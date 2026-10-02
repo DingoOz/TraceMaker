@@ -32,6 +32,14 @@ build/release/src/server/tracemaker-view board.kicad_pcb --demo                 
 kicad-cli pcb drc --format json -o drc.json routed.kicad_pcb                               # the judge
 ```
 
+Placement (opt-in; keeps the input placement unless the new one routes at least as well):
+
+```
+build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode refine --route-check 3000000
+```
+
+KiCad 10 plugin: `kicad_plugin/` (IPC action plugin; routes the open board in one undoable commit; see its README).
+
 Useful route options: `--threads N` (portfolio size), `--no-gpu` (CPU cost-to-go fields, identical results),
 `--no-rip-up`, `--fast-bends`, `--kb FILE` / `--no-kb` (knowledge base of earlier runs).
 
@@ -41,6 +49,14 @@ Useful route options: `--threads N` (portfolio size), `--no-gpu` (CPU cost-to-go
 scripts/fetch_fixtures.sh                     # Freerouting fixtures incl. PCBench, DAC2020, KiCad demos
 python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 ```
+
+Latest results (PCBench, 120 s per board, judged by `kicad-cli`; Freerouting figures are its published results):
+
+| Tier | Boards | TraceMaker clean | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
+|---|--:|--:|--:|--:|
+| A | 40 | 100% | 100% | 87.5% |
+| B | 40 | 60.0% | 50.0% | 12.5% |
+| C | 30 | 50.0% | 46.7% | 16.7% |
 
 Each run writes `bench/results/<run>/` (routed boards, per-board JSON, `summary.json`, `report.md`) and compares
 against Freerouting's own published per-board results on the same fixtures. Results appear on the progress
