@@ -194,7 +194,7 @@
     },
     {
      "text": "Router live streaming (route --view)",
-     "done": false
+     "done": true
     },
     {
      "text": "Replay log, heatmaps, FlatBuffers",
