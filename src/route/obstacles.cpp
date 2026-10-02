@@ -83,7 +83,36 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
         }
     }
   }
-  // Solder-mask openings drawn as graphics (logos, test areas): new copper under them would bridge.
+  // Solder-mask openings drawn as graphics (logos, test areas): new copper under them would bridge. Lines
+  // that close into a loop also open the area they enclose (KiCad fills closed mask outlines; PCBench
+  // Horticulture).
+  for (int side = 0; side < 2; ++side) {
+    const char* ln = side == 0 ? "F.Mask" : "B.Mask";
+    std::vector<std::vector<Point>> pieces;
+    for (const auto& g : b_.graphics)
+      if (g.layer == ln && g.kind == model::Graphic::Kind::Line) pieces.push_back({g.a, g.b});
+      else if (g.layer == ln && g.kind == model::Graphic::Kind::Arc) pieces.push_back(geom::arc_points(g.a, g.c, g.b, 5'000));
+    auto near = [](Point a, Point c) { return std::llabs(a.x - c.x) < 2000 && std::llabs(a.y - c.y) < 2000; };
+    std::vector<std::uint8_t> used(pieces.size(), 0);
+    for (std::size_t s0 = 0; s0 < pieces.size(); ++s0) {
+      if (used[s0]) continue;
+      used[s0] = 1;
+      std::vector<Point> chain = pieces[s0];
+      for (bool grown = true; grown && !near(chain.front(), chain.back());) {
+        grown = false;
+        for (std::size_t k = 0; k < pieces.size(); ++k) {
+          if (used[k]) continue;
+          if (near(chain.back(), pieces[k].front())) chain.insert(chain.end(), pieces[k].begin() + 1, pieces[k].end());
+          else if (near(chain.back(), pieces[k].back())) chain.insert(chain.end(), pieces[k].rbegin() + 1, pieces[k].rend());
+          else continue;
+          used[k] = 1;
+          grown = true;
+          break;
+        }
+      }
+      if (chain.size() >= 4 && near(chain.front(), chain.back())) mask_open_[side].push_back(Shape::polygon(chain, 0));
+    }
+  }
   for (const auto& g : b_.graphics) {
     const int side = g.layer == "F.Mask" ? 0 : g.layer == "B.Mask" ? 1 : -1;
     if (side < 0) continue;
@@ -310,7 +339,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
-      if (m.box.inflated(1'000).intersects(s.box) && geom::closer_than(s, m, 1'000)) return 2;
+      if (m.box.inflated(100'000).intersects(s.box) && geom::closer_than(s, m, 100'000)) return 2;
   return state;
 }
 
@@ -493,7 +522,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
-      if (m.box.inflated(1'000).intersects(s.box) && geom::closer_than(s, m, 1'000)) return kBlocked;
+      if (m.box.inflated(100'000).intersects(s.box) && geom::closer_than(s, m, 100'000)) return kBlocked;  // 0.1 mm: KiCad flags near misses
   return code;
 }
 
