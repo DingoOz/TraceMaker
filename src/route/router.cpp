@@ -633,9 +633,15 @@ struct Router::Impl {
     const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * 1e6);
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
-    const bool use_field = !zone_target && opt.field_heuristic && use_cache &&
+    const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
                            cells * static_cast<std::size_t>(nl) >= static_cast<std::size_t>(opt.field_min_cells);
-    if (use_field) build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * 1e6));
+    if (use_field) {
+      build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * 1e6));
+      // Wall-clock mode only (keeps --work runs deterministic): when shared GPUs make fields cost more than
+      // 30% of the run, this variant continues with the octile heuristic.
+      const double el = elapsed();
+      if (opt.work_budget == 0 && el > 10.0 && field_seconds > 0.3 * el) fields_off = true;
+    }
     const bool have_field = use_field && field_ok;
     auto h = [&](int fl, int gx, int gy) -> std::int64_t {
       if (have_field) {
@@ -976,6 +982,7 @@ struct Router::Impl {
   // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
   // signature hashes the routed copper inside the window, so any relevant change re-enables the attempt.
   std::unordered_map<std::uint64_t, std::uint8_t> nogoods;
+  bool fields_off = false;  // set when GPU fields cost too much wall-clock time (see search)
   int rip_cap = 0;  // per-connection rip limit (opt.max_rips_per_connection, raised by diversified restarts)
   long nogood_skips = 0;
   std::uint64_t window_signature(const geom::Box& box) {
