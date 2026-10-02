@@ -32,3 +32,5 @@
 {"ts": "2026-10-02T15:59:52+00:00", "kind": "milestone", "text": "M7 placement v1 committed: B2B + SimPL + legalisation + parallel annealing + LP lower bound; HPWL down, routability not yet up (opt-in tool tracemaker-place)"}
 {"ts": "2026-10-02T15:59:52+00:00", "kind": "build", "text": "Router: Horticulture mask fix, reverse boxed-in probe, pad-leg drop, portfolio early stop"}
 {"ts": "2026-10-02T16:20:26+00:00", "kind": "test", "text": "final4 PCBench (120 s, 8 variants): tier B 60.0% clean (FR RC12 50.0%), tier C 50.0% (FR RC12 46.7%); zero router-introduced DRC errors"}
+{"ts": "2026-10-02T17:04:57+00:00", "kind": "test", "text": "final5 PCBench: A 100%, B 60.0%, C 53.3%, D 52.4% clean (FR RC12 100/50.0/46.7/38.1%); zero router-introduced DRC errors"}
+{"ts": "2026-10-02T17:04:57+00:00", "kind": "milestone", "text": "Auto placement with route checks on 23 boards: HPWL -24.5% total, unrouted 61 -> 59, never worse"}

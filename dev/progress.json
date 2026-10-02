@@ -343,6 +343,10 @@
     {
      "text": "evaluation on 23 PCBench boards: HPWL -17..-26% median, zero new DRC errors; routability not yet improved",
      "done": true
+    },
+    {
+     "text": "--mode auto with route checks: 23 boards, HPWL -24.5% total, never more unrouted (61 -> 59)",
+     "done": true
     }
    ]
   },
@@ -445,6 +449,10 @@
     },
     {
      "text": "Portfolio early stop once a variant routes everything (wall-clock mode)",
+     "done": true
+    },
+    {
+     "text": "2x lattice pitch for two variants on large boards",
      "done": true
     }
    ]

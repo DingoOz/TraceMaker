@@ -9,16 +9,20 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 |---|--:|--:|--:|--:|--:|
 | A — routine 2-layer | 40 | **100%** | 100% | 87.5% | 0 |
 | B — 2–4 layer | 40 | **60.0%** | 50.0% | 12.5% | 0 |
-| C — complex / multi-layer | 30 | **50.0%** | 46.7% | 16.7% | 0 |
+| C — complex / multi-layer | 30 | **53.3%** | 46.7% | 16.7% | 0 |
+| D — hardest | 21 | **52.4%** | 38.1% | 0.0% | 0 |
 
 - **Clean pass** means fully connected and zero router-introduced KiCad DRC errors. Each board gets 120 s, with
   8 router variants in parallel.
-- **Runs:** tier A is from run `final3-tierA`; tiers B and C are from `final4-tier{B,C}` (latest router).
+- **Runs:** all four tiers are from the last runs of the night, `final5-tier{A,B,C,D}`, on the latest router.
+- **Samples:** 40 of 453 tier-A boards, 40 of 560 tier-B boards, 30 of 122 tier-C boards and the 21 tier-D boards
+  that have a KiCad file.
 - **Speed:** the tier-A median is 3 s per board. Freerouting's published median is 30 s on its own hardware.
 - **Variance:** results vary a little between runs because of the wall-clock limit. Earlier runs of the same day
-  scored B 50–55% and C 33–47%. A deterministic `--work` budget gives byte-identical repeats when needed.
+  scored B 50–60% and C 33–50%. A deterministic `--work` budget gives byte-identical repeats when needed.
 - **Head to head on tier B:** both clean on 16 boards, only TraceMaker on 8, only Freerouting on 4.
-- **Head to head on tier C:** both clean on 10 boards, only TraceMaker on 5, only Freerouting on 4.
+- **Head to head on tier C:** both clean on 11 boards, only TraceMaker on 5, only Freerouting on 3.
+- **Head to head on tier D:** both clean on 7 boards, only TraceMaker on 4, only Freerouting on 1.
 - All runs are on the progress site's benchmark panel with Freerouting columns.
 
 ## What was built
@@ -32,7 +36,7 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 | M4 router | done | Octilinear lattice A* with exact legality from the DRC rule engine; exact verification before every commit |
 | M5 learning | mostly done | PathFinder history; negotiated rip-up; boxed-in detection at both ends; learned blocks; nogoods; escalation (escapes, neck-down, negotiation); restarts that keep history |
 | M6 GPU | partial | CUDA cost-to-go fields as the A* heuristic, identical results with or without GPU; global routing corridors not started |
-| M7 placement | v1 done | `tracemaker-place`: quadratic placement, SimPL spreading, legalisation, parallel annealing, LP lower bound; `--route-check` keeps a placement only if it routes at least as well |
+| M7 placement | v1 done | `tracemaker-place`: quadratic placement, SimPL spreading, legalisation, parallel annealing, LP lower bound; `--mode auto --route-check` keeps the most routable of refine, full and input |
 | M10 portfolio | mostly done | 8-variant parallel portfolio with early stop; deterministic `--work` budget; SQLite knowledge base with a bandit over variants and per-board failure priorities |
 | M11 KiCad plugin | v1 done | KiCad 10 IPC action plugin routes the open board in one undoable commit (tested offline against kicad-python 0.8) |
 
@@ -49,26 +53,36 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 - **Portfolio early stop.** All variants stop once one routes every connection.
 - **Faster routed-copper checks.** A count raster skips most routed-copper queries. Output is identical and runs
   are 4–10% faster.
+- **Coarse lattice on large boards.** Two portfolio variants use double the lattice pitch on boards with at least
+  3M lattice points per layer. P8000 went from 325 to 334 of 361 connections in 120 s.
+- **Auto placement.** `--mode auto` picks between refine, full and the input placement by routing each.
 - **Placement integrated.** The placement agent's engine is committed. I added the router-in-the-loop check.
 
 ## Placement status (M7)
 
-- On 23 PCBench boards, wirelength (HPWL) falls by a median of 17% in full mode and 26% in refine mode. No new
-  KiCad DRC errors appear.
-- Routability is **not** better yet: 13 boards fully routed after placement against 15 for the human placement.
-- `--route-check N` routes the input and the new placement with the same work budget. It keeps the input if the
-  new placement routes fewer connections, so the tool never makes a board less routable.
-- The routability term inside the annealer (stage G) and side flipping are the next steps.
-- Details are in `docs/04-placement.md` section 7.
+- `tracemaker-place --mode auto --route-check N` runs refine and full placement. It routes each against the input
+  with the same deterministic budget and keeps the placement with the fewest unrouted connections, then the
+  shortest wirelength.
+- On 23 PCBench boards at a 3M-expansion budget it kept a new placement on 18 boards and the input on 5.
+  Unrouted connections never went up. They went down on 2 boards (61 to 59 in total).
+
+| Measure | Input placement | Kept placement |
+|---|--:|--:|
+| Total HPWL (mm) | 17,464 | 13,190 |
+| Median HPWL ratio | — | 0.83 |
+| Unrouted connections | 61 | 59 |
+
+- Without the route check, placement alone cut wirelength but routed slightly worse (13 fully routed boards
+  against 15). The routability term inside the annealer (stage G) and side flipping are the next steps.
+- Per-board table: `build/place-auto/summary.json`; design notes in `docs/04-placement.md` section 7.
 
 ## How to look at it
 
 - Progress site: `http://192.168.1.82:8765/` (roadmap, tests, latest code, benchmarks, GPUs, activity).
 - Live routing: `build/release/src/app/tracemaker route <board> -o out.kicad_pcb --view --hold`, then open
   `http://192.168.1.82:8766/`.
-- Placement: `build/release/src/place/tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode refine --route-check 3000000`.
-- Routed benchmark boards: `bench/results/final4-tier{B,C}/boards/*.kicad_pcb` and
-  `bench/results/final3-tierA/boards/` (open in KiCad 10).
+- Placement: `build/release/src/place/tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode auto --route-check 3000000`.
+- Routed benchmark boards: `bench/results/final5-tier{A,B,C,D}/boards/*.kicad_pcb` (open in KiCad 10).
 - Everything is committed locally (`git log`). Nothing was pushed anywhere.
 
 ## Decisions taken without you
@@ -87,7 +101,7 @@ All are in `dev/assumptions.md` (A1–A18), each with its reason. The ones you m
 
 ## Known issues and next steps
 
-1. **Large boards are time-limited.** P8000 and PCIE-to-MXM finish only one pass in 120 s. A* costs about 430 ns
+1. **Large boards are time-limited.** P8000 and PCIE-to-MXM finish only one or two passes in 120 s. A* costs about 430 ns
    per expansion. Global routing corridors, a coarse-to-fine lattice and parallel routing inside one variant are
    the next levers.
 2. **Edge-connector fingers** with mask openings on both sides block their own exits (fifogfx_c64cart).

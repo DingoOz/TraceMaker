@@ -35,7 +35,7 @@ kicad-cli pcb drc --format json -o drc.json routed.kicad_pcb                    
 Placement (opt-in; keeps the input placement unless the new one routes at least as well):
 
 ```
-build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode refine --route-check 3000000
+build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode auto --route-check 3000000
 ```
 
 KiCad 10 plugin: `kicad_plugin/` (IPC action plugin; routes the open board in one undoable commit; see its README).
@@ -56,7 +56,8 @@ Latest results (PCBench, 120 s per board, judged by `kicad-cli`; Freerouting fig
 |---|--:|--:|--:|--:|
 | A | 40 | 100% | 100% | 87.5% |
 | B | 40 | 60.0% | 50.0% | 12.5% |
-| C | 30 | 50.0% | 46.7% | 16.7% |
+| C | 30 | 53.3% | 46.7% | 16.7% |
+| D | 21 | 52.4% | 38.1% | 0.0% |
 
 Each run writes `bench/results/<run>/` (routed boards, per-board JSON, `summary.json`, `report.md`) and compares
 against Freerouting's own published per-board results on the same fixtures. Results appear on the progress
