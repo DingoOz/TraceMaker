@@ -140,3 +140,19 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Gridless "radar scan" (3D LineExplore, 2026) | No public code; promising results | Possible future portfolio arm |
 | Hypergraph successive approximation (tscircuit-autorouter) | Tuned for small boards | Reference for capacity-node global routing |
 | Topological rubber-band routing | No mature open implementation | Future portfolio arm |
+
+## 11. Implementation status (2026-10-02)
+
+| Part | Status | Where |
+|---|---|---|
+| Octilinear lattice A* (pitch (width + clearance) / 6, 25–100 µm), optional 9-state bend tracking | Done | `route/router.cpp` (`search`) |
+| Exact legality from the DRC rule engine; per-class fixed-obstacle code caches; separate routed-copper index; near-routed count raster to skip far queries | Done | `route/obstacles.cpp`, `router.cpp` |
+| Exact verification of every segment and via before commit | Done | `commit` |
+| Escape stubs off the lattice for fine-pitch pads; pad legs dropped when the track already ends on the pad | Done | `pad_cells`, `commit` |
+| Escalation: forced escapes, neck-down to the board minimum width, negotiation | Done | `run` |
+| Boxed-in detection at the source (open list exhausted) and at the target (short reverse probe) | Done | `search_and_commit_inner` |
+| Zone (plane) targets; MST connection planning over existing copper clusters | Done | `plan`, `search` |
+| GPU cost-to-go fields as the heuristic (never used to prune) | Done | `gpu/field_cuda.cu`, `build_field` |
+| Portfolio of 8 variants in threads, early stop when one is complete, 2x pitch for two variants on large boards | Done | `route_portfolio` |
+| Escape planning (section 3), global routing (section 4), cleanup (section 8) | Not started | |
+| Diff pairs and length tuning | Not started | |

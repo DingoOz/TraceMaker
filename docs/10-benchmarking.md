@@ -67,3 +67,13 @@ place-and-route set also resets unlocked footprint positions to a pile outside t
 2. Zero added KiCad DRC errors on every board that was clean before.
 3. Time within budget on every board.
 4. Determinism hash unchanged unless the change is meant to change results (then recorded).
+
+## 6. Implementation status (2026-10-02)
+
+- `bench/run.py` samples PCBench boards per Freerouting tier, routes each with a binary snapshot, judges with
+  `kicad-cli pcb drc`, and compares with Freerouting's published per-board results (`benchmarks.json`).
+- Samples: tier A 40 of 453 boards, tier B 40 of 560, tier C 30 of 122, tier D all 22 (seed 1).
+- Added errors count only violations involving a track, via or arc (decision A16); other new KiCad reports are
+  kept as diagnostics.
+- Results go to `bench/results/<run>/` and the progress site's benchmark panel.
+- Latest: tier A 100% clean, tier B 60.0%, tier C 50.0% (Freerouting 2.5.0-RC12: 100%, 50.0%, 46.7%).
