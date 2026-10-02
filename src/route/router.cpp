@@ -10,8 +10,10 @@
 #include <array>
 #include <deque>
 #include <set>
+#include <thread>
 #include <unordered_map>
 
+#include "core/rng.hpp"
 #include "drc/connectivity.hpp"
 #include "route/obstacles.hpp"
 
@@ -49,6 +51,7 @@ struct Router::Impl {
   std::vector<std::uint32_t> gstamp, cstamp, vstamp;
   std::vector<std::int64_t> g;
   std::vector<std::int32_t> parent;
+  std::vector<std::uint8_t> adir;  // arrival direction per state (used when direction is not part of the state)
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
   std::uint32_t gen = 0;
   std::set<std::pair<int, std::int64_t>> learned_block;  // (net, layer-cell key) blocked after exact-check failures
@@ -197,7 +200,20 @@ struct Router::Impl {
         upd(nxt);
       }
     }
-    std::stable_sort(out.begin(), out.end(), [](const Connection& a, const Connection& c) { return a.length < c.length; });
+    if (opt.order == 1) {
+      std::stable_sort(out.begin(), out.end(), [](const Connection& a, const Connection& c) { return a.length > c.length; });
+    } else if (opt.order == 2) {
+      // Shortest first with seeded jitter (up to 2x length), for portfolio diversity.
+      const RngStream rng(opt.seed, 0x0D3Du, 0);
+      std::vector<std::pair<double, std::size_t>> key;
+      for (std::size_t i = 0; i < out.size(); ++i) key.emplace_back(static_cast<double>(out[i].length) * (1.0 + rng.uniform(i)), i);
+      std::stable_sort(key.begin(), key.end());
+      std::vector<Connection> sorted;
+      for (const auto& [k, i] : key) sorted.push_back(out[i]);
+      out = std::move(sorted);
+    } else {
+      std::stable_sort(out.begin(), out.end(), [](const Connection& a, const Connection& c) { return a.length < c.length; });
+    }
     return out;
   }
 
@@ -328,14 +344,22 @@ struct Router::Impl {
 
   struct PathNode { int layer, gx, gy; };
 
+  // Why the last search ended without a path (failure explanation, design doc 06 T0).
+  enum class Miss { None, Enclosed, Window, Budget };
+  Miss last_miss = Miss::None;
+
   bool search(const Connection& c, const Window& w, std::vector<PathNode>& path) {
+    last_miss = Miss::None;
+    bool touched_edge = false;
     const NetId net = c.net;
     const Coord width = track_width(net);
     const Coord hw = width / 2;
     const Coord vd = via_diameter(net);
     const Coord vdrill = via_drill(net);
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
-    const std::size_t states = cells * static_cast<std::size_t>(nl) * 9;
+    const std::size_t D = opt.bend_states ? 9 : 1;  // direction states per lattice point
+    const std::size_t states = cells * static_cast<std::size_t>(nl) * D;
+    if (adir.size() < states) adir.resize(states);
     if (gstamp.size() < states) {
       gstamp.assign(states, 0);
       g.resize(states);
@@ -396,7 +420,7 @@ struct Router::Impl {
       return static_cast<std::int64_t>(static_cast<double>((mx - mn) + mn * diag / step) * opt.heuristic_weight);  // octile distance
     };
     auto sidx = [&](int l, std::int64_t ci, int dir) {
-      return ((static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)) * 9) + static_cast<std::size_t>(dir);
+      return ((static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)) * D) + (D == 9 ? static_cast<std::size_t>(dir) : 0);
     };
     using QE = std::pair<std::int64_t, std::size_t>;  // (f, state)
     std::priority_queue<QE, std::vector<QE>, std::greater<>> open;
@@ -409,6 +433,7 @@ struct Router::Impl {
       gstamp[s] = gen;
       g[s] = g0;
       parent[s] = -1;
+      adir[s] = kNoDir;
       open.emplace(g0 + h(w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
@@ -416,12 +441,13 @@ struct Router::Impl {
     while (!open.empty()) {
       const auto [f, s] = open.top();
       open.pop();
-      const int dir = static_cast<int>(s % 9);
-      const std::size_t lc = s / 9;
+      const int dir = D == 9 ? static_cast<int>(s % 9) : adir[s];
+      const std::size_t lc = s / D;
       const int l = static_cast<int>(lc / cells);
       const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
       if (f - h(w.x0 + cx, w.y0 + cy) > g[s]) continue;  // stale entry
+      if (cx == 0 || cy == 0 || cx == w.w - 1 || cy == w.h - 1) touched_edge = true;
       if (target(l, ci)) {
         goal = s;
         break;
@@ -454,6 +480,7 @@ struct Router::Impl {
         gstamp[ns] = gen;
         g[ns] = gs + cost;
         parent[ns] = static_cast<std::int32_t>(s);
+        adir[ns] = static_cast<std::uint8_t>(d);
         open.emplace(gs + cost + h(w.x0 + ncx, w.y0 + ncy), ns);
       }
       // Via: change to every other layer at this cell (through via).
@@ -467,15 +494,21 @@ struct Router::Impl {
           gstamp[ns] = gen;
           g[ns] = ng;
           parent[ns] = static_cast<std::int32_t>(s);
+          adir[ns] = kNoDir;
           open.emplace(ng + h(w.x0 + cx, w.y0 + cy), ns);
         }
       }
     }
     res.expansions += expanded;
-    if (goal == SIZE_MAX) return false;
+    if (goal == SIZE_MAX) {
+      // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
+      // cannot help (Contour's boxed-in terminal test).
+      last_miss = expanded > opt.max_expansions ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
+      return false;
+    }
     path.clear();
     for (std::int64_t s = static_cast<std::int64_t>(goal); s >= 0; s = parent[static_cast<std::size_t>(s)]) {
-      const std::size_t lc = static_cast<std::size_t>(s) / 9;
+      const std::size_t lc = static_cast<std::size_t>(s) / D;
       const int l = static_cast<int>(lc / cells);
       const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
       path.push_back({l, w.x0 + static_cast<int>(ci % w.w), w.y0 + static_cast<int>(ci / w.w)});
@@ -638,7 +671,13 @@ struct Router::Impl {
       const int x1 = std::min(nx - 1, to_ix(std::max(a.x, e.x) + m)), y1 = std::min(ny - 1, to_iy(std::max(a.y, e.y) + m));
       w.w = x1 - w.x0 + 1;
       w.h = y1 - w.y0 + 1;
-      if (!search(c, w, path)) continue;
+      if (!search(c, w, path)) {
+        if (last_miss == Miss::Enclosed) {
+          ++res.enclosed;
+          return false;  // boxed in: go straight to negotiation (or give up in strict mode)
+        }
+        continue;
+      }
       if (commit(c, path)) return true;
     }
     return false;
@@ -791,6 +830,53 @@ struct Router::Impl {
     return std::move(res);
   }
 };
+
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads) {
+  struct Variant {
+    std::string name;
+    RouterOptions o;
+  };
+  std::vector<Variant> vs;
+  auto add = [&](std::string name, auto tweak) {
+    RouterOptions o = base;
+    tweak(o);
+    if (!vs.empty()) o.sink = nullptr;  // only the first variant streams to the viewer
+    vs.push_back({std::move(name), o});
+  };
+  add("exact bends, shortest first", [](RouterOptions&) {});
+  add("fast bends, shortest first", [&](RouterOptions& o) { o.bend_states = false; });
+  add("fast bends, longest first", [&](RouterOptions& o) { o.bend_states = false; o.order = 1; });
+  add("fast bends, jittered order", [&](RouterOptions& o) { o.bend_states = false; o.order = 2; o.seed = base.seed + 1; });
+  add("exact bends, jittered order", [&](RouterOptions& o) { o.order = 2; o.seed = base.seed + 2; });
+  add("fast bends, cheap vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; });
+  add("fast bends, cheap crossings", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; });
+  add("fast bends, dear vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 2.5; });
+  const int n = std::clamp(threads, 1, static_cast<int>(vs.size()));
+  vs.resize(static_cast<std::size_t>(n));
+  std::vector<RouteResult> rs(vs.size());
+  std::vector<std::thread> pool;
+  for (std::size_t i = 0; i < vs.size(); ++i)
+    pool.emplace_back([&, i] { rs[i] = Router(board, rules, vs[i].o).run(); });
+  for (auto& t : pool) t.join();
+  PortfolioResult pr;
+  auto length = [](const RouteResult& r) {
+    double l = 0;
+    for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+    return l;
+  };
+  std::size_t best = 0;
+  for (std::size_t i = 0; i < rs.size(); ++i) {
+    pr.variants.push_back(vs[i].name);
+    pr.routed.push_back(rs[i].routed);
+    const auto& a = rs[i];
+    const auto& c = rs[best];
+    if (a.routed > c.routed || (a.routed == c.routed && (a.vias.size() < c.vias.size() || (a.vias.size() == c.vias.size() && length(a) < length(c)))))
+      best = i;
+  }
+  pr.best_variant = static_cast<int>(best);
+  pr.best = std::move(rs[best]);
+  return pr;
+}
 
 Router::Router(const model::Board& board, const model::DesignRules& rules, RouterOptions opt) : in_(board), rules_(rules), opt_(opt) {}
 

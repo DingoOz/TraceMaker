@@ -125,7 +125,7 @@ struct ViewOptions {
   bool hold = false;
 };
 
-int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view) {
+int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view, int threads) {
   auto lb = tmk::io::read_board_file(in);
   const auto rules = tmk::io::read_design_rules(in);
   std::unique_ptr<tmk::server::ViewerServer> server;
@@ -139,8 +139,15 @@ int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterO
     std::fflush(stdout);
     opt.sink = server.get();
   }
-  tmk::route::Router router(lb.board, rules, opt);
-  const auto res = router.run();
+  tmk::route::RouteResult res;
+  if (threads > 1) {
+    auto pr = tmk::route::route_portfolio(lb.board, rules, opt, threads);
+    for (std::size_t i = 0; i < pr.variants.size(); ++i)
+      std::printf("  variant %zu %-30s routed %d%s\n", i, pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : "");
+    res = std::move(pr.best);
+  } else {
+    res = tmk::route::Router(lb.board, rules, opt).run();
+  }
   tmk::io::BoardEditor ed(lb, opt.seed);
   for (const auto& t : res.tracks) ed.add_track(t);
   for (const auto& v : res.vias) ed.add_via(v);
@@ -216,6 +223,9 @@ int main(int argc, char** argv) {
   route->add_option("--seed", ropt.seed);
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
+  route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
+  int r_threads = 8;
+  route->add_option("--threads", r_threads, "Portfolio size: differently configured routers run in parallel, best kept (1 = single router)");
   ViewOptions vopt;
   route->add_flag("--view", vopt.enabled, "Stream the routing live to the browser viewer");
   route->add_option("--view-host", vopt.host, "Viewer bind address (default 0.0.0.0)");
@@ -241,7 +251,7 @@ int main(int argc, char** argv) {
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
-      return cmd_route(r_in, r_out, ropt, r_json, vopt);
+      return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads);
     }
     if (*rt) {
       int bad = 0, ok = 0;

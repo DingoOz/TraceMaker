@@ -83,6 +83,11 @@ class Obstacles {
   Coord reach_ = 0;
   std::vector<geom::Point> outline_;
   std::vector<std::vector<geom::Point>> cutouts_;
+  // Inside-board raster: 0 outside, 1 inside, 2 boundary cell (exact test needed).
+  std::vector<std::uint8_t> inside_raster_;
+  int ir_w_ = 0, ir_h_ = 0;
+  Coord ir_cell_ = 250'000;
+  bool inside_exact(geom::Point p) const;
   std::vector<std::pair<geom::Shape, const model::Zone*>> keepouts_;
   std::vector<geom::Shape> mask_open_[2];  // solder-mask openings drawn as graphics (front, back)
   struct Aperture {

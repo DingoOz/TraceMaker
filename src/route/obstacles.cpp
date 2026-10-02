@@ -86,6 +86,35 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     else if (g.kind == model::Graphic::Kind::Line)
       mask_open_[side].push_back(Shape::segment(g.a, g.b, g.width / 2));
   }
+  // Inside-board raster (exact point-in-polygon only in cells the outline or a cut-out crosses).
+  if (!outline_.empty()) {
+    ir_w_ = static_cast<int>((bounds_.x1 - bounds_.x0) / ir_cell_) + 1;
+    ir_h_ = static_cast<int>((bounds_.y1 - bounds_.y0) / ir_cell_) + 1;
+    inside_raster_.assign(static_cast<std::size_t>(ir_w_) * static_cast<std::size_t>(ir_h_), 255);
+    auto mark_loop = [&](const std::vector<Point>& loop) {
+      for (std::size_t i = 0, j = loop.size() - 1; i < loop.size(); j = i++) {
+        const Point a = loop[j], c = loop[i];
+        const Coord len = std::max(std::llabs(c.x - a.x), std::llabs(c.y - a.y));
+        const int n = static_cast<int>(len / (ir_cell_ / 4)) + 1;
+        for (int k = 0; k <= n; ++k) {
+          const Point q{a.x + (c.x - a.x) * k / n, a.y + (c.y - a.y) * k / n};
+          const Coord cx = (q.x - bounds_.x0) / ir_cell_, cy = (q.y - bounds_.y0) / ir_cell_;
+          for (Coord dy = -1; dy <= 1; ++dy)
+            for (Coord dx = -1; dx <= 1; ++dx) {
+              const Coord x = cx + dx, y = cy + dy;
+              if (x >= 0 && y >= 0 && x < ir_w_ && y < ir_h_) inside_raster_[static_cast<std::size_t>(y) * static_cast<std::size_t>(ir_w_) + static_cast<std::size_t>(x)] = 2;
+            }
+        }
+      }
+    };
+    mark_loop(outline_);
+    for (const auto& c : cutouts_) mark_loop(c);
+    for (int y = 0; y < ir_h_; ++y)
+      for (int x = 0; x < ir_w_; ++x) {
+        auto& v = inside_raster_[static_cast<std::size_t>(y) * static_cast<std::size_t>(ir_w_) + static_cast<std::size_t>(x)];
+        if (v == 255) v = inside_exact({bounds_.x0 + x * ir_cell_ + ir_cell_ / 2, bounds_.y0 + y * ir_cell_ + ir_cell_ / 2}) ? 1 : 0;
+      }
+  }
   // Pad solder-mask openings per board side (independent of the pad's copper layers: an edge-connector pad on
   // B.Cu can still open the front mask).
   via_mask_ = b_.vias_tented ? 0 : b_.pad_to_mask_clearance;
@@ -126,11 +155,24 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       keepouts_.emplace_back(Shape::polygon(z.outline.front(), 0), &z);
 }
 
-bool Obstacles::inside_board(Point p, Coord margin) const {
-  if (outline_.empty()) return true;
+bool Obstacles::inside_exact(Point p) const {
   if (!geom::point_in_polygon(p, outline_)) return false;
   for (const auto& c : cutouts_)
     if (geom::point_in_polygon(p, c)) return false;
+  return true;
+}
+
+bool Obstacles::inside_board(Point p, Coord margin) const {
+  if (outline_.empty()) return true;
+  if (!inside_raster_.empty()) {
+    const Coord cx = (p.x - bounds_.x0) / ir_cell_, cy = (p.y - bounds_.y0) / ir_cell_;
+    if (cx < 0 || cy < 0 || cx >= ir_w_ || cy >= ir_h_) return false;
+    const std::uint8_t st = inside_raster_[static_cast<std::size_t>(cy) * static_cast<std::size_t>(ir_w_) + static_cast<std::size_t>(cx)];
+    if (st == 0) return false;
+    if (st == 2 && !inside_exact(p)) return false;
+  } else if (!inside_exact(p)) {
+    return false;
+  }
   if (margin <= 0) return true;
   const Shape pt = Shape::point(p, 0);
   bool ok = true;
