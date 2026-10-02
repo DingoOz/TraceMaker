@@ -79,7 +79,10 @@ struct Text {                // copper text is an obstacle; only position, layer
   std::string text;
   Point pos;
   double angle = 0;
-  Coord height = 0, thickness = 0;
+  Coord height = 0, width = 0, thickness = 0;
+  int justify_h = 0;         // -1 left, 0 centre, 1 right
+  int justify_v = 0;         // -1 top, 0 centre, 1 bottom
+  bool mirror = false;
   int footprint = -1;
   bool hidden = false;
 };

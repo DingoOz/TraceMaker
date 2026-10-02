@@ -63,6 +63,7 @@ struct Router::Impl {
     bool implicit = false;           // satisfied through other routes of the same net (no own copper)
     std::vector<int> items;          // copper item indices owned by this connection
     int rips = 0, fails = 0;
+    std::string why;                 // last failure explanation
   };
   std::vector<ConnState> cs;
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
@@ -222,7 +223,69 @@ struct Router::Impl {
   // ---------------------------------------------------------------------------------------------------
   struct Endpoint {
     std::vector<std::pair<int, std::int64_t>> cells;  // (layer, cell index in window)
+    std::vector<Point> stub;                           // per cell: off-lattice escape point (or the pad centre)
+    std::vector<std::int64_t> cost;                    // per cell: cost from the pad centre
   };
+  // Off-lattice escapes: straight exits from the pad centre in 8 directions, exactly checked, joining the
+  // lattice at the first legal point (fine-pitch pins are often unreachable from lattice points alone).
+  struct Escape {
+    int layer, gx, gy;
+    Point stub;
+    std::int64_t cost;
+  };
+  std::unordered_map<int, std::vector<Escape>> escape_cache;  // pad -> escapes valid against fixed copper
+
+  const std::vector<Escape>& escapes(int pad) {
+    if (auto it = escape_cache.find(pad); it != escape_cache.end()) return it->second;
+    std::vector<Escape> out;
+    const auto& p = b.pads[static_cast<std::size_t>(pad)];
+    const NetId net = p.net;
+    const Coord width = track_width(net);
+    const Coord stepl = std::max<Coord>(pitch / 2, 10'000);
+    const bool saved_soft = soft;
+    soft = false;
+    for (int l = 0; l < nl; ++l) {
+      if (!(p.copper & model::layer_bit(l))) continue;
+      for (int d = 0; d < 8; ++d) {
+        const double ux = kDx[d] / ((d & 1) ? std::numbers::sqrt2 : 1.0), uy = kDy[d] / ((d & 1) ? std::numbers::sqrt2 : 1.0);
+        for (int k = 1; k <= 40; ++k) {
+          const Point E{p.pos.x + static_cast<Coord>(std::llround(ux * static_cast<double>(stepl * k))),
+                        p.pos.y + static_cast<Coord>(std::llround(uy * static_cast<double>(stepl * k)))};
+          if (obs->segment_state(p.pos, E, l, width, net, true) == 2) break;  // fixed copper blocks this direction
+          const int gx = to_ix(E.x), gy = to_iy(E.y);
+          if (gx < 0 || gy < 0 || gx >= nx || gy >= ny) break;
+          const Point C = at(gx, gy);
+          if (point_state(l, gx, gy, net, width / 2) == 2) continue;
+          if (obs->segment_state(E, C, l, width, net, true) == 2) continue;
+          out.push_back({l, gx, gy, E,
+                         static_cast<std::int64_t>(std::hypot(static_cast<double>(E.x - p.pos.x), static_cast<double>(E.y - p.pos.y)) +
+                                                   std::hypot(static_cast<double>(C.x - E.x), static_cast<double>(C.y - E.y)))});
+          break;
+        }
+      }
+    }
+    soft = saved_soft;
+    return escape_cache.emplace(pad, std::move(out)).first->second;
+  }
+
+  // Off-lattice escapes: straight exits from the pad centre in 8 directions, exactly checked, joining the
+  // lattice at the first legal point (fine-pitch pins are often unreachable from lattice points alone).
+  // Cached per pad against fixed copper; routed copper is checked by the search and at commit.
+  void add_escapes(const Window& w, int pad, Endpoint& e) {
+    const auto& p = b.pads[static_cast<std::size_t>(pad)];
+    const Coord width = track_width(p.net);
+    for (const auto& x : escapes(pad)) {
+      const int cx = x.gx - w.x0, cy = x.gy - w.y0;
+      if (cx < 0 || cy < 0 || cx >= w.w || cy >= w.h) continue;
+      // Against current routed copper too (the cache only knows fixed copper).
+      if (point_state(x.layer, x.gx, x.gy, p.net, width / 2) == 2) continue;
+      if (obs->segment_state(p.pos, x.stub, x.layer, width, p.net, soft) == 2) continue;
+      if (obs->segment_state(x.stub, at(x.gx, x.gy), x.layer, width, p.net, soft) == 2) continue;
+      e.cells.emplace_back(x.layer, static_cast<std::int64_t>(cy) * w.w + cx);
+      e.stub.push_back(x.stub);
+      e.cost.push_back(x.cost);
+    }
+  }
 
   static std::int64_t cell_key(int layer, int gx, int gy) {
     return (static_cast<std::int64_t>(layer) << 48) | (static_cast<std::int64_t>(gy) << 24) | gx;
@@ -332,13 +395,33 @@ struct Router::Impl {
           bool in = false;
           for (const auto& s : it.shapes)
             if (geom::closer_than(pt, s, 1)) in = true;
-          if (in) e.cells.emplace_back(l, static_cast<std::int64_t>(cy) * w.w + cx);
+          if (in) {
+            const Point C = at(w.x0 + cx, w.y0 + cy);
+            e.cells.emplace_back(l, static_cast<std::int64_t>(cy) * w.w + cx);
+            e.stub.push_back(p.pos);
+            e.cost.push_back(static_cast<std::int64_t>(std::hypot(static_cast<double>(C.x - p.pos.x), static_cast<double>(C.y - p.pos.y))));
+          }
         }
       if (e.cells.size() == before) {  // tiny pad: nearest lattice point
         const int cx = std::clamp(to_ix(p.pos.x) - w.x0, 0, w.w - 1), cy = std::clamp(to_iy(p.pos.y) - w.y0, 0, w.h - 1);
+        const Point C = at(w.x0 + cx, w.y0 + cy);
         e.cells.emplace_back(l, static_cast<std::int64_t>(cy) * w.w + cx);
+        e.stub.push_back(p.pos);
+        e.cost.push_back(static_cast<std::int64_t>(std::hypot(static_cast<double>(C.x - p.pos.x), static_cast<double>(C.y - p.pos.y))));
       }
     }
+    // Escapes only for pads without a usable lattice point of their own (typically fine-pitch pins): elsewhere
+    // they steal space other pins need.
+    bool any_free = false;
+    const Coord width = track_width(p.net);
+    for (const auto& [l, ci] : e.cells) {
+      const int gx = w.x0 + static_cast<int>(ci % w.w), gy = w.y0 + static_cast<int>(ci / w.w);
+      if (point_state(l, gx, gy, p.net, width / 2) != 2) {
+        any_free = true;
+        break;
+      }
+    }
+    if (!any_free) add_escapes(w, pad, e);
     return e;
   }
 
@@ -425,11 +508,20 @@ struct Router::Impl {
     using QE = std::pair<std::int64_t, std::size_t>;  // (f, state)
     std::priority_queue<QE, std::vector<QE>, std::greater<>> open;
     const Point sp = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
-    for (auto [l, ci] : src.cells) {
+    start_stub.clear();
+    target_stub.clear();
+    for (std::size_t k = 0; k < dst.cells.size(); ++k) {
+      const auto key = cell_key(dst.cells[k].first, w.x0 + static_cast<int>(dst.cells[k].second % w.w), w.y0 + static_cast<int>(dst.cells[k].second / w.w));
+      if (!target_stub.count(key) || dst.stub[k] == tp) target_stub[key] = dst.stub[k];
+    }
+    (void)sp;
+    for (std::size_t k = 0; k < src.cells.size(); ++k) {
+      const auto [l, ci] = src.cells[k];
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
-      const Point p = at(w.x0 + cx, w.y0 + cy);
-      const std::int64_t g0 = static_cast<std::int64_t>(std::hypot(static_cast<double>(p.x - sp.x), static_cast<double>(p.y - sp.y)));
+      const std::int64_t g0 = src.cost[k];
       const std::size_t s = sidx(l, ci, kNoDir);
+      if (gstamp[s] == gen && g[s] <= g0) continue;
+      start_stub[cell_key(l, w.x0 + cx, w.y0 + cy)] = src.stub[k];
       gstamp[s] = gen;
       g[s] = g0;
       parent[s] = -1;
@@ -534,6 +626,11 @@ struct Router::Impl {
     Point cur = pa;
     int layer = path.front().layer;
     auto P = [&](const PathNode& n) { return at(n.gx, n.gy); };
+    // Leading escape stub (pad centre -> escape point) before the first lattice point.
+    if (auto it = start_stub.find(cell_key(path.front().layer, path.front().gx, path.front().gy)); it != start_stub.end() && !(it->second == pa)) {
+      segs.push_back({pa, it->second, layer});
+      cur = it->second;
+    }
     for (std::size_t i = 0; i < path.size(); ++i) {
       const Point p = P(path[i]);
       if (path[i].layer != layer) {  // via at the previous point
@@ -551,6 +648,12 @@ struct Router::Impl {
       }
       if (!(cur == p)) segs.push_back({cur, p, layer});
       cur = p;
+    }
+    if (c.pad_b >= 0) {
+      if (auto it = target_stub.find(cell_key(path.back().layer, path.back().gx, path.back().gy)); it != target_stub.end() && !(it->second == pb) && !(it->second == cur)) {
+        segs.push_back({cur, it->second, layer});
+        cur = it->second;
+      }
     }
     if (!(cur == pb)) segs.push_back({cur, pb, layer});
     // Merge collinear consecutive segments on the same layer (after adding the pad legs).
@@ -577,11 +680,17 @@ struct Router::Impl {
     }
     for (const auto& v : vias)
       if (obs->via_state(v, vd, vdrill, net, 0, soft, &victims) == 2) ok = false;
-    if (!ok) return false;
+    if (!ok) {
+      commit_why = "exact check rejected the lattice path";
+      return false;
+    }
     std::sort(victims.begin(), victims.end());
     victims.erase(std::unique(victims.begin(), victims.end()), victims.end());
     for (int v : victims)
-      if (cs[static_cast<std::size_t>(v)].rips >= opt.max_rips_per_connection) return false;  // protected: too often ripped
+      if (cs[static_cast<std::size_t>(v)].rips >= opt.max_rips_per_connection) {
+        commit_why = "would rip a connection already ripped too often";
+        return false;
+      }
     // Rip up victims, and raise history on the contested cells so later searches avoid them.
     for (int v : victims) rip(v);
     for (const auto& s : merged) bump_history(s, net);
@@ -656,6 +765,8 @@ struct Router::Impl {
       }
   }
 
+  std::string why, commit_why;
+  std::unordered_map<std::int64_t, Point> start_stub, target_stub;  // lattice point -> escape point (pad centre if none)
   bool search_and_commit(const Connection& c, bool soft_mode) {
     soft = soft_mode;
     const Point a = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
@@ -672,6 +783,7 @@ struct Router::Impl {
       w.w = x1 - w.x0 + 1;
       w.h = y1 - w.y0 + 1;
       if (!search(c, w, path)) {
+        why = last_miss == Miss::Enclosed ? "boxed in" : last_miss == Miss::Budget ? "search budget" : "no path in window";
         if (last_miss == Miss::Enclosed) {
           ++res.enclosed;
           return false;  // boxed in: go straight to negotiation (or give up in strict mode)
@@ -679,6 +791,7 @@ struct Router::Impl {
         continue;
       }
       if (commit(c, path)) return true;
+      why = commit_why;
     }
     return false;
   }
@@ -782,7 +895,12 @@ struct Router::Impl {
           continue;
         }
         bool ok = search_and_commit(st.c, false);
-        if (!ok && opt.rip_up && pass > 0) ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
+        std::string reason = why;
+        if (!ok && opt.rip_up && pass > 0) {
+          ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
+          reason += "; negotiated: " + why;
+        }
+        cs[static_cast<std::size_t>(ci)].why = reason;
         if (ok) {
           cs[static_cast<std::size_t>(ci)].routed = true;
           ++res.routed;
@@ -820,7 +938,7 @@ struct Router::Impl {
         to = b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number;
       }
       res.failures.push_back(b.nets[static_cast<std::size_t>(st.c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." +
-                             pa.number + " -> " + to);
+                             pa.number + " -> " + to + "  (" + st.why + ")");
     }
     res.seconds = elapsed();
     std::fprintf(stderr, "legality checks %ld: outside %ld, copper %ld, holes/edges/keepouts %ld; rips %d, passes %d\n", obs->checks,

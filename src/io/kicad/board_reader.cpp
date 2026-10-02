@@ -406,11 +406,23 @@ class Reader {
     }
     tx.pos = fi >= 0 ? origin + geom::rotate(p, angle) : p;
     tx.hidden = yes(t, "hide");
-    if (NodeId e = d_.find(t, "effects"); e != kNoNode)
+    if (NodeId e = d_.find(t, "effects"); e != kNoNode) {
       if (NodeId f = d_.find(e, "font"); f != kNoNode) {
-        if (NodeId s = d_.find(f, "size"); s != kNoNode) tx.height = d_.nm_at(s, 1).value_or(0);
+        if (NodeId s = d_.find(f, "size"); s != kNoNode) {
+          tx.height = d_.nm_at(s, 1).value_or(0);
+          tx.width = d_.nm_at(s, 2).value_or(tx.height);
+        }
         tx.thickness = child_nm(f, "thickness");
       }
+      if (NodeId j = d_.find(e, "justify"); j != kNoNode) {
+        if (has_symbol(j, "left")) tx.justify_h = -1;
+        if (has_symbol(j, "right")) tx.justify_h = 1;
+        if (has_symbol(j, "top")) tx.justify_v = -1;
+        if (has_symbol(j, "bottom")) tx.justify_v = 1;
+        tx.mirror = has_symbol(j, "mirror");
+      }
+      if (yes(e, "hide")) tx.hidden = true;
+    }
     b_.texts.push_back(std::move(tx));
   }
 

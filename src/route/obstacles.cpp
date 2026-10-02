@@ -139,15 +139,30 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       apertures_[side].push_back(std::move(a));
     }
   }
-  // Copper text: a conservative rectangle (stroke-font advance ~ 1.0 x height per character).
+  // Copper text: a rectangle from the stroke-font metrics (advance <= 1.0 x glyph width, line pitch 1.62 x
+  // height), justified and mirrored as in the file, plus the stroke thickness and a 10% safety margin.
   for (const auto& t : b_.texts) {
     if (t.hidden || t.text.empty()) continue;
     const int l = b_.copper_index(t.layer);
     if (l < 0) continue;
-    const Coord h = std::max<Coord>(t.height, 1'000'000), th = std::max<Coord>(t.thickness, 150'000);
-    // Justification and mirroring move the text away from its anchor in any direction: cover all cases.
-    const Coord hw = static_cast<Coord>(t.text.size()) * h + th, hh = h * 12 / 10 + th;
-    std::vector<Point> pts = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
+    std::size_t lines = 1, longest = 0, cur = 0;
+    for (char ch : t.text) {
+      if (ch == '\n') {
+        ++lines;
+        longest = std::max(longest, cur);
+        cur = 0;
+      } else if ((static_cast<unsigned char>(ch) & 0xC0) != 0x80) {  // count UTF-8 code points
+        ++cur;
+      }
+    }
+    longest = std::max(longest, cur);
+    const Coord h = std::max<Coord>(t.height, 500'000), cw = std::max<Coord>(t.width, h), th = std::max<Coord>(t.thickness, 100'000);
+    const Coord W = static_cast<Coord>(longest) * cw * 11 / 10 + th;
+    const Coord H = static_cast<Coord>(static_cast<double>(lines - 1) * 1.62 * static_cast<double>(h)) + h * 11 / 10 + th;
+    Coord x0 = t.justify_h < 0 ? 0 : t.justify_h > 0 ? -W : -W / 2;
+    Coord y0 = t.justify_v < 0 ? 0 : t.justify_v > 0 ? -H : -H / 2;
+    if (t.mirror) x0 = -x0 - W;
+    std::vector<Point> pts = {{x0 - th, y0 - th}, {x0 + W + th, y0 - th}, {x0 + W + th, y0 + H + th}, {x0 - th, y0 + H + th}};
     for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
     texts_.emplace_back(l, Shape::polygon(pts, 0));
   }

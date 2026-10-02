@@ -1,0 +1,97 @@
+#pragma once
+// Placement problem extracted from a board (design doc 04 §2): parts with courtyards, holes and pins per
+// rotation, weighted nets, the board outline, keepouts and spacing rules. Everything is in integer nm; a part's
+// geometry is stored as offsets from its footprint origin for each of the four 90° rotations.
+#include <array>
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "geom/shape.hpp"
+#include "model/board.hpp"
+#include "model/rules.hpp"
+
+namespace tmk::place {
+
+using geom::Box;
+using geom::Point;
+using geom::Shape;
+
+inline std::size_t z(int i) { return static_cast<std::size_t>(i); }
+
+// Net weights are small integers so every cost is an exact integer (CLAUDE.md rule 2).
+inline constexpr int kSignalWeight = 10;
+inline constexpr int kPowerWeight = 1;
+
+struct PartGeom {               // one rotation of a part, offsets from the footprint origin
+  std::array<Shape, 2> cy;      // courtyard polygon per side (pts empty = no courtyard on that side)
+  std::vector<Shape> through;   // drilled holes and plated-through pad copper (obstacles on both sides)
+  std::vector<Shape> pads;      // pad copper (for the copper-to-edge clearance)
+  Box body;                     // bounding box of courtyards and through obstacles
+  Box edge_box;                 // bounding box of courtyards and pads inflated by the edge clearance
+};
+
+struct Part {
+  int fp = -1;                  // footprint index in the board
+  std::string ref, lib_id;
+  bool movable = false;
+  std::string fixed_reason;     // why a part is fixed (locked, mounting hole, ...)
+  int side = 0;                 // 0 front, 1 back (the footprint's side; never changed)
+  Point pos0;                   // original origin
+  double angle0 = 0;            // original absolute orientation (degrees); rotation r means angle0 + 90 r
+  std::array<PartGeom, 4> geom; // per rotation r = 0..3
+  std::vector<int> pins;        // indices into Problem::pins
+  Coord area = 0;               // courtyard bbox area incl. clearance (nm², saturating) for spreading
+  std::uint64_t shape_key = 0;  // equal keys = interchangeable footprints (swap moves)
+};
+
+struct Pin {
+  int part = -1;
+  int net = -1;                 // index into Problem::nets
+  std::array<Point, 4> off;     // offset from the part origin per rotation
+};
+
+struct PNet {
+  std::string name;
+  int weight = kSignalWeight;
+  bool signal = true;           // counted for airwire crossings
+  std::vector<int> pins;
+};
+
+struct Keepout {
+  Shape poly;
+  bool side[2] = {false, false};
+};
+
+struct Problem {
+  std::vector<Part> parts;
+  std::vector<Pin> pins;
+  std::vector<PNet> nets;
+  std::vector<Point> outline;                // largest Edge.Cuts loop (empty if none could be assembled)
+  std::vector<std::vector<Point>> cutouts;   // other closed Edge.Cuts loops
+  std::vector<Shape> edges;                  // every Edge.Cuts piece as segments (r = 0)
+  std::vector<Keepout> keepouts;
+  Coord clearance = 250'000;                 // courtyard-to-courtyard clearance
+  Coord edge_clearance = 0;                  // pad copper to board edge
+  Box region;                                // where parts may go (outline bbox)
+  std::vector<std::string> notes;            // extraction decisions worth reporting
+
+  int movable_count() const;
+};
+
+struct ExtractOptions {
+  bool fix_edge_connectors = true;  // connectors (J*, P*, CN*, USB*) touching the outline stay put
+  Coord courtyard_clearance = -1;   // override (-1: from the rules, else 0.25 mm)
+};
+
+// Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).
+Problem extract(const model::Board& b, const model::DesignRules& rules, const std::string& board_path,
+                const ExtractOptions& opt = {});
+
+// Geometry helpers.
+Shape translated(const Shape& s, Point d);
+Point rot90(Point p, int r);       // KiCad rotation by r * 90 degrees
+std::vector<Point> convex_hull(std::vector<Point> pts);
+bool power_like_name(const std::string& name);
+
+}  // namespace tmk::place

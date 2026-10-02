@@ -19,3 +19,4 @@
 {"ts": "2026-10-02T12:30:33+00:00", "kind": "test", "text": "Benchmark m5-tierA-v2: 92.5% clean pass on 40 tier-A boards (Freerouting RC12 100%, 2.4.1 87.5%), 99.6% completion, zero added DRC errors"}
 {"ts": "2026-10-02T12:55:50+00:00", "kind": "milestone", "text": "M3 complete (helper agent): live WebGL2 viewer + Boost.Beast event server, tracemaker-view with demo mode"}
 {"ts": "2026-10-02T12:57:47+00:00", "kind": "build", "text": "tracemaker route --view streams routing live to the browser viewer (port 8766)"}
+{"ts": "2026-10-02T13:19:11+00:00", "kind": "test", "text": "Tier B (40 boards) with an 8-variant portfolio: 42.5% clean pass (Freerouting RC12 50%, 2.4.1 12.5%); 5 boards clean only with TraceMaker"}
