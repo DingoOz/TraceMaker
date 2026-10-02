@@ -145,7 +145,8 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     const int l = b_.copper_index(t.layer);
     if (l < 0) continue;
     const Coord h = std::max<Coord>(t.height, 1'000'000), th = std::max<Coord>(t.thickness, 150'000);
-    const Coord hw = static_cast<Coord>(t.text.size()) * h / 2 + th, hh = h * 6 / 10 + th;
+    // Justification and mirroring move the text away from its anchor in any direction: cover all cases.
+    const Coord hw = static_cast<Coord>(t.text.size()) * h + th, hh = h * 12 / 10 + th;
     std::vector<Point> pts = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
     for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
     texts_.emplace_back(l, Shape::polygon(pts, 0));

@@ -27,6 +27,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
 FR_RESULTS = ROOT / "bench/data/freerouting/scripts/benchmark/results/benchmarks.json"
 TM = ROOT / "build/release/src/app/tracemaker"
+THREADS = 1
 DRC_CACHE = ROOT / "build/drc/kicad"
 # Violation types that routing cannot cause; ignored when counting added errors.
 NOT_ROUTING = {"lib_footprint_issues", "lib_footprint_mismatch", "silk_overlap", "silk_over_copper", "silk_edge_clearance",
@@ -82,7 +83,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     res = {"board": name}
     t0 = time.time()
     try:
-        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--json", str(out) + ".route.json"],
+        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"],
                            capture_output=True, text=True, timeout=time_limit * 3 + 60)
         res["exit"] = p.returncode
         if p.returncode not in (0, 3):
@@ -117,7 +118,10 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=1, help="board sampling seed")
     ap.add_argument("--name")
     ap.add_argument("--boards", nargs="*", help="explicit board folder names")
+    ap.add_argument("--threads", type=int, default=1, help="router portfolio size per board")
     a = ap.parse_args()
+    global THREADS
+    THREADS = a.threads
     base = fr_baseline()
     if a.boards:
         names = a.boards
@@ -168,7 +172,7 @@ def main() -> int:
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),
-        "time_limit_s": a.time,
+        "time_limit_s": a.time, "threads": a.threads,
         "fr_rc12_clean_pass": round(fr_clean / len(fr_rows), 4) if fr_rows else None,
         "fr_241_clean_pass": round(sum(r["fr_241"]["clean"] for r in fr241) / len(fr241), 4) if fr241 else None,
         "both_clean": both, "only_tracemaker_clean": only_tm, "only_freerouting_clean": only_fr,
