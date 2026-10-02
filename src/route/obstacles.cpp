@@ -139,32 +139,43 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       apertures_[side].push_back(std::move(a));
     }
   }
-  // Copper text: a rectangle from the stroke-font metrics (advance <= 1.0 x glyph width, line pitch 1.62 x
-  // height), justified and mirrored as in the file, plus the stroke thickness and a 10% safety margin.
+  // Copper text: one rectangle per line, sized from approximate KiCad stroke-font advances (upper case 0.8,
+  // lower case 0.68, digits 0.72, narrow glyphs 0.4 of the glyph width; line pitch 1.62 x height), justified
+  // and mirrored as in the file, plus the stroke thickness and a 5% margin.
   for (const auto& t : b_.texts) {
     if (t.hidden || t.text.empty()) continue;
     const int l = b_.copper_index(t.layer);
     if (l < 0) continue;
-    std::size_t lines = 1, longest = 0, cur = 0;
-    for (char ch : t.text) {
+    std::vector<double> widths(1, 0.0);  // per line, in glyph widths
+    for (std::size_t i = 0; i < t.text.size(); ++i) {
+      const unsigned char ch = static_cast<unsigned char>(t.text[i]);
       if (ch == '\n') {
-        ++lines;
-        longest = std::max(longest, cur);
-        cur = 0;
-      } else if ((static_cast<unsigned char>(ch) & 0xC0) != 0x80) {  // count UTF-8 code points
-        ++cur;
+        widths.push_back(0.0);
+        continue;
       }
+      if ((ch & 0xC0) == 0x80) continue;  // UTF-8 continuation byte
+      double a = 0.8;
+      if (ch >= 'a' && ch <= 'z') a = (ch == 'i' || ch == 'l' || ch == 'j' || ch == 't' || ch == 'f' || ch == 'r') ? 0.45 : (ch == 'm' || ch == 'w') ? 0.95 : 0.68;
+      else if (ch >= '0' && ch <= '9') a = 0.72;
+      else if (ch == ' ' || ch == '.' || ch == ',' || ch == ':' || ch == ';' || ch == '\'' || ch == '!' || ch == '|' || ch == 'I') a = 0.4;
+      else if (ch == 'M' || ch == 'W') a = 0.95;
+      else if (ch >= 0x80) a = 0.8;
+      widths.back() += a;
     }
-    longest = std::max(longest, cur);
-    const Coord h = std::max<Coord>(t.height, 500'000), cw = std::max<Coord>(t.width, h), th = std::max<Coord>(t.thickness, 100'000);
-    const Coord W = static_cast<Coord>(longest) * cw * 11 / 10 + th;
-    const Coord H = static_cast<Coord>(static_cast<double>(lines - 1) * 1.62 * static_cast<double>(h)) + h * 11 / 10 + th;
-    Coord x0 = t.justify_h < 0 ? 0 : t.justify_h > 0 ? -W : -W / 2;
-    Coord y0 = t.justify_v < 0 ? 0 : t.justify_v > 0 ? -H : -H / 2;
-    if (t.mirror) x0 = -x0 - W;
-    std::vector<Point> pts = {{x0 - th, y0 - th}, {x0 + W + th, y0 - th}, {x0 + W + th, y0 + H + th}, {x0 - th, y0 + H + th}};
-    for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
-    texts_.emplace_back(l, Shape::polygon(pts, 0));
+    const Coord h = std::max<Coord>(t.height, 300'000), cw = std::max<Coord>(t.width, 300'000), th = std::max<Coord>(t.thickness, 100'000);
+    const double pitchl = 1.62 * static_cast<double>(h);
+    const Coord H = static_cast<Coord>(static_cast<double>(widths.size() - 1) * pitchl) + h;
+    const Coord ytop = t.justify_v < 0 ? 0 : t.justify_v > 0 ? -H : -H / 2;
+    for (std::size_t li = 0; li < widths.size(); ++li) {
+      const Coord W = static_cast<Coord>(widths[li] * static_cast<double>(cw) * 1.05);
+      if (W <= 0) continue;
+      Coord x0 = t.justify_h < 0 ? 0 : t.justify_h > 0 ? -W : -W / 2;
+      if (t.mirror) x0 = -x0 - W;
+      const Coord y0 = ytop + static_cast<Coord>(static_cast<double>(li) * pitchl), y1 = y0 + h * 105 / 100;
+      std::vector<Point> pts = {{x0 - th, y0 - th}, {x0 + W + th, y0 - th}, {x0 + W + th, y1 + th}, {x0 - th, y1 + th}};
+      for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
+      texts_.emplace_back(l, Shape::polygon(pts, 0));
+    }
   }
   for (const auto& z : b_.zones)
     if (z.rule_area && z.keepout_tracks && !z.outline.empty() && z.outline.front().size() >= 3)
@@ -599,6 +610,13 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
     }
   });
   return state;
+}
+
+void Obstacles::routed_items_in(const geom::Box& box, std::vector<int>& out) const {
+  rgrid_->query(box, [&](int id) {
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (!it.removed && it.box.intersects(box)) out.push_back(id);
+  });
 }
 
 }  // namespace tmk::route

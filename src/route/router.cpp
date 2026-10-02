@@ -692,8 +692,8 @@ struct Router::Impl {
         return false;
       }
     // Rip up victims, and raise history on the contested cells so later searches avoid them.
+    for (const auto& s : merged) bump_history(s, net);  // before the rip, while the conflicts still exist
     for (int v : victims) rip(v);
-    for (const auto& s : merged) bump_history(s, net);
     // Commit.
     auto& st = cs[static_cast<std::size_t>(current)];
     for (const auto& s : merged) {
@@ -766,14 +766,48 @@ struct Router::Impl {
   }
 
   std::string why, commit_why;
+  bool strict_pass = false;
+  // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
+  // signature hashes the routed copper inside the window, so any relevant change re-enables the attempt.
+  std::unordered_map<std::uint64_t, std::uint8_t> nogoods;
+  long nogood_skips = 0;
+  std::uint64_t window_signature(const geom::Box& box) {
+    std::uint64_t h = 0x9E3779B97F4A7C15ull;
+    std::vector<int> ids;
+    obs->routed_items_in(box, ids);
+    std::sort(ids.begin(), ids.end());
+    for (int id : ids) h = splitmix64(h ^ static_cast<std::uint64_t>(id));
+    return h;
+  }
   std::unordered_map<std::int64_t, Point> start_stub, target_stub;  // lattice point -> escape point (pad centre if none)
   bool search_and_commit(const Connection& c, bool soft_mode) {
     soft = soft_mode;
+    // Skip an attempt that already failed in exactly this situation.
+    const Point pa0 = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
+    const Point pb0 = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : pa0;
+    geom::Box wb;
+    wb.add(pa0);
+    wb.add(pb0);
+    wb = wb.inflated(6'000'000 + c.length / 4);
+    const std::uint64_t ng = splitmix64(window_signature(wb) ^ (static_cast<std::uint64_t>(current) << 1) ^ (soft_mode ? 1u : 0u));
+    if (nogoods.count(ng)) {
+      ++nogood_skips;
+      why = "skipped: identical earlier attempt failed (nogood)";
+      return false;
+    }
+    const bool ok = search_and_commit_inner(c);
+    if (!ok) nogoods[ng] = 1;
+    return ok;
+  }
+
+  bool search_and_commit_inner(const Connection& c) {
     const Point a = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
     const Point e = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : a;
     static const Coord margins[] = {2'000'000, 6'000'000, 20'000'000, 1'000'000'000};
     std::vector<PathNode> path;
-    for (int attempt = 0; attempt < opt.max_attempts; ++attempt) {
+    // The strict first pass tries two window sizes only; anything harder is left to negotiation.
+    const int attempts = strict_pass ? std::min(2, opt.max_attempts) : opt.max_attempts;
+    for (int attempt = 0; attempt < attempts; ++attempt) {
       if (elapsed() > opt.time_limit_s) return false;
       const Coord m = margins[std::min(attempt, 3)] + c.length / 4;
       Window w;
@@ -881,6 +915,7 @@ struct Router::Impl {
 
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && elapsed() < opt.time_limit_s; ++pass) {
       res.passes = pass + 1;
+      strict_pass = pass == 0;
       std::vector<int> failed;
       const int routed_before = res.routed;
       while (!pending.empty() && elapsed() < opt.time_limit_s) {
@@ -941,8 +976,9 @@ struct Router::Impl {
                              pa.number + " -> " + to + "  (" + st.why + ")");
     }
     res.seconds = elapsed();
-    std::fprintf(stderr, "legality checks %ld: outside %ld, copper %ld, holes/edges/keepouts %ld; rips %d, passes %d\n", obs->checks,
-                 obs->rej_outside, obs->rej_copper, obs->rej_other, res.rips, res.passes);
+    res.nogood_skips = nogood_skips;
+    std::fprintf(stderr, "legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", obs->checks, res.rips,
+                 res.passes, res.enclosed, nogood_skips, history.size());
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
     return std::move(res);

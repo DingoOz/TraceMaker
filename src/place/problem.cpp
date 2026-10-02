@@ -179,13 +179,16 @@ bool power_like_name(const std::string& name) {
 Problem extract(const model::Board& b, const model::DesignRules& rules, const std::string& board_path, const ExtractOptions& opt) {
   Problem p;
   // Spacing rules.
-  std::string src = "default 0.25 mm";
+  const std::string dflt = "default " + std::to_string(nm_to_mm(opt.default_clearance)) + " mm";
+  std::string src = dflt;
   Coord cc = opt.courtyard_clearance;
+  p.clearance_is_default = false;
   if (cc < 0) {
     cc = rules_courtyard_clearance(rules, board_path, src);
     if (cc < 0) {
-      cc = 250'000;
-      src = "default 0.25 mm";
+      cc = opt.default_clearance;
+      src = dflt;
+      p.clearance_is_default = true;
     }
   } else {
     src = "command line";
@@ -341,6 +344,8 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     if (fp.locked) pt.fixed_reason = "locked";
     else if (fp.board_only) pt.fixed_reason = "board only";
     else if (fp.pads.empty()) pt.fixed_reason = "no pads";
+    else if (fp.reference.starts_with("REF**")) pt.fixed_reason = "unannotated (REF**)";
+    else if (fp.pads.size() == 1) pt.fixed_reason = "single pad (via, test point, fiducial)";
     else if (mounting_hole(b, fp)) pt.fixed_reason = "mounting hole";
     else if (owns_edges[fi]) pt.fixed_reason = "has Edge.Cuts";
     else if (owns_keepout[fi]) pt.fixed_reason = "has a keepout";

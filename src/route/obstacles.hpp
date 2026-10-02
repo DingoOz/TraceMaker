@@ -54,6 +54,8 @@ class Obstacles {
   int routed_state(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
                    bool via_hole = false, Coord hole_r = 0) const;
   bool has_custom_rules() const { return !r_.custom.empty(); }
+  // Ids of live routed items whose box meets `box`.
+  void routed_items_in(const geom::Box& box, std::vector<int>& out) const;
 
   const drc::CopperModel& copper() const { return cm_; }
   const drc::RuleEngine& rules() const { return *re_; }

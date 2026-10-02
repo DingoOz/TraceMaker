@@ -14,6 +14,7 @@
 #include "drc/drc.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
+#include "route/obstacles.hpp"
 #include "server/messages.hpp"
 #include "server/viewer_server.hpp"
 #include "core/version.hpp"
@@ -168,6 +169,41 @@ int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterO
   return res.routed == res.connections ? 0 : 3;
 }
 
+// Prints the fixed-obstacle legality map around a pad (router debugging): '.' free for its net, '#' blocked,
+// '+' the pad centre.
+int cmd_debug_pad(const std::string& path, const std::string& ref, const std::string& num, double pitch_mm, double radius_mm, double width_mm) {
+  auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  tmk::model::Board b = lb.board;
+  tmk::route::Obstacles obs(b, rules);
+  for (const auto& p : b.pads) {
+    const auto& fp = b.footprints[static_cast<std::size_t>(p.footprint)];
+    if (fp.reference != ref || p.number != num) continue;
+    const auto& nc = rules.class_for(b.nets[static_cast<std::size_t>(p.net)].name);
+    const tmk::Coord hw = width_mm > 0 ? static_cast<tmk::Coord>(width_mm * 5e5) : std::max(nc.track_width, rules.minimums.track_width) / 2;
+    const tmk::Coord pitch = static_cast<tmk::Coord>(pitch_mm * 1e6);
+    const int n = static_cast<int>(radius_mm / pitch_mm);
+    for (int l = 0; l < b.copper_count(); ++l) {
+      if (!(p.copper & tmk::model::layer_bit(l))) continue;
+      std::printf("%s.%s net %s layer %s hw %.3f mm; centre inside board: %d; outline points %zu\n", ref.c_str(), num.c_str(),
+                  b.nets[static_cast<std::size_t>(p.net)].name.c_str(), b.copper_name(l).c_str(), tmk::nm_to_mm(hw), obs.inside_board(p.pos, 0),
+                  obs.outline().size());
+      for (int y = -n; y <= n; ++y) {
+        std::string row;
+        for (int x = -n; x <= n; ++x) {
+          const tmk::geom::Point q{p.pos.x + x * pitch, p.pos.y + y * pitch};
+          const auto code = obs.fixed_code(q, l, hw, 0, p.net);
+          row += (x == 0 && y == 0) ? '+' : (code == tmk::route::Obstacles::kFree || code == p.net) ? '.' : '#';
+        }
+        std::printf("%s\n", row.c_str());
+      }
+    }
+    return 0;
+  }
+  std::fprintf(stderr, "pad not found\n");
+  return 1;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -233,6 +269,17 @@ int main(int argc, char** argv) {
   route->add_flag("--hold", vopt.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
 
+  auto* dbg = app.add_subcommand("debug-pad", "Print the router's legality map around a pad");
+  dbg->group("");
+  std::string d_board, d_ref, d_num;
+  double d_pitch = 0.08, d_radius = 2.0, d_width = 0;
+  dbg->add_option("board", d_board)->required();
+  dbg->add_option("ref", d_ref)->required();
+  dbg->add_option("pad", d_num)->required();
+  dbg->add_option("--pitch", d_pitch);
+  dbg->add_option("--radius", d_radius);
+  dbg->add_option("--width", d_width);
+
   CLI11_PARSE(app, argc, argv);
   try {
     if (*version) {
@@ -247,6 +294,7 @@ int main(int argc, char** argv) {
       return 0;
     }
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
+    if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {

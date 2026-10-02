@@ -72,6 +72,7 @@ struct Problem {
   std::vector<Shape> edges;                  // every Edge.Cuts piece as segments (r = 0)
   std::vector<Keepout> keepouts;
   Coord clearance = 250'000;                 // courtyard-to-courtyard clearance
+  bool clearance_is_default = true;          // not from a board rule or the command line
   Coord edge_clearance = 0;                  // pad copper to board edge
   Box region;                                // where parts may go (outline bbox)
   std::vector<std::string> notes;            // extraction decisions worth reporting
@@ -81,7 +82,8 @@ struct Problem {
 
 struct ExtractOptions {
   bool fix_edge_connectors = true;  // connectors (J*, P*, CN*, USB*) touching the outline stay put
-  Coord courtyard_clearance = -1;   // override (-1: from the rules, else 0.25 mm)
+  Coord courtyard_clearance = -1;   // override (-1: from the rules, else default_clearance)
+  Coord default_clearance = 250'000;  // used when the board has no courtyard rule (KiCad's own default is 0)
 };
 
 // Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).
