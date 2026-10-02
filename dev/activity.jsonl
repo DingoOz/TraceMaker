@@ -35,3 +35,4 @@
 {"ts": "2026-10-02T17:04:57+00:00", "kind": "test", "text": "final5 PCBench: A 100%, B 60.0%, C 53.3%, D 52.4% clean (FR RC12 100/50.0/46.7/38.1%); zero router-introduced DRC errors"}
 {"ts": "2026-10-02T17:04:57+00:00", "kind": "milestone", "text": "Auto placement with route checks on 23 boards: HPWL -24.5% total, unrouted 61 -> 59, never worse"}
 {"ts": "2026-10-02T17:52:29+00:00", "kind": "test", "text": "final7 PCBench: A 100%, B 62.5%, C 56.7%, D 52.4% clean (FR RC12 100/50.0/46.7/38.1%); zero router-introduced DRC errors"}
+{"ts": "2026-10-02T18:36:14+00:00", "kind": "test", "text": "final8 PCBench: A 100%, B 65.0%, C 56.7%, D 50.0% (22 boards) clean (FR RC12 100/50.0/46.7/36.4%); zero router-introduced DRC errors; no harness errors"}
