@@ -34,6 +34,8 @@ int main(int argc, char** argv) {
   app.add_option("--json", json_path, "Write the placement report as JSON");
   app.add_flag("-v,--verbose", o.verbose, "Log the spreading iterations");
   std::string debug_part;
+  bool no_fallback = false;
+  app.add_flag("--no-fallback", no_fallback, "Full mode: keep the result even if some parts could not be placed");
   app.add_option("--debug-part", debug_part, "Print the legality map of one part and exit");
   CLI11_PARSE(app, argc, argv);
 
@@ -57,8 +59,8 @@ int main(int argc, char** argv) {
         std::printf("%s movable=%d side=%d pos=(%.3f,%.3f) angle=%g body=[%.3f %.3f %.3f %.3f] edge_box=[%.3f %.3f %.3f %.3f] cy0=%zu cy1=%zu through=%zu pads=%zu\n",
                     debug_part.c_str(), p.parts[i].movable, p.parts[i].side, nm_to_mm(p.parts[i].pos0.x), nm_to_mm(p.parts[i].pos0.y),
                     p.parts[i].angle0, nm_to_mm(g.body.x0), nm_to_mm(g.body.y0), nm_to_mm(g.body.x1), nm_to_mm(g.body.y1),
-                    nm_to_mm(g.edge_box.x0), nm_to_mm(g.edge_box.y0), nm_to_mm(g.edge_box.x1), nm_to_mm(g.edge_box.y1), g.cy[0].pts.size(),
-                    g.cy[1].pts.size(), g.through.size(), g.pads.size());
+                    nm_to_mm(g.edge_box.x0), nm_to_mm(g.edge_box.y0), nm_to_mm(g.edge_box.x1), nm_to_mm(g.edge_box.y1), g.cy[0].size(),
+                    g.cy[1].size(), g.through.size(), g.pads.size());
         int inside = 0, legal = 0, total = 0;
         for (Coord y = p.region.y0; y <= p.region.y1; y += 250'000)
           for (Coord x = p.region.x0; x <= p.region.x1; x += 250'000) {
@@ -74,7 +76,7 @@ int main(int argc, char** argv) {
     }
     place::PlaceReport r = place::place(p, pl, o);
     std::vector<std::string> fallbacks;
-    if (o.mode == "full" && (!r.legal || r.legalise_failed > 0) && p.clearance_is_default && p.clearance > 0) {
+    if (o.mode == "full" && !no_fallback && (!r.legal || r.legalise_failed > 0) && p.clearance_is_default && p.clearance > 0) {
       fallbacks.push_back("full mode with 0.25 mm courtyard clearance left " + std::to_string(r.legalise_failed) +
                           " parts unplaced: retried with KiCad's default courtyard clearance (0)");
       eo.default_clearance = 0;
@@ -82,7 +84,7 @@ int main(int argc, char** argv) {
       pl = place::Placement::initial(p);
       r = place::place(p, pl, o);
     }
-    if (o.mode == "full" && (!r.legal || r.legalise_failed > 0)) {
+    if (o.mode == "full" && !no_fallback && (!r.legal || r.legalise_failed > 0)) {
       fallbacks.push_back("full mode could not place every part legally (" + std::to_string(r.legalise_failed) +
                           " unplaced): output is the refine-mode result instead");
       place::PlaceOptions ro = o;

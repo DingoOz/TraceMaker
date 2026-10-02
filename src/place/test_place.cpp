@@ -44,8 +44,8 @@ int add_part(Problem& p, Point pos, Coord hx, Coord hy, const std::vector<Point>
     std::vector<Point> c = {{-hx, -hy}, {hx, -hy}, {hx, hy}, {-hx, hy}};
     for (auto& q : c) q = rot90(q, r);
     auto& g = pt.geom[z(r)];
-    g.cy[z(side)] = Shape::polygon(c, 0);
-    g.body = g.cy[z(side)].box;
+    g.cy[z(side)].push_back(Shape::polygon(c, 0));
+    g.body = g.cy[z(side)].back().box;
     g.edge_box = g.body;
     for (const auto& o : offs) {
       g.pads.push_back(Shape::point(rot90(o, r), 100'000));
@@ -96,7 +96,7 @@ Problem random_problem(int n, std::uint64_t seed, Coord size = 40 * MM) {
     for (int d = 0; d < deg; ++d) {
       const int part = static_cast<int>(u() * parts) % parts;
       const Part& pt = p.parts[z(part)];
-      const Point off = pt.movable ? Point{(u() < 0.5 ? -1 : 1) * (pt.geom[0].cy[0].box.x1 / 2), 0} : Point{0, 0};
+      const Point off = pt.movable ? Point{(u() < 0.5 ? -1 : 1) * (pt.geom[0].cy[0].front().box.x1 / 2), 0} : Point{0, 0};
       pins.emplace_back(part, off);
     }
     add_net(p, pins, e % 7 == 0 ? kPowerWeight : kSignalWeight);
@@ -270,7 +270,7 @@ TEST_CASE("extraction from a KiCad board", "[place][fixture]") {
   CHECK(!p.outline.empty());
   CHECK(p.movable_count() > 10);
   CHECK(!p.nets.empty());
-  for (const auto& pt : p.parts) CHECK((!pt.geom[0].cy[0].pts.empty() || !pt.geom[0].cy[1].pts.empty()));
+  for (const auto& pt : p.parts) CHECK((!pt.geom[0].cy[0].empty() || !pt.geom[0].cy[1].empty()));
   // Pins at rotation 0 reproduce the absolute pad positions.
   for (const auto& q : p.pins) {
     const Point abs = p.parts[z(q.part)].pos0 + q.off[0];

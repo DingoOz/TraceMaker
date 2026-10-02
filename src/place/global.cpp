@@ -105,10 +105,8 @@ Bins make_bins(const Problem& p) {
     for (const auto& pt : p.parts) {
       if (pt.movable) continue;
       const PartGeom& g = pt.geom[0];
-      const Shape& cy = g.cy[z(s)];
-      if (!cy.pts.empty()) {
-        Box bx = cy.box;
-        bx = Box{bx.x0 + pt.pos0.x, bx.y0 + pt.pos0.y, bx.x1 + pt.pos0.x, bx.y1 + pt.pos0.y};
+      for (const Shape& cy : g.cy[z(s)]) {
+        const Box bx{cy.box.x0 + pt.pos0.x, cy.box.y0 + pt.pos0.y, cy.box.x1 + pt.pos0.x, cy.box.y1 + pt.pos0.y};
         clear_box(bx, [&](Point c) { return geom::point_in_polygon(c - pt.pos0, cy.pts); });
       }
       for (const auto& t : g.through) {

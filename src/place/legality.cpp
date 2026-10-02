@@ -97,12 +97,12 @@ bool Legality::inside_ok(int part, Point pos, int rot) const {
     return true;
   };
   for (int s = 0; s < 2; ++s) {
-    const Shape& cy = g.cy[z(s)];
-    if (cy.pts.empty()) continue;
-    if (near_edge(cy, 1)) return false;
-    if (!in_board(cy.pts[0] + pos)) return false;
-    for (const auto& k : p_.keepouts)
-      if (k.side[s] && closer(k.poly, Point{}, cy, pos, 1)) return false;
+    for (const Shape& cy : g.cy[z(s)]) {
+      if (near_edge(cy, 1)) return false;
+      if (!in_board(cy.pts[0] + pos)) return false;
+      for (const auto& k : p_.keepouts)
+        if (k.side[s] && closer(k.poly, Point{}, cy, pos, 1)) return false;
+    }
   }
   const Coord ec = std::max<Coord>(p_.edge_clearance, 1);
   for (const auto& pd : g.pads) {
@@ -117,17 +117,22 @@ bool Legality::pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) c
   const PartGeom& gb = p_.parts[z(b)].geom[z(rb)];
   const Coord reach = std::max({p_.clearance, kThroughMargin, kThroughThrough});
   if (!shift(ga.body, pa).inflated(reach).intersects(shift(gb.body, pb))) return false;
+  const Coord c = std::max<Coord>(p_.clearance, 1);
   for (int s = 0; s < 2; ++s)
-    if (closer(ga.cy[z(s)], pa, gb.cy[z(s)], pb, std::max<Coord>(p_.clearance, 1))) return true;
+    for (const Shape& u : ga.cy[z(s)])
+      for (const Shape& v : gb.cy[z(s)])
+        if (closer(u, pa, v, pb, c)) return true;
   for (const auto& t : ga.through) {
     for (int s = 0; s < 2; ++s)
-      if (closer(t, pa, gb.cy[z(s)], pb, kThroughMargin)) return true;
+      for (const Shape& v : gb.cy[z(s)])
+        if (closer(t, pa, v, pb, kThroughMargin)) return true;
     for (const auto& u : gb.through)
       if (closer(t, pa, u, pb, kThroughThrough)) return true;
   }
   for (const auto& t : gb.through)
     for (int s = 0; s < 2; ++s)
-      if (closer(t, pb, ga.cy[z(s)], pa, kThroughMargin)) return true;
+      for (const Shape& v : ga.cy[z(s)])
+        if (closer(t, pb, v, pa, kThroughMargin)) return true;
   return false;
 }
 
@@ -196,6 +201,15 @@ int Legality::find_conflict(int part, Point pos, int rot, int skip1, int skip2) 
         if (pair_conflict(part, pos, rot, q, pos_[z(q)], rot_[z(q)])) return q;
       }
   return -1;
+}
+
+void Legality::conflicts(int part, Point pos, int rot, std::vector<int>& out) const {
+  const Coord reach = std::max({p_.clearance, kThroughMargin, kThroughThrough});
+  std::vector<int> nb;
+  neighbours(shift(p_.parts[z(part)].geom[z(rot)].body, pos).inflated(reach), nb);
+  for (int q : nb)
+    if (q != part && pair_conflict(part, pos, rot, q, pos_[z(q)], rot_[z(q)])) out.push_back(q);
+  std::sort(out.begin(), out.end());
 }
 
 // ------------------------------------------------------------------------------------------------ Raster
@@ -317,7 +331,7 @@ void Raster::bump(std::vector<std::uint16_t>& g, const Box& b, int delta) {
 void Raster::add(int part, Point pos, int rot, int delta) {
   const PartGeom& g = p_.parts[z(part)].geom[z(rot)];
   for (int s = 0; s < 2; ++s)
-    if (!g.cy[z(s)].pts.empty()) bump(occ_[s], shift(g.cy[z(s)].box, pos), delta);
+    for (const Shape& cy : g.cy[z(s)]) bump(occ_[s], shift(cy.box, pos), delta);
   for (const auto& t : g.through)
     for (int s = 0; s < 2; ++s) bump(occ_[s], shift(t.box, pos), delta);
 }
@@ -327,9 +341,10 @@ bool Raster::free(int part, Point pos, int rot) const {
   const Coord infl = std::max(p_.clearance, kThroughMargin) + 1;
   const Coord tinfl = std::max(kThroughThrough, kThroughMargin) + 1;
   for (int s = 0; s < 2; ++s) {
-    if (g.cy[z(s)].pts.empty()) continue;
+    if (g.cy[z(s)].empty()) continue;
     if (any(blocked_[s], shift(g.edge_box, pos))) return false;
-    if (any(occ_[s], shift(g.cy[z(s)].box, pos).inflated(infl))) return false;
+    for (const Shape& cy : g.cy[z(s)])
+      if (any(occ_[s], shift(cy.box, pos).inflated(infl))) return false;
   }
   for (const auto& t : g.through)
     for (int s = 0; s < 2; ++s)

@@ -24,7 +24,7 @@ inline constexpr int kSignalWeight = 10;
 inline constexpr int kPowerWeight = 1;
 
 struct PartGeom {               // one rotation of a part, offsets from the footprint origin
-  std::array<Shape, 2> cy;      // courtyard polygon per side (pts empty = no courtyard on that side)
+  std::array<std::vector<Shape>, 2> cy;  // courtyard polygons per side (empty = no courtyard on that side)
   std::vector<Shape> through;   // drilled holes and plated-through pad copper (obstacles on both sides)
   std::vector<Shape> pads;      // pad copper (for the copper-to-edge clearance)
   Box body;                     // bounding box of courtyards and through obstacles
@@ -41,7 +41,7 @@ struct Part {
   double angle0 = 0;            // original absolute orientation (degrees); rotation r means angle0 + 90 r
   std::array<PartGeom, 4> geom; // per rotation r = 0..3
   std::vector<int> pins;        // indices into Problem::pins
-  Coord area = 0;               // courtyard bbox area incl. clearance (nm², saturating) for spreading
+  Coord area = 0;               // courtyard box area incl. clearance (nm², saturating), for spreading
   std::uint64_t shape_key = 0;  // equal keys = interchangeable footprints (swap moves)
 };
 

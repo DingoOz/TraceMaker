@@ -15,7 +15,8 @@ namespace tmk::route {
 
 struct RouterOptions {
   Coord pitch = 0;              // lattice pitch; 0 = automatic from net-class widths and clearances
-  double time_limit_s = 120;    // wall-clock budget for the whole run
+  double time_limit_s = 120;    // wall-clock safety limit for the whole run
+  long work_budget = 0;         // deterministic budget in search expansions (0 = none): same input + seed => same output
   long max_expansions = 3'000'000;  // per search attempt
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   double heuristic_weight = 1.0;

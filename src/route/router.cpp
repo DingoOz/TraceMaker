@@ -90,6 +90,11 @@ struct Router::Impl {
   Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {}
 
   double elapsed() const { return std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); }
+  // Out of budget? The work budget (search expansions) is deterministic; wall time is only a safety net.
+  bool out_of_budget() const {
+    if (opt.work_budget > 0 && res.expansions >= opt.work_budget) return true;
+    return elapsed() > opt.time_limit_s;
+  }
   void emit(const std::string& s) {
     if (opt.sink) opt.sink->publish(s);
   }
@@ -885,7 +890,7 @@ struct Router::Impl {
     // The strict first pass tries two window sizes only; anything harder is left to negotiation.
     const int attempts = strict_pass ? std::min(2, opt.max_attempts) : opt.max_attempts;
     for (int attempt = 0; attempt < attempts; ++attempt) {
-      if (elapsed() > opt.time_limit_s) return false;
+      if (out_of_budget()) return false;
       const Coord m = margins[std::min(attempt, 3)] + c.length / 4;
       Window w;
       w.x0 = std::max(0, to_ix(std::min(a.x, e.x) - m));
@@ -990,12 +995,12 @@ struct Router::Impl {
         }
     };
 
-    for (int pass = 0; pass < opt.max_passes && !pending.empty() && elapsed() < opt.time_limit_s; ++pass) {
+    for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
       strict_pass = pass == 0;
       std::vector<int> failed;
       const int routed_before = res.routed;
-      while (!pending.empty() && elapsed() < opt.time_limit_s) {
+      while (!pending.empty() && !out_of_budget()) {
         const int ci = pending.front();
         pending.pop_front();
         auto& st = cs[static_cast<std::size_t>(ci)];

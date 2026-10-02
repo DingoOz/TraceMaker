@@ -43,6 +43,8 @@ class Legality {
   bool present(int part) const { return present_[z(part)] != 0; }
   // First placed part that conflicts with `part` at (pos, rot), skipping `part` itself and skip1/skip2; -1 if none.
   int find_conflict(int part, Point pos, int rot, int skip1 = -1, int skip2 = -1) const;
+  // Every placed part that conflicts (sorted).
+  void conflicts(int part, Point pos, int rot, std::vector<int>& out) const;
   bool legal(int part, Point pos, int rot, int skip1 = -1, int skip2 = -1) const {
     return inside_ok(part, pos, rot) && find_conflict(part, pos, rot, skip1, skip2) < 0;
   }

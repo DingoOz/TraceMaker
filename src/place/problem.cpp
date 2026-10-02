@@ -42,44 +42,62 @@ bool mounting_hole(const model::Board& b, const model::Footprint& fp) {
   return (ref_like && netless) || upper(fp.lib_id).find("MOUNTINGHOLE") != std::string::npos;
 }
 
-// Largest closed loop of Edge.Cuts pieces is the outline, other loops are cut-outs (same as route/obstacles).
-void assemble_outline(Problem& p) {
+// Closed loops of Edge.Cuts pieces (as route/obstacles does), joining endpoints closer than `tol`: each step
+// appends the piece whose nearest end is closest to the chain's end.
+std::vector<std::vector<Point>> edge_loops(const std::vector<Shape>& edges, Coord tol) {
   std::vector<std::vector<Point>> pieces;
-  for (const auto& e : p.edges) pieces.push_back(e.pts);
-  auto near = [](Point a, Point c) { return std::llabs(a.x - c.x) < 2000 && std::llabs(a.y - c.y) < 2000; };
+  for (const auto& e : edges) pieces.push_back(e.pts);
+  auto dist = [](Point a, Point c) { return std::max(std::llabs(a.x - c.x), std::llabs(a.y - c.y)); };
   std::vector<std::uint8_t> used(pieces.size(), 0);
   std::vector<std::vector<Point>> loops;
   for (std::size_t s0 = 0; s0 < pieces.size(); ++s0) {
     if (used[s0] || pieces[s0].size() < 2) continue;
     used[s0] = 1;
     std::vector<Point> chain = pieces[s0];
-    for (bool grown = true; grown && !near(chain.front(), chain.back());) {
-      grown = false;
+    while (dist(chain.front(), chain.back()) > tol || chain.size() < 3) {
+      std::size_t best = pieces.size();
+      bool rev = false;
+      Coord bd = tol + 1;
       for (std::size_t k = 0; k < pieces.size(); ++k) {
         if (used[k] || pieces[k].size() < 2) continue;
-        if (near(chain.back(), pieces[k].front())) chain.insert(chain.end(), pieces[k].begin() + 1, pieces[k].end());
-        else if (near(chain.back(), pieces[k].back())) chain.insert(chain.end(), pieces[k].rbegin() + 1, pieces[k].rend());
-        else continue;
-        used[k] = 1;
-        grown = true;
-        break;
+        if (const Coord d = dist(chain.back(), pieces[k].front()); d < bd) bd = d, best = k, rev = false;
+        if (const Coord d = dist(chain.back(), pieces[k].back()); d < bd) bd = d, best = k, rev = true;
       }
+      if (best == pieces.size()) break;
+      used[best] = 1;
+      if (rev) chain.insert(chain.end(), pieces[best].rbegin() + 1, pieces[best].rend());
+      else chain.insert(chain.end(), pieces[best].begin() + 1, pieces[best].end());
     }
-    if (chain.size() >= 4 && near(chain.front(), chain.back())) loops.push_back(std::move(chain));
+    if (chain.size() >= 4 && dist(chain.front(), chain.back()) <= tol) loops.push_back(std::move(chain));
   }
-  auto area = [](const std::vector<Point>& l) {
-    long double a = 0;
-    for (std::size_t i = 0, j = l.size() - 1; i < l.size(); j = i++)
-      a += static_cast<long double>(l[j].x) * static_cast<long double>(l[i].y) - static_cast<long double>(l[i].x) * static_cast<long double>(l[j].y);
-    return std::fabs(a) / 2;
-  };
-  std::size_t best = loops.size();
-  for (std::size_t i = 0; i < loops.size(); ++i)
-    if (best == loops.size() || area(loops[i]) > area(loops[best])) best = i;
-  if (best == loops.size()) return;
-  p.outline = loops[best];
-  for (std::size_t i = 0; i < loops.size(); ++i)
-    if (i != best) p.cutouts.push_back(loops[i]);
+  return loops;
+}
+
+long double loop_area(const std::vector<Point>& l) {
+  long double a = 0;
+  for (std::size_t i = 0, j = l.size() - 1; i < l.size(); j = i++)
+    a += static_cast<long double>(l[j].x) * static_cast<long double>(l[i].y) - static_cast<long double>(l[i].x) * static_cast<long double>(l[j].y);
+  return std::fabs(a) / 2;
+}
+
+// The outline is the largest loop, accepted only if it contains most pad centres (a lone mounting-hole circle
+// must not become the board). Gaps in sloppy outlines are closed with growing tolerances (2 µm .. 0.5 mm).
+void assemble_outline(Problem& p, const model::Board& b) {
+  for (const Coord tol : {Coord{2'000}, Coord{50'000}, Coord{200'000}, Coord{500'000}}) {
+    auto loops = edge_loops(p.edges, tol);
+    std::size_t best = loops.size();
+    for (std::size_t i = 0; i < loops.size(); ++i)
+      if (best == loops.size() || loop_area(loops[i]) > loop_area(loops[best])) best = i;
+    if (best == loops.size()) continue;
+    std::size_t inside = 0;
+    for (const auto& pd : b.pads) inside += geom::point_in_polygon(pd.pos, loops[best]) ? 1u : 0u;
+    if (inside * 10 < b.pads.size() * 8u) continue;
+    p.outline = loops[best];
+    for (std::size_t i = 0; i < loops.size(); ++i)
+      if (i != best) p.cutouts.push_back(loops[i]);
+    if (tol > 2'000) p.notes.push_back("board outline closed with " + std::to_string(nm_to_mm(tol)) + " mm gap tolerance");
+    return;
+  }
 }
 
 Coord rules_courtyard_clearance(const model::DesignRules& rules, const std::string& board_path, std::string& source) {
@@ -200,13 +218,15 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // Board outline.
   const drc::CopperModel cm = drc::build_copper(b);
   p.edges = cm.edges;
-  assemble_outline(p);
+  assemble_outline(p, b);
   if (!p.outline.empty()) {
     for (const auto& q : p.outline) p.region.add(q);
   } else {
     p.region = b.edge_bbox();
     p.notes.push_back(p.region.empty() ? "no Edge.Cuts: parts are kept inside the footprint bounding box"
-                                       : "Edge.Cuts do not form a closed loop: using its bounding box");
+                                       : "Edge.Cuts do not form a closed loop around the parts: using their bounding box");
+    // Closed Edge.Cuts loops inside the box (holes, slots) still exclude parts.
+    for (auto& l : edge_loops(p.edges, 2'000)) p.cutouts.push_back(std::move(l));
   }
   if (p.region.empty()) {
     for (const auto& pd : b.pads) p.region.add(pd.pos);
@@ -284,34 +304,58 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     }
     // Pad copper and through obstacles.
     std::vector<Shape> pads, through;
+    std::vector<Box> pad_boxes;
     Box pad_box;
     for (int pi : fp.pads) {
       const auto& pd = b.pads[z(pi)];
+      Box one;
       for (auto s : drc::pad_shapes(pd)) {
-        pad_box.add(s.box);
+        one.add(s.box);
         if (pd.copper != 0) pads.push_back(translated(s, Point{} - fp.pos));
         if (pd.drill_x > 0 && pd.type == model::PadType::ThruHole) through.push_back(translated(s, Point{} - fp.pos));
       }
       if (pd.drill_x > 0) {
         const Coord r = std::max(pd.drill_x, pd.drill_y) / 2;
         through.push_back(Shape::point(pd.pos - fp.pos, r));
-        pad_box.add(Box{pd.pos.x - r, pd.pos.y - r, pd.pos.x + r, pd.pos.y + r});
+        one.add(Box{pd.pos.x - r, pd.pos.y - r, pd.pos.x + r, pd.pos.y + r});
       }
+      if (!one.empty()) pad_boxes.push_back(one);
+      pad_box.add(one);
     }
-    if (cpts[0].empty() && cpts[1].empty() && !pad_box.empty()) {
-      const Box f = pad_box.inflated(kFallbackMargin);
-      cpts[z(pt.side)] = {{f.x0, f.y0}, {f.x1, f.y0}, {f.x1, f.y1}, {f.x0, f.y1}};
-    }
-    std::array<Shape, 2> cy0;
+    // Courtyard shapes per side (offsets from the origin).
+    std::array<std::vector<Shape>, 2> cy0;
     for (int s = 0; s < 2; ++s) {
       if (cpts[z(s)].size() < 3) continue;
       auto hull = convex_hull(cpts[z(s)]);
       if (hull.size() < 3) continue;
       for (auto& q : hull) q = q - fp.pos;
-      cy0[z(s)] = Shape::polygon(std::move(hull), 0);
+      cy0[z(s)].push_back(Shape::polygon(std::move(hull), 0));
     }
-    if (cy0[0].pts.empty() && cy0[1].pts.empty()) continue;  // nothing to place or avoid (logos, net ties without pads)
+    if (cy0[0].empty() && cy0[1].empty() && !pad_box.empty()) {
+      // No courtyard: the pad bounding box inflated by 0.25 mm, or for large sparse footprints (shield headers,
+      // board outlines drawn as footprints: pads cover < 20% of the box) one such box per pad, so the empty
+      // middle stays usable.
+      auto rect = [&](const Box& bx) {
+        const Box f = bx.inflated(kFallbackMargin);
+        return Shape::polygon({Point{f.x0, f.y0} - fp.pos, Point{f.x1, f.y0} - fp.pos, Point{f.x1, f.y1} - fp.pos, Point{f.x0, f.y1} - fp.pos}, 0);
+      };
+      const Box fb = pad_box.inflated(kFallbackMargin);
+      const long double bb_area = static_cast<long double>(fb.x1 - fb.x0) * static_cast<long double>(fb.y1 - fb.y0);
+      long double pads_area = 0;
+      for (const auto& bx : pad_boxes) {
+        const Box f = bx.inflated(kFallbackMargin);
+        pads_area += static_cast<long double>(f.x1 - f.x0) * static_cast<long double>(f.y1 - f.y0);
+      }
+      if (bb_area <= 100e12L || pads_area >= 0.2L * bb_area) cy0[z(pt.side)].push_back(rect(pad_box));
+      else
+        for (const auto& bx : pad_boxes) cy0[z(pt.side)].push_back(rect(bx));
+      p.notes.push_back(fp.reference + ": no courtyard, using pad boxes + 0.25 mm");
+    }
+    if (cy0[0].empty() && cy0[1].empty()) continue;  // nothing to place or avoid (logos, net ties without pads)
 
+    long double cy_area = 0;
+    for (const auto& side : cy0)
+      for (const auto& s : side) cy_area += static_cast<long double>(s.box.x1 - s.box.x0 + cc) * static_cast<long double>(s.box.y1 - s.box.y0 + cc);
     for (int r = 0; r < 4; ++r) {
       PartGeom& g = pt.geom[z(r)];
       auto rot_shape = [&](const Shape& s) {
@@ -321,10 +365,10 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         return t;
       };
       for (int s = 0; s < 2; ++s)
-        if (!cy0[z(s)].pts.empty()) {
-          g.cy[z(s)] = rot_shape(cy0[z(s)]);
-          g.body.add(g.cy[z(s)].box);
-          g.edge_box.add(g.cy[z(s)].box);
+        for (const auto& sh : cy0[z(s)]) {
+          g.cy[z(s)].push_back(rot_shape(sh));
+          g.body.add(g.cy[z(s)].back().box);
+          g.edge_box.add(g.cy[z(s)].back().box);
         }
       for (const auto& s : through) {
         g.through.push_back(rot_shape(s));
@@ -335,9 +379,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         g.edge_box.add(g.pads.back().box.inflated(p.edge_clearance));
       }
     }
-    const Box bb = pt.geom[0].body;
-    const long double area = static_cast<long double>(bb.x1 - bb.x0 + cc) * static_cast<long double>(bb.y1 - bb.y0 + cc);
-    pt.area = static_cast<Coord>(std::min<long double>(area, 4e18L));
+    pt.area = static_cast<Coord>(std::min<long double>(cy_area, 4e18L));
     pt.shape_key = std::hash<std::string>{}(fp.lib_id) * 31u + static_cast<std::uint64_t>(pt.side);
 
     // Movability.
@@ -366,13 +408,14 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     }
     if (pt.fixed_reason.empty() && opt.fix_edge_connectors && connector_ref(fp.reference)) {
       for (int s = 0; s < 2 && pt.fixed_reason.empty(); ++s) {
-        if (pt.geom[0].cy[z(s)].pts.empty()) continue;
-        const Shape cy = translated(pt.geom[0].cy[z(s)], fp.pos);
-        for (const auto& e : p.edges)
-          if (geom::closer_than(cy, e, kEdgeConnectorReach)) {
-            pt.fixed_reason = "edge connector";
-            break;
-          }
+        for (const auto& sh : pt.geom[0].cy[z(s)]) {
+          const Shape cy = translated(sh, fp.pos);
+          for (const auto& e : p.edges)
+            if (geom::closer_than(cy, e, kEdgeConnectorReach)) {
+              pt.fixed_reason = "edge connector";
+              break;
+            }
+        }
       }
     }
     pt.movable = pt.fixed_reason.empty();

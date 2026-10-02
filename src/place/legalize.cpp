@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <deque>
 #include <numeric>
 
 namespace tmk::place {
@@ -74,28 +75,35 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
   std::vector<int> order;
   for (std::size_t i = 0; i < n; ++i)
     if (!keep[i]) order.push_back(static_cast<int>(i));
-  std::sort(order.begin(), order.end(), [&](int a, int b) {
-    return p.parts[z(a)].area != p.parts[z(b)].area ? p.parts[z(a)].area > p.parts[z(b)].area : a < b;
-  });
+  // Largest extent first (a spread-out footprint without courtyard is hard to fit late, whatever its area).
+  auto extent = [&](int i) {
+    const Box& b = p.parts[z(i)].geom[0].body;
+    return static_cast<long double>(b.x1 - b.x0) * static_cast<long double>(b.y1 - b.y0);
+  };
+  std::sort(order.begin(), order.end(), [&](int a, int b) { return extent(a) != extent(b) ? extent(a) > extent(b) : a < b; });
   const Coord max_r = static_cast<Coord>(std::hypot(static_cast<double>(w), static_cast<double>(h))) + 2'000'000;
   const std::vector<Point> offs = ring_offsets(cell, max_r);
-  double sum_disp = 0;
-  for (int i : order) {
-    const Point target = pl.pos[z(i)];
-    const Point home = pl.pos[z(i)];
-    const std::uint8_t home_rot = pl.rot[z(i)];
-    if (only_illegal) {
-      L.remove(i);
-      R.add(i, home, home_rot, -1);
-    }
-    bool found = false;
-    Point at{};
-    int at_rot = pl.rot[z(i)];
-    for (int k = 0; k < 4 && !found; ++k) {
+  // Refine mode only fixes conflicts locally: a part whose nearest legal spot is farther than this stays put.
+  constexpr Coord kRefineReach = 5'000'000;
+  const auto reach2 = static_cast<geom::i128>(kRefineReach) * kRefineReach;
+  std::vector<Point> target(n), home(n);
+  std::vector<std::uint8_t> home_rot(n), evictions(n, 0), placed(n, 0);
+  for (std::size_t i = 0; i < n; ++i) {
+    target[i] = home[i] = pl.pos[i];
+    home_rot[i] = pl.rot[i];
+  }
+  std::deque<int> work(order.begin(), order.end());
+  std::vector<int> conflicts;
+  long eviction_budget = 20 * static_cast<long>(order.size()) + 100;
+
+  // Nearest legal position (lattice rings around the target, all four rotations, own rotation first).
+  auto search = [&](int i, Point& at, int& at_rot) {
+    for (int k = 0; k < 4; ++k) {
       const int r = (pl.rot[z(i)] + k) & 3;
       long budget = 400;
       for (const Point d : offs) {
-        const Point q = target + d;
+        if (only_illegal && static_cast<geom::i128>(d.x) * d.x + static_cast<geom::i128>(d.y) * d.y > reach2) break;
+        const Point q = target[z(i)] + d;
         ++st.raster_checks;
         bool ok = false;
         if (R.free(i, q, r)) {
@@ -108,31 +116,94 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
           ok = L.legal(i, q, r);
         }
         if (ok) {
-          found = true;
           at = q;
           at_rot = r;
-          break;
+          return true;
         }
       }
     }
+    return false;
+  };
+  // Full mode, no free spot: take the spot whose conflicting movable parts have the least total area (never a
+  // fixed part), evict them and queue them again (rip-up and re-place).
+  auto evict_for = [&](int i, Point& at, int& at_rot) {
+    double best = 1e300;
+    std::vector<int> best_conf;
+    int tried = 0;
+    for (const Point d : offs) {
+      if (++tried > 1500) break;
+      const Point q = target[z(i)] + d;
+      for (int r = 0; r < 4; ++r) {
+        if (!L.inside_ok(i, q, r)) continue;
+        conflicts.clear();
+        L.conflicts(i, q, r, conflicts);
+        double cost = 0;
+        bool ok = !conflicts.empty();
+        for (int c2 : conflicts) {
+          if (!p.parts[z(c2)].movable || evictions[z(c2)] >= 3) ok = false;
+          cost += static_cast<double>(p.parts[z(c2)].area);
+        }
+        if (!ok) continue;
+        cost += static_cast<double>(p.parts[z(i)].area) * 1e-3 * std::hypot(static_cast<double>(d.x), static_cast<double>(d.y)) / 1e6;
+        if (cost < best) {
+          best = cost;
+          best_conf = conflicts;
+          at = q;
+          at_rot = r;
+        }
+      }
+    }
+    if (best_conf.empty()) return false;
+    for (int c2 : best_conf) {
+      L.remove(c2);
+      R.add(c2, pl.pos[z(c2)], pl.rot[z(c2)], -1);
+      if (placed[z(c2)]) --st.placed;
+      placed[z(c2)] = 0;
+      ++evictions[z(c2)];
+      work.push_back(c2);
+      --eviction_budget;
+    }
+    ++st.evictions;
+    return true;
+  };
+
+  while (!work.empty()) {
+    const int i = work.front();
+    work.pop_front();
+    if (only_illegal) {
+      L.remove(i);
+      R.add(i, home[z(i)], home_rot[z(i)], -1);
+    }
+    Point at{};
+    int at_rot = pl.rot[z(i)];
+    bool found = search(i, at, at_rot);
+    if (!found && !only_illegal && eviction_budget > 0) found = evict_for(i, at, at_rot);
     if (!found) {
-      ++st.failed;
-      st.failures.push_back(p.parts[z(i)].ref);
       // Back to where it was (refine: its reserved spot; full: the input position, reported as a failure).
-      pl.pos[z(i)] = only_illegal ? home : p.parts[z(i)].pos0;
-      pl.rot[z(i)] = only_illegal ? home_rot : 0;
+      pl.pos[z(i)] = only_illegal ? home[z(i)] : p.parts[z(i)].pos0;
+      pl.rot[z(i)] = only_illegal ? home_rot[z(i)] : 0;
       L.insert(i, pl.pos[z(i)], pl.rot[z(i)]);  // still an obstacle for the parts that follow
       R.add(i, pl.pos[z(i)], pl.rot[z(i)], +1);
       continue;
     }
-    const double disp = std::hypot(static_cast<double>(at.x - target.x), static_cast<double>(at.y - target.y)) / 1e6;
-    st.max_disp_mm = std::max(st.max_disp_mm, disp);
-    sum_disp += disp;
     pl.pos[z(i)] = at;
     pl.rot[z(i)] = static_cast<std::uint8_t>(at_rot);
     L.insert(i, at, at_rot);
     R.add(i, at, at_rot, +1);
+    placed[z(i)] = 1;
     ++st.placed;
+  }
+  for (int i : order)
+    if (!placed[z(i)]) {
+      ++st.failed;
+      st.failures.push_back(p.parts[z(i)].ref);
+    }
+  double sum_disp = 0;
+  for (std::size_t i = 0; i < n; ++i) {
+    if (!placed[i]) continue;
+    const double disp = std::hypot(static_cast<double>(pl.pos[i].x - target[i].x), static_cast<double>(pl.pos[i].y - target[i].y)) / 1e6;
+    st.max_disp_mm = std::max(st.max_disp_mm, disp);
+    sum_disp += disp;
   }
   st.mean_disp_mm = st.placed ? sum_disp / st.placed : 0.0;
   return st;
