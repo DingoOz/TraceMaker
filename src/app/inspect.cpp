@@ -21,7 +21,7 @@ void print_summary(const model::Board& b, const std::string& path) {
   for (const auto& w : b.warnings) std::printf("  warning: %s\n", w.c_str());
 }
 
-void write_truth_json(const model::Board& b, const std::string& out_path) {
+void write_truth_json(const model::Board& b, const std::string& out_path, const model::DesignRules* rules) {
   auto net = [&](model::NetId n) { return b.nets[static_cast<std::size_t>(n)].name; };
   json d;
   json cu = json::array();
@@ -32,6 +32,12 @@ void write_truth_json(const model::Board& b, const std::string& out_path) {
     if (!n.name.empty()) nets.push_back(n.name);
   std::sort(nets.begin(), nets.end());
   d["nets"] = nets;
+  if (rules) {  // design widths for quality metrics (narrowed tracks); not part of the KiCad truth schema
+    json w = json::object();
+    for (const auto& n : nets) w[n] = std::max(rules->class_for(n).track_width, rules->minimums.track_width);
+    d["net_track_width"] = w;
+    d["min_track_width"] = rules->minimums.track_width;
+  }
   d["footprints"] = json::array();
   d["pads"] = json::array();
   for (const auto& f : b.footprints)

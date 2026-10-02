@@ -380,7 +380,10 @@ int main(int argc, char** argv) {
     if (*inspect) {
       const auto lb = tmk::io::read_board_file(inspect_path);
       tmk::app::print_summary(lb.board, inspect_path);
-      if (!inspect_json.empty()) tmk::app::write_truth_json(lb.board, inspect_json);
+      if (!inspect_json.empty()) {
+        const auto rules = tmk::io::read_design_rules(inspect_path);
+        tmk::app::write_truth_json(lb.board, inspect_json, &rules);
+      }
       return 0;
     }
     if (*selftest) return cmd_selftest_edit(st_in, st_out);

@@ -438,8 +438,60 @@ but left 13 boards fully routed instead of 15: denser packing can block routing,
   \label{fig:placement}
 \end{figure}
 
+
+\subsection{Head to head on one board}
+\label{sec:h2h-board}
+
+To compare layout quality and not only pass or fail, the tier-C board \texttt{AmpOne} (a two-layer audio amplifier,
+321 connections) was routed by TraceMaker and by Freerouting 2.5.0-RC12 on the same machine, and measured together
+with the human-routed original (Figures~\ref{fig:cmp} and~\ref{fig:cmpzoom}, Table~\ref{tab:cmp}). Freerouting ran
+with its published benchmark settings (one thread, up to 500 passes, fanout and optimizer on, 30-minute limit) from
+the fixture's Specctra file, and its session was imported back into the KiCad board, so KiCad's DRC and the same
+quality metrics judge all three.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{compare_AmpOne_dev-AmpOne.pdf}
+  \caption{\texttt{AmpOne} routed three ways. The human design uses very wide power tracks; neither router does,
+  because the board's net classes do not ask for them.}
+  \label{fig:cmp}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{compare_AmpOne_dev-AmpOne_zoom.pdf}
+  \caption{The same 22\,mm window, centred on the densest pad area, in each result.}
+  \label{fig:cmpzoom}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\small
+\input{figures/compare_AmpOne_dev-AmpOne.tex}
+\caption{Quality metrics for \texttt{AmpOne}. ``Length / pad MST'' divides the track length by the length of a
+minimum spanning tree over each net's pad centres. ``Narrowed'' is track thinner than the net's design width.
+The human original is shown for reference: it does not pass the board's own rules (371 clearance errors).}
+\label{tab:cmp}
+\end{table}
+
+\noindent What the comparison shows:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Both routers connect everything; only TraceMaker passes KiCad's DRC.} Freerouting's result has three
+  hole-clearance and four board-edge-clearance errors in KiCad. Freerouting's own checker reports it clean: the
+  Specctra file it routes from does not carry all of KiCad's rules.
+  \item \textbf{TraceMaker uses less copper.} Its tracks are 6\% shorter than Freerouting's and 19\% shorter than the
+  human routing.
+  \item \textbf{Freerouting's layout is tidier.} It uses fewer than half the vias, a third fewer bends and no turns
+  sharper than 90\textdegree. TraceMaker has 33 such turns, which are acid traps in manufacturing, and narrows
+  65\,mm of track below the design width to get through tight spots. Freerouting runs an optimizer pass after
+  routing; TraceMaker has no clean-up stage yet (Section~\ref{sec:limits}).
+  \item \textbf{Speed is similar on this board} (46\,s against 37\,s). Freerouting 1.9.0 needs a display even in
+  command-line mode and could not run on this server yet; its published run on this board took 452\,s.
+\end{itemize}
+
 % ------------------------------------------------------------------------------------------------------------
 \section{Limitations and next steps}
+\label{sec:limits}
 
 \begin{itemize}[leftmargin=*]
   \item \textbf{Large boards are time-limited.} On the biggest boards the router finishes only one or two negotiation
@@ -449,6 +501,12 @@ but left 13 boards fully routed instead of 15: denser packing can block routing,
   mask bridges. On the PCIe adapter board KiCad flags any track leaving the fingers, and the human-routed original
   has 16 such bridges itself. Freerouting's published ``clean'' counts only clearance violations and unrouted
   connections, so on these boards TraceMaker is judged more strictly.
+  \item \textbf{No clean-up stage.} TraceMaker does not yet straighten, merge or re-route finished connections, so
+  it uses more vias and bends than Freerouting and can leave turns sharper than 90\textdegree\ and narrowed tracks
+  (Section~\ref{sec:h2h-board}).
+  \item \textbf{The Freerouting comparison uses published numbers} for the tier statistics. Those runs had up to
+  30 minutes per board, and their ``clean'' is judged by Freerouting's own DRC, which misses rules that KiCad
+  enforces. A same-machine, KiCad-judged comparison across many boards is the next benchmark.
   \item \textbf{Copper text} is modelled by generous estimated boxes rather than exact glyph outlines.
   \item \textbf{Placement} does not yet have a routability term inside the annealer, side flipping or
   decoupling-capacitor grouping.
