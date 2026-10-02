@@ -29,15 +29,34 @@ def run(cmd, cwd=None, timeout=None):
 
 
 def drc_counts(board, out_json):
-    rc, log = run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "-o", os.path.basename(out_json),
-                   os.path.basename(board)], cwd=os.path.dirname(board), timeout=900)
-    if not os.path.exists(out_json):
-        return None, log
+    if not (os.path.exists(out_json) and os.path.getmtime(out_json) > os.path.getmtime(board)):
+        rc, log = run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "-o", os.path.basename(out_json),
+                       os.path.basename(board)], cwd=os.path.dirname(board), timeout=900)
+        if not os.path.exists(out_json):
+            return None, log
     j = json.load(open(out_json))
     counts = {}
     for v in j.get("violations", []):
         counts[v["type"]] = counts.get(v["type"], 0) + 1
     return counts, ""
+
+
+def error_keys(drc_json):
+    """Inter-footprint DRC errors as (type, items) keys. Violations inside one footprint (library issues such as
+    a pad touching the footprint's own copper) cannot be caused by placement and are left out."""
+    import re
+    from collections import Counter
+    j = json.load(open(drc_json))
+    keys = Counter()
+    for v in j.get("violations", []):
+        if v.get("severity") != "error":
+            continue
+        items = tuple(sorted(i["description"] for i in v["items"]))
+        refs = set(re.findall(r" of (\S+)", " ".join(items)))
+        if len(refs) == 1 and len(items) > 1 and all(" of " in i for i in items):
+            continue
+        keys[(v["type"], items)] += 1
+    return keys
 
 
 def place(args, board, out, mode):
@@ -97,6 +116,14 @@ def one(args, name):
             res[k]["drc"] = c
             if err:
                 res[k]["drc_error"] = err[-500:]
+    if args.drc and all(res[k].get("drc") is not None for k in boards):
+        base = error_keys(boards["human"].replace(".kicad_pcb", ".drc.json"))
+        for k in ("full", "refine"):
+            new = error_keys(boards[k].replace(".kicad_pcb", ".drc.json")) - base
+            by_type = {}
+            for (t, _), n in new.items():
+                by_type[t] = by_type.get(t, 0) + n
+            res[k]["new_drc_errors"] = by_type
     if args.route:
         for k, b in boards.items():
             res[k]["route"] = route(args, b)
@@ -117,6 +144,8 @@ def fmt_table(results):
             if h is None or o is None:
                 return "n/a"
             diffs = [f"{t}+{o.get(t, 0) - h.get(t, 0)}" for t in PLACEMENT_TYPES if o.get(t, 0) > h.get(t, 0)]
+            # Any other new inter-footprint error (by item pair).
+            diffs += [f"{t}+{n}" for t, n in sorted(r[k].get("new_drc_errors", {}).items()) if t not in PLACEMENT_TYPES]
             return ", ".join(diffs) if diffs else "0"
 
         def rt(k):

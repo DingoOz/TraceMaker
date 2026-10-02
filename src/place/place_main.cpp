@@ -1,6 +1,5 @@
 // tracemaker-place: component placement for a .kicad_pcb (design doc 04).
 #include <cstdio>
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 
@@ -70,20 +69,6 @@ int main(int argc, char** argv) {
             ++inside;
             if (L.find_conflict(static_cast<int>(i), {x, y}, 0) < 0) ++legal;
           }
-        place::Raster R(p, 50'000);
-        if (std::getenv("TM_DEBUG_FIXED"))
-          for (std::size_t j = 0; j < p.parts.size(); ++j)
-            if (!p.parts[j].movable) R.add(static_cast<int>(j), p.parts[j].pos0, 0, +1);
-        if (const char* also = std::getenv("TM_DEBUG_ADD"))
-          for (std::size_t j = 0; j < p.parts.size(); ++j)
-            if (p.parts[j].ref == also) R.add(static_cast<int>(j), p.parts[j].pos0, 0, +1);
-        int rfree = 0, rins = 0;
-        for (Coord y = p.region.y0; y <= p.region.y1; y += 250'000)
-          for (Coord x = p.region.x0; x <= p.region.x1; x += 250'000) {
-            rfree += R.free(static_cast<int>(i), {x, y}, 0) ? 1 : 0;
-            rins += L.inside_ok(static_cast<int>(i), {x, y}, 0) && R.free(static_cast<int>(i), {x, y}, 0) ? 1 : 0;
-          }
-        std::printf("raster (no parts): free %d, inside+free %d, inside fraction %.3f\n", rfree, rins, R.inside_fraction(0));
         std::printf("grid %d positions: %d inside, %d legal; at original: inside=%d conflict=%d\n", total, inside, legal,
                     L.inside_ok(static_cast<int>(i), p.parts[i].pos0, 0), L.find_conflict(static_cast<int>(i), p.parts[i].pos0, 0));
       }
@@ -100,8 +85,8 @@ int main(int argc, char** argv) {
       r = place::place(p, pl, o);
     }
     // Still failing: keep the parts that found no place at their input position (as fixed parts) and place
-    // the rest around them, up to three rounds.
-    for (int round = 0; round < 3 && o.mode == "full" && !no_fallback && r.legalise_failed > 0; ++round) {
+    // the rest around them, up to six rounds.
+    for (int round = 0; round < 6 && o.mode == "full" && !no_fallback && r.legalise_failed > 0; ++round) {
       int kept = 0;
       for (const auto& ref : r.legalise_failures)
         for (auto& pt : p.parts)

@@ -27,6 +27,9 @@ Problem board(Coord w, Coord h) {
   p.edges.push_back(Shape::polyline({{0, 0}, {w, 0}, {w, h}, {0, h}, {0, 0}}, 0));
   p.region = Box{0, 0, w, h};
   p.clearance = 250'000;
+  p.max_need = 200'000;
+  // A fixed copper text block in one corner.
+  p.fixed_copper.push_back(CopperShape{Shape::polygon({{MM, MM}, {3 * MM, MM}, {3 * MM, 2 * MM}, {MM, 2 * MM}}), 1, 0, 200'000});
   return p;
 }
 
@@ -50,7 +53,10 @@ int add_part(Problem& p, Point pos, Coord hx, Coord hy, const std::vector<Point>
     for (const auto& o : offs) {
       g.pads.push_back(Shape::point(rot90(o, r), 100'000));
       g.edge_box.add(g.pads.back().box);
+      g.copper.push_back(CopperShape{g.pads.back(), 1, 0, 200'000});  // no net: clearance to every other pad
+      g.copper_box.add(g.pads.back().box);
     }
+    g.body.add(g.copper_box);
   }
   pt.area = (2 * hx + p.clearance) * (2 * hy + p.clearance);
   p.parts.push_back(pt);

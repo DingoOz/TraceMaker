@@ -24,11 +24,22 @@ inline constexpr int kSignalWeight = 10;
 inline constexpr int kPowerWeight = 1;
 inline constexpr Coord kEdgeTolerance = 250'000;  // courtyard may extend this far past the board edge
 
+// A piece of copper with what KiCad's clearance check needs: layers, net and the clearance it asks for
+// (its net class, local overrides and board minimum; pair clearance = max of the two).
+struct CopperShape {
+  Shape s;
+  model::LayerMask layers = 0;
+  model::NetId net = 0;         // board net id (0 = no net)
+  Coord need = 0;
+};
+
 struct PartGeom {               // one rotation of a part, offsets from the footprint origin
   std::array<std::vector<Shape>, 2> cy;  // courtyard polygons per side (empty = no courtyard on that side)
   std::vector<Shape> through;   // drilled holes and plated-through pad copper (obstacles on both sides)
   std::vector<Shape> pads;      // pad copper (for the copper-to-edge clearance)
-  Box body;                     // bounding box of courtyards and through obstacles
+  std::vector<CopperShape> copper;  // pads, footprint copper graphics/text, NPTH holes (copper clearance)
+  Box copper_box;               // bounding box of `copper`
+  Box body;                     // bounding box of courtyards, through obstacles and copper
   // Courtyards shrunk by kEdgeTolerance: what must stay inside the board outline. KiCad itself only checks pad
   // copper against the edge (copper_edge_clearance); a courtyard may reach a little past it.
   std::array<std::vector<Shape>, 2> cy_in;
@@ -75,6 +86,9 @@ struct Problem {
   std::vector<std::vector<Point>> cutouts;   // other closed Edge.Cuts loops
   std::vector<Shape> edges;                  // every Edge.Cuts piece as segments (r = 0)
   std::vector<Keepout> keepouts;
+  std::vector<CopperShape> fixed_copper;     // board copper that never moves: tracks, vias, copper graphics and text
+  Coord max_need = 0;                        // largest copper clearance any item asks for
+  int copper_layers = 2;
   Coord clearance = 250'000;                 // courtyard-to-courtyard clearance
   bool clearance_is_default = true;          // not from a board rule or the command line
   Coord edge_clearance = 0;                  // pad copper to board edge

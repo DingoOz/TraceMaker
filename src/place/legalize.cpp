@@ -2,9 +2,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <chrono>
-#include <cstdio>
-#include <cstdlib>
 #include <deque>
 #include <numeric>
 
@@ -236,11 +233,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     }
     Point at{};
     int at_rot = pl.rot[z(i)];
-    const auto t_dbg = std::chrono::steady_clock::now();
     bool found = search(i, at, at_rot);
-    if (std::getenv("TM_LEGAL_DEBUG"))
-      std::fprintf(stderr, "search %s: %s %.3fs\n", p.parts[z(i)].ref.c_str(), found ? "ok" : "FAIL",
-                   std::chrono::duration<double>(std::chrono::steady_clock::now() - t_dbg).count());
     if (!found && !only_illegal && eviction_budget > 0) found = evict_for(i, at, at_rot);
     if (!found) {
       // Back to where it was (refine: its reserved spot; full: the input position, reported as a failure).

@@ -22,6 +22,8 @@ struct Placement {
 
 // Exact test with translation (no copies): same semantics as geom::closer_than(a + da, b + db, clearance).
 bool closer(const Shape& a, Point da, const Shape& b, Point db, Coord clearance);
+// Copper clearance violation between two copper shapes (different nets, shared layer, max of the two needs).
+bool copper_conflict(const CopperShape& a, Point pa, const CopperShape& b, Point pb);
 
 inline constexpr Coord kThroughMargin = 100'000;   // through obstacle vs courtyard on the other side
 inline constexpr Coord kThroughThrough = 250'000;  // through obstacle vs through obstacle
@@ -66,6 +68,8 @@ class Legality {
   // Board edge segments in a bucket grid.
   std::vector<Shape> segs_;
   std::vector<std::vector<int>> seg_cells_;
+  std::vector<std::vector<int>> fixed_cells_;  // Problem::fixed_copper in the same grid
+  Coord reach_ = 0;                            // neighbour search inflation (largest clearance of any kind)
 };
 
 // Conservative occupancy raster per side (cell 0.05–0.1 mm). `free()` returning true proves that the part is
@@ -94,7 +98,8 @@ class Raster {
   std::vector<std::uint16_t> blocked_[2];  // static: not entirely inside the board
   std::vector<std::uint16_t> keep_[2];     // static: touched by a footprint keepout on that side
   std::vector<std::uint16_t> occ_[2];      // courtyard and through-obstacle boxes of placed parts
-  std::vector<std::int32_t> sat_blocked_[2], sat_keep_[2];  // summed-area tables of the indicator (cell != 0)
+  std::vector<std::uint16_t> fixed_[2];    // static: fixed board copper boxes
+  std::vector<std::int32_t> sat_blocked_[2], sat_keep_[2], sat_fixed_[2];  // summed-area tables (cell != 0)
   mutable std::vector<std::int32_t> sat_occ_[2];           // rebuilt lazily after add()
   mutable bool occ_dirty_ = true;
 };

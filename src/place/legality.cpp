@@ -57,6 +57,14 @@ Legality::Legality(const Problem& p) : p_(p) {
   stamp_.assign(std::max(p.parts.size(), std::size_t{1}), 0);
   for (const auto& e : p.edges)
     for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], 0));
+  reach_ = std::max({p.clearance, kThroughMargin, kThroughThrough, p.max_need});
+  fixed_cells_.assign(z(nx_ * ny_), {});
+  for (std::size_t i = 0; i < p.fixed_copper.size(); ++i) {
+    int x0, y0, x1, y1;
+    cells_of(p.fixed_copper[i].s.box, x0, y0, x1, y1);
+    for (int y = y0; y <= y1; ++y)
+      for (int x = x0; x <= x1; ++x) fixed_cells_[z(y * nx_ + x)].push_back(static_cast<int>(i));
+  }
   seg_cells_.assign(z(nx_ * ny_), {});
   for (std::size_t i = 0; i < segs_.size(); ++i) {
     int x0, y0, x1, y1;
@@ -110,13 +118,29 @@ bool Legality::inside_ok(int part, Point pos, int rot, bool lenient) const {
     if (near_edge(pd, ec)) return false;
     if (!in_board(pd.pts[0] + pos)) return false;
   }
+  // Fixed board copper (tracks, vias, copper graphics and text).
+  if (!lenient)
+    for (const auto& cs : g.copper) {
+      int x0, y0, x1, y1;
+      cells_of(shift(cs.s.box, pos).inflated(p_.max_need), x0, y0, x1, y1);
+      for (int y = y0; y <= y1; ++y)
+        for (int x = x0; x <= x1; ++x)
+          for (int fi : fixed_cells_[z(y * nx_ + x)])
+            if (copper_conflict(cs, pos, p_.fixed_copper[z(fi)], Point{})) return false;
+    }
   return true;
+}
+
+bool copper_conflict(const CopperShape& a, Point pa, const CopperShape& b, Point pb) {
+  if (!(a.layers & b.layers)) return false;
+  if (a.net == b.net && a.net != 0) return false;  // same net: no clearance (KiCad)
+  return closer(a.s, pa, b.s, pb, std::max<Coord>(std::max(a.need, b.need), 1));
 }
 
 bool Legality::pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) const {
   const PartGeom& ga = p_.parts[z(a)].geom[z(ra)];
   const PartGeom& gb = p_.parts[z(b)].geom[z(rb)];
-  const Coord reach = std::max({p_.clearance, kThroughMargin, kThroughThrough});
+  const Coord reach = reach_;
   if (!shift(ga.body, pa).inflated(reach).intersects(shift(gb.body, pb))) return false;
   const Coord c = std::max<Coord>(p_.clearance, 1);
   for (int s = 0; s < 2; ++s)
@@ -134,6 +158,13 @@ bool Legality::pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) c
     for (int s = 0; s < 2; ++s)
       for (const Shape& v : ga.cy[z(s)])
         if (closer(t, pb, v, pa, kThroughMargin)) return true;
+  // Copper of different parts (pads outside courtyards, large net-class clearances).
+  if (!ga.copper.empty() && !gb.copper.empty() && shift(ga.copper_box, pa).inflated(p_.max_need).intersects(shift(gb.copper_box, pb)))
+    for (const auto& u : ga.copper) {
+      if (!shift(u.s.box, pa).inflated(p_.max_need).intersects(shift(gb.copper_box, pb))) continue;
+      for (const auto& v : gb.copper)
+        if (copper_conflict(u, pa, v, pb)) return true;
+    }
   return false;
 }
 
@@ -187,7 +218,7 @@ void Legality::neighbours(const Box& box, std::vector<int>& out) const {
 }
 
 int Legality::find_conflict(int part, Point pos, int rot, int skip1, int skip2) const {
-  const Coord reach = std::max({p_.clearance, kThroughMargin, kThroughThrough});
+  const Coord reach = reach_;
   if (++epoch_ == 0) {
     std::fill(stamp_.begin(), stamp_.end(), 0);
     epoch_ = 1;
@@ -205,7 +236,7 @@ int Legality::find_conflict(int part, Point pos, int rot, int skip1, int skip2) 
 }
 
 void Legality::conflicts(int part, Point pos, int rot, std::vector<int>& out) const {
-  const Coord reach = std::max({p_.clearance, kThroughMargin, kThroughThrough});
+  const Coord reach = reach_;
   std::vector<int> nb;
   neighbours(shift(p_.parts[z(part)].geom[z(rot)].body, pos).inflated(reach), nb);
   for (int q : nb)
@@ -214,6 +245,15 @@ void Legality::conflicts(int part, Point pos, int rot, std::vector<int>& out) co
 }
 
 // ------------------------------------------------------------------------------------------------ Raster
+
+namespace {
+// Raster sides a copper shape touches: F.Cu → 0, B.Cu → 1, inner layers only → both.
+int copper_sides(const Problem& p, model::LayerMask layers) {
+  const model::LayerMask front = 1, back = model::LayerMask{1} << (p.copper_layers - 1);
+  int s = ((layers & front) ? 1 : 0) | ((layers & back) ? 2 : 0);
+  return s ? s : 3;
+}
+}  // namespace
 
 Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
   const Box r = p.region.inflated(1'000'000);
@@ -298,9 +338,16 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
       if (k.side[s])
         for (std::size_t i = 0; i < n; ++i) keep_[s][i] = static_cast<std::uint16_t>(keep_[s][i] | m[i]);
   }
+  for (int s = 0; s < 2; ++s) fixed_[s].assign(n, 0);
+  for (const auto& cs : p.fixed_copper) {
+    const int sides = copper_sides(p, cs.layers);
+    for (int s = 0; s < 2; ++s)
+      if (sides & (1 << s)) bump(fixed_[s], cs.s.box, 1);
+  }
   for (int s = 0; s < 2; ++s) {
     build_sat(blocked_[s], sat_blocked_[s]);
     build_sat(keep_[s], sat_keep_[s]);
+    build_sat(fixed_[s], sat_fixed_[s]);
   }
 }
 
@@ -362,6 +409,11 @@ void Raster::add(int part, Point pos, int rot, int delta) {
     for (const Shape& cy : g.cy[z(s)]) bump(occ_[s], shift(cy.box, pos), delta);
   for (const auto& t : g.through)
     for (int s = 0; s < 2; ++s) bump(occ_[s], shift(t.box, pos), delta);
+  for (const auto& cs : g.copper) {
+    const int sides = copper_sides(p_, cs.layers);
+    for (int s = 0; s < 2; ++s)
+      if (sides & (1 << s)) bump(occ_[s], shift(cs.s.box, pos), delta);
+  }
 }
 
 bool Raster::free(int part, Point pos, int rot) const {
@@ -390,6 +442,15 @@ bool Raster::free_impl(int part, Point pos, int rot, bool sat) const {
   for (const auto& t : g.through)
     for (int s = 0; s < 2; ++s)
       if (hit(occ_[s], sat_occ_[s], shift(t.box, pos).inflated(tinfl))) return false;
+  // Copper: against every other part's copper and the fixed board copper, with the largest clearance.
+  const Coord cinfl = std::max({p_.max_need, p_.clearance, kThroughMargin, kThroughThrough}) + 1;
+  for (const auto& cs : g.copper) {
+    const int sides = copper_sides(p_, cs.layers);
+    for (int s = 0; s < 2; ++s)
+      if ((sides & (1 << s)) && (hit(occ_[s], sat_occ_[s], shift(cs.s.box, pos).inflated(cinfl)) ||
+                                 hit(fixed_[s], sat_fixed_[s], shift(cs.s.box, pos).inflated(cinfl))))
+        return false;
+  }
   return true;
 }
 
@@ -406,7 +467,7 @@ Violations check_all(const Problem& p, const Placement& pl) {
   Legality L(p);
   L.reset(pl);
   std::vector<int> nb;
-  const Coord reach = std::max({p.clearance, kThroughMargin, kThroughThrough});
+  const Coord reach = std::max({p.clearance, kThroughMargin, kThroughThrough, p.max_need});
   for (std::size_t a = 0; a < p.parts.size(); ++a) {
     const int ia = static_cast<int>(a);
     if (!L.inside_ok(ia, pl.pos[a], pl.rot[a])) {

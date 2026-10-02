@@ -18,7 +18,7 @@ struct PlaceOptions {
   std::uint64_t seed = 1;
   int threads = 0;               // 0 = min(hardware, 16)
   int runs = 0;                  // annealing runs (0 = threads)
-  double effort = 1.0;
+  double effort = 4.0;           // annealing moves per run = effort × 4000 × movable parts
   double alpha_cross_mm = 2.0;
   double time_limit_s = 0;       // wall-time stop for the annealer (0 = none)
   bool verbose = false;

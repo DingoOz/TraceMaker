@@ -4,7 +4,6 @@
 #include <chrono>
 #include <climits>
 #include <cmath>
-#include <cstdlib>
 #include <map>
 #include <memory>
 #include <thread>
@@ -104,10 +103,8 @@ class Annealer {
         ++nup;
       }
     }
-    double p0 = o_.refine ? 0.05 : 0.3;
-    if (const char* e = std::getenv("TM_P0")) p0 = std::atof(e);  // TEMP tuning
-    double tend_ratio = 1e-4;
-    if (const char* e = std::getenv("TM_TEND")) tend_ratio = std::atof(e);  // TEMP tuning
+    const double p0 = o_.refine ? 0.05 : 0.3;
+    constexpr double tend_ratio = 1e-4;
     const double t0 = nup ? (up / nup) / -std::log(p0) : 1.0;
     const double t_end = t0 * tend_ratio;
     const double ln_ratio = std::log(t_end / t0);

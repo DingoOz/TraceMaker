@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <climits>
 #include <cmath>
 #include <fstream>
 #include <functional>
@@ -234,6 +235,31 @@ bool power_like_name(const std::string& name) {
   return false;
 }
 
+namespace {
+
+// Conservative rectangle around copper text: any justification, stroke-font advance <= 1 glyph height,
+// line pitch 1.62 heights, plus the stroke thickness.
+Shape text_box(const model::Text& t) {
+  std::size_t lines = 1, longest = 0, cur = 0;
+  for (char ch : t.text) {
+    if (ch == '\n') {
+      ++lines;
+      cur = 0;
+      continue;
+    }
+    if ((static_cast<unsigned char>(ch) & 0xC0) == 0x80) continue;
+    longest = std::max(longest, ++cur);
+  }
+  const Coord hgt = std::max<Coord>({t.height, t.width, 300'000});
+  const Coord th = std::max<Coord>(t.thickness, 150'000);
+  const Coord W = static_cast<Coord>(longest) * hgt + th, H = static_cast<Coord>(static_cast<double>(lines) * 1.62 * static_cast<double>(hgt)) + th;
+  std::vector<Point> pts = {{-W, -H}, {W, -H}, {W, H}, {-W, H}};
+  for (auto& q : pts) q = t.pos + geom::rotate(q, t.angle);
+  return Shape::polygon(std::move(pts), 0);
+}
+
+}  // namespace
+
 Problem extract(const model::Board& b, const model::DesignRules& rules, const std::string& board_path, const ExtractOptions& opt) {
   Problem p;
   // Spacing rules.
@@ -258,6 +284,59 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // Board outline.
   const drc::CopperModel cm = drc::build_copper(b);
   p.edges = cm.edges;
+
+  // Copper clearances: net class (or board minimum), local overrides; with custom clearance rules, their
+  // largest minimum as an upper bound (conditions are not evaluated here: conservative).
+  p.copper_layers = std::max(1, b.copper_count());
+  Coord custom_max = 0;
+  for (const auto& r : rules.custom)
+    for (const auto& k : r.constraints)
+      if (k.type == "clearance" && k.min) custom_max = std::max(custom_max, *k.min);
+  if (custom_max > 0) p.notes.push_back("custom clearance rules: placement uses their largest minimum for every pad (conservative)");
+  auto net_need = [&](model::NetId net) {
+    const std::string& name = net > 0 && static_cast<std::size_t>(net) < b.nets.size() ? b.nets[z(net)].name : std::string();
+    return std::max({rules.class_for(name).clearance, rules.minimums.clearance, custom_max});
+  };
+  const model::LayerMask all_layers = p.copper_layers >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << p.copper_layers) - 1;
+  const Coord hole_need = std::max({rules.minimums.hole_clearance, rules.default_class().clearance, custom_max});
+  std::vector<std::vector<CopperShape>> fp_copper(b.footprints.size());
+  for (const auto& it : cm.items) {
+    if (it.kind == drc::ItemKind::Zone) continue;  // zone fills are regenerated around the new placement
+    Coord need = net_need(it.net);
+    if (it.kind == drc::ItemKind::Pad) {
+      const auto& pd = b.pads[z(it.index)];
+      if (pd.clearance >= 0) need = std::max(need, pd.clearance);
+      if (pd.footprint >= 0 && b.footprints[z(pd.footprint)].clearance >= 0) need = std::max(need, b.footprints[z(pd.footprint)].clearance);
+      // Solder-mask apertures of pads on different nets must not merge (KiCad solder_mask_bridge): the
+      // copper gap must be at least the sum of both expansions, so each pad asks for twice its own.
+      bool masked = false;
+      for (const auto& l : pd.layers) masked |= l == "F.Mask" || l == "B.Mask" || l == "*.Mask" || l == "F&B.Mask";
+      if (masked) {
+        Coord exp = b.pad_to_mask_clearance;
+        if (pd.footprint >= 0 && b.footprints[z(pd.footprint)].mask_margin != INT64_MIN) exp = b.footprints[z(pd.footprint)].mask_margin;
+        if (pd.mask_margin != INT64_MIN) exp = pd.mask_margin;
+        need = std::max(need, 2 * exp + std::max<Coord>(rules.minimums.solder_mask_to_copper_clearance, 0));
+      }
+    }
+    for (const auto& s : it.shapes) {
+      CopperShape cs{s, it.layers, it.net, need};
+      if (it.footprint >= 0) fp_copper[z(it.footprint)].push_back(std::move(cs));
+      else p.fixed_copper.push_back(std::move(cs));
+    }
+  }
+  for (const auto& h : cm.holes)
+    if (!h.plated && h.pad >= 0 && b.pads[z(h.pad)].footprint >= 0)
+      fp_copper[z(b.pads[z(h.pad)].footprint)].push_back(CopperShape{h.shape, all_layers, 0, hole_need});
+  for (const auto& t : b.texts) {
+    const int l = b.copper_index(t.layer);
+    if (l < 0 || t.hidden || t.text.empty()) continue;
+    CopperShape cs{text_box(t), model::layer_bit(l), 0, net_need(0)};
+    if (t.footprint >= 0) fp_copper[z(t.footprint)].push_back(std::move(cs));
+    else p.fixed_copper.push_back(std::move(cs));
+  }
+  for (const auto& v : fp_copper)
+    for (const auto& cs : v) p.max_need = std::max(p.max_need, cs.need);
+  for (const auto& cs : p.fixed_copper) p.max_need = std::max(p.max_need, cs.need);
   assemble_outline(p, b);
   if (!p.outline.empty()) {
     for (const auto& q : p.outline) p.region.add(q);
@@ -308,6 +387,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
 
   // Parts.
   std::vector<int> part_of_fp(b.footprints.size(), -1);
+  std::vector<std::string> no_courtyard;
   for (std::size_t fi = 0; fi < b.footprints.size(); ++fi) {
     const auto& fp = b.footprints[fi];
     Part pt;
@@ -389,7 +469,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       if (bb_area <= 100e12L || pads_area >= 0.2L * bb_area) cy0[z(pt.side)].push_back(rect(pad_box));
       else
         for (const auto& bx : pad_boxes) cy0[z(pt.side)].push_back(rect(bx));
-      p.notes.push_back(fp.reference + ": no courtyard, using pad boxes + 0.25 mm");
+      no_courtyard.push_back(fp.reference);
     }
     if (cy0[0].empty() && cy0[1].empty()) continue;  // nothing to place or avoid (logos, net ties without pads)
 
@@ -419,6 +499,11 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         g.pads.push_back(rot_shape(s));
         g.edge_box.add(g.pads.back().box.inflated(p.edge_clearance));
       }
+      for (const auto& cs : fp_copper[fi]) {
+        g.copper.push_back(CopperShape{rot_shape(translated(cs.s, Point{} - fp.pos)), cs.layers, cs.net, cs.need});
+        g.copper_box.add(g.copper.back().s.box);
+      }
+      g.body.add(g.copper_box);
     }
     pt.area = static_cast<Coord>(std::min<long double>(cy_area, 4e18L));
     pt.shape_key = std::hash<std::string>{}(fp.lib_id) * 31u + static_cast<std::uint64_t>(pt.side);
@@ -462,6 +547,13 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     pt.movable = pt.fixed_reason.empty();
     part_of_fp[fi] = static_cast<int>(p.parts.size());
     p.parts.push_back(std::move(pt));
+  }
+
+  if (!no_courtyard.empty()) {
+    std::string s = std::to_string(no_courtyard.size()) + " footprint(s) without courtyard, using pad boxes + 0.25 mm:";
+    for (std::size_t k = 0; k < no_courtyard.size() && k < 12; ++k) s += " " + no_courtyard[k];
+    if (no_courtyard.size() > 12) s += " ...";
+    p.notes.push_back(s);
   }
 
   // Nets and pins.
