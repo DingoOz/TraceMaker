@@ -11,3 +11,5 @@
 {"ts": "2026-10-02T11:11:36+00:00", "kind": "milestone", "text": "M1: KiCad board reader verified against pcbnew on 5 demo boards (58,301 checks); byte-identical round trip"}
 {"ts": "2026-10-02T11:14:46+00:00", "kind": "build", "text": "Design-rule loader: net classes (with Default inheritance), patterns, explicit assignments, board minimums, custom .kicad_dru rules"}
 {"ts": "2026-10-02T11:14:46+00:00", "kind": "note", "text": "Dashboard: added syntax-highlighted Latest code panel (requested)"}
+{"ts": "2026-10-02T11:18:32+00:00", "kind": "test", "text": "Edited boards (moves, 90\u00b0/45\u00b0 rotations, removals, new tracks/vias) read identically in KiCad 10 and TraceMaker on 3 demo boards"}
+{"ts": "2026-10-02T11:18:32+00:00", "kind": "milestone", "text": "M1 complete: 3,538 fixture boards parse and round-trip byte for byte; schematic netlist matches board pad nets"}

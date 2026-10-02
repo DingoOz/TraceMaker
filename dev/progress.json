@@ -1,6 +1,6 @@
 {
  "project": "TraceMaker",
- "current_milestone": "M1",
+ "current_milestone": "M2",
  "milestones": [
   {
    "id": "M0",
@@ -70,7 +70,7 @@
   {
    "id": "M1",
    "title": "KiCad I/O and board model",
-   "status": "in_progress",
+   "status": "done",
    "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
    "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
    "tasks": [
@@ -100,30 +100,30 @@
     },
     {
      "text": "Board editor: add/remove tracks and vias, move/rotate footprints",
-     "done": false
+     "done": true
     },
     {
      "text": "Edited boards load in pcbnew with the expected geometry",
-     "done": false
+     "done": true
     },
     {
      "text": "Netlist import via kicad-cli (kicadsexpr) and cross-check against board pad nets",
-     "done": false
+     "done": true
     },
     {
      "text": "tracemaker inspect: board summary and JSON dump",
-     "done": false
+     "done": true
     },
     {
      "text": "Gate: round trip on all fixtures; reader matches KiCad",
-     "done": false
+     "done": true
     }
    ]
   },
   {
    "id": "M2",
    "title": "Rules and DRC parity",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Same violation multiset as `kicad-cli pcb drc` on all unrouted and routed fixture boards (documented, tested exceptions only)",
    "deliverables": "Rule compiler (net classes, board constraints, custom rules subset), spatial indices, own DRC with KiCad violation names",
    "tasks": [

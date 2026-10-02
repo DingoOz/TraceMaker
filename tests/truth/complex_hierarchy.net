@@ -1,0 +1,5232 @@
+(export
+	(version "E")
+	(design
+		(source "/home/dingo/Programming/TraceMaker/bench/data/kicad/demos/complex_hierarchy/complex_hierarchy.kicad_sch")
+		(date "2026-10-02T11:16:52")
+		(tool "Eeschema 10.0.6")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title "Complex hierarchy: demo")
+				(company)
+				(rev)
+				(date "2017-01-15")
+				(source "complex_hierarchy.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+		(sheet
+			(number "2")
+			(name "/ampli_ht_vertical/")
+			(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			(title_block
+				(title "Complex hierarchy: demo")
+				(company)
+				(rev "1")
+				(date "2017-01-15")
+				(source "ampli_ht.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+		(sheet
+			(number "3")
+			(name "/ampli_ht_horizontal/")
+			(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			(title_block
+				(title "Complex hierarchy: demo")
+				(company)
+				(rev "1")
+				(date "2017-01-15")
+				(source "ampli_ht.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "C101")
+			(value "47uF/63V")
+			(footprint "Capacitor_THT:CP_Axial_L11.0mm_D6.0mm_P18.00mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Axial_L11.0mm_D6.0mm_P18.00mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CP")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP* Elko* TantalC* C*elec c_elec* SMD*_Pol")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1558")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C102")
+			(value "47uF")
+			(footprint "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CP")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP* Elko* TantalC* C*elec c_elec* SMD*_Pol")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b03cec2")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C103")
+			(value "10uF")
+			(footprint "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CP")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP* Elko* TantalC* C*elec c_elec* SMD*_Pol")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4b15d9")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C104")
+			(value "47uF/20V")
+			(footprint "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CP")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP* Elko* TantalC* C*elec c_elec* SMD*_Pol")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004ae173cf")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C105")
+			(value "10uF")
+			(footprint "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Axial_L10.0mm_D4.5mm_P15.00mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CP")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP* Elko* TantalC* C*elec c_elec* SMD*_Pol")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4b15e7")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D101")
+			(value "1N4007")
+			(footprint "Diode_THT:D_DO-41_SOD81_P12.70mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-41_SOD81_P12.70mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004ae172f4")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "P101")
+			(value "CONN_2")
+			(footprint "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+			(fields
+				(field
+					(name "Footprint") "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CONN_2")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a12f4")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "P102")
+			(value "CONN_2")
+			(footprint "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+			(fields
+				(field
+					(name "Footprint") "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CONN_2")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004ad71b06")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "U101")
+			(value "78L05")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "7805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4b1532")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "U102")
+			(value "ICL7660")
+			(footprint "Package_DIP:DIP-8_W7.62mm_LongPads")
+			(fields
+				(field
+					(name "Footprint") "Package_DIP:DIP-8_W7.62mm_LongPads")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "ICL7660")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "complex_hierarchy")
+			)
+			(property
+				(name "Sheetfile")
+				(value "complex_hierarchy.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4b1230")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C201")
+			(value "15nF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1358")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C202")
+			(value "150nF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4f3641")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C203")
+			(value "4.7nF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1366")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C204")
+			(value "820pF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1365")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D201")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1375")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D202")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1377")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D203")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b616afa")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D204")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a137b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "P201")
+			(value "CONN_2")
+			(footprint "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+			(fields
+				(field
+					(name "Footprint") "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CONN_2")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1367")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "P202")
+			(value "CONN_2")
+			(footprint "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+			(fields
+				(field
+					(name "Footprint") "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CONN_2")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a136c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q201")
+			(value "MPSA92")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA92")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1360")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q202")
+			(value "MPSA42")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA42")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a137d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q203")
+			(value "MPSA92")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA92")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a137c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q204")
+			(value "MPSA42")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA42")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1379")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R201")
+			(value "1K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4f363e")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R202")
+			(value "22K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a136b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R203")
+			(value "22K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1359")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R204")
+			(value "470")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1376")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R205")
+			(value "220K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1374")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R206")
+			(value "47")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1364")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R207")
+			(value "47")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b616b96")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R208")
+			(value "1K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1371")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R209")
+			(value "220K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1370")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R210")
+			(value "220K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b617b88")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R211")
+			(value "5,6K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b61688c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R212")
+			(value "1K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a136d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R213")
+			(value "4,7K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1362")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "RV201")
+			(value "4,7K")
+			(footprint "Potentiometer_THT:Potentiometer_Bourns_3266W_Vertical")
+			(fields
+				(field
+					(name "Footprint") "Potentiometer_THT:Potentiometer_Bourns_3266W_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "POT")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1357")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "U201")
+			(value "LM358N")
+			(footprint "Package_DIP:DIP-8_W7.62mm_LongPads")
+			(fields
+				(field
+					(name "Footprint") "Package_DIP:DIP-8_W7.62mm_LongPads")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "LM358N")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_vertical")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_vertical/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a1333/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1368" "00000000-0000-0000-0000-00004b3a135c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+				(unit
+					(name "B")
+					(pins
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "7")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C301")
+			(value "15nF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1358")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C302")
+			(value "150nF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4f3641")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C303")
+			(value "4.7nF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1366")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C304")
+			(value "820pF")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "C")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C? C_????_* C_???? SMD*_c Capacitor*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1365")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D301")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1375")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D302")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1377")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D303")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b616afa")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D304")
+			(value "1N4148")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "D_Small")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Diode_* D-Pak_TO252AA *SingleDiode *SingleDiode* *_Diode_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a137b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "P301")
+			(value "CONN_2")
+			(footprint "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+			(fields
+				(field
+					(name "Footprint") "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CONN_2")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1367")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "P302")
+			(value "CONN_2")
+			(footprint "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+			(fields
+				(field
+					(name "Footprint") "TerminalBlock_Altech:Altech_AK300_1x02_P5.00mm_45-Degree")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "CONN_2")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a136c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q301")
+			(value "MPSA92")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA92")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1360")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q302")
+			(value "MPSA42")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA42")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a137d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q303")
+			(value "MPSA92")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA92")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a137c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q304")
+			(value "MPSA42")
+			(footprint "Package_TO_SOT_THT:TO-92_HandSolder")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-92_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "MPSA42")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO92-CBE")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1379")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R301")
+			(value "1K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b4f363e")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R302")
+			(value "22K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a136b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R303")
+			(value "22K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1359")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R304")
+			(value "470")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1376")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R305")
+			(value "220K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1374")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R306")
+			(value "47")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1364")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R307")
+			(value "47")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b616b96")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R308")
+			(value "1K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1371")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R309")
+			(value "220K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1370")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R310")
+			(value "220K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b617b88")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R311")
+			(value "5,6K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b61688c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R312")
+			(value "1K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a136d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R313")
+			(value "4,7K")
+			(footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+			(fields
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "R")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_* Resistor_*")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1362")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "RV301")
+			(value "4,7K")
+			(footprint "Potentiometer_THT:Potentiometer_Bourns_3266W_Vertical")
+			(fields
+				(field
+					(name "Footprint") "Potentiometer_THT:Potentiometer_Bourns_3266W_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "POT")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1357")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "U301")
+			(value "LM358N")
+			(footprint "Package_DIP:DIP-8_W7.62mm_LongPads")
+			(fields
+				(field
+					(name "Footprint") "Package_DIP:DIP-8_W7.62mm_LongPads")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "complex_hierarchy")
+				(part "LM358N")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "ampli_ht_horizontal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ampli_ht.kicad_sch")
+			)
+			(sheetpath
+				(names "/ampli_ht_horizontal/")
+				(tstamps "/00000000-0000-0000-0000-00004b3a13a4/")
+			)
+			(tstamps "00000000-0000-0000-0000-00004b3a1368" "00000000-0000-0000-0000-00004b3a135c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+				(unit
+					(name "B")
+					(pins
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "7")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "complex_hierarchy")
+			(part "7805")
+			(fields
+				(field
+					(name "Reference") "U")
+				(field
+					(name "Value") "7805")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "VO")
+					(type "power_out")
+				)
+				(pin
+					(num "2")
+					(name "GND")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "VI")
+					(type "input")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "C")
+			(footprints
+				(fp "C?")
+				(fp "C_????_*")
+				(fp "C_????")
+				(fp "SMD*_c")
+				(fp "Capacitor*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "C")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "CONN_2")
+			(fields
+				(field
+					(name "Reference") "P")
+				(field
+					(name "Value") "CONN_2")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "P1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "PM")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "CP")
+			(footprints
+				(fp "CP*")
+				(fp "Elko*")
+				(fp "TantalC*")
+				(fp "C*elec")
+				(fp "c_elec*")
+				(fp "SMD*_Pol")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "CP")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "D_Small")
+			(footprints
+				(fp "Diode_*")
+				(fp "D-Pak_TO252AA")
+				(fp "*SingleDiode")
+				(fp "*SingleDiode*")
+				(fp "*_Diode_*")
+			)
+			(fields
+				(field
+					(name "Reference") "D")
+				(field
+					(name "Value") "D_Small")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "K")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "A")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "ICL7660")
+			(fields
+				(field
+					(name "Reference") "U")
+				(field
+					(name "Value") "ICL7660")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "2")
+					(name "CAP+")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "GND")
+					(type "power_in")
+				)
+				(pin
+					(num "4")
+					(name "CAP-")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "VOUT")
+					(type "power_out")
+				)
+				(pin
+					(num "6")
+					(name "LV")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "OSC")
+					(type "input")
+				)
+				(pin
+					(num "8")
+					(name "V+")
+					(type "power_in")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "LM358N")
+			(fields
+				(field
+					(name "Reference") "U")
+				(field
+					(name "Value") "LM358N")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "output")
+				)
+				(pin
+					(num "2")
+					(name "-")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "+")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "V-")
+					(type "power_in")
+				)
+				(pin
+					(num "5")
+					(name "+")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "-")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "")
+					(type "output")
+				)
+				(pin
+					(num "8")
+					(name "V+")
+					(type "power_in")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "MPSA42")
+			(footprints
+				(fp "TO92-CBE")
+			)
+			(fields
+				(field
+					(name "Reference") "Q")
+				(field
+					(name "Value") "MPSA42")
+				(field
+					(name "Footprint") "TO92-CBE")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "E")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "B")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "C")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "MPSA92")
+			(footprints
+				(fp "TO92-CBE")
+			)
+			(fields
+				(field
+					(name "Reference") "Q")
+				(field
+					(name "Value") "MPSA92")
+				(field
+					(name "Footprint") "TO92-CBE")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "E")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "B")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "C")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "POT")
+			(fields
+				(field
+					(name "Reference") "RV")
+				(field
+					(name "Value") "POT")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "3")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "complex_hierarchy")
+			(part "R")
+			(footprints
+				(fp "R_*")
+				(fp "Resistor_*")
+			)
+			(fields
+				(field
+					(name "Reference") "R")
+				(field
+					(name "Value") "R")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "complex_hierarchy")
+			(uri "${KIPRJMOD}/complex_hierarchy.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "+12V")
+			(class "Default")
+			(node
+				(ref "C104")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D101")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U101")
+				(pin "3")
+				(pinfunction "VI_3")
+				(pintype "input")
+			)
+			(node
+				(ref "U201")
+				(pin "8")
+				(pinfunction "V+_8")
+				(pintype "power_in")
+			)
+			(node
+				(ref "U301")
+				(pin "8")
+				(pinfunction "V+_8")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "2")
+			(name "-VAA")
+			(class "power")
+			(node
+				(ref "C103")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U102")
+				(pin "5")
+				(pinfunction "VOUT_5")
+				(pintype "power_out")
+			)
+			(node
+				(ref "U201")
+				(pin "4")
+				(pinfunction "V-_4")
+				(pintype "power_in")
+			)
+			(node
+				(ref "U301")
+				(pin "4")
+				(pinfunction "V-_4")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "3")
+			(name "/12Vext")
+			(class "power")
+			(node
+				(ref "D101")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P102")
+				(pin "1")
+				(pinfunction "P1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "/ampli_ht_horizontal/PIEZO_IN")
+			(class "Default")
+			(node
+				(ref "P301")
+				(pin "1")
+				(pinfunction "P1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R301")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "5")
+			(name "/ampli_ht_horizontal/PIEZO_OUT")
+			(class "Default")
+			(node
+				(ref "P302")
+				(pin "1")
+				(pinfunction "P1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R306")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R307")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "6")
+			(name "/ampli_ht_horizontal/S_OUT+")
+			(class "Default")
+			(node
+				(ref "R309")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R310")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "RV301")
+				(pin "3")
+				(pinfunction "3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "7")
+			(name "/ampli_ht_horizontal/Vpil_0_3,3V")
+			(class "Default")
+			(node
+				(ref "C301")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U301")
+				(pin "3")
+				(pinfunction "+_3")
+				(pintype "input")
+			)
+			(node
+				(ref "U301")
+				(pin "6")
+				(pinfunction "-_6")
+				(pintype "input")
+			)
+			(node
+				(ref "U301")
+				(pin "7")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "8")
+			(name "/ampli_ht_vertical/PIEZO_IN")
+			(class "Default")
+			(node
+				(ref "P201")
+				(pin "1")
+				(pinfunction "P1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R201")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "9")
+			(name "/ampli_ht_vertical/PIEZO_OUT")
+			(class "Default")
+			(node
+				(ref "P202")
+				(pin "1")
+				(pinfunction "P1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R206")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R207")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "10")
+			(name "/ampli_ht_vertical/S_OUT+")
+			(class "Default")
+			(node
+				(ref "R209")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R210")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "RV201")
+				(pin "3")
+				(pinfunction "3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "11")
+			(name "/ampli_ht_vertical/Vpil_0_3,3V")
+			(class "Default")
+			(node
+				(ref "C201")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U201")
+				(pin "3")
+				(pinfunction "+_3")
+				(pintype "input")
+			)
+			(node
+				(ref "U201")
+				(pin "6")
+				(pinfunction "-_6")
+				(pintype "input")
+			)
+			(node
+				(ref "U201")
+				(pin "7")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "12")
+			(name "GND")
+			(class "power")
+			(node
+				(ref "C101")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C102")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C103")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C104")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C202")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C203")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C204")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C302")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C303")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C304")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P101")
+				(pin "2")
+				(pinfunction "PM_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P102")
+				(pin "2")
+				(pinfunction "PM_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P201")
+				(pin "2")
+				(pinfunction "PM_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P202")
+				(pin "2")
+				(pinfunction "PM_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P301")
+				(pin "2")
+				(pinfunction "PM_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P302")
+				(pin "2")
+				(pinfunction "PM_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q203")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q303")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R205")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R208")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R213")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R305")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R308")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R313")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U101")
+				(pin "2")
+				(pinfunction "GND_2")
+				(pintype "input")
+			)
+			(node
+				(ref "U102")
+				(pin "3")
+				(pinfunction "GND_3")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "13")
+			(name "HT")
+			(class "power")
+			(node
+				(ref "C101")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D201")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "D301")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "P101")
+				(pin "1")
+				(pinfunction "P1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q202")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q302")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R204")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R304")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "14")
+			(name "Net-(C201-Pad2)")
+			(class "Default")
+			(node
+				(ref "C201")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R202")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R203")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "15")
+			(name "Net-(C202-Pad1)")
+			(class "Default")
+			(node
+				(ref "C202")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R201")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R202")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "16")
+			(name "Net-(C204-Pad1)")
+			(class "Default")
+			(node
+				(ref "C204")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R211")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "17")
+			(name "Net-(C301-Pad2)")
+			(class "Default")
+			(node
+				(ref "C301")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R302")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R303")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "18")
+			(name "Net-(C302-Pad1)")
+			(class "Default")
+			(node
+				(ref "C302")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R301")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R302")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "19")
+			(name "Net-(C304-Pad1)")
+			(class "Default")
+			(node
+				(ref "C304")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R311")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "20")
+			(name "Net-(D201-K)")
+			(class "Default")
+			(node
+				(ref "D201")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D202")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "21")
+			(name "Net-(D202-K)")
+			(class "Default")
+			(node
+				(ref "D202")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q201")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "R205")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "22")
+			(name "Net-(D203-A)")
+			(class "Default")
+			(node
+				(ref "D203")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q201")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q202")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "23")
+			(name "Net-(D203-K)")
+			(class "Default")
+			(node
+				(ref "D203")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D204")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "24")
+			(name "Net-(D204-K)")
+			(class "Default")
+			(node
+				(ref "D204")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q203")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "Q204")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R211")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "25")
+			(name "Net-(D301-K)")
+			(class "Default")
+			(node
+				(ref "D301")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D302")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "26")
+			(name "Net-(D302-K)")
+			(class "Default")
+			(node
+				(ref "D302")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q301")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "R305")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "27")
+			(name "Net-(D303-A)")
+			(class "Default")
+			(node
+				(ref "D303")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q301")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q302")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "28")
+			(name "Net-(D303-K)")
+			(class "Default")
+			(node
+				(ref "D303")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D304")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "29")
+			(name "Net-(D304-K)")
+			(class "Default")
+			(node
+				(ref "D304")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q303")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "Q304")
+				(pin "3")
+				(pinfunction "C_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R311")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "30")
+			(name "Net-(Q201-E)")
+			(class "Default")
+			(node
+				(ref "Q201")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R204")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "31")
+			(name "Net-(Q202-E)")
+			(class "Default")
+			(node
+				(ref "Q202")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R206")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R210")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "32")
+			(name "Net-(Q203-E)")
+			(class "Default")
+			(node
+				(ref "Q203")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R207")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R209")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "33")
+			(name "Net-(Q204-B)")
+			(class "Default")
+			(node
+				(ref "Q204")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "R208")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "34")
+			(name "Net-(Q204-E)")
+			(class "Default")
+			(node
+				(ref "Q204")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R212")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "35")
+			(name "Net-(Q301-E)")
+			(class "Default")
+			(node
+				(ref "Q301")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R304")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "36")
+			(name "Net-(Q302-E)")
+			(class "Default")
+			(node
+				(ref "Q302")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R306")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R310")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "37")
+			(name "Net-(Q303-E)")
+			(class "Default")
+			(node
+				(ref "Q303")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R307")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R309")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "38")
+			(name "Net-(Q304-B)")
+			(class "Default")
+			(node
+				(ref "Q304")
+				(pin "2")
+				(pinfunction "B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "R308")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "39")
+			(name "Net-(Q304-E)")
+			(class "Default")
+			(node
+				(ref "Q304")
+				(pin "1")
+				(pinfunction "E_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R312")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "40")
+			(name "Net-(R212-Pad2)")
+			(class "Default")
+			(node
+				(ref "R212")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U201")
+				(pin "1")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "41")
+			(name "Net-(R213-Pad1)")
+			(class "Default")
+			(node
+				(ref "R213")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "RV201")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "42")
+			(name "Net-(R312-Pad2)")
+			(class "Default")
+			(node
+				(ref "R312")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U301")
+				(pin "1")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "43")
+			(name "Net-(R313-Pad1)")
+			(class "Default")
+			(node
+				(ref "R313")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "RV301")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "44")
+			(name "Net-(U102-CAP+)")
+			(class "Default")
+			(node
+				(ref "C105")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U102")
+				(pin "2")
+				(pinfunction "CAP+_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "45")
+			(name "Net-(U102-CAP-)")
+			(class "Default")
+			(node
+				(ref "C105")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U102")
+				(pin "4")
+				(pinfunction "CAP-_4")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "46")
+			(name "Net-(U201A--)")
+			(class "Default")
+			(node
+				(ref "RV201")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U201")
+				(pin "2")
+				(pinfunction "-_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "47")
+			(name "Net-(U201B-+)")
+			(class "Default")
+			(node
+				(ref "C203")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R203")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U201")
+				(pin "5")
+				(pinfunction "+_5")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "48")
+			(name "Net-(U301A--)")
+			(class "Default")
+			(node
+				(ref "RV301")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U301")
+				(pin "2")
+				(pinfunction "-_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "49")
+			(name "Net-(U301B-+)")
+			(class "Default")
+			(node
+				(ref "C303")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R303")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U301")
+				(pin "5")
+				(pinfunction "+_5")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "50")
+			(name "VCC")
+			(class "power")
+			(node
+				(ref "C102")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U101")
+				(pin "1")
+				(pinfunction "VO_1")
+				(pintype "power_out")
+			)
+			(node
+				(ref "U102")
+				(pin "8")
+				(pinfunction "V+_8")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "51")
+			(name "unconnected-(U102-LV-Pad6)")
+			(class "Default")
+			(node
+				(ref "U102")
+				(pin "6")
+				(pinfunction "LV_6")
+				(pintype "input+no_connect")
+			)
+		)
+		(net
+			(code "52")
+			(name "unconnected-(U102-OSC-Pad7)")
+			(class "Default")
+			(node
+				(ref "U102")
+				(pin "7")
+				(pinfunction "OSC_7")
+				(pintype "input+no_connect")
+			)
+		)
+	)
+)
