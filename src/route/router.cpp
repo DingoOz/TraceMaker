@@ -48,10 +48,16 @@ struct Router::Impl {
 
   // ---- per-search scratch (sized to the window) ----
   struct Window { int x0, y0, w, h; };
-  std::vector<std::uint32_t> gstamp, cstamp, vstamp;
-  std::vector<std::int64_t> g;
-  std::vector<std::int32_t> parent;
-  std::vector<std::uint8_t> adir;  // arrival direction per state (used when direction is not part of the state)
+  // One 16-byte record per search state (cost, generation tag with the arrival direction in the top 4 bits,
+  // parent), so an expansion touches one cache line instead of four.
+  struct SNode {
+    std::int64_t g;
+    std::uint32_t tag;
+    std::int32_t parent;
+  };
+  static constexpr std::uint32_t kGenMask = 0x0FFFFFFFu;
+  std::vector<SNode> sn;
+  std::vector<std::uint32_t> cstamp, vstamp;
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
   std::uint32_t gen = 0;
   std::set<std::pair<int, std::int64_t>> learned_block;  // (net, layer-cell key) blocked after exact-check failures
@@ -455,12 +461,7 @@ struct Router::Impl {
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
     const std::size_t D = opt.bend_states ? 9 : 1;  // direction states per lattice point
     const std::size_t states = cells * static_cast<std::size_t>(nl) * D;
-    if (adir.size() < states) adir.resize(states);
-    if (gstamp.size() < states) {
-      gstamp.assign(states, 0);
-      g.resize(states);
-      parent.resize(states);
-    }
+    if (sn.size() < states) sn.assign(states, SNode{0, 0, -1});
     if (cstamp.size() < cells * static_cast<std::size_t>(nl)) {
       cstamp.assign(cells * static_cast<std::size_t>(nl), 0);
       cell_state.resize(cells * static_cast<std::size_t>(nl));
@@ -469,8 +470,8 @@ struct Router::Impl {
       vstamp.assign(cells, 0);
       via_state.resize(cells);
     }
-    if (++gen == 0) {
-      std::fill(gstamp.begin(), gstamp.end(), 0u);
+    if (++gen > kGenMask) {
+      std::fill(sn.begin(), sn.end(), SNode{0, 0, -1});
       std::fill(cstamp.begin(), cstamp.end(), 0u);
       std::fill(vstamp.begin(), vstamp.end(), 0u);
       gen = 1;
@@ -533,12 +534,9 @@ struct Router::Impl {
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
       const std::int64_t g0 = src.cost[k];
       const std::size_t s = sidx(l, ci, kNoDir);
-      if (gstamp[s] == gen && g[s] <= g0) continue;
+      if ((sn[s].tag & kGenMask) == gen && sn[s].g <= g0) continue;
       start_stub[cell_key(l, w.x0 + cx, w.y0 + cy)] = src.stub[k];
-      gstamp[s] = gen;
-      g[s] = g0;
-      parent[s] = -1;
-      adir[s] = kNoDir;
+      sn[s] = SNode{g0, gen | (static_cast<std::uint32_t>(kNoDir) << 28), -1};
       open.emplace(g0 + h(w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
@@ -546,12 +544,12 @@ struct Router::Impl {
     while (!open.empty()) {
       const auto [f, s] = open.top();
       open.pop();
-      const int dir = D == 9 ? static_cast<int>(s % 9) : adir[s];
+      const int dir = D == 9 ? static_cast<int>(s % 9) : static_cast<int>(sn[s].tag >> 28);
       const std::size_t lc = s / D;
       const int l = static_cast<int>(lc / cells);
       const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
-      if (f - h(w.x0 + cx, w.y0 + cy) > g[s]) continue;  // stale entry
+      if (f - h(w.x0 + cx, w.y0 + cy) > sn[s].g) continue;  // stale entry
       if (cx == 0 || cy == 0 || cx == w.w - 1 || cy == w.h - 1) touched_edge = true;
       if (target(l, ci)) {
         goal = s;
@@ -562,7 +560,7 @@ struct Router::Impl {
         recent[recent_n++ % recent.size()] = {at(w.x0 + cx, w.y0 + cy), l};
         if ((expanded & 8191) == 0) emit_frontier();
       }
-      const std::int64_t gs = g[s];
+      const std::int64_t gs = sn[s].g;
       // Planar moves.
       for (int d = 0; d < 8; ++d) {
         if (dir != kNoDir) {
@@ -581,11 +579,8 @@ struct Router::Impl {
         std::int64_t cost = ((d & 1) ? diag : step) + extra;
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
         const std::size_t ns = sidx(l, nci, d);
-        if (gstamp[ns] == gen && g[ns] <= gs + cost) continue;
-        gstamp[ns] = gen;
-        g[ns] = gs + cost;
-        parent[ns] = static_cast<std::int32_t>(s);
-        adir[ns] = static_cast<std::uint8_t>(d);
+        if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= gs + cost) continue;
+        sn[ns] = SNode{gs + cost, gen | (static_cast<std::uint32_t>(d) << 28), static_cast<std::int32_t>(s)};
         open.emplace(gs + cost + h(w.x0 + ncx, w.y0 + ncy), ns);
       }
       // Via: change to every other layer at this cell (through via).
@@ -595,16 +590,15 @@ struct Router::Impl {
           if (l2 == l) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
           const std::int64_t ng = gs + via_cost + vextra;
-          if (gstamp[ns] == gen && g[ns] <= ng) continue;
-          gstamp[ns] = gen;
-          g[ns] = ng;
-          parent[ns] = static_cast<std::int32_t>(s);
-          adir[ns] = kNoDir;
+          if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
+          sn[ns] = SNode{ng, gen | (static_cast<std::uint32_t>(kNoDir) << 28), static_cast<std::int32_t>(s)};
           open.emplace(ng + h(w.x0 + cx, w.y0 + cy), ns);
         }
       }
     }
     res.expansions += expanded;
+    (goal == SIZE_MAX ? exp_fail : exp_ok) += expanded;
+    (goal == SIZE_MAX ? n_fail : n_ok) += 1;
     if (goal == SIZE_MAX) {
       // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
       // cannot help (Contour's boxed-in terminal test).
@@ -612,12 +606,12 @@ struct Router::Impl {
       return false;
     }
     path.clear();
-    for (std::int64_t s = static_cast<std::int64_t>(goal); s >= 0; s = parent[static_cast<std::size_t>(s)]) {
+    for (std::int64_t s = static_cast<std::int64_t>(goal); s >= 0; s = sn[static_cast<std::size_t>(s)].parent) {
       const std::size_t lc = static_cast<std::size_t>(s) / D;
       const int l = static_cast<int>(lc / cells);
       const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
       path.push_back({l, w.x0 + static_cast<int>(ci % w.w), w.y0 + static_cast<int>(ci / w.w)});
-      if (parent[static_cast<std::size_t>(s)] < 0) break;
+      if (sn[static_cast<std::size_t>(s)].parent < 0) break;
     }
     std::reverse(path.begin(), path.end());
     return true;
@@ -778,6 +772,7 @@ struct Router::Impl {
       }
   }
 
+  long exp_ok = 0, exp_fail = 0, n_ok = 0, n_fail = 0;
   std::string why, commit_why;
   bool strict_pass = false;
   // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
@@ -991,6 +986,7 @@ struct Router::Impl {
     }
     res.seconds = elapsed();
     res.nogood_skips = nogood_skips;
+    std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions)\n", n_ok, exp_ok, n_fail, exp_fail);
     std::fprintf(stderr, "legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
     emit_stats("done");
