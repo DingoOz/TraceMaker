@@ -200,13 +200,16 @@ def docs() -> list[dict]:
 
 
 def benchmarks() -> list[dict]:
+    """Full benchmark runs (>= 20 boards), oldest first (the page shows newest first)."""
     out = []
-    for f in sorted((ROOT / "bench" / "results").glob("*/summary.json"))[-20:]:
+    files = sorted((ROOT / "bench" / "results").glob("*/summary.json"), key=lambda f: f.stat().st_mtime)
+    for f in files:
         s = read_json(f, None)
-        if isinstance(s, dict):
+        if isinstance(s, dict) and (s.get("boards") or 0) >= 20:
             s.setdefault("run", f.parent.name)
+            s["finished"] = f.stat().st_mtime
             out.append(s)
-    return out
+    return out[-30:]
 
 
 HL_LANG = {".cpp": "cpp", ".hpp": "cpp", ".h": "cpp", ".cu": "cpp", ".cuh": "cpp", ".py": "python", ".ts": "typescript",

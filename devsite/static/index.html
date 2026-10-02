@@ -376,17 +376,23 @@ function renderModules(s) {
 
 function renderBench(s) {
   if (!s.benchmarks.length) {
-    replace("bench", el("div", { class: "empty", text: "No benchmark runs yet. The harness arrives in M4; results appear here (clean pass, completion, added KiCad DRC errors, time) next to Freerouting's published 74.6% clean pass on PCBench." }));
+    replace("bench", el("div", { class: "empty", text: "No benchmark runs yet." }));
     return;
   }
-  replace("bench", el("table", {},
-    el("thead", {}, el("tr", {}, ["Run", "Set", "Boards", "Clean pass", "Completion", "Time"].map((h, i) => el("th", { class: i > 1 ? "r" : "", text: h })))),
-    el("tbody", {}, s.benchmarks.slice().reverse().map((b) => el("tr", {},
-      el("td", { class: "mono", text: b.run }), el("td", { text: b.set || "" }),
-      el("td", { class: "r num", text: b.boards ?? "" }),
-      el("td", { class: "r num", text: b.clean_pass != null ? (b.clean_pass * 100).toFixed(1) + "%" : "" }),
-      el("td", { class: "r num", text: b.completion != null ? (b.completion * 100).toFixed(1) + "%" : "" }),
-      el("td", { class: "r num", text: b.seconds != null ? b.seconds.toFixed(0) + " s" : "" }))))));
+  const pct = (v) => (v == null ? "–" : (v * 100).toFixed(1) + "%");
+  replace("bench",
+    el("div", { class: "sub", style: "margin-bottom:8px", text: "PCBench fixtures judged by kicad-cli DRC (clean = fully routed and zero added errors). Freerouting columns: its own published results on the same boards." }),
+    el("table", {},
+      el("thead", {}, el("tr", {}, ["Run", "Set", "Boards", "TraceMaker", "FR 2.5.0-RC12", "FR 2.4.1", "Completion", "Added errors"].map((h, i) => el("th", { class: i > 1 ? "r" : "", text: h })))),
+      el("tbody", {}, s.benchmarks.slice().reverse().map((b) => el("tr", {},
+        el("td", { class: "mono", text: b.run }),
+        el("td", { text: b.set || "" }),
+        el("td", { class: "r num", text: b.boards ?? "" }),
+        el("td", { class: "r num" }, el("b", { text: pct(b.clean_pass) })),
+        el("td", { class: "r num", text: pct(b.fr_rc12_clean_pass) }),
+        el("td", { class: "r num", text: pct(b.fr_241_clean_pass) }),
+        el("td", { class: "r num", text: pct(b.completion) }),
+        el("td", { class: "r num", text: b.boards_with_added_errors == null ? "–" : String(b.boards_with_added_errors) })))))));
 }
 
 function renderEnv(s) {
