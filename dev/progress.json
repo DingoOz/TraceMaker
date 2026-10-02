@@ -71,7 +71,7 @@
    "id": "M1",
    "title": "KiCad I/O and board model",
    "status": "done",
-   "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
+   "gate": "Byte-identical round-trip of every fixture board (parse → write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
    "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
    "tasks": [
     {
@@ -169,7 +169,7 @@
    "id": "M3",
    "title": "Event bus, server, viewer v1",
    "status": "in_progress",
-   "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board",
+   "gate": "Viewer renders the largest fixture board at ≥ 60 fps; replay of a recorded log reproduces the final board",
    "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
    "tasks": [
     {
@@ -237,9 +237,9 @@
   },
   {
    "id": "M5",
-   "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
+   "title": "Failure memory T0–T2 + escalation R0–R3 + repair",
    "status": "in_progress",
-   "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
+   "gate": "Completion ≥ Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
    "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
    "tasks": [
     {
@@ -265,6 +265,10 @@
     {
      "text": "Gate: completion >= Freerouting on tier A (latest: 97.5% vs 100% clean)",
      "done": false
+    },
+    {
+     "text": "Reverse probe for boxed-in targets; pad legs dropped when the lattice end is on the pad; learned blocks beside fine-pitch pads",
+     "done": true
     }
    ]
   },
@@ -299,46 +303,54 @@
   },
   {
    "id": "M7",
-   "title": "Placement A\u2013D",
-   "status": "todo",
-   "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL \u2264 SA-PCB baseline on the placement set",
+   "title": "Placement A–D",
+   "status": "in_progress",
+   "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL ≤ SA-PCB baseline on the placement set",
    "deliverables": "Constraint extraction, decoupling detection, quadratic B2B (PCG), electrostatic global placement (CPU then GPU batched), rotation/side assignment, LP legalisation; placement report with optimality levels and lower bound",
    "tasks": [
     {
-     "text": "Constraint extraction",
+     "text": "Constraint extraction (fixed parts, outline, keepouts, courtyards, copper legality)",
+     "done": true
+    },
+    {
+     "text": "decoupling detection / proximity groups",
      "done": false
     },
     {
-     "text": "decoupling detection",
+     "text": "quadratic B2B (Eigen CG)",
+     "done": true
+    },
+    {
+     "text": "global spreading (SimPL instead of electrostatic; CPU)",
+     "done": true
+    },
+    {
+     "text": "rotation assignment (coordinate descent); side assignment (flip)",
      "done": false
     },
     {
-     "text": "quadratic B2B (PCG)",
-     "done": false
+     "text": "legalisation (greedy minimum displacement; LP not done)",
+     "done": true
     },
     {
-     "text": "electrostatic global placement (CPU then GPU batched)",
-     "done": false
+     "text": "parallel simulated annealing, deterministic across thread counts",
+     "done": true
     },
     {
-     "text": "rotation/side assignment",
-     "done": false
+     "text": "placement report with optimality levels and LP lower bound (min-cost flow)",
+     "done": true
     },
     {
-     "text": "LP legalisation",
-     "done": false
-    },
-    {
-     "text": "placement report with optimality levels and lower bound",
-     "done": false
+     "text": "evaluation on 23 PCBench boards: HPWL -17..-26% median, zero new DRC errors; routability not yet improved",
+     "done": true
     }
    ]
   },
   {
    "id": "M8",
-   "title": "Placement E\u2013G + ECO",
+   "title": "Placement E–G + ECO",
    "status": "todo",
-   "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot",
+   "gate": "Schematic-to-board set: clean pass ≥ 90%; `eco` mode closes boards that `none` mode cannot",
    "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
    "tasks": [
     {
@@ -430,26 +442,34 @@
     {
      "text": "Bit-identical across thread counts (portfolio selection)",
      "done": false
+    },
+    {
+     "text": "Portfolio early stop once a variant routes everything (wall-clock mode)",
+     "done": true
     }
    ]
   },
   {
    "id": "M11",
    "title": "KiCad integration",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Round-trip in KiCad on the demo boards",
    "deliverables": "IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package",
    "tasks": [
     {
-     "text": "IPC plugin (live board in pcbnew",
+     "text": "IPC action plugin: save copy with project, route, add tracks/vias in one commit",
+     "done": true
+    },
+    {
+     "text": "Offline test against kicad-python 0.8",
+     "done": true
+    },
+    {
+     "text": "Round trip in a running KiCad GUI",
      "done": false
     },
     {
-     "text": "one undoable commit)",
-     "done": false
-    },
-    {
-     "text": "Python bindings",
+     "text": "Python bindings (pybind11)",
      "done": false
     },
     {

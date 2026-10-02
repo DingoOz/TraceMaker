@@ -27,3 +27,7 @@
 {"ts": "2026-10-02T14:36:17+00:00", "kind": "test", "text": "Started final benchmark set (tiers A/B/C, 120 s per board, 8-variant portfolio)"}
 {"ts": "2026-10-02T14:52:06+00:00", "kind": "milestone", "text": "Final tier A (40 boards, 120 s): 100% clean pass, 100% completion, zero added DRC errors (Freerouting 2.5.0-RC12 100%, 2.4.1 87.5%)"}
 {"ts": "2026-10-02T15:07:12+00:00", "kind": "milestone", "text": "Final tier B (40 boards, 120 s): 50.0% clean = Freerouting 2.5.0-RC12 50.0% (2.4.1: 12.5%), zero added errors. Tier C (30): 36.7% vs RC12 46.7% (2.4.1: 16.7%)"}
+{"ts": "2026-10-02T15:16:18+00:00", "kind": "build", "text": "KiCad IPC plugin: autoroutes the open board in one undoable commit (offline-tested against kicad-python 0.8)"}
+{"ts": "2026-10-02T15:59:52+00:00", "kind": "test", "text": "final3 PCBench (120 s, 8 variants): tier A 100% clean (FR RC12 100%), tier B 55.0% (FR 50.0%), tier C 46.7% (FR 46.7%); zero router-introduced DRC errors on all 110 boards"}
+{"ts": "2026-10-02T15:59:52+00:00", "kind": "milestone", "text": "M7 placement v1 committed: B2B + SimPL + legalisation + parallel annealing + LP lower bound; HPWL down, routability not yet up (opt-in tool tracemaker-place)"}
+{"ts": "2026-10-02T15:59:52+00:00", "kind": "build", "text": "Router: Horticulture mask fix, reverse boxed-in probe, pad-leg drop, portfolio early stop"}
