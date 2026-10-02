@@ -47,6 +47,7 @@ struct PlaceReport {
   std::array<double, 2> utilisation{0, 0};  // movable demand / free area per side
   int spread_iterations = 0, rotation_changes = 0;
   int legalise_failed = 0, legalise_placed = 0;
+  std::vector<std::string> legalise_failures;  // references of the parts that found no position
   double legalise_mean_disp_mm = 0, legalise_max_disp_mm = 0;
   std::int64_t legal_start_whpwl = 0;  // weighted HPWL entering the annealer
   AnnealResult anneal;

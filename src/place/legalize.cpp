@@ -108,7 +108,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
   }
   std::deque<int> work(order.begin(), order.end());
   std::vector<int> conflicts;
-  long eviction_budget = 20 * static_cast<long>(order.size()) + 100;
+  long eviction_budget = 4 * static_cast<long>(order.size()) + 20;
 
   // Big parts (≥ 2% of the board area): before committing one, check that every big part still waiting has at
   // least one raster-free spot left (coarse lattice, any rotation); otherwise try the next candidate.
@@ -116,7 +116,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
   std::vector<std::uint8_t> big(n, 0);
   for (int i : order) big[z(i)] = extent(i) >= 0.02L * region_area ? 1 : 0;
   auto has_spot = [&](int j) {
-    const Coord step = std::max<Coord>(250'000, cell * 5);
+    const Coord step = std::max<Coord>(500'000, cell * 10);
     for (Coord y = p.region.y0; y <= p.region.y1; y += step)
       for (Coord x = p.region.x0; x <= p.region.x1; x += step)
         for (int r = 0; r < 4; ++r)
@@ -160,7 +160,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
           ++st.exact_checks;
           ok = L.legal(i, q, r);
         }
-        if (ok && big[z(i)] && lookahead_rejects < 300 && !room_for_big(i, q, r)) {
+        if (ok && big[z(i)] && lookahead_rejects < 100 && !room_for_big(i, q, r)) {
           ++lookahead_rejects;
           ++st.lookahead_rejects;
           if (!have_fallback) {
@@ -200,7 +200,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
         double cost = 0;
         bool ok = !conflicts.empty();
         for (int c2 : conflicts) {
-          if (!p.parts[z(c2)].movable || evictions[z(c2)] >= 3) ok = false;
+          if (!p.parts[z(c2)].movable || evictions[z(c2)] >= 2) ok = false;
           cost += static_cast<double>(p.parts[z(c2)].area);
         }
         if (!ok) continue;
@@ -241,18 +241,6 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     if (std::getenv("TM_LEGAL_DEBUG"))
       std::fprintf(stderr, "search %s: %s %.3fs\n", p.parts[z(i)].ref.c_str(), found ? "ok" : "FAIL",
                    std::chrono::duration<double>(std::chrono::steady_clock::now() - t_dbg).count());
-    if (!found && std::getenv("TM_LEGAL_DEBUG")) {  // TEMP
-      long ins = 0, rf = 0;
-      for (const Point d : offs)
-        for (int r = 0; r < 4; ++r) {
-          if (L.inside_ok(i, target[z(i)] + d, r)) ++ins;
-          if (R.free(i, target[z(i)] + d, r)) ++rf;
-        }
-      long gf = 0;
-      for (Coord y = p.region.y0; y <= p.region.y1; y += 250'000)
-        for (Coord x = p.region.x0; x <= p.region.x1; x += 250'000) gf += R.free(i, {x, y}, 0) ? 1 : 0;
-      std::fprintf(stderr, "fail %s: %zu offsets, inside %ld, raster free %ld, grid free %ld, placed so far %ld, target %.3f %.3f\n", p.parts[z(i)].ref.c_str(), offs.size(), ins, rf, gf, static_cast<long>(st.placed), nm_to_mm(target[z(i)].x), nm_to_mm(target[z(i)].y));
-    }
     if (!found && !only_illegal && eviction_budget > 0) found = evict_for(i, at, at_rot);
     if (!found) {
       // Back to where it was (refine: its reserved spot; full: the input position, reported as a failure).

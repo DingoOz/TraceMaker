@@ -99,6 +99,22 @@ int main(int argc, char** argv) {
       pl = place::Placement::initial(p);
       r = place::place(p, pl, o);
     }
+    // Still failing: keep the parts that found no place at their input position (as fixed parts) and place
+    // the rest around them, up to three rounds.
+    for (int round = 0; round < 3 && o.mode == "full" && !no_fallback && r.legalise_failed > 0; ++round) {
+      int kept = 0;
+      for (const auto& ref : r.legalise_failures)
+        for (auto& pt : p.parts)
+          if (pt.ref == ref && pt.movable) {
+            pt.movable = false;
+            pt.fixed_reason = "no legal position found in full mode: kept at its input position";
+            ++kept;
+          }
+      if (kept == 0) break;
+      fallbacks.push_back("kept " + std::to_string(kept) + " part(s) that found no legal position at their input positions and placed the rest again");
+      pl = place::Placement::initial(p);
+      r = place::place(p, pl, o);
+    }
     if (o.mode == "full" && !no_fallback && (!r.legal || r.legalise_failed > 0)) {
       fallbacks.push_back("full mode could not place every part legally (" + std::to_string(r.legalise_failed) +
                           " unplaced): output is the refine-mode result instead");

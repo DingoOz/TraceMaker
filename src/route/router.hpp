@@ -24,6 +24,7 @@ struct RouterOptions {
   int field_min_cells = 60'000;     // window size (lattice points x layers) from which the field is used
   int gpu_device = 0;               // CUDA device for fields (-1 = none)    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
+  int soft_attempts = 3;        // window sizes tried by negotiated searches
   double via_cost_mm = 1.0;     // equivalent track length of one via
   bool allow_vias = true;
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)

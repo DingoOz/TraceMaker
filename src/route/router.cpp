@@ -933,7 +933,9 @@ struct Router::Impl {
     static const Coord margins[] = {2'000'000, 6'000'000, 20'000'000, 1'000'000'000};
     std::vector<PathNode> path;
     // The strict first pass tries two window sizes only; anything harder is left to negotiation.
-    const int attempts = strict_pass ? std::min(2, opt.max_attempts) : opt.max_attempts;
+    // Negotiated searches stop before the whole-board window (they can cross copper, so a reachable target is
+    // normally found within 20 mm of the bounding box); strict passes try two sizes.
+    const int attempts = strict_pass ? std::min(2, opt.max_attempts) : soft ? std::min(opt.soft_attempts, opt.max_attempts) : opt.max_attempts;
     for (int attempt = 0; attempt < attempts; ++attempt) {
       if (out_of_budget()) {
         why = "out of budget";

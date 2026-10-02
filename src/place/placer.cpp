@@ -110,6 +110,7 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
     }
   }
   r.legalise_failed = ls.failed;
+  r.legalise_failures = ls.failures;
   r.legalise_placed = ls.placed;
   r.legalise_mean_disp_mm = ls.mean_disp_mm;
   r.legalise_max_disp_mm = ls.max_disp_mm;
