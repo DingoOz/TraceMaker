@@ -43,6 +43,17 @@ class Obstacles {
   // Rips up a routed item (by copper item index).
   void remove_item(int item);
 
+  // Fixed-obstacle code of a disk (fixed copper, fixed holes, edges, keepouts, outline), independent of the
+  // probe's own net: kFree, kBlocked, or the single net id whose own copper is the only conflict (so the disk
+  // is legal for that net only). Clearances use `probe_net`'s class; diff-pair relief is not applied (safe).
+  static constexpr std::int32_t kFree = -1, kBlocked = -2;
+  std::int32_t fixed_code(geom::Point p, int layer, Coord hw, Coord margin, model::NetId probe_net) const;
+  std::int32_t fixed_via_code(geom::Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const;
+  // Routed (rippable) copper only: 0 free, 1 conflicts (owners appended), 2 blocked when !soft.
+  int routed_state(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
+                   bool via_hole = false, Coord hole_r = 0) const;
+  bool has_custom_rules() const { return !r_.custom.empty(); }
+
   const drc::CopperModel& copper() const { return cm_; }
   const drc::RuleEngine& rules() const { return *re_; }
   index::UniformGrid& grid() { return *grid_; }
@@ -62,7 +73,8 @@ class Obstacles {
   const model::DesignRules& r_;
   drc::CopperModel cm_;
   std::unique_ptr<drc::RuleEngine> re_;
-  std::unique_ptr<index::UniformGrid> grid_;   // copper items
+  std::unique_ptr<index::UniformGrid> grid_;   // copper items (fixed and routed)
+  std::unique_ptr<index::UniformGrid> rgrid_;  // routed copper items only
   std::unique_ptr<index::UniformGrid> hgrid_;  // holes
   std::unique_ptr<index::UniformGrid> egrid_;  // board-edge segments
   std::vector<geom::Shape> edge_segs_;

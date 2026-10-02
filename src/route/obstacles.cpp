@@ -19,6 +19,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   const Coord cell = 1'000'000;
   grid_ = std::make_unique<index::UniformGrid>(bounds_, cell, cm_.items.size() + 1024);
   for (std::size_t i = 0; i < cm_.items.size(); ++i) grid_->insert(static_cast<int>(i), cm_.items[i].box);
+  rgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, 1024);
   hgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, cm_.holes.size() + 1024);
   for (std::size_t i = 0; i < cm_.holes.size(); ++i) hgrid_->insert(static_cast<int>(i), cm_.holes[i].shape.box);
   // Board edge as individual segments in a grid, so edge tests cost O(nearby segments).
@@ -235,6 +236,7 @@ int Obstacles::add_track(int index, int owner) {
   it.owner = owner;
   const int id = static_cast<int>(cm_.items.size());
   grid_->insert(id, it.box);
+  rgrid_->insert(id, it.box);
   cm_.items.push_back(std::move(it));
   return id;
 }
@@ -259,6 +261,7 @@ int Obstacles::add_via(int index, int owner) {
   it.owner = owner;
   const int id = static_cast<int>(cm_.items.size());
   grid_->insert(id, it.box);
+  rgrid_->insert(id, it.box);
   cm_.items.push_back(std::move(it));
   hgrid_->insert(static_cast<int>(cm_.holes.size()), h.shape.box);
   cm_.holes.push_back(std::move(h));
@@ -270,9 +273,132 @@ void Obstacles::remove_item(int item) {
   if (it.removed) return;
   it.removed = true;
   grid_->erase(item, it.box);
+  rgrid_->erase(item, it.box);
   if (it.kind == drc::ItemKind::Via)
     for (auto& h : cm_.holes)
       if (h.item == item) h.removed = true;
+}
+
+std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, model::NetId probe_net) const {
+  if (!inside_board(p, 0)) return kBlocked;
+  const Shape s = Shape::point(p, hw + margin);
+  const auto probe = make_probe(drc::ItemKind::Track, s, probe_net, layer, 2 * hw, p);
+  std::int32_t code = kFree;
+  auto add_net = [&](model::NetId n) {
+    if (n == 0) code = kBlocked;
+    else if (code == kFree) code = n;
+    else if (code != n) code = kBlocked;
+  };
+  grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
+    if (code == kBlocked) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer))) return;
+    if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
+    Coord req = re_->clearance(probe, it, layer);
+    if (it.kind == drc::ItemKind::Pad && (layer == 0 || layer == b_.copper_count() - 1)) {
+      const auto& pad = b_.pads[static_cast<std::size_t>(it.index)];
+      const char* mask = layer == 0 ? "F.Mask" : "B.Mask";
+      bool has_mask = false;
+      for (const auto& ln : pad.layers)
+        if (ln == mask || ln == "*.Mask" || ln == "F&B.Mask") has_mask = true;
+      if (has_mask) {
+        Coord mm = pad.mask_margin;
+        if (mm == INT64_MIN) mm = b_.footprints[static_cast<std::size_t>(pad.footprint)].mask_margin;
+        if (mm == INT64_MIN) mm = b_.pad_to_mask_clearance;
+        req = std::max(req, mm + 1'000);
+      }
+    }
+    for (const auto& u : it.shapes)
+      if (geom::closer_than(s, u, req)) {
+        add_net(it.net);
+        return;
+      }
+  });
+  if (code == kBlocked) return code;
+  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  hgrid_->query(s.box.inflated(hc + 1), [&](int id) {
+    if (code == kBlocked) return;
+    const auto& h = cm_.holes[static_cast<std::size_t>(id)];
+    if (h.removed || (h.item >= 0 && cm_.items[static_cast<std::size_t>(h.item)].owner >= 0)) return;
+    if (geom::closer_than(s, h.shape, hc)) {
+      if (h.plated && h.net != 0) add_net(h.net);
+      else code = kBlocked;
+    }
+  });
+  if (code == kBlocked) return code;
+  const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
+  bool edge_ok = true;
+  egrid_->query(s.box.inflated(ec + 1), [&](int id) {
+    if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
+  });
+  if (!edge_ok) return kBlocked;
+  for (const auto& [area, z] : keepouts_)
+    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return kBlocked;
+  return code;
+}
+
+std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const {
+  std::int32_t code = kFree;
+  for (int l = 0; l < b_.copper_count(); ++l) {
+    const std::int32_t c = fixed_code(p, l, d / 2, margin, probe_net);
+    if (c == kBlocked) return kBlocked;
+    if (c != kFree) {
+      if (code == kFree) code = c;
+      else if (code != c) return kBlocked;
+    }
+  }
+  // Hole to hole against fixed holes (any net).
+  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
+  const Shape hole = Shape::point(p, drill / 2 + margin);
+  bool ok = true;
+  hgrid_->query(hole.box.inflated(h2h + 1), [&](int id) {
+    const auto& h = cm_.holes[static_cast<std::size_t>(id)];
+    if (!ok || h.removed || (h.item >= 0 && cm_.items[static_cast<std::size_t>(h.item)].owner >= 0)) return;
+    if (geom::closer_than(hole, h.shape, h2h) || hole.pts[0] == h.shape.pts[0]) ok = false;
+  });
+  return ok ? code : kBlocked;
+}
+
+int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
+                            bool via_hole, Coord hole_r) const {
+  const auto probe = make_probe(kind, s, net, layer, 2 * s.r, s.pts[0]);
+  int state = 0;
+  rgrid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
+    if (state == 2) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || !(it.layers & model::layer_bit(layer))) return;
+    if (it.net == net && net != 0) return;
+    const Coord req = re_->clearance(probe, it, layer);
+    for (const auto& u : it.shapes)
+      if (geom::closer_than(s, u, req)) {
+        if (soft) {
+          state = 1;
+          if (owners) owners->push_back(it.owner);
+        } else {
+          state = 2;
+        }
+        return;
+      }
+  });
+  if (state == 2 || !via_hole) return state;
+  // A new via hole against routed vias' holes (hole to hole).
+  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
+  const Shape hole = Shape::point(s.pts[0], hole_r);
+  rgrid_->query(hole.box.inflated(h2h + 1), [&](int id) {
+    if (state == 2) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || it.kind != drc::ItemKind::Via) return;
+    const Shape other = Shape::point(it.pos, b_.vias[static_cast<std::size_t>(it.index)].drill / 2);
+    if (geom::closer_than(hole, other, h2h)) {
+      if (soft) {
+        state = 1;
+        if (owners) owners->push_back(it.owner);
+      } else {
+        state = 2;
+      }
+    }
+  });
+  return state;
 }
 
 }  // namespace tmk::route

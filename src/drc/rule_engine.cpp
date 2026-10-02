@@ -291,6 +291,26 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r, const
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
   }
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
+  // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
+  net_class_.resize(b_.nets.size());
+  dp_partner_.assign(b_.nets.size(), 0);
+  std::map<std::string, model::NetId> by_name;
+  for (const auto& n : b_.nets) by_name[n.name] = n.id;
+  for (const auto& n : b_.nets) {
+    net_class_[static_cast<std::size_t>(n.id)] = &r_.class_for(n.name);
+    if (n.name.size() < 2) continue;
+    std::string other = n.name;
+    char& last = other.back();
+    if (last == 'P') last = 'N';
+    else if (last == 'N') last = 'P';
+    else if (last == '+') last = '-';
+    else if (last == '-') last = '+';
+    else continue;
+    if (auto it = by_name.find(other); it != by_name.end()) dp_partner_[static_cast<std::size_t>(n.id)] = it->second;
+  }
+  for (const auto& rule : r_.custom)
+    for (const auto& k : rule.constraints)
+      if (k.type == "clearance") any_custom_clearance_ = true;
   for (const auto& p : b_.pads) max_clearance_ = std::max(max_clearance_, p.clearance);
   max_clearance_ = std::max({max_clearance_, r_.minimums.clearance, r_.minimums.copper_edge_clearance, r_.minimums.hole_clearance,
                              r_.minimums.hole_to_hole});
@@ -299,7 +319,9 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r, const
 RuleEngine::~RuleEngine() = default;
 
 const model::NetClass& RuleEngine::netclass(const CopperItem& it) const {
-  return r_.class_for(b_.nets[static_cast<std::size_t>(it.net)].name);
+  const auto i = static_cast<std::size_t>(it.net);
+  if (i < net_class_.size()) return *net_class_[i];
+  return r_.class_for(b_.nets[i].name);
 }
 
 bool RuleEngine::layer_matches(const std::string& sel, int layer) const {
@@ -334,6 +356,7 @@ std::optional<Coord> RuleEngine::custom_min(const char* type, const CopperItem* 
 
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   if (a == 0 || b == 0 || a == b) return false;
+  if (static_cast<std::size_t>(a) < dp_partner_.size()) return dp_partner_[static_cast<std::size_t>(a)] == b;
   const std::string& x = b_.nets[static_cast<std::size_t>(a)].name;
   const std::string& y = b_.nets[static_cast<std::size_t>(b)].name;
   if (x.size() != y.size() || x.empty()) return false;
@@ -358,7 +381,8 @@ Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer)
   // Observed: the smaller of clearance and diff-pair gap applies (0.154 gap passes under a 0.2 class; 0.2 mm
   // pads pass under a 0.25 gap).
   if (la < 0 && lb < 0 && coupled_diff_pair(a.net, b.net)) req = std::min(req, netclass(a).diff_pair_gap);
-  if (auto c = custom_min("clearance", &a, &b, layer)) req = *c;
+  if (any_custom_clearance_)
+    if (auto c = custom_min("clearance", &a, &b, layer)) req = *c;
   // The board minimum is always a floor (multichannel_mixer: 0.3 mm minimum over a 0.2 mm class).
   return std::max(req, r_.minimums.clearance);
 }

@@ -186,6 +186,8 @@ int main(int argc, char** argv) {
   route->add_option("--pitch-um", r_pitch_um, "Lattice pitch in micrometres (default: automatic)");
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
   route->add_option("--seed", ropt.seed);
+  route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
+  route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
   route->add_option("--json", r_json, "Write a result summary as JSON");
 
   CLI11_PARSE(app, argc, argv);

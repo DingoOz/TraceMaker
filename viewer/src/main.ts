@@ -26,6 +26,10 @@ try {
   hud.fatal(`${(e as Error).message}. TraceMaker needs WebGL2 (Chrome, Edge, Firefox or Safari with hardware acceleration enabled).`);
 }
 
+// A lost GPU context (driver reset, too many tabs) is recovered by reloading: all state comes from the server.
+canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
+canvas.addEventListener('webglcontextrestored', () => location.reload());
+
 const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, footprints: true, effects: true, follow: false };
 const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, footprints: true, effects: true, hoverNet: 0 };
 

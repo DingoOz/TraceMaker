@@ -64,6 +64,13 @@ struct Router::Impl {
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
   std::vector<int> init_root;        // copper item -> initial cluster root (fixed copper)
   bool soft = false;                 // current search may cross routed copper
+  // Persistent fixed-obstacle caches per net class (codes from Obstacles::fixed_code), lattice-indexed.
+  struct ClassCache {
+    std::vector<std::int32_t> margin, tight, via;  // INT32_MIN = not computed yet
+    model::NetId rep = 0;
+  };
+  std::map<const model::NetClass*, ClassCache> caches;
+  bool use_cache = true;
   int current = -1;                  // connection being routed
   std::vector<std::int64_t> soft_cells;  // cells of the last soft path that crossed routed copper
 
@@ -93,6 +100,7 @@ struct Router::Impl {
 
   void setup() {
     obs = std::make_unique<Obstacles>(b, rules);
+    use_cache = !obs->has_custom_rules();
     nl = b.copper_count();
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {
@@ -178,6 +186,43 @@ struct Router::Impl {
     const auto it = history.find(cell_key(layer, gx, gy));
     return it == history.end() ? 0 : static_cast<std::int64_t>(it->second) * pitch * 2;
   }
+  ClassCache& cache_for(NetId net) {
+    auto& cc = caches[&netclass(net)];
+    if (cc.margin.empty()) {
+      const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
+      cc.margin.assign(n, INT32_MIN);
+      cc.tight.assign(n, INT32_MIN);
+      cc.via.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), INT32_MIN);
+      cc.rep = net;
+    }
+    return cc;
+  }
+  static bool code_ok(std::int32_t code, NetId net) { return code == Obstacles::kFree || code == net; }
+
+  // State of a lattice point for the current net: 0 free, 1 crosses routed copper (soft), 2 blocked,
+  // 3 legal only without the lattice margin ("tight").
+  int point_state(int layer, int gx, int gy, NetId net, Coord hw) {
+    const Point p = at(gx, gy);
+    const Coord margin = pitch * 71 / 100 + 1;
+    if (!use_cache) {
+      int st = obs->disk_state(p, layer, hw, net, margin, soft);
+      if (st == 2 && obs->disk_state(p, layer, hw, net, 0, soft) != 2) st = 3;
+      return st;
+    }
+    auto& cc = cache_for(net);
+    const std::size_t gi = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
+    if (cc.margin[gi] == INT32_MIN) cc.margin[gi] = obs->fixed_code(p, layer, hw, margin, cc.rep);
+    int st = 0;
+    if (!code_ok(cc.margin[gi], net)) {
+      if (cc.tight[gi] == INT32_MIN) cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
+      if (!code_ok(cc.tight[gi], net)) return 2;
+      st = 3;
+    }
+    const int r = obs->routed_state(geom::Shape::point(p, hw + (st == 3 ? 0 : margin)), layer, net, drc::ItemKind::Track, soft, nullptr);
+    if (r == 2) return 2;
+    return r == 1 ? 1 : st;
+  }
+
   // Extra cost of entering a cell: -1 blocked, 0 free, > 0 crossing routed copper (soft mode only).
   std::int64_t cell_cost(const Window& w, int layer, int cx, int cy, NetId net, Coord hw) {
     const std::size_t idx = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(w.h) + static_cast<std::size_t>(cy)) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx);
@@ -185,14 +230,8 @@ struct Router::Impl {
     if (cstamp[idx] != gen) {
       cstamp[idx] = gen;
       const std::int64_t key = cell_key(layer, gx, gy);
-      int st = 2;
-      if (!learned_block.count({net, key})) {
-        st = obs->disk_state(at(gx, gy), layer, hw, net, pitch * 71 / 100 + 1, soft);
-        // Legal only without the lattice safety margin: allowed at a cost ("tight"); the exact segment check
-        // at commit decides. Needed for fine-pitch escapes (0.5 mm connectors with 0.25/0.2 mm rules).
-        if (st == 2 && obs->disk_state(at(gx, gy), layer, hw, net, 0, soft) != 2) st = 3;
-      }
-      cell_state[idx] = static_cast<std::uint8_t>(st);
+      ++obs->checks;
+      cell_state[idx] = static_cast<std::uint8_t>(learned_block.count({net, key}) ? 2 : point_state(layer, gx, gy, net, hw));
     }
     const int st = cell_state[idx];
     if (st == 2) return -1;
@@ -205,7 +244,24 @@ struct Router::Impl {
     const std::size_t idx = static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx);
     if (vstamp[idx] != gen) {
       vstamp[idx] = gen;
-      via_state[idx] = static_cast<std::uint8_t>(obs->via_state(at(w.x0 + cx, w.y0 + cy), d, drill, net, pitch * 71 / 100 + 1, soft));
+      const int gx = w.x0 + cx, gy = w.y0 + cy;
+      const Point p = at(gx, gy);
+      const Coord margin = pitch * 71 / 100 + 1;
+      int st;
+      if (!use_cache) {
+        st = obs->via_state(p, d, drill, net, margin, soft);
+      } else {
+        auto& cc = cache_for(net);
+        const std::size_t gi = static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
+        if (cc.via[gi] == INT32_MIN) cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
+        st = code_ok(cc.via[gi], net) ? 0 : 2;
+        for (int l = 0; l < nl && st != 2; ++l) {
+          const int r = obs->routed_state(geom::Shape::point(p, d / 2 + margin), l, net, drc::ItemKind::Via, soft, nullptr, l == 0, drill / 2 + margin);
+          if (r == 2) st = 2;
+          else if (r == 1) st = 1;
+        }
+      }
+      via_state[idx] = static_cast<std::uint8_t>(st);
     }
     if (via_state[idx] == 2) return -1;
     return via_state[idx] == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0;
@@ -281,7 +337,7 @@ struct Router::Impl {
       const Point p = at(gx, gy);
       const std::int64_t dx = std::llabs(p.x - tp.x), dy = std::llabs(p.y - tp.y);
       const std::int64_t mn = std::min(dx, dy), mx = std::max(dx, dy);
-      return (mx - mn) + mn * diag / step;  // octile distance in nm (admissible)
+      return static_cast<std::int64_t>(static_cast<double>((mx - mn) + mn * diag / step) * opt.heuristic_weight);  // octile distance
     };
     auto sidx = [&](int l, std::int64_t ci, int dir) {
       return ((static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)) * 9) + static_cast<std::size_t>(dir);

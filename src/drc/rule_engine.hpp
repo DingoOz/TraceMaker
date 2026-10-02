@@ -54,6 +54,9 @@ class RuleEngine {
   std::vector<Compiled> rules_;
   std::vector<std::string> warnings_;
   Coord max_clearance_ = 0;
+  std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
+  std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
+  bool any_custom_clearance_ = false;
   friend class Condition;
 };
 

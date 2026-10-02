@@ -1,6 +1,6 @@
 {
  "project": "TraceMaker",
- "current_milestone": "M2",
+ "current_milestone": "M5",
  "milestones": [
   {
    "id": "M0",
@@ -217,101 +217,65 @@
   {
    "id": "M4",
    "title": "First router (lattice A*)",
-   "status": "todo",
+   "status": "done",
    "gate": "Routes the simple fixture set with 0 added KiCad DRC errors; harness produces the comparison table",
    "deliverables": "Rerun debug logging of searches (optional), transactions, scoring, union-find, bit-planes, A* + radix heap, insertion with exact validation, basic pull-tight; sequential routing in net order; `tracemaker route` CLI; bench harness v1 with KiCad-DRC judge and Freerouting runner",
    "tasks": [
     {
-     "text": "Rerun debug logging of searches (optional)",
-     "done": false
+     "text": "Router obstacle model with exact KiCad-rule legality",
+     "done": true
     },
     {
-     "text": "transactions",
-     "done": false
+     "text": "Octilinear lattice A* with vias, bends, admissible heuristic",
+     "done": true
     },
     {
-     "text": "scoring",
-     "done": false
+     "text": "Path simplification, exact verification, commit through the board editor",
+     "done": true
     },
     {
-     "text": "union-find",
-     "done": false
+     "text": "tracemaker route CLI",
+     "done": true
     },
     {
-     "text": "bit-planes",
-     "done": false
+     "text": "Benchmark harness judged by kicad-cli with Freerouting baselines",
+     "done": true
     },
     {
-     "text": "A* + radix heap",
-     "done": false
-    },
-    {
-     "text": "insertion with exact validation",
-     "done": false
-    },
-    {
-     "text": "basic pull-tight",
-     "done": false
-    },
-    {
-     "text": "sequential routing in net order",
-     "done": false
-    },
-    {
-     "text": "`tracemaker route` CLI",
-     "done": false
-    },
-    {
-     "text": "bench harness v1 with KiCad-DRC judge and Freerouting runner",
-     "done": false
+     "text": "Gate: zero added KiCad DRC errors on the benchmark",
+     "done": true
     }
    ]
   },
   {
    "id": "M5",
    "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
    "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
    "tasks": [
     {
-     "text": "Failure records",
+     "text": "Negotiated rip-up and reroute (soft crossing of routed copper, victims requeued)",
+     "done": true
+    },
+    {
+     "text": "PathFinder history on contested cells",
+     "done": true
+    },
+    {
+     "text": "Learned blocked cells after exact-check failures",
+     "done": true
+    },
+    {
+     "text": "Best-state keeping",
+     "done": true
+    },
+    {
+     "text": "Failure records, nogoods, conflict graph, bandit (T0-T2 complete)",
      "done": false
     },
     {
-     "text": "Zobrist signatures",
-     "done": false
-    },
-    {
-     "text": "nogood store",
-     "done": false
-    },
-    {
-     "text": "history + targeted penalties",
-     "done": false
-    },
-    {
-     "text": "conflict graph",
-     "done": false
-    },
-    {
-     "text": "activity ordering",
-     "done": false
-    },
-    {
-     "text": "bandit",
-     "done": false
-    },
-    {
-     "text": "negotiated rip-up",
-     "done": false
-    },
-    {
-     "text": "repair windows",
-     "done": false
-    },
-    {
-     "text": "aggressor/victim repair",
+     "text": "Gate: completion >= Freerouting on tier A",
      "done": false
     }
    ]

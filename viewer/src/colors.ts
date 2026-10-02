@@ -31,7 +31,7 @@ export const theme = {
   padThrough: hex('#d4ad3f'),
   via: hex('#c4c9d4'),
   hole: hex('#05070d'),
-  ratsnest: hex('#c9d6f0', 0.5),
+  ratsnest: hex('#c9d6f0', 0.38),
   frontier: hex('#4fe3ff'),
   pathTry: hex('#ffd36b'),
   failure: hex('#ff4d5e'),

@@ -263,7 +263,9 @@ class Demo {
     for (auto id : pl.vias) srv_.publish(server::via_remove(id));
     pending_.push_back(pl.conn);
     ++rips_;
-    srv_.publish(server::log("info", "rip-up: net " + board_.nets[static_cast<std::size_t>(pl.conn.net)].name + " rerouted later"));
+    const auto net = static_cast<std::size_t>(pl.conn.net);
+    const std::string name = net < board_.nets.size() ? board_.nets[net].name : std::to_string(pl.conn.net);
+    srv_.publish(server::log("info", "rip-up: net " + name + " rerouted later"));
   }
 
   void publish_stats() {

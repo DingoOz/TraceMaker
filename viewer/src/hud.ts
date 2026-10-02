@@ -48,7 +48,7 @@ export class Hud {
   private extra = h('div', 'extra');
   private layerList = h('div', 'layer-list');
   private chips = h('div', 'chips');
-  private log = h('div', 'log');
+  private log = h('div', 'log-list');
   private logCount = 0;
   private coords = h('span', 'mono', '');
   private zoom = h('span', 'mono', '');
