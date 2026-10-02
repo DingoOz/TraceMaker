@@ -162,6 +162,10 @@
     {
      "text": "Performance on very large boards (vme-wren, jetson)",
      "done": false
+    },
+    {
+     "text": "Copper text obstacle margin (estimated glyph boxes)",
+     "done": true
     }
    ]
   },
@@ -269,6 +273,10 @@
     {
      "text": "Reverse probe for boxed-in targets; pad legs dropped when the lattice end is on the pad; learned blocks beside fine-pitch pads",
      "done": true
+    },
+    {
+     "text": "Diversified extra restarts while budget remains",
+     "done": true
     }
    ]
   },
@@ -298,6 +306,10 @@
     {
      "text": "GPU DRC broad-phase",
      "done": false
+    },
+    {
+     "text": "Adaptive GPU-field cut-off under GPU contention (wall-clock mode)",
+     "done": true
     }
    ]
   },
