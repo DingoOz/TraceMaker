@@ -128,7 +128,7 @@ struct ViewOptions {
 };
 
 int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view, int threads,
-              const std::string& kb_path) {
+              const std::string& kb_path, const std::string& items_out) {
   auto lb = tmk::io::read_board_file(in);
   const auto rules = tmk::io::read_design_rules(in);
   std::unique_ptr<tmk::server::ViewerServer> server;
@@ -185,6 +185,17 @@ int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterO
   std::printf("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s\n", res.routed, res.connections,
               res.tracks.size(), res.vias.size(), tmk::nm_to_mm(res.pitch), res.expansions, res.seconds);
   for (const auto& f : res.failures) std::printf("  unrouted: %s\n", f.c_str());
+  if (!items_out.empty()) {
+    // New copper for the KiCad plugin: layer and net by name, coordinates in nm.
+    nlohmann::json it{{"tracks", nlohmann::json::array()}, {"vias", nlohmann::json::array()}};
+    for (const auto& t : res.tracks)
+      it["tracks"].push_back({{"start", {t.a.x, t.a.y}}, {"end", {t.b.x, t.b.y}}, {"width", t.width}, {"layer", lb.board.copper_name(t.layer)},
+                              {"net", lb.board.nets[static_cast<std::size_t>(t.net)].name}});
+    for (const auto& v : res.vias)
+      it["vias"].push_back({{"position", {v.pos.x, v.pos.y}}, {"diameter", v.size}, {"drill", v.drill}, {"top", lb.board.copper_name(v.layer_top)},
+                            {"bottom", lb.board.copper_name(v.layer_bottom)}, {"net", lb.board.nets[static_cast<std::size_t>(v.net)].name}});
+    std::ofstream(items_out) << it.dump();
+  }
   if (!json_out.empty()) {
     nlohmann::json j{{"routed", res.routed}, {"connections", res.connections}, {"tracks", res.tracks.size()}, {"vias", res.vias.size()},
                      {"seconds", res.seconds}, {"expansions", res.expansions}, {"pitch_mm", tmk::nm_to_mm(res.pitch)}, {"failures", res.failures}};
@@ -307,6 +318,8 @@ int main(int argc, char** argv) {
   route->add_option("--view-port", vopt.port, "Viewer port (default 8766)");
   route->add_flag("--hold", vopt.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
+  std::string r_items;
+  route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
 
   auto* dbg = app.add_subcommand("debug-pad", "Print the router's legality map around a pad");
   dbg->group("");
@@ -340,7 +353,7 @@ int main(int argc, char** argv) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
       if (r_nogpu || tmk::gpu::list_devices().empty()) ropt.gpu_device = -1;
       else ropt.gpu_device = tmk::gpu::list_devices().front().cuda_index;
-      return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads, r_nokb ? std::string() : r_kb);
+      return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads, r_nokb ? std::string() : r_kb, r_items);
     }
     if (*rt) {
       int bad = 0, ok = 0;

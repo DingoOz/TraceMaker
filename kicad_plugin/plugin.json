@@ -1,0 +1,20 @@
+{
+  "$schema": "https://go.kicad.org/api/schemas/v1",
+  "identifier": "org.tracemaker.autoroute",
+  "name": "TraceMaker",
+  "description": "Autoroute the open board with TraceMaker (routes all unrouted connections; one undo step)",
+  "runtime": {
+    "type": "python",
+    "min_version": "3.9"
+  },
+  "actions": [
+    {
+      "identifier": "org.tracemaker.autoroute.route",
+      "name": "Autoroute with TraceMaker",
+      "description": "Route every unrouted connection with KiCad's own design rules",
+      "show-button": true,
+      "scopes": ["pcb"],
+      "entrypoint": "tracemaker_route.py"
+    }
+  ]
+}
