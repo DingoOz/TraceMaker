@@ -111,7 +111,11 @@ All are in `dev/assumptions.md` (A1–A20) and `docs/12-decisions.md` (D13–D16
 1. **Large boards are time-limited.** P8000 and PCIE-to-MXM finish only one or two passes in 120 s. A* costs about 430 ns
    per expansion. Global routing corridors, a coarse-to-fine lattice and parallel routing inside one variant are
    the next levers.
-2. **Edge-connector fingers** with mask openings on both sides block their own exits (fifogfx_c64cart).
+2. **Edge-connector fingers under mask openings** stay unrouted rather than create solder-mask bridges.
+   - fifogfx_c64cart has finger openings on both sides.
+   - PCIE-to-MXM has a board-level mask polygon over its fingers. KiCad flags any track leaving them, and the
+     human-routed original has 16 such solder_mask_bridge errors itself.
+   - These boards count as "clean" for Freerouting, whose published figure ignores mask bridges.
 3. **Copper text** uses estimated glyph boxes, which is conservative.
 4. **Board reader naming:** unplated-hole pad numbers and `~{...}` escaped references differ from pcbnew's naming
    in the parity comparison. Routing is unaffected.
