@@ -147,6 +147,11 @@ struct Router::Impl {
       Coord wc = 1'000'000'000;
       for (const auto& c : rules.classes) wc = std::min(wc, std::max(c.track_width, rules.minimums.track_width) + std::max(c.clearance, rules.minimums.clearance));
       pitch = std::clamp<Coord>(wc / 6 / 5'000 * 5'000, 25'000, 100'000);
+      // Large boards are time-limited at the fine pitch: a coarser lattice finishes more passes (P8000: 335
+      // instead of 325 of 361 connections in 120 s). Escape stubs still reach fine-pitch pads.
+      const auto bb0 = obs->bounds();
+      const double pts = static_cast<double>(bb0.x1 - bb0.x0) / static_cast<double>(pitch) * static_cast<double>(bb0.y1 - bb0.y0) / static_cast<double>(pitch);
+      if (opt.pitch_scale != 1.0 && pts >= 3e6) pitch = std::clamp<Coord>(static_cast<Coord>(static_cast<double>(pitch) * opt.pitch_scale) / 5'000 * 5'000, 25'000, 200'000);
     }
     res.pitch = pitch;
     const auto bb = obs->bounds();
@@ -1280,10 +1285,10 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   };
   add("exact bends, shortest first", [](RouterOptions&) {});
   add("fast bends, shortest first", [&](RouterOptions& o) { o.bend_states = false; });
-  add("fast bends, longest first", [&](RouterOptions& o) { o.bend_states = false; o.order = 1; });
+  add("fast bends, longest first (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.order = 1; o.pitch_scale = 2.0; });
   add("fast bends, jittered order", [&](RouterOptions& o) { o.bend_states = false; o.order = 2; o.seed = base.seed + 1; });
   add("exact bends, jittered order", [&](RouterOptions& o) { o.order = 2; o.seed = base.seed + 2; });
-  add("fast bends, cheap vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; });
+  add("fast bends, cheap vias (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; o.pitch_scale = 2.0; });
   add("fast bends, cheap crossings", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; });
   add("fast bends, dear vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 2.5; });
   std::vector<int> chosen;
