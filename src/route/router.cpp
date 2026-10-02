@@ -866,7 +866,7 @@ struct Router::Impl {
     std::sort(victims.begin(), victims.end());
     victims.erase(std::unique(victims.begin(), victims.end()), victims.end());
     for (int v : victims)
-      if (cs[static_cast<std::size_t>(v)].rips >= opt.max_rips_per_connection) {
+      if (cs[static_cast<std::size_t>(v)].rips >= rip_cap) {
         commit_why = "would rip a connection already ripped too often";
         return false;
       }
@@ -976,6 +976,7 @@ struct Router::Impl {
   // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
   // signature hashes the routed copper inside the window, so any relevant change re-enables the attempt.
   std::unordered_map<std::uint64_t, std::uint8_t> nogoods;
+  int rip_cap = 0;  // per-connection rip limit (opt.max_rips_per_connection, raised by diversified restarts)
   long nogood_skips = 0;
   std::uint64_t window_signature(const geom::Box& box) {
     std::uint64_t h = 0x9E3779B97F4A7C15ull;
@@ -1110,6 +1111,7 @@ struct Router::Impl {
 
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
+    rip_cap = opt.max_rips_per_connection;
     setup();
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"begin\",\"detail\":\"lattice A* with negotiated rip-up\"}");
     auto con = drc::compute_connectivity(b, obs->copper(), obs->grid());
@@ -1151,7 +1153,10 @@ struct Router::Impl {
     // Restarts that keep the lessons (design doc 06 §3.6): when negotiation stalls with budget left, rip
     // everything and start again, hardest (most failed) connections first, keeping history, nogoods and the
     // best legal state seen so far.
-    for (int restart = 0; restart <= opt.max_restarts; ++restart) {
+    // After the planned restarts, keep restarting while budget remains (up to 40 more), diversified: nogoods
+    // cleared, rip cap raised, history halved, ties in the hardest-first order shuffled (avr_ledprojector stopped
+    // at 43 of 120 s with every remaining attempt a nogood).
+    for (int restart = 0; restart <= opt.max_restarts + 40; ++restart) {
     if (restart > 0) {
       if (out_of_budget() || best_routed == res.connections) break;
       for (std::size_t i = 0; i < cs.size(); ++i) {
@@ -1167,7 +1172,23 @@ struct Router::Impl {
       res.routed = 0;
       std::vector<int> order(cs.size());
       for (std::size_t i = 0; i < cs.size(); ++i) order[i] = static_cast<int>(i);
-      std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
+      if (restart > opt.max_restarts) {
+        nogoods.clear();
+        rip_cap += 2;
+        for (auto it = history.begin(); it != history.end();) {
+          it->second = static_cast<std::uint16_t>(it->second / 2);
+          it = it->second == 0 ? history.erase(it) : std::next(it);
+        }
+        const RngStream rr(opt.seed, 0x5E57u, static_cast<std::uint64_t>(restart));
+        std::vector<double> tie(cs.size());
+        for (std::size_t i = 0; i < cs.size(); ++i) tie[i] = rr.uniform(i);
+        std::sort(order.begin(), order.end(), [&](int x, int y) {
+          const int fx = cs[static_cast<std::size_t>(x)].fails, fy = cs[static_cast<std::size_t>(y)].fails;
+          return fx != fy ? fx > fy : tie[static_cast<std::size_t>(x)] < tie[static_cast<std::size_t>(y)];
+        });
+      } else {
+        std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
+      }
       pending.assign(order.begin(), order.end());
       ++res.restarts;
       emit("{\"type\":\"stage\",\"name\":\"restart " + std::to_string(restart) + "\",\"state\":\"begin\",\"detail\":\"hardest connections first, history kept\"}");
