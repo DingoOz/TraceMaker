@@ -44,11 +44,15 @@ def main():
                                                 f"{r.get('unconnected')} unrouted")
         return f"{r['label'].replace('Freerouting', 'FR')} · {state}"
 
-    fig, axes = plt.subplots(1, n, figsize=(2.5 * n, 3.1))
+    if n == 4:  # 2 x 2 keeps each board large enough to read
+        fig, axes = plt.subplots(2, 2, figsize=(6.4, 6.5))
+        axes = axes.ravel()
+    else:
+        fig, axes = plt.subplots(1, n, figsize=(2.5 * n, 3.1))
     for ax, r in zip(axes, runs):
         mf.draw_board(ax, pathlib.Path(r["file"]))
-        ax.set_title(title(r), fontsize=7.5)
-    fig.subplots_adjust(wspace=0.04)
+        ax.set_title(title(r), fontsize=8.5)
+    fig.subplots_adjust(wspace=0.04, hspace=0.12)
     mf.save(fig, f"compare_{board}.pdf")
 
     window = densest_window(mf.board_json(pathlib.Path(runs[0]["file"])), zoom_mm)

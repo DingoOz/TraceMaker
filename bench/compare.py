@@ -25,7 +25,7 @@ TM = ROOT / "build/release/src/app/tracemaker"
 
 def run_fr(version: str, dsn: pathlib.Path, ses: pathlib.Path, timeout: str, log: pathlib.Path) -> dict:
     jar = FRB / "binaries" / f"freerouting-{version}.jar"
-    cmd = [str(JAVA), "-Xmx8g", "-jar", str(jar), "-de", str(dsn), "-do", str(ses), "--router.max_threads=1",
+    cmd = [str(JAVA), "-Xmx6g", "-jar", str(jar), "-de", str(dsn), "-do", str(ses), "--router.max_threads=1",
            f"--router.job_timeout={timeout}", "--router.autorouter.max_passes=500", "--router.optimizer.enabled=true",
            "--router.fanout.enabled=true"]
     if version.startswith("1."):

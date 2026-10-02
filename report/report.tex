@@ -443,16 +443,16 @@ but left 13 boards fully routed instead of 15: denser packing can block routing,
 \label{sec:h2h-board}
 
 To compare layout quality and not only pass or fail, the tier-C board \texttt{AmpOne} (a two-layer audio amplifier,
-321 connections) was routed by TraceMaker and by Freerouting 2.5.0-RC12 on the same machine, and measured together
+321 connections) was routed by TraceMaker, Freerouting 2.5.0-RC12 and Freerouting 1.9.0 on the same machine, and measured together
 with the human-routed original (Figures~\ref{fig:cmp} and~\ref{fig:cmpzoom}, Table~\ref{tab:cmp}). Freerouting ran
 with its published benchmark settings (one thread, up to 500 passes, fanout and optimizer on, 30-minute limit) from
 the fixture's Specctra file, and its session was imported back into the KiCad board, so KiCad's DRC and the same
-quality metrics judge all three.
+quality metrics judge every result.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{compare_AmpOne_dev-AmpOne.pdf}
-  \caption{\texttt{AmpOne} routed three ways. The human design uses very wide power tracks; neither router does,
+  \includegraphics[width=0.92\textwidth]{compare_AmpOne_dev-AmpOne.pdf}
+  \caption{\texttt{AmpOne} routed four ways. The human design uses very wide power tracks; none of the routers does,
   because the board's net classes do not ask for them.}
   \label{fig:cmp}
 \end{figure}
@@ -476,17 +476,18 @@ The human original is shown for reference: it does not pass the board's own rule
 
 \noindent What the comparison shows:
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Both routers connect everything; only TraceMaker passes KiCad's DRC.} Freerouting's result has three
-  hole-clearance and four board-edge-clearance errors in KiCad. Freerouting's own checker reports it clean: the
-  Specctra file it routes from does not carry all of KiCad's rules.
-  \item \textbf{TraceMaker uses less copper.} Its tracks are 6\% shorter than Freerouting's and 19\% shorter than the
-  human routing.
-  \item \textbf{Freerouting's layout is tidier.} It uses fewer than half the vias, a third fewer bends and no turns
-  sharper than 90\textdegree. TraceMaker has 33 such turns, which are acid traps in manufacturing, and narrows
-  65\,mm of track below the design width to get through tight spots. Freerouting runs an optimizer pass after
-  routing; TraceMaker has no clean-up stage yet (Section~\ref{sec:limits}).
-  \item \textbf{Speed is similar on this board} (46\,s against 37\,s). Freerouting 1.9.0 needs a display even in
-  command-line mode and could not run on this server yet; its published run on this board took 452\,s.
+  \item \textbf{All three routers connect everything; only TraceMaker passes KiCad's DRC.} Freerouting 2.5.0-RC12 leaves
+  three hole-clearance and four board-edge-clearance errors, and Freerouting 1.9.0 seven board-edge-clearance errors.
+  Both report their own result clean: the Specctra file they route from does not carry all of KiCad's rules.
+  \item \textbf{TraceMaker uses the least copper.} Its tracks are 5\% shorter than Freerouting 2.5's, 7\% shorter
+  than Freerouting 1.9's and 19\% shorter than the human routing.
+  \item \textbf{Freerouting's layouts are tidier.} Freerouting 1.9 uses a quarter of TraceMaker's vias and about half
+  its bends; Freerouting 2.5 sits in between. TraceMaker leaves 34 turns sharper than 90\textdegree, which trap etchant
+  in manufacturing, against none or one for Freerouting. In some runs it also narrows tracks below the design width
+  to pass tight spots (0 to 65\,mm on this board, depending on the run). Freerouting runs an optimizer after routing;
+  TraceMaker has no clean-up stage yet (Section~\ref{sec:limits}).
+  \item \textbf{Speed:} TraceMaker 41\,s with eight threads, Freerouting 2.5 39\,s and Freerouting 1.9 394\,s, each
+  with one thread.
 \end{itemize}
 
 % ------------------------------------------------------------------------------------------------------------
