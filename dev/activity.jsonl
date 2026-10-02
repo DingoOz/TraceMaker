@@ -14,3 +14,4 @@
 {"ts": "2026-10-02T11:18:32+00:00", "kind": "test", "text": "Edited boards (moves, 90\u00b0/45\u00b0 rotations, removals, new tracks/vias) read identically in KiCad 10 and TraceMaker on 3 demo boards"}
 {"ts": "2026-10-02T11:18:32+00:00", "kind": "milestone", "text": "M1 complete: 3,538 fixture boards parse and round-trip byte for byte; schematic netlist matches board pad nets"}
 {"ts": "2026-10-02T12:00:25+00:00", "kind": "milestone", "text": "M2 core done: DRC matches kicad-cli exactly on 11/16 demo boards; rule sources verified against KiCad behaviour; remaining gaps documented"}
+{"ts": "2026-10-02T12:14:16+00:00", "kind": "milestone", "text": "First routed board: PCBench 1-Wire-Wing 43/48 connections in 7.5 s with zero added KiCad DRC errors"}
