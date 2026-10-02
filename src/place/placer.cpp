@@ -88,7 +88,23 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   }
   // (D) legalisation.
   t = Clock::now();
-  const LegaliseStats ls = legalise(p, pl, !full);
+  // Full mode: if some parts found no place, retry with the failures first (they are usually the big parts
+  // whose room was taken by smaller ones), up to four times.
+  const Placement before_legal = pl;
+  LegaliseStats ls = legalise(p, pl, !full);
+  std::vector<int> first;
+  for (int attempt = 1; full && ls.failed > 0 && attempt < 5; ++attempt) {
+    for (int f : ls.failed_parts)
+      if (std::find(first.begin(), first.end(), f) == first.end()) first.push_back(f);
+    Placement retry = before_legal;
+    LegaliseStats lr = legalise(p, retry, false, 0, &first);
+    r.notes.push_back("legalisation attempt " + std::to_string(attempt + 1) + " (" + std::to_string(first.size()) +
+                      " earlier failures first): " + std::to_string(lr.failed) + " failed");
+    if (lr.failed < ls.failed) {
+      ls = lr;
+      pl = retry;
+    }
+  }
   r.legalise_failed = ls.failed;
   r.legalise_placed = ls.placed;
   r.legalise_mean_disp_mm = ls.mean_disp_mm;

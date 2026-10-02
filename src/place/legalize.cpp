@@ -42,7 +42,7 @@ std::vector<Point> ring_offsets(Coord h, Coord max_r) {
 
 }  // namespace
 
-LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord cell) {
+LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord cell, const std::vector<int>* first) {
   LegaliseStats st;
   const Coord w = p.region.x1 - p.region.x0, h = p.region.y1 - p.region.y0;
   if (cell <= 0) {
@@ -83,6 +83,17 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     return static_cast<long double>(b.x1 - b.x0) * static_cast<long double>(b.y1 - b.y0);
   };
   std::sort(order.begin(), order.end(), [&](int a, int b) { return extent(a) != extent(b) ? extent(a) > extent(b) : a < b; });
+  if (first && !first->empty()) {
+    // Parts that failed in an earlier attempt go first (in the given order).
+    std::vector<int> head;
+    for (int f : *first)
+      if (std::find(order.begin(), order.end(), f) != order.end() && std::find(head.begin(), head.end(), f) == head.end()) head.push_back(f);
+    std::vector<int> rest;
+    for (int i : order)
+      if (std::find(head.begin(), head.end(), i) == head.end()) rest.push_back(i);
+    order = head;
+    order.insert(order.end(), rest.begin(), rest.end());
+  }
   const Coord max_r = static_cast<Coord>(std::hypot(static_cast<double>(w), static_cast<double>(h))) + 2'000'000;
   const std::vector<Point> offs = ring_offsets(cell, max_r);
   // Refine mode only fixes conflicts locally: a part whose nearest legal spot is farther than this stays put.
@@ -211,6 +222,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     if (!placed[z(i)]) {
       ++st.failed;
       st.failures.push_back(p.parts[z(i)].ref);
+      st.failed_parts.push_back(i);
     }
   double sum_disp = 0;
   for (std::size_t i = 0; i < n; ++i) {

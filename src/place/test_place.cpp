@@ -202,7 +202,9 @@ TEST_CASE("raster fast path is conservative (raster free implies exactly legal)"
     if (z(part) >= p.parts.size()) continue;
     const Point q{static_cast<Coord>(rng.uniform(k++) * 30e6), static_cast<Coord>(rng.uniform(k++) * 30e6)};
     const int r = static_cast<int>(rng.u64(k++) & 3);
-    if (R.free(part, q, r)) {
+    const bool f = R.free(part, q, r);
+    REQUIRE(f == R.free_reference(part, q, r));  // summed-area tables agree with the cell scan
+    if (f) {
       ++free_count;
       REQUIRE(L.legal(part, q, r));
     }

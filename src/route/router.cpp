@@ -62,7 +62,10 @@ struct Router::Impl {
   std::vector<std::uint32_t> cstamp, vstamp;
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
   std::uint32_t gen = 0;
-  std::set<std::pair<int, std::int64_t>> learned_block;  // (net, layer-cell key) blocked after exact-check failures
+  // (net and width, layer-cell key) blocked by FIXED copper after exact-check failures (routed copper changes,
+  // so conflicts with it are not learned permanently).
+  std::set<std::pair<std::int64_t, std::int64_t>> learned_block;
+  std::int64_t block_owner(NetId net) const { return static_cast<std::int64_t>(net) * 10'000'000 + track_width(net) / 1000; }
 
   // ---- negotiation state ----
   struct ConnState {
@@ -182,6 +185,7 @@ struct Router::Impl {
     }
     std::vector<Connection> out;
     for (auto& [net, cl] : net_clusters) {
+      if (!opt.only_net.empty() && b.nets[static_cast<std::size_t>(net)].name != opt.only_net) continue;
       std::vector<Cluster> groups;
       for (auto& [r, c] : cl)
         if (!c.pads.empty()) groups.push_back(c);  // zone-only clusters (unused fills) are not targets on their own
@@ -377,7 +381,7 @@ struct Router::Impl {
       cstamp[idx] = gen;
       const std::int64_t key = cell_key(layer, gx, gy);
       ++obs->checks;
-      cell_state[idx] = static_cast<std::uint8_t>(learned_block.count({net, key}) ? 2 : point_state(layer, gx, gy, net, hw));
+      cell_state[idx] = static_cast<std::uint8_t>(learned_block.count({block_owner(net), key}) ? 2 : point_state(layer, gx, gy, net, hw));
     }
     const int st = cell_state[idx];
     if (st == 2) return -1;
@@ -588,7 +592,9 @@ struct Router::Impl {
       if (have_field) {
         const std::int32_t v = field[static_cast<std::size_t>(fl) * cells + static_cast<std::size_t>(gy - w.y0) * static_cast<std::size_t>(w.w) +
                                      static_cast<std::size_t>(gx - w.x0)];
-        return v >= gpu::kFieldInf ? kUnreachable : static_cast<std::int64_t>(static_cast<double>(v) * opt.heuristic_weight);
+        // Never prune on the field: where it claims "unreachable" fall back to the octile bound, so the search
+        // stays complete even if the field's view of blocked cells is stale or wrong.
+        if (v < gpu::kFieldInf) return static_cast<std::int64_t>(static_cast<double>(v) * opt.heuristic_weight);
       }
       const Point p = at(gx, gy);
       if (zone_target) return std::int64_t{0};  // plane anywhere nearby: no useful lower bound
@@ -688,6 +694,22 @@ struct Router::Impl {
       // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
       // cannot help (Contour's boxed-in terminal test).
       last_miss = expanded > opt.max_expansions ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
+      if (std::getenv("TM_DEBUG_ENCLOSED") && last_miss == Miss::Enclosed && soft) {
+        // Classify the rejected neighbours of every expanded cell (diagnostics).
+        long fixed = 0, learned = 0, other = 0, startcells = static_cast<long>(src.cells.size());
+        for (std::size_t lc = 0; lc < cells * static_cast<std::size_t>(nl); ++lc) {
+          if (cstamp[lc] != gen) continue;
+          if (cell_state[lc] != 2) continue;
+          const int l = static_cast<int>(lc / cells);
+          const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
+          const int gx = w.x0 + static_cast<int>(ci % w.w), gy = w.y0 + static_cast<int>(ci / w.w);
+          if (learned_block.count({block_owner(net), cell_key(l, gx, gy)})) ++learned;
+          else if (obs->disk_state(at(gx, gy), l, hw, net, 0, true) == 2) ++fixed;
+          else ++other;
+        }
+        std::fprintf(stderr, "ENCLOSED %s conn %d: expanded %ld, start cells %ld, blocked neighbours: fixed %ld learned %ld other %ld\n",
+                     b.nets[static_cast<std::size_t>(net)].name.c_str(), current, expanded, startcells, fixed, learned, other);
+      }
       return false;
     }
     path.clear();
@@ -818,7 +840,8 @@ struct Router::Impl {
       const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
       const geom::Box qb = geom::Shape::point(q, 0).box;
       if (qb.intersects(ia) || qb.intersects(ib)) continue;  // never block the pads themselves
-      if (obs->disk_state(q, s.layer, width / 2, c.net, 0, soft) == 2) learned_block.insert({c.net, cell_key(s.layer, to_ix(q.x), to_iy(q.y))});
+      if (obs->disk_state(q, s.layer, width / 2, c.net, 0, /*ignore_routed=*/true) == 2)
+        learned_block.insert({block_owner(c.net), cell_key(s.layer, to_ix(q.x), to_iy(q.y))});
     }
   }
 

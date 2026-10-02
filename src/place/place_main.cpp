@@ -74,6 +74,9 @@ int main(int argc, char** argv) {
         if (std::getenv("TM_DEBUG_FIXED"))
           for (std::size_t j = 0; j < p.parts.size(); ++j)
             if (!p.parts[j].movable) R.add(static_cast<int>(j), p.parts[j].pos0, 0, +1);
+        if (const char* also = std::getenv("TM_DEBUG_ADD"))
+          for (std::size_t j = 0; j < p.parts.size(); ++j)
+            if (p.parts[j].ref == also) R.add(static_cast<int>(j), p.parts[j].pos0, 0, +1);
         int rfree = 0, rins = 0;
         for (Coord y = p.region.y0; y <= p.region.y1; y += 250'000)
           for (Coord x = p.region.x0; x <= p.region.x1; x += 250'000) {

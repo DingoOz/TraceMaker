@@ -35,6 +35,7 @@ struct RouterOptions {
   int order = 0;                // connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
+  std::string only_net;         // debugging: route only this net
   events::Sink* sink = nullptr;
 };
 

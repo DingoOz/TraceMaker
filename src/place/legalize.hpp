@@ -17,10 +17,12 @@ struct LegaliseStats {
   long evictions = 0;        // rip-up-and-re-place steps (full mode)
   long raster_disagree = 0;  // raster said free but the exact test failed (must stay 0: the raster is conservative)
   std::vector<std::string> failures;
+  std::vector<int> failed_parts;
 };
 
 // `only_illegal`: parts that are already legal (inside the board, conflict-free) stay where they are and only
 // the others are re-placed (refine mode). `cell` is the raster cell (0 = automatic, 0.05–0.1 mm).
-LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord cell = 0);
+// `first`: parts to place before all others (e.g. the failures of an earlier attempt).
+LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord cell = 0, const std::vector<int>* first = nullptr);
 
 }  // namespace tmk::place

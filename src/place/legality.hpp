@@ -74,7 +74,8 @@ class Raster {
  public:
   Raster(const Problem& p, Coord cell);
   void add(int part, Point pos, int rot, int delta);  // delta = +1 insert, -1 remove
-  bool free(int part, Point pos, int rot) const;
+  bool free(int part, Point pos, int rot) const;            // summed-area tables: O(shapes) per call
+  bool free_reference(int part, Point pos, int rot) const;  // cell scan (reference path for tests)
   Coord cell() const { return h_; }
   // Fraction of cells inside the board on side s (for diagnostics).
   double inside_fraction(int side) const;
@@ -82,6 +83,9 @@ class Raster {
  private:
   bool range(const Box& b, int& x0, int& y0, int& x1, int& y1) const;
   bool any(const std::vector<std::uint16_t>& g, const Box& b) const;
+  bool any_sat(const std::vector<std::int32_t>& sat, const Box& b) const;
+  void build_sat(const std::vector<std::uint16_t>& g, std::vector<std::int32_t>& sat) const;
+  bool free_impl(int part, Point pos, int rot, bool sat) const;
   void bump(std::vector<std::uint16_t>& g, const Box& b, int delta);
   const Problem& p_;
   Coord h_;
@@ -90,6 +94,9 @@ class Raster {
   std::vector<std::uint16_t> blocked_[2];  // static: not entirely inside the board
   std::vector<std::uint16_t> keep_[2];     // static: touched by a footprint keepout on that side
   std::vector<std::uint16_t> occ_[2];      // courtyard and through-obstacle boxes of placed parts
+  std::vector<std::int32_t> sat_blocked_[2], sat_keep_[2];  // summed-area tables of the indicator (cell != 0)
+  mutable std::vector<std::int32_t> sat_occ_[2];           // rebuilt lazily after add()
+  mutable bool occ_dirty_ = true;
 };
 
 // Every conflict in a placement (for the final report and tests): movable-involved pairs and parts outside.

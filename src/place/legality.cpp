@@ -298,6 +298,10 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
       if (k.side[s])
         for (std::size_t i = 0; i < n; ++i) keep_[s][i] = static_cast<std::uint16_t>(keep_[s][i] | m[i]);
   }
+  for (int s = 0; s < 2; ++s) {
+    build_sat(blocked_[s], sat_blocked_[s]);
+    build_sat(keep_[s], sat_keep_[s]);
+  }
 }
 
 bool Raster::range(const Box& b, int& x0, int& y0, int& x1, int& y1) const {
@@ -320,6 +324,26 @@ bool Raster::any(const std::vector<std::uint16_t>& g, const Box& b) const {
   return false;
 }
 
+void Raster::build_sat(const std::vector<std::uint16_t>& g, std::vector<std::int32_t>& sat) const {
+  const std::size_t w = z(nx_) + 1;
+  sat.assign(w * (z(ny_) + 1), 0);
+  for (int y = 0; y < ny_; ++y) {
+    std::int32_t row = 0;
+    for (int x = 0; x < nx_; ++x) {
+      row += g[z(y * nx_ + x)] ? 1 : 0;
+      sat[(z(y) + 1) * w + z(x) + 1] = sat[z(y) * w + z(x) + 1] + row;
+    }
+  }
+}
+
+bool Raster::any_sat(const std::vector<std::int32_t>& sat, const Box& b) const {
+  int x0, y0, x1, y1;
+  if (!range(b, x0, y0, x1, y1)) return true;
+  const std::size_t w = z(nx_) + 1;
+  const std::int32_t s = sat[(z(y1) + 1) * w + z(x1) + 1] - sat[z(y0) * w + z(x1) + 1] - sat[(z(y1) + 1) * w + z(x0)] + sat[z(y0) * w + z(x0)];
+  return s > 0;
+}
+
 void Raster::bump(std::vector<std::uint16_t>& g, const Box& b, int delta) {
   auto cl = [](Coord v, int n) { return static_cast<int>(std::clamp<Coord>(v, 0, n - 1)); };
   const int x0 = cl((b.x0 - ox_) / h_, nx_), x1 = cl((b.x1 - ox_) / h_, nx_);
@@ -332,6 +356,7 @@ void Raster::bump(std::vector<std::uint16_t>& g, const Box& b, int delta) {
 }
 
 void Raster::add(int part, Point pos, int rot, int delta) {
+  occ_dirty_ = true;
   const PartGeom& g = p_.parts[z(part)].geom[z(rot)];
   for (int s = 0; s < 2; ++s)
     for (const Shape& cy : g.cy[z(s)]) bump(occ_[s], shift(cy.box, pos), delta);
@@ -340,18 +365,31 @@ void Raster::add(int part, Point pos, int rot, int delta) {
 }
 
 bool Raster::free(int part, Point pos, int rot) const {
+  if (occ_dirty_) {
+    for (int s = 0; s < 2; ++s) build_sat(occ_[s], sat_occ_[s]);
+    occ_dirty_ = false;
+  }
+  return free_impl(part, pos, rot, true);
+}
+
+bool Raster::free_reference(int part, Point pos, int rot) const { return free_impl(part, pos, rot, false); }
+
+bool Raster::free_impl(int part, Point pos, int rot, bool sat) const {
   const PartGeom& g = p_.parts[z(part)].geom[z(rot)];
   const Coord infl = std::max(p_.clearance, kThroughMargin) + 1;
   const Coord tinfl = std::max(kThroughThrough, kThroughMargin) + 1;
+  auto hit = [&](const std::vector<std::uint16_t>& grid, const std::vector<std::int32_t>& s, const Box& b) {
+    return sat ? any_sat(s, b) : any(grid, b);
+  };
   for (int s = 0; s < 2; ++s) {
     if (g.cy[z(s)].empty()) continue;
-    if (any(blocked_[s], shift(g.edge_box, pos))) return false;
+    if (hit(blocked_[s], sat_blocked_[s], shift(g.edge_box, pos))) return false;
     for (const Shape& cy : g.cy[z(s)])
-      if (any(keep_[s], shift(cy.box, pos)) || any(occ_[s], shift(cy.box, pos).inflated(infl))) return false;
+      if (hit(keep_[s], sat_keep_[s], shift(cy.box, pos)) || hit(occ_[s], sat_occ_[s], shift(cy.box, pos).inflated(infl))) return false;
   }
   for (const auto& t : g.through)
     for (int s = 0; s < 2; ++s)
-      if (any(occ_[s], shift(t.box, pos).inflated(tinfl))) return false;
+      if (hit(occ_[s], sat_occ_[s], shift(t.box, pos).inflated(tinfl))) return false;
   return true;
 }
 
