@@ -1,0 +1,6 @@
+add_subdirectory(core)
+add_subdirectory(sexpr)
+add_subdirectory(model)
+add_subdirectory(io)
+add_subdirectory(gpu)
+add_subdirectory(app)

@@ -1,0 +1,551 @@
+{
+ "project": "TraceMaker",
+ "current_milestone": "M1",
+ "milestones": [
+  {
+   "id": "M0",
+   "title": "Toolchain and skeleton",
+   "status": "done",
+   "gate": "`ctest` runs a CPU and a CUDA hello-kernel test on both GPUs; `kicad-cli version` works from the harness",
+   "deliverables": "CMake presets (`debug`, `release`, `asan`, `cpu-only`), CUDA build with a GCC host compiler that `nvcc 12.4` accepts, Catch2, clang-format/clang-tidy config (or GCC equivalents), `scripts/bootstrap.sh`, `kicad-cli` available (Docker image or native), fixture download script",
+   "tasks": [
+    {
+     "text": "Ubuntu setup script (packages, Docker, KiCad 10 kicad-cli wrapper)",
+     "done": true
+    },
+    {
+     "text": "Git repository, .gitignore",
+     "done": true
+    },
+    {
+     "text": "CMake project + presets (debug, release, cpu-only, asan, tsan)",
+     "done": true
+    },
+    {
+     "text": "CUDA build: nvcc 12.4 with g++-13 host, sm_60 + sm_70; system GCC 15 for C++",
+     "done": true
+    },
+    {
+     "text": "Core library: units, deterministic Philox/SplitMix RNG",
+     "done": true
+    },
+    {
+     "text": "GPU service: device discovery by UUID, free-memory admission control",
+     "done": true
+    },
+    {
+     "text": "First kernel with CPU reference; bit-identical on V100 and P100",
+     "done": true
+    },
+    {
+     "text": "Catch2 tests wired into ctest with JUnit results",
+     "done": true
+    },
+    {
+     "text": "tracemaker CLI: version, gpu-info",
+     "done": true
+    },
+    {
+     "text": "Development progress website (0.0.0.0)",
+     "done": true
+    },
+    {
+     "text": "scripts/bootstrap.sh: configure, build and test all presets",
+     "done": true
+    },
+    {
+     "text": "Benchmark environment check (kicad-cli from the harness)",
+     "done": true
+    },
+    {
+     "text": "Fixture download script (Freerouting, DAC2020, KiCad demos, PCBench)",
+     "done": true
+    },
+    {
+     "text": "Gate: CPU + CUDA tests pass on both GPUs; kicad-cli works from harness",
+     "done": true
+    }
+   ]
+  },
+  {
+   "id": "M1",
+   "title": "KiCad I/O and board model",
+   "status": "todo",
+   "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
+   "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
+   "tasks": [
+    {
+     "text": "s-expression lexer/parser/writer",
+     "done": false
+    },
+    {
+     "text": "`.kicad_pcb`",
+     "done": false
+    },
+    {
+     "text": "`.kicad_pro`",
+     "done": false
+    },
+    {
+     "text": "`.kicad_dru`",
+     "done": false
+    },
+    {
+     "text": "`.kicad_sch` (netlist)",
+     "done": false
+    },
+    {
+     "text": "`.kicad_mod`",
+     "done": false
+    },
+    {
+     "text": "board model with layers",
+     "done": false
+    },
+    {
+     "text": "stackup",
+     "done": false
+    },
+    {
+     "text": "footprints",
+     "done": false
+    },
+    {
+     "text": "pads",
+     "done": false
+    },
+    {
+     "text": "tracks",
+     "done": false
+    },
+    {
+     "text": "vias",
+     "done": false
+    },
+    {
+     "text": "zones",
+     "done": false
+    },
+    {
+     "text": "nets",
+     "done": false
+    },
+    {
+     "text": "net classes",
+     "done": false
+    },
+    {
+     "text": "DSN reader",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M2",
+   "title": "Rules and DRC parity",
+   "status": "todo",
+   "gate": "Same violation multiset as `kicad-cli pcb drc` on all unrouted and routed fixture boards (documented, tested exceptions only)",
+   "deliverables": "Rule compiler (net classes, board constraints, custom rules subset), spatial indices, own DRC with KiCad violation names",
+   "tasks": [
+    {
+     "text": "Rule compiler (net classes",
+     "done": false
+    },
+    {
+     "text": "board constraints",
+     "done": false
+    },
+    {
+     "text": "custom rules subset)",
+     "done": false
+    },
+    {
+     "text": "spatial indices",
+     "done": false
+    },
+    {
+     "text": "own DRC with KiCad violation names",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M3",
+   "title": "Event bus, server, viewer v1",
+   "status": "todo",
+   "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board",
+   "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
+   "tasks": [
+    {
+     "text": "Event types",
+     "done": false
+    },
+    {
+     "text": "ring buffers",
+     "done": false
+    },
+    {
+     "text": "WebSocket server",
+     "done": false
+    },
+    {
+     "text": "FlatBuffers schema",
+     "done": false
+    },
+    {
+     "text": "replay log",
+     "done": false
+    },
+    {
+     "text": "WebGL2 viewer (WebGPU backend optional): layers",
+     "done": false
+    },
+    {
+     "text": "pan/zoom",
+     "done": false
+    },
+    {
+     "text": "pads/tracks/vias/zones",
+     "done": false
+    },
+    {
+     "text": "ratsnest",
+     "done": false
+    },
+    {
+     "text": "dark theme",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M4",
+   "title": "First router (lattice A*)",
+   "status": "todo",
+   "gate": "Routes the simple fixture set with 0 added KiCad DRC errors; harness produces the comparison table",
+   "deliverables": "Rerun debug logging of searches (optional), transactions, scoring, union-find, bit-planes, A* + radix heap, insertion with exact validation, basic pull-tight; sequential routing in net order; `tracemaker route` CLI; bench harness v1 with KiCad-DRC judge and Freerouting runner",
+   "tasks": [
+    {
+     "text": "Rerun debug logging of searches (optional)",
+     "done": false
+    },
+    {
+     "text": "transactions",
+     "done": false
+    },
+    {
+     "text": "scoring",
+     "done": false
+    },
+    {
+     "text": "union-find",
+     "done": false
+    },
+    {
+     "text": "bit-planes",
+     "done": false
+    },
+    {
+     "text": "A* + radix heap",
+     "done": false
+    },
+    {
+     "text": "insertion with exact validation",
+     "done": false
+    },
+    {
+     "text": "basic pull-tight",
+     "done": false
+    },
+    {
+     "text": "sequential routing in net order",
+     "done": false
+    },
+    {
+     "text": "`tracemaker route` CLI",
+     "done": false
+    },
+    {
+     "text": "bench harness v1 with KiCad-DRC judge and Freerouting runner",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M5",
+   "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
+   "status": "todo",
+   "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
+   "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
+   "tasks": [
+    {
+     "text": "Failure records",
+     "done": false
+    },
+    {
+     "text": "Zobrist signatures",
+     "done": false
+    },
+    {
+     "text": "nogood store",
+     "done": false
+    },
+    {
+     "text": "history + targeted penalties",
+     "done": false
+    },
+    {
+     "text": "conflict graph",
+     "done": false
+    },
+    {
+     "text": "activity ordering",
+     "done": false
+    },
+    {
+     "text": "bandit",
+     "done": false
+    },
+    {
+     "text": "negotiated rip-up",
+     "done": false
+    },
+    {
+     "text": "repair windows",
+     "done": false
+    },
+    {
+     "text": "aggressor/victim repair",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M6",
+   "title": "Global routing + GPU",
+   "status": "todo",
+   "gate": "CPU and GPU results identical on every fixture; time-to-route reduced on dense boards with no quality loss",
+   "deliverables": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3); tile graph, Steiner decomposition, CPU NCR, corridors; GPU pattern routing, GPU sweep maze routing, GPU cost-to-go fields, GPU DRC broad-phase",
+   "tasks": [
+    {
+     "text": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3)",
+     "done": false
+    },
+    {
+     "text": "tile graph",
+     "done": false
+    },
+    {
+     "text": "Steiner decomposition",
+     "done": false
+    },
+    {
+     "text": "CPU NCR",
+     "done": false
+    },
+    {
+     "text": "corridors",
+     "done": false
+    },
+    {
+     "text": "GPU pattern routing",
+     "done": false
+    },
+    {
+     "text": "GPU sweep maze routing",
+     "done": false
+    },
+    {
+     "text": "GPU cost-to-go fields",
+     "done": false
+    },
+    {
+     "text": "GPU DRC broad-phase",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M7",
+   "title": "Placement A\u2013D",
+   "status": "todo",
+   "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL \u2264 SA-PCB baseline on the placement set",
+   "deliverables": "Constraint extraction, decoupling detection, quadratic B2B (PCG), electrostatic global placement (CPU then GPU batched), rotation/side assignment, LP legalisation; placement report with optimality levels and lower bound",
+   "tasks": [
+    {
+     "text": "Constraint extraction",
+     "done": false
+    },
+    {
+     "text": "decoupling detection",
+     "done": false
+    },
+    {
+     "text": "quadratic B2B (PCG)",
+     "done": false
+    },
+    {
+     "text": "electrostatic global placement (CPU then GPU batched)",
+     "done": false
+    },
+    {
+     "text": "rotation/side assignment",
+     "done": false
+    },
+    {
+     "text": "LP legalisation",
+     "done": false
+    },
+    {
+     "text": "placement report with optimality levels and lower bound",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M8",
+   "title": "Placement E\u2013G + ECO",
+   "status": "todo",
+   "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot",
+   "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
+   "tasks": [
+    {
+     "text": "GPU parallel-tempering SA",
+     "done": false
+    },
+    {
+     "text": "LNS",
+     "done": false
+    },
+    {
+     "text": "CP-SAT windows",
+     "done": false
+    },
+    {
+     "text": "routability loop",
+     "done": false
+    },
+    {
+     "text": "R4 exact window solve",
+     "done": false
+    },
+    {
+     "text": "R5 trial ordering",
+     "done": false
+    },
+    {
+     "text": "R6 cut proofs",
+     "done": false
+    },
+    {
+     "text": "ECO placement moves",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M9",
+   "title": "Escape planning",
+   "status": "todo",
+   "gate": "BGA boards in the academic set complete",
+   "deliverables": "Min-cost-flow escape, layer assignment, NC fallback, escape templates",
+   "tasks": [
+    {
+     "text": "Min-cost-flow escape",
+     "done": false
+    },
+    {
+     "text": "layer assignment",
+     "done": false
+    },
+    {
+     "text": "NC fallback",
+     "done": false
+    },
+    {
+     "text": "escape templates",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M10",
+   "title": "Portfolio, determinism, knowledge base",
+   "status": "todo",
+   "gate": "Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget",
+   "deliverables": "Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts",
+   "tasks": [
+    {
+     "text": "Successive-halving portfolio",
+     "done": false
+    },
+    {
+     "text": "deterministic sync points",
+     "done": false
+    },
+    {
+     "text": "persistent KB (T3)",
+     "done": false
+    },
+    {
+     "text": "warm starts",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M11",
+   "title": "KiCad integration",
+   "status": "todo",
+   "gate": "Round-trip in KiCad on the demo boards",
+   "deliverables": "IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package",
+   "tasks": [
+    {
+     "text": "IPC plugin (live board in pcbnew",
+     "done": false
+    },
+    {
+     "text": "one undoable commit)",
+     "done": false
+    },
+    {
+     "text": "Python bindings",
+     "done": false
+    },
+    {
+     "text": "PCM package",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M12",
+   "title": "Advanced rules and arms",
+   "status": "todo",
+   "gate": "Each feature gated by its own benchmark subset; no regressions",
+   "deliverables": "Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models",
+   "tasks": [
+    {
+     "text": "Differential pairs",
+     "done": false
+    },
+    {
+     "text": "length/skew tuning",
+     "done": false
+    },
+    {
+     "text": "blind/micro vias",
+     "done": false
+    },
+    {
+     "text": "gridless tile-plane arm",
+     "done": false
+    },
+    {
+     "text": "learned ordering/congestion models",
+     "done": false
+    }
+   ]
+  }
+ ]
+}

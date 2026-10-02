@@ -1,0 +1,5 @@
+add_library(tm_core STATIC version.cpp)
+add_library(tm::core ALIAS tm_core)
+target_include_directories(tm_core PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_compile_definitions(tm_core PUBLIC TM_VERSION="${PROJECT_VERSION}")
+tm_set_warnings(tm_core)

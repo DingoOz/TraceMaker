@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Runs python3 inside the KiCad 10 Docker image (pcbnew module available), with $HOME and the current
+# directory mounted at the same paths. Usage: scripts/kicad-python script.py args...
+IMG="${TRACEMAKER_KICAD_IMAGE:-kicad/kicad:10.0.6}"
+mounts=(-v "$HOME:$HOME")
+case "$PWD/" in "$HOME"/*) ;; *) mounts+=(-v "$PWD:$PWD") ;; esac
+args=(run --rm -i -u "$(id -u):$(id -g)" -e HOME=/tmp "${mounts[@]}" -w "$PWD" --entrypoint python3 "$IMG" "$@")
+if docker info >/dev/null 2>&1; then exec docker "${args[@]}"; fi
+exec sg docker -c "docker $(printf '%q ' "${args[@]}")"

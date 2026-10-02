@@ -1,0 +1,10 @@
+{"ts": "2026-10-02T10:50:36+00:00", "kind": "milestone", "text": "Design plan complete: PLAN.md, docs 01-12, research notes"}
+{"ts": "2026-10-02T10:50:37+00:00", "kind": "decision", "text": "C++ namespace is tmk (tm clashes with C struct tm)"}
+{"ts": "2026-10-02T10:50:37+00:00", "kind": "decision", "text": "CUDA host compiler g++-13; C++ code uses system g++-15; Nix toolchain kept off the build PATH"}
+{"ts": "2026-10-02T10:50:37+00:00", "kind": "build", "text": "Release preset builds: tm_core, tm_gpu, tracemaker CLI, tm_tests"}
+{"ts": "2026-10-02T10:50:37+00:00", "kind": "test", "text": "5/5 tests pass; Philox kernel bit-identical to CPU on V100 and P100"}
+{"ts": "2026-10-02T10:59:08+00:00", "kind": "test", "text": "Preset cpu-only: build and tests passed"}
+{"ts": "2026-10-02T10:59:22+00:00", "kind": "test", "text": "Preset asan: build and tests passed"}
+{"ts": "2026-10-02T11:01:15+00:00", "kind": "build", "text": "Progress website running on 0.0.0.0:8765 (systemd user service tracemaker-devsite)"}
+{"ts": "2026-10-02T11:01:15+00:00", "kind": "note", "text": "Fixtures fetched: Freerouting (166 regression DSN + 1,158 PCBench boards), DAC2020 bm1-bm11, KiCad 10 demos (19 boards)"}
+{"ts": "2026-10-02T11:01:15+00:00", "kind": "milestone", "text": "M0 complete: gate met (CPU + CUDA tests pass on V100 and P100; kicad-cli 10.0.6 works from the harness)"}

@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceMaker Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f4f4f1; --surface: #fcfcfb; --surface-2: #f0efec; --border: #e2e1dc;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #7a7974;
+  --accent: #2a78d6; --accent-soft: #cde2fb; --track: #e8e7e3;
+  --good: #0ca30c; --good-text: #006300; --warn: #fab219; --critical: #d03b3b;
+  --glow: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0f1012; --surface: #1a1a19; --surface-2: #232321; --border: #2e2e2b;
+    --text: #ffffff; --text-2: #c3c2b7; --muted: #8d8c84;
+    --accent: #3987e5; --accent-soft: #184f95; --track: #2c2c29;
+    --good: #0ca30c; --good-text: #4cc94c; --warn: #fab219; --critical: #e66767;
+    --glow: 0 0 12px rgba(57,135,229,.45);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0f1012; --surface: #1a1a19; --surface-2: #232321; --border: #2e2e2b;
+  --text: #ffffff; --text-2: #c3c2b7; --muted: #8d8c84;
+  --accent: #3987e5; --accent-soft: #184f95; --track: #2c2c29;
+  --good: #0ca30c; --good-text: #4cc94c; --warn: #fab219; --critical: #e66767;
+  --glow: 0 0 12px rgba(57,135,229,.45);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.45 Inter, system-ui, sans-serif; }
+.mono, .num { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 20px 16px 48px; }
+header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.logo { width: 34px; height: 34px; flex: none; }
+h1 { font-size: 20px; margin: 0; font-weight: 700; letter-spacing: -.01em; }
+.sub { color: var(--text-2); font-size: 13px; }
+.spacer { flex: 1; }
+button.toggle { background: var(--surface); color: var(--text-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 10px; font: inherit; cursor: pointer; }
+button.toggle:hover { color: var(--text); }
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 12px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 var(--good); animation: pulse 2s infinite; }
+.dot.stale { background: var(--critical); animation: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(12,163,12,.5);} 70% { box-shadow: 0 0 0 7px rgba(12,163,12,0);} 100% { box-shadow: 0 0 0 0 rgba(12,163,12,0);} }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } .fill { transition: none !important; } }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.tile .label { color: var(--text-2); font-size: 12px; font-weight: 500; }
+.tile .value { font-size: 28px; font-weight: 600; margin-top: 2px; letter-spacing: -.02em; }
+.tile .hint { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+.col { display: grid; gap: 16px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; }
+.panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-2); margin: 0 0 12px; font-weight: 600; }
+.empty { color: var(--muted); font-size: 13px; padding: 6px 0; }
+
+.bar { position: relative; height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 4px; transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.fill.active { box-shadow: var(--glow); }
+
+.ms { border-top: 1px solid var(--border); }
+.ms:first-of-type { border-top: 0; }
+.ms summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 44px minmax(0,1fr) 130px 120px; gap: 12px;
+  align-items: center; padding: 10px 4px; border-radius: 8px; }
+.ms summary::-webkit-details-marker { display: none; }
+.ms summary:hover { background: var(--surface-2); }
+.ms .id { font-weight: 600; color: var(--text-2); }
+.ms .title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms.current .id { color: var(--accent); }
+.ms .pct { display: grid; grid-template-columns: 1fr 40px; gap: 8px; align-items: center; font-size: 12px; color: var(--text-2); }
+@media (max-width: 640px) { .ms summary { grid-template-columns: 38px minmax(0,1fr) 96px; } .ms .pct { display: none; } }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-2);
+  border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; justify-self: start; white-space: nowrap; }
+.chip svg { width: 12px; height: 12px; flex: none; }
+.chip.done { color: var(--good-text); }
+.chip.active { color: var(--accent); border-color: var(--accent); }
+.body { padding: 2px 4px 14px 60px; }
+@media (max-width: 640px) { .body { padding-left: 4px; } }
+.gate { font-size: 12.5px; color: var(--text-2); background: var(--surface-2); border-radius: 8px; padding: 8px 10px; margin: 4px 0 10px; }
+.gate b { color: var(--text); font-weight: 600; }
+ul.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+ul.tasks li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; font-size: 13px; color: var(--text-2); }
+ul.tasks li.done { color: var(--text); }
+ul.tasks svg { width: 16px; height: 16px; margin-top: 1px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px; padding: 4px 6px; border-bottom: 1px solid var(--border); }
+td { padding: 6px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.r, th.r { text-align: right; }
+.nw { white-space: nowrap; }
+details.preset { border-top: 1px solid var(--border); }
+details.preset:first-child { border-top: 0; }
+details.preset summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: center; padding: 8px 4px; border-radius: 8px; font-size: 13px; }
+details.preset summary::-webkit-details-marker { display: none; }
+details.preset summary:hover { background: var(--surface-2); }
+details.preset table { margin: 2px 0 10px; }
+.status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.status svg { width: 13px; height: 13px; }
+.s-pass { color: var(--good-text); } .s-fail { color: var(--critical); } .s-skip { color: var(--muted); }
+
+.meter { margin-bottom: 14px; }
+.meter:last-child { margin-bottom: 0; }
+.meter .row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; margin-bottom: 6px; }
+.meter .row span:last-child { color: var(--text-2); }
+.meter .bar { height: 10px; border-radius: 5px; }
+.meter .meta { color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+
+.hbars { display: grid; gap: 8px; }
+.hbar { display: grid; grid-template-columns: 110px 1fr 54px; gap: 10px; align-items: center; font-size: 12.5px; }
+.hbar .name { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hbar .bar { height: 12px; border-radius: 0 4px 4px 0; background: transparent; }
+.hbar .fill { border-radius: 0 4px 4px 0; }
+.hbar .v { text-align: right; color: var(--text-2); }
+
+.feed { display: grid; gap: 0; max-height: 420px; overflow: auto; }
+.ev { display: grid; grid-template-columns: 70px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.ev:last-child { border-bottom: 0; }
+.ev .t { color: var(--muted); font-size: 11.5px; }
+.kind { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-right: 6px; font-weight: 600; }
+.kind.milestone, .kind.decision { color: var(--accent); }
+.commit { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.commit:last-child { border-bottom: 0; }
+.commit .h { color: var(--accent); font-size: 12px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 13px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; }
+#tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 9px; font-size: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.25); opacity: 0; transition: opacity .1s; z-index: 10; max-width: 320px; }
+#tip.on { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="logo" viewBox="0 0 34 34" aria-hidden="true">
+      <rect x="1" y="1" width="32" height="32" rx="8" fill="none" stroke="var(--border)" stroke-width="2"/>
+      <path d="M7 24 H14 L20 12 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="7" cy="24" r="3" fill="var(--accent)"/><circle cx="27" cy="12" r="3" fill="var(--accent)"/>
+    </svg>
+    <div>
+      <h1>TraceMaker</h1>
+      <div class="sub">Development progress · placement-aware PCB autorouter for KiCad</div>
+    </div>
+    <div class="spacer"></div>
+    <span class="live"><span class="dot" id="livedot"></span><span id="updated">connecting…</span></span>
+    <button class="toggle" id="theme" type="button">Theme</button>
+  </header>
+
+  <section class="tiles" id="tiles"></section>
+
+  <div class="grid">
+    <div class="col">
+      <section class="panel"><h2>Roadmap</h2><div id="milestones"></div></section>
+      <section class="panel"><h2>Benchmarks</h2><div id="bench"></div></section>
+      <section class="panel"><h2>Code by module</h2><div id="modules"></div></section>
+    </div>
+    <div class="col">
+      <section class="panel"><h2>Tests</h2><div id="tests"></div></section>
+      <section class="panel"><h2>GPUs</h2><div id="gpus"></div></section>
+      <section class="panel"><h2>Activity</h2><div id="activity" class="feed"></div></section>
+      <section class="panel"><h2>Commits</h2><div id="commits"></div></section>
+      <section class="panel"><h2>Environment &amp; docs</h2><div id="env"></div></section>
+    </div>
+  </div>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+"use strict";
+// ---------- helpers ----------
+const $ = (id) => document.getElementById(id);
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k === "style") n.setAttribute("style", v);
+    else if (k.startsWith("data-")) n.setAttribute(k, v);
+    else n[k] = v;
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return n;
+}
+const SVGNS = "http://www.w3.org/2000/svg";
+function icon(kind) {
+  // Status icons so state is never carried by colour alone.
+  const s = document.createElementNS(SVGNS, "svg"); s.setAttribute("viewBox", "0 0 16 16"); s.setAttribute("aria-hidden", "true");
+  const paths = {
+    done: '<circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M4.7 8.2l2.2 2.2 4.4-4.6" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    active: '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1.8 A6.2 6.2 0 0 1 8 14.2 Z" fill="currentColor"/>',
+    todo: '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+    pass: '<circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M4.7 8.2l2.2 2.2 4.4-4.6" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    fail: '<circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round"/>',
+    skip: '<circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 8h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  };
+  s.innerHTML = paths[kind] || paths.todo; // static strings only
+  return s;
+}
+const STATUS_LABEL = { done: "Done", in_progress: "In progress", todo: "Not started" };
+const STATUS_ICON = { done: "done", in_progress: "active", todo: "todo" };
+const fmtInt = (n) => n.toLocaleString("en-US");
+function ago(sec) {
+  const d = Date.now() / 1000 - sec;
+  if (d < 60) return "just now";
+  if (d < 3600) return Math.floor(d / 60) + " min ago";
+  if (d < 86400) return Math.floor(d / 3600) + " h ago";
+  return Math.floor(d / 86400) + " d ago";
+}
+const isoAgo = (iso) => ago(Date.parse(iso) / 1000);
+function bar(frac, title, active = false) {
+  const f = el("div", { class: "fill" + (active ? " active" : ""), style: `width:${(Math.max(0, Math.min(1, frac)) * 100).toFixed(1)}%` });
+  const b = el("div", { class: "bar" }, f);
+  if (title) b.dataset.tip = title;
+  return b;
+}
+function replace(id, ...nodes) { const n = $(id); n.replaceChildren(...nodes.flat()); }
+
+// ---------- tooltip ----------
+const tip = $("tip");
+document.addEventListener("pointermove", (e) => {
+  const t = e.target.closest("[data-tip]");
+  if (!t) { tip.classList.remove("on"); return; }
+  tip.textContent = t.dataset.tip;
+  const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8);
+  tip.style.left = x + "px"; tip.style.top = (e.clientY + 16) + "px";
+  tip.classList.add("on");
+});
+
+// ---------- theme ----------
+const root = document.documentElement;
+try { const t = localStorage.getItem("tm-theme"); if (t) root.dataset.theme = t; } catch (_) {}
+$("theme").addEventListener("click", () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("tm-theme", root.dataset.theme); } catch (_) {}
+});
+
+// ---------- renderers ----------
+const openState = new Set();
+function renderTiles(s) {
+  const ms = s.progress.milestones || [];
+  const all = ms.flatMap((m) => m.tasks || []);
+  const done = all.filter((t) => t.done).length;
+  const cur = ms.find((m) => m.id === s.progress.current_milestone) || ms[0] || { tasks: [] };
+  const curDone = cur.tasks.filter((t) => t.done).length;
+  const tests = s.tests.reduce((a, p) => ({ pass: a.pass + p.pass, fail: a.fail + p.fail, skip: a.skip + p.skip }), { pass: 0, fail: 0, skip: 0 });
+  const msDone = ms.filter((m) => m.status === "done").length;
+  const tile = (label, value, hint, extra) => el("div", { class: "tile" }, el("div", { class: "label", text: label }), el("div", { class: "value num", text: value }), extra || null, el("div", { class: "hint", text: hint }));
+  replace("tiles",
+    tile("Roadmap", all.length ? Math.round(100 * done / all.length) + "%" : "–", `${done} of ${all.length} tasks · ${msDone} of ${ms.length} milestones`, bar(all.length ? done / all.length : 0, `${done} / ${all.length} tasks done`)),
+    tile(`Current: ${cur.id || "–"}`, cur.tasks.length ? Math.round(100 * curDone / cur.tasks.length) + "%" : "–", cur.title || "", bar(cur.tasks.length ? curDone / cur.tasks.length : 0, `${curDone} / ${cur.tasks.length} tasks`, true)),
+    tile("Tests", tests.pass + tests.fail ? `${tests.pass}/${tests.pass + tests.fail}` : "–", (tests.fail ? `${tests.fail} failing` : "all passing") + ` · ${s.tests.length} build presets` + (tests.skip ? ` · ${tests.skip} skipped` : "")),
+    tile("Lines of code", fmtInt(s.code.lines), `${fmtInt(s.code.files)} files`),
+    tile("Commits", fmtInt(s.git.commit_count), s.git.uncommitted_files ? `${s.git.uncommitted_files} files uncommitted` : "working tree clean"),
+  );
+}
+
+function renderMilestones(s) {
+  const cur = s.progress.current_milestone;
+  const nodes = (s.progress.milestones || []).map((m) => {
+    const tasks = m.tasks || [];
+    const d = tasks.filter((t) => t.done).length;
+    const frac = tasks.length ? d / tasks.length : 0;
+    const det = el("details", { class: "ms" + (m.id === cur ? " current" : "") });
+    if (openState.has(m.id) || (openState.size === 0 && m.id === cur)) det.open = true;
+    det.addEventListener("toggle", () => det.open ? openState.add(m.id) : openState.delete(m.id));
+    const chipCls = m.status === "done" ? "done" : m.status === "in_progress" ? "active" : "";
+    det.append(
+      el("summary", {},
+        el("span", { class: "id mono", text: m.id }),
+        el("span", { class: "title", text: m.title }),
+        el("span", { class: "chip " + chipCls }, icon(STATUS_ICON[m.status] || "todo"), STATUS_LABEL[m.status] || m.status),
+        el("span", { class: "pct" }, bar(frac, `${m.id}: ${d} of ${tasks.length} tasks done`, m.status === "in_progress"), el("span", { class: "num", text: Math.round(frac * 100) + "%" })),
+      ),
+      el("div", { class: "body" },
+        el("div", { class: "gate" }, el("b", { text: "Gate: " }), m.gate || ""),
+        el("ul", { class: "tasks" }, tasks.map((t) => el("li", { class: t.done ? "done" : "" }, el("span", { class: t.done ? "s-pass" : "s-skip" }, icon(t.done ? "pass" : "todo")), el("span", { text: t.text })))),
+      ),
+    );
+    return det;
+  });
+  replace("milestones", nodes.length ? nodes : el("div", { class: "empty", text: "No roadmap data (dev/progress.json)." }));
+}
+
+const openPresets = new Set(["release"]);
+function renderTests(s) {
+  if (!s.tests.length) { replace("tests", el("div", { class: "empty", text: "No test results yet. Run ctest." })); return; }
+  const order = (p) => (p.preset === "release" ? 0 : 1);
+  replace("tests", s.tests.slice().sort((a, b) => order(a) - order(b) || a.preset.localeCompare(b.preset)).map((p) => {
+    const det = el("details", { class: "preset" });
+    det.open = openPresets.has(p.preset) || p.fail > 0;
+    det.addEventListener("toggle", () => det.open ? openPresets.add(p.preset) : openPresets.delete(p.preset));
+    const kind = p.fail ? "fail" : "pass";
+    det.append(
+      el("summary", {},
+        el("span", { class: "status s-" + kind }, icon(kind), el("b", { class: "mono", text: p.preset })),
+        el("span", { class: "sub", text: `${p.pass} passed · ${p.fail} failed · ${p.skip} skipped · ${ago(p.updated)}` })),
+      el("table", {},
+        el("thead", {}, el("tr", {}, el("th", { text: "Test" }), el("th", { text: "Result" }), el("th", { class: "r", text: "Time" }))),
+        el("tbody", {}, p.cases.map((c) => el("tr", {},
+          el("td", { text: c.name }),
+          el("td", { class: "nw" }, el("span", { class: "status s-" + c.status }, icon(c.status), { pass: "Pass", fail: "Fail", skip: "Skipped" }[c.status])),
+          el("td", { class: "r num nw", text: (c.time * 1000).toFixed(0) + " ms" }))))));
+    return det;
+  }));
+}
+
+function renderGpus(s) {
+  if (!s.gpus.length) { replace("gpus", el("div", { class: "empty", text: "nvidia-smi not available." })); return; }
+  replace("gpus", s.gpus.map((g) => {
+    const frac = g.used_mib / g.total_mib;
+    const gib = (m) => (m / 1024).toFixed(1);
+    return el("div", { class: "meter" },
+      el("div", { class: "row" }, el("span", { text: g.name.replace("Tesla ", "") }), el("span", { class: "num", text: `${gib(g.used_mib)} / ${gib(g.total_mib)} GiB used` })),
+      bar(frac, `${g.name}: ${fmtInt(g.used_mib)} MiB used of ${fmtInt(g.total_mib)} MiB (${Math.round(frac * 100)}%), all processes`),
+      el("div", { class: "meta num", text: `${fmtInt(g.total_mib - g.used_mib)} MiB free · utilisation ${g.util}% · ${g.temp} °C` }));
+  }));
+}
+
+function renderActivity(s) {
+  if (!s.activity.length) { replace("activity", el("div", { class: "empty", text: "No activity yet." })); return; }
+  replace("activity", s.activity.map((a) => el("div", { class: "ev" },
+    el("span", { class: "t", text: isoAgo(a.ts), title: a.ts }),
+    el("span", {}, el("span", { class: "kind " + a.kind, text: a.kind }), a.text))));
+}
+
+function renderCommits(s) {
+  if (!s.git.commits.length) { replace("commits", el("div", { class: "empty", text: `No commits yet on ${s.git.branch || "main"}.` })); return; }
+  replace("commits", s.git.commits.map((c) => el("div", { class: "commit" },
+    el("span", { class: "h mono", text: c.hash }), el("span", {}, c.subject, el("div", { class: "sub", text: isoAgo(c.date) })))));
+}
+
+function renderModules(s) {
+  const mods = s.code.by_module;
+  if (!mods.length) { replace("modules", el("div", { class: "empty", text: "No code yet." })); return; }
+  const max = Math.max(...mods.map((m) => m[1]));
+  replace("modules", el("div", { class: "hbars" }, mods.map(([name, n]) => el("div", { class: "hbar" },
+    el("span", { class: "name mono", text: name }),
+    bar(n / max, `${name}: ${fmtInt(n)} non-blank lines`),
+    el("span", { class: "v num", text: fmtInt(n) })))),
+    el("div", { class: "sub", style: "margin-top:10px", text: s.code.by_language.map(([l, n]) => `${l} ${fmtInt(n)}`).join(" · ") }));
+}
+
+function renderBench(s) {
+  if (!s.benchmarks.length) {
+    replace("bench", el("div", { class: "empty", text: "No benchmark runs yet. The harness arrives in M4; results appear here (clean pass, completion, added KiCad DRC errors, time) next to Freerouting's published 74.6% clean pass on PCBench." }));
+    return;
+  }
+  replace("bench", el("table", {},
+    el("thead", {}, el("tr", {}, ["Run", "Set", "Boards", "Clean pass", "Completion", "Time"].map((h, i) => el("th", { class: i > 1 ? "r" : "", text: h })))),
+    el("tbody", {}, s.benchmarks.slice().reverse().map((b) => el("tr", {},
+      el("td", { class: "mono", text: b.run }), el("td", { text: b.set || "" }),
+      el("td", { class: "r num", text: b.boards ?? "" }),
+      el("td", { class: "r num", text: b.clean_pass != null ? (b.clean_pass * 100).toFixed(1) + "%" : "" }),
+      el("td", { class: "r num", text: b.completion != null ? (b.completion * 100).toFixed(1) + "%" : "" }),
+      el("td", { class: "r num", text: b.seconds != null ? b.seconds.toFixed(0) + " s" : "" }))))));
+}
+
+function renderEnv(s) {
+  const builds = s.builds.map((b) => `${b.preset}${b.binary ? " (" + ago(b.binary) + ")" : ""}`).join(", ") || "none";
+  replace("env",
+    el("dl", { class: "kv" },
+      el("dt", { text: "Branch" }), el("dd", { class: "mono", text: s.git.branch || "–" }),
+      el("dt", { text: "Builds" }), el("dd", { text: builds }),
+      el("dt", { text: "kicad-cli" }), el("dd", { class: "mono", text: s.kicad || "…" })),
+    el("table", { style: "margin-top:12px" },
+      el("thead", {}, el("tr", {}, el("th", { text: "Design document" }), el("th", { class: "r", text: "Updated" }))),
+      el("tbody", {}, s.docs.map((d) => el("tr", {}, el("td", {}, d.title, el("div", { class: "sub mono", text: d.path })), el("td", { class: "r sub", text: ago(d.updated) }))))));
+}
+
+// ---------- loop ----------
+let last = 0;
+async function refresh() {
+  try {
+    const r = await fetch("/api/status", { cache: "no-store" });
+    const s = await r.json();
+    renderTiles(s); renderMilestones(s); renderTests(s); renderGpus(s); renderActivity(s);
+    renderCommits(s); renderModules(s); renderBench(s); renderEnv(s);
+    last = Date.now();
+  } catch (e) { /* keep the last good render */ }
+}
+setInterval(() => {
+  const stale = Date.now() - last > 15000;
+  $("livedot").classList.toggle("stale", stale);
+  $("updated").textContent = last ? (stale ? "connection lost" : "live · updated " + Math.round((Date.now() - last) / 1000) + " s ago") : "connecting…";
+}, 1000);
+refresh(); setInterval(refresh, 5000);
+</script>
+</body>
+</html>

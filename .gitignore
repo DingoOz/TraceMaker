@@ -1,0 +1,8 @@
+/build/
+/bench/data/
+/bench/results/
+__pycache__/
+*.pyc
+.venv/
+compile_commands.json
+.cache/
