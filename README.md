@@ -55,8 +55,8 @@ Latest results (PCBench, 120 s per board, judged by `kicad-cli`; Freerouting fig
 | Tier | Boards | TraceMaker clean | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
 |---|--:|--:|--:|--:|
 | A | 40 | 100% | 100% | 87.5% |
-| B | 40 | 60.0% | 50.0% | 12.5% |
-| C | 30 | 53.3% | 46.7% | 16.7% |
+| B | 40 | 62.5% | 50.0% | 12.5% |
+| C | 30 | 56.7% | 46.7% | 16.7% |
 | D | 21 | 52.4% | 38.1% | 0.0% |
 
 Each run writes `bench/results/<run>/` (routed boards, per-board JSON, `summary.json`, `report.md`) and compares

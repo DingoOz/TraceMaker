@@ -292,3 +292,11 @@ mounting-hole circle as the only loop) led to the fallbacks above.
 - Zone fills are ignored (they are refilled after placement); silkscreen is ignored.
 - Proximity constraints (decoupling caps, crystals) are not modelled: power-only parts can drift away from
   their IC.
+
+### 7.x Router in the loop (2026-10-02, evening)
+
+`--route-check N` routes the input and the new placement with the same deterministic budget and keeps the input
+when the new placement leaves more connections unrouted. `--mode auto` runs refine and full this way and keeps the
+fewest unrouted, then the shortest wirelength. On the 23 evaluation boards at N = 3M expansions it kept a new
+placement on 18 boards, total HPWL fell from 17,464 mm to 13,190 mm, and unrouted connections fell from 61 to 59;
+no board got worse (`bench/place_auto.py`).

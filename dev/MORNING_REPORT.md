@@ -8,21 +8,21 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 | Tier (PCBench) | Boards | TraceMaker clean pass | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 | Boards with router-introduced DRC errors |
 |---|--:|--:|--:|--:|--:|
 | A — routine 2-layer | 40 | **100%** | 100% | 87.5% | 0 |
-| B — 2–4 layer | 40 | **60.0%** | 50.0% | 12.5% | 0 |
-| C — complex / multi-layer | 30 | **53.3%** | 46.7% | 16.7% | 0 |
+| B — 2–4 layer | 40 | **62.5%** | 50.0% | 12.5% | 0 |
+| C — complex / multi-layer | 30 | **56.7%** | 46.7% | 16.7% | 0 |
 | D — hardest | 21 | **52.4%** | 38.1% | 0.0% | 0 |
 
 - **Clean pass** means fully connected and zero router-introduced KiCad DRC errors. Each board gets 120 s, with
   8 router variants in parallel.
-- **Runs:** all four tiers are from the last runs of the night, `final5-tier{A,B,C,D}`, on the latest router.
+- **Runs:** all four tiers are from the last runs of the night, `final7-tier{A,B,C,D}`, on the latest router.
 - **Samples:** 40 of 453 tier-A boards, 40 of 560 tier-B boards, 30 of 122 tier-C boards and the 21 tier-D boards
   that have a KiCad file.
 - **Speed:** the tier-A median is 3 s per board. Freerouting's published median is 30 s on its own hardware.
 - **Variance:** results vary a little between runs because of the wall-clock limit. Earlier runs of the same day
-  scored B 50–60% and C 33–50%. A deterministic `--work` budget gives byte-identical repeats when needed.
-- **Head to head on tier B:** both clean on 16 boards, only TraceMaker on 8, only Freerouting on 4.
-- **Head to head on tier C:** both clean on 11 boards, only TraceMaker on 5, only Freerouting on 3.
-- **Head to head on tier D:** both clean on 7 boards, only TraceMaker on 4, only Freerouting on 1.
+  scored B 50–60% and C 33–60%. A deterministic `--work` budget gives byte-identical repeats when needed.
+- **Head to head on tier B:** both clean on 17 boards, only TraceMaker on 8, only Freerouting on 3.
+- **Head to head on tier C:** both clean on 12 boards, only TraceMaker on 5, only Freerouting on 2.
+- **Head to head on tier D:** both clean on 6 boards, only TraceMaker on 5, only Freerouting on 2.
 - All runs are on the progress site's benchmark panel with Freerouting columns.
 
 ## What was built
@@ -56,6 +56,12 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 - **Coarse lattice on large boards.** Two portfolio variants use double the lattice pitch on boards with at least
   3M lattice points per layer. P8000 went from 325 to 334 of 361 connections in 120 s.
 - **Auto placement.** `--mode auto` picks between refine, full and the input placement by routing each.
+- **More restarts.** When budget remains after the planned restarts, the router keeps restarting with variation
+  instead of stopping early.
+- **GPU field cut-off.** A variant stops building GPU fields when they exceed 30% of its wall-clock time, which
+  happens when many jobs share the GPUs.
+- **Copper text margin.** Text boxes grew by 15% of the text height after one clearance error near copper text
+  on USBI2C01 in run final6. Run final7 has no router-introduced errors.
 - **Placement integrated.** The placement agent's engine is committed. I added the router-in-the-loop check.
 
 ## Placement status (M7)
@@ -82,12 +88,12 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 - Live routing: `build/release/src/app/tracemaker route <board> -o out.kicad_pcb --view --hold`, then open
   `http://192.168.1.82:8766/`.
 - Placement: `build/release/src/place/tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode auto --route-check 3000000`.
-- Routed benchmark boards: `bench/results/final5-tier{A,B,C,D}/boards/*.kicad_pcb` (open in KiCad 10).
+- Routed benchmark boards: `bench/results/final7-tier{A,B,C,D}/boards/*.kicad_pcb` (open in KiCad 10).
 - Everything is committed locally (`git log`). Nothing was pushed anywhere.
 
 ## Decisions taken without you
 
-All are in `dev/assumptions.md` (A1–A18), each with its reason. The ones you may want to revisit:
+All are in `dev/assumptions.md` (A1–A20) and `docs/12-decisions.md` (D13–D16 added tonight), each with its reason. The ones you may want to revisit:
 
 - **A1:** local git commits under a repository-local identity (`dingo`, your account email); nothing pushed.
 - **A3:** schematic connectivity comes from `kicad-cli` netlists rather than a native schematic resolver.
@@ -96,6 +102,7 @@ All are in `dev/assumptions.md` (A1–A18), each with its reason. The ones you m
 - **A17:** edge-connector fingers stay unrouted rather than create mask bridges. TraceMaker's clean pass is
   therefore stricter than Freerouting's figure.
 - **A18:** mask graphics are grown by the board's mask expansion, inferred from kicad-cli behaviour.
+- **A19:** copper text is modelled as a generous box. Exact glyph outlines would free some space.
 - **Placement agent:** full mode aims for a 0.25 mm courtyard gap and falls back to KiCad's default of 0 on dense
   boards. Connectors near the edge stay fixed unless `--move-connectors` is given.
 

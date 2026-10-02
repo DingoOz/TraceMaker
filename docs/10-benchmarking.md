@@ -76,5 +76,5 @@ place-and-route set also resets unlocked footprint positions to a pile outside t
 - Added errors count only violations involving a track, via or arc (decision A16); other new KiCad reports are
   kept as diagnostics.
 - Results go to `bench/results/<run>/` and the progress site's benchmark panel.
-- Latest (`final5`): tier A 100% clean, B 60.0%, C 53.3%, D 52.4% (Freerouting 2.5.0-RC12: 100%, 50.0%, 46.7%,
+- Latest (`final7`): tier A 100% clean, B 62.5%, C 56.7%, D 52.4% (Freerouting 2.5.0-RC12: 100%, 50.0%, 46.7%,
   38.1%); no router-introduced DRC errors on any board.
