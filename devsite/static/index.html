@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TraceMaker Progress</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" id="hl-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<link rel="stylesheet" id="hl-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -13,7 +17,7 @@
   --text: #0b0b0b; --text-2: #52514e; --muted: #7a7974;
   --accent: #2a78d6; --accent-soft: #cde2fb; --track: #e8e7e3;
   --good: #0ca30c; --good-text: #006300; --warn: #fab219; --critical: #d03b3b;
-  --glow: none;
+  --glow: none; --code-bg: #f6f8fa; --add-bg: rgba(42,120,214,.08);
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
@@ -22,7 +26,7 @@
     --text: #ffffff; --text-2: #c3c2b7; --muted: #8d8c84;
     --accent: #3987e5; --accent-soft: #184f95; --track: #2c2c29;
     --good: #0ca30c; --good-text: #4cc94c; --warn: #fab219; --critical: #e66767;
-    --glow: 0 0 12px rgba(57,135,229,.45);
+    --glow: 0 0 12px rgba(57,135,229,.45); --code-bg: #0d1117; --add-bg: rgba(57,135,229,.12);
   }
 }
 :root[data-theme="dark"] {
@@ -31,7 +35,7 @@
   --text: #ffffff; --text-2: #c3c2b7; --muted: #8d8c84;
   --accent: #3987e5; --accent-soft: #184f95; --track: #2c2c29;
   --good: #0ca30c; --good-text: #4cc94c; --warn: #fab219; --critical: #e66767;
-  --glow: 0 0 12px rgba(57,135,229,.45);
+  --glow: 0 0 12px rgba(57,135,229,.45); --code-bg: #0d1117; --add-bg: rgba(57,135,229,.12);
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.45 Inter, system-ui, sans-serif; }
@@ -134,6 +138,17 @@ details.preset table { margin: 2px 0 10px; }
 .commit .h { color: var(--accent); font-size: 12px; }
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 13px; }
 .kv dt { color: var(--muted); } .kv dd { margin: 0; }
+
+.code-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 13px; }
+.lang { font-size: 11px; font-weight: 600; letter-spacing: .04em; border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; color: var(--text-2); }
+.code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: auto; max-height: 560px; font: 12.5px/1.55 "JetBrains Mono", ui-monospace, monospace; }
+.code table { border-collapse: collapse; width: 100%; font-size: inherit; }
+.code td { border: 0; padding: 0 12px 0 0; white-space: pre; vertical-align: top; }
+.code td.ln { color: var(--muted); text-align: right; padding: 0 10px 0 12px; user-select: none; width: 1%; border-right: 1px solid var(--border); }
+.code tr.add td.src { background: var(--add-bg); box-shadow: inset 3px 0 0 var(--accent); }
+.code td.src { padding-left: 12px; }
+.code tr:first-child td { padding-top: 8px; } .code tr:last-child td { padding-bottom: 8px; }
+.code .hljs { background: transparent; padding: 0; }
 #tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--text); border: 1px solid var(--border);
   border-radius: 8px; padding: 6px 9px; font-size: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.25); opacity: 0; transition: opacity .1s; z-index: 10; max-width: 320px; }
 #tip.on { opacity: 1; }
@@ -160,6 +175,7 @@ details.preset table { margin: 2px 0 10px; }
 
   <div class="grid">
     <div class="col">
+      <section class="panel"><h2>Latest code</h2><div id="code"></div></section>
       <section class="panel"><h2>Roadmap</h2><div id="milestones"></div></section>
       <section class="panel"><h2>Benchmarks</h2><div id="bench"></div></section>
       <section class="panel"><h2>Code by module</h2><div id="modules"></div></section>
@@ -238,12 +254,19 @@ document.addEventListener("pointermove", (e) => {
 
 // ---------- theme ----------
 const root = document.documentElement;
+function syncCodeTheme() {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  $("hl-dark").disabled = !dark; $("hl-light").disabled = dark;
+}
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncCodeTheme);
 try { const t = localStorage.getItem("tm-theme"); if (t) root.dataset.theme = t; } catch (_) {}
 $("theme").addEventListener("click", () => {
   const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   root.dataset.theme = dark ? "light" : "dark";
   try { localStorage.setItem("tm-theme", root.dataset.theme); } catch (_) {}
+  syncCodeTheme();
 });
+syncCodeTheme();
 
 // ---------- renderers ----------
 const openState = new Set();
@@ -378,13 +401,43 @@ function renderEnv(s) {
       el("tbody", {}, s.docs.map((d) => el("tr", {}, el("td", {}, d.title, el("div", { class: "sub mono", text: d.path })), el("td", { class: "r sub", text: ago(d.updated) }))))));
 }
 
+
+let lastCodeKey = "";
+function renderCode(s) {
+  const c = s.latest_code;
+  if (!c) { replace("code", el("div", { class: "empty", text: "No code yet." })); return; }
+  const key = c.path + c.mtime;
+  if (key === lastCodeKey) return;  // keep scroll position when nothing changed
+  lastCodeKey = key;
+  const end = c.start + c.lines.length - 1;
+  const added = new Set(c.added);
+  const rows = c.lines.map((line, i) => {
+    const n = c.start + i;
+    const src = el("td", { class: "src" });
+    const code = el("code", { class: "hljs" });
+    if (window.hljs && hljs.getLanguage(c.language)) {
+      code.innerHTML = hljs.highlight(line || " ", { language: c.language, ignoreIllegals: true }).value;  // hljs escapes input
+    } else {
+      code.textContent = line || " ";
+    }
+    src.append(code);
+    return el("tr", { class: added.has(n) ? "add" : "" }, el("td", { class: "ln num", text: String(n) }), src);
+  });
+  const what = c.new_file ? "new file" : (c.added.length ? `${c.added.length} changed lines shown` : "no uncommitted changes; end of file");
+  replace("code",
+    el("div", { class: "code-head" },
+      el("span", {}, el("b", { class: "mono", text: c.path }), el("span", { class: "sub", text: `  lines ${c.start}–${end} of ${c.total_lines} · ${what} · ${ago(c.mtime)}` })),
+      el("span", { class: "lang", text: c.label })),
+    el("div", { class: "code" }, el("table", {}, el("tbody", {}, rows))));
+}
+
 // ---------- loop ----------
 let last = 0;
 async function refresh() {
   try {
     const r = await fetch("/api/status", { cache: "no-store" });
     const s = await r.json();
-    renderTiles(s); renderMilestones(s); renderTests(s); renderGpus(s); renderActivity(s);
+    renderTiles(s); renderCode(s); renderMilestones(s); renderTests(s); renderGpus(s); renderActivity(s);
     renderCommits(s); renderModules(s); renderBench(s); renderEnv(s);
     last = Date.now();
   } catch (e) { /* keep the last good render */ }

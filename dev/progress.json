@@ -70,72 +70,52 @@
   {
    "id": "M1",
    "title": "KiCad I/O and board model",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
    "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
    "tasks": [
     {
-     "text": "s-expression lexer/parser/writer",
+     "text": "Lossless s-expression parser/writer with span edits",
+     "done": true
+    },
+    {
+     "text": "Board reader: layers, nets (KiCad 9 and 10 syntax), footprints, pads, tracks, arcs, vias, zones, graphics",
+     "done": true
+    },
+    {
+     "text": "Reader verified against pcbnew ground truth on demo boards",
+     "done": true
+    },
+    {
+     "text": "Byte-identical round trip of fixture boards",
+     "done": true
+    },
+    {
+     "text": "Design rules: .kicad_pro net classes, patterns, assignments, board minimums",
+     "done": true
+    },
+    {
+     "text": "Custom rules: .kicad_dru parsed into rules and constraints",
+     "done": true
+    },
+    {
+     "text": "Board editor: add/remove tracks and vias, move/rotate footprints",
      "done": false
     },
     {
-     "text": "`.kicad_pcb`",
+     "text": "Edited boards load in pcbnew with the expected geometry",
      "done": false
     },
     {
-     "text": "`.kicad_pro`",
+     "text": "Netlist import via kicad-cli (kicadsexpr) and cross-check against board pad nets",
      "done": false
     },
     {
-     "text": "`.kicad_dru`",
+     "text": "tracemaker inspect: board summary and JSON dump",
      "done": false
     },
     {
-     "text": "`.kicad_sch` (netlist)",
-     "done": false
-    },
-    {
-     "text": "`.kicad_mod`",
-     "done": false
-    },
-    {
-     "text": "board model with layers",
-     "done": false
-    },
-    {
-     "text": "stackup",
-     "done": false
-    },
-    {
-     "text": "footprints",
-     "done": false
-    },
-    {
-     "text": "pads",
-     "done": false
-    },
-    {
-     "text": "tracks",
-     "done": false
-    },
-    {
-     "text": "vias",
-     "done": false
-    },
-    {
-     "text": "zones",
-     "done": false
-    },
-    {
-     "text": "nets",
-     "done": false
-    },
-    {
-     "text": "net classes",
-     "done": false
-    },
-    {
-     "text": "DSN reader",
+     "text": "Gate: round trip on all fixtures; reader matches KiCad",
      "done": false
     }
    ]

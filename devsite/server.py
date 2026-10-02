@@ -209,6 +209,77 @@ def benchmarks() -> list[dict]:
     return out
 
 
+HL_LANG = {".cpp": "cpp", ".hpp": "cpp", ".h": "cpp", ".cu": "cpp", ".cuh": "cpp", ".py": "python", ".ts": "typescript",
+           ".js": "javascript", ".html": "xml", ".css": "css", ".cmake": "cmake", ".sh": "bash", ".json": "json",
+           ".md": "markdown", ".fbs": "cpp", ".wgsl": "rust", ".glsl": "glsl"}
+LANG_LABEL = {"cpp": "C++", "python": "Python", "typescript": "TypeScript", "javascript": "JavaScript", "xml": "HTML",
+              "css": "CSS", "cmake": "CMake", "bash": "Shell", "json": "JSON", "markdown": "Markdown", "rust": "WGSL",
+              "glsl": "GLSL"}
+
+
+def latest_code(max_lines: int = 80) -> dict | None:
+    """The most recently written section of code: the newest changed hunks of the most recently modified file."""
+    newest: tuple[float, pathlib.Path] | None = None
+    for top in CODE_DIRS:
+        base = ROOT / top
+        if not base.is_dir():
+            continue
+        for dirpath, dirnames, filenames in os.walk(base):
+            dirnames[:] = [x for x in dirnames if x not in SKIP_DIRS]
+            for fn in filenames:
+                pth = pathlib.Path(dirpath, fn)
+                if pth.suffix not in HL_LANG and fn != "CMakeLists.txt":
+                    continue
+                try:
+                    m = pth.stat().st_mtime
+                except OSError:
+                    continue
+                if newest is None or m > newest[0]:
+                    newest = (m, pth)
+    if newest is None:
+        return None
+    mtime, path = newest
+    rel = str(path.relative_to(ROOT))
+    lang = "cmake" if path.name == "CMakeLists.txt" else HL_LANG[path.suffix]
+    try:
+        lines = path.read_text(errors="replace").splitlines()
+    except OSError:
+        return None
+    # Added/changed lines versus the last commit (new files: the whole file is new).
+    tracked = run(["git", "ls-files", "--error-unmatch", rel]).strip() != ""
+    added: set[int] = set()
+    if tracked:
+        diff = run(["git", "diff", "-U0", "HEAD", "--", rel])
+        for line in diff.splitlines():
+            if line.startswith("@@"):
+                try:
+                    plus = line.split("+", 1)[1].split(" ", 1)[0]
+                    start, _, count = plus.partition(",")
+                    n = int(count) if count else 1
+                    added.update(range(int(start), int(start) + n))
+                except (ValueError, IndexError):
+                    pass
+    else:
+        added = set(range(1, len(lines) + 1))
+    if added:
+        last = max(added)
+        end = min(len(lines), last + 3)
+        begin = max(1, end - max_lines + 1)
+        # Prefer to start at the beginning of the newest contiguous changed block when it fits.
+        block_start = last
+        while block_start - 1 in added:
+            block_start -= 1
+        if end - block_start + 4 <= max_lines:
+            begin = max(1, block_start - 3)
+            end = min(len(lines), begin + max_lines - 1)
+    else:
+        end = len(lines)
+        begin = max(1, end - max_lines + 1)
+    return {"path": rel, "language": lang, "label": LANG_LABEL.get(lang, lang), "mtime": mtime,
+            "start": begin, "lines": lines[begin - 1:end], "added": sorted(i for i in added if begin <= i <= end),
+            "total_lines": len(lines), "new_file": not tracked}
+
+
 def status() -> dict:
     return {
         "generated": time.time(),
@@ -222,6 +293,7 @@ def status() -> dict:
         "kicad": CACHE.get("kicad", 3600, kicad_version),
         "docs": CACHE.get("docs", 10, docs),
         "benchmarks": CACHE.get("bench", 10, benchmarks),
+        "latest_code": CACHE.get("latest_code", 3, latest_code),
     }
 
 
