@@ -1,5 +1,7 @@
 // tracemaker-place: component placement for a .kicad_pcb (design doc 04).
 #include <cstdio>
+#include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -23,7 +25,7 @@ int main(int argc, char** argv) {
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
   app.add_option("--mode", o.mode, "full (place from scratch) or refine (improve the current placement)")
-      ->check(CLI::IsMember({"full", "refine"}));
+      ->check(CLI::IsMember({"full", "refine", "auto"}));
   app.add_option("--time", o.time_limit_s, "Wall-time stop for the annealer, seconds (0 = none; budgets are in moves)");
   app.add_option("--seed", o.seed, "Random seed");
   app.add_option("--threads", o.threads, "Threads for parallel annealing runs (0 = min(cores, 16))");
@@ -45,6 +47,56 @@ int main(int argc, char** argv) {
   app.add_flag("--no-fallback", no_fallback, "Full mode: keep the result even if some parts could not be placed");
   app.add_option("--debug-part", debug_part, "Print the legality map of one part and exit");
   CLI11_PARSE(app, argc, argv);
+
+  // auto: run refine and full (each with the route check against the input) and keep the more routable
+  // result, then the shorter wirelength.
+  if (o.mode == "auto") {
+    if (route_check <= 0) {
+      std::fprintf(stderr, "error: --mode auto needs --route-check\n");
+      return 1;
+    }
+    struct Cand { std::string mode, path, json; int unrouted = 1 << 30; double hpwl = 0; int moved = 0; };
+    std::vector<Cand> cands;
+    for (const char* m : {"refine", "full"}) {
+      Cand c{m, out + "." + m + ".kicad_pcb", out + "." + m + ".json"};
+      std::string cmd = "'" + std::string(argv[0]) + "' '" + in + "' -o '" + c.path + "' --mode " + m + " --seed " + std::to_string(o.seed) +
+                        " --threads " + std::to_string(o.threads) + " --effort " + std::to_string(o.effort) + " --route-check " +
+                        std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
+                        (move_connectors ? " --move-connectors" : "") + " > /dev/null 2>&1";
+      const int rc = std::system(cmd.c_str());
+      if (rc != 0 && rc != 2 * 256) continue;
+      try {
+        std::ifstream f(c.json);
+        const auto j = nlohmann::json::parse(f);
+        const auto& rcj = j.at("route_check");
+        const bool kept = rcj.at("kept_input").get<bool>();
+        c.unrouted = kept ? rcj.at("connections_input").get<int>() - rcj.at("routed_input").get<int>()
+                          : rcj.at("connections_output").get<int>() - rcj.at("routed_output").get<int>();
+        c.moved = j.value("moved", 0);
+        c.hpwl = j.at("after").value("hpwl_mm", 0.0);
+        std::printf("  %s: %d unrouted, %d footprints moved%s\n", m, c.unrouted, c.moved,
+                    rcj.at("kept_input").get<bool>() ? " (kept input)" : "");
+        cands.push_back(c);
+      } catch (const std::exception& e) {
+        std::fprintf(stderr, "  %s: no report (%s)\n", m, e.what());
+      }
+    }
+    if (cands.empty()) {
+      std::fprintf(stderr, "error: no candidate placement\n");
+      return 1;
+    }
+    std::size_t best = 0;
+    for (std::size_t i = 1; i < cands.size(); ++i)
+      if (cands[i].unrouted < cands[best].unrouted || (cands[i].unrouted == cands[best].unrouted && cands[i].moved > 0 && cands[i].hpwl < cands[best].hpwl)) best = i;
+    std::filesystem::copy_file(cands[best].path, out, std::filesystem::copy_options::overwrite_existing);
+    if (!json_path.empty()) std::filesystem::copy_file(cands[best].json, json_path, std::filesystem::copy_options::overwrite_existing);
+    for (const auto& c : cands) {
+      std::filesystem::remove(c.path);
+      std::filesystem::remove(c.json);
+    }
+    std::printf("auto: kept %s -> %s\n", cands[best].mode.c_str(), out.c_str());
+    return 0;
+  }
 
   try {
     auto lb = io::read_board_file(in);
@@ -129,7 +181,7 @@ int main(int argc, char** argv) {
 
     // Router in the loop: a placement that routes fewer connections than the input is not an improvement,
     // whatever its wirelength. Route both with the same deterministic budget and keep the better one.
-    int routed_in = -1, routed_out = -1, conns = 0;
+    int routed_in = -1, routed_out = -1, conns = 0, conns_in = 0, conns_out = 0;
     bool reverted = false;
     if (route_check > 0) {
       route::RouterOptions ro;
@@ -143,8 +195,11 @@ int main(int argc, char** argv) {
         return res.routed;
       };
       routed_in = routed_of(in);
+      conns_in = conns;
       routed_out = routed_of(out);
-      if (routed_out < routed_in) {
+      conns_out = conns;
+      // Compare unrouted connections: the connection count can change with the placement.
+      if (conns_out - routed_out > conns_in - routed_in) {
         io::BoardEditor same(lb, o.seed);
         same.save(out);
         reverted = true;
@@ -184,7 +239,7 @@ int main(int argc, char** argv) {
       j["input"] = in;
       j["output"] = out;
       j["moved"] = moved;
-      if (route_check > 0) j["route_check"] = {{"work", route_check}, {"routed_input", routed_in}, {"routed_output", routed_out}, {"connections", conns}, {"kept_input", reverted}};
+      if (route_check > 0) j["route_check"] = {{"work", route_check}, {"routed_input", routed_in}, {"routed_output", routed_out}, {"connections", conns}, {"connections_input", conns_in}, {"connections_output", conns_out}, {"kept_input", reverted}};
       // Final placement (footprint origins and courtyard boxes, mm) for plotting and inspection.
       nlohmann::json parts = nlohmann::json::array();
       for (std::size_t i = 0; i < p.parts.size(); ++i) {
