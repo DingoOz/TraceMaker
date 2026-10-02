@@ -19,6 +19,7 @@ class UniformGrid {
   }
 
   void insert(int id, const geom::Box& box) {
+    if (static_cast<std::size_t>(id) >= stamp_.size()) stamp_.resize(static_cast<std::size_t>(id) * 2 + 16, 0);
     int x0, y0, x1, y1;
     range(box, x0, y0, x1, y1);
     for (int y = y0; y <= y1; ++y)
@@ -26,6 +27,14 @@ class UniformGrid {
   }
 
   // Calls f(id) once for every id whose inserted box shares a cell with `box`.
+  // Removes `id` from the cells of `box` (the box it was inserted with).
+  void erase(int id, const geom::Box& box) {
+    int x0, y0, x1, y1;
+    range(box, x0, y0, x1, y1);
+    for (int y = y0; y <= y1; ++y)
+      for (int x = x0; x <= x1; ++x) std::erase(cells_[idx(x, y)], id);
+  }
+
   template <class F>
   void query(const geom::Box& box, F&& f) {
     if (++gen_ == 0) {

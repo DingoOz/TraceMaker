@@ -1,5 +1,5 @@
 find_package(nlohmann_json 3 REQUIRED)
-add_library(tm_drc STATIC copper.cpp rule_engine.cpp drc.cpp)
+add_library(tm_drc STATIC copper.cpp rule_engine.cpp connectivity.cpp drc.cpp)
 add_library(tm::drc ALIAS tm_drc)
 target_link_libraries(tm_drc PUBLIC tm::model tm::geom PRIVATE nlohmann_json::nlohmann_json)
 tm_set_warnings(tm_drc)

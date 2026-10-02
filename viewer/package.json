@@ -1,0 +1,17 @@
+{
+  "name": "tracemaker-viewer",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Live WebGL2 viewer for the TraceMaker autorouter (protocol: docs/13-viewer-protocol.md)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2"
+  }
+}

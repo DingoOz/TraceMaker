@@ -2,12 +2,15 @@
 #include <CLI/CLI.hpp>
 
 #include <cstdio>
+#include <fstream>
+#include <nlohmann/json.hpp>
 #include <string>
 
 #include "app/inspect.hpp"
 #include "core/rng.hpp"
 #include "drc/drc.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "route/router.hpp"
 #include "core/version.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
@@ -110,6 +113,26 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
   return rep.violations.empty() && rep.unconnected.empty() ? 0 : 5;
 }
 
+int cmd_route(const std::string& in, const std::string& out, const tmk::route::RouterOptions& opt, const std::string& json_out) {
+  auto lb = tmk::io::read_board_file(in);
+  const auto rules = tmk::io::read_design_rules(in);
+  tmk::route::Router router(lb.board, rules, opt);
+  const auto res = router.run();
+  tmk::io::BoardEditor ed(lb, opt.seed);
+  for (const auto& t : res.tracks) ed.add_track(t);
+  for (const auto& v : res.vias) ed.add_via(v);
+  ed.save(out);
+  std::printf("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s\n", res.routed, res.connections,
+              res.tracks.size(), res.vias.size(), tmk::nm_to_mm(res.pitch), res.expansions, res.seconds);
+  for (const auto& f : res.failures) std::printf("  unrouted: %s\n", f.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j{{"routed", res.routed}, {"connections", res.connections}, {"tracks", res.tracks.size()}, {"vias", res.vias.size()},
+                     {"seconds", res.seconds}, {"expansions", res.expansions}, {"pitch_mm", tmk::nm_to_mm(res.pitch)}, {"failures", res.failures}};
+    std::ofstream(json_out) << j.dump(1);
+  }
+  return res.routed == res.connections ? 0 : 3;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -153,6 +176,18 @@ int main(int argc, char** argv) {
   pert->add_option("--vias", pvias);
   pert->add_option("--moves", pmoves);
 
+  auto* route = app.add_subcommand("route", "Route all unrouted connections of a board");
+  std::string r_in, r_out, r_json;
+  tmk::route::RouterOptions ropt;
+  double r_pitch_um = 0;
+  route->add_option("board", r_in)->required()->check(CLI::ExistingFile);
+  route->add_option("-o,--output", r_out, "Output .kicad_pcb")->required();
+  route->add_option("--time", ropt.time_limit_s, "Time limit, seconds");
+  route->add_option("--pitch-um", r_pitch_um, "Lattice pitch in micrometres (default: automatic)");
+  route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
+  route->add_option("--seed", ropt.seed);
+  route->add_option("--json", r_json, "Write a result summary as JSON");
+
   CLI11_PARSE(app, argc, argv);
   try {
     if (*version) {
@@ -169,6 +204,10 @@ int main(int argc, char** argv) {
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
+    if (*route) {
+      ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
+      return cmd_route(r_in, r_out, ropt, r_json);
+    }
     if (*rt) {
       int bad = 0, ok = 0;
       for (const auto& f : rt_files) {

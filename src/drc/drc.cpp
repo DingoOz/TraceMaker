@@ -8,6 +8,7 @@
 #include <numeric>
 #include <nlohmann/json.hpp>
 
+#include "drc/connectivity.hpp"
 #include "drc/copper.hpp"
 #include "drc/rule_engine.hpp"
 #include "index/uniform_grid.hpp"
@@ -23,19 +24,6 @@ std::map<std::string, int> DrcReport::counts() const {
 
 namespace {
 
-struct UnionFind {
-  std::vector<int> p;
-  explicit UnionFind(std::size_t n) : p(n) { std::iota(p.begin(), p.end(), 0); }
-  int find(int x) {
-    while (p[static_cast<std::size_t>(x)] != x) x = p[static_cast<std::size_t>(x)] = p[static_cast<std::size_t>(p[static_cast<std::size_t>(x)])];
-    return x;
-  }
-  void unite(int a, int b) {
-    a = find(a);
-    b = find(b);
-    if (a != b) p[static_cast<std::size_t>(std::max(a, b))] = std::min(a, b);
-  }
-};
 
 class Checker {
  public:
@@ -283,106 +271,17 @@ class Checker {
     }
   }
 
-  // Anchor-based connectivity, like KiCad's: tracks connect at their end points, vias and pads at their
-  // shapes; zone fills connect to anything they overlap.
+  // Connectivity (see drc/connectivity.cpp) and the checks that depend on it.
   void check_connectivity() {
     const auto n = cm_.items.size();
-    UnionFind uf(n);
-    std::vector<std::uint8_t> end_hit(n * 2, 0);  // track end point connected?
-    std::vector<model::LayerMask> via_layers(n, 0);  // layers on which each via has a connection
-    auto anchor_r = [&](const CopperItem& it) -> Coord {
-      return (it.kind == ItemKind::Track || it.kind == ItemKind::Arc || it.kind == ItemKind::Via) ? it.width / 2 : 0;
-    };
-    auto anchors = [&](const CopperItem& it, std::vector<model::Point>& out) {
-      out.clear();
-      if (it.kind == ItemKind::Track) {
-        const auto& t = b_.tracks[static_cast<std::size_t>(it.index)];
-        out = {t.a, t.b};
-      } else if (it.kind == ItemKind::Arc) {
-        const auto& t = b_.arcs[static_cast<std::size_t>(it.index)];
-        out = {t.a, t.b};
-      } else if (it.kind == ItemKind::Via || it.kind == ItemKind::Pad) {
-        out = {it.pos};
-      }
-    };
-    std::vector<model::Point> anc;
-    for (std::size_t i = 0; i < n; ++i) {
-      const CopperItem& a = cm_.items[i];
-      if (a.net == 0) continue;
-      grid_->query(a.box, [&](int jj) {
-        const auto j = static_cast<std::size_t>(jj);
-        if (j <= i) return;
-        const CopperItem& c = cm_.items[j];
-        if (c.net != a.net || !(a.layers & c.layers)) return;
-        bool linked = false;
-        if (a.kind == ItemKind::Zone || c.kind == ItemKind::Zone) {
-          linked = shapes_closer(a, c, 1);
-          // A track end inside the fill is a connected end.
-          const bool a_zone = a.kind == ItemKind::Zone;
-          const CopperItem& t = a_zone ? c : a;
-          const CopperItem& z = a_zone ? a : c;
-          const std::size_t ti = a_zone ? j : i;
-          if (linked && (t.kind == ItemKind::Track || t.kind == ItemKind::Arc)) {
-            anchors(t, anc);
-            for (std::size_t k = 0; k < anc.size(); ++k)
-              if (geom::point_in_polygon(anc[k], z.shapes.front().pts)) end_hit[ti * 2 + k] = 1;
-          }
-        } else {
-          // Anchors of a inside c, or anchors of c inside a.
-          for (int pass = 0; pass < 2; ++pass) {
-            const CopperItem& x = pass == 0 ? a : c;
-            const CopperItem& y = pass == 0 ? c : a;
-            const std::size_t xi = pass == 0 ? i : j;
-            anchors(x, anc);
-            for (std::size_t k = 0; k < anc.size(); ++k) {
-              const geom::Shape pt = geom::Shape::point(anc[k], anchor_r(x));
-              bool in = false;
-              for (const auto& s : y.shapes)
-                if (geom::closer_than(pt, s, 1)) { in = true; break; }
-              if (in) {
-                linked = true;
-                if (x.kind == ItemKind::Track || x.kind == ItemKind::Arc) end_hit[xi * 2 + k] = 1;
-              }
-            }
-          }
-          // KiCad links pads to anything their copper overlaps (a track passing through a pad connects to it).
-          if (!linked && (a.kind == ItemKind::Pad || c.kind == ItemKind::Pad)) linked = shapes_closer(a, c, 1);
-        }
-        if (linked) {
-          uf.unite(static_cast<int>(i), static_cast<int>(j));
-          if (a.kind == ItemKind::Via) via_layers[i] |= a.layers & c.layers;
-          if (c.kind == ItemKind::Via) via_layers[j] |= a.layers & c.layers;
-          // Track ends that touch another track's end also count as connected for both.
-          if ((a.kind == ItemKind::Track || a.kind == ItemKind::Arc) && (c.kind == ItemKind::Track || c.kind == ItemKind::Arc)) {
-            anchors(a, anc);
-            for (std::size_t k = 0; k < anc.size(); ++k)
-              for (const auto& s : c.shapes)
-                if (geom::closer_than(geom::Shape::point(anc[k], anchor_r(a)), s, 1)) end_hit[i * 2 + k] = 1;
-            anchors(c, anc);
-            for (std::size_t k = 0; k < anc.size(); ++k)
-              for (const auto& s : a.shapes)
-                if (geom::closer_than(geom::Shape::point(anc[k], anchor_r(c)), s, 1)) end_hit[j * 2 + k] = 1;
-          }
-        }
-      });
-    }
-    // Pads joined by a net-tie footprint's copper are connected.
-    {
-      std::map<std::pair<int, std::string>, int> pad_item;
-      for (std::size_t i = 0; i < n; ++i)
-        if (cm_.items[i].kind == ItemKind::Pad) {
-          const auto& p = b_.pads[static_cast<std::size_t>(cm_.items[i].index)];
-          pad_item[{p.footprint, p.number}] = static_cast<int>(i);
-        }
-      for (std::size_t f = 0; f < b_.footprints.size(); ++f)
-        for (const auto& g : b_.footprints[f].net_tie_groups)
-          for (std::size_t k = 1; k < g.size(); ++k) {
-            const auto x = pad_item.find({static_cast<int>(f), g[0]}), y = pad_item.find({static_cast<int>(f), g[k]});
-            if (x != pad_item.end() && y != pad_item.end()) uf.unite(x->second, y->second);
-          }
-    }
-    // Clusters with at least one pad, per net.
-    std::map<model::NetId, std::vector<int>> roots;  // net -> distinct cluster roots containing pads
+    const Connectivity con = compute_connectivity(b_, cm_, *grid_);
+    const auto& end_hit = con.end_hit;
+    const auto& via_layers = con.via_layers;
+    struct Roots {
+      const std::vector<int>& r;
+      int find(int i) const { return r[static_cast<std::size_t>(i)]; }
+    } uf{con.root};
+    std::map<model::NetId, std::vector<int>> roots;  // net -> distinct cluster roots
     std::map<int, int> root_item;
     // KiCad's ratsnest joins every copper cluster of a net (pads, and also stray tracks/vias), not only
     // clusters that contain pads (verified on fuzzed boards). Zone fills and graphics do not form clusters.

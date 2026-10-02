@@ -330,9 +330,20 @@ class Reader {
       gr.b = tf(child_xy(g, "end"));
     } else if (kind == "arc") {
       gr.kind = model::Graphic::Kind::Arc;
-      gr.a = tf(child_xy(g, "start"));
-      gr.c = tf(child_xy(g, "mid"));
-      gr.b = tf(child_xy(g, "end"));
+      if (d_.find(g, "mid") != kNoNode) {
+        gr.a = tf(child_xy(g, "start"));
+        gr.c = tf(child_xy(g, "mid"));
+        gr.b = tf(child_xy(g, "end"));
+      } else {
+        // KiCad <= 5: (start CENTRE) (end START-POINT) (angle SWEEP), sweep clockwise on screen.
+        const Point centre = child_xy(g, "start"), p0 = child_xy(g, "end");
+        double sweep = 0;
+        if (NodeId an = d_.find(g, "angle"); an != kNoNode) sweep = d_.number_at(an, 1).value_or(0.0);
+        const Point rel = p0 - centre;
+        gr.a = tf(p0);
+        gr.c = tf(centre + geom::rotate(rel, -sweep / 2));
+        gr.b = tf(centre + geom::rotate(rel, -sweep));
+      }
     } else if (kind == "circle") {
       gr.kind = model::Graphic::Kind::Circle;
       gr.a = tf(child_xy(g, "center"));
