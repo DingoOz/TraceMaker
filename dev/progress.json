@@ -260,7 +260,7 @@
     },
     {
      "text": "Failure records, nogoods, conflict graph, bandit (T0-T2 complete)",
-     "done": false
+     "done": true
     },
     {
      "text": "Gate: completion >= Freerouting on tier A",

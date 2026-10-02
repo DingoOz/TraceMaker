@@ -32,6 +32,7 @@ struct Hole {
   bool plated = true;
   model::NetId net = 0;
   model::Point pos;
+  Coord clearance = -1;         // local clearance of the owning pad/footprint (applies as hole clearance), -1 = none
   bool removed = false;
 };
 

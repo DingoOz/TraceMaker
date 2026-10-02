@@ -22,13 +22,17 @@ inline std::size_t z(int i) { return static_cast<std::size_t>(i); }
 // Net weights are small integers so every cost is an exact integer (CLAUDE.md rule 2).
 inline constexpr int kSignalWeight = 10;
 inline constexpr int kPowerWeight = 1;
+inline constexpr Coord kEdgeTolerance = 250'000;  // courtyard may extend this far past the board edge
 
 struct PartGeom {               // one rotation of a part, offsets from the footprint origin
   std::array<std::vector<Shape>, 2> cy;  // courtyard polygons per side (empty = no courtyard on that side)
   std::vector<Shape> through;   // drilled holes and plated-through pad copper (obstacles on both sides)
   std::vector<Shape> pads;      // pad copper (for the copper-to-edge clearance)
   Box body;                     // bounding box of courtyards and through obstacles
-  Box edge_box;                 // bounding box of courtyards and pads inflated by the edge clearance
+  // Courtyards shrunk by kEdgeTolerance: what must stay inside the board outline. KiCad itself only checks pad
+  // copper against the edge (copper_edge_clearance); a courtyard may reach a little past it.
+  std::array<std::vector<Shape>, 2> cy_in;
+  Box edge_box;                 // bounding box of the inset courtyards and pads inflated by the edge clearance
 };
 
 struct Part {
@@ -94,6 +98,8 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
 Shape translated(const Shape& s, Point d);
 Point rot90(Point p, int r);       // KiCad rotation by r * 90 degrees
 std::vector<Point> convex_hull(std::vector<Point> pts);
+// Inner parallel polygon of a convex polygon at distance t; a point at the centroid if it is thinner than 2t.
+Shape inset_convex(const Shape& s, Coord t);
 bool power_like_name(const std::string& name);
 
 }  // namespace tmk::place

@@ -21,3 +21,6 @@
 {"ts": "2026-10-02T12:57:47+00:00", "kind": "build", "text": "tracemaker route --view streams routing live to the browser viewer (port 8766)"}
 {"ts": "2026-10-02T13:19:11+00:00", "kind": "test", "text": "Tier B (40 boards) with an 8-variant portfolio: 42.5% clean pass (Freerouting RC12 50%, 2.4.1 12.5%); 5 boards clean only with TraceMaker"}
 {"ts": "2026-10-02T13:53:03+00:00", "kind": "test", "text": "Portfolio benchmarks (40 boards each): tier A 97.5% clean (FR RC12 100%, 2.4.1 87.5%), tier B 45% (FR RC12 50%, 2.4.1 12.5%); zero added DRC errors"}
+{"ts": "2026-10-02T13:55:51+00:00", "kind": "milestone", "text": "Failure memory across runs: SQLite knowledge base with a Thompson-sampling bandit over router variants and per-board failure priorities"}
+{"ts": "2026-10-02T14:11:33+00:00", "kind": "milestone", "text": "GPU cost-to-go fields: CUDA kernel equals CPU reference exactly; routed boards byte-identical with and without GPU"}
+{"ts": "2026-10-02T14:14:47+00:00", "kind": "build", "text": "Deterministic routing: --work budget makes runs byte-reproducible; aquarius 171/171 with an 8-variant portfolio"}

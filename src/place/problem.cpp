@@ -176,6 +176,45 @@ std::vector<Point> convex_hull(std::vector<Point> pts) {
   return h;
 }
 
+Shape inset_convex(const Shape& s, Coord t) {
+  const std::size_t n = s.pts.size();
+  if (n < 3 || t <= 0) return s;
+  long double area2 = 0, cx = 0, cy = 0;
+  for (std::size_t i = 0, j = n - 1; i < n; j = i++) {
+    area2 += static_cast<long double>(s.pts[j].x) * static_cast<long double>(s.pts[i].y) -
+             static_cast<long double>(s.pts[i].x) * static_cast<long double>(s.pts[j].y);
+    cx += static_cast<long double>(s.pts[i].x);
+    cy += static_cast<long double>(s.pts[i].y);
+  }
+  const Point centre{static_cast<Coord>(cx / n), static_cast<Coord>(cy / n)};
+  const double sgn = area2 > 0 ? 1.0 : -1.0;  // inward normal of edge a→b is sgn·(−dy, dx)
+  std::vector<Point> out(n);
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point a = s.pts[(i + n - 1) % n], v = s.pts[i], b = s.pts[(i + 1) % n];
+    auto normal = [&](Point p, Point q, double& nx, double& ny) {
+      const double dx = static_cast<double>(q.x - p.x), dy = static_cast<double>(q.y - p.y);
+      const double len = std::hypot(dx, dy);
+      nx = len > 0 ? sgn * -dy / len : 0;
+      ny = len > 0 ? sgn * dx / len : 0;
+    };
+    double n1x, n1y, n2x, n2y;
+    normal(a, v, n1x, n1y);
+    normal(v, b, n2x, n2y);
+    const double k = 1.0 + n1x * n2x + n1y * n2y;
+    if (k < 1e-6) return Shape::point(centre, 0);
+    const double td = static_cast<double>(t);
+    out[i] = Point{v.x + geom::kiround(td * (n1x + n2x) / k), v.y + geom::kiround(td * (n1y + n2y) / k)};
+  }
+  // Valid only if every edge keeps its direction (no edge collapsed or flipped).
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point a = s.pts[i], b = s.pts[(i + 1) % n], c = out[i], d = out[(i + 1) % n];
+    const long double dot = static_cast<long double>(b.x - a.x) * static_cast<long double>(d.x - c.x) +
+                            static_cast<long double>(b.y - a.y) * static_cast<long double>(d.y - c.y);
+    if (dot <= 0) return Shape::point(centre, 0);
+  }
+  return Shape::polygon(std::move(out), 0);
+}
+
 bool power_like_name(const std::string& name) {
   std::string n = upper(name);
   if (const auto s = n.rfind('/'); s != std::string::npos) n = n.substr(s + 1);
@@ -369,7 +408,8 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         for (const auto& sh : cy0[z(s)]) {
           g.cy[z(s)].push_back(rot_shape(sh));
           g.body.add(g.cy[z(s)].back().box);
-          g.edge_box.add(g.cy[z(s)].back().box);
+          g.cy_in[z(s)].push_back(rot_shape(inset_convex(sh, kEdgeTolerance)));
+          g.edge_box.add(g.cy_in[z(s)].back().box);
         }
       for (const auto& s : through) {
         g.through.push_back(rot_shape(s));
@@ -456,12 +496,13 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     }
     p.nets.push_back(std::move(net));
   }
-  // Parts that already overhang the board edge (or sit in a keepout) are placed that way on purpose
-  // (connectors, sensors, battery holders): keep them where they are.
+  // Parts that already overhang the board edge (pads outside, or the courtyard well past it) or sit in a
+  // keepout are placed that way on purpose (connectors, sensors, battery holders): keep them where they are.
+  // Pads merely closer to the edge than the copper-to-edge clearance do not count (common in old boards).
   {
     const Legality L(p);
     for (auto& pt : p.parts)
-      if (pt.movable && !L.inside_ok(static_cast<int>(&pt - p.parts.data()), pt.pos0, 0)) {
+      if (pt.movable && !L.inside_ok(static_cast<int>(&pt - p.parts.data()), pt.pos0, 0, true)) {
         pt.movable = false;
         pt.fixed_reason = "overhangs the board edge in the input";
       }

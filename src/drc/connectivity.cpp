@@ -80,7 +80,9 @@ Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, 
             }
           }
           // KiCad links pads to anything their copper overlaps (a track passing through a pad connects to it).
-          if (!linked && (a.kind == ItemKind::Pad || c.kind == ItemKind::Pad)) linked = shapes_closer(a, c, 1);
+          // Two pads need a centre inside the other (checked by the anchor pass above): overlapping pads of
+          // different footprints do not connect (verified on PCBench Horticulture's via-stitching arrays).
+          if (!linked && (a.kind == ItemKind::Pad) != (c.kind == ItemKind::Pad)) linked = shapes_closer(a, c, 1);
         }
         if (linked) {
           uf.unite(static_cast<int>(i), static_cast<int>(j));

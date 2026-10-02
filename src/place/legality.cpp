@@ -75,9 +75,9 @@ void Legality::cells_of(const Box& b, int& cx0, int& cy0, int& cx1, int& cy1) co
   cy1 = cy(b.y1);
 }
 
-bool Legality::inside_ok(int part, Point pos, int rot) const {
+bool Legality::inside_ok(int part, Point pos, int rot, bool lenient) const {
   const PartGeom& g = p_.parts[z(part)].geom[z(rot)];
-  const Box eb = shift(g.edge_box, pos);
+  const Box eb = shift(lenient ? g.edge_box.inflated(-p_.edge_clearance) : g.edge_box, pos);
   const Box& rg = p_.region;
   if (eb.x0 < rg.x0 || eb.y0 < rg.y0 || eb.x1 > rg.x1 || eb.y1 > rg.y1) return false;
   auto near_edge = [&](const Shape& s, Coord c) {
@@ -97,14 +97,15 @@ bool Legality::inside_ok(int part, Point pos, int rot) const {
     return true;
   };
   for (int s = 0; s < 2; ++s) {
-    for (const Shape& cy : g.cy[z(s)]) {
+    for (const Shape& cy : g.cy_in[z(s)]) {
       if (near_edge(cy, 1)) return false;
       if (!in_board(cy.pts[0] + pos)) return false;
+    }
+    for (const Shape& cy : g.cy[z(s)])
       for (const auto& k : p_.keepouts)
         if (k.side[s] && closer(k.poly, Point{}, cy, pos, 1)) return false;
-    }
   }
-  const Coord ec = std::max<Coord>(p_.edge_clearance, 1);
+  const Coord ec = lenient ? 1 : std::max<Coord>(p_.edge_clearance, 1);
   for (const auto& pd : g.pads) {
     if (near_edge(pd, ec)) return false;
     if (!in_board(pd.pts[0] + pos)) return false;
@@ -278,8 +279,10 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
     }
   };
   for (const auto& e : p.edges) mark_path(e.pts, false, inside, 0);
-  for (int s = 0; s < 2; ++s)
+  for (int s = 0; s < 2; ++s) {
     for (std::size_t i = 0; i < n; ++i) blocked_[s][i] = inside[i] ? 0 : 1;
+    keep_[s].assign(n, 0);
+  }
   // Keepouts: cells whose centre is inside, or that an edge of the keepout crosses.
   for (const auto& k : p.keepouts) {
     std::vector<std::uint8_t> m(n, 0);
@@ -293,7 +296,7 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
     mark_path(k.poly.pts, true, m, 1);
     for (int s = 0; s < 2; ++s)
       if (k.side[s])
-        for (std::size_t i = 0; i < n; ++i) blocked_[s][i] = static_cast<std::uint16_t>(blocked_[s][i] | m[i]);
+        for (std::size_t i = 0; i < n; ++i) keep_[s][i] = static_cast<std::uint16_t>(keep_[s][i] | m[i]);
   }
 }
 
@@ -344,7 +347,7 @@ bool Raster::free(int part, Point pos, int rot) const {
     if (g.cy[z(s)].empty()) continue;
     if (any(blocked_[s], shift(g.edge_box, pos))) return false;
     for (const Shape& cy : g.cy[z(s)])
-      if (any(occ_[s], shift(cy.box, pos).inflated(infl))) return false;
+      if (any(keep_[s], shift(cy.box, pos)) || any(occ_[s], shift(cy.box, pos).inflated(infl))) return false;
   }
   for (const auto& t : g.through)
     for (int s = 0; s < 2; ++s)

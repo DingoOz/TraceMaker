@@ -31,7 +31,8 @@ class Legality {
   explicit Legality(const Problem& p);
 
   // Board test (outline, cut-outs, keepouts, pad-to-edge clearance); independent of other parts.
-  bool inside_ok(int part, Point pos, int rot) const;
+  // `lenient`: pads only need to be inside the outline, without the copper-to-edge clearance.
+  bool inside_ok(int part, Point pos, int rot, bool lenient = false) const;
   // Exact test of two parts.
   bool pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) const;
 
@@ -86,7 +87,8 @@ class Raster {
   Coord h_;
   Coord ox_ = 0, oy_ = 0;
   int nx_ = 0, ny_ = 0;
-  std::vector<std::uint16_t> blocked_[2];  // static: not entirely inside the board, or in a keepout
+  std::vector<std::uint16_t> blocked_[2];  // static: not entirely inside the board
+  std::vector<std::uint16_t> keep_[2];     // static: touched by a footprint keepout on that side
   std::vector<std::uint16_t> occ_[2];      // courtyard and through-obstacle boxes of placed parts
 };
 

@@ -10,6 +10,10 @@ using geom::Point;
 using geom::Shape;
 
 Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(board), r_(rules), cm_(drc::build_copper(board)) {
+  // KiCad checks routed copper against footprint copper graphics as net-less copper (keyboard-switch
+  // footprints, logos), whatever pad they touch: block them for every net.
+  for (auto& it : cm_.items)
+    if (it.kind == drc::ItemKind::Graphic) it.net = 0;
   re_ = std::make_unique<drc::RuleEngine>(b_, r_, cm_);
   reach_ = std::max<Coord>(re_->max_clearance(), 1'000'000) + 2'000'000;  // clearance + generous track/via size
   bounds_ = b_.edge_bbox();
@@ -20,6 +24,10 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   grid_ = std::make_unique<index::UniformGrid>(bounds_, cell, cm_.items.size() + 1024);
   for (std::size_t i = 0; i < cm_.items.size(); ++i) grid_->insert(static_cast<int>(i), cm_.items[i].box);
   rgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, 1024);
+  // Non-plated holes are board edges for KiCad's copper_edge_clearance (verified on PCBench ErgoDone).
+  for (auto& h : cm_.holes)
+    if (!h.plated) h.clearance = std::max(h.clearance, r_.minimums.copper_edge_clearance);
+  for (const auto& h : cm_.holes) max_hole_local_ = std::max(max_hole_local_, h.clearance);
   hgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, cm_.holes.size() + 1024);
   for (std::size_t i = 0; i < cm_.holes.size(); ++i) hgrid_->insert(static_cast<int>(i), cm_.holes[i].shape.box);
   // Board edge as individual segments in a grid, so edge tests cost O(nearby segments).
@@ -243,12 +251,12 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   int state = 0;
   const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
   const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
-  hgrid_->query(s.box.inflated(std::max(hc, h2h) + 1), [&](int id) {
+  hgrid_->query(s.box.inflated(std::max({hc, h2h, max_hole_local_}) + 1), [&](int id) {
     if (state == 2) return;
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
     if (h.removed) return;
     bool hit = false;
-    if (!(h.net == net && net != 0 && h.plated) && geom::closer_than(s, h.shape, hc)) hit = true;
+    if (!(h.net == net && net != 0 && h.plated) && geom::closer_than(s, h.shape, std::max(hc, h.clearance))) hit = true;
     if (!hit && is_via_hole) {
       const Shape hole = Shape::point(s.pts[0], hole_r);
       if (geom::closer_than(hole, h.shape, h2h) || hole.pts[0] == h.shape.pts[0]) hit = true;
@@ -464,11 +472,11 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   aperture_codes(s, layer, via_probe, add_net);
   if (code == kBlocked) return code;
   const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
-  hgrid_->query(s.box.inflated(hc + 1), [&](int id) {
+  hgrid_->query(s.box.inflated(std::max(hc, max_hole_local_) + 1), [&](int id) {
     if (code == kBlocked) return;
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
     if (h.removed || (h.item >= 0 && cm_.items[static_cast<std::size_t>(h.item)].owner >= 0)) return;
-    if (geom::closer_than(s, h.shape, hc)) {
+    if (geom::closer_than(s, h.shape, std::max(hc, h.clearance))) {
       if (h.plated && h.net != 0) add_net(h.net);
       else code = kBlocked;
     }

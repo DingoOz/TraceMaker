@@ -73,7 +73,13 @@ def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
         return None
     d = json.loads(out.read_text())
     c = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error")
-    return {"errors": dict(c), "unconnected": len(d.get("unconnected_items", []))}
+    # Router-introduced = violations involving a track, arc or via (PCBench inputs have none). Pad-versus-footprint
+    # graphic violations can appear or disappear in KiCad's report once nets are connected; they are not caused by
+    # the router and are not counted (Freerouting's harness counts router-introduced violations the same way).
+    def routed_copper(v):
+        return any(i.get("description", "").startswith(("Track", "Via", "Arc")) for i in v.get("items", []))
+    r = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and routed_copper(v))
+    return {"errors": dict(c), "routed_errors": dict(r), "unconnected": len(d.get("unconnected_items", []))}
 
 
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
@@ -101,8 +107,11 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     if before is None or after is None:
         res["judge"] = "failed"
         return res
-    added = {t: n - before["errors"].get(t, 0) for t, n in after["errors"].items()
-             if t not in NOT_ROUTING and n - before["errors"].get(t, 0) > 0}
+    added = {t: n - before["routed_errors"].get(t, 0) for t, n in after["routed_errors"].items()
+             if t not in NOT_ROUTING and n - before["routed_errors"].get(t, 0) > 0}
+    # All added error types too (diagnostics only).
+    res["added_any"] = {t: n - before["errors"].get(t, 0) for t, n in after["errors"].items()
+                        if t not in NOT_ROUTING and n - before["errors"].get(t, 0) > 0}
     res.update({"unconnected_before": before["unconnected"], "unconnected_after": after["unconnected"], "added_errors": added})
     res["completion"] = 1.0 if before["unconnected"] == 0 else round(1 - after["unconnected"] / before["unconnected"], 4)
     res["clean"] = after["unconnected"] == 0 and not added

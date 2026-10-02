@@ -120,6 +120,7 @@ CopperModel build_copper(const model::Board& b) {
       h.item = item;
       h.pad = static_cast<int>(i);
       h.plated = p.type != model::PadType::NpThruHole;
+      h.clearance = p.clearance >= 0 ? p.clearance : b.footprints[static_cast<std::size_t>(p.footprint)].clearance;
       h.net = p.net;
       h.pos = c;
       m.holes.push_back(std::move(h));

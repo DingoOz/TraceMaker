@@ -101,7 +101,8 @@ class Obstacles {
   std::vector<Aperture> apertures_[2];               // pad solder-mask openings per side
   std::unique_ptr<index::UniformGrid> agrid_[2];
   std::vector<std::pair<int, geom::Shape>> texts_;   // copper text boxes (copper index, rectangle)
-  Coord via_mask_ = 0;                               // mask expansion of untented vias (0 when tented)
+  Coord via_mask_ = 0;
+  Coord max_hole_local_ = 0;                         // largest local (pad/footprint) clearance on a hole                               // mask expansion of untented vias (0 when tented)
   // Mask-opening and copper-text conflicts for new copper on `layer` (fixed obstacles only).
   void aperture_codes(const geom::Shape& s, int layer, bool via_probe, const std::function<void(model::NetId)>& hit) const;
 };

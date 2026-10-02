@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <deque>
 #include <numeric>
 
@@ -177,6 +179,15 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     Point at{};
     int at_rot = pl.rot[z(i)];
     bool found = search(i, at, at_rot);
+    if (!found && std::getenv("TM_LEGAL_DEBUG")) {  // TEMP
+      long ins = 0, rf = 0;
+      for (const Point d : offs)
+        for (int r = 0; r < 4; ++r) {
+          if (L.inside_ok(i, target[z(i)] + d, r)) ++ins;
+          if (R.free(i, target[z(i)] + d, r)) ++rf;
+        }
+      std::fprintf(stderr, "fail %s: %zu offsets, inside %ld, raster free %ld, placed so far %ld\n", p.parts[z(i)].ref.c_str(), offs.size(), ins, rf, static_cast<long>(st.placed));
+    }
     if (!found && !only_illegal && eviction_budget > 0) found = evict_for(i, at, at_rot);
     if (!found) {
       // Back to where it was (refine: its reserved spot; full: the input position, reported as a failure).
