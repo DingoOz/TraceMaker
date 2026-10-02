@@ -213,7 +213,10 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       Coord x0 = t.justify_h < 0 ? 0 : t.justify_h > 0 ? -W : -W / 2;
       if (t.mirror) x0 = -x0 - W;
       const Coord y0 = ytop + static_cast<Coord>(static_cast<double>(li) * pitchl), y1 = y0 + h * 105 / 100;
-      std::vector<Point> pts = {{x0 - th, y0 - th}, {x0 + W + th, y0 - th}, {x0 + W + th, y1 + th}, {x0 - th, y1 + th}};
+      // Extra 15% of the height on every side: KiCad's glyphs for bottom-justified text reach about 0.1 h above
+      // this box (PCBench USBI2C01, 'JACHO' on B.Cu: 0.12 mm violation with the tighter box).
+      const Coord m = th + h * 15 / 100;
+      std::vector<Point> pts = {{x0 - m, y0 - m}, {x0 + W + m, y0 - m}, {x0 + W + m, y1 + m}, {x0 - m, y1 + m}};
       for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
       texts_.emplace_back(l, Shape::polygon(pts, 0));
     }
