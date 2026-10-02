@@ -18,7 +18,10 @@ struct RouterOptions {
   double time_limit_s = 120;    // wall-clock budget for the whole run
   long max_expansions = 3'000'000;  // per search attempt
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
-  double heuristic_weight = 1.0;    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
+  double heuristic_weight = 1.0;
+  bool field_heuristic = true;      // GPU cost-to-go field as the A* heuristic on large windows
+  int field_min_cells = 60'000;     // window size (lattice points x layers) from which the field is used
+  int gpu_device = 0;               // CUDA device for fields (-1 = none)    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
   double via_cost_mm = 1.0;     // equivalent track length of one via
   bool allow_vias = true;

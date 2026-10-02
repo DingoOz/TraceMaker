@@ -15,6 +15,8 @@
 
 #include "core/rng.hpp"
 #include "drc/connectivity.hpp"
+#include "gpu/device.hpp"
+#include "gpu/field.hpp"
 #include "route/obstacles.hpp"
 
 namespace tmk::route {
@@ -446,6 +448,57 @@ struct Router::Impl {
 
   struct PathNode { int layer, gx, gy; };
 
+  // ---- cost-to-go field ----
+  static constexpr std::int64_t kUnreachable = std::int64_t{1} << 60;
+  std::vector<std::int32_t> field;
+  std::vector<std::uint8_t> f_pass, f_via, f_tgt;
+  bool field_ok = false;
+  long field_runs = 0, field_gpu_fail = 0, field_cpu_runs = 0;
+  double field_seconds = 0;
+  void build_field(const Window& w, NetId net, Coord hw, const Endpoint& dst, std::int64_t step, std::int64_t diag, std::int64_t viac) {
+    (void)hw;
+    const auto t0f = std::chrono::steady_clock::now();
+    field_ok = false;
+    const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
+    auto& cc = cache_for(net);
+    f_pass.assign(cells * static_cast<std::size_t>(nl), 1);
+    f_via.assign(cells, 1);
+    f_tgt.assign(cells * static_cast<std::size_t>(nl), 0);
+    for (int l = 0; l < nl; ++l)
+      for (int cy = 0; cy < w.h; ++cy) {
+        const std::size_t gbase = (static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(w.y0 + cy)) * static_cast<std::size_t>(nx) +
+                                  static_cast<std::size_t>(w.x0);
+        std::uint8_t* row = &f_pass[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w)];
+        for (int cx = 0; cx < w.w; ++cx) {
+          const std::int32_t t = cc.tight[gbase + static_cast<std::size_t>(cx)];
+          if (t != INT32_MIN && !code_ok(t, net)) row[cx] = 0;  // known blocked by fixed copper even without margin
+        }
+      }
+    for (int cy = 0; cy < w.h; ++cy)
+      for (int cx = 0; cx < w.w; ++cx) {
+        const std::int32_t v = cc.via[static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx)];
+        if (v != INT32_MIN && !code_ok(v, net)) f_via[static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx)] = 0;
+      }
+    for (const auto& [l, ci] : dst.cells) {
+      const std::size_t i = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
+      f_tgt[i] = 1;
+      f_pass[i] = 1;
+    }
+    gpu::FieldProblem fp{w.w, w.h, nl, static_cast<std::int32_t>(step), static_cast<std::int32_t>(diag), static_cast<std::int32_t>(std::min<std::int64_t>(viac, 1'000'000'000)),
+                         f_pass.data(), f_via.data(), f_tgt.data()};
+    // Same field on the GPU or the CPU (identical by construction), so results do not depend on GPU availability.
+    const auto st = opt.gpu_device >= 0 ? gpu::field_cuda(opt.gpu_device, fp, field) : gpu::GpuStatus{false, "no GPU"};
+    if (st.ok) {
+      ++field_runs;
+    } else {
+      gpu::field_cpu(fp, field);
+      if (opt.gpu_device >= 0) ++field_gpu_fail;
+      ++field_cpu_runs;
+    }
+    field_ok = true;
+    field_seconds += std::chrono::duration<double>(std::chrono::steady_clock::now() - t0f).count();
+  }
+
   // Why the last search ended without a path (failure explanation, design doc 06 T0).
   enum class Miss { None, Enclosed, Window, Budget };
   Miss last_miss = Miss::None;
@@ -509,7 +562,18 @@ struct Router::Impl {
     const bool zone_target = c.zone_b >= 0;
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
     const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * 1e6);
-    auto h = [&](int gx, int gy) -> std::int64_t {
+    // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
+    // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
+    const bool use_field = !zone_target && opt.field_heuristic && use_cache &&
+                           cells * static_cast<std::size_t>(nl) >= static_cast<std::size_t>(opt.field_min_cells);
+    if (use_field) build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * 1e6));
+    const bool have_field = use_field && field_ok;
+    auto h = [&](int fl, int gx, int gy) -> std::int64_t {
+      if (have_field) {
+        const std::int32_t v = field[static_cast<std::size_t>(fl) * cells + static_cast<std::size_t>(gy - w.y0) * static_cast<std::size_t>(w.w) +
+                                     static_cast<std::size_t>(gx - w.x0)];
+        return v >= gpu::kFieldInf ? kUnreachable : static_cast<std::int64_t>(static_cast<double>(v) * opt.heuristic_weight);
+      }
       const Point p = at(gx, gy);
       if (zone_target) return std::int64_t{0};  // plane anywhere nearby: no useful lower bound
       const std::int64_t dx = std::llabs(p.x - tp.x), dy = std::llabs(p.y - tp.y);
@@ -537,7 +601,8 @@ struct Router::Impl {
       if ((sn[s].tag & kGenMask) == gen && sn[s].g <= g0) continue;
       start_stub[cell_key(l, w.x0 + cx, w.y0 + cy)] = src.stub[k];
       sn[s] = SNode{g0, gen | (static_cast<std::uint32_t>(kNoDir) << 28), -1};
-      open.emplace(g0 + h(w.x0 + cx, w.y0 + cy), s);
+      if (h(l, w.x0 + cx, w.y0 + cy) >= kUnreachable) continue;
+      open.emplace(g0 + h(l, w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
     std::size_t goal = SIZE_MAX;
@@ -549,7 +614,7 @@ struct Router::Impl {
       const int l = static_cast<int>(lc / cells);
       const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
-      if (f - h(w.x0 + cx, w.y0 + cy) > sn[s].g) continue;  // stale entry
+      if (f - h(l, w.x0 + cx, w.y0 + cy) > sn[s].g) continue;  // stale entry
       if (cx == 0 || cy == 0 || cx == w.w - 1 || cy == w.h - 1) touched_edge = true;
       if (target(l, ci)) {
         goal = s;
@@ -580,8 +645,10 @@ struct Router::Impl {
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
         const std::size_t ns = sidx(l, nci, d);
         if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= gs + cost) continue;
+        const std::int64_t hn = h(l, w.x0 + ncx, w.y0 + ncy);
+        if (hn >= kUnreachable) continue;  // cannot reach a target from there
         sn[ns] = SNode{gs + cost, gen | (static_cast<std::uint32_t>(d) << 28), static_cast<std::int32_t>(s)};
-        open.emplace(gs + cost + h(w.x0 + ncx, w.y0 + ncy), ns);
+        open.emplace(gs + cost + hn, ns);
       }
       // Via: change to every other layer at this cell (through via).
       const std::int64_t vextra = (opt.allow_vias && nl > 1) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
@@ -591,8 +658,10 @@ struct Router::Impl {
           const std::size_t ns = sidx(l2, ci, kNoDir);
           const std::int64_t ng = gs + via_cost + vextra;
           if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
+          const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
+          if (hn >= kUnreachable) continue;
           sn[ns] = SNode{ng, gen | (static_cast<std::uint32_t>(kNoDir) << 28), static_cast<std::int32_t>(s)};
-          open.emplace(ng + h(w.x0 + cx, w.y0 + cy), ns);
+          open.emplace(ng + hn, ns);
         }
       }
     }
@@ -986,7 +1055,8 @@ struct Router::Impl {
     }
     res.seconds = elapsed();
     res.nogood_skips = nogood_skips;
-    std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions)\n", n_ok, exp_ok, n_fail, exp_fail);
+    std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions); fields %ld GPU + %ld CPU (%.2f s, %ld GPU fallbacks)\n",
+                 n_ok, exp_ok, n_fail, exp_fail, field_runs, field_cpu_runs, field_seconds, field_gpu_fail);
     std::fprintf(stderr, "legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
     emit_stats("done");
@@ -1031,6 +1101,11 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       else sel.back().o.sink = base.sink;
     }
     vs = std::move(sel);
+  }
+  // Spread variants over the visible GPUs (cost-to-go fields); CPU-only when none.
+  if (base.gpu_device >= 0) {
+    const auto devs = gpu::list_devices();
+    for (std::size_t i = 0; i < vs.size(); ++i) vs[i].o.gpu_device = devs.empty() ? -1 : devs[i % devs.size()].cuda_index;
   }
   std::vector<RouteResult> rs(vs.size());
   std::vector<std::thread> pool;

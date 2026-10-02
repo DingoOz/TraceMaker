@@ -1,11 +1,11 @@
 # tm_gpu: GPU service. CPU reference implementations are always compiled; CUDA sources only when enabled.
-add_library(tm_gpu STATIC philox_fill_cpu.cpp)
+add_library(tm_gpu STATIC philox_fill_cpu.cpp field_cpu.cpp)
 add_library(tm::gpu ALIAS tm_gpu)
 target_link_libraries(tm_gpu PUBLIC tm::core)
 tm_set_warnings(tm_gpu)
 
 if(TM_ENABLE_CUDA)
-  target_sources(tm_gpu PRIVATE device_cuda.cu philox_fill_cuda.cu)
+  target_sources(tm_gpu PRIVATE device_cuda.cu philox_fill_cuda.cu field_cuda.cu)
   target_link_libraries(tm_gpu PRIVATE CUDA::cudart)
   target_compile_definitions(tm_gpu PUBLIC TM_HAVE_CUDA=1)
   set_target_properties(tm_gpu PROPERTIES CUDA_SEPARABLE_COMPILATION OFF)

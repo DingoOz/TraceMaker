@@ -289,6 +289,9 @@ int main(int argc, char** argv) {
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
+  bool r_nogpu = false;
+  route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of CUDA (same results)");
+  route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
   int r_threads = 8;
   std::string r_kb = tmk::learn::KnowledgeBase::default_path();
   bool r_nokb = false;
@@ -332,6 +335,8 @@ int main(int argc, char** argv) {
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
+      if (r_nogpu || tmk::gpu::list_devices().empty()) ropt.gpu_device = -1;
+      else ropt.gpu_device = tmk::gpu::list_devices().front().cuda_index;
       return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads, r_nokb ? std::string() : r_kb);
     }
     if (*rt) {

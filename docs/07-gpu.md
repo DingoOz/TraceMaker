@@ -86,3 +86,11 @@ pattern routing and batch scheduling), DREAMPlace and Xplace (GPU analytic place
 Karras 2012 (LBVH), Lee/Moore wavefront with bit-parallel BFS. OrthoRoute (MIT) shows GPU PathFinder in a
 KiCad plugin, and its weak results on mixed boards are why TraceMaker keeps octilinear CPU detailed routing
 as the quality path.
+
+## 7. Implementation status (2026-10-02)
+
+| Workload | Status | Notes |
+|---|---|---|
+| Cost-to-go fields (router A* heuristic) | **Done**: `src/gpu/field_cuda.cu` + CPU reference `field_cpu.cpp` | GAMER-style line sweeps (rows, columns, both diagonals, both directions) + via relaxation to a fixpoint; one thread per line; `cudaStreamPerThread` so the 8 portfolio routers share the two GPUs. Exact equality with the CPU reference tested on random grids on the P100 and V100; routed boards byte-identical with `--no-gpu`. Used for windows ≥ 60k lattice points; GPU ~2x faster than the CPU field. Gain on routing is modest today because routed copper and soft costs (not in the field) dominate the remaining search effort |
+| Philox RNG fill | Done (toolchain test) | |
+| Placement density / annealing, DRC broad-phase, global maze routing | Not started | Profiling shows the A* loop itself (74%) is the router's bottleneck, not obstacle evaluation |
