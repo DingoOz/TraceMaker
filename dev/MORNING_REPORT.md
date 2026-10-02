@@ -2,64 +2,99 @@
 
 ## Results first
 
-TraceMaker routes real KiCad boards and is judged by KiCad's own DRC (`kicad-cli pcb drc`), against Freerouting's
-own published results on the same PCBench fixtures:
+TraceMaker routes real KiCad boards. KiCad's own DRC (`kicad-cli pcb drc`) judges every result, and the comparison
+is against Freerouting's published results on the same PCBench fixtures (Freerouting's own benchmark set and tiers):
 
-| Tier (PCBench, Freerouting's tiers) | Boards | TraceMaker clean pass | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 | Added DRC errors |
+| Tier (PCBench) | Boards | TraceMaker clean pass | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 | Boards with router-introduced DRC errors |
 |---|--:|--:|--:|--:|--:|
-| A — routine 2-layer | 40 | **100%** | 100% | 87.5% | 0 boards |
-| B — 2–4 layer | 40 | __B__ | __BFR__ | __BFR241__ | __BADD__ |
-| C — complex / multi-layer | 30 | __C__ | __CFR__ | __CFR241__ | __CADD__ |
+| A — routine 2-layer | 40 | **100%** | 100% | 87.5% | 0 |
+| B — 2–4 layer | 40 | **60.0%** | 50.0% | 12.5% | 0 |
+| C — complex / multi-layer | 30 | **50.0%** | 46.7% | 16.7% | 0 |
 
-- Clean pass = fully connected **and** zero router-introduced KiCad DRC errors. 120 s per board, 8 router variants
-  in parallel per board. Tier-A median time 3 s (Freerouting's published median 30 s on its own hardware).
-- Every run is on the progress site's benchmark panel: `http://<host>:8765/` (history, Freerouting columns).
+- **Clean pass** means fully connected and zero router-introduced KiCad DRC errors. Each board gets 120 s, with
+  8 router variants in parallel.
+- **Runs:** tier A is from run `final3-tierA`; tiers B and C are from `final4-tier{B,C}` (latest router).
+- **Speed:** the tier-A median is 3 s per board. Freerouting's published median is 30 s on its own hardware.
+- **Variance:** results vary a little between runs because of the wall-clock limit. Earlier runs of the same day
+  scored B 50–55% and C 33–47%. A deterministic `--work` budget gives byte-identical repeats when needed.
+- **Head to head on tier B:** both clean on 16 boards, only TraceMaker on 8, only Freerouting on 4.
+- **Head to head on tier C:** both clean on 10 boards, only TraceMaker on 5, only Freerouting on 4.
+- All runs are on the progress site's benchmark panel with Freerouting columns.
 
-## What was built (by milestone)
+## What was built
 
 | Milestone | State | Highlights |
 |---|---|---|
-| M0 toolchain | done | CMake presets (release/cpu-only/asan/tsan), CUDA 12.4 + g++-13 host, Catch2, setup script, fixtures |
-| M1 KiCad I/O | done | Lossless s-expression parser/editor; KiCad 4–10 boards; pcbnew-verified reader; 3,538 fixture boards round-trip byte for byte; rules (.kicad_pro/.kicad_dru/legacy); netlists via kicad-cli |
-| M2 DRC | core done | KiCad-equivalent DRC; 11/16 KiCad demo boards match kicad-cli exactly on 15 routing-relevant types (regression test); rule semantics learned from KiCad (see decisions) |
-| M3 viewer | done (v1) | WebGL2 viewer + Boost.Beast WebSocket server (helper agent); `tracemaker route --view` streams routing live (tracks, rip-ups, search frontiers, failures, ratsnest, stats) |
-| M4 router | done | Octilinear lattice A* with exact legality from the DRC rule engine; exact verification before every commit; writes KiCad tracks/vias |
-| M5 learning | mostly done | PathFinder history, negotiated rip-up, boxed-in detection, learned blocks, nogoods, escalation ladder (escapes → neck-down → negotiation), restarts that keep history |
-| M6 GPU | partial | CUDA cost-to-go fields (GAMER-style sweeps) as A* heuristic; byte-identical results with/without GPU; global routing corridors not started |
-| M7 placement | __PLACE__ | |
-| M10 portfolio / determinism / KB | mostly done | 8-variant parallel portfolio; deterministic `--work` budget (byte-identical repeats); SQLite knowledge base with a Thompson-sampling bandit over variants and per-board failure priorities |
+| M0 toolchain | done | CMake presets (release, cpu-only, asan, tsan); CUDA 12.4 with g++-13 host; Catch2; setup script; fixtures |
+| M1 KiCad I/O | done | Lossless s-expression parser and editor; KiCad 4–10 boards; 3,538 fixture boards round-trip byte for byte; rules from .kicad_pro, .kicad_dru and legacy files |
+| M2 DRC | core done | KiCad-equivalent DRC; 11 of 16 KiCad demo boards match kicad-cli exactly on 15 routing-relevant types (regression test) |
+| M3 viewer | done (v1) | WebGL2 viewer and WebSocket server; `tracemaker route --view` streams routing live |
+| M4 router | done | Octilinear lattice A* with exact legality from the DRC rule engine; exact verification before every commit |
+| M5 learning | mostly done | PathFinder history; negotiated rip-up; boxed-in detection at both ends; learned blocks; nogoods; escalation (escapes, neck-down, negotiation); restarts that keep history |
+| M6 GPU | partial | CUDA cost-to-go fields as the A* heuristic, identical results with or without GPU; global routing corridors not started |
+| M7 placement | v1 done | `tracemaker-place`: quadratic placement, SimPL spreading, legalisation, parallel annealing, LP lower bound; `--route-check` keeps a placement only if it routes at least as well |
+| M10 portfolio | mostly done | 8-variant parallel portfolio with early stop; deterministic `--work` budget; SQLite knowledge base with a bandit over variants and per-board failure priorities |
+| M11 KiCad plugin | v1 done | KiCad 10 IPC action plugin routes the open board in one undoable commit (tested offline against kicad-python 0.8) |
+
+## What changed this afternoon
+
+- **Horticulture solder-mask bridge fixed.** KiCad grows mask graphics by the board mask expansion. The router now
+  does the same, and the board routes clean (decision A18).
+- **Boxed-in targets detected.** Only the source pad used to be tested for being boxed in. A short reverse search
+  now detects a boxed-in target, so the escalation to escapes and neck-down runs. APM-RPi-Shield went from
+  124 to 125 of 125 in direct runs.
+- **Fine-pitch pad approaches.** A failing leg into a pad is dropped when the track already ends on the pad's
+  copper. Blocks are now learned beside fine-pitch pads and for diagonal steps that clip a pad corner.
+  USBI2C01 went from 72 to 73 of 73 at a fixed budget.
+- **Portfolio early stop.** All variants stop once one routes every connection.
+- **Faster routed-copper checks.** A count raster skips most routed-copper queries. Output is identical and runs
+  are 4–10% faster.
+- **Placement integrated.** The placement agent's engine is committed. I added the router-in-the-loop check.
+
+## Placement status (M7)
+
+- On 23 PCBench boards, wirelength (HPWL) falls by a median of 17% in full mode and 26% in refine mode. No new
+  KiCad DRC errors appear.
+- Routability is **not** better yet: 13 boards fully routed after placement against 15 for the human placement.
+- `--route-check N` routes the input and the new placement with the same work budget. It keeps the input if the
+  new placement routes fewer connections, so the tool never makes a board less routable.
+- The routability term inside the annealer (stage G) and side flipping are the next steps.
+- Details are in `docs/04-placement.md` section 7.
 
 ## How to look at it
 
 - Progress site: `http://192.168.1.82:8765/` (roadmap, tests, latest code, benchmarks, GPUs, activity).
-- Live routing: `build/release/src/app/tracemaker route <board> -o out.kicad_pcb --view --hold` → `http://192.168.1.82:8766/`.
-- Routed benchmark boards: `bench/results/final-tier{A,B,C}/boards/*.kicad_pcb` (open in KiCad 10).
-- Everything is committed locally (`git log`); nothing was pushed anywhere.
-
-## Things worth knowing (found by testing against KiCad)
-
-KiCad behaviours the router now honours, each found on a real board: board minimum clearance is a floor; local pad/
-footprint clearance beats net classes; coupled diff pairs use min(clearance, gap); plated through-holes are on all
-copper layers whatever the file says; overlapping pads of different footprints are not connected; footprint copper
-graphics are net-less for routing; non-plated holes keep the board-edge clearance; pad solder-mask openings bridge on
-either side; untented vias open the mask; copper text is an obstacle (multi-line, justified, mirrored); KiCad 5 arcs
-and filled polygons; regex net-class patterns; KiCad caps each violation type at 199 reports.
+- Live routing: `build/release/src/app/tracemaker route <board> -o out.kicad_pcb --view --hold`, then open
+  `http://192.168.1.82:8766/`.
+- Placement: `build/release/src/place/tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode refine --route-check 3000000`.
+- Routed benchmark boards: `bench/results/final4-tier{B,C}/boards/*.kicad_pcb` and
+  `bench/results/final3-tierA/boards/` (open in KiCad 10).
+- Everything is committed locally (`git log`). Nothing was pushed anywhere.
 
 ## Decisions taken without you
 
-All in `dev/assumptions.md` (A1–A16), each with its reason. The ones you may want to revisit:
-- A1 local git commits under a repository-local identity (`dingo`, your account email); nothing pushed.
-- A3 schematic connectivity via `kicad-cli` netlists rather than a native schematic resolver (for now).
-- A11 DRC parity is "good enough to route against"; KiCad remains the judge.
-- A16 benchmark "added errors" count router-introduced violations only (involving a track/via/arc).
+All are in `dev/assumptions.md` (A1–A18), each with its reason. The ones you may want to revisit:
+
+- **A1:** local git commits under a repository-local identity (`dingo`, your account email); nothing pushed.
+- **A3:** schematic connectivity comes from `kicad-cli` netlists rather than a native schematic resolver.
+- **A11:** DRC parity is "good enough to route against"; KiCad remains the judge.
+- **A16:** benchmark "added errors" count only violations involving a track, via or arc.
+- **A17:** edge-connector fingers stay unrouted rather than create mask bridges. TraceMaker's clean pass is
+  therefore stricter than Freerouting's figure.
+- **A18:** mask graphics are grown by the board's mask expansion, inferred from kicad-cli behaviour.
+- **Placement agent:** full mode aims for a 0.25 mm courtyard gap and falls back to KiCad's default of 0 on dense
+  boards. Connectors near the edge stay fixed unless `--move-connectors` is given.
 
 ## Known issues and next steps
 
-1. Some pins stay "boxed in" on dense fine-pitch boards although the same net routes alone (avr_ledprojector):
-   suspected interaction between the net-independent fixed-obstacle cache and neighbouring pads. Diagnostics:
-   `TM_DEBUG_ENCLOSED=1`, `tracemaker debug-pad`, `--only-net`.
-2. Edge-connector fingers with mask openings on both sides block their own exits (fifogfx_c64cart).
-3. Copper text uses estimated glyph boxes (conservative); exact outlines from KiCad would free space.
-4. Speed: the A* loop is the bottleneck on large boards; global routing corridors (M6) and bidirectional search
-   are the next levers. GPU fields help modestly today.
-5. KiCad IPC plugin (M11), schematic-to-board flow, escape planning (M9), diff pairs/length tuning (M12): not started.
+1. **Large boards are time-limited.** P8000 and PCIE-to-MXM finish only one pass in 120 s. A* costs about 430 ns
+   per expansion. Global routing corridors, a coarse-to-fine lattice and parallel routing inside one variant are
+   the next levers.
+2. **Edge-connector fingers** with mask openings on both sides block their own exits (fifogfx_c64cart).
+3. **Copper text** uses estimated glyph boxes, which is conservative.
+4. **Board reader naming:** unplated-hole pad numbers and `~{...}` escaped references differ from pcbnew's naming
+   in the parity comparison. Routing is unaffected.
+5. **Not started:** schematic-to-board flow, escape planning (M9), diff-pair and length tuning (M12), Python
+   bindings.
+6. **Diagnostics for the next session:** `TM_DEBUG_ENCLOSED=1`, `TM_DEBUG_EXACT=1`, and the hidden subcommands
+   `tracemaker debug-pad` and `tracemaker debug-seg`.
