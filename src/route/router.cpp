@@ -296,7 +296,7 @@ struct Router::Impl {
           const int gx = to_ix(E.x), gy = to_iy(E.y);
           if (gx < 0 || gy < 0 || gx >= nx || gy >= ny) break;
           const Point C = at(gx, gy);
-          if (point_state(l, gx, gy, net, width / 2) == 2) continue;
+          if (fixed_point_blocked(l, gx, gy, net, width / 2)) continue;  // fixed copper only: the cache outlives routes
           if (obs->segment_state(E, C, l, width, net, true) == 2) continue;
           out.push_back({l, gx, gy, E,
                          static_cast<std::int64_t>(std::hypot(static_cast<double>(E.x - p.pos.x), static_cast<double>(E.y - p.pos.y)) +
@@ -348,6 +348,16 @@ struct Router::Impl {
     return cc;
   }
   static bool code_ok(std::int32_t code, NetId net) { return code == Obstacles::kFree || code == net; }
+
+  // Blocked by fixed copper alone (legal without the lattice margin otherwise)?
+  bool fixed_point_blocked(int layer, int gx, int gy, NetId net, Coord hw) {
+    const Point p = at(gx, gy);
+    if (!use_cache) return obs->disk_state(p, layer, hw, net, 0, true) == 2;
+    auto& cc = cache_for(net);
+    const std::size_t gi = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
+    if (cc.tight[gi] == INT32_MIN) cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
+    return !code_ok(cc.tight[gi], net);
+  }
 
   // State of a lattice point for the current net: 0 free, 1 crosses routed copper (soft), 2 blocked,
   // 3 legal only without the lattice margin ("tight").
@@ -925,7 +935,10 @@ struct Router::Impl {
     // The strict first pass tries two window sizes only; anything harder is left to negotiation.
     const int attempts = strict_pass ? std::min(2, opt.max_attempts) : opt.max_attempts;
     for (int attempt = 0; attempt < attempts; ++attempt) {
-      if (out_of_budget()) return false;
+      if (out_of_budget()) {
+        why = "out of budget";
+        return false;
+      }
       const Coord m = margins[std::min(attempt, 3)] + c.length / 4;
       Window w;
       w.x0 = std::max(0, to_ix(std::min(a.x, e.x) - m));

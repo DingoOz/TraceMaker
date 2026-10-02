@@ -93,11 +93,15 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   const Placement before_legal = pl;
   LegaliseStats ls = legalise(p, pl, !full);
   std::vector<int> first;
+  std::vector<int> last_failed = ls.failed_parts;
   for (int attempt = 1; full && ls.failed > 0 && attempt < 5; ++attempt) {
-    for (int f : ls.failed_parts)
+    const std::size_t before = first.size();
+    for (int f : last_failed)
       if (std::find(first.begin(), first.end(), f) == first.end()) first.push_back(f);
+    if (first.size() == before) break;  // the same order again would give the same result
     Placement retry = before_legal;
     LegaliseStats lr = legalise(p, retry, false, 0, &first);
+    last_failed = lr.failed_parts;
     r.notes.push_back("legalisation attempt " + std::to_string(attempt + 1) + " (" + std::to_string(first.size()) +
                       " earlier failures first): " + std::to_string(lr.failed) + " failed");
     if (lr.failed < ls.failed) {

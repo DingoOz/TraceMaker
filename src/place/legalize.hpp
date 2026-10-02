@@ -14,7 +14,8 @@ struct LegaliseStats {
   int failed = 0;          // parts with no legal position found (left at their original position)
   double max_disp_mm = 0, mean_disp_mm = 0;
   long exact_checks = 0, raster_checks = 0;
-  long evictions = 0;        // rip-up-and-re-place steps (full mode)
+  long evictions = 0;
+  long lookahead_rejects = 0;  // spots refused because they left no room for a waiting big part        // rip-up-and-re-place steps (full mode)
   long raster_disagree = 0;  // raster said free but the exact test failed (must stay 0: the raster is conservative)
   std::vector<std::string> failures;
   std::vector<int> failed_parts;

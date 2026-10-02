@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <deque>
@@ -109,8 +110,39 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
   std::vector<int> conflicts;
   long eviction_budget = 20 * static_cast<long>(order.size()) + 100;
 
+  // Big parts (≥ 2% of the board area): before committing one, check that every big part still waiting has at
+  // least one raster-free spot left (coarse lattice, any rotation); otherwise try the next candidate.
+  const long double region_area = static_cast<long double>(w) * static_cast<long double>(h);
+  std::vector<std::uint8_t> big(n, 0);
+  for (int i : order) big[z(i)] = extent(i) >= 0.02L * region_area ? 1 : 0;
+  auto has_spot = [&](int j) {
+    const Coord step = std::max<Coord>(250'000, cell * 5);
+    for (Coord y = p.region.y0; y <= p.region.y1; y += step)
+      for (Coord x = p.region.x0; x <= p.region.x1; x += step)
+        for (int r = 0; r < 4; ++r)
+          if (R.free(j, Point{x, y} - Point{(p.parts[z(j)].geom[z(r)].body.x0 + p.parts[z(j)].geom[z(r)].body.x1) / 2,
+                                            (p.parts[z(j)].geom[z(r)].body.y0 + p.parts[z(j)].geom[z(r)].body.y1) / 2}, r))
+            return true;
+    return false;
+  };
+  auto room_for_big = [&](int i, Point q, int r) {
+    R.add(i, q, r, +1);
+    bool ok = true;
+    for (int j : work)
+      if (j != i && big[z(j)] && !placed[z(j)] && !has_spot(j)) {
+        ok = false;
+        break;
+      }
+    R.add(i, q, r, -1);
+    return ok;
+  };
+
   // Nearest legal position (lattice rings around the target, all four rotations, own rotation first).
   auto search = [&](int i, Point& at, int& at_rot) {
+    int lookahead_rejects = 0;
+    bool have_fallback = false;
+    Point fallback{};
+    int fallback_rot = 0;
     for (int k = 0; k < 4; ++k) {
       const int r = (pl.rot[z(i)] + k) & 3;
       long budget = 400;
@@ -128,12 +160,27 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
           ++st.exact_checks;
           ok = L.legal(i, q, r);
         }
+        if (ok && big[z(i)] && lookahead_rejects < 300 && !room_for_big(i, q, r)) {
+          ++lookahead_rejects;
+          ++st.lookahead_rejects;
+          if (!have_fallback) {
+            fallback = q;
+            fallback_rot = r;
+            have_fallback = true;
+          }
+          ok = false;
+        }
         if (ok) {
           at = q;
           at_rot = r;
           return true;
         }
       }
+    }
+    if (have_fallback) {  // every spot starves some other big part: take the nearest legal one anyway
+      at = fallback;
+      at_rot = fallback_rot;
+      return true;
     }
     return false;
   };
@@ -189,7 +236,11 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     }
     Point at{};
     int at_rot = pl.rot[z(i)];
+    const auto t_dbg = std::chrono::steady_clock::now();
     bool found = search(i, at, at_rot);
+    if (std::getenv("TM_LEGAL_DEBUG"))
+      std::fprintf(stderr, "search %s: %s %.3fs\n", p.parts[z(i)].ref.c_str(), found ? "ok" : "FAIL",
+                   std::chrono::duration<double>(std::chrono::steady_clock::now() - t_dbg).count());
     if (!found && std::getenv("TM_LEGAL_DEBUG")) {  // TEMP
       long ins = 0, rf = 0;
       for (const Point d : offs)
