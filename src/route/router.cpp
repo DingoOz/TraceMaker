@@ -1007,6 +1007,35 @@ struct Router::Impl {
         }
     };
 
+    std::vector<std::uint8_t> best_unrouted;
+    auto snapshot_unrouted = [&]() {
+      best_unrouted.assign(cs.size(), 0);
+      for (std::size_t i = 0; i < cs.size(); ++i) best_unrouted[i] = cs[i].routed ? 0 : 1;
+    };
+    // Restarts that keep the lessons (design doc 06 §3.6): when negotiation stalls with budget left, rip
+    // everything and start again, hardest (most failed) connections first, keeping history, nogoods and the
+    // best legal state seen so far.
+    for (int restart = 0; restart <= opt.max_restarts; ++restart) {
+    if (restart > 0) {
+      if (out_of_budget() || best_routed == res.connections) break;
+      for (std::size_t i = 0; i < cs.size(); ++i) {
+        auto& st = cs[i];
+        for (int item : st.items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+          obs->remove_item(item);
+        }
+        st.items.clear();
+        st.routed = st.implicit = false;
+      }
+      res.routed = 0;
+      std::vector<int> order(cs.size());
+      for (std::size_t i = 0; i < cs.size(); ++i) order[i] = static_cast<int>(i);
+      std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
+      pending.assign(order.begin(), order.end());
+      ++res.restarts;
+      emit("{\"type\":\"stage\",\"name\":\"restart " + std::to_string(restart) + "\",\"state\":\"begin\",\"detail\":\"hardest connections first, history kept\"}");
+    }
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
       strict_pass = pass == 0;
@@ -1060,20 +1089,29 @@ struct Router::Impl {
         }
         emit_stats("route");
         if (opt.sink && (res.routed % 8 == 0 || pending.empty())) emit_ratsnest();
-        if (res.routed > best_routed) snapshot();
+        if (res.routed > best_routed) {
+          snapshot();
+          snapshot_unrouted();
+        }
       }
       // Next pass: hardest (most failed) first.
       std::stable_sort(failed.begin(), failed.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
       for (int f : failed) pending.push_back(f);
       if (pass > 0 && res.routed <= routed_before && res.rips == 0) break;
     }
-    if (res.routed > best_routed) snapshot();
+    if (res.routed > best_routed) {
+      snapshot();
+      snapshot_unrouted();
+    }
+    }  // restarts
+    if (best_unrouted.empty()) snapshot_unrouted();
     res.routed = best_routed;
     res.tracks = std::move(best_tracks);
     res.vias = std::move(best_vias);
     // Failures relative to the best state are approximated by the connections unrouted at the end.
-    for (const auto& st : cs) {
-      if (st.routed) continue;
+    for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+      const auto& st = cs[ci];
+      if (!best_unrouted[ci]) continue;
       const auto& pa = b.pads[static_cast<std::size_t>(st.c.pad_a)];
       std::string to = "zone";
       if (st.c.pad_b >= 0) {
@@ -1088,7 +1126,7 @@ struct Router::Impl {
     res.nogood_skips = nogood_skips;
     std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions); fields %ld GPU + %ld CPU (%.2f s, %ld GPU fallbacks)\n",
                  n_ok, exp_ok, n_fail, exp_fail, field_runs, field_cpu_runs, field_seconds, field_gpu_fail);
-    std::fprintf(stderr, "legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", obs->checks, res.rips,
+    std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", res.restarts, obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");

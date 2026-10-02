@@ -186,7 +186,10 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
           if (L.inside_ok(i, target[z(i)] + d, r)) ++ins;
           if (R.free(i, target[z(i)] + d, r)) ++rf;
         }
-      std::fprintf(stderr, "fail %s: %zu offsets, inside %ld, raster free %ld, placed so far %ld\n", p.parts[z(i)].ref.c_str(), offs.size(), ins, rf, static_cast<long>(st.placed));
+      long gf = 0;
+      for (Coord y = p.region.y0; y <= p.region.y1; y += 250'000)
+        for (Coord x = p.region.x0; x <= p.region.x1; x += 250'000) gf += R.free(i, {x, y}, 0) ? 1 : 0;
+      std::fprintf(stderr, "fail %s: %zu offsets, inside %ld, raster free %ld, grid free %ld, placed so far %ld, target %.3f %.3f\n", p.parts[z(i)].ref.c_str(), offs.size(), ins, rf, gf, static_cast<long>(st.placed), nm_to_mm(target[z(i)].x), nm_to_mm(target[z(i)].y));
     }
     if (!found && !only_illegal && eviction_budget > 0) found = evict_for(i, at, at_rot);
     if (!found) {
