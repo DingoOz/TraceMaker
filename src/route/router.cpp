@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <map>
 #include <queue>
+#include <array>
 #include <deque>
 #include <set>
 #include <unordered_map>
@@ -426,6 +427,10 @@ struct Router::Impl {
         break;
       }
       if (++expanded > opt.max_expansions) break;
+      if (live && (expanded & 63) == 0) {
+        recent[recent_n++ % recent.size()] = {at(w.x0 + cx, w.y0 + cy), l};
+        if ((expanded & 8191) == 0) emit_frontier();
+      }
       const std::int64_t gs = g[s];
       // Planar moves.
       for (int d = 0; d < 8; ++d) {
@@ -661,6 +666,32 @@ struct Router::Impl {
 
   std::deque<int> pending;
 
+  // ---- live visualisation helpers ----
+  bool live = false;  // a viewer wants transient messages
+  std::array<std::pair<Point, int>, 96> recent{};
+  std::size_t recent_n = 0;
+  void emit_frontier() {
+    if (!opt.sink || !opt.sink->wants_transient()) return;
+    std::string m = "{\"type\":\"frontier\",\"conn\":" + std::to_string(current) + ",\"layer\":" + std::to_string(recent[0].second) + ",\"pts\":[";
+    const std::size_t n = std::min(recent_n, recent.size());
+    for (std::size_t i = 0; i < n; ++i) m += (i ? ",[" : "[") + jnum(recent[i].first.x) + "," + jnum(recent[i].first.y) + "]";
+    emit(m + "]}");
+    recent_n = 0;
+  }
+  void emit_ratsnest() {
+    if (!opt.sink) return;
+    std::string m = "{\"type\":\"ratsnest\",\"edges\":[";
+    bool first = true;
+    for (const auto& st : cs) {
+      if (st.routed) continue;
+      const Point a = b.pads[static_cast<std::size_t>(st.c.pad_a)].pos;
+      const Point e = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].pos : a;
+      m += (first ? "[" : ",[") + jnum(a.x) + "," + jnum(a.y) + "," + jnum(e.x) + "," + jnum(e.y) + "," + std::to_string(st.c.net) + "]";
+      first = false;
+    }
+    emit(m + "]}");
+  }
+
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
     setup();
@@ -677,6 +708,8 @@ struct Router::Impl {
       cs.push_back(std::move(st));
     }
     for (std::size_t i = 0; i < cs.size(); ++i) pending.push_back(static_cast<int>(i));
+    live = opt.sink != nullptr;
+    emit_ratsnest();
 
     // Best legal state seen (most connections routed): connection -> its tracks/vias.
     int best_routed = -1;
@@ -717,8 +750,16 @@ struct Router::Impl {
         } else {
           ++cs[static_cast<std::size_t>(ci)].fails;
           failed.push_back(ci);
+          if (opt.sink) {
+            const Point a = b.pads[static_cast<std::size_t>(st.c.pad_a)].pos;
+            const Point e = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].pos : a;
+            emit("{\"type\":\"failure\",\"conn\":" + std::to_string(ci) + ",\"net\":" + std::to_string(st.c.net) + ",\"rung\":" +
+                 std::to_string(pass > 0 ? 2 : 1) + ",\"cause\":\"no legal path (pass " + std::to_string(pass + 1) + ")\",\"a\":[" + jnum(a.x) + "," +
+                 jnum(a.y) + "],\"b\":[" + jnum(e.x) + "," + jnum(e.y) + "],\"blockers\":[],\"region\":[0,0,0,0]}");
+          }
         }
         emit_stats("route");
+        if (opt.sink && (res.routed % 8 == 0 || pending.empty())) emit_ratsnest();
         if (res.routed > best_routed) snapshot();
       }
       // Next pass: hardest (most failed) first.

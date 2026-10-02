@@ -168,48 +168,36 @@
   {
    "id": "M3",
    "title": "Event bus, server, viewer v1",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board",
    "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
    "tasks": [
     {
-     "text": "Event types",
+     "text": "Event types and Sink interface",
+     "done": true
+    },
+    {
+     "text": "WebSocket server (Boost.Beast), static files, snapshot + deltas, back-pressure",
+     "done": true
+    },
+    {
+     "text": "Viewer: WebGL2 instanced tracks/pads/vias/zones, layers, pan/zoom",
+     "done": true
+    },
+    {
+     "text": "Live effects: glow, frontiers, failures, HUD, log, tooltips",
+     "done": true
+    },
+    {
+     "text": "tracemaker-view with --demo",
+     "done": true
+    },
+    {
+     "text": "Router live streaming (route --view)",
      "done": false
     },
     {
-     "text": "ring buffers",
-     "done": false
-    },
-    {
-     "text": "WebSocket server",
-     "done": false
-    },
-    {
-     "text": "FlatBuffers schema",
-     "done": false
-    },
-    {
-     "text": "replay log",
-     "done": false
-    },
-    {
-     "text": "WebGL2 viewer (WebGPU backend optional): layers",
-     "done": false
-    },
-    {
-     "text": "pan/zoom",
-     "done": false
-    },
-    {
-     "text": "pads/tracks/vias/zones",
-     "done": false
-    },
-    {
-     "text": "ratsnest",
-     "done": false
-    },
-    {
-     "text": "dark theme",
+     "text": "Replay log, heatmaps, FlatBuffers",
      "done": false
     }
    ]

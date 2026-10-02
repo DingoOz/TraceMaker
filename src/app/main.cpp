@@ -1,7 +1,10 @@
 // tracemaker: command-line front end. Subcommands grow with the roadmap (route, place, bench, serve, replay).
 #include <CLI/CLI.hpp>
 
+#include <chrono>
 #include <cstdio>
+#include <filesystem>
+#include <thread>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -11,6 +14,8 @@
 #include "drc/drc.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
+#include "server/messages.hpp"
+#include "server/viewer_server.hpp"
 #include "core/version.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
@@ -113,9 +118,27 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
   return rep.violations.empty() && rep.unconnected.empty() ? 0 : 5;
 }
 
-int cmd_route(const std::string& in, const std::string& out, const tmk::route::RouterOptions& opt, const std::string& json_out) {
+struct ViewOptions {
+  bool enabled = false;
+  std::string host = "0.0.0.0";
+  int port = 8766;
+  bool hold = false;
+};
+
+int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view) {
   auto lb = tmk::io::read_board_file(in);
   const auto rules = tmk::io::read_design_rules(in);
+  std::unique_ptr<tmk::server::ViewerServer> server;
+  if (view.enabled) {
+    tmk::server::ServerOptions so;
+    so.host = view.host;
+    so.port = static_cast<std::uint16_t>(view.port);
+    server = std::make_unique<tmk::server::ViewerServer>(so);
+    server->publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(in).filename().string()));
+    std::printf("live view: %s\n", server->url().c_str());
+    std::fflush(stdout);
+    opt.sink = server.get();
+  }
   tmk::route::Router router(lb.board, rules, opt);
   const auto res = router.run();
   tmk::io::BoardEditor ed(lb, opt.seed);
@@ -129,6 +152,11 @@ int cmd_route(const std::string& in, const std::string& out, const tmk::route::R
     nlohmann::json j{{"routed", res.routed}, {"connections", res.connections}, {"tracks", res.tracks.size()}, {"vias", res.vias.size()},
                      {"seconds", res.seconds}, {"expansions", res.expansions}, {"pitch_mm", tmk::nm_to_mm(res.pitch)}, {"failures", res.failures}};
     std::ofstream(json_out) << j.dump(1);
+  }
+  if (server && view.hold) {
+    std::printf("routing finished; viewer still serving at %s (Ctrl-C to quit)\n", server->url().c_str());
+    std::fflush(stdout);
+    for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
   }
   return res.routed == res.connections ? 0 : 3;
 }
@@ -188,6 +216,11 @@ int main(int argc, char** argv) {
   route->add_option("--seed", ropt.seed);
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
+  ViewOptions vopt;
+  route->add_flag("--view", vopt.enabled, "Stream the routing live to the browser viewer");
+  route->add_option("--view-host", vopt.host, "Viewer bind address (default 0.0.0.0)");
+  route->add_option("--view-port", vopt.port, "Viewer port (default 8766)");
+  route->add_flag("--hold", vopt.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
 
   CLI11_PARSE(app, argc, argv);
@@ -208,7 +241,7 @@ int main(int argc, char** argv) {
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
-      return cmd_route(r_in, r_out, ropt, r_json);
+      return cmd_route(r_in, r_out, ropt, r_json, vopt);
     }
     if (*rt) {
       int bad = 0, ok = 0;
