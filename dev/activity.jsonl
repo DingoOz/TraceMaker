@@ -25,3 +25,5 @@
 {"ts": "2026-10-02T14:11:33+00:00", "kind": "milestone", "text": "GPU cost-to-go fields: CUDA kernel equals CPU reference exactly; routed boards byte-identical with and without GPU"}
 {"ts": "2026-10-02T14:14:47+00:00", "kind": "build", "text": "Deterministic routing: --work budget makes runs byte-reproducible; aquarius 171/171 with an 8-variant portfolio"}
 {"ts": "2026-10-02T14:36:17+00:00", "kind": "test", "text": "Started final benchmark set (tiers A/B/C, 120 s per board, 8-variant portfolio)"}
+{"ts": "2026-10-02T14:52:06+00:00", "kind": "milestone", "text": "Final tier A (40 boards, 120 s): 100% clean pass, 100% completion, zero added DRC errors (Freerouting 2.5.0-RC12 100%, 2.4.1 87.5%)"}
+{"ts": "2026-10-02T15:07:12+00:00", "kind": "milestone", "text": "Final tier B (40 boards, 120 s): 50.0% clean = Freerouting 2.5.0-RC12 50.0% (2.4.1: 12.5%), zero added errors. Tier C (30): 36.7% vs RC12 46.7% (2.4.1: 16.7%)"}
