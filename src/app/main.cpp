@@ -244,6 +244,33 @@ int cmd_debug_pad(const std::string& path, const std::string& ref, const std::st
   return 1;
 }
 
+int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int layer, double width_mm, const std::string& netname) {
+  auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  tmk::model::Board b = lb.board;
+  tmk::route::Obstacles obs(b, rules);
+  tmk::model::NetId net = 0;
+  for (std::size_t i = 0; i < b.nets.size(); ++i)
+    if (b.nets[i].name == netname) net = static_cast<tmk::model::NetId>(i);
+  const tmk::geom::Point a{static_cast<tmk::Coord>(v[0] * 1e6), static_cast<tmk::Coord>(v[1] * 1e6)};
+  const tmk::geom::Point e{static_cast<tmk::Coord>(v[2] * 1e6), static_cast<tmk::Coord>(v[3] * 1e6)};
+  const tmk::Coord w = static_cast<tmk::Coord>(width_mm * 1e6);
+  std::printf("segment_state %d (net %d)\n", obs.segment_state(a, e, layer, w, net, true, nullptr), static_cast<int>(net));
+  const auto s = tmk::geom::Shape::segment(a, e, w / 2);
+  for (const auto& it : obs.copper().items) {
+    if (it.removed || !(it.layers & tmk::model::layer_bit(layer))) continue;
+    for (const auto& sh : it.shapes) {
+      const double g = tmk::geom::gap(s, sh);
+      if (g < 1.0e6) std::printf("  item kind %d net %d gap %.4f mm\n", static_cast<int>(it.kind), static_cast<int>(it.net), g / 1e6);
+    }
+  }
+  for (const auto& h : obs.copper().holes) {
+    const double g = tmk::geom::gap(s, h.shape);
+    if (g < 1.0e6) std::printf("  hole plated %d net %d clearance %.4f gap %.4f mm\n", h.plated ? 1 : 0, static_cast<int>(h.net), tmk::nm_to_mm(h.clearance), g / 1e6);
+  }
+  return 0;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -321,6 +348,17 @@ int main(int argc, char** argv) {
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
 
+  auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
+  dseg->group("");
+  std::string ds_board, ds_net;
+  std::vector<double> ds_pts;
+  int ds_layer = 0;
+  double ds_width = 0.25;
+  dseg->add_option("board", ds_board)->required();
+  dseg->add_option("--pts", ds_pts)->expected(4)->required();
+  dseg->add_option("--layer", ds_layer);
+  dseg->add_option("--width", ds_width);
+  dseg->add_option("--net", ds_net);
   auto* dbg = app.add_subcommand("debug-pad", "Print the router's legality map around a pad");
   dbg->group("");
   std::string d_board, d_ref, d_num;
@@ -346,6 +384,7 @@ int main(int argc, char** argv) {
       return 0;
     }
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
+    if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);

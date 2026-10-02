@@ -795,6 +795,18 @@ struct Router::Impl {
       }
       merged.push_back(s);
     }
+    // A pad leg (pad centre <-> first/last lattice point) that fails the exact check is dropped when the
+    // lattice point already lies on the pad's copper: KiCad connects a track to any pad it overlaps.
+    auto on_pad = [&](Point q, int pad, int lay) { return on_pad_copper(q, pad, lay); };
+    if (merged.size() >= 2) {
+      const auto& f = merged.front();
+      if (f.a == pa && on_pad(f.b, c.pad_a, f.layer) && obs->segment_state(f.a, f.b, f.layer, width, net, true, nullptr) == 2)
+        merged.erase(merged.begin());
+    }
+    if (merged.size() >= 2 && c.pad_b >= 0) {
+      const auto& l = merged.back();
+      if (l.b == pb && on_pad(l.a, c.pad_b, l.layer) && obs->segment_state(l.a, l.b, l.layer, width, net, true, nullptr) == 2) merged.pop_back();
+    }
     // Exact verification. In soft mode, conflicts with other connections' routed copper name the victims.
     bool ok = true;
     std::vector<int> victims;
@@ -802,6 +814,9 @@ struct Router::Impl {
       const int st = obs->segment_state(s.a, s.b, s.layer, width, net, soft, &victims);
       if (st == 2) {
         ok = false;
+        if (std::getenv("TM_DEBUG_EXACT"))
+          std::fprintf(stderr, "EXACT %s conn %d soft %d: (%.4f,%.4f)-(%.4f,%.4f) L%d w %.3f\n", b.nets[static_cast<std::size_t>(net)].name.c_str(), current,
+                       soft ? 1 : 0, nm_to_mm(s.a.x), nm_to_mm(s.a.y), nm_to_mm(s.b.x), nm_to_mm(s.b.y), s.layer, nm_to_mm(width));
         learn_block(c, s, width);
       }
     }
@@ -845,16 +860,39 @@ struct Router::Impl {
     return true;
   }
 
+  bool on_pad_copper(Point q, int pad, int lay) const {
+    const auto& it = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(pad)])];
+    if (!(it.layers & model::layer_bit(lay))) return false;
+    for (const auto& sh : it.shapes)
+      if (geom::closer_than(geom::Shape::point(q, 1), sh, 0)) return true;
+    return false;
+  }
+
   void learn_block(const Connection& c, const auto& s, Coord width) {
     const int n = std::max<int>(1, static_cast<int>(std::hypot(static_cast<double>(s.b.x - s.a.x), static_cast<double>(s.b.y - s.a.y)) / static_cast<double>(pitch)));
     const auto& ia = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])].box;
     const auto& ib = c.pad_b >= 0 ? obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])].box : ia;
+    int learned = 0;
     for (int k = 0; k <= n; ++k) {
       const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
       const geom::Box qb = geom::Shape::point(q, 0).box;
-      if (qb.intersects(ia) || qb.intersects(ib)) continue;  // never block the pads themselves
-      if (obs->disk_state(q, s.layer, width / 2, c.net, 0, /*ignore_routed=*/true) == 2)
+      // Never block the pads themselves; points merely inside a pad's bounding box (beside a fine-pitch pad)
+      // can be blocked.
+      if ((qb.intersects(ia) && on_pad_copper(q, c.pad_a, s.layer)) || (c.pad_b >= 0 && qb.intersects(ib) && on_pad_copper(q, c.pad_b, s.layer))) continue;
+      if (obs->disk_state(q, s.layer, width / 2, c.net, 0, /*ignore_routed=*/true) == 2) {
         learned_block.insert({block_owner(c.net), cell_key(s.layer, to_ix(q.x), to_iy(q.y))});
+        ++learned;
+      }
+    }
+    // Every sampled disk legal but the segment not (a diagonal step clipping a fine-pitch pad corner): block
+    // the step's lattice points that are off the connection's pads, or the search repeats the same step.
+    if (learned == 0 && obs->segment_state(s.a, s.b, s.layer, width, c.net, true, nullptr) == 2) {
+      for (int k = 0; k <= n; ++k) {
+        const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
+        if (on_pad_copper(q, c.pad_a, s.layer) || (c.pad_b >= 0 && on_pad_copper(q, c.pad_b, s.layer))) continue;
+        if ((k == 0 || k == n) && n > 1) continue;  // interior points suffice for longer steps
+        learned_block.insert({block_owner(c.net), cell_key(s.layer, to_ix(q.x), to_iy(q.y))});
+      }
     }
   }
 
