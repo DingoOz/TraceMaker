@@ -78,6 +78,7 @@ struct Text {                // copper text is an obstacle; only position, layer
   std::string layer;
   std::string text;
   Point pos;
+  double angle = 0;
   Coord height = 0, thickness = 0;
   int footprint = -1;
   bool hidden = false;
@@ -163,6 +164,7 @@ struct Board {
   std::vector<Zone> zones;
   Coord thickness = 1'600'000;
   Coord pad_to_mask_clearance = 0;  // board solder-mask expansion for pads (setup)
+  bool vias_tented = false;         // (setup (tenting front back)); old boards: untented
   std::vector<std::string> warnings;
 
   int copper_count() const { return static_cast<int>(copper.size()); }

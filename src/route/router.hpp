@@ -17,7 +17,7 @@ struct RouterOptions {
   Coord pitch = 0;              // lattice pitch; 0 = automatic from net-class widths and clearances
   double time_limit_s = 120;    // wall-clock budget for the whole run
   long max_expansions = 3'000'000;  // per search attempt
-  double heuristic_weight = 1.25;   // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
+  double heuristic_weight = 1.0;    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
   double via_cost_mm = 1.0;     // equivalent track length of one via
   bool allow_vias = true;
@@ -31,7 +31,8 @@ struct RouterOptions {
 
 struct Connection {
   model::NetId net = 0;
-  int pad_a = -1, pad_b = -1;   // board pad indices
+  int pad_a = -1, pad_b = -1;   // board pad indices (pad_b = -1 when the target is a zone fill)
+  int zone_b = -1;              // copper item index of a zone fill (plane) to connect into, or -1
   Coord length = 0;             // straight-line distance
 };
 

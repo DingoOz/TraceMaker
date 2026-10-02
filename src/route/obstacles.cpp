@@ -75,6 +75,52 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
         }
     }
   }
+  // Solder-mask openings drawn as graphics (logos, test areas): new copper under them would bridge.
+  for (const auto& g : b_.graphics) {
+    const int side = g.layer == "F.Mask" ? 0 : g.layer == "B.Mask" ? 1 : -1;
+    if (side < 0) continue;
+    if ((g.kind == model::Graphic::Kind::Poly || g.kind == model::Graphic::Kind::Rect) && g.pts.size() >= 3 && (g.filled || g.kind == model::Graphic::Kind::Poly))
+      mask_open_[side].push_back(Shape::polygon(g.pts, g.width / 2));
+    else if (g.kind == model::Graphic::Kind::Circle && g.filled)
+      mask_open_[side].push_back(Shape::point(g.a, geom::kiround(std::hypot(static_cast<double>(g.b.x - g.a.x), static_cast<double>(g.b.y - g.a.y))) + g.width / 2));
+    else if (g.kind == model::Graphic::Kind::Line)
+      mask_open_[side].push_back(Shape::segment(g.a, g.b, g.width / 2));
+  }
+  // Pad solder-mask openings per board side (independent of the pad's copper layers: an edge-connector pad on
+  // B.Cu can still open the front mask).
+  via_mask_ = b_.vias_tented ? 0 : b_.pad_to_mask_clearance;
+  for (int side = 0; side < 2; ++side) {
+    agrid_[side] = std::make_unique<index::UniformGrid>(bounds_, cell, b_.pads.size() + 16);
+    const char* mask = side == 0 ? "F.Mask" : "B.Mask";
+    for (const auto& pad : b_.pads) {
+      bool has = false;
+      for (const auto& ln : pad.layers)
+        if (ln == mask || ln == "*.Mask" || ln == "F&B.Mask") has = true;
+      if (!has) continue;
+      Aperture a;
+      a.shapes = drc::pad_shapes(pad);
+      Coord mm = pad.mask_margin;
+      if (mm == INT64_MIN) mm = b_.footprints[static_cast<std::size_t>(pad.footprint)].mask_margin;
+      if (mm == INT64_MIN) mm = b_.pad_to_mask_clearance;
+      a.margin = std::max<Coord>(mm, 0);
+      a.net = pad.net;
+      for (const auto& sh : a.shapes) a.box.add(sh.box);
+      a.box = a.box.inflated(a.margin);
+      agrid_[side]->insert(static_cast<int>(apertures_[side].size()), a.box);
+      apertures_[side].push_back(std::move(a));
+    }
+  }
+  // Copper text: a conservative rectangle (stroke-font advance ~ 1.0 x height per character).
+  for (const auto& t : b_.texts) {
+    if (t.hidden || t.text.empty()) continue;
+    const int l = b_.copper_index(t.layer);
+    if (l < 0) continue;
+    const Coord h = std::max<Coord>(t.height, 1'000'000), th = std::max<Coord>(t.thickness, 150'000);
+    const Coord hw = static_cast<Coord>(t.text.size()) * h / 2 + th, hh = h * 6 / 10 + th;
+    std::vector<Point> pts = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
+    for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
+    texts_.emplace_back(l, Shape::polygon(pts, 0));
+  }
   for (const auto& z : b_.zones)
     if (z.rule_area && z.keepout_tracks && !z.outline.empty() && z.outline.front().size() >= 3)
       keepouts_.emplace_back(Shape::polygon(z.outline.front(), 0), &z);
@@ -102,19 +148,10 @@ int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int la
     if (it.removed || !(it.layers & model::layer_bit(layer))) return;
     if (it.net == probe.net && probe.net != 0) return;
     Coord req = re_->clearance(probe, it, layer);
-    // Keep new copper out of foreign pads' solder-mask openings on outer layers (KiCad solder_mask_bridge).
-    if (it.kind == drc::ItemKind::Pad && (layer == 0 || layer == b_.copper_count() - 1)) {
-      const auto& pad = b_.pads[static_cast<std::size_t>(it.index)];
-      const char* mask = layer == 0 ? "F.Mask" : "B.Mask";
-      bool has_mask = false;
-      for (const auto& ln : pad.layers)
-        if (ln == mask || ln == "*.Mask" || ln == "F&B.Mask") has_mask = true;
-      if (has_mask) {
-        Coord mm = pad.mask_margin;
-        if (mm == INT64_MIN) mm = b_.footprints[static_cast<std::size_t>(pad.footprint)].mask_margin;
-        if (mm == INT64_MIN) mm = b_.pad_to_mask_clearance;
-        req = std::max(req, mm + 1'000);
-      }
+    // Untented vias open the mask around themselves: other nets' copper must stay outside that opening.
+    if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1)) {
+      if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (probe.kind == drc::ItemKind::Via ? via_mask_ : 0) + 1'000);
+      else if (probe.kind == drc::ItemKind::Via && it.kind != drc::ItemKind::Zone) req = std::max(req, via_mask_ + 1'000);
     }
     for (const auto& u : it.shapes)
       if (geom::closer_than(s, u, req)) {
@@ -156,6 +193,26 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
     }
   });
   if (state == 2) return 2;
+  // A new via's hole against copper of other nets (hole clearance).
+  if (is_via_hole && hc > 0) {
+    const Shape hole = Shape::point(s.pts[0], hole_r);
+    grid_->query(hole.box.inflated(hc + 1), [&](int id) {
+      if (state == 2) return;
+      const auto& it = cm_.items[static_cast<std::size_t>(id)];
+      if (it.removed || it.kind == drc::ItemKind::Zone || (it.net == net && net != 0) || !(it.layers & model::layer_bit(layer))) return;
+      for (const auto& u : it.shapes)
+        if (geom::closer_than(hole, u, hc)) {
+          if (ignore_routed && it.owner >= 0) {
+            state = 1;
+            if (owners) owners->push_back(it.owner);
+          } else {
+            state = 2;
+          }
+          return;
+        }
+    });
+    if (state == 2) return 2;
+  }
   // Board edge.
   const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
   bool edge_ok = true;
@@ -163,9 +220,19 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
     if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
   });
   if (!edge_ok) return 2;
-  // Keepouts.
+  // Pad solder-mask openings and copper text.
+  bool ap_blocked = false;
+  aperture_codes(s, layer, is_via_hole, [&](model::NetId n) {
+    if (n == 0 || n != net) ap_blocked = true;
+  });
+  if (ap_blocked) return 2;
+  // Keepouts and solder-mask openings.
   for (const auto& [area, z] : keepouts_)
     if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return 2;
+  const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
+  if (side >= 0)
+    for (const auto& m : mask_open_[side])
+      if (m.box.inflated(1'000).intersects(s.box) && geom::closer_than(s, m, 1'000)) return 2;
   return state;
 }
 
@@ -217,7 +284,7 @@ int Obstacles::via_state(Point p, Coord d, Coord drill, model::NetId net, Coord 
   for (int l = 0; l < b_.copper_count() && st != 2; ++l) {
     const auto probe = make_probe(drc::ItemKind::Via, s, net, l, d, p);
     st = worst(st, copper_state(s, probe, l, ignore_routed, owners));
-    if (st != 2) st = worst(st, holes_edges_state(s, net, l, l == 0, drill / 2 + margin, ignore_routed, owners));
+    if (st != 2) st = worst(st, holes_edges_state(s, net, l, true, drill / 2 + margin, ignore_routed, owners));
   }
   return st;
 }
@@ -279,7 +346,25 @@ void Obstacles::remove_item(int item) {
       if (h.item == item) h.removed = true;
 }
 
-std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, model::NetId probe_net) const {
+void Obstacles::aperture_codes(const Shape& s, int layer, bool via_probe, const std::function<void(model::NetId)>& hit) const {
+  const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
+  if (side >= 0) {
+    const Coord extra = 1'000 + (via_probe ? via_mask_ : 0);
+    agrid_[side]->query(s.box.inflated(extra + 1), [&](int id) {
+      const auto& a = apertures_[side][static_cast<std::size_t>(id)];
+      for (const auto& u : a.shapes)
+        if (geom::closer_than(s, u, a.margin + extra)) {
+          hit(a.net);
+          return;
+        }
+    });
+  }
+  const Coord tc = std::max(r_.minimums.clearance, r_.default_class().clearance);
+  for (const auto& [l, t] : texts_)
+    if (l == layer && t.box.inflated(tc).intersects(s.box) && geom::closer_than(s, t, tc)) hit(0);
+}
+
+std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, model::NetId probe_net, bool via_probe) const {
   if (!inside_board(p, 0)) return kBlocked;
   const Shape s = Shape::point(p, hw + margin);
   const auto probe = make_probe(drc::ItemKind::Track, s, probe_net, layer, 2 * hw, p);
@@ -295,18 +380,9 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
     if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer))) return;
     if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
     Coord req = re_->clearance(probe, it, layer);
-    if (it.kind == drc::ItemKind::Pad && (layer == 0 || layer == b_.copper_count() - 1)) {
-      const auto& pad = b_.pads[static_cast<std::size_t>(it.index)];
-      const char* mask = layer == 0 ? "F.Mask" : "B.Mask";
-      bool has_mask = false;
-      for (const auto& ln : pad.layers)
-        if (ln == mask || ln == "*.Mask" || ln == "F&B.Mask") has_mask = true;
-      if (has_mask) {
-        Coord mm = pad.mask_margin;
-        if (mm == INT64_MIN) mm = b_.footprints[static_cast<std::size_t>(pad.footprint)].mask_margin;
-        if (mm == INT64_MIN) mm = b_.pad_to_mask_clearance;
-        req = std::max(req, mm + 1'000);
-      }
+    if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1) && it.kind != drc::ItemKind::Zone && it.kind != drc::ItemKind::Pad) {
+      if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (via_probe ? via_mask_ : 0) + 1'000);
+      else if (via_probe) req = std::max(req, via_mask_ + 1'000);
     }
     for (const auto& u : it.shapes)
       if (geom::closer_than(s, u, req)) {
@@ -314,6 +390,8 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
         return;
       }
   });
+  if (code == kBlocked) return code;
+  aperture_codes(s, layer, via_probe, add_net);
   if (code == kBlocked) return code;
   const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
   hgrid_->query(s.box.inflated(hc + 1), [&](int id) {
@@ -334,13 +412,17 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   if (!edge_ok) return kBlocked;
   for (const auto& [area, z] : keepouts_)
     if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return kBlocked;
+  const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
+  if (side >= 0)
+    for (const auto& m : mask_open_[side])
+      if (m.box.inflated(1'000).intersects(s.box) && geom::closer_than(s, m, 1'000)) return kBlocked;
   return code;
 }
 
 std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const {
   std::int32_t code = kFree;
   for (int l = 0; l < b_.copper_count(); ++l) {
-    const std::int32_t c = fixed_code(p, l, d / 2, margin, probe_net);
+    const std::int32_t c = fixed_code(p, l, d / 2, margin, probe_net, true);
     if (c == kBlocked) return kBlocked;
     if (c != kFree) {
       if (code == kFree) code = c;
@@ -356,7 +438,25 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
     if (!ok || h.removed || (h.item >= 0 && cm_.items[static_cast<std::size_t>(h.item)].owner >= 0)) return;
     if (geom::closer_than(hole, h.shape, h2h) || hole.pts[0] == h.shape.pts[0]) ok = false;
   });
-  return ok ? code : kBlocked;
+  if (!ok) return kBlocked;
+  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  if (hc > 0) {
+    const Shape h = Shape::point(p, drill / 2 + margin);
+    grid_->query(h.box.inflated(hc + 1), [&](int id) {
+      if (code == kBlocked) return;
+      const auto& it = cm_.items[static_cast<std::size_t>(id)];
+      if (it.owner >= 0 || it.removed || it.kind == drc::ItemKind::Zone) return;
+      if (it.net != 0 && code == it.net) return;
+      for (const auto& u : it.shapes)
+        if (geom::closer_than(h, u, hc)) {
+          if (it.net == 0) code = kBlocked;
+          else if (code == kFree) code = it.net;
+          else if (code != it.net) code = kBlocked;
+          return;
+        }
+    });
+  }
+  return code;
 }
 
 int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
@@ -368,7 +468,11 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.removed || !(it.layers & model::layer_bit(layer))) return;
     if (it.net == net && net != 0) return;
-    const Coord req = re_->clearance(probe, it, layer);
+    Coord req = re_->clearance(probe, it, layer);
+    if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1)) {
+      if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (kind == drc::ItemKind::Via ? via_mask_ : 0) + 1'000);
+      else if (kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + 1'000);
+    }
     for (const auto& u : it.shapes)
       if (geom::closer_than(s, u, req)) {
         if (soft) {
@@ -380,6 +484,44 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
         return;
       }
   });
+  if (state == 2) return state;
+  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  if (hc > 0) {
+    // New copper against routed vias' holes of other nets.
+    rgrid_->query(s.box.inflated(hc + 1), [&](int id) {
+      if (state == 2) return;
+      const auto& it = cm_.items[static_cast<std::size_t>(id)];
+      if (it.removed || it.kind != drc::ItemKind::Via || (it.net == net && net != 0)) return;
+      const Shape other = Shape::point(it.pos, b_.vias[static_cast<std::size_t>(it.index)].drill / 2);
+      if (geom::closer_than(s, other, hc)) {
+        if (soft) {
+          state = 1;
+          if (owners) owners->push_back(it.owner);
+        } else {
+          state = 2;
+        }
+      }
+    });
+    // A new via's hole against routed copper of other nets.
+    if (via_hole && state != 2) {
+      const Shape h = Shape::point(s.pts[0], hole_r);
+      rgrid_->query(h.box.inflated(hc + 1), [&](int id) {
+        if (state == 2) return;
+        const auto& it = cm_.items[static_cast<std::size_t>(id)];
+        if (it.removed || (it.net == net && net != 0) || !(it.layers & model::layer_bit(layer))) return;
+        for (const auto& u : it.shapes)
+          if (geom::closer_than(h, u, hc)) {
+            if (soft) {
+              state = 1;
+              if (owners) owners->push_back(it.owner);
+            } else {
+              state = 2;
+            }
+            return;
+          }
+      });
+    }
+  }
   if (state == 2 || !via_hole) return state;
   // A new via hole against routed vias' holes (hole to hole).
   const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);

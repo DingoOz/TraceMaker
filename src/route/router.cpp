@@ -91,6 +91,12 @@ struct Router::Impl {
   }
 
   const model::NetClass& netclass(NetId net) const { return rules.class_for(b.nets[static_cast<std::size_t>(net)].name); }
+  // Via drill and diameter for a net: net-class values raised to the board minimums (drill, diameter and
+  // annular ring: d >= drill + 2 * min_annular).
+  Coord via_drill(NetId net) const { return std::max(netclass(net).via_drill, rules.minimums.through_hole_diameter); }
+  Coord via_diameter(NetId net) const {
+    return std::max({netclass(net).via_diameter, rules.minimums.via_diameter, via_drill(net) + 2 * rules.minimums.via_annular_width});
+  }
   Coord track_width(NetId net) const { return std::max(netclass(net).track_width, rules.minimums.track_width); }
 
   // Lattice <-> board coordinates.
@@ -121,40 +127,63 @@ struct Router::Impl {
   // Connections: a minimum spanning tree over each net's existing copper clusters (pads that are already joined
   // by copper count as one node); edges are pad pairs at minimum distance.
   // ---------------------------------------------------------------------------------------------------
+  // Distance from a point to a zone fill (0 inside).
+  double zone_dist(Point p, int zone_item) const {
+    const auto& z = obs->copper().items[static_cast<std::size_t>(zone_item)];
+    const auto& poly = z.shapes.front().pts;
+    if (geom::point_in_polygon(p, poly)) return 0;
+    long double best = 1e30L;
+    for (std::size_t i = 0, j = poly.size() - 1; i < poly.size(); j = i++) best = std::min(best, geom::point_seg_dist(p, poly[j], poly[i]));
+    return static_cast<double>(best);
+  }
+
   std::vector<Connection> plan(drc::UnionFind& uf) {
     const auto& cm = obs->copper();
-    std::map<NetId, std::map<int, std::vector<int>>> net_clusters;  // net -> root -> pads
+    struct Cluster { std::vector<int> pads, zones; };
+    std::map<NetId, std::map<int, Cluster>> net_clusters;  // net -> root -> pads and zone fills
     pad_item.assign(b.pads.size(), -1);
     for (std::size_t i = 0; i < cm.items.size(); ++i) {
       const auto& it = cm.items[i];
-      if (it.kind != drc::ItemKind::Pad || it.net == 0) continue;
-      pad_item[static_cast<std::size_t>(it.index)] = static_cast<int>(i);
-      net_clusters[it.net][uf.find(static_cast<int>(i))].push_back(it.index);
+      if (it.net == 0) continue;
+      if (it.kind == drc::ItemKind::Pad) {
+        pad_item[static_cast<std::size_t>(it.index)] = static_cast<int>(i);
+        net_clusters[it.net][uf.find(static_cast<int>(i))].pads.push_back(it.index);
+      } else if (it.kind == drc::ItemKind::Zone && it.footprint < 0) {
+        net_clusters[it.net][uf.find(static_cast<int>(i))].zones.push_back(static_cast<int>(i));
+      }
     }
     std::vector<Connection> out;
     for (auto& [net, cl] : net_clusters) {
-      if (cl.size() < 2) continue;
-      std::vector<std::vector<int>> groups;
-      for (auto& [r, pads] : cl) groups.push_back(pads);
-      // Prim over clusters with pad-to-pad distances.
+      std::vector<Cluster> groups;
+      for (auto& [r, c] : cl)
+        if (!c.pads.empty()) groups.push_back(c);  // zone-only clusters (unused fills) are not targets on their own
+      if (groups.size() < 2) continue;
+      // Prim over clusters; a pad may connect to another cluster's pad or into its zone fill (plane).
       const std::size_t k = groups.size();
       std::vector<std::uint8_t> in(k, 0);
       std::vector<double> best(k, 1e300);
-      std::vector<std::pair<int, int>> via(k, {-1, -1});
+      std::vector<Connection> how(k);
       in[0] = 1;
       auto upd = [&](std::size_t from) {
         for (std::size_t j = 0; j < k; ++j) {
           if (in[j]) continue;
-          for (int pa : groups[from])
-            for (int pb : groups[j]) {
-              const auto& A = b.pads[static_cast<std::size_t>(pa)].pos;
-              const auto& B = b.pads[static_cast<std::size_t>(pb)].pos;
-              const double d = std::hypot(static_cast<double>(A.x - B.x), static_cast<double>(A.y - B.y));
-              if (d < best[j]) {
-                best[j] = d;
-                via[j] = {pa, pb};
-              }
+          auto consider = [&](int pa, int pb, int zb, double d) {
+            if (d < best[j]) {
+              best[j] = d;
+              how[j] = Connection{net, pa, pb, zb, static_cast<Coord>(d)};
             }
+          };
+          for (int pa : groups[from].pads) {
+            const Point A = b.pads[static_cast<std::size_t>(pa)].pos;
+            for (int pb : groups[j].pads) {
+              const Point B = b.pads[static_cast<std::size_t>(pb)].pos;
+              consider(pa, pb, -1, std::hypot(static_cast<double>(A.x - B.x), static_cast<double>(A.y - B.y)));
+            }
+            for (int z : groups[j].zones) consider(pa, -1, z, zone_dist(A, z));
+          }
+          // And pads of cluster j into zones of the tree side.
+          for (int pb : groups[j].pads)
+            for (int z : groups[from].zones) consider(pb, -1, z, zone_dist(b.pads[static_cast<std::size_t>(pb)].pos, z));
         }
       };
       upd(0);
@@ -163,7 +192,7 @@ struct Router::Impl {
         for (std::size_t j = 0; j < k; ++j)
           if (!in[j] && (nxt == k || best[j] < best[nxt])) nxt = j;
         in[nxt] = 1;
-        out.push_back({net, via[nxt].first, via[nxt].second, static_cast<Coord>(best[nxt])});
+        out.push_back(how[nxt]);
         upd(nxt);
       }
     }
@@ -256,7 +285,7 @@ struct Router::Impl {
         if (cc.via[gi] == INT32_MIN) cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
         st = code_ok(cc.via[gi], net) ? 0 : 2;
         for (int l = 0; l < nl && st != 2; ++l) {
-          const int r = obs->routed_state(geom::Shape::point(p, d / 2 + margin), l, net, drc::ItemKind::Via, soft, nullptr, l == 0, drill / 2 + margin);
+          const int r = obs->routed_state(geom::Shape::point(p, d / 2 + margin), l, net, drc::ItemKind::Via, soft, nullptr, true, drill / 2 + margin);
           if (r == 2) st = 2;
           else if (r == 1) st = 1;
         }
@@ -302,9 +331,8 @@ struct Router::Impl {
     const NetId net = c.net;
     const Coord width = track_width(net);
     const Coord hw = width / 2;
-    const auto& nc = netclass(net);
-    const Coord vd = std::max(nc.via_diameter, rules.minimums.via_diameter);
-    const Coord vdrill = std::max(nc.via_drill, rules.minimums.through_hole_diameter);
+    const Coord vd = via_diameter(net);
+    const Coord vdrill = via_drill(net);
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
     const std::size_t states = cells * static_cast<std::size_t>(nl) * 9;
     if (gstamp.size() < states) {
@@ -326,15 +354,42 @@ struct Router::Impl {
       std::fill(vstamp.begin(), vstamp.end(), 0u);
       gen = 1;
     }
-    const Endpoint src = pad_cells(w, c.pad_a), dst = pad_cells(w, c.pad_b);
-    if (src.cells.empty() || dst.cells.empty()) return false;
-    std::vector<std::uint32_t> is_target(cells * static_cast<std::size_t>(nl), 0);  // small; window-local
+    const Endpoint src = pad_cells(w, c.pad_a);
+    const Endpoint dst = c.pad_b >= 0 ? pad_cells(w, c.pad_b) : Endpoint{};
+    if (src.cells.empty() || (c.pad_b >= 0 && dst.cells.empty())) return false;
+    std::vector<std::uint8_t> is_target(cells * static_cast<std::size_t>(nl), 0);  // 1 target, 2 not (zone checks are lazy)
     for (auto [l, ci] : dst.cells) is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)] = 1;
-    const Point tp = b.pads[static_cast<std::size_t>(c.pad_b)].pos;
+    // Zone target: any cell inside the fill on its layer, with room for the track (tested lazily when reached).
+    int zone_layer = -1;
+    const std::vector<Point>* zone_poly = nullptr;
+    if (c.zone_b >= 0) {
+      const auto& z = obs->copper().items[static_cast<std::size_t>(c.zone_b)];
+      zone_layer = std::countr_zero(z.layers);
+      zone_poly = &z.shapes.front().pts;
+    }
+    auto target = [&](int l, std::int64_t ci) -> bool {
+      auto& t = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)];
+      if (t == 1) return true;
+      if (t == 2 || l != zone_layer) return false;
+      const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
+      const geom::Shape pt = geom::Shape::point(at(w.x0 + cx, w.y0 + cy), hw);
+      // Inside the fill and the whole track end disk on copper: no fill edge within hw.
+      bool inside = geom::point_in_polygon(pt.pts[0], *zone_poly);
+      if (inside) {
+        const auto& poly = *zone_poly;
+        for (std::size_t i = 0, j = poly.size() - 1; i < poly.size() && inside; j = i++)
+          if (geom::point_seg_closer(pt.pts[0], poly[j], poly[i], hw + pitch)) inside = false;
+      }
+      t = inside ? 1 : 2;
+      return inside;
+    };
+    const Point tp = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : b.pads[static_cast<std::size_t>(c.pad_a)].pos;
+    const bool zone_target = c.zone_b >= 0;
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
     const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * 1e6);
     auto h = [&](int gx, int gy) -> std::int64_t {
       const Point p = at(gx, gy);
+      if (zone_target) return std::int64_t{0};  // plane anywhere nearby: no useful lower bound
       const std::int64_t dx = std::llabs(p.x - tp.x), dy = std::llabs(p.y - tp.y);
       const std::int64_t mn = std::min(dx, dy), mx = std::max(dx, dy);
       return static_cast<std::int64_t>(static_cast<double>((mx - mn) + mn * diag / step) * opt.heuristic_weight);  // octile distance
@@ -366,7 +421,7 @@ struct Router::Impl {
       const std::int64_t ci = static_cast<std::int64_t>(lc % cells);
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
       if (f - h(w.x0 + cx, w.y0 + cy) > g[s]) continue;  // stale entry
-      if (is_target[lc]) {
+      if (target(l, ci)) {
         goal = s;
         break;
       }
@@ -381,7 +436,7 @@ struct Router::Impl {
         const int ncx = cx + kDx[d], ncy = cy + kDy[d];
         if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
         const std::int64_t nci = static_cast<std::int64_t>(ncy) * w.w + ncx;
-        const bool tgt = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci)] != 0;
+        const bool tgt = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci)] == 1;
         std::int64_t extra = 0;
         if (!tgt) {
           extra = cell_cost(w, l, ncx, ncy, net, hw);
@@ -430,13 +485,13 @@ struct Router::Impl {
   bool commit(const Connection& c, const std::vector<PathNode>& path) {
     const NetId net = c.net;
     const Coord width = track_width(net);
-    const auto& nc = netclass(net);
-    const Coord vd = std::max(nc.via_diameter, rules.minimums.via_diameter);
-    const Coord vdrill = std::max(nc.via_drill, rules.minimums.through_hole_diameter);
+    const Coord vd = via_diameter(net);
+    const Coord vdrill = via_drill(net);
     struct Seg { Point a, b; int layer; };
     std::vector<Seg> segs;
     std::vector<Point> vias;
-    const Point pa = b.pads[static_cast<std::size_t>(c.pad_a)].pos, pb = b.pads[static_cast<std::size_t>(c.pad_b)].pos;
+    const Point pa = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
+    const Point pb = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : at(path.back().gx, path.back().gy);
     // Corner points: pad centre, direction changes and layer changes, pad centre.
     Point cur = pa;
     int layer = path.front().layer;
@@ -519,7 +574,7 @@ struct Router::Impl {
   void learn_block(const Connection& c, const auto& s, Coord width) {
     const int n = std::max<int>(1, static_cast<int>(std::hypot(static_cast<double>(s.b.x - s.a.x), static_cast<double>(s.b.y - s.a.y)) / static_cast<double>(pitch)));
     const auto& ia = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])].box;
-    const auto& ib = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])].box;
+    const auto& ib = c.pad_b >= 0 ? obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])].box : ia;
     for (int k = 0; k <= n; ++k) {
       const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
       const geom::Box qb = geom::Shape::point(q, 0).box;
@@ -565,7 +620,8 @@ struct Router::Impl {
 
   bool search_and_commit(const Connection& c, bool soft_mode) {
     soft = soft_mode;
-    const Point a = b.pads[static_cast<std::size_t>(c.pad_a)].pos, e = b.pads[static_cast<std::size_t>(c.pad_b)].pos;
+    const Point a = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
+    const Point e = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : a;
     static const Coord margins[] = {2'000'000, 6'000'000, 20'000'000, 1'000'000'000};
     std::vector<PathNode> path;
     for (int attempt = 0; attempt < opt.max_attempts; ++attempt) {
@@ -587,7 +643,7 @@ struct Router::Impl {
   bool joined(int ci) {
     const auto& c = cs[static_cast<std::size_t>(ci)].c;
     const int ra = init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])];
-    const int rb = init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])];
+    const int rb = c.pad_b >= 0 ? init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])] : init_root[static_cast<std::size_t>(c.zone_b)];
     if (ra == rb) return true;
     std::map<int, int> up;
     auto find = [&](int x) {
@@ -597,7 +653,7 @@ struct Router::Impl {
     for (const auto& o : cs) {
       if (!o.routed || o.implicit || o.c.net != c.net) continue;
       const int x = find(init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_a)])]);
-      const int y = find(init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_b)])]);
+      const int y = find(o.c.pad_b >= 0 ? init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_b)])] : init_root[static_cast<std::size_t>(o.c.zone_b)]);
       if (x != y) up[x] = y;
     }
     return find(ra) == find(rb);
@@ -678,9 +734,13 @@ struct Router::Impl {
     for (const auto& st : cs) {
       if (st.routed) continue;
       const auto& pa = b.pads[static_cast<std::size_t>(st.c.pad_a)];
-      const auto& pb = b.pads[static_cast<std::size_t>(st.c.pad_b)];
+      std::string to = "zone";
+      if (st.c.pad_b >= 0) {
+        const auto& pb = b.pads[static_cast<std::size_t>(st.c.pad_b)];
+        to = b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number;
+      }
       res.failures.push_back(b.nets[static_cast<std::size_t>(st.c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." +
-                             pa.number + " -> " + b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number);
+                             pa.number + " -> " + to);
     }
     res.seconds = elapsed();
     std::fprintf(stderr, "legality checks %ld: outside %ld, copper %ld, holes/edges/keepouts %ld; rips %d, passes %d\n", obs->checks,

@@ -92,3 +92,66 @@ thin backend interface; the WebGL2 path uses fragment-shader SDFs and render-to-
 
 - `tracemaker render` writes PNG/SVG snapshots and an MP4 time-lapse of a replay (headless WebGPU or a
   CPU raster path) for reports and the benchmark dashboard.
+
+## 8. Implementation status (v1)
+
+v1 implements the JSON protocol of [`13-viewer-protocol.md`](13-viewer-protocol.md) end to end. FlatBuffers,
+replay, the control channel, heatmap rendering, the minimap and the WebGPU backend are not built yet.
+
+### Engine side (`src/server/`)
+
+| Target | Contents |
+|---|---|
+| `tm_viz_messages` (`tm::viz`) | `server/messages.hpp`: `board_snapshot_json(board, name)` plus builders for `track_add/remove`, `via_add/remove`, `footprint_move`, `ratsnest`, `frontier`, `path_try`, `failure`, `stats`, `stage`, `log`, `heatmap`, and `message_type()`. Depends only on model, drc and nlohmann_json, so the router can link it without Boost |
+| `tm_server` (`tm::server`) | `tmk::server::ViewerServer : events::Sink`: Boost.Beast HTTP + WebSocket on one background I/O thread. Serves static files (MIME types, percent-decoding, `..` and symlink escape rejected) from `<repo>/viewer/dist` or `ServerOptions::web_root`; WebSocket at `/ws`. Default bind `0.0.0.0:8766` (8765 is the dev progress site) |
+| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--web DIR] [--demo] [--keep-tracks]` |
+| `tm_server_tests` | Catch2: message builders, snapshot of `pic_programmer` (skipped if the fixture is missing), HTTP serving and traversal rejection, snapshot-then-deltas delivery, late-client catch-up, back-pressure. Registered with ctest |
+
+Server behaviour:
+- `publish()` only appends to a mutex-protected inbox and posts a drain to the I/O thread; it never touches
+  sockets. `wants_transient()` is true only while a viewer is connected, so producers can skip frontier work.
+- The server keeps the latest `board` snapshot and the state since it (tracks/vias added or removed, footprint
+  moves, the latest `ratsnest`, `stats` and heatmap per name/layer, and the last 300 `stage`/`log`/`failure`
+  messages). A client that connects mid-run receives the snapshot, then that state, then the live stream.
+- Per-client back-pressure: beyond 2,000 queued messages or 8 MB, `frontier`/`path_try` are dropped and queued
+  `stats` are coalesced to the latest; a new `board` supersedes queued scene deltas; a client more than 256 MB
+  behind on state is disconnected (it reconnects and gets a fresh snapshot).
+- Additions to the protocol (all optional, ignored by older readers): pads carry `fp` (footprint index), `num`
+  (pad number) and `hole:{pts,r}`; footprints carry `value`; the `board` outline is chained into closed loops
+  where the pieces join. Arc tracks are sent as straight segments with negative ids (-1, -2, …), so producers can
+  number new tracks from `Board::tracks.size()` upwards. Copper graphics (non-pad copper shapes) are not sent yet.
+
+### Viewer (`viewer/`, TypeScript + Vite, no framework)
+
+- WebGL2 renderer written against the raw API (GLSL ES 3.0, `viewer/src/shaders.ts`): instanced capsules with a
+  signed-distance fragment shader (tracks, round/oval pads, polygon-pad edges with r > 0, outline, ratsnest,
+  footprint boxes); vias as SDF rings with drill; polygon pads ear-clipped; zones and the board substrate filled
+  with an even-odd stencil pass (robust to holes and fractured fills).
+- Layer compositing: each copper layer is drawn into a 4× MSAA offscreen target, resolved, and composited with
+  its opacity, so overlapping copper on one layer never double-blends. "Active on top" draws the active layer
+  last and dims the others; layers can be hidden individually. Through-hole pads, holes and vias draw above.
+- Effects use additive blending: new tracks glow and decay (two Gaussian halos, 1.4 s), frontier points are
+  fading dots (0.6 s), `path_try` is a fading polyline, failures are pulsing red rings at both ends plus a moving
+  red dashed line (4.5 s). Effects are suppressed while catching up after a snapshot or a stall.
+- HUD: stage, iteration, routed/total with progress bar, unrouted, rip-ups, failures, elapsed, messages/s, FPS,
+  `stats.extra`; layer list (click = active, eye = visibility, keys 1–9); toggles for active-on-top (H), zones (Z),
+  ratsnest (R), footprints, effects (E), follow activity (L); event log of `log`/`stage`/`failure`; cursor
+  position in board millimetres; footprint reference labels; hover tooltip (net, layer, width/size, pad ref)
+  from a CPU uniform-grid picker, with the hovered net highlighted.
+- WebSocket client reconnects with exponential backoff (0.4–5 s) and applies all queued messages once per
+  animation frame; only the newest transient messages of a frame are kept after a stall.
+- Views can be linked as `#view=<x mm>,<y mm>,<px per mm>&layer=<n>&hc=0|1&follow=1`.
+
+### Running it
+
+```
+cd viewer && npm install && npm run build            # -> viewer/dist (served by the engine)
+cmake --build --preset release --target tracemaker-view
+build/release/src/server/tracemaker-view bench/data/kicad/demos/video/video.kicad_pcb --demo
+# open http://<host>:8766/ ; --demo clears the board's tracks and "routes" them again with synthetic events
+cd viewer && npm run dev                              # hot-reload development, proxies /ws to :8766
+```
+
+Verified in headless Chromium (SwiftShader WebGL2) on the `video` (7,932 tracks, 4 layers) and
+`RoyalBlue54L-Feather` (8 layers, zone fills) demos. Firefox has not been tested on this machine; the renderer
+uses only core WebGL2 (instancing, MSAA renderbuffers, `blitFramebuffer`, stencil).

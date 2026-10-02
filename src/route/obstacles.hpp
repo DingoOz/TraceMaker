@@ -1,6 +1,7 @@
 #pragma once
 // Obstacle model for routing: every copper item, hole, board edge and keepout, with exact legality tests that
 // use the DRC's rule engine, so the router and the DRC can never disagree about what is legal.
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -47,7 +48,7 @@ class Obstacles {
   // probe's own net: kFree, kBlocked, or the single net id whose own copper is the only conflict (so the disk
   // is legal for that net only). Clearances use `probe_net`'s class; diff-pair relief is not applied (safe).
   static constexpr std::int32_t kFree = -1, kBlocked = -2;
-  std::int32_t fixed_code(geom::Point p, int layer, Coord hw, Coord margin, model::NetId probe_net) const;
+  std::int32_t fixed_code(geom::Point p, int layer, Coord hw, Coord margin, model::NetId probe_net, bool via_probe = false) const;
   std::int32_t fixed_via_code(geom::Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const;
   // Routed (rippable) copper only: 0 free, 1 conflicts (owners appended), 2 blocked when !soft.
   int routed_state(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
@@ -83,6 +84,19 @@ class Obstacles {
   std::vector<geom::Point> outline_;
   std::vector<std::vector<geom::Point>> cutouts_;
   std::vector<std::pair<geom::Shape, const model::Zone*>> keepouts_;
+  std::vector<geom::Shape> mask_open_[2];  // solder-mask openings drawn as graphics (front, back)
+  struct Aperture {
+    std::vector<geom::Shape> shapes;  // pad copper shape; the opening is this inflated by `margin`
+    Coord margin = 0;
+    model::NetId net = 0;
+    geom::Box box;
+  };
+  std::vector<Aperture> apertures_[2];               // pad solder-mask openings per side
+  std::unique_ptr<index::UniformGrid> agrid_[2];
+  std::vector<std::pair<int, geom::Shape>> texts_;   // copper text boxes (copper index, rectangle)
+  Coord via_mask_ = 0;                               // mask expansion of untented vias (0 when tented)
+  // Mask-opening and copper-text conflicts for new copper on `layer` (fixed obstacles only).
+  void aperture_codes(const geom::Shape& s, int layer, bool via_probe, const std::function<void(model::NetId)>& hit) const;
 };
 
 }  // namespace tmk::route

@@ -128,6 +128,13 @@ def main() -> int:
     run_id = a.name or datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + f"-tier{a.tier}"
     outdir = ROOT / "bench/results" / run_id
     outdir.mkdir(parents=True, exist_ok=True)
+    # Snapshot the engine binary so rebuilding during a run cannot mix versions.
+    global TM
+    import shutil
+    snap = outdir / "tracemaker"
+    shutil.copy2(TM, snap)
+    TM = snap
+    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     print(f"run {run_id}: {len(names)} boards, tier {a.tier}, {a.time:.0f} s per board, {a.jobs} jobs", flush=True)
     rows = []
     with cf.ThreadPoolExecutor(a.jobs) as ex, (outdir / "boards.jsonl").open("w") as f:
@@ -157,7 +164,7 @@ def main() -> int:
         for t in r["added_errors"]:
             added_types[t] += 1
     summary = {
-        "run": run_id, "set": f"PCBench tier {a.tier}", "boards": n,
+        "run": run_id, "set": f"PCBench tier {a.tier}", "boards": n, "commit": commit,
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),

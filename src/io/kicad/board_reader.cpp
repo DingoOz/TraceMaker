@@ -29,7 +29,10 @@ class Reader {
     if (NodeId g = d_.find(root, "general"); g != kNoNode)
       if (NodeId t = d_.find(g, "thickness"); t != kNoNode) b_.thickness = d_.nm_at(t, 1).value_or(b_.thickness);
     read_layers(d_.find(root, "layers"));
-    if (NodeId setup = d_.find(root, "setup"); setup != kNoNode) b_.pad_to_mask_clearance = child_nm(setup, "pad_to_mask_clearance", 0);
+    if (NodeId setup = d_.find(root, "setup"); setup != kNoNode) {
+      b_.pad_to_mask_clearance = child_nm(setup, "pad_to_mask_clearance", 0);
+      if (NodeId t = d_.find(setup, "tenting"); t != kNoNode) b_.vias_tented = has_symbol(t, "front") || has_symbol(t, "back");
+    }
     b_.nets.push_back(model::Net{0, "", 0});
     b_.net_index[""] = 0;
     const auto table = d_.find_all(root, "net");
@@ -328,8 +331,8 @@ class Reader {
     gr.footprint = fi;
     if (NodeId l = d_.find(g, "layer"); l != kNoNode) gr.layer = d_.str_at(l, 1);
     // Keep only layers that matter for routing and placement.
-    const bool keep = gr.layer == "Edge.Cuts" || gr.layer.ends_with(".Cu") || gr.layer.ends_with(".CrtYd") ||
-                      gr.layer == "Margin";
+    const bool keep = gr.layer == "Edge.Cuts" || b_.copper_index(gr.layer) >= 0 || gr.layer.ends_with(".CrtYd") ||
+                      gr.layer == "Margin" || gr.layer == "F.Mask" || gr.layer == "B.Mask";
     if (!keep) return;
     const std::string_view h = d_.head(g);
     const std::string_view kind = h.substr(3);  // after "gr_" / "fp_"
@@ -339,6 +342,10 @@ class Reader {
     if (NodeId fl = d_.find(g, "fill"); fl != kNoNode) {
       const std::string v = d_.str_at(fl, 1);
       gr.filled = v == "solid" || v == "yes";
+    } else {
+      // KiCad <= 6 wrote no fill token: polygons were always filled, other shapes never.
+      const std::string_view k2 = d_.head(g).substr(3);
+      gr.filled = k2 == "poly";
     }
     if (kind == "line") {
       gr.kind = model::Graphic::Kind::Line;
@@ -389,11 +396,14 @@ class Reader {
     model::Text tx;
     tx.footprint = fi;
     if (NodeId l = d_.find(t, "layer"); l != kNoNode) tx.layer = d_.str_at(l, 1);
-    if (!tx.layer.ends_with(".Cu")) return;  // only copper text is an obstacle
+    if (b_.copper_index(tx.layer) < 0) return;  // only copper text is an obstacle (layer names may be custom)
     const bool fp_text = d_.head(t) == "fp_text";
     tx.text = d_.str_at(t, fp_text ? 2 : 1);
     Point p{};
-    if (NodeId a = d_.find(t, "at"); a != kNoNode) p = xy(a);
+    if (NodeId a = d_.find(t, "at"); a != kNoNode) {
+      p = xy(a);
+      tx.angle = d_.number_at(a, 3).value_or(0.0);  // absolute in KiCad files
+    }
     tx.pos = fi >= 0 ? origin + geom::rotate(p, angle) : p;
     tx.hidden = yes(t, "hide");
     if (NodeId e = d_.find(t, "effects"); e != kNoNode)
