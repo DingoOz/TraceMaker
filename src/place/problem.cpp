@@ -10,6 +10,7 @@
 
 #include "drc/copper.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "place/legality.hpp"
 
 namespace tmk::place {
 
@@ -454,6 +455,16 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       p.pins.push_back(pin);
     }
     p.nets.push_back(std::move(net));
+  }
+  // Parts that already overhang the board edge (or sit in a keepout) are placed that way on purpose
+  // (connectors, sensors, battery holders): keep them where they are.
+  {
+    const Legality L(p);
+    for (auto& pt : p.parts)
+      if (pt.movable && !L.inside_ok(static_cast<int>(&pt - p.parts.data()), pt.pos0, 0)) {
+        pt.movable = false;
+        pt.fixed_reason = "overhangs the board edge in the input";
+      }
   }
   return p;
 }

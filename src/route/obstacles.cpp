@@ -154,15 +154,16 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
         continue;
       }
       if ((ch & 0xC0) == 0x80) continue;  // UTF-8 continuation byte
-      double a = 0.8;
-      if (ch >= 'a' && ch <= 'z') a = (ch == 'i' || ch == 'l' || ch == 'j' || ch == 't' || ch == 'f' || ch == 'r') ? 0.45 : (ch == 'm' || ch == 'w') ? 0.95 : 0.68;
-      else if (ch >= '0' && ch <= '9') a = 0.72;
+      double a = 0.9;
+      if (ch >= 'a' && ch <= 'z') a = (ch == 'i' || ch == 'l' || ch == 'j' || ch == 't' || ch == 'f' || ch == 'r') ? 0.5 : (ch == 'm' || ch == 'w') ? 1.0 : 0.75;
+      else if (ch >= '0' && ch <= '9') a = 0.85;
       else if (ch == ' ' || ch == '.' || ch == ',' || ch == ':' || ch == ';' || ch == '\'' || ch == '!' || ch == '|' || ch == 'I') a = 0.4;
       else if (ch == 'M' || ch == 'W') a = 0.95;
       else if (ch >= 0x80) a = 0.8;
       widths.back() += a;
     }
-    const Coord h = std::max<Coord>(t.height, 300'000), cw = std::max<Coord>(t.width, 300'000), th = std::max<Coord>(t.thickness, 100'000);
+    // The file's two font sizes are taken as the larger for the advance (their order differs between versions).
+    const Coord h = std::max<Coord>(std::max(t.height, t.width), 300'000), cw = h, th = std::max<Coord>(t.thickness, 100'000);
     const double pitchl = 1.62 * static_cast<double>(h);
     const Coord H = static_cast<Coord>(static_cast<double>(widths.size() - 1) * pitchl) + h;
     const Coord ytop = t.justify_v < 0 ? 0 : t.justify_v > 0 ? -H : -H / 2;
