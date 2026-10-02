@@ -18,6 +18,10 @@
 | D10 | Viewer in the browser, served by the engine; WebGL2 baseline, WebGPU when available | Native ImGui/Qt; WebGPU-only | Remote use from any machine, GPU rendering, no install; WebGPU is not yet default on Linux Firefox |
 | D11 | Own CUDA kernels for placement and routing; no PyTorch/DREAMPlace runtime dependency | Embed DREAMPlace/Xplace | PyTorch wheels dropped Volta; CCCL 3/cuCollections partly untested on Pascal; BSD-3 code is ported, not linked |
 | D12 | FLUTE (BSD-3, from OpenROAD `stt`) for Steiner trees | GeoSteiner | GeoSteiner is CC BY-NC (non-commercial) |
+| D13 | Full placement aims for a 0.25 mm courtyard gap (board rule if present), falling back to KiCad's default of 0, then to keeping unplaceable parts at their input positions, then to the refine result | Always 0; always 0.25 mm | Most human boards are packed below 0.25 mm; the fallbacks keep full mode usable on dense boards |
+| D14 | Global spreading uses SimPL rather than the electrostatic method | ePlace/DREAMPlace-style density | Simpler on CPU and adequate for PCB part counts (doc 04 §7) |
+| D15 | Placement keeps a new placement only if it routes at least as well as the input under the same router budget (`--route-check`, `--mode auto`) | Trust HPWL | Lower HPWL from denser packing routed worse on PCBench (13 vs 15 fully routed boards) |
+| D16 | Large boards (≥ 3M lattice points per layer) get two portfolio variants at double pitch | One pitch for all variants | Fine-pitch lattices are time-limited on large boards (P8000: 325 → 334 of 361 in 120 s) |
 
 ## Risks
 
