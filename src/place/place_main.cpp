@@ -69,6 +69,14 @@ int main(int argc, char** argv) {
             ++inside;
             if (L.find_conflict(static_cast<int>(i), {x, y}, 0) < 0) ++legal;
           }
+        place::Raster R(p, 50'000);
+        int rfree = 0, rins = 0;
+        for (Coord y = p.region.y0; y <= p.region.y1; y += 250'000)
+          for (Coord x = p.region.x0; x <= p.region.x1; x += 250'000) {
+            rfree += R.free(static_cast<int>(i), {x, y}, 0) ? 1 : 0;
+            rins += L.inside_ok(static_cast<int>(i), {x, y}, 0) && R.free(static_cast<int>(i), {x, y}, 0) ? 1 : 0;
+          }
+        std::printf("raster (no parts): free %d, inside+free %d, inside fraction %.3f\n", rfree, rins, R.inside_fraction(0));
         std::printf("grid %d positions: %d inside, %d legal; at original: inside=%d conflict=%d\n", total, inside, legal,
                     L.inside_ok(static_cast<int>(i), p.parts[i].pos0, 0), L.find_conflict(static_cast<int>(i), p.parts[i].pos0, 0));
       }

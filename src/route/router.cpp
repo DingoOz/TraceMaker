@@ -82,7 +82,7 @@ struct Router::Impl {
     std::vector<std::int32_t> margin, tight, via;  // INT32_MIN = not computed yet
     model::NetId rep = 0;
   };
-  std::map<const model::NetClass*, ClassCache> caches;
+  std::map<std::pair<const model::NetClass*, Coord>, ClassCache> caches;  // per (net class, track width)
   bool use_cache = true;
   int current = -1;                  // connection being routed
   std::vector<std::int64_t> soft_cells;  // cells of the last soft path that crossed routed copper
@@ -115,7 +115,17 @@ struct Router::Impl {
   Coord via_diameter(NetId net) const {
     return std::max({netclass(net).via_diameter, rules.minimums.via_diameter, via_drill(net) + 2 * rules.minimums.via_annular_width});
   }
-  Coord track_width(NetId net) const { return std::max(netclass(net).track_width, rules.minimums.track_width); }
+  Coord width_override = 0;   // > 0: neck-down width for the current attempt (escalation rung)
+  bool force_escapes = false; // escalation rung: off-lattice escapes even when the pad has lattice exits
+  Coord class_width(NetId net) const { return std::max(netclass(net).track_width, rules.minimums.track_width); }
+  Coord track_width(NetId net) const { return width_override > 0 ? width_override : class_width(net); }
+  // Narrowest legal width to fall back to: the board minimum (KiCad's track_width rule), but not below 0.15 mm
+  // unless the board minimum itself is smaller and non-zero.
+  Coord neck_width(NetId net) const {
+    const Coord mn = rules.minimums.track_width;
+    const Coord w = mn > 0 ? std::max(mn, std::min<Coord>(class_width(net), 150'000)) : std::min<Coord>(class_width(net), 150'000);
+    return w < class_width(net) ? w : 0;
+  }
 
   // Lattice <-> board coordinates.
   Point at(int ix, int iy) const { return {lat.x0 + static_cast<Coord>(ix) * pitch, lat.y0 + static_cast<Coord>(iy) * pitch}; }
@@ -259,10 +269,11 @@ struct Router::Impl {
     Point stub;
     std::int64_t cost;
   };
-  std::unordered_map<int, std::vector<Escape>> escape_cache;  // pad -> escapes valid against fixed copper
+  std::unordered_map<std::int64_t, std::vector<Escape>> escape_cache;  // (pad, width) -> escapes valid against fixed copper
 
   const std::vector<Escape>& escapes(int pad) {
-    if (auto it = escape_cache.find(pad); it != escape_cache.end()) return it->second;
+    const std::int64_t ekey = static_cast<std::int64_t>(pad) * 4'000'000 + track_width(b.pads[static_cast<std::size_t>(pad)].net) / 1000;
+    if (auto it = escape_cache.find(ekey); it != escape_cache.end()) return it->second;
     std::vector<Escape> out;
     const auto& p = b.pads[static_cast<std::size_t>(pad)];
     const NetId net = p.net;
@@ -291,7 +302,7 @@ struct Router::Impl {
       }
     }
     soft = saved_soft;
-    return escape_cache.emplace(pad, std::move(out)).first->second;
+    return escape_cache.emplace(ekey, std::move(out)).first->second;
   }
 
   // Off-lattice escapes: straight exits from the pad centre in 8 directions, exactly checked, joining the
@@ -322,7 +333,7 @@ struct Router::Impl {
     return it == history.end() ? 0 : static_cast<std::int64_t>(it->second) * pitch * 2;
   }
   ClassCache& cache_for(NetId net) {
-    auto& cc = caches[&netclass(net)];
+    auto& cc = caches[{&netclass(net), track_width(net)}];
     if (cc.margin.empty()) {
       const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
       cc.margin.assign(n, INT32_MIN);
@@ -447,7 +458,7 @@ struct Router::Impl {
         break;
       }
     }
-    if (!any_free) add_escapes(w, pad, e);
+    if (!any_free || force_escapes) add_escapes(w, pad, e);
     return e;
   }
 
@@ -871,7 +882,8 @@ struct Router::Impl {
     wb.add(pa0);
     wb.add(pb0);
     wb = wb.inflated(6'000'000 + c.length / 4);
-    const std::uint64_t ng = splitmix64(window_signature(wb) ^ (static_cast<std::uint64_t>(current) << 1) ^ (soft_mode ? 1u : 0u));
+    const std::uint64_t ng = splitmix64(window_signature(wb) ^ (static_cast<std::uint64_t>(current) << 3) ^ (soft_mode ? 1u : 0u) ^
+                                        (force_escapes ? 2u : 0u) ^ (static_cast<std::uint64_t>(width_override) << 20));
     if (nogoods.count(ng)) {
       ++nogood_skips;
       why = "skipped: identical earlier attempt failed (nogood)";
@@ -1013,6 +1025,20 @@ struct Router::Impl {
         }
         bool ok = search_and_commit(st.c, false);
         std::string reason = why;
+        // Escalation for pads boxed in by fixed copper: forced off-lattice escapes, then a neck-down to the
+        // board's minimum track width (KiCad's track_width rule; the net-class width is only the default).
+        if (!ok && (last_miss == Miss::Enclosed || why.starts_with("exact check"))) {
+          force_escapes = true;
+          ok = search_and_commit(st.c, false);
+          if (!ok && neck_width(st.c.net) > 0) {
+            width_override = neck_width(st.c.net);
+            ok = search_and_commit(st.c, false);
+            if (ok) ++res.necked;
+            width_override = 0;
+          }
+          force_escapes = false;
+          if (!ok) reason += "; escapes/neck-down: " + why;
+        }
         if (!ok && opt.rip_up && pass > 0) {
           ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
           reason += "; negotiated: " + why;

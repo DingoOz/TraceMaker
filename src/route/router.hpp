@@ -52,6 +52,7 @@ struct RouteResult {
   int rips = 0, passes = 0;
   int enclosed = 0;             // searches that proved the source boxed in (no larger window tried)
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
+  int necked = 0;               // connections routed at the neck-down width
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
