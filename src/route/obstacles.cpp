@@ -149,11 +149,40 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     };
     mark_loop(outline_);
     for (const auto& c : cutouts_) mark_loop(c);
-    for (int y = 0; y < ir_h_; ++y)
-      for (int x = 0; x < ir_w_; ++x) {
-        auto& v = inside_raster_[static_cast<std::size_t>(y) * static_cast<std::size_t>(ir_w_) + static_cast<std::size_t>(x)];
-        if (v == 255) v = inside_exact({bounds_.x0 + x * ir_cell_ + ir_cell_ / 2, bounds_.y0 + y * ir_cell_ + ir_cell_ / 2}) ? 1 : 0;
+    // Interior cells by scanline parity (an exact point-in-polygon per cell was O(cells x vertices): minutes on
+    // PCBench LeeChee_1800, 378 x 157 mm with a 572-line outline). Cells near an edge are marked 2 above and
+    // tested exactly per query, so the parity here only has to be right at cell centres far from edges.
+    std::vector<const std::vector<Point>*> loops{&outline_};
+    for (const auto& c : cutouts_) loops.push_back(&c);
+    std::vector<std::vector<double>> xs(loops.size());
+    std::vector<std::size_t> at(loops.size());
+    for (int y = 0; y < ir_h_; ++y) {
+      const double yc = static_cast<double>(bounds_.y0 + static_cast<Coord>(y) * ir_cell_ + ir_cell_ / 2);
+      for (std::size_t li = 0; li < loops.size(); ++li) {
+        const auto& lp = *loops[li];
+        auto& v = xs[li];
+        v.clear();
+        for (std::size_t i = 0, j = lp.size() - 1; i < lp.size(); j = i++) {
+          const Point a = lp[j], c = lp[i];
+          if ((static_cast<double>(a.y) > yc) != (static_cast<double>(c.y) > yc))
+            v.push_back(static_cast<double>(a.x) + (yc - static_cast<double>(a.y)) * static_cast<double>(c.x - a.x) / static_cast<double>(c.y - a.y));
+        }
+        std::sort(v.begin(), v.end());
+        at[li] = 0;
       }
+      for (int x = 0; x < ir_w_; ++x) {
+        const double xc = static_cast<double>(bounds_.x0 + static_cast<Coord>(x) * ir_cell_ + ir_cell_ / 2);
+        bool in = true;
+        for (std::size_t li = 0; li < loops.size(); ++li) {
+          auto& k = at[li];
+          while (k < xs[li].size() && xs[li][k] <= xc) ++k;
+          const bool odd = ((xs[li].size() - k) & 1u) != 0;  // crossings to the right of the centre
+          if (li == 0 ? !odd : odd) in = false;
+        }
+        auto& v = inside_raster_[static_cast<std::size_t>(y) * static_cast<std::size_t>(ir_w_) + static_cast<std::size_t>(x)];
+        if (v == 255) v = in ? 1 : 0;
+      }
+    }
   }
   // Pad solder-mask openings per board side (independent of the pad's copper layers: an edge-connector pad on
   // B.Cu can still open the front mask).

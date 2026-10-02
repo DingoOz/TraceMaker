@@ -1119,13 +1119,17 @@ struct Router::Impl {
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
     rip_cap = opt.max_rips_per_connection;
+    const bool tdbg = std::getenv("TM_DEBUG_TIMING") != nullptr;
     setup();
+    if (tdbg) std::fprintf(stderr, "[%.2f s] setup done: lattice %d x %d x %d, pitch %.3f mm\n", elapsed(), nx, ny, nl, nm_to_mm(pitch));
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"begin\",\"detail\":\"lattice A* with negotiated rip-up\"}");
     auto con = drc::compute_connectivity(b, obs->copper(), obs->grid());
+    if (tdbg) std::fprintf(stderr, "[%.2f s] connectivity done\n", elapsed());
     init_root = con.root;
     drc::UnionFind uf(obs->copper().items.size());
     for (std::size_t i = 0; i < con.root.size(); ++i) uf.unite(static_cast<int>(i), con.root[i]);
     const auto conns = plan(uf);
+    if (tdbg) std::fprintf(stderr, "[%.2f s] plan done: %zu connections\n", elapsed(), conns.size());
     res.connections = static_cast<int>(conns.size());
     for (const auto& c : conns) {
       ConnState st;
