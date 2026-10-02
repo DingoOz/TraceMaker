@@ -469,7 +469,8 @@ quality metrics judge every result.
 \small
 \input{figures/compare_AmpOne_dev-AmpOne.tex}
 \caption{Quality metrics for \texttt{AmpOne}. ``Length / pad MST'' divides the track length by the length of a
-minimum spanning tree over each net's pad centres. ``Narrowed'' is track thinner than the net's design width.
+minimum spanning tree over each net's pad centres. ``Narrowed'' is track thinner than the net's design width. Acute angles count joints of two tracks of the same
+net at less than 90\textdegree; only those outside pad copper are etchant traps.
 The human original is shown for reference: it does not pass the board's own rules (371 clearance errors).}
 \label{tab:cmp}
 \end{table}
@@ -482,10 +483,11 @@ The human original is shown for reference: it does not pass the board's own rule
   \item \textbf{TraceMaker uses the least copper.} Its tracks are 5\% shorter than Freerouting 2.5's, 7\% shorter
   than Freerouting 1.9's and 19\% shorter than the human routing.
   \item \textbf{Freerouting's layouts are tidier.} Freerouting 1.9 uses a quarter of TraceMaker's vias and about half
-  its bends; Freerouting 2.5 sits in between. TraceMaker leaves 34 turns sharper than 90\textdegree, which trap etchant
-  in manufacturing, against none or one for Freerouting. In some runs it also narrows tracks below the design width
-  to pass tight spots (0 to 65\,mm on this board, depending on the run). Freerouting runs an optimizer after routing;
-  TraceMaker has no clean-up stage yet (Section~\ref{sec:limits}).
+  its bends; Freerouting 2.5 sits in between. TraceMaker joins 34 track pairs at acute angles at pad centres, where
+  the pad's copper fills the angle; it has no acute angle outside a pad, the kind that traps etchant
+  (Freerouting 1.9 has one, the human routing nine). In some runs TraceMaker also narrows tracks below the design
+  width to pass tight spots (0 to 65\,mm on this board, depending on the run). Freerouting runs an optimizer after
+  routing; TraceMaker has no clean-up stage yet (Section~\ref{sec:limits}).
   \item \textbf{Speed:} TraceMaker 41\,s with eight threads, Freerouting 2.5 39\,s and Freerouting 1.9 394\,s, each
   with one thread.
 \end{itemize}
@@ -503,7 +505,7 @@ The human original is shown for reference: it does not pass the board's own rule
   has 16 such bridges itself. Freerouting's published ``clean'' counts only clearance violations and unrouted
   connections, so on these boards TraceMaker is judged more strictly.
   \item \textbf{No clean-up stage.} TraceMaker does not yet straighten, merge or re-route finished connections, so
-  it uses more vias and bends than Freerouting and can leave turns sharper than 90\textdegree\ and narrowed tracks
+  it uses more vias and bends than Freerouting, joins tracks at acute angles at pad centres and can leave narrowed tracks
   (Section~\ref{sec:h2h-board}).
   \item \textbf{The Freerouting comparison uses published numbers} for the tier statistics. Those runs had up to
   30 minutes per board, and their ``clean'' is judged by Freerouting's own DRC, which misses rules that KiCad

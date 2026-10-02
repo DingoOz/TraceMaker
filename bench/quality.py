@@ -10,7 +10,9 @@ Per routed board:
   vias                          via count
   detour                        track length / sum over nets of the pad-centre minimum spanning tree
                                 (a lower-bound-like reference; < 1 is possible with shared trunks)
-  bends, sharp_bends            direction changes at joints; sharp = turning by more than 90 degrees
+  bends, sharp_bends            direction changes at joints; sharp = interior angle under 90 degrees at a joint outside
+                                pad copper (an acid trap); sharp_at_pads counts those inside a pad, where pad copper
+                                fills the angle
   narrowed_mm, narrowed_share   track length below the net's design width (net class or board minimum)
 """
 import argparse
@@ -70,7 +72,22 @@ def geometry(d: dict) -> dict:
             narrowed += L
         ends[(t["net"], t["layer"], a)].append(b)
         ends[(t["net"], t["layer"], b)].append(a)
-    bends = sharp = 0
+    # Pad copper per layer (rotated rectangles; round pads are covered by their bounding square, conservative).
+    pad_rects = defaultdict(list)
+    for pd in d["pads"]:
+        a = math.radians(-pd.get("angle", 0.0))
+        for l in pd.get("layers", []):
+            pad_rects[l].append((pd["x"], pd["y"], pd["w"] / 2, pd["h"] / 2, math.cos(a), math.sin(a)))
+
+    def on_pad(layer, p):
+        for x, y, hw, hh, c, s_ in pad_rects.get(layer, []) + pad_rects.get("*.Cu", []):
+            dx, dy = p[0] - x, p[1] - y
+            u, v = dx * c + dy * s_, -dx * s_ + dy * c
+            if abs(u) <= hw + 1 and abs(v) <= hh + 1:
+                return True
+        return False
+
+    bends = sharp = sharp_pad = 0
     for (net, layer, p), others in ends.items():
         if len(others) != 2:
             continue
@@ -85,7 +102,10 @@ def geometry(d: dict) -> dict:
         if interior < 179.0:
             bends += 1
             if interior < 90.0 - 0.5:
-                sharp += 1
+                if on_pad(layer, p):
+                    sharp_pad += 1
+                else:
+                    sharp += 1
     pads_by_net = defaultdict(list)
     for p in d["pads"]:
         if p.get("net"):
@@ -93,7 +113,7 @@ def geometry(d: dict) -> dict:
     ref = sum(mst_length(v) for v in pads_by_net.values() if 1 < len(v) <= 2000)
     total = sum(by_layer.values())
     return {"length_mm": round(total, 1), "length_by_layer_mm": {k: round(v, 1) for k, v in sorted(by_layer.items())},
-            "vias": len(d["vias"]), "segments": len(d["tracks"]), "bends": bends, "sharp_bends": sharp,
+            "vias": len(d["vias"]), "segments": len(d["tracks"]), "bends": bends, "sharp_bends": sharp, "sharp_at_pads": sharp_pad,
             "narrowed_mm": round(narrowed, 1), "narrowed_share": round(narrowed / total, 4) if total else 0.0,
             "pad_mst_mm": round(ref, 1), "detour": round(total / ref, 3) if ref else None}
 
@@ -109,6 +129,15 @@ def metrics(unrouted: pathlib.Path, routed: pathlib.Path) -> dict:
                     "clean": after["unconnected"] == 0 and not added})
     res.update(geometry(board_json(routed)))
     return res
+
+
+def rescore(quality_json: pathlib.Path) -> None:
+    """Recompute the geometry metrics of a stored bench/compare.py result (after a metric definition changes)."""
+    d = json.loads(quality_json.read_text())
+    for r in d["runs"]:
+        if r.get("file") and pathlib.Path(r["file"]).exists():
+            r.update(geometry(board_json(pathlib.Path(r["file"]))))
+    quality_json.write_text(json.dumps(d, indent=1))
 
 
 def main() -> int:

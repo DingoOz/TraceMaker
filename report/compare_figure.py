@@ -76,7 +76,8 @@ def main():
         ("Length / pad MST", lambda r: fmt(r.get("detour"), "{:.2f}")),
         ("Vias", lambda r: fmt(r.get("vias"))),
         ("Bends", lambda r: fmt(r.get("bends"))),
-        ("Turns sharper than 90\\textdegree", lambda r: fmt(r.get("sharp_bends"))),
+        ("Acute angles outside pads", lambda r: fmt(r.get("sharp_bends"))),
+        ("Acute angles at pad centres", lambda r: fmt(r.get("sharp_at_pads"))),
         ("Narrowed track (mm)", lambda r: fmt(r.get("narrowed_mm"), "{:.1f}")),
         ("Wall time (s)", lambda r: fmt(r.get("wall_s"), "{:.0f}")),
     ]
