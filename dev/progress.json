@@ -1,6 +1,6 @@
 {
  "project": "TraceMaker",
- "current_milestone": "M5",
+ "current_milestone": "M7",
  "milestones": [
   {
    "id": "M0",
@@ -263,7 +263,7 @@
      "done": true
     },
     {
-     "text": "Gate: completion >= Freerouting on tier A",
+     "text": "Gate: completion >= Freerouting on tier A (latest: 97.5% vs 100% clean)",
      "done": false
     }
    ]
@@ -271,40 +271,24 @@
   {
    "id": "M6",
    "title": "Global routing + GPU",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "CPU and GPU results identical on every fixture; time-to-route reduced on dense boards with no quality loss",
    "deliverables": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3); tile graph, Steiner decomposition, CPU NCR, corridors; GPU pattern routing, GPU sweep maze routing, GPU cost-to-go fields, GPU DRC broad-phase",
    "tasks": [
     {
-     "text": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3)",
+     "text": "GPU cost-to-go fields (CUDA sweeps) with identical CPU reference",
+     "done": true
+    },
+    {
+     "text": "Fields used as the router's A* heuristic; deterministic with/without GPU",
+     "done": true
+    },
+    {
+     "text": "Coarse global routing + corridors (CPU NCR)",
      "done": false
     },
     {
-     "text": "tile graph",
-     "done": false
-    },
-    {
-     "text": "Steiner decomposition",
-     "done": false
-    },
-    {
-     "text": "CPU NCR",
-     "done": false
-    },
-    {
-     "text": "corridors",
-     "done": false
-    },
-    {
-     "text": "GPU pattern routing",
-     "done": false
-    },
-    {
-     "text": "GPU sweep maze routing",
-     "done": false
-    },
-    {
-     "text": "GPU cost-to-go fields",
+     "text": "GPU pattern/maze global routing (GAMER/GGR port)",
      "done": false
     },
     {
@@ -419,24 +403,32 @@
   {
    "id": "M10",
    "title": "Portfolio, determinism, knowledge base",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget",
    "deliverables": "Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts",
    "tasks": [
     {
-     "text": "Successive-halving portfolio",
+     "text": "Parallel portfolio of 8 router variants, best kept",
+     "done": true
+    },
+    {
+     "text": "Deterministic work budget (byte-identical repeat runs)",
+     "done": true
+    },
+    {
+     "text": "Persistent knowledge base with variant bandit",
+     "done": true
+    },
+    {
+     "text": "Restarts that keep history",
+     "done": true
+    },
+    {
+     "text": "Successive-halving budget allocation",
      "done": false
     },
     {
-     "text": "deterministic sync points",
-     "done": false
-    },
-    {
-     "text": "persistent KB (T3)",
-     "done": false
-    },
-    {
-     "text": "warm starts",
+     "text": "Bit-identical across thread counts (portfolio selection)",
      "done": false
     }
    ]

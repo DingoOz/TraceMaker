@@ -24,3 +24,4 @@
 {"ts": "2026-10-02T13:55:51+00:00", "kind": "milestone", "text": "Failure memory across runs: SQLite knowledge base with a Thompson-sampling bandit over router variants and per-board failure priorities"}
 {"ts": "2026-10-02T14:11:33+00:00", "kind": "milestone", "text": "GPU cost-to-go fields: CUDA kernel equals CPU reference exactly; routed boards byte-identical with and without GPU"}
 {"ts": "2026-10-02T14:14:47+00:00", "kind": "build", "text": "Deterministic routing: --work budget makes runs byte-reproducible; aquarius 171/171 with an 8-variant portfolio"}
+{"ts": "2026-10-02T14:36:17+00:00", "kind": "test", "text": "Started final benchmark set (tiers A/B/C, 120 s per board, 8-variant portfolio)"}
