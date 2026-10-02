@@ -532,6 +532,7 @@ struct Router::Impl {
 
   // Why the last search ended without a path (failure explanation, design doc 06 T0).
   enum class Miss { None, Enclosed, Window, Budget };
+  long expansion_cap = 0;  // > 0: per-search expansion limit overriding opt.max_expansions (reverse probes)
   Miss last_miss = Miss::None;
 
   bool search(const Connection& c, const Window& w, std::vector<PathNode>& path) {
@@ -638,6 +639,7 @@ struct Router::Impl {
       open.emplace(g0 + h(l, w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
+    const long exp_cap = expansion_cap > 0 ? expansion_cap : opt.max_expansions;
     std::size_t goal = SIZE_MAX;
     while (!open.empty()) {
       const auto [f, s] = open.top();
@@ -653,7 +655,7 @@ struct Router::Impl {
         goal = s;
         break;
       }
-      if (++expanded > opt.max_expansions) break;
+      if (++expanded > exp_cap) break;
       if (live && (expanded & 63) == 0) {
         recent[recent_n++ % recent.size()] = {at(w.x0 + cx, w.y0 + cy), l};
         if ((expanded & 8191) == 0) emit_frontier();
@@ -704,7 +706,7 @@ struct Router::Impl {
     if (goal == SIZE_MAX) {
       // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
       // cannot help (Contour's boxed-in terminal test).
-      last_miss = expanded > opt.max_expansions ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
+      last_miss = expanded > exp_cap ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
       if (std::getenv("TM_DEBUG_ENCLOSED") && last_miss == Miss::Enclosed && soft) {
         // Classify the rejected neighbours of every expanded cell (diagnostics).
         long fixed = 0, learned = 0, other = 0, startcells = static_cast<long>(src.cells.size());
@@ -955,6 +957,24 @@ struct Router::Impl {
           ++res.enclosed;
           return false;  // boxed in: go straight to negotiation (or give up in strict mode)
         }
+        // Only the source is tested for being boxed in; a boxed-in target makes the search flood the window
+        // instead. A short reverse search detects that (an enclosed pocket exhausts within a few thousand
+        // expansions) so the escalation ladder (escapes, neck-down) can run. If it finds a path, use it.
+        if (attempt == 0 && c.pad_b >= 0) {
+          Connection r = c;
+          std::swap(r.pad_a, r.pad_b);
+          std::vector<PathNode> rp;
+          expansion_cap = 60'000;
+          const bool found = search(r, w, rp);
+          expansion_cap = 0;
+          if (!found && last_miss == Miss::Enclosed) {
+            ++res.enclosed;
+            why = "boxed in (target)";
+            return false;
+          }
+          if (found && commit(r, rp)) return true;
+          last_miss = Miss::Window;
+        }
         continue;
       }
       if (commit(c, path)) return true;
@@ -1095,7 +1115,7 @@ struct Router::Impl {
         std::string reason = why;
         // Escalation for pads boxed in by fixed copper: forced off-lattice escapes, then a neck-down to the
         // board's minimum track width (KiCad's track_width rule; the net-class width is only the default).
-        if (!ok && (last_miss == Miss::Enclosed || why.starts_with("exact check"))) {
+        if (!ok && (last_miss == Miss::Enclosed || why.starts_with("boxed in") || why.starts_with("exact check"))) {
           force_escapes = true;
           ok = search_and_commit(st.c, false);
           if (!ok && neck_width(st.c.net) > 0) {
