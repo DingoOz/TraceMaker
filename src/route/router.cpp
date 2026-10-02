@@ -153,6 +153,36 @@ struct Router::Impl {
     lat = geom::Box{bb.x0 / pitch * pitch, bb.y0 / pitch * pitch, bb.x1, bb.y1};
     nx = static_cast<int>((lat.x1 - lat.x0) / pitch) + 1;
     ny = static_cast<int>((lat.y1 - lat.y0) / pitch) + 1;
+    // Near-routed raster: how many routed items could conflict with a probe centred on each lattice point.
+    // Points with a zero count skip the routed-copper query (a third of the search time on large boards).
+    Coord probe = 0;
+    for (std::size_t n = 0; n < b.nets.size(); ++n) {
+      const auto net = static_cast<NetId>(n);
+      probe = std::max({probe, class_width(net) / 2, via_diameter(net) / 2});
+    }
+    const Coord hc = std::max<Coord>(rules.minimums.hole_clearance, 0);
+    const Coord vm = b.vias_tented ? 0 : std::max<Coord>(b.pad_to_mask_clearance, 0);
+    near_infl = probe + pitch * 71 / 100 + 1 + std::max({obs->rules().max_clearance(), hc, 2 * vm + 1'000}) + 2 * pitch + 2;
+    near_r.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
+  }
+  std::vector<std::uint16_t> near_r;
+  Coord near_infl = 0;
+  void near_mark(int item, int delta) {
+    const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+    const geom::Box bx = it.box.inflated(near_infl);
+    const int x0 = std::max(0, static_cast<int>((bx.x0 - lat.x0) / pitch) - 1), x1 = std::min(nx - 1, static_cast<int>((bx.x1 - lat.x0) / pitch) + 1);
+    const int y0 = std::max(0, static_cast<int>((bx.y0 - lat.y0) / pitch) - 1), y1 = std::min(ny - 1, static_cast<int>((bx.y1 - lat.y0) / pitch) + 1);
+    for (int l = 0; l < nl; ++l) {
+      if (!(it.layers & model::layer_bit(l))) continue;
+      for (int y = y0; y <= y1; ++y) {
+        std::uint16_t* row = &near_r[(static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(y)) * static_cast<std::size_t>(nx)];
+        for (int x = x0; x <= x1; ++x) row[x] = static_cast<std::uint16_t>(row[x] + delta);
+      }
+    }
+  }
+  void remove_routed(int item) {
+    if (!obs->copper().items[static_cast<std::size_t>(item)].removed) near_mark(item, -1);
+    obs->remove_item(item);
   }
 
   // ---------------------------------------------------------------------------------------------------
@@ -379,6 +409,7 @@ struct Router::Impl {
       if (!code_ok(cc.tight[gi], net)) return 2;
       st = 3;
     }
+    if (near_r[gi] == 0) return st;
     const int r = obs->routed_state(geom::Shape::point(p, hw + (st == 3 ? 0 : margin)), layer, net, drc::ItemKind::Track, soft, nullptr);
     if (r == 2) return 2;
     return r == 1 ? 1 : st;
@@ -417,6 +448,7 @@ struct Router::Impl {
         if (cc.via[gi] == INT32_MIN) cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
         st = code_ok(cc.via[gi], net) ? 0 : 2;
         for (int l = 0; l < nl && st != 2; ++l) {
+          if (near_r[(static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx)] == 0) continue;
           const int r = obs->routed_state(geom::Shape::point(p, d / 2 + margin), l, net, drc::ItemKind::Via, soft, nullptr, true, drill / 2 + margin);
           if (r == 2) st = 2;
           else if (r == 1) st = 1;
@@ -843,6 +875,7 @@ struct Router::Impl {
       b.tracks.push_back(t);
       const int id = static_cast<int>(b.tracks.size() - 1);
       st.items.push_back(obs->add_track(id, current));
+      near_mark(st.items.back(), +1);
       if (opt.sink)
         emit("{\"type\":\"track_add\",\"track\":{\"id\":" + std::to_string(id) + ",\"a\":[" + jnum(t.a.x) + "," + jnum(t.a.y) + "],\"b\":[" +
              jnum(t.b.x) + "," + jnum(t.b.y) + "],\"w\":" + jnum(t.width) + ",\"layer\":" + std::to_string(t.layer) + ",\"net\":" +
@@ -853,6 +886,7 @@ struct Router::Impl {
       b.vias.push_back(v);
       const int id = static_cast<int>(b.vias.size() - 1);
       st.items.push_back(obs->add_via(id, current));
+      near_mark(st.items.back(), +1);
       if (opt.sink)
         emit("{\"type\":\"via_add\",\"via\":{\"id\":" + std::to_string(id) + ",\"p\":[" + jnum(p.x) + "," + jnum(p.y) + "],\"d\":" + jnum(vd) +
              ",\"drill\":" + jnum(vdrill) + ",\"net\":" + std::to_string(net) + ",\"top\":0,\"bottom\":" + std::to_string(nl - 1) + "}}");
@@ -915,7 +949,7 @@ struct Router::Impl {
     for (int item : st.items) {
       const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
       if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
-      obs->remove_item(item);
+      remove_routed(item);
     }
     st.items.clear();
     if (st.routed) --res.routed;
@@ -1120,7 +1154,7 @@ struct Router::Impl {
         for (int item : st.items) {
           const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
           if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
-          obs->remove_item(item);
+          remove_routed(item);
         }
         st.items.clear();
         st.routed = st.implicit = false;
