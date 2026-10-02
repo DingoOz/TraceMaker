@@ -1,0 +1,5 @@
+find_package(SQLite3 REQUIRED)
+add_library(tm_learn STATIC knowledge_base.cpp)
+add_library(tm::learn ALIAS tm_learn)
+target_link_libraries(tm_learn PUBLIC tm::model PRIVATE SQLite::SQLite3)
+tm_set_warnings(tm_learn)

@@ -14,6 +14,7 @@
 #include "drc/drc.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
+#include "learn/knowledge_base.hpp"
 #include "route/obstacles.hpp"
 #include "server/messages.hpp"
 #include "server/viewer_server.hpp"
@@ -126,7 +127,8 @@ struct ViewOptions {
   bool hold = false;
 };
 
-int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view, int threads) {
+int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view, int threads,
+              const std::string& kb_path) {
   auto lb = tmk::io::read_board_file(in);
   const auto rules = tmk::io::read_design_rules(in);
   std::unique_ptr<tmk::server::ViewerServer> server;
@@ -140,14 +142,41 @@ int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterO
     std::fflush(stdout);
     opt.sink = server.get();
   }
+  // Knowledge base (failure memory T3): earlier failures on this board go first; variant choice by bandit.
+  std::unique_ptr<tmk::learn::KnowledgeBase> kb;
+  tmk::learn::BoardFeatures feat;
+  if (!kb_path.empty()) {
+    kb = std::make_unique<tmk::learn::KnowledgeBase>(kb_path);
+    if (!kb->ok()) kb.reset();
+  }
+  int conn_estimate = 0;
+  for (const auto& n : lb.board.nets) conn_estimate += !n.name.empty();
+  feat = tmk::learn::features_of(lb.board, lb.doc.text(), conn_estimate);
+  if (kb) {
+    for (const auto& f : kb->failed_connections(feat.hash)) opt.priority.emplace_back(f.pad_a, f.pad_b);
+    if (!opt.priority.empty()) std::printf("knowledge base: %zu connections that failed before are routed first\n", opt.priority.size());
+  }
   tmk::route::RouteResult res;
+  std::vector<int> ran;
+  int best_index = 0;
   if (threads > 1) {
-    auto pr = tmk::route::route_portfolio(lb.board, rules, opt, threads);
+    std::vector<int> pick;
+    if (kb && threads < tmk::route::portfolio_size()) pick = kb->choose_variants(feat, tmk::route::portfolio_size(), threads, opt.seed);
+    auto pr = tmk::route::route_portfolio(lb.board, rules, opt, threads, pick);
     for (std::size_t i = 0; i < pr.variants.size(); ++i)
-      std::printf("  variant %zu %-30s routed %d%s\n", i, pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : "");
+      std::printf("  variant %d %-30s routed %d%s\n", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : "");
+    ran = pr.indices;
+    best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
     res = std::move(pr.best);
   } else {
     res = tmk::route::Router(lb.board, rules, opt).run();
+    ran = {0};
+  }
+  if (kb) {
+    kb->record_run(feat, std::filesystem::path(in).filename().string(), ran, best_index, res.routed, res.connections, res.seconds);
+    std::vector<tmk::learn::FailedConnection> failed;
+    for (const auto& u : res.unrouted) failed.push_back({u.net, u.a, u.b, 1});
+    kb->record_failures(feat.hash, failed);
   }
   tmk::io::BoardEditor ed(lb, opt.seed);
   for (const auto& t : res.tracks) ed.add_track(t);
@@ -261,6 +290,10 @@ int main(int argc, char** argv) {
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
   int r_threads = 8;
+  std::string r_kb = tmk::learn::KnowledgeBase::default_path();
+  bool r_nokb = false;
+  route->add_option("--kb", r_kb, "Knowledge base file (failure memory across runs)");
+  route->add_flag("--no-kb", r_nokb, "Do not read or update the knowledge base");
   route->add_option("--threads", r_threads, "Portfolio size: differently configured routers run in parallel, best kept (1 = single router)");
   ViewOptions vopt;
   route->add_flag("--view", vopt.enabled, "Stream the routing live to the browser viewer");
@@ -299,7 +332,7 @@ int main(int argc, char** argv) {
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
-      return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads);
+      return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads, r_nokb ? std::string() : r_kb);
     }
     if (*rt) {
       int bad = 0, ok = 0;

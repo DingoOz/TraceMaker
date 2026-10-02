@@ -129,6 +129,30 @@ int main(int argc, char** argv) {
       j["input"] = in;
       j["output"] = out;
       j["moved"] = moved;
+      // Final placement (footprint origins and courtyard boxes, mm) for plotting and inspection.
+      nlohmann::json parts = nlohmann::json::array();
+      for (std::size_t i = 0; i < p.parts.size(); ++i) {
+        const auto& pt = p.parts[i];
+        const auto& b = pt.geom[pl.rot[i]].body;
+        parts.push_back({{"ref", pt.ref}, {"movable", pt.movable}, {"side", pt.side},
+                         {"x", nm_to_mm(pl.pos[i].x)}, {"y", nm_to_mm(pl.pos[i].y)}, {"x0", nm_to_mm(pt.pos0.x)}, {"y0", nm_to_mm(pt.pos0.y)},
+                         {"angle", pt.angle0 + 90.0 * pl.rot[i]},
+                         {"box", {nm_to_mm(b.x0 + pl.pos[i].x), nm_to_mm(b.y0 + pl.pos[i].y), nm_to_mm(b.x1 + pl.pos[i].x), nm_to_mm(b.y1 + pl.pos[i].y)}}});
+      }
+      j["placement"] = parts;
+      nlohmann::json nets = nlohmann::json::array();
+      for (const auto& n : p.nets) {
+        nlohmann::json pins = nlohmann::json::array();
+        for (int pi : n.pins) {
+          const auto q = pl.pin(p, pi);
+          pins.push_back({nm_to_mm(q.x), nm_to_mm(q.y)});
+        }
+        nets.push_back({{"name", n.name}, {"signal", n.signal}, {"pins", pins}});
+      }
+      j["net_pins"] = nets;
+      nlohmann::json outline = nlohmann::json::array();
+      for (const auto& q : p.outline) outline.push_back({nm_to_mm(q.x), nm_to_mm(q.y)});
+      j["outline"] = outline;
       std::ofstream(json_path) << j.dump(2) << "\n";
     }
     return r.legal ? 0 : 2;

@@ -28,6 +28,8 @@ struct RouterOptions {
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
   int order = 0;                // connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter
+  // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
+  std::vector<std::pair<std::string, std::string>> priority;
   events::Sink* sink = nullptr;
 };
 
@@ -49,17 +51,25 @@ struct RouteResult {
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
+  struct Unrouted {
+    std::string net, a, b;  // "REF.NUM" (b = "zone" for plane connections)
+  };
+  std::vector<Unrouted> unrouted;
 };
 
 // Runs several differently configured routers in parallel threads and keeps the best result (most connections
 // routed, then fewest vias, then shortest copper). The first variant is `base` itself; only it streams events.
 struct PortfolioResult {
   RouteResult best;
-  int best_variant = 0;
+  int best_variant = 0;               // position in `variants`
+  std::vector<int> indices;            // portfolio variant index per position
   std::vector<std::string> variants;   // description per variant
   std::vector<int> routed;             // routed count per variant
 };
-PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads);
+// `pick`: which variant indices to run (empty = the first `threads`).
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads,
+                                const std::vector<int>& pick = {});
+int portfolio_size();
 
 class Router {
  public:

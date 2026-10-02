@@ -52,6 +52,7 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   r.nets = static_cast<int>(p.nets.size());
   r.pins = static_cast<int>(p.pins.size());
   r.notes = p.notes;
+  r.utilisation = utilisation(p);
   auto stage = [&](const char* name, Clock::time_point t) { r.stage_seconds.emplace_back(name, since(t)); };
 
   auto t = Clock::now();
@@ -143,6 +144,8 @@ nlohmann::json report_json(const Problem& p, const PlaceReport& r) {
                  {"lb_any_rotation_mm", mm(r.lb_any_rot) / kSignalWeight},
                  {"quadratic_b2b_mm", r.quadratic_whpwl < 0 ? json(nullptr) : json(mm(r.quadratic_whpwl) / kSignalWeight)},
                  {"gap_final_over_lb_any", r.lb_any_rot > 0 ? static_cast<double>(r.after.whpwl) / static_cast<double>(r.lb_any_rot) : 0.0}};
+  j["utilisation"] = {r.utilisation[0], r.utilisation[1]};
+  j["utilisation"] = {r.utilisation[0], r.utilisation[1]};
   j["global"] = {{"overflow_quadratic", r.overflow_quadratic}, {"overflow_spread", r.overflow_spread},
                  {"spread_iterations", r.spread_iterations},   {"rotation_changes", r.rotation_changes}};
   j["legalise"] = {{"placed", r.legalise_placed}, {"failed", r.legalise_failed}, {"mean_disp_mm", r.legalise_mean_disp_mm},

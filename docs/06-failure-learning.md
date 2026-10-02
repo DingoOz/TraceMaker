@@ -152,3 +152,18 @@ contribution, and their benefit must be shown by ablation in the benchmark (road
   can create a DRC error.
 - All learning updates are deterministic functions of (seed, events in deterministic order).
 - Memory bounds: failure log capped (oldest summarised), nogood store capped with LRU on aspiration.
+
+## 8. Implementation status (2026-10-02)
+
+| Tier | Mechanism | Status | Where |
+|---|---|---|---|
+| T0 | Failure explanation: boxed-in source (open list exhausted without touching the window edge), window, search budget, exact-check rejection, protected victims | Done; reasons appear in every unrouted line of the report | `route/router.cpp` (`Miss`, `why`) |
+| T0 | Learned blocked lattice points after exact-check failures | Done | `learn_block` |
+| T1 | PathFinder history on contested lattice points (recorded before rip-up), added to every later search | Done (sparse map) | `bump_history`, `hist_cost` |
+| T1 | Negotiated rip-up: soft crossing of other connections' copper, victims ripped and requeued, rip cap per connection, best legal state kept | Done | `commit`, `rip`, `run` |
+| T1 | Activity ordering: failed connections retried hardest (most failures) first | Done | `run` |
+| T2 | Nogoods: (connection, mode, signature of routed copper in the window) attempts that failed are not repeated until the surroundings change | Done | `search_and_commit` |
+| T2 | Strategy selection: portfolio of 8 router variants in parallel threads, best kept | Done | `route_portfolio` |
+| T3 | Persistent SQLite knowledge base: Thompson-sampling bandit over variants per board-feature bucket; per-board failed connections routed first on re-runs | Done | `learn/knowledge_base.cpp`, `tracemaker route --kb` |
+| T3 | Learned models (congestion predictor, ordering policy) | Not started | |
+| — | Conflict graph between nets, precedence learning, Luby restarts | Not started | |

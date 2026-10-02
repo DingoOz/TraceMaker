@@ -83,7 +83,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     res = {"board": name}
     t0 = time.time()
     try:
-        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"],
+        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--kb", str(outdir / "kb.sqlite"), "--json", str(out) + ".route.json"],
                            capture_output=True, text=True, timeout=time_limit * 3 + 60)
         res["exit"] = p.returncode
         if p.returncode not in (0, 3):

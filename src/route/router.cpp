@@ -215,6 +215,19 @@ struct Router::Impl {
     } else {
       std::stable_sort(out.begin(), out.end(), [](const Connection& a, const Connection& c) { return a.length < c.length; });
     }
+    if (!opt.priority.empty()) {
+      std::set<std::pair<std::string, std::string>> pri;
+      for (const auto& [x, y] : opt.priority) {
+        pri.insert({x, y});
+        pri.insert({y, x});
+      }
+      auto label = [&](int pad) {
+        if (pad < 0) return std::string("zone");
+        const auto& p = b.pads[static_cast<std::size_t>(pad)];
+        return b.footprints[static_cast<std::size_t>(p.footprint)].reference + "." + p.number;
+      };
+      std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return pri.count({label(c.pad_a), label(c.pad_b)}) > 0; });
+    }
     return out;
   }
 
@@ -974,6 +987,7 @@ struct Router::Impl {
       }
       res.failures.push_back(b.nets[static_cast<std::size_t>(st.c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." +
                              pa.number + " -> " + to + "  (" + st.why + ")");
+      res.unrouted.push_back({b.nets[static_cast<std::size_t>(st.c.net)].name, b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." + pa.number, to});
     }
     res.seconds = elapsed();
     res.nogood_skips = nogood_skips;
@@ -985,7 +999,8 @@ struct Router::Impl {
   }
 };
 
-PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads) {
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads,
+                                const std::vector<int>& pick) {
   struct Variant {
     std::string name;
     RouterOptions o;
@@ -1005,8 +1020,22 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   add("fast bends, cheap vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; });
   add("fast bends, cheap crossings", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; });
   add("fast bends, dear vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 2.5; });
-  const int n = std::clamp(threads, 1, static_cast<int>(vs.size()));
-  vs.resize(static_cast<std::size_t>(n));
+  std::vector<int> chosen;
+  if (!pick.empty()) {
+    for (int i : pick)
+      if (i >= 0 && i < static_cast<int>(vs.size())) chosen.push_back(i);
+  } else {
+    for (int i = 0; i < std::clamp(threads, 1, static_cast<int>(vs.size())); ++i) chosen.push_back(i);
+  }
+  {
+    std::vector<Variant> sel;
+    for (std::size_t k = 0; k < chosen.size(); ++k) {
+      sel.push_back(vs[static_cast<std::size_t>(chosen[k])]);
+      if (k > 0) sel.back().o.sink = nullptr;
+      else sel.back().o.sink = base.sink;
+    }
+    vs = std::move(sel);
+  }
   std::vector<RouteResult> rs(vs.size());
   std::vector<std::thread> pool;
   for (std::size_t i = 0; i < vs.size(); ++i)
@@ -1019,6 +1048,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     return l;
   };
   std::size_t best = 0;
+  pr.indices = chosen;
   for (std::size_t i = 0; i < rs.size(); ++i) {
     pr.variants.push_back(vs[i].name);
     pr.routed.push_back(rs[i].routed);
@@ -1031,6 +1061,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   pr.best = std::move(rs[best]);
   return pr;
 }
+
+int portfolio_size() { return 8; }
 
 Router::Router(const model::Board& board, const model::DesignRules& rules, RouterOptions opt) : in_(board), rules_(rules), opt_(opt) {}
 

@@ -2,6 +2,7 @@
 // The placement pipeline (design doc 04 §3): `full` runs A (quadratic B2B) → B (SimPL spreading) →
 // C (rotations) → D (legalisation) → E (annealing); `refine` starts from the current placement and runs
 // D (only for illegal parts) → E. Both report the exact lower bounds of doc 04 §1 (L4) and what was achieved.
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -43,6 +44,7 @@ struct PlaceReport {
   std::int64_t lb_any_rot = 0;     // L4 bound valid for any rotations (bounds the final placement)
   std::int64_t quadratic_whpwl = -1;  // weighted HPWL of the B2B quadratic optimum (A), full mode
   double overflow_quadratic = 0, overflow_spread = 0;
+  std::array<double, 2> utilisation{0, 0};  // movable demand / free area per side
   int spread_iterations = 0, rotation_changes = 0;
   int legalise_failed = 0, legalise_placed = 0;
   double legalise_mean_disp_mm = 0, legalise_max_disp_mm = 0;

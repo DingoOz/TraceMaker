@@ -351,6 +351,19 @@ void quadratic_place(const Problem& p, Placement& pl, int relinearise, const std
 
 double density_overflow(const Problem& p, const Placement& pl) { return overflow_with(p, make_bins(p), pl); }
 
+std::array<double, 2> utilisation(const Problem& p) {
+  const Bins b = make_bins(p);
+  std::array<double, 2> u{0, 0};
+  for (int s = 0; s < 2; ++s) {
+    double dem = 0, cap = 0;
+    for (const auto& pt : p.parts)
+      if (pt.movable && pt.side == s) dem += static_cast<double>(pt.area);
+    for (double c : b.cap[s]) cap += c;
+    u[z(s)] = cap > 0 ? dem / cap : (dem > 0 ? 1e9 : 0.0);
+  }
+  return u;
+}
+
 SpreadStats spread(const Problem& p, Placement& pl, int max_iterations, double target_overflow) {
   SpreadStats st;
   const Bins bins = make_bins(p);

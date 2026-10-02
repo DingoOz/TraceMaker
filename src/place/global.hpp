@@ -10,6 +10,7 @@
 //     2012): alternate the quadratic solve (lower-bound placement) with a rough legalisation (upper-bound
 //     placement) and pull the parts towards it with anchor pseudo-nets of growing weight.
 // (C) Rotation: coordinate descent; each step is the exact HPWL optimum for one part with the others fixed.
+#include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -37,6 +38,9 @@ SpreadStats spread(const Problem& p, Placement& pl, int max_iterations = 40, dou
 
 // Bin density overflow of a placement: Σ max(0, demand − capacity) / Σ demand over a bin grid per side.
 double density_overflow(const Problem& p, const Placement& pl);
+
+// Movable courtyard area (incl. clearance) / free board area, per side.
+std::array<double, 2> utilisation(const Problem& p);
 
 // (C) Rotation coordinate descent over the movable parts (HPWL of each part's nets). Returns the number of
 // rotation changes; terminates because every change strictly lowers the weighted HPWL.

@@ -1,5 +1,5 @@
 find_package(CLI11 CONFIG REQUIRED)
 find_package(nlohmann_json 3 REQUIRED)
 add_executable(tracemaker main.cpp inspect.cpp)
-target_link_libraries(tracemaker PRIVATE tm::core tm::gpu tm::io tm::drc tm::route tm::server tm::viz CLI11::CLI11 nlohmann_json::nlohmann_json)
+target_link_libraries(tracemaker PRIVATE tm::core tm::gpu tm::io tm::drc tm::route tm::learn tm::server tm::viz CLI11::CLI11 nlohmann_json::nlohmann_json)
 tm_set_warnings(tracemaker)
