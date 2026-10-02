@@ -17,7 +17,8 @@ is against Freerouting's published results on the same PCBench fixtures (Freerou
 - **Runs:** all four tiers are from the last runs of the night, `final7-tier{A,B,C,D}`, on the latest router.
 - **Samples:** 40 of 453 tier-A boards, 40 of 560 tier-B boards, 30 of 122 tier-C boards and the 21 tier-D boards
   that have a KiCad file.
-- **Speed:** the tier-A median is 3 s per board. Freerouting's published median is 30 s on its own hardware.
+- **Speed:** the tier-A median is 1.4 s of routing (2.7 s wall time) per board in run final7. Freerouting's published median
+  is 30 s on its own hardware.
 - **Variance:** results vary a little between runs because of the wall-clock limit. Earlier runs of the same day
   scored B 50–60% and C 33–60%. A deterministic `--work` budget gives byte-identical repeats when needed.
 - **Head to head on tier B:** both clean on 17 boards, only TraceMaker on 8, only Freerouting on 3.
@@ -108,14 +109,15 @@ All are in `dev/assumptions.md` (A1–A20) and `docs/12-decisions.md` (D13–D16
 
 ## Known issues and next steps
 
-1. **Large boards are time-limited.** P8000 and PCIE-to-MXM finish only one or two passes in 120 s. A* costs about 430 ns
-   per expansion. Global routing corridors, a coarse-to-fine lattice and parallel routing inside one variant are
+1. **Large boards are time-limited.** P8000 finishes only one or two negotiation passes in 120 s. A* costs
+   about 430 ns per expansion. Global routing corridors, a coarse-to-fine lattice and parallel routing inside one variant are
    the next levers.
 2. **Edge-connector fingers under mask openings** stay unrouted rather than create solder-mask bridges.
    - fifogfx_c64cart has finger openings on both sides.
    - PCIE-to-MXM has a board-level mask polygon over its fingers. KiCad flags any track leaving them, and the
      human-routed original has 16 such solder_mask_bridge errors itself.
-   - These boards count as "clean" for Freerouting, whose published figure ignores mask bridges.
+   - These boards count as "clean" for Freerouting, whose published figure counts clearance violations and
+     unrouted connections but not mask bridges.
 3. **Copper text** uses estimated glyph boxes, which is conservative.
 4. **Board reader naming:** unplated-hole pad numbers and `~{...}` escaped references differ from pcbnew's naming
    in the parity comparison. Routing is unaffected.
