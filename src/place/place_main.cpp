@@ -11,6 +11,7 @@
 #include "io/kicad/project_reader.hpp"
 #include "place/legality.hpp"
 #include "place/placer.hpp"
+#include "route/router.hpp"
 
 int main(int argc, char** argv) {
   using namespace tmk;
@@ -35,6 +36,12 @@ int main(int argc, char** argv) {
   app.add_flag("-v,--verbose", o.verbose, "Log the spreading iterations");
   std::string debug_part;
   bool no_fallback = false;
+  long route_check = 0;
+  int route_threads = 8;
+  app.add_option("--route-check", route_check,
+                 "Route the input and the new placement with this work budget (A* expansions per variant) and keep the "
+                 "placement that routes more connections (0 = off)");
+  app.add_option("--route-threads", route_threads, "Router portfolio size for --route-check");
   app.add_flag("--no-fallback", no_fallback, "Full mode: keep the result even if some parts could not be placed");
   app.add_option("--debug-part", debug_part, "Print the legality map of one part and exit");
   CLI11_PARSE(app, argc, argv);
@@ -120,6 +127,36 @@ int main(int argc, char** argv) {
     }
     ed.save(out);
 
+    // Router in the loop: a placement that routes fewer connections than the input is not an improvement,
+    // whatever its wirelength. Route both with the same deterministic budget and keep the better one.
+    int routed_in = -1, routed_out = -1, conns = 0;
+    bool reverted = false;
+    if (route_check > 0) {
+      route::RouterOptions ro;
+      ro.work_budget = route_check;
+      ro.time_limit_s = 600;  // safety net only; the work budget decides
+      auto routed_of = [&](const std::string& path) {
+        const auto b = io::read_board_file(path).board;
+        const auto rr = io::read_design_rules(path);
+        const auto res = route::route_portfolio(b, rr, ro, route_threads).best;
+        conns = res.connections;
+        return res.routed;
+      };
+      routed_in = routed_of(in);
+      routed_out = routed_of(out);
+      if (routed_out < routed_in) {
+        io::BoardEditor same(lb, o.seed);
+        same.save(out);
+        reverted = true;
+        moved = 0;
+        r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns) + " < input " +
+                          std::to_string(routed_in) + ": kept the input placement");
+      } else {
+        r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns) + " (input " +
+                          std::to_string(routed_in) + ")");
+      }
+    }
+
     auto mm = [](std::int64_t nm) { return static_cast<double>(nm) / 1e6; };
     const double w = place::kSignalWeight;
     std::printf("%s: %d parts (%d movable), %d nets, %d pins, mode %s\n", in.c_str(), r.parts, r.movable, r.nets, r.pins, r.mode.c_str());
@@ -147,6 +184,7 @@ int main(int argc, char** argv) {
       j["input"] = in;
       j["output"] = out;
       j["moved"] = moved;
+      if (route_check > 0) j["route_check"] = {{"work", route_check}, {"routed_input", routed_in}, {"routed_output", routed_out}, {"connections", conns}, {"kept_input", reverted}};
       // Final placement (footprint origins and courtyard boxes, mm) for plotting and inspection.
       nlohmann::json parts = nlohmann::json::array();
       for (std::size_t i = 0; i < p.parts.size(); ++i) {

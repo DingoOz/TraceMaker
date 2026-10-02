@@ -9,7 +9,7 @@ tm_set_warnings(tm_place)
 
 find_package(CLI11 CONFIG REQUIRED)
 add_executable(tracemaker-place place_main.cpp)
-target_link_libraries(tracemaker-place PRIVATE tm::place tm::io CLI11::CLI11 nlohmann_json::nlohmann_json)
+target_link_libraries(tracemaker-place PRIVATE tm::place tm::io tm::route CLI11::CLI11 nlohmann_json::nlohmann_json)
 tm_set_warnings(tracemaker-place)
 
 if(TM_BUILD_TESTS)
