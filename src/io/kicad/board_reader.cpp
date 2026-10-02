@@ -396,7 +396,8 @@ class Reader {
     model::Text tx;
     tx.footprint = fi;
     if (NodeId l = d_.find(t, "layer"); l != kNoNode) tx.layer = d_.str_at(l, 1);
-    if (b_.copper_index(tx.layer) < 0) return;  // only copper text is an obstacle (layer names may be custom)
+    // Copper text is an obstacle; text on a solder-mask layer opens the mask (PCBench MySensorIRBlaster, FRM16).
+    if (b_.copper_index(tx.layer) < 0 && tx.layer != "F.Mask" && tx.layer != "B.Mask") return;
     const bool fp_text = d_.head(t) == "fp_text";
     tx.text = d_.str_at(t, fp_text ? 2 : 1);
     Point p{};

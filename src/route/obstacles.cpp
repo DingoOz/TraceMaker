@@ -214,7 +214,8 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   for (const auto& t : b_.texts) {
     if (t.hidden || t.text.empty()) continue;
     const int l = b_.copper_index(t.layer);
-    if (l < 0) continue;
+    const int mask_side = t.layer == "F.Mask" ? 0 : t.layer == "B.Mask" ? 1 : -1;
+    if (l < 0 && mask_side < 0) continue;
     std::vector<double> widths(1, 0.0);  // per line, in glyph widths
     for (std::size_t i = 0; i < t.text.size(); ++i) {
       const unsigned char ch = static_cast<unsigned char>(t.text[i]);
@@ -247,7 +248,8 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       const Coord m = th + h * 15 / 100;
       std::vector<Point> pts = {{x0 - m, y0 - m}, {x0 + W + m, y0 - m}, {x0 + W + m, y1 + m}, {x0 - m, y1 + m}};
       for (auto& p : pts) p = t.pos + geom::rotate(p, t.angle);
-      texts_.emplace_back(l, Shape::polygon(pts, 0));
+      if (l >= 0) texts_.emplace_back(l, Shape::polygon(pts, 0));
+      else mask_open_[mask_side].push_back(Shape::polygon(pts, gexp));  // mask text: an opening, like mask graphics
     }
   }
   for (const auto& z : b_.zones)
