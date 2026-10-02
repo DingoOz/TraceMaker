@@ -3,6 +3,7 @@
 //
 // Octilinear A* on a fine lattice (optimal under its cost model), with legality decided lazily by exact
 // clearance tests against the DRC's rule engine, then exact verification of every committed segment and via.
+#include <atomic>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -38,6 +39,7 @@ struct RouterOptions {
   std::vector<std::pair<std::string, std::string>> priority;
   std::string only_net;         // debugging: route only this net
   events::Sink* sink = nullptr;
+  const std::atomic<bool>* cancel = nullptr;  // set by the portfolio when another variant routed everything
 };
 
 struct Connection {

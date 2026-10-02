@@ -95,6 +95,7 @@ struct Router::Impl {
   double elapsed() const { return std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); }
   // Out of budget? The work budget (search expansions) is deterministic; wall time is only a safety net.
   bool out_of_budget() const {
+    if (opt.cancel && opt.cancel->load(std::memory_order_relaxed)) return true;
     if (opt.work_budget > 0 && res.expansions >= opt.work_budget) return true;
     return elapsed() > opt.time_limit_s;
   }
@@ -1216,8 +1217,16 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   }
   std::vector<RouteResult> rs(vs.size());
   std::vector<std::thread> pool;
+  // A complete result cannot be beaten on routed count: stop the other variants then. With a work budget the
+  // run must stay deterministic, so early stopping is only used under wall-clock limits.
+  std::atomic<bool> complete{false};
+  for (auto& v : vs)
+    if (base.work_budget == 0) v.o.cancel = &complete;
   for (std::size_t i = 0; i < vs.size(); ++i)
-    pool.emplace_back([&, i] { rs[i] = Router(board, rules, vs[i].o).run(); });
+    pool.emplace_back([&, i] {
+      rs[i] = Router(board, rules, vs[i].o).run();
+      if (rs[i].connections > 0 && rs[i].routed == rs[i].connections) complete = true;
+    });
   for (auto& t : pool) t.join();
   PortfolioResult pr;
   auto length = [](const RouteResult& r) {
