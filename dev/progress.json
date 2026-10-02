@@ -128,23 +128,39 @@
    "deliverables": "Rule compiler (net classes, board constraints, custom rules subset), spatial indices, own DRC with KiCad violation names",
    "tasks": [
     {
-     "text": "Rule compiler (net classes",
+     "text": "Exact integer geometry kernel (rounded-core shapes, int128 predicates, fine arc flattening)",
+     "done": true
+    },
+    {
+     "text": "Copper item model: pads (all shapes, drill offsets), tracks, arcs, vias, zone fills, copper graphics with nets",
+     "done": true
+    },
+    {
+     "text": "Rule engine: net classes, local overrides, diff pairs, board minimums, legacy rules, custom-rule conditions",
+     "done": true
+    },
+    {
+     "text": "Checks: clearance, shorts, crossings, widths, vias, annular, holes, edge, keepouts",
+     "done": true
+    },
+    {
+     "text": "Anchor/overlap connectivity, unconnected items, dangling tracks/vias",
+     "done": true
+    },
+    {
+     "text": "DRC parity harness vs kicad-cli + fuzzer",
+     "done": true
+    },
+    {
+     "text": "Parity: 11/16 demo boards exact (regression test)",
+     "done": true
+    },
+    {
+     "text": "Parity on broken-board classification (shorts/dangling)",
      "done": false
     },
     {
-     "text": "board constraints",
-     "done": false
-    },
-    {
-     "text": "custom rules subset)",
-     "done": false
-    },
-    {
-     "text": "spatial indices",
-     "done": false
-    },
-    {
-     "text": "own DRC with KiCad violation names",
+     "text": "Performance on very large boards (vme-wren, jetson)",
      "done": false
     }
    ]

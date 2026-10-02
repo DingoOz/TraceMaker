@@ -21,6 +21,7 @@ struct NetClass {
   Coord diff_pair_width = 200'000;
   Coord diff_pair_gap = 250'000;
   Coord diff_pair_via_gap = 250'000;
+  bool has_diff_pair_gap = false;  // set explicitly in the project (not inherited)
   int priority = 0;  // lower value = higher priority (KiCad 9+); Default has INT_MAX
 };
 
@@ -62,6 +63,7 @@ struct DesignRules {
   std::vector<std::pair<std::string, std::string>> patterns;   // (net-name pattern, class name), in file order
   std::map<std::string, std::vector<std::string>> assignments; // explicit net → class names
   std::vector<CustomRule> custom;
+  std::map<std::string, std::string> severities;  // KiCad violation type -> error | warning | ignore
   std::vector<std::string> warnings;        // anything that could not be interpreted
 
   const NetClass& default_class() const { return classes.front(); }
@@ -72,5 +74,7 @@ struct DesignRules {
 
 // KiCad net-class pattern match: shell-style wildcards (* and ?), case-sensitive.
 bool wildcard_match(std::string_view pattern, std::string_view text);
+// Net-class pattern: wildcard match or full regular-expression match (KiCad accepts both).
+bool pattern_match(const std::string& pattern, const std::string& text);
 
 }  // namespace tmk::model

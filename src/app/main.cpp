@@ -5,6 +5,9 @@
 #include <string>
 
 #include "app/inspect.hpp"
+#include "core/rng.hpp"
+#include "drc/drc.hpp"
+#include "io/kicad/project_reader.hpp"
 #include "core/version.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
@@ -55,6 +58,58 @@ int cmd_selftest_edit(const std::string& in, const std::string& out) {
   return 0;
 }
 
+// Random perturbations that create DRC violations, for parity testing against KiCad's DRC:
+// tracks between random pads, vias at random places, and small footprint moves.
+int cmd_perturb(const std::string& in, const std::string& out, std::uint64_t seed, int tracks, int vias, int moves) {
+  auto lb = tmk::io::read_board_file(in);
+  tmk::io::BoardEditor ed(lb, seed);
+  const auto& b = lb.board;
+  const tmk::RngStream rng(seed, 0x9e27u, 0);
+  std::uint64_t k = 0;
+  auto u = [&](std::uint64_t n) { return n ? rng.u64(k++) % n : 0; };
+  const auto bb = b.edge_bbox().empty() ? tmk::geom::Box{0, 0, 100'000'000, 100'000'000} : b.edge_bbox();
+  auto rnd_pt = [&]() {
+    return tmk::model::Point{bb.x0 + static_cast<tmk::Coord>(u(static_cast<std::uint64_t>(bb.x1 - bb.x0))),
+                             bb.y0 + static_cast<tmk::Coord>(u(static_cast<std::uint64_t>(bb.y1 - bb.y0)))};
+  };
+  static const tmk::Coord widths[] = {80'000, 100'000, 150'000, 200'000, 250'000, 400'000};
+  for (int i = 0; i < tracks && !b.pads.empty(); ++i) {
+    const auto& p = b.pads[u(b.pads.size())];
+    const tmk::model::Point a = p.pos;
+    const tmk::model::Point c{a.x + static_cast<tmk::Coord>(u(6'000'000)) - 3'000'000, a.y + static_cast<tmk::Coord>(u(6'000'000)) - 3'000'000};
+    int layer = 0;
+    for (int l = 0; l < b.copper_count(); ++l)
+      if (p.copper & tmk::model::layer_bit(l)) { layer = l; break; }
+    ed.add_track({a, c, widths[u(6)], layer, p.net, false, tmk::sexpr::kNoNode});
+  }
+  static const tmk::Coord vsizes[][2] = {{600'000, 300'000}, {800'000, 400'000}, {450'000, 300'000}, {300'000, 200'000}};
+  for (int i = 0; i < vias; ++i) {
+    const auto& vs = vsizes[u(4)];
+    const tmk::model::NetId net = static_cast<tmk::model::NetId>(u(b.nets.size()));
+    ed.add_via({rnd_pt(), vs[0], vs[1], 0, b.copper_count() - 1, tmk::model::ViaType::Through, net, false, tmk::sexpr::kNoNode});
+  }
+  for (int i = 0; i < moves && !b.footprints.empty(); ++i) {
+    const std::size_t fi = u(b.footprints.size());
+    const auto& f = b.footprints[fi];
+    if (f.locked) continue;
+    ed.move_footprint(fi, {f.pos.x + static_cast<tmk::Coord>(u(3'000'000)) - 1'500'000, f.pos.y + static_cast<tmk::Coord>(u(3'000'000)) - 1'500'000}, f.angle);
+  }
+  ed.save(out);
+  return 0;
+}
+
+int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  tmk::drc::DrcOptions opt;
+  opt.epsilon = epsilon;
+  const auto rep = tmk::drc::run_drc(lb.board, rules, opt);
+  for (const auto& [type, n] : rep.counts()) std::printf("%-24s %d\n", type.c_str(), n);
+  for (const auto& w : rep.warnings) std::printf("warning: %s\n", w.c_str());
+  if (!json_out.empty()) tmk::drc::write_drc_json(rep, json_out);
+  return rep.violations.empty() && rep.unconnected.empty() ? 0 : 5;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -79,6 +134,25 @@ int main(int argc, char** argv) {
   std::vector<std::string> rt_files;
   rt->add_option("boards", rt_files)->required();
 
+  auto* drc = app.add_subcommand("drc", "Check a board against its KiCad design rules");
+  std::string drc_path, drc_json;
+  double drc_eps_um = 0.5;
+  drc->add_option("board", drc_path)->required()->check(CLI::ExistingFile);
+  drc->add_option("--json", drc_json, "Write the report as JSON (kicad-cli layout)");
+  drc->add_option("--epsilon-um", drc_eps_um, "Tolerance below the required clearance, micrometres");
+
+  auto* pert = app.add_subcommand("selftest-perturb", "Add random tracks/vias and footprint moves (DRC parity fuzzing)");
+  pert->group("");
+  std::string pin, pout;
+  std::uint64_t pseed = 1;
+  int ptracks = 30, pvias = 20, pmoves = 5;
+  pert->add_option("in", pin)->required();
+  pert->add_option("out", pout)->required();
+  pert->add_option("--seed", pseed);
+  pert->add_option("--tracks", ptracks);
+  pert->add_option("--vias", pvias);
+  pert->add_option("--moves", pmoves);
+
   CLI11_PARSE(app, argc, argv);
   try {
     if (*version) {
@@ -93,6 +167,8 @@ int main(int argc, char** argv) {
       return 0;
     }
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
+    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
+    if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*rt) {
       int bad = 0, ok = 0;
       for (const auto& f : rt_files) {

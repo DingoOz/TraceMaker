@@ -1,0 +1,11 @@
+bench/data/kicad/demos/cm5_minima/CM5_MINIMA_3.kicad_pcb
+bench/data/kicad/demos/complex_hierarchy/complex_hierarchy.kicad_pcb
+bench/data/kicad/demos/ecc83/ecc83-pp.kicad_pcb
+bench/data/kicad/demos/ecc83/ecc83-pp_v2.kicad_pcb
+bench/data/kicad/demos/kit-dev-coldfire-xilinx_5213/kit-dev-coldfire-xilinx_5213.kicad_pcb
+bench/data/kicad/demos/multichannel/multichannel_mixer-unrouted.kicad_pcb
+bench/data/kicad/demos/multichannel/multichannel_mixer.kicad_pcb
+bench/data/kicad/demos/pic_programmer/pic_programmer.kicad_pcb
+bench/data/kicad/demos/sonde xilinx/sonde xilinx.kicad_pcb
+bench/data/kicad/demos/stickhub/StickHub.kicad_pcb
+bench/data/kicad/demos/video/video.kicad_pcb

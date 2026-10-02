@@ -172,6 +172,12 @@ std::string_view Document::indent_of(std::size_t offset) const {
 
 void Document::replace(NodeId id, std::string new_text) {
   const Node& n = nodes_[id];
+  // Replacing the same node again overrides the earlier replacement.
+  for (auto& e : edits_)
+    if (e.begin == n.begin && e.end == n.end && e.begin != e.end) {
+      e.text = std::move(new_text);
+      return;
+    }
   edits_.push_back(Edit{n.begin, n.end, std::move(new_text), edits_.size()});
 }
 

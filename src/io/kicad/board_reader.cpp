@@ -1,5 +1,7 @@
 #include "io/kicad/board_reader.hpp"
 
+#include "geom/shape.hpp"
+
 #include <algorithm>
 #include <charconv>
 #include <cmath>
@@ -174,6 +176,21 @@ class Reader {
       fp.angle = d_.number_at(a, 3).value_or(0.0);
     }
     if (NodeId u = d_.find(f, "uuid"); u != kNoNode) fp.uuid = d_.str_at(u, 1);
+    if (NodeId c = d_.find(f, "clearance"); c != kNoNode) fp.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId nt = d_.find(f, "net_tie_pad_groups"); nt != kNoNode)
+      for (std::size_t i = 1; i < d_.children(nt).size(); ++i) {
+        std::vector<std::string> g;
+        std::string cur;
+        for (char ch : d_.str_at(nt, i) + ",") {
+          if (ch == ',' || ch == ' ') {
+            if (!cur.empty()) g.push_back(cur);
+            cur.clear();
+          } else {
+            cur += ch;
+          }
+        }
+        if (g.size() > 1) fp.net_tie_groups.push_back(std::move(g));
+      }
     for (NodeId p : d_.find_all(f, "property")) {
       const std::string key = d_.str_at(p, 1);
       if (key == "Reference") fp.reference = d_.str_at(p, 2);
@@ -278,9 +295,13 @@ class Reader {
       if (h == "xy") {
         out.push_back(origin + geom::rotate(xy(c), angle));
       } else if (h == "arc") {
-        // Flatten the arc through its three defining points (refined arc handling comes with the geometry kernel).
-        for (const char* k : {"start", "mid", "end"})
-          if (NodeId q = d_.find(c, k); q != kNoNode) out.push_back(origin + geom::rotate(xy(q), angle));
+        // Outline arcs (zone fills around round pads, rounded board corners): flatten with 0.1 µm chords so
+        // clearances measured to the outline stay exact within KiCad's DRC epsilon.
+        const NodeId s = d_.find(c, "start"), m = d_.find(c, "mid"), e = d_.find(c, "end");
+        if (s == kNoNode || m == kNoNode || e == kNoNode) continue;
+        const auto arc = geom::arc_points(origin + geom::rotate(xy(s), angle), origin + geom::rotate(xy(m), angle),
+                                          origin + geom::rotate(xy(e), angle), 100);
+        out.insert(out.end(), arc.begin(), arc.end());
       }
     }
   }
@@ -332,6 +353,7 @@ class Reader {
     } else {
       return;
     }
+    gr.net = read_net(g);
     if (fi >= 0) b_.footprints[static_cast<std::size_t>(fi)].graphics.push_back(static_cast<int>(b_.graphics.size()));
     b_.graphics.push_back(std::move(gr));
   }

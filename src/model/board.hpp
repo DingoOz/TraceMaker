@@ -46,7 +46,7 @@ struct Pad {
   Coord size_x = 0, size_y = 0;
   Coord drill_x = 0, drill_y = 0;  // 0 = no hole
   bool drill_oval = false;
-  Point drill_offset;        // relative to the pad centre, in the pad's own frame
+  Point drill_offset;        // copper shape offset from the hole (pad position), in the pad's own frame
   LayerMask copper = 0;      // copper layers the pad has copper on
   std::vector<std::string> layers;  // all layer names as written (incl. mask/paste, wildcards expanded)
   double roundrect_ratio = 0;
@@ -66,6 +66,7 @@ struct Graphic {
   std::vector<Point> pts;    // poly / curve control points
   Coord width = 0;
   bool filled = false;
+  NetId net = 0;             // KiCad 8+ copper graphics can belong to a net
   int footprint = -1;        // owning footprint, -1 for board graphics
   sexpr::NodeId node = sexpr::kNoNode;
 };
@@ -90,6 +91,8 @@ struct Footprint {
        exclude_from_bom = false, dnp = false, allow_missing_courtyard = false;
   std::vector<int> pads;
   std::vector<int> graphics;
+  Coord clearance = -1;      // footprint-level clearance override, -1 = none
+  std::vector<std::vector<std::string>> net_tie_groups;  // pad numbers joined by the footprint's own copper
   std::string uuid;
   sexpr::NodeId node = sexpr::kNoNode;
 };

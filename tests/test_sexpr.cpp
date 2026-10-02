@@ -66,3 +66,11 @@ TEST_CASE("append to an inline list moves the closing paren to its own line", "[
   d.append_child(d.find(d.root(), "b"), "(d 2)");
   CHECK(d.write() == "(a\n\t(b (c 1)\n\t\t(d 2)\n\t)\n)");
 }
+
+TEST_CASE("replacing the same node twice keeps the last replacement", "[sexpr]") {
+  auto d = Document::parse("(a (b 1))");
+  const auto b = d.find(d.root(), "b");
+  d.replace(b, "(b 2)");
+  d.replace(b, "(b 3)");
+  CHECK(d.write() == "(a (b 3))");
+}
