@@ -60,6 +60,8 @@ export class Scene {
   fx: Fx = { newTracks: [], frontier: [], paths: [], failures: [] };
   activity: Activity | null = null;
   glowEnabled = true;
+  /** Effects are suppressed while a client catches up (snapshot replay) or after a stall. */
+  quietUntil = 0;
 
   wx(nm: number) { return (nm - this.ox) * MM; }
   wy(nm: number) { return (nm - this.oy) * MM; }
@@ -80,7 +82,7 @@ export class Scene {
         if (old) this.dirtyTrackLayers.add(old.layer);
         this.tracks.set(t.id, t);
         this.dirtyTrackLayers.add(t.layer);
-        if (this.glowEnabled) this.fx.newTracks.push({ t, t0: now });
+        if (this.glowEnabled && now >= this.quietUntil) this.fx.newTracks.push({ t, t0: now });
         this.activity = { x: (t.ax + t.bx) / 2, y: (t.ay + t.by) / 2, t: now };
         break;
       }
@@ -136,7 +138,7 @@ export class Scene {
       case 'failure': {
         if (!this.loaded) return;
         const [ax, ay] = this.pt(m.a), [bx, by] = this.pt(m.b);
-        this.fx.failures.push({ ax, ay, bx, by, t0: now });
+        if (now >= this.quietUntil) this.fx.failures.push({ ax, ay, bx, by, t0: now });
         this.activity = { x: (ax + bx) / 2, y: (ay + by) / 2, t: now };
         break;
       }

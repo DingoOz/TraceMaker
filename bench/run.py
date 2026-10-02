@@ -34,7 +34,7 @@ NOT_ROUTING = {"lib_footprint_issues", "lib_footprint_mismatch", "silk_overlap",
                "footprint_type_mismatch", "footprint_filters_mismatch", "nonmirrored_text_on_back_layer",
                "npth_inside_courtyard", "pth_inside_courtyard", "duplicate_footprints", "extra_footprint",
                "missing_footprint", "footprint_symbol_mismatch", "unconnected_items", "track_dangling", "via_dangling",
-               "isolated_copper", "starved_thermal", "lib_footprint_mismatch", "holes_co_located", "solder_mask_bridge"}
+               "isolated_copper", "starved_thermal", "lib_footprint_mismatch", "holes_co_located"}
 
 
 def fr_baseline() -> dict[str, dict]:

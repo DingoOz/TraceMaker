@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <bit>
+#include <cmath>
 
 namespace tmk::route {
 
@@ -25,41 +26,52 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) edge_segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], 0));
   egrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, edge_segs_.size() + 16);
   for (std::size_t i = 0; i < edge_segs_.size(); ++i) egrid_->insert(static_cast<int>(i), edge_segs_[i].box);
-  // Board outline: the Edge.Cuts piece with the largest box is used for "inside the board" tests.
-  double best = -1;
-  for (const auto& e : cm_.edges) {
-    const double area = static_cast<double>(e.box.x1 - e.box.x0) * static_cast<double>(e.box.y1 - e.box.y0);
-    if (e.pts.size() >= 4 && area > best && e.pts.front() == e.pts.back()) {
-      best = area;
-      outline_ = e.pts;
-    }
-  }
-  if (outline_.empty()) {
-    // Outline made of separate lines/arcs: chain them end to end.
+  // Board outline: chain all Edge.Cuts pieces into closed loops; the loop with the largest area is the
+  // outline, the others are cut-outs. If any pad centre falls outside, the outline is not trusted (edge
+  // clearance still applies through the edge segments).
+  {
     std::vector<std::vector<Point>> pieces;
     for (const auto& e : cm_.edges) pieces.push_back(e.pts);
-    if (!pieces.empty()) {
-      std::vector<Point> chain = pieces.front();
-      std::vector<std::uint8_t> used(pieces.size(), 0);
-      used[0] = 1;
-      for (bool grown = true; grown;) {
+    auto near = [](Point a, Point c) { return std::llabs(a.x - c.x) < 2000 && std::llabs(a.y - c.y) < 2000; };
+    std::vector<std::uint8_t> used(pieces.size(), 0);
+    std::vector<std::vector<Point>> loops;
+    for (std::size_t s0 = 0; s0 < pieces.size(); ++s0) {
+      if (used[s0] || pieces[s0].size() < 2) continue;
+      used[s0] = 1;
+      std::vector<Point> chain = pieces[s0];
+      for (bool grown = true; grown && !near(chain.front(), chain.back());) {
         grown = false;
         for (std::size_t k = 0; k < pieces.size(); ++k) {
-          if (used[k] || pieces[k].empty()) continue;
-          auto near = [](Point a, Point c) { return std::llabs(a.x - c.x) < 2000 && std::llabs(a.y - c.y) < 2000; };
-          if (near(chain.back(), pieces[k].front())) {
-            chain.insert(chain.end(), pieces[k].begin() + 1, pieces[k].end());
-          } else if (near(chain.back(), pieces[k].back())) {
-            chain.insert(chain.end(), pieces[k].rbegin() + 1, pieces[k].rend());
-          } else {
-            continue;
-          }
+          if (used[k] || pieces[k].size() < 2) continue;
+          if (near(chain.back(), pieces[k].front())) chain.insert(chain.end(), pieces[k].begin() + 1, pieces[k].end());
+          else if (near(chain.back(), pieces[k].back())) chain.insert(chain.end(), pieces[k].rbegin() + 1, pieces[k].rend());
+          else continue;
           used[k] = 1;
           grown = true;
+          break;
         }
       }
-      if (chain.size() >= 4 && std::llabs(chain.front().x - chain.back().x) < 2000 && std::llabs(chain.front().y - chain.back().y) < 2000)
-        outline_ = std::move(chain);
+      if (chain.size() >= 4 && near(chain.front(), chain.back())) loops.push_back(std::move(chain));
+    }
+    auto area = [](const std::vector<Point>& l) {
+      long double a = 0;
+      for (std::size_t i = 0, j = l.size() - 1; i < l.size(); j = i++)
+        a += static_cast<long double>(l[j].x) * static_cast<long double>(l[i].y) - static_cast<long double>(l[i].x) * static_cast<long double>(l[j].y);
+      return std::fabs(a) / 2;
+    };
+    std::size_t best = loops.size();
+    for (std::size_t i = 0; i < loops.size(); ++i)
+      if (best == loops.size() || area(loops[i]) > area(loops[best])) best = i;
+    if (best < loops.size()) {
+      outline_ = loops[best];
+      for (std::size_t i = 0; i < loops.size(); ++i)
+        if (i != best) cutouts_.push_back(loops[i]);
+      for (const auto& p : b_.pads)
+        if (!geom::point_in_polygon(p.pos, outline_)) {
+          outline_.clear();
+          cutouts_.clear();
+          break;
+        }
     }
   }
   for (const auto& z : b_.zones)
@@ -70,6 +82,8 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
 bool Obstacles::inside_board(Point p, Coord margin) const {
   if (outline_.empty()) return true;
   if (!geom::point_in_polygon(p, outline_)) return false;
+  for (const auto& c : cutouts_)
+    if (geom::point_in_polygon(p, c)) return false;
   if (margin <= 0) return true;
   const Shape pt = Shape::point(p, 0);
   bool ok = true;
@@ -79,110 +93,135 @@ bool Obstacles::inside_board(Point p, Coord margin) const {
   return ok;
 }
 
-bool Obstacles::copper_ok(const Shape& s, const drc::CopperItem& probe, int layer) const {
-  bool ok = true;
+int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int layer, bool ignore_routed, std::vector<int>* owners) const {
+  int state = 0;
   grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
-    if (!ok) return;
+    if (state == 2) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
-    if (!(it.layers & model::layer_bit(layer))) return;
+    if (it.removed || !(it.layers & model::layer_bit(layer))) return;
     if (it.net == probe.net && probe.net != 0) return;
-    const Coord req = re_->clearance(probe, it, layer);
+    Coord req = re_->clearance(probe, it, layer);
+    // Keep new copper out of foreign pads' solder-mask openings on outer layers (KiCad solder_mask_bridge).
+    if (it.kind == drc::ItemKind::Pad && (layer == 0 || layer == b_.copper_count() - 1)) {
+      const auto& pad = b_.pads[static_cast<std::size_t>(it.index)];
+      const char* mask = layer == 0 ? "F.Mask" : "B.Mask";
+      bool has_mask = false;
+      for (const auto& ln : pad.layers)
+        if (ln == mask || ln == "*.Mask" || ln == "F&B.Mask") has_mask = true;
+      if (has_mask) {
+        Coord mm = pad.mask_margin;
+        if (mm == INT64_MIN) mm = b_.footprints[static_cast<std::size_t>(pad.footprint)].mask_margin;
+        if (mm == INT64_MIN) mm = b_.pad_to_mask_clearance;
+        req = std::max(req, mm + 1'000);
+      }
+    }
     for (const auto& u : it.shapes)
       if (geom::closer_than(s, u, req)) {
-        ok = false;
+        if (ignore_routed && it.owner >= 0) {
+          state = 1;
+          if (owners) owners->push_back(it.owner);
+        } else {
+          state = 2;
+        }
         return;
       }
   });
-  return ok;
+  return state;
 }
 
-bool Obstacles::holes_edges_ok(const Shape& s, model::NetId net, int layer, bool is_via_hole, Coord hole_r) const {
+int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bool is_via_hole, Coord hole_r, bool ignore_routed,
+                                 std::vector<int>* owners) const {
   // Copper (or a new via's hole) against other items' holes.
-  bool ok = true;
+  int state = 0;
   const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
   const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
   hgrid_->query(s.box.inflated(std::max(hc, h2h) + 1), [&](int id) {
-    if (!ok) return;
+    if (state == 2) return;
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
-    if (h.net == net && net != 0 && h.plated) return;
-    if (geom::closer_than(s, h.shape, hc)) ok = false;
-    if (ok && is_via_hole) {
+    if (h.removed) return;
+    bool hit = false;
+    if (!(h.net == net && net != 0 && h.plated) && geom::closer_than(s, h.shape, hc)) hit = true;
+    if (!hit && is_via_hole) {
       const Shape hole = Shape::point(s.pts[0], hole_r);
-      if (geom::closer_than(hole, h.shape, h2h) || hole.pts[0] == h.shape.pts[0]) ok = false;
+      if (geom::closer_than(hole, h.shape, h2h) || hole.pts[0] == h.shape.pts[0]) hit = true;
+    }
+    if (!hit) return;
+    const int owner = h.item >= 0 ? cm_.items[static_cast<std::size_t>(h.item)].owner : -1;
+    if (ignore_routed && owner >= 0) {
+      state = 1;
+      if (owners) owners->push_back(owner);
+    } else {
+      state = 2;
     }
   });
-  if (!ok) return false;
+  if (state == 2) return 2;
   // Board edge.
   const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
   bool edge_ok = true;
   egrid_->query(s.box.inflated(ec + 1), [&](int id) {
     if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
   });
-  if (!edge_ok) return false;
+  if (!edge_ok) return 2;
   // Keepouts.
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return false;
-  return true;
+    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return 2;
+  return state;
 }
 
-bool Obstacles::disk_ok(Point p, int layer, Coord hw, model::NetId net, Coord margin) const {
-  ++checks;
-  if (!inside_board(p, 0)) {
-    ++rej_outside;
-    return false;
-  }
-  const Shape s = Shape::point(p, hw + margin);
+namespace {
+drc::CopperItem make_probe(drc::ItemKind kind, const Shape& s, model::NetId net, int layer, Coord width, Point pos) {
   drc::CopperItem probe;
-  probe.kind = drc::ItemKind::Track;
+  probe.kind = kind;
   probe.net = net;
-  probe.layers = model::layer_bit(layer);
-  probe.width = 2 * hw;
-  probe.shapes = {s};
-  probe.box = s.box;
-  probe.pos = p;
-  if (!copper_ok(s, probe, layer)) {
-    ++rej_copper;
-    return false;
-  }
-  if (!holes_edges_ok(s, net, layer, false, 0)) {
-    ++rej_other;
-    return false;
-  }
-  return true;
-}
-
-bool Obstacles::segment_ok(Point a, Point b, int layer, Coord width, model::NetId net) const {
-  const Shape s = Shape::segment(a, b, width / 2);
-  drc::CopperItem probe;
-  probe.kind = drc::ItemKind::Track;
-  probe.net = net;
-  probe.layers = model::layer_bit(layer);
+  probe.layers = layer >= 0 ? model::layer_bit(layer) : 0;
   probe.width = width;
   probe.shapes = {s};
   probe.box = s.box;
-  probe.pos = a;
-  return copper_ok(s, probe, layer) && holes_edges_ok(s, net, layer, false, 0);
+  probe.pos = pos;
+  return probe;
 }
+int worst(int a, int c) { return std::max(a, c); }
+}  // namespace
 
-bool Obstacles::via_ok(Point p, Coord d, Coord drill, model::NetId net, Coord margin) const {
-  if (!inside_board(p, 0)) return false;
-  const Shape s = Shape::point(p, d / 2 + margin);
-  drc::CopperItem probe;
-  probe.kind = drc::ItemKind::Via;
-  probe.net = net;
-  probe.width = d;
-  probe.shapes = {s};
-  probe.box = s.box;
-  probe.pos = p;
-  for (int l = 0; l < b_.copper_count(); ++l) {
-    probe.layers = model::layer_bit(l);
-    if (!copper_ok(s, probe, l)) return false;
-    if (!holes_edges_ok(s, net, l, l == 0, drill / 2 + margin)) return false;
+int Obstacles::disk_state(Point p, int layer, Coord hw, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners) const {
+  ++checks;
+  if (!inside_board(p, 0)) {
+    ++rej_outside;
+    return 2;
   }
-  return true;
+  const Shape s = Shape::point(p, hw + margin);
+  const auto probe = make_probe(drc::ItemKind::Track, s, net, layer, 2 * hw, p);
+  int st = copper_state(s, probe, layer, ignore_routed, owners);
+  if (st == 2) {
+    ++rej_copper;
+    return 2;
+  }
+  st = worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
+  if (st == 2) ++rej_other;
+  return st;
 }
 
-void Obstacles::add_track(int index) {
+int Obstacles::segment_state(Point a, Point b, int layer, Coord width, model::NetId net, bool ignore_routed, std::vector<int>* owners) const {
+  const Shape s = Shape::segment(a, b, width / 2);
+  const auto probe = make_probe(drc::ItemKind::Track, s, net, layer, width, a);
+  const int st = copper_state(s, probe, layer, ignore_routed, owners);
+  if (st == 2) return 2;
+  return worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
+}
+
+int Obstacles::via_state(Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners) const {
+  if (!inside_board(p, 0)) return 2;
+  const Shape s = Shape::point(p, d / 2 + margin);
+  int st = 0;
+  for (int l = 0; l < b_.copper_count() && st != 2; ++l) {
+    const auto probe = make_probe(drc::ItemKind::Via, s, net, l, d, p);
+    st = worst(st, copper_state(s, probe, l, ignore_routed, owners));
+    if (st != 2) st = worst(st, holes_edges_state(s, net, l, l == 0, drill / 2 + margin, ignore_routed, owners));
+  }
+  return st;
+}
+
+int Obstacles::add_track(int index, int owner) {
   const auto& t = b_.tracks[static_cast<std::size_t>(index)];
   drc::CopperItem it;
   it.kind = drc::ItemKind::Track;
@@ -193,11 +232,14 @@ void Obstacles::add_track(int index) {
   it.pos = t.a;
   it.width = t.width;
   it.box = it.shapes[0].box;
-  grid_->insert(static_cast<int>(cm_.items.size()), it.box);
+  it.owner = owner;
+  const int id = static_cast<int>(cm_.items.size());
+  grid_->insert(id, it.box);
   cm_.items.push_back(std::move(it));
+  return id;
 }
 
-void Obstacles::add_via(int index) {
+int Obstacles::add_via(int index, int owner) {
   const auto& v = b_.vias[static_cast<std::size_t>(index)];
   drc::CopperItem it;
   it.kind = drc::ItemKind::Via;
@@ -214,10 +256,23 @@ void Obstacles::add_via(int index) {
   h.via = index;
   h.net = v.net;
   h.pos = v.pos;
-  grid_->insert(static_cast<int>(cm_.items.size()), it.box);
+  it.owner = owner;
+  const int id = static_cast<int>(cm_.items.size());
+  grid_->insert(id, it.box);
   cm_.items.push_back(std::move(it));
   hgrid_->insert(static_cast<int>(cm_.holes.size()), h.shape.box);
   cm_.holes.push_back(std::move(h));
+  return id;
+}
+
+void Obstacles::remove_item(int item) {
+  auto& it = cm_.items[static_cast<std::size_t>(item)];
+  if (it.removed) return;
+  it.removed = true;
+  grid_->erase(item, it.box);
+  if (it.kind == drc::ItemKind::Via)
+    for (auto& h : cm_.holes)
+      if (h.item == item) h.removed = true;
 }
 
 }  // namespace tmk::route

@@ -21,6 +21,8 @@ struct CopperItem {
   int footprint = -1;
   model::Point pos;               // reporting position
   Coord width = 0;                // tracks/arcs: width; vias: diameter
+  int owner = -1;                 // router connection that created this item (-1 = fixed copper)
+  bool removed = false;           // ripped up (router working model only)
 };
 
 struct Hole {
@@ -30,6 +32,7 @@ struct Hole {
   bool plated = true;
   model::NetId net = 0;
   model::Point pos;
+  bool removed = false;
 };
 
 struct CopperModel {

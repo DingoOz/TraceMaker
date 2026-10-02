@@ -43,7 +43,7 @@ void BoardEditor::add_track(const model::Track& t) {
   s += "\t(end " + format_mm(t.b.x) + " " + format_mm(t.b.y) + ")\n";
   s += "\t(width " + format_mm(t.width) + ")\n";
   if (t.locked) s += "\t(locked yes)\n";
-  s += "\t(layer " + quote(b.copper_name(t.layer)) + ")\n";
+  s += "\t(layer " + quote(b.copper_file_name(t.layer)) + ")\n";
   if (const std::string n = net_expr(t.net); !n.empty()) s += "\t" + n + "\n";
   s += "\t(uuid " + quote(next_uuid()) + ")\n)";
   lb_.doc.append_child(lb_.doc.root(), s);
@@ -58,7 +58,7 @@ void BoardEditor::add_via(const model::Via& v) {
   s += "\t(size " + format_mm(v.size) + ")\n";
   s += "\t(drill " + format_mm(v.drill) + ")\n";
   if (v.locked) s += "\t(locked yes)\n";
-  s += "\t(layers " + quote(b.copper_name(v.layer_top)) + " " + quote(b.copper_name(v.layer_bottom)) + ")\n";
+  s += "\t(layers " + quote(b.copper_file_name(v.layer_top)) + " " + quote(b.copper_file_name(v.layer_bottom)) + ")\n";
   if (const std::string n = net_expr(v.net); !n.empty()) s += "\t" + n + "\n";
   s += "\t(uuid " + quote(next_uuid()) + ")\n)";
   lb_.doc.append_child(lb_.doc.root(), s);

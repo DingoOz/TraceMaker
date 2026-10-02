@@ -20,6 +20,10 @@ struct RouterOptions {
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
   double via_cost_mm = 1.0;     // equivalent track length of one via
   bool allow_vias = true;
+  bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
+  int max_rips_per_connection = 8;
+  int max_passes = 12;          // passes over still-unrouted connections
+  double soft_cost_mm = 2.5;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
   events::Sink* sink = nullptr;
 };
@@ -35,6 +39,7 @@ struct RouteResult {
   std::vector<model::Via> vias;
   int connections = 0, routed = 0;
   long expansions = 0;
+  int rips = 0, passes = 0;
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection

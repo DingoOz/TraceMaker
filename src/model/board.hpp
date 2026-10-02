@@ -1,6 +1,7 @@
 #pragma once
 // The board model (design doc 02 §3): every object TraceMaker reads from a .kicad_pcb, in absolute
 // integer-nanometre coordinates, with a link back to its s-expression node for lossless writing.
+#include <climits>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -22,6 +23,7 @@ inline constexpr LayerMask layer_bit(int copper_index) { return LayerMask{1} << 
 struct LayerDef {
   int ordinal = 0;           // KiCad layer id as written in the file
   std::string name;          // canonical name, e.g. "F.Cu", "In1.Cu", "Edge.Cuts"
+  std::string file_name;     // name as written in this file's layer table (old boards may use "Front")
   std::string type;          // signal, power, mixed, jumper, user
   std::string user_name;     // optional user-visible name
   int copper_index = -1;     // stack index for copper layers, -1 otherwise
@@ -55,6 +57,7 @@ struct Pad {
   Coord trapezoid_dx = 0, trapezoid_dy = 0;  // rect_delta
   std::vector<std::vector<Point>> custom_polys;  // custom primitives (gr_poly) in the pad frame
   Coord clearance = -1;      // local override, -1 = none
+  Coord mask_margin = INT64_MIN;  // local solder-mask expansion (unset = INT64_MIN)
   NetId net = 0;
   sexpr::NodeId node = sexpr::kNoNode;
 };
@@ -92,6 +95,7 @@ struct Footprint {
   std::vector<int> pads;
   std::vector<int> graphics;
   Coord clearance = -1;      // footprint-level clearance override, -1 = none
+  Coord mask_margin = INT64_MIN;  // footprint-level solder-mask expansion (unset = INT64_MIN)
   std::vector<std::vector<std::string>> net_tie_groups;  // pad numbers joined by the footprint's own copper
   std::string uuid;
   sexpr::NodeId node = sexpr::kNoNode;
@@ -158,11 +162,13 @@ struct Board {
   std::vector<Via> vias;
   std::vector<Zone> zones;
   Coord thickness = 1'600'000;
+  Coord pad_to_mask_clearance = 0;  // board solder-mask expansion for pads (setup)
   std::vector<std::string> warnings;
 
   int copper_count() const { return static_cast<int>(copper.size()); }
   const std::string& copper_name(int idx) const { return layers[static_cast<std::size_t>(copper[static_cast<std::size_t>(idx)])].name; }
-  int copper_index(std::string_view name) const;   // -1 if not copper
+  const std::string& copper_file_name(int idx) const { return layers[static_cast<std::size_t>(copper[static_cast<std::size_t>(idx)])].file_name; }
+  int copper_index(std::string_view name) const;   // -1 if not copper (canonical or file name)
   NetId net_by_name(std::string_view name) const;  // 0 if unknown
   // Bounding box of everything on Edge.Cuts (graphics stroke widths excluded).
   Box edge_bbox() const;

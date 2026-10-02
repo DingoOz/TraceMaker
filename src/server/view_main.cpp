@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <numbers>
+#include <optional>
 #include <random>
 #include <string>
 #include <thread>
@@ -116,6 +117,8 @@ class Demo {
     int layer = 0;
     double r = 0, speed = 0, life = 0;
     std::int64_t conn = 0;
+    double dir = 0;     // direction to the target (radians); the front is elongated towards it like A*'s
+    bool aimed = false;
   };
   struct Placed {
     std::vector<server::ObjectId> tracks, vias;
@@ -167,9 +170,15 @@ class Demo {
     return {l1, l1};
   }
 
-  void spawn_wave(Point c, int layer, double reach, std::int64_t conn) {
+  void spawn_wave(Point c, int layer, double reach, std::int64_t conn, std::optional<Point> target = {}) {
     std::uniform_real_distribution<double> u(0.8, 1.3);
-    waves_.push_back({c, layer, 0.2 * kNmPerMm, std::max(reach / 8.0, 0.4 * kNmPerMm) * u(rng_), 0, conn});
+    reach = std::min(reach, 25.0 * kNmPerMm);
+    Wave w{c, layer, 0.2 * kNmPerMm, std::max(reach / 8.0, 0.4 * kNmPerMm) * u(rng_), 0, conn, 0, false};
+    if (target) {
+      w.dir = std::atan2(static_cast<double>(target->y - c.y), static_cast<double>(target->x - c.x));
+      w.aimed = true;
+    }
+    waves_.push_back(w);
   }
 
   void step_waves() {
@@ -178,10 +187,19 @@ class Demo {
       w.r += w.speed;
       w.life += 1;
       std::vector<Point> pts;
-      const int n = std::clamp(static_cast<int>(w.r / (0.35 * kNmPerMm)), 12, 96);
+      const int n = std::clamp(static_cast<int>(w.r / (0.35 * kNmPerMm)), 12, 72);
       for (int i = 0; i < n; ++i) {
-        const double ang = (i + 0.5 * jitter(rng_)) * 2 * std::numbers::pi / n;
-        const double rr = w.r * (1 + 0.06 * jitter(rng_));
+        const double t = (i + 0.5 * jitter(rng_)) / n;  // 0..1 around the front
+        double ang, rr;
+        if (w.aimed) {
+          // Goal-directed front: reaches furthest towards the target, little behind the source.
+          const double off = (t * 2 - 1) * std::numbers::pi * 0.85;
+          ang = w.dir + off;
+          rr = w.r * (0.25 + 0.75 * std::pow(std::cos(off / 2), 2.0)) * (1 + 0.07 * jitter(rng_));
+        } else {
+          ang = t * 2 * std::numbers::pi;
+          rr = w.r * (1 + 0.06 * jitter(rng_));
+        }
         pts.push_back({w.c.x + static_cast<Coord>(rr * std::cos(ang)), w.c.y + static_cast<Coord>(rr * std::sin(ang))});
       }
       srv_.publish(server::frontier(w.conn, w.layer, pts));
@@ -277,7 +295,7 @@ class Demo {
         pending_.erase(pending_.begin());
         const Point a = pads_[static_cast<std::size_t>(c.a)].p, b = pads_[static_cast<std::size_t>(c.b)].p;
         const double reach = std::hypot(static_cast<double>(b.x - a.x), static_cast<double>(b.y - a.y));
-        spawn_wave(a, pick_layers(c).first, reach, conn_id);
+        spawn_wave(a, pick_layers(c).first, reach, conn_id, b);
         if (rng_() % 23 == 0) {
           fail(c, conn_id);
           pending_.push_back(c);  // retried at the end

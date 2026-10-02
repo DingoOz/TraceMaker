@@ -7,7 +7,9 @@
 #include <cstdio>
 #include <map>
 #include <queue>
+#include <deque>
 #include <set>
+#include <unordered_map>
 
 #include "drc/connectivity.hpp"
 #include "route/obstacles.hpp"
@@ -49,6 +51,21 @@ struct Router::Impl {
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
   std::uint32_t gen = 0;
   std::set<std::pair<int, std::int64_t>> learned_block;  // (net, layer-cell key) blocked after exact-check failures
+
+  // ---- negotiation state ----
+  struct ConnState {
+    Connection c;
+    bool routed = false;
+    bool implicit = false;           // satisfied through other routes of the same net (no own copper)
+    std::vector<int> items;          // copper item indices owned by this connection
+    int rips = 0, fails = 0;
+  };
+  std::vector<ConnState> cs;
+  std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
+  std::vector<int> init_root;        // copper item -> initial cluster root (fixed copper)
+  bool soft = false;                 // current search may cross routed copper
+  int current = -1;                  // connection being routed
+  std::vector<std::int64_t> soft_cells;  // cells of the last soft path that crossed routed copper
 
   Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {}
 
@@ -153,23 +170,45 @@ struct Router::Impl {
     std::vector<std::pair<int, std::int64_t>> cells;  // (layer, cell index in window)
   };
 
-  bool cell_free(const Window& w, int layer, int cx, int cy, NetId net, Coord hw) {
-    const std::size_t idx = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(w.h) + static_cast<std::size_t>(cy)) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx);
-    if (cstamp[idx] == gen) return cell_state[idx] == 1;
-    cstamp[idx] = gen;
-    const int gx = w.x0 + cx, gy = w.y0 + cy;
-    const std::int64_t key = (static_cast<std::int64_t>(layer) << 48) | (static_cast<std::int64_t>(gy) << 24) | gx;
-    bool ok = !learned_block.count({net, key}) && obs->disk_ok(at(gx, gy), layer, hw, net, pitch * 71 / 100 + 1);
-    cell_state[idx] = ok ? 1 : 2;
-    return ok;
+  static std::int64_t cell_key(int layer, int gx, int gy) {
+    return (static_cast<std::int64_t>(layer) << 48) | (static_cast<std::int64_t>(gy) << 24) | gx;
   }
-  bool via_free(const Window& w, int cx, int cy, NetId net, Coord d, Coord drill) {
+  std::int64_t hist_cost(int layer, int gx, int gy) const {
+    if (history.empty()) return 0;
+    const auto it = history.find(cell_key(layer, gx, gy));
+    return it == history.end() ? 0 : static_cast<std::int64_t>(it->second) * pitch * 2;
+  }
+  // Extra cost of entering a cell: -1 blocked, 0 free, > 0 crossing routed copper (soft mode only).
+  std::int64_t cell_cost(const Window& w, int layer, int cx, int cy, NetId net, Coord hw) {
+    const std::size_t idx = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(w.h) + static_cast<std::size_t>(cy)) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx);
+    const int gx = w.x0 + cx, gy = w.y0 + cy;
+    if (cstamp[idx] != gen) {
+      cstamp[idx] = gen;
+      const std::int64_t key = cell_key(layer, gx, gy);
+      int st = 2;
+      if (!learned_block.count({net, key})) {
+        st = obs->disk_state(at(gx, gy), layer, hw, net, pitch * 71 / 100 + 1, soft);
+        // Legal only without the lattice safety margin: allowed at a cost ("tight"); the exact segment check
+        // at commit decides. Needed for fine-pitch escapes (0.5 mm connectors with 0.25/0.2 mm rules).
+        if (st == 2 && obs->disk_state(at(gx, gy), layer, hw, net, 0, soft) != 2) st = 3;
+      }
+      cell_state[idx] = static_cast<std::uint8_t>(st);
+    }
+    const int st = cell_state[idx];
+    if (st == 2) return -1;
+    const std::int64_t hc = hist_cost(layer, gx, gy);
+    if (st == 1) return static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) + hc * 4;
+    if (st == 3) return 3 * pitch + hc;
+    return hc;
+  }
+  std::int64_t via_cost_at(const Window& w, int cx, int cy, NetId net, Coord d, Coord drill) {
     const std::size_t idx = static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx);
-    if (vstamp[idx] == gen) return via_state[idx] == 1;
-    vstamp[idx] = gen;
-    const bool ok = obs->via_ok(at(w.x0 + cx, w.y0 + cy), d, drill, net, pitch * 71 / 100 + 1);
-    via_state[idx] = ok ? 1 : 2;
-    return ok;
+    if (vstamp[idx] != gen) {
+      vstamp[idx] = gen;
+      via_state[idx] = static_cast<std::uint8_t>(obs->via_state(at(w.x0 + cx, w.y0 + cy), d, drill, net, pitch * 71 / 100 + 1, soft));
+    }
+    if (via_state[idx] == 2) return -1;
+    return via_state[idx] == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0;
   }
 
   // Lattice cells of the window inside a pad's copper on each of its layers (falls back to cells next to the
@@ -287,8 +326,12 @@ struct Router::Impl {
         if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
         const std::int64_t nci = static_cast<std::int64_t>(ncy) * w.w + ncx;
         const bool tgt = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci)] != 0;
-        if (!tgt && !cell_free(w, l, ncx, ncy, net, hw)) continue;
-        std::int64_t cost = (d & 1) ? diag : step;
+        std::int64_t extra = 0;
+        if (!tgt) {
+          extra = cell_cost(w, l, ncx, ncy, net, hw);
+          if (extra < 0) continue;
+        }
+        std::int64_t cost = ((d & 1) ? diag : step) + extra;
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
         const std::size_t ns = sidx(l, nci, d);
         if (gstamp[ns] == gen && g[ns] <= gs + cost) continue;
@@ -298,11 +341,12 @@ struct Router::Impl {
         open.emplace(gs + cost + h(w.x0 + ncx, w.y0 + ncy), ns);
       }
       // Via: change to every other layer at this cell (through via).
-      if (opt.allow_vias && nl > 1 && via_free(w, cx, cy, net, vd, vdrill)) {
+      const std::int64_t vextra = (opt.allow_vias && nl > 1) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
+      if (vextra >= 0) {
         for (int l2 = 0; l2 < nl; ++l2) {
           if (l2 == l) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
-          const std::int64_t ng = gs + via_cost;
+          const std::int64_t ng = gs + via_cost + vextra;
           if (gstamp[ns] == gen && g[ns] <= ng) continue;
           gstamp[ns] = gen;
           g[ns] = ng;
@@ -372,55 +416,99 @@ struct Router::Impl {
       }
       merged.push_back(s);
     }
-    // Exact verification.
+    // Exact verification. In soft mode, conflicts with other connections' routed copper name the victims.
     bool ok = true;
-    for (const auto& s : merged)
-      if (!obs->segment_ok(s.a, s.b, s.layer, width, net)) {
+    std::vector<int> victims;
+    for (const auto& s : merged) {
+      const int st = obs->segment_state(s.a, s.b, s.layer, width, net, soft, &victims);
+      if (st == 2) {
         ok = false;
-        // Learn: block the lattice cells along the failing segment for this net.
-        const int n = std::max<int>(1, static_cast<int>(std::hypot(static_cast<double>(s.b.x - s.a.x), static_cast<double>(s.b.y - s.a.y)) / static_cast<double>(pitch)));
-        for (int k = 0; k <= n; ++k) {
-          const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
-          if (geom::Shape::point(q, 0).box.intersects(obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])].box) ||
-              geom::Shape::point(q, 0).box.intersects(obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])].box))
-            continue;  // never block the pads themselves
-          if (!obs->disk_ok(q, s.layer, width / 2, net, 0)) {
-            const std::int64_t key = (static_cast<std::int64_t>(s.layer) << 48) | (static_cast<std::int64_t>(to_iy(q.y)) << 24) | to_ix(q.x);
-            learned_block.insert({net, key});
-          }
-        }
+        learn_block(c, s, width);
       }
+    }
     for (const auto& v : vias)
-      if (!obs->via_ok(v, vd, vdrill, net, 0)) ok = false;
+      if (obs->via_state(v, vd, vdrill, net, 0, soft, &victims) == 2) ok = false;
     if (!ok) return false;
+    std::sort(victims.begin(), victims.end());
+    victims.erase(std::unique(victims.begin(), victims.end()), victims.end());
+    for (int v : victims)
+      if (cs[static_cast<std::size_t>(v)].rips >= opt.max_rips_per_connection) return false;  // protected: too often ripped
+    // Rip up victims, and raise history on the contested cells so later searches avoid them.
+    for (int v : victims) rip(v);
+    for (const auto& s : merged) bump_history(s, net);
     // Commit.
+    auto& st = cs[static_cast<std::size_t>(current)];
     for (const auto& s : merged) {
       model::Track t{s.a, s.b, width, s.layer, net, false, sexpr::kNoNode};
       b.tracks.push_back(t);
-      obs->add_track(static_cast<int>(b.tracks.size() - 1));
-      res.tracks.push_back(t);
-      if (opt.sink) {
-        const int id = static_cast<int>(b.tracks.size() - 1);
+      const int id = static_cast<int>(b.tracks.size() - 1);
+      st.items.push_back(obs->add_track(id, current));
+      if (opt.sink)
         emit("{\"type\":\"track_add\",\"track\":{\"id\":" + std::to_string(id) + ",\"a\":[" + jnum(t.a.x) + "," + jnum(t.a.y) + "],\"b\":[" +
              jnum(t.b.x) + "," + jnum(t.b.y) + "],\"w\":" + jnum(t.width) + ",\"layer\":" + std::to_string(t.layer) + ",\"net\":" +
              std::to_string(t.net) + "}}");
-      }
     }
     for (const auto& p : vias) {
       model::Via v{p, vd, vdrill, 0, nl - 1, model::ViaType::Through, net, false, sexpr::kNoNode};
       b.vias.push_back(v);
-      obs->add_via(static_cast<int>(b.vias.size() - 1));
-      res.vias.push_back(v);
-      if (opt.sink) {
-        const int id = static_cast<int>(b.vias.size() - 1);
+      const int id = static_cast<int>(b.vias.size() - 1);
+      st.items.push_back(obs->add_via(id, current));
+      if (opt.sink)
         emit("{\"type\":\"via_add\",\"via\":{\"id\":" + std::to_string(id) + ",\"p\":[" + jnum(p.x) + "," + jnum(p.y) + "],\"d\":" + jnum(vd) +
              ",\"drill\":" + jnum(vdrill) + ",\"net\":" + std::to_string(net) + ",\"top\":0,\"bottom\":" + std::to_string(nl - 1) + "}}");
-      }
     }
     return true;
   }
 
-  bool route_one(const Connection& c) {
+  void learn_block(const Connection& c, const auto& s, Coord width) {
+    const int n = std::max<int>(1, static_cast<int>(std::hypot(static_cast<double>(s.b.x - s.a.x), static_cast<double>(s.b.y - s.a.y)) / static_cast<double>(pitch)));
+    const auto& ia = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])].box;
+    const auto& ib = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])].box;
+    for (int k = 0; k <= n; ++k) {
+      const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
+      const geom::Box qb = geom::Shape::point(q, 0).box;
+      if (qb.intersects(ia) || qb.intersects(ib)) continue;  // never block the pads themselves
+      if (obs->disk_state(q, s.layer, width / 2, c.net, 0, soft) == 2) learned_block.insert({c.net, cell_key(s.layer, to_ix(q.x), to_iy(q.y))});
+    }
+  }
+
+  void bump_history(const auto& s, NetId net) {
+    if (!soft) return;
+    const int n = std::max<int>(1, static_cast<int>(std::hypot(static_cast<double>(s.b.x - s.a.x), static_cast<double>(s.b.y - s.a.y)) / static_cast<double>(pitch)));
+    for (int k = 0; k <= n; ++k) {
+      const Point q{s.a.x + (s.b.x - s.a.x) * k / n, s.a.y + (s.b.y - s.a.y) * k / n};
+      std::vector<int> owners;
+      if (obs->disk_state(q, s.layer, track_width(net) / 2, net, 0, true, &owners) == 1) {
+        auto& h = history[cell_key(s.layer, to_ix(q.x), to_iy(q.y))];
+        if (h < 60000) h = static_cast<std::uint16_t>(h + 1);
+      }
+    }
+  }
+
+  // Removes a connection's copper and marks it (and connections of its net satisfied implicitly) unrouted.
+  void rip(int v) {
+    auto& st = cs[static_cast<std::size_t>(v)];
+    for (int item : st.items) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+      if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+      obs->remove_item(item);
+    }
+    st.items.clear();
+    if (st.routed) --res.routed;
+    st.routed = false;
+    ++st.rips;
+    ++res.rips;
+    pending.push_back(v);
+    for (std::size_t k = 0; k < cs.size(); ++k)
+      if (cs[k].implicit && cs[k].routed && cs[k].c.net == st.c.net) {
+        cs[k].routed = cs[k].implicit = false;
+        --res.routed;
+        pending.push_back(static_cast<int>(k));
+      }
+  }
+
+  bool search_and_commit(const Connection& c, bool soft_mode) {
+    soft = soft_mode;
     const Point a = b.pads[static_cast<std::size_t>(c.pad_a)].pos, e = b.pads[static_cast<std::size_t>(c.pad_b)].pos;
     static const Coord margins[] = {2'000'000, 6'000'000, 20'000'000, 1'000'000'000};
     std::vector<PathNode> path;
@@ -439,39 +527,108 @@ struct Router::Impl {
     return false;
   }
 
+  // Are the connection's pads already joined through fixed copper and other routed connections of its net?
+  bool joined(int ci) {
+    const auto& c = cs[static_cast<std::size_t>(ci)].c;
+    const int ra = init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])];
+    const int rb = init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])];
+    if (ra == rb) return true;
+    std::map<int, int> up;
+    auto find = [&](int x) {
+      while (up.count(x) && up[x] != x) x = up[x];
+      return x;
+    };
+    for (const auto& o : cs) {
+      if (!o.routed || o.implicit || o.c.net != c.net) continue;
+      const int x = find(init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_a)])]);
+      const int y = find(init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_b)])]);
+      if (x != y) up[x] = y;
+    }
+    return find(ra) == find(rb);
+  }
+
+  std::deque<int> pending;
+
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
     setup();
-    emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"begin\",\"detail\":\"lattice A*\"}");
+    emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"begin\",\"detail\":\"lattice A* with negotiated rip-up\"}");
     auto con = drc::compute_connectivity(b, obs->copper(), obs->grid());
+    init_root = con.root;
     drc::UnionFind uf(obs->copper().items.size());
     for (std::size_t i = 0; i < con.root.size(); ++i) uf.unite(static_cast<int>(i), con.root[i]);
     const auto conns = plan(uf);
     res.connections = static_cast<int>(conns.size());
-    // Pads joined during routing: track with a separate union-find on pad items.
     for (const auto& c : conns) {
-      const int ia = pad_item[static_cast<std::size_t>(c.pad_a)], ib = pad_item[static_cast<std::size_t>(c.pad_b)];
-      if (uf.find(ia) == uf.find(ib)) {  // already joined by an earlier route through a shared cluster
-        ++res.routed;
-        continue;
+      ConnState st;
+      st.c = c;
+      cs.push_back(std::move(st));
+    }
+    for (std::size_t i = 0; i < cs.size(); ++i) pending.push_back(static_cast<int>(i));
+
+    // Best legal state seen (most connections routed): connection -> its tracks/vias.
+    int best_routed = -1;
+    std::vector<model::Track> best_tracks;
+    std::vector<model::Via> best_vias;
+    auto snapshot = [&]() {
+      best_routed = res.routed;
+      best_tracks.clear();
+      best_vias.clear();
+      for (const auto& st : cs)
+        for (int item : st.items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          if (it.kind == drc::ItemKind::Via) best_vias.push_back(b.vias[static_cast<std::size_t>(it.index)]);
+          else best_tracks.push_back(b.tracks[static_cast<std::size_t>(it.index)]);
+        }
+    };
+
+    for (int pass = 0; pass < opt.max_passes && !pending.empty() && elapsed() < opt.time_limit_s; ++pass) {
+      res.passes = pass + 1;
+      std::vector<int> failed;
+      const int routed_before = res.routed;
+      while (!pending.empty() && elapsed() < opt.time_limit_s) {
+        const int ci = pending.front();
+        pending.pop_front();
+        auto& st = cs[static_cast<std::size_t>(ci)];
+        if (st.routed) continue;
+        current = ci;
+        if (joined(ci)) {
+          st.routed = st.implicit = true;
+          ++res.routed;
+          continue;
+        }
+        bool ok = search_and_commit(st.c, false);
+        if (!ok && opt.rip_up && pass > 0) ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
+        if (ok) {
+          cs[static_cast<std::size_t>(ci)].routed = true;
+          ++res.routed;
+        } else {
+          ++cs[static_cast<std::size_t>(ci)].fails;
+          failed.push_back(ci);
+        }
+        emit_stats("route");
+        if (res.routed > best_routed) snapshot();
       }
-      if (route_one(c)) {
-        uf.unite(ia, ib);
-        ++res.routed;
-      } else {
-        const auto& pa = b.pads[static_cast<std::size_t>(c.pad_a)];
-        const auto& pb = b.pads[static_cast<std::size_t>(c.pad_b)];
-        res.failures.push_back(b.nets[static_cast<std::size_t>(c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." + pa.number +
-                               " -> " + b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number);
-        if (opt.sink)
-          emit("{\"type\":\"failure\",\"conn\":0,\"net\":" + std::to_string(c.net) + ",\"rung\":0,\"cause\":\"no path\",\"a\":[" + jnum(pa.pos.x) + "," +
-               jnum(pa.pos.y) + "],\"b\":[" + jnum(pb.pos.x) + "," + jnum(pb.pos.y) + "],\"blockers\":[],\"region\":[0,0,0,0]}");
-      }
-      emit_stats("route");
+      // Next pass: hardest (most failed) first.
+      std::stable_sort(failed.begin(), failed.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
+      for (int f : failed) pending.push_back(f);
+      if (pass > 0 && res.routed <= routed_before && res.rips == 0) break;
+    }
+    if (res.routed > best_routed) snapshot();
+    res.routed = best_routed;
+    res.tracks = std::move(best_tracks);
+    res.vias = std::move(best_vias);
+    // Failures relative to the best state are approximated by the connections unrouted at the end.
+    for (const auto& st : cs) {
+      if (st.routed) continue;
+      const auto& pa = b.pads[static_cast<std::size_t>(st.c.pad_a)];
+      const auto& pb = b.pads[static_cast<std::size_t>(st.c.pad_b)];
+      res.failures.push_back(b.nets[static_cast<std::size_t>(st.c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." +
+                             pa.number + " -> " + b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number);
     }
     res.seconds = elapsed();
-    std::fprintf(stderr, "legality checks %ld: outside %ld, copper %ld, holes/edges/keepouts %ld; outline points %zu\n", obs->checks,
-                 obs->rej_outside, obs->rej_copper, obs->rej_other, obs->outline().size());
+    std::fprintf(stderr, "legality checks %ld: outside %ld, copper %ld, holes/edges/keepouts %ld; rips %d, passes %d\n", obs->checks,
+                 obs->rej_outside, obs->rej_copper, obs->rej_other, res.rips, res.passes);
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
     return std::move(res);

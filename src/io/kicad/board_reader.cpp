@@ -29,6 +29,7 @@ class Reader {
     if (NodeId g = d_.find(root, "general"); g != kNoNode)
       if (NodeId t = d_.find(g, "thickness"); t != kNoNode) b_.thickness = d_.nm_at(t, 1).value_or(b_.thickness);
     read_layers(d_.find(root, "layers"));
+    if (NodeId setup = d_.find(root, "setup"); setup != kNoNode) b_.pad_to_mask_clearance = child_nm(setup, "pad_to_mask_clearance", 0);
     b_.nets.push_back(model::Net{0, "", 0});
     b_.net_index[""] = 0;
     const auto table = d_.find_all(root, "net");
@@ -140,8 +141,18 @@ class Reader {
       if (!d_.is_list(l)) continue;
       model::LayerDef def;
       def.ordinal = static_cast<int>(d_.number_at(l, 0).value_or(-1));  // entries are headed by the ordinal
-      def.name = d_.str_at(l, 1);
+      def.file_name = d_.str_at(l, 1);
+      def.name = def.file_name;
       def.type = d_.str_at(l, 2);
+      // Copper layers are identified by number (old boards may name them "Front"/"Back"). Numbering changed
+      // in KiCad 9: F.Cu 0, B.Cu 2, In1 4, In2 6, … (before: F.Cu 0, In1..In30 = 1..30, B.Cu 31).
+      const bool copper_type = def.type == "signal" || def.type == "power" || def.type == "mixed" || def.type == "jumper";
+      if (copper_type && !def.name.ends_with(".Cu")) {
+        const bool v9 = b_.version >= 20240108;
+        if (def.ordinal == 0) def.name = "F.Cu";
+        else if (v9 ? def.ordinal == 2 : def.ordinal == 31) def.name = "B.Cu";
+        else def.name = "In" + std::to_string(v9 ? (def.ordinal - 2) / 2 : def.ordinal) + ".Cu";
+      }
       def.user_name = d_.str_at(l, 3);
       b_.layers.push_back(def);
     }
@@ -177,6 +188,7 @@ class Reader {
     }
     if (NodeId u = d_.find(f, "uuid"); u != kNoNode) fp.uuid = d_.str_at(u, 1);
     if (NodeId c = d_.find(f, "clearance"); c != kNoNode) fp.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId mm = d_.find(f, "solder_mask_margin"); mm != kNoNode) fp.mask_margin = d_.nm_at(mm, 1).value_or(INT64_MIN);
     if (NodeId nt = d_.find(f, "net_tie_pad_groups"); nt != kNoNode)
       for (std::size_t i = 1; i < d_.children(nt).size(); ++i) {
         std::vector<std::string> g;
@@ -262,6 +274,9 @@ class Reader {
       if (NodeId off = d_.find(dr, "offset"); off != kNoNode) pad.drill_offset = xy(off);
     }
     if (NodeId l = d_.find(p, "layers"); l != kNoNode) pad.copper = layers_mask(l, &pad.layers);
+    // A plated through hole has copper on every copper layer, whatever the file lists (KiCad semantics;
+    // verified on PCBench WordClock where P3 lists only F.Cu and KiCad's DRC checks it on B.Cu).
+    if (pad.type == model::PadType::ThruHole) pad.copper = expand_copper("*.Cu");
     if (NodeId r = d_.find(p, "roundrect_rratio"); r != kNoNode) pad.roundrect_ratio = d_.number_at(r, 1).value_or(0);
     if (NodeId r = d_.find(p, "chamfer_ratio"); r != kNoNode) pad.chamfer_ratio = d_.number_at(r, 1).value_or(0);
     if (NodeId c = d_.find(p, "chamfer"); c != kNoNode) {
@@ -275,6 +290,7 @@ class Reader {
       pad.trapezoid_dy = d_.nm_at(r, 2).value_or(0);
     }
     if (NodeId c = d_.find(p, "clearance"); c != kNoNode) pad.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId mm = d_.find(p, "solder_mask_margin"); mm != kNoNode) pad.mask_margin = d_.nm_at(mm, 1).value_or(INT64_MIN);
     if (NodeId prim = d_.find(p, "primitives"); prim != kNoNode) {
       for (NodeId g : d_.find_all(prim, "gr_poly")) {
         std::vector<Point> poly;

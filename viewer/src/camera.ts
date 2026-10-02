@@ -37,6 +37,7 @@ export class Camera {
 
   zoomAt(sx: number, sy: number, factor: number) {
     const [wx, wy] = this.anchor && this.anchor.sx === sx && this.anchor.sy === sy ? [this.anchor.wx, this.anchor.wy] : this.toWorld(sx, sy);
+    if (!this.anchor) this.target = this.zoom;
     this.target = Math.min(Math.max(this.target * factor, 0.05), 20000);
     this.anchor = { sx, sy, wx, wy };
     this.follow = null;

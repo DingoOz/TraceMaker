@@ -72,6 +72,11 @@ export class Connection {
     return q;
   }
 
+  /** True while the socket is open. */
+  get connected(): boolean {
+    return this.ws?.readyState === WebSocket.OPEN;
+  }
+
   takeBytes(): number {
     const b = this.bytes;
     this.bytes = 0;

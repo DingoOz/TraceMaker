@@ -3,8 +3,10 @@
 namespace tmk::model {
 
 int Board::copper_index(std::string_view name) const {
-  for (std::size_t i = 0; i < copper.size(); ++i)
-    if (layers[static_cast<std::size_t>(copper[i])].name == name) return static_cast<int>(i);
+  for (std::size_t i = 0; i < copper.size(); ++i) {
+    const auto& l = layers[static_cast<std::size_t>(copper[i])];
+    if (l.name == name || l.file_name == name) return static_cast<int>(i);
+  }
   return -1;
 }
 
