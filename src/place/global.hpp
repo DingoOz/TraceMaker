@@ -34,7 +34,9 @@ struct SpreadStats {
 
 // (B) SimPL loop starting from a quadratic placement `pl`; on return `pl` holds the spread (upper-bound)
 // placement.
-SpreadStats spread(const Problem& p, Placement& pl, int max_iterations = 40, double target_overflow = 0.10);
+// `trace` (optional) receives the spread placement of every iteration.
+SpreadStats spread(const Problem& p, Placement& pl, int max_iterations = 40, double target_overflow = 0.10,
+                   std::vector<Placement>* trace = nullptr);
 
 // Bin density overflow of a placement: Σ max(0, demand − capacity) / Σ demand over a bin grid per side.
 double density_overflow(const Problem& p, const Placement& pl);

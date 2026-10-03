@@ -255,6 +255,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
   if (best < 0) return res;
   Candidate inc = seeds[z(best)];
   say(o.log, "seed kept: " + inc.label);
+  if (o.on_incumbent) o.on_incumbent(inc.label);
   CongestionMap cm = make_congestion_map(p);
   std::vector<std::string> nets;
   std::vector<int> focus;
@@ -290,6 +291,8 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
     po.seed = o.place.seed + static_cast<std::uint64_t>(round) * 1'000'003u;
     Candidate c;
     c.label = "round " + std::to_string(round) + " re-place";
+    if (o.place.trace)
+      po.trace = [&o, lbl = c.label](const std::string& st, const Placement& x) { o.place.trace(lbl + "|" + st, x); };
     c.pl = inc.pl;
     const PlaceReport pr = place(q, c.pl, po);
     if (pr.legal) {
@@ -300,6 +303,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       if (c.eval.ok && c.eval.unrouted() < inc.eval.unrouted()) {
         inc = c;
         say(o.log, "  accepted");
+        if (o.on_incumbent) o.on_incumbent(inc.label);
       }
     } else {
       say(o.log, c.label + ": not legal, skipped");
@@ -324,6 +328,8 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
         e.hpwl = total_hpwl(p, e.pl);
         record(e);
         inc = e;
+        if (o.place.trace) o.place.trace(e.label + "|eco", e.pl);
+        if (o.on_incumbent) o.on_incumbent(e.label);
       }
     }
   }

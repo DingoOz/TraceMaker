@@ -362,7 +362,7 @@ std::array<double, 2> utilisation(const Problem& p) {
   return u;
 }
 
-SpreadStats spread(const Problem& p, Placement& pl, int max_iterations, double target_overflow) {
+SpreadStats spread(const Problem& p, Placement& pl, int max_iterations, double target_overflow, std::vector<Placement>* trace) {
   SpreadStats st;
   const Bins bins = make_bins(p);
   Placement x = pl;
@@ -376,6 +376,7 @@ SpreadStats spread(const Problem& p, Placement& pl, int max_iterations, double t
       sp.run();
     }
     st.iterations = k;
+    if (trace) trace->push_back(u);
     st.overflow_end = overflow_with(p, bins, x);
     st.hpwl_lower = weighted_hpwl(p, x);
     st.hpwl_upper = weighted_hpwl(p, u);

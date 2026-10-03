@@ -4,6 +4,7 @@
 // D (only for illegal parts) → E. Both report the exact lower bounds of doc 04 §1 (L4) and what was achieved.
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <string>
 
 #include <nlohmann/json_fwd.hpp>
@@ -30,6 +31,8 @@ struct PlaceOptions {
   double beta_congestion = 0;    // routability weight (0 = off)
   const CongestionMap* congestion = nullptr;
   std::vector<int> focus;        // LNS seed parts
+  // Recording (video): receives intermediate placements with a stage name. Never affects the result.
+  std::function<void(const std::string& stage, const Placement& pl)> trace;
 };
 
 struct Metrics {

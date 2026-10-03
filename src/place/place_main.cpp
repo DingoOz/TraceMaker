@@ -25,6 +25,43 @@ namespace {
 
 using namespace tmk;
 
+// --record: the placements along the chain that produced the result (video timelapse). Frames are kept per
+// candidate label; the chain is the sequence of incumbents, so only the stages that led to the output are written.
+struct PlaceRecorder {
+  std::map<std::string, std::vector<std::pair<std::string, place::Placement>>> frames;
+  std::vector<std::string> chain;
+
+  void add(const std::string& key, const place::Placement& pl) {
+    const auto bar = key.find('|');
+    const std::string label = key.substr(0, bar), stage = bar == std::string::npos ? key : key.substr(bar + 1);
+    auto& v = frames[label];
+    if (stage == "input") v.clear();  // a fallback re-run of the same candidate starts over
+    v.emplace_back(stage, pl);
+  }
+  void write(const std::string& path, const place::Problem& p, const place::Placement& input, const place::Placement& result,
+             const std::string& board) const {
+    std::ofstream f(path);
+    nlohmann::json parts = nlohmann::json::array();
+    for (const auto& pt : p.parts)
+      parts.push_back({{"ref", pt.ref}, {"x0", pt.pos0.x}, {"y0", pt.pos0.y}, {"angle0", pt.angle0}, {"side", pt.side}, {"movable", pt.movable}});
+    f << nlohmann::json{{"type", "place_header"}, {"board", board}, {"parts", parts}, {"chain", chain}}.dump() << "\n";
+    auto frame = [&](const std::string& label, const std::string& stage, const place::Placement& pl) {
+      nlohmann::json pos = nlohmann::json::array();
+      for (std::size_t i = 0; i < p.parts.size(); ++i) pos.push_back({pl.pos[i].x, pl.pos[i].y, pl.rot[i]});
+      f << nlohmann::json{{"type", "place_frame"}, {"label", label}, {"stage", stage}, {"hpwl", place::total_hpwl(p, pl)}, {"pos", pos}}.dump()
+        << "\n";
+    };
+    frame("input", "input", input);
+    for (const auto& label : chain) {
+      const auto it = frames.find(label);
+      if (it == frames.end()) continue;
+      for (const auto& [stage, pl] : it->second)
+        if (stage != "input" || label != chain.front()) frame(label, stage, pl);
+    }
+    frame("result", "result", result);
+  }
+};
+
 struct Placed {
   place::Problem p;
   place::Placement pl;
@@ -152,6 +189,7 @@ struct LoopCli {
   double beta = 1.0;
   double loop_time_s = 0;  // job wall-time stop for routable/eco (0 = none)
   long final_work = -1;    // routable/eco: verification budget for the winner vs the input (-1: 4 x work, 0: off)
+  std::string record;      // routable: write the placement timelapse (JSONL) here
 };
 
 nlohmann::json eval_json(const place::RouteEval& e) {
@@ -183,6 +221,7 @@ int run_loop_mode(const LoopCli& c) {
   };
   place::Candidate best;
   std::vector<place::Candidate> tried;
+  PlaceRecorder rec;
   place::RouteEval input_eval;
   int routes = 0, rounds = 0;
   nlohmann::json extra = nlohmann::json::object();
@@ -217,6 +256,7 @@ int run_loop_mode(const LoopCli& c) {
       place::PlaceOptions o = c.o;
       o.mode = mode;
       o.beta_congestion = beta;
+      if (!c.record.empty()) o.trace = [&rec, label](const std::string& st, const place::Placement& x) { rec.add(label + "|" + st, x); };
       if (beta > 0) {
         o.tempering = true;
         o.lns_rate = std::max(o.lns_rate, 0.02);
@@ -247,6 +287,10 @@ int run_loop_mode(const LoopCli& c) {
     lo.eco_candidates = c.eco_candidates;
     lo.log = log;
     lo.out_of_time = out_of_time;
+    if (!c.record.empty()) {
+      lo.place.trace = [&rec](const std::string& key, const place::Placement& x) { rec.add(key, x); };
+      lo.on_incumbent = [&rec](const std::string& label) { rec.chain.push_back(label); };
+    }
     const place::LoopResult res = place::routability_loop(P, seeds, lo, route);
     best = res.best;
     tried = res.tried;
@@ -267,12 +311,14 @@ int run_loop_mode(const LoopCli& c) {
         std::to_string(vb.unrouted()) + (keep ? " -> kept" : " -> input kept"));
     verify = {{"work", fw}, {"input", eval_json(vi)}, {"output", eval_json(vb)}, {"accepted", keep}};
     if (!keep) {
+      rec.chain.clear();
       notes.push_back(best.label + " rejected by the final verification route (" + std::to_string(vb.unrouted()) + " vs " +
                       std::to_string(vi.unrouted()) + " unrouted)");
       best = place::Candidate{"input", input, input_eval, place::total_hpwl(P, input)};
     }
   }
   const bool kept_input = best.pl.pos == input.pos && best.pl.rot == input.rot;
+  if (!c.record.empty()) rec.write(c.record, P, input, best.pl, c.in);
   int moved = 0;
   if (kept_input) {
     std::filesystem::copy_file(c.in, c.out, std::filesystem::copy_options::overwrite_existing);
@@ -368,6 +414,7 @@ int main(int argc, char** argv) {
   app.add_option("--final-work", lc.final_work,
                  "routable/eco: route the winner and the input again with this budget; keep the winner only if not worse "
                  "(default 4 x --route-check, 0 = off)");
+  app.add_option("--record", lc.record, "routable: write the placement timelapse (JSONL: header, then one frame per stage)");
   app.add_option("--loop-time", lc.loop_time_s,
                  "routable: wall-time stop in seconds; checked between seeds and routes, keeps the best placement so far (0 = none)");
   CLI11_PARSE(app, argc, argv);

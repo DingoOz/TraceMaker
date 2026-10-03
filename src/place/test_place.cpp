@@ -239,6 +239,33 @@ TEST_CASE("legalisation removes every overlap", "[place]") {
   }
 }
 
+TEST_CASE("recording a placement never changes it", "[place]") {
+  Problem p = random_problem(40, 23, 32 * MM);
+  for (const bool tempering : {false, true}) {
+    PlaceOptions o;
+    o.threads = 3;
+    o.runs = 3;
+    o.effort = 0.5;
+    o.tempering = tempering;
+    Placement a = Placement::initial(p), b = Placement::initial(p);
+    tmk::place::place(p, a, o);
+    std::vector<std::string> stages;
+    Placement last;
+    o.trace = [&](const std::string& st, const Placement& x) {
+      stages.push_back(st);
+      last = x;
+    };
+    tmk::place::place(p, b, o);
+    CHECK(a.pos == b.pos);
+    CHECK(a.rot == b.rot);
+    REQUIRE(!stages.empty());
+    CHECK(stages.front() == "input");
+    CHECK(stages.back() == "placed");
+    CHECK(std::count(stages.begin(), stages.end(), "annealing") > 10);
+    CHECK(last.pos == b.pos);
+  }
+}
+
 TEST_CASE("full pipeline: legal, deterministic, incremental cost exact", "[place]") {
   Problem p = random_problem(50, 21, 35 * MM);
   PlaceOptions o;

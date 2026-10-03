@@ -57,6 +57,10 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
 
   auto t = Clock::now();
   const Placement input = pl;
+  auto emit = [&](const char* st, const Placement& x) {
+    if (o.trace) o.trace(st, x);
+  };
+  emit("input", pl);
   r.before = measure(p, pl);
   r.lb_fixed_rot = hpwl_lower_bound(p, pl, RotationModel::Fixed);
   r.lb_any_rot = hpwl_lower_bound(p, pl, RotationModel::Any);
@@ -71,11 +75,14 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
       if (p.parts[i].movable) pl.pos[i] = centre - Point{(p.parts[i].geom[0].body.x0 + p.parts[i].geom[0].body.x1) / 2,
                                                          (p.parts[i].geom[0].body.y0 + p.parts[i].geom[0].body.y1) / 2};
     quadratic_place(p, pl, 10);
+    emit("quadratic", pl);
     r.quadratic_whpwl = weighted_hpwl(p, pl);
     stage("A quadratic", t);
     // (B) SimPL spreading.
     t = Clock::now();
-    const SpreadStats ss = spread(p, pl);
+    std::vector<Placement> spread_trace;
+    const SpreadStats ss = spread(p, pl, 40, 0.10, o.trace ? &spread_trace : nullptr);
+    for (const auto& x : spread_trace) emit("spreading", x);
     r.overflow_quadratic = ss.overflow_start;
     r.overflow_spread = density_overflow(p, pl);
     r.spread_iterations = ss.iterations;
@@ -84,6 +91,7 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
     // (C) rotations.
     t = Clock::now();
     r.rotation_changes = optimise_rotations(p, pl);
+    emit("rotations", pl);
     stage("C rotations", t);
   }
   // (D) legalisation.
@@ -117,6 +125,7 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   for (const auto& f : ls.failures) r.notes.push_back("legaliser found no position for " + f);
   if (ls.raster_disagree) r.notes.push_back("raster/exact disagreement x" + std::to_string(ls.raster_disagree));
   stage("D legalisation", t);
+  emit("legalised", pl);
   r.legal_start_whpwl = weighted_hpwl(p, pl);
 
   // (E) annealing (needs a legal start for the movable parts).
@@ -135,8 +144,14 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   ao.beta_congestion = o.beta_congestion;
   ao.congestion = o.congestion;
   ao.focus = o.focus;
+  if (o.trace) {  // about 120 frames of the winning run
+    const std::uint64_t moves = std::max<std::uint64_t>(20'000, static_cast<std::uint64_t>(o.effort * 4000.0 * r.movable));
+    ao.trace_every = std::max<std::uint64_t>(1, moves / 120);
+  }
   if (r.movable > 0) {
     r.anneal = anneal(p, pl, ao);
+    for (const auto& x : r.anneal.trace) emit("annealing", x);
+    r.anneal.trace.clear();
     pl = r.anneal.pl;
   }
   stage("E annealing", t);
@@ -144,6 +159,7 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
     t = Clock::now();
     const LnsResult lr = lns_improve(p, pl, ao, o.lns_polish);
     pl = lr.pl;
+    emit("lns", pl);
     r.lns_tried = lr.tried;
     r.lns_improved = lr.improved;
     stage("E LNS polish", t);
@@ -152,6 +168,7 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   t = Clock::now();
   r.after = measure(p, pl, &input);
   r.legal = r.after.new_overlaps == 0 && r.after.new_outside == 0;
+  emit("placed", pl);
   stage("final check", t);
   r.seconds_total = since(t_start);
   return r;

@@ -88,6 +88,9 @@ struct LoopOptions {
   // Job wall-time stop (CLAUDE.md rule 5): checked between routes; when it returns true the loop stops and keeps
   // the best candidate so far. The first seed (the input) is always routed.
   std::function<bool()> out_of_time;
+  // Recording (video): called with a candidate's label whenever it becomes the incumbent. Re-placement stages
+  // reach o.place.trace as "<label>|<stage>".
+  std::function<void(const std::string& label)> on_incumbent;
 };
 
 struct LoopResult {

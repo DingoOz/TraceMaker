@@ -45,6 +45,7 @@ struct AnnealOptions {
   int lns_window = 6;           // parts per LNS window (≤ 12)
   int exact_window = 4;         // windows up to this size are repaired exactly (branch and bound)
   std::vector<int> focus;       // parts LNS windows are centred on (empty: any movable part)
+  std::uint64_t trace_every = 0;  // record the live state every this many steps (0 = off; video recording)
 };
 
 struct AnnealResult {
@@ -58,6 +59,7 @@ struct AnnealResult {
   std::int64_t overflow = 0;    // RUDY overflow of the result (nm; 0 when β = 0)
   std::uint64_t exchanges_tried = 0, exchanges_accepted = 0;
   std::uint64_t lns_tried = 0, lns_improved = 0;
+  std::vector<Placement> trace;  // the winning run's recorded states (trace_every > 0)
 };
 
 // `start` must be legal for every movable part.
