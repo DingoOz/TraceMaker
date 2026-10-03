@@ -11,6 +11,7 @@
 #include "place/legalize.hpp"
 #include "place/lower_bound.hpp"
 #include "place/placer.hpp"
+#include "place/routable.hpp"
 #include "place/wirelength.hpp"
 
 using namespace tmk;
@@ -289,4 +290,223 @@ TEST_CASE("extraction from a KiCad board", "[place][fixture]") {
   // The human placement is a valid input: the bound is below its HPWL.
   const Placement pl = Placement::initial(p);
   CHECK(hpwl_lower_bound(p, pl, RotationModel::Fixed) <= weighted_hpwl(p, pl));
+}
+
+// ---- M8: routability term, parallel tempering, LNS, exact windows, ECO, routability loop -----------------------
+
+namespace {
+
+bool all_legal(const Problem& p, const Placement& pl) {
+  const Violations v = check_all(p, pl);
+  return v.overlaps == 0 && v.outside == 0;
+}
+
+// A legal start: the random problem legalised.
+Placement legal_start(const Problem& p) {
+  Placement pl = Placement::initial(p);
+  legalise(p, pl, false);
+  return pl;
+}
+
+// A synthetic router: each net is one connection, routed when its HPWL is at most `limit`.
+RouteFn fake_router(const Problem& p, Coord limit, int* calls = nullptr) {
+  return [&p, limit, calls](const Placement& pl) {
+    if (calls) ++*calls;
+    RouteEval e;
+    e.ok = true;
+    for (std::size_t n = 0; n < p.nets.size(); ++n) {
+      if (p.nets[n].pins.size() < 2) continue;
+      ++e.connections;
+      if (net_hpwl(p, pl, static_cast<int>(n)) <= limit) {
+        ++e.routed;
+        continue;
+      }
+      RouteEval::Failure f;
+      f.net = p.nets[n].name;
+      f.part_a = p.pins[z(p.nets[n].pins[0])].part;
+      f.part_b = p.pins[z(p.nets[n].pins[1])].part;
+      f.a = pl.pin(p, p.nets[n].pins[0]);
+      f.b = pl.pin(p, p.nets[n].pins[1]);
+      e.failed.push_back(f);
+    }
+    return e;
+  };
+}
+
+}  // namespace
+
+TEST_CASE("RUDY map: capacity inside the outline, scaling, incremental demand equals the reference", "[place][m8]") {
+  Problem p = random_problem(40, 31, 30 * MM);
+  CongestionMap m = make_congestion_map(p);
+  std::int64_t cap = 0;
+  for (auto c : m.cap) cap += c;
+  CHECK(cap > 0);
+  const Placement pl = legal_start(p);
+  const auto d = rudy_demand(p, pl, m);
+  std::int64_t total = 0;
+  for (auto v : d) total += v;
+  CHECK(total > 0);
+  // Shrinking capacity can only raise the overflow.
+  const auto o0 = rudy_overflow(p, pl, m);
+  scale_bins(m, {{15 * MM, 15 * MM}}, 5 * MM, 0.1);
+  CHECK(rudy_overflow(p, pl, m) >= o0);
+  // The annealer's incremental cost with the routability term equals the from-scratch cost.
+  AnnealOptions o;
+  o.runs = 2;
+  o.threads = 2;
+  o.effort = 0.3;
+  o.refine = true;
+  o.beta_congestion = 2.0;
+  o.congestion = &m;
+  const AnnealResult r = anneal(p, pl, o);
+  CHECK(r.cost == anneal_cost(p, r.pl, o.alpha_cross_mm, o.beta_congestion, &m));
+  CHECK(r.overflow == rudy_overflow(p, r.pl, m));
+  CHECK(all_legal(p, r.pl));
+}
+
+TEST_CASE("parallel tempering: legal, exact cost, identical for any thread count", "[place][m8]") {
+  Problem p = random_problem(45, 41, 35 * MM);
+  const Placement start = legal_start(p);
+  AnnealOptions o;
+  o.runs = 4;
+  o.effort = 0.2;
+  o.tempering = true;
+  o.lns_rate = 0.01;
+  o.threads = 1;
+  const AnnealResult a = anneal(p, start, o);
+  o.threads = 4;
+  const AnnealResult b = anneal(p, start, o);
+  o.threads = 3;
+  const AnnealResult c = anneal(p, start, o);
+  CHECK(a.pl.pos == b.pl.pos);
+  CHECK(a.pl.rot == b.pl.rot);
+  CHECK(a.pl.pos == c.pl.pos);
+  CHECK(a.cost == b.cost);
+  CHECK(a.exchanges_tried > 0);
+  CHECK(a.exchanges_accepted == b.exchanges_accepted);
+  CHECK(a.lns_tried > 0);
+  CHECK(all_legal(p, a.pl));
+  CHECK(a.cost == anneal_cost(p, a.pl, o.alpha_cross_mm));
+  CHECK(a.cost <= anneal_cost(p, start, o.alpha_cross_mm));
+  // The whole pipeline with tempering is deterministic across thread counts too.
+  PlaceOptions po;
+  po.tempering = true;
+  po.runs = 4;
+  po.effort = 0.1;
+  po.lns_polish = 20;
+  po.threads = 1;
+  Placement x = Placement::initial(p), y = Placement::initial(p);
+  const PlaceReport rx = tmk::place::place(p, x, po);
+  po.threads = 4;
+  tmk::place::place(p, y, po);
+  CHECK(rx.legal);
+  CHECK(x.pos == y.pos);
+  CHECK(x.rot == y.rot);
+}
+
+TEST_CASE("LNS never worsens the cost and keeps the placement legal", "[place][m8]") {
+  for (std::uint64_t s = 1; s <= 3; ++s) {
+    Problem p = random_problem(40, 50 + s, 30 * MM);
+    const Placement start = legal_start(p);
+    CongestionMap m = make_congestion_map(p);
+    AnnealOptions o;
+    o.seed = s;
+    o.lns_window = 8;
+    o.exact_window = 3;
+    o.beta_congestion = s == 2 ? 1.0 : 0.0;
+    o.congestion = &m;
+    const LnsResult r = lns_improve(p, start, o, 60);
+    CHECK(r.tried == 60);
+    CHECK(r.cost_after <= r.cost_before);
+    CHECK(r.cost_before == anneal_cost(p, start, o.alpha_cross_mm, o.beta_congestion, &m));
+    CHECK(r.cost_after == anneal_cost(p, r.pl, o.alpha_cross_mm, o.beta_congestion, &m));
+    CHECK(all_legal(p, r.pl));
+    if (s == 1) CHECK(r.improved > 0);
+    // Deterministic.
+    const LnsResult r2 = lns_improve(p, start, o, 60);
+    CHECK(r2.pl.pos == r.pl.pos);
+  }
+}
+
+TEST_CASE("exact window: branch and bound equals full enumeration and never worsens", "[place][m8]") {
+  Problem p = random_problem(30, 61, 25 * MM);
+  const Placement start = legal_start(p);
+  AnnealOptions o;
+  int improved = 0;
+  for (int seed_part = 4; seed_part < 34; seed_part += 6) {
+    std::vector<int> w;
+    for (int i = seed_part; i < seed_part + 4 && z(i) < p.parts.size(); ++i) w.push_back(i);
+    Placement a = start, b = start;
+    const WindowResult ra = solve_window(p, a, w, o, true);
+    const WindowResult rb = solve_window(p, b, w, o, false);
+    CHECK(ra.proven);
+    CHECK(rb.proven);
+    CHECK(ra.cost_after == rb.cost_after);  // the bound only prunes, it never changes the optimum
+    CHECK(ra.leaves <= rb.leaves);
+    CHECK(ra.cost_after <= ra.cost_before);
+    CHECK(ra.cost_after == anneal_cost(p, a, o.alpha_cross_mm));
+    CHECK(all_legal(p, a));
+    // Parts outside the window do not move.
+    for (std::size_t i = 0; i < p.parts.size(); ++i)
+      if (std::find(w.begin(), w.end(), static_cast<int>(i)) == w.end()) CHECK(a.pos[i] == start.pos[i]);
+    improved += ra.improved ? 1 : 0;
+  }
+  CHECK(improved > 0);
+}
+
+TEST_CASE("ECO: only improving moves, locked parts never move, legal", "[place][m8]") {
+  Problem p = random_problem(35, 71, 30 * MM);
+  Placement start = legal_start(p);
+  // Lock a third of the movable parts (as a KiCad lock would).
+  std::vector<int> locked;
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (p.parts[i].movable && i % 3 == 0) {
+      p.parts[i].movable = false;
+      locked.push_back(static_cast<int>(i));
+    }
+  int calls = 0;
+  const RouteFn route = fake_router(p, 12 * MM, &calls);
+  const RouteEval e0 = route(start);
+  REQUIRE(e0.unrouted() > 0);
+  EcoOptions o;
+  o.rounds = 4;
+  o.candidates = 6;
+  const EcoResult r = eco_place(p, start, e0, o, route);
+  CHECK(r.eval.unrouted() <= e0.unrouted());
+  CHECK(r.committed == static_cast<int>(r.moves.size()));
+  if (r.committed > 0) CHECK(r.eval.unrouted() < e0.unrouted());
+  CHECK(r.routes <= o.rounds * o.candidates);
+  for (int i : locked) {
+    CHECK(r.pl.pos[z(i)] == start.pos[z(i)]);
+    CHECK(r.pl.rot[z(i)] == start.rot[z(i)]);
+  }
+  CHECK(all_legal(p, r.pl));
+  // The reported result is what the router says about the returned placement.
+  CHECK(route(r.pl).unrouted() == r.eval.unrouted());
+  // Deterministic.
+  const EcoResult r2 = eco_place(p, start, e0, o, route);
+  CHECK(r2.pl.pos == r.pl.pos);
+}
+
+TEST_CASE("routability loop: never worse than its best seed, locked parts fixed", "[place][m8]") {
+  Problem p = random_problem(30, 81, 30 * MM);
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (p.parts[i].movable && i % 4 == 0) p.parts[i].movable = false;
+  const Placement start = legal_start(p);
+  const RouteFn route = fake_router(p, 10 * MM);
+  LoopOptions o;
+  o.place.threads = 2;
+  o.place.runs = 2;
+  o.place.effort = 0.3;
+  o.rounds = 2;
+  o.eco_candidates = 3;
+  std::vector<Candidate> seeds{{"input", start, {}, 0}};
+  const LoopResult r = routability_loop(p, seeds, o, route);
+  REQUIRE(!r.tried.empty());
+  CHECK(r.best.eval.unrouted() <= r.tried.front().eval.unrouted());
+  for (const auto& t : r.tried) CHECK(t.eval.ok);
+  CHECK(all_legal(p, r.best.pl));
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (!p.parts[i].movable) CHECK(r.best.pl.pos[i] == start.pos[i]);
+  CHECK(route(r.best.pl).unrouted() == r.best.eval.unrouted());
 }
