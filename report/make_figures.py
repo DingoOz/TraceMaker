@@ -12,6 +12,7 @@ import math
 import os
 import pathlib
 import re
+import statistics
 import subprocess
 
 import matplotlib
@@ -27,7 +28,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 RES = ROOT / "bench/results"
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
 TM = ROOT / "build/release/src/app/tracemaker"
-FINAL = "final8"
+FINAL = "final9"
 
 # Reference categorical palette (dataviz skill, light mode), slots 1-3 validate all-pairs.
 C_TM, C_FR12, C_FR241 = "#2a78d6", "#eb6834", "#1baf7a"
@@ -380,6 +381,11 @@ def fig_before_after(name, tier):
 
 
 def main():
+    if os.environ.get("QUALITY_ONLY"):
+        fig_quality_clean()
+        fig_quality_ratios()
+        fig_quality_time()
+        return
     fig_tiers()
     fig_head_to_head()
     fig_progress()
@@ -397,6 +403,103 @@ def main():
     cx, cy = fps.get("U2", (None, None))
     if cx is not None:
         fig_board("motor-3xdrv8833-hw_ver1", "B", "closeup.pdf", 3.1, 3.1, crop=(cx - 7, cy - 7, cx + 7, cy + 7))
+
+
+
+# --------------------------------------------------------------------------------------------------------------
+# Held-out quality benchmark (bench/quality_bench.py)
+QRUN = os.environ.get("QUALITY_RUN", "quality-1")
+QLABELS = [("TraceMaker", C_TM), ("Freerouting 2.5.0-RC12", C_FR12), ("Freerouting 1.9.0", "#4a3aa7")]
+
+
+def quality_rows():
+    p = RES / QRUN / "quality.jsonl"
+    rows = [json.loads(line) for line in p.read_text().splitlines() if line.strip()]
+    return [r for r in rows if "runs" in r]
+
+
+def run_of(row, label):
+    return next((x for x in row["runs"] if x["label"] == label), None)
+
+
+def fig_quality_clean():
+    rows = quality_rows()
+    tiers = sorted({r["tier"] for r in rows})
+    fig, ax = plt.subplots(figsize=(4.6, 2.5))
+    w = 0.26
+    for k, (lab, col) in enumerate(QLABELS):
+        xs, vals = [], []
+        for i, t in enumerate(tiers):
+            rs = [run_of(r, lab) for r in rows if r["tier"] == t]
+            rs = [x for x in rs if x and x.get("completion") is not None]
+            if not rs:
+                continue
+            xs.append(i + (k - 1) * (w + 0.02))
+            vals.append(100 * sum(1 for x in rs if x.get("clean")) / len(rs))
+        ax.bar(xs, vals, w, color=col, label=lab.replace("Freerouting", "FR"), edgecolor="white", linewidth=0.8)
+        for x, v in zip(xs, vals):
+            ax.text(x, v + 1.5, f"{v:.0f}", ha="center", va="bottom", fontsize=6.5, color=INK2)
+    n = {t: sum(1 for r in rows if r["tier"] == t) for t in tiers}
+    ax.set_xticks(range(len(tiers)), [f"Tier {t}\n({n[t]} boards)" for t in tiers])
+    ax.set_ylabel("Clean in KiCad's DRC (%)")
+    ax.set_ylim(0, 112)
+    ax.grid(axis="x", visible=False)
+    ax.legend(frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, 1.16))
+    save(fig, "quality_clean.pdf")
+
+
+def fig_quality_ratios():
+    rows = quality_rows()
+    metrics = [("length_mm", "Track length"), ("vias", "Vias"), ("bends", "Bends")]
+    others = [lab for lab, _ in QLABELS[1:]]
+    fig, axes = plt.subplots(1, len(others), figsize=(6.4, 2.4), sharey=True)
+    for ax, other in zip(axes, others):
+        data = []
+        for key, _ in metrics:
+            v = []
+            for r in rows:
+                a, b = run_of(r, "TraceMaker"), run_of(r, other)
+                if a and b and a.get("completion") == 1.0 and b.get("completion") == 1.0 and b.get(key):
+                    v.append(a[key] / b[key])
+            data.append(v)
+        for i, v in enumerate(data):
+            if not v:
+                continue
+            v = sorted(v)
+            jit = [(j / max(len(v) - 1, 1) - 0.5) * 0.45 for j in range(len(v))]
+            ax.scatter([i + x for x in jit], v, s=9, color=C_TM, alpha=0.75, edgecolor="white", linewidth=0.3, zorder=3)
+            med = statistics.median(v)
+            ax.plot([i - 0.3, i + 0.3], [med, med], color=INK, lw=1.3, zorder=4)
+            ax.text(i + 0.33, med, f"{med:.2f}", va="center", fontsize=6.5, color=INK)
+        ax.axhline(1.0, color=INK2, lw=0.8, ls="--")
+        ax.set_xticks(range(len(metrics)), [m[1] for m in metrics])
+        ax.set_yscale("log")
+        ax.set_title(f"TraceMaker / {other.replace('Freerouting', 'FR')}", fontsize=8)
+        ax.grid(axis="x", visible=False)
+        n = len(data[0])
+        ax.text(0.02, 0.02, f"{n} boards both complete", transform=ax.transAxes, fontsize=6.5, color=INK2)
+    axes[0].set_ylabel("Ratio (below 1: TraceMaker less)")
+    save(fig, "quality_ratios.pdf")
+
+
+def fig_quality_time():
+    rows = quality_rows()
+    fig, ax = plt.subplots(figsize=(4.6, 2.3))
+    for i, (lab, col) in enumerate(QLABELS):
+        v = sorted(x["wall_s"] for r in rows for x in [run_of(r, lab)] if x and x.get("wall_s"))
+        if not v:
+            continue
+        jit = [(j / max(len(v) - 1, 1) - 0.5) * 0.5 for j in range(len(v))]
+        ax.scatter([i + x for x in jit], v, s=9, color=col, alpha=0.8, edgecolor="white", linewidth=0.3)
+        med = statistics.median(v)
+        ax.plot([i - 0.32, i + 0.32], [med, med], color=INK, lw=1.3)
+        ax.text(i + 0.35, med, f"median {med:.0f} s", va="center", fontsize=6.5, color=INK2)
+    ax.set_yscale("log")
+    ax.set_xticks(range(len(QLABELS)), [l.replace("Freerouting", "FR") for l, _ in QLABELS])
+    ax.set_ylabel("Wall time per board (s)")
+    ax.set_xlim(-0.5, len(QLABELS) - 0.1)
+    ax.grid(axis="x", visible=False)
+    save(fig, "quality_time.pdf")
 
 
 if __name__ == "__main__":

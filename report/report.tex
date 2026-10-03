@@ -36,9 +36,12 @@
 that learns from its own failures, and writes the tracks and vias back into the \texttt{.kicad\_pcb} file
 without disturbing anything else. It also places components with an analytic placer checked by the router.
 Every result is judged by KiCad's own design-rule checker (\texttt{kicad-cli pcb drc}). On Freerouting's PCBench
-benchmark set TraceMaker routes 100\% of the sampled tier-A boards cleanly, 65.0\% of tier B, 56.7\% of tier C and
-50.0\% of tier D. Freerouting 2.5.0-RC12's published results on the same boards are 100\%, 50.0\%, 46.7\% and
-36.4\%. No board in the final runs has a DRC error introduced by the router.
+benchmark set TraceMaker routes 100\% of the sampled tier-A boards cleanly, 65.0\% of tier B, 60.0\% of tier C and
+54.5\% of tier D. Freerouting 2.5.0-RC12's published results on the same boards are 100\%, 50.0\%, 46.7\% and
+36.4\%. No board in the final runs has a DRC error introduced by the router. On 60 boards never used during
+development, with Freerouting 2.5.0-RC12 and 1.9.0 run on the same machine and judged by the same KiCad DRC,
+TraceMaker's results are clean on 73--78\% of boards against 3\% and 32\%, with 5\% shorter tracks and 28\% fewer
+bends than Freerouting 2.5, but more vias.
 \end{abstract}
 
 % ------------------------------------------------------------------------------------------------------------
@@ -241,12 +244,30 @@ classification decides the next rung.}
 \label{fig:ladder}
 \end{figure}
 
+\subsection{Clean-up after routing}
+\label{sec:cleanup}
+
+Search on a lattice finds legal paths, but not tidy ones: equal-cost staircases of short 45\textdegree\ steps, and vias
+placed where a slightly longer single-layer route existed. Once routing is done, TraceMaker therefore cleans up,
+much as Freerouting's optimizer does:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Via-saving re-routes.} Connections that use vias are taken out one at a time, most vias first, and
+  routed again with vias made ten times dearer and other connections' copper as a hard obstacle. The new route is kept
+  only if it is cheaper by track length plus 2\,mm per via; otherwise the old copper is restored exactly. Rounds
+  repeat while connections improve and search budget remains.
+  \item \textbf{Path smoothing (``pull tight'').} Within each connection, runs of same-layer, same-width segments are
+  replaced by the fewest octilinear segments that the exact rule check accepts, keeping pads and vias where they
+  are. This step is pure geometry, cheap and deterministic, so it always runs.
+\end{enumerate}
+Every new segment passes the same exact check as during routing, so clean-up cannot introduce a DRC error.
+
 \subsection{Parallel portfolio and determinism}
 
 Different strategies suit different boards: short connections first or long first, cheap or expensive vias,
 exact bend tracking or fast bends, and on large boards a lattice of double pitch. TraceMaker runs a portfolio of
 eight such variants in parallel threads and keeps the best result (most connections, then fewest vias, then
-shortest copper). When one variant routes everything the others stop.
+shortest copper). When one variant has routed everything after time $T$, the others may continue until $2T + 5$\,s, so
+a cleaner complete result can still win.
 
 Runs can be made fully deterministic with a work budget (\texttt{--work}, counted in A* expansions) instead of a
 time limit: random choices use a counter-based Philox generator keyed by (seed, stage, item), hash containers are
@@ -311,7 +332,7 @@ routes the open board through KiCad's IPC API and adds the result in one undoabl
 
 \subsection{Clean pass by tier}
 
-Figure~\ref{fig:tiers} and Table~\ref{tab:tiers} give the final run (\texttt{final8}). TraceMaker matches
+Figure~\ref{fig:tiers} and Table~\ref{tab:tiers} give the final run (\texttt{final9}, with the clean-up stage). TraceMaker matches
 Freerouting 2.5.0-RC12 on the routine tier-A boards and is ahead on the harder tiers. No board has a
 router-introduced DRC error.
 
@@ -332,8 +353,8 @@ Tier & Boards & TraceMaker & FR 2.5.0-RC12 & FR 2.4.1 & Router errors \\
 \midrule
 A (routine 2-layer)  & 40 & \textbf{100\%}  & 100\%  & 87.5\% & 0 \\
 B (2--4 layer)       & 40 & \textbf{65.0\%} & 50.0\% & 12.5\% & 0 \\
-C (complex)          & 30 & \textbf{56.7\%} & 46.7\% & 16.7\% & 0 \\
-D (hardest)          & 22 & \textbf{50.0\%} & 36.4\% & 0.0\%  & 0 \\
+C (complex)          & 30 & \textbf{60.0\%} & 46.7\% & 16.7\% & 0 \\
+D (hardest)          & 22 & \textbf{54.5\%} & 36.4\% & 0.0\%  & 0 \\
 \bottomrule
 \end{tabular}
 \caption{Final benchmark run. Samples: 40 of 453 tier-A boards, 40 of 560 tier-B, 30 of 122 tier-C and all 22
@@ -390,7 +411,8 @@ that are not clean miss only a few connections, and mean completion is above 95\
   hardware, so the comparison is indicative only; TraceMaker used eight threads of a 56-core server.}
 \end{figure}
 
-On tier A the median TraceMaker routing time is 0.9\,s per board (1.7\,s including file input and output), and
+On tier A the median TraceMaker routing time is 2.5\,s per board (5.9\,s including file input and output; the
+clean-up stage and the grace period for other portfolio variants added about 2\,s), and
 every board finished faster than Freerouting's published time (Figure~\ref{fig:time}).
 
 \subsection{Routed boards}
@@ -403,7 +425,7 @@ The four-layer high-voltage switching board (604 connections) uses the inner lay
   \centering
   \begin{subfigure}[t]{0.48\textwidth}
     \centering\includegraphics[width=\textwidth]{board_a.pdf}
-    \caption{\texttt{Hangul-Clock} (tier A): 209 connections, 6\,s.}
+    \caption{\texttt{Hangul-Clock} (tier A): 209 connections, 18\,s.}
   \end{subfigure}\hfill
   \begin{subfigure}[t]{0.48\textwidth}
     \centering\includegraphics[width=\textwidth]{board_c.pdf}
@@ -438,6 +460,78 @@ but left 13 boards fully routed instead of 15: denser packing can block routing,
   \label{fig:placement}
 \end{figure}
 
+
+\subsection{Quality benchmark on held-out boards}
+\label{sec:quality}
+
+The tier results above come from boards that were used while TraceMaker was developed, and compare against
+Freerouting's published numbers. To remove both weaknesses, 60 PCBench boards that never appeared in any development
+run (20 each from tiers A, B and C, fixed random seed) were routed by TraceMaker, Freerouting 2.5.0-RC12 and
+Freerouting 1.9.0 on the same machine. Freerouting used its published settings (one thread, 500 passes, fanout and
+optimizer on, 30-minute limit) on the fixture's Specctra file, and its result was imported into the KiCad board.
+Every result was judged by KiCad's DRC and measured by the same quality script (\texttt{bench/quality.py}); the
+human-routed originals were measured as a reference.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Router & KiCad clean & Connected & Completion & Router errors & Median time \\
+\midrule
+TraceMaker & \textbf{73\%} & 73\% & 98.3\% & \textbf{0} & 38\,s \\
+Freerouting 2.5.0-RC12 & 3\% & 78\% & 97.4\% & 58 & 24\,s \\
+Freerouting 1.9.0 & 32\% & 66\% & 96.8\% & 34 & 191\,s \\
+Human original & 3\% & 77\% & 98.0\% & 58 & -- \\
+\bottomrule
+\end{tabular}
+\caption{Held-out quality benchmark, 60 boards (\texttt{quality-3}). Three TraceMaker runs of the same boards
+gave 72--78\% clean, so differences of a few points are within run-to-run variation. ``Router errors'': boards with
+router-introduced KiCad DRC errors; TraceMaker includes the clean-up stage. Freerouting 1.9.0 failed to
+produce a result on one board.}
+\label{tab:quality}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[t]{0.52\textwidth}
+    \centering\includegraphics[width=\textwidth]{quality_clean.pdf}
+    \caption{Clean in KiCad's DRC, by tier.}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.46\textwidth}
+    \centering\includegraphics[width=\textwidth]{quality_time.pdf}
+    \caption{Wall time per board (recorded, not optimised for).}
+  \end{subfigure}
+  \caption{Held-out boards: correctness and time.}
+  \label{fig:qclean}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{quality_ratios.pdf}
+  \caption{Layout quality on boards that both routers fully connected: TraceMaker's value divided by Freerouting's,
+  one dot per board; the bar is the median.}
+  \label{fig:qratios}
+\end{figure}
+
+\noindent What the held-out benchmark shows:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Correctness is TraceMaker's clearest advantage.} No TraceMaker result had a router-introduced KiCad
+  error. Freerouting connects about as many boards, but almost none of its results pass KiCad's DRC. On 38 of the 60
+  boards Freerouting 2.5's only errors are board-edge clearance or tracks below the minimum width, rules that KiCad's
+  Specctra export does not pass on; both Freerouting versions also had genuine clearance errors on 9--10 boards and
+  shorts on 3--4.
+  \item \textbf{Connection rate is about equal.} TraceMaker fully connected 73--78\% of boards across runs,
+  Freerouting 2.5 78\% and Freerouting 1.9 66\%.
+  \item \textbf{Layout quality is mixed.} Against Freerouting 2.5, TraceMaker's tracks are 5\% shorter and it has 28\%
+  fewer bends, but 43\% more vias (medians over 38 boards both completed). Against Freerouting 1.9 its tracks are 4\%
+  shorter with 22\% fewer bends, but 2.2 times the vias. The clean-up stage cut the via ratio from 2.15 to 1.43 and the
+  bend ratio from 1.20 to 0.72 against Freerouting 2.5.
+  \item \textbf{Acute angles:} TraceMaker had none outside pad copper on any board; Freerouting 2.5 had 9 and
+  Freerouting 1.9 had 7 in total.
+  \item \textbf{The held-out set found two real bugs.} Text drawn on a solder-mask layer opens the mask; routing under
+  it caused bridges on two boards before the fix.
+\end{itemize}
 
 \subsection{Head to head on one board}
 \label{sec:h2h-board}
@@ -480,15 +574,14 @@ The human original is shown for reference: it does not pass the board's own rule
   \item \textbf{All three routers connect everything; only TraceMaker passes KiCad's DRC.} Freerouting 2.5.0-RC12 leaves
   three hole-clearance and four board-edge-clearance errors, and Freerouting 1.9.0 seven board-edge-clearance errors.
   Both report their own result clean: the Specctra file they route from does not carry all of KiCad's rules.
-  \item \textbf{TraceMaker uses the least copper.} Its tracks are 5\% shorter than Freerouting 2.5's, 7\% shorter
-  than Freerouting 1.9's and 19\% shorter than the human routing.
-  \item \textbf{Freerouting's layouts are tidier.} Freerouting 1.9 uses a quarter of TraceMaker's vias and about half
-  its bends; Freerouting 2.5 sits in between. TraceMaker joins 34 track pairs at acute angles at pad centres, where
-  the pad's copper fills the angle; it has no acute angle outside a pad, the kind that traps etchant
-  (Freerouting 1.9 has one, the human routing nine). In some runs TraceMaker also narrows tracks below the design
-  width to pass tight spots (0 to 65\,mm on this board, depending on the run). Freerouting runs an optimizer after
-  routing; TraceMaker has no clean-up stage yet (Section~\ref{sec:limits}).
-  \item \textbf{Speed:} TraceMaker 41\,s with eight threads, Freerouting 2.5 39\,s and Freerouting 1.9 394\,s, each
+  \item \textbf{TraceMaker uses the least copper and the fewest bends.} Its tracks are 4\% shorter than Freerouting
+  2.5's, 6\% shorter than Freerouting 1.9's and 18\% shorter than the human routing, with 594 bends against 723 and 610.
+  \item \textbf{Freerouting uses fewer vias.} TraceMaker uses 59 vias, Freerouting 2.5 42 and Freerouting 1.9 23. Before
+  the clean-up stage (Section~\ref{sec:cleanup}) TraceMaker used 90 vias and about 1,100 bends on this board.
+  TraceMaker joins 20 track pairs at acute angles at pad centres, where the pad's copper fills the angle, and has none
+  outside a pad (Freerouting 1.9 has one, the human routing nine). It narrows 97\,mm of track below the design width
+  to pass tight spots.
+  \item \textbf{Speed:} TraceMaker 78\,s with eight threads, Freerouting 2.5 39\,s and Freerouting 1.9 394\,s, each
   with one thread.
 \end{itemize}
 
@@ -504,12 +597,12 @@ The human original is shown for reference: it does not pass the board's own rule
   mask bridges. On the PCIe adapter board KiCad flags any track leaving the fingers, and the human-routed original
   has 16 such bridges itself. Freerouting's published ``clean'' counts only clearance violations and unrouted
   connections, so on these boards TraceMaker is judged more strictly.
-  \item \textbf{No clean-up stage.} TraceMaker does not yet straighten, merge or re-route finished connections, so
-  it uses more vias and bends than Freerouting, joins tracks at acute angles at pad centres and can leave narrowed tracks
-  (Section~\ref{sec:h2h-board}).
-  \item \textbf{The Freerouting comparison uses published numbers} for the tier statistics. Those runs had up to
-  30 minutes per board, and their ``clean'' is judged by Freerouting's own DRC, which misses rules that KiCad
-  enforces. A same-machine, KiCad-judged comparison across many boards is the next benchmark.
+  \item \textbf{More vias than Freerouting.} Even after clean-up TraceMaker uses about 1.4 times Freerouting 2.5's vias
+  and 2.2 times Freerouting 1.9's (median, held-out boards), and it narrows some tracks below the design width.
+  Layer-direction preferences and a via-minimising global stage are the next levers.
+  \item \textbf{The tier statistics use Freerouting's published numbers,} which allowed up to 30 minutes per board and
+  are judged by Freerouting's own DRC. The held-out quality benchmark (Section~\ref{sec:quality}) runs both
+  Freerouting versions locally and judges them with KiCad, but covers 60 boards; tier D has no unused boards left.
   \item \textbf{Copper text} is modelled by generous estimated boxes rather than exact glyph outlines.
   \item \textbf{Placement} does not yet have a routability term inside the annealer, side flipping or
   decoupling-capacitor grouping.
