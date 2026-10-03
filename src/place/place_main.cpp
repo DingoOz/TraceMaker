@@ -99,9 +99,7 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
     place::RouteEval e;
     io::LoadedBoard lb = io::read_board_file(in);
     apply(lb, p, pl, seed);
-    // Re-parse the written text: the board model must be exactly what the saved file gives (reading the edited
-    // document tree directly gave different routing results on Microdox: 3 vs 0 unrouted).
-    const model::Board b = io::read_board(sexpr::Document::parse(lb.doc.write()));
+    const model::Board b = io::read_board(lb.doc);  // applies the pending edits (same board as the saved file)
     route::RouterOptions ro;
     ro.work_budget = work;
     ro.time_limit_s = 600;  // safety net only; the work budget decides

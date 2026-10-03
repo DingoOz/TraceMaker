@@ -535,7 +535,16 @@ class Reader {
 
 }  // namespace
 
-model::Board read_board(const sexpr::Document& doc) { return Reader(doc).run(); }
+model::Board read_board(const sexpr::Document& doc) {
+  // Edits are text replacements applied by write(); the parsed tree still holds the original text. Reading an
+  // edited document must give the edited board, so parse the written text (found by the placer: reading an
+  // edited tree returned the board before the edits).
+  if (doc.modified()) {
+    const sexpr::Document fresh = sexpr::Document::parse(doc.write());
+    return Reader(fresh).run();
+  }
+  return Reader(doc).run();
+}
 
 LoadedBoard read_board_file(const std::string& path) {
   LoadedBoard lb{sexpr::Document::load(path), {}};

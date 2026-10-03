@@ -9,6 +9,7 @@
 #include <map>
 #include <nlohmann/json.hpp>
 
+#include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 
 namespace fs = std::filesystem;
@@ -163,4 +164,22 @@ TEST_CASE("board reader matches KiCad's own model", "[kicad][io]") {
     CHECK(board_zones == t["zones"].size());
   }
   if (!ran) SKIP("fixtures missing: run scripts/fetch_fixtures.sh");
+}
+
+TEST_CASE("reading an edited document gives the edited board", "[kicad][io]") {
+  const fs::path f = src_dir() / "bench/data/kicad/demos/pic_programmer/pic_programmer.kicad_pcb";
+  if (!fs::exists(f)) SKIP("fixture missing");
+  auto lb = tmk::io::read_board_file(f.string());
+  REQUIRE(!lb.board.footprints.empty());
+  const auto& fp0 = lb.board.footprints.front();
+  const tmk::model::Point moved{fp0.pos.x + 1'000'000, fp0.pos.y + 2'000'000};
+  tmk::io::BoardEditor ed(lb);
+  ed.move_footprint(0, moved, fp0.angle);
+  REQUIRE(lb.doc.modified());
+  const auto from_doc = tmk::io::read_board(lb.doc);
+  const auto from_text = tmk::io::read_board(tmk::sexpr::Document::parse(lb.doc.write()));
+  CHECK(from_doc.footprints.front().pos == moved);
+  CHECK(from_doc.footprints.front().pos == from_text.footprints.front().pos);
+  REQUIRE(from_doc.pads.size() == from_text.pads.size());
+  for (std::size_t i = 0; i < from_doc.pads.size(); ++i) CHECK(from_doc.pads[i].pos == from_text.pads[i].pos);
 }
