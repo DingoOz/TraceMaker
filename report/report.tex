@@ -560,6 +560,39 @@ produce a result on one board.}
   it caused bridges on two boards before the fix.
 \end{itemize}
 
+\paragraph{More held-out boards.} Two further sets were run the same way after the first: 30 more tier-C boards
+never used in development, and the DAC 2020 PCB benchmarks (10 boards that have Specctra files; the authors
+published them as layout benchmarks, with their human routing, which was stripped for the test).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Set & Router & KiCad clean & Connected & Completion & Router errors \\
+\midrule
+Tier C, 30 more & TraceMaker & \textbf{43\%} & 43\% & 96.5\% & \textbf{0} \\
+ & Freerouting 2.5.0-RC12 & 0\% & 57\% & 95.5\% & 30 \\
+ & Freerouting 1.9.0 & 21\% & 41\% & 94.9\% & 17 \\
+ & Human original & 13\% & 97\% & 100\% & 26 \\
+\midrule
+DAC 2020, 10 & TraceMaker & \textbf{60\%} & 60\% & 96.7\% & \textbf{0} \\
+ & Freerouting 2.5.0-RC12 & 10\% & 80\% & 98.9\% & 9 \\
+ & Freerouting 1.9.0 & 20\% & 50\% & 93.8\% & 5 \\
+ & Human original & 60\% & 100\% & 100\% & 4 \\
+\bottomrule
+\end{tabular}
+\caption{Further held-out sets. ``Router errors'': boards with router-introduced KiCad DRC errors (for the human
+original: errors in the original design). On boards both routers completed, TraceMaker's tracks were 7\% shorter
+than Freerouting 2.5's with 25--31\% fewer bends, but 1.5--2 times the vias.}
+\label{tab:quality2}
+\end{table}
+
+\noindent Freerouting 2.5 fully connects more of these boards than TraceMaker, but almost none of its results pass
+KiCad's DRC; TraceMaker's results that connect everything are clean. The DAC 2020 run also found a TraceMaker bug:
+solder-mask openings drawn by a footprint over its own pads were treated as walls, which left two boards at 37\% and
+60\% completion; after the fix both routed completely and clean.
+
 \subsection{Head to head on one board}
 \label{sec:h2h-board}
 
