@@ -1,4 +1,5 @@
 #include "route/router.hpp"
+#include "route/global_router.hpp"
 
 #include <algorithm>
 #include <bit>
@@ -432,7 +433,13 @@ struct Router::Impl {
     }
     const int st = cell_state[idx];
     if (st == 2) return -1;
-    const std::int64_t hc = hist_cost(layer, gx, gy);
+    std::int64_t hc = hist_cost(layer, gx, gy);
+    if (corr) {  // soft guidance: leaving the global corridor (or its layer) costs half a pitch per lattice step
+      const Point p = at(gx, gy);
+      const int tx = std::clamp(global.tile_of_x(p.x), 0, global.tiles_x - 1), ty = std::clamp(global.tile_of_y(p.y), 0, global.tiles_y - 1);
+      if (!(*corr)[(static_cast<std::size_t>(layer) * static_cast<std::size_t>(global.tiles_y) + static_cast<std::size_t>(ty)) * static_cast<std::size_t>(global.tiles_x) + static_cast<std::size_t>(tx)])
+        hc += corridor_pen;
+    }
     if (st == 1) return static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) + hc * 4;
     if (st == 3) return 3 * pitch + hc;
     return hc;
@@ -982,6 +989,9 @@ struct Router::Impl {
   // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
   // signature hashes the routed copper inside the window, so any relevant change re-enables the attempt.
   std::unordered_map<std::uint64_t, std::uint8_t> nogoods;
+  GlobalResult global;               // corridors from the global router (empty when off)
+  const std::vector<std::uint8_t>* corr = nullptr;  // corridor of the connection being searched
+  Coord corridor_pen = 0;            // extra cost per lattice step outside the corridor
   bool fields_off = false;
   double via_cost_mult = 1.0;   // raised by the clean-up pass
   bool bypass_nogoods = false;  // clean-up re-routes are judged on their own  // set when GPU fields cost too much wall-clock time (see search)
@@ -1012,7 +1022,9 @@ struct Router::Impl {
       why = "skipped: identical earlier attempt failed (nogood)";
       return false;
     }
+    corr = (!global.corridor.empty() && current >= 0 && static_cast<std::size_t>(current) < global.corridor.size()) ? &global.corridor[static_cast<std::size_t>(current)] : nullptr;
     const bool ok = search_and_commit_inner(c);
+    corr = nullptr;
     if (!ok && !bypass_nogoods) nogoods[ng] = 1;
     return ok;
   }
@@ -1410,6 +1422,34 @@ struct Router::Impl {
     drc::UnionFind uf(obs->copper().items.size());
     for (std::size_t i = 0; i < con.root.size(); ++i) uf.unite(static_cast<int>(i), con.root[i]);
     const auto conns = plan(uf);
+    if (opt.global_route) {
+      std::vector<GlobalNet> gn;
+      for (const auto& c : conns) {
+        GlobalNet g;
+        g.a = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
+        g.layers_a = b.pads[static_cast<std::size_t>(c.pad_a)].copper;
+        if (c.pad_b >= 0) {
+          g.b = b.pads[static_cast<std::size_t>(c.pad_b)].pos;
+          g.layers_b = b.pads[static_cast<std::size_t>(c.pad_b)].copper;
+        } else {
+          g.b = g.a;
+          g.layers_b = g.layers_a;
+        }
+        g.half_width = class_width(c.net) / 2;
+        gn.push_back(g);
+      }
+      GlobalOptions go;
+      Coord wc = 1'000'000'000;
+      for (const auto& cl : rules.classes) wc = std::min(wc, std::max(cl.track_width, rules.minimums.track_width) + std::max(cl.clearance, rules.minimums.clearance));
+      go.pitch = wc;
+      go.via_cost_tiles = 2.0;
+      global = global_route(*obs, geom::Box{lat.x0, lat.y0, lat.x1, lat.y1}, nl, gn, go);
+      const char* cp = std::getenv("TM_CORRIDOR_PEN");  // experiment knob (pitches per step)
+      corridor_pen = static_cast<Coord>((cp ? std::atof(cp) : 2.0) * static_cast<double>(pitch));
+      if (tdbg)
+        std::fprintf(stderr, "[%.2f s] global routing: %d x %d x %d tiles of %.2f mm, %d overflowed edges\n", elapsed(), global.tiles_x, global.tiles_y,
+                     global.layers, nm_to_mm(global.tile), global.overflow_edges);
+    }
     if (tdbg) std::fprintf(stderr, "[%.2f s] plan done: %zu connections\n", elapsed(), conns.size());
     res.connections = static_cast<int>(conns.size());
     for (const auto& c : conns) {

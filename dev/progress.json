@@ -314,6 +314,14 @@
     {
      "text": "Adaptive GPU-field cut-off under GPU contention (wall-clock mode)",
      "done": true
+    },
+    {
+     "text": "CPU global router v1 (tile graph, capacities, negotiated congestion, soft corridors): experimental, no gain yet",
+     "done": true
+    },
+    {
+     "text": "Global router v2: Steiner topology, via capacity, layer assignment, corridor-restricted windows",
+     "done": false
     }
    ]
   },

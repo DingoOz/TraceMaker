@@ -42,3 +42,5 @@
 {"ts": "2026-10-03T02:23:39+00:00", "kind": "build", "text": "Fixed: text on solder-mask layers now opens the mask (found on held-out boards FRM16 and MySensors IR Blaster)"}
 {"ts": "2026-10-03T02:23:39+00:00", "kind": "test", "text": "final9 PCBench with clean-up: A 100%, B 65.0%, C 60.0%, D 54.5% clean (FR RC12 published 100/50.0/46.7/36.4%); zero router-introduced DRC errors"}
 {"ts": "2026-10-03T03:09:56+00:00", "kind": "milestone", "text": "Comparison video: TraceMaker vs Freerouting 2.5 and 1.9 routing AmpOne (4x real time, KiCad-judged metrics) - on the dashboard and in report/compare_AmpOne.mp4"}
+{"ts": "2026-10-03T05:11:57+00:00", "kind": "note", "text": "M6 global routing v1 (CPU, soft corridors) built and measured: no gain yet on 3 boards; kept off by default (--global)"}
+{"ts": "2026-10-03T05:11:57+00:00", "kind": "build", "text": "Clean-up: region rip-up around vias added (small gain, e.g. AmpOne 59 -> 57 vias)"}

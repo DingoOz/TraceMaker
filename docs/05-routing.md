@@ -154,5 +154,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Zone (plane) targets; MST connection planning over existing copper clusters | Done | `plan`, `search` |
 | GPU cost-to-go fields as the heuristic (never used to prune) | Done | `gpu/field_cuda.cu`, `build_field` |
 | Portfolio of 8 variants in threads, early stop when one is complete, 2x pitch for two variants on large boards | Done | `route_portfolio` |
-| Escape planning (section 3), global routing (section 4), cleanup (section 8) | Not started | |
+| Global routing, first CPU version: tile graph (8 pitches), exact edge capacities, negotiated congestion, soft corridors (`--global`, off by default) | Experimental: no gain yet. On AmpOne, USBI2C01 and motor-3xdrv8833 (60 s, one variant) corridors shortened track a little but did not raise completion and sometimes added vias. Missing: Steiner topology, via capacity, layer assignment without via columns, corridor-restricted windows | `route/global_router.cpp` |
+| Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
+| Escape planning (section 3) | Not started | |
 | Diff pairs and length tuning | Not started | |
