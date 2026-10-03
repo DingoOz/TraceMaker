@@ -41,3 +41,4 @@
 {"ts": "2026-10-03T02:23:39+00:00", "kind": "milestone", "text": "Router clean-up stage: via-saving re-routes + path smoothing, via cost 3 mm. vs FR 2.5: vias ratio 2.15 -> 1.43, bends 1.20 -> 0.72, length 0.95"}
 {"ts": "2026-10-03T02:23:39+00:00", "kind": "build", "text": "Fixed: text on solder-mask layers now opens the mask (found on held-out boards FRM16 and MySensors IR Blaster)"}
 {"ts": "2026-10-03T02:23:39+00:00", "kind": "test", "text": "final9 PCBench with clean-up: A 100%, B 65.0%, C 60.0%, D 54.5% clean (FR RC12 published 100/50.0/46.7/36.4%); zero router-introduced DRC errors"}
+{"ts": "2026-10-03T03:09:56+00:00", "kind": "milestone", "text": "Comparison video: TraceMaker vs Freerouting 2.5 and 1.9 routing AmpOne (4x real time, KiCad-judged metrics) - on the dashboard and in report/compare_AmpOne.mp4"}

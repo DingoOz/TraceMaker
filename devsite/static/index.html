@@ -177,6 +177,7 @@ details.preset table { margin: 2px 0 10px; }
     <div class="col">
       <section class="panel"><h2>Latest code</h2><div id="code"></div></section>
       <section class="panel"><h2>Roadmap</h2><div id="milestones"></div></section>
+      <section class="panel"><h2>Comparison video</h2><div id="media"></div></section>
       <section class="panel"><h2>Quality benchmark (held-out boards)</h2><div id="quality"></div></section>
       <section class="panel"><h2>Benchmarks</h2><div id="bench"></div></section>
       <section class="panel"><h2>Code by module</h2><div id="modules"></div></section>
@@ -430,6 +431,20 @@ function renderQuality(s) {
     el("div", { class: "sub", style: "margin-top:8px", text: "Ratios are medians; below 1× means TraceMaker uses less. Freerouting runs from KiCad's Specctra export, which omits board-edge clearance and minimum track width, so many of its KiCad errors are of those two kinds." }));
 }
 
+let lastMedia = "";
+function renderMedia(s) {
+  const vids = s.media || [];
+  const key = vids.join(",");
+  if (key === lastMedia) return;  // do not restart a playing video on refresh
+  lastMedia = key;
+  if (!vids.length) { replace("media", el("div", { class: "empty", text: "No comparison video yet (report/VIDEO.md)." })); return; }
+  replace("media",
+    ...vids.map((v) => el("video", { src: "/media/" + v, controls: true, preload: "metadata", style: "width:100%;border-radius:8px;background:#000" })),
+    el("div", { class: "sub", style: "margin-top:8px" },
+      "TraceMaker (rendered from its event log) next to Freerouting 2.5 and 1.9 (their own GUIs), same board and machine, 4× real time. ",
+      el("a", { href: "/media/report.pdf", text: "Full report (PDF)", style: "color:var(--accent)" })));
+}
+
 function renderEnv(s) {
   const builds = s.builds.map((b) => `${b.preset}${b.binary ? " (" + ago(b.binary) + ")" : ""}`).join(", ") || "none";
   replace("env",
@@ -479,7 +494,7 @@ async function refresh() {
     const r = await fetch("/api/status", { cache: "no-store" });
     const s = await r.json();
     renderTiles(s); renderCode(s); renderMilestones(s); renderTests(s); renderGpus(s); renderActivity(s);
-    renderCommits(s); renderModules(s); renderQuality(s); renderBench(s); renderEnv(s);
+    renderCommits(s); renderModules(s); renderMedia(s); renderQuality(s); renderBench(s); renderEnv(s);
     last = Date.now();
   } catch (e) { /* keep the last good render */ }
 }

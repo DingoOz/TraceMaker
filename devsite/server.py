@@ -309,6 +309,7 @@ def status() -> dict:
         "docs": CACHE.get("docs", 10, docs),
         "benchmarks": CACHE.get("bench", 10, benchmarks),
         "quality": CACHE.get("quality", 10, quality_runs),
+        "media": sorted(f.name for f in (ROOT / "report").glob("compare_*.mp4")),
         "latest_code": CACHE.get("latest_code", 3, latest_code),
     }
 
@@ -334,8 +335,41 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, json.dumps(status()).encode(), "application/json")
         elif path in ("/", "/index.html"):
             self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
+        elif path.startswith("/media/"):
+            self._media(path[len("/media/"):])
         else:
             self._send(404, b"not found", "text/plain")
+
+    def _media(self, name: str) -> None:
+        """Read-only report media (comparison videos, the PDF report), with byte ranges so videos can seek."""
+        allowed = {f.name: f for f in (ROOT / "report").glob("compare_*.mp4")}
+        allowed["report.pdf"] = ROOT / "report" / "report.pdf"
+        f = allowed.get(name)
+        if f is None or not f.exists():
+            self._send(404, b"not found", "text/plain")
+            return
+        data = f.read_bytes()
+        ctype = "video/mp4" if name.endswith(".mp4") else "application/pdf"
+        rng = self.headers.get("Range", "")
+        if rng.startswith("bytes="):
+            a, _, b = rng[6:].partition("-")
+            start = int(a) if a else 0
+            end = min(int(b) if b else len(data) - 1, len(data) - 1)
+            part = data[start:end + 1]
+            self.send_response(206)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Range", f"bytes {start}-{end}/{len(data)}")
+            self.send_header("Content-Length", str(len(part)))
+            self.send_header("Accept-Ranges", "bytes")
+            self.end_headers()
+            self.wfile.write(part)
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Accept-Ranges", "bytes")
+        self.end_headers()
+        self.wfile.write(data)
 
 
 def main() -> None:
