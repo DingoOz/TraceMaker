@@ -16,3 +16,14 @@ add_test(NAME kicad_drc_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/d
 set_tests_properties(kicad_drc_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1200)
 add_test(NAME record_replay COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/record_replay.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/replay)
 set_tests_properties(record_replay PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
+
+# Python bindings: read, route, DRC and emit-items through the `tracemaker` module (skips if it was not built).
+if(NOT Python_EXECUTABLE)
+  set(Python_EXECUTABLE python3)  # bindings disabled: the test runs only to report the skip
+endif()
+add_test(NAME python_bindings COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/bindings/test_bindings.py ${CMAKE_BINARY_DIR}/python $<TARGET_FILE:tracemaker>)
+set_tests_properties(python_bindings PROPERTIES SKIP_RETURN_CODE 77 LABELS "python;integration" TIMEOUT 600)
+
+# KiCad PCM package: build the archive and check its layout and metadata.
+add_test(NAME pcm_package COMMAND sh -c "python3 '${PROJECT_SOURCE_DIR}/scripts/make_pcm_package.py' --out '${CMAKE_BINARY_DIR}/pcm-test' && python3 '${PROJECT_SOURCE_DIR}/scripts/validate_pcm.py' '${CMAKE_BINARY_DIR}/pcm-test/tracemaker-${PROJECT_VERSION}.zip'")
+set_tests_properties(pcm_package PROPERTIES LABELS "kicad" TIMEOUT 120)

@@ -30,3 +30,11 @@ assert len(tracks) == len(items["tracks"]) and len(vias) == len(items["vias"])
 t0 = items["tracks"][0]
 assert tracks[0].start.x == t0["start"][0] and tracks[0].width == t0["width"]
 print(f"OK: {len(tracks)} tracks, {len(vias)} vias built")
+
+# TRACEMAKER_ARGS (CLI spelling) maps onto the Python module's keyword arguments.
+from tracemaker_route import route_kwargs  # noqa: E402
+
+kw = route_kwargs(["--time", "30", "--threads", "4", "--no-kb", "--no-gpu", "--view", "--work", "5000"])
+assert kw == {"time_s": 30.0, "threads": 4, "kb": False, "gpu": False, "view": True, "work": 5000}, kw
+assert route_kwargs([]) == {}
+print("OK: TRACEMAKER_ARGS mapping")
