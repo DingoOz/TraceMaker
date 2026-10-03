@@ -36,6 +36,8 @@ class RuleEngine {
   const model::NetClass& netclass(const CopperItem& it) const;
   // True if the two nets are the P/N (or +/-) halves of one differential pair.
   bool coupled_diff_pair(model::NetId a, model::NetId b) const;
+  // Length constraint (min, max) of the last custom rule whose condition matches a track of `net`, if any.
+  std::pair<std::optional<Coord>, std::optional<Coord>> length_constraint(model::NetId net) const;
   const std::vector<std::string>& warnings() const { return warnings_; }
 
  private:

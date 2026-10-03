@@ -354,6 +354,27 @@ std::optional<Coord> RuleEngine::custom_min(const char* type, const CopperItem* 
   return out;
 }
 
+std::pair<std::optional<Coord>, std::optional<Coord>> RuleEngine::length_constraint(model::NetId net) const {
+  std::pair<std::optional<Coord>, std::optional<Coord>> out;
+  CopperItem probe;
+  probe.kind = ItemKind::Track;
+  probe.net = net;
+  probe.layers = ~model::LayerMask{0};
+  for (const auto& c : rules_) {
+    if (!c.valid) continue;
+    const model::Constraint* k = nullptr;
+    for (const auto& x : c.rule->constraints)
+      if (x.type == "length") k = &x;
+    if (!k) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &probe, nullptr, -1};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = {k->min, k->max};  // later rules take precedence
+  }
+  return out;
+}
+
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   if (a == 0 || b == 0 || a == b) return false;
   if (static_cast<std::size_t>(a) < dp_partner_.size()) return dp_partner_[static_cast<std::size_t>(a)] == b;

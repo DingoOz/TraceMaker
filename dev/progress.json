@@ -557,7 +557,7 @@
   {
    "id": "M12",
    "title": "Advanced rules and arms",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Each feature gated by its own benchmark subset; no regressions",
    "deliverables": "Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models",
    "tasks": [
@@ -579,6 +579,18 @@
     },
     {
      "text": "learned ordering/congestion models",
+     "done": false
+    },
+    {
+     "text": "Length tuning: custom length rules read; trombone meanders until in range; KiCad-judged test",
+     "done": true
+    },
+    {
+     "text": "Differential pairs: coupled pair routing v1 (experimental, --diff-pairs; rarely succeeds without coupled escapes)",
+     "done": true
+    },
+    {
+     "text": "Skew tuning, blind/micro vias, gridless arm, learned models",
      "done": false
     }
    ]

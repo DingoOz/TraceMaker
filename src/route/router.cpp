@@ -1589,6 +1589,97 @@ struct Router::Impl {
     return improved;
   }
 
+  // Length tuning (design doc 05 §9 phase 3): nets with a custom `length` constraint that are routed too short get
+  // trombone meanders on their longest straight segments. Each candidate meander is checked exactly; the net never
+  // exceeds its maximum. Returns the number of nets brought into range.
+  int tune_lengths() {
+    int tuned = 0;
+    std::map<NetId, std::vector<int>> conns_of;
+    for (std::size_t ci = 0; ci < cs.size(); ++ci)
+      if (cs[ci].routed && !cs[ci].implicit && !cs[ci].items.empty()) conns_of[cs[ci].c.net].push_back(static_cast<int>(ci));
+    auto seg_len = [](const model::Track& t) { return std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y)); };
+    for (const auto& [net, list] : conns_of) {
+      const auto [mn, mx] = obs->rules().length_constraint(net);
+      if (!mn) continue;
+      double len = 0;
+      for (int ci : list)
+        for (int item : cs[static_cast<std::size_t>(ci)].items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          if (it.kind == drc::ItemKind::Track) len += seg_len(b.tracks[static_cast<std::size_t>(it.index)]);
+        }
+      const double target = mx ? (static_cast<double>(*mn) + static_cast<double>(*mx)) / 2 : static_cast<double>(*mn) * 1.005;
+      double deficit = target - len;
+      if (static_cast<double>(*mn) <= len) continue;
+      const Coord w = class_width(net), clr = std::max(netclass(net).clearance, rules.minimums.clearance);
+      const Coord p = std::max<Coord>(2 * w, w + clr) + 20'000;  // spacing between the meander's parallel runs
+      for (int round = 0; round < 50 && deficit > 1'000; ++round) {
+        // Longest track of the net first.
+        int best_ci = -1, best_item = -1;
+        double best_l = 0;
+        for (int ci : list)
+          for (int item : cs[static_cast<std::size_t>(ci)].items) {
+            const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+            if (it.kind != drc::ItemKind::Track) continue;
+            const double l = seg_len(b.tracks[static_cast<std::size_t>(it.index)]);
+            if (l > best_l && l > static_cast<double>(4 * p)) { best_l = l; best_ci = ci; best_item = item; }
+          }
+        if (best_item < 0) break;
+        const model::Track t = b.tracks[static_cast<std::size_t>(obs->copper().items[static_cast<std::size_t>(best_item)].index)];
+        const double ux = static_cast<double>(t.b.x - t.a.x) / best_l, uy = static_cast<double>(t.b.y - t.a.y) / best_l;
+        bool placed = false;
+        for (double h_mm : {1.5, 1.0, 0.6, 0.4}) {
+          const double h = h_mm * 1e6;
+          int k = static_cast<int>(std::floor((best_l - 2.0 * static_cast<double>(p)) / (2.0 * static_cast<double>(p))));
+          k = std::min(k, static_cast<int>(std::ceil(deficit / (2 * h))));
+          if (mx) k = std::min(k, static_cast<int>(std::floor((static_cast<double>(*mx) - len) / (2 * h))));
+          if (k <= 0) continue;
+          for (double side : {1.0, -1.0}) {
+            const double nx_ = -uy * side, ny_ = ux * side;
+            auto P = [&](double along, double up) {
+              return Point{t.a.x + static_cast<Coord>(std::llround(ux * along + nx_ * up)), t.a.y + static_cast<Coord>(std::llround(uy * along + ny_ * up))};
+            };
+            std::vector<Point> pts{t.a};
+            double s0 = (best_l - 2.0 * static_cast<double>(p) * k) / 2;
+            for (int i = 0; i < k; ++i) {
+              const double x = s0 + 2.0 * static_cast<double>(p) * i;
+              pts.push_back(P(x, 0));
+              pts.push_back(P(x, h));
+              pts.push_back(P(x + static_cast<double>(p), h));
+              pts.push_back(P(x + static_cast<double>(p), 0));
+            }
+            pts.push_back(t.b);
+            // Remove the old track, then check the new ones exactly (other copper is a hard obstacle).
+            remove_routed(best_item);
+            bool good = true;
+            for (std::size_t i = 0; i + 1 < pts.size() && good; ++i)
+              if (!(pts[i] == pts[i + 1]) && obs->segment_state(pts[i], pts[i + 1], t.layer, t.width, net, false, nullptr) != 0) good = false;
+            auto& items = cs[static_cast<std::size_t>(best_ci)].items;
+            items.erase(std::remove(items.begin(), items.end(), best_item), items.end());
+            if (!good) {  // put the original back
+              const int id = obs->add_track(static_cast<int>(obs->copper().items[static_cast<std::size_t>(best_item)].index), best_ci);
+              near_mark(id, +1);
+              items.push_back(id);
+              best_item = id;
+              continue;
+            }
+            if (opt.sink) emit("{\"type\":\"track_remove\",\"id\":" + std::to_string(obs->copper().items[static_cast<std::size_t>(best_item)].index) + "}");
+            std::vector<PairSeg> segs;
+            for (std::size_t i = 0; i + 1 < pts.size(); ++i) segs.push_back({pts[i], pts[i + 1], t.width});
+            commit_segments(best_ci, segs, t.layer);
+            len += 2 * h * k;
+            deficit -= 2 * h * k;
+            placed = true;
+            break;
+          }
+          if (placed) break;
+        }
+        if (!placed) break;
+      }
+      if (len >= static_cast<double>(*mn) && (!mx || len <= static_cast<double>(*mx))) ++tuned;
+    }
+    return tuned;
+  }
+
   int smooth_paths() {
     int changed = 0;
     auto octi = [](Point a, Point c) {
@@ -1888,6 +1979,7 @@ struct Router::Impl {
         res.optimized += n;
         if (n == 0) break;
       }
+      res.length_tuned = tune_lengths();
       snapshot();
       snapshot_unrouted();
     }

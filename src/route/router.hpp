@@ -69,7 +69,8 @@ struct RouteResult {
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
   int optimized = 0;
-  int pairs = 0;                // differential pairs routed coupled            // connections improved by the clean-up pass
+  int pairs = 0;
+  int length_tuned = 0;          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
