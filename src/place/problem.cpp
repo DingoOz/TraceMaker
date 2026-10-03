@@ -331,8 +331,14 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     }
   }
   for (const auto& h : cm.holes)
-    if (!h.plated && h.pad >= 0 && b.pads[z(h.pad)].footprint >= 0)
-      fp_copper[z(b.pads[z(h.pad)].footprint)].push_back(CopperShape{h.shape, all_layers, 0, hole_need});
+    if (!h.plated && h.pad >= 0 && b.pads[z(h.pad)].footprint >= 0) {
+      // KiCad's hole_clearance check uses the NPTH pad's (or its footprint's) local clearance override too: a
+      // mounting hole asking for 4.3 mm keeps every pad that far away.
+      const auto& pd = b.pads[z(h.pad)];
+      const auto& fp = b.footprints[z(pd.footprint)];
+      const Coord need = std::max({hole_need, pd.clearance, fp.clearance});
+      fp_copper[z(pd.footprint)].push_back(CopperShape{h.shape, all_layers, 0, need});
+    }
   for (const auto& t : b.texts) {
     const int l = b.copper_index(t.layer);
     if (l < 0 || t.hidden || t.text.empty()) continue;
