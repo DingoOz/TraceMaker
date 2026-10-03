@@ -22,6 +22,14 @@ struct PlaceOptions {
   double alpha_cross_mm = 2.0;
   double time_limit_s = 0;       // wall-time stop for the annealer (0 = none)
   bool verbose = false;
+  // M8 (doc 04 §3 E, G): see AnnealOptions.
+  bool tempering = false;        // parallel tempering over the runs instead of independent runs
+  double lns_rate = 0;           // share of annealing steps that are LNS windows
+  int lns_window = 6;
+  int lns_polish = 0;            // LNS windows run on the annealing result (deterministic polish; 0 = none)
+  double beta_congestion = 0;    // routability weight (0 = off)
+  const CongestionMap* congestion = nullptr;
+  std::vector<int> focus;        // LNS seed parts
 };
 
 struct Metrics {
@@ -51,6 +59,7 @@ struct PlaceReport {
   double legalise_mean_disp_mm = 0, legalise_max_disp_mm = 0;
   std::int64_t legal_start_whpwl = 0;  // weighted HPWL entering the annealer
   AnnealResult anneal;
+  std::uint64_t lns_tried = 0, lns_improved = 0;  // polish stage
   double seconds_total = 0;
   std::vector<std::pair<std::string, double>> stage_seconds;
   std::vector<std::string> notes, log;

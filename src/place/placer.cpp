@@ -129,11 +129,25 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   ao.alpha_cross_mm = o.alpha_cross_mm;
   ao.time_limit_s = o.time_limit_s;
   ao.refine = !full;
+  ao.tempering = o.tempering;
+  ao.lns_rate = o.lns_rate;
+  ao.lns_window = o.lns_window;
+  ao.beta_congestion = o.beta_congestion;
+  ao.congestion = o.congestion;
+  ao.focus = o.focus;
   if (r.movable > 0) {
     r.anneal = anneal(p, pl, ao);
     pl = r.anneal.pl;
   }
   stage("E annealing", t);
+  if (r.movable > 0 && o.lns_polish > 0) {
+    t = Clock::now();
+    const LnsResult lr = lns_improve(p, pl, ao, o.lns_polish);
+    pl = lr.pl;
+    r.lns_tried = lr.tried;
+    r.lns_improved = lr.improved;
+    stage("E LNS polish", t);
+  }
 
   t = Clock::now();
   r.after = measure(p, pl, &input);
@@ -166,13 +180,15 @@ nlohmann::json report_json(const Problem& p, const PlaceReport& r) {
                  {"quadratic_b2b_mm", r.quadratic_whpwl < 0 ? json(nullptr) : json(mm(r.quadratic_whpwl) / kSignalWeight)},
                  {"gap_final_over_lb_any", r.lb_any_rot > 0 ? static_cast<double>(r.after.whpwl) / static_cast<double>(r.lb_any_rot) : 0.0}};
   j["utilisation"] = {r.utilisation[0], r.utilisation[1]};
-  j["utilisation"] = {r.utilisation[0], r.utilisation[1]};
   j["global"] = {{"overflow_quadratic", r.overflow_quadratic}, {"overflow_spread", r.overflow_spread},
                  {"spread_iterations", r.spread_iterations},   {"rotation_changes", r.rotation_changes}};
   j["legalise"] = {{"placed", r.legalise_placed}, {"failed", r.legalise_failed}, {"mean_disp_mm", r.legalise_mean_disp_mm},
                    {"max_disp_mm", r.legalise_max_disp_mm}, {"weighted_hpwl_mm", mm(r.legal_start_whpwl) / kSignalWeight}};
   j["anneal"] = {{"best_run", r.anneal.best_run}, {"moves", r.anneal.moves}, {"accepted", r.anneal.accepted},
-                 {"rejected_illegal", r.anneal.illegal}, {"time_limited", r.anneal.time_limited}, {"run_costs", r.anneal.run_costs}};
+                 {"rejected_illegal", r.anneal.illegal}, {"time_limited", r.anneal.time_limited}, {"run_costs", r.anneal.run_costs},
+                 {"exchanges_tried", r.anneal.exchanges_tried}, {"exchanges_accepted", r.anneal.exchanges_accepted},
+                 {"lns_tried", r.anneal.lns_tried + r.lns_tried}, {"lns_improved", r.anneal.lns_improved + r.lns_improved},
+                 {"rudy_overflow_mm", mm(r.anneal.overflow)}};
   json st = json::object();
   for (const auto& [k, v] : r.stage_seconds) st[k] = v;
   j["seconds"] = st;

@@ -218,7 +218,8 @@ it needs a row in doc 12.*
 
 **Not implemented:** side flipping (parts keep their side; `BoardEditor` has no flip yet), the LP legaliser (L2),
 CP-SAT windows and Hungarian slot assignment (L3 beyond single-part rotation), decoupling/crystal proximity
-groups, RUDY/routability terms, the routability loop (G), GPU kernels and parallel tempering, ECO mode.
+groups, GPU kernels. (RUDY, the routability loop (G), parallel tempering, LNS, exact windows and ECO were added in
+M8: §8.)
 
 ### 7.2 Optimality levels actually reached
 
@@ -300,3 +301,111 @@ when the new placement leaves more connections unrouted. `--mode auto` runs refi
 fewest unrouted, then the shortest wirelength. On the 23 evaluation boards at N = 3M expansions it kept a new
 placement on 18 boards, total HPWL fell from 17,464 mm to 13,190 mm, and unrouted connections fell from 61 to 59;
 no board got worse (`bench/place_auto.py`).
+
+## 8. Implementation status (M8, first version — 2026-10-03)
+
+Code: `src/place/congestion.*` (RUDY map), `anneal_state.hpp` + `anneal.cpp` (incremental state), `tempering.cpp`
+(parallel tempering), `lns.cpp` (LNS and exact windows), `routable.*` (routability loop and ECO), `place_main.cpp`
+(modes). All CPU, deterministic for a seed at any thread count; no GPU code (the doc 07 GPU version of (E) remains
+open). Evaluation scripts: `bench/place_variants.py` (annealer variants, placement only), `bench/place_m8.py`
+(auto / routable / eco / full+eco with routing and KiCad DRC).
+
+```
+tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode routable --route-check 3000000 --route-threads 4 [--rounds 3]
+                 [--eco-candidates 4] [--loop-beta 1.0]
+tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode eco --route-check 3000000 [--eco-rounds 4] [--eco-candidates 5]
+tracemaker-place ... [--tempering] [--lns-rate R] [--lns-window K] [--lns-polish N] [--beta B]   # any mode
+```
+
+### 8.1 What is built
+
+| Stage | File | As built |
+|---|---|---|
+| (E) routability term | `congestion.cpp` | RUDY (Spindler & Johannes, DATE 2007) over a grid of ≤ 32 bins on the longer side (≥ 1 mm): each signal net spreads its HPWL uniformly over its pin box (widened to one bin), every pin consumes 0.5 track across its bin; capacity = layers × bin²/0.5 mm × 0.6 × fraction inside the outline. Cost β·Σ max(0, demand − capacity), integer nm; kept incrementally by the annealer (only bins of the moved nets and pins change) and checked against the from-scratch reference in a test. Power nets are excluded. |
+| (E) parallel tempering | `tempering.cpp` | `runs` replicas; geometric ladder that follows the annealing schedule (annealed replica exchange): refine 16× → 1× the annealing temperature, full √8× → 1/√8×. Sweeps of moves/200 (500–20 000) moves run in parallel; exchanges of neighbouring slots (even/odd alternation) are decided at a `std::barrier` from their own Philox stream; a slot keeps its tuned shift radius. Byte-identical boards for 1, 3 and 16 threads (test). |
+| (E) LNS | `lns.cpp` | Window = the k (2…`--lns-window`) movable parts nearest a seed part (or a focus part from the router). Windows ≤ 4 parts are solved exactly (below); larger ones greedily: largest part first, each to its cheapest legal candidate (own spot, any window part's spot, HPWL-median spot, a 5 × 5 lattice of 0.5 mm around it; four rotations). Kept only if the total cost strictly falls; LNS steps run only in the last 30 % of an annealing budget. |
+| (F) exact windows | `lns.cpp` | Branch and bound instead of CP-SAT (OR-Tools is not installed): candidates per part = own spot, the other window parts' spots, the HPWL-median spot, four rotations each; bound = Σ w·HPWL of the pins already fixed or assigned − the largest possible fall of the crossing and overflow terms. Exact over that candidate set (not over the continuous plane); a full-enumeration reference path gives identical optima (test). Leaf cap 200 000 standalone, 4 000 inside annealing (then not proven). |
+| (G) routability loop | `routable.cpp` | Seeds: input, refine, refine+RUDY, full, full+RUDY (the plain seeds are exactly `--mode auto`'s candidates; the RUDY seeds use β = 1, tempering and LNS). All routed with the same work budget; the best (fewest unrouted, then HPWL) is the incumbent. Up to 3 rounds: shrink the capacity of bins around the failed connections' pads (× 0.6 per round, cumulative), triple the weight of the failed nets, refine-anneal from the incumbent with β = 1, tempering and LNS windows seeded on the parts near the failures, route; then one ECO round. A candidate replaces the incumbent only with fewer unrouted connections. |
+| ECO | `routable.cpp` | For movable parts at, or within 1.5 mm of, a failed connection: shifts of 0.5–2 mm in ±x/±y, rotations about the body centre, swaps with an identical part; each checked exactly for legality, ranked by the annealing cost with boosted failed nets and penalised bins + 0.25 mm per mm of displacement − 4 mm per mm of extra room around a failed pad; the top N are routed, the best strict improvement is committed; failed moves are remembered (across loop rounds too). Locked/fixed parts never move (test). |
+| Router callback | `place_main.cpp` | `RouteFn`: the input document with the placement applied, re-parsed from the written text and routed by `route::route_portfolio` with `work_budget`; unrouted connections are mapped back to parts and pad positions. |
+
+Two bugs found on the way: `--route-check` "kept the input" by re-saving the edited document, i.e. it wrote the new
+placement anyway (fixed: the input file is copied); and reading the board model straight from an edited document tree
+gave different routing results than reading the saved file (Microdox: 3 vs 0 unrouted for the same placement), so
+the loop re-parses the written text. The second one is an `io::` issue left for a separate fix (`read_board` on an
+edited `sexpr::Document`).
+
+### 8.2 Annealer variants (placement only, equal move budgets, 23 boards of §7.3, seed 1, 4 threads)
+
+Cost = weighted HPWL + 2 mm × crossings (what the annealer minimises). `bench/place_variants.py`.
+
+| Mode | Parallel tempering vs independent runs | PT + LNS (rate 0.02, window 8) |
+|---|---|---|
+| refine | geometric-mean cost ×0.960 (better on 15, worse on 8) | ×0.959 (15 / 8) |
+| full | ×1.004 (10 / 12) | ×1.005 (9 / 14) |
+
+Parallel tempering helps refine (whose single-run schedule starts cool) and is neutral for full. LNS adds nothing
+measurable at the end of a converged anneal: in the cold phase it found an improvement in ~0.1 % of windows. Neither
+is on by default for `full`/`refine`; `routable` uses both in its RUDY seeds and rounds. The PT ladder was tuned on
+8 of these boards, so the refine number is optimistic.
+
+### 8.3 Routability results (23 boards of §7.3)
+
+Router: `route_portfolio`, 3 000 000 expansions × 4 variants (deterministic), engine of 2026-10-03; placement seed 1,
+4 threads; 4 boards in parallel (16 threads). "Unrouted" = connections the router left open on the written board.
+"New DRC" = KiCad 10 errors of the legality group (courtyards, holes in courtyards, copper-edge clearance; plus any
+other inter-footprint error by item pair: clearance, shorts, mask bridges, hole clearance) that the human board
+does not have. `full+eco` = ECO applied to the unchecked full-mode placement (a placement that routes worse than the
+human one). Times are wall seconds per board including all routing. `bench/place_m8.py`.
+
+| Board | unrouted human | auto | routable | eco | full → full+eco | HPWL human | auto | routable | routable kept |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|---|
+| 1Bitsy_1bitsy | 22 | 21 | **13** | 22 | 25 → 18 | 813 | 812 | 801 | round 3 re-place |
+| AzizLight_AzizLight | 0 | 0 | 0 | 0 | 0 → 0 | 463 | 349 | 341 | refine+rudy |
+| ChirpHardware_chirp | 0 | 0 | 0 | 0 | 0 → 0 | 629 | 370 | 370 | full |
+| ESP_nRF_Relay_Relay_WiFi_nRF24 | 0 | 0 | 0 | 0 | 2 → **0** | 642 | 642 | 305 | refine+rudy |
+| Hardware_Playground_Touch_Switch_2ch_PCB | 10 | 10 | **4** | 7 | 16 → 14 | 568 | 568 | 491 | round 3 re-place |
+| IGN01A_IGN01A | 0 | 0 | 0 | 0 | 0 → 0 | 533 | 206 | 195 | refine+rudy |
+| LadybugLiteBlue_HW_LadybugBlueLite | 0 | 0 | 0 | 0 | 0 → 0 | 663 | 473 | 473 | refine |
+| Microdox-PCB_Microdox | 3 | 0 | 0 | **0** | 0 → 0 | 2788 | 1384 | 1319 | full+rudy |
+| PiPlay_SDHat | 0 | 0 | 0 | 0 | 0 → 0 | 444 | 366 | 366 | refine |
+| RX5808_rx5808_4button | 0 | 0 | 0 | 0 | 0 → 0 | 774 | 640 | 554 | refine+rudy |
+| Solare-BQ24210_Solare-BQ24210 | 0 | 0 | 0 | 0 | 0 → 0 | 88 | 75 | 75 | refine |
+| a123-battery-integration_BCM | 5 | 5 | **0** | **0** | 10 → 9 | 1194 | 811 | 830 | round 2 re-place |
+| beast-phat_beast-phat | 0 | 0 | 0 | 0 | 0 → 0 | 260 | 180 | 180 | full |
+| bullion_bullion | 15 | 15 | 13 | 14 | 16 → 16 | 421 | 421 | 294 | round 3 re-place |
+| domotics_out-board | 0 | 0 | 0 | 0 | 0 → 0 | 658 | 381 | 381 | full |
+| esp32stack_esp32stack | 0 | 0 | 0 | 0 | 0 → 0 | 1040 | 777 | 777 | refine |
+| jadonk_PocketBone | 1 | 1 | **0** | **0** | 11 → 11 | 1229 | 1229 | 1025 | refine+rudy |
+| kitspace_hbridge_driver | 0 | 0 | 0 | 0 | 0 → 0 | 455 | 388 | 377 | refine+rudy |
+| kitspace_training_board_v02 | 0 | 0 | 0 | 0 | 0 → 0 | 1170 | 721 | 696 | refine+rudy |
+| nanoTracer_nanoTracer | 0 | 0 | 0 | 0 | 8 → 8 | 1301 | 1301 | 1301 | input |
+| phone_amp_phone_amp | 8 | 8 | **5** | **5** | 10 → 8 | 412 | 384 | 382 | round 1 eco |
+| scimpy_volumebuffer | 0 | 0 | 0 | 0 | 0 → 0 | 590 | 553 | 542 | refine+rudy |
+| uC3Moy_uC3Moy | 0 | 0 | 0 | 0 | 3 → 3 | 329 | 329 | 329 | input |
+| **Total** | **64** | **60** | **35** | **48** | 101 → 87 | 17 464 | 13 360 | 12 403 | |
+
+- **Legality:** 0 new KiCad DRC errors of the legality group on every output of every mode (92 boards).
+- **Routability:** completely routed boards: human 16, auto 17, routable 19, eco 19. Unrouted connections: human 64,
+  auto 60, routable 35 (−45 %), eco 48 (−25 %); no board got worse in any mode.
+- **ECO** (`--mode eco` on the human placement, ≤ 4 rounds × 5 routed moves) closed 3 of the 7 boards the router
+  leaves incomplete (Microdox: one switch rotated 270°; a123: two ICs shifted 2 mm and 1 mm; PocketBone: U2 shifted
+  1 mm) and reduced 3 more (10 → 7, 15 → 14, 8 → 5) with 1–2 moved parts each. On the worse full-mode placements it
+  closed 1 of 9 (101 → 87 unrouted).
+- **Wirelength:** total HPWL human 17 464 mm, auto 13 360 mm, routable 12 403 mm (−29 %); eco leaves HPWL as it is.
+- **Time:** total wall time auto 1 354 s, routable 3 481 s (21–630 s per board), eco 1 541 s (2–301 s).
+- **Doc 14 quick set Q** (10 boards, all routed completely by hand placement): unrouted 0 in every mode; HPWL human
+  4 649 mm, auto 3 322 mm, routable 3 289 mm; 0 new DRC errors.
+
+Caveats: these 23 boards are the development set (doc 14 set D), and the router budget is the same one the loop
+optimises against, so part of the gain is the loop exploiting this router's behaviour at this budget (a small move
+perturbs a budget-limited router; ECO is partly sampling such perturbations). Most remaining failures are pads the
+router reports as "boxed in" (pad escape), which placement cannot fix. Not measured: Freerouting on the placed boards,
+the held-out set H, and the schematic-to-board set S of the M8 gate (clean pass ≥ 90 %) — it does not exist yet.
+
+### 8.4 Not done in M8
+
+GPU parallel tempering (CPU only), CP-SAT (replaced by the exact window B&B), the router rungs R4 exact window
+solve / R5 trial ordering / R6 cut proofs (they live in `src/route`, outside this placement change), ECO driven by
+the router's own `PlacementRequest` during routing (ECO runs between complete routes instead), side flipping in ECO,
+decoupling-cap slot moves, the bandit over ECO move types (doc 06).
