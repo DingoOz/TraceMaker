@@ -2,6 +2,7 @@
 #include <CLI/CLI.hpp>
 
 #include <chrono>
+#include <mutex>
 #include <cstdio>
 #include <filesystem>
 #include <thread>
@@ -120,7 +121,31 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
   return rep.violations.empty() && rep.unconnected.empty() ? 0 : 5;
 }
 
+// Records router events (JSON lines with a time stamp) for replay, e.g. comparison videos.
+class FileSink final : public tmk::events::Sink {
+ public:
+  explicit FileSink(const std::string& path) : f_(path), t0_(std::chrono::steady_clock::now()) {}
+  void publish(std::string json) override {
+    if (json.size() < 2 || json.front() != '{') return;
+    if (json.rfind("{\"t\":", 0) == 0) {  // already time-stamped (buffered portfolio replay)
+      std::lock_guard<std::mutex> lk(m_);
+      f_ << json << "\n";
+      return;
+    }
+    const double t = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0_).count();
+    std::lock_guard<std::mutex> lk(m_);
+    f_ << "{\"t\":" << t << "," << json.substr(1) << "\n";
+  }
+  bool wants_transient() const override { return false; }
+
+ private:
+  std::ofstream f_;
+  std::chrono::steady_clock::time_point t0_;
+  std::mutex m_;
+};
+
 struct ViewOptions {
+  std::string record;  // --record FILE
   bool enabled = false;
   std::string host = "0.0.0.0";
   int port = 8766;
@@ -141,6 +166,13 @@ int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterO
     std::printf("live view: %s\n", server->url().c_str());
     std::fflush(stdout);
     opt.sink = server.get();
+  }
+  std::unique_ptr<FileSink> recorder;
+  if (!view.record.empty() && !view.enabled) {
+    recorder = std::make_unique<FileSink>(view.record);
+    recorder->publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(in).filename().string()));
+    opt.sink = recorder.get();
+    opt.buffer_events = true;
   }
   // Knowledge base (failure memory T3): earlier failures on this board go first; variant choice by bandit.
   std::unique_ptr<tmk::learn::KnowledgeBase> kb;
@@ -342,6 +374,7 @@ int main(int argc, char** argv) {
   route->add_option("--threads", r_threads, "Portfolio size: differently configured routers run in parallel, best kept (1 = single router)");
   ViewOptions vopt;
   route->add_flag("--view", vopt.enabled, "Stream the routing live to the browser viewer");
+  route->add_option("--record", vopt.record, "Write the routing events (JSON lines, time-stamped) to a file for replay");
   route->add_option("--view-host", vopt.host, "Viewer bind address (default 0.0.0.0)");
   route->add_option("--view-port", vopt.port, "Viewer port (default 8766)");
   route->add_flag("--hold", vopt.hold, "Keep serving the viewer after routing finishes");

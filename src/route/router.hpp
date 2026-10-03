@@ -44,6 +44,9 @@ struct RouterOptions {
   // Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the
   // others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.
   std::atomic<double>* deadline = nullptr;
+  // Recording: every variant buffers its events and only the winning variant's are forwarded to `sink`
+  // (each message gains a leading "t" field, seconds since that variant started).
+  bool buffer_events = false;
 };
 
 struct Connection {

@@ -469,6 +469,8 @@ Freerouting's published numbers. To remove both weaknesses, 60 PCBench boards th
 run (20 each from tiers A, B and C, fixed random seed) were routed by TraceMaker, Freerouting 2.5.0-RC12 and
 Freerouting 1.9.0 on the same machine. Freerouting used its published settings (one thread, 500 passes, fanout and
 optimizer on, 30-minute limit) on the fixture's Specctra file, and its result was imported into the KiCad board.
+(``2.5.0-RC12'' is the name of the jar in Freerouting's own benchmark set; the program reports itself as
+v2.4.2-SNAPSHOT, built 2026-09-29.)
 Every result was judged by KiCad's DRC and measured by the same quality script (\texttt{bench/quality.py}); the
 human-routed originals were measured as a reference.
 
@@ -568,6 +570,9 @@ net at less than 90\textdegree; only those outside pad copper are etchant traps.
 The human original is shown for reference: it does not pass the board's own rules (371 clearance errors).}
 \label{tab:cmp}
 \end{table}
+
+\noindent A video of all three routers working on this board, played at 4$\times$ real time, is in
+\texttt{report/compare\_AmpOne.mp4}.
 
 \noindent What the comparison shows:
 \begin{itemize}[leftmargin=*]

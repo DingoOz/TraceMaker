@@ -1121,6 +1121,21 @@ struct Router::Impl {
   // Clean-up pass (after routing, while budget remains): re-route each connection that uses vias with vias made
   // dearer, in strict mode (no crossing), and keep the new route only if it is cheaper by length + 2 mm per via;
   // otherwise restore the old copper exactly. Comparable in purpose to Freerouting's optimizer stage.
+  void emit_track_add(int index) {
+    if (!opt.sink) return;
+    const auto& t = b.tracks[static_cast<std::size_t>(index)];
+    emit("{\"type\":\"track_add\",\"track\":{\"id\":" + std::to_string(index) + ",\"a\":[" + jnum(t.a.x) + "," + jnum(t.a.y) + "],\"b\":[" +
+         jnum(t.b.x) + "," + jnum(t.b.y) + "],\"w\":" + jnum(t.width) + ",\"layer\":" + std::to_string(t.layer) + ",\"net\":" +
+         std::to_string(t.net) + "}}");
+  }
+  void emit_via_add(int index) {
+    if (!opt.sink) return;
+    const auto& v = b.vias[static_cast<std::size_t>(index)];
+    emit("{\"type\":\"via_add\",\"via\":{\"id\":" + std::to_string(index) + ",\"p\":[" + jnum(v.pos.x) + "," + jnum(v.pos.y) + "],\"d\":" +
+         jnum(v.size) + ",\"drill\":" + jnum(v.drill) + ",\"net\":" + std::to_string(v.net) + ",\"top\":" + std::to_string(v.layer_top) +
+         ",\"bottom\":" + std::to_string(v.layer_bottom) + "}}");
+  }
+
   void optimize_vias() {
     via_cost_mult = 10.0;
     bypass_nogoods = true;
@@ -1171,11 +1186,17 @@ struct Router::Impl {
         ++res.optimized;
         continue;
       }
-      for (int item : st.items) remove_routed(item);  // rejected: restore the old copper
+      for (int item : st.items) {  // rejected: restore the old copper
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+        remove_routed(item);
+      }
       st.items.clear();
       for (const auto& o : saved) {
         const int id = o.kind == drc::ItemKind::Via ? obs->add_via(o.index, ci) : obs->add_track(o.index, ci);
         near_mark(id, +1);
+        if (o.kind == drc::ItemKind::Via) emit_via_add(o.index);
+        else emit_track_add(o.index);
         st.items.push_back(id);
       }
     }
@@ -1261,6 +1282,7 @@ struct Router::Impl {
         const int id = obs->add_track(static_cast<int>(b.tracks.size() - 1), static_cast<int>(ci));
         near_mark(id, +1);
         st.items.push_back(id);
+        emit_track_add(static_cast<int>(b.tracks.size() - 1));
       }
       ++changed;
     }
@@ -1526,6 +1548,23 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   std::atomic<double> deadline{1e30};
   for (auto& v : vs)
     if (base.work_budget == 0) v.o.deadline = &deadline;
+  // Event buffers per variant (recording mode): the winner's events are replayed into base.sink afterwards.
+  struct BufferSink final : events::Sink {
+    std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
+    std::vector<std::string> msgs;
+    void publish(std::string json) override {
+      if (json.size() < 2) return;
+      const double t = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+      msgs.push_back("{\"t\":" + std::to_string(t) + "," + json.substr(1));
+    }
+    bool wants_transient() const override { return false; }
+  };
+  std::vector<std::unique_ptr<BufferSink>> bufs;
+  if (base.buffer_events && base.sink)
+    for (auto& v : vs) {
+      bufs.push_back(std::make_unique<BufferSink>());
+      v.o.sink = bufs.back().get();
+    }
   for (std::size_t i = 0; i < vs.size(); ++i)
     pool.emplace_back([&, i] { rs[i] = Router(board, rules, vs[i].o).run(); });
   for (auto& t : pool) t.join();
@@ -1546,6 +1585,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       best = i;
   }
   pr.best_variant = static_cast<int>(best);
+  if (!bufs.empty())
+    for (auto& m : bufs[best]->msgs) base.sink->publish(std::move(m));
   pr.best = std::move(rs[best]);
   return pr;
 }
