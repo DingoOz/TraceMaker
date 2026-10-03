@@ -385,24 +385,44 @@
   {
    "id": "M8",
    "title": "Placement E–G + ECO",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Schematic-to-board set: clean pass ≥ 90%; `eco` mode closes boards that `none` mode cannot",
    "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
    "tasks": [
+    {
+     "text": "Parallel tempering (annealed replica exchange, CPU; deterministic for 1/3/16 threads): refine cost -4% on 23 boards, full neutral",
+     "done": true
+    },
     {
      "text": "GPU parallel-tempering SA",
      "done": false
     },
     {
-     "text": "LNS",
-     "done": false
+     "text": "LNS (window rip-up, exact <=4 parts, greedy otherwise; never worsens)",
+     "done": true
+    },
+    {
+     "text": "Exact windows by branch and bound (CP-SAT not available; B&B equals full enumeration)",
+     "done": true
     },
     {
      "text": "CP-SAT windows",
      "done": false
     },
     {
-     "text": "routability loop",
+     "text": "RUDY routability term in the annealer (incremental, exact vs reference)",
+     "done": true
+    },
+    {
+     "text": "Routability loop (--mode routable): 23 boards unrouted 64 -> 35 (auto 60), 0 new DRC errors",
+     "done": true
+    },
+    {
+     "text": "ECO placement moves (--mode eco): closes 3 of 7 incomplete boards, unrouted 64 -> 48",
+     "done": true
+    },
+    {
+     "text": "Schematic-to-board set S and clean-pass gate (>= 90%)",
      "done": false
     },
     {
@@ -415,10 +435,6 @@
     },
     {
      "text": "R6 cut proofs",
-     "done": false
-    },
-    {
-     "text": "ECO placement moves",
      "done": false
     }
    ]
