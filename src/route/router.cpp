@@ -1207,6 +1207,114 @@ struct Router::Impl {
   // Path smoothing ("pull tight"): within each connection, replace runs of same-layer, same-width segments by the
   // fewest octilinear segments the exact rule check accepts (other nets' copper is a hard obstacle). Pad and via
   // positions stay fixed, so connectivity is unchanged. Returns the number of connections changed.
+  // Region rip-up and re-route (large-neighbourhood search) around vias: take the connections with copper within
+  // 2.5 mm of a via (at most 8), remove them all, route them again with vias made dearer and other copper as a hard
+  // obstacle, and keep the result only if every one routes and length + 2 mm per via goes down; otherwise restore
+  // the old copper exactly. Unlike single-connection re-routes this can move a neighbour out of the way.
+  int lns_vias(int max_attempts) {
+    via_cost_mult = 10.0;
+    bypass_nogoods = true;
+    strict_pass = false;
+    struct Old { drc::ItemKind kind; int index; };
+    auto conn_cost = [&](const std::vector<int>& items) {
+      double len = 0;
+      int vias = 0;
+      for (int item : items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Via) {
+          ++vias;
+        } else {
+          const auto& t = b.tracks[static_cast<std::size_t>(it.index)];
+          len += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+        }
+      }
+      return len + 2e6 * vias;
+    };
+    // Via positions at the start, in a fixed order (connection index, then item order): deterministic.
+    std::vector<std::pair<int, Point>> targets;
+    for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+      if (!cs[ci].routed || cs[ci].implicit) continue;
+      for (int item : cs[ci].items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Via) targets.emplace_back(static_cast<int>(ci), it.pos);
+      }
+    }
+    int improved = 0, attempts = 0;
+    for (const auto& [owner, p] : targets) {
+      if (out_of_budget() || attempts >= max_attempts) break;
+      // Is the via still there (an earlier move may have removed it)?
+      bool present = false;
+      for (int item : cs[static_cast<std::size_t>(owner)].items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Via && it.pos == p) present = true;
+      }
+      if (!present) continue;
+      ++attempts;
+      std::vector<int> ids;
+      const geom::Box box = geom::Shape::point(p, 2'500'000).box;
+      obs->routed_items_in(box, ids);
+      std::vector<int> group{owner};
+      for (int id : ids) {
+        const int o = obs->copper().items[static_cast<std::size_t>(id)].owner;
+        if (o >= 0 && std::find(group.begin(), group.end(), o) == group.end() && group.size() < 8 && cs[static_cast<std::size_t>(o)].routed &&
+            !cs[static_cast<std::size_t>(o)].implicit)
+          group.push_back(o);
+      }
+      double before = 0;
+      std::vector<std::vector<Old>> saved(group.size());
+      for (std::size_t g = 0; g < group.size(); ++g) {
+        auto& st = cs[static_cast<std::size_t>(group[g])];
+        before += conn_cost(st.items);
+        for (int item : st.items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          saved[g].push_back({it.kind, it.index});
+          if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+          remove_routed(item);
+        }
+        st.items.clear();
+      }
+      // Route the via's own connection last: its neighbours first get the space the via was avoiding.
+      std::vector<std::size_t> order(group.size());
+      for (std::size_t g = 0; g < group.size(); ++g) order[g] = g;
+      std::stable_sort(order.begin(), order.end(), [&](std::size_t x, std::size_t y) { return (group[x] == owner) < (group[y] == owner); });
+      bool ok = true;
+      for (std::size_t g : order) {
+        current = group[g];
+        soft = false;
+        if (!search_and_commit(cs[static_cast<std::size_t>(group[g])].c, false)) {
+          ok = false;
+          break;
+        }
+      }
+      double after = 0;
+      if (ok)
+        for (int c : group) after += conn_cost(cs[static_cast<std::size_t>(c)].items);
+      if (ok && after < before - 1e3) {
+        ++improved;
+        continue;
+      }
+      for (std::size_t g = 0; g < group.size(); ++g) {  // rejected: restore every connection of the group
+        auto& st = cs[static_cast<std::size_t>(group[g])];
+        for (int item : st.items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+          remove_routed(item);
+        }
+        st.items.clear();
+        for (const auto& o : saved[g]) {
+          const int id = o.kind == drc::ItemKind::Via ? obs->add_via(o.index, group[g]) : obs->add_track(o.index, group[g]);
+          near_mark(id, +1);
+          if (o.kind == drc::ItemKind::Via) emit_via_add(o.index);
+          else emit_track_add(o.index);
+          st.items.push_back(id);
+        }
+      }
+    }
+    via_cost_mult = 1.0;
+    bypass_nogoods = false;
+    return improved;
+  }
+
   int smooth_paths() {
     int changed = 0;
     auto octi = [](Point a, Point c) {
@@ -1460,6 +1568,7 @@ struct Router::Impl {
         optimize_vias();
         if (res.optimized == before) break;
       }
+      if (!out_of_budget()) res.optimized += lns_vias(400);
       for (int round = 0; round < 3; ++round) {
         const int n = smooth_paths();
         res.optimized += n;
