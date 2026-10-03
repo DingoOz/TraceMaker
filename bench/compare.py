@@ -54,8 +54,10 @@ def main() -> int:
     ap.add_argument("--tm-threads", type=int, default=8)
     ap.add_argument("--fr-timeout", default="00:30:00")
     ap.add_argument("--out", default=str(ROOT / "build/compare"))
+    ap.add_argument("--fixtures", default=str(FIX), help="folder of fixtures in the PCBench layout (unrouted.kicad_pcb, unrouted.dsn, raw.kicad_pcb)")
+    ap.add_argument("--no-tm", action="store_true", help="skip TraceMaker (Freerouting-only runs, to be merged later)")
     a = ap.parse_args()
-    src = FIX / a.board
+    src = pathlib.Path(a.fixtures) / a.board
     out = pathlib.Path(a.out) / a.board
     out.mkdir(parents=True, exist_ok=True)
     unrouted = src / "unrouted.kicad_pcb"
@@ -65,13 +67,14 @@ def main() -> int:
     shutil.copy(src / "raw.kicad_pcb", human)
     runs["Human original"] = {"file": human, "wall_s": None}
 
-    tm_out = out / "tracemaker.kicad_pcb"
-    t0 = time.time()
-    p = subprocess.run([str(TM), "route", str(unrouted), "-o", str(tm_out), "--time", str(a.tm_time), "--threads",
-                        str(a.tm_threads), "--no-kb", "--json", str(tm_out) + ".route.json"], capture_output=True, text=True)
-    runs["TraceMaker"] = {"file": tm_out, "wall_s": round(time.time() - t0, 1)}
-    if p.returncode not in (0, 3):
-        runs["TraceMaker"]["error"] = p.stderr[-300:]
+    if not a.no_tm:
+        tm_out = out / "tracemaker.kicad_pcb"
+        t0 = time.time()
+        p = subprocess.run([str(TM), "route", str(unrouted), "-o", str(tm_out), "--time", str(a.tm_time), "--threads",
+                            str(a.tm_threads), "--no-kb", "--json", str(tm_out) + ".route.json"], capture_output=True, text=True)
+        runs["TraceMaker"] = {"file": tm_out, "wall_s": round(time.time() - t0, 1)}
+        if p.returncode not in (0, 3):
+            runs["TraceMaker"]["error"] = p.stderr[-300:]
 
     for v in a.fr:
         ses = out / f"fr-{v}.ses"
