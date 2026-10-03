@@ -84,11 +84,52 @@ def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
     return {"errors": dict(c), "routed_errors": dict(r), "unconnected": len(d.get("unconnected_items", []))}
 
 
+PLACE = ROOT / "build/release/src/place/tracemaker-place"
+PLACE_MODE = None        # --place MODE: TraceMaker may move components before routing
+PLACE_TIMEOUT = 900      # seconds; on timeout the human placement is routed (recorded)
+PLACE_WORK = 3_000_000   # router budget per placement evaluation (deterministic)
+# Errors placement can introduce (counted against the human board when parts move).
+PLACEMENT_ERRORS = {"courtyards_overlap", "pth_inside_courtyard", "npth_inside_courtyard", "copper_edge_clearance", "clearance",
+                    "shorting_items", "solder_mask_bridge", "hole_clearance", "hole_to_hole", "malformed_courtyard"}
+
+
+def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -> pathlib.Path:
+    """Runs tracemaker-place; returns the board to route (the placed one, or the input if placement failed)."""
+    placed = outdir / "boards" / f"{name}.placed.kicad_pcb"
+    js = outdir / "boards" / f"{name}.placed.json"
+    t0 = time.time()
+    try:
+        p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
+                            "--threads", str(THREADS), "--json", str(js)], capture_output=True, text=True, timeout=PLACE_TIMEOUT)
+        res["place_exit"] = p.returncode
+    except subprocess.TimeoutExpired:
+        res["place_exit"] = -1
+    res["place_s"] = round(time.time() - t0, 1)
+    if res["place_exit"] not in (0, 2) or not placed.exists():
+        res["place"] = "failed or timed out: human placement routed"
+        return src
+    try:
+        j = json.loads(js.read_text())
+        res["place"] = "ok"
+        res["moved"] = j.get("moved")
+        res["hpwl_before"] = j.get("before", {}).get("hpwl_mm")
+        res["hpwl_after"] = j.get("after", {}).get("hpwl_mm")
+    except (OSError, ValueError):
+        res["place"] = "ok (no report)"
+    # Errors the placement itself introduced (any items), against the human board.
+    human, moved = drc(src), drc(placed)
+    if human and moved:
+        res["place_added"] = {t: n - human["errors"].get(t, 0) for t, n in moved["errors"].items()
+                              if t in PLACEMENT_ERRORS and n - human["errors"].get(t, 0) > 0}
+    return placed
+
+
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
-    src = FIX / name / "unrouted.kicad_pcb"
+    src0 = FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
     out.parent.mkdir(parents=True, exist_ok=True)
     res = {"board": name}
+    src = place_board(name, src0, outdir, res) if PLACE_MODE else src0
     t0 = time.time()
     try:
         p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--kb", str(outdir / "kb.sqlite"), "--json", str(out) + ".route.json"] + EXTRA,
@@ -116,7 +157,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
                         if t not in NOT_ROUTING and n - before["errors"].get(t, 0) > 0}
     res.update({"unconnected_before": before["unconnected"], "unconnected_after": after["unconnected"], "added_errors": added})
     res["completion"] = 1.0 if before["unconnected"] == 0 else round(1 - after["unconnected"] / before["unconnected"], 4)
-    res["clean"] = after["unconnected"] == 0 and not added
+    res["clean"] = after["unconnected"] == 0 and not added and not res.get("place_added")
     return res
 
 
@@ -130,6 +171,9 @@ def main() -> int:
     ap.add_argument("--name")
     ap.add_argument("--boards", nargs="*", help="explicit board folder names")
     ap.add_argument("--threads", type=int, default=1, help="router portfolio size per board")
+    ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full"], help="let TraceMaker move components first")
+    ap.add_argument("--place-timeout", type=int, default=900)
+    ap.add_argument("--place-work", type=int, default=3_000_000)
     a = ap.parse_args()
     global THREADS
     THREADS = a.threads
@@ -144,11 +188,16 @@ def main() -> int:
     outdir = ROOT / "bench/results" / run_id
     outdir.mkdir(parents=True, exist_ok=True)
     # Snapshot the engine binary so rebuilding during a run cannot mix versions.
-    global TM
+    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK
     import shutil
     snap = outdir / "tracemaker"
     shutil.copy2(TM, snap)
     TM = snap
+    PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK = a.place, a.place_timeout, a.place_work
+    if PLACE_MODE:
+        psnap = outdir / "tracemaker-place"
+        shutil.copy2(PLACE, psnap)
+        PLACE = psnap
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     print(f"run {run_id}: {len(names)} boards, tier {a.tier}, {a.time:.0f} s per board, {a.jobs} jobs", flush=True)
     rows = []
@@ -179,7 +228,8 @@ def main() -> int:
         for t in r["added_errors"]:
             added_types[t] += 1
     summary = {
-        "run": run_id, "set": f"PCBench tier {a.tier}", "boards": n, "commit": commit,
+        "run": run_id, "set": f"PCBench tier {a.tier}" + (f" + placement ({a.place})" if a.place else ""), "boards": n, "commit": commit,
+        "place_mode": a.place,
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),
