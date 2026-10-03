@@ -22,6 +22,9 @@
 | D14 | Global spreading uses SimPL rather than the electrostatic method | ePlace/DREAMPlace-style density | Simpler on CPU and adequate for PCB part counts (doc 04 §7) |
 | D15 | Placement keeps a new placement only if it routes at least as well as the input under the same router budget (`--route-check`, `--mode auto`) | Trust HPWL | Lower HPWL from denser packing routed worse on PCBench (13 vs 15 fully routed boards) |
 | D16 | Large boards (≥ 3M lattice points per layer) get two portfolio variants at double pitch | One pitch for all variants | Fine-pitch lattices are time-limited on large boards (P8000: 325 → 334 of 361 in 120 s) |
+| D17 | The CLI's `route` and the Python module's `route()` call one function (`tmk::app::run_route_job`); the KiCad plugin uses the module in-process when importable, else the binary | Bindings that drive `Router` directly; plugin with the binary only | Identical results by construction (tested byte for byte); no subprocess when the module fits KiCad's Python, and the binary still works when it does not |
+| D18 | With bindings on, the whole build is position independent (`-fPIC -fno-semantic-interposition`); bindings are off in sanitizer builds | A second PIC copy of the engine libraries; shared engine library | One set of objects; routing output and speed unchanged (C-BISCUIT: same board, 5.29 s vs 5.30 s); an instrumented extension cannot load into a plain interpreter |
+| D19 | PCM package uses metadata schema v2 with `runtime: ipc`, does not bundle the engine by default (env `TRACEMAKER` / `TRACEMAKER_PYTHONPATH`), optional Linux bundling; licence field defaults to GPL-3.0-or-later until the project licence is chosen (requirement N8) | Always bundle binaries | Native builds depend on the system's CUDA runtime, SQLite and libstdc++ and the module on the Python version; KiCad 10 ships PCM schema v2 and kicad-python 0.8 validates against it |
 
 ## Risks
 
