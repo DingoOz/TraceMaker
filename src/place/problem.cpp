@@ -315,7 +315,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         Coord exp = b.pad_to_mask_clearance;
         if (pd.footprint >= 0 && b.footprints[z(pd.footprint)].mask_margin != INT64_MIN) exp = b.footprints[z(pd.footprint)].mask_margin;
         if (pd.mask_margin != INT64_MIN) exp = pd.mask_margin;
-        need = std::max(need, 2 * exp + std::max<Coord>(rules.minimums.solder_mask_to_copper_clearance, 0));
+        need = std::max(need, 2 * exp + std::max({rules.minimums.solder_mask_to_copper_clearance, rules.minimums.solder_mask_min_width, Coord{0}}));
       }
     }
     for (const auto& s : it.shapes) {
@@ -471,7 +471,12 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         for (const auto& bx : pad_boxes) cy0[z(pt.side)].push_back(rect(bx));
       no_courtyard.push_back(fp.reference);
     }
-    if (cy0[0].empty() && cy0[1].empty()) continue;  // nothing to place or avoid (logos, net ties without pads)
+    if (cy0[0].empty() && cy0[1].empty()) {
+      // Nothing to place (logos, art, net ties without pads), but its copper stays where it is and every moved
+      // part must keep clear of it (PCBench komputer-klavier: parts were placed onto a copper logo).
+      for (const auto& cs : fp_copper[fi]) p.fixed_copper.push_back(cs);
+      continue;
+    }
 
     long double cy_area = 0;
     for (const auto& side : cy0)

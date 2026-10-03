@@ -213,6 +213,7 @@ void read_legacy_board_rules(const fs::path& board, model::DesignRules& r) {
     if (auto v = nm(setup, "uvia_min_size")) r.minimums.microvia_diameter = *v;
     if (auto v = nm(setup, "uvia_min_drill")) r.minimums.microvia_drill = *v;
     if (auto v = nm(setup, "edge_clearance")) r.minimums.copper_edge_clearance = *v;
+    if (auto v = nm(setup, "solder_mask_min_width")) r.minimums.solder_mask_min_width = *v;
     if (const auto bb = d.find(setup, "blind_buried_vias_allowed"); bb != sexpr::kNoNode) r.minimums.allow_blind_buried_vias = d.str_at(bb, 1) == "yes";
     if (const auto uv = d.find(setup, "uvias_allowed"); uv != sexpr::kNoNode) r.minimums.allow_microvias = d.str_at(uv, 1) == "yes";
   }
