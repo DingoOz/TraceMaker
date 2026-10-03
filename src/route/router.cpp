@@ -1204,7 +1204,6 @@ struct Router::Impl {
       return {};
     };
     for (std::size_t ci = 0; ci < cs.size(); ++ci) {
-      if (out_of_budget()) break;
       auto& st = cs[ci];
       if (!st.routed || st.implicit || st.items.empty()) continue;
       std::vector<model::Track> tr;
@@ -1431,13 +1430,15 @@ struct Router::Impl {
       }
     }
     // Clean-up only when the live state is a best state (it then stays one: every connection keeps a route).
-    if (opt.optimize && best_routed > 0 && res.routed == best_routed && !out_of_budget()) {
+    // Via-saving re-routes need search budget; smoothing is cheap geometry and always runs (it uses no budget and
+    // no randomness, so --work runs stay deterministic).
+    if (opt.optimize && best_routed > 0 && res.routed == best_routed) {
       for (int round = 0; round < 4 && !out_of_budget(); ++round) {  // repeat while connections still improve
         const int before = res.optimized;
         optimize_vias();
         if (res.optimized == before) break;
       }
-      for (int round = 0; round < 3 && !out_of_budget(); ++round) {
+      for (int round = 0; round < 3; ++round) {
         const int n = smooth_paths();
         res.optimized += n;
         if (n == 0) break;
