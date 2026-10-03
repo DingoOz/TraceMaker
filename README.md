@@ -56,8 +56,13 @@ Latest results (PCBench, 120 s per board, judged by `kicad-cli`; Freerouting fig
 |---|--:|--:|--:|--:|
 | A | 40 | 100% | 100% | 87.5% |
 | B | 40 | 65.0% | 50.0% | 12.5% |
-| C | 30 | 56.7% | 46.7% | 16.7% |
-| D | 22 | 50.0% | 36.4% | 0.0% |
+| C | 30 | 60.0% | 46.7% | 16.7% |
+| D | 22 | 54.5% | 36.4% | 0.0% |
+
+Held-out quality benchmark (`bench/quality_bench.py`): 60 boards never used in development, Freerouting 2.5.0-RC12 and
+1.9.0 run on the same machine, everything judged by KiCad's DRC. KiCad-clean: TraceMaker 73–78%, Freerouting 2.5 3%,
+Freerouting 1.9 32%. Against Freerouting 2.5 TraceMaker's tracks are 5% shorter with 28% fewer bends but 43% more vias.
+Details and figures: `report/report.pdf`.
 
 Each run writes `bench/results/<run>/` (routed boards, per-board JSON, `summary.json`, `report.md`) and compares
 against Freerouting's own published per-board results on the same fixtures. Results appear on the progress
