@@ -5,6 +5,7 @@
 // can be tested with a synthetic router. The caller routes with a deterministic work budget, so every decision
 // here is reproducible. A placement is only ever accepted when it routes more connections than the incumbent
 // (transactions, CLAUDE.md rule 4); locked and otherwise fixed parts never move (rule 6).
+#include <array>
 #include <functional>
 #include <string>
 #include <vector>
@@ -40,6 +41,11 @@ bool better(const Candidate& a, const Candidate& b);
 
 // ---- ECO placement (doc 04 §4) ---------------------------------------------------------------------------------
 
+// Failure memory (doc 04 §4 step 4): moves already routed without improvement, by part, target and rotation.
+struct EcoMemory {
+  std::vector<std::array<std::int64_t, 8>> tried;
+};
+
 struct EcoOptions {
   int rounds = 4;              // commit rounds
   int candidates = 5;          // moves routed per round (the best-ranked ones)
@@ -50,7 +56,10 @@ struct EcoOptions {
   double beta = 1.0;           // routability weight in the ranking cost
   int weight_boost = 3;        // failed nets weigh this many times more in the ranking cost
   double disp_cost = 0.25;     // ranking: one mm of displacement costs this many mm of signal HPWL
+  Coord room = 2'000'000;      // ranking: clearance around a failed pad counts up to this distance
+  double room_gain = 4.0;      // ranking: one mm more room around a failed pad is worth this many mm of signal HPWL
   std::function<void(const std::string&)> log;
+  EcoMemory* memory = nullptr;  // shared across calls (e.g. the rounds of the routability loop); null = local
 };
 
 struct EcoResult {

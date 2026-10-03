@@ -4,7 +4,6 @@
 #include <cmath>
 #include <cstdio>
 #include <map>
-#include <tuple>
 
 #include "place/anneal.hpp"
 #include "place/wirelength.hpp"
@@ -34,7 +33,7 @@ struct EcoMove {
   std::string what;
   std::int64_t score = 0;
   std::size_t order = 0;
-  auto key() const { return std::make_tuple(a, pa.x, pa.y, ra, b, pb.x, pb.y, rb); }
+  std::array<std::int64_t, 8> key() const { return {a, pa.x, pa.y, ra, b, pb.x, pb.y, rb}; }
 };
 
 // Problem copy with the failed nets' weights boosted (ranking and re-placement only; reports use the original).
@@ -77,6 +76,15 @@ std::vector<int> parts_near(const Problem& p, const Placement& pl, const std::ve
   return out;
 }
 
+// Distance from a point to a part's body box (0 inside).
+Coord box_dist(const Problem& p, int part, const Placement& pl, Point q) {
+  const Box& g = p.parts[z(part)].geom[pl.rot[z(part)]].body;
+  const Point o = pl.pos[z(part)];
+  const Coord dx = std::max<Coord>({g.x0 + o.x - q.x, 0, q.x - g.x1 - o.x});
+  const Coord dy = std::max<Coord>({g.y0 + o.y - q.y, 0, q.y - g.y1 - o.y});
+  return std::max(dx, dy);
+}
+
 void say(const std::function<void(const std::string&)>& log, const std::string& s) {
   if (log) log(s);
 }
@@ -97,9 +105,11 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
   EcoResult res;
   res.pl = start;
   res.eval = start_eval;
-  std::vector<decltype(EcoMove{}.key())> tried;
+  EcoMemory local;
+  auto& tried = (o.memory ? *o.memory : local).tried;
   std::vector<std::string> nets;
   const std::int64_t disp_units = static_cast<std::int64_t>(std::llround(o.disp_cost * kSignalWeight));
+  const std::int64_t room_units = static_cast<std::int64_t>(std::llround(o.room_gain * kSignalWeight));
   for (int round = 0; round < o.rounds && res.eval.ok && res.eval.unrouted() > 0; ++round) {
     for (const auto& f : res.eval.failed) nets.push_back(f.net);
     std::sort(nets.begin(), nets.end());
@@ -130,6 +140,18 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
         disp += std::llabs(m.pb.x - res.pl.pos[z(m.b)].x) + std::llabs(m.pb.y - res.pl.pos[z(m.b)].y);
       }
       m.score = anneal_cost(q, t, o.alpha_cross_mm, o.beta, &cm) - base + disp_units * disp;
+      // Room around the failed pads: the router mostly reports pads it could not escape from ("boxed in"), so
+      // moving a neighbour's body away from such a pad (up to o.room) is credited.
+      for (int which = 0; which < (m.b >= 0 ? 2 : 1); ++which) {
+        const int part = which == 0 ? m.a : m.b;
+        for (const auto& f : res.eval.failed)
+          for (int e = 0; e < 2; ++e) {
+            if ((e == 0 ? f.part_a : f.part_b) == part) continue;  // its own pad moves with it
+            const Point pt = e == 0 ? f.a : f.b;
+            const Coord d0 = std::min(o.room, box_dist(p, part, res.pl, pt)), d1 = std::min(o.room, box_dist(p, part, t, pt));
+            m.score -= room_units * (d1 - d0);
+          }
+      }
       m.order = moves.size();
       moves.push_back(m);
     };
@@ -231,6 +253,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
   CongestionMap cm = make_congestion_map(p);
   std::vector<std::string> nets;
   std::vector<int> focus;
+  EcoMemory memory;
   for (int round = 1; round <= o.rounds && inc.eval.ok && inc.eval.unrouted() > 0; ++round) {
     ++res.rounds;
     std::vector<Point> pts;
@@ -281,6 +304,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       eo.alpha_cross_mm = o.place.alpha_cross_mm;
       eo.weight_boost = o.weight_boost;
       eo.log = o.log;
+      eo.memory = &memory;
       const EcoResult er = eco_place(p, inc.pl, inc.eval, eo, route);
       res.routes += er.routes;
       if (er.committed > 0) {

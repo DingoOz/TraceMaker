@@ -35,8 +35,19 @@ def place(board_dir: pathlib.Path, src: pathlib.Path, mode: str, a) -> dict:
     out = board_dir / f"{mode}.kicad_pcb"
     js = board_dir / f"{mode}.json"
     t = time.time()
+    run_mode = mode
+    if mode == "fulleco":
+        # ECO on a placement that routes worse than the human one: the unchecked full-mode result.
+        placed = board_dir / "fullplaced.kicad_pcb"
+        if not (a.reuse and placed.exists()):
+            subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", "full", "--threads", str(a.threads), "--seed", "1"],
+                           capture_output=True, text=True)
+        pro = src.with_suffix(".kicad_pro")
+        if pro.exists():
+            shutil.copyfile(pro, placed.with_suffix(".kicad_pro"))
+        src, run_mode = placed, "eco"
     if not (a.reuse and js.exists()):
-        p = subprocess.run([str(PLACE), str(src), "-o", str(out), "--mode", mode, "--route-check", str(a.work), "--route-threads",
+        p = subprocess.run([str(PLACE), str(src), "-o", str(out), "--mode", run_mode, "--route-check", str(a.work), "--route-threads",
                             str(a.route_threads), "--threads", str(a.threads), "--seed", "1", "--json", str(js)],
                            capture_output=True, text=True)
         (board_dir / f"{mode}.log").write_text(p.stdout + "\n" + p.stderr[-4000:])
@@ -46,6 +57,10 @@ def place(board_dir: pathlib.Path, src: pathlib.Path, mode: str, a) -> dict:
     kept_input = rc["kept_input"]
     un_in = rc["connections_input"] - rc["routed_input"]
     un_out = un_in if kept_input else rc["connections_output"] - rc["routed_output"]
+    if mode == "fulleco":
+        return {"path": str(out), "unrouted_input": un_in, "unrouted": un_out, "connections": rc["connections_input"],
+                "hpwl_input": j["before"]["hpwl_mm"], "hpwl": j["after"]["hpwl_mm"], "kept": "eco", "moved": j.get("moved", 0),
+                "legal": j.get("legal", False), "seconds": j.get("seconds_total", secs), "routes": j.get("routes"), "eco": j.get("eco")}
     return {"path": str(out), "unrouted_input": un_in, "unrouted": un_out, "connections": rc["connections_input"] if kept_input else rc["connections_output"],
             "hpwl_input": j["before"]["hpwl_mm"], "hpwl": j["before"]["hpwl_mm"] if kept_input else j["after"]["hpwl_mm"], "kept": j.get("kept", "input" if kept_input else mode),
             "moved": j.get("moved", 0), "legal": j.get("legal", False), "seconds": j.get("seconds_total", secs) if mode != "auto" else secs,
@@ -112,7 +127,10 @@ def fmt(rows, modes) -> str:
         cells = [str(first["unrouted_input"])]
         for m in modes:
             x = r.get(m, {})
-            cells.append(str(x["unrouted"]) if "unrouted" in x else "err")
+            if m == "fulleco" and "unrouted" in x:
+                cells.append(f"{x['unrouted_input']} → {x['unrouted']}")
+            else:
+                cells.append(str(x["unrouted"]) if "unrouted" in x else "err")
         cells.append(f"{first['hpwl_input']:.0f}")
         for m in modes:
             x = r.get(m, {})

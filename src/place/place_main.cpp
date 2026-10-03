@@ -12,6 +12,7 @@
 
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
+#include "sexpr/sexpr.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "place/legality.hpp"
 #include "place/lower_bound.hpp"
@@ -98,7 +99,9 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
     place::RouteEval e;
     io::LoadedBoard lb = io::read_board_file(in);
     apply(lb, p, pl, seed);
-    const model::Board b = io::read_board(lb.doc);
+    // Re-parse the written text: the board model must be exactly what the saved file gives (reading the edited
+    // document tree directly gave different routing results on Microdox: 3 vs 0 unrouted).
+    const model::Board b = io::read_board(sexpr::Document::parse(lb.doc.write()));
     route::RouterOptions ro;
     ro.work_budget = work;
     ro.time_limit_s = 600;  // safety net only; the work budget decides
