@@ -21,21 +21,24 @@ Needs xvfb, ffmpeg, the JDK 25 in build/tools and python-xlib/matplotlib in buil
 
 ## Placement video
 
-`report/compare_placement_SALSAFLOCK.mp4` (56 s) compares Freerouting "2.5.0-RC12" routing the designer's placement of
+`report/compare_placement_SALSAFLOCK.mp4` (62 s) compares Freerouting "2.5.0-RC12" routing the designer's placement of
 PCBench `retroreflectors_SALSAFLOCK` (tier B, 40 connections) with TraceMaker placing the parts and then routing them.
 
 1. **Finished boards** — both results in 3D (`kicad-cli pcb render`, `scripts/render_board_spin.py`), one full turn.
    These footprints carry no 3D part models, so the renders show board, copper, pads and silkscreen.
-2. **How they were made, on one clock** — played at a constant 5× for both. Freerouting routes from t = 0 (its own GUI,
-   screen-recorded). TraceMaker places from t = 0 and routes after: the placement panel shows the candidate that was
-   finally kept, as it was at each moment (annealing snapshots carry their own times; `tracemaker-place --record`),
-   captioned with what the job was doing (building candidates, router checks, re-placement, ECO trials, verification
-   routes); routing is rendered from `tracemaker route --record`. When a tool finishes, its panel shows the saved
-   KiCad board. Vertical meters show each busy CPU thread and, for TraceMaker, the SM use of both GPUs, sampled while
-   the jobs ran (`bench/cpu_sample.py --gpu`: `/proc` per thread every 0.25 s, `nvidia-smi pmon` per process every 1 s;
-   for Freerouting only the JVM's threads count). The elapsed time is the largest number; a bar shows each tool's
-   phases on the shared clock.
-3. **Result** — both boards with KiCad's violations drawn on them and the score card, with two controls (each router on
+2. **Placement** — Freerouting does not place parts, so its input is the designer's hand placement (time not recorded;
+   the video does not invent one). TraceMaker places on its own clock (142 s, played at 10×): the panel shows the
+   candidate that was finally kept as it was at each moment (annealing snapshots carry their own times;
+   `tracemaker-place --record`), captioned with what the job was doing (building candidates, router checks,
+   re-placement, ECO trials, verification routes).
+3. **Routing** — one clock for both, starting when routing starts, at real time. Freerouting's span is taken from its
+   log ("Starting routing" to "Saving", 14.5 s; JVM start-up and loading excluded) and its screen recording is cut to
+   match; TraceMaker is rendered from `tracemaker route --record` (best variant done at 12 s, job ends at 24 s while
+   the slower variants run to their deadline). When a tool finishes, its panel shows the saved KiCad board.
+   Vertical meters show each busy CPU thread and, for TraceMaker, the SM use of both GPUs, sampled while the jobs ran
+   (`bench/cpu_sample.py --gpu`); Freerouting's JVM JIT-compiler and GC threads are drawn dimmer than its one routing
+   thread. The elapsed time is the largest number.
+4. **Result** — both boards with KiCad's violations drawn on them and the score card, with two controls (each router on
    the other placement).
 
 How it is made: `scripts/record_placement_video.sh [board]` (placement, routing and Freerouting under the sampler,
@@ -45,8 +48,8 @@ imported Freerouting's session once, or run `bench/ses_import.py` first), then
 `build/report-venv/bin/python report/make_place_video.py --board retroreflectors_SALSAFLOCK`.
 
 Result on this board (KiCad DRC): Freerouting 35/40 routed with 56 new errors (52 track width: KiCad's Specctra export
-does not carry the minimum track width) in 22 s; TraceMaker 40/40 with 0 new errors after 142 s placing and 24 s
-routing (166 s in all). Track length 720 vs 713 mm, vias 4 vs 14. Placement's own share: TraceMaker's router routes
+does not carry the minimum track width) in 14.5 s of routing; TraceMaker 40/40 with 0 new errors, placed in 142 s and
+routed in 12 s (job 24 s). Track length 720 vs 713 mm, vias 4 vs 14. Placement's own share: TraceMaker's router routes
 38/40 on the designer's placement and 40/40 on its own; Freerouting stays at 35/40 on either. TraceMaker used CUDA:
 the router's cost-to-go fields run on both GPUs (P100 and V100) in every variant, including the placement's check
 routes; the placer's annealing and legalisation are CPU-only. Freerouting is CPU-only.
