@@ -277,6 +277,10 @@
     {
      "text": "Diversified extra restarts while budget remains",
      "done": true
+    },
+    {
+     "text": "Post-routing clean-up: via-saving re-routes and path smoothing (bends -40%, vias -25-33%)",
+     "done": true
     }
    ]
   },
@@ -466,6 +470,14 @@
     {
      "text": "2x lattice pitch for two variants on large boards",
      "done": true
+    },
+    {
+     "text": "Quality benchmark vs Freerouting 2.5.0-RC12 and 1.9.0 on 60 held-out boards (bench/quality_bench.py)",
+     "done": true
+    },
+    {
+     "text": "Run held-out quality benchmark on tier D-like boards and DAC2020",
+     "done": false
     }
    ]
   },

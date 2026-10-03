@@ -212,6 +212,18 @@ def benchmarks() -> list[dict]:
     return out[-30:]
 
 
+def quality_runs() -> list[dict]:
+    """Held-out quality benchmark runs (bench/quality_bench.py), oldest first."""
+    out = []
+    files = sorted((ROOT / "bench" / "results").glob("*/quality_summary.json"), key=lambda f: f.stat().st_mtime)
+    for f in files:
+        s = read_json(f, None)
+        if isinstance(s, dict) and s.get("by_router"):
+            s["finished"] = f.stat().st_mtime
+            out.append(s)
+    return out[-10:]
+
+
 HL_LANG = {".cpp": "cpp", ".hpp": "cpp", ".h": "cpp", ".cu": "cpp", ".cuh": "cpp", ".py": "python", ".ts": "typescript",
            ".js": "javascript", ".html": "xml", ".css": "css", ".cmake": "cmake", ".sh": "bash", ".json": "json",
            ".md": "markdown", ".fbs": "cpp", ".wgsl": "rust", ".glsl": "glsl"}
@@ -296,6 +308,7 @@ def status() -> dict:
         "kicad": CACHE.get("kicad", 3600, kicad_version),
         "docs": CACHE.get("docs", 10, docs),
         "benchmarks": CACHE.get("bench", 10, benchmarks),
+        "quality": CACHE.get("quality", 10, quality_runs),
         "latest_code": CACHE.get("latest_code", 3, latest_code),
     }
 

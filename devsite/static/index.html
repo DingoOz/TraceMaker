@@ -177,6 +177,7 @@ details.preset table { margin: 2px 0 10px; }
     <div class="col">
       <section class="panel"><h2>Latest code</h2><div id="code"></div></section>
       <section class="panel"><h2>Roadmap</h2><div id="milestones"></div></section>
+      <section class="panel"><h2>Quality benchmark (held-out boards)</h2><div id="quality"></div></section>
       <section class="panel"><h2>Benchmarks</h2><div id="bench"></div></section>
       <section class="panel"><h2>Code by module</h2><div id="modules"></div></section>
     </div>
@@ -395,6 +396,40 @@ function renderBench(s) {
         el("td", { class: "r num", text: b.boards_with_added_errors == null ? "–" : String(b.boards_with_added_errors) })))))));
 }
 
+function renderQuality(s) {
+  const runs = s.quality || [];
+  if (!runs.length) { replace("quality", el("div", { class: "empty", text: "No quality runs yet (bench/quality_bench.py)." })); return; }
+  const q = runs[runs.length - 1];
+  const pct = (v) => (v == null ? "–" : (v * 100).toFixed(0) + "%");
+  const order = ["TraceMaker", "Freerouting 2.5.0-RC12", "Freerouting 1.9.0", "Human original"];
+  const routers = order.filter((k) => q.by_router[k]);
+  const ratio = (v) => (v == null ? "–" : v.toFixed(2) + "×");
+  const paired = q.by_router.paired || {};
+  replace("quality",
+    el("div", { class: "sub", style: "margin-bottom:8px", text: `${q.run} · ${q.boards} PCBench boards never used in development (tiers ${q.tiers.join(", ")}) · every router run on this machine and judged by KiCad's DRC · ${ago(q.finished)}` }),
+    el("table", {},
+      el("thead", {}, el("tr", {}, ["Router", "KiCad clean", "Fully connected", "Mean completion", "Boards with router errors", "Median time"].map((h, i) => el("th", { class: i ? "r" : "", text: h })))),
+      el("tbody", {}, routers.map((k) => {
+        const r = q.by_router[k];
+        return el("tr", {},
+          el("td", {}, k === "TraceMaker" ? el("b", { text: k }) : k),
+          el("td", { class: "r num" }, k === "TraceMaker" ? el("b", { text: pct(r.kicad_clean) }) : pct(r.kicad_clean)),
+          el("td", { class: "r num", text: pct(r.complete) }),
+          el("td", { class: "r num", text: r.mean_completion == null ? "–" : (r.mean_completion * 100).toFixed(1) + "%" }),
+          el("td", { class: "r num", text: k === "Human original" ? "n/a" : String(r.boards_with_router_errors) }),
+          el("td", { class: "r num", text: r.median_wall_s == null ? "–" : Math.round(r.median_wall_s) + " s" }));
+      }))),
+    el("table", { style: "margin-top:12px" },
+      el("thead", {}, el("tr", {}, ["TraceMaker ÷ other (boards both complete)", "Boards", "Track length", "Vias", "Bends"].map((h, i) => el("th", { class: i ? "r" : "", text: h })))),
+      el("tbody", {}, Object.entries(paired).map(([k, p]) => el("tr", {},
+        el("td", { text: k }),
+        el("td", { class: "r num", text: String(p.boards_both_complete) }),
+        el("td", { class: "r num", text: ratio(p.median_ratio_length_mm) }),
+        el("td", { class: "r num", text: ratio(p.median_ratio_vias) }),
+        el("td", { class: "r num", text: ratio(p.median_ratio_bends) }))))),
+    el("div", { class: "sub", style: "margin-top:8px", text: "Ratios are medians; below 1× means TraceMaker uses less. Freerouting runs from KiCad's Specctra export, which omits board-edge clearance and minimum track width, so many of its KiCad errors are of those two kinds." }));
+}
+
 function renderEnv(s) {
   const builds = s.builds.map((b) => `${b.preset}${b.binary ? " (" + ago(b.binary) + ")" : ""}`).join(", ") || "none";
   replace("env",
@@ -444,7 +479,7 @@ async function refresh() {
     const r = await fetch("/api/status", { cache: "no-store" });
     const s = await r.json();
     renderTiles(s); renderCode(s); renderMilestones(s); renderTests(s); renderGpus(s); renderActivity(s);
-    renderCommits(s); renderModules(s); renderBench(s); renderEnv(s);
+    renderCommits(s); renderModules(s); renderQuality(s); renderBench(s); renderEnv(s);
     last = Date.now();
   } catch (e) { /* keep the last good render */ }
 }

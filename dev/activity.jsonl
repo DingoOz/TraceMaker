@@ -36,3 +36,8 @@
 {"ts": "2026-10-02T17:04:57+00:00", "kind": "milestone", "text": "Auto placement with route checks on 23 boards: HPWL -24.5% total, unrouted 61 -> 59, never worse"}
 {"ts": "2026-10-02T17:52:29+00:00", "kind": "test", "text": "final7 PCBench: A 100%, B 62.5%, C 56.7%, D 52.4% clean (FR RC12 100/50.0/46.7/38.1%); zero router-introduced DRC errors"}
 {"ts": "2026-10-02T18:36:14+00:00", "kind": "test", "text": "final8 PCBench: A 100%, B 65.0%, C 56.7%, D 50.0% (22 boards) clean (FR RC12 100/50.0/46.7/36.4%); zero router-introduced DRC errors; no harness errors"}
+{"ts": "2026-10-03T02:23:39+00:00", "kind": "test", "text": "Held-out quality benchmark (60 unseen PCBench boards, same machine, KiCad DRC judge): TraceMaker clean 73-78%, Freerouting 2.5.0-RC12 3% (78% connected), Freerouting 1.9.0 32% (66% connected)"}
+{"ts": "2026-10-03T02:23:39+00:00", "kind": "note", "text": "Freerouting failures are mostly board-edge clearance / minimum track width (rules not in the Specctra file); both versions also had real clearance errors on 9-10 boards and shorts on 3-4"}
+{"ts": "2026-10-03T02:23:39+00:00", "kind": "milestone", "text": "Router clean-up stage: via-saving re-routes + path smoothing, via cost 3 mm. vs FR 2.5: vias ratio 2.15 -> 1.43, bends 1.20 -> 0.72, length 0.95"}
+{"ts": "2026-10-03T02:23:39+00:00", "kind": "build", "text": "Fixed: text on solder-mask layers now opens the mask (found on held-out boards FRM16 and MySensors IR Blaster)"}
+{"ts": "2026-10-03T02:23:39+00:00", "kind": "test", "text": "final9 PCBench with clean-up: A 100%, B 65.0%, C 60.0%, D 54.5% clean (FR RC12 published 100/50.0/46.7/36.4%); zero router-introduced DRC errors"}
