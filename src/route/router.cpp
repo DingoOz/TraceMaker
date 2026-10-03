@@ -95,7 +95,7 @@ struct Router::Impl {
   double elapsed() const { return std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); }
   // Out of budget? The work budget (search expansions) is deterministic; wall time is only a safety net.
   bool out_of_budget() const {
-    if (opt.cancel && opt.cancel->load(std::memory_order_relaxed)) return true;
+    if (opt.deadline && res.routed < res.connections && elapsed() > opt.deadline->load(std::memory_order_relaxed)) return true;
     if (opt.work_budget > 0 && res.expansions >= opt.work_budget) return true;
     return elapsed() > opt.time_limit_s;
   }
@@ -630,13 +630,13 @@ struct Router::Impl {
     const Point tp = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : b.pads[static_cast<std::size_t>(c.pad_a)].pos;
     const bool zone_target = c.zone_b >= 0;
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
-    const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * 1e6);
+    const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6);
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
     const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
                            cells * static_cast<std::size_t>(nl) >= static_cast<std::size_t>(opt.field_min_cells);
     if (use_field) {
-      build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * 1e6));
+      build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6));
       // Wall-clock mode only (keeps --work runs deterministic): when shared GPUs make fields cost more than
       // 30% of the run, this variant continues with the octile heuristic.
       const double el = elapsed();
@@ -982,7 +982,9 @@ struct Router::Impl {
   // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
   // signature hashes the routed copper inside the window, so any relevant change re-enables the attempt.
   std::unordered_map<std::uint64_t, std::uint8_t> nogoods;
-  bool fields_off = false;  // set when GPU fields cost too much wall-clock time (see search)
+  bool fields_off = false;
+  double via_cost_mult = 1.0;   // raised by the clean-up pass
+  bool bypass_nogoods = false;  // clean-up re-routes are judged on their own  // set when GPU fields cost too much wall-clock time (see search)
   int rip_cap = 0;  // per-connection rip limit (opt.max_rips_per_connection, raised by diversified restarts)
   long nogood_skips = 0;
   std::uint64_t window_signature(const geom::Box& box) {
@@ -1005,13 +1007,13 @@ struct Router::Impl {
     wb = wb.inflated(6'000'000 + c.length / 4);
     const std::uint64_t ng = splitmix64(window_signature(wb) ^ (static_cast<std::uint64_t>(current) << 3) ^ (soft_mode ? 1u : 0u) ^
                                         (force_escapes ? 2u : 0u) ^ (static_cast<std::uint64_t>(width_override) << 20));
-    if (nogoods.count(ng)) {
+    if (!bypass_nogoods && nogoods.count(ng)) {
       ++nogood_skips;
       why = "skipped: identical earlier attempt failed (nogood)";
       return false;
     }
     const bool ok = search_and_commit_inner(c);
-    if (!ok) nogoods[ng] = 1;
+    if (!ok && !bypass_nogoods) nogoods[ng] = 1;
     return ok;
   }
 
@@ -1114,6 +1116,156 @@ struct Router::Impl {
       first = false;
     }
     emit(m + "]}");
+  }
+
+  // Clean-up pass (after routing, while budget remains): re-route each connection that uses vias with vias made
+  // dearer, in strict mode (no crossing), and keep the new route only if it is cheaper by length + 2 mm per via;
+  // otherwise restore the old copper exactly. Comparable in purpose to Freerouting's optimizer stage.
+  void optimize_vias() {
+    via_cost_mult = 10.0;
+    bypass_nogoods = true;
+    strict_pass = false;
+    struct Old { drc::ItemKind kind; int index; };
+    auto cost_of = [&](const std::vector<int>& items, int& vias) {
+      double len = 0;
+      vias = 0;
+      for (int item : items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Via) {
+          ++vias;
+        } else {
+          const auto& t = b.tracks[static_cast<std::size_t>(it.index)];
+          len += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+        }
+      }
+      return len + 2e6 * vias;
+    };
+    std::vector<std::pair<int, int>> order;  // (-vias, connection)
+    for (std::size_t i = 0; i < cs.size(); ++i) {
+      const auto& st = cs[i];
+      if (!st.routed || st.implicit || st.items.empty()) continue;
+      int v = 0;
+      cost_of(st.items, v);
+      if (v > 0) order.emplace_back(-v, static_cast<int>(i));
+    }
+    std::sort(order.begin(), order.end());
+    for (const auto& [nv, ci] : order) {
+      if (out_of_budget()) break;
+      auto& st = cs[static_cast<std::size_t>(ci)];
+      int old_v = 0;
+      const double old_cost = cost_of(st.items, old_v);
+      std::vector<Old> saved;
+      for (int item : st.items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        saved.push_back({it.kind, it.index});
+        if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+        remove_routed(item);
+      }
+      st.items.clear();
+      current = ci;
+      soft = false;
+      const bool ok = search_and_commit(st.c, false);
+      int new_v = 0;
+      const double new_cost = ok ? cost_of(st.items, new_v) : 0;
+      if (ok && new_cost < old_cost - 1e3) {
+        ++res.optimized;
+        continue;
+      }
+      for (int item : st.items) remove_routed(item);  // rejected: restore the old copper
+      st.items.clear();
+      for (const auto& o : saved) {
+        const int id = o.kind == drc::ItemKind::Via ? obs->add_via(o.index, ci) : obs->add_track(o.index, ci);
+        near_mark(id, +1);
+        st.items.push_back(id);
+      }
+    }
+    via_cost_mult = 1.0;
+    bypass_nogoods = false;
+  }
+
+  // Path smoothing ("pull tight"): within each connection, replace runs of same-layer, same-width segments by the
+  // fewest octilinear segments the exact rule check accepts (other nets' copper is a hard obstacle). Pad and via
+  // positions stay fixed, so connectivity is unchanged. Returns the number of connections changed.
+  int smooth_paths() {
+    int changed = 0;
+    auto octi = [](Point a, Point c) {
+      const Coord dx = c.x - a.x, dy = c.y - a.y;
+      return dx == 0 || dy == 0 || std::llabs(dx) == std::llabs(dy);
+    };
+    // Up to two octilinear segments from a to c (straight if already octilinear), or empty if none is legal.
+    auto shortcut = [&](Point a, Point c, int layer, Coord width, NetId net) -> std::vector<Point> {
+      auto legal = [&](Point u, Point v) { return u == v || obs->segment_state(u, v, layer, width, net, false, nullptr) == 0; };
+      if (octi(a, c)) return legal(a, c) ? std::vector<Point>{a, c} : std::vector<Point>{};
+      const Coord dx = c.x - a.x, dy = c.y - a.y, m = std::min(std::llabs(dx), std::llabs(dy));
+      const Point diag{a.x + (dx > 0 ? m : -m), a.y + (dy > 0 ? m : -m)};       // diagonal first
+      if (legal(a, diag) && legal(diag, c)) return {a, diag, c};
+      const Point straight{c.x - (dx > 0 ? m : -m), c.y - (dy > 0 ? m : -m)};  // straight first
+      if (legal(a, straight) && legal(straight, c)) return {a, straight, c};
+      return {};
+    };
+    for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+      if (out_of_budget()) break;
+      auto& st = cs[ci];
+      if (!st.routed || st.implicit || st.items.empty()) continue;
+      std::vector<model::Track> tr;
+      std::vector<int> others;  // vias and anything not a track keep their items
+      for (int item : st.items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Track) tr.push_back(b.tracks[static_cast<std::size_t>(it.index)]);
+        else others.push_back(item);
+      }
+      if (tr.size() < 2) continue;
+      std::vector<model::Track> out;
+      bool any = false;
+      std::size_t k = 0;
+      while (k < tr.size()) {
+        std::size_t e = k + 1;  // run [k, e): continuous, same layer and width
+        while (e < tr.size() && tr[e].layer == tr[k].layer && tr[e].width == tr[k].width && tr[e].a == tr[e - 1].b) ++e;
+        std::vector<Point> pts{tr[k].a};
+        for (std::size_t q = k; q < e; ++q) pts.push_back(tr[q].b);
+        std::vector<Point> npts{pts.front()};
+        std::size_t i = 0;
+        while (i + 1 < pts.size()) {
+          std::size_t best = i + 1;
+          std::vector<Point> via_pts;
+          for (std::size_t j = pts.size() - 1; j >= i + 2; --j) {
+            auto sc = shortcut(pts[i], pts[j], tr[k].layer, tr[k].width, tr[k].net);
+            if (!sc.empty() && sc.size() - 1 < j - i) {
+              best = j;
+              via_pts.assign(sc.begin() + 1, sc.end());
+              break;
+            }
+          }
+          if (via_pts.empty()) npts.push_back(pts[best]);
+          else {
+            npts.insert(npts.end(), via_pts.begin(), via_pts.end());
+            any = true;
+          }
+          i = best;
+        }
+        for (std::size_t q = 0; q + 1 < npts.size(); ++q)
+          if (!(npts[q] == npts[q + 1])) out.push_back(model::Track{npts[q], npts[q + 1], tr[k].width, tr[k].layer, tr[k].net, false, sexpr::kNoNode});
+        k = e;
+      }
+      if (!any) continue;
+      // Replace this connection's tracks.
+      for (int item : st.items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Track) {
+          if (opt.sink) emit("{\"type\":\"track_remove\",\"id\":" + std::to_string(it.index) + "}");
+          remove_routed(item);
+        }
+      }
+      st.items = others;
+      for (const auto& t : out) {
+        b.tracks.push_back(t);
+        const int id = obs->add_track(static_cast<int>(b.tracks.size() - 1), static_cast<int>(ci));
+        near_mark(id, +1);
+        st.items.push_back(id);
+      }
+      ++changed;
+    }
+    return changed;
   }
 
   RouteResult run() {
@@ -1272,6 +1424,27 @@ struct Router::Impl {
       snapshot_unrouted();
     }
     }  // restarts
+    if (opt.deadline && best_routed == res.connections && res.connections > 0) {  // first complete variant sets the deadline
+      const double d = 2 * elapsed() + 5;
+      double cur = opt.deadline->load();
+      while (d < cur && !opt.deadline->compare_exchange_weak(cur, d)) {
+      }
+    }
+    // Clean-up only when the live state is a best state (it then stays one: every connection keeps a route).
+    if (opt.optimize && best_routed > 0 && res.routed == best_routed && !out_of_budget()) {
+      for (int round = 0; round < 4 && !out_of_budget(); ++round) {  // repeat while connections still improve
+        const int before = res.optimized;
+        optimize_vias();
+        if (res.optimized == before) break;
+      }
+      for (int round = 0; round < 3 && !out_of_budget(); ++round) {
+        const int n = smooth_paths();
+        res.optimized += n;
+        if (n == 0) break;
+      }
+      snapshot();
+      snapshot_unrouted();
+    }
     if (best_unrouted.empty()) snapshot_unrouted();
     res.routed = best_routed;
     res.tracks = std::move(best_tracks);
@@ -1294,6 +1467,7 @@ struct Router::Impl {
     res.nogood_skips = nogood_skips;
     std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions); fields %ld GPU + %ld CPU (%.2f s, %ld GPU fallbacks)\n",
                  n_ok, exp_ok, n_fail, exp_fail, field_runs, field_cpu_runs, field_seconds, field_gpu_fail);
+    std::fprintf(stderr, "clean-up: %d connections improved\n", res.optimized);
     std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", res.restarts, obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
     emit_stats("done");
@@ -1346,16 +1520,13 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   }
   std::vector<RouteResult> rs(vs.size());
   std::vector<std::thread> pool;
-  // A complete result cannot be beaten on routed count: stop the other variants then. With a work budget the
-  // run must stay deterministic, so early stopping is only used under wall-clock limits.
-  std::atomic<bool> complete{false};
+  // Once a variant is complete the others get a short grace period, so the best-quality complete result can be
+  // chosen. With a work budget the run must stay deterministic, so this is only used under wall-clock limits.
+  std::atomic<double> deadline{1e30};
   for (auto& v : vs)
-    if (base.work_budget == 0) v.o.cancel = &complete;
+    if (base.work_budget == 0) v.o.deadline = &deadline;
   for (std::size_t i = 0; i < vs.size(); ++i)
-    pool.emplace_back([&, i] {
-      rs[i] = Router(board, rules, vs[i].o).run();
-      if (rs[i].connections > 0 && rs[i].routed == rs[i].connections) complete = true;
-    });
+    pool.emplace_back([&, i] { rs[i] = Router(board, rules, vs[i].o).run(); });
   for (auto& t : pool) t.join();
   PortfolioResult pr;
   auto length = [](const RouteResult& r) {

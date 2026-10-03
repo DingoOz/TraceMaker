@@ -36,14 +36,19 @@ def used_boards() -> set:
     return used
 
 
-def one(board: str, out: pathlib.Path, fr: list, fr_timeout: str) -> dict:
+def one(board: str, out: pathlib.Path, fr: list, fr_timeout: str, reuse: str | None = None) -> dict:
     t0 = time.time()
-    p = subprocess.run(["python3", str(ROOT / "bench/compare.py"), board, "--out", str(out / "boards"), "--fr", *fr,
+    p = subprocess.run(["python3", str(ROOT / "bench/compare.py"), board, "--out", str(out / "boards"), "--fr", *([] if reuse else fr),
                         "--fr-timeout", fr_timeout], capture_output=True, text=True)
     q = out / "boards" / board / "quality.json"
     if not q.exists():
         return {"board": board, "error": (p.stderr or p.stdout)[-400:]}
     d = json.loads(q.read_text())
+    if reuse:  # Freerouting results do not change between TraceMaker versions: take them from an earlier run
+        old = ROOT / "bench/results" / reuse / "boards" / board / "quality.json"
+        if old.exists():
+            d["runs"] += [r for r in json.loads(old.read_text())["runs"] if r["label"].startswith("Freerouting")]
+            q.write_text(json.dumps(d, indent=1))
     d["wall_total_s"] = round(time.time() - t0, 1)
     return d
 
@@ -96,6 +101,7 @@ def main() -> int:
     ap.add_argument("--fr", nargs="*", default=["2.5.0-RC12", "1.9.0"])
     ap.add_argument("--fr-timeout", default="00:30:00")
     ap.add_argument("--name", default="quality-1")
+    ap.add_argument("--reuse-fr", help="take Freerouting results from this earlier quality run (same boards)")
     a = ap.parse_args()
     base = bench_run.fr_baseline()
     used = used_boards()
@@ -105,12 +111,15 @@ def main() -> int:
         pool = sorted(n for n, v in base.items() if v.get("tier") == t and n not in used
                       and (bench_run.FIX / n / "unrouted.kicad_pcb").exists() and (bench_run.FIX / n / "unrouted.dsn").exists())
         boards += [(t, n) for n in rng.sample(pool, min(a.per_tier, len(pool)))]
+    if a.reuse_fr:  # the same boards as the reused run (the held-out pool shrinks once runs exist)
+        boards = [(json.loads(line)["tier"], json.loads(line)["board"]) for line in
+                  open(ROOT / "bench/results" / a.reuse_fr / "quality.jsonl")]
     out = ROOT / "bench/results" / a.name
     out.mkdir(parents=True, exist_ok=True)
     print(f"{a.name}: {len(boards)} held-out boards, jobs {a.jobs}", flush=True)
     rows = []
     with cf.ThreadPoolExecutor(a.jobs) as ex, open(out / "quality.jsonl", "w") as log:
-        futs = {ex.submit(one, n, out, a.fr, a.fr_timeout): (t, n) for t, n in boards}
+        futs = {ex.submit(one, n, out, a.fr, a.fr_timeout, a.reuse_fr): (t, n) for t, n in boards}
         for f in cf.as_completed(futs):
             t, n = futs[f]
             r = f.result()

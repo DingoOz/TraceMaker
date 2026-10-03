@@ -16,6 +16,7 @@ import concurrent.futures as cf
 import datetime
 import hashlib
 import json
+import os
 import pathlib
 import random
 import subprocess
@@ -26,7 +27,8 @@ from collections import Counter
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
 FR_RESULTS = ROOT / "bench/data/freerouting/scripts/benchmark/results/benchmarks.json"
-TM = ROOT / "build/release/src/app/tracemaker"
+TM = pathlib.Path(os.environ.get("TM_BINARY", ROOT / "build/release/src/app/tracemaker"))
+EXTRA = os.environ.get("TM_ROUTE_ARGS", "").split()  # extra route options for experiments, e.g. "--via-cost-mm 3"
 THREADS = 1
 DRC_CACHE = ROOT / "build/drc/kicad"
 # Violation types that routing cannot cause; ignored when counting added errors.
@@ -89,7 +91,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     res = {"board": name}
     t0 = time.time()
     try:
-        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--kb", str(outdir / "kb.sqlite"), "--json", str(out) + ".route.json"],
+        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--kb", str(outdir / "kb.sqlite"), "--json", str(out) + ".route.json"] + EXTRA,
                            capture_output=True, text=True, timeout=time_limit * 3 + 60)
         res["exit"] = p.returncode
         if p.returncode not in (0, 3):

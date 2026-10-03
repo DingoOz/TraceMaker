@@ -27,11 +27,12 @@ struct RouterOptions {
   int gpu_device = 0;               // CUDA device for fields (-1 = none)    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
   int soft_attempts = 3;        // window sizes tried by negotiated searches
-  double via_cost_mm = 1.0;     // equivalent track length of one via
+  double via_cost_mm = 3.0;     // equivalent track length of one via
   bool allow_vias = true;
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
   int max_rips_per_connection = 8;
   int max_passes = 12;          // passes over still-unrouted connections
+  bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
@@ -40,7 +41,9 @@ struct RouterOptions {
   std::vector<std::pair<std::string, std::string>> priority;
   std::string only_net;         // debugging: route only this net
   events::Sink* sink = nullptr;
-  const std::atomic<bool>* cancel = nullptr;  // set by the portfolio when another variant routed everything
+  // Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the
+  // others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.
+  std::atomic<double>* deadline = nullptr;
 };
 
 struct Connection {
@@ -60,6 +63,7 @@ struct RouteResult {
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
+  int optimized = 0;            // connections improved by the clean-up pass
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
