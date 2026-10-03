@@ -47,3 +47,4 @@
 {"ts": "2026-10-03T05:17:41+00:00", "kind": "milestone", "text": "M3 gate: tracemaker-view --replay plays a recorded routing log; integration test confirms the replay reproduces the routed board exactly"}
 {"ts": "2026-10-03T05:44:17+00:00", "kind": "test", "text": "DRC parity: same-number pads are one pad, same-footprint overlapping pads connect, chamfered round-rect pads; jetson demo now matches KiCad exactly (12 of 17 demo boards)"}
 {"ts": "2026-10-03T06:20:13+00:00", "kind": "test", "text": "DAC 2020 (10 boards, same machine, KiCad judge): TraceMaker clean 60% (human originals 60%), Freerouting 2.5 10%, 1.9 20%; fixed footprint mask-opening bug (bm10/bm11 now complete)"}
+{"ts": "2026-10-03T06:47:20+00:00", "kind": "test", "text": "final10 PCBench: A 100% (mask-tierA), B 67.5%, C 60.0%, D 50.0% clean (FR RC12 published 100/50.0/46.7/36.4%); zero router-introduced DRC errors"}
