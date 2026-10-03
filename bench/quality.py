@@ -118,6 +118,53 @@ def geometry(d: dict) -> dict:
             "pad_mst_mm": round(ref, 1), "detour": round(total / ref, 3) if ref else None}
 
 
+def pair_partner(name: str, names: set):
+    """KiCad's diff-pair naming: same name with a final P/N or +/- swapped."""
+    if len(name) < 2:
+        return None
+    swap = {"P": "N", "N": "P", "+": "-", "-": "+"}.get(name[-1])
+    other = name[:-1] + swap if swap else None
+    return other if other in names else None
+
+
+def coupling(d: dict) -> dict:
+    """Share of differential-pair track length that runs beside its partner (same layer, gap <= 0.3 mm)."""
+    by_net = defaultdict(list)
+    for t in d["tracks"]:
+        by_net[t["net"]].append(t)
+    names = set(by_net)
+    total = coupled = 0.0
+    pairs = 0
+    for n in sorted(names):
+        o = pair_partner(n, names)
+        if not o or n > o:
+            continue
+        pairs += 1
+        for a_net, b_net in ((n, o), (o, n)):
+            bs = by_net[b_net]
+            for t in by_net[a_net]:
+                ax, ay, bx, by_ = t["sx"], t["sy"], t["ex"], t["ey"]
+                L = math.hypot(bx - ax, by_ - ay)
+                k = max(1, int(L / 100000))  # 0.1 mm samples
+                for i in range(k):
+                    px, py = ax + (bx - ax) * (i + 0.5) / k, ay + (by_ - ay) * (i + 0.5) / k
+                    best = math.inf
+                    for u in bs:
+                        if u["layer"] != t["layer"]:
+                            continue
+                        ux, uy, vx, vy = u["sx"], u["sy"], u["ex"], u["ey"]
+                        dx, dy = vx - ux, vy - uy
+                        LL = dx * dx + dy * dy
+                        tt = 0.0 if LL == 0 else max(0.0, min(1.0, ((px - ux) * dx + (py - uy) * dy) / LL))
+                        dist = math.hypot(px - ux - tt * dx, py - uy - tt * dy) - (t["width"] + u["width"]) / 2
+                        best = min(best, dist)
+                    total += L / k
+                    if best <= 300000:
+                        coupled += L / k
+    return {"diff_pairs": pairs, "pair_length_mm": round(total / 1e6, 1),
+            "pair_coupled_share": round(coupled / total, 3) if total else None}
+
+
 def metrics(unrouted: pathlib.Path, routed: pathlib.Path) -> dict:
     before, after = bench_run.drc(unrouted), bench_run.drc(routed)
     res = {"board": str(routed)}
@@ -127,7 +174,9 @@ def metrics(unrouted: pathlib.Path, routed: pathlib.Path) -> dict:
         res.update({"unconnected": after["unconnected"], "router_errors": added,
                     "completion": 1.0 if before["unconnected"] == 0 else round(1 - after["unconnected"] / before["unconnected"], 4),
                     "clean": after["unconnected"] == 0 and not added})
-    res.update(geometry(board_json(routed)))
+    bj = board_json(routed)
+    res.update(geometry(bj))
+    res.update(coupling(bj))
     return res
 
 

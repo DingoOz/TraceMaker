@@ -32,6 +32,7 @@ struct RouterOptions {
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
   int max_rips_per_connection = 8;
   int max_passes = 12;          // passes over still-unrouted connections
+  bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
@@ -67,7 +68,8 @@ struct RouteResult {
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
-  int optimized = 0;            // connections improved by the clean-up pass
+  int optimized = 0;
+  int pairs = 0;                // differential pairs routed coupled            // connections improved by the clean-up pass
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
