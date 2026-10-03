@@ -38,6 +38,8 @@ class RuleEngine {
   bool coupled_diff_pair(model::NetId a, model::NetId b) const;
   // Length constraint (min, max) of the last custom rule whose condition matches a track of `net`, if any.
   std::pair<std::optional<Coord>, std::optional<Coord>> length_constraint(model::NetId net) const;
+  // Maximum skew of the last custom rule with a `skew` constraint matching a track of `net`, if any.
+  std::optional<Coord> skew_constraint(model::NetId net) const;
   const std::vector<std::string>& warnings() const { return warnings_; }
 
  private:

@@ -243,6 +243,14 @@ class Condition {
         }
         if (n.name == "intersectsArea" ? any : all_in) { v.b = true; break; }
       }
+    } else if (n.name == "inDiffPair" && !n.args.empty()) {
+      // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
+      // P/N or +/-) matches the pattern.
+      const auto net = static_cast<std::size_t>(it->net);
+      if (it->net != 0 && net < ctx.eng->dp_partner_.size() && ctx.eng->dp_partner_[net] != 0) {
+        const std::string& name = b.nets[net].name;
+        v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
+      }
     } else if (n.name == "memberOfFootprint" && !n.args.empty()) {
       v.b = it->footprint >= 0 && model::wildcard_match(n.args[0], b.footprints[static_cast<std::size_t>(it->footprint)].reference);
     } else {
@@ -371,6 +379,27 @@ std::pair<std::optional<Coord>, std::optional<Coord>> RuleEngine::length_constra
       if (!c.cond->eval(ctx)) continue;
     }
     out = {k->min, k->max};  // later rules take precedence
+  }
+  return out;
+}
+
+std::optional<Coord> RuleEngine::skew_constraint(model::NetId net) const {
+  std::optional<Coord> out;
+  CopperItem probe;
+  probe.kind = ItemKind::Track;
+  probe.net = net;
+  probe.layers = ~model::LayerMask{0};
+  for (const auto& c : rules_) {
+    if (!c.valid) continue;
+    const model::Constraint* k = nullptr;
+    for (const auto& x : c.rule->constraints)
+      if (x.type == "skew" && x.max) k = &x;
+    if (!k) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &probe, nullptr, -1};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = k->max;
   }
   return out;
 }

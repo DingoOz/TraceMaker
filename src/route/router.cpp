@@ -1592,15 +1592,22 @@ struct Router::Impl {
   // Length tuning (design doc 05 §9 phase 3): nets with a custom `length` constraint that are routed too short get
   // trombone meanders on their longest straight segments. Each candidate meander is checked exactly; the net never
   // exceeds its maximum. Returns the number of nets brought into range.
-  int tune_lengths() {
-    int tuned = 0;
-    std::map<NetId, std::vector<int>> conns_of;
-    for (std::size_t ci = 0; ci < cs.size(); ++ci)
-      if (cs[ci].routed && !cs[ci].implicit && !cs[ci].items.empty()) conns_of[cs[ci].c.net].push_back(static_cast<int>(ci));
+  double net_length(const std::vector<int>& list) const {
+    double len = 0;
+    for (int ci : list)
+      for (int item : cs[static_cast<std::size_t>(ci)].items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Track) {
+          const auto& t = b.tracks[static_cast<std::size_t>(it.index)];
+          len += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+        }
+      }
+    return len;
+  }
+
+  // Adds meanders to `net` (its routed connections `list`) until its length is at least `mn` and at most `mx`.
+  bool tune_net(NetId net, const std::vector<int>& list, std::optional<Coord> mn, std::optional<Coord> mx) {
     auto seg_len = [](const model::Track& t) { return std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y)); };
-    for (const auto& [net, list] : conns_of) {
-      const auto [mn, mx] = obs->rules().length_constraint(net);
-      if (!mn) continue;
       double len = 0;
       for (int ci : list)
         for (int item : cs[static_cast<std::size_t>(ci)].items) {
@@ -1609,9 +1616,9 @@ struct Router::Impl {
         }
       const double target = mx ? (static_cast<double>(*mn) + static_cast<double>(*mx)) / 2 : static_cast<double>(*mn) * 1.005;
       double deficit = target - len;
-      if (static_cast<double>(*mn) <= len) continue;
+      if (static_cast<double>(*mn) <= len) return true;
       const Coord w = class_width(net), clr = std::max(netclass(net).clearance, rules.minimums.clearance);
-      const Coord p = std::max<Coord>(2 * w, w + clr) + 20'000;  // spacing between the meander's parallel runs
+      const Coord p = w + clr + 20'000;  // spacing between the meander's parallel runs (centre to centre)
       for (int round = 0; round < 50 && deficit > 1'000; ++round) {
         // Longest track of the net first.
         int best_ci = -1, best_item = -1;
@@ -1621,15 +1628,15 @@ struct Router::Impl {
             const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
             if (it.kind != drc::ItemKind::Track) continue;
             const double l = seg_len(b.tracks[static_cast<std::size_t>(it.index)]);
-            if (l > best_l && l > static_cast<double>(4 * p)) { best_l = l; best_ci = ci; best_item = item; }
+            if (l > best_l && l > static_cast<double>(3 * p)) { best_l = l; best_ci = ci; best_item = item; }
           }
         if (best_item < 0) break;
         const model::Track t = b.tracks[static_cast<std::size_t>(obs->copper().items[static_cast<std::size_t>(best_item)].index)];
         const double ux = static_cast<double>(t.b.x - t.a.x) / best_l, uy = static_cast<double>(t.b.y - t.a.y) / best_l;
         bool placed = false;
-        for (double h_mm : {1.5, 1.0, 0.6, 0.4}) {
+        for (double h_mm : {1.5, 1.0, 0.6, 0.4, 0.25}) {
           const double h = h_mm * 1e6;
-          int k = static_cast<int>(std::floor((best_l - 2.0 * static_cast<double>(p)) / (2.0 * static_cast<double>(p))));
+          int k = static_cast<int>(std::floor((best_l - static_cast<double>(p)) / (2.0 * static_cast<double>(p))));
           k = std::min(k, static_cast<int>(std::ceil(deficit / (2 * h))));
           if (mx) k = std::min(k, static_cast<int>(std::floor((static_cast<double>(*mx) - len) / (2 * h))));
           if (k <= 0) continue;
@@ -1675,8 +1682,50 @@ struct Router::Impl {
         }
         if (!placed) break;
       }
-      if (len >= static_cast<double>(*mn) && (!mx || len <= static_cast<double>(*mx))) ++tuned;
+      return len >= static_cast<double>(*mn) && (!mx || len <= static_cast<double>(*mx));
+  }
+
+  std::map<NetId, std::vector<int>> routed_conns_by_net() const {
+    std::map<NetId, std::vector<int>> out;
+    for (std::size_t ci = 0; ci < cs.size(); ++ci)
+      if (cs[ci].routed && !cs[ci].implicit && !cs[ci].items.empty()) out[cs[ci].c.net].push_back(static_cast<int>(ci));
+    return out;
+  }
+
+  // Length tuning (design doc 05 §9 phase 3): nets with a custom `length` constraint that are routed too short get
+  // trombone meanders on their longest straight segments; each candidate is checked exactly and the net never
+  // exceeds its maximum. Returns the number of constrained nets brought into range.
+  int tune_lengths() {
+    int tuned = 0;
+    for (const auto& [net, list] : routed_conns_by_net()) {
+      const auto [mn, mx] = obs->rules().length_constraint(net);
+      if (mn && tune_net(net, list, mn, mx)) ++tuned;
     }
+    return tuned;
+  }
+
+  // Skew tuning: for a differential pair with a custom `skew` constraint, the shorter half gets meanders until the
+  // length difference is within the limit (aiming at half the limit).
+  int tune_skew() {
+    int tuned = 0;
+    const auto by = routed_conns_by_net();
+    for (const auto& [na, la] : by)
+      for (const auto& [nb, lb] : by) {
+        if (na >= nb || !obs->rules().coupled_diff_pair(na, nb)) continue;
+        const auto mxs = obs->rules().skew_constraint(na);
+        if (std::getenv("TM_DEBUG_TUNE"))
+          std::fprintf(stderr, "skew pair %s/%s: rule %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
+                       mxs ? "yes" : "no");
+        if (!mxs) continue;
+        const double A = net_length(la), B = net_length(lb);
+        if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "  lengths %.3f / %.3f mm, max skew %.3f\n", A / 1e6, B / 1e6, nm_to_mm(*mxs));
+        // KiCad measures a little more than the track sum (vias, length inside pads): aim at half the limit.
+        if (std::fabs(A - B) <= static_cast<double>(*mxs) / 2) { ++tuned; continue; }
+        const bool a_short = A < B;
+        const double longer = std::max(A, B);
+        const auto mn = static_cast<Coord>(longer - static_cast<double>(*mxs) / 4), mx = static_cast<Coord>(longer + static_cast<double>(*mxs) / 4);
+        if (tune_net(a_short ? na : nb, a_short ? la : lb, mn, mx)) ++tuned;
+      }
     return tuned;
   }
 
@@ -1979,7 +2028,8 @@ struct Router::Impl {
         res.optimized += n;
         if (n == 0) break;
       }
-      res.length_tuned = tune_lengths();
+      res.length_tuned = tune_lengths() + tune_skew();
+      if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "tuned nets: %d\n", res.length_tuned);
       snapshot();
       snapshot_unrouted();
     }
