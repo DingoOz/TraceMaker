@@ -1,5 +1,7 @@
 #include "route/obstacles.hpp"
 
+#include <optional>
+#include <tuple>
 #include <algorithm>
 #include <bit>
 #include <cmath>
@@ -116,15 +118,35 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       if (chain.size() >= 4 && near(chain.front(), chain.back())) mask_open_[side].push_back(Shape::polygon(chain, gexp));
     }
   }
+  // A footprint's own mask graphic over pads of one net of that footprint is that pad's opening (DAC 2020 boards
+  // draw every pad opening as an F.Mask polygon): copper of that net may enter it, like a pad aperture. Other
+  // mask graphics are net-less openings that no copper may enter.
+  std::vector<std::tuple<int, Shape, model::NetId>> fp_openings;
   for (const auto& g : b_.graphics) {
     const int side = g.layer == "F.Mask" ? 0 : g.layer == "B.Mask" ? 1 : -1;
     if (side < 0) continue;
+    std::optional<Shape> sh;
     if ((g.kind == model::Graphic::Kind::Poly || g.kind == model::Graphic::Kind::Rect) && g.pts.size() >= 3 && (g.filled || g.kind == model::Graphic::Kind::Poly))
-      mask_open_[side].push_back(Shape::polygon(g.pts, g.width / 2 + gexp));
+      sh = Shape::polygon(g.pts, g.width / 2 + gexp);
     else if (g.kind == model::Graphic::Kind::Circle && g.filled)
-      mask_open_[side].push_back(Shape::point(g.a, geom::kiround(std::hypot(static_cast<double>(g.b.x - g.a.x), static_cast<double>(g.b.y - g.a.y))) + g.width / 2 + gexp));
+      sh = Shape::point(g.a, geom::kiround(std::hypot(static_cast<double>(g.b.x - g.a.x), static_cast<double>(g.b.y - g.a.y))) + g.width / 2 + gexp);
     else if (g.kind == model::Graphic::Kind::Line)
-      mask_open_[side].push_back(Shape::segment(g.a, g.b, g.width / 2 + gexp));
+      sh = Shape::segment(g.a, g.b, g.width / 2 + gexp);
+    if (!sh) continue;
+    model::NetId net = 0;
+    int nets = 0;
+    if (g.footprint >= 0)
+      for (int pi : b_.footprints[static_cast<std::size_t>(g.footprint)].pads) {
+        const auto& pad = b_.pads[static_cast<std::size_t>(pi)];
+        bool touches = false;
+        for (const auto& ps : drc::pad_shapes(pad))
+          if (geom::closer_than(*sh, ps, 1)) touches = true;
+        if (!touches) continue;
+        if (nets == 0 || pad.net != net) ++nets;
+        net = pad.net;
+      }
+    if (nets == 1 && net != 0) fp_openings.emplace_back(side, *sh, net);
+    else mask_open_[side].push_back(*sh);
   }
   // Inside-board raster (exact point-in-polygon only in cells the outline or a cut-out crosses).
   if (!outline_.empty()) {
@@ -207,6 +229,15 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       agrid_[side]->insert(static_cast<int>(apertures_[side].size()), a.box);
       apertures_[side].push_back(std::move(a));
     }
+  }
+  for (auto& [side, sh, net] : fp_openings) {
+    Aperture a;
+    a.shapes = {sh};
+    a.margin = 0;
+    a.net = net;
+    a.box = sh.box;
+    agrid_[side]->insert(static_cast<int>(apertures_[side].size()), a.box);
+    apertures_[side].push_back(std::move(a));
   }
   // Copper text: one rectangle per line, sized from approximate KiCad stroke-font advances (upper case 0.8,
   // lower case 0.68, digits 0.72, narrow glyphs 0.4 of the glyph width; line pitch 1.62 x height), justified
