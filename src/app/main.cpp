@@ -1,24 +1,20 @@
 // tracemaker: command-line front end. Subcommands grow with the roadmap (route, place, bench, serve, replay).
 #include <CLI/CLI.hpp>
 
-#include <chrono>
-#include <mutex>
 #include <cstdio>
 #include <filesystem>
-#include <thread>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <string>
 
 #include "app/inspect.hpp"
+#include "app/route_job.hpp"
 #include "core/rng.hpp"
 #include "drc/drc.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
 #include "route/obstacles.hpp"
-#include "server/messages.hpp"
-#include "server/viewer_server.hpp"
 #include "core/version.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
@@ -121,124 +117,12 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
   return rep.violations.empty() && rep.unconnected.empty() ? 0 : 5;
 }
 
-// Records router events (JSON lines with a time stamp) for replay, e.g. comparison videos.
-class FileSink final : public tmk::events::Sink {
- public:
-  explicit FileSink(const std::string& path) : f_(path), t0_(std::chrono::steady_clock::now()) {}
-  void publish(std::string json) override {
-    if (json.size() < 2 || json.front() != '{') return;
-    if (json.rfind("{\"t\":", 0) == 0) {  // already time-stamped (buffered portfolio replay)
-      std::lock_guard<std::mutex> lk(m_);
-      f_ << json << "\n";
-      return;
-    }
-    const double t = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0_).count();
-    std::lock_guard<std::mutex> lk(m_);
-    f_ << "{\"t\":" << t << "," << json.substr(1) << "\n";
-  }
-  bool wants_transient() const override { return false; }
-
- private:
-  std::ofstream f_;
-  std::chrono::steady_clock::time_point t0_;
-  std::mutex m_;
-};
-
-struct ViewOptions {
-  std::string record;  // --record FILE
-  bool enabled = false;
-  std::string host = "0.0.0.0";
-  int port = 8766;
-  bool hold = false;
-};
-
-int cmd_route(const std::string& in, const std::string& out, tmk::route::RouterOptions opt, const std::string& json_out, const ViewOptions& view, int threads,
-              const std::string& kb_path, const std::string& items_out) {
-  auto lb = tmk::io::read_board_file(in);
-  const auto rules = tmk::io::read_design_rules(in);
-  std::unique_ptr<tmk::server::ViewerServer> server;
-  if (view.enabled) {
-    tmk::server::ServerOptions so;
-    so.host = view.host;
-    so.port = static_cast<std::uint16_t>(view.port);
-    server = std::make_unique<tmk::server::ViewerServer>(so);
-    server->publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(in).filename().string()));
-    std::printf("live view: %s\n", server->url().c_str());
+int cmd_route(tmk::app::RouteJob job) {
+  job.log = [](const std::string& line) {
+    std::printf("%s\n", line.c_str());
     std::fflush(stdout);
-    opt.sink = server.get();
-  }
-  std::unique_ptr<FileSink> recorder;
-  if (!view.record.empty() && !view.enabled) {
-    recorder = std::make_unique<FileSink>(view.record);
-    recorder->publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(in).filename().string()));
-    opt.sink = recorder.get();
-    opt.buffer_events = true;
-  }
-  // Knowledge base (failure memory T3): earlier failures on this board go first; variant choice by bandit.
-  std::unique_ptr<tmk::learn::KnowledgeBase> kb;
-  tmk::learn::BoardFeatures feat;
-  if (!kb_path.empty()) {
-    kb = std::make_unique<tmk::learn::KnowledgeBase>(kb_path);
-    if (!kb->ok()) kb.reset();
-  }
-  int conn_estimate = 0;
-  for (const auto& n : lb.board.nets) conn_estimate += !n.name.empty();
-  feat = tmk::learn::features_of(lb.board, lb.doc.text(), conn_estimate);
-  if (kb) {
-    for (const auto& f : kb->failed_connections(feat.hash)) opt.priority.emplace_back(f.pad_a, f.pad_b);
-    if (!opt.priority.empty()) std::printf("knowledge base: %zu connections that failed before are routed first\n", opt.priority.size());
-  }
-  tmk::route::RouteResult res;
-  std::vector<int> ran;
-  int best_index = 0;
-  if (threads > 1) {
-    std::vector<int> pick;
-    if (kb && threads < tmk::route::portfolio_size()) pick = kb->choose_variants(feat, tmk::route::portfolio_size(), threads, opt.seed);
-    auto pr = tmk::route::route_portfolio(lb.board, rules, opt, threads, pick);
-    for (std::size_t i = 0; i < pr.variants.size(); ++i)
-      std::printf("  variant %d %-30s routed %d%s\n", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : "");
-    ran = pr.indices;
-    best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
-    res = std::move(pr.best);
-  } else {
-    res = tmk::route::Router(lb.board, rules, opt).run();
-    ran = {0};
-  }
-  if (kb) {
-    kb->record_run(feat, std::filesystem::path(in).filename().string(), ran, best_index, res.routed, res.connections, res.seconds);
-    std::vector<tmk::learn::FailedConnection> failed;
-    for (const auto& u : res.unrouted) failed.push_back({u.net, u.a, u.b, 1});
-    kb->record_failures(feat.hash, failed);
-  }
-  tmk::io::BoardEditor ed(lb, opt.seed);
-  for (const auto& t : res.tracks) ed.add_track(t);
-  for (const auto& v : res.vias) ed.add_via(v);
-  ed.save(out);
-  std::printf("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s\n", res.routed, res.connections,
-              res.tracks.size(), res.vias.size(), tmk::nm_to_mm(res.pitch), res.expansions, res.seconds);
-  for (const auto& f : res.failures) std::printf("  unrouted: %s\n", f.c_str());
-  if (!items_out.empty()) {
-    // New copper for the KiCad plugin: layer and net by name, coordinates in nm.
-    nlohmann::json it{{"tracks", nlohmann::json::array()}, {"vias", nlohmann::json::array()}};
-    for (const auto& t : res.tracks)
-      it["tracks"].push_back({{"start", {t.a.x, t.a.y}}, {"end", {t.b.x, t.b.y}}, {"width", t.width}, {"layer", lb.board.copper_name(t.layer)},
-                              {"net", lb.board.nets[static_cast<std::size_t>(t.net)].name}});
-    for (const auto& v : res.vias)
-      it["vias"].push_back({{"position", {v.pos.x, v.pos.y}}, {"diameter", v.size}, {"drill", v.drill}, {"top", lb.board.copper_name(v.layer_top)},
-                            {"bottom", lb.board.copper_name(v.layer_bottom)}, {"net", lb.board.nets[static_cast<std::size_t>(v.net)].name}});
-    std::ofstream(items_out) << it.dump();
-  }
-  if (!json_out.empty()) {
-    nlohmann::json j{{"routed", res.routed}, {"connections", res.connections}, {"tracks", res.tracks.size()}, {"vias", res.vias.size()},
-                     {"seconds", res.seconds}, {"expansions", res.expansions}, {"pitch_mm", tmk::nm_to_mm(res.pitch)}, {"failures", res.failures}};
-    std::ofstream(json_out) << j.dump(1);
-  }
-  if (server && view.hold) {
-    std::printf("routing finished; viewer still serving at %s (Ctrl-C to quit)\n", server->url().c_str());
-    std::fflush(stdout);
-    for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
-  }
-  return res.routed == res.connections ? 0 : 3;
+  };
+  return tmk::app::run_route_job(std::move(job)).exit_code();
 }
 
 // Prints the fixed-obstacle legality map around a pad (router debugging): '.' free for its net, '#' blocked,
@@ -373,12 +257,12 @@ int main(int argc, char** argv) {
   route->add_option("--kb", r_kb, "Knowledge base file (failure memory across runs)");
   route->add_flag("--no-kb", r_nokb, "Do not read or update the knowledge base");
   route->add_option("--threads", r_threads, "Portfolio size: differently configured routers run in parallel, best kept (1 = single router)");
-  ViewOptions vopt;
-  route->add_flag("--view", vopt.enabled, "Stream the routing live to the browser viewer");
-  route->add_option("--record", vopt.record, "Write the routing events (JSON lines, time-stamped) to a file for replay");
-  route->add_option("--view-host", vopt.host, "Viewer bind address (default 0.0.0.0)");
-  route->add_option("--view-port", vopt.port, "Viewer port (default 8766)");
-  route->add_flag("--hold", vopt.hold, "Keep serving the viewer after routing finishes");
+  tmk::app::RouteJob r_job;
+  route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
+  route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay");
+  route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
+  route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
+  route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
@@ -428,9 +312,16 @@ int main(int argc, char** argv) {
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
-      if (r_nogpu || tmk::gpu::list_devices().empty()) ropt.gpu_device = -1;
-      else ropt.gpu_device = tmk::gpu::list_devices().front().cuda_index;
-      return cmd_route(r_in, r_out, ropt, r_json, vopt, r_threads, r_nokb ? std::string() : r_kb, r_items);
+      ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
+      auto job = std::move(r_job);
+      job.in = r_in;
+      job.out = r_out;
+      job.opt = ropt;
+      job.threads = r_threads;
+      job.kb_path = r_nokb ? std::string() : r_kb;
+      job.items_out = r_items;
+      job.json_out = r_json;
+      return cmd_route(std::move(job));
     }
     if (*rt) {
       int bad = 0, ok = 0;
