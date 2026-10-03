@@ -452,6 +452,19 @@ int Obstacles::segment_state(Point a, Point b, int layer, Coord width, model::Ne
   return worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
 }
 
+int Obstacles::via_state_span(Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners, int l0,
+                              int l1) const {
+  if (!inside_board(p, 0)) return 2;
+  const Shape s = Shape::point(p, d / 2 + margin);
+  int st = 0;
+  for (int l = std::max(0, l0); l <= std::min(l1, b_.copper_count() - 1) && st != 2; ++l) {
+    const auto probe = make_probe(drc::ItemKind::Via, s, net, l, d, p);
+    st = worst(st, copper_state(s, probe, l, ignore_routed, owners));
+    if (st != 2) st = worst(st, holes_edges_state(s, net, l, true, drill / 2 + margin, ignore_routed, owners));
+  }
+  return st;
+}
+
 int Obstacles::via_state(Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners) const {
   if (!inside_board(p, 0)) return 2;
   const Shape s = Shape::point(p, d / 2 + margin);

@@ -142,6 +142,7 @@ struct Router::Impl {
     obs = std::make_unique<Obstacles>(b, rules);
     use_cache = !obs->has_custom_rules();
     nl = b.copper_count();
+    blind_ok = opt.blind_vias && rules.minimums.allow_blind_buried_vias && nl > 2;
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {
       pitch = opt.pitch;
@@ -738,6 +739,23 @@ struct Router::Impl {
       }
       // Via: change to every other layer at this cell (through via).
       const std::int64_t vextra = (opt.allow_vias && nl > 1) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
+      if (vextra < 0 && blind_ok) {
+        // Through via blocked: a blind or buried via spanning only the layers between (dearer: costs more to make).
+        const Point vp = at(w.x0 + cx, w.y0 + cy);
+        const Coord vm = pitch * 71 / 100 + 1;
+        for (int l2 = 0; l2 < nl; ++l2) {
+          if (l2 == l) continue;
+          const int vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
+          if (vs == 2) continue;
+          const std::size_t ns = sidx(l2, ci, kNoDir);
+          const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0);
+          if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
+          const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
+          if (hn >= kUnreachable) continue;
+          sn[ns] = SNode{ng, gen | (static_cast<std::uint32_t>(kNoDir) << 28), static_cast<std::int32_t>(s)};
+          open.emplace(ng + hn, ns);
+        }
+      }
       if (vextra >= 0) {
         for (int l2 = 0; l2 < nl; ++l2) {
           if (l2 == l) continue;
@@ -798,6 +816,7 @@ struct Router::Impl {
     struct Seg { Point a, b; int layer; };
     std::vector<Seg> segs;
     std::vector<Point> vias;
+    std::vector<std::pair<int, int>> via_span;  // layers joined by each via
     const Point pa = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
     const Point pb = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : at(path.back().gx, path.back().gy);
     // Corner points: pad centre, direction changes and layer changes, pad centre.
@@ -814,6 +833,7 @@ struct Router::Impl {
       if (path[i].layer != layer) {  // via at the previous point
         if (!(cur == p)) segs.push_back({cur, p, layer});
         vias.push_back(p);
+        via_span.emplace_back(std::min(layer, path[i].layer), std::max(layer, path[i].layer));
         cur = p;
         layer = path[i].layer;
         continue;
@@ -871,8 +891,16 @@ struct Router::Impl {
         learn_block(c, s, width);
       }
     }
-    for (const auto& v : vias)
-      if (obs->via_state(v, vd, vdrill, net, 0, soft, &victims) == 2) ok = false;
+    // Each via is a through via where that is legal, else (boards that allow them) a blind/buried via over its span.
+    std::vector<std::pair<int, int>> via_layers(vias.size(), {0, nl - 1});
+    for (std::size_t k = 0; k < vias.size(); ++k) {
+      if (obs->via_state(vias[k], vd, vdrill, net, 0, soft, &victims) != 2) continue;
+      if (blind_ok && obs->via_state_span(vias[k], vd, vdrill, net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
+        via_layers[k] = via_span[k];
+        continue;
+      }
+      ok = false;
+    }
     if (!ok) {
       commit_why = "exact check rejected the lattice path";
       return false;
@@ -900,15 +928,16 @@ struct Router::Impl {
              jnum(t.b.x) + "," + jnum(t.b.y) + "],\"w\":" + jnum(t.width) + ",\"layer\":" + std::to_string(t.layer) + ",\"net\":" +
              std::to_string(t.net) + "}}");
     }
-    for (const auto& p : vias) {
-      model::Via v{p, vd, vdrill, 0, nl - 1, model::ViaType::Through, net, false, sexpr::kNoNode};
+    for (std::size_t k = 0; k < vias.size(); ++k) {
+      const auto [top, bot] = via_layers[k];
+      const bool through = top == 0 && bot == nl - 1;
+      model::Via v{vias[k], vd, vdrill, top, bot, through ? model::ViaType::Through : model::ViaType::Blind, net, false, sexpr::kNoNode};
       b.vias.push_back(v);
       const int id = static_cast<int>(b.vias.size() - 1);
       st.items.push_back(obs->add_via(id, current));
       near_mark(st.items.back(), +1);
-      if (opt.sink)
-        emit("{\"type\":\"via_add\",\"via\":{\"id\":" + std::to_string(id) + ",\"p\":[" + jnum(p.x) + "," + jnum(p.y) + "],\"d\":" + jnum(vd) +
-             ",\"drill\":" + jnum(vdrill) + ",\"net\":" + std::to_string(net) + ",\"top\":0,\"bottom\":" + std::to_string(nl - 1) + "}}");
+      if (!through) ++res.blind_vias;
+      emit_via_add(id);
     }
     return true;
   }
@@ -994,6 +1023,7 @@ struct Router::Impl {
   GlobalResult global;               // corridors from the global router (empty when off)
   const std::vector<std::uint8_t>* corr = nullptr;  // corridor of the connection being searched
   Coord corridor_pen = 0;            // extra cost per lattice step outside the corridor
+  bool blind_ok = false;    // blind/buried vias allowed (board setting, more than two layers)
   bool fields_off = false;
   double via_cost_mult = 1.0;   // raised by the clean-up pass
   bool bypass_nogoods = false;  // clean-up re-routes are judged on their own  // set when GPU fields cost too much wall-clock time (see search)

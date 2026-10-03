@@ -590,8 +590,16 @@
      "done": true
     },
     {
-     "text": "Skew tuning, blind/micro vias, gridless arm, learned models",
+     "text": "Gridless arm, learned models, micro vias",
      "done": false
+    },
+    {
+     "text": "Skew tuning for differential pairs (custom skew rules, inDiffPair condition)",
+     "done": true
+    },
+    {
+     "text": "Blind/buried vias where through vias are blocked (--blind-vias; correct on the 3 boards that allow them, no measurable gain)",
+     "done": true
     }
    ]
   }

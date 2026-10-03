@@ -25,6 +25,9 @@ class Obstacles {
                  std::vector<int>* owners = nullptr) const;
   int segment_state(geom::Point a, geom::Point b, int layer, Coord width, model::NetId net, bool ignore_routed,
                     std::vector<int>* owners = nullptr) const;
+  // A via on copper layers [l0, l1] only (blind or buried via); via_state covers all layers.
+  int via_state_span(geom::Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners, int l0,
+                     int l1) const;
   int via_state(geom::Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed,
                 std::vector<int>* owners = nullptr) const;
   bool disk_ok(geom::Point p, int layer, Coord hw, model::NetId net, Coord margin) const {

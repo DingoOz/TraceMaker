@@ -54,3 +54,4 @@
 {"ts": "2026-10-03T09:20:04+00:00", "kind": "milestone", "text": "M8 placement (CPU): parallel tempering, LNS + exact B&B windows, RUDY term, --mode routable and --mode eco. 23 PCBench boards at 3M x 4 router budget: unrouted human 64, auto 60, routable 35, eco 48; fully routed 16/17/19/19; 0 new KiCad DRC errors; HPWL -29% (routable). Schematic-to-board gate not measured (set S missing)."}
 {"ts": "2026-10-03T09:47:44+00:00", "kind": "test", "text": "Held-out tier C (30 unseen boards, same machine, KiCad judge): TraceMaker clean 43%, Freerouting 2.5 0% (57% connected), 1.9 21%"}
 {"ts": "2026-10-03T10:00:39+00:00", "kind": "milestone", "text": "M12 length tuning: nets with a custom length rule get meanders into range (test: KiCad DRC passes, untuned board fails)"}
+{"ts": "2026-10-03T10:36:47+00:00", "kind": "build", "text": "M12: blind/buried vias (--blind-vias) and skew tuning; KiCad DRC clean on boards that allow blind vias"}

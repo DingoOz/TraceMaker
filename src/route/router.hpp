@@ -32,6 +32,7 @@ struct RouterOptions {
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
   int max_rips_per_connection = 8;
   int max_passes = 12;          // passes over still-unrouted connections
+  bool blind_vias = false;      // use blind/buried vias where a through via is blocked, if the board allows them
   bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
@@ -70,7 +71,8 @@ struct RouteResult {
   int restarts = 0;
   int optimized = 0;
   int pairs = 0;
-  int length_tuned = 0;          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
+  int length_tuned = 0;
+  int blind_vias = 0;           // blind/buried vias placed          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
