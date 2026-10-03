@@ -181,7 +181,7 @@ def fig_time():
 
 
 def fig_placement():
-    p = ROOT / "build/place-auto/summary.json"
+    p = ROOT / "build/place-auto-fixed/summary.json"
     rows = [r for r in json.loads(p.read_text()) if "error" not in r]
     rows.sort(key=lambda r: r["hpwl_kept"] / r["hpwl_input"])
     fig, ax = plt.subplots(figsize=(5.0, 3.6))

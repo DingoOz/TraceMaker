@@ -446,11 +446,36 @@ The four-layer high-voltage switching board (604 connections) uses the inner lay
 
 \subsection{Placement}
 
-The placer was evaluated on 23 PCBench boards in \texttt{--mode auto} with a router check of three million A*
-expansions (Figure~\ref{fig:placement}). It kept a new placement on 18 boards and the human placement on five.
-Total HPWL fell from 17,464\,mm to 13,190\,mm ($-24.5\%$, median $-17\%$ per board), unrouted connections fell from
-61 to 59, and no board got worse. Without the router check, placement alone cut wirelength by a similar amount
-but left 13 boards fully routed instead of 15: denser packing can block routing, which is why the check exists.
+The placer was evaluated on 23 PCBench boards with a deterministic router budget of three million A* expansions
+per variant (Figure~\ref{fig:placement}, Table~\ref{tab:place}). In \texttt{--mode auto} it kept a new placement on
+17 boards and the human placement on six: total HPWL fell from 17,464\,mm to 13,360\,mm ($-23.5\%$, median $-17\%$
+per board), unrouted connections fell from 64 to 60, and no board got worse. The \texttt{--mode routable} loop
+(routability term in the annealer, parallel tempering, large-neighbourhood search and exact windows, re-placing the
+parts around failed connections between routing rounds) brought unrouted connections down to 35, with 19 boards
+fully routed against 16 for the human placement; \texttt{--mode eco} (a few legal moves near failed connections on
+the human placement) reached 48. No mode added a KiCad DRC error. Without any router check, placement alone cut
+wirelength by a similar amount but routed worse: denser packing can block routing, which is why the checks exist.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+& Human & \texttt{auto} & \texttt{routable} & \texttt{eco} \\
+\midrule
+Unrouted connections (sum) & 64 & 60 & \textbf{35} & 48 \\
+Boards fully routed & 16 & 17 & \textbf{19} & 19 \\
+Total HPWL (mm) & 17,464 & 13,360 & \textbf{12,403} & 17,433 \\
+New KiCad DRC errors & -- & 0 & 0 & 0 \\
+Placement wall time, all boards (s) & -- & 1,354 & 3,481 & 1,541 \\
+\bottomrule
+\end{tabular}
+\caption{Placement modes on the 23 development boards (deterministic router budget). These boards were used while
+developing the placer, so the gains are optimistic; the held-out evaluation in the placement test plan
+(\texttt{docs/14-placement-test-plan.md}) is still to be run. An earlier version of this table was affected by a
+bug: when the router check rejected a placement, the edited board was written instead of the input.}
+\label{tab:place}
+\end{table}
 
 \begin{figure}[h]
   \centering
@@ -609,8 +634,8 @@ The human original is shown for reference: it does not pass the board's own rule
   are judged by Freerouting's own DRC. The held-out quality benchmark (Section~\ref{sec:quality}) runs both
   Freerouting versions locally and judges them with KiCad, but covers 60 boards; tier D has no unused boards left.
   \item \textbf{Copper text} is modelled by generous estimated boxes rather than exact glyph outlines.
-  \item \textbf{Placement} does not yet have a routability term inside the annealer, side flipping or
-  decoupling-capacitor grouping.
+  \item \textbf{Placement} has no side flipping or decoupling-capacitor grouping yet, and its results come from the
+  development boards; the held-out set, the SA-PCB baseline and design-intent checks of the test plan are to do.
   \item \textbf{Not yet built:} schematic-to-board flow, escape planning for large BGAs, differential-pair and
   length tuning.
 \end{itemize}
