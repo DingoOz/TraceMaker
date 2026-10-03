@@ -151,6 +151,7 @@ struct LoopCli {
   int rounds = 3, eco_rounds = 4, eco_candidates = 5;
   double beta = 1.0;
   double loop_time_s = 0;  // job wall-time stop for routable/eco (0 = none)
+  long final_work = -1;    // routable/eco: verification budget for the winner vs the input (-1: 4 x work, 0: off)
 };
 
 nlohmann::json eval_json(const place::RouteEval& e) {
@@ -253,6 +254,24 @@ int run_loop_mode(const LoopCli& c) {
     rounds = res.rounds;
     input_eval = tried.front().eval;
   }
+  // Final verification (doc 04 §8.3b): at the check budget the router leaves connections unrouted that a full
+  // route completes, so a placement that is easier for a short route can be harder for the real one. Route the
+  // winner and the input again with a larger budget; the winner replaces the input only if it is not worse there.
+  nlohmann::json verify = nullptr;
+  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !(best.pl.pos == input.pos && best.pl.rot == input.rot)) {
+    const place::RouteFn route_full = make_route_fn(c.in, rules, P, fw, c.route_threads, c.o.seed);
+    const place::RouteEval vi = route_full(input), vb = route_full(best.pl);
+    routes += 2;
+    const bool keep = vb.ok && vi.ok && vb.unrouted() <= vi.unrouted();
+    log("verify at " + std::to_string(fw) + ": input " + std::to_string(vi.unrouted()) + " unrouted, " + best.label + " " +
+        std::to_string(vb.unrouted()) + (keep ? " -> kept" : " -> input kept"));
+    verify = {{"work", fw}, {"input", eval_json(vi)}, {"output", eval_json(vb)}, {"accepted", keep}};
+    if (!keep) {
+      notes.push_back(best.label + " rejected by the final verification route (" + std::to_string(vb.unrouted()) + " vs " +
+                      std::to_string(vi.unrouted()) + " unrouted)");
+      best = place::Candidate{"input", input, input_eval, place::total_hpwl(P, input)};
+    }
+  }
   const bool kept_input = best.pl.pos == input.pos && best.pl.rot == input.rot;
   int moved = 0;
   if (kept_input) {
@@ -295,6 +314,7 @@ int run_loop_mode(const LoopCli& c) {
     nlohmann::json tj = nlohmann::json::array();
     for (const auto& t : tried) tj.push_back({{"label", t.label}, {"route", eval_json(t.eval)}, {"hpwl_mm", nm_to_mm(t.hpwl)}});
     j["tried"] = tj;
+    j["verify"] = verify;
     for (auto& [k, v] : extra.items()) j[k] = v;
     std::ofstream(c.json_path) << j.dump(2) << "\n";
   }
@@ -345,6 +365,9 @@ int main(int argc, char** argv) {
   app.add_option("--eco-rounds", lc.eco_rounds, "eco: commit rounds");
   app.add_option("--eco-candidates", lc.eco_candidates, "eco/routable: moves routed per round");
   app.add_option("--loop-beta", lc.beta, "routable/eco: routability weight in the loop");
+  app.add_option("--final-work", lc.final_work,
+                 "routable/eco: route the winner and the input again with this budget; keep the winner only if not worse "
+                 "(default 4 x --route-check, 0 = off)");
   app.add_option("--loop-time", lc.loop_time_s,
                  "routable: wall-time stop in seconds; checked between seeds and routes, keeps the best placement so far (0 = none)");
   CLI11_PARSE(app, argc, argv);

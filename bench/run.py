@@ -19,6 +19,7 @@ import json
 import os
 import pathlib
 import random
+import re
 import subprocess
 import sys
 import time
@@ -81,7 +82,14 @@ def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
     def routed_copper(v):
         return any(i.get("description", "").startswith(("Track", "Via", "Arc")) for i in v.get("items", []))
     r = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and routed_copper(v))
-    return {"errors": dict(c), "routed_errors": dict(r), "unconnected": len(d.get("unconnected_items", []))}
+    # Violations between items of one footprint (pads, its copper graphics) cannot be caused by moving it: the
+    # footprint is rigid. KiCad still re-classifies some of them (short <-> clearance) after a rotation, so
+    # placement-added errors count only violations that involve two footprints or board items.
+    def own_footprint(v):
+        refs = [re.search(r" of ([^ ]+)(?: on [^ ]+)?$", i.get("description", "")) for i in v.get("items", [])]
+        return bool(refs) and all(refs) and len({m.group(1) for m in refs}) == 1
+    x = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and not own_footprint(v))
+    return {"errors": dict(c), "routed_errors": dict(r), "cross_errors": dict(x), "unconnected": len(d.get("unconnected_items", []))}
 
 
 PLACE = ROOT / "build/release/src/place/tracemaker-place"
@@ -120,9 +128,13 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     # Errors the placement itself introduced (any items), against the human board.
     human, moved = drc(src), drc(placed)
     if human and moved:
-        res["place_added"] = {t: n - human["errors"].get(t, 0) for t, n in moved["errors"].items()
-                              if t in PLACEMENT_ERRORS and n - human["errors"].get(t, 0) > 0}
+        res["place_added"] = place_added(human, moved)
     return placed
+
+
+def place_added(human: dict, moved: dict) -> dict:
+    hc, mc = human.get("cross_errors", human["errors"]), moved.get("cross_errors", moved["errors"])
+    return {t: n - hc.get(t, 0) for t, n in mc.items() if t in PLACEMENT_ERRORS and n - hc.get(t, 0) > 0}
 
 
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:

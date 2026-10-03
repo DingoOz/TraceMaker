@@ -414,6 +414,15 @@ budget). The benchmark passes 0.6 × its placement timeout. Without it, 16 of 22
 timeout and fell back to the human placement. The route check runs without the router's clean-up stage, which
 never changes the routed count.
 
+### 8.3b Final verification route (2026-10-03)
+
+In the tier B benchmark with placement (`placed2-tierB`), three boards that route clean on the human placement
+lost connections after placement: at the 3M check budget the human placement left 6–23 connections unrouted
+(the full 120 s route completes them), so the loop accepted placements that suit a short route. Routed at 4×
+the budget, the order matched the full route on all four changed boards. `routable` and `eco` now route the
+winner and the input again at `--final-work` (default 4 × `--route-check`) and keep the winner only if it leaves
+no more connections unrouted there.
+
 ### 8.4 Not done in M8
 
 GPU parallel tempering (CPU only), CP-SAT (replaced by the exact window B&B), the router rungs R4 exact window
