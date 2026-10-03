@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Screen-record Freerouting's own GUI while it routes a PCBench board (for comparison videos).
 
-  build/report-venv/bin/python bench/record_fr.py AmpOne_dev-AmpOne 2.5.0-RC12 out.mp4 [--display 97]
+  build/report-venv/bin/python bench/record_fr.py AmpOne_dev-AmpOne 2.5.0-RC12 out.mp4 [--display 97] [--dsn other.dsn]
 
 Starts a private Xvfb display, runs Freerouting with its published benchmark settings and its GUI on, moves
 secondary windows (the settings panel) off the captured area, and records the main window with ffmpeg until
@@ -39,6 +39,7 @@ def main():
     ap.add_argument("--display", type=int, default=97)
     ap.add_argument("--fps", type=int, default=10)
     ap.add_argument("--timeout", default="00:30:00")
+    ap.add_argument("--dsn", help="route this .dsn instead of the board's unrouted.dsn (e.g. from bench/dsn_place.py)")
     a = ap.parse_args()
     disp = f":{a.display}"
     xvfb = subprocess.Popen(["Xvfb", disp, "-screen", "0", "2600x1100x24"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -47,7 +48,7 @@ def main():
     ses = out.with_suffix(".ses")
     log = open(out.with_suffix(".log"), "w")
     cmd = [str(JAVA), "-Xmx6g", "-jar", str(FRB / "binaries" / f"freerouting-{a.version}.jar"),
-           "-de", str(FRB / "fixtures/PCBench" / a.board / "unrouted.dsn"), "-do", str(ses),
+           "-de", a.dsn or str(FRB / "fixtures/PCBench" / a.board / "unrouted.dsn"), "-do", str(ses),
            "--router.max_threads=1", f"--router.job_timeout={a.timeout}", "--router.autorouter.max_passes=500",
            "--router.optimizer.enabled=true", "--router.fanout.enabled=true"]
     if not a.version.startswith("1."):

@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--step", type=float, default=0.2667, help="seconds of routing per frame")
     ap.add_argument("--width", type=int, default=1150)
     ap.add_argument("--height", type=int, default=898)
+    ap.add_argument("--bbox", help="x0,y0,x1,y1 in mm (default: pads and outline)")
     a = ap.parse_args()
     out = pathlib.Path(a.outdir)
     out.mkdir(parents=True, exist_ok=True)
@@ -56,6 +57,8 @@ def main():
     xs = [p["x"] / 1e6 for p in d["pads"]] + [x for s in edges for x, _ in s]
     ys = [p["y"] / 1e6 for p in d["pads"]] + [y for s in edges for _, y in s]
     x0, x1, y0, y1 = min(xs) - 1, max(xs) + 1, min(ys) - 1, max(ys) + 1
+    if a.bbox:
+        x0, y0, x1, y1 = map(float, a.bbox.split(","))
     # Keep the panel's aspect: pad the shorter side.
     want = a.width / a.height
     if (x1 - x0) / (y1 - y0) < want:
