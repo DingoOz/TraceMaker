@@ -7,6 +7,7 @@
 #include <csignal>
 #include <cstdio>
 #include <filesystem>
+#include <fstream>
 #include <numbers>
 #include <optional>
 #include <random>
@@ -342,19 +343,29 @@ int main(int argc, char** argv) {
   CLI::App app{"TraceMaker live viewer server"};
   std::string board_path, host = "0.0.0.0", web;
   int port = 8766;
-  bool demo = false, keep = false;
+  bool demo = false, keep = false, loop = false;
+  std::string replay;
+  double speed = 1.0;
   app.add_option("board", board_path, ".kicad_pcb file to show")->required()->check(CLI::ExistingFile);
   app.add_option("--port", port, "TCP port (default 8766)")->check(CLI::Range(0, 65535));
   app.add_option("--host", host, "bind address (default 0.0.0.0)");
   app.add_option("--web", web, "directory of the built viewer (default <repo>/viewer/dist)");
   app.add_flag("--demo", demo, "stream synthetic routing events (tracks are cleared and re-routed in a loop)");
   app.add_flag("--keep-tracks", keep, "with --demo: keep the board's existing tracks and vias");
+  app.add_option("--replay", replay, "replay a recording made with `tracemaker route --record FILE`")->check(CLI::ExistingFile);
+  app.add_option("--speed", speed, "replay speed (1 = real time)")->check(CLI::PositiveNumber);
+  app.add_flag("--loop", loop, "with --replay: start again after the end");
   CLI11_PARSE(app, argc, argv);
 
   try {
     auto loaded = io::read_board_file(board_path);
     auto& board = loaded.board;
     const std::string name = std::filesystem::path(board_path).stem().string();
+    if (!replay.empty()) {  // the recording starts from the unrouted board
+      board.tracks.clear();
+      board.arcs.clear();
+      board.vias.clear();
+    }
     if (demo && !keep) {
       board.tracks.clear();
       board.arcs.clear();
@@ -379,6 +390,28 @@ int main(int argc, char** argv) {
 
     std::thread demo_thread;
     if (demo) demo_thread = std::thread([&] { Demo(srv, board, name).run(); });
+    if (!replay.empty())
+      demo_thread = std::thread([&] {
+        // Recorded lines are {"t":seconds, <message fields>}; publish each message (without "t") at t / speed.
+        do {
+          srv.publish(server::board_snapshot_json(board, name));
+          std::ifstream in(replay);
+          std::string line;
+          const auto t0 = std::chrono::steady_clock::now();
+          while (!g_stop && std::getline(in, line)) {
+            if (line.rfind("{\"t\":", 0) != 0) continue;
+            const std::size_t comma = line.find(',');
+            if (comma == std::string::npos) continue;
+            const double t = std::atof(line.c_str() + 5);
+            std::string msg = "{" + line.substr(comma + 1);
+            if (msg.find("\"type\":\"board\"") != std::string::npos) continue;  // snapshot already sent
+            const auto due = t0 + std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>(t / speed));
+            while (!g_stop && std::chrono::steady_clock::now() < due) std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            srv.publish(std::move(msg));
+          }
+          for (int i = 0; loop && !g_stop && i < 30; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(100));  // pause at the end
+        } while (loop && !g_stop);
+      });
     while (!g_stop) std::this_thread::sleep_for(std::chrono::milliseconds(100));
     if (demo_thread.joinable()) demo_thread.join();
     const auto c = srv.counters();

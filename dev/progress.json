@@ -203,6 +203,10 @@
     {
      "text": "Replay log, heatmaps, FlatBuffers",
      "done": false
+    },
+    {
+     "text": "Event recording (route --record) and replay (tracemaker-view --replay); test: replay reproduces the routed board exactly",
+     "done": true
     }
    ]
   },

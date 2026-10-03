@@ -14,3 +14,5 @@ add_test(NAME kicad_edit_roundtrip COMMAND ${PROJECT_SOURCE_DIR}/tests/integrati
 set_tests_properties(kicad_edit_roundtrip PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 600)
 add_test(NAME kicad_drc_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_parity.sh)
 set_tests_properties(kicad_drc_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1200)
+add_test(NAME record_replay COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/record_replay.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/replay)
+set_tests_properties(record_replay PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
