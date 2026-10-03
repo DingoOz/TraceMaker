@@ -107,7 +107,10 @@ void Annealer::note_best() {
 }
 
 void Annealer::step(Slot& s) {
-  if (o_.trace_every > 0 && steps_++ % o_.trace_every == 0) trace_.push_back(pl_);
+  if (o_.trace_every > 0 && steps_++ % o_.trace_every == 0) {
+    trace_.push_back(pl_);
+    trace_t_.push_back(trace_now());
+  }
   // Shift radius adapts to keep the acceptance ratio of shift moves near 0.44 (Lam & Delosme, "Performance
   // of a new annealing schedule", DAC 1988).
   if (s.tried >= 500) {
@@ -568,6 +571,7 @@ AnnealResult anneal(const Problem& p, const Placement& start, const AnnealOption
   res.pl = best.best();
   res.start_cost = best.start_cost();
   res.trace = best.trace();
+  res.trace_t = best.trace_t();
   detail::finish_result(p, o, res);
   return res;
 }

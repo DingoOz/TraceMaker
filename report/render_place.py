@@ -9,6 +9,11 @@ is a key frame; positions are interpolated linearly between consecutive key fram
 (rotations switch half-way). Drawn in the report's board style: pads gold, moved parts teal with a faint trail
 back to where the designer had them, fixed parts grey, ratsnest (minimum spanning tree per net) cyan, with the
 stage and the ratsnest length in the corner. frame_00000.png is the designer's placement.
+
+With --speed S (timed mode) frame k shows the job at real time k*S/fps: the state of the candidate that was kept,
+as it existed at that moment (annealing snapshots carry their own times; a long gap is bridged by moving over the
+last two seconds before the next recorded state), and the job's phase at that moment (building a candidate,
+routing one, ...) as the caption.
 """
 import argparse
 import importlib.util
@@ -75,12 +80,16 @@ def main():
     ap.add_argument("--width", type=int, default=930)
     ap.add_argument("--height", type=int, default=700)
     ap.add_argument("--bbox", help="x0,y0,x1,y1 in mm (default: board outline + pads)")
+    ap.add_argument("--speed", type=float, help="timed mode: real seconds per video second")
+    ap.add_argument("--fps", type=int, default=15)
+    ap.add_argument("--no-caption", action="store_true")
     a = ap.parse_args()
     out = pathlib.Path(a.outdir)
     out.mkdir(parents=True, exist_ok=True)
     rows = [json.loads(line) for line in open(a.events)]
     head = next(r for r in rows if r["type"] == "place_header")
     keys = [r for r in rows if r["type"] == "place_frame"]
+    phases = [r for r in rows if r["type"] == "place_phase"]
     parts = head["parts"]
     ref_index = {p["ref"]: i for i, p in enumerate(parts)}
 
@@ -195,6 +204,7 @@ def main():
         if start_len is None:
             start_len = total
         stage_t.set_text(stage_text)
+        stage_t.set_visible(bool(stage_text))
         delta = (total / start_len - 1) * 100 if start_len else 0.0
         stat_t.set_text(f"Ratsnest {total:,.0f} mm  ({delta:+.1f}%)" if n else f"Ratsnest {total:,.0f} mm")
         fig.savefig(out / f"frame_{n:05d}.png", dpi=dpi, facecolor=bg)
@@ -206,6 +216,35 @@ def main():
             inner = m[m.find("(") + 1:m.find(":")] if "(" in m else ""
             return f"Router-guided move: {inner}" if inner else STAGE_NAMES["eco"]
         return STAGE_NAMES.get(st, st)
+
+    if a.speed:
+        job = head.get("seconds", keys[-1].get("t", 0.0))
+        keys.sort(key=lambda k: k.get("t", 0.0))
+        n_frames = int(math.ceil(job / a.speed * a.fps)) + 1
+
+        def caption(t):
+            txt = "Designer's placement"
+            for ph in phases:
+                if ph["t"] <= t:
+                    txt = ph["text"]
+            txt = txt.replace("building candidate placement: ", "building candidate: ").replace("router check: ", "router check of: ")
+            return txt[0].upper() + txt[1:]
+        j = 0
+        for n in range(n_frames):
+            t = min(job, n * a.speed / a.fps)
+            while j + 1 < len(keys) and keys[j + 1]["t"] <= t:
+                j += 1
+            pos = keys[j]["pos"]
+            if j + 1 < len(keys):
+                nxt = keys[j + 1]
+                span = min(2.0, nxt["t"] - keys[j]["t"])
+                if span > 0 and t > nxt["t"] - span:
+                    u = (t - (nxt["t"] - span)) / span
+                    pos = [[xa + (xb - xa) * u, ya + (yb - ya) * u, rb if u >= 0.5 else ra]
+                           for (xa, ya, ra), (xb, yb, rb) in zip(pos, nxt["pos"])]
+            draw(pos, "" if a.no_caption else caption(t), n)
+        print(f"{n_frames} frames over {job:.1f} s at {a.speed:g}x, {len(keys)} recorded states, {len(phases)} phases")
+        return
 
     # Frame budget: every key-frame transition gets an equal share; key frames with identical positions are skipped.
     seq = [keys[0]]

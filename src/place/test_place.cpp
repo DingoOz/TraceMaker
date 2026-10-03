@@ -251,7 +251,7 @@ TEST_CASE("recording a placement never changes it", "[place]") {
     tmk::place::place(p, a, o);
     std::vector<std::string> stages;
     Placement last;
-    o.trace = [&](const std::string& st, const Placement& x) {
+    o.trace = [&](const std::string& st, const Placement& x, double) {
       stages.push_back(st);
       last = x;
     };

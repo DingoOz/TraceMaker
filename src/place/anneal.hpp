@@ -19,6 +19,7 @@
 //   routing problems", CP 1998): rip up a window of nearby parts and re-place them, exactly (branch and bound
 //   over candidate slots and rotations) for small windows, greedily otherwise; kept only if the cost falls.
 // - A routability term β · RUDY overflow (place/congestion.hpp).
+#include <chrono>
 #include <cstdint>
 #include <vector>
 
@@ -26,6 +27,9 @@
 #include "place/legality.hpp"
 
 namespace tmk::place {
+
+// Recording clock (video timelapse): steady-clock seconds. Only ever written to recordings.
+inline double trace_now() { return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
 
 struct AnnealOptions {
   std::uint64_t seed = 1;
@@ -60,6 +64,7 @@ struct AnnealResult {
   std::uint64_t exchanges_tried = 0, exchanges_accepted = 0;
   std::uint64_t lns_tried = 0, lns_improved = 0;
   std::vector<Placement> trace;  // the winning run's recorded states (trace_every > 0)
+  std::vector<double> trace_t;   // when each was recorded (trace_now())
 };
 
 // `start` must be legal for every movable part.

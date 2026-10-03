@@ -111,6 +111,7 @@ AnnealResult anneal_tempering(const Problem& p, const std::vector<std::vector<in
   res.pl = best.best();
   res.start_cost = best.start_cost();
   res.trace = best.trace();
+  res.trace_t = best.trace_t();
   finish_result(p, o, res);
   return res;
 }

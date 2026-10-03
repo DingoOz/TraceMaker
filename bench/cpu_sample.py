@@ -2,13 +2,17 @@
 """Run a command and sample the CPU use of every thread of it and its child processes (from /proc), for the
 parallelism overlay of the comparison videos.
 
-  python3 bench/cpu_sample.py out.json [--every 0.25] -- command args...
+  python3 bench/cpu_sample.py out.json [--every 0.25] [--gpu] -- command args...
 
 out.json: {"cmd", "every", "clk_tck", "samples": [{"t": s, "threads": {"pid/tid name": cpu_fraction}}...]}, where
 cpu_fraction is the share of one core the thread used since the previous sample (1.0 = one core fully busy).
+With --gpu, "gpu": [{"t", "gpu", "sm"}] holds the SM utilisation (%) of the job's processes from `nvidia-smi pmon`
+(1 s resolution; the GPUs are shared, so only rows with the job's pids count).
 """
+import threading
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -56,11 +60,24 @@ def main() -> int:
     every = float(opts[opts.index("--every") + 1]) if "--every" in opts else 0.25
     t0 = time.monotonic()
     proc = subprocess.Popen(cmd)
+    gpu_rows, pmon = [], None
+    if "--gpu" in opts and shutil.which("nvidia-smi"):
+        pmon = subprocess.Popen(["nvidia-smi", "pmon", "-s", "u", "-d", "1"], stdout=subprocess.PIPE, text=True)
+
+        def read_pmon():
+            for line in pmon.stdout:
+                f = line.split()
+                if len(f) > 3 and not line.startswith("#") and f[1].isdigit():
+                    gpu_rows.append((time.monotonic() - t0, int(f[0]), int(f[1]), f[3]))
+        threading.Thread(target=read_pmon, daemon=True).start()
+    pids_seen = set()
     prev, prev_t, samples = {}, t0, []
     while True:
         done = proc.poll() is not None
         now = time.monotonic()
-        cur = thread_times(children(proc.pid)) if not done else {}
+        tree = children(proc.pid) if not done else []
+        pids_seen.update(tree)
+        cur = thread_times(tree)
         dt = now - prev_t
         if dt > 0 and cur:
             samples.append({"t": round(now - t0, 3),
@@ -71,8 +88,11 @@ def main() -> int:
         if done:
             break
         time.sleep(every)
-    json.dump({"cmd": cmd, "every": every, "clk_tck": CLK, "seconds": round(time.monotonic() - t0, 2), "samples": samples},
-              open(out, "w"))
+    seconds = round(time.monotonic() - t0, 2)
+    if pmon:
+        pmon.terminate()
+    gpu = [{"t": round(t, 2), "gpu": g, "sm": int(sm) if sm.isdigit() else 0} for t, g, pid, sm in gpu_rows if pid in pids_seen]
+    json.dump({"cmd": cmd, "every": every, "clk_tck": CLK, "seconds": seconds, "samples": samples, "gpu": gpu}, open(out, "w"))
     return proc.returncode
 
 

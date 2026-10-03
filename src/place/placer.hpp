@@ -32,7 +32,8 @@ struct PlaceOptions {
   const CongestionMap* congestion = nullptr;
   std::vector<int> focus;        // LNS seed parts
   // Recording (video): receives intermediate placements with a stage name. Never affects the result.
-  std::function<void(const std::string& stage, const Placement& pl)> trace;
+  // `t` is when the state existed (trace_now()); annealing snapshots are delivered after the run.
+  std::function<void(const std::string& stage, const Placement& pl, double t)> trace;
 };
 
 struct Metrics {

@@ -10,10 +10,13 @@ placed.kicad_pcb, place_events.jsonl (tracemaker-place --record), tm_events.json
 route --record), fr_human.mp4/.ses/.log and fr_placed.ses/.log (bench/record_fr.py), tm_human.kicad_pcb, and the
 thread samples cpu_place.json, cpu_route.json, cpu_fr.json (bench/cpu_sample.py).
 
-Acts: (1) placement: designer's placement vs TraceMaker's placement stages (the winning candidate's recorded states,
-interpolated); its thread strip is the whole placement job compressed to the act; (2) routing at 1x real time:
-Freerouting's own GUI (screen recording) vs TraceMaker rendered from its event log; (3) results, every board judged
-by KiCad's DRC, with two control runs (each router on the other placement) so the placement's share is visible.
+Acts: (1) the two finished boards in 3D (kicad-cli pcb render, scripts/render_board_spin.py), spinning once;
+(2) how they were made, on one shared clock at a constant speed-up: Freerouting routes from t = 0 (its own GUI,
+screen-recorded); TraceMaker places from t = 0 (the kept candidate's states at the times they existed, captioned with
+what the job was doing) and then routes (rendered from its event log); each panel switches to the saved KiCad board
+when that tool finishes; vertical meters show the CPU threads and GPU SM use sampled while the jobs ran, and the
+elapsed time is the largest number; (3) results, every board judged by KiCad's DRC, with two control runs (each
+router on the other placement) so the placement's share is visible.
 """
 import argparse
 import importlib.util
@@ -109,39 +112,6 @@ def cpu_summary(series, t0, t1):
     return busy, peak
 
 
-def draw_strip(img, x, title, sub, series, t_now, t_span, t0=0.0, note=None, accent=TEAL):
-    """Thread lanes under a panel: lane i is lit while at least i+1 threads are busy (brightness = that thread's
-    share of a core). The history scrolls left; the big number is cores busy right now."""
-    d = ImageDraw.Draw(img)
-    d.rounded_rectangle([x, SY, x + PW, SY + SH], radius=10, fill=PANEL)
-    d.text((x + 16, SY + 10), title, font=font(19, True), fill=INK)
-    d.text((x + 16, SY + 36), sub, font=font(14), fill=DIM)
-    gx0, gx1, gy0 = x + 16, x + PW - 200, SY + 62
-    lane_h = 10
-    if note:
-        d.text((gx0, gy0 + 38), note, font=font(17), fill=MUTED)
-        return
-    cols = gx1 - gx0
-    for lane in range(LANES):
-        y = gy0 + (LANES - 1 - lane) * lane_h
-        d.rectangle([gx0, y, gx1, y + lane_h - 3], fill="#181d23")
-    if series is not None and t_now >= 0:
-        for c in range(cols):
-            tc = t0 + t_now - t_span * (1 - c / cols)
-            if tc < t0:
-                continue
-            v = series_at(series, tc)
-            for lane in range(min(LANES, len(v))):
-                y = gy0 + (LANES - 1 - lane) * lane_h
-                d.line([gx0 + c, y, gx0 + c, y + lane_h - 3], fill=mix("#181d23", accent, max(0.25, v[lane])))
-        now = series_at(series, t0 + t_now)
-        busy = sum(now)
-        d.text((gx1 + 22, gy0 - 4), f"{busy:.1f}", font=font(46, True), fill=accent)
-        d.text((gx1 + 22, gy0 + 50), "cores busy now", font=font(14), fill=DIM)
-        d.text((gx1 + 22, gy0 + 70), f"{len([v for v in now if v > 0.3])} threads working", font=font(14), fill=DIM)
-    d.text((gx0, gy0 + LANES * lane_h + 2), "1 lane = 1 CPU thread  ·  history scrolls left", font=font(12), fill=DIM)
-
-
 # ---- board renders -------------------------------------------------------------------------------------------------
 
 def view_box(board):
@@ -167,7 +137,7 @@ def drc_json(board):
     return json.loads(out.read_text())
 
 
-def render_final(board, png, bbox, w, h, label):
+def render_final(board, png, bbox, w, h, label, markers=True):
     """Routed board in the report style with KiCad's verdict drawn on it: router-introduced violations as red rings,
     unconnected items as dashed magenta lines."""
     dpi = 100
@@ -176,7 +146,7 @@ def render_final(board, png, bbox, w, h, label):
     ax = fig.add_axes([0, 0, 1, 1])
     mf.draw_board(ax, board, crop=bbox, lw_scale=2.0)
     ax.set_aspect("auto")
-    dr = drc_json(board)
+    dr = drc_json(board) if markers else {}
     n_err = 0
     for v in dr.get("violations", []):
         if v.get("severity") != "error":
@@ -212,7 +182,6 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--board", default="retroreflectors_SALSAFLOCK")
     ap.add_argument("--out", default=str(ROOT / "report/compare_placement_SALSAFLOCK.mp4"))
-    ap.add_argument("--place-seconds", type=float, default=16.0, help="video length of the placement act")
     ap.add_argument("--fr-version", default="2.5.0-RC12")
     a = ap.parse_args()
     human, placed = V / "human.kicad_pcb", V / "placed.kicad_pcb"
@@ -266,12 +235,41 @@ def main():
     tm_job = route_job_s - route_offset  # the portfolio runs its slower variants to their deadline
     print(f"placement {place_s:.0f} s, TM routing {tm_d:.1f} s, FR routing {fr_d:.1f} s (window {fr_window:.1f} s)")
 
-    # Panel frame sequences.
-    n_place = int(a.place_seconds * FPS)
-    subprocess.run([PY, str(ROOT / "report/render_place.py"), str(V / "place_events.jsonl"), str(human), str(V / "pf"), "--frames",
-                    str(n_place - 25), "--hold", "25", "--width", str(PW), "--height", str(PH), "--bbox", bb], check=True)
+    # One clock for both: Freerouting routes from t = 0; TraceMaker places from t = 0, then routes.
+    route_t0 = place_s + route_offset             # TraceMaker's routing starts here on the shared clock
+    t_end = max(fr_d, place_s + route_job_s)
+    speed = max(1, round(t_end / 36.0))
+    n_act = int(math.ceil(t_end / speed * FPS)) + 2 * FPS
+    BW, BH, BY, CW = 780, 680, 150, 130
+    bx = (20 + CW + 10, 980)                      # board panels
+    cx_ = (20, 980 + BW + 10)                     # CPU/GPU columns
+    gpu_names = {0: "P100", 1: "V100"}
+    gpu_tm = [(r["t"], r["gpu"], r["sm"]) for r in json.loads((V / "cpu_place.json").read_text()).get("gpu", [])] + \
+             [(place_s + r["t"], r["gpu"], r["sm"]) for r in json.loads((V / "cpu_route.json").read_text()).get("gpu", [])]
+    fields = [(int(m.group(1)), float(m.group(2))) for m in re.finditer(r"fields (\d+) GPU \+ \d+ CPU \(([\d.]+) s", (V / "tm_route.log").read_text())]
+    pfields = [(int(m.group(1)), float(m.group(2))) for m in re.finditer(r"fields (\d+) GPU \+ \d+ CPU \(([\d.]+) s", (V / "place.log").read_text())]
+
+    def gpu_at(t):
+        out = {}
+        for ts, g, sm in gpu_tm:
+            if t - 1.5 <= ts <= t:
+                out[g] = sm
+        return out
+
+    def tm_threads(t):
+        if t < place_s:
+            return series_at(cpu_pl, t)
+        if t <= place_s + route_job_s:
+            return series_at(cpu_rt, t - place_s)
+        return []
+
+    def fr_threads(t):
+        return series_at(cpu_fr, fr_offset + t) if t <= fr_d else []
+
+    subprocess.run([PY, str(ROOT / "report/render_place.py"), str(V / "place_events.jsonl"), str(human), str(V / "pf"), "--speed", str(speed),
+                    "--fps", str(FPS), "--width", str(BW), "--height", str(BH), "--bbox", bb], check=True)
     subprocess.run([PY, str(ROOT / "report/render_events.py"), str(V / "tm_events.jsonl"), str(placed), str(V / "rf"), "--step",
-                    f"{1 / FPS:.5f}", "--width", str(PW), "--height", str(PH), "--bbox", bb], check=True)
+                    f"{speed / FPS:.5f}", "--width", str(BW), "--height", str(BH), "--bbox", bb], check=True)
     fr_frames = V / "ff"
     if fr_frames.exists():
         shutil.rmtree(fr_frames)
@@ -280,13 +278,17 @@ def main():
                                 capture_output=True, text=True).stdout)
     cut = min(fr_d + 0.5, vdur - 1.0)  # its window closes when it exits
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(V / "fr_human.mp4"), "-t", f"{cut:.2f}", "-vf",
-                    f"fps={FPS},scale={PW}:{PH}:force_original_aspect_ratio=decrease,pad={PW}:{PH}:(ow-iw)/2:(oh-ih)/2:color=0x101418",
+                    f"setpts=PTS/{speed},fps={FPS},scale={BW}:{BH}:force_original_aspect_ratio=decrease,pad={BW}:{BH}:(ow-iw)/2:(oh-ih)/2:color=0x101418",
                     str(fr_frames / "f_%05d.png")], check=True)
     pf = sorted((V / "pf").glob("frame_*.png"))
     rf = sorted((V / "rf").glob("frame_*.png"))
     ff = sorted(fr_frames.glob("f_*.png"))
-    fh, fhe = V / "final_fr.png", None
+    fh = V / "final_fr.png"
     fhe = render_final(fr_h_board, fh, bbox, PW, 470, f"Freerouting: {routed(m_fr)}/{conns} routed")
+    # The saved boards in the panels' size: shown once each tool has finished (the KiCad files, not the replay).
+    render_final(fr_h_board, V / "saved_fr.png", bbox, BW, BH, f"Saved result: {routed(m_fr)}/{conns} routed", markers=False)
+    render_final(V / "tm.kicad_pcb", V / "saved_tm.png", bbox, BW, BH, f"Saved result: {routed(m_tm)}/{conns} routed", markers=False)
+    saved_fr, saved_tm = Image.open(V / "saved_fr.png").convert("RGB"), Image.open(V / "saved_tm.png").convert("RGB")
     tme = render_final(V / "tm.kicad_pcb", V / "final_tm.png", bbox, PW, 470, f"TraceMaker: {routed(m_tm)}/{conns} routed")
 
     n = 0
@@ -296,75 +298,136 @@ def main():
         img.save(frames / f"f_{n:05d}.png")
         n += 1
 
-    def base(act, act_name):
+    def base(act):
         img = Image.new("RGB", (W, H), hexrgb(BG))
         d = ImageDraw.Draw(img)
-        d.text((W // 2, 12), "Does moving the parts help? Placement + routing on the same board", font=font(28, True), fill=INK, anchor="mt")
-        d.text((W // 2, 50), f"{a.board.split('_', 1)[-1]} (PCBench tier B, {conns} connections) · TraceMaker vs Freerouting "
-               f"{a.fr_version} · same machine · every result judged by KiCad's DRC", font=font(16), fill=MUTED, anchor="mt")
-        for i, nm in enumerate(["1 · Placement", "2 · Routing", "3 · Result"]):
-            cx = W // 2 + (i - 1) * 190
+        d.text((W // 2, 10), "Does moving the parts help? One clock for both: placement + routing", font=font(28, True), fill=INK, anchor="mt")
+        d.text((W // 2, 48), f"{a.board.split('_', 1)[-1]} (PCBench tier B, {conns} connections) · TraceMaker vs Freerouting "
+               f"{a.fr_version} · same machine · played at {speed}x real time · results judged by KiCad's DRC", font=font(16), fill=MUTED, anchor="mt")
+        for i, nm in enumerate(["1 · Finished boards", "2 · How they were made", "3 · Result"]):
+            cx = W // 2 + (i - 1) * 250
             on = i + 1 == act
-            d.rounded_rectangle([cx - 85, 76, cx + 85, 102], radius=13, fill=TEAL if on else "#1b2027")
-            d.text((cx, 89), nm, font=font(15, on), fill="#06110f" if on else DIM, anchor="mm")
+            d.rounded_rectangle([cx - 118, 74, cx + 118, 100], radius=13, fill=TEAL if on else "#1b2027")
+            d.text((cx, 87), nm, font=font(15, on), fill="#06110f" if on else DIM, anchor="mm")
         return img, d
 
     def panel_titles(d, left, left_sub, right, right_sub):
-        for x, t, s in ((PX[0], left, left_sub), (PX[1], right, right_sub)):
+        for x, t, s_ in ((PX[0], left, left_sub), (PX[1], right, right_sub)):
             d.text((x + PW // 2, PY0 - 19), t, font=font(20, True), fill=INK, anchor="mb")
-            d.text((x + PW // 2, PY0 - 2), s, font=font(13), fill=DIM, anchor="mb")
+            d.text((x + PW // 2, PY0 - 2), s_, font=font(13), fill=DIM, anchor="mb")
 
-    # Intro card.
-    for k in range(int(3.5 * FPS)):
-        img = Image.new("RGB", (W, H), hexrgb(BG))
+    def column(img, x, threads, gpus, accent, gpu_note):
+        """Vertical meters: one bar per busy CPU thread (height = share of a core), then the GPUs (SM %)."""
         d = ImageDraw.Draw(img)
-        d.text((W // 2, 330), "Does moving the parts help routing?", font=font(54, True), fill=INK, anchor="mm")
-        d.text((W // 2, 410), f"Board: {a.board.split('_', 1)[-1]} from PCBench (tier B, {conns} connections, 2 layers)",
-               font=font(24), fill=MUTED, anchor="mm")
-        d.text((W // 2, 520), f"Left: Freerouting {a.fr_version} routes the designer's placement (it does not place parts)",
-               font=font(24), fill=INK, anchor="mm")
-        d.text((W // 2, 565), "Right: TraceMaker moves the parts first, checking each candidate with its router, then routes",
-               font=font(24), fill=INK, anchor="mm")
-        d.text((W // 2, 680), "1 Placement   →   2 Routing (real time)   →   3 Result (KiCad DRC)", font=font(26, True), fill=TEAL,
-               anchor="mm")
+        d.rounded_rectangle([x, BY, x + CW, BY + BH], radius=10, fill=PANEL)
+        d.text((x + CW // 2, BY + 10), "CPU threads", font=font(14, True), fill=INK, anchor="mt")
+        top, bot = BY + 34, BY + 430
+        slots = 12
+        bw = (CW - 20) // slots
+        for i in range(slots):
+            x0 = x + 10 + i * bw
+            d.rectangle([x0, top, x0 + bw - 2, bot], fill="#181d23")
+            if i < len(threads):
+                h = int((bot - top) * threads[i])
+                d.rectangle([x0, bot - h, x0 + bw - 2, bot], fill=accent)
+        busy = sum(threads)
+        d.text((x + CW // 2, bot + 8), f"{len([v for v in threads if v > 0.3])} busy", font=font(15, True), fill=INK, anchor="mt")
+        d.text((x + CW // 2, bot + 28), f"{busy:.1f} cores", font=font(13), fill=DIM, anchor="mt")
+        d.text((x + CW // 2, bot + 62), "GPU (CUDA)", font=font(14, True), fill=INK, anchor="mt")
+        gtop, gbot = bot + 86, BY + BH - 40
+        if gpu_note:
+            d.multiline_text((x + CW // 2, gtop + 40), gpu_note, font=font(13), fill=DIM, anchor="ma", align="center")
+            return
+        for i, g in enumerate((0, 1)):
+            x0 = x + 18 + i * 52
+            d.rectangle([x0, gtop, x0 + 42, gbot], fill="#181d23")
+            sm = gpus.get(g, 0)
+            h = int((gbot - gtop) * sm / 100)
+            d.rectangle([x0, gbot - h, x0 + 42, gbot], fill="#a77bff")
+            d.text((x0 + 21, gbot + 6), gpu_names[g], font=font(12), fill=DIM, anchor="mt")
+            d.text((x0 + 21, gtop - 2), f"{sm}%", font=font(12), fill=INK, anchor="mb")
+
+    def timeline(d, x, w, y, segs, t, accent):
+        """Proportional bar on the shared clock: coloured segments for what the tool did, a marker at now."""
+        d.rounded_rectangle([x, y, x + w, y + 22], radius=6, fill="#181d23")
+        for s0, s1, col, lab in segs:
+            xa, xb = x + int(w * s0 / t_end), x + int(w * min(s1, t) / t_end)
+            if xb > xa:
+                d.rectangle([xa, y, xb, y + 22], fill=col)
+            xl = x + int(w * s0 / t_end)
+            d.text((xl + 4, y + 26), lab, font=font(13), fill=DIM)
+        xm = x + int(w * min(t, t_end) / t_end)
+        d.line([xm, y - 4, xm, y + 26], fill=INK, width=2)
+
+    # Act 1: the two finished boards in 3D (kicad-cli pcb render), spinning once.
+    spins = [sorted((V / f"spin_{tag}").glob("s_*.png")) for tag in ("fr", "tm")]
+    for k in range(len(spins[0])):
+        img, d = base(1)
+        for side, (x, title, sub, verdict, col) in enumerate((
+                (20, f"Freerouting {a.fr_version}", "the designer's placement, routed by Freerouting",
+                 f"{routed(m_fr)}/{conns} routed · {errs(m_fr)} new KiCad DRC errors", AMBER),
+                (980, "TraceMaker", "TraceMaker's placement, routed by TraceMaker",
+                 f"{routed(m_tm)}/{conns} routed · {errs(m_tm)} new KiCad DRC errors", TEAL))):
+            d.text((x + 460, 150), title, font=font(30, True), fill=col, anchor="mt")
+            d.text((x + 460, 192), sub, font=font(17), fill=MUTED, anchor="mt")
+            im = Image.open(spins[side][k]).convert("RGBA")
+            layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+            layer.paste(im, (x + 460 - im.width // 2, 225), im)
+            img = Image.alpha_composite(img.convert("RGBA"), layer).convert("RGB")
+            d = ImageDraw.Draw(img)
+            d.text((x + 460, 900), verdict, font=font(26, True), fill=INK, anchor="mt")
+        d.text((W // 2, 990), "Same netlist, same board outline. How did each get here?", font=font(22), fill=MUTED, anchor="mt")
+        d.text((W // 2, 1040), "3D: kicad-cli pcb render (these footprints carry no 3D part models)", font=font(13), fill=DIM, anchor="mt")
         save(img)
 
-    # Act 1: placement.
-    left_place = Image.open(pf[0]).convert("RGB")
-    for k in range(n_place):
-        img, d = base(1, "Placement")
-        panel_titles(d, f"Freerouting {a.fr_version}", "keeps the designer's placement: it has no placement step",
-                     "TraceMaker", f"places: {moved} parts moved · stages of the winning candidate, as recorded")
-        img.paste(left_place, (PX[0], PY0))
-        img.paste(Image.open(pf[min(k, len(pf) - 1)]).convert("RGB"), (PX[1], PY0))
-        draw_strip(img, PX[0], "Freerouting · placement", "", None, 0, 1, note="No placement step: the board goes straight to routing.")
-        tl = place_s * k / max(1, n_place - 1)
-        draw_strip(img, PX[1], f"TraceMaker · placement job: {tl:.0f} of {place_s:.0f} s (shown {place_s / a.place_seconds:.0f}x faster)",
-                   "8 annealing runs in parallel, then check routes (8 router variants each)", cpu_pl, tl, place_s * 0.35)
-        save(img)
-
-    # Act 2: routing at 1x.
-    n_route = int((max(tm_job, fr_d) + 2.0) * FPS)
-    for k in range(n_route):
-        t = k / FPS
-        img, d = base(2, "Routing")
-        panel_titles(d, f"Freerouting {a.fr_version}", "its own window (screen recording) · 1 routing thread",
-                     "TraceMaker", "rendered from its event log · 8 router variants in parallel, best kept")
-        img.paste(Image.open(ff[min(k, len(ff) - 1)]).convert("RGB"), (PX[0], PY0))
-        img.paste(Image.open(rf[min(k, len(rf) - 1)]).convert("RGB"), (PX[1], PY0))
-        for x, dur in ((PX[0], fr_d), (PX[1], tm_d)):
-            cy = PY0 + PH - 82
-            d.rounded_rectangle([x + 10, cy - 6, x + 470, cy + 30], radius=8, fill=PANEL)
-            d.text((x + 20, cy), f"real time {min(t, dur):4.1f} s", font=font(20), fill=INK)
-            if t >= dur:
-                d.text((x + 250, cy), f"routed in {dur:.1f} s", font=font(20, True), fill=GREEN)
-        if t >= tm_d:
-            msg = f"job ended at {tm_job:.1f} s" if t >= tm_job else "slower variants run to their deadline..."
-            d.text((PX[1] + 20, PY0 + PH - 40), msg, font=font(17), fill=MUTED)
-        draw_strip(img, PX[0], "Freerouting · routing", "Java: 1 routing thread; the other busy threads are the JVM's JIT compiler",
-                   cpu_fr, min(t, fr_d + 0.5), 12.0, t0=fr_offset, accent=AMBER)
-        draw_strip(img, PX[1], "TraceMaker · routing", "portfolio: 8 variants race on 8 threads; the best result is kept",
-                   cpu_rt, min(t, tm_job), 12.0, t0=route_offset)
+    for k in range(n_act):
+        t = min(t_end, k * speed / FPS)
+        img, d = base(2)
+        # Panel titles.
+        for x, title, sub in ((bx[0], f"Freerouting {a.fr_version}", "routes the designer's placement · its own window (screen recording)"),
+                              (bx[1], "TraceMaker", "places the parts, then routes · rendered from its recordings")):
+            d.text((x + BW // 2, BY - 18), title, font=font(20, True), fill=INK, anchor="mb")
+            d.text((x + BW // 2, BY - 2), sub, font=font(13), fill=DIM, anchor="mb")
+        # Board panels.
+        img.paste(saved_fr if t >= fr_d else Image.open(ff[min(k, len(ff) - 1)]).convert("RGB"), (bx[0], BY))
+        if t >= route_t0 + tm_d:
+            img.paste(saved_tm, (bx[1], BY))
+        elif t < route_t0:
+            img.paste(Image.open(pf[min(k, len(pf) - 1)]).convert("RGB"), (bx[1], BY))
+        else:
+            kr = int((t - route_t0) / speed * FPS)
+            img.paste(Image.open(rf[min(kr, len(rf) - 1)]).convert("RGB"), (bx[1], BY))
+        column(img, cx_[0], fr_threads(t), {}, AMBER, "not used\n(Freerouting is\nCPU-only)")
+        column(img, cx_[1], tm_threads(t), gpu_at(t), TEAL, None)
+        # Info bars: the clock is the biggest number on screen.
+        for side in (0, 1):
+            x0 = 20 if side == 0 else 980
+            d.rounded_rectangle([x0, BY + BH + 12, x0 + 920, H - 14], radius=10, fill=PANEL)
+            if side == 0:
+                done = t >= fr_d
+                clock = min(t, fr_d)
+                status = f"Done: {routed(m_fr)}/{conns} routed in {fr_d:.0f} s" if done else "Routing (1 routing thread)"
+                detail = "no placement step: it routes the parts where the designer put them" if not done else "finished; waiting for TraceMaker"
+                segs = [(0, fr_d, AMBER, f"routing {fr_d:.0f} s")]
+                acc = AMBER
+            else:
+                job_end = place_s + route_job_s
+                clock = min(t, job_end)
+                if t < route_t0:
+                    status, detail = "Placing components", f"8 annealing threads; router checks use the GPUs · {t:.0f} of {place_s:.0f} s"
+                elif t < route_t0 + tm_d:
+                    status, detail = "Routing (8 router variants in parallel)", f"placement took {place_s:.0f} s"
+                elif t < job_end:
+                    status, detail = f"Routed {routed(m_tm)}/{conns} at {route_t0 + tm_d:.0f} s", "slower router variants run to their deadline"
+                else:
+                    status, detail = f"Done: {routed(m_tm)}/{conns} routed at {job_end:.0f} s", f"{place_s:.0f} s placing + {route_job_s:.0f} s routing"
+                segs = [(0, place_s, "#2a7f74", f"placing {place_s:.0f} s"), (place_s, job_end, TEAL, f"routing {route_job_s:.0f} s")]
+                acc = TEAL
+            d.text((x0 + 22, BY + BH + 20), f"{clock:.0f} s", font=font(92, True), fill=acc)
+            d.text((x0 + 300, BY + BH + 30), status, font=font(22, True), fill=INK)
+            d.text((x0 + 300, BY + BH + 64), detail, font=font(16), fill=MUTED)
+            timeline(d, x0 + 300, 590, BY + BH + 104, segs, t, acc)
+            d.text((x0 + 300, BY + BH + 160), f"shared clock: 0 – {t_end:.0f} s", font=font(12), fill=DIM)
         save(img)
 
     # Act 3: results.
@@ -380,12 +443,13 @@ def main():
         ("Placement time", "none", f"{place_s:.0f} s"),
         ("Routing time (whole job)", f"{fr_d:.0f} s", f"{tm_job:.0f} s"),
         ("Avg cores busy (routing)", f"{fr_busy:.1f}", f"{tm_busy:.1f}  (placing {pl_busy:.1f})"),
+        ("GPU (CUDA)", "not used", f"P100+V100 · {sum(f for f, _ in fields + pfields):,} fields"),
     ]
     fin_fr, fin_tm = Image.open(fh).convert("RGB"), Image.open(V / "final_tm.png").convert("RGB")
     d_routed = routed(m_tm) - routed(m_fr)
     d_err = errs(m_tm) - errs(m_fr)
     for k in range(int(14 * FPS)):
-        img, d = base(3, "Result")
+        img, d = base(3)
         panel_titles(d, f"Freerouting {a.fr_version} on the designer's placement", "red rings: new DRC errors · magenta: still unconnected",
                      "TraceMaker: its placement, its routing", "red rings: new DRC errors · magenta: still unconnected")
         img.paste(fin_fr, (PX[0], PY0))
@@ -397,9 +461,9 @@ def main():
         cd.text((x0s[1] + 120, 20), "Freerouting", font=font(19, True), fill=AMBER, anchor="mt")
         cd.text((x0s[2] + 150, 20), "TraceMaker", font=font(19, True), fill=TEAL, anchor="mt")
         for i, (lab, l, r) in enumerate(rows):
-            y = 52 + i * 42
+            y = 50 + i * 38
             if i % 2 == 0:
-                cd.rectangle([20, y - 8, 1010, y + 32], fill="#141a20")
+                cd.rectangle([20, y - 7, 1010, y + 29], fill="#141a20")
             cd.text((x0s[0], y), lab, font=font(19), fill=MUTED)
             cd.text((x0s[1] + 120, y), l, font=font(21, True), fill=INK, anchor="mt")
             cd.text((x0s[2] + 150, y), r, font=font(21, True), fill=INK, anchor="mt")
@@ -416,7 +480,7 @@ def main():
             cd.text((cx + 4, cy + 64), lab, font=font(17), fill=MUTED)
         fe = m_fr.get("router_errors", {})
         cd.text((hx, 262), "Freerouting's errors: " + ", ".join(f"{v} {k.replace('_', ' ')}" for k, v in sorted(fe.items(), key=lambda kv: -kv[1]))
-                + " (KiCad's Specctra export omits the minimum track width)", font=font(14), fill=DIM)
+                + " (Specctra export lacks the min. track width)", font=font(14), fill=DIM)
         cd.text((hx, 292), "Placement's own share (controls, same settings, KiCad DRC):", font=font(16, True), fill=MUTED)
         cd.text((hx, 318), f"TraceMaker's router: {routed(m_tmh)}/{conns} on the designer's placement -> {routed(m_tm)}/{conns} on its own "
                 f"(ratsnest {(rats_p / rats_h - 1) * 100:+.1f}%)", font=font(16), fill=MUTED)

@@ -87,6 +87,7 @@ class Annealer {
   void note_best();
   const Placement& best() const { return best_pl_; }
   const std::vector<Placement>& trace() const { return trace_; }
+  const std::vector<double>& trace_t() const { return trace_t_; }
   std::int64_t best_cost() const { return best_cost_; }
   std::int64_t start_cost() const { return start_cost_; }
   std::uint64_t moves() const { return moves_; }
@@ -134,6 +135,7 @@ class Annealer {
   const AnnealOptions& o_;
   Placement pl_, best_pl_;
   std::vector<Placement> trace_;  // live state every o_.trace_every steps (recording only; never read back)
+  std::vector<double> trace_t_;
   std::uint64_t steps_ = 0;
   Legality L_;
   RngStream rng_;

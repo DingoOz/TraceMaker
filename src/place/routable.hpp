@@ -91,6 +91,7 @@ struct LoopOptions {
   // Recording (video): called with a candidate's label whenever it becomes the incumbent. Re-placement stages
   // reach o.place.trace as "<label>|<stage>".
   std::function<void(const std::string& label)> on_incumbent;
+  std::function<void(const std::string& label)> on_route;  // recording: a check route of this candidate starts
 };
 
 struct LoopResult {

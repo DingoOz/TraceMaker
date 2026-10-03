@@ -57,8 +57,8 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
 
   auto t = Clock::now();
   const Placement input = pl;
-  auto emit = [&](const char* st, const Placement& x) {
-    if (o.trace) o.trace(st, x);
+  auto emit = [&](const char* st, const Placement& x, double when = -1) {
+    if (o.trace) o.trace(st, x, when < 0 ? trace_now() : when);
   };
   emit("input", pl);
   r.before = measure(p, pl);
@@ -150,8 +150,9 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   }
   if (r.movable > 0) {
     r.anneal = anneal(p, pl, ao);
-    for (const auto& x : r.anneal.trace) emit("annealing", x);
+    for (std::size_t i = 0; i < r.anneal.trace.size(); ++i) emit("annealing", r.anneal.trace[i], r.anneal.trace_t[i]);
     r.anneal.trace.clear();
+    r.anneal.trace_t.clear();
     pl = r.anneal.pl;
   }
   stage("E annealing", t);

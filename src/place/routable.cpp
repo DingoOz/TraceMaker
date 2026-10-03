@@ -245,6 +245,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       break;
     }
     if (!s.eval.ok) {
+      if (o.on_route) o.on_route(s.label);
       s.eval = route(s.pl);
       ++res.routes;
     }
@@ -292,10 +293,11 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
     Candidate c;
     c.label = "round " + std::to_string(round) + " re-place";
     if (o.place.trace)
-      po.trace = [&o, lbl = c.label](const std::string& st, const Placement& x) { o.place.trace(lbl + "|" + st, x); };
+      po.trace = [&o, lbl = c.label](const std::string& st, const Placement& x, double t) { o.place.trace(lbl + "|" + st, x, t); };
     c.pl = inc.pl;
     const PlaceReport pr = place(q, c.pl, po);
     if (pr.legal) {
+      if (o.on_route) o.on_route(c.label);
       c.eval = route(c.pl);
       ++res.routes;
       c.hpwl = total_hpwl(p, c.pl);
@@ -318,7 +320,11 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       eo.weight_boost = o.weight_boost;
       eo.log = o.log;
       eo.memory = &memory;
-      const EcoResult er = eco_place(p, inc.pl, inc.eval, eo, route);
+      const RouteFn eco_route = [&](const Placement& x) {
+        if (o.on_route) o.on_route("round " + std::to_string(round) + " ECO trial");
+        return route(x);
+      };
+      const EcoResult er = eco_place(p, inc.pl, inc.eval, eo, o.on_route ? eco_route : route);
       res.routes += er.routes;
       if (er.committed > 0) {
         Candidate e;
@@ -328,7 +334,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
         e.hpwl = total_hpwl(p, e.pl);
         record(e);
         inc = e;
-        if (o.place.trace) o.place.trace(e.label + "|eco", e.pl);
+        if (o.place.trace) o.place.trace(e.label + "|eco", e.pl, trace_now());
         if (o.on_incumbent) o.on_incumbent(e.label);
       }
     }
