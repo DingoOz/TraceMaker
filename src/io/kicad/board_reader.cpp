@@ -363,9 +363,17 @@ class Reader {
         double sweep = 0;
         if (NodeId an = d_.find(g, "angle"); an != kNoNode) sweep = d_.number_at(an, 1).value_or(0.0);
         const Point rel = p0 - centre;
-        gr.a = tf(p0);
-        gr.c = tf(centre + geom::rotate(rel, -sweep / 2));
-        gr.b = tf(centre + geom::rotate(rel, -sweep));
+        if (sweep == 0.0) {
+          // KiCad reads a legacy arc with angle 0 as a full circle (`kicad-cli pcb upgrade` writes start = end and
+          // the opposite point as mid). On Edge.Cuts that is a round cut-out (PCBench kitspace_d20_tri_r1.0).
+          gr.kind = model::Graphic::Kind::Circle;
+          gr.a = tf(centre);
+          gr.b = tf(p0);
+        } else {
+          gr.a = tf(p0);
+          gr.c = tf(centre + geom::rotate(rel, -sweep / 2));
+          gr.b = tf(centre + geom::rotate(rel, -sweep));
+        }
       }
     } else if (kind == "circle") {
       gr.kind = model::Graphic::Kind::Circle;
