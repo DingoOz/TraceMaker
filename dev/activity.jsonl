@@ -45,3 +45,4 @@
 {"ts": "2026-10-03T05:11:57+00:00", "kind": "note", "text": "M6 global routing v1 (CPU, soft corridors) built and measured: no gain yet on 3 boards; kept off by default (--global)"}
 {"ts": "2026-10-03T05:11:57+00:00", "kind": "build", "text": "Clean-up: region rip-up around vias added (small gain, e.g. AmpOne 59 -> 57 vias)"}
 {"ts": "2026-10-03T05:17:41+00:00", "kind": "milestone", "text": "M3 gate: tracemaker-view --replay plays a recorded routing log; integration test confirms the replay reproduces the routed board exactly"}
+{"ts": "2026-10-03T05:44:17+00:00", "kind": "test", "text": "DRC parity: same-number pads are one pad, same-footprint overlapping pads connect, chamfered round-rect pads; jetson demo now matches KiCad exactly (12 of 17 demo boards)"}

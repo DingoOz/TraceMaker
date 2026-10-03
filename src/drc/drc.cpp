@@ -123,6 +123,13 @@ class Checker {
           // net-tie footprints (KiCad: One-Air-Max USB1 shield copper); net-less pads are (microwave POLY).
           if ((a.kind == ItemKind::Graphic || c.kind == ItemKind::Graphic) &&
               (a.net != 0 || c.net != 0 || !b_.footprints[static_cast<std::size_t>(a.footprint)].net_tie_groups.empty())) return;
+          // Pads with the same number in one footprint are one electrical pad (split thermal pads), even when KiCad
+          // gave each piece its own "unconnected-" net (KiCad: jetson-agx-thor-baseboard U30 pads 57/58).
+          if (a.kind == ItemKind::Pad && c.kind == ItemKind::Pad) {
+            const auto& pa = b_.pads[static_cast<std::size_t>(a.index)];
+            const auto& pc = b_.pads[static_cast<std::size_t>(c.index)];
+            if (!pa.number.empty() && pa.number == pc.number) return;
+          }
         }
         const int layer = std::countr_zero(common);
         // Track centre lines crossing.

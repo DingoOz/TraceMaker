@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 
 namespace tmk::drc {
 
@@ -44,24 +45,30 @@ std::vector<Shape> pad_shapes(const model::Pad& p) {
       else out.push_back(Shape::segment(tf({0, -(h - w) / 2}), tf({0, (h - w) / 2}), w / 2));
       break;
     case model::PadShape::Rect: out.push_back(rect(w / 2, h / 2, 0)); break;
-    case model::PadShape::RoundRect: {
-      const Coord r = static_cast<Coord>(std::llround(p.roundrect_ratio * static_cast<double>(std::min(w, h))));
-      out.push_back(rect(w / 2 - r, h / 2 - r, r));
-      break;
-    }
+    case model::PadShape::RoundRect:
     case model::PadShape::ChamferedRect: {
-      const Coord c = static_cast<Coord>(std::llround(p.chamfer_ratio * static_cast<double>(std::min(w, h))));
-      const Coord hw = w / 2, hh = h / 2;
+      // KiCad applies chamfers to round-rect pads too (RoyalBlue54L J2: roundrect, chamfer_ratio 0.25, all corners).
+      // A chamfered round rect is modelled as the chamfered rectangle shrunk by the corner radius, then inflated by it.
+      const Coord r = p.shape == model::PadShape::RoundRect
+                          ? static_cast<Coord>(std::llround(p.roundrect_ratio * static_cast<double>(std::min(w, h)))) : 0;
+      const Coord c = p.chamfer_corners ? static_cast<Coord>(std::llround(p.chamfer_ratio * static_cast<double>(std::min(w, h)))) : 0;
+      if (c <= 0) {
+        out.push_back(rect(w / 2 - r, h / 2 - r, r));
+        break;
+      }
+      // Shrinking by r moves the chamfer line inwards by r: on the shrunk rectangle the chamfer is c - r (2 - sqrt 2).
+      const Coord hw = w / 2 - r, hh = h / 2 - r;
+      const Coord cc = std::max<Coord>(0, c - static_cast<Coord>(std::llround(static_cast<double>(r) * (2.0 - std::numbers::sqrt2))));
       std::vector<Point> pts;
       auto corner = [&](bool cham, Point at, Point a, Point b) {
-        if (cham) { pts.push_back(a); pts.push_back(b); }
+        if (cham && cc > 0) { pts.push_back(a); pts.push_back(b); }
         else pts.push_back(at);
       };
-      corner(p.chamfer_corners & 1, {-hw, -hh}, {-hw, -hh + c}, {-hw + c, -hh});
-      corner(p.chamfer_corners & 2, {hw, -hh}, {hw - c, -hh}, {hw, -hh + c});
-      corner(p.chamfer_corners & 8, {hw, hh}, {hw, hh - c}, {hw - c, hh});
-      corner(p.chamfer_corners & 4, {-hw, hh}, {-hw + c, hh}, {-hw, hh - c});
-      out.push_back(poly(pts, 0));
+      corner(p.chamfer_corners & 1, {-hw, -hh}, {-hw, -hh + cc}, {-hw + cc, -hh});
+      corner(p.chamfer_corners & 2, {hw, -hh}, {hw - cc, -hh}, {hw, -hh + cc});
+      corner(p.chamfer_corners & 8, {hw, hh}, {hw, hh - cc}, {hw - cc, hh});
+      corner(p.chamfer_corners & 4, {-hw, hh}, {-hw + cc, hh}, {-hw, hh - cc});
+      out.push_back(poly(pts, r));
       break;
     }
     case model::PadShape::Trapezoid: {

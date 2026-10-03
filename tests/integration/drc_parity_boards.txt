@@ -9,3 +9,4 @@ bench/data/kicad/demos/pic_programmer/pic_programmer.kicad_pcb
 bench/data/kicad/demos/sonde xilinx/sonde xilinx.kicad_pcb
 bench/data/kicad/demos/stickhub/StickHub.kicad_pcb
 bench/data/kicad/demos/video/video.kicad_pcb
+bench/data/kicad/demos/jetson-agx-thor-baseboard/jetson-agx-thor-baseboard.kicad_pcb
