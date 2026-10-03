@@ -102,3 +102,25 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
 - Net-class assignment can come from the schematic (directives), pattern rules in `.kicad_pro`, or the
   board; resolve in KiCad's priority order.
 - Locked items (`locked` flag) and user groups must never move or be ripped.
+
+## 8. Implementation status (M11)
+
+- **IPC action plugin** (`kicad_plugin/`): saves a copy of the open board with its project (`save_as(...,
+  include_project=True)`; the rules come from the copied project files), routes it, and adds the new tracks and
+  vias with `begin_commit` → `create_items` → `push_commit` (one undo step). Not yet done from the sketch in §5:
+  footprint moves, ripping existing copper, `RefillZones`, and a long-running `tracemakerd` (each run starts the
+  engine afresh). The plugin is tested offline against kicad-python 0.8 (`test_offline.py`); the round trip in a
+  running KiCad GUI is still open.
+- **Engine access**: the plugin imports the Python module `tracemaker` when it can and otherwise runs the
+  `tracemaker` binary (`route --emit-items`). `TRACEMAKER_ARGS` uses CLI spelling for both (decision D17).
+- **Python bindings** (`bindings/`, pybind11, CMake option `TM_BUILD_PYTHON`, on when pybind11 is found and the
+  build is not a sanitizer build): `read_board`, `route`, `emit_items`, `drc`. `route` calls
+  `tmk::app::run_route_job` (`src/app/route_job.hpp`), the function behind the CLI's `route` subcommand, so both
+  give byte-identical boards (ctest `python_bindings` checks this on a PCBench board). The GIL is released while
+  routing and checking. The module is built into `build/<preset>/python/` (D18).
+- **PCM package**: `scripts/make_pcm_package.py` writes `build/pcm/tracemaker-<version>.zip` (metadata schema v2
+  as shipped with KiCad 10, `type: plugin`, `runtime: ipc`, `kicad_version: 10.0`, the plugin under `plugins/`, a
+  generated 64×64 `resources/icon.png`; reproducible archive). `scripts/validate_pcm.py` checks the layout and
+  metadata and also runs kicad-python's official validator when it is installed; ctest `pcm_package` builds and
+  validates the archive. The engine is not bundled by default (D19); `--binary`/`--module` bundle the Linux builds
+  for use on the same machine. Installing the archive through the PCM GUI has not been tried yet.

@@ -14,6 +14,7 @@ project(TraceMaker VERSION 0.1.0 DESCRIPTION "Placement-aware PCB autorouter for
 option(TM_ENABLE_CUDA "Build CUDA kernels (CPU reference paths are always built)" ON)
 option(TM_BUILD_TESTS "Build unit tests" ON)
 option(TM_WERROR "Treat warnings as errors" ON)
+option(TM_BUILD_PYTHON "Build the Python module `tracemaker` (needs pybind11; skipped with a message if missing)" ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,7 +37,31 @@ endif()
 
 include(cmake/Warnings.cmake)
 
+if(TM_BUILD_PYTHON AND CMAKE_CXX_FLAGS MATCHES "-fsanitize=")
+  # A sanitizer-instrumented extension cannot be loaded into an uninstrumented interpreter.
+  message(STATUS "Sanitizer build: Python bindings disabled")
+  set(TM_BUILD_PYTHON OFF)
+endif()
+if(TM_BUILD_PYTHON)
+  # FindPython (not the deprecated FindPythonLibs); the presets put /usr/bin first, so the system interpreter
+  # (whose headers are installed) is chosen over any Nix python on PATH.
+  set(PYBIND11_FINDPYTHON ON)
+  find_package(pybind11 CONFIG QUIET)
+  if(pybind11_FOUND)
+    # The engine's static libraries are linked into the Python extension, so they must be position independent.
+    # -fno-semantic-interposition keeps GCC inlining across global functions as it does without -fPIC.
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-semantic-interposition>)
+  else()
+    message(STATUS "pybind11 not found: Python bindings disabled")
+    set(TM_BUILD_PYTHON OFF)
+  endif()
+endif()
+
 add_subdirectory(src)
+if(TM_BUILD_PYTHON)
+  add_subdirectory(bindings)
+endif()
 
 if(TM_BUILD_TESTS)
   enable_testing()

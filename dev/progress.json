@@ -517,11 +517,23 @@
      "done": false
     },
     {
-     "text": "Python bindings (pybind11)",
+     "text": "Python bindings (pybind11): read_board, route, emit_items, drc; GIL released; CLI parity test",
+     "done": true
+    },
+    {
+     "text": "PCM package (scripts/make_pcm_package.py, validate_pcm.py; passes kicad-python 0.8 validator)",
+     "done": true
+    },
+    {
+     "text": "Plugin uses the Python module when importable, binary otherwise",
+     "done": true
+    },
+    {
+     "text": "Install the PCM archive in a running KiCad GUI",
      "done": false
     },
     {
-     "text": "PCM package",
+     "text": "Plugin: footprint moves, rip-up of existing copper, RefillZones after commit",
      "done": false
     }
    ]
