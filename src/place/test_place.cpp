@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "core/rng.hpp"
+#include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "place/anneal.hpp"
@@ -378,6 +379,12 @@ TEST_CASE("parallel tempering: legal, exact cost, identical for any thread count
   const AnnealResult b = anneal(p, start, o);
   o.threads = 3;
   const AnnealResult c = anneal(p, start, o);
+  o.threads = 16;  // more threads than replicas (clamped)
+  const AnnealResult d = anneal(p, start, o);
+  CHECK(a.pl.pos == d.pl.pos);
+  // P2 (doc 14): fixed parts never move.
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (!p.parts[i].movable) CHECK(a.pl.pos[i] == start.pos[i]);
   CHECK(a.pl.pos == b.pl.pos);
   CHECK(a.pl.rot == b.pl.rot);
   CHECK(a.pl.pos == c.pl.pos);
@@ -486,6 +493,61 @@ TEST_CASE("ECO: only improving moves, locked parts never move, legal", "[place][
   // Deterministic.
   const EcoResult r2 = eco_place(p, start, e0, o, route);
   CHECK(r2.pl.pos == r.pl.pos);
+  // P8 (doc 14): one round moves at most one part (two for a swap), and only a part near a failed connection.
+  o.rounds = 1;
+  const EcoResult r1 = eco_place(p, start, e0, o, route);
+  std::vector<int> moved;
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (r1.pl.pos[i] != start.pos[i] || r1.pl.rot[i] != start.rot[i]) moved.push_back(static_cast<int>(i));
+  CHECK(moved.size() <= 2);
+  int near_count = 0;
+  for (int i : moved) {
+    bool near = false;
+    const Box& g = p.parts[z(i)].geom[start.rot[z(i)]].body;
+    const Box body{g.x0 + start.pos[z(i)].x, g.y0 + start.pos[z(i)].y, g.x1 + start.pos[z(i)].x, g.y1 + start.pos[z(i)].y};
+    for (const auto& f : e0.failed) {
+      Box fb;
+      fb.add(f.a);
+      fb.add(f.b);
+      near |= f.part_a == i || f.part_b == i || fb.inflated(o.corridor).intersects(body);
+    }
+    near_count += near ? 1 : 0;
+  }
+  // A swap partner need not be near (it takes the near part's place); at least one moved part must be.
+  if (!moved.empty()) CHECK(near_count >= 1);
+}
+
+TEST_CASE("P5: byte-identical board for 1, 3 and 16 threads (tempering + LNS + RUDY, refine)", "[place][m8][fixture]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/1Bitsy_1bitsy/unrouted.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto rules = io::read_design_rules(path);
+  std::vector<std::string> out;
+  for (int threads : {1, 3, 16}) {
+    auto lb = io::read_board_file(path);
+    ExtractOptions eo;
+    eo.default_clearance = 0;
+    const Problem p = extract(lb.board, rules, path, eo);
+    Placement pl = Placement::initial(p);
+    PlaceOptions o;
+    o.mode = "refine";
+    o.runs = 4;
+    o.threads = threads;
+    o.effort = 0.3;
+    o.tempering = true;
+    o.lns_rate = 0.02;
+    o.beta_congestion = 1.0;
+    const PlaceReport r = tmk::place::place(p, pl, o);
+    CHECK(r.legal);
+    for (std::size_t i = 0; i < p.parts.size(); ++i)
+      if (!p.parts[i].movable) CHECK((pl.pos[i] == p.parts[i].pos0 && pl.rot[i] == 0));  // P2
+    io::BoardEditor ed(lb, 1);
+    for (std::size_t i = 0; i < p.parts.size(); ++i)
+      if (pl.pos[i] != p.parts[i].pos0 || pl.rot[i] != 0)
+        ed.move_footprint(static_cast<std::size_t>(p.parts[i].fp), pl.pos[i], p.parts[i].angle0 + 90.0 * pl.rot[i]);
+    out.push_back(ed.write());
+  }
+  CHECK(out[0] == out[1]);
+  CHECK(out[0] == out[2]);
 }
 
 TEST_CASE("routability loop: never worse than its best seed, locked parts fixed", "[place][m8]") {
