@@ -70,6 +70,9 @@ struct PNet {
   std::string name;
   int weight = kSignalWeight;
   bool signal = true;           // counted for airwire crossings
+  // Design-intent pseudo-net (decoupling capacitor to its IC's supply pin): part of the objective only, never
+  // reported as wirelength, never routed, never counted for congestion.
+  bool affinity = false;
   std::vector<int> pins;
 };
 
@@ -102,6 +105,7 @@ struct ExtractOptions {
   bool fix_edge_connectors = true;  // connectors (J*, P*, CN*, USB*) touching the outline stay put
   Coord courtyard_clearance = -1;   // override (-1: from the rules, else default_clearance)
   Coord default_clearance = 250'000;  // used when the board has no courtyard rule (KiCad's own default is 0)
+  bool decap_affinity = true;       // tie each decoupling capacitor to the nearest supply pin of its IC
 };
 
 // Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).
@@ -115,5 +119,6 @@ std::vector<Point> convex_hull(std::vector<Point> pts);
 // Inner parallel polygon of a convex polygon at distance t; a point at the centroid if it is thinner than 2t.
 Shape inset_convex(const Shape& s, Coord t);
 bool power_like_name(const std::string& name);
+bool ground_like_name(const std::string& name);
 
 }  // namespace tmk::place

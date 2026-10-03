@@ -129,6 +129,11 @@ TEST_CASE("power-like net names", "[place]") {
   for (const char* s : {"SDA", "/MCU/PA3", "Net-(R1-Pad2)", "VSYNC_IN", "RESET"}) CHECK_FALSE(power_like_name(s));
 }
 
+TEST_CASE("ground-like net names", "[place]") {
+  for (const char* s : {"GND", "/power/GNDA", "AGND", "VSS", "0V"}) CHECK(ground_like_name(s));
+  for (const char* s : {"+3V3", "VCC", "VBUS", "SDA"}) CHECK_FALSE(ground_like_name(s));
+}
+
 TEST_CASE("translated closer() agrees with geom::closer_than", "[place]") {
   const RngStream rng(5, 2, 0);
   std::uint64_t k = 0;
@@ -291,6 +296,35 @@ TEST_CASE("extraction from a KiCad board", "[place][fixture]") {
   // The human placement is a valid input: the bound is below its HPWL.
   const Placement pl = Placement::initial(p);
   CHECK(hpwl_lower_bound(p, pl, RotationModel::Fixed) <= weighted_hpwl(p, pl));
+}
+
+TEST_CASE("decoupling capacitors are tied to an IC supply pin, objective only", "[place][fixture]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/ChirpHardware_chirp/unrouted.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto lb = io::read_board_file(path);
+  const auto rules = io::read_design_rules(path);
+  const Problem on = extract(lb.board, rules, path);
+  ExtractOptions eo;
+  eo.decap_affinity = false;
+  const Problem off = extract(lb.board, rules, path, eo);
+  int tied = 0;
+  for (const auto& n : on.nets) {
+    if (!n.affinity) continue;
+    ++tied;
+    REQUIRE(n.pins.size() == 2);
+    CHECK_FALSE(n.signal);
+    CHECK(n.weight == kSignalWeight);
+    CHECK(on.parts[z(on.pins[z(n.pins[0])].part)].ref.starts_with("C"));
+    const std::string ic = on.parts[z(on.pins[z(n.pins[1])].part)].ref;
+    CHECK((ic.starts_with("U") || ic.starts_with("IC")));
+  }
+  CHECK(tied > 0);
+  CHECK(on.nets.size() == off.nets.size() + static_cast<std::size_t>(tied));
+  // Reported wirelength ignores the pseudo-nets; the objective includes them.
+  const Placement a = Placement::initial(on), b = Placement::initial(off);
+  CHECK(total_hpwl(on, a) == total_hpwl(off, b));
+  CHECK(weighted_hpwl(on, a) > weighted_hpwl(off, b));
+  CHECK(count_crossings(on, a) == count_crossings(off, b));
 }
 
 // ---- M8: routability term, parallel tempering, LNS, exact windows, ECO, routability loop -----------------------

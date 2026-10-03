@@ -235,6 +235,12 @@ bool power_like_name(const std::string& name) {
   return false;
 }
 
+bool ground_like_name(const std::string& name) {
+  std::string n = upper(name);
+  if (const auto s = n.rfind('/'); s != std::string::npos) n = n.substr(s + 1);
+  return n.find("GND") != std::string::npos || n.starts_with("VSS") || n == "0V";
+}
+
 namespace {
 
 // Conservative rectangle around copper text: any justification, stroke-font advance <= 1 glyph height,
@@ -592,6 +598,62 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       p.pins.push_back(pin);
     }
     p.nets.push_back(std::move(net));
+  }
+  // Decoupling capacitors (design doc 04 §2, decision D25): a two-pad capacitor between a supply and a ground sits only on
+  // power nets, which carry weight 1, so wirelength alone lets it drift away from the IC it decouples. Tie its
+  // supply pad to the nearest pad of an IC (U*, IC*) on the same supply in the input placement, at signal weight.
+  if (opt.decap_affinity) {
+    int tied = 0;
+    auto ic_ref = [](const std::string& ref) {
+      const std::string r = upper(ref);
+      return (r.starts_with("U") && starts_with_digit_after(r, 1)) || (r.starts_with("IC") && starts_with_digit_after(r, 2));
+    };
+    for (std::size_t fi = 0; fi < b.footprints.size(); ++fi) {
+      const auto& fp = b.footprints[fi];
+      const int cap = part_of_fp[fi];
+      const std::string r = upper(fp.reference);
+      if (cap < 0 || !r.starts_with("C") || !starts_with_digit_after(r, 1) || fp.pads.size() != 2) continue;
+      const auto& p0 = b.pads[z(fp.pads[0])];
+      const auto& p1 = b.pads[z(fp.pads[1])];
+      if (p0.net <= 0 || p1.net <= 0 || p0.net == p1.net) continue;
+      auto supply = [&](const model::Pad& q) {
+        const auto& nm = b.nets[z(q.net)].name;
+        return power_like_name(nm) && !ground_like_name(nm);
+      };
+      auto ground = [&](const model::Pad& q) { return ground_like_name(b.nets[z(q.net)].name); };
+      const model::Pad* sp = supply(p0) && ground(p1) ? &p0 : supply(p1) && ground(p0) ? &p1 : nullptr;
+      if (!sp) continue;
+      int best = -1;
+      geom::i128 best_d = 0;
+      for (std::size_t k = 0; k < b.pads.size(); ++k) {  // ascending index: ties keep the first pad
+        const auto& q = b.pads[k];
+        if (q.net != sp->net || q.footprint < 0 || part_of_fp[z(q.footprint)] < 0 || part_of_fp[z(q.footprint)] == cap) continue;
+        if (!ic_ref(b.footprints[z(q.footprint)].reference)) continue;
+        const geom::i128 dx = q.pos.x - sp->pos.x, dy = q.pos.y - sp->pos.y, d = dx * dx + dy * dy;
+        if (best < 0 || d < best_d) best = static_cast<int>(k), best_d = d;
+      }
+      if (best < 0) continue;
+      PNet net;
+      const auto& ic_pad = b.pads[z(best)];
+      net.name = "~decap " + fp.reference + "-" + b.footprints[z(ic_pad.footprint)].reference;
+      net.weight = kSignalWeight;
+      net.signal = false;
+      net.affinity = true;
+      const int ni = static_cast<int>(p.nets.size());
+      for (const model::Pad* q : {sp, &ic_pad}) {
+        Pin pin;
+        pin.part = part_of_fp[z(q->footprint)];
+        pin.net = ni;
+        const Point off = q->pos - p.parts[z(pin.part)].pos0;
+        for (int rr = 0; rr < 4; ++rr) pin.off[z(rr)] = rot90(off, rr);
+        net.pins.push_back(static_cast<int>(p.pins.size()));
+        p.parts[z(pin.part)].pins.push_back(static_cast<int>(p.pins.size()));
+        p.pins.push_back(pin);
+      }
+      p.nets.push_back(std::move(net));
+      ++tied;
+    }
+    if (tied > 0) p.notes.push_back(std::to_string(tied) + " decoupling capacitor(s) tied to the nearest supply pin of their IC");
   }
   // Parts that already overhang the board edge (pads outside, or the courtyard well past it) or sit in a
   // keepout are placed that way on purpose (connectors, sensors, battery holders): keep them where they are.

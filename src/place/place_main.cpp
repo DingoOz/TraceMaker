@@ -143,7 +143,7 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
 struct LoopCli {
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false, no_fallback = false;
+  bool move_connectors = false, no_fallback = false, no_decap_affinity = false;
   double clearance_mm = -1;
   long work = 3'000'000;
   int route_threads = 8;
@@ -161,6 +161,7 @@ int run_loop_mode(const LoopCli& c) {
   const auto rules = io::read_design_rules(c.in);
   place::ExtractOptions eo;
   eo.fix_edge_connectors = !c.move_connectors;
+  eo.decap_affinity = !c.no_decap_affinity;
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
   // placed with 0.25 mm or 0, is legal in it.
@@ -297,7 +298,7 @@ int main(int argc, char** argv) {
   CLI::App app{"TraceMaker placer: quadratic + SimPL global placement, legalisation and annealing"};
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false;
+  bool move_connectors = false, no_decap_affinity = false;
   double clearance_mm = -1;
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
@@ -311,6 +312,7 @@ int main(int argc, char** argv) {
   app.add_option("--alpha-cross-mm", o.alpha_cross_mm, "Cost of one airwire crossing in mm of signal HPWL");
   app.add_option("--courtyard-clearance-mm", clearance_mm, "Override the courtyard clearance (default: rules, else 0.25 mm)");
   app.add_flag("--move-connectors", move_connectors, "Also move connectors that touch the board edge");
+  app.add_flag("--no-decap-affinity", no_decap_affinity, "Do not tie decoupling capacitors to their IC's supply pins");
   app.add_option("--json", json_path, "Write the placement report as JSON");
   app.add_flag("-v,--verbose", o.verbose, "Log the spreading iterations");
   std::string debug_part;
@@ -341,6 +343,7 @@ int main(int argc, char** argv) {
     lc.json_path = json_path;
     lc.o = o;
     lc.move_connectors = move_connectors;
+    lc.no_decap_affinity = no_decap_affinity;
     lc.clearance_mm = clearance_mm;
     lc.work = route_check > 0 ? route_check : 3'000'000;
     lc.route_threads = route_threads;
@@ -367,7 +370,8 @@ int main(int argc, char** argv) {
       std::string cmd = "'" + std::string(argv[0]) + "' '" + in + "' -o '" + c.path + "' --mode " + m + " --seed " + std::to_string(o.seed) +
                         " --threads " + std::to_string(o.threads) + " --effort " + std::to_string(o.effort) + " --route-check " +
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
-                        (move_connectors ? " --move-connectors" : "") + " > /dev/null 2>&1";
+                        (move_connectors ? " --move-connectors" : "") +
+                        (no_decap_affinity ? " --no-decap-affinity" : "") + " > /dev/null 2>&1";
       const int rc = std::system(cmd.c_str());
       if (rc != 0 && rc != 2 * 256) continue;
       try {
@@ -408,6 +412,7 @@ int main(int argc, char** argv) {
     const auto rules = io::read_design_rules(in);
     place::ExtractOptions eo;
     eo.fix_edge_connectors = !move_connectors;
+    eo.decap_affinity = !no_decap_affinity;
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for
     // 0.25 mm and falls back to 0 when the board is too dense for it.
@@ -523,6 +528,7 @@ int main(int argc, char** argv) {
       j["placement"] = parts;
       nlohmann::json nets = nlohmann::json::array();
       for (const auto& n : p.nets) {
+        if (n.affinity) continue;
         nlohmann::json pins = nlohmann::json::array();
         for (int pi : n.pins) {
           const auto q = pl.pin(p, pi);

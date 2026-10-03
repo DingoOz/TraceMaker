@@ -34,6 +34,9 @@ Extracted from the KiCad project (doc 08):
   - **decoupling capacitors**: a two-terminal part whose nets are {power net, ground net} and which
     shares that power net with an IC power pin → soft constraint "within *d* of that pin", with the
     capacitor-to-pin assignment solved by the Hungarian algorithm (L3);
+    *built (2026-10-03, D25)*: each such capacitor is tied to the nearest IC pad on its supply in the input
+    placement by a two-pin pseudo-net at signal weight (objective only, not reported as wirelength); the
+    Hungarian assignment is not built;
   - **crystal/oscillator** near its MCU pins; **termination resistors** near the driver or receiver
     (by net topology); **ESD/TVS** near the connector pin.
   - schematic **hierarchical sheets** and KiCad **groups/rooms** as cluster hints.

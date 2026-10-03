@@ -25,7 +25,8 @@ std::int64_t weighted_hpwl(const Problem& p, const Placement& pl) {
 
 std::int64_t total_hpwl(const Problem& p, const Placement& pl) {
   std::int64_t s = 0;
-  for (std::size_t n = 0; n < p.nets.size(); ++n) s += net_hpwl(p, pl, static_cast<int>(n));
+  for (std::size_t n = 0; n < p.nets.size(); ++n)
+    if (!p.nets[n].affinity) s += net_hpwl(p, pl, static_cast<int>(n));
   return s;
 }
 

@@ -62,7 +62,8 @@ std::vector<std::int64_t> rudy_demand(const Problem& p, const Placement& pl, con
   auto none = [](std::size_t) {};
   for (std::size_t n = 0; n < p.nets.size(); ++n)
     if (rudy_net(p, static_cast<int>(n))) add_box_demand(m, net_box(p, pl, static_cast<int>(n)), +1, d, none);
-  for (const Pin& q : p.pins) d[z(m.bin(pl.pos[z(q.part)] + q.off[pl.rot[z(q.part)]]))] += m.pin_demand;
+  for (const Pin& q : p.pins)
+    if (!p.nets[z(q.net)].affinity) d[z(m.bin(pl.pos[z(q.part)] + q.off[pl.rot[z(q.part)]]))] += m.pin_demand;
   return d;
 }
 
