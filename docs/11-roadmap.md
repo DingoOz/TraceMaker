@@ -20,6 +20,7 @@
 | M10 | **Portfolio, determinism, knowledge base** | Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts | Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget |
 | M11 | **KiCad integration** | IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package | Round-trip in KiCad on the demo boards |
 | M12 | **Advanced rules and arms** | Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models | Each feature gated by its own benchmark subset; no regressions |
+| M13 | **Component-aware layout rules** (planned, doc 15) | Category detection from the BOM/netlist (USB, Ethernet, crystals, regulators, RF, …), role binding, rule catalogue (`docs/component_rules.yaml`) compiled into net classes, a sidecar `.kicad_dru`, keep-out areas and placer pseudo-nets; stackup-based impedance; detection/rule report | Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier |
 
 ## Working rules for implementation sessions
 
