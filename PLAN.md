@@ -42,6 +42,7 @@
 | 10 | [docs/10-benchmarking.md](docs/10-benchmarking.md) | Datasets, metrics, baselines, harness, gates |
 | 11 | [docs/11-roadmap.md](docs/11-roadmap.md) | Milestones M0–M12 with gates |
 | 12 | [docs/12-decisions.md](docs/12-decisions.md) | Decision log and risks |
+| 14 | [docs/14-placement-test-plan.md](docs/14-placement-test-plan.md) | Placement test plan: levels, datasets, metrics, baselines, gates |
 
 Background material:
 - [cpp_autorouter_clean_sheet.md](cpp_autorouter_clean_sheet.md): the routing-stage design and the
