@@ -100,7 +100,8 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     t0 = time.time()
     try:
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
-                            "--threads", str(THREADS), "--json", str(js)], capture_output=True, text=True, timeout=PLACE_TIMEOUT)
+                            "--threads", str(THREADS), "--json", str(js)]
+                           + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT)
         res["place_exit"] = p.returncode
     except subprocess.TimeoutExpired:
         res["place_exit"] = -1

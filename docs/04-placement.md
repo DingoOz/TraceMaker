@@ -406,6 +406,14 @@ perturbs a budget-limited router; ECO is partly sampling such perturbations). Mo
 router reports as "boxed in" (pad escape), which placement cannot fix. Not measured: Freerouting on the placed boards,
 the held-out set H, and the schematic-to-board set S of the M8 gate (clean pass ≥ 90 %) — it does not exist yet.
 
+### 8.3a Wall-time stop for the loop (2026-10-03)
+
+`--loop-time S` stops `routable` between seeds and routes once S seconds have passed and keeps the best
+placement so far (the input is always routed first, so the result is never worse than the input at the check
+budget). The benchmark passes 0.6 × its placement timeout. Without it, 16 of 22 tier D boards hit the 900 s
+timeout and fell back to the human placement. The route check runs without the router's clean-up stage, which
+never changes the routed count.
+
 ### 8.4 Not done in M8
 
 GPU parallel tempering (CPU only), CP-SAT (replaced by the exact window B&B), the router rungs R4 exact window

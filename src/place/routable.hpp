@@ -85,6 +85,9 @@ struct LoopOptions {
   int weight_boost = 3;         // failed nets weigh this many times more in the re-placement rounds
   int eco_candidates = 4;       // ECO moves routed per round (0 = no ECO step)
   std::function<void(const std::string&)> log;
+  // Job wall-time stop (CLAUDE.md rule 5): checked between routes; when it returns true the loop stops and keeps
+  // the best candidate so far. The first seed (the input) is always routed.
+  std::function<bool()> out_of_time;
 };
 
 struct LoopResult {

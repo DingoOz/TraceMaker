@@ -103,6 +103,7 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
     route::RouterOptions ro;
     ro.work_budget = work;
     ro.time_limit_s = 600;  // safety net only; the work budget decides
+    ro.optimize = false;    // clean-up never changes the routed count, which is all the check reads
     const auto res = route::route_portfolio(b, rules, ro, threads).best;
     e.ok = true;
     e.connections = res.connections;
@@ -149,6 +150,7 @@ struct LoopCli {
   int route_threads = 8;
   int rounds = 3, eco_rounds = 4, eco_candidates = 5;
   double beta = 1.0;
+  double loop_time_s = 0;  // job wall-time stop for routable/eco (0 = none)
 };
 
 nlohmann::json eval_json(const place::RouteEval& e) {
@@ -175,6 +177,9 @@ int run_loop_mode(const LoopCli& c) {
     std::fflush(stdout);
   };
   const place::RouteFn route = make_route_fn(c.in, rules, P, c.work, c.route_threads, c.o.seed);
+  auto out_of_time = [&] {
+    return c.loop_time_s > 0 && std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count() > c.loop_time_s;
+  };
   place::Candidate best;
   std::vector<place::Candidate> tried;
   place::RouteEval input_eval;
@@ -202,6 +207,10 @@ int run_loop_mode(const LoopCli& c) {
     std::vector<place::Candidate> seeds;
     seeds.push_back(place::Candidate{"input", input, {}, 0});
     auto add_seed = [&](const std::string& label, const std::string& mode, double beta) {
+      if (out_of_time()) {
+        notes.push_back(label + ": not built, loop time limit reached");
+        return;
+      }
       // Plain seeds use the options as given (with the defaults they are exactly --mode auto's candidates); the
       // routability seeds add parallel tempering and LNS (doc 04 §8.1).
       place::PlaceOptions o = c.o;
@@ -236,6 +245,7 @@ int run_loop_mode(const LoopCli& c) {
     lo.rounds = c.rounds;
     lo.eco_candidates = c.eco_candidates;
     lo.log = log;
+    lo.out_of_time = out_of_time;
     const place::LoopResult res = place::routability_loop(P, seeds, lo, route);
     best = res.best;
     tried = res.tried;
@@ -335,6 +345,8 @@ int main(int argc, char** argv) {
   app.add_option("--eco-rounds", lc.eco_rounds, "eco: commit rounds");
   app.add_option("--eco-candidates", lc.eco_candidates, "eco/routable: moves routed per round");
   app.add_option("--loop-beta", lc.beta, "routable/eco: routability weight in the loop");
+  app.add_option("--loop-time", lc.loop_time_s,
+                 "routable: wall-time stop in seconds; checked between seeds and routes, keeps the best placement so far (0 = none)");
   CLI11_PARSE(app, argc, argv);
 
   if (o.mode == "routable" || o.mode == "eco") {

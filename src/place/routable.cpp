@@ -237,8 +237,13 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
     say(o.log, c.label + ": " + describe(c.eval) + ", HPWL " + fmt_mm(c.hpwl) + " mm");
   };
   int best = -1;
+  auto stop = [&] { return o.out_of_time && o.out_of_time(); };
   for (std::size_t i = 0; i < seeds.size(); ++i) {
     auto& s = seeds[i];
+    if (i > 0 && !s.eval.ok && stop()) {
+      say(o.log, "time limit: remaining seeds not routed");
+      break;
+    }
     if (!s.eval.ok) {
       s.eval = route(s.pl);
       ++res.routes;
@@ -255,6 +260,10 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
   std::vector<int> focus;
   EcoMemory memory;
   for (int round = 1; round <= o.rounds && inc.eval.ok && inc.eval.unrouted() > 0; ++round) {
+    if (stop()) {
+      say(o.log, "time limit: stopped before round " + std::to_string(round));
+      break;
+    }
     ++res.rounds;
     std::vector<Point> pts;
     for (const auto& f : inc.eval.failed) {
@@ -296,7 +305,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       say(o.log, c.label + ": not legal, skipped");
     }
     // ECO moves around what is still unrouted.
-    if (o.eco_candidates > 0 && inc.eval.unrouted() > 0) {
+    if (o.eco_candidates > 0 && inc.eval.unrouted() > 0 && !stop()) {
       EcoOptions eo;
       eo.rounds = 1;
       eo.candidates = o.eco_candidates;
