@@ -38,6 +38,18 @@ Placement (opt-in; keeps the input placement unless the new one routes at least 
 build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode auto --route-check 3000000
 ```
 
+Escape feasibility and component-aware rules (both report-only unless asked for):
+
+```
+build/release/src/app/tracemaker escape board.kicad_pcb            # dense-package pins that cannot escape, and why
+build/release/src/app/tracemaker rules board.kicad_pcb --mode on --dru rules.kicad_dru   # detected parts, rules, impedance
+build/release/src/app/tracemaker route board.kicad_pcb -o out.kicad_pcb --component-rules on   # + crystal/inductor keep-outs
+build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode full --component-rules soft
+```
+
+`--rules-override overrides.json` corrects detections and rules (doc 15 §6.3). Escape planning (doc 05 §12) runs in
+two of the eight portfolio variants; `--escape-plan` turns it on in all of them.
+
 KiCad 10 plugin: `kicad_plugin/` (IPC action plugin; routes the open board in one undoable commit; see its README).
 
 Useful route options: `--threads N` (portfolio size), `--no-gpu` (CPU cost-to-go fields, identical results),
