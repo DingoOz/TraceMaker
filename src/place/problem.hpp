@@ -114,6 +114,7 @@ struct ExtractOptions {
   Coord courtyard_clearance = -1;   // override (-1: from the rules, else default_clearance)
   Coord default_clearance = 250'000;  // used when the board has no courtyard rule (KiCad's own default is 0)
   bool decap_affinity = true;       // tie each decoupling capacitor to the nearest supply pin of its IC
+  int decap_weight = kSignalWeight; // weight of those ties (D25: signal weight)
   // Extra objective-only pseudo-nets from component rules (crules::placement_affinities). Parts already tied by
   // decap_affinity are skipped.
   std::vector<PadAffinity> affinities;

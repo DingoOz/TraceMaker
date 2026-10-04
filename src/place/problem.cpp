@@ -598,7 +598,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   if (opt.decap_affinity) {
     int tied = 0;
     for (const auto& t : crules::decap_ties(b, [&](int fi) { return part_of_fp[z(fi)] >= 0; }, false)) {
-      add_affinity(t.cap_pad, t.ic_pad, kSignalWeight,
+      add_affinity(t.cap_pad, t.ic_pad, opt.decap_weight,
                    "~decap " + b.footprints[z(t.cap_fp)].reference + "-" + b.footprints[z(b.pads[z(t.ic_pad)].footprint)].reference);
       tied_fp[z(t.cap_fp)] = 1;
       ++tied;

@@ -32,12 +32,15 @@ KEYS = ["decap_median_mm", "crystal_median_mm", "esd_median_mm", "regcap_median_
 
 def one(board: str, cfg: str, out_dir: pathlib.Path, threads: int, seed: int = 1, reuse: bool = False) -> dict:
     src = FIX / board / "unrouted.kicad_pcb"
-    sub = cfg if seed == 1 else f"{cfg}-s{seed}"
+    tag = cfg.replace(":--", "_").replace("=", "")
+    sub = tag if seed == 1 else f"{tag}-s{seed}"
     out = out_dir / sub / f"{board}.kicad_pcb"
     js = out_dir / sub / f"{board}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     cmd = [str(PLACE), str(src), "-o", str(out), "--mode", "full", "--seed", str(seed), "--threads", str(threads), "--json", str(js),
-           "--component-rules", cfg]
+           "--component-rules", cfg.split(":")[0]]
+    for extra in cfg.split(":")[1:]:  # e.g. "soft:--decap-weight=20"
+        cmd += extra.split("=", 1)
     if reuse and js.exists() and out.exists():
         p = subprocess.CompletedProcess(cmd, 0, "", "")
     else:
