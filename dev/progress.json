@@ -450,24 +450,44 @@
   {
    "id": "M9",
    "title": "Escape planning",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "BGA boards in the academic set complete",
    "deliverables": "Min-cost-flow escape, layer assignment, NC fallback, escape templates",
    "tasks": [
     {
-     "text": "Min-cost-flow escape",
+     "text": "Escape corridors for dense-package pins (perimeter + dog-bone), opt-in --escape-plan",
+     "done": true
+    },
+    {
+     "text": "Escape feasibility analysis: tracemaker escape, dead pins with reasons and hints; benchmark dead_pins / clean_pass_feasible",
+     "done": true
+    },
+    {
+     "text": "Via neck-down rung (smallest via the board minimums allow)",
+     "done": true
+    },
+    {
+     "text": "Dead pins: not retried after a negotiated neck-down check",
+     "done": true
+    },
+    {
+     "text": "Second-ring channel corridors (built, off: measured mixed)",
+     "done": true
+    },
+    {
+     "text": "Min-cost-flow channel assignment for deep arrays",
      "done": false
     },
     {
-     "text": "layer assignment",
+     "text": "Per-ring layer assignment",
      "done": false
     },
     {
-     "text": "NC fallback",
+     "text": "NC fallback: negotiation for escapes (existing rip-up applies; no escape-specific fallback yet)",
      "done": false
     },
     {
-     "text": "escape templates",
+     "text": "Escape templates in the knowledge base",
      "done": false
     }
    ]
