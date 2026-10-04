@@ -109,7 +109,8 @@ Everything is **off by default** because the measurements showed regressions (D3
   those capacitors and their ICs, then refine with the crystal/ESD/regulator pulls. Over 23 boards × 3 seeds vs
   "off": decap median equal (seed 2: 3.26 → 3.42 mm), crystal 5.11/6.70/5.07 → 4.66/5.77/4.72 mm, load caps
   2.38/4.77/3.11 → 2.03/2.76/2.39 mm, HPWL 1 % shorter; 18 per-board changes better, 4 worse (PocketBone's decaps on
-  every seed). Good enough to be what `soft` means; not yet good enough to turn component rules on by default.
+  every seed — mostly the regulator's own input/output caps, which the LDO rule deliberately re-places around the
+  regulator and the decap metric also counts). Good enough to be what `soft` means; not yet good enough to turn component rules on by default.
 - **Routing (`tracemaker route --component-rules soft|on`):** USB D+/D− routed as coupled pairs (soft; usually falls
   back to single tracks on these short runs) and crystal/inductor keep-outs (on). Keep-outs cost completion on 4 of
   10 affected boards (worst 93 → 86 connections), so they stay opt-in.

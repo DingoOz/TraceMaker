@@ -1348,7 +1348,10 @@ feature stays off and the scale at 100 %.
 locks those capacitors and their ICs and refines with the other pulls. 23 boards × seeds 1–3, off → two-stage:
 decap median 3.66/3.26/3.74 → 3.66/3.42/3.74 mm, crystal 5.11/6.70/5.07 → 4.66/5.77/4.72, load caps 2.38/4.77/3.11 →
 2.03/2.76/2.39, regulator caps unchanged, HPWL geometric mean 0.99. Per board, 18 metric changes better and 4 worse
-(PocketBone decaps on every seed; bullion's crystal on one). Integration test `crules_two_stage`.
+(PocketBone decaps on every seed; bullion's crystal on one). PocketBone's "decaps" there are mostly the regulator U4's
+input/output capacitors (C2–C13): the LDO rule re-places them around U4, which is not locked (no D25 tie anchors it),
+and `bench/place_intent.py` counts any supply-to-ground capacitor near an IC as a decap — the two metrics overlap.
+Integration test `crules_two_stage`.
 
 ### 14.4 Routing (P2/P3)
 
