@@ -197,6 +197,7 @@ struct LoopCli {
   bool move_connectors = false, no_fallback = false, no_decap_affinity = false;
   std::string component_rules = "off";  // --component-rules (doc 15)
   int decap_weight = place::kSignalWeight;
+  int crules_weight_pct = 100;
   double clearance_mm = -1;
   long work = 3'000'000;
   int route_threads = 8;
@@ -237,6 +238,7 @@ int run_loop_mode(const LoopCli& c) {
   eo.fix_edge_connectors = !c.move_connectors;
   eo.decap_affinity = !c.no_decap_affinity;
   eo.decap_weight = c.decap_weight;
+  eo.crules_weight_pct = c.crules_weight_pct;
   apply_component_rules(lb.board, c.component_rules, eo);
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
@@ -420,6 +422,7 @@ int main(int argc, char** argv) {
   bool move_connectors = false, no_decap_affinity = false;
   std::string component_rules = "off";
   int decap_weight = place::kSignalWeight;
+  int crules_weight_pct = 100;
   double clearance_mm = -1;
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
@@ -438,6 +441,8 @@ int main(int argc, char** argv) {
                  "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling)")
       ->check(CLI::IsMember({"off", "report", "soft", "on"}));
   app.add_option("--decap-weight", decap_weight, "Weight of each decoupling-capacitor tie (D25); a signal net weighs 10 (the default)")
+      ->check(CLI::Range(1, 1000));
+  app.add_option("--crules-weight", crules_weight_pct, "Scale of the component-rule proximity weights in percent (100 = as the rules say)")
       ->check(CLI::Range(1, 1000));
   app.add_option("--json", json_path, "Write the placement report as JSON");
   app.add_flag("-v,--verbose", o.verbose, "Log the spreading iterations");
@@ -478,6 +483,7 @@ int main(int argc, char** argv) {
     lc.no_decap_affinity = no_decap_affinity;
     lc.component_rules = component_rules;
     lc.decap_weight = decap_weight;
+    lc.crules_weight_pct = crules_weight_pct;
     lc.clearance_mm = clearance_mm;
     lc.work = route_check > 0 ? route_check : 3'000'000;
     lc.route_threads = route_threads;
@@ -505,7 +511,8 @@ int main(int argc, char** argv) {
                         " --threads " + std::to_string(o.threads) + " --effort " + std::to_string(o.effort) + " --route-check " +
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
                         (move_connectors ? " --move-connectors" : "") +
-                        (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) + " > /dev/null 2>&1";
+                        (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
+                        " --crules-weight " + std::to_string(crules_weight_pct) + " > /dev/null 2>&1";
       const int rc = std::system(cmd.c_str());
       if (rc != 0 && rc != 2 * 256) continue;
       try {
@@ -548,6 +555,7 @@ int main(int argc, char** argv) {
     eo.fix_edge_connectors = !move_connectors;
     eo.decap_affinity = !no_decap_affinity;
     eo.decap_weight = decap_weight;
+    eo.crules_weight_pct = crules_weight_pct;
     const int crules_ties = apply_component_rules(lb.board, component_rules, eo);
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for

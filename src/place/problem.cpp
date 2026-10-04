@@ -617,7 +617,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         ++skipped;
         continue;
       }
-      add_affinity(a.pad_a, a.pad_b, a.weight, a.name);
+      add_affinity(a.pad_a, a.pad_b, std::max(1, a.weight * opt.crules_weight_pct / 100), a.name);
       ++added;
     }
     p.notes.push_back("component rules: " + std::to_string(added) + " proximity pseudo-net(s)" +
