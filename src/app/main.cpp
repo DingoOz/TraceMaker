@@ -122,7 +122,7 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
 
 // Component-aware layout rules (design doc 15 §7): detections, bound roles and every rule's status. Read-only.
 int cmd_rules(const std::string& path, const std::string& mode_s, const std::string& json_out, const std::string& dru_out, const std::string& roles_from,
-              const std::string& catalogue_path) {
+              const std::string& catalogue_path, const std::string& override_path) {
   namespace cr = tmk::crules;
   const auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
@@ -130,6 +130,9 @@ int cmd_rules(const std::string& path, const std::string& mode_s, const std::str
   cr::Catalogue own;
   if (!catalogue_path.empty()) own = cr::load_catalogue_file(catalogue_path);
   const cr::Catalogue& cat = catalogue_path.empty() ? cr::builtin_catalogue() : own;
+  cr::Overrides ov;
+  if (!override_path.empty()) ov = cr::load_overrides_file(override_path, cat);
+  const cr::Overrides* ovp = override_path.empty() ? nullptr : &ov;
   cr::Detection det;
   if (!roles_from.empty()) {
     // Detect and bind on another version of the same board (e.g. the input of a placement), measure on this one:
@@ -140,9 +143,9 @@ int cmd_rules(const std::string& path, const std::string& mode_s, const std::str
     for (std::size_t i = 0; same && i < a.footprints.size(); ++i) same = a.footprints[i].reference == lb.board.footprints[i].reference;
     for (std::size_t i = 0; same && i < a.nets.size(); ++i) same = a.nets[i].name == lb.board.nets[i].name;
     if (!same) throw std::runtime_error("--roles-from: " + roles_from + " is not the same board (footprints, pads or nets differ)");
-    det = cr::detect(a, cat);
+    det = cr::detect(a, cat, ovp);
   } else {
-    det = cr::detect(lb.board, cat);
+    det = cr::detect(lb.board, cat, ovp);
   }
   const cr::Evaluation ev = cr::evaluate(lb.board, &rules, cat, det, mode);
   std::fputs(cr::report_text(lb.board, cat, det, ev).c_str(), stdout);
@@ -288,7 +291,7 @@ int main(int argc, char** argv) {
   inspect->add_option("--json", inspect_json, "Also write the board as JSON (KiCad truth schema)");
 
   auto* crules_cmd = app.add_subcommand("rules", "Detect component categories and report the component-aware layout rules (doc 15)");
-  std::string cr_path, cr_json, cr_dru, cr_cat, cr_roles_from, cr_mode = "soft";
+  std::string cr_path, cr_json, cr_dru, cr_cat, cr_roles_from, cr_override, cr_mode = "soft";
   crules_cmd->add_option("board", cr_path, "Board file")->required()->check(CLI::ExistingFile);
   crules_cmd->add_option("--json", cr_json, "Write the full report (every rule of every instance) as JSON");
   crules_cmd->add_option("--mode", cr_mode, "Which statuses to report: report (check only), soft (as placement would apply them), on (with keep-outs)")
@@ -296,6 +299,9 @@ int main(int argc, char** argv) {
   crules_cmd->add_option("--dru", cr_dru, "Write the generated custom rules (sidecar .kicad_dru) to this file");
   crules_cmd->add_option("--roles-from", cr_roles_from, "Detect and bind roles on this version of the board (e.g. the placement input), measure on the given one");
   crules_cmd->add_option("--catalogue", cr_cat, "Catalogue JSON to use instead of the built-in one (scripts/crules_catalogue.py output)");
+  crules_cmd->add_option("--rules-override", cr_override,
+                         "User override file (JSON, doc 15 §6.3): disable rules, assert/deny categories, set parameters")
+      ->check(CLI::ExistingFile);
 
   auto* selftest = app.add_subcommand("selftest-edit", "Apply a fixed set of edits (for integration tests)");
   selftest->group("");  // hidden
@@ -369,6 +375,9 @@ int main(int argc, char** argv) {
                     "Component-aware rules (doc 15): off (default); report/soft write <output>.tracemaker.kicad_dru; on also routes "
                     "with the generated keep-outs (crystal, switching-regulator inductor) as in-memory rule areas")
       ->check(CLI::IsMember({"off", "report", "soft", "on"}));
+  route->add_option("--rules-override", r_job.rules_override,
+                    "User override file for --component-rules (JSON, doc 15 §6.3): disable rules, assert/deny categories, set parameters")
+      ->check(CLI::ExistingFile);
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
 
@@ -416,7 +425,7 @@ int main(int argc, char** argv) {
       }
       return 0;
     }
-    if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat);
+    if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json);

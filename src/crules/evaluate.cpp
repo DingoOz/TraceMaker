@@ -156,6 +156,21 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
       // Confidence below `apply` demotes hard to soft (§3.2); so does unverified evidence (§8: R rules are never hard).
       if (e.severity == Severity::Hard && (!apply_level || r.evidence == "R")) e.severity = Severity::Soft;
       const auto key = std::make_pair(static_cast<int>(ii), r.id);
+      // User override file (doc 15 §3.5 level 1): a disabled rule is neither applied nor measured.
+      const RuleOverride* user = in.override_for(r.id);
+      if (user && user->disabled) {
+        e.status = Status::NotApplied;
+        e.detail = "overridden by user: " + user->notes.front();
+        ev.rules.push_back(std::move(e));
+        continue;
+      }
+      // Rules whose parameters the user changed are evaluated on a copy with the new parameters.
+      RuleSpec user_spec;
+      if (user && user->has_params) {
+        user_spec = r;
+        user_spec.params = user->params;
+      }
+      const RuleSpec& rp = user && user->has_params ? user_spec : r;
 
       // Measurement first: proximity pairs and board-edge distances are reported in every mode.
       bool measured_rule = false;
@@ -181,7 +196,7 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
         m.value_mm = nm_to_mm(geom::kiround(best));
         double lim = 0;
         for (const char* k : {"max_mm", "antenna_side_to_edge_mm"})
-          if (r.params.contains(k) && r.params[k].is_number()) lim = r.params[k].get<double>();
+          if (rp.params.contains(k) && rp.params[k].is_number()) lim = rp.params[k].get<double>();
         m.limit_mm = lim;
         m.met = m.value_mm <= lim + 1e-9;
         m.what = "nearest courtyard vertex (or pad centre) to Edge.Cuts";
@@ -216,19 +231,30 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
           if (!apply_level) e.detail = "confidence " + std::to_string(in.confidence) + " below the apply threshold " + std::to_string(cat.apply);
           else if (mode == Mode::On) {
             e.status = Status::Applied;
-            e.detail = "router/DRC keep-out (tracks) on " + layers + "; sidecar .kicad_dru rule";
+            e.detail = std::string("router/DRC keep-out (") + (k->second.front()->zone.keepout_vias ? "tracks, vias, zones" : "tracks") + ") on " + layers +
+                       "; sidecar .kicad_dru rule";
           } else {
             e.detail = std::string(mode == Mode::Report ? "report mode" : "soft mode adds no hard constraints") + "; keep-out on " + layers +
                        " is used with --component-rules on";
           }
         } else {
+          const bool generated_kind = r.id == "XTAL-04" || r.id == "BUCK-06" || r.id == "BOOST-04" || r.id == "ETH-05";
+          const std::string& aref = b.footprints[static_cast<std::size_t>(in.anchor)].reference;
           e.detail = not_built_reason(r);
+          if (r.id == "ETH-05" && in.role("integrated_magnetics"))
+            e.detail = "not required: " + aref + " has integrated magnetics (MagJack)";
+          else if (r.id == "ETH-05" && !in.role("magnetics"))
+            e.detail = "role magnetics not bound (no discrete LAN transformer with 6 or more pads shares two signal nets with " + aref + ")";
+          else if (generated_kind && !apply_level)
+            e.detail = "confidence " + std::to_string(in.confidence) + " below the apply threshold " + std::to_string(cat.apply) + " (keep-outs need it)";
+          else if (r.id == "ETH-05")
+            e.detail = "the same magnetics' void is generated for another Ethernet instance";
           for (const auto& s : ko_missing)
             if (s.starts_with(r.id + " " + b.footprints[static_cast<std::size_t>(in.anchor)].reference + ":")) e.detail = s.substr(s.find(':') + 2);
         }
       } else if (r.kind == "impedance") {
         // P4 (report only): widths and gaps per routing layer from the stackup; never guessed without one (§3.6).
-        e.impedance = plan_impedance(b, rules, r);
+        e.impedance = plan_impedance(b, rules, rp);
         const std::string computed = impedance_text(*e.impedance);
         if (const std::string cls = board_pair_class(b, rules, in, r); !cls.empty()) {
           e.status = Status::SatisfiedByBoard;
@@ -245,8 +271,8 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
         } else {
           e.detail = computed;
         }
-      } else if (r.kind == "width_for_current" && r.params.contains("current_a")) {
-        e.current = plan_current(b, r);
+      } else if (r.kind == "width_for_current" && rp.params.contains("current_a")) {
+        e.current = plan_current(b, rp);
         e.detail = current_text(*e.current);
       } else if (r.kind == "diff_pair") {
         const Role* dp = in.role("dp");
@@ -266,10 +292,14 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
       } else if (r.kind == "order" && (r.id == "USB2-08")) {
         e.detail = "connector-ESD leg placed by USB2-07; the routing order itself is not built yet (doc 15 P3)";
       } else if (r.kind == "edge") {
-        e.detail = "measured only (edge connectors stay fixed at the edge; no edge attraction for other parts yet)";
+        const bool conn = std::find(r.applies_to.begin(), r.applies_to.end(), "connector") != r.applies_to.end();
+        e.detail = conn ? "measured only (edge connectors stay fixed at the edge; tracemaker-place --edge-attraction pulls movable ones to it)"
+                        : "measured only (edge connectors stay fixed at the edge; no edge attraction for other parts yet)";
       } else {
         e.detail = measured_rule ? "measured only" : not_built_reason(r);
       }
+      if (user)
+        for (const auto& n : user->notes) e.detail += "; overridden by user: " + n;
       ev.rules.push_back(std::move(e));
     }
   }

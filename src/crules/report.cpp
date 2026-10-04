@@ -61,7 +61,7 @@ std::string measure_text(const Measure& m) {
 
 // Rules not built yet are listed once per category, not once per instance.
 bool generic_not_built(const EffectiveRule& e) {
-  return e.status == Status::NotApplied && !e.measure &&
+  return e.status == Status::NotApplied && !e.measure && e.detail.find("overridden by user") == std::string::npos &&
          (e.detail.find("(doc 15 P") != std::string::npos || e.detail.find("not built") != std::string::npos ||
           e.detail.find("not generated for this category") != std::string::npos || e.detail.find("not bound to pins for this category") != std::string::npos);
 }
@@ -76,6 +76,12 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
     s << "  board has no pad pin names (KiCad 5 file): binding uses net names, pad numbers and topology; categories that need pin names are capped at "
       << kNoPinNameCap << "\n";
   if (ev.mode == Mode::Off) return s.str();
+  if (!det.override_source.empty()) {
+    s << "  user overrides (" << det.override_source << ", doc 15 §6.3): " << det.override_entries.size() << " entr" << (det.override_entries.size() == 1 ? "y" : "ies");
+    for (const auto& e : det.override_entries) s << "; " << e;
+    s << "\n";
+    for (const auto& u : det.override_unused) s << "  warning: override matched nothing: " << u << "\n";
+  }
   s << "  " << stackup_summary(b, cat) << "\n";
   std::map<int, std::vector<const EffectiveRule*>> by_inst;
   for (const auto& e : ev.rules) by_inst[e.instance].push_back(&e);
@@ -92,7 +98,7 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
       summarised = in.category;
       std::string refs;
       int lo = 100, hi = 0;
-      std::map<std::string, std::array<int, 4>> agg;  // rule -> applied, met, violated, other
+      std::map<std::string, std::array<int, 5>> agg;  // rule -> applied, met, violated, other, disabled by user
       std::map<std::string, std::pair<double, std::string>> worst;
       for (std::size_t jj = ii; jj < det.instances.size() && det.instances[jj].category == in.category; ++jj) {
         const Instance& x = det.instances[jj];
@@ -106,6 +112,10 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
             continue;
           }
           auto& a = agg[e->spec->id];
+          if (x.disabled(e->spec->id)) {
+            a[4] += 1;
+            continue;
+          }
           a[0] += e->status == Status::Applied ? 1 : 0;
           if (e->measure) {
             a[e->measure->met ? 1 : 2] += 1;
@@ -120,9 +130,10 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
       s << "  " << C.id << ": " << per_cat[in.category] << " instances, confidence " << lo << (lo != hi ? "-" + std::to_string(hi) : "") << ":" << refs
         << "\n";
       for (const auto& [id, a] : agg) {
-        if (a[0] + a[1] + a[2] == 0) continue;  // nothing applied or measured (e.g. DEC-07 without a VREF pin)
+        if (a[0] + a[1] + a[2] + a[4] == 0) continue;  // nothing applied or measured (e.g. DEC-07 without a VREF pin)
         s << "     " << id << "  applied " << a[0] << ", met " << a[1] << ", violated " << a[2];
         if (a[3]) s << ", not measured " << a[3];
+        if (a[4]) s << ", disabled by user " << a[4];
         if (const auto w = worst.find(id); w != worst.end() && w->second.first > 0) s << " (worst " << w->second.second << " " << fmt_mm(w->second.first) << " mm)";
         s << "\n";
       }
@@ -131,7 +142,7 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
     const auto& fp = b.footprints[static_cast<std::size_t>(in.anchor)];
     char head[256];
     std::snprintf(head, sizeof head, "  %-17s %-6s %-28.28s confidence %3d%s", C.id.c_str(), fp.reference.c_str(), fp.value.c_str(), in.confidence,
-                  in.capped ? " (capped)" : in.confidence < cat.apply ? " (suggest)" : "");
+                  in.asserted ? " (asserted by user)" : in.capped ? " (capped)" : in.confidence < cat.apply ? " (suggest)" : "");
     s << head;
     std::string roles;
     for (const auto& r : in.roles) roles += " " + r.name + "=" + role_text(b, r);
@@ -187,6 +198,8 @@ nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const De
   j["thresholds"] = {{"apply", cat.apply}, {"suggest", cat.suggest}};
   j["board_has_pin_names"] = det.board_has_pin_names;
   j["stackup"] = stackup_json(b, cat);
+  if (!det.override_source.empty())
+    j["user_overrides"] = {{"file", det.override_source}, {"entries", det.override_entries}, {"unused", det.override_unused}};
   std::map<int, std::vector<const EffectiveRule*>> by_inst;
   for (const auto& e : ev.rules) by_inst[e.instance].push_back(&e);
   auto inst_json = [&](const Instance& in) {
@@ -202,6 +215,7 @@ nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const De
     for (const auto& r : in.roles) roles[r.name] = role_json(b, r);
     x["roles"] = roles;
     if (!in.superseded_by.empty()) x["note"] = in.superseded_by;
+    if (in.asserted) x["asserted_by_user"] = true;
     return x;
   };
   json insts = json::array();
@@ -213,6 +227,11 @@ nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const De
       json r = {{"id", e->spec->id}, {"kind", e->spec->kind}, {"severity", severity_name(e->severity)}, {"status", status_name(e->status)}, {"detail", e->detail}};
       if (e->impedance) r["impedance"] = impedance_json(*e->impedance);
       if (e->current) r["current"] = current_json(*e->current);
+      if (const RuleOverride* o = det.instances[ii].override_for(e->spec->id)) {
+        json u = {{"disabled", o->disabled}, {"notes", o->notes}};
+        if (o->has_params) u["params"] = o->params;
+        r["user_override"] = u;
+      }
       if (e->measure) {
         r["measured_mm"] = e->measure->value_mm;
         r["limit_mm"] = e->measure->limit_mm;

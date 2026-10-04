@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <regex>
 #include <set>
 #include <sstream>
 
@@ -83,6 +84,9 @@ struct KeepoutPlan {
   std::vector<int> parts;   // footprints whose courtyards form the area
   std::vector<int> pins;    // extra pads whose centres are included (a crystal's IC oscillator pins)
   std::vector<NetId> own;   // nets allowed inside in the sidecar rule
+  // A copper void (ETH-05): tracks, vias and zones kept out, on the parts' layer and the layer next to it only, and
+  // only the parts' own nets allowed in the sidecar rule (no ground exemption: the void is about planes too).
+  bool copper_void = false;
 };
 
 std::vector<KeepoutPlan> keepout_plans(const model::Board& b, const Catalogue& cat, const Detection& det) {
@@ -93,6 +97,7 @@ std::vector<KeepoutPlan> keepout_plans(const model::Board& b, const Catalogue& c
     if (in.confidence < cat.apply) continue;
     const Category& C = cat.categories[static_cast<std::size_t>(in.category)];
     for (const RuleSpec& r : C.rules) {
+      if (in.disabled(r.id)) continue;  // user override file
       KeepoutPlan k;
       k.instance = static_cast<int>(ii);
       k.spec = &r;
@@ -103,10 +108,24 @@ std::vector<KeepoutPlan> keepout_plans(const model::Board& b, const Catalogue& c
           if (const Role* p = in.role(nm)) k.pins.insert(k.pins.end(), p->pads.begin(), p->pads.end());
       } else if (r.id == "BUCK-06" || r.id == "BOOST-04") {
         if (const Role* l = in.role("inductor")) k.parts = l->parts;
+      } else if (r.id == "ETH-05") {
+        // Discrete magnetics only; an RJ45 with integrated magnetics binds no `magnetics` role (doc 15 §8.1 note).
+        if (const Role* m = in.role("magnetics")) k.parts = m->parts;
+        k.copper_void = true;
       } else {
         continue;
       }
       if (k.parts.empty()) continue;
+      // The same parts can be bound by two instances (an Ethernet RJ45 and its PHY share the magnetics): one area.
+      std::vector<int> key = k.parts;
+      std::sort(key.begin(), key.end());
+      bool dup = false;
+      for (const auto& o : out) {
+        std::vector<int> ok = o.parts;
+        std::sort(ok.begin(), ok.end());
+        dup = dup || (o.spec->id == r.id && ok == key);
+      }
+      if (dup) continue;
       for (int f : k.parts)
         for (NetId n : ix.fp_nets(f)) k.own.push_back(n);
       std::sort(k.own.begin(), k.own.end());
@@ -150,6 +169,33 @@ std::vector<PlacementAffinity> placement_affinities(const model::Board& b, const
   return out;
 }
 
+std::vector<EdgeAttraction> edge_attractions(const model::Board& b, const Catalogue& cat, const Detection& det, Mode mode) {
+  std::vector<EdgeAttraction> out;
+  if (mode != Mode::Soft && mode != Mode::On) return out;
+  static const std::regex header(R"(pin_?header|pin_?socket)", std::regex::ECMAScript | std::regex::icase | std::regex::optimize);
+  std::set<int> seen;
+  for (const auto& in : det.instances) {
+    const auto& fp = b.footprints[static_cast<std::size_t>(in.anchor)];
+    if (fp.locked || seen.count(in.anchor) || std::regex_search(fp.lib_id, header)) continue;  // rule 6; stacking headers
+    for (const RuleSpec& r : cat.categories[static_cast<std::size_t>(in.category)].rules) {
+      if (r.kind != "edge" || !r.enforced_in("place") || r.severity == Severity::Advisory || in.disabled(r.id)) continue;
+      if (std::find(r.applies_to.begin(), r.applies_to.end(), "connector") == r.applies_to.end()) continue;  // not modules/antennas
+      EdgeAttraction a;
+      a.footprint = in.anchor;
+      a.body = outline_points(b, in.anchor);
+      const auto& params = rule_params(in, r);
+      if (params.contains("max_mm") && params["max_mm"].is_number()) a.max_mm = params["max_mm"].get<double>();
+      a.rule = r.id;
+      a.name = "~" + r.id + " " + fp.reference + " edge";
+      if (a.body.empty()) continue;
+      seen.insert(in.anchor);
+      out.push_back(std::move(a));
+      break;
+    }
+  }
+  return out;
+}
+
 std::vector<GeneratedKeepout> generate_keepouts(const model::Board& b, const Catalogue& cat, const Detection& det, std::vector<std::string>* not_generated) {
   std::vector<GeneratedKeepout> out;
   const int nl = b.copper_count();
@@ -164,14 +210,21 @@ std::vector<GeneratedKeepout> generate_keepouts(const model::Board& b, const Cat
     }
     for (int p : k.pins) pts.push_back(b.pads[static_cast<std::size_t>(p)].pos);
     double margin_mm = 0;
-    if (k.spec->params.contains("margin_mm") && k.spec->params["margin_mm"].is_number()) margin_mm = k.spec->params["margin_mm"].get<double>();
+    const auto& params = rule_params(det.instances[static_cast<std::size_t>(k.instance)], *k.spec);
+    if (params.contains("margin_mm") && params["margin_mm"].is_number()) margin_mm = params["margin_mm"].get<double>();
     const auto poly = grown_hull(std::move(pts), mm_to_nm(margin_mm));
     if (poly.size() < 3) continue;
     // Layers where none of the parts has a pad (their own nets need no track there) and no other part has a pad
     // inside the area (its connections must stay possible).
+    // ETH-05 asks for the component layer and the layer below it ("same, adjacent").
+    model::LayerMask allowed = ~model::LayerMask{0};
+    if (k.copper_void && nl >= 2) {
+      const bool back = b.footprints[static_cast<std::size_t>(k.parts.front())].back;
+      allowed = back ? (model::layer_bit(nl - 1) | model::layer_bit(nl - 2)) : (model::layer_bit(0) | model::layer_bit(1));
+    }
     model::LayerMask free = 0;
     for (int l = 0; l < nl; ++l) {
-      if (used & model::layer_bit(l)) continue;
+      if ((used & model::layer_bit(l)) || !(allowed & model::layer_bit(l))) continue;
       bool foreign = false;
       for (const auto& p : b.pads) {
         if (!(p.copper & model::layer_bit(l)) || std::find(k.parts.begin(), k.parts.end(), p.footprint) != k.parts.end()) continue;
@@ -193,6 +246,8 @@ std::vector<GeneratedKeepout> generate_keepouts(const model::Board& b, const Cat
     g.instance = k.instance;
     g.zone.rule_area = true;
     g.zone.keepout_tracks = true;
+    g.zone.keepout_vias = k.copper_void;
+    g.zone.keepout_pour = k.copper_void;
     g.zone.name = "tmk:" + k.spec->id + ":" + ref;
     g.zone.copper = free;
     for (int l = 0; l < nl; ++l)
@@ -208,7 +263,7 @@ std::vector<std::pair<NetId, NetId>> usb_pairs(const model::Board& b, const Cata
   std::vector<std::pair<NetId, NetId>> out;
   const int usb = cat.index_of("usb2");
   for (const auto& in : det.instances) {
-    if (in.category != usb) continue;
+    if (in.category != usb || in.disabled("USB2-02")) continue;
     const Role* p = in.role("dp");
     const Role* m = in.role("dm");
     if (!p || !m || p->nets.size() != 1 || m->nets.size() != 1 || p->nets.front() == m->nets.front()) continue;
@@ -238,8 +293,9 @@ std::string dru_sidecar(const model::Board& b, const Catalogue& cat, const Detec
     // Allowed inside: the parts' own nets and every ground net (ground copper under a crystal is wanted).
     std::set<std::string> allowed;
     for (NetId net : k.own) allowed.insert(b.nets[static_cast<std::size_t>(net)].name);
-    for (const auto& nt : b.nets)
-      if (!nt.name.empty() && ground_like_name(nt.name)) allowed.insert(nt.name);
+    if (!k.copper_void)
+      for (const auto& nt : b.nets)
+        if (!nt.name.empty() && ground_like_name(nt.name)) allowed.insert(nt.name);
     for (const auto& a : allowed) {
       bad = bad || a.find('\'') != std::string::npos || a.find('"') != std::string::npos;
       cond += " && A.NetName != '" + a + "'";
@@ -247,7 +303,7 @@ std::string dru_sidecar(const model::Board& b, const Catalogue& cat, const Detec
     if (bad) continue;  // a quote in a name would need escaping KiCad's expression syntax does not offer
     s << "\n# " << k.spec->id << " (" << severity_name(k.spec->severity) << ", confidence " << in.confidence << "): " << k.spec->text << "\n";
     s << "(rule \"tmk " << k.spec->id << " " << ref << "\"\n";
-    s << "  (constraint disallow track via)\n";
+    s << "  (constraint disallow track via" << (k.copper_void ? " zone" : "") << ")\n";
     s << "  (condition \"" << cond << "\"))\n";
     ++n;
   }

@@ -74,6 +74,10 @@ struct PNet {
   // reported as wirelength, never routed, never counted for congestion.
   bool affinity = false;
   std::vector<int> pins;
+  // Fixed coordinates inside the net's bounding box (an edge pull, doc 15 CONN-01): a one-pin net with an x anchor
+  // has HPWL |pin.x - ax|, the distance to a vertical board edge. Affinity nets only.
+  bool has_ax = false, has_ay = false;
+  Coord ax = 0, ay = 0;
 };
 
 struct Keepout {
@@ -109,6 +113,17 @@ struct PadAffinity {
   std::string name;                 // "~XTAL-01 Y1-U1"
 };
 
+// An objective-only pull of a part toward the board outline (doc 15 CONN-01, opt-in): the body point nearest to the
+// outline in the input becomes a one-pin pseudo-net anchored on the nearest outline segment's axis (x for a mostly
+// vertical segment, y for a mostly horizontal one), so the pull is exact in the annealer's integer cost and
+// rotating the part away from the edge costs too.
+struct EdgePull {
+  int footprint = -1;
+  std::vector<Point> body;          // absolute candidate points (courtyard outline, else pad corners)
+  int weight = 2 * kSignalWeight;
+  std::string name;                 // "~CONN-01 J3 edge"
+};
+
 struct ExtractOptions {
   bool fix_edge_connectors = true;  // connectors (J*, P*, CN*, USB*) touching the outline stay put
   Coord courtyard_clearance = -1;   // override (-1: from the rules, else default_clearance)
@@ -119,6 +134,8 @@ struct ExtractOptions {
   // Extra objective-only pseudo-nets from component rules (crules::placement_affinities). Parts already tied by
   // decap_affinity are skipped.
   std::vector<PadAffinity> affinities;
+  // Edge pulls for movable parts (crules::edge_attractions); fixed parts are skipped.
+  std::vector<EdgePull> edge_pulls;
 };
 
 // Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).

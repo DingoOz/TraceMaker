@@ -197,14 +197,22 @@ bool Annealer::median_target(int a, int r, Point& out) const {
       y0 = std::min(y0, q.y);
       y1 = std::max(y1, q.y);
     }
-    if (x0 > x1) continue;
-    const int w = p_.nets[z(n)].weight;
-    xs.emplace_back(x0, w);
-    xs.emplace_back(x1, w);
-    ys.emplace_back(y0, w);
-    ys.emplace_back(y1, w);
+    const PNet& net = p_.nets[z(n)];
+    const int w = net.weight;
+    if (net.has_ax) x0 = std::min(x0, net.ax), x1 = std::max(x1, net.ax);  // edge pulls: fixed coordinates
+    if (net.has_ay) y0 = std::min(y0, net.ay), y1 = std::max(y1, net.ay);
+    if (x0 <= x1) {
+      xs.emplace_back(x0, w);
+      xs.emplace_back(x1, w);
+    }
+    if (y0 <= y1) {
+      ys.emplace_back(y0, w);
+      ys.emplace_back(y1, w);
+    }
   }
-  if (xs.empty()) return false;
+  // Without edge pulls both axes are empty or both are not; a one-axis edge pull alone leaves the other axis where
+  // the part is.
+  if (xs.empty() && ys.empty()) return false;
   auto wmedian = [](std::vector<std::pair<Coord, int>>& v) {
     std::sort(v.begin(), v.end());
     long tot = 0;
@@ -221,7 +229,7 @@ bool Annealer::median_target(int a, int r, Point& out) const {
   const auto& pins = p_.parts[z(a)].pins;
   for (int pi : pins) mean = mean + p_.pins[z(pi)].off[z(r)];
   if (!pins.empty()) mean = Point{mean.x / static_cast<Coord>(pins.size()), mean.y / static_cast<Coord>(pins.size())};
-  out = Point{wmedian(xs) - mean.x, wmedian(ys) - mean.y};
+  out = Point{xs.empty() ? pl_.pos[z(a)].x : wmedian(xs) - mean.x, ys.empty() ? pl_.pos[z(a)].y : wmedian(ys) - mean.y};
   return true;
 }
 

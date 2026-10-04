@@ -126,9 +126,19 @@ RouteJobResult run_route_job(RouteJob job) {
   const crules::Mode cr_mode = crules::parse_mode(job.component_rules);
   model::Board with_rules;
   const model::Board* route_board = &lb.board;
+  if (cr_mode == crules::Mode::Off && !job.rules_override.empty()) {
+    crules::load_overrides_file(job.rules_override, crules::builtin_catalogue());  // still validated: a broken file is an error
+    log("warning: --rules-override " + job.rules_override + " has no effect with --component-rules off");
+  }
   if (cr_mode != crules::Mode::Off) {
     const auto& cat = crules::builtin_catalogue();
-    const auto det = crules::detect(lb.board, cat);
+    crules::Overrides ov;
+    if (!job.rules_override.empty()) ov = crules::load_overrides_file(job.rules_override, cat);
+    const auto det = crules::detect(lb.board, cat, job.rules_override.empty() ? nullptr : &ov);
+    if (!job.rules_override.empty()) {
+      log(fmt("component rules: %zu user override(s) from %s", det.override_entries.size(), job.rules_override.c_str()));
+      for (const auto& u : det.override_unused) log("  warning: override matched nothing: " + u);
+    }
     std::vector<std::string> skipped;
     const auto kos = crules::generate_keepouts(lb.board, cat, det, &skipped);
     log(fmt("component rules (%s): %zu instance(s), %zu generated keep-out(s)%s", job.component_rules.c_str(), det.instances.size(), kos.size(),

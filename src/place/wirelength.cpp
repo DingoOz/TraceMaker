@@ -14,6 +14,9 @@ Coord net_hpwl(const Problem& p, const Placement& pl, int net) {
     y0 = std::min(y0, q.y);
     y1 = std::max(y1, q.y);
   }
+  const PNet& n = p.nets[z(net)];
+  if (n.has_ax) x0 = std::min(x0, n.ax), x1 = std::max(x1, n.ax);
+  if (n.has_ay) y0 = std::min(y0, n.ay), y1 = std::max(y1, n.ay);
   return (x1 - x0) + (y1 - y0);
 }
 

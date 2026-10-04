@@ -27,7 +27,8 @@ BOARDS = ["1Bitsy_1bitsy", "AzizLight_AzizLight", "ChirpHardware_chirp", "ESP_nR
           "Solare-BQ24210_Solare-BQ24210", "a123-battery-integration_BCM", "beast-phat_beast-phat", "bullion_bullion", "domotics_out-board",
           "esp32stack_esp32stack", "jadonk_PocketBone", "kitspace_hbridge_driver", "kitspace_training_board_v02", "nanoTracer_nanoTracer",
           "phone_amp_phone_amp", "scimpy_volumebuffer", "uC3Moy_uC3Moy"]
-KEYS = ["decap_median_mm", "crystal_median_mm", "esd_median_mm", "regcap_median_mm", "loadcap_median_mm", "xtal_rule_median_mm"]
+KEYS = ["decap_median_mm", "crystal_median_mm", "esd_median_mm", "regcap_median_mm", "loadcap_median_mm", "xtal_rule_median_mm",
+        "conn_edge_median_mm", "conn_edge_mean_mm", "connectors_at_edge", "conn_edge_met"]
 
 
 def one(board: str, cfg: str, out_dir: pathlib.Path, threads: int, seed: int = 1, reuse: bool = False) -> dict:
@@ -98,16 +99,20 @@ def main() -> int:
             m[k] = med([by[(b, c)].get(k) for b in boards])
         summary["median"][c] = m
     summary["median"]["human"] = {k: med([human[b].get(k) for b in boards]) for k in KEYS}
-    if len(cfgs) >= 2:
-        base, new = cfgs[0], cfgs[1]
+    summary["hpwl_ratios"] = {}
+    for new in cfgs[1:]:
+        base = cfgs[0]
         ratios = [by[(b, new)]["hpwl_mm"] / by[(b, base)]["hpwl_mm"] for b in boards if by[(b, base)].get("hpwl_mm") and by[(b, new)].get("hpwl_mm")]
-        summary["hpwl_ratio_median"] = round(statistics.median(ratios), 4) if ratios else None
-        summary["hpwl_ratio_geomean"] = round(statistics.geometric_mean(ratios), 4) if ratios else None
+        summary["hpwl_ratios"][new] = {"median": round(statistics.median(ratios), 4) if ratios else None,
+                                       "geomean": round(statistics.geometric_mean(ratios), 4) if ratios else None}
+        if new == cfgs[1]:
+            summary["hpwl_ratio_median"] = summary["hpwl_ratios"][new]["median"]
+            summary["hpwl_ratio_geomean"] = summary["hpwl_ratios"][new]["geomean"]
     print("\nmedians:")
     for c, m in summary["median"].items():
         print(f"  {c:6s} " + "  ".join(f"{k}={v}" for k, v in m.items()))
-    if "hpwl_ratio_median" in summary:
-        print(f"  HPWL {cfgs[1]}/{cfgs[0]}: median ratio {summary['hpwl_ratio_median']}, geometric mean {summary['hpwl_ratio_geomean']}")
+    for new, r in summary["hpwl_ratios"].items():
+        print(f"  HPWL {new}/{cfgs[0]}: median ratio {r['median']}, geometric mean {r['geomean']}")
     (out_dir / f"summary-s{a.seed}.json").write_text(json.dumps(summary, indent=1))
     return 0
 

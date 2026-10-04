@@ -2,6 +2,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <filesystem>
+#include <set>
 
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
@@ -388,6 +389,121 @@ TEST_CASE("component-rule proximity pseudo-nets are objective only and skip D25-
   CHECK(total_hpwl(on, a) == total_hpwl(off, b));
   CHECK(count_crossings(on, a) == count_crossings(off, b));
   CHECK(weighted_hpwl(on, a) > weighted_hpwl(off, b));
+}
+
+// ---- Connector edge pulls (doc 15 CONN-01, --edge-attraction) ---------------------------------------------------
+
+namespace {
+
+// One-pin pseudo-net from a pin at `off` of `part` to the vertical line x = ax (or horizontal y = ay).
+void add_pull(Problem& p, int part, Point off, bool vertical, Coord at, int weight) {
+  add_net(p, {{part, off}}, weight);
+  PNet& n = p.nets.back();
+  n.name = "~pull " + std::to_string(part);
+  n.signal = false;
+  n.affinity = true;
+  if (vertical) n.has_ax = true, n.ax = at;
+  else n.has_ay = true, n.ay = at;
+}
+
+}  // namespace
+
+TEST_CASE("edge pulls: one-pin anchored nets, exact incremental cost, objective only", "[place][crules]") {
+  const Problem base = random_problem(40, 77, 35 * MM);
+  Problem p = base;
+  std::vector<int> pulled;
+  for (std::size_t i = 0; i < p.parts.size() && pulled.size() < 6; ++i)
+    if (p.parts[i].movable) pulled.push_back(static_cast<int>(i));
+  for (std::size_t k = 0; k < pulled.size(); ++k)  // alternate left edge (x = 0) and top edge (y = 0)
+    add_pull(p, pulled[k], {0, 0}, k % 2 == 0, 0, 4 * kSignalWeight);
+  // HPWL of a pull = distance of the pin to the line on its axis.
+  const Placement s = Placement::initial(p);
+  for (std::size_t k = 0; k < pulled.size(); ++k) {
+    const int n = static_cast<int>(base.nets.size() + k);
+    const Point at = s.pin(p, p.nets[z(n)].pins[0]);
+    CHECK(net_hpwl(p, s, n) == (k % 2 == 0 ? at.x : at.y));
+  }
+  // Reported wirelength and crossings ignore the pulls; the objective counts them.
+  CHECK(total_hpwl(p, s) == total_hpwl(base, Placement::initial(base)));
+  CHECK(count_crossings(p, s) == count_crossings(base, Placement::initial(base)));
+  CHECK(weighted_hpwl(p, s) > weighted_hpwl(base, Placement::initial(base)));
+  // The annealer's incremental cost stays exact (independent runs, tempering, LNS) and the result is deterministic.
+  PlaceOptions o;
+  o.threads = 2;
+  o.runs = 2;
+  o.effort = 0.5;
+  Placement a = Placement::initial(p), b = Placement::initial(p);
+  const PlaceReport ra = tmk::place::place(p, a, o);
+  tmk::place::place(p, b, o);
+  CHECK(ra.legal);
+  CHECK(a.pos == b.pos);
+  CHECK(ra.anneal.cost == anneal_cost(p, a, o.alpha_cross_mm));
+  o.tempering = true;  // (lns_polish runs after the annealer and is checked through lns_improve below)
+  Placement t = Placement::initial(p);
+  const PlaceReport rt = tmk::place::place(p, t, o);
+  CHECK(rt.anneal.cost == anneal_cost(p, t, o.alpha_cross_mm));
+  Placement start = Placement::initial(p);
+  legalise(p, start, false);
+  AnnealOptions ao;
+  ao.lns_window = 6;
+  ao.exact_window = 3;
+  const LnsResult r = lns_improve(p, start, ao, 40);
+  CHECK(r.cost_before == anneal_cost(p, start, ao.alpha_cross_mm));
+  CHECK(r.cost_after == anneal_cost(p, r.pl, ao.alpha_cross_mm));
+  CHECK(r.cost_after <= r.cost_before);
+  // The pulls work: the pulled parts end up closer to their edges than without them.
+  Placement free_pl = Placement::initial(base);
+  o.tempering = false;
+  tmk::place::place(base, free_pl, o);
+  Coord with = 0, without = 0;
+  for (std::size_t k = 0; k < pulled.size(); ++k) {
+    with += k % 2 == 0 ? a.pos[z(pulled[k])].x : a.pos[z(pulled[k])].y;
+    without += k % 2 == 0 ? free_pl.pos[z(pulled[k])].x : free_pl.pos[z(pulled[k])].y;
+  }
+  CHECK(with < without);
+  // The HPWL lower bound ignores the pulls, so it stays a lower bound of the objective.
+  CHECK(ra.after.whpwl >= ra.lb_any_rot);
+}
+
+TEST_CASE("edge pulls from component rules: movable connectors only, objective only", "[place][fixture][crules]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/1Bitsy_1bitsy/unrouted.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto lb = io::read_board_file(path);
+  const auto rules = io::read_design_rules(path);
+  const auto& cat = crules::builtin_catalogue();
+  const auto det = crules::detect(lb.board, cat);
+  CHECK(crules::edge_attractions(lb.board, cat, det, crules::Mode::Report).empty());
+  const auto pulls = crules::edge_attractions(lb.board, cat, det, crules::Mode::Soft);
+  REQUIRE(!pulls.empty());
+  std::set<int> fps;
+  for (const auto& e : pulls) {
+    CHECK(fps.insert(e.footprint).second);  // once per footprint
+    CHECK_FALSE(lb.board.footprints[z(e.footprint)].locked);
+    CHECK(lb.board.footprints[z(e.footprint)].lib_id.find("Pin_Header") == std::string::npos);
+    CHECK_FALSE(e.body.empty());
+  }
+  ExtractOptions eo;
+  eo.fix_edge_connectors = false;  // make every connector movable so pulls are added
+  for (const auto& e : pulls) eo.edge_pulls.push_back({e.footprint, e.body, e.weight, e.name});
+  ExtractOptions plain;
+  plain.fix_edge_connectors = false;
+  const Problem off = extract(lb.board, rules, path, plain);
+  const Problem on = extract(lb.board, rules, path, eo);
+  int added = 0;
+  for (std::size_t n = off.nets.size(); n < on.nets.size(); ++n) {
+    const auto& net = on.nets[n];
+    CHECK(net.affinity);
+    CHECK_FALSE(net.signal);
+    CHECK(net.pins.size() == 1);
+    CHECK(net.has_ax != net.has_ay);
+    CHECK(on.parts[z(on.pins[z(net.pins[0])].part)].movable);
+    ++added;
+  }
+  CHECK(added > 0);
+  CHECK(added <= static_cast<int>(pulls.size()));
+  const Placement a = Placement::initial(on), b = Placement::initial(off);
+  CHECK(total_hpwl(on, a) == total_hpwl(off, b));
+  CHECK(count_crossings(on, a) == count_crossings(off, b));
 }
 
 // ---- M8: routability term, parallel tempering, LNS, exact windows, ECO, routability loop -----------------------
