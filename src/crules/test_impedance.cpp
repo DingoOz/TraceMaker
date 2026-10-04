@@ -14,8 +14,15 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cmath>
+#include <filesystem>
 
+#include "crules/catalogue.hpp"
+#include "crules/detect.hpp"
+#include "crules/engine.hpp"
 #include "crules/impedance.hpp"
+#include "crules/impedance_rules.hpp"
+#include "io/kicad/board_reader.hpp"
+#include "io/kicad/project_reader.hpp"
 
 using namespace tmk;
 using namespace tmk::crules;
@@ -204,4 +211,167 @@ TEST_CASE("IPC-2221 width for current", "[impedance][current]") {
   CHECK(imp::current_for_width(w - 1, 20.0, um(70), true) < 3.0);
   CHECK(imp::width_for_current(2.0, 10.0, um(35), true) < imp::width_for_current(3.0, 10.0, um(35), true));
   CHECK(imp::width_for_current(0, 10.0, um(35), true) == 0);
+}
+
+// ---- on boards ------------------------------------------------------------------------------------------------
+
+namespace {
+
+// A 4-layer board with a JLC-style stackup: F.Cu / 0.2104 mm prepreg er 4.4 / In1.Cu / 1.065 mm core er 4.6 / In2.Cu /
+// 0.2104 mm prepreg / B.Cu, 35 um outer and 15.2 um inner copper, a GND zone on In1.Cu, and a USB micro-B with D+/D-.
+std::string four_layer_board(bool with_stackup) {
+  std::string s = R"((kicad_pcb (version 20240108) (generator "pcbnew")
+  (general (thickness 1.6))
+  (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (44 "Edge.Cuts" user))
+  (setup
+)";
+  if (with_stackup)
+    s += R"(    (stackup
+      (layer "F.Mask" (type "Top Solder Mask") (thickness 0.01) (epsilon_r 3.8))
+      (layer "F.Cu" (type "copper") (thickness 0.035))
+      (layer "dielectric 1" (type "prepreg") (thickness 0.2104) (material "7628") (epsilon_r 4.4) (loss_tangent 0.02))
+      (layer "In1.Cu" (type "copper") (thickness 0.0152))
+      (layer "dielectric 2" (type "core") (thickness 1.065) (material "FR4") (epsilon_r 4.6) (loss_tangent 0.02))
+      (layer "In2.Cu" (type "copper") (thickness 0.0152))
+      (layer "dielectric 3" (type "prepreg") (thickness 0.2104) (material "7628") (epsilon_r 4.4) (loss_tangent 0.02))
+      (layer "B.Cu" (type "copper") (thickness 0.035))
+      (layer "B.Mask" (type "Bottom Solder Mask") (thickness 0.01) (epsilon_r 3.8))
+      (copper_finish "HAL SnPb")
+      (dielectric_constraints no)
+    )
+)";
+  s += R"(    (pad_to_mask_clearance 0)
+  )
+  (net 0 "") (net 1 "GND") (net 2 "/USB_DP") (net 3 "/USB_DM") (net 4 "+5V")
+  (footprint "Connector_USB:USB_Micro-B_Molex_47346-0001" (layer "F.Cu") (at 10 10)
+    (property "Reference" "J1") (property "Value" "USB_B_Micro")
+    (pad "1" smd rect (at 0 0) (size 0.4 1.35) (layers "F.Cu" "F.Mask") (net 4 "+5V") (pinfunction "VBUS"))
+    (pad "2" smd rect (at 0.65 0) (size 0.4 1.35) (layers "F.Cu" "F.Mask") (net 3 "/USB_DM") (pinfunction "D-"))
+    (pad "3" smd rect (at 1.3 0) (size 0.4 1.35) (layers "F.Cu" "F.Mask") (net 2 "/USB_DP") (pinfunction "D+"))
+    (pad "5" smd rect (at 2.6 0) (size 0.4 1.35) (layers "F.Cu" "F.Mask") (net 1 "GND") (pinfunction "GND"))
+  )
+  (zone (net 1) (net_name "GND") (layer "In1.Cu") (hatch edge 0.5) (connect_pads (clearance 0.2)) (min_thickness 0.25)
+    (fill yes (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 0 0) (xy 50 0) (xy 50 50) (xy 0 50))))
+  (gr_rect (start 0 0) (end 50 50) (stroke (width 0.1) (type default)) (fill none) (layer "Edge.Cuts"))
+)
+)";
+  return s;
+}
+
+model::Board parse_board(const std::string& text) { return io::read_board(sexpr::Document::parse(text)); }
+
+const EffectiveRule* find_rule(const Evaluation& ev, const std::string& id) {
+  for (const auto& e : ev.rules)
+    if (e.spec->id == id) return &e;
+  return nullptr;
+}
+
+}  // namespace
+
+TEST_CASE("stackup geometry: microstrip outside, stripline inside, reference zones", "[impedance][stackup]") {
+  const model::Board b = parse_board(four_layer_board(true));
+  REQUIRE(b.stackup.present);
+  const auto geo = stackup_geometry(b);
+  REQUIRE(geo.size() == 4);
+  CHECK(geo[0].ok);
+  CHECK(geo[0].structure == imp::Structure::Microstrip);
+  CHECK(geo[0].ref_a == 1);
+  CHECK(geo[0].h1 == mm(0.2104));
+  CHECK(geo[0].t == mm(0.035));
+  CHECK(geo[0].er == Approx(4.4));
+  CHECK(geo[0].ref_a_note == "GND");      // GND zone on In1.Cu
+  CHECK(geo[3].ref_a == 2);
+  CHECK(geo[3].ref_a_note == "assumed");  // no zone on In2.Cu
+  CHECK(geo[1].structure == imp::Structure::Stripline);
+  CHECK(geo[1].h1 == mm(0.2104));
+  CHECK(geo[1].h2 == mm(1.065));
+  // Both sides combined in series: (0.2104 + 1.065) / (0.2104/4.4 + 1.065/4.6).
+  CHECK(geo[1].er == Approx((0.2104 + 1.065) / (0.2104 / 4.4 + 1.065 / 4.6)).epsilon(1e-6));
+}
+
+TEST_CASE("impedance rules: widths per layer with a stackup, never without one", "[impedance][stackup]") {
+  const Catalogue& cat = builtin_catalogue();
+  {
+    const model::Board b = parse_board(four_layer_board(true));
+    const Detection d = detect(b, cat);
+    const Evaluation ev = evaluate(b, nullptr, cat, d, Mode::Report);
+    const EffectiveRule* e = find_rule(ev, "USB2-01");
+    REQUIRE(e);
+    REQUIRE(e->impedance);
+    REQUIRE(e->impedance->computed);
+    CHECK(e->status == Status::NotApplied);  // report only
+    CHECK(e->detail.find("report only") != std::string::npos);
+    // F.Cu over In1.Cu: the 90 ohm pair at the 0.2 mm default gap, re-evaluated, is 90 ohm.
+    const LineSolution* f = nullptr;
+    for (const auto& L : e->impedance->lines)
+      if (L.layer == "F.Cu" && L.differential) f = &L;
+    REQUIRE(f);
+    REQUIRE(f->ok);
+    CHECK(f->gap == mm(0.2));
+    CHECK(std::fabs(imp::coupled_microstrip(f->width, f->gap, mm(0.2104), mm(0.035), 4.4).zdiff() - 90.0) < 0.01);
+    CHECK(f->width > mm(0.1));
+    CHECK(f->width < mm(0.4));
+    CHECK(f->ps_per_mm > 5.0);
+    CHECK(f->ps_per_mm < 7.0);
+    // Stated formula error and the reference layer appear in the report.
+    CHECK(f->error_pct > 0);
+    CHECK(f->ref.find("In1.Cu (GND)") != std::string::npos);
+    // JSON carries the numbers; output is deterministic.
+    const auto j = report_json(b, cat, d, ev).dump();
+    CHECK(j.find("\"width_mm\"") != std::string::npos);
+    CHECK(j.find("\"stackup\"") != std::string::npos);
+    CHECK(report_json(b, cat, detect(b, cat), evaluate(b, nullptr, cat, detect(b, cat), Mode::Report)).dump() == j);
+    CHECK(report_text(b, cat, d, ev).find("prop delay") != std::string::npos);
+  }
+  {
+    const model::Board b = parse_board(four_layer_board(false));
+    CHECK(!b.stackup.present);
+    const Detection d = detect(b, cat);
+    const Evaluation ev = evaluate(b, nullptr, cat, d, Mode::Report);
+    const EffectiveRule* e = find_rule(ev, "USB2-01");
+    REQUIRE(e);
+    CHECK(e->status == Status::NotApplied);
+    CHECK(e->detail == "not applied: no stackup in the board (doc 15 §3.6)");
+    REQUIRE(e->impedance);
+    CHECK(!e->impedance->computed);
+    CHECK(report_text(b, cat, d, ev).find("skew budgets use 6.0 ps/mm outer / 7.0 ps/mm inner") != std::string::npos);
+  }
+}
+
+TEST_CASE("width for current from a rule's current, with the stackup's copper", "[impedance][current]") {
+  const Catalogue& cat = builtin_catalogue();
+  const RuleSpec* usbc09 = nullptr;
+  for (const auto& c : cat.categories)
+    for (const auto& r : c.rules)
+      if (r.id == "USBC-09") usbc09 = &r;
+  REQUIRE(usbc09);
+  const model::Board b = parse_board(four_layer_board(true));
+  const CurrentPlan p = plan_current(b, *usbc09);
+  REQUIRE(p.computed);
+  CHECK(p.amps == 3.0);
+  CHECK(!p.copper_assumed);
+  CHECK(p.outer_copper == mm(0.035));
+  CHECK(p.inner_copper == mm(0.0152));
+  CHECK(p.outer_width == imp::width_for_current(3.0, 10.0, mm(0.035), true));
+  CHECK(p.inner_width == imp::width_for_current(3.0, 10.0, mm(0.0152), false));
+  const CurrentPlan q = plan_current(parse_board(four_layer_board(false)), *usbc09);
+  CHECK(q.copper_assumed);
+  CHECK(current_text(q).find("assumed 1 oz") != std::string::npos);
+}
+
+TEST_CASE("KiCad demo stackups parse and give sane geometry", "[impedance][stackup][fixture]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/kicad/demos/royalblue54L_feather/RoyalBlue54L-Feather.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto lb = io::read_board_file(path);
+  REQUIRE(lb.board.stackup.present);
+  const auto geo = stackup_geometry(lb.board);
+  REQUIRE(geo.size() == 8);
+  for (const auto& g : geo) {
+    INFO(g.layer << ": " << g.why);
+    CHECK(g.ok);
+    CHECK(g.er == Approx(4.5));
+  }
+  CHECK(geo[0].h1 == mm(0.1));
+  CHECK(geo[1].h1 == mm(0.1));
+  CHECK(geo[1].h2 == mm(0.3));
 }
