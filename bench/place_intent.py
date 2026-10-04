@@ -11,6 +11,9 @@ For each board:
                                    (bounding box of Edge.Cuts; bodies overhang pads), and the total
   crystal_median_mm / crystal_max  crystals/oscillators (Y*/X*/XTAL*/OSC*) to the nearest IC pad they connect to
   passive_rotation_ok              share of two-pin passives (R/C/L/D/F/FB) at a multiple of 90 degrees
+  esd_/regcap_/loadcap_/xtal_rule_ component-rule distances from `tracemaker rules`: ESD part to its connector (ESD-01),
+                                   regulator in/out caps to the regulator pins (LDO-01, BUCK-01), crystal load caps to the
+                                   crystal (XTAL-02), crystal to its IC pins (XTAL-01); median of the per-instance maxima
 """
 import argparse
 import json
@@ -54,7 +57,7 @@ def edge_box(path: pathlib.Path):
     return (min(xs), min(ys), max(xs), max(ys)) if xs else None
 
 
-def metrics(path: pathlib.Path) -> dict:
+def metrics(path: pathlib.Path, roles_from: pathlib.Path = None) -> dict:
     d = board_json(path)
     pads_by_ref = {}
     for p in d["pads"]:
@@ -100,10 +103,39 @@ def metrics(path: pathlib.Path) -> dict:
     pas = [f for r, f in fps.items() if re.match(r"^(R|C|L|D|F|FB)\d", r) and len(pads_by_ref.get(r, [])) == 2]
     rot_ok = sum(1 for f in pas if abs(((f["angle"] % 90) + 90) % 90) < 0.01 or abs(((f["angle"] % 90) + 90) % 90 - 90) < 0.01)
     med = lambda v: round(statistics.median(v), 2) if v else None  # noqa: E731
-    return {"board": str(path), "decaps": len(decap), "decap_median_mm": med(decap), "decap_max_mm": round(max(decap), 2) if decap else None,
-            "connectors": len(conn), "connectors_at_edge": at_edge, "crystals": len(xtal), "crystal_median_mm": med(xtal),
-            "crystal_max_mm": round(max(xtal), 2) if xtal else None,
-            "passive_rotation_ok": round(rot_ok / len(pas), 3) if pas else None}
+    row = {"board": str(path), "decaps": len(decap), "decap_median_mm": med(decap), "decap_max_mm": round(max(decap), 2) if decap else None,
+           "connectors": len(conn), "connectors_at_edge": at_edge, "crystals": len(xtal), "crystal_median_mm": med(xtal),
+           "crystal_max_mm": round(max(xtal), 2) if xtal else None,
+           "passive_rotation_ok": round(rot_ok / len(pas), 3) if pas else None}
+    row.update(rule_metrics(path, roles_from))
+    return row
+
+
+# Component-rule distances (docs/15-component-rules.md): the largest pad-centre distance of each bound rule instance,
+# with roles bound on `roles_from` (the placement input) when given, so a placed board is measured on the same parts;
+# as `tracemaker rules` measures it. Detection does not depend on positions except the regulator-cap binding (the
+# cap whose nearest active pad is the regulator's), so the instance sets of a placed board and its input agree for
+# crystals and ESD parts and may differ slightly for regulator caps.
+RULE_METRICS = {"esd": ("ESD-01",), "regcap": ("LDO-01", "BUCK-01"), "loadcap": ("XTAL-02",), "xtal_rule": ("XTAL-01",)}
+
+
+def rule_metrics(path: pathlib.Path, roles_from: pathlib.Path = None) -> dict:
+    out = ROOT / "build/quality" / (path.resolve().as_posix().replace("/", "_")[-150:] + ".rules.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    extra = ["--roles-from", str(roles_from)] if roles_from else []
+    subprocess.run([str(TM), "rules", str(path), "--mode", "report", "--json", str(out)] + extra, check=True, capture_output=True)
+    rep = json.loads(out.read_text())
+    vals = {k: [] for k in RULE_METRICS}
+    for inst in rep["instances"]:
+        for r in inst["rules"]:
+            for k, ids in RULE_METRICS.items():
+                if r["id"] in ids and "measured_mm" in r:
+                    vals[k].append(r["measured_mm"])
+    row = {}
+    for k, v in vals.items():
+        row[f"{k}_n"] = len(v)
+        row[f"{k}_median_mm"] = round(statistics.median(v), 2) if v else None
+    return row
 
 
 def main() -> int:
