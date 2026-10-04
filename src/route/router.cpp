@@ -1896,8 +1896,13 @@ struct Router::Impl {
         }
     }
     auto keep = [&](NetId n) { return class_width(n) + std::max(netclass(n).clearance, rules.minimums.clearance); };
+    auto channel = [&](NetId n) {
+      const Coord w = neck_width(n) > 0 ? neck_width(n) : class_width(n);
+      return w + 2 * std::max(netclass(n).clearance, rules.minimums.clearance);
+    };
     EscapeStats es;
-    const auto plan = plan_escapes(b, needs, keep, {}, &es);
+    // Second-ring channel corridors are off by default: logicbone 964 -> 954, decelerator 479 -> 484 (doc 05 §12).
+    const auto plan = opt.escape_second_ring ? plan_escapes(b, needs, keep, {}, &es, channel) : plan_escapes(b, needs, keep, {}, &es);
     reserve.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
     pad_reserved.assign(b.pads.size(), {});
     reserve_pen = static_cast<std::int64_t>(2 * opt.soft_cost_mm * 1e6);
@@ -1919,25 +1924,33 @@ struct Router::Impl {
       }
       ++res.escape_corridors;
       const Coord r = c.band;
-      const int ix0 = std::max(0, to_ix(std::min(c.a.x, c.b.x) - r)), ix1 = std::min(nx - 1, to_ix(std::max(c.a.x, c.b.x) + r));
-      const int iy0 = std::max(0, to_iy(std::min(c.a.y, c.b.y) - r)), iy1 = std::min(ny - 1, to_iy(std::max(c.a.y, c.b.y) + r));
-      const long double ux = static_cast<long double>(c.b.x - c.a.x), uy = static_cast<long double>(c.b.y - c.a.y);
-      const long double len2 = ux * ux + uy * uy;
-      const long double r2 = static_cast<long double>(r) * static_cast<long double>(r);
-      for (int gy = iy0; gy <= iy1; ++gy)
-        for (int gx = ix0; gx <= ix1; ++gx) {
-          const Point p = at(gx, gy);
-          const long double px = static_cast<long double>(p.x - c.a.x), py = static_cast<long double>(p.y - c.a.y);
-          const long double t = len2 > 0 ? std::clamp((px * ux + py * uy) / len2, 0.0L, 1.0L) : 0.0L;
-          const long double dx = px - t * ux, dy = py - t * uy;
-          if (dx * dx + dy * dy > r2) continue;
-          const long double vx = static_cast<long double>(p.x - c.b.x), vy = static_cast<long double>(p.y - c.b.y);
-          if (c.via && vx * vx + vy * vy <= r2) {  // the via site: every layer
-            for (int l = 0; l < nl; ++l) mark(lat_index(l, gx, gy), c.net, c.pad);
-          } else {
-            mark(lat_index(c.layer, gx, gy), c.net, c.pad);
+      auto strip = [&](Point sa, Point sb, bool site_at_end) {
+        const int ix0 = std::max(0, to_ix(std::min(sa.x, sb.x) - r)), ix1 = std::min(nx - 1, to_ix(std::max(sa.x, sb.x) + r));
+        const int iy0 = std::max(0, to_iy(std::min(sa.y, sb.y) - r)), iy1 = std::min(ny - 1, to_iy(std::max(sa.y, sb.y) + r));
+        const long double ux = static_cast<long double>(sb.x - sa.x), uy = static_cast<long double>(sb.y - sa.y);
+        const long double len2 = ux * ux + uy * uy;
+        const long double r2 = static_cast<long double>(r) * static_cast<long double>(r);
+        for (int gy = iy0; gy <= iy1; ++gy)
+          for (int gx = ix0; gx <= ix1; ++gx) {
+            const Point p = at(gx, gy);
+            const long double px = static_cast<long double>(p.x - sa.x), py = static_cast<long double>(p.y - sa.y);
+            const long double t = len2 > 0 ? std::clamp((px * ux + py * uy) / len2, 0.0L, 1.0L) : 0.0L;
+            const long double dx = px - t * ux, dy = py - t * uy;
+            if (dx * dx + dy * dy > r2) continue;
+            const long double vx = static_cast<long double>(p.x - sb.x), vy = static_cast<long double>(p.y - sb.y);
+            if (site_at_end && vx * vx + vy * vy <= r2) {  // the via site: every layer
+              for (int l = 0; l < nl; ++l) mark(lat_index(l, gx, gy), c.net, c.pad);
+            } else {
+              mark(lat_index(c.layer, gx, gy), c.net, c.pad);
+            }
           }
-        }
+      };
+      if (c.has_mid) {
+        strip(c.a, c.mid, false);
+        strip(c.mid, c.b, false);
+      } else {
+        strip(c.a, c.b, c.via);
+      }
     }
   }
   // A pin whose connections are all routed no longer needs its corridor.

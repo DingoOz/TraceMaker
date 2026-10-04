@@ -37,6 +37,7 @@ struct RouterOptions {
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
+  bool escape_second_ring = false;  // second-ring balls escape between two outer balls instead of by dog-bone
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;

@@ -27,6 +27,8 @@ struct EscapeCorridor {
   model::NetId net = 0;
   int layer = -1;                // copper index the stub runs on
   Point a, b;                    // centreline: pad centre -> escape point (or via site)
+  bool has_mid = false;          // second-ring pins: a -> mid (between two outer balls) -> b
+  Point mid;
   Coord band = 0;                // half-width of the reserved strip around the centreline
   bool via = false;              // b is a dog-bone via site (reserved on every layer)
 };
@@ -38,14 +40,18 @@ struct EscapeOptions {
 };
 
 struct EscapeStats {
-  int parts = 0, perimeter = 0, dogbones = 0;
+  int parts = 0, perimeter = 0, second_ring = 0, dogbones = 0;
 };
 
 // Plans corridors for the pads with needs[pad] != 0. keep(net) is the distance another net's centreline must
 // keep from this net's centreline (track width + clearance); the band is that, capped at a share of the pin
 // pitch so the corridors of neighbouring pins never overlap. Deterministic: footprints and pads in board order.
+// channel(net), when given, is the gap a track of that net needs between two pads (narrowest legal width plus
+// twice the clearance): second-ring balls whose outer neighbours leave that much room escape on their own layer
+// between them (the classic two-ring fanout) instead of taking a dog-bone via.
 std::vector<EscapeCorridor> plan_escapes(const model::Board& b, const std::vector<char>& needs, const std::function<Coord(model::NetId)>& keep,
-                                         const EscapeOptions& o = {}, EscapeStats* stats = nullptr);
+                                         const EscapeOptions& o = {}, EscapeStats* stats = nullptr,
+                                         const std::function<Coord(model::NetId)>& channel = {});
 
 class Obstacles;
 

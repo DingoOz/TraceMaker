@@ -302,6 +302,7 @@ int main(int argc, char** argv) {
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
   route->add_flag("!--no-optimize", ropt.optimize, "Skip the post-routing clean-up pass (fewer vias, shorter tracks)");
   route->add_flag("--escape-plan,!--no-escape-plan", ropt.escape_plan, "Reserve escape corridors for the pins of dense packages (QFP, BGA) before routing");
+  route->add_flag("--escape-second-ring", ropt.escape_second_ring, "Escape plan: second-ring balls between two outer balls (else dog-bone vias)")->group("");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
   bool r_nogpu = false;
   route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of CUDA (same results)");

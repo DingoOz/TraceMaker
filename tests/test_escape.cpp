@@ -80,6 +80,27 @@ TEST_CASE("escape plan: perimeter pins fan out, inner balls get one dog-bone sit
   for (const auto& c : plan)
     for (const auto& p : b.pads)
       if (b.pads[static_cast<std::size_t>(c.pad)].pos != p.pos) CHECK(dist_point_segment(p.pos, c.a, c.b) >= static_cast<double>(pitch) / 2 - 1);
+  // With a channel callback the second ring escapes between two outer balls instead of taking a via.
+  route::EscapeStats st2;
+  const auto plan2 = route::plan_escapes(b, needs, [](model::NetId) { return Coord{300'000}; }, {}, &st2,
+                                         [](model::NetId) { return Coord{350'000}; });  // 0.8 pitch - 0.4 ball = 0.4 >= 0.35
+  CHECK(st2.perimeter == 20);
+  CHECK(st2.second_ring == 12);
+  CHECK(st2.dogbones == 4);
+  std::set<std::pair<Coord, Coord>> gaps;
+  for (const auto& c : plan2)
+    if (c.has_mid) {
+      CHECK(gaps.insert({c.mid.x, c.mid.y}).second);  // one ball per gap
+      for (const auto& p : b.pads)
+        if (b.pads[static_cast<std::size_t>(c.pad)].pos != p.pos) {
+          CHECK(dist_point_segment(p.pos, c.a, c.mid) >= static_cast<double>(pitch) / 2 - 1);
+          CHECK(dist_point_segment(p.pos, c.mid, c.b) >= static_cast<double>(pitch) / 2 - 1);
+        }
+    }
+  // Too narrow a gap: dog-bones as before.
+  route::EscapeStats st3;
+  route::plan_escapes(b, needs, [](model::NetId) { return Coord{300'000}; }, {}, &st3, [](model::NetId) { return Coord{450'000}; });
+  CHECK(st3.second_ring == 0);
   // Deterministic.
   const auto again = route::plan_escapes(b, needs, [](model::NetId) { return Coord{300'000}; });
   REQUIRE(again.size() == plan.size());

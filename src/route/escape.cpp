@@ -33,7 +33,7 @@ int lowest_layer(model::LayerMask m) {
 }  // namespace
 
 std::vector<EscapeCorridor> plan_escapes(const model::Board& b, const std::vector<char>& needs, const std::function<Coord(model::NetId)>& keep,
-                                         const EscapeOptions& o, EscapeStats* stats) {
+                                         const EscapeOptions& o, EscapeStats* stats, const std::function<Coord(model::NetId)>& channel) {
   std::vector<EscapeCorridor> out;
   for (const auto& fp : b.footprints) {
     std::vector<int> pads;
@@ -84,6 +84,26 @@ std::vector<EscapeCorridor> plan_escapes(const model::Board& b, const std::vecto
         else c.b = {a.x, a.y + hy + o.length};
         c.band = std::min(k, pitch / 2 - 1);
         if (stats) ++stats->perimeter;
+      } else if (channel && m <= pitch + ring && [&] {
+                   const auto [hx, hy] = half_extents(p);
+                   const Coord across = (m == dl || m == dr) ? 2 * hy : 2 * hx;  // pad extent along the outer row
+                   return pitch - across >= channel(p.net);
+                 }()) {
+        // Second ring: diagonally to the interstitial site beside it (the same way for every ball of that half of
+        // the side, so each gap between two outer balls serves one ball), then straight out between them.
+        const auto [hx, hy] = half_extents(p);
+        c.has_mid = true;
+        if (m == dl || m == dr) {
+          const Coord dir = m == dl ? -1 : 1, sj = a.y >= centre.y ? 1 : -1;
+          c.mid = {a.x + dir * pitch / 2, a.y + sj * pitch / 2};  // the interstitial site, then out between the outer balls
+          c.b = {a.x + dir * (pitch + hx + o.length), c.mid.y};
+        } else {
+          const Coord dir = m == dt ? -1 : 1, sj = a.x >= centre.x ? 1 : -1;
+          c.mid = {a.x + sj * pitch / 2, a.y + dir * pitch / 2};
+          c.b = {c.mid.x, a.y + dir * (pitch + hy + o.length)};
+        }
+        c.band = std::min(k, pitch * 35 / 100);
+        if (stats) ++stats->second_ring;
       } else {
         // Inner ball: dog-bone to the diagonal interstitial site pointing away from the package centre, so all
         // balls of a quadrant fan out the same way and every site serves exactly one ball.
