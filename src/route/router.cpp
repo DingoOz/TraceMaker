@@ -1,4 +1,5 @@
 #include "route/router.hpp"
+#include "route/escape.hpp"
 #include "route/global_router.hpp"
 
 #include <algorithm>
@@ -91,6 +92,25 @@ struct Router::Impl {
   bool use_cache = true;
   int current = -1;                  // connection being routed
   std::vector<std::int64_t> soft_cells;  // cells of the last soft path that crossed routed copper
+
+  // ---- escape planning (M9, route/escape.hpp) ----
+  // Lattice cell -> net it is reserved for (0 none, -1 contested by two plans: reserved for nobody). Another
+  // net may not enter a reserved cell in a strict search and pays reserve_pen in a negotiated one.
+  std::vector<std::int32_t> reserve;
+  std::vector<std::vector<std::size_t>> pad_reserved;  // board pad -> cells it reserved
+  std::vector<int> pad_open;                           // board pad -> its connections not yet routed
+  std::int64_t reserve_pen = 0;
+  std::size_t lat_index(int layer, int gx, int gy) const {
+    return (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) +
+           static_cast<std::size_t>(gx);
+  }
+  // Extra cost (or -1: blocked) of using a cell reserved for another net.
+  std::int64_t reserved_cost(int layer, int gx, int gy, NetId net) const {
+    if (reserve.empty()) return 0;
+    const std::int32_t r = reserve[lat_index(layer, gx, gy)];
+    if (r <= 0 || r == static_cast<std::int32_t>(net)) return 0;
+    return soft ? reserve_pen : -1;
+  }
 
   Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {}
 
@@ -435,7 +455,9 @@ struct Router::Impl {
     }
     const int st = cell_state[idx];
     if (st == 2) return -1;
-    std::int64_t hc = hist_cost(layer, gx, gy);
+    const std::int64_t rc = reserved_cost(layer, gx, gy, net);
+    if (rc < 0) return -1;
+    std::int64_t hc = hist_cost(layer, gx, gy) + rc;
     if (corr) {  // soft guidance: leaving the global corridor (or its layer) costs half a pitch per lattice step
       const Point p = at(gx, gy);
       const int tx = std::clamp(global.tile_of_x(p.x), 0, global.tiles_x - 1), ty = std::clamp(global.tile_of_y(p.y), 0, global.tiles_y - 1);
@@ -471,7 +493,13 @@ struct Router::Impl {
       via_state[idx] = static_cast<std::uint8_t>(st);
     }
     if (via_state[idx] == 2) return -1;
-    return via_state[idx] == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0;
+    std::int64_t extra = 0;
+    for (int l = 0; l < nl && !reserve.empty(); ++l) {
+      const std::int64_t rc = reserved_cost(l, w.x0 + cx, w.y0 + cy, net);
+      if (rc < 0) return -1;
+      extra = std::max(extra, rc);
+    }
+    return extra + (via_state[idx] == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0);
   }
 
   // Lattice cells of the window inside a pad's copper on each of its layers (falls back to cells next to the
@@ -1841,6 +1869,78 @@ struct Router::Impl {
     return changed;
   }
 
+  // Escape planning (M9): reserve each dense-package pin's escape corridor for its net (route/escape.hpp).
+  void plan_escape_reservations() {
+    std::vector<char> needs(b.pads.size(), 0);
+    pad_open.assign(b.pads.size(), 0);
+    for (const auto& st : cs) {
+      if (st.routed) continue;
+      for (int pad : {st.c.pad_a, st.c.pad_b})
+        if (pad >= 0) {
+          needs[static_cast<std::size_t>(pad)] = 1;
+          ++pad_open[static_cast<std::size_t>(pad)];
+        }
+    }
+    auto keep = [&](NetId n) { return class_width(n) + std::max(netclass(n).clearance, rules.minimums.clearance); };
+    EscapeStats es;
+    const auto plan = plan_escapes(b, needs, keep, {}, &es);
+    reserve.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
+    pad_reserved.assign(b.pads.size(), {});
+    reserve_pen = static_cast<std::int64_t>(2 * opt.soft_cost_mm * 1e6);
+    res.escape_corridors = 0;
+    auto mark = [&](std::size_t gi, NetId net, int pad) {
+      if (reserve[gi] == 0) {
+        reserve[gi] = static_cast<std::int32_t>(net);
+        pad_reserved[static_cast<std::size_t>(pad)].push_back(gi);
+      } else if (reserve[gi] != static_cast<std::int32_t>(net)) {
+        reserve[gi] = -1;  // two plans want it: reserved for nobody
+      }
+    };
+    for (const auto& c : plan) {
+      if (c.via) {  // a dog-bone is only worth reserving where that net's via fits among the fixed copper
+        const int gx = to_ix(c.b.x), gy = to_iy(c.b.y);
+        if (gx < 0 || gy < 0 || gx >= nx || gy >= ny) continue;
+        const std::int32_t code = obs->fixed_via_code(at(gx, gy), via_diameter(c.net), via_drill(c.net), 0, cache_for(c.net).rep);
+        if (!code_ok(code, c.net)) continue;
+      }
+      ++res.escape_corridors;
+      const Coord r = c.band;
+      const int ix0 = std::max(0, to_ix(std::min(c.a.x, c.b.x) - r)), ix1 = std::min(nx - 1, to_ix(std::max(c.a.x, c.b.x) + r));
+      const int iy0 = std::max(0, to_iy(std::min(c.a.y, c.b.y) - r)), iy1 = std::min(ny - 1, to_iy(std::max(c.a.y, c.b.y) + r));
+      const long double ux = static_cast<long double>(c.b.x - c.a.x), uy = static_cast<long double>(c.b.y - c.a.y);
+      const long double len2 = ux * ux + uy * uy;
+      const long double r2 = static_cast<long double>(r) * static_cast<long double>(r);
+      for (int gy = iy0; gy <= iy1; ++gy)
+        for (int gx = ix0; gx <= ix1; ++gx) {
+          const Point p = at(gx, gy);
+          const long double px = static_cast<long double>(p.x - c.a.x), py = static_cast<long double>(p.y - c.a.y);
+          const long double t = len2 > 0 ? std::clamp((px * ux + py * uy) / len2, 0.0L, 1.0L) : 0.0L;
+          const long double dx = px - t * ux, dy = py - t * uy;
+          if (dx * dx + dy * dy > r2) continue;
+          const long double vx = static_cast<long double>(p.x - c.b.x), vy = static_cast<long double>(p.y - c.b.y);
+          if (c.via && vx * vx + vy * vy <= r2) {  // the via site: every layer
+            for (int l = 0; l < nl; ++l) mark(lat_index(l, gx, gy), c.net, c.pad);
+          } else {
+            mark(lat_index(c.layer, gx, gy), c.net, c.pad);
+          }
+        }
+    }
+  }
+  // A pin whose connections are all routed no longer needs its corridor.
+  void release_escapes(int ci) {
+    if (reserve.empty()) return;
+    const auto& c = cs[static_cast<std::size_t>(ci)].c;
+    for (int pad : {c.pad_a, c.pad_b}) {
+      if (pad < 0) continue;
+      auto& open = pad_open[static_cast<std::size_t>(pad)];
+      if (open > 0 && --open == 0) {
+        for (std::size_t gi : pad_reserved[static_cast<std::size_t>(pad)])
+          if (reserve[gi] == static_cast<std::int32_t>(c.net)) reserve[gi] = 0;
+        pad_reserved[static_cast<std::size_t>(pad)].clear();
+      }
+    }
+  }
+
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
     rip_cap = opt.max_rips_per_connection;
@@ -1890,6 +1990,10 @@ struct Router::Impl {
       cs.push_back(std::move(st));
     }
     for (std::size_t i = 0; i < cs.size(); ++i) pending.push_back(static_cast<int>(i));
+    if (opt.escape_plan) {
+      plan_escape_reservations();
+      if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
+    }
     live = opt.sink != nullptr;
     if (opt.diff_pairs) {
       const int np = route_diff_pairs();
@@ -1944,6 +2048,7 @@ struct Router::Impl {
         st.routed = st.implicit = st.coupled = false;
       }
       res.routed = 0;
+      if (opt.escape_plan) plan_escape_reservations();  // everything is unrouted again: corridors back
       if (opt.diff_pairs) route_diff_pairs();  // pairs first again, coupled
       std::vector<int> order(cs.size());
       for (std::size_t i = 0; i < cs.size(); ++i) order[i] = static_cast<int>(i);
@@ -1983,6 +2088,7 @@ struct Router::Impl {
         if (joined(ci)) {
           st.routed = st.implicit = true;
           ++res.routed;
+          release_escapes(ci);
           continue;
         }
         bool ok = search_and_commit(st.c, false);
@@ -2009,6 +2115,7 @@ struct Router::Impl {
         if (ok) {
           cs[static_cast<std::size_t>(ci)].routed = true;
           ++res.routed;
+          release_escapes(ci);
         } else {
           ++cs[static_cast<std::size_t>(ci)].fails;
           failed.push_back(ci);

@@ -36,6 +36,7 @@ struct RouterOptions {
   bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
+  bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
@@ -72,7 +73,8 @@ struct RouteResult {
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;
-  int blind_vias = 0;           // blind/buried vias placed          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
+  int blind_vias = 0;           // blind/buried vias placed
+  int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection

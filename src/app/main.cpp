@@ -127,7 +127,8 @@ int cmd_route(tmk::app::RouteJob job) {
 
 // Prints the fixed-obstacle legality map around a pad (router debugging): '.' free for its net, '#' blocked,
 // '+' the pad centre.
-int cmd_debug_pad(const std::string& path, const std::string& ref, const std::string& num, double pitch_mm, double radius_mm, double width_mm) {
+int cmd_debug_pad(const std::string& path, const std::string& ref, const std::string& num, double pitch_mm, double radius_mm, double width_mm,
+                  bool via_map) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   tmk::model::Board b = lb.board;
@@ -150,6 +151,24 @@ int cmd_debug_pad(const std::string& path, const std::string& ref, const std::st
           const tmk::geom::Point q{p.pos.x + x * pitch, p.pos.y + y * pitch};
           const auto code = obs.fixed_code(q, l, hw, 0, p.net);
           row += (x == 0 && y == 0) ? '+' : (code == tmk::route::Obstacles::kFree || code == p.net) ? '.' : '#';
+        }
+        std::printf("%s\n", row.c_str());
+      }
+    }
+    if (via_map) {  // where a through via of the pad's net (net-class size) passes the fixed-copper checks
+      const tmk::Coord drill = std::max(nc.via_drill, rules.minimums.through_hole_diameter);
+      const tmk::Coord dia = std::max({nc.via_diameter, rules.minimums.via_diameter, drill + 2 * rules.minimums.via_annular_width});
+      std::printf("via %.3f / %.3f mm (V legal)\n", tmk::nm_to_mm(dia), tmk::nm_to_mm(drill));
+      for (int l = 0; l < b.copper_count(); ++l)
+        std::printf("  centre layer %s: code %d\n", b.copper_name(l).c_str(), static_cast<int>(obs.fixed_code(p.pos, l, dia / 2, 0, p.net, true)));
+      std::printf("  hole_to_hole %.3f, hole_clearance %.3f, via code %d\n", tmk::nm_to_mm(rules.minimums.hole_to_hole), tmk::nm_to_mm(rules.minimums.hole_clearance),
+                  static_cast<int>(obs.fixed_via_code(p.pos, dia, drill, 0, p.net)));
+      for (int y = -n; y <= n; ++y) {
+        std::string row;
+        for (int x = -n; x <= n; ++x) {
+          const tmk::geom::Point q{p.pos.x + x * pitch, p.pos.y + y * pitch};
+          const auto code = obs.fixed_via_code(q, dia, drill, 0, p.net);
+          row += (x == 0 && y == 0) ? '+' : (code == tmk::route::Obstacles::kFree || code == p.net) ? 'V' : '#';
         }
         std::printf("%s\n", row.c_str());
       }
@@ -249,6 +268,7 @@ int main(int argc, char** argv) {
   route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs together as coupled tracks first (experimental)");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
   route->add_flag("!--no-optimize", ropt.optimize, "Skip the post-routing clean-up pass (fewer vias, shorter tracks)");
+  route->add_flag("--escape-plan,!--no-escape-plan", ropt.escape_plan, "Reserve escape corridors for the pins of dense packages (QFP, BGA) before routing");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
   bool r_nogpu = false;
   route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of CUDA (same results)");
@@ -284,12 +304,14 @@ int main(int argc, char** argv) {
   dbg->group("");
   std::string d_board, d_ref, d_num;
   double d_pitch = 0.08, d_radius = 2.0, d_width = 0;
+  bool d_via = false;
   dbg->add_option("board", d_board)->required();
   dbg->add_option("ref", d_ref)->required();
   dbg->add_option("pad", d_num)->required();
   dbg->add_option("--pitch", d_pitch);
   dbg->add_option("--radius", d_radius);
   dbg->add_option("--width", d_width);
+  dbg->add_flag("--via", d_via, "Also print where a via of the pad's net is legal");
 
   CLI11_PARSE(app, argc, argv);
   try {
@@ -309,7 +331,7 @@ int main(int argc, char** argv) {
     }
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
-    if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width);
+    if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*route) {
