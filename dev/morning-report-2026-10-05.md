@@ -1,8 +1,8 @@
 # Overnight report: M9 escape planning and M13 component-aware rules
 
 Written during the unattended run of 2026-10-04/05. Everything is committed locally on `main` (not pushed).
-Assumptions taken without being able to ask are listed at the end (M9: `dev/assumptions.md` A26–A31; M13:
-`dev/assumptions-m13.md`).
+Assumptions taken without being able to ask are listed at the end (M9: `dev/assumptions.md` A26–A32; M13:
+`dev/assumptions-m13.md` items 1–49).
 
 ## M9 — escape planning
 
@@ -61,8 +61,10 @@ Tier C gained a board (multisensor_cr2032) from the via neck-down / dead-pin cha
 clean and m2fc lost its clean pass by one connection (723/724, "search budget"): the old binary's winning variant on
 m2fc was one of the two that now carry escape planning. At a fixed 70 M budget old and new route m2fc identically
 (707) and escape planning routes 709, so this is the last connection falling either side of the 120 s limit, not a
-broken board. Clean pass on the boards
-whose pins can all escape: tier B 69.2 % (39 boards), tier C 70.4 % (27 boards), BGA set 46.7 % (15 boards).
+broken board.
+
+Clean pass on the boards whose pins can all escape: tier B 69.2 % (39 boards), tier C 70.4 % (27 boards), BGA set
+46.7 % (15 boards).
 
 Quality on boards clean before and after (final10 vs final binary): via count median ratio 1.00 (mean +0.2 % tier B,
 27 boards; +0.6 % tier C, 17 boards), track segments 1.00. Sanitizers: the ASan/UBSan unit tests (main, placement,
@@ -143,6 +145,8 @@ See `dev/assumptions.md` (A26–A32, M9) and `dev/assumptions-m13.md` (M13, item
 
 - **A27/D33 — escape planning runs in 2 of the 8 portfolio variants**, chosen without data on which variants win
   (the route JSON now records the winner, so this can be revisited).
+- **A32 — escape corridors reach 2 mm past the pad edge** (0.5 / 1 / 2 / 3 mm tested on two boards; 3 mm scored a
+  little higher on one board but reserves more space other nets cannot use).
 - **A29/D34 — via neck-down:** the router may now use the smallest via the board minimums allow (0.5/0.3 mm on
   boards without a project file instead of the class 0.8/0.4 mm), only when the class via does not fit. This is a
   manufacturable size, but it is a change in what the router produces.
@@ -153,3 +157,15 @@ See `dev/assumptions.md` (A26–A32, M9) and `dev/assumptions-m13.md` (M13, item
   only on layers where the parts have no pads and only for tracks (KiCad rule areas cannot exempt a part's own nets;
   the full rule is in the sidecar `.kicad_dru`); detector patterns in the catalogue were edited (library nicknames
   ignored, buck/boost part-number weights 30 → 50); HV-02 demoted to soft because its evidence is unverified.
+
+## Suggested next steps
+
+1. **Negotiation speed on large boards** (M6 global routing v2): the limit for logicbone-class boards now; escape
+   planning cannot help there.
+2. **Decap vs crystal/ESD space conflict in placement** before turning component rules on: reserve room around IC
+   supply pins rather than tuning weights (weights were tested on four seeds and do not resolve it).
+3. **Pin names for KiCad 5 boards** (or KiCad 6+ fixtures): most interface categories never reach the apply threshold
+   on PCBench because the boards have no pin names.
+4. Housekeeping: the three helper worktrees (`.claude/worktrees/agent-a988…`, `agent-aacd…`, `agent-a11c…`) are
+   merged and can be removed with `git worktree remove`; I left them for you to inspect.
+
