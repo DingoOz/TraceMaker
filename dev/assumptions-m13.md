@@ -175,3 +175,24 @@ section at its end); decisions D26–D31 in `docs/12-decisions.md`.
 42. **With `--component-rules off`** the override file is still read and validated (a broken file is an error), and a
     warning says it has no effect.
 
+## Ethernet magnetics void (ETH-05)
+
+43. **Magnetics binding**: a footprint is `magnetics` of an Ethernet instance when it has 6 or more pads, is a
+    transformer by reference (T*, TR*) or by lib_id/value (`transformer`, `magnetics`, `lan trans`, Pulse H1102/HX11xx,
+    Bel S558, Halo TG110, Wurth 7490...), and shares at least two signal nets with the anchor (line pairs of the RJ45 or
+    MDI pairs of the PHY). Four-pad common-mode chokes are not magnetics. The anchor role is `phy` when the anchor is an
+    IC, else `rj45`. Why 6 pads: one 1:1 pair transformer with centre taps has 6; a choke has 4.
+44. **No void under an RJ45 with integrated magnetics** (catalogue note): lib_id or value matching MagJack, HR911/HR961,
+    HY911, J00xx (Pulse), ARJM/ARJC (Abracon), LPJ, LMJ, HFJ1 (Halo), "PulseTrans", "Trafo" binds role
+    `integrated_magnetics` and reports ETH-05 "not required". A MagJack named otherwise reports "role magnetics not
+    bound": no void either way (the conservative side for routing).
+45. **Layers "same, adjacent"** = the magnetics' side and the next copper layer (In1.Cu on 4 layers, B.Cu on 2), minus
+    layers where the magnetics have pads (so SMD magnetics on F.Cu get a void on the adjacent layer only; through-hole
+    magnetics on a 2-layer board get none, reported). The router area keeps out tracks, vias and zones; the sidecar
+    rule disallows track, via and zone in the courtyard except the magnetics' own nets (no ground exemption, unlike
+    XTAL-04: the void is about planes). Margin 0.508 mm from the catalogue. Generated at confidence >= apply only, and
+    used for routing only with `--component-rules on` (as XTAL-04). On PCBench the Ethernet instances are capped at 60
+    (no pin names), so no void is generated there unless the user asserts the category (override file).
+46. **One area per set of parts**: an RJ45 instance and a PHY instance that bind the same magnetics produce one
+    void (the first instance in report order names it); the other reports "generated for another Ethernet instance".
+

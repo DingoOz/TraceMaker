@@ -614,6 +614,48 @@ Bound bind_default(const Ctx& c, int anchor, const Category& cat) {
   return r;
 }
 
+// Ethernet (doc 15 §8.1 `ethernet`): the anchor is the RJ45 (a connector) or the PHY (an IC); `magnetics` are the
+// discrete LAN transformers that share at least two signal nets with the anchor (the line pairs of the RJ45, or the
+// MDI pairs of the PHY) and have at least six pads (a two-pair 1:1 transformer; four-pad common-mode chokes are not
+// magnetics). An RJ45 with integrated magnetics (MagJack) needs no void (ETH-05 note): role `integrated_magnetics`.
+Bound bind_ethernet(const Ctx& c, int anchor) {
+  Bound r;
+  const auto& fp = c.b.footprints[static_cast<std::size_t>(anchor)];
+  const bool phy_anchor = c.ix.is_ic(anchor) && !c.ix.is_connector(anchor);
+  Role a = make_role(phy_anchor ? "phy" : "rj45");
+  a.parts.push_back(anchor);
+  r.roles.push_back(a);
+  static const std::regex integrated = icase(R"(magjack|hr911|hr961|hy911|j00\d\d|arjm|arjc|lpj|lmj|hfj1|pulsetrans|trafo|with.?magnetics|integrated.?magnetics|_mag(_|$))");
+  if (!phy_anchor && (search(fp.lib_id, integrated) || search(fp.value, integrated))) {
+    Role im = make_role("integrated_magnetics");
+    im.parts.push_back(anchor);
+    r.roles.push_back(im);
+    return r;
+  }
+  static const std::regex transformer =
+      icase(R"(transformer|magnetics|lan.?trans|h1102|h1601|h5007|hx1188|hx1198|hx5004|hx5008|tg110|tg111|749010|7490100|s558-|hr6010|ns892|g2406|13f-)");
+  std::vector<int> mags;
+  for (NetId n : c.ix.fp_nets(anchor)) {
+    if (!c.ix.signal(n)) continue;
+    for (int f : c.ix.parts_on(n)) {
+      if (f == anchor || std::find(mags.begin(), mags.end(), f) != mags.end() || c.ix.pad_count(f) < 6) continue;
+      const auto& t = c.b.footprints[static_cast<std::size_t>(f)];
+      const std::string& l = c.ix.letters(f);
+      if (!(l == "T" || l == "TR" || search(t.lib_id, transformer) || search(t.value, transformer))) continue;
+      int shared = 0;
+      for (NetId m : c.ix.fp_nets(f)) shared += c.ix.signal(m) && std::binary_search(c.ix.fp_nets(anchor).begin(), c.ix.fp_nets(anchor).end(), m) ? 1 : 0;
+      if (shared >= 2) mags.push_back(f);
+    }
+  }
+  std::sort(mags.begin(), mags.end());
+  if (!mags.empty()) {
+    Role m = make_role("magnetics");
+    m.parts = mags;
+    r.roles.push_back(m);
+  }
+  return r;
+}
+
 Bound bind(const Ctx& c, const Category& cat, int anchor) {
   const std::string& id = cat.id;
   if (id == "usb2") return bind_usb(c, anchor, false);
@@ -625,6 +667,7 @@ Bound bind(const Ctx& c, const Category& cat, int anchor) {
   if (id == "buck" || id == "boost") return bind_regulator(c, anchor, true);
   if (id == "esd_tvs") return bind_esd(c, anchor);
   if (id == "connector_general") return bind_connector(c, anchor);
+  if (id == "ethernet") return bind_ethernet(c, anchor);
   if (id == "rf_module") return bind_module(c, anchor, "module");
   if (id == "chip_antenna") return bind_module(c, anchor, "antenna");
   if (id == "can") {

@@ -231,13 +231,24 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
           if (!apply_level) e.detail = "confidence " + std::to_string(in.confidence) + " below the apply threshold " + std::to_string(cat.apply);
           else if (mode == Mode::On) {
             e.status = Status::Applied;
-            e.detail = "router/DRC keep-out (tracks) on " + layers + "; sidecar .kicad_dru rule";
+            e.detail = std::string("router/DRC keep-out (") + (k->second.front()->zone.keepout_vias ? "tracks, vias, zones" : "tracks") + ") on " + layers +
+                       "; sidecar .kicad_dru rule";
           } else {
             e.detail = std::string(mode == Mode::Report ? "report mode" : "soft mode adds no hard constraints") + "; keep-out on " + layers +
                        " is used with --component-rules on";
           }
         } else {
+          const bool generated_kind = r.id == "XTAL-04" || r.id == "BUCK-06" || r.id == "BOOST-04" || r.id == "ETH-05";
+          const std::string& aref = b.footprints[static_cast<std::size_t>(in.anchor)].reference;
           e.detail = not_built_reason(r);
+          if (r.id == "ETH-05" && in.role("integrated_magnetics"))
+            e.detail = "not required: " + aref + " has integrated magnetics (MagJack)";
+          else if (r.id == "ETH-05" && !in.role("magnetics"))
+            e.detail = "role magnetics not bound (no discrete LAN transformer with 6 or more pads shares two signal nets with " + aref + ")";
+          else if (generated_kind && !apply_level)
+            e.detail = "confidence " + std::to_string(in.confidence) + " below the apply threshold " + std::to_string(cat.apply) + " (keep-outs need it)";
+          else if (r.id == "ETH-05")
+            e.detail = "the same magnetics' void is generated for another Ethernet instance";
           for (const auto& s : ko_missing)
             if (s.starts_with(r.id + " " + b.footprints[static_cast<std::size_t>(in.anchor)].reference + ":")) e.detail = s.substr(s.find(':') + 2);
         }
