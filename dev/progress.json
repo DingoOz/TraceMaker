@@ -618,7 +618,7 @@
   {
    "id": "M13",
    "title": "Component-aware layout rules",
-   "status": "todo",
+   "status": "in_progress",
    "gate": "Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier",
    "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
    "tasks": [
@@ -628,7 +628,7 @@
     },
     {
      "text": "Category detection + role binding with confidence",
-     "done": false
+     "done": true
     },
     {
      "text": "Rule compiler: net classes, sidecar .kicad_dru, keep-out areas, placer pseudo-nets",
@@ -640,10 +640,26 @@
     },
     {
      "text": "Detection and rule report",
-     "done": false
+     "done": true
     },
     {
      "text": "Labelled PCBench subset and benchmark",
+     "done": true
+    },
+    {
+     "text": "Placer pseudo-nets for proximity rules (crystal, ESD, regulator caps, generalised decoupling): --component-rules",
+     "done": true
+    },
+    {
+     "text": "Generated keep-outs (crystal, inductor) for router/DRC + sidecar .kicad_dru",
+     "done": true
+    },
+    {
+     "text": "Per-net coupled routing for USB 2.0 pairs (RouterOptions::pair_nets)",
+     "done": true
+    },
+    {
+     "text": "Net classes from rules (impedance, width for current) - needs stackup (P4/P5)",
      "done": false
     }
    ]

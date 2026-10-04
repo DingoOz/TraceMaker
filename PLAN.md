@@ -43,7 +43,7 @@
 | 11 | [docs/11-roadmap.md](docs/11-roadmap.md) | Milestones M0–M12 with gates |
 | 12 | [docs/12-decisions.md](docs/12-decisions.md) | Decision log and risks |
 | 14 | [docs/14-placement-test-plan.md](docs/14-placement-test-plan.md) | Placement test plan: levels, datasets, metrics, baselines, gates |
-| 15 | [docs/15-component-rules.md](docs/15-component-rules.md) | **Planned:** component-aware layout rules (detect USB, Ethernet, crystals, regulators, RF, …; apply cited placement/routing rules); catalogue in [docs/component_rules.yaml](docs/component_rules.yaml) |
+| 15 | [docs/15-component-rules.md](docs/15-component-rules.md) | **Partly built (M13 P0–P3):** component-aware layout rules (detect USB, Ethernet, crystals, regulators, RF, …; apply cited placement/routing rules); catalogue in [docs/component_rules.yaml](docs/component_rules.yaml); `tracemaker rules`, `--component-rules` (opt-in); status in §14 |
 
 Background material:
 - [cpp_autorouter_clean_sheet.md](cpp_autorouter_clean_sheet.md): the routing-stage design and the
