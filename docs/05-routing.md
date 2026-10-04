@@ -182,6 +182,11 @@ unrouted connections were pins reported "boxed in". Two different causes hide be
 | Dead pins | A connection still boxed in by a negotiated search (which may cross all routed copper) at the neck-down width, neck-down via and with off-lattice escapes is enclosed by fixed copper: it is not retried in later passes or restarts and is reported as such | Same results at a fixed budget (retrying a sealed pocket is cheap); clearer failure reasons |
 | Feasibility analysis (`tracemaker escape <board> [--json]`) | Per dense package: breadth-first search from each pin over a 0.04 mm lattice of the package area, fixed copper only, at the neck-down width and via; a pin escapes when it gets 0.5 mm outside the package. Dead pins are explained ("no channel at W mm and no via site within reach", "only the solder-mask rule blocks via sites: untented vias") with a hint (tent vias / reduce `pad_to_mask_clearance`) | 0.1–2 s per board. Across all 1,157 PCBench boards: 708 have dense packages, 42 have pins that cannot escape even with the neck-down via (789 of 46,628 pins; tiers B 2/45, C 4/39: OtterCast, PCIE-to-MXM, sbc, zx-sizif, memsarray, a motor board). sbc: 22 DRAM balls blocked only by the mask rule. `bench/run.py` records `dead_pins` per board and `clean_pass_feasible`; `bench/feasibility.py` splits finished runs (BGA set: 41.2 % clean, 46.7 % on its 15 feasible boards) |
 
+**Tried and dropped.** Routing connections that touch dense-package pins first (then shortest first) in the
+strict pass: logicbone 964 → 750, decelerator 479 → 431 (one variant, same budget) — the many short connections
+finish first under shortest-first. Second-ring channel corridors: mixed (logicbone 964 → 954, decelerator
+479 → 484), kept behind `--escape-second-ring`.
+
 **Not built yet (rest of M9).** Min-cost-flow channel assignment for arrays deeper than two rings (Yan & Wong),
 layer assignment per ring, escape templates in the knowledge base (doc 06 T3), and a feasible-completion metric
 in the benchmark summary (completion over connections whose pins can escape).
