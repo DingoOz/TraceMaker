@@ -1953,6 +1953,12 @@ struct Router::Impl {
       }
     }
   }
+  void release_pad(int pad, NetId net) {
+    if (reserve.empty() || pad < 0) return;
+    for (std::size_t gi : pad_reserved[static_cast<std::size_t>(pad)])
+      if (reserve[gi] == static_cast<std::int32_t>(net)) reserve[gi] = 0;
+    pad_reserved[static_cast<std::size_t>(pad)].clear();
+  }
   // A pin whose connections are all routed no longer needs its corridor.
   void release_escapes(int ci) {
     if (reserve.empty()) return;
@@ -2152,6 +2158,8 @@ struct Router::Impl {
             force_escapes = false;
             if (!ok && why.starts_with("boxed in")) {
               st.dead = true;
+              release_pad(st.c.pad_a, st.c.net);  // a sealed pin's corridor only blocks others
+              release_pad(st.c.pad_b, st.c.net);
               reason += "; fixed copper encloses the pin";
             }
           }
