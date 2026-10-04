@@ -53,3 +53,25 @@ routed in 12 s (job 24 s). Track length 720 vs 713 mm, vias 4 vs 14. Placement's
 38/40 on the designer's placement and 40/40 on its own; Freerouting stays at 35/40 on either. TraceMaker used CUDA:
 the router's cost-to-go fields run on both GPUs (P100 and V100) in every variant, including the placement's check
 routes; the placer's annealing and legalisation are CPU-only. Freerouting is CPU-only.
+
+### Second board: `report/compare_placement_aquarius.mp4`
+
+PCBench `kitspace_aquarius` (tier A, 171 connections; TM4C123 MCU, micro-USB, LDO, 16 MHz crystal, 13 LED driver
+stages), 80 s. Made with `scripts/record_placement_video.sh kitspace_aquarius`,
+`python3 scripts/render_board_spin.py build/video_place/kitspace_aquarius` and
+`make_place_video.py --board kitspace_aquarius --caveat "..."`. Routing is played at 2× for both tools (TraceMaker's
+job takes 82 s).
+
+TraceMaker kept its full placement (72 parts moved, ratsnest 2,487 → 1,085 mm) in 181 s and routed 171/171 with 0 new
+KiCad DRC errors, 1,017 mm and 62 vias (best variant at 64 s, job 82 s). Freerouting on the designer's placement:
+171/171, 9 new errors (6 track width, 3 copper-edge clearance), 2,472 mm, 75 vias, 42 s. Controls: TraceMaker's router
+on the designer's placement 2,217 mm / 82 vias; Freerouting on TraceMaker's placement 1,225 mm / 54 vias — the
+placement halves the track length for either router.
+
+Freerouting 2.5's autorouter pass is single-threaded, but its optimizer is not ("optimizer.max_threads=55" in its log
+even with `--router.max_threads=1`): its batch-optimizer threads used 186 CPU-seconds in 13 s here. The video shows
+Freerouting's two phases from its log. (On SALSAFLOCK the optimizer was skipped because connections stayed unrouted.)
+
+Caveat shown on the card: the placer optimises wiring only. It moved the indicator LEDs D1–D13 away from their
+silkscreen labels ("choose_indication", "control_indication"), which a designer would not accept; design-intent rules
+of that kind are planned in doc 15 (M13).

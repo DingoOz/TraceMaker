@@ -191,9 +191,24 @@ def fit(img, w, h):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--board", default="retroreflectors_SALSAFLOCK")
-    ap.add_argument("--out", default=str(ROOT / "report/compare_placement_SALSAFLOCK.mp4"))
+    ap.add_argument("--out", help="default: report/compare_placement_<board>.mp4")
     ap.add_argument("--fr-version", default="2.5.0-RC12")
+    ap.add_argument("--caveat", default="", help="one line on the result card (e.g. design intent the placer does not know)")
+    ap.add_argument("--tier", help="PCBench tier shown in the subtitle (default: looked up in bench/results)")
     a = ap.parse_args()
+    global V
+    if (V / a.board).is_dir():
+        V = V / a.board               # scripts/record_placement_video.sh BOARD writes build/video_place/BOARD
+    tier = a.tier
+    if not tier:
+        for f in sorted((ROOT / "bench/results").glob("*/boards.jsonl")):
+            for line in open(f):
+                if f'"board": "{a.board}"' in line and '"tier"' in line:
+                    tier = json.loads(line).get("tier")
+                    break
+            if tier:
+                break
+    a.out = a.out or str(ROOT / f"report/compare_placement_{a.board.split('_', 1)[-1]}.mp4")
     human, placed = V / "human.kicad_pcb", V / "placed.kicad_pcb"
     frames = V / "frames"
     if frames.exists():
@@ -244,9 +259,14 @@ def main():
             ts = int(mm_.group(1)) * 3600 + int(mm_.group(2)) * 60 + float(mm_.group(3))
             if "Starting routing" in line and "start" not in stamps:
                 stamps["start"] = ts
+            if "Starting optimization" in line:
+                stamps["opt"] = ts
             if "Saving" in line:
                 stamps["end"] = ts
     fr_d = stamps["end"] - stamps["start"]
+    fr_opt = stamps.get("opt", stamps["end"]) - stamps["start"]  # its autorouter pass is single-threaded, the optimizer is not
+    opt_log = (V / "fr_human.log").read_text(errors="replace")
+    fr_opt_ran = "Skipping optimization" not in opt_log
     rec = re.search(r"\(([\d.]+) s of routing\)", (V / "rec_human.log").read_text())
     fr_window = float(rec.group(1)) if rec else fr_d
     fr_rec0 = max(0.0, fr_job_s - fr_window - 1.0)    # sampler clock when the GUI recording starts
@@ -262,7 +282,8 @@ def main():
     speed_p = max(1, round(place_s / 14.0))
     n_place = int(math.ceil(place_s / speed_p * FPS)) + int(1.5 * FPS)
     r_end = max(fr_d, route_job_s - route_offset)
-    n_route = int(math.ceil(r_end * FPS)) + 2 * FPS
+    speed_r = max(1, math.ceil(r_end / 45.0))     # same constant speed for both tools
+    n_route = int(math.ceil(r_end / speed_r * FPS)) + 2 * FPS
     BW, BH, BY, CW = 780, 680, 150, 130
     bx = (20 + CW + 10, 980)                      # board panels
     cx_ = (20, 980 + BW + 10)                     # CPU/GPU columns
@@ -285,7 +306,7 @@ def main():
     subprocess.run([PY, str(ROOT / "report/render_place.py"), str(V / "place_events.jsonl"), str(human), str(V / "pf_left"), "--speed", "100000",
                     "--fps", str(FPS), "--width", str(BW), "--height", str(BH), "--bbox", bb, "--no-caption"], check=True)
     subprocess.run([PY, str(ROOT / "report/render_events.py"), str(V / "tm_events.jsonl"), str(placed), str(V / "rf"), "--step",
-                    f"{1 / FPS:.5f}", "--width", str(BW), "--height", str(BH), "--bbox", bb], check=True)
+                    f"{speed_r / FPS:.5f}", "--width", str(BW), "--height", str(BH), "--bbox", bb], check=True)
     fr_frames = V / "ff"
     if fr_frames.exists():
         shutil.rmtree(fr_frames)
@@ -294,7 +315,7 @@ def main():
                                 capture_output=True, text=True).stdout)
     cut = min(fr_d + 0.3, vdur - fr_video0 - 0.5)  # its window closes when it exits
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{fr_video0:.2f}", "-i", str(V / "fr_human.mp4"), "-t", f"{cut:.2f}", "-vf",
-                    f"fps={FPS},scale={BW}:{BH}:force_original_aspect_ratio=decrease,pad={BW}:{BH}:(ow-iw)/2:(oh-ih)/2:color=0x101418",
+                    f"setpts=PTS/{speed_r},fps={FPS},scale={BW}:{BH}:force_original_aspect_ratio=decrease,pad={BW}:{BH}:(ow-iw)/2:(oh-ih)/2:color=0x101418",
                     str(fr_frames / "f_%05d.png")], check=True)
     pf = sorted((V / "pf").glob("frame_*.png"))
     left_place = Image.open(sorted((V / "pf_left").glob("frame_*.png"))[0]).convert("RGB")
@@ -320,7 +341,7 @@ def main():
         img = Image.new("RGB", (W, H), hexrgb(BG))
         d = ImageDraw.Draw(img)
         d.text((W // 2, 10), "Does moving the parts help? Placement, then routing, on the same board", font=font(28, True), fill=INK, anchor="mt")
-        d.text((W // 2, 48), f"{a.board.split('_', 1)[-1]} (PCBench tier B, {conns} connections) · TraceMaker vs Freerouting "
+        d.text((W // 2, 48), f"{a.board.split('_', 1)[-1]} (PCBench tier {tier}, {conns} connections) · TraceMaker vs Freerouting "
                f"{a.fr_version} · same machine · {note}results judged by KiCad's DRC", font=font(16), fill=MUTED, anchor="mt")
         for i, nm in enumerate(["1 · Finished boards", "2 · Placement", "3 · Routing", "4 · Result"]):
             cx = W // 2 + int((i - 1.5) * 230)
@@ -437,25 +458,33 @@ def main():
 
     # Act 3: routing, one clock for both from the start of routing, at real time.
     for k in range(n_route):
-        t = min(r_end, k / FPS)
-        img, d = base(3, "routing at real time, one clock · ")
+        t = min(r_end, k * speed_r / FPS)
+        img, d = base(3, ("routing at real time" if speed_r == 1 else f"routing played at {speed_r}x") + ", one clock · ")
         board_titles(d, f"Freerouting {a.fr_version}", "routes the designer's placement · its own window (screen recording)",
                      "TraceMaker", "routes its own placement · rendered from its event log")
         img.paste(saved_fr if t >= fr_d else Image.open(ff[min(k, len(ff) - 1)]).convert("RGB"), (bx[0], BY))
-        img.paste(saved_tm if t >= tm_d else Image.open(rf[min(k, len(rf) - 1)]).convert("RGB"), (bx[1], BY))
+        # The file is written when the whole job ends (the slower variants run to the portfolio deadline).
+        img.paste(saved_tm if t >= tm_route_end else Image.open(rf[min(k, len(rf) - 1)]).convert("RGB"), (bx[1], BY))
         column(img, cx_[0], series_at(cpu_fr, fr_offset + t) if t <= fr_d else [], {}, AMBER, gpu_note="not used\n(Freerouting is\nCPU-only)")
         column(img, cx_[1], series_at(cpu_rt, route_offset + t) if t <= tm_route_end else [], gpu_at(gpu_rt, t), TEAL)
-        fr_done = t >= fr_d
-        info(d, 0, f"{min(t, fr_d):.0f} s", AMBER, f"Done: {routed(m_fr)}/{conns} routed in {fr_d:.0f} s" if fr_done else "Routing (1 routing thread)",
-             "finished" if fr_done else "the parts stay where the designer put them",
-             [(0, fr_d, AMBER, f"routing {fr_d:.0f} s")], t, r_end, f"routing clock: 0 – {r_end:.0f} s, same for both")
+        if t >= fr_d:
+            fst, fde = f"Done: {routed(m_fr)}/{conns} routed in {fr_d:.0f} s", "finished"
+        elif t < fr_opt:
+            fst, fde = "Autorouting (single-threaded pass)", "the parts stay where the designer put them"
+        else:
+            fst, fde = "Optimizing (multi-threaded optimizer)", "Freerouting's optimizer runs on many threads"
+        fsegs = [(0, fr_opt, AMBER, f"autoroute {fr_opt:.0f} s")]
+        if fr_opt_ran and fr_d - fr_opt > 0.5:
+            fsegs.append((fr_opt, fr_d, "#a87a2c", f"optimize {fr_d - fr_opt:.0f} s"))
+        info(d, 0, f"{min(t, fr_d):.0f} s", AMBER, fst, fde, fsegs, t, r_end, f"routing clock: 0 – {r_end:.0f} s, same for both")
         if t < tm_d:
             st, de = "Routing (8 router variants in parallel)", f"placement ({place_s:.0f} s) happened before this clock started"
         elif t < tm_route_end:
-            st, de = f"Routed {routed(m_tm)}/{conns} in {tm_d:.0f} s", "slower router variants run to their deadline"
+            st, de = f"Best variant done at {tm_d:.0f} s; others still running", "the result is saved when the slower variants reach their deadline"
         else:
-            st, de = f"Done: {routed(m_tm)}/{conns} routed", f"routing job {tm_route_end:.0f} s (after {place_s:.0f} s of placement)"
-        info(d, 1, f"{min(t, tm_route_end):.0f} s", TEAL, st, de, [(0, tm_route_end, TEAL, f"routing {tm_route_end:.0f} s")], t, r_end,
+            st, de = f"Done: {routed(m_tm)}/{conns} routed, saved at {tm_route_end:.0f} s", f"best variant {tm_d:.0f} s · after {place_s:.0f} s of placement"
+        info(d, 1, f"{min(t, tm_route_end):.0f} s", TEAL, st, de,
+             [(0, tm_d, TEAL, f"routing {tm_d:.0f} s"), (tm_d, tm_route_end, "#2a7f74", f"other variants {tm_route_end - tm_d:.0f} s")], t, r_end,
              f"routing clock: 0 – {r_end:.0f} s, same for both")
         save(img)
 
@@ -484,7 +513,7 @@ def main():
         img.paste(fin_fr, (PX[0], PY0))
         img.paste(fin_tm, (PX[1], PY0))
         alpha = min(1.0, k / (0.8 * FPS))
-        card = Image.new("RGB", (W - 40, 400), hexrgb(PANEL))
+        card = Image.new("RGB", (W - 40, 420), hexrgb(PANEL))
         cd = ImageDraw.Draw(card)
         x0s = (30, 430, 700)
         cd.text((x0s[1] + 120, 20), "Freerouting", font=font(19, True), fill=AMBER, anchor="mt")
@@ -516,8 +545,10 @@ def main():
         cd.text((hx, 342), f"Freerouting: {routed(m_fr)}/{conns} on the designer's placement, {routed(m_frp)}/{conns} on TraceMaker's "
                 f"({errs(m_frp)} new errors)", font=font(16), fill=MUTED)
         cd.text((hx, 366), "TraceMaker's placement added 0 DRC errors (checked against the designer's board).", font=font(16), fill=MUTED)
-        region = img.crop((20, 640, W - 20, 1040))
-        img.paste(Image.blend(region, card, alpha), (20, 640))
+        if a.caveat:
+            cd.text((hx, 392), "Caveat: " + a.caveat, font=font(14, True), fill=AMBER)
+        region = img.crop((20, 626, W - 20, 1046))
+        img.paste(Image.blend(region, card, alpha), (20, 626))
         save(img)
 
     for k in range(int(1.0 * FPS)):

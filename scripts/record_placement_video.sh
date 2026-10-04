@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 cd "$(dirname "$0")/.."
-V=build/video_place
 B=${1:-retroreflectors_SALSAFLOCK}
+V=build/video_place/$B
 mkdir -p $V
 cp bench/data/freerouting/scripts/benchmark/fixtures/PCBench/$B/unrouted.kicad_pcb $V/human.kicad_pcb
 python3 bench/cpu_sample.py $V/cpu_place.json --gpu -- build/release/src/place/tracemaker-place $V/human.kicad_pcb -o $V/placed.kicad_pcb --mode routable --route-check 3000000 --threads 8 --json $V/placed.json --record $V/place_events.jsonl > $V/place.log 2>&1
