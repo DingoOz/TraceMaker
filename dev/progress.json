@@ -71,7 +71,7 @@
    "id": "M1",
    "title": "KiCad I/O and board model",
    "status": "done",
-   "gate": "Byte-identical round-trip of every fixture board (parse → write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
+   "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
    "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
    "tasks": [
     {
@@ -177,7 +177,7 @@
    "id": "M3",
    "title": "Event bus, server, viewer v1",
    "status": "in_progress",
-   "gate": "Viewer renders the largest fixture board at ≥ 60 fps; replay of a recorded log reproduces the final board",
+   "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board",
    "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
    "tasks": [
     {
@@ -249,9 +249,9 @@
   },
   {
    "id": "M5",
-   "title": "Failure memory T0–T2 + escalation R0–R3 + repair",
+   "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
    "status": "in_progress",
-   "gate": "Completion ≥ Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
+   "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
    "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
    "tasks": [
     {
@@ -335,9 +335,9 @@
   },
   {
    "id": "M7",
-   "title": "Placement A–D",
+   "title": "Placement A\u2013D",
    "status": "in_progress",
-   "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL ≤ SA-PCB baseline on the placement set",
+   "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL \u2264 SA-PCB baseline on the placement set",
    "deliverables": "Constraint extraction, decoupling detection, quadratic B2B (PCG), electrostatic global placement (CPU then GPU batched), rotation/side assignment, LP legalisation; placement report with optimality levels and lower bound",
    "tasks": [
     {
@@ -345,7 +345,11 @@
      "done": true
     },
     {
-     "text": "decoupling detection / proximity groups",
+     "text": "Decoupling capacitors tied to their IC supply pin (D25)",
+     "done": true
+    },
+    {
+     "text": "Other proximity groups: crystals, termination, ESD near connectors (see doc 15)",
      "done": false
     },
     {
@@ -357,7 +361,11 @@
      "done": true
     },
     {
-     "text": "rotation assignment (coordinate descent); side assignment (flip)",
+     "text": "Rotation assignment (coordinate descent)",
+     "done": true
+    },
+    {
+     "text": "Side assignment (flip to the back)",
      "done": false
     },
     {
@@ -384,9 +392,9 @@
   },
   {
    "id": "M8",
-   "title": "Placement E–G + ECO",
+   "title": "Placement E\u2013G + ECO",
    "status": "in_progress",
-   "gate": "Schematic-to-board set: clean pass ≥ 90%; `eco` mode closes boards that `none` mode cannot",
+   "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot",
    "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
    "tasks": [
     {
@@ -508,8 +516,8 @@
      "done": true
     },
     {
-     "text": "Run held-out quality benchmark on tier D-like boards and DAC2020",
-     "done": false
+     "text": "Held-out quality benchmark on tier C-like boards (heldC-1) and DAC2020",
+     "done": true
     }
    ]
   },
@@ -562,15 +570,23 @@
    "deliverables": "Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models",
    "tasks": [
     {
-     "text": "Differential pairs",
+     "text": "Differential pairs: experimental --diff-pairs (rarely couples)",
+     "done": true
+    },
+    {
+     "text": "Differential pairs: proper coupled routing",
      "done": false
     },
     {
-     "text": "length/skew tuning",
-     "done": false
+     "text": "Length and skew tuning (KiCad length constraints)",
+     "done": true
     },
     {
-     "text": "blind/micro vias",
+     "text": "Blind/buried vias: experimental --blind-vias",
+     "done": true
+    },
+    {
+     "text": "Micro vias",
      "done": false
     },
     {
@@ -590,16 +606,45 @@
      "done": true
     },
     {
-     "text": "Gridless arm, learned models, micro vias",
-     "done": false
-    },
-    {
      "text": "Skew tuning for differential pairs (custom skew rules, inDiffPair condition)",
      "done": true
     },
     {
      "text": "Blind/buried vias where through vias are blocked (--blind-vias; correct on the 3 boards that allow them, no measurable gain)",
      "done": true
+    }
+   ]
+  },
+  {
+   "id": "M13",
+   "title": "Component-aware layout rules",
+   "status": "todo",
+   "gate": "Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier",
+   "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
+   "tasks": [
+    {
+     "text": "Verify the 41 unchecked catalogue numbers against their sources",
+     "done": false
+    },
+    {
+     "text": "Category detection + role binding with confidence",
+     "done": false
+    },
+    {
+     "text": "Rule compiler: net classes, sidecar .kicad_dru, keep-out areas, placer pseudo-nets",
+     "done": false
+    },
+    {
+     "text": "Stackup parsing + impedance (IPC-2141A / Wadell)",
+     "done": false
+    },
+    {
+     "text": "Detection and rule report",
+     "done": false
+    },
+    {
+     "text": "Labelled PCBench subset and benchmark",
+     "done": false
     }
    ]
   }
