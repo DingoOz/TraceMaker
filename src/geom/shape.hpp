@@ -59,5 +59,8 @@ double gap(const Shape& a, const Shape& b);
 std::vector<Point> arc_points(Point start, Point mid, Point end, Coord max_error = 5'000);
 // Circle outline as a closed polyline (first point repeated at the end).
 std::vector<Point> circle_points(Point centre, Coord radius, Coord max_error = 5'000);
+// Convex hull, counter-clockwise in a y-up frame, no repeated point (Andrew's monotone chain, 1979; exact
+// integer orientation tests). Fewer than three distinct points are returned sorted.
+std::vector<Point> convex_hull(std::vector<Point> pts);
 
 }  // namespace tmk::geom

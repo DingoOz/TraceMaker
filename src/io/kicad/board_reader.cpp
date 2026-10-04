@@ -210,7 +210,10 @@ class Reader {
       const std::string key = d_.str_at(p, 1);
       if (key == "Reference") fp.reference = d_.str_at(p, 2);
       else if (key == "Value") fp.value = d_.str_at(p, 2);
+      else if (key == "Description" && fp.description.empty()) fp.description = d_.str_at(p, 2);
     }
+    if (NodeId de = d_.find(f, "descr"); de != kNoNode && fp.description.empty()) fp.description = d_.str_at(de, 1);
+    if (NodeId tg = d_.find(f, "tags"); tg != kNoNode) fp.keywords = d_.str_at(tg, 1);
     for (NodeId t : d_.find_all(f, "fp_text")) {  // KiCad <= 7
       const std::string kind = d_.str_at(t, 1);
       if (kind == "reference" && fp.reference.empty()) fp.reference = d_.str_at(t, 2);
@@ -301,6 +304,8 @@ class Reader {
         pad.custom_polys.push_back(std::move(poly));
       }
     }
+    if (NodeId pf = d_.find(p, "pinfunction"); pf != kNoNode) pad.pinfunction = d_.str_at(pf, 1);
+    if (NodeId pt = d_.find(p, "pintype"); pt != kNoNode) pad.pintype = d_.str_at(pt, 1);
     pad.net = read_net(p);
     fp.pads.push_back(static_cast<int>(b_.pads.size()));
     b_.pads.push_back(std::move(pad));

@@ -58,6 +58,9 @@ struct Pad {
   std::vector<std::vector<Point>> custom_polys;  // custom primitives (gr_poly) in the pad frame
   Coord clearance = -1;      // local override, -1 = none
   Coord mask_margin = INT64_MIN;  // local solder-mask expansion (unset = INT64_MIN)
+  // Schematic pin name and electrical type (KiCad 6+ boards; empty in older files). Read-only, used to
+  // recognise component roles (doc 15 §3.1).
+  std::string pinfunction, pintype;
   NetId net = 0;
   sexpr::NodeId node = sexpr::kNoNode;
 };
@@ -90,6 +93,7 @@ struct Text {                // copper text is an obstacle; only position, layer
 struct Footprint {
   std::string lib_id;
   std::string reference, value;
+  std::string description, keywords;  // footprint (descr ...)/(tags ...) or Description property; read-only
   Point pos;
   double angle = 0;
   bool back = false;
