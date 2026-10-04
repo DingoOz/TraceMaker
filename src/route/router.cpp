@@ -140,10 +140,21 @@ struct Router::Impl {
   const model::NetClass& netclass(NetId net) const { return rules.class_for(b.nets[static_cast<std::size_t>(net)].name); }
   // Via drill and diameter for a net: net-class values raised to the board minimums (drill, diameter and
   // annular ring: d >= drill + 2 * min_annular).
-  Coord via_drill(NetId net) const { return std::max(netclass(net).via_drill, rules.minimums.through_hole_diameter); }
-  Coord via_diameter(NetId net) const {
-    return std::max({netclass(net).via_diameter, rules.minimums.via_diameter, via_drill(net) + 2 * rules.minimums.via_annular_width});
+  Coord class_via_drill(NetId net) const { return std::max(netclass(net).via_drill, rules.minimums.through_hole_diameter); }
+  Coord class_via_diameter(NetId net) const {
+    return std::max({netclass(net).via_diameter, rules.minimums.via_diameter, class_via_drill(net) + 2 * rules.minimums.via_annular_width});
   }
+  // Via neck-down (M9 escalation rung, with the track neck-down): KiCad's DRC checks vias against the board
+  // minimums only (via diameter, drill, annular ring), not the net class, so the smallest via they allow is
+  // legal where the class via does not fit (e.g. between BGA balls or in a dense LED matrix). Only used when
+  // the class via is blocked; never below a 0.2 mm drill, which every board house drills.
+  Coord neck_via_drill(NetId net) const { return std::min(class_via_drill(net), std::max<Coord>(rules.minimums.through_hole_diameter, 200'000)); }
+  Coord neck_via_diameter(NetId net) const {
+    return std::min(class_via_diameter(net), std::max(rules.minimums.via_diameter, neck_via_drill(net) + 2 * std::max<Coord>(rules.minimums.via_annular_width, 100'000)));
+  }
+  bool via_override = false;  // escalation rung: the neck-down via
+  Coord via_drill(NetId net) const { return via_override ? neck_via_drill(net) : class_via_drill(net); }
+  Coord via_diameter(NetId net) const { return via_override ? neck_via_diameter(net) : class_via_diameter(net); }
   Coord width_override = 0;   // > 0: neck-down width for the current attempt (escalation rung)
   bool force_escapes = false; // escalation rung: off-lattice escapes even when the pad has lattice exits
   Coord class_width(NetId net) const { return std::max(netclass(net).track_width, rules.minimums.track_width); }
@@ -399,7 +410,7 @@ struct Router::Impl {
     return it == history.end() ? 0 : static_cast<std::int64_t>(it->second) * pitch * 2;
   }
   ClassCache& cache_for(NetId net) {
-    auto& cc = caches[{&netclass(net), track_width(net)}];
+    auto& cc = caches[{&netclass(net), track_width(net) * 2 + (via_override ? 1 : 0)}];  // via codes depend on the via size
     if (cc.margin.empty()) {
       const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
       cc.margin.assign(n, INT32_MIN);
@@ -2102,11 +2113,13 @@ struct Router::Impl {
         if (!ok && (last_miss == Miss::Enclosed || why.starts_with("boxed in") || why.starts_with("exact check"))) {
           force_escapes = true;
           ok = search_and_commit(st.c, false);
-          if (!ok && neck_width(st.c.net) > 0) {
+          if (!ok && (neck_width(st.c.net) > 0 || neck_via_diameter(st.c.net) < class_via_diameter(st.c.net))) {
             width_override = neck_width(st.c.net);
+            via_override = true;
             ok = search_and_commit(st.c, false);
             if (ok) ++res.necked;
             width_override = 0;
+            via_override = false;
           }
           force_escapes = false;
           if (!ok) reason += "; escapes/neck-down: " + why;
@@ -2118,9 +2131,11 @@ struct Router::Impl {
             // Last check before giving the pin up: negotiated, with off-lattice escapes and the neck-down width.
             force_escapes = true;
             if (neck_width(st.c.net) > 0) width_override = neck_width(st.c.net);
+            via_override = true;
             ok = search_and_commit(st.c, true);
-            if (ok && width_override > 0) ++res.necked;
+            if (ok) ++res.necked;
             width_override = 0;
+            via_override = false;
             force_escapes = false;
             if (!ok && why.starts_with("boxed in")) {
               st.dead = true;
