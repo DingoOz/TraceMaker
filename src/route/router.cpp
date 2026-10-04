@@ -1915,6 +1915,7 @@ struct Router::Impl {
     pad_reserved.assign(b.pads.size(), {});
     reserve_pen = static_cast<std::int64_t>(2 * opt.soft_cost_mm * 1e6);
     res.escape_corridors = 0;
+    plan_json.clear();
     auto mark = [&](std::size_t gi, NetId net, int pad) {
       if (reserve[gi] == 0) {
         reserve[gi] = static_cast<std::int32_t>(net);
@@ -1959,10 +1960,32 @@ struct Router::Impl {
       } else {
         strip(c.a, c.b, c.via);
       }
+      if (opt.sink) {  // viewer: one corridor per pin (doc 09; CLAUDE.md rule 7)
+        std::string pts = "[" + jnum(c.a.x) + "," + jnum(c.a.y) + "]";
+        if (c.has_mid) pts += ",[" + jnum(c.mid.x) + "," + jnum(c.mid.y) + "]";
+        pts += ",[" + jnum(c.b.x) + "," + jnum(c.b.y) + "]";
+        if (!plan_json.empty()) plan_json += ",";
+        plan_json += "{\"id\":" + std::to_string(c.pad) + ",\"net\":" + std::to_string(c.net) + ",\"pad\":\"" + pad_label(c.pad) +
+                     "\",\"via\":" + (c.via ? "true" : "false") + ",\"pts\":[" + pts + "]}";
+      }
     }
+    if (opt.sink) emit("{\"type\":\"escape_plan\",\"corridors\":[" + plan_json + "]}");
+  }
+  std::string plan_json;
+  std::string pad_label(int pad) const {
+    const auto& p = b.pads[static_cast<std::size_t>(pad)];
+    std::string ref = p.footprint >= 0 ? b.footprints[static_cast<std::size_t>(p.footprint)].reference : std::string("?");
+    std::string out = ref + "." + p.number;
+    std::string esc;
+    for (char ch : out) {
+      if (ch == '"' || ch == '\\') esc += '\\';
+      esc += ch;
+    }
+    return esc;
   }
   void release_pad(int pad, NetId net) {
     if (reserve.empty() || pad < 0) return;
+    if (opt.sink && !pad_reserved[static_cast<std::size_t>(pad)].empty()) emit("{\"type\":\"escape_release\",\"id\":" + std::to_string(pad) + "}");
     for (std::size_t gi : pad_reserved[static_cast<std::size_t>(pad)])
       if (reserve[gi] == static_cast<std::int32_t>(net)) reserve[gi] = 0;
     pad_reserved[static_cast<std::size_t>(pad)].clear();
@@ -1974,11 +1997,7 @@ struct Router::Impl {
     for (int pad : {c.pad_a, c.pad_b}) {
       if (pad < 0) continue;
       auto& open = pad_open[static_cast<std::size_t>(pad)];
-      if (open > 0 && --open == 0) {
-        for (std::size_t gi : pad_reserved[static_cast<std::size_t>(pad)])
-          if (reserve[gi] == static_cast<std::int32_t>(c.net)) reserve[gi] = 0;
-        pad_reserved[static_cast<std::size_t>(pad)].clear();
-      }
+      if (open > 0 && --open == 0) release_pad(pad, c.net);
     }
   }
 
@@ -2166,6 +2185,12 @@ struct Router::Impl {
             force_escapes = false;
             if (!ok && why.starts_with("boxed in")) {
               st.dead = true;
+              if (opt.sink) {
+                const int dp = why.find("target") != std::string::npos && st.c.pad_b >= 0 ? st.c.pad_b : st.c.pad_a;
+                const Point q = b.pads[static_cast<std::size_t>(dp)].pos;
+                emit("{\"type\":\"escape_dead\",\"id\":" + std::to_string(dp) + ",\"net\":" + std::to_string(st.c.net) + ",\"pad\":\"" + pad_label(dp) +
+                     "\",\"p\":[" + jnum(q.x) + "," + jnum(q.y) + "],\"why\":\"fixed copper encloses the pin\"}");
+              }
               release_pad(st.c.pad_a, st.c.net);  // a sealed pin's corridor only blocks others
               release_pad(st.c.pad_b, st.c.net);
               reason += "; fixed copper encloses the pin";

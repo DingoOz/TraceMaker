@@ -18,6 +18,9 @@ On connect the server sends the latest `board` snapshot, then every later messag
 | `frontier` *(transient)* | `conn`, `layer`, `pts:[[x,y],…]` | Sampled points of an active search frontier |
 | `path_try` *(transient)* | `conn`, `pts:[[x,y,layer],…]` | A candidate path being evaluated |
 | `failure` | `conn`, `net`, `rung`, `cause`, `a:[x,y]`, `b:[x,y]`, `blockers:[track/via/pad ids]`, `region:[x0,y0,x1,y1]` | A failed attempt (failure memory) |
+| `escape_plan` | `corridors:[{id, net, pad:"REF.NUM", via, pts:[[x,y],…]}]` | Escape corridors reserved for dense-package pins (M9); `id` is the board pad index. Sent at the start and after each restart; the viewer draws them (toggle X) |
+| `escape_release` | `id` | The pin is connected (or given up): its corridor is gone |
+| `escape_dead` | `id`, `net`, `pad`, `p:[x,y]`, `why` | A pin enclosed by fixed copper even for a negotiated, necked-down search: not retried (red cross in the viewer) |
 | `heatmap` | `name`, `x0`, `y0`, `cell`, `w`, `h`, `layer`, `max`, `data:[…]` (row-major, 0–255) | Congestion / history / learned-penalty overlays |
 | `stats` | `stage`, `iteration`, `routed`, `total`, `unrouted`, `rips`, `failures`, `elapsed_s`, `extra:{}` | Progress counters (≤ 10 Hz) |
 | `stage` | `name`, `state:"begin"|"end"`, `detail` | Pipeline stage changes |

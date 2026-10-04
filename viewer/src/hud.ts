@@ -25,6 +25,7 @@ export interface Toggles {
   activeOnTop: boolean;
   zones: boolean;
   ratsnest: boolean;
+  escape: boolean;
   footprints: boolean;
   effects: boolean;
   follow: boolean;
@@ -170,7 +171,7 @@ export class Hud {
 
   setToggles(t: Toggles) {
     const labels: [keyof Toggles, string, string][] = [
-      ['activeOnTop', 'Active on top', 'H'], ['zones', 'Zones', 'Z'], ['ratsnest', 'Ratsnest', 'R'],
+      ['activeOnTop', 'Active on top', 'H'], ['zones', 'Zones', 'Z'], ['ratsnest', 'Ratsnest', 'R'], ['escape', 'Escape plan', 'X'],
       ['footprints', 'Footprints', ''], ['effects', 'Effects', 'E'], ['follow', 'Follow activity', 'L'],
     ];
     this.chips.textContent = '';

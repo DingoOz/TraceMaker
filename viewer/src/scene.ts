@@ -55,6 +55,9 @@ export class Scene {
   viasDirty = true;
   padsDirty = true;
   ratsDirty = true;
+  escapes = new Map<number, { pts: number[]; net: number; via: boolean }>();  // pad id -> corridor polyline (mm)
+  deadPins: { x: number; y: number; net: number }[] = [];
+  escDirty = true;
   footprintsDirty = true;
 
   fx: Fx = { newTracks: [], frontier: [], paths: [], failures: [] };
@@ -135,6 +138,22 @@ export class Scene {
         this.fx.paths.push({ pts, t0: now });
         break;
       }
+      case 'escape_plan': {
+        this.escapes.clear();
+        for (const c of m.corridors) this.escapes.set(c.id, { pts: c.pts.flatMap((p) => this.pt(p)), net: c.net, via: c.via });
+        this.escDirty = true;
+        break;
+      }
+      case 'escape_release':
+        if (this.escapes.delete(m.id)) this.escDirty = true;
+        break;
+      case 'escape_dead': {
+        const [x, y] = this.pt(m.p);
+        this.deadPins.push({ x, y, net: m.net });
+        this.escapes.delete(m.id);
+        this.escDirty = true;
+        break;
+      }
       case 'failure': {
         if (!this.loaded) return;
         const [ax, ay] = this.pt(m.a), [bx, by] = this.pt(m.b);
@@ -197,6 +216,9 @@ export class Scene {
     for (const v of b.vias) this.vias.set(v.id, this.via(v));
     this.ratsnest = [];
     this.ratsNets = [];
+    this.escapes.clear();
+    this.deadPins = [];
+    this.escDirty = true;
     this.fx = { newTracks: [], frontier: [], paths: [], failures: [] };
     this.activity = null;
     for (let i = 0; i < this.layerNames.length; i++) this.dirtyTrackLayers.add(i);

@@ -30,8 +30,8 @@ try {
 canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
 canvas.addEventListener('webglcontextrestored', () => location.reload());
 
-const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, footprints: true, effects: true, follow: false };
-const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, footprints: true, effects: true, hoverNet: 0 };
+const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false };
+const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, hoverNet: 0 };
 
 const conn = new Connection(Connection.defaultUrl());
 conn.onState = (s) => {
@@ -51,6 +51,7 @@ function applyToggles() {
   view.activeOnTop = toggles.activeOnTop;
   view.zones = toggles.zones;
   view.ratsnest = toggles.ratsnest;
+  view.escape = toggles.escape;
   view.footprints = toggles.footprints;
   view.effects = toggles.effects;
   scene.glowEnabled = toggles.effects;
@@ -106,6 +107,7 @@ window.addEventListener('keydown', (e) => {
   else if (k === 'h') hud.onToggle('activeOnTop', !toggles.activeOnTop);
   else if (k === 'z') hud.onToggle('zones', !toggles.zones);
   else if (k === 'r') hud.onToggle('ratsnest', !toggles.ratsnest);
+  else if (k === 'x') hud.onToggle('escape', !toggles.escape);
   else if (k === 'e') hud.onToggle('effects', !toggles.effects);
   else if (k === 'l') hud.onToggle('follow', !toggles.follow);
   else if (/^[1-9]$/.test(k) && Number(k) <= scene.layerNames.length) hud.onActiveLayer(Number(k) - 1);
@@ -183,6 +185,12 @@ function processMessages(now: number) {
       case 'log': hud.addLog(m.level, m.text); break;
       case 'failure':
         hud.addLog('error', `${scene.netName(m.net)}: ${m.cause}${m.rung ? ` (rung ${m.rung})` : ''}`, 'failure');
+        break;
+      case 'escape_plan':
+        hud.addLog('info', `escape plan: ${m.corridors.length} pin corridors reserved`, 'stage');
+        break;
+      case 'escape_dead':
+        hud.addLog('error', `${m.pad} (${scene.netName(m.net)}): cannot escape: ${m.why}`, 'failure');
         break;
       default: break;
     }

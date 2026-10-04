@@ -70,4 +70,8 @@ export type Message =
   | { type: 'path_try'; conn: number; pts: [number, number, number][] }
   | { type: 'heatmap'; name: string; x0: number; y0: number; cell: number; w: number; h: number; layer: number; max: number; data: number[] }
   | { type: 'stage'; name: string; state: 'begin' | 'end'; detail?: string }
-  | { type: 'log'; level: string; text: string };
+  | { type: 'log'; level: string; text: string }
+  // Escape planning (M9): reserved corridor per dense-package pin, released when the pin is connected; dead pins.
+  | { type: 'escape_plan'; corridors: { id: number; net: number; pad: string; via: boolean; pts: XY[] }[] }
+  | { type: 'escape_release'; id: number }
+  | { type: 'escape_dead'; id: number; net: number; pad: string; p: XY; why: string };

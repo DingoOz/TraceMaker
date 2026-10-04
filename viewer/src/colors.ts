@@ -32,6 +32,8 @@ export const theme = {
   via: hex('#c4c9d4'),
   hole: hex('#05070d'),
   ratsnest: hex('#c9d6f0', 0.38),
+  escape: hex('#5fd3a0', 0.55),
+  deadPin: hex('#ff4d4d', 0.95),
   frontier: hex('#4fe3ff'),
   pathTry: hex('#ffd36b'),
   failure: hex('#ff4d5e'),

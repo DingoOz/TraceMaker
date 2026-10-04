@@ -95,6 +95,7 @@ export interface ViewOptions {
   activeOnTop: boolean;
   zones: boolean;
   ratsnest: boolean;
+  escape: boolean;
   footprints: boolean;
   effects: boolean;
   hoverNet: number;
@@ -118,6 +119,8 @@ export class Renderer {
   private outlineLines: Batch;
   private fpLines: Batch;
   private rats: Batch;
+  private esc: Batch;
+  private dead: Batch;
   private fxBatch: Batch;
   private fullscreen: Batch;
   private boardVersion = -1;
@@ -152,6 +155,8 @@ export class Renderer {
     this.outlineLines = this.capsBatch();
     this.fpLines = this.capsBatch();
     this.rats = this.capsBatch();
+    this.esc = this.capsBatch();
+    this.dead = this.capsBatch();
     this.fxBatch = new Batch(gl, this.quad, [4, 4, 4, 4], true);
     this.fullscreen = new Batch(gl, this.quad, [], false);
     this.fullscreen.count = 4;
@@ -274,6 +279,17 @@ export class Renderer {
       for (let i = 0; i < scene.ratsnest.length; i += 4)
         r.push(scene.ratsnest[i], scene.ratsnest[i + 1], scene.ratsnest[i + 2], scene.ratsnest[i + 3], 0, scene.ratsNets[i / 4]);
       this.rats.set(r);
+    }
+    if (scene.escDirty) {
+      scene.escDirty = false;
+      const e: number[] = [];
+      for (const c of scene.escapes.values())
+        for (let i = 0; i + 3 < c.pts.length; i += 2) e.push(c.pts[i], c.pts[i + 1], c.pts[i + 2], c.pts[i + 3], 0.03, c.net);
+      this.esc.set(e);
+      const d: number[] = [];
+      const a = 0.35;  // marker arm (mm)
+      for (const p of scene.deadPins) d.push(p.x - a, p.y - a, p.x + a, p.y + a, 0.07, p.net, p.x - a, p.y + a, p.x + a, p.y - a, 0.07, p.net);
+      this.dead.set(d);
     }
   }
 
@@ -470,6 +486,10 @@ export class Renderer {
     if (opt.footprints) this.drawCaps(this.fpLines, cam, dpr, theme.footprint, 0, 0.5);
     this.drawCaps(this.outlineLines, cam, dpr, theme.outline, 0, 0.7);
     if (opt.ratsnest) this.drawCaps(this.rats, cam, dpr, theme.ratsnest, opt.hoverNet, 0.5, [1, 1, 1, 0.95]);
+    if (opt.escape) {
+      this.drawCaps(this.esc, cam, dpr, theme.escape, opt.hoverNet, 0.5, [1, 1, 1, 0.95]);
+      this.drawCaps(this.dead, cam, dpr, theme.deadPin, 0, 0.5);
+    }
 
     if (animating) {
       gl.blendFunc(gl.ONE, gl.ONE);
