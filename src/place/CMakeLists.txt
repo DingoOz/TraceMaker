@@ -5,12 +5,12 @@ find_package(Threads REQUIRED)
 add_library(tm_place STATIC problem.cpp legality.cpp wirelength.cpp lower_bound.cpp global.cpp legalize.cpp congestion.cpp anneal.cpp
             tempering.cpp lns.cpp placer.cpp routable.cpp)
 add_library(tm::place ALIAS tm_place)
-target_link_libraries(tm_place PUBLIC tm::model tm::geom tm::core nlohmann_json::nlohmann_json PRIVATE tm::drc tm::io Eigen3::Eigen Threads::Threads)
+target_link_libraries(tm_place PUBLIC tm::model tm::geom tm::core nlohmann_json::nlohmann_json PRIVATE tm::crules tm::drc tm::io Eigen3::Eigen Threads::Threads)
 tm_set_warnings(tm_place)
 
 find_package(CLI11 CONFIG REQUIRED)
 add_executable(tracemaker-place place_main.cpp)
-target_link_libraries(tracemaker-place PRIVATE tm::place tm::io tm::route CLI11::CLI11 nlohmann_json::nlohmann_json)
+target_link_libraries(tracemaker-place PRIVATE tm::place tm::crules tm::io tm::route CLI11::CLI11 nlohmann_json::nlohmann_json)
 tm_set_warnings(tracemaker-place)
 
 if(TM_BUILD_TESTS)

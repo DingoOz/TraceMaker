@@ -141,7 +141,7 @@ TEST_CASE("translated closer() agrees with geom::closer_than", "[place]") {
   for (int it = 0; it < 3000; ++it) {
     std::vector<Point> a, b;
     for (int i = 0; i < 4; ++i) a.push_back({static_cast<Coord>(u() * 4e6), static_cast<Coord>(u() * 4e6)});
-    a = convex_hull(a);
+    a = place::convex_hull(a);
     if (a.size() < 3) continue;
     b = {{0, 0}, {1'000'000, 0}, {1'000'000, 500'000}, {0, 500'000}};
     const Shape sa = Shape::polygon(a), sb = Shape::polygon(b);
