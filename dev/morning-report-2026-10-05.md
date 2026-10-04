@@ -79,7 +79,8 @@ Second-ring channel corridors are built and tested but measured mixed, so they a
 
 ## M13 — component-aware rules
 
-Built by a helper agent on its own branch, reviewed and merged (`c058336`); all 75 tests pass after the merge.
+Built by three helper agents on their own branches, reviewed and merged one by one (full test suite after each: 75,
+then 93, then 102 tests, all passing).
 Everything is **off by default** because the measurements showed regressions (D31).
 
 - **Catalogue → engine:** `docs/component_rules.yaml` is converted to an embedded JSON (a test keeps YAML, JSON and
@@ -110,9 +111,26 @@ Everything is **off by default** because the measurements showed regressions (D3
   benchmark impedance rules always say "not applied: no stackup in the board"; 35 other boards (KiCad demos, 8 raw
   PCBench originals, Freerouting issue fixtures) were used for testing.
 
+- **Overrides, Ethernet, edge pull** (a third helper agent, merged; 102 tests pass):
+  - `--rules-override FILE` (JSON; `scripts/crules_override.py` converts the YAML form of doc 15 §6.3) for
+    `tracemaker rules`, `route` and `tracemaker-place`: `disable` rules/categories (optionally `@REF`), `assert` or
+    `deny` a category on a part, `set` a rule parameter. Typos are errors with a "did you mean" hint, and every
+    override shows in the report.
+  - Ethernet magnetics void (ETH-05): magnetics bound to the RJ45/PHY, keep-out around the transformer in `on` mode;
+    MagJacks recognised (void "not required"). On PCBench it only fires with an override (confidence cap of 60).
+  - Connector edge attraction, opt-in (`tracemaker-place --component-rules soft --edge-attraction`): connectors within
+    1 mm of the edge 52 → 58 of 148, within 5 mm 105 → 117, HPWL +0.4 %; but decaps moved away on two boards
+    (training_board 11.2 → 27.2 mm), so it is off by default. Default placement output is byte-identical to before.
+
+### To check (the helpers disagree)
+
+The first M13 agent reported that KiCad 10 parses the generated sidecar `.kicad_dru` and flags real violations; the
+third found `kicad-cli pcb drc` silent even on a deliberately malformed `.kicad_dru`. So it is not established that
+KiCad applies the generated rules; treat the sidecar as a readable record of the rules until that is checked.
+
 ## Assumptions
 
-See `dev/assumptions.md` (A26–A31, M9) and `dev/assumptions-m13.md` (M13). The ones most worth a look:
+See `dev/assumptions.md` (A26–A32, M9) and `dev/assumptions-m13.md` (M13, items 1–49). The ones most worth a look:
 
 - **A27/D33 — escape planning runs in 2 of the 8 portfolio variants**, chosen without data on which variants win
   (the route JSON now records the winner, so this can be revisited).
