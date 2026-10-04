@@ -221,9 +221,17 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
             if (s.starts_with(r.id + " " + b.footprints[static_cast<std::size_t>(in.anchor)].reference + ":")) e.detail = s.substr(s.find(':') + 2);
         }
       } else if (r.kind == "diff_pair" || r.kind == "impedance") {
+        const Role* dp = in.role("dp");
+        const Role* dm = in.role("dm");
+        const bool usb_pair = r.id == "USB2-02" && dp && dm && dp->nets.size() == 1 && dm->nets.size() == 1;
         if (const std::string cls = board_pair_class(b, rules, in, r); !cls.empty()) {
           e.status = Status::SatisfiedByBoard;
           e.detail = "net class " + cls;
+        } else if (usb_pair && mode != Mode::Report) {
+          e.status = Status::Applied;
+          e.detail = "router: D+/D- routed coupled first (falls back to single tracks); intra-pair skew not checked yet";
+        } else if (usb_pair) {
+          e.detail = "report mode (tracemaker route --component-rules soft routes the pair coupled first)";
         } else {
           e.detail = not_built_reason(r);
         }

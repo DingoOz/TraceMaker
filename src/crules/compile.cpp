@@ -203,6 +203,21 @@ std::vector<GeneratedKeepout> generate_keepouts(const model::Board& b, const Cat
   return out;
 }
 
+std::vector<std::pair<NetId, NetId>> usb_pairs(const model::Board& b, const Catalogue& cat, const Detection& det) {
+  (void)b;
+  std::vector<std::pair<NetId, NetId>> out;
+  const int usb = cat.index_of("usb2");
+  for (const auto& in : det.instances) {
+    if (in.category != usb) continue;
+    const Role* p = in.role("dp");
+    const Role* m = in.role("dm");
+    if (!p || !m || p->nets.size() != 1 || m->nets.size() != 1 || p->nets.front() == m->nets.front()) continue;
+    const std::pair<NetId, NetId> pr{p->nets.front(), m->nets.front()};
+    if (std::find(out.begin(), out.end(), pr) == out.end()) out.push_back(pr);
+  }
+  return out;
+}
+
 std::string dru_sidecar(const model::Board& b, const Catalogue& cat, const Detection& det) {
   std::ostringstream s;
   s << "(version 1)\n";

@@ -88,6 +88,10 @@ std::vector<GeneratedKeepout> generate_keepouts(const model::Board& b, const Cat
 // review or merge: "<output>.tracemaker.kicad_dru". Never written into the user's own files (rule 8).
 std::string dru_sidecar(const model::Board& b, const Catalogue& cat, const Detection& det);
 
+// USB 2.0 D+/D- pairs to route coupled first (USB2-02, doc 15 P3): one (dp, dm) per usb2 instance whose dp and dm
+// roles each bind exactly one net, in instance order, without duplicates.
+std::vector<std::pair<model::NetId, model::NetId>> usb_pairs(const model::Board& b, const Catalogue& cat, const Detection& det);
+
 // Report (doc 15 §7).
 std::string report_text(const model::Board& b, const Catalogue& cat, const Detection& det, const Evaluation& ev);
 nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const Detection& det, const Evaluation& ev);

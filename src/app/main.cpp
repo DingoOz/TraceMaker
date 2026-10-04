@@ -119,7 +119,7 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
 }
 
 // Component-aware layout rules (design doc 15 §7): detections, bound roles and every rule's status. Read-only.
-int cmd_rules(const std::string& path, const std::string& mode_s, const std::string& json_out, const std::string& dru_out,
+int cmd_rules(const std::string& path, const std::string& mode_s, const std::string& json_out, const std::string& dru_out, const std::string& roles_from,
               const std::string& catalogue_path) {
   namespace cr = tmk::crules;
   const auto lb = tmk::io::read_board_file(path);
@@ -128,7 +128,20 @@ int cmd_rules(const std::string& path, const std::string& mode_s, const std::str
   cr::Catalogue own;
   if (!catalogue_path.empty()) own = cr::load_catalogue_file(catalogue_path);
   const cr::Catalogue& cat = catalogue_path.empty() ? cr::builtin_catalogue() : own;
-  const cr::Detection det = cr::detect(lb.board, cat);
+  cr::Detection det;
+  if (!roles_from.empty()) {
+    // Detect and bind on another version of the same board (e.g. the input of a placement), measure on this one:
+    // binding that depends on positions (regulator caps) then names the same parts in both.
+    const auto ref = tmk::io::read_board_file(roles_from);
+    const auto& a = ref.board;
+    bool same = a.footprints.size() == lb.board.footprints.size() && a.pads.size() == lb.board.pads.size() && a.nets.size() == lb.board.nets.size();
+    for (std::size_t i = 0; same && i < a.footprints.size(); ++i) same = a.footprints[i].reference == lb.board.footprints[i].reference;
+    for (std::size_t i = 0; same && i < a.nets.size(); ++i) same = a.nets[i].name == lb.board.nets[i].name;
+    if (!same) throw std::runtime_error("--roles-from: " + roles_from + " is not the same board (footprints, pads or nets differ)");
+    det = cr::detect(a, cat);
+  } else {
+    det = cr::detect(lb.board, cat);
+  }
   const cr::Evaluation ev = cr::evaluate(lb.board, &rules, cat, det, mode);
   std::fputs(cr::report_text(lb.board, cat, det, ev).c_str(), stdout);
   if (!json_out.empty()) std::ofstream(json_out) << cr::report_json(lb.board, cat, det, ev).dump(1) << "\n";
@@ -223,12 +236,13 @@ int main(int argc, char** argv) {
   inspect->add_option("--json", inspect_json, "Also write the board as JSON (KiCad truth schema)");
 
   auto* crules_cmd = app.add_subcommand("rules", "Detect component categories and report the component-aware layout rules (doc 15)");
-  std::string cr_path, cr_json, cr_dru, cr_cat, cr_mode = "soft";
+  std::string cr_path, cr_json, cr_dru, cr_cat, cr_roles_from, cr_mode = "soft";
   crules_cmd->add_option("board", cr_path, "Board file")->required()->check(CLI::ExistingFile);
   crules_cmd->add_option("--json", cr_json, "Write the full report (every rule of every instance) as JSON");
   crules_cmd->add_option("--mode", cr_mode, "Which statuses to report: report (check only), soft (as placement would apply them), on (with keep-outs)")
       ->check(CLI::IsMember({"report", "soft", "on"}));
   crules_cmd->add_option("--dru", cr_dru, "Write the generated custom rules (sidecar .kicad_dru) to this file");
+  crules_cmd->add_option("--roles-from", cr_roles_from, "Detect and bind roles on this version of the board (e.g. the placement input), measure on the given one");
   crules_cmd->add_option("--catalogue", cr_cat, "Catalogue JSON to use instead of the built-in one (scripts/crules_catalogue.py output)");
 
   auto* selftest = app.add_subcommand("selftest-edit", "Apply a fixed set of edits (for integration tests)");
@@ -297,6 +311,10 @@ int main(int argc, char** argv) {
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
   route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
+  route->add_option("--component-rules", r_job.component_rules,
+                    "Component-aware rules (doc 15): off (default); report/soft write <output>.tracemaker.kicad_dru; on also routes "
+                    "with the generated keep-outs (crystal, switching-regulator inductor) as in-memory rule areas")
+      ->check(CLI::IsMember({"off", "report", "soft", "on"}));
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
 
@@ -338,7 +356,7 @@ int main(int argc, char** argv) {
       }
       return 0;
     }
-    if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_cat);
+    if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width);

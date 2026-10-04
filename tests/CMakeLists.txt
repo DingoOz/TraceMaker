@@ -33,3 +33,6 @@ set_tests_properties(length_tuning PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;
 # Component-rule catalogue: the committed JSON matches docs/component_rules.yaml and the rule ids in doc 15 (doc 15 §9.1 L0).
 add_test(NAME crules_catalogue_sync COMMAND python3 ${PROJECT_SOURCE_DIR}/scripts/crules_catalogue.py --check)
 set_tests_properties(crules_catalogue_sync PROPERTIES SKIP_RETURN_CODE 77 LABELS "crules" TIMEOUT 60)
+# Component rules in routing: generated keep-outs honoured, never written into the output, sidecar .kicad_dru written.
+add_test(NAME crules_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_route.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/crules)
+set_tests_properties(crules_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "crules;integration" TIMEOUT 600)

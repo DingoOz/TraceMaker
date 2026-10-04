@@ -1,5 +1,6 @@
 #include "app/route_job.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdarg>
 #include <cstdio>
@@ -9,6 +10,7 @@
 #include <mutex>
 #include <thread>
 
+#include "crules/engine.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
@@ -119,20 +121,62 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& f : kb->failed_connections(feat.hash)) opt.priority.emplace_back(f.pad_a, f.pad_b);
     if (!opt.priority.empty()) log(fmt("knowledge base: %zu connections that failed before are routed first", opt.priority.size()));
   }
+  // Component rules (doc 15 §5.5): generated keep-outs are added to an in-memory copy of the board the router
+  // sees; the output is written from the original document, so the user's board never gains them.
+  const crules::Mode cr_mode = crules::parse_mode(job.component_rules);
+  model::Board with_rules;
+  const model::Board* route_board = &lb.board;
+  if (cr_mode != crules::Mode::Off) {
+    const auto& cat = crules::builtin_catalogue();
+    const auto det = crules::detect(lb.board, cat);
+    std::vector<std::string> skipped;
+    const auto kos = crules::generate_keepouts(lb.board, cat, det, &skipped);
+    log(fmt("component rules (%s): %zu instance(s), %zu generated keep-out(s)%s", job.component_rules.c_str(), det.instances.size(), kos.size(),
+            cr_mode == crules::Mode::On ? "" : " (not applied: use --component-rules on)"));
+    for (const auto& s : skipped) log("  keep-out not generated: " + s);
+    // USB2-02 (P3): route each detected USB 2.0 D+/D- pair coupled first (a soft preference: the router falls back
+    // to single tracks). Only pairs bound to exactly one net each.
+    if (cr_mode == crules::Mode::Soft || cr_mode == crules::Mode::On)
+      for (const auto& p : crules::usb_pairs(lb.board, cat, det)) {
+        if (std::find(opt.pair_nets.begin(), opt.pair_nets.end(), p) != opt.pair_nets.end()) continue;
+        opt.pair_nets.push_back(p);
+        log("  differential pair (USB2-02): " + lb.board.nets[static_cast<std::size_t>(p.first)].name + " / " +
+            lb.board.nets[static_cast<std::size_t>(p.second)].name);
+      }
+    if (cr_mode == crules::Mode::On && !kos.empty()) {
+      with_rules = lb.board;
+      for (const auto& k : kos) {
+        with_rules.zones.push_back(k.zone);
+        log("  keep-out " + k.zone.name + " on " + [&] {
+          std::string l;
+          for (const auto& n : k.zone.layers) l += (l.empty() ? "" : "+") + n;
+          return l;
+        }());
+      }
+      route_board = &with_rules;
+    }
+    if (!job.out.empty()) {
+      std::string side = job.out;
+      if (side.ends_with(".kicad_pcb")) side.resize(side.size() - 10);
+      side += ".tracemaker.kicad_dru";
+      std::ofstream(side) << crules::dru_sidecar(lb.board, cat, det);
+      log("component rules: generated custom rules written to " + side);
+    }
+  }
   auto& res = out.result;
   std::vector<int> ran;
   int best_index = 0;
   if (job.threads > 1) {
     std::vector<int> pick;
     if (kb && job.threads < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), job.threads, opt.seed);
-    auto pr = route::route_portfolio(lb.board, rules, opt, job.threads, pick);
+    auto pr = route::route_portfolio(*route_board, rules, opt, job.threads, pick);
     for (std::size_t i = 0; i < pr.variants.size(); ++i)
       log(fmt("  variant %d %-30s routed %d%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
     ran = pr.indices;
     best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
     res = std::move(pr.best);
   } else {
-    res = route::Router(lb.board, rules, opt).run();
+    res = route::Router(*route_board, rules, opt).run();
     ran = {0};
   }
   if (kb) {

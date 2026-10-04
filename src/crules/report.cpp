@@ -224,6 +224,14 @@ nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const De
   for (const auto& in : det.possible) poss.push_back(inst_json(in));
   j["possible"] = poss;
   j["rule_status_counts"] = counts;
+  // Generated keep-outs (used by the router with --component-rules on), polygon in mm, for the viewer and tests.
+  json kos = json::array();
+  for (const auto& k : generate_keepouts(b, cat, det)) {
+    json poly = json::array();
+    for (const auto& q : k.zone.outline.front()) poly.push_back({nm_to_mm(q.x), nm_to_mm(q.y)});
+    kos.push_back({{"name", k.zone.name}, {"rule", k.rule}, {"ref", k.ref}, {"layers", k.zone.layers}, {"polygon_mm", poly}});
+  }
+  j["keepouts"] = kos;
   return j;
 }
 

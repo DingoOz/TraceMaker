@@ -372,6 +372,21 @@ TEST_CASE("keep-outs: crystal area on the free layer, tracks only, named; sideca
   CHECK(reported);
 }
 
+TEST_CASE("USB 2.0 pairs for coupled routing (USB2-02)", "[crules]") {
+  Builder B = demo_board();
+  const Catalogue& cat = builtin_catalogue();
+  const auto pairs = usb_pairs(B.b, cat, detect(B.b, cat));
+  REQUIRE(pairs.size() == 1);
+  CHECK(B.b.nets[static_cast<std::size_t>(pairs[0].first)].name == "/USB_DP");
+  CHECK(B.b.nets[static_cast<std::size_t>(pairs[0].second)].name == "/USB_DM");
+  // Report mode applies nothing; soft applies USB2-02 (routing preference).
+  const Detection d = detect(B.b, cat);
+  for (const auto& e : evaluate(B.b, nullptr, cat, d, Mode::Soft).rules)
+    if (e.spec->id == "USB2-02") CHECK(e.status == Status::Applied);
+  for (const auto& e : evaluate(B.b, nullptr, cat, d, Mode::Report).rules)
+    if (e.spec->id == "USB2-02") CHECK(e.status == Status::NotApplied);
+}
+
 TEST_CASE("PCBench fixture: detection report is stable and finds the crystal", "[crules][fixture]") {
   const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/1Bitsy_1bitsy/unrouted.kicad_pcb";
   if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
