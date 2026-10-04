@@ -4,6 +4,7 @@
 #include <map>
 #include <regex>
 #include <set>
+#include <stdexcept>
 
 #include "crules/names.hpp"
 #include "geom/shape.hpp"
@@ -14,6 +15,22 @@ const Role* Instance::role(std::string_view name) const {
   for (const auto& r : roles)
     if (r.name == name) return &r;
   return nullptr;
+}
+
+const RuleOverride* Instance::override_for(std::string_view rule) const {
+  for (const auto& o : overrides)
+    if (o.rule == rule) return &o;
+  return nullptr;
+}
+
+bool Instance::disabled(std::string_view rule) const {
+  const RuleOverride* o = override_for(rule);
+  return o && o->disabled;
+}
+
+const nlohmann::ordered_json& rule_params(const Instance& in, const RuleSpec& r) {
+  const RuleOverride* o = in.override_for(r.id);
+  return o && o->has_params ? o->params : r.params;
 }
 
 namespace {
@@ -632,14 +649,80 @@ int exclusive_group(const std::string& id) {
 // Categories whose binding works from net names and topology alone, so a board without pin names does not cap them.
 bool binds_without_pin_names(const std::string& id) { return id == "ic_decoupling"; }
 
+// Attaches the user's `disable` and `set` entries (doc 15 §6.3) to the detected instances: global entries
+// first, then entries for one reference, each group in file order, so @REF wins and a later entry wins.
+void apply_rule_overrides(const model::Board& b, const Catalogue& cat, const Overrides& ov, Detection& det) {
+  using K = OverrideEntry::Kind;
+  auto slot = [](Instance& in, const std::string& rule) -> RuleOverride& {
+    for (auto& o : in.overrides)
+      if (o.rule == rule) return o;
+    in.overrides.push_back(RuleOverride{});
+    in.overrides.back().rule = rule;
+    return in.overrides.back();
+  };
+  for (const bool with_ref : {false, true})
+    for (const auto& e : ov.entries) {
+      if ((e.kind != K::Disable && e.kind != K::Set) || e.ref.empty() == with_ref) continue;
+      const int ci = cat.index_of(e.category);
+      int hits = 0;
+      for (auto& in : det.instances) {
+        if (in.category != ci || (!e.ref.empty() && b.footprints[static_cast<std::size_t>(in.anchor)].reference != e.ref)) continue;
+        ++hits;
+        for (const RuleSpec& r : cat.categories[static_cast<std::size_t>(ci)].rules) {
+          if (!e.rule.empty() && r.id != e.rule) continue;
+          RuleOverride& o = slot(in, r.id);
+          if (e.kind == K::Disable) {
+            if (!o.disabled) o.notes.push_back("disabled (" + e.text + ")");
+            o.disabled = true;
+            continue;
+          }
+          if (!o.has_params) o.params = r.params, o.has_params = true;
+          o.params[e.param] = e.value;
+          std::erase_if(o.notes, [&](const std::string& n) { return n.starts_with(e.param + " = "); });
+          o.notes.push_back(e.param + " = " + e.value.dump() + " (catalogue " + r.params[e.param].dump() + "; " + e.text + ")");
+        }
+      }
+      if (hits == 0)
+        det.override_unused.push_back(e.text + ": " +
+                                      (e.ref.empty() ? "no " + e.category + " instance on this board"
+                                                     : e.ref + " is not detected as " + e.category + " (assert it to force the category)"));
+    }
+  for (const auto& e : ov.entries) {
+    if (e.kind != K::Assert) continue;
+    bool found = false;
+    for (const auto& in : det.instances)
+      found = found || (cat.categories[static_cast<std::size_t>(in.category)].id == e.category && b.footprints[static_cast<std::size_t>(in.anchor)].reference == e.ref);
+    if (!found) det.override_unused.push_back(e.text + ": " + e.ref + " has no pads (nothing to bind)");
+  }
+}
+
 }  // namespace
 
-Detection detect(const model::Board& b, const Catalogue& cat) {
+Detection detect(const model::Board& b, const Catalogue& cat, const Overrides* ov) {
   const BoardIndex ix(b);
   Ctx c{b, ix, {}};
   for (const auto& t : decap_ties(b, [](int) { return true; }, true)) c.decap.emplace(t.cap_fp, t);
   Detection det;
   det.board_has_pin_names = ix.has_pin_names();
+  if (ov) {
+    check_override_refs(*ov, b);
+    det.override_source = ov->source;
+    for (const auto& e : ov->entries) det.override_entries.push_back(e.text);
+  }
+  // `assert` / `deny` entries for (category, reference).
+  auto user = [&](OverrideEntry::Kind k, const std::string& category, const std::string& ref) {
+    if (!ov) return false;
+    for (const auto& e : ov->entries)
+      if (e.kind == k && e.category == category && e.ref == ref) return true;
+    return false;
+  };
+  if (ov)  // Two asserted categories that exclude each other on one part (doc 15 §3.4): the user must pick one.
+    for (const auto& a : ov->entries)
+      for (const auto& x : ov->entries)
+        if (&a < &x && a.kind == OverrideEntry::Kind::Assert && x.kind == OverrideEntry::Kind::Assert && a.ref == x.ref &&
+            exclusive_group(a.category) != 0 && exclusive_group(a.category) == exclusive_group(x.category))
+          throw std::runtime_error(ov->source + ": " + a.ref + " is asserted as both " + a.category + " and " + x.category +
+                                   ", which exclude each other (doc 15 §3.4)");
 
   std::vector<Instance> all;
   for (std::size_t ci = 0; ci < cat.categories.size(); ++ci) {
@@ -649,6 +732,8 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
       const int f = static_cast<int>(fi);
       const auto& fp = b.footprints[fi];
       if (fp.pads.empty()) continue;  // logos and drawings: nothing to bind (a mounting hole has an NPTH pad)
+      const bool asserted = user(OverrideEntry::Kind::Assert, C.id, fp.reference);
+      const bool denied = user(OverrideEntry::Kind::Deny, C.id, fp.reference);
       // Non-topology detectors on the anchor's own fields.
       std::vector<char> hit(C.detect.size(), 0);
       bool any = false;
@@ -687,7 +772,7 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
         pin_hit_any = pin_hit_any || hit[di];
       }
       any = any || pin_hit_any;
-      if (!any && !has_topology) continue;
+      if (!any && !has_topology && !asserted) continue;
       Bound bd = bind(c, C, f);
       if (!bd.pin_pads.empty())
         for (std::size_t di = 0; di < C.detect.size(); ++di) {
@@ -716,11 +801,26 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
         strong = strong || C.detect[di].signal != Signal::RefPrefix;
         in.evidence.push_back(std::string(signal_name(C.detect[di].signal)) + " +" + std::to_string(C.detect[di].weight));
       }
-      if (!strong) continue;
+      if (!strong && !asserted) continue;
       in.confidence = std::min(sum, 100);
       if (!ix.has_pin_names() && C.has_signal(Signal::PinName) && !binds_without_pin_names(C.id) && in.confidence > kNoPinNameCap) {
         in.confidence = kNoPinNameCap;
         in.capped = true;
+      }
+      if (denied) {  // the user says this part is not this category: listed, never applied (doc 15 §3.5)
+        in.superseded_by = "denied by user (" + ov->source + ")";
+        det.possible.push_back(std::move(in));
+        continue;
+      }
+      if (asserted) {  // the user says it is: full confidence, and the binder's objection is overruled
+        in.asserted = true;
+        in.confidence = 100;
+        in.capped = false;
+        in.evidence.push_back("user assert");
+        if (!bd.ok) {
+          in.evidence.push_back("binder: " + bd.why);
+          bd = bind_default(c, f, C);
+        }
       }
       if (!bd.ok) {
         in.superseded_by = bd.why;
@@ -738,9 +838,11 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
     for (std::size_t j = 0; j < all.size(); ++j) {
       if (j == i || all[j].anchor != all[i].anchor || all[j].confidence < cat.suggest) continue;
       if (exclusive_group(cat.categories[static_cast<std::size_t>(all[j].category)].id) != g) continue;
-      const bool j_wins = all[j].confidence > all[i].confidence || (all[j].confidence == all[i].confidence && all[j].category < all[i].category);
+      if (all[i].asserted) break;  // the user's choice wins (two asserted members of one group are refused above)
+      const bool j_wins = all[j].asserted || all[j].confidence > all[i].confidence ||
+                          (all[j].confidence == all[i].confidence && all[j].category < all[i].category);
       if (j_wins) {
-        all[i].superseded_by = cat.categories[static_cast<std::size_t>(all[j].category)].id;
+        all[i].superseded_by = cat.categories[static_cast<std::size_t>(all[j].category)].id + (all[j].asserted ? " (asserted by user)" : "");
         break;
       }
     }
@@ -757,6 +859,7 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
   };
   std::sort(det.instances.begin(), det.instances.end(), order);
   std::sort(det.possible.begin(), det.possible.end(), order);
+  if (ov) apply_rule_overrides(b, cat, *ov, det);
   return det;
 }
 

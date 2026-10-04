@@ -196,6 +196,7 @@ struct LoopCli {
   place::PlaceOptions o;
   bool move_connectors = false, no_fallback = false, no_decap_affinity = false;
   std::string component_rules = "off";  // --component-rules (doc 15)
+  std::string rules_override;           // --rules-override (doc 15 §6.3)
   int decap_weight = place::kSignalWeight;
   int crules_weight_pct = 100;
   double clearance_mm = -1;
@@ -211,11 +212,20 @@ struct LoopCli {
 // --component-rules (doc 15 §3.5, P1): detect component categories and add their proximity rules as objective-only
 // pseudo-nets (crystal + load caps, oscillator, ESD at its connector, regulator caps, generalised decoupling). The
 // D25 decoupling ties stay as they are. Returns the number of pseudo-nets requested (0 for off/report).
-int apply_component_rules(const model::Board& b, const std::string& mode_s, place::ExtractOptions& eo) {
+int apply_component_rules(const model::Board& b, const std::string& mode_s, const std::string& override_path, place::ExtractOptions& eo) {
   const crules::Mode mode = crules::parse_mode(mode_s);
-  if (mode == crules::Mode::Off) return 0;
   const auto& cat = crules::builtin_catalogue();
-  const auto det = crules::detect(b, cat);
+  crules::Overrides ov;
+  if (!override_path.empty()) ov = crules::load_overrides_file(override_path, cat);  // validated even when off
+  if (mode == crules::Mode::Off) {
+    if (!override_path.empty()) std::printf("  warning: --rules-override %s has no effect with --component-rules off\n", override_path.c_str());
+    return 0;
+  }
+  const auto det = crules::detect(b, cat, override_path.empty() ? nullptr : &ov);
+  if (!override_path.empty()) {
+    std::printf("  component rules: %zu user override(s) from %s\n", det.override_entries.size(), override_path.c_str());
+    for (const auto& u : det.override_unused) std::printf("  warning: override matched nothing: %s\n", u.c_str());
+  }
   std::map<std::string, int> per_cat;
   for (const auto& in : det.instances) ++per_cat[cat.categories[static_cast<std::size_t>(in.category)].id];
   std::string s;
@@ -239,7 +249,7 @@ int run_loop_mode(const LoopCli& c) {
   eo.decap_affinity = !c.no_decap_affinity;
   eo.decap_weight = c.decap_weight;
   eo.crules_weight_pct = c.crules_weight_pct;
-  apply_component_rules(lb.board, c.component_rules, eo);
+  apply_component_rules(lb.board, c.component_rules, c.rules_override, eo);
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
   // placed with 0.25 mm or 0, is legal in it.
@@ -420,7 +430,7 @@ int main(int argc, char** argv) {
   std::string in, out, json_path;
   place::PlaceOptions o;
   bool move_connectors = false, no_decap_affinity = false;
-  std::string component_rules = "off";
+  std::string component_rules = "off", rules_override;
   int decap_weight = place::kSignalWeight;
   int crules_weight_pct = 100;
   double clearance_mm = -1;
@@ -444,6 +454,9 @@ int main(int argc, char** argv) {
       ->check(CLI::Range(1, 1000));
   app.add_option("--crules-weight", crules_weight_pct, "Scale of the component-rule proximity weights in percent (100 = as the rules say)")
       ->check(CLI::Range(1, 1000));
+  app.add_option("--rules-override", rules_override,
+                 "User override file for --component-rules (JSON, doc 15 §6.3): disable rules, assert/deny categories, set parameters")
+      ->check(CLI::ExistingFile);
   app.add_option("--json", json_path, "Write the placement report as JSON");
   app.add_flag("-v,--verbose", o.verbose, "Log the spreading iterations");
   std::string debug_part;
@@ -482,6 +495,7 @@ int main(int argc, char** argv) {
     lc.move_connectors = move_connectors;
     lc.no_decap_affinity = no_decap_affinity;
     lc.component_rules = component_rules;
+    lc.rules_override = rules_override;
     lc.decap_weight = decap_weight;
     lc.crules_weight_pct = crules_weight_pct;
     lc.clearance_mm = clearance_mm;
@@ -512,7 +526,8 @@ int main(int argc, char** argv) {
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
                         (move_connectors ? " --move-connectors" : "") +
                         (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
-                        " --crules-weight " + std::to_string(crules_weight_pct) + " > /dev/null 2>&1";
+                        " --crules-weight " + std::to_string(crules_weight_pct) + (rules_override.empty() ? "" : " --rules-override '" + rules_override + "'") +
+                        " > /dev/null 2>&1";
       const int rc = std::system(cmd.c_str());
       if (rc != 0 && rc != 2 * 256) continue;
       try {
@@ -556,7 +571,7 @@ int main(int argc, char** argv) {
     eo.decap_affinity = !no_decap_affinity;
     eo.decap_weight = decap_weight;
     eo.crules_weight_pct = crules_weight_pct;
-    const int crules_ties = apply_component_rules(lb.board, component_rules, eo);
+    const int crules_ties = apply_component_rules(lb.board, component_rules, rules_override, eo);
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for
     // 0.25 mm and falls back to 0 when the board is too dense for it.

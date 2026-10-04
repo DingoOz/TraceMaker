@@ -93,6 +93,7 @@ std::vector<KeepoutPlan> keepout_plans(const model::Board& b, const Catalogue& c
     if (in.confidence < cat.apply) continue;
     const Category& C = cat.categories[static_cast<std::size_t>(in.category)];
     for (const RuleSpec& r : C.rules) {
+      if (in.disabled(r.id)) continue;  // user override file
       KeepoutPlan k;
       k.instance = static_cast<int>(ii);
       k.spec = &r;
@@ -164,7 +165,8 @@ std::vector<GeneratedKeepout> generate_keepouts(const model::Board& b, const Cat
     }
     for (int p : k.pins) pts.push_back(b.pads[static_cast<std::size_t>(p)].pos);
     double margin_mm = 0;
-    if (k.spec->params.contains("margin_mm") && k.spec->params["margin_mm"].is_number()) margin_mm = k.spec->params["margin_mm"].get<double>();
+    const auto& params = rule_params(det.instances[static_cast<std::size_t>(k.instance)], *k.spec);
+    if (params.contains("margin_mm") && params["margin_mm"].is_number()) margin_mm = params["margin_mm"].get<double>();
     const auto poly = grown_hull(std::move(pts), mm_to_nm(margin_mm));
     if (poly.size() < 3) continue;
     // Layers where none of the parts has a pad (their own nets need no track there) and no other part has a pad
@@ -208,7 +210,7 @@ std::vector<std::pair<NetId, NetId>> usb_pairs(const model::Board& b, const Cata
   std::vector<std::pair<NetId, NetId>> out;
   const int usb = cat.index_of("usb2");
   for (const auto& in : det.instances) {
-    if (in.category != usb) continue;
+    if (in.category != usb || in.disabled("USB2-02")) continue;
     const Role* p = in.role("dp");
     const Role* m = in.role("dm");
     if (!p || !m || p->nets.size() != 1 || m->nets.size() != 1 || p->nets.front() == m->nets.front()) continue;

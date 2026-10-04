@@ -148,3 +148,30 @@ section at its end); decisions D26–D31 in `docs/12-decisions.md`.
 36. **Not done tonight**: commented width suggestions in the sidecar `.kicad_dru` (the sidecar has no access to the
     project rules the report uses, so the numbers could differ from the report); `--assume-stackup` presets.
 
+## User override file (§3.5, §6.3)
+
+37. **JSON in the engine, YAML by conversion.** `--rules-override FILE` reads JSON; a `.yaml`/`.yml` name is refused
+    with the command `scripts/crules_override.py FILE.yaml -o FILE.json` (PyYAML, keys and order kept). Why: no YAML
+    library in C++ (same as the catalogue, item 1). The file is not discovered automatically next to the board
+    (`<project>.tracemaker_rules.yaml` in §3.5): the user names it. Revert: look for the file in `cmd_rules`/route/place.
+38. **Accepted keys**: `version` (must be 1), `comment`, `disable`, `assert`, `deny`, `set`. Everything else is an
+    error, including `stackup_preset` (not built, §3.6) and catalogue keys such as `categories` (adding or redefining
+    categories from the override file is not supported). `assert`/`deny` take the doc form `{REF: category}` (or a list
+    of categories) or a list of `{category, ref}`; `set` takes `{rule, param, value}` with `RULE@REF` or `ref`.
+39. **Validation**: unknown rule ids, categories, parameters, value types (JSON type must equal the catalogue
+    value's), negative or non-finite numbers, malformed `ID@REF`, a category both asserted and denied on one part,
+    two asserted categories that exclude each other (§3.4) and references that are not on the board are errors with a
+    "did you mean" hint. A reference that is on the board but not an instance of the entry's category (or a global
+    entry with no instance) is a **warning** in the report and the route/place log, not an error: the catalogue
+    default then applies, which is the conservative side, and a board edit must not make routing fail.
+40. **`@REF` means the instance anchor** (the connector of a usb2 instance, the crystal of a crystal instance), not a
+    satellite part such as a load capacitor. Entries for one reference win over global ones; among equals the later
+    entry in the file wins. A disabled rule is neither applied nor measured; the report says "overridden by user:
+    disabled (<entry>)". A changed parameter is reported as "max_mm = 5 (catalogue 10; <entry>)".
+41. **`assert`** gives confidence 100 (never capped), wins conflicts in its exclusive group, and binds roles with the
+    category's binder; when the binder rejects the part (e.g. a U* asserted as connector) only the anchor role is
+    bound and the binder's objection is kept in the evidence. **`deny`** lists the instance under "possible" with
+    "denied by user", so a competing category in the same exclusive group can win.
+42. **With `--component-rules off`** the override file is still read and validated (a broken file is an error), and a
+    warning says it has no effect.
+

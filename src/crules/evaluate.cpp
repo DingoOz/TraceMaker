@@ -156,6 +156,21 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
       // Confidence below `apply` demotes hard to soft (§3.2); so does unverified evidence (§8: R rules are never hard).
       if (e.severity == Severity::Hard && (!apply_level || r.evidence == "R")) e.severity = Severity::Soft;
       const auto key = std::make_pair(static_cast<int>(ii), r.id);
+      // User override file (doc 15 §3.5 level 1): a disabled rule is neither applied nor measured.
+      const RuleOverride* user = in.override_for(r.id);
+      if (user && user->disabled) {
+        e.status = Status::NotApplied;
+        e.detail = "overridden by user: " + user->notes.front();
+        ev.rules.push_back(std::move(e));
+        continue;
+      }
+      // Rules whose parameters the user changed are evaluated on a copy with the new parameters.
+      RuleSpec user_spec;
+      if (user && user->has_params) {
+        user_spec = r;
+        user_spec.params = user->params;
+      }
+      const RuleSpec& rp = user && user->has_params ? user_spec : r;
 
       // Measurement first: proximity pairs and board-edge distances are reported in every mode.
       bool measured_rule = false;
@@ -181,7 +196,7 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
         m.value_mm = nm_to_mm(geom::kiround(best));
         double lim = 0;
         for (const char* k : {"max_mm", "antenna_side_to_edge_mm"})
-          if (r.params.contains(k) && r.params[k].is_number()) lim = r.params[k].get<double>();
+          if (rp.params.contains(k) && rp.params[k].is_number()) lim = rp.params[k].get<double>();
         m.limit_mm = lim;
         m.met = m.value_mm <= lim + 1e-9;
         m.what = "nearest courtyard vertex (or pad centre) to Edge.Cuts";
@@ -228,7 +243,7 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
         }
       } else if (r.kind == "impedance") {
         // P4 (report only): widths and gaps per routing layer from the stackup; never guessed without one (§3.6).
-        e.impedance = plan_impedance(b, rules, r);
+        e.impedance = plan_impedance(b, rules, rp);
         const std::string computed = impedance_text(*e.impedance);
         if (const std::string cls = board_pair_class(b, rules, in, r); !cls.empty()) {
           e.status = Status::SatisfiedByBoard;
@@ -245,8 +260,8 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
         } else {
           e.detail = computed;
         }
-      } else if (r.kind == "width_for_current" && r.params.contains("current_a")) {
-        e.current = plan_current(b, r);
+      } else if (r.kind == "width_for_current" && rp.params.contains("current_a")) {
+        e.current = plan_current(b, rp);
         e.detail = current_text(*e.current);
       } else if (r.kind == "diff_pair") {
         const Role* dp = in.role("dp");
@@ -270,6 +285,8 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
       } else {
         e.detail = measured_rule ? "measured only" : not_built_reason(r);
       }
+      if (user)
+        for (const auto& n : user->notes) e.detail += "; overridden by user: " + n;
       ev.rules.push_back(std::move(e));
     }
   }

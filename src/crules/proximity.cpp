@@ -35,8 +35,8 @@ int first_pad(const model::Board& b, int fp, NetId n) {
   return -1;
 }
 
-double param_mm(const RuleSpec& r, const char* key, double dflt) {
-  if (r.params.contains(key) && r.params[key].is_number()) return r.params[key].get<double>();
+double param_mm(const nlohmann::ordered_json& params, const char* key, double dflt) {
+  if (params.contains(key) && params[key].is_number()) return params[key].get<double>();
   return dflt;
 }
 
@@ -61,10 +61,11 @@ std::vector<ProximityPairs> proximity_pairs(const model::Board& b, const Catalog
     const int anchor = in.anchor;
     auto pos = [&](int pad) { return b.pads[static_cast<std::size_t>(pad)].pos; };
     for (const RuleSpec& r : C.rules) {
+      if (in.disabled(r.id)) continue;  // disabled by the user override file: no measurement, no pseudo-net
       ProximityPairs pp;
       pp.spec = &r;
       pp.instance = static_cast<int>(ii);
-      pp.limit_mm = param_mm(r, "max_mm", 0);
+      pp.limit_mm = param_mm(rule_params(in, r), "max_mm", 0);
       auto need = [&](const char* role) -> const Role* {
         const Role* x = in.role(role);
         if ((!x || x->empty()) && pp.unbound.empty()) pp.unbound = std::string("role ") + role + " not bound";
@@ -140,7 +141,7 @@ std::vector<ProximityPairs> proximity_pairs(const model::Board& b, const Catalog
         const Role* l = need("inductor");
         const Role* sw = need("sw");
         if (l && sw) {
-          pp.limit_mm = param_mm(r, "inductor_max_mm", 0);
+          pp.limit_mm = param_mm(rule_params(in, r), "inductor_max_mm", 0);
           for (int f : l->parts)
             for (NetId n : sw->nets)
               if (const int lp = first_pad(b, f, n); lp >= 0)
