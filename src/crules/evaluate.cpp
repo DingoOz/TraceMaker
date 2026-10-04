@@ -292,7 +292,9 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
       } else if (r.kind == "order" && (r.id == "USB2-08")) {
         e.detail = "connector-ESD leg placed by USB2-07; the routing order itself is not built yet (doc 15 P3)";
       } else if (r.kind == "edge") {
-        e.detail = "measured only (edge connectors stay fixed at the edge; no edge attraction for other parts yet)";
+        const bool conn = std::find(r.applies_to.begin(), r.applies_to.end(), "connector") != r.applies_to.end();
+        e.detail = conn ? "measured only (edge connectors stay fixed at the edge; tracemaker-place --edge-attraction pulls movable ones to it)"
+                        : "measured only (edge connectors stay fixed at the edge; no edge attraction for other parts yet)";
       } else {
         e.detail = measured_rule ? "measured only" : not_built_reason(r);
       }

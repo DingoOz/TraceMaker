@@ -634,6 +634,57 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
         pt.fixed_reason = "overhangs the board edge in the input";
       }
   }
+  // Edge pulls (doc 15 CONN-01, opt-in): after movability is final, so fixed parts (edge connectors already at the
+  // edge, locked parts) get none.
+  if (!opt.edge_pulls.empty()) {
+    int added = 0, fixed = 0;
+    for (const auto& e : opt.edge_pulls) {
+      if (e.footprint < 0 || static_cast<std::size_t>(e.footprint) >= b.footprints.size() || e.body.empty()) continue;
+      const int part = part_of_fp[z(e.footprint)];
+      if (part < 0 || !p.parts[z(part)].movable) {
+        ++fixed;
+        continue;
+      }
+      if (p.outline.size() < 3) break;
+      // The body point nearest to the outer outline (cut-outs do not count) and the segment it is nearest to;
+      // ties keep the first point and segment (input order).
+      double best = 0;
+      Point from{}, at{};
+      bool vertical = false, found = false;
+      for (const Point& q : e.body)
+        for (std::size_t i = 0; i < p.outline.size(); ++i) {
+          const Point a = p.outline[i], c = p.outline[(i + 1) % p.outline.size()];
+          const double dx = static_cast<double>(c.x - a.x), dy = static_cast<double>(c.y - a.y);
+          const double len2 = dx * dx + dy * dy;
+          double t = len2 > 0 ? (static_cast<double>(q.x - a.x) * dx + static_cast<double>(q.y - a.y) * dy) / len2 : 0.0;
+          t = std::clamp(t, 0.0, 1.0);
+          const Point foot{a.x + geom::kiround(t * dx), a.y + geom::kiround(t * dy)};
+          const double d = std::hypot(static_cast<double>(q.x - foot.x), static_cast<double>(q.y - foot.y));
+          if (!found || d < best) found = true, best = d, from = q, at = foot, vertical = std::fabs(dy) >= std::fabs(dx);
+        }
+      PNet net;
+      net.name = e.name;
+      net.weight = std::max(1, e.weight * opt.crules_weight_pct / 100);
+      net.signal = false;
+      net.affinity = true;
+      if (vertical) net.has_ax = true, net.ax = at.x;
+      else net.has_ay = true, net.ay = at.y;
+      const int ni = static_cast<int>(p.nets.size());
+      Pin pin;
+      pin.part = part;
+      pin.net = ni;
+      const Point off = from - p.parts[z(part)].pos0;
+      for (int rr = 0; rr < 4; ++rr) pin.off[z(rr)] = rot90(off, rr);
+      net.pins.push_back(static_cast<int>(p.pins.size()));
+      p.parts[z(part)].pins.push_back(static_cast<int>(p.pins.size()));
+      p.pins.push_back(pin);
+      p.nets.push_back(std::move(net));
+      ++added;
+    }
+    p.notes.push_back("component rules: " + std::to_string(added) + " connector edge pull(s)" +
+                      (fixed ? ", " + std::to_string(fixed) + " connector(s) fixed (not pulled)" : std::string()) +
+                      (p.outline.size() < 3 ? "; no closed board outline: no pulls" : std::string()));
+  }
   return p;
 }
 

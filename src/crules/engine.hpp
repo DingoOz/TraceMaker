@@ -75,8 +75,23 @@ struct PlacementAffinity {
 };
 std::vector<PlacementAffinity> placement_affinities(const model::Board& b, const Catalogue& cat, const Detection& det, Mode mode);
 
+// Connector edge pull for the placer (doc 15 §5.2 `edge`; CONN-01, USB2-11, DISP-02), opt-in
+// (tracemaker-place --edge-attraction): the anchor of every instance with a connector edge rule (mode soft/on, not
+// advisory, not disabled by the user), once per footprint, never a locked part and never a pin header or socket
+// (board-to-board and jumper headers, CONN-01 note). `body` holds the courtyard outline points (else pad corners),
+// absolute; the placer pulls the body point nearest to the board outline toward the outline.
+struct EdgeAttraction {
+  int footprint = -1;
+  std::vector<Point> body;
+  int weight = 20;               // 2 x signal weight, like ESD-01 (doc 15 §5.2)
+  double max_mm = 0;             // the rule's limit (report only)
+  std::string rule, name;        // "CONN-01", "~CONN-01 J3 edge"
+};
+std::vector<EdgeAttraction> edge_attractions(const model::Board& b, const Catalogue& cat, const Detection& det, Mode mode);
+
 // Keep-out rule areas (doc 15 §5.5, P2) for instances at confidence >= apply: crystal + load caps (XTAL-04),
-// switching-regulator inductor (BUCK-06/BOOST-04). The polygon is the convex hull of the parts' courtyards (and the
+// switching-regulator inductor (BUCK-06/BOOST-04), discrete Ethernet magnetics (ETH-05: tracks, vias and zones on
+// the magnetics' side and the adjacent layer only). The polygon is the convex hull of the parts' courtyards (and the
 // IC's oscillator pins for a crystal) grown by the rule margin, on the copper layers where none of those parts has
 // a pad, so the parts' own nets still reach their pads; tracks only (vias and zones stay allowed: ground stitching
 // under a crystal is good practice). Zones are named "tmk:<rule>:<ref>".

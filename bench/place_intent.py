@@ -116,7 +116,8 @@ def metrics(path: pathlib.Path, roles_from: pathlib.Path = None) -> dict:
 # as `tracemaker rules` measures it. Detection does not depend on positions except the regulator-cap binding (the
 # cap whose nearest active pad is the regulator's), so the instance sets of a placed board and its input agree for
 # crystals and ESD parts and may differ slightly for regulator caps.
-RULE_METRICS = {"esd": ("ESD-01",), "regcap": ("LDO-01", "BUCK-01"), "loadcap": ("XTAL-02",), "xtal_rule": ("XTAL-01",)}
+RULE_METRICS = {"esd": ("ESD-01",), "regcap": ("LDO-01", "BUCK-01"), "loadcap": ("XTAL-02",), "xtal_rule": ("XTAL-01",),
+                "conn_edge": ("CONN-01", "USB2-11", "DISP-02")}
 
 
 def rule_metrics(path: pathlib.Path, roles_from: pathlib.Path = None) -> dict:
@@ -126,15 +127,23 @@ def rule_metrics(path: pathlib.Path, roles_from: pathlib.Path = None) -> dict:
     subprocess.run([str(TM), "rules", str(path), "--mode", "report", "--json", str(out)] + extra, check=True, capture_output=True)
     rep = json.loads(out.read_text())
     vals = {k: [] for k in RULE_METRICS}
+    edge_by_anchor = {}  # connector edge distance once per connector (a USB receptacle has USB2-11 and CONN-01)
     for inst in rep["instances"]:
         for r in inst["rules"]:
             for k, ids in RULE_METRICS.items():
                 if r["id"] in ids and "measured_mm" in r:
-                    vals[k].append(r["measured_mm"])
+                    if k == "conn_edge":
+                        edge_by_anchor.setdefault(inst["anchor"], r["measured_mm"])
+                    else:
+                        vals[k].append(r["measured_mm"])
+    vals["conn_edge"] = [edge_by_anchor[a] for a in sorted(edge_by_anchor)]
     row = {}
     for k, v in vals.items():
         row[f"{k}_n"] = len(v)
         row[f"{k}_median_mm"] = round(statistics.median(v), 2) if v else None
+    ce = vals["conn_edge"]
+    row["conn_edge_mean_mm"] = round(statistics.mean(ce), 2) if ce else None
+    row["conn_edge_met"] = sum(1 for x in ce if x <= 1.0)  # CONN-01's 1 mm
     return row
 
 

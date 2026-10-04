@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <regex>
 #include <set>
 #include <sstream>
 
@@ -163,6 +164,33 @@ std::vector<PlacementAffinity> placement_affinities(const model::Board& b, const
       a.rule = pp.spec->id;
       a.name = "~" + pp.spec->id + " " + fp_ref(b, pa) + "-" + fp_ref(b, pb);
       out.push_back(std::move(a));
+    }
+  }
+  return out;
+}
+
+std::vector<EdgeAttraction> edge_attractions(const model::Board& b, const Catalogue& cat, const Detection& det, Mode mode) {
+  std::vector<EdgeAttraction> out;
+  if (mode != Mode::Soft && mode != Mode::On) return out;
+  static const std::regex header(R"(pin_?header|pin_?socket)", std::regex::ECMAScript | std::regex::icase | std::regex::optimize);
+  std::set<int> seen;
+  for (const auto& in : det.instances) {
+    const auto& fp = b.footprints[static_cast<std::size_t>(in.anchor)];
+    if (fp.locked || seen.count(in.anchor) || std::regex_search(fp.lib_id, header)) continue;  // rule 6; stacking headers
+    for (const RuleSpec& r : cat.categories[static_cast<std::size_t>(in.category)].rules) {
+      if (r.kind != "edge" || !r.enforced_in("place") || r.severity == Severity::Advisory || in.disabled(r.id)) continue;
+      if (std::find(r.applies_to.begin(), r.applies_to.end(), "connector") == r.applies_to.end()) continue;  // not modules/antennas
+      EdgeAttraction a;
+      a.footprint = in.anchor;
+      a.body = outline_points(b, in.anchor);
+      const auto& params = rule_params(in, r);
+      if (params.contains("max_mm") && params["max_mm"].is_number()) a.max_mm = params["max_mm"].get<double>();
+      a.rule = r.id;
+      a.name = "~" + r.id + " " + fp.reference + " edge";
+      if (a.body.empty()) continue;
+      seen.insert(in.anchor);
+      out.push_back(std::move(a));
+      break;
     }
   }
   return out;
