@@ -122,11 +122,14 @@ Everything is **off by default** because the measurements showed regressions (D3
     1 mm of the edge 52 → 58 of 148, within 5 mm 105 → 117, HPWL +0.4 %; but decaps moved away on two boards
     (training_board 11.2 → 27.2 mm), so it is off by default. Default placement output is byte-identical to before.
 
-### To check (the helpers disagree)
+### Settled: does KiCad apply the generated rules?
 
-The first M13 agent reported that KiCad 10 parses the generated sidecar `.kicad_dru` and flags real violations; the
-third found `kicad-cli pcb drc` silent even on a deliberately malformed `.kicad_dru`. So it is not established that
-KiCad applies the generated rules; treat the sidecar as a readable record of the rules until that is checked.
+The helpers disagreed (one saw KiCad flag the rules, one saw kicad-cli silent on a malformed file). Both were right:
+kicad-cli applies `<board>.kicad_dru` even without a project file (a 5 mm clearance rule took a board from 135 to 632
+violations), and silently ignores the whole file when it has a syntax error. The generated rules parse (checked by
+appending a sentinel rule to real sidecars of 1Bitsy and ArduinoDueClone), and a new integration test
+(`crules_dru_parses`) repeats that check on every run. Note the sidecar is named `<output>.tracemaker.kicad_dru`, so
+KiCad does not load it automatically: it has to be merged into, or copied as, the project's `.kicad_dru`.
 
 ## Assumptions
 
