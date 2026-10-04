@@ -36,3 +36,5 @@ set_tests_properties(crules_catalogue_sync PROPERTIES SKIP_RETURN_CODE 77 LABELS
 # Component rules in routing: generated keep-outs honoured, never written into the output, sidecar .kicad_dru written.
 add_test(NAME crules_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_route.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/crules)
 set_tests_properties(crules_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "crules;integration" TIMEOUT 600)
+add_test(NAME crules_dru_parses COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_dru_parses.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/crules_dru)
+set_tests_properties(crules_dru_parses PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 900)
