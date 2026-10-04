@@ -36,7 +36,10 @@ struct EscapeCorridor {
 struct EscapeOptions {
   int min_pads = 8;              // smaller footprints escape easily
   Coord max_pitch = 1'300'000;   // pin pitch up to which a footprint counts as dense (1.27 mm BGAs included)
-  Coord length = 1'000'000;      // corridor length past the pad edge for perimeter pins
+  // Corridor length past the pad edge for perimeter pins. One variant, fixed budget: 0.5 / 1 / 2 / 3 mm gave
+  // logicbone 961 / 964 / 968 / 977 and decelerator 449 / 479 / 491 / 490 routed; 2 mm reserves less board
+  // area than 3 mm for nearly the same gain (doc 05 §12).
+  Coord length = 2'000'000;
 };
 
 struct EscapeStats {
