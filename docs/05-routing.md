@@ -187,7 +187,12 @@ strict pass: logicbone 964 → 750, decelerator 479 → 431 (one variant, same b
 finish first under shortest-first. Second-ring channel corridors: mixed (logicbone 964 → 954, decelerator
 479 → 484), kept behind `--escape-second-ring`.
 
+**What limits the feasible large boards now.** logicbone (all 908 dense-package pins can escape) routes 999 of
+1,188 connections in 120 s and only 1,005 in 600 s: in 600 s each variant completes just two passes (the negotiated
+pass on a 2,754 × 1,847 × 2 lattice at 0.035 mm takes the rest), and the remaining failures are mostly nogood skips
+and windows without a path. That is negotiation speed on large lattices (global routing, M6), not escape.
+
 **Not built yet (rest of M9).** Min-cost-flow channel assignment for arrays deeper than two rings (Yan & Wong),
-layer assignment per ring, escape templates in the knowledge base (doc 06 T3), and a feasible-completion metric
-in the benchmark summary (completion over connections whose pins can escape).
+layer assignment per ring, escape templates in the knowledge base (doc 06 T3), and completion over escapable
+connections (the benchmark now reports a feasible clean pass per board, not per connection).
 

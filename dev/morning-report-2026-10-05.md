@@ -62,6 +62,12 @@ m2fc was one of the two that now carry escape planning. At a fixed 70 M budget o
 broken board. Clean pass on the boards
 whose pins can all escape: tier B 69.2 % (39 boards), tier C 70.4 % (27 boards), BGA set 46.7 % (15 boards).
 
+### What limits the big boards now
+
+logicbone (all pins escapable) routes 999/1,188 in 120 s and only 1,005 in 600 s: each variant gets through just two
+passes because the negotiated pass on its fine lattice is slow. That is negotiation speed on large boards (global
+routing, M6), not escape planning — the next thing to work on for tier C/D and the BGA set.
+
 ### Not done (rest of M9)
 
 Min-cost-flow channel assignment for deep arrays, per-ring layer assignment, escape templates in the knowledge base.
