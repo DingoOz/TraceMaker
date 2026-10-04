@@ -250,7 +250,7 @@
   {
    "id": "M5",
    "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
-   "status": "in_progress",
+   "status": "done",
    "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
    "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
    "tasks": [
@@ -275,8 +275,8 @@
      "done": true
     },
     {
-     "text": "Gate: completion >= Freerouting on tier A (latest: 97.5% vs 100% clean)",
-     "done": false
+     "text": "Gate: completion >= Freerouting on tier A (100% clean, equal to Freerouting RC12, in every run since 2026-10-03)",
+     "done": true
     },
     {
      "text": "Reverse probe for boxed-in targets; pad legs dropped when the lattice end is on the pad; learned blocks beside fine-pitch pads",
@@ -349,8 +349,8 @@
      "done": true
     },
     {
-     "text": "Other proximity groups: crystals, termination, ESD near connectors (see doc 15)",
-     "done": false
+     "text": "Other proximity groups: crystals, load caps, ESD near connectors, regulator caps (M13, --component-rules soft)",
+     "done": true
     },
     {
      "text": "quadratic B2B (Eigen CG)",
@@ -651,7 +651,11 @@
      "done": true
     },
     {
-     "text": "Rule compiler: net classes, sidecar .kicad_dru, keep-out areas, placer pseudo-nets",
+     "text": "Rule compiler: sidecar .kicad_dru, keep-out areas, placer pseudo-nets",
+     "done": true
+    },
+    {
+     "text": "Rule compiler: net classes from rules (applied to routing)",
      "done": false
     },
     {
@@ -697,6 +701,14 @@
     {
      "text": "Connector edge attraction in the placer (opt-in --edge-attraction, objective only)",
      "done": true
+    },
+    {
+     "text": "Two-stage soft placement (decaps and their ICs locked first, D43)",
+     "done": true
+    },
+    {
+     "text": "Turn component rules on by default (larger multi-seed test first)",
+     "done": false
     }
    ]
   }
