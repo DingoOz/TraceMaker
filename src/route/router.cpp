@@ -78,6 +78,9 @@ struct Router::Impl {
     int rips = 0, fails = 0;
     std::string why;                 // last failure explanation
     bool coupled = false;            // routed as half of a differential pair: clean-up leaves it alone
+    // Boxed in even by a negotiated search, which may cross every other net's routed copper: only fixed copper
+    // encloses the pin (M9). Retrying it in later passes and restarts only spends budget others could use.
+    bool dead = false;
   };
   std::vector<ConnState> cs;
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
@@ -2070,7 +2073,8 @@ struct Router::Impl {
         std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
       }
       pending.assign(order.begin(), order.end());
-      pending.erase(std::remove_if(pending.begin(), pending.end(), [&](int c) { return cs[static_cast<std::size_t>(c)].routed; }), pending.end());
+      pending.erase(std::remove_if(pending.begin(), pending.end(), [&](int c) { return cs[static_cast<std::size_t>(c)].routed || cs[static_cast<std::size_t>(c)].dead; }),
+                    pending.end());
       ++res.restarts;
       emit("{\"type\":\"stage\",\"name\":\"restart " + std::to_string(restart) + "\",\"state\":\"begin\",\"detail\":\"hardest connections first, history kept\"}");
     }
@@ -2110,6 +2114,19 @@ struct Router::Impl {
         if (!ok && opt.rip_up && pass > 0) {
           ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
           reason += "; negotiated: " + why;
+          if (!ok && why.starts_with("boxed in")) {
+            // Last check before giving the pin up: negotiated, with off-lattice escapes and the neck-down width.
+            force_escapes = true;
+            if (neck_width(st.c.net) > 0) width_override = neck_width(st.c.net);
+            ok = search_and_commit(st.c, true);
+            if (ok && width_override > 0) ++res.necked;
+            width_override = 0;
+            force_escapes = false;
+            if (!ok && why.starts_with("boxed in")) {
+              st.dead = true;
+              reason += "; fixed copper encloses the pin";
+            }
+          }
         }
         cs[static_cast<std::size_t>(ci)].why = reason;
         if (ok) {
@@ -2118,7 +2135,7 @@ struct Router::Impl {
           release_escapes(ci);
         } else {
           ++cs[static_cast<std::size_t>(ci)].fails;
-          failed.push_back(ci);
+          if (!st.dead) failed.push_back(ci);
           if (opt.sink) {
             const Point a = b.pads[static_cast<std::size_t>(st.c.pad_a)].pos;
             const Point e = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].pos : a;

@@ -67,6 +67,10 @@ class Obstacles {
   // Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise.
   const std::vector<geom::Point>& outline() const { return outline_; }
   bool inside_board(geom::Point p, Coord margin) const;
+  // Solder-mask expansion the checks give untented vias (0 when the board tents them). Escape analysis sets it
+  // to 0 to ask "would a via fit here if vias were tented?"; routing never changes it.
+  Coord via_mask() const { return via_mask_; }
+  void set_via_mask(Coord m) { via_mask_ = m; }
   // Rejection counters (diagnostics): outside board, copper, holes/edges/keepouts.
   mutable long rej_outside = 0, rej_copper = 0, rej_other = 0, checks = 0;
 

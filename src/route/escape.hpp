@@ -12,9 +12,11 @@
 // once its pin is connected. Reservations only remove options: every commit is still checked exactly, so the
 // plan cannot introduce violations.
 #include <functional>
+#include <string>
 #include <vector>
 
 #include "model/board.hpp"
+#include "model/rules.hpp"
 
 namespace tmk::route {
 
@@ -44,5 +46,33 @@ struct EscapeStats {
 // pitch so the corridors of neighbouring pins never overlap. Deterministic: footprints and pads in board order.
 std::vector<EscapeCorridor> plan_escapes(const model::Board& b, const std::vector<char>& needs, const std::function<Coord(model::NetId)>& keep,
                                          const EscapeOptions& o = {}, EscapeStats* stats = nullptr);
+
+class Obstacles;
+
+// Escape feasibility (M9 analysis): can each pin of a dense package leave it at all under the board's rules?
+// A breadth-first search from the pad over a lattice of the package area, against fixed copper only (nothing
+// routed), at the narrowest legal width (the router's neck-down width), changing layers wherever that net's
+// via passes every fixed check. A pin escapes when it reaches `margin` outside the box of the package's pad
+// centres. On a lattice, so "dead" means "no escape on this lattice": an off-lattice path can exist in rare
+// cases; the router keeps trying those pins.
+struct DeadPin {
+  int pad = -1;
+  std::string reason;
+};
+struct PartEscape {
+  int footprint = -1;
+  std::string ref;
+  Coord pitch = 0;
+  int pins = 0, escapable = 0;
+  std::vector<DeadPin> dead;
+  std::string hint;              // what would make the dead pins escapable, when it can be told
+};
+struct EscapeAnalysisOptions {
+  Coord lattice = 40'000;        // search pitch
+  Coord margin = 500'000;        // how far outside the package a pin must get
+  Coord window = 1'500'000;      // search area around the package
+};
+std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::DesignRules& r, Obstacles& obs,
+                                        const EscapeAnalysisOptions& o = {}, const EscapeOptions& eo = {});
 
 }  // namespace tmk::route

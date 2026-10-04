@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <nlohmann/json.hpp>
 #include <string>
 
@@ -14,6 +15,7 @@
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
+#include "route/escape.hpp"
 #include "route/obstacles.hpp"
 #include "core/version.hpp"
 #include "gpu/device.hpp"
@@ -179,6 +181,37 @@ int cmd_debug_pad(const std::string& path, const std::string& ref, const std::st
   return 1;
 }
 
+int cmd_escape(const std::string& path, const std::string& json_path) {
+  auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  tmk::model::Board b = lb.board;
+  tmk::route::Obstacles obs(b, rules);
+  const auto parts = tmk::route::analyse_escapes(b, rules, obs);
+  nlohmann::json j = nlohmann::json::array();
+  int dead = 0, pins = 0;
+  for (const auto& pe : parts) {
+    pins += pe.pins;
+    dead += static_cast<int>(pe.dead.size());
+    std::printf("%-10s pitch %.3f mm: %d of %d pins escape%s%s\n", pe.ref.c_str(), tmk::nm_to_mm(pe.pitch), pe.escapable, pe.pins,
+                pe.dead.empty() ? "" : "; dead:", pe.dead.empty() ? "" : "");
+    std::map<std::string, std::vector<std::string>> by_reason;
+    for (const auto& d : pe.dead) by_reason[d.reason].push_back(b.pads[static_cast<std::size_t>(d.pad)].number);
+    nlohmann::json jd = nlohmann::json::array();
+    for (const auto& [why, nums] : by_reason) {
+      std::string list;
+      for (std::size_t k = 0; k < nums.size() && k < 12; ++k) list += (k ? " " : "") + nums[k];
+      if (nums.size() > 12) list += " ...";
+      std::printf("    %zu pins, %s: %s\n", nums.size(), why.c_str(), list.c_str());
+      jd.push_back({{"reason", why}, {"pins", nums}});
+    }
+    if (!pe.hint.empty()) std::printf("    hint: %s\n", pe.hint.c_str());
+    j.push_back({{"ref", pe.ref}, {"pitch_mm", tmk::nm_to_mm(pe.pitch)}, {"pins", pe.pins}, {"escapable", pe.escapable}, {"dead", jd}, {"hint", pe.hint}});
+  }
+  std::printf("%zu dense packages, %d pins to route, %d cannot escape\n", parts.size(), pins, dead);
+  if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"parts", j}, {"pins", pins}, {"dead", dead}}.dump(1) << "\n";
+  return 0;
+}
+
 int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int layer, double width_mm, const std::string& netname) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
@@ -289,6 +322,10 @@ int main(int argc, char** argv) {
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
 
+  auto* esc = app.add_subcommand("escape", "Escape feasibility of dense packages: pins that cannot leave their package under the board's rules");
+  std::string esc_board, esc_json;
+  esc->add_option("board", esc_board)->required()->check(CLI::ExistingFile);
+  esc->add_option("--json", esc_json, "Write the analysis as JSON");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -331,6 +368,7 @@ int main(int argc, char** argv) {
     }
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
+    if (*esc) return cmd_escape(esc_board, esc_json);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
