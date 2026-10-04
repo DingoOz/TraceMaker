@@ -196,3 +196,18 @@ section at its end); decisions D26–D31 in `docs/12-decisions.md`.
 46. **One area per set of parts**: an RJ45 instance and a PHY instance that bind the same magnetics produce one
     void (the first instance in report order names it); the other reports "generated for another Ethernet instance".
 
+## Connector edge attraction (CONN-01)
+
+47. **Which parts are pulled**: anchors of instances with a connector edge rule (CONN-01, USB2-11, DISP-02: kind
+    `edge`, enforced in `place`, not advisory, `applies_to` contains `connector`), once per footprint, never locked,
+    never a pin header/socket (lib_id `pin_header`/`pinheader`/`pin_socket`/`pinsocket`; CONN-01 note on stacking
+    headers; jumper and programming headers are mostly not cable connectors). All of them, not only those whose rule
+    is unmet in the input, because in full mode the input position is discarded; only parts the placer may move get a
+    pull, so connectors already at the edge stay fixed as before. RF modules and antennas are not pulled (their
+    orientation matters more than the distance).
+48. **Pull model**: one-pin pseudo-net from the courtyard point nearest to the outer outline (cut-outs ignored) in the
+    input, anchored on the axis of the nearest outline segment (x if |dy| >= |dx|, else y); on a slanted outline
+    this is the axis distance, not the true distance. Weight 20 (2 x signal, like ESD-01) scaled by --crules-weight;
+    not tuned. The global quadratic stage and the HPWL lower bound ignore the pull.
+49. **`--edge-attraction` with `--component-rules off/report` is an error**, not a silent no-op.
+

@@ -335,6 +335,27 @@ with `rule_area = true`, `place::PNet`) plus the new ones listed in §5.2.
 Same schema, plus `disable`, `assert`, `deny`, `set` (parameter overrides by rule id and optional
 `@REF`), and `stackup_preset`. Unknown keys are errors (a typo must not silently drop an override).
 
+As built (§14.6): the engine reads the file as **JSON** (`--rules-override FILE` on `tracemaker rules`,
+`tracemaker route` and `tracemaker-place`); the YAML form maps 1:1 and `scripts/crules_override.py FILE.yaml -o
+FILE.json` converts it. Accepted keys: `version` (1), `comment`, `disable`, `assert`, `deny`, `set`;
+`stackup_preset` and catalogue keys are not built yet and are refused.
+
+```json
+{
+  "version": 1,
+  "disable": ["USB2-04@J2", "XTAL-04", "mounting_hole", "crystal@Y2"],
+  "assert": {"J5": "usb2"},
+  "deny": [{"category": "buck", "ref": "U7"}],
+  "set": [{"rule": "XTAL-02", "param": "max_mm", "value": 5},
+          {"rule": "XTAL-01@Y1", "param": "max_mm", "value": 8}]
+}
+```
+
+`disable` takes rule ids or category ids, optionally `@REF` (the instance anchor); `assert`/`deny` take
+`{REF: category}` (or a list of categories) or a list of `{category, ref}`; `set` takes `{rule, param, value}` with
+the reference as `RULE@REF` or `"ref"`; the value must have the catalogue value's JSON type. Entries for one reference
+win over global ones; among equals the later entry wins.
+
 ## 7. Reporting
 
 What the user sees (CLI summary; full table in `report.json` and the viewer's "Rules" panel):
@@ -1208,10 +1229,10 @@ IPC-2152. All sources cited by rule id in §8:
 | IPC-2221B-TP | [Common in-circuit-test (bed-of-nails) DFT practice; e.g. IPC-2221B §8 test points (not re-read)](https://www.ipc.org/TOC/IPC-2221B.pdf) |
 | TMK-PRACTICE | No primary source read: common layout practice recorded as a TraceMaker default (doc 15 §8 note); verify before making hard |
 
-## 14. Implementation status (2026-10-04, milestone M13 P0–P4)
+## 14. Implementation status (2026-10-04, milestone M13 P0–P4, user overrides, ETH-05, edge attraction)
 
 Built in `src/crules/` (namespace `tmk::crules`); assumptions made without review are listed in
-[`../dev/assumptions-m13.md`](../dev/assumptions-m13.md); decisions D26–D31 and D36–D39 in [12-decisions.md](12-decisions.md).
+[`../dev/assumptions-m13.md`](../dev/assumptions-m13.md); decisions D26–D31 and D36–D42 in [12-decisions.md](12-decisions.md).
 
 ### 14.1 What is built
 
@@ -1219,11 +1240,14 @@ Built in `src/crules/` (namespace `tmk::crules`); assumptions made without revie
 |---|---|---|
 | Catalogue loader | `scripts/crules_catalogue.py` → `src/crules/catalogue.json` (embedded); `catalogue.{hpp,cpp}` | ctest `crules_catalogue_sync` checks JSON = YAML and YAML rule ids = this document's (§9.1 L0); `tracemaker rules --catalogue` loads another file |
 | Detection (§3.1–3.2) | `detect.cpp` | Every footprint against every category; integer weights; apply 70 / suggest 40; no-pin-name cap 60 (§3.6) for categories with a `pin_name` detector except `ic_decoupling`; conflicts by exclusive groups (§3.4); "possible" list below 40 |
-| Role binding (§3.3) | `detect.cpp` (`bind_*`) | usb2/usb3_typec (connector, D+/D− by pin name, net name or KiCad USB pad numbers, ESD, CMC, transceiver, VBUS, CC), crystal (IC, XIN/XOUT pins, load caps, series R), oscillator, ic_decoupling (generalised D25), ldo/buck/boost (VIN/VOUT, cin/cout, inductor, SW), esd_tvs (connector, protected nets, IC, ground pins), can/rs485 (bus, connector, ESD, termination), rf_module/chip_antenna (footprint keep-out), connector_general, mounting_hole; other categories bind their anchor only |
+| Role binding (§3.3) | `detect.cpp` (`bind_*`) | usb2/usb3_typec (connector, D+/D− by pin name, net name or KiCad USB pad numbers, ESD, CMC, transceiver, VBUS, CC), crystal (IC, XIN/XOUT pins, load caps, series R), oscillator, ic_decoupling (generalised D25), ldo/buck/boost (VIN/VOUT, cin/cout, inductor, SW), esd_tvs (connector, protected nets, IC, ground pins), can/rs485 (bus, connector, ESD, termination), rf_module/chip_antenna (footprint keep-out), ethernet (rj45 or phy anchor, discrete magnetics, integrated magnetics), connector_general, mounting_hole; other categories bind their anchor only |
 | Effective rules (§3.5, §7) | `evaluate.cpp`, `report.cpp` | Every rule of every instance: applied / satisfied-by-board / not-applied(reason) / advisory, hard→soft below `apply` and for R-evidence rules, measured pad-centre distances for proximity rules, edge distance for edge rules |
 | Report | `tracemaker rules <board> [--mode report\|soft\|on] [--json f] [--dru f] [--roles-from input]` | Text summary (categories with > 6 instances condensed) and full JSON incl. keep-out polygons |
 | P1 placement | `tracemaker-place --component-rules off\|report\|soft` (default **off**), `ExtractOptions::affinities` | Objective-only pseudo-nets (D25 mechanism, D28) for XTAL-01/02, OSC-01/02, ESD-01, USB2-07, USBC-10, CAN-02, RS485-02, LDO-01, BUCK-01/02 (proxies), DEC-01/07 |
 | P2 keep-outs | `generate_keepouts`, `dru_sidecar`; `tracemaker route --component-rules on` | XTAL-04, BUCK-06, BOOST-04 at confidence ≥ 70: rule areas on pad-free layers (D29) given to the router (in memory only); `report`/`soft`/`on` write `<output>.tracemaker.kicad_dru` |
+| Ethernet magnetics void | `bind_ethernet`, `generate_keepouts` (ETH-05) | Discrete magnetics: tracks, vias and zones kept out on their side and the adjacent layer (D41, §14.6) |
+| User override file (§3.5, §6.3) | `overrides.{hpp,cpp}`, `detect(…, &overrides)`; `--rules-override` on `rules`, `route`, `tracemaker-place` | `disable`/`assert`/`deny`/`set`, validated against catalogue and board; reported (D40, §14.6) |
+| Connector edge attraction | `crules::edge_attractions`, `ExtractOptions::edge_pulls`, `PNet::has_ax/ay`; `tracemaker-place --component-rules soft --edge-attraction` | Opt-in, objective only (D42, §14.6) |
 | P3 USB pairs | `RouterOptions::pair_nets`, `crules::usb_pairs`; `tracemaker route --component-rules soft\|on` | USB2-02: detected D+/D− routed coupled first (D30); skew not yet checked |
 | Events (rule 7) | route job | `crules.detected`, `crules.keepout` |
 | P4 stackup | `model/stackup.{hpp,cpp}`, `io/kicad/board_reader.cpp` (`read_stackup`) | `Board::stackup`: layers in file order with type, thickness (nm), εr, loss tangent, material, sublayers (`addsublayer`, combined in series), copper index; copper finish. Read-only (rule 8); `present == false` without a block |
@@ -1232,9 +1256,11 @@ Built in `src/crules/` (namespace `tmk::crules`); assumptions made without revie
 | P4 width for current | `imp::width_for_current` (IPC-2221), `plan_current` | Reported for rules that give `current_a` (USBC-09); report only |
 
 Not built: net classes from rules (impedance widths are reported only, D36; width for current, P5), hard proximity
-constraints, edge attraction for connectors (edge rules are measured only), antenna keep-outs without a footprint
-keep-out (no datasheet table), Ethernet magnetics void, routing order/chain topology, skew and via limits for pairs,
-the user override file (§6.3), `--write-keepouts`/`--write-rules`, viewer drawing of the events.
+constraints, the connector orientation part of CONN-01 beyond what the edge pull implies, edge attraction in the global
+(quadratic) placement stage (the annealer carries it), antenna keep-outs without a footprint keep-out (no datasheet
+table), the Ethernet plane split (ETH-07) and chassis isolation (ETH-06), routing order/chain topology, skew and via
+limits for pairs, `stackup_preset` and catalogue additions in the override file, automatic discovery of
+`<project>.tracemaker_rules.*` next to the board, `--write-keepouts`/`--write-rules`, viewer drawing of the events.
 
 ### 14.2 Detection quality (§9.1 L1)
 
@@ -1417,3 +1443,76 @@ target with width, gap, Z, εeff, ps/mm, h, εr, error) and `current` on the rul
 Not built in P4: routing with the computed widths (net classes per layer; D36), the reference-plane coverage check
 and plane-gap cost, stitching vias at layer changes, solder-mask correction, broadside-coupled and coplanar pairs,
 the `--assume-stackup` preset (§3.6), commented suggestions in the sidecar `.kicad_dru`.
+
+
+### 14.6 User overrides, Ethernet magnetics void, connector edge attraction
+
+**User override file** (§3.5 level 1, §6.3; D40). `src/crules/overrides.{hpp,cpp}` parses and validates the file;
+`detect(board, catalogue, &overrides)` applies it, so `tracemaker rules`, `tracemaker route` and `tracemaker-place`
+behave the same:
+
+```
+tracemaker rules board.kicad_pcb --mode on --rules-override board.tracemaker_rules.json
+tracemaker route board.kicad_pcb -o out.kicad_pcb --component-rules on --rules-override board.tracemaker_rules.json
+tracemaker-place board.kicad_pcb -o placed.kicad_pcb --component-rules soft --rules-override board.tracemaker_rules.json
+scripts/crules_override.py board.tracemaker_rules.yaml -o board.tracemaker_rules.json   # YAML -> JSON
+```
+
+- `deny` moves the instance to "possible" ("denied by user (file)"), so a competing category in its exclusive group
+  can win; `assert` gives confidence 100 (never capped), wins its group, binds with the category's binder or, if the
+  binder rejects the part, the anchor alone (the objection stays in the evidence).
+- `disable` (rule, rule@REF, category, category@REF): the rule is neither applied nor measured; no pseudo-net,
+  keep-out, sidecar rule or USB pair comes from it. Report: `not-applied: overridden by user: disabled (disable
+  XTAL-04@Y1)`; condensed categories count "disabled by user".
+- `set`: the rule is evaluated with the new parameter (limits, keep-out margins, impedance targets); report:
+  `…; overridden by user: max_mm = 5 (catalogue 10; set XTAL-01 max_mm = 5)`; JSON `user_override` per rule and
+  `user_overrides` (file, entries, unused) at the top level.
+- Errors (exit 1, message names the file and entry, with a "did you mean" hint): unknown keys, rule ids, categories,
+  parameters, value types, negative numbers, malformed `ID@REF`, references not on the board, a category both
+  asserted and denied, two asserted categories that exclude each other, a `.yaml` file (with the conversion command).
+  An entry whose reference is on the board but not an instance of the category (or a global entry with no instance)
+  is a warning in the report and the route/place log: the catalogue default then applies.
+- Tests: `[overrides]` in `src/crules/test_crules.cpp` (every form, 20 error messages, disable/assert/deny/set
+  semantics, precedence, determinism).
+
+**Ethernet magnetics void** (ETH-05; D41). `bind_ethernet` binds the anchor as `rj45` (connector) or `phy` (IC),
+`magnetics` = transformers (T*/TR* or a transformer lib_id/value, ≥ 6 pads) sharing ≥ 2 signal nets with the anchor,
+and `integrated_magnetics` for MagJack-style RJ45s (no void: "not required"). `generate_keepouts` adds a rule area
+around the magnetics' courtyards grown by 0.508 mm on their side and the adjacent copper layer, minus layers with
+their pads (SMD on F.Cu: B.Cu on 2 layers, In1.Cu on 4), keeping out tracks, vias and zones; the sidecar rule is
+`(constraint disallow track via zone)` with only the magnetics' own nets exempt. An RJ45 and a PHY instance sharing
+the magnetics give one area. Generated at confidence ≥ apply and used for routing with `--component-rules on` only.
+On PCBench (the 30 boards whose file names an RJ45), 54 Ethernet instances on 27 boards: discrete magnetics bound on 7 boards (KiwiSDR,
+Own-Mailbox ×4, PoEPi ×2; 13 instances), 10 MagJack instances "not required"; all capped at confidence 60 (KiCad 5, no pin names), so no void is generated there unless
+the user asserts the category; with `assert {"P3": "ethernet"}` on Own-Mailbox `pierre` the void is generated on In1.Cu and
+given to the router. Not verified: that KiCad applies the sidecar `zone` constraint (kicad-cli DRC reports nothing for a malformed `.kicad_dru` either, so a silent run proves nothing). Tests: `[ethernet]` (2 and 4 layers, shared magnetics, MagJack, through-hole magnetics,
+unbound role, sidecar text, user disable).
+
+**Connector edge attraction** (D42), opt-in: `tracemaker-place --component-rules soft --edge-attraction` (an error
+with `off`/`report`). `crules::edge_attractions` lists the anchors of instances with a connector edge rule (CONN-01,
+USB2-11, DISP-02; not RFM-01/ANT-02, not advisory DBG-03, not disabled), once per footprint, never locked parts or
+pin headers/sockets. The placer (`ExtractOptions::edge_pulls`) adds, for each such part that is **movable**, a
+one-pin affinity net from the courtyard point nearest to the outer outline to that segment's axis (`PNet::has_ax`/
+`has_ay`), weight 20 × `--crules-weight`. `net_hpwl` includes the fixed coordinate, so the annealer's incremental
+integer cost stays exact (tested with independent runs, tempering and LNS); the weighted median move uses it; the
+global (quadratic) stage and the HPWL lower bound ignore it (the bound stays a lower bound). Reported HPWL and
+crossings exclude it. Connectors already at the edge stay fixed as before (`fix_edge_connectors`).
+
+Measured with `bench/crules_place.py --configs off,soft,soft:--edge-attraction` (23 boards of doc 04 §7.3, seed 1,
+8 threads). Connector edge distance = CONN-01's measure (nearest courtyard vertex to Edge.Cuts, once per connector);
+the per-board median and mean are then taken over boards. `off` and `soft` reproduce §14.3 exactly.
+
+| Config | HPWL median | HPWL vs off (geo-mean) | connector edge, median of board medians | median of board means | connectors ≤ 1 mm from the edge (sum, 148 connectors) | pads ≤ 5 mm from the edge box (sum) |
+|---|---:|---:|---:|---:|---:|---:|
+| off | 518.3 | 1.000 | 1.81 mm | 2.17 mm | 52 | 105 |
+| soft | 518.3 | 0.996 | 1.81 mm | 2.36 mm | 52 | 105 |
+| soft + edge attraction | 518.3 | 1.004 | 1.75 mm | 1.81 mm | 58 | 117 |
+| human placement | – | – | 1.81 mm | 2.45 mm | – | – |
+
+The pull changes the result on 5 boards (the others have no movable connector with an edge rule: their connectors
+are at the edge and fixed, or are pin headers). There, mean connector distance: ChirpHardware 6.2 → 2.1 mm,
+LadybugLiteBlue 5.8 → 2.1, kitspace_training_board 11.4 → 1.6 (6 of 6 connectors now within 1 mm), nanoTracer
+4.0 → 3.4, Microdox unchanged (3.9); HPWL +3.8 % geo-mean on these 5 (Chirp +7.7 %, Ladybug +6.3 %, training +2.2 %,
+nanoTracer +3.3 %, Microdox −0.2 %). Costs: decoupling distance worse on 2 boards (training board 11.2 → 27.2 mm,
+nanoTracer 5.8 → 10.0 mm) because the connectors take edge space the ICs and their caps had. So edge attraction does
+what it is meant to, at a wirelength and (on two boards) decap cost; it stays **opt-in**, default off.

@@ -685,6 +685,18 @@
     {
      "text": "IPC-2221 width for current reported for rules with a current (USBC-09)",
      "done": true
+    },
+    {
+     "text": "User override file (--rules-override, JSON): disable / assert / deny / set, validated, reported (doc 15 \u00a76.3)",
+     "done": true
+    },
+    {
+     "text": "Ethernet magnetics void (ETH-05) as a generated keep-out (--component-rules on)",
+     "done": true
+    },
+    {
+     "text": "Connector edge attraction in the placer (opt-in --edge-attraction, objective only)",
+     "done": true
     }
    ]
   }
