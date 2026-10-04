@@ -62,6 +62,10 @@ m2fc was one of the two that now carry escape planning. At a fixed 70 M budget o
 broken board. Clean pass on the boards
 whose pins can all escape: tier B 69.2 % (39 boards), tier C 70.4 % (27 boards), BGA set 46.7 % (15 boards).
 
+Quality on boards clean before and after (final10 vs final binary): via count median ratio 1.00 (mean +0.2 % tier B,
+27 boards; +0.6 % tier C, 17 boards), track segments 1.00. Sanitizers: the ASan/UBSan unit tests (main, placement,
+server, crules) pass, and a route with every M9 option on runs clean under ASan/UBSan.
+
 ### What limits the big boards now
 
 logicbone (all pins escapable) routes 999/1,188 in 120 s and only 1,005 in 600 s: each variant gets through just two
