@@ -75,3 +75,4 @@
 {"ts": "2026-10-04T14:45:06+00:00", "kind": "decision", "text": "D36-D39: impedance rules report-only; closed-form models; adjacent copper layer = reference plane; pairs solved at the Default class gap"}
 {"ts": "2026-10-04T15:51:16+00:00", "kind": "note", "text": "M13: user override file (--rules-override: disable/assert/deny/set), Ethernet magnetics void ETH-05, opt-in connector edge attraction (--edge-attraction: mean connector edge distance 2.36 -> 1.81 mm over 23 boards, HPWL geo-mean +0.8% vs soft); ctest 102/102"}
 {"ts": "2026-10-04T17:10:42+00:00", "kind": "decision", "text": "Two-stage soft component-rule placement (D43): decaps unchanged, crystals 5.1->4.7 mm, load caps 2.4->2.0 mm, HPWL -1% over 23 boards x 3 seeds; component rules still off by default."}
+{"ts": "2026-10-04T17:37:54+00:00", "kind": "test", "text": "Held-out heldC (30 boards): clean 43.3% -> 50.0%, completion 96.5% -> 97.1%, 0 added errors (tonight's binary vs 2026-10-03)."}

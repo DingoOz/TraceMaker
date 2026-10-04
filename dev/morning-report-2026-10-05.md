@@ -66,6 +66,11 @@ broken board.
 Clean pass on the boards whose pins can all escape: tier B 69.2 % (39 boards), tier C 70.4 % (27 boards), BGA set
 46.7 % (15 boards).
 
+**Held-out check** (the 30 tier-C-like boards of `heldC-1`, never used for tuning): 43.3 % → **50.0 %** clean
+(HamShield09 and Simple_84_Keyboard became clean, none lost), completion 96.5 % → 97.1 %, no added errors; 53.6 % on
+its 28 feasible boards. Different harness runs on different days, so this is "tonight's binary vs the 2026-10-03
+binary", not one change.
+
 Quality on boards clean before and after (final10 vs final binary): via count median ratio 1.00 (mean +0.2 % tier B,
 27 boards; +0.6 % tier C, 17 boards), track segments 1.00. Sanitizers: the ASan/UBSan unit tests (main, placement,
 server, crules) pass, and a route with every M9 option on runs clean under ASan/UBSan.
