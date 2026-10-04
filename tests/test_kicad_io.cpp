@@ -183,3 +183,87 @@ TEST_CASE("reading an edited document gives the edited board", "[kicad][io]") {
   REQUIRE(from_doc.pads.size() == from_text.pads.size());
   for (std::size_t i = 0; i < from_doc.pads.size(); ++i) CHECK(from_doc.pads[i].pos == from_text.pads[i].pos);
 }
+
+TEST_CASE("stackup: layers, sublayers, permittivity and copper mapping are read; text is untouched", "[kicad][io][stackup]") {
+  // KiCad 6+ syntax with a two-sheet dielectric (addsublayer) and a locked thickness.
+  const std::string text = R"((kicad_pcb (version 20221018) (generator pcbnew)
+  (general (thickness 1.6))
+  (layers (0 "F.Cu" signal) (31 "B.Cu" signal) (44 "Edge.Cuts" user))
+  (setup
+    (stackup
+      (layer "F.SilkS" (type "Top Silk Screen"))
+      (layer "F.Mask" (type "Top Solder Mask") (thickness 0.01) (epsilon_r 3.3))
+      (layer "F.Cu" (type "copper") (thickness 0.035))
+      (layer "dielectric 1" (type "prepreg") (thickness 0.1 locked) (material "FR4") (epsilon_r 4.0) (loss_tangent 0.02) addsublayer
+        (thickness 0.3) (material "R-1551") (epsilon_r 4.6) (loss_tangent 0.01))
+      (layer "B.Cu" (type "copper") (thickness 0.018))
+      (layer "B.Mask" (type "Bottom Solder Mask") (thickness 0.01))
+      (copper_finish "ENIG")
+      (dielectric_constraints no)
+    )
+    (pad_to_mask_clearance 0)
+  )
+  (net 0 "")
+)
+)";
+  const auto doc = tmk::sexpr::Document::parse(text);
+  const auto b = tmk::io::read_board(doc);
+  CHECK(doc.write() == text);
+  const auto& st = b.stackup;
+  REQUIRE(st.present);
+  REQUIRE(st.layers.size() == 6);
+  CHECK(st.copper_finish == "ENIG");
+  CHECK(st.layers[2].copper_index == 0);
+  CHECK(st.layers[4].copper_index == 1);
+  CHECK(st.layers[1].is_mask());
+  CHECK(st.layers[1].epsilon_r == 3.3);
+  const auto& d = st.layers[3];
+  CHECK(d.sublayers == 2);
+  CHECK(d.thickness == 400'000);
+  CHECK(d.material == "FR4");
+  // Series combination: 0.4 / (0.1/4.0 + 0.3/4.6); loss tangent thickness-weighted.
+  CHECK(std::fabs(d.epsilon_r - 0.4 / (0.1 / 4.0 + 0.3 / 4.6)) < 1e-12);
+  CHECK(std::fabs(d.loss_tangent - (0.1 * 0.02 + 0.3 * 0.01) / 0.4) < 1e-12);
+  const auto gap = st.between(0, 1);
+  CHECK(gap.complete);
+  CHECK(gap.thickness == 400'000);
+  CHECK(std::fabs(gap.epsilon_r - d.epsilon_r) < 1e-12);
+  CHECK(st.copper_thickness(0) == 35'000);
+  CHECK(st.copper_thickness(1) == 18'000);
+  REQUIRE(st.mask(false));
+  CHECK(st.mask(false)->epsilon_r == 0);  // not given: never invented
+  CHECK(!st.mask(false)->epsilon_complete);
+}
+
+TEST_CASE("stackup: boards without one say so; missing permittivity makes the gap incomplete", "[kicad][io][stackup]") {
+  const auto none = tmk::io::read_board(tmk::sexpr::Document::parse(
+      "(kicad_pcb (version 20171130) (layers (0 F.Cu signal) (31 B.Cu signal)) (setup (pad_to_mask_clearance 0)) (net 0 \"\"))"));
+  CHECK(!none.stackup.present);
+  CHECK(none.stackup.layers.empty());
+  const auto partial = tmk::io::read_board(tmk::sexpr::Document::parse(
+      "(kicad_pcb (version 20221018) (layers (0 \"F.Cu\" signal) (31 \"B.Cu\" signal)) (setup (stackup (layer \"F.Cu\" (type \"copper\") (thickness 0.035)) "
+      "(layer \"dielectric 1\" (type \"core\") (thickness 1.51)) (layer \"B.Cu\" (type \"copper\") (thickness 0.035)))) (net 0 \"\"))"));
+  REQUIRE(partial.stackup.present);
+  const auto g = partial.stackup.between(0, 1);
+  CHECK(g.thickness == 1'510'000);
+  CHECK(!g.complete);
+  CHECK(g.epsilon_r == 0);
+}
+
+TEST_CASE("stackup: KiCad demo with dielectric sublayers round-trips", "[kicad][io][stackup]") {
+  const fs::path p = src_dir() / "bench/data/kicad/demos/tiny_tapeout/tinytapeout-demo.kicad_pcb";
+  if (!fs::exists(p)) SKIP("fixtures missing: run scripts/fetch_fixtures.sh");
+  const auto lb = tmk::io::read_board_file(p.string());
+  REQUIRE(lb.board.stackup.present);
+  int sub = 0;
+  for (const auto& l : lb.board.stackup.layers)
+    if (l.sublayers == 2) {
+      ++sub;
+      CHECK(l.thickness == 2 * 68'130);
+      CHECK(std::fabs(l.epsilon_r - 4.3) < 1e-9);
+    }
+  CHECK(sub >= 1);
+  std::ifstream f(p, std::ios::binary);
+  const std::string orig((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+  CHECK(lb.doc.write() == orig);
+}

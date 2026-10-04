@@ -9,6 +9,7 @@
 
 #include "core/units.hpp"
 #include "geom/point.hpp"
+#include "model/stackup.hpp"
 #include "sexpr/sexpr.hpp"
 
 namespace tmk::model {
@@ -172,6 +173,7 @@ struct Board {
   Coord thickness = 1'600'000;
   Coord pad_to_mask_clearance = 0;  // board solder-mask expansion for pads (setup)
   bool vias_tented = false;         // (setup (tenting front back)); old boards: untented
+  Stackup stackup;                  // (setup (stackup ...)); present == false when the file has none
   std::vector<std::string> warnings;
 
   int copper_count() const { return static_cast<int>(copper.size()); }

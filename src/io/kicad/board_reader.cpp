@@ -32,6 +32,7 @@ class Reader {
     if (NodeId setup = d_.find(root, "setup"); setup != kNoNode) {
       b_.pad_to_mask_clearance = child_nm(setup, "pad_to_mask_clearance", 0);
       if (NodeId t = d_.find(setup, "tenting"); t != kNoNode) b_.vias_tented = has_symbol(t, "front") || has_symbol(t, "back");
+      if (NodeId st = d_.find(setup, "stackup"); st != kNoNode) read_stackup(st);
     }
     b_.nets.push_back(model::Net{0, "", 0});
     b_.net_index[""] = 0;
@@ -90,6 +91,67 @@ class Reader {
       return v.empty() || v == "yes" || v == "true";
     }
     return has_symbol(list, name);
+  }
+
+  // (stackup (layer "F.Cu" (type "copper") (thickness 0.035)) (layer "dielectric 1" (type "core") (thickness 0.1 locked)
+  //  (material "FR4") (epsilon_r 4.5) (loss_tangent 0.02) addsublayer (thickness 0.1) ...) ... (copper_finish "ENIG"))
+  // Read-only: the block is never rewritten (rule 8). Copper layers are mapped to stack indices after the layer table.
+  void read_stackup(NodeId st) {
+    model::Stackup& s = b_.stackup;
+    s.present = true;
+    for (NodeId c : d_.children(st)) {
+      if (!d_.is_list(c)) continue;
+      const std::string_view h = d_.head(c);
+      if (h == "copper_finish") s.copper_finish = d_.str_at(c, 1);
+      else if (h == "dielectric_constraints") s.dielectric_constraints = d_.str_at(c, 1) == "yes";
+      else if (h == "layer") s.layers.push_back(read_stackup_layer(c));
+    }
+  }
+
+  model::StackupLayer read_stackup_layer(NodeId n) {
+    model::StackupLayer l;
+    l.name = d_.str_at(n, 1);
+    if (NodeId t = d_.find(n, "type"); t != kNoNode) l.type = d_.str_at(t, 1);
+    l.copper_index = l.type == "copper" ? b_.copper_index(l.name) : -1;
+    if (l.type == "copper" && l.copper_index < 0)
+      b_.warnings.push_back("stackup copper layer " + l.name + " is not in the layer table");
+    // Sublayers: the children after each bare `addsublayer` symbol describe one more dielectric sheet.
+    struct Sheet { Coord h = 0; double er = 0, tand = 0; bool has_er = false; std::string material; };
+    std::vector<Sheet> sheets(1);
+    for (NodeId c : d_.children(n)) {
+      if (!d_.is_list(c)) {
+        if (d_.node(c).kind == sexpr::Kind::Symbol && d_.raw(c) == "addsublayer") sheets.emplace_back();
+        continue;
+      }
+      const std::string_view h = d_.head(c);
+      Sheet& sh = sheets.back();
+      if (h == "thickness") sh.h = d_.nm_at(c, 1).value_or(0);
+      else if (h == "epsilon_r") {
+        if (const auto v = d_.number_at(c, 1); v && *v > 0) {
+          sh.er = *v;
+          sh.has_er = true;
+        }
+      } else if (h == "loss_tangent") sh.tand = d_.number_at(c, 1).value_or(0);
+      else if (h == "material") sh.material = d_.str_at(c, 1);
+    }
+    l.sublayers = static_cast<int>(sheets.size());
+    l.material = sheets.front().material;
+    l.epsilon_complete = true;
+    double h_over_er = 0, tand_h = 0;
+    for (const Sheet& sh : sheets) {
+      l.thickness += sh.h;
+      l.epsilon_complete = l.epsilon_complete && sh.has_er;
+      if (sh.has_er) h_over_er += static_cast<double>(sh.h) / sh.er;
+      tand_h += sh.tand * static_cast<double>(sh.h);
+    }
+    if (sheets.size() == 1) {
+      l.epsilon_r = sheets.front().er;
+      l.loss_tangent = sheets.front().tand;
+    } else if (l.epsilon_complete && h_over_er > 0) {
+      l.epsilon_r = static_cast<double>(l.thickness) / h_over_er;  // series combination (stackup.hpp)
+      l.loss_tangent = l.thickness > 0 ? tand_h / static_cast<double>(l.thickness) : 0;
+    }
+    return l;
   }
 
   NetId intern_net(const std::string& name) {
