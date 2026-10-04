@@ -51,6 +51,10 @@ Same machine, 120 s per board, 8 variants, 2 boards at a time. "cur" = tonight's
 | Tier D (22) | 50.0 %, 16,497 routed, 95.0 % completion | – | – | 50.0 %, **16,626**, 96.2 % |
 | BGA set (17) | 41.2 %, 6,916 routed | – | 41.2 %, 6,947 | – |
 
+With the final 2 mm corridors: tier B 67.5 %, 5,167 routed; tier C 63.3 %, 9,523 (within noise of the 1 mm arm).
+The route JSON now records the winning variant: across tiers B and C the two escape-planning variants won 16 of 70
+boards ("fast bends, dear vias" won most, 24).
+
 Tier C gained a board (multisensor_cr2032) from the via neck-down / dead-pin changes. In tier D, Keyboard became
 clean and m2fc lost its clean pass by one connection (723/724, "search budget"): the old binary's winning variant on
 m2fc was one of the two that now carry escape planning. At a fixed 70 M budget old and new route m2fc identically
