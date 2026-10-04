@@ -1,0 +1,191 @@
+{
+ "about": "Hand-labelled component categories on PCBench boards (doc 15 §9.1 L1), labelled 2026-10-04 from footprint names, values and nets (no schematics). Each board lists, per category, the references a human sees as that category; a category missing from a board's labels means the board has none. 'ignore' lists references whose label is ambiguous; they count neither way. ic_decoupling is labelled only on the boards that carry an ic_decoupling key. Scored by bench/crules_detect.py.",
+ "fixtures": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/<board>/unrouted.kicad_pcb",
+ "categories": ["crystal", "oscillator", "usb2", "esd_tvs", "ldo", "buck", "boost", "rf_module", "can", "rs485", "connector_general", "mounting_hole"],
+ "definitions": {
+  "crystal": "quartz crystal or ceramic resonator (2, 3 or 4 pads)",
+  "oscillator": "active oscillator module (MEMS/XO), not a passive crystal",
+  "usb2": "any USB receptacle or plug footprint (A, B, mini, micro, C, board-mount OTG), with or without data lines; a pin header named USB is not one",
+  "esd_tvs": "a part made for ESD/transient protection: TVS diodes (SMAJ, SMBJ, SM24, PESD, PRTR), ESD arrays and USB ESD/EMI filters (USBLC6, STF202, NUF2042); Zeners, Schottkys and generic clamp diodes (BAV99) are not, or are ignored when used as clamps",
+  "ldo": "linear regulator (78xx, 1117, MCP1700/1703, AP2112, XC6206, ...)",
+  "buck": "step-down switching regulator IC",
+  "boost": "step-up switching regulator IC (incl. LED boost drivers); buck-boost parts are ignored",
+  "rf_module": "radio module with its own antenna (ESP32/ESP8266 modules, RFM95, nRF52 modules); a socket for a plugged module is ignored",
+  "can": "CAN transceiver IC",
+  "rs485": "RS-485/RS-422 transceiver IC",
+  "connector_general": "board-to-wire/board-to-board connector: headers, sockets, terminal blocks, JST/Molex, USB, RJ, barrel jacks, card sockets, RF connectors, castellated edge pads; jumpers, test pins and module footprints are not (or are ignored)",
+  "mounting_hole": "mechanical mounting hole, whatever its reference",
+  "ic_decoupling": "capacitor between a supply (or an IC's local supply node, VDDA, AREF, regulator in/out) and ground that serves an IC's power pin; crystal load caps, signal filters, AC coupling and LED-driver outputs are not"
+ },
+ "boards": {
+  "CANadapter_CANadapter": {
+   "labels": {"crystal": ["Y1"], "esd_tvs": ["D1"], "ldo": ["U5"], "can": ["U4"], "connector_general": ["P1", "P2", "P3", "P4"],
+              "ic_decoupling": ["C1", "C4"]}
+  },
+  "UCCBPCB_USB_CAN_CONVERTER_BASIC": {
+   "labels": {"usb2": ["P3"], "esd_tvs": ["U2", "U5"], "ldo": ["U4"], "can": ["U3"], "connector_general": ["P1", "P2", "P3", "P4"],
+              "ic_decoupling": ["C2", "C3", "C4", "C5", "C7", "C8"]}
+  },
+  "USBtin_USBtin": {
+   "labels": {"crystal": ["Y1"], "usb2": ["J1"], "can": ["U2"], "connector_general": ["J1", "J2"]},
+   "ignore": {"connector_general": ["JP1", "JP2"]}
+  },
+  "gwurrbus_gwurrbus-relay": {
+   "labels": {"crystal": ["Y1"], "ldo": ["U1"], "rs485": ["U2"], "connector_general": ["P1", "PROG1", "PWR1", "RS485", "RS485S1"]}
+  },
+  "shutter_Shutter V4": {
+   "labels": {"crystal": ["Y1"], "ldo": ["U2"], "rs485": ["U1"], "connector_general": ["CON1", "CON2", "K1", "P1", "P2", "P3"]}
+  },
+  "raspican_raspican": {
+   "labels": {"crystal": ["Y1"], "can": ["U1"], "connector_general": ["J1", "J2", "P1"]},
+   "ignore": {"connector_general": ["J3"]}
+  },
+  "esp32-cantroller_EltekController": {
+   "labels": {"rf_module": ["U1"], "usb2": ["USB1"], "can": ["U2"], "ldo": ["U3"], "mounting_hole": ["H1", "H2", "H3", "H4"],
+              "connector_general": ["J1", "J2", "J3", "USB1"]},
+   "ignore": {"connector_general": ["I2C1", "JP1", "JP2"]}
+  },
+  "data-manager_data-manager": {
+   "labels": {"rf_module": ["U1"], "usb2": ["J3"], "can": ["U5"], "ldo": ["U3"], "mounting_hole": ["H1", "H2", "H3", "H4"],
+              "connector_general": ["J1", "J2", "J3", "J4", "J5"]}
+  },
+  "ESP32-board_esp32_board": {
+   "labels": {"rf_module": ["U3"], "usb2": ["P1"], "ldo": ["U1"], "mounting_hole": ["REF**", "REF**_2", "REF**_3"],
+              "connector_general": ["P1", "P3", "P4", "P11", "P12"]},
+   "ignore": {"connector_general": ["P5", "P6", "P7", "P8", "P9", "P10"]}
+  },
+  "esp32stack_esp32stack": {
+   "labels": {"rf_module": ["U1"], "usb2": ["P1"], "ldo": ["U2"], "connector_general": ["J1", "J2", "P1"],
+              "ic_decoupling": ["C3", "C4", "C5", "C6", "C7", "C8"]}
+  },
+  "ESP8266-MQTT-battery-monitor-hw_battery-monitor": {
+   "labels": {"esd_tvs": ["CR1", "CR2", "CR3"], "rf_module": ["U2"], "buck": ["U3"], "connector_general": ["J1", "J2", "J3"],
+              "mounting_hole": ["MTG-HOLE-125-RING-300", "MTG-HOLE-125-RING-300_2", "MTG-HOLE-125-RING-300_3", "MTG-HOLE-125-RING-300_4"]}
+  },
+  "LoRaWAN_GPS_MINI-ULTRA-PRO": {
+   "labels": {"esd_tvs": ["D3"], "usb2": ["J2"], "rf_module": ["U3"], "ldo": ["U4"], "crystal": ["Y1"], "mounting_hole": ["M1", "M2", "M3", "M4"],
+              "connector_general": ["J1", "J2", "J3", "J4", "J5", "J6"],
+              "ic_decoupling": ["C3", "C4", "C5", "C6", "C7", "C8", "C9", "C11", "C12", "C13", "C14", "C15", "C16", "C17", "C19"]}
+  },
+  "PiZeroHub_PiZeroHub": {
+   "labels": {"usb2": ["P1", "P2", "P3", "P4", "P5", "P6", "P7"], "esd_tvs": ["U2", "U3", "U4", "U5"], "crystal": ["Y1"], "mounting_hole": ["REF**", "REF**_2"],
+              "connector_general": ["P1", "P2", "P3", "P4", "P5", "P6", "P7"]}
+  },
+  "4-port-usb-hub_4port-usb-hub": {
+   "labels": {"usb2": ["P1", "P2", "P3", "P4", "P5"], "crystal": ["Y1"], "mounting_hole": ["P7", "P8", "P9"],
+              "connector_general": ["P1", "P2", "P3", "P4", "P5", "P6"]}
+  },
+  "Hardware_Playground_NRF52832_Touch_Switch_Power_Supply": {
+   "labels": {"esd_tvs": ["D15"], "ldo": ["U2"], "mounting_hole": ["Noname_1", "Noname_2", "Noname_3"], "connector_general": ["CN1"]},
+   "ignore": {"connector_general": ["H1", "H2", "H3"], "buck": ["U4"], "boost": ["U4"]}
+  },
+  "eeg_brainboard_batteryv0": {
+   "labels": {"usb2": ["CON1"], "esd_tvs": ["D1"], "ldo": ["U4"], "connector_general": ["CON1", "P1", "P4"]},
+   "ignore": {"connector_general": ["P2", "P3", "P6", "P7", "P8", "P9", "P10", "U6"]}
+  },
+  "MoonLander_MoonLander": {
+   "labels": {"esd_tvs": ["IC3"], "usb2": ["P3"], "ldo": ["IC2"], "crystal": ["Y1"], "mounting_hole": ["MH1", "MH2"],
+              "connector_general": ["J1", "P1", "P2", "P3", "P4"]}
+  },
+  "HACK_hack": {
+   "labels": {"usb2": ["P1"], "esd_tvs": ["U2"], "ldo": ["U1"], "crystal": ["X1"], "connector_general": ["P1", "P2", "P3", "P4", "P5"],
+              "ic_decoupling": ["C1", "C2", "C3", "C4", "C8", "C9", "C10"]},
+   "ignore": {"connector_general": ["JP1"]}
+  },
+  "MicroMaple_MicroMaple": {
+   "labels": {"usb2": ["P1"], "ldo": ["U2", "U3"], "crystal": ["X1"], "connector_general": ["P1", "P2", "P3", "P4"],
+              "ic_decoupling": ["C1", "C2", "C3", "C4", "C7", "C8", "C9"]},
+   "ignore": {"connector_general": ["P5", "P6", "P7", "P8"]}
+  },
+  "bobc_MS-F100": {
+   "labels": {"usb2": ["P1"], "esd_tvs": ["U4"], "ldo": ["U1", "U3"], "crystal": ["X1"], "connector_general": ["P1", "P2", "P3", "P4"],
+              "ic_decoupling": ["C3", "C4", "C5", "C6", "C7", "C8"]}
+  },
+  "espionage_esplight": {
+   "labels": {"usb2": ["P1"], "ldo": ["U2"], "rf_module": ["U3"], "crystal": ["Y1"], "connector_general": ["P1", "P2"],
+              "ic_decoupling": ["C3", "C4"]}
+  },
+  "MeArm-Wireless-PCB_MeArmWireless": {
+   "labels": {"usb2": ["P2"], "ldo": ["U8"], "rf_module": ["U1"], "crystal": ["X1"], "connector_general": ["P1", "P2", "P4", "P5"]}
+  },
+  "Hornbill-ESP32-Minima_Beacon32": {
+   "labels": {"rf_module": ["M1"], "ldo": ["U1"], "crystal": ["Y1"], "connector_general": ["P2", "P17"]},
+   "ignore": {"connector_general": ["P1", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "P15", "P16"]}
+  },
+  "NightClock_ESPBoard": {
+   "labels": {"rf_module": ["U2"], "ldo": ["U1"], "mounting_hole": ["REF**", "REF**_2", "REF**_3", "REF**_4"], "connector_general": ["P1", "P2", "P3", "P4", "P5", "P6"]},
+   "ignore": {"connector_general": ["JP1"]}
+  },
+  "kitspace_OtterScreen": {
+   "labels": {"usb2": ["J2"], "boost": ["U3", "U4"], "ldo": ["U5"], "mounting_hole": ["H1", "H2"], "connector_general": ["J1", "J2"]},
+   "ignore": {"connector_general": ["U1"]}
+  },
+  "ArduinoDueClone_ATSAM3X8EA": {
+   "labels": {"usb2": ["P4", "P5"], "ldo": ["U2"], "crystal": ["Y1", "Y2"],
+              "connector_general": ["P2", "P3", "P4", "P5", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14"]},
+   "ignore": {"esd_tvs": ["D5", "D6"]}
+  },
+  "OricMouse_OricMouse": {
+   "labels": {"crystal": ["Y1"], "ldo": ["U3"], "mounting_hole": ["Hole1", "Hole2", "Hole3", "Hole4"], "connector_general": ["P1", "P2", "P3", "P4", "P5", "P6"]},
+   "ignore": {"connector_general": ["JP1"]}
+  },
+  "blackmagic-isolated_mmp": {
+   "labels": {"crystal": ["Y1"], "ldo": ["IC2"], "usb2": ["P1"], "connector_general": ["J1", "P1", "P2"],
+              "ic_decoupling": ["C2", "C3", "C5", "C7", "C8", "C9", "C10", "C11"]},
+   "ignore": {"ic_decoupling": ["C6"]}
+  },
+  "kitspace_ESP8266-PowerMonitor": {
+   "labels": {"rf_module": ["U2"], "ldo": ["U1"], "mounting_hole": ["REF**"], "connector_general": ["J1", "J2", "J3", "J4", "J5"]},
+   "ignore": {"connector_general": ["JP1"]}
+  },
+  "cat-trainer_teensy_base_pcb": {
+   "labels": {"ldo": ["U1", "U2"], "mounting_hole": ["REF**", "REF**_2", "REF**_3", "REF**_4"],
+              "connector_general": ["CON_9V1", "P_ACC1", "P_ACC2", "P_DISP1", "P_PUMP1", "P_SERVO1", "P_UART1"]},
+   "ignore": {"rf_module": ["U4"], "connector_general": ["SW_DN1", "SW_ENT1", "SW_UP1", "U3", "U4", "U5"]}
+  },
+  "Hardware_Playground_nrf52832_uno": {
+   "labels": {"rf_module": ["U1"], "usb2": ["USB1"], "ldo": ["U3"], "crystal": ["X1"], "connector_general": ["J1", "P1", "USB1"]},
+   "ignore": {"connector_general": ["NFC", "Vdd"], "mounting_hole": ["Noname_1", "Noname_2", "Noname_3"]}
+  },
+  "RSL_RSL": {
+   "labels": {"crystal": ["X1"], "ldo": ["U2"],
+              "connector_general": ["J1", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P12", "P13", "P14", "P15"]},
+   "ignore": {"connector_general": ["P11"], "usb2": ["J1"]}
+  },
+  "C-BISCUIT_buck-reg-5v": {
+   "labels": {"buck": ["U1"], "mounting_hole": ["REF**_2", "REF**_3", "REF**_4", "REF**_5"], "connector_general": ["P1", "P2"]},
+   "ignore": {"connector_general": ["W1", "W2"]}
+  },
+  "kitspace_12_24_boost_converter": {
+   "labels": {"mounting_hole": ["REF**", "REF**_2", "REF**_3", "REF**_4"], "connector_general": ["J1", "J2", "J3", "J4"]},
+   "ignore": {"boost": ["U1"]}
+  },
+  "TPS63001-Breakout_TPS63001 Breakout": {
+   "labels": {"mounting_hole": ["P1", "P2"], "connector_general": ["P3"]},
+   "ignore": {"buck": ["U1"], "boost": ["U1"]}
+  },
+  "supply-ldo-adj-single_supply-ldo-adj-single": {
+   "labels": {"ldo": ["U1"], "connector_general": ["P1", "P2", "P3", "P4"]},
+   "ignore": {"connector_general": ["P5", "P6"]}
+  },
+  "typec-charger_TypeC-DC-Charger": {
+   "labels": {"usb2": ["J1"], "connector_general": ["CON1", "J1"]},
+   "ignore": {"buck": ["U1"], "boost": ["U1"], "connector_general": ["TEST2", "TEST3", "TEST5"]}
+  },
+  "kitspace_USB-C-Screen-Adapter": {
+   "labels": {"usb2": ["J1"], "esd_tvs": ["U5"], "ldo": ["U4"], "boost": ["U1", "U2"], "connector_general": ["J1", "P1"],
+              "ic_decoupling": ["C1", "C2", "C3", "C4", "C9", "C11", "C17", "C18", "C19", "C20", "C21", "C22"]},
+   "ignore": {"connector_general": ["U6", "TP1", "TP2", "TP3"], "ic_decoupling": ["C23"]}
+  },
+  "Hardware_Playground_buck_led_driver": {
+   "labels": {"connector_general": ["J1", "J2", "J3", "J4"]},
+   "ignore": {"buck": ["U1"]}
+  },
+  "ChirpHardware_chirp": {
+   "labels": {"ldo": ["U6"], "oscillator": ["Y1"], "connector_general": ["P1", "P7"]}
+  },
+  "Solare-BQ24210_Solare-BQ24210": {
+   "labels": {"connector_general": ["J1", "J2", "J3", "J4"]}
+  }
+ }
+}

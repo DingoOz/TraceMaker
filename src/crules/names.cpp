@@ -90,8 +90,13 @@ bool ground_like_name(std::string_view name) {
 
 bool analog_supply_name(std::string_view name) {
   const std::string n = upper(net_leaf(name));
-  for (const char* pfx : {"VREF", "AREF", "VCAP", "AVCC", "AVDD", "VDDA", "VLCD", "VIO", "VDDIO", "VDDUSB", "VUSB", "V3V3", "V5V", "VCORE"})
+  for (const char* pfx : {"VREF", "AREF", "VCAP", "AVCC", "AVDD", "VDDA", "VLCD", "VIO", "VDDIO", "VDDUSB", "VUSB", "V3V3", "V5V", "VCORE",
+                          "VEXT", "VLDO", "VREG", "VOUT", "VSUP", "AV+"})
     if (n.starts_with(pfx)) return true;
+  // KiCad power symbols are named "+<something>" (+BATT, +VIN); "3.3V" / "+3.3V" with a decimal point.
+  if (n.size() > 1 && n[0] == '+' && is_alpha(n[1])) return true;
+  static const std::regex volts(R"(^[+]?\d+[.,]\d+V\d*$)", std::regex::ECMAScript | std::regex::optimize);
+  if (std::regex_search(n, volts)) return true;
   return n == "REF" || n.ends_with("_VREF") || n.ends_with("_AREF");
 }
 

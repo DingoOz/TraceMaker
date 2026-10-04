@@ -1,0 +1,61 @@
+{
+ "about": "Held-out labels (doc 15 §9.1 L1): 12 PCBench boards labelled 2026-10-04 after the detectors were tuned on bench/crules_labels.json and before running detection on them. Same definitions and format as bench/crules_labels.json; never tune detectors on these.",
+ "fixtures": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/<board>/unrouted.kicad_pcb",
+ "categories": ["crystal", "oscillator", "usb2", "esd_tvs", "ldo", "buck", "boost", "rf_module", "can", "rs485", "connector_general", "mounting_hole"],
+ "boards": {
+  "Curryboard_Curryboard": {
+   "labels": {"crystal": ["X1", "X2"], "ldo": ["IC1"], "boost": ["U2"], "connector_general": ["CON1", "P1"]},
+   "ignore": {"connector_general": ["U6", "JP1"]}
+  },
+  "linklayer_contact": {
+   "labels": {"crystal": ["X1"], "usb2": ["P1"], "ldo": ["U2"], "can": ["U3"], "mounting_hole": ["Noname_1", "Noname_2"],
+              "connector_general": ["P1", "P2", "P3"]},
+   "ignore": {"connector_general": ["JP1", "JP2", "JP3", "JP4", "JP5", "TP1", "TP2", "TP3"]}
+  },
+  "newer-motor-controllers_stm32f407riser": {
+   "labels": {"crystal": ["X2"], "can": ["U2"], "ldo": ["U7"], "usb2": ["X1"],
+              "connector_general": ["J1", "J2", "J3", "J4", "P1", "P2", "P3", "P4", "P5", "X1"]}
+  },
+  "Vento_Vento": {
+   "labels": {"esd_tvs": ["DA1"], "usb2": ["J4"], "ldo": ["U2"], "crystal": ["X1", "X2", "X3"], "mounting_hole": ["H1", "H2", "H3", "H4"],
+              "connector_general": ["J1", "J2", "J3", "J4", "P1", "P2", "T1"]},
+   "ignore": {"rf_module": ["U4"]}
+  },
+  "kitspace_Oak": {
+   "labels": {"usb2": ["J2"], "ldo": ["U1"], "rf_module": ["U5"], "mounting_hole": ["REF1", "REF2"], "connector_general": ["J2", "J3", "J4"]},
+   "ignore": {"rf_module": ["U4"], "connector_general": ["J1", "U6"]}
+  },
+  "BlueBerry-Zero_blueberry": {
+   "labels": {"usb2": ["P2"], "boost": ["U2"], "ldo": ["U4"], "rf_module": ["U5"], "mounting_hole": ["REF**", "REF**_2", "REF**_3", "REF**_4"],
+              "connector_general": ["P1", "P2", "P3"]}
+  },
+  "f4fc_f4fc": {
+   "labels": {"usb2": ["P3"], "ldo": ["U3"], "crystal": ["X1"], "mounting_hole": ["REF**", "REF**_2", "REF**_3", "REF**_4"],
+              "connector_general": ["P3", "P4", "P5", "PORT_OUT1"]},
+   "ignore": {"connector_general": ["P1", "P2", "P6", "P7", "P9"]}
+  },
+  "beer-gauge_beer-gauge": {
+   "labels": {"usb2": ["P5"], "ldo": ["U2"], "crystal": ["Y1", "Y2"], "mounting_hole": ["REF**_2", "REF**_3", "REF**_4", "REF**_5"],
+              "connector_general": ["CON1", "P1", "P2", "P3", "P4", "P5", "J1"]},
+   "ignore": {"connector_general": ["BT1", "W1", "W2", "W3", "W4", "W5", "W6"]}
+  },
+  "flip32plus_flip32": {
+   "labels": {"usb2": ["CON1"], "ldo": ["IC2", "U1"], "crystal": ["X1"], "mounting_hole": ["MNT1", "MNT2", "MNT3", "MNT4"],
+              "connector_general": ["BEEP", "CON1", "ESC", "I2C", "JTAG", "RC_CH", "Spektrum", "UART1", "VBAT"]},
+   "ignore": {"connector_general": ["BOOT", "PA15", "PB14", "PB15", "PC13", "PC14", "PC15", "FSYNC-MPU", "JP1"]}
+  },
+  "SensebenderMicro2_SensebenderMicro2": {
+   "labels": {"ldo": ["U2"], "rf_module": ["U3", "U4"], "crystal": ["Y1"], "connector_general": ["P2", "P3"]},
+   "ignore": {"connector_general": ["W1", "W2", "W3", "W4", "W5", "JP1", "JP2"]}
+  },
+  "TinyTracker_ub-minimal": {
+   "labels": {"buck": ["U8"], "crystal": ["X1"], "connector_general": ["P2", "BT1"]},
+   "ignore": {"rf_module": ["U2", "U3"], "connector_general": ["P1"]}
+  },
+  "MySensorsNode_LE-BOX-0028": {
+   "labels": {"ldo": ["U1"], "boost": ["U2", "U9"], "rf_module": ["U4", "U5"], "mounting_hole": ["HOLE1", "HOLE2", "HOLE3", "HOLE4"],
+              "connector_general": ["P1", "P2", "P3", "P4", "BT1", "BT2", "BT3"]},
+   "ignore": {"connector_general": ["ANT1", "BT4", "BT5", "U7", "JP1", "JP2", "JP3", "JP4", "JP5", "JP6", "JP7", "JP8", "JP9", "JP10"]}
+  }
+ }
+}

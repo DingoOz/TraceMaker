@@ -676,7 +676,7 @@ Detected by: topology (up to 80), pin_name (up to 10). Roles: `cap`, `pin`, `ic`
 
 #### `buck` — Switching step-down (buck) regulator
 
-Detected by: pin_name (up to 40), value (up to 30), keywords (up to 30), topology (up to 30). Roles: `ic`, `cin`, `inductor`, `cout`, `sw`, `fb`, `fb_div`, `diode`, `snubber`, `epad`.
+Detected by: pin_name (up to 40), value (up to 50), keywords (up to 30), topology (up to 30). Roles: `ic`, `cin`, `inductor`, `cout`, `sw`, `fb`, `fb_div`, `diode`, `snubber`, `epad`.
 
 | ID | Rule | Parameters (defaults) | Sev. | Enforced | Ev. | Sources |
 |---|---|---|---|---|---|---|
@@ -698,7 +698,7 @@ Detected by: pin_name (up to 40), value (up to 30), keywords (up to 30), topolog
 
 #### `boost` — Switching step-up (boost) regulator
 
-Detected by: keywords (up to 40), value (up to 30), pin_name (up to 30). Roles: `ic`, `inductor`, `rect`, `cout`, `cin`, `fb`, `sw`.
+Detected by: keywords (up to 40), value (up to 50), pin_name (up to 30). Roles: `ic`, `inductor`, `rect`, `cout`, `cin`, `fb`, `sw`.
 
 | ID | Rule | Parameters (defaults) | Sev. | Enforced | Ev. | Sources |
 |---|---|---|---|---|---|---|

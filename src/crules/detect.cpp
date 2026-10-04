@@ -134,13 +134,14 @@ bool dm_name(const std::string& leaf) {
 Bound bind_usb(const Ctx& c, int anchor, bool typec_only) {
   Bound r;
   const auto& fp = c.b.footprints[static_cast<std::size_t>(anchor)];
-  static const std::regex lib_c = icase("usb_c|type.?c");
+  static const std::regex lib_c = icase("usb[_-]?c([_-]|$)|type.?c");
   static const std::regex lib_ab = icase("usb_(micro|mini|a|b)|micro.?usb|mini.?usb|usb.?(micro|mini)|usb_?a_|usb_?b_");
-  const bool is_c = search(fp.lib_id, lib_c), is_ab = search(fp.lib_id, lib_ab);
+  const std::string fname = fp.lib_id.substr(fp.lib_id.rfind(':') == std::string::npos ? 0 : fp.lib_id.rfind(':') + 1);
+  const bool is_c = search(fname, lib_c), is_ab = search(fname, lib_ab);
   if (typec_only && !is_c) {
     // usb3_typec also matches lib_id "usb3"; anything else is a plain USB 2.0 connector.
     static const std::regex usb3 = icase("usb3|usb_?3");
-    if (!search(fp.lib_id, usb3)) {
+    if (!search(fname, usb3)) {
       r.ok = false;
       r.why = "not a Type-C or USB 3 receptacle";
       return r;
@@ -510,7 +511,8 @@ Bound bind_esd(const Ctx& c, int anchor) {
 
 Bound bind_connector(const Ctx& c, int anchor) {
   Bound r;
-  static const std::set<std::string> not_conn = {"U", "IC", "R", "C", "L", "D", "Q", "Y", "SW", "S", "F", "FB", "TP", "H", "MH", "LED", "BT", "RV", "T", "Z", "ZD", "VR", "K", "RN", "M"};
+  // Parts, jumpers and test points: not external connectors even on a header footprint.
+  static const std::set<std::string> not_conn = {"U", "IC", "R", "C", "L", "D", "Q", "Y", "SW", "S", "F", "FB", "TP", "H", "MH", "LED", "BT", "RV", "T", "Z", "ZD", "VR", "RN", "M", "JP", "SJ", "W", "NT", "TEST", "FID"};
   if (not_conn.count(c.ix.letters(anchor)) || c.ix.pad_count(anchor) == 0) {
     r.ok = false;
     r.why = "reference " + c.ix.letters(anchor) + " is not a connector";
@@ -646,7 +648,7 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
     for (std::size_t fi = 0; fi < b.footprints.size(); ++fi) {
       const int f = static_cast<int>(fi);
       const auto& fp = b.footprints[fi];
-      if (fp.pads.empty() && fp.lib_id.empty()) continue;
+      if (fp.pads.empty()) continue;  // logos and drawings: nothing to bind (a mounting hole has an NPTH pad)
       // Non-topology detectors on the anchor's own fields.
       std::vector<char> hit(C.detect.size(), 0);
       bool any = false;
@@ -655,7 +657,15 @@ Detection detect(const model::Board& b, const Catalogue& cat) {
         bool h = false;
         switch (d.signal) {
           case Signal::RefPrefix: h = search(fp.reference, d.re); break;
-          case Signal::LibId: h = search(fp.lib_id, d.re); break;
+          case Signal::LibId: {
+            // A pattern written as "library:footprint" matches the whole lib_id; any other pattern matches the
+            // footprint name only, because library nicknames are free text ("usb_ccb_custom:QFN-48" is not a USB
+            // connector; PCBench UCCBPCB).
+            const auto colon = fp.lib_id.rfind(':');
+            const bool whole = d.pattern.find(':') != std::string::npos || colon == std::string::npos;
+            h = search(whole ? fp.lib_id : fp.lib_id.substr(colon + 1), d.re);
+            break;
+          }
           case Signal::Value: h = search(fp.value, d.re); break;
           case Signal::Keywords: h = search(fp.description + " " + fp.keywords, d.re) && !(fp.description.empty() && fp.keywords.empty()); break;
           case Signal::NetName:
