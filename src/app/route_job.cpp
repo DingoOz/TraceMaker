@@ -134,6 +134,22 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("component rules (%s): %zu instance(s), %zu generated keep-out(s)%s", job.component_rules.c_str(), det.instances.size(), kos.size(),
             cr_mode == crules::Mode::On ? "" : " (not applied: use --component-rules on)"));
     for (const auto& s : skipped) log("  keep-out not generated: " + s);
+    // Events for the viewer and recordings (rule 7, doc 15 §7): what was detected and the keep-out polygons (nm).
+    if (opt.sink) {
+      for (const auto& in : det.instances)
+        opt.sink->publish(nlohmann::json{{"type", "crules.detected"},
+                                         {"category", cat.categories[static_cast<std::size_t>(in.category)].id},
+                                         {"anchor", lb.board.footprints[static_cast<std::size_t>(in.anchor)].reference},
+                                         {"confidence", in.confidence}}
+                              .dump());
+      for (const auto& k : kos) {
+        nlohmann::json poly = nlohmann::json::array();
+        for (const auto& q : k.zone.outline.front()) poly.push_back({q.x, q.y});
+        opt.sink->publish(nlohmann::json{{"type", "crules.keepout"}, {"name", k.zone.name}, {"layers", k.zone.layers},
+                                         {"applied", cr_mode == crules::Mode::On}, {"polygon", poly}}
+                              .dump());
+      }
+    }
     // USB2-02 (P3): route each detected USB 2.0 D+/D- pair coupled first (a soft preference: the router falls back
     // to single tracks). Only pairs bound to exactly one net each.
     if (cr_mode == crules::Mode::Soft || cr_mode == crules::Mode::On)
