@@ -2278,10 +2278,12 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   add("exact bends, shortest first", [](RouterOptions&) {});
   add("fast bends, shortest first", [&](RouterOptions& o) { o.bend_states = false; });
   add("fast bends, longest first (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.order = 1; o.pitch_scale = 2.0; });
-  add("fast bends, jittered order", [&](RouterOptions& o) { o.bend_states = false; o.order = 2; o.seed = base.seed + 1; });
+  // Escape planning (M9) as a portfolio arm: on in two variants, so boards where it helps get it while the others
+  // keep their configurations (all variants on: tier B +8 connections, tier C -7; doc 05 §12).
+  add("fast bends, jittered order, escape plan", [&](RouterOptions& o) { o.bend_states = false; o.order = 2; o.seed = base.seed + 1; o.escape_plan = true; });
   add("exact bends, jittered order", [&](RouterOptions& o) { o.order = 2; o.seed = base.seed + 2; });
   add("fast bends, cheap vias (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; o.pitch_scale = 2.0; });
-  add("fast bends, cheap crossings", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; });
+  add("fast bends, cheap crossings, escape plan", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; o.escape_plan = true; });
   add("fast bends, dear vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 2.5; });
   std::vector<int> chosen;
   if (!pick.empty()) {
