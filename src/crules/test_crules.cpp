@@ -301,6 +301,12 @@ TEST_CASE("evaluation: proximity measured, statuses follow the mode", "[crules]"
       CHECK(s.status == Status::Applied);
     }
     if (r.spec->id == "RFM-02") CHECK(s.status != Status::Applied);
+    // J2's pads (no courtyard) sit at x = 95..97 mm on a 100 mm wide board: 3 mm from the right edge.
+    if (r.spec->id == "CONN-01" && b.footprints[static_cast<std::size_t>(d.instances[static_cast<std::size_t>(r.instance)].anchor)].reference == "J2") {
+      REQUIRE(r.measure);
+      CHECK(r.measure->value_mm == 3.0);
+      CHECK_FALSE(r.measure->met);
+    }
   }
   CHECK(saw);
   // Hard rules below the apply threshold are demoted to soft (doc 15 §3.2).

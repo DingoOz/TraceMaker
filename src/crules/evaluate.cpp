@@ -170,7 +170,7 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
         double best = 1e300;
         for (int f : {in.anchor})
           for (const Point& q : body_points(b, f))
-            for (const auto& [a, c] : edges) best = std::min(best, std::sqrt(static_cast<double>(geom::point_seg_dist(q, a, c))));
+            for (const auto& [a, c] : edges) best = std::min(best, static_cast<double>(geom::point_seg_dist(q, a, c)));  // a distance (nm), not squared
         Measure m;
         m.value_mm = nm_to_mm(geom::kiround(best));
         double lim = 0;

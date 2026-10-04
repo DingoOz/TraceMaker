@@ -41,7 +41,7 @@ bool point_seg_closer(Point p, Point a, Point b, Coord t);
 // True if the distance between segments ab and cd is strictly less than t (t >= 0).
 bool seg_seg_closer(Point a, Point b, Point c, Point d, Coord t);
 
-// Squared distances, for reporting (long double).
+// Distances in nm (not squared), for reporting (long double).
 long double point_seg_dist(Point p, Point a, Point b);
 long double seg_seg_dist(Point a, Point b, Point c, Point d);
 
