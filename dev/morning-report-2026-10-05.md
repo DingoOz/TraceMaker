@@ -2,7 +2,7 @@
 
 Written during the unattended run of 2026-10-04/05. Everything is committed locally on `main` (not pushed).
 Assumptions taken without being able to ask are listed at the end (M9: `dev/assumptions.md` A26–A32; M13:
-`dev/assumptions-m13.md` items 1–49).
+`dev/assumptions-m13.md` items 1–50).
 
 ## M9 — escape planning
 
@@ -104,7 +104,12 @@ Everything is **off by default** because the measurements showed regressions (D3
   "off" (decaps 3.66 → 3.30 mm, crystal 5.11 → 4.53, regulator caps 4.25 → 2.45) at equal HPWL, but per board decaps
   still got worse on two of the five boards that change (PocketBone 4.3 → 8.5 mm): then seeds 2–4 showed it was
   luck: at 75 % decaps were worse than "off" on every one of those seeds (and regulator caps too); only the crystal
-  gain held on all seeds. Weights do not resolve the conflict; the feature stays off (doc 15 §14).
+  gain held on all seeds. Weights do not resolve the conflict.
+  **What does work: two stages** (D43, now what `soft` does in full mode): place with the decoupling ties only, lock
+  those capacitors and their ICs, then refine with the crystal/ESD/regulator pulls. Over 23 boards × 3 seeds vs
+  "off": decap median equal (seed 2: 3.26 → 3.42 mm), crystal 5.11/6.70/5.07 → 4.66/5.77/4.72 mm, load caps
+  2.38/4.77/3.11 → 2.03/2.76/2.39 mm, HPWL 1 % shorter; 18 per-board changes better, 4 worse (PocketBone's decaps on
+  every seed). Good enough to be what `soft` means; not yet good enough to turn component rules on by default.
 - **Routing (`tracemaker route --component-rules soft|on`):** USB D+/D− routed as coupled pairs (soft; usually falls
   back to single tracks on these short runs) and crystal/inductor keep-outs (on). Keep-outs cost completion on 4 of
   10 affected boards (worst 93 → 86 connections), so they stay opt-in.
@@ -141,7 +146,7 @@ KiCad does not load it automatically: it has to be merged into, or copied as, th
 
 ## Assumptions
 
-See `dev/assumptions.md` (A26–A32, M9) and `dev/assumptions-m13.md` (M13, items 1–49). The ones most worth a look:
+See `dev/assumptions.md` (A26–A32, M9) and `dev/assumptions-m13.md` (M13, items 1–50). The ones most worth a look:
 
 - **A27/D33 — escape planning runs in 2 of the 8 portfolio variants**, chosen without data on which variants win
   (the route JSON now records the winner, so this can be revisited).
@@ -162,8 +167,8 @@ See `dev/assumptions.md` (A26–A32, M9) and `dev/assumptions-m13.md` (M13, item
 
 1. **Negotiation speed on large boards** (M6 global routing v2): the limit for logicbone-class boards now; escape
    planning cannot help there.
-2. **Decap vs crystal/ESD space conflict in placement** before turning component rules on: reserve room around IC
-   supply pins rather than tuning weights (weights were tested on four seeds and do not resolve it).
+2. **Turning component rules on in placement:** two-stage `soft` is nearly there; look at PocketBone (decaps worse on
+   every seed) and run it on a larger set (held-out boards, more seeds) before making it the default.
 3. **Pin names for KiCad 5 boards** (or KiCad 6+ fixtures): most interface categories never reach the apply threshold
    on PCBench because the boards have no pin names.
 4. Housekeeping: the three helper worktrees (`.claude/worktrees/agent-a988…`, `agent-aacd…`, `agent-a11c…`) are

@@ -82,8 +82,49 @@ struct Placed {
 };
 
 // full or refine with the full-mode fallbacks (clearance 0, keeping unplaceable parts, refine as last resort).
+Placed place_with_fallbacks_one(const io::LoadedBoard& lb, const model::DesignRules& rules, const std::string& in, place::ExtractOptions eo,
+                                const place::PlaceOptions& o, bool no_fallback);
+
 Placed place_with_fallbacks(const io::LoadedBoard& lb, const model::DesignRules& rules, const std::string& in, place::ExtractOptions eo,
                             const place::PlaceOptions& o, bool no_fallback) {
+  if (!(eo.crules_two_stage && o.mode == "full" && !eo.affinities.empty())) return place_with_fallbacks_one(lb, rules, in, eo, o, no_fallback);
+  // Stage 1: decoupling ties only (D25 and the component rules' own DEC-* ties).
+  place::ExtractOptions e1 = eo;
+  std::erase_if(e1.affinities, [](const auto& a) { return !a.name.starts_with("~DEC-"); });
+  Placed s1 = place_with_fallbacks_one(lb, rules, in, e1, o, no_fallback);
+  // Stage 2: the same problem with the component-rule pulls, starting from stage 1, decoupling capacitors locked.
+  place::ExtractOptions e2 = eo;
+  e2.default_clearance = s1.p.clearance;  // whatever spacing stage 1 settled on
+  Placed x;
+  x.p = place::extract(lb.board, rules, in, e2);
+  if (x.p.parts.size() != s1.p.parts.size()) return s1;
+  x.pl = s1.pl;
+  int locked = 0;
+  for (const auto& n : x.p.nets)
+    if (n.affinity && (n.name.starts_with("~decap ") || n.name.starts_with("~DEC-")) && !n.pins.empty()) {
+      // Both ends: the capacitor and the IC it decouples (an IC pulled towards its crystal would leave its
+      // capacitors behind).
+      for (int pin : n.pins) {
+        auto& pt = x.p.parts[static_cast<std::size_t>(x.p.pins[static_cast<std::size_t>(pin)].part)];
+        if (pt.movable) {
+          pt.movable = false;
+          pt.fixed_reason = "decoupling capacitor or its IC, placed in stage 1";
+          ++locked;
+        }
+      }
+    }
+  for (std::size_t i = 0; i < x.p.parts.size(); ++i)
+    if (!s1.p.parts[i].movable) x.p.parts[i].movable = false;  // stage-1 fallbacks stay
+  place::PlaceOptions o2 = o;
+  o2.mode = "refine";
+  x.r = place::place(x.p, x.pl, o2);
+  if (!x.r.legal) return s1;
+  x.r.notes.insert(x.r.notes.begin(), "two-stage component rules: " + std::to_string(locked) + " decoupling capacitor(s) and IC(s) locked after stage 1, then refined");
+  return x;
+}
+
+Placed place_with_fallbacks_one(const io::LoadedBoard& lb, const model::DesignRules& rules, const std::string& in, place::ExtractOptions eo,
+                                const place::PlaceOptions& o, bool no_fallback) {
   Placed x;
   // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for
   // 0.25 mm and falls back to 0 when the board is too dense for it.
@@ -200,6 +241,7 @@ struct LoopCli {
   bool edge_attraction = false;         // --edge-attraction (doc 15 CONN-01)
   int decap_weight = place::kSignalWeight;
   int crules_weight_pct = 100;
+  bool crules_two_stage = true;
   double clearance_mm = -1;
   long work = 3'000'000;
   int route_threads = 8;
@@ -256,6 +298,7 @@ int run_loop_mode(const LoopCli& c) {
   eo.decap_affinity = !c.no_decap_affinity;
   eo.decap_weight = c.decap_weight;
   eo.crules_weight_pct = c.crules_weight_pct;
+  eo.crules_two_stage = c.crules_two_stage;
   apply_component_rules(lb.board, c.component_rules, c.rules_override, c.edge_attraction, eo);
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
@@ -441,6 +484,7 @@ int main(int argc, char** argv) {
   bool edge_attraction = false;
   int decap_weight = place::kSignalWeight;
   int crules_weight_pct = 100;
+  bool crules_two_stage = true;
   double clearance_mm = -1;
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
@@ -462,6 +506,8 @@ int main(int argc, char** argv) {
       ->check(CLI::Range(1, 1000));
   app.add_option("--crules-weight", crules_weight_pct, "Scale of the component-rule proximity weights in percent (100 = as the rules say)")
       ->check(CLI::Range(1, 1000));
+  app.add_flag("--crules-two-stage,!--no-crules-two-stage", crules_two_stage,
+               "Full mode with component rules (default on): place with the decoupling ties first, lock those capacitors and their ICs, then refine with the component-rule pulls");
   app.add_flag("--edge-attraction", edge_attraction,
                "With --component-rules soft/on: pull movable connectors (CONN-01, USB2-11, DISP-02) toward the nearest board edge "
                "(objective only; pin headers are not pulled)");
@@ -514,6 +560,7 @@ int main(int argc, char** argv) {
     lc.edge_attraction = edge_attraction;
     lc.decap_weight = decap_weight;
     lc.crules_weight_pct = crules_weight_pct;
+    lc.crules_two_stage = crules_two_stage;
     lc.clearance_mm = clearance_mm;
     lc.work = route_check > 0 ? route_check : 3'000'000;
     lc.route_threads = route_threads;
@@ -542,7 +589,7 @@ int main(int argc, char** argv) {
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
                         (move_connectors ? " --move-connectors" : "") +
                         (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
-                        " --crules-weight " + std::to_string(crules_weight_pct) + (rules_override.empty() ? "" : " --rules-override '" + rules_override + "'") + (edge_attraction ? " --edge-attraction" : "") +
+                        " --crules-weight " + std::to_string(crules_weight_pct) + (crules_two_stage ? "" : " --no-crules-two-stage") + (rules_override.empty() ? "" : " --rules-override '" + rules_override + "'") + (edge_attraction ? " --edge-attraction" : "") +
                         " > /dev/null 2>&1";
       const int rc = std::system(cmd.c_str());
       if (rc != 0 && rc != 2 * 256) continue;
@@ -587,6 +634,7 @@ int main(int argc, char** argv) {
     eo.decap_affinity = !no_decap_affinity;
     eo.decap_weight = decap_weight;
     eo.crules_weight_pct = crules_weight_pct;
+    eo.crules_two_stage = crules_two_stage;
     const int crules_ties = apply_component_rules(lb.board, component_rules, rules_override, edge_attraction, eo);
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for

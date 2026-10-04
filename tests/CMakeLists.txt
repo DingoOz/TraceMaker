@@ -38,3 +38,5 @@ add_test(NAME crules_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integrati
 set_tests_properties(crules_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "crules;integration" TIMEOUT 600)
 add_test(NAME crules_dru_parses COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_dru_parses.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/crules_dru)
 set_tests_properties(crules_dru_parses PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 900)
+add_test(NAME crules_two_stage COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_two_stage.py $<TARGET_FILE:tracemaker-place> ${CMAKE_BINARY_DIR}/integration/crules_two_stage)
+set_tests_properties(crules_two_stage PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 900)

@@ -1342,8 +1342,13 @@ decaps still get worse on RX5808 (3.7 → 5.8 mm) and PocketBone (4.3 → 8.5 mm
 only 5 of 23 boards change at all. Seeds 2–4 overturn the seed-1 picture: at 75 % decap medians are worse than off
 on every seed (3.74 / 3.92 / 3.85 vs 3.26 / 3.74 / 3.39 mm), as at 100 %, and regulator caps too; only the crystal
 gain holds on all seeds (e.g. 5.07 → 2.83–3.59 mm on seed 3). A weight scale does not fix the decap conflict; the
-feature stays off and the scale at 100 %. Next idea: let the decap ties and the new pulls compete for space
-explicitly (e.g. reserve a ring around IC supply pins), not by weights.
+feature stays off and the scale at 100 %.
+
+**Two stages (D43, now what `soft` does in full mode).** Stage 1 places with the decoupling ties only; stage 2
+locks those capacitors and their ICs and refines with the other pulls. 23 boards × seeds 1–3, off → two-stage:
+decap median 3.66/3.26/3.74 → 3.66/3.42/3.74 mm, crystal 5.11/6.70/5.07 → 4.66/5.77/4.72, load caps 2.38/4.77/3.11 →
+2.03/2.76/2.39, regulator caps unchanged, HPWL geometric mean 0.99. Per board, 18 metric changes better and 4 worse
+(PocketBone decaps on every seed; bullion's crystal on one). Integration test `crules_two_stage`.
 
 ### 14.4 Routing (P2/P3)
 

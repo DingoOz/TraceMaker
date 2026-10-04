@@ -210,4 +210,5 @@ section at its end); decisions D26–D31 in `docs/12-decisions.md`.
     this is the axis distance, not the true distance. Weight 20 (2 x signal, like ESD-01) scaled by --crules-weight;
     not tuned. The global quadratic stage and the HPWL lower bound ignore the pull.
 49. **`--edge-attraction` with `--component-rules off/report` is an error**, not a silent no-op.
+50. **Two-stage soft placement (D43).** In full mode `--component-rules soft` first places with the decoupling ties only, then locks those capacitors *and the ICs they decouple* and refines with the other pulls. Locking the ICs is a choice: it keeps decaps next to their IC but stops the IC from moving toward its crystal or connector; the crystal moves toward the IC instead. PocketBone's decap metric still gets worse on all three seeds (its measured decaps include ones not tied by D25). Revert: `--no-crules-two-stage`.
 

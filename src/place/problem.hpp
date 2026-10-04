@@ -131,6 +131,9 @@ struct ExtractOptions {
   bool decap_affinity = true;       // tie each decoupling capacitor to the nearest supply pin of its IC
   int decap_weight = kSignalWeight; // weight of those ties (D25: signal weight)
   int crules_weight_pct = 100;      // scale of the component-rule proximity weights (100 = as the rules say)
+  // Full mode with component rules: place with the decoupling ties only, then lock the tied capacitors and refine
+  // with the component-rule pulls (they compete for the space next to the IC otherwise; doc 15 §14.3).
+  bool crules_two_stage = true;
   // Extra objective-only pseudo-nets from component rules (crules::placement_affinities). Parts already tied by
   // decap_affinity are skipped.
   std::vector<PadAffinity> affinities;
