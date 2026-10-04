@@ -35,6 +35,8 @@ The 17-board BGA/dense-package set (`bga-base`, 41 % clean) fails for two differ
   minimums allow (KiCad checks vias against those). d20_tri 164 → 188, OtterCast 160 → 177, 0 added KiCad errors.
 - **Dead pins** (default) — a pin still boxed in by a negotiated search at the neck-down sizes is enclosed by fixed
   copper; it is reported as such and not retried.
+- **In the viewer:** the reserved corridors are drawn (toggle X) and vanish as each pin connects; dead pins get a red
+  cross and a log line (`escape_plan` / `escape_release` / `escape_dead` events, doc 13).
 - Tests (`tests/test_escape.cpp`), `debug-pad --via` (via legality map), doc 05 §12.
 
 ### Regression runs (CLAUDE.md rule 9)
