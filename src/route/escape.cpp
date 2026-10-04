@@ -165,8 +165,11 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
       ++pe.pins;
       const Coord hw = neck(r, p.net, b) / 2;
       const auto& nc = r.class_for(b.nets[z(p.net)].name);
-      const Coord drill = std::max(nc.via_drill, r.minimums.through_hole_diameter);
-      const Coord dia = std::max({nc.via_diameter, r.minimums.via_diameter, drill + 2 * r.minimums.via_annular_width});
+      // The smallest via the router may use (its neck-down rung): what the board minimums allow, drill >= 0.2 mm.
+      const Coord cdrill = std::max(nc.via_drill, r.minimums.through_hole_diameter);
+      const Coord cdia = std::max({nc.via_diameter, r.minimums.via_diameter, cdrill + 2 * r.minimums.via_annular_width});
+      const Coord drill = std::min(cdrill, std::max<Coord>(r.minimums.through_hole_diameter, 200'000));
+      const Coord dia = std::min(cdia, std::max(r.minimums.via_diameter, drill + 2 * std::max<Coord>(r.minimums.via_annular_width, 100'000)));
       const Coord clr = std::max(nc.clearance, r.minimums.clearance);
       auto& tc = track_codes[{hw, clr}];
       if (tc.empty()) tc.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), kUnknown);
