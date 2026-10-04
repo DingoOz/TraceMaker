@@ -1335,6 +1335,12 @@ PocketBone: decaps 3-4 mm become 6-8 mm). Doubling the decap ties fixes the deca
 default for placement** (D31); `soft` is recommended where crystals and connector ESD matter more than a few tenths
 of a millimetre of decap distance. `off` reproduces the previous placer output byte for byte.
 
+**Weight scale (`tracemaker-place --crules-weight PCT`, 2026-10-04 night, seed 1, 23 boards).** Medians, off →
+soft at 50 % / 75 % / 100 %: decaps 3.66 → 3.33 / 3.30 / 3.92 mm; crystal to IC 5.11 → 5.35 / 4.53 / 3.98 mm;
+regulator caps 4.25 → 3.79 / 2.45 / 4.31 mm; HPWL equal. At 75 % every median improves on off, but per board the
+decaps still get worse on RX5808 (3.7 → 5.8 mm) and PocketBone (4.3 → 8.5 mm) and better on bullion (4.0 → 2.4 mm);
+only 5 of 23 boards change at all. Too few to set a default from: the feature stays off and the scale at 100 %.
+
 ### 14.4 Routing (P2/P3)
 
 `--component-rules` defaults to `off` for `tracemaker route` (D31): the router's default path is unchanged

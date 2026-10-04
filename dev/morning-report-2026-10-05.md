@@ -96,7 +96,10 @@ Everything is **off by default** because the measurements showed regressions (D3
   wirelength (crystal 6.4 → 5.1 mm, ESD 7.1 → 3.2 mm on 9 ESD boards) but decoupling and regulator caps get worse on
   some boards because the new pulls take the space next to the IC. I added `--crules-weight` to scale them: at 50 %
   decaps and regulator caps beat even "off" (3.66 → 3.33 mm, 4.25 → 3.79 mm) but the crystal gain disappears. Only
-  ~4 of 23 boards change at all, so I left the default at 100 % and the feature off.
+  ~4 of 23 boards change at all, so I left the default at 100 % and the feature off. At 75 % every median improved on
+  "off" (decaps 3.66 → 3.30 mm, crystal 5.11 → 4.53, regulator caps 4.25 → 2.45) at equal HPWL, but per board decaps
+  still got worse on two of the five boards that change (PocketBone 4.3 → 8.5 mm): a promising setting for a larger,
+  multi-seed test, not yet a default.
 - **Routing (`tracemaker route --component-rules soft|on`):** USB D+/D− routed as coupled pairs (soft; usually falls
   back to single tracks on these short runs) and crystal/inductor keep-outs (on). Keep-outs cost completion on 4 of
   10 affected boards (worst 93 → 86 connections), so they stay opt-in.
