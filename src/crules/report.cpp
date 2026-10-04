@@ -76,6 +76,7 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
     s << "  board has no pad pin names (KiCad 5 file): binding uses net names, pad numbers and topology; categories that need pin names are capped at "
       << kNoPinNameCap << "\n";
   if (ev.mode == Mode::Off) return s.str();
+  s << "  " << stackup_summary(b, cat) << "\n";
   std::map<int, std::vector<const EffectiveRule*>> by_inst;
   for (const auto& e : ev.rules) by_inst[e.instance].push_back(&e);
   std::map<int, std::map<std::string, std::string>> not_built;  // category -> rule id -> reason
@@ -183,6 +184,7 @@ nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const De
   j["mode"] = mode_name(ev.mode);
   j["thresholds"] = {{"apply", cat.apply}, {"suggest", cat.suggest}};
   j["board_has_pin_names"] = det.board_has_pin_names;
+  j["stackup"] = stackup_json(b, cat);
   std::map<int, std::vector<const EffectiveRule*>> by_inst;
   for (const auto& e : ev.rules) by_inst[e.instance].push_back(&e);
   auto inst_json = [&](const Instance& in) {
@@ -207,6 +209,8 @@ nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const De
     json rules = json::array();
     for (const EffectiveRule* e : by_inst[static_cast<int>(ii)]) {
       json r = {{"id", e->spec->id}, {"kind", e->spec->kind}, {"severity", severity_name(e->severity)}, {"status", status_name(e->status)}, {"detail", e->detail}};
+      if (e->impedance) r["impedance"] = impedance_json(*e->impedance);
+      if (e->current) r["current"] = current_json(*e->current);
       if (e->measure) {
         r["measured_mm"] = e->measure->value_mm;
         r["limit_mm"] = e->measure->limit_mm;

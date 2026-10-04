@@ -242,7 +242,8 @@ A rule's `applies_to` names roles, not nets: rules are written once per category
 
 A controlled-impedance rule needs the stackup: copper thickness, dielectric thickness to the reference plane,
 εr (and loss tangent for reporting), solder mask. KiCad stores it in the `(setup (stackup …))` block of the
-board; TraceMaker does not parse it today. Planned:
+board; TraceMaker reads it since M13 P4 (§14.5, which also lists where the implementation differs from this plan).
+Planned:
 
 1. Parse the stackup (doc 08 §3 owns it; read-only, round-trips untouched).
 2. Width/gap from closed-form formulas: Hammerstad & Jensen microstrip (with Kirschning–Jansen dispersion
@@ -1207,10 +1208,10 @@ IPC-2152. All sources cited by rule id in §8:
 | IPC-2221B-TP | [Common in-circuit-test (bed-of-nails) DFT practice; e.g. IPC-2221B §8 test points (not re-read)](https://www.ipc.org/TOC/IPC-2221B.pdf) |
 | TMK-PRACTICE | No primary source read: common layout practice recorded as a TraceMaker default (doc 15 §8 note); verify before making hard |
 
-## 14. Implementation status (2026-10-04, milestone M13 P0–P3)
+## 14. Implementation status (2026-10-04, milestone M13 P0–P4)
 
 Built in `src/crules/` (namespace `tmk::crules`); assumptions made without review are listed in
-[`../dev/assumptions-m13.md`](../dev/assumptions-m13.md); decisions D26–D31 in [12-decisions.md](12-decisions.md).
+[`../dev/assumptions-m13.md`](../dev/assumptions-m13.md); decisions D26–D31 and D36–D39 in [12-decisions.md](12-decisions.md).
 
 ### 14.1 What is built
 
@@ -1225,8 +1226,12 @@ Built in `src/crules/` (namespace `tmk::crules`); assumptions made without revie
 | P2 keep-outs | `generate_keepouts`, `dru_sidecar`; `tracemaker route --component-rules on` | XTAL-04, BUCK-06, BOOST-04 at confidence ≥ 70: rule areas on pad-free layers (D29) given to the router (in memory only); `report`/`soft`/`on` write `<output>.tracemaker.kicad_dru` |
 | P3 USB pairs | `RouterOptions::pair_nets`, `crules::usb_pairs`; `tracemaker route --component-rules soft\|on` | USB2-02: detected D+/D− routed coupled first (D30); skew not yet checked |
 | Events (rule 7) | route job | `crules.detected`, `crules.keepout` |
+| P4 stackup | `model/stackup.{hpp,cpp}`, `io/kicad/board_reader.cpp` (`read_stackup`) | `Board::stackup`: layers in file order with type, thickness (nm), εr, loss tangent, material, sublayers (`addsublayer`, combined in series), copper index; copper finish. Read-only (rule 8); `present == false` without a block |
+| P4 impedance solver | `crules/impedance.{hpp,cpp}` | Closed forms, quasi-static, solder mask ignored; width/gap by integer-nm bisection (§14.5) |
+| P4 impedance rules | `crules/impedance_rules.{hpp,cpp}`, `evaluate.cpp` | Every `impedance` rule gets a width (and gap) per routing layer over the adjacent copper layer, in the text and JSON report; report only (D36) |
+| P4 width for current | `imp::width_for_current` (IPC-2221), `plan_current` | Reported for rules that give `current_a` (USBC-09); report only |
 
-Not built: net classes from rules (impedance needs the stackup, P4; width for current, P5), hard proximity
+Not built: net classes from rules (impedance widths are reported only, D36; width for current, P5), hard proximity
 constraints, edge attraction for connectors (edge rules are measured only), antenna keep-outs without a footprint
 keep-out (no datasheet table), Ethernet magnetics void, routing order/chain topology, skew and via limits for pairs,
 the user override file (§6.3), `--write-keepouts`/`--write-rules`, viewer drawing of the events.
@@ -1327,3 +1332,88 @@ of a millimetre of decap distance. `off` reproduces the previous placer output b
   (ctest `crules_route`).
 
 So keep-outs are a real constraint with a completion cost on dense boards; they stay opt-in.
+
+### 14.5 Stackup and impedance (P4)
+
+**Stackup.** `(setup (stackup …))` is read into `Board::stackup` (§14.1). Of the 1,157 PCBench boards, **none** of the
+`unrouted.kicad_pcb` files has a stackup (they are KiCad 5 exports); 8 of the `raw.kicad_pcb` originals do
+(`kitspace_BalthazarPSU3`, `Minisumo_V2.1`, `minisumo_v3`, `OSO-BOOK-C1`, `OtterPill`, `solenoid_driver`, `Unifying`,
+`USBI2C01`), as do 15 KiCad demos (2 to 12 copper layers; `tiny_tapeout` uses dielectric sublayers) and 12 Freerouting
+issue fixtures. So on the benchmark impedance rules always report "not applied: no stackup in the board (doc 15
+§3.6)" — nothing is guessed (CLAUDE.md rule 6).
+
+**Geometry per routing layer** (`stackup_geometry`): an outer layer is microstrip over the adjacent copper layer
+(dielectric = everything between them); an inner layer is stripline between the copper layers above and below
+(off-centre allowed; εr of the two sides combined in series). The adjacent copper layer is *assumed* to be a plane;
+the report says "(GND)" when a zone of a ground net is on it and "(assumed)" otherwise. KiCad `power` layers are not
+routing layers. A stackup without εr or thickness for a gap makes that layer "not computed", never defaulted.
+
+**Models** (`impedance.cpp`, each cited at its definition):
+
+| Structure | Model | Stated formula error |
+|---|---|---|
+| Microstrip | Hammerstad & Jensen 1980 with their thickness correction (KiCad additionally applies Bahl & Garg's thickness term, 0–3 % higher Z on thin dielectrics) | ±4 % |
+| Stripline | Cohn 1954 (w/(b−t) ≥ 0.35) / Wheeler 1978 (narrow), off-centre by Wadell's image split (two centred lines in parallel) | ±2 % centred, ±5 % off-centre |
+| Edge-coupled microstrip | Kirschning & Jansen 1984 static even/odd modes, Jansen 1978 thickness, Bahl & Garg 1977 | ±5 % |
+| Edge-coupled stripline | Cohn 1955 (exact zero-thickness conformal mapping, thick-strip eq. 18/20/22), image split off-centre | ±4 % centred, ±8 % off-centre |
+| Grounded coplanar | Ghione & Naldi 1983/84 conformal mapping, Gupta et al. 1996 thickness | ±7 % |
+
+The stated error covers the papers' accuracy plus what is left out (solder mask lowers outer-layer Z by roughly 1–3 Ω;
+dispersion; the image split). Fab tolerance (±10 % typical) is reported separately. Differential impedance =
+2 × odd-mode impedance; the propagation delay is √εeff / c (odd mode for pairs).
+
+**Solving** (`plan_impedance`): width by bisection on integer nm (monotone functions; ties to the narrower width) in
+[max(board minimum width, 0.1 mm), 5 mm (pairs) / 10 mm]; pairs use the Default net class's diff-pair gap (never below
+its clearance or the board minimum clearance); if even the narrowest width is too low in impedance, the width stays at
+the minimum and the gap is solved instead; GCPW uses the clearance as the ground gap. Rules with `structure: stripline`
+are solved on inner layers only, `gcpw` on outer layers (pairs on those layers use coupled microstrip: no coplanar-pair
+model). A pair wider than 1 mm as plain microstrip gets the §5.3 note (prefer GCPW or short matched routing).
+
+**Unit tests** (`src/crules/test_impedance.cpp`, `[impedance]`; reader in `tests/test_kicad_io.cpp`, `[stackup]`).
+References and the tolerance each test uses:
+
+| Case | Reference | TraceMaker | Error | Tolerance |
+|---|---|---:|---:|---:|
+| Microstrip, εr 2.2, h 1.27 mm, w 3.911 mm, t 0 | Pozar Ex. 3.7: 50 Ω, εeff 1.87 | 50.04 Ω, 1.881 | 0.07 %, 0.6 % | 0.5 %, 1 % |
+| Microstrip, εr 4.5, h 1.51 mm, w 2.9 mm, 35 µm | KiCad: 49.03 Ω | 48.94 Ω | 0.2 % | 3 % |
+| Microstrip, εr 4.3, h 0.2 mm, w 0.35 mm, 35 µm | KiCad: 51.44 Ω | 50.71 Ω | 1.4 % | 3 % |
+| Microstrip, εr 4.4, h 0.1 mm, w 0.18 mm, 35 µm | KiCad: 49.29 Ω | 47.92 Ω | 2.8 % | 3 % |
+| Microstrip 50 Ω on 1.6 mm FR-4 (εr 4.5, 35 µm) | this document / KiCad: 2.9–3.0 mm | 2.966 mm | — | in range |
+| Microstrip, h 0.2 mm, w 0.1–0.38 mm | IPC-2141A rule of thumb | | ≤ 10 % | 10 % |
+| Stripline, εr 2.2, b 3.2 mm, w 2.66 mm, t 0 | Pozar Ex. 3.5: 50 Ω | 49.90 Ω | 0.2 % | 0.5 % |
+| Stripline, b 20 mil, w 8 mil, t 0.7 mil, centred / off-centre (3 cases) | KiCad: 49.71 / 43.50 / 29.69 Ω | identical | < 0.01 % | 0.1 % |
+| Coupled microstrip, 4 geometries (h 0.1–1.51 mm) | KiCad: 133.30 / 113.25 / 92.78 / 79.15 Ω diff | identical | < 0.01 % | 0.1 % |
+| Coupled stripline, w = s = 0.1 mm, b 0.5 mm, t 0 | exact (scipy ellipk): Z0e 91.209, Z0o 55.090 Ω | identical | < 1e-6 | 1e-6 |
+| Coupled stripline, b 20 mil, w = s = 8 mil, t 0.7 mil | KiCad QA: Z0e 55.34, Z0o 43.59, Zdiff 87.18 Ω | 54.91 / 44.12 / 88.24 Ω | 0.8 / 1.2 / 1.2 % | 2 % |
+| GCPW, w 0.5, gap 0.3, h 0.8 mm, εr 4.4, t 0 | exact (scipy ellipk): 70.483 Ω, εeff 2.8166 | identical | < 1e-6 | 1e-6 |
+| GCPW, same, 35 µm | KiCad: 70.86 Ω | 69.44 Ω | 2.0 % | 3 % |
+| IPC-2221: 1 A, ΔT 10 °C, 35 µm, outer / inner | formula by hand: 0.300 / 0.781 mm (≈ 12 / 31 mil per A) | 0.300 / 0.781 mm | < 0.1 % | 0.5 % |
+
+"KiCad" = KiCad's `common/transline_calculations` (master, 2026-10-04) compiled outside the tree and run at 1 MHz.
+Where it differs from TraceMaker beyond rounding: its microstrip adds Bahl & Garg's thickness term; its coupled
+stripline thin-gap branch (Cohn eq. 22, s < 5t) omits √εr in the medium impedance (in air both agree; with εr 4.3 it
+jumps 7 % at s = 5t where ours joins eq. 20 within 1.4 %); its zero-thickness coupled stripline and GCPW differ from the
+exact conformal mapping by 2–6 %. Round trips (solve → evaluate) are exact to 1e-3 Ω; monotonicity of every function
+the solver bisects is tested by sweeps. The single stripline's two branches meet with a step of about 0.6 % at
+w/(b−t) = 0.35 (bisection then returns the boundary width).
+
+**Report** (`tracemaker rules`): a header line with the stackup and the propagation delay per layer (50 Ω line) used
+for ps→mm skew conversion, or "no stackup in the board: … skew budgets use 6.0 ps/mm outer / 7.0 ps/mm inner"; per
+`impedance` rule the widths grouped by layers with the same result, the reference layers and the stated error; when
+a board net class already covers the pair, the rule stays "satisfied-by-board" and the report adds the class's
+impedance by the same model. Example (KiCad demo RoyalBlue54L-Feather, 8 layers, 0.1 mm prepreg εr 4.5):
+
+```
+  stackup: 8 copper layers, 1.58 mm, ENIG; prop delay (ps/mm, 50 Ω line): F.Cu 5.91 In1.Cu 7.08 … B.Cu 5.91
+     USB2-01   impedance       soft      satisfied-by-board: net class USB_DIFF (diff pair 0.125 mm / gap 0.203 mm,
+               114 Ω diff on F.Cu by this model); for comparison, report only, not applied to routing:
+         90 Ω diff on F.Cu, B.Cu: 0.201 mm / gap 0.250 mm microstrip (h 0.100 mm, εr 4.50) = 90.0 Ω, 6.06 ps/mm, formula error ±5 %
+           reference: F.Cu over In1.Cu (GND); B.Cu over In6.Cu (GND)
+```
+
+JSON: `stackup` (layers, per-layer geometry, delays) at the top level; `impedance` (bounds, one entry per layer and
+target with width, gap, Z, εeff, ps/mm, h, εr, error) and `current` on the rules.
+
+Not built in P4: routing with the computed widths (net classes per layer; D36), the reference-plane coverage check
+and plane-gap cost, stitching vias at layer changes, solder-mask correction, broadside-coupled and coplanar pairs,
+the `--assume-stackup` preset (§3.6), commented suggestions in the sidecar `.kicad_dru`.

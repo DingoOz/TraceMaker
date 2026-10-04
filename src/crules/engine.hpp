@@ -15,6 +15,7 @@
 
 #include "crules/catalogue.hpp"
 #include "crules/detect.hpp"
+#include "crules/impedance_rules.hpp"
 #include "model/board.hpp"
 #include "model/rules.hpp"
 
@@ -42,6 +43,8 @@ struct EffectiveRule {
   Status status = Status::NotApplied;
   std::string detail;            // what was applied, or why not
   std::optional<Measure> measure;
+  std::optional<ImpedancePlan> impedance;  // impedance rules: widths/gaps from the stackup (P4, report only)
+  std::optional<CurrentPlan> current;      // width_for_current rules that name a current (IPC-2221, report only)
 };
 
 struct Evaluation {

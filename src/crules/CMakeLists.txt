@@ -8,7 +8,7 @@ add_custom_command(OUTPUT ${TM_CRULES_DATA}
                    DEPENDS ${TM_CRULES_JSON} ${CMAKE_CURRENT_SOURCE_DIR}/embed.cmake
                    COMMENT "Embedding the component-rule catalogue")
 
-add_library(tm_crules STATIC catalogue.cpp names.cpp topology.cpp detect.cpp proximity.cpp evaluate.cpp compile.cpp report.cpp ${TM_CRULES_DATA})
+add_library(tm_crules STATIC catalogue.cpp names.cpp topology.cpp detect.cpp proximity.cpp evaluate.cpp compile.cpp report.cpp impedance.cpp impedance_rules.cpp ${TM_CRULES_DATA})
 add_library(tm::crules ALIAS tm_crules)
 target_include_directories(tm_crules PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(tm_crules PUBLIC tm::model tm::geom tm::core nlohmann_json::nlohmann_json)
@@ -17,7 +17,7 @@ tm_set_warnings(tm_crules)
 if(TM_BUILD_TESTS)
   find_package(Catch2 3 REQUIRED)
   include(Catch)
-  add_executable(tm_crules_tests test_crules.cpp)
+  add_executable(tm_crules_tests test_crules.cpp test_impedance.cpp)
   target_link_libraries(tm_crules_tests PRIVATE tm::crules tm::io Catch2::Catch2WithMain)
   target_compile_definitions(tm_crules_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
   tm_set_warnings(tm_crules_tests)

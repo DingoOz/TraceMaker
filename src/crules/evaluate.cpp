@@ -2,6 +2,7 @@
 // where TraceMaker can measure it, a measured value.
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <map>
 #include <stdexcept>
 
@@ -83,6 +84,12 @@ std::vector<Point> body_points(const model::Board& b, int fi) {
   return pts;
 }
 
+std::string fmt_mm3(Coord v) {
+  char buf[32];
+  std::snprintf(buf, sizeof buf, "%.3f", nm_to_mm(v));
+  return buf;
+}
+
 double pad_dist_mm(const model::Board& b, int pa, int pb) {
   const Point a = b.pads[static_cast<std::size_t>(pa)].pos, c = b.pads[static_cast<std::size_t>(pb)].pos;
   return std::hypot(nm_to_mm(a.x - c.x), nm_to_mm(a.y - c.y));
@@ -91,7 +98,6 @@ double pad_dist_mm(const model::Board& b, int pa, int pb) {
 // Why a rule of this kind is not applied in this milestone (doc 15 §10 phases).
 std::string not_built_reason(const RuleSpec& r) {
   const std::string& k = r.kind;
-  if (k == "impedance") return "needs a stackup and the impedance solver (doc 15 P4)";
   if (k == "diff_pair") return "per-net differential-pair routing not enabled for these nets (doc 15 P3)";
   if (k == "length_match" || k == "max_length" || k == "max_stub" || k == "via_limit") return "routing-stage rule, not built yet (doc 15 P3)";
   if (k == "reference_plane" || k == "stitching") return "needs plane-coverage checks (doc 15 P4)";
@@ -220,7 +226,29 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
           for (const auto& s : ko_missing)
             if (s.starts_with(r.id + " " + b.footprints[static_cast<std::size_t>(in.anchor)].reference + ":")) e.detail = s.substr(s.find(':') + 2);
         }
-      } else if (r.kind == "diff_pair" || r.kind == "impedance") {
+      } else if (r.kind == "impedance") {
+        // P4 (report only): widths and gaps per routing layer from the stackup; never guessed without one (§3.6).
+        e.impedance = plan_impedance(b, rules, r);
+        const std::string computed = impedance_text(*e.impedance);
+        if (const std::string cls = board_pair_class(b, rules, in, r); !cls.empty()) {
+          e.status = Status::SatisfiedByBoard;
+          const model::NetClass* nc = rules->find_class(cls);
+          std::string zc;
+          if (nc && e.impedance->zdiff > 0)
+            if (const double z = pair_impedance(b, 0, nc->diff_pair_width, nc->diff_pair_gap); z > 0) {
+              char buf[64];
+              std::snprintf(buf, sizeof buf, ", %.0f Ω diff on %s by this model", z, b.copper_name(0).c_str());
+              zc = buf;
+            }
+          e.detail = "net class " + cls + (nc ? " (diff pair " + fmt_mm3(nc->diff_pair_width) + " mm / gap " + fmt_mm3(nc->diff_pair_gap) + " mm" + zc + ")" : "") +
+                     (e.impedance->computed ? "; for comparison, " + computed : "");
+        } else {
+          e.detail = computed;
+        }
+      } else if (r.kind == "width_for_current" && r.params.contains("current_a")) {
+        e.current = plan_current(b, r);
+        e.detail = current_text(*e.current);
+      } else if (r.kind == "diff_pair") {
         const Role* dp = in.role("dp");
         const Role* dm = in.role("dm");
         const bool usb_pair = r.id == "USB2-02" && dp && dm && dp->nets.size() == 1 && dm->nets.size() == 1;
