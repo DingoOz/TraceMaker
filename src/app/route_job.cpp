@@ -182,6 +182,7 @@ RouteJobResult run_route_job(RouteJob job) {
   auto& res = out.result;
   std::vector<int> ran;
   int best_index = 0;
+  std::string best_name;
   if (job.threads > 1) {
     std::vector<int> pick;
     if (kb && job.threads < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), job.threads, opt.seed);
@@ -190,6 +191,7 @@ RouteJobResult run_route_job(RouteJob job) {
       log(fmt("  variant %d %-30s routed %d%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
     ran = pr.indices;
     best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
+    best_name = pr.variants[static_cast<std::size_t>(pr.best_variant)];
     res = std::move(pr.best);
   } else {
     res = route::Router(*route_board, rules, opt).run();
@@ -214,7 +216,8 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!job.items_out.empty()) std::ofstream(job.items_out) << out.items.dump();
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
                  {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
-                 {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}};
+                 {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
+                 {"escape_corridors", res.escape_corridors}};
   if (!job.json_out.empty()) std::ofstream(job.json_out) << out.summary.dump(1);
   if (server && job.hold) {
     log("routing finished; viewer still serving at " + server->url() + " (Ctrl-C to quit)");
