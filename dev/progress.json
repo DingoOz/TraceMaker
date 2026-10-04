@@ -655,8 +655,8 @@
      "done": false
     },
     {
-     "text": "Stackup parsing + impedance (IPC-2141A / Wadell)",
-     "done": false
+     "text": "Stackup parsing + impedance (IPC-2141A / Wadell) - widths/gaps reported per layer (P4, report only)",
+     "done": true
     },
     {
      "text": "Detection and rule report",
@@ -681,6 +681,10 @@
     {
      "text": "Net classes from rules (impedance, width for current) - needs stackup (P4/P5)",
      "done": false
+    },
+    {
+     "text": "IPC-2221 width for current reported for rules with a current (USBC-09)",
+     "done": true
     }
    ]
   }

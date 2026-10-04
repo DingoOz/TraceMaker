@@ -106,3 +106,45 @@ section at its end); decisions D26–D31 in `docs/12-decisions.md`.
     `--component-rules soft`); categories with more than 6 instances are summarised in the text report (JSON has
     everything).
 24. **Worktree only**: `bench/data` is a symlink to the main checkout's fixtures (not committed).
+
+## Stackup and impedance (P4)
+
+25. **Stackup reading**: dielectric sublayers (`addsublayer`) are combined into one layer: thicknesses add, εr in
+    series (Σh / Σ(h/εr), exact for a field normal to the sheets), loss tangent thickness-weighted. A missing εr is
+    never defaulted: the layer's gap is "incomplete" and no width is computed for it (rule 6). The solder-mask
+    layers are read but not used. Revert: `read_stackup_layer` in `board_reader.cpp`.
+26. **Reference plane = adjacent copper layer** (D38). Outer layers: microstrip over the next copper layer; inner
+    layers: stripline between both neighbours, εr of the two sides combined in series. "(GND)" in the report means
+    a zone of a net named like GND/VSS/GROUND is on that layer; anything else is "(assumed)". Not checked: whether
+    the plane is solid under the route (plane coverage, doc 15 §5.2, still to build). KiCad `power` layers are not
+    reported as routing layers.
+27. **Stated formula errors** (shown in the report; `imp::formula_error_pct`): microstrip ±4 %, coupled microstrip
+    ±5 %, centred stripline ±2 % (pairs ±4 %), off-centre stripline ±5 % (pairs ±8 %, the KiCad QA tolerance for its
+    own offset model), GCPW ±7 %. Judgement: the papers claim 0.2–1 % for their range; the rest covers solder mask
+    (ignored, −1 to −3 Ω on outer layers), thickness corrections and the image split. Fab tolerance ±10 % is printed
+    separately.
+28. **Microstrip follows Hammerstad & Jensen exactly**; KiCad's calculator adds Bahl & Garg's thickness term and
+    gives 0–3 % higher Z on thin dielectrics. Tests compare with KiCad at 3 %.
+29. **Cohn's thin-gap coupled-stripline equation (eq. 22, s < 5t)** is used with the medium's wave impedance
+    η0/√εr in its capacitive terms. KiCad uses η0 there; ours is the dimensionally consistent reading (it joins eq. 20
+    within 1.4 % at s = 5t; KiCad's jumps 7 % with εr 4.3). Revert: `coupled_stripline_centred`.
+30. **Solving bounds**: width ≥ max(board minimum track width, 0.1 mm), ≤ 5 mm for pairs and 10 mm for single
+    lines; pair gap = max(Default class diff-pair gap, Default clearance, board minimum clearance); GCPW ground gap =
+    clearance; without project rules 0.1 mm / 0.2 mm (stated in the report). If the target needs a narrower trace
+    than allowed, the width stays at the minimum and the gap is solved (D39).
+31. **Single-ended lines are reported whenever a rule gives `z0_ohm`**, also when it equals half of `zdiff_ohm`
+    (USB2-01's 45 Ω): DDR3/Ethernet use both, and the catalogue does not say which roles are single-ended.
+32. **`structure: stripline`** (DDR4-01) is solved on inner layers only, **`structure: gcpw`** (RF-01) on outer
+    layers; there is no coplanar-pair model, so differential targets on GCPW layers use coupled microstrip.
+33. **Propagation delay** for the report header: εeff of the 50 Ω microstrip on outer layers, εr on inner layers;
+    without a stackup the catalogue's 6.0 / 7.0 ps/mm. Not yet used to convert `tol_ps` rules (skew checking is not
+    built).
+34. **Width for current**: IPC-2221 for rules that give `current_a` (only USBC-09, 3 A); ΔT from the rule or 10 °C
+    (PWR-01's default); copper from the stackup (F.Cu outer, In1.Cu inner) or 35 µm (1 oz, PWR-01's default) with
+    "assumed" in the report. Report only.
+35. **Reference values** in the tests come from Pozar's textbook examples, exact conformal-mapping values computed
+    with scipy, and KiCad's transline code (master of 2026-10-04) compiled in a scratch directory and run at 1 MHz.
+    No web search was available to collect fab-calculator values (JLCPCB, Polar); none are claimed.
+36. **Not done tonight**: commented width suggestions in the sidecar `.kicad_dru` (the sidecar has no access to the
+    project rules the report uses, so the numbers could differ from the report); `--assume-stackup` presets.
+
