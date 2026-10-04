@@ -10,6 +10,7 @@
 #include <CLI/CLI.hpp>
 #include <nlohmann/json.hpp>
 
+#include "crules/engine.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "sexpr/sexpr.hpp"
@@ -194,6 +195,8 @@ struct LoopCli {
   std::string in, out, json_path;
   place::PlaceOptions o;
   bool move_connectors = false, no_fallback = false, no_decap_affinity = false;
+  std::string component_rules = "off";  // --component-rules (doc 15)
+  int decap_weight = place::kSignalWeight;
   double clearance_mm = -1;
   long work = 3'000'000;
   int route_threads = 8;
@@ -203,6 +206,24 @@ struct LoopCli {
   long final_work = -1;    // routable/eco: verification budget for the winner vs the input (-1: 4 x work, 0: off)
   std::string record;      // routable: write the placement timelapse (JSONL) here
 };
+
+// --component-rules (doc 15 §3.5, P1): detect component categories and add their proximity rules as objective-only
+// pseudo-nets (crystal + load caps, oscillator, ESD at its connector, regulator caps, generalised decoupling). The
+// D25 decoupling ties stay as they are. Returns the number of pseudo-nets requested (0 for off/report).
+int apply_component_rules(const model::Board& b, const std::string& mode_s, place::ExtractOptions& eo) {
+  const crules::Mode mode = crules::parse_mode(mode_s);
+  if (mode == crules::Mode::Off) return 0;
+  const auto& cat = crules::builtin_catalogue();
+  const auto det = crules::detect(b, cat);
+  std::map<std::string, int> per_cat;
+  for (const auto& in : det.instances) ++per_cat[cat.categories[static_cast<std::size_t>(in.category)].id];
+  std::string s;
+  for (const auto& [k, n] : per_cat) s += " " + k + "=" + std::to_string(n);
+  const auto aff = crules::placement_affinities(b, cat, det, mode);
+  std::printf("  component rules (%s):%s; %zu proximity pseudo-net(s)\n", mode_s.c_str(), s.c_str(), aff.size());
+  for (const auto& a : aff) eo.affinities.push_back({a.pad_a, a.pad_b, a.weight, a.name});
+  return static_cast<int>(aff.size());
+}
 
 nlohmann::json eval_json(const place::RouteEval& e) {
   return {{"connections", e.connections}, {"routed", e.routed}, {"unrouted", e.unrouted()}, {"seconds", e.seconds}};
@@ -215,6 +236,8 @@ int run_loop_mode(const LoopCli& c) {
   place::ExtractOptions eo;
   eo.fix_edge_connectors = !c.move_connectors;
   eo.decap_affinity = !c.no_decap_affinity;
+  eo.decap_weight = c.decap_weight;
+  apply_component_rules(lb.board, c.component_rules, eo);
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
   // placed with 0.25 mm or 0, is legal in it.
@@ -395,6 +418,8 @@ int main(int argc, char** argv) {
   std::string in, out, json_path;
   place::PlaceOptions o;
   bool move_connectors = false, no_decap_affinity = false;
+  std::string component_rules = "off";
+  int decap_weight = place::kSignalWeight;
   double clearance_mm = -1;
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
@@ -409,6 +434,11 @@ int main(int argc, char** argv) {
   app.add_option("--courtyard-clearance-mm", clearance_mm, "Override the courtyard clearance (default: rules, else 0.25 mm)");
   app.add_flag("--move-connectors", move_connectors, "Also move connectors that touch the board edge");
   app.add_flag("--no-decap-affinity", no_decap_affinity, "Do not tie decoupling capacitors to their IC's supply pins");
+  app.add_option("--component-rules", component_rules,
+                 "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling)")
+      ->check(CLI::IsMember({"off", "report", "soft", "on"}));
+  app.add_option("--decap-weight", decap_weight, "Weight of each decoupling-capacitor tie (D25); a signal net weighs 10 (the default)")
+      ->check(CLI::Range(1, 1000));
   app.add_option("--json", json_path, "Write the placement report as JSON");
   app.add_flag("-v,--verbose", o.verbose, "Log the spreading iterations");
   std::string debug_part;
@@ -446,6 +476,8 @@ int main(int argc, char** argv) {
     lc.o = o;
     lc.move_connectors = move_connectors;
     lc.no_decap_affinity = no_decap_affinity;
+    lc.component_rules = component_rules;
+    lc.decap_weight = decap_weight;
     lc.clearance_mm = clearance_mm;
     lc.work = route_check > 0 ? route_check : 3'000'000;
     lc.route_threads = route_threads;
@@ -473,7 +505,7 @@ int main(int argc, char** argv) {
                         " --threads " + std::to_string(o.threads) + " --effort " + std::to_string(o.effort) + " --route-check " +
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
                         (move_connectors ? " --move-connectors" : "") +
-                        (no_decap_affinity ? " --no-decap-affinity" : "") + " > /dev/null 2>&1";
+                        (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) + " > /dev/null 2>&1";
       const int rc = std::system(cmd.c_str());
       if (rc != 0 && rc != 2 * 256) continue;
       try {
@@ -515,6 +547,8 @@ int main(int argc, char** argv) {
     place::ExtractOptions eo;
     eo.fix_edge_connectors = !move_connectors;
     eo.decap_affinity = !no_decap_affinity;
+    eo.decap_weight = decap_weight;
+    const int crules_ties = apply_component_rules(lb.board, component_rules, eo);
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for
     // 0.25 mm and falls back to 0 when the board is too dense for it.
@@ -616,6 +650,7 @@ int main(int argc, char** argv) {
       j["input"] = in;
       j["output"] = out;
       j["moved"] = moved;
+      j["component_rules"] = {{"mode", component_rules}, {"pseudo_nets", crules_ties}};
       if (route_check > 0) j["route_check"] = {{"work", route_check}, {"routed_input", routed_in}, {"routed_output", routed_out}, {"connections", conns}, {"connections_input", conns_in}, {"connections_output", conns_out}, {"kept_input", reverted}};
       // Final placement (footprint origins and courtyard boxes, mm) for plotting and inspection.
       nlohmann::json parts = nlohmann::json::array();

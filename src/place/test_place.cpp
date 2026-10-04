@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "core/rng.hpp"
+#include "crules/engine.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
@@ -141,7 +142,7 @@ TEST_CASE("translated closer() agrees with geom::closer_than", "[place]") {
   for (int it = 0; it < 3000; ++it) {
     std::vector<Point> a, b;
     for (int i = 0; i < 4; ++i) a.push_back({static_cast<Coord>(u() * 4e6), static_cast<Coord>(u() * 4e6)});
-    a = convex_hull(a);
+    a = place::convex_hull(a);
     if (a.size() < 3) continue;
     b = {{0, 0}, {1'000'000, 0}, {1'000'000, 500'000}, {0, 500'000}};
     const Shape sa = Shape::polygon(a), sb = Shape::polygon(b);
@@ -352,6 +353,41 @@ TEST_CASE("decoupling capacitors are tied to an IC supply pin, objective only", 
   CHECK(total_hpwl(on, a) == total_hpwl(off, b));
   CHECK(weighted_hpwl(on, a) > weighted_hpwl(off, b));
   CHECK(count_crossings(on, a) == count_crossings(off, b));
+}
+
+TEST_CASE("component-rule proximity pseudo-nets are objective only and skip D25-tied parts", "[place][fixture][crules]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/1Bitsy_1bitsy/unrouted.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto lb = io::read_board_file(path);
+  const auto rules = io::read_design_rules(path);
+  const auto& cat = crules::builtin_catalogue();
+  const auto det = crules::detect(lb.board, cat);
+  ExtractOptions eo;
+  for (const auto& a : crules::placement_affinities(lb.board, cat, det, crules::Mode::Soft)) eo.affinities.push_back({a.pad_a, a.pad_b, a.weight, a.name});
+  REQUIRE(!eo.affinities.empty());
+  const Problem off = extract(lb.board, rules, path);
+  const Problem on = extract(lb.board, rules, path, eo);
+  int extra = 0, xtal = 0;
+  for (std::size_t n = off.nets.size(); n < on.nets.size(); ++n) {
+    const auto& net = on.nets[n];
+    REQUIRE(net.affinity);
+    CHECK_FALSE(net.signal);
+    REQUIRE(net.pins.size() == 2);
+    CHECK(on.pins[z(net.pins[0])].part != on.pins[z(net.pins[1])].part);
+    // No part D25 already tied is pulled again.
+    const std::string& sat = on.parts[z(on.pins[z(net.pins[0])].part)].ref;
+    for (const auto& m : off.nets)
+      if (m.affinity) CHECK(off.parts[z(off.pins[z(m.pins[0])].part)].ref != sat);
+    xtal += net.name.starts_with("~XTAL-") ? 1 : 0;
+    ++extra;
+  }
+  CHECK(extra > 0);
+  CHECK(xtal > 0);
+  CHECK(extra <= static_cast<int>(eo.affinities.size()));
+  const Placement a = Placement::initial(on), b = Placement::initial(off);
+  CHECK(total_hpwl(on, a) == total_hpwl(off, b));
+  CHECK(count_crossings(on, a) == count_crossings(off, b));
+  CHECK(weighted_hpwl(on, a) > weighted_hpwl(off, b));
 }
 
 // ---- M8: routability term, parallel tempering, LNS, exact windows, ECO, routability loop -----------------------

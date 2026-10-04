@@ -34,6 +34,9 @@ struct RouterOptions {
   int max_passes = 12;          // passes over still-unrouted connections
   bool blind_vias = false;      // use blind/buried vias where a through via is blocked, if the board allows them
   bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
+  // Component rules (doc 15 P3): these net pairs only are routed coupled first when diff_pairs is off (e.g. USB 2.0
+  // D+/D- bound by tm::crules, whose names need not end in P/N or +/-). Empty = none.
+  std::vector<std::pair<model::NetId, model::NetId>> pair_nets;
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)

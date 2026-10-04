@@ -2,8 +2,8 @@
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-03.
 >
-> **Status: PLANNED — nothing in this document is built.** It captures a feature request and the research
-> behind it so a later milestone can implement it. Where it says "TraceMaker does X", read "will do X".
+> **Status: partly built (M13 phases P0–P2 and part of P3, 2026-10-04): see §14.** Everything not listed there
+> is still a plan: where it says "TraceMaker does X", read "will do X".
 > The machine-readable draft of the catalogue is [`component_rules.yaml`](component_rules.yaml); the two
 > must stay consistent (a test will check that every rule id in one appears in the other, §9).
 
@@ -676,7 +676,7 @@ Detected by: topology (up to 80), pin_name (up to 10). Roles: `cap`, `pin`, `ic`
 
 #### `buck` — Switching step-down (buck) regulator
 
-Detected by: pin_name (up to 40), value (up to 30), keywords (up to 30), topology (up to 30). Roles: `ic`, `cin`, `inductor`, `cout`, `sw`, `fb`, `fb_div`, `diode`, `snubber`, `epad`.
+Detected by: pin_name (up to 40), value (up to 50), keywords (up to 30), topology (up to 30). Roles: `ic`, `cin`, `inductor`, `cout`, `sw`, `fb`, `fb_div`, `diode`, `snubber`, `epad`.
 
 | ID | Rule | Parameters (defaults) | Sev. | Enforced | Ev. | Sources |
 |---|---|---|---|---|---|---|
@@ -698,7 +698,7 @@ Detected by: pin_name (up to 40), value (up to 30), keywords (up to 30), topolog
 
 #### `boost` — Switching step-up (boost) regulator
 
-Detected by: keywords (up to 40), value (up to 30), pin_name (up to 30). Roles: `ic`, `inductor`, `rect`, `cout`, `cin`, `fb`, `sw`.
+Detected by: keywords (up to 40), value (up to 50), pin_name (up to 30). Roles: `ic`, `inductor`, `rect`, `cout`, `cin`, `fb`, `sw`.
 
 | ID | Rule | Parameters (defaults) | Sev. | Enforced | Ev. | Sources |
 |---|---|---|---|---|---|---|
@@ -1206,3 +1206,124 @@ IPC-2152. All sources cited by rule id in §8:
 | ARM-CORESIGHT-CONN | [Arm, CoreSight / Cortex debug connectors (10-pin 1.27 mm, 20-pin 2.54 mm)](https://developer.arm.com/documentation/101416/latest/Hardware-Description/Target-Interfaces/Cortex-Debug--10-pin-) |
 | IPC-2221B-TP | [Common in-circuit-test (bed-of-nails) DFT practice; e.g. IPC-2221B §8 test points (not re-read)](https://www.ipc.org/TOC/IPC-2221B.pdf) |
 | TMK-PRACTICE | No primary source read: common layout practice recorded as a TraceMaker default (doc 15 §8 note); verify before making hard |
+
+## 14. Implementation status (2026-10-04, milestone M13 P0–P3)
+
+Built in `src/crules/` (namespace `tmk::crules`); assumptions made without review are listed in
+[`../dev/assumptions-m13.md`](../dev/assumptions-m13.md); decisions D26–D31 in [12-decisions.md](12-decisions.md).
+
+### 14.1 What is built
+
+| Piece | Where | Notes |
+|---|---|---|
+| Catalogue loader | `scripts/crules_catalogue.py` → `src/crules/catalogue.json` (embedded); `catalogue.{hpp,cpp}` | ctest `crules_catalogue_sync` checks JSON = YAML and YAML rule ids = this document's (§9.1 L0); `tracemaker rules --catalogue` loads another file |
+| Detection (§3.1–3.2) | `detect.cpp` | Every footprint against every category; integer weights; apply 70 / suggest 40; no-pin-name cap 60 (§3.6) for categories with a `pin_name` detector except `ic_decoupling`; conflicts by exclusive groups (§3.4); "possible" list below 40 |
+| Role binding (§3.3) | `detect.cpp` (`bind_*`) | usb2/usb3_typec (connector, D+/D− by pin name, net name or KiCad USB pad numbers, ESD, CMC, transceiver, VBUS, CC), crystal (IC, XIN/XOUT pins, load caps, series R), oscillator, ic_decoupling (generalised D25), ldo/buck/boost (VIN/VOUT, cin/cout, inductor, SW), esd_tvs (connector, protected nets, IC, ground pins), can/rs485 (bus, connector, ESD, termination), rf_module/chip_antenna (footprint keep-out), connector_general, mounting_hole; other categories bind their anchor only |
+| Effective rules (§3.5, §7) | `evaluate.cpp`, `report.cpp` | Every rule of every instance: applied / satisfied-by-board / not-applied(reason) / advisory, hard→soft below `apply` and for R-evidence rules, measured pad-centre distances for proximity rules, edge distance for edge rules |
+| Report | `tracemaker rules <board> [--mode report\|soft\|on] [--json f] [--dru f] [--roles-from input]` | Text summary (categories with > 6 instances condensed) and full JSON incl. keep-out polygons |
+| P1 placement | `tracemaker-place --component-rules off\|report\|soft` (default **off**), `ExtractOptions::affinities` | Objective-only pseudo-nets (D25 mechanism, D28) for XTAL-01/02, OSC-01/02, ESD-01, USB2-07, USBC-10, CAN-02, RS485-02, LDO-01, BUCK-01/02 (proxies), DEC-01/07 |
+| P2 keep-outs | `generate_keepouts`, `dru_sidecar`; `tracemaker route --component-rules on` | XTAL-04, BUCK-06, BOOST-04 at confidence ≥ 70: rule areas on pad-free layers (D29) given to the router (in memory only); `report`/`soft`/`on` write `<output>.tracemaker.kicad_dru` |
+| P3 USB pairs | `RouterOptions::pair_nets`, `crules::usb_pairs`; `tracemaker route --component-rules soft\|on` | USB2-02: detected D+/D− routed coupled first (D30); skew not yet checked |
+| Events (rule 7) | route job | `crules.detected`, `crules.keepout` |
+
+Not built: net classes from rules (impedance needs the stackup, P4; width for current, P5), hard proximity
+constraints, edge attraction for connectors (edge rules are measured only), antenna keep-outs without a footprint
+keep-out (no datasheet table), Ethernet magnetics void, routing order/chain topology, skew and via limits for pairs,
+the user override file (§6.3), `--write-keepouts`/`--write-rules`, viewer drawing of the events.
+
+### 14.2 Detection quality (§9.1 L1)
+
+Labels: `bench/crules_labels.json` (41 PCBench boards; ic_decoupling on 10 of them) and
+`bench/crules_labels_heldout.json` (12 boards labelled after the detectors were tuned on the first set).
+`bench/crules_detect.py` scores them. All PCBench boards are KiCad 5 files without pin names.
+
+Per category, at the **suggest** threshold (≥ 40: what the report lists and what soft rules use). TP/FP/FN count
+instances (anchor references); "before" is the catalogue as written on 2026-10-03, "tuned" after the detector changes
+of D27 and assumptions-m13 item 4, "held-out" the 12 boards labelled after tuning (before the CAN fix, which was made
+because of its FP).
+
+| Category | 41 boards, before: TP/FP/FN (P / R) | 41 boards, tuned: TP/FP/FN (P / R) | 12 held-out: TP/FP/FN (P / R) |
+|---|---|---|---|
+| crystal | 18/0/3 (1.00 / 0.86) | 21/0/0 (1.00 / 1.00) | 12/0/1 (1.00 / 0.92) |
+| oscillator | 0/0/1 (– / 0.00) | 0/0/1 (– / 0.00) | – |
+| usb2 | 20/6/13 (0.77 / 0.61) | 30/0/3 (1.00 / 0.91) | 5/0/3 (1.00 / 0.63) |
+| esd_tvs | 13/0/4 (1.00 / 0.76) | 17/0/0 (1.00 / 1.00) | 1/0/0 (1.00 / 1.00) |
+| ldo | 24/0/9 (1.00 / 0.73) | 33/0/0 (1.00 / 1.00) | 10/0/2 (1.00 / 0.83) |
+| buck | 1/2/1 (0.33 / 0.50) | 2/0/0 (1.00 / 1.00) | 0/0/1 (– / 0.00) |
+| boost | 0/0/4 (– / 0.00) | 4/0/0 (1.00 / 1.00) | 4/0/0 (1.00 / 1.00) |
+| rf_module | 9/0/3 (1.00 / 0.75) | 12/0/0 (1.00 / 1.00) | 5/0/1 (1.00 / 0.83) |
+| can | 6/0/0 (1.00 / 1.00) | 6/0/0 (1.00 / 1.00) | 2/2/0 (0.50 / 1.00) → 2/0/0 after the CAN fix |
+| rs485 | 2/0/0 (1.00 / 1.00) | 2/0/0 (1.00 / 1.00) | – |
+| connector_general | 102/0/75 (1.00 / 0.58) | 172/0/5 (1.00 / 0.97) | 34/0/25 (1.00 / 0.58) |
+| mounting_hole | 44/0/10 (1.00 / 0.81) | 54/0/0 (1.00 / 1.00) | 20/0/8 (1.00 / 0.71) |
+| ic_decoupling (10 boards) | 63/1/8 (0.98 / 0.89) | 68/1/3 (0.99 / 0.96) | – |
+
+Held-out precision is 1.00 in every category but CAN (two LIN transceivers TJA1027 matched `tja10`; the pattern is
+now `tja104x|tja105x`). Held-out recall shows what tuning on 41 boards cannot buy: footprints named by vendor part
+number (connectors such as `B2B-PH-K-S`, `20021121-...`, `SIL-10J1`; USB `10118192`), mounting holes named
+`M2.5_HOLE` or `1pin`, an LDO named `TC1265`, a buck `LM3671`. At the **apply** threshold (≥ 70) only crystal,
+esd_tvs, rf_module, mounting_hole and ic_decoupling are reached on PCBench, because KiCad 5 boards have no pin names
+and the other categories are capped at 60 (§3.6); held-out at apply: crystal 12/0/1, rf_module 1/0/5, mounting_hole
+20/0/8, the rest 0 detections (no false positives). Gate of §9.1 (precision ≥ 0.95, recall ≥ 0.8) on the held-out
+set: met by crystal, ldo, boost, rf_module, esd_tvs (1 instance), can (after the fix); not met by usb2 (recall 0.63),
+connector_general (0.58), mounting_hole (0.71), buck (1 instance).
+
+### 14.3 Placement effect (§9.1 L3, P1)
+
+`bench/crules_place.py`: `tracemaker-place --mode full --seed 1` (8 threads per board), `--component-rules off`
+vs `soft`; distances by `bench/place_intent.py`, component-rule distances measured on the placed board with roles
+bound on the input (`--roles-from`). HPWL is the reported (unweighted) wirelength; pseudo-nets never count in it.
+
+Medians over boards (n = boards with that kind of part); distances in mm. "decap" and "crystal" are
+place_intent's own measures (centre to the nearest IC pad); "XTAL-01", "XTAL-02", "ESD-01", "reg caps" (LDO-01 and
+BUCK-01) are the largest pad-centre distance per rule instance. The third configuration additionally doubles D25's
+decoupling ties (`--decap-weight 20`).
+
+| Set | Config | HPWL (median) | HPWL vs off (geo-mean) | decap | crystal | XTAL-01 | XTAL-02 load caps | ESD-01 | reg caps |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 23 boards of doc 04 §7.3, seed 1 | off | 518.3 | 1.000 | 3.66 (17) | 5.11 (6) | 6.36 (5) | 2.38 (4) | – | 4.25 (3) |
+| | soft | 518.3 | 0.996 | 3.92 | 3.98 | 5.06 | 2.02 | – | 4.31 |
+| | soft + decap ×2 | 581.3 | 1.028 | 3.26 | 4.47 | 4.81 | 2.00 | – | 2.83 |
+| | human placement | – | – | 4.15 | 4.45 | 5.36 | 2.84 | – | 3.48 |
+| 9 boards with ESD parts, seed 1 | off | 582.0 | 1.000 | 5.61 (9) | 4.04 (6) | 6.04 (6) | 3.70 (5) | 7.12 (9) | 2.00 (3) |
+| | soft | 589.5 | 1.005 | 3.83 | 3.46 | 4.52 | 2.28 | 3.19 | 3.80 |
+| | soft + decap ×2 | 597.3 | 1.019 | 2.78 | 3.38 | 4.26 | 1.86 | 3.20 | 2.01 |
+| | human placement | – | – | 2.94 | 3.98 | 4.68 | 1.85 | 7.12 | 2.12 |
+| 6 boards where soft changes the result, seeds 1–3 (18 runs) | off | 615.7 | 1.000 | 3.20 (15) | 5.41 (15) | 6.36 (15) | 3.10 (12) | – | 2.19 (3) |
+| | soft | 617.9 | 0.986 | 4.29 | 3.54 | 4.58 | 2.06 | – | 4.53 |
+| | soft + decap ×2 | 628.7 | 1.004 | 2.92 | 4.08 | 5.03 | 2.06 | – | 2.53 |
+
+On 17 of the 23 boards `soft` adds no pseudo-net (no crystal/ESD/regulator instance, or D25 already ties the parts)
+and the placement is byte-identical to `off`. Per board, soft vs off (change > 0.05 mm): on the 23 boards XTAL-01 is
+better on 4 and worse on 0, load caps better on 3, decaps worse on 3 and better on 0; on the ESD set ESD-01 is better
+on 8 of 9 boards (worse on 0), decaps better on 5 and worse on 4, regulator caps worse on 2; over the 18 multi-seed
+runs XTAL-01 is better on 14 of 15, load caps on 9 of 12, but decaps worse on 9 (better on 2) and regulator caps
+worse on 3 of 3. The crystal and protection pulls take the space next to the IC that D25's decaps had (bullion,
+PocketBone: decaps 3-4 mm become 6-8 mm). Doubling the decap ties fixes the decaps
+(better than off) at +2-3 % HPWL. Neither is free of regressions, so **`--component-rules` stays `off` by
+default for placement** (D31); `soft` is recommended where crystals and connector ESD matter more than a few tenths
+of a millimetre of decap distance. `off` reproduces the previous placer output byte for byte.
+
+### 14.4 Routing (P2/P3)
+
+`--component-rules` defaults to `off` for `tracemaker route` (D31): the router's default path is unchanged
+(`pair_nets` empty). Measured 2026-10-04:
+
+- **Tier-A sample** (`bench/run.py --tier A --limit 40 --time 30 --jobs 2`, KiCad DRC judge): off 36/40 clean,
+  completion 0.997; with `TM_ROUTE_ARGS="--component-rules on"` 35/40, 0.995. `on` changes the router input on only 3
+  of the 40 boards (kitspace_aquarius, kitspace_threeboard: one crystal keep-out each; mechkeys_1800-controller: a
+  keep-out and two USB pairs); the board that lost its clean pass (mosavr_pcie1x_backplane, 110 → 102 routed) gets no
+  component rule at all, so that difference is wall-clock noise of the 30 s runs on a shared machine.
+- **16 boards with crystals/USB/ESD** (same harness): off 8/16 clean, completion 0.951; on 6/16, 0.947.
+- **Deterministic** (`--work 20000000 --threads 1`, 10 boards where the rules change the router input): `soft` (USB
+  pairs only) routes the same number of connections as `off` on all 10; the experimental coupled-pair router mostly
+  falls back to single tracks on these short USB runs ("too short to couple", "leg start fails"). `on` (keep-outs)
+  is worse on 4 boards (blackmagic-isolated 93 → 86, PiZeroHub 108 → 104, bobc_MS-F100 102 → 99, MicroMaple 95 → 94),
+  better on 1 (HACK 82 → 88) and equal on 5: a hard keep-out under the crystal and its IC pins removes routing
+  space on the far layer. Leaving the IC pins out of the area (tried) does not help consistently.
+- **KiCad check of the sidecar**: on PCBench CANadapter, KiCad 10 reads `<output>.tracemaker.kicad_dru` (copied as
+  the project's `.kicad_dru`) and reports one "items not allowed (rule 'tmk XTAL-04 Y1')" — a +3V3 track on B.Cu
+  under the crystal — for the board routed with `off`, and none for the board routed with `on`
+  (ctest `crules_route`).
+
+So keep-outs are a real constraint with a completion cost on dense boards; they stay opt-in.

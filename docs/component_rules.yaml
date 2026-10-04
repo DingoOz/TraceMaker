@@ -108,8 +108,8 @@ categories:
     name: USB 2.0 (Full/High Speed) port
     prefix: USB2
     detect:
-      - {signal: lib_id, pattern: "connector_usb:usb_(micro|mini|a|b|c)_|usb.?(micro|mini)|usb_?a_|usb_?b_", weight: 60}
-      - {signal: lib_id, pattern: "usb_c|type.?c", weight: 60}
+      - {signal: lib_id, pattern: "connector_usb:usb_(micro|mini|a|b|c)_|usb.?(micro|mini)|(micro|mini).?usb|usb_?otg|usb[_-]?[ab]([_-]|$)", weight: 60}
+      - {signal: lib_id, pattern: "usb[_-]?c([_-]|$)|type.?c", weight: 60}
       - {signal: pin_name, pattern: "^(d\\+|d-|dp|dm|usb_?d[pmn+-])$", weight: 30}
       - {signal: net_name, pattern: "usb.*(d[pmn+-]|dp|dm|data)", weight: 20}
       - {signal: ref_prefix, pattern: "^(j|p|usb|cn)\\d", weight: 10}
@@ -341,9 +341,9 @@ categories:
     name: Quartz crystal with load capacitors
     prefix: XTAL
     detect:
-      - {signal: lib_id, pattern: "crystal|xtal|hc-?49|resonator", weight: 50}
+      - {signal: lib_id, pattern: "crystal|xtal|crstl|hc-?49|hc-?50|resonator|abs0[57]|abm\\d|fc-?1[23]5|fa-?2[03]8|tsx-?32|csm-?\\d", weight: 50}
       - {signal: ref_prefix, pattern: "^(y|x|xtal)\\d", weight: 15}
-      - {signal: value, pattern: "\\d+(\\.\\d+)?\\s*(mhz|khz)|32\\.768", weight: 20}
+      - {signal: value, pattern: "\\d+(\\.\\d+)?\\s*(mhz|khz)|32\\.768|crystal|xtal", weight: 20}
       - {signal: topology, pattern: two_terminal_between_osc_pins, weight: 50}
     roles: {crystal: anchor, xin: "IC pin named OSC_IN/XTAL_IN/XI/XTAL1/OSC32_IN/XTAL_P", xout: "IC pin named OSC_OUT/XTAL_OUT/XO/XTAL2/OSC32_OUT/XTAL_N", load_caps: "caps from xin/xout nets to GND", ic: "IC owning xin/xout", series_r: "optional series resistor on xout"}
     rules:
@@ -394,7 +394,7 @@ categories:
     detect:
       - {signal: pin_name, pattern: "^(sw|lx|ph)\\d*$", weight: 40}
       - {signal: pin_name, pattern: "^(fb|vfb|vos|bst|boot|cb)$", weight: 20}
-      - {signal: value, pattern: "tps5|tps6|tps54|tps62|lm26|lmr|mp1584|mp2|ap63|rt8|sy8|xl4|lm2596|lt86|ltc36|max1", weight: 30}
+      - {signal: value, pattern: "tps54|tps56|tps62|tps82|lm26\\d\\d\\d|lm25\\d\\d\\d|lm257\\d|lmr1|lmr3|mp1584|mp2|ap63|rt8|sy8|xl4|lm2596|lt86|ltc36|max15\\d\\d\\d", weight: 50}
       - {signal: keywords, pattern: "step.?down|buck", weight: 30}
       - {signal: topology, pattern: inductor_from_sw_pin_to_output_cap, weight: 30}
     roles: {ic: anchor, cin: "HF input cap on VIN-PGND", inductor: "part from SW to VOUT", cout: "output caps", sw: "SW net", fb: "FB net and divider", fb_div: "FB divider resistors", diode: "catch diode (non-synchronous)", snubber: "RC on SW", epad: "exposed pad"}
@@ -415,7 +415,7 @@ categories:
     prefix: BOOST
     detect:
       - {signal: keywords, pattern: "step.?up|boost", weight: 40}
-      - {signal: value, pattern: "tps61|mt3608|lm2577|xl6009|tps55340|ltc3|max17|ap3012|sx1308", weight: 30}
+      - {signal: value, pattern: "tps61|mt3608|lm2577|xl6009|tps55340|ltc34[0-3]\\d|ap3012|sx1308|sy72\\d\\d|lmr6[24]", weight: 50}
       - {signal: pin_name, pattern: "^(sw|lx)$", weight: 30}
     roles: {ic: anchor, inductor: "from VIN to SW", rect: "diode or synchronous output", cout: "output caps", cin: "input caps", fb: "FB net", sw: "SW net"}
     rules:
@@ -428,7 +428,7 @@ categories:
     name: Linear regulator / LDO
     prefix: LDO
     detect:
-      - {signal: value, pattern: "ams1117|ld1117|lm1117|ap2112|mcp1700|mcp1702|xc6206|lp5907|tlv7|tps7|lm317|78\\d\\d|79\\d\\d|ht7333|rt9013|ncp1117|mic5", weight: 50}
+      - {signal: value, pattern: "ams1117|ams10\\d\\d|ld1117|lm1117|ap2112|ap22\\d\\d|mcp170\\d|xc62\\d\\d|lp5907|lp29\\d\\d|lp38\\d\\d|lt19\\d\\d|lt176[1-4]|bu\\d\\d[a-z][a-z]\\d|tlv7|tps7|lm317|78\\d\\d|79\\d\\d|ht7333|rt9013|ncp11\\d\\d|mic5|spx\\d\\d\\d\\d", weight: 50}
       - {signal: keywords, pattern: "ldo|linear regulator|low.?dropout", weight: 40}
       - {signal: pin_name, pattern: "^(vin|in)$.*|^(vout|out)$", weight: 10}
     roles: {ic: anchor, cin: "input cap", cout: "output cap", fb_div: "adjustable divider", tab: "thermal tab/exposed pad"}
@@ -442,7 +442,7 @@ categories:
     name: Radio module with integrated PCB/chip antenna (ESP32, Pico W, u-blox, nRF modules)
     prefix: RFM
     detect:
-      - {signal: lib_id, pattern: "rf_module:|esp32-(wroom|wrover|s[23]|c[36])|esp-?12|wroom|nina-|bm8\\d|mdbt|raytac|rak\\d|rfm9|ra-0\\d|e22|e32|hc-0[56]|nrf24", weight: 60}
+      - {signal: lib_id, pattern: "rf_module:|esp32-(wroom|wrover|s[23]|c[36])|esp-?(0\\d|12|32)|wroom|nina-|bm8\\d|mdbt|raytac|rak\\d|rfm9|ra-0\\d|e22|e32|e73-|hc-0[56]|nrf24", weight: 60}
       - {signal: value, pattern: "esp32|esp8266|wroom|wrover|nina|cyw43|pico.?w|rfm9\\d|sx127|nrf52", weight: 30}
       - {signal: keywords, pattern: "wifi|bluetooth|ble|lora|zigbee|802\\.15\\.4", weight: 20}
     roles: {module: anchor, antenna_region: "antenna area from the module footprint (keep-out zone in the footprint, or datasheet offset)"}
@@ -543,7 +543,7 @@ categories:
     name: ESD / TVS protection device
     prefix: ESD
     detect:
-      - {signal: value, pattern: "usblc|tpd\\d|esd\\d|pesd|smaj|smbj|sm712|prtr|rclamp|tvs|sp05|ip4220|nup", weight: 50}
+      - {signal: value, pattern: "usblc|tpd\\d|esd\\d|pesd|smaj|smbj|sm712|sm(05|12|15|24)|prtr|rclamp|tvs|sp05|ip4220|nup|nuf20|stf20|emif", weight: 50}
       - {signal: keywords, pattern: "esd|tvs|transient", weight: 30}
       - {signal: lib_id, pattern: "tvs|esd|sot-23-6.*esd", weight: 20}
       - {signal: topology, pattern: diode_array_signal_to_ground_near_connector_net, weight: 30}
@@ -560,7 +560,7 @@ categories:
     name: Board-to-wire / board-to-board connector (any external connector)
     prefix: CONN
     detect:
-      - {signal: lib_id, pattern: "^connector|conn_|header|jst|molex|terminal|socket|receptacle|plug", weight: 40}
+      - {signal: lib_id, pattern: "^connector|conn|header|hdr|jst|molex|terminal|socket|receptacle|plug|usb|rj\\d\\d|[86]p[86]c|microsd|sd_?card|barrel|jack|xt\\d\\d|bnc|rf-sma|sma-edge|u\\.?fl|minidin|castellated|pin_?array|^s\\d+b-|^sm\\d+b-|phoenix|berg|ftsh|tc20[35]0|arduino|^[12]x\\d+$", weight: 40}
       - {signal: ref_prefix, pattern: "^(j|p|cn|x)\\d", weight: 20}
     roles: {connector: anchor}
     rules:
@@ -572,7 +572,7 @@ categories:
     name: Mounting hole / fastener
     prefix: MH
     detect:
-      - {signal: lib_id, pattern: "mountinghole|mounting_hole|mount_hole|standoff", weight: 70}
+      - {signal: lib_id, pattern: "mountinghole|mounting_hole|mount_hole|mtg-?hole|hole_npth|^mh-m\\d|standoff", weight: 70}
       - {signal: ref_prefix, pattern: "^(h|mh)\\d", weight: 20}
     roles: {hole: anchor}
     rules:
@@ -610,7 +610,7 @@ categories:
     name: CAN / CAN FD transceiver
     prefix: CAN
     detect:
-      - {signal: value, pattern: "tcan|sn65hvd2[3-5]|mcp25(5|6)|tja10|tja14|mcp2562|iso1042|max3051", weight: 50}
+      - {signal: value, pattern: "tcan|sn65hvd2[3-5]|mcp25(5|6)|tja104\\d|tja105\\d|tja14|mcp2562|iso1042|max3051", weight: 50}
       - {signal: pin_name, pattern: "^can_?[hl]$", weight: 40}
       - {signal: net_name, pattern: "can_?[hl]|canh|canl", weight: 20}
     roles: {xcvr: anchor, bus: "CANH/CANL", term: "120 ohm or 2 x 60 ohm across bus", split_cap: "4.7 nF from split midpoint to GND", connector: "bus connector", esd: "TVS on bus", cmc: "choke on bus", decap: "VCC/VIO caps"}

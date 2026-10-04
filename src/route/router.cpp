@@ -1443,6 +1443,14 @@ struct Router::Impl {
     return true;
   }
 
+  // Component-rule hook (doc 15 P3): with --diff-pairs every P/N pair by name; otherwise only RouterOptions::pair_nets.
+  bool pair_wanted(NetId a, NetId c) const {
+    if (opt.diff_pairs) return obs->rules().coupled_diff_pair(a, c);
+    for (const auto& [p, q] : opt.pair_nets)
+      if ((p == a && q == c) || (p == c && q == a)) return true;
+    return false;
+  }
+
   int route_diff_pairs() {
     std::map<NetId, std::vector<int>> by_net;
     for (std::size_t ci = 0; ci < cs.size(); ++ci)
@@ -1453,7 +1461,7 @@ struct Router::Impl {
     auto dist = [](Point u, Point v) { return std::hypot(static_cast<double>(u.x - v.x), static_cast<double>(u.y - v.y)); };
     for (const auto& [na, la] : by_net)
       for (const auto& [nb, lb] : by_net) {
-        if (na >= nb || !obs->rules().coupled_diff_pair(na, nb)) continue;
+        if (na >= nb || !pair_wanted(na, nb)) continue;
         // Pair up connections whose two ends lie close to each other (each half may have several connections).
         std::vector<char> used(lb.size(), 0);
         for (int ca : la) {
@@ -2028,7 +2036,7 @@ struct Router::Impl {
       if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
     }
     live = opt.sink != nullptr;
-    if (opt.diff_pairs) {
+    if (opt.diff_pairs || !opt.pair_nets.empty()) {
       const int np = route_diff_pairs();
       if (tdbg) std::fprintf(stderr, "[%.2f s] differential pairs routed coupled: %d\n", elapsed(), np);
       res.pairs = np;
@@ -2082,7 +2090,7 @@ struct Router::Impl {
       }
       res.routed = 0;
       if (opt.escape_plan) plan_escape_reservations();  // everything is unrouted again: corridors back
-      if (opt.diff_pairs) route_diff_pairs();  // pairs first again, coupled
+      if (opt.diff_pairs || !opt.pair_nets.empty()) route_diff_pairs();  // pairs first again, coupled
       std::vector<int> order(cs.size());
       for (std::size_t i = 0; i < cs.size(); ++i) order[i] = static_cast<int>(i);
       if (restart > opt.max_restarts) {

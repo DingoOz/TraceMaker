@@ -204,4 +204,22 @@ std::vector<Point> circle_points(Point c, Coord radius, Coord max_error) {
   return out;
 }
 
+std::vector<Point> convex_hull(std::vector<Point> pts) {
+  std::sort(pts.begin(), pts.end(), [](Point a, Point b) { return a.x != b.x ? a.x < b.x : a.y < b.y; });
+  pts.erase(std::unique(pts.begin(), pts.end()), pts.end());
+  if (pts.size() < 3) return pts;
+  std::vector<Point> h(2 * pts.size());
+  std::size_t k = 0;
+  for (std::size_t i = 0; i < pts.size(); ++i) {
+    while (k >= 2 && orient(h[k - 2], h[k - 1], pts[i]) <= 0) --k;
+    h[k++] = pts[i];
+  }
+  for (std::size_t i = pts.size() - 1, t = k + 1; i > 0; --i) {
+    while (k >= t && orient(h[k - 2], h[k - 1], pts[i - 1]) <= 0) --k;
+    h[k++] = pts[i - 1];
+  }
+  h.resize(k - 1);
+  return h;
+}
+
 }  // namespace tmk::geom

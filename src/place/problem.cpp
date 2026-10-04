@@ -9,6 +9,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include "crules/names.hpp"
+#include "crules/topology.hpp"
 #include "drc/copper.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "place/legality.hpp"
@@ -158,24 +160,7 @@ Shape translated(const Shape& s, Point d) {
   return t;
 }
 
-std::vector<Point> convex_hull(std::vector<Point> pts) {
-  // Andrew's monotone chain (exact integer orientation tests).
-  std::sort(pts.begin(), pts.end(), [](Point a, Point b) { return a.x != b.x ? a.x < b.x : a.y < b.y; });
-  pts.erase(std::unique(pts.begin(), pts.end()), pts.end());
-  if (pts.size() < 3) return pts;
-  std::vector<Point> h(2 * pts.size());
-  std::size_t k = 0;
-  for (std::size_t i = 0; i < pts.size(); ++i) {
-    while (k >= 2 && geom::orient(h[k - 2], h[k - 1], pts[i]) <= 0) --k;
-    h[k++] = pts[i];
-  }
-  for (std::size_t i = pts.size() - 1, t = k + 1; i > 0; --i) {
-    while (k >= t && geom::orient(h[k - 2], h[k - 1], pts[i - 1]) <= 0) --k;
-    h[k++] = pts[i - 1];
-  }
-  h.resize(k - 1);
-  return h;
-}
+std::vector<Point> convex_hull(std::vector<Point> pts) { return geom::convex_hull(std::move(pts)); }
 
 Shape inset_convex(const Shape& s, Coord t) {
   const std::size_t n = s.pts.size();
@@ -216,30 +201,9 @@ Shape inset_convex(const Shape& s, Coord t) {
   return Shape::polygon(std::move(out), 0);
 }
 
-bool power_like_name(const std::string& name) {
-  std::string n = upper(name);
-  if (const auto s = n.rfind('/'); s != std::string::npos) n = n.substr(s + 1);
-  if (n.empty()) return false;
-  if (n.find("GND") != std::string::npos || n.find("PWR") != std::string::npos) return true;
-  if ((n[0] == '+' || n[0] == '-') && n.size() > 1 && (std::isdigit(static_cast<unsigned char>(n[1])) || n[1] == 'V')) return true;
-  for (const char* pfx : {"VCC", "VDD", "VSS", "VEE", "VBUS", "VBAT", "VIN", "VSYS", "VPP", "VMOT", "V+", "V-", "AVCC", "AVDD", "DVDD", "VDDA", "VDDIO"})
-    if (n.starts_with(pfx)) return true;
-  // "3V3", "5V", "12V", "1V8": digits, a V, optional digits.
-  std::size_t i = 0;
-  while (i < n.size() && std::isdigit(static_cast<unsigned char>(n[i]))) ++i;
-  if (i > 0 && i < n.size() && n[i] == 'V') {
-    std::size_t j = i + 1;
-    while (j < n.size() && std::isdigit(static_cast<unsigned char>(n[j]))) ++j;
-    if (j == n.size()) return true;
-  }
-  return false;
-}
-
-bool ground_like_name(const std::string& name) {
-  std::string n = upper(name);
-  if (const auto s = n.rfind('/'); s != std::string::npos) n = n.substr(s + 1);
-  return n.find("GND") != std::string::npos || n.starts_with("VSS") || n == "0V";
-}
+// Net-name conventions live in tm::crules (shared with component-rule detection, doc 15).
+bool power_like_name(const std::string& name) { return crules::power_like_name(name); }
+bool ground_like_name(const std::string& name) { return crules::ground_like_name(name); }
 
 namespace {
 
@@ -458,7 +422,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     std::array<std::vector<Shape>, 2> cy0;
     for (int s = 0; s < 2; ++s) {
       if (cpts[z(s)].size() < 3) continue;
-      auto hull = convex_hull(cpts[z(s)]);
+      auto hull = geom::convex_hull(cpts[z(s)]);
       if (hull.size() < 3) continue;
       for (auto& q : hull) q = q - fp.pos;
       cy0[z(s)].push_back(Shape::polygon(std::move(hull), 0));
@@ -608,58 +572,56 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // Decoupling capacitors (design doc 04 §2, decision D25): a two-pad capacitor between a supply and a ground sits only on
   // power nets, which carry weight 1, so wirelength alone lets it drift away from the IC it decouples. Tie its
   // supply pad to the nearest pad of an IC (U*, IC*) on the same supply in the input placement, at signal weight.
+  // A two-pin pseudo-net between two pads: objective only (never reported as wirelength, never routed, never
+  // counted for crossings or congestion), so the reported HPWL is unchanged.
+  auto add_affinity = [&](int pad_a, int pad_b, int weight, std::string name) {
+    PNet net;
+    net.name = std::move(name);
+    net.weight = weight;
+    net.signal = false;
+    net.affinity = true;
+    const int ni = static_cast<int>(p.nets.size());
+    for (const int pi : {pad_a, pad_b}) {
+      const model::Pad& q = b.pads[z(pi)];
+      Pin pin;
+      pin.part = part_of_fp[z(q.footprint)];
+      pin.net = ni;
+      const Point off = q.pos - p.parts[z(pin.part)].pos0;
+      for (int rr = 0; rr < 4; ++rr) pin.off[z(rr)] = rot90(off, rr);
+      net.pins.push_back(static_cast<int>(p.pins.size()));
+      p.parts[z(pin.part)].pins.push_back(static_cast<int>(p.pins.size()));
+      p.pins.push_back(pin);
+    }
+    p.nets.push_back(std::move(net));
+  };
+  std::vector<std::uint8_t> tied_fp(b.footprints.size(), 0);
   if (opt.decap_affinity) {
     int tied = 0;
-    auto ic_ref = [](const std::string& ref) {
-      const std::string r = upper(ref);
-      return (r.starts_with("U") && starts_with_digit_after(r, 1)) || (r.starts_with("IC") && starts_with_digit_after(r, 2));
-    };
-    for (std::size_t fi = 0; fi < b.footprints.size(); ++fi) {
-      const auto& fp = b.footprints[fi];
-      const int cap = part_of_fp[fi];
-      const std::string r = upper(fp.reference);
-      if (cap < 0 || !r.starts_with("C") || !starts_with_digit_after(r, 1) || fp.pads.size() != 2) continue;
-      const auto& p0 = b.pads[z(fp.pads[0])];
-      const auto& p1 = b.pads[z(fp.pads[1])];
-      if (p0.net <= 0 || p1.net <= 0 || p0.net == p1.net) continue;
-      auto supply = [&](const model::Pad& q) {
-        const auto& nm = b.nets[z(q.net)].name;
-        return power_like_name(nm) && !ground_like_name(nm);
-      };
-      auto ground = [&](const model::Pad& q) { return ground_like_name(b.nets[z(q.net)].name); };
-      const model::Pad* sp = supply(p0) && ground(p1) ? &p0 : supply(p1) && ground(p0) ? &p1 : nullptr;
-      if (!sp) continue;
-      int best = -1;
-      geom::i128 best_d = 0;
-      for (std::size_t k = 0; k < b.pads.size(); ++k) {  // ascending index: ties keep the first pad
-        const auto& q = b.pads[k];
-        if (q.net != sp->net || q.footprint < 0 || part_of_fp[z(q.footprint)] < 0 || part_of_fp[z(q.footprint)] == cap) continue;
-        if (!ic_ref(b.footprints[z(q.footprint)].reference)) continue;
-        const geom::i128 dx = q.pos.x - sp->pos.x, dy = q.pos.y - sp->pos.y, d = dx * dx + dy * dy;
-        if (best < 0 || d < best_d) best = static_cast<int>(k), best_d = d;
-      }
-      if (best < 0) continue;
-      PNet net;
-      const auto& ic_pad = b.pads[z(best)];
-      net.name = "~decap " + fp.reference + "-" + b.footprints[z(ic_pad.footprint)].reference;
-      net.weight = kSignalWeight;
-      net.signal = false;
-      net.affinity = true;
-      const int ni = static_cast<int>(p.nets.size());
-      for (const model::Pad* q : {sp, &ic_pad}) {
-        Pin pin;
-        pin.part = part_of_fp[z(q->footprint)];
-        pin.net = ni;
-        const Point off = q->pos - p.parts[z(pin.part)].pos0;
-        for (int rr = 0; rr < 4; ++rr) pin.off[z(rr)] = rot90(off, rr);
-        net.pins.push_back(static_cast<int>(p.pins.size()));
-        p.parts[z(pin.part)].pins.push_back(static_cast<int>(p.pins.size()));
-        p.pins.push_back(pin);
-      }
-      p.nets.push_back(std::move(net));
+    for (const auto& t : crules::decap_ties(b, [&](int fi) { return part_of_fp[z(fi)] >= 0; }, false)) {
+      add_affinity(t.cap_pad, t.ic_pad, opt.decap_weight,
+                   "~decap " + b.footprints[z(t.cap_fp)].reference + "-" + b.footprints[z(b.pads[z(t.ic_pad)].footprint)].reference);
+      tied_fp[z(t.cap_fp)] = 1;
       ++tied;
     }
     if (tied > 0) p.notes.push_back(std::to_string(tied) + " decoupling capacitor(s) tied to the nearest supply pin of their IC");
+  }
+  // Component-rule proximity pseudo-nets (doc 15 P1), the same mechanism as D25. A part D25 already tied keeps
+  // only its D25 tie, so the default decoupling behaviour does not change.
+  if (!opt.affinities.empty()) {
+    int added = 0, skipped = 0;
+    for (const auto& a : opt.affinities) {
+      if (a.pad_a < 0 || a.pad_b < 0 || static_cast<std::size_t>(a.pad_a) >= b.pads.size() || static_cast<std::size_t>(a.pad_b) >= b.pads.size()) continue;
+      const int fa = b.pads[z(a.pad_a)].footprint, fb = b.pads[z(a.pad_b)].footprint;
+      if (fa < 0 || fb < 0 || fa == fb || part_of_fp[z(fa)] < 0 || part_of_fp[z(fb)] < 0) continue;
+      if (tied_fp[z(fa)]) {
+        ++skipped;
+        continue;
+      }
+      add_affinity(a.pad_a, a.pad_b, a.weight, a.name);
+      ++added;
+    }
+    p.notes.push_back("component rules: " + std::to_string(added) + " proximity pseudo-net(s)" +
+                      (skipped ? ", " + std::to_string(skipped) + " skipped (part already tied as a decoupling capacitor)" : std::string()));
   }
   // Parts that already overhang the board edge (pads outside, or the courtyard well past it) or sit in a
   // keepout are placed that way on purpose (connectors, sensors, battery holders): keep them where they are.

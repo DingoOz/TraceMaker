@@ -1,0 +1,5945 @@
+{
+ "version": 1,
+ "status": "draft-planned",
+ "units": {
+  "length": "mm",
+  "impedance": "ohm",
+  "time": "ps",
+  "voltage": "V",
+  "current": "A",
+  "temperature": "C"
+ },
+ "defaults": {
+  "thresholds": {
+   "apply": 70,
+   "suggest": 40
+  },
+  "prop_delay_ps_per_mm": {
+   "outer": 6.0,
+   "inner": 7.0
+  },
+  "general_high_speed": {
+   "pair_to_other_signal_mm": 0.76,
+   "pair_to_clock_mm": 1.27,
+   "stitch_via_within_mm": 5.08,
+   "plane_edge_min_mm": 2.29,
+   "max_via_stub_mm": 0.38,
+   "sources": [
+    "TI-SPRAAR7J"
+   ]
+  }
+ },
+ "sources": {
+  "TI-SPRAAR7J": {
+   "title": "TI SPRAAR7J, High-Speed Interface Layout Guidelines (2023)",
+   "url": "https://www.ti.com/lit/an/spraar7j/spraar7j.pdf"
+  },
+  "TI-SLLA414": {
+   "title": "TI SLLA414A, High-Speed Layout Guidelines for Signal Conditioners and USB Hubs",
+   "url": "https://www.ti.com/lit/an/slla414a/slla414a.pdf"
+  },
+  "TI-TUSB8041": {
+   "title": "TI TUSB8041 USB 3.0 hub datasheet, \u00a711.1 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/tusb8041.pdf"
+  },
+  "TI-TUSB1310A": {
+   "title": "TI TUSB1310A USB 3.0 PHY datasheet, \u00a76.2.4 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/tusb1310a.pdf"
+  },
+  "TI-TUSB320": {
+   "title": "TI TUSB320 USB Type-C CC logic datasheet, \u00a710.1 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/tusb320.pdf"
+  },
+  "TI-TPS65987D": {
+   "title": "TI TPS65987D USB Type-C PD controller datasheet, \u00a711.4-11.5 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/tps65987d.pdf"
+  },
+  "USB-TYPEC-SPEC": {
+   "title": "USB-IF, USB Type-C Cable and Connector Specification (Rd = 5.1 kOhm)",
+   "url": "https://www.usb.org/document-library/usb-type-cr-cable-and-connector-specification-release-24"
+  },
+  "RPI-CM5": {
+   "title": "Raspberry Pi Compute Module 5 datasheet (carrier-board layout notes)",
+   "url": "https://datasheets.raspberrypi.com/cm5/cm5-datasheet.pdf"
+  },
+  "TI-TPD12S016": {
+   "title": "TI TPD12S016 HDMI companion/ESD datasheet, \u00a710.1 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/tpd12s016.pdf"
+  },
+  "TI-SN75DP130": {
+   "title": "TI SN75DP130 DisplayPort redriver datasheet, \u00a712.1 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/sn75dp130.pdf"
+  },
+  "TI-DS160PR410": {
+   "title": "TI DS160PR410 PCIe 4.0 redriver datasheet, \u00a79-10",
+   "url": "https://www.ti.com/lit/ds/symlink/ds160pr410.pdf"
+  },
+  "TI-SN75LVCP601": {
+   "title": "TI SN75LVCP601 SATA redriver datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/sn75lvcp601.pdf"
+  },
+  "TI-DS90UB953": {
+   "title": "TI DS90UB953-Q1 serializer datasheet, \u00a77.4.1.1 CSI-2 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/ds90ub953-q1.pdf"
+  },
+  "TI-SNLA187": {
+   "title": "TI SNLA187, LVDS Owner's Manual",
+   "url": "https://www.ti.com/lit/pdf/snla187"
+  },
+  "TI-SPRABI1": {
+   "title": "TI SPRABI1, DDR3 Design Requirements for KeyStone Devices",
+   "url": "https://www.ti.com/lit/pdf/sprabi1"
+  },
+  "TI-SPRAD06": {
+   "title": "TI SPRAD06, AM62x DDR Board Design and Layout Guidelines (DDR4, LPDDR4)",
+   "url": "https://www.ti.com/lit/pdf/sprad06"
+  },
+  "TI-AM625": {
+   "title": "TI AM625 datasheet, \u00a78.2.2 OSPI/QSPI board design",
+   "url": "https://www.ti.com/lit/ds/symlink/am625.pdf"
+  },
+  "TI-SPRAD21": {
+   "title": "TI SPRAD21, AM62x schematic design guidelines",
+   "url": "https://www.ti.com/lit/pdf/sprad21"
+  },
+  "TI-WL1837MOD": {
+   "title": "TI WL1837MOD datasheet, \u00a79.1 SDIO layout",
+   "url": "https://www.ti.com/lit/ds/symlink/wl1837mod.pdf"
+  },
+  "TI-TXS0206A": {
+   "title": "TI TXS0206A SD-card level translator datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/txs0206a.pdf"
+  },
+  "ST-AN2867": {
+   "title": "ST AN2867, Guidelines for oscillator design on STM8AF/AL/S and STM32 MCUs/MPUs",
+   "url": "https://www.st.com/resource/en/application_note/an2867-oscillator-design-guide-for-stm8afals-stm32-mcus-and-mpus-stmicroelectronics.pdf"
+  },
+  "MCHP-AN826": {
+   "title": "Microchip AN826, Crystal Oscillator Basics and Crystal Selection for rfPIC and PICmicro",
+   "url": "https://ww1.microchip.com/downloads/en/AppNotes/00826a.pdf"
+  },
+  "NXP-AN2049": {
+   "title": "NXP/Freescale AN2049, Crystal Feedback Oscillators",
+   "url": "https://www.nxp.com/docs/en/application-note/AN2049.pdf"
+  },
+  "ESP-HDG-ESP32": {
+   "title": "Espressif, ESP32 Hardware Design Guidelines: PCB Layout Design",
+   "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/pcb-layout-design.html"
+  },
+  "ESP-HDG-S3": {
+   "title": "Espressif, ESP32-S3 Hardware Design Guidelines: PCB Layout Design",
+   "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/pcb-layout-design.html"
+  },
+  "ESP-HDG-C3": {
+   "title": "Espressif, ESP32-C3 Hardware Design Guidelines: PCB Layout Design",
+   "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/pcb-layout-design.html"
+  },
+  "ST-AN4488": {
+   "title": "ST AN4488, Getting started with STM32F4xxxx MCU hardware development",
+   "url": "https://www.st.com/resource/en/application_note/an4488-getting-started-with-stm32f4xxxx-mcu-hardware-development-stmicroelectronics.pdf"
+  },
+  "TI-SLVA959B": {
+   "title": "TI SLVA959B, Best Practices for Board Layout of Motor Drivers",
+   "url": "https://www.ti.com/lit/an/slva959b/slva959b.pdf"
+  },
+  "AMD-UG483": {
+   "title": "AMD/Xilinx UG483, 7 Series FPGAs PCB Design Guide",
+   "url": "https://docs.amd.com/v/u/en-US/ug483_7Series_PCB"
+  },
+  "ADI-MT101": {
+   "title": "ADI MT-101, Decoupling Techniques",
+   "url": "https://www.analog.com/media/en/training-seminars/tutorials/MT-101.pdf"
+  },
+  "TI-SLYT614": {
+   "title": "TI SLYT614, Five steps to a great PCB layout for a step-down converter",
+   "url": "https://www.ti.com/lit/an/slyt614/slyt614.pdf"
+  },
+  "TI-SNVA021C": {
+   "title": "TI SNVA021C, AN-1149 Layout Guidelines for Switching Power Supplies",
+   "url": "https://www.ti.com/lit/an/snva021c/snva021c.pdf"
+  },
+  "TI-SLMA002": {
+   "title": "TI SLMA002, PowerPAD Thermally Enhanced Package",
+   "url": "https://www.ti.com/lit/an/slma002h/slma002h.pdf"
+  },
+  "ADI-AN139": {
+   "title": "ADI (Linear Technology) AN-139, Power Supply Layout and EMI",
+   "url": "https://www.analog.com/media/en/technical-documentation/application-notes/an139f.pdf"
+  },
+  "TI-SLVA118A": {
+   "title": "TI SLVA118A, Linear Regulator Design Guide for LDOs",
+   "url": "https://www.ti.com/lit/an/slva118a/slva118a.pdf"
+  },
+  "ADI-MT031": {
+   "title": "ADI MT-031, Grounding Data Converters and Solving the Mystery of AGND and DGND",
+   "url": "https://www.analog.com/media/en/training-seminars/tutorials/MT-031.pdf"
+  },
+  "ADI-OPAMP-HB": {
+   "title": "ADI, Op Amp Applications Handbook (W. Jung, ed.), ch. 7 guarding / MT-041",
+   "url": "https://www.analog.com/en/resources/technical-books/op-amp-applications-handbook.html"
+  },
+  "IPC-2221B": {
+   "title": "IPC-2221B, Generic Standard on Printed Board Design (2012): \u00a76.2 conductor current, Table 6-1 spacing",
+   "url": "https://www.ipc.org/TOC/IPC-2221B.pdf"
+  },
+  "IPC-2152": {
+   "title": "IPC-2152, Standard for Determining Current Carrying Capacity in Printed Board Design (2009)",
+   "url": "https://www.ipc.org/TOC/IPC-2152.pdf"
+  },
+  "KICAD-CALC-IPC2221": {
+   "title": "KiCad PCB Calculator, electrical spacing panel (IPC-2221 Table 6-1 values)",
+   "url": "https://gitlab.com/kicad/code/kicad/-/raw/master/pcb_calculator/calculator_panels/panel_electrical_spacing_ipc2221.cpp"
+  },
+  "TI-SLUA618A": {
+   "title": "TI SLUA618A, Fundamentals of MOSFET and IGBT Gate Driver Circuits",
+   "url": "https://www.ti.com/lit/an/slua618a/slua618a.pdf"
+  },
+  "RPI-PICOW": {
+   "title": "Raspberry Pi Pico W datasheet, \u00a72.2.1 antenna placement",
+   "url": "https://pip-assets.raspberrypi.com/categories/686-raspberry-pi-pico-w/documents/RP-008312-DS-2-pico-w-datasheet.pdf"
+  },
+  "UBLOX-NINAB3": {
+   "title": "u-blox NINA-B3 System Integration Manual UBX-17056748",
+   "url": "https://content.u-blox.com/sites/default/files/NINA-B3_SIM_UBX-17056748.pdf"
+  },
+  "NORDIC-NRF52840-REF": {
+   "title": "Nordic nRF52840 Product Specification, Reference circuitry",
+   "url": "https://docs.nordicsemi.com/bundle/ps_nrf52840/page/ref_circuitry.html"
+  },
+  "JOHANSON-2450AT18A100": {
+   "title": "Johanson 2450AT18A100 2.4 GHz chip antenna datasheet (eval-board layout)",
+   "url": "https://www.johansontechnology.com/datasheets/2450AT18A100/2450AT18A100.pdf"
+  },
+  "IGNION-NN03-310": {
+   "title": "Ignion TRIO mXTEND NN03-310 user manual",
+   "url": "https://ignion.io/files/UM_NN03-310.pdf"
+  },
+  "TI-AN058": {
+   "title": "TI SWRA161B (AN058), Antenna Selection Guide",
+   "url": "https://www.ti.com/lit/an/swra161b/swra161b.pdf"
+  },
+  "SILABS-AN928": {
+   "title": "Silicon Labs AN928.2, EFR32 Series 2 Layout Design Guide",
+   "url": "https://www.silabs.com/documents/public/application-notes/an928.2-efr32-series2-layout-design-guide.pdf"
+  },
+  "WADELL-1991": {
+   "title": "B. C. Wadell, Transmission Line Design Handbook, Artech House, 1991",
+   "url": "https://us.artechhouse.com/Transmission-Line-Design-Handbook-P297.aspx"
+  },
+  "IPC-2141A": {
+   "title": "IPC-2141A, Design Guide for High-Speed Controlled Impedance Circuit Boards (2004)",
+   "url": "https://www.ipc.org/TOC/IPC-2141A.pdf"
+  },
+  "HAMMERSTAD-1980": {
+   "title": "E. Hammerstad, O. Jensen, Accurate Models for Microstrip Computer-Aided Design, IEEE MTT-S Digest 1980, pp. 407-409",
+   "url": "https://doi.org/10.1109/MWSYM.1980.1124303"
+  },
+  "IEC-62368-1": {
+   "title": "IEC 62368-1:2023, Audio/video, information and communication technology equipment - Safety requirements (clearance/creepage tables)",
+   "url": "https://webstore.iec.ch/en/publication/90190"
+  },
+  "TI-SLLA284": {
+   "title": "TI SLLA284G, Digital Isolator Design Guide",
+   "url": "https://www.ti.com/lit/an/slla284d/slla284d.pdf"
+  },
+  "ADI-AN1109": {
+   "title": "ADI AN-1109, Recommendations for Control of Radiated Emissions with isoPower Devices",
+   "url": "https://www.analog.com/media/en/technical-documentation/application-notes/AN-1109.pdf"
+  },
+  "JLC-CAPS": {
+   "title": "JLCPCB PCB manufacturing capabilities",
+   "url": "https://jlcpcb.com/capabilities/pcb-capabilities"
+  },
+  "KICAD-PCBEXPR": {
+   "title": "KiCad source, pcbnew/pcbexpr_functions.cpp (custom-rule condition functions)",
+   "url": "https://gitlab.com/kicad/code/kicad/-/raw/master/pcbnew/pcbexpr_functions.cpp"
+  },
+  "QUILTER-DOCS": {
+   "title": "Quilter documentation, Physics constraints (overview, bypass capacitors, switching converters)",
+   "url": "https://docs.quilter.ai/physics-constraints/overview.md"
+  },
+  "JITX-DOCS": {
+   "title": "JITX documentation",
+   "url": "https://docs.jitx.com/en/latest/"
+  },
+  "TI-SNLA079D": {
+   "title": "TI SNLA079D, AN-1469 PHYTER Design & Layout Guide",
+   "url": "https://www.ti.com/lit/an/snla079d/snla079d.pdf"
+  },
+  "TI-SNLA387": {
+   "title": "TI SNLA387, Ethernet PHY PCB Design Layout Checklist (2021)",
+   "url": "https://www.ti.com/lit/an/snla387/snla387.pdf"
+  },
+  "TI-DP83867": {
+   "title": "TI DP83867IR/CR Gigabit Ethernet PHY datasheet SNLS484J, \u00a79.2.2 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/dp83867ir.pdf"
+  },
+  "MCHP-AN18-0": {
+   "title": "SMSC/Microchip AN 18.0, LAN950x Layout Guidelines (Ethernet chapter)",
+   "url": "https://ww1.microchip.com/downloads/en/Appnotes/en562744.pdf"
+  },
+  "TI-SLLA270": {
+   "title": "TI SLLA270, Controller Area Network Physical Layer Requirements",
+   "url": "https://www.ti.com/lit/an/slla270/slla270.pdf"
+  },
+  "TI-TCAN1042H": {
+   "title": "TI TCAN1042H CAN FD transceiver datasheet, \u00a712.1 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/tcan1042h.pdf"
+  },
+  "TI-SLLA272": {
+   "title": "TI SLLA272, The RS-485 Design Guide",
+   "url": "https://www.ti.com/lit/an/slla272d/slla272d.pdf"
+  },
+  "TI-MAX3232": {
+   "title": "TI MAX3232 RS-232 transceiver datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/max3232.pdf"
+  },
+  "TI-SLVA689": {
+   "title": "TI SLVA689, I2C Bus Pullup Resistor Calculation",
+   "url": "https://www.ti.com/lit/an/slva689/slva689.pdf"
+  },
+  "NXP-UM10204": {
+   "title": "NXP UM10204 Rev. 7, I2C-bus specification and user manual",
+   "url": "https://www.nxp.com/docs/en/user-guide/UM10204.pdf"
+  },
+  "TI-SPRU655I": {
+   "title": "TI SPRU655I, Emulation and Trace Headers Technical Reference Manual",
+   "url": "https://www.ti.com/lit/ug/spru655i/spru655i.pdf"
+  },
+  "TI-SLVA680A": {
+   "title": "TI SLVA680A, ESD Protection Layout Guide",
+   "url": "https://www.ti.com/lit/an/slva680a/slva680a.pdf"
+  },
+  "TI-BQ24075": {
+   "title": "TI BQ2407x Li-ion charger datasheet SLUS810N, \u00a712 layout",
+   "url": "https://www.ti.com/lit/ds/symlink/bq24075.pdf"
+  },
+  "IEEE-802.3": {
+   "title": "IEEE 802.3 Ethernet standard (MDI isolation 1500 Vrms, clause 22 MDIO)",
+   "url": "https://standards.ieee.org/ieee/802.3/10422/"
+  },
+  "ISO-11898-2": {
+   "title": "ISO 11898-2, Road vehicles - Controller area network - High-speed medium access unit",
+   "url": "https://www.iso.org/standard/85120.html"
+  },
+  "ARM-CORESIGHT-CONN": {
+   "title": "Arm, CoreSight / Cortex debug connectors (10-pin 1.27 mm, 20-pin 2.54 mm)",
+   "url": "https://developer.arm.com/documentation/101416/latest/Hardware-Description/Target-Interfaces/Cortex-Debug--10-pin-"
+  },
+  "IPC-2221B-TP": {
+   "title": "Common in-circuit-test (bed-of-nails) DFT practice; e.g. IPC-2221B \u00a78 test points (not re-read)",
+   "url": "https://www.ipc.org/TOC/IPC-2221B.pdf"
+  },
+  "TMK-PRACTICE": {
+   "title": "No primary source read: common layout practice recorded as a TraceMaker default (doc 15 \u00a78 note); verify before making hard",
+   "url": "docs/15-component-rules.md"
+  }
+ },
+ "categories": [
+  {
+   "id": "usb2",
+   "name": "USB 2.0 (Full/High Speed) port",
+   "prefix": "USB2",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "connector_usb:usb_(micro|mini|a|b|c)_|usb.?(micro|mini)|(micro|mini).?usb|usb_?otg|usb[_-]?[ab]([_-]|$)",
+     "weight": 60
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "usb[_-]?c([_-]|$)|type.?c",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(d\\+|d-|dp|dm|usb_?d[pmn+-])$",
+     "weight": 30
+    },
+    {
+     "signal": "net_name",
+     "pattern": "usb.*(d[pmn+-]|dp|dm|data)",
+     "weight": 20
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(j|p|usb|cn)\\d",
+     "weight": 10
+    }
+   ],
+   "roles": {
+    "connector": "anchor",
+    "dp": "net on anchor pin named D+/DP (USB-C: A6 and B6)",
+    "dm": "net on anchor pin named D-/DM (USB-C: A7 and B7)",
+    "esd": "part with >= 2 pins on {dp, dm} and one on GND",
+    "cmc": "4-pin part in series on dp and dm",
+    "transceiver": "IC whose pins named D+/D-/USB_DP/USB_DM end dp/dm"
+   },
+   "rules": [
+    {
+     "id": "USB2-01",
+     "kind": "impedance",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "D+/D- are a 90 ohm differential pair (45 ohm single-ended)",
+     "params": {
+      "zdiff_ohm": 90,
+      "z0_ohm": 45,
+      "tol_pct": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLLA414"
+     ],
+     "evidence": "V",
+     "note": "SLLA414 states +/-15 %; SPRAAR7J tables +/-10 %. Needs a stackup (doc 15 \u00a75.3). FS-only links tolerate much more; HS is the reason for the rule."
+    },
+    {
+     "id": "USB2-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "Route D+/D- coupled; intra-pair length mismatch <= 1.27 mm",
+     "params": {
+      "max_intra_skew_mm": 1.27
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-TUSB8041",
+      "RPI-CM5"
+     ],
+     "evidence": "V",
+     "note": "TI 50 mil; Raspberry Pi CM5 asks 0.15 mm. Default is TI's value."
+    },
+    {
+     "id": "USB2-03",
+     "kind": "max_length",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "Transceiver-to-connector length <= 203 mm recommended (hard ceiling 305 mm)",
+     "params": {
+      "max_mm": 203,
+      "hard_max_mm": 305
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-TUSB8041",
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-04",
+     "kind": "via_limit",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "<= 4 vias per line, equal count on D+ and D-",
+     "params": {
+      "max_vias": 4,
+      "equal_pn": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-05",
+     "kind": "max_stub",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "No stubs or test points on D+/D- (inline and symmetric if unavoidable)",
+     "params": {
+      "max_mm": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-TUSB8041"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-06",
+     "kind": "clearance",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "Keep 0.76 mm from other signals and 1.27 mm from clocks",
+     "params": {
+      "to_other_mm": 0.76,
+      "to_clock_mm": 1.27
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-07",
+     "kind": "proximity",
+     "applies_to": [
+      "esd",
+      "cmc"
+     ],
+     "rule": "ESD and common-mode choke as close to the connector as possible, flow-through",
+     "params": {
+      "to": "connector",
+      "max_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLVA680A"
+     ],
+     "evidence": "V",
+     "note": "5 mm is TraceMaker's default for 'as close as possible'; sources give no number."
+    },
+    {
+     "id": "USB2-08",
+     "kind": "order",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "Along each line: connector -> ESD -> CMC -> transceiver",
+     "params": {
+      "sequence": [
+       "connector",
+       "esd",
+       "cmc",
+       "transceiver"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLVA680A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-09",
+     "kind": "reference_plane",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "Route over solid GND on the adjacent layer; never cross a plane split",
+     "params": {
+      "plane_net": "GND",
+      "no_split_crossing": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-10",
+     "kind": "advisory",
+     "applies_to": [
+      "dp",
+      "dm"
+     ],
+     "rule": "No AC coupling capacitors on D+/D-; P/N swap only if the PHY supports it",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA414",
+      "RPI-CM5"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USB2-11",
+     "kind": "edge",
+     "applies_to": [
+      "connector"
+     ],
+     "rule": "Receptacle at the board edge, mating face at or just past the edge",
+     "params": {
+      "max_mm": 0.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "General connector practice (CONN-01); kept here so the USB report is self-contained."
+    }
+   ]
+  },
+  {
+   "id": "usb3_typec",
+   "name": "USB 3.x SuperSpeed and USB Type-C receptacle",
+   "prefix": "USBC",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "usb_c|type.?c|usb3|usb_?3",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(cc[12]|sbu[12]|vconn)$",
+     "weight": 40
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(ss)?(tx|rx)[12]?[+-]|^(sstx|ssrx)[pn]",
+     "weight": 40
+    },
+    {
+     "signal": "value",
+     "pattern": "tusb|hd3ss|fusb30|stusb|tps6598|ptn5110|cypd",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "connector": "anchor",
+    "cc": "nets on CC1/CC2",
+    "sbu": "nets on SBU1/SBU2",
+    "vbus": "net on VBUS pins",
+    "sstx": "TX+/TX- pairs (A2/A3, B2/B3)",
+    "ssrx": "RX+/RX- pairs (A10/A11, B10/B11)",
+    "dp_tie": "D+ (A6, B6) and D- (A7, B7) joins on the receptacle",
+    "ac_cap": "series capacitors on sstx",
+    "esd": "TVS parts on any connector signal"
+   },
+   "rules": [
+    {
+     "id": "USBC-01",
+     "kind": "impedance",
+     "applies_to": [
+      "sstx",
+      "ssrx"
+     ],
+     "rule": "SuperSpeed pairs 90 ohm differential",
+     "params": {
+      "zdiff_ohm": 90,
+      "tol_pct": 7
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLLA414",
+      "TI-TUSB1310A"
+     ],
+     "evidence": "V",
+     "note": "Tolerance varies: +/-7 % (SPRAAR7J), +/-10 % (TUSB8041), +/-15 % (SLLA414); some SoCs ask 95 ohm +/-5 %."
+    },
+    {
+     "id": "USBC-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "sstx",
+      "ssrx"
+     ],
+     "rule": "Intra-pair mismatch <= 0.127 mm; TX and RX need not be matched to each other",
+     "params": {
+      "max_intra_skew_mm": 0.127
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLLA414",
+      "TI-TUSB1310A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USBC-03",
+     "kind": "max_stub",
+     "applies_to": [
+      "dp_tie"
+     ],
+     "rule": "Each stub of the A6/B6 and A7/B7 D+/D- tie <= 3.5 mm",
+     "params": {
+      "max_mm": 3.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-TUSB320"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USBC-04",
+     "kind": "via_limit",
+     "applies_to": [
+      "sstx",
+      "ssrx"
+     ],
+     "rule": "<= 2 vias per SuperSpeed line",
+     "params": {
+      "max_vias": 2,
+      "equal_pn": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USBC-05",
+     "kind": "max_length",
+     "applies_to": [
+      "sstx",
+      "ssrx"
+     ],
+     "rule": "SuperSpeed length <= 140 mm (SoC tables 89-140 mm; 203 mm absolute for hubs/PHYs)",
+     "params": {
+      "max_mm": 140
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-TUSB1310A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USBC-06",
+     "kind": "order",
+     "applies_to": [
+      "sstx"
+     ],
+     "rule": "TX AC caps (100 nF, 0402 or smaller, no arrays) symmetric near the connector, order connector -> ESD -> CMC -> caps",
+     "params": {
+      "sequence": [
+       "connector",
+       "esd",
+       "cmc",
+       "ac_cap"
+      ],
+      "cap_nF": 100
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-TUSB1310A",
+      "TI-TUSB8041",
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V",
+     "note": "Spec range 75-265 nF (recalled, not re-read)."
+    },
+    {
+     "id": "USBC-07",
+     "kind": "keepout",
+     "applies_to": [
+      "ac_cap",
+      "esd"
+     ],
+     "rule": "Void the reference plane under AC-cap pads (100 %) and ESD pads (60 %) on the adjacent layer",
+     "params": {
+      "layers": "adjacent",
+      "disallow": [
+       "zones"
+      ],
+      "void_pct": 100
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V",
+     "note": "Changes plane geometry; reported, not generated, until P4."
+    },
+    {
+     "id": "USBC-08",
+     "kind": "width_for_current",
+     "applies_to": [
+      "cc"
+     ],
+     "rule": "CC traces >= 0.2 mm (carry VCONN current)",
+     "params": {
+      "min_width_mm": 0.2
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc"
+     ],
+     "sources": [
+      "TI-TPS65987D"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USBC-09",
+     "kind": "width_for_current",
+     "applies_to": [
+      "vbus"
+     ],
+     "rule": "VBUS sized for the port current; at 5 A ~3 mm outer (0.5 oz + plating), > 5 mm inner, >= 4 vias per layer change",
+     "params": {
+      "current_a": 3,
+      "min_width_mm_at_5a_outer": 3.05,
+      "min_vias": 4
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-TPS65987D",
+      "IPC-2152"
+     ],
+     "evidence": "V",
+     "note": "Default current 3 A (Type-C default max without PD 5 A cable). See PWR-01."
+    },
+    {
+     "id": "USBC-10",
+     "kind": "proximity",
+     "applies_to": [
+      "esd"
+     ],
+     "rule": "ESD/TVS on CC, SBU, D+/D-, VBUS as close to the receptacle as possible",
+     "params": {
+      "to": "connector",
+      "max_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLVA680A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "USBC-11",
+     "kind": "advisory",
+     "applies_to": [
+      "cc"
+     ],
+     "rule": "Sink (UFP) needs Rd = 5.1 kohm on each CC unless the controller integrates it",
+     "params": {
+      "rd_kohm": 5.1
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "USB-TYPEC-SPEC"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "USBC-12",
+     "kind": "advisory",
+     "applies_to": [
+      "sbu"
+     ],
+     "rule": "SBU: no numeric layout rule found; treat as low-speed signal with ESD at the connector",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "ethernet",
+   "name": "Ethernet 10/100/1000BASE-T (PHY, magnetics, RJ45)",
+   "prefix": "ETH",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "rj45|8p8c|magjack|hr911|j0011d|arjm|lpj",
+     "weight": 60
+    },
+    {
+     "signal": "value",
+     "pattern": "lan87|ksz8|ksz9|dp838|rtl82(0|1)|w5500|enc28j60|lan9|ip101|88e1",
+     "weight": 50
+    },
+    {
+     "signal": "keywords",
+     "pattern": "ethernet|magnetics|lan transformer",
+     "weight": 30
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(td|rd|tx|rx)[+-]$|^(txp|txn|rxp|rxn|mdi\\d?[pn+-])",
+     "weight": 30
+    },
+    {
+     "signal": "net_name",
+     "pattern": "eth|mdi|rmii|rgmii",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "rj45": "anchor",
+    "phy": "IC with MDI pins",
+    "magnetics": "discrete transformer between phy and rj45 (absent for MagJack)",
+    "mdi_pairs": "TX+/TX-, RX+/RX- (and pairs C/D at 1G) between phy and magnetics",
+    "line_pairs": "pairs between magnetics and rj45",
+    "centre_tap": "cable-side centre taps",
+    "chassis": "rj45 shield net",
+    "mac_bus": "RMII/RGMII nets between phy and MAC",
+    "phy_xtal": "25 MHz crystal/oscillator of the phy"
+   },
+   "rules": [
+    {
+     "id": "ETH-01",
+     "kind": "impedance",
+     "applies_to": [
+      "mdi_pairs",
+      "line_pairs"
+     ],
+     "rule": "MDI pairs 100 ohm differential (50 ohm single-ended)",
+     "params": {
+      "zdiff_ohm": 100,
+      "z0_ohm": 50,
+      "tol_pct": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "TI-SNLA079D",
+      "TI-DP83867"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "mdi_pairs"
+     ],
+     "rule": "Intra-pair mismatch <= 0.51 mm at 1G, <= 1.27 mm at 10/100; each pair on one layer to the magnetics, no stubs",
+     "params": {
+      "max_intra_skew_mm": 0.51,
+      "max_intra_skew_mm_10_100": 1.27
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "TI-SNLA079D"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-03",
+     "kind": "max_length",
+     "applies_to": [
+      "mdi_pairs"
+     ],
+     "rule": "PHY to magnetics < 50.8 mm",
+     "params": {
+      "max_mm": 50.8
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "MCHP-AN18-0"
+     ],
+     "evidence": "V",
+     "note": "SMSC AN18.0 gives a 25.4-76.2 mm window (minimum for ESD); TI gives < 50.8 mm. Default TI; minimum not enforced."
+    },
+    {
+     "id": "ETH-04",
+     "kind": "clearance",
+     "applies_to": [
+      "mdi_pairs"
+     ],
+     "rule": ">= 0.76 mm between different pairs; same-layer copper >= 3w (5w preferred); other high-speed traces >= 7.6 mm from the front end",
+     "params": {
+      "pair_to_pair_mm": 0.762,
+      "to_copper_w": 3,
+      "to_high_speed_mm": 7.62
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "MCHP-AN18-0"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-05",
+     "kind": "keepout",
+     "applies_to": [
+      "magnetics"
+     ],
+     "rule": "No copper under discrete magnetics on the component layer and the layer below (all layers for automotive), void 0.5 mm beyond the body; not required under integrated-magnetics RJ45",
+     "params": {
+      "layers": [
+       "same",
+       "adjacent"
+      ],
+      "margin_mm": 0.508,
+      "disallow": [
+       "tracks",
+       "vias",
+       "zones"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "TI-SNLA079D",
+      "TI-DP83867"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-06",
+     "kind": "clearance",
+     "applies_to": [
+      "chassis"
+     ],
+     "rule": "Chassis (earth) ground isolated from circuit ground by >= 0.51 mm on all layers; many designs use ~2 mm for 1500 Vrms hipot",
+     "params": {
+      "min_mm": 0.508,
+      "recommended_mm": 2.0
+     },
+     "severity": "hard",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "IEEE-802.3"
+     ],
+     "evidence": "V",
+     "note": "0.508 mm read in SNLA387; the 2 mm practice value is recalled, not verified."
+    },
+    {
+     "id": "ETH-07",
+     "kind": "keepout",
+     "applies_to": [
+      "magnetics",
+      "rj45"
+     ],
+     "rule": "Planes stop at the middle of the magnetics; only line pairs cross from there to the RJ45; chassis plane around RJ45 overlaps nothing else",
+     "params": {
+      "layers": "all",
+      "disallow": [
+       "zones",
+       "tracks_except_line_pairs"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "MCHP-AN18-0"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-08",
+     "kind": "advisory",
+     "applies_to": [
+      "centre_tap"
+     ],
+     "rule": "Bob Smith termination: 75 ohm per pair centre tap to a common 1000 pF / 2 kV capacitor to chassis; unused RJ45 pairs terminated the same way, close to the RJ45",
+     "params": {
+      "r_ohm": 75,
+      "c_pF": 1000,
+      "c_rating_kV": 2
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA079D",
+      "MCHP-AN18-0"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-09",
+     "kind": "orientation",
+     "applies_to": [
+      "magnetics"
+     ],
+     "rule": "Magnetics oriented with line side facing the RJ45 and PHY side facing the PHY",
+     "params": {
+      "relation": "line_side_faces_anchor"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "MCHP-AN18-0"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-10",
+     "kind": "proximity",
+     "applies_to": [
+      "phy_xtal"
+     ],
+     "rule": "PHY crystal/oscillator and RBIAS resistor close to the PHY; one crystal per device; all crystal parts on the top layer",
+     "params": {
+      "to": "phy",
+      "max_mm": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "MCHP-AN18-0"
+     ],
+     "evidence": "V",
+     "note": "10 mm is TraceMaker's default (see XTAL-01)."
+    },
+    {
+     "id": "ETH-11",
+     "kind": "length_match",
+     "applies_to": [
+      "mac_bus"
+     ],
+     "rule": "RGMII: 50 ohm, TXD[3:0] and RXD[3:0] each matched within 11 ps (~1.5 mm), length < 50.8 mm (152 mm max); 2 ns clock delay from the PHY/MAC internal delay, not trace",
+     "params": {
+      "z0_ohm": 50,
+      "tol_ps": 11,
+      "tol_mm": 1.524,
+      "max_mm": 50.8,
+      "hard_max_mm": 152.4
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-DP83867"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-12",
+     "kind": "length_match",
+     "applies_to": [
+      "mac_bus"
+     ],
+     "rule": "RMII/MII: length < 152 mm, RX group and TX group matched within 1.27 mm; 50 ohm; series termination at the driver",
+     "params": {
+      "max_mm": 152.4,
+      "tol_mm": 1.27,
+      "z0_ohm": 50
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387",
+      "TI-SNLA079D"
+     ],
+     "evidence": "V",
+     "note": "SNLA079 allows 50.8 mm mismatch and 68 ohm; SNLA387 asks 1.27 mm and 50 ohm. Default SNLA387."
+    },
+    {
+     "id": "ETH-13",
+     "kind": "reference_plane",
+     "applies_to": [
+      "mdi_pairs",
+      "mac_bus"
+     ],
+     "rule": "Never route MDI or MAC bus over a plane split",
+     "params": {
+      "no_split_crossing": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA079D"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-14",
+     "kind": "advisory",
+     "applies_to": [
+      "mdi_pairs"
+     ],
+     "rule": "ESD diodes on Ethernet go on the PHY side of the magnetics (exception to ESD-01 connector-side placement)",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA387"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ETH-15",
+     "kind": "advisory",
+     "applies_to": [
+      "phy"
+     ],
+     "rule": "MDIO needs a 1.5 kohm pull-up at the station-management side",
+     "params": {
+      "r_kohm": 1.5
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "IEEE-802.3"
+     ],
+     "evidence": "R"
+    }
+   ]
+  },
+  {
+   "id": "hdmi_dp",
+   "name": "HDMI / DVI / DisplayPort (TMDS, main link)",
+   "prefix": "HDMI",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "hdmi|displayport|dvi",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "tmds|^d[0-2][+-]|^ck[+-]|^ml_?lane|hpd|aux[pn+-]",
+     "weight": 30
+    },
+    {
+     "signal": "value",
+     "pattern": "tfp410|tfp401|tdp158|sn75dp|adv75|it66|ptn3460|tpd12s016",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "connector": "anchor",
+    "tmds": "TMDS data and clock pairs (DP main-link lanes)",
+    "esd": "ESD array on connector pins",
+    "ac_cap": "series caps (DP only)"
+   },
+   "rules": [
+    {
+     "id": "HDMI-01",
+     "kind": "impedance",
+     "applies_to": [
+      "tmds"
+     ],
+     "rule": "TMDS / main-link pairs 100 ohm differential",
+     "params": {
+      "zdiff_ohm": 100,
+      "tol_pct": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLLA414"
+     ],
+     "evidence": "V",
+     "note": "SLLA414 gives +/-15 %."
+    },
+    {
+     "id": "HDMI-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "tmds"
+     ],
+     "rule": "Intra-pair mismatch <= 0.127 mm",
+     "params": {
+      "max_intra_skew_mm": 0.127
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-SLLA414"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "HDMI-03",
+     "kind": "length_match",
+     "applies_to": [
+      "tmds"
+     ],
+     "rule": "Pair-to-pair matching within 25 mm is sufficient",
+     "params": {
+      "tol_mm": 25
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "RPI-CM5"
+     ],
+     "evidence": "V",
+     "note": "Spec budget is 0.2 Tcharacter inter-pair."
+    },
+    {
+     "id": "HDMI-04",
+     "kind": "via_limit",
+     "applies_to": [
+      "tmds"
+     ],
+     "rule": "Avoid vias (0 in TI SoC tables; <= 2 on newer SoCs); max length 102 mm",
+     "params": {
+      "max_vias": 0,
+      "relaxed_max_vias": 2,
+      "max_mm": 102
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "HDMI-05",
+     "kind": "proximity",
+     "applies_to": [
+      "esd"
+     ],
+     "rule": "ESD next to the connector, no vias between connector and ESD pin",
+     "params": {
+      "to": "connector",
+      "max_mm": 5,
+      "max_vias_between": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-TPD12S016"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "HDMI-06",
+     "kind": "advisory",
+     "applies_to": [
+      "ac_cap"
+     ],
+     "rule": "DisplayPort needs AC caps on main-link lanes (spec 75-200 nF); HDMI has none. DP: no copper under connector pads (pad region < 75 ohm otherwise)",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA414",
+      "TI-SN75DP130"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "lvds",
+   "name": "LVDS link (display, ADC data, FPD-Link)",
+   "prefix": "LVDS",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "ds90|sn65lvds|lvds|thc63",
+     "weight": 40
+    },
+    {
+     "signal": "net_name",
+     "pattern": "lvds|(tx|rx)(out|in)?\\d?[_-]?[pn]$",
+     "weight": 20
+    },
+    {
+     "signal": "keywords",
+     "pattern": "lvds",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "pairs": "LVDS differential nets",
+    "term": "100 ohm resistor across a pair",
+    "receiver": "IC at the receiving end"
+   },
+   "rules": [
+    {
+     "id": "LVDS-01",
+     "kind": "impedance",
+     "applies_to": [
+      "pairs"
+     ],
+     "rule": "100 ohm differential, tightly coupled (S < 2W), uniform W and S",
+     "params": {
+      "zdiff_ohm": 100,
+      "tol_pct": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA187"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "LVDS-02",
+     "kind": "proximity",
+     "applies_to": [
+      "term"
+     ],
+     "rule": "Termination resistor as close to the receiver inputs as possible",
+     "params": {
+      "to": "receiver",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA187"
+     ],
+     "evidence": "V",
+     "note": "3 mm is TraceMaker's default."
+    },
+    {
+     "id": "LVDS-03",
+     "kind": "diff_pair",
+     "applies_to": [
+      "pairs"
+     ],
+     "rule": "Intra-pair mismatch <= 0.127 mm (general high-speed default)",
+     "params": {
+      "max_intra_skew_mm": 0.127
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "mipi_dphy",
+   "name": "MIPI D-PHY (CSI-2 camera, DSI display)",
+   "prefix": "MIPI",
+   "detect": [
+    {
+     "signal": "net_name",
+     "pattern": "csi|dsi|mipi",
+     "weight": 40
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "(csi|dsi).*(d\\d|clk)[_-]?[pn]",
+     "weight": 40
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "fpc|ffc|camera",
+     "weight": 10
+    }
+   ],
+   "roles": {
+    "data": "data lane pairs",
+    "clk": "clock lane pair"
+   },
+   "rules": [
+    {
+     "id": "MIPI-01",
+     "kind": "impedance",
+     "applies_to": [
+      "data",
+      "clk"
+     ],
+     "rule": "100 ohm differential, 50 ohm single-ended, loosely coupled (lanes also carry single-ended low-power signalling)",
+     "params": {
+      "zdiff_ohm": 100,
+      "z0_ohm": 50,
+      "tol_pct": 15
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-DS90UB953"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MIPI-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "data",
+      "clk"
+     ],
+     "rule": "Intra-pair mismatch <= 0.127 mm (RPi CM5: 0.15 mm)",
+     "params": {
+      "max_intra_skew_mm": 0.127
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-DS90UB953",
+      "RPI-CM5"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MIPI-03",
+     "kind": "length_match",
+     "applies_to": [
+      "data",
+      "clk"
+     ],
+     "rule": "Clock-to-data lane mismatch <= 0.64 mm (lane skew budget 40 ps at 1.25 GHz)",
+     "params": {
+      "tol_mm": 0.64,
+      "tol_ps": 40,
+      "reference": "clk"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-DS90UB953",
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MIPI-04",
+     "kind": "via_limit",
+     "applies_to": [
+      "data",
+      "clk"
+     ],
+     "rule": "<= 2 vias per line; length <= 254 mm; pair separation >= 3W",
+     "params": {
+      "max_vias": 2,
+      "max_mm": 254,
+      "pair_spacing_w": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-DS90UB953"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "pcie",
+   "name": "PCI Express link (edge connector, slot, M.2)",
+   "prefix": "PCIE",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "pci_?e|pcie|pci_express|m\\.?2|mini_?pcie",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(pe|pcie)?_?(tx|rx|pet|per)[pn]\\d|refclk[+-pn]",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "tx": "TX lane pairs",
+    "rx": "RX lane pairs",
+    "refclk": "REFCLK pair",
+    "ac_cap": "series caps on TX"
+   },
+   "rules": [
+    {
+     "id": "PCIE-01",
+     "kind": "impedance",
+     "applies_to": [
+      "tx",
+      "rx",
+      "refclk"
+     ],
+     "rule": "100 ohm differential (Gen1/2); 85 ohm at Gen3/4 CEM connectors; some SoCs 95 ohm +/-5 %",
+     "params": {
+      "zdiff_ohm": 100,
+      "alt_zdiff_ohm": 85,
+      "tol_pct": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-DS160PR410"
+     ],
+     "evidence": "V",
+     "note": "Sources disagree; pick per generation (open question \u00a711.3)."
+    },
+    {
+     "id": "PCIE-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "tx",
+      "rx",
+      "refclk"
+     ],
+     "rule": "Intra-pair mismatch <= 0.127 mm",
+     "params": {
+      "max_intra_skew_mm": 0.127
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "PCIE-03",
+     "kind": "length_match",
+     "applies_to": [
+      "tx",
+      "rx"
+     ],
+     "rule": "Inter-pair (lane-to-lane) mismatch per direction <= 14 mm",
+     "params": {
+      "tol_mm": 14
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "PCIE-04",
+     "kind": "proximity",
+     "applies_to": [
+      "ac_cap"
+     ],
+     "rule": "TX AC caps 220 nF (Gen3/4; spec 75-265 nF), 0402 max, symmetric, GND void under pads",
+     "params": {
+      "cap_nF": 220
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-DS160PR410",
+      "RPI-CM5"
+     ],
+     "evidence": "V",
+     "note": "Placement within the segment disagrees: near the receiver end (DS160PR410) vs near the driver (RPi CM5)."
+    },
+    {
+     "id": "PCIE-05",
+     "kind": "via_limit",
+     "applies_to": [
+      "tx",
+      "rx"
+     ],
+     "rule": "Avoid vias (0 on older TI SoCs, <= 2 newer); length <= 102-140 mm; back-drill connector vias",
+     "params": {
+      "max_vias": 2,
+      "max_mm": 140
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J",
+      "TI-DS160PR410"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "sata",
+   "name": "SATA link",
+   "prefix": "SATA",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "sata",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "sata.*(tx|rx)[pn+-]|^[ab][+-]$",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "pairs": "TX/RX pairs",
+    "ac_cap": "series caps"
+   },
+   "rules": [
+    {
+     "id": "SATA-01",
+     "kind": "impedance",
+     "applies_to": [
+      "pairs"
+     ],
+     "rule": "100 ohm differential +/-15 %",
+     "params": {
+      "zdiff_ohm": 100,
+      "tol_pct": 15
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "SATA-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "pairs"
+     ],
+     "rule": "Intra-pair mismatch <= 0.127 mm; length <= 89-140 mm; avoid vias",
+     "params": {
+      "max_intra_skew_mm": 0.127,
+      "max_mm": 140,
+      "max_vias": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "SATA-03",
+     "kind": "advisory",
+     "applies_to": [
+      "ac_cap"
+     ],
+     "rule": "10 nF AC coupling caps on each line (spec max 12 nF)",
+     "params": {
+      "cap_nF": 10
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SN75LVCP601"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "ddr3",
+   "name": "DDR3/DDR3L SDRAM interface",
+   "prefix": "DDR3",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "mt41|k4b|ddr3|h5tq|nt5cb|is43tr",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^dqs\\d*_?[pn]?$|^(dq|dm)\\d+$|^ba\\d$|^odt|^ras#?|^cas#?",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "controller": "SoC/FPGA",
+    "dram": "memory devices",
+    "byte_lane": "DQ[8n..8n+7], DM, DQS pair per byte",
+    "addr_cmd": "A, BA, RAS, CAS, WE, CS, CKE, ODT",
+    "ck": "CK pair",
+    "vtt_term": "resistors to VTT at the end of the fly-by",
+    "vref": "VREF nets"
+   },
+   "rules": [
+    {
+     "id": "DDR3-01",
+     "kind": "impedance",
+     "applies_to": [
+      "byte_lane",
+      "addr_cmd",
+      "ck"
+     ],
+     "rule": "50 ohm single-ended, 100 ohm differential (CK, DQS), +/-5 %",
+     "params": {
+      "z0_ohm": 50,
+      "zdiff_ohm": 100,
+      "tol_pct": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRABI1"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR3-02",
+     "kind": "length_match",
+     "applies_to": [
+      "byte_lane"
+     ],
+     "rule": "DQ/DM within +/-0.25 mm of their DQS; DQS P/N +/-0.025 mm; whole byte on one layer",
+     "params": {
+      "tol_mm": 0.25,
+      "dqs_pn_tol_mm": 0.025,
+      "reference": "dqs"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRABI1"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR3-03",
+     "kind": "length_match",
+     "applies_to": [
+      "addr_cmd"
+     ],
+     "rule": "Fly-by topology; each address/command net within +/-0.51 mm of CK from controller to each DRAM; stubs < 2.0 mm; same via count per segment",
+     "params": {
+      "topology": "fly_by",
+      "tol_mm": 0.51,
+      "max_stub_mm": 2.0,
+      "reference": "ck"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRABI1"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR3-04",
+     "kind": "proximity",
+     "applies_to": [
+      "vtt_term"
+     ],
+     "rule": "VTT termination (39-42 ohm) at the last DRAM, <= 12.7 mm of trace from it",
+     "params": {
+      "to": "last_dram",
+      "max_mm": 12.7,
+      "measure": "routed"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRABI1"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR3-05",
+     "kind": "clearance",
+     "applies_to": [
+      "byte_lane",
+      "addr_cmd"
+     ],
+     "rule": "Centre-to-centre spacing >= 5W (4W only up to 1066 MT/s)",
+     "params": {
+      "pitch_w": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRABI1"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR3-06",
+     "kind": "proximity",
+     "applies_to": [
+      "vref"
+     ],
+     "rule": "VREF: 10 nF + 100 nF at each VREF pin; trace >= 0.76 mm wide, >= 0.38 mm from other nets",
+     "params": {
+      "min_width_mm": 0.76,
+      "to_other_mm": 0.38
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRABI1"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "ddr4_lpddr4",
+   "name": "DDR4 / LPDDR4 SDRAM interface",
+   "prefix": "DDR4",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "mt40a|mt53|k4a|k4f|ddr4|lpddr4|h5an|h9hc",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^dqs_?[tc]|^act_n|^bg\\d|^ca\\d$|^dmi",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "controller": "SoC",
+    "dram": "memory devices",
+    "byte_lane": "DQ, DM/DBI, DQS per byte",
+    "addr_cmd": "address/command/control",
+    "ck": "CK pair",
+    "vrefca": "VREFCA net"
+   },
+   "rules": [
+    {
+     "id": "DDR4-01",
+     "kind": "impedance",
+     "applies_to": [
+      "byte_lane",
+      "addr_cmd",
+      "ck"
+     ],
+     "rule": "40 ohm single-ended, 80 ohm differential +/-10 %; stripline over full VSS reference; no plane cuts",
+     "params": {
+      "z0_ohm": 40,
+      "zdiff_ohm": 80,
+      "tol_pct": 10,
+      "structure": "stripline"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD06"
+     ],
+     "evidence": "V",
+     "note": "Controller-specific; AM62x values. LPDDR4 per its own table."
+    },
+    {
+     "id": "DDR4-02",
+     "kind": "length_match",
+     "applies_to": [
+      "byte_lane"
+     ],
+     "rule": "DDR4: DQS-to-DQ <= 2 ps (~0.25 mm), DQS P/N <= 0.4 ps, <= 2 vias, equal via count; no cross-byte matching",
+     "params": {
+      "tol_ps": 2,
+      "dqs_pn_tol_ps": 0.4,
+      "max_vias": 2,
+      "reference": "dqs"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD06"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR4-03",
+     "kind": "length_match",
+     "applies_to": [
+      "addr_cmd"
+     ],
+     "rule": "DDR4: address/control to CK <= 4 ps total; CK P/N <= 0.8 ps; total <= 500 ps (~64 mm); <= 3 vias",
+     "params": {
+      "tol_ps": 4,
+      "ck_pn_tol_ps": 0.8,
+      "max_ps": 500,
+      "max_vias": 3,
+      "reference": "ck",
+      "topology": "fly_by"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD06"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR4-04",
+     "kind": "length_match",
+     "applies_to": [
+      "byte_lane",
+      "addr_cmd"
+     ],
+     "rule": "LPDDR4: DQS P/N <= 1.5 ps, DQS-to-byte <= 150 ps, CK and address <= 450 ps; via stub <= 0.5 mm; 5W to other classes",
+     "params": {
+      "dqs_pn_tol_ps": 1.5,
+      "tol_ps": 150,
+      "max_ps": 450,
+      "max_via_stub_mm": 0.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD06"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR4-05",
+     "kind": "clearance",
+     "applies_to": [
+      "byte_lane",
+      "addr_cmd"
+     ],
+     "rule": "4W to other DDR classes, 3W within a class",
+     "params": {
+      "other_class_w": 4,
+      "same_class_w": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD06"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DDR4-06",
+     "kind": "proximity",
+     "applies_to": [
+      "vrefca"
+     ],
+     "rule": "VREFCA 0.5 mm trace, 100 nF at each device",
+     "params": {
+      "min_width_mm": 0.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD06"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "sdr_sdram",
+   "name": "SDR SDRAM / parallel memory and external buses",
+   "prefix": "PBUS",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "is42s|mt48lc|as4c|w9812|is61|cy7c10|sram|sdram",
+     "weight": 50
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(a|d|dq)\\d+$",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "controller": "MCU/FPGA",
+    "memory": "memory devices",
+    "data": "data bus",
+    "addr": "address/control",
+    "clk": "clock"
+   },
+   "rules": [
+    {
+     "id": "PBUS-01",
+     "kind": "proximity",
+     "applies_to": [
+      "memory"
+     ],
+     "rule": "Memory close to the controller; keep the bus short (sources thin: no primary numeric value read)",
+     "params": {
+      "to": "controller",
+      "max_mm": 30
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "30 mm is a TraceMaker default. Thin evidence."
+    },
+    {
+     "id": "PBUS-02",
+     "kind": "proximity",
+     "applies_to": [
+      "clk"
+     ],
+     "rule": "Series source termination (22-33 ohm, 0 ohm placeholder) on clock lines next to the driver",
+     "params": {
+      "r_ohm": 22,
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD21"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "PBUS-03",
+     "kind": "length_match",
+     "applies_to": [
+      "data",
+      "addr",
+      "clk"
+     ],
+     "rule": "Match bus lengths to the clock loosely (rule of thumb +/-10 mm at <= 133 MHz)",
+     "params": {
+      "tol_mm": 10,
+      "reference": "clk"
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "Rule of thumb; no primary source read."
+    }
+   ]
+  },
+  {
+   "id": "qspi_flash",
+   "name": "QSPI / OSPI flash",
+   "prefix": "QSPI",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "w25q|mx25|is25|gd25|s25fl|n25q|mt25|at25",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(io|dq)[0-7]$|^(s?clk|sck)$|^cs#?$|^dqs$",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "controller": "MCU/SoC",
+    "flash": "anchor",
+    "clk": "clock net",
+    "data": "IO0-IO7 and CS",
+    "series_r": "series resistor on clk"
+   },
+   "rules": [
+    {
+     "id": "QSPI-01",
+     "kind": "max_length",
+     "applies_to": [
+      "clk"
+     ],
+     "rule": "CLK pin to flash <= 450 ps (~70 mm stripline / 80 mm microstrip)",
+     "params": {
+      "max_ps": 450,
+      "max_mm": 70
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-AM625"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "QSPI-02",
+     "kind": "length_match",
+     "applies_to": [
+      "data"
+     ],
+     "rule": "Each data and CS line = CLK delay +/- 60 ps (~7.6 mm)",
+     "params": {
+      "tol_ps": 60,
+      "tol_mm": 7.6,
+      "reference": "clk"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-AM625"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "QSPI-03",
+     "kind": "proximity",
+     "applies_to": [
+      "series_r"
+     ],
+     "rule": "Series resistor (0 ohm placeholder) as close as possible to the controller CLK pin; 50 ohm routing",
+     "params": {
+      "to": "controller",
+      "max_mm": 3,
+      "z0_ohm": 50
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-AM625",
+      "TI-SPRAD21"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "sd_sdio",
+   "name": "SD card / microSD / SDIO / eMMC",
+   "prefix": "SDIO",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "micro_?sd|sd_?card|tf_?card|sdcard|emmc",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(sd_?)?(cmd|clk|dat[0-7]|d[0-3])$",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "socket": "anchor",
+    "controller": "host",
+    "clk": "CLK",
+    "bus": "CMD, DAT0-3",
+    "series_r": "series resistor on CLK"
+   },
+   "rules": [
+    {
+     "id": "SDIO-01",
+     "kind": "length_match",
+     "applies_to": [
+      "clk",
+      "bus"
+     ],
+     "rule": "CLK, CMD, DAT routed in parallel, all the same length, < 120 mm",
+     "params": {
+      "max_mm": 120,
+      "tol_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-WL1837MOD",
+      "TI-TXS0206A"
+     ],
+     "evidence": "V",
+     "note": "TXS0206A: keep round-trip reflection < 30 ns, load < 50 pF. tol 5 mm is TraceMaker's default for 'same length'."
+    },
+    {
+     "id": "SDIO-02",
+     "kind": "clearance",
+     "applies_to": [
+      "clk"
+     ],
+     "rule": "> 1.5W spacing or GND guard between lines, especially around CLK",
+     "params": {
+      "spacing_w": 1.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-WL1837MOD"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "SDIO-03",
+     "kind": "proximity",
+     "applies_to": [
+      "series_r"
+     ],
+     "rule": "Series 0 ohm/22 ohm resistor on CLK close to the host",
+     "params": {
+      "to": "controller",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD21"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "SDIO-04",
+     "kind": "advisory",
+     "applies_to": [
+      "bus"
+     ],
+     "rule": "eMMC HS200/HS400: no primary numeric source read; apply SDIO-01..03 and report",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD21"
+     ],
+     "evidence": "R"
+    }
+   ]
+  },
+  {
+   "id": "crystal",
+   "name": "Quartz crystal with load capacitors",
+   "prefix": "XTAL",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "crystal|xtal|crstl|hc-?49|hc-?50|resonator|abs0[57]|abm\\d|fc-?1[23]5|fa-?2[03]8|tsx-?32|csm-?\\d",
+     "weight": 50
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(y|x|xtal)\\d",
+     "weight": 15
+    },
+    {
+     "signal": "value",
+     "pattern": "\\d+(\\.\\d+)?\\s*(mhz|khz)|32\\.768|crystal|xtal",
+     "weight": 20
+    },
+    {
+     "signal": "topology",
+     "pattern": "two_terminal_between_osc_pins",
+     "weight": 50
+    }
+   ],
+   "roles": {
+    "crystal": "anchor",
+    "xin": "IC pin named OSC_IN/XTAL_IN/XI/XTAL1/OSC32_IN/XTAL_P",
+    "xout": "IC pin named OSC_OUT/XTAL_OUT/XO/XTAL2/OSC32_OUT/XTAL_N",
+    "load_caps": "caps from xin/xout nets to GND",
+    "ic": "IC owning xin/xout",
+    "series_r": "optional series resistor on xout"
+   },
+   "rules": [
+    {
+     "id": "XTAL-01",
+     "kind": "proximity",
+     "applies_to": [
+      "crystal"
+     ],
+     "rule": "Crystal as close to the IC oscillator pins as possible; trace <= 10 mm",
+     "params": {
+      "to": [
+       "xin",
+       "xout"
+      ],
+      "max_mm": 10,
+      "measure": "routed"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ST-AN2867",
+      "NXP-AN2049"
+     ],
+     "evidence": "R",
+     "note": "No vendor gives a hard number; 5-10 mm is common practice. Exception XTAL-08 (ESP32)."
+    },
+    {
+     "id": "XTAL-02",
+     "kind": "proximity",
+     "applies_to": [
+      "load_caps"
+     ],
+     "rule": "Load caps next to the crystal, between crystal and IC, short ground to the IC's VSS/oscillator ground",
+     "params": {
+      "to": "crystal",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ST-AN2867"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "XTAL-03",
+     "kind": "via_limit",
+     "applies_to": [
+      "xin",
+      "xout"
+     ],
+     "rule": "No vias on crystal traces",
+     "params": {
+      "max_vias": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "ST-AN2867"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "XTAL-04",
+     "kind": "keepout",
+     "applies_to": [
+      "crystal",
+      "load_caps"
+     ],
+     "rule": "No foreign signals under the crystal/load-cap area or between crystal and IC, on any layer; solid GND on the adjacent layer",
+     "params": {
+      "shape": "courtyard_hull_with_ic_pins",
+      "layers": "all",
+      "disallow": [
+       "foreign_tracks",
+       "foreign_vias"
+      ],
+      "margin_mm": 0.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "ST-AN2867"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "XTAL-05",
+     "kind": "guard",
+     "applies_to": [
+      "crystal",
+      "load_caps"
+     ],
+     "rule": "Ground guard ring around crystal, caps and traces, tied to the IC's VSS",
+     "params": {
+      "net": "GND"
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "ST-AN2867"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "XTAL-06",
+     "kind": "length_match",
+     "applies_to": [
+      "xin",
+      "xout"
+     ],
+     "rule": "XIN/XOUT traces short and symmetric (loose, mm scale)",
+     "params": {
+      "tol_mm": 2
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "ST-AN2867"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "XTAL-07",
+     "kind": "clearance",
+     "applies_to": [
+      "crystal"
+     ],
+     "rule": "Keep the crystal >= 5 mm from switching-regulator inductors/SW nodes, clocks and board edges",
+     "params": {
+      "to_roles": [
+       "buck.inductor",
+       "buck.sw",
+       "boost.inductor"
+      ],
+      "min_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ST-AN2867",
+      "TI-SNVA021C"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "XTAL-08",
+     "kind": "clearance",
+     "applies_to": [
+      "crystal"
+     ],
+     "rule": "ESP32 family: crystal >= 2.7 mm (ESP32) / >= 2.0 mm (S3, C3) from the chip; dense GND vias around the clock trace",
+     "params": {
+      "min_mm": 2.7,
+      "min_mm_s3_c3": 2.0,
+      "applies_when": "ic matches esp32"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "ESP-HDG-S3",
+      "ESP-HDG-C3"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "XTAL-09",
+     "kind": "advisory",
+     "applies_to": [
+      "load_caps"
+     ],
+     "rule": "Check load caps: CL = C1*C2/(C1+C2) + Cstray, Cstray ~2-5 pF; C1 = C2 = 2(CL - Cstray)",
+     "params": {
+      "cstray_pF": [
+       2,
+       5
+      ]
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "MCHP-AN826"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "oscillator",
+   "name": "Crystal oscillator module (active clock)",
+   "prefix": "OSC",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "oscillator|osc_|_xo_|tcxo|vctcxo|sit\\d",
+     "weight": 50
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(out|clk_?out)$",
+     "weight": 10
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(x|y|osc|u)\\d",
+     "weight": 5
+    }
+   ],
+   "roles": {
+    "osc": "anchor",
+    "out": "output net",
+    "load": "IC clock input",
+    "decap": "cap on VDD pin"
+   },
+   "rules": [
+    {
+     "id": "OSC-01",
+     "kind": "proximity",
+     "applies_to": [
+      "decap"
+     ],
+     "rule": "100 nF decoupling at the oscillator VDD pin (see DEC-01)",
+     "params": {
+      "to": "osc.VDD",
+      "max_mm": 2
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "OSC-02",
+     "kind": "proximity",
+     "applies_to": [
+      "osc"
+     ],
+     "rule": "Oscillator close to its load; series resistor at the source",
+     "params": {
+      "to": "load",
+      "max_mm": 20
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SNLA079D"
+     ],
+     "evidence": "V",
+     "note": "20 mm is TraceMaker's default."
+    }
+   ]
+  },
+  {
+   "id": "ic_decoupling",
+   "name": "MCU / FPGA / SoC / IC supply decoupling (generalises D25)",
+   "prefix": "DEC",
+   "detect": [
+    {
+     "signal": "topology",
+     "pattern": "two_terminal_cap_supply_to_ground_sharing_ic_power_pin",
+     "weight": 80
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(vdd|vcc|vddio|vdda|avdd|vref|vcap|dvdd|vbat)",
+     "weight": 10
+    }
+   ],
+   "roles": {
+    "cap": "anchor",
+    "pin": "IC power pin on the cap's supply net (nearest, Hungarian assignment planned)",
+    "ic": "IC owning pin",
+    "bulk": "caps >= 1 uF on the same rail",
+    "ferrite": "ferrite/resistor between VDD and VDDA",
+    "vdda": "analog supply pin",
+    "vref": "reference pin",
+    "vcap": "core-regulator VCAP pin"
+   },
+   "rules": [
+    {
+     "id": "DEC-01",
+     "kind": "proximity",
+     "applies_to": [
+      "cap"
+     ],
+     "rule": "One 100 nF ceramic per power pin (or pin pair) as close as possible; < 5 mm",
+     "params": {
+      "to": "pin",
+      "max_mm": 5,
+      "target_mm": 2,
+      "measure": "pad_edge"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B",
+      "ST-AN4488",
+      "ESP-HDG-ESP32"
+     ],
+     "evidence": "V",
+     "note": "Existing D25 pseudo-net reaches 1.8-3 mm; target 2 mm."
+    },
+    {
+     "id": "DEC-02",
+     "kind": "order",
+     "applies_to": [
+      "cap"
+     ],
+     "rule": "Smallest-value cap closest to the pin, larger caps further out",
+     "params": {
+      "sequence_by": "value_ascending"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DEC-03",
+     "kind": "order",
+     "applies_to": [
+      "cap"
+     ],
+     "rule": "Same layer as the IC; plane -> via -> cap -> pin; no via between cap pad and IC pin",
+     "params": {
+      "sequence": [
+       "plane_via",
+       "cap",
+       "pin"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DEC-04",
+     "kind": "width_for_current",
+     "applies_to": [
+      "cap"
+     ],
+     "rule": "Cap-to-pin connection short and wide (length:width <= 3:1); ground via at the cap ground pad, 2 preferred",
+     "params": {
+      "max_length_to_width": 3,
+      "gnd_vias_min": 1,
+      "gnd_vias_preferred": 2
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B",
+      "ESP-HDG-ESP32"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DEC-05",
+     "kind": "proximity",
+     "applies_to": [
+      "bulk"
+     ],
+     "rule": "Bulk 4.7-10 uF per rail near the IC (MT-101: 10-100 uF within ~50 mm)",
+     "params": {
+      "to": "ic",
+      "max_mm": 50
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ST-AN4488",
+      "ADI-MT101",
+      "ESP-HDG-ESP32"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "DEC-06",
+     "kind": "proximity",
+     "applies_to": [
+      "ferrite"
+     ],
+     "rule": "VDDA filtered from VDD: ferrite bead (or <= 47 ohm) + 1 uF + 10 nF at VDDA",
+     "params": {
+      "to": "vdda",
+      "max_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ST-AN4488"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "DEC-07",
+     "kind": "proximity",
+     "applies_to": [
+      "cap"
+     ],
+     "rule": "VREF+: 100 nF + 1 uF at the pin; VCAP: 2.2 uF ceramic (ESR < 2 ohm) per pin (STM32F4/F7/H7)",
+     "params": {
+      "to": [
+       "vref",
+       "vcap"
+      ],
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ST-AN4488"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "DEC-08",
+     "kind": "advisory",
+     "applies_to": [
+      "ic"
+     ],
+     "rule": "FPGA/BGA: cap count per rail from the vendor table; 0402 caps under the BGA on the back side with via-in-pad",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "AMD-UG483"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "DEC-09",
+     "kind": "thermal_vias",
+     "applies_to": [
+      "ic"
+     ],
+     "rule": "ESP32: >= 9 ground vias in the exposed pad",
+     "params": {
+      "count_min": 9,
+      "applies_when": "ic matches esp32"
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "buck",
+   "name": "Switching step-down (buck) regulator",
+   "prefix": "BUCK",
+   "detect": [
+    {
+     "signal": "pin_name",
+     "pattern": "^(sw|lx|ph)\\d*$",
+     "weight": 40
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(fb|vfb|vos|bst|boot|cb)$",
+     "weight": 20
+    },
+    {
+     "signal": "value",
+     "pattern": "tps54|tps56|tps62|tps82|lm26\\d\\d\\d|lm25\\d\\d\\d|lm257\\d|lmr1|lmr3|mp1584|mp2|ap63|rt8|sy8|xl4|lm2596|lt86|ltc36|max15\\d\\d\\d",
+     "weight": 50
+    },
+    {
+     "signal": "keywords",
+     "pattern": "step.?down|buck",
+     "weight": 30
+    },
+    {
+     "signal": "topology",
+     "pattern": "inductor_from_sw_pin_to_output_cap",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "ic": "anchor",
+    "cin": "HF input cap on VIN-PGND",
+    "inductor": "part from SW to VOUT",
+    "cout": "output caps",
+    "sw": "SW net",
+    "fb": "FB net and divider",
+    "fb_div": "FB divider resistors",
+    "diode": "catch diode (non-synchronous)",
+    "snubber": "RC on SW",
+    "epad": "exposed pad"
+   },
+   "rules": [
+    {
+     "id": "BUCK-01",
+     "kind": "loop",
+     "applies_to": [
+      "cin",
+      "ic"
+     ],
+     "rule": "Hot loop: HF input cap placed first, as close to VIN/PGND as manufacturing allows (<= 2 mm), wide short copper, no vias in the loop",
+     "params": {
+      "roles": [
+       "cin",
+       "ic.VIN",
+       "ic.PGND"
+      ],
+      "max_mm": 2,
+      "max_vias": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614"
+     ],
+     "evidence": "V",
+     "note": "2 mm is a TraceMaker default for 'as close as allowed'."
+    },
+    {
+     "id": "BUCK-02",
+     "kind": "copper_area",
+     "applies_to": [
+      "sw"
+     ],
+     "rule": "Minimise SW-node copper; inductor close to the IC and rotated to keep SW short",
+     "params": {
+      "minimise": true,
+      "inductor_max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BUCK-03",
+     "kind": "loop",
+     "applies_to": [
+      "inductor",
+      "cout"
+     ],
+     "rule": "Output loop inductor -> COUT -> PGND short; inductor, COUT, diode close together",
+     "params": {
+      "roles": [
+       "inductor",
+       "cout",
+       "ic.PGND"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614",
+      "TI-SNVA021C"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BUCK-04",
+     "kind": "clearance",
+     "applies_to": [
+      "fb"
+     ],
+     "rule": "FB trace short, taken from the output cap (Kelvin), away from inductor and SW; preferably opposite side with GND between",
+     "params": {
+      "from_roles": [
+       "sw",
+       "inductor"
+      ],
+      "min_mm": 2,
+      "kelvin_from": "cout"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SNVA021C",
+      "TI-SLYT614"
+     ],
+     "evidence": "V",
+     "note": "2 mm is a TraceMaker default."
+    },
+    {
+     "id": "BUCK-05",
+     "kind": "proximity",
+     "applies_to": [
+      "fb_div"
+     ],
+     "rule": "FB divider, compensation and soft-start parts close to the IC pins; small FB node",
+     "params": {
+      "to": "ic.FB",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614",
+      "TI-SNVA021C"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BUCK-06",
+     "kind": "keepout",
+     "applies_to": [
+      "inductor",
+      "sw"
+     ],
+     "rule": "No foreign signal traces under the inductor or SW copper on the adjacent layers",
+     "params": {
+      "layers": [
+       "same",
+       "adjacent"
+      ],
+      "disallow": [
+       "foreign_tracks"
+      ],
+      "margin_mm": 0.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNVA021C",
+      "TI-SLYT614"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BUCK-07",
+     "kind": "thermal_vias",
+     "applies_to": [
+      "epad"
+     ],
+     "rule": "Thermal vias in the exposed pad: 0.3 mm drill at 1.0-1.2 mm pitch filling the pad (or per datasheet)",
+     "params": {
+      "drill_mm": 0.3,
+      "pitch_mm": [
+       1.0,
+       1.2
+      ]
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLMA002"
+     ],
+     "evidence": "R",
+     "note": "SLVA959B instead gives 0.2 mm hole / 0.5 mm pad."
+    },
+    {
+     "id": "BUCK-08",
+     "kind": "width_for_current",
+     "applies_to": [
+      "sw",
+      "cout"
+     ],
+     "rule": "High-current traces: max(IPC-2221 width, 0.381 mm per A)",
+     "params": {
+      "mm_per_a": 0.381
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SNVA021C",
+      "IPC-2221B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BUCK-09",
+     "kind": "advisory",
+     "applies_to": [
+      "ic"
+     ],
+     "rule": "Grounding style per datasheet: single solid plane (ADI AN-139, modern TI) or PGND/AGND joined at the exposed pad (SLYT614)",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614",
+      "ADI-AN139"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BUCK-10",
+     "kind": "net_weight",
+     "applies_to": [
+      "cin",
+      "inductor",
+      "cout"
+     ],
+     "rule": "Placement weight x8 on VIN/SW/PGND loop nets so the power stage packs tightly",
+     "params": {
+      "weight": 8
+     },
+     "severity": "soft",
+     "enforce": [
+      "place"
+     ],
+     "sources": [
+      "TI-SLYT614"
+     ],
+     "evidence": "V",
+     "note": "Weight is a TraceMaker choice implementing the cited placement order."
+    }
+   ]
+  },
+  {
+   "id": "boost",
+   "name": "Switching step-up (boost) regulator",
+   "prefix": "BOOST",
+   "detect": [
+    {
+     "signal": "keywords",
+     "pattern": "step.?up|boost",
+     "weight": 40
+    },
+    {
+     "signal": "value",
+     "pattern": "tps61|mt3608|lm2577|xl6009|tps55340|ltc34[0-3]\\d|ap3012|sx1308|sy72\\d\\d|lmr6[24]",
+     "weight": 50
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(sw|lx)$",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "ic": "anchor",
+    "inductor": "from VIN to SW",
+    "rect": "diode or synchronous output",
+    "cout": "output caps",
+    "cin": "input caps",
+    "fb": "FB net",
+    "sw": "SW net"
+   },
+   "rules": [
+    {
+     "id": "BOOST-01",
+     "kind": "loop",
+     "applies_to": [
+      "cout",
+      "rect",
+      "ic"
+     ],
+     "rule": "Hot loop is on the output side (LS switch -> rectifier -> COUT): COUT tightest, <= 2 mm",
+     "params": {
+      "roles": [
+       "cout",
+       "rect",
+       "ic.PGND"
+      ],
+      "max_mm": 2,
+      "max_vias": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "ADI-AN139"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "BOOST-02",
+     "kind": "copper_area",
+     "applies_to": [
+      "sw"
+     ],
+     "rule": "Minimise SW-node copper; inductor close to the SW pin",
+     "params": {
+      "minimise": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BOOST-03",
+     "kind": "clearance",
+     "applies_to": [
+      "fb"
+     ],
+     "rule": "FB from the output cap, away from SW and inductor (as BUCK-04)",
+     "params": {
+      "from_roles": [
+       "sw",
+       "inductor"
+      ],
+      "min_mm": 2
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SNVA021C"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BOOST-04",
+     "kind": "keepout",
+     "applies_to": [
+      "inductor",
+      "sw"
+     ],
+     "rule": "No foreign signals under inductor/SW (as BUCK-06)",
+     "params": {
+      "layers": [
+       "same",
+       "adjacent"
+      ],
+      "disallow": [
+       "foreign_tracks"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SNVA021C"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "ldo",
+   "name": "Linear regulator / LDO",
+   "prefix": "LDO",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "ams1117|ams10\\d\\d|ld1117|lm1117|ap2112|ap22\\d\\d|mcp170\\d|xc62\\d\\d|lp5907|lp29\\d\\d|lp38\\d\\d|lt19\\d\\d|lt176[1-4]|bu\\d\\d[a-z][a-z]\\d|tlv7|tps7|lm317|78\\d\\d|79\\d\\d|ht7333|rt9013|ncp11\\d\\d|mic5|spx\\d\\d\\d\\d",
+     "weight": 50
+    },
+    {
+     "signal": "keywords",
+     "pattern": "ldo|linear regulator|low.?dropout",
+     "weight": 40
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(vin|in)$.*|^(vout|out)$",
+     "weight": 10
+    }
+   ],
+   "roles": {
+    "ic": "anchor",
+    "cin": "input cap",
+    "cout": "output cap",
+    "fb_div": "adjustable divider",
+    "tab": "thermal tab/exposed pad"
+   },
+   "rules": [
+    {
+     "id": "LDO-01",
+     "kind": "proximity",
+     "applies_to": [
+      "cin",
+      "cout"
+     ],
+     "rule": "Input and output caps next to their pins (< 5 mm, <= 10 mm max), ground returns direct to the LDO GND",
+     "params": {
+      "to": [
+       "ic.VIN",
+       "ic.VOUT"
+      ],
+      "max_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "LDO-02",
+     "kind": "proximity",
+     "applies_to": [
+      "fb_div"
+     ],
+     "rule": "Adjustable: divider at the FB/ADJ pin, top taken from the output cap",
+     "params": {
+      "to": "ic.FB",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLYT614"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "LDO-03",
+     "kind": "copper_area",
+     "applies_to": [
+      "tab"
+     ],
+     "rule": "Thermal copper on the tab sized from PD = (VIN-VOUT)*IOUT and theta_JA; most gain in the first ~645 mm2 (1 in2) of 1 oz copper",
+     "params": {
+      "min_mm2": 645
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA118A"
+     ],
+     "evidence": "V",
+     "note": "Needs VIN/IOUT from the user; otherwise reported only."
+    },
+    {
+     "id": "LDO-04",
+     "kind": "connection",
+     "applies_to": [
+      "tab"
+     ],
+     "rule": "Tab/exposed pad connected solid (no thermal relief) with vias to inner/back planes",
+     "params": {
+      "style": "solid"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "rf_module",
+   "name": "Radio module with integrated PCB/chip antenna (ESP32, Pico W, u-blox, nRF modules)",
+   "prefix": "RFM",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "rf_module:|esp32-(wroom|wrover|s[23]|c[36])|esp-?(0\\d|12|32)|wroom|nina-|bm8\\d|mdbt|raytac|rak\\d|rfm9|ra-0\\d|e22|e32|e73-|hc-0[56]|nrf24",
+     "weight": 60
+    },
+    {
+     "signal": "value",
+     "pattern": "esp32|esp8266|wroom|wrover|nina|cyw43|pico.?w|rfm9\\d|sx127|nrf52",
+     "weight": 30
+    },
+    {
+     "signal": "keywords",
+     "pattern": "wifi|bluetooth|ble|lora|zigbee|802\\.15\\.4",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "module": "anchor",
+    "antenna_region": "antenna area from the module footprint (keep-out zone in the footprint, or datasheet offset)"
+   },
+   "rules": [
+    {
+     "id": "RFM-01",
+     "kind": "edge",
+     "applies_to": [
+      "module"
+     ],
+     "rule": "Module antenna outside the board or at the edge with the feed near the edge (ESP32: overhang strongly recommended; u-blox NINA-B3 internal antenna: corner)",
+     "params": {
+      "antenna_side_to_edge_mm": 0,
+      "prefer_overhang": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "UBLOX-NINAB3",
+      "RPI-PICOW"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "RFM-02",
+     "kind": "keepout",
+     "applies_to": [
+      "antenna_region"
+     ],
+     "rule": "No copper, vias or parts under/around the antenna region on any layer, per the module datasheet (Pico W: 14 x 9 mm cut-out; ESP32: cut the board on both sides and below if it cannot overhang)",
+     "params": {
+      "layers": "all",
+      "disallow": [
+       "tracks",
+       "vias",
+       "zones",
+       "footprints"
+      ],
+      "shape": "footprint_keepout_or_datasheet"
+     },
+     "severity": "hard",
+     "enforce": [
+      "place",
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "RPI-PICOW"
+     ],
+     "evidence": "V",
+     "note": "Hard only when the region comes from the footprint's own keep-out or a known module table; otherwise soft. Some modules (u-blox NINA-B3x2 internal antenna) want GND under the antenna: the module table decides, never a blanket rule."
+    },
+    {
+     "id": "RFM-03",
+     "kind": "clearance",
+     "applies_to": [
+      "module"
+     ],
+     "rule": "Tall or metal parts >= 10 mm from the antenna; >= 15 mm clearance around ESP32 PCB antenna inside the housing",
+     "params": {
+      "min_mm": 10,
+      "esp32_housing_mm": 15
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "UBLOX-NINAB3",
+      "ESP-HDG-ESP32"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "RFM-04",
+     "kind": "advisory",
+     "applies_to": [
+      "module"
+     ],
+     "rule": "Ground plane extends >= 10 mm on both sides of a PCB-trace-antenna module (u-blox B3x6); dense GND vias near module ground pads",
+     "params": {
+      "gnd_extent_mm": 10
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "UBLOX-NINAB3"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "chip_antenna",
+   "name": "Discrete antenna (chip antenna, PCB trace antenna, wire/whip pad)",
+   "prefix": "ANT",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "antenna|rf_antenna|2450at|ant_|fractus|ignion|chip_ant",
+     "weight": 60
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(ae|ant|e)\\d",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "antenna": "anchor",
+    "feed": "net from RF pin/matching to antenna",
+    "match": "pi network parts on feed",
+    "rf_ic": "IC with ANT/RF pin"
+   },
+   "rules": [
+    {
+     "id": "ANT-01",
+     "kind": "keepout",
+     "applies_to": [
+      "antenna"
+     ],
+     "rule": "Ground/copper-free clearance area around the antenna on all layers per datasheet (Johanson 2450AT18A100 ~6.5 x 13.5 mm at the board end; Ignion NN03-310 40 x 12 mm)",
+     "params": {
+      "layers": "all",
+      "disallow": [
+       "tracks",
+       "vias",
+       "zones",
+       "footprints"
+      ],
+      "shape": "datasheet_table"
+     },
+     "severity": "hard",
+     "enforce": [
+      "place",
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "JOHANSON-2450AT18A100",
+      "IGNION-NN03-310"
+     ],
+     "evidence": "V",
+     "note": "Hard only with a part-table entry; unknown antennas get advisory 'keep-out unknown'."
+    },
+    {
+     "id": "ANT-02",
+     "kind": "edge",
+     "applies_to": [
+      "antenna"
+     ],
+     "rule": "Antenna at a board edge or corner",
+     "params": {
+      "max_mm": 1
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "JOHANSON-2450AT18A100",
+      "TI-AN058"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ANT-03",
+     "kind": "advisory",
+     "applies_to": [
+      "match"
+     ],
+     "rule": "Pi (shunt-series-shunt) matching pads between RF pin and antenna",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-AN058",
+      "JOHANSON-2450AT18A100"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ANT-04",
+     "kind": "proximity",
+     "applies_to": [
+      "match"
+     ],
+     "rule": "Matching parts close to the RF pin (zigzag 0201/0402)",
+     "params": {
+      "to": "rf_ic.ANT",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "NORDIC-NRF52840-REF"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "rf_line",
+   "name": "50 ohm RF line (RF pin, matching, antenna or RF connector)",
+   "prefix": "RF",
+   "detect": [
+    {
+     "signal": "pin_name",
+     "pattern": "^(ant|rf_?(in|out|io)?|lna_in|pa_out|rfio)$",
+     "weight": 50
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "u\\.?fl|ipex|mhf|sma|mmcx|coax",
+     "weight": 40
+    },
+    {
+     "signal": "net_name",
+     "pattern": "ant|rf",
+     "weight": 15
+    }
+   ],
+   "roles": {
+    "line": "net(s) from RF pin through matching to antenna/connector",
+    "connector": "u.FL/SMA if any"
+   },
+   "rules": [
+    {
+     "id": "RF-01",
+     "kind": "impedance",
+     "applies_to": [
+      "line"
+     ],
+     "rule": "50 ohm, grounded coplanar waveguide preferred (2-layer 1.6 mm: ~1.0-1.2 mm wide, 0.15-0.2 mm gap; plain microstrip would be ~3 mm)",
+     "params": {
+      "z0_ohm": 50,
+      "tol_pct": 10,
+      "structure": "gcpw"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "WADELL-1991",
+      "IPC-2141A",
+      "HAMMERSTAD-1980",
+      "UBLOX-NINAB3"
+     ],
+     "evidence": "C",
+     "note": "Widths computed with Wadell GCPW formulas (er 4.4-4.6); a stackup is required to apply."
+    },
+    {
+     "id": "RF-02",
+     "kind": "via_limit",
+     "applies_to": [
+      "line"
+     ],
+     "rule": "No vias, no 90 degree corners (135 degree or arcs), uniform width and gap, short",
+     "params": {
+      "max_vias": 0,
+      "max_bend_deg": 45
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "ESP-HDG-ESP32",
+      "UBLOX-NINAB3"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "RF-03",
+     "kind": "stitching",
+     "applies_to": [
+      "line"
+     ],
+     "rule": "GND via fence along both sides at <= lambda/20 (2.4 GHz: <= 3.4 mm; practice 1-2.5 mm), 0.5-1 mm from the gap edge",
+     "params": {
+      "pitch_mm": 2.5,
+      "max_pitch_lambda_frac": 0.05,
+      "offset_mm": 0.75
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "SILABS-AN928",
+      "UBLOX-NINAB3"
+     ],
+     "evidence": "R",
+     "note": "Rule of thumb, not a standard; AN928 could not be re-read."
+    },
+    {
+     "id": "RF-04",
+     "kind": "clearance",
+     "applies_to": [
+      "line"
+     ],
+     "rule": "Other signals >= 3w from the RF line; high-speed and switching nets kept away",
+     "params": {
+      "min_w": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "UBLOX-NINAB3",
+      "ESP-HDG-ESP32"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "RF-05",
+     "kind": "keepout",
+     "applies_to": [
+      "connector"
+     ],
+     "rule": "u.FL: no conductors under the connector between ground pads, GND void under the signal pad on the first inner layer; SMA THT: void all layers around the centre pin",
+     "params": {
+      "layers": [
+       "adjacent"
+      ],
+      "disallow": [
+       "tracks",
+       "zones"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "UBLOX-NINAB3"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "shield_can",
+   "name": "RF shield can / fence",
+   "prefix": "SHLD",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "shield|rf_shield|bmi-s|can_frame",
+     "weight": 60
+    }
+   ],
+   "roles": {
+    "fence": "anchor"
+   },
+   "rules": [
+    {
+     "id": "SHLD-01",
+     "kind": "stitching",
+     "applies_to": [
+      "fence"
+     ],
+     "rule": "GND vias along the fence pad at <= lambda/20 (2.4 GHz: 2-3 mm typical)",
+     "params": {
+      "pitch_mm": 2.5
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "SILABS-AN928"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "SHLD-02",
+     "kind": "keepout",
+     "applies_to": [
+      "fence"
+     ],
+     "rule": "No top-layer signals across the fence; parts >= 0.3-0.5 mm inside the fence",
+     "params": {
+      "layers": [
+       "same"
+      ],
+      "disallow": [
+       "foreign_tracks"
+      ],
+      "inner_margin_mm": 0.4
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "SILABS-AN928"
+     ],
+     "evidence": "R",
+     "note": "Rule of thumb; can vendor land pattern is authoritative."
+    }
+   ]
+  },
+  {
+   "id": "analog_frontend",
+   "name": "ADC / DAC / precision analog / sensor / audio codec",
+   "prefix": "ANA",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "ads1|ads8|ad7|ad5|mcp3|mcp4|max11|ltc2|pcm\\d|cs4|wm8|sgtl|tlv320|es83|ina\\d|opa|lmv|tl07|ne5532",
+     "weight": 40
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(agnd|avdd|vref|refin|refout|ain\\d*|in[+-]|vcom)$",
+     "weight": 30
+    },
+    {
+     "signal": "keywords",
+     "pattern": "adc|dac|codec|audio|instrumentation|sensor",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "ic": "anchor",
+    "analog_in": "nets on AIN/IN+/IN- pins",
+    "ref": "VREF/REFCAP net",
+    "ref_cap": "caps on ref",
+    "aa_filter": "RC parts on analog_in",
+    "hi_z": "high-impedance nodes (TIA inverting input, electrometer)",
+    "agnd": "AGND net"
+   },
+   "rules": [
+    {
+     "id": "ANA-01",
+     "kind": "reference_plane",
+     "applies_to": [
+      "analog_in",
+      "ref"
+     ],
+     "rule": "One solid ground plane, partitioned by placement; if AGND/DGND are split, join once under the converter and never route across the split",
+     "params": {
+      "no_split_crossing": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "ADI-MT031",
+      "TI-SLVA959B"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "ANA-02",
+     "kind": "advisory",
+     "applies_to": [
+      "ic"
+     ],
+     "rule": "Converter AGND and DGND pins both to the analog ground plane with short connections",
+     "params": {
+      "max_mm": 1
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "ADI-MT031"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "ANA-03",
+     "kind": "proximity",
+     "applies_to": [
+      "ref_cap"
+     ],
+     "rule": "Reference cap(s) directly at the VREF pin, short return to AGND",
+     "params": {
+      "to": "ic.VREF",
+      "max_mm": 2.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ADI-MT101"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "ANA-04",
+     "kind": "diff_pair",
+     "applies_to": [
+      "analog_in"
+     ],
+     "rule": "Differential inputs symmetric and coupled; anti-alias RC at the ADC pins",
+     "params": {
+      "max_intra_skew_mm": 1.0,
+      "filter_max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ANA-05",
+     "kind": "guard",
+     "applies_to": [
+      "hi_z"
+     ],
+     "rule": "Guard ring around high-impedance nodes, driven at node potential or GND, mask removed",
+     "params": {
+      "width_mm": [
+       0.5,
+       1.0
+      ]
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "ADI-OPAMP-HB"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "ANA-06",
+     "kind": "clearance",
+     "applies_to": [
+      "analog_in",
+      "ref"
+     ],
+     "rule": "Digital, clock and switching nets >= 3W away and not parallel to analog inputs/reference",
+     "params": {
+      "min_w": 3,
+      "to_roles": [
+       "buck.sw",
+       "boost.sw",
+       "clocks"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ANA-07",
+     "kind": "clearance",
+     "applies_to": [
+      "ic"
+     ],
+     "rule": "Analog front end placed away from switching regulators and their inductors (>= 10 mm)",
+     "params": {
+      "to_roles": [
+       "buck.inductor",
+       "boost.inductor"
+      ],
+      "min_mm": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SNVA021C"
+     ],
+     "evidence": "R",
+     "note": "10 mm is a TraceMaker default."
+    }
+   ]
+  },
+  {
+   "id": "power_path",
+   "name": "High-current power path (power input, regulator in/out, motor/LED supply)",
+   "prefix": "PWR",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "barrel|dc_jack|terminal_?block|xt60|xt30|molex_mini_fit|banana|screw_terminal",
+     "weight": 40
+    },
+    {
+     "signal": "net_name",
+     "pattern": "^\\+?(vin|vbat|vmot|vm|12v|24v|48v|vbus)$|\\d+a$",
+     "weight": 20
+    },
+    {
+     "signal": "topology",
+     "pattern": "net_feeds_power_stage",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "net": "power net(s)",
+    "pads": "pads of the net"
+   },
+   "rules": [
+    {
+     "id": "PWR-01",
+     "kind": "width_for_current",
+     "applies_to": [
+      "net"
+     ],
+     "rule": "Width from current: IPC-2221 I = k*dT^0.44*A^0.725 (k 0.048 ext, 0.024 int; A in mil2), IPC-2152 charts when available; default dT 10 C, 1 oz",
+     "params": {
+      "delta_t_c": 10,
+      "copper_oz": 1,
+      "k_external": 0.048,
+      "k_internal": 0.024
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "IPC-2221B",
+      "IPC-2152"
+     ],
+     "evidence": "C",
+     "note": "Needs the current (user override or net-name convention). IPC-2221 internal values are very conservative vs IPC-2152."
+    },
+    {
+     "id": "PWR-02",
+     "kind": "via_limit",
+     "applies_to": [
+      "net"
+     ],
+     "rule": "Via count at layer changes >= ceil(I / I_via); I_via ~0.8 A for 0.25-0.3 mm drill, 1 oz, 10 C rise",
+     "params": {
+      "amps_per_via": {
+       "d0_20": 0.55,
+       "d0_25": 0.81,
+       "d0_30": 0.84,
+       "d0_41": 1.1
+      }
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B",
+      "IPC-2152"
+     ],
+     "evidence": "V",
+     "note": "TI table is not monotonic per mm; treat as approximate."
+    },
+    {
+     "id": "PWR-03",
+     "kind": "connection",
+     "applies_to": [
+      "pads"
+     ],
+     "rule": "High-current and thermal pads connect solid to zones (no spoke relief)",
+     "params": {
+      "style": "solid"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "PWR-04",
+     "kind": "advisory",
+     "applies_to": [
+      "net"
+     ],
+     "rule": "Via rows must not slice the return plane; keep copper webs between antipads",
+     "params": {
+      "min_web_mm": 0.25
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "motor_driver",
+   "name": "Motor driver / H-bridge / MOSFET power stage / gate driver",
+   "prefix": "MOT",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "drv8|a49|l298|l293|tb6612|tmc2|vnh|bts79|ir21|ucc27|lm510|bridge|mosfet",
+     "weight": 40
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(vm|vmot|out[12ab]|aout|bout|gh|gl|sh|hs|ls|isen|sense|sns)",
+     "weight": 30
+    },
+    {
+     "signal": "keywords",
+     "pattern": "motor|h-bridge|gate driver|half-bridge",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "ic": "anchor",
+    "fet": "power MOSFETs",
+    "gate": "gate nets",
+    "gate_r": "gate resistors",
+    "shunt": "current-sense resistor",
+    "sense": "Kelvin sense nets",
+    "bulk": "bulk caps on VM",
+    "bypass": "ceramic caps on VM",
+    "boot": "bootstrap cap"
+   },
+   "rules": [
+    {
+     "id": "MOT-01",
+     "kind": "proximity",
+     "applies_to": [
+      "fet"
+     ],
+     "rule": "Gate driver close to the MOSFETs (gate trace <= 20 mm); gate resistor at the driver or gate; driver bypass directly across its pins",
+     "params": {
+      "to": "gate_driver_pin",
+      "max_mm": 20
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLUA618A",
+      "TI-SLVA959B"
+     ],
+     "evidence": "V",
+     "note": "20 mm from practice; source asks 'as close as possible'."
+    },
+    {
+     "id": "MOT-02",
+     "kind": "diff_pair",
+     "applies_to": [
+      "gate"
+     ],
+     "rule": "High-side gate trace routed next to its return (SH/source); >= 0.5 mm wide on >= 1 oz",
+     "params": {
+      "pair_with": "source_return",
+      "min_width_mm": 0.51
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MOT-03",
+     "kind": "kelvin",
+     "applies_to": [
+      "shunt",
+      "sense"
+     ],
+     "rule": "Sense lines from the shunt's inner (Kelvin) pads, routed as a coupled pair to the amplifier; filter at the amplifier",
+     "params": {
+      "pair": true,
+      "filter_cap_nF": 1
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MOT-04",
+     "kind": "loop",
+     "applies_to": [
+      "bypass",
+      "fet"
+     ],
+     "rule": "Power loop (VM bypass -> HS FET -> LS FET -> GND) minimised; bypass <= 5 mm from VM pins; bulk near power entry with several vias",
+     "params": {
+      "max_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MOT-05",
+     "kind": "thermal_vias",
+     "applies_to": [
+      "ic"
+     ],
+     "rule": "Thermal pad: wide top pour, via array 0.2 mm hole / 0.5 mm pad, direct connect, unmasked; 1.5-2 oz preferred",
+     "params": {
+      "drill_mm": 0.2,
+      "pad_mm": 0.5
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "MOT-06",
+     "kind": "advisory",
+     "applies_to": [
+      "gate"
+     ],
+     "rule": "Drain sense (VDRAIN) as a single trace to the drains via a net tie; gate return to source, not the power ground path",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "esd_tvs",
+   "name": "ESD / TVS protection device",
+   "prefix": "ESD",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "usblc|tpd\\d|esd\\d|pesd|smaj|smbj|sm712|sm(05|12|15|24)|prtr|rclamp|tvs|sp05|ip4220|nup|nuf20|stf20|emif",
+     "weight": 50
+    },
+    {
+     "signal": "keywords",
+     "pattern": "esd|tvs|transient",
+     "weight": 30
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "tvs|esd|sot-23-6.*esd",
+     "weight": 20
+    },
+    {
+     "signal": "topology",
+     "pattern": "diode_array_signal_to_ground_near_connector_net",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "tvs": "anchor",
+    "connector": "connector sharing the protected nets",
+    "protected": "nets shared with the connector",
+    "ic": "IC at the far end of protected nets",
+    "gnd": "TVS ground pin"
+   },
+   "rules": [
+    {
+     "id": "ESD-01",
+     "kind": "proximity",
+     "applies_to": [
+      "tvs"
+     ],
+     "rule": "TVS as close to the connector as the rules allow; IC much farther from the TVS than the TVS from the connector",
+     "params": {
+      "to": "connector",
+      "max_mm": 5,
+      "ratio_ic_to_conn_min": 2
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA680A"
+     ],
+     "evidence": "V",
+     "note": "Ethernet exception ETH-14."
+    },
+    {
+     "id": "ESD-02",
+     "kind": "order",
+     "applies_to": [
+      "protected"
+     ],
+     "rule": "Routing order connector -> TVS pad -> IC, flow-through, no stub to the TVS",
+     "params": {
+      "sequence": [
+       "connector",
+       "tvs",
+       "ic"
+      ],
+      "max_stub_mm": 0
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA680A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ESD-03",
+     "kind": "via_limit",
+     "applies_to": [
+      "protected"
+     ],
+     "rule": "No via between connector and TVS (if unavoidable, reach the TVS before any branch)",
+     "params": {
+      "max_vias_between": 0,
+      "segment": [
+       "connector",
+       "tvs"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA680A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ESD-04",
+     "kind": "keepout",
+     "applies_to": [
+      "connector",
+      "tvs"
+     ],
+     "rule": "No unprotected traces in the region between connector and TVS",
+     "params": {
+      "layers": "all",
+      "disallow": [
+       "foreign_tracks"
+      ],
+      "shape": "hull_connector_tvs"
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA680A"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ESD-05",
+     "kind": "thermal_vias",
+     "applies_to": [
+      "gnd"
+     ],
+     "rule": "TVS ground straight into the plane: stitching via(s) right at the ground pin (>= 2)",
+     "params": {
+      "count_min": 2
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA680A",
+      "TI-TCAN1042H"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ESD-06",
+     "kind": "advisory",
+     "applies_to": [
+      "protected"
+     ],
+     "rule": "Straight runs or curves between connector and TVS; no 90 degree corners",
+     "params": {
+      "max_bend_deg": 45
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA680A"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "connector_general",
+   "name": "Board-to-wire / board-to-board connector (any external connector)",
+   "prefix": "CONN",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "^connector|conn|header|hdr|jst|molex|terminal|socket|receptacle|plug|usb|rj\\d\\d|[86]p[86]c|microsd|sd_?card|barrel|jack|xt\\d\\d|bnc|rf-sma|sma-edge|u\\.?fl|minidin|castellated|pin_?array|^s\\d+b-|^sm\\d+b-|phoenix|berg|ftsh|tc20[35]0|arduino|^[12]x\\d+$",
+     "weight": 40
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(j|p|cn|x)\\d",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "connector": "anchor"
+   },
+   "rules": [
+    {
+     "id": "CONN-01",
+     "kind": "edge",
+     "applies_to": [
+      "connector"
+     ],
+     "rule": "Cable/mating connectors at the board edge, mating face at or slightly past the edge, facing outward",
+     "params": {
+      "max_mm": 1.0,
+      "facing": "outward"
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "Universal practice; no single primary source. Pin headers between boards (stacking) are excluded by footprint class."
+    },
+    {
+     "id": "CONN-02",
+     "kind": "keepout",
+     "applies_to": [
+      "connector"
+     ],
+     "rule": "Mechanical keep-out for the mating plug/cable in front of the connector (no parts taller than the board in that region)",
+     "params": {
+      "depth_mm": 5,
+      "disallow": [
+       "footprints"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "CONN-03",
+     "kind": "clearance",
+     "applies_to": [
+      "connector"
+     ],
+     "rule": "Copper >= 0.3-0.5 mm from routed board edges (fab floor 0.2 mm; V-score 0.4 mm)",
+     "params": {
+      "min_mm": 0.3,
+      "fab_min_mm": 0.2,
+      "vscore_min_mm": 0.4
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "drc"
+     ],
+     "sources": [
+      "JLC-CAPS"
+     ],
+     "evidence": "V",
+     "note": "Board edge clearance rule from the board takes precedence."
+    }
+   ]
+  },
+  {
+   "id": "mounting_hole",
+   "name": "Mounting hole / fastener",
+   "prefix": "MH",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "mountinghole|mounting_hole|mount_hole|mtg-?hole|hole_npth|^mh-m\\d|standoff",
+     "weight": 70
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(h|mh)\\d",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "hole": "anchor"
+   },
+   "rules": [
+    {
+     "id": "MH-01",
+     "kind": "keepout",
+     "applies_to": [
+      "hole"
+     ],
+     "rule": "Copper and parts kept out to the screw head/washer diameter plus margin (M3: ~6-7 mm diameter) unless the hole is plated and grounded",
+     "params": {
+      "diameter_mm_m3": 6.5,
+      "disallow": [
+       "footprints",
+       "foreign_tracks"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE",
+      "JLC-CAPS"
+     ],
+     "evidence": "R",
+     "note": "Rule of thumb; NPTH-to-copper fab minimum 0.2 mm is from JLC (V)."
+    }
+   ]
+  },
+  {
+   "id": "mains_hv",
+   "name": "Mains / high-voltage section (AC input, relay contacts, offline converter primary)",
+   "prefix": "HV",
+   "detect": [
+    {
+     "signal": "net_name",
+     "pattern": "mains|230v|240v|120v|110v|ac_?(l|n|line|neutral)|^(l|n|pe)$|hv|400v",
+     "weight": 40
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "relay|transformer|varistor|mov|x2|y1|y2|iec|fuseholder|tnp|hlk-|irm-",
+     "weight": 30
+    },
+    {
+     "signal": "value",
+     "pattern": "hlk-|irm-|lnk|top2|viper|275v|250vac|x2|y2",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "hazardous": "nets at mains potential",
+    "selv": "low-voltage nets",
+    "barrier": "parts bridging the two (transformer, opto, relay coil-contact)"
+   },
+   "rules": [
+    {
+     "id": "HV-01",
+     "kind": "clearance",
+     "applies_to": [
+      "hazardous"
+     ],
+     "rule": "Functional spacing between conductors from IPC-2221B Table 6-1 by peak voltage (B2 external uncoated: 0.64 mm at 31-150 V, 1.25 mm at 151-300 V, 2.5 mm at 301-500 V, +0.005 mm/V above)",
+     "params": {
+      "table": "IPC-2221B-6-1",
+      "column": "B2",
+      "b2_mm": {
+       "0-15": 0.1,
+       "16-30": 0.1,
+       "31-50": 0.6,
+       "51-100": 0.6,
+       "101-150": 0.6,
+       "151-170": 1.25,
+       "171-250": 1.25,
+       "251-300": 1.25,
+       "301-500": 2.5
+      },
+      "b2_per_volt_above_500": 0.005,
+      "b1_mm": {
+       "0-15": 0.05,
+       "16-30": 0.05,
+       "31-50": 0.1,
+       "51-100": 0.1,
+       "101-150": 0.2,
+       "151-170": 0.2,
+       "171-250": 0.2,
+       "251-300": 0.2,
+       "301-500": 0.25
+      }
+     },
+     "severity": "hard",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "IPC-2221B",
+      "KICAD-CALC-IPC2221"
+     ],
+     "evidence": "V",
+     "note": "IPC-2221B prints 0.6 mm where the KiCad calculator has 0.64 mm; column letters differ between revisions. Hard only when the voltage is known (doc 15 \u00a73.6). Not a safety spacing."
+    },
+    {
+     "id": "HV-02",
+     "kind": "creepage",
+     "applies_to": [
+      "hazardous",
+      "selv"
+     ],
+     "rule": "Safety creepage/clearance mains (250 Vrms, PD2, material group IIIb, OVC II) to SELV: basic 2.5 mm creepage / 2.0 mm clearance; reinforced 5.0 mm / 4.0 mm",
+     "params": {
+      "voltage_v": 250,
+      "pollution_degree": 2,
+      "material_group": "IIIb",
+      "basic": {
+       "creepage_mm": 2.5,
+       "clearance_mm": 2.0
+      },
+      "reinforced": {
+       "creepage_mm": 5.0,
+       "clearance_mm": 4.0
+      }
+     },
+     "severity": "hard",
+     "enforce": [
+      "place",
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "IEC-62368-1"
+     ],
+     "evidence": "R",
+     "note": "Not re-read in the standard; verify. IEC 62368-1 transient-based clearance can be lower (~1.5/3.0 mm). Medical (IEC 60601-1) is higher. The often-quoted 6.4 mm is IPC B3 / UL-era, not IEC reinforced. The report never claims compliance."
+    },
+    {
+     "id": "HV-03",
+     "kind": "advisory",
+     "applies_to": [
+      "barrier"
+     ],
+     "rule": "Slots count toward creepage only if >= 1.0 mm wide at PD2 (0.25 mm PD1, 1.5 mm PD3); effective creepage = path + width + 2 x depth around the slot",
+     "params": {
+      "min_slot_mm_pd2": 1.0
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA284",
+      "IEC-62368-1"
+     ],
+     "evidence": "V",
+     "note": "TraceMaker does not cut slots; it reports where one would close a creepage shortfall."
+    },
+    {
+     "id": "HV-04",
+     "kind": "keepout",
+     "applies_to": [
+      "barrier"
+     ],
+     "rule": "No copper of either side under the barrier part between its primary and secondary pins, all layers",
+     "params": {
+      "layers": "all",
+      "disallow": [
+       "tracks",
+       "vias",
+       "zones"
+      ]
+     },
+     "severity": "hard",
+     "enforce": [
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA284"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "isolation",
+   "name": "Isolation barrier (digital isolator, optocoupler, isolated DC/DC)",
+   "prefix": "ISO",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "iso77|iso78|iso1|adum|si86|pc817|ltv|4n3\\d|6n13\\d|hcpl|tlp|el817|b0505|r05|ime05|si88",
+     "weight": 50
+    },
+    {
+     "signal": "keywords",
+     "pattern": "isolat|optocoupler|optoisolator|photocoupler",
+     "weight": 40
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "isolator|optocoupler|opto|dip-4|so-4",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "iso": "anchor",
+    "side1": "nets on side-1 pins",
+    "side2": "nets on side-2 pins",
+    "gnd1": "side-1 ground",
+    "gnd2": "side-2 ground"
+   },
+   "rules": [
+    {
+     "id": "ISO-01",
+     "kind": "keepout",
+     "applies_to": [
+      "iso"
+     ],
+     "rule": "Keep the space under the isolator free of traces, vias and pads on all layers (barrier strip between pin rows)",
+     "params": {
+      "layers": "all",
+      "disallow": [
+       "tracks",
+       "vias",
+       "pads",
+       "zones"
+      ],
+      "shape": "between_pin_rows"
+     },
+     "severity": "hard",
+     "enforce": [
+      "place",
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA284"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ISO-02",
+     "kind": "clearance",
+     "applies_to": [
+      "side1",
+      "side2"
+     ],
+     "rule": "Side-1 to side-2 copper spacing >= the isolator's package creepage (default: body pin-row gap), never less than HV-02 when side 1 is hazardous",
+     "params": {
+      "min_mm": "from_footprint_pin_rows"
+     },
+     "severity": "hard",
+     "enforce": [
+      "place",
+      "route",
+      "drc",
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA284",
+      "IEC-62368-1"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "ISO-03",
+     "kind": "advisory",
+     "applies_to": [
+      "gnd1",
+      "gnd2"
+     ],
+     "rule": "Optional stitching capacitance by overlapping inner planes across the barrier (isoPower EMI); keep away from the board edge",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "ADI-AN1109"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "ISO-04",
+     "kind": "advisory",
+     "applies_to": [
+      "iso"
+     ],
+     "rule": "Isolator stack: >= 4 layers (signal, GND, power, signal) per TI; signal spacing >= 3h",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA284"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "can",
+   "name": "CAN / CAN FD transceiver",
+   "prefix": "CAN",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "tcan|sn65hvd2[3-5]|mcp25(5|6)|tja104\\d|tja105\\d|tja14|mcp2562|iso1042|max3051",
+     "weight": 50
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^can_?[hl]$",
+     "weight": 40
+    },
+    {
+     "signal": "net_name",
+     "pattern": "can_?[hl]|canh|canl",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "xcvr": "anchor",
+    "bus": "CANH/CANL",
+    "term": "120 ohm or 2 x 60 ohm across bus",
+    "split_cap": "4.7 nF from split midpoint to GND",
+    "connector": "bus connector",
+    "esd": "TVS on bus",
+    "cmc": "choke on bus",
+    "decap": "VCC/VIO caps"
+   },
+   "rules": [
+    {
+     "id": "CAN-01",
+     "kind": "diff_pair",
+     "applies_to": [
+      "bus"
+     ],
+     "rule": "CANH/CANL routed as a coupled pair (~120 ohm differential), short on-board stub to the transceiver",
+     "params": {
+      "zdiff_ohm": 120,
+      "max_stub_mm": 100
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA270",
+      "TI-TCAN1042H"
+     ],
+     "evidence": "R",
+     "note": "120 ohm pair is a rule of thumb (cable Z0 = 120 ohm, V); at CAN rates on-board geometry matters little."
+    },
+    {
+     "id": "CAN-02",
+     "kind": "proximity",
+     "applies_to": [
+      "esd",
+      "cmc"
+     ],
+     "rule": "TVS, filter caps and CMC as close to the bus connector as possible, in line with the signal path",
+     "params": {
+      "to": "connector",
+      "max_mm": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-TCAN1042H"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "CAN-03",
+     "kind": "advisory",
+     "applies_to": [
+      "term"
+     ],
+     "rule": "120 ohm termination only at the two bus ends (never on a removable node); split 2 x 60 ohm + 4.7 nF recommended for EMC",
+     "params": {
+      "r_ohm": 120,
+      "split_r_ohm": 60,
+      "split_c_nF": 4.7
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA270",
+      "ISO-11898-2"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "CAN-04",
+     "kind": "proximity",
+     "applies_to": [
+      "decap"
+     ],
+     "rule": "VCC/VIO bypass at the pins; >= 2 vias per supply/ground connection on bypass and protection parts",
+     "params": {
+      "to": "xcvr",
+      "max_mm": 3,
+      "vias_min": 2
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-TCAN1042H"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "rs485",
+   "name": "RS-485 / RS-422 transceiver",
+   "prefix": "RS485",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "max48[0-9]|max13|sp3485|sn65hvd(7|8)|thvd|isl8|adm248|st3485|sn75176",
+     "weight": 50
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(a|b|y|z)$",
+     "weight": 15
+    },
+    {
+     "signal": "net_name",
+     "pattern": "rs485|485_?[ab]",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "xcvr": "anchor",
+    "bus": "A/B (and Y/Z)",
+    "term": "120 ohm across bus",
+    "bias": "fail-safe pull-up on A / pull-down on B",
+    "esd": "TVS"
+   },
+   "rules": [
+    {
+     "id": "RS485-01",
+     "kind": "diff_pair",
+     "applies_to": [
+      "bus"
+     ],
+     "rule": "A/B routed as a coupled ~120 ohm pair",
+     "params": {
+      "zdiff_ohm": 120
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA272"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "RS485-02",
+     "kind": "proximity",
+     "applies_to": [
+      "esd",
+      "term"
+     ],
+     "rule": "TVS and termination at the connector end",
+     "params": {
+      "to": "connector",
+      "max_mm": 10
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA272",
+      "TI-SLVA680A"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "RS485-03",
+     "kind": "advisory",
+     "applies_to": [
+      "term",
+      "bias"
+     ],
+     "rule": "120 ohm at each cable end (or 2 x 60 ohm + cap, 1 % matched); external fail-safe bias e.g. 2 x 523 ohm at 5 V; stub <= t_r*v/10",
+     "params": {
+      "r_ohm": 120,
+      "bias_ohm_5v": 523
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SLLA272"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "rs232",
+   "name": "RS-232 transceiver with charge pump",
+   "prefix": "RS232",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "max232|max3232|sp3232|st3232|trs3232|max3221|adm3202",
+     "weight": 60
+    }
+   ],
+   "roles": {
+    "xcvr": "anchor",
+    "pump_caps": "C1-C4 on C1+/C1-/C2+/C2-/V+/V-"
+   },
+   "rules": [
+    {
+     "id": "RS232-01",
+     "kind": "proximity",
+     "applies_to": [
+      "pump_caps"
+     ],
+     "rule": "Charge-pump caps close to the IC, C1 and C2 shortest (fastest edges)",
+     "params": {
+      "to": "xcvr",
+      "max_mm": 5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-MAX3232"
+     ],
+     "evidence": "V",
+     "note": "5 mm is a TraceMaker default; datasheet says 'short'."
+    }
+   ]
+  },
+  {
+   "id": "i2c",
+   "name": "I2C / SMBus",
+   "prefix": "I2C",
+   "detect": [
+    {
+     "signal": "pin_name",
+     "pattern": "^(i2c\\d?_?)?(sda|scl)$|^smb(clk|dat)",
+     "weight": 50
+    },
+    {
+     "signal": "net_name",
+     "pattern": "sda|scl",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "bus": "SDA, SCL",
+    "pullup": "resistors from SDA/SCL to supply"
+   },
+   "rules": [
+    {
+     "id": "I2C-01",
+     "kind": "advisory",
+     "applies_to": [
+      "pullup"
+     ],
+     "rule": "Pull-ups between Rp_min = (VCC - 0.4 V)/3 mA and Rp_max = tr/(0.8473*Cb); Cb <= 400 pF (Std/Fast), 550 pF (Fm+); tr 1000/300/120 ns",
+     "params": {
+      "vol_v": 0.4,
+      "iol_ma": 3,
+      "cb_max_pF": 400,
+      "tr_ns": {
+       "standard": 1000,
+       "fast": 300,
+       "fast_plus": 120
+      }
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "NXP-UM10204",
+      "TI-SLVA689"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "I2C-02",
+     "kind": "advisory",
+     "applies_to": [
+      "bus"
+     ],
+     "rule": "Runs > 100 mm without planes: order SDA-VDD-VSS-SCL or SDA-VSS-SCL",
+     "params": {
+      "max_mm_without_planes": 100
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "NXP-UM10204"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "I2C-03",
+     "kind": "net_weight",
+     "applies_to": [
+      "pullup"
+     ],
+     "rule": "Pull-ups are not placement-critical (low weight); one set per bus segment",
+     "params": {
+      "weight": 0.5
+     },
+     "severity": "soft",
+     "enforce": [
+      "place"
+     ],
+     "sources": [
+      "NXP-UM10204"
+     ],
+     "evidence": "V"
+    }
+   ]
+  },
+  {
+   "id": "spi",
+   "name": "SPI bus (non-memory)",
+   "prefix": "SPI",
+   "detect": [
+    {
+     "signal": "pin_name",
+     "pattern": "^(spi\\d?_?)?(sck|sclk|mosi|miso|copi|cipo|sdo|sdi|cs|nss)$",
+     "weight": 40
+    }
+   ],
+   "roles": {
+    "sck": "clock",
+    "bus": "MOSI/MISO/CS",
+    "series_r": "series resistor on SCK"
+   },
+   "rules": [
+    {
+     "id": "SPI-01",
+     "kind": "proximity",
+     "applies_to": [
+      "series_r"
+     ],
+     "rule": "22-33 ohm series termination at the SCK driver when the clock is more than a few cm long",
+     "params": {
+      "to": "driver",
+      "max_mm": 3
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAD21"
+     ],
+     "evidence": "R",
+     "note": "Rule of thumb; SPRAD21 recommends 22 ohm series on SPI clocks near the source."
+    }
+   ]
+  },
+  {
+   "id": "jtag_swd",
+   "name": "JTAG / SWD debug header",
+   "prefix": "DBG",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "jtag|swd|tag-connect|tc20|cortex_debug|arm_.*debug",
+     "weight": 60
+    },
+    {
+     "signal": "pin_name",
+     "pattern": "^(tck|tms|tdi|tdo|trst|swdio|swclk|swo|nreset)$",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "header": "anchor",
+    "target": "MCU/FPGA with the debug pins",
+    "tdo_r": "series resistor on TDO",
+    "tck_r": "series resistor on TCK"
+   },
+   "rules": [
+    {
+     "id": "DBG-01",
+     "kind": "max_length",
+     "applies_to": [
+      "header"
+     ],
+     "rule": "Header to device <= 76 mm",
+     "params": {
+      "max_mm": 76.2
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRU655I"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "DBG-02",
+     "kind": "proximity",
+     "applies_to": [
+      "tdo_r"
+     ],
+     "rule": "TDO series termination at the device pin, <= 12.7-25.4 mm",
+     "params": {
+      "to": "target.TDO",
+      "max_mm": 12.7
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-SPRU655I"
+     ],
+     "evidence": "V",
+     "note": "SPRU655I says 1 in in a table and 0.5 in in a figure note; default is the stricter."
+    },
+    {
+     "id": "DBG-03",
+     "kind": "edge",
+     "applies_to": [
+      "header"
+     ],
+     "rule": "Debug header reachable at the board edge (10-pin 1.27 mm / 20-pin 2.54 mm Cortex headers)",
+     "params": {
+      "max_mm": 5
+     },
+     "severity": "advisory",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "ARM-CORESIGHT-CONN"
+     ],
+     "evidence": "R"
+    }
+   ]
+  },
+  {
+   "id": "led",
+   "name": "Indicator LED with series resistor",
+   "prefix": "LED",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "^led:|led_\\d|led_smd",
+     "weight": 50
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(led|d)\\d",
+     "weight": 10
+    }
+   ],
+   "roles": {
+    "led": "anchor",
+    "r": "series resistor"
+   },
+   "rules": [
+    {
+     "id": "LED-01",
+     "kind": "proximity",
+     "applies_to": [
+      "r"
+     ],
+     "rule": "Series resistor next to the LED or its driver (thin evidence: practice only)",
+     "params": {
+      "to": "led",
+      "max_mm": 10
+     },
+     "severity": "advisory",
+     "enforce": [
+      "place"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "No layout source; weight only. Visible LEDs belong on the user-facing side (user input)."
+    }
+   ]
+  },
+  {
+   "id": "display_fpc",
+   "name": "Display / camera FPC connector",
+   "prefix": "DISP",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "fpc|ffc|hirose_fh|zif",
+     "weight": 40
+    },
+    {
+     "signal": "keywords",
+     "pattern": "display|lcd|oled|tft|camera",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "connector": "anchor",
+    "lanes": "MIPI/LVDS lanes on the connector"
+   },
+   "rules": [
+    {
+     "id": "DISP-01",
+     "kind": "advisory",
+     "applies_to": [
+      "lanes"
+     ],
+     "rule": "High-speed lanes through an FPC follow MIPI-*/LVDS-* rules; keep ground pins and a continuous return under the connector",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "R"
+    },
+    {
+     "id": "DISP-02",
+     "kind": "edge",
+     "applies_to": [
+      "connector"
+     ],
+     "rule": "FPC connector at the board edge with cable exit unobstructed",
+     "params": {
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "Practice (CONN-01)."
+    }
+   ]
+  },
+  {
+   "id": "battery_charger",
+   "name": "Li-ion/LiPo charger and battery connection",
+   "prefix": "BAT",
+   "detect": [
+    {
+     "signal": "value",
+     "pattern": "bq24|bq25|mcp738|tp4056|ltc40|max1555|ip5306|cn3065",
+     "weight": 60
+    },
+    {
+     "signal": "lib_id",
+     "pattern": "battery|cr2032|18650|jst_ph_.*2",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "ic": "anchor",
+    "caps": "IN, OUT, BAT caps",
+    "sense": "charge-current sense resistor (switch-mode)",
+    "epad": "thermal pad"
+   },
+   "rules": [
+    {
+     "id": "BAT-01",
+     "kind": "proximity",
+     "applies_to": [
+      "caps"
+     ],
+     "rule": "IN, OUT and BAT caps as close as possible with short ground to the thermal pad",
+     "params": {
+      "to": "ic",
+      "max_mm": 3
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "report"
+     ],
+     "sources": [
+      "TI-BQ24075"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BAT-02",
+     "kind": "thermal_vias",
+     "applies_to": [
+      "epad"
+     ],
+     "rule": "Thermal pad soldered with multiple vias (filled or tented); it is the main GND",
+     "params": {
+      "count_min": 4
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-BQ24075"
+     ],
+     "evidence": "V"
+    },
+    {
+     "id": "BAT-03",
+     "kind": "kelvin",
+     "applies_to": [
+      "sense"
+     ],
+     "rule": "Switch-mode charger sense resistor routed Kelvin (see MOT-03)",
+     "params": {
+      "pair": true
+     },
+     "severity": "soft",
+     "enforce": [
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TI-SLVA959B"
+     ],
+     "evidence": "R"
+    }
+   ]
+  },
+  {
+   "id": "fuse",
+   "name": "Fuse / PTC on a power input",
+   "prefix": "FUSE",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "fuse|polyfuse|ptc",
+     "weight": 60
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^(f|fu)\\d",
+     "weight": 20
+    }
+   ],
+   "roles": {
+    "fuse": "anchor",
+    "input": "connector feeding the fuse"
+   },
+   "rules": [
+    {
+     "id": "FUSE-01",
+     "kind": "order",
+     "applies_to": [
+      "fuse"
+     ],
+     "rule": "Fuse at the power-entry point before any other branch; traces sized for the fuse rating (PWR-01)",
+     "params": {
+      "sequence": [
+       "input",
+       "fuse"
+      ]
+     },
+     "severity": "soft",
+     "enforce": [
+      "place",
+      "route",
+      "report"
+     ],
+     "sources": [
+      "TMK-PRACTICE"
+     ],
+     "evidence": "R",
+     "note": "Practice; thin primary evidence."
+    }
+   ]
+  },
+  {
+   "id": "test_point",
+   "name": "Test point (bed-of-nails / probe)",
+   "prefix": "TP",
+   "detect": [
+    {
+     "signal": "lib_id",
+     "pattern": "testpoint|test_point|tp_",
+     "weight": 60
+    },
+    {
+     "signal": "ref_prefix",
+     "pattern": "^tp\\d",
+     "weight": 30
+    }
+   ],
+   "roles": {
+    "tp": "anchor"
+   },
+   "rules": [
+    {
+     "id": "TP-01",
+     "kind": "advisory",
+     "applies_to": [
+      "tp"
+     ],
+     "rule": "Bed-of-nails: pad >= 0.9-1.0 mm, pitch 2.54 mm preferred (1.27 mm possible), >= 3 mm from the board edge, all on one side",
+     "params": {
+      "pad_min_mm": 0.9,
+      "pitch_mm": 2.54,
+      "edge_min_mm": 3.0
+     },
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "IPC-2221B-TP"
+     ],
+     "evidence": "R",
+     "note": "Not verified this session; fixture vendors set the real limits."
+    },
+    {
+     "id": "TP-02",
+     "kind": "advisory",
+     "applies_to": [
+      "tp"
+     ],
+     "rule": "No test points on high-speed pairs (USB2-05)",
+     "params": {},
+     "severity": "advisory",
+     "enforce": [
+      "report"
+     ],
+     "sources": [
+      "TI-SPRAAR7J"
+     ],
+     "evidence": "V"
+    }
+   ]
+  }
+ ]
+}

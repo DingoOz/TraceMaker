@@ -23,6 +23,10 @@ struct RouteJob {
   int view_port = 8766;
   bool hold = false;              // keep serving the viewer after routing; never returns (CLI only)
   std::string record;             // events file for replay (ignored while viewing)
+  // --component-rules (doc 15 §3.5): "off" (default), "report" or "soft" (detect; write the sidecar .kicad_dru next
+  // to the output), "on" (also route with the generated keep-outs as in-memory rule areas; never written into the
+  // output board).
+  std::string component_rules = "off";
   // Progress lines (the CLI's stdout text, one line per call, no trailing newline). Empty = silent.
   std::function<void(const std::string&)> log;
 };

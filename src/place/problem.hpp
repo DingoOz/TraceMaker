@@ -101,11 +101,23 @@ struct Problem {
   int movable_count() const;
 };
 
+// A design-intent pseudo-net between two board pads (doc 15 P1): `pad_a` belongs to the part that should sit
+// near `pad_b` (an ESD part near its connector, a crystal near its IC's oscillator pins, ...).
+struct PadAffinity {
+  int pad_a = -1, pad_b = -1;       // board pad indices
+  int weight = kSignalWeight;
+  std::string name;                 // "~XTAL-01 Y1-U1"
+};
+
 struct ExtractOptions {
   bool fix_edge_connectors = true;  // connectors (J*, P*, CN*, USB*) touching the outline stay put
   Coord courtyard_clearance = -1;   // override (-1: from the rules, else default_clearance)
   Coord default_clearance = 250'000;  // used when the board has no courtyard rule (KiCad's own default is 0)
   bool decap_affinity = true;       // tie each decoupling capacitor to the nearest supply pin of its IC
+  int decap_weight = kSignalWeight; // weight of those ties (D25: signal weight)
+  // Extra objective-only pseudo-nets from component rules (crules::placement_affinities). Parts already tied by
+  // decap_affinity are skipped.
+  std::vector<PadAffinity> affinities;
 };
 
 // Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).
