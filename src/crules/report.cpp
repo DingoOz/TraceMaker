@@ -149,7 +149,9 @@ std::string report_text(const model::Board& b, const Catalogue& cat, const Detec
       }
       char line[128];
       std::snprintf(line, sizeof line, "     %-9s %-15s %-9s ", e->spec->id.c_str(), e->spec->kind.c_str(), severity_name(e->severity));
-      s << line << status_name(e->status) << ": " << e->detail;
+      // A detail that already says "not applied" (kept verbatim for doc 15 §3.6) is not prefixed again.
+      if (e->status == Status::NotApplied && e->detail.starts_with("not applied")) s << line << e->detail;
+      else s << line << status_name(e->status) << ": " << e->detail;
       if (e->measure) s << "  " << measure_text(*e->measure);
       s << "\n";
     }
