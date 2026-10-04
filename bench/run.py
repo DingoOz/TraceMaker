@@ -137,12 +137,23 @@ def place_added(human: dict, moved: dict) -> dict:
     return {t: n - hc.get(t, 0) for t, n in mc.items() if t in PLACEMENT_ERRORS and n - hc.get(t, 0) > 0}
 
 
+def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
+    """Pins of dense packages that cannot escape under the board's own rules (`tracemaker escape`, doc 05 §12):
+    a board with any is not routable clean by any router."""
+    try:
+        subprocess.run([str(TM), "escape", str(board), "--json", str(out_json)], capture_output=True, timeout=300)
+        return int(json.loads(out_json.read_text())["dead"])
+    except (subprocess.TimeoutExpired, OSError, ValueError, KeyError):
+        return None
+
+
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     src0 = FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
     out.parent.mkdir(parents=True, exist_ok=True)
     res = {"board": name}
     src = place_board(name, src0, outdir, res) if PLACE_MODE else src0
+    res["dead_pins"] = dead_pins(src, outdir / "boards" / f"{name}.escape.json")
     t0 = time.time()
     try:
         p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--kb", str(outdir / "kb.sqlite"), "--json", str(out) + ".route.json"] + EXTRA,
@@ -254,6 +265,9 @@ def main() -> int:
         "added_error_types": dict(added_types),
         "judge_failures": len(rows) - n,
     }
+    feasible = [r for r in judged if r.get("dead_pins") == 0]
+    summary["feasible_boards"] = len(feasible)
+    summary["clean_pass_feasible"] = round(sum(r["clean"] for r in feasible) / len(feasible), 4) if feasible else None
     (outdir / "summary.json").write_text(json.dumps(summary, indent=1))
     lines = [f"# Benchmark {run_id}", "", f"PCBench tier {a.tier}, {n} boards, {a.time:.0f} s limit per board.", "",
              "| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |", "|---|--:|--:|--:|",
