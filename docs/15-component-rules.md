@@ -1339,7 +1339,11 @@ of a millimetre of decap distance. `off` reproduces the previous placer output b
 soft at 50 % / 75 % / 100 %: decaps 3.66 → 3.33 / 3.30 / 3.92 mm; crystal to IC 5.11 → 5.35 / 4.53 / 3.98 mm;
 regulator caps 4.25 → 3.79 / 2.45 / 4.31 mm; HPWL equal. At 75 % every median improves on off, but per board the
 decaps still get worse on RX5808 (3.7 → 5.8 mm) and PocketBone (4.3 → 8.5 mm) and better on bullion (4.0 → 2.4 mm);
-only 5 of 23 boards change at all. Too few to set a default from: the feature stays off and the scale at 100 %.
+only 5 of 23 boards change at all. Seeds 2–4 overturn the seed-1 picture: at 75 % decap medians are worse than off
+on every seed (3.74 / 3.92 / 3.85 vs 3.26 / 3.74 / 3.39 mm), as at 100 %, and regulator caps too; only the crystal
+gain holds on all seeds (e.g. 5.07 → 2.83–3.59 mm on seed 3). A weight scale does not fix the decap conflict; the
+feature stays off and the scale at 100 %. Next idea: let the decap ties and the new pulls compete for space
+explicitly (e.g. reserve a ring around IC supply pins), not by weights.
 
 ### 14.4 Routing (P2/P3)
 
