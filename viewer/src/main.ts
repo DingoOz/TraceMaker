@@ -31,7 +31,7 @@ canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
 canvas.addEventListener('webglcontextrestored', () => location.reload());
 
 const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false };
-const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, hoverNet: 0 };
+const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, hoverNet: 0, heatmap: '' };
 
 const conn = new Connection(Connection.defaultUrl());
 conn.onState = (s) => {
@@ -68,6 +68,21 @@ hud.onActiveLayer = (l) => {
   dirty = true;
 };
 hud.onFit = () => { cam.fit(scene.bbox, 0.06, PANEL_PX); dirty = labelsDirty = true; };
+
+// Heatmap overlays (doc 09 §3): the router sends "expansions" (search effort) and "history" (PathFinder cost);
+// any other name the engine sends is listed too. The choice survives a reconnect (kept by name).
+let heatNames = '';
+function updateHeatHud() {
+  const names = [...scene.heatmaps.keys()].sort();
+  heatNames = names.join('\n');
+  const hm = scene.heatmaps.get(view.heatmap);
+  hud.setHeatmap(view.heatmap, names, hm?.max ?? 0, hm?.scale ?? '');
+}
+hud.onHeatmap = (name) => { view.heatmap = name; updateHeatHud(); dirty = true; };
+function cycleHeatmap() {
+  const names = ['', ...[...scene.heatmaps.keys()].sort()];
+  hud.onHeatmap(names[(names.indexOf(view.heatmap) + 1) % names.length]);
+}
 
 // ------------------------------------------------------------------------------------------------ input
 let drag: { x: number; y: number; id: number } | null = null;
@@ -110,6 +125,7 @@ window.addEventListener('keydown', (e) => {
   else if (k === 'x') hud.onToggle('escape', !toggles.escape);
   else if (k === 'e') hud.onToggle('effects', !toggles.effects);
   else if (k === 'l') hud.onToggle('follow', !toggles.follow);
+  else if (k === 'm') cycleHeatmap();
   else if (/^[1-9]$/.test(k) && Number(k) <= scene.layerNames.length) hud.onActiveLayer(Number(k) - 1);
 });
 const resize = () => {
@@ -124,7 +140,7 @@ window.addEventListener('resize', resize);
 resize();
 
 // A view can be bookmarked or shared as #view=<x mm>,<y mm>,<px per mm> (KiCad board coordinates);
-// #layer=<n> selects the active layer, #hc=0 turns "active on top" off.
+// #layer=<n> selects the active layer, #hc=0 turns "active on top" off, #heat=<name> shows a heatmap overlay.
 function applyHashView() {
   const p = new URLSearchParams(location.hash.slice(1));
   const v = p.get('view')?.split(',').map(Number);
@@ -138,6 +154,7 @@ function applyHashView() {
   if (p.has('layer') && l >= 0 && l < scene.layerNames.length) hud.onActiveLayer(l);
   if (p.get('hc') === '0') hud.onToggle('activeOnTop', false);
   if (p.get('follow') === '1') hud.onToggle('follow', true);
+  if (p.get('heat')) hud.onHeatmap(p.get('heat')!); // shown once the engine sends that overlay
 }
 
 // ----------------------------------------------------------------------------------------------- messages
@@ -168,6 +185,7 @@ function processMessages(now: number) {
         view.visible = scene.layerNames.map(() => true);
         view.active = 0;
         hud.setBoard(scene.name, scene.layerNames, view.visible, view.active);
+        updateHeatHud(); // overlays were cleared with the snapshot; the server resends them
         const key = `${scene.name}:${scene.bbox.join(',')}`;
         if (fitted !== key) {
           cam.fit(scene.bbox, 0.06, PANEL_PX);
@@ -185,6 +203,10 @@ function processMessages(now: number) {
       case 'log': hud.addLog(m.level, m.text); break;
       case 'failure':
         hud.addLog('error', `${scene.netName(m.net)}: ${m.cause}${m.rung ? ` (rung ${m.rung})` : ''}`, 'failure');
+        break;
+      case 'heatmap':
+        // The legend changes only when the list of overlays or the shown one's maximum does.
+        if (m.name === view.heatmap || [...scene.heatmaps.keys()].sort().join('\n') !== heatNames) updateHeatHud();
         break;
       case 'escape_plan':
         hud.addLog('info', `escape plan: ${m.corridors.length} pin corridors reserved`, 'stage');

@@ -29,6 +29,21 @@ export interface Fx {
 
 export interface Activity { x: number; y: number; t: number }
 
+/** Latest overlay grid per name (doc 13 `heatmap`), in world millimetres. `version` bumps on every update. */
+export interface Heatmap {
+  name: string;
+  layer: number;
+  x0: number;
+  y0: number;
+  cell: number;
+  w: number;
+  h: number;
+  max: number;
+  scale: string;
+  data: Uint8Array;
+  version: number;
+}
+
 const MM = 1e-6;
 
 export class Scene {
@@ -59,6 +74,8 @@ export class Scene {
   deadPins: { x: number; y: number; net: number }[] = [];
   escDirty = true;
   footprintsDirty = true;
+  heatmaps = new Map<string, Heatmap>();  // by name; layer -1 (all layers) is what the router sends
+  private heatVersion = 0;
 
   fx: Fx = { newTracks: [], frontier: [], paths: [], failures: [] };
   activity: Activity | null = null;
@@ -154,6 +171,14 @@ export class Scene {
         this.escDirty = true;
         break;
       }
+      case 'heatmap': {
+        if (!this.loaded || m.w <= 0 || m.h <= 0 || m.data.length !== m.w * m.h) return;
+        this.heatmaps.set(m.name, {
+          name: m.name, layer: m.layer, x0: this.wx(m.x0), y0: this.wy(m.y0), cell: m.cell * MM, w: m.w, h: m.h,
+          max: m.max, scale: m.scale ?? 'linear', data: Uint8Array.from(m.data), version: ++this.heatVersion,
+        });
+        break;
+      }
       case 'failure': {
         if (!this.loaded) return;
         const [ax, ay] = this.pt(m.a), [bx, by] = this.pt(m.b);
@@ -219,6 +244,7 @@ export class Scene {
     this.escapes.clear();
     this.deadPins = [];
     this.escDirty = true;
+    this.heatmaps.clear();  // the server resends the current overlays after a snapshot
     this.fx = { newTracks: [], frontier: [], paths: [], failures: [] };
     this.activity = null;
     for (let i = 0; i < this.layerNames.length; i++) this.dirtyTrackLayers.add(i);

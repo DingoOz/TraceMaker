@@ -1,5 +1,5 @@
 // HTML overlay: brand bar, progress, layer controls, log, status bar and hover tooltip.
-import { css, layerColor } from './colors';
+import { css, infernoGradient, layerColor } from './colors';
 import type { ConnState } from './connection';
 import type { StatsMsg } from './protocol';
 
@@ -49,6 +49,7 @@ export class Hud {
   private extra = h('div', 'extra');
   private layerList = h('div', 'layer-list');
   private chips = h('div', 'chips');
+  private heat = h('div', 'heat');
   private log = h('div', 'log-list');
   private logCount = 0;
   private coords = h('span', 'mono', '');
@@ -60,6 +61,7 @@ export class Hud {
   onActiveLayer: (layer: number) => void = () => {};
   onToggle: (key: keyof Toggles, value: boolean) => void = () => {};
   onFit: () => void = () => {};
+  onHeatmap: (name: string) => void = () => {};
 
   constructor(parent: HTMLElement) {
     this.root = h('div', 'hud');
@@ -103,7 +105,8 @@ export class Hud {
     const layers = h('section', 'section');
     const lh = h('div', 'section-head');
     lh.append(h('div', 'label', 'Layers'), h('div', 'hint', 'click = active · 1–9'));
-    layers.append(lh, this.layerList, this.chips);
+    layers.append(lh, this.layerList, this.chips, this.heat);
+    this.setHeatmap('', [], 0, '');
 
     const logSec = h('section', 'section grow');
     const logHead = h('div', 'section-head');
@@ -120,7 +123,7 @@ export class Hud {
     const fit = h('button', 'btn', 'Fit');
     fit.title = 'Fit board (F)';
     fit.onclick = () => this.onFit();
-    sb.append(fit, this.coords, this.zoom, h('span', 'hint', 'drag to pan · wheel to zoom · F fit · H high contrast'));
+    sb.append(fit, this.coords, this.zoom, h('span', 'hint', 'drag to pan · wheel to zoom · F fit · H high contrast · M heatmap'));
     this.root.appendChild(sb);
     this.root.appendChild(this.tooltip);
   }
@@ -181,6 +184,30 @@ export class Hud {
       b.onclick = () => this.onToggle(key, !t[key]);
       this.chips.appendChild(b);
     }
+  }
+
+  /** Overlay selector and legend: one chip per available heatmap (M cycles), a colour bar with the raw maximum. */
+  setHeatmap(active: string, names: string[], max: number, scale: string) {
+    this.heat.textContent = '';
+    const row = h('div', 'heat-row');
+    row.appendChild(h('span', 'label', 'Overlay'));
+    for (const n of ['', ...names]) {
+      const b = h('button', `chip${n === active ? ' on' : ''}`, n || 'Off');
+      b.title = 'Heatmap overlay (M cycles)';
+      b.onclick = () => this.onHeatmap(n);
+      row.appendChild(b);
+    }
+    this.heat.appendChild(row);
+    if (!names.length) {
+      this.heat.appendChild(h('div', 'hint', 'no heatmaps yet (the router sends expansions and history)'));
+      return;
+    }
+    if (!active) return;
+    const bar = h('div', 'heat-bar');
+    bar.style.background = infernoGradient();
+    const ends = h('div', 'heat-ends');
+    ends.append(h('span', 'mono', '0'), h('span', 'muted', scale === 'sqrt' ? 'square-root scale' : 'linear'), h('span', 'mono', num(max)));
+    this.heat.append(bar, ends);
   }
 
   setStats(s: StatsMsg) {

@@ -99,6 +99,7 @@ export interface ViewOptions {
   footprints: boolean;
   effects: boolean;
   hoverNet: number;
+  heatmap: string; // overlay name ('' = none)
 }
 
 export class Renderer {
@@ -108,6 +109,9 @@ export class Renderer {
   private tri: Program;
   private comp: Program;
   private fx: Program;
+  private heat: Program;
+  private heatTex: WebGLTexture | null = null;
+  private heatShown = ''; // name@version of the grid in heatTex
   private quad: WebGLBuffer;
   private layers: LayerBuffers[] = [];
   private thCaps: Batch;
@@ -143,6 +147,7 @@ export class Renderer {
     this.tri = new Program(gl, S.triVS, S.triFS);
     this.comp = new Program(gl, S.compositeVS, S.compositeFS);
     this.fx = new Program(gl, S.fxVS, S.fxFS);
+    this.heat = new Program(gl, S.heatVS, S.heatFS);
     this.quad = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -413,6 +418,36 @@ export class Renderer {
     b.draw();
   }
 
+  /** Heatmap overlay over the copper: the grid is uploaded as an R8 texture only when a new one arrives. */
+  private drawHeatmap(scene: Scene, name: string, cam: Camera, dpr: number) {
+    const hm = scene.heatmaps.get(name);
+    if (!hm) return;
+    const gl = this.gl;
+    if (!this.heatTex) {
+      this.heatTex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, this.heatTex);
+      // Linear filtering blends neighbouring cells: a coarse grid reads as a smooth field, not as blocks.
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    }
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.heatTex);
+    const key = `${hm.name}@${hm.version}`;
+    if (key !== this.heatShown) {
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, hm.w, hm.h, 0, gl.RED, gl.UNSIGNED_BYTE, hm.data);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+      this.heatShown = key;
+    }
+    this.setView(this.heat, cam, dpr);
+    gl.uniform4f(this.heat.u('u_rect'), hm.x0, hm.y0, hm.w * hm.cell, hm.h * hm.cell);
+    gl.uniform1i(this.heat.u('u_tex'), 0);
+    gl.uniform1f(this.heat.u('u_opacity'), 0.72);
+    this.fullscreen.draw(gl.TRIANGLE_STRIP);
+  }
+
   /** Renders one frame. Returns true while animations are running (effects). */
   render(scene: Scene, cam: Camera, opt: ViewOptions, now: number): boolean {
     const gl = this.gl;
@@ -483,6 +518,7 @@ export class Renderer {
       gl.uniform4fv(this.ring.u('u_holeColor'), theme.hole);
       this.vias.draw();
     }
+    if (opt.heatmap) this.drawHeatmap(scene, opt.heatmap, cam, dpr);
     if (opt.footprints) this.drawCaps(this.fpLines, cam, dpr, theme.footprint, 0, 0.5);
     this.drawCaps(this.outlineLines, cam, dpr, theme.outline, 0, 0.7);
     if (opt.ratsnest) this.drawCaps(this.rats, cam, dpr, theme.ratsnest, opt.hoverNet, 0.5, [1, 1, 1, 0.95]);

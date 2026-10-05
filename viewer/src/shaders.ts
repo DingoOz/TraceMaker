@@ -1,5 +1,6 @@
 // GLSL ES 3.0 shaders. World units are millimetres; u_view = (centre x, centre y, clip-per-mm x, clip-per-mm y),
 // u_px = millimetres per device pixel (for signed-distance anti-aliasing).
+import { INFERNO_COEFFS } from './colors';
 
 const VIEW = /* glsl */ `
 uniform vec4 u_view;
@@ -208,4 +209,39 @@ void main() {
   vec3 rgb = v_c.rgb * I * v_c.a * f;
   if (max(rgb.r, max(rgb.g, rgb.b)) < 0.002) discard;
   o = vec4(rgb, 0.0);
+}`;
+
+// Inferno polynomial (Horner form) generated from the table in colors.ts, so legend and overlay agree.
+const vec3 = (c: [number, number, number]) => `vec3(${c.map((v) => v.toFixed(12)).join(', ')})`;
+const INFERNO = /* glsl */ `
+vec3 inferno(float t) {
+  ${INFERNO_COEFFS.map((c, i) => `const vec3 c${i} = ${vec3(c)};`).join('\n  ')}
+  return clamp(c0 + t * (c1 + t * (c2 + t * (c3 + t * (c4 + t * (c5 + t * c6))))), 0.0, 1.0);
+}
+`;
+
+/** Heatmap overlay: one quad over the grid's rectangle (u_rect = x0, y0, width, height in mm) sampling an R8
+ *  texture of the cell bytes, coloured with inferno; zero cells are transparent and faint ones fade in. */
+export const heatVS = /* glsl */ `#version 300 es
+layout(location = 0) in vec2 a_corner;
+${VIEW}
+uniform vec4 u_rect;
+out vec2 v_uv;
+void main() {
+  v_uv = (a_corner + 1.0) * 0.5;
+  gl_Position = toClip(u_rect.xy + v_uv * u_rect.zw);
+}`;
+
+export const heatFS = /* glsl */ `#version 300 es
+precision highp float;
+in vec2 v_uv;
+uniform sampler2D u_tex;
+uniform float u_opacity;
+${INFERNO}
+out vec4 o;
+void main() {
+  float v = texture(u_tex, v_uv).r;
+  if (v < 0.5 / 255.0) discard;
+  float a = u_opacity * (0.25 + 0.75 * smoothstep(0.0, 0.35, v));
+  o = vec4(inferno(0.12 + 0.88 * v) * a, a);
 }`;
