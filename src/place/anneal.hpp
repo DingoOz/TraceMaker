@@ -19,6 +19,10 @@
 //   routing problems", CP 1998): rip up a window of nearby parts and re-place them, exactly (branch and bound
 //   over candidate slots and rotations) for small windows, greedily otherwise; kept only if the cost falls.
 // - A routability term β · RUDY overflow (place/congestion.hpp).
+//
+// Side assignment (doc 04 §3 C/E, D48; opt-in): a flip move puts a part on the other side (KiCad's mirrored
+// footprint, problem.hpp kStates) at its body centre or at the weighted median of its nets, and the cost gains
+// a via estimate for nets with surface-mount pins on both sides.
 #include <chrono>
 #include <cstdint>
 #include <vector>
@@ -50,6 +54,11 @@ struct AnnealOptions {
   int exact_window = 4;         // windows up to this size are repaired exactly (branch and bound)
   std::vector<int> focus;       // parts LNS windows are centred on (empty: any movable part)
   std::uint64_t trace_every = 0;  // record the live state every this many steps (0 = off; video recording)
+  // Side assignment (doc 04 §3 C/E, D48): flip moves for parts with Part::may_flip(), and the via estimate
+  // via_mm · Σ w · min(front, back surface-mount pins) per net in the cost (wirelength.hpp side_vias).
+  bool flip = false;
+  double via_mm = 2.0;          // one estimated via costs as much as this much signal HPWL
+  double flip_rate = 0.1;       // share of ordinary moves that are flips (only drawn when flipping is on)
 };
 
 struct AnnealResult {
@@ -73,7 +82,7 @@ AnnealResult anneal(const Problem& p, const Placement& start, const AnnealOption
 // Cost used by the annealer, from scratch (reference path): weighted HPWL + α·crossings + β·RUDY overflow,
 // all in the annealer's integer units.
 std::int64_t anneal_cost(const Problem& p, const Placement& pl, double alpha_cross_mm, double beta = 0,
-                         const CongestionMap* m = nullptr);
+                         const CongestionMap* m = nullptr, double via_mm = 0);
 
 // Large-neighbourhood search from `start` (legal): `windows` LNS windows (sizes and seeds from `o`; the
 // stream is o.seed). Never returns a placement with a higher cost than `start`.

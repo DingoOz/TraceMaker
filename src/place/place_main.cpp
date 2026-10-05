@@ -176,10 +176,29 @@ int apply(io::LoadedBoard& lb, const place::Problem& p, const place::Placement& 
   for (std::size_t i = 0; i < p.parts.size(); ++i) {
     const auto& pt = p.parts[i];
     if (pl.pos[i] == pt.pos0 && pl.rot[i] == 0) continue;
-    ed.move_footprint(static_cast<std::size_t>(pt.fp), pl.pos[i], pt.angle0 + 90.0 * pl.rot[i]);
+    if (place::flipped(pl.rot[i])) ed.flip_footprint(static_cast<std::size_t>(pt.fp), pl.pos[i], pt.angle_of(pl.rot[i]));
+    else ed.move_footprint(static_cast<std::size_t>(pt.fp), pl.pos[i], pt.angle_of(pl.rot[i]));
     ++moved;
   }
   return moved;
+}
+
+// Side assignment (D48): which footprints the writer can mirror, and the user's side pins.
+void setup_flip(const io::LoadedBoard& lb, bool flip, const std::string& keep_side, place::ExtractOptions& eo) {
+  eo.flip = flip;
+  if (!flip) return;
+  eo.flip_ok.assign(lb.board.footprints.size(), 0);
+  eo.flip_why.assign(lb.board.footprints.size(), {});
+  for (std::size_t i = 0; i < lb.board.footprints.size(); ++i) eo.flip_ok[i] = io::flip_supported(lb, i, &eo.flip_why[i]) ? 1 : 0;
+  std::string cur;
+  for (char ch : keep_side + ",") {
+    if (ch == ',' || ch == ' ') {
+      if (!cur.empty()) eo.keep_side.push_back(cur);
+      cur.clear();
+    } else {
+      cur += ch;
+    }
+  }
 }
 
 // The router as a placement evaluator: the input document with the placement applied, routed in memory with a
@@ -250,6 +269,7 @@ struct LoopCli {
   double loop_time_s = 0;  // job wall-time stop for routable/eco (0 = none)
   long final_work = -1;    // routable/eco: verification budget for the winner vs the input (-1: 4 x work, 0: off)
   std::string record;      // routable: write the placement timelapse (JSONL) here
+  std::string keep_side;   // --keep-side (D48)
 };
 
 // --component-rules (doc 15 §3.5, P1): detect component categories and add their proximity rules as objective-only
@@ -300,6 +320,7 @@ int run_loop_mode(const LoopCli& c) {
   eo.crules_weight_pct = c.crules_weight_pct;
   eo.crules_two_stage = c.crules_two_stage;
   apply_component_rules(lb.board, c.component_rules, c.rules_override, c.edge_attraction, eo);
+  setup_flip(lb, c.o.flip, c.keep_side, eo);
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
   // placed with 0.25 mm or 0, is legal in it.
@@ -335,6 +356,7 @@ int run_loop_mode(const LoopCli& c) {
     e.candidates = c.eco_candidates;
     e.beta = c.beta;
     e.alpha_cross_mm = c.o.alpha_cross_mm;
+    e.via_mm = c.o.flip ? c.o.via_mm : 0;
     e.log = log;
     const place::EcoResult er = place::eco_place(P, input, input_eval, e, route);
     routes += er.routes;
@@ -532,6 +554,15 @@ int main(int argc, char** argv) {
   app.add_option("--lns-window", o.lns_window, "Parts per LNS window (2..12)");
   app.add_option("--lns-polish", o.lns_polish, "LNS windows run on the annealing result");
   app.add_option("--beta", o.beta_congestion, "Routability weight: mm of signal HPWL per mm of RUDY overflow (0 = off)");
+  std::string keep_side, debug_flip;
+  app.add_flag("--flip", o.flip,
+               "Side assignment (D48): movable surface-mount parts may move to the other side (KiCad-mirrored footprints); "
+               "through-hole, locked and fixed parts never do");
+  app.add_option("--flip-via-mm", o.via_mm, "With --flip: cost of one estimated via (a net's surface-mount pin on its minority side) in mm of signal HPWL");
+  app.add_option("--flip-rate", o.flip_rate, "With --flip: share of annealing moves that are flips");
+  app.add_option("--keep-side", keep_side, "With --flip: references that must stay on their side (comma separated)");
+  app.add_option("--debug-flip", debug_flip,
+                 "Write the input with these footprints (comma separated references, or 'all') flipped in place, KiCad style, and exit");
   app.add_option("--rounds", lc.rounds, "routable: re-placement rounds after the seeds");
   app.add_option("--eco-rounds", lc.eco_rounds, "eco: commit rounds");
   app.add_option("--eco-candidates", lc.eco_candidates, "eco/routable: moves routed per round");
@@ -543,6 +574,30 @@ int main(int argc, char** argv) {
   app.add_option("--loop-time", lc.loop_time_s,
                  "routable: wall-time stop in seconds; checked between seeds and routes, keeps the best placement so far (0 = none)");
   CLI11_PARSE(app, argc, argv);
+  if (!debug_flip.empty()) {  // writer check: flip footprints in place (verified against pcbnew, scripts/flip_check.py)
+    try {
+      auto lb = io::read_board_file(in);
+      io::BoardEditor ed(lb, o.seed);
+      int n = 0;
+      for (std::size_t i = 0; i < lb.board.footprints.size(); ++i) {
+        const auto& fp = lb.board.footprints[i];
+        if (debug_flip != "all" && ("," + debug_flip + ",").find("," + fp.reference + ",") == std::string::npos) continue;
+        std::string why;
+        if (!io::flip_supported(lb, i, &why)) {
+          std::printf("  %s: not flipped (%s)\n", fp.reference.c_str(), why.c_str());
+          continue;
+        }
+        ed.flip_footprint(i, fp.pos, -fp.angle);
+        ++n;
+      }
+      ed.save(out);
+      std::printf("flipped %d footprint(s) -> %s\n", n, out.c_str());
+      return 0;
+    } catch (const std::exception& e) {
+      std::fprintf(stderr, "error: %s\n", e.what());
+      return 1;
+    }
+  }
   if (edge_attraction && component_rules != "soft" && component_rules != "on") {
     std::fprintf(stderr, "error: --edge-attraction needs --component-rules soft or on\n");
     return 1;
@@ -565,6 +620,7 @@ int main(int argc, char** argv) {
     lc.work = route_check > 0 ? route_check : 3'000'000;
     lc.route_threads = route_threads;
     lc.no_fallback = no_fallback;
+    lc.keep_side = keep_side;
     try {
       return run_loop_mode(lc);
     } catch (const std::exception& e) {
@@ -590,6 +646,7 @@ int main(int argc, char** argv) {
                         (move_connectors ? " --move-connectors" : "") +
                         (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
                         " --crules-weight " + std::to_string(crules_weight_pct) + (crules_two_stage ? "" : " --no-crules-two-stage") + (rules_override.empty() ? "" : " --rules-override '" + rules_override + "'") + (edge_attraction ? " --edge-attraction" : "") +
+                        (o.flip ? " --flip --flip-via-mm " + std::to_string(o.via_mm) + " --flip-rate " + std::to_string(o.flip_rate) + (keep_side.empty() ? "" : " --keep-side '" + keep_side + "'") : "") +
                         " > /dev/null 2>&1";
       const int rc = std::system(cmd.c_str());
       if (rc != 0 && rc != 2 * 256) continue;
@@ -636,6 +693,7 @@ int main(int argc, char** argv) {
     eo.crules_weight_pct = crules_weight_pct;
     eo.crules_two_stage = crules_two_stage;
     const int crules_ties = apply_component_rules(lb.board, component_rules, rules_override, edge_attraction, eo);
+    setup_flip(lb, o.flip, keep_side, eo);
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for
     // 0.25 mm and falls back to 0 when the board is too dense for it.
@@ -727,6 +785,9 @@ int main(int argc, char** argv) {
     std::printf("  conflicts       before %10d      after %10d   new %d (outside board: %d -> %d, new %d; fixed-only pairs %d)\n",
                 r.before.overlaps, r.after.overlaps, r.after.new_overlaps, r.before.outside, r.after.outside, r.after.new_outside,
                 r.after.fixed_overlaps);
+    if (o.flip)
+      std::printf("  side assignment: %d part(s) may flip, %d flipped; via estimate before %lld after %lld\n", p.flippable_count(), r.after.flipped,
+                  static_cast<long long>(r.before.side_vias), static_cast<long long>(r.after.side_vias));
     std::printf("  legalisation: %d placed, %d failed, mean displacement %.2f mm, max %.2f mm\n", r.legalise_placed, r.legalise_failed,
                 r.legalise_mean_disp_mm, r.legalise_max_disp_mm);
     std::printf("  annealing: best run %d, %llu moves, %llu accepted%s\n", r.anneal.best_run, static_cast<unsigned long long>(r.anneal.moves),
@@ -744,9 +805,9 @@ int main(int argc, char** argv) {
       for (std::size_t i = 0; i < p.parts.size(); ++i) {
         const auto& pt = p.parts[i];
         const auto& b = pt.geom[pl.rot[i]].body;
-        parts.push_back({{"ref", pt.ref}, {"movable", pt.movable}, {"side", pt.side},
+        parts.push_back({{"ref", pt.ref}, {"movable", pt.movable}, {"side", pt.side_in(pl.rot[i])}, {"flipped", place::flipped(pl.rot[i])},
                          {"x", nm_to_mm(pl.pos[i].x)}, {"y", nm_to_mm(pl.pos[i].y)}, {"x0", nm_to_mm(pt.pos0.x)}, {"y0", nm_to_mm(pt.pos0.y)},
-                         {"angle", pt.angle0 + 90.0 * pl.rot[i]},
+                         {"angle", pt.angle_of(pl.rot[i])},
                          {"box", {nm_to_mm(b.x0 + pl.pos[i].x), nm_to_mm(b.y0 + pl.pos[i].y), nm_to_mm(b.x1 + pl.pos[i].x), nm_to_mm(b.y1 + pl.pos[i].y)}}});
       }
       j["placement"] = parts;

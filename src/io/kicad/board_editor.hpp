@@ -4,6 +4,7 @@
 // byte for byte. Re-read the document after editing to get an updated board model.
 #include <cstdint>
 #include <string>
+#include <string_view>
 
 #include "io/kicad/board_reader.hpp"
 
@@ -21,6 +22,11 @@ class BoardEditor {
   // Moves footprint `index` to `pos` with orientation `angle` (degrees). Pad and text orientations, which
   // KiCad stores as absolute angles, are rotated by the same delta. Flipping sides is not supported here.
   void move_footprint(std::size_t index, model::Point pos, double angle);
+  // Moves footprint `index` to the other side of the board the way KiCad does (FOOTPRINT::Flip, top/bottom, about
+  // its own origin: local y and pad orientations negated, text angles 180° − a, F.* <-> B.* layers, texts
+  // mirrored), then puts it at `pos` with the final orientation `angle` in degrees (flipped orientation −angle0
+  // plus any rotation). Only for footprints where flip_supported() holds.
+  void flip_footprint(std::size_t index, model::Point pos, double angle);
 
   std::string write() const { return lb_.doc.write(); }
   void save(const std::string& path) const { lb_.doc.save(path); }
@@ -35,6 +41,14 @@ class BoardEditor {
   std::uint64_t seed_;
   std::uint64_t uuid_counter_ = 0;
 };
+
+// True if BoardEditor::flip_footprint mirrors every item of footprint `index` exactly: no copper on inner
+// layers, no padstacks, no text on copper, and nothing it does not know (zones, text boxes, dimensions, private
+// layers, ...). `why` receives the first reason it cannot.
+bool flip_supported(const LoadedBoard& board, std::size_t index, std::string* why = nullptr);
+// KiCad's FlipLayer for outer layers: the first and last copper layer of `board` (by their names in the file) and
+// F.X <-> B.X for the other side-specific layers; any other name unchanged.
+std::string flip_layer_name(const model::Board& board, std::string_view name);
 
 // Formats an angle the way KiCad writes it: shortest decimal, no trailing zeros ("90", "45.5").
 std::string format_angle(double deg);

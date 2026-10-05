@@ -117,7 +117,8 @@ std::int64_t axis_bound(const Problem& p, const Placement& pl, RotationModel mod
     for (int part : parts) {
       // For rotation r: U − X ≥ max_k o_k(r) and X − L ≥ −min_k o_k(r).
       Coord up = LLONG_MAX, lo = LLONG_MIN;
-      for (int r = 0; r < 4; ++r) {
+      const int states = p.parts[z(part)].may_flip() ? kStates : 4;  // either side when the part may flip
+      for (int r = 0; r < states; ++r) {
         if (model == RotationModel::Fixed && r != pl.rot[z(part)]) continue;
         Coord mx = LLONG_MIN, mn = LLONG_MAX;
         for (int pi : net.pins) {

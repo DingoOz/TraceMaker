@@ -25,6 +25,9 @@ inline Coord snap(Coord v) { return (v >= 0 ? (v + kLattice / 2) : (v - kLattice
 inline Point snap(Point q) { return Point{snap(q.x), snap(q.y)}; }
 inline std::int64_t alpha_units(double alpha_mm) { return static_cast<std::int64_t>(std::llround(alpha_mm * 1e6)) * kSignalWeight; }
 // Cost of one nm of RUDY overflow: β (mm of signal HPWL per mm of overflow) × signal weight; resolution 0.1.
+// Cost of one estimated via per unit of net weight: a via on a signal net (weight kSignalWeight) costs via_mm of
+// signal HPWL.
+inline std::int64_t via_units(double via_mm) { return static_cast<std::int64_t>(std::llround(via_mm * 1e6)); }
 inline std::int64_t beta_units(double beta) { return static_cast<std::int64_t>(std::llround(beta * kSignalWeight)); }
 
 inline Point body_centre(const Part& pt, int rot) {
@@ -57,7 +60,7 @@ class Annealer {
  public:
   Annealer(const Problem& p, const std::vector<std::vector<int>>& pn, const Placement& start, const AnnealOptions& o, int stream);
 
-  std::int64_t cost() const { return whp_ + alpha_ * cross_ + beta_ * ovf_; }
+  std::int64_t cost() const { return whp_ + alpha_ * cross_ + beta_ * ovf_ + via_ * vias_; }
   std::int64_t crossings() const { return cross_; }
   std::int64_t overflow() const { return ovf_; }
   const Placement& current() const { return pl_; }
@@ -115,6 +118,7 @@ class Annealer {
   bool propose_rotate(Move& m);
   bool propose_swap(Move& m);
   bool propose_swap_near(Move& m, Coord radius);
+  bool propose_flip(Move& m, Coord radius);
   bool single(Move& m, int a, Point q, std::uint8_t r);
   // Weighted median of the other pins of a's nets for rotation r (origin placed so the pin centroid sits there).
   bool median_target(int a, int r, Point& out) const;
@@ -165,6 +169,12 @@ class Annealer {
   std::uint32_t bepoch_ = 0;
   std::vector<std::size_t> touched_;
   std::int64_t dovf_ = 0;
+  // Side assignment: front/back surface-mount pin counts per net, Σ w·min(front, back), and the move's changes.
+  bool sides_ = false;
+  std::vector<int> flippable_;
+  std::int64_t via_ = 0, vias_ = 0, dvia_ = 0;
+  std::vector<std::array<int, 2>> side_cnt_;
+  std::vector<std::pair<int, std::array<int, 2>>> side_saved_;
   // Scratch.
   std::vector<int> nets_, cnets_, near_;
   std::vector<Coord> new_hp_;

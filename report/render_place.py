@@ -44,7 +44,10 @@ STAGE_NAMES = {
 
 
 def rot90(x, y, r):
-    """KiCad rotation by r * 90 degrees (y down), as place::rot90."""
+    """KiCad rotation by r * 90 degrees (y down), as place::rot90; bit 4 of r (a part flipped to the other side, D48)
+    mirrors y first."""
+    if r & 4:
+        y = -y
     return [(x, y), (y, -x), (-x, -y), (-y, x)][r & 3]
 
 
@@ -109,7 +112,8 @@ def main():
             ox, oy = p["x"] - pt["x0"], p["y"] - pt["y0"]
             dx, dy = rot90(ox, oy, int(r))
             cx, cy = (x + dx) / 1e6, (y + dy) / 1e6
-            q = dict(p, x=x + dx, y=y + dy, angle=p.get("angle", 0.0) + 90.0 * int(r))
+            a0 = p.get("angle", 0.0)
+            q = dict(p, x=x + dx, y=y + dy, angle=(-a0 if int(r) & 4 else a0) + 90.0 * (int(r) & 3))
             polys.append((i, mf.pad_poly(q)))
             centres.append((i, p.get("net"), (cx, cy)))
         return polys, centres

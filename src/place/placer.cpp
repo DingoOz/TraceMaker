@@ -24,6 +24,8 @@ Metrics measure(const Problem& p, const Placement& pl, const Placement* referenc
   m.whpwl = weighted_hpwl(p, pl);
   m.hpwl = total_hpwl(p, pl);
   m.crossings = count_crossings(p, pl);
+  m.side_vias = side_vias(p, pl, false);
+  for (std::size_t i = 0; i < p.parts.size(); ++i) m.flipped += flipped(pl.rot[i]) ? 1 : 0;
   const Violations v = check_all(p, pl);
   m.overlaps = v.overlaps;
   m.outside = v.outside;
@@ -144,6 +146,9 @@ PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   ao.beta_congestion = o.beta_congestion;
   ao.congestion = o.congestion;
   ao.focus = o.focus;
+  ao.flip = o.flip;
+  ao.via_mm = o.via_mm;
+  ao.flip_rate = o.flip_rate;
   if (o.trace) {  // about 120 frames of the winning run
     const std::uint64_t moves = std::max<std::uint64_t>(20'000, static_cast<std::uint64_t>(o.effort * 4000.0 * r.movable));
     ao.trace_every = std::max<std::uint64_t>(1, moves / 120);
@@ -181,7 +186,7 @@ nlohmann::json report_json(const Problem& p, const PlaceReport& r) {
     return json{{"weighted_hpwl_mm", mm(m.whpwl) / kSignalWeight}, {"hpwl_mm", mm(m.hpwl)},     {"crossings", m.crossings},
                 {"overlaps", m.overlaps},                          {"outside", m.outside},      {"fixed_overlaps", m.fixed_overlaps},
                 {"fixed_outside", m.fixed_outside}, {"new_overlaps", m.new_overlaps}, {"new_outside", m.new_outside},
-                {"conflicts", m.conflicts}};
+                {"flipped", m.flipped}, {"side_vias", m.side_vias}, {"conflicts", m.conflicts}};
   };
   json j;
   j["mode"] = r.mode;
@@ -224,7 +229,7 @@ nlohmann::json report_json(const Problem& p, const PlaceReport& r) {
       {"L3", "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window "
              "CP-SAT and Hungarian slot assignment are not implemented"},
       {"L4", "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline "
-             "constraints, valid for every rotation of the movable parts; every legal placement has weighted HPWL >= it"}};
+             "constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"}};
   return j;
 }
 

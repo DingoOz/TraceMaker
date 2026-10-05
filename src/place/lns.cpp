@@ -51,7 +51,8 @@ void Annealer::candidates(int a, const std::vector<int>& window, const std::vect
   std::size_t self = 0;
   while (window[self] != a) ++self;
   out.emplace_back(old_pos[self], old_rot[self]);
-  for (int r = 0; r < 4; ++r) {
+  for (int turn = 0; turn < 4; ++turn) {
+    const int r = with_turn(old_rot[self], turn);  // windows never change sides
     // Every window part's spot (body centres), including its own spot at the other rotations.
     for (std::size_t j = 0; j < window.size(); ++j) {
       const Point c = old_pos[j] + body_centre(p_.parts[z(window[j])], old_rot[j]);

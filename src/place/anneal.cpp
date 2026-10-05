@@ -74,6 +74,17 @@ Annealer::Annealer(const Problem& p, const std::vector<std::vector<int>>& pn, co
     bstamp_.assign(cmap_.size(), 0);
     saved_.assign(cmap_.size(), 0);
   }
+  if (o.flip) {
+    sides_ = true;
+    via_ = via_units(o.via_mm);
+    for (int i : movable_)
+      if (p.parts[z(i)].may_flip()) flippable_.push_back(i);
+    side_cnt_.resize(p.nets.size());
+    for (std::size_t n = 0; n < p.nets.size(); ++n) {
+      side_cnt_[n] = side_counts(p, pl_, static_cast<int>(n));
+      vias_ += p.nets[n].weight * std::min(side_cnt_[n][0], side_cnt_[n][1]);
+    }
+  }
   const Coord w = p.region.x1 - p.region.x0, h = p.region.y1 - p.region.y0;
   r0_ = o.refine ? 5'000'000 : std::min<Coord>(std::max(w, h) / 4, 20'000'000);
   r0_ = std::max<Coord>(r0_, 500'000);
@@ -125,10 +136,13 @@ void Annealer::step(Slot& s) {
   }
   const Coord rad = static_cast<Coord>(s.radius);
   Move m;
-  const double u = next();
+  // The flip draw happens only when flips are possible, so runs without them use the same random stream as before.
+  const bool flip = !flippable_.empty() && next() < o_.flip_rate;
+  const double u = flip ? 1.0 : next();
   bool ok;
-  const bool shift = u < 0.45;
-  if (shift) ok = propose_shift(m, rad);
+  const bool shift = !flip && u < 0.45;
+  if (flip) ok = propose_flip(m, rad);
+  else if (shift) ok = propose_shift(m, rad);
   else if (u < 0.60) ok = propose_median(m, rad);
   else if (u < 0.72) ok = propose_rotate(m);
   else if (u < 0.84) ok = propose_swap(m);
@@ -250,10 +264,27 @@ bool Annealer::propose_median(Move& m, Coord radius) {
 bool Annealer::propose_rotate(Move& m) {
   const int a = pick_movable();
   const int r0 = pl_.rot[z(a)];
-  const int r = (r0 + 1 + static_cast<int>(next_u64() % 3)) & 3;
+  const int r = with_turn(r0, r0 + 1 + static_cast<int>(next_u64() % 3));
   const Point c = pl_.pos[z(a)] + body_centre(p_.parts[z(a)], r0);
   const Point q = c - body_centre(p_.parts[z(a)], r);
   return single(m, a, snap(q), static_cast<std::uint8_t>(r));
+}
+
+// Flip to the other side (any of the four turns there): about the body centre, or (half of the time) to the
+// weighted median of the part's nets with a small jitter, e.g. under the IC it connects to.
+bool Annealer::propose_flip(Move& m, Coord radius) {
+  const int a = flippable_[z(static_cast<int>(next_u64() % flippable_.size()))];
+  const int r0 = pl_.rot[z(a)];
+  const auto r = static_cast<std::uint8_t>(((r0 & kFlipBit) ^ kFlipBit) | static_cast<int>(next_u64() % 4));
+  Point q = pl_.pos[z(a)] + body_centre(p_.parts[z(a)], r0) - body_centre(p_.parts[z(a)], r);
+  if (next() < 0.5) {
+    Point t;
+    if (median_target(a, r, t)) {
+      const Coord j = std::max<Coord>(radius / 8, 20'000);
+      q = t + Point{static_cast<Coord>((next() * 2 - 1) * static_cast<double>(j)), static_cast<Coord>((next() * 2 - 1) * static_cast<double>(j))};
+    }
+  }
+  return single(m, a, snap(q), r);
 }
 
 bool Annealer::propose_swap(Move& m) {
@@ -275,8 +306,10 @@ bool Annealer::propose_swap(Move& m) {
   m.old_rot[1] = pl_.rot[z(b)];
   m.pos[0] = pl_.pos[z(b)];
   m.pos[1] = pl_.pos[z(a)];
-  m.rot[0] = static_cast<std::uint8_t>((pl_.rot[z(b)] + dk) & 3);
-  m.rot[1] = static_cast<std::uint8_t>((pl_.rot[z(a)] - dk + 4) & 3);
+  m.rot[0] = swap_state(pl_.rot[z(b)], dk);
+  m.rot[1] = swap_state(pl_.rot[z(a)], -dk);
+  // Parts on different sides exchange sides too: both must be allowed to flip.
+  if (flipped(m.rot[0]) != flipped(m.old_rot[0]) && !(pa.may_flip() && pb.may_flip())) return false;
   return true;
 }
 
@@ -397,7 +430,28 @@ std::int64_t Annealer::evaluate(const Move& m) {
     }
     for (std::size_t k : touched_) dovf_ += bin_overflow(demand_[k], cmap_.cap[k]) - bin_overflow(saved_[k], cmap_.cap[k]);
   }
-  return d + alpha_ * dcross_ + beta_ * dovf_;
+  dvia_ = 0;
+  side_saved_.clear();
+  if (sides_) {
+    for (int k = 0; k < m.n; ++k) {
+      if (flipped(m.rot[z(k)]) == flipped(m.old_rot[z(k)])) continue;
+      const Part& pt = p_.parts[z(m.part[z(k)])];
+      const int from = pt.side_in(m.old_rot[z(k)]), to = 1 - from;
+      for (int pi : pt.pins) {
+        const Pin& q = p_.pins[z(pi)];
+        if (!q.one_side || p_.nets[z(q.net)].affinity) continue;
+        auto& c = side_cnt_[z(q.net)];
+        if (std::none_of(side_saved_.begin(), side_saved_.end(), [&](const auto& e) { return e.first == q.net; })) side_saved_.emplace_back(q.net, c);
+        --c[z(from)];
+        ++c[z(to)];
+      }
+    }
+    for (const auto& [n, old] : side_saved_) {
+      const auto& c = side_cnt_[z(n)];
+      dvia_ += p_.nets[z(n)].weight * (std::min(c[0], c[1]) - std::min(old[0], old[1]));
+    }
+  }
+  return d + alpha_ * dcross_ + beta_ * dovf_ + via_ * dvia_;
 }
 
 bool Annealer::legal(const Move& m) const {
@@ -418,6 +472,8 @@ void Annealer::revert(const Move& m) {
   if (beta_ > 0)
     for (std::size_t k : touched_) demand_[k] = saved_[k];
   touched_.clear();
+  for (const auto& [n, old] : side_saved_) side_cnt_[z(n)] = old;
+  side_saved_.clear();
 }
 
 void Annealer::commit(const Move& m) {
@@ -440,6 +496,8 @@ void Annealer::commit(const Move& m) {
     ovf_ += dovf_;
   }
   touched_.clear();
+  vias_ += dvia_;
+  side_saved_.clear();
 }
 
 void Annealer::mst_of(int n, std::vector<Seg>& out) {
@@ -534,11 +592,12 @@ void finish_result(const Problem& p, const AnnealOptions& o, AnnealResult& res) 
 
 }  // namespace detail
 
-std::int64_t anneal_cost(const Problem& p, const Placement& pl, double alpha_cross_mm, double beta, const CongestionMap* m) {
+std::int64_t anneal_cost(const Problem& p, const Placement& pl, double alpha_cross_mm, double beta, const CongestionMap* m, double via_mm) {
   const std::int64_t a = detail::alpha_units(alpha_cross_mm);
   const std::int64_t b = detail::beta_units(beta);
   std::int64_t c = weighted_hpwl(p, pl) + (a > 0 ? a * count_crossings(p, pl) : 0);
   if (b > 0) c += b * rudy_overflow(p, pl, m ? *m : make_congestion_map(p));
+  if (via_mm > 0) c += detail::via_units(via_mm) * side_vias(p, pl, true);
   return c;
 }
 

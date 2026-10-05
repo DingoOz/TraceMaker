@@ -46,15 +46,36 @@ struct PartGeom {               // one rotation of a part, offsets from the foot
   Box edge_box;                 // bounding box of the inset courtyards and pads inflated by the edge clearance
 };
 
+// Orientation state of a part (Placement::rot): bits 0–1 = quarter turns r, bit 2 = flipped to the other side.
+// State r means angle0 + 90 r on the input side; state 4 + r means the KiCad flip (top/bottom about the origin:
+// offsets mirrored in y, orientation −angle0) followed by r quarter turns, i.e. −angle0 + 90 r on the other side.
+inline constexpr int kStates = 8;
+inline constexpr std::uint8_t kFlipBit = 4;
+inline bool flipped(int state) { return (state & kFlipBit) != 0; }
+// State with the same side as `state` and `r` quarter turns.
+inline std::uint8_t with_turn(int state, int r) { return static_cast<std::uint8_t>((state & kFlipBit) | (r & 3)); }
+inline Point mirror_y(Point p) { return Point{p.x, -p.y}; }
+// Exchanging two interchangeable parts a and b (same footprint and input side; angle0_b − angle0_a = 90° dk): the
+// state that gives a the absolute pose b has in `b_state`. Flipping negates angle0, so dk changes sign there.
+// (b takes a's pose with swap_state(a_state, −dk).)
+inline std::uint8_t swap_state(int b_state, int dk) { return with_turn(b_state, (b_state & 3) + (flipped(b_state) ? -dk : dk) + 4); }
+
 struct Part {
   int fp = -1;                  // footprint index in the board
   std::string ref, lib_id;
   bool movable = false;
   std::string fixed_reason;     // why a part is fixed (locked, mounting hole, ...)
-  int side = 0;                 // 0 front, 1 back (the footprint's side; never changed)
+  int side = 0;                 // 0 front, 1 back: the footprint's side in the input
+  // May move to the other side (states 4–7): movable, surface mount only (no holes), the board has two copper
+  // sides, flipping was asked for, and the writer can mirror the footprint (doc 04 §3 C/E, D48).
+  bool flippable = false;
+  std::string flip_reason;      // why a movable part may not flip (empty when it may, or when flipping is off)
   Point pos0;                   // original origin
-  double angle0 = 0;            // original absolute orientation (degrees); rotation r means angle0 + 90 r
-  std::array<PartGeom, 4> geom; // per rotation r = 0..3
+  double angle0 = 0;            // original absolute orientation (degrees); see kStates for state angles
+  std::array<PartGeom, kStates> geom;  // per state (states 4–7 only filled for flippable parts)
+  bool may_flip() const { return movable && flippable; }  // movability can be revoked after extraction
+  int side_in(int state) const { return side ^ (flipped(state) ? 1 : 0); }
+  double angle_of(int state) const { return flipped(state) ? -angle0 + 90.0 * (state & 3) : angle0 + 90.0 * (state & 3); }
   std::vector<int> pins;        // indices into Problem::pins
   Coord area = 0;               // courtyard box area incl. clearance (nm², saturating), for spreading
   std::uint64_t shape_key = 0;  // equal keys = interchangeable footprints (swap moves)
@@ -63,7 +84,8 @@ struct Part {
 struct Pin {
   int part = -1;
   int net = -1;                 // index into Problem::nets
-  std::array<Point, 4> off;     // offset from the part origin per rotation
+  std::array<Point, kStates> off;  // offset from the part origin per state
+  bool one_side = false;        // a surface-mount pad: on the part's side only (via estimate when sides differ)
 };
 
 struct PNet {
@@ -103,6 +125,7 @@ struct Problem {
   std::vector<std::string> notes;            // extraction decisions worth reporting
 
   int movable_count() const;
+  int flippable_count() const;
 };
 
 // A design-intent pseudo-net between two board pads (doc 15 P1): `pad_a` belongs to the part that should sit
@@ -139,6 +162,13 @@ struct ExtractOptions {
   std::vector<PadAffinity> affinities;
   // Edge pulls for movable parts (crules::edge_attractions); fixed parts are skipped.
   std::vector<EdgePull> edge_pulls;
+  // Side assignment (doc 04 §3 C/E, D48): movable surface-mount parts may move to the other side. `flip_ok` (one
+  // entry per footprint; empty = all) says whether the writer can mirror the footprint, `flip_why` why not;
+  // `keep_side` lists references the user pins to their side.
+  bool flip = false;
+  std::vector<std::uint8_t> flip_ok;
+  std::vector<std::string> flip_why;
+  std::vector<std::string> keep_side;
 };
 
 // Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).
@@ -147,6 +177,10 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
 
 // Geometry helpers.
 Shape translated(const Shape& s, Point d);
+// Mirror in y about the origin (polygon winding kept).
+Shape mirrored(const Shape& s);
+// Copper layer mask of the other side: bit i <-> bit n−1−i for n copper layers (KiCad FlipLayerMask).
+model::LayerMask flip_layers(model::LayerMask m, int n);
 Point rot90(Point p, int r);       // KiCad rotation by r * 90 degrees
 std::vector<Point> convex_hull(std::vector<Point> pts);
 // Inner parallel polygon of a convex polygon at distance t; a point at the centroid if it is thinner than 2t.
