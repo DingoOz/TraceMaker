@@ -70,6 +70,30 @@ The own DRC must match `kicad-cli pcb drc` (verified per KiCad version in CI on 
    (phase 3), dangling tracks/vias.
 5. **Both-sides rule**: any check triggered by new geometry also re-checks the other object of every pair.
 6. Output: markers with KiCad's violation type names, so reports compare 1:1 with `kicad-cli`.
+7. **Broken boards** (KiCad 10 semantics, D51; regression test `drc_broken_parity`): the checks run on the nets
+   KiCad assigns when it loads a board. KiCad links connectivity items of *any* nets whose copper touches (except
+   two pads/zone fills of different nets) and propagates the pads' net to the tracks, vias and board graphics of
+   every cluster whose pads carry a single net; a via touching only zone fills takes a zone's net. So a stray via
+   on another net's track is not a short, while a track bridging two nets' pads is. Classification: copper
+   overlapping a zone fill is `clearance` (gap 0); a track or via overlapping a pad, track or via of another net
+   is `shorting_items` even when one side is net-less; two pads short only when both have nets. Dangling tracks
+   and vias are judged on the any-net graph (a track ending on another net's copper is not dangling; a via is
+   dangling when all its links start on one layer). Same-net items join where their copper overlaps, not only
+   at end points. Free vias (`(free yes)`) keep their net. A zone's own clearance is a local clearance (max
+   with the net class) for its fill; an item is reported once per zone and layer. KiCad tests vias per copper
+   layer, so a via against a through pad or via is reported on each common layer (hole clearances too, plus
+   the pad loop's via-hole test when the hole clearance is positive); via and pad holes are tested against
+   other nets' fills. Tracks and vias are tested against holes, and copper against the board edge, even at
+   zero clearance; slots are left out of hole-to-hole. Copper of a net may touch a net-tie footprint's items
+   on its own net-tie pad. Harness: `scripts/drc_broken_parity.py` injects defects (`tracemaker
+   selftest-defects`: stubs, stray and stitched vias, cut and shortened tracks, crossings, overlaps, vias on
+   other nets' tracks and fills, tracks into pads) and matches violations one to one (`--base-delta` for bases
+   that are not themselves at parity). Also KiCad's: a via or round pad wholly inside another net's plain
+   rectangular pad is `clearance` (its circle-in-rectangle gap is not 0); a via written without a drill takes
+   its net class drill for size and hole-to-hole tests but has a point hole for hole clearances. Documented
+   exceptions: TraceMaker's DRC does not check copper text, so KiCad violations involving text are excluded;
+   a net-less footprint graphic touching a track is a short or a clearance violation in KiCad depending on the
+   two items' UUID order (TraceMaker: clearance).
 
 ## 7. Memory management
 

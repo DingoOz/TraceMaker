@@ -158,6 +158,17 @@ CopperModel build_copper(const model::Board& b) {
     it.layers = model::layer_bit(t.layer);
     it.shapes = {Shape::polyline(geom::arc_points(t.a, t.mid, t.b, 100), t.width / 2)};  // 0.1 µm chords: well inside KiCad's epsilon
     it.pos = t.a;
+    {
+      // KiCad reports an arc at its centre (PCB_ARC::GetPosition).
+      // Circle through start (origin), mid and end, in coordinates relative to the start.
+      const double bx = static_cast<double>(t.mid.x - t.a.x), by = static_cast<double>(t.mid.y - t.a.y);
+      const double cx = static_cast<double>(t.b.x - t.a.x), cy = static_cast<double>(t.b.y - t.a.y);
+      const double d = 2 * (bx * cy - by * cx);
+      if (std::fabs(d) > 1e-6) {
+        const double b2 = bx * bx + by * by, c2 = cx * cx + cy * cy;
+        it.pos = {t.a.x + geom::kiround((cy * b2 - by * c2) / d), t.a.y + geom::kiround((bx * c2 - cx * b2) / d)};
+      }
+    }
     it.width = t.width;
     finish(it);
     m.items.push_back(std::move(it));
@@ -171,6 +182,7 @@ CopperModel build_copper(const model::Board& b) {
     it.net = v.net;
     for (int l = v.layer_top; l <= v.layer_bottom; ++l) it.layers |= model::layer_bit(l);
     it.shapes = {Shape::point(v.pos, v.size / 2)};
+    it.free_via = v.free;
     it.pos = v.pos;
     it.width = v.size;
     finish(it);
@@ -197,7 +209,7 @@ CopperModel build_copper(const model::Board& b) {
       it.net = z.net;
       it.layers = model::layer_bit(layer);
       it.shapes = {Shape::polygon(pts, 0)};
-      it.pos = pts.front();
+      it.pos = z.outline.empty() || z.outline.front().empty() ? pts.front() : z.outline.front().front();  // KiCad: first outline corner
       it.footprint = z.footprint;
       finish(it);
       m.items.push_back(std::move(it));

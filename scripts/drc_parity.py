@@ -45,11 +45,12 @@ def kicad_counts(path: pathlib.Path, timeout: int) -> Counter | None:
     return c
 
 
-def tm_counts(path: pathlib.Path, timeout: int) -> Counter | None:
+def tm_counts(path: pathlib.Path, timeout: int, tm: pathlib.Path = TM) -> Counter | None:
     out = ROOT / "build" / "drc" / "tm" / f"{key(path)}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
+    out.unlink(missing_ok=True)
     try:
-        subprocess.run([str(TM), "drc", str(path), "--json", str(out)], capture_output=True, timeout=timeout)
+        subprocess.run([str(tm), "drc", str(path), "--json", str(out)], capture_output=True, timeout=timeout)
     except subprocess.TimeoutExpired:
         return None
     if not out.exists():
@@ -66,11 +67,12 @@ def main() -> int:
     ap.add_argument("--jobs", type=int, default=8)
     ap.add_argument("--timeout", type=int, default=300)
     ap.add_argument("--json", help="write per-board results here")
+    ap.add_argument("--tm", default=str(TM), help="tracemaker binary to compare (default: this build)")
     a = ap.parse_args()
     boards = [pathlib.Path(b) for b in a.boards if pathlib.Path(b).is_file()]
     with cf.ThreadPoolExecutor(a.jobs) as ex:
         kc = dict(zip(boards, ex.map(lambda b: kicad_counts(b, a.timeout), boards)))
-        tc = dict(zip(boards, ex.map(lambda b: tm_counts(b, a.timeout), boards)))
+        tc = dict(zip(boards, ex.map(lambda b: tm_counts(b, a.timeout, pathlib.Path(a.tm)), boards)))
     exact = 0
     per_type = Counter()
     rows = []

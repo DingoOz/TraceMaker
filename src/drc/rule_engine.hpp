@@ -32,6 +32,10 @@ class RuleEngine {
   Coord hole_size_min(const CopperItem* owner) const;
   // Largest clearance any pair could need (for spatial-index inflation).
   Coord max_clearance() const { return max_clearance_; }
+  // KiCad applies a copper zone's own clearance to its fill (ZONE::GetLocalClearance): the larger of it and the
+  // net-class clearance, unless a pad override or custom rule decides. The DRC enables it; the router does not
+  // yet (D51: changing it needs a routing benchmark run).
+  void use_zone_clearance_overrides();
 
   const model::NetClass& netclass(const CopperItem& it) const;
   // True if the two nets are the P/N (or +/-) halves of one differential pair.
@@ -61,6 +65,7 @@ class RuleEngine {
   std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
   std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
   bool any_custom_clearance_ = false;
+  bool zone_overrides_ = false;
   friend class Condition;
 };
 

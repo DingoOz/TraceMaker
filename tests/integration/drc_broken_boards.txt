@@ -1,3 +1,5 @@
+# Base boards for tests/integration/drc_broken_parity.sh: routed boards whose own DRC already matches kicad-cli
+# exactly (drc_parity_boards.txt without the slow jetson board). Defects are injected into each.
 bench/data/kicad/demos/cm5_minima/CM5_MINIMA_3.kicad_pcb
 bench/data/kicad/demos/complex_hierarchy/complex_hierarchy.kicad_pcb
 bench/data/kicad/demos/ecc83/ecc83-pp.kicad_pcb
@@ -9,6 +11,3 @@ bench/data/kicad/demos/pic_programmer/pic_programmer.kicad_pcb
 bench/data/kicad/demos/sonde xilinx/sonde xilinx.kicad_pcb
 bench/data/kicad/demos/stickhub/StickHub.kicad_pcb
 bench/data/kicad/demos/video/video.kicad_pcb
-bench/data/kicad/demos/jetson-agx-thor-baseboard/jetson-agx-thor-baseboard.kicad_pcb
-bench/data/kicad/demos/interf_u/interf_u.kicad_pcb
-bench/data/kicad/demos/tiny_tapeout/tinytapeout-demo.kicad_pcb

@@ -8,6 +8,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "app/route_job.hpp"
 #include "core/rng.hpp"
@@ -376,6 +377,18 @@ int main(int argc, char** argv) {
   pert->add_option("--vias", pvias);
   pert->add_option("--moves", pmoves);
 
+  auto* brk = app.add_subcommand("selftest-defects", "Inject one kind of defect into a routed board (broken-board DRC parity)");
+  brk->group("");
+  std::string bk_in, bk_out, bk_manifest, bk_kind;
+  std::uint64_t bk_seed = 1;
+  int bk_count = 3;
+  brk->add_option("in", bk_in)->required()->check(CLI::ExistingFile);
+  brk->add_option("out", bk_out)->required();
+  brk->add_option("--kind", bk_kind)->required()->check(CLI::IsMember(tmk::app::defect_kinds()));
+  brk->add_option("--seed", bk_seed);
+  brk->add_option("--count", bk_count);
+  brk->add_option("--manifest", bk_manifest, "Write the injected defects as JSON");
+
   auto* route = app.add_subcommand("route", "Route all unrouted connections of a board");
   std::string r_in, r_out, r_json;
   tmk::route::RouterOptions ropt;
@@ -491,6 +504,11 @@ int main(int argc, char** argv) {
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
+    if (*brk) {
+      const int n = tmk::app::inject_defects(bk_in, bk_out, bk_manifest, bk_kind, bk_seed, bk_count);
+      std::printf("%d %s defects injected\n", n, bk_kind.c_str());
+      return 0;
+    }
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
