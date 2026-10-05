@@ -31,7 +31,14 @@ struct EscapeCorridor {
   Point mid;
   Coord band = 0;                // half-width of the reserved strip around the centreline
   bool via = false;              // b is a dog-bone via site (reserved on every layer)
+  // Version 2 (escape_flow.hpp): the corridor continues from b through these points on tail_layer (the pad's
+  // layer, or the layer a dog-bone via changes to).
+  std::vector<Point> tail;
+  int tail_layer = -1;
 };
+
+// Half extents of a pad's bounding box along x and y (rotation applied).
+std::pair<Coord, Coord> pad_half_extents(const model::Pad& p);
 
 struct EscapeOptions {
   int min_pads = 8;              // smaller footprints escape easily

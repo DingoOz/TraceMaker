@@ -483,12 +483,12 @@
      "done": true
     },
     {
-     "text": "Min-cost-flow channel assignment for deep arrays",
-     "done": false
+     "text": "Min-cost-flow channel assignment for deep arrays (built, opt-in --escape-flow: measured below the v1 corridors, D49)",
+     "done": true
     },
     {
-     "text": "Per-ring layer assignment",
-     "done": false
+     "text": "Per-ring layer assignment (per pin, layer by layer, inside --escape-flow; same evidence, D49)",
+     "done": true
     },
     {
      "text": "NC fallback: negotiation for escapes (existing rip-up applies; no escape-specific fallback yet)",

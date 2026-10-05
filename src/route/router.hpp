@@ -53,6 +53,10 @@ struct RouterOptions {
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   bool escape_second_ring = false;  // second-ring balls escape between two outer balls instead of by dog-bone
+  // Escape planning version 2 (route/escape_flow.hpp): deep ball-grid arrays get min-cost-flow channel and layer
+  // assignment; other dense packages keep version 1's corridors. Implies escape_plan.
+  bool escape_flow = false;
+  bool escape_report = false;   // fill RouteResult::escape_rings (pins of deep arrays per ring, and how many connected)
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
@@ -91,6 +95,9 @@ struct RouteResult {
   int length_tuned = 0;
   int blind_vias = 0;           // blind/buried vias placed
   int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
+  // With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route, pins with every
+  // connection routed}.
+  std::vector<std::pair<int, int>> escape_rings;
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection

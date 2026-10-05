@@ -234,12 +234,19 @@ RouteJobResult run_route_job(RouteJob job) {
   log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s", res.routed, res.connections, res.tracks.size(),
           res.vias.size(), nm_to_mm(res.pitch), res.expansions, res.seconds));
   for (const auto& f : res.failures) log("  unrouted: " + f);
+  for (std::size_t r = 0; r < res.escape_rings.size(); ++r)
+    log(fmt("  deep-array ring %zu: %d of %d pins connected", r + 1, res.escape_rings[r].second, res.escape_rings[r].first));
   out.items = items_json(lb.board, res);
   if (!job.items_out.empty()) std::ofstream(job.items_out) << out.items.dump();
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
                  {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
                  {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
                  {"escape_corridors", res.escape_corridors}};
+  if (!res.escape_rings.empty()) {
+    nlohmann::json rings = nlohmann::json::array();
+    for (const auto& [pins, done] : res.escape_rings) rings.push_back({{"pins", pins}, {"connected", done}});
+    out.summary["escape_rings"] = rings;
+  }
   if (!job.json_out.empty()) std::ofstream(job.json_out) << out.summary.dump(1);
   if (server && job.hold) {
     log("routing finished; viewer still serving at " + server->url() + " (Ctrl-C to quit)");
