@@ -371,7 +371,7 @@ int main(int argc, char** argv) {
   route->add_option("--threads", r_threads, "Portfolio size: differently configured routers run in parallel, best kept (1 = single router)");
   tmk::app::RouteJob r_job;
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
-  route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay");
+  route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
   route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");

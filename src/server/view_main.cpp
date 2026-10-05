@@ -20,6 +20,7 @@
 #include "drc/copper.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "server/messages.hpp"
+#include "server/replay_log.hpp"
 #include "server/viewer_server.hpp"
 
 namespace {
@@ -393,24 +394,29 @@ int main(int argc, char** argv) {
     if (!replay.empty())
       demo_thread = std::thread([&] {
         // Recorded lines are {"t":seconds, <message fields>}; publish each message (without "t") at t / speed.
-        do {
-          srv.publish(server::board_snapshot_json(board, name));
-          std::ifstream in(replay);
-          std::string line;
-          const auto t0 = std::chrono::steady_clock::now();
-          while (!g_stop && std::getline(in, line)) {
-            if (line.rfind("{\"t\":", 0) != 0) continue;
-            const std::size_t comma = line.find(',');
-            if (comma == std::string::npos) continue;
-            const double t = std::atof(line.c_str() + 5);
-            std::string msg = "{" + line.substr(comma + 1);
-            if (msg.find("\"type\":\"board\"") != std::string::npos) continue;  // snapshot already sent
-            const auto due = t0 + std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>(t / speed));
-            while (!g_stop && std::chrono::steady_clock::now() < due) std::this_thread::sleep_for(std::chrono::milliseconds(5));
-            srv.publish(std::move(msg));
-          }
-          for (int i = 0; loop && !g_stop && i < 30; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(100));  // pause at the end
-        } while (loop && !g_stop);
+        try {
+          do {
+            srv.publish(server::board_snapshot_json(board, name));
+            server::ReplayReader in(replay);  // plain or zstd-compressed (detected from the content)
+            std::string line;
+            const auto t0 = std::chrono::steady_clock::now();
+            while (!g_stop && in.next_line(line)) {
+              if (line.rfind("{\"t\":", 0) != 0) continue;
+              const std::size_t comma = line.find(',');
+              if (comma == std::string::npos) continue;
+              const double t = std::atof(line.c_str() + 5);
+              std::string msg = "{" + line.substr(comma + 1);
+              if (msg.find("\"type\":\"board\"") != std::string::npos) continue;  // snapshot already sent
+              const auto due = t0 + std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>(t / speed));
+              while (!g_stop && std::chrono::steady_clock::now() < due) std::this_thread::sleep_for(std::chrono::milliseconds(5));
+              srv.publish(std::move(msg));
+            }
+            for (int i = 0; loop && !g_stop && i < 30; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(100));  // pause at the end
+          } while (loop && !g_stop);
+        } catch (const std::exception& e) {  // a damaged recording ends the replay, not the server
+          std::fprintf(stderr, "tracemaker-view: replay stopped: %s\n", e.what());
+          srv.publish(server::log("error", std::string("replay stopped: ") + e.what()));
+        }
       });
     while (!g_stop) std::this_thread::sleep_for(std::chrono::milliseconds(100));
     if (demo_thread.joinable()) demo_thread.join();
