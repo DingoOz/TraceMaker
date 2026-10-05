@@ -15,14 +15,19 @@ namespace {
 
 std::size_t z(int i) { return static_cast<std::size_t>(i); }
 
-// Half extents of a pad's bounding box along x and y (rotation applied).
-std::pair<Coord, Coord> half_extents(const model::Pad& p) {
+std::pair<Coord, Coord> half_extents(const model::Pad& p) { return pad_half_extents(p); }
+
+}  // namespace
+
+std::pair<Coord, Coord> pad_half_extents(const model::Pad& p) {
   const double a = p.angle * M_PI / 180.0;
   const double c = std::fabs(std::cos(a)), s = std::fabs(std::sin(a));
   const double hx = c * static_cast<double>(p.size_x) / 2 + s * static_cast<double>(p.size_y) / 2;
   const double hy = s * static_cast<double>(p.size_x) / 2 + c * static_cast<double>(p.size_y) / 2;
   return {static_cast<Coord>(std::llround(hx)), static_cast<Coord>(std::llround(hy))};
 }
+
+namespace {
 
 int lowest_layer(model::LayerMask m) {
   for (int l = 0; l < 64; ++l)

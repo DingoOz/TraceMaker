@@ -1,6 +1,7 @@
 #include "route/router.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
+#include "route/escape_flow.hpp"
 #include "route/heat_grid.hpp"
 #include "route/global_router.hpp"
 
@@ -2497,8 +2498,31 @@ struct Router::Impl {
       return w + 2 * std::max(netclass(n).clearance, rules.minimums.clearance);
     };
     EscapeStats es;
-    // Second-ring channel corridors are off by default: logicbone 964 -> 954, decelerator 479 -> 484 (doc 05 §12).
-    const auto plan = opt.escape_second_ring ? plan_escapes(b, needs, keep, {}, &es, channel) : plan_escapes(b, needs, keep, {}, &es);
+    std::vector<EscapeCorridor> plan;
+    if (opt.escape_flow) {
+      // Version 2: min-cost-flow channels and layers for deep arrays, planned at the router's class rules and
+      // checked against fixed copper at the lattice's own legality test (doc 05 §14).
+      FlowEscapeInput fin;
+      fin.width = [&](NetId n) { return class_width(n); };
+      fin.clearance = [&](NetId n) { return std::max(netclass(n).clearance, rules.minimums.clearance); };
+      fin.via = [&](NetId n) { return via_diameter(n); };
+      fin.keep = keep;
+      fin.track_free = [&](int layer, Point p, NetId n) { return code_ok(obs->fixed_code(p, layer, class_width(n) / 2, 0, n), n); };
+      fin.via_free = [&](Point p, NetId n) { return code_ok(obs->fixed_via_code(p, via_diameter(n), via_drill(n), 0, n), n); };
+      fin.layers = nl;
+      FlowEscapeStats fs;
+      plan = plan_escapes_flow(b, needs, fin, {}, &fs);
+      if (std::getenv("TM_DEBUG_TIMING")) {
+        std::fprintf(stderr, "escape flow: %d deep arrays;", fs.arrays);
+        for (std::size_t r = 0; r < fs.rings.size(); ++r)
+          std::fprintf(stderr, " ring %zu: %d pins %d/%d/%d/%d;", r + 1, fs.rings[r].pins, fs.rings[r].pad_layer, fs.rings[r].other_layer,
+                       fs.rings[r].via_only, fs.rings[r].none);
+        std::fprintf(stderr, "\n");
+      }
+    } else {
+      // Second-ring channel corridors are off by default: logicbone 964 -> 954, decelerator 479 -> 484 (doc 05 §12).
+      plan = opt.escape_second_ring ? plan_escapes(b, needs, keep, {}, &es, channel) : plan_escapes(b, needs, keep, {}, &es);
+    }
     reserve.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
     pad_reserved.assign(b.pads.size(), {});
     reserve_pen = static_cast<std::int64_t>(2 * opt.soft_cost_mm * 1e6);
@@ -2521,7 +2545,7 @@ struct Router::Impl {
       }
       ++res.escape_corridors;
       const Coord r = c.band;
-      auto strip = [&](Point sa, Point sb, bool site_at_end) {
+      auto strip = [&](Point sa, Point sb, bool site_at_end, int layer) {
         const int ix0 = std::max(0, to_ix(std::min(sa.x, sb.x) - r)), ix1 = std::min(nx - 1, to_ix(std::max(sa.x, sb.x) + r));
         const int iy0 = std::max(0, to_iy(std::min(sa.y, sb.y) - r)), iy1 = std::min(ny - 1, to_iy(std::max(sa.y, sb.y) + r));
         const long double ux = static_cast<long double>(sb.x - sa.x), uy = static_cast<long double>(sb.y - sa.y);
@@ -2538,20 +2562,26 @@ struct Router::Impl {
             if (site_at_end && vx * vx + vy * vy <= r2) {  // the via site: every layer
               for (int l = 0; l < nl; ++l) mark(lat_index(l, gx, gy), c.net, c.pad);
             } else {
-              mark(lat_index(c.layer, gx, gy), c.net, c.pad);
+              mark(lat_index(layer, gx, gy), c.net, c.pad);
             }
           }
       };
       if (c.has_mid) {
-        strip(c.a, c.mid, false);
-        strip(c.mid, c.b, false);
+        strip(c.a, c.mid, false, c.layer);
+        strip(c.mid, c.b, false, c.layer);
       } else {
-        strip(c.a, c.b, c.via);
+        strip(c.a, c.b, c.via, c.layer);
+      }
+      Point prev = c.b;
+      for (const Point& q : c.tail) {  // version 2: the planned channels, on the escape's layer
+        strip(prev, q, false, c.tail_layer);
+        prev = q;
       }
       if (opt.sink) {  // viewer: one corridor per pin (doc 09; CLAUDE.md rule 7)
         std::string pts = "[" + jnum(c.a.x) + "," + jnum(c.a.y) + "]";
         if (c.has_mid) pts += ",[" + jnum(c.mid.x) + "," + jnum(c.mid.y) + "]";
         pts += ",[" + jnum(c.b.x) + "," + jnum(c.b.y) + "]";
+        for (const Point& q : c.tail) pts += ",[" + jnum(q.x) + "," + jnum(q.y) + "]";
         if (!plan_json.empty()) plan_json += ",";
         plan_json += "{\"id\":" + std::to_string(c.pad) + ",\"net\":" + std::to_string(c.net) + ",\"pad\":\"" + pad_label(c.pad) +
                      "\",\"via\":" + (c.via ? "true" : "false") + ",\"pts\":[" + pts + "]}";
@@ -2638,7 +2668,7 @@ struct Router::Impl {
       cs.push_back(std::move(st));
     }
     for (std::size_t i = 0; i < cs.size(); ++i) pending.push_back(static_cast<int>(i));
-    if (opt.escape_plan) {
+    if (opt.escape_plan || opt.escape_flow) {
       plan_escape_reservations();
       if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
     }
@@ -2700,7 +2730,7 @@ struct Router::Impl {
         st.routed = st.implicit = st.coupled = false;
       }
       res.routed = 0;
-      if (opt.escape_plan) plan_escape_reservations();  // everything is unrouted again: corridors back
+      if (opt.escape_plan || opt.escape_flow) plan_escape_reservations();  // everything is unrouted again: corridors back
       if (opt.diff_pairs || !opt.pair_nets.empty()) route_diff_pairs();  // pairs first again, coupled
       std::vector<int> order(cs.size());
       for (std::size_t i = 0; i < cs.size(); ++i) order[i] = static_cast<int>(i);
@@ -2898,6 +2928,24 @@ struct Router::Impl {
     if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
     std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
                  xf_strict_wide, xf_soft_conf, xf_soft_wide);
+    if (opt.escape_report) {  // pins of deep arrays per ring: to route, and with every connection routed
+      std::vector<char> needs(b.pads.size(), 0), open(b.pads.size(), 0);
+      for (const auto& st : cs)
+        for (int pad : {st.c.pad_a, st.c.pad_b})
+          if (pad >= 0) {
+            needs[static_cast<std::size_t>(pad)] = 1;
+            if (!st.routed) open[static_cast<std::size_t>(pad)] = 1;
+          }
+      const auto ring = array_rings(b, needs);
+      res.escape_rings.clear();
+      for (std::size_t pi = 0; pi < ring.size(); ++pi) {
+        if (ring[pi] <= 0 || !needs[pi]) continue;
+        if (res.escape_rings.size() < static_cast<std::size_t>(ring[pi])) res.escape_rings.resize(static_cast<std::size_t>(ring[pi]));
+        auto& e = res.escape_rings[static_cast<std::size_t>(ring[pi] - 1)];
+        ++e.first;
+        if (!open[pi]) ++e.second;
+      }
+    }
     emit_heatmaps(true);
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");

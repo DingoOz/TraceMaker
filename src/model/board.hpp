@@ -138,6 +138,7 @@ struct Via {
   NetId net = 0;
   bool locked = false;
   sexpr::NodeId node = sexpr::kNoNode;
+  bool free = false;         // (free yes): a stitching via whose net KiCad's connectivity never changes
 };
 
 struct Zone {
@@ -146,6 +147,7 @@ struct Zone {
   std::vector<std::string> layers;
   std::string name;
   int priority = 0;
+  Coord clearance = -1;      // (connect_pads (clearance x)): the zone's local clearance override, -1 = none
   bool rule_area = false;
   bool keepout_tracks = false, keepout_vias = false, keepout_pads = false, keepout_pour = false,
        keepout_footprints = false;

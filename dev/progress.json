@@ -156,8 +156,8 @@
      "done": true
     },
     {
-     "text": "Parity on broken-board classification (shorts/dangling)",
-     "done": false
+     "text": "Parity on broken-board classification (shorts/dangling): 264/264 injected-defect variants match kicad-cli violation by violation (was 41/264; regression test); demo boards 14/17 exact",
+     "done": true
     },
     {
      "text": "Performance on very large boards (vme-wren, jetson)",
@@ -483,12 +483,12 @@
      "done": true
     },
     {
-     "text": "Min-cost-flow channel assignment for deep arrays",
-     "done": false
+     "text": "Min-cost-flow channel assignment for deep arrays (built, opt-in --escape-flow: measured below the v1 corridors, D49)",
+     "done": true
     },
     {
-     "text": "Per-ring layer assignment",
-     "done": false
+     "text": "Per-ring layer assignment (per pin, layer by layer, inside --escape-flow; same evidence, D49)",
+     "done": true
     },
     {
      "text": "NC fallback: negotiation for escapes (existing rip-up applies; no escape-specific fallback yet)",

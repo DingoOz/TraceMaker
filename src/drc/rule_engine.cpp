@@ -326,6 +326,12 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r, const
 
 RuleEngine::~RuleEngine() = default;
 
+void RuleEngine::use_zone_clearance_overrides() {
+  zone_overrides_ = true;
+  for (const auto& z : b_.zones)
+    if (!z.rule_area) max_clearance_ = std::max(max_clearance_, z.clearance);
+}
+
 const model::NetClass& RuleEngine::netclass(const CopperItem& it) const {
   const auto i = static_cast<std::size_t>(it.net);
   if (i < net_class_.size()) return *net_class_[i];
@@ -452,8 +458,14 @@ Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer)
   // Observed: the smaller of clearance and diff-pair gap applies (0.154 gap passes under a 0.2 class; 0.2 mm
   // pads pass under a 0.25 gap).
   if (la < 0 && lb < 0 && coupled_diff_pair(a.net, b.net)) req = std::min(req, netclass(a).diff_pair_gap);
+  bool custom = false;
   if (any_custom_clearance_)
-    if (auto c = custom_min("clearance", &a, &b, layer)) req = *c;
+    if (auto c = custom_min("clearance", &a, &b, layer)) req = *c, custom = true;
+  // A copper zone's own clearance is a local clearance: without a pad override or a custom rule, the larger of
+  // it and the net-class value applies (DRC_ENGINE::EvalRules; KiCad names it "zone clearance").
+  if (zone_overrides_ && la < 0 && lb < 0 && !custom)
+    for (const CopperItem* z : {&a, &b})
+      if (z->kind == ItemKind::Zone) req = std::max(req, b_.zones[static_cast<std::size_t>(z->index)].clearance);
   // The board minimum is always a floor (multichannel_mixer: 0.3 mm minimum over a 0.2 mm class).
   return std::max(req, r_.minimums.clearance);
 }

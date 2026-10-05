@@ -211,9 +211,12 @@ class Reader {
       def.type = d_.str_at(l, 2);
       // Copper layers are identified by number (old boards may name them "Front"/"Back"). Numbering changed
       // in KiCad 9: F.Cu 0, B.Cu 2, In1 4, In2 6, … (before: F.Cu 0, In1..In30 = 1..30, B.Cu 31).
-      const bool copper_type = def.type == "signal" || def.type == "power" || def.type == "mixed" || def.type == "jumper";
+      const bool v9 = b_.version >= 20240108;
+      // Only copper ordinals can be copper: even ones from KiCad 9 on, 0..31 before. KiCad 10 boards may give
+      // user layers a copper type ("(39 "User.1" signal)" in multichannel_mixer); they are not copper.
+      const bool copper_ordinal = v9 ? def.ordinal >= 0 && def.ordinal % 2 == 0 : def.ordinal >= 0 && def.ordinal <= 31;
+      const bool copper_type = copper_ordinal && (def.type == "signal" || def.type == "power" || def.type == "mixed" || def.type == "jumper");
       if (copper_type && !def.name.ends_with(".Cu")) {
-        const bool v9 = b_.version >= 20240108;
         if (def.ordinal == 0) def.name = "F.Cu";
         else if (v9 ? def.ordinal == 2 : def.ordinal == 31) def.name = "B.Cu";
         else def.name = "In" + std::to_string(v9 ? (def.ordinal - 2) / 2 : def.ordinal) + ".Cu";
@@ -555,6 +558,7 @@ class Reader {
     }
     via.net = read_net(v);
     via.locked = yes(v, "locked");
+    via.free = yes(v, "free");
     b_.vias.push_back(via);
   }
 
@@ -572,6 +576,8 @@ class Reader {
     if (NodeId l = d_.find(z, "layers"); l != kNoNode) zone.copper |= layers_mask(l, &zone.layers);
     if (NodeId n = d_.find(z, "name"); n != kNoNode) zone.name = d_.str_at(n, 1);
     if (NodeId p = d_.find(z, "priority"); p != kNoNode) zone.priority = static_cast<int>(d_.number_at(p, 1).value_or(0));
+    if (NodeId cp = d_.find(z, "connect_pads"); cp != kNoNode)
+      if (NodeId c = d_.find(cp, "clearance"); c != kNoNode) zone.clearance = d_.nm_at(c, 1).value_or(-1);
     if (NodeId k = d_.find(z, "keepout"); k != kNoNode) {
       zone.rule_area = true;
       auto na = [&](std::string_view what) {

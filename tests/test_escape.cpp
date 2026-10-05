@@ -3,11 +3,13 @@
 
 #include <cmath>
 #include <filesystem>
+#include <algorithm>
 #include <set>
 
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/escape.hpp"
+#include "route/escape_flow.hpp"
 #include "route/obstacles.hpp"
 
 using namespace tmk;
@@ -137,4 +139,141 @@ TEST_CASE("escape analysis: sbc's DRAM balls are blocked only by the solder-mask
   const auto tented = route::analyse_escapes(b, rules, obs);
   for (const auto& pe : tented)
     if (pe.ref == "DRAM1") CHECK(pe.dead.size() < dram->dead.size());
+}
+
+// ---- Escape planning v2: min-cost-flow channel and layer assignment (route/escape_flow.hpp) ----
+
+namespace {
+
+route::FlowEscapeInput flow_input(Coord w, Coord s, Coord via, int layers) {
+  route::FlowEscapeInput in;
+  in.width = [w](model::NetId) { return w; };
+  in.clearance = [s](model::NetId) { return s; };
+  in.via = [via](model::NetId) { return via; };
+  in.keep = [w, s](model::NetId) { return w + s; };
+  in.layers = layers;
+  return in;
+}
+
+// The corridor's polyline on the layer it ends on (the tail, preceded by b), or on the pad layer when it has none.
+std::vector<Point> tail_of(const route::EscapeCorridor& c) {
+  std::vector<Point> pts{c.b};
+  pts.insert(pts.end(), c.tail.begin(), c.tail.end());
+  if (!c.via) pts.insert(pts.begin(), c.a);
+  return pts;
+}
+
+// Does the polyline cross the open middle of segment p-q (between 20 % and 80 % of its length)?
+bool crosses_middle(const std::vector<Point>& pl, Point p, Point q) {
+  for (std::size_t k = 0; k + 1 < pl.size(); ++k) {
+    const double ax = static_cast<double>(pl[k].x), ay = static_cast<double>(pl[k].y);
+    const double bx = static_cast<double>(pl[k + 1].x), by = static_cast<double>(pl[k + 1].y);
+    const double px = static_cast<double>(p.x), py = static_cast<double>(p.y), qx = static_cast<double>(q.x), qy = static_cast<double>(q.y);
+    const double d = (bx - ax) * (qy - py) - (by - ay) * (qx - px);
+    if (std::fabs(d) < 1e-9) continue;
+    const double t = ((px - ax) * (qy - py) - (py - ay) * (qx - px)) / d;   // along the polyline segment
+    const double u = ((px - ax) * (by - ay) - (py - ay) * (bx - ax)) / d;   // along p-q
+    if (t >= -1e-9 && t <= 1 + 1e-9 && u >= 0.2 && u <= 0.8) return true;
+  }
+  return false;
+}
+
+}  // namespace
+
+TEST_CASE("escape flow: a 6 x 6 array escapes on its pad layer within every channel's capacity", "[escape]") {
+  const Coord pitch = 1'000'000, ball = 400'000, w = 150'000, s = 150'000;
+  const auto b = bga(6, pitch, ball);
+  std::vector<char> needs(b.pads.size(), 1);
+  route::FlowEscapeStats st;
+  const auto plan = route::plan_escapes_flow(b, needs, flow_input(w, s, 600'000, 1), {}, &st);
+  CHECK(st.arrays == 1);
+  REQUIRE(st.rings.size() == 3);
+  CHECK(st.rings[0].pins == 20);
+  CHECK(st.rings[1].pins == 12);
+  CHECK(st.rings[2].pins == 4);
+  // One track fits between two balls (0.6 mm gap, 0.15 / 0.15 mm rules): 20 boundary channels for 16 inner balls.
+  for (const auto& r : st.rings) CHECK(r.pad_layer == r.pins);
+  REQUIRE(plan.size() == 36);
+  // Independent check of the plan's geometry: no more corridors between two neighbouring balls than fit there
+  // (one), none through a gap's centre more often than its diagonal allows (two), and every corridor keeps the
+  // track clear of the other balls.
+  auto pos = [&](int i, int j) { return Point{i * pitch, j * pitch}; };
+  for (int j = 0; j < 6; ++j)
+    for (int i = 0; i < 6; ++i)
+      for (const auto [di, dj] : {std::pair{1, 0}, std::pair{0, 1}}) {
+        if (i + di >= 6 || j + dj >= 6) continue;
+        int n = 0;
+        for (const auto& c : plan) n += crosses_middle(tail_of(c), pos(i, j), pos(i + di, j + dj));
+        CHECK(n <= 1);
+      }
+  for (int j = 0; j < 5; ++j)
+    for (int i = 0; i < 5; ++i) {
+      const Point centre{i * pitch + pitch / 2, j * pitch + pitch / 2};
+      int n = 0;
+      for (const auto& c : plan) n += static_cast<int>(std::count(c.tail.begin(), c.tail.end(), centre)) + (c.b == centre);
+      CHECK(n <= 2);
+    }
+  for (const auto& c : plan) {
+    const auto pl = tail_of(c);
+    for (const auto& p : b.pads) {
+      if (p.pos == b.pads[static_cast<std::size_t>(c.pad)].pos) continue;
+      for (std::size_t k = 0; k + 1 < pl.size(); ++k) CHECK(dist_point_segment(p.pos, pl[k], pl[k + 1]) >= static_cast<double>(ball / 2 + s + w / 2) - 1);
+    }
+    // ends outside the array
+    const Point e = pl.back();
+    CHECK((e.x < 0 || e.y < 0 || e.x > 5 * pitch || e.y > 5 * pitch));
+  }
+  // Deterministic.
+  const auto again = route::plan_escapes_flow(b, needs, flow_input(w, s, 600'000, 1));
+  REQUIRE(again.size() == plan.size());
+  for (std::size_t i = 0; i < plan.size(); ++i) CHECK((again[i].pad == plan[i].pad && again[i].b == plan[i].b && again[i].tail == plan[i].tail));
+}
+
+TEST_CASE("escape flow: without channels between balls, inner rings take dog-bone vias and leave on the next layer", "[escape]") {
+  // 0.8 mm pitch, 0.45 mm balls, 0.1 / 0.15 mm rules: 0.35 mm between balls is too narrow for one track.
+  const Coord pitch = 800'000, ball = 450'000, w = 100'000, s = 150'000, via = 300'000;
+  const auto b = bga(8, pitch, ball);
+  std::vector<char> needs(b.pads.size(), 1);
+  route::FlowEscapeStats st;
+  const auto plan = route::plan_escapes_flow(b, needs, flow_input(w, s, via, 4), {}, &st);
+  REQUIRE(st.rings.size() == 4);
+  CHECK(st.rings[0].pad_layer == 28);  // the perimeter leaves on its own layer
+  CHECK(st.rings[1].pad_layer == 0);
+  int via_pins = 0, other = 0;
+  for (const auto& r : st.rings) via_pins += r.other_layer + r.via_only, other += r.other_layer;
+  CHECK(via_pins == 36);  // every inner ball gets a via site
+  CHECK(other > 0);
+  CHECK(st.per_layer[0] == 28);
+  CHECK(st.per_layer[1] > 0);  // the nearest layer first
+  std::set<std::pair<Coord, Coord>> sites;
+  for (const auto& c : plan) {
+    if (!c.via) continue;
+    CHECK(sites.insert({c.b.x, c.b.y}).second);  // one via per interstitial site
+    CHECK(std::llabs(std::llabs(c.b.x - c.a.x) - pitch / 2) <= 1);
+    CHECK(std::llabs(std::llabs(c.b.y - c.a.y) - pitch / 2) <= 1);
+    if (c.tail.empty()) continue;
+    CHECK(c.tail_layer > 0);
+    // On the via layers the vias are the obstacles: the tail keeps clear of every other planned via.
+    for (const auto& o : plan)
+      if (o.via && o.pad != c.pad)
+        for (std::size_t k = 0; k + 1 < c.tail.size(); ++k)
+          CHECK(dist_point_segment(o.b, c.tail[k], c.tail[k + 1]) >= static_cast<double>(via / 2 + s + w / 2) - 1);
+  }
+}
+
+TEST_CASE("escape flow: shallow packages are planned exactly as version 1", "[escape]") {
+  const auto b = bga(4, 800'000, 400'000);  // two rings only
+  std::vector<char> needs(b.pads.size(), 1);
+  const auto v1 = route::plan_escapes(b, needs, [](model::NetId) { return Coord{300'000}; });
+  route::FlowEscapeStats st;
+  const auto v2 = route::plan_escapes_flow(b, needs, flow_input(100'000, 100'000, 400'000, 2), {}, &st);
+  CHECK(st.arrays == 0);
+  REQUIRE(v1.size() == v2.size());
+  for (std::size_t i = 0; i < v1.size(); ++i) CHECK((v1[i].pad == v2[i].pad && v1[i].b == v2[i].b && v1[i].via == v2[i].via && v2[i].tail.empty()));
+  CHECK(route::array_rings(b, needs) == std::vector<int>(b.pads.size(), 0));
+  const auto deep = bga(7, 800'000, 400'000);
+  std::vector<char> all(deep.pads.size(), 1);
+  const auto rings = route::array_rings(deep, all);
+  CHECK(rings[0] == 1);
+  CHECK(rings[static_cast<std::size_t>(3 * 7 + 3)] == 4);
 }
