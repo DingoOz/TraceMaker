@@ -87,6 +87,7 @@ def main():
     ap.add_argument("--speed", type=float, help="timed mode: real seconds per video second")
     ap.add_argument("--fps", type=int, default=15)
     ap.add_argument("--no-caption", action="store_true")
+    ap.add_argument("--by-motion", action="store_true", help="key-frame mode: share --frames by how far the parts move")
     a = ap.parse_args()
     out = pathlib.Path(a.outdir)
     out.mkdir(parents=True, exist_ok=True)
@@ -257,15 +258,26 @@ def main():
         if k["pos"] != seq[-1]["pos"] or k is keys[-1]:
             seq.append(k)
     steps = max(1, len(seq) - 1)
-    per = max(1, a.frames // steps)
+    per = [max(1, a.frames // steps)] * steps
+    if a.by_motion:
+        # Frames in proportion to each transition's total displacement (at least one each), so
+        # large moves glide and the many small annealing steps pass quickly.
+        w = [sum(math.hypot(xb - xa, yb - ya) for (xa, ya, _), (xb, yb, _) in zip(seq[s]["pos"], seq[s + 1]["pos"])) for s in range(steps)]
+        spare, tot = max(0, a.frames - steps), sum(w) or 1.0
+        cum, per = 0.0, []
+        for x in w:  # cumulative rounding: the shares add up to exactly --frames
+            nxt = cum + spare * x / tot
+            per.append(1 + round(nxt) - round(cum))
+            cum = nxt
     n = 0
     draw(seq[0]["pos"], label(seq[0]), n)
     n += 1
     for s in range(steps):
         pa, pb = seq[s]["pos"], seq[s + 1]["pos"]
         lab = label(seq[s + 1])
-        for f in range(1, per + 1):
-            t = f / per
+        for f in range(1, per[s] + 1):
+            t = f / per[s]
+            t = t * t * (3 - 2 * t) if a.by_motion else t  # ease in and out
             pos = [[xa + (xb - xa) * t, ya + (yb - ya) * t, rb if t >= 0.5 else ra] for (xa, ya, ra), (xb, yb, rb) in zip(pa, pb)]
             draw(pos, lab, n)
             n += 1

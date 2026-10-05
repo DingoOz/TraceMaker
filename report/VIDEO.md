@@ -75,3 +75,22 @@ Freerouting's two phases from its log. (On SALSAFLOCK the optimizer was skipped 
 Caveat shown on the card: the placer optimises wiring only. It moved the indicator LEDs D1–D13 away from their
 silkscreen labels ("choose_indication", "control_indication"), which a designer would not accept; design-intent rules
 of that kind are planned in doc 15 (M13).
+
+## Social clip: `report/x_aquarius.mp4`
+
+A 23 s square (1080×1080, H.264) clip for posting: TraceMaker placing PCBench `kitspace_aquarius` (73 parts,
+171 connections) and then routing it, with an end card of measured results (171/171 routed, 0 KiCad DRC errors,
+ratsnest −58 % against the designer's placement, 3 min 13 s to place and 19 s to route on 8 threads with the GPU fields).
+Placement is shown **condensed** (the kept candidate's recorded states, interpolated with frames shared by how far the
+parts move) with its real time printed; routing plays at a printed 2.4× with the live routed count.
+
+    V=build/xvideo/kitspace_aquarius
+    build/release/src/place/tracemaker-place $V/human.kicad_pcb -o $V/placed.kicad_pcb --mode routable --route-check 3000000 \
+        --threads 8 --json $V/placed.json --record $V/place_events.jsonl
+    build/release/src/app/tracemaker route $V/placed.kicad_pcb -o $V/tm.kicad_pcb --time 120 --threads 8 --no-kb --record $V/tm_events.jsonl
+    build/report-venv/bin/python report/render_place.py $V/place_events.jsonl $V/human.kicad_pcb $V/pf --frames 240 --by-motion --hold 0 --width 1000 --height 880
+    build/report-venv/bin/python report/render_events.py $V/tm_events.jsonl $V/placed.kicad_pcb $V/rf --step 0.0813 --width 1000 --height 880 --bbox 134.5,31,190,111.5
+    build/report-venv/bin/python report/make_x_video.py $V --out report/x_aquarius.mp4
+
+`$V/video_facts.json` holds the end-card numbers; each comes from the run (placed.json, the route log, KiCad DRC of
+tm.kicad_pcb via bench/run.py's judge, and the ratsnest figure render_place.py draws).

@@ -1,0 +1,10 @@
+{
+  "board_line": "kitspace aquarius · 73 parts · 171 connections",
+  "place_s": 193.4,
+  "card": [
+    ["171 / 171", "connections routed", [90, 210, 120]],
+    ["0 errors", "KiCad 10 design-rule check", null],
+    ["−58% wiring", "ratsnest length vs. the designer's placement", null],
+    ["3:13 + 19 s", "to place, then route · 8 CPU threads + GPU", null]
+  ]
+}
