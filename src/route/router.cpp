@@ -475,8 +475,10 @@ struct Router::Impl {
     if (corr) {  // soft guidance: leaving the global corridor (or its layer) costs half a pitch per lattice step
       const Point p = at(gx, gy);
       const int tx = std::clamp(global.tile_of_x(p.x), 0, global.tiles_x - 1), ty = std::clamp(global.tile_of_y(p.y), 0, global.tiles_y - 1);
-      if (!(*corr)[(static_cast<std::size_t>(layer) * static_cast<std::size_t>(global.tiles_y) + static_cast<std::size_t>(ty)) * static_cast<std::size_t>(global.tiles_x) + static_cast<std::size_t>(tx)])
+      if (!(*corr)[(static_cast<std::size_t>(layer) * static_cast<std::size_t>(global.tiles_y) + static_cast<std::size_t>(ty)) * static_cast<std::size_t>(global.tiles_x) + static_cast<std::size_t>(tx)]) {
+        if (corr_hard) return -1;
         hc += corridor_pen;
+      }
     }
     if (st == 1) return static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) + hc * 4;
     if (st == 3) return 3 * pitch + hc;
@@ -813,6 +815,7 @@ struct Router::Impl {
     }
     res.expansions += expanded;
     (goal == SIZE_MAX ? exp_fail : exp_ok) += expanded;
+    if (goal == SIZE_MAX) (soft ? (corr_hard ? xf_soft_conf : xf_soft_wide) : (corr_hard ? xf_strict_conf : xf_strict_wide)) += expanded;
     (goal == SIZE_MAX ? n_fail : n_ok) += 1;
     if (goal == SIZE_MAX) {
       // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
@@ -1057,6 +1060,7 @@ struct Router::Impl {
   }
 
   long exp_ok = 0, exp_fail = 0, n_ok = 0, n_fail = 0;
+  long xf_soft_conf = 0, xf_soft_wide = 0, xf_strict_conf = 0, xf_strict_wide = 0;  // failed-search expansions by kind
   std::string why, commit_why;
   bool strict_pass = false;
   // Nogoods (design doc 06 §3.3): (connection, soft, window signature) attempts that already failed. The
@@ -1065,6 +1069,8 @@ struct Router::Impl {
   GlobalResult global;               // corridors from the global router (empty when off)
   const std::vector<std::uint8_t>* corr = nullptr;  // corridor of the connection being searched
   Coord corridor_pen = 0;            // extra cost per lattice step outside the corridor
+  bool corr_hard = false;            // confined attempt: cells outside the corridor are blocked
+  long confined_ok = 0, confined_tried = 0;
   bool blind_ok = false;    // blind/buried vias allowed (board setting, more than two layers)
   bool fields_off = false;
   double via_cost_mult = 1.0;   // raised by the clean-up pass
@@ -1108,6 +1114,38 @@ struct Router::Impl {
     const Point e = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : a;
     static const Coord margins[] = {2'000'000, 6'000'000, 20'000'000, 1'000'000'000};
     std::vector<PathNode> path;
+    // Global router v2: first a search confined to the connection's corridor (much smaller than the usual
+    // window on large boards), then, if it fails, the usual windows with the corridor as soft guidance.
+    if (corr && opt.global_confine && current >= 0 && static_cast<std::size_t>(current) < global.corridor_box.size()) {
+      const auto& cb = global.corridor_box[static_cast<std::size_t>(current)];
+      Window w;
+      w.x0 = std::clamp(to_ix(global.origin.x + static_cast<Coord>(cb[0]) * global.tile), 0, nx - 1);
+      w.y0 = std::clamp(to_iy(global.origin.y + static_cast<Coord>(cb[1]) * global.tile), 0, ny - 1);
+      const int x1 = std::clamp(to_ix(global.origin.x + static_cast<Coord>(cb[2] + 1) * global.tile), 0, nx - 1);
+      const int y1 = std::clamp(to_iy(global.origin.y + static_cast<Coord>(cb[3] + 1) * global.tile), 0, ny - 1);
+      w.w = x1 - w.x0 + 1;
+      w.h = y1 - w.y0 + 1;
+      if (w.w > 1 && w.h > 1 && !out_of_budget()) {
+        ++confined_tried;
+        corr_hard = true;
+        // Strict searches in a corridor are capped: successful ones average ~50k expansions on logicbone, and a
+        // corridor blocked by other routes is negotiation's job, not worth flooding (doc 05 §13).
+        if (!soft && opt.global_strict_corridor_only) expansion_cap = 200'000;
+        const bool found = search(c, w, path);
+        expansion_cap = 0;
+        corr_hard = false;
+        if (found && commit(c, path)) {
+          ++confined_ok;
+          return true;
+        }
+        last_miss = Miss::None;  // an exhausted corridor says nothing about the pin being boxed in
+        if (!soft && opt.global_strict_corridor_only) {
+          why = "corridor blocked (left to negotiation)";
+          last_miss = Miss::Window;
+          return false;
+        }
+      }
+    }
     // The strict first pass tries two window sizes only; anything harder is left to negotiation.
     // Negotiated searches stop before the whole-board window (they can cross copper, so a reachable target is
     // normally found within 20 mm of the bounding box); strict passes try two sizes.
@@ -2281,6 +2319,9 @@ struct Router::Impl {
     std::fprintf(stderr, "clean-up: %d connections improved\n", res.optimized);
     std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", res.restarts, obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
+    if (confined_tried) std::fprintf(stderr, "global corridors: %ld of %ld confined searches committed\n", confined_ok, confined_tried);
+    std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
+                 xf_strict_wide, xf_soft_conf, xf_soft_wide);
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
     return std::move(res);

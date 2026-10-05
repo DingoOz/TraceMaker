@@ -38,6 +38,13 @@ struct RouterOptions {
   // D+/D- bound by tm::crules, whose names need not end in P/N or +/-). Empty = none.
   std::vector<std::pair<model::NetId, model::NetId>> pair_nets;
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
+  // Global router v2 (M6): the first search of each connection is confined to its corridor (cells outside are
+  // blocked, window cropped to the corridor); only if that fails do the usual unconfined windows run.
+  bool global_confine = false;
+  // Strict pass with corridors: a connection that cannot be routed inside its corridor goes straight to
+  // negotiation instead of flooding the wide strict windows (on logicbone those failed floods were 76 % of all
+  // search expansions; doc 05 §13).
+  bool global_strict_corridor_only = false;
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   bool escape_second_ring = false;  // second-ring balls escape between two outer balls instead of by dog-bone

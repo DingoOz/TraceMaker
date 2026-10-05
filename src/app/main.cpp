@@ -351,6 +351,9 @@ int main(int argc, char** argv) {
   route->add_flag("--blind-vias", ropt.blind_vias, "Use blind/buried vias where a through via is blocked (only on boards that allow them)");
   route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs together as coupled tracks first (experimental)");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
+  route->add_flag("--global-confine", ropt.global_confine, "With --global: confine each connection's first search to its corridor (experimental)")->group("");
+  route->add_flag("--global-corridor-only", ropt.global_strict_corridor_only, "With --global-confine: a corridor failure goes straight to negotiation (experimental)")->group("");
+  route->add_option("--max-expansions", ropt.max_expansions, "Search expansions per attempt")->group("");
   route->add_flag("!--no-optimize", ropt.optimize, "Skip the post-routing clean-up pass (fewer vias, shorter tracks)");
   route->add_flag("--escape-plan,!--no-escape-plan", ropt.escape_plan, "Reserve escape corridors for the pins of dense packages (QFP, BGA) before routing");
   route->add_flag("--escape-second-ring", ropt.escape_second_ring, "Escape plan: second-ring balls between two outer balls (else dog-bone vias)")->group("");

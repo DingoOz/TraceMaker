@@ -196,3 +196,27 @@ and windows without a path. That is negotiation speed on large lattices (global 
 layer assignment per ring, escape templates in the knowledge base (doc 06 T3), and completion over escapable
 connections (the benchmark now reports a feasible clean pass per board, not per connection).
 
+## 13. Global router v2, first steps (M6, 2026-10-05)
+
+**Where the time goes on a large board.** logicbone, one variant, 160 M expansions: 938 connections routed in one
+pass; the 253 failed searches used 124 M expansions (76 %), the 938 successful ones 39 M. Failed strict searches
+flood their whole window before giving up, and negotiation (where they would be fixed) never starts.
+
+**Corridor confinement (built, off: `--global-confine`, `--global-corridor-only`).** The global result now keeps
+each corridor's tile bounding box. With confinement, a connection's first search runs in a window cropped to that
+box with cells outside the corridor blocked; with `--global-corridor-only`, a non-negotiated search that fails in its
+corridor goes straight to negotiation instead of trying the wide windows (capped at 200 k expansions).
+10 hard boards (`bench/m6_bench.py`: logicbone, decelerator, EEZ, sbc, LimeSDR and five tier D boards), one variant,
+100 M expansions each, total connections routed:
+
+| No global routing | v1 (soft corridor cost) | + confinement | + corridor-only |
+|---|---|---|---|
+| **8,285** | 8,092 | 7,936 | 7,568 |
+
+Every global variant is worse: the coarse corridors (tile capacities from free boundary samples, two-pin
+connections, no pin-escape or via demand) are worse guides than the detailed router's own A* with the GPU
+cost-to-go field, and confining searches to them costs completion. Deferring to negotiation is worse still at a
+fixed budget, because negotiated searches cost about twice as much per connection (rip-ups). Corridors will only
+help once the global plan models pin access, via demand and multi-pin topology well enough to be trusted; until then
+the throughput problem is attacked in the detailed router.
+

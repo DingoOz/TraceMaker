@@ -178,6 +178,7 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
   // Corridors: walk each path's nodes (re-derived from the edges, starting at the goal node), mark tiles, widen
   // by one tile on the same layer. Both end tiles are marked on all of their pad's layers.
   res.corridor.resize(nets.size());
+  res.corridor_box.assign(nets.size(), {0, 0, g.nx - 1, g.ny - 1});
   res.vias.assign(nets.size(), 0);
   for (std::size_t k = 0; k < nets.size(); ++k) {
     auto& c = res.corridor[k];
@@ -232,6 +233,15 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
       mark(l, x0, y0);
       mark(l, x1, y1);
     }
+  }
+  for (std::size_t k = 0; k < nets.size(); ++k) {
+    std::array<int, 4> bx{g.nx, g.ny, -1, -1};
+    const auto& c = res.corridor[k];
+    for (int l = 0; l < layers; ++l)
+      for (int y = 0; y < g.ny; ++y)
+        for (int x = 0; x < g.nx; ++x)
+          if (c[g.node(l, x, y)]) bx = {std::min(bx[0], x), std::min(bx[1], y), std::max(bx[2], x), std::max(bx[3], y)};
+    if (bx[2] >= 0) res.corridor_box[k] = bx;
   }
   return res;
 }

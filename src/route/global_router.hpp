@@ -7,6 +7,7 @@
 // negotiated congestion (PathFinder: McMurchie and Ebeling, FPGA 1995) rips up connections on overflowed edges and
 // re-routes them with growing history costs. The result is a corridor per connection: the tiles of its path on
 // each layer, widened by one tile, which the detailed router uses as soft guidance.
+#include <array>
 #include <cstdint>
 #include <vector>
 
@@ -37,6 +38,8 @@ struct GlobalResult {
   geom::Point origin;
   // corridor[k][(l * tiles_y + ty) * tiles_x + tx] != 0: tile on layer l is in connection k's corridor.
   std::vector<std::vector<std::uint8_t>> corridor;
+  // Bounding box of each corridor in tiles (x0, y0, x1, y1, inclusive); the detailed router's confined window.
+  std::vector<std::array<int, 4>> corridor_box;
   std::vector<int> vias;       // global vias per connection
   int overflow_edges = 0;      // edges still over capacity after negotiation
   long total_overflow = 0;
