@@ -79,3 +79,4 @@
 {"ts": "2026-10-05T01:17:19+00:00", "kind": "note", "text": "Global router v2 start: corridor confinement worse on 10 hard boards (8,285 -> 7,936); 1M search cap +96 at fixed budget but not confirmed on tiers B/C; defaults unchanged, doc 05 \u00a713."}
 {"ts": "2026-10-05T03:57:37+00:00", "kind": "test", "text": "Reachability pre-check (exact flood fill before likely-failing strict searches): 10 hard boards 8,285 -> 8,332 routed, no board worse; 0 mismatches vs full A*; tiers B/C running"}
 {"ts": "2026-10-05T04:46:36+00:00", "kind": "decision", "text": "D44: reachability pre-check on by default (--reach-check 1). Exact (0 mismatches vs full A*); 10 hard boards 8,285 -> 8,332; tiers A-D neutral (clean 100/67.5/63.3/50 %, unchanged)"}
+{"ts": "2026-10-05T06:21:45+00:00", "kind": "test", "text": "Component rules placement gate: placed tiers B and C, --place routable, --component-rules off vs soft (same binary, run side by side)"}

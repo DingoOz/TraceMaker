@@ -96,6 +96,7 @@ PLACE = ROOT / "build/release/src/place/tracemaker-place"
 PLACE_MODE = None        # --place MODE: TraceMaker may move components before routing
 PLACE_TIMEOUT = 900      # seconds; on timeout the human placement is routed (recorded)
 PLACE_WORK = 3_000_000   # router budget per placement evaluation (deterministic)
+PLACE_CRULES = None      # --place-crules MODE: tracemaker-place --component-rules (doc 15); None = its default
 # Errors placement can introduce (counted against the human board when parts move).
 PLACEMENT_ERRORS = {"courtyards_overlap", "pth_inside_courtyard", "npth_inside_courtyard", "copper_edge_clearance", "clearance",
                     "shorting_items", "solder_mask_bridge", "hole_clearance", "hole_to_hole", "malformed_courtyard"}
@@ -109,6 +110,7 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     try:
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
                             "--threads", str(THREADS), "--json", str(js)]
+                           + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else [])
                            + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT)
         res["place_exit"] = p.returncode
     except subprocess.TimeoutExpired:
@@ -198,6 +200,7 @@ def main() -> int:
     ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full"], help="let TraceMaker move components first")
     ap.add_argument("--place-timeout", type=int, default=900)
     ap.add_argument("--place-work", type=int, default=3_000_000)
+    ap.add_argument("--place-crules", choices=["off", "report", "soft", "on"], help="component rules during placement (doc 15)")
     a = ap.parse_args()
     global THREADS
     THREADS = a.threads
@@ -212,12 +215,12 @@ def main() -> int:
     outdir = ROOT / "bench/results" / run_id
     outdir.mkdir(parents=True, exist_ok=True)
     # Snapshot the engine binary so rebuilding during a run cannot mix versions.
-    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK
+    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES
     import shutil
     snap = outdir / "tracemaker"
     shutil.copy2(TM, snap)
     TM = snap
-    PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK = a.place, a.place_timeout, a.place_work
+    PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES = a.place, a.place_timeout, a.place_work, a.place_crules
     if PLACE_MODE:
         psnap = outdir / "tracemaker-place"
         shutil.copy2(PLACE, psnap)
@@ -252,8 +255,9 @@ def main() -> int:
         for t in r["added_errors"]:
             added_types[t] += 1
     summary = {
-        "run": run_id, "set": f"PCBench tier {a.tier}" + (f" + placement ({a.place})" if a.place else ""), "boards": n, "commit": commit,
+        "run": run_id, "set": f"PCBench tier {a.tier}" + (f" + placement ({a.place}" + (f", component rules {a.place_crules}" if a.place_crules else "") + ")" if a.place else ""), "boards": n, "commit": commit,
         "place_mode": a.place,
+        "place_crules": a.place_crules,
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),
