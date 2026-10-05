@@ -1,5 +1,6 @@
 #include "route/router.hpp"
 #include "route/escape.hpp"
+#include "route/heat_grid.hpp"
 #include "route/global_router.hpp"
 
 #include <algorithm>
@@ -821,6 +822,7 @@ struct Router::Impl {
       if (++expanded > exp_cap) break;
       if (live && (expanded & 63) == 0) {
         recent[recent_n++ % recent.size()] = {at(w.x0 + cx, w.y0 + cy), l};
+        heat_exp.add(at(w.x0 + cx, w.y0 + cy), 64);  // one sample stands for the 64 expansions since the last
         if ((expanded & 8191) == 0) emit_frontier();
       }
       const std::int64_t gs = sn[s].g;
@@ -1293,6 +1295,25 @@ struct Router::Impl {
   bool live = false;  // a viewer wants transient messages
   std::array<std::pair<Point, int>, 96> recent{};
   std::size_t recent_n = 0;
+  // Heatmap overlays (doc 09 §3, doc 13 `heatmap`): where the searches spent their expansions, and the PathFinder
+  // history cost per cell. Filled only while a sink is attached and never read by the router.
+  HeatGrid heat_exp, heat_hist;
+  long heat_last = 0;  // res.expansions at the last heatmap message
+  // Resent by work done, not by wall time, so a recording is the same for the same input and seed.
+  long heat_every() const { return opt.work_budget > 0 ? std::max(200'000L, opt.work_budget / 40) : 2'000'000L; }
+  void emit_heatmaps(bool force) {
+    if (!opt.sink || !heat_exp.ready()) return;
+    if (!force && res.expansions - heat_last < heat_every()) return;
+    heat_last = res.expansions;
+    emit(heat_exp.message("expansions", -1));
+    heat_hist.clear();
+    // Iterating the hash map is fine here: raise() keeps the maximum per cell, which does not depend on order.
+    for (const auto& [key, hv] : history) {
+      const int gx = static_cast<int>(key & 0xFFFFFF), gy = static_cast<int>((key >> 24) & 0xFFFFFF);
+      if (gx < nx && gy < ny) heat_hist.raise(at(gx, gy), hv);
+    }
+    emit(heat_hist.message("history", -1));
+  }
   void emit_frontier() {
     if (!opt.sink || !opt.sink->wants_transient()) return;
     std::string m = "{\"type\":\"frontier\",\"conn\":" + std::to_string(current) + ",\"layer\":" + std::to_string(recent[0].second) + ",\"pts\":[";
@@ -2166,6 +2187,10 @@ struct Router::Impl {
       if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
     }
     live = opt.sink != nullptr;
+    if (live) {
+      heat_exp.init(lat, pitch);
+      heat_hist.init(lat, pitch);
+    }
     if (opt.diff_pairs || !opt.pair_nets.empty()) {
       const int np = route_diff_pairs();
       if (tdbg) std::fprintf(stderr, "[%.2f s] differential pairs routed coupled: %d\n", elapsed(), np);
@@ -2326,6 +2351,7 @@ struct Router::Impl {
         }
         emit_stats("route");
         if (opt.sink && (res.routed % 8 == 0 || pending.empty())) emit_ratsnest();
+        emit_heatmaps(false);
         if (res.routed > best_routed) {
           snapshot();
           snapshot_unrouted();
@@ -2398,6 +2424,7 @@ struct Router::Impl {
     if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
     std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
                  xf_strict_wide, xf_soft_conf, xf_soft_wide);
+    emit_heatmaps(true);
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
     return std::move(res);

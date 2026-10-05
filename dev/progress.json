@@ -205,12 +205,16 @@
      "done": true
     },
     {
-     "text": "Replay log, heatmaps, FlatBuffers",
-     "done": false
+     "text": "Replay log (zstd frames, --record FILE.zst) and heatmaps (expansions, history) live and in replay; test: recording/viewing leave the routed board byte-identical",
+     "done": true
     },
     {
      "text": "Event recording (route --record) and replay (tracemaker-view --replay); test: replay reproduces the routed board exactly",
      "done": true
+    },
+    {
+     "text": "FlatBuffers schema for the protocol and replay log (deferred until the message set is stable, D45)",
+     "done": false
     }
    ]
   },

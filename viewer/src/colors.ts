@@ -39,3 +39,33 @@ export const theme = {
   failure: hex('#ff4d5e'),
   highlight: hex('#ffffff'),
 };
+
+// Inferno colour map (perceptually uniform, readable on dark backgrounds; doc 09 §3), as the degree-6 polynomial
+// fit published by "mattz" on Shadertoy (CC0). The heatmap shader builds its polynomial from the same table.
+export const INFERNO_COEFFS: [number, number, number][] = [
+  [0.0002189403691192265, 0.001651004631001012, -0.01948089843709184],
+  [0.1065134194856116, 0.5639564367884091, 3.932712388889277],
+  [11.60249308247187, -3.972853965665698, -15.9423941062914],
+  [-41.70399613139459, 17.43639888205313, 44.35414519872813],
+  [77.162935699427, -33.40235894210092, -81.80730925738993],
+  [-71.31942824499214, 32.62606426397723, 73.20951985803202],
+  [25.13112622477341, -12.24266895238567, -23.07032500287172],
+];
+
+export function inferno(t: number): RGBA {
+  const x = Math.min(1, Math.max(0, t));
+  const c: number[] = [0, 0, 0];
+  for (let k = 0; k < 3; k++) {
+    let v = 0;
+    for (let i = INFERNO_COEFFS.length - 1; i >= 0; i--) v = v * x + INFERNO_COEFFS[i][k];
+    c[k] = Math.min(1, Math.max(0, v));
+  }
+  return [c[0], c[1], c[2], 1];
+}
+
+/** CSS linear-gradient of the inferno map, for legends. */
+export function infernoGradient(): string {
+  const stops: string[] = [];
+  for (let i = 0; i <= 8; i++) stops.push(`${css(inferno(i / 8))} ${(i * 12.5).toFixed(1)}%`);
+  return `linear-gradient(90deg, ${stops.join(', ')})`;
+}

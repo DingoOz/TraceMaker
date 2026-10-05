@@ -56,6 +56,22 @@ export interface FailureMsg {
   region?: [number, number, number, number];
 }
 
+/** Overlay grid (doc 13): row-major w*h bytes 0–255, cell size in nm, layer -1 = all layers. `scale` says how
+ *  raw values became bytes ("sqrt": byte = 255·sqrt(v / max); absent: linear). */
+export interface HeatmapMsg {
+  type: 'heatmap';
+  name: string;
+  x0: number;
+  y0: number;
+  cell: number;
+  w: number;
+  h: number;
+  layer: number;
+  max: number;
+  scale?: string;
+  data: number[];
+}
+
 export type Message =
   | BoardMsg
   | StatsMsg
@@ -68,7 +84,7 @@ export type Message =
   | { type: 'ratsnest'; edges: [number, number, number, number, number][] }
   | { type: 'frontier'; conn: number; layer: number; pts: XY[] }
   | { type: 'path_try'; conn: number; pts: [number, number, number][] }
-  | { type: 'heatmap'; name: string; x0: number; y0: number; cell: number; w: number; h: number; layer: number; max: number; data: number[] }
+  | HeatmapMsg
   | { type: 'stage'; name: string; state: 'begin' | 'end'; detail?: string }
   | { type: 'log'; level: string; text: string }
   // Escape planning (M9): reserved corridor per dense-package pin, released when the pin is connected; dead pins.

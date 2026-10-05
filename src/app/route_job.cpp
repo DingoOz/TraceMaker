@@ -8,6 +8,7 @@
 #include <fstream>
 #include <memory>
 #include <mutex>
+#include <sstream>
 #include <thread>
 
 #include "crules/engine.hpp"
@@ -17,6 +18,7 @@
 #include "io/kicad/project_reader.hpp"
 #include "learn/knowledge_base.hpp"
 #include "server/messages.hpp"
+#include "server/replay_log.hpp"
 #include "server/viewer_server.hpp"
 
 namespace tmk::app {
@@ -38,25 +40,29 @@ __attribute__((format(printf, 1, 2))) std::string fmt(const char* f, ...) {
   return s;
 }
 
-// Records router events (JSON lines with a time stamp) for replay, e.g. comparison videos.
+// Records router events (JSON lines with a time stamp) for replay, e.g. comparison videos. A path ending in
+// ".zst" is written zstd-compressed (server/replay_log.hpp, decision D45).
 class FileSink final : public events::Sink {
  public:
-  explicit FileSink(const std::string& path) : f_(path), t0_(std::chrono::steady_clock::now()) {}
+  explicit FileSink(const std::string& path) : w_(path), t0_(std::chrono::steady_clock::now()) {}
   void publish(std::string json) override {
     if (json.size() < 2 || json.front() != '{') return;
-    if (json.rfind("{\"t\":", 0) == 0) {  // already time-stamped (buffered portfolio replay)
-      std::lock_guard<std::mutex> lk(m_);
-      f_ << json << "\n";
-      return;
-    }
-    const double t = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0_).count();
+    const bool stamped = json.rfind("{\"t\":", 0) == 0;  // already time-stamped (buffered portfolio replay)
+    const bool keyframe = !stamped && server::message_type(json) == "board";  // snapshots are never buffered
     std::lock_guard<std::mutex> lk(m_);
-    f_ << "{\"t\":" << t << "," << json.substr(1) << "\n";
+    if (stamped) {
+      w_.write_line(json);
+    } else {
+      std::ostringstream t;
+      t << std::chrono::duration<double>(std::chrono::steady_clock::now() - t0_).count();
+      w_.write_line("{\"t\":" + t.str() + "," + json.substr(1));
+    }
+    if (keyframe) w_.end_frame();  // the snapshot is a frame of its own: a reader can start from it
   }
   bool wants_transient() const override { return false; }
 
  private:
-  std::ofstream f_;
+  server::ReplayWriter w_;
   std::chrono::steady_clock::time_point t0_;
   std::mutex m_;
 };

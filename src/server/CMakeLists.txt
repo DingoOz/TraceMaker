@@ -6,6 +6,18 @@ add_library(tm::viz ALIAS tm_viz_messages)
 target_link_libraries(tm_viz_messages PUBLIC tm::model tm::drc PRIVATE nlohmann_json::nlohmann_json)
 tm_set_warnings(tm_viz_messages)
 
+# Replay log (plain or zstd-compressed JSON lines; doc 09 §2, decision D45).
+find_package(zstd CONFIG REQUIRED)
+add_library(tm_replay STATIC replay_log.cpp)
+add_library(tm::replay ALIAS tm_replay)
+target_link_libraries(tm_replay PUBLIC tm::core)
+if(TARGET zstd::libzstd_shared)
+  target_link_libraries(tm_replay PRIVATE zstd::libzstd_shared)
+else()
+  target_link_libraries(tm_replay PRIVATE zstd::libzstd_static)
+endif()
+tm_set_warnings(tm_replay)
+
 # HTTP + WebSocket server (Boost.Beast) serving the viewer and streaming messages.
 find_package(Boost 1.81 CONFIG REQUIRED)
 find_package(Threads REQUIRED)
@@ -23,14 +35,14 @@ target_compile_options(tm_server PRIVATE ${TM_SERVER_TSAN_FLAGS})
 
 find_package(CLI11 CONFIG REQUIRED)
 add_executable(tracemaker-view view_main.cpp)
-target_link_libraries(tracemaker-view PRIVATE tm::server tm::viz tm::io tm::drc CLI11::CLI11)
+target_link_libraries(tracemaker-view PRIVATE tm::server tm::replay tm::viz tm::io tm::drc CLI11::CLI11)
 tm_set_warnings(tracemaker-view)
 
 if(TM_BUILD_TESTS)
   find_package(Catch2 3 REQUIRED)
   include(Catch)
-  add_executable(tm_server_tests test_server.cpp)
-  target_link_libraries(tm_server_tests PRIVATE tm::server tm::viz tm::io Boost::headers Threads::Threads
+  add_executable(tm_server_tests test_server.cpp test_replay.cpp)
+  target_link_libraries(tm_server_tests PRIVATE tm::server tm::replay tm::route tm::viz tm::io Boost::headers Threads::Threads
                                                 nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
   target_compile_definitions(tm_server_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
   tm_set_warnings(tm_server_tests)
