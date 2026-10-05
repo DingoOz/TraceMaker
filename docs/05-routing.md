@@ -220,3 +220,14 @@ fixed budget, because negotiated searches cost about twice as much per connectio
 help once the global plan models pin access, via demand and multi-pin topology well enough to be trusted; until then
 the throughput problem is attacked in the detailed router.
 
+**Search cap.** Failed searches stop at `max_expansions` (3 M). One variant, fixed budget, the same 10 boards:
+3 M / 2 M / 1 M / 750 k / 500 k routed 8,285 / 8,309 / 8,381 / 8,371 / 8,363. The KiCad-judged tiers with the real
+setup (8 variants, 120 s) did not confirm it: tier B 5,167 → 5,161 routed (67.5 % clean both), tier C 9,523 → 9,512
+and 63.3 % → 60.0 % clean (two boards lost, one gained). The default stays 3 M; fixed-budget single-variant gains
+must be checked on the tiers before they become defaults.
+
+**Next.** The detailed router's failed searches are the cost; options that keep the search exact: reuse a failed
+search's explored region for the next window instead of starting over, a cheap reachability pre-check on a coarse
+grid of fixed plus routed copper before a full A*, and making the global plan trustworthy (pin access and via
+demand in the tile capacities, multi-pin Steiner topology) before it guides anything.
+
