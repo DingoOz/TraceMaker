@@ -22,7 +22,7 @@ Coord ceil_half(Coord v) { return (v + 1) / 2; }
 
 }  // namespace
 
-PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const drc::RuleEngine& re, NetId a, NetId c) {
+PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const drc::RuleEngine& re, NetId a, NetId c, Coord via_mask) {
   const auto& na = rules.class_for(b.nets[static_cast<std::size_t>(a)].name);
   const auto& nc = rules.class_for(b.nets[static_cast<std::size_t>(c)].name);
   const auto& m = rules.minimums;
@@ -62,6 +62,7 @@ PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const
   Coord vgap = req;
   if (na.has_diff_pair_gap) vgap = std::max(vgap, na.diff_pair_via_gap);
   if (nc.has_diff_pair_gap) vgap = std::max(vgap, nc.diff_pair_via_gap);
+  if (via_mask > 0) vgap = std::max(vgap, 2 * via_mask + 1'000);  // as route::Obstacles checks untented vias
   r.via_offset = std::max({r.offset, ceil_half(r.via_diameter + vgap), ceil_half(r.via_drill + m.hole_to_hole),
                            ceil_half(r.via_drill / 2 + r.via_diameter / 2 + m.hole_clearance)}) +
                  kRoundMargin;

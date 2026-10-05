@@ -6,7 +6,7 @@ deterministic budget and reports, per pair, the coupled share of its length, the
   bench/pair_eval.py BOARD [BOARD ...] [--work 30000000] [--jobs 4] [--drc-jobs 2] [--out build/pair_eval]
                      [--on-args "--diff-pairs"] [--json results.json]
 
-BOARD is a PCBench fixture name or a .kicad_pcb path. Both runs use --threads 1 --no-kb --no-gpu, so they are
+BOARD is a PCBench fixture name or a .kicad_pcb path. Both runs use --variants 1 --threads 1 --no-kb --no-gpu, so they are
 deterministic and differ only by the pair options.
 """
 import argparse
@@ -40,7 +40,7 @@ def board_path(name: str) -> pathlib.Path:
 def route(src: pathlib.Path, out: pathlib.Path, work: int, extra: list[str]) -> dict:
     js = out.with_suffix(".json")
     if not out.exists() or not js.exists():
-        cmd = [str(TM), "route", str(src), "-o", str(out), "--work", str(work), "--threads", "1", "--no-kb", "--no-gpu",
+        cmd = [str(TM), "route", str(src), "-o", str(out), "--work", str(work), "--variants", "1", "--threads", "1", "--no-kb", "--no-gpu",
                "--json", str(js), *extra]
         r = subprocess.run(cmd, capture_output=True, text=True)
         (out.with_suffix(".log")).write_text(r.stderr + r.stdout)

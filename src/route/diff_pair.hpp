@@ -30,7 +30,10 @@ struct PairRule {
   std::string source;       // "rule", "net class" or "clearance" (for the report)
 };
 
-PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const drc::RuleEngine& re, model::NetId a, model::NetId c);
+// `via_mask`: solder-mask expansion of untented vias (route::Obstacles::via_mask()); two vias then need their mask
+// openings apart as well.
+PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const drc::RuleEngine& re, model::NetId a, model::NetId c,
+                   Coord via_mask = 0);
 
 // Octilinear unit direction d (0..7, E, NE, N, NW, W, SW, S, SE with y down) and its left normal, as doubles.
 struct Dir2 { double x, y; };

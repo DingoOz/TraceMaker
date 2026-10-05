@@ -12,6 +12,9 @@
 #include <thread>
 
 #include "crules/engine.hpp"
+#include "drc/copper.hpp"
+#include "drc/rule_engine.hpp"
+#include "route/diff_pair.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
@@ -240,6 +243,29 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
                  {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
                  {"escape_corridors", res.escape_corridors}};
+  // Differential pairs (doc 05 §14): how each wanted pair came out, measured on the new copper (only when pairs are on).
+  if (opt.diff_pairs || !opt.pair_nets.empty()) {
+    const auto cm = drc::build_copper(lb.board);
+    const drc::RuleEngine re(lb.board, rules, cm);
+    auto want = opt.diff_pairs ? route::named_pairs(lb.board, re) : std::vector<std::pair<model::NetId, model::NetId>>{};
+    for (const auto& p : opt.pair_nets)
+      if (std::find(want.begin(), want.end(), p) == want.end() && std::find(want.begin(), want.end(), std::make_pair(p.second, p.first)) == want.end())
+        want.push_back(p);
+    nlohmann::json pj = nlohmann::json::array();
+    log(fmt("differential pairs: %zu wanted, %d routed coupled", want.size(), res.pairs));
+    for (const auto& [na, nb] : want) {
+      const auto pr = route::pair_rule(lb.board, rules, re, na, nb);
+      const auto st = route::measure_pair(res.tracks, res.vias, na, nb, route::coupled_threshold(pr));
+      const std::string& a = lb.board.nets[static_cast<std::size_t>(na)].name;
+      const std::string& b = lb.board.nets[static_cast<std::size_t>(nb)].name;
+      log(fmt("  %s / %s: %.1f mm, coupled %.0f %%, gap %.3f mm (target %.3f, %s), skew %.3f mm, vias %d/%d", a.c_str(), b.c_str(),
+              (st.length_a + st.length_b) / 2e6, 100 * st.coupled_share(), st.gap_median / 1e6, nm_to_mm(pr.gap), pr.source.c_str(), st.skew() / 1e6,
+              st.vias_a, st.vias_b));
+      pj.push_back({{"net_a", a}, {"net_b", b}, {"coupled_share", st.coupled_share()}, {"gap_mm", st.gap_median / 1e6}, {"target_gap_mm", nm_to_mm(pr.gap)},
+                    {"skew_mm", st.skew() / 1e6}, {"length_mm", (st.length_a + st.length_b) / 2e6}});
+    }
+    out.summary["pairs"] = pj;
+  }
   if (!job.json_out.empty()) std::ofstream(job.json_out) << out.summary.dump(1);
   if (server && job.hold) {
     log("routing finished; viewer still serving at " + server->url() + " (Ctrl-C to quit)");
