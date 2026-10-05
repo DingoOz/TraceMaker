@@ -412,8 +412,7 @@ int optimise_rotations(const Problem& p, Placement& pl, int max_passes) {
       const std::uint8_t r0 = pl.rot[i];
       std::int64_t best = INT64_MAX;
       std::uint8_t best_r = r0;
-      for (std::uint8_t r : {r0, static_cast<std::uint8_t>((r0 + 1) & 3), static_cast<std::uint8_t>((r0 + 2) & 3),
-                             static_cast<std::uint8_t>((r0 + 3) & 3)}) {
+      for (std::uint8_t r : {r0, with_turn(r0, r0 + 1), with_turn(r0, r0 + 2), with_turn(r0, r0 + 3)}) {
         // Rotate about the body centre so the part stays where the spreading put it.
         const Point c = pl.pos[i] + body_centre(p.parts[i], r0);
         const Point save = pl.pos[i];

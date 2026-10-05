@@ -58,6 +58,7 @@ struct EcoOptions {
   double disp_cost = 0.25;     // ranking: one mm of displacement costs this many mm of signal HPWL
   Coord room = 2'000'000;      // ranking: clearance around a failed pad counts up to this distance
   double room_gain = 4.0;      // ranking: one mm more room around a failed pad is worth this many mm of signal HPWL
+  double via_mm = 0;           // ranking: side-assignment via estimate (only when flipping is on; D48)
   std::function<void(const std::string&)> log;
   EcoMemory* memory = nullptr;  // shared across calls (e.g. the rounds of the routability loop); null = local
 };

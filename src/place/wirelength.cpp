@@ -26,6 +26,25 @@ std::int64_t weighted_hpwl(const Problem& p, const Placement& pl) {
   return s;
 }
 
+std::array<int, 2> side_counts(const Problem& p, const Placement& pl, int net) {
+  std::array<int, 2> c{0, 0};
+  if (p.nets[z(net)].affinity) return c;
+  for (int pi : p.nets[z(net)].pins) {
+    const Pin& q = p.pins[z(pi)];
+    if (q.one_side) ++c[z(p.parts[z(q.part)].side_in(pl.rot[z(q.part)]))];
+  }
+  return c;
+}
+
+std::int64_t side_vias(const Problem& p, const Placement& pl, bool weighted) {
+  std::int64_t s = 0;
+  for (std::size_t n = 0; n < p.nets.size(); ++n) {
+    const auto c = side_counts(p, pl, static_cast<int>(n));
+    s += (weighted ? p.nets[n].weight : 1) * std::min(c[0], c[1]);
+  }
+  return s;
+}
+
 std::int64_t total_hpwl(const Problem& p, const Placement& pl) {
   std::int64_t s = 0;
   for (std::size_t n = 0; n < p.nets.size(); ++n)

@@ -122,7 +122,7 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
       fp.push_back(f.b);
     }
     scale_bins(cm, fp, cm.cell, 0.5);
-    const std::int64_t base = anneal_cost(q, res.pl, o.alpha_cross_mm, o.beta, &cm);
+    const std::int64_t base = anneal_cost(q, res.pl, o.alpha_cross_mm, o.beta, &cm, o.via_mm);
     const std::vector<int> involved = parts_near(p, res.pl, res.eval.failed, o.corridor);
     Legality L(p);
     L.reset(res.pl);
@@ -139,7 +139,7 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
         t.rot[z(m.b)] = m.rb;
         disp += std::llabs(m.pb.x - res.pl.pos[z(m.b)].x) + std::llabs(m.pb.y - res.pl.pos[z(m.b)].y);
       }
-      m.score = anneal_cost(q, t, o.alpha_cross_mm, o.beta, &cm) - base + disp_units * disp;
+      m.score = anneal_cost(q, t, o.alpha_cross_mm, o.beta, &cm, o.via_mm) - base + disp_units * disp;
       // Room around the failed pads: the router mostly reports pads it could not escape from ("boxed in"), so
       // moving a neighbour's body away from such a pad (up to o.room) is credited.
       for (int which = 0; which < (m.b >= 0 ? 2 : 1); ++which) {
@@ -169,7 +169,7 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
         }
       const Point c = pos + centre(pt, r);
       for (int dr = 1; dr <= 3; ++dr) {
-        const int r2 = (r + dr) & 3;
+        const int r2 = with_turn(r, r + dr);
         const Point np = snap(c - centre(pt, r2));
         if (!L.legal(a, np, r2)) continue;
         add(EcoMove{a, -1, np, {}, static_cast<std::uint8_t>(r2), 0, pt.ref + " rotate " + std::to_string(90 * dr), 0, 0});
@@ -183,8 +183,10 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
         if (std::fabs(dk_f - std::round(dk_f)) > 1e-6) continue;
         const int dk = static_cast<int>(std::lround(dk_f)) & 3;
         const Point na = res.pl.pos[bi], nb = pos;
-        const auto ra = static_cast<std::uint8_t>((res.pl.rot[bi] + dk) & 3);
-        const auto rb = static_cast<std::uint8_t>((r - dk + 4) & 3);
+        const auto ra = swap_state(res.pl.rot[bi], dk);
+        const auto rb = swap_state(r, -dk);
+        // A side change (one of the pair is flipped, the other is not) needs both parts to be allowed to flip.
+        if (flipped(ra) != flipped(r) && !(pt.may_flip() && pb.may_flip())) continue;
         if (!L.inside_ok(a, na, ra) || !L.inside_ok(b, nb, rb)) continue;
         if (L.find_conflict(a, na, ra, b) >= 0 || L.find_conflict(b, nb, rb, a) >= 0 || L.pair_conflict(a, na, ra, b, nb, rb)) continue;
         if (b < a && std::binary_search(involved.begin(), involved.end(), b)) continue;  // the pair is generated once
@@ -317,6 +319,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       eo.candidates = o.eco_candidates;
       eo.beta = o.beta;
       eo.alpha_cross_mm = o.place.alpha_cross_mm;
+      eo.via_mm = o.place.flip ? o.place.via_mm : 0;
       eo.weight_boost = o.weight_boost;
       eo.log = o.log;
       eo.memory = &memory;

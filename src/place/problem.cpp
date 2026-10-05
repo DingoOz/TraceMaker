@@ -153,6 +153,27 @@ Point rot90(Point p, int r) {
   }
 }
 
+int Problem::flippable_count() const {
+  int n = 0;
+  for (const auto& pt : parts) n += pt.flippable ? 1 : 0;
+  return n;
+}
+
+Shape mirrored(const Shape& s) {
+  Shape t = s;
+  for (auto& q : t.pts) q = mirror_y(q);
+  if (t.closed) std::reverse(t.pts.begin(), t.pts.end());  // keep the winding
+  t.update_box();
+  return t;
+}
+
+model::LayerMask flip_layers(model::LayerMask m, int n) {
+  model::LayerMask out = 0;
+  for (int i = 0; i < n && i < 64; ++i)
+    if (m & model::layer_bit(i)) out |= model::layer_bit(n - 1 - i);
+  return out;
+}
+
 Shape translated(const Shape& s, Point d) {
   Shape t = s;
   for (auto& q : t.pts) q = q + d;
@@ -457,35 +478,47 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     long double cy_area = 0;
     for (const auto& side : cy0)
       for (const auto& s : side) cy_area += static_cast<long double>(s.box.x1 - s.box.x0 + cc) * static_cast<long double>(s.box.y1 - s.box.y0 + cc);
-    for (int r = 0; r < 4; ++r) {
-      PartGeom& g = pt.geom[z(r)];
+    // Flip candidates (D48): surface mount only (no drilled hole: a through obstacle is the same on both sides, but
+    // KiCad's THT parts stay on top by default, doc 04 §2), two copper sides, and a footprint the writer can mirror.
+    const bool flip_candidate = opt.flip && through.empty() && p.copper_layers >= 2 && (opt.flip_ok.empty() || opt.flip_ok[fi] != 0);
+    for (int state = 0; state < (flip_candidate ? kStates : 4); ++state) {
+      const bool fl = flipped(state);
+      const int r = state & 3;
+      PartGeom& g = pt.geom[z(state)];
+      auto pre = [&](const Shape& s) { return fl ? mirrored(s) : s; };
       auto rot_shape = [&](const Shape& s) {
         Shape t = s;
         for (auto& q : t.pts) q = rot90(q, r);
         t.update_box();
         return t;
       };
-      for (int s = 0; s < 2; ++s)
+      for (int s = 0; s < 2; ++s) {
+        const int to = fl ? 1 - s : s;  // a flipped part's front courtyard is on the back
         for (const auto& sh : cy0[z(s)]) {
-          g.cy[z(s)].push_back(rot_shape(sh));
-          g.body.add(g.cy[z(s)].back().box);
-          g.cy_in[z(s)].push_back(rot_shape(inset_convex(sh, kEdgeTolerance)));
-          g.edge_box.add(g.cy_in[z(s)].back().box);
+          g.cy[z(to)].push_back(rot_shape(pre(sh)));
+          g.body.add(g.cy[z(to)].back().box);
+          g.cy_in[z(to)].push_back(rot_shape(inset_convex(pre(sh), kEdgeTolerance)));
+          g.edge_box.add(g.cy_in[z(to)].back().box);
         }
+      }
       for (const auto& s : through) {
-        g.through.push_back(rot_shape(s));
+        g.through.push_back(rot_shape(pre(s)));
         g.body.add(g.through.back().box);
       }
       for (const auto& s : pads) {
-        g.pads.push_back(rot_shape(s));
+        g.pads.push_back(rot_shape(pre(s)));
         g.edge_box.add(g.pads.back().box.inflated(p.edge_clearance));
       }
       for (const auto& cs : fp_copper[fi]) {
-        g.copper.push_back(CopperShape{rot_shape(translated(cs.s, Point{} - fp.pos)), cs.layers, cs.net, cs.need});
+        g.copper.push_back(CopperShape{rot_shape(pre(translated(cs.s, Point{} - fp.pos))), fl ? flip_layers(cs.layers, p.copper_layers) : cs.layers,
+                                       cs.net, cs.need});
         g.copper_box.add(g.copper.back().s.box);
       }
       g.body.add(g.copper_box);
     }
+    if (flip_candidate) pt.flippable = true;  // confirmed below once movability is final
+    else if (opt.flip) pt.flip_reason = !through.empty() ? "through-hole or drilled" : p.copper_layers < 2 ? "single copper layer"
+                                       : opt.flip_why.size() > fi && !opt.flip_why[fi].empty() ? opt.flip_why[fi] : "footprint cannot be mirrored";
     pt.area = static_cast<Coord>(std::min<long double>(cy_area, 4e18L));
     pt.shape_key = std::hash<std::string>{}(fp.lib_id) * 31u + static_cast<std::uint64_t>(pt.side);
 
@@ -538,12 +571,18 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   }
 
   // Nets and pins.
-  std::vector<std::vector<std::pair<int, Point>>> net_pins(b.nets.size());  // (part, absolute pad position)
+  struct NetPin {
+    int first;   // part
+    Point pos;   // absolute pad position
+    bool smd;    // surface mount: copper on one side only
+  };
+  std::vector<std::vector<NetPin>> net_pins(b.nets.size());
   for (const auto& pd : b.pads) {
     if (pd.net <= 0 || pd.footprint < 0) continue;
     const int pi = part_of_fp[z(pd.footprint)];
     if (pi < 0) continue;
-    net_pins[z(pd.net)].emplace_back(pi, pd.pos);
+    const bool smd = pd.drill_x == 0 && (pd.type == model::PadType::Smd || pd.type == model::PadType::Connect);
+    net_pins[z(pd.net)].push_back(NetPin{pi, pd.pos, smd});
   }
   for (std::size_t n = 1; n < b.nets.size(); ++n) {
     const auto& v = net_pins[n];
@@ -557,10 +596,11 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     net.weight = power ? kPowerWeight : kSignalWeight;
     net.signal = !power;
     const int ni = static_cast<int>(p.nets.size());
-    for (const auto& [part, abs] : v) {
+    for (const auto& [part, abs, smd] : v) {
       Pin pin;
       pin.part = part;
       pin.net = ni;
+      pin.one_side = smd;
       const Point off = abs - p.parts[z(part)].pos0;
       for (int r = 0; r < 4; ++r) pin.off[z(r)] = rot90(off, r);
       net.pins.push_back(static_cast<int>(p.pins.size()));
@@ -684,6 +724,26 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     p.notes.push_back("component rules: " + std::to_string(added) + " connector edge pull(s)" +
                       (fixed ? ", " + std::to_string(fixed) + " connector(s) fixed (not pulled)" : std::string()) +
                       (p.outline.size() < 3 ? "; no closed board outline: no pulls" : std::string()));
+  }
+  // Flipped states: pin offsets mirrored in y, then turned (see kStates).
+  for (auto& q : p.pins)
+    for (int r = 0; r < 4; ++r) q.off[z(4 + r)] = rot90(mirror_y(q.off[0]), r);
+  // Side assignment: only parts that may move at all, never parts the user pinned to their side (rule 6).
+  if (opt.flip) {
+    int n = 0;
+    for (auto& pt : p.parts) {
+      if (!pt.movable) {
+        pt.flippable = false;
+        pt.flip_reason.clear();
+        continue;
+      }
+      if (pt.flippable && std::find(opt.keep_side.begin(), opt.keep_side.end(), pt.ref) != opt.keep_side.end()) {
+        pt.flippable = false;
+        pt.flip_reason = "--keep-side";
+      }
+      n += pt.flippable ? 1 : 0;
+    }
+    p.notes.push_back("side assignment: " + std::to_string(n) + " of " + std::to_string(p.movable_count()) + " movable part(s) may flip");
   }
   return p;
 }

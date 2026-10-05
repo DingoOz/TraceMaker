@@ -373,8 +373,8 @@
      "done": true
     },
     {
-     "text": "Side assignment (flip to the back)",
-     "done": false
+     "text": "Side assignment (flip to the back): opt-in --flip, annealer flip move + via estimate, KiCad-exact mirror (2,529 footprints = pcbnew); 23 boards HPWL -8%, crossings -31%, 0 new DRC (D48)",
+     "done": true
     },
     {
      "text": "legalisation (greedy minimum displacement; LP not done)",

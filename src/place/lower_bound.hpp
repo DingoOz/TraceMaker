@@ -16,7 +16,8 @@ namespace tmk::place {
 enum class RotationModel {
   Fixed,  // movable parts keep the rotations in the given placement: the exact relaxed optimum for them
   Any,    // valid for every rotation of the movable parts (each pin may take its most favourable offset
-          // per axis independently): a weaker bound that also holds for our final placement
+          // per axis independently; both sides for parts that may flip): a weaker bound that also holds for our
+          // final placement
 };
 
 // Minimum weighted HPWL (Σ weight · HPWL, nm) over all positions of the movable parts with overlaps and the
