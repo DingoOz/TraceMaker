@@ -17,6 +17,7 @@
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
 #include "route/escape.hpp"
+#include "route/escape_flow.hpp"
 #include "route/obstacles.hpp"
 #include "core/version.hpp"
 #include "gpu/device.hpp"
@@ -219,7 +220,7 @@ int cmd_debug_pad(const std::string& path, const std::string& ref, const std::st
   return 1;
 }
 
-int cmd_escape(const std::string& path, const std::string& json_path) {
+int cmd_escape(const std::string& path, const std::string& json_path, bool flow) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   tmk::model::Board b = lb.board;
@@ -246,7 +247,49 @@ int cmd_escape(const std::string& path, const std::string& json_path) {
     j.push_back({{"ref", pe.ref}, {"pitch_mm", tmk::nm_to_mm(pe.pitch)}, {"pins", pe.pins}, {"escapable", pe.escapable}, {"dead", jd}, {"hint", pe.hint}});
   }
   std::printf("%zu dense packages, %d pins to route, %d cannot escape\n", parts.size(), pins, dead);
-  if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"parts", j}, {"pins", pins}, {"dead", dead}}.dump(1) << "\n";
+  nlohmann::json jf;
+  if (flow) {
+    // Escape plan v2 at the net classes' rules (the router's strict-pass width, clearance and class via).
+    std::map<tmk::model::NetId, int> on_net;
+    for (const auto& p : b.pads)
+      if (p.net > 0) ++on_net[p.net];
+    std::vector<char> needs(b.pads.size(), 0);
+    for (std::size_t i = 0; i < b.pads.size(); ++i) needs[i] = b.pads[i].net > 0 && on_net[b.pads[i].net] > 1;
+    auto nc = [&](tmk::model::NetId n) -> const tmk::model::NetClass& { return rules.class_for(b.nets[static_cast<std::size_t>(n)].name); };
+    auto width = [&](tmk::model::NetId n) { return std::max(nc(n).track_width, rules.minimums.track_width); };
+    auto via_d = [&](tmk::model::NetId n) {
+      const tmk::Coord drill = std::max(nc(n).via_drill, rules.minimums.through_hole_diameter);
+      return std::max({nc(n).via_diameter, rules.minimums.via_diameter, drill + 2 * rules.minimums.via_annular_width});
+    };
+    auto via_drill = [&](tmk::model::NetId n) { return std::max(nc(n).via_drill, rules.minimums.through_hole_diameter); };
+    auto ok = [](std::int32_t c, tmk::model::NetId n) { return c == tmk::route::Obstacles::kFree || c == static_cast<std::int32_t>(n); };
+    tmk::route::FlowEscapeInput in;
+    in.width = width;
+    in.clearance = [&](tmk::model::NetId n) { return std::max(nc(n).clearance, rules.minimums.clearance); };
+    in.via = via_d;
+    in.keep = [&](tmk::model::NetId n) { return width(n) + std::max(nc(n).clearance, rules.minimums.clearance); };
+    in.track_free = [&](int l, tmk::geom::Point p, tmk::model::NetId n) { return ok(obs.fixed_code(p, l, width(n) / 2, 0, n), n); };
+    in.via_free = [&](tmk::geom::Point p, tmk::model::NetId n) { return ok(obs.fixed_via_code(p, via_d(n), via_drill(n), 0, n), n); };
+    in.layers = b.copper_count();
+    tmk::route::FlowEscapeStats fs;
+    tmk::route::plan_escapes_flow(b, needs, in, {}, &fs);
+    std::printf("escape plan v2: %d deep arrays\n", fs.arrays);
+    jf = {{"arrays", fs.arrays}, {"rings", nlohmann::json::array()}, {"per_layer", fs.per_layer}};
+    for (std::size_t r = 0; r < fs.rings.size(); ++r) {
+      const auto& rp = fs.rings[r];
+      std::printf("  ring %2zu: %4d pins: %4d pad layer, %4d via + other layer, %4d via only, %4d none\n", r + 1, rp.pins, rp.pad_layer, rp.other_layer,
+                  rp.via_only, rp.none);
+      jf["rings"].push_back({{"ring", r + 1}, {"pins", rp.pins}, {"pad_layer", rp.pad_layer}, {"other_layer", rp.other_layer}, {"via_only", rp.via_only}, {"none", rp.none}});
+    }
+    std::printf("  escapes per layer:");
+    for (std::size_t l = 0; l < fs.per_layer.size(); ++l) std::printf(" %s %d", b.copper_name(static_cast<int>(l)).c_str(), fs.per_layer[l]);
+    std::printf("\n");
+  }
+  if (!json_path.empty()) {
+    nlohmann::json out{{"board", path}, {"parts", j}, {"pins", pins}, {"dead", dead}};
+    if (flow) out["flow"] = jf;
+    std::ofstream(json_path) << out.dump(1) << "\n";
+  }
   return 0;
 }
 
@@ -357,6 +400,9 @@ int main(int argc, char** argv) {
   route->add_flag("!--no-optimize", ropt.optimize, "Skip the post-routing clean-up pass (fewer vias, shorter tracks)");
   route->add_flag("--escape-plan,!--no-escape-plan", ropt.escape_plan, "Reserve escape corridors for the pins of dense packages (QFP, BGA) before routing");
   route->add_flag("--escape-second-ring", ropt.escape_second_ring, "Escape plan: second-ring balls between two outer balls (else dog-bone vias)")->group("");
+  route->add_flag("--escape-flow", ropt.escape_flow,
+                  "Escape plan v2: min-cost-flow channel and layer assignment for deep BGA arrays (implies --escape-plan; experimental)");
+  route->add_flag("--escape-report", ropt.escape_report, "Report the pins of deep BGA arrays per ring and how many were connected");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
   bool r_nogpu = false;
   route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of CUDA (same results)");
@@ -396,6 +442,8 @@ int main(int argc, char** argv) {
   std::string esc_board, esc_json;
   esc->add_option("board", esc_board)->required()->check(CLI::ExistingFile);
   esc->add_option("--json", esc_json, "Write the analysis as JSON");
+  bool esc_flow = false;
+  esc->add_flag("--flow", esc_flow, "Also plan deep BGA arrays by min-cost flow and report the channel/layer assignment per ring");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -439,7 +487,7 @@ int main(int argc, char** argv) {
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
-    if (*esc) return cmd_escape(esc_board, esc_json);
+    if (*esc) return cmd_escape(esc_board, esc_json, esc_flow);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);

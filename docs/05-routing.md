@@ -41,6 +41,8 @@ Lin et al.; negotiated fallback). Additions:
 - **Escape templates from the knowledge base** (doc 06 tier 3): a successful escape pattern for a footprint
   geometry + rule class is reused as the first candidate on later boards.
 - Escape solving for each dense part is independent → run in parallel.
+- Built so far: version 1, reserved corridors (§12); version 2, the min-cost-flow channel and layer assignment
+  above for deep arrays, opt-in (§14). The negotiated-congestion fallback is not built.
 
 ## 4. Global routing
 
@@ -156,7 +158,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Portfolio of 8 variants on a thread pool, early stop when one is complete (wall-clock mode), 2x pitch for two variants on large boards; with `--work` all 8 run at any `--threads` and the winner is chosen by a total order ending in the variant index, so the output is bit-identical across thread counts (D47) | Done | `route_portfolio` |
 | Global routing, first CPU version: tile graph (8 pitches), exact edge capacities, negotiated congestion, soft corridors (`--global`, off by default) | Experimental: no gain yet. On AmpOne, USBI2C01 and motor-3xdrv8833 (60 s, one variant) corridors shortened track a little but did not raise completion and sometimes added vias. Missing: Steiner topology, via capacity, layer assignment without via columns, corridor-restricted windows | `route/global_router.cpp` |
 | Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
-| Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Not built: min-cost-flow channel assignment, layer assignment, escape templates. See §12 | `route/escape.{hpp,cpp}`, `router.cpp` |
+| Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Version 2 (2026-10-05): min-cost-flow channel and layer assignment for deep arrays, opt-in (`--escape-flow`), measured below version 1. Not built: NC fallback, escape templates. See §12, §14 | `route/escape.{hpp,cpp}`, `router.cpp` |
 | Diff pairs and length tuning | Not started | |
 
 ## 12. Escape planning, version 1 (M9, 2026-10-04)
@@ -192,8 +194,8 @@ finish first under shortest-first. Second-ring channel corridors: mixed (logicbo
 pass on a 2,754 × 1,847 × 2 lattice at 0.035 mm takes the rest), and the remaining failures are mostly nogood skips
 and windows without a path. That is negotiation speed on large lattices (global routing, M6), not escape.
 
-**Not built yet (rest of M9).** Min-cost-flow channel assignment for arrays deeper than two rings (Yan & Wong),
-layer assignment per ring, escape templates in the knowledge base (doc 06 T3), and completion over escapable
+**Not built yet (rest of M9).** ~~Min-cost-flow channel assignment for arrays deeper than two rings (Yan & Wong),
+layer assignment per ring~~ (built 2026-10-05, opt-in, §14), escape templates in the knowledge base (doc 06 T3), and completion over escapable
 connections (the benchmark now reports a feasible clean pass per board, not per connection).
 
 ## 13. Global router v2, first steps (M6, 2026-10-05)
@@ -247,3 +249,78 @@ the hopeless retries cheap, and the retries that do find a path need a full A* i
 smaller window's g-values are not optimal in the larger one). Still open: making the global plan trustworthy (pin access and via
 demand in the tile capacities, multi-pin Steiner topology) before it guides anything.
 
+## 14. Escape planning, version 2: min-cost-flow channels and layers (M9, 2026-10-05)
+
+**Formulation** (`route/escape_flow.{hpp,cpp}`, `--escape-flow`, off by default; D49). Only *deep arrays* are
+planned this way: SMD pads of one footprint on a square grid (≥ 80 % of the balls within pitch/8 of one grid,
+which tolerates a few test or mounting pads; ≥ 5 × 5 points, ≥ 30 % populated, pads larger than the pitch left
+to the fixed-copper checks) with a pin to route in the third ring or deeper. Every other dense package keeps
+version 1's corridors (§12), so with no deep array the plan is version 1's exactly.
+
+1. *Pad layer* (Yan & Wong, DAC 2009, network-flow escape model with diagonal capacities). Nodes are the square
+   gaps between four balls (split into in/out with the gap's capacity), arcs join neighbouring gaps through the
+   channel between two balls. Channel capacity = how many tracks fit: k tracks need k·w + (k + 1)·s of free
+   gap, w and s the most common class width and clearance among the array's pins (ties: the smaller), gap =
+   pitch minus the two pad half-extents across the channel. Gap capacity = the same count across the narrower
+   diagonal (√2·pitch, integer square root, minus both pads' diagonal radii); every track turning in or crossing
+   a gap passes a diagonal, and taking the narrower one for all is conservative. A missing ball counts as a point
+   obstacle. Each channel midpoint and gap centre is also checked against fixed copper with the router's own
+   legality test (`fixed_code` at the planning width) and gets capacity 0 if blocked (thermal pads, planes,
+   keep-outs). Every ball to route is a unit source joined to its four gaps; gaps outside the array are the sink.
+   Min-cost max flow by successive shortest paths (Dijkstra on reduced costs; integer costs 7 per half
+   diagonal, 10 per channel step, 5 straight out of a perimeter ball), so as many balls as possible escape
+   without a via, by the shortest channel sequences.
+2. *Via sites* (dog-bones): the balls left get one of their four interstitial sites by a second min-cost flow
+   (one via per site; only sites no pad-layer escape crosses, where the via clears the four balls by the
+   clearance and that net's via passes the fixed-copper check; cost 0 for the site pointing away from the
+   package centre, 1 sideways, 2 inwards).
+3. *Further layers*, nearest to the pad layer first (the layer-by-layer assignment of Ozdal & Wong, TCAD 2006,
+   and Lin et al., DAC 2021): the same flow model on a grid shifted by half a pitch, where the obstacles are the
+   planned vias (all of them: through vias) and the nodes are the gaps between via sites. Balls that escape there
+   are assigned that layer; the others try the next layer.
+
+Flow paths are decomposed in source order with arcs in fixed order; escapes sharing a channel are placed side by
+side at the track pitch around the centre of the free gap. The corridor of a pin is its dog-bone (if any) plus the
+channel polyline (gap centres and channel points) on its layer, extended 2 mm past the array, reserved exactly as
+version 1's (blocked for other nets in strict searches, 2× crossing cost in negotiated ones, released when the
+pin connects, re-planned on restarts). Reservations only remove options; every commit is still checked exactly.
+`tracemaker escape <board> --flow` prints the assignment per ring (pad layer / via + other layer / via only /
+none) and per layer; `route --escape-report` reports per ring how many deep-array pins were connected.
+
+**What the plan finds on the BGA set** (`escape --flow`, the boards' own rules): 8 of the 17 boards have no
+deep array (LimeSDR_Sony's BGA-named part is too small to be one; EEZ, d20, VESC, red-scout have none); OtterCast's array
+has no channel and no via site under the fixture rules (rings 2–6: 0 of 42 balls); PocketBone (×3) and
+DoroidOscillo escape every ball on the pad layer; decelerator needs vias from ring 2; logicbone (2 layers) puts
+rings 1–2 and 62 of 92 ring-3 balls on F.Cu and 74 on B.Cu, but 130 balls of rings 3–10 get a via site with no
+room left on B.Cu between the vias; sbc and Own-Mailbox's DRAM have no via site for most inner balls (the
+solder-mask rule, §12).
+
+**Evaluation** (one variant, `--work N --variants 1 --threads 1 --no-gpu`, routed connections; rings =
+connected/pins of rings 1, 2, 3 of the deep arrays):
+
+| Board (budget) | Off | Version 1 (`--escape-plan`) | Version 2 (`--escape-flow`) |
+|---|---|---|---|
+| logicbone (160 M) | 907 (68/124, 60/114, 25/92) | **931** (71, 62, 25) | 916 (66, 56, 26) |
+| decelerator4030 (200 M) | 444 (9/44, 2/32, 1/16) | **462** (10, 1, 2) | 448 (8, 2, 1) |
+| sbc (60 M) | 333 (34/64, 14/55, 11/42) | **345** (40, 17, 17) | 340 (40, 16, 13) |
+| DoroidOscillo (40 M) | 264 (11/18, 9/14, 4/11) | 265 (12, 9, 4) | **271** (14, 10, 5) |
+| Own-Mailbox pierre (40 M) | 363 (27/33, 20/31, 9/21) | **364** (28, 20, 11) | 361 (29, 21, 6) |
+| PocketBone (40 M) | 199 (28/30, 20/20, 17/17) | **202** (30, 20, 17) | 200 (29, 20, 16) |
+| OtterCast (60 M) | **177** | 167 | 167 (same plan as version 1: no flow escapes) |
+| **Total** | 2,687 | **2,736** | 2,703 |
+
+Version 2 beats routing without a plan (+16) but loses to version 1 (−33) on these boards; it wins only on
+DoroidOscillo, the one array whose every ball can leave on the pad layer through planned channels. Narrower bands
+so perimeter corridors and channel exits never overlap (0.24 and 0.15 pitch) did not change the picture
+(logicbone 908 / 917, decelerator 452 / 468, sbc 343, pierre 363). KiCad DRC of the version-2 outputs of
+DoroidOscillo, logicbone and PocketBone: 0 added errors. Planning takes milliseconds (it runs again on every
+restart).
+
+**Why it does not help yet.** The corridors through the array are long, and reserving them (and their 2 mm
+extensions between the perimeter corridors) takes room the perimeter pins' own routes need outside the package:
+on logicbone rings 1–2 lose 11 connections while ring 3 gains 1. The router's own A* already finds the channel
+an inner ball needs once the perimeter fan-out is in place, so a reservation helps most where it protects a
+short, contested exit (version 1's perimeter corridors and dog-bones). The flow plan is kept, opt-in, as the
+routability analysis it is (which balls can leave on which layer under the board's rules) and as the starting
+point for the next steps: plan-guided rather than reserved corridors (a cost bonus instead of blocking others),
+reserving only the inner rings' channels, and an NC fallback on the escape graph for the balls the flow leaves.
