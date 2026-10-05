@@ -410,6 +410,27 @@ std::optional<Coord> RuleEngine::skew_constraint(model::NetId net) const {
   return out;
 }
 
+std::optional<model::Constraint> RuleEngine::net_constraint(model::NetId net, const std::string& type) const {
+  std::optional<model::Constraint> out;
+  CopperItem probe;
+  probe.kind = ItemKind::Track;
+  probe.net = net;
+  probe.layers = ~model::LayerMask{0};
+  for (const auto& c : rules_) {
+    if (!c.valid) continue;
+    const model::Constraint* k = nullptr;
+    for (const auto& x : c.rule->constraints)
+      if (x.type == type) k = &x;
+    if (!k) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &probe, nullptr, -1};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = *k;  // later rules take precedence
+  }
+  return out;
+}
+
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   if (a == 0 || b == 0 || a == b) return false;
   if (static_cast<std::size_t>(a) < dp_partner_.size()) return dp_partner_[static_cast<std::size_t>(a)] == b;

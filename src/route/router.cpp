@@ -1,4 +1,5 @@
 #include "route/router.hpp"
+#include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
 #include "route/heat_grid.hpp"
@@ -1118,10 +1119,15 @@ struct Router::Impl {
     st.items.clear();
     if (st.routed) --res.routed;
     st.routed = false;
+    const bool was_coupled = st.coupled;
     st.coupled = false;
     ++st.rips;
     ++res.rips;
     pending.push_back(v);
+    if (was_coupled && !pair_partner.empty()) {  // the other half goes too: the pair is re-routed coupled or not at all
+      const int p = pair_partner[static_cast<std::size_t>(v)];
+      if (p >= 0 && cs[static_cast<std::size_t>(p)].coupled && cs[static_cast<std::size_t>(p)].routed) rip(p);
+    }
     for (std::size_t k = 0; k < cs.size(); ++k)
       if (cs[k].implicit && cs[k].routed && cs[k].c.net == st.c.net) {
         cs[k].routed = cs[k].implicit = false;
@@ -1356,10 +1362,16 @@ struct Router::Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------
-  // Differential pairs (design doc 05 §9 phase 3): the two halves of a P/N pair are routed together as one wide
-  // object. A* finds the pair's centreline on one layer with a half-width covering both tracks and the gap; the
-  // centreline is then offset left and right into the two tracks, joined to the pads by short legs, verified
-  // exactly and committed. Anything that fails falls back to ordinary routing of the two connections.
+  // Differential pairs, version 2 (design doc 05 §9 phase 3 and §15; decision D50). The pair is searched as one
+  // object: an A* over centreline states (layer, lattice point, direction, which half is on the left) whose moves
+  // add a straight lattice step, a 45-degree turn followed by a straight run long enough for the inner track's miter,
+  // or a coupled via pair (both halves jog out to the via spacing, change layer side by side and jog back). Each move
+  // is checked exactly on the two offset tracks and vias it adds, so the coupled section keeps the pair's gap by
+  // construction. The ends are joined to the pads by short uncoupled legs (straight, octilinear dog-legs, or entering
+  // the pair from behind), validated lazily when the A* pops a start or goal candidate, and paid at twice the coupled
+  // cost so the coupled section starts as close to the pads as the board allows. The finished pair is verified once
+  // more (each half against the board, then the second half against the first) before it is committed; anything
+  // that fails leaves both connections to ordinary routing.
   // ---------------------------------------------------------------------------------------------------
   struct PairSeg { Point a, b; Coord w; };
   bool commit_segments(int ci, const std::vector<PairSeg>& segs, int layer) {
@@ -1375,203 +1387,592 @@ struct Router::Impl {
     return true;
   }
 
+  struct PairLeg {
+    std::vector<Point> pts;  // pad centre -> coupled section end
+    Coord w = 0;
+    double len = 0;
+  };
+  struct PairHalf {
+    NetId net = 0;
+    std::vector<std::pair<int, PairSeg>> segs;  // (layer, segment)
+    std::vector<Point> vias;
+  };
   std::string pair_why;
+  std::vector<std::uint8_t> pad_routed_here;  // board pad -> an end of some connection (filled on first use)
+  // Is the first unrouted connection at `pad` boxed in? A strict search from the pad (60k expansions at most) that
+  // exhausts its open list inside the window proves it; any path, or a search cut short, says no.
+  bool pin_boxed_in(int pad) {
+    for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+      const auto& st = cs[ci];
+      if (st.routed || (st.c.pad_a != pad && st.c.pad_b != pad)) continue;
+      Connection r = st.c;
+      if (r.pad_b == pad) std::swap(r.pad_a, r.pad_b);
+      const Point a = b.pads[static_cast<std::size_t>(r.pad_a)].pos;
+      const Point e = r.pad_b >= 0 ? b.pads[static_cast<std::size_t>(r.pad_b)].pos : a;
+      const Coord m = 2'000'000 + r.length / 4;
+      Window w;
+      w.x0 = std::max(0, to_ix(std::min(a.x, e.x) - m));
+      w.y0 = std::max(0, to_iy(std::min(a.y, e.y) - m));
+      w.w = std::min(nx - 1, to_ix(std::max(a.x, e.x) + m)) - w.x0 + 1;
+      w.h = std::min(ny - 1, to_iy(std::max(a.y, e.y) + m)) - w.y0 + 1;
+      const bool saved_soft = soft;
+      soft = false;
+      expansion_cap = 60'000;
+      std::vector<PathNode> path;
+      const bool found = search(r, w, path);
+      expansion_cap = 0;
+      soft = saved_soft;
+      return !found && last_miss == Miss::Enclosed;
+    }
+    return false;
+  }
+
+  // A leg from pad centre `p` to the coupled section's end `X` on `layer` whose last segment arrives along `a` (never
+  // doubling back over the pair): straight, the two octilinear dog-legs, or the same to a point behind X followed by
+  // a straight entry. Shortest legal candidate first, at the pair width, then at the neck-down width.
+  std::optional<PairLeg> pair_leg(Point p, Point X, Dir2 a, Dir2 n, int layer, NetId net, Coord w) {
+    std::vector<std::vector<Point>> cand;
+    auto with_dogs = [&](Point f, Point t, std::optional<Point> tail) {
+      auto push = [&](std::vector<Point> v) {
+        if (tail) v.push_back(*tail);
+        std::vector<Point> u;
+        for (const Point q : v)
+          if (u.empty() || !(u.back() == q)) u.push_back(q);
+        cand.push_back(std::move(u));
+      };
+      push({f, t});
+      const Coord dx = t.x - f.x, dy = t.y - f.y, m = std::min(std::llabs(dx), std::llabs(dy));
+      if (m > 0 && std::llabs(dx) != std::llabs(dy)) {
+        push({f, Point{f.x + (dx > 0 ? m : -m), f.y + (dy > 0 ? m : -m)}, t});
+        push({f, Point{t.x - (dx > 0 ? m : -m), t.y - (dy > 0 ? m : -m)}, t});
+      }
+    };
+    with_dogs(p, X, std::nullopt);
+    const double side_off = std::fabs(static_cast<double>(X.x - p.x) * n.x + static_cast<double>(X.y - p.y) * n.y);
+    with_dogs(p, offset_point(X, a, -std::max(side_off, static_cast<double>(w))), X);
+    auto length = [](const std::vector<Point>& v) {
+      double l = 0;
+      for (std::size_t i = 0; i + 1 < v.size(); ++i) l += std::hypot(static_cast<double>(v[i + 1].x - v[i].x), static_cast<double>(v[i + 1].y - v[i].y));
+      return l;
+    };
+    std::vector<std::pair<double, std::size_t>> order;
+    for (std::size_t i = 0; i < cand.size(); ++i) {
+      const auto& v = cand[i];
+      if (v.size() >= 2) {  // the last segment must not run against the pair's direction
+        const Point q = v[v.size() - 2], e = v.back();
+        if (static_cast<double>(e.x - q.x) * a.x + static_cast<double>(e.y - q.y) * a.y < 0) continue;
+      }
+      order.emplace_back(length(v), i);
+    }
+    std::stable_sort(order.begin(), order.end(), [](const auto& x, const auto& y) { return x.first < y.first; });
+    const Coord neck = neck_width(net);
+    for (const Coord ww : {w, neck > 0 && neck < w ? neck : Coord{0}}) {
+      if (ww <= 0) continue;
+      for (const auto& [len, i] : order) {
+        const auto& v = cand[i];
+        bool good = true;
+        for (std::size_t k = 0; k + 1 < v.size() && good; ++k) good = obs->segment_state(v[k], v[k + 1], layer, ww, net, false, nullptr) == 0;
+        if (good) return PairLeg{v, ww, len};
+      }
+    }
+    return std::nullopt;
+  }
+
+  // Do two legs of different halves keep the gap the rules require between the halves?
+  bool legs_clear(const PairLeg& x, const PairLeg& y, Coord req) const {
+    for (std::size_t i = 0; i + 1 < x.pts.size(); ++i)
+      for (std::size_t j = 0; j + 1 < y.pts.size(); ++j)
+        if (geom::seg_seg_closer(x.pts[i], x.pts[i + 1], y.pts[j], y.pts[j + 1], (x.w + y.w) / 2 + req)) return false;
+    return true;
+  }
+
+  // The two halves of a built pair keep the gap the rules require between them (a leg can still cut across the other
+  // half's coupled run near the far end of a short pair). Geometry only; the exact check follows.
+  // `vm`: mask expansion of untented vias, which Obstacles adds between a via and other copper (once) or another via
+  // (twice).
+  static bool halves_clear(const PairHalf& x, const PairHalf& y, Coord req, Coord vd, Coord vm) {
+    for (const auto& [la, sa] : x.segs)
+      for (const auto& [lb, sb] : y.segs)
+        if (la == lb && geom::seg_seg_closer(sa.a, sa.b, sb.a, sb.b, (sa.w + sb.w) / 2 + req)) return false;
+    const Coord req_vt = vm > 0 ? std::max(req, vm + 1'000) : req, req_vv = vm > 0 ? std::max(req, 2 * vm + 1'000) : req;
+    for (const PairHalf* h : {&x, &y}) {
+      const PairHalf* o = h == &x ? &y : &x;
+      for (const Point v : h->vias) {
+        for (const auto& [l, sg] : o->segs)
+          if (geom::point_seg_closer(v, sg.a, sg.b, vd / 2 + sg.w / 2 + req_vt)) return false;
+        for (const Point w : o->vias)
+          if (geom::point_seg_closer(v, w, w, vd + req_vv)) return false;
+      }
+    }
+    return true;
+  }
+
+  void commit_half(int ci, const PairHalf& h, Coord vd, Coord vdrill) {
+    auto& st = cs[static_cast<std::size_t>(ci)];
+    for (const auto& [layer, s] : h.segs) {
+      b.tracks.push_back(model::Track{s.a, s.b, s.w, layer, h.net, false, sexpr::kNoNode});
+      const int id = obs->add_track(static_cast<int>(b.tracks.size() - 1), ci);
+      near_mark(id, +1);
+      st.items.push_back(id);
+      emit_track_add(static_cast<int>(b.tracks.size() - 1));
+    }
+    for (const Point v : h.vias) {
+      b.vias.push_back(model::Via{v, vd, vdrill, 0, nl - 1, model::ViaType::Through, h.net, false, sexpr::kNoNode});
+      const int id = obs->add_via(static_cast<int>(b.vias.size() - 1), ci);
+      near_mark(id, +1);
+      st.items.push_back(id);
+      emit_via_add(static_cast<int>(b.vias.size() - 1));
+    }
+  }
+  bool half_legal(const PairHalf& h, Coord vd, Coord vdrill) const {
+    const bool dbg = std::getenv("TM_DEBUG_PAIRS") != nullptr;
+    for (const auto& [layer, s] : h.segs)
+      if (obs->segment_state(s.a, s.b, layer, s.w, h.net, false, nullptr) != 0) {
+        if (dbg)
+          std::fprintf(stderr, "   pair half %s: segment fails: --pts %.4f %.4f %.4f %.4f --layer %d --width %.3f\n", b.nets[static_cast<std::size_t>(h.net)].name.c_str(),
+                       nm_to_mm(s.a.x), nm_to_mm(s.a.y), nm_to_mm(s.b.x), nm_to_mm(s.b.y), layer, nm_to_mm(s.w));
+        return false;
+      }
+    for (const Point v : h.vias)
+      if (obs->via_state(v, vd, vdrill, h.net, 0, false, nullptr) != 0) {
+        if (dbg) std::fprintf(stderr, "   pair half %s: via fails at %.4f %.4f\n", b.nets[static_cast<std::size_t>(h.net)].name.c_str(), nm_to_mm(v.x), nm_to_mm(v.y));
+        return false;
+      }
+    return true;
+  }
+
   bool route_pair(int ia, int ib) {
     const Connection& A = cs[static_cast<std::size_t>(ia)].c;
     Connection B = cs[static_cast<std::size_t>(ib)].c;
-    const auto& pa1 = b.pads[static_cast<std::size_t>(A.pad_a)];
-    const auto& pa2 = b.pads[static_cast<std::size_t>(A.pad_b)];
     auto d = [](Point u, Point v) { return std::hypot(static_cast<double>(u.x - v.x), static_cast<double>(u.y - v.y)); };
-    if (d(pa1.pos, b.pads[static_cast<std::size_t>(B.pad_b)].pos) + d(pa2.pos, b.pads[static_cast<std::size_t>(B.pad_a)].pos) <
-        d(pa1.pos, b.pads[static_cast<std::size_t>(B.pad_a)].pos) + d(pa2.pos, b.pads[static_cast<std::size_t>(B.pad_b)].pos))
+    auto pad = [&](int i) -> const model::Pad& { return b.pads[static_cast<std::size_t>(i)]; };
+    if (d(pad(A.pad_a).pos, pad(B.pad_b).pos) + d(pad(A.pad_b).pos, pad(B.pad_a).pos) <
+        d(pad(A.pad_a).pos, pad(B.pad_a).pos) + d(pad(A.pad_b).pos, pad(B.pad_b).pos))
       std::swap(B.pad_a, B.pad_b);
-    const auto& pb1 = b.pads[static_cast<std::size_t>(B.pad_a)];
-    const auto& pb2 = b.pads[static_cast<std::size_t>(B.pad_b)];
-    const model::LayerMask common = pa1.copper & pa2.copper & pb1.copper & pb2.copper;
-    if (!common) { pair_why = "no common layer"; return false; }
-    const int layer = std::countr_zero(common);
-    const auto& nc = netclass(A.net);
-    const Coord w = std::max(nc.has_diff_pair_gap ? nc.diff_pair_width : class_width(A.net), rules.minimums.track_width);
-    const Coord clr = std::max(nc.clearance, rules.minimums.clearance);
-    const Coord gap = (nc.has_diff_pair_gap ? std::min(clr, nc.diff_pair_gap) : clr) + 10'000;  // 10 um margin
-    const Coord off = (w + gap) / 2;           // centreline to each track centre
-    const Coord hw_env = off + w / 2;          // centreline to the outer track edges
+    const model::Pad &pa1 = pad(A.pad_a), &pa2 = pad(A.pad_b), &pb1 = pad(B.pad_a), &pb2 = pad(B.pad_b);
+    const model::LayerMask s_layers = pa1.copper & pb1.copper, e_layers = pa2.copper & pb2.copper;
+    if (!s_layers || !e_layers) { pair_why = "no common layer at an end"; return false; }
+    // A pin of another net between the two pins of an end (the ground pin between P and N on HDMI connectors and
+    // ICs) can be enclosed by the converging legs. Such pins are tested before and after the pair is committed; a
+    // pair that boxes in a pin which could escape before is taken back (below).
+    std::vector<int> straddled;
+    if (pad_routed_here.size() != b.pads.size()) {
+      pad_routed_here.assign(b.pads.size(), 0);
+      for (const auto& st : cs)
+        for (int pd : {st.c.pad_a, st.c.pad_b})
+          if (pd >= 0) pad_routed_here[static_cast<std::size_t>(pd)] = 1;
+    }
+    for (const auto& [p1, p2] : {std::pair{&pa1, &pb1}, std::pair{&pa2, &pb2}}) {
+      const double dx = static_cast<double>(p2->pos.x - p1->pos.x), dy = static_cast<double>(p2->pos.y - p1->pos.y), L2 = dx * dx + dy * dy;
+      for (const int fp : {p1->footprint, p2->footprint}) {
+        if (fp < 0 || L2 <= 0) continue;
+        for (const int pi : b.footprints[static_cast<std::size_t>(fp)].pads) {
+          const auto& q = b.pads[static_cast<std::size_t>(pi)];
+          if (q.net == A.net || q.net == B.net || q.net == 0 || !pad_routed_here[static_cast<std::size_t>(pi)] || !(q.copper & p1->copper & p2->copper)) continue;
+          const double qx = static_cast<double>(q.pos.x - p1->pos.x), qy = static_cast<double>(q.pos.y - p1->pos.y);
+          const double t = (qx * dx + qy * dy) / L2;
+          if (t <= 0.05 || t >= 0.95 || std::fabs(qx * dy - qy * dx) / std::sqrt(L2) > 0.3 * std::sqrt(L2)) continue;
+          if (std::find(straddled.begin(), straddled.end(), pi) == straddled.end()) straddled.push_back(pi);
+        }
+      }
+    }
+    std::vector<std::uint8_t> boxed_before;
+    for (const int pi : straddled) boxed_before.push_back(pin_boxed_in(pi) ? 1 : 0);
+    const PairRule pr = pair_rule(b, rules, obs->rules(), A.net, B.net, obs->via_mask());
+    const Coord w = pr.width;
+    const double off = static_cast<double>(pr.offset);
     const Point S{(pa1.pos.x + pb1.pos.x) / 2, (pa1.pos.y + pb1.pos.y) / 2};
     const Point E{(pa2.pos.x + pb2.pos.x) / 2, (pa2.pos.y + pb2.pos.y) / 2};
-    const double se = std::hypot(static_cast<double>(E.x - S.x), static_cast<double>(E.y - S.y));
-    if (se < 2'000'000) { pair_why = "too short to couple"; return false; }
-    const Coord R = std::min<Coord>(2'500'000, static_cast<Coord>(0.3 * se));  // centreline ends this close to the pad midpoints
-    const Coord margin = pitch * 71 / 100 + 1;
+    const double se = d(S, E);
+    if (se < 1'500'000) { pair_why = "too short to couple"; return false; }
+    // Where the coupled section may start and end: within Rs / Re of the pad midpoints (legs are uncoupled length),
+    // farther where the two pads lie far apart (pins with another pin between them).
+    auto reach = [&](Point p1, Point p2) {
+      double r = std::clamp(std::max(0.3 * se, 1.5 * d(p1, p2)), 600'000.0, 2'500'000.0);
+      if (pr.max_uncoupled) r = std::min(r, std::max(static_cast<double>(*pr.max_uncoupled) / 2, 2.0 * static_cast<double>(pitch)));
+      return r;
+    };
+    const double Rs = reach(pa1.pos, pb1.pos), Re = reach(pa2.pos, pb2.pos);
+    // A turn is followed by a straight run of K lattice steps: the inner track's miter cuts its run back by
+    // off * tan(22.5 deg) at each end, so shorter runs would fold the inner track over itself.
+    const double fold = 2.0 * 0.41422 * off + static_cast<double>(w);
+    const int K = std::max(1, static_cast<int>(std::ceil(fold / static_cast<double>(pitch))));
+    const double hj = static_cast<double>(pr.via_offset) - off;  // via jog: lateral (and forward) distance
+    const int MV = std::max(1, static_cast<int>(std::ceil((2.0 * hj + fold) / static_cast<double>(pitch))));
     geom::Box box;
     box.add(S);
     box.add(E);
-    box = box.inflated(6'000'000);
-    const int x0 = std::max(0, to_ix(box.x0)), y0 = std::max(0, to_iy(box.y0));
-    const int x1 = std::min(nx - 1, to_ix(box.x1)), y1 = std::min(ny - 1, to_iy(box.y1));
-    const int W = x1 - x0 + 1, H = y1 - y0 + 1;
-    if (W <= 2 || H <= 2) { pair_why = "window"; return false; }
-    std::vector<std::int8_t> legal(static_cast<std::size_t>(W) * static_cast<std::size_t>(H), -1);
-    auto ok = [&](int cx, int cy) {
-      auto& v = legal[static_cast<std::size_t>(cy) * static_cast<std::size_t>(W) + static_cast<std::size_t>(cx)];
-      if (v < 0) {
-        const Point p = at(x0 + cx, y0 + cy);
-        const auto code = obs->fixed_code(p, layer, hw_env, margin, A.net);
-        bool good = (code == Obstacles::kFree || code == A.net || code == B.net) && obs->inside_board(p, 0);
-        if (good) good = obs->routed_state(geom::Shape::point(p, hw_env + margin), layer, A.net, drc::ItemKind::Track, false, nullptr) == 0;
-        v = good ? 1 : 0;
-      }
-      return v == 1;
-    };
+    box = box.inflated(3'000'000 + static_cast<Coord>(se / 4));
+    const int wx0 = std::max(0, to_ix(box.x0)), wy0 = std::max(0, to_iy(box.y0));
+    const int wx1 = std::min(nx - 1, to_ix(box.x1)), wy1 = std::min(ny - 1, to_iy(box.y1));
+    auto in_win = [&](int gx, int gy) { return gx >= wx0 && gy >= wy0 && gx <= wx1 && gy <= wy1; };
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
-    auto hcost = [&](int cx, int cy) {
-      const Point p = at(x0 + cx, y0 + cy);
-      const double dd = std::max(0.0, d(p, E) - static_cast<double>(R));
-      return static_cast<std::int64_t>(dd);
+    auto steplen = [&](int dd) { return (dd & 1) ? diag : step; };
+    // A turn costs as much as its straight run again: without it the weighted search prefers staircases of 45-degree
+    // turns that follow the straight line to the goal over one diagonal and one straight run.
+    const std::int64_t bend_cost = static_cast<std::int64_t>(K) * pitch;
+    const std::int64_t via_pair_cost = 2 * static_cast<std::int64_t>(opt.via_cost_mm * 1e6);
+    const bool vias_ok = opt.allow_vias && nl > 1;
+    // Cost-to-go: the centreline still has to get within reach of the end pads (legs cost more than coupled track,
+    // so the straight distance is a lower bound), weighted a little for focus (pairs need not be optimal, only legal).
+    const double reach_e = std::max(d(E, pa2.pos), d(E, pb2.pos)) + off;
+    // Off the end pads' layers a coupled via pair is still to come.
+    auto hcost = [&](Point c, int l) {
+      return static_cast<std::int64_t>(2.0 * std::max(0.0, d(c, E) - reach_e)) + ((e_layers & model::layer_bit(l)) ? 0 : via_pair_cost);
     };
-    const std::size_t N = static_cast<std::size_t>(W) * static_cast<std::size_t>(H);
-    std::vector<std::int64_t> g(N, std::numeric_limits<std::int64_t>::max());
-    std::vector<std::int32_t> par(N, -1);
-    using QE = std::pair<std::int64_t, std::int32_t>;
+    // Which net runs on the side `sigma` (+1 left, -1 right) of a state with side bit s (0: A on the left).
+    auto net_of = [&](double sigma, int s) { return (sigma > 0) == (s == 0) ? A.net : B.net; };
+    auto key = [&](int l, int gx, int gy, int dd, int s) {
+      return ((static_cast<std::uint64_t>(l) * static_cast<std::uint64_t>(ny) + static_cast<std::uint64_t>(gy)) * static_cast<std::uint64_t>(nx) +
+              static_cast<std::uint64_t>(gx)) * 16u + static_cast<std::uint64_t>(dd * 2 + s);
+    };
+    struct Dec { int l, gx, gy, dd, s; };
+    auto decode = [&](std::uint64_t k) {
+      Dec x;
+      x.s = static_cast<int>(k & 1u);
+      x.dd = static_cast<int>((k >> 1) & 7u);
+      std::uint64_t r = k / 16u;
+      x.gx = static_cast<int>(r % static_cast<std::uint64_t>(nx));
+      r /= static_cast<std::uint64_t>(nx);
+      x.gy = static_cast<int>(r % static_cast<std::uint64_t>(ny));
+      x.l = static_cast<int>(r / static_cast<std::uint64_t>(ny));
+      return x;
+    };
+    enum : std::uint8_t { kStart = 0, kStraight = 1, kTurn = 2, kVia = 3 };
+    struct PN {
+      std::int64_t g;
+      std::uint64_t parent;
+      std::int32_t start;
+      std::uint8_t move;
+      bool closed;
+    };
+    std::unordered_map<std::uint64_t, PN> nodes;
+    nodes.reserve(1u << 15);
+    std::unordered_map<std::uint64_t, std::uint8_t> straight_ok;  // (layer, cell reached, dir, side) -> 1 legal, 2 not
+    struct Cand {
+      int l, gx, gy, dd, s;
+      std::int64_t g = 0;   // start: leg cost; goal: estimated total cost
+      bool checked = false;  // start legs validated
+      PairLeg la, lb;       // legs of net A and net B
+      std::uint64_t node = 0;
+    };
+    std::vector<Cand> starts, goals;
+    int dbg_legs = std::getenv("TM_DEBUG_PAIRS") ? 6 : 0;
+    struct QE {
+      std::int64_t f, seq;
+      std::uint8_t kind;  // 0 state, 1 start candidate, 2 goal candidate
+      std::uint64_t id;
+      bool operator>(const QE& o) const { return f != o.f ? f > o.f : seq > o.seq; }
+    };
     std::priority_queue<QE, std::vector<QE>, std::greater<>> pq;
-    const int r_cells = static_cast<int>(R / pitch);
-    const int sx = to_ix(S.x) - x0, sy = to_iy(S.y) - y0;
-    for (int dy = -r_cells; dy <= r_cells; ++dy)
-      for (int dx = -r_cells; dx <= r_cells; ++dx) {
-        const int cx = sx + dx, cy = sy + dy;
-        if (cx < 0 || cy < 0 || cx >= W || cy >= H) continue;
-        const Point p = at(x0 + cx, y0 + cy);
-        if (d(p, S) > static_cast<double>(R) || !ok(cx, cy)) continue;
-        const std::size_t id = static_cast<std::size_t>(cy) * static_cast<std::size_t>(W) + static_cast<std::size_t>(cx);
-        g[id] = static_cast<std::int64_t>(2.0 * d(p, S));  // legs are dearer than coupled track
-        pq.emplace(g[id] + hcost(cx, cy), static_cast<std::int32_t>(id));
-      }
-    std::int32_t goal = -1;
-    long expanded = 0;
-    static const int DX[8] = {1, -1, 0, 0, 1, 1, -1, -1}, DY[8] = {0, 0, 1, -1, 1, -1, 1, -1};
-    while (!pq.empty() && expanded < 2'000'000) {
-      const auto [f, u] = pq.top();
-      pq.pop();
-      const int cx = u % W, cy = u / W;
-      if (f - hcost(cx, cy) > g[static_cast<std::size_t>(u)]) continue;
-      ++expanded;
-      const Point p = at(x0 + cx, y0 + cy);
-      if (d(p, E) <= static_cast<double>(R)) {
-        goal = u;
-        break;
-      }
-      for (int k = 0; k < 8; ++k) {
-        const int vx = cx + DX[k], vy = cy + DY[k];
-        if (vx < 0 || vy < 0 || vx >= W || vy >= H || !ok(vx, vy)) continue;
-        const std::size_t v = static_cast<std::size_t>(vy) * static_cast<std::size_t>(W) + static_cast<std::size_t>(vx);
-        std::int64_t c = k < 4 ? step : diag;
-        if (par[static_cast<std::size_t>(u)] >= 0) {  // bend penalty keeps the pair straight
-          const int pu = par[static_cast<std::size_t>(u)];
-          if ((cx - pu % W) != DX[k] || (cy - pu / W) != DY[k]) c += step;
+    std::int64_t seq = 0;
+    const std::int64_t leg_weight = 2;
+    // Start candidates: every lattice point within R of the start pads' midpoint, each direction, the side
+    // assignment with the shorter legs (crossing legs are never shorter).
+    for (int l = 0; l < nl; ++l) {
+      if (!(s_layers & model::layer_bit(l))) continue;
+      const int gx0 = std::max(wx0, to_ix(S.x - static_cast<Coord>(Rs))), gx1 = std::min(wx1, to_ix(S.x + static_cast<Coord>(Rs)));
+      const int gy0 = std::max(wy0, to_iy(S.y - static_cast<Coord>(Rs))), gy1 = std::min(wy1, to_iy(S.y + static_cast<Coord>(Rs)));
+      for (int gy = gy0; gy <= gy1; ++gy)
+        for (int gx = gx0; gx <= gx1; ++gx) {
+          const Point c = at(gx, gy);
+          if (d(c, S) > Rs) continue;
+          for (int dd = 0; dd < 8; ++dd) {
+            const Dir2 n = left_normal(dd);
+            const Point L = offset_point(c, n, off), Rt = offset_point(c, n, -off);
+            const double c0 = d(pa1.pos, L) + d(pb1.pos, Rt), c1 = d(pa1.pos, Rt) + d(pb1.pos, L);
+            Cand cd;
+            cd.l = l, cd.gx = gx, cd.gy = gy, cd.dd = dd, cd.s = c0 <= c1 ? 0 : 1;
+            cd.g = leg_weight * static_cast<std::int64_t>(std::min(c0, c1));
+            pq.push({cd.g + hcost(c, l), seq++, 1, starts.size()});
+            starts.push_back(std::move(cd));
+          }
         }
-        const std::int64_t ng = g[static_cast<std::size_t>(u)] + c;
-        if (ng < g[v]) {
-          g[v] = ng;
-          par[v] = u;
-          pq.emplace(ng + hcost(vx, vy), static_cast<std::int32_t>(v));
+    }
+    // Legs of a candidate: start legs arrive along the pair's direction; end legs leave along it (built pad -> X
+    // and arriving against the direction).
+    auto make_legs = [&](Cand& cd, bool at_start) {
+      const Point c = at(cd.gx, cd.gy);
+      const Dir2 u = unit_dir(cd.dd), n = left_normal(cd.dd);
+      const Dir2 a = at_start ? u : Dir2{-u.x, -u.y};
+      const Point XA = offset_point(c, n, cd.s == 0 ? off : -off), XB = offset_point(c, n, cd.s == 0 ? -off : off);
+      // The pads lie behind the start of the coupled section and ahead of its end (or level with it): otherwise the
+      // legs would double back along the pair.
+      for (const auto& [pad_pt, X] : {std::pair{(at_start ? pa1 : pa2).pos, XA}, std::pair{(at_start ? pb1 : pb2).pos, XB}}) {
+        const double ahead = static_cast<double>(pad_pt.x - X.x) * u.x + static_cast<double>(pad_pt.y - X.y) * u.y;
+        if ((at_start ? -ahead : ahead) < -static_cast<double>(w) / 2) return false;
+      }
+      const auto la = pair_leg((at_start ? pa1 : pa2).pos, XA, a, n, cd.l, A.net, w);
+      const auto lb = la ? pair_leg((at_start ? pb1 : pb2).pos, XB, a, n, cd.l, B.net, w) : std::nullopt;
+      if (dbg_legs > 0 && !at_start && (!la || !lb || !legs_clear(*la, *lb, pr.required_gap))) {
+        --dbg_legs;
+        const Point pA = (at_start ? pa1 : pa2).pos, pB = (at_start ? pb1 : pb2).pos;
+        std::fprintf(stderr, "   end legs fail (%s): dir %d layer %d c (%.3f,%.3f) padA (%.3f,%.3f) XA (%.3f,%.3f) padB (%.3f,%.3f) XB (%.3f,%.3f)\n",
+                     !la ? "A" : !lb ? "B" : "clear", cd.dd, cd.l, nm_to_mm(c.x), nm_to_mm(c.y), nm_to_mm(pA.x), nm_to_mm(pA.y), nm_to_mm(XA.x), nm_to_mm(XA.y),
+                     nm_to_mm(pB.x), nm_to_mm(pB.y), nm_to_mm(XB.x), nm_to_mm(XB.y));
+      }
+      if (!la || !lb || !legs_clear(*la, *lb, pr.required_gap)) return false;
+      // Each leg against the other half's straight run next to the candidate (K steps are straight at both ends).
+      const double run = static_cast<double>(K * pitch) * (at_start ? 1.0 : -1.0);
+      if (!legs_clear(*la, PairLeg{{XB, offset_point(XB, u, run)}, w, 0}, pr.required_gap) ||
+          !legs_clear(*lb, PairLeg{{XA, offset_point(XA, u, run)}, w, 0}, pr.required_gap))
+        return false;
+      cd.la = *la;
+      cd.lb = *lb;
+      return true;
+    };
+    auto relax = [&](std::uint64_t k, std::int64_t g, std::uint64_t parent, std::int32_t start, std::uint8_t move, Point c, int l) {
+      auto [it, fresh] = nodes.try_emplace(k, PN{g, parent, start, move, false});
+      if (!fresh) {
+        if (it->second.closed || it->second.g <= g) return;
+        it->second = PN{g, parent, start, move, false};
+      }
+      pq.push({g + hcost(c, l), seq++, 0, k});
+    };
+    auto seg_ok = [&](Point p, Point q, int l, NetId net) { return p == q || obs->segment_state(p, q, l, w, net, false, nullptr) == 0; };
+    auto delta = [&](int dd, int k, int& gx, int& gy) {
+      gx += k * kDx[dd];
+      gy += k * kDy[dd];
+    };
+    // Reconstructs the two halves of a found pair (each half's tracks per layer and its vias).
+    auto build = [&](const Cand& goal, PairHalf& ha, PairHalf& hb) {
+      std::vector<std::uint64_t> chain;
+      for (std::uint64_t k = goal.node;; k = nodes.at(k).parent) {
+        chain.push_back(k);
+        if (nodes.at(k).move == kStart) break;
+      }
+      std::reverse(chain.begin(), chain.end());
+      const Cand& st0 = starts[static_cast<std::size_t>(nodes.at(chain.front()).start)];
+      for (const double sigma : {1.0, -1.0}) {
+        const NetId net = net_of(sigma, st0.s);
+        PairHalf& h = net == A.net ? ha : hb;
+        h.net = net;
+        const PairLeg& ls = net == A.net ? st0.la : st0.lb;
+        const PairLeg& le = net == A.net ? goal.la : goal.lb;
+        int layer = st0.l;
+        Point cur = ls.pts.front();
+        auto to = [&](Point q, Coord ww) {
+          if (q == cur) return;
+          h.segs.push_back({layer, PairSeg{cur, q, ww}});
+          cur = q;
+        };
+        for (std::size_t i = 1; i < ls.pts.size(); ++i) to(ls.pts[i], ls.w);
+        for (std::size_t i = 1; i < chain.size(); ++i) {
+          const Dec p = decode(chain[i - 1]), q = decode(chain[i]);
+          const Point cp = at(p.gx, p.gy), cq = at(q.gx, q.gy);
+          const std::uint8_t mv = nodes.at(chain[i]).move;
+          // Corners only: a node's own offset point is emitted where the track leaves the straight line (a via) and
+          // at the end; emitting it before an inner miter would fold the track back over itself.
+          if (mv == kTurn) to(miter_point(cp, p.dd, q.dd, sigma * off), w);
+          if (mv == kVia) {
+            const Dir2 u = unit_dir(p.dd), n = left_normal(p.dd);
+            const Point V = offset_point(offset_point(cp, u, hj), n, sigma * static_cast<double>(pr.via_offset));
+            to(offset_point(cp, n, sigma * off), w);
+            to(V, w);
+            h.vias.push_back(V);
+            layer = q.l;
+            to(offset_point(offset_point(cp, u, 2 * hj), n, sigma * off), w);
+          }
+          if (i + 1 == chain.size()) to(offset_point(cq, left_normal(q.dd), sigma * off), w);
+        }
+        for (std::size_t i = le.pts.size(); i-- > 1;) to(le.pts[i - 1], le.w);
+        // Merge collinear runs of one layer and width.
+        std::vector<std::pair<int, PairSeg>> merged;
+        for (const auto& [l, s] : h.segs) {
+          if (!merged.empty()) {
+            auto& [ml, m] = merged.back();
+            if (ml == l && m.w == s.w && m.b == s.a && geom::orient(m.a, m.b, s.b) == 0 &&
+                (m.b.x - m.a.x) * (s.b.x - s.a.x) + (m.b.y - m.a.y) * (s.b.y - s.a.y) > 0) {
+              m.b = s.b;
+              continue;
+            }
+          }
+          merged.push_back({l, s});
+        }
+        h.segs = std::move(merged);
+      }
+    };
+
+    // Search budget: in proportion to the pair's length in lattice steps (short pairs that cannot couple fail fast).
+    const long cap = std::clamp(static_cast<long>(600.0 * se / static_cast<double>(pitch)), 40'000L, 250'000L);
+    long expanded = 0, dbg_start_ok = 0, dbg_goal_ok = 0;
+    double dbg_closest = 1e300;
+    int finals = 0;
+    pair_why = "no coupled path";
+    bool done = false;
+    PairHalf ha, hb;
+    // Goal candidates wait in their own queue (by estimated total cost) and are checked in turn with the states: when
+    // the best of them is no dearer than the best state, and at least every 16 expansions, so a found end is used
+    // as soon as its legs are legal (the first legal goal is taken: pairs need to be legal, not optimal).
+    std::priority_queue<QE, std::vector<QE>, std::greater<>> gq;
+    int since_goal = 0;
+    while (expanded < cap && !done) {
+      if (!gq.empty() && (pq.empty() || gq.top().f <= pq.top().f || since_goal >= 16)) {
+        since_goal = 0;
+        const QE q = gq.top();
+        gq.pop();
+        Cand& cd = goals[static_cast<std::size_t>(q.id)];
+        if (!make_legs(cd, false)) continue;
+        ++dbg_goal_ok;
+        if (pr.max_uncoupled) {
+          std::uint64_t k = cd.node;
+          while (nodes.at(k).move != kStart) k = nodes.at(k).parent;
+          const Cand& s0 = starts[static_cast<std::size_t>(nodes.at(k).start)];
+          const double lim = static_cast<double>(*pr.max_uncoupled);
+          if (s0.la.len + cd.la.len > lim || s0.lb.len + cd.lb.len > lim) continue;
+        }
+        ha = PairHalf{};
+        hb = PairHalf{};
+        build(cd, ha, hb);
+        if (!halves_clear(ha, hb, pr.required_gap, pr.via_diameter, obs->via_mask())) continue;
+        if (half_legal(ha, pr.via_diameter, pr.via_drill) && half_legal(hb, pr.via_diameter, pr.via_drill)) {
+          commit_half(ia, ha, pr.via_diameter, pr.via_drill);
+          if (half_legal(hb, pr.via_diameter, pr.via_drill)) {  // now against the first half too
+            commit_half(ib, hb, pr.via_diameter, pr.via_drill);
+            done = true;
+            break;
+          }
+          lift_items(ia);  // the second half clashes with the first: take the first back
+        }
+        pair_why = "exact check of the finished pair";
+        if (++finals >= 4) break;
+        continue;
+      }
+      if (pq.empty()) break;
+      const QE q = pq.top();
+      pq.pop();
+      if (q.kind == 1) {  // start candidate: legs checked when first popped
+        Cand& cd = starts[static_cast<std::size_t>(q.id)];
+        const Point c = at(cd.gx, cd.gy);
+        if (!cd.checked) {
+          cd.checked = true;
+          if (!make_legs(cd, true)) continue;
+          ++dbg_start_ok;
+          const std::int64_t real = leg_weight * static_cast<std::int64_t>(cd.la.len + cd.lb.len);
+          if (real > cd.g) {
+            cd.g = real;
+            pq.push({cd.g + hcost(c, cd.l), seq++, 1, q.id});
+            continue;
+          }
+        }
+        relax(key(cd.l, cd.gx, cd.gy, cd.dd, cd.s), cd.g, 0, static_cast<std::int32_t>(q.id), kStart, c, cd.l);
+        continue;
+      }
+      auto it = nodes.find(q.id);
+      PN& nd = it->second;
+      const Dec x = decode(q.id);
+      const Point c = at(x.gx, x.gy);
+      if (nd.closed || q.f - hcost(c, x.l) != nd.g) continue;
+      nd.closed = true;
+      ++expanded;
+      ++since_goal;
+      dbg_closest = std::min(dbg_closest, d(c, E));
+      const std::int64_t g = nd.g;
+      const std::uint8_t mv0 = nd.move;
+      const Dir2 u = unit_dir(x.dd), n = left_normal(x.dd);
+      // Goal candidate: near the end pads, on a layer both have, after at least one coupled move.
+      if (mv0 != kStart && (e_layers & model::layer_bit(x.l)) && d(c, E) <= Re) {
+        const Point L = offset_point(c, n, off), Rt = offset_point(c, n, -off);
+        const Point la = x.s == 0 ? L : Rt, lb = x.s == 0 ? Rt : L;
+        Cand cd;
+        cd.l = x.l, cd.gx = x.gx, cd.gy = x.gy, cd.dd = x.dd, cd.s = x.s, cd.node = q.id;
+        cd.g = g + leg_weight * static_cast<std::int64_t>(d(la, pa2.pos) + d(lb, pb2.pos));
+        gq.push({cd.g, seq++, 2, goals.size()});
+        goals.push_back(std::move(cd));
+      }
+      // Straight: one lattice step (K steps right after the start, so a turn cannot fold back over the legs).
+      {
+        const int k = mv0 == kStart ? K : 1;
+        int gx = x.gx, gy = x.gy;
+        delta(x.dd, k, gx, gy);
+        if (in_win(gx, gy) && obs->inside_board(at(gx, gy), 0)) {
+          const std::uint64_t nk = key(x.l, gx, gy, x.dd, x.s);
+          bool good;
+          if (k == 1) {
+            auto& memo = straight_ok[nk];
+            if (memo == 0) {
+              const Point c2 = at(gx, gy);
+              memo = seg_ok(offset_point(c, n, off), offset_point(c2, n, off), x.l, net_of(1, x.s)) &&
+                             seg_ok(offset_point(c, n, -off), offset_point(c2, n, -off), x.l, net_of(-1, x.s))
+                         ? 1
+                         : 2;
+            }
+            good = memo == 1;
+          } else {
+            const Point c2 = at(gx, gy);
+            good = seg_ok(offset_point(c, n, off), offset_point(c2, n, off), x.l, net_of(1, x.s)) &&
+                   seg_ok(offset_point(c, n, -off), offset_point(c2, n, -off), x.l, net_of(-1, x.s));
+          }
+          if (good) relax(nk, g + k * steplen(x.dd), q.id, -1, kStraight, at(gx, gy), x.l);
+        }
+      }
+      // 45-degree turns, each followed by K straight steps.
+      if (mv0 != kStart)
+        for (const int t : {1, 7}) {
+          const int d2 = (x.dd + t) & 7;
+          int gx = x.gx, gy = x.gy;
+          delta(d2, K, gx, gy);
+          if (!in_win(gx, gy) || !obs->inside_board(at(gx, gy), 0)) continue;
+          const Point c2 = at(gx, gy);
+          const Dir2 n2 = left_normal(d2);
+          bool good = true;
+          for (const double sg : {1.0, -1.0}) {
+            if (!good) break;
+            const NetId net = net_of(sg, x.s);
+            const Point M = miter_point(c, x.dd, d2, sg * off);
+            good = seg_ok(offset_point(c, n, sg * off), M, x.l, net) && seg_ok(M, offset_point(c2, n2, sg * off), x.l, net);
+          }
+          if (good) relax(key(x.l, gx, gy, d2, x.s), g + K * steplen(d2) + bend_cost, q.id, -1, kTurn, c2, x.l);
+        }
+      // Coupled via pair: jog out to the via spacing, change layer, jog back, MV steps in all.
+      if (vias_ok) {
+        int gx = x.gx, gy = x.gy;
+        delta(x.dd, MV, gx, gy);
+        if (in_win(gx, gy) && obs->inside_board(at(gx, gy), 0)) {
+          const Point c2 = at(gx, gy);
+          for (int l2 = 0; l2 < nl; ++l2) {
+            if (l2 == x.l) continue;
+            bool good = true;
+            for (const double sg : {1.0, -1.0}) {
+              if (!good) break;
+              const NetId net = net_of(sg, x.s);
+              const Point P = offset_point(c, n, sg * off);
+              const Point V = offset_point(offset_point(c, u, hj), n, sg * static_cast<double>(pr.via_offset));
+              const Point Q = offset_point(offset_point(c, u, 2 * hj), n, sg * off);
+              good = seg_ok(P, V, x.l, net) && obs->via_state(V, pr.via_diameter, pr.via_drill, net, 0, false, nullptr) == 0 && seg_ok(V, Q, l2, net) &&
+                     seg_ok(Q, offset_point(c2, n, sg * off), l2, net);
+            }
+            if (good) relax(key(l2, gx, gy, x.dd, x.s), g + MV * steplen(x.dd) + via_pair_cost, q.id, -1, kVia, c2, l2);
+          }
         }
       }
     }
     res.expansions += expanded;
-    if (goal < 0) { pair_why = "no centreline path"; return false; }
-    std::vector<Point> path;
-    for (std::int32_t u = goal; u >= 0; u = par[static_cast<std::size_t>(u)]) path.push_back(at(x0 + u % W, y0 + u / W));
-    std::reverse(path.begin(), path.end());
-    // Keep corners only.
-    std::vector<Point> c{path.front()};
-    for (std::size_t i = 1; i + 1 < path.size(); ++i) {
-      const Point a0 = c.back(), m = path[i], e = path[i + 1];
-      if (geom::orient(a0, m, e) != 0) c.push_back(m);
+    if (std::getenv("TM_DEBUG_PAIRS")) {
+      const std::string who = pad_label(A.pad_a) + "-" + pad_label(A.pad_b) + " / " + pad_label(B.pad_a) + "-" + pad_label(B.pad_b);
+      if (expanded == 0)
+        std::fprintf(stderr, "  pair search %s: no legal start (%zu tried)\n", who.c_str(), starts.size());
+      else
+        std::fprintf(stderr, "  pair search %s layers %x/%x: gap %.3f w %.3f K %d MV %d, %zu starts (%ld legal), %ld expanded, %zu goals (%ld legal), closest %.3f mm, R %.3f/%.3f\n",
+                     who.c_str(), static_cast<unsigned>(s_layers), static_cast<unsigned>(e_layers), nm_to_mm(pr.gap), nm_to_mm(w), K, MV, starts.size(), dbg_start_ok, expanded,
+                     goals.size(), dbg_goal_ok, dbg_closest / 1e6, Rs / 1e6, Re / 1e6);
     }
-    if (path.size() > 1) c.push_back(path.back());
-    if (c.size() < 2) { pair_why = "short"; return false; }
-    // Offset the centreline by +-off (miter joins).
-    auto offset = [&](double sgn) {
-      std::vector<Point> o;
-      for (std::size_t i = 0; i < c.size(); ++i) {
-        auto nrm = [&](Point u, Point v) {
-          const double dx = static_cast<double>(v.x - u.x), dy = static_cast<double>(v.y - u.y), L = std::hypot(dx, dy);
-          return std::pair<double, double>{-dy / L, dx / L};
-        };
-        std::pair<double, double> n;
-        if (i == 0) n = nrm(c[0], c[1]);
-        else if (i + 1 == c.size()) n = nrm(c[i - 1], c[i]);
-        else {
-          const auto n1 = nrm(c[i - 1], c[i]), n2 = nrm(c[i], c[i + 1]);
-          const double dot = n1.first * n2.first + n1.second * n2.second;
-          n = {(n1.first + n2.first) / (1 + dot), (n1.second + n2.second) / (1 + dot)};
-        }
-        o.push_back({c[i].x + static_cast<Coord>(std::llround(sgn * static_cast<double>(off) * n.first)),
-                     c[i].y + static_cast<Coord>(std::llround(sgn * static_cast<double>(off) * n.second))});
-      }
-      return o;
-    };
-    auto left = offset(1.0), right = offset(-1.0);
-    if (d(left.front(), pa1.pos) + d(right.front(), pb1.pos) > d(right.front(), pa1.pos) + d(left.front(), pb1.pos)) std::swap(left, right);
-    if (d(left.back(), pa2.pos) + d(right.back(), pb2.pos) > d(right.back(), pa2.pos) + d(left.back(), pb2.pos)) {
-      pair_why = "halves swap sides between the ends (needs a layer change)";
+    if (!done) {
+      if (expanded >= cap) pair_why = "pair search budget";
       return false;
     }
-    // Legs from the pads to the coupled section: straight if legal, else one of the two octilinear dog-legs.
-    // Legs from the pads to the coupled section: straight if legal, else one of the two octilinear dog-legs; at the
-    // pair width first, then necked down to the board minimum (fine-pitch connectors).
-    const Coord wmin = std::max<Coord>(rules.minimums.track_width, 1);
-    auto leg = [&](Point from, Point to, NetId net, Coord& lw) -> std::vector<Point> {
-      for (Coord ww : {w, std::min(w, wmin)}) {
-        auto seg_ok = [&](Point u, Point v) { return u == v || obs->segment_state(u, v, layer, ww, net, false, nullptr) == 0; };
-        lw = ww;
-        if (seg_ok(from, to)) return {from, to};
-        const Coord dx = to.x - from.x, dy = to.y - from.y, m = std::min(std::llabs(dx), std::llabs(dy));
-        const Point c1{from.x + (dx > 0 ? m : -m), from.y + (dy > 0 ? m : -m)};
-        if (seg_ok(from, c1) && seg_ok(c1, to)) return {from, c1, to};
-        const Point c2{to.x - (dx > 0 ? m : -m), to.y - (dy > 0 ? m : -m)};
-        if (seg_ok(from, c2) && seg_ok(c2, to)) return {from, c2, to};
-        if (ww == wmin) break;
-      }
-      return {};
-    };
-    auto build = [&](Point s0, const std::vector<Point>& mid, Point e0, NetId net, std::vector<PairSeg>& segs) {
-      Coord w0 = w, w1 = w;
-      const auto l0 = leg(s0, mid.front(), net, w0), l1 = leg(mid.back(), e0, net, w1);
-      if (l0.empty() || l1.empty()) {
-        if (std::getenv("TM_DEBUG_PAIRS")) {
-          const Point f = l0.empty() ? s0 : mid.back(), t = l0.empty() ? mid.front() : e0;
-          std::fprintf(stderr, "  leg %s fails: --pts %.4f %.4f %.4f %.4f --layer %d --width %.3f --net '%s'\n", l0.empty() ? "start" : "end", nm_to_mm(f.x),
-                       nm_to_mm(f.y), nm_to_mm(t.x), nm_to_mm(t.y), layer, nm_to_mm(wmin), b.nets[static_cast<std::size_t>(net)].name.c_str());
-        }
+    for (std::size_t k = 0; k < straddled.size(); ++k)
+      if (!boxed_before[k] && pin_boxed_in(straddled[k])) {
+        lift_items(ia);
+        lift_items(ib);
+        pair_why = "would enclose pin " + pad_label(straddled[k]) + " between the halves";
         return false;
       }
-      for (std::size_t i = 0; i + 1 < l0.size(); ++i) segs.push_back({l0[i], l0[i + 1], w0});
-      for (std::size_t i = 0; i + 1 < mid.size(); ++i) segs.push_back({mid[i], mid[i + 1], w});
-      for (std::size_t i = 0; i + 1 < l1.size(); ++i) segs.push_back({l1[i], l1[i + 1], w1});
-      return true;
-    };
-    std::vector<PairSeg> sa, sb;
-    if (!build(pa1.pos, left, pa2.pos, A.net, sa) || !build(pb1.pos, right, pb2.pos, B.net, sb)) { pair_why = "legs"; return false; }
-    for (const auto& x : sa)
-      for (const auto& y : sb)
-        if (geom::segments_intersect(x.a, x.b, y.a, y.b)) { pair_why = "halves cross"; return false; }
-    for (const auto& x : sa)
-      if (!(x.a == x.b) && obs->segment_state(x.a, x.b, layer, x.w, A.net, false, nullptr) != 0) { pair_why = "exact check (P)"; return false; }
-    for (const auto& x : sb)
-      if (!(x.a == x.b) && obs->segment_state(x.a, x.b, layer, x.w, B.net, false, nullptr) != 0) { pair_why = "exact check (N)"; return false; }
-    // Each half against the other (the pair gap rule applies between them).
-    commit_segments(ia, sa, layer);
-    for (const auto& x : sb)
-      if (!(x.a == x.b) && obs->segment_state(x.a, x.b, layer, x.w, B.net, false, nullptr) != 0) {
-        for (int item : cs[static_cast<std::size_t>(ia)].items) remove_routed(item);
-        cs[static_cast<std::size_t>(ia)].items.clear();
-        return false;
-      }
-    commit_segments(ib, sb, layer);
     for (int ci : {ia, ib}) {
       cs[static_cast<std::size_t>(ci)].routed = true;
       cs[static_cast<std::size_t>(ci)].coupled = true;
       ++res.routed;
+      release_escapes(ci);
     }
     return true;
   }
@@ -1584,10 +1985,45 @@ struct Router::Impl {
     return false;
   }
 
-  int route_diff_pairs() {
+  // Partner connection of each half routed coupled (-1 none); empty unless pairs are routed. A coupled half ripped by
+  // negotiation takes its partner with it, and the pair is tried coupled again before single routing (D50).
+  std::vector<int> pair_partner;
+  std::vector<std::uint8_t> pair_retries;
+  // Routes wanted pairs coupled. Before routing (recouple = false): every unrouted pair of connections. In the
+  // clean-up (recouple = true): pairs whose halves both ended up routed singly are ripped and routed coupled; the old
+  // copper is restored exactly when that fails, so completion never changes (transaction, rule 4).
+  struct OldItem { drc::ItemKind kind; int index; };
+  void restore_items(int ci, const std::vector<OldItem>& saved) {
+    auto& st = cs[static_cast<std::size_t>(ci)];
+    for (const auto& o : saved) {
+      const int id = o.kind == drc::ItemKind::Via ? obs->add_via(o.index, ci) : obs->add_track(o.index, ci);
+      near_mark(id, +1);
+      if (o.kind == drc::ItemKind::Via) emit_via_add(o.index);
+      else emit_track_add(o.index);
+      st.items.push_back(id);
+    }
+  }
+  std::vector<OldItem> lift_items(int ci) {
+    auto& st = cs[static_cast<std::size_t>(ci)];
+    std::vector<OldItem> saved;
+    for (int item : st.items) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+      saved.push_back({it.kind, it.index});
+      if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+      remove_routed(item);
+    }
+    st.items.clear();
+    return saved;
+  }
+  int route_diff_pairs(bool recouple = false) {
+    if (!recouple) pair_partner.assign(cs.size(), -1);
+    if (pair_retries.size() != cs.size()) pair_retries.assign(cs.size(), 0);
     std::map<NetId, std::vector<int>> by_net;
-    for (std::size_t ci = 0; ci < cs.size(); ++ci)
-      if (!cs[ci].routed && cs[ci].c.pad_b >= 0) by_net[cs[ci].c.net].push_back(static_cast<int>(ci));
+    for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+      const auto& st = cs[ci];
+      if (st.c.pad_b < 0) continue;
+      if (recouple ? (st.routed && !st.implicit && !st.coupled && !st.items.empty()) : !st.routed) by_net[st.c.net].push_back(static_cast<int>(ci));
+    }
     int done = 0;
     const bool dbg = std::getenv("TM_DEBUG_PAIRS") != nullptr;
     auto pos = [&](int pad) { return b.pads[static_cast<std::size_t>(pad)].pos; };
@@ -1610,12 +2046,28 @@ struct Router::Impl {
             if (dd < bd) { bd = dd; best = static_cast<int>(k); }
           }
           if (best < 0 || out_of_budget()) continue;
-          const bool okp = route_pair(ca, lb[static_cast<std::size_t>(best)]);
+          const int cb = lb[static_cast<std::size_t>(best)];
+          std::vector<OldItem> old_a, old_b;
+          if (recouple) {
+            old_a = lift_items(ca);
+            old_b = lift_items(cb);
+            cs[static_cast<std::size_t>(ca)].routed = cs[static_cast<std::size_t>(cb)].routed = false;
+            res.routed -= 2;
+          }
+          const bool okp = route_pair(ca, cb);
+          if (recouple && !okp) {
+            restore_items(ca, old_a);
+            restore_items(cb, old_b);
+            cs[static_cast<std::size_t>(ca)].routed = cs[static_cast<std::size_t>(cb)].routed = true;
+            res.routed += 2;
+          }
           if (dbg)
-            std::fprintf(stderr, "pair %s / %s: %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
-                         okp ? "coupled" : pair_why.c_str());
+            std::fprintf(stderr, "pair %s / %s%s: %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
+                         recouple ? " (clean-up)" : "", okp ? "coupled" : pair_why.c_str());
           if (okp) {
             used[static_cast<std::size_t>(best)] = 1;
+            pair_partner[static_cast<std::size_t>(ca)] = cb;
+            pair_partner[static_cast<std::size_t>(cb)] = ca;
             ++done;
           }
         }
@@ -1924,8 +2376,12 @@ struct Router::Impl {
     const auto by = routed_conns_by_net();
     for (const auto& [na, la] : by)
       for (const auto& [nb, lb] : by) {
-        if (na >= nb || !obs->rules().coupled_diff_pair(na, nb)) continue;
-        const auto mxs = obs->rules().skew_constraint(na);
+        // KiCad's pairs (by name) with a custom skew rule; with --pair-skew-mm also every pair routed as one (D50).
+        if (na >= nb) continue;
+        const bool named = obs->rules().coupled_diff_pair(na, nb);
+        if (!named && !(opt.pair_skew > 0 && pair_wanted(na, nb))) continue;
+        auto mxs = named ? obs->rules().skew_constraint(na) : std::nullopt;
+        if (!mxs && opt.pair_skew > 0 && pair_wanted(na, nb)) mxs = opt.pair_skew;
         if (std::getenv("TM_DEBUG_TUNE"))
           std::fprintf(stderr, "skew pair %s/%s: rule %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
                        mxs ? "yes" : "no");
@@ -2318,6 +2774,22 @@ struct Router::Impl {
           release_escapes(ci);
           continue;
         }
+        // Half of a pair whose coupled route was ripped: both halves coupled again first (twice per pair at most).
+        if (!pair_partner.empty() && pair_partner[static_cast<std::size_t>(ci)] >= 0) {
+          const int p = pair_partner[static_cast<std::size_t>(ci)];
+          if (!cs[static_cast<std::size_t>(p)].routed && pair_retries[static_cast<std::size_t>(ci)] < 2) {
+            ++pair_retries[static_cast<std::size_t>(ci)];
+            ++pair_retries[static_cast<std::size_t>(p)];
+            if (route_pair(ci, p)) {
+              emit_stats("route");
+              if (res.routed > best_routed) {
+                snapshot();
+                snapshot_unrouted();
+              }
+              continue;
+            }
+          }
+        }
         bool ok = search_and_commit(st.c, false);
         std::string reason = why;
         // Escalation for pads boxed in by fixed copper: forced off-lattice escapes, then a neck-down to the
@@ -2407,6 +2879,8 @@ struct Router::Impl {
     // Via-saving re-routes need search budget; smoothing is cheap geometry and always runs (it uses no budget and
     // no randomness, so --work runs stay deterministic).
     if (opt.optimize && best_routed > 0 && res.routed == best_routed) {
+      // Pairs split by negotiation: coupled again where they fit now (each attempt restores the old copper on failure).
+      if ((opt.diff_pairs || !opt.pair_nets.empty()) && !out_of_budget()) res.pairs += route_diff_pairs(true);
       for (int round = 0; round < 4 && !out_of_budget(); ++round) {  // repeat while connections still improve
         const int before = res.optimized;
         optimize_vias();

@@ -208,8 +208,8 @@ A rule's `applies_to` names roles, not nets: rules are written once per category
 |---|---|---|
 | Net classes with track width, clearance, diff-pair width/gap/via gap | `model/rules.hpp` (`NetClass`) | `impedance`, `diff_pair` once widths are computed |
 | KiCad custom rules: conditions (`NetClass`, `NetName`, `Reference`, `Type`, `Layer`, `memberOfFootprint`, `insideArea`/`intersectsArea`/`enclosedByArea`, `inDiffPair`, `existsOnLayer`, `isPlated`), constraints `clearance`, `track_width`, `length`, `skew` | `drc/rule_engine.cpp` | `clearance`, `max_length`, `length_match`, keep-outs by area |
-| Diff-pair coupled routing (P/N detection by name, coupled tracks first, falls back to single routing) | `RouterOptions::diff_pairs` (off by default), `RouteResult::pairs` | `diff_pair` |
-| Length tuning by meanders into a custom `length` range; `skew_constraint` | `route/router.cpp`, `RouteResult::length_tuned` | `length_match`, `max_length` (as upper bound) |
+| Diff-pair coupled routing (P/N detection by name or per pair; coupled pair search with coupled vias, gap from rule / net class / clearance, `diff_pair_uncoupled` limits the legs, re-coupling after rip-up, falls back to single routing; doc 05 §15, D50) | `RouterOptions::diff_pairs`, `pair_nets` (off by default), `RouteResult::pairs`; `tracemaker pairs` measures coupled share, gap and skew | `diff_pair` |
+| Length tuning by meanders into a custom `length` range; `skew_constraint`; intra-pair skew limit for coupled pairs (`RouterOptions::pair_skew`, `--pair-skew-mm`) | `route/router.cpp`, `RouteResult::length_tuned` | `length_match`, `max_length` (as upper bound), `max_intra_skew_mm` |
 | Rule areas / keep-outs (`keepout_tracks/vias/pads/pour/footprints`) read from the board | `model/board.hpp` (`Zone`) | `keepout` (a generated keep-out is just another rule area) |
 | Placer pseudo-nets (`PNet::affinity`, decoupling capacitors, D25) | `place/problem.hpp` | `proximity`, `loop`, `net_weight` |
 | Fixed edge connectors, locked parts | doc 04 §2 | `edge` (partly) |
@@ -221,7 +221,7 @@ A rule's `applies_to` names roles, not nets: rules are written once per category
 | Kind | Placement | Routing | Check / report | New capability needed |
 |---|---|---|---|---|
 | `impedance` | — | net class width/gap for the role's nets, per layer | width/gap vs target; layer changes; reference plane | **Stackup model** (not parsed today: `board.hpp` has no stackup) and an **impedance solver** (§5.3) |
-| `diff_pair` | net weight ↑ for the pair | `diff_pairs` on for those nets; max uncoupled length | KiCad `diff_pair_gap`, `diff_pair_uncoupled` | Per-net enablement (today all-or-nothing); uncoupled-length accounting |
+| `diff_pair` | net weight ↑ for the pair | `diff_pairs` on for those nets; max uncoupled length | KiCad `diff_pair_gap`, `diff_pair_uncoupled` | Per-net enablement exists (`pair_nets`, D30) and the router reads `diff_pair_gap`/`diff_pair_uncoupled` custom rules (D50); still missing: per-pair skew limits from the catalogue (one global `pair_skew` today) |
 | `length_match`, `max_length` | pseudo-net weight so endpoints stay close (max length is impossible if the parts are far apart) | meander tuning to a range; lengths through series parts summed per segment | KiCad `length`, `skew` | Groups spanning series parts; ps→mm conversion from stackup |
 | `max_stub`, `via_limit` | — | via cost ↑ / via forbidden on the role's nets; stub check at commit | KiCad `via_count`; own stub measure | Stub measurement in the own DRC |
 | `keepout` | rule area with `footprints` disallowed | rule area with `tracks/vias/zones` disallowed | KiCad DRC on the generated rule area | Generating rule-area polygons from footprint geometry (antenna region from the module's `F.Cu`/`Edge` keep-out or the datasheet offsets) |
@@ -1317,7 +1317,7 @@ Built in `src/crules/` (namespace `tmk::crules`); assumptions made without revie
 | Ethernet magnetics void | `bind_ethernet`, `generate_keepouts` (ETH-05) | Discrete magnetics: tracks, vias and zones kept out on their side and the adjacent layer (D41, §14.6) |
 | User override file (§3.5, §6.3) | `overrides.{hpp,cpp}`, `detect(…, &overrides)`; `--rules-override` on `rules`, `route`, `tracemaker-place` | `disable`/`assert`/`deny`/`set`, validated against catalogue and board; reported (D40, §14.6) |
 | Connector edge attraction | `crules::edge_attractions`, `ExtractOptions::edge_pulls`, `PNet::has_ax/ay`; `tracemaker-place --component-rules soft --edge-attraction` | Opt-in, objective only (D42, §14.6) |
-| P3 USB pairs | `RouterOptions::pair_nets`, `crules::usb_pairs`; `tracemaker route --component-rules soft\|on` | USB2-02: detected D+/D− routed coupled first (D30); skew not yet checked |
+| P3 USB pairs | `RouterOptions::pair_nets`, `crules::usb_pairs`; `tracemaker route --component-rules soft\|on` | USB2-02: detected D+/D− routed coupled first (D30) by the coupled pair search (doc 05 §15, D50); skew measured by `tracemaker pairs`, tuned with `--pair-skew-mm` (not yet set from the rule's 1.27 mm) |
 | Events (rule 7) | route job | `crules.detected`, `crules.keepout` |
 | P4 stackup | `model/stackup.{hpp,cpp}`, `io/kicad/board_reader.cpp` (`read_stackup`) | `Board::stackup`: layers in file order with type, thickness (nm), εr, loss tangent, material, sublayers (`addsublayer`, combined in series), copper index; copper finish. Read-only (rule 8); `present == false` without a block |
 | P4 impedance solver | `crules/impedance.{hpp,cpp}` | Closed forms, quasi-static, solder mask ignored; width/gap by integer-nm bisection (§14.5) |

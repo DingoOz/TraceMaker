@@ -17,6 +17,7 @@
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
+#include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
 #include "route/obstacles.hpp"
@@ -221,6 +222,42 @@ int cmd_debug_pad(const std::string& path, const std::string& ref, const std::st
   return 1;
 }
 
+// Differential pairs of a routed board (doc 05 §15): per pair the coupled share of its track length, the gap it
+// keeps, the intra-pair skew and vias. Pairs: KiCad's by name, plus any given as "NET_A,NET_B".
+int cmd_pairs(const std::string& path, const std::vector<std::string>& extra, const std::string& json_path) {
+  auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  tmk::model::Board b = lb.board;
+  tmk::route::Obstacles obs(b, rules);
+  auto pairs = tmk::route::named_pairs(b, obs.rules());
+  for (const auto& e : extra) {
+    const auto comma = e.find(',');
+    if (comma == std::string::npos) throw std::runtime_error("--pair wants NET_A,NET_B: " + e);
+    auto id = [&](const std::string& name) {
+      for (std::size_t i = 1; i < b.nets.size(); ++i)
+        if (b.nets[i].name == name) return static_cast<tmk::model::NetId>(i);
+      throw std::runtime_error("no net " + name);
+    };
+    pairs.emplace_back(id(e.substr(0, comma)), id(e.substr(comma + 1)));
+  }
+  nlohmann::json j = nlohmann::json::array();
+  std::printf("%-28s %9s %9s %8s %9s %9s %8s %5s\n", "pair", "len_mm", "coupled", "gap_mm", "gap_min", "target", "skew_mm", "vias");
+  for (const auto& [na, nb] : pairs) {
+    const auto pr = tmk::route::pair_rule(b, rules, obs.rules(), na, nb);
+    const auto st = tmk::route::measure_pair(b.tracks, b.vias, na, nb, tmk::route::coupled_threshold(pr));
+    const std::string name = b.nets[static_cast<std::size_t>(na)].name + " / " + b.nets[static_cast<std::size_t>(nb)].name;
+    std::printf("%-28s %9.2f %8.1f%% %8.3f %9.3f %9.3f %8.3f %2d/%-2d\n", name.c_str(), (st.length_a + st.length_b) / 2e6, 100 * st.coupled_share(),
+                st.gap_median / 1e6, st.gap_min / 1e6, tmk::nm_to_mm(pr.gap), st.skew() / 1e6, st.vias_a, st.vias_b);
+    j.push_back({{"net_a", b.nets[static_cast<std::size_t>(na)].name}, {"net_b", b.nets[static_cast<std::size_t>(nb)].name},
+                 {"length_a_mm", st.length_a / 1e6}, {"length_b_mm", st.length_b / 1e6}, {"coupled_share", st.coupled_share()},
+                 {"coupled_a_mm", st.coupled_a / 1e6}, {"coupled_b_mm", st.coupled_b / 1e6}, {"gap_median_mm", st.gap_median / 1e6},
+                 {"gap_min_mm", st.gap_min / 1e6}, {"target_gap_mm", tmk::nm_to_mm(pr.gap)}, {"width_mm", tmk::nm_to_mm(pr.width)},
+                 {"gap_source", pr.source}, {"skew_mm", st.skew() / 1e6}, {"vias_a", st.vias_a}, {"vias_b", st.vias_b}});
+  }
+  if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"pairs", j}}.dump(1) << "\n";
+  return 0;
+}
+
 int cmd_escape(const std::string& path, const std::string& json_path, bool flow) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
@@ -405,7 +442,9 @@ int main(int argc, char** argv) {
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
   route->add_flag("--blind-vias", ropt.blind_vias, "Use blind/buried vias where a through via is blocked (only on boards that allow them)");
-  route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs together as coupled tracks first (experimental)");
+  route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs (KiCad P/N or +/- names) as coupled pairs first (doc 05 §15)");
+  double r_pair_skew_mm = 0;
+  route->add_option("--pair-skew-mm", r_pair_skew_mm, "Intra-pair skew limit for coupled pairs: meanders on the shorter half (0 = custom skew rules only)");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
   route->add_flag("--global-confine", ropt.global_confine, "With --global: confine each connection's first search to its corridor (experimental)")->group("");
   route->add_flag("--global-corridor-only", ropt.global_strict_corridor_only, "With --global-confine: a corridor failure goes straight to negotiation (experimental)")->group("");
@@ -457,6 +496,12 @@ int main(int argc, char** argv) {
   esc->add_option("--json", esc_json, "Write the analysis as JSON");
   bool esc_flow = false;
   esc->add_flag("--flow", esc_flow, "Also plan deep BGA arrays by min-cost flow and report the channel/layer assignment per ring");
+  auto* pairs_cmd = app.add_subcommand("pairs", "Differential pairs of a routed board: coupled share, gap, intra-pair skew");
+  std::string pr_board, pr_json;
+  std::vector<std::string> pr_extra;
+  pairs_cmd->add_option("board", pr_board)->required()->check(CLI::ExistingFile);
+  pairs_cmd->add_option("--pair", pr_extra, "Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM");
+  pairs_cmd->add_option("--json", pr_json, "Write the measurements as JSON");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -501,6 +546,7 @@ int main(int argc, char** argv) {
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow);
+    if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
@@ -511,6 +557,7 @@ int main(int argc, char** argv) {
     }
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
+      ropt.pair_skew = static_cast<tmk::Coord>(r_pair_skew_mm * 1e6);
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
       auto job = std::move(r_job);
       job.in = r_in;
