@@ -330,6 +330,10 @@
     {
      "text": "Global router v2: Steiner topology, via capacity, layer assignment, corridor-restricted windows",
      "done": false
+    },
+    {
+     "text": "Exact flood-fill reachability pre-check before likely-failing searches (10 hard boards +47 routed at fixed budget; tiers neutral)",
+     "done": true
     }
    ]
   },

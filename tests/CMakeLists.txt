@@ -40,3 +40,6 @@ add_test(NAME crules_dru_parses COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/inte
 set_tests_properties(crules_dru_parses PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 900)
 add_test(NAME crules_two_stage COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_two_stage.py $<TARGET_FILE:tracemaker-place> ${CMAKE_BINARY_DIR}/integration/crules_two_stage)
 set_tests_properties(crules_two_stage PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 900)
+# Reachability pre-check: every "unreachable" verdict re-checked by the full A* (skips without fixtures).
+add_test(NAME reach_verify COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/reach_verify.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/reach_verify)
+set_tests_properties(reach_verify PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 600)

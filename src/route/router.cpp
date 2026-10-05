@@ -622,11 +622,17 @@ struct Router::Impl {
 
   // Why the last search ended without a path (failure explanation, design doc 06 T0).
   enum class Miss { None, Enclosed, Window, Budget };
+  bool reach_check_now = false;  // run the reachability pre-check before the next search
+  std::vector<std::uint32_t> rstamp;  // flood-fill visited marks (generation stamps)
+  std::vector<std::size_t> reach_q;
+  long reach_checks = 0, reach_pruned = 0, reach_visits = 0, reach_mismatch = 0;
+  bool reach_said_no = false;  // this search's pre-check found no path
   long expansion_cap = 0;  // > 0: per-search expansion limit overriding opt.max_expansions (reverse probes)
   Miss last_miss = Miss::None;
 
   bool search(const Connection& c, const Window& w, std::vector<PathNode>& path) {
     last_miss = Miss::None;
+    reach_said_no = false;
     bool touched_edge = false;
     const NetId net = c.net;
     const Coord width = track_width(net);
@@ -649,6 +655,7 @@ struct Router::Impl {
       std::fill(sn.begin(), sn.end(), SNode{0, 0, -1});
       std::fill(cstamp.begin(), cstamp.end(), 0u);
       std::fill(vstamp.begin(), vstamp.end(), 0u);
+      std::fill(rstamp.begin(), rstamp.end(), 0u);
       gen = 1;
     }
     const Endpoint src = pad_cells(w, c.pad_a);
@@ -682,6 +689,66 @@ struct Router::Impl {
     };
     const Point tp = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : b.pads[static_cast<std::size_t>(c.pad_a)].pos;
     const bool zone_target = c.zone_b >= 0;
+    // Reachability pre-check (doc 05 §13): a flood fill over the same legality tests as the A* below, but with no
+    // bend states, turn limits or costs, so it admits every path the A* could find. "Unreachable" is therefore
+    // exact, found with one visit per lattice point instead of up to nine heap-ordered expansions, and the cell
+    // cache it fills is reused by the A* when a path exists. Run only where a failure is likely (reach_check_now).
+    if (reach_check_now && !soft && !zone_target && c.pad_b >= 0) {
+      const std::size_t lcells = cells * static_cast<std::size_t>(nl);
+      if (rstamp.size() < lcells) rstamp.assign(lcells, 0);
+      const std::size_t cap = static_cast<std::size_t>(expansion_cap > 0 ? expansion_cap : opt.max_expansions);
+      reach_q.clear();
+      for (const auto& [l, ci] : src.cells) {
+        const std::size_t i = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
+        if (rstamp[i] == gen) continue;
+        rstamp[i] = gen;
+        reach_q.push_back(i);
+      }
+      bool found = false, edge = false;
+      for (std::size_t head = 0; head < reach_q.size() && reach_q.size() <= cap; ++head) {
+        const std::size_t i = reach_q[head];
+        if (is_target[i] == 1) {
+          found = true;
+          break;
+        }
+        const int l = static_cast<int>(i / cells);
+        const std::size_t ci = i % cells;
+        const int cx = static_cast<int>(ci % static_cast<std::size_t>(w.w)), cy = static_cast<int>(ci / static_cast<std::size_t>(w.w));
+        if (cx == 0 || cy == 0 || cx == w.w - 1 || cy == w.h - 1) edge = true;
+        for (int d = 0; d < 8; ++d) {
+          const int ncx = cx + kDx[d], ncy = cy + kDy[d];
+          if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
+          const std::size_t ni = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ncy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(ncx);
+          if (rstamp[ni] == gen) continue;
+          if (is_target[ni] != 1 && cell_cost(w, l, ncx, ncy, net, hw) < 0) continue;
+          rstamp[ni] = gen;
+          reach_q.push_back(ni);
+        }
+        // Layer change: a through via, or (optimistically) any blind/buried via when those are allowed.
+        if (nl > 1 && (blind_ok || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
+          for (int l2 = 0; l2 < nl; ++l2) {
+            const std::size_t ni = static_cast<std::size_t>(l2) * cells + ci;
+            if (l2 == l || rstamp[ni] == gen) continue;
+            rstamp[ni] = gen;
+            reach_q.push_back(ni);
+          }
+      }
+      const long visited = static_cast<long>(reach_q.size());
+      res.expansions += visited;  // counted as work so --work budgets stay deterministic
+      reach_visits += visited;
+      ++reach_checks;
+      if (!found && reach_q.size() <= cap) {
+        ++reach_pruned;
+        reach_said_no = true;
+        // --reach-verify (reference check): run the A* anyway; a path it finds is a mismatch.
+        if (!opt.reach_verify) {
+          exp_fail += visited;
+          ++n_fail;
+          last_miss = edge ? Miss::Window : Miss::Enclosed;
+          return false;
+        }
+      }
+    }
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
     const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6);
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
@@ -813,6 +880,7 @@ struct Router::Impl {
         }
       }
     }
+    if (reach_said_no && goal != SIZE_MAX) ++reach_mismatch;
     res.expansions += expanded;
     (goal == SIZE_MAX ? exp_fail : exp_ok) += expanded;
     if (goal == SIZE_MAX) (soft ? (corr_hard ? xf_soft_conf : xf_soft_wide) : (corr_hard ? xf_strict_conf : xf_strict_wide)) += expanded;
@@ -1162,7 +1230,12 @@ struct Router::Impl {
       const int x1 = std::min(nx - 1, to_ix(std::max(a.x, e.x) + m)), y1 = std::min(ny - 1, to_iy(std::max(a.y, e.y) + m));
       w.w = x1 - w.x0 + 1;
       w.h = y1 - w.y0 + 1;
-      if (!search(c, w, path)) {
+      // The cheap reachability check first: on every strict search (mode 2) or only on likely failures (mode 1:
+      // a retry with a larger window, or a connection that has failed before).
+      reach_check_now = opt.reach_check == 2 || (opt.reach_check == 1 && (attempt > 0 || cs[static_cast<std::size_t>(current)].fails > 0));
+      const bool found_path = search(c, w, path);
+      reach_check_now = false;
+      if (!found_path) {
         why = last_miss == Miss::Enclosed ? "boxed in" : last_miss == Miss::Budget ? "search budget" : "no path in window";
         if (last_miss == Miss::Enclosed) {
           ++res.enclosed;
@@ -2320,6 +2393,9 @@ struct Router::Impl {
     std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", res.restarts, obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
     if (confined_tried) std::fprintf(stderr, "global corridors: %ld of %ld confined searches committed\n", confined_ok, confined_tried);
+    if (reach_checks) std::fprintf(stderr, "reachability checks: %ld, %ld proved unreachable, %ld cells visited%s\n", reach_checks, reach_pruned, reach_visits,
+                                  opt.reach_verify ? (reach_mismatch ? ", MISMATCHES" : ", verified (0 mismatches)") : "");
+    if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
     std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
                  xf_strict_wide, xf_soft_conf, xf_soft_wide);
     emit_stats("done");

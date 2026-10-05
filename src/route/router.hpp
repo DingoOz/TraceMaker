@@ -23,6 +23,8 @@ struct RouterOptions {
   // 8,285 / 8,309 / 8,381 / 8,371 / 8,363), but the 8-variant 120 s tiers did not confirm it (tier B 5,167 -> 5,161,
   // tier C 9,523 -> 9,512 and 63.3 % -> 60.0 % clean), so it stays 3M (doc 05 §13; --max-expansions to experiment).
   long max_expansions = 3'000'000;
+  bool reach_verify = false;        // test only: run the A* even where the pre-check proved no path, count mismatches
+  int reach_check = 1;              // flood-fill reachability check before strict searches (exact): 0 off, 1 likely failures, 2 all
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   double heuristic_weight = 1.0;
   bool field_heuristic = true;      // GPU cost-to-go field as the A* heuristic on large windows

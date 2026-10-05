@@ -226,8 +226,24 @@ setup (8 variants, 120 s) did not confirm it: tier B 5,167 → 5,161 routed (67.
 and 63.3 % → 60.0 % clean (two boards lost, one gained). The default stays 3 M; fixed-budget single-variant gains
 must be checked on the tiers before they become defaults.
 
-**Next.** The detailed router's failed searches are the cost; options that keep the search exact: reuse a failed
-search's explored region for the next window instead of starting over, a cheap reachability pre-check on a coarse
-grid of fixed plus routed copper before a full A*, and making the global plan trustworthy (pin access and via
+**Reachability pre-check (on: `--reach-check 1`).** Before a strict search that is likely to fail (a retry with a
+larger window, or a connection that has failed before), a flood fill over the same lattice and the same legality
+tests (`cell_cost`, `via_cost_at`; any layer change where blind/buried vias are allowed) but with no bend states,
+turn limits or costs. It admits every path the A* could find, so "no path" is exact: the A* and its cost-to-go field
+are skipped and the miss is classed as window (the flood touched the window edge) or enclosed. Each lattice point
+is visited once (versus up to nine heap-ordered states), the legality cache it fills is reused by the A* when a path
+exists, and visits count as work units so `--work` runs stay deterministic. `--reach-verify` runs the A* anyway after
+every "no path" and counts paths it finds (integration test `reach_verify`: 0 mismatches on sbc). The same 10 boards,
+one variant, 100 M expansions: off / likely failures / every strict search routed 8,285 / **8,332** / 8,336; mode 1
+is better or equal on every board, mode 2 swings both ways (logicbone +45, Aleste −30). Checking every strict search
+on sbc proves 72 of 102 failed searches unreachable and cuts failed-search expansions from 23.9 M to 0.4 M, but the
+flood on the searches that succeed costs as much again. KiCad-judged tiers (8 variants, 120 s): tier B 5,167 → 5,165
+routed, tier C 9,523 → 9,523, tier D 16,626 → 16,628, tier A 2,637 → 2,637; clean pass unchanged (100 %, 67.5 %,
+63.3 %, 50 %). Neutral within wall-clock noise at 120 s with 8 variants; kept on because it is exact and wins at fixed
+budgets on the largest boards.
+
+**Next.** Reusing a failed search's explored region for the next window was not built: the pre-check already makes
+the hopeless retries cheap, and the retries that do find a path need a full A* in the larger window anyway (the
+smaller window's g-values are not optimal in the larger one). Still open: making the global plan trustworthy (pin access and via
 demand in the tile capacities, multi-pin Steiner topology) before it guides anything.
 
