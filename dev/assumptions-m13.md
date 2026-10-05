@@ -212,3 +212,11 @@ section at its end); decisions D26–D31 in `docs/12-decisions.md`.
 49. **`--edge-attraction` with `--component-rules off/report` is an error**, not a silent no-op.
 50. **Two-stage soft placement (D43).** In full mode `--component-rules soft` first places with the decoupling ties only, then locks those capacitors *and the ICs they decouple* and refines with the other pulls. Locking the ICs is a choice: it keeps decaps next to their IC but stops the IC from moving toward its crystal or connector; the crystal moves toward the IC instead. PocketBone's decap metric still gets worse on all three seeds (its measured decaps include ones not tied by D25). Revert: `--no-crules-two-stage`.
 
+51. **Source verification of the 41 R rules (D45, doc 15 §8.10).** ST, ADI, NXP, AMD and Silicon Labs servers refused
+    direct downloads from this machine, so their PDFs were read from Internet Archive copies of the vendors' own URLs
+    (revision and date recorded per source). Judgement calls: a rule whose source supports the statement but gives no
+    number is **D** (default), not V; DEC-05 keeps 50 mm for MT-101's 2 in (50.8 mm); AN928.2's edge-stitching spacing
+    (λ/10 of the 10th harmonic, 40–50 mil) is applied to the RF-03 line fence and the SHLD-01 shield fence; the MDIO
+    1.5 kΩ value (ETH-15) is taken from the DP83848C datasheet because IEEE 802.3 clause 22 is paywalled; the 120 Ω of
+    CAN-01/RS485-01 is the cable impedance, so the on-board pair target stays a TraceMaker choice. IEC 62368-1 (HV-02),
+    IPC-2221B (TP-01) and ISO 4762/7089 (MH-01) were not read: those rules stay R. Revert: `git revert` the commit.

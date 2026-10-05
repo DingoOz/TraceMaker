@@ -153,8 +153,9 @@ Evaluation evaluate(const model::Board& b, const model::DesignRules* rules, cons
       e.instance = static_cast<int>(ii);
       e.spec = &r;
       e.severity = r.severity;
-      // Confidence below `apply` demotes hard to soft (§3.2); so does unverified evidence (§8: R rules are never hard).
-      if (e.severity == Severity::Hard && (!apply_level || r.evidence == "R")) e.severity = Severity::Soft;
+      // Confidence below `apply` demotes hard to soft (§3.2); so does a value no source states (§8: R and D rules are
+      // never hard; D-rule numbers are TraceMaker defaults, D45).
+      if (e.severity == Severity::Hard && (!apply_level || r.evidence == "R" || r.evidence == "D")) e.severity = Severity::Soft;
       const auto key = std::make_pair(static_cast<int>(ii), r.id);
       // User override file (doc 15 §3.5 level 1): a disabled rule is neither applied nor measured.
       const RuleOverride* user = in.override_for(r.id);

@@ -73,8 +73,10 @@ def check(cat: dict) -> int:
                     errors.append(f"rule {r['id']} cites unknown source {s}")
             if r.get("severity") not in ("hard", "soft", "advisory"):
                 errors.append(f"rule {r['id']}: bad severity {r.get('severity')}")
-            if r.get("evidence") == "R" and r.get("severity") == "hard":
-                warnings.append(f"rule {r['id']}: R-evidence rule is hard; the engine demotes it to soft (doc 15 §8)")
+            if r.get("evidence") not in ("V", "R", "D", "C"):
+                errors.append(f"rule {r['id']}: bad evidence {r.get('evidence')!r} (V, D, R or C, doc 15 §8)")
+            if r.get("evidence") in ("R", "D") and r.get("severity") == "hard":
+                warnings.append(f"rule {r['id']}: {r['evidence']}-evidence rule is hard; the engine demotes it to soft (doc 15 §8)")
         for d in c["detect"]:
             if not isinstance(d.get("weight"), int) or not 0 <= d["weight"] <= 100:
                 errors.append(f"category {c['id']}: detector weight must be an integer 0..100")
