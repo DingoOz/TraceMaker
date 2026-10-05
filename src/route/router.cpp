@@ -1,6 +1,7 @@
 #include "route/router.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
+#include "route/heat_grid.hpp"
 #include "route/global_router.hpp"
 
 #include <algorithm>
@@ -837,6 +838,7 @@ struct Router::Impl {
       if (++expanded > exp_cap) break;
       if (live && (expanded & 63) == 0) {
         recent[recent_n++ % recent.size()] = {at(w.x0 + cx, w.y0 + cy), l};
+        heat_exp.add(at(w.x0 + cx, w.y0 + cy), 64);  // one sample stands for the 64 expansions since the last
         if ((expanded & 8191) == 0) emit_frontier();
       }
       const std::int64_t gs = sn[s].g;
@@ -1314,6 +1316,25 @@ struct Router::Impl {
   bool live = false;  // a viewer wants transient messages
   std::array<std::pair<Point, int>, 96> recent{};
   std::size_t recent_n = 0;
+  // Heatmap overlays (doc 09 §3, doc 13 `heatmap`): where the searches spent their expansions, and the PathFinder
+  // history cost per cell. Filled only while a sink is attached and never read by the router.
+  HeatGrid heat_exp, heat_hist;
+  long heat_last = 0;  // res.expansions at the last heatmap message
+  // Resent by work done, not by wall time, so a recording is the same for the same input and seed.
+  long heat_every() const { return opt.work_budget > 0 ? std::max(200'000L, opt.work_budget / 40) : 2'000'000L; }
+  void emit_heatmaps(bool force) {
+    if (!opt.sink || !heat_exp.ready()) return;
+    if (!force && res.expansions - heat_last < heat_every()) return;
+    heat_last = res.expansions;
+    emit(heat_exp.message("expansions", -1));
+    heat_hist.clear();
+    // Iterating the hash map is fine here: raise() keeps the maximum per cell, which does not depend on order.
+    for (const auto& [key, hv] : history) {
+      const int gx = static_cast<int>(key & 0xFFFFFF), gy = static_cast<int>((key >> 24) & 0xFFFFFF);
+      if (gx < nx && gy < ny) heat_hist.raise(at(gx, gy), hv);
+    }
+    emit(heat_hist.message("history", -1));
+  }
   void emit_frontier() {
     if (!opt.sink || !opt.sink->wants_transient()) return;
     std::string m = "{\"type\":\"frontier\",\"conn\":" + std::to_string(current) + ",\"layer\":" + std::to_string(recent[0].second) + ",\"pts\":[";
@@ -2549,6 +2570,10 @@ struct Router::Impl {
       if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
     }
     live = opt.sink != nullptr;
+    if (live) {
+      heat_exp.init(lat, pitch);
+      heat_hist.init(lat, pitch);
+    }
     if (opt.diff_pairs || !opt.pair_nets.empty()) {
       const int np = route_diff_pairs();
       if (tdbg) std::fprintf(stderr, "[%.2f s] differential pairs routed coupled: %d\n", elapsed(), np);
@@ -2728,6 +2753,7 @@ struct Router::Impl {
         }
         emit_stats("route");
         if (opt.sink && (res.routed % 8 == 0 || pending.empty())) emit_ratsnest();
+        emit_heatmaps(false);
         if (res.routed > best_routed) {
           snapshot();
           snapshot_unrouted();
@@ -2803,14 +2829,15 @@ struct Router::Impl {
     if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
     std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
                  xf_strict_wide, xf_soft_conf, xf_soft_wide);
+    emit_heatmaps(true);
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
     return std::move(res);
   }
 };
 
-PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads,
-                                const std::vector<int>& pick) {
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
+                                const std::vector<int>& pick, int threads) {
   struct Variant {
     std::string name;
     RouterOptions o;
@@ -2837,7 +2864,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     for (int i : pick)
       if (i >= 0 && i < static_cast<int>(vs.size())) chosen.push_back(i);
   } else {
-    for (int i = 0; i < std::clamp(threads, 1, static_cast<int>(vs.size())); ++i) chosen.push_back(i);
+    for (int i = 0; i < std::clamp(variants, 1, static_cast<int>(vs.size())); ++i) chosen.push_back(i);
   }
   {
     std::vector<Variant> sel;
@@ -2877,24 +2904,40 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       bufs.push_back(std::make_unique<BufferSink>());
       v.o.sink = bufs.back().get();
     }
-  for (std::size_t i = 0; i < vs.size(); ++i)
-    pool.emplace_back([&, i] { rs[i] = Router(board, rules, vs[i].o).run(); });
+  // Variants are taken in index order by `threads` workers. Which thread runs a variant, and when, cannot change its
+  // result: each Router owns all of its state, its clock starts when it starts, and in work-budget mode nothing is
+  // shared between variants (the shared deadline is wall-clock mode only).
+  const std::size_t workers = threads <= 0 ? vs.size() : std::min(vs.size(), static_cast<std::size_t>(threads));
+  std::atomic<std::size_t> next{0};
+  for (std::size_t w = 0; w < workers; ++w)
+    pool.emplace_back([&] {
+      for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
+    });
   for (auto& t : pool) t.join();
   PortfolioResult pr;
+  // Copper length is summed in commit order, so it is the same value whichever thread ran the variant.
   auto length = [](const RouteResult& r) {
     double l = 0;
     for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
     return l;
+  };
+  // Total order on (routed desc, vias asc, length asc, variant index asc): the winner depends neither on the order
+  // in which variants finished nor on their positions in `pick`.
+  auto better = [&](std::size_t i, std::size_t j) {
+    const auto& a = rs[i];
+    const auto& c = rs[j];
+    if (a.routed != c.routed) return a.routed > c.routed;
+    if (a.vias.size() != c.vias.size()) return a.vias.size() < c.vias.size();
+    const double la = length(a), lc = length(c);
+    if (la != lc) return la < lc;
+    return chosen[i] < chosen[j];
   };
   std::size_t best = 0;
   pr.indices = chosen;
   for (std::size_t i = 0; i < rs.size(); ++i) {
     pr.variants.push_back(vs[i].name);
     pr.routed.push_back(rs[i].routed);
-    const auto& a = rs[i];
-    const auto& c = rs[best];
-    if (a.routed > c.routed || (a.routed == c.routed && (a.vias.size() < c.vias.size() || (a.vias.size() == c.vias.size() && length(a) < length(c)))))
-      best = i;
+    if (i > 0 && better(i, best)) best = i;
   }
   pr.best_variant = static_cast<int>(best);
   if (!bufs.empty())

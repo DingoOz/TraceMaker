@@ -205,12 +205,16 @@
      "done": true
     },
     {
-     "text": "Replay log, heatmaps, FlatBuffers",
-     "done": false
+     "text": "Replay log (zstd frames, --record FILE.zst) and heatmaps (expansions, history) live and in replay; test: recording/viewing leave the routed board byte-identical",
+     "done": true
     },
     {
      "text": "Event recording (route --record) and replay (tracemaker-view --replay); test: replay reproduces the routed board exactly",
      "done": true
+    },
+    {
+     "text": "FlatBuffers schema for the protocol and replay log (deferred until the message set is stable, D45)",
+     "done": false
     }
    ]
   },
@@ -369,8 +373,8 @@
      "done": true
     },
     {
-     "text": "Side assignment (flip to the back)",
-     "done": false
+     "text": "Side assignment (flip to the back): opt-in --flip, annealer flip move + via estimate, KiCad-exact mirror (2,529 footprints = pcbnew); 23 boards HPWL -8%, crossings -31%, 0 new DRC (D48)",
+     "done": true
     },
     {
      "text": "legalisation (greedy minimum displacement; LP not done)",
@@ -524,8 +528,8 @@
      "done": false
     },
     {
-     "text": "Bit-identical across thread counts (portfolio selection)",
-     "done": false
+     "text": "Bit-identical across thread counts (portfolio selection; --variants, all 8 with --work, D47)",
+     "done": true
     },
     {
      "text": "Portfolio early stop once a variant routes everything (wall-clock mode)",
@@ -647,8 +651,8 @@
    "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
    "tasks": [
     {
-     "text": "Verify the 41 unchecked catalogue numbers against their sources",
-     "done": false
+     "text": "Verify the 41 unchecked catalogue numbers against their sources (2026-10-05: 9 confirmed, 9 corrected, 11 TraceMaker defaults now D, 12 unverifiable stay R; doc 15 \u00a78.10, D46)",
+     "done": true
     },
     {
      "text": "Category detection + role binding with confidence",

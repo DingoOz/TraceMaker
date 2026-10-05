@@ -81,8 +81,8 @@ py::object to_python(const nlohmann::json& j) {
 std::string opt_str(const std::optional<std::string>& s) { return s.value_or(std::string()); }
 
 // Runs one routing job with the CLI's defaults. `kb`: True = default knowledge base, False/None = none, str = file.
-tmk::app::RouteJobResult run_job(const std::string& in, const std::optional<std::string>& out, double time_s, int threads, long work,
-                                 std::uint64_t seed, bool view, const std::string& view_host, int view_port, bool gpu, const py::object& kb,
+tmk::app::RouteJobResult run_job(const std::string& in, const std::optional<std::string>& out, double time_s, int threads, int variants,
+                                 long work, std::uint64_t seed, bool view, const std::string& view_host, int view_port, bool gpu, const py::object& kb,
                                  double pitch_um, double via_cost_mm, bool optimize, bool rip_up, bool global_route,
                                  const std::optional<std::string>& items_out, const std::optional<std::string>& json_out,
                                  const std::optional<std::string>& record, bool verbose, std::vector<std::string>& log) {
@@ -98,6 +98,7 @@ tmk::app::RouteJobResult run_job(const std::string& in, const std::optional<std:
   job.opt.rip_up = rip_up;
   job.opt.global_route = global_route;
   job.threads = threads;
+  job.variants = variants;
   if (py::isinstance<py::str>(kb)) job.kb_path = kb.cast<std::string>();
   else if (!kb.is_none() && kb.cast<bool>()) job.kb_path = tmk::learn::KnowledgeBase::default_path();
   job.items_out = opt_str(items_out);
@@ -121,18 +122,18 @@ tmk::app::RouteJobResult run_job(const std::string& in, const std::optional<std:
 
 #define TM_ROUTE_ARGS                                                                                                          \
   py::arg("path_in"), py::arg("path_out") = py::none(), py::kw_only(), py::arg("time_s") = 120.0, py::arg("threads") = 8,       \
-      py::arg("work") = 0L, py::arg("seed") = 1ULL, py::arg("view") = false, py::arg("view_host") = "0.0.0.0",                 \
+      py::arg("variants") = 0, py::arg("work") = 0L, py::arg("seed") = 1ULL, py::arg("view") = false, py::arg("view_host") = "0.0.0.0",                 \
       py::arg("view_port") = 8766, py::arg("gpu") = true, py::arg("kb") = true, py::arg("pitch_um") = 0.0,                      \
       py::arg("via_cost_mm") = 3.0, py::arg("optimize") = true, py::arg("rip_up") = true, py::arg("global_route") = false,     \
       py::arg("items_out") = py::none(), py::arg("json_out") = py::none(), py::arg("record") = py::none(),                    \
       py::arg("verbose") = false
 
-py::dict route(const std::string& in, const std::optional<std::string>& out, double time_s, int threads, long work, std::uint64_t seed,
+py::dict route(const std::string& in, const std::optional<std::string>& out, double time_s, int threads, int variants, long work, std::uint64_t seed,
                bool view, const std::string& view_host, int view_port, bool gpu, const py::object& kb, double pitch_um, double via_cost_mm,
                bool optimize, bool rip_up, bool global_route, const std::optional<std::string>& items_out,
                const std::optional<std::string>& json_out, const std::optional<std::string>& record, bool verbose) {
   std::vector<std::string> log;
-  const auto r = run_job(in, out, time_s, threads, work, seed, view, view_host, view_port, gpu, kb, pitch_um, via_cost_mm, optimize, rip_up,
+  const auto r = run_job(in, out, time_s, threads, variants, work, seed, view, view_host, view_port, gpu, kb, pitch_um, via_cost_mm, optimize, rip_up,
                          global_route, items_out, json_out, record, verbose, log);
   py::dict d = to_python(r.summary).cast<py::dict>();
   py::list unrouted;
@@ -150,12 +151,12 @@ py::dict route(const std::string& in, const std::optional<std::string>& out, dou
   return d;
 }
 
-py::dict emit_items(const std::string& in, const std::optional<std::string>& out, double time_s, int threads, long work, std::uint64_t seed,
+py::dict emit_items(const std::string& in, const std::optional<std::string>& out, double time_s, int threads, int variants, long work, std::uint64_t seed,
                     bool view, const std::string& view_host, int view_port, bool gpu, const py::object& kb, double pitch_um,
                     double via_cost_mm, bool optimize, bool rip_up, bool global_route, const std::optional<std::string>& items_out,
                     const std::optional<std::string>& json_out, const std::optional<std::string>& record, bool verbose) {
   std::vector<std::string> log;
-  const auto r = run_job(in, out, time_s, threads, work, seed, view, view_host, view_port, gpu, kb, pitch_um, via_cost_mm, optimize, rip_up,
+  const auto r = run_job(in, out, time_s, threads, variants, work, seed, view, view_host, view_port, gpu, kb, pitch_um, via_cost_mm, optimize, rip_up,
                          global_route, items_out, json_out, record, verbose, log);
   return to_python(r.items).cast<py::dict>();
 }

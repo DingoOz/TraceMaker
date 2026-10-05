@@ -785,3 +785,145 @@ TEST_CASE("routability loop: never worse than its best seed, locked parts fixed"
     if (!p.parts[i].movable) CHECK(r.best.pl.pos[i] == start.pos[i]);
   CHECK(route(r.best.pl).unrouted() == r.best.eval.unrouted());
 }
+
+// ---- Side assignment (doc 04 §3 C/E, D48) ----------------------------------------------------------------------
+
+namespace {
+
+ExtractOptions flip_options(const io::LoadedBoard& lb) {
+  ExtractOptions eo;
+  eo.flip = true;
+  eo.flip_ok.assign(lb.board.footprints.size(), 0);
+  for (std::size_t i = 0; i < lb.board.footprints.size(); ++i) eo.flip_ok[i] = io::flip_supported(lb, i) ? 1 : 0;
+  return eo;
+}
+
+bool near(Point a, Point b, Coord tol = 2) { return std::llabs(a.x - b.x) <= tol && std::llabs(a.y - b.y) <= tol; }
+bool near(const Box& a, const Box& b, Coord tol = 2) { return near(Point{a.x0, a.y0}, Point{b.x0, b.y0}, tol) && near(Point{a.x1, a.y1}, Point{b.x1, b.y1}, tol); }
+
+}  // namespace
+
+TEST_CASE("flip: the placer's mirrored geometry is what the KiCad writer produces", "[place][fixture][flip]") {
+  for (const char* name : {"1Bitsy_1bitsy", "ChirpHardware_chirp"}) {
+    const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/" + name + "/unrouted.kicad_pcb";
+    if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+    auto lb = io::read_board_file(path);
+    const auto rules = io::read_design_rules(path);
+    const ExtractOptions eo = flip_options(lb);
+    const Problem p = extract(lb.board, rules, path, eo);
+    REQUIRE(p.flippable_count() > 5);
+    // Every flippable part to a flipped state (all four turns occur) at a shifted origin, written KiCad style.
+    Placement pl = Placement::initial(p);
+    io::BoardEditor ed(lb, 1);
+    int k = 0;
+    for (std::size_t i = 0; i < p.parts.size(); ++i) {
+      const Part& pt = p.parts[i];
+      if (!pt.may_flip()) {
+        CHECK(pt.flip_reason.empty() == !pt.movable);  // a movable part that may not flip says why
+        continue;
+      }
+      pl.rot[i] = static_cast<std::uint8_t>(kFlipBit | (k++ & 3));
+      pl.pos[i] = pt.pos0 + Point{1'000'000, -2'000'000};
+      ed.flip_footprint(static_cast<std::size_t>(pt.fp), pl.pos[i], pt.angle_of(pl.rot[i]));
+    }
+    // Read back (text round trip) and extract without flipping: each part's input state must equal our state.
+    const auto b2 = io::read_board(sexpr::Document::parse(lb.doc.write()));
+    const Problem q = extract(b2, rules, path);
+    REQUIRE(q.parts.size() == p.parts.size());
+    REQUIRE(q.pins.size() == p.pins.size());
+    for (std::size_t i = 0; i < p.parts.size(); ++i) {
+      const Part& a = p.parts[i];
+      const Part& c = q.parts[i];
+      if (!flipped(pl.rot[i])) continue;
+      CHECK(c.side == 1 - a.side);
+      CHECK(c.side == a.side_in(pl.rot[i]));
+      CHECK(std::fmod(c.angle0 - a.angle_of(pl.rot[i]) + 720.0, 360.0) < 1e-6);
+      const PartGeom& ga = a.geom[pl.rot[i]];
+      const PartGeom& gc = c.geom[0];
+      for (int s = 0; s < 2; ++s) {
+        REQUIRE(ga.cy[z(s)].size() == gc.cy[z(s)].size());
+        for (std::size_t j = 0; j < ga.cy[z(s)].size(); ++j) CHECK(near(ga.cy[z(s)][j].box, gc.cy[z(s)][j].box));
+      }
+      REQUIRE(ga.pads.size() == gc.pads.size());
+      for (std::size_t j = 0; j < ga.pads.size(); ++j) CHECK(near(ga.pads[j].box, gc.pads[j].box));
+      REQUIRE(ga.copper.size() == gc.copper.size());
+      for (std::size_t j = 0; j < ga.copper.size(); ++j) {
+        CHECK(near(ga.copper[j].s.box, gc.copper[j].s.box));
+        CHECK(ga.copper[j].layers == gc.copper[j].layers);
+      }
+    }
+    const Placement qi = Placement::initial(q);
+    for (std::size_t j = 0; j < p.pins.size(); ++j)
+      // Real pads only: decoupling ties pick the nearest IC pad of the input, which moved.
+      if (flipped(pl.rot[z(p.pins[j].part)]) && !p.nets[z(p.pins[j].net)].affinity) {
+        const Point u = pl.pin(p, static_cast<int>(j)), v = qi.pin(q, static_cast<int>(j));
+        INFO(name << " " << p.parts[z(p.pins[j].part)].ref << " net " << p.nets[z(p.pins[j].net)].name << " " << u.x << "," << u.y << " vs " << v.x << "," << v.y);
+        CHECK(near(u, v));
+      }
+  }
+}
+
+TEST_CASE("flip: legal, exact incremental cost with the via term, deterministic, only allowed parts flip", "[place][fixture][flip]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/ChirpHardware_chirp/unrouted.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto lb = io::read_board_file(path);
+  const auto rules = io::read_design_rules(path);
+  ExtractOptions eo = flip_options(lb);
+  const Problem p0 = extract(lb.board, rules, path, eo);
+  std::string pinned;
+  for (const auto& pt : p0.parts)
+    if (pt.may_flip()) pinned = pt.ref;  // the user pins one part to its side (--keep-side)
+  eo.keep_side = {pinned};
+  const Problem p = extract(lb.board, rules, path, eo);
+  std::vector<Placement> res;
+  for (int threads : {1, 3}) {
+    PlaceOptions o;
+    o.mode = "full";
+    o.runs = 3;
+    o.threads = threads;
+    o.effort = 0.3;
+    o.flip = true;
+    Placement pl = Placement::initial(p);
+    const PlaceReport r = tmk::place::place(p, pl, o);
+    CHECK(r.legal);
+    CHECK(r.after.flipped > 0);
+    CHECK(r.anneal.cost == anneal_cost(p, r.anneal.pl, o.alpha_cross_mm, 0, nullptr, o.via_mm));
+    CHECK(r.after.whpwl >= r.lb_any_rot);  // the any-rotation bound covers both sides of flippable parts
+    for (std::size_t i = 0; i < p.parts.size(); ++i) {
+      const Part& pt = p.parts[i];
+      if (!pt.may_flip()) CHECK_FALSE(flipped(pl.rot[i]));  // locked, fixed, through-hole, pinned (rule 6)
+      if (!pt.movable) CHECK((pl.pos[i] == pt.pos0 && pl.rot[i] == 0));
+      if (pt.ref == pinned) CHECK_FALSE(flipped(pl.rot[i]));
+    }
+    res.push_back(pl);
+  }
+  CHECK(res[0].pos == res[1].pos);
+  CHECK(res[0].rot == res[1].rot);
+}
+
+TEST_CASE("flip: with no part allowed to flip, --flip changes nothing", "[place][flip]") {
+  Problem p = random_problem(30, 5, 30 * MM);
+  PlaceOptions o;
+  o.runs = 2;
+  o.threads = 2;
+  o.effort = 0.3;
+  Placement a = Placement::initial(p), b = Placement::initial(p);
+  tmk::place::place(p, a, o);
+  o.flip = true;
+  tmk::place::place(p, b, o);
+  CHECK(a.pos == b.pos);
+  CHECK(a.rot == b.rot);
+}
+
+TEST_CASE("flip: swap states exchange absolute poses on either side", "[place][flip]") {
+  Part a, b;
+  a.angle0 = 0;
+  b.angle0 = 90;  // dk = 1
+  for (int sb = 0; sb < kStates; ++sb) {
+    const int sa = swap_state(sb, 1);
+    CHECK(flipped(sa) == flipped(sb));
+    CHECK(std::fmod(a.angle_of(sa) - b.angle_of(sb) + 720.0, 360.0) == 0.0);
+    const int back = swap_state(sa, -1);
+    CHECK(std::fmod(b.angle_of(back) - a.angle_of(sa) + 720.0, 360.0) == 0.0);
+  }
+}

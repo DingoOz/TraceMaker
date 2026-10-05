@@ -4,7 +4,7 @@
   bench/m6_bench.py [--work 100000000] [--jobs 8] [--boards ...] -- CONFIG_NAME=ROUTE_ARGS [CONFIG_NAME=ROUTE_ARGS ...]
   e.g. bench/m6_bench.py -- base= global=--global
 
-Each board is routed by one portfolio variant (--threads 1) with a deterministic work budget, so results are
+Each board is routed by one portfolio variant (--variants 1) with a deterministic work budget, so results are
 repeatable and independent of machine load; reports routed connections per board and in total, plus seconds.
 Not a replacement for the KiCad-judged tiers (bench/run.py), which a change must still pass.
 """
@@ -26,7 +26,7 @@ def one(board: str, cfg: str, args: list[str], work: int, out: pathlib.Path) -> 
     o = out / cfg / f"{board}.kicad_pcb"
     o.parent.mkdir(parents=True, exist_ok=True)
     p = subprocess.run([str(TM), "route", str(FIX / board / "unrouted.kicad_pcb"), "-o", str(o), "--work", str(work), "--time", "3600",
-                        "--threads", "1", "--no-kb"] + args, capture_output=True, text=True)
+                        "--threads", "1", "--variants", "1", "--no-kb"] + args, capture_output=True, text=True)
     m = re.search(r"routed (\d+)/(\d+) connections.*?([\d.]+) s", p.stdout + p.stderr)
     return (board, cfg, int(m.group(1)), int(m.group(2)), float(m.group(3))) if m else (board, cfg, -1, -1, 0.0)
 

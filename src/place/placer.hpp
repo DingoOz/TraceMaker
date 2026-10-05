@@ -31,6 +31,11 @@ struct PlaceOptions {
   double beta_congestion = 0;    // routability weight (0 = off)
   const CongestionMap* congestion = nullptr;
   std::vector<int> focus;        // LNS seed parts
+  // Side assignment (doc 04 §3 C/E, D48): see AnnealOptions. The problem must be extracted with
+  // ExtractOptions::flip for any part to be allowed to flip.
+  bool flip = false;
+  double via_mm = 2.0;
+  double flip_rate = 0.1;
   // Recording (video): receives intermediate placements with a stage name. Never affects the result.
   // `t` is when the state existed (trace_now()); annealing snapshots are delivered after the run.
   std::function<void(const std::string& stage, const Placement& pl, double t)> trace;
@@ -40,6 +45,8 @@ struct Metrics {
   std::int64_t whpwl = 0;        // Σ weight·HPWL (signal nets weight 10, power nets 1), nm
   std::int64_t hpwl = 0;         // Σ HPWL over all nets, nm
   std::int64_t crossings = 0;    // MST airwire crossings between different signal nets
+  int flipped = 0;               // parts on the other side than in the input
+  std::int64_t side_vias = 0;    // via estimate of the side assignment (unweighted side_vias)
   int overlaps = 0, outside = 0; // violations involving movable parts
   int fixed_overlaps = 0, fixed_outside = 0;
   // Relative to a reference (the input) placement: violations where at least one involved movable part was

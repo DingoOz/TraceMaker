@@ -246,7 +246,11 @@ class Reader {
     fp.node = f;
     fp.lib_id = d_.str_at(f, 1);
     fp.locked = yes(f, "locked");
-    if (NodeId l = d_.find(f, "layer"); l != kNoNode) fp.back = d_.str_at(l, 1) == "B.Cu";
+    // The last copper layer, by its name in this file (KiCad 5 boards may call it "Back").
+    if (NodeId l = d_.find(f, "layer"); l != kNoNode) {
+      const std::string ln = d_.str_at(l, 1);
+      fp.back = ln == "B.Cu" || (b_.copper_count() > 1 && b_.copper_index(ln) == b_.copper_count() - 1);
+    }
     if (NodeId a = d_.find(f, "at"); a != kNoNode) {
       fp.pos = xy(a);
       fp.angle = d_.number_at(a, 3).value_or(0.0);

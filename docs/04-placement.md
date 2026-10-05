@@ -89,6 +89,8 @@ Objective: `min_x  W_WA(x; γ) + λ · D(x) + μ · R(x) + ν · P(x)`
 - **Side** (two-sided boards): minimum-cut style partition with area capacity per side: start with
   FM (Fiduccia–Mattheyses) on the hypergraph where cutting a net costs a via estimate; exact by CP-SAT
   when the movable part count is ≤ ~40. THT parts are pinned to the top.
+  *built (2026-10-05, D48)*: opt-in `--flip`; the side is chosen by the annealer's flip move with a via-estimate
+  cost, not by a partition (§9). THT parts keep their side (top or bottom).
 
 ### (D) Legalisation — L2
 
@@ -163,8 +165,10 @@ The bandit in doc 06 learns which move types pay off on this board.
 
 ## 5. Output
 
-- New positions, rotations and sides written to the `.kicad_pcb` (only `at`, `layer` and flipped pad
-  layers change; everything else is preserved byte-for-byte where possible).
+- New positions, rotations and sides written to the `.kicad_pcb`: a moved part changes only its `at` and the
+  absolute angles of its pads and texts; a flipped part (§9, D48) is mirrored the way KiCad's own Flip does it
+  (local y, orientations, side-specific layers, text mirroring), which touches its child items too. Everything else
+  is preserved byte-for-byte.
 - Placement report: per-level optimality claims, HPWL, lower bound and gap, crossings, overflow, moved
   parts, constraint violations.
 
@@ -219,7 +223,7 @@ resort writes the `refine` result (all reported in `notes`). `refine` uses the r
 spacing a designer chose is never declared illegal. *This deviates from the single 0.25 mm default in the M7 brief;
 it needs a row in doc 12.*
 
-**Not implemented:** side flipping (parts keep their side; `BoardEditor` has no flip yet), the LP legaliser (L2),
+**Not implemented:** side flipping (parts keep their side; added 2026-10-05 as opt-in `--flip`, §9), the LP legaliser (L2),
 CP-SAT windows and Hungarian slot assignment (L3 beyond single-part rotation), decoupling/crystal proximity
 groups, GPU kernels. (RUDY, the routability loop (G), parallel tempering, LNS, exact windows and ECO were added in
 M8: §8.)
@@ -291,7 +295,8 @@ mounting-hole circle as the only loop) led to the fallbacks above.
   not HPWL.
 - Full mode from scratch is weaker than refine (lower HPWL than refine on 5 of 23 boards; below the human HPWL on 21 of 23, refine on 23 of 23); the annealer is far from
   converged at effort 4 (effort 16 lowers HPWL another 5–10 %). Parallel tempering / GPU multi-start (doc 07).
-- Courtyards are convex hulls (conservative for L-shaped courtyards); no 45° or free rotations; no flipping.
+- Courtyards are convex hulls (conservative for L-shaped courtyards); no 45° or free rotations; no flipping (opt-in
+  since 2026-10-05, §9).
 - Custom clearance rules are applied as a global maximum, not per condition.
 - Zone fills are ignored (they are refilled after placement); silkscreen is ignored.
 - Proximity constraints (decoupling caps, crystals) are not modelled: power-only parts can drift away from
@@ -429,3 +434,50 @@ GPU parallel tempering (CPU only), CP-SAT (replaced by the exact window B&B), th
 solve / R5 trial ordering / R6 cut proofs (they live in `src/route`, outside this placement change), ECO driven by
 the router's own `PlacementRequest` during routing (ECO runs between complete routes instead), side flipping in ECO,
 decoupling-cap slot moves, the bandit over ECO move types (doc 06).
+
+## 9. Side assignment (D48, 2026-10-05)
+
+Opt-in: `tracemaker-place ... --flip [--flip-via-mm 2] [--flip-rate 0.1] [--keep-side R1,C3]` (all modes; off by
+default, and with it off every output is byte-identical to the build before the change: 23/23 boards, full and
+refine).
+
+| Piece | File | As built |
+|---|---|---|
+| States | `problem.hpp` | `Placement::rot` is an orientation state 0–7: bits 0–1 quarter turns, bit 2 = on the other side. A flipped state is KiCad's top/bottom flip about the origin (offsets mirrored in y, orientation −angle0) followed by the turns. Geometry (courtyards moved to the other side, pads, copper with mirrored layer masks, inset courtyards) and pin offsets are built per state; every stage that enumerates rotations keeps the side bit (rotation descent, legaliser, LNS/window candidates, ECO). |
+| Who may flip | `problem.cpp`, `place_main.cpp` | Movable parts (never locked or fixed ones, rule 6), surface mount only (no drilled hole of any kind: THT parts stay on their side, doc 04 §2), boards with ≥ 2 copper layers, not listed in `--keep-side`, and footprints the writer can mirror exactly (`io::flip_supported`: no padstacks, no copper on inner layers, no text on copper, no zones/text boxes/dimensions/groups/points in the footprint). Each excluded movable part gets a `flip_reason`. |
+| Move | `anneal.cpp` | With probability `--flip-rate` a step is a flip of a random flippable part to the other side with a random turn, about its body centre or (half the time) at the weighted median of its nets — e.g. under the IC it serves. Swaps of identical parts on different sides exchange sides only if both may flip. The extra random draw happens only when some part may flip. |
+| Cost | `anneal.cpp`, `wirelength.cpp` | Via estimate: per real net, min(front, back) surface-mount pins (THT pins reach both sides), weighted like HPWL; one via costs `--flip-via-mm` (2) mm of signal HPWL. Kept incrementally (pin counts per net) and checked against the reference `anneal_cost(..., via_mm)` in a test. |
+| Bound | `lower_bound.cpp` | The "any rotation" L4 bound lets each pin of a flippable part take its best offset over all 8 states, so it stays a true bound. |
+| Writer | `io/kicad/board_editor.cpp` | `flip_footprint`: KiCad's FOOTPRINT::Flip (top/bottom about the origin) then the rotation: local y of every child negated (pads, graphics incl. pts/arcs and custom-pad primitives, texts), pad angles −a, text angles 180° − a, footprint angle −angle0, F.*↔B.* layers (copper by the board's layer table, so KiCad 5 "Front"/"Back" work), text mirrored on side-specific layers only, legacy arc sweeps negated (not normalised), trapezoid `rect_delta` dy negated, chamfer corners top↔bottom, drill offsets mirrored. Only the changed tokens are replaced; everything else in the file is untouched. |
+| Reader fix | `io/kicad/board_reader.cpp` | A footprint on the last copper layer under its file name ("Back" in some KiCad 5 boards) is now read as a back-side footprint (it was read as front). |
+
+**KiCad verification.** `scripts/flip_check.py` (pcbnew in the KiCad 10 image) flips every footprint of a board
+in memory with KiCad's own `FOOTPRINT::Flip` and compares it with ours as KiCad loads it: side, position,
+orientation; per pad position, orientation, layers, drill and the exact copper polygon (XOR area); per graphic and
+text layer, bounding box, angle, mirroring, justification; courtyards. On the 23 boards of §7.3, 6 more PCBench
+boards with trapezoid/custom pads and renamed copper layers, and 8 KiCad demo boards (KiCad 6–10 formats): 2,529
+footprints (SMD and THT), 0 differences. The first runs found four writer bugs (legacy arc sweeps normalised to
+0–360°, the trapezoid delta axis, text on non-side layers mirrored, user-named copper layers) and one reader bug,
+all fixed before the evaluation. Tests: `[flip]` in `test_place.cpp` (placer geometry = what the writer produces,
+read back and re-extracted; exact incremental cost; determinism across thread counts; locked/THT/pinned parts never
+flip) and `test_kicad_io.cpp` (writer rules, KiCad 5 and 10 syntax, flip and flip back).
+
+**Evaluation** (`bench/place_flip.py`, 23 boards of §7.3, seed 1, 4 threads, 2 boards at a time; KiCad 10 DRC):
+
+| Mode | Total HPWL off → flip | Median ratio | Crossings off → flip | Parts flipped | Via estimate off → flip | New KiCad DRC errors off / flip |
+|---|---|---|---|---|---|---|
+| full | 13,041 → 12,014 mm (−7.9 %) | 0.962 | 378 → 259 | 255 on 16 boards | 85 → 471 | 0 / 0 |
+| refine | 12,811 → 11,843 mm (−7.6 %) | 0.967 | 320 → 218 | 262 on 17 boards | 85 → 481 | 0 / 0 |
+
+- Legal on every board in every configuration; no new courtyard, hole, edge, clearance, short or mask-bridge error
+  (KiCad's `nonmirrored_text_on_back_layer` count stays at the human boards' 4: flipped texts are mirrored).
+- 6 boards have no flippable part (all through-hole); their outputs equal flip-off. On nanoTracer one part may flip
+  and the different random stream alone gave full mode +11 % HPWL; esp32stack full +4 % HPWL (crossings 20 → 1);
+  ESP_nRF refine +5 %. Every other board is equal or better.
+- The price is vias: the estimate rises from 85 to ~480 in total (≈ 1.5 more per flipped part), and assembly becomes
+  double-sided. Routability was not measured (no router runs here); on 2-layer boards the parts on the back also
+  occupy the bottom routing layer, so `--flip` is not a routability feature yet. Decoupling capacitors get closer
+  to their IC pins (median distance falls on 11 (full) and 13 (refine) of the 17 boards with decaps, rises on 2 and
+  1; they often go under the IC).
+- Not built: the FM/CP-SAT partition of stage (C) (the annealer's flip move does the side assignment), side
+  capacity in global placement (B), flips in ECO and in the exact windows.

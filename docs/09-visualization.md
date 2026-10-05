@@ -13,7 +13,7 @@
 ## 2. Architecture
 
 ```
- engine threads ─▶ per-thread SPSC rings ─▶ publisher thread ─┬─▶ replay log (FlatBuffers + zstd, keyframes)
+ engine threads ─▶ per-thread SPSC rings ─▶ publisher thread ─┬─▶ replay log (JSON lines in zstd frames, keyframe; D45)
                                                                └─▶ WebSocket server ─▶ browser viewer
                                                                      (snapshot on connect, then deltas,
                                                                       coalesced to ≤ 60 Hz, LOD-filtered)
@@ -25,7 +25,9 @@
 - **Back-pressure**: the publisher keeps the latest value per overlay and merges deltas while the socket is
   busy; transient visual events are droppable, state deltas are not.
 - **Replay**: the same message stream is written to disk with a keyframe (full snapshot) every N seconds;
-  the viewer opens a log file through the engine's `replay` mode and can seek anywhere.
+  the viewer opens a log file through the engine's `replay` mode and can seek anywhere. Built so far (D45): the
+  JSON messages, one per line, in independent zstd frames with the snapshot as its own frame; replay plays from
+  the start (seeking needs the control channel and periodic keyframes, not built yet).
 - **Control channel** (viewer → engine): pause/resume/step, change speed, pick an object, request detail
   (e.g., a failure record), adjust visual LOD. Changes to the routing itself stay in the CLI/plugin.
 - **Security**: binds to `127.0.0.1` by default; remote access through an SSH tunnel, or `--listen 0.0.0.0`
@@ -86,7 +88,7 @@ thin backend interface; the WebGL2 path uses fragment-shader SDFs and render-to-
 | Debug viewer | **Rerun** (MIT/Apache-2.0, C++ SDK) for kernel and algorithm debugging during M4–M6, before the product viewer has all panels; not a product dependency ("expect breaking changes") |
 | UI chrome | Lightweight (Preact or Svelte) panels over the canvas; charts with a small canvas plotting library |
 | Engine server | uWebSockets (Apache-2.0) or Boost.Beast; serves the built static viewer too |
-| Schema | FlatBuffers, shared `.fbs` compiled for C++ and TypeScript |
+| Schema | FlatBuffers, shared `.fbs` compiled for C++ and TypeScript, once the message set is stable; until then JSON (doc 13), compressed with zstd in recordings (D45) |
 
 ## 7. Offline outputs
 
@@ -95,8 +97,29 @@ thin backend interface; the WebGL2 path uses fragment-shader SDFs and render-to-
 
 ## 8. Implementation status (v1)
 
-v1 implements the JSON protocol of [`13-viewer-protocol.md`](13-viewer-protocol.md) end to end. FlatBuffers,
-replay, the control channel, heatmap rendering, the minimap and the WebGPU backend are not built yet.
+v1 implements the JSON protocol of [`13-viewer-protocol.md`](13-viewer-protocol.md) end to end, recording and
+replay (plain or zstd-compressed logs) and heatmap overlays. FlatBuffers (deferred, D45), seeking in a replay,
+the control channel, the minimap and the WebGPU backend are not built yet.
+
+### Heatmaps and replay log
+
+- The router keeps two coarse grids (`route/heat_grid.hpp`, at most 128 cells on the long side, whole-µm cells
+  over the routing lattice) while a sink is attached: **`expansions`**, A* expansions per cell (one sample per
+  64 expansions, cumulative over the run), and **`history`**, the largest PathFinder history cost per cell. Both
+  are sent as `heatmap` messages (layer -1, square-root scaled bytes, `"scale":"sqrt"`) every
+  max(200k, budget / 40) expansions (2M without a work budget) and once at the end. They are counted by work, not
+  wall time, so a recording is the same for the same input and seed; the router never reads them, so routing is
+  unchanged (`record_replay` compares boards routed plainly, recorded and viewed byte for byte).
+- The server keeps the latest grid per name, so a viewer that connects late (or a replay) sees the current
+  overlay. The viewer draws the selected one over the copper as an R8 texture with linear filtering and the
+  inferno palette (zero cells transparent); `M` or the Overlay chips choose it, `#heat=<name>` in the URL
+  preselects it, and the legend shows the raw maximum.
+- `tracemaker route --record FILE` writes one JSON message per line with a leading `"t"` (seconds). If FILE
+  ends in `.zst` the log is a sequence of independent zstd frames (`server/replay_log.hpp`): the board snapshot
+  is a frame of its own and later frames close every 1 MiB of text, so a killed run loses at most the open
+  frame and any zstd tool reads the log (`zstd -dc run.jsonl.zst | jq`). On C-BISCUIT and CANadapter the
+  compressed log is 12–13× smaller than the plain one (≈ 20 kB vs 260 kB). `tracemaker-view --replay` detects
+  the format from the content.
 
 ### Engine side (`src/server/`)
 
@@ -104,8 +127,9 @@ replay, the control channel, heatmap rendering, the minimap and the WebGPU backe
 |---|---|
 | `tm_viz_messages` (`tm::viz`) | `server/messages.hpp`: `board_snapshot_json(board, name)` plus builders for `track_add/remove`, `via_add/remove`, `footprint_move`, `ratsnest`, `frontier`, `path_try`, `failure`, `stats`, `stage`, `log`, `heatmap`, and `message_type()`. Depends only on model, drc and nlohmann_json, so the router can link it without Boost |
 | `tm_server` (`tm::server`) | `tmk::server::ViewerServer : events::Sink`: Boost.Beast HTTP + WebSocket on one background I/O thread. Serves static files (MIME types, percent-decoding, `..` and symlink escape rejected) from `<repo>/viewer/dist` or `ServerOptions::web_root`; WebSocket at `/ws`. Default bind `0.0.0.0:8766` (8765 is the dev progress site) |
-| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--web DIR] [--demo] [--keep-tracks]` |
-| `tm_server_tests` | Catch2: message builders, snapshot of `pic_programmer` (skipped if the fixture is missing), HTTP serving and traversal rejection, snapshot-then-deltas delivery, late-client catch-up, back-pressure. Registered with ctest |
+| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--web DIR] [--demo] [--keep-tracks] [--replay LOG [--speed S] [--loop]]` |
+| `tm_replay` (`tm::replay`) | `server/replay_log.hpp`: `ReplayWriter` (plain, or zstd frames for `.zst`) and `ReplayReader` (format detected from the magic number; a truncated tail is ignored, corrupt frames throw). Links libzstd only |
+| `tm_server_tests` | Catch2: message builders, snapshot of `pic_programmer` (skipped if the fixture is missing), HTTP serving and traversal rejection, snapshot-then-deltas delivery, late-client catch-up, back-pressure; replay log round-trips (plain, zstd, multi-frame, truncated, corrupt), `HeatGrid` sizing/scaling, and routing C-BISCUIT with a capturing sink: heatmaps sent, copper identical to routing without one. Registered with ctest |
 
 Server behaviour:
 - `publish()` only appends to a mutex-protected inbox and posts a drain to the I/O thread; it never touches

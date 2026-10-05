@@ -116,7 +116,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     const Coord step = std::max<Coord>(500'000, cell * 10);
     for (Coord y = p.region.y0; y <= p.region.y1; y += step)
       for (Coord x = p.region.x0; x <= p.region.x1; x += step)
-        for (int r = 0; r < 4; ++r)
+        for (int r = with_turn(pl.rot[z(j)], 0); r < with_turn(pl.rot[z(j)], 0) + 4; ++r)  // same side, four turns
           if (R.free(j, Point{x, y} - Point{(p.parts[z(j)].geom[z(r)].body.x0 + p.parts[z(j)].geom[z(r)].body.x1) / 2,
                                             (p.parts[z(j)].geom[z(r)].body.y0 + p.parts[z(j)].geom[z(r)].body.y1) / 2}, r))
             return true;
@@ -141,7 +141,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     Point fallback{};
     int fallback_rot = 0;
     for (int k = 0; k < 4; ++k) {
-      const int r = (pl.rot[z(i)] + k) & 3;
+      const int r = with_turn(pl.rot[z(i)], pl.rot[z(i)] + k);
       long budget = 400;
       for (const Point d : offs) {
         if (only_illegal && static_cast<geom::i128>(d.x) * d.x + static_cast<geom::i128>(d.y) * d.y > reach2) break;
@@ -190,7 +190,7 @@ LegaliseStats legalise(const Problem& p, Placement& pl, bool only_illegal, Coord
     for (const Point d : offs) {
       if (++tried > 1500) break;
       const Point q = target[z(i)] + d;
-      for (int r = 0; r < 4; ++r) {
+      for (int r = with_turn(pl.rot[z(i)], 0); r < with_turn(pl.rot[z(i)], 0) + 4; ++r) {
         if (!L.inside_ok(i, q, r)) continue;
         conflicts.clear();
         L.conflicts(i, q, r, conflicts);

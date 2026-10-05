@@ -103,8 +103,12 @@ struct RouteResult {
   std::vector<Unrouted> unrouted;
 };
 
-// Runs several differently configured routers in parallel threads and keeps the best result (most connections
-// routed, then fewest vias, then shortest copper). The first variant is `base` itself; only it streams events.
+// Runs several differently configured routers (portfolio variants) and keeps the best result. Variant i is a pure
+// function of (base options, i): it never depends on the thread count, and with a work budget each variant's result
+// is deterministic. The variants are scheduled on `threads` worker threads (0 = one per variant) in index order and
+// the winner is the minimum of a total order (most connections routed, then fewest vias, then shortest copper, then
+// the lowest variant index), so with `base.work_budget` > 0 the output is the same for any `threads` (requirement
+// N3, decision D47). Only the first variant streams events live.
 struct PortfolioResult {
   RouteResult best;
   int best_variant = 0;               // position in `variants`
@@ -112,9 +116,10 @@ struct PortfolioResult {
   std::vector<std::string> variants;   // description per variant
   std::vector<int> routed;             // routed count per variant
 };
-// `pick`: which variant indices to run (empty = the first `threads`).
-PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads,
-                                const std::vector<int>& pick = {});
+// `variants`: how many variants to run (the first `variants` of the portfolio); `pick`: which variant indices to
+// run instead (non-empty: overrides `variants`). `threads`: concurrency only (0 = one thread per variant).
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
+                                const std::vector<int>& pick = {}, int threads = 0);
 int portfolio_size();
 
 class Router {

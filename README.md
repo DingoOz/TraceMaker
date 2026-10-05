@@ -52,7 +52,8 @@ two of the eight portfolio variants; `--escape-plan` turns it on in all of them.
 
 KiCad 10 plugin: `kicad_plugin/` (IPC action plugin; routes the open board in one undoable commit; see its README).
 
-Useful route options: `--threads N` (portfolio size), `--no-gpu` (CPU cost-to-go fields, identical results),
+Useful route options: `--threads N` (threads; also the portfolio size unless `--work` is given, when all eight variants
+run and the output is identical at any thread count), `--variants N` (portfolio size), `--no-gpu` (CPU cost-to-go fields, identical results),
 `--no-rip-up`, `--fast-bends`, `--kb FILE` / `--no-kb` (knowledge base of earlier runs).
 
 ## Benchmark

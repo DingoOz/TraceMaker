@@ -14,7 +14,10 @@ struct RouteJob {
   std::string in;                 // input .kicad_pcb (its project files supply the design rules)
   std::string out;                // output .kicad_pcb; empty = do not write a board
   route::RouterOptions opt;       // `sink` is set here when viewing or recording
-  int threads = 8;                // portfolio size (1 = single router)
+  int threads = 8;                // worker threads for the portfolio variants
+  // Portfolio size (1 = single router). 0 = automatic: all variants (route::portfolio_size()) with a work budget,
+  // so the output does not depend on `threads` (D47); otherwise `threads` (wall-clock mode: one variant per thread).
+  int variants = 0;
   std::string kb_path;            // knowledge base file; empty = none
   std::string items_out;          // --emit-items file; empty = none
   std::string json_out;           // --json summary file; empty = none
@@ -40,7 +43,7 @@ struct RouteJobResult {
   int exit_code() const { return result.routed == result.connections ? 0 : 3; }
 };
 
-// Reads the board and its rules, routes (a portfolio when threads > 1), writes the requested outputs.
+// Reads the board and its rules, routes (a portfolio when more than one variant runs), writes the requested outputs.
 // Throws std::exception on unreadable input.
 RouteJobResult run_route_job(RouteJob job);
 
