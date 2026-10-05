@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Deterministic defect injection for DRC parity on broken boards (design doc 03 §6, roadmap M2): takes a
 // routed board and adds one kind of defect a given number of times (shorts between nets, dangling tracks and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // HTML overlay: brand bar, progress, layer controls, log, status bar and hover tooltip.
 import { css, infernoGradient, layerColor } from './colors';
 import type { ConnState } from './connection';

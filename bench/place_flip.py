@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Side assignment (D48): placement with and without --flip on the 23 boards of docs/04-placement.md §7.3.
 
   bench/place_flip.py [--modes full,refine] [--jobs 2] [--threads 4] [--out build/flip] [--no-drc] [--base BIN] [Board ...]

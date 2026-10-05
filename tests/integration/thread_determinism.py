@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Bit-identical routing at any thread count (requirement N3, doc 02 §6.2, decision D47).
 
   thread_determinism.py <tracemaker> <work dir> [board] [work]

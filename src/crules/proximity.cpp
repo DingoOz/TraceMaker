@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Proximity rules bound to pad pairs (doc 15 §4 `proximity`, §5.2): which pin of which part should be near
 // which other pin. Used for the measurement in the report and for the placer's pseudo-nets.
 #include <algorithm>

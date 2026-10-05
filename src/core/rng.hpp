@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Deterministic, counter-based random numbers (design doc 02 §6.2).
 //

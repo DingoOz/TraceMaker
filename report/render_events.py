@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Render a TraceMaker event recording (`tracemaker route --record`) as video frames.
 
   build/report-venv/bin/python report/render_events.py events.jsonl unrouted.kicad_pcb outdir --step 0.2667 \

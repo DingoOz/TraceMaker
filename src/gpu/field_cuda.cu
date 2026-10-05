@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include <cuda_runtime.h>
 
 #include "gpu/device.hpp"

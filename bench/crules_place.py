@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Placement with and without component-rule proximity pseudo-nets (docs/15-component-rules.md P1).
 
   bench/crules_place.py [--configs off,soft] [--jobs 2] [--threads 8] [--out build/crules/place] [Board ...]

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // CPU picking for hover: a uniform grid over item bounding boxes, rebuilt lazily when the scene changes.
 import { distToSeg, pointInPolygon } from './geometry';
 import type { Pad, Scene, Track, Via } from './scene';

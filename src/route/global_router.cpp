@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/global_router.hpp"
 
 #include <algorithm>

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // The component-rule report (doc 15 §7): what was detected, with which confidence and roles, and each rule's
 // status. Text for the terminal, JSON for tools (bench/crules_detect.py, bench/place_intent.py).
 #include <array>

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Detection quality of component-aware layout rules (docs/15-component-rules.md §9.1 L1).
 
   bench/crules_detect.py [--labels bench/crules_labels.json] [--json out.json] [--jobs 4] [-v]

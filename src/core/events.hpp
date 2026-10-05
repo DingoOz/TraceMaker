@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Event sink for live visualisation and replay (design doc 02 §7, protocol in docs/13-viewer-protocol.md).
 // Producers (router, placer, DRC) publish JSON messages; the viewer server implements Sink. Publishing must

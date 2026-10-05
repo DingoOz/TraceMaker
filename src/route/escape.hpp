@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Escape (fanout) planning, version 1 (roadmap M9; design doc 05 §3).
 //

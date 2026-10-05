@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // User override file (doc 15 §3.5, §6.3): parsing and validation. Applying the entries is part of detection
 // (detect.cpp: assert/deny change which instances exist; disable/set are attached to the instances).
 #include "crules/overrides.hpp"

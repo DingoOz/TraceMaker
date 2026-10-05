@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Component-rule catalogue (design doc 15 §6.1): categories of components with their detectors, roles and
 // layout rules. The source is docs/component_rules.yaml; scripts/crules_catalogue.py converts it to

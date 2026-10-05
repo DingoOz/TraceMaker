@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Small geometry helpers in world units (millimetres).
 
 /** KiCad rotation (degrees, positive = counter-clockwise on screen in y-down coordinates). */

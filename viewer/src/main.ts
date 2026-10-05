@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // TraceMaker live viewer: connects to the engine's event stream and renders the board with WebGL2.
 import './style.css';
 import { Camera } from './camera';

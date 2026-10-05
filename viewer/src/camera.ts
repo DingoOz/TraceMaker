@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // 2-D camera in CSS pixels: pan by drag, smooth zoom about the cursor, fit to a box.
 export class Camera {
   cx = 0; // world point at the viewport centre (mm)

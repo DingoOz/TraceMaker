@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Large-neighbourhood search and exact windows for detailed placement (design doc 04 §3 E "LNS", F).
 //
 // LNS after Shaw (CP 1998): destroy a window of k nearby movable parts and repair it. Small windows are repaired

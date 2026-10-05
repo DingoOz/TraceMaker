@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // HTTP + WebSocket server for the live viewer (design doc 09, protocol in docs/13-viewer-protocol.md).
 //

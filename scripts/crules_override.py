@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Convert a component-rule override file from YAML to the JSON the engine reads (design doc 15 §6.3).
 
   scripts/crules_override.py board.tracemaker_rules.yaml -o board.tracemaker_rules.json

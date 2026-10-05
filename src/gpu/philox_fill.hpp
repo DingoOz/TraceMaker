@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Fills an array with draws 0..n-1 of the RNG stream (seed, stage, item).
 //

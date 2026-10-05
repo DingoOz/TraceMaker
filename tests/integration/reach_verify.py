@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Reachability pre-check vs. the full A* (doc 05 §13; rule 3: every accelerated path has a reference path).
 
   reach_verify.py <tracemaker> <work dir> [board]

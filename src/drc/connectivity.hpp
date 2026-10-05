@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Copper connectivity with KiCad's semantics, shared by the DRC (unconnected/dangling checks) and the router
 // (which pads are already joined).

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Updates dev/progress.json (shown on the progress website).
 
   progress.py status M1 in_progress|done|todo     set a milestone's status (done also ticks all tasks)

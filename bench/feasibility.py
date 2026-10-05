@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Clean pass of finished runs split by escape feasibility (doc 05 §12): boards whose dense-package pins can all
 escape under the board's own rules vs boards with pins no router can get out (`tracemaker escape`).
 

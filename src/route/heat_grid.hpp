@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Coarse accumulation grid behind the viewer's heatmap overlays (design doc 09 §3 "Heatmap overlays", protocol
 // doc 13 `heatmap`). Visualisation only: the router writes into it while a sink is attached and never reads it

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // CPU-vs-GPU equivalence for the Philox fill kernel, on every visible device (design doc 07 §3).
 // A device without enough free memory is skipped, not failed: the GPUs are shared with other jobs.
 #include <catch2/catch_test_macros.hpp>

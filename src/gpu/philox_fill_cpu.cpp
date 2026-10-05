@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "core/rng.hpp"
 #include "gpu/philox_fill.hpp"
 

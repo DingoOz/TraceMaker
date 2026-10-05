@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Quality benchmark: TraceMaker vs Freerouting versions on held-out PCBench boards, judged identically.
 
   bench/quality_bench.py --per-tier 20 --tiers A B C --jobs 6 --name quality-1

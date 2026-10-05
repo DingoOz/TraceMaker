@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // WebGL2 renderer: instanced SDF primitives, per-layer offscreen compositing, additive glow effects.
 import type { Camera } from './camera';
 import { layerColor, lighten, theme, type RGBA } from './colors';

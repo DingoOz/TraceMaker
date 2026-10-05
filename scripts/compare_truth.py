@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Compares two board JSON dumps in the kicad_truth schema (KiCad's view vs TraceMaker's view).
 
 Usage: compare_truth.py kicad.json ours.json   — exits 1 and lists differences if they disagree.

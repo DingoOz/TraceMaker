@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Exact lower bound on weighted HPWL (design doc 04 §1 level L4).
 //

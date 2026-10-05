@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Shows violations of one type that only KiCad or only TraceMaker reports, matched by item positions.
 
 Usage: drc_detail.py board.kicad_pcb type [limit]   (run drc_parity.py first to fill the caches)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Wirelength and airwire metrics: weighted half-perimeter wirelength (HPWL) and crossings between the
 // minimum-spanning-tree airwires of different signal nets (doc 04 §3 E).

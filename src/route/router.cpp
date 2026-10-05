@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/router.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"

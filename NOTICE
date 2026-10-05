@@ -1,0 +1,41 @@
+TraceMaker
+Copyright (C) 2026 The TraceMaker authors
+
+TraceMaker is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+version. It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License in LICENSE.
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
+
+Additional permission under GNU GPL version 3 section 7 (CUDA)
+--------------------------------------------------------------
+
+If you modify this Program, or any covered work, by linking or combining it with the NVIDIA CUDA Toolkit runtime
+libraries (or a modified version of those libraries), containing parts covered by the terms of the NVIDIA CUDA
+Toolkit End User License Agreement, the licensors of this Program grant you additional permission to convey the
+resulting work. Corresponding Source for a non-source form of such a combination shall not include the source code
+for the parts of those libraries used as well as that of the covered work.
+
+TraceMaker's GPU paths are optional: every one has a CPU reference path, and a build without CUDA is fully functional.
+
+
+Third-party components (linked, not included in this repository)
+----------------------------------------------------------------
+
+Boost (BSL-1.0), Catch2 (BSL-1.0, tests only), CLI11 (BSD-3-Clause), Eigen (MPL-2.0), nlohmann/json (MIT),
+pybind11 (BSD-3-Clause), SQLite (public domain), zstd (BSD-3-Clause), NVIDIA CUDA Toolkit (NVIDIA EULA; optional),
+TypeScript and Vite (MIT; viewer build only).
+
+
+Test data
+---------
+
+tests/truth/ holds JSON summaries and a netlist derived from KiCad demo projects (StickHub, pic_programmer,
+ecc83-pp, multichannel_mixer, complex_hierarchy; https://gitlab.com/kicad/code/kicad, demos/). They remain under
+the terms of the KiCad project and are credited to their authors.
+
+Benchmark boards (Freerouting's PCBench set, the DAC 2020 set, KiCad demos) are fetched by scripts/fetch_fixtures.sh
+into bench/data/ and are not part of this repository; each keeps its own licence. Renders of those boards in
+report/ are credited to their original authors.

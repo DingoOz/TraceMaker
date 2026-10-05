@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Global routing on a coarse 3-D tile graph (design doc 05 §4, roadmap M6; CPU reference path).
 //

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Routing quality metrics for a routed .kicad_pcb, judged against its unrouted input.
 
   bench/quality.py unrouted.kicad_pcb routed_a.kicad_pcb [routed_b.kicad_pcb ...] [--labels A B ...] [--json out.json]

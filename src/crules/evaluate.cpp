@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Effective rules (doc 15 §3.4-3.6, §5.5): every catalogue rule of every detected instance gets a status and,
 // where TraceMaker can measure it, a measured value.
 #include <algorithm>

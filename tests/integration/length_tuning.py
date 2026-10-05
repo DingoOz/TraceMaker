@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Roadmap M12 gate for length tuning: a net with a custom `length` rule ends inside its range, judged by KiCad.
 
   length_tuning.py <tracemaker> <workdir>

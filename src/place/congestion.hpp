@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Routability estimate for placement (design doc 04 §3 B `R(x)`, E `β·RUDY overflow`, G).
 //

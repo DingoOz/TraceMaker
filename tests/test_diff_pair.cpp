@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Differential pairs (M12, doc 05 §15): the pair rule (gap and width from net class, custom rules and the clearance
 // KiCad requires between the halves), offset/miter geometry, and the coupled-share / gap / skew measurement.
 #include <catch2/catch_test_macros.hpp>

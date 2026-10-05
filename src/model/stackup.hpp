@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // The board's physical stackup as KiCad stores it in (setup (stackup ...)) (design doc 15 §5.3): read-only,
 // used to turn impedance rules into widths and gaps. Boards without a stackup block (KiCad 5 and older, or

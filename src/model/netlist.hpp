@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Schematic connectivity as exported by KiCad (kicad-cli sch export netlist --format kicadsexpr).
 #include <string>

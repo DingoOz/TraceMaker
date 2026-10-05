@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Persistent knowledge base (design doc 06 §4, failure-memory tier T3): what was learned on earlier runs.
 //

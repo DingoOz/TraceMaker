@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "io/kicad/project_reader.hpp"
 
 #include <climits>

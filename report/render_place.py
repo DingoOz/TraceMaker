@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Render a placement recording (`tracemaker-place --record`) as video frames.
 
   build/report-venv/bin/python report/render_place.py place_events.jsonl unrouted.kicad_pcb outdir \

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Copper items with exact shapes, built from the board model, for DRC and routing obstacles.
 #include <vector>

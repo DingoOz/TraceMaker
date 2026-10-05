@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Placement legality (design doc 04 §3 D/E): exact integer tests of courtyards, through-hole obstacles, the
 // board outline, keepouts and pad-to-edge clearance, plus a bucket index of placed parts and a conservative

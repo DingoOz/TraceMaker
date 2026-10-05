@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Integer-nanometre points and KiCad-compatible rotation.
 #include <cmath>

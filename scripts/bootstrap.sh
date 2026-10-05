@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Configure, build and test TraceMaker presets.
 # Usage: scripts/bootstrap.sh [preset ...]     (default: release cpu-only asan)
 set -euo pipefail

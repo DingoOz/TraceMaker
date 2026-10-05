@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Closed-form transmission-line impedance for PCB traces (design doc 15 §5.3) and the IPC-2221 width for
 // current (§5.4). Quasi-static (no dispersion: the targets are 45-100 ohm lines below a few GHz), lossless,

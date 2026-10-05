@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker-place: component placement for a .kicad_pcb (design doc 04).
 #include <chrono>
 #include <cstdio>

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Reads design rules from a KiCad project: <name>.kicad_pro (JSON) and <name>.kicad_dru (s-expressions).
 #include <string>

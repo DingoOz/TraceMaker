@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Re-judges placement-added errors of finished `run.py --place` runs with the current rule (run.place_added):
 violations inside one footprint are not counted. KiCad reports are cached, so this is quick.
 

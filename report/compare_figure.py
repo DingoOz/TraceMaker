@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Side-by-side figure of one board routed by the human designer, TraceMaker and Freerouting (bench/compare.py).
 
   build/report-venv/bin/python report/compare_figure.py AmpOne_dev-AmpOne

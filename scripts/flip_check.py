@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Checks TraceMaker's footprint flip (io::BoardEditor::flip_footprint) against KiCad's own FOOTPRINT::Flip.
 
   build/release/src/place/tracemaker-place in.kicad_pcb -o ours.kicad_pcb --debug-flip all

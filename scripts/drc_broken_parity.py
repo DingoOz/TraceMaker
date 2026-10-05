@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """DRC parity on broken boards: injects defects into routed boards and compares how TraceMaker's DRC and
 kicad-cli classify them (shorts between nets, crossings, dangling tracks and vias, missing connections).
 

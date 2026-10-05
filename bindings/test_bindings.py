@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Checks the Python module `tracemaker` against the CLI (no pytest needed).
 
 usage: test_bindings.py MODULE_DIR [TRACEMAKER_BINARY]

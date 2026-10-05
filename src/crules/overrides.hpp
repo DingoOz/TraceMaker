@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // The user override file (design doc 15 §3.5 level 1, §6.3): the user disables rules, forces or forbids a
 // category on a part, or changes a rule parameter. The engine reads JSON (it has no YAML parser, like the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // TraceMaker's detailed router, version 1 (roadmap M4; design doc 05 §2, §5).
 //

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Builders for viewer protocol v1 messages (docs/13-viewer-protocol.md). Pure functions returning one JSON
 // object per message, ready for events::Sink::publish(). No Boost or networking: the router links only this

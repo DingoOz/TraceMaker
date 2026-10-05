@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
 # DRC parity regression: TraceMaker's DRC must keep matching kicad-cli exactly (15 routing-relevant types) on
 # every board listed in drc_parity_boards.txt. Needs kicad-cli (Docker image); skips otherwise.
 set -euo pipefail

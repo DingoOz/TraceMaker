@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Placement evaluation on PCBench boards (human placement vs tracemaker-place full/refine).
 
 For each board: place in full and refine mode, re-read every output with `tracemaker inspect`, run KiCad's DRC

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // From detected instances to effective rules and engine inputs (design doc 15 §3.5, §5.5, §7):
 //   evaluate  -> every catalogue rule of every instance, tagged applied / satisfied-by-board / not-applied(reason)

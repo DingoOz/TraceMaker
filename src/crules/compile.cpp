@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Compiling effective rules into engine inputs (doc 15 §5.5): placement pseudo-nets, keep-out rule areas and the
 // sidecar .kicad_dru.
 #include <algorithm>

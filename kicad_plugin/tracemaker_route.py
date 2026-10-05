@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """KiCad 10 IPC action plugin: autoroute the open board with TraceMaker.
 
 Flow: save a copy of the open board (with its project, so all design rules are available), route the copy, then

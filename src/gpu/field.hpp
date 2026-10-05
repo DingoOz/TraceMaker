@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Cost-to-go fields for the router (design doc 05 §5.2, doc 07 §2): exact shortest-path distances from a set
 // of target lattice points over a window, on an octilinear multi-layer lattice with through-via moves.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // WebSocket client: reconnects with backoff and hands messages to the app once per animation frame.
 import type { Message } from './protocol';
 

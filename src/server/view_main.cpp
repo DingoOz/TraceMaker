@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker-view: serves the live viewer for one board, optionally with a synthetic event stream (--demo) so
 // the viewer can be developed and shown without the router.
 #include <algorithm>

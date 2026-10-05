@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Obstacle model for routing: every copper item, hole, board edge and keepout, with exact legality tests that
 // use the DRC's rule engine, so the router and the DRC can never disagree about what is legal.

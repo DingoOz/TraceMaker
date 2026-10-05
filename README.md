@@ -89,3 +89,10 @@ editor · `src/model` board and rules · `src/geom` exact geometry · `src/drc` 
 connectivity · `src/route` router (obstacles, A*, negotiation, portfolio) · `src/learn` knowledge base ·
 `src/gpu` CUDA kernels with CPU references · `src/server` viewer server · `src/place` placement ·
 `viewer/` WebGL2 viewer · `bench/` harness · `devsite/` progress website · `tests/` tests.
+
+## Licence
+
+TraceMaker is free software under the GNU General Public License, version 3 or (at your option) any later version
+(`GPL-3.0-or-later`); see [LICENSE](LICENSE). [NOTICE](NOTICE) adds a section 7 permission to link with NVIDIA's
+CUDA runtime, lists third-party components, and credits the KiCad demo projects behind `tests/truth/`. Benchmark
+boards are downloaded, not redistributed, and keep their own licences.

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Two-stage component-rule placement (doc 15 §14.3): with --component-rules soft in full mode the decoupling
 capacitors and their ICs keep their stage-1 positions, the result is legal, and the report says so. Skips (77)
 without the fixture.

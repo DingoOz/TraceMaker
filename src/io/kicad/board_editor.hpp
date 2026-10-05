@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Edits a loaded .kicad_pcb document in place, KiCad style (design doc 08 §3). Only the nodes TraceMaker
 // owns change: new segment/via nodes, removed tracks, and footprint placement. Everything else is kept

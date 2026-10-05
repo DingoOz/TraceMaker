@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // The placement pipeline (design doc 04 §3): `full` runs A (quadratic B2B) → B (SimPL spreading) →
 // C (rotations) → D (legalisation) → E (annealing); `refine` starts from the current placement and runs

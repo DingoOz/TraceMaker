@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Python module `tracemaker` (roadmap M11, design doc 08 §5): the engine without a subprocess, for the KiCad
 // plugin and for scripting. Routing goes through tmk::app::run_route_job, the same function the CLI's `route`
 // subcommand calls, so `tracemaker.route(...)` and `tracemaker route ...` give identical boards.

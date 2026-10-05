@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Tests for the viewer protocol messages and the WebSocket/HTTP server.
 #include <chrono>
 #include <filesystem>

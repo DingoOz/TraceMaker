@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Write a Specctra .dsn for a re-placed board by moving the `(place ...)` records of the original board's .dsn
 (kicad-cli cannot export Specctra). The coordinate map (scale, y flip, offset, rotation) is checked against the
 original board first: every component of the original .kicad_pcb must map onto its .dsn record exactly.

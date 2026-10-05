@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """M8 placement evaluation: human placement vs `--mode auto`, `--mode routable` and `--mode eco` on PCBench boards.
 
 Every placement is judged by the same deterministic router budget (`--work` expansions per portfolio variant,

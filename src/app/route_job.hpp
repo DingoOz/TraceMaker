@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // One `tracemaker route` run as a reusable function, shared by the CLI (src/app/main.cpp) and the Python bindings
 // (bindings/), so both take exactly the same code path (design doc 08 §5).

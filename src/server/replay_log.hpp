@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Replay log (design doc 09 §2, decision D45): the viewer protocol's JSON messages, one per line, each with a
 // leading "t" (seconds since the recording started). Written plain (`.jsonl`) or as a sequence of independent

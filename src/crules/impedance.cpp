@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Closed-form PCB transmission-line models (doc 15 §5.3) and IPC-2221 width for current (§5.4).
 // All formulas are quasi-static; lengths are normalised to the dielectric height before use, so the units cancel.
 #include "crules/impedance.hpp"

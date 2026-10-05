@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Broken-board DRC parity regression: defects injected deterministically into the boards listed in
 # drc_broken_boards.txt (shorts, crossings, dangling tracks and vias, cut connections; see
 # `tracemaker selftest-defects`) must be classified exactly like kicad-cli does, violation by violation.

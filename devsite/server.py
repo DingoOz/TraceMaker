@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """TraceMaker development progress website.
 
 Read-only dashboard over the repository: roadmap progress (dev/progress.json), activity log

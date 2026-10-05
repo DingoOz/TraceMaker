@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Roadmap M12 gate for coupled differential pairs (doc 05 §15, D50).
 
   diff_pair.py <tracemaker> <workdir>

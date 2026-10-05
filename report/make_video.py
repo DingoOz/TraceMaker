@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Compose the side-by-side routing video: TraceMaker (rendered from its event recording) next to Freerouting's own
 GUI recordings, all at the same speed-up, with real-time clocks and a closing metrics table.
 

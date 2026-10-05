@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Route one PCBench board with TraceMaker and Freerouting versions, then measure quality the same way for all.
 
   bench/compare.py AmpOne_dev-AmpOne [--fr 2.5.0-RC12 1.9.0] [--tm-time 120] [--fr-timeout 00:30:00] [--out DIR]

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 import subprocess, concurrent.futures as cf, pathlib, sys
 """Render the two finished boards of the placement video in 3D (kicad-cli pcb render), 90 angles each, 8 at a time.
 Usage: python3 scripts/render_board_spin.py [build/video_place/BOARD]. Run from the repository root after the composer (or bench/ses_import.py) has written build/video_place/fr_human.kicad_pcb."""

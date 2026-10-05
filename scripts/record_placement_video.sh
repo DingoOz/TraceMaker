@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-or-later
 set -e
 cd "$(dirname "$0")/.."
 B=${1:-retroreflectors_SALSAFLOCK}

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Impedance and current rules on a real board (design doc 15 §5.3-5.4, P4): the board stackup gives, per routing
 // layer, the line structure and the dielectric to the nearest reference layer; the closed forms of impedance.hpp

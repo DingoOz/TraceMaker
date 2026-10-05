@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Colour theme: KiCad-familiar layer colours, tuned for a near-black navy background.
 export type RGBA = [number, number, number, number];
 

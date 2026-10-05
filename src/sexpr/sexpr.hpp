@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Lossless s-expression documents for KiCad files (design doc 08 §3).
 //

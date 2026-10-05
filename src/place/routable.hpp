@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Router-in-the-loop placement (design doc 04 §3 G) and ECO placement (doc 04 §4).
 //

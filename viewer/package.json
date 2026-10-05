@@ -1,6 +1,7 @@
 {
   "name": "tracemaker-viewer",
   "private": true,
+  "license": "GPL-3.0-or-later",
   "version": "0.1.0",
   "description": "Live WebGL2 viewer for the TraceMaker autorouter (protocol: docs/13-viewer-protocol.md)",
   "type": "module",

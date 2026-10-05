@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Fixed-budget A/B harness for router changes on large, hard boards (global router v2, doc 05 §13).
 
   bench/m6_bench.py [--work 100000000] [--jobs 8] [--boards ...] -- CONFIG_NAME=ROUTE_ARGS [CONFIG_NAME=ROUTE_ARGS ...]

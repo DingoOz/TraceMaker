@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Design rules as KiCad defines them (design doc 08 §3–4): board minimums and net classes from the
 // .kicad_pro project file, plus custom rules from the .kicad_dru file.

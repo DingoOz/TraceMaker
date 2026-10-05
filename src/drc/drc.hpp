@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Design-rule checker equivalent to KiCad's for routing-relevant rules (design doc 03 §6). Violation type
 // names are KiCad's, so reports compare 1:1 with `kicad-cli pcb drc --format json`.

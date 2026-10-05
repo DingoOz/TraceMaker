@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Component rules in routing (docs/15-component-rules.md §5.5, P2/P3), end to end on a PCBench board.
 
   crules_route.py <tracemaker> <work dir> [board]

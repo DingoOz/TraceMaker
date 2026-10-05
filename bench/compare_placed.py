@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Compare 'placement + routing' runs (bench/run.py --place) with routing-only runs on the same boards.
 
   bench/compare_placed.py placed-tierA:mask-tierA placed-tierB:final10-tierB ...

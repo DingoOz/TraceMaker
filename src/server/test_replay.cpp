@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Tests for the replay log (plain and zstd) and the router's heatmap overlays (doc 09 §2–3, decision D45).
 #include <algorithm>
 #include <cstdio>

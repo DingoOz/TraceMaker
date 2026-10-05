@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Import a Specctra session (.ses, e.g. from Freerouting) into a copy of a .kicad_pcb.
 
 Appends the session's wires as `segment` items and its vias as `via` items to the board text, so KiCad's DRC

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Placement comparison video: Freerouting routing the designer's placement next to TraceMaker placing the parts
 and then routing them, with live CPU-thread strips under both panels and a closing score card.
 

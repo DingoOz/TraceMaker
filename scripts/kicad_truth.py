@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Dumps KiCad's own view of a board as JSON, for parser and geometry tests.
 
 Runs inside the KiCad image: scripts/kicad-python scripts/kicad_truth.py board.kicad_pcb out.json

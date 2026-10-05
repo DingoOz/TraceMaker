@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Board reader tests against KiCad's own view of the same boards (tests/truth/*.json, produced by
 // scripts/kicad_truth.py inside the KiCad 10 image). Boards come from bench/data (scripts/fetch_fixtures.sh);
 // tests skip when the fixtures are missing.

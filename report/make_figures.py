@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Figures for the TraceMaker LaTeX report (report/report.tex).
 
 Reads benchmark results from bench/results/, placement results from build/place-auto/, and routed boards via

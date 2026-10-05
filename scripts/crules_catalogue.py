@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Convert the component-rule catalogue (docs/component_rules.yaml) to the JSON the engine embeds.
 
   scripts/crules_catalogue.py            write src/crules/catalogue.json from the YAML

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Resolves KiCad constraints for pairs of copper items (design doc 03 §6): net-class clearances, local pad
 // overrides, board minimums and custom .kicad_dru rules with their conditions.

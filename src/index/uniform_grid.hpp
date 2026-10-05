@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Uniform spatial hash grid over a bounding box (design doc 03 §2): O(1) insert, box queries return each
 // id at most once per query via a generation stamp.

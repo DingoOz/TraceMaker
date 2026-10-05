@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Checks that the benchmark harness can reach its external tools.
 
 Exit code 0 when everything required is present. Optional tools are reported but not required.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 import { defineConfig } from 'vite';
 
 // `npm run dev` proxies the event stream to a running tracemaker-view / tracemaker server.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Reads .kicad_pcb files (KiCad 9 and 10 formats) into the board model, keeping the s-expression document
 // for lossless writing.

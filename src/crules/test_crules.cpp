@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Unit tests for component-aware layout rules (tm::crules, design doc 15 §9.1 L0-L2).
 #include <catch2/catch_test_macros.hpp>
 

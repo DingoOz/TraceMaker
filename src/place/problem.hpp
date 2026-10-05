@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Placement problem extracted from a board (design doc 04 §2): parts with courtyards, holes and pins per
 // rotation, weighted nets, the board outline, keepouts and spacing rules. Everything is in integer nm; a part's

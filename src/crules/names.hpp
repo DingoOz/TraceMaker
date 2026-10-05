@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Name conventions used to recognise parts and nets (doc 15 §3.1): reference letters, power and ground net
 // names, natural sort of references, component values. Pure string functions, no board access.

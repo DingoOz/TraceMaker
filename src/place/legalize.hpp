@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // (D) Legalisation (design doc 04 §3 D): Tetris-style greedy, largest parts first, each part moved to the
 // nearest legal position (minimum Euclidean displacement over a lattice searched in rings) from its target.

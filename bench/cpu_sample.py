@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Run a command and sample the CPU use of every thread of it and its child processes (from /proc), for the
 parallelism overlay of the comparison videos.
 

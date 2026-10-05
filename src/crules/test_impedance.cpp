@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Impedance solver and IPC-2221 width tests (design doc 15 §5.3-5.4, §9.1 L0). Every reference value names its
 // source and tolerance. Three kinds of reference:
 //   textbook  - worked examples in D. M. Pozar, "Microwave Engineering", 4th ed., Wiley 2012 (Ex. 3.5, 3.7);

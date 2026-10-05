@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Category detection and role binding (design doc 15 §3): each footprint is scored against every category's
 // detectors (integer weights, confidence = min(100, sum)); a category instance is the anchor footprint plus the

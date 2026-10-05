@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Downloads benchmark fixture sets into bench/data (git-ignored; never redistributed).
 # Usage: scripts/fetch_fixtures.sh [all|freerouting|dac2020|kicad-demos|pcbench|pcbworld] ...
 # Default: freerouting dac2020 kicad-demos. Sources and licences: docs/10-benchmarking.md.

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Screen-record Freerouting's own GUI while it routes a PCBench board (for comparison videos).
 
   build/report-venv/bin/python bench/record_fr.py AmpOne_dev-AmpOne 2.5.0-RC12 out.mp4 [--display 97] [--dsn other.dsn]

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Design-intent metrics for a placement (docs/14-placement-test-plan.md §4, "Intent").
 
   bench/place_intent.py board.kicad_pcb [other.kicad_pcb ...] [--json out.json]

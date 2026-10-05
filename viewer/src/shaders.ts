@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // GLSL ES 3.0 shaders. World units are millimetres; u_view = (centre x, centre y, clip-per-mm x, clip-per-mm y),
 // u_px = millimetres per device pixel (for signed-distance anti-aliasing).
 import { INFERNO_COEFFS } from './colors';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/escape_flow.hpp"
 
 #include <algorithm>

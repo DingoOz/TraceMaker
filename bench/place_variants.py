@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Compare annealer variants of `tracemaker-place` (placement only, no routing) on PCBench boards.
 
 The figure of merit is the annealing cost the placer minimises, in signal-mm: weighted HPWL (signal nets x1,

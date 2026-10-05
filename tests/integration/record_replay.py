@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Roadmap M3 gate: replaying a recorded event log reproduces the final routed board.
 
   record_replay.py <tracemaker> <workdir>

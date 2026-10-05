@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // GPU discovery and memory admission control (design doc 07 §4).
 //

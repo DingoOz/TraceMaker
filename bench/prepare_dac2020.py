@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Prepare the DAC 2020 PCB benchmarks (bench/data/dac2020) in the PCBench fixture layout used by bench/compare.py.
 
 For each benchmark bmN with a Specctra file in Freerouting's fixture set (DAC2020_bmNN.dsn), writes

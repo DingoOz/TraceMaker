@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Parallel tempering (replica exchange) for detailed placement (design doc 04 §3 E).
 //
 // Swendsen & Wang, "Replica Monte Carlo simulation of spin glasses", PRL 57 (1986); Hukushima & Nemoto,

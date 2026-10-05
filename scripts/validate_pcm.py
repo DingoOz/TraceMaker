@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Checks a KiCad PCM package archive (e.g. build/pcm/tracemaker-0.1.0.zip).
 
 Always runs the standard-library checks below. When kicad-python's validator is importable (kipy.packaging,

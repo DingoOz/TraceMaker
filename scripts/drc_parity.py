@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Compares TraceMaker's DRC with KiCad's (kicad-cli pcb drc) on a set of boards.
 
 Usage: drc_parity.py [--jobs N] [--timeout S] board.kicad_pcb ...

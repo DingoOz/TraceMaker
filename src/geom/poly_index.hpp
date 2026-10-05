@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Bucketed edges of one large closed polygon (a zone fill), so "does this disk touch the polygon?" costs the
 // edges near the disk instead of every edge. Exact: the answer equals

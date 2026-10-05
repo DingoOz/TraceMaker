@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // The board model (design doc 02 §3): every object TraceMaker reads from a .kicad_pcb, in absolute
 // integer-nanometre coordinates, with a link back to its s-expression node for lossless writing.

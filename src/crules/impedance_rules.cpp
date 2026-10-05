@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Impedance and current rules on a board (doc 15 §5.3-5.4, P4). Report-only.
 #include "crules/impedance_rules.hpp"
 

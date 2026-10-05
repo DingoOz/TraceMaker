@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Scene state in world units (millimetres relative to the board centre), updated by protocol messages.
 import { earClip, rotate } from './geometry';
 import type { BoardMsg, FootprintMsg, Message, PadMsg, TrackMsg, ViaMsg, XY } from './protocol';

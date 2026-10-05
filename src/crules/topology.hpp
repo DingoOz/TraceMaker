@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Netlist views of a board for component recognition (doc 15 §3.1 "Topology", §8.0 topology detectors): pads per
 // net, nets per footprint, part kinds from reference letters, and the decoupling-capacitor ties of decision D25.

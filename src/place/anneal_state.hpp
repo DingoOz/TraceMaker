@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Internal: the incremental annealing state shared by simulated annealing, parallel tempering, large-
 // neighbourhood search and exact windows (anneal.cpp, tempering.cpp, lns.cpp). Not part of the public API.

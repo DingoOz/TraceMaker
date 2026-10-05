@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Append an entry to the development activity log shown on the progress website.
 
 Usage: scripts/devlog.py [--kind build|test|note|decision|milestone] "message"

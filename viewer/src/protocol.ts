@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Viewer protocol v1 (docs/13-viewer-protocol.md). Coordinates are integer nanometres.
 export type XY = [number, number];
 

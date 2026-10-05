@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Escape planning (M9): corridor geometry on a synthetic BGA and the feasibility analysis on a fixture board.
 #include <catch2/catch_test_macros.hpp>
 

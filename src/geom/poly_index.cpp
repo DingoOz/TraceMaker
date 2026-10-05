@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "geom/poly_index.hpp"
 
 #include <algorithm>

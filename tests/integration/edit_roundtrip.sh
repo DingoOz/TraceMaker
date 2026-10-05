@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Edits demo boards with TraceMaker, then checks that KiCad itself reads the edited files exactly as TraceMaker
 # does (positions, rotations, pads, tracks, vias, nets). Needs Docker + the KiCad image; skips otherwise.
 set -euo pipefail

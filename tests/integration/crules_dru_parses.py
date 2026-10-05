@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """The generated sidecar .kicad_dru must be valid KiCad syntax: kicad-cli silently ignores a whole rules file with a
 syntax error (checked with KiCad 10), so every generated rule would vanish without a message. Sentinel check: append
 a rule that must fire (5 mm clearance) to the generated file, place it next to a board as <board>.kicad_dru, and

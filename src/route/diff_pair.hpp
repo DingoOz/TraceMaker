@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Differential pairs (design doc 05 §9 phase 3, §15): the geometry rule a pair is routed at, and a measurement of
 // how a routed pair came out (coupled share, gap, intra-pair skew). The coupled search itself lives in the router

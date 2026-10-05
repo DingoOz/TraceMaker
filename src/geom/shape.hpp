@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Exact integer geometry for clearance checks (design doc 03 §1).
 //

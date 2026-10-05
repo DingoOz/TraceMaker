@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Offline check: TraceMaker's --emit-items JSON becomes valid kipy Track/Via objects (no KiCad needed)."""
 import json
 import sys

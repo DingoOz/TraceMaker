@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """TraceMaker benchmark harness (design doc 10).
 
 Routes PCBench fixtures with TraceMaker, judges input and output with `kicad-cli pcb drc`, and compares with

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // Escape planning, version 2 (roadmap M9; design doc 05 §3 and §14): min-cost-flow channel assignment for deep
 // ball-grid arrays, layer by layer.

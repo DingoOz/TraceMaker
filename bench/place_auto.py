@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Evaluate `tracemaker-place --mode auto` on PCBench boards.
 
 For each board: run auto placement with a route check, then report unrouted connections for the input placement

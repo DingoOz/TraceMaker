@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 // (E) Detailed placement by simulated annealing (design doc 04 §3 E; Kirkpatrick, Gelatt, Vecchi, Science
 // 1983; move set after TimberWolf, Sechen & Sangiovanni-Vincentelli, IEEE JSSC 1985).

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Component-rules default gate on placed tiers (docs/15-component-rules.md §9.1 L3).
 
   bench/crules_tiers.py OFF_RUN SOFT_RUN [OFF_RUN SOFT_RUN ...]

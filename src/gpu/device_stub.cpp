@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Device API for builds without CUDA: no devices, never enough memory.
 #include "gpu/device.hpp"
 

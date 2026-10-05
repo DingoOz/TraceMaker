@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Builds the TraceMaker KiCad Plugin and Content Manager (PCM) package.
 
 Output: build/pcm/tracemaker-<version>.zip, installable in KiCad 10 with
