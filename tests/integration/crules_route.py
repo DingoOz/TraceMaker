@@ -50,7 +50,7 @@ def main() -> int:
     out = work / "routed.kicad_pcb"
     side = work / "routed.tracemaker.kicad_dru"
     side.unlink(missing_ok=True)
-    r = subprocess.run([str(tm), "route", str(src), "-o", str(out), "--component-rules", "on", "--threads", "2", "--work", "3000000",
+    r = subprocess.run([str(tm), "route", str(src), "-o", str(out), "--component-rules", "on", "--threads", "2", "--variants", "2", "--work", "3000000",
                         "--no-kb", "--no-gpu"], capture_output=True, text=True)
     if r.returncode not in (0, 3):
         print(r.stdout[-2000:], r.stderr[-2000:])
@@ -83,7 +83,7 @@ def main() -> int:
     out2 = work / "routed_off.kicad_pcb"
     side2 = work / "routed_off.tracemaker.kicad_dru"
     side2.unlink(missing_ok=True)
-    subprocess.run([str(tm), "route", str(src), "-o", str(out2), "--threads", "2", "--work", "3000000", "--no-kb", "--no-gpu"],
+    subprocess.run([str(tm), "route", str(src), "-o", str(out2), "--threads", "2", "--variants", "2", "--work", "3000000", "--no-kb", "--no-gpu"],
                    capture_output=True, text=True)
     if side2.exists():
         errors.append("sidecar written with --component-rules off")

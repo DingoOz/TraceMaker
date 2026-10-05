@@ -118,6 +118,9 @@ any mode. Edge connectors and mounting holes are fixed by default (configurable)
   order-independent. Floating point is allowed only where the result is snapped before it affects a
   decision (placement positions are snapped to a 1 µm grid each iteration).
 - Budgets are **work units**, not wall time, at decision points. Wall time only stops the job early.
+- Portfolio variants are defined by (settings, variant index), never by the thread count; threads only schedule
+  them, and the best variant is chosen by a total order ending in the variant index, so a work-budget run is
+  bit-identical at any thread count (router: `--variants`, default all eight with `--work`; D47).
 
 ### 6.3 Budgets
 

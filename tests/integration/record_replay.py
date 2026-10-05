@@ -23,7 +23,7 @@ BOARD = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/C-BISC
 
 
 def route(tm, out, *extra):
-    subprocess.run([tm, "route", str(BOARD), "-o", str(out), "--work", "2000000", "--threads", "4", "--no-kb", *extra],
+    subprocess.run([tm, "route", str(BOARD), "-o", str(out), "--work", "2000000", "--threads", "4", "--variants", "4", "--no-kb", *extra],
                    check=True, capture_output=True)
 
 

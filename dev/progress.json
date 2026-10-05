@@ -528,8 +528,8 @@
      "done": false
     },
     {
-     "text": "Bit-identical across thread counts (portfolio selection)",
-     "done": false
+     "text": "Bit-identical across thread counts (portfolio selection; --variants, all 8 with --work, D47)",
+     "done": true
     },
     {
      "text": "Portfolio early stop once a variant routes everything (wall-clock mode)",

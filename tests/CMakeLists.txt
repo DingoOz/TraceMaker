@@ -43,3 +43,6 @@ set_tests_properties(crules_two_stage PROPERTIES SKIP_RETURN_CODE 77 LABELS "int
 # Reachability pre-check: every "unreachable" verdict re-checked by the full A* (skips without fixtures).
 add_test(NAME reach_verify COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/reach_verify.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/reach_verify)
 set_tests_properties(reach_verify PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 600)
+# Determinism across thread counts (N3, D47): the same --work portfolio at 1, 2 and 4 threads gives identical bytes.
+add_test(NAME thread_determinism COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/thread_determinism.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/thread_determinism)
+set_tests_properties(thread_determinism PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 900 PROCESSORS 4)
