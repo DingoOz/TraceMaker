@@ -24,7 +24,7 @@ def main() -> int:
         return 77
     work.mkdir(parents=True, exist_ok=True)
     out, rec, js = work / "replay.kicad_pcb", work / "replay.jsonl", work / "replay.json"
-    subprocess.run([tm, "route", str(BOARD), "-o", str(out), "--work", "2000000", "--threads", "4", "--no-kb", "--record", str(rec)],
+    subprocess.run([tm, "route", str(BOARD), "-o", str(out), "--work", "2000000", "--threads", "4", "--variants", "4", "--no-kb", "--record", str(rec)],
                    check=True, capture_output=True)
     subprocess.run([tm, "inspect", str(out), "--json", str(js)], check=True, capture_output=True)
     board = json.loads(js.read_text())

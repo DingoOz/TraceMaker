@@ -25,7 +25,7 @@ def main() -> int:
         return 77
     work.mkdir(parents=True, exist_ok=True)
     p = subprocess.run([str(tm), "route", str(src), "-o", str(work / "out.kicad_pcb"), "--work", "15000000", "--time", "3600",
-                        "--threads", "1", "--no-kb", "--reach-check", "2", "--reach-verify"], capture_output=True, text=True)
+                        "--threads", "1", "--variants", "1", "--no-kb", "--reach-check", "2", "--reach-verify"], capture_output=True, text=True)
     out = p.stdout + p.stderr
     m = re.search(r"reachability checks: (\d+), (\d+) proved unreachable", out)
     if not m:

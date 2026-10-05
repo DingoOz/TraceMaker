@@ -193,10 +193,16 @@ RouteJobResult run_route_job(RouteJob job) {
   std::vector<int> ran;
   int best_index = 0;
   std::string best_name;
-  if (job.threads > 1) {
+  // The variant set is a setting, never derived from the thread count when a work budget makes the run
+  // deterministic: then `--threads` only changes how fast the same variants finish (requirement N3, D47).
+  const int threads = std::max(1, job.threads);
+  const int variants = std::clamp(job.variants > 0 ? job.variants : opt.work_budget > 0 ? route::portfolio_size() : threads, 1,
+                                  route::portfolio_size());
+  if (variants > 1) {
     std::vector<int> pick;
-    if (kb && job.threads < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), job.threads, opt.seed);
-    auto pr = route::route_portfolio(*route_board, rules, opt, job.threads, pick);
+    if (kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, opt.seed);
+    log(fmt("portfolio: %d variants on %d thread%s", variants, std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
+    auto pr = route::route_portfolio(*route_board, rules, opt, variants, pick, threads);
     for (std::size_t i = 0; i < pr.variants.size(); ++i)
       log(fmt("  variant %d %-30s routed %d%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
     ran = pr.indices;

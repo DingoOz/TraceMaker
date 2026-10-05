@@ -35,7 +35,7 @@ def main() -> int:
         (work / f"{stem}.kicad_dru").write_text(RULE)
         (work / f"{stem}.kicad_pro").write_text(json.dumps({"meta": {"filename": f"{stem}.kicad_pro", "version": 1}}))
     out = work / "lt_routed.kicad_pcb"
-    subprocess.run([tm, "route", str(board), "-o", str(out), "--work", "3000000", "--threads", "4", "--no-kb"], check=True, capture_output=True)
+    subprocess.run([tm, "route", str(board), "-o", str(out), "--work", "3000000", "--threads", "4", "--variants", "4", "--no-kb"], check=True, capture_output=True)
     js = work / "lt.json"
     subprocess.run([tm, "inspect", str(out), "--json", str(js)], check=True, capture_output=True)
     d = json.loads(js.read_text())

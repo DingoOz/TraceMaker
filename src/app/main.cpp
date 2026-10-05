@@ -368,7 +368,13 @@ int main(int argc, char** argv) {
   bool r_nokb = false;
   route->add_option("--kb", r_kb, "Knowledge base file (failure memory across runs)");
   route->add_flag("--no-kb", r_nokb, "Do not read or update the knowledge base");
-  route->add_option("--threads", r_threads, "Portfolio size: differently configured routers run in parallel, best kept (1 = single router)");
+  route->add_option("--threads", r_threads,
+                    "Threads for the portfolio (differently configured routers, best kept). Without --variants it is also the portfolio "
+                    "size, except with --work, where all variants run and the output is identical for any thread count");
+  int r_variants = 0;
+  route->add_option("--variants", r_variants,
+                    "Portfolio size (1 = single router; default: all with --work, else --threads); the output never depends on --threads "
+                    "with --work. --time applies to each variant from its start");
   tmk::app::RouteJob r_job;
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay");
@@ -445,6 +451,7 @@ int main(int argc, char** argv) {
       job.out = r_out;
       job.opt = ropt;
       job.threads = r_threads;
+      job.variants = r_variants;
       job.kb_path = r_nokb ? std::string() : r_kb;
       job.items_out = r_items;
       job.json_out = r_json;

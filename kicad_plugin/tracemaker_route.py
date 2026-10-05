@@ -92,6 +92,7 @@ def route_kwargs(args: list) -> dict:
     p = argparse.ArgumentParser(add_help=False)
     p.add_argument("--time", dest="time_s", type=float)
     p.add_argument("--threads", type=int)
+    p.add_argument("--variants", type=int)
     p.add_argument("--work", type=int)
     p.add_argument("--seed", type=int)
     p.add_argument("--pitch-um", dest="pitch_um", type=float)

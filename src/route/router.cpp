@@ -2404,8 +2404,8 @@ struct Router::Impl {
   }
 };
 
-PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int threads,
-                                const std::vector<int>& pick) {
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
+                                const std::vector<int>& pick, int threads) {
   struct Variant {
     std::string name;
     RouterOptions o;
@@ -2432,7 +2432,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     for (int i : pick)
       if (i >= 0 && i < static_cast<int>(vs.size())) chosen.push_back(i);
   } else {
-    for (int i = 0; i < std::clamp(threads, 1, static_cast<int>(vs.size())); ++i) chosen.push_back(i);
+    for (int i = 0; i < std::clamp(variants, 1, static_cast<int>(vs.size())); ++i) chosen.push_back(i);
   }
   {
     std::vector<Variant> sel;
@@ -2472,24 +2472,40 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       bufs.push_back(std::make_unique<BufferSink>());
       v.o.sink = bufs.back().get();
     }
-  for (std::size_t i = 0; i < vs.size(); ++i)
-    pool.emplace_back([&, i] { rs[i] = Router(board, rules, vs[i].o).run(); });
+  // Variants are taken in index order by `threads` workers. Which thread runs a variant, and when, cannot change its
+  // result: each Router owns all of its state, its clock starts when it starts, and in work-budget mode nothing is
+  // shared between variants (the shared deadline is wall-clock mode only).
+  const std::size_t workers = threads <= 0 ? vs.size() : std::min(vs.size(), static_cast<std::size_t>(threads));
+  std::atomic<std::size_t> next{0};
+  for (std::size_t w = 0; w < workers; ++w)
+    pool.emplace_back([&] {
+      for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
+    });
   for (auto& t : pool) t.join();
   PortfolioResult pr;
+  // Copper length is summed in commit order, so it is the same value whichever thread ran the variant.
   auto length = [](const RouteResult& r) {
     double l = 0;
     for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
     return l;
+  };
+  // Total order on (routed desc, vias asc, length asc, variant index asc): the winner depends neither on the order
+  // in which variants finished nor on their positions in `pick`.
+  auto better = [&](std::size_t i, std::size_t j) {
+    const auto& a = rs[i];
+    const auto& c = rs[j];
+    if (a.routed != c.routed) return a.routed > c.routed;
+    if (a.vias.size() != c.vias.size()) return a.vias.size() < c.vias.size();
+    const double la = length(a), lc = length(c);
+    if (la != lc) return la < lc;
+    return chosen[i] < chosen[j];
   };
   std::size_t best = 0;
   pr.indices = chosen;
   for (std::size_t i = 0; i < rs.size(); ++i) {
     pr.variants.push_back(vs[i].name);
     pr.routed.push_back(rs[i].routed);
-    const auto& a = rs[i];
-    const auto& c = rs[best];
-    if (a.routed > c.routed || (a.routed == c.routed && (a.vias.size() < c.vias.size() || (a.vias.size() == c.vias.size() && length(a) < length(c)))))
-      best = i;
+    if (i > 0 && better(i, best)) best = i;
   }
   pr.best_variant = static_cast<int>(best);
   if (!bufs.empty())
