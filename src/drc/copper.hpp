@@ -23,6 +23,7 @@ struct CopperItem {
   Coord width = 0;                // tracks/arcs: width; vias: diameter
   int owner = -1;                 // router connection that created this item (-1 = fixed copper)
   bool removed = false;           // ripped up (router working model only)
+  bool free_via = false;          // via marked (free yes): its net is fixed for KiCad's net propagation
 };
 
 struct Hole {

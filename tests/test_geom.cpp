@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "core/rng.hpp"
+#include "geom/poly_index.hpp"
 #include "geom/shape.hpp"
 
 using namespace tmk::geom;
@@ -58,4 +59,33 @@ TEST_CASE("arcs flatten within the error bound", "[geom]") {
   CHECK(pts.front() == Point{1'000'000, 0});
   CHECK(pts.back() == Point{-1'000'000, 0});
   CHECK(pts[pts.size() / 2].y > 900'000);  // went through the mid point side
+}
+
+TEST_CASE("polygon edge index answers disk tests exactly like closer_than", "[geom]") {
+  // A jagged star polygon with many edges (like a zone fill), tested against disks inside, outside, on the
+  // boundary and on vertices: the bucketed path must agree with the linear reference everywhere.
+  const tmk::RngStream rng(11, 2, 0);
+  std::vector<Point> poly;
+  const int n = 400;
+  for (int i = 0; i < n; ++i) {
+    const double a = 2.0 * M_PI * i / n;
+    const double rad = (i % 2 ? 20e6 : 35e6) + static_cast<double>(rng.u64(static_cast<std::uint64_t>(i)) % 5'000'000);
+    poly.push_back({static_cast<tmk::Coord>(rad * std::cos(a)), static_cast<tmk::Coord>(rad * std::sin(a))});
+  }
+  const Shape ref = Shape::polygon(poly, 0);
+  const PolygonIndex idx(poly);
+  int hits = 0;
+  for (std::uint64_t k = 0; k < 4000; ++k) {
+    const Point p = poly[k % poly.size()], q = poly[(k + 1) % poly.size()];
+    Point c{static_cast<tmk::Coord>(rng.u64(1000 + k) % 90'000'000) - 45'000'000, static_cast<tmk::Coord>(rng.u64(9000 + k) % 90'000'000) - 45'000'000};
+    if (k % 10 == 0) c = p;                                   // on a vertex
+    if (k % 10 == 1) c = Point{(p.x + q.x) / 2, (p.y + q.y) / 2};  // on (or next to) an edge
+    const tmk::Coord r = static_cast<tmk::Coord>(rng.u64(20000 + k) % 400'000);
+    const bool want = closer_than(Shape::point(c, r), ref, 1);
+    REQUIRE(idx.disk_closer(c, r, 1) == want);
+    REQUIRE(idx.disk_closer(c, r + 1, 0) == closer_than(Shape::point(c, r + 1), ref, 0));  // overlap only
+    hits += want;
+  }
+  CHECK(hits > 500);
+  CHECK(hits < 3800);
 }

@@ -156,8 +156,8 @@
      "done": true
     },
     {
-     "text": "Parity on broken-board classification (shorts/dangling)",
-     "done": false
+     "text": "Parity on broken-board classification (shorts/dangling): 264/264 injected-defect variants match kicad-cli violation by violation (was 41/264; regression test); demo boards 14/17 exact",
+     "done": true
     },
     {
      "text": "Performance on very large boards (vme-wren, jetson)",
