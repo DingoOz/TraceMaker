@@ -43,7 +43,7 @@ struct RouterOptions {
   // D+/D- bound by tm::crules, whose names need not end in P/N or +/-). Empty = none.
   std::vector<std::pair<model::NetId, model::NetId>> pair_nets;
   // Intra-pair skew limit for pairs routed coupled (0 = only KiCad custom `skew` rules): the shorter half gets meanders
-  // in the clean-up until the halves differ by at most half of it (length tuning code, doc 05 §14).
+  // in the clean-up until the halves differ by at most half of it (length tuning code, doc 05 §15).
   Coord pair_skew = 0;
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   // Global router v2 (M6): the first search of each connection is confined to its corridor (cells outside are

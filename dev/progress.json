@@ -602,7 +602,11 @@
      "done": true
     },
     {
-     "text": "Differential pairs: proper coupled routing",
+     "text": "Differential pairs: proper coupled routing (v2, opt-in --diff-pairs, D50): coupled pair search with coupled vias, breakout legs, re-coupling, enclosed-pin check, --pair-skew-mm; 18 PCBench boards: 35 of 59 pairs >= 50 % coupled at the rule gap, completion 2,201 -> 2,210; KiCad: no new error kinds (one more Margin-layer edge clearance on a board that has 27 with pairs off) (doc 05 \u00a715)",
+     "done": true
+    },
+    {
+     "text": "Differential pairs: twists for mirrored pin order, pairs ending on routed copper, per-pair skew limits from component rules",
      "done": false
     },
     {

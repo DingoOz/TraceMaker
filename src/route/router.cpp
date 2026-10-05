@@ -1362,7 +1362,7 @@ struct Router::Impl {
   }
 
   // ---------------------------------------------------------------------------------------------------
-  // Differential pairs, version 2 (design doc 05 §9 phase 3 and §14; decision D50). The pair is searched as one
+  // Differential pairs, version 2 (design doc 05 §9 phase 3 and §15; decision D50). The pair is searched as one
   // object: an A* over centreline states (layer, lattice point, direction, which half is on the left) whose moves
   // add a straight lattice step, a 45-degree turn followed by a straight run long enough for the inner track's miter,
   // or a coupled via pair (both halves jog out to the via spacing, change layer side by side and jog back). Each move

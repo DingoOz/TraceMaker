@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Differential-pair evaluation (M12, doc 05 §14): routes boards with and without coupled pair routing at a fixed
+"""Differential-pair evaluation (M12, doc 05 §15): routes boards with and without coupled pair routing at a fixed
 deterministic budget and reports, per pair, the coupled share of its length, the gap kept and the intra-pair skew
 (`tracemaker pairs`), and per board the completion and KiCad DRC errors added by routing (kicad-cli, Docker).
 

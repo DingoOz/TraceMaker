@@ -131,7 +131,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 |---|---|
 | 1 | Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, `.kicad_dru` clearance/width conditions on net class, layer and area |
 | 2 | Zone connections (thermal reliefs to planes), solder-mask bridge awareness, blind/buried/micro vias |
-| 3 | Differential pairs (coupled routing as a single wide "pair" object in search), length and skew targets (meander tuning in cleanup), max uncoupled length |
+| 3 | Differential pairs (coupled routing as a single "pair" object in search: §15), length and skew targets (meander tuning in cleanup), max uncoupled length (`diff_pair_uncoupled`) |
 
 ## 10. Considered and not chosen as the core
 
@@ -159,7 +159,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Global routing, first CPU version: tile graph (8 pitches), exact edge capacities, negotiated congestion, soft corridors (`--global`, off by default) | Experimental: no gain yet. On AmpOne, USBI2C01 and motor-3xdrv8833 (60 s, one variant) corridors shortened track a little but did not raise completion and sometimes added vias. Missing: Steiner topology, via capacity, layer assignment without via columns, corridor-restricted windows | `route/global_router.cpp` |
 | Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
 | Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Version 2 (2026-10-05): min-cost-flow channel and layer assignment for deep arrays, opt-in (`--escape-flow`), measured below version 1. Not built: NC fallback, escape templates. See §12, §14 | `route/escape.{hpp,cpp}`, `router.cpp` |
-| Diff pairs and length tuning | Not started | |
+| Differential pairs (version 2, M12): coupled pair search with coupled vias, breakout/fan-in legs, re-coupling after rip-up, enclosed-pin check; length tuning (custom `length` rules) and skew tuning (custom `skew` rules, `--pair-skew-mm`) | Done, opt-in (`--diff-pairs`, D50). Not built: pair twists, pairs ending on routed copper, pair-aware global routing. See §15 | `route/router.cpp` (`route_pair`, `tune_skew`), `route/diff_pair.{hpp,cpp}` |
 
 ## 12. Escape planning, version 1 (M9, 2026-10-04)
 
@@ -324,3 +324,76 @@ short, contested exit (version 1's perimeter corridors and dog-bones). The flow 
 routability analysis it is (which balls can leave on which layer under the board's rules) and as the starting
 point for the next steps: plan-guided rather than reserved corridors (a cost bonus instead of blocking others),
 reserving only the inner rings' channels, and an NC fallback on the escape graph for the balls the flow leaves.
+
+## 15. Differential pairs, version 2 (M12, 2026-10-05)
+
+**Before.** `--diff-pairs` (v1) searched the pair's centreline on one layer with a disk wide enough for both tracks,
+offset it into two tracks and only then tried straight or dog-leg legs to the pads. On the USB hub and similar boards
+it coupled nothing: the legs failed, halves that had to change layer could not, and whatever was coupled was later
+ripped by negotiation and re-routed as single tracks.
+
+**What was built** (off by default: `--diff-pairs` for KiCad's pairs by name, `RouterOptions::pair_nets` for pairs
+named otherwise, e.g. USB DP/DM from `--component-rules soft`; D50).
+
+| Part | What |
+|---|---|
+| Pair rule (`route/diff_pair.cpp`, `pair_rule`) | Width and gap, highest source first: a custom rule's `diff_pair_gap` (opt, else min); the net class's diff-pair width, gap and via gap when the project sets them; else the class width and the clearance KiCad requires between the halves (relaxed to the class diff-pair gap only for pairs KiCad recognises by name, as its DRC does). Never below the board minimums. `diff_pair_uncoupled` (max) limits the legs. Offsets carry a 1 µm rounding margin per side, so the gap comes out 2 µm wide of the rule. Coupled vias sit side by side at the via gap (and the mask web of untented vias) |
+| Coupled search (`route_pair`) | A* over (layer, lattice point, direction, which half is on the left). Moves: one straight lattice step; a 45° turn followed by K straight steps, K·pitch ≥ 2·offset·tan 22.5° + width so the inner track's miter never folds back; a coupled via pair (both halves jog out at 45° to the via spacing, change layer side by side, jog back; MV steps). Each move is checked exactly (`segment_state`, `via_state` against fixed and routed copper) on both offset tracks, so the coupled section keeps its gap by construction. Cost: length + K·pitch per turn + two vias; heuristic 2 × straight-line distance to the end pads plus a via pair while off the end pads' layers (weighted: legal, not optimal). Budget 600 states per lattice step of the pair's length (40 k–250 k), counted as work |
+| Breakout and fan-in | Start candidates: every lattice point within R of the start pads' midpoint (0.3 × the pair's length, at least 1.5 × the pads' distance, 0.6–2.5 mm), 8 directions, sides by the shorter legs. Legs: straight, the two octilinear dog-legs, or the same to a point behind the end of the coupled section followed by a straight entry; at the pair width, then the neck-down width; checked exactly, against each other and against the other half's first straight run, when the A* pops the candidate. The pads must lie behind the start (ahead of the end), so legs never double back along the pair. Legs cost twice the coupled length, so coupling starts as close to the pads as the board allows. Goal candidates near the end pads wait in their own queue and are checked at least every 16 expansions; the first legal one is taken |
+| Commit | Both halves are built from corners only (a node's own offset point would fold an inner miter back), collinear runs merged, checked against each other geometrically, then exactly: each half against the board, the first committed, the second checked against it too, otherwise the first is taken back. Up to four finished candidates per search |
+| Enclosed pins | A pin of another net between the two pins of an end (the ground pin between P and N on HDMI parts) is tested with a short strict search before and after the pair; a pair that boxes in a pin that could escape before is taken back |
+| Negotiation and clean-up | A coupled half ripped by negotiation takes its partner with it, and the pair is tried coupled again (twice at most) before single routing. In the clean-up, pairs that ended up routed singly are lifted and routed coupled; on failure their old copper is restored exactly, so completion is unchanged. Via optimisation, smoothing and LNS leave coupled connections alone |
+| Skew | `--pair-skew-mm X` (or a KiCad custom `skew` rule) meanders the shorter half in the clean-up with the length-tuning code until the halves differ by at most X/2 (meanders go to the free side) |
+| Measurement | `tracemaker pairs <board> [--pair A,B] [--json]`: per pair the track length, the coupled share (20 µm samples beside a parallel track of the other half on the same layer within gap + max(gap/4, 50 µm)), the gap kept (median, minimum), skew and vias. `tracemaker route` prints the same for the pairs it routed; `bench/pair_eval.py` routes boards off/on at a fixed budget and judges both with KiCad |
+
+**Results.** 18 PCBench boards with differential pairs by name (USB, Ethernet, HDMI/TMDS, DisplayPort lanes, PCIe,
+MDI), one variant, `--work 30000000`, KiCad 10 DRC (`bench/pair_eval.py`):
+
+| Board | Pairs | Coupled share per pair (on) | Gap kept (target) | Skew median off → on | Routed off → on | KiCad added errors off → on |
+|---|---|---|---|---|---|---|
+| 4-port-usb-hub_4port-usb-hub | 5 | 94 93 84 93 92 | 0.202 (0.200) | 5.82 → 1.06 | 113 → 113 / 113 | 0 → 0 |
+| PmodHDMIIn_PmodHDMIIn | 4 | 55 8 41 56 | 0.152 (0.150) | 12.01 → 9.66 | 113 → 112 / 116 | 0 → 0 |
+| kitspace_USBee32-S2 | 1 | 70 | 0.202 (0.200) | 1.33 → 0.74 | 159 → 159 / 159 | 0 → 0 |
+| EtherCAT_shield_v1_EtherCAT_shield_v1 | 4 | 80 19 78 22 | 0.202 (0.200) | 3.63 → 2.96 | 226 → 230 / 272 | 0 → 0 |
+| Omega2-mini-dock_Omega2 mini-dock | 3 | 4 53 39 | 0.202 (0.200) | 0.22 → 0.20 | 76 → 76 / 76 | 0 → 0 |
+| USB-Adapter_USB Adapter | 1 | 0 | – (0.150) | 2.42 → 2.42 | 42 → 42 / 42 | 0 → 0 |
+| USBtin_USBtin | 1 | 84 | 0.202 (0.200) | 5.55 → 0.88 | 54 → 54 / 54 | 0 → 0 |
+| android_debug_cable_android_debug_cable | 1 | 10 | 0.250 (0.200) | 6.40 → 6.40 | 32 → 32 / 32 | 0 → 0 |
+| Own-Mailbox-Hardware_eth | 2 | 69 84 | 0.182 (0.180) | 0.00 → 1.38 | 176 → 180 / 294 | 0 → 0 |
+| kitspace_OtterPillG | 1 | 0 | – (0.157) | 8.71 → 1.61 | 104 → 103 / 109 | 0 → 0 |
+| kitspace_USB-LED-Otter | 1 | 0 | – (0.200) | 0.00 → 0.00 | 33 → 33 / 39 | 0 → 0 |
+| ULPI-Pmod_ULPI-Pmod | 1 | 0 | – (0.200) | 0.33 → 0.33 | 54 → 54 / 62 | 0 → 0 |
+| edid-injector_edid-injector | 5 | 88 88 88 88 75 | 0.154 (0.152) | 1.09 → 0.03 | 112 → 112 / 112 | 0 → 0 |
+| RaspberryPi-PoE_PoELLi_PI | 7 | 0 24 74 55 0 0 0 | 0.201 (0.199) | 3.26 → 2.64 | 84 → 84 / 84 | 27 → 28 |
+| kitspace_stack-light | 5 | 0 0 31 48 85 | 0.155 (0.153) | 5.19 → 6.50 | 301 → 303 / 306 | 0 → 0 |
+| kitspace_CH330 | 1 | 0 | – (0.200) | 0.00 → 0.00 | 22 → 22 / 24 | 0 → 0 |
+| HY-AI7688H-RevA_HY-AI7688H | 8 | 57 82 76 85 91 71 71 68 | 0.252 (0.250) | 2.01 → 1.32 | 375 → 375 / 375 | 0 → 0 |
+| kitspace_USB-C-Screen-Adapter-LDR6023SS | 8 | 91 63 51 87 66 0 0 0 | 0.202 (0.200) | 0.44 → 0.22 | 125 → 126 / 134 | 0 → 0 |
+
+59 pairs (some are not signal pairs: KiCad's naming also pairs `POE_V1+/-` or `AG_IN_+/-`). Coupled share ≥ 80 % on
+18, ≥ 50 % on 35, some coupling on 45; median 57 %. Where coupled, the gap is the rule's gap plus the 2 µm rounding
+margin everywhere. Intra-pair skew (track length) fell on most boards without any tuning (hub median 5.8 → 1.1 mm); with
+`--pair-skew-mm 0.5` the hub's five pairs end at 0.07–0.26 mm, still 82–92 % coupled and KiCad-clean. Completion
+with pairs on is equal on 11 boards, higher on 5 and lower by one connection on 2 (PmodHDMIIn 113 → 112,
+OtterPillG 104 → 103); at a fixed budget single connections swing both ways with any change (PmodHDMIIn off routes
+105 / 106 / 113 at 20 / 25 / 35 M, on 105 / 107 / 112; OtterPillG off 104 / 104 / 108 at 25 / 30 / 35 M): 2,201 → 2,210
+routed in all. KiCad finds no error on routed copper with pairs on except on RaspberryPi-PoE, which has 27 with pairs
+off as well: all are clearance to graphics on the Margin layer, which KiCad treats as board edge and the router's
+obstacle model does not read (one more of them lies on a pair track). Pairs left uncoupled: the halves would have to
+swap sides between the ends (ULPI-Pmod, android_debug_cable: the pin order is mirrored), a pair that changes layer
+from a bottom-side connector (CH330, USB-LED-Otter) found no via site, short pairs under 1.5 mm (USB-Adapter), and
+pairs ripped by negotiation that could not be coupled again in the clean-up. With pairs off the output is
+byte-identical to the previous router (six boards checked).
+
+**Tried and dropped.** Making coupled copper four times dearer to cross in negotiated searches (pairs kept their
+coupling a little more often, but PmodHDMIIn routed 110 instead of 112 of 116); holding back a tenth of the work
+budget for the clean-up re-coupling (removed without a separate measurement: on a board that uses its whole budget the tenth
+is taken from routing, which matters more there than coupling); refusing every pair with a pin between its pins (safe, but HDMI connectors whose
+ground pins escape on their own lost 88 % coupling for nothing; the before/after test replaced it).
+
+**Not built.** Pairs whose pin order is mirrored between the ends need a twist (one half crosses the other through a
+via): such pairs (ULPI-Pmod, android_debug_cable) are routed singly. A pair ends on pads only, so a pair joining copper
+already routed for its nets (a T at an AC-coupling capacitor or termination) often fails its goal legs. No pair-aware
+global routing; no rounded or arc corners; skew in picoseconds needs the stackup (doc 15 §5.3); tuning meanders on
+one half reduce coupling locally (both halves meandering together is not built); per-pair skew limits from the
+component-rule catalogue are not wired (one global `--pair-skew-mm`).

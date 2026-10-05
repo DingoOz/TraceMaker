@@ -222,7 +222,7 @@ int cmd_debug_pad(const std::string& path, const std::string& ref, const std::st
   return 1;
 }
 
-// Differential pairs of a routed board (doc 05 §14): per pair the coupled share of its track length, the gap it
+// Differential pairs of a routed board (doc 05 §15): per pair the coupled share of its track length, the gap it
 // keeps, the intra-pair skew and vias. Pairs: KiCad's by name, plus any given as "NET_A,NET_B".
 int cmd_pairs(const std::string& path, const std::vector<std::string>& extra, const std::string& json_path) {
   auto lb = tmk::io::read_board_file(path);
@@ -442,7 +442,7 @@ int main(int argc, char** argv) {
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
   route->add_flag("--blind-vias", ropt.blind_vias, "Use blind/buried vias where a through via is blocked (only on boards that allow them)");
-  route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs (KiCad P/N or +/- names) as coupled pairs first (doc 05 §14)");
+  route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs (KiCad P/N or +/- names) as coupled pairs first (doc 05 §15)");
   double r_pair_skew_mm = 0;
   route->add_option("--pair-skew-mm", r_pair_skew_mm, "Intra-pair skew limit for coupled pairs: meanders on the shorter half (0 = custom skew rules only)");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");

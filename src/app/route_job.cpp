@@ -245,7 +245,7 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
                  {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
                  {"escape_corridors", res.escape_corridors}};
-  // Differential pairs (doc 05 §14): how each wanted pair came out, measured on the new copper (only when pairs are on).
+  // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
   if (opt.diff_pairs || !opt.pair_nets.empty()) {
     const auto cm = drc::build_copper(lb.board);
     const drc::RuleEngine re(lb.board, rules, cm);
@@ -254,7 +254,7 @@ RouteJobResult run_route_job(RouteJob job) {
       if (std::find(want.begin(), want.end(), p) == want.end() && std::find(want.begin(), want.end(), std::make_pair(p.second, p.first)) == want.end())
         want.push_back(p);
     nlohmann::json pj = nlohmann::json::array();
-    log(fmt("differential pairs: %zu wanted, %d routed coupled", want.size(), res.pairs));
+    log(fmt("differential pairs: %zu wanted, %d coupled pair routes (re-coupling included)", want.size(), res.pairs));
     for (const auto& [na, nb] : want) {
       const auto pr = route::pair_rule(lb.board, rules, re, na, nb);
       const auto st = route::measure_pair(res.tracks, res.vias, na, nb, route::coupled_threshold(pr));

@@ -1,5 +1,5 @@
 #pragma once
-// Differential pairs (design doc 05 §9 phase 3, §14): the geometry rule a pair is routed at, and a measurement of
+// Differential pairs (design doc 05 §9 phase 3, §15): the geometry rule a pair is routed at, and a measurement of
 // how a routed pair came out (coupled share, gap, intra-pair skew). The coupled search itself lives in the router
 // (route/router.cpp, `route_pair`), which owns the lattice and the transaction state.
 #include <algorithm>
