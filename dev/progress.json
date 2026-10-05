@@ -719,8 +719,8 @@
      "done": true
     },
     {
-     "text": "Turn component rules on by default (larger multi-seed test first)",
-     "done": false
+     "text": "Turn component rules on by default for placement (soft; placed tiers B+C off vs soft: clean pass unchanged, crystals closer, decaps equal; D52). Routing stays off",
+     "done": true
     }
    ]
   }

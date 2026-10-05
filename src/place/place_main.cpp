@@ -255,7 +255,7 @@ struct LoopCli {
   std::string in, out, json_path;
   place::PlaceOptions o;
   bool move_connectors = false, no_fallback = false, no_decap_affinity = false;
-  std::string component_rules = "off";  // --component-rules (doc 15)
+  std::string component_rules = "soft";  // --component-rules (doc 15; soft by default, D52)
   std::string rules_override;           // --rules-override (doc 15 §6.3)
   bool edge_attraction = false;         // --edge-attraction (doc 15 CONN-01)
   int decap_weight = place::kSignalWeight;
@@ -502,7 +502,7 @@ int main(int argc, char** argv) {
   std::string in, out, json_path;
   place::PlaceOptions o;
   bool move_connectors = false, no_decap_affinity = false;
-  std::string component_rules = "off", rules_override;
+  std::string component_rules = "soft", rules_override;  // D52
   bool edge_attraction = false;
   int decap_weight = place::kSignalWeight;
   int crules_weight_pct = 100;
@@ -522,7 +522,7 @@ int main(int argc, char** argv) {
   app.add_flag("--move-connectors", move_connectors, "Also move connectors that touch the board edge");
   app.add_flag("--no-decap-affinity", no_decap_affinity, "Do not tie decoupling capacitors to their IC's supply pins");
   app.add_option("--component-rules", component_rules,
-                 "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling)")
+                 "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling); default soft (D52)")
       ->check(CLI::IsMember({"off", "report", "soft", "on"}));
   app.add_option("--decap-weight", decap_weight, "Weight of each decoupling-capacitor tie (D25); a signal net weighs 10 (the default)")
       ->check(CLI::Range(1, 1000));
