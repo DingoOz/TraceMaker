@@ -148,8 +148,8 @@ From highest to lowest:
 3. **Component rules** from the catalogue, at the confidence-adjusted severity.
 4. **TraceMaker defaults** (doc 05 §9).
 
-Command-line switch: `--component-rules off|report|soft|on` (default planned: `report` until the gates in §9
-pass, then `soft`). `report` detects and checks only; `soft` applies everything as costs and never adds hard
+Command-line switch: `--component-rules off|report|soft|on`. Placement (`tracemaker-place`) defaults to `soft`
+(D52, §14.3); routing (`tracemaker route`) stays `off` until its own gate passes. `report` detects and checks only; `soft` applies everything as costs and never adds hard
 constraints; `on` applies catalogue severities.
 
 ### 3.6 Missing inputs
@@ -1421,6 +1421,23 @@ decap median 3.66/3.26/3.74 → 3.66/3.42/3.74 mm, crystal 5.11/6.70/5.07 → 4.
 input/output capacitors (C2–C13): the LDO rule re-places them around U4, which is not locked (no D25 tie anchors it),
 and `bench/place_intent.py` counts any supply-to-ground capacitor near an IC as a decap — the two metrics overlap.
 Integration test `crules_two_stage`.
+
+**Default gate on the placed tiers (D52, 2026-10-05).** `bench/run.py --place routable` (the default placement
+mode: the router keeps the input or the most routable candidate), 8 router variants, 120 s, `--place-crules off`
+vs `soft` side by side, compared by `bench/crules_tiers.py`:
+
+| Tier | Boards | Clean pass off → soft | Routed off → soft | Full re-placement kept |
+|---|---:|---|---|---|
+| B | 40 | 28 → 28 | 5,163 → 5,156 | 4 → 8 boards |
+| C | 30 | 18 → 18 | 9,538 → 9,539 | — |
+
+Distances on the kept boards (medians over boards with the part, mm; per board better / worse by > 0.25 mm):
+decap 3.17 → 3.17 (2 / 5), crystal 5.25 → 5.25 (3 / 1), XTAL-01 6.54 → 5.57 (5 / 1), load caps 3.11 → 2.81
+(3 / 0), regulator caps 3.38 → 3.28 (1 / 0), ESD 4.67 → 7.90 (0 / 1, n = 3). The decap and ESD losses come from the
+router keeping a different candidate (e.g. the human board in one arm, a full re-placement in the other), not from
+the pulls moving parts apart; within one candidate type the distances are equal or shorter. Gate (§9.1): no
+routing regression — met; crystal and load-cap metrics improve — met; decap median unchanged — not improved. Soft is
+the placement default on that evidence; decap behaviour is the open item.
 
 ### 14.4 Routing (P2/P3)
 
