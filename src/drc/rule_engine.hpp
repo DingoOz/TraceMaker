@@ -40,6 +40,8 @@ class RuleEngine {
   std::pair<std::optional<Coord>, std::optional<Coord>> length_constraint(model::NetId net) const;
   // Maximum skew of the last custom rule with a `skew` constraint matching a track of `net`, if any.
   std::optional<Coord> skew_constraint(model::NetId net) const;
+  // Last custom constraint of `type` (e.g. diff_pair_gap, diff_pair_uncoupled) whose rule matches a track of `net`.
+  std::optional<model::Constraint> net_constraint(model::NetId net, const std::string& type) const;
   const std::vector<std::string>& warnings() const { return warnings_; }
 
  private:
