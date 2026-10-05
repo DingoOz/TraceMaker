@@ -651,8 +651,8 @@
    "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
    "tasks": [
     {
-     "text": "Verify the 41 unchecked catalogue numbers against their sources",
-     "done": false
+     "text": "Verify the 41 unchecked catalogue numbers against their sources (2026-10-05: 9 confirmed, 9 corrected, 11 TraceMaker defaults now D, 12 unverifiable stay R; doc 15 \u00a78.10, D46)",
+     "done": true
     },
     {
      "text": "Category detection + role binding with confidence",

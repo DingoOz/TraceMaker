@@ -55,8 +55,8 @@
    "url": "https://www.ti.com/lit/ds/symlink/tps65987d.pdf"
   },
   "USB-TYPEC-SPEC": {
-   "title": "USB-IF, USB Type-C Cable and Connector Specification (Rd = 5.1 kOhm)",
-   "url": "https://www.usb.org/document-library/usb-type-cr-cable-and-connector-specification-release-24"
+   "title": "USB-IF, USB Type-C Cable and Connector Specification, Release 2.0 (Aug 2019), \u00a74.11.1 Table 4-25 (Rd = 5.1 kOhm)",
+   "url": "https://www.usb.org/sites/default/files/USB%20Type-C%20Spec%20R2.0%20-%20August%202019.pdf"
   },
   "RPI-CM5": {
    "title": "Raspberry Pi Compute Module 5 datasheet (carrier-board layout notes)",
@@ -99,7 +99,7 @@
    "url": "https://www.ti.com/lit/ds/symlink/am625.pdf"
   },
   "TI-SPRAD21": {
-   "title": "TI SPRAD21, AM62x schematic design guidelines",
+   "title": "TI SPRAD21, AM62x/AM62Ax/AM62D-Q1/AM62Px Schematic Design Guidelines and Review Checklist (rev. I, Sep 2025)",
    "url": "https://www.ti.com/lit/pdf/sprad21"
   },
   "TI-WL1837MOD": {
@@ -111,7 +111,7 @@
    "url": "https://www.ti.com/lit/ds/symlink/txs0206a.pdf"
   },
   "ST-AN2867": {
-   "title": "ST AN2867, Guidelines for oscillator design on STM8AF/AL/S and STM32 MCUs/MPUs",
+   "title": "ST AN2867 Rev 22 (Nov 2024), Guidelines for oscillator design on STM8AF/AL/S and STM32 MCUs/MPUs",
    "url": "https://www.st.com/resource/en/application_note/an2867-oscillator-design-guide-for-stm8afals-stm32-mcus-and-mpus-stmicroelectronics.pdf"
   },
   "MCHP-AN826": {
@@ -119,7 +119,7 @@
    "url": "https://ww1.microchip.com/downloads/en/AppNotes/00826a.pdf"
   },
   "NXP-AN2049": {
-   "title": "NXP/Freescale AN2049, Crystal Feedback Oscillators",
+   "title": "NXP/Freescale AN2049, Some Characteristics and Design Notes for Crystal Feedback Oscillators",
    "url": "https://www.nxp.com/docs/en/application-note/AN2049.pdf"
   },
   "ESP-HDG-ESP32": {
@@ -135,7 +135,7 @@
    "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/pcb-layout-design.html"
   },
   "ST-AN4488": {
-   "title": "ST AN4488, Getting started with STM32F4xxxx MCU hardware development",
+   "title": "ST AN4488 Rev 7 (Oct 2018), Getting started with STM32F4xxxx MCU hardware development",
    "url": "https://www.st.com/resource/en/application_note/an4488-getting-started-with-stm32f4xxxx-mcu-hardware-development-stmicroelectronics.pdf"
   },
   "TI-SLVA959B": {
@@ -143,11 +143,11 @@
    "url": "https://www.ti.com/lit/an/slva959b/slva959b.pdf"
   },
   "AMD-UG483": {
-   "title": "AMD/Xilinx UG483, 7 Series FPGAs PCB Design Guide",
+   "title": "AMD/Xilinx UG483 v1.14 (May 2019), 7 Series FPGAs PCB Design Guide",
    "url": "https://docs.amd.com/v/u/en-US/ug483_7Series_PCB"
   },
   "ADI-MT101": {
-   "title": "ADI MT-101, Decoupling Techniques",
+   "title": "ADI MT-101 Rev.0 (03/09), Decoupling Techniques",
    "url": "https://www.analog.com/media/en/training-seminars/tutorials/MT-101.pdf"
   },
   "TI-SLYT614": {
@@ -159,11 +159,11 @@
    "url": "https://www.ti.com/lit/an/snva021c/snva021c.pdf"
   },
   "TI-SLMA002": {
-   "title": "TI SLMA002, PowerPAD Thermally Enhanced Package",
+   "title": "TI SLMA002H (rev. Jul 2018), PowerPAD Thermally Enhanced Package",
    "url": "https://www.ti.com/lit/an/slma002h/slma002h.pdf"
   },
   "ADI-AN139": {
-   "title": "ADI (Linear Technology) AN-139, Power Supply Layout and EMI",
+   "title": "ADI (Linear Technology) AN-139 Rev A (Oct 2012), Power Supply Layout and EMI",
    "url": "https://www.analog.com/media/en/technical-documentation/application-notes/an139f.pdf"
   },
   "TI-SLVA118A": {
@@ -171,12 +171,12 @@
    "url": "https://www.ti.com/lit/an/slva118a/slva118a.pdf"
   },
   "ADI-MT031": {
-   "title": "ADI MT-031, Grounding Data Converters and Solving the Mystery of AGND and DGND",
+   "title": "ADI MT-031 Rev.A (10/08), Grounding Data Converters and Solving the Mystery of AGND and DGND",
    "url": "https://www.analog.com/media/en/training-seminars/tutorials/MT-031.pdf"
   },
   "ADI-OPAMP-HB": {
-   "title": "ADI, Op Amp Applications Handbook (W. Jung, ed.), ch. 7 guarding / MT-041",
-   "url": "https://www.analog.com/en/resources/technical-books/op-amp-applications-handbook.html"
+   "title": "ADI, Op Amp Applications Handbook (W. Jung, ed.), Section 7-2 PCB Design Issues: guarding (pp. 7.41-7.42)",
+   "url": "https://www.analog.com/media/en/training-seminars/design-handbooks/Op-Amp-Applications/Section7.pdf"
   },
   "IPC-2221B": {
    "title": "IPC-2221B, Generic Standard on Printed Board Design (2012): \u00a76.2 conductor current, Table 6-1 spacing",
@@ -219,7 +219,7 @@
    "url": "https://www.ti.com/lit/an/swra161b/swra161b.pdf"
   },
   "SILABS-AN928": {
-   "title": "Silicon Labs AN928.2, EFR32 Series 2 Layout Design Guide",
+   "title": "Silicon Labs AN928.2 Rev 1.7, EFR32 Series 2 Layout Design Guide",
    "url": "https://www.silabs.com/documents/public/application-notes/an928.2-efr32-series2-layout-design-guide.pdf"
   },
   "WADELL-1991": {
@@ -243,7 +243,7 @@
    "url": "https://www.ti.com/lit/an/slla284d/slla284d.pdf"
   },
   "ADI-AN1109": {
-   "title": "ADI AN-1109, Recommendations for Control of Radiated Emissions with isoPower Devices",
+   "title": "ADI AN-1109 Rev.0, Recommendations for Control of Radiated Emissions with iCoupler Devices",
    "url": "https://www.analog.com/media/en/technical-documentation/application-notes/AN-1109.pdf"
   },
   "JLC-CAPS": {
@@ -318,13 +318,17 @@
    "title": "IEEE 802.3 Ethernet standard (MDI isolation 1500 Vrms, clause 22 MDIO)",
    "url": "https://standards.ieee.org/ieee/802.3/10422/"
   },
+  "TI-DP83848C": {
+   "title": "TI DP83848C PHYTER Ethernet PHY datasheet SNLS266E: MDIO 1.5 kOhm pull-up (p.6, p.35)",
+   "url": "https://www.ti.com/lit/ds/symlink/dp83848c.pdf"
+  },
   "ISO-11898-2": {
    "title": "ISO 11898-2, Road vehicles - Controller area network - High-speed medium access unit",
    "url": "https://www.iso.org/standard/85120.html"
   },
   "ARM-CORESIGHT-CONN": {
-   "title": "Arm, CoreSight / Cortex debug connectors (10-pin 1.27 mm, 20-pin 2.54 mm)",
-   "url": "https://developer.arm.com/documentation/101416/latest/Hardware-Description/Target-Interfaces/Cortex-Debug--10-pin-"
+   "title": "Arm/Keil, CoreSight target connectors: Cortex Debug 10-pin and Debug+ETM 20-pin at 0.05 in, Arm JTAG 20-pin at 0.10 in (now Arm KAN339)",
+   "url": "http://www2.keil.com/coresight/coresight-connectors/"
   },
   "IPC-2221B-TP": {
    "title": "Common in-circuit-test (bed-of-nails) DFT practice; e.g. IPC-2221B \u00a78 test points (not re-read)",
@@ -627,7 +631,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "General connector practice (CONN-01); kept here so the USB report is self-contained."
+     "note": "General connector practice (CONN-01); kept here so the USB report is self-contained.",
+     "checked": "2026-10-05 unverified: practice rule (TMK-PRACTICE); no primary source gives a number, the receptacle datasheet sets the overhang"
     }
    ]
   },
@@ -909,7 +914,7 @@
      "applies_to": [
       "cc"
      ],
-     "rule": "Sink (UFP) needs Rd = 5.1 kohm on each CC unless the controller integrates it",
+     "rule": "Sink (UFP) needs Rd = 5.1 kohm (+/-20 %, +/-10 % if the sink reads the source's current advertisement) on each CC unless the controller integrates it",
      "params": {
       "rd_kohm": 5.1
      },
@@ -918,9 +923,11 @@
       "report"
      ],
      "sources": [
-      "USB-TYPEC-SPEC"
+      "USB-TYPEC-SPEC",
+      "TI-TUSB320"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "checked": "2026-10-05 confirmed: USB Type-C Cable and Connector Specification R2.0 \u00a74.11.1 Table 4-25 p.236 (Rd 5.1 kOhm, +/-20 % or +/-10 %); TI TUSB320 SLLSEN9F \u00a76.5 p.6 (RCC_D 4.6/5.1/5.6 kOhm)"
     },
     {
      "id": "USBC-12",
@@ -1318,7 +1325,7 @@
      "applies_to": [
       "phy"
      ],
-     "rule": "MDIO needs a 1.5 kohm pull-up at the station-management side",
+     "rule": "MDIO needs a 1.5 kohm pull-up resistor (PHY datasheets; IEEE 802.3 clause 22)",
      "params": {
       "r_kohm": 1.5
      },
@@ -1327,9 +1334,12 @@
       "report"
      ],
      "sources": [
+      "TI-DP83848C",
       "IEEE-802.3"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "note": "The value is read in a PHY datasheet; the IEEE 802.3 clause 22 text (paywalled) was not read, so which side of the bus carries the pull-up is not taken from the standard.",
+     "checked": "2026-10-05 confirmed: TI DP83848C SNLS266E pin description p.6 and 'MII Serial Management Interface' p.35 ('The MDIO pin requires a pullup resistor (1.5 kOhm)')"
     }
    ]
   },
@@ -2318,7 +2328,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "30 mm is a TraceMaker default. Thin evidence."
+     "note": "30 mm is a TraceMaker default. Thin evidence.",
+     "checked": "2026-10-05 unverified: practice default (TMK-PRACTICE); no primary source gives a distance"
     },
     {
      "id": "PBUS-02",
@@ -2362,7 +2373,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "Rule of thumb; no primary source read."
+     "note": "Rule of thumb; no primary source read.",
+     "checked": "2026-10-05 unverified: practice rule of thumb (TMK-PRACTICE); no primary source read"
     }
    ]
   },
@@ -2563,7 +2575,8 @@
      "sources": [
       "TI-SPRAD21"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "checked": "2026-10-05 confirmed (no number to check): TI SPRAD21I \u00a77.3.2.1 p.43 gives no HS200/HS400 layout numbers and points to the processor data sheet and an E2E FAQ"
     }
    ]
   },
@@ -2626,8 +2639,9 @@
       "ST-AN2867",
       "NXP-AN2049"
      ],
-     "evidence": "R",
-     "note": "No vendor gives a hard number; 5-10 mm is common practice. Exception XTAL-08 (ESP32)."
+     "evidence": "D",
+     "note": "No vendor gives a hard number; 5-10 mm is common practice. Exception XTAL-08 (ESP32).",
+     "checked": "2026-10-05 default: ST AN2867 Rev 22 \u00a77.1 p.44 ('mount the crystal as close as possible to the MCU') and NXP AN2049 p.2 ('very close to the two clock pins') give no number; 10 mm is a TraceMaker default"
     },
     {
      "id": "XTAL-02",
@@ -2648,7 +2662,8 @@
      "sources": [
       "ST-AN2867"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 default: ST AN2867 Rev 22 \u00a77.1 Figure 13 p.45 shows CL1/CL2 between crystal and MCU with VSS paths to a local ground; no distance given, 3 mm is a TraceMaker default"
     },
     {
      "id": "XTAL-03",
@@ -2719,7 +2734,8 @@
      "sources": [
       "ST-AN2867"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "checked": "2026-10-05 confirmed: ST AN2867 Rev 22 \u00a77.1 p.44 (guard ring connected to ground 'is essential'; oscillator ground connected to the nearest MCU ground) and \u00a77.2 Figure 14 p.46"
     },
     {
      "id": "XTAL-06",
@@ -2728,7 +2744,7 @@
       "xin",
       "xout"
      ],
-     "rule": "XIN/XOUT traces short and symmetric (loose, mm scale)",
+     "rule": "XIN/XOUT paths short, load capacitors placed symmetrically (loose, mm scale)",
      "params": {
       "tol_mm": 2
      },
@@ -2739,7 +2755,8 @@
      "sources": [
       "ST-AN2867"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 corrected: ST AN2867 Rev 22 \u00a77.2 pp.47-50 asks for short paths and 'symmetry between oscillator capacitances' (not equal trace lengths); 2 mm is a TraceMaker default"
     },
     {
      "id": "XTAL-07",
@@ -2765,7 +2782,8 @@
       "ST-AN2867",
       "TI-SNVA021C"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 default: ST AN2867 Rev 22 \u00a77.1 p.44 (route high-frequency signals away from the oscillator) and TI SNVA021C \u00a71 p.2 (open-core inductors further from low-power parts) give no number; 5 mm is a TraceMaker default"
     },
     {
      "id": "XTAL-08",
@@ -3014,7 +3032,7 @@
      "applies_to": [
       "bulk"
      ],
-     "rule": "Bulk 4.7-10 uF per rail near the IC (MT-101: 10-100 uF within ~50 mm)",
+     "rule": "Bulk >= 4.7 uF (typ. 10 uF) per supply near the IC (MT-101: 10-100 uF within 2 in = 50.8 mm)",
      "params": {
       "to": "ic",
       "max_mm": 50
@@ -3029,7 +3047,9 @@
       "ADI-MT101",
       "ESP-HDG-ESP32"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "note": "max_mm = 50 rounds MT-101's 2 in (50.8 mm) down.",
+     "checked": "2026-10-05 confirmed: ST AN4488 Rev 7 \u00a72.2 p.9 and \u00a78.3 p.37 (min 4.7 uF, typ. 10 uF per package); ADI MT-101 Rev.0 p.2 Figure 2 (10-100 uF no more than 2 in from the chip)"
     },
     {
      "id": "DEC-06",
@@ -3037,7 +3057,7 @@
      "applies_to": [
       "ferrite"
      ],
-     "rule": "VDDA filtered from VDD: ferrite bead (or <= 47 ohm) + 1 uF + 10 nF at VDDA",
+     "rule": "VDDA decoupled with 100 nF ceramic + 1 uF at the pin; VDDA may be fed from VDD through a ferrite bead (STM32F4)",
      "params": {
       "to": "vdda",
       "max_mm": 5
@@ -3050,7 +3070,8 @@
      "sources": [
       "ST-AN4488"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 corrected: ST AN4488 Rev 7 \u00a72.2 p.9 gives 100 nF + 1 uF on VDDA and an optional ferrite bead from VDD; the earlier '10 nF' and '<= 47 ohm' are not in AN4488. 5 mm is a TraceMaker default"
     },
     {
      "id": "DEC-07",
@@ -3058,7 +3079,7 @@
      "applies_to": [
       "cap"
      ],
-     "rule": "VREF+: 100 nF + 1 uF at the pin; VCAP: 2.2 uF ceramic (ESR < 2 ohm) per pin (STM32F4/F7/H7)",
+     "rule": "VREF+ (when fed from a separate reference): 100 nF + 1 uF at the pin; VCAP1/VCAP2: 2.2 uF ceramic, ESR < 2 ohm, each (one 4.7 uF, ESR < 1 ohm, if only VCAP1) (STM32F4; other families per their own notes)",
      "params": {
       "to": [
        "vref",
@@ -3074,7 +3095,8 @@
      "sources": [
       "ST-AN4488"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 corrected: ST AN4488 Rev 7 \u00a72.2 pp.9-10; the single-VCAP 4.7 uF case added and F7/H7 dropped (not in AN4488). 3 mm is a TraceMaker default"
     },
     {
      "id": "DEC-08",
@@ -3082,7 +3104,7 @@
      "applies_to": [
       "ic"
      ],
-     "rule": "FPGA/BGA: cap count per rail from the vendor table; 0402 caps under the BGA on the back side with via-in-pad",
+     "rule": "FPGA/BGA: capacitor count and values per rail from the vendor table; mid-frequency ceramics within two electrical inches of the point of load, mounted on the back side under the device when the power planes sit in the lower half of the stack",
      "params": {},
      "severity": "advisory",
      "enforce": [
@@ -3091,7 +3113,9 @@
      "sources": [
       "AMD-UG483"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "note": "UG483 v1.14 uses 0805/0603 board capacitors (the package carries its own); via-in-pad is optional where the fab allows it.",
+     "checked": "2026-10-05 corrected: AMD UG483 v1.14 Tables 2-1 to 2-4 pp.14-19, 'PCB Capacitor Placement and Mounting Techniques' p.24, back-side mounting p.32, via-in-pad p.30; the earlier '0402 under the BGA with via-in-pad' is not what v1.14 says"
     },
     {
      "id": "DEC-09",
@@ -3321,13 +3345,10 @@
      "applies_to": [
       "epad"
      ],
-     "rule": "Thermal vias in the exposed pad: 0.3 mm drill at 1.0-1.2 mm pitch filling the pad (or per datasheet)",
+     "rule": "Thermal vias in the exposed pad: drill <= 0.33 mm (13 mil), on a grid filling the pad (TI's JEDEC test board: 0.3 mm at 1.5 mm pitch), or per datasheet",
      "params": {
       "drill_mm": 0.3,
-      "pitch_mm": [
-       1.0,
-       1.2
-      ]
+      "pitch_mm": 1.5
      },
      "severity": "advisory",
      "enforce": [
@@ -3336,8 +3357,9 @@
      "sources": [
       "TI-SLMA002"
      ],
-     "evidence": "R",
-     "note": "SLVA959B instead gives 0.2 mm hole / 0.5 mm pad."
+     "evidence": "V",
+     "note": "SLVA959B instead gives 0.2 mm hole / 0.5 mm pad. The device datasheet wins.",
+     "checked": "2026-10-05 corrected: TI SLMA002H p.9 (drill 0.33 mm or smaller) and p.18 (test board vias 0.3 mm diameter, 1.5 mm pitch); the earlier 1.0-1.2 mm pitch is not in SLMA002H"
     },
     {
      "id": "BUCK-08",
@@ -3461,7 +3483,8 @@
      "sources": [
       "ADI-AN139"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 default: ADI (LT) AN-139 Rev A p.3 Figures 6-7 (boost hot loop = switch, rectifier and COUT on the output side) gives no distance; 2 mm and no vias are TraceMaker defaults"
     },
     {
      "id": "BOOST-02",
@@ -3977,10 +4000,10 @@
      "applies_to": [
       "line"
      ],
-     "rule": "GND via fence along both sides at <= lambda/20 (2.4 GHz: <= 3.4 mm; practice 1-2.5 mm), 0.5-1 mm from the gap edge",
+     "rule": "GND stitching vias along both sides of the RF line's ground pour, spaced < lambda/10 of the 10th harmonic (2.4 GHz: ~1.2 mm; reference boards 1.0-1.27 mm), 0.5-1 mm from the gap edge",
      "params": {
-      "pitch_mm": 2.5,
-      "max_pitch_lambda_frac": 0.05,
+      "pitch_mm": 1.27,
+      "max_pitch_lambda_frac": 0.01,
       "offset_mm": 0.75
      },
      "severity": "soft",
@@ -3992,8 +4015,9 @@
       "SILABS-AN928",
       "UBLOX-NINAB3"
      ],
-     "evidence": "R",
-     "note": "Rule of thumb, not a standard; AN928 could not be re-read."
+     "evidence": "D",
+     "note": "AN928.2 states the spacing for PCB edges and internal GND pour edges; the 0.5-1 mm offset is a TraceMaker default.",
+     "checked": "2026-10-05 corrected: Silicon Labs AN928.2 Rev 1.7 \u00a73.1 p.19 (via spacing < lambda/10 of the 10th harmonic, typically 40-50 mil); was lambda/20 and 2.5 mm. u-blox NINA-B3 SIM R15 \u00a7B.1.2 p.69 asks for stitching vias around the RF trace without a number"
     },
     {
      "id": "RF-04",
@@ -4066,9 +4090,9 @@
      "applies_to": [
       "fence"
      ],
-     "rule": "GND vias along the fence pad at <= lambda/20 (2.4 GHz: 2-3 mm typical)",
+     "rule": "GND vias along the fence pad at < lambda/10 of the 10th harmonic (2.4 GHz: 1.0-1.27 mm, as on reference boards)",
      "params": {
-      "pitch_mm": 2.5
+      "pitch_mm": 1.27
      },
      "severity": "advisory",
      "enforce": [
@@ -4077,7 +4101,9 @@
      "sources": [
       "SILABS-AN928"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "note": "AN928.2 states the spacing for GND pour edges; applying it to a shield fence is a TraceMaker reading.",
+     "checked": "2026-10-05 corrected: Silicon Labs AN928.2 Rev 1.7 \u00a73.1 p.19 (40-50 mil typical); was lambda/20 and 2.5 mm"
     },
     {
      "id": "SHLD-02",
@@ -4105,7 +4131,8 @@
       "SILABS-AN928"
      ],
      "evidence": "R",
-     "note": "Rule of thumb; can vendor land pattern is authoritative."
+     "note": "Rule of thumb; can vendor land pattern is authoritative.",
+     "checked": "2026-10-05 unverified: AN928.2 Rev 1.7 only says a shielding cap should cover all RF parts (\u00a73.2.1 p.26); no fence-crossing or margin number found; the can vendor's land pattern is authoritative"
     }
    ]
   },
@@ -4160,7 +4187,8 @@
       "ADI-MT031",
       "TI-SLVA959B"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "checked": "2026-10-05 confirmed: ADI MT-031 Rev.A pp.7-12 (AGND/DGND joined at the converter, Figure 8) and Figure 11 (partitioning); TI SLVA959B \u00a71.1-1.2 pp.3-5 (partitioning is not a physical split, Figure 1-4)"
     },
     {
      "id": "ANA-02",
@@ -4179,7 +4207,8 @@
      "sources": [
       "ADI-MT031"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 default: ADI MT-031 Rev.A pp.7-8 (AGND and DGND pins joined to the analog ground plane with minimum lead lengths); 1 mm is a TraceMaker default"
     },
     {
      "id": "ANA-03",
@@ -4198,9 +4227,12 @@
       "report"
      ],
      "sources": [
-      "ADI-MT101"
+      "ADI-MT101",
+      "ST-AN4488"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "note": "MT-101 does not address reference pins specifically; it is cited for HF decoupling 'as physically close to the pins as possible'.",
+     "checked": "2026-10-05 default: ADI MT-101 Rev.0 p.2 (HF caps as close as possible to the pins) and ST AN4488 Rev 7 \u00a72.2 p.9 (VREF+ needs 100 nF + 1 uF); no distance given, 2.5 mm is a TraceMaker default"
     },
     {
      "id": "ANA-04",
@@ -4230,7 +4262,7 @@
      "applies_to": [
       "hi_z"
      ],
-     "rule": "Guard ring around high-impedance nodes, driven at node potential or GND, mask removed",
+     "rule": "Guard ring completely around high-impedance nodes, held at the node's potential (ground for an inverting stage), on both sides of the board with vias for through-hole parts",
      "params": {
       "width_mm": [
        0.5,
@@ -4244,7 +4276,9 @@
      "sources": [
       "ADI-OPAMP-HB"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "note": "Ring width and solder-mask opening are TraceMaker defaults; the source gives neither.",
+     "checked": "2026-10-05 default: ADI Op Amp Applications Handbook Section 7-2 pp.7.41-7.42 (guard surrounds the node at its potential, within 1 mV for < 1 pA at 1 GOhm); the 0.5-1.0 mm width is a TraceMaker default"
     },
     {
      "id": "ANA-06",
@@ -4294,8 +4328,9 @@
      "sources": [
       "TI-SNVA021C"
      ],
-     "evidence": "R",
-     "note": "10 mm is a TraceMaker default."
+     "evidence": "D",
+     "note": "10 mm is a TraceMaker default.",
+     "checked": "2026-10-05 default: TI SNVA021C \u00a71-2 p.2 (keep sensitive traces away from the inductor) gives no number; 10 mm is a TraceMaker default"
     }
    ]
   },
@@ -4792,7 +4827,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "Universal practice; no single primary source. Pin headers between boards (stacking) are excluded by footprint class."
+     "note": "Universal practice; no single primary source. Pin headers between boards (stacking) are excluded by footprint class.",
+     "checked": "2026-10-05 unverified: practice rule (TMK-PRACTICE); no primary source exists"
     },
     {
      "id": "CONN-02",
@@ -4815,7 +4851,8 @@
      "sources": [
       "TMK-PRACTICE"
      ],
-     "evidence": "R"
+     "evidence": "R",
+     "checked": "2026-10-05 unverified: practice rule (TMK-PRACTICE); the mating plug's drawing sets the real depth"
     },
     {
      "id": "CONN-03",
@@ -4887,7 +4924,8 @@
       "JLC-CAPS"
      ],
      "evidence": "R",
-     "note": "Rule of thumb; NPTH-to-copper fab minimum 0.2 mm is from JLC (V)."
+     "note": "Rule of thumb; NPTH-to-copper fab minimum 0.2 mm is from JLC (V).",
+     "checked": "2026-10-05 unverified: 6.5 mm sits between the M3 socket-head (5.5 mm) and washer (7 mm) diameters recalled from ISO 4762 / ISO 7089, which were not read"
     }
    ]
   },
@@ -4997,7 +5035,8 @@
       "IEC-62368-1"
      ],
      "evidence": "R",
-     "note": "Not re-read in the standard; verify. IEC 62368-1 transient-based clearance can be lower (~1.5/3.0 mm). Medical (IEC 60601-1) is higher. The often-quoted 6.4 mm is IPC B3 / UL-era, not IEC reinforced. The report never claims compliance."
+     "note": "Not re-read in the standard; verify. IEC 62368-1 transient-based clearance can be lower (~1.5/3.0 mm). Medical (IEC 60601-1) is higher. The often-quoted 6.4 mm is IPC B3 / UL-era, not IEC reinforced. The report never claims compliance.",
+     "checked": "2026-10-05 unverified: IEC 62368-1 is a paid standard and no copy was read; the values stay as attributed and the rule stays soft at run time"
     },
     {
      "id": "HV-03",
@@ -5137,7 +5176,7 @@
       "gnd1",
       "gnd2"
      ],
-     "rule": "Optional stitching capacitance by overlapping inner planes across the barrier (isoPower EMI); keep away from the board edge",
+     "rule": "Optional stitching capacitance by overlapping inner planes across the barrier (isolator EMI, iCoupler/isoPower); keep away from the board edge",
      "params": {},
      "severity": "advisory",
      "enforce": [
@@ -5146,7 +5185,8 @@
      "sources": [
       "ADI-AN1109"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "checked": "2026-10-05 confirmed: ADI AN-1109 Rev.0 'Input-to-Output Stitching' pp.6-7 (overlapping inner planes form the stitching capacitor; surface layers are not used) and 'Edge Guarding' p.8"
     },
     {
      "id": "ISO-04",
@@ -5219,8 +5259,9 @@
       "TI-SLLA270",
       "TI-TCAN1042H"
      ],
-     "evidence": "R",
-     "note": "120 ohm pair is a rule of thumb (cable Z0 = 120 ohm, V); at CAN rates on-board geometry matters little."
+     "evidence": "D",
+     "note": "120 ohm is the cable impedance and termination (read); the sources give no on-board trace impedance, so the pair target is a TraceMaker choice. 100 mm keeps the on-board stub a small part of ISO 11898-2's 0.3 m.",
+     "checked": "2026-10-05 default: TI SLLA270 p.5 and TCAN1042H SLLSES7D \u00a710.2.2.1 p.27 (120 ohm twisted pair and termination), \u00a710.2.1.1 p.26 (0.3 m stub at 1 Mbps); 100 mm on-board stub is a TraceMaker default"
     },
     {
      "id": "CAN-02",
@@ -5339,7 +5380,9 @@
      "sources": [
       "TI-SLLA272"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "note": "120 ohm is the cable impedance (read); the board pair target is a TraceMaker choice.",
+     "checked": "2026-10-05 default: TI SLLA272D \u00a75 p.2 (keep both lines close and equidistant on the PCB, 120 ohm cable) and \u00a76 p.3 (120 ohm termination)"
     },
     {
      "id": "RS485-02",
@@ -5362,7 +5405,8 @@
       "TI-SLLA272",
       "TI-SLVA680A"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 default: TI SLVA680A \u00a72 p.4 ('place the TVS as near to the connector as design rules allow') and SLLA272D \u00a76 p.3 (termination at the cable ends); 10 mm is a TraceMaker default"
     },
     {
      "id": "RS485-03",
@@ -5538,7 +5582,7 @@
      "applies_to": [
       "series_r"
      ],
-     "rule": "22-33 ohm series termination at the SCK driver when the clock is more than a few cm long",
+     "rule": "22 ohm series resistor (provisioned) at the SCK driver, especially when the clock line is long",
      "params": {
       "to": "driver",
       "max_mm": 3
@@ -5550,8 +5594,9 @@
      "sources": [
       "TI-SPRAD21"
      ],
-     "evidence": "R",
-     "note": "Rule of thumb; SPRAD21 recommends 22 ohm series on SPI clocks near the source."
+     "evidence": "D",
+     "note": "SPRAD21 recommends it on every MCSPI clock output of the AM62x family; 33 ohm and the 'few cm' condition were not in the source.",
+     "checked": "2026-10-05 corrected: TI SPRAD21I \u00a75.2.1.6 p.17 (22 ohm near the processor clock output); 3 mm is a TraceMaker default"
     }
    ]
   },
@@ -5626,7 +5671,7 @@
      "applies_to": [
       "header"
      ],
-     "rule": "Debug header reachable at the board edge (10-pin 1.27 mm / 20-pin 2.54 mm Cortex headers)",
+     "rule": "Debug header reachable at the board edge (Cortex Debug 10-pin and Debug+ETM 20-pin at 1.27 mm pitch; Arm JTAG 20-pin at 2.54 mm)",
      "params": {
       "max_mm": 5
      },
@@ -5638,7 +5683,8 @@
      "sources": [
       "ARM-CORESIGHT-CONN"
      ],
-     "evidence": "R"
+     "evidence": "D",
+     "checked": "2026-10-05 corrected: Keil/Arm 'CoreSight target connectors' page (read via the Internet Archive): 10-pin and 20-pin Cortex at 0.05 in, Arm standard JTAG 20-pin at 0.10 in; the 5 mm edge distance is a TraceMaker default"
     }
    ]
   },
@@ -5682,7 +5728,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "No layout source; weight only. Visible LEDs belong on the user-facing side (user input)."
+     "note": "No layout source; weight only. Visible LEDs belong on the user-facing side (user input).",
+     "checked": "2026-10-05 unverified: practice rule (TMK-PRACTICE); no layout source exists"
     }
    ]
   },
@@ -5722,7 +5769,9 @@
      "sources": [
       "TI-SPRAAR7J"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "note": "SPRAAR7J has no FPC-specific text; its reference-plane and connector rules are applied.",
+     "checked": "2026-10-05 confirmed (no number to check): TI SPRAAR7J \u00a72.4 p.6 (continuous reference planes) and \u00a73.5 p.10 (connectors)"
     },
     {
      "id": "DISP-02",
@@ -5743,7 +5792,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "Practice (CONN-01)."
+     "note": "Practice (CONN-01).",
+     "checked": "2026-10-05 unverified: practice rule (TMK-PRACTICE); the FPC connector drawing sets the cable exit"
     }
    ]
   },
@@ -5828,7 +5878,8 @@
      "sources": [
       "TI-SLVA959B"
      ],
-     "evidence": "R"
+     "evidence": "V",
+     "checked": "2026-10-05 confirmed: TI SLVA959B \u00a77.6 p.32 (sense lines as a tightly coupled pair from the shunt to the amplifier) and \u00a77.9 p.34 ('use Kelvin connections'); written for motor drivers"
     }
    ]
   },
@@ -5876,7 +5927,8 @@
       "TMK-PRACTICE"
      ],
      "evidence": "R",
-     "note": "Practice; thin primary evidence."
+     "note": "Practice; thin primary evidence.",
+     "checked": "2026-10-05 unverified: practice rule (TMK-PRACTICE); no primary source"
     }
    ]
   },
@@ -5920,7 +5972,8 @@
       "IPC-2221B-TP"
      ],
      "evidence": "R",
-     "note": "Not verified this session; fixture vendors set the real limits."
+     "note": "Not verified: IPC-2221B was not read; fixture vendors set the real limits.",
+     "checked": "2026-10-05 unverified: IPC-2221B is a paid standard and was not read; fixture vendors set the real limits"
     },
     {
      "id": "TP-02",
