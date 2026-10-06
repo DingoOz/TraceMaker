@@ -1,4 +1,4 @@
-find_package(Eigen3 3.4 REQUIRED NO_MODULE)
+find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(nlohmann_json 3 REQUIRED)
 find_package(Threads REQUIRED)
 
