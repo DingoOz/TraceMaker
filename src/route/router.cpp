@@ -245,6 +245,27 @@ struct Router::Impl {
     return static_cast<double>(best);
   }
 
+  // Gap between the copper of two pads (0 when they touch), by bisection on the exact closer_than predicate, to
+  // 1/4096 of the centre distance. `centre` is the distance between the pad positions.
+  double pad_gap(int pa, int pb, double centre) const {
+    const auto& ia = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(pa)])];
+    const auto& ib = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(pb)])];
+    auto closer = [&](Coord t) {
+      for (const auto& sa : ia.shapes)
+        for (const auto& sb : ib.shapes)
+          if (geom::closer_than(sa, sb, t)) return true;
+      return false;
+    };
+    if (closer(1)) return 0;
+    Coord lo = 1, hi = static_cast<Coord>(centre) + 2;  // not closer than lo; closer than hi (the centres are copper)
+    if (!closer(hi)) return centre;
+    for (int it = 0; it < 12 && hi - lo > 1; ++it) {
+      const Coord mid = lo + (hi - lo) / 2;
+      (closer(mid) ? hi : lo) = mid;
+    }
+    return static_cast<double>(lo);
+  }
+
   std::vector<Connection> plan(drc::UnionFind& uf) {
     const auto& cm = obs->copper();
     struct Cluster { std::vector<int> pads, zones; };
@@ -261,6 +282,9 @@ struct Router::Impl {
       }
     }
     std::vector<Connection> out;
+    // With coupled pair routing the old centre distances stay: the plan of the nets around a pair decides
+    // whether negotiation later splits it, and pair routing was tuned and tested on that plan (doc 05 §17).
+    const bool by_gap = opt.plan_gap && !opt.diff_pairs && opt.pair_nets.empty();
     for (auto& [net, cl] : net_clusters) {
       if (!opt.only_net.empty() && b.nets[static_cast<std::size_t>(net)].name != opt.only_net) continue;
       std::vector<Cluster> groups;
@@ -286,7 +310,16 @@ struct Router::Impl {
             const Point A = b.pads[static_cast<std::size_t>(pa)].pos;
             for (int pb : groups[j].pads) {
               const Point B = b.pads[static_cast<std::size_t>(pb)].pos;
-              consider(pa, pb, -1, std::hypot(static_cast<double>(A.x - B.x), static_cast<double>(A.y - B.y)));
+              const double centre = std::hypot(static_cast<double>(A.x - B.x), static_cast<double>(A.y - B.y));
+              if (!by_gap) {
+                consider(pa, pb, -1, centre);
+                continue;
+              }
+              // Copper to copper, not centre to centre: a pin beside a large pad of its net (a QFN's exposed pad,
+              // a wide power pad) is nearer to it than to the next pin of the row, and the pin-to-pin connection
+              // may have to hop over a foreign pin between them. The centre distance breaks ties.
+              if (centre * 1e-3 >= best[j]) continue;  // even touching copper would not beat the best so far
+              consider(pa, pb, -1, pad_gap(pa, pb, centre) + centre * 1e-3);
             }
             for (int z : groups[j].zones) consider(pa, -1, z, zone_dist(A, z));
           }

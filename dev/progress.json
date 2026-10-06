@@ -293,6 +293,10 @@
     {
      "text": "Post-routing clean-up: via-saving re-routes and path smoothing (bends -40%, vias -25-33%)",
      "done": true
+    },
+    {
+     "text": "Connection planning by pad copper distance (--plan-gap, on, D54): 24 boards at a fixed budget 11,905 -> 11,986 routed; tiers A-D neutral; failure reasons now reported as at the best state",
+     "done": true
     }
    ]
   },
@@ -446,7 +450,7 @@
      "done": false
     },
     {
-     "text": "R4 exact window solve",
+     "text": "R4 exact window solve (group re-route of up to five connections in every order tried 2026-10-06: no board changed, removed; doc 05 \u00a717)",
      "done": false
     },
     {

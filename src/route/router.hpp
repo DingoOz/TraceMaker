@@ -59,6 +59,8 @@ struct RouterOptions {
   bool global_congestion = false;
   int global_congestion_from = 6;
   double global_congestion_pen = 0.5;  // pitches per lattice step, per eighth of capacity above the threshold
+  // Connection planning measures pad copper to pad copper instead of centre to centre (doc 05 §17).
+  bool plan_gap = true;
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   bool escape_second_ring = false;  // second-ring balls escape between two outer balls instead of by dog-bone

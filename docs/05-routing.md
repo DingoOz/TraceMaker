@@ -431,3 +431,48 @@ option stays off (D53). The remaining M6 global-routing items (Steiner topology,
 maze port) refine a plan that has no congestion to resolve on this benchmark, so they are deferred until a board set
 shows tile-scale overflow; the next lever for clean pass is pin access in the detailed router.
 
+## 17. The last few connections: failure reasons, group re-route, planning by copper distance (2026-10-06)
+
+**Failure reasons were stale.** The unrouted list is taken from the best state, but each reason was read at the end
+of the run, after later restarts had overwritten it. Reasons are now saved with the best state; a ripped connection
+says which net ripped it, and the last escalation rung (negotiated, with escapes and neck-down) records its reason.
+The split in §16 ("roughly 600 boxed in") was made from the stale reasons and is unreliable in its detail. With
+correct reasons, nine nearly clean boards (8 variants, 60 M expansions): on five the last one to five connections
+are "ripped up by X and not routed again" or "would rip a connection already ripped too often"; ErgoDone has two
+pins sealed by fixed copper; teensy-fx and dorkyboard are boxed in before negotiation.
+
+**Group re-route (escalation rung R4, tried and removed).** For each open connection after a restart's passes: lift
+the connections that ripped it and those with copper within 2 mm of its pads (five in all at most), route the group
+strictly in every order (up to 48, 300 k expansions per search), restore the lifted copper if no order routes all.
+Eight nearly clean boards, 8 variants, 60 M expansions: the final routed count was the same on every board (it
+closed up to ten connections in intermediate states, never in a state better than the best). 24 boards, one variant:
+identical to the baseline on all. The code was removed. On serial_gw the cause is visible in the geometry: IC1 is a
+QFN at 0.5 mm pitch whose centre pad has no net, pins 3–6 are GND, +5V, GND, +5V, and with KiCad's default 0.25 mm
+track and 0.2 mm clearance the pins can only leave outwards, so the two connections must cross through vias in a
+fan-out with no room for them. Ordering cannot fix that.
+
+**Planning by copper distance (on: `--plan-gap`, `--no-plan-gap` for the old behaviour; D54).** The spanning tree of
+each net (§11, `plan`) weighed a pad pair by the distance between pad centres. It now uses the gap between the pads'
+copper (bisection on the exact `closer_than` predicate, to 1/4096 of the centre distance; touching pads count 0),
+with the centre distance as tie-break, and skips pairs that could not beat the best so far. A pin beside a large pad
+of its own net (an exposed pad, a wide power pad, a connector shell) is then joined to that pad rather than to the
+next pin of the row. Planning takes under 0.2 s more on the largest boards.
+
+Runs with coupled pair routing (`--diff-pairs` or component-rule pair nets) keep centre distances. With copper
+distances the `diff_pair` test (USB hub, 15 M expansions) lost pair D3: it was routed coupled, the changed plan of
+the surrounding nets led negotiation to split it, and the clean-up found no coupled path again (84 % → 0 % coupled).
+Pair routing stays on the plan it was tuned on until re-coupling is more robust.
+
+| Measurement | Centre distance | Copper distance |
+|---|---|---|
+| 24 hard and nearly clean boards, one variant, 60 M expansions, connections routed | 11,905 | 11,986 (15 boards better, 4 worse, LeeChee +45, LimeSDR +16) |
+| Tier D, 8 variants, 120 s, both run side by side (`ab-nogap-tierD`, `ab-gap-tierD`) | 16,618 routed, 12 of 22 clean | 16,622 routed, 12 of 22 clean |
+| Tier B against `reach1` | 5,165 routed, 67.5 % clean | 5,166 routed, 67.5 % clean |
+| Tier C against `reach1` | 9,523 routed, 63.3 % clean | 9,522 routed, 63.3 % clean |
+| Tier A against `m12` | 2,637 routed, 100 % clean | 2,637 routed, 100 % clean |
+
+No board gained KiCad errors. The gain shows at a fixed budget with one variant and not in the KiCad-judged tiers,
+where the eight-variant portfolio at 120 s is neutral, as with the reachability pre-check (§13). A first tier D run
+made while tiers B and C were also running read 16,576 routed; the side-by-side run shows that was machine load.
+Tier D's clean pass is 12 of 22 with either planning: m2fc's last connection closes or not from run to run.
+
