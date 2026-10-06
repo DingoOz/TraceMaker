@@ -5,7 +5,8 @@ Thank you for wanting to help. This page tells you how to get a change accepted 
 ## In one minute
 
 - **Small, focused pull requests** are reviewed fastest. One idea per pull request.
-- **Open an issue first** for anything larger than a bug fix, so we can agree on the approach.
+- **Just send the pull request.** There is no need to ask first. Most contributors work with an AI assistant, and
+  this page assumes you do too.
 - **Every change must keep the tests green** (`ctest --preset release`).
 - **Changes to routing or placement need a benchmark run**, and the numbers go in the pull request, good or bad.
 - **Never commit benchmark boards.** They are downloaded, not redistributed.
@@ -18,7 +19,23 @@ Thank you for wanting to help. This page tells you how to get a change accepted 
 - **Fix a bug** from the [issue list](https://github.com/DingoOz/TraceMaker/issues).
 - **Improve the documentation**, including this page.
 - **Try it on your own boards** and say what happened.
-- **Add a feature.** Please open an issue first.
+- **Add a feature.** Send the pull request; say what it is for and what you measured.
+
+## Working with an AI assistant
+
+That is the expected way to contribute here. A few things make it go well.
+
+- **Point the assistant at [CLAUDE.md](CLAUDE.md) first.** It holds the build commands, the machine notes and the
+  rules below, written for an assistant to follow. Then the design document for the area you are changing
+  (`docs/11-roadmap.md` lists them).
+- **You are the author.** Read the change before you send it, and be ready to answer questions about it.
+- **Numbers must be measured, not predicted.** If the pull request says "routes 12 more connections", there must
+  be a run that shows it. Have the assistant paste the command and the result.
+- **Have it run the tests and the quick tier**, not just say the change should pass.
+- **Ask it to state what it did not check.** An honest "not tested on tier B" is worth more than a confident
+  summary.
+- **Keep the change small.** Assistants will happily rewrite more than you asked for; unrelated edits get the pull
+  request sent back.
 
 ## Reporting a bug
 
@@ -118,7 +135,8 @@ These are not style preferences. A change that breaks one will not be merged.
 
 - **Commit messages:** a short first line saying what changed, then why, and what you measured if anything.
 - **Keep unrelated changes apart.** A fix and a refactor are two pull requests.
-- **Describe the pull request** in a few sentences: the problem, the change, how you tested it.
+- **Describe the pull request** in a few sentences: the problem, the change, how you tested it, and what you did
+  not test.
 - Expect questions. Review is about the change, not about you.
 
 ## Licence of contributions
