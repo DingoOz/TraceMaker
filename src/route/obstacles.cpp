@@ -405,7 +405,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   if (ap_blocked) return 2;
   // Keepouts and solder-mask openings.
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return 2;
+    if ((z->copper & model::layer_bit(layer)) && (!is_via_hole || z->keepout_vias) && geom::closer_than(s, area, 1)) return 2;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
@@ -601,7 +601,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   });
   if (!edge_ok) return kBlocked;
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return kBlocked;
+    if ((z->copper & model::layer_bit(layer)) && (!via_probe || z->keepout_vias) && geom::closer_than(s, area, 1)) return kBlocked;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
