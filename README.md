@@ -232,6 +232,7 @@ Other folders: `src/core`, `src/sexpr`, `src/model`, `src/geom`, `src/learn`, `d
 - [dev/assumptions.md](dev/assumptions.md): choices made without asking the owner.
 - [report/report.pdf](report/report.pdf): method and results, with figures.
 - [report/roadmap_testing.pdf](report/roadmap_testing.pdf): the roadmap and all testing.
+- [CONTRIBUTING.md](CONTRIBUTING.md): how to report a bug or send a change.
 
 ## Licence
 
