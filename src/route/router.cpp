@@ -87,6 +87,7 @@ struct Router::Impl {
     bool dead = false;
   };
   std::vector<ConnState> cs;
+  std::set<NetId> first_net_ids;  // --first-nets
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
   std::vector<int> init_root;        // copper item -> initial cluster root (fixed copper)
   bool soft = false;                 // current search may cross routed copper
@@ -178,6 +179,10 @@ struct Router::Impl {
 
   void setup() {
     obs = std::make_unique<Obstacles>(b, rules);
+    obs->set_soft_zones(opt.soft_zones);
+    for (std::size_t n = 0; n < b.nets.size(); ++n)
+      if (std::find(opt.first_nets.begin(), opt.first_nets.end(), b.nets[n].name) != opt.first_nets.end()) first_net_ids.insert(static_cast<NetId>(n));
+    obs->set_vias_off_pads(opt.vias_off_pads, static_cast<Coord>(opt.vias_off_pads_below_mm * 1e6));
     use_cache = !obs->has_custom_rules();
     nl = b.copper_count();
     blind_ok = opt.blind_vias && rules.minimums.allow_blind_buried_vias && nl > 2;
@@ -292,7 +297,9 @@ struct Router::Impl {
       if (std::find(opt.skip_nets.begin(), opt.skip_nets.end(), b.nets[static_cast<std::size_t>(net)].name) != opt.skip_nets.end()) continue;
       std::vector<Cluster> groups;
       for (auto& [r, c] : cl)
-        if (!c.pads.empty()) groups.push_back(c);  // zone-only clusters (unused fills) are not targets on their own
+        // Zone-only clusters (unused fills) are not targets on their own -- except with soft zones, where an inner
+        // plane that no pad touches yet (all-SMD boards) is the net's plane: pads drop vias into it.
+        if (!c.pads.empty() || (opt.soft_zones && !c.zones.empty())) groups.push_back(c);
       if (groups.size() < 2) continue;
       // Prim over clusters; a pad may connect to another cluster's pad or into its zone fill (plane).
       const std::size_t k = groups.size();
@@ -368,6 +375,8 @@ struct Router::Impl {
       };
       std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return pri.count({label(c.pad_a), label(c.pad_b)}) > 0; });
     }
+    if (!first_net_ids.empty())
+      std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return first_net_ids.count(c.net) > 0; });
     return out;
   }
 
@@ -609,8 +618,56 @@ struct Router::Impl {
         break;
       }
     }
+    const std::size_t n_own = e.cells.size();
     if (!any_free || force_escapes) add_escapes(w, pad, e);
+    // Round pads (BGA/WLP balls) are offered a via in pad at a high cost: an inner ball can look free locally (a
+    // diagonal gap) yet have no way out of the array.
+    if (opt.via_in_pad && ((!any_free && e.cells.size() == n_own) || (p.shape == model::PadShape::Circle && inner_ball(pad)))) add_in_pad(w, pad, e);
     return e;
+  }
+
+  // Via in pad (--via-in-pad): the minimum via the rules allow, centred in a single-layer pad -- an inner ball of an
+  // array, or a pad with no legal exit on its own layer. The pad centre becomes an endpoint on every other layer at
+  // four times the via cost (a last resort); commit() adds the via. Needs filled and capped vias at the fab.
+  Coord in_pad_drill() const { return std::max<Coord>(rules.minimums.through_hole_diameter, 100'000); }
+  Coord in_pad_diameter() const {
+    return std::max({rules.minimums.via_diameter, in_pad_drill() + 2 * rules.minimums.via_annular_width, in_pad_drill() + 100'000});
+  }
+  // A ball with balls of its own package on all four sides (not on the array's outer ring).
+  bool inner_ball(int pad) const {
+    const auto& p = b.pads[static_cast<std::size_t>(pad)];
+    bool l = false, r = false, u = false, d = false;
+    for (const auto& q : b.pads) {
+      if (q.footprint != p.footprint || &q == &p) continue;
+      const Coord dx = q.pos.x - p.pos.x, dy = q.pos.y - p.pos.y, eps = 10'000;
+      l |= dx < -eps; r |= dx > eps; u |= dy < -eps; d |= dy > eps;
+    }
+    return l && r && u && d;
+  }
+  bool in_pad_via_needed(int pad, int layer) const {
+    return opt.via_in_pad && !(b.pads[static_cast<std::size_t>(pad)].copper & model::layer_bit(layer));
+  }
+  void add_in_pad(const Window& w, int pad, Endpoint& e) {
+    const auto& p = b.pads[static_cast<std::size_t>(pad)];
+    if (std::popcount(p.copper) != 1) return;  // through-hole pads already reach every layer
+    obs->set_pad_via_exempt(true);
+    const bool vip_blocked = obs->via_state(p.pos, in_pad_diameter(), in_pad_drill(), p.net, 0, true) == 2;  // routed copper can be ripped
+    obs->set_pad_via_exempt(false);
+    if (std::getenv("TM_DEBUG_INPAD"))
+      std::fprintf(stderr, "INPAD %s pad %d: via %.3f/%.3f %s\n", b.nets[static_cast<std::size_t>(p.net)].name.c_str(), pad, nm_to_mm(in_pad_diameter()),
+                   nm_to_mm(in_pad_drill()), vip_blocked ? "illegal" : "offered");
+    if (vip_blocked) return;
+    const int gx = to_ix(p.pos.x), gy = to_iy(p.pos.y);
+    if (gx < w.x0 || gy < w.y0 || gx >= w.x0 + w.w || gy >= w.y0 + w.h) return;
+    const Point C = at(gx, gy);
+    const std::int64_t cost = static_cast<std::int64_t>(4 * opt.via_cost_mm * 1e6) +
+                              static_cast<std::int64_t>(std::hypot(static_cast<double>(C.x - p.pos.x), static_cast<double>(C.y - p.pos.y)));
+    for (int l = 0; l < nl; ++l) {
+      if (p.copper & model::layer_bit(l)) continue;
+      e.cells.emplace_back(l, static_cast<std::int64_t>(gy - w.y0) * w.w + (gx - w.x0));
+      e.stub.push_back(p.pos);
+      e.cost.push_back(cost);
+    }
   }
 
   struct PathNode { int layer, gx, gy; };
@@ -1041,9 +1098,17 @@ struct Router::Impl {
       const auto& l = merged.back();
       if (l.b == pb && on_pad(l.a, c.pad_b, l.layer) && obs->segment_state(l.a, l.b, l.layer, width, net, true, nullptr) == 2) merged.pop_back();
     }
+    // Vias in pad where the path starts or ends on a layer the pad is not on (only offered by add_in_pad).
+    std::vector<Point> pad_vias;
+    if (in_pad_via_needed(c.pad_a, path.front().layer)) pad_vias.push_back(pa);
+    if (c.pad_b >= 0 && in_pad_via_needed(c.pad_b, path.back().layer)) pad_vias.push_back(pb);
     // Exact verification. In soft mode, conflicts with other connections' routed copper name the victims.
     bool ok = true;
     std::vector<int> victims;
+    obs->set_pad_via_exempt(true);
+    for (const Point v : pad_vias)
+      if (obs->via_state(v, in_pad_diameter(), in_pad_drill(), net, 0, soft, &victims) == 2) ok = false;
+    obs->set_pad_via_exempt(false);
     for (const auto& s : merged) {
       const int st = obs->segment_state(s.a, s.b, s.layer, width, net, soft, &victims);
       if (st == 2) {
@@ -1077,6 +1142,11 @@ struct Router::Impl {
     }
     std::sort(victims.begin(), victims.end());
     victims.erase(std::unique(victims.begin(), victims.end()), victims.end());
+    for (int v : victims)
+      if (first_net_ids.count(cs[static_cast<std::size_t>(v)].c.net) && !first_net_ids.count(net)) {
+        commit_why = "would rip a --first-nets connection";
+        return false;
+      }
     for (int v : victims)
       if (cs[static_cast<std::size_t>(v)].rips >= rip_cap) {
         commit_why = "would rip a connection already ripped too often";
@@ -1118,6 +1188,13 @@ struct Router::Impl {
       st.items.push_back(obs->add_via(id, current));
       near_mark(st.items.back(), +1);
       if (!through && !via_micro[k]) ++res.blind_vias;
+      emit_via_add(id);
+    }
+    for (const Point pv : pad_vias) {
+      b.vias.push_back(model::Via{pv, in_pad_diameter(), in_pad_drill(), 0, nl - 1, model::ViaType::Through, net, false, sexpr::kNoNode});
+      const int id = static_cast<int>(b.vias.size() - 1);
+      st.items.push_back(obs->add_via(id, current));
+      near_mark(st.items.back(), +1);
       emit_via_add(id);
     }
     return true;
