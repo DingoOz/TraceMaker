@@ -450,6 +450,7 @@ int main(int argc, char** argv) {
   route->add_flag("--blind-vias", ropt.blind_vias, "Use blind/buried vias where a through via is blocked (only on boards that allow them)");
   route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs (KiCad P/N or +/- names) as coupled pairs first (doc 05 §15)");
   double r_pair_skew_mm = 0;
+  route->add_flag("--pair-twists,!--no-pair-twists", ropt.pair_twists, "Coupled pairs may swap sides at a layer change, for pairs whose pin order is mirrored between the ends (default on; only with pair routing)");
   route->add_option("--pair-skew-mm", r_pair_skew_mm, "Intra-pair skew limit for coupled pairs: meanders on the shorter half (0 = custom skew rules only)");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
   route->add_flag("--global-confine", ropt.global_confine, "With --global: confine each connection's first search to its corridor (experimental)")->group("");
@@ -466,6 +467,7 @@ int main(int argc, char** argv) {
                   "Escape plan v2: min-cost-flow channel and layer assignment for deep BGA arrays (implies --escape-plan; experimental)");
   bool r_reroute = false;
   route->add_flag("--reroute", r_reroute, "Remove every unlocked track and via first and route the whole board again");
+  route->add_flag("--fine-variant,!--no-fine-variant", ropt.fine_variant, "Portfolio: one variant routes small boards at half the lattice pitch (default on)")->group("");
   route->add_flag("--halving", ropt.halving, "With more --variants than --threads: successive halving over all the variants instead of running only the first ones");
   route->add_flag("--cut-report", ropt.cut_report, "Report straight lines across the board that more nets must cross than tracks fit (proof that the placement cannot be routed)");
   route->add_flag("--escape-report", ropt.escape_report, "Report the pins of deep BGA arrays per ring and how many were connected");

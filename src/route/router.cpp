@@ -194,6 +194,7 @@ struct Router::Impl {
       const auto bb0 = obs->bounds();
       const double pts = static_cast<double>(bb0.x1 - bb0.x0) / static_cast<double>(pitch) * static_cast<double>(bb0.y1 - bb0.y0) / static_cast<double>(pitch);
       if (opt.pitch_scale != 1.0 && pts >= 3e6) pitch = std::clamp<Coord>(static_cast<Coord>(static_cast<double>(pitch) * opt.pitch_scale) / 5'000 * 5'000, 25'000, 200'000);
+      if (opt.pitch_scale_small != 1.0 && pts < 1e6) pitch = std::clamp<Coord>(static_cast<Coord>(static_cast<double>(pitch) * opt.pitch_scale_small) / 5'000 * 5'000, 25'000, 200'000);
     }
     res.pitch = pitch;
     const auto bb = obs->bounds();
@@ -1472,6 +1473,7 @@ struct Router::Impl {
     std::vector<Point> vias;
   };
   std::string pair_why;
+  std::string pair_tag;  // TM_DEBUG_PAIRS: which unhandled situation the last pair was in
   std::vector<std::uint8_t> pad_routed_here;  // board pad -> an end of some connection (filled on first use)
   // Is the first unrouted connection at `pad` boxed in? A strict search from the pad (60k expansions at most) that
   // exhausts its open list inside the window proves it; any path, or a search cut short, says no.
@@ -1625,6 +1627,21 @@ struct Router::Impl {
       std::swap(B.pad_a, B.pad_b);
     const model::Pad &pa1 = pad(A.pad_a), &pa2 = pad(A.pad_b), &pb1 = pad(B.pad_a), &pb2 = pad(B.pad_b);
     const model::LayerMask s_layers = pa1.copper & pb1.copper, e_layers = pa2.copper & pb2.copper;
+    // Diagnostics (TM_DEBUG_PAIRS): the two situations the coupled search does not handle (doc 05 §15, §24).
+    pair_tag.clear();
+    {
+      const Point s{(pa1.pos.x + pb1.pos.x) / 2, (pa1.pos.y + pb1.pos.y) / 2}, e{(pa2.pos.x + pb2.pos.x) / 2, (pa2.pos.y + pb2.pos.y) / 2};
+      const auto side = [&](Point p, Point q) { return geom::orient(s, e, Point{e.x + (q.x - p.x), e.y + (q.y - p.y)}); };
+      const auto s1 = side(pa1.pos, pb1.pos), s2 = side(pa2.pos, pb2.pos);
+      if ((s1 > 0 && s2 < 0) || (s1 < 0 && s2 > 0)) pair_tag += " [pin order mirrored between the ends]";
+      for (std::size_t k = 0; k < cs.size(); ++k)
+        if (static_cast<int>(k) != ia && static_cast<int>(k) != ib && cs[k].routed && !cs[k].items.empty() && (cs[k].c.net == A.net || cs[k].c.net == B.net) &&
+            (cs[k].c.pad_a == A.pad_a || cs[k].c.pad_a == A.pad_b || cs[k].c.pad_b == A.pad_a || cs[k].c.pad_b == A.pad_b || cs[k].c.pad_a == B.pad_a ||
+             cs[k].c.pad_a == B.pad_b || cs[k].c.pad_b == B.pad_a || cs[k].c.pad_b == B.pad_b)) {
+          pair_tag += " [an end pad already carries routed copper]";
+          break;
+        }
+    }
     if (!s_layers || !e_layers) { pair_why = "no common layer at an end"; return false; }
     // A pin of another net between the two pins of an end (the ground pin between P and N on HDMI connectors and
     // ICs) can be enclosed by the converging legs. Such pins are tested before and after the pair is committed; a
@@ -1673,6 +1690,15 @@ struct Router::Impl {
     const int K = std::max(1, static_cast<int>(std::ceil(fold / static_cast<double>(pitch))));
     const double hj = static_cast<double>(pr.via_offset) - off;  // via jog: lateral (and forward) distance
     const int MV = std::max(1, static_cast<int>(std::ceil((2.0 * hj + fold) / static_cast<double>(pitch))));
+    // Twist (doc 05 §24): the halves change layer one after the other and cross in between, while they are on
+    // different layers, so the half that was on the left continues on the right. In the frame of the pair's
+    // direction (x along, y to the left), with D = off + via_offset and lead-in and lead-out of D / 2:
+    //   right half: (0, -off) -> via at (hj, -vo) -> on the new layer (hj + D/2, -vo) -> (hj + 3D/2, +off) -> on
+    //   left half:  (0, +off) -> (hj + D/2, +off) -> (hj + 3D/2, -vo) -> via at (hj + 2D, -vo) -> new layer (2hj + 2D, -off)
+    // Each track keeps at least D (the distance the coupled via pair keeps) from the other half's via.
+    const double twD = off + static_cast<double>(pr.via_offset);
+    const double twT = 2.0 * hj + 2.0 * twD;
+    const int MT = std::max(1, static_cast<int>(std::ceil((twT + fold) / static_cast<double>(pitch))));
     geom::Box box;
     box.add(S);
     box.add(E);
@@ -1712,7 +1738,7 @@ struct Router::Impl {
       x.l = static_cast<int>(r / static_cast<std::uint64_t>(ny));
       return x;
     };
-    enum : std::uint8_t { kStart = 0, kStraight = 1, kTurn = 2, kVia = 3 };
+    enum : std::uint8_t { kStart = 0, kStraight = 1, kTurn = 2, kVia = 3, kTwist = 4 };
     struct PN {
       std::int64_t g;
       std::uint64_t parent;
@@ -1824,6 +1850,7 @@ struct Router::Impl {
         const PairLeg& ls = net == A.net ? st0.la : st0.lb;
         const PairLeg& le = net == A.net ? goal.la : goal.lb;
         int layer = st0.l;
+        double sg = sigma;  // the side this half is on; a twist changes it
         Point cur = ls.pts.front();
         auto to = [&](Point q, Coord ww) {
           if (q == cur) return;
@@ -1837,17 +1864,42 @@ struct Router::Impl {
           const std::uint8_t mv = nodes.at(chain[i]).move;
           // Corners only: a node's own offset point is emitted where the track leaves the straight line (a via) and
           // at the end; emitting it before an inner miter would fold the track back over itself.
-          if (mv == kTurn) to(miter_point(cp, p.dd, q.dd, sigma * off), w);
+          if (mv == kTurn) to(miter_point(cp, p.dd, q.dd, sg * off), w);
           if (mv == kVia) {
             const Dir2 u = unit_dir(p.dd), n = left_normal(p.dd);
-            const Point V = offset_point(offset_point(cp, u, hj), n, sigma * static_cast<double>(pr.via_offset));
-            to(offset_point(cp, n, sigma * off), w);
+            const Point V = offset_point(offset_point(cp, u, hj), n, sg * static_cast<double>(pr.via_offset));
+            to(offset_point(cp, n, sg * off), w);
             to(V, w);
             h.vias.push_back(V);
             layer = q.l;
-            to(offset_point(offset_point(cp, u, 2 * hj), n, sigma * off), w);
+            to(offset_point(offset_point(cp, u, 2 * hj), n, sg * off), w);
           }
-          if (i + 1 == chain.size()) to(offset_point(cq, left_normal(q.dd), sigma * off), w);
+          if (mv == kTwist) {
+            const Dir2 u = unit_dir(p.dd), n = left_normal(p.dd);
+            auto pt = [&](double x, double y) { return offset_point(offset_point(cp, u, x), n, y); };
+            const double vo = static_cast<double>(pr.via_offset);
+            if (sg > 0) {  // the left half: crosses on the old layer, changes layer last
+              to(pt(0, off), w);
+              to(pt(hj + twD / 2, off), w);
+              to(pt(hj + 1.5 * twD, -vo), w);
+              const Point V = pt(hj + 2.0 * twD, -vo);
+              to(V, w);
+              h.vias.push_back(V);
+              layer = q.l;
+              to(pt(twT, -off), w);
+            } else {  // the right half: changes layer first, crosses on the new layer
+              to(pt(0, -off), w);
+              const Point V = pt(hj, -vo);
+              to(V, w);
+              h.vias.push_back(V);
+              layer = q.l;
+              to(pt(hj + twD / 2, -vo), w);
+              to(pt(hj + 1.5 * twD, off), w);
+              to(pt(twT, off), w);
+            }
+            sg = -sg;
+          }
+          if (i + 1 == chain.size()) to(offset_point(cq, left_normal(q.dd), sg * off), w);
         }
         for (std::size_t i = le.pts.size(); i-- > 1;) to(le.pts[i - 1], le.w);
         // Merge collinear runs of one layer and width.
@@ -2020,6 +2072,33 @@ struct Router::Impl {
           }
         }
       }
+      // Twist: change layer and swap sides (the geometry is described where MT is defined).
+      if (vias_ok && opt.pair_twists && mv0 != kStart) {
+        int gx = x.gx, gy = x.gy;
+        delta(x.dd, MT, gx, gy);
+        if (in_win(gx, gy) && obs->inside_board(at(gx, gy), 0)) {
+          const Point c2 = at(gx, gy);
+          auto pt = [&](double xx, double yy) { return offset_point(offset_point(c, u, xx), n, yy); };
+          const double vo = static_cast<double>(pr.via_offset);
+          const NetId nl_ = net_of(1, x.s), nr_ = net_of(-1, x.s);
+          for (int l2 = 0; l2 < nl; ++l2) {
+            if (l2 == x.l) continue;
+            const Point VR = pt(hj, -vo), VL = pt(hj + 2.0 * twD, -vo);
+            const bool good =
+                // right half
+                seg_ok(pt(0, -off), VR, x.l, nr_) && obs->via_state(VR, pr.via_diameter, pr.via_drill, nr_, 0, false, nullptr) == 0 &&
+                seg_ok(VR, pt(hj + twD / 2, -vo), l2, nr_) && seg_ok(pt(hj + twD / 2, -vo), pt(hj + 1.5 * twD, off), l2, nr_) &&
+                seg_ok(pt(hj + 1.5 * twD, off), pt(twT, off), l2, nr_) && seg_ok(pt(twT, off), offset_point(c2, n, off), l2, nr_) &&
+                // left half
+                seg_ok(pt(0, off), pt(hj + twD / 2, off), x.l, nl_) && seg_ok(pt(hj + twD / 2, off), pt(hj + 1.5 * twD, -vo), x.l, nl_) &&
+                seg_ok(pt(hj + 1.5 * twD, -vo), VL, x.l, nl_) && obs->via_state(VL, pr.via_diameter, pr.via_drill, nl_, 0, false, nullptr) == 0 &&
+                seg_ok(VL, pt(twT, -off), l2, nl_) && seg_ok(pt(twT, -off), offset_point(c2, n, -off), l2, nl_);
+            // Dearer than a plain via pair by its uncoupled length: used only where the pin order calls for it.
+            if (good)
+              relax(key(l2, gx, gy, x.dd, 1 - x.s), g + MT * steplen(x.dd) + via_pair_cost + leg_weight * static_cast<std::int64_t>(2.0 * twD), q.id, -1, kTwist, c2, l2);
+          }
+        }
+      }
     }
     res.expansions += expanded;
     if (std::getenv("TM_DEBUG_PAIRS")) {
@@ -2137,7 +2216,7 @@ struct Router::Impl {
           }
           if (dbg)
             std::fprintf(stderr, "pair %s / %s%s: %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
-                         recouple ? " (clean-up)" : "", okp ? "coupled" : pair_why.c_str());
+                         recouple ? " (clean-up)" : "", ((okp ? std::string("coupled") : pair_why) + pair_tag).c_str());
           if (okp) {
             used[static_cast<std::size_t>(best)] = 1;
             pair_partner[static_cast<std::size_t>(ca)] = cb;
@@ -3081,7 +3160,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   // keep their configurations (all variants on: tier B +8 connections, tier C -7; doc 05 §12).
   add("fast bends, jittered order, escape plan", [&](RouterOptions& o) { o.bend_states = false; o.order = 2; o.seed = base.seed + 1; o.escape_plan = true; });
   add("exact bends, jittered order", [&](RouterOptions& o) { o.order = 2; o.seed = base.seed + 2; });
-  add("fast bends, cheap vias (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; o.pitch_scale = 2.0; });
+  add("fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+      [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; o.pitch_scale = 2.0; if (base.fine_variant) o.pitch_scale_small = 0.5; });
   add("fast bends, cheap crossings, escape plan", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; o.escape_plan = true; });
   add("fast bends, dear vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 2.5; });
   std::vector<int> chosen;

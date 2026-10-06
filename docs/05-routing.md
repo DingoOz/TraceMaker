@@ -391,8 +391,8 @@ budget for the clean-up re-coupling (removed without a separate measurement: on 
 is taken from routing, which matters more there than coupling); refusing every pair with a pin between its pins (safe, but HDMI connectors whose
 ground pins escape on their own lost 88 % coupling for nothing; the before/after test replaced it).
 
-**Not built.** Pairs whose pin order is mirrored between the ends need a twist (one half crosses the other through a
-via): such pairs (ULPI-Pmod, android_debug_cable) are routed singly. A pair ends on pads only, so a pair joining copper
+**Not built** (twists and per-pair skew limits were added on 2026-10-06, §24). Pairs whose pin order is mirrored between the ends need a twist (one half crosses the other through a
+via): such pairs (ULPI-Pmod, android_debug_cable) were routed singly. A pair ends on pads only, so a pair joining copper
 already routed for its nets (a T at an AC-coupling capacitor or termination) often fails its goal legs. No pair-aware
 global routing; no rounded or arc corners; skew in picoseconds needs the stackup (doc 15 §5.3); tuning meanders on
 one half reduce coupling locally (both halves meandering together is not built); per-pair skew limits from the
@@ -610,4 +610,59 @@ Two items of §12 and §14 stay unbuilt, and M9's gate is not met.
 packages, 41 % are clean, 47 % of the 15 on which every pin can escape under the rules the judge applies (§12);
 Freerouting 2.5 completes 24 %. The limit is the same one §16–§20 measure: fan-outs under KiCad's default rules, on
 boards whose own routed versions do not pass those rules.
+
+## 24. Differential pairs: twists, per-pair skew, and what the failures are (M12, 2026-10-06)
+
+**Why pairs stay uncoupled** (`TM_DEBUG_PAIRS` now tags each attempt; 18 boards, 59 pairs, first attempts): 63 of
+120 attempts couple. Of the failures, 26 are tagged "pin order mirrored between the ends" and 8 "an end pad already
+carries routed copper"; but 20 of the 26 are one pair (OtterPillG's USB pair, from a bottom-side connector with no
+via site) tried again and again, and pairs that join routed copper mostly succeed (13 couple, 8 do not). 24 of the
+59 pairs have a half with more than two pads. So neither situation is the large class the earlier note assumed.
+
+**Twists** (on with pair routing; `--no-pair-twists`). A new move of the coupled search (`kTwist`): the right half
+changes layer first, the halves cross while they are on different layers, the left half changes layer last, and
+the search continues on the new layer with the sides swapped. In the pair's frame, with D = offset + via offset:
+right half (0, −off) → via (hj, −vo) → (hj + D/2, −vo) → (hj + 3D/2, +off); left half (0, +off) → (hj + D/2, +off) →
+(hj + 3D/2, −vo) → via (hj + 2D, −vo) → (2hj + 2D, −off). Each track keeps at least D from the other half's via,
+which is the distance the coupled via pair keeps; both halves get one via and the same length. Every segment and
+via is checked exactly, and the finished pair is verified like any other. It costs a via pair plus its uncoupled
+length, so the search uses it only where the pin order asks for it.
+
+18 boards, 59 pairs, 30 M expansions: one pair gains coupling (USB-C-Screen-Adapter L3: 0 → 86 %), none loses;
+pairs at ≥ 80 % 18 → 19, at ≥ 50 % 35 → 36, median share 57 → 63 %; connections routed 2,210 → 2,212. The
+`diff_pair` test is unchanged (five pairs 91–94 % coupled, KiCad-clean).
+
+**Per-pair skew limits.** `RouterOptions::pair_net_skew` gives each pair of `pair_nets` its own limit; pairs found by
+the component rules take USB2-02's `max_intra_skew_mm` (1.27 mm). A custom skew rule of the board wins, then the
+pair's own limit, then `--pair-skew-mm`.
+
+**Still not built:** a pair ending on routed copper as such (the pair's ends are pads; the count above says it
+rarely matters), pair-aware global routing, arcs, skew in picoseconds, both halves meandering together.
+
+## 25. Finer lattice instead of a gridless arm; learned models (M12, 2026-10-06)
+
+**The question behind a gridless router** is whether geometry finer than the lattice finds routes the lattice
+misses. Twelve nearly clean boards, all eight variants, default pitch at 30 M expansions against half the pitch at
+120 M (the same coverage per unit of work):
+
+| | Default pitch | Half pitch |
+|---|---|---|
+| Connections routed (12 boards) | 4,140 | 4,153 |
+| Boards complete | 0 | 1 (robomezzi 282 of 282) |
+| Better / worse boards | | 9 better (teensy-fx +9, V2X +5, MicroMaple +4), 2 worse (dorkyboard −8, mechkeys_58r −4) |
+
+So finer geometry helps some fan-outs and costs four times the work. It is taken as a portfolio arm: the
+cheap-vias variant routes at half pitch when the lattice has fewer than a million points per layer (it already
+routes large boards at twice the pitch). Side by side on the KiCad-judged tiers (8 variants, 120 s, with and
+without the arm): tier B 27 → 28 clean of 40 (USBI2C01 and SALSAFLOCK gained, serial_gw lost) and 5,156 → 5,163
+routed; tier C 18 → 18 clean of 30 and 9,506 → 9,514 routed; no board gained errors. On (D63; `--no-fine-variant`).
+
+**A gridless tile-plane arm is not built.** The half-pitch result bounds what it could add on these boards (about
+0.3 % more connections), and the failures that remain are fan-outs that do not fit under the default rules at any
+resolution (§17, §20). It would be a second router; the finer variant takes most of the gain for a line of code.
+
+**Learned ordering and congestion models are not built.** What they would learn is measured to matter little here:
+every order of small conflict groups changed no board (§17), jittered and reversed orders are already portfolio
+arms whose wins are spread evenly (each of the eight variants wins between 9 and 46 of 172 boards), tile congestion
+is absent (§16, §20), and the knowledge base's bandit already chooses variants per board from past runs (doc 06).
 

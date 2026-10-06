@@ -18,6 +18,10 @@ namespace tmk::route {
 
 struct RouterOptions {
   Coord pitch = 0;              // lattice pitch; 0 = automatic from net-class widths and clearances
+  // Auto pitch multiplier on small lattices (< 1M points per layer): a finer lattice finds fan-outs the default one
+  // misses and small boards have the time for it (doc 05 §25).
+  double pitch_scale_small = 1.0;
+  bool fine_variant = true;      // portfolio: the cheap-vias variant routes small boards at half pitch
   double pitch_scale = 1.0;      // auto pitch multiplier, applied only on large lattices (>= 3M points per layer)
   double time_limit_s = 120;    // wall-clock safety limit for the whole run
   // Portfolio with more variants than threads: successive halving (Jamieson and Talwalkar, AISTATS 2016) instead of
@@ -54,6 +58,9 @@ struct RouterOptions {
   std::vector<std::pair<model::NetId, model::NetId>> pair_nets;
   // Intra-pair skew limit for pairs routed coupled (0 = only KiCad custom `skew` rules): the shorter half gets meanders
   // in the clean-up until the halves differ by at most half of it (length tuning code, doc 05 §15).
+  // Coupled pairs may twist: change layer one half after the other and cross in between, so that a pair whose
+  // pin order is mirrored between its ends can still be routed coupled (doc 05 §24).
+  bool pair_twists = true;
   Coord pair_skew = 0;
   // Per-pair limits for RouterOptions::pair_nets (same index; 0 or missing = pair_skew): component rules give each
   // interface its own limit (USB 2.0 1.27 mm, doc 15 USB2-02).
