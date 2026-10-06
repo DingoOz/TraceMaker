@@ -31,6 +31,9 @@ struct RouteJob {
   // to the output), "on" (also route with the generated keep-outs as in-memory rule areas; never written into the
   // output board).
   std::string component_rules = "off";
+  // --reroute: remove every unlocked track and via first and route the whole board again (locked copper, arcs and
+  // zones stay; rule 6).
+  bool reroute = false;
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
   // Progress lines (the CLI's stdout text, one line per call, no trailing newline). Empty = silent.
   std::function<void(const std::string&)> log;

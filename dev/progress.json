@@ -511,7 +511,7 @@
   {
    "id": "M10",
    "title": "Portfolio, determinism, knowledge base",
-   "status": "in_progress",
+   "status": "done",
    "gate": "Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget",
    "deliverables": "Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts",
    "tasks": [
@@ -532,8 +532,8 @@
      "done": true
     },
     {
-     "text": "Successive-halving budget allocation",
-     "done": false
+     "text": "Successive-halving budget allocation (--halving, restart-based): 24 boards at 2 / 4 threads 12,385 / 12,451 routed against 12,402 / 12,508 for the first variants; kept off (D59)",
+     "done": true
     },
     {
      "text": "Bit-identical across thread counts (portfolio selection; --variants, all 8 with --work, D47)",
@@ -560,7 +560,7 @@
   {
    "id": "M11",
    "title": "KiCad integration",
-   "status": "in_progress",
+   "status": "done",
    "gate": "Round-trip in KiCad on the demo boards",
    "deliverables": "IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package",
    "tasks": [
@@ -573,8 +573,8 @@
      "done": true
     },
     {
-     "text": "Round trip in a running KiCad GUI",
-     "done": false
+     "text": "Round trip in a running KiCad GUI (headless: pcbnew in Docker under Xvfb, scripts/kicad_gui_roundtrip.py): tracks 140 -> 316 in the open board, one undo removes them, DRC of the saved board clean of new errors",
+     "done": true
     },
     {
      "text": "Python bindings (pybind11): read_board, route, emit_items, drc; GIL released; CLI parity test",
@@ -589,12 +589,12 @@
      "done": true
     },
     {
-     "text": "Install the PCM archive in a running KiCad GUI",
-     "done": false
+     "text": "Install the PCM archive in a running KiCad GUI (Plugin and Content Manager, Install from File: listed as installed and compatible; venv creation and toolbar button not checked, no network in the container)",
+     "done": true
     },
     {
-     "text": "Plugin: footprint moves, rip-up of existing copper, RefillZones after commit",
-     "done": false
+     "text": "Plugin: footprint moves (TRACEMAKER_PLACE), re-routing of existing unlocked copper (TRACEMAKER_REROUTE, route --reroute), zone refill (TRACEMAKER_REFILL); checked in the running GUI",
+     "done": true
     }
    ]
   },
@@ -626,8 +626,8 @@
      "done": true
     },
     {
-     "text": "Micro vias",
-     "done": false
+     "text": "Micro vias (--micro-vias, off): outer layer to the next at the class's microvia size where a through via is blocked; no fixture allows them on more than two layers; KiCad-clean on two boards with the setting forced on",
+     "done": true
     },
     {
      "text": "gridless tile-plane arm",
@@ -658,7 +658,7 @@
   {
    "id": "M13",
    "title": "Component-aware layout rules",
-   "status": "in_progress",
+   "status": "done",
    "gate": "Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier",
    "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
    "tasks": [

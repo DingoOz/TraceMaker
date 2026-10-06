@@ -63,6 +63,8 @@
 | D55 | The DRC tests items against zone fills through an edge index and caches area-rule results per fill; no GPU broad-phase is built | LBVH broad-phase on the GPU (doc 07) | Profile of vme-wren: broad-phase 14 ms, exact tests against fills 650 of 730 s. With the index 7 s, reports byte-identical to the linear reference path (doc 05 §19) |
 | D56 | Global router v2 (net-shared edges, via capacity, layer-true corridors, integer costs) is kept off, and the GPU pattern/maze port is not built; M6 is closed | Turn corridors or the map on; port GAMER/GGR kernels | 18 hard boards at a fixed budget: 13,305 routed without, 12,967 with corridors, 13,324 with the map (noise). Tile-graph routing takes 0.02–0.5 s per board (doc 05 §19) |
 | D58 | Impedance and width rules become synthetic net classes (`tmk_<RULE>_<ref>`) for Default-class nets of instances at the apply threshold; used by the router only with `--component-rules on`; one width per net (the front-layer solution) | Per-layer widths; writing the classes into the project file | The router has one width per net, and the user's files are never written (rule 8). Board classes win; a class is never narrower than the board allows (doc 15 §15) |
+| D59 | Successive halving for the portfolio (`--halving`) is restart-based and stays off | Resumable router runs; halving on by default with fewer threads than variants | 24 boards: 12,385 / 12,451 routed at 2 / 4 threads against 12,402 / 12,508 for the first variants on the whole budget (doc 05 §22) |
+| D60 | The plugin refills zones only on request or after it moved footprints | Always refill | KiCad records the refill as its own undo step; the plugin's promise is one undo for a routing run (doc 08 §8) |
 
 ## Risks
 

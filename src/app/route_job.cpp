@@ -97,6 +97,23 @@ RouteJobResult run_route_job(RouteJob job) {
   };
   auto& opt = job.opt;
   auto lb = io::read_board_file(job.in);
+  if (job.reroute) {
+    // Strip the unlocked tracks and vias from the document and read it again (the editor changes the document,
+    // not the model).
+    int removed = 0;
+    {
+      io::BoardEditor ed(lb, opt.seed);
+      for (std::size_t i = 0; i < lb.board.tracks.size(); ++i)
+        if (!lb.board.tracks[i].locked) ed.remove_track(i), ++removed;
+      for (std::size_t i = 0; i < lb.board.vias.size(); ++i)
+        if (!lb.board.vias[i].locked) ed.remove_via(i), ++removed;
+      const std::string tmp = (job.out.empty() ? (std::filesystem::temp_directory_path() / "tracemaker-reroute.kicad_pcb").string() : job.out + ".reroute-tmp.kicad_pcb");
+      ed.save(tmp);
+      lb = io::read_board_file(tmp);
+      std::filesystem::remove(tmp);
+    }
+    log(fmt("reroute: %d unlocked tracks and vias removed", removed));
+  }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
   const std::string name = std::filesystem::path(job.in).filename().string();
   RouteJobResult out;

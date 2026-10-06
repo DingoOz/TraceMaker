@@ -464,6 +464,8 @@ int main(int argc, char** argv) {
   route->add_flag("--escape-second-ring", ropt.escape_second_ring, "Escape plan: second-ring balls between two outer balls (else dog-bone vias)")->group("");
   route->add_flag("--escape-flow", ropt.escape_flow,
                   "Escape plan v2: min-cost-flow channel and layer assignment for deep BGA arrays (implies --escape-plan; experimental)");
+  bool r_reroute = false;
+  route->add_flag("--reroute", r_reroute, "Remove every unlocked track and via first and route the whole board again");
   route->add_flag("--halving", ropt.halving, "With more --variants than --threads: successive halving over all the variants instead of running only the first ones");
   route->add_flag("--cut-report", ropt.cut_report, "Report straight lines across the board that more nets must cross than tracks fit (proof that the placement cannot be routed)");
   route->add_flag("--escape-report", ropt.escape_report, "Report the pins of deep BGA arrays per ring and how many were connected");
@@ -573,6 +575,7 @@ int main(int argc, char** argv) {
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
       auto job = std::move(r_job);
       job.in = r_in;
+      job.reroute = r_reroute;
       job.out = r_out;
       job.opt = ropt;
       job.threads = r_threads;

@@ -107,10 +107,22 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
 
 - **IPC action plugin** (`kicad_plugin/`): saves a copy of the open board with its project (`save_as(...,
   include_project=True)`; the rules come from the copied project files), routes it, and adds the new tracks and
-  vias with `begin_commit` → `create_items` → `push_commit` (one undo step). Not yet done from the sketch in §5:
-  footprint moves, ripping existing copper, `RefillZones`, and a long-running `tracemakerd` (each run starts the
-  engine afresh). The plugin is tested offline against kicad-python 0.8 (`test_offline.py`); the round trip in a
-  running KiCad GUI is still open.
+  vias with `begin_commit` → `create_items` → `push_commit` (one undo step). Since 2026-10-06 also, each by an
+  environment variable (README): `TRACEMAKER_REROUTE=1` removes the unlocked tracks and vias and routes the board
+  again (`route --reroute`; locked copper, arcs and zones stay); `TRACEMAKER_PLACE=<mode>` runs `tracemaker-place`
+  first and moves the footprints with `update_items` (side changes are not applied; when parts move, the old
+  copper is routed again and the zones are refilled); `TRACEMAKER_REFILL=1` refills the zones. Removal, moves and
+  new copper are one commit. KiCad records a zone refill as a step of its own, so with a refill the result takes
+  two undos; that is why refill is off unless footprints moved. Not built: a long-running `tracemakerd` (each run
+  starts the engine afresh). The plugin is tested offline against kicad-python 0.8 (`test_offline.py`).
+- **Round trip in a running KiCad GUI** (`scripts/kicad_gui_roundtrip.py`, KiCad 10.0.6): pcbnew from the Docker
+  image runs on an Xvfb display with the API server enabled (`kicad_common.json`), the first-run wizard is
+  clicked away through XTEST, and the plugin talks to the live board over the API socket. On
+  `multichannel_mixer-unrouted`: tracks 140 → 316 and vias 19 → 21 in the open board (80 connections in 30 s); one
+  Ctrl+Z gives back 140 / 19, Ctrl+Y the result; KiCad's DRC of the board saved from the GUI: unconnected 148 → 65,
+  no new errors. With `--place refine`: 65 footprints moved, old copper routed again, zones refilled, two undos
+  restore tracks, vias and footprint positions, no new DRC errors. The script is not a ctest (it needs Docker,
+  Xvfb and about three minutes); screenshots in `report/m11-gui/`.
 - **Engine access**: the plugin imports the Python module `tracemaker` when it can and otherwise runs the
   `tracemaker` binary (`route --emit-items`). `TRACEMAKER_ARGS` uses CLI spelling for both (decision D17).
 - **Python bindings** (`bindings/`, pybind11, CMake option `TM_BUILD_PYTHON`, on when pybind11 is found and the
@@ -123,4 +135,7 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
   generated 64×64 `resources/icon.png`; reproducible archive). `scripts/validate_pcm.py` checks the layout and
   metadata and also runs kicad-python's official validator when it is installed; ctest `pcm_package` builds and
   validates the archive. The engine is not bundled by default (D19); `--binary`/`--module` bundle the Linux builds
-  for use on the same machine. Installing the archive through the PCM GUI has not been tried yet.
+  for use on the same machine. Installed through the Plugin and Content Manager of a running KiCad 10.0.6 (headless, as above; Install from
+  File…): the manager lists TraceMaker 0.1.0 as installed and compatible, and the files are in
+  `3rdparty/plugins/org_tracemaker_autoroute/` (`report/m11-gui/pcm-installed.png`). Not checked: that KiCad then
+  builds the plugin's virtual environment and shows the toolbar button (the container had no network for pip).

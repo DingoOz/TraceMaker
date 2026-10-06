@@ -145,17 +145,21 @@ def main() -> int:
         check(p.returncode == 0, "the plugin ran against the live board")
         board = KiCad(socket_path=sock).get_board()
         t1, v1 = len(board.get_tracks()), len(board.get_vias())
-        check(t1 > t0, f"tracks added in the open board: {t0} -> {t1}; vias {v0} -> {v1}")
+        check(t1 != t0, f"copper changed in the open board: tracks {t0} -> {t1}; vias {v0} -> {v1}")
         if a.place:
             moved = sum(1 for f in board.get_footprints() if pos0.get(ref(f)) != pos(f))
             check(moved > 0, f"footprints moved in the open board: {moved}")
         shot("2-routed.png")
         ctrl("z")
+        if a.place:
+            ctrl("z")  # the zone refill after moved footprints is a step of its own
         board = KiCad(socket_path=sock).get_board()
         t2, v2 = len(board.get_tracks()), len(board.get_vias())
         back = all(pos0.get(ref(f)) == pos(f) for f in board.get_footprints())
-        check((t2, v2) == (t0, v0) and back, f"one undo removes the whole result: {t2} tracks, {v2} vias" + (", footprints back" if a.place else ""))
+        check((t2, v2) == (t0, v0) and back, (f"two undos (zone refill, then the commit)" if a.place else "one undo") + f" remove the whole result: {t2} tracks, {v2} vias" + (", footprints back" if a.place else ""))
         ctrl("y")
+        if a.place:
+            ctrl("y")
         board = KiCad(socket_path=sock).get_board()
         check((len(board.get_tracks()), len(board.get_vias())) == (t1, v1), "redo brings it back")
         out = g / "proj/after_gui.kicad_pcb"
