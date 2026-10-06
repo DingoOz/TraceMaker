@@ -1,4 +1,5 @@
-find_package(Eigen3 3.4 REQUIRED NO_MODULE)
+# Eigen 5 retains Eigen3::Eigen; accept both supported majors.
+find_package(Eigen3 3.4...5 REQUIRED NO_MODULE)
 find_package(nlohmann_json 3 REQUIRED)
 find_package(Threads REQUIRED)
 

@@ -48,7 +48,7 @@ struct RouteJobResult {
 // Throws std::exception on unreadable input.
 RouteJobResult run_route_job(RouteJob job);
 
-// The CUDA device the CLI uses for cost-to-go fields: the first listed device, or -1 (none, or `use_gpu` false).
+// The GPU device used for cost-to-go fields: the first listed device, or -1 (none, or `use_gpu` false).
 int default_gpu_device(bool use_gpu);
 
 }  // namespace tmk::app

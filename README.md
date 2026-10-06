@@ -1,6 +1,6 @@
 # TraceMaker
 
-A placement-aware PCB autorouter for KiCad, written in C++20 with CUDA. It reads KiCad 9 and 10 boards and
+A placement-aware PCB autorouter for KiCad, written in C++20 with optional CUDA or Metal. It reads KiCad 9 and 10 boards and
 projects directly, routes with negotiated rip-up and reroute on an exact-geometry lattice, learns from failed
 attempts within and across runs, writes the result back into the `.kicad_pcb` without disturbing anything else,
 and is judged by KiCad's own DRC. A browser viewer shows routing live.
@@ -8,6 +8,30 @@ and is judged by KiCad's own DRC. A browser viewer shows routing live.
 Design: [PLAN.md](PLAN.md) and [docs/](docs/). Decisions taken without the user's input: [dev/assumptions.md](dev/assumptions.md).
 
 ## Build
+
+### macOS (Apple silicon)
+
+Install Apple's Command Line Tools or Xcode, then the build dependencies:
+
+```sh
+brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost
+# Optional: brew install pybind11 python ccache
+cmake --preset macos-metal -DCMAKE_PREFIX_PATH="$(brew --prefix)"
+cmake --build --preset macos-metal -j 8
+ctest --preset macos-metal
+build/macos-metal/src/app/tracemaker gpu-info
+build/macos-metal/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --work 5000000 --no-kb
+```
+
+Use `macos-cpu` for a CPU-only build, or `--no-gpu` on the Metal executable. Metal accelerates cost-to-go
+fields; A* and exact legality checks stay on the CPU. Kernels are embedded, so no runtime shader files are
+needed. `gpu-info` reports working-set headroom, not system-wide free memory. See
+[docs/07-gpu.md](docs/07-gpu.md) for scope and verification.
+
+Install KiCad separately and put `kicad-cli` on `PATH` for external DRC. The route command does not run that
+check automatically. Build the browser viewer with the `viewer/` command below.
+
+### Linux (CUDA or CPU)
 
 Ubuntu 26.04 with the packages from the setup script (`g++-13` for CUDA host code, Boost, Eigen, oneTBB, fmt,
 spdlog, FlatBuffers, SQLite, Catch2, pybind11, Docker for `kicad-cli`).
@@ -87,7 +111,7 @@ site (`http://<host>:8765/`).
 `src/core` units, RNG, events · `src/sexpr` lossless s-expressions · `src/io/kicad` board/project/netlist I/O and
 editor · `src/model` board and rules · `src/geom` exact geometry · `src/drc` KiCad-equivalent DRC and
 connectivity · `src/route` router (obstacles, A*, negotiation, portfolio) · `src/learn` knowledge base ·
-`src/gpu` CUDA kernels with CPU references · `src/server` viewer server · `src/place` placement ·
+`src/gpu` CUDA/Metal fields with CPU references · `src/server` viewer server · `src/place` placement ·
 `viewer/` WebGL2 viewer · `bench/` harness · `devsite/` progress website · `tests/` tests.
 
 ## Licence

@@ -88,7 +88,7 @@ nlohmann::json items_json(const model::Board& b, const route::RouteResult& res) 
 int default_gpu_device(bool use_gpu) {
   if (!use_gpu) return -1;
   const auto devs = gpu::list_devices();
-  return devs.empty() ? -1 : devs.front().cuda_index;
+  return devs.empty() ? -1 : devs.front().index;
 }
 
 RouteJobResult run_route_job(RouteJob job) {
@@ -248,8 +248,7 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"escape_corridors", res.escape_corridors}};
   // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
   if (opt.diff_pairs || !opt.pair_nets.empty()) {
-    const auto cm = drc::build_copper(lb.board);
-    const drc::RuleEngine re(lb.board, rules, cm);
+    const drc::RuleEngine re(lb.board, rules);
     auto want = opt.diff_pairs ? route::named_pairs(lb.board, re) : std::vector<std::pair<model::NetId, model::NetId>>{};
     for (const auto& p : opt.pair_nets)
       if (std::find(want.begin(), want.end(), p) == want.end() && std::find(want.begin(), want.end(), std::make_pair(p.second, p.first)) == want.end())

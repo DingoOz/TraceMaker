@@ -94,3 +94,69 @@ as the quality path.
 | Cost-to-go fields (router A* heuristic) | **Done**: `src/gpu/field_cuda.cu` + CPU reference `field_cpu.cpp` | GAMER-style line sweeps (rows, columns, both diagonals, both directions) + via relaxation to a fixpoint; one thread per line; `cudaStreamPerThread` so the 8 portfolio routers share the two GPUs. Exact equality with the CPU reference tested on random grids on the P100 and V100; routed boards byte-identical with `--no-gpu`. Used for windows ≥ 60k lattice points; GPU ~2x faster than the CPU field. Gain on routing is modest today because routed copper and soft costs (not in the field) dominate the remaining search effort |
 | Philox RNG fill | Done (toolchain test) | |
 | Placement density / annealing, DRC broad-phase, global maze routing | Not started | Profiling shows the A* loop itself (74%) is the router's bottleneck, not obstacle evaluation |
+
+## 8. Native macOS / Metal (2026-10-06, D53)
+
+**What was built**
+
+| Part | What |
+|---|---|
+| Build | `macos-metal` and `macos-cpu` presets use Apple Clang; Metal uses Objective-C++20. CUDA and Metal are mutually exclusive; non-Apple builds retain the CUDA default |
+| Device API | `compiled_backend`, `DeviceInfo::index`, and `field_gpu` select the compiled backend. CPU references are always built; unavailable devices and failed jobs fall back to CPU |
+| `device_metal.mm` | Registry-ID-ordered discovery with `METAL-<registry-id>` identifiers. Memory admission uses `recommendedMaxWorkingSetSize - currentAllocatedSize` with a 256 MiB margin: process working-set headroom, not free system RAM |
+| `field_metal.mm` | Embedded MSL, cached per-device pipelines, and per-thread shared buffers and command queues. Ordered integer line sweeps and via relaxation return only converged fields; buffer barriers order dispatches, and the CPU reads results after completion |
+| Scope | Cost-to-go fields only. Philox remains CUDA-only; placement, A*, and exact legality checks stay on the CPU |
+
+**Results.** On Apple M4 Pro, a private 4-layer sensor board (218 connections), seed 7, one variant, and
+5,000,000 work units produced byte-identical CPU/Metal boards: 118/154 connections routed, 342 added tracks,
+47 added vias, 73 Metal fields, zero fallbacks. The first kernel took 1.53 s for fields versus 0.88 s on CPU;
+§8.1 replaces it.
+
+KiCad 10.0.3 sign-off was **not clean**: 36 unconnected items and three added vias inside J5's footprint-local
+keepout, on top of 17 input errors. Both backends reproduced this router/rule-coverage limitation. The input
+board and project were unchanged.
+
+There was no executable `quick` manifest. Regression used a seeded 30-board tier-A sample
+(`bench/run.py --tier A --limit 30 --seed 1`), one variant, seed 7, no knowledge base, and 1,000,000 work units
+per board. All 30 CPU/Metal outputs were byte-identical, with no added judged routing errors. Each backend
+completed 13/30 cleanly; mean completion was 89.33%. These runs are not comparable to the README's longer
+portfolio runs. Results: `bench/results/macos-{cpu,metal}-quick/`. The generated table's RC12 zero means
+missing baseline data; the summary records null.
+
+CTest (first kernel): Metal 117 passed / 14 skipped; CPU 114 passed / 17 skipped; zero failures in each
+131-test suite. Skips covered unavailable fixtures, Docker-dependent KiCad parity, YAML tooling, and
+unsupported GPU workloads. Native KiCad judged the private board and regression sample separately.
+The migrated CUDA sources could not be compiled or run on macOS.
+
+### 8.1 Parallel line scans (2026-10-06, D55)
+
+**Before.** Fields used 50% of busy CPU time on the cleared private board (20M work, 8 variants):
+2,311 fields, mean 262k lattice points × layers, 4 layers, median 8 rounds, maximum 15, about 21 ms each.
+One thread per line left the first Metal kernel slower than CPU with concurrent callers.
+
+**What was built.** GAMER's line recurrence is a segmented prefix-min:
+`d'[i] = c·i + min_{j≤i}(d[j] − c·j)` within each open run. One 32-lane SIMD-group scans a line in 32-cell
+blocks, carrying the minimum between blocks. The backward scan mirrors the forward scan; each lane rereads
+only cells it wrote. Disjoint lines and layers share dispatches without changing `field_cpu`'s per-round
+state. A round uses four line dispatches and one via dispatch. Command buffers batch 16 rounds initially,
+then 8; rounds after convergence do no work. GPU field time is about 0.4–1.5 ms.
+
+**Results.** Apple M4 Pro, macOS 26.4; CPU/Metal outputs were byte-identical.
+
+| Measurement | CPU | Metal (first kernel) | Metal (scan kernel) |
+|---|--:|--:|--:|
+| 2,311 captured fields, one caller | 47.7 s | 41.7 s | 10.3 s, 0 mismatches |
+| 8 concurrent callers × 2,311 fields | 54.1 s | 107.9 s | 18.2 s |
+| Field time per rip-up variant | 8.3–12.0 s | 8.5–11.4 s | 1.0–1.5 s |
+| Cleared private board, 20M work, 8 variants | 16.2 s (21.4 s wall) | 15.2 s | 9.2 s (11.8 s wall), 208/218 |
+| `tracemaker-place --mode routable`, 17 routes | 336.0 s | — | 228.5 s |
+
+**Rules caveat.** The table used a renamed board without its project, hence default rules and a 0.075 mm
+lattice. With project rules (0.050 mm lattice), the route took about 121 s on either backend; field time per
+variant was 1.6 s on Metal or 6.4 s on CPU. A* dominated. The default 120 s `--time` limit stopped the run
+before 20M work, so non-best variants differed between runs; the output boards remained identical.
+Placement's 600 s router safety limit gave 55–147 s per route, 987 s for 7 routes.
+
+The same 30-board sample gave 30/30 byte-identical CPU/Metal boards, 43.3% clean pass, 89.3% completion, and
+no added errors (`bench/results/macos-metal-scan-quick/`). The `[gpu][field]` tests cover thin grids, blocked
+targets, buffer reuse, concurrent callers, and a 300-cell winding corridor requiring more than 32 rounds.

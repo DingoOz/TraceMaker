@@ -27,7 +27,7 @@ struct FieldProblem {
 // CPU reference. `out` is resized to layers*h*w. Returns the number of sweep rounds.
 int field_cpu(const FieldProblem& p, std::vector<std::int32_t>& out);
 
-// CUDA version on device `cuda_index`; on failure (no CUDA, no memory) returns !ok and leaves `out` empty.
-GpuStatus field_cuda(int cuda_index, const FieldProblem& p, std::vector<std::int32_t>& out);
+// Compiled GPU backend; on failure (no device, no memory) returns !ok and leaves `out` empty.
+GpuStatus field_gpu(int device_index, const FieldProblem& p, std::vector<std::int32_t>& out);
 
 }  // namespace tmk::gpu

@@ -612,7 +612,7 @@ struct Router::Impl {
     gpu::FieldProblem fp{w.w, w.h, nl, static_cast<std::int32_t>(step), static_cast<std::int32_t>(diag), static_cast<std::int32_t>(std::min<std::int64_t>(viac, 1'000'000'000)),
                          f_pass.data(), f_via.data(), f_tgt.data()};
     // Same field on the GPU or the CPU (identical by construction), so results do not depend on GPU availability.
-    const auto st = opt.gpu_device >= 0 ? gpu::field_cuda(opt.gpu_device, fp, field) : gpu::GpuStatus{false, "no GPU"};
+    const auto st = opt.gpu_device >= 0 ? gpu::field_gpu(opt.gpu_device, fp, field) : gpu::GpuStatus{false, "no GPU"};
     if (st.ok) {
       ++field_runs;
     } else {
@@ -2996,7 +2996,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   // Spread variants over the visible GPUs (cost-to-go fields); CPU-only when none.
   if (base.gpu_device >= 0) {
     const auto devs = gpu::list_devices();
-    for (std::size_t i = 0; i < vs.size(); ++i) vs[i].o.gpu_device = devs.empty() ? -1 : devs[i % devs.size()].cuda_index;
+    for (std::size_t i = 0; i < vs.size(); ++i) vs[i].o.gpu_device = devs.empty() ? -1 : devs[i % devs.size()].index;
   }
   std::vector<RouteResult> rs(vs.size());
   std::vector<std::thread> pool;

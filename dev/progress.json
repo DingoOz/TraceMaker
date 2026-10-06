@@ -308,6 +308,14 @@
      "done": true
     },
     {
+     "text": "Native Apple Clang CPU/Metal builds; Metal cost-to-go fields match CPU on random/edge/concurrent cases and a private board's route output (D53)",
+     "done": true
+    },
+    {
+     "text": "Metal fields as SIMD-group segmented scans: 4.6x one caller, 3x CPU under 8 callers, route 16.2 -> 9.2 s on default rules (A* dominates on the project's 0.05 mm lattice), bit-identical (D55)",
+     "done": true
+    },
+    {
      "text": "Fields used as the router's A* heuristic; deterministic with/without GPU",
      "done": true
     },

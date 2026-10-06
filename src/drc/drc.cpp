@@ -32,7 +32,7 @@ namespace {
 class Checker {
  public:
   Checker(const model::Board& b, const model::DesignRules& r, const DrcOptions& o)
-      : b_(b), r_(r), o_(o), cm_(build_copper(b)), re_(b, r, cm_) {
+      : b_(b), r_(r), o_(o), cm_(build_copper(b)), re_(b, r) {
     re_.use_zone_clearance_overrides();
   }
 

@@ -284,7 +284,7 @@ class Condition {
 
 // ---------------------------------------------------------------------------------------------------------
 
-RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r, const CopperModel& cm) : b_(b), r_(r), cm_(cm) {
+RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r) {
   for (const auto& rule : r_.custom) {
     Compiled c{&rule, nullptr, true};
     if (!rule.condition.empty()) {

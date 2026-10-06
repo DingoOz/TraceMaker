@@ -30,7 +30,7 @@ struct RouterOptions {
   double heuristic_weight = 1.0;
   bool field_heuristic = true;      // GPU cost-to-go field as the A* heuristic on large windows
   int field_min_cells = 60'000;     // window size (lattice points x layers) from which the field is used
-  int gpu_device = 0;               // CUDA device for fields (-1 = none)    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
+  int gpu_device = 0;              // GPU backend device for fields (-1 = CPU reference)
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
   int soft_attempts = 3;        // window sizes tried by negotiated searches
   double via_cost_mm = 3.0;     // equivalent track length of one via

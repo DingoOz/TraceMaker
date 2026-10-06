@@ -17,7 +17,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   // footprints, logos), whatever pad they touch: block them for every net.
   for (auto& it : cm_.items)
     if (it.kind == drc::ItemKind::Graphic) it.net = 0;
-  re_ = std::make_unique<drc::RuleEngine>(b_, r_, cm_);
+  re_ = std::make_unique<drc::RuleEngine>(b_, r_);
   reach_ = std::max<Coord>(re_->max_clearance(), 1'000'000) + 2'000'000;  // clearance + generous track/via size
   bounds_ = b_.edge_bbox();
   for (const auto& it : cm_.items) bounds_.add(it.box);
