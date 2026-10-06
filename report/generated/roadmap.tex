@@ -1,0 +1,254 @@
+\subsection*{M0: Toolchain and skeleton}
+\addcontentsline{toc}{subsection}{M0: Toolchain and skeleton}
+\noindent\textbf{Deliverables.} CMake presets (\texttt{debug}, \texttt{release}, \texttt{asan}, \texttt{cpu-only}), CUDA build with a GCC host compiler that \texttt{nvcc 12.4} accepts, Catch2, clang-format/clang-tidy config (or GCC equivalents), \texttt{scripts/bootstrap.sh}, \texttt{kicad-cli} available (Docker image or native), fixture download script\par\smallskip
+\noindent\textbf{Gate.} \texttt{ctest} runs a CPU and a CUDA hello-kernel test on both GPUs; \texttt{kicad-cli version} works from the harness\par\smallskip
+\noindent\textbf{Tasks} (14 of 14 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Ubuntu setup script (packages, Docker, KiCad 10 kicad-cli wrapper)
+\item[\textcolor{fraqua}{$\checkmark$}] Git repository, .gitignore
+\item[\textcolor{fraqua}{$\checkmark$}] CMake project + presets (debug, release, cpu-only, asan, tsan)
+\item[\textcolor{fraqua}{$\checkmark$}] CUDA build: nvcc 12.4 with g++-13 host, sm\_60 + sm\_70; system GCC 15 for C++
+\item[\textcolor{fraqua}{$\checkmark$}] Core library: units, deterministic Philox/SplitMix RNG
+\item[\textcolor{fraqua}{$\checkmark$}] GPU service: device discovery by UUID, free-memory admission control
+\item[\textcolor{fraqua}{$\checkmark$}] First kernel with CPU reference; bit-identical on V100 and P100
+\item[\textcolor{fraqua}{$\checkmark$}] Catch2 tests wired into ctest with JUnit results
+\item[\textcolor{fraqua}{$\checkmark$}] tracemaker CLI: version, gpu-info
+\item[\textcolor{fraqua}{$\checkmark$}] Development progress website (0.0.0.0)
+\item[\textcolor{fraqua}{$\checkmark$}] scripts/bootstrap.sh: configure, build and test all presets
+\item[\textcolor{fraqua}{$\checkmark$}] Benchmark environment check (kicad-cli from the harness)
+\item[\textcolor{fraqua}{$\checkmark$}] Fixture download script (Freerouting, DAC2020, KiCad demos, PCBench)
+\item[\textcolor{fraqua}{$\checkmark$}] Gate: CPU + CUDA tests pass on both GPUs; kicad-cli works from harness
+\end{itemize}
+\subsection*{M1: KiCad I/O and board model}
+\addcontentsline{toc}{subsection}{M1: KiCad I/O and board model}
+\noindent\textbf{Deliverables.} s-expression lexer/parser/writer; \texttt{.kicad\_pcb}, \texttt{.kicad\_pro}, \texttt{.kicad\_dru}, \texttt{.kicad\_sch} (netlist), \texttt{.kicad\_mod}; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader\par\smallskip
+\noindent\textbf{Gate.} Byte-identical round-trip of every fixture board (parse $\to$ write); netlist equals \texttt{kicad-cli sch export netlist} on all fixture projects\par\smallskip
+\noindent\textbf{Tasks} (11 of 11 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Lossless s-expression parser/writer with span edits
+\item[\textcolor{fraqua}{$\checkmark$}] Board reader: layers, nets (KiCad 9 and 10 syntax), footprints, pads, tracks, arcs, vias, zones, graphics
+\item[\textcolor{fraqua}{$\checkmark$}] Reader verified against pcbnew ground truth on demo boards
+\item[\textcolor{fraqua}{$\checkmark$}] Byte-identical round trip of fixture boards
+\item[\textcolor{fraqua}{$\checkmark$}] Design rules: .kicad\_pro net classes, patterns, assignments, board minimums
+\item[\textcolor{fraqua}{$\checkmark$}] Custom rules: .kicad\_dru parsed into rules and constraints
+\item[\textcolor{fraqua}{$\checkmark$}] Board editor: add/remove tracks and vias, move/rotate footprints
+\item[\textcolor{fraqua}{$\checkmark$}] Edited boards load in pcbnew with the expected geometry
+\item[\textcolor{fraqua}{$\checkmark$}] Netlist import via kicad-cli (kicadsexpr) and cross-check against board pad nets
+\item[\textcolor{fraqua}{$\checkmark$}] tracemaker inspect: board summary and JSON dump
+\item[\textcolor{fraqua}{$\checkmark$}] Gate: round trip on all fixtures; reader matches KiCad
+\end{itemize}
+\subsection*{M2: Rules and DRC parity}
+\addcontentsline{toc}{subsection}{M2: Rules and DRC parity}
+\noindent\textbf{Deliverables.} Rule compiler (net classes, board constraints, custom rules subset), spatial indices, own DRC with KiCad violation names\par\smallskip
+\noindent\textbf{Gate.} Same violation multiset as \texttt{kicad-cli pcb drc} on all unrouted and routed fixture boards (documented, tested exceptions only)\par\smallskip
+\noindent\colorbox{boxfill}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Gate result.} Result: 14 of 17 KiCad demo boards exact and 264 of 264 injected-defect variants (regression tests); three demo boards differ in documented ways. Since 2026-10-06 Margin-layer edges and one-sided SMD pads match KiCad too.}}\par\smallskip
+\noindent\textbf{Tasks} (11 of 11 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Exact integer geometry kernel (rounded-core shapes, int128 predicates, fine arc flattening)
+\item[\textcolor{fraqua}{$\checkmark$}] Copper item model: pads (all shapes, drill offsets), tracks, arcs, vias, zone fills, copper graphics with nets
+\item[\textcolor{fraqua}{$\checkmark$}] Rule engine: net classes, local overrides, diff pairs, board minimums, legacy rules, custom-rule conditions
+\item[\textcolor{fraqua}{$\checkmark$}] Checks: clearance, shorts, crossings, widths, vias, annular, holes, edge, keepouts
+\item[\textcolor{fraqua}{$\checkmark$}] Anchor/overlap connectivity, unconnected items, dangling tracks/vias
+\item[\textcolor{fraqua}{$\checkmark$}] DRC parity harness vs kicad-cli + fuzzer
+\item[\textcolor{fraqua}{$\checkmark$}] Parity: 11/16 demo boards exact (regression test)
+\item[\textcolor{fraqua}{$\checkmark$}] Parity on broken-board classification (shorts/dangling): 264/264 injected-defect variants match kicad-cli violation by violation (was 41/264; regression test); demo boards 14/17 exact
+\item[\textcolor{fraqua}{$\checkmark$}] Performance on very large boards: vme-wren 730 s -\textgreater{} 7 s, jetson 250 s -\textgreater{} 4 s (zone-fill edge index, area-rule cache; identical reports)
+\item[\textcolor{fraqua}{$\checkmark$}] Copper text obstacle margin (estimated glyph boxes)
+\item[\textcolor{fraqua}{$\checkmark$}] DRC parity 12 of 17 KiCad demo boards (jetson now exact; RoyalBlue54L down to a malformed duplicate pad)
+\end{itemize}
+\subsection*{M3: Event bus, server, viewer v1}
+\addcontentsline{toc}{subsection}{M3: Event bus, server, viewer v1}
+\noindent\textbf{Deliverables.} Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme\par\smallskip
+\noindent\textbf{Gate.} Viewer renders the largest fixture board at $\geq$ 60 fps; replay of a recorded log reproduces the final board\par\smallskip
+\noindent\colorbox{boxfill}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Gate result.} Result: replay reproduces the routed board (test record\_replay). The 60 fps figure was not measured: there is no GPU-backed browser on this machine.}}\par\smallskip
+\noindent\textbf{Tasks} (9 of 9 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Event types and Sink interface
+\item[\textcolor{fraqua}{$\checkmark$}] WebSocket server (Boost.Beast), static files, snapshot + deltas, back-pressure
+\item[\textcolor{fraqua}{$\checkmark$}] Viewer: WebGL2 instanced tracks/pads/vias/zones, layers, pan/zoom
+\item[\textcolor{fraqua}{$\checkmark$}] Live effects: glow, frontiers, failures, HUD, log, tooltips
+\item[\textcolor{fraqua}{$\checkmark$}] tracemaker-view with --demo
+\item[\textcolor{fraqua}{$\checkmark$}] Router live streaming (route --view)
+\item[\textcolor{fraqua}{$\checkmark$}] Replay log (zstd frames, --record FILE.zst) and heatmaps (expansions, history) live and in replay; test: recording/viewing leave the routed board byte-identical
+\item[\textcolor{fraqua}{$\checkmark$}] Event recording (route --record) and replay (tracemaker-view --replay); test: replay reproduces the routed board exactly
+\item[\textcolor{fraqua}{$\checkmark$}] FlatBuffers schema: closed, not built (protocol and replay log stay JSON, zstd-compressed logs 12-13x smaller; D45, D61)
+\end{itemize}
+\subsection*{M4: First router (lattice A*)}
+\addcontentsline{toc}{subsection}{M4: First router (lattice A*)}
+\noindent\textbf{Deliverables.} Rerun debug logging of searches (optional), transactions, scoring, union-find, bit-planes, A* + radix heap, insertion with exact validation, basic pull-tight; sequential routing in net order; \texttt{tracemaker route} CLI; bench harness v1 with KiCad-DRC judge and Freerouting runner\par\smallskip
+\noindent\textbf{Gate.} Routes the simple fixture set with 0 added KiCad DRC errors; harness produces the comparison table\par\smallskip
+\noindent\textbf{Tasks} (6 of 6 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Router obstacle model with exact KiCad-rule legality
+\item[\textcolor{fraqua}{$\checkmark$}] Octilinear lattice A* with vias, bends, admissible heuristic
+\item[\textcolor{fraqua}{$\checkmark$}] Path simplification, exact verification, commit through the board editor
+\item[\textcolor{fraqua}{$\checkmark$}] tracemaker route CLI
+\item[\textcolor{fraqua}{$\checkmark$}] Benchmark harness judged by kicad-cli with Freerouting baselines
+\item[\textcolor{fraqua}{$\checkmark$}] Gate: zero added KiCad DRC errors on the benchmark
+\end{itemize}
+\subsection*{M5: Failure memory T0--T2 + escalation R0--R3 + repair}
+\addcontentsline{toc}{subsection}{M5: Failure memory T0--T2 + escalation R0--R3 + repair}
+\noindent\textbf{Deliverables.} Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair\par\smallskip
+\noindent\textbf{Gate.} Completion $\geq$ Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed\par\smallskip
+\noindent\textbf{Tasks} (10 of 10 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Negotiated rip-up and reroute (soft crossing of routed copper, victims requeued)
+\item[\textcolor{fraqua}{$\checkmark$}] PathFinder history on contested cells
+\item[\textcolor{fraqua}{$\checkmark$}] Learned blocked cells after exact-check failures
+\item[\textcolor{fraqua}{$\checkmark$}] Best-state keeping
+\item[\textcolor{fraqua}{$\checkmark$}] Failure records, nogoods, conflict graph, bandit (T0-T2 complete)
+\item[\textcolor{fraqua}{$\checkmark$}] Gate: completion \textgreater{}= Freerouting on tier A (100\% clean, equal to Freerouting RC12, in every run since 2026-10-03)
+\item[\textcolor{fraqua}{$\checkmark$}] Reverse probe for boxed-in targets; pad legs dropped when the lattice end is on the pad; learned blocks beside fine-pitch pads
+\item[\textcolor{fraqua}{$\checkmark$}] Diversified extra restarts while budget remains
+\item[\textcolor{fraqua}{$\checkmark$}] Post-routing clean-up: via-saving re-routes and path smoothing (bends -40\%, vias -25-33\%)
+\item[\textcolor{fraqua}{$\checkmark$}] Connection planning by pad copper distance (--plan-gap, on, D54): 24 boards at a fixed budget 11,905 -\textgreater{} 11,986 routed; tiers A-D neutral; failure reasons now reported as at the best state
+\end{itemize}
+\subsection*{M6: Global routing + GPU}
+\addcontentsline{toc}{subsection}{M6: Global routing + GPU}
+\noindent\textbf{Deliverables.} Port/adapt GAMER sweep and GGR pattern kernels from Xplace \texttt{gpugr} (BSD-3); tile graph, Steiner decomposition, CPU NCR, corridors; GPU pattern routing, GPU sweep maze routing, GPU cost-to-go fields, GPU DRC broad-phase\par\smallskip
+\noindent\textbf{Gate.} CPU and GPU results identical on every fixture; time-to-route reduced on dense boards with no quality loss\par\smallskip
+\noindent\textbf{Tasks} (10 of 10 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] GPU cost-to-go fields (CUDA sweeps) with identical CPU reference
+\item[\textcolor{fraqua}{$\checkmark$}] Fields used as the router's A* heuristic; deterministic with/without GPU
+\item[\textcolor{fraqua}{$\checkmark$}] Coarse global routing + corridors (CPU, negotiated congestion): built, off by default (corridors cost completion in three measurements)
+\item[\textcolor{fraqua}{$\checkmark$}] GPU pattern/maze global routing (GAMER/GGR port): closed, not built. The CPU global router routes the tile graph in 0.02-0.5 s per board and its plan does not help (D56)
+\item[\textcolor{fraqua}{$\checkmark$}] GPU DRC broad-phase: closed, not built. Broad-phase is 14 ms; the DRC was fixed on the CPU with a zone-fill edge index: vme-wren 730 s -\textgreater{} 7 s, jetson 250 s -\textgreater{} 4 s, reports byte-identical (D55)
+\item[\textcolor{fraqua}{$\checkmark$}] Adaptive GPU-field cut-off under GPU contention (wall-clock mode)
+\item[\textcolor{fraqua}{$\checkmark$}] CPU global router v1 (tile graph, capacities, negotiated congestion, soft corridors): experimental, no gain yet
+\item[\textcolor{fraqua}{$\checkmark$}] Global router v2: net-shared edges (Steiner demand), via capacity, layer-true corridors, integer costs, corridor-restricted windows: built; 18 hard boards 13,305 without, 12,967 corridors, 13,324 congestion map; off (D56)
+\item[\textcolor{fraqua}{$\checkmark$}] Exact flood-fill reachability pre-check before likely-failing searches (10 hard boards +47 routed at fixed budget; tiers neutral)
+\item[\textcolor{fraqua}{$\checkmark$}] Global congestion map + cut-based tile capacities (opt-in --global-congestion): 18 hard boards 13,285 -\textgreater{} 13,294 routed, within noise; kept off (D53). Boards are not congested at tile scale; v2 remainder deferred
+\end{itemize}
+\subsection*{M7: Placement A--D}
+\addcontentsline{toc}{subsection}{M7: Placement A--D}
+\noindent\textbf{Deliverables.} Constraint extraction, decoupling detection, quadratic B2B (PCG), electrostatic global placement (CPU then GPU batched), rotation/side assignment, LP legalisation; placement report with optimality levels and lower bound\par\smallskip
+\noindent\textbf{Gate.} Placements are legal (zero courtyard overlaps, inside outline); HPWL $\leq$ SA-PCB baseline on the placement set\par\smallskip
+\noindent\colorbox{boxfill}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Gate result.} Result: legality met (held-out set, doc 04 \S10). The HPWL comparison with SA-PCB was NOT measured: the baseline does not build here (it needs SWIG, which is not installed, and its Makefile is stale; build/tools/sa-pcb).}}\par\smallskip
+\noindent\textbf{Tasks} (12 of 12 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Constraint extraction (fixed parts, outline, keepouts, courtyards, copper legality)
+\item[\textcolor{fraqua}{$\checkmark$}] Decoupling capacitors tied to their IC supply pin (D25)
+\item[\textcolor{fraqua}{$\checkmark$}] Other proximity groups: crystals, load caps, ESD near connectors, regulator caps (M13, --component-rules soft)
+\item[\textcolor{fraqua}{$\checkmark$}] quadratic B2B (Eigen CG)
+\item[\textcolor{fraqua}{$\checkmark$}] global spreading (SimPL instead of electrostatic; CPU)
+\item[\textcolor{fraqua}{$\checkmark$}] Rotation assignment (coordinate descent)
+\item[\textcolor{fraqua}{$\checkmark$}] Side assignment (flip to the back): opt-in --flip, annealer flip move + via estimate, KiCad-exact mirror (2,529 footprints = pcbnew); 23 boards HPWL -8\%, crossings -31\%, 0 new DRC (D48)
+\item[\textcolor{fraqua}{$\checkmark$}] legalisation (greedy minimum displacement; LP not done)
+\item[\textcolor{fraqua}{$\checkmark$}] parallel simulated annealing, deterministic across thread counts
+\item[\textcolor{fraqua}{$\checkmark$}] placement report with optimality levels and LP lower bound (min-cost flow)
+\item[\textcolor{fraqua}{$\checkmark$}] evaluation on 23 PCBench boards: HPWL -17..-26\% median, zero new DRC errors; routability not yet improved
+\item[\textcolor{fraqua}{$\checkmark$}] --mode auto with route checks: 23 boards, HPWL -24.5\% total, never more unrouted (61 -\textgreater{} 59)
+\end{itemize}
+\subsection*{M8: Placement E--G + ECO}
+\addcontentsline{toc}{subsection}{M8: Placement E--G + ECO}
+\noindent\textbf{Deliverables.} GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves\par\smallskip
+\noindent\textbf{Gate.} Schematic-to-board set: clean pass $\geq$ 90\%; \texttt{eco} mode closes boards that \texttt{none} mode cannot\par\smallskip
+\noindent\colorbox{boxfill}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Gate result.} Result 2026-10-06: NOT met. From-scratch clean pass 85 \% (34/40) on set S; 4 of the 6 failing boards cannot be clean in any placement. eco closed 0 of the 1 held-out board the human placement leaves unrouted (3 of 7 on the development set).}}\par\smallskip
+\noindent\textbf{Tasks} (12 of 12 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Parallel tempering (annealed replica exchange, CPU; deterministic for 1/3/16 threads): refine cost -4\% on 23 boards, full neutral
+\item[\textcolor{fraqua}{$\checkmark$}] GPU parallel-tempering SA: closed, not built (annealing 1.9 s median, 56 s max on the held-out boards; CPU tempering neutral on routability; D57)
+\item[\textcolor{fraqua}{$\checkmark$}] LNS (window rip-up, exact \textless{}=4 parts, greedy otherwise; never worsens)
+\item[\textcolor{fraqua}{$\checkmark$}] Exact windows by branch and bound (CP-SAT not available; B\&B equals full enumeration)
+\item[\textcolor{fraqua}{$\checkmark$}] CP-SAT windows: closed, not built (no OR-tools C++ library; exact windows by branch and bound equal full enumeration; D57)
+\item[\textcolor{fraqua}{$\checkmark$}] RUDY routability term in the annealer (incremental, exact vs reference)
+\item[\textcolor{fraqua}{$\checkmark$}] Routability loop (--mode routable): 23 boards unrouted 64 -\textgreater{} 35 (auto 60), 0 new DRC errors
+\item[\textcolor{fraqua}{$\checkmark$}] ECO placement moves (--mode eco): closes 3 of 7 incomplete boards, unrouted 64 -\textgreater{} 48
+\item[\textcolor{fraqua}{$\checkmark$}] Schematic-to-board set S (40 held-out boards, parts piled) built and the gate measured: 85 \% clean (34/40) with routable --scratch, human placement 95 \%; gate of 90 \% NOT met (doc 04 \S10)
+\item[\textcolor{fraqua}{$\checkmark$}] R4 exact window solve: closed, not built as an exact model (no CP-SAT); the group re-route stand-in changed no board and was removed (doc 05 \S17, \S20)
+\item[\textcolor{fraqua}{$\checkmark$}] R5 trial ordering: closed, not built (every order of small conflict groups was tried and changed no board, doc 05 \S17, \S20)
+\item[\textcolor{fraqua}{$\checkmark$}] R6 cut proofs: built (route --cut-report); no over-full line on 92 tier B-D boards, tightest line 40 \% used
+\end{itemize}
+\subsection*{M9: Escape planning}
+\addcontentsline{toc}{subsection}{M9: Escape planning}
+\noindent\textbf{Deliverables.} Min-cost-flow escape, layer assignment, NC fallback, escape templates\par\smallskip
+\noindent\textbf{Gate.} BGA boards in the academic set complete\par\smallskip
+\noindent\colorbox{boxfill}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Gate result.} Result: NOT met. 17 dense-package boards: 41 \% clean, 47 \% of the 15 feasible ones (Freerouting 2.5: 24 \%).}}\par\smallskip
+\noindent\textbf{Tasks} (9 of 9 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Escape corridors for dense-package pins (perimeter + dog-bone), opt-in --escape-plan
+\item[\textcolor{fraqua}{$\checkmark$}] Escape feasibility analysis: tracemaker escape, dead pins with reasons and hints; benchmark dead\_pins / clean\_pass\_feasible
+\item[\textcolor{fraqua}{$\checkmark$}] Via neck-down rung (smallest via the board minimums allow)
+\item[\textcolor{fraqua}{$\checkmark$}] Dead pins: not retried after a negotiated neck-down check
+\item[\textcolor{fraqua}{$\checkmark$}] Second-ring channel corridors (built, off: measured mixed)
+\item[\textcolor{fraqua}{$\checkmark$}] Min-cost-flow channel assignment for deep arrays (built, opt-in --escape-flow: measured below the v1 corridors, D49)
+\item[\textcolor{fraqua}{$\checkmark$}] Per-ring layer assignment (per pin, layer by layer, inside --escape-flow; same evidence, D49)
+\item[\textcolor{fraqua}{$\checkmark$}] NC fallback for escapes: closed, not built (the flow planner it belongs to measured below the corridors and is off; ordinary negotiation already overrides corridors; D62)
+\item[\textcolor{fraqua}{$\checkmark$}] Escape templates in the knowledge base: closed, not built (planning takes 0.1-2 s per board; a cache saves nothing; D62)
+\end{itemize}
+\subsection*{M10: Portfolio, determinism, knowledge base}
+\addcontentsline{toc}{subsection}{M10: Portfolio, determinism, knowledge base}
+\noindent\textbf{Deliverables.} Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts\par\smallskip
+\noindent\textbf{Gate.} Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget\par\smallskip
+\noindent\textbf{Tasks} (10 of 10 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Parallel portfolio of 8 router variants, best kept
+\item[\textcolor{fraqua}{$\checkmark$}] Deterministic work budget (byte-identical repeat runs)
+\item[\textcolor{fraqua}{$\checkmark$}] Persistent knowledge base with variant bandit
+\item[\textcolor{fraqua}{$\checkmark$}] Restarts that keep history
+\item[\textcolor{fraqua}{$\checkmark$}] Successive-halving budget allocation (--halving, restart-based): 24 boards at 2 / 4 threads 12,385 / 12,451 routed against 12,402 / 12,508 for the first variants; kept off (D59)
+\item[\textcolor{fraqua}{$\checkmark$}] Bit-identical across thread counts (portfolio selection; --variants, all 8 with --work, D47)
+\item[\textcolor{fraqua}{$\checkmark$}] Portfolio early stop once a variant routes everything (wall-clock mode)
+\item[\textcolor{fraqua}{$\checkmark$}] 2x lattice pitch for two variants on large boards
+\item[\textcolor{fraqua}{$\checkmark$}] Quality benchmark vs Freerouting 2.5.0-RC12 and 1.9.0 on 60 held-out boards (bench/quality\_bench.py)
+\item[\textcolor{fraqua}{$\checkmark$}] Held-out quality benchmark on tier C-like boards (heldC-1) and DAC2020
+\end{itemize}
+\subsection*{M11: KiCad integration}
+\addcontentsline{toc}{subsection}{M11: KiCad integration}
+\noindent\textbf{Deliverables.} IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package\par\smallskip
+\noindent\textbf{Gate.} Round-trip in KiCad on the demo boards\par\smallskip
+\noindent\textbf{Tasks} (8 of 8 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] IPC action plugin: save copy with project, route, add tracks/vias in one commit
+\item[\textcolor{fraqua}{$\checkmark$}] Offline test against kicad-python 0.8
+\item[\textcolor{fraqua}{$\checkmark$}] Round trip in a running KiCad GUI (headless: pcbnew in Docker under Xvfb, scripts/kicad\_gui\_roundtrip.py): tracks 140 -\textgreater{} 316 in the open board, one undo removes them, DRC of the saved board clean of new errors
+\item[\textcolor{fraqua}{$\checkmark$}] Python bindings (pybind11): read\_board, route, emit\_items, drc; GIL released; CLI parity test
+\item[\textcolor{fraqua}{$\checkmark$}] PCM package (scripts/make\_pcm\_package.py, validate\_pcm.py; passes kicad-python 0.8 validator)
+\item[\textcolor{fraqua}{$\checkmark$}] Plugin uses the Python module when importable, binary otherwise
+\item[\textcolor{fraqua}{$\checkmark$}] Install the PCM archive in a running KiCad GUI (Plugin and Content Manager, Install from File: listed as installed and compatible; venv creation and toolbar button not checked, no network in the container)
+\item[\textcolor{fraqua}{$\checkmark$}] Plugin: footprint moves (TRACEMAKER\_PLACE), re-routing of existing unlocked copper (TRACEMAKER\_REROUTE, route --reroute), zone refill (TRACEMAKER\_REFILL); checked in the running GUI
+\end{itemize}
+\subsection*{M12: Advanced rules and arms}
+\addcontentsline{toc}{subsection}{M12: Advanced rules and arms}
+\noindent\textbf{Deliverables.} Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models\par\smallskip
+\noindent\textbf{Gate.} Each feature gated by its own benchmark subset; no regressions\par\smallskip
+\noindent\textbf{Tasks} (12 of 12 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Differential pairs: experimental --diff-pairs (rarely couples)
+\item[\textcolor{fraqua}{$\checkmark$}] Differential pairs: proper coupled routing (v2, opt-in --diff-pairs, D50): coupled pair search with coupled vias, breakout legs, re-coupling, enclosed-pin check, --pair-skew-mm; 18 PCBench boards: 35 of 59 pairs \textgreater{}= 50 \% coupled at the rule gap, completion 2,201 -\textgreater{} 2,210; KiCad: no new error kinds (one more Margin-layer edge clearance on a board that has 27 with pairs off) (doc 05 \S15)
+\item[\textcolor{fraqua}{$\checkmark$}] Differential pairs: twists (layer change with the sides swapped, on with pair routing: one of 59 pairs gains coupling, median share 57 -\textgreater{} 63 \%), per-pair skew limits from component rules; pairs ending on routed copper measured to matter little (13 of 21 such attempts couple) and not built (D64)
+\item[\textcolor{fraqua}{$\checkmark$}] Length and skew tuning (KiCad length constraints)
+\item[\textcolor{fraqua}{$\checkmark$}] Blind/buried vias: experimental --blind-vias
+\item[\textcolor{fraqua}{$\checkmark$}] Micro vias (--micro-vias, off): outer layer to the next at the class's microvia size where a through via is blocked; no fixture allows them on more than two layers; KiCad-clean on two boards with the setting forced on
+\item[\textcolor{fraqua}{$\checkmark$}] Gridless tile-plane arm: closed, not built; a half-pitch portfolio variant for small boards takes its place (12 boards 4,140 -\textgreater{} 4,153 routed at half pitch; tier B 27 -\textgreater{} 28 clean; D63)
+\item[\textcolor{fraqua}{$\checkmark$}] Learned ordering/congestion models: closed, not built (ordering changes measured no effect, tile congestion absent, variant bandit already in the knowledge base; D64)
+\item[\textcolor{fraqua}{$\checkmark$}] Length tuning: custom length rules read; trombone meanders until in range; KiCad-judged test
+\item[\textcolor{fraqua}{$\checkmark$}] Differential pairs: coupled pair routing v1 (experimental, --diff-pairs; rarely succeeds without coupled escapes)
+\item[\textcolor{fraqua}{$\checkmark$}] Skew tuning for differential pairs (custom skew rules, inDiffPair condition)
+\item[\textcolor{fraqua}{$\checkmark$}] Blind/buried vias where through vias are blocked (--blind-vias; correct on the 3 boards that allow them, no measurable gain)
+\end{itemize}
+\subsection*{M13: Component-aware layout rules}
+\addcontentsline{toc}{subsection}{M13: Component-aware layout rules}
+\noindent\textbf{Deliverables.} Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad\_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)\par\smallskip
+\noindent\textbf{Gate.} Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier\par\smallskip
+\noindent\textbf{Tasks} (17 of 17 closed; status: done).
+\begin{itemize}[leftmargin=1.6em,itemsep=1pt]
+\item[\textcolor{fraqua}{$\checkmark$}] Verify the 41 unchecked catalogue numbers against their sources (2026-10-05: 9 confirmed, 9 corrected, 11 TraceMaker defaults now D, 12 unverifiable stay R; doc 15 \S8.10, D46)
+\item[\textcolor{fraqua}{$\checkmark$}] Category detection + role binding with confidence
+\item[\textcolor{fraqua}{$\checkmark$}] Rule compiler: sidecar .kicad\_dru, keep-out areas, placer pseudo-nets
+\item[\textcolor{fraqua}{$\checkmark$}] Rule compiler: net classes from rules, used by the router with --component-rules on (tmk\_\textless{}RULE\textgreater{}\_\textless{}ref\textgreater{}, Default-class nets only, D58; doc 15 \S15)
+\item[\textcolor{fraqua}{$\checkmark$}] Stackup parsing + impedance (IPC-2141A / Wadell) - widths/gaps reported per layer (P4, report only)
+\item[\textcolor{fraqua}{$\checkmark$}] Detection and rule report
+\item[\textcolor{fraqua}{$\checkmark$}] Labelled PCBench subset and benchmark
+\item[\textcolor{fraqua}{$\checkmark$}] Placer pseudo-nets for proximity rules (crystal, ESD, regulator caps, generalised decoupling): --component-rules
+\item[\textcolor{fraqua}{$\checkmark$}] Generated keep-outs (crystal, inductor) for router/DRC + sidecar .kicad\_dru
+\item[\textcolor{fraqua}{$\checkmark$}] Per-net coupled routing for USB 2.0 pairs (RouterOptions::pair\_nets)
+\item[\textcolor{fraqua}{$\checkmark$}] Net classes from rules: impedance width/gap from the stackup, IPC-2221 width for current, minimum widths (one width per net: front-layer solution; per-layer widths not built)
+\item[\textcolor{fraqua}{$\checkmark$}] IPC-2221 width for current reported for rules with a current (USBC-09)
+\item[\textcolor{fraqua}{$\checkmark$}] User override file (--rules-override, JSON): disable / assert / deny / set, validated, reported (doc 15 \S6.3)
+\item[\textcolor{fraqua}{$\checkmark$}] Ethernet magnetics void (ETH-05) as a generated keep-out (--component-rules on)
+\item[\textcolor{fraqua}{$\checkmark$}] Connector edge attraction in the placer (opt-in --edge-attraction, objective only)
+\item[\textcolor{fraqua}{$\checkmark$}] Two-stage soft placement (decaps and their ICs locked first, D43)
+\item[\textcolor{fraqua}{$\checkmark$}] Turn component rules on by default for placement (soft; placed tiers B+C off vs soft: clean pass unchanged, crystals closer, decaps equal; D52). Routing stays off
+\end{itemize}

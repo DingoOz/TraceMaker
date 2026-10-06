@@ -1,0 +1,196 @@
+\subsection*{src/\allowbreak{}crules/\allowbreak{}test\_\allowbreak{}crules.cpp (19 tests, 0.3 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+catalogue: embedded JSON loads with every category and rule & {\footnotesize [crules]} & 0.01 & passed \\
+catalogue: schema errors are reported, not ignored & {\footnotesize [crules]} & 0.00 & passed \\
+names: references, supplies, voltages, capacitances & {\footnotesize [crules]} & 0.00 & passed \\
+detection and role binding on a synthetic board with pin names & {\footnotesize [crules]} & 0.01 & passed \\
+detection is deterministic and independent of footprint order & {\footnotesize [crules]} & 0.02 & passed \\
+boards without pin names: binding by nets and pad numbers, capped confidence & {\footnotesize [crules]} & 0.01 & passed \\
+D25 ties are reproduced and the generalised decoupling is a superset & {\footnotesize [crules]} & 0.00 & passed \\
+evaluation: proximity measured, statuses follow the mode & {\footnotesize [crules]} & 0.01 & passed \\
+placement affinities: each part pulled by one rule, locked parts never & {\footnotesize [crules]} & 0.02 & passed \\
+keep-outs: crystal area on the free layer, tracks only, named; sidecar rule & {\footnotesize [crules]} & 0.01 & passed \\
+USB 2.0 pairs for coupled routing (USB2-02) & {\footnotesize [crules]} & 0.01 & passed \\
+PCBench fixture: detection report is stable and finds the crystal & {\footnotesize [crules][fixture]} & 0.05 & passed \\
+overrides: every form parses, in file order & {\footnotesize [crules][overrides]} & 0.01 & passed \\
+overrides: typos and contradictions are errors with a clear message & {\footnotesize [crules][overrides]} & 0.01 & passed \\
+overrides: disable a rule, a rule on one part, a category & {\footnotesize [crules][overrides]} & 0.02 & passed \\
+overrides: deny and assert change which instances exist & {\footnotesize [crules][overrides]} & 0.01 & passed \\
+overrides: set changes parameters; @REF wins over global, later wins among equals & {\footnotesize [crules][overrides]} & 0.02 & passed \\
+ethernet: discrete magnetics bound and voided on the adjacent layer (ETH-05) & {\footnotesize [crules][ethernet]} & 0.01 & passed \\
+ethernet: four layers, MagJack, through-hole magnetics & {\footnotesize [crules][ethernet]} & 0.01 & passed \\
+\bottomrule\end{longtable}
+\subsection*{src/\allowbreak{}crules/\allowbreak{}test\_\allowbreak{}impedance.cpp (16 tests, 0.1 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+elliptic integral ratio K(k)/K(k') & {\footnotesize [impedance]} & 0.00 & passed \\
+microstrip: Hammerstad \& Jensen against textbook, KiCad and IPC-2141A & {\footnotesize [impedance]} & 0.00 & passed \\
+microstrip: 50 ohm on 1.6 mm FR-4 is about 3 mm wide (doc 15 \S5.3) & {\footnotesize [impedance]} & 0.00 & passed \\
+stripline: Cohn/Wheeler against textbook and KiCad & {\footnotesize [impedance]} & 0.00 & passed \\
+coupled microstrip: Kirschning \& Jansen against KiCad & {\footnotesize [impedance]} & 0.00 & passed \\
+coupled stripline: Cohn 1955 exact and against KiCad & {\footnotesize [impedance]} & 0.00 & passed \\
+grounded coplanar waveguide: exact and against KiCad & {\footnotesize [impedance]} & 0.00 & passed \\
+impedance is monotone where the solver relies on it & {\footnotesize [impedance]} & 0.00 & passed \\
+solving: integer-nm bisection round trips and is deterministic & {\footnotesize [impedance]} & 0.00 & passed \\
+propagation delay & {\footnotesize [impedance]} & 0.00 & passed \\
+IPC-2221 width for current & {\footnotesize [impedance][current]} & 0.00 & passed \\
+stackup geometry: microstrip outside, stripline inside, reference zones & {\footnotesize [impedance][stackup]} & 0.00 & passed \\
+impedance rules: widths per layer with a stackup, never without one & {\footnotesize [impedance][stackup]} & 0.01 & passed \\
+width for current from a rule's current, with the stackup's copper & {\footnotesize [impedance][current]} & 0.01 & passed \\
+KiCad demo stackups parse and give sane geometry & {\footnotesize [impedance][stackup][fixture]} & 0.04 & passed \\
+net classes from rules: computed widths become classes for Default-class nets only & {\footnotesize [impedance][stackup][netclass]} & 0.01 & passed \\
+\bottomrule\end{longtable}
+\subsection*{src/\allowbreak{}place/\allowbreak{}test\_\allowbreak{}place.cpp (28 tests, 30.4 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+rot90 matches KiCad rotation & {\footnotesize [place]} & 0.01 & passed \\
+convex hull & {\footnotesize [place]} & 0.00 & passed \\
+power-like net names & {\footnotesize [place]} & 0.00 & passed \\
+ground-like net names & {\footnotesize [place]} & 0.00 & passed \\
+translated closer() agrees with geom::closer\_than & {\footnotesize [place]} & 0.01 & passed \\
+min-cost flow on a small graph & {\footnotesize [place]} & 0.00 & passed \\
+HPWL lower bound is exact on a chain and bounds random placements & {\footnotesize [place]} & 0.01 & passed \\
+raster fast path is conservative (raster free implies exactly legal) & {\footnotesize [place]} & 0.12 & passed \\
+legalisation removes every overlap & {\footnotesize [place]} & 0.64 & passed \\
+recording a placement never changes it & {\footnotesize [place]} & 3.07 & passed \\
+full pipeline: legal, deterministic, incremental cost exact & {\footnotesize [place]} & 6.95 & passed \\
+rotation descent is monotone & {\footnotesize [place]} & 0.00 & passed \\
+extraction from a KiCad board & {\footnotesize [place][fixture]} & 0.02 & passed \\
+decoupling capacitors are tied to an IC supply pin, objective only & {\footnotesize [place][fixture]} & 0.01 & passed \\
+component-rule proximity pseudo-nets are objective only and skip D25-tied parts & {\footnotesize [place][fixture][crules]} & 0.03 & passed \\
+edge pulls: one-pin anchored nets, exact incremental cost, objective only & {\footnotesize [place][crules]} & 2.94 & passed \\
+edge pulls from component rules: movable connectors only, objective only & {\footnotesize [place][fixture][crules]} & 0.03 & passed \\
+RUDY map: capacity inside the outline, scaling, incremental demand equals the reference & {\footnotesize [place][m8]} & 1.09 & passed \\
+parallel tempering: legal, exact cost, identical for any thread count & {\footnotesize [place][m8]} & 4.59 & passed \\
+LNS never worsens the cost and keeps the placement legal & {\footnotesize [place][m8]} & 1.99 & passed \\
+exact window: branch and bound equals full enumeration and never worsens & {\footnotesize [place][m8]} & 0.83 & passed \\
+ECO: only improving moves, locked parts never move, legal & {\footnotesize [place][m8]} & 0.65 & passed \\
+P5: byte-identical board for 1, 3 and 16 threads (tempering + LNS + RUDY, refine) & {\footnotesize [place][m8][fixture]} & 4.11 & passed \\
+routability loop: never worse than its best seed, locked parts fixed & {\footnotesize [place][m8]} & 1.54 & passed \\
+flip: the placer's mirrored geometry is what the KiCad writer produces & {\footnotesize [place][fixture][flip]} & 0.02 & passed \\
+flip: legal, exact incremental cost with the via term, deterministic, only allowed parts flip & {\footnotesize [place][fixture][flip]} & 1.09 & passed \\
+flip: with no part allowed to flip, --flip changes nothing & {\footnotesize [place][flip]} & 0.62 & passed \\
+flip: swap states exchange absolute poses on either side & {\footnotesize [place][flip]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{src/\allowbreak{}server/\allowbreak{}test\_\allowbreak{}replay.cpp (5 tests, 5.2 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+replay log round-trips plain and zstd & {\footnotesize [replay]} & 0.09 & passed \\
+replay log keeps empty lines, long lines and end\_frame boundaries & {\footnotesize [replay]} & 0.02 & passed \\
+a truncated compressed log yields its complete lines, a corrupt one throws & {\footnotesize [replay]} & 0.08 & passed \\
+heat grid sizing, scaling and message & {\footnotesize [heatmap]} & 0.01 & passed \\
+router heatmaps: emitted with a sink, routing unchanged by it & {\footnotesize [heatmap][route]} & 5.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{src/\allowbreak{}server/\allowbreak{}test\_\allowbreak{}server.cpp (4 tests, 0.4 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+message builders put type first and classify & {\footnotesize [server]} & 0.00 & passed \\
+board snapshot of pic\_programmer has the board's objects & {\footnotesize [server]} & 0.03 & passed \\
+viewer server serves files, streams snapshot then deltas, shuts down & {\footnotesize [server]} & 0.01 & passed \\
+slow clients lose transient messages but not state & {\footnotesize [server]} & 0.33 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}diff\_\allowbreak{}pair.cpp (5 tests, 0.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+pair rule: tightest legal coupling without diff-pair settings & {\footnotesize [diffpair]} & 0.00 & passed \\
+pair rule: net-class diff-pair width and gap, relaxed clearance only for KiCad pairs & {\footnotesize [diffpair]} & 0.00 & passed \\
+pair rule: a custom diff\_pair\_gap rule wins, diff\_pair\_uncoupled limits the legs & {\footnotesize [diffpair]} & 0.01 & passed \\
+pair geometry: offsets are symmetric and miters keep the offset distance & {\footnotesize [diffpair]} & 0.00 & passed \\
+pair measurement: coupled share, gap and skew & {\footnotesize [diffpair]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}escape.cpp (5 tests, 3.1 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+escape plan: perimeter pins fan out, inner balls get one dog-bone site each & {\footnotesize [escape]} & 0.00 & passed \\
+escape analysis: sbc's DRAM balls are blocked only by the solder-mask rule & {\footnotesize [escape][fixture]} & 3.12 & passed \\
+escape flow: a 6 x 6 array escapes on its pad layer within every channel's capacity & {\footnotesize [escape]} & 0.01 & passed \\
+escape flow: without channels between balls, inner rings take dog-bone vias and leave on the next layer & {\footnotesize [escape]} & 0.01 & passed \\
+escape flow: shallow packages are planned exactly as version 1 & {\footnotesize [escape]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}geom.cpp (7 tests, 0.6 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+rotation follows KiCad's convention and is exact for right angles & {\footnotesize [geom]} & 0.00 & passed \\
+segment intersection handles crossing, touching and collinear cases & {\footnotesize [geom]} & 0.00 & passed \\
+exact closer-than agrees with floating-point distance away from the boundary & {\footnotesize [geom]} & 0.01 & passed \\
+shape gaps: round pads, tracks and polygons & {\footnotesize [geom]} & 0.00 & passed \\
+arcs flatten within the error bound & {\footnotesize [geom]} & 0.00 & passed \\
+polygon edge index answers disk tests exactly like closer\_than & {\footnotesize [geom]} & 0.08 & passed \\
+polygon edge index answers shape tests and gaps exactly like the linear reference & {\footnotesize [geom]} & 0.52 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}gpu.cpp (4 tests, 2.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+CPU reference fill is deterministic & {\footnotesize [gpu][cpu-reference]} & 0.00 & passed \\
+GPU Philox fill is bit-identical to the CPU reference on every device & {\footnotesize [gpu][cuda]} & 0.68 & passed \\
+cost-to-go field: CPU reference is the exact shortest-path distance on a small case & {\footnotesize [gpu][field]} & 0.01 & passed \\
+cost-to-go field: GPU equals CPU on random grids & {\footnotesize [gpu][field][cuda]} & 1.30 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}kicad\_\allowbreak{}io.cpp (8 tests, 0.4 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+demo boards round-trip byte for byte & {\footnotesize [kicad][io]} & 0.14 & passed \\
+board reader matches KiCad's own model & {\footnotesize [kicad][io]} & 0.16 & passed \\
+reading an edited document gives the edited board & {\footnotesize [kicad][io]} & 0.03 & passed \\
+stackup: layers, sublayers, permittivity and copper mapping are read; text is untouched & {\footnotesize [kicad][io][stackup]} & 0.00 & passed \\
+stackup: boards without one say so; missing permittivity makes the gap incomplete & {\footnotesize [kicad][io][stackup]} & 0.01 & passed \\
+stackup: KiCad demo with dielectric sublayers round-trips & {\footnotesize [kicad][io][stackup]} & 0.08 & passed \\
+flipping a footprint: KiCad's mirror, layers swapped, the rest byte for byte & {\footnotesize [kicad][io][flip]} & 0.00 & passed \\
+flipping a KiCad 5 module: user copper names, signed arc sweeps & {\footnotesize [kicad][io][flip]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}netlist.cpp (1 tests, 0.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+schematic netlist agrees with the board's pad nets & {\footnotesize [netlist][kicad]} & 0.01 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}rng.cpp (2 tests, 0.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+Philox4x32-10 matches the Random123 known-answer vectors & {\footnotesize [core][rng]} & 0.00 & passed \\
+RNG streams are pure functions of (seed, stage, item, n) & {\footnotesize [core][rng]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}rules.cpp (4 tests, 0.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+lengths with units convert to nanometres & {\footnotesize [rules]} & 0.00 & passed \\
+net-class wildcard patterns & {\footnotesize [rules]} & 0.00 & passed \\
+project net classes, patterns and minimums are read & {\footnotesize [rules]} & 0.01 & passed \\
+classes inherit null values from Default; explicit assignments and custom rules are read & {\footnotesize [rules]} & 0.01 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}sexpr.cpp (7 tests, 0.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+millimetre strings convert to nanometres exactly & {\footnotesize [sexpr]} & 0.01 & passed \\
+documents parse into a navigable tree & {\footnotesize [sexpr]} & 0.01 & passed \\
+unmodified documents write back byte for byte & {\footnotesize [sexpr]} & 0.00 & passed \\
+malformed documents raise ParseError with a line number & {\footnotesize [sexpr]} & 0.01 & passed \\
+edits remove, replace and append with KiCad indentation & {\footnotesize [sexpr]} & 0.00 & passed \\
+append to an inline list moves the closing paren to its own line & {\footnotesize [sexpr]} & 0.00 & passed \\
+replacing the same node twice keeps the last replacement & {\footnotesize [sexpr]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{tests/\allowbreak{}test\_\allowbreak{}units.cpp (1 tests, 0.0 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+millimetre \textless{}-\textgreater{} nanometre conversion is exact for KiCad values & {\footnotesize [core][units]} & 0.00 & passed \\
+\bottomrule\end{longtable}
+\subsection*{integration (tests/\allowbreak{}CMakeLists.txt) (16 tests, 261.6 s)}
+\begin{longtable}{@{}p{0.57\linewidth}p{0.19\linewidth}rl@{}}
+\toprule Test & Tags / labels & Time (s) & Result \\ \midrule \endhead
+kicad\_\allowbreak{}edit\_\allowbreak{}roundtrip\newline{\footnotesize\color{ink2} Boards edited by TraceMaker (tracks and vias added, footprints moved and rotated) are read back by pcbnew in Docker; geometry must equal TraceMaker's own reading. Time limit 600 s.} & {\footnotesize kicad;integration} & 4.06 & passed \\
+kicad\_\allowbreak{}drc\_\allowbreak{}parity\newline{\footnotesize\color{ink2} TraceMaker's DRC against \texttt{kicad-cli pcb drc} on 14 KiCad demo boards: the same violations, type by type (15 routing-relevant types). Time limit 1200 s.} & {\footnotesize kicad;integration} & 9.56 & passed \\
+kicad\_\allowbreak{}drc\_\allowbreak{}broken\_\allowbreak{}parity\newline{\footnotesize\color{ink2} 264 boards with injected defects (11 demo boards, 12 defect kinds, 2 seeds): TraceMaker's DRC must match KiCad violation by violation. Time limit 1800 s.} & {\footnotesize kicad;integration} & 35.91 & passed \\
+drc\_\allowbreak{}zone\_\allowbreak{}index\newline{\footnotesize\color{ink2} DRC reports through the zone-fill edge index are byte-identical to the linear reference path (\texttt{drc -{}-linear-zones}) on four zone boards. Time limit 1800 s.} & {\footnotesize integration} & 21.69 & passed \\
+global\_\allowbreak{}route\newline{\footnotesize\color{ink2} \texttt{route -{}-global} and \texttt{-{}-global-congestion} are repeatable byte for byte at a fixed work budget and stay within 5 connections of routing without them. Time limit 1800 s.} & {\footnotesize integration;route} & 15.98 & passed \\
+record\_\allowbreak{}replay\newline{\footnotesize\color{ink2} A board routed plainly, with \texttt{-{}-record} and with \texttt{-{}-view} is byte-identical; replaying the recorded log reproduces the routed board. Time limit 600 s.} & {\footnotesize integration} & 12.11 & passed \\
+python\_\allowbreak{}bindings\newline{\footnotesize\color{ink2} The Python module reads, routes, checks and emits items; \texttt{route} gives the same bytes as the CLI. Time limit 600 s.} & {\footnotesize python;integration} & 12.20 & passed \\
+pcm\_\allowbreak{}package\newline{\footnotesize\color{ink2} Builds the KiCad PCM archive and validates its layout and metadata (also with kicad-python's validator). Time limit 120 s.} & {\footnotesize kicad} & 0.18 & passed \\
+length\_\allowbreak{}tuning\newline{\footnotesize\color{ink2} A net with a custom \texttt{length} rule is meandered into range; KiCad's DRC judges the result. Time limit 600 s.} & {\footnotesize kicad;integration} & 3.40 & passed \\
+crules\_\allowbreak{}catalogue\_\allowbreak{}sync\newline{\footnotesize\color{ink2} The committed rule catalogue JSON equals \texttt{docs/component\_rules.yaml} and the rule ids used in doc 15. Time limit 60 s.} & {\footnotesize crules} & 0.36 & passed \\
+crules\_\allowbreak{}route\newline{\footnotesize\color{ink2} Routing with \texttt{-{}-component-rules on}: no new track enters a generated keep-out, the keep-outs are not written into the board, the sidecar \texttt{.kicad\_dru} is written. Time limit 600 s.} & {\footnotesize crules;integration} & 6.64 & passed \\
+crules\_\allowbreak{}dru\_\allowbreak{}parses\newline{\footnotesize\color{ink2} KiCad itself parses the generated sidecar \texttt{.kicad\_dru} without errors. Time limit 900 s.} & {\footnotesize kicad;integration} & 5.02 & passed \\
+crules\_\allowbreak{}two\_\allowbreak{}stage\newline{\footnotesize\color{ink2} Two-stage placement with component rules: the result is legal, and parts locked after stage 1 are where the decoupling-only placement put them. Time limit 3600 s.} & {\footnotesize integration} & 64.96 & passed \\
+reach\_\allowbreak{}verify\newline{\footnotesize\color{ink2} Every ''unreachable'' verdict of the flood-fill pre-check is re-checked by the full A*: zero mismatches. Time limit 600 s.} & {\footnotesize route;integration} & 12.64 & passed \\
+thread\_\allowbreak{}determinism\newline{\footnotesize\color{ink2} The same \texttt{-{}-work} portfolio at 1, 3 and 8 threads (and with fewer variants) writes identical bytes. Time limit 3600 s.} & {\footnotesize route;integration} & 29.77 & passed \\
+diff\_\allowbreak{}pair\newline{\footnotesize\color{ink2} A USB hub's five differential pairs are routed coupled at the rule's gap, twice with identical bytes, and KiCad's DRC is clean. Time limit 3600 s.} & {\footnotesize route;kicad;integration} & 27.13 & passed \\
+\bottomrule\end{longtable}
