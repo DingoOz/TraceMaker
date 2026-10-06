@@ -18,7 +18,19 @@ class PolygonIndex {
   // (clearance + r > 0).
   bool disk_closer(Point c, Coord r, Coord clearance) const;
 
+  // Any shape against the polygon. shape_closer(s, clearance) equals closer_than(s, Shape::polygon(pts, 0),
+  // clearance); shape_gap(s, bound) equals gap(s, Shape::polygon(pts, 0)) when the two cores are closer than
+  // `bound` (the caller knows that from shape_closer). Both visit only the polygon edges near the shape; the
+  // linear functions are the reference path (tests/test_geom.cpp).
+  bool shape_closer(const Shape& s, Coord clearance) const;
+  double shape_gap(const Shape& s, Coord bound) const;
+
  private:
+  bool inside(Point c) const;  // crossing parity; a point on the boundary may count either way
+  // Calls f(p, q, a, b) for every core edge pq of s and every polygon edge ab in a cell within `reach` of pq
+  // (an edge may come up more than once); stops and returns true when f does.
+  template <class F>
+  bool near_edges(const Shape& s, Coord reach, F&& f) const;
   int cell_x(Coord x) const;
   int cell_y(Coord y) const;
 

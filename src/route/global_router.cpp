@@ -2,6 +2,7 @@
 #include "route/global_router.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <limits>
 #include <queue>
@@ -15,7 +16,7 @@ struct Graph {
   int nx = 0, ny = 0, nl = 0;
   // Horizontal edges (tx,ty)-(tx+1,ty) and vertical edges (tx,ty)-(tx,ty+1) per layer.
   std::vector<int> cap_h, cap_v, use_h, use_v;
-  std::vector<double> hist_h, hist_v;
+  std::vector<std::int64_t> hist_h, hist_v;
   std::size_t X() const { return static_cast<std::size_t>(nx); }
   std::size_t Y() const { return static_cast<std::size_t>(ny); }
   static std::size_t z(int v) { return static_cast<std::size_t>(v); }
@@ -24,14 +25,15 @@ struct Graph {
   std::size_t node(int l, int x, int y) const { return (z(l) * Y() + z(y)) * X() + z(x); }
 };
 
-// One step of a path: from node to node, through a horizontal (0) / vertical (1) edge or a via (2).
-struct Step { int kind; std::size_t edge; };
+constexpr std::int64_t kUnit = 256;  // cost of one tile step
+std::size_t z2(const Graph& g, int x, int y) { return static_cast<std::size_t>(y) * g.X() + static_cast<std::size_t>(x); }
 
 }  // namespace
 
 GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int layers, const std::vector<GlobalNet>& nets,
                           const GlobalOptions& opt) {
   GlobalResult res;
+  const auto t_start = std::chrono::steady_clock::now();
   const Coord pitch = std::max<Coord>(opt.pitch, 100'000);
   const Coord tile = opt.tile > 0 ? opt.tile : std::clamp<Coord>(8 * pitch, 1'500'000, 5'000'000);
   res.tile = tile;
@@ -47,8 +49,8 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
   g.cap_v.assign(static_cast<std::size_t>(layers) * (g.Y() - 1) * g.X(), 0);
   g.use_h.assign(g.cap_h.size(), 0);
   g.use_v.assign(g.cap_v.size(), 0);
-  g.hist_h.assign(g.cap_h.size(), 0.0);
-  g.hist_v.assign(g.cap_v.size(), 0.0);
+  g.hist_h.assign(g.cap_h.size(), 0);
+  g.hist_v.assign(g.cap_v.size(), 0);
 
   // Capacities: tracks that fit across the narrowest of eight cut lines between the two tile centres. A cut is
   // sampled at quarter-pitch steps; a free run of n samples holds 1 + (n - 1) * step / pitch tracks, so gaps
@@ -87,37 +89,96 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
         }
       }
 
+  // Via capacity: free through-via sites on a grid of via pitches inside the tile (fixed copper only).
+  std::vector<int> via_cap(g.X() * g.Y(), std::numeric_limits<int>::max()), via_use(g.X() * g.Y(), 0);
+  std::vector<std::int64_t> via_hist(g.X() * g.Y(), 0);
+  // At most 8 x 8 sites a tile: boards without via rules (old formats) would otherwise give a pitch of microns.
+  const Coord vp = std::max({opt.via_pitch, tile / 8, Coord{300'000}});
+  if (opt.via_diameter > 0 && opt.via_pitch > 0)
+    for (int y = 0; y < g.ny; ++y)
+      for (int x = 0; x < g.nx; ++x) {
+        int sites = 0;
+        for (Coord vy = vp / 2; vy < tile; vy += vp)
+          for (Coord vx = vp / 2; vx < tile; vx += vp)
+            sites += obs.fixed_via_code({bounds.x0 + x * tile + vx, bounds.y0 + y * tile + vy}, opt.via_diameter, opt.via_drill, 0, 0) == Obstacles::kFree;
+        via_cap[z2(g, x, y)] = sites;
+      }
+  const auto t_cap = std::chrono::steady_clock::now();
+  res.seconds_capacity = std::chrono::duration<double>(t_cap - t_start).count();
+
   auto tx_of = [&](Coord x) { return std::clamp(static_cast<int>((x - bounds.x0) / tile), 0, g.nx - 1); };
   auto ty_of = [&](Coord y) { return std::clamp(static_cast<int>((y - bounds.y0) / tile), 0, g.ny - 1); };
-  const double via_cost = opt.via_cost_tiles;
-  double pres = 1.0;  // present-congestion weight, grows each round
-  auto edge_cost = [&](int cap, int use, double hist) {
-    double c = 1.0 + hist;
-    if (use + 1 > cap) c += pres * (use + 1 - cap) * 4.0;
+  // Integer costs (rule 2): kUnit per tile step.
+  const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_tiles * static_cast<double>(kUnit));
+  std::int64_t pres = kUnit;  // present-congestion weight, grows each round
+  // Nets on each edge: (net, connections of it using the edge). Demand = distinct nets.
+  std::vector<std::vector<std::pair<int, int>>> on_h(g.cap_h.size()), on_v(g.cap_v.size());
+  auto holds = [](const std::vector<std::pair<int, int>>& on, int net) {
+    if (net <= 0) return false;
+    for (const auto& [n, c] : on)
+      if (n == net) return true;
+    return false;
+  };
+  auto edge_cost = [&](int cap, int use, std::int64_t hist, bool own) {
+    if (own) return kUnit;  // the net's own trunk: no new demand
+    std::int64_t c = kUnit + hist;
+    if (use + 1 > cap) c += pres * (use + 1 - cap) * 4;
     return c;
   };
 
-  std::vector<std::vector<Step>> paths(nets.size());
-  std::vector<std::size_t> start_node(nets.size(), 0);
+  // A path is its node sequence, start to goal.
+  std::vector<std::vector<std::size_t>> paths(nets.size());
+  const std::size_t plane = g.X() * g.Y();
+  auto step_edge = [&](std::size_t u, std::size_t v, int& kind) -> std::size_t {
+    const int lu = static_cast<int>(u / plane), lv = static_cast<int>(v / plane);
+    const int xu = static_cast<int>(u % g.X()), yu = static_cast<int>((u / g.X()) % g.Y());
+    const int xv = static_cast<int>(v % g.X()), yv = static_cast<int>((v / g.X()) % g.Y());
+    if (lu != lv) { kind = 2; return z2(g, xu, yu); }
+    if (yu == yv) { kind = 0; return g.hi(lu, std::min(xu, xv), yu); }
+    kind = 1;
+    return g.vi(lu, xu, std::min(yu, yv));
+  };
   auto apply = [&](std::size_t k, int d) {
-    for (const auto& s : paths[k]) {
-      if (s.kind == 0) g.use_h[s.edge] += d;
-      else if (s.kind == 1) g.use_v[s.edge] += d;
+    const int net = nets[k].net;
+    for (std::size_t i = 0; i + 1 < paths[k].size(); ++i) {
+      int kind = 0;
+      const std::size_t e = step_edge(paths[k][i], paths[k][i + 1], kind);
+      if (kind == 2) {
+        via_use[e] += d;
+        continue;
+      }
+      auto& on = (kind == 0 ? on_h : on_v)[e];
+      auto& use = (kind == 0 ? g.use_h : g.use_v)[e];
+      // Net 0 shares with nothing: adding always makes a new entry, removing takes any one of its entries.
+      auto it = std::find_if(on.begin(), on.end(), [&](const auto& pr) { return pr.first == net && (net > 0 || d < 0); });
+      if (it == on.end()) {
+        on.emplace_back(net, 1);  // d is +1 here: a path is never removed before it was added
+        ++use;
+      } else if ((it->second += d) == 0) {
+        on.erase(it);
+        --use;
+      }
     }
   };
-  const std::size_t nn = static_cast<std::size_t>(layers) * g.X() * g.Y();
-  std::vector<double> dist(nn);
-  std::vector<std::int64_t> from(nn);
-  std::vector<int> from_kind(nn);
-  std::vector<std::size_t> from_edge(nn);
+  auto over = [&](std::size_t k) {
+    for (std::size_t i = 0; i + 1 < paths[k].size(); ++i) {
+      int kind = 0;
+      const std::size_t e = step_edge(paths[k][i], paths[k][i + 1], kind);
+      if (kind == 0 ? g.use_h[e] > g.cap_h[e] : kind == 1 ? g.use_v[e] > g.cap_v[e] : via_use[e] > via_cap[e]) return true;
+    }
+    return false;
+  };
+  const std::size_t nn = static_cast<std::size_t>(layers) * plane;
+  constexpr std::int64_t kInf = std::numeric_limits<std::int64_t>::max();
+  std::vector<std::int64_t> dist(nn), from(nn);
   auto route_one = [&](std::size_t k) {
     const auto& n = nets[k];
     const int ax = tx_of(n.a.x), ay = ty_of(n.a.y), bx = tx_of(n.b.x), by = ty_of(n.b.y);
-    std::fill(dist.begin(), dist.end(), std::numeric_limits<double>::infinity());
+    std::fill(dist.begin(), dist.end(), kInf);
     std::fill(from.begin(), from.end(), -1);
-    using QE = std::pair<double, std::size_t>;
+    using QE = std::pair<std::int64_t, std::size_t>;  // (f, node): ties resolve by node index, deterministically
     std::priority_queue<QE, std::vector<QE>, std::greater<>> pq;
-    auto h = [&](int x, int y) { return static_cast<double>(std::abs(x - bx) + std::abs(y - by)); };
+    auto h = [&](int x, int y) { return static_cast<std::int64_t>(std::abs(x - bx) + std::abs(y - by)) * kUnit; };
     for (int l = 0; l < layers; ++l)
       if (n.layers_a & model::layer_bit(l)) {
         const std::size_t s = g.node(l, ax, ay);
@@ -128,35 +189,37 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
     while (!pq.empty()) {
       const auto [f, u] = pq.top();
       pq.pop();
-      const int l = static_cast<int>(u / (g.X() * g.Y()));
+      const int l = static_cast<int>(u / plane);
       const int y = static_cast<int>((u / g.X()) % g.Y()), x = static_cast<int>(u % g.X());
-      if (f - h(x, y) > dist[u] + 1e-9) continue;
+      if (f - h(x, y) > dist[u]) continue;
       if (x == bx && y == by && (n.layers_b & model::layer_bit(l))) {
         goal = u;
         break;
       }
-      auto relax = [&](std::size_t v, double c, int kind, std::size_t edge, int vx, int vy) {
-        const double nd = dist[u] + c;
+      auto relax = [&](std::size_t v, std::int64_t c, int vx, int vy) {
+        const std::int64_t nd = dist[u] + c;
         if (nd < dist[v]) {
           dist[v] = nd;
           from[v] = static_cast<std::int64_t>(u);
-          from_kind[v] = kind;
-          from_edge[v] = edge;
           pq.emplace(nd + h(vx, vy), v);
         }
       };
-      if (x + 1 < g.nx) { const auto e = g.hi(l, x, y); relax(g.node(l, x + 1, y), edge_cost(g.cap_h[e], g.use_h[e], g.hist_h[e]), 0, e, x + 1, y); }
-      if (x > 0) { const auto e = g.hi(l, x - 1, y); relax(g.node(l, x - 1, y), edge_cost(g.cap_h[e], g.use_h[e], g.hist_h[e]), 0, e, x - 1, y); }
-      if (y + 1 < g.ny) { const auto e = g.vi(l, x, y); relax(g.node(l, x, y + 1), edge_cost(g.cap_v[e], g.use_v[e], g.hist_v[e]), 1, e, x, y + 1); }
-      if (y > 0) { const auto e = g.vi(l, x, y - 1); relax(g.node(l, x, y - 1), edge_cost(g.cap_v[e], g.use_v[e], g.hist_v[e]), 1, e, x, y - 1); }
+      auto horiz = [&](std::size_t e, int vx) { relax(g.node(l, vx, y), edge_cost(g.cap_h[e], g.use_h[e], g.hist_h[e], holds(on_h[e], n.net)), vx, y); };
+      auto vert = [&](std::size_t e, int vy) { relax(g.node(l, x, vy), edge_cost(g.cap_v[e], g.use_v[e], g.hist_v[e], holds(on_v[e], n.net)), x, vy); };
+      if (x + 1 < g.nx) horiz(g.hi(l, x, y), x + 1);
+      if (x > 0) horiz(g.hi(l, x - 1, y), x - 1);
+      if (y + 1 < g.ny) vert(g.vi(l, x, y), y + 1);
+      if (y > 0) vert(g.vi(l, x, y - 1), y - 1);
+      const std::size_t t = z2(g, x, y);
+      std::int64_t vc = via_hist[t];
+      if (via_use[t] + 1 > via_cap[t]) vc += pres * (via_use[t] + 1 - via_cap[t]) * 4;
       for (int l2 = 0; l2 < layers; ++l2)
-        if (l2 != l) relax(g.node(l2, x, y), via_cost * std::abs(l2 - l), 2, 0, x, y);
+        if (l2 != l) relax(g.node(l2, x, y), via_cost * std::abs(l2 - l) + vc, x, y);
     }
     paths[k].clear();
     if (goal == SIZE_MAX) return;
-    for (std::size_t v = goal; from[v] >= 0; v = static_cast<std::size_t>(from[v])) paths[k].push_back({from_kind[v], from_edge[v]});
-    start_node[k] = goal;
-    // Keep the node sequence too, for corridors: rebuild by walking again.
+    for (std::int64_t v = static_cast<std::int64_t>(goal); v >= 0; v = from[static_cast<std::size_t>(v)]) paths[k].push_back(static_cast<std::size_t>(v));
+    std::reverse(paths[k].begin(), paths[k].end());
   };
 
   // First pass, shortest connections first (deterministic order).
@@ -168,19 +231,18 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
     route_one(k);
     apply(k, +1);
   }
-  // Negotiation: rip up connections that use an overflowed edge, raise history there, re-route.
+  // Negotiation: rip up connections that use an overflowed edge or via tile, raise history there, re-route.
   for (int it = 0; it < opt.iterations; ++it) {
     for (std::size_t e = 0; e < g.use_h.size(); ++e)
-      if (g.use_h[e] > g.cap_h[e]) g.hist_h[e] += 0.5 * (g.use_h[e] - g.cap_h[e]);
+      if (g.use_h[e] > g.cap_h[e]) g.hist_h[e] += kUnit / 2 * (g.use_h[e] - g.cap_h[e]);
     for (std::size_t e = 0; e < g.use_v.size(); ++e)
-      if (g.use_v[e] > g.cap_v[e]) g.hist_v[e] += 0.5 * (g.use_v[e] - g.cap_v[e]);
-    pres *= 1.6;
+      if (g.use_v[e] > g.cap_v[e]) g.hist_v[e] += kUnit / 2 * (g.use_v[e] - g.cap_v[e]);
+    for (std::size_t t = 0; t < via_use.size(); ++t)
+      if (via_use[t] > via_cap[t]) via_hist[t] += kUnit / 2 * (via_use[t] - via_cap[t]);
+    pres = pres * 8 / 5;
     bool any = false;
     for (std::size_t k : order) {
-      bool over = false;
-      for (const auto& s : paths[k])
-        if ((s.kind == 0 && g.use_h[s.edge] > g.cap_h[s.edge]) || (s.kind == 1 && g.use_v[s.edge] > g.cap_v[s.edge])) over = true;
-      if (!over) continue;
+      if (!over(k)) continue;
       any = true;
       apply(k, -1);
       route_one(k);
@@ -192,6 +254,7 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
     if (g.use_h[e] > g.cap_h[e]) { ++res.overflow_edges; res.total_overflow += g.use_h[e] - g.cap_h[e]; }
   for (std::size_t e = 0; e < g.use_v.size(); ++e)
     if (g.use_v[e] > g.cap_v[e]) { ++res.overflow_edges; res.total_overflow += g.use_v[e] - g.cap_v[e]; }
+  for (std::size_t t = 0; t < via_use.size(); ++t) res.overflow_via_tiles += via_use[t] > via_cap[t];
 
   // Congestion map: demand over capacity on the four boundaries of each tile (integers, so every platform agrees).
   res.util.assign(nn, 0);
@@ -207,8 +270,8 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
         res.util[g.node(l, x, y)] = static_cast<std::uint8_t>(std::min<long>(255, use * 8 / std::max<long>(1, cap)));
       }
 
-  // Corridors: walk each path's nodes (re-derived from the edges, starting at the goal node), mark tiles, widen
-  // by one tile on the same layer. Both end tiles are marked on all of their pad's layers.
+  // Corridors: each path's tiles on the layers it uses, widened by one tile. Both end tiles are marked on all
+  // of their pad's layers. A via marks its tile on the two layers it joins only (no via columns).
   res.corridor.resize(nets.size());
   res.corridor_box.assign(nets.size(), {0, 0, g.nx - 1, g.ny - 1});
   res.vias.assign(nets.size(), 0);
@@ -231,39 +294,10 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
       std::fill(c.begin(), c.end(), 1);
       continue;
     }
-    // Walk back from the goal: undo each step to recover the node sequence.
-    std::size_t u = start_node[k];
-    int l = static_cast<int>(u / (g.X() * g.Y()));
-    int y = static_cast<int>((u / g.X()) % g.Y()), x = static_cast<int>(u % g.X());
-    mark(l, x, y);
-    for (const auto& s : paths[k]) {  // steps are stored goal -> start
-      if (s.kind == 2) {
-        ++res.vias[k];
-        // The previous layer is the one whose via leads here; find it from the path's next marks: mark the tile on
-        // every layer (a via column) — corridors only guide, so this is safe.
-        for (int ll = 0; ll < layers; ++ll) mark(ll, x, y);
-        continue;
-      }
-      // Horizontal edge index -> its two tiles; we are at one of them.
-      int x0, y0, x1, y1, le;
-      if (s.kind == 0) {
-        le = static_cast<int>(s.edge / (g.Y() * (g.X() - 1)));
-        const std::size_t r = s.edge % (g.Y() * (g.X() - 1));
-        y0 = y1 = static_cast<int>(r / (g.X() - 1));
-        x0 = static_cast<int>(r % (g.X() - 1));
-        x1 = x0 + 1;
-      } else {
-        le = static_cast<int>(s.edge / ((g.Y() - 1) * g.X()));
-        const std::size_t r = s.edge % ((g.Y() - 1) * g.X());
-        y0 = static_cast<int>(r / g.X());
-        x0 = x1 = static_cast<int>(r % g.X());
-        y1 = y0 + 1;
-      }
-      l = le;
-      if (x == x0 && y == y0) { x = x1; y = y1; }
-      else { x = x0; y = y0; }
-      mark(l, x0, y0);
-      mark(l, x1, y1);
+    for (std::size_t i = 0; i < paths[k].size(); ++i) {
+      const std::size_t u = paths[k][i];
+      mark(static_cast<int>(u / plane), static_cast<int>(u % g.X()), static_cast<int>((u / g.X()) % g.Y()));
+      if (i > 0 && u / plane != paths[k][i - 1] / plane) ++res.vias[k];
     }
   }
   for (std::size_t k = 0; k < nets.size(); ++k) {
@@ -275,6 +309,7 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
           if (c[g.node(l, x, y)]) bx = {std::min(bx[0], x), std::min(bx[1], y), std::max(bx[2], x), std::max(bx[3], y)};
     if (bx[2] >= 0) res.corridor_box[k] = bx;
   }
+  res.seconds_route = std::chrono::duration<double>(std::chrono::steady_clock::now() - t_cap).count();
   return res;
 }
 

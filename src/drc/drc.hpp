@@ -29,6 +29,7 @@ struct DrcOptions {
   Coord epsilon = 500;        // KiCad's DRC epsilon (0.0005 mm): gaps below required - epsilon are violations
   bool dangling = true;       // report dangling tracks and vias (warnings)
   bool propagate_nets = true; // check with the nets KiCad assigns on load (drc/connectivity.hpp propagate_nets)
+  bool linear_zone_tests = false;  // reference path: test items against every edge of a zone fill (no edge index)
 };
 
 struct DrcReport {

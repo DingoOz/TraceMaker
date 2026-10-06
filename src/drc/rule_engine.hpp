@@ -2,6 +2,9 @@
 #pragma once
 // Resolves KiCad constraints for pairs of copper items (design doc 03 §6): net-class clearances, local pad
 // overrides, board minimums and custom .kicad_dru rules with their conditions.
+#include <tuple>
+#include <mutex>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -67,6 +70,10 @@ class RuleEngine {
   Coord max_clearance_ = 0;
   std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
   std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
+  // Area functions (insideArea, intersectsArea, enclosedByArea) of a zone fill, by (condition node, zone, fill):
+  // a fill has tens of thousands of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).
+  mutable std::map<std::tuple<const void*, int, int>, bool> area_cache_;
+  mutable std::mutex area_mutex_;
   bool any_custom_clearance_ = false;
   bool zone_overrides_ = false;
   friend class Condition;

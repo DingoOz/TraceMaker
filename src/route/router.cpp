@@ -287,6 +287,7 @@ struct Router::Impl {
     const bool by_gap = opt.plan_gap && !opt.diff_pairs && opt.pair_nets.empty();
     for (auto& [net, cl] : net_clusters) {
       if (!opt.only_net.empty() && b.nets[static_cast<std::size_t>(net)].name != opt.only_net) continue;
+      if (std::find(opt.skip_nets.begin(), opt.skip_nets.end(), b.nets[static_cast<std::size_t>(net)].name) != opt.skip_nets.end()) continue;
       std::vector<Cluster> groups;
       for (auto& [r, c] : cl)
         if (!c.pads.empty()) groups.push_back(c);  // zone-only clusters (unused fills) are not targets on their own
@@ -2697,6 +2698,7 @@ struct Router::Impl {
           g.layers_b = g.layers_a;
         }
         g.half_width = class_width(c.net) / 2;
+        g.net = static_cast<int>(c.net);
         gn.push_back(g);
       }
       GlobalOptions go;
@@ -2704,13 +2706,23 @@ struct Router::Impl {
       for (const auto& cl : rules.classes) wc = std::min(wc, std::max(cl.track_width, rules.minimums.track_width) + std::max(cl.clearance, rules.minimums.clearance));
       go.pitch = wc;
       go.via_cost_tiles = 2.0;
+      go.via_diameter = go.via_drill = 1'000'000'000;  // the smallest class via: capacity is what could fit
+      Coord vclear = 1'000'000'000;
+      for (const auto& cl : rules.classes) {
+        const Coord drill = std::max(cl.via_drill, rules.minimums.through_hole_diameter);
+        const Coord d = std::max({cl.via_diameter, rules.minimums.via_diameter, drill + 2 * rules.minimums.via_annular_width});
+        if (d < go.via_diameter) go.via_diameter = d, go.via_drill = drill;
+        vclear = std::min(vclear, std::max(cl.clearance, rules.minimums.clearance));
+      }
+      go.via_pitch = go.via_diameter + vclear;
       global = global_route(*obs, geom::Box{lat.x0, lat.y0, lat.x1, lat.y1}, nl, gn, go);
       const char* cp = std::getenv("TM_CORRIDOR_PEN");  // experiment knob (pitches per step)
       corridor_pen = static_cast<Coord>((cp ? std::atof(cp) : 2.0) * static_cast<double>(pitch));
       if (opt.global_congestion) cong_pen = std::max<Coord>(1, static_cast<Coord>(opt.global_congestion_pen * static_cast<double>(pitch)));
       if (tdbg)
-        std::fprintf(stderr, "[%.2f s] global routing: %d x %d x %d tiles of %.2f mm, %d overflowed edges\n", elapsed(), global.tiles_x, global.tiles_y,
-                     global.layers, nm_to_mm(global.tile), global.overflow_edges);
+        std::fprintf(stderr, "[%.2f s] global routing: %d x %d x %d tiles of %.2f mm, %d overflowed edges, %d overflowed via tiles; set-up %.3f s, routing %.3f s\n",
+                     elapsed(), global.tiles_x, global.tiles_y, global.layers, nm_to_mm(global.tile), global.overflow_edges, global.overflow_via_tiles,
+                     global.seconds_capacity, global.seconds_route);
       if (tdbg) {
         std::array<long, 5> hist{};  // tiles by utilisation: < 4, 4-5, 6-7, 8-11, >= 12 eighths
         for (const auto u : global.util) ++hist[u < 4 ? 0 : u < 6 ? 1 : u < 8 ? 2 : u < 12 ? 3 : 4];

@@ -16,6 +16,10 @@ add_test(NAME kicad_drc_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/d
 set_tests_properties(kicad_drc_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1200)
 add_test(NAME kicad_drc_broken_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_broken_parity.sh)
 set_tests_properties(kicad_drc_broken_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1800)
+add_test(NAME drc_zone_index COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_zone_index.sh $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/drc_zone_index)
+set_tests_properties(drc_zone_index PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
+add_test(NAME global_route COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/global_route.sh $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/global_route)
+set_tests_properties(global_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration;route" TIMEOUT 600)
 add_test(NAME record_replay COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/record_replay.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/replay)
 set_tests_properties(record_replay PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
 

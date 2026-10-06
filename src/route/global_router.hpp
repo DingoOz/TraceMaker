@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
-// Global routing on a coarse 3-D tile graph (design doc 05 §4, roadmap M6; CPU reference path).
+// Global routing on a coarse 3-D tile graph (design doc 05 §4 and §19, roadmap M6; CPU, the only path: §19 shows
+// why there is no GPU version).
 //
 // The board is cut into square tiles about eight track pitches wide. Each tile edge on each copper layer gets a
-// capacity: how many tracks fit through the free part of the shared boundary, measured with the exact obstacle
-// model. Every two-pin connection is routed on the tile graph with A* (length + via cost + congestion), then
-// negotiated congestion (PathFinder: McMurchie and Ebeling, FPGA 1995) rips up connections on overflowed edges and
-// re-routes them with growing history costs. The result is a corridor per connection: the tiles of its path on
-// each layer, widened by one tile, which the detailed router uses as soft guidance.
+// capacity: how many tracks fit across the narrowest cut between the two tile centres, measured with the exact
+// obstacle model; each tile gets a via capacity (free via sites). Every two-pin connection is routed on the tile
+// graph with A* (length + via cost + congestion), then negotiated congestion (PathFinder: McMurchie and Ebeling,
+// FPGA 1995) rips up connections on overflowed edges or via tiles and re-routes them with growing history costs.
+// Connections of one net share edges: an edge carries a net once however many of its connections use it, and a
+// connection pays no congestion on an edge its net already holds, so a net's connections merge into a tree with
+// shared trunks (the demand side of a Steiner topology). All costs are integers. The result is a corridor per
+// connection: the tiles of its path on the layers it uses, widened by one tile, which the detailed router uses as
+// soft guidance.
 #include <array>
 #include <cstdint>
 #include <vector>
@@ -24,6 +29,7 @@ struct GlobalNet {             // one two-pin connection
   geom::Point a, b;
   model::LayerMask layers_a = 0, layers_b = 0;  // copper layers each end can start on
   Coord half_width = 0;
+  int net = 0;                 // connections with the same net (> 0) share edges; 0 = shares with nothing
 };
 
 struct GlobalOptions {
@@ -31,6 +37,8 @@ struct GlobalOptions {
   Coord pitch = 0;             // track pitch (width + clearance) used for capacities
   double via_cost_tiles = 2.0; // cost of a via, in tile lengths
   int iterations = 8;          // negotiation rounds after the first pass
+  Coord via_diameter = 0, via_drill = 0;  // via used for the via capacity of a tile; 0 = no via capacity
+  Coord via_pitch = 0;         // spacing of the via sites sampled in a tile (via diameter + clearance)
 };
 
 struct GlobalResult {
@@ -47,6 +55,8 @@ struct GlobalResult {
   std::vector<std::uint8_t> util;
   int overflow_edges = 0;      // edges still over capacity after negotiation
   long total_overflow = 0;
+  int overflow_via_tiles = 0;  // tiles with more planned vias than free via sites
+  double seconds_capacity = 0, seconds_route = 0;  // set-up (obstacle sampling) and routing + negotiation
   int tile_of_x(Coord x) const { return static_cast<int>((x - origin.x) / tile); }
   int tile_of_y(Coord y) const { return static_cast<int>((y - origin.y) / tile); }
 };

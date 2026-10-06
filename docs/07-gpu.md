@@ -93,4 +93,6 @@ as the quality path.
 |---|---|---|
 | Cost-to-go fields (router A* heuristic) | **Done**: `src/gpu/field_cuda.cu` + CPU reference `field_cpu.cpp` | GAMER-style line sweeps (rows, columns, both diagonals, both directions) + via relaxation to a fixpoint; one thread per line; `cudaStreamPerThread` so the 8 portfolio routers share the two GPUs. Exact equality with the CPU reference tested on random grids on the P100 and V100; routed boards byte-identical with `--no-gpu`. Used for windows ≥ 60k lattice points; GPU ~2x faster than the CPU field. Gain on routing is modest today because routed copper and soft costs (not in the field) dominate the remaining search effort |
 | Philox RNG fill | Done (toolchain test) | |
-| Placement density / annealing, DRC broad-phase, global maze routing | Not started | Profiling shows the A* loop itself (74%) is the router's bottleneck, not obstacle evaluation |
+| Placement density / annealing | Not started | |
+| DRC broad-phase | Not built (D55) | The broad-phase (uniform grid) takes 14 ms on the largest board; the DRC's time was in exact tests against zone fills, fixed on the CPU with an edge index: vme-wren 730 s → 7 s (doc 05 §19) |
+| Global pattern and maze routing (GAMER / GGR port) | Not built (D56) | The CPU global router routes the tile graph in 0.02–0.5 s per board, and its plan does not improve routing (doc 05 §19) |

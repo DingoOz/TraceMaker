@@ -231,6 +231,15 @@ class Condition {
       const int l = b.copper_index(n.args[0]);
       v.b = l >= 0 && (it->layers & model::layer_bit(l));
     } else if ((n.name == "insideArea" || n.name == "intersectsArea" || n.name == "enclosedByArea") && !n.args.empty()) {
+      const bool fill = it->kind == ItemKind::Zone;
+      const std::tuple<const void*, int, int> key{&n, it->index, it->sub};
+      if (fill) {
+        const std::lock_guard lock(ctx.eng->area_mutex_);
+        if (const auto f = ctx.eng->area_cache_.find(key); f != ctx.eng->area_cache_.end()) {
+          v.b = f->second;
+          return v;
+        }
+      }
       for (const auto& z : b.zones) {
         if (!model::wildcard_match(n.args[0], z.name) || z.outline.empty()) continue;
         const auto& poly = z.outline.front();
@@ -243,6 +252,10 @@ class Condition {
             if (geom::closer_than(s, area, 1)) { any = true; break; }
         }
         if (n.name == "intersectsArea" ? any : all_in) { v.b = true; break; }
+      }
+      if (fill) {
+        const std::lock_guard lock(ctx.eng->area_mutex_);
+        ctx.eng->area_cache_[key] = v.b;
       }
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final

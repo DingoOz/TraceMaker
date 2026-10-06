@@ -156,7 +156,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Zone (plane) targets; MST connection planning over existing copper clusters | Done | `plan`, `search` |
 | GPU cost-to-go fields as the heuristic (never used to prune) | Done | `gpu/field_cuda.cu`, `build_field` |
 | Portfolio of 8 variants on a thread pool, early stop when one is complete (wall-clock mode), 2x pitch for two variants on large boards; with `--work` all 8 run at any `--threads` and the winner is chosen by a total order ending in the variant index, so the output is bit-identical across thread counts (D47) | Done | `route_portfolio` |
-| Global routing, first CPU version: tile graph (8 pitches), exact edge capacities, negotiated congestion, soft corridors (`--global`, off by default) | Experimental: no gain yet. On AmpOne, USBI2C01 and motor-3xdrv8833 (60 s, one variant) corridors shortened track a little but did not raise completion and sometimes added vias. Missing: Steiner topology, via capacity, layer assignment without via columns. Corridor-restricted windows (§13) and a congestion map (§16) were built and measured: no gain, off | `route/global_router.cpp` |
+| Global routing (CPU): tile graph (8 pitches), cut-based edge capacities, via capacity per tile, net-shared edges, integer costs, negotiated congestion; corridors (`--global`, `--global-confine`) and congestion map (`--global-congestion`) | Built, off by default: measured three times on hard boards, corridors cost completion and the map is neutral (§13, §16, §19). No GPU version: routing the tile graph takes 0.02–0.5 s | `route/global_router.cpp` |
 | Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
 | Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Version 2 (2026-10-05): min-cost-flow channel and layer assignment for deep arrays, opt-in (`--escape-flow`), measured below version 1. Not built: NC fallback, escape templates. See §12, §14 | `route/escape.{hpp,cpp}`, `router.cpp` |
 | Differential pairs (version 2, M12): coupled pair search with coupled vias, breakout/fan-in legs, re-coupling after rip-up, enclosed-pin check; length tuning (custom `length` rules) and skew tuning (custom `skew` rules, `--pair-skew-mm`) | Done, opt-in (`--diff-pairs`, D50). Not built: pair twists, pairs ending on routed copper, pair-aware global routing. See §15 | `route/router.cpp` (`route_pair`, `tune_skew`), `route/diff_pair.{hpp,cpp}` |
@@ -475,4 +475,66 @@ No board gained KiCad errors. The gain shows at a fixed budget with one variant 
 where the eight-variant portfolio at 120 s is neutral, as with the reachability pre-check (§13). A first tier D run
 made while tiers B and C were also running read 16,576 routed; the side-by-side run shows that was machine load.
 Tier D's clean pass is 12 of 22 with either planning: m2fc's last connection closes or not from run to run.
+
+## 18. What the benchmark asks for: designers' layouts and missing pours (2026-10-06)
+
+**The designers' own layouts under the same judge** (`bench/human_baseline.py`; `raw.kicad_pcb` of the 92 boards in
+tiers B–D, KiCad DRC with the fixture's rules, errors on routed copper and unconnected items as in `bench/run.py`):
+
+| | Boards |
+|---|---|
+| Designer's layout clean | 6 of 92 |
+| TraceMaker non-clean boards whose designer's layout is not clean either | 33 of 34 |
+| TraceMaker clean boards whose designer's layout has errors on routed copper | 52 of 58 (median 108 errors) |
+| Designer used copper zones that the unrouted fixture no longer has | 82 of 92 |
+
+PCBench ships no project files, so KiCad's default rules judge boards designed to finer ones; "the designer fails
+too" is true almost everywhere and does not tell winnable boards from the rest. Only 32 of the 938 open connections
+on the non-clean boards are on a net the designer poured.
+
+**What if the poured nets were left to a pour** (hidden `--skip-net`, 34 non-clean boards, 8 variants, 60 M
+expansions, the designer's zone nets skipped): 4 boards complete (serial_gw, mechkeys_58r, LeeChee, LimeSDR); open
+connections 938 → 723; large drops on poncho_fpga (46 → 3), MonApollo (58 → 25), V2X (24 → 9), prog_rig (11 → 3);
+no change on EtherCAT, P8000, memsarray, robomezzi. Ground and power routed as tracks take channel space on some
+boards, but most of the open connections remain: the fan-outs do not fit under the default rules. Keeping or
+creating pours for power nets is a possible feature (not built); it would close a few boards, not most.
+
+## 19. Global router v2 and the close of M6 (2026-10-06)
+
+**Built** (`route/global_router.cpp`). On top of §16's cut capacities: connections of one net share tile edges (an
+edge carries a net once, and a connection pays no congestion on an edge its net already holds, so a net's
+connections merge into a tree with shared trunks: the demand side of a Steiner topology; the tree's pad pairs still
+come from the detailed router's spanning tree); a via capacity per tile (free sites of the smallest class via on a
+grid of via pitches, at most 8 × 8 a tile) with its own overflow and history; corridors on the layers a path uses
+instead of whole via columns; integer costs (256 per tile step), ties broken by node index. Test `global_route`:
+`--global` and `--global-congestion` are repeatable byte for byte.
+
+**Result.** 18 hard boards, one variant, 100 M expansions, connections routed:
+
+| No global routing | v2 corridors (`--global`) | + confinement | v2 congestion map |
+|---|---|---|---|
+| 13,305 | 12,967 | 12,735 | 13,324 |
+
+Corridors cost completion on 15 of 18 boards (prog_rig −99, Teensy −53, Aleste −39), as in §13 and §16. The
+congestion map is within noise (decelerator +15, P8000 +5, the rest equal). All global options stay off (D56).
+
+**Why there is no GPU global router.** Routing and negotiating the tile graph takes 0.02–0.5 s per board (Aleste
+0.06 s, logicbone 0.52 s, sbc 0.13 s); set-up, which samples the CPU obstacle model, takes 0.4–1.3 s. Against a
+120 s routing budget there is at most half a second for a GPU port of the pattern and maze stages (GAMER, GGR) to
+save, on a plan that does not help. Not built. Known wart: set-up takes 135 s on LeeChee, where obstacle queries are
+about 50 times slower than elsewhere (cause not found; only the opt-in global options pay it).
+
+**GPU DRC broad-phase: not built, the DRC fixed on the CPU instead** (D55). Profiling vme-wren (38,062 copper
+items, 128 zones): the uniform grid builds in 14 ms and yields 327 k candidate pairs; of the DRC's 730 s, 395 s
+tested items against every edge of each zone fill (`closer_than`, `gap`), 166 s did the same for holes, 80 s
+re-evaluated `intersectsArea` for the same fills, 5 s tested fills against the board edge. `geom::PolygonIndex` now
+answers any shape against a fill from the nearby edges (`shape_closer`, `shape_gap`), and the rule engine caches
+area functions per fill. vme-wren 730 s → 7 s, jetson 250 s → 4 s (connectivity is now the largest part, 2.6–4.4 s);
+the test suite 694 s → 334 s. The linear tests stay as the reference path (`drc --linear-zones`): reports are
+byte-identical on vme-wren, jetson and six smaller zone boards (tests `drc_zone_index` and the `[geom]` equivalence
+test). A broad-phase on the GPU would speed up 14 ms.
+
+**M6 gate.** CPU and GPU give identical results for the one GPU workload routing uses (cost-to-go fields, doc 07);
+time to route on dense boards came down through the fields and the reachability pre-check (§13) with no loss of
+quality. Global routing did not contribute and is kept as measured, optional code.
 

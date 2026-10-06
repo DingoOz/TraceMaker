@@ -160,8 +160,8 @@
      "done": true
     },
     {
-     "text": "Performance on very large boards (vme-wren, jetson)",
-     "done": false
+     "text": "Performance on very large boards: vme-wren 730 s -> 7 s, jetson 250 s -> 4 s (zone-fill edge index, area-rule cache; identical reports)",
+     "done": true
     },
     {
      "text": "Copper text obstacle margin (estimated glyph boxes)",
@@ -303,7 +303,7 @@
   {
    "id": "M6",
    "title": "Global routing + GPU",
-   "status": "in_progress",
+   "status": "done",
    "gate": "CPU and GPU results identical on every fixture; time-to-route reduced on dense boards with no quality loss",
    "deliverables": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3); tile graph, Steiner decomposition, CPU NCR, corridors; GPU pattern routing, GPU sweep maze routing, GPU cost-to-go fields, GPU DRC broad-phase",
    "tasks": [
@@ -316,16 +316,16 @@
      "done": true
     },
     {
-     "text": "Coarse global routing + corridors (CPU NCR)",
-     "done": false
+     "text": "Coarse global routing + corridors (CPU, negotiated congestion): built, off by default (corridors cost completion in three measurements)",
+     "done": true
     },
     {
-     "text": "GPU pattern/maze global routing (GAMER/GGR port)",
-     "done": false
+     "text": "GPU pattern/maze global routing (GAMER/GGR port): closed, not built. The CPU global router routes the tile graph in 0.02-0.5 s per board and its plan does not help (D56)",
+     "done": true
     },
     {
-     "text": "GPU DRC broad-phase",
-     "done": false
+     "text": "GPU DRC broad-phase: closed, not built. Broad-phase is 14 ms; the DRC was fixed on the CPU with a zone-fill edge index: vme-wren 730 s -> 7 s, jetson 250 s -> 4 s, reports byte-identical (D55)",
+     "done": true
     },
     {
      "text": "Adaptive GPU-field cut-off under GPU contention (wall-clock mode)",
@@ -336,8 +336,8 @@
      "done": true
     },
     {
-     "text": "Global router v2: Steiner topology, via capacity, layer assignment, corridor-restricted windows",
-     "done": false
+     "text": "Global router v2: net-shared edges (Steiner demand), via capacity, layer-true corridors, integer costs, corridor-restricted windows: built; 18 hard boards 13,305 without, 12,967 corridors, 13,324 congestion map; off (D56)",
+     "done": true
     },
     {
      "text": "Exact flood-fill reachability pre-check before likely-failing searches (10 hard boards +47 routed at fixed budget; tiers neutral)",

@@ -112,11 +112,12 @@ int cmd_perturb(const std::string& in, const std::string& out, std::uint64_t see
   return 0;
 }
 
-int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon) {
+int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon, bool linear_zones) {
   const auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   tmk::drc::DrcOptions opt;
   opt.epsilon = epsilon;
+  opt.linear_zone_tests = linear_zones;
   const auto rep = tmk::drc::run_drc(lb.board, rules, opt);
   for (const auto& [type, n] : rep.counts()) std::printf("%-24s %d\n", type.c_str(), n);
   for (const auto& w : rep.warnings) std::printf("warning: %s\n", w.c_str());
@@ -402,6 +403,8 @@ int main(int argc, char** argv) {
   drc->add_option("board", drc_path)->required()->check(CLI::ExistingFile);
   drc->add_option("--json", drc_json, "Write the report as JSON (kicad-cli layout)");
   drc->add_option("--epsilon-um", drc_eps_um, "Tolerance below the required clearance, micrometres");
+  bool drc_linear_zones = false;
+  drc->add_flag("--linear-zones", drc_linear_zones, "Reference path: test items against every edge of a zone fill")->group("");
 
   auto* pert = app.add_subcommand("selftest-perturb", "Add random tracks/vias and footprint moves (DRC parity fuzzing)");
   pert->group("");
@@ -439,6 +442,7 @@ int main(int argc, char** argv) {
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
   route->add_option("--seed", ropt.seed);
   route->add_option("--only-net", ropt.only_net, "Debugging: route only this net")->group("");
+  route->add_option("--skip-net", ropt.skip_nets, "Experiments: leave this net unrouted (repeatable)")->group("");
   route->add_option("--soft-attempts", ropt.soft_attempts, "Window sizes tried by negotiated searches (1-4)")->group("");
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
@@ -553,7 +557,7 @@ int main(int argc, char** argv) {
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
-    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0));
+    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*brk) {
       const int n = tmk::app::inject_defects(bk_in, bk_out, bk_manifest, bk_kind, bk_seed, bk_count);

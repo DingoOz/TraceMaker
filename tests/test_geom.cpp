@@ -90,3 +90,43 @@ TEST_CASE("polygon edge index answers disk tests exactly like closer_than", "[ge
   CHECK(hits > 500);
   CHECK(hits < 3800);
 }
+
+TEST_CASE("polygon edge index answers shape tests and gaps exactly like the linear reference", "[geom]") {
+  // Tracks, pads (rectangles with a corner radius) and disks against a jagged polygon: shape_closer must equal
+  // closer_than, and shape_gap must equal gap bit for bit whenever the shapes are within the clearance.
+  const tmk::RngStream rng(12, 3, 0);
+  std::vector<Point> poly;
+  const int n = 600;
+  for (int i = 0; i < n; ++i) {
+    const double a = 2.0 * M_PI * i / n;
+    const double rad = (i % 2 ? 20e6 : 35e6) + static_cast<double>(rng.u64(static_cast<std::uint64_t>(i)) % 5'000'000);
+    poly.push_back({static_cast<tmk::Coord>(rad * std::cos(a)), static_cast<tmk::Coord>(rad * std::sin(a))});
+  }
+  const Shape ref = Shape::polygon(poly, 0);
+  const PolygonIndex idx(poly);
+  auto coord = [&](std::uint64_t k) { return static_cast<tmk::Coord>(rng.u64(k) % 90'000'000) - 45'000'000; };
+  int near = 0;
+  for (std::uint64_t k = 0; k < 6000; ++k) {
+    Point c{coord(7 * k), coord(7 * k + 1)};
+    if (k % 12 == 0) c = poly[k % poly.size()];  // on a vertex
+    const tmk::Coord len = static_cast<tmk::Coord>(rng.u64(7 * k + 2) % 6'000'000), r = static_cast<tmk::Coord>(rng.u64(7 * k + 3) % 300'000);
+    const Point d{c.x + len, c.y + static_cast<tmk::Coord>(rng.u64(7 * k + 4) % 3'000'000) - 1'500'000};
+    Shape s;
+    switch (k % 3) {
+      case 0: s = Shape::segment(c, d, r); break;
+      case 1: s = Shape::point(c, r + 1); break;
+      default: s = Shape::polygon({c, {d.x, c.y}, {d.x, c.y + len / 2 + 1}, {c.x, c.y + len / 2 + 1}}, r); break;
+    }
+    const tmk::Coord clearance = static_cast<tmk::Coord>(rng.u64(7 * k + 5) % 500'000);
+    const bool want = closer_than(s, ref, clearance);
+    REQUIRE(idx.shape_closer(s, clearance) == want);
+    REQUIRE(idx.shape_closer(s, 0) == closer_than(s, ref, 0));
+    if (want) {
+      REQUIRE(idx.shape_gap(s, clearance + s.r) == gap(s, ref));
+      ++near;
+    }
+  }
+  CHECK(near > 800);
+  CHECK(near < 5500);
+}
+

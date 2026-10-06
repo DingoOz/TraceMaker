@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "drc/drc.hpp"
 
+#include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <algorithm>
 #include <bit>
 #include <cmath>
@@ -39,9 +42,22 @@ class Checker {
   DrcReport run() {
     rep_.warnings = r_.warnings;
     for (const auto& w : re_.warnings()) rep_.warnings.push_back(w);
+    // TM_DEBUG_TIMING: seconds per phase on stderr (where a large board's time goes; doc 07 §DRC broad-phase).
+    const bool timing = std::getenv("TM_DEBUG_TIMING") != nullptr;
+    auto t0 = std::chrono::steady_clock::now();
+    auto tick = [&](const char* phase) {
+      if (!timing) return;
+      const auto t1 = std::chrono::steady_clock::now();
+      std::fprintf(stderr, "drc %-22s %8.3f s\n", phase, std::chrono::duration<double>(t1 - t0).count());
+      t0 = t1;
+    };
+    if (timing) std::fprintf(stderr, "drc items %zu, holes %zu\n", cm_.items.size(), cm_.holes.size());
     build_grid();
+    tick("grid");
     graph_ = item_graph(b_, cm_, *grid_);
+    tick("item graph");
     zones_ = std::make_unique<ZoneFills>(cm_);
+    tick("zone fills index");
     if (o_.propagate_nets) {
       // KiCad's DRC sees the board after net propagation: a stray via or track on another net's copper has
       // taken that net, so it is not a short (verified with scripts/drc_broken_parity.py).
@@ -59,14 +75,23 @@ class Checker {
         via_drill_[static_cast<std::size_t>(h.via)] = d;
         h.shape = geom::Shape::point(h.pos, d / 2);
       }
+    tick("net propagation");
     check_pairs();
+    tick("check_pairs");
     check_items();
+    tick("check_items");
     check_pad_rings();
+    tick("check_pad_rings");
     check_holes();
+    tick("check_holes");
     check_via_hole_pairs();
+    tick("check_via_hole_pairs");
     check_edges();
+    tick("check_edges");
     check_keepouts();
+    tick("check_keepouts");
     check_connectivity();
+    tick("check_connectivity");
     // Project severities: drop ignored types, apply warning/error levels.
     auto sev = [&](const std::string& t) -> const std::string* {
       const auto it = r_.severities.find(t);
@@ -133,6 +158,33 @@ class Checker {
     return g;
   }
 
+  // Pair tests that go through a zone fill's edge index when one side is a fill: the same answers as
+  // shapes_closer / shapes_gap (geom::PolygonIndex is tested against them), at the cost of the nearby edges
+  // instead of every edge of the fill. On vme-wren the linear tests took 395 of the DRC's 477 s.
+  const geom::PolygonIndex* fill_index(const CopperItem& z) const {
+    if (z.kind != ItemKind::Zone || o_.linear_zone_tests) return nullptr;
+    const int slot = zones_->slot[static_cast<std::size_t>(&z - cm_.items.data())];
+    return slot < 0 ? nullptr : &zones_->index[static_cast<std::size_t>(slot)];
+  }
+  bool pair_closer(const CopperItem& a, const CopperItem& c, Coord t) const {
+    const geom::PolygonIndex* za = fill_index(a);
+    const geom::PolygonIndex* zc = za ? nullptr : fill_index(c);
+    if (!za && !zc) return shapes_closer(a, c, t);
+    for (const auto& s : (za ? c : a).shapes)
+      if ((za ? za : zc)->shape_closer(s, t)) return true;
+    return false;
+  }
+  // Gap of a pair known to be closer than t (pair_closer(a, c, t) holds).
+  double pair_gap(const CopperItem& a, const CopperItem& c, Coord t) const {
+    const geom::PolygonIndex* za = fill_index(a);
+    const geom::PolygonIndex* zc = za ? nullptr : fill_index(c);
+    if (!za && !zc) return shapes_gap(a, c);
+    double g = 1e30;
+    // Shapes of the item farther than t from the fill cannot hold the minimum; the bound keeps their search local.
+    for (const auto& s : (za ? c : a).shapes) g = std::min(g, (za ? za : zc)->shape_gap(s, std::max<Coord>(t, 0) + s.r + 1));
+    return g;
+  }
+
   void check_pairs() {
     const auto n = cm_.items.size();
     for (std::size_t i = 0; i < n; ++i) {
@@ -173,8 +225,8 @@ class Checker {
           }
         }
         const Coord req = re_.clearance(a, c, layer);
-        if (!shapes_closer(a, c, req - o_.epsilon)) return;
-        const double g = shapes_gap(a, c);
+        if (!pair_closer(a, c, req - o_.epsilon)) return;
+        const double g = pair_gap(a, c, req - o_.epsilon);
         // KiCad (drc_test_provider_copper_clearance.cpp): copper overlapping a zone fill is a clearance violation
         // with zero gap; two pads short only when both have a net; a track or via overlapping a pad, track or via
         // of another net shorts even when one side is net-less. Copper graphics: overlapping copper of two nets,
@@ -196,7 +248,7 @@ class Checker {
           reps = 0;
           for (model::LayerMask m = common; m; m &= m - 1) {
             const int l = std::countr_zero(m);
-            if (l == layer || shapes_closer(a, c, re_.clearance(a, c, l) - o_.epsilon)) ++reps;
+            if (l == layer || pair_closer(a, c, re_.clearance(a, c, l) - o_.epsilon)) ++reps;
           }
         }
         // KiCad tests an item against a whole zone on a layer (testItemAgainstZone): one report even when the
@@ -364,7 +416,8 @@ class Checker {
           if (!ao || !(ao->layers & c.layers) || (c.net != 0 && c.net == a.net)) return;
           const int zl = std::countr_zero(c.layers);
           const Coord zreq = re_.hole_clearance(ao, c, zl);
-          if (zreq > 0 && geom::closer_than(cshape(a), c.shapes.front(), zreq - o_.epsilon) &&
+          const geom::PolygonIndex* zi = fill_index(c);
+          if (zreq > 0 && (zi ? zi->shape_closer(cshape(a), zreq - o_.epsilon) : geom::closer_than(cshape(a), c.shapes.front(), zreq - o_.epsilon)) &&
               zone_reported_.insert({"hole", static_cast<std::size_t>(a.item), c.index, zl}).second)
             add("hole_clearance", ao, &c, -1, zreq, zl);
           return;
@@ -443,8 +496,11 @@ class Checker {
       for (const auto& e : cm_.edges) {
         if (!e.box.inflated(req).intersects(it.box)) continue;
         bool hit = false;
-        for (const auto& s : it.shapes)
-          if (geom::closer_than(s, e, req > 0 ? req - o_.epsilon : 1)) { hit = true; break; }  // 0: touching or crossing
+        const Coord thr = req > 0 ? req - o_.epsilon : 1;  // 0: touching or crossing
+        if (const geom::PolygonIndex* zi = fill_index(it)) hit = zi->shape_closer(e, thr);
+        else
+          for (const auto& s : it.shapes)
+            if (geom::closer_than(s, e, thr)) { hit = true; break; }
         if (hit) {
           add("copper_edge_clearance", &it, nullptr, -1, req, layer);
           break;

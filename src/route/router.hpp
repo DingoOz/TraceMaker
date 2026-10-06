@@ -75,6 +75,7 @@ struct RouterOptions {
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
   std::string only_net;         // debugging: route only this net
+  std::vector<std::string> skip_nets;  // experiments: leave these nets unrouted (e.g. nets a designer would pour)
   events::Sink* sink = nullptr;
   // Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the
   // others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.
