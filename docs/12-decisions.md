@@ -66,6 +66,8 @@
 | D58 | Impedance and width rules become synthetic net classes (`tmk_<RULE>_<ref>`) for Default-class nets of instances at the apply threshold; used by the router only with `--component-rules on`; one width per net (the front-layer solution) | Per-layer widths; writing the classes into the project file | The router has one width per net, and the user's files are never written (rule 8). Board classes win; a class is never narrower than the board allows (doc 15 §15) |
 | D59 | Successive halving for the portfolio (`--halving`) is restart-based and stays off | Resumable router runs; halving on by default with fewer threads than variants | 24 boards: 12,385 / 12,451 routed at 2 / 4 threads against 12,402 / 12,508 for the first variants on the whole budget (doc 05 §22) |
 | D60 | The plugin refills zones only on request or after it moved footprints | Always refill | KiCad records the refill as its own undo step; the plugin's promise is one undo for a routing run (doc 08 §8) |
+| D61 | The viewer protocol and replay log stay JSON; the FlatBuffers schema is dropped from the roadmap | A `.fbs` schema with C++ and JavaScript codecs | D45's reasons held: zstd JSON logs are 12–13× smaller than plain, recording does not change routing, the browser parses JSON natively. No measurement shows the protocol as a bottleneck |
+| D62 | M9 is closed with two items unbuilt (negotiated fallback for escapes, escape templates) and its gate not met | Build both | The flow planner the fallback belongs to measured below the simple corridors and is off; planning takes 0.1–2 s, so a template cache saves nothing (doc 05 §23) |
 
 ## Risks
 

@@ -176,8 +176,8 @@
   {
    "id": "M3",
    "title": "Event bus, server, viewer v1",
-   "status": "in_progress",
-   "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board",
+   "status": "done",
+   "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board | Result: replay reproduces the routed board (test record_replay). The 60 fps figure was not measured: there is no GPU-backed browser on this machine.",
    "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
    "tasks": [
     {
@@ -213,8 +213,8 @@
      "done": true
     },
     {
-     "text": "FlatBuffers schema for the protocol and replay log (deferred until the message set is stable, D45)",
-     "done": false
+     "text": "FlatBuffers schema: closed, not built (protocol and replay log stay JSON, zstd-compressed logs 12-13x smaller; D45, D61)",
+     "done": true
     }
    ]
   },
@@ -466,8 +466,8 @@
   {
    "id": "M9",
    "title": "Escape planning",
-   "status": "in_progress",
-   "gate": "BGA boards in the academic set complete",
+   "status": "done",
+   "gate": "BGA boards in the academic set complete | Result: NOT met. 17 dense-package boards: 41 % clean, 47 % of the 15 feasible ones (Freerouting 2.5: 24 %).",
    "deliverables": "Min-cost-flow escape, layer assignment, NC fallback, escape templates",
    "tasks": [
     {
@@ -499,12 +499,12 @@
      "done": true
     },
     {
-     "text": "NC fallback: negotiation for escapes (existing rip-up applies; no escape-specific fallback yet)",
-     "done": false
+     "text": "NC fallback for escapes: closed, not built (the flow planner it belongs to measured below the corridors and is off; ordinary negotiation already overrides corridors; D62)",
+     "done": true
     },
     {
-     "text": "Escape templates in the knowledge base",
-     "done": false
+     "text": "Escape templates in the knowledge base: closed, not built (planning takes 0.1-2 s per board; a cache saves nothing; D62)",
+     "done": true
     }
    ]
   },

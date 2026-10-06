@@ -594,3 +594,20 @@ eight variants does not make up for that. With eight or more threads there is no
 resumable runs to pay; kept off (D59). The knowledge base's variant choice (doc 06 T3) remains the way fewer
 threads pick their variants.
 
+## 23. Escape planning: what is left of M9 (2026-10-06)
+
+Two items of §12 and §14 stay unbuilt, and M9's gate is not met.
+
+- **Negotiated-congestion fallback for escapes.** The flow planner it would fall back from (§14) routes fewer
+  connections than the simple corridors of §12 (7 deep-array boards at a fixed budget: no plan 2,687, corridors
+  2,736, flow 2,703), so it is off, and the corridors are reservations that the router's ordinary negotiation
+  already overrides at twice the crossing cost. There is nothing for a second negotiation to arbitrate.
+- **Escape templates in the knowledge base.** A template would store a package's corridor plan for reuse. Planning
+  takes 0.1–2 s per board (§12) and its benefit is a few connections on some boards, so a cache of it would save
+  no measurable time and add no routed connection.
+
+**Gate** ("the BGA boards of the academic set complete"): not met. On the 17 PCBench boards with BGAs and dense
+packages, 41 % are clean, 47 % of the 15 on which every pin can escape under the rules the judge applies (§12);
+Freerouting 2.5 completes 24 %. The limit is the same one §16–§20 measure: fan-outs under KiCad's default rules, on
+boards whose own routed versions do not pass those rules.
+

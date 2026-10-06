@@ -98,7 +98,9 @@ thin backend interface; the WebGL2 path uses fragment-shader SDFs and render-to-
 ## 8. Implementation status (v1)
 
 v1 implements the JSON protocol of [`13-viewer-protocol.md`](13-viewer-protocol.md) end to end, recording and
-replay (plain or zstd-compressed logs) and heatmap overlays. FlatBuffers (deferred, D45), seeking in a replay,
+replay (plain or zstd-compressed logs) and heatmap overlays. FlatBuffers is not built and no longer planned (D45,
+D61: the zstd-compressed JSON log is 12–13× smaller than plain JSON, recording leaves routing byte-identical, and the
+viewer parses JSON natively; a binary schema would add a second encoder and decoder for no measured need). Seeking in a replay,
 the control channel, the minimap and the WebGPU backend are not built yet.
 
 ### Heatmaps and replay log
