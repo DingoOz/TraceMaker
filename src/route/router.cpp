@@ -1038,7 +1038,12 @@ struct Router::Impl {
       }
     // Rip up victims, and raise history on the contested cells so later searches avoid them.
     for (const auto& s : merged) bump_history(s, net);  // before the rip, while the conflicts still exist
-    for (int v : victims) rip(v);
+    for (int v : victims) {
+      rip(v);
+      // If the budget ends before the victim is tried again, the report must not show the reason of an attempt
+      // that preceded its route.
+      cs[static_cast<std::size_t>(v)].why = "ripped up by " + b.nets[static_cast<std::size_t>(net)].name + " and not routed again";
+    }
     // Commit.
     auto& st = cs[static_cast<std::size_t>(current)];
     for (const auto& s : merged) {
@@ -2725,9 +2730,14 @@ struct Router::Impl {
     };
 
     std::vector<std::uint8_t> best_unrouted;
+    std::vector<std::string> best_why;  // reasons as they stood at the best state; later restarts overwrite cs[].why
     auto snapshot_unrouted = [&]() {
       best_unrouted.assign(cs.size(), 0);
-      for (std::size_t i = 0; i < cs.size(); ++i) best_unrouted[i] = cs[i].routed ? 0 : 1;
+      best_why.assign(cs.size(), {});
+      for (std::size_t i = 0; i < cs.size(); ++i) {
+        best_unrouted[i] = cs[i].routed ? 0 : 1;
+        if (!cs[i].routed) best_why[i] = cs[i].why;
+      }
     };
     // Restarts that keep the lessons (design doc 06 §3.6): when negotiation stalls with budget left, rip
     // everything and start again, hardest (most failed) connections first, keeping history, nogoods and the
@@ -2851,6 +2861,8 @@ struct Router::Impl {
               release_pad(st.c.pad_a, st.c.net);  // a sealed pin's corridor only blocks others
               release_pad(st.c.pad_b, st.c.net);
               reason += "; fixed copper encloses the pin";
+            } else if (!ok) {
+              reason += "; negotiated escapes/neck-down: " + why;
             }
           }
         }
@@ -2920,7 +2932,6 @@ struct Router::Impl {
     res.routed = best_routed;
     res.tracks = std::move(best_tracks);
     res.vias = std::move(best_vias);
-    // Failures relative to the best state are approximated by the connections unrouted at the end.
     for (std::size_t ci = 0; ci < cs.size(); ++ci) {
       const auto& st = cs[ci];
       if (!best_unrouted[ci]) continue;
@@ -2931,7 +2942,7 @@ struct Router::Impl {
         to = b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number;
       }
       res.failures.push_back(b.nets[static_cast<std::size_t>(st.c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." +
-                             pa.number + " -> " + to + "  (" + st.why + ")");
+                             pa.number + " -> " + to + "  (" + best_why[ci] + ")");
       res.unrouted.push_back({b.nets[static_cast<std::size_t>(st.c.net)].name, b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." + pa.number, to});
     }
     res.seconds = elapsed();
