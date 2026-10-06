@@ -179,7 +179,8 @@ A change that fails G1 or G2 is not merged. G3–G7 are reported with every mile
 | L1 property tests | Not yet written as such (P5 and P7 are partly covered by existing tests and `place_auto.py`) |
 | L2 board evaluation | `eval_place.py` (legality, round trip, HPWL, crossings) on the D set |
 | L3 routability | `place_auto.py` on the D set: HPWL −24.5%, unrouted 61 → 59, 0 new DRC errors |
-| Held-out set H, scratch set S, DAC placement runs | Not started |
+| Held-out set H, scratch set S | Built and run 2026-10-06 (`bench/make_place_sets.py`, `bench/place_sets/`): H human 95 %, S from scratch 85 % clean, gate G4 (90 %) not met (doc 04 §10) |
+| DAC placement runs | Not started |
 | Design-intent metrics | Not started |
 | SA-PCB baseline (M7 gate) | Not started |
 | Human review | Not started |

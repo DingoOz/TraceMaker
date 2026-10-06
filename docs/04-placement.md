@@ -481,3 +481,60 @@ flip) and `test_kicad_io.cpp` (writer rules, KiCad 5 and 10 syntax, flip and fli
   1; they often go under the IC).
 - Not built: the FM/CP-SAT partition of stage (C) (the annealer's flip move does the side assignment), side
   capacity in global placement (B), flips in ECO and in the exact windows.
+
+## 10. The M8 gate: from-scratch placement on held-out boards (2026-10-06)
+
+**Sets** (`bench/make_place_sets.py`, lists in `bench/place_sets/`, doc 14 §3). *H*: 40 PCBench boards never used
+before (not in any result, list, test or doc: 342 boards excluded), 10 to 300 parts with at least 10 movable, a
+courtyard on at least 80 % of the parts, routed completely in the human placement in 120 s; seed 7; 20 boards at or
+below the candidates' median of 33 parts and 20 above (14 to 138 parts, 4,022 connections, 132 candidates tried).
+*S*: the H boards with every part that full mode may move piled at the centre of the board, so the file no longer
+holds the human placement. Parts full mode holds in the human board (locked, edge connectors, mounting holes,
+parts overhanging the edge) stay: a schematic does not say where a connector goes.
+
+**What a board without a placement needed** (`--scratch`). The placer's fallbacks all lead back to the input,
+which is right for a human placement and wrong for a pile:
+
+- a part that "overhangs the board edge in the input" is no longer held there (at the pile, large parts do);
+- the input is no candidate in `routable`, refine has nothing to refine, legality is absolute rather than "no
+  worse than the input", and neither mode reverts to the input when it routes more;
+- a part with no legal position is tried by its pad outline instead of its courtyard (`pads_only`), then by copper
+  and holes alone (`copper_only`: it may lie across other courtyards), and failing that is set down beside the
+  board and reported. It is never left on top of the others.
+- Solder-mask openings drawn as graphics (logos) keep pads away: kitspace_postcard had LEDs under one.
+
+24 of the 40 human placements have courtyard conflicts by the placer's own rules; designers overlap courtyards.
+Three boards have a part that fits nowhere without breaking copper, hole or mask rules that the human placement
+itself breaks (tt_nano: an Arduino module; Mini-Ultra: a 15 mm IC between two pin headers 12.4 mm apart;
+ottawa-badge-tagging: a battery holder).
+
+**Two router faults the held-out boards exposed** (both fixed, both in the human placement too): copper ran across
+Margin-layer lines, which KiCad treats as the board edge (kitspace_hack, 13–24 errors); and a pad without a hole
+listed on both sides was connected on the far side, which KiCad does not accept (Kefersender: "84 of 84 routed",
+2 unconnected in KiCad).
+
+**Result** (8 router variants, 120 s, KiCad's DRC as judge; clean = everything connected, no error added by
+placement or routing relative to the human board):
+
+| Run | Clean pass | Connections routed |
+|---|---|---|
+| H, human placement, before the two fixes | 38 of 40 (95 %) | 4,021 of 4,022 |
+| H, human placement, Margin fix | 38 of 40 (95 %); with the pad fix Kefersender is clean too: 39 | 4,019 of 4,022 |
+| S, `full`, as the placer was | 28 of 40 (70 %) | 3,900 of 4,002 |
+| S, `routable --scratch`, first version | 33 of 40 (82.5 %) | 3,944 of 4,022 |
+| **S, `routable --scratch`, final** (`S-routable-7`) | **34 of 40 (85 %)** | 3,939 of 4,013 |
+
+**The gate (clean pass ≥ 90 % of S) is not met: 85 %.** The six boards: the three above with a part that cannot be
+placed legally; kitspace_hack, which is not routable clean in its human placement either once Margin lines count
+(89 of 92; `eco` moved two parts and still left 3); ottawa-badges-2016 and pico-pi, each 3 connections short (197
+of 200, 216 of 219). Without the four boards no placement can make clean, 34 of 36 are. Placement takes 91 s at the
+median in `routable` (up to 9 minutes of routing checks per board).
+
+The gate's second clause, "`eco` closes at least half of the H boards that the human placement leaves unrouted",
+has one board to act on (kitspace_hack) and does not close it; on the development set `eco` closed 3 of 7 (§8).
+
+**Not built** (D57). *GPU parallel-tempering annealing*: annealing takes 1.9 s at the median and 56 s at most
+(138 parts) on these boards, the routing checks take minutes, and CPU tempering measured neutral on routability
+(§8). *CP-SAT windows*: OR-tools is not available as a C++ library here, and exact windows by branch and bound
+already equal full enumeration (§8).
+

@@ -409,8 +409,8 @@
   {
    "id": "M8",
    "title": "Placement E\u2013G + ECO",
-   "status": "in_progress",
-   "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot",
+   "status": "done",
+   "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot | Result 2026-10-06: NOT met. From-scratch clean pass 85 % (34/40) on set S; 4 of the 6 failing boards cannot be clean in any placement. eco closed 0 of the 1 held-out board the human placement leaves unrouted (3 of 7 on the development set).",
    "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
    "tasks": [
     {
@@ -418,8 +418,8 @@
      "done": true
     },
     {
-     "text": "GPU parallel-tempering SA",
-     "done": false
+     "text": "GPU parallel-tempering SA: closed, not built (annealing 1.9 s median, 56 s max on the held-out boards; CPU tempering neutral on routability; D57)",
+     "done": true
     },
     {
      "text": "LNS (window rip-up, exact <=4 parts, greedy otherwise; never worsens)",
@@ -430,8 +430,8 @@
      "done": true
     },
     {
-     "text": "CP-SAT windows",
-     "done": false
+     "text": "CP-SAT windows: closed, not built (no OR-tools C++ library; exact windows by branch and bound equal full enumeration; D57)",
+     "done": true
     },
     {
      "text": "RUDY routability term in the annealer (incremental, exact vs reference)",
@@ -446,20 +446,20 @@
      "done": true
     },
     {
-     "text": "Schematic-to-board set S and clean-pass gate (>= 90%)",
-     "done": false
+     "text": "Schematic-to-board set S (40 held-out boards, parts piled) built and the gate measured: 85 % clean (34/40) with routable --scratch, human placement 95 %; gate of 90 % NOT met (doc 04 \u00a710)",
+     "done": true
     },
     {
-     "text": "R4 exact window solve (group re-route of up to five connections in every order tried 2026-10-06: no board changed, removed; doc 05 \u00a717)",
-     "done": false
+     "text": "R4 exact window solve: closed, not built as an exact model (no CP-SAT); the group re-route stand-in changed no board and was removed (doc 05 \u00a717, \u00a720)",
+     "done": true
     },
     {
-     "text": "R5 trial ordering",
-     "done": false
+     "text": "R5 trial ordering: closed, not built (every order of small conflict groups was tried and changed no board, doc 05 \u00a717, \u00a720)",
+     "done": true
     },
     {
-     "text": "R6 cut proofs",
-     "done": false
+     "text": "R6 cut proofs: built (route --cut-report); no over-full line on 92 tier B-D boards, tightest line 40 % used",
+     "done": true
     }
    ]
   },
