@@ -338,6 +338,10 @@
     {
      "text": "Exact flood-fill reachability pre-check before likely-failing searches (10 hard boards +47 routed at fixed budget; tiers neutral)",
      "done": true
+    },
+    {
+     "text": "Global congestion map + cut-based tile capacities (opt-in --global-congestion): 18 hard boards 13,285 -> 13,294 routed, within noise; kept off (D53). Boards are not congested at tile scale; v2 remainder deferred",
+     "done": true
     }
    ]
   },

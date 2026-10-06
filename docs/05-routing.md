@@ -156,7 +156,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Zone (plane) targets; MST connection planning over existing copper clusters | Done | `plan`, `search` |
 | GPU cost-to-go fields as the heuristic (never used to prune) | Done | `gpu/field_cuda.cu`, `build_field` |
 | Portfolio of 8 variants on a thread pool, early stop when one is complete (wall-clock mode), 2x pitch for two variants on large boards; with `--work` all 8 run at any `--threads` and the winner is chosen by a total order ending in the variant index, so the output is bit-identical across thread counts (D47) | Done | `route_portfolio` |
-| Global routing, first CPU version: tile graph (8 pitches), exact edge capacities, negotiated congestion, soft corridors (`--global`, off by default) | Experimental: no gain yet. On AmpOne, USBI2C01 and motor-3xdrv8833 (60 s, one variant) corridors shortened track a little but did not raise completion and sometimes added vias. Missing: Steiner topology, via capacity, layer assignment without via columns, corridor-restricted windows | `route/global_router.cpp` |
+| Global routing, first CPU version: tile graph (8 pitches), exact edge capacities, negotiated congestion, soft corridors (`--global`, off by default) | Experimental: no gain yet. On AmpOne, USBI2C01 and motor-3xdrv8833 (60 s, one variant) corridors shortened track a little but did not raise completion and sometimes added vias. Missing: Steiner topology, via capacity, layer assignment without via columns. Corridor-restricted windows (§13) and a congestion map (§16) were built and measured: no gain, off | `route/global_router.cpp` |
 | Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
 | Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Version 2 (2026-10-05): min-cost-flow channel and layer assignment for deep arrays, opt-in (`--escape-flow`), measured below version 1. Not built: NC fallback, escape templates. See §12, §14 | `route/escape.{hpp,cpp}`, `router.cpp` |
 | Differential pairs (version 2, M12): coupled pair search with coupled vias, breakout/fan-in legs, re-coupling after rip-up, enclosed-pin check; length tuning (custom `length` rules) and skew tuning (custom `skew` rules, `--pair-skew-mm`) | Done, opt-in (`--diff-pairs`, D50). Not built: pair twists, pairs ending on routed copper, pair-aware global routing. See §15 | `route/router.cpp` (`route_pair`, `tune_skew`), `route/diff_pair.{hpp,cpp}` |
@@ -397,3 +397,37 @@ already routed for its nets (a T at an AC-coupling capacitor or termination) oft
 global routing; no rounded or arc corners; skew in picoseconds needs the stackup (doc 15 §5.3); tuning meanders on
 one half reduce coupling locally (both halves meandering together is not built); per-pair skew limits from the
 component-rule catalogue are not wired (one global `--pair-skew-mm`).
+
+## 16. Global congestion map (M6, 2026-10-06)
+
+**Why the boards fail.** Unrouted connections of the non-clean boards in the last full tier run (`reach1`, 8 variants,
+120 s): of about 960 on tiers B–D, roughly 600 are pins boxed in by nearby copper (with or without a nogood skip), 137
+are "no path in window" and 171 were never attempted before the time limit; the last two kinds sit on a few large
+tier D boards (Aleste alone has 204 unrouted). The nearly clean boards, which decide the clean pass, are almost all
+boxed-in pins. Global routing addresses the second group only.
+
+**What was built** (off: `--global-congestion`, `--global-congestion-from`, `--global-congestion-pen`). The output §4
+names and v1 never had: the global plan as a map. `GlobalResult::util` holds, per tile and layer, the planned tracks
+through the tile's four boundaries in eighths of their capacity (integers). The detailed router adds
+`(util − from) × pen` pitches per lattice step in tiles above the threshold, except within one tile of the
+connection's own ends. No corridors are used.
+
+**Capacity from cuts, not the boundary.** v1 sampled only the shared boundary of two tiles. On through-hole boards
+that line often falls between pin rows, so the plan saw almost no congestion (Aleste: 1.7 % of tiles at or above
+6/8). Capacity is now the narrowest of eight cut lines between the two tile centres, and a free run of *n* samples
+holds 1 + (n − 1) · step / pitch tracks. Set-up rises from about 0.2 s to 1–1.7 s on the large boards. Aleste then
+has 4.3 % of tiles at or above 6/8, logicbone 4.7 %, P8000 1.5 %, sbc 1.5 %.
+
+**Result.** 18 hard boards (the 10 of §13 plus LFK78, TCKB, P8000, dorkyboard, m2fc, prog_rig, V2X, DronPi), one
+variant, 100 M expansions, total connections routed:
+
+| No global routing | Map, from 6, pen 0.5 | Map, from 4, pen 0.5 | Map, from 4, pen 1.5 | v1 corridors (`--global`), new capacities |
+|---|---|---|---|---|
+| 13,285 | 13,293 | 13,294 | 13,289 | 12,933 |
+
+The map is within noise of the baseline (per board −7 to +4) and corridors stay worse. With honest capacities these
+boards are not congested at tile scale: the failures are local pin access, which a 2–5 mm tile cannot see. The
+option stays off (D53). The remaining M6 global-routing items (Steiner topology, via capacity, the GPU pattern and
+maze port) refine a plan that has no congestion to resolve on this benchmark, so they are deferred until a board set
+shows tile-scale overflow; the next lever for clean pass is pin access in the detailed router.
+

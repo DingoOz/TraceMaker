@@ -476,13 +476,19 @@ struct Router::Impl {
     const std::int64_t rc = reserved_cost(layer, gx, gy, net);
     if (rc < 0) return -1;
     std::int64_t hc = hist_cost(layer, gx, gy) + rc;
-    if (corr) {  // soft guidance: leaving the global corridor (or its layer) costs half a pitch per lattice step
+    if (corr || cong_pen > 0) {
       const Point p = at(gx, gy);
       const int tx = std::clamp(global.tile_of_x(p.x), 0, global.tiles_x - 1), ty = std::clamp(global.tile_of_y(p.y), 0, global.tiles_y - 1);
-      if (!(*corr)[(static_cast<std::size_t>(layer) * static_cast<std::size_t>(global.tiles_y) + static_cast<std::size_t>(ty)) * static_cast<std::size_t>(global.tiles_x) + static_cast<std::size_t>(tx)]) {
+      const std::size_t ti = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(global.tiles_y) + static_cast<std::size_t>(ty)) * static_cast<std::size_t>(global.tiles_x) + static_cast<std::size_t>(tx);
+      if (corr && !(*corr)[ti]) {  // soft guidance: leaving the global corridor (or its layer) costs half a pitch per lattice step
         if (corr_hard) return -1;
         hc += corridor_pen;
       }
+      // Congestion map: through traffic pays in tiles the global plan fills; a connection's own end tiles (and
+      // their neighbours) are free, since it has to get in and out of them whatever the congestion.
+      if (cong_pen > 0 && global.util[ti] > opt.global_congestion_from &&
+          std::max(std::abs(tx - cong_end[0]), std::abs(ty - cong_end[1])) > 1 && std::max(std::abs(tx - cong_end[2]), std::abs(ty - cong_end[3])) > 1)
+        hc += (global.util[ti] - opt.global_congestion_from) * cong_pen;
     }
     if (st == 1) return static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) + hc * 4;
     if (st == 3) return 3 * pitch + hc;
@@ -1148,6 +1154,8 @@ struct Router::Impl {
   const std::vector<std::uint8_t>* corr = nullptr;  // corridor of the connection being searched
   Coord corridor_pen = 0;            // extra cost per lattice step outside the corridor
   bool corr_hard = false;            // confined attempt: cells outside the corridor are blocked
+  Coord cong_pen = 0;                // congestion map: cost per lattice step per eighth of capacity (0 = off)
+  std::array<int, 4> cong_end{};     // tiles of the two ends of the connection being searched
   long confined_ok = 0, confined_tried = 0;
   bool blind_ok = false;    // blind/buried vias allowed (board setting, more than two layers)
   bool fields_off = false;
@@ -1180,7 +1188,11 @@ struct Router::Impl {
       why = "skipped: identical earlier attempt failed (nogood)";
       return false;
     }
-    corr = (!global.corridor.empty() && current >= 0 && static_cast<std::size_t>(current) < global.corridor.size()) ? &global.corridor[static_cast<std::size_t>(current)] : nullptr;
+    if (cong_pen > 0) {
+      const Point pa = b.pads[static_cast<std::size_t>(c.pad_a)].pos, pb = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : pa;
+      cong_end = {global.tile_of_x(pa.x), global.tile_of_y(pa.y), global.tile_of_x(pb.x), global.tile_of_y(pb.y)};
+    }
+    corr = (opt.global_route && !global.corridor.empty() && current >= 0 && static_cast<std::size_t>(current) < global.corridor.size()) ? &global.corridor[static_cast<std::size_t>(current)] : nullptr;
     const bool ok = search_and_commit_inner(c);
     corr = nullptr;
     if (!ok && !bypass_nogoods) nogoods[ng] = 1;
@@ -2633,7 +2645,7 @@ struct Router::Impl {
     drc::UnionFind uf(obs->copper().items.size());
     for (std::size_t i = 0; i < con.root.size(); ++i) uf.unite(static_cast<int>(i), con.root[i]);
     const auto conns = plan(uf);
-    if (opt.global_route) {
+    if (opt.global_route || opt.global_congestion) {
       std::vector<GlobalNet> gn;
       for (const auto& c : conns) {
         GlobalNet g;
@@ -2657,9 +2669,15 @@ struct Router::Impl {
       global = global_route(*obs, geom::Box{lat.x0, lat.y0, lat.x1, lat.y1}, nl, gn, go);
       const char* cp = std::getenv("TM_CORRIDOR_PEN");  // experiment knob (pitches per step)
       corridor_pen = static_cast<Coord>((cp ? std::atof(cp) : 2.0) * static_cast<double>(pitch));
+      if (opt.global_congestion) cong_pen = std::max<Coord>(1, static_cast<Coord>(opt.global_congestion_pen * static_cast<double>(pitch)));
       if (tdbg)
         std::fprintf(stderr, "[%.2f s] global routing: %d x %d x %d tiles of %.2f mm, %d overflowed edges\n", elapsed(), global.tiles_x, global.tiles_y,
                      global.layers, nm_to_mm(global.tile), global.overflow_edges);
+      if (tdbg) {
+        std::array<long, 5> hist{};  // tiles by utilisation: < 4, 4-5, 6-7, 8-11, >= 12 eighths
+        for (const auto u : global.util) ++hist[u < 4 ? 0 : u < 6 ? 1 : u < 8 ? 2 : u < 12 ? 3 : 4];
+        std::fprintf(stderr, "global utilisation (eighths) <4: %ld, 4-5: %ld, 6-7: %ld, 8-11: %ld, >=12: %ld\n", hist[0], hist[1], hist[2], hist[3], hist[4]);
+      }
     }
     if (tdbg) std::fprintf(stderr, "[%.2f s] plan done: %zu connections\n", elapsed(), conns.size());
     res.connections = static_cast<int>(conns.size());

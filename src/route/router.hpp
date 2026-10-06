@@ -54,6 +54,11 @@ struct RouterOptions {
   // negotiation instead of flooding the wide strict windows (on logicbone those failed floods were 76 % of all
   // search expansions; doc 05 §13).
   bool global_strict_corridor_only = false;
+  // Global congestion map (M6, doc 05 §16): plan on the tile graph, then charge detailed steps through tiles the
+  // plan fills beyond global_congestion_from eighths of capacity, except near the connection's own ends. No corridors.
+  bool global_congestion = false;
+  int global_congestion_from = 6;
+  double global_congestion_pen = 0.5;  // pitches per lattice step, per eighth of capacity above the threshold
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   bool escape_second_ring = false;  // second-ring balls escape between two outer balls instead of by dog-bone

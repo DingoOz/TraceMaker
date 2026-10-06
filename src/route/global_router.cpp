@@ -50,23 +50,40 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
   g.hist_h.assign(g.cap_h.size(), 0.0);
   g.hist_v.assign(g.cap_v.size(), 0.0);
 
-  // Capacities: sample the shared boundary of two tiles at half-pitch steps; free samples x step / pitch tracks.
+  // Capacities: tracks that fit across the narrowest of eight cut lines between the two tile centres. A cut is
+  // sampled at quarter-pitch steps; a free run of n samples holds 1 + (n - 1) * step / pitch tracks, so gaps
+  // narrower than a pitch (between the pins of a row) count once and blocked stretches not at all. The boundary
+  // alone overestimates badly: on a through-hole board it often falls between pin rows and looks empty.
   const Coord hw = pitch / 4;  // a narrow probe: capacity counts free cross-section, the pitch divides it
-  const Coord step = std::max<Coord>(pitch / 2, 25'000);
+  const Coord step = std::max<Coord>(pitch / 4, 25'000);
+  constexpr int kCuts = 8;
   auto free_at = [&](geom::Point p, int l) { return obs.fixed_code(p, l, hw, 0, 0) == Obstacles::kFree; };
+  auto cut_capacity = [&](Coord fixed, Coord from, bool vertical_line, int l) {
+    int cap = 0, run = 0;
+    auto close = [&] {
+      if (run > 0) cap += 1 + static_cast<int>(static_cast<Coord>(run - 1) * step / pitch);
+      run = 0;
+    };
+    for (Coord t = step / 2; t < tile; t += step) {
+      if (free_at(vertical_line ? geom::Point{fixed, from + t} : geom::Point{from + t, fixed}, l)) ++run;
+      else close();
+    }
+    close();
+    return cap;
+  };
   for (int l = 0; l < layers; ++l)
     for (int y = 0; y < g.ny; ++y)
       for (int x = 0; x < g.nx; ++x) {
         const Coord x0 = bounds.x0 + x * tile, y0 = bounds.y0 + y * tile;
-        if (x + 1 < g.nx) {  // boundary x = x0 + tile, from y0 to y0 + tile
-          int f = 0;
-          for (Coord t = step / 2; t < tile; t += step) f += free_at({x0 + tile, y0 + t}, l);
-          g.cap_h[g.hi(l, x, y)] = static_cast<int>(static_cast<double>(f) * static_cast<double>(step) / static_cast<double>(pitch));
+        if (x + 1 < g.nx) {  // cuts x = const between the centres of tiles x and x + 1, from y0 to y0 + tile
+          int c = std::numeric_limits<int>::max();
+          for (int k = 0; k < kCuts; ++k) c = std::min(c, cut_capacity(x0 + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), y0, true, l));
+          g.cap_h[g.hi(l, x, y)] = c;
         }
         if (y + 1 < g.ny) {
-          int f = 0;
-          for (Coord t = step / 2; t < tile; t += step) f += free_at({x0 + t, y0 + tile}, l);
-          g.cap_v[g.vi(l, x, y)] = static_cast<int>(static_cast<double>(f) * static_cast<double>(step) / static_cast<double>(pitch));
+          int c = std::numeric_limits<int>::max();
+          for (int k = 0; k < kCuts; ++k) c = std::min(c, cut_capacity(y0 + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), x0, false, l));
+          g.cap_v[g.vi(l, x, y)] = c;
         }
       }
 
@@ -175,6 +192,20 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
     if (g.use_h[e] > g.cap_h[e]) { ++res.overflow_edges; res.total_overflow += g.use_h[e] - g.cap_h[e]; }
   for (std::size_t e = 0; e < g.use_v.size(); ++e)
     if (g.use_v[e] > g.cap_v[e]) { ++res.overflow_edges; res.total_overflow += g.use_v[e] - g.cap_v[e]; }
+
+  // Congestion map: demand over capacity on the four boundaries of each tile (integers, so every platform agrees).
+  res.util.assign(nn, 0);
+  for (int l = 0; l < layers; ++l)
+    for (int y = 0; y < g.ny; ++y)
+      for (int x = 0; x < g.nx; ++x) {
+        long use = 0, cap = 0;
+        auto add = [&](const std::vector<int>& u, const std::vector<int>& c, std::size_t e) { use += u[e]; cap += c[e]; };
+        if (x + 1 < g.nx) add(g.use_h, g.cap_h, g.hi(l, x, y));
+        if (x > 0) add(g.use_h, g.cap_h, g.hi(l, x - 1, y));
+        if (y + 1 < g.ny) add(g.use_v, g.cap_v, g.vi(l, x, y));
+        if (y > 0) add(g.use_v, g.cap_v, g.vi(l, x, y - 1));
+        res.util[g.node(l, x, y)] = static_cast<std::uint8_t>(std::min<long>(255, use * 8 / std::max<long>(1, cap)));
+      }
 
   // Corridors: walk each path's nodes (re-derived from the edges, starting at the goal node), mark tiles, widen
   // by one tile on the same layer. Both end tiles are marked on all of their pad's layers.

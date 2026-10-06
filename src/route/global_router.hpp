@@ -42,6 +42,9 @@ struct GlobalResult {
   // Bounding box of each corridor in tiles (x0, y0, x1, y1, inclusive); the detailed router's confined window.
   std::vector<std::array<int, 4>> corridor_box;
   std::vector<int> vias;       // global vias per connection
+  // util[(l * tiles_y + ty) * tiles_x + tx]: planned tracks through the tile's four boundaries on layer l, in
+  // eighths of their capacity (8 = full, capped at 255). The detailed router's congestion map.
+  std::vector<std::uint8_t> util;
   int overflow_edges = 0;      // edges still over capacity after negotiation
   long total_overflow = 0;
   int tile_of_x(Coord x) const { return static_cast<int>((x - origin.x) / tile); }
