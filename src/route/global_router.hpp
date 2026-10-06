@@ -30,6 +30,7 @@ struct GlobalNet {             // one two-pin connection
   model::LayerMask layers_a = 0, layers_b = 0;  // copper layers each end can start on
   Coord half_width = 0;
   int net = 0;                 // connections with the same net (> 0) share edges; 0 = shares with nothing
+  geom::Box box_a, box_b;      // copper of the two end pads (cut lines: which side of a line an end is on)
 };
 
 struct GlobalOptions {
@@ -38,7 +39,21 @@ struct GlobalOptions {
   double via_cost_tiles = 2.0; // cost of a via, in tile lengths
   int iterations = 8;          // negotiation rounds after the first pass
   Coord via_diameter = 0, via_drill = 0;  // via used for the via capacity of a tile; 0 = no via capacity
+  // Every pad of the nets being routed, as (net, copper box): a pad that straddles a cut line carries its net
+  // across without a track, so that net is not counted there.
+  std::vector<std::pair<int, geom::Box>> pads;
   Coord via_pitch = 0;         // spacing of the via sites sampled in a tile (via diameter + clearance)
+};
+
+// A straight line across the whole board and what has to cross it (escalation rung R6, doc 05 §20; the cut argument
+// of Maley, "Single-Layer Wire Routing and Compaction", 1990, at the resolution of the capacity samples). Every net
+// with a planned connection whose two end pads lie wholly on opposite sides, and no pad across the line, crosses it at
+// least once, on some layer; `capacity` is an upper bound of the tracks
+// that fit across it on all layers past the fixed copper. demand > capacity proves the placement unroutable.
+struct CutLine {
+  bool vertical = true;        // a line x = at (false: y = at)
+  Coord at = 0;
+  int capacity = 0, demand = 0;
 };
 
 struct GlobalResult {
@@ -56,6 +71,8 @@ struct GlobalResult {
   int overflow_edges = 0;      // edges still over capacity after negotiation
   long total_overflow = 0;
   int overflow_via_tiles = 0;  // tiles with more planned vias than free via sites
+  std::vector<CutLine> over_cuts;  // lines with demand > capacity, tightest line of each over-full tile boundary
+  CutLine tightest;                // the line with the highest demand / capacity (capacity 0 counts as over-full)
   double seconds_capacity = 0, seconds_route = 0;  // set-up (obstacle sampling) and routing + negotiation
   int tile_of_x(Coord x) const { return static_cast<int>((x - origin.x) / tile); }
   int tile_of_y(Coord y) const { return static_cast<int>((y - origin.y) / tile); }

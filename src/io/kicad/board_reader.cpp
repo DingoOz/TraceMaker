@@ -353,6 +353,13 @@ class Reader {
     // A plated through hole has copper on every copper layer, whatever the file lists (KiCad semantics;
     // verified on PCBench WordClock where P3 lists only F.Cu and KiCad's DRC checks it on B.Cu).
     if (pad.type == model::PadType::ThruHole) pad.copper = expand_copper("*.Cu");
+    // A pad without a hole has copper on one side only: KiCad connects an SMD pad listed on "*.Cu" on its
+    // footprint's side and reports a track reaching it on the other side as a missing connection (PCBench
+    // Kefersender SMA_E1: pads 0 and 2, routed on B.Cu, stayed in KiCad's ratsnest).
+    if ((pad.type == model::PadType::Smd || pad.type == model::PadType::Connect) && pad.drill_x == 0 && fi >= 0) {
+      const model::LayerMask front = model::layer_bit(0), back = model::layer_bit(b_.copper_count() - 1);
+      if ((pad.copper & front) && (pad.copper & back) && b_.copper_count() > 1) pad.copper = b_.footprints[static_cast<std::size_t>(fi)].back ? back : front;
+    }
     if (NodeId r = d_.find(p, "roundrect_rratio"); r != kNoNode) pad.roundrect_ratio = d_.number_at(r, 1).value_or(0);
     if (NodeId r = d_.find(p, "chamfer_ratio"); r != kNoNode) pad.chamfer_ratio = d_.number_at(r, 1).value_or(0);
     if (NodeId c = d_.find(p, "chamfer"); c != kNoNode) {

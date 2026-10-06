@@ -73,21 +73,76 @@ GlobalResult global_route(const Obstacles& obs, const geom::Box& bounds, int lay
     close();
     return cap;
   };
+  // line_x[x * kCuts + k]: tracks across the whole straight line x = const (cut k between tile columns x and x + 1),
+  // all rows and layers; line_y likewise. Unlike the per-tile minimum these are capacities of real lines (R6).
+  std::vector<long> line_x(g.X() * kCuts, 0), line_y(g.Y() * kCuts, 0);
   for (int l = 0; l < layers; ++l)
     for (int y = 0; y < g.ny; ++y)
       for (int x = 0; x < g.nx; ++x) {
         const Coord x0 = bounds.x0 + x * tile, y0 = bounds.y0 + y * tile;
         if (x + 1 < g.nx) {  // cuts x = const between the centres of tiles x and x + 1, from y0 to y0 + tile
           int c = std::numeric_limits<int>::max();
-          for (int k = 0; k < kCuts; ++k) c = std::min(c, cut_capacity(x0 + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), y0, true, l));
+          for (int k = 0; k < kCuts; ++k) {
+            const int ck = cut_capacity(x0 + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), y0, true, l);
+            line_x[static_cast<std::size_t>(x) * kCuts + static_cast<std::size_t>(k)] += ck;
+            c = std::min(c, ck);
+          }
           g.cap_h[g.hi(l, x, y)] = c;
         }
         if (y + 1 < g.ny) {
           int c = std::numeric_limits<int>::max();
-          for (int k = 0; k < kCuts; ++k) c = std::min(c, cut_capacity(y0 + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), x0, false, l));
+          for (int k = 0; k < kCuts; ++k) {
+            const int ck = cut_capacity(y0 + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), x0, false, l);
+            line_y[static_cast<std::size_t>(y) * kCuts + static_cast<std::size_t>(k)] += ck;
+            c = std::min(c, ck);
+          }
           g.cap_v[g.vi(l, x, y)] = c;
         }
       }
+  // Cut lines (R6): nets with endpoints on both sides of each line against the line's capacity.
+  {
+    // Per net: is there a planned connection across the line, and does a pad of the net straddle it?
+    std::vector<int> ids;
+    for (const auto& n : nets)
+      if (n.net > 0) ids.push_back(n.net);
+    std::sort(ids.begin(), ids.end());
+    ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
+    auto demand_at = [&](bool vertical, Coord at) {
+      auto lo = [&](const geom::Box& bx) { return vertical ? bx.x0 : bx.y0; };
+      auto hi = [&](const geom::Box& bx) { return vertical ? bx.x1 : bx.y1; };
+      std::vector<int> need, bridged;
+      for (const auto& n : nets)
+        if (n.net > 0 && ((hi(n.box_a) < at && lo(n.box_b) > at) || (hi(n.box_b) < at && lo(n.box_a) > at))) need.push_back(n.net);
+      for (const auto& [net, bx] : opt.pads)
+        if (lo(bx) <= at && at <= hi(bx)) bridged.push_back(net);
+      std::sort(need.begin(), need.end());
+      need.erase(std::unique(need.begin(), need.end()), need.end());
+      std::sort(bridged.begin(), bridged.end());
+      int d = 0;
+      for (int net : need) d += !std::binary_search(bridged.begin(), bridged.end(), net);
+      return d;
+    };
+    bool have = false;
+    auto consider = [&](bool vertical, Coord at, long cap, std::vector<CutLine>& over_here) {
+      CutLine c{vertical, at, static_cast<int>(std::min<long>(cap, std::numeric_limits<int>::max())), 0};
+      c.demand = demand_at(vertical, at);
+      if (c.demand == 0) return;
+      // Tighter: demand / capacity larger, compared by cross-multiplication.
+      auto tighter = [](const CutLine& p, const CutLine& q) { return static_cast<long>(p.demand) * q.capacity > static_cast<long>(q.demand) * p.capacity; };
+      if (!have || tighter(c, res.tightest)) res.tightest = c, have = true;
+      if (c.demand > c.capacity && (over_here.empty() || tighter(c, over_here.front()))) over_here.assign(1, c);
+    };
+    for (int x = 0; x + 1 < g.nx; ++x) {
+      std::vector<CutLine> over_here;
+      for (int k = 0; k < kCuts; ++k) consider(true, bounds.x0 + x * tile + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), line_x[static_cast<std::size_t>(x) * kCuts + static_cast<std::size_t>(k)], over_here);
+      res.over_cuts.insert(res.over_cuts.end(), over_here.begin(), over_here.end());
+    }
+    for (int y = 0; y + 1 < g.ny; ++y) {
+      std::vector<CutLine> over_here;
+      for (int k = 0; k < kCuts; ++k) consider(false, bounds.y0 + y * tile + tile / 2 + (2 * k + 1) * tile / (2 * kCuts), line_y[static_cast<std::size_t>(y) * kCuts + static_cast<std::size_t>(k)], over_here);
+      res.over_cuts.insert(res.over_cuts.end(), over_here.begin(), over_here.end());
+    }
+  }
 
   // Via capacity: free through-via sites on a grid of via pitches inside the tile (fixed copper only).
   std::vector<int> via_cap(g.X() * g.Y(), std::numeric_limits<int>::max()), via_use(g.X() * g.Y(), 0);

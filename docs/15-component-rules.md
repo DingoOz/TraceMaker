@@ -1324,7 +1324,7 @@ Built in `src/crules/` (namespace `tmk::crules`); assumptions made without revie
 | P4 impedance rules | `crules/impedance_rules.{hpp,cpp}`, `evaluate.cpp` | Every `impedance` rule gets a width (and gap) per routing layer over the adjacent copper layer, in the text and JSON report; report only (D36) |
 | P4 width for current | `imp::width_for_current` (IPC-2221), `plan_current` | Reported for rules that give `current_a` (USBC-09); report only |
 
-Not built: net classes from rules (impedance widths are reported only, D36; width for current, P5), hard proximity
+Net classes from rules were built on 2026-10-06 (§15, D58). Not built: hard proximity
 constraints, the connector orientation part of CONN-01 beyond what the edge pull implies, edge attraction in the global
 (quadratic) placement stage (the annealer carries it), antenna keep-outs without a footprint keep-out (no datasheet
 table), the Ethernet plane split (ETH-07) and chassis isolation (ETH-06), routing order/chain topology, skew and via
@@ -1620,3 +1620,33 @@ LadybugLiteBlue 5.8 → 2.1, kitspace_training_board 11.4 → 1.6 (6 of 6 connec
 nanoTracer +3.3 %, Microdox −0.2 %). Costs: decoupling distance worse on 2 boards (training board 11.2 → 27.2 mm,
 nanoTracer 5.8 → 10.0 mm) because the connectors take edge space the ICs and their caps had. So edge attraction does
 what it is meant to, at a wirelength and (on two boards) decap cost; it stays **opt-in**, default off.
+
+## 15. Net classes from rules (P5, 2026-10-06)
+
+`crules::synthetic_net_classes` (`crules/netclasses.cpp`) turns three kinds of evaluated rule into net classes:
+
+| Rule kind | Needs | Class gets |
+|---|---|---|
+| `impedance` | a stackup, so that a width (and pair gap) was computed (§5.3) | track width = the front-layer solution; for a differential target also the pair width and gap |
+| `width_for_current` with a current | the IPC-2221 width (35 µm copper assumed without a stackup, said in the report) | track width = the outer-layer width |
+| `width_for_current` with `min_width_mm` only (USBC-08) | nothing | track width = that minimum |
+
+Limits that keep it conservative (§3.5): only instances at the apply threshold; only the nets bound to the rule's
+`applies_to` roles; only nets the board leaves in its Default class (a board class always wins, and the rule then
+reads "satisfied by board"); the width is never below the Default class's width for single-ended rules, nor below
+the board minimum; a second rule on the same net can only widen its class. The classes are named
+`tmk_<RULE>_<anchor reference>`, live in memory only (rule 8) and are listed in every mode; the router uses them with
+`--component-rules on` (`route_job.cpp`, `component_rule_net_classes` in the route JSON).
+
+The router has one width per net. The front-layer solution is used on every layer, and the report says so when
+another layer would need a different width (stripline inner layers; inner layers for current). Per-layer widths are
+not built. Pin escapes still use the neck-down width where the class width does not fit a pad row.
+
+Examples (`route --component-rules on`): StickHub (two layers, 1.6 mm): `tmk_USB2-01_J1`, pair 0.760 mm / gap
+0.150 mm for 90 Ω on F.Cu, nets D+ and D−. CM5 Minima: `tmk_USBC-08_J101` 0.2 mm for CC1/CC2; `tmk_USBC-09_J101`
+1.367 mm for 3 A on +5V (inner layers would need 8.189 mm). PCBench boards have no stackup, so no impedance class is
+ever made for them: the quick tier is unaffected, and routing stays off by default.
+
+Test: `[netclass]` in `crules/test_impedance.cpp` (the class carries the computed pair solution; exactly the two
+nets resolve to it; a net with a board class of its own is left alone; no stackup, no impedance class).
+

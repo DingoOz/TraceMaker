@@ -65,6 +65,7 @@ struct Part {
   int fp = -1;                  // footprint index in the board
   std::string ref, lib_id;
   bool movable = false;
+  bool copper_only = false;     // ExtractOptions::copper_only: only its copper and holes are tested against other parts
   std::string fixed_reason;     // why a part is fixed (locked, mounting hole, ...)
   int side = 0;                 // 0 front, 1 back: the footprint's side in the input
   // May move to the other side (states 4–7): movable, surface mount only (no holes), the board has two copper
@@ -170,6 +171,17 @@ struct ExtractOptions {
   std::vector<std::uint8_t> flip_ok;
   std::vector<std::string> flip_why;
   std::vector<std::string> keep_side;
+  // References whose courtyard is ignored: the part is as large as its pads (box + 0.25 mm), like a footprint
+  // drawn without a courtyard. Full mode's fallback for parts whose courtyard fits nowhere (designers overlap
+  // courtyards routinely: 24 of the 40 boards of set H do; doc 04 §9).
+  std::vector<std::string> pads_only;
+  // References tested by copper and holes only: neither their outline nor the other parts' courtyards count
+  // against them (copper clearance, hole spacing and the board edge still do). The last resort before a part is
+  // left off the board: battery holders, modules and headers that the designer placed across other courtyards.
+  std::vector<std::string> copper_only;
+  // The input positions of movable parts mean nothing (a board straight from the schematic: parts piled or beside
+  // the board). A part that overhangs the edge where the input has it is then not held there.
+  bool scratch = false;
 };
 
 // Builds the problem. `rules` and `board_path` give the courtyard clearance (custom rules or .kicad_pro).

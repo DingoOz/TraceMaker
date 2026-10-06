@@ -111,6 +111,21 @@ std::string dru_sidecar(const model::Board& b, const Catalogue& cat, const Detec
 // roles each bind exactly one net, in instance order, without duplicates.
 std::vector<std::pair<model::NetId, model::NetId>> usb_pairs(const model::Board& b, const Catalogue& cat, const Detection& det);
 
+// Net classes from rules (doc 15 §5.3-5.4 and §16, P5): impedance rules with a computed width/gap, and width rules
+// with a current or a minimum width, become synthetic net classes for the nets bound to the rule's roles. Only for
+// instances at the apply threshold, only for nets the board leaves in its Default class (the board's own classes
+// always win, §3.5), and only ever wider than the class the net has (never looser than a board rule). The router
+// has one width per net: the outer-layer solution is used and `detail` says when inner layers would differ.
+struct SyntheticClass {
+  model::NetClass cls;               // name "tmk_<RULE>_<anchor reference>"
+  std::vector<model::NetId> nets;
+  std::string rule, detail;
+};
+std::vector<SyntheticClass> synthetic_net_classes(const model::Board& b, const model::DesignRules& rules, const Catalogue& cat,
+                                                  const Detection& det, const Evaluation& ev);
+// `rules` with the synthetic classes added and their nets assigned to them (in memory only, rule 8).
+model::DesignRules with_synthetic_classes(const model::Board& b, model::DesignRules rules, const std::vector<SyntheticClass>& sc);
+
 // Report (doc 15 §7).
 std::string report_text(const model::Board& b, const Catalogue& cat, const Detection& det, const Evaluation& ev);
 nlohmann::json report_json(const model::Board& b, const Catalogue& cat, const Detection& det, const Evaluation& ev);

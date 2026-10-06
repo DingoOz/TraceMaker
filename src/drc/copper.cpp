@@ -220,7 +220,8 @@ CopperModel build_copper(const model::Board& b) {
   for (std::size_t i = 0; i < b.graphics.size(); ++i) {
     const auto& g = b.graphics[i];
     const int layer = b.copper_index(g.layer);
-    if (layer < 0 && g.layer != "Edge.Cuts") continue;
+    const bool margin = g.layer == "Margin";
+    if (layer < 0 && g.layer != "Edge.Cuts" && !margin) continue;
     std::vector<Shape> shapes;
     const Coord r = g.width / 2;
     switch (g.kind) {
@@ -251,7 +252,7 @@ CopperModel build_copper(const model::Board& b) {
       for (auto& s : shapes) {
         s.r = 0;
         s.update_box();
-        m.edges.push_back(std::move(s));
+        (margin ? m.margins : m.edges).push_back(std::move(s));
       }
       continue;
     }

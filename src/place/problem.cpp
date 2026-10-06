@@ -2,6 +2,7 @@
 #include "place/problem.hpp"
 
 #include <algorithm>
+#include <optional>
 #include <cctype>
 #include <climits>
 #include <cmath>
@@ -332,6 +333,32 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     if (t.footprint >= 0) fp_copper[z(t.footprint)].push_back(std::move(cs));
     else p.fixed_copper.push_back(std::move(cs));
   }
+  // Solder-mask openings drawn as graphics (logos, bare-copper art, board-level openings): a pad whose own opening
+  // reaches one is a KiCad solder_mask_bridge (PCBench kitspace_postcard: LEDs placed under a logo's opening). They
+  // act as net-less copper on that side that pads keep the mask expansion away from. A footprint's graphic over
+  // its own pads is those pads' opening and is left out.
+  for (const auto& g : b.graphics) {
+    const int side = g.layer == "F.Mask" ? 0 : g.layer == "B.Mask" ? 1 : -1;
+    if (side < 0 || p.copper_layers < 1) continue;
+    std::optional<Shape> sh;
+    if ((g.kind == model::Graphic::Kind::Poly || g.kind == model::Graphic::Kind::Rect) && g.pts.size() >= 3 && (g.filled || g.kind == model::Graphic::Kind::Poly))
+      sh = Shape::polygon(g.pts, g.width / 2);
+    else if (g.kind == model::Graphic::Kind::Circle && g.filled)
+      sh = Shape::point(g.a, geom::kiround(std::hypot(static_cast<double>(g.b.x - g.a.x), static_cast<double>(g.b.y - g.a.y))) + g.width / 2);
+    else if (g.kind == model::Graphic::Kind::Line)
+      sh = Shape::segment(g.a, g.b, g.width / 2);
+    if (!sh) continue;
+    bool own_pad = false;
+    if (g.footprint >= 0)
+      for (int pi : b.footprints[z(g.footprint)].pads)
+        for (const auto& ps : drc::pad_shapes(b.pads[z(pi)]))
+          if (geom::closer_than(*sh, ps, 1)) own_pad = true;
+    if (own_pad) continue;
+    const Coord need = std::max<Coord>(b.pad_to_mask_clearance, 0) + std::max({rules.minimums.solder_mask_min_width, Coord{0}}) + 1'000;
+    CopperShape cs{*sh, model::layer_bit(side == 0 ? 0 : p.copper_layers - 1), 0, need};
+    if (g.footprint >= 0) fp_copper[z(g.footprint)].push_back(std::move(cs));
+    else p.fixed_copper.push_back(std::move(cs));
+  }
   for (const auto& v : fp_copper)
     for (const auto& cs : v) p.max_need = std::max(p.max_need, cs.need);
   for (const auto& cs : p.fixed_copper) p.max_need = std::max(p.max_need, cs.need);
@@ -449,6 +476,8 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       for (auto& q : hull) q = q - fp.pos;
       cy0[z(s)].push_back(Shape::polygon(std::move(hull), 0));
     }
+    if (!pad_box.empty() && std::find(opt.pads_only.begin(), opt.pads_only.end(), fp.reference) != opt.pads_only.end()) cy0 = {};
+    pt.copper_only = std::find(opt.copper_only.begin(), opt.copper_only.end(), fp.reference) != opt.copper_only.end();
     if (cy0[0].empty() && cy0[1].empty() && !pad_box.empty()) {
       // No courtyard: the pad bounding box inflated by 0.25 mm, or for large sparse footprints (shield headers,
       // board outlines drawn as footprints: pads cover < 20% of the box) one such box per pad, so the empty
@@ -667,7 +696,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // Parts that already overhang the board edge (pads outside, or the courtyard well past it) or sit in a
   // keepout are placed that way on purpose (connectors, sensors, battery holders): keep them where they are.
   // Pads merely closer to the edge than the copper-to-edge clearance do not count (common in old boards).
-  {
+  if (!opt.scratch) {
     const Legality L(p);
     for (auto& pt : p.parts)
       if (pt.movable && !L.inside_ok(static_cast<int>(&pt - p.parts.data()), pt.pos0, 0, true)) {

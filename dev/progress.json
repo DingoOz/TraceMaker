@@ -675,8 +675,8 @@
      "done": true
     },
     {
-     "text": "Rule compiler: net classes from rules (applied to routing)",
-     "done": false
+     "text": "Rule compiler: net classes from rules, used by the router with --component-rules on (tmk_<RULE>_<ref>, Default-class nets only, D58; doc 15 \u00a715)",
+     "done": true
     },
     {
      "text": "Stackup parsing + impedance (IPC-2141A / Wadell) - widths/gaps reported per layer (P4, report only)",
@@ -703,8 +703,8 @@
      "done": true
     },
     {
-     "text": "Net classes from rules (impedance, width for current) - needs stackup (P4/P5)",
-     "done": false
+     "text": "Net classes from rules: impedance width/gap from the stackup, IPC-2221 width for current, minimum widths (one width per net: front-layer solution; per-layer widths not built)",
+     "done": true
     },
     {
      "text": "IPC-2221 width for current reported for rules with a current (USBC-09)",

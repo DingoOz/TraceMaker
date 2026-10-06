@@ -97,7 +97,7 @@ RouteJobResult run_route_job(RouteJob job) {
   };
   auto& opt = job.opt;
   auto lb = io::read_board_file(job.in);
-  const auto rules = io::read_design_rules(job.in);
+  auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
   const std::string name = std::filesystem::path(job.in).filename().string();
   RouteJobResult out;
   std::unique_ptr<server::ViewerServer> server;
@@ -135,6 +135,7 @@ RouteJobResult run_route_job(RouteJob job) {
   // sees; the output is written from the original document, so the user's board never gains them.
   const crules::Mode cr_mode = crules::parse_mode(job.component_rules);
   model::Board with_rules;
+  nlohmann::json cr_classes = nlohmann::json::array();
   const model::Board* route_board = &lb.board;
   if (cr_mode == crules::Mode::Off && !job.rules_override.empty()) {
     crules::load_overrides_file(job.rules_override, crules::builtin_catalogue());  // still validated: a broken file is an error
@@ -170,12 +171,37 @@ RouteJobResult run_route_job(RouteJob job) {
                               .dump());
       }
     }
+    // Net classes from impedance and width rules (P5, doc 15 §16): reported in every mode, used by the router with
+    // --component-rules on.
+    {
+      const auto ev = crules::evaluate(lb.board, &rules, cat, det, cr_mode);
+      const auto sc = crules::synthetic_net_classes(lb.board, rules, cat, det, ev);
+      for (const auto& c : sc) {
+        std::string nets;
+        for (const auto n : c.nets) nets += (nets.empty() ? "" : ", ") + lb.board.nets[static_cast<std::size_t>(n)].name;
+        log("  net class " + c.cls.name + " (" + c.rule + "): " + c.detail + "; nets " + nets + (cr_mode == crules::Mode::On ? "" : " (not applied: use --component-rules on)"));
+        nlohmann::json nj = nlohmann::json::array();
+        for (const auto n : c.nets) nj.push_back(lb.board.nets[static_cast<std::size_t>(n)].name);
+        cr_classes.push_back({{"name", c.cls.name}, {"rule", c.rule}, {"track_width_mm", nm_to_mm(c.cls.track_width)},
+                              {"diff_pair_gap_mm", c.cls.has_diff_pair_gap ? nm_to_mm(c.cls.diff_pair_gap) : 0.0}, {"nets", nj},
+                              {"detail", c.detail}, {"applied", cr_mode == crules::Mode::On}});
+      }
+      if (cr_mode == crules::Mode::On && !sc.empty()) rules = crules::with_synthetic_classes(lb.board, std::move(rules), sc);
+    }
     // USB2-02 (P3): route each detected USB 2.0 D+/D- pair coupled first (a soft preference: the router falls back
     // to single tracks). Only pairs bound to exactly one net each.
     if (cr_mode == crules::Mode::Soft || cr_mode == crules::Mode::On)
       for (const auto& p : crules::usb_pairs(lb.board, cat, det)) {
         if (std::find(opt.pair_nets.begin(), opt.pair_nets.end(), p) != opt.pair_nets.end()) continue;
         opt.pair_nets.push_back(p);
+        // The interface's own intra-pair skew limit (USB2-02 max_intra_skew_mm), unless the user gave one for all pairs.
+        Coord skew = 0;
+        for (const auto& c : cat.categories)
+          for (const auto& r : c.rules)
+            if (r.id == "USB2-02" && r.params.contains("max_intra_skew_mm") && r.params["max_intra_skew_mm"].is_number())
+              skew = static_cast<Coord>(r.params["max_intra_skew_mm"].get<double>() * 1e6);
+        opt.pair_net_skew.resize(opt.pair_nets.size(), 0);
+        opt.pair_net_skew.back() = skew;
         log("  differential pair (USB2-02): " + lb.board.nets[static_cast<std::size_t>(p.first)].name + " / " +
             lb.board.nets[static_cast<std::size_t>(p.second)].name);
       }
@@ -240,12 +266,20 @@ RouteJobResult run_route_job(RouteJob job) {
   for (const auto& f : res.failures) log("  unrouted: " + f);
   for (std::size_t r = 0; r < res.escape_rings.size(); ++r)
     log(fmt("  deep-array ring %zu: %d of %d pins connected", r + 1, res.escape_rings[r].second, res.escape_rings[r].first));
+  if (opt.cut_report) {
+    auto line = [&](const route::CutLine& c) {
+      return fmt("%s = %.2f mm: %d nets must cross, %d tracks fit", c.vertical ? "x" : "y", nm_to_mm(c.at), c.demand, c.capacity);
+    };
+    if (res.tightest_cut.demand > 0) log("  tightest cut line " + line(res.tightest_cut));
+    for (const auto& c : res.over_cuts) log("  cut proof: unroutable across " + line(c));
+  }
   out.items = items_json(lb.board, res);
   if (!job.items_out.empty()) std::ofstream(job.items_out) << out.items.dump();
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
                  {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
                  {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
                  {"escape_corridors", res.escape_corridors}};
+  if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
   if (opt.diff_pairs || !opt.pair_nets.empty()) {
     const auto cm = drc::build_copper(lb.board);
@@ -268,6 +302,14 @@ RouteJobResult run_route_job(RouteJob job) {
                     {"skew_mm", st.skew() / 1e6}, {"length_mm", (st.length_a + st.length_b) / 2e6}});
     }
     out.summary["pairs"] = pj;
+  }
+  if (opt.cut_report) {
+    auto cj = [](const route::CutLine& c) {
+      return nlohmann::json{{"axis", c.vertical ? "x" : "y"}, {"at_mm", nm_to_mm(c.at)}, {"demand", c.demand}, {"capacity", c.capacity}};
+    };
+    nlohmann::json over = nlohmann::json::array();
+    for (const auto& c : res.over_cuts) over.push_back(cj(c));
+    out.summary["cuts"] = {{"tightest", cj(res.tightest_cut)}, {"unroutable", over}};
   }
   if (!res.escape_rings.empty()) {
     nlohmann::json rings = nlohmann::json::array();

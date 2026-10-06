@@ -28,6 +28,7 @@ from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
+SRC_FIX = FIX  # --fixtures DIR: boards to place and route (e.g. set S); FIX stays the human reference for placement errors
 FR_RESULTS = ROOT / "bench/data/freerouting/scripts/benchmark/results/benchmarks.json"
 TM = pathlib.Path(os.environ.get("TM_BINARY", ROOT / "build/release/src/app/tracemaker"))
 EXTRA = os.environ.get("TM_ROUTE_ARGS", "").split()  # extra route options for experiments, e.g. "--via-cost-mm 3"
@@ -97,6 +98,7 @@ PLACE = ROOT / "build/release/src/place/tracemaker-place"
 PLACE_MODE = None        # --place MODE: TraceMaker may move components before routing
 PLACE_TIMEOUT = 900      # seconds; on timeout the human placement is routed (recorded)
 PLACE_WORK = 3_000_000   # router budget per placement evaluation (deterministic)
+PLACE_ARGS: list[str] = []  # --place-args: extra tracemaker-place options (e.g. --scratch for set S)
 PLACE_CRULES = None      # --place-crules MODE: tracemaker-place --component-rules (doc 15); None = its default
 # Errors placement can introduce (counted against the human board when parts move).
 PLACEMENT_ERRORS = {"courtyards_overlap", "pth_inside_courtyard", "npth_inside_courtyard", "copper_edge_clearance", "clearance",
@@ -111,7 +113,7 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     try:
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
                             "--threads", str(THREADS), "--json", str(js)]
-                           + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else [])
+                           + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else []) + PLACE_ARGS
                            + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT)
         res["place_exit"] = p.returncode
     except subprocess.TimeoutExpired:
@@ -129,7 +131,8 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     except (OSError, ValueError):
         res["place"] = "ok (no report)"
     # Errors the placement itself introduced (any items), against the human board.
-    human, moved = drc(src), drc(placed)
+    ref = FIX / name / "unrouted.kicad_pcb"
+    human, moved = drc(ref if ref.exists() else src), drc(placed)
     if human and moved:
         res["place_added"] = place_added(human, moved)
     return placed
@@ -151,7 +154,7 @@ def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
 
 
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
-    src0 = FIX / name / "unrouted.kicad_pcb"
+    src0 = SRC_FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
     out.parent.mkdir(parents=True, exist_ok=True)
     res = {"board": name}
@@ -202,9 +205,18 @@ def main() -> int:
     ap.add_argument("--place-timeout", type=int, default=900)
     ap.add_argument("--place-work", type=int, default=3_000_000)
     ap.add_argument("--place-crules", choices=["off", "report", "soft", "on"], help="component rules during placement (doc 15)")
+    ap.add_argument("--fixtures", help="directory with <board>/unrouted.kicad_pcb to use instead of PCBench (with --boards or --board-list)")
+    ap.add_argument("--place-args", help="extra tracemaker-place options, space-separated (quote the whole string)")
+    ap.add_argument("--board-list", help="file with one board name per line (# comments)")
+    ap.add_argument("--set-name", help="name of the board set for the summary (default: the tier)")
     a = ap.parse_args()
-    global THREADS
+    global THREADS, SRC_FIX, PLACE_ARGS
+    PLACE_ARGS = (a.place_args or "").split()
     THREADS = a.threads
+    if a.fixtures:
+        SRC_FIX = pathlib.Path(a.fixtures).resolve()
+    if a.board_list:
+        a.boards = [x.strip() for x in pathlib.Path(a.board_list).read_text().splitlines() if x.strip() and not x.startswith("#")]
     base = fr_baseline()
     if a.boards:
         names = a.boards
@@ -256,7 +268,7 @@ def main() -> int:
         for t in r["added_errors"]:
             added_types[t] += 1
     summary = {
-        "run": run_id, "set": f"PCBench tier {a.tier}" + (f" + placement ({a.place}" + (f", component rules {a.place_crules}" if a.place_crules else "") + ")" if a.place else ""), "boards": n, "commit": commit,
+        "run": run_id, "set": (a.set_name or f"PCBench tier {a.tier}") + (f" + placement ({a.place}" + (f", component rules {a.place_crules}" if a.place_crules else "") + ")" if a.place else ""), "boards": n, "commit": commit,
         "place_mode": a.place,
         "place_crules": a.place_crules,
         "clean_pass": round(clean / n, 4) if n else None,

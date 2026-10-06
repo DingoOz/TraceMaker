@@ -538,3 +538,59 @@ test). A broad-phase on the GPU would speed up 14 ms.
 time to route on dense boards came down through the fields and the reachability pre-check (§13) with no loss of
 quality. Global routing did not contribute and is kept as measured, optional code.
 
+## 20. Escalation rungs R4–R6 (M8, 2026-10-06)
+
+**R6, cut proofs: built** (`route --cut-report`; `CutLine` in `route/global_router.hpp`). Every straight line across
+the board at the capacity samples (eight per tile boundary, both axes) gets a capacity, the tracks that fit across
+it on all layers past the fixed copper, and a demand, the nets that must cross it. A net counts when one of its
+planned connections has its two end pads wholly on opposite sides of the line and no pad of the net lies across the
+line (such a pad carries the net over without a track). Capacity is an upper bound (a narrow probe, the smallest
+class pitch, free runs counted generously), demand a lower bound, so demand > capacity proves that the placement
+cannot be routed whatever the router does; the line and the deficit are the request to the placer (doc 04 §4). The
+first version counted nets by pad centres and "proved" MicroMaple unroutable across a line through its edge
+connector's pads; the pad-box rule above removed that.
+
+On the 92 boards of tiers B–D: no line is over-full. The tightest line carries 9 % of its capacity at the median,
+12 % on the non-clean boards, 40 % at most. With §16 (tile congestion) and §19 (corridors) this is the third
+measurement that says these boards are not short of space at board scale: what fails is the fan-out at a package.
+The report is therefore off by default and costs the global router's set-up when asked for.
+
+**R4, exact window solve: not built.** The design called for a multi-commodity-flow model in CP-SAT, which is not
+available here (no OR-tools C++ library). Its cheaper stand-in, the group re-route of §17 (up to five connections,
+every order), changed no board's result, and the cut and congestion measurements above say an exact window model
+would mostly return "feasible, the heuristic just did not find it" on fan-outs it cannot represent at 2× pitch.
+
+**R5, trial ordering: not built.** Ordering the last connections by how many others each traps is what the group
+re-route explored exhaustively on small groups, without effect (§17).
+
+## 21. Micro vias (M12, 2026-10-06)
+
+`--micro-vias` (off): on boards whose rules allow micro vias and with more than two copper layers, a layer change
+between an outer layer and the layer next to it may use a micro via of the net class's size (`uvia_diameter`,
+`uvia_drill`, not below the board minimums) where a through via is blocked. The search tries it before a
+blind/buried via; the commit keeps a through via wherever one is legal, so micro vias appear only where they are
+needed; the exact check uses the micro via's own size over its two layers. No fixture allows micro vias on more than
+two layers; on two four-layer boards with the setting switched on (EUC-VESC BJT, stm32f407riser; 20 M expansions)
+routing was complete or unchanged, KiCad reported no error on routed copper, and no micro via was needed. Like
+blind vias (§11): correct, no measurable gain on the boards at hand.
+
+## 22. Successive halving for the portfolio (M10, 2026-10-06)
+
+`--halving` (off): with more variants than threads, every variant runs on a small budget, the better half runs
+again on twice as much, until as many are left as there are threads (Jamieson and Talwalkar, AISTATS 2016). Each
+rung gets an equal share of the thread-time that `threads` variants would have used, so total work is the same. A
+router run cannot be resumed, so every rung starts its variants from scratch; the best result of any rung is
+returned, and the selection is deterministic with a work budget.
+
+24 hard and nearly clean boards, 30 M expansions per thread, connections routed:
+
+| Threads | The first variants, whole budget | All eight, successive halving |
+|---|---|---|
+| 2 | 12,402 | 12,385 |
+| 4 | 12,508 | 12,451 |
+
+Halving loses a little: its finalists run on a third (two threads) or half (four) of the budget, and choosing among
+eight variants does not make up for that. With eight or more threads there is nothing to allocate. It would need
+resumable runs to pay; kept off (D59). The knowledge base's variant choice (doc 06 T3) remains the way fewer
+threads pick their variants.
+

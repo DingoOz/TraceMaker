@@ -8,7 +8,7 @@ add_custom_command(OUTPUT ${TM_CRULES_DATA}
                    DEPENDS ${TM_CRULES_JSON} ${CMAKE_CURRENT_SOURCE_DIR}/embed.cmake
                    COMMENT "Embedding the component-rule catalogue")
 
-add_library(tm_crules STATIC catalogue.cpp names.cpp topology.cpp overrides.cpp detect.cpp proximity.cpp evaluate.cpp compile.cpp report.cpp impedance.cpp impedance_rules.cpp ${TM_CRULES_DATA})
+add_library(tm_crules STATIC catalogue.cpp names.cpp topology.cpp overrides.cpp detect.cpp proximity.cpp evaluate.cpp compile.cpp report.cpp impedance.cpp impedance_rules.cpp netclasses.cpp ${TM_CRULES_DATA})
 add_library(tm::crules ALIAS tm_crules)
 target_include_directories(tm_crules PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(tm_crules PUBLIC tm::model tm::geom tm::core nlohmann_json::nlohmann_json)

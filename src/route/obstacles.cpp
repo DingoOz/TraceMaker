@@ -34,8 +34,9 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   hgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, cm_.holes.size() + 1024);
   for (std::size_t i = 0; i < cm_.holes.size(); ++i) hgrid_->insert(static_cast<int>(i), cm_.holes[i].shape.box);
   // Board edge as individual segments in a grid, so edge tests cost O(nearby segments).
-  for (const auto& e : cm_.edges)
-    for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) edge_segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], 0));
+  for (const auto* list : {&cm_.edges, &cm_.margins})  // Margin graphics keep copper away like the edge (KiCad)
+    for (const auto& e : *list)
+      for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) edge_segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], 0));
   egrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, edge_segs_.size() + 16);
   for (std::size_t i = 0; i < edge_segs_.size(); ++i) egrid_->insert(static_cast<int>(i), edge_segs_[i].box);
   // Board outline: chain all Edge.Cuts pieces into closed loops; the loop with the largest area is the

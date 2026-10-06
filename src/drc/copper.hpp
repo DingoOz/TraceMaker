@@ -42,6 +42,9 @@ struct CopperModel {
   std::vector<CopperItem> items;
   std::vector<Hole> holes;
   std::vector<geom::Shape> edges;  // Edge.Cuts outline pieces (open polylines, r = 0)
+  // Margin-layer graphics: KiCad's copper_edge_clearance treats them like the board edge
+  // (drc_test_provider_edge_clearance collects Edge.Cuts and Margin), but they are no part of the outline.
+  std::vector<geom::Shape> margins;
 };
 
 // Pad copper shape in absolute coordinates.

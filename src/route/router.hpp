@@ -12,6 +12,7 @@
 #include "core/events.hpp"
 #include "model/board.hpp"
 #include "model/rules.hpp"
+#include "route/global_router.hpp"
 
 namespace tmk::route {
 
@@ -19,6 +20,11 @@ struct RouterOptions {
   Coord pitch = 0;              // lattice pitch; 0 = automatic from net-class widths and clearances
   double pitch_scale = 1.0;      // auto pitch multiplier, applied only on large lattices (>= 3M points per layer)
   double time_limit_s = 120;    // wall-clock safety limit for the whole run
+  // Portfolio with more variants than threads: successive halving (Jamieson and Talwalkar, AISTATS 2016) instead of
+  // running only `threads` variants. Every variant runs on a small budget, the better half runs again on twice as
+  // much, until `threads` variants are left; each rung takes an equal share of the wall time (or work) that
+  // `threads` variants would have used. Runs restart from scratch at each rung (a router run cannot be resumed).
+  bool halving = false;
   long work_budget = 0;         // deterministic budget in search expansions (0 = none): same input + seed => same output
   // Per search attempt. One variant at a fixed budget prefers 1M (10 hard boards: 3M / 2M / 1M / 750k / 500k routed
   // 8,285 / 8,309 / 8,381 / 8,371 / 8,363), but the 8-variant 120 s tiers did not confirm it (tier B 5,167 -> 5,161,
@@ -38,6 +44,9 @@ struct RouterOptions {
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
   int max_rips_per_connection = 8;
   int max_passes = 12;          // passes over still-unrouted connections
+  // Micro vias (outer layer to the next one, the net class's microvia size) where a through via is blocked, on
+  // boards whose rules allow them (doc 05 §21).
+  bool micro_vias = false;
   bool blind_vias = false;      // use blind/buried vias where a through via is blocked, if the board allows them
   bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
   // Component rules (doc 15 P3): these net pairs only are routed coupled first when diff_pairs is off (e.g. USB 2.0
@@ -46,6 +55,9 @@ struct RouterOptions {
   // Intra-pair skew limit for pairs routed coupled (0 = only KiCad custom `skew` rules): the shorter half gets meanders
   // in the clean-up until the halves differ by at most half of it (length tuning code, doc 05 §15).
   Coord pair_skew = 0;
+  // Per-pair limits for RouterOptions::pair_nets (same index; 0 or missing = pair_skew): component rules give each
+  // interface its own limit (USB 2.0 1.27 mm, doc 15 USB2-02).
+  std::vector<Coord> pair_net_skew;
   bool global_route = false;    // plan every connection on a coarse tile graph first; detailed search follows the corridors
   // Global router v2 (M6): the first search of each connection is confined to its corridor (cells outside are
   // blocked, window cropped to the corridor); only if that fails do the usual unconfined windows run.
@@ -67,6 +79,9 @@ struct RouterOptions {
   // Escape planning version 2 (route/escape_flow.hpp): deep ball-grid arrays get min-cost-flow channel and layer
   // assignment; other dense packages keep version 1's corridors. Implies escape_plan.
   bool escape_flow = false;
+  // R6 cut proofs (doc 05 §20): measure every straight line across the board (capacity past fixed copper against
+  // the nets that must cross) and fill RouteResult::over_cuts / tightest_cut. Costs the global router's set-up.
+  bool cut_report = false;
   bool escape_report = false;   // fill RouteResult::escape_rings (pins of deep arrays per ring, and how many connected)
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
@@ -105,11 +120,15 @@ struct RouteResult {
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;
+  int micro_vias = 0;           // micro vias placed
   int blind_vias = 0;           // blind/buried vias placed
   int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   // With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route, pins with every
   // connection routed}.
   std::vector<std::pair<int, int>> escape_rings;
+  // With cut_report: lines across the board that more nets must cross than tracks fit, and the tightest line.
+  std::vector<CutLine> over_cuts;
+  CutLine tightest_cut;
   double seconds = 0;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection

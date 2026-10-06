@@ -488,12 +488,16 @@ class Checker {
   }
 
   void check_edges() {
-    if (cm_.edges.empty()) return;
+    if (cm_.edges.empty() && cm_.margins.empty()) return;
+    std::vector<const geom::Shape*> edges;
+    for (const auto& e : cm_.edges) edges.push_back(&e);
+    for (const auto& e : cm_.margins) edges.push_back(&e);
     for (const auto& it : cm_.items) {
       const int layer = std::countr_zero(it.layers);
       const Coord req = re_.edge_clearance(it, layer);
       if (req < 0) continue;  // KiCad tests at zero clearance too: copper may not cross the edge
-      for (const auto& e : cm_.edges) {
+      for (const geom::Shape* ep : edges) {
+        const geom::Shape& e = *ep;
         if (!e.box.inflated(req).intersects(it.box)) continue;
         bool hit = false;
         const Coord thr = req > 0 ? req - o_.epsilon : 1;  // 0: touching or crossing

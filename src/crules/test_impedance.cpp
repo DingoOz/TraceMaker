@@ -376,3 +376,51 @@ TEST_CASE("KiCad demo stackups parse and give sane geometry", "[impedance][stack
   CHECK(geo[1].h1 == mm(0.1));
   CHECK(geo[1].h2 == mm(0.3));
 }
+
+TEST_CASE("net classes from rules: computed widths become classes for Default-class nets only", "[impedance][stackup][netclass]") {
+  const Catalogue& cat = builtin_catalogue();
+  const model::Board b = parse_board(four_layer_board(true));
+  const Detection d = detect(b, cat);
+  model::DesignRules rules;
+  rules.classes.push_back(model::NetClass{});
+  rules.classes[0].name = "Default";
+  const Evaluation ev = evaluate(b, &rules, cat, d, Mode::On);
+  const EffectiveRule* e = find_rule(ev, "USB2-01");
+  REQUIRE(e);
+  REQUIRE(e->impedance);
+  REQUIRE(e->impedance->computed);
+  const auto sc = synthetic_net_classes(b, rules, cat, d, ev);
+  const SyntheticClass* usb = nullptr;
+  for (const auto& c : sc)
+    if (c.rule == "USB2-01") usb = &c;
+  REQUIRE(usb);
+  REQUIRE(usb->nets.size() == 2);
+  // The class carries the front-layer pair solution, never below the board minimum.
+  const LineSolution* f = nullptr;
+  for (const auto& L : e->impedance->lines)
+    if (L.layer == "F.Cu" && L.differential) f = &L;
+  REQUIRE(f);
+  CHECK(usb->cls.track_width == f->width);
+  CHECK(usb->cls.diff_pair_width == f->width);
+  CHECK(usb->cls.diff_pair_gap == f->gap);
+  CHECK(usb->cls.has_diff_pair_gap);
+  CHECK(usb->cls.name.starts_with("tmk_USB2-01_"));
+  // Applied: the two nets resolve to the class, every other net stays in Default.
+  const model::DesignRules with = with_synthetic_classes(b, rules, sc);
+  int in_class = 0;
+  for (std::size_t n = 1; n < b.nets.size(); ++n) in_class += with.class_for(b.nets[n].name).name == usb->cls.name;
+  CHECK(in_class == 2);
+  CHECK(with.class_for(b.nets[static_cast<std::size_t>(usb->nets[0])].name).track_width == f->width);
+  // A net the board already put in a class of its own is left alone (the board's rules win, doc 15 §3.5).
+  model::DesignRules own = rules;
+  own.classes.push_back(rules.classes[0]);
+  own.classes.back().name = "USB_BOARD";
+  own.assignments[b.nets[static_cast<std::size_t>(usb->nets[0])].name] = {"USB_BOARD"};
+  const auto sc2 = synthetic_net_classes(b, own, cat, d, evaluate(b, &own, cat, d, Mode::On));
+  for (const auto& c : sc2)
+    CHECK(std::find(c.nets.begin(), c.nets.end(), usb->nets[0]) == c.nets.end());
+  // Without a stackup nothing is computed, so no impedance class appears (never guessed, CLAUDE.md rule 6).
+  const model::Board nb = parse_board(four_layer_board(false));
+  const Detection nd = detect(nb, cat);
+  for (const auto& c : synthetic_net_classes(nb, rules, cat, nd, evaluate(nb, &rules, cat, nd, Mode::On))) CHECK(c.rule != "USB2-01");
+}

@@ -1,0 +1,247 @@
+{
+ "seed": 7,
+ "median_parts": 33,
+ "tried": 132,
+ "boards": [
+  {
+   "board": "kitspace_tt_nano_HAT_b2",
+   "parts": 25,
+   "movable": 20,
+   "connections": 56
+  },
+  {
+   "board": "NRC2016_usb_sio",
+   "parts": 26,
+   "movable": 25,
+   "connections": 83
+  },
+  {
+   "board": "Phased-Array-Microphone-using-FPGA_SateliteMicrophone",
+   "parts": 21,
+   "movable": 17,
+   "connections": 33
+  },
+  {
+   "board": "PowerGloveUHID_sensor_board",
+   "parts": 18,
+   "movable": 14,
+   "connections": 28
+  },
+  {
+   "board": "i2lcd__autosave-i2lcd",
+   "parts": 22,
+   "movable": 22,
+   "connections": 74
+  },
+  {
+   "board": "fuzzer_fuzzer",
+   "parts": 19,
+   "movable": 10,
+   "connections": 69
+  },
+  {
+   "board": "sensorboard_DiffIR",
+   "parts": 19,
+   "movable": 15,
+   "connections": 32
+  },
+  {
+   "board": "kitspace_GPSMux",
+   "parts": 20,
+   "movable": 12,
+   "connections": 36
+  },
+  {
+   "board": "photon_Sprinkler_sprinkler",
+   "parts": 17,
+   "movable": 16,
+   "connections": 39
+  },
+  {
+   "board": "LiPoSensor_lipo_sensor",
+   "parts": 31,
+   "movable": 26,
+   "connections": 72
+  },
+  {
+   "board": "ABOVISP_ABOVISP",
+   "parts": 15,
+   "movable": 11,
+   "connections": 31
+  },
+  {
+   "board": "MAVRIC_Hardware_SoilBoard",
+   "parts": 15,
+   "movable": 13,
+   "connections": 39
+  },
+  {
+   "board": "z2amiller_sensorboard",
+   "parts": 25,
+   "movable": 22,
+   "connections": 58
+  },
+  {
+   "board": "kitspace_postcard",
+   "parts": 20,
+   "movable": 20,
+   "connections": 37
+  },
+  {
+   "board": "kitspace_beehive",
+   "parts": 29,
+   "movable": 15,
+   "connections": 79
+  },
+  {
+   "board": "Mini-Ultra-8-MHz_RS-MINI-ULTRA-8M",
+   "parts": 22,
+   "movable": 17,
+   "connections": 67
+  },
+  {
+   "board": "ottawa-badges-2016_ottawa-badge-tagger-2016",
+   "parts": 14,
+   "movable": 13,
+   "connections": 30
+  },
+  {
+   "board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD_negative",
+   "parts": 25,
+   "movable": 19,
+   "connections": 85
+  },
+  {
+   "board": "kitspace_hack",
+   "parts": 29,
+   "movable": 24,
+   "connections": 92
+  },
+  {
+   "board": "NoVo-Pi_NoVoPi",
+   "parts": 24,
+   "movable": 23,
+   "connections": 44
+  },
+  {
+   "board": "medusa_medusa_rs422_rx",
+   "parts": 46,
+   "movable": 44,
+   "connections": 97
+  },
+  {
+   "board": "ottawa-badges-2016_ottawa-badges-2016",
+   "parts": 98,
+   "movable": 86,
+   "connections": 200
+  },
+  {
+   "board": "PiPlay_AudioHAT",
+   "parts": 43,
+   "movable": 33,
+   "connections": 108
+  },
+  {
+   "board": "8088_sbc2_pcb_8088_sbc2",
+   "parts": 65,
+   "movable": 60,
+   "connections": 328
+  },
+  {
+   "board": "2d_conduction_sk9822-matrix",
+   "parts": 133,
+   "movable": 122,
+   "connections": 374
+  },
+  {
+   "board": "Kefersender_UKW TX",
+   "parts": 40,
+   "movable": 36,
+   "connections": 84
+  },
+  {
+   "board": "TLPHnodeV2_TLPHnodeV2",
+   "parts": 34,
+   "movable": 32,
+   "connections": 89
+  },
+  {
+   "board": "bmw-ibus-bluetooth_bmw_bt_cdcemu_digital",
+   "parts": 58,
+   "movable": 50,
+   "connections": 125
+  },
+  {
+   "board": "digital_clock_led_clock_v1",
+   "parts": 138,
+   "movable": 133,
+   "connections": 251
+  },
+  {
+   "board": "avr_frs_shield_avr_frs",
+   "parts": 34,
+   "movable": 30,
+   "connections": 62
+  },
+  {
+   "board": "custom_cpu--register_custom_cpu--register",
+   "parts": 47,
+   "movable": 20,
+   "connections": 74
+  },
+  {
+   "board": "kitspace_LED%20Zappelin",
+   "parts": 42,
+   "movable": 37,
+   "connections": 118
+  },
+  {
+   "board": "pico-pi-rel_pico-pi",
+   "parts": 96,
+   "movable": 82,
+   "connections": 219
+  },
+  {
+   "board": "pcb-covox-amp-v2_pcb-covox-amp-v2",
+   "parts": 61,
+   "movable": 56,
+   "connections": 125
+  },
+  {
+   "board": "Pi-Zero-SD-and-Audio-Out_BaseBoard",
+   "parts": 57,
+   "movable": 45,
+   "connections": 146
+  },
+  {
+   "board": "Box0-hv-analog-breakoutboard_breakout",
+   "parts": 57,
+   "movable": 54,
+   "connections": 149
+  },
+  {
+   "board": "Open-Source-Power-Supply_PowerSupply_PCB_backup",
+   "parts": 54,
+   "movable": 46,
+   "connections": 90
+  },
+  {
+   "board": "clunet-switch1_switch",
+   "parts": 36,
+   "movable": 24,
+   "connections": 69
+  },
+  {
+   "board": "4_digit_hex_display_4_digit_display",
+   "parts": 46,
+   "movable": 44,
+   "connections": 108
+  },
+  {
+   "board": "bypass_crossmix_bypass_crossmix",
+   "parts": 61,
+   "movable": 53,
+   "connections": 122
+  }
+ ]
+}

@@ -181,6 +181,7 @@ struct Router::Impl {
     use_cache = !obs->has_custom_rules();
     nl = b.copper_count();
     blind_ok = opt.blind_vias && rules.minimums.allow_blind_buried_vias && nl > 2;
+    micro_ok = opt.micro_vias && rules.minimums.allow_microvias && nl > 2;
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {
       pitch = opt.pitch;
@@ -768,8 +769,8 @@ struct Router::Impl {
           rstamp[ni] = gen;
           reach_q.push_back(ni);
         }
-        // Layer change: a through via, or (optimistically) any blind/buried via when those are allowed.
-        if (nl > 1 && (blind_ok || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
+        // Layer change: a through via, or (optimistically) any blind/buried or micro via when those are allowed.
+        if (nl > 1 && (blind_ok || micro_ok || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
           for (int l2 = 0; l2 < nl; ++l2) {
             const std::size_t ni = static_cast<std::size_t>(l2) * cells + ci;
             if (l2 == l || rstamp[ni] == gen) continue;
@@ -895,13 +896,16 @@ struct Router::Impl {
       }
       // Via: change to every other layer at this cell (through via).
       const std::int64_t vextra = (opt.allow_vias && nl > 1) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
-      if (vextra < 0 && blind_ok) {
-        // Through via blocked: a blind or buried via spanning only the layers between (dearer: costs more to make).
+      if (vextra < 0 && (blind_ok || micro_ok)) {
+        // Through via blocked: a micro via to the next layer from an outer one, or a blind or buried via spanning
+        // only the layers between (dearer: costs more to make).
         const Point vp = at(w.x0 + cx, w.y0 + cy);
         const Coord vm = pitch * 71 / 100 + 1;
         for (int l2 = 0; l2 < nl; ++l2) {
           if (l2 == l) continue;
-          const int vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
+          int vs = 2;
+          if (micro_ok && micro_span(l, l2)) vs = obs->via_state_span(vp, micro_diameter(net), micro_drill(net), net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
+          if (vs == 2 && blind_ok) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
           const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0);
@@ -1051,8 +1055,15 @@ struct Router::Impl {
     }
     // Each via is a through via where that is legal, else (boards that allow them) a blind/buried via over its span.
     std::vector<std::pair<int, int>> via_layers(vias.size(), {0, nl - 1});
+    std::vector<std::uint8_t> via_micro(vias.size(), 0);
     for (std::size_t k = 0; k < vias.size(); ++k) {
       if (obs->via_state(vias[k], vd, vdrill, net, 0, soft, &victims) != 2) continue;
+      if (micro_ok && micro_span(via_span[k].first, via_span[k].second) &&
+          obs->via_state_span(vias[k], micro_diameter(net), micro_drill(net), net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
+        via_layers[k] = via_span[k];
+        via_micro[k] = 1;
+        continue;
+      }
       if (blind_ok && obs->via_state_span(vias[k], vd, vdrill, net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
         via_layers[k] = via_span[k];
         continue;
@@ -1095,11 +1106,17 @@ struct Router::Impl {
       const auto [top, bot] = via_layers[k];
       const bool through = top == 0 && bot == nl - 1;
       model::Via v{vias[k], vd, vdrill, top, bot, through ? model::ViaType::Through : model::ViaType::Blind, net, false, sexpr::kNoNode};
+      if (via_micro[k]) {
+        v.size = micro_diameter(net);
+        v.drill = micro_drill(net);
+        v.type = model::ViaType::Micro;
+        ++res.micro_vias;
+      }
       b.vias.push_back(v);
       const int id = static_cast<int>(b.vias.size() - 1);
       st.items.push_back(obs->add_via(id, current));
       near_mark(st.items.back(), +1);
-      if (!through) ++res.blind_vias;
+      if (!through && !via_micro[k]) ++res.blind_vias;
       emit_via_add(id);
     }
     return true;
@@ -1196,6 +1213,11 @@ struct Router::Impl {
   Coord cong_pen = 0;                // congestion map: cost per lattice step per eighth of capacity (0 = off)
   std::array<int, 4> cong_end{};     // tiles of the two ends of the connection being searched
   long confined_ok = 0, confined_tried = 0;
+  bool micro_ok = false;    // micro vias allowed (board setting, more than two layers)
+  // A micro via joins an outer layer and the layer next to it (KiCad's definition).
+  bool micro_span(int l0, int l1) const { return std::abs(l0 - l1) == 1 && (std::min(l0, l1) == 0 || std::max(l0, l1) == nl - 1); }
+  Coord micro_diameter(NetId net) const { return std::max(netclass(net).uvia_diameter, rules.minimums.microvia_diameter); }
+  Coord micro_drill(NetId net) const { return std::max(netclass(net).uvia_drill, rules.minimums.microvia_drill); }
   bool blind_ok = false;    // blind/buried vias allowed (board setting, more than two layers)
   bool fields_off = false;
   double via_cost_mult = 1.0;   // raised by the clean-up pass
@@ -2431,8 +2453,13 @@ struct Router::Impl {
         // KiCad's pairs (by name) with a custom skew rule; with --pair-skew-mm also every pair routed as one (D50).
         if (na >= nb) continue;
         const bool named = obs->rules().coupled_diff_pair(na, nb);
-        if (!named && !(opt.pair_skew > 0 && pair_wanted(na, nb))) continue;
+        if (!named && !((opt.pair_skew > 0 || !opt.pair_net_skew.empty()) && pair_wanted(na, nb))) continue;
         auto mxs = named ? obs->rules().skew_constraint(na) : std::nullopt;
+        // A custom rule of the board wins; then the pair's own limit (component rules); then --pair-skew-mm.
+        if (!mxs)
+          for (std::size_t k = 0; k < opt.pair_nets.size() && k < opt.pair_net_skew.size(); ++k)
+            if (opt.pair_net_skew[k] > 0 && ((opt.pair_nets[k].first == na && opt.pair_nets[k].second == nb) || (opt.pair_nets[k].first == nb && opt.pair_nets[k].second == na)))
+              mxs = opt.pair_net_skew[k];
         if (!mxs && opt.pair_skew > 0 && pair_wanted(na, nb)) mxs = opt.pair_skew;
         if (std::getenv("TM_DEBUG_TUNE"))
           std::fprintf(stderr, "skew pair %s/%s: rule %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
@@ -2684,7 +2711,7 @@ struct Router::Impl {
     drc::UnionFind uf(obs->copper().items.size());
     for (std::size_t i = 0; i < con.root.size(); ++i) uf.unite(static_cast<int>(i), con.root[i]);
     const auto conns = plan(uf);
-    if (opt.global_route || opt.global_congestion) {
+    if (opt.global_route || opt.global_congestion || opt.cut_report) {
       std::vector<GlobalNet> gn;
       for (const auto& c : conns) {
         GlobalNet g;
@@ -2699,6 +2726,8 @@ struct Router::Impl {
         }
         g.half_width = class_width(c.net) / 2;
         g.net = static_cast<int>(c.net);
+        g.box_a = obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])].box;
+        g.box_b = c.pad_b >= 0 ? obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])].box : g.box_a;
         gn.push_back(g);
       }
       GlobalOptions go;
@@ -2706,6 +2735,8 @@ struct Router::Impl {
       for (const auto& cl : rules.classes) wc = std::min(wc, std::max(cl.track_width, rules.minimums.track_width) + std::max(cl.clearance, rules.minimums.clearance));
       go.pitch = wc;
       go.via_cost_tiles = 2.0;
+      for (const auto& it : obs->copper().items)
+        if (it.kind == drc::ItemKind::Pad && it.net != 0) go.pads.emplace_back(static_cast<int>(it.net), it.box);
       go.via_diameter = go.via_drill = 1'000'000'000;  // the smallest class via: capacity is what could fit
       Coord vclear = 1'000'000'000;
       for (const auto& cl : rules.classes) {
@@ -2718,6 +2749,8 @@ struct Router::Impl {
       global = global_route(*obs, geom::Box{lat.x0, lat.y0, lat.x1, lat.y1}, nl, gn, go);
       const char* cp = std::getenv("TM_CORRIDOR_PEN");  // experiment knob (pitches per step)
       corridor_pen = static_cast<Coord>((cp ? std::atof(cp) : 2.0) * static_cast<double>(pitch));
+      res.over_cuts = global.over_cuts;
+      res.tightest_cut = global.tightest;
       if (opt.global_congestion) cong_pen = std::max<Coord>(1, static_cast<Coord>(opt.global_congestion_pen * static_cast<double>(pitch)));
       if (tdbg)
         std::fprintf(stderr, "[%.2f s] global routing: %d x %d x %d tiles of %.2f mm, %d overflowed edges, %d overflowed via tiles; set-up %.3f s, routing %.3f s\n",
@@ -3072,6 +3105,71 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     const auto devs = gpu::list_devices();
     for (std::size_t i = 0; i < vs.size(); ++i) vs[i].o.gpu_device = devs.empty() ? -1 : devs[i % devs.size()].cuda_index;
   }
+  // Copper length is summed in commit order, so it is the same value whichever thread ran the variant.
+  auto length = [](const RouteResult& r) {
+    double l = 0;
+    for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+    return l;
+  };
+  if (base.halving && threads >= 1 && static_cast<int>(vs.size()) > threads) {
+    // Rung sizes n, n/2, ... down to `threads`.
+    std::vector<std::size_t> sizes{vs.size()};
+    while (sizes.back() > static_cast<std::size_t>(threads)) sizes.push_back(std::max(static_cast<std::size_t>(threads), sizes.back() / 2));
+    const double rungs = static_cast<double>(sizes.size());
+    std::vector<std::size_t> alive(vs.size());
+    for (std::size_t i = 0; i < alive.size(); ++i) alive[i] = i;
+    std::vector<RouteResult> last(vs.size());      // each variant's result at its last rung
+    std::vector<std::uint8_t> ran(vs.size(), 0);
+    auto better_r = [&](const RouteResult& a, std::size_t ia, const RouteResult& c, std::size_t ic) {
+      if (a.routed != c.routed) return a.routed > c.routed;
+      if (a.vias.size() != c.vias.size()) return a.vias.size() < c.vias.size();
+      const double la = length(a), lc = length(c);
+      if (la != lc) return la < lc;
+      return chosen[ia] < chosen[ic];
+    };
+    RouteResult best_res;
+    std::size_t best_i = 0;
+    bool have_best = false;
+    for (std::size_t r = 0; r < sizes.size(); ++r) {
+      // An equal share of the budget per rung, split over the variants of the rung that share a thread.
+      const double share = static_cast<double>(threads) / (rungs * static_cast<double>(alive.size()));
+      std::atomic<std::size_t> next{0};
+      std::vector<std::thread> pool;
+      std::vector<RouteResult> out(alive.size());
+      for (int w = 0; w < threads; ++w)
+        pool.emplace_back([&] {
+          for (std::size_t k; (k = next.fetch_add(1)) < alive.size();) {
+            RouterOptions o = vs[alive[k]].o;
+            o.sink = nullptr;  // restarts would replay the board in the viewer
+            o.deadline = nullptr;
+            if (base.work_budget > 0) o.work_budget = std::max<long>(1, static_cast<long>(static_cast<double>(base.work_budget) * share));
+            else o.time_limit_s = base.time_limit_s * share;
+            out[k] = Router(board, rules, o).run();
+          }
+        });
+      for (auto& t : pool) t.join();
+      for (std::size_t k = 0; k < alive.size(); ++k) {
+        if (!have_best || better_r(out[k], alive[k], best_res, best_i)) best_res = out[k], best_i = alive[k], have_best = true;
+        last[alive[k]] = std::move(out[k]);
+        ran[alive[k]] = 1;
+      }
+      if (best_res.connections > 0 && best_res.routed == best_res.connections) break;  // complete: nothing left to select
+      if (r + 1 < sizes.size()) {
+        std::stable_sort(alive.begin(), alive.end(), [&](std::size_t p, std::size_t q) { return better_r(last[p], p, last[q], q); });
+        alive.resize(sizes[r + 1]);
+        std::sort(alive.begin(), alive.end());
+      }
+    }
+    PortfolioResult pr;
+    pr.indices = chosen;
+    for (std::size_t i = 0; i < vs.size(); ++i) {
+      pr.variants.push_back(vs[i].name);
+      pr.routed.push_back(ran[i] ? last[i].routed : 0);
+    }
+    pr.best_variant = static_cast<int>(best_i);
+    pr.best = std::move(best_res);
+    return pr;
+  }
   std::vector<RouteResult> rs(vs.size());
   std::vector<std::thread> pool;
   // Once a variant is complete the others get a short grace period, so the best-quality complete result can be
@@ -3107,12 +3205,6 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     });
   for (auto& t : pool) t.join();
   PortfolioResult pr;
-  // Copper length is summed in commit order, so it is the same value whichever thread ran the variant.
-  auto length = [](const RouteResult& r) {
-    double l = 0;
-    for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
-    return l;
-  };
   // Total order on (routed desc, vias asc, length asc, variant index asc): the winner depends neither on the order
   // in which variants finished nor on their positions in `pick`.
   auto better = [&](std::size_t i, std::size_t j) {

@@ -142,9 +142,59 @@ Placed place_with_fallbacks_one(const io::LoadedBoard& lb, const model::DesignRu
     x.pl = place::Placement::initial(x.p);
     x.r = place::place(x.p, x.pl, o);
   }
+  // Still failing: a part whose courtyard fits nowhere is placed by its pads instead (box + 0.25 mm), up to three
+  // rounds. KiCad then reports a courtyard overlap for it, as it does for the designer's own placement of such
+  // parts; the alternative below leaves the part where the input has it, which on a board without a placement
+  // is on top of the others.
+  for (int round = 0; round < 3 && o.mode == "full" && !no_fallback && x.r.legalise_failed > 0; ++round) {
+    std::size_t added = 0;
+    for (const auto& ref : x.r.legalise_failures)
+      if (std::find(eo.pads_only.begin(), eo.pads_only.end(), ref) == eo.pads_only.end()) {
+        eo.pads_only.push_back(ref);
+        ++added;
+      }
+    if (added == 0) break;
+    fallbacks.push_back("ignored the courtyard of " + std::to_string(added) + " part(s) that found no legal position (pad box + 0.25 mm instead) and placed again");
+    x.p = place::extract(lb.board, rules, in, eo);
+    x.pl = place::Placement::initial(x.p);
+    x.r = place::place(x.p, x.pl, o);
+  }
   // Still failing: keep the parts that found no place at their input position (as fixed parts) and place
   // the rest around them, up to six rounds.
-  for (int round = 0; round < 6 && o.mode == "full" && !no_fallback && x.r.legalise_failed > 0; ++round) {
+  // Then by copper and holes only (scratch): the part may lie across other parts' courtyards, as battery holders,
+  // modules and headers do in designers' own placements, but its pads and holes keep their clearances.
+  for (int round = 0; round < 2 && eo.scratch && o.mode == "full" && !no_fallback && x.r.legalise_failed > 0; ++round) {
+    std::size_t added = 0;
+    for (const auto& ref : x.r.legalise_failures)
+      if (std::find(eo.copper_only.begin(), eo.copper_only.end(), ref) == eo.copper_only.end()) {
+        eo.copper_only.push_back(ref);
+        ++added;
+      }
+    if (added == 0) break;
+    fallbacks.push_back(std::to_string(added) + " part(s) still found no position: placed by their copper and holes only (they may lie across other courtyards)");
+    x.p = place::extract(lb.board, rules, in, eo);
+    x.pl = place::Placement::initial(x.p);
+    x.r = place::place(x.p, x.pl, o);
+  }
+  // From scratch there is no input placement to fall back to: a part that still fits nowhere is set down beside
+  // the board (to the right of it, in a row, as KiCad leaves new footprints), where it overlaps nothing, and
+  // reported. The board is then not finished, but nothing is shorted and the rest can be routed.
+  if (eo.scratch && o.mode == "full" && !no_fallback && x.r.legalise_failed > 0) {
+    Coord cursor = x.p.region.x1 + 2'000'000;
+    int parked = 0;
+    for (const auto& ref : x.r.legalise_failures)
+      for (std::size_t i = 0; i < x.p.parts.size(); ++i) {
+        const auto& pt = x.p.parts[i];
+        if (pt.ref != ref || !pt.movable) continue;
+        const auto& body = pt.geom[0].body;  // offsets from the footprint origin
+        x.pl.pos[i] = tmk::geom::Point{cursor - body.x0, x.p.region.y0 - body.y0};
+        x.pl.rot[i] = 0;
+        cursor += (body.x1 - body.x0) + 1'000'000;
+        ++parked;
+      }
+    if (parked) fallbacks.push_back(std::to_string(parked) + " part(s) fit nowhere on the board and were set down beside it: the placement is not complete");
+  }
+  for (int round = 0; round < 6 && o.mode == "full" && !no_fallback && !eo.scratch && x.r.legalise_failed > 0; ++round) {
     int kept = 0;
     for (const auto& ref : x.r.legalise_failures)
       for (auto& pt : x.p.parts)
@@ -158,7 +208,7 @@ Placed place_with_fallbacks_one(const io::LoadedBoard& lb, const model::DesignRu
     x.pl = place::Placement::initial(x.p);
     x.r = place::place(x.p, x.pl, o);
   }
-  if (o.mode == "full" && !no_fallback && (!x.r.legal || x.r.legalise_failed > 0)) {
+  if (o.mode == "full" && !no_fallback && !eo.scratch && (!x.r.legal || x.r.legalise_failed > 0)) {
     fallbacks.push_back("full mode could not place every part legally (" + std::to_string(x.r.legalise_failed) +
                         " unplaced): output is the refine-mode result instead");
     place::PlaceOptions ro = o;
@@ -255,7 +305,7 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
 struct LoopCli {
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false, no_fallback = false, no_decap_affinity = false;
+  bool move_connectors = false, no_fallback = false, no_decap_affinity = false, scratch = false;
   std::string component_rules = "soft";  // --component-rules (doc 15; soft by default, D52)
   std::string rules_override;           // --rules-override (doc 15 §6.3)
   bool edge_attraction = false;         // --edge-attraction (doc 15 CONN-01)
@@ -316,6 +366,7 @@ int run_loop_mode(const LoopCli& c) {
   const auto rules = io::read_design_rules(c.in);
   place::ExtractOptions eo;
   eo.fix_edge_connectors = !c.move_connectors;
+  eo.scratch = c.scratch;
   eo.decap_affinity = !c.no_decap_affinity;
   eo.decap_weight = c.decap_weight;
   eo.crules_weight_pct = c.crules_weight_pct;
@@ -364,8 +415,11 @@ int run_loop_mode(const LoopCli& c) {
     best = place::Candidate{"eco", er.pl, er.eval, place::total_hpwl(P, er.pl)};
     extra["eco"] = {{"committed", er.committed}, {"ranked", er.ranked}, {"moves", er.moves}};
   } else {
+    // From scratch (--scratch) the input is a pile, not a placement: it is no candidate, refine has nothing to
+    // refine, legality is absolute instead of "no worse than the input", and there is no input to fall back to.
     std::vector<place::Candidate> seeds;
-    seeds.push_back(place::Candidate{"input", input, {}, 0});
+    std::vector<place::Candidate> illegal;  // scratch: the least bad choice when no seed is legal
+    if (!c.scratch) seeds.push_back(place::Candidate{"input", input, {}, 0});
     auto add_seed = [&](const std::string& label, const std::string& mode, double beta) {
       if (out_of_time()) {
         notes.push_back(label + ": not built, loop time limit reached");
@@ -392,16 +446,24 @@ int run_loop_mode(const LoopCli& c) {
         return;
       }
       const place::Metrics m = place::measure(P, x.pl, &input);
-      if (!x.r.legal || m.new_overlaps > 0 || m.new_outside > 0) {
-        notes.push_back(label + ": not legal, skipped");
+      if (c.scratch ? (!x.r.legal || x.r.legalise_failed > 0 || m.overlaps > 0 || m.outside > 0) : (!x.r.legal || m.new_overlaps > 0 || m.new_outside > 0)) {
+        notes.push_back(label + ": not legal, skipped" + (c.scratch ? " (" + std::to_string(m.overlaps) + " overlaps, " + std::to_string(m.outside) + " outside, " +
+                                                                           std::to_string(x.r.legalise_failed) + " unplaced)" : std::string()));
+        if (c.scratch) illegal.push_back(place::Candidate{label, x.pl, {}, 0});
         return;
       }
       seeds.push_back(place::Candidate{label, x.pl, {}, 0});
     };
-    add_seed("refine", "refine", 0);
-    add_seed("refine+rudy", "refine", c.beta);
+    if (!c.scratch) {
+      add_seed("refine", "refine", 0);
+      add_seed("refine+rudy", "refine", c.beta);
+    }
     add_seed("full", "full", 0);
     add_seed("full+rudy", "full", c.beta);
+    if (seeds.empty() && !illegal.empty()) {
+      notes.push_back("no legal placement was found: the output is the full-mode result with its conflicts");
+      seeds.push_back(illegal.front());
+    }
     place::LoopOptions lo;
     lo.place = c.o;
     lo.place.tempering = true;
@@ -423,13 +485,18 @@ int run_loop_mode(const LoopCli& c) {
     tried = res.tried;
     routes = res.routes;
     rounds = res.rounds;
-    input_eval = tried.front().eval;
+    if (c.scratch) {
+      input_eval = route(input);
+      ++routes;
+    } else {
+      input_eval = tried.front().eval;
+    }
   }
   // Final verification (doc 04 §8.3b): at the check budget the router leaves connections unrouted that a full
   // route completes, so a placement that is easier for a short route can be harder for the real one. Route the
   // winner and the input again with a larger budget; the winner replaces the input only if it is not worse there.
   nlohmann::json verify = nullptr;
-  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !(best.pl.pos == input.pos && best.pl.rot == input.rot)) {
+  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !c.scratch && !(best.pl.pos == input.pos && best.pl.rot == input.rot)) {
     const place::RouteFn route_full = make_route_fn(c.in, rules, P, fw, c.route_threads, c.o.seed);
     if (!c.record.empty()) rec.phase("verification: input and winner routed with a 4x budget");
     const place::RouteEval vi = route_full(input), vb = route_full(best.pl);
@@ -502,7 +569,7 @@ int main(int argc, char** argv) {
   CLI::App app{"TraceMaker placer: quadratic + SimPL global placement, legalisation and annealing"};
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false, no_decap_affinity = false;
+  bool move_connectors = false, no_decap_affinity = false, scratch = false;
   std::string component_rules = "soft", rules_override;  // D52
   bool edge_attraction = false;
   int decap_weight = place::kSignalWeight;
@@ -521,6 +588,8 @@ int main(int argc, char** argv) {
   app.add_option("--alpha-cross-mm", o.alpha_cross_mm, "Cost of one airwire crossing in mm of signal HPWL");
   app.add_option("--courtyard-clearance-mm", clearance_mm, "Override the courtyard clearance (default: rules, else 0.25 mm)");
   app.add_flag("--move-connectors", move_connectors, "Also move connectors that touch the board edge");
+  app.add_flag("--scratch", scratch, "The input has no placement (parts piled or beside the board, as after importing a schematic): "
+                                     "input positions of movable parts carry no intent and are never fallen back to");
   app.add_flag("--no-decap-affinity", no_decap_affinity, "Do not tie decoupling capacitors to their IC's supply pins");
   app.add_option("--component-rules", component_rules,
                  "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling); default soft (D52)")
@@ -610,6 +679,7 @@ int main(int argc, char** argv) {
     lc.json_path = json_path;
     lc.o = o;
     lc.move_connectors = move_connectors;
+    lc.scratch = scratch;
     lc.no_decap_affinity = no_decap_affinity;
     lc.component_rules = component_rules;
     lc.rules_override = rules_override;
@@ -644,7 +714,7 @@ int main(int argc, char** argv) {
       std::string cmd = "'" + std::string(argv[0]) + "' '" + in + "' -o '" + c.path + "' --mode " + m + " --seed " + std::to_string(o.seed) +
                         " --threads " + std::to_string(o.threads) + " --effort " + std::to_string(o.effort) + " --route-check " +
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
-                        (move_connectors ? " --move-connectors" : "") +
+                        (move_connectors ? " --move-connectors" : "") + (scratch ? " --scratch" : "") +
                         (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
                         " --crules-weight " + std::to_string(crules_weight_pct) + (crules_two_stage ? "" : " --no-crules-two-stage") + (rules_override.empty() ? "" : " --rules-override '" + rules_override + "'") + (edge_attraction ? " --edge-attraction" : "") +
                         (o.flip ? " --flip --flip-via-mm " + std::to_string(o.via_mm) + " --flip-rate " + std::to_string(o.flip_rate) + (keep_side.empty() ? "" : " --keep-side '" + keep_side + "'") : "") +
@@ -689,6 +759,7 @@ int main(int argc, char** argv) {
     const auto rules = io::read_design_rules(in);
     place::ExtractOptions eo;
     eo.fix_edge_connectors = !move_connectors;
+    eo.scratch = scratch;
     eo.decap_affinity = !no_decap_affinity;
     eo.decap_weight = decap_weight;
     eo.crules_weight_pct = crules_weight_pct;
@@ -753,7 +824,7 @@ int main(int argc, char** argv) {
       routed_out = routed_of(out);
       conns_out = conns;
       // Compare unrouted connections: the connection count can change with the placement.
-      if (conns_out - routed_out > conns_in - routed_in) {
+      if (!scratch && conns_out - routed_out > conns_in - routed_in) {  // from scratch the input is no alternative
         // The editor changed `lb` in place, so the input is restored by copying the file (byte for byte). Before
         // 2026-10-03 this re-saved the edited document, i.e. "kept the input" still wrote the new placement.
         std::filesystem::copy_file(in, out, std::filesystem::copy_options::overwrite_existing);

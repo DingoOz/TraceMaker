@@ -144,21 +144,26 @@ bool Legality::pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) c
   const Coord reach = reach_;
   if (!shift(ga.body, pa).inflated(reach).intersects(shift(gb.body, pb))) return false;
   const Coord c = std::max<Coord>(p_.clearance, 1);
-  for (int s = 0; s < 2; ++s)
-    for (const Shape& u : ga.cy[z(s)])
-      for (const Shape& v : gb.cy[z(s)])
-        if (closer(u, pa, v, pb, c)) return true;
-  for (const auto& t : ga.through) {
+  // A copper-only part (ExtractOptions::copper_only) is tested by its holes and copper alone.
+  const bool outlines = !p_.parts[z(a)].copper_only && !p_.parts[z(b)].copper_only;
+  if (outlines)
     for (int s = 0; s < 2; ++s)
-      for (const Shape& v : gb.cy[z(s)])
-        if (closer(t, pa, v, pb, kThroughMargin)) return true;
+      for (const Shape& u : ga.cy[z(s)])
+        for (const Shape& v : gb.cy[z(s)])
+          if (closer(u, pa, v, pb, c)) return true;
+  for (const auto& t : ga.through) {
+    if (outlines)
+      for (int s = 0; s < 2; ++s)
+        for (const Shape& v : gb.cy[z(s)])
+          if (closer(t, pa, v, pb, kThroughMargin)) return true;
     for (const auto& u : gb.through)
       if (closer(t, pa, u, pb, kThroughThrough)) return true;
   }
-  for (const auto& t : gb.through)
-    for (int s = 0; s < 2; ++s)
-      for (const Shape& v : ga.cy[z(s)])
-        if (closer(t, pb, v, pa, kThroughMargin)) return true;
+  if (outlines)
+    for (const auto& t : gb.through)
+      for (int s = 0; s < 2; ++s)
+        for (const Shape& v : ga.cy[z(s)])
+          if (closer(t, pb, v, pa, kThroughMargin)) return true;
   // Copper of different parts (pads outside courtyards, large net-class clearances).
   if (!ga.copper.empty() && !gb.copper.empty() && shift(ga.copper_box, pa).inflated(p_.max_need).intersects(shift(gb.copper_box, pb)))
     for (const auto& u : ga.copper) {
