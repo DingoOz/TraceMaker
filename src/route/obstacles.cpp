@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/obstacles.hpp"
 
+#include <array>
 #include <optional>
 #include <tuple>
 #include <algorithm>
 #include <bit>
 #include <cmath>
+#include <memory>
 
 namespace tmk::route {
 
@@ -284,8 +286,9 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       else mask_open_[mask_side].push_back(Shape::polygon(pts, gexp));  // mask text: an opening, like mask graphics
     }
   }
+  // Include via-only keepouts; track and via checks use their respective flags.
   for (const auto& z : b_.zones)
-    if (z.rule_area && z.keepout_tracks && !z.outline.empty() && z.outline.front().size() >= 3)
+    if (z.rule_area && (z.keepout_tracks || z.keepout_vias) && !z.outline.empty() && z.outline.front().size() >= 3)
       keepouts_.emplace_back(Shape::polygon(z.outline.front(), 0), &z);
 }
 
@@ -389,6 +392,8 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
     });
     if (state == 2) return 2;
   }
+  // Physical hole clearance applies to fixed copper of any net, including the same net.
+  if (is_via_hole && physical_hole_blocked(Shape::point(s.pts[0], hole_r), net, layer)) return 2;
   // Board edge.
   const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
   bool edge_ok = true;
@@ -404,7 +409,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   if (ap_blocked) return 2;
   // Keepouts and solder-mask openings.
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return 2;
+    if ((is_via_hole ? z->keepout_vias : z->keepout_tracks) && (z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return 2;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
@@ -413,19 +418,69 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
 }
 
 namespace {
-drc::CopperItem make_probe(drc::ItemKind kind, const Shape& s, model::NetId net, int layer, Coord width, Point pos) {
-  drc::CopperItem probe;
-  probe.kind = kind;
-  probe.net = net;
-  probe.layers = layer >= 0 ? model::layer_bit(layer) : 0;
-  probe.width = width;
-  probe.shapes = {s};
-  probe.box = s.box;
-  probe.pos = pos;
-  return probe;
+// Reuse rule-probe storage to avoid per-check allocation. A stack supports nested legality checks;
+// pooled items have stable addresses while the pool grows.
+class Probe {
+ public:
+  Probe(drc::ItemKind kind, const Shape& s, model::NetId net, int layer, Coord width, Point pos) {
+    if (depth_ == pool_.size()) pool_.push_back(std::make_unique<drc::CopperItem>());
+    item_ = pool_[depth_++].get();
+    drc::CopperItem& p = *item_;
+    p.kind = kind;
+    p.index = -1;
+    p.sub = 0;
+    p.net = net;
+    p.layers = layer >= 0 ? model::layer_bit(layer) : 0;
+    p.shapes.resize(1);
+    p.shapes[0] = s;  // reuses the pooled shape's point storage
+    p.box = s.box;
+    p.footprint = -1;
+    p.pos = pos;
+    p.width = width;
+    p.owner = -1;
+    p.removed = false;
+    p.free_via = false;
+  }
+  ~Probe() { --depth_; }
+  Probe(const Probe&) = delete;
+  Probe& operator=(const Probe&) = delete;
+  const drc::CopperItem& operator*() const { return *item_; }
+
+ private:
+  static thread_local std::vector<std::unique_ptr<drc::CopperItem>> pool_;
+  static thread_local std::size_t depth_;
+  drc::CopperItem* item_;
+};
+thread_local std::vector<std::unique_ptr<drc::CopperItem>> Probe::pool_;
+thread_local std::size_t Probe::depth_ = 0;
+// Routed hole checks do not nest, so one scratch disk per thread suffices.
+const Shape& scratch_hole(Point c, Coord r) {
+  static thread_local Shape h;
+  h.set_point(c, r);
+  return h;
 }
 int worst(int a, int c) { return std::max(a, c); }
 }  // namespace
+
+bool Obstacles::physical_hole_blocked(const Shape& hole, model::NetId net, int layer) const {
+  if (!re_->any_physical_hole_clearance()) return false;
+  const Probe pp(drc::ItemKind::Via, hole, net, layer, 2 * hole.r, hole.pts[0]);
+  const drc::CopperItem& probe = *pp;
+  bool hit = false;
+  grid_->query(hole.box.inflated(re_->max_physical_hole_clearance() + 1), [&](int id) {
+    if (hit) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer))) return;
+    const Coord req = re_->physical_hole_clearance(&probe, it, layer);
+    if (req <= 0) return;
+    for (const auto& u : it.shapes)
+      if (geom::closer_than(hole, u, req)) {
+        hit = true;
+        return;
+      }
+  });
+  return hit;
+}
 
 int Obstacles::disk_state(Point p, int layer, Coord hw, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners) const {
   ++checks;
@@ -434,7 +489,8 @@ int Obstacles::disk_state(Point p, int layer, Coord hw, model::NetId net, Coord 
     return 2;
   }
   const Shape s = Shape::point(p, hw + margin);
-  const auto probe = make_probe(drc::ItemKind::Track, s, net, layer, 2 * hw, p);
+  const Probe pp(drc::ItemKind::Track, s, net, layer, 2 * hw, p);
+  const drc::CopperItem& probe = *pp;
   int st = copper_state(s, probe, layer, ignore_routed, owners);
   if (st == 2) {
     ++rej_copper;
@@ -447,7 +503,8 @@ int Obstacles::disk_state(Point p, int layer, Coord hw, model::NetId net, Coord 
 
 int Obstacles::segment_state(Point a, Point b, int layer, Coord width, model::NetId net, bool ignore_routed, std::vector<int>* owners) const {
   const Shape s = Shape::segment(a, b, width / 2);
-  const auto probe = make_probe(drc::ItemKind::Track, s, net, layer, width, a);
+  const Probe pp(drc::ItemKind::Track, s, net, layer, width, a);
+  const drc::CopperItem& probe = *pp;
   const int st = copper_state(s, probe, layer, ignore_routed, owners);
   if (st == 2) return 2;
   return worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
@@ -459,7 +516,8 @@ int Obstacles::via_state_span(Point p, Coord d, Coord drill, model::NetId net, C
   const Shape s = Shape::point(p, d / 2 + margin);
   int st = 0;
   for (int l = std::max(0, l0); l <= std::min(l1, b_.copper_count() - 1) && st != 2; ++l) {
-    const auto probe = make_probe(drc::ItemKind::Via, s, net, l, d, p);
+    const Probe pp(drc::ItemKind::Via, s, net, l, d, p);
+    const drc::CopperItem& probe = *pp;
     st = worst(st, copper_state(s, probe, l, ignore_routed, owners));
     if (st != 2) st = worst(st, holes_edges_state(s, net, l, true, drill / 2 + margin, ignore_routed, owners));
   }
@@ -471,7 +529,8 @@ int Obstacles::via_state(Point p, Coord d, Coord drill, model::NetId net, Coord 
   const Shape s = Shape::point(p, d / 2 + margin);
   int st = 0;
   for (int l = 0; l < b_.copper_count() && st != 2; ++l) {
-    const auto probe = make_probe(drc::ItemKind::Via, s, net, l, d, p);
+    const Probe pp(drc::ItemKind::Via, s, net, l, d, p);
+    const drc::CopperItem& probe = *pp;
     st = worst(st, copper_state(s, probe, l, ignore_routed, owners));
     if (st != 2) st = worst(st, holes_edges_state(s, net, l, true, drill / 2 + margin, ignore_routed, owners));
   }
@@ -555,8 +614,10 @@ void Obstacles::aperture_codes(const Shape& s, int layer, bool via_probe, const 
 
 std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, model::NetId probe_net, bool via_probe) const {
   if (!inside_board(p, 0)) return kBlocked;
-  const Shape s = Shape::point(p, hw + margin);
-  const auto probe = make_probe(drc::ItemKind::Track, s, probe_net, layer, 2 * hw, p);
+  static thread_local Shape s;  // scratch disk; fixed_code does not re-enter
+  s.set_point(p, hw + margin);
+  const Probe pp(drc::ItemKind::Track, s, probe_net, layer, 2 * hw, p);
+  const drc::CopperItem& probe = *pp;
   std::int32_t code = kFree;
   auto add_net = [&](model::NetId n) {
     if (n == 0) code = kBlocked;
@@ -600,7 +661,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   });
   if (!edge_ok) return kBlocked;
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return kBlocked;
+    if ((via_probe ? z->keepout_vias : z->keepout_tracks) && (z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return kBlocked;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
@@ -608,7 +669,72 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   return code;
 }
 
+// Combine fixed-copper codes across layers in one query: any block or two different nets block.
+// Layer-independent checks run once; fixed_via_code_reference retains the per-layer path.
 std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const {
+  if (!inside_board(p, 0)) return kBlocked;
+  const int nl = b_.copper_count();
+  const Coord hw = d / 2;
+  static thread_local Shape s;  // scratch disk
+  s.set_point(p, hw + margin);
+  std::int32_t code = kFree;
+  auto add_net = [&](model::NetId n) {
+    if (n == 0) code = kBlocked;
+    else if (code == kFree) code = n;
+    else if (code != n) code = kBlocked;
+  };
+  {
+    std::array<std::optional<Probe>, 64> probes;  // one per layer; reverse destruction preserves the pool stack
+    for (int l = 0; l < nl; ++l) probes[static_cast<std::size_t>(l)].emplace(drc::ItemKind::Track, s, probe_net, l, 2 * hw, p);
+    const model::LayerMask all = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
+    grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
+      if (code == kBlocked) return;
+      const auto& it = cm_.items[static_cast<std::size_t>(id)];
+      if (it.owner >= 0 || it.removed || !(it.layers & all)) return;
+      if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
+      for (int l = 0; l < nl; ++l) {
+        if (!(it.layers & model::layer_bit(l))) continue;
+        Coord req = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l);
+        if (via_mask_ > 0 && (l == 0 || l == nl - 1) && it.kind != drc::ItemKind::Zone && it.kind != drc::ItemKind::Pad)
+          req = std::max(req, it.kind == drc::ItemKind::Via ? 2 * via_mask_ + 1'000 : via_mask_ + 1'000);
+        for (const auto& u : it.shapes)
+          if (geom::closer_than(s, u, req)) {
+            add_net(it.net);
+            return;
+          }
+      }
+    });
+  }
+  if (code == kBlocked) return code;
+  for (int l = 0; l < nl && code != kBlocked; ++l) aperture_codes(s, l, true, add_net);
+  if (code == kBlocked) return code;
+  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  hgrid_->query(s.box.inflated(std::max(hc, max_hole_local_) + 1), [&](int id) {
+    if (code == kBlocked) return;
+    const auto& h = cm_.holes[static_cast<std::size_t>(id)];
+    if (h.removed || (h.item >= 0 && cm_.items[static_cast<std::size_t>(h.item)].owner >= 0)) return;
+    if (geom::closer_than(s, h.shape, std::max(hc, h.clearance))) {
+      if (h.plated && h.net != 0) add_net(h.net);
+      else code = kBlocked;
+    }
+  });
+  if (code == kBlocked) return code;
+  const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
+  bool edge_ok = true;
+  egrid_->query(s.box.inflated(ec + 1), [&](int id) {
+    if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
+  });
+  if (!edge_ok) return kBlocked;
+  const model::LayerMask copper = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
+  for (const auto& [area, z] : keepouts_)
+    if (z->keepout_vias && (z->copper & copper) && geom::closer_than(s, area, 1)) return kBlocked;
+  for (int side = 0; side < (nl > 1 ? 2 : 1); ++side)
+    for (const auto& m : mask_open_[side])
+      if (m.box.inflated(100'000).intersects(s.box) && geom::closer_than(s, m, 100'000)) return kBlocked;  // 0.1 mm: KiCad flags near misses
+  return via_hole_code(p, drill, margin, probe_net, code);
+}
+
+std::int32_t Obstacles::fixed_via_code_reference(Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const {
   std::int32_t code = kFree;
   for (int l = 0; l < b_.copper_count(); ++l) {
     const std::int32_t c = fixed_code(p, l, d / 2, margin, probe_net, true);
@@ -618,9 +744,15 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
       else if (code != c) return kBlocked;
     }
   }
+  return via_hole_code(p, drill, margin, probe_net, code);
+}
+
+// Check the via hole against fixed holes and copper, continuing from the pad's code.
+std::int32_t Obstacles::via_hole_code(Point p, Coord drill, Coord margin, model::NetId probe_net, std::int32_t code) const {
   // Hole to hole against fixed holes (any net).
   const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
-  const Shape hole = Shape::point(p, drill / 2 + margin);
+  static thread_local Shape hole;  // scratch disk: the via's hole
+  hole.set_point(p, drill / 2 + margin);
   bool ok = true;
   hgrid_->query(hole.box.inflated(h2h + 1), [&](int id) {
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
@@ -628,9 +760,11 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
     if (geom::closer_than(hole, h.shape, h2h) || hole.pts[0] == h.shape.pts[0]) ok = false;
   });
   if (!ok) return kBlocked;
+  for (int l = 0; l < b_.copper_count(); ++l)
+    if (physical_hole_blocked(hole, probe_net, l)) return kBlocked;
   const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
   if (hc > 0) {
-    const Shape h = Shape::point(p, drill / 2 + margin);
+    const Shape& h = hole;
     grid_->query(h.box.inflated(hc + 1), [&](int id) {
       if (code == kBlocked) return;
       const auto& it = cm_.items[static_cast<std::size_t>(id)];
@@ -648,9 +782,11 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
   return code;
 }
 
-int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
-                            bool via_hole, Coord hole_r) const {
-  const auto probe = make_probe(kind, s, net, layer, 2 * s.r, s.pts[0]);
+// The parts of routed_state, each 0 free, 1 conflict (owners appended), 2 blocked (when !soft).
+// New copper against routed copper of other nets on `layer`.
+int Obstacles::routed_copper_part(const Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners) const {
+  const Probe pp(kind, s, net, layer, 2 * s.r, s.pts[0]);
+  const drc::CopperItem& probe = *pp;
   int state = 0;
   rgrid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
     if (state == 2) return;
@@ -673,54 +809,17 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
         return;
       }
   });
-  if (state == 2) return state;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
-  if (hc > 0) {
-    // New copper against routed vias' holes of other nets.
-    rgrid_->query(s.box.inflated(hc + 1), [&](int id) {
-      if (state == 2) return;
-      const auto& it = cm_.items[static_cast<std::size_t>(id)];
-      if (it.removed || it.kind != drc::ItemKind::Via || (it.net == net && net != 0)) return;
-      const Shape other = Shape::point(it.pos, b_.vias[static_cast<std::size_t>(it.index)].drill / 2);
-      if (geom::closer_than(s, other, hc)) {
-        if (soft) {
-          state = 1;
-          if (owners) owners->push_back(it.owner);
-        } else {
-          state = 2;
-        }
-      }
-    });
-    // A new via's hole against routed copper of other nets.
-    if (via_hole && state != 2) {
-      const Shape h = Shape::point(s.pts[0], hole_r);
-      rgrid_->query(h.box.inflated(hc + 1), [&](int id) {
-        if (state == 2) return;
-        const auto& it = cm_.items[static_cast<std::size_t>(id)];
-        if (it.removed || (it.net == net && net != 0) || !(it.layers & model::layer_bit(layer))) return;
-        for (const auto& u : it.shapes)
-          if (geom::closer_than(h, u, hc)) {
-            if (soft) {
-              state = 1;
-              if (owners) owners->push_back(it.owner);
-            } else {
-              state = 2;
-            }
-            return;
-          }
-      });
-    }
-  }
-  if (state == 2 || !via_hole) return state;
-  // A new via hole against routed vias' holes (hole to hole).
-  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
-  const Shape hole = Shape::point(s.pts[0], hole_r);
-  rgrid_->query(hole.box.inflated(h2h + 1), [&](int id) {
+  return state;
+}
+
+// New copper against routed vias' holes of other nets (hole clearance; vias span every layer).
+int Obstacles::routed_via_holes_part(const Shape& s, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const {
+  int state = 0;
+  rgrid_->query(s.box.inflated(hc + 1), [&](int id) {
     if (state == 2) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
-    if (it.removed || it.kind != drc::ItemKind::Via) return;
-    const Shape other = Shape::point(it.pos, b_.vias[static_cast<std::size_t>(it.index)].drill / 2);
-    if (geom::closer_than(hole, other, h2h)) {
+    if (it.removed || it.kind != drc::ItemKind::Via || (it.net == net && net != 0)) return;
+    if (geom::closer_than_disk(s, it.pos, b_.vias[static_cast<std::size_t>(it.index)].drill / 2, hc)) {
       if (soft) {
         state = 1;
         if (owners) owners->push_back(it.owner);
@@ -730,6 +829,77 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
     }
   });
   return state;
+}
+
+// A new via's hole against routed copper of other nets on `layer` (hole clearance).
+int Obstacles::routed_hole_copper_part(const Shape& h, int layer, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const {
+  int state = 0;
+  rgrid_->query(h.box.inflated(hc + 1), [&](int id) {
+    if (state == 2) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || (it.net == net && net != 0) || !(it.layers & model::layer_bit(layer))) return;
+    for (const auto& u : it.shapes)
+      if (geom::closer_than(h, u, hc)) {
+        if (soft) {
+          state = 1;
+          if (owners) owners->push_back(it.owner);
+        } else {
+          state = 2;
+        }
+        return;
+      }
+  });
+  return state;
+}
+
+// A new via hole against routed vias' holes (hole to hole, any net).
+int Obstacles::routed_hole_to_hole_part(const Shape& hole, bool soft, std::vector<int>* owners) const {
+  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
+  int state = 0;
+  rgrid_->query(hole.box.inflated(h2h + 1), [&](int id) {
+    if (state == 2) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || it.kind != drc::ItemKind::Via) return;
+    if (geom::closer_than_disk(hole, it.pos, b_.vias[static_cast<std::size_t>(it.index)].drill / 2, h2h)) {
+      if (soft) {
+        state = 1;
+        if (owners) owners->push_back(it.owner);
+      } else {
+        state = 2;
+      }
+    }
+  });
+  return state;
+}
+
+int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
+                            bool via_hole, Coord hole_r) const {
+  int state = routed_copper_part(s, layer, net, kind, soft, owners);
+  if (state == 2) return state;
+  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  if (hc > 0) {
+    state = std::max(state, routed_via_holes_part(s, net, hc, soft, owners));
+    if (via_hole && state != 2) state = std::max(state, routed_hole_copper_part(scratch_hole(s.pts[0], hole_r), layer, net, hc, soft, owners));
+  }
+  if (state == 2 || !via_hole) return state;
+  return std::max(state, routed_hole_to_hole_part(scratch_hole(s.pts[0], hole_r), soft, owners));
+}
+
+int Obstacles::routed_via_state(const Shape& s, model::LayerMask layers, model::NetId net, bool soft, Coord hole_r) const {
+  if (!layers) return 0;
+  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Shape& hole = scratch_hole(s.pts[0], hole_r);
+  int state = 0;
+  for (int l = 0; l < b_.copper_count(); ++l) {
+    if (!(layers & model::layer_bit(l))) continue;
+    state = std::max(state, routed_copper_part(s, l, net, drc::ItemKind::Via, soft, nullptr));
+    if (state == 2) return state;
+    if (hc > 0) state = std::max(state, routed_hole_copper_part(hole, l, net, hc, soft, nullptr));
+    if (state == 2) return state;
+  }
+  if (hc > 0) state = std::max(state, routed_via_holes_part(s, net, hc, soft, nullptr));
+  if (state == 2) return state;
+  return std::max(state, routed_hole_to_hole_part(hole, soft, nullptr));
 }
 
 void Obstacles::routed_items_in(const geom::Box& box, std::vector<int>& out) const {

@@ -46,6 +46,15 @@ Metrics measure(const Problem& p, const Placement& pl, const Placement* referenc
   return m;
 }
 
+std::optional<Placement> repaired(const Problem& p, const Placement& pl, int* moved) {
+  Placement out = pl;
+  const LegaliseStats ls = legalise(p, out, true);
+  const Metrics m = measure(p, out);
+  if (ls.failed > 0 || m.overlaps > 0 || m.outside > 0) return std::nullopt;
+  if (moved) *moved = ls.placed;
+  return out;
+}
+
 PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o) {
   PlaceReport r;
   const auto t_start = Clock::now();

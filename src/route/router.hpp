@@ -123,6 +123,7 @@ struct PortfolioResult {
   std::vector<int> indices;            // portfolio variant index per position
   std::vector<std::string> variants;   // description per variant
   std::vector<int> routed;             // routed count per variant
+  std::vector<double> seconds;         // wall time per variant (its own clock)
 };
 // `variants`: how many variants to run (the first `variants` of the portfolio); `pick`: which variant indices to
 // run instead (non-empty: overrides `variants`). `threads`: concurrency only (0 = one thread per variant).

@@ -233,11 +233,13 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
 
 LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, const LoopOptions& o, const RouteFn& route) {
   LoopResult res;
-  auto record = [&](const Candidate& c) {
+  auto record = [&](const Candidate& c, bool eligible) {
     Candidate light = c;
     light.pl = Placement{};
     res.tried.push_back(light);
-    say(o.log, c.label + ": " + describe(c.eval) + ", HPWL " + fmt_mm(c.hpwl) + " mm");
+    say(o.log, c.label + ": " + describe(c.eval) + ", HPWL " + fmt_mm(c.hpwl) + " mm" +
+                   (c.legal ? "" : eligible ? " (has conflicts of the input: accepted, no repair)"
+                                           : " (not legal: reference only)"));
   };
   int best = -1;
   auto stop = [&] { return o.out_of_time && o.out_of_time(); };
@@ -253,10 +255,18 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       ++res.routes;
     }
     s.hpwl = total_hpwl(p, s.pl);
-    record(s);
-    if (best < 0 || better(s, seeds[z(best)])) best = static_cast<int>(i);
+    // Seed legality is absolute: existing conflicts cannot win on routing unless the input has no repair.
+    const Metrics m = measure(p, s.pl);
+    s.legal = m.overlaps == 0 && m.outside == 0;
+    const bool eligible = s.legal || (i == 0 && o.accept_first_seed_conflicts);
+    record(s, eligible);
+    if (eligible && (best < 0 || better(s, seeds[z(best)]))) best = static_cast<int>(i);
   }
-  if (best < 0) return res;
+  if (best < 0) {
+    if (!seeds.empty() && seeds.front().eval.ok) res.best = seeds.front();
+    say(o.log, "no legal seed: nothing to improve");
+    return res;
+  }
   Candidate inc = seeds[z(best)];
   say(o.log, "seed kept: " + inc.label);
   if (o.on_incumbent) o.on_incumbent(inc.label);
@@ -304,7 +314,9 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       c.eval = route(c.pl);
       ++res.routes;
       c.hpwl = total_hpwl(p, c.pl);
-      record(c);
+      const Metrics cmet = measure(p, c.pl);
+      c.legal = cmet.overlaps == 0 && cmet.outside == 0;  // pr.legal excludes unchanged input conflicts
+      record(c, true);
       if (c.eval.ok && c.eval.unrouted() < inc.eval.unrouted()) {
         inc = c;
         say(o.log, "  accepted");
@@ -336,7 +348,9 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
         e.pl = er.pl;
         e.eval = er.eval;
         e.hpwl = total_hpwl(p, e.pl);
-        record(e);
+        const Metrics em = measure(p, e.pl);
+        e.legal = em.overlaps == 0 && em.outside == 0;  // ECO checks moves, not existing conflicts
+        record(e, true);
         inc = e;
         if (o.place.trace) o.place.trace(e.label + "|eco", e.pl, trace_now());
         if (o.on_incumbent) o.on_incumbent(e.label);

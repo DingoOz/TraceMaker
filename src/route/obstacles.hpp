@@ -54,10 +54,15 @@ class Obstacles {
   static constexpr std::int32_t kFree = -1, kBlocked = -2;
   std::int32_t fixed_code(geom::Point p, int layer, Coord hw, Coord margin, model::NetId probe_net, bool via_probe = false) const;
   std::int32_t fixed_via_code(geom::Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const;
+  // Per-layer reference for fixed_via_code.
+  std::int32_t fixed_via_code_reference(geom::Point p, Coord d, Coord drill, Coord margin, model::NetId probe_net) const;
   // Routed (rippable) copper only: 0 free, 1 conflicts (owners appended), 2 blocked when !soft.
   int routed_state(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners,
                    bool via_hole = false, Coord hole_r = 0) const;
-  bool has_custom_rules() const { return !r_.custom.empty(); }
+  // Maximum routed_state over `layers` for a via and its hole; layer-independent hole checks run once.
+  int routed_via_state(const geom::Shape& s, model::LayerMask layers, model::NetId net, bool soft, Coord hole_r) const;
+  // Rules outside the per-class cache require exact per-point checks.
+  bool needs_exact_routing() const { return re_->needs_exact_routing(); }
   // Ids of live routed items whose box meets `box`.
   void routed_items_in(const geom::Box& box, std::vector<int>& out) const;
 
@@ -79,6 +84,13 @@ class Obstacles {
   int copper_state(const geom::Shape& s, const drc::CopperItem& probe, int layer, bool ignore_routed, std::vector<int>* owners) const;
   int holes_edges_state(const geom::Shape& s, model::NetId net, int layer, bool is_via_hole, Coord hole_r, bool ignore_routed,
                         std::vector<int>* owners) const;
+  // Physical hole clearance against fixed copper on `layer`, any net.
+  bool physical_hole_blocked(const geom::Shape& hole, model::NetId net, int layer) const;
+  int routed_copper_part(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners) const;
+  int routed_via_holes_part(const geom::Shape& s, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;
+  int routed_hole_copper_part(const geom::Shape& h, int layer, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;
+  int routed_hole_to_hole_part(const geom::Shape& hole, bool soft, std::vector<int>* owners) const;
+  std::int32_t via_hole_code(geom::Point p, Coord drill, Coord margin, model::NetId probe_net, std::int32_t code) const;
 
   model::Board& b_;
   const model::DesignRules& r_;

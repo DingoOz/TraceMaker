@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <initializer_list>
+#include <string_view>
 
 namespace tmk::drc {
 
@@ -54,6 +56,8 @@ class Condition {
   }
 
   bool eval(EvalCtx& ctx) const { return eval(*root_, ctx).truthy(); }
+  // Property or function names used by either item.
+  bool references(std::initializer_list<std::string_view> names) const { return references(*root_, names); }
 
  private:
   void skip() {
@@ -178,6 +182,13 @@ class Condition {
     return n;
   }
 
+  static bool references(const Node& n, std::initializer_list<std::string_view> names) {
+    if ((n.op == Node::Op::Prop || n.op == Node::Op::Call) && std::find(names.begin(), names.end(), n.name) != names.end()) return true;
+    for (const auto& k : n.kids)
+      if (references(*k, names)) return true;
+    return false;
+  }
+
   static bool str_eq(const Value& l, const Value& r) {
     if (l.k == Value::K::Num || r.k == Value::K::Num) {
       const double a = l.k == Value::K::Num ? l.n : std::atof(l.s.c_str());
@@ -295,9 +306,24 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r, const
         warnings_.push_back("rule '" + rule.name + "': cannot parse condition (" + err + "); rule ignored");
       }
     }
-    rules_.push_back(std::move(c));
-    for (const auto& k : rule.constraints)
+    c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
+                                               "Reference", "Parent.Reference", "Pad_Type", "Width"});
+    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair"});
+    for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
+      if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
+      // Rules outside the per-class cache need exact checks, including unreadable conditions.
+      if (!c.valid || (k.type != "disallow" && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
+      if (k.type != "disallow" || !c.valid) continue;
+      for (const auto& w : k.items)
+        if (w != "track" && w != "via" && w != "through_via" && w != "micro_via" && w != "buried_via" && w != "blind_via" && w != "pad" &&
+            w != "zone" && w != "graphic")
+          warnings_.push_back("rule '" + rule.name + "': disallow " + w + " is not checked by TraceMaker (KiCad's DRC still reports it)");
+      if (c.positional)
+        warnings_.push_back("rule '" + rule.name +
+                            "': disallow condition depends on position or footprint; the router does not avoid it, the DRC reports it");
+    }
+    rules_.push_back(std::move(c));
   }
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
@@ -430,6 +456,71 @@ std::optional<model::Constraint> RuleEngine::net_constraint(model::NetId net, co
     out = *k;  // later rules take precedence
   }
   return out;
+}
+
+namespace {
+// KiCad's disallow item keywords (DRC_RULES_PARSER): "via" covers every via type.
+bool disallow_word_matches(const std::string& w, const CopperItem& it, const model::Board& b) {
+  switch (it.kind) {
+    case ItemKind::Track:
+    case ItemKind::Arc: return w == "track";
+    case ItemKind::Pad: return w == "pad";
+    case ItemKind::Zone: return w == "zone";
+    case ItemKind::Graphic: return w == "graphic";
+    case ItemKind::Via: {
+      if (w == "via") return true;
+      const auto type = it.index >= 0 ? b.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
+      return (w == "through_via" && type == model::ViaType::Through) || (w == "micro_via" && type == model::ViaType::Micro) ||
+             ((w == "buried_via" || w == "blind_via") && type == model::ViaType::Blind);
+    }
+  }
+  return false;
+}
+}  // namespace
+
+bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer) const {
+  if (!c.valid || !layer_matches(c.rule->layer, layer)) return false;
+  bool typed = false;
+  for (const auto& k : c.rule->constraints)
+    if (k.type == "disallow")
+      for (const auto& w : k.items) typed = typed || disallow_word_matches(w, it, b_);
+  if (!typed) return false;
+  if (!c.cond) return true;
+  EvalCtx ctx{this, &it, nullptr, layer};
+  return c.cond->eval(ctx) && !ctx.unknown;  // an unsupported property never makes a rule fire
+}
+
+std::optional<std::string> RuleEngine::disallowed(const CopperItem& it, int layer) const {
+  std::optional<std::string> out;
+  for (const auto& c : rules_)
+    if (disallow_hit(c, it, layer)) out = c.rule->name;
+  return out;
+}
+
+bool RuleEngine::track_allowed(model::NetId net, int layer) const {
+  CopperItem probe;
+  probe.kind = ItemKind::Track;
+  probe.net = net;
+  probe.layers = model::layer_bit(layer);
+  for (const auto& c : rules_)
+    if (!c.positional && disallow_hit(c, probe, layer)) return false;
+  return true;
+}
+
+bool RuleEngine::via_allowed(model::NetId net) const {
+  CopperItem probe;  // a through via: on every copper layer
+  probe.kind = ItemKind::Via;
+  probe.net = net;
+  for (int l = 0; l < b_.copper_count(); ++l) probe.layers |= model::layer_bit(l);
+  for (const auto& c : rules_)
+    for (int l = 0; l < b_.copper_count(); ++l)
+      if (!c.positional && disallow_hit(c, probe, l)) return false;
+  return true;
+}
+
+Coord RuleEngine::physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const {
+  if (max_physical_hole_ <= 0) return -1;
+  return custom_min("physical_hole_clearance", hole_owner, &other, layer).value_or(-1);
 }
 
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {

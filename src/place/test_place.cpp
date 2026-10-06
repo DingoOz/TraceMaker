@@ -3,6 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <filesystem>
+#include <fstream>
 #include <set>
 
 #include "core/rng.hpp"
@@ -326,6 +327,61 @@ TEST_CASE("extraction from a KiCad board", "[place][fixture]") {
   // The human placement is a valid input: the bound is below its HPWL.
   const Placement pl = Placement::initial(p);
   CHECK(hpwl_lower_bound(p, pl, RotationModel::Fixed) <= weighted_hpwl(p, pl));
+}
+
+TEST_CASE("parts dropped beside the board are placed; parts overhanging the edge stay", "[place]") {
+  // R1 on the 20 x 10 mm board, R2/R3 beside it, R4 straddling the right edge.
+  auto fp = [](const char* ref, double x, double y) {
+    return std::string("  (footprint \"R\" (layer \"F.Cu\") (at ") + std::to_string(x) + " " + std::to_string(y) + ")\n" +
+           "    (property \"Reference\" \"" + ref + "\" (at 0 0) (layer \"F.SilkS\"))\n" +
+           "    (pad \"1\" smd rect (at -1 0) (size 1 1) (layers \"F.Cu\") (net 1 \"A\"))\n" +
+           "    (pad \"2\" smd rect (at 1 0) (size 1 1) (layers \"F.Cu\") (net 2 \"B\"))\n  )\n";
+  };
+  const std::string text = "(kicad_pcb (version 20240108) (generator \"pcbnew\")\n"
+                           "  (layers (0 \"F.Cu\" signal) (31 \"B.Cu\" signal) (37 \"F.SilkS\" user) (44 \"Edge.Cuts\" user))\n"
+                           "  (net 0 \"\") (net 1 \"A\") (net 2 \"B\")\n" +
+                           fp("R1", 5, 5) + fp("R2", 40, 5) + fp("R3", 60, 20) + fp("R4", 21, 5) +
+                           "  (gr_rect (start 0 0) (end 20 10) (layer \"Edge.Cuts\") (stroke (width 0.1) (type solid)))\n)\n";
+  const auto dir = std::filesystem::temp_directory_path() / "tmk_place_offboard";
+  std::filesystem::create_directories(dir);
+  const std::string path = (dir / "b.kicad_pcb").string();
+  {
+    std::ofstream(path) << text;
+  }
+  const auto lb = io::read_board_file(path);
+  const Problem p = extract(lb.board, io::read_design_rules(path), path);
+  std::filesystem::remove_all(dir);
+  // Off-board pads must not prevent accepting the Edge.Cuts loop.
+  REQUIRE(!p.outline.empty());
+  auto part = [&](const char* ref) -> const Part& {
+    for (const auto& pt : p.parts)
+      if (pt.ref == ref) return pt;
+    FAIL("no part " << ref);
+    return p.parts.front();
+  };
+  CHECK(part("R1").movable);
+  CHECK(part("R2").movable);
+  CHECK(part("R3").movable);
+  CHECK_FALSE(part("R4").movable);
+  CHECK(part("R4").fixed_reason == "overhangs the board edge in the input");
+  Placement pl = Placement::initial(p);
+  PlaceOptions o;
+  o.mode = "full";
+  o.runs = 2;
+  o.threads = 2;
+  o.effort = 0.5;
+  const PlaceReport r = tmk::place::place(p, pl, o);
+  CHECK(r.legal);
+  CHECK(r.legalise_failed == 0);
+  for (std::size_t i = 0; i < p.parts.size(); ++i) {
+    if (!p.parts[i].movable) continue;
+    const Box& body = p.parts[i].geom[pl.rot[i]].body;
+    const Point q = pl.pos[i];
+    CHECK(q.x + body.x0 >= 0);
+    CHECK(q.x + body.x1 <= 20 * MM);
+    CHECK(q.y + body.y0 >= 0);
+    CHECK(q.y + body.y1 <= 10 * MM);
+  }
 }
 
 TEST_CASE("decoupling capacitors are tied to an IC supply pin, objective only", "[place][fixture]") {
@@ -785,6 +841,84 @@ TEST_CASE("routability loop: never worse than its best seed, locked parts fixed"
   for (std::size_t i = 0; i < p.parts.size(); ++i)
     if (!p.parts[i].movable) CHECK(r.best.pl.pos[i] == start.pos[i]);
   CHECK(route(r.best.pl).unrouted() == r.best.eval.unrouted());
+}
+
+TEST_CASE("routability loop: illegal seeds are reference only unless the input is accepted as it is", "[place][m8]") {
+  Problem p = random_problem(30, 83, 30 * MM);
+  const Placement legal = legal_start(p);
+  // Overlapping parts give the fake router the shortest wires.
+  Placement piled = legal;
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (p.parts[i].movable) piled.pos[i] = Point{15 * MM, 15 * MM};
+  REQUIRE(measure(p, piled).overlaps > 0);
+  const RouteFn route = fake_router(p, 10 * MM);
+  REQUIRE(route(piled).unrouted() < route(legal).unrouted());
+  LoopOptions o;
+  o.place.threads = 2;
+  o.place.runs = 2;
+  o.place.effort = 0.3;
+  o.rounds = 1;
+  o.eco_candidates = 2;
+  {
+    const LoopResult r = routability_loop(p, {{"input", piled, {}, 0}, {"legal", legal, {}, 0}}, o, route);
+    REQUIRE(r.tried.size() >= 2);
+    CHECK_FALSE(r.tried.front().legal);
+    CHECK(r.best.legal);
+    CHECK(r.best.label != "input");
+    CHECK(all_legal(p, r.best.pl));
+  }
+  {
+    // With no legal seed, return the input without improving it.
+    const LoopResult r = routability_loop(p, {{"input", piled, {}, 0}}, o, route);
+    CHECK(r.best.label == "input");
+    CHECK_FALSE(r.best.legal);
+    CHECK(r.rounds == 0);
+    CHECK(r.best.pl.pos == piled.pos);
+  }
+  {
+    // The no-repair exception admits the first seed despite its conflicts.
+    LoopOptions oa = o;
+    oa.accept_first_seed_conflicts = true;
+    const LoopResult r = routability_loop(p, {{"input", piled, {}, 0}, {"legal", legal, {}, 0}}, oa, route);
+    CHECK(r.best.label == "input");
+    CHECK_FALSE(r.best.legal);
+  }
+}
+
+TEST_CASE("minimal repair: only parts in a conflict move, and the result is legal", "[place][m8]") {
+  Problem p = random_problem(30, 85, 30 * MM);
+  const Placement legal = legal_start(p);
+  // Drop two movable parts onto two others: four parts in conflict, the rest untouched.
+  std::vector<int> mov;
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (p.parts[i].movable) mov.push_back(static_cast<int>(i));
+  REQUIRE(mov.size() >= 4);
+  Placement bad = legal;
+  bad.pos[z(mov[0])] = legal.pos[z(mov[1])];
+  bad.pos[z(mov[2])] = legal.pos[z(mov[3])];
+  const Metrics before = measure(p, bad);
+  REQUIRE(before.overlaps > 0);
+  std::set<std::string> in_conflict;
+  for (const auto& c : before.conflicts) {
+    const auto slash = c.find('/');
+    in_conflict.insert(c.substr(0, slash));
+    in_conflict.insert(c.substr(slash + 1));
+  }
+  int moved = -1;
+  const auto rep = repaired(p, bad, &moved);
+  REQUIRE(rep.has_value());
+  CHECK(all_legal(p, *rep));
+  CHECK(moved >= 1);
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (!in_conflict.count(p.parts[i].ref)) {
+      CHECK(rep->pos[i] == bad.pos[i]);
+      CHECK(rep->rot[i] == bad.rot[i]);
+    }
+  // Legal input needs no repair.
+  const auto same = repaired(p, legal, &moved);
+  REQUIRE(same.has_value());
+  CHECK(same->pos == legal.pos);
+  CHECK(moved == 0);
 }
 
 // ---- Side assignment (doc 04 §3 C/E, D48) ----------------------------------------------------------------------

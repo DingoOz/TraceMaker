@@ -67,6 +67,7 @@ struct Router::Impl {
   std::vector<SNode> sn;
   std::vector<std::uint32_t> cstamp, vstamp;
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
+  std::vector<std::int64_t> cell_hist;  // history cost per cell (valid when cstamp matches)
   std::uint32_t gen = 0;
   // (net and width, layer-cell key) blocked by FIXED copper after exact-check failures (routed copper changes,
   // so conflicts with it are not learned permanently).
@@ -119,7 +120,11 @@ struct Router::Impl {
     return soft ? reserve_pen : -1;
   }
 
-  Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {}
+  Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {
+    // Name-pattern matching is too costly for per-cell lookups.
+    net_class.reserve(b.nets.size());
+    for (const auto& n : b.nets) net_class.push_back(&rules.class_for(n.name));
+  }
 
   double elapsed() const { return std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); }
   // Out of budget? The work budget (search expansions) is deterministic; wall time is only a safety net.
@@ -141,7 +146,11 @@ struct Router::Impl {
     emit(buf);
   }
 
-  const model::NetClass& netclass(NetId net) const { return rules.class_for(b.nets[static_cast<std::size_t>(net)].name); }
+  std::vector<const model::NetClass*> net_class;  // by net id
+  const model::NetClass& netclass(NetId net) const {
+    const auto i = static_cast<std::size_t>(net);
+    return i < net_class.size() ? *net_class[i] : rules.class_for(b.nets[i].name);
+  }
   // Via drill and diameter for a net: net-class values raised to the board minimums (drill, diameter and
   // annular ring: d >= drill + 2 * min_annular).
   Coord class_via_drill(NetId net) const { return std::max(netclass(net).via_drill, rules.minimums.through_hole_diameter); }
@@ -170,6 +179,17 @@ struct Router::Impl {
     const Coord w = mn > 0 ? std::max(mn, std::min<Coord>(class_width(net), 150'000)) : std::min<Coord>(class_width(net), 150'000);
     return w < class_width(net) ? w : 0;
   }
+  // Per-net track layers and via permission from custom disallow rules (doc 05 §16).
+  std::vector<model::LayerMask> net_layers;
+  std::vector<std::uint8_t> net_vias;
+  bool layer_ok(NetId net, int layer) const {
+    const auto i = static_cast<std::size_t>(net);
+    return i >= net_layers.size() || (net_layers[i] & model::layer_bit(layer));
+  }
+  bool vias_ok(NetId net) const {
+    const auto i = static_cast<std::size_t>(net);
+    return i >= net_vias.size() || net_vias[i];
+  }
 
   // Lattice <-> board coordinates.
   Point at(int ix, int iy) const { return {lat.x0 + static_cast<Coord>(ix) * pitch, lat.y0 + static_cast<Coord>(iy) * pitch}; }
@@ -178,9 +198,18 @@ struct Router::Impl {
 
   void setup() {
     obs = std::make_unique<Obstacles>(b, rules);
-    use_cache = !obs->has_custom_rules();
+    use_cache = !obs->needs_exact_routing();
     nl = b.copper_count();
     blind_ok = opt.blind_vias && rules.minimums.allow_blind_buried_vias && nl > 2;
+    net_layers.assign(b.nets.size(), 0);
+    net_vias.assign(b.nets.size(), 1);
+    for (const auto& n : b.nets) {
+      const auto i = static_cast<std::size_t>(n.id);
+      if (i >= net_layers.size()) continue;
+      for (int l = 0; l < nl; ++l)
+        if (obs->rules().track_allowed(n.id, l)) net_layers[i] |= model::layer_bit(l);
+      net_vias[i] = obs->rules().via_allowed(n.id) ? 1 : 0;
+    }
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {
       pitch = opt.pitch;
@@ -363,7 +392,7 @@ struct Router::Impl {
     const bool saved_soft = soft;
     soft = false;
     for (int l = 0; l < nl; ++l) {
-      if (!(p.copper & model::layer_bit(l))) continue;
+      if (!(p.copper & model::layer_bit(l)) || !layer_ok(net, l)) continue;
       for (int d = 0; d < 8; ++d) {
         const double ux = kDx[d] / ((d & 1) ? std::numbers::sqrt2 : 1.0), uy = kDy[d] / ((d & 1) ? std::numbers::sqrt2 : 1.0);
         for (int k = 1; k <= 40; ++k) {
@@ -413,8 +442,14 @@ struct Router::Impl {
     const auto it = history.find(cell_key(layer, gx, gy));
     return it == history.end() ? 0 : static_cast<std::int64_t>(it->second) * pitch * 2;
   }
+  // Consecutive per-cell lookups usually use the same net and width.
+  NetId cc_net = -1;
+  Coord cc_key = -1;
+  ClassCache* cc_last = nullptr;
   ClassCache& cache_for(NetId net) {
-    auto& cc = caches[{&netclass(net), track_width(net) * 2 + (via_override ? 1 : 0)}];  // via codes depend on the via size
+    const Coord key = track_width(net) * 2 + (via_override ? 1 : 0);  // via codes depend on the via size
+    if (net == cc_net && key == cc_key) return *cc_last;
+    auto& cc = caches[{&netclass(net), key}];
     if (cc.margin.empty()) {
       const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
       cc.margin.assign(n, INT32_MIN);
@@ -422,6 +457,9 @@ struct Router::Impl {
       cc.via.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), INT32_MIN);
       cc.rep = net;
     }
+    cc_net = net;
+    cc_key = key;
+    cc_last = &cc;
     return cc;
   }
   static bool code_ok(std::int32_t code, NetId net) { return code == Obstacles::kFree || code == net; }
@@ -436,9 +474,11 @@ struct Router::Impl {
     return !code_ok(cc.tight[gi], net);
   }
 
+  geom::Shape probe_disk;  // reused by point_state and via_cost_at
   // State of a lattice point for the current net: 0 free, 1 crosses routed copper (soft), 2 blocked,
   // 3 legal only without the lattice margin ("tight").
   int point_state(int layer, int gx, int gy, NetId net, Coord hw) {
+    if (!layer_ok(net, layer)) return 2;
     const Point p = at(gx, gy);
     const Coord margin = pitch * 71 / 100 + 1;
     if (!use_cache) {
@@ -456,7 +496,8 @@ struct Router::Impl {
       st = 3;
     }
     if (near_r[gi] == 0) return st;
-    const int r = obs->routed_state(geom::Shape::point(p, hw + (st == 3 ? 0 : margin)), layer, net, drc::ItemKind::Track, soft, nullptr);
+    probe_disk.set_point(p, hw + (st == 3 ? 0 : margin));
+    const int r = obs->routed_state(probe_disk, layer, net, drc::ItemKind::Track, soft, nullptr);
     if (r == 2) return 2;
     return r == 1 ? 1 : st;
   }
@@ -470,12 +511,13 @@ struct Router::Impl {
       const std::int64_t key = cell_key(layer, gx, gy);
       ++obs->checks;
       cell_state[idx] = static_cast<std::uint8_t>(learned_block.count({block_owner(net), key}) ? 2 : point_state(layer, gx, gy, net, hw));
+      cell_hist[idx] = cell_state[idx] == 2 ? 0 : hist_cost(layer, gx, gy);  // history only changes between searches
     }
     const int st = cell_state[idx];
     if (st == 2) return -1;
     const std::int64_t rc = reserved_cost(layer, gx, gy, net);
     if (rc < 0) return -1;
-    std::int64_t hc = hist_cost(layer, gx, gy) + rc;
+    std::int64_t hc = cell_hist[idx] + rc;
     if (corr) {  // soft guidance: leaving the global corridor (or its layer) costs half a pitch per lattice step
       const Point p = at(gx, gy);
       const int tx = std::clamp(global.tile_of_x(p.x), 0, global.tiles_x - 1), ty = std::clamp(global.tile_of_y(p.y), 0, global.tiles_y - 1);
@@ -489,6 +531,7 @@ struct Router::Impl {
     return hc;
   }
   std::int64_t via_cost_at(const Window& w, int cx, int cy, NetId net, Coord d, Coord drill) {
+    if (!vias_ok(net)) return -1;
     const std::size_t idx = static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx);
     if (vstamp[idx] != gen) {
       vstamp[idx] = gen;
@@ -503,11 +546,13 @@ struct Router::Impl {
         const std::size_t gi = static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
         if (cc.via[gi] == INT32_MIN) cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
         st = code_ok(cc.via[gi], net) ? 0 : 2;
-        for (int l = 0; l < nl && st != 2; ++l) {
-          if (near_r[(static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx)] == 0) continue;
-          const int r = obs->routed_state(geom::Shape::point(p, d / 2 + margin), l, net, drc::ItemKind::Via, soft, nullptr, true, drill / 2 + margin);
-          if (r == 2) st = 2;
-          else if (r == 1) st = 1;
+        if (st != 2) {
+          model::LayerMask near = 0;  // layers with routed copper nearby
+          for (int l = 0; l < nl; ++l)
+            if (near_r[(static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx)] != 0)
+              near |= model::layer_bit(l);
+          probe_disk.set_point(p, d / 2 + margin);
+          st = obs->routed_via_state(probe_disk, near, net, soft, drill / 2 + margin);
         }
       }
       via_state[idx] = static_cast<std::uint8_t>(st);
@@ -533,7 +578,7 @@ struct Router::Impl {
     const int x0 = std::max(0, to_ix(it.box.x0) - w.x0), x1 = std::min(w.w - 1, to_ix(it.box.x1) - w.x0);
     const int y0 = std::max(0, to_iy(it.box.y0) - w.y0), y1 = std::min(w.h - 1, to_iy(it.box.y1) - w.y0);
     for (int l = 0; l < nl; ++l) {
-      if (!(p.copper & model::layer_bit(l))) continue;
+      if (!(p.copper & model::layer_bit(l)) || !layer_ok(p.net, l)) continue;
       std::size_t before = e.cells.size();
       for (int cy = y0; cy <= y1; ++cy)
         for (int cx = x0; cx <= x1; ++cx) {
@@ -589,7 +634,11 @@ struct Router::Impl {
     f_pass.assign(cells * static_cast<std::size_t>(nl), 1);
     f_via.assign(cells, 1);
     f_tgt.assign(cells * static_cast<std::size_t>(nl), 0);
-    for (int l = 0; l < nl; ++l)
+    for (int l = 0; l < nl; ++l) {
+      if (!layer_ok(net, l)) {  // disallowed layer: no track may run there
+        std::fill_n(f_pass.begin() + static_cast<std::ptrdiff_t>(static_cast<std::size_t>(l) * cells), cells, std::uint8_t{0});
+        continue;
+      }
       for (int cy = 0; cy < w.h; ++cy) {
         const std::size_t gbase = (static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(w.y0 + cy)) * static_cast<std::size_t>(nx) +
                                   static_cast<std::size_t>(w.x0);
@@ -599,6 +648,8 @@ struct Router::Impl {
           if (t != INT32_MIN && !code_ok(t, net)) row[cx] = 0;  // known blocked by fixed copper even without margin
         }
       }
+    }
+    if (!vias_ok(net)) std::fill(f_via.begin(), f_via.end(), std::uint8_t{0});
     for (int cy = 0; cy < w.h; ++cy)
       for (int cx = 0; cx < w.w; ++cx) {
         const std::int32_t v = cc.via[static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx)];
@@ -650,6 +701,7 @@ struct Router::Impl {
     if (cstamp.size() < cells * static_cast<std::size_t>(nl)) {
       cstamp.assign(cells * static_cast<std::size_t>(nl), 0);
       cell_state.resize(cells * static_cast<std::size_t>(nl));
+      cell_hist.resize(cells * static_cast<std::size_t>(nl));
     }
     if (vstamp.size() < cells) {
       vstamp.assign(cells, 0);
@@ -729,10 +781,15 @@ struct Router::Impl {
           reach_q.push_back(ni);
         }
         // Layer change: a through via, or (optimistically) any blind/buried via when those are allowed.
-        if (nl > 1 && (blind_ok || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
+        auto via_useful = [&] {  // avoid legality checks when every usable layer is reached
+          for (int l2 = 0; l2 < nl; ++l2)
+            if (l2 != l && rstamp[static_cast<std::size_t>(l2) * cells + ci] != gen && layer_ok(net, l2)) return true;
+          return false;
+        };
+        if (nl > 1 && via_useful() && ((blind_ok && vias_ok(net)) || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
           for (int l2 = 0; l2 < nl; ++l2) {
             const std::size_t ni = static_cast<std::size_t>(l2) * cells + ci;
-            if (l2 == l || rstamp[ni] == gen) continue;
+            if (l2 == l || rstamp[ni] == gen || !layer_ok(net, l2)) continue;
             rstamp[ni] = gen;
             reach_q.push_back(ni);
           }
@@ -853,14 +910,23 @@ struct Router::Impl {
         sn[ns] = SNode{gs + cost, gen | (static_cast<std::uint32_t>(d) << 28), static_cast<std::int32_t>(s)};
         open.emplace(gs + cost + hn, ns);
       }
-      // Via: change to every other layer at this cell (through via).
-      const std::int64_t vextra = (opt.allow_vias && nl > 1) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
-      if (vextra < 0 && blind_ok) {
+      // Through via: skip legality checks if the bare via cost cannot improve another layer.
+      // Extra via costs are nonnegative.
+      auto via_useful = [&] {
+        for (int l2 = 0; l2 < nl; ++l2) {
+          if (l2 == l || !layer_ok(net, l2)) continue;
+          const std::size_t ns = sidx(l2, ci, kNoDir);
+          if ((sn[ns].tag & kGenMask) != gen || sn[ns].g > gs + via_cost) return true;
+        }
+        return false;
+      };
+      const std::int64_t vextra = (opt.allow_vias && nl > 1 && (blind_ok || via_useful())) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
+      if (vextra < 0 && blind_ok && vias_ok(net)) {
         // Through via blocked: a blind or buried via spanning only the layers between (dearer: costs more to make).
         const Point vp = at(w.x0 + cx, w.y0 + cy);
         const Coord vm = pitch * 71 / 100 + 1;
         for (int l2 = 0; l2 < nl; ++l2) {
-          if (l2 == l) continue;
+          if (l2 == l || !layer_ok(net, l2)) continue;
           const int vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
@@ -874,7 +940,7 @@ struct Router::Impl {
       }
       if (vextra >= 0) {
         for (int l2 = 0; l2 < nl; ++l2) {
-          if (l2 == l) continue;
+          if (l2 == l || !layer_ok(net, l2)) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
           const std::int64_t ng = gs + via_cost + vextra;
           if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
@@ -1551,7 +1617,10 @@ struct Router::Impl {
         d(pad(A.pad_a).pos, pad(B.pad_a).pos) + d(pad(A.pad_b).pos, pad(B.pad_b).pos))
       std::swap(B.pad_a, B.pad_b);
     const model::Pad &pa1 = pad(A.pad_a), &pa2 = pad(A.pad_b), &pb1 = pad(B.pad_a), &pb2 = pad(B.pad_b);
-    const model::LayerMask s_layers = pa1.copper & pb1.copper, e_layers = pa2.copper & pb2.copper;
+    model::LayerMask allowed = 0;  // layers both halves may use (custom disallow rules)
+    for (int l = 0; l < nl; ++l)
+      if (layer_ok(A.net, l) && layer_ok(B.net, l)) allowed |= model::layer_bit(l);
+    const model::LayerMask s_layers = pa1.copper & pb1.copper & allowed, e_layers = pa2.copper & pb2.copper & allowed;
     if (!s_layers || !e_layers) { pair_why = "no common layer at an end"; return false; }
     // A pin of another net between the two pins of an end (the ground pin between P and N on HDMI connectors and
     // ICs) can be enclosed by the converging legs. Such pins are tested before and after the pair is committed; a
@@ -1613,7 +1682,7 @@ struct Router::Impl {
     // turns that follow the straight line to the goal over one diagonal and one straight run.
     const std::int64_t bend_cost = static_cast<std::int64_t>(K) * pitch;
     const std::int64_t via_pair_cost = 2 * static_cast<std::int64_t>(opt.via_cost_mm * 1e6);
-    const bool vias_ok = opt.allow_vias && nl > 1;
+    const bool vias_ok = opt.allow_vias && nl > 1 && this->vias_ok(A.net) && this->vias_ok(B.net);
     // Cost-to-go: the centreline still has to get within reach of the end pads (legs cost more than coupled track,
     // so the straight distance is a lower bound), weighted a little for focus (pairs need not be optimal, only legal).
     const double reach_e = std::max(d(E, pa2.pos), d(E, pb2.pos)) + off;
@@ -1730,7 +1799,7 @@ struct Router::Impl {
       }
       pq.push({g + hcost(c, l), seq++, 0, k});
     };
-    auto seg_ok = [&](Point p, Point q, int l, NetId net) { return p == q || obs->segment_state(p, q, l, w, net, false, nullptr) == 0; };
+    auto seg_ok = [&](Point p, Point q, int l, NetId net) { return p == q || (layer_ok(net, l) && obs->segment_state(p, q, l, w, net, false, nullptr) == 0); };
     auto delta = [&](int dd, int k, int& gx, int& gy) {
       gx += k * kDx[dd];
       gy += k * kDy[dd];
@@ -2508,8 +2577,8 @@ struct Router::Impl {
       fin.clearance = [&](NetId n) { return std::max(netclass(n).clearance, rules.minimums.clearance); };
       fin.via = [&](NetId n) { return via_diameter(n); };
       fin.keep = keep;
-      fin.track_free = [&](int layer, Point p, NetId n) { return code_ok(obs->fixed_code(p, layer, class_width(n) / 2, 0, n), n); };
-      fin.via_free = [&](Point p, NetId n) { return code_ok(obs->fixed_via_code(p, via_diameter(n), via_drill(n), 0, n), n); };
+      fin.track_free = [&](int layer, Point p, NetId n) { return layer_ok(n, layer) && code_ok(obs->fixed_code(p, layer, class_width(n) / 2, 0, n), n); };
+      fin.via_free = [&](Point p, NetId n) { return vias_ok(n) && code_ok(obs->fixed_via_code(p, via_diameter(n), via_drill(n), 0, n), n); };
       fin.layers = nl;
       FlowEscapeStats fs;
       plan = plan_escapes_flow(b, needs, fin, {}, &fs);
@@ -2538,6 +2607,7 @@ struct Router::Impl {
       }
     };
     for (const auto& c : plan) {
+      if (!layer_ok(c.net, c.layer) || (c.via && !vias_ok(c.net))) continue;  // custom disallow rules
       if (c.via) {  // a dog-bone is only worth reserving where that net's via fits among the fixed copper
         const int gx = to_ix(c.b.x), gy = to_iy(c.b.y);
         if (gx < 0 || gy < 0 || gx >= nx || gy >= ny) continue;
@@ -3055,6 +3125,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   for (std::size_t i = 0; i < rs.size(); ++i) {
     pr.variants.push_back(vs[i].name);
     pr.routed.push_back(rs[i].routed);
+    pr.seconds.push_back(rs[i].seconds);
     if (i > 0 && better(i, best)) best = i;
   }
   pr.best_variant = static_cast<int>(best);

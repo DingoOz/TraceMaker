@@ -36,6 +36,7 @@ struct Candidate {
   Placement pl;
   RouteEval eval;
   std::int64_t hpwl = 0;  // Σ HPWL (nm) on the loop's problem
+  bool legal = true;  // no overlap or outline violation involving a movable part, not just parts moved
 };
 // Better routed result: fewer unrouted connections, then shorter wirelength.
 bool better(const Candidate& a, const Candidate& b);
@@ -94,6 +95,8 @@ struct LoopOptions {
   // reach o.place.trace as "<label>|<stage>".
   std::function<void(const std::string& label)> on_incumbent;
   std::function<void(const std::string& label)> on_route;  // recording: a check route of this candidate starts
+  // If minimal repair fails, compare the input as it is; other seeds must be legal (D59).
+  bool accept_first_seed_conflicts = false;
 };
 
 struct LoopResult {

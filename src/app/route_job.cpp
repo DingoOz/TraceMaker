@@ -214,7 +214,8 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("portfolio: %d variants on %d thread%s", variants, std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
     auto pr = route::route_portfolio(*route_board, rules, opt, variants, pick, threads);
     for (std::size_t i = 0; i < pr.variants.size(); ++i)
-      log(fmt("  variant %d %-30s routed %d%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
+      log(fmt("  variant %d %-30s routed %d in %.1f s%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], pr.seconds[i],
+              static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
     ran = pr.indices;
     best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
     best_name = pr.variants[static_cast<std::size_t>(pr.best_variant)];

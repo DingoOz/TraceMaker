@@ -170,6 +170,14 @@
     {
      "text": "DRC parity 12 of 17 KiCad demo boards (jetson now exact; RoyalBlue54L down to a malformed duplicate pad)",
      "done": true
+    },
+    {
+     "text": "Router + DRC honour custom disallow track/via (per-net layer mask), physical_hole_clearance (no via in pad) and via-only keepouts; KiCad-parity counts on a private 4-layer board (D56)",
+     "done": true
+    },
+    {
+     "text": "Router hot paths: per-net class resolved once, pooled rule probes, lazy and merged via checks; 20M route check on a private board's 0.05 mm lattice ~140 s -> ~10 s, outputs unchanged (D57)",
+     "done": true
     }
    ]
   },
