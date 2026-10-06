@@ -24,7 +24,8 @@ def main() -> int:
     out = {}
     for tag, extra in (("off", ["--component-rules", "off"]), ("two", ["--component-rules", "soft"]), ("one", ["--component-rules", "soft", "--no-crules-two-stage"])):
         js = work / f"{tag}.json"
-        subprocess.run([str(place), str(BOARD), "-o", str(work / f"{tag}.kicad_pcb"), "--mode", "full", "--threads", "4", "--seed", "1",
+        subprocess.run([str(place), str(BOARD), "-o", str(work / f"{tag}.kicad_pcb"), "--mode", "full", "--threads", "4", "--seed", "1", "--effort", "0.2",  # legality and locking are tested, not quality
+                        
                         "--json", str(js)] + extra, check=True, capture_output=True)
         out[tag] = json.loads(js.read_text())
     ok = out["two"].get("legal") is True

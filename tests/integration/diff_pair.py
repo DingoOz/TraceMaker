@@ -31,7 +31,7 @@ def main() -> int:
     for k, threads in ((1, "1"), (2, "2")):
         out = work / f"hub_pairs_{k}.kicad_pcb"
         js = work / f"hub_pairs_{k}.json"
-        subprocess.run([tm, "route", str(SRC), "-o", str(out), "--diff-pairs", "--work", "15000000", "--variants", "1", "--threads", threads,
+        subprocess.run([tm, "route", str(SRC), "-o", str(out), "--diff-pairs", "--work", "15000000", "--time", "3600", "--variants", "1", "--threads", threads,
                         "--no-kb", "--no-gpu", "--json", str(js)], capture_output=True)
         outs.append((out, json.loads(js.read_text())))
     ok = True

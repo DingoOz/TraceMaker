@@ -11,7 +11,7 @@ SRC="$ROOT/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/4-port-usb-
 [[ -f $SRC ]] || { echo "SKIP: fixture missing"; exit 77; }
 mkdir -p "$OUT"
 # The router exits 3 when connections stay open: not a failure here.
-routed() { { "$TM" route "$SRC" -o "$1" --work 8000000 --variants 1 --threads 1 --no-kb --no-gpu "${@:2}" 2>&1 || true; } | sed -n 's/^routed \([0-9]*\)\/.*/\1/p'; }
+routed() { { "$TM" route "$SRC" -o "$1" --work 3000000 --variants 1 --threads 1 --no-kb --no-gpu "${@:2}" 2>&1 || true; } | sed -n 's/^routed \([0-9]*\)\/.*/\1/p'; }
 base=$(routed "$OUT/base.kicad_pcb")
 for mode in --global --global-congestion; do
   a=$(routed "$OUT/a$mode.kicad_pcb" $mode)

@@ -341,12 +341,17 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     const int side = g.layer == "F.Mask" ? 0 : g.layer == "B.Mask" ? 1 : -1;
     if (side < 0 || p.copper_layers < 1) continue;
     std::optional<Shape> sh;
-    if ((g.kind == model::Graphic::Kind::Poly || g.kind == model::Graphic::Kind::Rect) && g.pts.size() >= 3 && (g.filled || g.kind == model::Graphic::Kind::Poly))
-      sh = Shape::polygon(g.pts, g.width / 2);
-    else if (g.kind == model::Graphic::Kind::Circle && g.filled)
+    if ((g.kind == model::Graphic::Kind::Poly || g.kind == model::Graphic::Kind::Rect) && g.pts.size() >= 3 && (g.filled || g.kind == model::Graphic::Kind::Poly)) {
+      // The convex hull: logo outlines have thousands of points, and every candidate position of every part is
+      // tested against them (1Bitsy: full mode 2 s -> 43 s with the exact outlines). The hull keeps pads out of
+      // a little more than the opening, never less.
+      auto hull = geom::convex_hull(g.pts);
+      if (hull.size() >= 3) sh = Shape::polygon(std::move(hull), g.width / 2);
+    } else if (g.kind == model::Graphic::Kind::Circle && g.filled) {
       sh = Shape::point(g.a, geom::kiround(std::hypot(static_cast<double>(g.b.x - g.a.x), static_cast<double>(g.b.y - g.a.y))) + g.width / 2);
-    else if (g.kind == model::Graphic::Kind::Line)
+    } else if (g.kind == model::Graphic::Kind::Line) {
       sh = Shape::segment(g.a, g.b, g.width / 2);
+    }
     if (!sh) continue;
     bool own_pad = false;
     if (g.footprint >= 0)

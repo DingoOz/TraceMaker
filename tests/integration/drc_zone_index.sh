@@ -8,9 +8,10 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 TM=${1:-$ROOT/build/release/src/app/tracemaker}
 OUT=${2:-$ROOT/build/release/integration/drc_zone_index}
 D=$ROOT/bench/data/kicad/demos
-boards=("$D/video/video.kicad_pcb" "$D/stickhub/StickHub.kicad_pcb" "$D/cm5_minima/CM5_MINIMA_3.kicad_pcb"
-        "$D/tiny_tapeout/tinytapeout-demo.kicad_pcb" "$D/kit-dev-coldfire-xilinx_5213/kit-dev-coldfire-xilinx_5213.kicad_pcb"
-        "$D/complex_hierarchy/complex_hierarchy.kicad_pcb")
+# Four boards that the linear path checks in seconds, so the test also fits a sanitizer build's time limit
+# (CM5 Minima and tinytapeout, 14-16 s each on the linear path, were compared by hand: identical).
+boards=("$D/video/video.kicad_pcb" "$D/stickhub/StickHub.kicad_pcb"
+        "$D/kit-dev-coldfire-xilinx_5213/kit-dev-coldfire-xilinx_5213.kicad_pcb" "$D/complex_hierarchy/complex_hierarchy.kicad_pcb")
 for b in "${boards[@]}"; do [[ -f $b ]] || { echo "SKIP: fixtures missing ($b)"; exit 77; }; done
 mkdir -p "$OUT"
 fail=0

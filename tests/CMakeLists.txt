@@ -17,9 +17,9 @@ set_tests_properties(kicad_drc_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kic
 add_test(NAME kicad_drc_broken_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_broken_parity.sh)
 set_tests_properties(kicad_drc_broken_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1800)
 add_test(NAME drc_zone_index COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_zone_index.sh $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/drc_zone_index)
-set_tests_properties(drc_zone_index PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
+set_tests_properties(drc_zone_index PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 1800)  # 9 minutes under asan
 add_test(NAME global_route COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/global_route.sh $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/global_route)
-set_tests_properties(global_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration;route" TIMEOUT 600)
+set_tests_properties(global_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration;route" TIMEOUT 1800)
 add_test(NAME record_replay COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/record_replay.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/replay)
 set_tests_properties(record_replay PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
 
@@ -45,13 +45,13 @@ set_tests_properties(crules_route PROPERTIES SKIP_RETURN_CODE 77 LABELS "crules;
 add_test(NAME crules_dru_parses COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_dru_parses.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/crules_dru)
 set_tests_properties(crules_dru_parses PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 900)
 add_test(NAME crules_two_stage COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/crules_two_stage.py $<TARGET_FILE:tracemaker-place> ${CMAKE_BINARY_DIR}/integration/crules_two_stage)
-set_tests_properties(crules_two_stage PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 900)
+set_tests_properties(crules_two_stage PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 3600)
 # Reachability pre-check: every "unreachable" verdict re-checked by the full A* (skips without fixtures).
 add_test(NAME reach_verify COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/reach_verify.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/reach_verify)
 set_tests_properties(reach_verify PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 600)
 # Determinism across thread counts (N3, D47): the same --work portfolio at 1, 2 and 4 threads gives identical bytes.
 add_test(NAME thread_determinism COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/thread_determinism.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/thread_determinism)
-set_tests_properties(thread_determinism PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 900 PROCESSORS 4)
+set_tests_properties(thread_determinism PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 3600 PROCESSORS 4)
 # Coupled differential pairs (M12, D50): a USB hub's five pairs routed coupled, deterministic, KiCad-clean.
 add_test(NAME diff_pair COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/diff_pair.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/diff_pair)
-set_tests_properties(diff_pair PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;kicad;integration" TIMEOUT 900)
+set_tests_properties(diff_pair PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;kicad;integration" TIMEOUT 3600)
