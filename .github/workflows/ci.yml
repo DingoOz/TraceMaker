@@ -1,0 +1,45 @@
+# Basic CI: build the CPU-only preset with warnings as errors and run the tests.
+#
+# The job runs in an Ubuntu 26.04 container so the compiler (GCC 15) and library versions match the ones TraceMaker is
+# developed with. Hosted runners have no GPU, no benchmark boards (2.4 GB, downloaded, never in the repository) and no
+# KiCad, so the tests that need those report themselves as skipped; the rest must pass.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test (CPU only)
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 45
+    steps:
+      - name: Install build dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            g++-15 cmake ninja-build git ca-certificates python3 python3-yaml python3-dev \
+            libboost-dev libboost-system-dev libeigen3-dev nlohmann-json3-dev libcli11-dev \
+            libsqlite3-dev libzstd-dev catch2 pybind11-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake --preset cpu-only
+
+      - name: Build
+        run: cmake --build --preset cpu-only
+
+      - name: Test
+        run: ctest --preset cpu-only --output-on-failure
