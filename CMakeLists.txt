@@ -1,9 +1,40 @@
 cmake_minimum_required(VERSION 3.28)
 
-# CUDA defaults must be set before the CUDA language is enabled.
-# nvcc 12.4 rejects GCC > 13 as host compiler (verified 2026-10-02), so default to g++-13.
-if(NOT DEFINED CMAKE_CUDA_HOST_COMPILER AND EXISTS /usr/bin/g++-13)
-  set(CMAKE_CUDA_HOST_COMPILER /usr/bin/g++-13 CACHE FILEPATH "CUDA host compiler")
+# Compilers. The presets do not pin them, so another machine can choose its own:
+#   C++:        -DCMAKE_CXX_COMPILER=..., else $CXX, else the newest of /usr/bin/g++-15, -14, -13, else CMake's default.
+#   CUDA host:  -DCMAKE_CUDA_HOST_COMPILER=..., else $TM_CUDA_HOST_CXX, else /usr/bin/g++-13 or g++-12.
+# The system compilers are preferred over whatever `g++` is first on PATH: on the development machine that is a Nix
+# toolchain whose linker cannot see the system CUDA libraries. All of this must happen before project().
+if(NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED ENV{CXX})
+  foreach(tm_cxx /usr/bin/g++-15 /usr/bin/g++-14 /usr/bin/g++-13)
+    if(EXISTS ${tm_cxx})
+      set(CMAKE_CXX_COMPILER ${tm_cxx} CACHE FILEPATH "C++ compiler")
+      break()
+    endif()
+  endforeach()
+endif()
+# nvcc 12.4 rejects GCC > 13 as host compiler (verified 2026-10-02).
+if(NOT DEFINED CMAKE_CUDA_HOST_COMPILER)
+  if(DEFINED ENV{TM_CUDA_HOST_CXX})
+    set(CMAKE_CUDA_HOST_COMPILER $ENV{TM_CUDA_HOST_CXX} CACHE FILEPATH "CUDA host compiler")
+  else()
+    foreach(tm_cxx /usr/bin/g++-13 /usr/bin/g++-12)
+      if(EXISTS ${tm_cxx})
+        set(CMAKE_CUDA_HOST_COMPILER ${tm_cxx} CACHE FILEPATH "CUDA host compiler")
+        break()
+      endif()
+    endforeach()
+  endif()
+endif()
+# ccache when it is installed (it used to be required by the presets).
+find_program(TM_CCACHE ccache)
+if(TM_CCACHE)
+  if(NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${TM_CCACHE} CACHE STRING "C++ compiler launcher")
+  endif()
+  if(NOT DEFINED CMAKE_CUDA_COMPILER_LAUNCHER)
+    set(CMAKE_CUDA_COMPILER_LAUNCHER ${TM_CCACHE} CACHE STRING "CUDA compiler launcher")
+  endif()
 endif()
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
   set(CMAKE_CUDA_ARCHITECTURES 60 70 CACHE STRING "Tesla P100 (sm_60) and V100 (sm_70)")

@@ -22,11 +22,13 @@ scripts/bootstrap.sh                 # configure + build + test presets release,
 cmake --preset release && cmake --build --preset release && ctest --preset release
 build/release/src/app/tracemaker gpu-info
 python3 bench/check_env.py           # kicad-cli, engine binary, Freerouting, fixtures
-scripts/fetch_fixtures.sh [set ...]  # freerouting dac2020 kicad-demos (default), pcbench, pcbworld
+scripts/fetch_fixtures.sh [set ...]  # freerouting dac2020 kicad-demos derived (default, pinned commits), pcbench, pcbworld
 ```
 
-- Presets pin `/usr/bin/g++-15` for C++ and `/usr/bin/g++-13` for CUDA host code and put `/usr/bin` first on
-  PATH. `g++` on the user's PATH is a Nix toolchain whose linker cannot see the system CUDA libraries.
+- `CMakeLists.txt` (not the presets) defaults to `/usr/bin/g++-15` for C++ and `/usr/bin/g++-13` for CUDA host
+  code, overridable with `CXX` / `-DCMAKE_CXX_COMPILER` and `TM_CUDA_HOST_CXX` / `-DCMAKE_CUDA_HOST_COMPILER`; the
+  presets put `/usr/bin` first on PATH. `g++` on the user's PATH is a Nix toolchain whose linker cannot see the
+  system CUDA libraries, so do not export `CXX` to it.
 - The C++ namespace is `tmk` (`tm` clashes with C's `struct tm`).
 - Fixtures live in `bench/data/` (git-ignored). Freerouting's PCBench set (1,158 boards with `.kicad_pcb` and
   `.dsn`) is at `bench/data/freerouting/scripts/benchmark/fixtures/PCBench`.

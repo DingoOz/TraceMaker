@@ -19,6 +19,13 @@
 Licences differ per set; the harness downloads sets into `bench/data/` (git-ignored) from their sources
 and never redistributes them.
 
+`scripts/fetch_fixtures.sh` pins the three default sets to the commits the 0.8.0 results were measured on
+(Freerouting `d216f90` of 2026-09-30, DAC 2020 `bee2888`, KiCad 10.0 `7a7d026`), so a fresh clone gets the same
+boards, tiers and Freerouting result file; `TM_FIXTURES=latest` or `TM_REF_<SET>=<commit>` overrides a pin. Its
+`derived` step builds `bench/data/dac2020_prepared` (`bench/prepare_dac2020.py`) and, once the placer is built, the
+from-scratch set S (`bench/make_place_sets.py scratch`). The fresh-clone path was checked command by command against
+the upstream repositories, not by a complete download and test run.
+
 ### Building unrouted fixtures
 
 `bench/tools/strip.py` removes `segment`/`arc`/`via` nodes (keeping locked ones and zones), and for the

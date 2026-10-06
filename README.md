@@ -20,6 +20,12 @@ cd viewer && npm install && npm run build   # browser viewer (served by the engi
 
 Presets: `release`, `debug`, `cpu-only` (no CUDA), `asan`, `tsan`.
 
+Compilers are not fixed by the presets. By default the build takes the newest of `/usr/bin/g++-15`, `-14`, `-13` for
+C++ and `/usr/bin/g++-13` or `-12` as the CUDA host compiler (nvcc 12.4 rejects newer ones). To choose your own:
+`CXX=/path/to/g++ cmake --preset release`, or `-DCMAKE_CXX_COMPILER=...`; for CUDA host code
+`TM_CUDA_HOST_CXX=/path/to/g++` or `-DCMAKE_CUDA_HOST_COMPILER=...`. Without a CUDA 12.x toolkit use `cpu-only`.
+`ccache` is used when it is installed.
+
 ## Use
 
 ```
@@ -59,9 +65,16 @@ run and the output is identical at any thread count), `--variants N` (portfolio 
 ## Benchmark
 
 ```
-scripts/fetch_fixtures.sh                     # Freerouting fixtures incl. PCBench, DAC2020, KiCad demos
+scripts/fetch_fixtures.sh                     # Freerouting fixtures incl. PCBench, DAC2020, KiCad demos; derived sets
 python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 ```
+
+The fixtures are downloaded from their sources into `bench/data/` (about 2.4 GB, git-ignored, never redistributed:
+about half of the PCBench boards state no licence). They are pinned to the commits the published results were
+measured on; `TM_FIXTURES=latest scripts/fetch_fixtures.sh` takes upstream's current state instead. The script also
+builds the derived sets (DAC 2020 in the PCBench layout; the from-scratch placement set S, which needs a built
+`tracemaker-place`: run `scripts/fetch_fixtures.sh derived` after the first build). Tests that need a fixture or
+`kicad-cli` skip when it is missing.
 
 Latest results (PCBench, 120 s per board, judged by `kicad-cli`; Freerouting figures are its published results):
 
