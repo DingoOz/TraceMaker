@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Runs kicad-cli from the KiCad 10 Docker image. Your home directory and the current directory are
+# mounted at the same paths, so file arguments work unchanged.
+IMG="${TRACEMAKER_KICAD_IMAGE:-kicad/kicad:10.0.6}"
+mounts=(-v "$HOME:$HOME")
+case "$PWD/" in "$HOME"/*) ;; *) mounts+=(-v "$PWD:$PWD") ;; esac
+args=(run --rm -i -u "$(id -u):$(id -g)" -e HOME=/tmp "${mounts[@]}" -w "$PWD" "$IMG" kicad-cli "$@")
+if docker info >/dev/null 2>&1; then exec docker "${args[@]}"; fi
+# This shell started before the user joined the docker group: run through 'sg docker'.
+exec sg docker -c "docker $(printf '%q ' "${args[@]}")"

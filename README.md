@@ -1,115 +1,242 @@
 # TraceMaker
 
-A placement-aware PCB autorouter for KiCad, written in C++20 with CUDA. It reads KiCad 9 and 10 boards and
-projects directly, routes with negotiated rip-up and reroute on an exact-geometry lattice, learns from failed
-attempts within and across runs, writes the result back into the `.kicad_pcb` without disturbing anything else,
-and is judged by KiCad's own DRC. A browser viewer shows routing live.
+**An autorouter and component placer for KiCad.** You give it a `.kicad_pcb`; it draws the tracks and vias and
+writes them back into the file.
 
-Design: [PLAN.md](PLAN.md) and [docs/](docs/). Decisions taken without the user's input: [dev/assumptions.md](dev/assumptions.md).
+![TraceMaker's live viewer after routing a motor-driver board: 195 of 195 connections](docs/img/viewer.png)
 
-## Build
+*The live viewer after routing a three-channel motor driver: 195 of 195 connections, front copper in red, back in blue.*
 
-Ubuntu 26.04 with the packages from the setup script (`g++-13` for CUDA host code, Boost, Eigen, oneTBB, fmt,
-spdlog, FlatBuffers, SQLite, Catch2, pybind11, Docker for `kicad-cli`).
+## In one minute
+
+- **What it does:** routes unrouted connections on KiCad 9 and 10 boards, and can place components first.
+- **How it is judged:** by KiCad's own design-rule check (`kicad-cli pcb drc`), not by its own opinion.
+- **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
+- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one.
+- **Status:** release 0.8.0. Licence GPL-3.0-or-later.
+
+## How good is it?
+
+Share of boards routed with **every connection made and no KiCad error added** (PCBench, 120 s per board):
+
+| Tier | Boards | TraceMaker | Freerouting 2.5 |
+|---|--:|--:|--:|
+| A (routine) | 40 | **100%** | 100% |
+| B | 40 | **70.0%** | 50.0% |
+| C | 30 | **63.3%** | 46.7% |
+| D (hardest) | 22 | **54.5%** | 36.4% |
+
+Freerouting's figures are its own published results on the same boards.
+
+**Known limits, stated plainly:**
+
+- Placing a board from scratch gives 85% clean boards on held-out designs; the project's target was 90%.
+- On boards with dense packages (BGAs, fine-pitch QFNs), 41% come out clean.
+- It uses more vias than Freerouting.
+
+Full detail: [design and results report](report/report.pdf) ·
+[roadmap and test report](report/roadmap_testing.pdf) (all 132 tests, every benchmark run).
+
+## Quick start
+
+**1. Build**
 
 ```
 cmake --preset release && cmake --build --preset release
-ctest --preset release            # unit + integration tests (KiCad tests use the kicad/kicad:10.0.6 image)
-cd viewer && npm install && npm run build   # browser viewer (served by the engine)
 ```
+
+No CUDA? Use `cpu-only` instead of `release` in both commands.
+
+**2. Route a board**
+
+```
+build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb
+```
+
+**3. Watch it work** (optional)
+
+```
+cd viewer && npm install && npm run build && cd ..
+build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --view --hold
+```
+
+Then open `http://localhost:8766/` in a browser.
+
+**4. Check the result with KiCad**
+
+```
+kicad-cli pcb drc --format json -o drc.json routed.kicad_pcb
+```
+
+No KiCad installed? `scripts/kicad-cli` runs it from the `kicad/kicad:10.0.6` Docker image; put it on your `PATH`.
+
+## What you need
+
+- **Ubuntu 26.04** (what it is developed on).
+- **Compilers:** GCC 15 (what it is built and tested with; older versions are untried). With CUDA 12.x, also
+  GCC 13 or 12 for the GPU code.
+- **Libraries:** Boost, Eigen, oneTBB, fmt, spdlog, FlatBuffers, SQLite, Catch2, pybind11.
+- **Docker**, only for the KiCad checks and the tests that compare with KiCad.
+
+<details>
+<summary><b>Choosing compilers and build presets</b></summary>
 
 Presets: `release`, `debug`, `cpu-only` (no CUDA), `asan`, `tsan`.
 
-Compilers are not fixed by the presets. By default the build takes the newest of `/usr/bin/g++-15`, `-14`, `-13` for
-C++ and `/usr/bin/g++-13` or `-12` as the CUDA host compiler (nvcc 12.4 rejects newer ones). To choose your own:
-`CXX=/path/to/g++ cmake --preset release`, or `-DCMAKE_CXX_COMPILER=...`; for CUDA host code
-`TM_CUDA_HOST_CXX=/path/to/g++` or `-DCMAKE_CUDA_HOST_COMPILER=...`. Without a CUDA 12.x toolkit use `cpu-only`.
+The presets do not fix the compilers. By default the build takes:
+
+- for C++: the newest of `/usr/bin/g++-15`, `-14`, `-13`;
+- for CUDA host code: `/usr/bin/g++-13` or `-12` (nvcc 12.4 rejects newer ones).
+
+To choose your own:
+
+- C++: `CXX=/path/to/g++ cmake --preset release`, or `-DCMAKE_CXX_COMPILER=...`
+- CUDA host: `TM_CUDA_HOST_CXX=/path/to/g++`, or `-DCMAKE_CUDA_HOST_COMPILER=...`
+
 `ccache` is used when it is installed.
 
-## Use
+</details>
+
+## Common tasks
+
+Every command below starts with `build/release/src/app/tracemaker` unless it says otherwise.
+
+| I want to… | Command |
+|---|---|
+| Route a board (120 s limit) | `route board.kicad_pcb -o out.kicad_pcb --time 120` |
+| Get the same result every time | `route board.kicad_pcb -o out.kicad_pcb --work 50000000` |
+| Watch the routing live | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
+| Route everything again, old tracks removed | `route board.kicad_pcb -o out.kicad_pcb --reroute` |
+| Run a design-rule check | `drc board.kicad_pcb --json report.json` |
+| See a summary of a board | `inspect board.kicad_pcb` |
+| Find pins that cannot escape their package | `escape board.kicad_pcb` |
+| See which parts and layout rules it detects | `rules board.kicad_pcb --mode on` |
+
+<details>
+<summary><b>Placing components</b></summary>
+
+The placer is a separate program: `build/release/src/place/tracemaker-place`.
+
+| I want to… | Command |
+|---|---|
+| Improve a placement, and keep mine if the new one routes worse | `tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode auto --route-check 3000000` |
+| Let the router steer the placement | `tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode routable` |
+| Nudge a few parts to fix routing failures | `tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode eco` |
+| Place a board that has no placement yet | `tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode routable --scratch` |
+
+Locked parts, edge connectors and keep-outs are never moved or violated. A part that fits nowhere legally is set
+down beside the board and reported.
+
+</details>
+
+<details>
+<summary><b>More route options</b></summary>
+
+- `--threads N`: threads. Eight differently configured routers run in parallel and the best result is kept.
+- `--variants N`: how many of those eight to run.
+- `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.
+- `--no-gpu`: compute on the CPU only. Results are identical.
+- `--diff-pairs`: route differential pairs side by side at the rule's gap.
+- `--component-rules on`: apply detected layout rules (keep-outs, widths from impedance and current).
+- `--rules-override FILE`: correct what was detected (doc 15 §6.3).
+- `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
+- `--cut-report`: report lines across the board that more nets must cross than tracks fit.
+- `--kb FILE` / `--no-kb`: the knowledge base of earlier runs.
+
+</details>
+
+<details>
+<summary><b>KiCad plugin</b></summary>
+
+`kicad_plugin/` is a KiCad 10 action plugin. It routes the open board and adds the result as **one commit**, so a
+single Ctrl-Z removes it. It can also re-route existing copper, move footprints and refill zones.
+
+- Build the package: `python3 scripts/make_pcm_package.py`
+- Install it in KiCad: Plugin and Content Manager → Install from File…
+- Details and settings: [kicad_plugin/README.md](kicad_plugin/README.md)
+
+</details>
+
+## Run the tests
 
 ```
-build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --time 120     # 8-variant portfolio
-build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --view --hold  # live view on :8766
-build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --work 50000000 # deterministic budget
-build/release/src/app/tracemaker drc board.kicad_pcb --json report.json                   # KiCad-equivalent DRC
-build/release/src/app/tracemaker inspect board.kicad_pcb                                   # board summary
-build/release/src/server/tracemaker-view board.kicad_pcb --demo                            # viewer demo
-kicad-cli pcb drc --format json -o drc.json routed.kicad_pcb                               # the judge
+scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
+ctest --preset release             # 132 tests, about 5 minutes
 ```
 
-Placement (opt-in; keeps the input placement unless the new one routes at least as well):
+- Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.
+- After the first build, run `scripts/fetch_fixtures.sh derived` once more to build the placement test set.
+
+<details>
+<summary><b>About the test boards</b></summary>
+
+- They are downloaded from their original sources into `bench/data/` and are **never part of this repository**.
+  About half of the PCBench boards state no licence.
+- They are pinned to the exact versions the published results were measured on.
+  `TM_FIXTURES=latest scripts/fetch_fixtures.sh` takes the newest upstream versions instead.
+- Sets: Freerouting's fixtures including PCBench (1,157 boards), DAC 2020 (11), KiCad's demo projects (19).
+
+</details>
+
+## Run the benchmark
 
 ```
-build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode auto --route-check 3000000
-```
-
-Escape feasibility and component-aware rules (both report-only unless asked for):
-
-```
-build/release/src/app/tracemaker escape board.kicad_pcb            # dense-package pins that cannot escape, and why
-build/release/src/app/tracemaker rules board.kicad_pcb --mode on --dru rules.kicad_dru   # detected parts, rules, impedance
-build/release/src/app/tracemaker route board.kicad_pcb -o out.kicad_pcb --component-rules on   # + crystal/inductor keep-outs
-build/release/src/place/tracemaker-place board.kicad_pcb -o placed.kicad_pcb --mode full --component-rules soft
-```
-
-`--rules-override overrides.json` corrects detections and rules (doc 15 §6.3). Escape planning (doc 05 §12) runs in
-two of the eight portfolio variants; `--escape-plan` turns it on in all of them.
-
-KiCad 10 plugin: `kicad_plugin/` (IPC action plugin; routes the open board in one undoable commit; see its README).
-
-Useful route options: `--threads N` (threads; also the portfolio size unless `--work` is given, when all eight variants
-run and the output is identical at any thread count), `--variants N` (portfolio size), `--no-gpu` (CPU cost-to-go fields, identical results),
-`--no-rip-up`, `--fast-bends`, `--kb FILE` / `--no-kb` (knowledge base of earlier runs).
-
-## Benchmark
-
-```
-scripts/fetch_fixtures.sh                     # Freerouting fixtures incl. PCBench, DAC2020, KiCad demos; derived sets
 python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 ```
 
-The fixtures are downloaded from their sources into `bench/data/` (about 2.4 GB, git-ignored, never redistributed:
-about half of the PCBench boards state no licence). They are pinned to the commits the published results were
-measured on; `TM_FIXTURES=latest scripts/fetch_fixtures.sh` takes upstream's current state instead. The script also
-builds the derived sets (DAC 2020 in the PCBench layout; the from-scratch placement set S, which needs a built
-`tracemaker-place`: run `scripts/fetch_fixtures.sh derived` after the first build). Tests that need a fixture or
-`kicad-cli` skip when it is missing.
+- Each run writes `bench/results/<run>/`: the routed boards, a result per board, and `summary.json`.
+- Every board is compared with Freerouting's published result for the same file.
 
-Latest results (PCBench, 120 s per board, judged by `kicad-cli`; Freerouting figures are its published results):
+<details>
+<summary><b>More benchmark results</b></summary>
 
-| Tier | Boards | TraceMaker clean | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
-|---|--:|--:|--:|--:|
-| A | 40 | 100% | 100% | 87.5% |
-| B | 40 | 70.0% | 50.0% | 12.5% |
-| C | 30 | 63.3% | 46.7% | 16.7% |
-| D | 22 | 54.5% | 36.4% | 0.0% |
+**Held-out quality study** (`bench/quality_bench.py`, measured 2–3 October 2026): 60 boards never used in
+development, with Freerouting 2.5.0-RC12 and 1.9.0 run on the same machine and everything judged by KiCad.
 
-Held-out quality benchmark (`bench/quality_bench.py`): 60 boards never used in development, Freerouting 2.5.0-RC12 and
-1.9.0 run on the same machine, everything judged by KiCad's DRC. KiCad-clean: TraceMaker 73–78%, Freerouting 2.5 3%,
-Freerouting 1.9 32%. Against Freerouting 2.5 TraceMaker's tracks are 5% shorter with 28% fewer bends but 43% more vias.
-DAC 2020 (10 boards, same judge): TraceMaker clean 60% (as many as the human-routed originals), Freerouting 2.5 10%,
-Freerouting 1.9 20%. Details and figures: [`report/report.pdf`](report/report.pdf).
+| | TraceMaker | Freerouting 2.5 | Freerouting 1.9 |
+|---|--:|--:|--:|
+| Boards clean in KiCad | 73–78% | 3% | 32% |
 
-Roadmap and test report (every milestone and gate, all 132 tests, every benchmark run, the held-out placement sets and
-the experiments behind each decision, as of 6 October 2026): [`report/roadmap_testing.pdf`](report/roadmap_testing.pdf)
-(source `report/roadmap_testing.tex`; tables generated by `report/make_test_report.py`).
+Against Freerouting 2.5, TraceMaker's tracks are 5% shorter with 28% fewer bends, but it uses 43% more vias.
 
-Each run writes `bench/results/<run>/` (routed boards, per-board JSON, `summary.json`, `report.md`) and compares
-against Freerouting's own published per-board results on the same fixtures. Results appear on the progress
-site (`http://<host>:8765/`).
+**DAC 2020** (10 boards, same judge): TraceMaker 60% clean, as many as the human-routed originals;
+Freerouting 2.5 10%; Freerouting 1.9 20%.
 
-## Layout
+**Older Freerouting, tiers A to D:** version 2.4.1 scores 87.5%, 12.5%, 16.7% and 0.0%.
 
-`src/core` units, RNG, events · `src/sexpr` lossless s-expressions · `src/io/kicad` board/project/netlist I/O and
-editor · `src/model` board and rules · `src/geom` exact geometry · `src/drc` KiCad-equivalent DRC and
-connectivity · `src/route` router (obstacles, A*, negotiation, portfolio) · `src/learn` knowledge base ·
-`src/gpu` CUDA kernels with CPU references · `src/server` viewer server · `src/place` placement ·
-`viewer/` WebGL2 viewer · `bench/` harness · `devsite/` progress website · `tests/` tests.
+</details>
+
+## Where things are
+
+| Folder | What is in it |
+|---|---|
+| `src/route` | the router |
+| `src/place` | the placer |
+| `src/drc` | the design-rule check |
+| `src/io/kicad` | reading and writing KiCad files |
+| `src/crules` | component-aware layout rules |
+| `src/gpu` | CUDA code, each with a CPU twin |
+| `src/server`, `viewer/` | the live viewer |
+| `kicad_plugin/` | the KiCad plugin |
+| `bench/` | benchmark tools |
+| `tests/` | tests |
+| `docs/` | design documents; start at [PLAN.md](PLAN.md) |
+| `report/` | the two PDF reports |
+
+Other folders: `src/core`, `src/sexpr`, `src/model`, `src/geom`, `src/learn`, `devsite/` (a progress dashboard).
+
+## Read more
+
+- [PLAN.md](PLAN.md) and [docs/](docs/): how it is designed.
+- [docs/12-decisions.md](docs/12-decisions.md): every design decision and why.
+- [dev/assumptions.md](dev/assumptions.md): choices made without asking the owner.
+- [report/report.pdf](report/report.pdf): method and results, with figures.
+- [report/roadmap_testing.pdf](report/roadmap_testing.pdf): the roadmap and all testing.
 
 ## Licence
 
-TraceMaker is free software under the GNU General Public License, version 3 or (at your option) any later version
-(`GPL-3.0-or-later`); see [LICENSE](LICENSE). [NOTICE](NOTICE) adds a section 7 permission to link with NVIDIA's
-CUDA runtime, lists third-party components, and credits the KiCad demo projects behind `tests/truth/`. Benchmark
-boards are downloaded, not redistributed, and keep their own licences.
+GNU General Public License, version 3 or later (`GPL-3.0-or-later`). See [LICENSE](LICENSE).
+
+[NOTICE](NOTICE) adds a permission to link with NVIDIA's CUDA runtime, lists third-party components, and credits
+the KiCad demo projects behind `tests/truth/`. Benchmark boards are downloaded, not redistributed, and keep their
+own licences.
