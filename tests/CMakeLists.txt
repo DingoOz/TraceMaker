@@ -12,9 +12,9 @@ catch_discover_tests(tm_tests REPORTER junit OUTPUT_DIR ${CMAKE_BINARY_DIR}/test
 # Integration: edited boards must read identically in KiCad (Docker) and TraceMaker.
 add_test(NAME kicad_edit_roundtrip COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/edit_roundtrip.sh $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration)
 set_tests_properties(kicad_edit_roundtrip PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 600)
-add_test(NAME kicad_drc_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_parity.sh)
+add_test(NAME kicad_drc_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_parity.sh $<TARGET_FILE:tracemaker>)
 set_tests_properties(kicad_drc_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1200)
-add_test(NAME kicad_drc_broken_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_broken_parity.sh)
+add_test(NAME kicad_drc_broken_parity COMMAND ${PROJECT_SOURCE_DIR}/tests/integration/drc_broken_parity.sh $<TARGET_FILE:tracemaker>)
 set_tests_properties(kicad_drc_broken_parity PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 1800)
 add_test(NAME record_replay COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/record_replay.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/replay)
 set_tests_properties(record_replay PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration" TIMEOUT 600)
