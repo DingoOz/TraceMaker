@@ -26,7 +26,7 @@
 \title{\textbf{TraceMaker}\\[2pt]\large A learning, GPU-assisted PCB autorouter and placer for KiCad\\[2pt]
 \normalsize Design, method and benchmark results}
 \author{Development report}
-\date{2 October 2026}
+\date{6 October 2026 (release 0.8.0; first version 2 October 2026)}
 
 \begin{document}
 \maketitle
@@ -36,12 +36,15 @@
 that learns from its own failures, and writes the tracks and vias back into the \texttt{.kicad\_pcb} file
 without disturbing anything else. It also places components with an analytic placer checked by the router.
 Every result is judged by KiCad's own design-rule checker (\texttt{kicad-cli pcb drc}). On Freerouting's PCBench
-benchmark set TraceMaker routes 100\% of the sampled tier-A boards cleanly, 65.0\% of tier B, 60.0\% of tier C and
+benchmark set TraceMaker routes 100\% of the sampled tier-A boards cleanly, 70.0\% of tier B, 63.3\% of tier C and
 54.5\% of tier D. Freerouting 2.5.0-RC12's published results on the same boards are 100\%, 50.0\%, 46.7\% and
 36.4\%. No board in the final runs has a DRC error introduced by the router. On 60 boards never used during
 development, with Freerouting 2.5.0-RC12 and 1.9.0 run on the same machine and judged by the same KiCad DRC,
 TraceMaker's results are clean on 73--78\% of boards against 3\% and 32\%, with 5\% shorter tracks and 28\% fewer
-bends than Freerouting 2.5, but more vias.
+bends than Freerouting 2.5, but more vias. This edition brings the tier results, the testing section and the
+limitations up to release 0.8.0 and adds Section~\ref{sec:since} on what was built after the first version; the
+held-out quality study and the single-board comparison are as measured on 2--3 October. The companion document
+\texttt{report/roadmap\_testing.pdf} lists every milestone, test and benchmark run.
 \end{abstract}
 
 % ------------------------------------------------------------------------------------------------------------
@@ -264,7 +267,8 @@ Every new segment passes the same exact check as during routing, so clean-up can
 \subsection{Parallel portfolio and determinism}
 
 Different strategies suit different boards: short connections first or long first, cheap or expensive vias,
-exact bend tracking or fast bends, and on large boards a lattice of double pitch. TraceMaker runs a portfolio of
+exact bend tracking or fast bends, on large boards a lattice of double pitch and on small boards one of half
+pitch. TraceMaker runs a portfolio of
 eight such variants in parallel threads and keeps the best result (most connections, then fewest vias, then
 shortest copper). When one variant has routed everything after time $T$, the others may continue until $2T + 5$\,s, so
 a cleaner complete result can still win.
@@ -272,7 +276,7 @@ a cleaner complete result can still win.
 Runs can be made fully deterministic with a work budget (\texttt{--work}, counted in A* expansions) instead of a
 time limit: random choices use a counter-based Philox generator keyed by (seed, stage, item), hash containers are
 never iterated in an output-affecting order, and costs are integers. Repeated runs then produce byte-identical
-boards, which the regression tests rely on.
+boards at any thread count, which the regression tests rely on.
 
 \subsection{GPU cost-to-go fields}
 \label{sec:gpu}
@@ -306,25 +310,34 @@ unrouted. \texttt{--mode auto} does this for both the refine and the full mode a
 
 \texttt{tracemaker route --view} streams the routing as it happens to a WebGL2 viewer in the browser: tracks
 appearing and being ripped up, the A* frontier, failures and the remaining airwires. A KiCad~10 action plugin
-routes the open board through KiCad's IPC API and adds the result in one undoable commit.
+routes the open board through KiCad's IPC API and adds the result in one undoable commit; it can also re-route
+existing unlocked copper, move footprints first and refill zones.
 
 % ------------------------------------------------------------------------------------------------------------
 \section{How it was tested}
 \label{sec:testing}
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Unit and integration tests} (43, run with \texttt{ctest}): exact unit conversion, Philox known-answer
-  vectors, GPU-equals-CPU for the random generator and cost-to-go fields, s-expression parsing and byte-exact
-  round trips, the board reader against KiCad's own model, rule reading, geometry predicates, placement legality
-  and lower bounds, and the viewer server.
-  \item \textbf{DRC parity.} TraceMaker's own DRC is compared with \texttt{kicad-cli} on the KiCad demo boards; 11 of 16
-  match exactly on the 15 routing-relevant violation types, and these 11 are a regression test. The router uses the
-  same rule engine, so parity problems show up as router errors and were fixed at the source.
+  \item \textbf{Unit and integration tests} (132, run with \texttt{ctest}; 116 unit tests and 16 integration
+  tests): exact unit conversion, Philox known-answer vectors, GPU-equals-CPU for the random generator and
+  cost-to-go fields, s-expression parsing and byte-exact round trips, the board reader against KiCad's own model,
+  rule reading, geometry predicates and the indexed paths against their linear references, placement legality and
+  lower bounds, the component-rule catalogue and impedance formulas, differential-pair geometry, and the viewer
+  server and replay log. The suite passes in the release and CPU-only builds; the address-sanitizer build reports
+  no memory error.
+  \item \textbf{DRC parity.} TraceMaker's own DRC is compared with \texttt{kicad-cli} on the KiCad demo boards: 14
+  of 17 match exactly on the 15 routing-relevant violation types, and 264 of 264 boards with injected defects match
+  violation by violation; both are regression tests. The router uses the same rule engine, so parity problems show
+  up as router errors and were fixed at the source.
   \item \textbf{Benchmark harness.} \texttt{bench/run.py} samples boards from Freerouting's PCBench set by
   Freerouting's own difficulty tiers, routes each with a snapshot of the binary (120\,s, eight variants), and runs
   \texttt{kicad-cli pcb drc} on the result. A board is \emph{clean} when it is fully connected and KiCad reports no
   violation involving a track, via or arc that was not already present in the unrouted board. The result is
   compared with Freerouting's published per-board results for the same files.
+  \item \textbf{Determinism.} With a work budget the output is byte-identical at any thread count and with or
+  without a GPU; a test routes the same board at one, three and eight threads and compares the files.
+  \item \textbf{A running KiCad.} The plugin is driven against \texttt{pcbnew} on a virtual display: copper appears
+  in the open board, one undo removes it, and KiCad's DRC of the saved board shows no new error.
 \end{itemize}
 
 % ------------------------------------------------------------------------------------------------------------
@@ -332,7 +345,7 @@ routes the open board through KiCad's IPC API and adds the result in one undoabl
 
 \subsection{Clean pass by tier}
 
-Figure~\ref{fig:tiers} and Table~\ref{tab:tiers} give the final run (\texttt{final9}, with the clean-up stage). TraceMaker matches
+Figure~\ref{fig:tiers} and Table~\ref{tab:tiers} give the final run (\texttt{final11}, release 0.8.0). TraceMaker matches
 Freerouting 2.5.0-RC12 on the routine tier-A boards and is ahead on the harder tiers. No board has a
 router-introduced DRC error.
 
@@ -352,18 +365,21 @@ router-introduced DRC error.
 Tier & Boards & TraceMaker & FR 2.5.0-RC12 & FR 2.4.1 & Router errors \\
 \midrule
 A (routine 2-layer)  & 40 & \textbf{100\%}  & 100\%  & 87.5\% & 0 \\
-B (2--4 layer)       & 40 & \textbf{65.0\%} & 50.0\% & 12.5\% & 0 \\
-C (complex)          & 30 & \textbf{60.0\%} & 46.7\% & 16.7\% & 0 \\
+B (2--4 layer)       & 40 & \textbf{70.0\%} & 50.0\% & 12.5\% & 0 \\
+C (complex)          & 30 & \textbf{63.3\%} & 46.7\% & 16.7\% & 0 \\
 D (hardest)          & 22 & \textbf{54.5\%} & 36.4\% & 0.0\%  & 0 \\
 \bottomrule
 \end{tabular}
 \caption{Final benchmark run. Samples: 40 of 453 tier-A boards, 40 of 560 tier-B, 30 of 122 tier-C and all 22
-tier-D boards (fixed seed). FR: Freerouting's published results. Router errors: boards with router-introduced DRC errors.}
+tier-D boards (fixed seed). FR: Freerouting's published results. Router errors: boards with router-introduced DRC errors.
+The four tiers of this run were routed at the same time (64 router threads on 56 cores). The first version of this
+report gave 100, 65.0, 60.0 and 54.5\,\% (\texttt{final9}).}
 \label{tab:tiers}
 \end{table}
 
 Figure~\ref{fig:h2h} compares the two routers board by board. On every tier there are more boards that only
-TraceMaker routes clean than boards that only Freerouting does.
+TraceMaker routes clean than boards that only Freerouting does (tier B: 10 against 2; tier C: 7 against 2; tier D: 5
+against 1).
 
 \begin{figure}[h]
   \centering
@@ -374,16 +390,18 @@ TraceMaker routes clean than boards that only Freerouting does.
 
 \subsection{Progress during development}
 
-Figure~\ref{fig:progress} tracks every full benchmark run during the development session. The first router
+Figure~\ref{fig:progress} tracks every full benchmark run since the project began. The first router
 (plain lattice A*) routed 70\% of tier A clean. Fixing rule semantics found against KiCad, the learning mechanisms
 and the escalation ladder took tier A to 100\% within about two and a half hours; the later gains on tiers B--D came from
 boxed-in detection at both ends of a connection, pad-approach fixes for fine-pitch parts, the coarse-lattice
-variants for large boards, extra restarts and the large-board setup fix.
+variants for large boards, extra restarts and the large-board setup fix. Since then the curves are nearly flat:
+the work of 4--6 October (Section~\ref{sec:since}) added features and fixed faults more than it moved clean pass.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.75\textwidth]{progress.pdf}
-  \caption{Clean pass of every full benchmark run (20 or more boards) over the development session. Dashed lines:
+  \caption{Clean pass of every full benchmark run (20 or more boards) since the first one, including side-by-side
+  experiment arms. Dashed lines:
   Freerouting 2.5.0-RC12 on the same boards. Small run-to-run differences come from the wall-clock limit.}
   \label{fig:progress}
 \end{figure}
@@ -391,7 +409,8 @@ variants for large boards, extra restarts and the large-board setup fix.
 \subsection{Completion and speed}
 
 Clean pass is all-or-nothing. Figure~\ref{fig:completion} shows how close the remaining boards are: most boards
-that are not clean miss only a few connections, and mean completion is above 95\% on every tier.
+that are not clean miss only a few connections, and mean completion is above 95\% on every tier (97.2, 97.5 and
+95.3\,\% on tiers B, C and D).
 
 \begin{figure}[h]
   \centering
@@ -411,9 +430,11 @@ that are not clean miss only a few connections, and mean completion is above 95\
   hardware, so the comparison is indicative only; TraceMaker used eight threads of a 56-core server.}
 \end{figure}
 
-On tier A the median TraceMaker routing time is 2.5\,s per board (5.9\,s including file input and output; the
-clean-up stage and the grace period for other portfolio variants added about 2\,s), and
-every board finished faster than Freerouting's published time (Figure~\ref{fig:time}).
+On tier A, routed on its own with the release 0.8.0 binary (\texttt{final12-tierA}), the median TraceMaker routing
+time is 3.4\,s per board (11.4\,s including file input and output and the judge's set-up), and 38 of the 40 boards
+finished faster than Freerouting's published time (Figure~\ref{fig:time}). The first version of this report
+measured 2.5\,s: the portfolio variant that routes small boards at half the lattice pitch does four times the work
+on them, and the others wait for it up to the grace period.
 
 \subsection{Routed boards}
 
@@ -425,7 +446,7 @@ The four-layer high-voltage switching board (604 connections) uses the inner lay
   \centering
   \begin{subfigure}[t]{0.48\textwidth}
     \centering\includegraphics[width=\textwidth]{board_a.pdf}
-    \caption{\texttt{Hangul-Clock} (tier A): 209 connections, 18\,s.}
+    \caption{\texttt{Hangul-Clock} (tier A): 209 connections, 39\,s.}
   \end{subfigure}\hfill
   \begin{subfigure}[t]{0.48\textwidth}
     \centering\includegraphics[width=\textwidth]{board_c.pdf}
@@ -471,8 +492,7 @@ Placement wall time, all boards (s) & -- & 1,354 & 3,481 & 1,541 \\
 \bottomrule
 \end{tabular}
 \caption{Placement modes on the 23 development boards (deterministic router budget). These boards were used while
-developing the placer, so the gains are optimistic; the held-out evaluation in the placement test plan
-(\texttt{docs/14-placement-test-plan.md}) is still to be run. An earlier version of this table was affected by a
+developing the placer, so the gains are optimistic; the held-out evaluation is in Section~\ref{sec:since}. An earlier version of this table was affected by a
 bug: when the router check rejected a placement, the edited board was written instead of the input.}
 \label{tab:place}
 \end{table}
@@ -649,28 +669,107 @@ The human original is shown for reference: it does not pass the board's own rule
 \end{itemize}
 
 % ------------------------------------------------------------------------------------------------------------
+\section{What was added after the first version}
+\label{sec:since}
+
+The first version of this report described the state on 2--3 October. This section summarises what was built and
+measured between then and release 0.8.0; \texttt{report/roadmap\_testing.pdf} has the numbers behind each item.
+
+\paragraph{Routing features.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Escape planning} for dense packages: reserved exit corridors for perimeter pins and dog-bone sites
+  for inner balls, used by two of the eight portfolio variants, and \texttt{tracemaker escape}, which reports pins
+  that cannot leave their package under the board's rules. A flow-based planner for deep arrays was built and
+  measured below the simple corridors; it is opt-in.
+  \item \textbf{Differential pairs} routed as one object: a coupled search with coupled vias, breakout legs,
+  re-coupling after rip-up, skew tuning, and twists (a layer change with the sides swapped) for pairs whose pin
+  order is mirrored between the ends. On 18 boards with 59 pairs, 36 are coupled over at least half their length;
+  the median coupled share is 63\,\%.
+  \item \textbf{Length tuning} to KiCad \texttt{length} rules by meanders; blind, buried and micro vias where the
+  board's rules allow them.
+  \item \textbf{Connection planning by copper distance:} each net's spanning tree weighs pads by the gap between
+  their copper, not their centres.
+  \item \textbf{A reachability pre-check:} an exact flood fill proves a search hopeless before the A* runs.
+\end{itemize}
+
+\paragraph{Component-aware rules.} TraceMaker recognises common parts (USB, Ethernet, crystals, regulators and
+others) from footprints and nets, and applies a catalogue of 193 layout rules drawn from application notes:
+proximity pulls in placement (on by default), generated keep-outs, and with \texttt{--component-rules on} net
+classes whose widths come from impedance targets and the board's stackup or from current.
+
+\paragraph{Placement.} Parts can be moved to the other side of the board (opt-in), with mirroring that matches
+KiCad's exactly. For boards with no placement at all, \texttt{--scratch} places every movable part from a pile.
+This was measured on a held-out set built for the purpose: 40 PCBench boards never used before, with their
+movable parts piled at the board centre.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lr}
+\toprule
+& Boards clean \\
+\midrule
+Designer's placement, routed by TraceMaker & 38 of 40 \\
+Placed from scratch, as the placer was on 3 October & 28 of 40 \\
+Placed from scratch, release 0.8.0 & \textbf{34 of 40 (85\,\%)} \\
+\bottomrule
+\end{tabular}
+\caption{Held-out placement boards (eight router variants, 120\,s, KiCad's DRC). The project's own target was
+90\,\%; it is not met. Three of the six failing boards have a part that fits nowhere without breaking rules that
+the designer's placement itself breaks, and one cannot be routed clean in the designer's placement either.}
+\label{tab:scratch}
+\end{table}
+
+\paragraph{Correctness and speed.} Two faults were found by those held-out boards and fixed: copper had been routed
+across lines on the Margin layer, which KiCad treats as the board edge; and pads without a hole that are listed on
+both sides had been connected on the far side, which KiCad reports as unconnected. TraceMaker's DRC now tests
+copper against zone fills through an edge index: the check of the largest demo board fell from 730\,s to 7\,s with
+a byte-identical report.
+
+\paragraph{KiCad integration.} The plugin was run against a live \texttt{pcbnew} on a virtual display, and its
+package was installed through KiCad's Plugin and Content Manager (Section~\ref{sec:testing}).
+
+\paragraph{What did not help.} Global routing was built twice (corridors, then a congestion map with net-shared
+edges and via capacity) and measured on 18 hard boards at a fixed budget: corridors cost completion (13,305
+connections without, 12,967 with) and the map was neutral. A joint re-route of small groups of conflicting nets
+changed no board. Successive halving of the portfolio's budget was slightly worse than running the first variants.
+All three are off or removed.
+
+\paragraph{What the benchmark measures.} PCBench boards come without their project files, so KiCad's default rules
+judge them. Under that judge only 6 of the 92 designer-routed boards of tiers B to D are clean, and on 82 of them
+the designer used copper pours that the unrouted fixture no longer has. No straight line across any of those boards
+is more than 40\,\% full: the boards are not short of space, and what fails is the fan-out at a fine-pitch package
+under rules coarser than the original design's.
+
+% ------------------------------------------------------------------------------------------------------------
 \section{Limitations and next steps}
 \label{sec:limits}
 
 \begin{itemize}[leftmargin=*]
+  \item \textbf{The last few connections at fine-pitch packages.} Most boards that are not clean miss a handful of
+  connections where two or three nets keep displacing each other at one package, or where the vias a crossing needs
+  do not fit under KiCad's default rules. Neither global routing nor re-ordering helped; a lattice of half the
+  pitch helps a little (one more clean board in tier B) at four times the work.
   \item \textbf{Large boards are time-limited.} On the biggest boards the router finishes only one or two negotiation
-  passes in 120\,s; an A* expansion costs about 430\,ns. Global routing corridors, a coarse-to-fine lattice and
-  parallelism inside one route are the next steps.
+  passes in 120\,s.
+  \item \textbf{From-scratch placement is at 85\,\% clean, not the 90\,\% aimed for,} and a part that cannot be placed
+  legally is set down beside the board with a message.
+  \item \textbf{Dense packages:} 41\,\% of the 17 dense-package boards are clean (Freerouting 2.5: 24\,\%).
   \item \textbf{Edge-connector fingers under solder-mask openings} are left unrouted rather than routed with
-  mask bridges. On the PCIe adapter board KiCad flags any track leaving the fingers, and the human-routed original
-  has 16 such bridges itself. Freerouting's published ``clean'' counts only clearance violations and unrouted
-  connections, so on these boards TraceMaker is judged more strictly.
+  mask bridges. Freerouting's published ``clean'' counts only clearance violations and unrouted connections, so on
+  these boards TraceMaker is judged more strictly.
   \item \textbf{More vias than Freerouting.} Even after clean-up TraceMaker uses about 1.4 times Freerouting 2.5's vias
   and 2.2 times Freerouting 1.9's (median, held-out boards), and it narrows some tracks below the design width.
-  Layer-direction preferences and a via-minimising global stage are the next levers.
   \item \textbf{The tier statistics use Freerouting's published numbers,} which allowed up to 30 minutes per board and
   are judged by Freerouting's own DRC. The held-out quality benchmark (Section~\ref{sec:quality}) runs both
-  Freerouting versions locally and judges them with KiCad, but covers 60 boards; tier D has no unused boards left.
+  Freerouting versions locally and judges them with KiCad, but covers 60 boards and was not repeated for this
+  edition.
+  \item \textbf{One width per net.} Net classes from impedance rules use the front-layer width on every layer.
   \item \textbf{Copper text} is modelled by generous estimated boxes rather than exact glyph outlines.
-  \item \textbf{Placement} has no side flipping or decoupling-capacitor grouping yet, and its results come from the
-  development boards; the held-out set, the SA-PCB baseline and design-intent checks of the test plan are to do.
-  \item \textbf{Not yet built:} schematic-to-board flow, escape planning for large BGAs, differential-pair and
-  length tuning.
+  \item \textbf{Not measured:} the placer against the SA-PCB annealer (that baseline did not build on the test
+  machine), and the viewer's frame rate.
+  \item \textbf{Not built:} a gridless routing arm, learned net ordering, a GPU global router, per-layer track
+  widths, and a schematic reader of TraceMaker's own (netlists come from \texttt{kicad-cli}).
 \end{itemize}
 
 % ------------------------------------------------------------------------------------------------------------
@@ -679,12 +778,13 @@ The human original is shown for reference: it does not pass the board's own rule
 \begin{small}
 \begin{verbatim}
 cmake --preset release && cmake --build --preset release && ctest --preset release
-scripts/fetch_fixtures.sh pcbench
+scripts/fetch_fixtures.sh            # pinned fixtures and derived sets
 python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8 --name my-run
 build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --time 120 --view
 build/release/src/place/tracemaker-place in.kicad_pcb -o out.kicad_pcb \
     --mode auto --route-check 3000000
 build/report-venv/bin/python report/make_figures.py   # figures for this report
+python3 report/make_test_report.py                    # tables of roadmap_testing.tex
 \end{verbatim}
 \end{small}
 

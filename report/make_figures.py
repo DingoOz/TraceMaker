@@ -29,7 +29,8 @@ OUT.mkdir(parents=True, exist_ok=True)
 RES = ROOT / "bench/results"
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
 TM = ROOT / "build/release/src/app/tracemaker"
-FINAL = "final9"
+FINAL = "final11"
+TIME_RUN = "final12-tierA"  # tier A routed on its own: final11 ran all four tiers at once, which distorts times
 
 # Reference categorical palette (dataviz skill, light mode), slots 1-3 validate all-pairs.
 C_TM, C_FR12, C_FR241 = "#2a78d6", "#eb6834", "#1baf7a"
@@ -114,7 +115,11 @@ def fig_progress():
     runs = []
     for f in glob.glob(str(RES / "*/summary.json")):
         d = json.loads(pathlib.Path(f).read_text())
-        if d.get("boards", 0) >= 20 and d.get("set", "").startswith("PCBench tier"):
+        # Runs given an explicit board list (held-out and dense-package sets) are recorded under the default tier
+        # label: keep only runs named after the tier they sample.
+        run = pathlib.Path(f).parent.name
+        tier = d.get("set", "")[-1:]
+        if d.get("boards", 0) >= 20 and d.get("set", "").startswith("PCBench tier") and tier in "ABCD" and re.search(rf"tier{tier}|[_-]{tier}\d*$", run):
             runs.append((os.path.getmtime(f), d))
     runs.sort(key=lambda x: x[0])
     t0 = runs[0][0]
@@ -162,7 +167,7 @@ def fig_completion():
 
 
 def fig_time():
-    b = boards(f"{FINAL}-tierA")
+    b = boards(TIME_RUN)
     pts = [(r["fr_rc12"]["seconds"], r["seconds"]) for r in b if r.get("fr_rc12", {}).get("seconds") and r.get("seconds")]
     fig, ax = plt.subplots(figsize=(3.0, 2.6))
     xs, ys = zip(*pts)
