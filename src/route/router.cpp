@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <bit>
+#include <numbers>
 #include <chrono>
 #include <cmath>
 #include <cstdio>
@@ -183,6 +184,7 @@ struct Router::Impl {
     for (std::size_t n = 0; n < b.nets.size(); ++n)
       if (std::find(opt.first_nets.begin(), opt.first_nets.end(), b.nets[n].name) != opt.first_nets.end()) first_net_ids.insert(static_cast<NetId>(n));
     obs->set_vias_off_pads(opt.vias_off_pads, static_cast<Coord>(opt.vias_off_pads_below_mm * 1e6));
+    if (opt.via_in_pad) find_inner_balls();
     use_cache = !obs->has_custom_rules();
     nl = b.copper_count();
     blind_ok = opt.blind_vias && rules.minimums.allow_blind_buried_vias && nl > 2;
@@ -273,6 +275,20 @@ struct Router::Impl {
     return static_cast<double>(lo);
   }
 
+  // Filled area of zone fill items (nm^2), shoelace over each item's outline.
+  long double zones_area(const std::vector<int>& items) const {
+    long double a = 0;
+    for (int z : items)
+      for (const auto& sh : obs->copper().items[static_cast<std::size_t>(z)].shapes) {
+        const auto& p = sh.pts;
+        long double s = 0;
+        for (std::size_t i = 0, j = p.size() - 1; i < p.size(); j = i++)
+          s += static_cast<long double>(p[j].x) * static_cast<long double>(p[i].y) - static_cast<long double>(p[i].x) * static_cast<long double>(p[j].y);
+        a += s < 0 ? -s / 2 : s / 2;
+      }
+    return a;
+  }
+
   std::vector<Connection> plan(drc::UnionFind& uf) {
     const auto& cm = obs->copper();
     struct Cluster { std::vector<int> pads, zones; };
@@ -296,10 +312,13 @@ struct Router::Impl {
       if (!opt.only_net.empty() && b.nets[static_cast<std::size_t>(net)].name != opt.only_net) continue;
       if (std::find(opt.skip_nets.begin(), opt.skip_nets.end(), b.nets[static_cast<std::size_t>(net)].name) != opt.skip_nets.end()) continue;
       std::vector<Cluster> groups;
+      bool has_pads = false;
+      for (auto& [r, c] : cl) has_pads |= !c.pads.empty();
       for (auto& [r, c] : cl)
         // Zone-only clusters (unused fills) are not targets on their own -- except with soft zones, where an inner
-        // plane that no pad touches yet (all-SMD boards) is the net's plane: pads drop vias into it.
-        if (!c.pads.empty() || (opt.soft_zones && !c.zones.empty())) groups.push_back(c);
+        // plane that no pad touches yet (all-SMD boards) is the net's plane: pads drop vias into it. Only for nets
+        // with pads, and not for slivers of a stale fill (under 1 mm^2), which a refill may drop or reshape.
+        if (!c.pads.empty() || (opt.soft_zones && has_pads && !c.zones.empty() && zones_area(c.zones) >= 1e12L)) groups.push_back(c);
       if (groups.size() < 2) continue;
       // Prim over clusters; a pad may connect to another cluster's pad or into its zone fill (plane).
       const std::size_t k = groups.size();
@@ -344,7 +363,7 @@ struct Router::Impl {
         for (std::size_t j = 0; j < k; ++j)
           if (!in[j] && (nxt == k || best[j] < best[nxt])) nxt = j;
         in[nxt] = 1;
-        out.push_back(how[nxt]);
+        if (how[nxt].pad_a >= 0) out.push_back(how[nxt]);  // two zone-only clusters have nothing to join them directly
         upd(nxt);
       }
     }
@@ -387,6 +406,7 @@ struct Router::Impl {
     std::vector<std::pair<int, std::int64_t>> cells;  // (layer, cell index in window)
     std::vector<Point> stub;                           // per cell: off-lattice escape point (or the pad centre)
     std::vector<std::int64_t> cost;                    // per cell: cost from the pad centre
+    std::size_t in_pad_from = SIZE_MAX;                // cells from here on are via-in-pad endpoints (add_in_pad)
   };
   // Off-lattice escapes: straight exits from the pad centre in 8 directions, exactly checked, joining the
   // lattice at the first legal point (fine-pitch pins are often unreachable from lattice points alone).
@@ -629,29 +649,63 @@ struct Router::Impl {
   // Via in pad (--via-in-pad): the minimum via the rules allow, centred in a single-layer pad -- an inner ball of an
   // array, or a pad with no legal exit on its own layer. The pad centre becomes an endpoint on every other layer at
   // four times the via cost (a last resort); commit() adds the via. Needs filled and capped vias at the fab.
-  Coord in_pad_drill() const { return std::max<Coord>(rules.minimums.through_hole_diameter, 100'000); }
-  Coord in_pad_diameter() const {
-    return std::max({rules.minimums.via_diameter, in_pad_drill() + 2 * rules.minimums.via_annular_width, in_pad_drill() + 100'000});
-  }
-  // A ball with balls of its own package on all four sides (not on the array's outer ring).
-  bool inner_ball(int pad) const {
-    const auto& p = b.pads[static_cast<std::size_t>(pad)];
-    bool l = false, r = false, u = false, d = false;
-    for (const auto& q : b.pads) {
-      if (q.footprint != p.footprint || &q == &p) continue;
-      const Coord dx = q.pos.x - p.pos.x, dy = q.pos.y - p.pos.y, eps = 10'000;
-      l |= dx < -eps; r |= dx > eps; u |= dy < -eps; d |= dy > eps;
+  // Sizes come from the board's minimums only; when they could not be read (0), no via in pad is placed (rule 6).
+  Coord in_pad_drill() const { return rules.minimums.through_hole_diameter; }
+  Coord in_pad_diameter() const { return std::max(rules.minimums.via_diameter, in_pad_drill() + 2 * rules.minimums.via_annular_width); }
+  bool in_pad_sizes_known() const { return rules.minimums.through_hole_diameter > 0 && rules.minimums.via_diameter > 0; }
+  // Inner balls (--via-in-pad), computed once per board: round single-layer pads with a pad of the same footprint
+  // one ball pitch away in each of the four directions of the footprint's frame. The pitch is the footprint's
+  // smallest distance between two round pads.
+  std::vector<std::uint8_t> inner_ball_;
+  void find_inner_balls() {
+    inner_ball_.assign(b.pads.size(), 0);
+    for (const auto& f : b.footprints) {
+      std::vector<int> balls;
+      for (int i : f.pads) {
+        const auto& p = b.pads[static_cast<std::size_t>(i)];
+        if (p.shape == model::PadShape::Circle && std::popcount(p.copper) == 1) balls.push_back(i);
+      }
+      if (balls.size() < 9) continue;  // a 3 x 3 array is the smallest with an inner ball
+      double ball_pitch = 1e300;
+      for (std::size_t x = 0; x < balls.size(); ++x)
+        for (std::size_t y = x + 1; y < balls.size(); ++y) {
+          const Point a = b.pads[static_cast<std::size_t>(balls[x])].pos, c = b.pads[static_cast<std::size_t>(balls[y])].pos;
+          ball_pitch = std::min(ball_pitch, std::hypot(static_cast<double>(a.x - c.x), static_cast<double>(a.y - c.y)));
+        }
+      const double ang = f.angle * std::numbers::pi / 180.0, tol = ball_pitch / 10;
+      const double ux = std::cos(ang) * ball_pitch, uy = -std::sin(ang) * ball_pitch;  // KiCad angles turn counter-clockwise, y down
+      for (int i : balls) {
+        const Point p = b.pads[static_cast<std::size_t>(i)].pos;
+        int found = 0;
+        for (const auto& [dx, dy] : {std::pair{ux, uy}, std::pair{-ux, -uy}, std::pair{-uy, ux}, std::pair{uy, -ux}})
+          for (int o : balls) {
+            const Point q = b.pads[static_cast<std::size_t>(o)].pos;
+            if (std::hypot(static_cast<double>(q.x - p.x) - dx, static_cast<double>(q.y - p.y) - dy) < tol) {
+              ++found;
+              break;
+            }
+          }
+        inner_ball_[static_cast<std::size_t>(i)] = found == 4;
+      }
     }
-    return l && r && u && d;
   }
+  bool inner_ball(int pad) const { return !inner_ball_.empty() && inner_ball_[static_cast<std::size_t>(pad)]; }
   bool in_pad_via_needed(int pad, int layer) const {
     return opt.via_in_pad && !(b.pads[static_cast<std::size_t>(pad)].copper & model::layer_bit(layer));
   }
   void add_in_pad(const Window& w, int pad, Endpoint& e) {
     const auto& p = b.pads[static_cast<std::size_t>(pad)];
-    if (std::popcount(p.copper) != 1) return;  // through-hole pads already reach every layer
+    if (std::popcount(p.copper) != 1 || !in_pad_sizes_known()) return;  // through-hole pads already reach every layer
+    // One via per pad: a via another connection already placed in this pad is not duplicated (that connection
+    // leaves through it; this one must use the pad's own layer).
+    std::vector<int> near;
+    obs->routed_items_in(geom::Shape::point(p.pos, 1).box, near);
+    for (int id : near) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(id)];
+      if (it.kind == drc::ItemKind::Via && it.net == p.net && it.pos == p.pos && it.owner != current) return;
+    }
     obs->set_pad_via_exempt(true);
-    const bool vip_blocked = obs->via_state(p.pos, in_pad_diameter(), in_pad_drill(), p.net, 0, true) == 2;  // routed copper can be ripped
+    const bool vip_blocked = obs->via_state(p.pos, in_pad_diameter(), in_pad_drill(), p.net, 0, soft) == 2;  // as commit() will check it
     obs->set_pad_via_exempt(false);
     if (std::getenv("TM_DEBUG_INPAD"))
       std::fprintf(stderr, "INPAD %s pad %d: via %.3f/%.3f %s\n", b.nets[static_cast<std::size_t>(p.net)].name.c_str(), pad, nm_to_mm(in_pad_diameter()),
@@ -660,7 +714,10 @@ struct Router::Impl {
     const int gx = to_ix(p.pos.x), gy = to_iy(p.pos.y);
     if (gx < w.x0 || gy < w.y0 || gx >= w.x0 + w.w || gy >= w.y0 + w.h) return;
     const Point C = at(gx, gy);
-    const std::int64_t cost = static_cast<std::int64_t>(4 * opt.via_cost_mm * 1e6) +
+    if (e.in_pad_from == SIZE_MAX) e.in_pad_from = e.cells.size();
+    // Four vias' worth at the current via price (the clean-up stages raise via_cost_mult; a fixed price would make
+    // the in-pad via the cheap option there).
+    const std::int64_t cost = static_cast<std::int64_t>(4 * opt.via_cost_mm * via_cost_mult * 1e6) +
                               static_cast<std::int64_t>(std::hypot(static_cast<double>(C.x - p.pos.x), static_cast<double>(C.y - p.pos.y)));
     for (int l = 0; l < nl; ++l) {
       if (p.copper & model::layer_bit(l)) continue;
@@ -766,6 +823,15 @@ struct Router::Impl {
     if (src.cells.empty() || (c.pad_b >= 0 && dst.cells.empty())) return false;
     std::vector<std::uint8_t> is_target(cells * static_cast<std::size_t>(nl), 0);  // 1 target, 2 not (zone checks are lazy)
     for (auto [l, ci] : dst.cells) is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)] = 1;
+    // Via-in-pad target cells carry their penalty (the source side pays it through src.cost): charged on entry.
+    std::unordered_map<std::size_t, std::int64_t> target_extra;
+    for (std::size_t k = dst.in_pad_from; k < dst.cells.size(); ++k)
+      target_extra[static_cast<std::size_t>(dst.cells[k].first) * cells + static_cast<std::size_t>(dst.cells[k].second)] = dst.cost[k];
+    auto textra = [&](std::size_t i) -> std::int64_t {
+      if (target_extra.empty()) return 0;
+      const auto it = target_extra.find(i);
+      return it == target_extra.end() ? 0 : it->second;
+    };
     // Zone target: any cell inside the fill on its layer, with room for the track (tested lazily when reached).
     int zone_layer = -1;
     const std::vector<Point>* zone_poly = nullptr;
@@ -942,6 +1008,8 @@ struct Router::Impl {
         if (!tgt) {
           extra = cell_cost(w, l, ncx, ncy, net, hw);
           if (extra < 0) continue;
+        } else {
+          extra = textra(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci));
         }
         std::int64_t cost = ((d & 1) ? diag : step) + extra;
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
@@ -966,7 +1034,8 @@ struct Router::Impl {
           if (vs == 2 && blind_ok) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
-          const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0);
+          const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0) +
+                                  textra(static_cast<std::size_t>(l2) * cells + static_cast<std::size_t>(ci));
           if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
           const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
           if (hn >= kUnreachable) continue;
@@ -978,7 +1047,7 @@ struct Router::Impl {
         for (int l2 = 0; l2 < nl; ++l2) {
           if (l2 == l) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
-          const std::int64_t ng = gs + via_cost + vextra;
+          const std::int64_t ng = gs + via_cost + vextra + textra(static_cast<std::size_t>(l2) * cells + static_cast<std::size_t>(ci));
           if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
           const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
           if (hn >= kUnreachable) continue;
@@ -2426,7 +2495,8 @@ struct Router::Impl {
       for (int id : ids) {
         const int o = obs->copper().items[static_cast<std::size_t>(id)].owner;
         if (o >= 0 && std::find(group.begin(), group.end(), o) == group.end() && group.size() < 8 && cs[static_cast<std::size_t>(o)].routed &&
-            !cs[static_cast<std::size_t>(o)].implicit && !cs[static_cast<std::size_t>(o)].coupled)
+            !cs[static_cast<std::size_t>(o)].implicit && !cs[static_cast<std::size_t>(o)].coupled &&
+            !(first_net_ids.count(cs[static_cast<std::size_t>(o)].c.net) && !first_net_ids.count(cs[static_cast<std::size_t>(owner)].c.net)))
           group.push_back(o);
       }
       double before = 0;
@@ -3014,6 +3084,9 @@ struct Router::Impl {
       } else {
         std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
       }
+      // --first-nets go first again: a restart rips everything, including them.
+      if (!first_net_ids.empty())
+        std::stable_partition(order.begin(), order.end(), [&](int c) { return first_net_ids.count(cs[static_cast<std::size_t>(c)].c.net) > 0; });
       pending.assign(order.begin(), order.end());
       pending.erase(std::remove_if(pending.begin(), pending.end(), [&](int c) { return cs[static_cast<std::size_t>(c)].routed || cs[static_cast<std::size_t>(c)].dead; }),
                     pending.end());
