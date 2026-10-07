@@ -18,7 +18,7 @@ std::string format_uuid(const cudaUUID_t& id) {
 
 }  // namespace
 
-bool cuda_compiled() { return true; }
+Backend compiled_backend() { return Backend::Cuda; }
 
 std::vector<DeviceInfo> list_devices() {
   std::vector<DeviceInfo> out;
@@ -33,7 +33,7 @@ std::vector<DeviceInfo> list_devices() {
     cudaDeviceProp prop{};
     if (cudaGetDeviceProperties(&prop, i) != cudaSuccess) continue;
     DeviceInfo info;
-    info.cuda_index = i;
+    info.index = i;
     info.name = prop.name;
     info.uuid = format_uuid(prop.uuid);
     info.cc_major = prop.major;

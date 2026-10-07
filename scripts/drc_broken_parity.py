@@ -152,7 +152,7 @@ def variant_dir(base: pathlib.Path) -> pathlib.Path:
     return SCRATCH / f"{base.parent.name}__{base.stem}".replace(" ", "_")  # PCBench boards share file names
 
 
-def make_variant(base: pathlib.Path, kind: str, seed: int, count: int) -> tuple[pathlib.Path, int]:
+def make_variant(base: pathlib.Path, kind: str, seed: int, count: int, tm: pathlib.Path = TM) -> tuple[pathlib.Path, int]:
     d = variant_dir(base)
     d.mkdir(parents=True, exist_ok=True)
     out = d / f"{kind}.kicad_pcb"
@@ -161,7 +161,7 @@ def make_variant(base: pathlib.Path, kind: str, seed: int, count: int) -> tuple[
         if src.exists():
             shutil.copyfile(src, out.with_suffix(ext))
     man = out.with_suffix(".defects.json")
-    subprocess.run([str(TM), "selftest-defects", str(base), str(out), "--kind", kind, "--seed", str(seed),
+    subprocess.run([str(tm), "selftest-defects", str(base), str(out), "--kind", kind, "--seed", str(seed),
                     "--count", str(count), "--manifest", str(man)], check=True, capture_output=True)
     return out, len(json.loads(man.read_text())["defects"])
 
@@ -192,7 +192,7 @@ def main() -> int:
         return 77
     jobs = [(b, k) for b in bases for k in kinds]
     with cf.ThreadPoolExecutor(a.jobs) as ex:
-        made = list(ex.map(lambda j: make_variant(j[0], j[1], a.seed, a.count), jobs))
+        made = list(ex.map(lambda j: make_variant(j[0], j[1], a.seed, a.count, pathlib.Path(a.tm)), jobs))
     paths = [p for p, n in made if n > 0]
     with cf.ThreadPoolExecutor(a.kicad_jobs) as ex:
         kr = dict(zip(paths, ex.map(lambda p: kicad_report(p, a.timeout), paths)))

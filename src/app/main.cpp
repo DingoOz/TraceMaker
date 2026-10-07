@@ -30,20 +30,26 @@
 namespace {
 
 int cmd_gpu_info() {
-  if (!tmk::gpu::cuda_compiled()) {
-    std::puts("This build has no CUDA support (cpu-only). CPU reference paths are used.");
+  const auto backend = tmk::gpu::compiled_backend();
+  if (backend == tmk::gpu::Backend::Cpu) {
+    std::puts("This build has no GPU support (cpu-only). CPU reference paths are used.");
     return 0;
   }
   const auto devices = tmk::gpu::list_devices();
   if (devices.empty()) {
-    std::puts("No CUDA devices visible. CPU reference paths will be used.");
+    std::puts("No GPU devices visible. CPU reference paths will be used.");
     return 0;
   }
   constexpr double kMiB = 1024.0 * 1024.0;
   for (const auto& d : devices) {
-    std::printf("cuda:%d  %-24s sm_%d%d  free %7.0f / %7.0f MiB  %s\n", d.cuda_index, d.name.c_str(), d.cc_major,
-                d.cc_minor, static_cast<double>(d.free_bytes) / kMiB, static_cast<double>(d.total_bytes) / kMiB,
-                d.uuid.c_str());
+    if (backend == tmk::gpu::Backend::Cuda) {
+      std::printf("cuda:%d  %-24s sm_%d%d  free %7.0f / %7.0f MiB  %s\n", d.index, d.name.c_str(), d.cc_major,
+                  d.cc_minor, static_cast<double>(d.free_bytes) / kMiB, static_cast<double>(d.total_bytes) / kMiB,
+                  d.uuid.c_str());
+    } else {
+      std::printf("metal:%d  %-24s working-set headroom %7.0f / %7.0f MiB  %s\n", d.index, d.name.c_str(),
+                  static_cast<double>(d.free_bytes) / kMiB, static_cast<double>(d.total_bytes) / kMiB, d.uuid.c_str());
+    }
   }
   return 0;
 }
@@ -366,7 +372,7 @@ int main(int argc, char** argv) {
   CLI::App app{"TraceMaker: placement-aware PCB autorouter for KiCad"};
   app.require_subcommand(1);
   auto* version = app.add_subcommand("version", "Print the version");
-  auto* gpu_info = app.add_subcommand("gpu-info", "List CUDA devices and their free memory");
+  auto* gpu_info = app.add_subcommand("gpu-info", "List GPU devices and their available memory budget");
 
   auto* inspect = app.add_subcommand("inspect", "Read a .kicad_pcb and print a summary");
   std::string inspect_path, inspect_json;
@@ -473,14 +479,14 @@ int main(int argc, char** argv) {
   route->add_flag("--escape-report", ropt.escape_report, "Report the pins of deep BGA arrays per ring and how many were connected");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
   bool r_nogpu = false;
-  route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of CUDA (same results)");
+  route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of the GPU (same results)");
   route->add_flag("--reach-verify", ropt.reach_verify, "Test: check every unreachable verdict with the full A*")->group("");
   route->add_option("--reach-check", ropt.reach_check, "Reachability check before strict searches: 0 off, 1 likely failures, 2 all")->group("");
   route->add_flag("--soft-zones", ropt.soft_zones, "Zone fills do not block other nets (refill the zones afterwards); unused fills become plane targets");
   route->add_flag("--via-in-pad", ropt.via_in_pad, "Inner balls / enclosed SMD pads may take a minimum-size via in the pad (needs filled, capped vias)");
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
-  route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first and never ripped up by other nets (e.g. crystal lines)")->delimiter(',');
+  route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
   route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
   int r_threads = 8;
   std::string r_kb = tmk::learn::KnowledgeBase::default_path();

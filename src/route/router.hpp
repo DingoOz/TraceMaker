@@ -38,14 +38,14 @@ struct RouterOptions {
   int reach_check = 1;              // flood-fill reachability check before strict searches (exact): 0 off, 1 likely failures, 2 all
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   double heuristic_weight = 1.0;
-  // Plane-aware routing of all-SMD boards (doc 05 §16), all opt-in:
+  // Plane-aware routing of all-SMD boards (doc 05 §26), all opt-in:
   bool soft_zones = false;          // zone fills do not block other nets (refilled afterwards); unused fills become plane targets
   bool via_in_pad = false;          // inner balls / enclosed SMD pads may take a minimum-size via in the pad
   bool vias_off_pads = false;       // vias keep clear of SMD pads narrower than vias_off_pads_below_mm (except via-in-pad)
   double vias_off_pads_below_mm = 2.0;
   bool field_heuristic = true;      // GPU cost-to-go field as the A* heuristic on large windows
   int field_min_cells = 60'000;     // window size (lattice points x layers) from which the field is used
-  int gpu_device = 0;               // CUDA device for fields (-1 = none)    // weighted A* (1.0 = optimal under the cost model; >1 trades optimality for speed)
+  int gpu_device = 0;              // GPU backend device for fields (-1 = CPU reference)
   int max_attempts = 4;         // per connection (window growth and learned blocks between attempts)
   int soft_attempts = 3;        // window sizes tried by negotiated searches
   double via_cost_mm = 3.0;     // equivalent track length of one via
@@ -101,7 +101,7 @@ struct RouterOptions {
   int order = 0;                // connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
-  std::vector<std::string> first_nets;  // routed before everything else and never ripped up by other nets (crystal lines)
+  std::vector<std::string> first_nets;  // routed first, also after restarts; other nets do not rip them (crystal lines)
   std::string only_net;         // debugging: route only this net
   std::vector<std::string> skip_nets;  // experiments: leave these nets unrouted (e.g. nets a designer would pour)
   events::Sink* sink = nullptr;

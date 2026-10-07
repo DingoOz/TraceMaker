@@ -13,28 +13,30 @@
 
 namespace tmk::gpu {
 
+enum class Backend { Cpu, Cuda, Metal };
+
 struct DeviceInfo {
-  int cuda_index = -1;      // CUDA runtime index (fastest-first order; differs from nvidia-smi order)
-  std::string name;         // e.g. "Tesla V100-PCIE-16GB"
-  std::string uuid;         // "GPU-xxxxxxxx-…", same format as nvidia-smi; stable across reboots
+  int index = -1;           // backend runtime index; select by uuid/name for stability
+  std::string name;
+  std::string uuid;         // CUDA UUID or Metal registry ID
   int cc_major = 0, cc_minor = 0;
   std::size_t total_bytes = 0;
-  std::size_t free_bytes = 0;  // at the time of the query
+  std::size_t free_bytes = 0;  // CUDA free memory or Metal working-set headroom
 };
 
-// True when this build contains CUDA kernels.
-bool cuda_compiled();
+// Backend compiled into this build. CPU references are always available.
+Backend compiled_backend();
 
-// All visible CUDA devices with current free memory. Empty without CUDA, a driver or devices.
+// All visible devices with current memory budget. Empty without an available GPU.
 std::vector<DeviceInfo> list_devices();
 
 // Finds a device by exact UUID or by a case-sensitive substring of its name ("V100", "P100").
 std::optional<DeviceInfo> find_device(std::string_view uuid_or_name);
 
 // True when `bytes` plus a safety margin fit in the device's free memory right now.
-bool has_free_memory(int cuda_index, std::size_t bytes);
+bool has_free_memory(int device_index, std::size_t bytes);
 
-// Safety margin kept free on every device for other processes and CUDA runtime overheads.
+// Safety margin kept free on every device for other processes and runtime overheads.
 inline constexpr std::size_t kDeviceMemoryMargin = std::size_t{256} << 20;
 
 }  // namespace tmk::gpu

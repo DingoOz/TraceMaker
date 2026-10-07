@@ -47,8 +47,7 @@ double dist(Point a, Point b) { return std::hypot(static_cast<double>(a.x - b.x)
 TEST_CASE("pair rule: tightest legal coupling without diff-pair settings", "[diffpair]") {
   const auto b = two_nets("USB_DP", "USB_DM");  // not a KiCad pair by name: the full clearance applies
   const auto r = rules_with(200'000, false, 0, 0);
-  const auto cm = drc::build_copper(b);
-  const drc::RuleEngine re(b, r, cm);
+  const drc::RuleEngine re(b, r);
   const auto pr = route::pair_rule(b, r, re, 1, 2);
   CHECK(pr.width == 250'000);
   CHECK(pr.gap == 200'000);
@@ -63,8 +62,7 @@ TEST_CASE("pair rule: net-class diff-pair width and gap, relaxed clearance only 
   const auto r = rules_with(200'000, true, 180'000, 150'000);
   {
     const auto b = two_nets("/TMDS_0_P", "/TMDS_0_N");
-    const auto cm = drc::build_copper(b);
-    const drc::RuleEngine re(b, r, cm);
+    const drc::RuleEngine re(b, r);
     const auto pr = route::pair_rule(b, r, re, 1, 2);
     CHECK(pr.width == 180'000);
     CHECK(pr.gap == 150'000);  // KiCad relaxes the clearance between the halves to the diff-pair gap
@@ -72,8 +70,7 @@ TEST_CASE("pair rule: net-class diff-pair width and gap, relaxed clearance only 
   }
   {
     const auto b = two_nets("DP", "DM");
-    const auto cm = drc::build_copper(b);
-    const drc::RuleEngine re(b, r, cm);
+    const drc::RuleEngine re(b, r);
     const auto pr = route::pair_rule(b, r, re, 1, 2);
     CHECK(pr.gap == 200'000);  // not a pair to KiCad: the gap may not undercut the clearance
   }
@@ -92,8 +89,7 @@ TEST_CASE("pair rule: a custom diff_pair_gap rule wins, diff_pair_uncoupled limi
   cr.constraints = {g, u};
   r.custom.push_back(cr);
   const auto b = two_nets("D+", "D-");
-  const auto cm = drc::build_copper(b);
-  const drc::RuleEngine re(b, r, cm);
+  const drc::RuleEngine re(b, r);
   const auto pr = route::pair_rule(b, r, re, 1, 2);
   CHECK(pr.gap == 300'000);
   CHECK(pr.source == "rule");

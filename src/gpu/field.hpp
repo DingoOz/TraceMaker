@@ -5,7 +5,7 @@
 //
 // Computed by alternating line sweeps (row, column and both diagonals, each in both directions) plus via
 // relaxation, repeated to a fixpoint (GAMER, Lin et al., TCAD 2023). The fixpoint is the unique shortest-path
-// distance, so the CPU reference and the CUDA kernel produce identical results whatever the sweep order.
+// distance, so the CPU reference and the GPU kernel produce identical results whatever the sweep order.
 #include <cstdint>
 #include <limits>
 #include <vector>
@@ -27,7 +27,7 @@ struct FieldProblem {
 // CPU reference. `out` is resized to layers*h*w. Returns the number of sweep rounds.
 int field_cpu(const FieldProblem& p, std::vector<std::int32_t>& out);
 
-// CUDA version on device `cuda_index`; on failure (no CUDA, no memory) returns !ok and leaves `out` empty.
-GpuStatus field_cuda(int cuda_index, const FieldProblem& p, std::vector<std::int32_t>& out);
+// Compiled GPU backend; on failure (no device, no memory) returns !ok and leaves `out` empty.
+GpuStatus field_gpu(int device_index, const FieldProblem& p, std::vector<std::int32_t>& out);
 
 }  // namespace tmk::gpu
