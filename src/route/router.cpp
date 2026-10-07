@@ -209,6 +209,12 @@ struct Router::Impl {
   int to_ix(Coord x) const { return static_cast<int>(std::llround(static_cast<double>(x - lat.x0) / static_cast<double>(pitch))); }
   int to_iy(Coord y) const { return static_cast<int>(std::llround(static_cast<double>(y - lat.y0) / static_cast<double>(pitch))); }
 
+  // ---- layer limits (doc 05 §29) ----
+  std::vector<std::int64_t> layer_pm;  // per layer: track cost per mille; empty = every layer at the plain cost
+  bool tracks_ok(int layer) const { return !(opt.no_track_layers & model::layer_bit(layer)); }
+  // Cost of a track of plain cost `v` on `layer` (integer, so the same on every machine).
+  std::int64_t on_layer(std::int64_t v, int layer) const { return layer_pm.empty() ? v : v * layer_pm[static_cast<std::size_t>(layer)] / 1000; }
+
   void setup() {
     obs = std::make_unique<Obstacles>(b, rules);
     obs->set_soft_zones(opt.soft_zones);
@@ -228,11 +234,17 @@ struct Router::Impl {
       const auto i = static_cast<std::size_t>(n.id);
       if (i >= net_layers.size()) continue;
       for (int l = 0; l < nl; ++l)
-        if (obs->rules().track_allowed(n.id, l)) net_layers[i] |= model::layer_bit(l);
+        if (tracks_ok(l) && obs->rules().track_allowed(n.id, l)) net_layers[i] |= model::layer_bit(l);
       net_vias[i] = obs->rules().via_allowed(n.id) && !obs->rules().via_hole_rule_hits_own_tracks(n.id) ? 1 : 0;
       net_blind[i] = net_vias[i] && obs->rules().via_allowed(n.id, model::ViaType::Blind) ? 1 : 0;
       net_micro[i] = net_vias[i] && obs->rules().via_allowed(n.id, model::ViaType::Micro) ? 1 : 0;
     }
+    // Factors below 1 are raised to 1: the octile and field heuristics assume no track is cheaper than its length.
+    for (std::size_t l = 0; l < opt.layer_cost_pm.size() && l < static_cast<std::size_t>(nl); ++l)
+      if (opt.layer_cost_pm[l] > 1000) {
+        layer_pm.resize(static_cast<std::size_t>(nl), 1000);
+        layer_pm[l] = opt.layer_cost_pm[l];
+      }
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {
       pitch = opt.pitch;
@@ -780,7 +792,7 @@ struct Router::Impl {
     const std::int64_t cost = static_cast<std::int64_t>(4 * opt.via_cost_mm * via_cost_mult * 1e6) +
                               static_cast<std::int64_t>(std::hypot(static_cast<double>(C.x - p.pos.x), static_cast<double>(C.y - p.pos.y)));
     for (int l = 0; l < nl; ++l) {
-      if (p.copper & model::layer_bit(l)) continue;
+      if ((p.copper & model::layer_bit(l)) || !layer_ok(p.net, l)) continue;
       e.cells.emplace_back(l, static_cast<std::int64_t>(gy - w.y0) * w.w + (gx - w.x0));
       e.stub.push_back(p.pos);
       e.cost.push_back(cost);
@@ -1083,7 +1095,7 @@ struct Router::Impl {
         } else {
           extra = textra(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci));
         }
-        std::int64_t cost = ((d & 1) ? diag : step) + extra;
+        std::int64_t cost = on_layer((d & 1) ? diag : step, l) + extra;
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
         const std::size_t ns = sidx(l, nci, d);
         if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= gs + cost) continue;
@@ -1097,7 +1109,7 @@ struct Router::Impl {
       // where the through via is found blocked, so a skipped check would change which vias the search considers.
       auto via_useful = [&] {
         for (int l2 = 0; l2 < nl; ++l2) {
-          if (l2 == l || !layer_ok(net, l2)) continue;
+          if (l2 == l || (!layer_ok(net, l2) && !target(l2, ci))) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
           if ((sn[ns].tag & kGenMask) != gen || sn[ns].g > gs + via_cost) return true;
         }
@@ -1110,7 +1122,8 @@ struct Router::Impl {
         const Point vp = at(w.x0 + cx, w.y0 + cy);
         const Coord vm = pitch * 71 / 100 + 1;
         for (int l2 = 0; l2 < nl; ++l2) {
-          if (l2 == l || !layer_ok(net, l2)) continue;
+          // A layer without tracks is a landing only where the via itself ends the connection (in a zone fill).
+          if (l2 == l || (!layer_ok(net, l2) && !target(l2, ci))) continue;
           int vs = 2;
           if (micro_for(net) && micro_span(l, l2)) vs = obs->via_state_span(vp, micro_diameter(net), micro_drill(net), net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2 && blind_for(net)) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
@@ -1127,7 +1140,8 @@ struct Router::Impl {
       }
       if (vextra >= 0) {
         for (int l2 = 0; l2 < nl; ++l2) {
-          if (l2 == l || !layer_ok(net, l2)) continue;
+          // A layer without tracks is a landing only where the via itself ends the connection (in a zone fill).
+          if (l2 == l || (!layer_ok(net, l2) && !target(l2, ci))) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
           const std::int64_t ng = gs + via_cost + vextra + textra(static_cast<std::size_t>(l2) * cells + static_cast<std::size_t>(ci));
           if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
@@ -1253,6 +1267,12 @@ struct Router::Impl {
     std::vector<Point> pad_vias;
     if (in_pad_via_needed(c.pad_a, path.front().layer)) pad_vias.push_back(pa);
     if (c.pad_b >= 0 && in_pad_via_needed(c.pad_b, path.back().layer)) pad_vias.push_back(pb);
+    // The search keeps off layers without tracks; nothing may be committed there whatever produced the path.
+    for (const auto& s : merged)
+      if (!layer_ok(net, s.layer)) {
+        commit_why = "track on a layer that takes no tracks";
+        return false;
+      }
     // Exact verification. In soft mode, conflicts with other connections' routed copper name the victims.
     bool ok = true;
     std::vector<int> victims;
@@ -1831,7 +1851,7 @@ struct Router::Impl {
   bool half_legal(const PairHalf& h, Coord vd, Coord vdrill) const {
     const bool dbg = std::getenv("TM_DEBUG_PAIRS") != nullptr;
     for (const auto& [layer, s] : h.segs)
-      if (obs->segment_state(s.a, s.b, layer, s.w, h.net, false, nullptr) != 0) {
+      if (!tracks_ok(layer) || obs->segment_state(s.a, s.b, layer, s.w, h.net, false, nullptr) != 0) {
         if (dbg)
           std::fprintf(stderr, "   pair half %s: segment fails: --pts %.4f %.4f %.4f %.4f --layer %d --width %.3f\n", b.nets[static_cast<std::size_t>(h.net)].name.c_str(),
                        nm_to_mm(s.a.x), nm_to_mm(s.a.y), nm_to_mm(s.b.x), nm_to_mm(s.b.y), layer, nm_to_mm(s.w));
@@ -1938,7 +1958,7 @@ struct Router::Impl {
     const int wx1 = std::min(nx - 1, to_ix(box.x1)), wy1 = std::min(ny - 1, to_iy(box.y1));
     auto in_win = [&](int gx, int gy) { return gx >= wx0 && gy >= wy0 && gx <= wx1 && gy <= wy1; };
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
-    auto steplen = [&](int dd) { return (dd & 1) ? diag : step; };
+    auto steplen = [&](int dd, int l) { return on_layer((dd & 1) ? diag : step, l); };
     // A turn costs as much as its straight run again: without it the weighted search prefers staircases of 45-degree
     // turns that follow the straight line to the goal over one diagonal and one straight run.
     const std::int64_t bend_cost = static_cast<std::int64_t>(K) * pitch;
@@ -2260,7 +2280,7 @@ struct Router::Impl {
             good = seg_ok(offset_point(c, n, off), offset_point(c2, n, off), x.l, net_of(1, x.s)) &&
                    seg_ok(offset_point(c, n, -off), offset_point(c2, n, -off), x.l, net_of(-1, x.s));
           }
-          if (good) relax(nk, g + k * steplen(x.dd), q.id, -1, kStraight, at(gx, gy), x.l);
+          if (good) relax(nk, g + k * steplen(x.dd, x.l), q.id, -1, kStraight, at(gx, gy), x.l);
         }
       }
       // 45-degree turns, each followed by K straight steps.
@@ -2279,7 +2299,7 @@ struct Router::Impl {
             const Point M = miter_point(c, x.dd, d2, sg * off);
             good = seg_ok(offset_point(c, n, sg * off), M, x.l, net) && seg_ok(M, offset_point(c2, n2, sg * off), x.l, net);
           }
-          if (good) relax(key(x.l, gx, gy, d2, x.s), g + K * steplen(d2) + bend_cost, q.id, -1, kTurn, c2, x.l);
+          if (good) relax(key(x.l, gx, gy, d2, x.s), g + K * steplen(d2, x.l) + bend_cost, q.id, -1, kTurn, c2, x.l);
         }
       // Coupled via pair: jog out to the via spacing, change layer, jog back, MV steps in all.
       if (vias_ok) {
@@ -2299,7 +2319,7 @@ struct Router::Impl {
               good = seg_ok(P, V, x.l, net) && obs->via_state(V, pr.via_diameter, pr.via_drill, net, 0, false, nullptr) == 0 && seg_ok(V, Q, l2, net) &&
                      seg_ok(Q, offset_point(c2, n, sg * off), l2, net);
             }
-            if (good) relax(key(l2, gx, gy, x.dd, x.s), g + MV * steplen(x.dd) + via_pair_cost, q.id, -1, kVia, c2, l2);
+            if (good) relax(key(l2, gx, gy, x.dd, x.s), g + MV * steplen(x.dd, l2) + via_pair_cost, q.id, -1, kVia, c2, l2);
           }
         }
       }
@@ -2326,7 +2346,7 @@ struct Router::Impl {
                 seg_ok(VL, pt(twT, -off), l2, nl_) && seg_ok(pt(twT, -off), offset_point(c2, n, -off), l2, nl_);
             // Dearer than a plain via pair by its uncoupled length: used only where the pin order calls for it.
             if (good)
-              relax(key(l2, gx, gy, x.dd, 1 - x.s), g + MT * steplen(x.dd) + via_pair_cost + leg_weight * static_cast<std::int64_t>(2.0 * twD), q.id, -1, kTwist, c2, l2);
+              relax(key(l2, gx, gy, x.dd, 1 - x.s), g + MT * steplen(x.dd, l2) + via_pair_cost + leg_weight * static_cast<std::int64_t>(2.0 * twD), q.id, -1, kTwist, c2, l2);
           }
         }
       }

@@ -16,6 +16,7 @@
 #include "drc/copper.hpp"
 #include "drc/rule_engine.hpp"
 #include "route/diff_pair.hpp"
+#include "route/layer_limits.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
@@ -113,6 +114,22 @@ RouteJobResult run_route_job(RouteJob job) {
       std::filesystem::remove(tmp);
     }
     log(fmt("reroute: %d unlocked tracks and vias removed", removed));
+  }
+  if (!job.no_tracks_on.empty() || !job.layer_costs.empty()) {
+    const auto& bd = lb.board;
+    const auto lim = route::layer_limits(bd, job.no_tracks_on, job.layer_costs);
+    opt.no_track_layers = lim.no_track_layers;
+    opt.layer_cost_pm = lim.layer_cost_pm;
+    std::string names;
+    int stranded = 0;  // pads with a net whose copper lies only on layers without tracks
+    for (int l = 0; l < bd.copper_count(); ++l)
+      if (lim.no_track_layers & model::layer_bit(l)) names += (names.empty() ? "" : ", ") + bd.copper_name(l);
+    for (const auto& p : bd.pads) stranded += p.net != 0 && p.copper != 0 && (p.copper & ~lim.no_track_layers) == 0;
+    if (!names.empty()) log("no new tracks on: " + names);
+    for (int l = 0; l < bd.copper_count() && !lim.layer_cost_pm.empty(); ++l)
+      if (lim.layer_cost_pm[static_cast<std::size_t>(l)] != 1000)
+        log(fmt("track cost on %s: x%.3g", bd.copper_name(l).c_str(), lim.layer_cost_pm[static_cast<std::size_t>(l)] / 1000.0));
+    if (stranded) log(fmt("warning: %d pads lie only on layers that take no tracks; their connections stay unrouted", stranded));
   }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
   if (opt.via_in_pad && (rules.minimums.via_diameter <= 0 || rules.minimums.through_hole_diameter <= 0))
