@@ -286,8 +286,14 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     }
   }
   for (const auto& z : b_.zones)
-    if (z.rule_area && z.keepout_tracks && !z.outline.empty() && z.outline.front().size() >= 3)
+    if (z.rule_area && (z.keepout_tracks || z.keepout_vias) && !z.outline.empty() && z.outline.front().size() >= 3)
       keepouts_.emplace_back(Shape::polygon(z.outline.front(), 0), &z);
+}
+
+bool Obstacles::via_keeps_off(const drc::CopperItem& it) const {
+  if (!vias_off_pads_ || pad_via_exempt_ || it.kind != drc::ItemKind::Pad || std::popcount(it.layers) != 1) return false;
+  const auto& p = b_.pads[static_cast<std::size_t>(it.index)];
+  return std::min(p.size_x, p.size_y) < vias_off_pads_max_;
 }
 
 bool Obstacles::inside_exact(Point p) const {
@@ -323,7 +329,8 @@ int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int la
     if (state == 2) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.removed || !(it.layers & model::layer_bit(layer))) return;
-    if (it.net == probe.net && probe.net != 0) return;
+    if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;
+    if (it.net == probe.net && probe.net != 0 && !(probe.kind == drc::ItemKind::Via && via_keeps_off(it))) return;
     Coord req = re_->clearance(probe, it, layer);
     // Untented vias open the mask around themselves: other nets' copper must stay outside that opening.
     if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1)) {
@@ -405,7 +412,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   if (ap_blocked) return 2;
   // Keepouts and solder-mask openings.
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return 2;
+    if ((z->copper & model::layer_bit(layer)) && (is_via_hole ? z->keepout_vias : z->keepout_tracks) && geom::closer_than(s, area, 1)) return 2;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])
@@ -568,6 +575,15 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
     if (code == kBlocked) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer))) return;
+    if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;
+    if (via_probe && via_keeps_off(it)) {
+      const Coord rq = re_->clearance(probe, it, layer);
+      for (const auto& u : it.shapes)
+        if (geom::closer_than(s, u, rq)) {
+          code = kBlocked;
+          return;
+        }
+    }
     if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
     Coord req = re_->clearance(probe, it, layer);
     if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1) && it.kind != drc::ItemKind::Zone && it.kind != drc::ItemKind::Pad) {
@@ -601,7 +617,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   });
   if (!edge_ok) return kBlocked;
   for (const auto& [area, z] : keepouts_)
-    if ((z->copper & model::layer_bit(layer)) && geom::closer_than(s, area, 1)) return kBlocked;
+    if ((z->copper & model::layer_bit(layer)) && (via_probe ? z->keepout_vias : z->keepout_tracks) && geom::closer_than(s, area, 1)) return kBlocked;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0)
     for (const auto& m : mask_open_[side])

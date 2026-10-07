@@ -2,7 +2,7 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp)
 target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::route nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
@@ -55,3 +55,7 @@ set_tests_properties(thread_determinism PROPERTIES SKIP_RETURN_CODE 77 LABELS "r
 # Coupled differential pairs (M12, D50): a USB hub's five pairs routed coupled, deterministic, KiCad-clean.
 add_test(NAME diff_pair COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/diff_pair.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/diff_pair)
 set_tests_properties(diff_pair PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;kicad;integration" TIMEOUT 3600)
+# Plane-aware routing of an all-SMD board (doc 05 §26): defaults vs. --soft-zones --via-in-pad --keep-vias-off-pads
+# --first-nets on the synthetic tests/boards/plane_smd; KiCad's DRC when kicad-cli is on the PATH.
+add_test(NAME plane_smd COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/plane_smd.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/plane_smd)
+set_tests_properties(plane_smd PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 600)
