@@ -26,6 +26,8 @@ struct Shape {
   static Shape polyline(std::vector<Point> pts, Coord r);
   static Shape polygon(std::vector<Point> pts, Coord r = 0);
   void update_box();
+  // Reset to a disk, reusing point storage for scratch legality checks.
+  void set_point(Point p, Coord r);
 };
 
 // Orientation of c relative to a→b: >0 left (counter-clockwise in y-up math terms), <0 right, 0 collinear.
@@ -52,6 +54,8 @@ bool point_in_polygon(Point p, const std::vector<Point>& poly);
 // True if the gap between the two shapes (distance between their surfaces, negative when they overlap) is
 // strictly less than `clearance`. clearance may be 0 (then: do they overlap or touch? no — strictly overlap).
 bool closer_than(const Shape& a, const Shape& b, Coord clearance);
+// Equivalent to closer_than(a, Shape::point(c, r), clearance), without allocating.
+bool closer_than_disk(const Shape& a, Point c, Coord r, Coord clearance);
 
 // Gap between two shapes in nm (negative = overlap depth bound; 0 when cores touch with r = 0).
 double gap(const Shape& a, const Shape& b);

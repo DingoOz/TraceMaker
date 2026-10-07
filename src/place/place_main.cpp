@@ -380,6 +380,8 @@ int run_loop_mode(const LoopCli& c) {
   eo_refine.default_clearance = 0;
   const place::Problem P = place::extract(lb.board, rules, c.in, eo_refine);
   const place::Placement input = place::Placement::initial(P);
+  const place::Metrics input_m = place::measure(P, input);
+  const bool input_legal = input_m.overlaps == 0 && input_m.outside == 0;
   const auto t0 = std::chrono::steady_clock::now();
   auto log = [](const std::string& s) {
     std::printf("  %s\n", s.c_str());
@@ -398,10 +400,32 @@ int run_loop_mode(const LoopCli& c) {
   std::vector<std::string> notes;
   std::printf("%s: %zu parts (%d movable), mode %s, router budget %ld expansions x %d variants\n", c.in.c_str(), P.parts.size(), P.movable_count(),
               c.o.mode.c_str(), c.work, c.route_threads);
+  // Compare against the input's minimal repair. If repair fails, keep the conservative model's conflicts visible.
+  place::Placement base = input;
+  std::string base_label = "input";
+  bool base_legal = input_legal;
+  if (!input_legal && !c.scratch) {  // from scratch the input is a pile, not a placement to repair
+    std::string list;
+    for (std::size_t i = 0; i < input_m.conflicts.size() && i < 6; ++i) list += (i ? ", " : "") + input_m.conflicts[i];
+    if (input_m.conflicts.size() > 6) list += ", ...";
+    std::string msg = "input not legal: " + std::to_string(input_m.conflicts.size()) +
+                      " conflict(s) involving movable parts (" + list + ")";
+    int n = 0;
+    if (auto rep = place::repaired(P, input, &n)) {
+      base = std::move(*rep);
+      base_label = "input repaired (" + std::to_string(n) + " part(s) moved)";
+      base_legal = true;
+      msg += "; compared as its minimal repair: " + std::to_string(n) + " conflicting part(s) moved to the nearest legal spot";
+    } else {
+      msg += "; no minimal repair found: compared as it is";
+    }
+    log(msg);
+    notes.push_back(msg);
+  }
   if (c.o.mode == "eco") {
-    input_eval = route(input);
+    input_eval = route(base);
     ++routes;
-    log("input: " + std::to_string(input_eval.unrouted()) + " unrouted (" + std::to_string(input_eval.routed) + "/" +
+    log(base_label + ": " + std::to_string(input_eval.unrouted()) + " unrouted (" + std::to_string(input_eval.routed) + "/" +
         std::to_string(input_eval.connections) + ")");
     place::EcoOptions e;
     e.rounds = c.eco_rounds;
@@ -410,16 +434,17 @@ int run_loop_mode(const LoopCli& c) {
     e.alpha_cross_mm = c.o.alpha_cross_mm;
     e.via_mm = c.o.flip ? c.o.via_mm : 0;
     e.log = log;
-    const place::EcoResult er = place::eco_place(P, input, input_eval, e, route);
+    const place::EcoResult er = place::eco_place(P, base, input_eval, e, route);
     routes += er.routes;
-    best = place::Candidate{"eco", er.pl, er.eval, place::total_hpwl(P, er.pl)};
+    // ECO checks each move, not existing conflicts.
+    best = place::Candidate{er.committed > 0 ? "eco" : base_label, er.pl, er.eval, place::total_hpwl(P, er.pl), base_legal};
     extra["eco"] = {{"committed", er.committed}, {"ranked", er.ranked}, {"moves", er.moves}};
   } else {
     // From scratch (--scratch) the input is a pile, not a placement: it is no candidate, refine has nothing to
     // refine, legality is absolute instead of "no worse than the input", and there is no input to fall back to.
     std::vector<place::Candidate> seeds;
     std::vector<place::Candidate> illegal;  // scratch: the least bad choice when no seed is legal
-    if (!c.scratch) seeds.push_back(place::Candidate{"input", input, {}, 0});
+    if (!c.scratch) seeds.push_back(place::Candidate{base_label, base, {}, 0});
     auto add_seed = [&](const std::string& label, const std::string& mode, double beta) {
       if (out_of_time()) {
         notes.push_back(label + ": not built, loop time limit reached");
@@ -446,7 +471,9 @@ int run_loop_mode(const LoopCli& c) {
         return;
       }
       const place::Metrics m = place::measure(P, x.pl, &input);
-      if (c.scratch ? (!x.r.legal || x.r.legalise_failed > 0 || m.overlaps > 0 || m.outside > 0) : (!x.r.legal || m.new_overlaps > 0 || m.new_outside > 0)) {
+      // Legality is absolute in both modes; from scratch an unplaced part also disqualifies, and the candidate
+      // is remembered as the least bad choice.
+      if (!x.r.legal || (c.scratch && x.r.legalise_failed > 0) || m.overlaps > 0 || m.outside > 0) {
         notes.push_back(label + ": not legal, skipped" + (c.scratch ? " (" + std::to_string(m.overlaps) + " overlaps, " + std::to_string(m.outside) + " outside, " +
                                                                            std::to_string(x.r.legalise_failed) + " unplaced)" : std::string()));
         if (c.scratch) illegal.push_back(place::Candidate{label, x.pl, {}, 0});
@@ -460,9 +487,11 @@ int run_loop_mode(const LoopCli& c) {
     }
     add_seed("full", "full", 0);
     add_seed("full+rudy", "full", c.beta);
+    bool illegal_fallback = false;
     if (seeds.empty() && !illegal.empty()) {
       notes.push_back("no legal placement was found: the output is the full-mode result with its conflicts");
       seeds.push_back(illegal.front());
+      illegal_fallback = true;
     }
     place::LoopOptions lo;
     lo.place = c.o;
@@ -472,6 +501,8 @@ int run_loop_mode(const LoopCli& c) {
     lo.eco_candidates = c.eco_candidates;
     lo.log = log;
     lo.out_of_time = out_of_time;
+    // From scratch the only seed with conflicts is the least-bad fallback above, which must stay eligible.
+    lo.accept_first_seed_conflicts = c.scratch ? illegal_fallback : !base_legal;
     if (!c.record.empty()) {
       lo.place.trace = [&rec](const std::string& key, const place::Placement& x, double t) {
         if (key.ends_with("|input")) rec.phase("re-placing around unrouted connections: " + key.substr(0, key.find('|')));
@@ -482,6 +513,8 @@ int run_loop_mode(const LoopCli& c) {
     }
     const place::LoopResult res = place::routability_loop(P, seeds, lo, route);
     best = res.best;
+    if (best.pl.pos.empty())
+      best = place::Candidate{base_label, base, {}, place::total_hpwl(P, base), base_legal};  // nothing routed
     tried = res.tried;
     routes = res.routes;
     rounds = res.rounds;
@@ -494,22 +527,25 @@ int run_loop_mode(const LoopCli& c) {
   }
   // Final verification (doc 04 §8.3b): at the check budget the router leaves connections unrouted that a full
   // route completes, so a placement that is easier for a short route can be harder for the real one. Route the
-  // winner and the input again with a larger budget; the winner replaces the input only if it is not worse there.
+  // winner and the base (the input, or its minimal repair) again with a larger budget; the winner replaces the
+  // base only if it is not worse there.
   nlohmann::json verify = nullptr;
-  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !c.scratch && !(best.pl.pos == input.pos && best.pl.rot == input.rot)) {
+  const bool best_is_base = best.pl.pos == base.pos && best.pl.rot == base.rot;
+  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !c.scratch && !best_is_base) {
     const place::RouteFn route_full = make_route_fn(c.in, rules, P, fw, c.route_threads, c.o.seed);
     if (!c.record.empty()) rec.phase("verification: input and winner routed with a 4x budget");
-    const place::RouteEval vi = route_full(input), vb = route_full(best.pl);
+    const place::RouteEval vi = route_full(base), vb = route_full(best.pl);
     routes += 2;
     const bool keep = vb.ok && vi.ok && vb.unrouted() <= vi.unrouted();
-    log("verify at " + std::to_string(fw) + ": input " + std::to_string(vi.unrouted()) + " unrouted, " + best.label + " " +
-        std::to_string(vb.unrouted()) + (keep ? " -> kept" : " -> input kept"));
+    log("verify at " + std::to_string(fw) + ": " + base_label + " " + std::to_string(vi.unrouted()) +
+        " unrouted, " + best.label + " " + std::to_string(vb.unrouted()) +
+        (keep ? " -> kept" : " -> " + base_label + " kept"));
     verify = {{"work", fw}, {"input", eval_json(vi)}, {"output", eval_json(vb)}, {"accepted", keep}};
     if (!keep) {
       rec.chain.clear();
       notes.push_back(best.label + " rejected by the final verification route (" + std::to_string(vb.unrouted()) + " vs " +
                       std::to_string(vi.unrouted()) + " unrouted)");
-      best = place::Candidate{"input", input, input_eval, place::total_hpwl(P, input)};
+      best = place::Candidate{base_label, base, input_eval, place::total_hpwl(P, base), base_legal};
     }
   }
   const bool kept_input = best.pl.pos == input.pos && best.pl.rot == input.rot;
@@ -529,15 +565,20 @@ int run_loop_mode(const LoopCli& c) {
   r.nets = static_cast<int>(P.nets.size());
   r.pins = static_cast<int>(P.pins.size());
   r.notes = notes;
-  r.before = place::measure(P, input);
+  r.before = input_m;
   r.after = place::measure(P, best.pl, &input);
   r.legal = r.after.new_overlaps == 0 && r.after.new_outside == 0;
   r.lb_fixed_rot = place::hpwl_lower_bound(P, input, place::RotationModel::Fixed);
   r.lb_any_rot = place::hpwl_lower_bound(P, input, place::RotationModel::Any);
   r.seconds_total = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+  // Report unchanged input conflicts separately from illegal moves.
+  const int left = r.after.overlaps + r.after.outside;
+  const std::string status = !r.legal ? "NOT LEGAL"
+                            : left > 0 ? "legal moves, " + std::to_string(left) + " conflict(s) of the input remain"
+                                       : "legal";
   std::printf("  kept: %s, %d -> %d unrouted (%d/%d routed), HPWL %.1f -> %.1f mm, %d footprints moved, %d routes, %.1f s, %s -> %s\n",
               best.label.c_str(), input_eval.unrouted(), best.eval.unrouted(), best.eval.routed, best.eval.connections, nm_to_mm(r.before.hpwl),
-              nm_to_mm(r.after.hpwl), moved, routes, r.seconds_total, r.legal ? "legal" : "NOT LEGAL", c.out.c_str());
+              nm_to_mm(r.after.hpwl), moved, routes, r.seconds_total, status.c_str(), c.out.c_str());
   if (!c.json_path.empty()) {
     auto j = place::report_json(P, r);
     j["input"] = c.in;
@@ -823,20 +864,56 @@ int main(int argc, char** argv) {
       conns_in = conns;
       routed_out = routed_of(out);
       conns_out = conns;
-      // Compare unrouted connections: the connection count can change with the placement.
-      if (!scratch && conns_out - routed_out > conns_in - routed_in) {  // from scratch the input is no alternative
-        // The editor changed `lb` in place, so the input is restored by copying the file (byte for byte). Before
-        // 2026-10-03 this re-saved the edited document, i.e. "kept the input" still wrote the new placement.
-        std::filesystem::copy_file(in, out, std::filesystem::copy_options::overwrite_existing);
-        reverted = true;
-        moved = 0;
-        pl = place::Placement::initial(p);
-        r.after = place::measure(p, pl, &pl);
-        r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns) + " < input " +
-                          std::to_string(routed_in) + ": kept the input placement");
+      if (scratch) {
+        // From scratch the input is a pile: no alternative to fall back to and nothing to repair.
+        r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns_out) + " (input " +
+                          std::to_string(routed_in) + "/" + std::to_string(conns_in) + ")");
       } else {
-        r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns) + " (input " +
-                          std::to_string(routed_in) + ")");
+        // Compare unrouted counts against the input's minimal repair, or the input if repair fails (D75).
+        // Use the board's courtyard rule (else 0): full mode's 0.25 mm default can reject legal hand placements.
+        place::ExtractOptions eo_input = eo;
+        eo_input.default_clearance = 0;
+        const place::Problem p_in = place::extract(io::read_board_file(in).board, rules, in, eo_input);
+        const place::Placement in_pl = place::Placement::initial(p_in);
+        const place::Metrics m_in = place::measure(p_in, in_pl);
+        const bool input_legal = m_in.overlaps == 0 && m_in.outside == 0;
+        int n = 0;
+        const std::optional<place::Placement> rep = input_legal ? std::nullopt : place::repaired(p_in, in_pl, &n);
+        const std::string head = "route check: new placement routed " + std::to_string(routed_out) + "/" +
+                                 std::to_string(conns_out) + " (input " + std::to_string(routed_in) + "/" +
+                                 std::to_string(conns_in) + ")" +
+                                 (input_legal ? ""
+                                              : "; input not legal (" + std::to_string(m_in.conflicts.size()) + " conflicts)");
+        if (!rep) {
+          if (conns_out - routed_out > conns_in - routed_in) {
+            // The editor changed `lb` in place, so the input is restored by copying the file (byte for byte). Before
+            // 2026-10-03 this re-saved the edited document, i.e. "kept the input" still wrote the new placement.
+            std::filesystem::copy_file(in, out, std::filesystem::copy_options::overwrite_existing);
+            reverted = true;
+            moved = 0;
+            pl = place::Placement::initial(p);
+            r.after = place::measure(p, pl, &pl);
+            r.notes.push_back(head + (input_legal ? "" : ", no minimal repair") + ": kept the input placement");
+          } else {
+            r.notes.push_back(head + (input_legal ? "" : ", no minimal repair"));
+          }
+        } else {
+          const place::RouteEval re = make_route_fn(in, rules, p_in, route_check, route_threads, o.seed)(*rep);
+          const std::string what = ", its minimal repair (" + std::to_string(n) + " part(s) moved) routed " +
+                                   std::to_string(re.routed) + "/" + std::to_string(re.connections);
+          if (conns_out - routed_out > re.unrouted()) {
+            auto rlb = io::read_board_file(in);
+            moved = apply(rlb, p_in, *rep, o.seed);
+            io::BoardEditor(rlb, o.seed).save(out);
+            pl = *rep;  // same part order: both problems come from the same board
+            r.after = place::measure(p, pl, &in_pl);
+            routed_out = re.routed;
+            conns_out = re.connections;
+            r.notes.push_back(head + what + ": kept the repair");
+          } else {
+            r.notes.push_back(head + what + ": new placement kept");
+          }
+        }
       }
     }
 

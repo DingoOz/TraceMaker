@@ -206,8 +206,8 @@ src/place/eval_place.py --route --truth --jobs 12 <PCBench board names>   # the 
 
 | Stage | File | As built |
 |---|---|---|
-| Problem | `problem.cpp` | Parts with courtyards per side (convex hull of the `F/B.CrtYd` graphics; no courtyard → pad box + 0.25 mm, or one box per pad for sparse footprints), through obstacles (PTH pad copper and holes, both sides), copper shapes with layers, net and required clearance (net class, local overrides, board minimum, 2 × solder-mask expansion so masks cannot bridge; with custom clearance rules their largest minimum, conservatively), pins per rotation, net weights (power-like names or > 30 pins: 0.1, else 1), outline = largest Edge.Cuts loop containing ≥ 80 % of the pads (gap tolerance up to 0.5 mm, else the Edge.Cuts bounding box), cut-outs, footprint keepouts, fixed board copper (tracks, vias, copper graphics and text). |
-| Fixed parts | `problem.cpp` | locked, `board_only`, no pads, `REF**`, single-pad footprints (vias, test points, fiducials), mounting holes (`H*`/`MH*` without nets, `MountingHole` libs), footprints owning Edge.Cuts or keepouts, footprints touching routed copper, connectors (`J*`, `P<n>`, `CN*`, `USB*`) within 2 mm of the edge (`--move-connectors` frees them), and parts that already overhang the outline in the input. |
+| Problem | `problem.cpp` | Parts with courtyards per side (convex hull of the `F/B.CrtYd` graphics; no courtyard → pad box + 0.25 mm, or one box per pad for sparse footprints), through obstacles (PTH pad copper and holes, both sides), copper shapes with layers, net and required clearance (net class, local overrides, board minimum, 2 × solder-mask expansion so masks cannot bridge; with custom clearance rules their largest minimum, conservatively), pins per rotation, net weights (power-like names or > 30 pins: 0.1, else 1), outline = largest Edge.Cuts loop containing ≥ 80 % of the pads within the Edge.Cuts extents (gap tolerance up to 0.5 mm, else the Edge.Cuts bounding box), cut-outs, footprint keepouts, fixed board copper (tracks, vias, copper graphics and text). |
+| Fixed parts | `problem.cpp` | locked, `board_only`, no pads, `REF**`, single-pad footprints (vias, test points, fiducials), mounting holes (`H*`/`MH*` without nets, `MountingHole` libs), footprints owning Edge.Cuts or keepouts, footprints touching routed copper, connectors (`J*`, `P<n>`, `CN*`, `USB*`) within 2 mm of the edge (`--move-connectors` frees them), and parts that already overhang the outline in the input. Parts entirely clear of the outline's bounding box stay movable: KiCad drops new footprints beside the board. Pads outside the Edge.Cuts extents do not count toward outline selection (D74). |
 | (A) | `global.cpp` | B2B quadratic placement, Eigen CG with Jacobi preconditioner, 10 re-linearisations from the board centre, weak (1e-4) pull to the centre for strict convexity. |
 | (B) | `global.cpp` | SimPL: lower-bound solve ↔ rough legalisation, anchor pseudo-nets of weight 0.1·k × the part's own net weight, until the bin overflow of the lower-bound placement is ≤ 10 % (≤ 40 iterations). Rough legalisation is recursive bisection over a capacity grid (free area per bin after the outline, keepouts and fixed parts), cutting parts at their area median and the region where its capacity is in the same proportion. **Why SimPL, not electrostatics:** boards have tens to a few hundred parts, so the per-iteration cost is negligible either way; SimPL needs no step-size control or γ annealing, reuses the B2B solver of (A), is deterministic, and its rough legaliser handles irregular outlines and fixed blockages through the capacity grid. The electrostatic method remains the plan for the GPU multi-start version. |
 | (C) | `global.cpp` | Rotation coordinate descent (4 states per part, about the body centre, strict improvement only, so it terminates). |
@@ -309,6 +309,31 @@ when the new placement leaves more connections unrouted. `--mode auto` runs refi
 fewest unrouted, then the shortest wirelength. On the 23 evaluation boards at N = 3M expansions it kept a new
 placement on 18 boards, total HPWL fell from 17,464 mm to 13,190 mm, and unrouted connections fell from 61 to 59;
 no board got worse (`bench/place_auto.py`).
+
+**An illegal input is compared as its minimal repair** (2026-10-06, D75).
+
+**Before.** A routable run on a private 4-layer sensor board kept an input with three overlaps plus one ECO
+move and reported it as "legal": only conflicts involving moved parts counted. KiCad's DRC found courtyard
+overlaps and two shorts.
+
+**What was built.** `place::repaired` uses refine's legaliser to re-place only conflicting movable parts at the
+nearest legal spot. Other parts stay put. Conflicts are overlaps or outline violations involving a movable
+part, judged with the board's courtyard rule (else 0).
+
+- `--route-check` (refine, full, auto): compare with the repair and write it if the new placement leaves more
+  connections unrouted.
+- `routable`: use the repair as the first seed ("input repaired (N part(s) moved)") and the final verification
+  baseline. Other seeds must have no conflicts, including those already present in the input.
+- `eco`: start from the repair.
+
+If repair fails, compare the input as it is: convex-hull courtyards and through-hole margins are conservative.
+The input can then seed re-placement and ECO rounds. Reports name any remaining conflicts separately from
+illegal moves ("legal moves, N conflict(s) of the input remain").
+
+**Results.** The model finds conflicts in 14 of the 30 PCBench tier-A hand placements. Some are clean in KiCad
+(threeboard: U1 against fixed copper; esp-com: pads near the edge); others have KiCad courtyard overlaps
+(Hangul 2, phone_rtty 8). LogicBoxen has 7 model conflicts and none in KiCad's DRC. Minimal repair preserves
+the rest of each hand layout.
 
 ## 8. Implementation status (M8, first version — 2026-10-03)
 
