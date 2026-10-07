@@ -73,7 +73,7 @@ __global__ void init_kernel(const std::uint8_t* target, std::int32_t* d, int tot
 
 }  // namespace
 
-GpuStatus field_cuda(int cuda_index, const FieldProblem& p, std::vector<std::int32_t>& out) {
+GpuStatus field_gpu(int cuda_index, const FieldProblem& p, std::vector<std::int32_t>& out) {
   out.clear();
   const std::size_t n = static_cast<std::size_t>(p.w) * static_cast<std::size_t>(p.h);
   const std::size_t total = n * static_cast<std::size_t>(p.layers);

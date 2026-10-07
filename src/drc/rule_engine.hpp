@@ -20,7 +20,7 @@ class Condition;  // compiled custom-rule condition
 
 class RuleEngine {
  public:
-  RuleEngine(const model::Board& b, const model::DesignRules& r, const CopperModel& cm);
+  RuleEngine(const model::Board& b, const model::DesignRules& r);
   ~RuleEngine();
 
   // Required copper-to-copper clearance between two items on a copper layer.
@@ -64,7 +64,6 @@ class RuleEngine {
 
   const model::Board& b_;
   const model::DesignRules& r_;
-  const CopperModel& cm_;
   std::vector<Compiled> rules_;
   std::vector<std::string> warnings_;
   Coord max_clearance_ = 0;

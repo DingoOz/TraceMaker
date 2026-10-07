@@ -58,7 +58,7 @@ std::pair<Point, double> closest_on(Point a, Point b, Point p) {
 
 class Injector {
  public:
-  Injector(io::LoadedBoard& lb, std::uint64_t seed) : lb_(lb), b_(lb.board), ed_(lb, seed), rng_(seed, 0xDEFEu, 0) {}
+  Injector(io::LoadedBoard& lb, std::uint64_t seed) : b_(lb.board), ed_(lb, seed), rng_(seed, 0xDEFEu, 0) {}
 
   int run(const std::string& kind, int count) {
     // Candidate tracks in a seeded order: straight tracks with a net, at least 0.5 mm long.
@@ -221,7 +221,6 @@ class Injector {
     throw std::invalid_argument("unknown defect kind: " + kind);
   }
 
-  io::LoadedBoard& lb_;
   const model::Board& b_;
   io::BoardEditor ed_;
   RngStream rng_;

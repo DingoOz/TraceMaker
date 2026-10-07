@@ -26,9 +26,10 @@ add_library(tm::server ALIAS tm_server)
 target_link_libraries(tm_server PUBLIC tm::core tm::viz PRIVATE Boost::headers Threads::Threads nlohmann_json::nlohmann_json)
 target_compile_definitions(tm_server PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_server)
-# Asio uses std::atomic_thread_fence, which GCC's TSan cannot model and warns about (-Wtsan).
+# Asio uses std::atomic_thread_fence, which GCC's TSan cannot model and warns about (-Wtsan). Clang has no
+# such warning and rejects the flag.
 set(TM_SERVER_TSAN_FLAGS "")
-if(CMAKE_CXX_FLAGS MATCHES "sanitize=thread")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_FLAGS MATCHES "sanitize=thread")
   set(TM_SERVER_TSAN_FLAGS -Wno-tsan)
 endif()
 target_compile_options(tm_server PRIVATE ${TM_SERVER_TSAN_FLAGS})

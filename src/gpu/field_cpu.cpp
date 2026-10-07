@@ -81,10 +81,10 @@ int field_cpu(const FieldProblem& p, std::vector<std::int32_t>& out) {
   return rounds;
 }
 
-#if !TM_HAVE_CUDA
-GpuStatus field_cuda(int, const FieldProblem&, std::vector<std::int32_t>& out) {
+#if !TM_HAVE_CUDA && !TM_HAVE_METAL
+GpuStatus field_gpu(int, const FieldProblem&, std::vector<std::int32_t>& out) {
   out.clear();
-  return {false, "built without CUDA"};
+  return {false, "built without GPU support"};
 }
 #endif
 

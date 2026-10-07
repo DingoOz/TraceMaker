@@ -47,15 +47,6 @@ cmake --preset release && cmake --build --preset release
 
 No CUDA? Use `cpu-only` instead of `release` in both commands.
 
-On macOS (Apple silicon), with Apple's Command Line Tools and
-`brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost`:
-
-```
-cmake --preset macos-metal -DCMAKE_PREFIX_PATH="$(brew --prefix)" && cmake --build --preset macos-metal
-```
-
-`macos-cpu` builds without Metal. Metal speeds up the cost-to-go fields only; see [docs/07-gpu.md](docs/07-gpu.md) §8.
-
 **2. Route a board**
 
 ```
@@ -90,7 +81,7 @@ No KiCad installed? `scripts/kicad-cli` runs it from the `kicad/kicad:10.0.6` Do
 <details>
 <summary><b>Choosing compilers and build presets</b></summary>
 
-Presets: `release`, `debug`, `cpu-only` (no CUDA), `asan`, `tsan`; on macOS `macos-metal`, `macos-cpu`.
+Presets: `release`, `debug`, `cpu-only` (no CUDA), `asan`, `tsan`.
 
 The presets do not fix the compilers. By default the build takes:
 
@@ -229,7 +220,7 @@ Freerouting 2.5 10%; Freerouting 1.9 20%.
 | `src/drc` | the design-rule check |
 | `src/io/kicad` | reading and writing KiCad files |
 | `src/crules` | component-aware layout rules |
-| `src/gpu` | CUDA and Metal code, each with a CPU twin |
+| `src/gpu` | CUDA code, each with a CPU twin |
 | `src/server`, `viewer/` | the live viewer |
 | `kicad_plugin/` | the KiCad plugin |
 | `bench/` | benchmark tools |

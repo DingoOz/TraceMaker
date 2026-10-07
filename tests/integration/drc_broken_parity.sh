@@ -5,14 +5,16 @@
 # `tracemaker selftest-defects`) must be classified exactly like kicad-cli does, violation by violation.
 # Two seeds, 12 defect kinds, 3 defects each. Needs kicad-cli (Docker image); skips otherwise. KiCad results are
 # cached by file content in build/drc/kicad, so only the first run calls kicad-cli (at most 2 containers at once).
+# Usage: drc_broken_parity.sh [TRACEMAKER_BINARY] (default: build/release, scripts/drc_broken_parity.py).
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ROOT"
 command -v kicad-cli >/dev/null || { echo "SKIP: kicad-cli missing"; exit 77; }
 mapfile -t boards < <(grep -v '^#' tests/integration/drc_broken_boards.txt)
 for b in "${boards[@]}"; do [[ -f $b ]] || { echo "SKIP: fixtures missing ($b)"; exit 77; }; done
+tm=(); [[ $# -ge 1 ]] && tm=(--tm "$1")
 status=0
 for seed in 1 2; do
-  python3 scripts/drc_broken_parity.py --kicad-jobs 2 --jobs 4 --count 3 --seed "$seed" "${boards[@]}" || status=1
+  python3 scripts/drc_broken_parity.py "${tm[@]}" --kicad-jobs 2 --jobs 4 --count 3 --seed "$seed" "${boards[@]}" || status=1
 done
 exit $status

@@ -33,7 +33,7 @@ TEST_CASE("exact closer-than agrees with floating-point distance away from the b
     const tmk::Coord t = static_cast<tmk::Coord>(rng.u64(i * 16 + 8) % 600'000);
     const long double d = seg_seg_dist(a, b, p, q);
     if (std::fabs(static_cast<double>(d) - static_cast<double>(t)) < 2.0) continue;  // too close to call in floating point
-    REQUIRE(seg_seg_closer(a, b, p, q, t) == (d < t));
+    REQUIRE(seg_seg_closer(a, b, p, q, t) == (d < static_cast<long double>(t)));
     ++checked;
   }
   CHECK(checked > 19000);

@@ -19,6 +19,40 @@
       }
     },
     {
+      "name": "macos-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "TM_ENABLE_CUDA": "OFF",
+        "TM_WERROR": "ON"
+      }
+    },
+    {
+      "name": "macos-cpu",
+      "inherits": "macos-base",
+      "displayName": "Native macOS (CPU)",
+      "cacheVariables": {
+        "TM_ENABLE_METAL": "OFF"
+      }
+    },
+    {
+      "name": "macos-metal",
+      "inherits": "macos-base",
+      "displayName": "Native macOS (Metal)",
+      "cacheVariables": {
+        "CMAKE_OBJCXX_COMPILER": "/usr/bin/clang++",
+        "TM_ENABLE_METAL": "ON"
+      }
+    },
+    {
       "name": "debug",
       "inherits": "base",
       "displayName": "Debug (CUDA)",
@@ -66,6 +100,14 @@
   ],
   "buildPresets": [
     {
+      "name": "macos-cpu",
+      "configurePreset": "macos-cpu"
+    },
+    {
+      "name": "macos-metal",
+      "configurePreset": "macos-metal"
+    },
+    {
       "name": "debug",
       "configurePreset": "debug"
     },
@@ -87,6 +129,20 @@
     }
   ],
   "testPresets": [
+    {
+      "name": "macos-cpu",
+      "configurePreset": "macos-cpu",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "macos-metal",
+      "configurePreset": "macos-metal",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
     {
       "name": "debug",
       "configurePreset": "debug",
