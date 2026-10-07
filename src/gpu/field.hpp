@@ -5,7 +5,7 @@
 //
 // Computed by alternating line sweeps (row, column and both diagonals, each in both directions) plus via
 // relaxation, repeated to a fixpoint (GAMER, Lin et al., TCAD 2023). The fixpoint is the unique shortest-path
-// distance, so the CPU reference and the CUDA kernel produce identical results whatever the sweep order.
+// distance, so the CPU reference and the GPU kernel produce identical results whatever the sweep order.
 #include <cstdint>
 #include <limits>
 #include <vector>
