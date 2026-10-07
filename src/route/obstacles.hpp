@@ -72,6 +72,13 @@ class Obstacles {
   // to 0 to ask "would a via fit here if vias were tented?"; routing never changes it.
   Coord via_mask() const { return via_mask_; }
   void set_via_mask(Coord m) { via_mask_ = m; }
+  // Zone fills are ignored as obstacles (they are refilled after routing); they remain connection targets.
+  void set_soft_zones(bool on) { soft_zones_ = on; }
+  // Vias keep clear of SMD pads narrower than `max_pad` (any net, net-class clearance), as if they were another
+  // net's copper; larger pads (exposed thermal pads) still take vias. set_pad_via_exempt(true) lifts this around the
+  // checks of one deliberate via in pad (the router's --via-in-pad).
+  void set_vias_off_pads(bool on, Coord max_pad) { vias_off_pads_ = on; vias_off_pads_max_ = max_pad; }
+  void set_pad_via_exempt(bool on) const { pad_via_exempt_ = on; }
   // Rejection counters (diagnostics): outside board, copper, holes/edges/keepouts.
   mutable long rej_outside = 0, rej_copper = 0, rej_other = 0, checks = 0;
 
@@ -98,6 +105,11 @@ class Obstacles {
   int ir_w_ = 0, ir_h_ = 0;
   Coord ir_cell_ = 250'000;
   bool inside_exact(geom::Point p) const;
+  bool soft_zones_ = false;
+  bool vias_off_pads_ = false;
+  Coord vias_off_pads_max_ = 2'000'000;
+  mutable bool pad_via_exempt_ = false;
+  bool via_keeps_off(const drc::CopperItem& it) const;
   std::vector<std::pair<geom::Shape, const model::Zone*>> keepouts_;
   std::vector<geom::Shape> mask_open_[2];  // solder-mask openings drawn as graphics (front, back)
   struct Aperture {

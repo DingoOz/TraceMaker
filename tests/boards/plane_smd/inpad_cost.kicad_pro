@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "filename": "inpad_cost.kicad_pro",
+    "version": 3
+  },
+  "board": {
+    "design_settings": {
+      "rules": {
+        "min_clearance": 0.1,
+        "min_track_width": 0.1,
+        "min_via_diameter": 0.25,
+        "min_through_hole_diameter": 0.15,
+        "min_via_annular_width": 0.05,
+        "min_hole_clearance": 0.2,
+        "min_hole_to_hole": 0.25,
+        "min_copper_edge_clearance": 0.3,
+        "allow_blind_buried_vias": false,
+        "allow_microvias": false
+      }
+    }
+  },
+  "net_settings": {
+    "meta": {
+      "version": 4
+    },
+    "classes": [
+      {
+        "name": "Default",
+        "clearance": 0.1,
+        "track_width": 0.1,
+        "via_diameter": 0.45,
+        "via_drill": 0.2,
+        "priority": 2147483647
+      }
+    ]
+  }
+}

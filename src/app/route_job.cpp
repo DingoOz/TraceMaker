@@ -115,6 +115,8 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("reroute: %d unlocked tracks and vias removed", removed));
   }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
+  if (opt.via_in_pad && (rules.minimums.via_diameter <= 0 || rules.minimums.through_hole_diameter <= 0))
+    log("warning: --via-in-pad: the board's minimum via diameter or drill could not be read, so no via in pad is placed");
   const std::string name = std::filesystem::path(job.in).filename().string();
   RouteJobResult out;
   std::unique_ptr<server::ViewerServer> server;

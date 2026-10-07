@@ -142,6 +142,11 @@ down beside the board and reported.
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
 - `--cut-report`: report lines across the board that more nets must cross than tracks fit.
 - `--kb FILE` / `--no-kb`: the knowledge base of earlier runs.
+- All-SMD boards with inner planes (doc 05 §26; refill the zones afterwards, e.g. `kicad-cli pcb drc --refill-zones
+  --save-board`): `--soft-zones` (zone fills do not block other nets; an inner plane no pad touches becomes a via
+  target), `--keep-vias-off-pads` / `--vias-off-pads-below MM` (no via in an SMD pad narrower than 2 mm),
+  `--via-in-pad` (the board's minimum via in an inner ball that has no other way out), `--first-nets A,B` (these
+  nets go first, also after restarts, and other nets do not rip them).
 
 </details>
 
