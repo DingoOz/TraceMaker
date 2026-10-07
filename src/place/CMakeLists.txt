@@ -1,4 +1,9 @@
-find_package(Eigen3 REQUIRED NO_MODULE)
+# Eigen 3.4 or later, including Eigen 5 (Homebrew ships 5.0). Eigen's version files accept only their own major
+# version and reject ranges ("3.4...5" matches neither 3.4.0 nor 5.0.1), hence two lookups.
+find_package(Eigen3 3.4 QUIET NO_MODULE)
+if(NOT Eigen3_FOUND)
+  find_package(Eigen3 5 REQUIRED NO_MODULE)
+endif()
 find_package(nlohmann_json 3 REQUIRED)
 find_package(Threads REQUIRED)
 
