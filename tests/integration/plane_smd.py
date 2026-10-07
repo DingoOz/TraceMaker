@@ -31,7 +31,7 @@ NM = 1e6
 def route(tm, work, name, extra):
     out = work / f"{name}.kicad_pcb"
     shutil.copy(SRC.with_suffix(".kicad_pro"), out.with_suffix(".kicad_pro"))
-    r = subprocess.run([str(tm), "route", str(SRC), "-o", str(out), "--work", "3000000", "--variants", "2", "--threads", "2", "--no-kb",
+    r = subprocess.run([str(tm), "route", str(SRC), "-o", str(out), "--work", "3000000", "--time", "3600", "--variants", "2", "--threads", "2", "--no-kb",
                         "--no-gpu", "--json", str(work / f"{name}.route.json")] + extra, capture_output=True, text=True)
     if r.returncode not in (0, 3):
         sys.exit(f"{name}: tracemaker failed\n{r.stdout[-2000:]}\n{r.stderr[-2000:]}")

@@ -123,12 +123,12 @@ TEST_CASE("plane_smd: defaults leave the board incomplete without a via; the opt
   for (const auto& t : r.tracks) CHECK((t.layer != layer(b, "In1.Cu") && t.layer != layer(b, "In2.Cu")));
   // Exactly one via in a small SMD pad: the minimum via in the inner ball U2.B2.
   int in_small = 0;
-  const auto& b2 = pad(b, "U2", "B2");
+  const model::Pad* b2 = &pad(b, "U2", "B2");  // a pointer: GCC 15 flags a reference bound through string temporaries
   for (const auto& v : r.vias)
     for (const auto& p : b.pads)
       if (p.type == model::PadType::Smd && std::min(p.size_x, p.size_y) < 2'000'000 && p.net == v.net && inside(p, v.pos)) {
         ++in_small;
-        CHECK(&p == &b2);
+        CHECK(&p == b2);
         CHECK(v.size == 250'000);
         CHECK(v.drill == 150'000);
       }
@@ -137,4 +137,77 @@ TEST_CASE("plane_smd: defaults leave the board incomplete without a via; the opt
   REQUIRE(!r.tracks.empty());
   const auto xin = net_id(b, "XIN"), xout = net_id(b, "XOUT");
   CHECK((r.tracks.front().net == xin || r.tracks.front().net == xout));
+}
+
+TEST_CASE("plane_smd: planes of a net without pads are not connection targets", "[route][planes]") {
+  // Review of PR 1: two zone-only clusters had nothing between them and an empty connection (pad_a = -1) was planned.
+  if (!std::filesystem::exists(kBoard)) SKIP("board missing: " + kBoard);
+  model::Board b = io::read_board_file(kBoard).board;
+  const auto rules = io::read_design_rules(kBoard);
+  route::RouterOptions opt;
+  opt.work_budget = 300'000;
+  opt.gpu_device = -1;
+  const int plain = route::Router(b, rules, opt).run().connections;
+  model::Net orphan;
+  orphan.name = "ORPHAN";
+  b.nets.push_back(orphan);
+  for (auto& z : b.zones)
+    if (!z.rule_area) z.net = static_cast<model::NetId>(b.nets.size() - 1);
+  opt.soft_zones = true;
+  const auto r = route::Router(b, rules, opt).run();
+  CHECK(r.connections == plain);
+}
+
+TEST_CASE("plane_smd: no via in pad when the board's minimum via cannot be read", "[route][planes]") {
+  if (!std::filesystem::exists(kBoard)) SKIP("board missing: " + kBoard);
+  const model::Board b = io::read_board_file(kBoard).board;
+  auto rules = io::read_design_rules(kBoard);
+  rules.minimums.via_diameter = 0;
+  rules.minimums.through_hole_diameter = 0;
+  route::RouterOptions opt;
+  opt.work_budget = 3'000'000;
+  opt.bend_states = false;
+  opt.gpu_device = -1;
+  opt.soft_zones = opt.via_in_pad = opt.vias_off_pads = true;
+  const auto r = route::Router(b, rules, opt).run();
+  const model::Pad* b2 = &pad(b, "U2", "B2");
+  for (const auto& v : r.vias) CHECK_FALSE((v.net == b2->net && inside(*b2, v.pos)));
+  CHECK(r.routed < r.connections);  // U2.B2 has no other way out
+}
+
+TEST_CASE("plane_smd: a rule area that forbids vias but allows tracks blocks vias only", "[route][planes]") {
+  if (!std::filesystem::exists(kBoard)) SKIP("board missing: " + kBoard);
+  model::Board b = io::read_board_file(kBoard).board;
+  const auto rules = io::read_design_rules(kBoard);
+  model::Zone z;
+  z.rule_area = true;
+  z.keepout_vias = true;
+  for (int l = 0; l < b.copper_count(); ++l) z.copper |= model::layer_bit(l);
+  const Coord r = 1'000'000;
+  z.outline.push_back({{kFree.x - r, kFree.y - r}, {kFree.x + r, kFree.y - r}, {kFree.x + r, kFree.y + r}, {kFree.x - r, kFree.y + r}});
+  b.zones.push_back(z);
+  route::Obstacles obs(b, rules);
+  obs.set_soft_zones(true);
+  const auto sda = net_id(b, "SDA");
+  CHECK_FALSE(obs.via_ok(kFree, kVia, kDrill, sda, 0));
+  CHECK(obs.fixed_via_code(kFree, kVia, kDrill, 0, sda) == route::Obstacles::kBlocked);
+  CHECK(obs.disk_ok(kFree, layer(b, "F.Cu"), 50'000, sda, 0));
+}
+
+TEST_CASE("inpad_cost: a via in pad costs the same at either end, at every via price", "[route][planes]") {
+  // Two 3 x 3 arrays whose centre balls can leave on F.Cu; a no-track strip forces a layer change. Two ordinary vias
+  // beat a via in either centre ball. Review of PR 1: the penalty was charged at the source only, and at a fixed
+  // price that the clean-up stages (which raise the via price) undercut, so both balls took a via in pad.
+  const std::string path = std::string(TM_SOURCE_DIR) + "/tests/boards/plane_smd/inpad_cost.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("board missing: " + path);
+  const model::Board b = io::read_board_file(path).board;
+  const auto rules = io::read_design_rules(path);
+  route::RouterOptions opt;
+  opt.work_budget = 3'000'000;
+  opt.gpu_device = -1;
+  opt.via_in_pad = opt.vias_off_pads = true;
+  const auto r = route::Router(b, rules, opt).run();
+  CHECK(r.routed == r.connections);
+  for (const auto& v : r.vias)
+    for (const auto& p : b.pads) CHECK_FALSE((p.net == v.net && p.net != 0 && inside(p, v.pos)));
 }

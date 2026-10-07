@@ -16,6 +16,10 @@ The board is unrouted. What it exercises:
     Plane vias inside those small pads are what --keep-vias-off-pads prevents; the exposed pad may take vias.
   * Y1, a 32.768 kHz crystal with its load capacitors, whose lines should stay short (--first-nets XIN,XOUT).
   * U3, an SOT-23-5 I2C sensor with pull-ups R1/R2.
+A second board, inpad_cost.kicad_pcb, checks that a via in pad costs the same at either end of a connection: two
+3 x 3 ball arrays at 0.65 mm pitch (the gaps admit a track, so the centre balls can leave on F.Cu) whose centre balls
+are joined by LINK, with a strip of F.Cu between them where tracks are forbidden. A via each side of the strip costs
+less than a via in either centre ball, so the routed board has no via in a pad.
 Design rules (in the .kicad_pro): 0.1 mm tracks and clearance, 0.45/0.2 mm vias, minimum via 0.25/0.15 mm, 0.2 mm
 hole clearance, 0.3 mm copper-to-edge. Nothing here is copied from a real product.
 """
@@ -173,3 +177,32 @@ b.Save(path)
 (OUT / f"{NAME}.kicad_pro").write_text(json.dumps(pro, indent=2) + "\n")  # Save() may rewrite it
 (OUT / f"{NAME}.kicad_prl").unlink(missing_ok=True)  # local view settings
 print(f"wrote {path} and .kicad_pro: {len(b.GetFootprints())} footprints, {len(nets)} nets")
+
+# inpad_cost: 2 layers, 14 x 8 mm.
+b = pcbnew.BOARD()
+b.SetCopperLayerCount(2)
+nets = {}
+X0, Y0, W, H = 100.0, 100.0, 14.0, 8.0
+rect(pcbnew.Edge_Cuts, X0, Y0, X0 + W, Y0 + H)
+ball_array("U4", 104, 104, {"B2": "LINK"}, rows="ABC", cols=3, pitch=0.65)
+ball_array("U5", 110, 104, {"B2": "LINK"}, rows="ABC", cols=3, pitch=0.65)
+strip = pcbnew.ZONE(b)
+strip.SetLayer(pcbnew.F_Cu)
+strip.SetZoneName("NO_TRACKS_F")
+strip.SetIsRuleArea(True)
+strip.SetDoNotAllowTracks(True)
+strip.SetDoNotAllowVias(False)
+strip.SetDoNotAllowZoneFills(False)
+strip.SetDoNotAllowPads(False)
+strip.SetDoNotAllowFootprints(False)
+o = strip.Outline()
+o.NewOutline()
+for px, py in ((106.5, 99), (107.5, 99), (107.5, 109), (106.5, 109)):
+    o.Append(MM(px), MM(py))
+b.Add(strip)
+path2 = str(OUT / "inpad_cost.kicad_pcb")
+b.Save(path2)
+pro["meta"]["filename"] = "inpad_cost.kicad_pro"
+(OUT / "inpad_cost.kicad_pro").write_text(json.dumps(pro, indent=2) + "\n")
+(OUT / "inpad_cost.kicad_prl").unlink(missing_ok=True)
+print(f"wrote {path2} and .kicad_pro")
