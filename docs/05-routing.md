@@ -154,6 +154,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Escalation: forced escapes, neck-down to the board minimum width, negotiation | Done | `run` |
 | Boxed-in detection at the source (open list exhausted) and at the target (short reverse probe) | Done | `search_and_commit_inner` |
 | Zone (plane) targets; MST connection planning over existing copper clusters | Done | `plan`, `search` |
+| Plane-aware routing of all-SMD boards: soft zone fills, untouched planes as via targets, vias kept off small pads, via in pad for inner balls, first nets (2026-10-07) | Done, opt-in (D65–D69). See §26 | `obstacles.cpp`, `plan`, `pad_cells`, `search`, `commit` |
 | GPU cost-to-go fields as the heuristic (never used to prune) | Done | `gpu/field_cuda.cu`, `build_field` |
 | Portfolio of 8 variants on a thread pool, early stop when one is complete (wall-clock mode), 2x pitch for two variants on large boards; with `--work` all 8 run at any `--threads` and the winner is chosen by a total order ending in the variant index, so the output is bit-identical across thread counts (D47) | Done | `route_portfolio` |
 | Global routing (CPU): tile graph (8 pitches), cut-based edge capacities, via capacity per tile, net-shared edges, integer costs, negotiated congestion; corridors (`--global`, `--global-confine`) and congestion map (`--global-congestion`) | Built, off by default: measured three times on hard boards, corridors cost completion and the map is neutral (§13, §16, §19). No GPU version: routing the tile graph takes 0.02–0.5 s | `route/global_router.cpp` |
@@ -666,3 +667,54 @@ every order of small conflict groups changed no board (§17), jittered and rever
 arms whose wins are spread evenly (each of the eight variants wins between 9 and 46 of 172 boards), tile congestion
 is absent (§16, §20), and the knowledge base's bandit already chooses variants per board from past runs (doc 06).
 
+## 26. Plane-aware routing of all-SMD boards (2026-10-07)
+
+**The case.** Small boards put every part on the outer layers and give whole inner layers to ground and supply
+planes: no pad touches a plane, every plane pin needs a via, and the planes cover the board. On one such board (a
+private 6-layer wearable: two GND planes and a supply plane inside, a 0.4 mm-pitch WLP, a 0.5 mm-pitch QFN, a BLE
+module, a 32 kHz crystal; 167 connections) the router stopped at 94/167 with no via at all:
+
+1. Zone fills are fixed copper of their net, so a via of another net through a full-board plane was illegal
+   everywhere, and a GND via crossed the supply plane. Rule areas "no tracks, vias allowed" on the plane layers,
+   which keep the planes whole, blocked vias too (D65).
+2. `plan` drops zone-only clusters, so a plane that no pad touches was never a target and GND pads were wired to
+   each other on the signal layers.
+3. With planes as targets, the cheapest plane connection is a via at the pad centre: about 100 vias landed in pads
+   (0.5 mm vias in 0.25 mm QFN pins and 0402 pads).
+4. An inner WLP ball (0.25 mm lands, 0.15 mm gaps) looks free locally (the diagonal gap fits a track), but every exit
+   ends on another ball, and there is no dog-bone site at 0.4 mm pitch.
+5. The 32 kHz crystal line, routed in shortest-first order and ripped by negotiation, ended 25.7 mm long with four
+   vias.
+
+**What was built** (all opt-in except the keep-out fix):
+
+| Part | What |
+|---|---|
+| Keep-outs (D65) | A rule area blocks tracks if it forbids tracks and vias if it forbids vias. Before, only areas forbidding tracks were read, and they blocked vias too |
+| `--soft-zones` (D66) | `Obstacles` skips zone fills in `copper_state` and `fixed_code`; KiCad refills around the new copper. `plan` keeps zone-only clusters of a net that has pads, when their fill is at least 1 mm² (a sliver of a stale fill is no target), and never plans a connection between two zone-only clusters |
+| `--keep-vias-off-pads`, `--vias-off-pads-below MM` (2; D67) | A via probe treats single-layer pads narrower than the limit, of any net, as obstacles at net-class clearance, also in the cached `fixed_code` (net-independent, as the cache needs). Exposed pads still take vias |
+| `--via-in-pad` (D68) | `pad_cells` offers the pad centre on every other layer, with the board's minimum via (`min_via_diameter`, `min_through_hole_diameter`; no via when they could not be read, with a warning), for inner balls (a round pad with a pad of its footprint one ball pitch away in each direction of the footprint's frame, found once per board) and for pads with no legal own-layer cell. The penalty is four vias at the current via price, charged on either end (`src.cost`, and on entry to a target cell). One via per pad: a pad whose via another connection placed is not offered again. `commit` adds the via, checked with the pad exemption |
+| `--first-nets A,B` (D69) | Connections of the named nets go first in `plan`'s order (after learned priorities) and again after every restart; `commit` and the via clean-up (`lns_vias`) do not rip them for other nets |
+
+**Measured.** Synthetic board `tests/boards/plane_smd` (4 layers, every part SMD, filled GND / +3V3 planes inside,
+3 M expansions, 2 variants; KiCad 10 DRC after `--refill-zones`):
+
+| Options | Routed | Vias | GND / +3V3 track | KiCad errors / unconnected |
+|---|--:|--:|---|---|
+| defaults | 41/47 | 0 | 39.7 / 86.6 mm | 0 / 6 |
+| `--soft-zones` | 48/49 | 38 | 6.0 / 1.6 mm (vias in pads) | 0 / 1 |
+| + `--via-in-pad` | 47/49 | 40 | 6.0 / 1.6 mm | 0 / 2 |
+| + `--keep-vias-off-pads` | 49/49 | 42 | 15.9 / 10.7 mm | 0 / 0 |
+| + `--first-nets XIN,XOUT` | 49/49 | 42 | 15.9 / 10.7 mm | 0 / 0 |
+
+`--via-in-pad` belongs with `--keep-vias-off-pads`: alone, plane vias crowd the edge of the ball array and box in two
+edge balls. `--first-nets` changes nothing here (the crystal is not contested); on the private board it took the
+crystal lines from 25.7 mm with four vias to 4.3 and 5.1 mm with one via each. Default behaviour and the quick tier:
+see the pull request that brought this section (numbers measured on the merged tree).
+
+**Not built.** The options are in no portfolio variant and are not chosen automatically (a board with inner planes and
+only SMD pads could switch `--soft-zones` and `--keep-vias-off-pads` on by itself; the component-rule catalogue could
+feed crystal nets to `--first-nets`). The output keeps the old, now stale fills: refill before judging. Connectivity
+still trusts the stale fills (a fill that a refill would split is one target). `--first-nets` takes net names only,
+and the protected nets may rip each other. A second connection at a pad that already has a via in it must use the
+pad's own layer.
