@@ -2,6 +2,7 @@
 #include "drc/rule_engine.hpp"
 
 #include <algorithm>
+#include <bit>
 #include <cctype>
 #include <cmath>
 #include <initializer_list>
@@ -39,6 +40,9 @@ class Condition {
     char who = 'A';       // A or B
     std::string name;     // property or function name
     std::vector<std::string> args;
+    // Area and courtyard functions: zones or courtyard entries whose name matches args[0], resolved once
+    // (bind): the router asks these functions for every lattice point it visits.
+    std::vector<int> bound;
   };
 
   static std::unique_ptr<Condition> parse(const std::string& text, std::string& err) {
@@ -64,6 +68,8 @@ class Condition {
   // First property or function that prop() / call() below do not evaluate ("" if none): such a condition is
   // never true here.
   std::string unsupported() const { return unsupported(*root_); }
+  // Resolves the name patterns of area and courtyard functions against the board.
+  void bind(const model::Board& b, const CourtyardCache& courtyards) { bind(*root_, b, courtyards); }
 
  private:
   void skip() {
@@ -222,6 +228,23 @@ class Condition {
     return {};
   }
 
+  static bool area_call(const Node& n) {
+    return n.op == Node::Op::Call && !n.args.empty() && (n.name == "insideArea" || n.name == "intersectsArea" || n.name == "enclosedByArea");
+  }
+  static bool courtyard_call(const Node& n) {
+    return n.op == Node::Op::Call && !n.args.empty() &&
+           (n.name == "intersectsCourtyard" || n.name == "intersectsFrontCourtyard" || n.name == "intersectsBackCourtyard");
+  }
+  static void bind(Node& n, const model::Board& b, const CourtyardCache& courtyards) {
+    if (area_call(n)) {
+      for (std::size_t z = 0; z < b.zones.size(); ++z)
+        if (model::wildcard_match(n.args[0], b.zones[z].name)) n.bound.push_back(static_cast<int>(z));
+    } else if (courtyard_call(n)) {
+      n.bound = courtyard_entries(courtyards, n.args[0]);
+    }
+    for (auto& k : n.kids) bind(*k, b, courtyards);
+  }
+
   static bool str_eq(const Value& l, const Value& r) {
     if (l.k == Value::K::Num && r.k == Value::K::Num) return std::fabs(l.n - r.n) < 1e-9;
     // KiCad's layer value rejects its unset ID even against '*'; it is not a missing property.
@@ -300,7 +323,7 @@ class Condition {
     } else if (n.name == "existsOnLayer" && !n.args.empty()) {
       const int l = b.copper_index(n.args[0]);
       v.b = l >= 0 && (it->layers & model::layer_bit(l));
-    } else if ((n.name == "insideArea" || n.name == "intersectsArea" || n.name == "enclosedByArea") && !n.args.empty()) {
+    } else if (area_call(n)) {
       const bool fill = it->kind == ItemKind::Zone;
       const std::tuple<const void*, int, int> key{&n, it->index, it->sub};
       if (fill) {
@@ -310,8 +333,13 @@ class Condition {
           return v;
         }
       }
-      for (const auto& z : b.zones) {
-        if (model::wildcard_match(n.args[0], z.name) && area_matches(*it, z, n.name == "enclosedByArea")) {
+      const bool enclosure = n.name == "enclosedByArea";
+      for (const int zi : n.bound) {
+        // Boxes first: an item outside an area's box can neither meet it nor be enclosed by it.
+        const geom::Box& zb = ctx.eng->zone_box_[static_cast<std::size_t>(zi)];
+        const geom::Box& ib = it->box;
+        if (!ib.empty() && (enclosure ? (ib.x0 < zb.x0 || ib.y0 < zb.y0 || ib.x1 > zb.x1 || ib.y1 > zb.y1) : !ib.intersects(zb))) continue;
+        if (area_matches(*it, b.zones[static_cast<std::size_t>(zi)], enclosure)) {
           v.b = true;
           break;
         }
@@ -320,9 +348,8 @@ class Condition {
         const std::lock_guard lock(ctx.eng->area_mutex_);
         ctx.eng->area_cache_[key] = v.b;
       }
-    } else if ((n.name == "intersectsCourtyard" || n.name == "intersectsFrontCourtyard" ||
-                n.name == "intersectsBackCourtyard") && !n.args.empty()) {
-      v.b = courtyard_matches(*it, ctx.eng->courtyards_, n.args[0], n.name);
+    } else if (courtyard_call(n)) {
+      v.b = courtyard_matches(*it, ctx.eng->courtyards_, n.bound, n.name);
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
       // P/N or +/-) matches the pattern.
@@ -413,20 +440,31 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
       // Rules outside the per-class cache need exact checks, including unreadable conditions.
       if (!c.valid || (k.type != "disallow" && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
       if (k.type != "disallow" || !c.valid) continue;
-      for (const auto& w : k.items)
-        if (w != "track" && w != "via" && w != "through_via" && w != "micro_via" && w != "buried_via" && w != "blind_via" && w != "pad" &&
-            w != "zone" && w != "graphic")
-          warnings_.push_back("rule '" + rule.name + "': disallow " + w + " is not checked by TraceMaker (KiCad's DRC still reports it)");
-      if (c.positional)
-        warnings_.push_back("rule '" + rule.name +
-                            "': disallow condition depends on position or footprint; the router does not avoid it, the DRC reports it");
+      for (const auto& w : k.items) {
+        const std::uint16_t bit = w == "track" ? kTrack : w == "via" ? kVia : w == "through_via" ? kThroughVia : w == "micro_via" ? kMicroVia
+                                  : w == "blind_via" ? kBlindVia : w == "buried_via" ? kBuriedVia : w == "pad" ? kPad : w == "zone" ? kZone
+                                  : w == "graphic" ? kGraphic : 0;
+        if (!bit) warnings_.push_back("rule '" + rule.name + "': disallow " + w + " is not checked by TraceMaker (KiCad's DRC still reports it)");
+        c.words |= bit;
+      }
     }
+    // Position, size and footprint conditions are evaluated on each new track and via (probe_disallowed).
+    if (c.positional && (c.words & kRouted)) positional_disallow_ = true;
     rules_.push_back(std::move(c));
   }
   if (std::any_of(rules_.begin(), rules_.end(), [](const Compiled& c) {
         return c.valid && c.cond && c.cond->references({"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"});
       }))
     courtyards_ = build_courtyards(b_);
+  zone_box_.reserve(b_.zones.size());
+  for (const auto& z : b_.zones) {
+    geom::Box box;
+    for (const auto& ring : z.outline)
+      for (const auto& p : ring) box.add(p);
+    zone_box_.push_back(box);
+  }
+  for (auto& c : rules_)
+    if (c.valid && c.cond) c.cond->bind(b_, courtyards_);
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
   net_class_.resize(b_.nets.size());
@@ -560,41 +598,40 @@ std::optional<model::Constraint> RuleEngine::net_constraint(model::NetId net, co
   return out;
 }
 
-namespace {
-// KiCad's disallow item keywords (DRC_RULES_PARSER): "via" covers every via type.
-// `via_type`: the type of a via that is not on the board yet (a router probe).
-bool disallow_word_matches(const std::string& w, const CopperItem& it, const model::Board& b, const model::ViaType* via_type) {
+// KiCad's disallow item keywords (DRC_RULES_PARSER): "via" covers every via type. `words` holds the rule's
+// keyword bits. `via_type`: the type of a via that is not on the board yet (a router probe); `span`: its
+// layers are known (`it.layers`), so blind and buried vias can be told apart.
+bool RuleEngine::words_match(std::uint16_t words, const CopperItem& it, const model::ViaType* via_type, bool span) const {
   switch (it.kind) {
     case ItemKind::Track:
-    case ItemKind::Arc: return w == "track";
-    case ItemKind::Pad: return w == "pad";
-    case ItemKind::Zone: return w == "zone";
-    case ItemKind::Graphic: return w == "graphic";
+    case ItemKind::Arc: return words & kTrack;
+    case ItemKind::Pad: return words & kPad;
+    case ItemKind::Zone: return words & kZone;
+    case ItemKind::Graphic: return words & kGraphic;
     case ItemKind::Via: {
-      if (w == "via") return true;
-      const auto type = via_type ? *via_type : it.index >= 0 ? b.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
-      if (w == "through_via") return type == model::ViaType::Through;
-      if (w == "micro_via") return type == model::ViaType::Micro;
-      if (type != model::ViaType::Blind) return false;
-      // A router probe has no span yet; conservatively retain the existing blind/buried gate.
-      if (via_type || it.index < 0) return w == "blind_via" || w == "buried_via";
-      const auto& via = b.vias[static_cast<std::size_t>(it.index)];
-      const bool top_outer = via.layer_top == 0;
-      const bool bottom_outer = via.layer_bottom == b.copper_count() - 1;
-      return (w == "blind_via" && top_outer != bottom_outer) || (w == "buried_via" && !top_outer && !bottom_outer);
+      if (words & kVia) return true;
+      const auto type = via_type ? *via_type : it.index >= 0 ? b_.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
+      if (type == model::ViaType::Through) return words & kThroughVia;
+      if (type == model::ViaType::Micro) return words & kMicroVia;
+      int top = 0, bottom = 0;
+      if (it.index >= 0 && !via_type) {
+        top = b_.vias[static_cast<std::size_t>(it.index)].layer_top;
+        bottom = b_.vias[static_cast<std::size_t>(it.index)].layer_bottom;
+      } else if (span && it.layers) {
+        top = std::countr_zero(it.layers);
+        bottom = 63 - std::countl_zero(it.layers);
+      } else {
+        return words & (kBlindVia | kBuriedVia);  // no span yet: either keyword forbids the via (conservative)
+      }
+      const bool top_outer = top == 0, bottom_outer = bottom == b_.copper_count() - 1;
+      return ((words & kBlindVia) && top_outer != bottom_outer) || ((words & kBuriedVia) && !top_outer && !bottom_outer);
     }
   }
   return false;
 }
-}  // namespace
 
-bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type) const {
-  if (!c.valid || !layer_matches(c.rule->layer, layer)) return false;
-  bool typed = false;
-  for (const auto& k : c.rule->constraints)
-    if (k.type == "disallow")
-      for (const auto& w : k.items) typed = typed || disallow_word_matches(w, it, b_, via_type);
-  if (!typed) return false;
+bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type, bool span) const {
+  if (!c.valid || !layer_matches(c.rule->layer, layer) || !words_match(c.words, it, via_type, span)) return false;
   if (!c.cond) return true;
   EvalCtx ctx{this, &it, nullptr, layer};
   return c.cond->eval(ctx) && !ctx.unknown;  // an unsupported property never makes a rule fire
@@ -608,6 +645,18 @@ std::optional<std::string> RuleEngine::disallowed(const CopperItem& it, int laye
       else out = c.rule->name;
     }
   return out;
+}
+
+bool RuleEngine::probe_disallowed(const CopperItem& it, model::ViaType type) const {
+  const model::ViaType* vt = it.kind == ItemKind::Via ? &type : nullptr;
+  for (model::LayerMask m = it.layers; m; m &= m - 1) {
+    const int l = std::countr_zero(m);
+    bool hit = false;
+    for (const auto& c : rules_)  // in file order: the last matching rule decides, as in disallowed()
+      if (disallow_hit(c, it, l, vt, true)) hit = c.rule->severity != "ignore";
+    if (hit) return true;
+  }
+  return false;
 }
 
 bool RuleEngine::track_allowed(model::NetId net, int layer) const {

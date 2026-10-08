@@ -35,7 +35,11 @@ bool footprint_selected(const std::string& selector, const std::string& referenc
 // Function is intersectsCourtyard/intersectsFrontCourtyard/intersectsBackCourtyard. Front and back are the
 // footprint's own sides (KiCad: GetCourtyard(fp->IsFlipped() ? B_Cu : F_Cu)): the front courtyard of a flipped
 // footprint is its B.CrtYd outline. The item's copper side does not matter.
-// Prepared geometry and selector matching perform no per-query allocations.
 bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
                        const std::string& selector, const std::string& function);
+// The same test against entries resolved once by courtyard_entries (the rule engine binds each selector, so
+// queries perform no allocations or name matching).
+std::vector<int> courtyard_entries(const CourtyardCache& courtyards, const std::string& selector);
+bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
+                       const std::vector<int>& entries, const std::string& function);
 }  // namespace tmk::drc
