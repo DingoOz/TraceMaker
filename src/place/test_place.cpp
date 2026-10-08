@@ -2,6 +2,8 @@
 // Unit tests for the placer (tm::place).
 #include <catch2/catch_test_macros.hpp>
 
+#include <unistd.h>
+
 #include <filesystem>
 #include <fstream>
 #include <set>
@@ -342,7 +344,8 @@ TEST_CASE("parts dropped beside the board are placed; parts overhanging the edge
                            "  (net 0 \"\") (net 1 \"A\") (net 2 \"B\")\n" +
                            fp("R1", 5, 5) + fp("R2", 40, 5) + fp("R3", 60, 20) + fp("R4", 21, 5) +
                            "  (gr_rect (start 0 0) (end 20 10) (layer \"Edge.Cuts\") (stroke (width 0.1) (type solid)))\n)\n";
-  const auto dir = std::filesystem::temp_directory_path() / "tmk_place_offboard";
+  const auto dir = std::filesystem::temp_directory_path() / ("tmk_place_offboard_" + std::to_string(::getpid()));  // per process
+  std::filesystem::remove_all(dir);
   std::filesystem::create_directories(dir);
   const std::string path = (dir / "b.kicad_pcb").string();
   {

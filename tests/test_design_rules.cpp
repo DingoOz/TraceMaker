@@ -2,6 +2,8 @@
 // Custom-rule routing and DRC (doc 05 §27): disallow, physical hole clearance and via-only keepouts.
 #include <catch2/catch_test_macros.hpp>
 
+#include <unistd.h>
+
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -49,7 +51,8 @@ const char* kInnerGndOnly =
 struct Files {
   fs::path dir, pcb;
   Files(const std::string& name, const std::string& board, const std::string& dru) {
-    dir = fs::temp_directory_path() / ("tmk_design_rules_" + name);
+    // Per process: several builds may run their tests at the same time.
+    dir = fs::temp_directory_path() / ("tmk_design_rules_" + name + "_" + std::to_string(::getpid()));
     fs::remove_all(dir);
     fs::create_directories(dir);
     pcb = dir / "b.kicad_pcb";
