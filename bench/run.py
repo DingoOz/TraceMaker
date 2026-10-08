@@ -7,6 +7,12 @@ Freerouting's own published per-board results (scripts/benchmark/results/benchma
 repository, judged by KiCad DRC on Freerouting's side).
 
   bench/run.py --tier A --limit 60 --time 60 --jobs 12 [--name run-id]
+  bench/run.py --set quick --work 1000000 --name run-id          # deterministic regression tier (doc 10 §4)
+  bench/run.py --fixtures build/demos --set planes --work 3000000 --refill --route-args=--soft-zones
+
+--work routes with a deterministic work budget and no knowledge base, so the same binary gives the same boards;
+bench/compare_runs.py compares two runs. --refill makes KiCad refill zones before judging both input and output
+(needed whenever zone fills may be stale, e.g. with --soft-zones).
 
 Writes bench/results/<run-id>/{boards.jsonl, summary.json, report.md}; summary.json is shown on the progress site.
 """
@@ -21,6 +27,7 @@ import os
 import pathlib
 import random
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -33,6 +40,8 @@ FR_RESULTS = ROOT / "bench/data/freerouting/scripts/benchmark/results/benchmarks
 TM = pathlib.Path(os.environ.get("TM_BINARY", ROOT / "build/release/src/app/tracemaker"))
 EXTRA = os.environ.get("TM_ROUTE_ARGS", "").split()  # extra route options for experiments, e.g. "--via-cost-mm 3"
 THREADS = 1
+WORK = 0         # --work N: deterministic work budget per board (0: wall-clock --time only)
+REFILL = False   # --refill: KiCad refills zones before judging
 DRC_CACHE = ROOT / "build/drc/kicad"
 # Violation types that routing cannot cause; ignored when counting added errors.
 NOT_ROUTING = {"lib_footprint_issues", "lib_footprint_mismatch", "silk_overlap", "silk_over_copper", "silk_edge_clearance",
@@ -66,11 +75,12 @@ def fr_baseline() -> dict[str, dict]:
 def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
     DRC_CACHE.mkdir(parents=True, exist_ok=True)
     st = path.stat()
-    key = hashlib.sha1(f"{path.resolve()}:{st.st_mtime_ns}:{st.st_size}".encode()).hexdigest()[:16]
+    key = hashlib.sha1(f"{path.resolve()}:{st.st_mtime_ns}:{st.st_size}:{REFILL}".encode()).hexdigest()[:16]
     out = DRC_CACHE / f"{key}.json"
     if not out.exists():
         try:
-            subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "--all-track-errors", "-o", str(out), str(path)],
+            subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "--all-track-errors"] +
+                           (["--refill-zones"] if REFILL else []) + ["-o", str(out), str(path)],
                            capture_output=True, timeout=timeout)
         except subprocess.TimeoutExpired:
             return None
@@ -157,12 +167,19 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     src0 = SRC_FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
     out.parent.mkdir(parents=True, exist_ok=True)
+    # KiCad judges the output with the input's net classes and custom rules (fixtures from bench/prepare_demos.py
+    # carry them; PCBench boards have none).
+    for ext in (".kicad_pro", ".kicad_dru"):
+        if src0.with_suffix(ext).exists():
+            shutil.copyfile(src0.with_suffix(ext), out.with_suffix(ext))
     res = {"board": name}
     src = place_board(name, src0, outdir, res) if PLACE_MODE else src0
     res["dead_pins"] = dead_pins(src, outdir / "boards" / f"{name}.escape.json")
     t0 = time.time()
     try:
-        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--kb", str(outdir / "kb.sqlite"), "--json", str(out) + ".route.json"] + EXTRA,
+        # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
+        budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
+        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + EXTRA,
                            capture_output=True, text=True, timeout=time_limit * 3 + 60)
         res["exit"] = p.returncode
         if p.returncode not in (0, 3):
@@ -195,7 +212,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tier", default="A", help="Freerouting tier: A, B, C, D or all")
     ap.add_argument("--limit", type=int, default=50)
-    ap.add_argument("--time", type=float, default=60)
+    ap.add_argument("--time", type=float, help="wall-clock limit per board (default 60 s; 3600 s as a safety stop with --work)")
+    ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
+    ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
+    ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
+    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes); also names the set in the summary")
     ap.add_argument("--jobs", type=int, default=12)
     ap.add_argument("--seed", type=int, default=1, help="board sampling seed")
     ap.add_argument("--name")
@@ -210,11 +231,18 @@ def main() -> int:
     ap.add_argument("--board-list", help="file with one board name per line (# comments)")
     ap.add_argument("--set-name", help="name of the board set for the summary (default: the tier)")
     a = ap.parse_args()
-    global THREADS, SRC_FIX, PLACE_ARGS
+    global THREADS, SRC_FIX, PLACE_ARGS, WORK, REFILL, EXTRA
     PLACE_ARGS = (a.place_args or "").split()
     THREADS = a.threads
+    WORK, REFILL = a.work, a.refill
+    EXTRA = EXTRA + (a.route_args or "").split()
+    if a.time is None:
+        a.time = 3600.0 if a.work else 60.0
     if a.fixtures:
         SRC_FIX = pathlib.Path(a.fixtures).resolve()
+    if a.set:
+        a.board_list = a.board_list or str(ROOT / "bench/sets" / f"{a.set}.txt")
+        a.set_name = a.set_name or a.set
     if a.board_list:
         a.boards = [x.strip() for x in pathlib.Path(a.board_list).read_text().splitlines() if x.strip() and not x.startswith("#")]
     base = fr_baseline()
@@ -229,7 +257,6 @@ def main() -> int:
     outdir.mkdir(parents=True, exist_ok=True)
     # Snapshot the engine binary so rebuilding during a run cannot mix versions.
     global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES
-    import shutil
     snap = outdir / "tracemaker"
     shutil.copy2(TM, snap)
     TM = snap
@@ -239,7 +266,8 @@ def main() -> int:
         shutil.copy2(PLACE, psnap)
         PLACE = psnap
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    print(f"run {run_id}: {len(names)} boards, tier {a.tier}, {a.time:.0f} s per board, {a.jobs} jobs", flush=True)
+    budget = f"{a.work:,} work units" if a.work else f"{a.time:.0f} s"
+    print(f"run {run_id}: {len(names)} boards, {a.set_name or 'tier ' + a.tier}, {budget} per board, {a.jobs} jobs", flush=True)
     rows = []
     with cf.ThreadPoolExecutor(a.jobs) as ex, (outdir / "boards.jsonl").open("w") as f:
         for r in ex.map(lambda n: run_board(n, outdir, a.time), names):
@@ -274,7 +302,7 @@ def main() -> int:
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),
-        "time_limit_s": a.time, "threads": a.threads,
+        "time_limit_s": a.time, "threads": a.threads, "work": a.work, "refill": a.refill, "route_args": " ".join(EXTRA),
         "fr_rc12_clean_pass": round(fr_clean / len(fr_rows), 4) if fr_rows else None,
         "fr_241_clean_pass": round(sum(r["fr_241"]["clean"] for r in fr241) / len(fr241), 4) if fr241 else None,
         "both_clean": both, "only_tracemaker_clean": only_tm, "only_freerouting_clean": only_fr,
@@ -286,7 +314,8 @@ def main() -> int:
     summary["feasible_boards"] = len(feasible)
     summary["clean_pass_feasible"] = round(sum(r["clean"] for r in feasible) / len(feasible), 4) if feasible else None
     (outdir / "summary.json").write_text(json.dumps(summary, indent=1))
-    lines = [f"# Benchmark {run_id}", "", f"PCBench tier {a.tier}, {n} boards, {a.time:.0f} s limit per board.", "",
+    notes = [f"{budget} per board"] + (["zones refilled before judging"] if a.refill else []) + ([f"route options `{' '.join(EXTRA)}`"] if EXTRA else [])
+    lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
              "| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |", "|---|--:|--:|--:|",
              f"| Clean pass (KiCad DRC) | {summary['clean_pass']:.1%} | {summary['fr_rc12_clean_pass'] or 0:.1%} | {summary['fr_241_clean_pass'] or 0:.1%} |",
              f"| Mean completion | {summary['completion']:.1%} | | |", "",
