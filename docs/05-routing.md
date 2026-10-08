@@ -772,7 +772,8 @@ check (8 variants) took ~140 s, including ~1–2 s for Metal fields. CPU profili
 
 **Results.** The 20M check fell from ~140 s to ~10 s; the 5M check from ~32 s to ~4 s. Outputs at both budgets
 are byte-identical. Fewer filled via-cache entries leave more cells unknown to the field, increasing total
-expansions by 0.01% without changing output.
+expansions by 0.01% without changing output there (see "Checked at the merge" below: identity is measured, not
+guaranteed).
 
 **Second round** (2026-10-06). On the same 20M check, `/usr/bin/time -l` instructions retired repeated within
 0.2%; wall and user time varied ±20% with shared machine load. Runs used `--threads 2`; work-budget output is
@@ -797,6 +798,33 @@ one variant, one thread, CPU fields, fixed work. Instructions retired from `/usr
 The gain is largest where net classes use name patterns, which the old per-cell lookup matched every time.
 The two largest demos (vme-wren, jetson-agx-thor) route nothing within 1M work and take 128 s and 60 s doing so
 (jetson 2.1× faster after, vme-wren unchanged); where that time goes is not yet profiled.
+
+**Checked at the merge** (2026-10-07, Linux, GCC 15, x86-64; the merged tree against the router before it, both
+with CPU fields, `--seed 7`, no knowledge base):
+
+| Set | Budget | CPU s before → after | Speed-up | Output |
+|---|--:|--:|--:|---|
+| 8 PCBench boards (1Bitsy, Aleste-520EX, chirp, CoreOne, MonApollo, decelerator4030, logicbone, sbc) | 3M, 8 variants, 1 thread | 49.9–78.9 → 38.4–63.5 | 1.13–1.49× | 8/8 identical |
+| KiCad demos complex_hierarchy, pic_programmer (project rules, net classes with name patterns) | 3M, 8 variants, 1 thread | 1,079 → 475; 1,364 → 613 | 2.27×, 2.22× | 2/2 identical |
+| KiCad demos RoyalBlue54L-Feather, CM5_MINIMA_3 | 1M, 2 variants | 173 → 74; 773 → 338 | 2.33×, 2.29× | 2/2 identical |
+| 36 further multilayer PCBench boards | 600k, 3 variants | not timed | | 36/36 identical |
+
+The machine was shared, so the times are indicative. Output is also the same at 1 and 3 threads (2 boards).
+
+*Identical output is measured, not guaranteed.* The via-check skip leaves fewer via codes in the per-class cache,
+the cost-to-go field then knows fewer blocked via cells, and the searches expand a different number of states:
+on 1Bitsy five of the seven variant lines compared differ (for example 941,956 → 945,052 expansions) while the
+routed board is byte-identical. The work budget counts expansions, so where a budget ends mid-search the two
+routers can stop at different points. All 48 boards above gave identical files; a board that does not is
+possible, and the skip has no switch to turn it off for a comparison.
+
+*Reference paths (CLAUDE.md rule 3).* Tested against a reference: the one-pass `fixed_via_code` against
+`fixed_via_code_reference` on a grid of points (with custom rules, and with soft zones and vias off pads, §26),
+and the degenerate-segment path of `seg_seg_closer` against the four-way test on 60,000 random cases. Checked by
+reading only, with no test of their own: `closer_than_disk` against `closer_than` with a point shape,
+`routed_via_state` against the per-layer `routed_state` loop it replaced, the history cost cached with the cell
+state, the per-net class table, the last-lookup memo in `cache_for`, and the via-check skip itself. The
+byte-identical boards exercise all of these together.
 
 **Reverted.** A 4-ary open heap and pre-rule bounding-box filters gave no measurable gain. Combining routed
 queries was slower; per-layer/via-only routed indexes gave −2% within noise and added five indexes; a combined
