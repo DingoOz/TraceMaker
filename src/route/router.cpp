@@ -1753,8 +1753,9 @@ struct Router::Impl {
 
   // A leg from pad centre `p` to the coupled section's end `X` on `layer` whose last segment arrives along `a` (never
   // doubling back over the pair): straight, the two octilinear dog-legs, or the same to a point behind X followed by
-  // a straight entry. Shortest legal candidate first, at the pair width, then at the neck-down width.
-  std::optional<PairLeg> pair_leg(Point p, Point X, Dir2 a, Dir2 n, int layer, NetId net, Coord w) {
+  // a straight entry. Shortest legal candidate first, at the pair width, then at the neck-down width. `checks` counts
+  // the exact segment checks made, legal or not: they are the pair search's work units for candidates (rule 5).
+  std::optional<PairLeg> pair_leg(Point p, Point X, Dir2 a, Dir2 n, int layer, NetId net, Coord w, long& checks) {
     std::vector<std::vector<Point>> cand;
     auto with_dogs = [&](Point f, Point t, std::optional<Point> tail) {
       auto push = [&](std::vector<Point> v) {
@@ -1795,7 +1796,10 @@ struct Router::Impl {
       for (const auto& [len, i] : order) {
         const auto& v = cand[i];
         bool good = true;
-        for (std::size_t k = 0; k + 1 < v.size() && good; ++k) good = obs->segment_state(v[k], v[k + 1], layer, ww, net, false, nullptr) == 0;
+        for (std::size_t k = 0; k + 1 < v.size() && good; ++k) {
+          ++checks;
+          good = obs->segment_state(v[k], v[k + 1], layer, ww, net, false, nullptr) == 0;
+        }
         if (good) return PairLeg{v, ww, len};
       }
     }
@@ -2040,6 +2044,16 @@ struct Router::Impl {
           }
         }
     }
+    // Work units of this attempt (rule 5): closed states and exact leg checks of start and goal candidates. Rejected
+    // candidates are not free: with every leg blocked by fill polygons an attempt once ran minutes at zero counted work.
+    long expanded = 0, leg_checks = 0, charged = 0;
+    // Charges the work done since the last call to the router's total, so the work budget sees it during the attempt.
+    auto charge = [&] {
+      const long now = expanded + leg_checks;
+      res.expansions += now - charged;
+      res.pair_work += now - charged;
+      charged = now;
+    };
     // Legs of a candidate: start legs arrive along the pair's direction; end legs leave along it (built pad -> X
     // and arriving against the direction).
     auto make_legs = [&](Cand& cd, bool at_start) {
@@ -2053,8 +2067,8 @@ struct Router::Impl {
         const double ahead = static_cast<double>(pad_pt.x - X.x) * u.x + static_cast<double>(pad_pt.y - X.y) * u.y;
         if ((at_start ? -ahead : ahead) < -static_cast<double>(w) / 2) return false;
       }
-      const auto la = pair_leg((at_start ? pa1 : pa2).pos, XA, a, n, cd.l, A.net, w);
-      const auto lb = la ? pair_leg((at_start ? pb1 : pb2).pos, XB, a, n, cd.l, B.net, w) : std::nullopt;
+      const auto la = pair_leg((at_start ? pa1 : pa2).pos, XA, a, n, cd.l, A.net, w, leg_checks);
+      const auto lb = la ? pair_leg((at_start ? pb1 : pb2).pos, XB, a, n, cd.l, B.net, w, leg_checks) : std::nullopt;
       if (dbg_legs > 0 && !at_start && (!la || !lb || !legs_clear(*la, *lb, pr.required_gap))) {
         --dbg_legs;
         const Point pA = (at_start ? pa1 : pa2).pos, pB = (at_start ? pb1 : pb2).pos;
@@ -2171,8 +2185,11 @@ struct Router::Impl {
     };
 
     // Search budget: in proportion to the pair's length in lattice steps (short pairs that cannot couple fail fast).
+    // Leg checks are not capped here (a pair may need many rejected candidates before a legal one; capping them lost
+    // coupled pairs at a fixed budget): they are charged to the router's work, so its budget and time limit end them.
     const long cap = std::clamp(static_cast<long>(600.0 * se / static_cast<double>(pitch)), 40'000L, 250'000L);
-    long expanded = 0, dbg_start_ok = 0, dbg_goal_ok = 0;
+    long dbg_start_ok = 0, dbg_goal_ok = 0, iterations = 0;
+    bool stopped = false;  // the router's work budget or time limit ran out during the attempt
     double dbg_closest = 1e300;
     int finals = 0;
     pair_why = "no coupled path";
@@ -2184,6 +2201,15 @@ struct Router::Impl {
     std::priority_queue<QE, std::vector<QE>, std::greater<>> gq;
     int since_goal = 0;
     while (expanded < cap && !done) {
+      // Every 64 steps (one candidate or state each) the attempt's work joins the total and the budget is checked:
+      // deterministic under a work budget, and the time limit stops a long attempt instead of waiting for it.
+      if ((++iterations & 63) == 0) {
+        charge();
+        if (out_of_budget()) {
+          stopped = true;
+          break;
+        }
+      }
       if (!gq.empty() && (pq.empty() || gq.top().f <= pq.top().f || since_goal >= 16)) {
         since_goal = 0;
         const QE q = gq.top();
@@ -2351,18 +2377,19 @@ struct Router::Impl {
         }
       }
     }
-    res.expansions += expanded;
+    charge();
     if (std::getenv("TM_DEBUG_PAIRS")) {
       const std::string who = pad_label(A.pad_a) + "-" + pad_label(A.pad_b) + " / " + pad_label(B.pad_a) + "-" + pad_label(B.pad_b);
       if (expanded == 0)
-        std::fprintf(stderr, "  pair search %s: no legal start (%zu tried)\n", who.c_str(), starts.size());
+        std::fprintf(stderr, "  pair search %s: no legal start (%zu tried, %ld leg checks)%s\n", who.c_str(), starts.size(), leg_checks, stopped ? ", out of budget" : "");
       else
-        std::fprintf(stderr, "  pair search %s layers %x/%x: gap %.3f w %.3f K %d MV %d, %zu starts (%ld legal), %ld expanded, %zu goals (%ld legal), closest %.3f mm, R %.3f/%.3f\n",
+        std::fprintf(stderr, "  pair search %s layers %x/%x: gap %.3f w %.3f K %d MV %d, %zu starts (%ld legal), %ld expanded, %ld leg checks, %zu goals (%ld legal), closest %.3f mm, R %.3f/%.3f%s\n",
                      who.c_str(), static_cast<unsigned>(s_layers), static_cast<unsigned>(e_layers), nm_to_mm(pr.gap), nm_to_mm(w), K, MV, starts.size(), dbg_start_ok, expanded,
-                     goals.size(), dbg_goal_ok, dbg_closest / 1e6, Rs / 1e6, Re / 1e6);
+                     leg_checks, goals.size(), dbg_goal_ok, dbg_closest / 1e6, Rs / 1e6, Re / 1e6, stopped ? ", out of budget" : "");
     }
     if (!done) {
-      if (expanded >= cap) pair_why = "pair search budget";
+      if (stopped) pair_why = "out of budget";
+      else if (expanded >= cap) pair_why = "pair search budget";
       return false;
     }
     for (std::size_t k = 0; k < straddled.size(); ++k)
