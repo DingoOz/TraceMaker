@@ -691,7 +691,7 @@ module, a 32 kHz crystal; 167 connections) the router stopped at 94/167 with no 
 | Part | What |
 |---|---|
 | Keep-outs (D65) | A rule area blocks tracks if it forbids tracks and vias if it forbids vias. Before, only areas forbidding tracks were read, and they blocked vias too |
-| `--soft-zones` (D66) | `Obstacles` skips zone fills in `copper_state` and `fixed_code`; KiCad refills around the new copper. `plan` keeps zone-only clusters of a net that has pads, when their fill is at least 1 mm² (a sliver of a stale fill is no target), and never plans a connection between two zone-only clusters |
+| `--soft-zones` (D66) | `Obstacles` skips zone fills in `copper_state` and `fixed_code`; KiCad refills around the new copper. `plan` keeps zone-only clusters of a net that has pads, when their fill is at least 1 mm² (a sliver of a stale fill is no target) and a pad of the net can reach it, and never plans a connection between two zone-only clusters. Teardrops are never targets, and a via joins every same-net plane it passes through (§32) |
 | `--keep-vias-off-pads`, `--vias-off-pads-below MM` (2; D67) | A via probe treats single-layer pads narrower than the limit, of any net, as obstacles at net-class clearance, also in the cached `fixed_code` (net-independent, as the cache needs). Exposed pads still take vias |
 | `--via-in-pad` (D68) | `pad_cells` offers the pad centre on every other layer, with the board's minimum via (`min_via_diameter`, `min_through_hole_diameter`; no via when they could not be read, with a warning), for inner balls (a round pad with a pad of its footprint one ball pitch away in each direction of the footprint's frame, found once per board) and for pads with no legal own-layer cell. The penalty is four vias at the current via price, charged on either end (`src.cost`, and on entry to a target cell). One via per pad: a pad whose via another connection placed is not offered again. `commit` adds the via, checked with the pad exemption |
 | `--first-nets A,B` (D69) | Connections of the named nets go first in `plan`'s order (after learned priorities) and again after every restart; `commit` and the via clean-up (`lns_vias`) do not rip them for other nets |
@@ -878,3 +878,46 @@ boards at 5 M work units; the quick tier is unchanged).
 - Planes that no pad touches are still not connection targets; only a net whose fill already holds one of
   its pads gets vias into it.
 - The Python bindings and the KiCad plugin do not expose the two options yet.
+
+## 32. Plane targets: teardrops, unreachable planes, and planes a via passes through (2026-10-08)
+
+**Before.** Three ways the plan of §26 asked for connections that could not or need not be made:
+
+1. A teardrop (a zone with `(attr (teardrop ...))`) was a zone like any other. When routing is deleted, the
+   teardrops stay; an orphaned one of a signal net became a plane target with `--soft-zones` (RoyalBlue54L: zone
+   targets on SWDCLK, RESET and SDA), and in every mode a teardrop attached to a pad was a target for the net's
+   other pads.
+2. A plane that no pad of the net could reach (no vias for the net, from `disallow via` or without vias at all)
+   still replaced the pad-to-pad connection: each pad got a connection into the plane, and none could be routed.
+3. A through via from a pad into one plane passes through the net's other planes, but the plan's connection to
+   the second plane was routed anyway, with another via.
+
+**What was built** (D79).
+
+- The reader keeps the teardrop attribute (`model::Zone::teardrop`); `plan` never makes a teardrop a target.
+  Teardrops stay copper of their net for connectivity and, with `--soft-zones`, are as soft as other fills.
+- `reaches(pad, zone)`: a connection from the pad can end in the fill by a via of a type the net may place (a via
+  may end in the net's fill on any layer, §29), or by a track on a layer the pad and fill share and the net may use.
+  A zone-only cluster is a target only if some pad of the net reaches it, and a pad is offered a fill only if it
+  reaches it.
+- With `--soft-zones`, every routed track or via records the same-net plane fills it touches (`drc::zones_touching`,
+  1 nm, as the initial connectivity), and `joined` counts those as joined, so a later connection to a plane
+  already reached is satisfied. The record follows the item; a rip removes it with the connection.
+
+**Results.** Eight boards, routing stripped, 3 M work units, one variant, two threads; KiCad 10.0.3 after
+`--refill-zones`:
+
+| Board | Routed (`--soft-zones`) | Unconnected after refill | Defaults |
+|---|---|---|---|
+| complex_hierarchy (165 teardrops) | 65 → 84 / 84 | 34 → 3 | 77 → 84 / 84, unconnected 21 → 3 |
+| RoyalBlue54L-Feather (263 teardrops) | 67 → 76 / 171 | 107 → 100 | byte-identical |
+| multichannel_mixer, StickHub, sonde xilinx, pic_programmer, interf_u, plane_smd | equal | equal | byte-identical |
+
+No board gained a DRC error. The quick tier is byte-identical (no teardrops; nothing changes without them unless
+vias are forbidden). Tests (`[planes]`): a teardrop is read as one and is no target; an unreachable plane (no vias,
+or a rule forbidding the net's vias) leaves one routed pad-to-pad connection where there were two failed plane
+connections; with planes of one net on In1 and In2, two vias instead of three.
+
+**Tried and dropped.** Keeping teardrops hard under `--soft-zones` (as track copper), on top of the target fix and
+before the contact credit: RoyalBlue 108 → 100 unconnected at 3 M but 89 both at 10 M, complex_hierarchy equal; no
+consistent effect, so they stay as soft as other fills.
