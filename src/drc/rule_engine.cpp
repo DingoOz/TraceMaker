@@ -489,7 +489,8 @@ std::optional<model::Constraint> RuleEngine::net_constraint(model::NetId net, co
 
 namespace {
 // KiCad's disallow item keywords (DRC_RULES_PARSER): "via" covers every via type.
-bool disallow_word_matches(const std::string& w, const CopperItem& it, const model::Board& b) {
+// `via_type`: the type of a via that is not on the board yet (a router probe).
+bool disallow_word_matches(const std::string& w, const CopperItem& it, const model::Board& b, const model::ViaType* via_type) {
   switch (it.kind) {
     case ItemKind::Track:
     case ItemKind::Arc: return w == "track";
@@ -498,7 +499,7 @@ bool disallow_word_matches(const std::string& w, const CopperItem& it, const mod
     case ItemKind::Graphic: return w == "graphic";
     case ItemKind::Via: {
       if (w == "via") return true;
-      const auto type = it.index >= 0 ? b.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
+      const auto type = via_type ? *via_type : it.index >= 0 ? b.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
       return (w == "through_via" && type == model::ViaType::Through) || (w == "micro_via" && type == model::ViaType::Micro) ||
              ((w == "buried_via" || w == "blind_via") && type == model::ViaType::Blind);
     }
@@ -507,12 +508,12 @@ bool disallow_word_matches(const std::string& w, const CopperItem& it, const mod
 }
 }  // namespace
 
-bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer) const {
+bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type) const {
   if (!c.valid || !layer_matches(c.rule->layer, layer)) return false;
   bool typed = false;
   for (const auto& k : c.rule->constraints)
     if (k.type == "disallow")
-      for (const auto& w : k.items) typed = typed || disallow_word_matches(w, it, b_);
+      for (const auto& w : k.items) typed = typed || disallow_word_matches(w, it, b_, via_type);
   if (!typed) return false;
   if (!c.cond) return true;
   EvalCtx ctx{this, &it, nullptr, layer};
@@ -536,14 +537,16 @@ bool RuleEngine::track_allowed(model::NetId net, int layer) const {
   return true;
 }
 
-bool RuleEngine::via_allowed(model::NetId net) const {
-  CopperItem probe;  // a through via: on every copper layer
+bool RuleEngine::via_allowed(model::NetId net, model::ViaType type) const {
+  // The probe is on every copper layer: where a blind, buried or micro via will sit is not known here, so a rule
+  // limited to some layers counts for all of them (conservative).
+  CopperItem probe;
   probe.kind = ItemKind::Via;
   probe.net = net;
   for (int l = 0; l < b_.copper_count(); ++l) probe.layers |= model::layer_bit(l);
   for (const auto& c : rules_)
     for (int l = 0; l < b_.copper_count(); ++l)
-      if (!c.positional && disallow_hit(c, probe, l)) return false;
+      if (!c.positional && disallow_hit(c, probe, l, &type)) return false;
   return true;
 }
 

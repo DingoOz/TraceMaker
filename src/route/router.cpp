@@ -184,7 +184,7 @@ struct Router::Impl {
   // Per-net track layers and via permission from custom disallow rules; a net also gets no vias when a
   // physical_hole_clearance rule holds between its vias and its own tracks (doc 05 §27).
   std::vector<model::LayerMask> net_layers;
-  std::vector<std::uint8_t> net_vias;
+  std::vector<std::uint8_t> net_vias, net_blind, net_micro;  // through vias; blind/buried and micro vias (when the board has them)
   bool layer_ok(NetId net, int layer) const {
     const auto i = static_cast<std::size_t>(net);
     return i >= net_layers.size() || (net_layers[i] & model::layer_bit(layer));
@@ -192,6 +192,16 @@ struct Router::Impl {
   bool vias_ok(NetId net) const {
     const auto i = static_cast<std::size_t>(net);
     return i >= net_vias.size() || net_vias[i];
+  }
+  // Blind/buried and micro vias for this net: the board and options allow them, the net may have vias at all, and
+  // no rule disallows that via type for it (`disallow blind_via`, `buried_via`, `micro_via`).
+  bool blind_for(NetId net) const {
+    const auto i = static_cast<std::size_t>(net);
+    return blind_ok && (i >= net_blind.size() || net_blind[i]);
+  }
+  bool micro_for(NetId net) const {
+    const auto i = static_cast<std::size_t>(net);
+    return micro_ok && (i >= net_micro.size() || net_micro[i]);
   }
 
   // Lattice <-> board coordinates.
@@ -212,12 +222,16 @@ struct Router::Impl {
     micro_ok = opt.micro_vias && rules.minimums.allow_microvias && nl > 2;
     net_layers.assign(b.nets.size(), 0);
     net_vias.assign(b.nets.size(), 1);
+    net_blind.assign(b.nets.size(), 1);
+    net_micro.assign(b.nets.size(), 1);
     for (const auto& n : b.nets) {
       const auto i = static_cast<std::size_t>(n.id);
       if (i >= net_layers.size()) continue;
       for (int l = 0; l < nl; ++l)
         if (obs->rules().track_allowed(n.id, l)) net_layers[i] |= model::layer_bit(l);
       net_vias[i] = obs->rules().via_allowed(n.id) && !obs->rules().via_hole_rule_hits_own_tracks(n.id) ? 1 : 0;
+      net_blind[i] = net_vias[i] && obs->rules().via_allowed(n.id, model::ViaType::Blind) ? 1 : 0;
+      net_micro[i] = net_vias[i] && obs->rules().via_allowed(n.id, model::ViaType::Micro) ? 1 : 0;
     }
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {
@@ -952,7 +966,7 @@ struct Router::Impl {
             if (l2 != l && rstamp[static_cast<std::size_t>(l2) * cells + ci] != gen && layer_ok(net, l2)) return true;
           return false;
         };
-        if (nl > 1 && via_useful() && (((blind_ok || micro_ok) && vias_ok(net)) || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
+        if (nl > 1 && via_useful() && (blind_for(net) || micro_for(net) || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0)))
           for (int l2 = 0; l2 < nl; ++l2) {
             const std::size_t ni = static_cast<std::size_t>(l2) * cells + ci;
             if (l2 == l || rstamp[ni] == gen || !layer_ok(net, l2)) continue;
@@ -1089,8 +1103,8 @@ struct Router::Impl {
         }
         return false;
       };
-      const std::int64_t vextra = (opt.allow_vias && nl > 1 && (blind_ok || micro_ok || via_useful())) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
-      if (vextra < 0 && (blind_ok || micro_ok) && vias_ok(net)) {
+      const std::int64_t vextra = (opt.allow_vias && nl > 1 && (blind_for(net) || micro_for(net) || via_useful())) ? via_cost_at(w, cx, cy, net, vd, vdrill) : -1;
+      if (vextra < 0 && (blind_for(net) || micro_for(net))) {
         // Through via blocked: a micro via to the next layer from an outer one, or a blind or buried via spanning
         // only the layers between (dearer: costs more to make).
         const Point vp = at(w.x0 + cx, w.y0 + cy);
@@ -1098,8 +1112,8 @@ struct Router::Impl {
         for (int l2 = 0; l2 < nl; ++l2) {
           if (l2 == l || !layer_ok(net, l2)) continue;
           int vs = 2;
-          if (micro_ok && micro_span(l, l2)) vs = obs->via_state_span(vp, micro_diameter(net), micro_drill(net), net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
-          if (vs == 2 && blind_ok) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
+          if (micro_for(net) && micro_span(l, l2)) vs = obs->via_state_span(vp, micro_diameter(net), micro_drill(net), net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
+          if (vs == 2 && blind_for(net)) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
           const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0) +
@@ -1261,13 +1275,13 @@ struct Router::Impl {
     std::vector<std::uint8_t> via_micro(vias.size(), 0);
     for (std::size_t k = 0; k < vias.size(); ++k) {
       if (obs->via_state(vias[k], vd, vdrill, net, 0, soft, &victims) != 2) continue;
-      if (micro_ok && micro_span(via_span[k].first, via_span[k].second) &&
+      if (micro_for(net) && micro_span(via_span[k].first, via_span[k].second) &&
           obs->via_state_span(vias[k], micro_diameter(net), micro_drill(net), net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
         via_layers[k] = via_span[k];
         via_micro[k] = 1;
         continue;
       }
-      if (blind_ok && obs->via_state_span(vias[k], vd, vdrill, net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
+      if (blind_for(net) && obs->via_state_span(vias[k], vd, vdrill, net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
         via_layers[k] = via_span[k];
         continue;
       }

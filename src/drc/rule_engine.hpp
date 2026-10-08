@@ -55,7 +55,9 @@ class RuleEngine {
   std::optional<std::string> disallowed(const CopperItem& it, int layer) const;
   // Router checks for a new track or through via. Positional and footprint conditions are warned and left to DRC.
   bool track_allowed(model::NetId net, int layer) const;
-  bool via_allowed(model::NetId net) const;
+  // `type`: Through by default; Blind stands for blind and buried vias alike (`blind_via` or `buried_via` in a
+  // rule forbids both: the board model has one type for the two), Micro for micro vias.
+  bool via_allowed(model::NetId net, model::ViaType type = model::ViaType::Through) const;
   // Hole-to-copper clearance on `layer`, any net; -1 when no rule matches (KiCad: hole_clearance).
   Coord physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
   bool any_physical_hole_clearance() const { return max_physical_hole_ > 0; }
@@ -75,7 +77,7 @@ class RuleEngine {
     bool positional = false;  // position, footprint or pad condition: cannot be pre-evaluated for routing
   };
   // Item type, layer and condition all match a disallow constraint.
-  bool disallow_hit(const Compiled& c, const CopperItem& it, int layer) const;
+  bool disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type = nullptr) const;
   // Value of the last matching custom constraint of `type` (min field), trying (a,b) and (b,a).
   std::optional<Coord> custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer) const;
   bool layer_matches(const std::string& sel, int layer) const;

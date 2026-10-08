@@ -263,6 +263,66 @@ TEST_CASE("disallow via also forbids blind and buried vias", "[rules][route]") {
   CHECK(r.routed == 1);  // SIG needs a via to cross the wall; GND does not care
 }
 
+TEST_CASE("disallow blind_via or buried_via or micro_via alone stops the router placing that via type", "[rules][route]") {
+  // Vias are forbidden on B.Cu everywhere, so no through via fits; the wall is crossed on In1 through a via from
+  // F.Cu to In1: a micro via or a blind via, whichever the options allow.
+  const std::string no_bottom_vias =
+      "  (zone (net 0) (net_name \"\") (layers \"B.Cu\") (name \"nobv\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
+      "    (min_thickness 0.25) (keepout (tracks allowed) (vias not_allowed) (pads allowed) (copperpour allowed) (footprints allowed))\n"
+      "    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 0 0) (xy 20 0) (xy 20 10) (xy 0 10))))\n";
+  const std::string board = board_text(std::string(kOuterWall) + no_bottom_vias);
+  auto run = [&](const std::string& name, const std::string& word, bool blind, bool micro) {
+    const Files f(name, board, word.empty() ? std::string() : "(version 1)\n(rule \"SIG\" (condition \"A.NetName == 'SIG'\") (constraint disallow " + word + "))\n");
+    const auto lb = io::read_board_file(f.pcb.string());
+    auto rules = io::read_design_rules(f.pcb.string());
+    rules.minimums.allow_blind_buried_vias = true;
+    rules.minimums.allow_microvias = true;
+    route::RouterOptions o;
+    o.work_budget = 2'000'000;
+    o.gpu_device = -1;
+    o.time_limit_s = 600;
+    o.blind_vias = blind;
+    o.micro_vias = micro;
+    return route::Router(lb.board, rules, o).run();
+  };
+  auto sig_vias = [](const route::RouteResult& r, model::ViaType type) {
+    int n = 0;
+    for (const auto& v : r.vias) n += v.net == 1 && v.type == type;
+    return n;
+  };
+  {
+    const auto r = run("bv_free", "", true, false);
+    REQUIRE(r.routed == 2);
+    CHECK(sig_vias(r, model::ViaType::Blind) > 0);
+  }
+  for (const char* word : {"blind_via", "buried_via"}) {  // one via type in the board model: either word forbids both
+    const auto r = run(std::string("bv_") + word, word, true, false);
+    CHECK(r.routed == 1);  // GND still crosses
+    for (const auto& v : r.vias) CHECK(v.net != 1);
+  }
+  {
+    const auto r = run("mv_free", "", false, true);
+    REQUIRE(r.routed == 2);
+    CHECK(sig_vias(r, model::ViaType::Micro) > 0);
+  }
+  {
+    const auto r = run("mv_rule", "micro_via", false, true);
+    CHECK(r.routed == 1);
+    for (const auto& v : r.vias) CHECK(v.net != 1);
+  }
+  {
+    // With both types available, SIG falls back to the type the rule leaves it.
+    const auto r = run("mv_rule_blind", "micro_via", true, true);
+    CHECK(r.routed == 2);
+    CHECK(sig_vias(r, model::ViaType::Micro) == 0);
+    CHECK(sig_vias(r, model::ViaType::Blind) > 0);
+    const auto q = run("bv_rule_micro", "blind_via", true, true);
+    CHECK(q.routed == 2);
+    CHECK(sig_vias(q, model::ViaType::Blind) == 0);
+    CHECK(sig_vias(q, model::ViaType::Micro) > 0);
+  }
+}
+
 TEST_CASE("fixed via codes: the one-pass check equals the per-layer reference", "[rules][route]") {
   // Keepouts (outer wall, via-only), fixed tracks of both nets on several layers, and a physical hole rule.
   const std::string extra = std::string(kOuterWall) +
