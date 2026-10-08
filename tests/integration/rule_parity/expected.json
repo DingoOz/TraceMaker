@@ -102,6 +102,36 @@
         ]
       ]
     },
+    "court_flipped_intersectsBackCourtyard": {
+      "items_not_allowed": [
+        [
+          "front-court"
+        ]
+      ]
+    },
+    "court_flipped_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_flipped_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
     "court_intersectsBackCourtyard": {
       "items_not_allowed": [
         [
@@ -129,6 +159,19 @@
       "items_not_allowed": [
         [
           "front-court"
+        ]
+      ]
+    },
+    "court_lib_id": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
         ]
       ]
     },
@@ -404,6 +447,22 @@
     },
     "membership_Rwildcard": {
       "items_not_allowed": [
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "membership_lib_id": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
         [
           "R1:pad1"
         ],

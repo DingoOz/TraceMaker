@@ -87,9 +87,15 @@ def generate(root: Path) -> dict:
     court_items=[footprint('R1',20,10,courtyard=True),track('front-court',18,11,21,11),track('back-court',23,11,26,11,layer='B.Cu'),track('front-in-back-court',23,9,26,9),track('outside-court',35,10,38,10)]
     for func in ['intersectsCourtyard','intersectsFrontCourtyard','intersectsBackCourtyard']:
         case('court_'+func,court_items,rule(f"A.{func}('R1')"))
+    # Front and back are the footprint's own sides: for a flipped footprint, front is B.CrtYd (x 23..27).
+    flipped_items=[footprint('R1',20,10,back=True,courtyard=True),track('front-court',18,11,21,11),track('back-court',23,11,26,11,layer='B.Cu'),track('front-in-back-court',23,9,26,9),track('outside-court',35,10,38,10)]
+    for func in ['intersectsCourtyard','intersectsFrontCourtyard','intersectsBackCourtyard']:
+        case('court_flipped_'+func,flipped_items,rule(f"A.{func}('R1')"),note='Flipped R1: F.CrtYd at x 18..22, B.CrtYd at x 23..27.')
+    case('court_lib_id',court_items,rule("A.intersectsCourtyard('Test:*')"),note='A selector with a colon matches the footprint library id.')
     pads=[footprint('R1',10,5),footprint('R2',10,10,size=(2,0.5)),footprint('C1',10,15,'thru_hole'),footprint('H1',10,20,'np_thru_hole'),track('free-track',20,5,23,5),via('free-via',20,10)]
     for selector in ['R*','R1']:
         case('membership_'+selector.replace('*','wildcard'),pads,rule(f"A.memberOfFootprint('{selector}')",'pad track'))
+    case('membership_lib_id',pads,rule("A.memberOfFootprint('Test:R')",'pad track'))
     for prop in ['A.Reference','A.Parent.Reference','Parent.Reference','B.Reference']:
         case('reference_'+prop.replace('.','_'),pads,rule(f"{prop} == 'R1'",'pad track'))
     case('pad_type',pads,rule("A.Pad_Type == 'SMD'",'pad'))

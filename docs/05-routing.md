@@ -902,7 +902,7 @@ were not distinguished.
 | Later matching disallow rules win for the same item type; ignore clears that violation, not another type's ban | `severity_ignore`, `later_ignore`, `earlier_ignore`, `later_different_disallow`, `later_different_disallow_ignore` |
 | Own item layer, also in paired clearance: tracks use their layer, pads the footprint side even for PTH/NPTH; vias have no layer property (`==`/`!=` false); multilayer zones expose an unset ID (`==` false, `!=` true), not a fill's layer | `item_layer_front`, `item_layer_back`, `own_layer_pads_front`, `own_layer_pads_not_front`, `zone_pair_*` |
 | `insideArea` aliases intersection; common copper layers required; enclosure checks all rounded copper against actual contours, including holes and concavity | `area_insideArea`, `area_enclosedByArea`, `area_concave_*`, `area_hole_*` |
-| Physical front/back/both courtyard polygons, independent of the item's copper side; wildcard references; closed lines/arcs/rectangles/circles/polygons, no interior for an open outline | `court_intersectsBackCourtyard`, `court_line_*`, `court_arc_*`, `court_unclosed_*`; direct geometry tests cover circles, polygons and wildcards |
+| Front and back courtyards are the footprint's own sides (`GetCourtyard(fp->IsFlipped() ? B_Cu : F_Cu)`): a flipped footprint's front courtyard is its B.CrtYd outline; the item's copper side does not matter. Footprint selectors are reference wildcards, or library-id wildcards when they contain `:` (courtyard functions and `memberOfFootprint`); closed lines/arcs/rectangles/circles/polygons, no interior for an open outline | `court_intersectsBackCourtyard`, `court_flipped_*`, `court_lib_id`, `membership_lib_id`, `court_line_*`, `court_arc_*`, `court_unclosed_*`; direct geometry tests cover circles, polygons and wildcards |
 | Absolute transformed pad/via anchors; tracks/arcs have undefined positions (`==`/`!=` both false, relational zero-coercion) | `position_x`, `position_anchor_shifted_pad`, `position_anchor_rotated_pad`, `position_anchor_x_ne_zero`, `position_anchor_x_lt_one` |
 | Blind via spans touch exactly one outer layer; buried spans none; micro vias remain separate | `subtype_blind_via`, `subtype_buried_via`, `subtype_micro_via` |
 
@@ -915,8 +915,10 @@ dependency. The new item-dependent conditions remain positional: the router leav
 rule name. Static gates only acquire dropped-rule and typed ignore semantics; blind/buried probes without
 a span retain the conservative router gate.
 
-**Results.** Original corpus: 35/61 → 61/61 MATCH (26 → 0 mismatches). The expanded corpus matches all 161
-cases, including 70 scalar/geometry probes and 30 paired-clearance probes. Comparison uses violation
+**Results.** Original corpus: 35/61 → 61/61 MATCH (26 → 0 mismatches). The expanded corpus matches all 166
+cases, including 70 scalar/geometry probes and 30 paired-clearance probes. Five were added after a routed
+board (kitspace_threeboard, ICs on the bottom) showed that KiCad's front and back courtyards are the
+footprint's own sides: flipped-footprint courtyards and library-id selectors. Comparison uses violation
 item/pair multisets, retaining repeated reports against different copper-layer fills rather than just counts.
 `rule_parity` passes in 1.62 s without KiCad; a full KiCad 10.0.3 rejudge reproduces the frozen oracle.
 

@@ -332,7 +332,10 @@ class Condition {
         v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
       }
     } else if (n.name == "memberOfFootprint" && !n.args.empty()) {
-      v.b = it->footprint >= 0 && model::wildcard_match(n.args[0], b.footprints[static_cast<std::size_t>(it->footprint)].reference);
+      if (it->footprint >= 0) {
+        const auto& fp = b.footprints[static_cast<std::size_t>(it->footprint)];
+        v.b = footprint_selected(n.args[0], fp.reference, fp.lib_id);
+      }
     } else {
       ctx.unknown = true;
       v.k = Value::K::Undef;

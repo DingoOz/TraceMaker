@@ -235,6 +235,8 @@ CourtyardCache build_courtyards(const model::Board& board) {
   for (const auto& fp : board.footprints) {
     CourtyardEntry entry;
     entry.reference = fp.reference;
+    entry.lib_id = fp.lib_id;
+    entry.back = fp.back;
     entry.sides[0] = prepare_courtyard(board, fp, 0);
     entry.sides[1] = prepare_courtyard(board, fp, 1);
     result.entries.push_back(std::move(entry));
@@ -242,15 +244,21 @@ CourtyardCache build_courtyards(const model::Board& board) {
   return result;
 }
 
+bool footprint_selected(const std::string& selector, const std::string& reference, const std::string& lib_id) {
+  if (selector.empty()) return false;
+  return model::wildcard_match(selector, reference) || (selector.find(':') != std::string::npos && model::wildcard_match(selector, lib_id));
+}
+
 bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
-                       const std::string& ref_pattern, const std::string& function) {
-  int first = 0, last = 2;
-  if (function == "intersectsFrontCourtyard") last = 1;
-  else if (function == "intersectsBackCourtyard") first = 1;
-  else if (function != "intersectsCourtyard") return false;
+                       const std::string& selector, const std::string& function) {
+  const bool front = function == "intersectsFrontCourtyard", back = function == "intersectsBackCourtyard";
+  if (!front && !back && function != "intersectsCourtyard") return false;
   for (const auto& entry : courtyards.entries) {
-    if (!model::wildcard_match(ref_pattern, entry.reference)) continue;
-    for (int side = first; side < last; ++side) {
+    if (!footprint_selected(selector, entry.reference, entry.lib_id)) continue;
+    for (int side = 0; side < 2; ++side) {
+      // side 0 is F.CrtYd: the footprint's front unless it is flipped.
+      const bool own_front = (side == 1) == entry.back;
+      if ((front && !own_front) || (back && own_front)) continue;
       const auto& region = entry.sides[static_cast<std::size_t>(side)];
       if (region.rings.empty()) continue;
       for (const auto& shape : item.shapes)

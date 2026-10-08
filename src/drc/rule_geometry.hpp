@@ -17,8 +17,9 @@ struct CourtyardRegion {
   geom::Box box;
 };
 struct CourtyardEntry {
-  std::string reference;
-  std::array<CourtyardRegion, 2> sides;  // physical front, back
+  std::string reference, lib_id;
+  bool back = false;                     // footprint flipped to the bottom side
+  std::array<CourtyardRegion, 2> sides;  // physical F.CrtYd, B.CrtYd
 };
 struct CourtyardCache {
   std::vector<CourtyardEntry> entries;
@@ -27,9 +28,14 @@ struct CourtyardCache {
 // Build once per board; invalid/unclosed contours leave the corresponding side empty.
 CourtyardCache build_courtyards(const model::Board& board);
 
-// Function is intersectsCourtyard/intersectsFrontCourtyard/intersectsBackCourtyard.
-// Selects physical F/B courtyard layers independently of the item's copper side.
-// Prepared geometry and reference matching perform no per-query allocations.
+// KiCad's footprint selector (testFootprintSelector): a reference wildcard, or, when the selector contains ':',
+// a library-id wildcard. Case-sensitive, like wxString::Matches.
+bool footprint_selected(const std::string& selector, const std::string& reference, const std::string& lib_id);
+
+// Function is intersectsCourtyard/intersectsFrontCourtyard/intersectsBackCourtyard. Front and back are the
+// footprint's own sides (KiCad: GetCourtyard(fp->IsFlipped() ? B_Cu : F_Cu)): the front courtyard of a flipped
+// footprint is its B.CrtYd outline. The item's copper side does not matter.
+// Prepared geometry and selector matching perform no per-query allocations.
 bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
-                       const std::string& ref_pattern, const std::string& function);
+                       const std::string& selector, const std::string& function);
 }  // namespace tmk::drc
