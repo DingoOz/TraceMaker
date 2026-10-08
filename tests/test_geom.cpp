@@ -39,6 +39,27 @@ TEST_CASE("exact closer-than agrees with floating-point distance away from the b
   CHECK(checked > 19000);
 }
 
+TEST_CASE("closer-than with a point (disk core) equals the general four-way segment test, exactly", "[geom]") {
+  // The general four-way test is the reference for the degenerate-segment shortcut.
+  auto general = [](Point a, Point b, Point c, Point d, tmk::Coord t) {
+    return (t > 0 && segments_intersect(a, b, c, d)) || point_seg_closer(a, c, d, t) || point_seg_closer(b, c, d, t) ||
+           point_seg_closer(c, a, b, t) || point_seg_closer(d, a, b, t);
+  };
+  const tmk::RngStream rng(7, 2, 0);
+  int hits = 0;
+  for (std::uint64_t i = 0; i < 60000; ++i) {
+    // Small coordinates make on-segment, endpoint and exact-boundary cases common.
+    auto c = [&](std::uint64_t k) { return static_cast<tmk::Coord>(rng.u64(i * 16 + k) % 41) - 20; };
+    const Point a{c(0), c(1)}, b = (i % 5 == 0) ? a : Point{c(2), c(3)}, p{c(4), c(5)};
+    const tmk::Coord t = static_cast<tmk::Coord>(rng.u64(i * 16 + 8) % 30) + 1;
+    REQUIRE(seg_seg_closer(a, b, p, p, t) == general(a, b, p, p, t));
+    REQUIRE(seg_seg_closer(p, p, a, b, t) == general(p, p, a, b, t));
+    hits += seg_seg_closer(a, b, p, p, t);
+  }
+  CHECK(hits > 1000);
+  CHECK(hits < 59000);
+}
+
 TEST_CASE("shape gaps: round pads, tracks and polygons", "[geom]") {
   const Shape pad = Shape::point({0, 0}, 500'000);                       // 1 mm round pad
   const Shape track = Shape::segment({800'000, -1'000'000}, {800'000, 1'000'000}, 100'000);  // 0.2 mm track

@@ -6,6 +6,7 @@
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <optional>
 #include <string>
 
 #include <nlohmann/json_fwd.hpp>
@@ -79,6 +80,9 @@ struct PlaceReport {
 };
 
 Metrics measure(const Problem& p, const Placement& pl, const Placement* reference = nullptr);
+// Minimal repair: re-place only conflicting movable parts at the nearest legal spot (refine's legaliser).
+// Empty if no legal repair is found; `moved` returns the number of parts re-placed.
+std::optional<Placement> repaired(const Problem& p, const Placement& pl, int* moved = nullptr);
 PlaceReport place(const Problem& p, Placement& pl, const PlaceOptions& o);
 nlohmann::json report_json(const Problem& p, const PlaceReport& r);
 

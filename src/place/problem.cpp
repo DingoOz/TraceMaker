@@ -87,17 +87,23 @@ long double loop_area(const std::vector<Point>& l) {
 }
 
 // The outline is the largest loop, accepted only if it contains most pad centres (a lone mounting-hole circle
-// must not become the board). Gaps in sloppy outlines are closed with growing tolerances (2 µm .. 0.5 mm).
+// must not become the board). Ignore pads beyond the Edge.Cuts extents: new parts may sit beside the board.
+// Gaps in sloppy outlines are closed with growing tolerances (2 µm .. 0.5 mm).
 void assemble_outline(Problem& p, const model::Board& b) {
+  const Box extents = b.edge_bbox();
   for (const Coord tol : {Coord{2'000}, Coord{50'000}, Coord{200'000}, Coord{500'000}}) {
     auto loops = edge_loops(p.edges, tol);
     std::size_t best = loops.size();
     for (std::size_t i = 0; i < loops.size(); ++i)
       if (best == loops.size() || loop_area(loops[i]) > loop_area(loops[best])) best = i;
     if (best == loops.size()) continue;
-    std::size_t inside = 0;
-    for (const auto& pd : b.pads) inside += geom::point_in_polygon(pd.pos, loops[best]) ? 1u : 0u;
-    if (inside * 10 < b.pads.size() * 8u) continue;
+    std::size_t inside = 0, counted = 0;
+    for (const auto& pd : b.pads) {
+      if (!extents.empty() && !extents.intersects(Box{pd.pos.x, pd.pos.y, pd.pos.x, pd.pos.y})) continue;
+      ++counted;
+      inside += geom::point_in_polygon(pd.pos, loops[best]) ? 1u : 0u;
+    }
+    if (inside * 10 < counted * 8u) continue;
     p.outline = loops[best];
     for (std::size_t i = 0; i < loops.size(); ++i)
       if (i != best) p.cutouts.push_back(loops[i]);
@@ -701,13 +707,18 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // Parts that already overhang the board edge (pads outside, or the courtyard well past it) or sit in a
   // keepout are placed that way on purpose (connectors, sensors, battery holders): keep them where they are.
   // Pads merely closer to the edge than the copper-to-edge clearance do not count (common in old boards).
+  // KiCad drops new parts beside the board; parts entirely clear of its bounding box stay movable.
   if (!opt.scratch) {
     const Legality L(p);
-    for (auto& pt : p.parts)
+    for (auto& pt : p.parts) {
+      const Box& body = pt.geom[0].body;
+      const Box at{pt.pos0.x + body.x0, pt.pos0.y + body.y0, pt.pos0.x + body.x1, pt.pos0.y + body.y1};
+      if (!at.intersects(p.region)) continue;
       if (pt.movable && !L.inside_ok(static_cast<int>(&pt - p.parts.data()), pt.pos0, 0, true)) {
         pt.movable = false;
         pt.fixed_reason = "overhangs the board edge in the input";
       }
+    }
   }
   // Edge pulls (doc 15 CONN-01, opt-in): after movability is final, so fixed parts (edge connectors already at the
   // edge, locked parts) get none.

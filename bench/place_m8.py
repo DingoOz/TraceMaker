@@ -18,6 +18,7 @@ import concurrent.futures as cf
 import datetime
 import importlib.util
 import json
+import os
 import pathlib
 import shutil
 import subprocess
@@ -25,7 +26,7 @@ import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
-PLACE = ROOT / "build/release/src/place/tracemaker-place"
+PLACE = pathlib.Path(os.environ.get("TM_PLACE_BINARY", ROOT / "build/release/src/place/tracemaker-place"))
 
 spec = importlib.util.spec_from_file_location("eval_place", ROOT / "src/place/eval_place.py")
 ev = importlib.util.module_from_spec(spec)

@@ -47,6 +47,8 @@
   the most conservative interpretation (for example, the largest clearance that could apply).
 - Phase 1 custom-rule conditions: `A.NetClass`, `A.NetName`, `A.Type`, `A.Layer`, `A.insideArea(...)`,
   `A.intersectsArea(...)`, `A.isPlated()`, `A.Pad_Type`, `A.Reference`, boolean `&& || !`. Others later.
+- The router also enforces `disallow track/via` by net and layer, and `physical_hole_clearance` between holes
+  and copper of any net (doc 05 §27). Positional `disallow` rules are warned and left to the DRC.
 
 ## 5. IPC plugin (`kicad_plugin/`)
 

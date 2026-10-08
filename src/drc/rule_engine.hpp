@@ -50,6 +50,23 @@ class RuleEngine {
   std::optional<Coord> skew_constraint(model::NetId net) const;
   // Last custom constraint of `type` (e.g. diff_pair_gap, diff_pair_uncoupled) whose rule matches a track of `net`.
   std::optional<model::Constraint> net_constraint(model::NetId net, const std::string& type) const;
+
+  // Name of the last rule disallowing `it` on `layer`, if any (KiCad: items_not_allowed).
+  std::optional<std::string> disallowed(const CopperItem& it, int layer) const;
+  // Router checks for a new track or through via. Positional and footprint conditions are warned and left to DRC.
+  bool track_allowed(model::NetId net, int layer) const;
+  // `type`: Through by default; Blind stands for blind and buried vias alike (`blind_via` or `buried_via` in a
+  // rule forbids both: the board model has one type for the two), Micro for micro vias.
+  bool via_allowed(model::NetId net, model::ViaType type = model::ViaType::Through) const;
+  // Hole-to-copper clearance on `layer`, any net; -1 when no rule matches (KiCad: hole_clearance).
+  Coord physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
+  bool any_physical_hole_clearance() const { return max_physical_hole_ > 0; }
+  // True when a physical_hole_clearance rule holds between a via of `net` and a track of the same net: the
+  // tracks that end in a via touch its hole, so every via of that net would break the rule.
+  bool via_hole_rule_hits_own_tracks(model::NetId net) const;
+  Coord max_physical_hole_clearance() const { return max_physical_hole_; }
+  // Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.
+  bool needs_exact_routing() const { return needs_exact_; }
   const std::vector<std::string>& warnings() const { return warnings_; }
 
  private:
@@ -57,7 +74,10 @@ class RuleEngine {
     const model::CustomRule* rule;
     std::unique_ptr<Condition> cond;  // null = always
     bool valid = true;
+    bool positional = false;  // position, footprint or pad condition: cannot be pre-evaluated for routing
   };
+  // Item type, layer and condition all match a disallow constraint.
+  bool disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type = nullptr) const;
   // Value of the last matching custom constraint of `type` (min field), trying (a,b) and (b,a).
   std::optional<Coord> custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer) const;
   bool layer_matches(const std::string& sel, int layer) const;
@@ -75,6 +95,8 @@ class RuleEngine {
   mutable std::mutex area_mutex_;
   bool any_custom_clearance_ = false;
   bool zone_overrides_ = false;
+  bool needs_exact_ = false;
+  Coord max_physical_hole_ = 0;
   friend class Condition;
 };
 

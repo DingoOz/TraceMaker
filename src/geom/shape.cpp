@@ -42,6 +42,13 @@ void Shape::update_box() {
   for (const auto& p : pts) box.add(p);
   box = box.inflated(r);
 }
+void Shape::set_point(Point p, Coord radius) {
+  pts.resize(1);
+  pts[0] = p;
+  r = radius;
+  closed = false;
+  box = Box{p.x - radius, p.y - radius, p.x + radius, p.y + radius};
+}
 
 namespace {
 inline i128 dot(Point a, Point b, Point c, Point d) {  // (b-a)·(d-c)
@@ -79,6 +86,10 @@ bool point_seg_closer(Point p, Point a, Point b, Coord t) {
 }
 
 bool seg_seg_closer(Point a, Point b, Point c, Point d, Coord t) {
+  // A degenerate segment reduces to point-to-segment distance; its endpoint distances cannot be smaller.
+  // Keep t > 0: point_seg_closer squares t.
+  if (t > 0 && c == d) return point_seg_closer(c, a, b, t);
+  if (t > 0 && a == b) return point_seg_closer(a, c, d, t);
   if (t > 0 && segments_intersect(a, b, c, d)) return true;
   return point_seg_closer(a, c, d, t) || point_seg_closer(b, c, d, t) || point_seg_closer(c, a, b, t) ||
          point_seg_closer(d, a, b, t);
@@ -142,6 +153,15 @@ bool closer_than(const Shape& a, const Shape& b, Coord clearance) {
   return any_edge(a, [&](Point p, Point q) {
     return any_edge(b, [&](Point u, Point v) { return seg_seg_closer(p, q, u, v, t); });
   });
+}
+
+bool closer_than_disk(const Shape& a, Point c, Coord r, Coord clearance) {
+  // Disk-specialised closer_than: one degenerate edge and no closed interior.
+  const Coord t = clearance + a.r + r;
+  if (!a.box.inflated(clearance).intersects(Box{c.x - r, c.y - r, c.x + r, c.y + r})) return false;
+  if (t > 0 && a.closed && point_in_polygon(c, a.pts)) return true;
+  if (t <= 0) return false;
+  return any_edge(a, [&](Point p, Point q) { return seg_seg_closer(p, q, c, c, t); });
 }
 
 double gap(const Shape& a, const Shape& b) {

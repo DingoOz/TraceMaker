@@ -129,7 +129,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 
 | Phase | Rules |
 |---|---|
-| 1 | Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, `.kicad_dru` clearance/width conditions on net class, layer and area |
+| 1 | Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, `.kicad_dru` clearance/width conditions on net class, layer and area; `disallow` and `physical_hole_clearance` (§27) |
 | 2 | Zone connections (thermal reliefs to planes), solder-mask bridge awareness, blind/buried/micro vias |
 | 3 | Differential pairs (coupled routing as a single "pair" object in search: §15), length and skew targets (meander tuning in cleanup), max uncoupled length (`diff_pair_uncoupled`) |
 
@@ -718,3 +718,118 @@ feed crystal nets to `--first-nets`). The output keeps the old, now stale fills:
 still trusts the stale fills (a fill that a refill would split is one target). `--first-nets` takes net names only,
 and the protected nets may rip each other. A second connection at a pad that already has a via in it must use the
 pad's own layer.
+
+## 27. Custom-rule routing (2026-10-06, D72)
+
+**Before.** Any custom rule disabled the obstacle cache and cost-to-go fields.
+
+**What was built**
+
+| Rule | Router | DRC (`tracemaker drc`) |
+|---|---|---|
+| `disallow track` by net, net class, type or layer, including `inDiffPair` | `RuleEngine::track_allowed` supplies per-net layer masks for pad cells, escapes, planar moves, via landings, diff-pair legs, escape corridors and fields. Through vias may pass through disallowed track layers. | `items_not_allowed`, once per item |
+| `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). `blind_via` or `buried_via` alone stops blind and buried vias for the net (`--blind-vias`; the board model has one type for the two, so either word forbids both), `micro_via` alone stops micro vias (`--micro-vias`); the other type stays available. | `items_not_allowed` |
+| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`) | Not applied; `tracemaker route` and `tracemaker drc` print a warning naming the rule. | Reported |
+| `disallow` whose condition does not parse, or uses a property or function TraceMaker does not evaluate | Not applied; warned by name in both commands. | Not reported |
+| `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
+| `physical_hole_clearance` | Between a hole and any other item's copper, whatever the nets, as KiCad reports it. `Obstacles::physical_copper_state` tests new tracks and via pads against the holes of pads and vias; `physical_hole_state` tests a new via's hole against copper; both against fixed and routed items, in the exact check before commit and in the search's cached and routed checks. A net whose vias the rule sets against its own tracks (an unconditional rule does) gets no vias: the tracks that end in a via touch its hole. For the same reason a track cannot end on a plated pad of its own net under such a rule. | `hole_clearance`, once per hole and item, any net |
+| Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
+
+Disallow masks retain the per-class cache. Physical-hole rules do too when independent of `NetName`, `NetClass`
+and `inDiffPair`. Other custom rules, including unparseable conditions, require exact checks.
+
+KiCad's violation names and counts were checked with kicad-cli 10.0.3. Example: inner layers for GND only;
+no via in an SMD pad except on U1.
+
+```
+(rule "Inner layers carry GND only" (layer inner) (condition "A.NetName != 'GND'") (constraint disallow track))
+(rule "No via in SMD pad (except U1)" (constraint physical_hole_clearance (min 0.05mm))
+  (condition "A.Type == 'Via' && B.Type == 'Pad' && B.Pad_Type == 'SMD' && B.Reference != 'U1'"))
+```
+
+**Results.** On a private 4-layer sensor board (218 connections), the example rules give parity on all 120
+`items_not_allowed` violations and 63 of KiCad's 64 `hole_clearance` pairs. The missing pair is a paste-only pad
+on U2, absent from the copper model; the same via is reported against its copper pad. Three existing J2/J5 hole
+clearances from two fixed footprints are reported by TraceMaker but not KiCad.
+
+At the same placement, 20M work and 8 variants: without rules, 218/218 routed, 119 non-GND inner-layer tracks,
+64 vias in SMD pads and one via in J5's keepout. With rules, 208/218 routed, no inner-layer track, no via in a
+non-U1 SMD pad, nothing in J5's keepout and no added KiCad DRC error.
+
+## 28. Search speed on fine lattices (2026-10-06, D73)
+
+**Before.** On the private board, project rules give a 0.05 mm lattice. The placement loop's 20M-work route
+check (8 variants) took ~140 s, including ~1–2 s for Metal fields. CPU profiling (`sample`) identified these costs.
+
+**What was built**
+
+| Part | Cost before | Change |
+|---|---|---|
+| `DesignRules::class_for`, `Router::Impl::cache_for` | ~80% in wildcard/regex lookup | Resolve classes once per net; retain the last cache lookup. |
+| `Probe` (`obstacles.cpp`) | ~20% after class caching | Reuse rule-probe items in a per-thread pool. |
+| Via checks, `Obstacles::routed_via_state` | ~35% of search | Skip checks when the bare via cost cannot improve another layer; check layer-independent routed holes once. |
+| PathFinder history | ~9% of search | Cache history with cell state; history changes only between searches. |
+
+**Results.** The 20M check fell from ~140 s to ~10 s; the 5M check from ~32 s to ~4 s. Outputs at both budgets
+are byte-identical. Fewer filled via-cache entries leave more cells unknown to the field, increasing total
+expansions by 0.01% without changing output there (see "Checked at the merge" below: identity is measured, not
+guaranteed).
+
+**Second round** (2026-10-06). On the same 20M check, `/usr/bin/time -l` instructions retired repeated within
+0.2%; wall and user time varied ±20% with shared machine load. Runs used `--threads 2`; work-budget output is
+thread-count independent. Peak memory is ~0.4–0.8 GB per concurrent variant (2.8 GB at 2 threads, 6.3 GB at 8).
+
+| Part | Change | Effect |
+|---|---|---|
+| `Obstacles::fixed_via_code` | One copper query across layers; check holes, edges, keepouts and mask openings once. Grid tests compare with `fixed_via_code_reference`. | user CPU −7% |
+| `Shape::set_point`, `closer_than_disk` | Reuse scratch disks and test routed via holes without shape allocation. | user CPU −10% |
+| `seg_seg_closer` | Reduce a degenerate segment to one point-to-segment test; exact parity with the general four-way test. | instructions −3.5% |
+
+Outputs remain byte-identical at 5M and 20M on the private board; quick tier 30/30.
+
+**Public boards** (`bench/speed_ab.py`, Apple M4 Pro): the engine before and after D72–D73 on the same boards,
+one variant, one thread, CPU fields, fixed work. Instructions retired from `/usr/bin/time -l`.
+
+| Set | Work | CPU s before → after | Instructions | Speed-up | Output |
+|---|--:|--:|--:|--:|---|
+| 10 large PCBench boards (`bench/m6_bench.py` set; no project files, default rules) | 30M | 100.7 → 83.2 | 1,511 G → 1,221 G | 1.21× (1.09–1.32×) | 10/10 identical |
+| 6 small KiCad demo projects (`--demos`; net classes with name patterns) | 2M | 184.1 → 75.8 | 5,023 G → 2,019 G | 2.43× (2.15–2.73×) | 6/6 identical |
+
+The gain is largest where net classes use name patterns, which the old per-cell lookup matched every time.
+The two largest demos (vme-wren, jetson-agx-thor) route nothing within 1M work and take 128 s and 60 s doing so
+(jetson 2.1× faster after, vme-wren unchanged); where that time goes is not yet profiled.
+
+**Checked at the merge** (2026-10-07, Linux, GCC 15, x86-64; the merged tree against the router before it, both
+with CPU fields, `--seed 7`, no knowledge base):
+
+| Set | Budget | CPU s before → after | Speed-up | Output |
+|---|--:|--:|--:|---|
+| 8 PCBench boards (1Bitsy, Aleste-520EX, chirp, CoreOne, MonApollo, decelerator4030, logicbone, sbc) | 3M, 8 variants, 1 thread | 49.9–78.9 → 38.4–63.5 | 1.13–1.49× | 8/8 identical |
+| KiCad demos complex_hierarchy, pic_programmer (project rules, net classes with name patterns) | 3M, 8 variants, 1 thread | 1,079 → 475; 1,364 → 613 | 2.27×, 2.22× | 2/2 identical |
+| KiCad demos RoyalBlue54L-Feather, CM5_MINIMA_3 | 1M, 2 variants | 173 → 74; 773 → 338 | 2.33×, 2.29× | 2/2 identical |
+| 36 further multilayer PCBench boards | 600k, 3 variants | not timed | | 36/36 identical |
+
+The machine was shared, so the times are indicative. Output is also the same at 1 and 3 threads (2 boards).
+
+*Identical output is measured, not guaranteed.* The via-check skip leaves fewer via codes in the per-class cache,
+the cost-to-go field then knows fewer blocked via cells, and the searches expand a different number of states:
+on 1Bitsy five of the seven variant lines compared differ (for example 941,956 → 945,052 expansions) while the
+routed board is byte-identical. The work budget counts expansions, so where a budget ends mid-search the two
+routers can stop at different points. All 48 boards above gave identical files; a board that does not is
+possible, and the skip has no switch to turn it off for a comparison.
+
+*Reference paths (CLAUDE.md rule 3).* Tested against a reference: the one-pass `fixed_via_code` against
+`fixed_via_code_reference` on a grid of points (with custom rules, and with soft zones and vias off pads, §26),
+and the degenerate-segment path of `seg_seg_closer` against the four-way test on 60,000 random cases. Checked by
+reading only, with no test of their own: `closer_than_disk` against `closer_than` with a point shape,
+`routed_via_state` against the per-layer `routed_state` loop it replaced, the history cost cached with the cell
+state, the per-net class table, the last-lookup memo in `cache_for`, and the via-check skip itself. The
+byte-identical boards exercise all of these together.
+
+**Reverted.** A 4-ary open heap and pre-rule bounding-box filters gave no measurable gain. Combining routed
+queries was slower; per-layer/via-only routed indexes gave −2% within noise and added five indexes; a combined
+physical-hole query gave −0.3%.
+
+**Remaining costs.** Open list ~16%, routed-copper queries ~17%, fixed-copper via checks ~16% (half rule
+evaluation), fields ~10%. Fixed-obstacle caches remain per variant: up to eight copies of the same lattice
+codes; sharing them needs a thread-safe cache.
