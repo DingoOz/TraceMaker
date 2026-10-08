@@ -878,3 +878,36 @@ boards at 5 M work units; the quick tier is unchanged).
 - Planes that no pad touches are still not connection targets; only a net whose fill already holds one of
   its pads gets vias into it.
 - The Python bindings and the KiCad plugin do not expose the two options yet.
+
+## 31. Router obstacle tests against zone fills through the edge index (2026-10-08)
+
+**Before.** The DRC answers shapes against zone fills from nearby edges (§19, D55), but the router's `Obstacles`
+still tested every probe against every edge of every fill it came near: the fixed-copper codes of the lattice,
+the exact segment and via checks, and physical hole rules. On boards whose fills have thousands of vertices this
+was most of the run: stripped CM5 with its fills kept spent 21 s on 2 M work units, and one coupled-pair leg check
+against its largest fill (17,742 vertices) cost about 0.3 ms.
+
+**What was built** (D78). `Obstacles` builds a `geom::PolygonIndex` for each zone fill at construction (the DRC's
+`drc::ZoneFills`) and asks it in place of the per-edge loop wherever a probe meets a fill (`item_closer`). The
+index's answer equals `closer_than` against the fill (the `[geom]` equivalence test); the linear loop stays as the
+reference path (`Obstacles::set_linear_zone_tests`), and a test compares the two over segment, disk, via,
+fixed-code and fixed-via-code queries around a fill with 160 teeth and a notch, with a physical hole rule.
+
+**Results.** Same work budget, one variant, CPU fields; every output byte-identical to the old binary.
+
+| Boards | Before | After |
+|---|--:|--:|
+| `speed_ab.py --demos`, 10 M (six KiCad demos with fills and project rules) | 514.9 s, 7,329 G instructions | 118.7 s, 1,066 G (tinytapeout 200 → 7 s, kit-dev-coldfire 56 → 5 s, CM5_MINIMA_3 175 → 93 s) |
+| vme-wren / jetson-agx-thor, routing stripped, 1 M | 29.5 / 49.3 s | 5.8 / 3.8 s |
+| CM5 (fills kept), 2 M, two threads | 21.0 s | 1.6 s |
+| CM5 (fills kept), `--diff-pairs`, 2 M, with §30 | 351 s | 2.3 s |
+| `speed_ab.py` PCBench, 10 M (10 boards) | 52.6 s | 52.4 s |
+| Quick tier, 1 M (30 boards) | – | byte-identical |
+
+Peak memory is unchanged (tinytapeout at 10 M: 2.82 GB peak footprint both); the index adds about 3 MB there.
+`speed_ab.py` reports resident size, which macOS lowers by compressing pages in long runs, so its "before" column
+reads lower on the slow boards.
+
+**Limits.** Fills are indexed as read; the router never changes them, so the index stays valid (`--soft-zones` skips
+fills before they are tested). The plane-target test of a soft-zone connection (inside the fill and no edge within the
+track's half-width) still walks all edges, once per lattice cell it asks about; its answers are cached per cell.
