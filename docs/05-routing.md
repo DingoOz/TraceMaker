@@ -1031,7 +1031,57 @@ probes against the direct area and courtyard tests on a grid (prefilters and bou
   that re-allows a layer in one area is not seen there, so the net stays off that layer (conservative).
 - Search tests lattice disks. A diagonal step between two legal points can still clip an area corner; the
   exact check at commit rejects it and learns the cells.
-- Cost-to-go fields, the global router and `tracemaker escape` do not see positional rules (`escape` ignores
-  the per-net masks too). The fields stay lower bounds; the other two only guide or report.
+- Cost-to-go fields and the global router do not see positional rules. The fields stay lower bounds; the
+  global router only guides. (`tracemaker escape` applies them since §35.)
 - Courtyard geometry has no deflation tolerance (§33). One track on threeboard is 1.25 µm into a courtyard by
   TraceMaker's test and outside it by KiCad's, so TraceMaker is the stricter of the two.
+
+## 35. Escape analysis: outstanding pins and the board's rules (2026-10-09, D83)
+
+**Before.** `tracemaker escape` (§12) searched every pin whose net has another pad. It ignored copper that
+already joins the net, the per-net layer and via limits of custom rules (§27) and the positional disallow
+rules the router now obeys (§34), and it always treated zone fills as fixed. On stripped CM5 it reported 18
+dead pins. They sit in the hand layout's channels through fills that a refill would redraw: in a fair test on
+the fork (5M then 30M work, KiCad-refilled DRC), `--soft-zones` routing connected 17 of the 18.
+
+**What was built.**
+
+- Obligations: only pins whose net the existing copper does not complete are searched (`pins`). Pins whose
+  net is already one cluster (pads, tracks, vias and fills, with the router's connectivity) are counted as
+  `satisfied`.
+- Rules: each pin's search uses its net's track layers and via permission (`track_allowed`, `via_allowed`, the
+  hole-rule veto) and the positional rules on the track's copper at each lattice point and on the via. The
+  fixed-copper code caches stay per class; rule verdicts are memoised per pin. A dead pin that escapes with
+  the rules ignored is reported "walled in by custom disallow rules (it escapes without them)".
+- Options as `route`: `--soft-zones` (fills do not block) and `--keep-vias-off-pads` / `--vias-off-pads-below`.
+  `--flow` applies the same rules to its channel and via tests. Rule warnings are printed as `route` prints
+  them.
+- Output: the summary line names the analysis lattice; JSON adds per-part and total `satisfied` and a `domain`
+  object (lattice, margin, window, zone and via options). `pins` and `dead` keep their meaning for
+  `bench/run.py` and `bench/feasibility.py`.
+
+"Dead" still means no escape on the analysis lattice inside its window. The breadth-first search is complete
+there, but an off-lattice path can exist. A pin that escapes alone can still lose its channel to its
+neighbours.
+
+**Results.** Without rules and with fills hard, the 30 `quick`, 11 `mid` and seven of the eight `planes`
+boards give the same dead pins as before. (The eighth, "sonde xilinx", has a space in its path that the
+comparison script did not handle.) RoyalBlue54L-Feather has two pins whose nets are already complete; they
+move from `pins` to `satisfied`.
+
+| Board | Dead, fills hard | Dead, `--soft-zones` |
+|---|---|---|
+| CM5 (stripped, `bench/prepare_demos.py CM5_MINIMA_3`) | 18 of 340 | 0 |
+| RoyalBlue54L-Feather | 19 of 236 | 2 |
+| StickHub | 1 of 46 | 0 |
+| plane_smd | 1 of 30 | 1 |
+
+With §34's "no vias under ICs" rule, kitspace_d20's U8 exposed pad (pin 49) is "walled in by custom disallow
+rules". The router reports the same pin boxed in.
+
+**Limits.**
+
+- One lattice (0.04 mm), the neck-down width and the smallest through via. Blind and micro vias, the per-run
+  `--no-tracks-on` limits and the router's off-lattice escape rungs are not modelled.
+- Satisfied means the net is complete. A pin whose cluster still has to reach another cluster is searched from
+  its pad, through its own net's copper.
