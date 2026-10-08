@@ -150,6 +150,8 @@ down beside the board and reported.
 - `--rules-override FILE`: correct what was detected (doc 15 §6.3).
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
 - `--cut-report`: report lines across the board that more nets must cross than tracks fit.
+- `--no-tracks-on In1.Cu,In2.Cu`: no new tracks on these layers (vias still pass through and reach the planes).
+  `--layer-cost In1.Cu=4,In2.Cu=4`: tracks there cost that many times their length, so they are a last resort.
 - `--kb FILE` / `--no-kb`: the knowledge base of earlier runs.
 - All-SMD boards with inner planes (doc 05 §26; refill the zones afterwards, e.g. `kicad-cli pcb drc --refill-zones
   --save-board`): `--soft-zones` (zone fills do not block other nets; an inner plane no pad touches becomes a via

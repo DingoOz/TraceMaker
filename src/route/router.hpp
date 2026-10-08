@@ -104,6 +104,12 @@ struct RouterOptions {
   std::vector<std::string> first_nets;  // routed first, also after restarts; other nets do not rip them (crystal lines)
   std::string only_net;         // debugging: route only this net
   std::vector<std::string> skip_nets;  // experiments: leave these nets unrouted (e.g. nets a designer would pour)
+  // Layer limits (doc 05 §29; route/layer_limits.hpp turns layer names into these). Layers in no_track_layers get
+  // no new tracks: vias still pass through them and still connect into zone fills there, and pads that exist only
+  // on such layers stay unrouted. layer_cost_pm[l] is the cost of a track on copper layer l per mille of its
+  // length (1000 = normal, never less; missing entries are 1000).
+  model::LayerMask no_track_layers = 0;
+  std::vector<std::int32_t> layer_cost_pm;
   events::Sink* sink = nullptr;
   // Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the
   // others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.

@@ -501,6 +501,9 @@ int main(int argc, char** argv) {
                     "Portfolio size (1 = single router; default: all with --work, else --threads); the output never depends on --threads "
                     "with --work. --time applies to each variant from its start");
   tmk::app::RouteJob r_job;
+  route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
+      ->delimiter(',');
+  route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");

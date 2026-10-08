@@ -833,3 +833,48 @@ physical-hole query gave −0.3%.
 **Remaining costs.** Open list ~16%, routed-copper queries ~17%, fixed-copper via checks ~16% (half rule
 evaluation), fields ~10%. Fixed-obstacle caches remain per variant: up to eight copies of the same lattice
 codes; sharing them needs a thread-safe cache.
+
+## 29. Layer limits: layers without tracks, and dearer layers (issue #6, 2026-10-07)
+
+**The problem.** On a signal / power / ground / signal stack the router treated all four layers alike and put
+about a third of its track length on the two plane layers. There was no way to say "keep the planes whole" or
+"use them only when nothing else works".
+
+**Two options, both off by default** (layer names as KiCad writes them, the file's own names, or the user's
+layer names; an unknown layer or a bad factor stops the run with an error instead of being dropped):
+
+- `--no-tracks-on In1.Cu,In2.Cu`: these layers get no new tracks. Vias still pass through them, and a via may
+  still end a connection in the net's own zone fill there, which is how a pad reaches its plane. A pad that
+  exists only on such a layer has no legal exit and stays unrouted (the CLI counts them in a warning).
+- `--layer-cost In1.Cu=4,In2.Cu=4`: a track on that layer costs that many times its length (1 to 1000). The
+  layer stays available; the search takes it only where the detour on the plain layers would cost more.
+
+**How.** A layer without tracks is taken out of every net's allowed-layer mask, the same mask that custom
+`disallow track` rules fill (§27), so the A*, the reachability pre-check (§13), the cost-to-go field, pad
+endpoints and escapes, the coupled-pair search and the escape planners all see one thing. Two additions serve
+both: a via may land on a layer the net has no tracks on where that cell ends the connection in the net's own
+zone fill, and `commit()` rejects any segment on such a layer before the exact check, whatever produced the
+path. The cost factor multiplies the planar step cost per layer in integer per-mille arithmetic (rule 2).
+Factors below 1 are refused: the octile and field heuristics are lower bounds only if no track costs less than
+its length. With both options unset, no cost or test changes, and the output is byte-identical (10 PCBench
+boards at 5 M work units; the quick tier is unchanged).
+
+**Measured** on six four-layer PCBench boards (4 variants, 60 s per board, KiCad as the judge):
+
+| | Routed (of 1,078) | Boards complete | Track on In1/In2 | Added DRC errors |
+|---|--:|--:|--:|--:|
+| Defaults | 1,058 | 5 | 2,193 mm of 6,512 (34 %) | 0 |
+| `--no-tracks-on In1.Cu,In2.Cu` | 1,038 | 3 | 0 mm of 6,467 | 0 |
+| `--layer-cost In1.Cu=4,In2.Cu=4` | 1,054 | 4 | 430 mm of 6,734 (6 %) | 0 |
+
+**Limits.**
+- The limits apply to every net. A per-net limit is a KiCad custom `disallow track` rule (§27).
+- A dear layer that cannot be avoided makes that search wider: the heuristics measure plain length, so the
+  search first exhausts everything cheaper (a 15-fold expansion count on the test board where every way across
+  costs four times). A field computed with per-layer step costs would remove this; it needs the same change in
+  the CPU reference and the CUDA kernel and is not built.
+- The global router and the cut report (§16, §20) still count capacity on every layer, so `--cut-report` may
+  call a board routable that is not once layers are closed. Its proofs of "unroutable" stay valid.
+- Planes that no pad touches are still not connection targets; only a net whose fill already holds one of
+  its pads gets vias into it.
+- The Python bindings and the KiCad plugin do not expose the two options yet.

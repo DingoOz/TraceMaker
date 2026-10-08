@@ -35,6 +35,10 @@ struct RouteJob {
   // zones stay; rule 6).
   bool reroute = false;
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
+  // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
+  // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
+  std::vector<std::string> no_tracks_on;
+  std::vector<std::string> layer_costs;
   // Progress lines (the CLI's stdout text, one line per call, no trailing newline). Empty = silent.
   std::function<void(const std::string&)> log;
 };
