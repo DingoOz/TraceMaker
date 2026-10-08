@@ -12,8 +12,9 @@ writes them back into the file.
 - **What it does:** routes unrouted connections on KiCad 9 and 10 boards, and can place components first.
 - **How it is judged:** by KiCad's own design-rule check (`kicad-cli pcb drc`), not by its own opinion.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
-- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one.
-- **Status:** release 0.8.0. Licence GPL-3.0-or-later.
+- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
+  Metal backend is contributed and has not been run by the project.
+- **Status:** release 0.9.0. Licence GPL-3.0-or-later.
 
 ## How good is it?
 
@@ -22,8 +23,8 @@ Share of boards routed with **every connection made and no KiCad error added** (
 | Tier | Boards | TraceMaker | Freerouting 2.5 |
 |---|--:|--:|--:|
 | A (routine) | 40 | **100%** | 100% |
-| B | 40 | **70.0%** | 50.0% |
-| C | 30 | **63.3%** | 46.7% |
+| B | 40 | **72.5%** | 50.0% |
+| C | 30 | **60.0%** | 46.7% |
 | D (hardest) | 22 | **54.5%** | 36.4% |
 
 Freerouting's figures are its own published results on the same boards.
@@ -35,7 +36,7 @@ Freerouting's figures are its own published results on the same boards.
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·
-[roadmap and test report](report/roadmap_testing.pdf) (all 132 tests, every benchmark run).
+[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.9.0 has 165 tests).
 
 ## Quick start
 
@@ -177,7 +178,7 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 ```
 scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
-ctest --preset release             # 132 tests, about 5 minutes
+ctest --preset release             # 165 tests, about 12 minutes
 ```
 
 - Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.

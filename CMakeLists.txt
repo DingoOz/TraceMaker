@@ -40,7 +40,7 @@ if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
   set(CMAKE_CUDA_ARCHITECTURES 60 70 CACHE STRING "Tesla P100 (sm_60) and V100 (sm_70)")
 endif()
 
-project(TraceMaker VERSION 0.8.0 DESCRIPTION "Placement-aware PCB autorouter for KiCad" LANGUAGES CXX)
+project(TraceMaker VERSION 0.9.0 DESCRIPTION "Placement-aware PCB autorouter for KiCad" LANGUAGES CXX)
 
 if(APPLE)
   option(TM_ENABLE_CUDA "Build CUDA kernels (CPU reference paths are always built)" OFF)
