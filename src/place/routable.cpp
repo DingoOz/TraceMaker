@@ -238,8 +238,8 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
     light.pl = Placement{};
     res.tried.push_back(light);
     say(o.log, c.label + ": " + describe(c.eval) + ", HPWL " + fmt_mm(c.hpwl) + " mm" +
-                   (c.legal ? "" : eligible ? " (has conflicts of the input: accepted, no repair)"
-                                           : " (not legal: reference only)"));
+                   (c.legal || !o.absolute_seed_legality ? "" : eligible ? " (has conflicts of the input: accepted, no repair)"
+                                                                         : " (not legal: reference only)"));
   };
   int best = -1;
   auto stop = [&] { return o.out_of_time && o.out_of_time(); };
@@ -255,10 +255,10 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       ++res.routes;
     }
     s.hpwl = total_hpwl(p, s.pl);
-    // Seed legality is absolute: existing conflicts cannot win on routing unless the input has no repair.
+    // With absolute seed legality, existing conflicts cannot win on routing unless the input has no repair.
     const Metrics m = measure(p, s.pl);
     s.legal = m.overlaps == 0 && m.outside == 0;
-    const bool eligible = s.legal || (i == 0 && o.accept_first_seed_conflicts);
+    const bool eligible = !o.absolute_seed_legality || s.legal || (i == 0 && o.accept_first_seed_conflicts);
     record(s, eligible);
     if (eligible && (best < 0 || better(s, seeds[z(best)]))) best = static_cast<int>(i);
   }

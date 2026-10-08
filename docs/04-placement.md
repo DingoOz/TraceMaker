@@ -310,7 +310,7 @@ fewest unrouted, then the shortest wirelength. On the 23 evaluation boards at N 
 placement on 18 boards, total HPWL fell from 17,464 mm to 13,190 mm, and unrouted connections fell from 61 to 59;
 no board got worse (`bench/place_auto.py`).
 
-**An illegal input is compared as its minimal repair** (2026-10-06, D75).
+**An illegal input can be compared as its minimal repair** (`--repair-input`, 2026-10-06, D75; opt-in since 2026-10-07).
 
 **Before.** A routable run on a private 4-layer sensor board kept an input with three overlaps plus one ECO
 move and reported it as "legal": only conflicts involving moved parts counted. KiCad's DRC found courtyard
@@ -319,6 +319,10 @@ overlaps and two shorts.
 **What was built.** `place::repaired` uses refine's legaliser to re-place only conflicting movable parts at the
 nearest legal spot. Other parts stay put. Conflicts are overlaps or outline violations involving a movable
 part, judged with the board's courtyard rule (else 0).
+
+All of this runs only with `--repair-input`. Without the flag the input is the baseline and the fallback as it
+is, a seed may keep the input's conflicts as long as it adds none, and the report names the conflicts
+("input not legal: … compared as it is"). The reason is in the results below: the model is stricter than KiCad.
 
 - `--route-check` (refine, full, auto): compare with the repair and write it if the new placement leaves more
   connections unrouted.
@@ -334,6 +338,13 @@ illegal moves ("legal moves, N conflict(s) of the input remain").
 (threeboard: U1 against fixed copper; esp-com: pads near the edge); others have KiCad courtyard overlaps
 (Hangul 2, phone_rtty 8). LogicBoxen has 7 model conflicts and none in KiCad's DRC. Minimal repair preserves
 the rest of each hand layout.
+
+**Why it is opt-in.** The repair replaces the input without ever being compared with it, so nothing shows that
+the result is better than what the user drew (CLAUDE.md rule 4). On kitspace_threeboard, which KiCad's DRC
+accepts, `--mode eco --repair-input` reports one model conflict (U1 against fixed copper), moves U1 by 0.25 mm
+in x and y and keeps "input repaired"; without the flag U1 stays and the output is the same as before D75. Where
+the repair fails (LogicBoxen, esp-com, phone_rtty) the input is kept either way. From scratch (`--scratch`) the
+flag has no effect: a pile is not a placement to repair.
 
 ## 8. Implementation status (M8, first version — 2026-10-03)
 

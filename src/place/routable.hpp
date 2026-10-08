@@ -95,7 +95,10 @@ struct LoopOptions {
   // reach o.place.trace as "<label>|<stage>".
   std::function<void(const std::string& label)> on_incumbent;
   std::function<void(const std::string& label)> on_route;  // recording: a check route of this candidate starts
-  // If minimal repair fails, compare the input as it is; other seeds must be legal (D75).
+  // --repair-input (D75): only seeds without any conflict can become the incumbent; the others are routed for
+  // reference. Off: every seed is eligible, as its caller checked it adds no conflict to the input's.
+  bool absolute_seed_legality = false;
+  // With absolute_seed_legality: the first seed is the input whose minimal repair failed; it is compared as it is.
   bool accept_first_seed_conflicts = false;
 };
 

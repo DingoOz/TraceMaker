@@ -306,6 +306,7 @@ struct LoopCli {
   std::string in, out, json_path;
   place::PlaceOptions o;
   bool move_connectors = false, no_fallback = false, no_decap_affinity = false, scratch = false;
+  bool repair_input = false;            // --repair-input (D75): compare against the input's minimal repair
   std::string component_rules = "soft";  // --component-rules (doc 15; soft by default, D52)
   std::string rules_override;           // --rules-override (doc 15 §6.3)
   bool edge_attraction = false;         // --edge-attraction (doc 15 CONN-01)
@@ -400,18 +401,25 @@ int run_loop_mode(const LoopCli& c) {
   std::vector<std::string> notes;
   std::printf("%s: %zu parts (%d movable), mode %s, router budget %ld expansions x %d variants\n", c.in.c_str(), P.parts.size(), P.movable_count(),
               c.o.mode.c_str(), c.work, c.route_threads);
-  // Compare against the input's minimal repair. If repair fails, keep the conservative model's conflicts visible.
+  // The baseline is the input as it is. The placement model is conservative (convex-hull courtyards, through-hole
+  // margins): it finds conflicts in hand placements that KiCad accepts, and a "repair" then moves parts of a legal
+  // layout without ever being compared with the original (kitspace_threeboard: U1 by 0.25 mm). Only with
+  // --repair-input (D75) is an input with conflicts replaced by its minimal repair; if that fails, it stays.
+  // From scratch the input is a pile, not a placement to repair.
+  const bool repair = c.repair_input && !c.scratch;
   place::Placement base = input;
   std::string base_label = "input";
   bool base_legal = input_legal;
-  if (!input_legal && !c.scratch) {  // from scratch the input is a pile, not a placement to repair
+  if (!input_legal && !c.scratch) {
     std::string list;
     for (std::size_t i = 0; i < input_m.conflicts.size() && i < 6; ++i) list += (i ? ", " : "") + input_m.conflicts[i];
     if (input_m.conflicts.size() > 6) list += ", ...";
     std::string msg = "input not legal: " + std::to_string(input_m.conflicts.size()) +
                       " conflict(s) involving movable parts (" + list + ")";
     int n = 0;
-    if (auto rep = place::repaired(P, input, &n)) {
+    if (!repair) {
+      msg += "; compared as it is (--repair-input compares its minimal repair instead)";
+    } else if (auto rep = place::repaired(P, input, &n)) {
       base = std::move(*rep);
       base_label = "input repaired (" + std::to_string(n) + " part(s) moved)";
       base_legal = true;
@@ -437,7 +445,7 @@ int run_loop_mode(const LoopCli& c) {
     const place::EcoResult er = place::eco_place(P, base, input_eval, e, route);
     routes += er.routes;
     // ECO checks each move, not existing conflicts.
-    best = place::Candidate{er.committed > 0 ? "eco" : base_label, er.pl, er.eval, place::total_hpwl(P, er.pl), base_legal};
+    best = place::Candidate{er.committed > 0 || !repair ? "eco" : base_label, er.pl, er.eval, place::total_hpwl(P, er.pl), base_legal};
     extra["eco"] = {{"committed", er.committed}, {"ranked", er.ranked}, {"moves", er.moves}};
   } else {
     // From scratch (--scratch) the input is a pile, not a placement: it is no candidate, refine has nothing to
@@ -471,9 +479,11 @@ int run_loop_mode(const LoopCli& c) {
         return;
       }
       const place::Metrics m = place::measure(P, x.pl, &input);
-      // Legality is absolute in both modes; from scratch an unplaced part also disqualifies, and the candidate
-      // is remembered as the least bad choice.
-      if (!x.r.legal || (c.scratch && x.r.legalise_failed > 0) || m.overlaps > 0 || m.outside > 0) {
+      // Without --repair-input a seed may keep the input's conflicts but add none. With it, and from scratch,
+      // legality is absolute; from scratch an unplaced part also disqualifies, and the candidate is remembered as
+      // the least bad choice.
+      const bool absolute = repair || c.scratch;
+      if (!x.r.legal || (c.scratch && x.r.legalise_failed > 0) || (absolute ? m.overlaps > 0 || m.outside > 0 : m.new_overlaps > 0 || m.new_outside > 0)) {
         notes.push_back(label + ": not legal, skipped" + (c.scratch ? " (" + std::to_string(m.overlaps) + " overlaps, " + std::to_string(m.outside) + " outside, " +
                                                                            std::to_string(x.r.legalise_failed) + " unplaced)" : std::string()));
         if (c.scratch) illegal.push_back(place::Candidate{label, x.pl, {}, 0});
@@ -487,11 +497,9 @@ int run_loop_mode(const LoopCli& c) {
     }
     add_seed("full", "full", 0);
     add_seed("full+rudy", "full", c.beta);
-    bool illegal_fallback = false;
     if (seeds.empty() && !illegal.empty()) {
       notes.push_back("no legal placement was found: the output is the full-mode result with its conflicts");
       seeds.push_back(illegal.front());
-      illegal_fallback = true;
     }
     place::LoopOptions lo;
     lo.place = c.o;
@@ -501,8 +509,9 @@ int run_loop_mode(const LoopCli& c) {
     lo.eco_candidates = c.eco_candidates;
     lo.log = log;
     lo.out_of_time = out_of_time;
-    // From scratch the only seed with conflicts is the least-bad fallback above, which must stay eligible.
-    lo.accept_first_seed_conflicts = c.scratch ? illegal_fallback : !base_legal;
+    // Only with --repair-input are seeds with conflicts shut out (the unrepairable input excepted).
+    lo.absolute_seed_legality = repair;
+    lo.accept_first_seed_conflicts = !base_legal;
     if (!c.record.empty()) {
       lo.place.trace = [&rec](const std::string& key, const place::Placement& x, double t) {
         if (key.ends_with("|input")) rec.phase("re-placing around unrouted connections: " + key.substr(0, key.find('|')));
@@ -610,7 +619,7 @@ int main(int argc, char** argv) {
   CLI::App app{"TraceMaker placer: quadratic + SimPL global placement, legalisation and annealing"};
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false, no_decap_affinity = false, scratch = false;
+  bool move_connectors = false, no_decap_affinity = false, scratch = false, repair_input = false;
   std::string component_rules = "soft", rules_override;  // D52
   bool edge_attraction = false;
   int decap_weight = place::kSignalWeight;
@@ -631,6 +640,9 @@ int main(int argc, char** argv) {
   app.add_flag("--move-connectors", move_connectors, "Also move connectors that touch the board edge");
   app.add_flag("--scratch", scratch, "The input has no placement (parts piled or beside the board, as after importing a schematic): "
                                      "input positions of movable parts carry no intent and are never fallen back to");
+  app.add_flag("--repair-input", repair_input, "routable, eco and --route-check: an input placement with overlaps or parts off the board is "
+                                               "replaced, as the baseline and fallback, by its minimal repair (only the conflicting parts moved "
+                                               "to the nearest legal spot). Off by default: the placement model is stricter than KiCad's DRC");
   app.add_flag("--no-decap-affinity", no_decap_affinity, "Do not tie decoupling capacitors to their IC's supply pins");
   app.add_option("--component-rules", component_rules,
                  "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling); default soft (D52)")
@@ -721,6 +733,7 @@ int main(int argc, char** argv) {
     lc.o = o;
     lc.move_connectors = move_connectors;
     lc.scratch = scratch;
+    lc.repair_input = repair_input;
     lc.no_decap_affinity = no_decap_affinity;
     lc.component_rules = component_rules;
     lc.rules_override = rules_override;
@@ -864,12 +877,24 @@ int main(int argc, char** argv) {
       conns_in = conns;
       routed_out = routed_of(out);
       conns_out = conns;
-      if (scratch) {
-        // From scratch the input is a pile: no alternative to fall back to and nothing to repair.
-        r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns_out) + " (input " +
-                          std::to_string(routed_in) + "/" + std::to_string(conns_in) + ")");
+      if (scratch || !repair_input) {
+        // Compare unrouted connections with the input as it is: the connection count can change with the placement.
+        if (!scratch && conns_out - routed_out > conns_in - routed_in) {  // from scratch the input is no alternative
+          // The editor changed `lb` in place, so the input is restored by copying the file (byte for byte). Before
+          // 2026-10-03 this re-saved the edited document, i.e. "kept the input" still wrote the new placement.
+          std::filesystem::copy_file(in, out, std::filesystem::copy_options::overwrite_existing);
+          reverted = true;
+          moved = 0;
+          pl = place::Placement::initial(p);
+          r.after = place::measure(p, pl, &pl);
+          r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns) + " < input " +
+                            std::to_string(routed_in) + ": kept the input placement");
+        } else {
+          r.notes.push_back("route check: new placement routed " + std::to_string(routed_out) + "/" + std::to_string(conns) + " (input " +
+                            std::to_string(routed_in) + ")");
+        }
       } else {
-        // Compare unrouted counts against the input's minimal repair, or the input if repair fails (D75).
+        // --repair-input: compare unrouted counts against the input's minimal repair, or the input if repair fails (D75).
         // Use the board's courtyard rule (else 0): full mode's 0.25 mm default can reject legal hand placements.
         place::ExtractOptions eo_input = eo;
         eo_input.default_clearance = 0;

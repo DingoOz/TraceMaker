@@ -843,7 +843,7 @@ TEST_CASE("routability loop: never worse than its best seed, locked parts fixed"
   CHECK(route(r.best.pl).unrouted() == r.best.eval.unrouted());
 }
 
-TEST_CASE("routability loop: illegal seeds are reference only unless the input is accepted as it is", "[place][m8]") {
+TEST_CASE("routability loop: with absolute seed legality illegal seeds are reference only unless the input is accepted as it is", "[place][m8]") {
   Problem p = random_problem(30, 83, 30 * MM);
   const Placement legal = legal_start(p);
   // Overlapping parts give the fake router the shortest wires.
@@ -859,6 +859,15 @@ TEST_CASE("routability loop: illegal seeds are reference only unless the input i
   o.place.effort = 0.3;
   o.rounds = 1;
   o.eco_candidates = 2;
+  {
+    // Default: the input is compared as it is, conflicts and all, and wins on routing.
+    const LoopResult r = routability_loop(p, {{"input", piled, {}, 0}, {"legal", legal, {}, 0}}, o, route);
+    CHECK(r.tried.front().label == "input");
+    CHECK_FALSE(r.tried.front().legal);
+    CHECK(r.best.eval.unrouted() <= route(piled).unrouted());  // the incumbent started from the input, not from "legal"
+    CHECK(r.best.eval.unrouted() < route(legal).unrouted());
+  }
+  o.absolute_seed_legality = true;  // --repair-input
   {
     const LoopResult r = routability_loop(p, {{"input", piled, {}, 0}, {"legal", legal, {}, 0}}, o, route);
     REQUIRE(r.tried.size() >= 2);
