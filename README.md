@@ -178,7 +178,7 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 ```
 scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
-ctest --preset release             # 165 tests, about 12 minutes
+ctest --preset release             # 165 tests, about 6 minutes
 ```
 
 - Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.
