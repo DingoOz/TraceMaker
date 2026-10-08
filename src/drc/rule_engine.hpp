@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "drc/copper.hpp"
+#include "drc/rule_geometry.hpp"
 #include "model/board.hpp"
 #include "model/rules.hpp"
 
@@ -55,8 +56,8 @@ class RuleEngine {
   std::optional<std::string> disallowed(const CopperItem& it, int layer) const;
   // Router checks for a new track or through via. Positional and footprint conditions are warned and left to DRC.
   bool track_allowed(model::NetId net, int layer) const;
-  // `type`: Through by default; Blind stands for blind and buried vias alike (`blind_via` or `buried_via` in a
-  // rule forbids both: the board model has one type for the two), Micro for micro vias.
+  // `Blind` router probes have no span yet, so either blind/buried keyword conservatively forbids them.
+  // Board items are distinguished exactly by whether their span touches an outer copper layer.
   bool via_allowed(model::NetId net, model::ViaType type = model::ViaType::Through) const;
   // Hole-to-copper clearance on `layer`, any net; -1 when no rule matches (KiCad: hole_clearance).
   Coord physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
@@ -93,6 +94,7 @@ class RuleEngine {
   // a fill has tens of thousands of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).
   mutable std::map<std::tuple<const void*, int, int>, bool> area_cache_;
   mutable std::mutex area_mutex_;
+  CourtyardCache courtyards_;
   bool any_custom_clearance_ = false;
   bool zone_overrides_ = false;
   bool needs_exact_ = false;

@@ -728,9 +728,11 @@ pad's own layer.
 | Rule | Router | DRC (`tracemaker drc`) |
 |---|---|---|
 | `disallow track` by net, net class, type or layer, including `inDiffPair` | `RuleEngine::track_allowed` supplies per-net layer masks for pad cells, escapes, planar moves, via landings, diff-pair legs, escape corridors and fields. Through vias may pass through disallowed track layers. | `items_not_allowed`, once per item |
-| `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). `blind_via` or `buried_via` alone stops blind and buried vias for the net (`--blind-vias`; the board model has one type for the two, so either word forbids both), `micro_via` alone stops micro vias (`--micro-vias`); the other type stays available. | `items_not_allowed` |
-| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`) | Not applied; `tracemaker route` and `tracemaker drc` print a warning naming the rule. | Reported |
-| `disallow` whose condition does not parse, or uses a property or function TraceMaker does not evaluate | Not applied; warned by name in both commands. | Not reported |
+| `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). Blind/buried router probes have no span yet, so either keyword conservatively stops both; `micro_via` alone stops micro vias. | `items_not_allowed`; `blind_via` has exactly one outer span endpoint, `buried_via` none, micro remains separate (D80). |
+| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Not applied; both commands warn by rule name that the router does not avoid it, the DRC reports it. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
+| Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
+| Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
+| Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have an undefined own layer. Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
 | `physical_hole_clearance` | Between a hole and any other item's copper, whatever the nets, as KiCad reports it. `Obstacles::physical_copper_state` tests new tracks and via pads against the holes of pads and vias; `physical_hole_state` tests a new via's hole against copper; both against fixed and routed items, in the exact check before commit and in the search's cached and routed checks. A net whose vias the rule sets against its own tracks (an unconditional rule does) gets no vias: the tracks that end in a via touch its hole. For the same reason a track cannot end on a plated pad of its own net under such a rule. | `hole_clearance`, once per hole and item, any net |
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
@@ -878,3 +880,59 @@ boards at 5 M work units; the quick tier is unchanged).
 - Planes that no pad touches are still not connection targets; only a net whose fill already holds one of
   its pads gets vias into it.
 - The Python bindings and the KiCad plugin do not expose the two options yet.
+
+## 33. Custom-rule conditions: KiCad 10 parity (2026-10-08)
+
+**Before.** The 61-case custom-rule corpus matched 35 cases and disagreed on 26. Comparisons discarded unit
+suffixes, unknown symbols could hide behind short-circuiting despite a "rule not applied" warning, and area
+enclosure used bounding-box corners. Vias acquired the DRC pass's layer; ignore rules and blind/buried spans
+were not distinguished.
+
+**What was built** (D80).
+
+| Semantics | Deciding KiCad 10.0.3 cases |
+|---|---|
+| `<`, `<=`, `>`, `>=` and numeric equality/inequality; dimensional properties are nanometres | `width_gt_mm`, `position_anchor_x_le_zero`, `size_x_mm`, `size_y_half_mm`, `size_x_mil` |
+| Literal scaling without rounding; equality tolerance below 1e-9 nm, retaining fractional nanometres | `width_eq_mil`, `literal_mm_mil`, `fractional_nm_constant`, `fractional_nm_not_zero` |
+| Exact case-sensitive unit vocabulary: `mm`, `mil`, `in`, `deg`, `fs`, `ps`, including spaced suffixes; time scales to attoseconds | `width_gt_in`, `width_eq_spaced_mm`, `width_eq_deg`, `width_eq_250fs`, `width_eq_quarter_ps`, `literal_ps_fs` |
+| One numeric literal without units drops the entire condition, even in an unused branch; multiple numeric literals permit bare internal-unit values | `width_ne_double_or`, `width_gt_double_or`, `width_eq_integer_multiliteral_false_or` |
+| Quoted dimensions remain strings: equality with a number is false, inequality true, relational conversion is zero | `size_x_quoted`, `width_eq_quoted_mm_or`, `width_ne_quoted_mm`, `width_gt_quoted_mm` |
+| Unknown properties/functions anywhere drop the rule; invalid `Parent.Reference` aliases are removed; bare `L` remains undefined for unary disallow | `unknown_short_circuit`, `unknown_function`, `reference_A_Parent_Reference`, `reference_Parent_Reference`, `bare_layer_front` |
+| A terminal unterminated single-quoted string extends to the end | `malformed_quote`; unmatched parentheses still fail (`malformed_paren`) |
+| Later matching disallow rules win for the same item type; ignore clears that violation, not another type's ban | `severity_ignore`, `later_ignore`, `earlier_ignore`, `later_different_disallow`, `later_different_disallow_ignore` |
+| Own item layer: tracks use their layer, pads the footprint side even for PTH/NPTH, vias undefined for both equality and inequality | `item_layer_front`, `item_layer_back`, `own_layer_pads_front`, `own_layer_pads_not_front` |
+| `insideArea` aliases intersection; common copper layers required; enclosure checks all rounded copper against actual contours, including holes and concavity | `area_insideArea`, `area_enclosedByArea`, `area_concave_*`, `area_hole_*` |
+| Physical front/back/both courtyard polygons, independent of the item's copper side; wildcard references; closed lines/arcs/rectangles/circles/polygons, no interior for an open outline | `court_intersectsBackCourtyard`, `court_line_*`, `court_arc_*`, `court_unclosed_*`; direct geometry tests cover circles, polygons and wildcards |
+| Absolute transformed pad/via anchors; tracks/arcs have undefined positions (`==`/`!=` both false, relational zero-coercion) | `position_x`, `position_anchor_shifted_pad`, `position_anchor_rotated_pad`, `position_anchor_x_ne_zero`, `position_anchor_x_lt_one` |
+| Blind via spans touch exactly one outer layer; buried spans none; micro vias remain separate | `subtype_blind_via`, `subtype_buried_via`, `subtype_micro_via` |
+
+The rejection of `um`, `cm`, `mils`, `inch`, `thou` and uppercase suffixes, and non-conversion of quoted
+dimensions, are measured KiCad behaviour, not advertised language extensions. The unusual lone-unitless-literal
+rule is also in [KiCad's compiler](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/common/libeval_compiler/libeval_compiler.cpp);
+the unit list is in its [PCB evaluator](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/pcbnew/pcbexpr_evaluator.cpp).
+Courtyards are prepared once, and area/courtyard queries use the existing integer geometry without a new
+dependency. The new item-dependent conditions remain positional: the router leaves them to DRC and warns by
+rule name. Static gates only acquire dropped-rule and typed ignore semantics; blind/buried probes without
+a span retain the conservative router gate.
+
+**Results.** Original corpus: 35/61 → 61/61 MATCH (26 → 0 mismatches). Expanded corpus: all 131 cases MATCH,
+including 70 new probes, comparing violation item/pair multisets rather than counts. Final runner line:
+`131 cases in 78.01s: Counter({'MATCH': 131})`. Corpus, frozen expectations, raw CLI reports and logs remain
+under `/tmp/tmk-C`; the runner's label mapper was extended for arcs and fixture metadata now stays with its
+immutable board fragment, rather than stale reused footprint labels.
+
+The `[rules]` filter passes 95,874 assertions in 29 cases. Full ctest, excluding the two version-specific
+`kicad_drc_parity` / `kicad_drc_broken_parity` tests, reports 0 failures out of 176 (173 passed; GPU Philox,
+KiCad edit round-trip and catalogue sync skipped). C++ compilation has no warnings; Apple's pre-existing
+duplicate-static-library linker warnings remain unchanged.
+
+Quick tier: the same 30 PCBench tier-A boards before and after, one portfolio thread, 60 s per board, six
+parallel jobs: 30/30 clean and complete, zero added KiCad DRC errors, and every routed board byte-identical.
+Runs are `bench/results/d80-before-quick` and `d80-after-quick` (not committed).
+
+**Limits.** This is parity for the named corpus, not all of KiCad's expression language. Bezier courtyard
+graphics, near-closed endpoint snapping and KiCad's small courtyard deflation tolerance are not covered.
+Courtyard arcs/circles use the existing 5 µm-sagitta polygonization; containment is exact against the represented
+copper cores and contours. Circle/polygon/wildcard courtyard behaviour has direct engine tests but no dedicated
+CLI corpus case. Positional router enforcement and zone refill are unchanged.
+
