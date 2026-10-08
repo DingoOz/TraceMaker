@@ -732,7 +732,7 @@ pad's own layer.
 | Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Not applied; both commands warn by rule name that the router does not avoid it, the DRC reports it. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
 | Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
 | Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
-| Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have an undefined own layer. Layer selectors and membership still examine occupied copper layers (D80). |
+| Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have no layer property. A zone uses its source layer, not a fill projection; a multilayer zone has an unset layer ID (`==` false, `!=` true). Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
 | `physical_hole_clearance` | Between a hole and any other item's copper, whatever the nets, as KiCad reports it. `Obstacles::physical_copper_state` tests new tracks and via pads against the holes of pads and vias; `physical_hole_state` tests a new via's hole against copper; both against fixed and routed items, in the exact check before commit and in the search's cached and routed checks. A net whose vias the rule sets against its own tracks (an unconditional rule does) gets no vias: the tracks that end in a via touch its hole. For the same reason a track cannot end on a plated pad of its own net under such a rule. | `hole_clearance`, once per hole and item, any net |
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
@@ -900,7 +900,7 @@ were not distinguished.
 | Unknown properties/functions anywhere drop the rule; invalid `Parent.Reference` aliases are removed; bare `L` remains undefined for unary disallow | `unknown_short_circuit`, `unknown_function`, `reference_A_Parent_Reference`, `reference_Parent_Reference`, `bare_layer_front` |
 | A terminal unterminated single-quoted string extends to the end | `malformed_quote`; unmatched parentheses still fail (`malformed_paren`) |
 | Later matching disallow rules win for the same item type; ignore clears that violation, not another type's ban | `severity_ignore`, `later_ignore`, `earlier_ignore`, `later_different_disallow`, `later_different_disallow_ignore` |
-| Own item layer: tracks use their layer, pads the footprint side even for PTH/NPTH, vias undefined for both equality and inequality | `item_layer_front`, `item_layer_back`, `own_layer_pads_front`, `own_layer_pads_not_front` |
+| Own item layer, also in paired clearance: tracks use their layer, pads the footprint side even for PTH/NPTH; vias have no layer property (`==`/`!=` false); multilayer zones expose an unset ID (`==` false, `!=` true), not a fill's layer | `item_layer_front`, `item_layer_back`, `own_layer_pads_front`, `own_layer_pads_not_front`, `zone_pair_*` |
 | `insideArea` aliases intersection; common copper layers required; enclosure checks all rounded copper against actual contours, including holes and concavity | `area_insideArea`, `area_enclosedByArea`, `area_concave_*`, `area_hole_*` |
 | Physical front/back/both courtyard polygons, independent of the item's copper side; wildcard references; closed lines/arcs/rectangles/circles/polygons, no interior for an open outline | `court_intersectsBackCourtyard`, `court_line_*`, `court_arc_*`, `court_unclosed_*`; direct geometry tests cover circles, polygons and wildcards |
 | Absolute transformed pad/via anchors; tracks/arcs have undefined positions (`==`/`!=` both false, relational zero-coercion) | `position_x`, `position_anchor_shifted_pad`, `position_anchor_rotated_pad`, `position_anchor_x_ne_zero`, `position_anchor_x_lt_one` |
@@ -915,20 +915,41 @@ dependency. The new item-dependent conditions remain positional: the router leav
 rule name. Static gates only acquire dropped-rule and typed ignore semantics; blind/buried probes without
 a span retain the conservative router gate.
 
-**Results.** Original corpus: 35/61 → 61/61 MATCH (26 → 0 mismatches). Expanded corpus: all 131 cases MATCH,
-including 70 new probes, comparing violation item/pair multisets rather than counts. Final runner line:
-`131 cases in 78.01s: Counter({'MATCH': 131})`. Corpus, frozen expectations, raw CLI reports and logs remain
-under `/tmp/tmk-C`; the runner's label mapper was extended for arcs and fixture metadata now stays with its
-immutable board fragment, rather than stale reused footprint labels.
+**Results.** Original corpus: 35/61 → 61/61 MATCH (26 → 0 mismatches). The expanded corpus matches all 161
+cases, including 70 scalar/geometry probes and 30 paired-clearance probes. Comparison uses violation
+item/pair multisets, retaining repeated reports against different copper-layer fills rather than just counts.
+`rule_parity` passes in 1.62 s without KiCad; a full KiCad 10.0.3 rejudge reproduces the frozen oracle.
 
-The `[rules]` filter passes 95,874 assertions in 29 cases. Full ctest, excluding the two version-specific
-`kicad_drc_parity` / `kicad_drc_broken_parity` tests, reports 0 failures out of 176 (173 passed; GPU Philox,
+The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
+directory, `expected.json` freezes KiCad 10.0.3 item/pair multisets, and `run.py` runs only TraceMaker DRC.
+`ctest --test-dir build/macos-metal -R '^rule_parity$' --output-on-failure` needs neither KiCad nor routing.
+To refresh the oracle deliberately, run:
+
+```
+python3 tests/integration/rule_parity/run.py build/macos-metal/src/app/tracemaker build/macos-metal/integration/rule_parity --rejudge --kicad-cli /opt/homebrew/bin/kicad-cli
+```
+
+Only rejudging may skip (77) when KiCad is absent; ordinary regression runs fail on missing binaries or
+item/pair differences. Raw DRC reports and logs stay in the build directory.
+
+The `[rules]` filter passes 95,985 assertions in 32 cases. Full ctest, excluding the two version-specific
+`kicad_drc_parity` / `kicad_drc_broken_parity` tests, reports 0 failures out of 180 (177 passed; GPU Philox,
 KiCad edit round-trip and catalogue sync skipped). C++ compilation has no warnings; Apple's pre-existing
 duplicate-static-library linker warnings remain unchanged.
 
+Real-board comparison against `origin/main`: Jetson clearance 3,604 → 2,040; every removed report is a
+Via–Zone pair previously given 1 mm by `(hs_zone_clearance` through `A.Layer == B.Layer`. The new paired
+corpus independently confirms that this rule does not match vias in KiCad. Multilayer zones also retain
+their unset own-layer ID across fills, including inequality and wildcard comparisons. Vme-wren's complete
+violation and unconnected-item arrays are unchanged (22,362 clearance, 21 shorting, 1 dangling track,
+92 dangling vias); its six new `fromTo` warnings name length-only rules that DRC does not evaluate.
+The 14-board DRC parity manifest stays 13/14 both before and after: the existing tiny-tapeout
+`annular_width` mismatch is KiCad 16 / TraceMaker 0. That harness caps counts at 199; the custom-rule
+corpus and the real-board item diffs do not.
+
 Quick tier: the same 30 PCBench tier-A boards before and after, one portfolio thread, 60 s per board, six
 parallel jobs: 30/30 clean and complete, zero added KiCad DRC errors, and every routed board byte-identical.
-Runs are `bench/results/d80-before-quick` and `d80-after-quick` (not committed).
+Runs are `bench/results/d80-before-quick` and `d80-final-quick` (not committed).
 
 **Limits.** This is parity for the named corpus, not all of KiCad's expression language. Bezier courtyard
 graphics, near-closed endpoint snapping and KiCad's small courtyard deflation tolerance are not covered.

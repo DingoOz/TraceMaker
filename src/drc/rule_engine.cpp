@@ -23,7 +23,7 @@ struct EvalCtx {
 };
 
 struct Value {
-  enum class K { Undef, Bool, Str, Num } k = K::Undef;
+  enum class K { Undef, Bool, Str, Num, NoLayer } k = K::Undef;
   bool b = false;
   std::string s;
   double n = 0;
@@ -224,6 +224,8 @@ class Condition {
 
   static bool str_eq(const Value& l, const Value& r) {
     if (l.k == Value::K::Num && r.k == Value::K::Num) return std::fabs(l.n - r.n) < 1e-9;
+    // KiCad's layer value rejects its unset ID even against '*'; it is not a missing property.
+    if (l.k == Value::K::NoLayer || r.k == Value::K::NoLayer) return false;
     if (l.k != r.k) return false;
     if (l.k == Value::K::Bool || r.k == Value::K::Bool) return l.truthy() == r.truthy();
     // KiCad compares strings case-insensitively with wildcard support on either side.
@@ -250,11 +252,19 @@ class Condition {
       if (it->kind == ItemKind::Via) return {};
       if (it->kind == ItemKind::Pad && it->footprint >= 0) {
         v.s = b.footprints[static_cast<std::size_t>(it->footprint)].back ? "B.Cu" : "F.Cu";
-      } else if (it->layers && !(it->layers & (it->layers - 1))) {
+      } else {
+        // Multilayer zones expose an unset layer ID, not the copper projection's fill layer.
+        const model::LayerMask layers = it->kind == ItemKind::Zone
+                                           ? b.zones[static_cast<std::size_t>(it->index)].copper
+                                           : it->layers;
+        if (!layers || (layers & (layers - 1))) {
+          v.k = it->kind == ItemKind::Zone ? Value::K::NoLayer : Value::K::Undef;
+          return v;
+        }
         int layer = 0;
-        while (!(it->layers & model::layer_bit(layer))) ++layer;
+        while (!(layers & model::layer_bit(layer))) ++layer;
         v.s = b.copper_name(layer);
-      } else return {};
+      }
     } else if (n.name == "Reference")
       v.s = it->footprint >= 0 ? b.footprints[static_cast<std::size_t>(it->footprint)].reference : "";
     else if (n.name == "Pad_Type" && it->kind == ItemKind::Pad) {
