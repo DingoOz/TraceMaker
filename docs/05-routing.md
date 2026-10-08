@@ -729,8 +729,9 @@ pad's own layer.
 |---|---|---|
 | `disallow track` by net, net class, type or layer, including `inDiffPair` | `RuleEngine::track_allowed` supplies per-net layer masks for pad cells, escapes, planar moves, via landings, diff-pair legs, escape corridors and fields. Through vias may pass through disallowed track layers. | `items_not_allowed`, once per item |
 | `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed` rejects vias for a net if a through via matches on any layer; the net then gets no blind or buried vias either (`--blind-vias`). | `items_not_allowed` |
-| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`) | Warned; not applied. | Reported |
-| `disallow hole / footprint / text` | Warned; not applied. | Left to KiCad |
+| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`) | Not applied; `tracemaker route` and `tracemaker drc` print a warning naming the rule. | Reported |
+| `disallow` whose condition does not parse, or uses a property or function TraceMaker does not evaluate | Not applied; warned by name in both commands. | Not reported |
+| `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
 | `physical_hole_clearance` | Between a hole and any other item's copper, whatever the nets, as KiCad reports it. `Obstacles::physical_copper_state` tests new tracks and via pads against the holes of pads and vias; `physical_hole_state` tests a new via's hole against copper; both against fixed and routed items, in the exact check before commit and in the search's cached and routed checks. A net whose vias the rule sets against its own tracks (an unconditional rule does) gets no vias: the tracks that end in a via touch its hole. For the same reason a track cannot end on a plated pad of its own net under such a rule. | `hole_clearance`, once per hole and item, any net |
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
 

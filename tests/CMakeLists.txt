@@ -59,3 +59,6 @@ set_tests_properties(diff_pair PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;kica
 # --first-nets on the synthetic tests/boards/plane_smd; KiCad's DRC when kicad-cli is on the PATH.
 add_test(NAME plane_smd COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/plane_smd.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/plane_smd)
 set_tests_properties(plane_smd PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 600)
+# Custom rules the router cannot apply are named in the route log (doc 05 §27).
+add_test(NAME route_rule_warnings COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/route_rule_warnings.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/route_rule_warnings)
+set_tests_properties(route_rule_warnings PROPERTIES LABELS "route;integration" TIMEOUT 120)

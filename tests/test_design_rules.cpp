@@ -9,6 +9,7 @@
 #include <tuple>
 
 #include "drc/drc.hpp"
+#include "drc/rule_engine.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/obstacles.hpp"
@@ -335,6 +336,31 @@ TEST_CASE("fixed via codes: one-pass and per-layer paths agree with soft zones a
     CHECK((blocked < compared) == soft);
     CHECK((differs > 0) == (soft && off_pads && !exempt));
   }
+}
+
+TEST_CASE("disallow rules the router cannot apply are named in the rule warnings", "[rules]") {
+  const std::string area =
+      "  (zone (net 0) (net_name \"\") (layers \"F.Cu\") (name \"noroute\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
+      "    (min_thickness 0.25) (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed))\n"
+      "    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 9 0) (xy 11 0) (xy 11 10) (xy 9 10))))\n";
+  const std::string rules = std::string(kInnerGndOnly) +
+                            "(rule \"by area\" (condition \"A.intersectsArea('noroute')\") (constraint disallow track via))\n"
+                            "(rule \"broken\" (condition \"A.NetName != 'GND' &&& (\") (constraint disallow track))\n"
+                            "(rule \"odd property\" (condition \"A.Frobnicate == 3\") (constraint disallow track))\n";
+  const Files f("warn", board_text(area), rules);
+  const auto lb = io::read_board_file(f.pcb.string());
+  const auto dr = io::read_design_rules(f.pcb.string());
+  const drc::RuleEngine re(lb.board, dr);
+  auto names = [&](const std::string& rule) {
+    return std::any_of(re.warnings().begin(), re.warnings().end(), [&](const std::string& w) { return w.find("rule '" + rule + "'") != std::string::npos; });
+  };
+  CHECK(names("by area"));
+  CHECK(names("broken"));
+  CHECK(names("odd property"));
+  CHECK_FALSE(names("inner GND only"));  // applied by the router as a layer mask
+  // None of the three changes what the router allows.
+  for (int l = 0; l < 4; ++l) CHECK(re.track_allowed(1, l) == (l == 0 || l == 3));
+  CHECK(re.via_allowed(1));
 }
 
 TEST_CASE("DRC reports disallowed tracks and vias in pads as KiCad does", "[rules][drc]") {

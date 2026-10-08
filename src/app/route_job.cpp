@@ -244,6 +244,12 @@ RouteJobResult run_route_job(RouteJob job) {
       log("component rules: generated custom rules written to " + side);
     }
   }
+  // Custom rules the router cannot apply (unreadable conditions, position-dependent disallow rules) are named
+  // here, not only by `tracemaker drc`: the routed board may break them (rule 6).
+  {
+    const drc::RuleEngine re(*route_board, rules);
+    for (const auto& w : re.warnings()) log("warning: " + w);
+  }
   auto& res = out.result;
   std::vector<int> ran;
   int best_index = 0;

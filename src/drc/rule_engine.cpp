@@ -58,6 +58,9 @@ class Condition {
   bool eval(EvalCtx& ctx) const { return eval(*root_, ctx).truthy(); }
   // Property or function names used by either item.
   bool references(std::initializer_list<std::string_view> names) const { return references(*root_, names); }
+  // First property or function that prop() / call() below do not evaluate ("" if none): such a condition is
+  // never true here.
+  std::string unsupported() const { return unsupported(*root_); }
 
  private:
   void skip() {
@@ -187,6 +190,17 @@ class Condition {
     for (const auto& k : n.kids)
       if (references(*k, names)) return true;
     return false;
+  }
+
+  static std::string unsupported(const Node& n) {
+    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "Reference", "Parent.Reference", "Pad_Type", "Width"};
+    static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
+                                                 "memberOfFootprint"};
+    if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
+    if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls)) return n.name + "()";
+    for (const auto& k : n.kids)
+      if (auto u = unsupported(*k); !u.empty()) return u;
+    return {};
   }
 
   static bool str_eq(const Value& l, const Value& r) {
@@ -332,7 +346,9 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         if (w != "track" && w != "via" && w != "through_via" && w != "micro_via" && w != "buried_via" && w != "blind_via" && w != "pad" &&
             w != "zone" && w != "graphic")
           warnings_.push_back("rule '" + rule.name + "': disallow " + w + " is not checked by TraceMaker (KiCad's DRC still reports it)");
-      if (c.positional)
+      if (const std::string u = c.cond ? c.cond->unsupported() : std::string(); !u.empty())
+        warnings_.push_back("rule '" + rule.name + "': disallow condition uses " + u + ", which TraceMaker does not evaluate; rule not applied");
+      else if (c.positional)
         warnings_.push_back("rule '" + rule.name +
                             "': disallow condition depends on position or footprint; the router does not avoid it, the DRC reports it");
     }
