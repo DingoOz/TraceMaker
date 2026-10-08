@@ -116,6 +116,121 @@ TEST_CASE("physical_hole_clearance keeps vias out of same-net SMD pads, except w
   CHECK_FALSE(obs.needs_exact_routing());  // net-independent rule: cache remains valid
 }
 
+// A plated hole without a net at (10, 3), on the straight line between the two SIG pads: drill 0.8, pad 1.2 mm.
+const char* kHoleInTheWay =
+    "  (footprint \"H\" (layer \"F.Cu\") (at 10 3)\n"
+    "    (property \"Reference\" \"H1\" (at 0 0) (layer \"F.SilkS\"))\n"
+    "    (pad \"1\" thru_hole circle (at 0 0) (size 1.2 1.2) (drill 0.8) (layers \"*.Cu\"))\n  )\n";
+const char* kHoleKeepaway = "(version 1)\n(rule \"hole keepaway\" (constraint physical_hole_clearance (min 1mm)))\n";
+
+TEST_CASE("physical_hole_clearance: new tracks keep the rule's distance from holes", "[rules][route]") {
+  const Files plain("phc_track_plain", board_text(kHoleInTheWay), "");
+  const Files ruled("phc_track_ruled", board_text(kHoleInTheWay), kHoleKeepaway);
+  const geom::Shape hole = geom::Shape::point({10'000'000, 3'000'000}, 400'000);
+  // A 0.25 mm track 1.2 mm from the hole's centre: 0.475 mm from the pad (legal by clearance), 0.675 mm from the hole.
+  const geom::Point a{8'000'000, 4'200'000}, b{12'000'000, 4'200'000};
+  {
+    auto lb = io::read_board_file(plain.pcb.string());
+    const auto rules = io::read_design_rules(plain.pcb.string());
+    route::Obstacles obs(lb.board, rules);
+    CHECK(obs.segment_state(a, b, 0, 250'000, 1, false) == 0);
+    CHECK(obs.fixed_code({10'000'000, 4'200'000}, 0, 125'000, 0, 1) != route::Obstacles::kBlocked);
+  }
+  {
+    auto lb = io::read_board_file(ruled.pcb.string());
+    const auto rules = io::read_design_rules(ruled.pcb.string());
+    route::Obstacles obs(lb.board, rules);
+    for (int l = 0; l < 4; ++l) CHECK(obs.segment_state(a, b, l, 250'000, 1, false) == 2);  // the hole is on every layer
+    CHECK(obs.fixed_code({10'000'000, 4'200'000}, 0, 125'000, 0, 1) == route::Obstacles::kBlocked);  // cached path agrees
+    CHECK(obs.segment_state({8'000'000, 5'000'000}, {12'000'000, 5'000'000}, 0, 250'000, 1, false) == 0);  // 1.475 mm away
+    CHECK_FALSE(obs.needs_exact_routing());
+  }
+  // Routed: without the rule the SIG track passes the hole closer than 1 mm; with it no track does.
+  auto near_hole = [&](const route::RouteResult& r) {
+    int n = 0;
+    for (const auto& t : r.tracks) n += geom::closer_than(geom::Shape::segment(t.a, t.b, t.width / 2), hole, 1'000'000);
+    return n;
+  };
+  const auto before = route_board(plain);
+  REQUIRE(before.routed == 2);
+  CHECK(near_hole(before) > 0);
+  const auto after = route_board(ruled);
+  CHECK(after.routed == 2);
+  CHECK(near_hole(after) == 0);
+}
+
+TEST_CASE("physical_hole_clearance: via holes and routed copper of any net keep the rule's distance", "[rules][route]") {
+  const Files f("phc_routed", board_text(""), kHoleKeepaway);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto with_rule = io::read_design_rules(f.pcb.string());
+  const model::DesignRules no_rule = [&] {
+    auto r = with_rule;
+    r.custom.clear();
+    return r;
+  }();
+  route::Obstacles ruled(lb.board, with_rule), plain(lb.board, no_rule);
+  // Routed copper is registered after the models are built: a GND track on In1 (connection 7) and a GND via (connection 8).
+  model::Track t;
+  t.a = {6'000'000, 5'000'000};
+  t.b = {14'000'000, 5'000'000};
+  t.width = 250'000;
+  t.layer = 1;
+  t.net = 2;
+  lb.board.tracks.push_back(t);
+  model::Via v;
+  v.pos = {10'000'000, 8'000'000};
+  v.size = 600'000;
+  v.drill = 300'000;
+  v.layer_top = 0;
+  v.layer_bottom = 3;
+  v.net = 2;
+  lb.board.vias.push_back(v);
+  for (route::Obstacles* o : {&ruled, &plain}) {
+    o->add_track(static_cast<int>(lb.board.tracks.size()) - 1, 7);
+    o->add_via(static_cast<int>(lb.board.vias.size()) - 1, 8);
+  }
+  // A new via 0.9 mm beside the routed track: copper 0.475 mm apart, hole 0.625 mm from the track.
+  const geom::Point vp{10'000'000, 5'900'000};
+  for (model::NetId net : {1, 2}) {  // another net, and the track's own net
+    CHECK(plain.via_state(vp, 600'000, 300'000, net, 0, false) == 0);
+    CHECK(ruled.via_state(vp, 600'000, 300'000, net, 0, false) == 2);
+    std::vector<int> owners;
+    CHECK(ruled.via_state(vp, 600'000, 300'000, net, 0, true, &owners) == 1);  // rippable, not fixed
+    CHECK(std::find(owners.begin(), owners.end(), 7) != owners.end());
+    // The search's routed-copper check agrees with the exact one.
+    CHECK(ruled.routed_state(geom::Shape::point(vp, 300'000), 1, net, drc::ItemKind::Via, false, nullptr, true, 150'000) == 2);
+    CHECK(ruled.routed_via_state(geom::Shape::point(vp, 300'000), model::layer_bit(1), net, false, 150'000) == 2);
+  }
+  // A new track 0.9 mm beside the routed via: copper 0.475 mm apart, 0.625 mm from its hole.
+  const geom::Point a{8'000'000, 8'900'000}, b{12'000'000, 8'900'000};
+  for (model::NetId net : {1, 2}) {
+    CHECK(plain.segment_state(a, b, 3, 250'000, net, false) == 0);
+    CHECK(ruled.segment_state(a, b, 3, 250'000, net, false) == 2);
+    std::vector<int> owners;
+    CHECK(ruled.segment_state(a, b, 3, 250'000, net, true, &owners) == 1);
+    CHECK(std::find(owners.begin(), owners.end(), 8) != owners.end());
+    CHECK(ruled.routed_state(geom::Shape::segment(a, b, 125'000), 3, net, drc::ItemKind::Track, false, nullptr) == 2);
+  }
+}
+
+TEST_CASE("physical_hole_clearance between a net's vias and its own tracks leaves the net without vias", "[rules][route]") {
+  // Both nets need a via to cross the wall, and the tracks that end in a via touch its hole: KiCad reports each
+  // such pair, so no via may be placed.
+  const Files free_board("phc_own_free", board_text(kOuterWall), "");
+  const auto before = route_board(free_board);
+  REQUIRE(before.routed == 2);
+  REQUIRE_FALSE(before.vias.empty());
+  const Files f("phc_own", board_text(kOuterWall), kHoleKeepaway);
+  const auto r = route_board(f);
+  CHECK(r.vias.empty());
+  CHECK(r.routed == 0);
+  // A rule limited to vias against pads leaves vias usable.
+  const Files pads_only("phc_own_pads", board_text(kOuterWall),
+                        "(version 1)\n(rule \"no via in pad\" (constraint physical_hole_clearance (min 0.05mm))\n"
+                        "  (condition \"A.Type == 'Via' && B.Type == 'Pad'\"))\n");
+  CHECK(route_board(pads_only).routed == 2);
+}
+
 TEST_CASE("a keepout that forbids only vias blocks vias and lets tracks through", "[rules][route]") {
   const std::string ko =
       "  (zone (net 0) (net_name \"\") (layers \"B.Cu\") (name \"tc\") (hatch edge 0.5) (connect_pads (clearance 0))\n"

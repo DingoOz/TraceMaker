@@ -181,7 +181,8 @@ struct Router::Impl {
     const Coord w = mn > 0 ? std::max(mn, std::min<Coord>(class_width(net), 150'000)) : std::min<Coord>(class_width(net), 150'000);
     return w < class_width(net) ? w : 0;
   }
-  // Per-net track layers and via permission from custom disallow rules (doc 05 §27).
+  // Per-net track layers and via permission from custom disallow rules; a net also gets no vias when a
+  // physical_hole_clearance rule holds between its vias and its own tracks (doc 05 §27).
   std::vector<model::LayerMask> net_layers;
   std::vector<std::uint8_t> net_vias;
   bool layer_ok(NetId net, int layer) const {
@@ -216,7 +217,7 @@ struct Router::Impl {
       if (i >= net_layers.size()) continue;
       for (int l = 0; l < nl; ++l)
         if (obs->rules().track_allowed(n.id, l)) net_layers[i] |= model::layer_bit(l);
-      net_vias[i] = obs->rules().via_allowed(n.id) ? 1 : 0;
+      net_vias[i] = obs->rules().via_allowed(n.id) && !obs->rules().via_hole_rule_hits_own_tracks(n.id) ? 1 : 0;
     }
     // Pitch: a fraction of the smallest (width + clearance) so lattice tracks can pass between fine-pitch pads.
     if (opt.pitch > 0) {

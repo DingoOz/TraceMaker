@@ -59,6 +59,9 @@ class RuleEngine {
   // Hole-to-copper clearance on `layer`, any net; -1 when no rule matches (KiCad: hole_clearance).
   Coord physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
   bool any_physical_hole_clearance() const { return max_physical_hole_ > 0; }
+  // True when a physical_hole_clearance rule holds between a via of `net` and a track of the same net: the
+  // tracks that end in a via touch its hole, so every via of that net would break the rule.
+  bool via_hole_rule_hits_own_tracks(model::NetId net) const;
   Coord max_physical_hole_clearance() const { return max_physical_hole_; }
   // Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.
   bool needs_exact_routing() const { return needs_exact_; }

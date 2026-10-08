@@ -91,8 +91,11 @@ class Obstacles {
   int copper_state(const geom::Shape& s, const drc::CopperItem& probe, int layer, bool ignore_routed, std::vector<int>* owners) const;
   int holes_edges_state(const geom::Shape& s, model::NetId net, int layer, bool is_via_hole, Coord hole_r, bool ignore_routed,
                         std::vector<int>* owners) const;
-  // Physical hole clearance against fixed copper on `layer`, any net.
-  bool physical_hole_blocked(const geom::Shape& hole, model::NetId net, int layer) const;
+  // Custom physical_hole_clearance rules, any net: new copper against existing holes, and a new via's hole
+  // against existing copper, on `layer`. 0 free, 1 conflict with routed copper (when soft), 2 blocked.
+  int physical_copper_state(const geom::Shape& s, drc::ItemKind kind, model::NetId net, int layer, bool fixed, bool routed, bool soft,
+                            std::vector<int>* owners) const;
+  int physical_hole_state(const geom::Shape& hole, model::NetId net, int layer, bool fixed, bool routed, bool soft, std::vector<int>* owners) const;
   int routed_copper_part(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners) const;
   int routed_via_holes_part(const geom::Shape& s, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;
   int routed_hole_copper_part(const geom::Shape& h, int layer, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;

@@ -536,6 +536,20 @@ Coord RuleEngine::physical_hole_clearance(const CopperItem* hole_owner, const Co
   return custom_min("physical_hole_clearance", hole_owner, &other, layer).value_or(-1);
 }
 
+bool RuleEngine::via_hole_rule_hits_own_tracks(model::NetId net) const {
+  if (max_physical_hole_ <= 0) return false;
+  CopperItem via, track;
+  via.kind = ItemKind::Via;
+  track.kind = ItemKind::Track;
+  via.net = track.net = net;
+  for (int l = 0; l < b_.copper_count(); ++l) via.layers |= model::layer_bit(l);
+  for (int l = 0; l < b_.copper_count(); ++l) {
+    track.layers = model::layer_bit(l);
+    if (physical_hole_clearance(&via, track, l) > 0) return true;
+  }
+  return false;
+}
+
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   if (a == 0 || b == 0 || a == b) return false;
   if (static_cast<std::size_t>(a) < dp_partner_.size()) return dp_partner_[static_cast<std::size_t>(a)] == b;
