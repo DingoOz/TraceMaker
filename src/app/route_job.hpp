@@ -35,6 +35,8 @@ struct RouteJob {
   // zones stay; rule 6).
   bool reroute = false;
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
+  // With soft zones: refill the zones after routing and route what the refill left unconnected (doc 05 §36).
+  bool refill_repair = true;
   // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;
@@ -48,7 +50,9 @@ struct RouteJobResult {
   nlohmann::json items;           // new copper in the --emit-items layout (layer and net by name, nm)
   nlohmann::json summary;         // the --json layout
   std::string viewer_url;         // empty when not viewing
-  int exit_code() const { return result.routed == result.connections ? 0 : 3; }
+  int unconnected_after_refill = -1;  // with soft zones: what KiCad's refill would leave unconnected
+  // 0 when everything planned was routed (and, with soft zones, nothing is unconnected after the refill).
+  int exit_code() const { return unconnected_after_refill >= 0 ? (unconnected_after_refill == 0 ? 0 : 3) : result.routed == result.connections ? 0 : 3; }
 };
 
 // Reads the board and its rules, routes (a portfolio when more than one variant runs), writes the requested outputs.

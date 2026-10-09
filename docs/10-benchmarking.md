@@ -91,6 +91,7 @@ binary from the base commit (a clean `origin/main` worktree) and run both on the
 |---|---|---|
 | `speed_ab.py` | engine speed A/B at a fixed work budget: wall and CPU time, instructions, memory, byte-identical outputs (`--demos` for KiCad demos) | maintained |
 | `scripts/drc_parity.py`, `drc_broken_parity.py` | `tracemaker drc` against KiCad on demo and broken boards (ctest `kicad_drc_parity`, `kicad_drc_broken_parity`); counts are capped at KiCad's 199 per type | maintained |
+| `refill_parity.py` | `tracemaker drc --refill-zones` against `kicad-cli pcb drc --refill-zones`: unconnected items per net on boards with zones (`--dir … --glob raw.kicad_pcb --sample N` for PCBench; doc 05 §36) | maintained |
 | `quality.py`, `quality_bench.py`, `compare.py`, `human_baseline.py` | routing quality metrics; TraceMaker against Freerouting versions; the designers' own routing judged the same way | maintained |
 | `check_env.py`, `prepare_dac2020.py`, `prepare_demos.py`, `make_place_sets.py` | tool checks and fixture preparation | maintained |
 | `pair_eval.py`, `feasibility.py`, `crules_detect.py`, `crules_place.py`, `crules_tiers.py` | feature evaluations (diff pairs, escape feasibility, component rules) | kept for re-measuring their features |

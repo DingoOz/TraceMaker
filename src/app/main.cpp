@@ -15,6 +15,7 @@
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
 #include "drc/drc.hpp"
+#include "drc/refill.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
@@ -118,13 +119,20 @@ int cmd_perturb(const std::string& in, const std::string& out, std::uint64_t see
   return 0;
 }
 
-int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon, bool linear_zones) {
+int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon, bool linear_zones, bool refill) {
   const auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   tmk::drc::DrcOptions opt;
   opt.epsilon = epsilon;
   opt.linear_zone_tests = linear_zones;
-  const auto rep = tmk::drc::run_drc(lb.board, rules, opt);
+  // As kicad-cli's --refill-zones: judge the fills the current copper would get, not the stored ones (doc 05 §36).
+  tmk::drc::RefillResult refilled;
+  if (refill) {
+    refilled = tmk::drc::refill_zones(lb.board, rules);
+    std::printf("zones refilled           %d (%d islands removed)\n", refilled.zones, refilled.islands_removed);
+    for (const auto& w : refilled.warnings) std::printf("warning: %s\n", w.c_str());
+  }
+  const auto rep = tmk::drc::run_drc(refill ? refilled.board : lb.board, rules, opt);
   for (const auto& [type, n] : rep.counts()) std::printf("%-24s %d\n", type.c_str(), n);
   for (const auto& w : rep.warnings) std::printf("warning: %s\n", w.c_str());
   if (!json_out.empty()) tmk::drc::write_drc_json(rep, json_out);
@@ -434,6 +442,8 @@ int main(int argc, char** argv) {
   drc->add_option("--epsilon-um", drc_eps_um, "Tolerance below the required clearance, micrometres");
   bool drc_linear_zones = false;
   drc->add_flag("--linear-zones", drc_linear_zones, "Reference path: test items against every edge of a zone fill")->group("");
+  bool drc_refill = false;
+  drc->add_flag("--refill-zones", drc_refill, "Refill zones for the current copper before checking (not written)");
 
   auto* pert = app.add_subcommand("selftest-perturb", "Add random tracks/vias and footprint moves (DRC parity fuzzing)");
   pert->group("");
@@ -506,6 +516,8 @@ int main(int argc, char** argv) {
   route->add_flag("--reach-verify", ropt.reach_verify, "Test: check every unreachable verdict with the full A*")->group("");
   route->add_option("--reach-check", ropt.reach_check, "Reachability check before strict searches: 0 off, 1 likely failures, 2 all")->group("");
   route->add_flag("--soft-zones", ropt.soft_zones, "Zone fills do not block other nets (refill the zones afterwards); unused fills become plane targets");
+  bool r_no_repair = false;
+  route->add_flag("--no-refill-repair", r_no_repair, "With --soft-zones: only count what the zone refill leaves unconnected, do not route it");
   route->add_flag("--via-in-pad", ropt.via_in_pad, "Inner balls / enclosed SMD pads may take a minimum-size via in the pad (needs filled, capped vias)");
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
@@ -605,7 +617,7 @@ int main(int argc, char** argv) {
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
-    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones);
+    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*brk) {
       const int n = tmk::app::inject_defects(bk_in, bk_out, bk_manifest, bk_kind, bk_seed, bk_count);
@@ -619,6 +631,7 @@ int main(int argc, char** argv) {
       auto job = std::move(r_job);
       job.in = r_in;
       job.reroute = r_reroute;
+      job.refill_repair = !r_no_repair;
       job.out = r_out;
       job.opt = ropt;
       job.threads = r_threads;

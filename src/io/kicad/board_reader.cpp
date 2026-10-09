@@ -84,6 +84,10 @@ class Reader {
       if (!d_.is_list(c) && d_.node(c).kind == sexpr::Kind::Symbol && d_.raw(c) == sym) return true;
     return false;
   }
+  model::ZoneConnect zone_connect(NodeId zc) const {
+    const int v = static_cast<int>(d_.number_at(zc, 1).value_or(-1));
+    return v >= 0 && v <= 3 ? static_cast<model::ZoneConnect>(v) : model::ZoneConnect::Inherited;
+  }
   bool yes(NodeId list, std::string_view name) const {
     // (name yes) / (name) / bare symbol `name`
     const NodeId c = d_.find(list, name);
@@ -217,7 +221,11 @@ class Reader {
       // user layers a copper type ("(39 "User.1" signal)" in multichannel_mixer); they are not copper.
       const bool copper_ordinal = v9 ? def.ordinal >= 0 && def.ordinal % 2 == 0 : def.ordinal >= 0 && def.ordinal <= 31;
       const bool copper_type = copper_ordinal && (def.type == "signal" || def.type == "power" || def.type == "mixed" || def.type == "jumper");
-      if (copper_type && !def.name.ends_with(".Cu")) {
+      // Old boards name copper layers freely ("Front", "Gnd.Cu", "Vcc.Cu" in PCBench neotron-32); the file name is
+      // kept for lookups, the canonical name comes from the ordinal.
+      const bool canonical = def.name == "F.Cu" || def.name == "B.Cu" ||
+                             (def.name.starts_with("In") && def.name.ends_with(".Cu") && std::atoi(def.name.c_str() + 2) > 0);
+      if (copper_type && !canonical) {
         if (def.ordinal == 0) def.name = "F.Cu";
         else if (v9 ? def.ordinal == 2 : def.ordinal == 31) def.name = "B.Cu";
         else def.name = "In" + std::to_string(v9 ? (def.ordinal - 2) / 2 : def.ordinal) + ".Cu";
@@ -261,6 +269,7 @@ class Reader {
     }
     if (NodeId u = d_.find(f, "uuid"); u != kNoNode) fp.uuid = d_.str_at(u, 1);
     if (NodeId c = d_.find(f, "clearance"); c != kNoNode) fp.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId zc = d_.find(f, "zone_connect"); zc != kNoNode) fp.zone_connect = zone_connect(zc);
     if (NodeId mm = d_.find(f, "solder_mask_margin"); mm != kNoNode) fp.mask_margin = d_.nm_at(mm, 1).value_or(INT64_MIN);
     if (NodeId nt = d_.find(f, "net_tie_pad_groups"); nt != kNoNode)
       for (std::size_t i = 1; i < d_.children(nt).size(); ++i) {
@@ -373,6 +382,11 @@ class Reader {
       pad.trapezoid_dy = d_.nm_at(r, 2).value_or(0);
     }
     if (NodeId c = d_.find(p, "clearance"); c != kNoNode) pad.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId zc = d_.find(p, "zone_connect"); zc != kNoNode) pad.zone_connect = zone_connect(zc);
+    if (NodeId g = d_.find(p, "thermal_gap"); g != kNoNode) pad.thermal_gap = d_.nm_at(g, 1).value_or(-1);
+    for (const char* key : {"thermal_bridge_width", "thermal_width"})  // KiCad 7+, KiCad 6
+      if (NodeId w = d_.find(p, key); w != kNoNode) pad.thermal_bridge_width = d_.nm_at(w, 1).value_or(-1);
+    if (NodeId a = d_.find(p, "thermal_bridge_angle"); a != kNoNode) pad.thermal_bridge_angle = d_.number_at(a, 1).value_or(-1);
     if (NodeId mm = d_.find(p, "solder_mask_margin"); mm != kNoNode) pad.mask_margin = d_.nm_at(mm, 1).value_or(INT64_MIN);
     if (NodeId prim = d_.find(p, "primitives"); prim != kNoNode) {
       for (NodeId g : d_.find_all(prim, "gr_poly")) {
@@ -583,9 +597,25 @@ class Reader {
     if (NodeId l = d_.find(z, "layer"); l != kNoNode) zone.copper |= layers_mask(l, &zone.layers);
     if (NodeId l = d_.find(z, "layers"); l != kNoNode) zone.copper |= layers_mask(l, &zone.layers);
     if (NodeId n = d_.find(z, "name"); n != kNoNode) zone.name = d_.str_at(n, 1);
+    if (NodeId u = d_.find(z, "uuid"); u != kNoNode) zone.uuid = d_.str_at(u, 1);
     if (NodeId p = d_.find(z, "priority"); p != kNoNode) zone.priority = static_cast<int>(d_.number_at(p, 1).value_or(0));
-    if (NodeId cp = d_.find(z, "connect_pads"); cp != kNoNode)
+    if (NodeId cp = d_.find(z, "connect_pads"); cp != kNoNode) {
       if (NodeId c = d_.find(cp, "clearance"); c != kNoNode) zone.clearance = d_.nm_at(c, 1).value_or(-1);
+      const std::string mode = d_.str_at(cp, 1);
+      if (mode == "yes") zone.connect = model::ZoneConnect::Full;
+      else if (mode == "no") zone.connect = model::ZoneConnect::None;
+      else if (mode == "thru_hole_only") zone.connect = model::ZoneConnect::ThtThermal;
+    }
+    if (NodeId mt = d_.find(z, "min_thickness"); mt != kNoNode) zone.min_thickness = d_.nm_at(mt, 1).value_or(zone.min_thickness);
+    if (NodeId fl = d_.find(z, "fill"); fl != kNoNode) {
+      if (NodeId g = d_.find(fl, "thermal_gap"); g != kNoNode) zone.thermal_gap = d_.nm_at(g, 1).value_or(zone.thermal_gap);
+      if (NodeId w = d_.find(fl, "thermal_bridge_width"); w != kNoNode)
+        zone.thermal_bridge_width = d_.nm_at(w, 1).value_or(zone.thermal_bridge_width);
+      if (NodeId m = d_.find(fl, "island_removal_mode"); m != kNoNode) zone.island_removal = static_cast<int>(d_.number_at(m, 1).value_or(0));
+      // Written as the area in mm² (ZONE::GetMinIslandArea / IU_PER_MM, formatted as a length).
+      if (NodeId a = d_.find(fl, "island_area_min"); a != kNoNode) zone.island_area_min = d_.number_at(a, 1).value_or(0) * 1e12;
+      if (NodeId m = d_.find(fl, "mode"); m != kNoNode) zone.hatched = d_.str_at(m, 1) == "hatch";
+    }
     if (NodeId at = d_.find(z, "attr"); at != kNoNode) zone.teardrop = d_.find(at, "teardrop") != kNoNode;
     if (NodeId k = d_.find(z, "keepout"); k != kNoNode) {
       zone.rule_area = true;

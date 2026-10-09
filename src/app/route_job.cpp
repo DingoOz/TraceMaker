@@ -14,6 +14,8 @@
 
 #include "crules/engine.hpp"
 #include "drc/copper.hpp"
+#include "drc/drc.hpp"
+#include "drc/refill.hpp"
 #include "drc/rule_engine.hpp"
 #include "route/diff_pair.hpp"
 #include "route/layer_limits.hpp"
@@ -298,6 +300,48 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& u : res.unrouted) failed.push_back({u.net, u.a, u.b, 1});
     kb->record_failures(feat.hash, failed);
   }
+  // Soft zones (doc 05 §36): the router cut through stale fills and trusted them for connectivity. Refill them for
+  // the new copper as KiCad will, count what is still unconnected, and route those connections again with the
+  // refilled fills as fixed copper (pass 2, its own budget equal to the first pass's).
+  nlohmann::json refill_summary;
+  int unconnected_after_refill = -1;
+  if (opt.soft_zones) {
+    model::Board routed = *route_board;
+    auto add_copper = [](model::Board& b, const route::RouteResult& r) {
+      b.tracks.insert(b.tracks.end(), r.tracks.begin(), r.tracks.end());
+      b.vias.insert(b.vias.end(), r.vias.begin(), r.vias.end());
+    };
+    auto unconnected = [&](const model::Board& b) {
+      drc::DrcOptions d;
+      d.connectivity_only = true;
+      d.dangling = false;
+      return static_cast<int>(drc::run_drc(b, rules, d).unconnected.size());
+    };
+    add_copper(routed, res);
+    auto rf = drc::refill_zones(routed, rules);
+    for (const auto& w : rf.warnings) log("warning: " + w);
+    const int before = unconnected(rf.board);
+    log(fmt("soft zones: after refilling %d zones, %d items unconnected", rf.zones, before));
+    refill_summary = {{"zones", rf.zones}, {"unconnected", before}};
+    unconnected_after_refill = before;
+    if (before > 0 && job.refill_repair) {
+      route::RouterOptions o2 = opt;
+      o2.soft_zones = false;
+      o2.sink = nullptr;
+      const auto r2 = route::Router(rf.board, rules, o2).run();
+      log(fmt("refill repair: routed %d/%d connections, %zu tracks, %zu vias, %ld expansions", r2.routed, r2.connections, r2.tracks.size(),
+              r2.vias.size(), r2.expansions));
+      res.tracks.insert(res.tracks.end(), r2.tracks.begin(), r2.tracks.end());
+      res.vias.insert(res.vias.end(), r2.vias.begin(), r2.vias.end());
+      add_copper(routed, r2);
+      const auto rf2 = drc::refill_zones(routed, rules);
+      unconnected_after_refill = unconnected(rf2.board);
+      log(fmt("refill repair: %d items unconnected after refilling again", unconnected_after_refill));
+      refill_summary["repair"] = {{"connections", r2.connections}, {"routed", r2.routed}, {"tracks", r2.tracks.size()},
+                                  {"vias", r2.vias.size()}, {"expansions", r2.expansions}};
+    }
+    out.unconnected_after_refill = unconnected_after_refill;
+  }
   if (!job.out.empty()) {
     io::BoardEditor ed(lb, opt.seed);
     for (const auto& t : res.tracks) ed.add_track(t);
@@ -322,6 +366,10 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
                  {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
                  {"escape_corridors", res.escape_corridors}};
+  if (!refill_summary.is_null()) {
+    out.summary["refill"] = refill_summary;
+    out.summary["unconnected_after_refill"] = unconnected_after_refill;
+  }
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
   if (opt.diff_pairs || !opt.pair_nets.empty()) {

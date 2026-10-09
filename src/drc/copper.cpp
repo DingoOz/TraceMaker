@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <numbers>
 
 namespace tmk::drc {
@@ -284,6 +285,34 @@ CopperModel build_copper(const model::Board& b) {
     }
   }
   return m;
+}
+
+std::vector<std::vector<model::Point>> edge_loops(const std::vector<geom::Shape>& edges, Coord tol, bool* all_closed) {
+  auto near = [tol](Point a, Point c) { return std::llabs(a.x - c.x) < tol && std::llabs(a.y - c.y) < tol; };
+  if (all_closed) *all_closed = true;
+  std::vector<std::uint8_t> used(edges.size(), 0);
+  std::vector<std::vector<Point>> loops;
+  for (std::size_t s0 = 0; s0 < edges.size(); ++s0) {
+    if (used[s0] || edges[s0].pts.size() < 2) continue;
+    used[s0] = 1;
+    std::vector<Point> chain = edges[s0].pts;
+    for (bool grown = true; grown && !near(chain.front(), chain.back());) {
+      grown = false;
+      for (std::size_t k = 0; k < edges.size(); ++k) {
+        const auto& pk = edges[k].pts;
+        if (used[k] || pk.size() < 2) continue;
+        if (near(chain.back(), pk.front())) chain.insert(chain.end(), pk.begin() + 1, pk.end());
+        else if (near(chain.back(), pk.back())) chain.insert(chain.end(), pk.rbegin() + 1, pk.rend());
+        else continue;
+        used[k] = 1;
+        grown = true;
+        break;
+      }
+    }
+    if (chain.size() >= 4 && near(chain.front(), chain.back())) loops.push_back(std::move(chain));
+    else if (all_closed) *all_closed = false;
+  }
+  return loops;
 }
 
 }  // namespace tmk::drc
