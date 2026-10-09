@@ -8,6 +8,7 @@ A run is a directory bench/results/<run-id> or just the run id. Per board: route
 completion and clean pass before and after, added DRC errors. Exit status 1 when a gate fails:
   1. no board gets worse in clean pass or completion;
   2. no added KiCad DRC errors on a board that was clean before;
+  3. both runs hold the same boards, and at least one;
   with --expect-identical (speed-ups, refactors): every routed board byte-identical.
 Wall time is reported, not gated: it is only comparable from the same machine and load.
 """
@@ -79,8 +80,13 @@ def main() -> int:
            f"Clean pass {sum(r.get('clean', False) for r in bs)} → {sum(r.get('clean', False) for r in fs)}; "
            f"mean completion {mean(bs, 'completion'):.1%} → {mean(fs, 'completion'):.1%}; "
            f"router seconds {sum(r.get('seconds', 0) for r in bs):.1f} → {sum(r.get('seconds', 0) for r in fs):.1f}."]
+    # A run that lost a board (crash, judge failure) or shares none with the other must not pass by having nothing
+    # to compare.
     if missing:
         out.append(f"In one run only (not compared): {', '.join(missing)}.")
+        failures.append(f"{len(missing)} boards are in one run only")
+    if not boards:
+        failures.append("no board is in both runs")
     if rows:
         out += ["", "| Board | Routed | Completion | Clean | Added errors (after) | Router s | Output |", "|---|---|---|---|---|---|---|"] + rows
     out += ["", "Gates: " + ("pass" if not failures else "FAIL")] + [f"- {x}" for x in failures]
