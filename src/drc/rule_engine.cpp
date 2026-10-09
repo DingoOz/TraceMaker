@@ -5,13 +5,14 @@
 #include <cctype>
 #include <cmath>
 #include <initializer_list>
+#include <cstdlib>
 #include <string_view>
 
 namespace tmk::drc {
 
 // ---------------------------------------------------------------------------------------------------------
 // Condition expressions: a small recursive-descent parser for the subset of KiCad's rule language used in
-// practice: A./B. properties, string/number literals, == != && || ! and parentheses, and a few functions.
+// practice: A./B. properties, string/number literals, comparisons, && || ! and a few functions.
 // ---------------------------------------------------------------------------------------------------------
 struct EvalCtx {
   const RuleEngine* eng;
@@ -22,7 +23,7 @@ struct EvalCtx {
 };
 
 struct Value {
-  enum class K { Undef, Bool, Str, Num } k = K::Undef;
+  enum class K { Undef, Bool, Str, Num, NoLayer } k = K::Undef;
   bool b = false;
   std::string s;
   double n = 0;
@@ -32,7 +33,7 @@ struct Value {
 class Condition {
  public:
   struct Node {
-    enum class Op { Or, And, Not, Eq, Ne, Lit, Prop, Call } op;
+    enum class Op { Or, And, Not, Eq, Ne, Lt, Le, Gt, Ge, Lit, Prop, Call } op;
     std::vector<std::unique_ptr<Node>> kids;
     Value lit;
     char who = 'A';       // A or B
@@ -48,6 +49,8 @@ class Condition {
       c->root_ = c->parse_or();
       c->skip();
       if (c->pos_ != c->src_.size()) throw std::runtime_error("unexpected '" + c->src_.substr(c->pos_, 10) + "'");
+      // libeval_compiler rejects a lone numeric literal without units, even in an unused OR branch.
+      if (c->numeric_count_ == 1 && c->missing_units_) throw std::runtime_error("numeric literal is missing units");
     } catch (const std::exception& e) {
       err = e.what();
       return nullptr;
@@ -108,14 +111,11 @@ class Condition {
       return n;
     }
     auto l = parse_term();
-    if (eat("==")) {
-      auto n = make(Node::Op::Eq);
-      n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_term());
-      return n;
-    }
-    if (eat("!=")) {
-      auto n = make(Node::Op::Ne);
+    for (const auto& [token, op] : {std::pair{"==", Node::Op::Eq}, {"!=", Node::Op::Ne},
+                                   {"<=", Node::Op::Le}, {">=", Node::Op::Ge},
+                                   {"<", Node::Op::Lt}, {">", Node::Op::Gt}}) {
+      if (!eat(token)) continue;
+      auto n = make(op);
       n->kids.push_back(std::move(l));
       n->kids.push_back(parse_term());
       return n;
@@ -126,8 +126,9 @@ class Condition {
     const char q = src_[pos_++];
     std::string s;
     while (pos_ < src_.size() && src_[pos_] != q) s += src_[pos_++];
-    if (pos_ >= src_.size()) throw std::runtime_error("unterminated string");
-    ++pos_;
+    // KiCad lets a terminal single-quoted string run to the end of the condition.
+    if (pos_ == src_.size() && q != '\'') throw std::runtime_error("unterminated string");
+    if (pos_ < src_.size()) ++pos_;
     return s;
   }
   std::unique_ptr<Node> parse_term() {
@@ -146,12 +147,29 @@ class Condition {
       n->lit.s = read_string();
       return n;
     }
-    if (std::isdigit(static_cast<unsigned char>(c)) || c == '-' || c == '.') {
-      std::size_t b = pos_;
-      while (pos_ < src_.size() && (std::isalnum(static_cast<unsigned char>(src_[pos_])) || src_[pos_] == '.' || src_[pos_] == '-')) ++pos_;
+    if (std::isdigit(static_cast<unsigned char>(c)) || c == '-' || c == '+' || c == '.') {
+      const char* begin = src_.c_str() + pos_;
+      char* end = nullptr;
+      const double number = std::strtod(begin, &end);
+      if (end == begin || !std::isfinite(number)) throw std::runtime_error("invalid number");
+      pos_ += static_cast<std::size_t>(end - begin);
+      skip();
+      const std::size_t unit_start = pos_;
+      while (pos_ < src_.size() && std::isalpha(static_cast<unsigned char>(src_[pos_]))) ++pos_;
+      const std::string unit = src_.substr(unit_start, pos_ - unit_start);
+      double scale = 1;
+      if (unit == "mm") scale = 1e6;
+      else if (unit == "mil") scale = 25400;
+      else if (unit == "in") scale = 25400000;
+      else if (unit == "ps") scale = 1e6;  // KiCad's internal time unit is the attosecond.
+      else if (unit == "fs") scale = 1000;
+      else if (unit == "deg") scale = 1;
+      else if (!unit.empty()) throw std::runtime_error("unknown unit '" + unit + "'");
+      ++numeric_count_;
+      missing_units_ = missing_units_ || unit.empty();
       auto n = make(Node::Op::Lit);
       n->lit.k = Value::K::Num;
-      n->lit.n = std::atof(src_.substr(b, pos_ - b).c_str());
+      n->lit.n = number * scale;
       return n;
     }
     // Identifier: A.Prop, B.func(args), or a bare word (true/false).
@@ -193,9 +211,10 @@ class Condition {
   }
 
   static std::string unsupported(const Node& n) {
-    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "Reference", "Parent.Reference", "Pad_Type", "Width"};
+    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
+                                                 "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
-                                                 "memberOfFootprint"};
+                                                 "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
     if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls)) return n.name + "()";
     for (const auto& k : n.kids)
@@ -204,11 +223,10 @@ class Condition {
   }
 
   static bool str_eq(const Value& l, const Value& r) {
-    if (l.k == Value::K::Num || r.k == Value::K::Num) {
-      const double a = l.k == Value::K::Num ? l.n : std::atof(l.s.c_str());
-      const double b = r.k == Value::K::Num ? r.n : std::atof(r.s.c_str());
-      return std::fabs(a - b) < 1e-9;
-    }
+    if (l.k == Value::K::Num && r.k == Value::K::Num) return std::fabs(l.n - r.n) < 1e-9;
+    // KiCad's layer value rejects its unset ID even against '*'; it is not a missing property.
+    if (l.k == Value::K::NoLayer || r.k == Value::K::NoLayer) return false;
+    if (l.k != r.k) return false;
     if (l.k == Value::K::Bool || r.k == Value::K::Bool) return l.truthy() == r.truthy();
     // KiCad compares strings case-insensitively with wildcard support on either side.
     auto low = [](std::string s) {
@@ -228,15 +246,42 @@ class Condition {
     if (n.name == "NetClass") v.s = ctx.eng->netclass(*it).name;
     else if (n.name == "NetName") v.s = b.nets[static_cast<std::size_t>(it->net)].name;
     else if (n.name == "Type") v.s = it->kind == ItemKind::Arc ? "Track" : kind_name(it->kind);
-    else if (n.name == "Layer") v.s = ctx.layer >= 0 ? b.copper_name(ctx.layer) : "";
-    else if (n.name == "Reference" || n.name == "Parent.Reference")
+    else if (n.name == "L") return {};
+    else if (n.name == "Layer") {
+      // Vias have no own layer; pads use the footprint side even when their copper is multilayer.
+      if (it->kind == ItemKind::Via) return {};
+      if (it->kind == ItemKind::Pad && it->footprint >= 0) {
+        v.s = b.footprints[static_cast<std::size_t>(it->footprint)].back ? "B.Cu" : "F.Cu";
+      } else {
+        // Multilayer zones expose an unset layer ID, not the copper projection's fill layer.
+        const model::LayerMask layers = it->kind == ItemKind::Zone
+                                           ? b.zones[static_cast<std::size_t>(it->index)].copper
+                                           : it->layers;
+        if (!layers || (layers & (layers - 1))) {
+          v.k = it->kind == ItemKind::Zone ? Value::K::NoLayer : Value::K::Undef;
+          return v;
+        }
+        int layer = 0;
+        while (!(layers & model::layer_bit(layer))) ++layer;
+        v.s = b.copper_name(layer);
+      }
+    } else if (n.name == "Reference")
       v.s = it->footprint >= 0 ? b.footprints[static_cast<std::size_t>(it->footprint)].reference : "";
     else if (n.name == "Pad_Type" && it->kind == ItemKind::Pad) {
       static const char* names[] = {"SMD", "Through-hole", "NPTH, mechanical", "Edge connector"};
       v.s = names[static_cast<int>(b.pads[static_cast<std::size_t>(it->index)].type)];
     } else if (n.name == "Width") {
       v.k = Value::K::Num;
-      v.n = static_cast<double>(it->width) / 1e6;
+      v.n = static_cast<double>(it->width);
+    } else if (n.name == "Size_X" || n.name == "Size_Y") {
+      if (it->kind != ItemKind::Pad || it->index < 0) return {};
+      const auto& pad = b.pads[static_cast<std::size_t>(it->index)];
+      v.k = Value::K::Num;
+      v.n = static_cast<double>(n.name == "Size_X" ? pad.size_x : pad.size_y);
+    } else if (n.name == "Position_X" || n.name == "Position_Y") {
+      if (it->kind != ItemKind::Via && it->kind != ItemKind::Pad) return {};
+      v.k = Value::K::Num;
+      v.n = static_cast<double>(n.name == "Position_X" ? it->pos.x : it->pos.y);
     } else {
       ctx.unknown = true;
       v.k = Value::K::Undef;
@@ -266,22 +311,18 @@ class Condition {
         }
       }
       for (const auto& z : b.zones) {
-        if (!model::wildcard_match(n.args[0], z.name) || z.outline.empty()) continue;
-        const auto& poly = z.outline.front();
-        const bool all_in = geom::point_in_polygon({it->box.x0, it->box.y0}, poly) && geom::point_in_polygon({it->box.x1, it->box.y1}, poly) &&
-                            geom::point_in_polygon({it->box.x0, it->box.y1}, poly) && geom::point_in_polygon({it->box.x1, it->box.y0}, poly);
-        bool any = geom::point_in_polygon(it->pos, poly);
-        if (!any) {
-          const geom::Shape area = geom::Shape::polygon(poly, 0);
-          for (const auto& s : it->shapes)
-            if (geom::closer_than(s, area, 1)) { any = true; break; }
+        if (model::wildcard_match(n.args[0], z.name) && area_matches(*it, z, n.name == "enclosedByArea")) {
+          v.b = true;
+          break;
         }
-        if (n.name == "intersectsArea" ? any : all_in) { v.b = true; break; }
       }
       if (fill) {
         const std::lock_guard lock(ctx.eng->area_mutex_);
         ctx.eng->area_cache_[key] = v.b;
       }
+    } else if ((n.name == "intersectsCourtyard" || n.name == "intersectsFrontCourtyard" ||
+                n.name == "intersectsBackCourtyard") && !n.args.empty()) {
+      v.b = courtyard_matches(*it, ctx.eng->courtyards_, n.args[0], n.name);
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
       // P/N or +/-) matches the pattern.
@@ -291,7 +332,10 @@ class Condition {
         v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
       }
     } else if (n.name == "memberOfFootprint" && !n.args.empty()) {
-      v.b = it->footprint >= 0 && model::wildcard_match(n.args[0], b.footprints[static_cast<std::size_t>(it->footprint)].reference);
+      if (it->footprint >= 0) {
+        const auto& fp = b.footprints[static_cast<std::size_t>(it->footprint)];
+        v.b = footprint_selected(n.args[0], fp.reference, fp.lib_id);
+      }
     } else {
       ctx.unknown = true;
       v.k = Value::K::Undef;
@@ -306,8 +350,25 @@ class Condition {
       case Node::Op::Or: v.b = eval(*n.kids[0], ctx).truthy() || eval(*n.kids[1], ctx).truthy(); return v;
       case Node::Op::And: v.b = eval(*n.kids[0], ctx).truthy() && eval(*n.kids[1], ctx).truthy(); return v;
       case Node::Op::Not: v.b = !eval(*n.kids[0], ctx).truthy(); return v;
-      case Node::Op::Eq: v.b = str_eq(eval(*n.kids[0], ctx), eval(*n.kids[1], ctx)); return v;
-      case Node::Op::Ne: v.b = !str_eq(eval(*n.kids[0], ctx), eval(*n.kids[1], ctx)); return v;
+      case Node::Op::Eq:
+      case Node::Op::Ne:
+      case Node::Op::Lt:
+      case Node::Op::Le:
+      case Node::Op::Gt:
+      case Node::Op::Ge: {
+        const Value l = eval(*n.kids[0], ctx), r = eval(*n.kids[1], ctx);
+        if ((n.op == Node::Op::Eq || n.op == Node::Op::Ne) && (l.k == Value::K::Undef || r.k == Value::K::Undef)) return v;
+        switch (n.op) {
+          case Node::Op::Eq: v.b = str_eq(l, r); break;
+          case Node::Op::Ne: v.b = !str_eq(l, r); break;
+          case Node::Op::Lt: v.b = l.n < r.n; break;
+          case Node::Op::Le: v.b = l.n <= r.n; break;
+          case Node::Op::Gt: v.b = l.n > r.n; break;
+          case Node::Op::Ge: v.b = l.n >= r.n; break;
+          default: break;
+        }
+        return v;
+      }
       case Node::Op::Lit: return n.lit;
       case Node::Op::Prop: return prop(n, ctx);
       case Node::Op::Call: return call(n, ctx);
@@ -317,6 +378,8 @@ class Condition {
 
   std::string src_;
   std::size_t pos_ = 0;
+  std::size_t numeric_count_ = 0;
+  bool missing_units_ = false;
   std::unique_ptr<Node> root_;
 };
 
@@ -333,8 +396,16 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         warnings_.push_back("rule '" + rule.name + "': cannot parse condition (" + err + "); rule ignored");
       }
     }
+    if (c.cond) {
+      if (const auto unsupported = c.cond->unsupported(); !unsupported.empty()) {
+        c.valid = false;
+        warnings_.push_back("rule '" + rule.name + "': condition uses " + unsupported +
+                            ", which TraceMaker does not evaluate; rule not applied");
+      }
+    }
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
-                                               "Reference", "Parent.Reference", "Pad_Type", "Width"});
+                                               "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
+                                               "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
     const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair"});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
@@ -346,14 +417,16 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         if (w != "track" && w != "via" && w != "through_via" && w != "micro_via" && w != "buried_via" && w != "blind_via" && w != "pad" &&
             w != "zone" && w != "graphic")
           warnings_.push_back("rule '" + rule.name + "': disallow " + w + " is not checked by TraceMaker (KiCad's DRC still reports it)");
-      if (const std::string u = c.cond ? c.cond->unsupported() : std::string(); !u.empty())
-        warnings_.push_back("rule '" + rule.name + "': disallow condition uses " + u + ", which TraceMaker does not evaluate; rule not applied");
-      else if (c.positional)
+      if (c.positional)
         warnings_.push_back("rule '" + rule.name +
                             "': disallow condition depends on position or footprint; the router does not avoid it, the DRC reports it");
     }
     rules_.push_back(std::move(c));
   }
+  if (std::any_of(rules_.begin(), rules_.end(), [](const Compiled& c) {
+        return c.valid && c.cond && c.cond->references({"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"});
+      }))
+    courtyards_ = build_courtyards(b_);
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
   net_class_.resize(b_.nets.size());
@@ -500,8 +573,15 @@ bool disallow_word_matches(const std::string& w, const CopperItem& it, const mod
     case ItemKind::Via: {
       if (w == "via") return true;
       const auto type = via_type ? *via_type : it.index >= 0 ? b.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
-      return (w == "through_via" && type == model::ViaType::Through) || (w == "micro_via" && type == model::ViaType::Micro) ||
-             ((w == "buried_via" || w == "blind_via") && type == model::ViaType::Blind);
+      if (w == "through_via") return type == model::ViaType::Through;
+      if (w == "micro_via") return type == model::ViaType::Micro;
+      if (type != model::ViaType::Blind) return false;
+      // A router probe has no span yet; conservatively retain the existing blind/buried gate.
+      if (via_type || it.index < 0) return w == "blind_via" || w == "buried_via";
+      const auto& via = b.vias[static_cast<std::size_t>(it.index)];
+      const bool top_outer = via.layer_top == 0;
+      const bool bottom_outer = via.layer_bottom == b.copper_count() - 1;
+      return (w == "blind_via" && top_outer != bottom_outer) || (w == "buried_via" && !top_outer && !bottom_outer);
     }
   }
   return false;
@@ -523,7 +603,10 @@ bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer
 std::optional<std::string> RuleEngine::disallowed(const CopperItem& it, int layer) const {
   std::optional<std::string> out;
   for (const auto& c : rules_)
-    if (disallow_hit(c, it, layer)) out = c.rule->name;
+    if (disallow_hit(c, it, layer)) {
+      if (c.rule->severity == "ignore") out.reset();
+      else out = c.rule->name;
+    }
   return out;
 }
 
@@ -532,9 +615,10 @@ bool RuleEngine::track_allowed(model::NetId net, int layer) const {
   probe.kind = ItemKind::Track;
   probe.net = net;
   probe.layers = model::layer_bit(layer);
+  bool allowed = true;
   for (const auto& c : rules_)
-    if (!c.positional && disallow_hit(c, probe, layer)) return false;
-  return true;
+    if (!c.positional && disallow_hit(c, probe, layer)) allowed = c.rule->severity == "ignore";
+  return allowed;
 }
 
 bool RuleEngine::via_allowed(model::NetId net, model::ViaType type) const {
@@ -544,9 +628,12 @@ bool RuleEngine::via_allowed(model::NetId net, model::ViaType type) const {
   probe.kind = ItemKind::Via;
   probe.net = net;
   for (int l = 0; l < b_.copper_count(); ++l) probe.layers |= model::layer_bit(l);
-  for (const auto& c : rules_)
-    for (int l = 0; l < b_.copper_count(); ++l)
-      if (!c.positional && disallow_hit(c, probe, l, &type)) return false;
+  for (int l = 0; l < b_.copper_count(); ++l) {
+    bool allowed = true;
+    for (const auto& c : rules_)
+      if (!c.positional && disallow_hit(c, probe, l, &type)) allowed = c.rule->severity == "ignore";
+    if (!allowed) return false;
+  }
   return true;
 }
 
