@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/escape.hpp"
 
+#include "drc/connectivity.hpp"
 #include "route/obstacles.hpp"
 
 #include <algorithm>
@@ -9,6 +10,8 @@
 #include <cstdlib>
 #include <deque>
 #include <map>
+#include <set>
+#include <tuple>
 
 namespace tmk::route {
 
@@ -144,11 +147,37 @@ Coord neck(const model::DesignRules& r, model::NetId net, const model::Board& b)
 std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::DesignRules& r, Obstacles& obs, const EscapeAnalysisOptions& o,
                                         const EscapeOptions& eo) {
   std::vector<PartEscape> out;
-  // Pins that must be routed: their net has another pad.
+  // Pins that must be routed: their net's pads are not yet all joined by existing copper (pads, tracks, vias and
+  // zone fills, with the router's connectivity). A pin whose net is already complete has nothing to escape for.
+  // Complete is what the router's planner calls complete: one cluster with pads and, with soft zones, no plane
+  // of the net that no pad touches yet (the planner drops a via into it from a pad, doc 05 §26).
+  const auto& cm = obs.copper();
+  const auto con = drc::compute_connectivity(b, cm, obs.grid());
+  std::map<model::NetId, std::set<int>> net_roots;  // the planner's clusters, per net
+  for (std::size_t i = 0; i < cm.items.size(); ++i) {
+    const auto& it = cm.items[i];
+    if (it.kind != drc::ItemKind::Pad || it.net <= 0) continue;
+    net_roots[it.net].insert(con.root[i]);
+  }
+  if (obs.soft_zones()) {
+    std::map<std::pair<model::NetId, int>, std::vector<int>> fills;  // (net, cluster without pads) -> its fill items
+    for (std::size_t i = 0; i < cm.items.size(); ++i) {
+      const auto& it = cm.items[i];
+      if (it.kind != drc::ItemKind::Zone || it.footprint >= 0 || it.net <= 0) continue;
+      if (b.zones[static_cast<std::size_t>(it.index)].teardrop) continue;  // track copper, never a plane target (doc 05 §32)
+      const auto nr = net_roots.find(it.net);
+      if (nr == net_roots.end() || nr->second.count(con.root[i])) continue;
+      fills[{it.net, con.root[i]}].push_back(static_cast<int>(i));
+    }
+    for (const auto& [key, items] : fills)
+      if (zone_fill_area(cm, items) >= kPlaneTargetArea) net_roots[key.first].insert(key.second);
+  }
   std::map<model::NetId, int> pads_on_net;
   for (const auto& p : b.pads)
     if (p.net > 0) ++pads_on_net[p.net];
   const int nl = b.copper_count();
+  const drc::RuleEngine& rules = obs.rules();
+  const model::LayerMask all_layers = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
   for (std::size_t fi = 0; fi < b.footprints.size(); ++fi) {
     const auto& fp = b.footprints[fi];
     std::vector<int> pads;
@@ -178,16 +207,25 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
     const Coord L = o.lattice;
     const Coord gx0 = x0 - o.window, gy0 = y0 - o.window;
     const int nx = static_cast<int>((x1 - x0 + 2 * o.window) / L) + 1, ny = static_cast<int>((y1 - y0 + 2 * o.window) / L) + 1;
+    const std::size_t cells = static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
     auto pt = [&](int ix, int iy) { return Point{gx0 + static_cast<Coord>(ix) * L, gy0 + static_cast<Coord>(iy) * L}; };
     auto outside = [&](Point p) { return p.x < x0 - o.margin || p.x > x1 + o.margin || p.y < y0 - o.margin || p.y > y1 + o.margin; };
-    // Codes per (net width class) are cached: pins of the same net class share them.
-    std::map<std::pair<Coord, Coord>, std::vector<std::int32_t>> track_codes;  // (half width, rep net) -> layer cells
+    auto lat = [&](int l, int ix, int iy) {
+      return (static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(iy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(ix);
+    };
+    // Fixed-copper codes per (half width, clearance) and (via size, clearance) are cached: pins of the same class
+    // share them. Custom disallow rules may name single nets, so they are tested per pin, outside these caches.
+    std::map<std::pair<Coord, Coord>, std::vector<std::int32_t>> track_codes;
     std::map<std::pair<Coord, model::NetId>, std::vector<std::int32_t>> via_codes;
     const std::int32_t kUnknown = INT32_MIN;
     bool mask_hint = false;
     for (int pi : pads) {
       const auto& p = b.pads[z(pi)];
       if (p.net <= 0 || pads_on_net[p.net] < 2) continue;
+      if (net_roots[p.net].size() < 2) {
+        ++pe.satisfied;
+        continue;
+      }
       ++pe.pins;
       const Coord hw = neck(r, p.net, b) / 2;
       const auto& nc = r.class_for(b.nets[z(p.net)].name);
@@ -198,12 +236,12 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
       const Coord dia = std::min(cdia, std::max(r.minimums.via_diameter, drill + 2 * std::max<Coord>(r.minimums.via_annular_width, 100'000)));
       const Coord clr = std::max(nc.clearance, r.minimums.clearance);
       auto& tc = track_codes[{hw, clr}];
-      if (tc.empty()) tc.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), kUnknown);
+      if (tc.empty()) tc.assign(static_cast<std::size_t>(nl) * cells, kUnknown);
       auto& vc = via_codes[{dia * 1'000'000 + drill, static_cast<model::NetId>(clr / 1000)}];
-      if (vc.empty()) vc.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), kUnknown);
+      if (vc.empty()) vc.assign(cells, kUnknown);
       auto ok = [&](std::int32_t c) { return c == Obstacles::kFree || c == p.net; };
       auto tcode = [&](int l, int ix, int iy) {
-        auto& c = tc[(static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(iy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(ix)];
+        auto& c = tc[lat(l, ix, iy)];
         if (c == kUnknown) c = obs.fixed_code(pt(ix, iy), l, hw, 0, p.net);
         return c;
       };
@@ -212,76 +250,110 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
         if (c == kUnknown) c = obs.fixed_via_code(pt(ix, iy), dia, drill, 0, p.net);
         return c;
       };
-      // Start: lattice points inside the pad on its layers (pad copper is the pin's own net).
-      std::vector<std::uint8_t> seen(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
-      std::deque<std::tuple<int, int, int>> q;
-      const auto [hx, hy] = half_extents(p);
-      for (int l = 0; l < nl; ++l) {
-        if (!(p.copper & (model::LayerMask{1} << l))) continue;
-        const int ix0 = static_cast<int>((p.pos.x - hx - gx0) / L), ix1 = static_cast<int>((p.pos.x + hx - gx0) / L) + 1;
-        const int iy0 = static_cast<int>((p.pos.y - hy - gy0) / L), iy1 = static_cast<int>((p.pos.y + hy - gy0) / L) + 1;
-        bool any = false;
-        for (int iy = std::max(0, iy0); iy <= std::min(ny - 1, iy1); ++iy)
-          for (int ix = std::max(0, ix0); ix <= std::min(nx - 1, ix1); ++ix)
-            if (ok(tcode(l, ix, iy))) {
-              const std::size_t k = (static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(iy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(ix);
-              if (!seen[k]) {
-                seen[k] = 1;
+      // The router's rules for this net (doc 05 §27, §34): track layers, via permission, and positional disallow
+      // rules on the track's copper at each point and on the via itself. Verdicts are memoised per pin.
+      model::LayerMask layers = 0;
+      for (int l = 0; l < nl; ++l)
+        if (rules.track_allowed(p.net, l)) layers |= model::layer_bit(l);
+      const bool vias_allowed = rules.via_allowed(p.net) && !rules.via_hole_rule_hits_own_tracks(p.net);
+      const bool ruled = layers != all_layers || !vias_allowed || obs.positional_rules();
+      std::vector<std::int8_t> track_rule(obs.positional_rules() ? static_cast<std::size_t>(nl) * cells : 0, -1), via_rule(obs.positional_rules() ? cells : 0, -1);
+      geom::Shape disk;
+      auto track_ok = [&](bool with_rules, int l, int ix, int iy) {
+        if (!ok(tcode(l, ix, iy))) return false;
+        if (!with_rules) return true;
+        if (!(layers & model::layer_bit(l))) return false;
+        if (track_rule.empty()) return true;
+        auto& v = track_rule[lat(l, ix, iy)];
+        if (v < 0) {
+          disk.set_point(pt(ix, iy), hw);
+          v = obs.track_disallowed(disk, l, 2 * hw, p.net) ? 0 : 1;
+        }
+        return v == 1;
+      };
+      auto via_ok = [&](bool with_rules, int ix, int iy) {
+        if (!ok(vcode(ix, iy))) return false;
+        if (!with_rules) return true;
+        if (!vias_allowed) return false;
+        if (via_rule.empty()) return true;
+        auto& v = via_rule[static_cast<std::size_t>(iy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(ix)];
+        if (v < 0) v = obs.via_disallowed(pt(ix, iy), dia, p.net, 0, nl - 1, model::ViaType::Through) ? 0 : 1;
+        return v == 1;
+      };
+      // Breadth-first search from the pad (lattice points inside it on its layers) to the package's outside.
+      std::vector<std::pair<int, int>> region;  // reached points (for the mask hint)
+      bool via_seen = false;
+      auto escapes = [&](bool with_rules) {
+        std::vector<std::uint8_t> seen(static_cast<std::size_t>(nl) * cells, 0);
+        std::deque<std::tuple<int, int, int>> q;
+        region.clear();
+        via_seen = false;
+        const auto [hx, hy] = half_extents(p);
+        for (int l = 0; l < nl; ++l) {
+          if (!(p.copper & (model::LayerMask{1} << l)) || (with_rules && !(layers & model::layer_bit(l)))) continue;
+          const int ix0 = static_cast<int>((p.pos.x - hx - gx0) / L), ix1 = static_cast<int>((p.pos.x + hx - gx0) / L) + 1;
+          const int iy0 = static_cast<int>((p.pos.y - hy - gy0) / L), iy1 = static_cast<int>((p.pos.y + hy - gy0) / L) + 1;
+          bool any = false;
+          for (int iy = std::max(0, iy0); iy <= std::min(ny - 1, iy1); ++iy)
+            for (int ix = std::max(0, ix0); ix <= std::min(nx - 1, ix1); ++ix)
+              if (track_ok(with_rules, l, ix, iy) && !seen[lat(l, ix, iy)]) {
+                seen[lat(l, ix, iy)] = 1;
                 q.emplace_back(l, ix, iy);
                 any = true;
               }
-            }
-        if (!any) {  // pad smaller than the lattice: its nearest point
-          const int ix = std::clamp(static_cast<int>((p.pos.x - gx0 + L / 2) / L), 0, nx - 1), iy = std::clamp(static_cast<int>((p.pos.y - gy0 + L / 2) / L), 0, ny - 1);
-          seen[(static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(iy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(ix)] = 1;
-          q.emplace_back(l, ix, iy);
-        }
-      }
-      bool escaped = false, via_seen = false;
-      std::vector<std::pair<int, int>> region;  // reached points (for the mask hint)
-      static constexpr int kDx[8] = {1, -1, 0, 0, 1, 1, -1, -1}, kDy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
-      while (!q.empty() && !escaped) {
-        const auto [l, ix, iy] = q.front();
-        q.pop_front();
-        if (outside(pt(ix, iy))) {
-          escaped = true;
-          break;
-        }
-        if (region.size() < 20'000) region.emplace_back(ix, iy);
-        for (int d = 0; d < 8; ++d) {
-          const int jx = ix + kDx[d], jy = iy + kDy[d];
-          if (jx < 0 || jy < 0 || jx >= nx || jy >= ny) continue;
-          const std::size_t k = (static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(jy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(jx);
-          if (seen[k] || !ok(tcode(l, jx, jy))) continue;
-          seen[k] = 1;
-          q.emplace_back(l, jx, jy);
-        }
-        if (nl > 1 && ok(vcode(ix, iy))) {
-          via_seen = true;
-          for (int l2 = 0; l2 < nl; ++l2) {
-            const std::size_t k = (static_cast<std::size_t>(l2) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(iy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(ix);
-            if (seen[k]) continue;
-            seen[k] = 1;
-            q.emplace_back(l2, ix, iy);
+          if (!any) {  // pad smaller than the lattice: its nearest point
+            const int ix = std::clamp(static_cast<int>((p.pos.x - gx0 + L / 2) / L), 0, nx - 1), iy = std::clamp(static_cast<int>((p.pos.y - gy0 + L / 2) / L), 0, ny - 1);
+            seen[lat(l, ix, iy)] = 1;
+            q.emplace_back(l, ix, iy);
           }
         }
-      }
-      if (escaped) {
+        static constexpr int kDx[8] = {1, -1, 0, 0, 1, 1, -1, -1}, kDy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+        while (!q.empty()) {
+          const auto [l, ix, iy] = q.front();
+          q.pop_front();
+          if (outside(pt(ix, iy))) return true;
+          if (region.size() < 20'000) region.emplace_back(ix, iy);
+          for (int d = 0; d < 8; ++d) {
+            const int jx = ix + kDx[d], jy = iy + kDy[d];
+            if (jx < 0 || jy < 0 || jx >= nx || jy >= ny) continue;
+            const std::size_t k = lat(l, jx, jy);
+            if (seen[k] || !track_ok(with_rules, l, jx, jy)) continue;
+            seen[k] = 1;
+            q.emplace_back(l, jx, jy);
+          }
+          if (nl > 1 && via_ok(with_rules, ix, iy)) {
+            via_seen = true;
+            for (int l2 = 0; l2 < nl; ++l2) {
+              const std::size_t k = lat(l2, ix, iy);
+              if (seen[k] || (with_rules && !(layers & model::layer_bit(l2)))) continue;
+              seen[k] = 1;
+              q.emplace_back(l2, ix, iy);
+            }
+          }
+        }
+        return false;
+      };
+      if (escapes(true)) {
         ++pe.escapable;
         continue;
       }
       DeadPin dp;
       dp.pad = pi;
-      if (via_seen) {
+      const bool via_reached = via_seen;
+      const std::vector<std::pair<int, int>> reached = std::move(region);
+      if (ruled && escapes(false)) {
+        // Copper alone leaves it a way out: the board's custom disallow rules wall it in.
+        dp.reason = "walled in by custom disallow rules (it escapes without them)";
+      } else if (via_reached) {
         dp.reason = "trapped on every layer it can reach";
       } else {
         // Would a via fit somewhere it can reach if vias were tented (no solder-mask opening of their own)?
         bool mask_only = false;
-        if (obs.via_mask() > 0 && nl > 1) {
+        if (obs.via_mask() > 0 && nl > 1 && vias_allowed) {
           const Coord saved = obs.via_mask();
           obs.set_via_mask(0);
-          for (const auto& [ix, iy] : region)
-            if (ok(obs.fixed_via_code(pt(ix, iy), dia, drill, 0, p.net))) {
+          for (const auto& [ix, iy] : reached)
+            if (ok(obs.fixed_via_code(pt(ix, iy), dia, drill, 0, p.net)) && !obs.via_disallowed(pt(ix, iy), dia, p.net, 0, nl - 1, model::ViaType::Through)) {
               mask_only = true;
               break;
             }
@@ -297,7 +369,7 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
       }
       pe.dead.push_back(dp);
     }
-    if (pe.pins == 0) continue;
+    if (pe.pins == 0 && pe.satisfied == 0) continue;
     if (mask_hint)
       pe.hint = "tent the vias (board setup) or reduce pad_to_mask_clearance (" + std::to_string(nm_to_mm(obs.via_mask())).substr(0, 5) +
                 " mm): vias would then fit where the dead pins need them";

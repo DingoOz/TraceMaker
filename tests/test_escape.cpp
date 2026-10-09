@@ -2,16 +2,22 @@
 // Escape planning (M9): corridor geometry on a synthetic BGA and the feasibility analysis on a fixture board.
 #include <catch2/catch_test_macros.hpp>
 
+#include <unistd.h>
+
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
-#include <algorithm>
+#include <fstream>
 #include <set>
+#include <string>
+#include <string_view>
 
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
 #include "route/obstacles.hpp"
+#include "route/router.hpp"
 
 using namespace tmk;
 using geom::Point;
@@ -277,4 +283,126 @@ TEST_CASE("escape flow: shallow packages are planned exactly as version 1", "[es
   const auto rings = route::array_rings(deep, all);
   CHECK(rings[0] == 1);
   CHECK(rings[static_cast<std::size_t>(3 * 7 + 3)] == 4);
+}
+
+// ---- Escape analysis: outstanding obligations and the board's custom rules ----
+
+namespace {
+
+// Two-layer board: U1 and J1, ten 0.6 x 1.5 mm SMD pads each at 1 mm pitch, pad k of both on net Nk; U1 has a
+// courtyard. `extra` adds copper inside the board, `dru` custom rules.
+struct RuleBoard {
+  std::filesystem::path dir;
+  model::Board board;
+  model::DesignRules rules;
+  RuleBoard(const std::string& name, const std::string& extra, const std::string& dru) {
+    dir = std::filesystem::temp_directory_path() / ("tmk_escape_" + name + "_" + std::to_string(::getpid()));
+    std::filesystem::remove_all(dir);
+    std::filesystem::create_directories(dir);
+    std::string nets = "(net 0 \"\")";
+    for (int k = 0; k < 10; ++k) nets += " (net " + std::to_string(k + 1) + " \"N" + std::to_string(k) + "\")";
+    auto fp = [](const char* ref, double y, bool courtyard) {
+      std::string s = std::string("  (footprint \"P\" (layer \"F.Cu\") (at 10 ") + std::to_string(y) + ")\n    (property \"Reference\" \"" + ref +
+                      "\" (at 0 0) (layer \"F.SilkS\"))\n";
+      if (courtyard) s += "    (fp_rect (start -5 -1.2) (end 5 1.2) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n";
+      for (int k = 0; k < 10; ++k)
+        s += "    (pad \"" + std::to_string(k + 1) + "\" smd rect (at " + std::to_string(k - 4.5) + " 0) (size 0.6 1.5) (layers \"F.Cu\") (net " +
+             std::to_string(k + 1) + " \"N" + std::to_string(k) + "\"))\n";
+      return s + "  )\n";
+    };
+    const std::string pcb = "(kicad_pcb (version 20240108) (generator \"pcbnew\")\n"
+                            "  (layers (0 \"F.Cu\" signal) (31 \"B.Cu\" signal) (37 \"F.SilkS\" user) (39 \"F.CrtYd\" user) (44 \"Edge.Cuts\" user))\n  " +
+                            nets + "\n" + fp("U1", 5, true) + fp("J1", 15, false) +
+                            "  (gr_rect (start 0 0) (end 20 20) (layer \"Edge.Cuts\") (stroke (width 0.1) (type solid)))\n" + extra + ")\n";
+    std::ofstream(dir / "b.kicad_pcb") << pcb;
+    if (!dru.empty()) std::ofstream(dir / "b.kicad_dru") << "(version 1)\n" + dru;
+    board = io::read_board_file((dir / "b.kicad_pcb").string()).board;
+    rules = io::read_design_rules((dir / "b.kicad_pcb").string());
+  }
+  ~RuleBoard() { std::filesystem::remove_all(dir); }
+  std::vector<route::PartEscape> analyse(bool soft_zones = false) {
+    route::Obstacles obs(board, rules);
+    obs.set_soft_zones(soft_zones);
+    return route::analyse_escapes(board, rules, obs);
+  }
+};
+
+// `ref` by value: GCC's -Wdangling-reference rejects a returned reference when an argument binds a temporary.
+const route::PartEscape& part(const std::vector<route::PartEscape>& parts, std::string_view ref) {
+  for (const auto& pe : parts)
+    if (pe.ref == ref) return pe;
+  FAIL("no part " << ref);
+  return parts.front();
+}
+
+}  // namespace
+
+TEST_CASE("escape analysis: pins of nets the existing copper already completes are satisfied, not obligations", "[escape][rules]") {
+  // N2's pads on U1 and J1 are joined by a track; every other net is still open.
+  RuleBoard rb("satisfied", "  (segment (start 8 5) (end 8 15) (width 0.25) (layer \"B.Cu\") (net 3))\n"
+                            "  (via (at 8 5.9) (size 0.6) (drill 0.3) (layers \"F.Cu\" \"B.Cu\") (net 3))\n"
+                            "  (segment (start 7.5 5) (end 8 5.9) (width 0.25) (layer \"F.Cu\") (net 3))\n"
+                            "  (via (at 8 14.1) (size 0.6) (drill 0.3) (layers \"F.Cu\" \"B.Cu\") (net 3))\n"
+                            "  (segment (start 7.5 15) (end 8 14.1) (width 0.25) (layer \"F.Cu\") (net 3))\n",
+               "");
+  const auto parts = rb.analyse();
+  for (const char* ref : {"U1", "J1"}) {
+    const auto& pe = part(parts, ref);
+    CHECK(pe.satisfied == 1);
+    CHECK(pe.pins == 9);
+    CHECK(pe.escapable == 9);
+  }
+}
+
+TEST_CASE("escape analysis: with soft zones a plane no pad touches keeps its net outstanding, as in the router's plan", "[escape][rules]") {
+  // N9's two pads are joined by a track, and N9 has a B.Cu plane that neither touches. With hard fills the
+  // router's planner has nothing to do for N9; with soft zones it connects a pad to the plane (doc 05 §26).
+  const std::string pts = "(pts (xy 0.5 0.5) (xy 19.5 0.5) (xy 19.5 19.5) (xy 0.5 19.5))";
+  RuleBoard rb("plane", "  (segment (start 14.5 5) (end 14.5 15) (width 0.25) (layer \"F.Cu\") (net 10))\n"
+                        "  (zone (net 10) (net_name \"N9\") (layer \"B.Cu\") (hatch edge 0.5) (connect_pads (clearance 0.2)) (min_thickness 0.2)\n"
+                        "    (fill yes (thermal_gap 0.3) (thermal_bridge_width 0.3))\n    (polygon " + pts + ")\n    (filled_polygon (layer \"B.Cu\") " + pts + "))\n",
+               "");
+  for (const char* ref : {"U1", "J1"}) {
+    const auto hard = rb.analyse(false), soft = rb.analyse(true);
+    CHECK(part(hard, ref).satisfied == 1);
+    CHECK(part(hard, ref).pins == 9);
+    CHECK(part(soft, ref).satisfied == 0);
+    CHECK(part(soft, ref).pins == 10);
+    CHECK(part(soft, ref).escapable == 10);
+  }
+  // The router's planner on the same board: every net has two pads, so one connection per outstanding net, and
+  // with soft zones N9's is the pad-to-plane one.
+  for (bool soft : {false, true}) {
+    route::RouterOptions o;
+    o.soft_zones = soft;
+    o.work_budget = 2'000'000;
+    o.time_limit_s = 3600;  // the work budget decides, also in a slow sanitizer build
+    o.gpu_device = -1;
+    const auto res = route::Router(rb.board, rb.rules, o).run();
+    CHECK(res.connections == part(rb.analyse(soft), "U1").pins);
+    CHECK(res.routed == res.connections);
+  }
+}
+
+TEST_CASE("escape analysis: a pin that custom disallow rules wall in is dead, and named as such", "[escape][rules]") {
+  // N3 may neither run tracks nor place vias in U1's courtyard, so its U1 pin has no way out; its J1 pin and the
+  // other nets are unaffected. N5 may not use F.Cu, its pads' only layer.
+  const std::string dru = "(rule \"N3 off U1\" (condition \"A.intersectsCourtyard('U1') && A.NetName == 'N3'\") (constraint disallow track via))\n"
+                          "(rule \"N5 not on top\" (layer \"F.Cu\") (condition \"A.NetName == 'N5'\") (constraint disallow track))\n";
+  RuleBoard ruled("walled", "", dru);
+  const auto parts = ruled.analyse();
+  const auto& u1 = part(parts, "U1");
+  CHECK(u1.pins == 10);
+  CHECK(u1.escapable == 8);
+  std::set<std::string> dead;
+  for (const auto& d : u1.dead) {
+    dead.insert(ruled.board.pads[static_cast<std::size_t>(d.pad)].number);
+    CHECK(d.reason.find("walled in by custom disallow rules") != std::string::npos);
+  }
+  CHECK(dead == std::set<std::string>{"4", "6"});
+  const auto& j1 = part(parts, "J1");
+  REQUIRE(j1.dead.size() == 1);  // N5 is off F.Cu everywhere
+  CHECK(ruled.board.pads[static_cast<std::size_t>(j1.dead[0].pad)].number == "6");
+  RuleBoard free_board("free", "", "");
+  for (const auto& pe : free_board.analyse()) CHECK(pe.dead.empty());
 }

@@ -68,10 +68,15 @@ class Obstacles;
 
 // Escape feasibility (M9 analysis): can each pin of a dense package leave it at all under the board's rules?
 // A breadth-first search from the pad over a lattice of the package area, against fixed copper only (nothing
-// routed), at the narrowest legal width (the router's neck-down width), changing layers wherever that net's
-// via passes every fixed check. A pin escapes when it reaches `margin` outside the box of the package's pad
-// centres. On a lattice, so "dead" means "no escape on this lattice": an off-lattice path can exist in rare
-// cases; the router keeps trying those pins.
+// routed; fills as the obstacles are set: hard, or ignored with set_soft_zones), at the narrowest legal width
+// (the router's neck-down width), changing layers wherever that net's via passes every fixed check. The router's
+// custom-rule limits apply: per-net track layers and via permission, and position-dependent disallow rules.
+// A pin escapes when it reaches `margin` outside the box of the package's pad centres. Pins whose net is already
+// complete in the existing copper are `satisfied`, not searched; complete as the router's planner sees it, so with
+// soft zones a plane of the net that no pad touches yet leaves the net outstanding. The search is complete over
+// its finite lattice and window, so "dead" means "no escape on this lattice": an off-lattice path can exist in
+// rare cases (the router keeps trying those pins), and a pin that escapes alone may still lose its channel to its
+// neighbours.
 struct DeadPin {
   int pad = -1;
   std::string reason;
@@ -80,7 +85,8 @@ struct PartEscape {
   int footprint = -1;
   std::string ref;
   Coord pitch = 0;
-  int pins = 0, escapable = 0;
+  int pins = 0, escapable = 0;   // pins still to be routed, and those of them that escape
+  int satisfied = 0;             // pins whose net is already complete
   std::vector<DeadPin> dead;
   std::string hint;              // what would make the dead pins escapable, when it can be told
 };
