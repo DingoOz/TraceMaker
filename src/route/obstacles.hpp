@@ -86,6 +86,7 @@ class Obstacles {
   void set_via_mask(Coord m) { via_mask_ = m; }
   // Zone fills are ignored as obstacles (they are refilled after routing); they remain connection targets.
   void set_soft_zones(bool on) { soft_zones_ = on; }
+  bool soft_zones() const { return soft_zones_; }
   // Vias keep clear of SMD pads narrower than `max_pad` (any net, net-class clearance), as if they were another
   // net's copper; larger pads (exposed thermal pads) still take vias. set_pad_via_exempt(true) lifts this around the
   // checks of one deliberate via in pad (the router's --via-in-pad).
@@ -156,5 +157,11 @@ class Obstacles {
   // Mask-opening and copper-text conflicts for new copper on `layer` (fixed obstacles only).
   void aperture_codes(const geom::Shape& s, int layer, bool via_probe, const std::function<void(model::NetId)>& hit) const;
 };
+
+// Filled area of zone fill items (nm^2), shoelace over each item's outline.
+long double zone_fill_area(const drc::CopperModel& cm, const std::vector<int>& items);
+// With soft zones a fill of at least this area that no pad touches is its net's plane: a connection target of its
+// own (doc 05 §26). Smaller ones are slivers of a stale fill, which a refill may drop or reshape.
+inline constexpr long double kPlaneTargetArea = 1e12L;  // 1 mm^2
 
 }  // namespace tmk::route

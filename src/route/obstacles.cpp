@@ -1020,4 +1020,17 @@ void Obstacles::routed_items_in(const geom::Box& box, std::vector<int>& out) con
   });
 }
 
+long double zone_fill_area(const drc::CopperModel& cm, const std::vector<int>& items) {
+  long double a = 0;
+  for (int z : items)
+    for (const auto& sh : cm.items[static_cast<std::size_t>(z)].shapes) {
+      const auto& p = sh.pts;
+      long double s = 0;
+      for (std::size_t i = 0, j = p.size() - 1; i < p.size(); j = i++)
+        s += static_cast<long double>(p[j].x) * static_cast<long double>(p[i].y) - static_cast<long double>(p[i].x) * static_cast<long double>(p[j].y);
+      a += s < 0 ? -s / 2 : s / 2;
+    }
+  return a;
+}
+
 }  // namespace tmk::route

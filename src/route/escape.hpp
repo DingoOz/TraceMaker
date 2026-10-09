@@ -72,9 +72,11 @@ class Obstacles;
 // (the router's neck-down width), changing layers wherever that net's via passes every fixed check. The router's
 // custom-rule limits apply: per-net track layers and via permission, and position-dependent disallow rules.
 // A pin escapes when it reaches `margin` outside the box of the package's pad centres. Pins whose net is already
-// complete in the existing copper are `satisfied`, not searched. The search is complete over its finite lattice
-// and window, so "dead" means "no escape on this lattice": an off-lattice path can exist in rare cases (the
-// router keeps trying those pins), and a pin that escapes alone may still lose its channel to its neighbours.
+// complete in the existing copper are `satisfied`, not searched; complete as the router's planner sees it, so with
+// soft zones a plane of the net that no pad touches yet leaves the net outstanding. The search is complete over
+// its finite lattice and window, so "dead" means "no escape on this lattice": an off-lattice path can exist in
+// rare cases (the router keeps trying those pins), and a pin that escapes alone may still lose its channel to its
+// neighbours.
 struct DeadPin {
   int pad = -1;
   std::string reason;

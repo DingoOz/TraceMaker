@@ -354,20 +354,6 @@ struct Router::Impl {
     return static_cast<double>(lo);
   }
 
-  // Filled area of zone fill items (nm^2), shoelace over each item's outline.
-  long double zones_area(const std::vector<int>& items) const {
-    long double a = 0;
-    for (int z : items)
-      for (const auto& sh : obs->copper().items[static_cast<std::size_t>(z)].shapes) {
-        const auto& p = sh.pts;
-        long double s = 0;
-        for (std::size_t i = 0, j = p.size() - 1; i < p.size(); j = i++)
-          s += static_cast<long double>(p[j].x) * static_cast<long double>(p[i].y) - static_cast<long double>(p[i].x) * static_cast<long double>(p[j].y);
-        a += s < 0 ? -s / 2 : s / 2;
-      }
-    return a;
-  }
-
   // Can a connection from pad `p` end in zone fill item `z`? By a track on a layer both have copper on and the net
   // may use, or by a via of a type the net may place (a via may end in the net's own fill on any layer, §29).
   bool reaches(int p, int z) const {
@@ -410,7 +396,7 @@ struct Router::Impl {
         // plane that no pad touches yet (all-SMD boards) is the net's plane: pads drop vias into it. Only for nets
         // with pads, not for slivers of a stale fill (under 1 mm^2), which a refill may drop or reshape, and only
         // for planes a pad of the net can reach: an unreachable plane would replace pad-to-pad connections.
-        const bool plane = opt.soft_zones && has_pads && !c.zones.empty() && zones_area(c.zones) >= 1e12L &&
+        const bool plane = opt.soft_zones && has_pads && !c.zones.empty() && zone_fill_area(obs->copper(), c.zones) >= kPlaneTargetArea &&
                            std::any_of(cl.begin(), cl.end(), [&](const auto& o) {
                              return std::any_of(o.second.pads.begin(), o.second.pads.end(), [&](int p) {
                                return std::any_of(c.zones.begin(), c.zones.end(), [&](int z) { return reaches(p, z); });

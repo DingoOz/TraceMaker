@@ -1197,7 +1197,9 @@ the fork (5M then 30M work, KiCad-refilled DRC), `--soft-zones` routing connecte
 
 - Obligations: only pins whose net the existing copper does not complete are searched (`pins`). Pins whose
   net is already one cluster (pads, tracks, vias and fills, with the router's connectivity) are counted as
-  `satisfied`.
+  `satisfied`. With `--soft-zones` a fill of 1 mm² or more that no pad touches keeps its net outstanding: it
+  is a plane target in the router's plan (§26), which connects one pad of the net to it. The test for that is
+  the planner's own (`zone_fill_area`, `kPlaneTargetArea`).
 - Rules: each pin's search uses its net's track layers and via permission (`track_allowed`, `via_allowed`, the
   hole-rule veto) and the positional rules on the track's copper at each lattice point and on the via. The
   fixed-copper code caches stay per class; rule verdicts are memoised per pin. A dead pin that escapes with

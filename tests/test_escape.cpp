@@ -17,6 +17,7 @@
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
 #include "route/obstacles.hpp"
+#include "route/router.hpp"
 
 using namespace tmk;
 using geom::Point;
@@ -319,8 +320,9 @@ struct RuleBoard {
     rules = io::read_design_rules((dir / "b.kicad_pcb").string());
   }
   ~RuleBoard() { std::filesystem::remove_all(dir); }
-  std::vector<route::PartEscape> analyse() {
+  std::vector<route::PartEscape> analyse(bool soft_zones = false) {
     route::Obstacles obs(board, rules);
+    obs.set_soft_zones(soft_zones);
     return route::analyse_escapes(board, rules, obs);
   }
 };
@@ -349,6 +351,35 @@ TEST_CASE("escape analysis: pins of nets the existing copper already completes a
     CHECK(pe.satisfied == 1);
     CHECK(pe.pins == 9);
     CHECK(pe.escapable == 9);
+  }
+}
+
+TEST_CASE("escape analysis: with soft zones a plane no pad touches keeps its net outstanding, as in the router's plan", "[escape][rules]") {
+  // N9's two pads are joined by a track, and N9 has a B.Cu plane that neither touches. With hard fills the
+  // router's planner has nothing to do for N9; with soft zones it connects a pad to the plane (doc 05 §26).
+  const std::string pts = "(pts (xy 0.5 0.5) (xy 19.5 0.5) (xy 19.5 19.5) (xy 0.5 19.5))";
+  RuleBoard rb("plane", "  (segment (start 14.5 5) (end 14.5 15) (width 0.25) (layer \"F.Cu\") (net 10))\n"
+                        "  (zone (net 10) (net_name \"N9\") (layer \"B.Cu\") (hatch edge 0.5) (connect_pads (clearance 0.2)) (min_thickness 0.2)\n"
+                        "    (fill yes (thermal_gap 0.3) (thermal_bridge_width 0.3))\n    (polygon " + pts + ")\n    (filled_polygon (layer \"B.Cu\") " + pts + "))\n",
+               "");
+  for (const char* ref : {"U1", "J1"}) {
+    const auto hard = rb.analyse(false), soft = rb.analyse(true);
+    CHECK(part(hard, ref).satisfied == 1);
+    CHECK(part(hard, ref).pins == 9);
+    CHECK(part(soft, ref).satisfied == 0);
+    CHECK(part(soft, ref).pins == 10);
+    CHECK(part(soft, ref).escapable == 10);
+  }
+  // The router's planner on the same board: every net has two pads, so one connection per outstanding net, and
+  // with soft zones N9's is the pad-to-plane one.
+  for (bool soft : {false, true}) {
+    route::RouterOptions o;
+    o.soft_zones = soft;
+    o.work_budget = 2'000'000;
+    o.gpu_device = -1;
+    const auto res = route::Router(rb.board, rb.rules, o).run();
+    CHECK(res.connections == part(rb.analyse(soft), "U1").pins);
+    CHECK(res.routed == res.connections);
   }
 }
 

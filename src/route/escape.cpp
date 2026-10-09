@@ -149,15 +149,28 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
   std::vector<PartEscape> out;
   // Pins that must be routed: their net's pads are not yet all joined by existing copper (pads, tracks, vias and
   // zone fills, with the router's connectivity). A pin whose net is already complete has nothing to escape for.
+  // Complete is what the router's planner calls complete: one cluster with pads and, with soft zones, no plane
+  // of the net that no pad touches yet (the planner drops a via into it from a pad, doc 05 §26).
   const auto& cm = obs.copper();
   const auto con = drc::compute_connectivity(b, cm, obs.grid());
-  std::vector<int> pad_root(b.pads.size(), -1);
-  std::map<model::NetId, std::set<int>> net_roots;  // clusters holding pads, per net
+  std::map<model::NetId, std::set<int>> net_roots;  // the planner's clusters, per net
   for (std::size_t i = 0; i < cm.items.size(); ++i) {
     const auto& it = cm.items[i];
     if (it.kind != drc::ItemKind::Pad || it.net <= 0) continue;
-    pad_root[z(it.index)] = con.root[i];
     net_roots[it.net].insert(con.root[i]);
+  }
+  if (obs.soft_zones()) {
+    std::map<std::pair<model::NetId, int>, std::vector<int>> fills;  // (net, cluster without pads) -> its fill items
+    for (std::size_t i = 0; i < cm.items.size(); ++i) {
+      const auto& it = cm.items[i];
+      if (it.kind != drc::ItemKind::Zone || it.footprint >= 0 || it.net <= 0) continue;
+      if (b.zones[static_cast<std::size_t>(it.index)].teardrop) continue;  // track copper, never a plane target (doc 05 §32)
+      const auto nr = net_roots.find(it.net);
+      if (nr == net_roots.end() || nr->second.count(con.root[i])) continue;
+      fills[{it.net, con.root[i]}].push_back(static_cast<int>(i));
+    }
+    for (const auto& [key, items] : fills)
+      if (zone_fill_area(cm, items) >= kPlaneTargetArea) net_roots[key.first].insert(key.second);
   }
   std::map<model::NetId, int> pads_on_net;
   for (const auto& p : b.pads)
