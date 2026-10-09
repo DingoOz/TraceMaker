@@ -104,6 +104,7 @@ TEST_CASE("plane_smd: defaults leave the board incomplete without a via; the opt
   const auto rules = io::read_design_rules(kBoard);
   route::RouterOptions base;
   base.work_budget = 3'000'000;
+  base.time_limit_s = 3600;  // the work budget decides, also in a slow sanitizer build
   base.gpu_device = -1;
   const auto plain = route::Router(b, rules, base).run();
   CHECK(plain.routed < plain.connections);
@@ -146,6 +147,7 @@ TEST_CASE("plane_smd: planes of a net without pads are not connection targets", 
   const auto rules = io::read_design_rules(kBoard);
   route::RouterOptions opt;
   opt.work_budget = 300'000;
+  opt.time_limit_s = 3600;  // the work budget decides, also in a slow sanitizer build
   opt.gpu_device = -1;
   const int plain = route::Router(b, rules, opt).run().connections;
   model::Net orphan;
@@ -166,6 +168,7 @@ TEST_CASE("plane_smd: no via in pad when the board's minimum via cannot be read"
   rules.minimums.through_hole_diameter = 0;
   route::RouterOptions opt;
   opt.work_budget = 3'000'000;
+  opt.time_limit_s = 3600;  // the work budget decides, also in a slow sanitizer build
   opt.bend_states = false;
   opt.gpu_device = -1;
   opt.soft_zones = opt.via_in_pad = opt.vias_off_pads = true;
@@ -204,6 +207,7 @@ TEST_CASE("inpad_cost: a via in pad costs the same at either end, at every via p
   const auto rules = io::read_design_rules(path);
   route::RouterOptions opt;
   opt.work_budget = 3'000'000;
+  opt.time_limit_s = 3600;  // the work budget decides, also in a slow sanitizer build
   opt.gpu_device = -1;
   opt.via_in_pad = opt.vias_off_pads = true;
   const auto r = route::Router(b, rules, opt).run();
