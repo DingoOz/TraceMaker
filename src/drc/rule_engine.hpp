@@ -54,11 +54,17 @@ class RuleEngine {
 
   // Name of the last rule disallowing `it` on `layer`, if any (KiCad: items_not_allowed).
   std::optional<std::string> disallowed(const CopperItem& it, int layer) const;
-  // Router checks for a new track or through via. Positional and footprint conditions are warned and left to DRC.
+  // Router fast paths for a new track or via of `net`, from rules whose conditions do not depend on the
+  // item's position, size or footprint (per-net layer and via-type masks).
   bool track_allowed(model::NetId net, int layer) const;
   // `Blind` router probes have no span yet, so either blind/buried keyword conservatively forbids them.
   // Board items are distinguished exactly by whether their span touches an outer copper layer.
   bool via_allowed(model::NetId net, model::ViaType type = model::ViaType::Through) const;
+  // A disallow rule on tracks or vias depends on position, size or footprint: the router asks probe_disallowed.
+  bool positional_disallow() const { return positional_disallow_; }
+  // A new track or via (index -1, actual shape, width and layers; a via's layers are its span, which tells
+  // blind from buried) is disallowed on one of its layers, every custom rule applied in order as in disallowed().
+  bool probe_disallowed(const CopperItem& it, model::ViaType type = model::ViaType::Through) const;
   // Hole-to-copper clearance on `layer`, any net; -1 when no rule matches (KiCad: hole_clearance).
   Coord physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
   bool any_physical_hole_clearance() const { return max_physical_hole_ > 0; }
@@ -71,14 +77,21 @@ class RuleEngine {
   const std::vector<std::string>& warnings() const { return warnings_; }
 
  private:
+  // Keyword bits of a rule's disallow constraints.
+  enum : std::uint16_t {
+    kTrack = 1, kVia = 2, kThroughVia = 4, kMicroVia = 8, kBlindVia = 16, kBuriedVia = 32, kPad = 64, kZone = 128, kGraphic = 256,
+    kRouted = kTrack | kVia | kThroughVia | kMicroVia | kBlindVia | kBuriedVia,
+  };
   struct Compiled {
     const model::CustomRule* rule;
     std::unique_ptr<Condition> cond;  // null = always
     bool valid = true;
-    bool positional = false;  // position, footprint or pad condition: cannot be pre-evaluated for routing
+    bool positional = false;  // position, size, footprint or pad condition: evaluated per item, not per net
+    std::uint16_t words = 0;  // disallow keywords
   };
+  bool words_match(std::uint16_t words, const CopperItem& it, const model::ViaType* via_type, bool span) const;
   // Item type, layer and condition all match a disallow constraint.
-  bool disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type = nullptr) const;
+  bool disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type = nullptr, bool span = false) const;
   // Value of the last matching custom constraint of `type` (min field), trying (a,b) and (b,a).
   std::optional<Coord> custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer) const;
   bool layer_matches(const std::string& sel, int layer) const;
@@ -95,6 +108,8 @@ class RuleEngine {
   mutable std::map<std::tuple<const void*, int, int>, bool> area_cache_;
   mutable std::mutex area_mutex_;
   CourtyardCache courtyards_;
+  std::vector<geom::Box> zone_box_;  // outline box of every zone, for area functions
+  bool positional_disallow_ = false;
   bool any_custom_clearance_ = false;
   bool zone_overrides_ = false;
   bool needs_exact_ = false;

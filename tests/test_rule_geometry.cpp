@@ -270,8 +270,9 @@ TEST_CASE("Overlapping and touching courtyard outlines are merged; unreadable on
   CHECK(drc::build_courtyards(curve).entries[0].sides[1].unreadable);
 }
 
-TEST_CASE("Indexed courtyard selectors give the results of matching every footprint", "[rules][drc][rule_geometry]") {
-  // Rule 3: the selector index is an accelerated path; the scan over all footprints is its reference.
+TEST_CASE("Courtyard selectors resolved once give the results of matching every footprint", "[rules][drc][rule_geometry]") {
+  // Rule 3: entries resolved once (courtyard_entries, as Condition::bind keeps them) are the accelerated path;
+  // the scan over all footprints for each query is its reference.
   model::Board b;
   const char* refs[] = {"R1", "R2", "C1", "U1", "U12", "J1"};
   for (std::size_t i = 0; i < 6; ++i) {
@@ -287,19 +288,20 @@ TEST_CASE("Indexed courtyard selectors give the results of matching every footpr
     rect.b = {static_cast<Coord>(i) * 10 * M + 6 * M, 6 * M};
     add_graphic(b, rect, i);
   }
-  const auto scan = drc::build_courtyards(b);
-  auto indexed = scan;
-  const char* selectors[] = {"R*", "R1", "U1", "U1?", "*", "Lib:Odd", "Lib:*", "X*", "?1"};
-  for (const auto* selector : selectors) drc::index_courtyard_selector(indexed, selector);
-  REQUIRE(scan.selected.empty());
+  const auto cache = drc::build_courtyards(b);
+  const char* selectors[] = {"R*", "R1", "U1", "U1?", "*", "Lib:Odd", "Lib:*", "X*", "?1", ""};
   int hits = 0;
-  for (const auto* selector : selectors)
-    for (const auto* function : {"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"})
-      for (Coord x = -2 * M; x < 60 * M; x += 2 * M) {
-        const auto item = copper(Shape::point({x, 3 * M}, M / 2));
-        const bool expected = drc::courtyard_matches(item, scan, selector, function);
-        CHECK(drc::courtyard_matches(item, indexed, selector, function) == expected);
-        hits += expected;
-      }
+  for (const std::string selector : selectors) {
+    const auto entries = drc::courtyard_entries(cache, selector);
+    CHECK(std::is_sorted(entries.begin(), entries.end()));  // entry order
+    for (const std::string function : {"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard", "unknownCourtyard"})
+      for (Coord x = -2 * M; x < 60 * M; x += 2 * M)
+        for (const auto& shape : {Shape::point({x, 3 * M}, M / 2), Shape::segment({x, -M}, {x + 3 * M, 2 * M}, M / 10)}) {
+          const auto item = copper(shape);
+          const bool expected = drc::courtyard_matches(item, cache, selector, function);
+          CHECK(drc::courtyard_matches(item, cache, entries, function) == expected);
+          hits += expected;
+        }
+  }
   CHECK(hits > 50);  // the comparison is not vacuous
 }

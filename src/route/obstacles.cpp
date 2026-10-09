@@ -468,6 +468,7 @@ class Probe {
   Probe(const Probe&) = delete;
   Probe& operator=(const Probe&) = delete;
   const drc::CopperItem& operator*() const { return *item_; }
+  void set_layers(model::LayerMask m) const { item_->layers = m; }  // a via's span
 
  private:
   static thread_local std::vector<std::unique_ptr<drc::CopperItem>> pool_;
@@ -482,8 +483,29 @@ const Shape& scratch_hole(Point c, Coord r) {
   h.set_point(c, r);
   return h;
 }
+// Track copper of a lattice disk for rule probes (rule checks do not nest).
+const Shape& scratch_disk(Point c, Coord r) {
+  static thread_local Shape d;
+  d.set_point(c, r);
+  return d;
+}
 int worst(int a, int c) { return std::max(a, c); }
 }  // namespace
+
+bool Obstacles::track_disallowed(const Shape& s, int layer, Coord width, model::NetId net) const {
+  if (!re_->positional_disallow()) return false;
+  const Probe pp(drc::ItemKind::Track, s, net, layer, width, s.pts[0]);
+  return re_->probe_disallowed(*pp);
+}
+
+bool Obstacles::via_disallowed(Point p, Coord d, model::NetId net, int l0, int l1, model::ViaType type) const {
+  if (!re_->positional_disallow()) return false;
+  const Probe pp(drc::ItemKind::Via, scratch_disk(p, d / 2), net, -1, d, p);
+  model::LayerMask span = 0;
+  for (int l = std::max(0, l0); l <= std::min(l1, b_.copper_count() - 1); ++l) span |= model::layer_bit(l);
+  pp.set_layers(span);
+  return re_->probe_disallowed(*pp, type);
+}
 
 // Custom physical_hole_clearance rules hold between a hole and any other item's copper, whatever the nets
 // (KiCad reports them as hole_clearance, also for a track of the hole's own net). `fixed` / `routed` select
@@ -557,6 +579,7 @@ int Obstacles::disk_state(Point p, int layer, Coord hw, model::NetId net, Coord 
     return 2;
   }
   st = worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
+  if (st != 2 && track_disallowed(scratch_disk(p, hw), layer, 2 * hw, net)) st = 2;
   if (st == 2) ++rej_other;
   return st;
 }
@@ -567,12 +590,13 @@ int Obstacles::segment_state(Point a, Point b, int layer, Coord width, model::Ne
   const drc::CopperItem& probe = *pp;
   const int st = copper_state(s, probe, layer, ignore_routed, owners);
   if (st == 2) return 2;
-  return worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
+  const int st2 = worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
+  return st2 != 2 && track_disallowed(s, layer, width, net) ? 2 : st2;
 }
 
 int Obstacles::via_state_span(Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners, int l0,
-                              int l1) const {
-  if (!inside_board(p, 0)) return 2;
+                              int l1, model::ViaType type) const {
+  if (!inside_board(p, 0) || via_disallowed(p, d, net, l0, l1, type)) return 2;
   const Shape s = Shape::point(p, d / 2 + margin);
   int st = 0;
   for (int l = std::max(0, l0); l <= std::min(l1, b_.copper_count() - 1) && st != 2; ++l) {
@@ -585,7 +609,7 @@ int Obstacles::via_state_span(Point p, Coord d, Coord drill, model::NetId net, C
 }
 
 int Obstacles::via_state(Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners) const {
-  if (!inside_board(p, 0)) return 2;
+  if (!inside_board(p, 0) || via_disallowed(p, d, net, 0, b_.copper_count() - 1, model::ViaType::Through)) return 2;
   const Shape s = Shape::point(p, d / 2 + margin);
   int st = 0;
   for (int l = 0; l < b_.copper_count() && st != 2; ++l) {

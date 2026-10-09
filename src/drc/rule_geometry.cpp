@@ -268,38 +268,50 @@ bool footprint_selected(const std::string& selector, const std::string& referenc
   return model::wildcard_match(selector, reference) || (selector.find(':') != std::string::npos && model::wildcard_match(selector, lib_id));
 }
 
-void index_courtyard_selector(CourtyardCache& courtyards, const std::string& selector) {
-  auto& list = courtyards.selected[selector];
-  list.clear();
+std::vector<int> courtyard_entries(const CourtyardCache& courtyards, const std::string& selector) {
+  std::vector<int> out;
   for (std::size_t i = 0; i < courtyards.entries.size(); ++i)
-    if (footprint_selected(selector, courtyards.entries[i].reference, courtyards.entries[i].lib_id)) list.push_back(i);
+    if (footprint_selected(selector, courtyards.entries[i].reference, courtyards.entries[i].lib_id)) out.push_back(static_cast<int>(i));
+  return out;
 }
 
+namespace {
+// 0 all sides, 1 the footprint's front, 2 its back; -1 for a name that is not a courtyard function.
+int courtyard_side(const std::string& function) {
+  return function == "intersectsCourtyard" ? 0 : function == "intersectsFrontCourtyard" ? 1 : function == "intersectsBackCourtyard" ? 2 : -1;
+}
+bool courtyard_hit(const CopperItem& item, const CourtyardEntry& entry, int which) {
+  for (int side = 0; side < 2; ++side) {
+    // side 0 is F.CrtYd: the footprint's front unless it is flipped.
+    const bool own_front = (side == 1) == entry.back;
+    if ((which == 1 && !own_front) || (which == 2 && own_front)) continue;
+    const auto& region = entry.sides[static_cast<std::size_t>(side)];
+    for (const auto& shape : item.shapes) {
+      if (region.parts.empty() || !shape.box.intersects(region.box)) continue;
+      for (const auto& part : region.parts)
+        if (collides(shape, part)) return true;
+    }
+  }
+  return false;
+}
+}  // namespace
+
+bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
+                       const std::vector<int>& entries, const std::string& function) {
+  const int which = courtyard_side(function);
+  if (which < 0) return false;
+  for (const int e : entries)
+    if (courtyard_hit(item, courtyards.entries[static_cast<std::size_t>(e)], which)) return true;
+  return false;
+}
+
+// Reference path: the selector is matched against every footprint for each query.
 bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
                        const std::string& selector, const std::string& function) {
-  const bool front = function == "intersectsFrontCourtyard", back = function == "intersectsBackCourtyard";
-  if (!front && !back && function != "intersectsCourtyard") return false;
-  const auto hit = [&](const CourtyardEntry& entry) {
-    for (int side = 0; side < 2; ++side) {
-      // side 0 is F.CrtYd: the footprint's front unless it is flipped.
-      const bool own_front = (side == 1) == entry.back;
-      if ((front && !own_front) || (back && own_front)) continue;
-      const auto& region = entry.sides[static_cast<std::size_t>(side)];
-      for (const auto& shape : item.shapes) {
-        if (region.parts.empty() || !shape.box.intersects(region.box)) continue;
-        for (const auto& part : region.parts)
-          if (collides(shape, part)) return true;
-      }
-    }
-    return false;
-  };
-  if (const auto indexed = courtyards.selected.find(selector); indexed != courtyards.selected.end()) {
-    for (const std::size_t i : indexed->second)
-      if (hit(courtyards.entries[i])) return true;
-    return false;
-  }
+  const int which = courtyard_side(function);
+  if (which < 0) return false;
   for (const auto& entry : courtyards.entries)
-    if (footprint_selected(selector, entry.reference, entry.lib_id) && hit(entry)) return true;
+    if (footprint_selected(selector, entry.reference, entry.lib_id) && courtyard_hit(item, entry, which)) return true;
   return false;
 }
 }  // namespace tmk::drc
