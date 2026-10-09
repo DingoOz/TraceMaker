@@ -87,7 +87,12 @@ struct Router::Impl {
     // Boxed in even by a negotiated search, which may cross every other net's routed copper: only fixed copper
     // encloses the pin (M9). Retrying it in later passes and restarts only spends budget others could use.
     bool dead = false;
+    bool deferred = false;           // put back once in this first pass (over its effort cap): the retry is uncapped
   };
+  std::vector<int> deferred;         // first pass: connections put back, retried when the pending queue empties
+  bool deferred_now = false;         // the last search_and_commit put its connection back
+  bool probe_now = false;            // the search running is the target probe (no cost field)
+  std::vector<char> inner_pin;       // board pad -> inner pin of a dense package (filled on first use)
   std::vector<ConnState> cs;
   std::set<NetId> first_net_ids;  // --first-nets
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
@@ -1053,7 +1058,8 @@ struct Router::Impl {
     const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6);
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
-    const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
+    // Not for the target probe: its few thousand expansions cost less than a field over the whole window.
+    const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off && !probe_now &&
                            cells * static_cast<std::size_t>(nl) >= static_cast<std::size_t>(opt.field_min_cells);
     if (use_field) {
       build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6));
@@ -1552,9 +1558,10 @@ struct Router::Impl {
       cong_end = {global.tile_of_x(pa.x), global.tile_of_y(pa.y), global.tile_of_x(pb.x), global.tile_of_y(pb.y)};
     }
     corr = (opt.global_route && !global.corridor.empty() && current >= 0 && static_cast<std::size_t>(current) < global.corridor.size()) ? &global.corridor[static_cast<std::size_t>(current)] : nullptr;
+    deferred_now = false;
     const bool ok = search_and_commit_inner(c);
     corr = nullptr;
-    if (!ok && !bypass_nogoods) nogoods[ng] = 1;
+    if (!ok && !bypass_nogoods && !deferred_now) nogoods[ng] = 1;  // a deferred search is retried as it stands
     return ok;
   }
 
@@ -1599,6 +1606,13 @@ struct Router::Impl {
     // Negotiated searches stop before the whole-board window (they can cross copper, so a reachable target is
     // normally found within 20 mm of the bounding box); strict passes try two sizes.
     const int attempts = strict_pass ? std::min(2, opt.max_attempts) : soft ? std::min(opt.soft_attempts, opt.max_attempts) : opt.max_attempts;
+    ConnState* st = current >= 0 && static_cast<std::size_t>(current) < cs.size() ? &cs[static_cast<std::size_t>(current)] : nullptr;
+    // First pass, plain searches only (escalations run after a real failure): an effort cap from the connection's
+    // length. Long or hopeless connections then go after the cheap ones instead of spending their budget first.
+    const long defer_cap = strict_pass && opt.defer_steps > 0 && st && !st->deferred && !force_escapes && width_override == 0 && !via_override
+                               ? std::max(opt.defer_floor, static_cast<long>(opt.defer_steps) * std::max<long>(1, static_cast<long>(c.length / pitch)))
+                               : 0;
+    const bool may_defer = defer_cap > 0 && defer_cap < opt.max_expansions;  // at the search limit it would fail anyway
     for (int attempt = 0; attempt < attempts; ++attempt) {
       if (out_of_budget()) {
         why = "out of budget";
@@ -1614,8 +1628,40 @@ struct Router::Impl {
       // The cheap reachability check first: on every strict search (mode 2) or only on likely failures (mode 1:
       // a retry with a larger window, or a connection that has failed before).
       reach_check_now = opt.reach_check == 2 || (opt.reach_check == 1 && (attempt > 0 || cs[static_cast<std::size_t>(current)].fails > 0));
+      // A sealed target makes the forward search flood its window before the reverse probe below can tell. Where
+      // that is likely (an inner pin of a dense package, or a connection that failed before) probe from the target
+      // first, cheaply: an enclosed pocket exhausts in a few hundred expansions (doc 05 §37).
+      if (attempt == 0 && !soft && opt.target_probe > 0 && c.pad_b >= 0 && st) {
+        if (inner_pin.empty()) inner_pin = inner_dense_pins(b);
+        if (inner_pin[static_cast<std::size_t>(c.pad_b)] || st->fails > 0) {
+          Connection r = c;
+          std::swap(r.pad_a, r.pad_b);
+          std::vector<PathNode> rp;
+          const bool check = reach_check_now;
+          reach_check_now = false;
+          expansion_cap = opt.target_probe;
+          probe_now = true;
+          const bool found = search(r, w, rp);
+          probe_now = false;
+          expansion_cap = 0;
+          reach_check_now = check;
+          if (!found && last_miss == Miss::Enclosed) {
+            ++res.enclosed;
+            why = "boxed in (target)";
+            return false;
+          }
+          if (found && commit(r, rp)) return true;
+        }
+      }
+      expansion_cap = may_defer ? defer_cap : 0;
       const bool found_path = search(c, w, path);
+      expansion_cap = 0;
       reach_check_now = false;
+      if (!found_path && may_defer && last_miss == Miss::Budget) {
+        deferred_now = true;
+        why = "deferred: search over its effort cap";
+        return false;
+      }
       if (!found_path) {
         why = last_miss == Miss::Enclosed ? "boxed in" : last_miss == Miss::Budget ? "search budget" : "no path in window";
         if (last_miss == Miss::Enclosed) {
@@ -3253,8 +3299,9 @@ struct Router::Impl {
           remove_routed(item);
         }
         st.items.clear();
-        st.routed = st.implicit = st.coupled = false;
+        st.routed = st.implicit = st.coupled = st.deferred = false;
       }
+      deferred.clear();
       res.routed = 0;
       if (opt.escape_plan || opt.escape_flow) plan_escape_reservations();  // everything is unrouted again: corridors back
       if (opt.diff_pairs || !opt.pair_nets.empty()) route_diff_pairs();  // pairs first again, coupled
@@ -3291,7 +3338,15 @@ struct Router::Impl {
       strict_pass = pass == 0;
       std::vector<int> failed;
       const int routed_before = res.routed;
-      while (!pending.empty() && !out_of_budget()) {
+      // Connections put back by the first pass's effort cap come after everything else, uncapped.
+      auto next = [&] {
+        if (pending.empty() && !deferred.empty()) {
+          pending.assign(deferred.begin(), deferred.end());
+          deferred.clear();
+        }
+        return !pending.empty();
+      };
+      while (next() && !out_of_budget()) {
         const int ci = pending.front();
         pending.pop_front();
         auto& st = cs[static_cast<std::size_t>(ci)];
@@ -3320,6 +3375,13 @@ struct Router::Impl {
           }
         }
         bool ok = search_and_commit(st.c, false);
+        if (deferred_now) {
+          st.deferred = true;
+          st.why = why;
+          deferred.push_back(ci);
+          ++res.deferred;
+          continue;
+        }
         std::string reason = why;
         // Escalation for pads boxed in by fixed copper: forced off-lattice escapes, then a neck-down to the
         // board's minimum track width (KiCad's track_width rule; the net-class width is only the default).
@@ -3452,6 +3514,7 @@ struct Router::Impl {
     std::fprintf(stderr, "clean-up: %d connections improved\n", res.optimized);
     std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", res.restarts, obs->checks, res.rips,
                  res.passes, res.enclosed, nogood_skips, history.size());
+    if (res.deferred) std::fprintf(stderr, "first pass: %d searches put back over their effort cap\n", res.deferred);
     if (confined_tried) std::fprintf(stderr, "global corridors: %ld of %ld confined searches committed\n", confined_ok, confined_tried);
     if (reach_checks) std::fprintf(stderr, "reachability checks: %ld, %ld proved unreachable, %ld cells visited%s\n", reach_checks, reach_pruned, reach_visits,
                                   opt.reach_verify ? (reach_mismatch ? ", MISMATCHES" : ", verified (0 mismatches)") : "");
@@ -3498,7 +3561,14 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   };
   add("exact bends, shortest first", [](RouterOptions&) {});
   add("fast bends, shortest first", [&](RouterOptions& o) { o.bend_states = false; });
-  add("fast bends, longest first (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.order = 1; o.pitch_scale = 2.0; });
+  // Longest first spends a fixed budget on the most expensive searches first (decelerator: 5 of 1009 connections in
+  // 5 M expansions), so its first pass puts searches over their effort cap back (doc 05 §37).
+  add("fast bends, longest first (2x pitch on large boards)", [&](RouterOptions& o) {
+    o.bend_states = false;
+    o.order = 1;
+    o.pitch_scale = 2.0;
+    o.defer_steps = std::max(o.defer_steps, 30);
+  });
   // Escape planning (M9) as a portfolio arm: on in two variants, so boards where it helps get it while the others
   // keep their configurations (all variants on: tier B +8 connections, tier C -7; doc 05 §12).
   add("fast bends, jittered order, escape plan", [&](RouterOptions& o) { o.bend_states = false; o.order = 2; o.seed = base.seed + 1; o.escape_plan = true; });

@@ -122,6 +122,22 @@ TEST_CASE("escape plan: perimeter pins fan out, inner balls get one dog-bone sit
   CHECK(route::plan_escapes(b, needs, [](model::NetId) { return Coord{300'000}; }, coarse).empty());
 }
 
+TEST_CASE("inner dense pins: the balls inside a BGA's outer ring, not the ring, not coarse parts", "[escape]") {
+  const auto b = bga(5, 800'000, 400'000);
+  const auto inner = route::inner_dense_pins(b);
+  REQUIRE(inner.size() == b.pads.size());
+  for (int y = 0; y < 5; ++y)
+    for (int x = 0; x < 5; ++x)
+      CHECK(inner[static_cast<std::size_t>(y * 5 + x)] == (x > 0 && x < 4 && y > 0 && y < 4 ? 1 : 0));
+  // The same grid at 2.54 mm is not dense: nothing can seal its pins.
+  const auto coarse = route::inner_dense_pins(bga(5, 2'540'000, 1'000'000));
+  CHECK(std::count(coarse.begin(), coarse.end(), 1) == 0);
+  // Through-hole pins reach every layer: never flagged.
+  auto tht = bga(5, 800'000, 400'000);
+  tht.pads[12].type = model::PadType::ThruHole;
+  CHECK(route::inner_dense_pins(tht)[12] == 0);
+}
+
 TEST_CASE("escape analysis: sbc's DRAM balls are blocked only by the solder-mask rule", "[escape][fixture]") {
   const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/sbc_sbc/unrouted.kicad_pcb";
   if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);

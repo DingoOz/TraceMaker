@@ -39,34 +39,65 @@ int lowest_layer(model::LayerMask m) {
   return -1;
 }
 
+// A dense package: its copper pads, pin pitch (the smallest centre distance between two of them; pads at the same
+// spot, e.g. a thermal pad split into parts, do not count) and pad-centre box. False when the footprint escapes
+// easily (fewer than min_pads pads, or a pitch above max_pitch).
+struct DensePart {
+  std::vector<int> pads;
+  Coord pitch = LLONG_MAX;
+  Coord x0 = LLONG_MAX, y0 = LLONG_MAX, x1 = LLONG_MIN, y1 = LLONG_MIN;
+};
+bool dense_part(const model::Board& b, const model::Footprint& fp, const EscapeOptions& o, DensePart& d) {
+  d = {};
+  for (int pi : fp.pads) {
+    const auto& p = b.pads[z(pi)];
+    if (p.copper != 0 && p.type != model::PadType::NpThruHole) d.pads.push_back(pi);
+  }
+  if (static_cast<int>(d.pads.size()) < o.min_pads) return false;
+  for (std::size_t i = 0; i < d.pads.size(); ++i)
+    for (std::size_t j = i + 1; j < d.pads.size(); ++j) {
+      const Point v = b.pads[z(d.pads[j])].pos - b.pads[z(d.pads[i])].pos;
+      const Coord dist = static_cast<Coord>(std::llround(std::hypot(static_cast<double>(v.x), static_cast<double>(v.y))));
+      if (dist > 0) d.pitch = std::min(d.pitch, dist);
+    }
+  if (d.pitch == LLONG_MAX || d.pitch > o.max_pitch) return false;
+  for (int pi : d.pads) {
+    const Point q = b.pads[z(pi)].pos;
+    d.x0 = std::min(d.x0, q.x), d.x1 = std::max(d.x1, q.x), d.y0 = std::min(d.y0, q.y), d.y1 = std::max(d.y1, q.y);
+  }
+  return true;
+}
+
+// Within this of the pad-centre box a pin is on the perimeter.
+Coord perimeter_ring(Coord pitch) { return pitch * 3 / 4; }
+
 }  // namespace
+
+std::vector<char> inner_dense_pins(const model::Board& b, const EscapeOptions& o) {
+  std::vector<char> inner(b.pads.size(), 0);
+  DensePart d;
+  for (const auto& fp : b.footprints) {
+    if (!dense_part(b, fp, o, d)) continue;
+    const Coord ring = perimeter_ring(d.pitch);
+    for (int pi : d.pads) {
+      const auto& p = b.pads[z(pi)];
+      if (p.type != model::PadType::Smd) continue;
+      const Coord m = std::min({p.pos.x - d.x0, d.x1 - p.pos.x, p.pos.y - d.y0, d.y1 - p.pos.y});
+      if (m > ring) inner[z(pi)] = 1;
+    }
+  }
+  return inner;
+}
 
 std::vector<EscapeCorridor> plan_escapes(const model::Board& b, const std::vector<char>& needs, const std::function<Coord(model::NetId)>& keep,
                                          const EscapeOptions& o, EscapeStats* stats, const std::function<Coord(model::NetId)>& channel) {
   std::vector<EscapeCorridor> out;
   for (const auto& fp : b.footprints) {
-    std::vector<int> pads;
-    for (int pi : fp.pads) {
-      const auto& p = b.pads[z(pi)];
-      if (p.copper != 0 && p.type != model::PadType::NpThruHole) pads.push_back(pi);
-    }
-    if (static_cast<int>(pads.size()) < o.min_pads) continue;
-    // Pin pitch: the smallest centre distance between two pads of the footprint (pads at the same spot, e.g.
-    // a thermal pad split into parts, do not count).
-    Coord pitch = LLONG_MAX;
-    for (std::size_t i = 0; i < pads.size(); ++i)
-      for (std::size_t j = i + 1; j < pads.size(); ++j) {
-        const Point d = b.pads[z(pads[j])].pos - b.pads[z(pads[i])].pos;
-        const Coord dist = static_cast<Coord>(std::llround(std::hypot(static_cast<double>(d.x), static_cast<double>(d.y))));
-        if (dist > 0) pitch = std::min(pitch, dist);
-      }
-    if (pitch == LLONG_MAX || pitch > o.max_pitch) continue;
-    Coord x0 = LLONG_MAX, y0 = LLONG_MAX, x1 = LLONG_MIN, y1 = LLONG_MIN;
-    for (int pi : pads) {
-      const Point q = b.pads[z(pi)].pos;
-      x0 = std::min(x0, q.x), x1 = std::max(x1, q.x), y0 = std::min(y0, q.y), y1 = std::max(y1, q.y);
-    }
-    const Coord ring = pitch * 3 / 4;  // within this of the pad-centre box: on the perimeter
+    DensePart part;
+    if (!dense_part(b, fp, o, part)) continue;
+    const std::vector<int>& pads = part.pads;
+    const Coord pitch = part.pitch, x0 = part.x0, y0 = part.y0, x1 = part.x1, y1 = part.y1;
+    const Coord ring = perimeter_ring(pitch);
     const Point centre{(x0 + x1) / 2, (y0 + y1) / 2};
     bool any = false;
     for (int pi : pads) {
@@ -180,25 +211,10 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
   const model::LayerMask all_layers = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
   for (std::size_t fi = 0; fi < b.footprints.size(); ++fi) {
     const auto& fp = b.footprints[fi];
-    std::vector<int> pads;
-    for (int pi : fp.pads) {
-      const auto& p = b.pads[z(pi)];
-      if (p.copper != 0 && p.type != model::PadType::NpThruHole) pads.push_back(pi);
-    }
-    if (static_cast<int>(pads.size()) < eo.min_pads) continue;
-    Coord pitch = LLONG_MAX;
-    for (std::size_t i = 0; i < pads.size(); ++i)
-      for (std::size_t j = i + 1; j < pads.size(); ++j) {
-        const Point d = b.pads[z(pads[j])].pos - b.pads[z(pads[i])].pos;
-        const Coord dist = static_cast<Coord>(std::llround(std::hypot(static_cast<double>(d.x), static_cast<double>(d.y))));
-        if (dist > 0) pitch = std::min(pitch, dist);
-      }
-    if (pitch == LLONG_MAX || pitch > eo.max_pitch) continue;
-    Coord x0 = LLONG_MAX, y0 = LLONG_MAX, x1 = LLONG_MIN, y1 = LLONG_MIN;
-    for (int pi : pads) {
-      const Point q = b.pads[z(pi)].pos;
-      x0 = std::min(x0, q.x), x1 = std::max(x1, q.x), y0 = std::min(y0, q.y), y1 = std::max(y1, q.y);
-    }
+    DensePart part;
+    if (!dense_part(b, fp, eo, part)) continue;
+    const std::vector<int>& pads = part.pads;
+    const Coord pitch = part.pitch, x0 = part.x0, y0 = part.y0, x1 = part.x1, y1 = part.y1;
     PartEscape pe;
     pe.footprint = static_cast<int>(fi);
     pe.ref = fp.reference;

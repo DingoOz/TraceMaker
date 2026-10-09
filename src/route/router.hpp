@@ -36,6 +36,14 @@ struct RouterOptions {
   long max_expansions = 3'000'000;
   bool reach_verify = false;        // test only: run the A* even where the pre-check proved no path, count mismatches
   int reach_check = 1;              // flood-fill reachability check before strict searches (exact): 0 off, 1 likely failures, 2 all
+  // Before the first strict search of a connection whose target is an inner pin of a dense package (or that has
+  // failed before), a reverse search from the target capped at this many expansions: a sealed pin exhausts its
+  // pocket in a few hundred, where the forward search would flood its window first (doc 05 §37). 0 = off.
+  long target_probe = 5'000;
+  // First pass: a search that costs more than this many expansions per lattice step of the connection's length
+  // (at least defer_floor) is put back to the end of the pass, so cheap connections are not starved (0 = off).
+  int defer_steps = 0;
+  long defer_floor = 20'000;
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   double heuristic_weight = 1.0;
   // Plane-aware routing of all-SMD boards (doc 05 §26), all opt-in:
@@ -137,6 +145,7 @@ struct RouteResult {
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
+  int deferred = 0;             // first-pass searches put back over their effort cap (opt.defer_steps)
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;

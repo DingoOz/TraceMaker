@@ -64,6 +64,10 @@ std::vector<EscapeCorridor> plan_escapes(const model::Board& b, const std::vecto
                                          const EscapeOptions& o = {}, EscapeStats* stats = nullptr,
                                          const std::function<Coord(model::NetId)>& channel = {});
 
+// SMD pins of dense packages that sit more than 3/4 pitch inside the box of the package's pad centres, indexed by
+// board pad: the pins the package's own pads and their clearances can seal off.
+std::vector<char> inner_dense_pins(const model::Board& b, const EscapeOptions& o = {});
+
 class Obstacles;
 
 // Escape feasibility (M9 analysis): can each pin of a dense package leave it at all under the board's rules?
