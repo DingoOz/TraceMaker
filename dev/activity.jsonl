@@ -116,3 +116,4 @@
 {"ts": "2026-10-08T17:50:06+02:00", "kind": "build", "text": "D77: coupled-pair attempts charge every leg check as work and check the budget/time limit every 64 steps (CM5 fills kept: --work 20000 635 s -> 3.4 s; pairs off byte-identical)"}
 {"ts": "2026-10-08T20:36:22+02:00", "kind": "build", "text": "D78: router obstacle tests use the zone-fill edge index (PolygonIndex); KiCad demos at 10M 515 -> 119 s, byte-identical"}
 {"ts": "2026-10-08T20:57:27+02:00", "kind": "build", "text": "D79: teardrops are no plane targets, unreachable planes are no targets, soft-zone vias join every same-net plane they touch (complex_hierarchy 34 -> 3 unconnected after refill)"}
+{"ts": "2026-10-08T22:53:28+02:00", "kind": "build", "text": "D81: bench sets (quick, mid, planes), run.py --work/--refill/--route-args/--set, compare_runs.py gates; plane fixtures via prepare_demos.py"}

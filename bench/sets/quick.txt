@@ -1,0 +1,32 @@
+# Quick tier (doc 10 §4): the 30 PCBench tier-A boards that run.py --limit 30 samples with seed 1.
+# Every routing change: --set quick --work 1000000.
+655_testboard
+C-BISCUIT_buck-reg-5v
+CubeSAT-Reaction-Wheel_Edison_Motor_Servo
+Dekada_dekada_TopoR_curves
+ESP8266-MQTT-battery-monitor-hw_battery-monitor
+HES-V2__autosave-hes
+Hangul-Clock_Hangul
+Hardware_Playground_rpi_zero_ws2812
+Inkjet__autosave-InkjetDriver
+LogicBoxen_LogicBoxen
+Photodiode_dethead
+atmel-programmer_atmel_programmer
+breakout-boards_swd-and-uart
+custom_cpu--ALU_custom_cpu--ALU
+esp-serial-terminal_esp-com
+esp8266_envmonitor_environment-monitor-1.2
+fan_controller_fan_controller
+kika-in-space_DS8500
+kitspace_4_switch_array
+kitspace_8_switch_array
+kitspace_Potentiometer_mount_4LED
+kitspace_threeboard
+komputer-klavier_KomputerKlavier
+mechkeys_1800-controller
+mini-whip_mini-whip-power-feed
+mosavr_pcie1x_backplane
+phone_rtty_interface_phone_rtty_rev_a
+scimpy_volumebuffer
+spisolator_spisolator
+uC3Moy_uC3Moy
