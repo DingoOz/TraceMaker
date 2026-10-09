@@ -10,6 +10,7 @@
 #include <fstream>
 #include <set>
 #include <string>
+#include <string_view>
 
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
@@ -324,7 +325,8 @@ struct RuleBoard {
   }
 };
 
-const route::PartEscape& part(const std::vector<route::PartEscape>& parts, const std::string& ref) {
+// `ref` by value: GCC's -Wdangling-reference rejects a returned reference when an argument binds a temporary.
+const route::PartEscape& part(const std::vector<route::PartEscape>& parts, std::string_view ref) {
   for (const auto& pe : parts)
     if (pe.ref == ref) return pe;
   FAIL("no part " << ref);
