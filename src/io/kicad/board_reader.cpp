@@ -586,6 +586,7 @@ class Reader {
     if (NodeId p = d_.find(z, "priority"); p != kNoNode) zone.priority = static_cast<int>(d_.number_at(p, 1).value_or(0));
     if (NodeId cp = d_.find(z, "connect_pads"); cp != kNoNode)
       if (NodeId c = d_.find(cp, "clearance"); c != kNoNode) zone.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId at = d_.find(z, "attr"); at != kNoNode) zone.teardrop = d_.find(at, "teardrop") != kNoNode;
     if (NodeId k = d_.find(z, "keepout"); k != kNoNode) {
       zone.rule_area = true;
       auto na = [&](std::string_view what) {
