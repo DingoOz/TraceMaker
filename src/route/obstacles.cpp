@@ -20,6 +20,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   for (auto& it : cm_.items)
     if (it.kind == drc::ItemKind::Graphic) it.net = 0;
   re_ = std::make_unique<drc::RuleEngine>(b_, r_);
+  fills_ = std::make_unique<drc::ZoneFills>(cm_);
   reach_ = std::max<Coord>(re_->max_clearance(), 1'000'000) + 2'000'000;  // clearance + generous track/via size
   bounds_ = b_.edge_bbox();
   for (const auto& it : cm_.items) bounds_.add(it.box);
@@ -340,18 +341,26 @@ int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int la
       if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (probe.kind == drc::ItemKind::Via ? via_mask_ : 0) + 1'000);
       else if (probe.kind == drc::ItemKind::Via && it.kind != drc::ItemKind::Zone) req = std::max(req, via_mask_ + 1'000);
     }
-    for (const auto& u : it.shapes)
-      if (geom::closer_than(s, u, req)) {
-        if (ignore_routed && it.owner >= 0) {
-          state = 1;
-          if (owners) owners->push_back(it.owner);
-        } else {
-          state = 2;
-        }
-        return;
+    if (item_closer(s, it, req)) {
+      if (ignore_routed && it.owner >= 0) {
+        state = 1;
+        if (owners) owners->push_back(it.owner);
+      } else {
+        state = 2;
       }
+    }
   });
   return state;
+}
+
+bool Obstacles::item_closer(const Shape& s, const drc::CopperItem& it, Coord req) const {
+  if (it.kind == drc::ItemKind::Zone && !linear_zone_tests_) {
+    const auto i = static_cast<std::size_t>(&it - cm_.items.data());
+    if (i < fills_->slot.size() && fills_->slot[i] >= 0) return fills_->index[static_cast<std::size_t>(fills_->slot[i])].shape_closer(s, req);
+  }
+  for (const auto& u : it.shapes)
+    if (geom::closer_than(s, u, req)) return true;
+  return false;
 }
 
 int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bool is_via_hole, Coord hole_r, bool ignore_routed,
@@ -521,16 +530,14 @@ int Obstacles::physical_hole_state(const Shape& hole, model::NetId net, int laye
     if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;  // refilled after routing, around the new hole
     const Coord req = re_->physical_hole_clearance(&probe, it, layer);
     if (req <= 0) return;
-    for (const auto& u : it.shapes)
-      if (geom::closer_than(hole, u, req)) {
-        if (is_routed && soft) {
-          state = 1;
-          if (owners) owners->push_back(it.owner);
-        } else {
-          state = 2;
-        }
-        return;
+    if (item_closer(hole, it, req)) {
+      if (is_routed && soft) {
+        state = 1;
+        if (owners) owners->push_back(it.owner);
+      } else {
+        state = 2;
       }
+    }
   });
   return state;
 }
@@ -684,11 +691,10 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
     if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;
     if (via_probe && via_keeps_off(it)) {
       const Coord rq = re_->clearance(probe, it, layer);
-      for (const auto& u : it.shapes)
-        if (geom::closer_than(s, u, rq)) {
-          code = kBlocked;
-          return;
-        }
+      if (item_closer(s, it, rq)) {
+        code = kBlocked;
+        return;
+      }
     }
     if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
     Coord req = re_->clearance(probe, it, layer);
@@ -696,11 +702,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
       if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (via_probe ? via_mask_ : 0) + 1'000);
       else if (via_probe) req = std::max(req, via_mask_ + 1'000);
     }
-    for (const auto& u : it.shapes)
-      if (geom::closer_than(s, u, req)) {
-        add_net(it.net);
-        return;
-      }
+    if (item_closer(s, it, req)) add_net(it.net);
   });
   if (code == kBlocked) return code;
   aperture_codes(s, layer, via_probe, add_net);
@@ -761,11 +763,10 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
         for (int l = 0; l < nl; ++l) {
           if (!(it.layers & model::layer_bit(l))) continue;
           const Coord rq = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l);
-          for (const auto& u : it.shapes)
-            if (geom::closer_than(s, u, rq)) {
-              code = kBlocked;
-              return;
-            }
+          if (item_closer(s, it, rq)) {
+            code = kBlocked;
+            return;
+          }
         }
       }
       if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
@@ -774,11 +775,10 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
         Coord req = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l);
         if (via_mask_ > 0 && (l == 0 || l == nl - 1) && it.kind != drc::ItemKind::Zone && it.kind != drc::ItemKind::Pad)
           req = std::max(req, it.kind == drc::ItemKind::Via ? 2 * via_mask_ + 1'000 : via_mask_ + 1'000);
-        for (const auto& u : it.shapes)
-          if (geom::closer_than(s, u, req)) {
-            add_net(it.net);
-            return;
-          }
+        if (item_closer(s, it, req)) {
+          add_net(it.net);
+          return;
+        }
       }
     });
   }

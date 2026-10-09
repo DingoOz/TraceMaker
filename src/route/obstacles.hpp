@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 
+#include "drc/connectivity.hpp"
 #include "drc/copper.hpp"
 #include "drc/rule_engine.hpp"
 #include "index/uniform_grid.hpp"
@@ -84,11 +85,17 @@ class Obstacles {
   // checks of one deliberate via in pad (the router's --via-in-pad).
   void set_vias_off_pads(bool on, Coord max_pad) { vias_off_pads_ = on; vias_off_pads_max_ = max_pad; }
   void set_pad_via_exempt(bool on) const { pad_via_exempt_ = on; }
+  // Reference path: test probes against every edge of a zone fill instead of the fill's edge index (the answers
+  // are the same; tests/test_design_rules.cpp).
+  void set_linear_zone_tests(bool on) { linear_zone_tests_ = on; }
   // Rejection counters (diagnostics): outside board, copper, holes/edges/keepouts.
   mutable long rej_outside = 0, rej_copper = 0, rej_other = 0, checks = 0;
 
  private:
   int copper_state(const geom::Shape& s, const drc::CopperItem& probe, int layer, bool ignore_routed, std::vector<int>* owners) const;
+  // True if `s` is closer than `req` to the copper of `it`. A zone fill answers from its edge index
+  // (geom::PolygonIndex, exact), so a probe costs the fill's nearby edges instead of all of them.
+  bool item_closer(const geom::Shape& s, const drc::CopperItem& it, Coord req) const;
   int holes_edges_state(const geom::Shape& s, model::NetId net, int layer, bool is_via_hole, Coord hole_r, bool ignore_routed,
                         std::vector<int>* owners) const;
   // Custom physical_hole_clearance rules, any net: new copper against existing holes, and a new via's hole
@@ -106,6 +113,8 @@ class Obstacles {
   const model::DesignRules& r_;
   drc::CopperModel cm_;
   std::unique_ptr<drc::RuleEngine> re_;
+  std::unique_ptr<drc::ZoneFills> fills_;     // edge index of every zone fill present at construction
+  bool linear_zone_tests_ = false;
   std::unique_ptr<index::UniformGrid> grid_;   // copper items (fixed and routed)
   std::unique_ptr<index::UniformGrid> rgrid_;  // routed copper items only
   std::unique_ptr<index::UniformGrid> hgrid_;  // holes
