@@ -731,6 +731,7 @@ pad's own layer.
 | `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). Blind/buried router probes have no span yet, so either keyword conservatively stops both; `micro_via` alone stops micro vias. | `items_not_allowed`; `blind_via` has exactly one outer span endpoint, `buried_via` none, micro remains separate (D80). |
 | Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Not applied; both commands warn by rule name that the router does not avoid it, the DRC reports it. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
 | Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
+| Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasExactNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
 | Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
 | Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have no layer property. A zone uses its source layer, not a fill projection; a multilayer zone has an unset layer ID (`==` false, `!=` true). Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
@@ -1005,7 +1006,7 @@ were not distinguished.
 | One numeric literal without units drops the entire condition, even in an unused branch; multiple numeric literals permit bare internal-unit values | `width_ne_double_or`, `width_gt_double_or`, `width_eq_integer_multiliteral_false_or` |
 | Quoted dimensions remain strings: equality with a number is false, inequality true, relational conversion is zero | `size_x_quoted`, `width_eq_quoted_mm_or`, `width_ne_quoted_mm`, `width_gt_quoted_mm` |
 | `\|\|` binds tighter than `&&`, and `!` tighter than the comparisons, unlike C: `a && b \|\| c` is `a && (b \|\| c)`; `!A.NetName == 'X'` compares the negation with `'X'` and is never true | `precedence_and_or`, `precedence_or_and`, `precedence_mixed`, `precedence_not_eq`, `precedence_not_ne` (KiCad 10.0.6) |
-| Unknown properties/functions anywhere drop the rule; invalid `Parent.Reference` aliases are removed; bare `L` remains undefined for unary disallow | `unknown_short_circuit`, `unknown_function`, `reference_A_Parent_Reference`, `reference_Parent_Reference`, `bare_layer_front` |
+| Properties and functions unknown to KiCad drop the rule anywhere in the condition (a function KiCad knows and TraceMaker does not evaluate keeps it, see §27); invalid `Parent.Reference` aliases are removed; bare `L` remains undefined for unary disallow | `unknown_short_circuit`, `unknown_function`, `reference_A_Parent_Reference`, `reference_Parent_Reference`, `bare_layer_front`, `kicad_function_*` |
 | A terminal unterminated single-quoted string extends to the end | `malformed_quote`; unmatched parentheses still fail (`malformed_paren`) |
 | Later matching disallow rules win for the same item type; ignore clears that violation, not another type's ban | `severity_ignore`, `later_ignore`, `earlier_ignore`, `later_different_disallow`, `later_different_disallow_ignore` |
 | Own item layer, also in paired clearance: tracks use their layer, pads the footprint side even for PTH/NPTH; vias have no layer property (`==`/`!=` false); multilayer zones expose an unset ID (`==` false, `!=` true), not a fill's layer | `item_layer_front`, `item_layer_back`, `own_layer_pads_front`, `own_layer_pads_not_front`, `zone_pair_*` |
@@ -1050,6 +1051,14 @@ and frozen as new cases:
   keep even/odd filling), and a courtyard that still cannot be read (open, self-crossing, Bezier) is named in
   a warning by `tracemaker drc` and `tracemaker route` when a rule uses a courtyard function. Six
   `court_overlap_*`, `court_touch_*` and `court_disjoint_*` cases.
+- Functions KiCad knows and TraceMaker does not evaluate. Dropping every rule with a symbol TraceMaker does not
+  know also dropped rules KiCad applies: with `(A.NetName == 'X' && B.NetName == 'Y') || A.hasNetclass('a')`
+  on a 0.8 mm clearance rule, KiCad and the engine before D80 report the X–Y pair, and the engine after D80
+  reported nothing. Seventeen functions that KiCad 10.0.6 compiles (listed in §27) now keep their rule, with
+  a warning; the call is taken as false as before D80. Symbols KiCad does not know still drop the rule
+  (`hasExactComponentClass`, `isThroughVia`). KiCad's property names are an open set and cannot be told apart
+  this way: a rule with a property TraceMaker does not evaluate is still dropped, with its warning. Twenty
+  `kicad_function_*` cases.
 
 Cost on a large board (jetson-agx-thor-baseboard, 1,125 footprints, its own rules plus a clearance rule with
 `A.intersectsCourtyard('U*') || B.intersectsCourtyard('U*')`): the DRC took 61.7 s against 5.1 s without the

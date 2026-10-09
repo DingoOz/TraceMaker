@@ -741,3 +741,43 @@ TEST_CASE("A courtyard that cannot be read is warned about when a rule asks for 
   CHECK(warned("A.intersectsFrontCourtyard('*')"));
   CHECK_FALSE(warned("A.NetName == 'SIG'"));  // courtyards are not built for rules that do not use them
 }
+
+TEST_CASE("Rules with a KiCad function TraceMaker does not evaluate are kept, unknown symbols drop the rule", "[rules][drc]") {
+  // KiCad 10.0.6: kicad_function_*. KiCad applies these rules, so dropping them would hide what the rest of the
+  // condition selects (before D80 they were evaluated the same way, without a warning).
+  CHECK(parity_hits("A.NetName == 'SIG' || A.hasNetclass('x')") == 2);
+  CHECK(parity_hits("A.NetName == 'SIG' || A.fromTo('a', 'b')") == 2);
+  CHECK(parity_hits("A.hasNetclass('x')") == 0);
+  CHECK(parity_hits("A.NetName == 'SIG' && !A.isMicroVia()") == 0);  // a disallow never fires through the unknown call
+  CHECK(parity_hits("A.NetName == 'SIG' || A.isThroughVia()") == 0);  // not a KiCad function: rule dropped
+  {
+    const Files f("kicad_function", board_text(kParityCopper), parity_rule("A.NetName == 'SIG' || A.hasNetclass('x')"));
+    const auto lb = io::read_board_file(f.pcb.string());
+    const auto rules = io::read_design_rules(f.pcb.string());
+    const drc::RuleEngine engine(lb.board, rules);
+    CHECK_FALSE(engine.track_allowed(1, 0));  // the router honours the branch that can be evaluated
+    CHECK(engine.track_allowed(2, 0));
+    CHECK(std::any_of(engine.warnings().begin(), engine.warnings().end(), [](const auto& w) {
+      return w.find("rule 'parity'") != std::string::npos && w.find("hasNetclass()") != std::string::npos &&
+             w.find("taken as false") != std::string::npos;
+    }));
+  }
+  // A clearance rule: KiCad and the engine before D80 hold SIG against GND to 1 mm.
+  const Files f("kicad_function_clearance", board_text(kParityCopper),
+                "(version 1)\n(rule \"wide\" (condition \"(A.NetName == 'SIG' && B.NetName == 'GND') || A.hasNetclass('x')\")"
+                " (constraint clearance (min 1mm)))\n");
+  const auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  const drc::RuleEngine engine(lb.board, rules);
+  const auto copper = drc::build_copper(lb.board);
+  const drc::CopperItem* sig = nullptr;
+  const drc::CopperItem* gnd = nullptr;
+  for (const auto& it : copper.items) {
+    if (it.kind != drc::ItemKind::Track) continue;
+    (it.net == 1 ? sig : gnd) = &it;
+  }
+  REQUIRE(sig);
+  REQUIRE(gnd);
+  CHECK(engine.clearance(*sig, *gnd, 0) == 1'000'000);
+  CHECK(engine.clearance(*sig, *sig, 0) < 1'000'000);
+}

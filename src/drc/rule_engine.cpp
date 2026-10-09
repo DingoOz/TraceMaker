@@ -63,9 +63,11 @@ class Condition {
   bool references(std::initializer_list<std::string_view> names) const { return references(*root_, names); }
   // First argument of every call of one of the named functions.
   void first_args(std::initializer_list<std::string_view> names, std::vector<std::string>& out) const { first_args(*root_, names, out); }
-  // First property or function that prop() / call() below do not evaluate ("" if none): such a condition is
-  // never true here.
+  // First property or function that prop() / call() below do not evaluate and that is not one of KiCad's
+  // functions either ("" if none): KiCad does not compile such a condition, and the rule is dropped.
   std::string unsupported() const { return unsupported(*root_); }
+  // First function that KiCad knows and call() below does not evaluate ("" if none).
+  std::string unevaluated() const { return unevaluated(*root_); }
 
  private:
   void skip() {
@@ -237,9 +239,28 @@ class Condition {
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
                                                  "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
-    if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls)) return n.name + "()";
+    if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls) && !kicad_only(n.name))
+      return n.name + "()";
     for (const auto& k : n.kids)
       if (auto u = unsupported(*k); !u.empty()) return u;
+    return {};
+  }
+
+  // Functions of KiCad 10 that TraceMaker does not evaluate (each measured with KiCad 10.0.6: a rule
+  // "A.NetName == 'X' || A.<function>(...)" still selects the X items, corpus cases kicad_function_*). KiCad
+  // applies these rules, so they are not dropped like a rule with an unknown symbol: the call is undefined
+  // (false) here, as before D80, and a disallow whose evaluation reached it does not fire (disallow_hit).
+  static bool kicad_only(std::string_view name) {
+    static constexpr std::string_view names[] = {
+        "hasNetclass", "hasExactNetclass", "hasComponentClass", "fromTo", "isMicroVia", "isBlindBuriedVia", "isBlindVia",
+        "isBuriedVia", "isCoupledDiffPair", "getField", "memberOf", "memberOfGroup", "memberOfSheet",
+        "memberOfSheetOrChildren", "insideCourtyard", "insideFrontCourtyard", "insideBackCourtyard"};
+    return std::find(std::begin(names), std::end(names), name) != std::end(names);
+  }
+  static std::string unevaluated(const Node& n) {
+    if (n.op == Node::Op::Call && kicad_only(n.name)) return n.name + "()";
+    for (const auto& k : n.kids)
+      if (auto u = unevaluated(*k); !u.empty()) return u;
     return {};
   }
 
@@ -428,6 +449,10 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         c.valid = false;
         warnings_.push_back("rule '" + rule.name + "': condition uses " + unsupported +
                             ", which TraceMaker does not evaluate; rule not applied");
+      } else if (const auto unevaluated = c.cond->unevaluated(); !unevaluated.empty()) {
+        warnings_.push_back("rule '" + rule.name + "': condition uses " + unevaluated +
+                            ", which KiCad evaluates and TraceMaker does not: it is taken as false, and a disallow never "
+                            "fires through it");
       }
     }
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",

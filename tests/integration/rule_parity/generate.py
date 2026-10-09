@@ -219,6 +219,19 @@ def generate(root: Path) -> dict:
         ('number_trailing_dot','A.Width > 0.mm'),
     ]:
         case(name,number_items,rule(condition),note='Tracks of 1.001 mm, 0.02794 mm (1.1 mil) and 0.4 mm.')
+    # Functions KiCad compiles and TraceMaker does not evaluate: the rule is kept and the X branch still decides.
+    # The last two are unknown to KiCad as well, and drop the rule.
+    for function,arguments in [
+        ('hasNetclass',"'a'"),('hasExactNetclass',"'a'"),('hasComponentClass',"'a'"),('fromTo',"'a','b'"),
+        ('isMicroVia',''),('isBlindBuriedVia',''),('isBlindVia',''),('isBuriedVia',''),('isCoupledDiffPair',''),
+        ('getField',"'a'"),('memberOf',"'a'"),('memberOfGroup',"'a'"),('memberOfSheet',"'a'"),
+        ('memberOfSheetOrChildren',"'a'"),('insideCourtyard',"'a'"),('insideFrontCourtyard',"'a'"),
+        ('insideBackCourtyard',"'a'"),('hasExactComponentClass',"'a'"),('isThroughVia',''),
+    ]:
+        case('kicad_function_'+function,static,rule(f"A.NetName == 'X' || A.{function}({arguments})"),
+             note='A rule KiCad applies selects the three X tracks; a rule it cannot compile selects nothing.')
+    case('kicad_function_clearance',[track('near-A',5,5,8,5),track('near-B',5,5.6,8,5.6,net=2),track('far-B',20,10,23,10,net=2)],
+         rule("(A.NetName == 'X' && B.NetName == 'Y') || A.hasNetclass('a')",constraint='(constraint clearance (min 0.8mm))'),types=['clearance'])
     layer_pads=[footprint('SF',5,5),footprint('SB',5,10,back=True),footprint('PF',5,15,'thru_hole'),
                 footprint('PB',5,20,'thru_hole',back=True),footprint('NF',5,25,'np_thru_hole')]+vias
     for name,condition in [

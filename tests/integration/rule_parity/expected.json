@@ -394,6 +394,237 @@
         ]
       ]
     },
+    "kicad_function_clearance": {
+      "clearance": [
+        [
+          "near-A",
+          "near-B"
+        ]
+      ]
+    },
+    "kicad_function_fromTo": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_getField": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_hasComponentClass": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_hasExactComponentClass": {},
+    "kicad_function_hasExactNetclass": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_hasNetclass": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_insideBackCourtyard": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_insideCourtyard": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_insideFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isBlindBuriedVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isBlindVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isBuriedVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isCoupledDiffPair": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isMicroVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isThroughVia": {},
+    "kicad_function_memberOf": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_memberOfGroup": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_memberOfSheet": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_memberOfSheetOrChildren": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
     "later_different_disallow": {
       "items_not_allowed": [
         [
