@@ -765,9 +765,13 @@ def main():
                    str(args.board.with_name(args.board.stem + '-routed.kicad_pcb')), '--json', 'route.json'] + zone_opts
         if pairs:
             command.append('--diff-pairs')
-        command.extend(['--work', str(work)])
+        # The work budget is only deterministic while no variant reaches --time (default 120 s), which stops it
+        # early without a message; the benchmarks pair --work with --time 3600 for the same reason.
+        command.extend(['--work', str(work), '--time', '3600'])
         report.update(connections=connections, connection_source=connection_source, recommended_command=shlex.join(command))
         finding('Recommended routing', 'info', f'{connections} connections ({connection_source}); --work {work} is a starting point, not a completion guarantee. Budget tiers: <100: 1M; <500: 10M; otherwise 50M.')
+        if planes and not args.soft_zones and all(l in ('F.Cu', 'B.Cu') for z in planes for l in z['layers']):
+            finding('Recommended routing', 'info', 'The pours are on outer layers only, where --soft-zones does not always help (KiCad demos at 3M work, unconnected after refill: StickHub 30 → 15, sonde xilinx 0 → 2). Also route without --soft-zones --keep-vias-off-pads and keep the result with the better sign-off.')
         finding('Recommended routing', 'info', 'Resolve block findings first. Review quality/slow findings; then sign off both boards with refilled KiCad DRC.')
         print(f'# TraceMaker board preflight: {args.board.name}\n\nUnits: mm. Severity: block / slow / quality / info. Read-only; not an exact geometric DRC.')
         for title, lines in sections.items():
