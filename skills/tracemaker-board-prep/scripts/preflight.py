@@ -418,10 +418,28 @@ def main():
         settings = project.get('net_settings', {})
         minimums = project.get('board', {}).get('design_settings', {}).get('rules', {})
         if not project:
+            # As the engine (read_design_rules): KiCad's built-in minimums, then the rules a KiCad 5 board stores
+            # in itself, (setup (trace_min ...)) and (net_class NAME "descr" (clearance) (trace_width) ... (add_net)).
             minimums = dict(min_via_diameter=0.4, min_through_hole_diameter=0.3,
                             min_via_annular_width=0.1, min_hole_clearance=0.25,
                             min_hole_to_hole=0.25, min_copper_edge_clearance=0.5,
                             min_microvia_diameter=0.2, min_microvia_drill=0.1)
+            setup = child(board, 'setup')
+            for old, new in (('trace_min', 'min_track_width'), ('via_min_size', 'min_via_diameter'),
+                             ('via_min_drill', 'min_through_hole_diameter'), ('uvia_min_size', 'min_microvia_diameter'),
+                             ('uvia_min_drill', 'min_microvia_drill'), ('edge_clearance', 'min_copper_edge_clearance')):
+                if val(setup, old) is not None:
+                    minimums[new] = number(setup, old)
+            for old, new in (('blind_buried_vias_allowed', 'allow_blind_buried_vias'), ('uvias_allowed', 'allow_microvias')):
+                if val(setup, old) is not None:
+                    minimums[new] = val(setup, old) == 'yes'
+            legacy = [n for n in children(board, 'net_class') if len(n) > 1 and not isinstance(n[1], list)]
+            fields = (('clearance', 'clearance'), ('trace_width', 'track_width'), ('via_dia', 'via_diameter'), ('via_drill', 'via_drill'))
+            settings = dict(classes=[dict({new: number(n, old) for old, new in fields if val(n, old) is not None}, name=n[1])
+                                     for n in legacy],
+                            netclass_assignments={a[1]: n[1] for n in legacy for a in children(n, 'add_net') if len(a) > 1})
+            if legacy:
+                finding('Project and lattice', 'info', f'{len(legacy)} net classes and the minimums below are the ones stored in this KiCad 5 board, as TraceMaker reads them without a project.')
         elif not minimums:
             finding('Project and lattice', 'block', 'Project has no board design rules; TraceMaker uses zero minimums.')
         for key in sorted(minimums):
