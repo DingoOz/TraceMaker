@@ -102,6 +102,32 @@
         ]
       ]
     },
+    "court_disjoint_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_disjoint_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
     "court_flipped_intersectsBackCourtyard": {
       "items_not_allowed": [
         [
@@ -198,6 +224,58 @@
         ],
         [
           "court-shape-inside"
+        ]
+      ]
+    },
+    "court_overlap_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_overlap_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_touch_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_touch_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
         ]
       ]
     },

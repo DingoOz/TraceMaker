@@ -719,3 +719,25 @@ TEST_CASE("KiCad rule numbers: exact equality and plain decimal literals", "[rul
   CHECK(hits("A.Width > -1mm") == 3);
   CHECK(hits("A.Width > 0.mm") == 3);
 }
+
+TEST_CASE("A courtyard that cannot be read is warned about when a rule asks for courtyards", "[rules][drc]") {
+  // Rule 6: the open outline of X1 never matches, which the user must be told.
+  const std::string open_courtyard =
+      "(footprint \"X\" (layer \"F.Cu\") (at 10 5)\n"
+      " (property \"Reference\" \"X1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      " (fp_line (start -1 -1) (end 1 -1) (stroke (width 0.05) (type solid)) (layer \"F.CrtYd\"))\n"
+      " (fp_line (start 1 -1) (end 1 1) (stroke (width 0.05) (type solid)) (layer \"F.CrtYd\"))\n"
+      " (pad \"1\" smd rect (at 0 0) (size 0.5 0.5) (layers \"F.Cu\") (net 1 \"SIG\")))\n";
+  const auto warned = [&](const std::string& condition) {
+    const Files f("courtyard_warning", board_text(open_courtyard), parity_rule(condition));
+    const auto lb = io::read_board_file(f.pcb.string());
+    const auto rules = io::read_design_rules(f.pcb.string());
+    const drc::RuleEngine engine(lb.board, rules);
+    return std::any_of(engine.warnings().begin(), engine.warnings().end(), [](const auto& w) {
+      return w.find("courtyard outline of X1 (F.CrtYd)") != std::string::npos;
+    });
+  };
+  CHECK(warned("A.intersectsCourtyard('X1')"));
+  CHECK(warned("A.intersectsFrontCourtyard('*')"));
+  CHECK_FALSE(warned("A.NetName == 'SIG'"));  // courtyards are not built for rules that do not use them
+}

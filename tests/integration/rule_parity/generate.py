@@ -92,6 +92,14 @@ def generate(root: Path) -> dict:
     for func in ['intersectsCourtyard','intersectsFrontCourtyard','intersectsBackCourtyard']:
         case('court_flipped_'+func,flipped_items,rule(f"A.{func}('R1')"),note='Flipped R1: F.CrtYd at x 18..22, B.CrtYd at x 23..27.')
     case('court_lib_id',court_items,rule("A.intersectsCourtyard('Test:*')"),note='A selector with a colon matches the footprint library id.')
+    # A second F.CrtYd rectangle beside the first (x 18..22): KiCad merges overlapping and touching outlines.
+    def court_rect(ref,a,b,c,d):
+        return f'(fp_rect (start {a} {b}) (end {c} {d}) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (uuid "{uid(ref+"extra-court")}"))'
+    for shape,rect in [('overlap',(1,-2,5,2)),('touch',(2,-2,5,2)),('disjoint',(2.5,-2,5,2))]:
+        items=[footprint('R1',20,10,courtyard=True,graphics=court_rect('R1',*rect))]+court_items[1:]
+        for func in ['intersectsCourtyard','intersectsFrontCourtyard']:
+            case(f'court_{shape}_{func}',items,rule(f"A.{func}('R1')"),
+                 note=f'Two F.CrtYd rectangles ({shape}): x 18..22 and x {20+rect[0]}..25; B.CrtYd at x 23..27.')
     pads=[footprint('R1',10,5),footprint('R2',10,10,size=(2,0.5)),footprint('C1',10,15,'thru_hole'),footprint('H1',10,20,'np_thru_hole'),track('free-track',20,5,23,5),via('free-via',20,10)]
     for selector in ['R*','R1']:
         case('membership_'+selector.replace('*','wildcard'),pads,rule(f"A.memberOfFootprint('{selector}')",'pad track'))

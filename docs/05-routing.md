@@ -1044,6 +1044,12 @@ and frozen as new cases:
   1.001 mm track and `!=` missed it (KiCad: the reverse, because 1.001 × 10⁶ is not a whole number in double
   precision). `.3mm` and `3e-1mm` are not numbers in KiCad and drop the rule; they were accepted. Eleven
   `number_*` cases.
+- Courtyards. A footprint whose courtyard is drawn as two overlapping or touching outlines has their union as
+  its courtyard in KiCad; the engine rejected crossing outlines, so the footprint had no courtyard and its
+  rules never matched, without a message. Outlines that touch are now merged (outlines clear of each other
+  keep even/odd filling), and a courtyard that still cannot be read (open, self-crossing, Bezier) is named in
+  a warning by `tracemaker drc` and `tracemaker route` when a rule uses a courtyard function. Six
+  `court_overlap_*`, `court_touch_*` and `court_disjoint_*` cases.
 
 The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
 directory, `expected.json` freezes KiCad item/pair multisets (10.0.6 since the rejudge above), and `run.py` runs only TraceMaker DRC.
@@ -1077,7 +1083,8 @@ parallel jobs: 30/30 clean and complete, zero added KiCad DRC errors, and every 
 Runs are `bench/results/d80-before-quick` and `d80-final-quick` (not committed).
 
 **Limits.** This is parity for the named corpus, not all of KiCad's expression language. Bezier courtyard
-graphics, near-closed endpoint snapping and KiCad's small courtyard deflation tolerance are not covered.
+graphics, near-closed endpoint snapping and KiCad's small courtyard deflation tolerance are not covered;
+a courtyard that cannot be read matches nothing and is warned about by footprint reference.
 Courtyard arcs/circles use the existing 5 µm-sagitta polygonization; containment is exact against the represented
 copper cores and contours. Circle/polygon/wildcard courtyard behaviour has direct engine tests but no dedicated
 CLI corpus case. Positional router enforcement and zone refill are unchanged.

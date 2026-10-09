@@ -13,8 +13,13 @@ namespace tmk::drc {
 // The caller selects/caches zones; insideArea and intersectsArea both pass false.
 bool area_matches(const CopperItem& item, const model::Zone& area, bool enclosed);
 struct CourtyardRegion {
-  std::vector<std::vector<geom::Point>> rings;
+  // The courtyard is the union of the parts. The rings of one part use even/odd filling (a ring inside another
+  // is a hole); outlines that overlap or touch are parts of their own, as KiCad merges them.
+  std::vector<std::vector<std::vector<geom::Point>>> parts;
   geom::Box box;
+  // The side has courtyard graphics, but they are not closed, simple outlines (or use a Bezier curve): no
+  // parts, and the rule engine warns that courtyard conditions cannot match this footprint.
+  bool unreadable = false;
 };
 struct CourtyardEntry {
   std::string reference, lib_id;
@@ -25,7 +30,7 @@ struct CourtyardCache {
   std::vector<CourtyardEntry> entries;
 };
 
-// Build once per board; invalid/unclosed contours leave the corresponding side empty.
+// Build once per board; invalid/unclosed contours leave the corresponding side empty and marked unreadable.
 CourtyardCache build_courtyards(const model::Board& board);
 
 // KiCad's footprint selector (testFootprintSelector): a reference wildcard, or, when the selector contains ':',

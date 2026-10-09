@@ -444,8 +444,22 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   }
   if (std::any_of(rules_.begin(), rules_.end(), [](const Compiled& c) {
         return c.valid && c.cond && c.cond->references({"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"});
-      }))
+      })) {
     courtyards_ = build_courtyards(b_);
+    // Rule 6: a courtyard that could not be read never matches, which must not pass in silence (KiCad reports
+    // such footprints as malformed courtyards).
+    std::string names;
+    int unreadable = 0;
+    for (const auto& entry : courtyards_.entries)
+      for (int side = 0; side < 2; ++side) {
+        if (!entry.sides[static_cast<std::size_t>(side)].unreadable) continue;
+        if (++unreadable <= 5) names += (names.empty() ? "" : ", ") + entry.reference + (side == 0 ? " (F.CrtYd)" : " (B.CrtYd)");
+      }
+    if (unreadable > 0)
+      warnings_.push_back("courtyard outline of " + names + (unreadable > 5 ? " and " + std::to_string(unreadable - 5) + " more" : "") +
+                          " is not a closed outline TraceMaker can read (open, self-crossing or with a Bezier curve); "
+                          "courtyard rule conditions do not match there");
+  }
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
   net_class_.resize(b_.nets.size());

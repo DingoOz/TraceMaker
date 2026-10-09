@@ -223,3 +223,49 @@ TEST_CASE("Arc circle and polygon courtyards use contours rather than bounding b
   CHECK(drc::courtyard_matches(copper(Shape::point({M, 8 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
   CHECK_FALSE(drc::courtyard_matches(copper(Shape::point({8 * M, 8 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
 }
+
+TEST_CASE("Overlapping and touching courtyard outlines are merged; unreadable ones are marked", "[rules][drc][rule_geometry]") {
+  auto b = court_board();
+  model::Graphic rect;
+  rect.kind = model::Graphic::Kind::Rect;
+  rect.layer = "F.CrtYd";
+  rect.a = {0, 0}; rect.b = {10 * M, 10 * M};
+  add_graphic(b, rect);
+  rect.a = {5 * M, 0}; rect.b = {15 * M, 10 * M};
+  add_graphic(b, rect);
+  auto cache = drc::build_courtyards(b);
+  // KiCad 10.0.6 court_overlap_*: the courtyard is the union. Even/odd filling would exclude x 5..10.
+  CHECK_FALSE(cache.entries[0].sides[0].unreadable);
+  CHECK(drc::courtyard_matches(copper(Shape::point({2 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  CHECK(drc::courtyard_matches(copper(Shape::point({7 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  CHECK(drc::courtyard_matches(copper(Shape::point({13 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  CHECK_FALSE(drc::courtyard_matches(copper(Shape::point({17 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  // court_touch_*: a shared edge.
+  b.graphics.back().a = {10 * M, 0};
+  cache = drc::build_courtyards(b);
+  CHECK(drc::courtyard_matches(copper(Shape::point({2 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  CHECK(drc::courtyard_matches(copper(Shape::point({13 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  // Outlines clear of each other keep even/odd filling: the inner one is a hole.
+  b.graphics.back().a = {4 * M, 4 * M};
+  b.graphics.back().b = {6 * M, 6 * M};
+  cache = drc::build_courtyards(b);
+  CHECK(drc::courtyard_matches(copper(Shape::point({2 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+  CHECK_FALSE(drc::courtyard_matches(copper(Shape::point({5 * M, 5 * M}, M / 10)), cache, "R*", "intersectsCourtyard"));
+
+  // No courtyard graphics: empty, but nothing was unreadable. An open outline or a Bezier curve is unreadable.
+  auto open = court_board();
+  CHECK_FALSE(drc::build_courtyards(open).entries[0].sides[0].unreadable);
+  add_graphic(open, line({0, 0}, {10 * M, 0}));
+  add_graphic(open, line({10 * M, 0}, {10 * M, 10 * M}));
+  cache = drc::build_courtyards(open);
+  CHECK(cache.entries[0].sides[0].unreadable);
+  CHECK_FALSE(cache.entries[0].sides[1].unreadable);
+  CHECK(cache.entries[0].sides[0].parts.empty());
+  auto curve = court_board();
+  model::Graphic bezier;
+  bezier.kind = model::Graphic::Kind::Curve;
+  bezier.layer = "B.CrtYd";
+  bezier.pts = {{0, 0}, {5 * M, 5 * M}, {10 * M, 5 * M}, {10 * M, 0}};
+  add_graphic(curve, bezier);
+  CHECK(drc::build_courtyards(curve).entries[0].sides[1].unreadable);
+}

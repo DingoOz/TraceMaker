@@ -135,36 +135,46 @@ bool enclosed(const Shape& shape, const Rings& rings) {
   });
 }
 
-bool valid_rings(Rings& rings) {
-  for (auto& ring : rings) {
-    ring.erase(std::unique(ring.begin(), ring.end()), ring.end());
-    if (ring.size() > 1 && ring.front() == ring.back()) ring.pop_back();
-    if (ring.size() < 3) return false;
-    i128 area = 0;
-    for (std::size_t i = 0; i < ring.size(); ++i) {
-      const Point a = ring[i], b = ring[(i + 1) % ring.size()];
-      area += static_cast<i128>(a.x) * b.y - static_cast<i128>(a.y) * b.x;
-      for (std::size_t j = i + 1; j < ring.size(); ++j) {
-        if (j == i + 1 || (i == 0 && j + 1 == ring.size())) continue;
-        if (geom::segments_intersect(a, b, ring[j], ring[(j + 1) % ring.size()])) return false;
-      }
+// A simple closed contour with area; removes repeated points.
+bool simple_ring(std::vector<Point>& ring) {
+  ring.erase(std::unique(ring.begin(), ring.end()), ring.end());
+  if (ring.size() > 1 && ring.front() == ring.back()) ring.pop_back();
+  if (ring.size() < 3) return false;
+  i128 area = 0;
+  for (std::size_t i = 0; i < ring.size(); ++i) {
+    const Point a = ring[i], b = ring[(i + 1) % ring.size()];
+    area += static_cast<i128>(a.x) * b.y - static_cast<i128>(a.y) * b.x;
+    for (std::size_t j = i + 1; j < ring.size(); ++j) {
+      if (j == i + 1 || (i == 0 && j + 1 == ring.size())) continue;
+      if (geom::segments_intersect(a, b, ring[j], ring[(j + 1) % ring.size()])) return false;
     }
-    if (area == 0) return false;
   }
+  return area != 0;
+}
+
+// True if two of the rings share a point.
+bool rings_touch(const Rings& rings) {
   for (std::size_t i = 0; i < rings.size(); ++i)
     for (std::size_t j = i + 1; j < rings.size(); ++j)
       for (std::size_t a = 0; a < rings[i].size(); ++a)
         for (std::size_t b = 0; b < rings[j].size(); ++b)
           if (geom::segments_intersect(rings[i][a], rings[i][(a + 1) % rings[i].size()],
-                                       rings[j][b], rings[j][(b + 1) % rings[j].size()])) return false;
-  return !rings.empty();
+                                       rings[j][b], rings[j][(b + 1) % rings[j].size()])) return true;
+  return false;
+}
+
+CourtyardRegion unreadable_courtyard() {
+  CourtyardRegion region;
+  region.unreadable = true;
+  return region;
 }
 
 CourtyardRegion prepare_courtyard(const model::Board& board, const model::Footprint& fp, int side) {
   CourtyardRegion region;
+  Rings rings;
   std::vector<std::vector<Point>> chains;
   for (int index : fp.graphics) {
-    if (index < 0 || static_cast<std::size_t>(index) >= board.graphics.size()) return {};
+    if (index < 0 || static_cast<std::size_t>(index) >= board.graphics.size()) return unreadable_courtyard();
     const auto& g = board.graphics[static_cast<std::size_t>(index)];
     if (g.layer != (side == 0 ? "F.CrtYd" : "B.CrtYd")) continue;
     switch (g.kind) {
@@ -173,17 +183,17 @@ CourtyardRegion prepare_courtyard(const model::Board& board, const model::Footpr
       case model::Graphic::Kind::Circle: {
         const Coord r = geom::kiround(std::hypot(static_cast<double>(g.b.x - g.a.x),
                                                 static_cast<double>(g.b.y - g.a.y)));
-        if (r <= 0) return {};
-        region.rings.push_back(geom::circle_points(g.a, r, kCourtyardError));
+        if (r <= 0) return unreadable_courtyard();
+        rings.push_back(geom::circle_points(g.a, r, kCourtyardError));
         break;
       }
       case model::Graphic::Kind::Rect:
-        region.rings.push_back(g.pts.empty() ? std::vector<Point>{g.a, {g.b.x, g.a.y}, g.b, {g.a.x, g.b.y}} : g.pts);
+        rings.push_back(g.pts.empty() ? std::vector<Point>{g.a, {g.b.x, g.a.y}, g.b, {g.a.x, g.b.y}} : g.pts);
         break;
-      case model::Graphic::Kind::Poly: region.rings.push_back(g.pts); break;
+      case model::Graphic::Kind::Poly: rings.push_back(g.pts); break;
       // The board model retains Bezier controls, not a valid contour. Never
       // manufacture a courtyard by joining its control polygon.
-      case model::Graphic::Kind::Curve: return {};
+      case model::Graphic::Kind::Curve: return unreadable_courtyard();
     }
   }
   std::vector<bool> used(chains.size());
@@ -191,7 +201,7 @@ CourtyardRegion prepare_courtyard(const model::Board& board, const model::Footpr
     if (used[start]) continue;
     auto ring = std::move(chains[start]);
     used[start] = true;
-    if (ring.size() < 2) return {};
+    if (ring.size() < 2) return unreadable_courtyard();
     while (ring.front() != ring.back()) {
       std::size_t next = chains.size();
       bool reverse = false;
@@ -199,21 +209,30 @@ CourtyardRegion prepare_courtyard(const model::Board& board, const model::Footpr
         if (used[i] || chains[i].empty()) continue;
         if (chains[i].front() == ring.back() || chains[i].back() == ring.back()) {
           // Branching endpoints do not describe an unambiguous closed contour.
-          if (next != chains.size()) return {};
+          if (next != chains.size()) return unreadable_courtyard();
           next = i;
           reverse = chains[i].back() == ring.back();
         }
       }
-      if (next == chains.size()) return {};
+      if (next == chains.size()) return unreadable_courtyard();
       used[next] = true;
       if (reverse) std::reverse(chains[next].begin(), chains[next].end());
       ring.insert(ring.end(), chains[next].begin() + 1, chains[next].end());
     }
-    region.rings.push_back(std::move(ring));
+    rings.push_back(std::move(ring));
   }
-  if (!valid_rings(region.rings)) return {};
-  for (const auto& ring : region.rings)
+  if (rings.empty()) return region;  // no courtyard on this side
+  for (auto& ring : rings)
+    if (!simple_ring(ring)) return unreadable_courtyard();
+  for (const auto& ring : rings)
     for (Point p : ring) region.box.add(p);
+  // KiCad merges courtyard shapes that overlap or touch (court_overlap_*, court_touch_*): each is then a part of
+  // its own and the courtyard is their union. Even/odd filling over crossing rings would cut their overlap out.
+  // Rings that keep clear of each other stay one part, so that a ring inside another is a hole.
+  if (rings_touch(rings))
+    for (auto& ring : rings) region.parts.push_back({std::move(ring)});
+  else
+    region.parts.push_back(std::move(rings));
   return region;
 }
 }  // namespace
@@ -260,9 +279,11 @@ bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
       const bool own_front = (side == 1) == entry.back;
       if ((front && !own_front) || (back && own_front)) continue;
       const auto& region = entry.sides[static_cast<std::size_t>(side)];
-      if (region.rings.empty()) continue;
-      for (const auto& shape : item.shapes)
-        if (shape.box.intersects(region.box) && collides(shape, region.rings)) return true;
+      for (const auto& shape : item.shapes) {
+        if (region.parts.empty() || !shape.box.intersects(region.box)) continue;
+        for (const auto& part : region.parts)
+          if (collides(shape, part)) return true;
+      }
     }
   }
   return false;
