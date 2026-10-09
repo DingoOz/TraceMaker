@@ -339,7 +339,7 @@ named otherwise, e.g. USB DP/DM from `--component-rules soft`; D50).
 | Part | What |
 |---|---|
 | Pair rule (`route/diff_pair.cpp`, `pair_rule`) | Width and gap, highest source first: a custom rule's `diff_pair_gap` (opt, else min); the net class's diff-pair width, gap and via gap when the project sets them; else the class width and the clearance KiCad requires between the halves (relaxed to the class diff-pair gap only for pairs KiCad recognises by name, as its DRC does). Never below the board minimums. `diff_pair_uncoupled` (max) limits the legs. Offsets carry a 1 µm rounding margin per side, so the gap comes out 2 µm wide of the rule. Coupled vias sit side by side at the via gap (and the mask web of untented vias) |
-| Coupled search (`route_pair`) | A* over (layer, lattice point, direction, which half is on the left). Moves: one straight lattice step; a 45° turn followed by K straight steps, K·pitch ≥ 2·offset·tan 22.5° + width so the inner track's miter never folds back; a coupled via pair (both halves jog out at 45° to the via spacing, change layer side by side, jog back; MV steps). Each move is checked exactly (`segment_state`, `via_state` against fixed and routed copper) on both offset tracks, so the coupled section keeps its gap by construction. Cost: length + K·pitch per turn + two vias; heuristic 2 × straight-line distance to the end pads plus a via pair while off the end pads' layers (weighted: legal, not optimal). Budget 600 states per lattice step of the pair's length (40 k–250 k), counted as work |
+| Coupled search (`route_pair`) | A* over (layer, lattice point, direction, which half is on the left). Moves: one straight lattice step; a 45° turn followed by K straight steps, K·pitch ≥ 2·offset·tan 22.5° + width so the inner track's miter never folds back; a coupled via pair (both halves jog out at 45° to the via spacing, change layer side by side, jog back; MV steps). Each move is checked exactly (`segment_state`, `via_state` against fixed and routed copper) on both offset tracks, so the coupled section keeps its gap by construction. Cost: length + K·pitch per turn + two vias; heuristic 2 × straight-line distance to the end pads plus a via pair while off the end pads' layers (weighted: legal, not optimal). Budget 600 states per lattice step of the pair's length (40 k–250 k). Work is the states closed plus every exact leg check of a start or goal candidate, legal or not, charged to the router's total every 64 steps, when the work budget and the time limit are also checked, so an attempt whose candidates all fail ends on either (§30, D77) |
 | Breakout and fan-in | Start candidates: every lattice point within R of the start pads' midpoint (0.3 × the pair's length, at least 1.5 × the pads' distance, 0.6–2.5 mm), 8 directions, sides by the shorter legs. Legs: straight, the two octilinear dog-legs, or the same to a point behind the end of the coupled section followed by a straight entry; at the pair width, then the neck-down width; checked exactly, against each other and against the other half's first straight run, when the A* pops the candidate. The pads must lie behind the start (ahead of the end), so legs never double back along the pair. Legs cost twice the coupled length, so coupling starts as close to the pads as the board allows. Goal candidates near the end pads wait in their own queue and are checked at least every 16 expansions; the first legal one is taken |
 | Commit | Both halves are built from corners only (a node's own offset point would fold an inner miter back), collinear runs merged, checked against each other geometrically, then exactly: each half against the board, the first committed, the second checked against it too, otherwise the first is taken back. Up to four finished candidates per search |
 | Enclosed pins | A pin of another net between the two pins of an end (the ground pin between P and N on HDMI parts) is tested with a short strict search before and after the pair; a pair that boxes in a pin that could escape before is taken back |
@@ -878,3 +878,37 @@ boards at 5 M work units; the quick tier is unchanged).
 - Planes that no pad touches are still not connection targets; only a net whose fill already holds one of
   its pads gets vias into it.
 - The Python bindings and the KiCad plugin do not expose the two options yet.
+
+## 30. Coupled-pair search: rejected candidates are work (2026-10-08)
+
+**Before.** A pair attempt (§15) counted only the states it closed. Building and checking the legs of start and goal
+candidates was free, and the attempt never looked at the work budget or the time limit until it ended. On a board
+whose fills hug its pads every leg fails, so an attempt checks tens of thousands of candidates at about zero work:
+stripped CM5 with its fills kept and `--diff-pairs` ran 1,048 s at `--time 900` with 130,247 work units counted, and
+at `--work 20000` it ran 635 s. A sample put 98 % of the time in the start legs' exact checks against fill polygons
+(17,742 vertices for the largest).
+
+**What was built** (D77). Every exact segment check of a leg, legal or not, is a work unit, as is every closed
+state. The attempt adds its work to the router's total every 64 steps (a step is one candidate or one state) and
+then checks the budget and the time limit, so a budgeted run stops inside an attempt, deterministically, and a
+long attempt stops at the time limit instead of finishing first. Nothing is committed before the attempt's goal
+check, so stopping leaves no partial pair. The attempt's state budget is unchanged and leg checks get no cap of
+their own: a version that capped them at the state budget lost coupling on three of 18 boards at 30 M, where a
+pair needs many rejected candidates before its first legal one. `RouteResult::pair_work` and the route summary's
+`pair_work` report the part of the work spent in pair searches.
+
+**Results.**
+
+| Check | Before | After |
+|---|---|---|
+| CM5 (fills kept), `--diff-pairs --time 4` | 15.8 s | 4.1 s |
+| CM5 (fills kept), `--diff-pairs --work 20000` | 635 s, 34,754 counted | 3.4 s, 20,051 counted, same output at 1 and 2 threads |
+| Quick tier (no pairs), 1 M work | – | byte-identical on all 30 boards |
+| `diff_pair` test (USB hub, 15 M) | 113 / 113 | byte-identical, 429,115 of the work in pairs |
+| 18 pair boards of §15, `--diff-pairs`, 30 M | – | 17 byte-identical; PmodHDMIIn routes 112 / 116 as before with less coupling (54 8 41 56 → 44 8 4 48 %), because 958,420 of its 30 M now go to leg checks; at 30,958,420 the output is byte-identical to the old 30 M |
+
+Results at a fixed `--work` with pairs on therefore shift a little: the same budget buys less routing where pair
+searches check many candidates. The time limit now ends a pathological attempt, but a work budget alone still does
+not bound its wall time: one leg check against a fill of 17,742 vertices costs about 0.3 ms, because
+`Obstacles` tests a shape against a whole fill polygon. Answering it from nearby edges with `geom::PolygonIndex`,
+as the DRC does (§19), is the speed fix and is not built here.
