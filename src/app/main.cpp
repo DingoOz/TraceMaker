@@ -266,19 +266,26 @@ int cmd_pairs(const std::string& path, const std::vector<std::string>& extra, co
   return 0;
 }
 
-int cmd_escape(const std::string& path, const std::string& json_path, bool flow) {
+int cmd_escape(const std::string& path, const std::string& json_path, bool flow, bool soft_zones, double vias_off_pads_below_mm) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   tmk::model::Board b = lb.board;
   tmk::route::Obstacles obs(b, rules);
-  const auto parts = tmk::route::analyse_escapes(b, rules, obs);
+  // The same obstacle semantics as `route` with these options.
+  obs.set_soft_zones(soft_zones);
+  obs.set_vias_off_pads(vias_off_pads_below_mm > 0, static_cast<tmk::Coord>(vias_off_pads_below_mm * 1e6));
+  for (const auto& w : obs.rules().warnings()) std::printf("warning: %s\n", w.c_str());
+  const tmk::route::EscapeAnalysisOptions eao;
+  const auto parts = tmk::route::analyse_escapes(b, rules, obs, eao);
   nlohmann::json j = nlohmann::json::array();
-  int dead = 0, pins = 0;
+  int dead = 0, pins = 0, satisfied = 0;
   for (const auto& pe : parts) {
     pins += pe.pins;
+    satisfied += pe.satisfied;
     dead += static_cast<int>(pe.dead.size());
-    std::printf("%-10s pitch %.3f mm: %d of %d pins escape%s%s\n", pe.ref.c_str(), tmk::nm_to_mm(pe.pitch), pe.escapable, pe.pins,
-                pe.dead.empty() ? "" : "; dead:", pe.dead.empty() ? "" : "");
+    std::printf("%-10s pitch %.3f mm: %d of %d pins escape", pe.ref.c_str(), tmk::nm_to_mm(pe.pitch), pe.escapable, pe.pins);
+    if (pe.satisfied > 0) std::printf(" (%d more already connected)", pe.satisfied);
+    std::printf("%s\n", pe.dead.empty() ? "" : "; dead:");
     std::map<std::string, std::vector<std::string>> by_reason;
     for (const auto& d : pe.dead) by_reason[d.reason].push_back(b.pads[static_cast<std::size_t>(d.pad)].number);
     nlohmann::json jd = nlohmann::json::array();
@@ -290,9 +297,11 @@ int cmd_escape(const std::string& path, const std::string& json_path, bool flow)
       jd.push_back({{"reason", why}, {"pins", nums}});
     }
     if (!pe.hint.empty()) std::printf("    hint: %s\n", pe.hint.c_str());
-    j.push_back({{"ref", pe.ref}, {"pitch_mm", tmk::nm_to_mm(pe.pitch)}, {"pins", pe.pins}, {"escapable", pe.escapable}, {"dead", jd}, {"hint", pe.hint}});
+    j.push_back({{"ref", pe.ref}, {"pitch_mm", tmk::nm_to_mm(pe.pitch)}, {"pins", pe.pins}, {"escapable", pe.escapable}, {"satisfied", pe.satisfied},
+                 {"dead", jd}, {"hint", pe.hint}});
   }
-  std::printf("%zu dense packages, %d pins to route, %d cannot escape\n", parts.size(), pins, dead);
+  std::printf("%zu dense packages, %d pins to route, %d cannot escape on the analysis lattice (%.3f mm)%s\n", parts.size(), pins, dead,
+              tmk::nm_to_mm(eao.lattice), soft_zones ? ", fills ignored" : "");
   nlohmann::json jf;
   if (flow) {
     // Escape plan v2 at the net classes' rules (the router's strict-pass width, clearance and class via).
@@ -314,8 +323,16 @@ int cmd_escape(const std::string& path, const std::string& json_path, bool flow)
     in.clearance = [&](tmk::model::NetId n) { return std::max(nc(n).clearance, rules.minimums.clearance); };
     in.via = via_d;
     in.keep = [&](tmk::model::NetId n) { return width(n) + std::max(nc(n).clearance, rules.minimums.clearance); };
-    in.track_free = [&](int l, tmk::geom::Point p, tmk::model::NetId n) { return ok(obs.fixed_code(p, l, width(n) / 2, 0, n), n); };
-    in.via_free = [&](tmk::geom::Point p, tmk::model::NetId n) { return ok(obs.fixed_via_code(p, via_d(n), via_drill(n), 0, n), n); };
+    // The router's custom-rule limits, as in its own escape planning (doc 05 §34).
+    const auto& re = obs.rules();
+    in.track_free = [&](int l, tmk::geom::Point p, tmk::model::NetId n) {
+      return re.track_allowed(n, l) && ok(obs.fixed_code(p, l, width(n) / 2, 0, n), n) &&
+             !obs.track_disallowed(tmk::geom::Shape::point(p, width(n) / 2), l, width(n), n);
+    };
+    in.via_free = [&](tmk::geom::Point p, tmk::model::NetId n) {
+      return re.via_allowed(n) && !re.via_hole_rule_hits_own_tracks(n) && ok(obs.fixed_via_code(p, via_d(n), via_drill(n), 0, n), n) &&
+             !obs.via_disallowed(p, via_d(n), n, 0, b.copper_count() - 1, tmk::model::ViaType::Through);
+    };
     in.layers = b.copper_count();
     tmk::route::FlowEscapeStats fs;
     tmk::route::plan_escapes_flow(b, needs, in, {}, &fs);
@@ -332,7 +349,13 @@ int cmd_escape(const std::string& path, const std::string& json_path, bool flow)
     std::printf("\n");
   }
   if (!json_path.empty()) {
-    nlohmann::json out{{"board", path}, {"parts", j}, {"pins", pins}, {"dead", dead}};
+    nlohmann::json out{{"board", path},
+                       {"parts", j},
+                       {"pins", pins},
+                       {"dead", dead},
+                       {"satisfied", satisfied},
+                       {"domain", {{"lattice_mm", tmk::nm_to_mm(eao.lattice)}, {"margin_mm", tmk::nm_to_mm(eao.margin)}, {"window_mm", tmk::nm_to_mm(eao.window)},
+                                   {"soft_zones", soft_zones}, {"vias_off_pads_below_mm", vias_off_pads_below_mm}}}};
     if (flow) out["flow"] = jf;
     std::ofstream(json_path) << out.dump(1) << "\n";
   }
@@ -524,8 +547,12 @@ int main(int argc, char** argv) {
   std::string esc_board, esc_json;
   esc->add_option("board", esc_board)->required()->check(CLI::ExistingFile);
   esc->add_option("--json", esc_json, "Write the analysis as JSON");
-  bool esc_flow = false;
+  bool esc_flow = false, esc_soft = false, esc_vop = false;
+  double esc_vop_below = 2.0;
   esc->add_flag("--flow", esc_flow, "Also plan deep BGA arrays by min-cost flow and report the channel/layer assignment per ring");
+  esc->add_flag("--soft-zones", esc_soft, "Zone fills do not block (as route --soft-zones): analyse what a refill would leave");
+  esc->add_flag("--keep-vias-off-pads", esc_vop, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (as route)");
+  esc->add_option("--vias-off-pads-below", esc_vop_below, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
   auto* pairs_cmd = app.add_subcommand("pairs", "Differential pairs of a routed board: coupled share, gap, intra-pair skew");
   std::string pr_board, pr_json;
   std::vector<std::string> pr_extra;
@@ -575,7 +602,7 @@ int main(int argc, char** argv) {
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
-    if (*esc) return cmd_escape(esc_board, esc_json, esc_flow);
+    if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones);
