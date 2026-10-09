@@ -1290,8 +1290,18 @@ pitch.
 | **Total** | **9,102** | **9,136** | **9,140** |
 
 Mean completion 76.4 % → 77.2 %. No board is clean in any run. The added errors are the same (Teensy's four
-`solder_mask_bridge`). The process time of the 11 boards went from 360 s to 442 s at the same work: neither the
-probe's expansions nor the capped attempts' cost fields are free in wall time.
+`solder_mask_bridge`).
+
+**Time.** At the same work the 11 boards take 6.7 % more CPU time (931 → 993 s user, `--threads 4`), almost all
+of it on sbc (65 → 93 s) and kitspace_d20 (68 → 79 s). The probes themselves take 0.05–0.24 s per variant on sbc.
+The rest is where the saved budget goes: without the probe sbc's variants spend their budget flooding windows in
+the first pass; with it they reach negotiation, whose searches cost 6–8.5 s per variant instead of 0–1.7 s, since
+negotiated expansions (rip-up, crossing costs, routed-copper checks) take more time than strict ones. The work
+budget counts expansions, not that. At the same wall time (`--time 40`, four variants, both binaries side by side)
+the 11 boards route 9,332 → 9,370: logicbone +7, EEZ +31, MonApollo +1, Aleste −1, the rest equal.
+
+The search's target marks now live in a generation-stamped array that persists between searches; it used to be
+a new array the size of the window, cleared on every search. Outputs are byte-identical.
 
 Variant 2 alone with the cap (20 M): sbc 23 → 342, decelerator 16 → 463, EEZ 18 → 464, logicbone 83 → 755, Aleste
 35 → 1173 and LeeChee 1067 → 1131 (level with the board's best variant). On LimeSDR, the one `mid` board it won, it routes 799 instead of 810, so

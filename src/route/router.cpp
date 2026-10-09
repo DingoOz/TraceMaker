@@ -67,6 +67,10 @@ struct Router::Impl {
   static constexpr std::uint32_t kGenMask = 0x0FFFFFFFu;
   std::vector<SNode> sn;
   std::vector<std::uint32_t> cstamp, vstamp;
+  // Target marks per (layer, cell): 1 target, 2 not (zone targets are tested lazily); valid when tstamp matches. A
+  // fresh array per search cost a clear of the whole window, which dominated short searches in large windows.
+  std::vector<std::uint32_t> tstamp;
+  std::vector<std::uint8_t> tval;
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
   std::vector<std::int64_t> cell_hist;  // history cost per cell (valid when cstamp matches)
   std::uint32_t gen = 0;
@@ -942,18 +946,27 @@ struct Router::Impl {
       vstamp.assign(cells, 0);
       via_state.resize(cells);
     }
+    if (tstamp.size() < cells * static_cast<std::size_t>(nl)) {
+      tstamp.assign(cells * static_cast<std::size_t>(nl), 0);
+      tval.resize(cells * static_cast<std::size_t>(nl));
+    }
     if (++gen > kGenMask) {
       std::fill(sn.begin(), sn.end(), SNode{0, 0, -1});
       std::fill(cstamp.begin(), cstamp.end(), 0u);
       std::fill(vstamp.begin(), vstamp.end(), 0u);
+      std::fill(tstamp.begin(), tstamp.end(), 0u);
       std::fill(rstamp.begin(), rstamp.end(), 0u);
       gen = 1;
     }
     const Endpoint src = pad_cells(w, c.pad_a);
     const Endpoint dst = c.pad_b >= 0 ? pad_cells(w, c.pad_b) : Endpoint{};
     if (src.cells.empty() || (c.pad_b >= 0 && dst.cells.empty())) return false;
-    std::vector<std::uint8_t> is_target(cells * static_cast<std::size_t>(nl), 0);  // 1 target, 2 not (zone checks are lazy)
-    for (auto [l, ci] : dst.cells) is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)] = 1;
+    auto tget = [&](std::size_t i) -> std::uint8_t { return tstamp[i] == gen ? tval[i] : 0; };
+    auto tset = [&](std::size_t i, std::uint8_t v) {
+      tstamp[i] = gen;
+      tval[i] = v;
+    };
+    for (auto [l, ci] : dst.cells) tset(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci), 1);
     // Via-in-pad target cells carry their penalty (the source side pays it through src.cost): charged on entry.
     std::unordered_map<std::size_t, std::int64_t> target_extra;
     for (std::size_t k = dst.in_pad_from; k < dst.cells.size(); ++k)
@@ -972,7 +985,8 @@ struct Router::Impl {
       zone_poly = &z.shapes.front().pts;
     }
     auto target = [&](int l, std::int64_t ci) -> bool {
-      auto& t = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)];
+      const std::size_t ti = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
+      const std::uint8_t t = tget(ti);
       if (t == 1) return true;
       if (t == 2 || l != zone_layer) return false;
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
@@ -984,7 +998,7 @@ struct Router::Impl {
         for (std::size_t i = 0, j = poly.size() - 1; i < poly.size() && inside; j = i++)
           if (geom::point_seg_closer(pt.pts[0], poly[j], poly[i], hw + pitch)) inside = false;
       }
-      t = inside ? 1 : 2;
+      tset(ti, inside ? 1 : 2);
       return inside;
     };
     const Point tp = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : b.pads[static_cast<std::size_t>(c.pad_a)].pos;
@@ -1007,7 +1021,7 @@ struct Router::Impl {
       bool found = false, edge = false;
       for (std::size_t head = 0; head < reach_q.size() && reach_q.size() <= cap; ++head) {
         const std::size_t i = reach_q[head];
-        if (is_target[i] == 1) {
+        if (tget(i) == 1) {
           found = true;
           break;
         }
@@ -1020,7 +1034,7 @@ struct Router::Impl {
           if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
           const std::size_t ni = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ncy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(ncx);
           if (rstamp[ni] == gen) continue;
-          if (is_target[ni] != 1 && cell_cost(w, l, ncx, ncy, net, hw) < 0) continue;
+          if (tget(ni) != 1 && cell_cost(w, l, ncx, ncy, net, hw) < 0) continue;
           rstamp[ni] = gen;
           reach_q.push_back(ni);
         }
@@ -1140,7 +1154,7 @@ struct Router::Impl {
         const int ncx = cx + kDx[d], ncy = cy + kDy[d];
         if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
         const std::int64_t nci = static_cast<std::int64_t>(ncy) * w.w + ncx;
-        const bool tgt = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci)] == 1;
+        const bool tgt = tget(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci)) == 1;
         std::int64_t extra = 0;
         if (!tgt) {
           extra = cell_cost(w, l, ncx, ncy, net, hw);
