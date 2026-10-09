@@ -401,6 +401,47 @@ TEST_CASE("fixed via codes: one-pass and per-layer paths agree with soft zones a
   }
 }
 
+TEST_CASE("zone fills: indexed and linear obstacle tests agree", "[rules][route][planes]") {
+  // A GND fill on F.Cu and In1.Cu with 160 teeth along one side and a notch cut into the other, so probes meet
+  // concave corners, short edges and the inside of the fill. A physical hole rule sends via holes through the fill too.
+  std::string pts = "(xy 6 7) (xy 9.5 7) (xy 9.5 5) (xy 10.5 5) (xy 10.5 7) (xy 14 7) (xy 14 3)";
+  for (int k = 1; k < 160; ++k) pts += " (xy " + std::to_string(14.0 - 0.05 * k) + (k % 2 ? " 3.2)" : " 3)");
+  pts += " (xy 6 3)";
+  const std::string fill =
+      "  (zone (net 2) (net_name \"GND\") (layers \"F.Cu\" \"In1.Cu\") (name \"gnd\") (hatch edge 0.5) (connect_pads (clearance 0.2))\n"
+      "    (min_thickness 0.25) (fill yes (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts " + pts + "))\n"
+      "    (filled_polygon (layer \"F.Cu\") (pts " + pts + ")) (filled_polygon (layer \"In1.Cu\") (pts " + pts + ")))\n";
+  const std::string rule = "(version 1)\n(rule \"holes\" (constraint physical_hole_clearance (min 0.4mm)))\n";
+  const Files f("fills", board_text(fill), rule), g("nofill", board_text(""), rule);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  auto lb0 = io::read_board_file(g.pcb.string());
+  const auto rules0 = io::read_design_rules(g.pcb.string());
+  route::Obstacles obs(lb.board, rules), ref(lb.board, rules), none(lb0.board, rules0);
+  ref.set_linear_zone_tests(true);
+  int compared = 0, blocked = 0, by_fill = 0;
+  for (Coord y = 2'000'000; y <= 8'000'000; y += 61'000)
+    for (Coord x = 5'000'000; x <= 15'000'000; x += 67'000)
+      for (model::NetId net : {1, 2}) {
+        const geom::Point p{x, y}, q{x + 370'000, y + 230'000};
+        for (int l : {0, 1}) {
+          const int seg = obs.segment_state(p, q, l, 250'000, net, false);
+          REQUIRE(seg == ref.segment_state(p, q, l, 250'000, net, false));
+          REQUIRE(obs.disk_state(p, l, 125'000, net, 0, false) == ref.disk_state(p, l, 125'000, net, 0, false));
+          REQUIRE(obs.fixed_code(p, l, 125'000, 0, net) == ref.fixed_code(p, l, 125'000, 0, net));
+          REQUIRE(obs.fixed_code(p, l, 300'000, 0, net, true) == ref.fixed_code(p, l, 300'000, 0, net, true));
+          blocked += seg == 2;
+          by_fill += seg != none.segment_state(p, q, l, 250'000, net, false);
+          ++compared;
+        }
+        REQUIRE(obs.via_state(p, 600'000, 300'000, net, 0, false) == ref.via_state(p, 600'000, 300'000, net, 0, false));
+        REQUIRE(obs.fixed_via_code(p, 600'000, 300'000, 0, net) == ref.fixed_via_code(p, 600'000, 300'000, 0, net));
+      }
+  // Not vacuous: the fill decides many answers, and some probes stay free.
+  CHECK(by_fill > compared / 10);
+  CHECK(blocked < compared);
+}
+
 TEST_CASE("disallow rules the router cannot apply are named in the rule warnings", "[rules]") {
   const std::string area =
       "  (zone (net 0) (net_name \"\") (layers \"F.Cu\") (name \"noroute\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
