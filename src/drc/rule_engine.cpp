@@ -61,6 +61,8 @@ class Condition {
   bool eval(EvalCtx& ctx) const { return eval(*root_, ctx).truthy(); }
   // Property or function names used by either item.
   bool references(std::initializer_list<std::string_view> names) const { return references(*root_, names); }
+  // First argument of every call of one of the named functions.
+  void first_args(std::initializer_list<std::string_view> names, std::vector<std::string>& out) const { first_args(*root_, names, out); }
   // First property or function that prop() / call() below do not evaluate ("" if none): such a condition is
   // never true here.
   std::string unsupported() const { return unsupported(*root_); }
@@ -224,6 +226,11 @@ class Condition {
     return false;
   }
 
+  static void first_args(const Node& n, std::initializer_list<std::string_view> names, std::vector<std::string>& out) {
+    if (n.op == Node::Op::Call && !n.args.empty() && std::find(names.begin(), names.end(), n.name) != names.end()) out.push_back(n.args[0]);
+    for (const auto& k : n.kids) first_args(*k, names, out);
+  }
+
   static std::string unsupported(const Node& n) {
     static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
                                                  "Size_X", "Size_Y", "Position_X", "Position_Y"};
@@ -308,6 +315,21 @@ class Condition {
     return v;
   }
 
+  // Area and courtyard functions of a zone fill are remembered by (condition node, zone, fill): a fill has tens
+  // of thousands of points and is asked again for every pair it is in. Other items are computed each time.
+  template <class F> static bool cached_for_fill(const Node& n, const CopperItem& it, EvalCtx& ctx, F&& compute) {
+    if (it.kind != ItemKind::Zone) return compute();
+    const std::tuple<const void*, int, int> key{&n, it.index, it.sub};
+    {
+      const std::lock_guard lock(ctx.eng->area_mutex_);
+      if (const auto f = ctx.eng->area_cache_.find(key); f != ctx.eng->area_cache_.end()) return f->second;
+    }
+    const bool result = compute();
+    const std::lock_guard lock(ctx.eng->area_mutex_);
+    ctx.eng->area_cache_[key] = result;
+    return result;
+  }
+
   Value call(const Node& n, EvalCtx& ctx) const {
     const CopperItem* it = n.who == 'A' ? ctx.a : ctx.b;
     Value v;
@@ -320,28 +342,14 @@ class Condition {
       const int l = b.copper_index(n.args[0]);
       v.b = l >= 0 && (it->layers & model::layer_bit(l));
     } else if ((n.name == "insideArea" || n.name == "intersectsArea" || n.name == "enclosedByArea") && !n.args.empty()) {
-      const bool fill = it->kind == ItemKind::Zone;
-      const std::tuple<const void*, int, int> key{&n, it->index, it->sub};
-      if (fill) {
-        const std::lock_guard lock(ctx.eng->area_mutex_);
-        if (const auto f = ctx.eng->area_cache_.find(key); f != ctx.eng->area_cache_.end()) {
-          v.b = f->second;
-          return v;
-        }
-      }
-      for (const auto& z : b.zones) {
-        if (model::wildcard_match(n.args[0], z.name) && area_matches(*it, z, n.name == "enclosedByArea")) {
-          v.b = true;
-          break;
-        }
-      }
-      if (fill) {
-        const std::lock_guard lock(ctx.eng->area_mutex_);
-        ctx.eng->area_cache_[key] = v.b;
-      }
+      v.b = cached_for_fill(n, *it, ctx, [&] {
+        for (const auto& z : b.zones)
+          if (model::wildcard_match(n.args[0], z.name) && area_matches(*it, z, n.name == "enclosedByArea")) return true;
+        return false;
+      });
     } else if ((n.name == "intersectsCourtyard" || n.name == "intersectsFrontCourtyard" ||
                 n.name == "intersectsBackCourtyard") && !n.args.empty()) {
-      v.b = courtyard_matches(*it, ctx.eng->courtyards_, n.args[0], n.name);
+      v.b = cached_for_fill(n, *it, ctx, [&] { return courtyard_matches(*it, ctx.eng->courtyards_, n.args[0], n.name); });
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
       // P/N or +/-) matches the pattern.
@@ -442,10 +450,12 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     }
     rules_.push_back(std::move(c));
   }
-  if (std::any_of(rules_.begin(), rules_.end(), [](const Compiled& c) {
-        return c.valid && c.cond && c.cond->references({"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"});
-      })) {
+  std::vector<std::string> selectors;
+  for (const auto& c : rules_)
+    if (c.valid && c.cond) c.cond->first_args({"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"}, selectors);
+  if (!selectors.empty()) {
     courtyards_ = build_courtyards(b_);
+    for (const auto& selector : selectors) index_courtyard_selector(courtyards_, selector);
     // Rule 6: a courtyard that could not be read never matches, which must not pass in silence (KiCad reports
     // such footprints as malformed courtyards).
     std::string names;

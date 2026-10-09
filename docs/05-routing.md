@@ -1051,6 +1051,13 @@ and frozen as new cases:
   a warning by `tracemaker drc` and `tracemaker route` when a rule uses a courtyard function. Six
   `court_overlap_*`, `court_touch_*` and `court_disjoint_*` cases.
 
+Cost on a large board (jetson-agx-thor-baseboard, 1,125 footprints, its own rules plus a clearance rule with
+`A.intersectsCourtyard('U*') || B.intersectsCourtyard('U*')`): the DRC took 61.7 s against 5.1 s without the
+rule, because the rule is evaluated for every pair of items and each evaluation matched the selector against
+every footprint and tested whole zone fills again. Each selector is now resolved once when the rules are
+compiled (the scan over all footprints stays as the reference path, with a test that both agree), and a fill's
+result is remembered as for the area functions: 6.0 s, same report.
+
 The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
 directory, `expected.json` freezes KiCad item/pair multisets (10.0.6 since the rejudge above), and `run.py` runs only TraceMaker DRC.
 `ctest --test-dir build/macos-metal -R '^rule_parity$' --output-on-failure` needs neither KiCad nor routing.

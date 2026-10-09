@@ -269,3 +269,37 @@ TEST_CASE("Overlapping and touching courtyard outlines are merged; unreadable on
   add_graphic(curve, bezier);
   CHECK(drc::build_courtyards(curve).entries[0].sides[1].unreadable);
 }
+
+TEST_CASE("Indexed courtyard selectors give the results of matching every footprint", "[rules][drc][rule_geometry]") {
+  // Rule 3: the selector index is an accelerated path; the scan over all footprints is its reference.
+  model::Board b;
+  const char* refs[] = {"R1", "R2", "C1", "U1", "U12", "J1"};
+  for (std::size_t i = 0; i < 6; ++i) {
+    model::Footprint fp;
+    fp.reference = refs[i];
+    fp.lib_id = i % 2 ? "Lib:Odd" : "Lib:Even";
+    fp.back = i == 3;
+    b.footprints.push_back(std::move(fp));
+    model::Graphic rect;
+    rect.kind = model::Graphic::Kind::Rect;
+    rect.layer = i % 3 ? "F.CrtYd" : "B.CrtYd";
+    rect.a = {static_cast<Coord>(i) * 10 * M, 0};
+    rect.b = {static_cast<Coord>(i) * 10 * M + 6 * M, 6 * M};
+    add_graphic(b, rect, i);
+  }
+  const auto scan = drc::build_courtyards(b);
+  auto indexed = scan;
+  const char* selectors[] = {"R*", "R1", "U1", "U1?", "*", "Lib:Odd", "Lib:*", "X*", "?1"};
+  for (const auto* selector : selectors) drc::index_courtyard_selector(indexed, selector);
+  REQUIRE(scan.selected.empty());
+  int hits = 0;
+  for (const auto* selector : selectors)
+    for (const auto* function : {"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"})
+      for (Coord x = -2 * M; x < 60 * M; x += 2 * M) {
+        const auto item = copper(Shape::point({x, 3 * M}, M / 2));
+        const bool expected = drc::courtyard_matches(item, scan, selector, function);
+        CHECK(drc::courtyard_matches(item, indexed, selector, function) == expected);
+        hits += expected;
+      }
+  CHECK(hits > 50);  // the comparison is not vacuous
+}

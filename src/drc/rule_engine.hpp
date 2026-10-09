@@ -90,8 +90,8 @@ class RuleEngine {
   Coord max_clearance_ = 0;
   std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
   std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
-  // Area functions (insideArea, intersectsArea, enclosedByArea) of a zone fill, by (condition node, zone, fill):
-  // a fill has tens of thousands of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).
+  // Area and courtyard functions of a zone fill, by (condition node, zone, fill): a fill has tens of thousands
+  // of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).
   mutable std::map<std::tuple<const void*, int, int>, bool> area_cache_;
   mutable std::mutex area_mutex_;
   CourtyardCache courtyards_;

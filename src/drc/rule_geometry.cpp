@@ -268,12 +268,18 @@ bool footprint_selected(const std::string& selector, const std::string& referenc
   return model::wildcard_match(selector, reference) || (selector.find(':') != std::string::npos && model::wildcard_match(selector, lib_id));
 }
 
+void index_courtyard_selector(CourtyardCache& courtyards, const std::string& selector) {
+  auto& list = courtyards.selected[selector];
+  list.clear();
+  for (std::size_t i = 0; i < courtyards.entries.size(); ++i)
+    if (footprint_selected(selector, courtyards.entries[i].reference, courtyards.entries[i].lib_id)) list.push_back(i);
+}
+
 bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
                        const std::string& selector, const std::string& function) {
   const bool front = function == "intersectsFrontCourtyard", back = function == "intersectsBackCourtyard";
   if (!front && !back && function != "intersectsCourtyard") return false;
-  for (const auto& entry : courtyards.entries) {
-    if (!footprint_selected(selector, entry.reference, entry.lib_id)) continue;
+  const auto hit = [&](const CourtyardEntry& entry) {
     for (int side = 0; side < 2; ++side) {
       // side 0 is F.CrtYd: the footprint's front unless it is flipped.
       const bool own_front = (side == 1) == entry.back;
@@ -285,7 +291,15 @@ bool courtyard_matches(const CopperItem& item, const CourtyardCache& courtyards,
           if (collides(shape, part)) return true;
       }
     }
+    return false;
+  };
+  if (const auto indexed = courtyards.selected.find(selector); indexed != courtyards.selected.end()) {
+    for (const std::size_t i : indexed->second)
+      if (hit(courtyards.entries[i])) return true;
+    return false;
   }
+  for (const auto& entry : courtyards.entries)
+    if (footprint_selected(selector, entry.reference, entry.lib_id) && hit(entry)) return true;
   return false;
 }
 }  // namespace tmk::drc
