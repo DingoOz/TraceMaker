@@ -46,7 +46,7 @@ class Condition {
     c->src_ = text;
     c->pos_ = 0;
     try {
-      c->root_ = c->parse_or();
+      c->root_ = c->parse_and();
       c->skip();
       if (c->pos_ != c->src_.size()) throw std::runtime_error("unexpected '" + c->src_.substr(c->pos_, 10) + "'");
       // libeval_compiler rejects a lone numeric literal without units, even in an unused OR branch.
@@ -82,45 +82,51 @@ class Condition {
     n->op = op;
     return n;
   }
-  std::unique_ptr<Node> parse_or() {
-    auto l = parse_and();
-    while (eat("||")) {
-      auto n = make(Node::Op::Or);
-      n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_and());
-      l = std::move(n);
-    }
-    return l;
-  }
+  // KiCad's grammar gives || a higher precedence than && and puts ! above the comparisons, unlike C:
+  // `a && b || c` is `a && (b || c)`, and `!A.NetName == 'X'` compares the negation with 'X' (never equal).
+  // Measured with KiCad 10.0.6: corpus cases precedence_* (doc 05 §33).
   std::unique_ptr<Node> parse_and() {
-    auto l = parse_unary();
+    auto l = parse_or();
     while (eat("&&")) {
       auto n = make(Node::Op::And);
       n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_unary());
+      n->kids.push_back(parse_or());
       l = std::move(n);
     }
     return l;
   }
-  std::unique_ptr<Node> parse_unary() {
-    skip();
-    if (pos_ < src_.size() && src_[pos_] == '!' && (pos_ + 1 >= src_.size() || src_[pos_ + 1] != '=')) {
-      ++pos_;
-      auto n = make(Node::Op::Not);
-      n->kids.push_back(parse_unary());
-      return n;
+  std::unique_ptr<Node> parse_or() {
+    auto l = parse_compare();
+    while (eat("||")) {
+      auto n = make(Node::Op::Or);
+      n->kids.push_back(std::move(l));
+      n->kids.push_back(parse_compare());
+      l = std::move(n);
     }
-    auto l = parse_term();
+    return l;
+  }
+  std::unique_ptr<Node> parse_compare() {
+    auto l = parse_not();
     for (const auto& [token, op] : {std::pair{"==", Node::Op::Eq}, {"!=", Node::Op::Ne},
                                    {"<=", Node::Op::Le}, {">=", Node::Op::Ge},
                                    {"<", Node::Op::Lt}, {">", Node::Op::Gt}}) {
       if (!eat(token)) continue;
       auto n = make(op);
       n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_term());
+      n->kids.push_back(parse_not());
       return n;
     }
     return l;
+  }
+  std::unique_ptr<Node> parse_not() {
+    skip();
+    if (pos_ < src_.size() && src_[pos_] == '!' && (pos_ + 1 >= src_.size() || src_[pos_ + 1] != '=')) {
+      ++pos_;
+      auto n = make(Node::Op::Not);
+      n->kids.push_back(parse_not());
+      return n;
+    }
+    return parse_term();
   }
   std::string read_string() {
     const char q = src_[pos_++];
@@ -137,7 +143,7 @@ class Condition {
     const char c = src_[pos_];
     if (c == '(') {
       ++pos_;
-      auto n = parse_or();
+      auto n = parse_and();
       if (!eat(")")) throw std::runtime_error("missing ')'");
       return n;
     }

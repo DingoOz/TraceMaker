@@ -638,6 +638,71 @@
         ]
       ]
     },
+    "precedence_and_or": {},
+    "precedence_mixed": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "precedence_not_call": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "precedence_not_eq": {},
+    "precedence_not_ne": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "precedence_not_parenthesized": {
+      "items_not_allowed": [
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "precedence_or_and": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ]
+      ]
+    },
+    "precedence_or_and_parenthesized": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
     "reference_A_Parent_Reference": {},
     "reference_A_Reference": {
       "items_not_allowed": [
@@ -1556,6 +1621,6 @@
     "zone_pair_multi_zone_undefined": {},
     "zone_pair_multi_zone_wildcard": {}
   },
-  "judge": "KiCad 10.0.3",
+  "judge": "KiCad 10.0.6",
   "schema_version": 1
 }

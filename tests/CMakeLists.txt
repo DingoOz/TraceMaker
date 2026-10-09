@@ -62,6 +62,6 @@ set_tests_properties(plane_smd PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;inte
 # Custom rules the router cannot apply are named in the route log (doc 05 §27).
 add_test(NAME route_rule_warnings COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/route_rule_warnings.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/route_rule_warnings)
 set_tests_properties(route_rule_warnings PROPERTIES LABELS "route;integration" TIMEOUT 120)
-# Frozen KiCad 10.0.3 custom-rule item/pair multisets; normal runs do not require KiCad.
+# Frozen KiCad 10 custom-rule item/pair multisets (expected.json names the judging version); normal runs do not require KiCad.
 add_test(NAME rule_parity COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/rule_parity/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/rule_parity)
 set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 300)

@@ -664,3 +664,16 @@ TEST_CASE("KiCad multilayer pad Layer and transformed pad anchors follow their f
   CHECK(parity_hits("A.Width == 250000 || 1mm == 0mm") == 1);
   CHECK(parity_hits("A.Width > 0.25 || 1mm == 0mm") == 3);
 }
+
+TEST_CASE("KiCad rule operators: || binds tighter than &&, and ! tighter than comparisons", "[rules][drc]") {
+  // KiCad 10.0.6: precedence_and_or, precedence_or_and, precedence_mixed, precedence_not_*.
+  // Tracks: SIG 0.2 mm and 0.25 mm on F.Cu, GND 0.4 mm on B.Cu.
+  CHECK(parity_hits("A.NetName == 'GND' && A.Width > 0.3mm || A.NetName == 'SIG'") == 1);   // GND && (wide || SIG)
+  CHECK(parity_hits("A.NetName == 'SIG' || A.NetName == 'GND' && A.Layer == 'B.Cu'") == 1);  // (SIG || GND) && B.Cu
+  CHECK(parity_hits("A.NetName == 'SIG' || (A.NetName == 'GND' && A.Layer == 'B.Cu')") == 3);
+  CHECK(parity_hits("A.NetName == 'GND' || A.NetName == 'SIG' && A.Width > 0.22mm || A.Layer == 'B.Cu'") == 2);
+  CHECK(parity_hits("!A.NetName == 'SIG'") == 0);  // (!A.NetName) == 'SIG'
+  CHECK(parity_hits("!A.NetName != 'SIG'") == 3);
+  CHECK(parity_hits("!(A.NetName == 'SIG')") == 1);
+  CHECK(parity_hits("!A.existsOnLayer('F.Cu') && A.NetName == 'GND'") == 1);
+}

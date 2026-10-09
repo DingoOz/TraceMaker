@@ -173,6 +173,18 @@ def generate(root: Path) -> dict:
          note='Later matching ignore disallow has a different item type.')
     case('later_different_disallow_condition',static,rule(name='ban-track')+rule("A.NetName == 'X'",word='via',name='ban-X-via'),
          note='Later rule matches X only and has a different item type.')
+    # KiCad's || binds tighter than &&, and ! tighter than the comparisons (measured with KiCad 10.0.6).
+    for name,condition in [
+        ('precedence_and_or',"A.NetName == 'Y' && A.Layer == 'B.Cu' || A.NetName == 'X'"),
+        ('precedence_or_and',"A.NetName == 'X' || A.NetName == 'Y' && A.Layer == 'B.Cu'"),
+        ('precedence_or_and_parenthesized',"A.NetName == 'X' || (A.NetName == 'Y' && A.Layer == 'B.Cu')"),
+        ('precedence_mixed',"A.NetName == 'Y' || A.NetName == 'X' && A.Layer == 'B.Cu' || A.Layer == 'In1.Cu'"),
+        ('precedence_not_eq',"!A.NetName == 'X'"),
+        ('precedence_not_ne',"!A.NetName != 'X'"),
+        ('precedence_not_parenthesized',"!(A.NetName == 'X')"),
+        ('precedence_not_call',"!A.existsOnLayer('F.Cu') && A.NetName == 'X'"),
+    ]:
+        case(name,static,rule(condition),note='Operator precedence probe: X tracks on F.Cu, In1.Cu and B.Cu, one Y track on F.Cu.')
     layer_pads=[footprint('SF',5,5),footprint('SB',5,10,back=True),footprint('PF',5,15,'thru_hole'),
                 footprint('PB',5,20,'thru_hole',back=True),footprint('NF',5,25,'np_thru_hole')]+vias
     for name,condition in [

@@ -1004,6 +1004,7 @@ were not distinguished.
 | Exact case-sensitive unit vocabulary: `mm`, `mil`, `in`, `deg`, `fs`, `ps`, including spaced suffixes; time scales to attoseconds | `width_gt_in`, `width_eq_spaced_mm`, `width_eq_deg`, `width_eq_250fs`, `width_eq_quarter_ps`, `literal_ps_fs` |
 | One numeric literal without units drops the entire condition, even in an unused branch; multiple numeric literals permit bare internal-unit values | `width_ne_double_or`, `width_gt_double_or`, `width_eq_integer_multiliteral_false_or` |
 | Quoted dimensions remain strings: equality with a number is false, inequality true, relational conversion is zero | `size_x_quoted`, `width_eq_quoted_mm_or`, `width_ne_quoted_mm`, `width_gt_quoted_mm` |
+| `\|\|` binds tighter than `&&`, and `!` tighter than the comparisons, unlike C: `a && b \|\| c` is `a && (b \|\| c)`; `!A.NetName == 'X'` compares the negation with `'X'` and is never true | `precedence_and_or`, `precedence_or_and`, `precedence_mixed`, `precedence_not_eq`, `precedence_not_ne` (KiCad 10.0.6) |
 | Unknown properties/functions anywhere drop the rule; invalid `Parent.Reference` aliases are removed; bare `L` remains undefined for unary disallow | `unknown_short_circuit`, `unknown_function`, `reference_A_Parent_Reference`, `reference_Parent_Reference`, `bare_layer_front` |
 | A terminal unterminated single-quoted string extends to the end | `malformed_quote`; unmatched parentheses still fail (`malformed_paren`) |
 | Later matching disallow rules win for the same item type; ignore clears that violation, not another type's ban | `severity_ignore`, `later_ignore`, `earlier_ignore`, `later_different_disallow`, `later_different_disallow_ignore` |
@@ -1029,8 +1030,16 @@ footprint's own sides: flipped-footprint courtyards and library-id selectors. Co
 item/pair multisets, retaining repeated reports against different copper-layer fills rather than just counts.
 `rule_parity` passes in 1.62 s without KiCad; a full KiCad 10.0.3 rejudge reproduces the frozen oracle.
 
+**Re-judged with KiCad 10.0.6 (2026-10-09).** A full rejudge with KiCad 10.0.6 reproduced all 166 cases, and
+`expected.json` is now frozen from 10.0.6. Conditions probed beyond the corpus showed differences, each fixed
+and frozen as new cases:
+
+- Operator precedence. `A.NetName == 'X' || A.NetName == 'Y' && A.Layer == 'B.Cu'` selects only the X track
+  on B.Cu in KiCad; read as in C it selected every X track. Without parentheses a rule could apply to items
+  KiCad exempts, or miss items KiCad checks. Eight `precedence_*` cases.
+
 The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
-directory, `expected.json` freezes KiCad 10.0.3 item/pair multisets, and `run.py` runs only TraceMaker DRC.
+directory, `expected.json` freezes KiCad item/pair multisets (10.0.6 since the rejudge above), and `run.py` runs only TraceMaker DRC.
 `ctest --test-dir build/macos-metal -R '^rule_parity$' --output-on-failure` needs neither KiCad nor routing.
 To refresh the oracle deliberately, run:
 
