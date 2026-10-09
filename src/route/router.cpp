@@ -92,6 +92,10 @@ struct Router::Impl {
   std::set<NetId> first_net_ids;  // --first-nets
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
   std::vector<int> init_root;        // copper item -> initial cluster root (fixed copper)
+  // With soft zones: routed copper item -> initial clusters of the same-net plane fills it touches, so a via that
+  // passes through several planes of its net joins all of them (`joined`). Teardrops are no planes.
+  std::vector<std::vector<int>> plane_contacts;
+  std::unique_ptr<drc::ZoneFills> soft_fills;
   bool soft = false;                 // current search may cross routed copper
   // Persistent fixed-obstacle caches per net class (codes from Obstacles::fixed_code), lattice-indexed.
   struct ClassCache {
@@ -218,6 +222,7 @@ struct Router::Impl {
   void setup() {
     obs = std::make_unique<Obstacles>(b, rules);
     obs->set_soft_zones(opt.soft_zones);
+    if (opt.soft_zones) soft_fills = std::make_unique<drc::ZoneFills>(obs->copper());
     for (std::size_t n = 0; n < b.nets.size(); ++n)
       if (std::find(opt.first_nets.begin(), opt.first_nets.end(), b.nets[n].name) != opt.first_nets.end()) first_net_ids.insert(static_cast<NetId>(n));
     obs->set_vias_off_pads(opt.vias_off_pads, static_cast<Coord>(opt.vias_off_pads_below_mm * 1e6));
@@ -280,6 +285,7 @@ struct Router::Impl {
   Coord near_infl = 0;
   void near_mark(int item, int delta) {
     const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+    if (delta > 0 && soft_fills) note_plane_contacts(item);
     const geom::Box bx = it.box.inflated(near_infl);
     const int x0 = std::max(0, static_cast<int>((bx.x0 - lat.x0) / pitch) - 1), x1 = std::min(nx - 1, static_cast<int>((bx.x1 - lat.x0) / pitch) + 1);
     const int y0 = std::max(0, static_cast<int>((bx.y0 - lat.y0) / pitch) - 1), y1 = std::min(ny - 1, static_cast<int>((bx.y1 - lat.y0) / pitch) + 1);
@@ -290,6 +296,23 @@ struct Router::Impl {
         for (int x = x0; x <= x1; ++x) row[x] = static_cast<std::uint16_t>(row[x] + delta);
       }
     }
+  }
+  // Touching (1 nm) as in the initial connectivity. Items are never reused, so contacts are recorded once and
+  // follow the item: `joined` reads them only for live connections, so a rip removes them.
+  void note_plane_contacts(int item) {
+    const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+    std::vector<int> roots;
+    for (const auto& s : it.shapes)
+      for (int zi : drc::zones_touching(obs->copper(), *soft_fills, obs->grid(), s, it.layers, 1)) {
+        const auto& z = obs->copper().items[static_cast<std::size_t>(zi)];
+        if (z.footprint >= 0 || z.net != it.net || b.zones[static_cast<std::size_t>(z.index)].teardrop) continue;
+        roots.push_back(init_root[static_cast<std::size_t>(zi)]);
+      }
+    std::sort(roots.begin(), roots.end());
+    roots.erase(std::unique(roots.begin(), roots.end()), roots.end());
+    if (roots.empty()) return;
+    if (plane_contacts.size() <= static_cast<std::size_t>(item)) plane_contacts.resize(static_cast<std::size_t>(item) + 1);
+    plane_contacts[static_cast<std::size_t>(item)] = std::move(roots);
   }
   void remove_routed(int item) {
     if (!obs->copper().items[static_cast<std::size_t>(item)].removed) near_mark(item, -1);
@@ -345,6 +368,17 @@ struct Router::Impl {
     return a;
   }
 
+  // Can a connection from pad `p` end in zone fill item `z`? By a track on a layer both have copper on and the net
+  // may use, or by a via of a type the net may place (a via may end in the net's own fill on any layer, §29).
+  bool reaches(int p, int z) const {
+    const auto& pad = b.pads[static_cast<std::size_t>(p)];
+    if (nl > 1 && (blind_for(pad.net) || micro_for(pad.net) || (opt.allow_vias && vias_ok(pad.net)))) return true;
+    const model::LayerMask shared = pad.copper & obs->copper().items[static_cast<std::size_t>(z)].layers;
+    for (int l = 0; l < nl; ++l)
+      if ((shared & model::layer_bit(l)) && layer_ok(pad.net, l)) return true;
+    return false;
+  }
+
   std::vector<Connection> plan(drc::UnionFind& uf) {
     const auto& cm = obs->copper();
     struct Cluster { std::vector<int> pads, zones; };
@@ -356,7 +390,8 @@ struct Router::Impl {
       if (it.kind == drc::ItemKind::Pad) {
         pad_item[static_cast<std::size_t>(it.index)] = static_cast<int>(i);
         net_clusters[it.net][uf.find(static_cast<int>(i))].pads.push_back(it.index);
-      } else if (it.kind == drc::ItemKind::Zone && it.footprint < 0) {
+      } else if (it.kind == drc::ItemKind::Zone && it.footprint < 0 && !b.zones[static_cast<std::size_t>(it.index)].teardrop) {
+        // A teardrop is track copper, not a plane: one left behind by deleted routing is no target.
         net_clusters[it.net][uf.find(static_cast<int>(i))].zones.push_back(static_cast<int>(i));
       }
     }
@@ -370,11 +405,19 @@ struct Router::Impl {
       std::vector<Cluster> groups;
       bool has_pads = false;
       for (auto& [r, c] : cl) has_pads |= !c.pads.empty();
-      for (auto& [r, c] : cl)
+      for (auto& [r, c] : cl) {
         // Zone-only clusters (unused fills) are not targets on their own -- except with soft zones, where an inner
         // plane that no pad touches yet (all-SMD boards) is the net's plane: pads drop vias into it. Only for nets
-        // with pads, and not for slivers of a stale fill (under 1 mm^2), which a refill may drop or reshape.
-        if (!c.pads.empty() || (opt.soft_zones && has_pads && !c.zones.empty() && zones_area(c.zones) >= 1e12L)) groups.push_back(c);
+        // with pads, not for slivers of a stale fill (under 1 mm^2), which a refill may drop or reshape, and only
+        // for planes a pad of the net can reach: an unreachable plane would replace pad-to-pad connections.
+        const bool plane = opt.soft_zones && has_pads && !c.zones.empty() && zones_area(c.zones) >= 1e12L &&
+                           std::any_of(cl.begin(), cl.end(), [&](const auto& o) {
+                             return std::any_of(o.second.pads.begin(), o.second.pads.end(), [&](int p) {
+                               return std::any_of(c.zones.begin(), c.zones.end(), [&](int z) { return reaches(p, z); });
+                             });
+                           });
+        if (!c.pads.empty() || plane) groups.push_back(c);
+      }
       if (groups.size() < 2) continue;
       // Prim over clusters; a pad may connect to another cluster's pad or into its zone fill (plane).
       const std::size_t k = groups.size();
@@ -406,11 +449,13 @@ struct Router::Impl {
               if (centre * 1e-3 >= best[j]) continue;  // even touching copper would not beat the best so far
               consider(pa, pb, -1, pad_gap(pa, pb, centre) + centre * 1e-3);
             }
-            for (int z : groups[j].zones) consider(pa, -1, z, zone_dist(A, z));
+            for (int z : groups[j].zones)
+              if (reaches(pa, z)) consider(pa, -1, z, zone_dist(A, z));
           }
           // And pads of cluster j into zones of the tree side.
           for (int pb : groups[j].pads)
-            for (int z : groups[from].zones) consider(pb, -1, z, zone_dist(b.pads[static_cast<std::size_t>(pb)].pos, z));
+            for (int z : groups[from].zones)
+              if (reaches(pb, z)) consider(pb, -1, z, zone_dist(b.pads[static_cast<std::size_t>(pb)].pos, z));
         }
       };
       upd(0);
@@ -1615,6 +1660,12 @@ struct Router::Impl {
       const int x = find(init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_a)])]);
       const int y = find(o.c.pad_b >= 0 ? init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(o.c.pad_b)])] : init_root[static_cast<std::size_t>(o.c.zone_b)]);
       if (x != y) up[x] = y;
+      for (int item : o.items)
+        if (static_cast<std::size_t>(item) < plane_contacts.size())
+          for (int root : plane_contacts[static_cast<std::size_t>(item)]) {
+            const int u = find(x), v = find(root);
+            if (u != v) up[u] = v;
+          }
     }
     return find(ra) == find(rb);
   }

@@ -152,6 +152,7 @@ struct Zone {
   bool rule_area = false;
   bool keepout_tracks = false, keepout_vias = false, keepout_pads = false, keepout_pour = false,
        keepout_footprints = false;
+  bool teardrop = false;     // (attr (teardrop ...)): copper KiCad adds where a track meets a pad or via, not a plane
   std::vector<std::vector<Point>> outline;  // main outline + holes (arcs flattened)
   std::vector<std::pair<int, std::vector<Point>>> fills;  // (copper index, filled polygon)
   int footprint = -1;
