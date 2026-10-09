@@ -331,7 +331,8 @@ RouteJobResult run_route_job(RouteJob job) {
       if (std::find(want.begin(), want.end(), p) == want.end() && std::find(want.begin(), want.end(), std::make_pair(p.second, p.first)) == want.end())
         want.push_back(p);
     nlohmann::json pj = nlohmann::json::array();
-    log(fmt("differential pairs: %zu wanted, %d coupled pair routes (re-coupling included)", want.size(), res.pairs));
+    log(fmt("differential pairs: %zu wanted, %d coupled pair routes (re-coupling included), %ld work units", want.size(), res.pairs, res.pair_work));
+    out.summary["pair_work"] = res.pair_work;
     for (const auto& [na, nb] : want) {
       const auto pr = route::pair_rule(lb.board, rules, re, na, nb);
       const auto st = route::measure_pair(res.tracks, res.vias, na, nb, route::coupled_threshold(pr));

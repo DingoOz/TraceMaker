@@ -7,7 +7,9 @@
 
 #include "drc/copper.hpp"
 #include "drc/rule_engine.hpp"
+#include "io/kicad/board_reader.hpp"
 #include "route/diff_pair.hpp"
+#include "route/router.hpp"
 
 using namespace tmk;
 using geom::Point;
@@ -142,4 +144,60 @@ TEST_CASE("pair measurement: coupled share, gap and skew", "[diffpair]") {
   const auto far = route::measure_pair(t, {}, 1, 2, 150'000);
   CHECK(far.coupled_a == 0);
   CHECK(far.gap_median == 0);
+}
+
+namespace {
+
+// 40 x 20 mm, one copper layer (no via can hop the fence). Pair D_P/D_N runs from U1 (x = 5) to U2 (x = 35); a locked
+// ring of net W surrounds both pads of each end, so no pair or single route gets out.
+model::Board fenced_pair() {
+  std::string s = R"((kicad_pcb (version 20240108) (generator "pcbnew")
+  (general (thickness 1.6))
+  (layers (0 "F.Cu" signal) (44 "Edge.Cuts" user))
+  (setup (pad_to_mask_clearance 0))
+  (net 0 "") (net 1 "D_P") (net 2 "D_N") (net 3 "W")
+)";
+  for (const int x : {5, 35}) {
+    const std::string ref = x == 5 ? "U1" : "U2", at = std::to_string(x);
+    s += "  (footprint \"T:P\" (layer \"F.Cu\") (at " + at + " 10) (property \"Reference\" \"" + ref + "\")\n"
+         "    (pad \"1\" smd rect (at 0 -0.3) (size 0.3 0.3) (layers \"F.Cu\") (net 1 \"D_P\"))\n"
+         "    (pad \"2\" smd rect (at 0 0.3) (size 0.3 0.3) (layers \"F.Cu\") (net 2 \"D_N\")))\n";
+    const double x0 = x - 0.75, x1 = x + 0.75;
+    for (const auto& [a, b] : {std::pair{std::pair{x0, 9.0}, std::pair{x1, 9.0}}, std::pair{std::pair{x1, 9.0}, std::pair{x1, 11.0}},
+                               std::pair{std::pair{x1, 11.0}, std::pair{x0, 11.0}}, std::pair{std::pair{x0, 11.0}, std::pair{x0, 9.0}}})
+      s += "  (segment (start " + std::to_string(a.first) + " " + std::to_string(a.second) + ") (end " + std::to_string(b.first) + " " +
+           std::to_string(b.second) + ") (width 0.2) (locked yes) (layer \"F.Cu\") (net 3))\n";
+  }
+  s += "  (gr_rect (start 0 0) (end 40 20) (stroke (width 0.1) (type default)) (fill none) (layer \"Edge.Cuts\"))\n)\n";
+  return io::read_board(sexpr::Document::parse(s));
+}
+
+route::RouteResult route_fenced(const model::Board& b, long work) {
+  route::RouterOptions o;
+  o.work_budget = work;
+  o.time_limit_s = 600;
+  o.gpu_device = -1;
+  o.pair_nets = {{b.net_by_name("D_P"), b.net_by_name("D_N")}};
+  return route::Router(b, rules_with(200'000, false, 0, 0), o).run();
+}
+
+}  // namespace
+
+TEST_CASE("pair search: rejected candidates are work, and the work budget stops an attempt", "[diffpair][route]") {
+  const auto b = fenced_pair();
+  const auto full = route_fenced(b, 0);
+  CHECK(full.routed == 0);
+  // Closed states are few (no leg is legal, so no state is ever reached); the charge is the leg checks of the
+  // thousands of rejected candidates. Charging only closed states left such attempts at about zero work.
+  CHECK(full.pair_work > 5'000);
+  CHECK(full.expansions >= full.pair_work);
+  // A budget far below the attempt's work stops it inside the attempt, within one check interval (64 candidates of at
+  // most 72 leg checks each), and the same budget gives the same run.
+  const long budget = 2'000;
+  const auto cut = route_fenced(b, budget);
+  CHECK(cut.pair_work < full.pair_work);
+  CHECK(cut.expansions <= budget + 64 * 72);
+  const auto again = route_fenced(b, budget);
+  CHECK(again.expansions == cut.expansions);
+  CHECK(again.pair_work == cut.pair_work);
 }
