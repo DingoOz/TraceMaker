@@ -1,0 +1,2044 @@
+{
+  "cases": {
+    "area_concave_enclosedByArea": {
+      "items_not_allowed": [
+        [
+          "area-shape-solid"
+        ]
+      ]
+    },
+    "area_concave_insideArea": {
+      "items_not_allowed": [
+        [
+          "area-shape-crossing"
+        ],
+        [
+          "area-shape-solid"
+        ]
+      ]
+    },
+    "area_concave_intersectsArea": {
+      "items_not_allowed": [
+        [
+          "area-shape-crossing"
+        ],
+        [
+          "area-shape-solid"
+        ]
+      ]
+    },
+    "area_enclosedByArea": {
+      "items_not_allowed": [
+        [
+          "inside"
+        ]
+      ]
+    },
+    "area_hole_enclosedByArea": {
+      "items_not_allowed": [
+        [
+          "area-shape-solid"
+        ]
+      ]
+    },
+    "area_hole_insideArea": {
+      "items_not_allowed": [
+        [
+          "area-shape-crossing"
+        ],
+        [
+          "area-shape-solid"
+        ]
+      ]
+    },
+    "area_hole_intersectsArea": {
+      "items_not_allowed": [
+        [
+          "area-shape-crossing"
+        ],
+        [
+          "area-shape-solid"
+        ]
+      ]
+    },
+    "area_insideArea": {
+      "items_not_allowed": [
+        [
+          "crossing"
+        ],
+        [
+          "inside"
+        ]
+      ]
+    },
+    "area_intersectsArea": {
+      "items_not_allowed": [
+        [
+          "crossing"
+        ],
+        [
+          "inside"
+        ]
+      ]
+    },
+    "bare_layer_front": {},
+    "court_arc_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "court-shape-crossing"
+        ],
+        [
+          "court-shape-inside"
+        ]
+      ]
+    },
+    "court_arc_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "court-shape-crossing"
+        ],
+        [
+          "court-shape-inside"
+        ]
+      ]
+    },
+    "court_disjoint_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_disjoint_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_flipped_intersectsBackCourtyard": {
+      "items_not_allowed": [
+        [
+          "front-court"
+        ]
+      ]
+    },
+    "court_flipped_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_flipped_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_intersectsBackCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "front-court"
+        ]
+      ]
+    },
+    "court_lib_id": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_line_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "court-shape-corner"
+        ],
+        [
+          "court-shape-crossing"
+        ],
+        [
+          "court-shape-inside"
+        ]
+      ]
+    },
+    "court_line_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "court-shape-corner"
+        ],
+        [
+          "court-shape-crossing"
+        ],
+        [
+          "court-shape-inside"
+        ]
+      ]
+    },
+    "court_overlap_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_overlap_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_touch_intersectsCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_touch_intersectsFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "back-court"
+        ],
+        [
+          "front-court"
+        ],
+        [
+          "front-in-back-court"
+        ]
+      ]
+    },
+    "court_unclosed_intersectsCourtyard": {},
+    "court_unclosed_intersectsFrontCourtyard": {},
+    "custom_clearance": {
+      "clearance": [
+        [
+          "near-A",
+          "near-B"
+        ]
+      ]
+    },
+    "custom_track_width": {
+      "track_width": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ]
+      ]
+    },
+    "earlier_ignore": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "exists_on_front": {
+      "items_not_allowed": [
+        [
+          "X-blind"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ],
+        [
+          "Y-front"
+        ],
+        [
+          "Y-through"
+        ]
+      ]
+    },
+    "fractional_nm": {},
+    "fractional_nm_constant": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "fractional_nm_gt": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "fractional_nm_not_zero": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "item_layer_back": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ]
+      ]
+    },
+    "item_layer_front": {
+      "items_not_allowed": [
+        [
+          "X-front"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "kicad_function_clearance": {
+      "clearance": [
+        [
+          "near-A",
+          "near-B"
+        ]
+      ]
+    },
+    "kicad_function_fromTo": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_getField": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_hasComponentClass": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_hasExactComponentClass": {},
+    "kicad_function_hasExactNetclass": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_hasNetclass": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_insideBackCourtyard": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_insideCourtyard": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_insideFrontCourtyard": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isBlindBuriedVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isBlindVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isBuriedVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isCoupledDiffPair": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isMicroVia": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_isThroughVia": {},
+    "kicad_function_memberOf": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_memberOfGroup": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_memberOfSheet": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "kicad_function_memberOfSheetOrChildren": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "later_different_disallow": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-blind"
+        ],
+        [
+          "X-buried"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ],
+        [
+          "Y-front"
+        ],
+        [
+          "Y-through"
+        ]
+      ]
+    },
+    "later_different_disallow_condition": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-blind"
+        ],
+        [
+          "X-buried"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "later_different_disallow_ignore": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "later_ignore": {
+      "items_not_allowed": [
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "literal_mm_mil": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "literal_ps_fs": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "malformed_paren": {},
+    "malformed_quote": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "membership_R1": {
+      "items_not_allowed": [
+        [
+          "R1:pad1"
+        ]
+      ]
+    },
+    "membership_Rwildcard": {
+      "items_not_allowed": [
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "membership_lib_id": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "number_exponent": {},
+    "number_inexact_eq_mil": {},
+    "number_inexact_eq_mm": {},
+    "number_inexact_ge_mil": {
+      "items_not_allowed": [
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_inexact_gt_mm": {
+      "items_not_allowed": [
+        [
+          "inexact-mm"
+        ]
+      ]
+    },
+    "number_inexact_ne_mil": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_inexact_ne_mm": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_leading_dot": {},
+    "number_negative": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_plus_sign": {
+      "items_not_allowed": [
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_trailing_dot": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "own_layer_pads_back": {
+      "items_not_allowed": [
+        [
+          "PB:pad1"
+        ],
+        [
+          "SB:pad1"
+        ]
+      ]
+    },
+    "own_layer_pads_front": {
+      "items_not_allowed": [
+        [
+          "NF:pad1"
+        ],
+        [
+          "PF:pad1"
+        ],
+        [
+          "SF:pad1"
+        ]
+      ]
+    },
+    "own_layer_pads_not_back": {
+      "items_not_allowed": [
+        [
+          "NF:pad1"
+        ],
+        [
+          "PF:pad1"
+        ],
+        [
+          "SF:pad1"
+        ]
+      ]
+    },
+    "own_layer_pads_not_front": {
+      "items_not_allowed": [
+        [
+          "PB:pad1"
+        ],
+        [
+          "SB:pad1"
+        ]
+      ]
+    },
+    "pad_type": {
+      "items_not_allowed": [
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "physical_hole_b_reference": {
+      "hole_clearance": [
+        [
+          "R1:pad1",
+          "via-in-SMD"
+        ]
+      ]
+    },
+    "physical_hole_smd": {
+      "hole_clearance": [
+        [
+          "R1:pad1",
+          "via-in-SMD"
+        ]
+      ]
+    },
+    "plated": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "free-via"
+        ]
+      ]
+    },
+    "position_anchor_footprint_origin": {},
+    "position_anchor_or": {
+      "items_not_allowed": [
+        [
+          "PR:pad1"
+        ],
+        [
+          "position-arc"
+        ],
+        [
+          "position-track"
+        ],
+        [
+          "position-via"
+        ]
+      ]
+    },
+    "position_anchor_rotated_pad": {
+      "items_not_allowed": [
+        [
+          "PR:pad1"
+        ]
+      ]
+    },
+    "position_anchor_shifted_pad": {
+      "items_not_allowed": [
+        [
+          "PS:pad1"
+        ]
+      ]
+    },
+    "position_anchor_x_20": {},
+    "position_anchor_x_gt_15": {
+      "items_not_allowed": [
+        [
+          "PR:pad1"
+        ],
+        [
+          "position-via"
+        ]
+      ]
+    },
+    "position_anchor_x_le_zero": {
+      "items_not_allowed": [
+        [
+          "position-arc"
+        ],
+        [
+          "position-track"
+        ]
+      ]
+    },
+    "position_anchor_x_lt_one": {
+      "items_not_allowed": [
+        [
+          "position-arc"
+        ],
+        [
+          "position-track"
+        ]
+      ]
+    },
+    "position_anchor_x_ne_zero": {
+      "items_not_allowed": [
+        [
+          "PR:pad1"
+        ],
+        [
+          "PS:pad1"
+        ],
+        [
+          "position-via"
+        ]
+      ]
+    },
+    "position_anchor_x_zero": {},
+    "position_anchor_y_5": {},
+    "position_anchor_y_zero": {},
+    "position_x": {
+      "items_not_allowed": [
+        [
+          "free-via"
+        ]
+      ]
+    },
+    "precedence_and_or": {},
+    "precedence_mixed": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "precedence_not_call": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "precedence_not_eq": {},
+    "precedence_not_ne": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "precedence_not_parenthesized": {
+      "items_not_allowed": [
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "precedence_or_and": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ]
+      ]
+    },
+    "precedence_or_and_parenthesized": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "reference_A_Parent_Reference": {},
+    "reference_A_Reference": {
+      "items_not_allowed": [
+        [
+          "R1:pad1"
+        ]
+      ]
+    },
+    "reference_B_Reference": {},
+    "reference_Parent_Reference": {},
+    "severity_ignore": {},
+    "size_x_mil": {
+      "items_not_allowed": [
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "size_x_mm": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
+        [
+          "R1:pad1"
+        ]
+      ]
+    },
+    "size_x_ne_quoted_mm": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "size_x_quoted": {},
+    "size_x_quoted_integer": {},
+    "size_x_quoted_or": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "size_x_quoted_quarter": {},
+    "size_y_half_mm": {
+      "items_not_allowed": [
+        [
+          "R2:pad1"
+        ]
+      ]
+    },
+    "static_class_track": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "static_class_via": {
+      "items_not_allowed": [
+        [
+          "X-blind"
+        ],
+        [
+          "X-buried"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ]
+      ]
+    },
+    "static_inner_track": {
+      "items_not_allowed": [
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "static_inner_via": {
+      "items_not_allowed": [
+        [
+          "X-blind"
+        ],
+        [
+          "X-buried"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ],
+        [
+          "Y-through"
+        ]
+      ]
+    },
+    "static_layer_track": {
+      "items_not_allowed": [
+        [
+          "X-front"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "static_net_track": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
+    "static_net_via": {
+      "items_not_allowed": [
+        [
+          "X-blind"
+        ],
+        [
+          "X-buried"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ]
+      ]
+    },
+    "static_type_track": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "static_type_via": {
+      "items_not_allowed": [
+        [
+          "X-blind"
+        ],
+        [
+          "X-buried"
+        ],
+        [
+          "X-micro"
+        ],
+        [
+          "X-through"
+        ],
+        [
+          "Y-through"
+        ]
+      ]
+    },
+    "subtype_blind_via": {
+      "items_not_allowed": [
+        [
+          "X-blind"
+        ]
+      ]
+    },
+    "subtype_buried_via": {
+      "items_not_allowed": [
+        [
+          "X-buried"
+        ]
+      ]
+    },
+    "subtype_micro_via": {
+      "items_not_allowed": [
+        [
+          "X-micro"
+        ]
+      ]
+    },
+    "subtype_through_via": {
+      "items_not_allowed": [
+        [
+          "X-through"
+        ],
+        [
+          "Y-through"
+        ]
+      ]
+    },
+    "unknown_function": {},
+    "unknown_property": {},
+    "unknown_short_circuit": {},
+    "width_eq_250fs": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_bare_integer": {},
+    "width_eq_deg": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_double": {},
+    "width_eq_double_multiliteral_false_or": {},
+    "width_eq_double_or": {},
+    "width_eq_fs": {},
+    "width_eq_inch_or": {},
+    "width_eq_integer_multiliteral_false_or": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_mil": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_mm": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_ps": {},
+    "width_eq_quarter_ps": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_quoted_integer": {},
+    "width_eq_quoted_mm": {},
+    "width_eq_quoted_mm_or": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_eq_spaced_mm": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ]
+      ]
+    },
+    "width_eq_thou_or": {},
+    "width_eq_upper_mm_or": {},
+    "width_gt_bare_integer": {},
+    "width_gt_bare_zero": {},
+    "width_gt_cm": {},
+    "width_gt_cm_or": {},
+    "width_gt_double": {},
+    "width_gt_double_multiliteral_false_or": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_double_multiliteral_true_or": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_double_or": {},
+    "width_gt_in": {
+      "items_not_allowed": [
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_mils": {},
+    "width_gt_mils_or": {},
+    "width_gt_mm": {
+      "items_not_allowed": [
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_quoted_mm": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_spaced_in": {
+      "items_not_allowed": [
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_um": {},
+    "width_gt_um_or": {},
+    "width_gt_upper_in_or": {},
+    "width_gt_zero_fs": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_gt_zero_ps": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_ne_double": {},
+    "width_ne_double_multiliteral_false_or": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_ne_double_or": {},
+    "width_ne_quoted_mm": {
+      "items_not_allowed": [
+        [
+          "quarter"
+        ],
+        [
+          "thin"
+        ],
+        [
+          "wide"
+        ]
+      ]
+    },
+    "width_non_track_eq_diameter": {},
+    "width_non_track_eq_zero": {},
+    "width_non_track_gt": {},
+    "width_non_track_lt": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ],
+        [
+          "free-track"
+        ],
+        [
+          "free-via"
+        ]
+      ]
+    },
+    "width_non_track_ne": {},
+    "zone_pair_front_different_layer": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-front"
+        ]
+      ]
+    },
+    "zone_pair_front_exists_front": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-front"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-front"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-front"
+        ],
+        [
+          "zone-front",
+          "zone-front-track"
+        ],
+        [
+          "zone-front",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_front_item_back": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-front"
+        ]
+      ]
+    },
+    "zone_pair_front_item_front": {
+      "clearance": [
+        [
+          "ZPF:pad1",
+          "zone-front"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-front"
+        ],
+        [
+          "zone-front",
+          "zone-front-track"
+        ]
+      ]
+    },
+    "zone_pair_front_same_layer": {
+      "clearance": [
+        [
+          "ZPF:pad1",
+          "zone-front"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-front"
+        ],
+        [
+          "zone-front",
+          "zone-front-track"
+        ]
+      ]
+    },
+    "zone_pair_front_unconditional": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-front"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-front"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-front"
+        ],
+        [
+          "zone-front",
+          "zone-front-track"
+        ],
+        [
+          "zone-front",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_front_zone_front": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-front"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-front"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-front"
+        ],
+        [
+          "zone-front",
+          "zone-front-track"
+        ],
+        [
+          "zone-front",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_front_zone_not_front": {},
+    "zone_pair_front_zone_type": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-front"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-front"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-front"
+        ],
+        [
+          "zone-front",
+          "zone-front-track"
+        ],
+        [
+          "zone-front",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_inner_different_layer": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-inner"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-inner"
+        ]
+      ]
+    },
+    "zone_pair_inner_exists_front": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-inner"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-inner"
+        ],
+        [
+          "zone-inner",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_inner_item_back": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-inner"
+        ]
+      ]
+    },
+    "zone_pair_inner_item_front": {
+      "clearance": [
+        [
+          "ZPF:pad1",
+          "zone-inner"
+        ]
+      ]
+    },
+    "zone_pair_inner_same_layer": {
+      "clearance": [
+        [
+          "zone-inner",
+          "zone-inner-track"
+        ]
+      ]
+    },
+    "zone_pair_inner_unconditional": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-inner"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-inner"
+        ],
+        [
+          "zone-inner",
+          "zone-inner-track"
+        ],
+        [
+          "zone-inner",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_inner_zone_front": {},
+    "zone_pair_inner_zone_not_front": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-inner"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-inner"
+        ],
+        [
+          "zone-inner",
+          "zone-inner-track"
+        ],
+        [
+          "zone-inner",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_inner_zone_type": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-inner"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-inner"
+        ],
+        [
+          "zone-inner",
+          "zone-inner-track"
+        ],
+        [
+          "zone-inner",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_multi_different_layer": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-multi"
+        ],
+        [
+          "zone-front-track",
+          "zone-multi"
+        ],
+        [
+          "zone-inner-track",
+          "zone-multi"
+        ]
+      ]
+    },
+    "zone_pair_multi_exists_front": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-multi"
+        ],
+        [
+          "zone-front-track",
+          "zone-multi"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_multi_item_back": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ]
+      ]
+    },
+    "zone_pair_multi_item_front": {
+      "clearance": [
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-multi"
+        ],
+        [
+          "zone-front-track",
+          "zone-multi"
+        ]
+      ]
+    },
+    "zone_pair_multi_same_layer": {},
+    "zone_pair_multi_unconditional": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-multi"
+        ],
+        [
+          "zone-front-track",
+          "zone-multi"
+        ],
+        [
+          "zone-inner-track",
+          "zone-multi"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_multi_zone_empty": {},
+    "zone_pair_multi_zone_front": {},
+    "zone_pair_multi_zone_not_front": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-multi"
+        ],
+        [
+          "zone-front-track",
+          "zone-multi"
+        ],
+        [
+          "zone-inner-track",
+          "zone-multi"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_multi_zone_type": {
+      "clearance": [
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPB:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZPF:pad1",
+          "zone-multi"
+        ],
+        [
+          "ZSF:pad1",
+          "zone-multi"
+        ],
+        [
+          "zone-front-track",
+          "zone-multi"
+        ],
+        [
+          "zone-inner-track",
+          "zone-multi"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ],
+        [
+          "zone-multi",
+          "zone-through-via"
+        ]
+      ]
+    },
+    "zone_pair_multi_zone_undefined": {},
+    "zone_pair_multi_zone_wildcard": {}
+  },
+  "judge": "KiCad 10.0.6",
+  "schema_version": 1
+}

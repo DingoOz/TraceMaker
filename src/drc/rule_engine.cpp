@@ -5,13 +5,14 @@
 #include <cctype>
 #include <cmath>
 #include <initializer_list>
+#include <cstdlib>
 #include <string_view>
 
 namespace tmk::drc {
 
 // ---------------------------------------------------------------------------------------------------------
 // Condition expressions: a small recursive-descent parser for the subset of KiCad's rule language used in
-// practice: A./B. properties, string/number literals, == != && || ! and parentheses, and a few functions.
+// practice: A./B. properties, string/number literals, comparisons, && || ! and a few functions.
 // ---------------------------------------------------------------------------------------------------------
 struct EvalCtx {
   const RuleEngine* eng;
@@ -22,7 +23,7 @@ struct EvalCtx {
 };
 
 struct Value {
-  enum class K { Undef, Bool, Str, Num } k = K::Undef;
+  enum class K { Undef, Bool, Str, Num, NoLayer } k = K::Undef;
   bool b = false;
   std::string s;
   double n = 0;
@@ -32,7 +33,7 @@ struct Value {
 class Condition {
  public:
   struct Node {
-    enum class Op { Or, And, Not, Eq, Ne, Lit, Prop, Call } op;
+    enum class Op { Or, And, Not, Eq, Ne, Lt, Le, Gt, Ge, Lit, Prop, Call } op;
     std::vector<std::unique_ptr<Node>> kids;
     Value lit;
     char who = 'A';       // A or B
@@ -45,9 +46,11 @@ class Condition {
     c->src_ = text;
     c->pos_ = 0;
     try {
-      c->root_ = c->parse_or();
+      c->root_ = c->parse_and();
       c->skip();
       if (c->pos_ != c->src_.size()) throw std::runtime_error("unexpected '" + c->src_.substr(c->pos_, 10) + "'");
+      // libeval_compiler rejects a lone numeric literal without units, even in an unused OR branch.
+      if (c->numeric_count_ == 1 && c->missing_units_) throw std::runtime_error("numeric literal is missing units");
     } catch (const std::exception& e) {
       err = e.what();
       return nullptr;
@@ -58,9 +61,13 @@ class Condition {
   bool eval(EvalCtx& ctx) const { return eval(*root_, ctx).truthy(); }
   // Property or function names used by either item.
   bool references(std::initializer_list<std::string_view> names) const { return references(*root_, names); }
-  // First property or function that prop() / call() below do not evaluate ("" if none): such a condition is
-  // never true here.
+  // First argument of every call of one of the named functions.
+  void first_args(std::initializer_list<std::string_view> names, std::vector<std::string>& out) const { first_args(*root_, names, out); }
+  // First property or function that prop() / call() below do not evaluate and that is not one of KiCad's
+  // functions either ("" if none): KiCad does not compile such a condition, and the rule is dropped.
   std::string unsupported() const { return unsupported(*root_); }
+  // First function that KiCad knows and call() below does not evaluate ("" if none).
+  std::string unevaluated() const { return unevaluated(*root_); }
 
  private:
   void skip() {
@@ -79,55 +86,59 @@ class Condition {
     n->op = op;
     return n;
   }
-  std::unique_ptr<Node> parse_or() {
-    auto l = parse_and();
-    while (eat("||")) {
-      auto n = make(Node::Op::Or);
-      n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_and());
-      l = std::move(n);
-    }
-    return l;
-  }
+  // KiCad's grammar gives || a higher precedence than && and puts ! above the comparisons, unlike C:
+  // `a && b || c` is `a && (b || c)`, and `!A.NetName == 'X'` compares the negation with 'X' (never equal).
+  // Measured with KiCad 10.0.6: corpus cases precedence_* (doc 05 §33).
   std::unique_ptr<Node> parse_and() {
-    auto l = parse_unary();
+    auto l = parse_or();
     while (eat("&&")) {
       auto n = make(Node::Op::And);
       n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_unary());
+      n->kids.push_back(parse_or());
       l = std::move(n);
     }
     return l;
   }
-  std::unique_ptr<Node> parse_unary() {
+  std::unique_ptr<Node> parse_or() {
+    auto l = parse_compare();
+    while (eat("||")) {
+      auto n = make(Node::Op::Or);
+      n->kids.push_back(std::move(l));
+      n->kids.push_back(parse_compare());
+      l = std::move(n);
+    }
+    return l;
+  }
+  std::unique_ptr<Node> parse_compare() {
+    auto l = parse_not();
+    for (const auto& [token, op] : {std::pair{"==", Node::Op::Eq}, {"!=", Node::Op::Ne},
+                                   {"<=", Node::Op::Le}, {">=", Node::Op::Ge},
+                                   {"<", Node::Op::Lt}, {">", Node::Op::Gt}}) {
+      if (!eat(token)) continue;
+      auto n = make(op);
+      n->kids.push_back(std::move(l));
+      n->kids.push_back(parse_not());
+      return n;
+    }
+    return l;
+  }
+  std::unique_ptr<Node> parse_not() {
     skip();
     if (pos_ < src_.size() && src_[pos_] == '!' && (pos_ + 1 >= src_.size() || src_[pos_ + 1] != '=')) {
       ++pos_;
       auto n = make(Node::Op::Not);
-      n->kids.push_back(parse_unary());
+      n->kids.push_back(parse_not());
       return n;
     }
-    auto l = parse_term();
-    if (eat("==")) {
-      auto n = make(Node::Op::Eq);
-      n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_term());
-      return n;
-    }
-    if (eat("!=")) {
-      auto n = make(Node::Op::Ne);
-      n->kids.push_back(std::move(l));
-      n->kids.push_back(parse_term());
-      return n;
-    }
-    return l;
+    return parse_term();
   }
   std::string read_string() {
     const char q = src_[pos_++];
     std::string s;
     while (pos_ < src_.size() && src_[pos_] != q) s += src_[pos_++];
-    if (pos_ >= src_.size()) throw std::runtime_error("unterminated string");
-    ++pos_;
+    // KiCad lets a terminal single-quoted string run to the end of the condition.
+    if (pos_ == src_.size() && q != '\'') throw std::runtime_error("unterminated string");
+    if (pos_ < src_.size()) ++pos_;
     return s;
   }
   std::unique_ptr<Node> parse_term() {
@@ -136,7 +147,7 @@ class Condition {
     const char c = src_[pos_];
     if (c == '(') {
       ++pos_;
-      auto n = parse_or();
+      auto n = parse_and();
       if (!eat(")")) throw std::runtime_error("missing ')'");
       return n;
     }
@@ -146,12 +157,37 @@ class Condition {
       n->lit.s = read_string();
       return n;
     }
-    if (std::isdigit(static_cast<unsigned char>(c)) || c == '-' || c == '.') {
-      std::size_t b = pos_;
-      while (pos_ < src_.size() && (std::isalnum(static_cast<unsigned char>(src_[pos_])) || src_[pos_] == '.' || src_[pos_] == '-')) ++pos_;
+    if (std::isdigit(static_cast<unsigned char>(c)) || c == '-' || c == '+' || c == '.') {
+      // KiCad's numbers are an optional sign, digits and an optional fraction: ".3mm" and "3e-1mm" do not
+      // compile there (number_leading_dot, number_exponent), and strtod would also take hexadecimal.
+      std::size_t e = pos_ + ((c == '-' || c == '+') ? 1 : 0);
+      const std::size_t digits = e;
+      while (e < src_.size() && std::isdigit(static_cast<unsigned char>(src_[e]))) ++e;
+      if (e == digits) throw std::runtime_error("invalid number");
+      if (e < src_.size() && src_[e] == '.') {
+        ++e;
+        while (e < src_.size() && std::isdigit(static_cast<unsigned char>(src_[e]))) ++e;
+      }
+      const double number = std::strtod(src_.substr(pos_, e - pos_).c_str(), nullptr);
+      if (!std::isfinite(number)) throw std::runtime_error("invalid number");
+      pos_ = e;
+      skip();
+      const std::size_t unit_start = pos_;
+      while (pos_ < src_.size() && std::isalpha(static_cast<unsigned char>(src_[pos_]))) ++pos_;
+      const std::string unit = src_.substr(unit_start, pos_ - unit_start);
+      double scale = 1;
+      if (unit == "mm") scale = 1e6;
+      else if (unit == "mil") scale = 25400;
+      else if (unit == "in") scale = 25400000;
+      else if (unit == "ps") scale = 1e6;  // KiCad's internal time unit is the attosecond.
+      else if (unit == "fs") scale = 1000;
+      else if (unit == "deg") scale = 1;
+      else if (!unit.empty()) throw std::runtime_error("unknown unit '" + unit + "'");
+      ++numeric_count_;
+      missing_units_ = missing_units_ || unit.empty();
       auto n = make(Node::Op::Lit);
       n->lit.k = Value::K::Num;
-      n->lit.n = std::atof(src_.substr(b, pos_ - b).c_str());
+      n->lit.n = number * scale;
       return n;
     }
     // Identifier: A.Prop, B.func(args), or a bare word (true/false).
@@ -192,23 +228,49 @@ class Condition {
     return false;
   }
 
+  static void first_args(const Node& n, std::initializer_list<std::string_view> names, std::vector<std::string>& out) {
+    if (n.op == Node::Op::Call && !n.args.empty() && std::find(names.begin(), names.end(), n.name) != names.end()) out.push_back(n.args[0]);
+    for (const auto& k : n.kids) first_args(*k, names, out);
+  }
+
   static std::string unsupported(const Node& n) {
-    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "Reference", "Parent.Reference", "Pad_Type", "Width"};
+    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
+                                                 "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
-                                                 "memberOfFootprint"};
+                                                 "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
-    if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls)) return n.name + "()";
+    if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls) && !kicad_only(n.name))
+      return n.name + "()";
     for (const auto& k : n.kids)
       if (auto u = unsupported(*k); !u.empty()) return u;
     return {};
   }
 
+  // Functions of KiCad 10 that TraceMaker does not evaluate (each measured with KiCad 10.0.6: a rule
+  // "A.NetName == 'X' || A.<function>(...)" still selects the X items, corpus cases kicad_function_*). KiCad
+  // applies these rules, so they are not dropped like a rule with an unknown symbol: the call is undefined
+  // (false) here, as before D80, and a disallow whose evaluation reached it does not fire (disallow_hit).
+  static bool kicad_only(std::string_view name) {
+    static constexpr std::string_view names[] = {
+        "hasNetclass", "hasExactNetclass", "hasComponentClass", "fromTo", "isMicroVia", "isBlindBuriedVia", "isBlindVia",
+        "isBuriedVia", "isCoupledDiffPair", "getField", "memberOf", "memberOfGroup", "memberOfSheet",
+        "memberOfSheetOrChildren", "insideCourtyard", "insideFrontCourtyard", "insideBackCourtyard"};
+    return std::find(std::begin(names), std::end(names), name) != std::end(names);
+  }
+  static std::string unevaluated(const Node& n) {
+    if (n.op == Node::Op::Call && kicad_only(n.name)) return n.name + "()";
+    for (const auto& k : n.kids)
+      if (auto u = unevaluated(*k); !u.empty()) return u;
+    return {};
+  }
+
   static bool str_eq(const Value& l, const Value& r) {
-    if (l.k == Value::K::Num || r.k == Value::K::Num) {
-      const double a = l.k == Value::K::Num ? l.n : std::atof(l.s.c_str());
-      const double b = r.k == Value::K::Num ? r.n : std::atof(r.s.c_str());
-      return std::fabs(a - b) < 1e-9;
-    }
+    // Exact, as in KiCad: a literal is its decimal value times the unit scale in double precision, so
+    // "A.Width == 1.001mm" (1000999.9999999999 nm) does not match a 1001000 nm track (number_inexact_*).
+    if (l.k == Value::K::Num && r.k == Value::K::Num) return l.n == r.n;
+    // KiCad's layer value rejects its unset ID even against '*'; it is not a missing property.
+    if (l.k == Value::K::NoLayer || r.k == Value::K::NoLayer) return false;
+    if (l.k != r.k) return false;
     if (l.k == Value::K::Bool || r.k == Value::K::Bool) return l.truthy() == r.truthy();
     // KiCad compares strings case-insensitively with wildcard support on either side.
     auto low = [](std::string s) {
@@ -228,20 +290,65 @@ class Condition {
     if (n.name == "NetClass") v.s = ctx.eng->netclass(*it).name;
     else if (n.name == "NetName") v.s = b.nets[static_cast<std::size_t>(it->net)].name;
     else if (n.name == "Type") v.s = it->kind == ItemKind::Arc ? "Track" : kind_name(it->kind);
-    else if (n.name == "Layer") v.s = ctx.layer >= 0 ? b.copper_name(ctx.layer) : "";
-    else if (n.name == "Reference" || n.name == "Parent.Reference")
+    else if (n.name == "L") return {};
+    else if (n.name == "Layer") {
+      // Vias have no own layer; pads use the footprint side even when their copper is multilayer.
+      if (it->kind == ItemKind::Via) return {};
+      if (it->kind == ItemKind::Pad && it->footprint >= 0) {
+        v.s = b.footprints[static_cast<std::size_t>(it->footprint)].back ? "B.Cu" : "F.Cu";
+      } else {
+        // Multilayer zones expose an unset layer ID, not the copper projection's fill layer.
+        const model::LayerMask layers = it->kind == ItemKind::Zone
+                                           ? b.zones[static_cast<std::size_t>(it->index)].copper
+                                           : it->layers;
+        if (!layers || (layers & (layers - 1))) {
+          v.k = it->kind == ItemKind::Zone ? Value::K::NoLayer : Value::K::Undef;
+          return v;
+        }
+        int layer = 0;
+        while (!(layers & model::layer_bit(layer))) ++layer;
+        v.s = b.copper_name(layer);
+      }
+    } else if (n.name == "Reference")
       v.s = it->footprint >= 0 ? b.footprints[static_cast<std::size_t>(it->footprint)].reference : "";
     else if (n.name == "Pad_Type" && it->kind == ItemKind::Pad) {
       static const char* names[] = {"SMD", "Through-hole", "NPTH, mechanical", "Edge connector"};
       v.s = names[static_cast<int>(b.pads[static_cast<std::size_t>(it->index)].type)];
     } else if (n.name == "Width") {
+      // Only tracks and arcs have a Width in KiCad. A via's diameter (CopperItem::width) is not one: for pads and
+      // vias the property is undefined (== and != false, relational comparisons see 0).
+      if (it->kind != ItemKind::Track && it->kind != ItemKind::Arc) return {};
       v.k = Value::K::Num;
-      v.n = static_cast<double>(it->width) / 1e6;
+      v.n = static_cast<double>(it->width);
+    } else if (n.name == "Size_X" || n.name == "Size_Y") {
+      if (it->kind != ItemKind::Pad || it->index < 0) return {};
+      const auto& pad = b.pads[static_cast<std::size_t>(it->index)];
+      v.k = Value::K::Num;
+      v.n = static_cast<double>(n.name == "Size_X" ? pad.size_x : pad.size_y);
+    } else if (n.name == "Position_X" || n.name == "Position_Y") {
+      if (it->kind != ItemKind::Via && it->kind != ItemKind::Pad) return {};
+      v.k = Value::K::Num;
+      v.n = static_cast<double>(n.name == "Position_X" ? it->pos.x : it->pos.y);
     } else {
       ctx.unknown = true;
       v.k = Value::K::Undef;
     }
     return v;
+  }
+
+  // Area and courtyard functions of a zone fill are remembered by (condition node, zone, fill): a fill has tens
+  // of thousands of points and is asked again for every pair it is in. Other items are computed each time.
+  template <class F> static bool cached_for_fill(const Node& n, const CopperItem& it, EvalCtx& ctx, F&& compute) {
+    if (it.kind != ItemKind::Zone) return compute();
+    const std::tuple<const void*, int, int> key{&n, it.index, it.sub};
+    {
+      const std::lock_guard lock(ctx.eng->area_mutex_);
+      if (const auto f = ctx.eng->area_cache_.find(key); f != ctx.eng->area_cache_.end()) return f->second;
+    }
+    const bool result = compute();
+    const std::lock_guard lock(ctx.eng->area_mutex_);
+    ctx.eng->area_cache_[key] = result;
+    return result;
   }
 
   Value call(const Node& n, EvalCtx& ctx) const {
@@ -256,32 +363,14 @@ class Condition {
       const int l = b.copper_index(n.args[0]);
       v.b = l >= 0 && (it->layers & model::layer_bit(l));
     } else if ((n.name == "insideArea" || n.name == "intersectsArea" || n.name == "enclosedByArea") && !n.args.empty()) {
-      const bool fill = it->kind == ItemKind::Zone;
-      const std::tuple<const void*, int, int> key{&n, it->index, it->sub};
-      if (fill) {
-        const std::lock_guard lock(ctx.eng->area_mutex_);
-        if (const auto f = ctx.eng->area_cache_.find(key); f != ctx.eng->area_cache_.end()) {
-          v.b = f->second;
-          return v;
-        }
-      }
-      for (const auto& z : b.zones) {
-        if (!model::wildcard_match(n.args[0], z.name) || z.outline.empty()) continue;
-        const auto& poly = z.outline.front();
-        const bool all_in = geom::point_in_polygon({it->box.x0, it->box.y0}, poly) && geom::point_in_polygon({it->box.x1, it->box.y1}, poly) &&
-                            geom::point_in_polygon({it->box.x0, it->box.y1}, poly) && geom::point_in_polygon({it->box.x1, it->box.y0}, poly);
-        bool any = geom::point_in_polygon(it->pos, poly);
-        if (!any) {
-          const geom::Shape area = geom::Shape::polygon(poly, 0);
-          for (const auto& s : it->shapes)
-            if (geom::closer_than(s, area, 1)) { any = true; break; }
-        }
-        if (n.name == "intersectsArea" ? any : all_in) { v.b = true; break; }
-      }
-      if (fill) {
-        const std::lock_guard lock(ctx.eng->area_mutex_);
-        ctx.eng->area_cache_[key] = v.b;
-      }
+      v.b = cached_for_fill(n, *it, ctx, [&] {
+        for (const auto& z : b.zones)
+          if (model::wildcard_match(n.args[0], z.name) && area_matches(*it, z, n.name == "enclosedByArea")) return true;
+        return false;
+      });
+    } else if ((n.name == "intersectsCourtyard" || n.name == "intersectsFrontCourtyard" ||
+                n.name == "intersectsBackCourtyard") && !n.args.empty()) {
+      v.b = cached_for_fill(n, *it, ctx, [&] { return courtyard_matches(*it, ctx.eng->courtyards_, n.args[0], n.name); });
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
       // P/N or +/-) matches the pattern.
@@ -291,7 +380,10 @@ class Condition {
         v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
       }
     } else if (n.name == "memberOfFootprint" && !n.args.empty()) {
-      v.b = it->footprint >= 0 && model::wildcard_match(n.args[0], b.footprints[static_cast<std::size_t>(it->footprint)].reference);
+      if (it->footprint >= 0) {
+        const auto& fp = b.footprints[static_cast<std::size_t>(it->footprint)];
+        v.b = footprint_selected(n.args[0], fp.reference, fp.lib_id);
+      }
     } else {
       ctx.unknown = true;
       v.k = Value::K::Undef;
@@ -306,8 +398,25 @@ class Condition {
       case Node::Op::Or: v.b = eval(*n.kids[0], ctx).truthy() || eval(*n.kids[1], ctx).truthy(); return v;
       case Node::Op::And: v.b = eval(*n.kids[0], ctx).truthy() && eval(*n.kids[1], ctx).truthy(); return v;
       case Node::Op::Not: v.b = !eval(*n.kids[0], ctx).truthy(); return v;
-      case Node::Op::Eq: v.b = str_eq(eval(*n.kids[0], ctx), eval(*n.kids[1], ctx)); return v;
-      case Node::Op::Ne: v.b = !str_eq(eval(*n.kids[0], ctx), eval(*n.kids[1], ctx)); return v;
+      case Node::Op::Eq:
+      case Node::Op::Ne:
+      case Node::Op::Lt:
+      case Node::Op::Le:
+      case Node::Op::Gt:
+      case Node::Op::Ge: {
+        const Value l = eval(*n.kids[0], ctx), r = eval(*n.kids[1], ctx);
+        if ((n.op == Node::Op::Eq || n.op == Node::Op::Ne) && (l.k == Value::K::Undef || r.k == Value::K::Undef)) return v;
+        switch (n.op) {
+          case Node::Op::Eq: v.b = str_eq(l, r); break;
+          case Node::Op::Ne: v.b = !str_eq(l, r); break;
+          case Node::Op::Lt: v.b = l.n < r.n; break;
+          case Node::Op::Le: v.b = l.n <= r.n; break;
+          case Node::Op::Gt: v.b = l.n > r.n; break;
+          case Node::Op::Ge: v.b = l.n >= r.n; break;
+          default: break;
+        }
+        return v;
+      }
       case Node::Op::Lit: return n.lit;
       case Node::Op::Prop: return prop(n, ctx);
       case Node::Op::Call: return call(n, ctx);
@@ -317,6 +426,8 @@ class Condition {
 
   std::string src_;
   std::size_t pos_ = 0;
+  std::size_t numeric_count_ = 0;
+  bool missing_units_ = false;
   std::unique_ptr<Node> root_;
 };
 
@@ -333,8 +444,20 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         warnings_.push_back("rule '" + rule.name + "': cannot parse condition (" + err + "); rule ignored");
       }
     }
+    if (c.cond) {
+      if (const auto unsupported = c.cond->unsupported(); !unsupported.empty()) {
+        c.valid = false;
+        warnings_.push_back("rule '" + rule.name + "': condition uses " + unsupported +
+                            ", which TraceMaker does not evaluate; rule not applied");
+      } else if (const auto unevaluated = c.cond->unevaluated(); !unevaluated.empty()) {
+        warnings_.push_back("rule '" + rule.name + "': condition uses " + unevaluated +
+                            ", which KiCad evaluates and TraceMaker does not: it is taken as false, and a disallow never "
+                            "fires through it");
+      }
+    }
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
-                                               "Reference", "Parent.Reference", "Pad_Type", "Width"});
+                                               "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
+                                               "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
     const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair"});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
@@ -346,13 +469,31 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         if (w != "track" && w != "via" && w != "through_via" && w != "micro_via" && w != "buried_via" && w != "blind_via" && w != "pad" &&
             w != "zone" && w != "graphic")
           warnings_.push_back("rule '" + rule.name + "': disallow " + w + " is not checked by TraceMaker (KiCad's DRC still reports it)");
-      if (const std::string u = c.cond ? c.cond->unsupported() : std::string(); !u.empty())
-        warnings_.push_back("rule '" + rule.name + "': disallow condition uses " + u + ", which TraceMaker does not evaluate; rule not applied");
-      else if (c.positional)
+      if (c.positional)
         warnings_.push_back("rule '" + rule.name +
                             "': disallow condition depends on position or footprint; the router does not avoid it, the DRC reports it");
     }
     rules_.push_back(std::move(c));
+  }
+  std::vector<std::string> selectors;
+  for (const auto& c : rules_)
+    if (c.valid && c.cond) c.cond->first_args({"intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"}, selectors);
+  if (!selectors.empty()) {
+    courtyards_ = build_courtyards(b_);
+    for (const auto& selector : selectors) index_courtyard_selector(courtyards_, selector);
+    // Rule 6: a courtyard that could not be read never matches, which must not pass in silence (KiCad reports
+    // such footprints as malformed courtyards).
+    std::string names;
+    int unreadable = 0;
+    for (const auto& entry : courtyards_.entries)
+      for (int side = 0; side < 2; ++side) {
+        if (!entry.sides[static_cast<std::size_t>(side)].unreadable) continue;
+        if (++unreadable <= 5) names += (names.empty() ? "" : ", ") + entry.reference + (side == 0 ? " (F.CrtYd)" : " (B.CrtYd)");
+      }
+    if (unreadable > 0)
+      warnings_.push_back("courtyard outline of " + names + (unreadable > 5 ? " and " + std::to_string(unreadable - 5) + " more" : "") +
+                          " is not a closed outline TraceMaker can read (open, self-crossing or with a Bezier curve); "
+                          "courtyard rule conditions do not match there");
   }
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
@@ -500,8 +641,15 @@ bool disallow_word_matches(const std::string& w, const CopperItem& it, const mod
     case ItemKind::Via: {
       if (w == "via") return true;
       const auto type = via_type ? *via_type : it.index >= 0 ? b.vias[static_cast<std::size_t>(it.index)].type : model::ViaType::Through;
-      return (w == "through_via" && type == model::ViaType::Through) || (w == "micro_via" && type == model::ViaType::Micro) ||
-             ((w == "buried_via" || w == "blind_via") && type == model::ViaType::Blind);
+      if (w == "through_via") return type == model::ViaType::Through;
+      if (w == "micro_via") return type == model::ViaType::Micro;
+      if (type != model::ViaType::Blind) return false;
+      // A router probe has no span yet; conservatively retain the existing blind/buried gate.
+      if (via_type || it.index < 0) return w == "blind_via" || w == "buried_via";
+      const auto& via = b.vias[static_cast<std::size_t>(it.index)];
+      const bool top_outer = via.layer_top == 0;
+      const bool bottom_outer = via.layer_bottom == b.copper_count() - 1;
+      return (w == "blind_via" && top_outer != bottom_outer) || (w == "buried_via" && !top_outer && !bottom_outer);
     }
   }
   return false;
@@ -523,7 +671,10 @@ bool RuleEngine::disallow_hit(const Compiled& c, const CopperItem& it, int layer
 std::optional<std::string> RuleEngine::disallowed(const CopperItem& it, int layer) const {
   std::optional<std::string> out;
   for (const auto& c : rules_)
-    if (disallow_hit(c, it, layer)) out = c.rule->name;
+    if (disallow_hit(c, it, layer)) {
+      if (c.rule->severity == "ignore") out.reset();
+      else out = c.rule->name;
+    }
   return out;
 }
 
@@ -532,9 +683,10 @@ bool RuleEngine::track_allowed(model::NetId net, int layer) const {
   probe.kind = ItemKind::Track;
   probe.net = net;
   probe.layers = model::layer_bit(layer);
+  bool allowed = true;
   for (const auto& c : rules_)
-    if (!c.positional && disallow_hit(c, probe, layer)) return false;
-  return true;
+    if (!c.positional && disallow_hit(c, probe, layer)) allowed = c.rule->severity == "ignore";
+  return allowed;
 }
 
 bool RuleEngine::via_allowed(model::NetId net, model::ViaType type) const {
@@ -544,9 +696,12 @@ bool RuleEngine::via_allowed(model::NetId net, model::ViaType type) const {
   probe.kind = ItemKind::Via;
   probe.net = net;
   for (int l = 0; l < b_.copper_count(); ++l) probe.layers |= model::layer_bit(l);
-  for (const auto& c : rules_)
-    for (int l = 0; l < b_.copper_count(); ++l)
-      if (!c.positional && disallow_hit(c, probe, l, &type)) return false;
+  for (int l = 0; l < b_.copper_count(); ++l) {
+    bool allowed = true;
+    for (const auto& c : rules_)
+      if (!c.positional && disallow_hit(c, probe, l, &type)) allowed = c.rule->severity == "ignore";
+    if (!allowed) return false;
+  }
   return true;
 }
 

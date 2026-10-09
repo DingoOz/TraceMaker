@@ -728,9 +728,12 @@ pad's own layer.
 | Rule | Router | DRC (`tracemaker drc`) |
 |---|---|---|
 | `disallow track` by net, net class, type or layer, including `inDiffPair` | `RuleEngine::track_allowed` supplies per-net layer masks for pad cells, escapes, planar moves, via landings, diff-pair legs, escape corridors and fields. Through vias may pass through disallowed track layers. | `items_not_allowed`, once per item |
-| `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). `blind_via` or `buried_via` alone stops blind and buried vias for the net (`--blind-vias`; the board model has one type for the two, so either word forbids both), `micro_via` alone stops micro vias (`--micro-vias`); the other type stays available. | `items_not_allowed` |
-| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`) | Not applied; `tracemaker route` and `tracemaker drc` print a warning naming the rule. | Reported |
-| `disallow` whose condition does not parse, or uses a property or function TraceMaker does not evaluate | Not applied; warned by name in both commands. | Not reported |
+| `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). Blind/buried router probes have no span yet, so either keyword conservatively stops both; `micro_via` alone stops micro vias. | `items_not_allowed`; `blind_via` has exactly one outer span endpoint, `buried_via` none, micro remains separate (D80). |
+| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Not applied; both commands warn by rule name that the router does not avoid it, the DRC reports it. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
+| Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
+| Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasExactNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
+| Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
+| Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have no layer property. A zone uses its source layer, not a fill projection; a multilayer zone has an unset layer ID (`==` false, `!=` true). Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
 | `physical_hole_clearance` | Between a hole and any other item's copper, whatever the nets, as KiCad reports it. `Obstacles::physical_copper_state` tests new tracks and via pads against the holes of pads and vias; `physical_hole_state` tests a new via's hole against copper; both against fixed and routed items, in the exact check before commit and in the search's cached and routed checks. A net whose vias the rule sets against its own tracks (an unconditional rule does) gets no vias: the tracks that end in a via touch its hole. For the same reason a track cannot end on a plated pad of its own net under such a rule. | `hole_clearance`, once per hole and item, any net |
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
@@ -986,3 +989,119 @@ connections; with planes of one net on In1 and In2, two vias instead of three.
 **Tried and dropped.** Keeping teardrops hard under `--soft-zones` (as track copper), on top of the target fix and
 before the contact credit: RoyalBlue 108 → 100 unconnected at 3 M but 89 both at 10 M, complex_hierarchy equal; no
 consistent effect, so they stay as soft as other fills.
+## 33. Custom-rule conditions: KiCad 10 parity (2026-10-08)
+
+**Before.** The 61-case custom-rule corpus matched 35 cases and disagreed on 26. Comparisons discarded unit
+suffixes, unknown symbols could hide behind short-circuiting despite a "rule not applied" warning, and area
+enclosure used bounding-box corners. Vias acquired the DRC pass's layer; ignore rules and blind/buried spans
+were not distinguished.
+
+**What was built** (D80).
+
+| Semantics | Deciding KiCad 10.0.3 cases |
+|---|---|
+| `<`, `<=`, `>`, `>=` and numeric equality/inequality; dimensional properties are nanometres | `width_gt_mm`, `position_anchor_x_le_zero`, `size_x_mm`, `size_y_half_mm`, `size_x_mil` |
+| Literal scaling without rounding, retaining fractional nanometres; equality is exact in double precision, so `A.Width == 1.001mm` (1000999.9999999999 nm) does not match a 1.001 mm track. A literal is a sign, digits and an optional fraction: no leading dot, no exponent | `width_eq_mil`, `literal_mm_mil`, `fractional_nm_constant`, `fractional_nm_not_zero`, `number_inexact_*`, `number_leading_dot`, `number_exponent` |
+| Exact case-sensitive unit vocabulary: `mm`, `mil`, `in`, `deg`, `fs`, `ps`, including spaced suffixes; time scales to attoseconds | `width_gt_in`, `width_eq_spaced_mm`, `width_eq_deg`, `width_eq_250fs`, `width_eq_quarter_ps`, `literal_ps_fs` |
+| One numeric literal without units drops the entire condition, even in an unused branch; multiple numeric literals permit bare internal-unit values | `width_ne_double_or`, `width_gt_double_or`, `width_eq_integer_multiliteral_false_or` |
+| Quoted dimensions remain strings: equality with a number is false, inequality true, relational conversion is zero | `size_x_quoted`, `width_eq_quoted_mm_or`, `width_ne_quoted_mm`, `width_gt_quoted_mm` |
+| `\|\|` binds tighter than `&&`, and `!` tighter than the comparisons, unlike C: `a && b \|\| c` is `a && (b \|\| c)`; `!A.NetName == 'X'` compares the negation with `'X'` and is never true | `precedence_and_or`, `precedence_or_and`, `precedence_mixed`, `precedence_not_eq`, `precedence_not_ne` (KiCad 10.0.6) |
+| Properties and functions unknown to KiCad drop the rule anywhere in the condition (a function KiCad knows and TraceMaker does not evaluate keeps it, see §27); invalid `Parent.Reference` aliases are removed; bare `L` remains undefined for unary disallow | `unknown_short_circuit`, `unknown_function`, `reference_A_Parent_Reference`, `reference_Parent_Reference`, `bare_layer_front`, `kicad_function_*` |
+| A terminal unterminated single-quoted string extends to the end | `malformed_quote`; unmatched parentheses still fail (`malformed_paren`) |
+| Later matching disallow rules win for the same item type; ignore clears that violation, not another type's ban | `severity_ignore`, `later_ignore`, `earlier_ignore`, `later_different_disallow`, `later_different_disallow_ignore` |
+| Own item layer, also in paired clearance: tracks use their layer, pads the footprint side even for PTH/NPTH; vias have no layer property (`==`/`!=` false); multilayer zones expose an unset ID (`==` false, `!=` true), not a fill's layer | `item_layer_front`, `item_layer_back`, `own_layer_pads_front`, `own_layer_pads_not_front`, `zone_pair_*` |
+| `insideArea` aliases intersection; common copper layers required; enclosure checks all rounded copper against actual contours, including holes and concavity | `area_insideArea`, `area_enclosedByArea`, `area_concave_*`, `area_hole_*` |
+| Front and back courtyards are the footprint's own sides (`GetCourtyard(fp->IsFlipped() ? B_Cu : F_Cu)`): a flipped footprint's front courtyard is its B.CrtYd outline; the item's copper side does not matter. Footprint selectors are reference wildcards, or library-id wildcards when they contain `:` (courtyard functions and `memberOfFootprint`); closed lines/arcs/rectangles/circles/polygons, no interior for an open outline | `court_intersectsBackCourtyard`, `court_flipped_*`, `court_lib_id`, `membership_lib_id`, `court_line_*`, `court_arc_*`, `court_unclosed_*`; direct geometry tests cover circles, polygons and wildcards |
+| Absolute transformed pad/via anchors; tracks/arcs have undefined positions (`==`/`!=` both false, relational zero-coercion) | `position_x`, `position_anchor_shifted_pad`, `position_anchor_rotated_pad`, `position_anchor_x_ne_zero`, `position_anchor_x_lt_one` |
+| Blind via spans touch exactly one outer layer; buried spans none; micro vias remain separate | `subtype_blind_via`, `subtype_buried_via`, `subtype_micro_via` |
+
+The rejection of `um`, `cm`, `mils`, `inch`, `thou` and uppercase suffixes, and non-conversion of quoted
+dimensions, are measured KiCad behaviour, not advertised language extensions. The unusual lone-unitless-literal
+rule is also in [KiCad's compiler](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/common/libeval_compiler/libeval_compiler.cpp);
+the unit list is in its [PCB evaluator](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/pcbnew/pcbexpr_evaluator.cpp).
+Courtyards are prepared once, and area/courtyard queries use the existing integer geometry without a new
+dependency. The new item-dependent conditions remain positional: the router leaves them to DRC and warns by
+rule name. Static gates only acquire dropped-rule and typed ignore semantics; blind/buried probes without
+a span retain the conservative router gate.
+
+**Results.** Original corpus: 35/61 → 61/61 MATCH (26 → 0 mismatches). The expanded corpus matches all 166
+cases, including 70 scalar/geometry probes and 30 paired-clearance probes. Five were added after a routed
+board (kitspace_threeboard, ICs on the bottom) showed that KiCad's front and back courtyards are the
+footprint's own sides: flipped-footprint courtyards and library-id selectors. Comparison uses violation
+item/pair multisets, retaining repeated reports against different copper-layer fills rather than just counts.
+`rule_parity` passes in 1.62 s without KiCad; a full KiCad 10.0.3 rejudge reproduces the frozen oracle.
+
+**Re-judged with KiCad 10.0.6 (2026-10-09).** A full rejudge with KiCad 10.0.6 reproduced all 166 cases, and
+`expected.json` is now frozen from 10.0.6. Conditions probed beyond the corpus showed differences, each fixed
+and frozen as new cases:
+
+- Operator precedence. `A.NetName == 'X' || A.NetName == 'Y' && A.Layer == 'B.Cu'` selects only the X track
+  on B.Cu in KiCad; read as in C it selected every X track. Without parentheses a rule could apply to items
+  KiCad exempts, or miss items KiCad checks. Eight `precedence_*` cases.
+- `Width` is a track and arc property. Pads and vias have none (`==` and `!=` false, relational comparisons
+  see 0), where the engine gave pads 0 and vias their diameter: `A.Width < 0.3mm` missed every via, and
+  `A.Width > 0.5mm` selected them. Five `width_non_track_*` cases.
+- Numbers. KiCad compares for equality exactly; the engine allowed 1e-9 nm, so `A.Width == 1.001mm` matched a
+  1.001 mm track and `!=` missed it (KiCad: the reverse, because 1.001 × 10⁶ is not a whole number in double
+  precision). `.3mm` and `3e-1mm` are not numbers in KiCad and drop the rule; they were accepted. Eleven
+  `number_*` cases.
+- Courtyards. A footprint whose courtyard is drawn as two overlapping or touching outlines has their union as
+  its courtyard in KiCad; the engine rejected crossing outlines, so the footprint had no courtyard and its
+  rules never matched, without a message. Outlines that touch are now merged (outlines clear of each other
+  keep even/odd filling), and a courtyard that still cannot be read (open, self-crossing, Bezier) is named in
+  a warning by `tracemaker drc` and `tracemaker route` when a rule uses a courtyard function. Six
+  `court_overlap_*`, `court_touch_*` and `court_disjoint_*` cases.
+- Functions KiCad knows and TraceMaker does not evaluate. Dropping every rule with a symbol TraceMaker does not
+  know also dropped rules KiCad applies: with `(A.NetName == 'X' && B.NetName == 'Y') || A.hasNetclass('a')`
+  on a 0.8 mm clearance rule, KiCad and the engine before D80 report the X–Y pair, and the engine after D80
+  reported nothing. Seventeen functions that KiCad 10.0.6 compiles (listed in §27) now keep their rule, with
+  a warning; the call is taken as false as before D80. Symbols KiCad does not know still drop the rule
+  (`hasExactComponentClass`, `isThroughVia`). KiCad's property names are an open set and cannot be told apart
+  this way: a rule with a property TraceMaker does not evaluate is still dropped, with its warning. Twenty
+  `kicad_function_*` cases.
+
+Cost on a large board (jetson-agx-thor-baseboard, 1,125 footprints, its own rules plus a clearance rule with
+`A.intersectsCourtyard('U*') || B.intersectsCourtyard('U*')`): the DRC took 61.7 s against 5.1 s without the
+rule, because the rule is evaluated for every pair of items and each evaluation matched the selector against
+every footprint and tested whole zone fills again. Each selector is now resolved once when the rules are
+compiled (the scan over all footprints stays as the reference path, with a test that both agree), and a fill's
+result is remembered as for the area functions: 6.0 s, same report.
+
+The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
+directory, `expected.json` freezes KiCad item/pair multisets (10.0.6 since the rejudge above), and `run.py` runs only TraceMaker DRC.
+`ctest --test-dir build/macos-metal -R '^rule_parity$' --output-on-failure` needs neither KiCad nor routing.
+To refresh the oracle deliberately, run:
+
+```
+python3 tests/integration/rule_parity/run.py build/macos-metal/src/app/tracemaker build/macos-metal/integration/rule_parity --rejudge --kicad-cli /opt/homebrew/bin/kicad-cli
+```
+
+Only rejudging may skip (77) when KiCad is absent; ordinary regression runs fail on missing binaries or
+item/pair differences. Raw DRC reports and logs stay in the build directory.
+
+The `[rules]` filter passes 95,985 assertions in 32 cases. Full ctest, excluding the two version-specific
+`kicad_drc_parity` / `kicad_drc_broken_parity` tests, reports 0 failures out of 180 (177 passed; GPU Philox,
+KiCad edit round-trip and catalogue sync skipped). C++ compilation has no warnings; Apple's pre-existing
+duplicate-static-library linker warnings remain unchanged.
+
+Real-board comparison against `origin/main`: Jetson clearance 3,604 → 2,040; every removed report is a
+Via–Zone pair previously given 1 mm by `(hs_zone_clearance` through `A.Layer == B.Layer`. The new paired
+corpus independently confirms that this rule does not match vias in KiCad. Multilayer zones also retain
+their unset own-layer ID across fills, including inequality and wildcard comparisons. Vme-wren's complete
+violation and unconnected-item arrays are unchanged (22,362 clearance, 21 shorting, 1 dangling track,
+92 dangling vias); its six new `fromTo` warnings name length-only rules that DRC does not evaluate.
+The 14-board DRC parity manifest stays 13/14 both before and after: the existing tiny-tapeout
+`annular_width` mismatch is KiCad 16 / TraceMaker 0. That harness caps counts at 199; the custom-rule
+corpus and the real-board item diffs do not.
+
+Quick tier: the same 30 PCBench tier-A boards before and after, one portfolio thread, 60 s per board, six
+parallel jobs: 30/30 clean and complete, zero added KiCad DRC errors, and every routed board byte-identical.
+Runs are `bench/results/d80-before-quick` and `d80-final-quick` (not committed).
+
+**Limits.** This is parity for the named corpus, not all of KiCad's expression language. Bezier courtyard
+graphics, near-closed endpoint snapping and KiCad's small courtyard deflation tolerance are not covered;
+a courtyard that cannot be read matches nothing and is warned about by footprint reference.
+Courtyard arcs/circles use the existing 5 µm-sagitta polygonization; containment is exact against the represented
+copper cores and contours. Circle/polygon/wildcard courtyard behaviour has direct engine tests but no dedicated
+CLI corpus case. Positional router enforcement and zone refill are unchanged.
+
