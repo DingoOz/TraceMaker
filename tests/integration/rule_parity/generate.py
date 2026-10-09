@@ -185,6 +185,15 @@ def generate(root: Path) -> dict:
         ('precedence_not_call',"!A.existsOnLayer('F.Cu') && A.NetName == 'X'"),
     ]:
         case(name,static,rule(condition),note='Operator precedence probe: X tracks on F.Cu, In1.Cu and B.Cu, one Y track on F.Cu.')
+    # Width exists on tracks and arcs only: undefined (not 0, not the via diameter) for pads and vias.
+    for name,condition in [
+        ('width_non_track_eq_zero','A.Width == 0mm'),
+        ('width_non_track_ne','A.Width != 0.25mm'),
+        ('width_non_track_lt','A.Width < 0.3mm'),
+        ('width_non_track_eq_diameter','A.Width == 0.8mm'),
+        ('width_non_track_gt','A.Width > 0.5mm'),
+    ]:
+        case(name,pads,rule(condition,'pad track via'),note='Pads, a 0.25 mm track and a 0.8 mm via: Width is a track property.')
     layer_pads=[footprint('SF',5,5),footprint('SB',5,10,back=True),footprint('PF',5,15,'thru_hole'),
                 footprint('PB',5,20,'thru_hole',back=True),footprint('NF',5,25,'np_thru_hole')]+vias
     for name,condition in [

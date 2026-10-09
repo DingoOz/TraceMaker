@@ -677,3 +677,12 @@ TEST_CASE("KiCad rule operators: || binds tighter than &&, and ! tighter than co
   CHECK(parity_hits("!(A.NetName == 'SIG')") == 1);
   CHECK(parity_hits("!A.existsOnLayer('F.Cu') && A.NetName == 'GND'") == 1);
 }
+
+TEST_CASE("KiCad rule Width is a track property: undefined for pads and vias", "[rules][drc]") {
+  // KiCad 10.0.6: width_non_track_*. Four pads, tracks of 0.2, 0.25 and 0.4 mm, four 0.8 mm vias.
+  CHECK(parity_hits("A.Width == 0mm", "track pad via") == 0);
+  CHECK(parity_hits("A.Width == 0.8mm", "track pad via") == 0);   // not the via diameter
+  CHECK(parity_hits("A.Width != 0.25mm", "track pad via") == 2);  // undefined: != is false too
+  CHECK(parity_hits("A.Width > 0.5mm", "track pad via") == 0);
+  CHECK(parity_hits("A.Width < 0.3mm", "track pad via") == 10);   // undefined compares as 0: 2 tracks, all pads and vias
+}

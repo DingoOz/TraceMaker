@@ -1037,6 +1037,9 @@ and frozen as new cases:
 - Operator precedence. `A.NetName == 'X' || A.NetName == 'Y' && A.Layer == 'B.Cu'` selects only the X track
   on B.Cu in KiCad; read as in C it selected every X track. Without parentheses a rule could apply to items
   KiCad exempts, or miss items KiCad checks. Eight `precedence_*` cases.
+- `Width` is a track and arc property. Pads and vias have none (`==` and `!=` false, relational comparisons
+  see 0), where the engine gave pads 0 and vias their diameter: `A.Width < 0.3mm` missed every via, and
+  `A.Width > 0.5mm` selected them. Five `width_non_track_*` cases.
 
 The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
 directory, `expected.json` freezes KiCad item/pair multisets (10.0.6 since the rejudge above), and `run.py` runs only TraceMaker DRC.

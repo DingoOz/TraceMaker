@@ -277,6 +277,9 @@ class Condition {
       static const char* names[] = {"SMD", "Through-hole", "NPTH, mechanical", "Edge connector"};
       v.s = names[static_cast<int>(b.pads[static_cast<std::size_t>(it->index)].type)];
     } else if (n.name == "Width") {
+      // Only tracks and arcs have a Width in KiCad. A via's diameter (CopperItem::width) is not one: for pads and
+      // vias the property is undefined (== and != false, relational comparisons see 0).
+      if (it->kind != ItemKind::Track && it->kind != ItemKind::Arc) return {};
       v.k = Value::K::Num;
       v.n = static_cast<double>(it->width);
     } else if (n.name == "Size_X" || n.name == "Size_Y") {

@@ -1137,6 +1137,32 @@
         ]
       ]
     },
+    "width_non_track_eq_diameter": {},
+    "width_non_track_eq_zero": {},
+    "width_non_track_gt": {},
+    "width_non_track_lt": {
+      "items_not_allowed": [
+        [
+          "C1:pad1"
+        ],
+        [
+          "H1:pad1"
+        ],
+        [
+          "R1:pad1"
+        ],
+        [
+          "R2:pad1"
+        ],
+        [
+          "free-track"
+        ],
+        [
+          "free-via"
+        ]
+      ]
+    },
+    "width_non_track_ne": {},
     "zone_pair_front_different_layer": {
       "clearance": [
         [
