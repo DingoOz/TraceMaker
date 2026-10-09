@@ -56,8 +56,15 @@ def drc(cli, board, out):
     return report
 
 
+class Parser(argparse.ArgumentParser):
+    def error(self, message):
+        # argparse exits with 2, which here means ILLEGAL.
+        self.print_usage(sys.stderr)
+        self.exit(3, f"{self.prog}: error: {message}\n")
+
+
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = Parser(description=__doc__, epilog="Exit code: 0 CLEAN, 1 INCOMPLETE, 2 ILLEGAL, 3 tool error (no verdict).")
     parser.add_argument("input", type=Path)
     parser.add_argument("routed", type=Path)
     parser.add_argument("--route-json", type=Path)
@@ -146,9 +153,9 @@ def main():
         if save_board:
             print(f"After promoting, from the command line: `{result['refill_command']}`")
         print(result["staging_note"])
-    except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
-        result.update(verdict="TOOL ERROR", error=str(exc))
-        print(f"# TraceMaker sign-off: TOOL ERROR\n\n{exc}", file=sys.stderr)
+    except Exception as exc:  # anything unexpected must not leave as 1 (INCOMPLETE) through a traceback
+        result.update(verdict="TOOL ERROR", error=f"{type(exc).__name__}: {exc}")
+        print(f"# TraceMaker sign-off: TOOL ERROR\n\n{result['error']}", file=sys.stderr)
         code = 3
     if args.json:
         try:
