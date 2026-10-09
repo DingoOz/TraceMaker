@@ -1292,8 +1292,9 @@ pitch.
 Mean completion 76.4 % → 77.2 %. No board is clean in any run. The added errors are the same (Teensy's four
 `solder_mask_bridge`).
 
-**Time.** At the same work the 11 boards take 6.7 % more CPU time (931 → 993 s user, `--threads 4`), almost all
-of it on sbc (65 → 93 s) and kitspace_d20 (68 → 79 s). The probes themselves take 0.05–0.24 s per variant on sbc.
+**Time.** At the same work the 11 boards take 6.7 % more CPU time (931 → 993 s user, `--threads 4`). That is
+inside the run-to-run noise of this Mac (byte-identical boards move up to 14 % between two runs) except on sbc
+(65 → 93 s) and kitspace_d20 (68 → 79 s). The probes themselves take 0.05–0.24 s per variant on sbc.
 The rest is where the saved budget goes: without the probe sbc's variants spend their budget flooding windows in
 the first pass; with it they reach negotiation, whose searches cost 6–8.5 s per variant instead of 0–1.7 s, since
 negotiated expansions (rip-up, crossing costs, routed-copper checks) take more time than strict ones. The work
