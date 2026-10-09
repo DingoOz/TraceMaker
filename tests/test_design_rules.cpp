@@ -319,6 +319,51 @@ TEST_CASE("positional disallow: no vias in a footprint courtyard", "[rules][rout
   CHECK(disallowed_routed(f, r) == 0);
 }
 
+TEST_CASE("positional disallow through_via: a blind via over the whole stack is a through via", "[rules][route]") {
+  // Where a through via is blocked the router tries a blind via over the layers the path joins. From F.Cu to
+  // B.Cu that span is the whole stack and the via is written as a through via, so the rule must judge it as one.
+  const std::string u1 =
+      "  (footprint \"U\" (layer \"F.Cu\") (at 10 5)\n"
+      "    (property \"Reference\" \"U1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (fp_rect (start -3 -4.5) (end 3 4.5) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n";
+  const std::string rule =
+      "(version 1)\n(rule \"no through vias under U1\" (condition \"A.intersectsCourtyard('U1')\") (constraint disallow through_via))\n";
+  const Files f("through_span", board_text(u1), rule);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  const route::Obstacles obs(lb.board, rules);
+  const geom::Point under{10'000'000, 5'000'000}, beside{14'000'000, 5'000'000};
+  const Coord d = 600'000, drill = 300'000;
+  CHECK(obs.via_state(under, d, drill, 1, 0, false) == 2);
+  CHECK(obs.via_state_span(under, d, drill, 1, 0, false, nullptr, 0, 3) == 2);  // F.Cu to B.Cu: a through via
+  CHECK(obs.via_state_span(under, d, drill, 1, 0, false, nullptr, 0, 1) == 0);  // a real blind via is not named
+  CHECK(obs.via_state_span(under, d, drill, 1, 0, false, nullptr, 1, 2) == 0);  // nor a buried one
+  CHECK(obs.via_state_span(beside, d, drill, 1, 0, false, nullptr, 0, 3) == 0);
+
+  // Routed: tracks may cross the middle on B.Cu only, and the courtyard covers every place a via could go.
+  const std::string wall =
+      "  (zone (net 0) (net_name \"\") (layers \"F.Cu\" \"In1.Cu\" \"In2.Cu\") (name \"wall\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
+      "    (min_thickness 0.25) (keepout (tracks not_allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed))\n"
+      "    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 9 0) (xy 11 0) (xy 11 10) (xy 9 10))))\n";
+  const std::string all =
+      "  (footprint \"U\" (layer \"F.Cu\") (at 10 5)\n"
+      "    (property \"Reference\" \"U1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (fp_rect (start -10 -5) (end 10 5) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n";
+  const Files g("through_span_routed", board_text(wall + all), rule);
+  const auto gb = io::read_board_file(g.pcb.string());
+  auto grules = io::read_design_rules(g.pcb.string());
+  grules.minimums.allow_blind_buried_vias = true;
+  route::RouterOptions o;
+  o.work_budget = 2'000'000;
+  o.gpu_device = -1;
+  o.time_limit_s = 600;
+  o.blind_vias = true;
+  const auto r = route::Router(gb.board, grules, o).run();
+  CHECK(r.routed == 2);  // on blind vias from F.Cu and buried or blind ones down to B.Cu
+  for (const auto& v : r.vias) CHECK_FALSE((v.layer_top == 0 && v.layer_bottom == 3));
+  CHECK(disallowed_routed(g, r) == 0);
+}
+
 TEST_CASE("disallow via also forbids blind and buried vias", "[rules][route]") {
   const std::string rule = "(version 1)\n(rule \"no SIG vias\" (condition \"A.NetName == 'SIG'\") (constraint disallow via))\n";
   const Files f("noblind", board_text(kOuterWall), rule);

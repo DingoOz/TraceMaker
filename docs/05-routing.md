@@ -1126,7 +1126,10 @@ eight PCBench boards (below), every routed board had KiCad `items_not_allowed` e
 - `Obstacles::segment_state`, `disk_state`, `via_state` and `via_state_span` (now with the via type) return
   "blocked" for disallowed copper. They are the exact checks of commit, escapes, diff-pair moves and legs,
   clean-up shortcuts, in-pad vias and failed-commit learning, so nothing the rules forbid is committed. A
-  disk is judged on its copper (half the track width), not the lattice margin.
+  disk is judged on its copper (half the track width), not the lattice margin. A blind-via probe from the
+  top layer to the bottom one is judged as a through via, which is what commit writes for that span:
+  otherwise `disallow through_via` in an area was passed by the blind attempt that follows a blocked
+  through via.
 - Search: `point_state` treats the rules like fixed copper. A point is blocked when they forbid the track's
   copper there, and legal only "tight" when they forbid the disk with the lattice margin, so steps between two
   free points stay legal. `via_cost_at` judges the via itself (vias sit exactly on lattice points). These tests

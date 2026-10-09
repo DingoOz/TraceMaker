@@ -500,6 +500,8 @@ bool Obstacles::track_disallowed(const Shape& s, int layer, Coord width, model::
 
 bool Obstacles::via_disallowed(Point p, Coord d, model::NetId net, int l0, int l1, model::ViaType type) const {
   if (!re_->positional_disallow()) return false;
+  // A blind via over the whole stack is committed, written and judged by the DRC as a through via.
+  if (type == model::ViaType::Blind && l0 <= 0 && l1 >= b_.copper_count() - 1) type = model::ViaType::Through;
   const Probe pp(drc::ItemKind::Via, scratch_disk(p, d / 2), net, -1, d, p);
   model::LayerMask span = 0;
   for (int l = std::max(0, l0); l <= std::min(l1, b_.copper_count() - 1); ++l) span |= model::layer_bit(l);
