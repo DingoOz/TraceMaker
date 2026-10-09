@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <functional>
 #include <fstream>
 #include <string>
 #include <tuple>
@@ -250,6 +251,119 @@ TEST_CASE("a keepout that forbids only vias blocks vias and lets tracks through"
   CHECK(obs.segment_state({8'500'000, 5'000'000}, {11'500'000, 5'000'000}, 3, 250'000, 1, false) == 0);
 }
 
+namespace {
+// Routed copper the DRC reports as items_not_allowed under the rules of `f` (the router's result added to the board).
+int disallowed_routed(const Files& f, const route::RouteResult& r) {
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  const auto fixed = lb.board.tracks.size() + lb.board.vias.size();
+  lb.board.tracks.insert(lb.board.tracks.end(), r.tracks.begin(), r.tracks.end());
+  lb.board.vias.insert(lb.board.vias.end(), r.vias.begin(), r.vias.end());
+  const drc::RuleEngine re(lb.board, rules);
+  int n = 0;
+  for (const auto& it : drc::build_copper(lb.board).items) {
+    if (it.kind != drc::ItemKind::Track && it.kind != drc::ItemKind::Via) continue;
+    bool hit = false;
+    for (int l = 0; l < lb.board.copper_count(); ++l)
+      if (it.layers & model::layer_bit(l)) hit = hit || re.disallowed(it, l).has_value();
+    n += hit;
+  }
+  return fixed == 0 ? n : -1;  // these boards start without copper
+}
+
+// Routes `f` with its custom rules removed: what the rules have to change.
+route::RouteResult route_without_rules(const Files& f) {
+  const auto lb = io::read_board_file(f.pcb.string());
+  auto rules = io::read_design_rules(f.pcb.string());
+  rules.custom.clear();
+  route::RouterOptions o;
+  o.work_budget = 2'000'000;
+  o.gpu_device = -1;
+  o.time_limit_s = 600;
+  return route::Router(lb.board, rules, o).run();
+}
+}  // namespace
+
+TEST_CASE("positional disallow: the router keeps a named net out of an area and lets other nets through", "[rules][route]") {
+  // A rule area without keepout flags across the middle of F.Cu; the rule closes it to SIG only, so the cached
+  // per-class obstacle codes (SIG and GND share a class) cannot represent it.
+  const std::string area =
+      "  (zone (net 0) (net_name \"\") (layers \"F.Cu\") (name \"noroute\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
+      "    (min_thickness 0.25) (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed))\n"
+      "    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 9 0) (xy 11 0) (xy 11 10) (xy 9 10))))\n";
+  const std::string rule =
+      "(version 1)\n(rule \"SIG off noroute\" (condition \"A.intersectsArea('noroute') && A.NetName == 'SIG'\") (constraint disallow track via))\n";
+  const Files f("area_net", board_text(area), rule);
+  CHECK(disallowed_routed(f, route_without_rules(f)) > 0);  // SIG's straight F.Cu route crosses the area
+  const auto r = route_board(f);
+  CHECK(r.routed == 2);
+  CHECK(disallowed_routed(f, r) == 0);
+  bool gnd_crosses = false;  // on F.Cu, through the area
+  for (const auto& t : r.tracks) gnd_crosses = gnd_crosses || (t.net == 2 && t.layer == 0 && std::min(t.a.x, t.b.x) < 10'000'000 && std::max(t.a.x, t.b.x) > 10'000'000);
+  CHECK(gnd_crosses);
+}
+
+TEST_CASE("positional disallow: no vias in a footprint courtyard", "[rules][route]") {
+  // The outer-layer wall forces both nets onto an inner layer; U1's courtyard (x 7..13) covers the wall's
+  // surroundings, so the vias must sit beside the pads instead.
+  const std::string u1 =
+      "  (footprint \"U\" (layer \"F.Cu\") (at 10 5)\n"
+      "    (property \"Reference\" \"U1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (fp_rect (start -3 -4.5) (end 3 4.5) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n";
+  const std::string rule = "(version 1)\n(rule \"no vias under U1\" (condition \"A.intersectsCourtyard('U1')\") (constraint disallow via))\n";
+  const Files f("court_vias", board_text(std::string(kOuterWall) + u1), rule);
+  CHECK(disallowed_routed(f, route_without_rules(f)) > 0);
+  const auto r = route_board(f);
+  CHECK(r.routed == 2);
+  CHECK_FALSE(r.vias.empty());
+  CHECK(disallowed_routed(f, r) == 0);
+}
+
+TEST_CASE("positional disallow through_via: a blind via over the whole stack is a through via", "[rules][route]") {
+  // Where a through via is blocked the router tries a blind via over the layers the path joins. From F.Cu to
+  // B.Cu that span is the whole stack and the via is written as a through via, so the rule must judge it as one.
+  const std::string u1 =
+      "  (footprint \"U\" (layer \"F.Cu\") (at 10 5)\n"
+      "    (property \"Reference\" \"U1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (fp_rect (start -3 -4.5) (end 3 4.5) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n";
+  const std::string rule =
+      "(version 1)\n(rule \"no through vias under U1\" (condition \"A.intersectsCourtyard('U1')\") (constraint disallow through_via))\n";
+  const Files f("through_span", board_text(u1), rule);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  const route::Obstacles obs(lb.board, rules);
+  const geom::Point under{10'000'000, 5'000'000}, beside{14'000'000, 5'000'000};
+  const Coord d = 600'000, drill = 300'000;
+  CHECK(obs.via_state(under, d, drill, 1, 0, false) == 2);
+  CHECK(obs.via_state_span(under, d, drill, 1, 0, false, nullptr, 0, 3) == 2);  // F.Cu to B.Cu: a through via
+  CHECK(obs.via_state_span(under, d, drill, 1, 0, false, nullptr, 0, 1) == 0);  // a real blind via is not named
+  CHECK(obs.via_state_span(under, d, drill, 1, 0, false, nullptr, 1, 2) == 0);  // nor a buried one
+  CHECK(obs.via_state_span(beside, d, drill, 1, 0, false, nullptr, 0, 3) == 0);
+
+  // Routed: tracks may cross the middle on B.Cu only, and the courtyard covers every place a via could go.
+  const std::string wall =
+      "  (zone (net 0) (net_name \"\") (layers \"F.Cu\" \"In1.Cu\" \"In2.Cu\") (name \"wall\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
+      "    (min_thickness 0.25) (keepout (tracks not_allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed))\n"
+      "    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 9 0) (xy 11 0) (xy 11 10) (xy 9 10))))\n";
+  const std::string all =
+      "  (footprint \"U\" (layer \"F.Cu\") (at 10 5)\n"
+      "    (property \"Reference\" \"U1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (fp_rect (start -10 -5) (end 10 5) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n";
+  const Files g("through_span_routed", board_text(wall + all), rule);
+  const auto gb = io::read_board_file(g.pcb.string());
+  auto grules = io::read_design_rules(g.pcb.string());
+  grules.minimums.allow_blind_buried_vias = true;
+  route::RouterOptions o;
+  o.work_budget = 2'000'000;
+  o.gpu_device = -1;
+  o.time_limit_s = 600;
+  o.blind_vias = true;
+  const auto r = route::Router(gb.board, grules, o).run();
+  CHECK(r.routed == 2);  // on blind vias from F.Cu and buried or blind ones down to B.Cu
+  for (const auto& v : r.vias) CHECK_FALSE((v.layer_top == 0 && v.layer_bottom == 3));
+  CHECK(disallowed_routed(g, r) == 0);
+}
+
 TEST_CASE("disallow via also forbids blind and buried vias", "[rules][route]") {
   const std::string rule = "(version 1)\n(rule \"no SIG vias\" (condition \"A.NetName == 'SIG'\") (constraint disallow via))\n";
   const Files f("noblind", board_text(kOuterWall), rule);
@@ -458,11 +572,12 @@ TEST_CASE("disallow rules the router cannot apply are named in the rule warnings
   auto names = [&](const std::string& rule) {
     return std::any_of(re.warnings().begin(), re.warnings().end(), [&](const std::string& w) { return w.find("rule '" + rule + "'") != std::string::npos; });
   };
-  CHECK(names("by area"));
   CHECK(names("broken"));
   CHECK(names("odd property"));
   CHECK_FALSE(names("inner GND only"));  // applied by the router as a layer mask
-  // None of the three changes what the router allows.
+  CHECK_FALSE(names("by area"));         // applied by the router to each new track and via
+  CHECK(re.positional_disallow());
+  // The per-net masks are unchanged: the area rule is not a rule about whole layers.
   for (int l = 0; l < 4; ++l) CHECK(re.track_allowed(1, l) == (l == 0 || l == 3));
   CHECK(re.via_allowed(1));
 }
@@ -524,7 +639,67 @@ int parity_hits(const std::string& condition, const std::string& items = "track"
   }
   return hits;
 }
+
+// A new 0.25 mm F.Cu track end or 0.6 mm through via of SIG at `p`, as the router asks about it.
+drc::CopperItem probe(drc::ItemKind kind, geom::Point p) {
+  drc::CopperItem it;
+  it.kind = kind;
+  it.net = 1;
+  it.width = kind == drc::ItemKind::Via ? 600'000 : 250'000;
+  it.layers = kind == drc::ItemKind::Via ? model::LayerMask{0xF} : model::layer_bit(0);
+  it.shapes = {geom::Shape::point(p, it.width / 2)};
+  it.box = it.shapes[0].box;
+  it.pos = p;
+  return it;
+}
 }  // namespace
+
+TEST_CASE("router rule probes: bound selectors and box prefilters agree with the direct geometry tests", "[rules][route]") {
+  // A concave F.Cu rule area and a front courtyard on a flipped and an unflipped footprint, probed on a grid.
+  const std::string extra =
+      "  (zone (net 0) (net_name \"\") (layers \"F.Cu\") (name \"noroute\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
+      "    (min_thickness 0.25) (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed))\n"
+      "    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 7 1) (xy 11 1) (xy 11 3) (xy 9 3) (xy 9 6) (xy 7 6))))\n"
+      "  (footprint \"U\" (layer \"F.Cu\") (at 12 7)\n    (property \"Reference\" \"U1\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (fp_rect (start -1.5 -1.5) (end 1.5 1.5) (layer \"F.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n"
+      "  (footprint \"U\" (layer \"B.Cu\") (at 12 2)\n    (property \"Reference\" \"U2\" (at 0 0) (layer \"B.SilkS\"))\n"
+      "    (fp_rect (start -1.5 -1.5) (end 1.5 1.5) (layer \"B.CrtYd\") (stroke (width 0.05) (type solid)))\n  )\n";
+  const Files f("prefilter", board_text(extra), "");
+  const auto lb = io::read_board_file(f.pcb.string());
+  const auto base = io::read_design_rules(f.pcb.string());
+  const auto courtyards = drc::build_courtyards(lb.board);
+  const model::Zone* area = nullptr;
+  for (const auto& z : lb.board.zones)
+    if (z.name == "noroute") area = &z;
+  REQUIRE(area);
+  struct Case {
+    const char* condition;
+    std::function<bool(const drc::CopperItem&)> reference;
+  };
+  const std::vector<Case> cases = {
+      {"A.intersectsArea('nor*')", [&](const drc::CopperItem& it) { return drc::area_matches(it, *area, false); }},
+      {"A.enclosedByArea('noroute')", [&](const drc::CopperItem& it) { return drc::area_matches(it, *area, true); }},
+      {"A.intersectsFrontCourtyard('U?')", [&](const drc::CopperItem& it) { return drc::courtyard_matches(it, courtyards, "U?", "intersectsFrontCourtyard"); }},
+  };
+  for (const auto& c : cases) {
+    auto rules = base;
+    rules.custom = {model::CustomRule{"probe", c.condition, "", "", {model::Constraint{"disallow", std::nullopt, std::nullopt, std::nullopt, {"track", "via"}}}}};
+    const drc::RuleEngine engine(lb.board, rules);
+    REQUIRE(engine.positional_disallow());
+    int hits = 0, n = 0;
+    for (Coord x = 5'000'000; x <= 15'000'000; x += 370'000)
+      for (Coord y = 0; y <= 10'000'000; y += 370'000)
+        for (const auto kind : {drc::ItemKind::Track, drc::ItemKind::Via}) {
+          const auto it = probe(kind, {x, y});
+          const bool expected = c.reference(it);
+          CHECK(engine.probe_disallowed(it) == expected);
+          hits += expected;
+          ++n;
+        }
+    CHECK(hits > 0);
+    CHECK(hits < n);
+  }
+}
 
 TEST_CASE("KiCad rule numbers retain units, fractional nanometres and comparison precision", "[rules][drc]") {
   // KiCad 10.0.3: width_gt_mm, width_eq_mil, literal_mm_mil and fractional_nm_*.
@@ -580,6 +755,7 @@ TEST_CASE("KiCad quoted numbers stay strings, while pad dimensions and positions
   CHECK(parity_hits("A.Position_X > 10mm", "track pad via") == 6);
   CHECK(parity_hits("A.Position_Y == 3mm", "track pad via") == 3);
   CHECK(parity_hits("A.Position_X != 0mm", "track pad via") == 8);
+  // The router evaluates both on each new track or via: pad sizes never match one, positions match vias only.
   for (const auto* condition : {"A.Size_X == 1mm", "A.Position_X > 10mm"}) {
     const Files f("positional", board_text(kParityCopper), parity_rule(condition, "track via"));
     const auto lb = io::read_board_file(f.pcb.string());
@@ -587,9 +763,11 @@ TEST_CASE("KiCad quoted numbers stay strings, while pad dimensions and positions
     const drc::RuleEngine engine(lb.board, rules);
     CHECK(engine.track_allowed(1, 0));
     CHECK(engine.via_allowed(1));
-    CHECK(std::any_of(engine.warnings().begin(), engine.warnings().end(), [](const auto& warning) {
-      return warning.find("the router does not avoid it, the DRC reports it") != std::string::npos;
-    }));
+    CHECK(engine.positional_disallow());
+    const bool by_position = std::string(condition).find("Position") != std::string::npos;
+    CHECK(engine.probe_disallowed(probe(drc::ItemKind::Via, {12'000'000, 5'000'000})) == by_position);
+    CHECK_FALSE(engine.probe_disallowed(probe(drc::ItemKind::Via, {8'000'000, 5'000'000})));
+    CHECK_FALSE(engine.probe_disallowed(probe(drc::ItemKind::Track, {12'000'000, 5'000'000})));  // tracks have no position
   }
 }
 

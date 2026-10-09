@@ -27,9 +27,9 @@ class Obstacles {
                  std::vector<int>* owners = nullptr) const;
   int segment_state(geom::Point a, geom::Point b, int layer, Coord width, model::NetId net, bool ignore_routed,
                     std::vector<int>* owners = nullptr) const;
-  // A via on copper layers [l0, l1] only (blind or buried via); via_state covers all layers.
+  // A via on copper layers [l0, l1] only (blind or buried via, or a micro via with `type`); via_state covers all layers.
   int via_state_span(geom::Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners, int l0,
-                     int l1) const;
+                     int l1, model::ViaType type = model::ViaType::Blind) const;
   int via_state(geom::Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed,
                 std::vector<int>* owners = nullptr) const;
   bool disk_ok(geom::Point p, int layer, Coord hw, model::NetId net, Coord margin) const {
@@ -41,6 +41,12 @@ class Obstacles {
   bool via_ok(geom::Point p, Coord d, Coord drill, model::NetId net, Coord margin) const {
     return via_state(p, d, drill, net, margin, false) == 0;
   }
+  // Custom disallow rules that depend on position, size or footprint (doc 05 §34), for new copper of `net`: a
+  // track whose copper is `s` with `width` on `layer`, or a via of diameter `d` spanning [l0, l1]. The state
+  // checks above include them (blocked, 2); a disk's rules are judged on its copper, without the margin.
+  bool positional_rules() const { return re_->positional_disallow(); }
+  bool track_disallowed(const geom::Shape& s, int layer, Coord width, model::NetId net) const;
+  bool via_disallowed(geom::Point p, Coord d, model::NetId net, int l0, int l1, model::ViaType type) const;
 
   // Registers committed copper (the board copy must already contain the track/via at `index`). Returns the
   // copper item index.

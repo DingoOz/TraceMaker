@@ -601,14 +601,27 @@ struct Router::Impl {
   }
   static bool code_ok(std::int32_t code, NetId net) { return code == Obstacles::kFree || code == net; }
 
-  // Blocked by fixed copper alone (legal without the lattice margin otherwise)?
+  // Blocked by fixed copper (or a positional disallow rule) alone (legal without the lattice margin otherwise)?
   bool fixed_point_blocked(int layer, int gx, int gy, NetId net, Coord hw) {
     const Point p = at(gx, gy);
     if (!use_cache) return obs->disk_state(p, layer, hw, net, 0, true) == 2;
     auto& cc = cache_for(net);
     const std::size_t gi = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
     if (cc.tight[gi] == INT32_MIN) cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
-    return !code_ok(cc.tight[gi], net);
+    return !code_ok(cc.tight[gi], net) || rule_state(p, layer, hw, 0, net) == 2;
+  }
+
+  // Positional disallow rules (doc 05 §34) are judged like fixed copper, outside the per-class caches (they may
+  // name nets): 2 when they forbid the track's copper at p, 3 when they forbid only the disk with the lattice
+  // margin (legal "tight"), else 0.
+  geom::Shape rule_disk;
+  int rule_state(Point p, int layer, Coord hw, Coord margin, NetId net) {
+    if (!obs->positional_rules()) return 0;
+    rule_disk.set_point(p, hw);
+    if (obs->track_disallowed(rule_disk, layer, 2 * hw, net)) return 2;
+    if (margin <= 0) return 0;
+    rule_disk.set_point(p, hw + margin);
+    return obs->track_disallowed(rule_disk, layer, 2 * hw, net) ? 3 : 0;
   }
 
   geom::Shape probe_disk;  // reused by point_state and via_cost_at
@@ -618,8 +631,10 @@ struct Router::Impl {
     if (!layer_ok(net, layer)) return 2;
     const Point p = at(gx, gy);
     const Coord margin = pitch * 71 / 100 + 1;
+    const int rs = rule_state(p, layer, hw, margin, net);
+    if (rs == 2) return 2;
     if (!use_cache) {
-      int st = obs->disk_state(p, layer, hw, net, margin, soft);
+      int st = rs == 3 ? 2 : obs->disk_state(p, layer, hw, net, margin, soft);
       if (st == 2 && obs->disk_state(p, layer, hw, net, 0, soft) != 2) st = 3;
       return st;
     }
@@ -627,7 +642,7 @@ struct Router::Impl {
     const std::size_t gi = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
     if (cc.margin[gi] == INT32_MIN) cc.margin[gi] = obs->fixed_code(p, layer, hw, margin, cc.rep);
     int st = 0;
-    if (!code_ok(cc.margin[gi], net)) {
+    if (!code_ok(cc.margin[gi], net) || rs == 3) {
       if (cc.tight[gi] == INT32_MIN) cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
       if (!code_ok(cc.tight[gi], net)) return 2;
       st = 3;
@@ -688,7 +703,8 @@ struct Router::Impl {
         auto& cc = cache_for(net);
         const std::size_t gi = static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
         if (cc.via[gi] == INT32_MIN) cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
-        st = code_ok(cc.via[gi], net) ? 0 : 2;
+        // Positional rules are judged on the via itself (vias sit exactly on lattice points), as via_state does.
+        st = code_ok(cc.via[gi], net) && !obs->via_disallowed(p, d, net, 0, nl - 1, model::ViaType::Through) ? 0 : 2;
         if (st != 2) {
           model::LayerMask near = 0;  // layers with routed copper nearby
           for (int l = 0; l < nl; ++l)
@@ -1170,7 +1186,8 @@ struct Router::Impl {
           // A layer without tracks is a landing only where the via itself ends the connection (in a zone fill).
           if (l2 == l || (!layer_ok(net, l2) && !target(l2, ci))) continue;
           int vs = 2;
-          if (micro_for(net) && micro_span(l, l2)) vs = obs->via_state_span(vp, micro_diameter(net), micro_drill(net), net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
+          if (micro_for(net) && micro_span(l, l2))
+            vs = obs->via_state_span(vp, micro_diameter(net), micro_drill(net), net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2), model::ViaType::Micro);
           if (vs == 2 && blind_for(net)) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
@@ -1341,7 +1358,8 @@ struct Router::Impl {
     for (std::size_t k = 0; k < vias.size(); ++k) {
       if (obs->via_state(vias[k], vd, vdrill, net, 0, soft, &victims) != 2) continue;
       if (micro_for(net) && micro_span(via_span[k].first, via_span[k].second) &&
-          obs->via_state_span(vias[k], micro_diameter(net), micro_drill(net), net, 0, soft, &victims, via_span[k].first, via_span[k].second) != 2) {
+          obs->via_state_span(vias[k], micro_diameter(net), micro_drill(net), net, 0, soft, &victims, via_span[k].first, via_span[k].second,
+                              model::ViaType::Micro) != 2) {
         via_layers[k] = via_span[k];
         via_micro[k] = 1;
         continue;
@@ -2995,8 +3013,13 @@ struct Router::Impl {
       fin.clearance = [&](NetId n) { return std::max(netclass(n).clearance, rules.minimums.clearance); };
       fin.via = [&](NetId n) { return via_diameter(n); };
       fin.keep = keep;
-      fin.track_free = [&](int layer, Point p, NetId n) { return layer_ok(n, layer) && code_ok(obs->fixed_code(p, layer, class_width(n) / 2, 0, n), n); };
-      fin.via_free = [&](Point p, NetId n) { return vias_ok(n) && code_ok(obs->fixed_via_code(p, via_diameter(n), via_drill(n), 0, n), n); };
+      fin.track_free = [&](int layer, Point p, NetId n) {
+        return layer_ok(n, layer) && code_ok(obs->fixed_code(p, layer, class_width(n) / 2, 0, n), n) && rule_state(p, layer, class_width(n) / 2, 0, n) != 2;
+      };
+      fin.via_free = [&](Point p, NetId n) {
+        return vias_ok(n) && code_ok(obs->fixed_via_code(p, via_diameter(n), via_drill(n), 0, n), n) &&
+               !obs->via_disallowed(p, via_diameter(n), n, 0, nl - 1, model::ViaType::Through);
+      };
       fin.layers = nl;
       FlowEscapeStats fs;
       plan = plan_escapes_flow(b, needs, fin, {}, &fs);
@@ -3030,7 +3053,7 @@ struct Router::Impl {
         const int gx = to_ix(c.b.x), gy = to_iy(c.b.y);
         if (gx < 0 || gy < 0 || gx >= nx || gy >= ny) continue;
         const std::int32_t code = obs->fixed_via_code(at(gx, gy), via_diameter(c.net), via_drill(c.net), 0, cache_for(c.net).rep);
-        if (!code_ok(code, c.net)) continue;
+        if (!code_ok(code, c.net) || obs->via_disallowed(at(gx, gy), via_diameter(c.net), c.net, 0, nl - 1, model::ViaType::Through)) continue;
       }
       ++res.escape_corridors;
       const Coord r = c.band;

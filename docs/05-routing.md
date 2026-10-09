@@ -729,7 +729,7 @@ pad's own layer.
 |---|---|---|
 | `disallow track` by net, net class, type or layer, including `inDiffPair` | `RuleEngine::track_allowed` supplies per-net layer masks for pad cells, escapes, planar moves, via landings, diff-pair legs, escape corridors and fields. Through vias may pass through disallowed track layers. | `items_not_allowed`, once per item |
 | `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). Blind/buried router probes have no span yet, so either keyword conservatively stops both; `micro_via` alone stops micro vias. | `items_not_allowed`; `blind_via` has exactly one outer span endpoint, `buried_via` none, micro remains separate (D80). |
-| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Not applied; both commands warn by rule name that the router does not avoid it, the DRC reports it. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
+| Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Applied to every new track and via with its actual shape, width, position and span, in the exact checks before commit, escapes, pair legs and clean-up, and in the search's lattice tests (§34, D82). Not warned. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
 | Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
 | Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasExactNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
 | Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
@@ -1105,3 +1105,82 @@ Courtyard arcs/circles use the existing 5 µm-sagitta polygonization; containmen
 copper cores and contours. Circle/polygon/wildcard courtyard behaviour has direct engine tests but no dedicated
 CLI corpus case. Positional router enforcement and zone refill are unchanged.
 
+## 34. The router obeys positional disallow rules (2026-10-08, D82)
+
+**Before.** `disallow track` / `via` rules whose conditions depend on where the item is or what it is
+(`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `Width`, `Position_X/Y`, footprint
+properties) were DRC-only (§27, §33). The router warned and routed through them. With two common rules on
+eight PCBench boards (below), every routed board had KiCad `items_not_allowed` errors: 16 to 102 per board,
+476 in all.
+
+**What was built.**
+
+- `RuleEngine::probe_disallowed` judges a new track or via the way `disallowed` judges board items: every
+  custom rule in file order, the last match deciding (so `ignore` exceptions hold). The probe is the actual
+  copper: shape, width, position, net and layers, and for a via its span, so `blind_via` and `buried_via` are
+  told apart there (the per-net via-type switch keeps its conservative gate). `positional_disallow()` is set
+  when such a rule names tracks or vias; without one, nothing below runs and routing is unchanged.
+- Disallow keywords are compiled to bits. Area and courtyard functions resolve their name patterns once
+  (`Condition::bind`), and an area's outline box rejects far probes before the exact test: the router asks
+  these functions for every lattice point it visits.
+- `Obstacles::segment_state`, `disk_state`, `via_state` and `via_state_span` (now with the via type) return
+  "blocked" for disallowed copper. They are the exact checks of commit, escapes, diff-pair moves and legs,
+  clean-up shortcuts, in-pad vias and failed-commit learning, so nothing the rules forbid is committed. A
+  disk is judged on its copper (half the track width), not the lattice margin. A blind-via probe from the
+  top layer to the bottom one is judged as a through via, which is what commit writes for that span:
+  otherwise `disallow through_via` in an area was passed by the blind attempt that follows a blocked
+  through via.
+- Search: `point_state` treats the rules like fixed copper. A point is blocked when they forbid the track's
+  copper there, and legal only "tight" when they forbid the disk with the lattice margin, so steps between two
+  free points stay legal. `via_cost_at` judges the via itself (vias sit exactly on lattice points). These tests
+  run outside the per-class obstacle caches, since a rule may name nets that share a class. Escape planning's
+  track and via tests and its dog-bone reservations apply them too.
+- The warning "the router does not avoid it" is gone; unparseable rules and unknown symbols are still warned.
+
+Checking the result against KiCad found a parity bug in §33. KiCad's front and back courtyards are the
+footprint's own sides, so for a flipped footprint `intersectsFrontCourtyard` means its B.CrtYd outline.
+Footprint selectors containing `:` also match library ids. Both were fixed with five new corpus cases (D80).
+
+**Results.** Without positional rules the output does not change. Every routed board was byte-identical to
+`origin/main`: `quick` 30/30, `mid` 11/11 and `planes` 8/8 (the commands of doc 10 §4).
+
+With rules, KiCad 10.0.3 judges the output with the board's `.kicad_dru`. Eight PCBench boards (Hangul,
+d20, LogicBoxen, custom_cpu ALU, mechkeys, threeboard, Inkjet, scimpy) were routed at 3M work with:
+
+```
+(rule "no vias under ICs" (constraint disallow via) (condition "A.intersectsCourtyard('U*')"))
+(rule "bottom clear under front ICs" (layer B.Cu) (constraint disallow track)
+  (condition "A.intersectsFrontCourtyard('U*')"))
+```
+
+| | `origin/main` (rules ignored) | This change |
+|---|---|---|
+| KiCad `items_not_allowed` from routed copper | 476 (8 boards) | 0 |
+| Clean boards (no added error, complete) | 0 | 3 |
+| Mean completion | 97.6 % | 88.8 % |
+| Router seconds, sum | 11.3 | 11.5 |
+
+Part of the drop is work: the rules make routes longer, and at 20M work Inkjet, LogicBoxen and custom_cpu
+ALU route completely and clean. The rest comes from the rules themselves. d20 stops at 249/282 (276/282
+without the rules) and threeboard at 80/119, and their failures are reported boxed in. On d20 these are pins
+whose only exits are vias under their own IC (the QFN-48 U8 and the 1 × 1 mm UDFN-6 parts); on threeboard,
+pads of bottom-side ICs inside the courtyard that the rule closes on B.Cu.
+
+A net-dependent area rule was also tested on multichannel_mixer (`planes` settings: 3M work, `--soft-zones`,
+refill before judging). The rule `A.intersectsArea('auto-placement-area-*') && A.NetName != 'GND'` disallows vias:
+22 → 0 `items_not_allowed`, 177 → 175 routed.
+
+Tests: a net-specific area rule (SIG is kept out, GND still crosses on F.Cu), no vias in a courtyard, router
+probes against the direct area and courtyard tests on a grid (prefilters and bound selectors), and
+`route_rule_warnings`, which routes with an area rule and checks `tracemaker drc` finds no disallowed item.
+
+**Limits.**
+
+- The per-net layer masks still come from position-independent rules alone. A later positional `ignore` rule
+  that re-allows a layer in one area is not seen there, so the net stays off that layer (conservative).
+- Search tests lattice disks. A diagonal step between two legal points can still clip an area corner; the
+  exact check at commit rejects it and learns the cells.
+- Cost-to-go fields, the global router and `tracemaker escape` do not see positional rules (`escape` ignores
+  the per-net masks too). The fields stay lower bounds; the other two only guide or report.
+- Courtyard geometry has no deflation tolerance (§33). One track on threeboard is 1.25 µm into a courtyard by
+  TraceMaker's test and outside it by KiCad's, so TraceMaker is the stricter of the two.
