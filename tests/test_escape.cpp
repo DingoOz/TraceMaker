@@ -376,6 +376,7 @@ TEST_CASE("escape analysis: with soft zones a plane no pad touches keeps its net
     route::RouterOptions o;
     o.soft_zones = soft;
     o.work_budget = 2'000'000;
+    o.time_limit_s = 3600;  // the work budget decides, also in a slow sanitizer build
     o.gpu_device = -1;
     const auto res = route::Router(rb.board, rb.rules, o).run();
     CHECK(res.connections == part(rb.analyse(soft), "U1").pins);
