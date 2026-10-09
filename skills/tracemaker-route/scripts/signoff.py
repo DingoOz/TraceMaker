@@ -44,7 +44,9 @@ def routing_error(v):
 def drc(cli, board, out):
     command = [cli, "pcb", "drc", "--refill-zones", "--format", "json",
                "--severity-all", "--all-track-errors", "-o", str(out), str(board)]
-    p = subprocess.run(command, capture_output=True, text=True, timeout=1800)  # large boards refill for minutes
+    # stdin is closed: a containerised kicad-cli (docker run -i) would otherwise read the caller's input.
+    p = subprocess.run(command, stdin=subprocess.DEVNULL, capture_output=True, text=True,
+                       timeout=1800)  # large boards refill for minutes
     if p.returncode not in (0, 5) or not out.is_file():
         raise RuntimeError(f"KiCad DRC failed for {board} (exit {p.returncode}): "
                            + (p.stderr or p.stdout).strip())
@@ -60,6 +62,9 @@ def main():
     parser.add_argument("routed", type=Path)
     parser.add_argument("--route-json", type=Path)
     parser.add_argument("--json", type=Path)
+    parser.add_argument("--stage-dir", type=Path,
+                        help="where the temporary copies go (default: the system temporary directory); give a directory "
+                             "kicad-cli can read when it runs in a container or sandbox (Docker, Flatpak, Snap)")
     args = parser.parse_args()
     if not (str(args.input).isprintable() and str(args.routed).isprintable()):
         parser.error("board paths contain control characters; rename the files")
@@ -74,9 +79,12 @@ def main():
         if not args.input.with_suffix(".kicad_pro").is_file():
             result["warnings"].append(f"No sibling .kicad_pro for {args.input}; KiCad judges both boards on default net classes "
                                       "and minimums. Keep the board beside its project files.")
-        help_run = subprocess.run([cli, "pcb", "drc", "--help"], capture_output=True, text=True, timeout=10)
+        help_run = subprocess.run([cli, "pcb", "drc", "--help"], stdin=subprocess.DEVNULL, capture_output=True,
+                                  text=True, timeout=60)
         save_board = help_run.returncode == 0 and "--save-board" in help_run.stdout + help_run.stderr
-        with tempfile.TemporaryDirectory(prefix="tracemaker-signoff-") as tmp:
+        if args.stage_dir:
+            args.stage_dir.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="tracemaker-signoff-", dir=args.stage_dir) as tmp:
             # KiCad finds a board's project by its file name, so the routed board is judged as a copy named like the
             # input, beside copies of the input's .kicad_pro / .kicad_dru: both boards under the same rules.
             staged = []
@@ -88,8 +96,16 @@ def main():
                     if args.input.with_suffix(ext).is_file():
                         shutil.copyfile(args.input.with_suffix(ext), folder / (args.input.stem + ext))
                 staged.append(folder / args.input.name)
-            before = drc(cli, staged[0], Path(tmp) / "input.json")
-            after = drc(cli, staged[1], Path(tmp) / "routed.json")
+            try:
+                before = drc(cli, staged[0], Path(tmp) / "input.json")
+                after = drc(cli, staged[1], Path(tmp) / "routed.json")
+            except RuntimeError as exc:
+                if args.stage_dir:
+                    raise
+                # The copies exist, so a kicad-cli that cannot open them does not see this directory.
+                raise RuntimeError(f"{exc}\nThe boards were staged in {tmp}. A kicad-cli that runs in a container or sandbox "
+                                   "(Docker, Flatpak, Snap) may not see that directory: pass --stage-dir DIR with one it can "
+                                   "read, for example a build directory of the project.") from exc
         old = Counter(v["type"] for v in before["violations"] if routing_error(v))
         new = Counter(v["type"] for v in after["violations"] if routing_error(v))
         added = {k: new[k] - old[k] for k in sorted(new) if new[k] > old[k]}
