@@ -17,6 +17,11 @@ import sys
 import tempfile
 
 
+def flat(text):
+    """One printable line: names from board files must not be able to start a line of the report."""
+    return ' '.join(''.join(c if c.isprintable() else ' ' for c in str(text)).split())
+
+
 def sexprs(text):
     """Small iterative reader: quoted strings and comments cannot close a list."""
     root, stack = [], []
@@ -378,10 +383,15 @@ def main():
     args = parser.parse_args()
     if not math.isfinite(args.small_pad_mm) or args.small_pad_mm <= 0:
         parser.error('--small-pad-mm must be positive and finite')
+    if not str(args.board).isprintable():
+        parser.error('board path contains control characters; rename the file')
     report = {'board': str(args.board), 'findings': []}
     sections = defaultdict(list)
 
     def finding(section, severity, text):
+        # Net, rule, class and footprint names are the board author's text: a line break in one could forge a
+        # finding or a command block for the agent reading the report.
+        text = flat(text)
         sections[section].append(f'- **{severity}**: {text}')
         report['findings'].append({'section': section, 'severity': severity, 'message': text})
 
@@ -424,7 +434,7 @@ def main():
         sections['Project and lattice'].extend(['', '| Class | Nets | Effective track | Effective clearance | Implied pitch |',
                                                  '|---|---:|---:|---:|---:|'])
         for c in classes:
-            sections['Project and lattice'].append(f"| {c['name']} | {used[c['name']]} | {c['effective_track']:g} | {c['effective_clearance']:g} | {c['pitch_mm']:g} |")
+            sections['Project and lattice'].append(f"| {flat(c['name']).replace('|', '/')} | {used[c['name']]} | {c['effective_track']:g} | {c['effective_clearance']:g} | {c['pitch_mm']:g} |")
         finest = min(c['pitch_mm'] for c in classes)
         setters = [c['name'] for c in classes if c['pitch_mm'] == finest]
         report['pitch_mm'] = finest
@@ -445,7 +455,8 @@ def main():
                 drc_text, drc_code = p.stdout + '\n' + p.stderr, p.returncode
             except (OSError, subprocess.TimeoutExpired) as exc:
                 finding('Custom rules', 'info', f'TraceMaker DRC unavailable: {exc}')
-        engine_warnings = [line.strip() for line in (drc_text or '').splitlines() if 'warning:' in line]
+        # One entry per warning, flattened: a rule name may hold line breaks.
+        engine_warnings = [flat(w) for w in re.split(r'^(?=warning: )', drc_text or '', flags=re.M) if w.startswith('warning: ')]
         report['drc_warnings'] = engine_warnings
         rules_path = args.board.with_suffix('.kicad_dru')
         rules = []
@@ -471,7 +482,7 @@ def main():
             name, condition = rule[1], val(rule, 'condition', '')
             constraints = children(rule, 'constraint')
             kinds = [c[1] for c in constraints]
-            said = [w for w in engine_warnings if f"rule '{name}'" in w]
+            said = [w for w in engine_warnings if flat(f"rule '{name}'") in w]
             dropped = [w for w in said if 'rule ignored' in w or 'rule not applied' in w]
             reasons, refs, parsed = [], set(), True
             try:

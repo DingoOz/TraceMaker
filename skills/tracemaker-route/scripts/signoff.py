@@ -25,6 +25,11 @@ NOT_ROUTING = {
 }
 
 
+def flat(text):
+    """One printable line: item descriptions carry net and footprint names, the board author's text."""
+    return " ".join("".join(c if c.isprintable() else " " for c in str(text)).split())
+
+
 def routing_error(v):
     if v.get("severity") != "error" or v.get("type") in NOT_ROUTING:
         return False
@@ -56,6 +61,8 @@ def main():
     parser.add_argument("--route-json", type=Path)
     parser.add_argument("--json", type=Path)
     args = parser.parse_args()
+    if not (str(args.input).isprintable() and str(args.routed).isprintable()):
+        parser.error("board paths contain control characters; rename the files")
     result = {"input": str(args.input), "routed": str(args.routed), "warnings": []}
     try:
         cli = shutil.which(os.environ.get("KICAD_CLI", "kicad-cli"))
@@ -86,8 +93,8 @@ def main():
         old = Counter(v["type"] for v in before["violations"] if routing_error(v))
         new = Counter(v["type"] for v in after["violations"] if routing_error(v))
         added = {k: new[k] - old[k] for k in sorted(new) if new[k] > old[k]}
-        examples = {k: [{"description": v.get("description", ""),
-                         "items": [i.get("description", "") for i in v.get("items", [])]}
+        examples = {k: [{"description": flat(v.get("description", "")),
+                         "items": [flat(i.get("description", "")) for i in v.get("items", [])]}
                         for v in after["violations"] if v["type"] == k and routing_error(v)][:5]
                     for k in added}
         unconnected = len(after["unconnected_items"])
@@ -111,14 +118,14 @@ def main():
         print(f"- Unconnected: {result['unconnected_before']} → {unconnected}")
         print(f"- Added routing errors: {sum(added.values())} (positive per-type output − input deltas)")
         for kind, count in added.items():
-            print(f"\n## {kind}: +{count}")
+            print(f"\n## {flat(kind)}: +{count}")
             print("Examples from the output report; deltas do not identify individual new violations.")
             for example in examples[kind]:
                 print(f"- {example['description']}: " + "; ".join(example["items"]))
         if "router" in result:
             print("\n## Router summary")
             for key, value in result["router"].items():
-                print(f"- {key}: {value if value is not None else 'not recorded'}")
+                print(f"- {key}: {flat(value) if value is not None else 'not recorded'}")
         print(f"\n{result['refill_reminder']}")
         if save_board:
             print(f"After promoting, from the command line: `{result['refill_command']}`")
