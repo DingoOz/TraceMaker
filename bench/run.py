@@ -30,6 +30,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import threading
 import time
 from collections import Counter
 
@@ -163,6 +165,31 @@ def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
         return None
 
 
+def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
+    """Runs cmd and returns (exit code, stdout, stderr, CPU seconds). CPU time is the child's own user + system time
+    from os.wait4, so other boards routing at the same time do not count. Raises subprocess.TimeoutExpired."""
+    with tempfile.TemporaryFile("w+") as fo, tempfile.TemporaryFile("w+") as fe:
+        p = subprocess.Popen(cmd, stdout=fo, stderr=fe, text=True)
+        killed = threading.Event()
+
+        def kill() -> None:
+            killed.set()
+            p.kill()
+
+        timer = threading.Timer(timeout, kill)
+        timer.start()
+        try:
+            _, status, usage = os.wait4(p.pid, 0)
+        finally:
+            timer.cancel()
+        p.returncode = os.waitstatus_to_exitcode(status)  # reaped here: Popen must not wait again
+        if killed.is_set():
+            raise subprocess.TimeoutExpired(cmd, timeout)
+        fo.seek(0)
+        fe.seek(0)
+        return p.returncode, fo.read(), fe.read(), usage.ru_utime + usage.ru_stime
+
+
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     src0 = SRC_FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
@@ -179,11 +206,13 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     try:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
-        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + EXTRA,
-                           capture_output=True, text=True, timeout=time_limit * 3 + 60)
-        res["exit"] = p.returncode
-        if p.returncode not in (0, 3):
-            res["error"] = (p.stderr or p.stdout)[-500:]
+        code, stdout, stderr, cpu = run_measured(
+            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + EXTRA,
+            time_limit * 3 + 60)
+        res["exit"] = code
+        res["cpu_s"] = round(cpu, 2)
+        if code not in (0, 3):
+            res["error"] = (stderr or stdout)[-500:]
     except subprocess.TimeoutExpired:
         res["exit"] = -1
         res["error"] = "timeout"
@@ -302,6 +331,7 @@ def main() -> int:
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),
+        "cpu_seconds": round(sum(r.get("cpu_s", 0) for r in judged), 1),
         "time_limit_s": a.time, "threads": a.threads, "work": a.work, "refill": a.refill, "route_args": " ".join(EXTRA),
         "fr_rc12_clean_pass": round(fr_clean / len(fr_rows), 4) if fr_rows else None,
         "fr_241_clean_pass": round(sum(r["fr_241"]["clean"] for r in fr241) / len(fr241), 4) if fr241 else None,
@@ -318,7 +348,8 @@ def main() -> int:
     lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
              "| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |", "|---|--:|--:|--:|",
              f"| Clean pass (KiCad DRC) | {summary['clean_pass']:.1%} | {summary['fr_rc12_clean_pass'] or 0:.1%} | {summary['fr_241_clean_pass'] or 0:.1%} |",
-             f"| Mean completion | {summary['completion']:.1%} | | |", "",
+             f"| Mean completion | {summary['completion']:.1%} | | |",
+             f"| Route CPU time, all boards | {summary['cpu_seconds']:,.0f} s | | |", "",
              f"Both clean: {both}; only TraceMaker: {only_tm}; only Freerouting: {only_fr}.",
              f"Boards with added DRC errors: {summary['boards_with_added_errors']} ({dict(added_types)})."]
     (outdir / "report.md").write_text("\n".join(lines) + "\n")
