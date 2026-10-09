@@ -152,7 +152,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Exact verification of every segment and via before commit | Done | `commit` |
 | Escape stubs off the lattice for fine-pitch pads; pad legs dropped when the track already ends on the pad | Done | `pad_cells`, `commit` |
 | Escalation: forced escapes, neck-down to the board minimum width, negotiation | Done | `run` |
-| Boxed-in detection at the source (open list exhausted) and at the target (short reverse probe) | Done | `search_and_commit_inner` |
+| Boxed-in detection at the source (open list exhausted) and at the target (short reverse probe; first, for inner pins of dense packages and connections that failed before, §37) | Done | `search_and_commit_inner` |
 | Zone (plane) targets; MST connection planning over existing copper clusters | Done | `plan`, `search` |
 | Plane-aware routing of all-SMD boards: soft zone fills, untouched planes as via targets, vias kept off small pads, via in pad for inner balls, first nets (2026-10-07) | Done, opt-in (D65–D69). See §26 | `obstacles.cpp`, `plan`, `pad_cells`, `search`, `commit` |
 | GPU cost-to-go fields as the heuristic (never used to prune) | Done | `gpu/field_cuda.cu`, `build_field` |
@@ -1236,3 +1236,92 @@ rules". The router reports the same pin boxed in.
   `--no-tracks-on` limits and the router's off-lattice escape rungs are not modelled.
 - Satisfied means the net is complete. A pin whose cluster still has to reach another cluster is searched from
   its pad, through its own net's copper.
+
+## 37. Search order: target probe first, effort cap for longest first (2026-10-09, D87)
+
+**Before.** With `--work`, portfolio variant 2 ("fast bends, longest first, 2× pitch on large boards") routed
+almost nothing on large boards: at 20 M expansions on the `mid` set, sbc 23 of 410, decelerator 16 of 1009, EEZ
+18 of 634, logicbone 83 of 1188 and Aleste 35 of 1616, against 300–1300 for the other variants. The cause was the order of work, not the
+pitch.
+
+- **Pitch was not the cause.** One variant at 5 M: shortest first routed sbc 326 at 1× and 2× pitch, and LeeChee
+  1018 at 1× and 1091 at 2×. Longest first routed sbc 0 and LeeChee 4 at 1×, and 0 and 24 at 2×.
+- **Longest first spends a fixed budget on the most expensive searches first.** The first searches cost 50 k to
+  1.4 M expansions each; the average in a shortest-first run is 3–7 k. decelerator's 100 mm `/D23` alone took
+  1.34 M, and 5 M expansions routed 5 connections. The A* heuristic is a lower bound that falls 0.1–6 % short of
+  the path cost, and the band of states it explores widens with the connection's length. Two things were ruled
+  out: filling the obstacle cache before building the cost field, and breaking heap ties towards the target.
+  Neither changed the count.
+- **A sealed target is found only after the forward search has flooded its window.** sbc's longest connections
+  are DDR lines whose DRAM ends are dead pins (22 balls without a via site under the solder-mask rule, §35). The
+  forward search used about 630 k expansions on each before the reverse probe found the target in a pocket of
+  about 450 cells. Eight of those took the whole 5 M.
+
+**What was built.**
+
+- **Target probe** (`RouterOptions::target_probe`, 5,000 expansions, on; `--target-probe 0` turns it off).
+  Before the first strict search of a connection whose target is an inner pin of a dense package
+  (`route::inner_dense_pins`: an SMD pin more than 3/4 pitch inside the box of the package's pad centres, on a
+  footprint the escape planner counts as dense), or that has failed before, a reverse search from the target
+  runs with that cap and no cost field. An exhausted pocket is "boxed in (target)" and goes straight to the
+  escalation ladder (forced escapes, neck-down). A path is committed. Anything else falls through to the usual
+  search. Probing every target cost one variant at 5 M 29 connections on Aleste and 14 on logicbone; probing only
+  these pins costs none on `mid`.
+- **Effort cap for the first pass** (`RouterOptions::defer_steps`, 0 = off; variant 2 uses 30). In pass 0, a
+  plain search (no forced escapes, no neck-down) is capped at `defer_steps` expansions per lattice step of the
+  connection's length, at least `defer_floor` (20 k). A search that hits the cap puts its connection at the end
+  of the pass, where it runs once more without the cap. A deferred attempt records no nogood, so the retry is
+  not skipped. The first pass counts deferrals ("first pass: N searches put back").
+- `route::dense_part` now holds the dense-package test that `plan_escapes`, `analyse_escapes` and
+  `inner_dense_pins` share. With the probe off and no cap, routing and `tracemaker escape` output are
+  byte-identical to before.
+
+**Results.** `mid` set, 20 M expansions, all eight variants, `--threads 3`, routed connections:
+
+| Board | Before | Probe (first version, with a cost field) | Probe + variant 2 cap (as built) |
+|---|---|---|---|
+| decelerator4030 | 611 | 617 | 617 |
+| EEZ DIB MCU | 519 | 531 | 536 |
+| logicbone | 966 | 976 | 976 |
+| sbc | 354 | 357 | 357 |
+| kitspace_d20 | 276 | 279 | 279 |
+| LimeSDR | 810 | 810 | 809 |
+| Aleste, CoreOne, Teensy, LeeChee, MonApollo | 5,566 | 5,566 | 5,566 |
+| **Total** | **9,102** | **9,136** | **9,140** |
+
+Mean completion 76.4 % → 77.2 %. No board is clean in any run. The added errors are the same (Teensy's four
+`solder_mask_bridge`).
+
+**Time.** At the same work the 11 boards take 6.7 % more CPU time (931 → 993 s user, `--threads 4`). That is
+inside the run-to-run noise of this Mac (byte-identical boards move up to 14 % between two runs) except on sbc
+(65 → 93 s) and kitspace_d20 (68 → 79 s). The probes themselves take 0.05–0.24 s per variant on sbc.
+The rest is where the saved budget goes: without the probe sbc's variants spend their budget flooding windows in
+the first pass; with it they reach negotiation, whose searches cost 6–8.5 s per variant instead of 0–1.7 s, since
+negotiated expansions (rip-up, crossing costs, routed-copper checks) take more time than strict ones. The work
+budget counts expansions, not that. At the same wall time (`--time 40`, four variants, both binaries side by side)
+the 11 boards route 9,332 → 9,370: logicbone +7, EEZ +31, MonApollo +1, Aleste −1, the rest equal.
+
+The search's target marks now live in a generation-stamped array that persists between searches; it used to be
+a new array the size of the window, cleared on every search. Outputs are byte-identical.
+
+Variant 2 alone with the cap (20 M): sbc 23 → 342, decelerator 16 → 463, EEZ 18 → 464, logicbone 83 → 755, Aleste
+35 → 1173 and LeeChee 1067 → 1131 (level with the board's best variant). On LimeSDR, the one `mid` board it won, it routes 799 instead of 810, so
+the board drops to 809. A cap of 300 steps left Aleste at 118 and decelerator at 41: the capped attempts on long
+connections still spent the budget.
+
+The cap on every variant (`--defer-steps 300`) routed 9,184 (Aleste +9, CoreOne +13, decelerator +32 against the
+probe alone; LeeChee −11, logicbone −4) but took 555 s against 407 s with the cap on variant 2 alone (cap 300), for the same work. At 100 steps it
+routed 9,073. It stays an option.
+
+`quick` (30 boards, 1 M, one variant): clean pass and completion unchanged, one output differs. `planes` (3 M,
+`--soft-zones`, `--refill`): completion 88.9 % → 90.0 %; RoyalBlue 123 → 131 routed; StickHub's unconnected items
+15 → 6. StickHub has seven more `solder_mask_bridge`: tracks and vias under the B.Mask openings of its LOGO
+footprints, which the router does not model (5 before, 12 after; KiCad gives the same count on repeated runs).
+
+**Limits.**
+
+- The probe's cap is fixed. A sealed pocket larger than 5,000 states still costs a forward flood before the
+  60 k reverse probe after the first window.
+- The cap is per lattice step of the straight-line length, so a connection that must detour far is deferred
+  even when its search is efficient.
+- Mask openings from footprint graphics are not obstacles for other nets' copper.

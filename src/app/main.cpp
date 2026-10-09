@@ -505,6 +505,10 @@ int main(int argc, char** argv) {
   route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of the GPU (same results)");
   route->add_flag("--reach-verify", ropt.reach_verify, "Test: check every unreachable verdict with the full A*")->group("");
   route->add_option("--reach-check", ropt.reach_check, "Reachability check before strict searches: 0 off, 1 likely failures, 2 all")->group("");
+  route->add_option("--target-probe", ropt.target_probe,
+                    "Expansions of the reverse probe from an inner pin of a dense package before its first search (0 = off)")->group("");
+  route->add_option("--defer-steps", ropt.defer_steps,
+                    "First pass: put a search back when it costs more than this many expansions per lattice step of its length (0 = off)")->group("");
   route->add_flag("--soft-zones", ropt.soft_zones, "Zone fills do not block other nets (refill the zones afterwards); unused fills become plane targets");
   route->add_flag("--via-in-pad", ropt.via_in_pad, "Inner balls / enclosed SMD pads may take a minimum-size via in the pad (needs filled, capped vias)");
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
