@@ -89,6 +89,17 @@ def number(node, head, default=0):
     return float(val(node, head, default))
 
 
+def net_of(node, nets):
+    """Net name of a pad or zone. KiCad 10 writes (net "NAME") and has no net table; older files write
+    (net N "NAME") on pads and (net N) elsewhere, with a table of (net N "NAME") at the top."""
+    n = child(node, 'net')
+    if len(n) >= 3:
+        return n[2]
+    if len(n) == 2 and not isinstance(n[1], list):
+        return nets.get(n[1], '' if nets else n[1])
+    return ''
+
+
 def locked(node):
     return 'locked' in node or bool(child(node, 'locked')) and val(node, 'locked') not in ('no', 'false')
 
@@ -424,7 +435,10 @@ def main():
                                              priority=c.get('priority') if c.get('priority') is not None else 0))
                        for c in source_classes if c.get('name') not in (None, '', 'Default'))
         nets = {n[1]: n[2] for n in children(board, 'net') if len(n) >= 3}
-        net_names = sorted(n for n in nets.values() if n)
+        # KiCad 5 called footprints modules.
+        footprints = children(board, 'footprint') + children(board, 'module')
+        net_names = sorted({n for n in nets.values() if n}
+                           | {net_of(pad, nets) for fp in footprints for pad in children(fp, 'pad')} - {''})
         used = Counter(class_for(n, classes, settings)['name'] for n in net_names)
         for c in classes:
             c['effective_track'] = max(c['track_width'], minimums.get('min_track_width', 0))
@@ -587,11 +601,11 @@ def main():
             count = sum(locked(n) for n in items)
             routed += len(items)
             finding('Existing copper', 'info', f'{kind}: {len(items)} total, {count} locked, {len(items) - count} unlocked.')
-        footprints = children(board, 'footprint')
         refs_locked = []
         small, pads_by_net = 0, defaultdict(set)
         for fp in footprints:
-            ref = next((p[2] for p in children(fp, 'property') if p[1] == 'Reference'), val(fp, 'reference', '?'))
+            ref = next((p[2] for p in children(fp, 'property') if p[1] == 'Reference'),
+                       next((t[2] for t in children(fp, 'fp_text') if t[1] == 'reference'), '?'))
             if locked(fp):
                 refs_locked.append(ref)
             at = child(fp, 'at')
@@ -606,8 +620,8 @@ def main():
                 size = (local_bounds[2] - local_bounds[0], local_bounds[3] - local_bounds[1])
                 if pad[2] == 'smd' and size[0] < args.small_pad_mm and size[1] < args.small_pad_mm:
                     small += 1
-                net = val(pad, 'net', '0')
-                if net != '0':
+                net = net_of(pad, nets)
+                if net:
                     pads_by_net[net].add((ref, pad[1]))
                 p = xy(pad, 'at')
                 x = origin[0] + p[0] * math.cos(angle) + p[1] * math.sin(angle)
