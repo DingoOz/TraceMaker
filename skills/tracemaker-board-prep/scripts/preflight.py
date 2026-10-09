@@ -292,7 +292,7 @@ def outline(board):
     shapes = [n for n in board if isinstance(n, list) and n and n[0].startswith('gr_')
               and val(n, 'layer') == 'Edge.Cuts']
     edges, polygons, bounds = [], [], []
-    curved = False
+    curved, zero_length = False, 0
     for n in shapes:
         kind = n[0]
         if kind in ('gr_line', 'gr_arc'):
@@ -306,6 +306,7 @@ def outline(board):
                 a, mid, b = b, rotate(b, turn / 2), rotate(b, turn)
             edges.append((a, b))
             bounds.extend((a, b))
+            zero_length += kind == 'gr_line' and math.dist(a, b) < 1e-6
             if kind == 'gr_arc':
                 curved = True
                 bounds.extend(arc_bounds(a, mid or a, b))
@@ -325,12 +326,29 @@ def outline(board):
             bounds.extend(((a[0] - r, a[1] - r), (a[0] + r, a[1] + r)))
             polygons.append([])
             curved = True
-    # Endpoints quantised to 1 µm: sufficient for a preflight, not a geometric DRC.
-    key = lambda p: (round(p[0], 3), round(p[1], 3))
+    # KiCad 10.0.6 chains outline segments whose ends lie within 0.01 mm of each other (PCBench: 28 outlines with
+    # gaps of 1.2 to 10 µm pass its DRC, none above), so ends that close are merged before the loops are followed.
+    tolerance = 0.01 + 1e-9
+    cells, parent = defaultdict(list), {}
+
+    def key(p):
+        while parent[p] != p:
+            parent[p] = parent[parent[p]]
+            p = parent[p]
+        return p
+
+    for p in sorted({p for edge in edges for p in edge}):
+        parent[p] = p
+        cx, cy = math.floor(p[0] / tolerance), math.floor(p[1] / tolerance)
+        for q in [q for dx in (-1, 0, 1) for dy in (-1, 0, 1) for q in cells[cx + dx, cy + dy]]:
+            if math.dist(p, q) <= tolerance:
+                parent[key(q)] = key(p)
+        cells[cx, cy].append(p)
     graph = defaultdict(list)
     for index, (a, b) in enumerate(edges):
-        graph[key(a)].append((key(b), index))
-        graph[key(b)].append((key(a), index))
+        if key(a) != key(b):  # a stub shorter than the tolerance is not a side of the outline
+            graph[key(a)].append((key(b), index))
+            graph[key(b)].append((key(a), index))
     seen, loops = set(), []
     for start in sorted(graph):
         if start in seen:
@@ -356,7 +374,12 @@ def outline(board):
             max(p[0] for p in bounds), max(p[1] for p in bounds)) if bounds else None
     simple = not curved and len(polygons) + len(loops) == 1
     polygon_area = area((polygons + loops)[0]) if simple else 0
-    return {'present': bool(shapes), 'closed': bool(polygons or loops), 'bbox': bbox,
+    # Footprints can carry part of the outline (edge connectors, board templates); those shapes are not followed.
+    in_footprints = sum(1 for fp in children(board, 'footprint') + children(board, 'module') for n in fp
+                        if isinstance(n, list) and n and isinstance(n[0], str) and n[0].startswith('fp_')
+                        and val(n, 'layer') == 'Edge.Cuts')
+    return {'present': bool(shapes), 'closed': bool(polygons or loops), 'bbox': bbox, 'in_footprints': in_footprints,
+            'zero_length': zero_length,
             'area_mm2': polygon_area or ((bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) if bbox else 0),
             'area_method': 'simple outline polygon' if polygon_area else 'outline bbox approximation'}
 
@@ -561,8 +584,12 @@ def main():
 
         out = outline(board)
         report['outline'] = out
-        finding('Outline and placement', 'info' if out['closed'] else 'block',
-                f"Edge.Cuts present: {out['present']}; closed loop detected: {out['closed']}; area {out['area_mm2']:g} mm² ({out['area_method']}). Closure/bounds are approximate; KiCad DRC is authoritative.")
+        if out['zero_length']:
+            finding('Outline and placement', 'block', f"{out['zero_length']} Edge.Cuts lines of zero length: KiCad's DRC calls the outline malformed (invalid_outline) and skips its edge checks. Delete them.")
+        finding('Outline and placement', 'info' if out['closed'] or out['in_footprints'] else 'block',
+                f"Edge.Cuts present: {out['present']}; closed loop detected: {out['closed']}; area {out['area_mm2']:g} mm² ({out['area_method']}). Closure/bounds are approximate; KiCad DRC is authoritative."
+                + (f" {out['in_footprints']} Edge.Cuts shapes are drawn in footprints and not followed here: check the outline with KiCad's DRC (invalid_outline)."
+                   if out['in_footprints'] and not out['closed'] else ''))
         copper_layers = [n[1] for n in child(board, 'layers')[1:] if isinstance(n, list) and len(n) > 1 and n[1].endswith('.Cu')]
         planes, zone_details = [], []
         for index, z in enumerate(children(board, 'zone'), 1):
