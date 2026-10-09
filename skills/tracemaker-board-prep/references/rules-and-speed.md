@@ -38,7 +38,8 @@ TraceMaker reads the board's `.kicad_dru`. Whether a rule is cheap depends on it
 | `physical_hole_clearance` that mentions a net or net class | Enforced | **Disables caches board-wide** |
 | `clearance` (any condition), and any other constraint type | Enforced exactly | **Disables caches board-wide** |
 | `disallow hole/footprint/text` | Not checked by TraceMaker; KiCad DRC reports it | — |
-| Condition that does not parse, uses a name TraceMaker does not evaluate (`memberOfGroup`, `Parent.Reference`, `insideCourtyard`, `getField`, ...) or has a single number without units | **Not applied by the router or `tracemaker drc`** (KiCad still applies it); named in a `warning:` line. Preflight grades it `block` | **Disables caches board-wide** |
+| Condition that does not parse, uses a property TraceMaker does not evaluate (`Parent.Reference`, ...) or has a single number without units | **Not applied by the router or `tracemaker drc`** (KiCad still applies it); named in a `warning:` line. Preflight grades it `block` | **Disables caches board-wide** |
+| Condition that calls a KiCad function TraceMaker does not evaluate (`memberOfGroup`, `hasNetclass`, `fromTo`, `getField`, `insideCourtyard`, ...) | **Kept, with that call taken as false**, so the rule misses whatever only the call selects and a `disallow` never fires through it (KiCad applies it in full); named in a `warning:` line. Preflight grades it `block` | As the rule's constraint |
 
 TraceMaker evaluates `NetClass`, `NetName`, `Type`, `Layer`, `L`, `Reference`, `Pad_Type`, `Width`, `Size_X`,
 `Size_Y`, `Position_X`, `Position_Y`, `isPlated()`, `existsOnLayer()`, `insideArea()`, `intersectsArea()`,

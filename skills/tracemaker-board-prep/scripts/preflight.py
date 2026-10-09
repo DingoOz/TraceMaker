@@ -551,6 +551,13 @@ def main():
             for w in dropped:
                 finding('Custom rules', 'block', f"Rule '{name}' is not applied by TraceMaker (router and `tracemaker drc`): {w}. "
                         'KiCad still enforces it: fix the condition, or route and fix its violations by hand.')
+            # The engine keeps a rule that calls a KiCad function it cannot evaluate, with the call taken as false: the
+            # rule then misses whatever only that call selects, and KiCad still reports those items.
+            partial = [w for w in said if w not in dropped and 'KiCad evaluates and TraceMaker does not' in w]
+            for w in partial:
+                finding('Custom rules', 'block', f"Rule '{name}' is not applied by TraceMaker the way KiCad applies it: {w}. "
+                        'KiCad still enforces it in full: rewrite the condition without that function, or route and fix its '
+                        'violations by hand.')
             if dropped:
                 reasons.append('rule not applied')
             for kind in kinds:
