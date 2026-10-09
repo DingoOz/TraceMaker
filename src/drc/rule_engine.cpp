@@ -154,11 +154,19 @@ class Condition {
       return n;
     }
     if (std::isdigit(static_cast<unsigned char>(c)) || c == '-' || c == '+' || c == '.') {
-      const char* begin = src_.c_str() + pos_;
-      char* end = nullptr;
-      const double number = std::strtod(begin, &end);
-      if (end == begin || !std::isfinite(number)) throw std::runtime_error("invalid number");
-      pos_ += static_cast<std::size_t>(end - begin);
+      // KiCad's numbers are an optional sign, digits and an optional fraction: ".3mm" and "3e-1mm" do not
+      // compile there (number_leading_dot, number_exponent), and strtod would also take hexadecimal.
+      std::size_t e = pos_ + ((c == '-' || c == '+') ? 1 : 0);
+      const std::size_t digits = e;
+      while (e < src_.size() && std::isdigit(static_cast<unsigned char>(src_[e]))) ++e;
+      if (e == digits) throw std::runtime_error("invalid number");
+      if (e < src_.size() && src_[e] == '.') {
+        ++e;
+        while (e < src_.size() && std::isdigit(static_cast<unsigned char>(src_[e]))) ++e;
+      }
+      const double number = std::strtod(src_.substr(pos_, e - pos_).c_str(), nullptr);
+      if (!std::isfinite(number)) throw std::runtime_error("invalid number");
+      pos_ = e;
       skip();
       const std::size_t unit_start = pos_;
       while (pos_ < src_.size() && std::isalpha(static_cast<unsigned char>(src_[pos_]))) ++pos_;
@@ -229,7 +237,9 @@ class Condition {
   }
 
   static bool str_eq(const Value& l, const Value& r) {
-    if (l.k == Value::K::Num && r.k == Value::K::Num) return std::fabs(l.n - r.n) < 1e-9;
+    // Exact, as in KiCad: a literal is its decimal value times the unit scale in double precision, so
+    // "A.Width == 1.001mm" (1000999.9999999999 nm) does not match a 1001000 nm track (number_inexact_*).
+    if (l.k == Value::K::Num && r.k == Value::K::Num) return l.n == r.n;
     // KiCad's layer value rejects its unset ID even against '*'; it is not a missing property.
     if (l.k == Value::K::NoLayer || r.k == Value::K::NoLayer) return false;
     if (l.k != r.k) return false;

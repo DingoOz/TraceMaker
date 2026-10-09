@@ -471,6 +471,89 @@
         ]
       ]
     },
+    "number_exponent": {},
+    "number_inexact_eq_mil": {},
+    "number_inexact_eq_mm": {},
+    "number_inexact_ge_mil": {
+      "items_not_allowed": [
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_inexact_gt_mm": {
+      "items_not_allowed": [
+        [
+          "inexact-mm"
+        ]
+      ]
+    },
+    "number_inexact_ne_mil": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_inexact_ne_mm": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_leading_dot": {},
+    "number_negative": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_plus_sign": {
+      "items_not_allowed": [
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
+    "number_trailing_dot": {
+      "items_not_allowed": [
+        [
+          "inexact-mil"
+        ],
+        [
+          "inexact-mm"
+        ],
+        [
+          "plain"
+        ]
+      ]
+    },
     "own_layer_pads_back": {
       "items_not_allowed": [
         [

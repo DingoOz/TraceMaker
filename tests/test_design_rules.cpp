@@ -686,3 +686,36 @@ TEST_CASE("KiCad rule Width is a track property: undefined for pads and vias", "
   CHECK(parity_hits("A.Width > 0.5mm", "track pad via") == 0);
   CHECK(parity_hits("A.Width < 0.3mm", "track pad via") == 10);   // undefined compares as 0: 2 tracks, all pads and vias
 }
+
+TEST_CASE("KiCad rule numbers: exact equality and plain decimal literals", "[rules][drc]") {
+  // KiCad 10.0.6: number_inexact_*, number_leading_dot, number_exponent, number_plus_sign, number_negative.
+  const std::string copper =
+      "(segment (start 6 3) (end 9 3) (width 1.001) (layer \"F.Cu\") (net 1))\n"
+      "(segment (start 6 5) (end 9 5) (width 0.02794) (layer \"F.Cu\") (net 1))\n"
+      "(segment (start 6 7) (end 9 7) (width 0.4) (layer \"F.Cu\") (net 1))\n";
+  const auto hits = [&](const std::string& condition) {
+    const Files f("numbers", board_text(copper), parity_rule(condition));
+    const auto lb = io::read_board_file(f.pcb.string());
+    const auto rules = io::read_design_rules(f.pcb.string());
+    const drc::RuleEngine engine(lb.board, rules);
+    const auto items = drc::build_copper(lb.board);
+    int n = 0;
+    for (const auto& it : items.items) n += engine.disallowed(it, 0).has_value();
+    return n;
+  };
+  // 1.001 * 1e6 is 1000999.9999999999 and 1.1 * 25400 is 27940.000000000004 in double precision; KiCad compares
+  // them exactly with the tracks' 1001000 nm and 27940 nm.
+  CHECK(hits("A.Width == 1.001mm") == 0);
+  CHECK(hits("A.Width != 1.001mm") == 3);
+  CHECK(hits("A.Width > 1.001mm") == 1);
+  CHECK(hits("A.Width == 1.1mil") == 0);
+  CHECK(hits("A.Width >= 1.1mil") == 2);
+  CHECK(hits("A.Width == 0.4mm") == 1);
+  // Not numbers in KiCad: the rule is dropped.
+  CHECK(hits("A.Width > .3mm") == 0);
+  CHECK(hits("A.Width > 3e-1mm") == 0);
+  CHECK(hits("A.Width > 0x1mm") == 0);
+  CHECK(hits("A.Width > +0.3mm") == 2);
+  CHECK(hits("A.Width > -1mm") == 3);
+  CHECK(hits("A.Width > 0.mm") == 3);
+}

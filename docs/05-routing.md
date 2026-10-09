@@ -1000,7 +1000,7 @@ were not distinguished.
 | Semantics | Deciding KiCad 10.0.3 cases |
 |---|---|
 | `<`, `<=`, `>`, `>=` and numeric equality/inequality; dimensional properties are nanometres | `width_gt_mm`, `position_anchor_x_le_zero`, `size_x_mm`, `size_y_half_mm`, `size_x_mil` |
-| Literal scaling without rounding; equality tolerance below 1e-9 nm, retaining fractional nanometres | `width_eq_mil`, `literal_mm_mil`, `fractional_nm_constant`, `fractional_nm_not_zero` |
+| Literal scaling without rounding, retaining fractional nanometres; equality is exact in double precision, so `A.Width == 1.001mm` (1000999.9999999999 nm) does not match a 1.001 mm track. A literal is a sign, digits and an optional fraction: no leading dot, no exponent | `width_eq_mil`, `literal_mm_mil`, `fractional_nm_constant`, `fractional_nm_not_zero`, `number_inexact_*`, `number_leading_dot`, `number_exponent` |
 | Exact case-sensitive unit vocabulary: `mm`, `mil`, `in`, `deg`, `fs`, `ps`, including spaced suffixes; time scales to attoseconds | `width_gt_in`, `width_eq_spaced_mm`, `width_eq_deg`, `width_eq_250fs`, `width_eq_quarter_ps`, `literal_ps_fs` |
 | One numeric literal without units drops the entire condition, even in an unused branch; multiple numeric literals permit bare internal-unit values | `width_ne_double_or`, `width_gt_double_or`, `width_eq_integer_multiliteral_false_or` |
 | Quoted dimensions remain strings: equality with a number is false, inequality true, relational conversion is zero | `size_x_quoted`, `width_eq_quoted_mm_or`, `width_ne_quoted_mm`, `width_gt_quoted_mm` |
@@ -1040,6 +1040,10 @@ and frozen as new cases:
 - `Width` is a track and arc property. Pads and vias have none (`==` and `!=` false, relational comparisons
   see 0), where the engine gave pads 0 and vias their diameter: `A.Width < 0.3mm` missed every via, and
   `A.Width > 0.5mm` selected them. Five `width_non_track_*` cases.
+- Numbers. KiCad compares for equality exactly; the engine allowed 1e-9 nm, so `A.Width == 1.001mm` matched a
+  1.001 mm track and `!=` missed it (KiCad: the reverse, because 1.001 × 10⁶ is not a whole number in double
+  precision). `.3mm` and `3e-1mm` are not numbers in KiCad and drop the rule; they were accepted. Eleven
+  `number_*` cases.
 
 The durable corpus is `tests/integration/rule_parity/`: `generate.py` creates boards and rules in the build
 directory, `expected.json` freezes KiCad item/pair multisets (10.0.6 since the rejudge above), and `run.py` runs only TraceMaker DRC.

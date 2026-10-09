@@ -194,6 +194,23 @@ def generate(root: Path) -> dict:
         ('width_non_track_gt','A.Width > 0.5mm'),
     ]:
         case(name,pads,rule(condition,'pad track via'),note='Pads, a 0.25 mm track and a 0.8 mm via: Width is a track property.')
+    # Numbers: equality is exact in double precision (1.001 * 1e6 and 1.1 * 25400 are not whole nanometres),
+    # and a literal is sign, digits and an optional fraction.
+    number_items=[track('inexact-mm',5,5,8,5,width=1.001),track('inexact-mil',5,9,8,9,width=0.02794),track('plain',5,13,8,13,width=0.4)]
+    for name,condition in [
+        ('number_inexact_eq_mm','A.Width == 1.001mm'),
+        ('number_inexact_ne_mm','A.Width != 1.001mm'),
+        ('number_inexact_gt_mm','A.Width > 1.001mm'),
+        ('number_inexact_eq_mil','A.Width == 1.1mil'),
+        ('number_inexact_ne_mil','A.Width != 1.1mil'),
+        ('number_inexact_ge_mil','A.Width >= 1.1mil'),
+        ('number_leading_dot','A.Width > .3mm'),
+        ('number_exponent','A.Width > 3e-1mm'),
+        ('number_plus_sign','A.Width > +0.3mm'),
+        ('number_negative','A.Width > -1mm'),
+        ('number_trailing_dot','A.Width > 0.mm'),
+    ]:
+        case(name,number_items,rule(condition),note='Tracks of 1.001 mm, 0.02794 mm (1.1 mil) and 0.4 mm.')
     layer_pads=[footprint('SF',5,5),footprint('SB',5,10,back=True),footprint('PF',5,15,'thru_hole'),
                 footprint('PB',5,20,'thru_hole',back=True),footprint('NF',5,25,'np_thru_hole')]+vias
     for name,condition in [
