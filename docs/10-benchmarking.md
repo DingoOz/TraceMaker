@@ -28,9 +28,10 @@ the upstream repositories, not by a complete download and test run.
 
 ### Building unrouted fixtures
 
-`bench/tools/strip.py` removes `segment`/`arc`/`via` nodes (keeping locked ones and zones), and for the
-place-and-route set also resets unlocked footprint positions to a pile outside the outline (what KiCad's
-"Update PCB from Schematic" produces).
+`strip_routing` in `bench/prepare_dac2020.py` removes top-level `segment`/`arc`/`via` nodes and keeps everything
+else byte for byte (zones and their fills too). `bench/prepare_demos.py` uses it to turn KiCad demo projects and
+test boards into `bench/run.py` fixtures (`<out>/<name>/unrouted.kicad_pcb` with the project and custom rules
+beside it). The place-and-route sets (unlocked footprints reset to a pile) are built by `bench/make_place_sets.py`.
 
 ## 2. Metrics per board
 
@@ -57,25 +58,63 @@ place-and-route set also resets unlocked footprint positions to a pile outside t
 
 ## 4. Harness (`bench/`)
 
-- Python, driven by manifest files (`bench/manifests/*.yaml`: board list, time budget, tier).
-- Tiers: `quick` (~30 boards, < 5 min total, every change), `standard` (~300 boards, nightly), `full` (all).
-- Runs N boards in parallel (one engine process per board, GPU jobs shared through the engine's queue).
-- Each run writes `results/<run-id>/<board>.json` and a summary; `bench/report.py` renders Markdown and an
-  HTML dashboard (per-board deltas vs baseline, scatter of time vs completion, failure-cause histogram from
-  the failure memory).
-- **Paired comparison**: same boards, same budget, same machine; report wins/losses/ties per board, a
-  sign test, and the bootstrap confidence interval of the clean-pass difference.
-- **Seeds**: best-of-1 is the headline; best-of-5 is reported separately (PCBWorld reports baselines as best
-  of 5, so compare like with like).
+`bench/run.py` routes each board of a set with a snapshot of the engine binary, judges input and output with
+`kicad-cli pcb drc`, and writes `bench/results/<run-id>/{boards.jsonl, summary.json, report.md, boards/}`
+(`summary.json` feeds the progress site). `bench/compare_runs.py` compares two runs board by board and checks the
+gates of §5.
+
+| Option | Effect |
+|---|---|
+| `--set NAME` | the boards of `bench/sets/NAME.txt` (names the set in the summary) |
+| `--work N` | deterministic work budget per board, no knowledge base; `--time` becomes a safety stop (3,600 s) |
+| `--refill` | KiCad refills zones before judging input and output; needed whenever fills may be stale (`--soft-zones`) |
+| `--route-args=...` | extra `tracemaker route` options (also `TM_ROUTE_ARGS`) |
+| `--fixtures DIR` | boards from `DIR/<name>/unrouted.kicad_pcb` instead of PCBench; a `.kicad_pro`/`.kicad_dru` beside it is copied next to the output so KiCad judges with the board's rules |
+| `--tier`, `--limit`, `--seed` | sample PCBench boards by Freerouting tier instead of a set |
+
+**Sets** (`bench/sets/`):
+
+| Set | Boards | Command | When |
+|---|---|---|---|
+| `quick` | the 30 PCBench tier-A boards of `--limit 30 --seed 1` | `--set quick --work 1000000 --route-args "--variants 1"` (≈ 30 s with `--jobs 4`) | every routing change |
+| `mid` | 11 large, hard PCBench boards | `--set mid --work 20000000` | changes to search, plans or rip-up, which can move results at 20 M while `quick` stays identical |
+| `planes` | 7 KiCad demos with zone fills plus `tests/boards/plane_smd`, routing stripped | `bench/prepare_demos.py --set planes`, then `--fixtures build/demos --set planes --work 3000000 --refill`, once plain and once with `--route-args=--soft-zones` | changes to zones, planes and plane targets |
+
+**Comparing.** `bench/compare_runs.py BEFORE AFTER [--expect-identical]` lists every board whose routed output
+differs or got worse, the clean-pass and completion totals and router seconds, and exits 1 if a gate fails.
+`--expect-identical` adds "every routed board byte-identical" for speed-ups and refactors. Build the "before"
+binary from the base commit (a clean `origin/main` worktree) and run both on the same machine.
+
+**Other tools.**
+
+| Tool | Purpose | Status |
+|---|---|---|
+| `speed_ab.py` | engine speed A/B at a fixed work budget: wall and CPU time, instructions, memory, byte-identical outputs (`--demos` for KiCad demos) | maintained |
+| `scripts/drc_parity.py`, `drc_broken_parity.py` | `tracemaker drc` against KiCad on demo and broken boards (ctest `kicad_drc_parity`, `kicad_drc_broken_parity`); counts are capped at KiCad's 199 per type | maintained |
+| `quality.py`, `quality_bench.py`, `compare.py`, `human_baseline.py` | routing quality metrics; TraceMaker against Freerouting versions; the designers' own routing judged the same way | maintained |
+| `check_env.py`, `prepare_dac2020.py`, `prepare_demos.py`, `make_place_sets.py` | tool checks and fixture preparation | maintained |
+| `pair_eval.py`, `feasibility.py`, `crules_detect.py`, `crules_place.py`, `crules_tiers.py` | feature evaluations (diff pairs, escape feasibility, component rules) | kept for re-measuring their features |
+| `m6_bench.py`, `place_m8.py`, `place_auto.py`, `place_flip.py`, `place_intent.py`, `place_variants.py`, `compare_placed.py`, `rescore_placed.py`, `dsn_place.py` | milestone evaluations of the global router and placement | historical; results are in the docs that cite them |
+| `ses_import.py`, `record_fr.py` | import a Freerouting session; screen-record Freerouting | utilities |
+| `cpu_sample.py` | per-thread CPU sampling from `/proc` | Linux only |
+
+**Not built** (planned in the first version of this document): manifest files, a `standard` (~300 boards) and
+`full` tier as named sets, `bench/report.py` with an HTML dashboard, and paired statistics (sign test, bootstrap
+interval). Seeds: best-of-1 is the headline; best-of-5 is reported separately where a comparison needs it
+(PCBWorld reports baselines as best of 5).
+
+**Judge noise.** KiCad's `solder_mask_bridge` count can differ between runs on byte-identical boards when zones
+are refilled (StickHub: 17, 15 and 13); read a change in that type alone as noise.
 
 ## 5. Gates (used by the roadmap)
 
-1. No board in `quick` gets worse in clean pass or completion.
-2. Zero added KiCad DRC errors on every board that was clean before.
-3. Time within budget on every board.
-4. Determinism hash unchanged unless the change is meant to change results (then recorded).
+1. No board in `quick` gets worse in clean pass or completion (`compare_runs.py`).
+2. Zero added KiCad DRC errors on every board that was clean before (`compare_runs.py`).
+3. Time within budget on every board (with `--work`, the budget is work units; wall time only stops the job).
+4. Routed boards byte-identical unless the change is meant to change results (`compare_runs.py
+   --expect-identical`; then the differences are recorded).
 
-## 6. Implementation status (2026-10-02)
+## 6. Implementation status (2026-10-02; sets, work budgets and refill 2026-10-08, D81)
 
 - `bench/run.py` samples PCBench boards per Freerouting tier, routes each with a binary snapshot, judges with
   `kicad-cli pcb drc`, and compares with Freerouting's published per-board results (`benchmarks.json`).
@@ -85,3 +124,10 @@ place-and-route set also resets unlocked footprint positions to a pile outside t
 - Results go to `bench/results/<run>/` and the progress site's benchmark panel.
 - Latest (`final8`): tier A 100% clean, B 65.0%, C 56.7%, D 50.0% (Freerouting 2.5.0-RC12: 100%, 50.0%, 46.7%,
   36.4%); no router-introduced DRC errors on any board.
+- Sets, `--work`, `--refill` and `compare_runs.py` (D81), measured on `origin/main` `a5532a9`:
+  - `--set quick --work 1000000 --route-args "--variants 1"` reproduces the earlier quick-tier run (made with
+    `TM_ROUTE_ARGS`) byte for byte on all 30 boards: 40.0 % clean, 89.2 % completion, about 30 s with `--jobs 4`.
+  - `--set mid --work 20000000`: 0 of 11 clean, 76.4 % completion, 3 minutes with `--jobs 4`.
+  - `--set planes --work 3000000 --refill --route-args=--soft-zones`: 86.1 % completion. Without `--refill` the
+    judge reads the stale fills, and without the copied project files KiCad judged demo outputs on default rules
+    (hundreds of false `track_width` and `clearance` errors on RoyalBlue, StickHub and plane_smd).

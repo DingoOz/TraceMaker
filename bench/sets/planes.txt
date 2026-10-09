@@ -1,0 +1,11 @@
+# Plane tier (doc 10 §4): KiCad demo projects with zone fills, routing stripped (bench/prepare_demos.py), plus the
+# all-SMD plane test board. Judge with --refill (KiCad refills zones first); run with and without --soft-zones.
+# bench/prepare_demos.py --out build/demos --set planes && bench/run.py --fixtures build/demos --set planes --work 3000000 --refill
+complex_hierarchy
+RoyalBlue54L-Feather
+multichannel_mixer
+StickHub
+sonde xilinx
+pic_programmer
+interf_u
+plane_smd

@@ -1,0 +1,14 @@
+# Mid-budget tier (doc 10 §4): large, hard PCBench boards at 20 M work units. Search and plan changes can move
+# results here while the 1 M quick tier stays identical (a fork experiment lost 8 connections on kitspace_d20_r0.1).
+# Routing changes that alter search or plans: --set mid --work 20000000.
+oskirby_logicbone
+decelerator4030_decelerator4030
+kitspace_EEZ%20DIB%20MCU%20r1B2
+sbc_sbc
+front-end-modules_LimeSDR_Sony
+Aleste-520EX_aleste
+CoreOne-xCORE200-Original_CoreOne
+LeeChee_1800
+MonApollo_analog-board
+KiCad-Library_Teensy_test_layout
+kitspace_d20_r0.1
