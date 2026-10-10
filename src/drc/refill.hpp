@@ -22,7 +22,7 @@ struct RefillResult {
 // item knocked out at its clearance, spokes that reach the fill, minimum-width pruning, then islands without a pad
 // removed by each zone's island_removal_mode. Teardrop zones lose their fill: kicad-cli's refill first rebuilds
 // teardrops (TEARDROP_MANAGER::UpdateTeardrops), and a rebuilt teardrop joins a pad to a track that already
-// touches it. Hatched zones keep their stored fill (warning).
+// touches it. Hatched zones are not redrawn: their stored fill is kept where the new solid fill still is (warning).
 RefillResult refill_zones(const model::Board& b, const model::DesignRules& r);
 
 }  // namespace tmk::drc

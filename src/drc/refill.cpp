@@ -97,11 +97,9 @@ class Filler {
     for (std::size_t z = 0; z < b_.zones.size(); ++z) {
       const auto& zone = b_.zones[z];
       if (!fillable(zone)) continue;
-      if (zone.hatched) {
+      if (zone.hatched)
         warnings_.push_back("zone refill: hatched zone" + (zone.name.empty() ? std::string{} : " '" + zone.name + "'") +
-                            " keeps its stored fill");
-        continue;
-      }
+                            ": the hatch is not redrawn, its stored fill is cut to the new solid fill");
       ++res.zones;
       for (int l = 0; l < layers; ++l)
         if (zone.copper & model::layer_bit(l)) order[static_cast<std::size_t>(l)].push_back(static_cast<int>(z));
@@ -342,7 +340,7 @@ class Filler {
         if (other.keepout_pour && !other.outline.empty()) append(holes, outline_rings(other));
         continue;
       }
-      if (other.teardrop || other.hatched || other.net == zone.net || !higher_priority(other, zone)) continue;
+      if (other.teardrop || other.net == zone.net || !higher_priority(other, zone)) continue;
       const Rings& of = fills_[o][static_cast<std::size_t>(layer)];
       if (of.empty() || !rings_box(of).intersects(zbox)) continue;
       const Coord gap = std::max<Coord>(0, re_.clearance(zit, zone_item(static_cast<int>(o), layer), layer));
@@ -401,6 +399,15 @@ class Filler {
       if (other.priority > zone.priority) append(owned, outline_rings(other));
     }
     if (!owned.empty()) fill = geom::subtract(fill, owned);
+    // Hatched fills are not modelled. The stored hatch is kept only where the solid fill for the current copper
+    // still is: copper the refill would knock out must not carry a connection (rule 6: be conservative). A
+    // hatched zone stored without a fill gets none.
+    if (zone.hatched) {
+      Rings stored;
+      for (const auto& [l, pts] : zone.fills)
+        if (l == layer && pts.size() >= 3) stored.push_back(pts);
+      fill = geom::intersect(fill, geom::unite(stored));
+    }
     return fill;
   }
 

@@ -133,7 +133,7 @@ TEST_CASE("refill: a thermal pad joins the plane by the spokes that reach it", "
   CHECK(unconnected(drc::refill_zones(closed.board, closed.rules).board, closed.rules) == 1);
 }
 
-TEST_CASE("refill: teardrops lose their fill, hatched zones keep theirs", "[refill]") {
+TEST_CASE("refill: teardrops lose their fill", "[refill]") {
   const std::string teardrop =
       "  (zone (net 1) (net_name \"GND\") (layer \"B.Cu\") (uuid \"t\") (attr (teardrop (type padvia))) (connect_pads (clearance 0))"
       " (min_thickness 0.1) (fill yes) (polygon (pts (xy 10 10) (xy 11 10) (xy 11 11)))"
@@ -144,6 +144,26 @@ TEST_CASE("refill: teardrops lose their fill, hatched zones keep theirs", "[refi
   const auto rf = drc::refill_zones(l.board, l.rules);
   CHECK(rf.board.zones[1].fills.empty());
   CHECK(rf.zones == 1);
+}
+
+TEST_CASE("refill: a hatched zone's stored fill does not carry a connection across new copper", "[refill]") {
+  // The hatch is not redrawn; trusting the stored fill would join the two pads across the S track, where KiCad's
+  // refill splits the plane (kicad-cli 10.0.6: one unconnected item).
+  auto hatched = [](std::string text) {
+    const std::string fill = "(fill yes", outline = "(polygon (pts (xy 1 1) (xy 29 1) (xy 29 19) (xy 1 19)))";
+    text.replace(text.find(fill), fill.size(), "(fill yes (mode hatch)");
+    text.insert(text.find(outline) + outline.size(), " (filled_polygon (layer \"F.Cu\") (pts (xy 1 1) (xy 29 1) (xy 29 19) (xy 1 19)))");
+    return text;
+  };
+  const auto cut = load("hatch_cut", hatched(board_text(track(15, 0.8, 19.2))));
+  REQUIRE(cut.board.zones[0].hatched);
+  CHECK(unconnected(cut.board, cut.rules) == 0);  // the stale fill
+  const auto rf = drc::refill_zones(cut.board, cut.rules);
+  CHECK(unconnected(rf.board, cut.rules) == 1);
+  CHECK(fills_on(rf.board, 0) == 2);
+  CHECK(!rf.warnings.empty());
+  const auto whole = load("hatch_whole", hatched(board_text("")));
+  CHECK(unconnected(drc::refill_zones(whole.board, whole.rules).board, whole.rules) == 0);
 }
 
 TEST_CASE("refill: connectivity through the fill edge index equals the linear test", "[refill]") {
