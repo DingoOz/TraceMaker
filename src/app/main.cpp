@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker: command-line front end. Subcommands grow with the roadmap (route, place, bench, serve, replay).
 #include <CLI/CLI.hpp>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include <cstdio>
 #include <filesystem>
@@ -12,6 +14,7 @@
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "app/route_job.hpp"
+#include "app/tui.hpp"
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
 #include "drc/drc.hpp"
@@ -397,6 +400,142 @@ int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int lay
   return 0;
 }
 
+// The options of a command as the options screen lists them, read from the command-line definitions.
+std::vector<tmk::app::tui::Field> tui_fields(CLI::App& cmd) {
+  std::vector<tmk::app::tui::Field> out;
+  for (CLI::Option* o : cmd.get_options()) {
+    if (o == cmd.get_help_ptr() || o->check_lname("config")) continue;  // the screen is the options file's editor
+    tmk::app::tui::Field f;
+    f.help = o->get_description();
+    f.hidden = o->get_group().empty();
+    const auto& longs = o->get_lnames();
+    const auto& shorts = o->get_snames();
+    if (o->get_expected_max() == 0) {  // a flag: one row, every spelling a state
+      for (const auto& n : longs) f.spellings.push_back("--" + n);
+      if (f.spellings.empty())
+        for (const auto& n : shorts) f.spellings.push_back("-" + n);
+      for (const auto& sp : f.spellings) f.label += (f.label.empty() ? "" : " / ") + sp;
+    } else if (longs.empty() && shorts.empty()) {
+      f.label = o->get_name();
+      f.save = false;
+    } else {
+      f.arg = longs.empty() ? "-" + shorts.front() : "--" + longs.front();
+      f.label = (shorts.empty() || longs.empty() ? "" : "-" + shorts.front() + ", ") + f.arg;
+      f.key = longs.empty() ? std::string() : longs.front();
+      o->capture_default_str();
+      f.def = o->get_default_str();
+      if (f.def == "[]" || f.def == "\"\"") f.def.clear();
+    }
+    if (f.label == "board" || f.arg == "--output") f.save = false;  // they belong to one run, not to a set of options
+    if (!f.label.empty()) out.push_back(std::move(f));
+  }
+  return out;
+}
+
+// What the command-line parser says about `args` (subcommand first), without touching this process: the variables
+// the options are bound to keep their defaults for the run that may follow. Empty if the arguments parse.
+std::string cli_check(CLI::App& app, const std::vector<std::string>& args) {
+  int fd[2];
+  if (::pipe(fd) != 0) return {};
+  std::fflush(nullptr);
+  const pid_t pid = ::fork();
+  if (pid < 0) {
+    ::close(fd[0]), ::close(fd[1]);
+    return {};
+  }
+  if (pid == 0) {
+    ::close(fd[0]);
+    std::string msg;
+    try {
+      std::vector<std::string> rev(args.rbegin(), args.rend());
+      app.clear();
+      app.parse(rev);
+    } catch (const CLI::ParseError& e) {
+      msg = e.what();
+    } catch (const std::exception& e) {
+      msg = e.what();
+    }
+    if (!msg.empty() && ::write(fd[1], msg.data(), msg.size()) < 0) ::_exit(1);
+    ::_exit(0);
+  }
+  ::close(fd[1]);
+  std::string msg;
+  char buf[512];
+  for (ssize_t n; (n = ::read(fd[0], buf, sizeof buf)) > 0;) msg.append(buf, static_cast<std::size_t>(n));
+  ::close(fd[0]);
+  int st = 0;
+  ::waitpid(pid, &st, 0);
+  for (char& c : msg)
+    if (c == '\n') c = ' ';
+  return msg;
+}
+
+// The arguments an options file stands for (`route --config`, doc 02 §2.1): one `name = value` per line. An option
+// that is also on the command line is left out, so the command line wins. Throws on a line that names no option.
+std::vector<std::string> config_args(CLI::App& cmd, const std::string& path) {
+  std::ifstream f(path);
+  if (!f) throw std::runtime_error("cannot read the options file " + path);
+  const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+  std::vector<std::string> out;
+  for (const auto& e : tmk::app::tui::parse_options(text)) {
+    const std::string where = path + ":" + std::to_string(e.line) + ": ";
+    CLI::Option* o = e.name.empty() || e.name == "config" ? nullptr : cmd.get_option_no_throw("--" + e.name);
+    if (o == nullptr) throw std::runtime_error(where + "no route option named " + e.name);
+    if (o->count() > 0) continue;
+    if (o->get_expected_max() != 0) {
+      out.push_back("--" + e.name + "=" + e.value);
+      continue;
+    }
+    const int t = tmk::app::tui::truth(e.value);
+    if (t < 0) throw std::runtime_error(where + e.name + " is a flag, its value must be true or false");
+    if (t == 1) {
+      out.push_back("--" + e.name);
+      continue;
+    }
+    // "x = false": the flag's spelling of the other sense (--x against --no-x), if it has one.
+    const auto& off = o->get_fnames();
+    const bool negative = std::find(off.begin(), off.end(), e.name) != off.end();
+    std::string other;
+    for (const auto& n : o->get_lnames())
+      if ((std::find(off.begin(), off.end(), n) != off.end()) != negative) other = n;
+    if (other.empty()) throw std::runtime_error(where + e.name + " = false has no meaning: the flag has no opposite, remove the line");
+    out.push_back("--" + other);
+  }
+  return out;
+}
+
+// `tracemaker tui`: the options screen for `route`. Returns the exit code; `next` holds the arguments of the run the
+// user asked for, if any.
+int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std::string& out, const std::string& config,
+            const std::string& keys, bool scripted, std::vector<std::string>& next) {
+  namespace tui = tmk::app::tui;
+  tui::Model m("tracemaker route", tui_fields(route), [&](const std::vector<std::string>& args) {
+    std::vector<std::string> all{"route"};
+    all.insert(all.end(), args.begin(), args.end());
+    return cli_check(app, all);
+  });
+  if (!config.empty()) {
+    m.set_save_path(config);
+    std::ifstream f(config);
+    if (f) {
+      const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+      for (const std::string& p : m.load_config(text)) std::fprintf(stderr, "warning: %s: %s\n", config.c_str(), p.c_str());
+    }
+  }
+  if (!board.empty()) m.set("board", board);
+  if (!out.empty()) m.set("--output", out);
+  const tui::Action a = scripted ? tui::run_keys(m, keys) : tui::run_terminal(m);
+  if (scripted && !m.status().empty()) std::fprintf(stderr, "%s\n", m.status().c_str());
+  if (a == tui::Action::print) {
+    std::printf("%s\n", m.command_line().c_str());
+  } else if (a == tui::Action::run) {
+    std::fprintf(stderr, "%s\n", m.command_line().c_str());
+    next = m.args();
+    next.insert(next.begin(), "route");
+  }
+  return 0;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -473,7 +612,10 @@ int main(int argc, char** argv) {
   std::string r_in, r_out, r_json;
   tmk::route::RouterOptions ropt;
   double r_pitch_um = 0;
-  route->add_option("board", r_in)->required()->check(CLI::ExistingFile);
+  route->add_option("board", r_in, "Board file (.kicad_pcb)")->required()->check(CLI::ExistingFile);
+  std::string r_config;
+  route->add_option("--config", r_config, "Read options from a file of `name = value` lines, as `tracemaker tui` saves them; options on the command line win")
+      ->check(CLI::ExistingFile);
   route->add_option("-o,--output", r_out, "Output .kicad_pcb")->required();
   route->add_option("--time", ropt.time_limit_s, "Time limit, seconds (safety net; results then depend on machine speed)");
   route->add_option("--work", ropt.work_budget,
@@ -597,7 +739,47 @@ int main(int argc, char** argv) {
   dbg->add_option("--width", d_width);
   dbg->add_flag("--via", d_via, "Also print where a via of the pad's net is legal");
 
+  auto* tui = app.add_subcommand("tui", "Choose the route options on a terminal screen, then run, print or save them");
+  std::string t_board, t_out, t_config, t_keys;
+  tui->add_option("board", t_board, "Board file to route");
+  tui->add_option("-o,--output", t_out, "Output .kicad_pcb");
+  tui->add_option("--config", t_config, "Options file to start from (if it exists) and to save to");
+  auto* t_keys_opt = tui->add_option("--keys", t_keys, "Test: take these keys instead of opening the terminal, then print the command")->group("");
+
   CLI11_PARSE(app, argc, argv);
+  if (*tui) {
+    // The screen ends in a `route` run, a printed command or nothing. A run goes through the parser again, exactly
+    // as if the user had typed the command.
+    std::vector<std::string> next;
+    try {
+      const int rc = cmd_tui(app, *route, t_board, t_out, t_config, t_keys, t_keys_opt->count() > 0, next);
+      if (next.empty()) return rc;
+      std::reverse(next.begin(), next.end());
+      app.clear();
+      app.parse(next);
+    } catch (const CLI::ParseError& e) {
+      return app.exit(e);
+    } catch (const std::exception& e) {
+      std::fprintf(stderr, "error: %s\n", e.what());
+      return 1;
+    }
+  }
+  if (*route && !r_config.empty()) {
+    // The file's options join the command line and the whole goes through the parser again, so a value from the
+    // file is checked and converted exactly like a typed one.
+    try {
+      std::vector<std::string> all = config_args(*route, r_config);
+      for (int i = argc - 1; i >= 1; --i) all.insert(all.begin(), argv[i]);
+      std::reverse(all.begin(), all.end());
+      app.clear();
+      app.parse(all);
+    } catch (const CLI::ParseError& e) {
+      return app.exit(e);
+    } catch (const std::exception& e) {
+      std::fprintf(stderr, "error: %s\n", e.what());
+      return 1;
+    }
+  }
   try {
     if (*version) {
       std::printf("tracemaker %s\n", std::string(tmk::version()).c_str());

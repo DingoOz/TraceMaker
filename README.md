@@ -117,6 +117,8 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 | Get the same result every time | `route board.kicad_pcb -o out.kicad_pcb --work 50000000` |
 | Watch the routing live | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
 | Route everything again, old tracks removed | `route board.kicad_pcb -o out.kicad_pcb --reroute` |
+| Pick the options on a screen instead of typing them | `tui board.kicad_pcb -o out.kicad_pcb` |
+| Route with a saved set of options | `route board.kicad_pcb -o out.kicad_pcb --config options.toml` |
 | Run a design-rule check | `drc board.kicad_pcb --json report.json` |
 | See a summary of a board | `inspect board.kicad_pcb` |
 | Find pins that cannot escape their package | `escape board.kicad_pcb` |
@@ -142,6 +144,9 @@ down beside the board and reported.
 <details>
 <summary><b>More route options</b></summary>
 
+- `tracemaker tui`: every option below (and the rest) on one screen, with its description and default. Space
+  toggles a flag or edits a value, `/` filters, `r` runs the route, `p` prints the command, `s` saves the choices to
+  a file for `route --config FILE`. In the file each line is `name = value`; options typed on the command line win.
 - `--threads N`: threads. Eight differently configured routers run in parallel and the best result is kept.
 - `--variants N`: how many of those eight to run.
 - `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.

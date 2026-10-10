@@ -43,6 +43,37 @@
 One engine process keeps the board model, GPU contexts and memory pools warm. The CLI is the same
 library without the server.
 
+### 2.1 Options screen and options file (2026-10-10, D89)
+
+`tracemaker route` has some sixty options. Two things make them manageable without a second place that lists them.
+
+- **`tracemaker tui [BOARD] [-o OUTPUT] [--config FILE]`** opens a screen in the terminal with one row per `route`
+  option: its name, its value or default, and its description. Flags toggle (a flag with two spellings, such as
+  `--pair-twists` / `--no-pair-twists`, cycles default, on, off), value options are edited in place, `/` filters by
+  name or description and `h` shows the experimental options. The command the choices stand for is shown as they
+  change, with the command-line parser's verdict on it ("--output is required", a value that is not a number).
+  `r` runs it, `p` prints it to standard output (the screen itself is on `/dev/tty`, so `cmd=$(tracemaker tui ...)`
+  works) and `s` saves an options file.
+- **`tracemaker route ... --config FILE`** reads such a file: one `name = value` per line, the name being the
+  option's long spelling without the dashes, flags as `name = true`, `#` for comments. Options on the command line
+  win over the file. The board and the output are not saved: they belong to one run, not to a set of options.
+
+How it is built:
+
+- The rows are read from the `route` command's own option definitions at start-up (name, spellings, description,
+  default, hidden group), so a new option appears on the screen without further work.
+- Neither path sets options itself. The screen's choices and a file's lines become ordinary arguments, and the
+  parser runs again on them, exactly as if they had been typed: a value from a file is checked and converted like
+  any other, and a line that names no option is an error with the file and line.
+- The screen asks the parser for its verdict in a forked child, because parsing writes into the variables the
+  options are bound to, and those must still hold their defaults when the chosen run starts.
+- The model (`src/app/tui.hpp`: keys in, lines of text out) holds no terminal code and is unit-tested. The terminal
+  layer is plain termios and ANSI escape sequences; there is no curses dependency. `tests/integration/tui_options.py`
+  drives it through a pseudo-terminal and checks that a file routes a board byte for byte like the typed options.
+
+Limits: `route` only (the placer and the other subcommands have no screen); POSIX terminals only; a value option's
+choices are not offered as a list, the parser's message names them when the value is wrong.
+
 ## 3. The board model and transactions
 
 All stages share one **board model** and change it only through **transactions** (copy-on-write
