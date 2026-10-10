@@ -76,24 +76,26 @@ class Checker {
         h.shape = geom::Shape::point(h.pos, d / 2);
       }
     tick("net propagation");
-    check_pairs();
-    tick("check_pairs");
-    check_items();
-    tick("check_items");
-    check_pad_rings();
-    tick("check_pad_rings");
-    check_holes();
-    tick("check_holes");
-    check_via_hole_pairs();
-    tick("check_via_hole_pairs");
-    check_edges();
-    tick("check_edges");
-    check_keepouts();
-    tick("check_keepouts");
-    check_disallow();
-    tick("check_disallow");
-    check_physical_holes();
-    tick("check_physical_holes");
+    if (!o_.connectivity_only) {
+      check_pairs();
+      tick("check_pairs");
+      check_items();
+      tick("check_items");
+      check_pad_rings();
+      tick("check_pad_rings");
+      check_holes();
+      tick("check_holes");
+      check_via_hole_pairs();
+      tick("check_via_hole_pairs");
+      check_edges();
+      tick("check_edges");
+      check_keepouts();
+      tick("check_keepouts");
+      check_disallow();
+      tick("check_disallow");
+      check_physical_holes();
+      tick("check_physical_holes");
+    }
     check_connectivity();
     tick("check_connectivity");
     // Project severities: drop ignored types, apply warning/error levels.
@@ -580,7 +582,7 @@ class Checker {
   // Connectivity (see drc/connectivity.cpp) and the checks that depend on it.
   void check_connectivity() {
     const auto n = cm_.items.size();
-    const Connectivity con = compute_connectivity(b_, cm_, *grid_, true);
+    const Connectivity con = compute_connectivity(b_, cm_, *grid_, true, o_.linear_zone_tests ? nullptr : zones_.get());
     struct Roots {
       const std::vector<int>& r;
       int find(int i) const { return r[static_cast<std::size_t>(i)]; }

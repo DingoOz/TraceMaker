@@ -52,4 +52,8 @@ std::vector<geom::Shape> pad_shapes(const model::Pad& pad);
 
 CopperModel build_copper(const model::Board& b);
 
+// Closed loops chained from Edge.Cuts pieces whose ends meet within `tol`; pieces that close no loop are dropped
+// (`all_closed`, if given, tells whether any was).
+std::vector<std::vector<model::Point>> edge_loops(const std::vector<geom::Shape>& edges, Coord tol = 2'000, bool* all_closed = nullptr);
+
 }  // namespace tmk::drc

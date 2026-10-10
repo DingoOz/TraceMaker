@@ -20,7 +20,8 @@ bool shapes_closer(const CopperItem& a, const CopperItem& c, Coord t) {
 // Anchor-based connectivity, like KiCad's: tracks connect at their end points (end disks), vias and pads by
 // their shapes (a pad links to any copper it overlaps), zone fills to anything they overlap, and net-tie pads
 // to each other.
-Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, index::UniformGrid& grid, bool overlap_links) {
+Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, index::UniformGrid& grid, bool overlap_links,
+                                  const ZoneFills* fills) {
   Connectivity out;
     const auto n = cm.items.size();
     UnionFind uf(n);
@@ -54,7 +55,15 @@ Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, 
         if (c.net != a.net || !(a.layers & c.layers)) return;
         bool linked = false;
         if (a.kind == ItemKind::Zone || c.kind == ItemKind::Zone) {
-          linked = shapes_closer(a, c, 1);
+          const std::size_t zi = a.kind == ItemKind::Zone ? i : j;
+          const int slot = fills ? fills->slot[zi] : -1;  // two fills: a's edge buckets against c's polygon
+          if (slot >= 0) {
+            const auto& idx = fills->index[static_cast<std::size_t>(slot)];
+            for (const auto& s : (zi == i ? c : a).shapes)
+              if (idx.shape_closer(s, 1)) { linked = true; break; }
+          } else {
+            linked = shapes_closer(a, c, 1);
+          }
           // A track end inside the fill is a connected end.
           const bool a_zone = a.kind == ItemKind::Zone;
           const CopperItem& t = a_zone ? c : a;
