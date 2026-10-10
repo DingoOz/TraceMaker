@@ -271,6 +271,7 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& w : re.warnings()) log("warning: " + w);
   }
   auto& res = out.result;
+  const auto route_t0 = std::chrono::steady_clock::now();  // --time covers the whole job, the refill repair included
   std::vector<int> ran;
   int best_index = 0;
   std::string best_name;
@@ -328,10 +329,14 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("soft zones: after refilling %d zones, %d items unconnected", rf.zones, before));
     refill_summary = {{"zones", rf.zones}, {"unconnected", before}, {"warnings", rf.warnings}};
     unconnected_after_refill = before;
-    if (before > 0 && job.refill_repair) {
+    // The repair has the first pass's work budget but only what is left of the time limit (rule 5).
+    const double time_left = opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();
+    if (before > 0 && job.refill_repair && time_left <= 0) log("refill repair: skipped, the time limit is used up");
+    if (before > 0 && job.refill_repair && time_left > 0) {
       route::RouterOptions o2 = opt;
       o2.soft_zones = false;
       o2.sink = nullptr;
+      o2.time_limit_s = time_left;
       const auto r2 = route::Router(rf.board, rules, o2).run();
       log(fmt("refill repair: routed %d/%d connections, %zu tracks, %zu vias, %ld expansions", r2.routed, r2.connections, r2.tracks.size(),
               r2.vias.size(), r2.expansions));
