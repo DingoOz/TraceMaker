@@ -326,7 +326,7 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& w : rf.warnings) log("warning: " + w);
     const int before = unconnected(rf.board);
     log(fmt("soft zones: after refilling %d zones, %d items unconnected", rf.zones, before));
-    refill_summary = {{"zones", rf.zones}, {"unconnected", before}};
+    refill_summary = {{"zones", rf.zones}, {"unconnected", before}, {"warnings", rf.warnings}};
     unconnected_after_refill = before;
     if (before > 0 && job.refill_repair) {
       route::RouterOptions o2 = opt;
@@ -335,14 +335,19 @@ RouteJobResult run_route_job(RouteJob job) {
       const auto r2 = route::Router(rf.board, rules, o2).run();
       log(fmt("refill repair: routed %d/%d connections, %zu tracks, %zu vias, %ld expansions", r2.routed, r2.connections, r2.tracks.size(),
               r2.vias.size(), r2.expansions));
-      res.tracks.insert(res.tracks.end(), r2.tracks.begin(), r2.tracks.end());
-      res.vias.insert(res.vias.end(), r2.vias.begin(), r2.vias.end());
+      // The repair's copper changes the fills once more. It is kept only if the count after that refill is lower
+      // (rule 4); otherwise the first pass stands.
       add_copper(routed, r2);
-      const auto rf2 = drc::refill_zones(routed, rules);
-      unconnected_after_refill = unconnected(rf2.board);
-      log(fmt("refill repair: %d items unconnected after refilling again", unconnected_after_refill));
+      const int after = unconnected(drc::refill_zones(routed, rules).board);
+      const bool kept = after < before;
+      log(fmt("refill repair: %d items unconnected after refilling again%s", after, kept ? "" : " (no better: repair discarded)"));
+      if (kept) {
+        res.tracks.insert(res.tracks.end(), r2.tracks.begin(), r2.tracks.end());
+        res.vias.insert(res.vias.end(), r2.vias.begin(), r2.vias.end());
+        unconnected_after_refill = after;
+      }
       refill_summary["repair"] = {{"connections", r2.connections}, {"routed", r2.routed}, {"tracks", r2.tracks.size()},
-                                  {"vias", r2.vias.size()}, {"expansions", r2.expansions}};
+                                  {"vias", r2.vias.size()}, {"expansions", r2.expansions}, {"unconnected", after}, {"kept", kept}};
     }
     out.unconnected_after_refill = unconnected_after_refill;
   }
