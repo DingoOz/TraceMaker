@@ -309,7 +309,8 @@ RouteJobResult run_route_job(RouteJob job) {
     ed.save(job.out);
   }
   // The whole job, every variant included: a portfolio on fewer threads than variants runs them one after
-  // another, so the winner's own time understates the run by up to the variant count.
+  // another, so the winner's own time understates the run several times over (by more than the variant count
+  // when the winner is one of the quicker variants).
   const double job_seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - t_job).count();
   log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s (best variant %.2f s)", res.routed,
           res.connections, res.tracks.size(), res.vias.size(), nm_to_mm(res.pitch), res.expansions, job_seconds, res.seconds));
