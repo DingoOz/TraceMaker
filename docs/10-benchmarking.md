@@ -67,7 +67,7 @@ gates of §5.
 |---|---|
 | `--set NAME` | the boards of `bench/sets/NAME.txt` (names the set in the summary) |
 | `--work N` | deterministic work budget per board, no knowledge base; `--time` becomes a safety stop (3,600 s). Every portfolio variant gets the whole budget, so a board does up to eight times `N` |
-| `--threads N` | router threads per board; with `--work` the default is the cores per job (at most 8), since the output does not depend on it (D47); without `--work` it is also the portfolio size (default 1) |
+| `--threads N` | router threads per board; with `--work` the default is the cores per job (at most 8), since the output does not depend on it (D47), but 1 with `--halving` in the route options, whose budget shares follow the thread count; without `--work` it is also the portfolio size (default 1) |
 | `--refill` | KiCad refills zones before judging input and output; needed whenever fills may be stale (`--soft-zones`) |
 | `--route-args=...` | extra `tracemaker route` options (also `TM_ROUTE_ARGS`) |
 | `--fixtures DIR` | boards from `DIR/<name>/unrouted.kicad_pcb` instead of PCBench; a `.kicad_pro`/`.kicad_dru` beside it is copied next to the output so KiCad judges with the board's rules |

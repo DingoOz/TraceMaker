@@ -223,7 +223,8 @@ def main() -> int:
     ap.add_argument("--name")
     ap.add_argument("--boards", nargs="*", help="explicit board folder names")
     ap.add_argument("--threads", type=int, help="router threads per board (default with --work: the cores per job, at most 8, "
-                    "since the output does not depend on it; without --work it is also the portfolio size, default 1)")
+                    "since the output does not depend on it, but 1 with --halving in the route options, where it does; "
+                    "without --work it is also the portfolio size, default 1)")
     ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full"], help="let TraceMaker move components first")
     ap.add_argument("--place-timeout", type=int, default=900)
     ap.add_argument("--place-work", type=int, default=3_000_000)
@@ -237,11 +238,12 @@ def main() -> int:
     PLACE_ARGS = (a.place_args or "").split()
     # With --work every board runs the whole portfolio whatever the thread count (D47); one thread runs its eight
     # variants one after another. Placement keeps one thread unless asked: its annealing runs follow --threads.
-    THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work else 1)
+    # Successive halving splits the budget by the thread count, so there the default must not follow the machine.
+    EXTRA = EXTRA + (a.route_args or "").split()
+    THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work and "--halving" not in EXTRA else 1)
     PLACE_THREADS = a.threads or 1
     a.threads = THREADS
     WORK, REFILL = a.work, a.refill
-    EXTRA = EXTRA + (a.route_args or "").split()
     if a.time is None:
         a.time = 3600.0 if a.work else 60.0
     if a.fixtures:
