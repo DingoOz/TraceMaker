@@ -158,7 +158,10 @@ down beside the board and reported.
   --save-board`): `--soft-zones` (zone fills do not block other nets; an inner plane no pad touches becomes a via
   target), `--keep-vias-off-pads` / `--vias-off-pads-below MM` (no via in an SMD pad narrower than 2 mm),
   `--via-in-pad` (the board's minimum via in an inner ball that has no other way out), `--first-nets A,B` (these
-  nets go first, also after restarts, and other nets do not rip them).
+  nets go first, also after restarts, and other nets do not rip them). With `--soft-zones` the job then refills
+  the zones in memory, routes what the refill left unconnected once more, and reports `unconnected_after_refill`
+  (the exit code follows it; `--no-refill-repair` only counts; doc 05 §36). The written board keeps its old fills.
+- `tracemaker drc --refill-zones`: judge the fills the current copper would get, like kicad-cli's flag.
 
 </details>
 
