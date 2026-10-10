@@ -4,6 +4,7 @@
 //
 // Octilinear A* on a fine lattice (optimal under its cost model), with legality decided lazily by exact
 // clearance tests against the DRC's rule engine, then exact verification of every committed segment and via.
+#include <array>
 #include <atomic>
 #include <cstdint>
 #include <string>
@@ -126,6 +127,29 @@ struct Connection {
   Coord length = 0;             // straight-line distance
 };
 
+// Work profile (doc 10 §2, D88): how many of each costly operation a run did, per phase. The counts depend only on
+// the board, the options and the work budget, so the same job gives the same profile on any machine and at any
+// thread count. The --work budget charges expansions and flood cells; the other counts are what it does not charge.
+struct WorkCounts {
+  long expansions = 0;     // A* states expanded (strict, negotiated and coupled-pair searches)
+  long flood_cells = 0;    // cells visited by the reachability pre-check
+  long searches = 0;       // A* searches and pre-checks started
+  long cell_checks = 0;    // lattice points whose legality a search evaluated (per-search cache misses)
+  long fixed_checks = 0;   // fixed-copper legality computations (per-class cache misses, tracks and vias)
+  long field_cells = 0;    // cost-to-go field cells computed (window x layers per field)
+  long fields = 0;
+  long commits = 0;        // found paths checked exactly before committing
+  long rips = 0;           // routed connections ripped up by negotiation
+  WorkCounts& operator+=(const WorkCounts& o);
+};
+enum class WorkPhase { Setup, FirstPass, Negotiation, Cleanup };  // setup: plan, escape reservations, coupled pairs
+inline constexpr int kWorkPhases = 4;
+const char* work_phase_name(WorkPhase p);
+struct WorkProfile {
+  std::array<WorkCounts, kWorkPhases> phase{};
+  WorkCounts total() const;
+};
+
 struct RouteResult {
   std::vector<model::Track> tracks;  // new copper, in commit order
   std::vector<model::Via> vias;
@@ -150,6 +174,7 @@ struct RouteResult {
   std::vector<CutLine> over_cuts;
   CutLine tightest_cut;
   double seconds = 0;
+  WorkProfile work;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
   struct Unrouted {
@@ -171,6 +196,7 @@ struct PortfolioResult {
   std::vector<std::string> variants;   // description per variant
   std::vector<int> routed;             // routed count per variant
   std::vector<double> seconds;         // wall time per variant (its own clock)
+  std::vector<WorkProfile> work;       // work profile per variant
 };
 // `variants`: how many variants to run (the first `variants` of the portfolio); `pick`: which variant indices to
 // run instead (non-empty: overrides `variants`). `threads`: concurrency only (0 = one thread per variant).
