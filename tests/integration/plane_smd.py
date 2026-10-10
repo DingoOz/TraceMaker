@@ -81,6 +81,13 @@ def main() -> int:
         if ref == "U2.B2" and (v["size"] != 250_000 or v["drill"] != 150_000):
             errors.append(f"U2.B2 via is {v['size'] / NM}/{v['drill'] / NM} mm, expected the minimum 0.25/0.15")
 
+    # The summary's count after the refill is the engine's own judgement of the board it wrote (doc 05 §36).
+    own = work / "planes.refill.json"
+    subprocess.run([str(tm), "drc", str(out), "--refill-zones", "--json", str(own)], capture_output=True)
+    n_own = len(json.loads(own.read_text())["unconnected_items"])
+    if res.get("unconnected_after_refill") != n_own:
+        errors.append(f"summary unconnected_after_refill {res.get('unconnected_after_refill')}, drc --refill-zones on the output {n_own}")
+
     if shutil.which("kicad-cli"):
         drc = work / "planes.drc.json"
         subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-error", "--refill-zones", "-o", str(drc), str(out)], capture_output=True)

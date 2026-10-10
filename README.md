@@ -48,7 +48,7 @@ cmake --preset release && cmake --build --preset release
 No CUDA? Use `cpu-only` instead of `release` in both commands.
 
 On macOS (Apple silicon), with Apple's Command Line Tools and
-`brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost`:
+`brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost clipper2`:
 
 ```
 cmake --preset macos-metal -DCMAKE_PREFIX_PATH="$(brew --prefix)" && cmake --build --preset macos-metal
@@ -84,7 +84,8 @@ No KiCad installed? `scripts/kicad-cli` runs it from the `kicad/kicad:10.0.6` Do
 - **Ubuntu 26.04** (what it is developed on).
 - **Compilers:** GCC 15 (what it is built and tested with; older versions are untried). With CUDA 12.x, also
   GCC 13 or 12 for the GPU code.
-- **Libraries:** Boost, Eigen, oneTBB, fmt, spdlog, FlatBuffers, SQLite, Catch2, pybind11.
+- **Libraries:** Boost, Eigen, oneTBB, fmt, spdlog, FlatBuffers, SQLite, Catch2, pybind11, Clipper2 (fetched and
+  built with the project when it is not installed).
 - **Docker**, only for the KiCad checks and the tests that compare with KiCad.
 
 <details>
@@ -157,7 +158,10 @@ down beside the board and reported.
   --save-board`): `--soft-zones` (zone fills do not block other nets; an inner plane no pad touches becomes a via
   target), `--keep-vias-off-pads` / `--vias-off-pads-below MM` (no via in an SMD pad narrower than 2 mm),
   `--via-in-pad` (the board's minimum via in an inner ball that has no other way out), `--first-nets A,B` (these
-  nets go first, also after restarts, and other nets do not rip them).
+  nets go first, also after restarts, and other nets do not rip them). With `--soft-zones` the job then refills
+  the zones in memory, routes what the refill left unconnected once more, and reports `unconnected_after_refill`
+  (the exit code follows it; `--no-refill-repair` only counts; doc 05 §36). The written board keeps its old fills.
+- `tracemaker drc --refill-zones`: judge the fills the current copper would get, like kicad-cli's flag.
 
 </details>
 

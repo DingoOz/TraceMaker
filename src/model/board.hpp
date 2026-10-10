@@ -40,6 +40,9 @@ struct Net {
 enum class PadType : std::uint8_t { Smd, ThruHole, NpThruHole, Connect };
 enum class PadShape : std::uint8_t { Circle, Rect, Oval, Trapezoid, RoundRect, ChamferedRect, Custom };
 
+// How a pad joins a zone of its net (KiCad's ZONE_CONNECTION; the file stores these numbers).
+enum class ZoneConnect : std::int8_t { Inherited = -1, None = 0, Thermal = 1, Full = 2, ThtThermal = 3 };
+
 struct Pad {
   int footprint = -1;
   std::string number;
@@ -60,6 +63,9 @@ struct Pad {
   std::vector<std::vector<Point>> custom_polys;  // custom primitives (gr_poly) in the pad frame
   Coord clearance = -1;      // local override, -1 = none
   Coord mask_margin = INT64_MIN;  // local solder-mask expansion (unset = INT64_MIN)
+  ZoneConnect zone_connect = ZoneConnect::Inherited;  // (zone_connect n)
+  Coord thermal_gap = -1, thermal_bridge_width = -1;  // local overrides, -1 = none
+  double thermal_bridge_angle = -1;  // degrees; -1 = KiCad's default (45 for round pads, 90 otherwise)
   // Schematic pin name and electrical type (KiCad 6+ boards; empty in older files). Read-only, used to
   // recognise component roles (doc 15 §3.1).
   std::string pinfunction, pintype;
@@ -106,6 +112,7 @@ struct Footprint {
   std::vector<int> graphics;
   Coord clearance = -1;      // footprint-level clearance override, -1 = none
   Coord mask_margin = INT64_MIN;  // footprint-level solder-mask expansion (unset = INT64_MIN)
+  ZoneConnect zone_connect = ZoneConnect::Inherited;  // (zone_connect n): the pads' default
   std::vector<std::vector<std::string>> net_tie_groups;  // pad numbers joined by the footprint's own copper
   std::string uuid;
   sexpr::NodeId node = sexpr::kNoNode;
@@ -147,8 +154,16 @@ struct Zone {
   LayerMask copper = 0;
   std::vector<std::string> layers;
   std::string name;
+  std::string uuid;          // breaks priority ties between zones of different nets (ZONE::HigherPriority)
   int priority = 0;
   Coord clearance = -1;      // (connect_pads (clearance x)): the zone's local clearance override, -1 = none
+  // Fill settings (doc 05 §36); defaults are KiCad's.
+  ZoneConnect connect = ZoneConnect::Thermal;  // (connect_pads [yes|no|thru_hole_only])
+  Coord min_thickness = 250'000;
+  Coord thermal_gap = 500'000, thermal_bridge_width = 500'000;
+  int island_removal = 0;    // 0 always remove islands, 1 never, 2 below island_area_min
+  double island_area_min = 0;  // nm²
+  bool hatched = false;      // (fill (mode hatch))
   bool rule_area = false;
   bool keepout_tracks = false, keepout_vias = false, keepout_pads = false, keepout_pour = false,
        keepout_footprints = false;

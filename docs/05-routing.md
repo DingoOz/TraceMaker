@@ -715,7 +715,8 @@ see the pull request that brought this section (numbers measured on the merged t
 **Not built.** The options are in no portfolio variant and are not chosen automatically (a board with inner planes and
 only SMD pads could switch `--soft-zones` and `--keep-vias-off-pads` on by itself; the component-rule catalogue could
 feed crystal nets to `--first-nets`). The output keeps the old, now stale fills: refill before judging. Connectivity
-still trusts the stale fills (a fill that a refill would split is one target). `--first-nets` takes net names only,
+still trusts the stale fills during routing (a fill that a refill would split is one target); since §36 the route
+job refills in memory afterwards and routes what the refill left unconnected. `--first-nets` takes net names only,
 and the protected nets may rip each other. A second connection at a pad that already has a via in it must use the
 pad's own layer.
 
@@ -1236,3 +1237,83 @@ rules". The router reports the same pin boxed in.
   `--no-tracks-on` limits and the router's off-lattice escape rungs are not modelled.
 - Satisfied means the net is complete. A pin whose cluster still has to reach another cluster is searched from
   its pad, through its own net's copper.
+
+## 36. Zone refill in the engine (2026-10-09, D85)
+
+**Before.** With `--soft-zones` the router cuts through fills and trusts the stale polygons for connectivity (§26).
+KiCad refills before judging, and the refill undoes connections the router counted; the router neither saw nor
+repaired that. Measured on the `planes` set at 3 M work units with `--soft-zones` (KiCad 10.0.3, unconnected items):
+
+| Board | Router gap | KiCad, stale fills | `tracemaker drc`, stale | KiCad `--refill-zones` | `tracemaker drc`, KiCad's fills |
+|---|--:|--:|--:|--:|--:|
+| RoyalBlue54L-Feather | 52 | 52 | 52 | 63 | 63 |
+| StickHub | 2 | 1 | 1 | 15 | 15 |
+| complex_hierarchy | 1 | 1 | 1 | 17 | 17 |
+| interf_u | 23 | 23 | 23 | 33 | 33 |
+| multichannel_mixer | 0 | 0 | 0 | 4 | 4 |
+| pic_programmer | 4 | 4 | 4 | 7 | 7 |
+| plane_smd | 1 | 1 | 1 | 1 | 1 |
+| sonde xilinx | 0 | 0 | 0 | 2 | 2 |
+
+The engine's connectivity already agreed with KiCad's on all 16 boards (also routed with fills fixed); only the
+fill polygons were missing. The last column uses KiCad's `ZONE_FILLER` fills with teardrop zones removed, which is
+what `kicad-cli --refill-zones` does first: `ZONE_FILLER_TOOL::FillAllZones` calls
+`TEARDROP_MANAGER::UpdateTeardrops` with a forced full update, so a teardrop whose track was deleted disappears (a
+rebuilt teardrop joins a pad to a track that already touches it). What the refill broke: the GND pour split into
+islands by new tracks (StickHub), through-hole pads cut off from their plane (interf_u, pic_programmer, sonde
+xilinx), and tracks ending in a deleted teardrop (complex_hierarchy, RoyalBlue; also with fills fixed: 0 → 18).
+
+**What was built**
+
+| Part | What |
+|---|---|
+| `geom/clip` | Polygon union, difference, intersection, even-odd union, offsets and point tests over Clipper2 (int64, deterministic for a given input order); `fracture` joins holes to the outline by zero-width bridges, as KiCad writes `filled_polygon` |
+| `drc::refill_zones` | Follows `ZONE_FILLER::fillCopperZone` per copper zone and layer, layers in parallel and zones by priority: outline within the board outline (not clipped when the outline does not close at 10 µm, as KiCad); thermal gaps around same-net pads with a thermal connection (pad, then footprint, then zone setting; `thru_hole_only` thermal for plated holes only; coincident pads once); every other-net pad, track, via, hole, copper graphic, board edge, pour keep-out and higher-priority zone of another net knocked out at the `RuleEngine` clearance + 0.5 µm; four spokes per thermal pad kept when their end lands in the fill after the minimum-width test or in another pad's spoke; minimum-width pruning (deflate and re-inflate by `min_thickness/2 − 1 µm`, blobs dropped); same-net higher-priority zones' areas removed; islands whose cluster holds no pad removed by `island_removal_mode`, unless every island of the zone is one. Teardrop zones lose their fill; a hatched zone is not redrawn: its stored fill is kept where the solid fill for the current copper still is (warning), so copper a refill knocks out carries no connection |
+| Reader | Zone `connect_pads` mode, `min_thickness`, `thermal_gap`, `thermal_bridge_width`, `island_removal_mode`, `island_area_min`, hatch mode and uuid; pad and footprint `zone_connect`, pad thermal gap, width and angle. Copper layers with free names (`Gnd.Cu`, `Vcc.Cu` in KiCad 5 boards) get their canonical name from the ordinal; before, they were not copper at all |
+| `tracemaker drc --refill-zones` | Judges the refilled board, like kicad-cli's flag; the fills are not written |
+| Route with `--soft-zones` | Refills in memory after routing, reports `unconnected_after_refill` and a `refill` object in the summary, then routes what is unconnected once more with the refilled fills as fixed copper (pass 2, the same work budget as the first pass, within what is left of `--time`); the repair's copper is kept only if the count after refilling again is lower (rule 4). `refill.warnings` lists what the refill could not model. `--no-refill-repair` only counts. The exit code follows the count after the refill |
+| Connectivity | `compute_connectivity` can test items against fills through the fill edge index (`geom::PolygonIndex`); the DRC and the refill use it, `drc --linear-zones` keeps the linear reference (ctest `drc_zone_index`, now on refilled boards too). A refilled keyboard (mechkeys LFK78, 478 islands) went from 39 s to 1.7 s |
+| `bench/refill_parity.py` | Unconnected items per net, `tracemaker drc --refill-zones` against `kicad-cli pcb drc --refill-zones` |
+
+**Results**
+
+- **Parity.** The 16 routed `planes` boards above (soft and fixed fills): unconnected items equal KiCad's on all
+  16. PCBench, 200 of the original boards (`raw.kicad_pcb`) with zones, evenly spaced in name order: the same unconnected items per
+  net on 191. Eight of the nine others are KiCad 5 files whose zones share one id (`tstamp 0`): KiCad breaks
+  priority ties by that id, and its own fills of those boards empty or misattribute zones (on OpenMPPT four zones
+  fill alone but are empty together). The refill warns on such boards. The ninth has a `target` on Edge.Cuts,
+  which the reader does not read. Engine refill and judge take 0.02-2 s per board, `kicad-cli` 1.4-8.7 s.
+- **No DRC errors from the fills.** On the refilled `planes` boards `tracemaker drc` finds the same clearance and
+  edge errors as KiCad and none on new fills.
+- **Repair.** `planes`, 3 M work units, `--soft-zones`, KiCad after `--refill-zones`:
+
+| Board | Soft 3 M | Soft 6 M | Soft 3 M + repair 3 M |
+|---|--:|--:|--:|
+| complex_hierarchy | 3 | 3 | 0 |
+| RoyalBlue54L-Feather | 54 | 46 | 51 |
+| multichannel_mixer | 4 | 4 | 3 |
+| StickHub | 15 | 14 | 8 |
+| sonde xilinx | 2 | 2 | 0 |
+| pic_programmer | 7 | 7 | 4 |
+| interf_u | 33 | 26 | 28 |
+| plane_smd | 1 | 1 | 1 |
+| Total | 119 | 103 | 95 |
+
+  The engine's `unconnected_after_refill` equals KiCad's count on all eight. No board gained a DRC error
+  (StickHub's `solder_mask_bridge` count moves between runs: doc 10 §4, judge noise). On RoyalBlue and interf_u more
+  soft work beats the repair; the repair spends the same budget as the first pass whatever is left.
+- **Unchanged elsewhere.** `quick` (30 boards) and the `planes` set with `--no-refill-repair` are byte-identical
+  to `origin/main`. In `mid`, oskirby_logicbone changed: its six inner layers are named `Gnd1.Cu` … `Sig2.Cu`, so
+  the router saw a two-layer board before; it now routes on eight, 966 → 936 of 1188 at 20 M work units (KiCad:
+  completion 55.5 % → 49.5 %, no added errors). The other ten are byte-identical.
+
+**Limits**
+
+- Not modelled: KiCad's iterative refill (lower zones reclaim area from removed islands), corner smoothing,
+  hatched fills, copper text knock-outs, net ties, courtyard and physical clearance rules, custom
+  `zone_connection` / thermal rules (warned), Margin line widths, and the islands-outside-the-board test (fills
+  are clipped to the outline instead).
+- Fills are for judging only: the routed board still carries the stale fills (doc 08 asks for a refill before
+  judging).
+- The repair is one pass with the first pass's work budget and the rest of the time limit (none when the first
+  pass used it up); no portfolio variant is chosen by its count after the refill.
