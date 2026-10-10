@@ -139,6 +139,9 @@ struct Router::Impl {
     if (opt.work_budget > 0 && res.expansions >= opt.work_budget) return true;
     return elapsed() > opt.time_limit_s;
   }
+  // Work profile (D88): the phase now running and its counters.
+  WorkPhase phase = WorkPhase::Setup;
+  WorkCounts& wc() { return res.work.phase[static_cast<std::size_t>(phase)]; }
   void emit(const std::string& s) {
     if (opt.sink) opt.sink->publish(s);
   }
@@ -590,10 +593,16 @@ struct Router::Impl {
   // Blocked by fixed copper (or a positional disallow rule) alone (legal without the lattice margin otherwise)?
   bool fixed_point_blocked(int layer, int gx, int gy, NetId net, Coord hw) {
     const Point p = at(gx, gy);
-    if (!use_cache) return obs->disk_state(p, layer, hw, net, 0, true) == 2;
+    if (!use_cache) {
+      ++wc().fixed_checks;
+      return obs->disk_state(p, layer, hw, net, 0, true) == 2;
+    }
     auto& cc = cache_for(net);
     const std::size_t gi = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
-    if (cc.tight[gi] == INT32_MIN) cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
+    if (cc.tight[gi] == INT32_MIN) {
+      cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
+      ++wc().fixed_checks;
+    }
     return !code_ok(cc.tight[gi], net) || rule_state(p, layer, hw, 0, net) == 2;
   }
 
@@ -620,16 +629,23 @@ struct Router::Impl {
     const int rs = rule_state(p, layer, hw, margin, net);
     if (rs == 2) return 2;
     if (!use_cache) {
+      ++wc().fixed_checks;
       int st = rs == 3 ? 2 : obs->disk_state(p, layer, hw, net, margin, soft);
       if (st == 2 && obs->disk_state(p, layer, hw, net, 0, soft) != 2) st = 3;
       return st;
     }
     auto& cc = cache_for(net);
     const std::size_t gi = (static_cast<std::size_t>(layer) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
-    if (cc.margin[gi] == INT32_MIN) cc.margin[gi] = obs->fixed_code(p, layer, hw, margin, cc.rep);
+    if (cc.margin[gi] == INT32_MIN) {
+      cc.margin[gi] = obs->fixed_code(p, layer, hw, margin, cc.rep);
+      ++wc().fixed_checks;
+    }
     int st = 0;
     if (!code_ok(cc.margin[gi], net) || rs == 3) {
-      if (cc.tight[gi] == INT32_MIN) cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
+      if (cc.tight[gi] == INT32_MIN) {
+        cc.tight[gi] = obs->fixed_code(p, layer, hw, 0, cc.rep);
+        ++wc().fixed_checks;
+      }
       if (!code_ok(cc.tight[gi], net)) return 2;
       st = 3;
     }
@@ -648,6 +664,7 @@ struct Router::Impl {
       cstamp[idx] = gen;
       const std::int64_t key = cell_key(layer, gx, gy);
       ++obs->checks;
+      ++wc().cell_checks;
       cell_state[idx] = static_cast<std::uint8_t>(learned_block.count({block_owner(net), key}) ? 2 : point_state(layer, gx, gy, net, hw));
       cell_hist[idx] = cell_state[idx] == 2 ? 0 : hist_cost(layer, gx, gy);  // history only changes between searches
     }
@@ -684,11 +701,15 @@ struct Router::Impl {
       const Coord margin = pitch * 71 / 100 + 1;
       int st;
       if (!use_cache) {
+        ++wc().fixed_checks;
         st = obs->via_state(p, d, drill, net, margin, soft);
       } else {
         auto& cc = cache_for(net);
         const std::size_t gi = static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
-        if (cc.via[gi] == INT32_MIN) cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
+        if (cc.via[gi] == INT32_MIN) {
+          cc.via[gi] = obs->fixed_via_code(p, d, drill, margin, cc.rep);
+          ++wc().fixed_checks;
+        }
         // Positional rules are judged on the via itself (vias sit exactly on lattice points), as via_state does.
         st = code_ok(cc.via[gi], net) && !obs->via_disallowed(p, d, net, 0, nl - 1, model::ViaType::Through) ? 0 : 2;
         if (st != 2) {
@@ -902,6 +923,8 @@ struct Router::Impl {
       ++field_cpu_runs;
     }
     field_ok = true;
+    ++wc().fields;
+    wc().field_cells += static_cast<long>(cells) * nl;
     field_seconds += std::chrono::duration<double>(std::chrono::steady_clock::now() - t0f).count();
   }
 
@@ -1035,6 +1058,8 @@ struct Router::Impl {
       }
       const long visited = static_cast<long>(reach_q.size());
       res.expansions += visited;  // counted as work so --work budgets stay deterministic
+      wc().flood_cells += visited;
+      ++wc().searches;
       reach_visits += visited;
       ++reach_checks;
       if (!found && reach_q.size() <= cap) {
@@ -1202,6 +1227,8 @@ struct Router::Impl {
     }
     if (reach_said_no && goal != SIZE_MAX) ++reach_mismatch;
     res.expansions += expanded;
+    wc().expansions += expanded;
+    ++wc().searches;
     (goal == SIZE_MAX ? exp_fail : exp_ok) += expanded;
     if (goal == SIZE_MAX) (soft ? (corr_hard ? xf_soft_conf : xf_soft_wide) : (corr_hard ? xf_strict_conf : xf_strict_wide)) += expanded;
     (goal == SIZE_MAX ? n_fail : n_ok) += 1;
@@ -1243,6 +1270,7 @@ struct Router::Impl {
   // learns blocked cells) when the exact check fails.
   bool commit(const Connection& c, const std::vector<PathNode>& path) {
     const NetId net = c.net;
+    ++wc().commits;
     const Coord width = track_width(net);
     const Coord vd = via_diameter(net);
     const Coord vdrill = via_drill(net);
@@ -1484,6 +1512,7 @@ struct Router::Impl {
     st.coupled = false;
     ++st.rips;
     ++res.rips;
+    ++wc().rips;
     pending.push_back(v);
     if (was_coupled && !pair_partner.empty()) {  // the other half goes too: the pair is re-routed coupled or not at all
       const int p = pair_partner[static_cast<std::size_t>(v)];
@@ -2107,6 +2136,7 @@ struct Router::Impl {
       const long now = expanded + leg_checks;
       res.expansions += now - charged;
       res.pair_work += now - charged;
+      wc().expansions += now - charged;
       charged = now;
     };
     // Legs of a candidate: start legs arrive along the pair's direction; end legs leave along it (built pad -> X
@@ -3000,9 +3030,11 @@ struct Router::Impl {
       fin.via = [&](NetId n) { return via_diameter(n); };
       fin.keep = keep;
       fin.track_free = [&](int layer, Point p, NetId n) {
+        ++wc().fixed_checks;
         return layer_ok(n, layer) && code_ok(obs->fixed_code(p, layer, class_width(n) / 2, 0, n), n) && rule_state(p, layer, class_width(n) / 2, 0, n) != 2;
       };
       fin.via_free = [&](Point p, NetId n) {
+        ++wc().fixed_checks;
         return vias_ok(n) && code_ok(obs->fixed_via_code(p, via_diameter(n), via_drill(n), 0, n), n) &&
                !obs->via_disallowed(p, via_diameter(n), n, 0, nl - 1, model::ViaType::Through);
       };
@@ -3038,6 +3070,7 @@ struct Router::Impl {
       if (c.via) {  // a dog-bone is only worth reserving where that net's via fits among the fixed copper
         const int gx = to_ix(c.b.x), gy = to_iy(c.b.y);
         if (gx < 0 || gy < 0 || gx >= nx || gy >= ny) continue;
+        ++wc().fixed_checks;
         const std::int32_t code = obs->fixed_via_code(at(gx, gy), via_diameter(c.net), via_drill(c.net), 0, cache_for(c.net).rep);
         if (!code_ok(code, c.net) || obs->via_disallowed(at(gx, gy), via_diameter(c.net), c.net, 0, nl - 1, model::ViaType::Through)) continue;
       }
@@ -3244,6 +3277,7 @@ struct Router::Impl {
     // at 43 of 120 s with every remaining attempt a nogood).
     for (int restart = 0; restart <= opt.max_restarts + 40; ++restart) {
     if (restart > 0) {
+      phase = WorkPhase::Setup;  // ripping everything, escape reservations and coupled pairs again
       if (out_of_budget() || best_routed == res.connections) break;
       for (std::size_t i = 0; i < cs.size(); ++i) {
         auto& st = cs[i];
@@ -3289,6 +3323,7 @@ struct Router::Impl {
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
       strict_pass = pass == 0;
+      phase = strict_pass ? WorkPhase::FirstPass : WorkPhase::Negotiation;
       std::vector<int> failed;
       const int routed_before = res.routed;
       while (!pending.empty() && !out_of_budget()) {
@@ -3409,6 +3444,7 @@ struct Router::Impl {
     // Clean-up only when the live state is a best state (it then stays one: every connection keeps a route).
     // Via-saving re-routes need search budget; smoothing is cheap geometry and always runs (it uses no budget and
     // no randomness, so --work runs stay deterministic).
+    phase = WorkPhase::Cleanup;
     if (opt.optimize && best_routed > 0 && res.routed == best_routed) {
       // Pairs split by negotiation: coupled again where they fit now (each attempt restores the old copper on failure).
       if ((opt.diff_pairs || !opt.pair_nets.empty()) && !out_of_budget()) res.pairs += route_diff_pairs(true);
@@ -3591,6 +3627,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       pr.variants.push_back(vs[i].name);
       pr.routed.push_back(ran[i] ? last[i].routed : 0);
       pr.seconds.push_back(spent[i]);  // the job log and summary read one entry per variant
+      pr.work.push_back(ran[i] ? last[i].work : WorkProfile{});
     }
     pr.best_variant = static_cast<int>(best_i);
     pr.best = std::move(best_res);
@@ -3648,6 +3685,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     pr.variants.push_back(vs[i].name);
     pr.routed.push_back(rs[i].routed);
     pr.seconds.push_back(rs[i].seconds);
+    pr.work.push_back(rs[i].work);
     if (i > 0 && better(i, best)) best = i;
   }
   pr.best_variant = static_cast<int>(best);
@@ -3658,6 +3696,35 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
 }
 
 int portfolio_size() { return 8; }
+
+WorkCounts& WorkCounts::operator+=(const WorkCounts& o) {
+  expansions += o.expansions;
+  flood_cells += o.flood_cells;
+  searches += o.searches;
+  cell_checks += o.cell_checks;
+  fixed_checks += o.fixed_checks;
+  field_cells += o.field_cells;
+  fields += o.fields;
+  commits += o.commits;
+  rips += o.rips;
+  return *this;
+}
+
+WorkCounts WorkProfile::total() const {
+  WorkCounts t;
+  for (const auto& p : phase) t += p;
+  return t;
+}
+
+const char* work_phase_name(WorkPhase p) {
+  switch (p) {
+    case WorkPhase::Setup: return "setup";
+    case WorkPhase::FirstPass: return "first_pass";
+    case WorkPhase::Negotiation: return "negotiation";
+    case WorkPhase::Cleanup: return "cleanup";
+  }
+  return "?";
+}
 
 Router::Router(const model::Board& board, const model::DesignRules& rules, RouterOptions opt) : in_(board), rules_(rules), opt_(opt) {}
 

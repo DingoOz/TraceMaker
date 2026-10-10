@@ -42,6 +42,8 @@ beside it). The place-and-route sets (unlocked footprints reset to a pile) are b
 | Added DRC errors | by KiCad violation type |
 | Vias, wirelength, bends | totals; also normalised to the reference routing where it exists |
 | Wall time, work units | engine-reported, with hardware recorded: the time is the whole route job (every portfolio variant, D86), the work units (`expansions`) are the winning variant's only |
+| Work profile | per phase (setup, first pass, negotiation, clean-up): expansions, flood cells, searches, cell checks, fixed-copper checks, cost-field cells and fields, commits, rips; deterministic, in the route JSON as `work` (winner) and `work_all_variants` (D88) |
+| Route CPU time | user + system seconds of the `tracemaker route` process (`cpu_s` per board, `cpu_seconds` per run) |
 | Placement (P&R set) | HPWL, lower-bound gap, crossings, courtyard overlaps (must be 0), moved parts |
 | Determinism | output hash per board at 1 and N threads, GPU on/off |
 
@@ -84,7 +86,10 @@ gates of §5.
 **Comparing.** `bench/compare_runs.py BEFORE AFTER [--expect-identical]` lists every board whose routed output
 differs or got worse, the clean-pass and completion totals and router seconds, and exits 1 if a gate fails.
 `--expect-identical` adds "every routed board byte-identical" for speed-ups and refactors. Build the "before"
-binary from the base commit (a clean `origin/main` worktree) and run both on the same machine.
+binary from the base commit (a clean `origin/main` worktree) and run both on the same machine. Route CPU time is
+printed per board and in total. When both runs used the same `--work`, boards whose output is byte-identical did the
+same work, so their CPU change is run-to-run noise; the report prints that band and lists the boards (and the total)
+that moved beyond it, and at least 10 %: a pointer for gate 5, not a failure.
 
 **Other tools.**
 
@@ -115,6 +120,10 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
 3. Time within budget on every board (with `--work`, the budget is work units; wall time only stops the job).
 4. Routed boards byte-identical unless the change is meant to change results (`compare_runs.py
    --expect-identical`; then the differences are recorded).
+5. Quality is judged at equal work, speed at equal wall time. The work budget charges search expansions and flood
+   cells only (the work profile shows what else a run did), so a change that moves work into dearer operations, such
+   as reaching negotiation sooner, takes longer at the same work while routing more in the same time (doc 05 §37).
+   A claim that a change is faster or slower needs runs at equal wall time; `compare_runs.py` points at the boards.
 
 ## 6. Implementation status (2026-10-02; sets, work budgets and refill 2026-10-08, D81)
 
@@ -141,3 +150,8 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
   (decelerator4030, LimeSDR, logicbone at 5 M and 20 M) put 81–89 % of the process in the seven losing variants
   and under 2 % in reading, set-up, clean-up and writing. Times in runs made before D86, including the Freerouting
   comparisons, are the winner's only.
+- Work profile and route CPU time (D88). The counters change no output (`quick` 30/30 byte-identical) and cost no
+  measurable time. Two `mid` runs at 20 M (`--jobs 4 --threads 3`, the same work), `origin/main` against D87 (#21):
+  the four byte-identical boards moved +9 % to +14 % in CPU time between the runs, which is the noise of one
+  sequential pair on this 14-core Mac; only sbc (+41 %) and kitspace_d20 (+24 %) moved beyond it. A 10 % threshold
+  alone would have flagged seven boards. Single CPU-time comparisons of under about 15 % are not evidence here.

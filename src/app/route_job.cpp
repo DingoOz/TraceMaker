@@ -86,6 +86,19 @@ nlohmann::json items_json(const model::Board& b, const route::RouteResult& res) 
   return it;
 }
 
+// Work profile (doc 10 §2, D88), per phase and in total.
+nlohmann::json work_json(const route::WorkProfile& w) {
+  auto counts = [](const route::WorkCounts& c) {
+    return nlohmann::json{{"expansions", c.expansions}, {"flood_cells", c.flood_cells}, {"searches", c.searches},
+                          {"cell_checks", c.cell_checks}, {"fixed_checks", c.fixed_checks}, {"field_cells", c.field_cells},
+                          {"fields", c.fields},         {"commits", c.commits},         {"rips", c.rips}};
+  };
+  nlohmann::json j;
+  for (int p = 0; p < route::kWorkPhases; ++p) j[route::work_phase_name(static_cast<route::WorkPhase>(p))] = counts(w.phase[static_cast<std::size_t>(p)]);
+  j["total"] = counts(w.total());
+  return j;
+}
+
 }  // namespace
 
 int default_gpu_device(bool use_gpu) {
@@ -281,6 +294,7 @@ RouteJobResult run_route_job(RouteJob job) {
   const int threads = std::max(1, job.threads);
   const int variants = std::clamp(job.variants > 0 ? job.variants : opt.work_budget > 0 ? route::portfolio_size() : threads, 1,
                                   route::portfolio_size());
+  route::WorkProfile all_work;  // summed over the portfolio's variants
   if (variants > 1) {
     std::vector<int> pick;
     if (kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, opt.seed);
@@ -295,9 +309,12 @@ RouteJobResult run_route_job(RouteJob job) {
     best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
     best_name = pr.variants[static_cast<std::size_t>(pr.best_variant)];
     res = std::move(pr.best);
+    for (const auto& w : pr.work)
+      for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += w.phase[static_cast<std::size_t>(p)];
   } else {
     res = route::Router(*route_board, rules, opt).run();
     ran = {0};
+    all_work = res.work;
   }
   if (kb) {
     kb->record_run(feat, name, ran, best_index, res.routed, res.connections, res.seconds);
@@ -369,6 +386,12 @@ RouteJobResult run_route_job(RouteJob job) {
   log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s (best variant %.2f s)", res.routed,
           res.connections, res.tracks.size(), res.vias.size(), nm_to_mm(res.pitch), res.expansions, job_seconds, res.seconds));
   for (const auto& f : res.failures) log("  unrouted: " + f);
+  {
+    const auto t = all_work.total();
+    log(fmt("work (all variants): %ld expansions, %ld flood cells, %ld cell checks, %ld fixed-copper checks, %ld field cells in %ld fields, "
+            "%ld commits, %ld rips",
+            t.expansions, t.flood_cells, t.cell_checks, t.fixed_checks, t.field_cells, t.fields, t.commits, t.rips));
+  }
   for (std::size_t r = 0; r < res.escape_rings.size(); ++r)
     log(fmt("  deep-array ring %zu: %d of %d pins connected", r + 1, res.escape_rings[r].second, res.escape_rings[r].first));
   if (opt.cut_report) {
@@ -390,6 +413,8 @@ RouteJobResult run_route_job(RouteJob job) {
     out.summary["unconnected_after_refill"] = unconnected_after_refill;
   }
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
+  out.summary["work"] = work_json(res.work);
+  out.summary["work_all_variants"] = work_json(all_work);
   // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
   if (opt.diff_pairs || !opt.pair_nets.empty()) {
     const drc::RuleEngine re(lb.board, rules);

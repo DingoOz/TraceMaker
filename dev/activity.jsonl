@@ -123,3 +123,4 @@
 {"ts": "2026-10-09T00:02:24+02:00", "kind": "build", "text": "D83: tracemaker escape analyses outstanding pins under the router's rules and zone/via options; stripped CM5 18 -> 0 dead with --soft-zones"}
 {"ts": "2026-10-09T14:23:47+02:00", "kind": "note", "text": "Zone refill in the engine (D85): drc --refill-zones matches kicad-cli on 16/16 plane boards and 191/200 PCBench boards; --soft-zones routing refills and repairs, planes 119 -> 95 unconnected at 3M+3M"}
 {"ts": "2026-10-09T15:28:59+02:00", "kind": "decision", "text": "D86: route seconds cover the whole job (all portfolio variants); bench/run.py gives --work boards the cores per job as router threads; mid 11/11 and quick 30/30 byte-identical"}
+{"ts": "2026-10-09T17:29:26+02:00", "kind": "decision", "text": "D88: work profile per phase in the route JSON; bench records route CPU time; compare_runs flags CPU changes at equal work beyond the identical-board noise band"}
