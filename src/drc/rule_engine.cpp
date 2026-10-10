@@ -353,9 +353,11 @@ class Condition {
   }
 
   // Area and courtyard functions of a zone fill are remembered by (condition node, zone, fill): a fill has tens
-  // of thousands of points and is asked again for every pair it is in. Other items are computed each time.
+  // of thousands of points and is asked again for every pair it is in. Other items are computed each time, and so
+  // is a zone asked as a whole (sub < 0, the refill's outline on one layer): its answer depends on the layer, which
+  // the key does not hold, and the refill asks for all layers at once.
   template <class F> static bool cached_for_fill(const Node& n, const CopperItem& it, EvalCtx& ctx, F&& compute) {
-    if (it.kind != ItemKind::Zone) return compute();
+    if (it.kind != ItemKind::Zone || it.sub < 0) return compute();
     const std::tuple<const void*, int, int> key{&n, it.index, it.sub};
     {
       const std::lock_guard lock(ctx.eng->area_mutex_);

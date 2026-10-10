@@ -148,7 +148,7 @@ class Filler {
     CopperItem it;
     it.kind = ItemKind::Zone;
     it.index = z;
-    it.sub = -1;  // the zone itself, not one of its fill polygons (rule-engine caches key on it)
+    it.sub = -1;  // the zone itself, not one of its fill polygons (the rule engine caches only those)
     it.net = zone.net;
     it.layers = model::layer_bit(layer);
     it.shapes = {geom::Shape::polygon(zone.outline.front(), 0)};

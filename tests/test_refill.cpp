@@ -54,11 +54,12 @@ struct Loaded {
   model::DesignRules rules;
 };
 
-Loaded load(const std::string& name, const std::string& text) {
+Loaded load(const std::string& name, const std::string& text, const std::string& dru = "") {
   const fs::path dir = fs::temp_directory_path() / ("tmk_refill_" + name + "_" + std::to_string(::getpid()));
   fs::create_directories(dir);
   const fs::path pcb = dir / "b.kicad_pcb";
   std::ofstream(pcb) << text;
+  if (!dru.empty()) std::ofstream(dir / "b.kicad_dru") << dru;
   Loaded l{io::read_board_file(pcb.string()).board, io::read_design_rules(pcb.string())};
   fs::remove_all(dir);
   return l;
@@ -164,6 +165,31 @@ TEST_CASE("refill: a hatched zone's stored fill does not carry a connection acro
   CHECK(!rf.warnings.empty());
   const auto whole = load("hatch_whole", hatched(board_text("")));
   CHECK(unconnected(drc::refill_zones(whole.board, whole.rules).board, whole.rules) == 0);
+}
+
+TEST_CASE("refill: an area rule applies on the layers of its area only", "[refill]") {
+  // GND on both layers, an S track on each, and a 2 mm clearance inside rule area X, which is on F.Cu only. On F.Cu
+  // the wide knock-out splits the plane; on B.Cu the track is an ordinary hole in it. The rule engine must not
+  // remember the answer for one layer and give it for the other (the layers are filled in parallel).
+  std::string text = board_text(segment(15, 3, 15, 17));
+  const std::string one = "(layer \"F.Cu\") (uuid \"a\")", bridge = "(thermal_bridge_width 0.5)";
+  text.replace(text.find(one), one.size(), "(layers \"F.Cu\" \"B.Cu\") (uuid \"a\")");
+  text.replace(text.find(bridge), bridge.size(), bridge + " (island_removal_mode 1)");  // B.Cu holds no pad
+  text.insert(text.rfind(')'),
+              "  (segment (start 15 3) (end 15 17) (width 0.3) (layer \"B.Cu\") (net 2))\n"
+              "  (zone (net 0) (net_name \"\") (layer \"F.Cu\") (uuid \"x\") (name \"X\") (hatch edge 0.5) (connect_pads (clearance 0))"
+              " (min_thickness 0.25) (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed))"
+              " (polygon (pts (xy 10 2) (xy 20 2) (xy 20 18) (xy 10 18))))\n");
+  const auto l = load("area_rule", text, "(version 1)\n(rule big (condition \"A.intersectsArea('X') || B.intersectsArea('X')\")"
+                                         " (constraint clearance (min 2mm)))\n");
+  REQUIRE(l.rules.custom.size() == 1);
+  for (int run = 0; run < 8; ++run) {
+    const auto rf = drc::refill_zones(l.board, l.rules);
+    int front = 0, back = 0;
+    for (const auto& [layer, pts] : rf.board.zones[0].fills) (layer == 0 ? front : back) += 1;
+    CHECK(front == 2);
+    CHECK(back == 1);
+  }
 }
 
 TEST_CASE("refill: connectivity through the fill edge index equals the linear test", "[refill]") {
