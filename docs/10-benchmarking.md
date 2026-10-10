@@ -88,8 +88,10 @@ differs or got worse, the clean-pass and completion totals and router seconds, a
 `--expect-identical` adds "every routed board byte-identical" for speed-ups and refactors. Build the "before"
 binary from the base commit (a clean `origin/main` worktree) and run both on the same machine. Route CPU time is
 printed per board and in total. When both runs used the same `--work`, boards whose output is byte-identical did the
-same work, so their CPU change is run-to-run noise; the report prints that band and lists the boards (and the total)
-that moved beyond it, and at least 10 %: a pointer for gate 5, not a failure.
+same work, so their CPU change is run-to-run noise or a change in speed that leaves the output alone; the report
+prints that band and lists the boards (and the total) that moved beyond it, and at least 10 %. When every identical
+board moved the same way by more than 10 % it says that too: one pair of runs cannot tell a faster binary from a
+quieter machine, a second run of one binary can. All of it is a pointer for gate 5, not a failure.
 
 **Other tools.**
 
@@ -152,6 +154,7 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
   comparisons, are the winner's only.
 - Work profile and route CPU time (D88). The counters change no output (`quick` 30/30 byte-identical) and cost no
   measurable time. Two `mid` runs at 20 M (`--jobs 4 --threads 3`, the same work), `origin/main` against D87 (#21):
-  the four byte-identical boards moved +9 % to +14 % in CPU time between the runs, which is the noise of one
-  sequential pair on this 14-core Mac; only sbc (+41 %) and kitspace_d20 (+24 %) moved beyond it. A 10 % threshold
+  the four byte-identical boards moved +9 % to +14 % in CPU time between the runs (noise of one sequential pair on
+  this 14-core Mac, or a slow-down that left their output alone: one pair cannot tell);
+  only sbc (+41 %) and kitspace_d20 (+24 %) moved beyond it. A 10 % threshold
   alone would have flagged seven boards. Single CPU-time comparisons of under about 15 % are not evidence here.

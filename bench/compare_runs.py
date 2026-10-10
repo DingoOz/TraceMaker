@@ -12,9 +12,11 @@ completion and clean pass before and after, added DRC errors. Exit status 1 when
   with --expect-identical (speed-ups, refactors): every routed board byte-identical.
 Wall time and route CPU time are reported, not gated: they are only comparable from the same machine. When both runs
 used the same --work budget, boards whose routed output is byte-identical did the same work, so their CPU change is
-run-to-run noise; the report gives that band and lists the other boards (and the total) that moved beyond it, at
-least 10 %. Equal work is not equal time (the budget counts search expansions only, doc 10 §5), so a claim about
-speed needs a run at equal wall time.
+run-to-run noise or a change in speed that leaves the output alone; the report gives that band and lists the other
+boards (and the total) that moved beyond it, at least 10 %. One pair of runs cannot tell the two apart: when every
+identical board moved the same way by more than 10 % the report says so, and a second run of one binary settles it.
+Equal work is not equal time (the budget counts search expansions and flood cells only, doc 10 §5), so a claim
+about speed needs a run at equal wall time.
 """
 import argparse
 import hashlib
@@ -56,7 +58,7 @@ def main() -> int:
     boards = sorted(set(before) & set(after))
     missing = sorted(set(before) ^ set(after))
     identical, rows, failures, notes = 0, [], [], []
-    noise: list[float] = []  # CPU change of byte-identical boards: same work, so pure run-to-run noise
+    noise: list[float] = []  # CPU change of byte-identical boards: same work, so run-to-run noise or a uniform speed change
 
     def summary(d: pathlib.Path) -> dict:
         f = d / "summary.json"
@@ -108,7 +110,12 @@ def main() -> int:
         if same_work:
             band = max([CPU_FLAG] + [abs(x) for x in noise])
             if noise:
-                out.append(f"Byte-identical boards moved {min(noise):+.0%} to {max(noise):+.0%} in CPU time (run-to-run noise).")
+                out.append(f"Byte-identical boards moved {min(noise):+.0%} to {max(noise):+.0%} in CPU time (the same work: noise, or speed).")
+            # Noise scatters around zero. A speed-up or slow-down that leaves the output alone moves every identical
+            # board the same way, and the band above would hide it.
+            if noise and (min(noise) > CPU_FLAG or max(noise) < -CPU_FLAG):
+                notes.append(f"every byte-identical board moved the same way, {min(noise):+.0%} to {max(noise):+.0%}: a change in speed "
+                             "(binary or machine), not scatter; run one binary twice to tell which")
             if abs(cpu_f - cpu_b) / cpu_b > band:
                 notes.append(f"route CPU time {(cpu_f - cpu_b) / cpu_b:+.1%} in total")
             for name in boards:
@@ -125,7 +132,7 @@ def main() -> int:
     if rows:
         out += ["", "| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |", "|---|---|---|---|---|---|---|---|"] + rows
     if notes:
-        out += ["", "Beyond the noise at equal work (not a gate; check speed at equal wall time, doc 10 §5):"] + [f"- {x}" for x in notes]
+        out += ["", "CPU time at equal work, beyond what the byte-identical boards show as noise (not a gate; check speed at equal wall time, doc 10 §5):"] + [f"- {x}" for x in notes]
     out += ["", "Gates: " + ("pass" if not failures else "FAIL")] + [f"- {x}" for x in failures]
     text = "\n".join(out) + "\n"
     print(text, end="")
