@@ -93,6 +93,7 @@ int default_gpu_device(bool use_gpu) {
 }
 
 RouteJobResult run_route_job(RouteJob job) {
+  const auto t_job = std::chrono::steady_clock::now();
   auto log = [&](const std::string& line) {
     if (job.log) job.log(line);
   };
@@ -271,6 +272,7 @@ RouteJobResult run_route_job(RouteJob job) {
   std::vector<int> ran;
   int best_index = 0;
   std::string best_name;
+  nlohmann::json variant_rows = nlohmann::json::array();
   // The variant set is a setting, never derived from the thread count when a work budget makes the run
   // deterministic: then `--threads` only changes how fast the same variants finish (requirement N3, D47).
   const int threads = std::max(1, job.threads);
@@ -281,9 +283,11 @@ RouteJobResult run_route_job(RouteJob job) {
     if (kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, opt.seed);
     log(fmt("portfolio: %d variants on %d thread%s", variants, std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
     auto pr = route::route_portfolio(*route_board, rules, opt, variants, pick, threads);
-    for (std::size_t i = 0; i < pr.variants.size(); ++i)
+    for (std::size_t i = 0; i < pr.variants.size(); ++i) {
       log(fmt("  variant %d %-30s routed %d in %.1f s%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], pr.seconds[i],
               static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
+      variant_rows.push_back({{"variant", pr.indices[i]}, {"name", pr.variants[i]}, {"routed", pr.routed[i]}, {"seconds", pr.seconds[i]}});
+    }
     ran = pr.indices;
     best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
     best_name = pr.variants[static_cast<std::size_t>(pr.best_variant)];
@@ -304,8 +308,12 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& v : res.vias) ed.add_via(v);
     ed.save(job.out);
   }
-  log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s", res.routed, res.connections, res.tracks.size(),
-          res.vias.size(), nm_to_mm(res.pitch), res.expansions, res.seconds));
+  // The whole job, every variant included: a portfolio on fewer threads than variants runs them one after
+  // another, so the winner's own time understates the run several times over (by more than the variant count
+  // when the winner is one of the quicker variants).
+  const double job_seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - t_job).count();
+  log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s (best variant %.2f s)", res.routed,
+          res.connections, res.tracks.size(), res.vias.size(), nm_to_mm(res.pitch), res.expansions, job_seconds, res.seconds));
   for (const auto& f : res.failures) log("  unrouted: " + f);
   for (std::size_t r = 0; r < res.escape_rings.size(); ++r)
     log(fmt("  deep-array ring %zu: %d of %d pins connected", r + 1, res.escape_rings[r].second, res.escape_rings[r].first));
@@ -319,9 +327,10 @@ RouteJobResult run_route_job(RouteJob job) {
   out.items = items_json(lb.board, res);
   if (!job.items_out.empty()) std::ofstream(job.items_out) << out.items.dump();
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
-                 {"vias", res.vias.size()},  {"seconds", res.seconds},         {"expansions", res.expansions},
-                 {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures}, {"variant", best_index}, {"variant_name", best_name},
-                 {"escape_corridors", res.escape_corridors}};
+                 {"vias", res.vias.size()},  {"seconds", job_seconds},         {"variant_seconds", res.seconds},
+                 {"expansions", res.expansions}, {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures},
+                 {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors}};
+  if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
   if (opt.diff_pairs || !opt.pair_nets.empty()) {

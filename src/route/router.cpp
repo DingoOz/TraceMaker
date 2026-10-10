@@ -3543,6 +3543,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     for (std::size_t i = 0; i < alive.size(); ++i) alive[i] = i;
     std::vector<RouteResult> last(vs.size());      // each variant's result at its last rung
     std::vector<std::uint8_t> ran(vs.size(), 0);
+    std::vector<double> spent(vs.size(), 0.0);     // wall time per variant, summed over its rungs
     auto better_r = [&](const RouteResult& a, std::size_t ia, const RouteResult& c, std::size_t ic) {
       if (a.routed != c.routed) return a.routed > c.routed;
       if (a.vias.size() != c.vias.size()) return a.vias.size() < c.vias.size();
@@ -3573,6 +3574,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       for (auto& t : pool) t.join();
       for (std::size_t k = 0; k < alive.size(); ++k) {
         if (!have_best || better_r(out[k], alive[k], best_res, best_i)) best_res = out[k], best_i = alive[k], have_best = true;
+        spent[alive[k]] += out[k].seconds;
         last[alive[k]] = std::move(out[k]);
         ran[alive[k]] = 1;
       }
@@ -3588,6 +3590,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     for (std::size_t i = 0; i < vs.size(); ++i) {
       pr.variants.push_back(vs[i].name);
       pr.routed.push_back(ran[i] ? last[i].routed : 0);
+      pr.seconds.push_back(spent[i]);  // the job log and summary read one entry per variant
     }
     pr.best_variant = static_cast<int>(best_i);
     pr.best = std::move(best_res);

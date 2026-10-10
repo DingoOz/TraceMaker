@@ -466,7 +466,9 @@ int main(int argc, char** argv) {
   route->add_option("board", r_in)->required()->check(CLI::ExistingFile);
   route->add_option("-o,--output", r_out, "Output .kicad_pcb")->required();
   route->add_option("--time", ropt.time_limit_s, "Time limit, seconds (safety net; results then depend on machine speed)");
-  route->add_option("--work", ropt.work_budget, "Deterministic work budget in search expansions per router (e.g. 50000000)");
+  route->add_option("--work", ropt.work_budget,
+                    "Deterministic work budget in search expansions per router (e.g. 50000000); with the default portfolio every "
+                    "variant gets the whole budget, so a run does up to --variants times this work");
   route->add_option("--pitch-um", r_pitch_um, "Lattice pitch in micrometres (default: automatic)");
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
   route->add_option("--seed", ropt.seed);

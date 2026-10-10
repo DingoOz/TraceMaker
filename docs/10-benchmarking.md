@@ -41,7 +41,7 @@ beside it). The place-and-route sets (unlocked footprints reset to a pile) are b
 | Completion | routed connections / routable connections (excluding pins proved dead) |
 | Added DRC errors | by KiCad violation type |
 | Vias, wirelength, bends | totals; also normalised to the reference routing where it exists |
-| Wall time, work units | engine-reported, with hardware recorded |
+| Wall time, work units | engine-reported, with hardware recorded: the time is the whole route job (every portfolio variant, D86), the work units (`expansions`) are the winning variant's only |
 | Placement (P&R set) | HPWL, lower-bound gap, crossings, courtyard overlaps (must be 0), moved parts |
 | Determinism | output hash per board at 1 and N threads, GPU on/off |
 
@@ -66,7 +66,8 @@ gates of §5.
 | Option | Effect |
 |---|---|
 | `--set NAME` | the boards of `bench/sets/NAME.txt` (names the set in the summary) |
-| `--work N` | deterministic work budget per board, no knowledge base; `--time` becomes a safety stop (3,600 s) |
+| `--work N` | deterministic work budget per board, no knowledge base; `--time` becomes a safety stop (3,600 s). Every portfolio variant gets the whole budget, so a board does up to eight times `N` |
+| `--threads N` | router threads per board; with `--work` the default is the cores per job (at most 8), since the output does not depend on it (D47), but 1 with `--halving` in the route options, whose budget shares follow the thread count; without `--work` it is also the portfolio size (default 1) |
 | `--refill` | KiCad refills zones before judging input and output; needed whenever fills may be stale (`--soft-zones`) |
 | `--route-args=...` | extra `tracemaker route` options (also `TM_ROUTE_ARGS`) |
 | `--fixtures DIR` | boards from `DIR/<name>/unrouted.kicad_pcb` instead of PCBench; a `.kicad_pro`/`.kicad_dru` beside it is copied next to the output so KiCad judges with the board's rules |
@@ -131,3 +132,11 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
   - `--set planes --work 3000000 --refill --route-args=--soft-zones`: 86.1 % completion. Without `--refill` the
     judge reads the stale fills, and without the copied project files KiCad judged demo outputs on default rules
     (hundreds of false `track_width` and `clearance` errors on RoyalBlue, StickHub and plane_smd).
+- Timing (D86). The summary's `seconds` used to be the winning variant's own time. With `--work` every board runs
+  all eight variants, and at one thread per board (the old default) they ran one after another, so a board's job
+  took several times the reported figure (more than eight times when the winner is one of the quicker variants):
+  on the `mid` set at 20 M, 6–16 s reported against 45–107 s of process time. `seconds` now covers the whole job,
+  `variant_seconds` keeps the winner's time and `variants` lists every variant. A per-variant profile
+  (decelerator4030, LimeSDR, logicbone at 5 M and 20 M) put 81–89 % of the process in the seven losing variants
+  and under 2 % in reading, set-up, clean-up and writing. Times in runs made before D86, including the Freerouting
+  comparisons, are the winner's only.

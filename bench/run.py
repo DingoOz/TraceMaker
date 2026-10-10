@@ -40,6 +40,7 @@ FR_RESULTS = ROOT / "bench/data/freerouting/scripts/benchmark/results/benchmarks
 TM = pathlib.Path(os.environ.get("TM_BINARY", ROOT / "build/release/src/app/tracemaker"))
 EXTRA = os.environ.get("TM_ROUTE_ARGS", "").split()  # extra route options for experiments, e.g. "--via-cost-mm 3"
 THREADS = 1
+PLACE_THREADS = 1
 WORK = 0         # --work N: deterministic work budget per board (0: wall-clock --time only)
 REFILL = False   # --refill: KiCad refills zones before judging
 DRC_CACHE = ROOT / "build/drc/kicad"
@@ -122,7 +123,7 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     t0 = time.time()
     try:
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
-                            "--threads", str(THREADS), "--json", str(js)]
+                            "--threads", str(PLACE_THREADS), "--json", str(js)]
                            + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else []) + PLACE_ARGS
                            + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT)
         res["place_exit"] = p.returncode
@@ -221,7 +222,9 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=1, help="board sampling seed")
     ap.add_argument("--name")
     ap.add_argument("--boards", nargs="*", help="explicit board folder names")
-    ap.add_argument("--threads", type=int, default=1, help="router portfolio size per board")
+    ap.add_argument("--threads", type=int, help="router threads per board (default with --work: the cores per job, at most 8, "
+                    "since the output does not depend on it, but 1 with --halving in the route options, where it does; "
+                    "without --work it is also the portfolio size, default 1)")
     ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full"], help="let TraceMaker move components first")
     ap.add_argument("--place-timeout", type=int, default=900)
     ap.add_argument("--place-work", type=int, default=3_000_000)
@@ -231,11 +234,16 @@ def main() -> int:
     ap.add_argument("--board-list", help="file with one board name per line (# comments)")
     ap.add_argument("--set-name", help="name of the board set for the summary (default: the tier)")
     a = ap.parse_args()
-    global THREADS, SRC_FIX, PLACE_ARGS, WORK, REFILL, EXTRA
+    global THREADS, PLACE_THREADS, SRC_FIX, PLACE_ARGS, WORK, REFILL, EXTRA
     PLACE_ARGS = (a.place_args or "").split()
-    THREADS = a.threads
-    WORK, REFILL = a.work, a.refill
+    # With --work every board runs the whole portfolio whatever the thread count (D47); one thread runs its eight
+    # variants one after another. Placement keeps one thread unless asked: its annealing runs follow --threads.
+    # Successive halving splits the budget by the thread count, so there the default must not follow the machine.
     EXTRA = EXTRA + (a.route_args or "").split()
+    THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work and "--halving" not in EXTRA else 1)
+    PLACE_THREADS = a.threads or 1
+    a.threads = THREADS
+    WORK, REFILL = a.work, a.refill
     if a.time is None:
         a.time = 3600.0 if a.work else 60.0
     if a.fixtures:
