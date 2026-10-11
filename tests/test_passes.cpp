@@ -506,6 +506,51 @@ TEST_CASE("stitch: a via may pass through the middle of another net's plane, not
   CHECK(unconnected(rf.board, l.rules) == unconnected(drc::refill_zones(l.board, l.rules).board, l.rules));
 }
 
+TEST_CASE("stitch: holes through another net's plane keep that plane's minimum width between them", "[passes][stitch]") {
+  // Four layers: GND on the outer two, a P plane with a 0.6 mm minimum width on In1.Cu, its two pins at the left
+  // edge. At a 1.3 mm pitch neighbouring sites would leave 0.3 mm of P copper between their holes; the refill
+  // prunes that, and a grid of merged holes leaves the plane in loose pieces that are dropped as islands. The
+  // plane may lose the holes and nothing else.
+  const std::string p_plane = R"(  (footprint "T:H" (layer "F.Cu") (at 3 6) (property "Reference" "J2")
+    (pad "1" thru_hole circle (at 0 0) (size 1.6 1.6) (drill 0.8) (layers "*.Cu") (net 2 "P")))
+  (footprint "T:H" (layer "F.Cu") (at 3 12) (property "Reference" "J3")
+    (pad "1" thru_hole circle (at 0 0) (size 1.6 1.6) (drill 0.8) (layers "*.Cu") (net 2 "P")))
+  (zone (net 2) (net_name "P") (layer "In1.Cu") (uuid "zp") (hatch edge 0.5) (connect_pads yes (clearance 0.2))
+    (min_thickness 0.6) (fill yes (thermal_gap 0.5) (thermal_bridge_width 0.7))
+    (polygon (pts (xy 1 1) (xy 29 1) (xy 29 19) (xy 1 19))))
+)";
+  const auto l = load("web", board_text(kGndPin + gnd_zone("F.Cu") + gnd_zone("B.Cu") + p_plane, 4));
+  auto p_area = [](const model::Board& b) {  // mm^2; a fractured outline has its holes inside the one ring
+    double a = 0;
+    for (const auto& z : b.zones)
+      if (z.net == 2)
+        for (const auto& [layer, pts] : z.fills) {
+          double s = 0;
+          for (std::size_t k = 0, j = pts.size() - 1; k < pts.size(); j = k++)
+            s += static_cast<double>(pts[j].x) / 1e6 * static_cast<double>(pts[k].y) / 1e6 - static_cast<double>(pts[k].x) / 1e6 * static_cast<double>(pts[j].y) / 1e6;
+          a += std::abs(s) / 2;
+        }
+    return a;
+  };
+  passes::StitchOptions o;
+  o.planes = true;
+  o.pitch = 1'300'000;
+  const auto r = passes::stitch_vias(l.board, l.rules, o);
+  REQUIRE(r.vias.size() > 20);
+  CHECK(!r.discarded);
+  for (std::size_t i = 0; i < r.vias.size(); ++i)
+    for (std::size_t j = i + 1; j < r.vias.size(); ++j) {
+      const double d = std::hypot(static_cast<double>(r.vias[i].pos.x - r.vias[j].pos.x), static_cast<double>(r.vias[i].pos.y - r.vias[j].pos.y));
+      CHECK(d >= 2 * (300'000 + 200'000) + 600'000);  // two knock-outs (via radius + clearance) and the web
+    }
+  model::Board b = l.board;
+  b.vias.insert(b.vias.end(), r.vias.begin(), r.vias.end());
+  const double before = p_area(drc::refill_zones(l.board, l.rules).board), after = p_area(drc::refill_zones(b, l.rules).board);
+  const double holes = static_cast<double>(r.vias.size()) * 3.14159265 * 0.52 * 0.52;  // radius 0.3 + 0.2 and the refill's margins
+  CHECK(before - after > 0);
+  CHECK(before - after <= holes);
+}
+
 TEST_CASE("stitch: a signal via gets one plane via within the distance", "[passes][stitch]") {
   const std::string sig = seg(10, 5, 15, 5, 3) + seg(15, 5, 20, 5, 3, 0.2, "B.Cu") +
                           "  (via (at 15 5) (size 0.6) (drill 0.3) (layers \"F.Cu\" \"B.Cu\") (net 3))\n";

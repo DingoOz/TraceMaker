@@ -1607,7 +1607,11 @@ redraw them).
    clearance + 10 µm) plus the zone's minimum width as a web must lie wholly inside the fill, away from every edge
    of it (outline, other knock-outs, thermal gaps). So the hole cannot cut the fill into islands, sever a spoke or
    leave a sliver. A fill the via neither clears completely nor sits in the middle of blocks the site, and so does
-   any hatched fill within reach. New vias keep two knock-outs and 0.25 mm apart, so their holes never merge.
+   any hatched fill within reach. New vias keep two knock-outs and a web apart, so their holes never merge. The
+   web is the largest minimum width of any zone on the board (at least 0.25 mm): the refill prunes copper narrower
+   than a zone's minimum width, and with a fixed 0.25 mm web a 1.4 mm grid through a plane with a 0.5 mm minimum
+   width left that plane in loose pieces between the holes, which the refill dropped as islands (KiCad: 270 of
+   495 mm² gone where the 164 holes account for 130; no DRC item, no unconnected item).
 3. After all sites: a second refill with the vias. A via stays only if its own net's fill overlaps it on at least
    two layers (KiCad joins a via to its net's zone solidly, without thermal relief). If a zone of another net has
    more pieces than before, the whole pass is withdrawn. A stitched net's own zone may gain a piece: an island the

@@ -154,10 +154,15 @@ StitchResult stitch_vias(const model::Board& board, const model::DesignRules& ru
     }
     return true;
   };
-  // New vias keep apart by both knock-outs and a web, so two holes in one plane never merge.
+  // New vias keep apart by both knock-outs and a web, so two holes in one plane never merge. The web is the
+  // largest minimum width of any zone: the refill prunes copper narrower than that, and a grid of holes whose
+  // webs are pruned leaves a plane in loose pieces between them, which the refill then drops as islands.
+  Coord web = 250'000;
+  for (const auto& z : w.zones)
+    if (!z.rule_area) web = std::max(web, z.min_thickness);
   auto apart = [&](Point p, Coord r) {
     for (const auto& v : res.vias)
-      if (within(p, v.pos, 2 * (r + reach) + 250'000)) return false;
+      if (within(p, v.pos, 2 * (r + reach) + web)) return false;
     return true;
   };
   // The exact check (rule 1) against everything but the fills, the fill test above, then the two-layer test; a via
