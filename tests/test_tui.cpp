@@ -129,7 +129,7 @@ TEST_CASE("tui: the parser's verdict is shown and gates the run", "[tui]") {
   REQUIRE(run_keys(m, "p") == Action::print);
   // The save prompt asks for the path; Esc cancels, Enter hands the path to the caller.
   REQUIRE(m.press('s') == Action::none);
-  REQUIRE(has(screen(m), "save options to: tracemaker-route.toml_"));
+  REQUIRE(has(screen(m), "save file options to: tracemaker-route.toml_"));
   REQUIRE(m.press(key::esc) == Action::none);
   m.press('s');
   m.press(key::ctrl_u);
@@ -151,17 +151,88 @@ TEST_CASE("tui: the screen fits any size and keeps the selection in view", "[tui
   for (const auto& [rows, cols] : std::vector<std::pair<int, int>>{{24, 80}, {10, 40}, {3, 20}, {1, 5}, {50, 200}}) {
     const auto lines = m.render(rows, cols);
     REQUIRE(static_cast<int>(lines.size()) == rows);
-    for (const Line& l : lines) REQUIRE(static_cast<int>(l.text.size()) <= std::max(cols, 20));
+    for (const Line& l : lines) REQUIRE(static_cast<int>(display_width(l.text)) <= std::max(cols, 20));
   }
   run_keys(m, "<end>");
-  REQUIRE(has(screen(m), "> --option-59"));
+  REQUIRE(has(screen(m), "\xe2\x96\xb8 --option-59"));
   run_keys(m, "<pgup><pgup>");
-  REQUIRE(has(screen(m), "> --option-39"));
+  REQUIRE(has(screen(m), "\xe2\x96\xb8 --option-39"));
   run_keys(m, "<home><down>");
-  REQUIRE(has(screen(m, 12, 60), "> --option-1 "));
+  REQUIRE(has(screen(m, 12, 60), "\xe2\x96\xb8 --option-1 "));
   // A long command line is cut with "..." instead of pushing the key line off the screen.
   for (int i = 0; i < 60; ++i) run_keys(m, "<space><down>");
   const auto lines = m.render(24, 80);
-  REQUIRE(has(lines[21].text, "..."));
-  REQUIRE(has(lines[23].text, "q quit"));
+  REQUIRE(has(lines[19].text + lines[20].text, "..."));
+  REQUIRE(has(lines[22].text, "q quit"));
+}
+
+TEST_CASE("tui: values live in scopes; an edit goes to the target scope and a higher scope wins", "[tui]") {
+  Model m("tracemaker route", sample());
+  m.enable_scope(Scope::global, "g.conf", true);
+  m.enable_scope(Scope::project, "p.conf", false);
+  m.disable_scope(Scope::file);
+  m.set_target(Scope::project);
+  REQUIRE(m.target() == Scope::project);
+  REQUIRE(m.load_config("via-cost-mm = 1\nsoft-zones = true\n", Scope::global).empty());
+  REQUIRE(m.fields()[2].value == "1");
+  REQUIRE(m.fields()[2].scope == Scope::global);
+  REQUIRE(has(screen(m), "p.conf"));
+  REQUIRE(has(screen(m), "new: p.conf"));
+  REQUIRE(has(screen(m), "PROJECT"));
+
+  // An edit made while PROJECT is the target is kept in the project layer and wins over the global value.
+  const std::string clear(1, static_cast<char>(key::ctrl_u));
+  run_keys(m, "/via<enter><enter>" + clear + "2<enter>");
+  REQUIRE(m.fields()[2].value == "2");
+  REQUIRE(m.fields()[2].scope == Scope::project);
+  REQUIRE(m.dirty(Scope::project));
+  REQUIRE(!m.dirty(Scope::global));
+  REQUIRE(has(m.config_text(Scope::project), "via-cost-mm = 2\n"));
+  REQUIRE(!has(m.config_text(Scope::project), "soft-zones"));  // that one belongs to the global file
+  REQUIRE(has(m.config_text(Scope::global), "via-cost-mm = 1\n"));
+  REQUIRE(has(m.config_text(Scope::global), "soft-zones = true\n"));
+  REQUIRE(has(screen(m), "(project)"));
+
+  // `d` resets the target's own value and the global one shows through again.
+  run_keys(m, "d");
+  REQUIRE(m.fields()[2].value == "1");
+  REQUIRE(m.fields()[2].scope == Scope::global);
+  // With the target on GLOBAL a project value hides the edit, and the screen says so.
+  run_keys(m, "<enter>" + clear + "9<enter><tab>");
+  REQUIRE(m.target() == Scope::global);
+  run_keys(m, "<tab>");  // a ring of the enabled scopes: project, then global again
+  REQUIRE(m.target() == Scope::project);
+  m.press(key::tab);
+  REQUIRE(m.target() == Scope::global);
+  REQUIRE(has(m.status(), "changes now go to global"));
+  REQUIRE(m.fields()[2].value == "9");  // that edit went to the project layer, so it wins over the global value
+  m.press('d');  // clears the global value, which the project value was hiding
+  REQUIRE(m.fields()[2].value == "9");
+  m.press('d');
+  REQUIRE(has(m.status(), "cannot reset here: the value is set in project"));
+  // The board and the output are never written to a file, whatever the target.
+  m.set("board", "b.kicad_pcb");
+  REQUIRE(!has(m.config_text(Scope::global), "kicad_pcb"));
+  REQUIRE(!has(m.config_text(Scope::project), "kicad_pcb"));
+  REQUIRE(m.args().front() == "b.kicad_pcb");
+}
+
+TEST_CASE("tui: the screen is a frame with a help panel for the option under the cursor", "[tui]") {
+  Model m("tracemaker route", sample());
+  const std::string s = screen(m, 30, 90);
+  REQUIRE(has(s, "\xe2\x94\x8c"));  // top-left corner
+  REQUIRE(has(s, "\xe2\x94\x94"));  // bottom-left corner
+  REQUIRE(has(s, "Help  board"));
+  REQUIRE(has(s, "Board file"));
+  run_keys(m, "<down><down>");
+  const std::string t = screen(m, 30, 90);
+  REQUIRE(has(t, "Help  --via-cost-mm"));
+  REQUIRE(has(t, "Cost of a via"));
+  REQUIRE(has(t, "default 3"));
+  // Every line is boxed and has styled spans that add up to its text.
+  for (const Line& l : m.render(30, 90)) {
+    std::string joined;
+    for (const Span& sp : l.spans) joined += sp.text;
+    REQUIRE(joined == l.text);
+  }
 }

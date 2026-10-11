@@ -147,6 +147,9 @@ down beside the board and reported.
 - `tracemaker tui`: every option below (and the rest) on one screen, with its description and default. Space
   toggles a flag or edits a value, `/` filters, `r` runs the route, `p` prints the command, `s` saves the choices to
   a file for `route --config FILE`. In the file each line is `name = value`; options typed on the command line win.
+  A help panel describes the option under the cursor. Options can be kept globally
+  (`~/.config/tracemaker/route.conf`), per project (`tracemaker.conf` beside the board) or in the `--config` file;
+  each value shows where it comes from, and `Tab` chooses which of them receives your edits and the `s` save.
 - `--threads N`: threads. Eight differently configured routers run in parallel and the best result is kept.
 - `--variants N`: how many of those eight to run.
 - `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.

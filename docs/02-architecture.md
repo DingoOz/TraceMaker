@@ -58,6 +58,30 @@ library without the server.
   option's long spelling without the dashes, flags as `name = true`, `#` for comments. Options on the command line
   win over the file. The board and the output are not saved: they belong to one run, not to a set of options.
 
+**Look and scopes (D90).** The screen is a coloured frame: a title bar, a scope bar, the option list with a scroll
+bar, a **Help** panel, the **Command** the choices stand for and a status line with the keys. The Help panel shows
+the description of the option under the cursor, whether it is a flag or a value, its default, its value now and
+which scope that value comes from, and the key it has in an options file. Colours are 256-colour escapes; with
+`NO_COLOR` the same frame is drawn with bold, dim and reverse.
+
+Options can be kept in three files, the higher over the lower, and every value shows the scope it comes from:
+
+| Scope | File | For |
+|---|---|---|
+| global | `$XDG_CONFIG_HOME/tracemaker/route.conf` (else `~/.config/tracemaker/route.conf`) | every board of this user |
+| project | `tracemaker.conf` in the board's folder (the current folder without a board) | the boards of that folder |
+| file | the file given with `--config` | one named set |
+
+The scope bar shows which scope **receives edits**; `Tab` / `Shift-Tab` move it and `s` writes that scope's file
+(creating its folder). A file holds only the values that belong to its scope, so saving "project" never copies the
+global values into it. An edit made while a lower scope is the target is kept there, and the status line says so when a
+higher scope's value hides it; `d` resets the target scope's own value, letting the next lower one show through. The
+board and the output belong to one run and are never written.
+
+`route` reads an options file only when it is named with `--config`; it never looks for the global or project file by
+itself, so a run cannot depend on a file it did not announce. The screen reads all three to fill itself and prints the
+whole command (`p`), which is explicit and reproducible.
+
 How it is built:
 
 - The rows are read from the `route` command's own option definitions at start-up (name, spellings, description,
@@ -72,7 +96,8 @@ How it is built:
   drives it through a pseudo-terminal and checks that a file routes a board byte for byte like the typed options.
 
 Limits: `route` only (the placer and the other subcommands have no screen); POSIX terminals only; a value option's
-choices are not offered as a list, the parser's message names them when the value is wrong.
+choices are not offered as a list, the parser's message names them when the value is wrong; writing a file drops
+comments added by hand (the screen rewrites the file from its values).
 
 ## 3. The board model and transactions
 

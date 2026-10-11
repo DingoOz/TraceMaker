@@ -6,9 +6,20 @@
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 
 namespace tmk::app::tui {
+
+const char* scope_name(Scope s) {
+  switch (s) {
+    case Scope::global: return "global";
+    case Scope::project: return "project";
+    case Scope::file: return "file";
+    case Scope::run: break;
+  }
+  return "this run";
+}
 
 namespace {
 
@@ -139,6 +150,23 @@ std::string plain_value(std::string v) {
 
 }  // namespace
 
+std::size_t display_width(const std::string& s) { return width(s); }
+
+namespace {
+
+// What each scope is for, said when the user moves to it.
+const char* scope_note(Scope s) {
+  switch (s) {
+    case Scope::global: return "options for every board of this user";
+    case Scope::project: return "options for the boards of this folder, over the global ones";
+    case Scope::file: return "the options file given with --config, over the others";
+    case Scope::run: break;
+  }
+  return "";
+}
+
+}  // namespace
+
 Model::Model(std::string command, std::vector<Field> fields, Check check)
     : command_(std::move(command)), fields_(std::move(fields)), check_(std::move(check)) {
   recheck();
@@ -190,15 +218,17 @@ std::string Model::command_line() const {
   return s;
 }
 
-std::string Model::config_text() const {
-  std::string s = "# TraceMaker route options, written by `tracemaker tui`.\n"
+std::string Model::config_text(Scope sc) const {
+  std::string s = std::string("# TraceMaker route options (") + scope_name(sc) +
+                  "), written by `tracemaker tui`.\n"
                   "# Use: tracemaker route BOARD -o OUTPUT --config THIS_FILE (options on the command line win)\n";
   for (const Field& f : fields_) {
-    if (f.value.empty() || !f.save) continue;
+    const std::string& v = f.layer[static_cast<int>(sc)];
+    if (v.empty() || !f.save) continue;
     if (f.is_flag())
-      s += f.value.substr(f.value.find_first_not_of('-')) + " = true\n";
+      s += v.substr(v.find_first_not_of('-')) + " = true\n";
     else if (!f.key.empty())
-      s += f.key + " = " + config_value(f.value) + "\n";
+      s += f.key + " = " + config_value(v) + "\n";
   }
   return s;
 }
@@ -228,15 +258,16 @@ int truth(const std::string& value) {
   return -1;
 }
 
-std::vector<std::string> Model::load_config(const std::string& text) {
+std::vector<std::string> Model::load_config(const std::string& text, Scope sc) {
   std::vector<std::string> problems;
+  const int at = static_cast<int>(sc);
   for (const Entry& e : parse_options(text)) {
     const std::string where = "line " + std::to_string(e.line) + ": ";
     bool found = false;
     for (Field& f : fields_) {
       if (!f.is_flag()) {
         if (f.key != e.name || e.name.empty()) continue;
-        f.value = e.value;
+        f.layer[at] = e.value;
         found = true;
         break;
       }
@@ -244,9 +275,9 @@ std::vector<std::string> Model::load_config(const std::string& text) {
       if (sp == f.spellings.end()) continue;
       const int t = truth(e.value);
       if (t == 1)
-        f.value = *sp;
+        f.layer[at] = *sp;
       else if (t == 0)  // "x = false" is the other spelling where the flag has two (--x / --no-x), else the default
-        f.value = f.spellings.size() == 2 ? f.spellings[sp == f.spellings.begin() ? 1 : 0] : std::string();
+        f.layer[at] = f.spellings.size() == 2 ? f.spellings[sp == f.spellings.begin() ? 1 : 0] : std::string();
       else
         problems.push_back(where + e.name + " is a flag, its value must be true or false");
       found = true;
@@ -254,14 +285,69 @@ std::vector<std::string> Model::load_config(const std::string& text) {
     }
     if (!found) problems.push_back(where + "no option named " + e.name);
   }
+  for (Field& f : fields_) refresh(f);
   recheck();
   return problems;
+}
+
+void Model::refresh(Field& f) const {
+  f.value.clear();
+  f.scope = Scope::run;
+  for (int i = kScopes - 1; i >= 0; --i) {
+    if (f.layer[i].empty()) continue;
+    f.value = f.layer[i];
+    f.scope = static_cast<Scope>(i);
+    break;
+  }
+}
+
+void Model::put(Field& f, std::string value) {
+  const Scope home_scope = home(f);
+  f.layer[static_cast<int>(home_scope)] = std::move(value);
+  dirty_[static_cast<int>(home_scope)] = home_scope != Scope::run;
+  refresh(f);
+  recheck();
+  // A higher scope with a value of its own hides what was just set.
+  if (!f.value.empty() && f.scope != home_scope && home_scope != Scope::run)
+    status_ = std::string("kept in ") + scope_name(home_scope) + ", but the " + scope_name(f.scope) + " value wins";
+}
+
+void Model::enable_scope(Scope s, std::string path, bool exists) {
+  const int i = static_cast<int>(s);
+  enabled_[i] = true;
+  path_[i] = std::move(path);
+  exists_[i] = exists;
+}
+
+void Model::disable_scope(Scope s) {
+  enabled_[static_cast<int>(s)] = false;
+  if (target_ == s) next_target(1);
+}
+
+void Model::set_target(Scope s) {
+  if (s != Scope::run && enabled_[static_cast<int>(s)]) target_ = s;
+}
+
+void Model::next_target(int step) {
+  for (int n = 1; n <= kScopes; ++n) {
+    const int i = ((static_cast<int>(target_) - 1 + step * n) % 3 + 3) % 3 + 1;  // global, project, file in a ring
+    if (enabled_[i]) {
+      target_ = static_cast<Scope>(i);
+      return;
+    }
+  }
+}
+
+void Model::mark_saved() {
+  dirty_[static_cast<int>(target_)] = false;
+  exists_[static_cast<int>(target_)] = true;
 }
 
 bool Model::set(const std::string& name, const std::string& value) {
   for (Field& f : fields_) {
     if (f.is_flag() || (f.label != name && (f.arg.empty() || f.arg != name))) continue;
-    f.value = value;
+    f.layer[static_cast<int>(f.save ? target_ : Scope::run)] = value;
+    refresh(f);
     recheck();
     return true;
   }
@@ -300,10 +386,9 @@ Action Model::press(int k) {
       const Mode was = mode_;
       mode_ = Mode::list;
       if (was == Mode::edit && !vis.empty()) {
-        fields_[vis[sel_]].value = trim(buffer_);
-        recheck();
+        put(fields_[vis[sel_]], trim(buffer_));
       } else if (was == Mode::save && !trim(buffer_).empty()) {
-        save_path_ = trim(buffer_);
+        path_[static_cast<int>(target_)] = trim(buffer_);
         return Action::save;
       }
       return Action::none;
@@ -342,10 +427,10 @@ Action Model::press(int k) {
       if (vis.empty()) break;
       Field& f = fields_[vis[sel_]];
       if (f.is_flag()) {
-        // Default, then each spelling in turn, then the default again.
-        const auto it = std::find(f.spellings.begin(), f.spellings.end(), f.value);
-        f.value = it == f.spellings.end() ? f.spellings.front() : (it + 1 == f.spellings.end() ? std::string() : *(it + 1));
-        recheck();
+        // Default, then each spelling in turn, then the default again (in the scope that edits go to).
+        const std::string& own = f.layer[static_cast<int>(home(f))];
+        const auto it = std::find(f.spellings.begin(), f.spellings.end(), own);
+        put(f, it == f.spellings.end() ? f.spellings.front() : (it + 1 == f.spellings.end() ? std::string() : *(it + 1)));
       } else {
         buffer_ = f.value;
         mode_ = Mode::edit;
@@ -355,10 +440,20 @@ Action Model::press(int k) {
     case 'd':
     case key::del:
     case key::backspace:
-      if (!vis.empty() && !fields_[vis[sel_]].value.empty()) {
-        fields_[vis[sel_]].value.clear();
-        recheck();
+      if (vis.empty()) break;
+      if (Field& f = fields_[vis[sel_]]; !f.layer[static_cast<int>(home(f))].empty()) {
+        put(f, std::string());
+      } else if (!f.value.empty()) {
+        status_ = std::string("cannot reset here: the value is set in ") + scope_name(f.scope) + " (Tab moves there)";
       }
+      break;
+    case key::tab:
+      next_target(1);
+      status_ = std::string("changes now go to ") + scope_name(target_) + ": " + scope_note(target_);
+      break;
+    case key::shift_tab:
+      next_target(-1);
+      status_ = std::string("changes now go to ") + scope_name(target_) + ": " + scope_note(target_);
       break;
     case '/':
       buffer_ = filter_;
@@ -368,7 +463,7 @@ Action Model::press(int k) {
       show_hidden_ = !show_hidden_;
       break;
     case 's':
-      buffer_ = save_path_;
+      buffer_ = save_path();
       mode_ = Mode::save;
       break;
     case 'p':
@@ -390,13 +485,132 @@ Action Model::press(int k) {
   return Action::none;
 }
 
+namespace {
+
+using Spans = std::vector<Span>;
+
+const char* const kH = "\xe2\x94\x80";  // ─ (box-drawing characters are three bytes, one column)
+const char* const kV = "\xe2\x94\x82";  // │
+
+std::size_t spans_width(const Spans& sp) {
+  std::size_t n = 0;
+  for (const Span& s : sp) n += width(s.text);
+  return n;
+}
+
+// The first `w` columns of the spans.
+Spans clip(const Spans& sp, std::size_t w) {
+  Spans out;
+  for (const Span& s : sp) {
+    if (w == 0) break;
+    const std::size_t sw = width(s.text);
+    out.push_back({sw <= w ? s.text : fit(s.text, w), s.style});
+    w -= std::min(w, sw);
+  }
+  return out;
+}
+
+std::string plain_text(const Spans& sp) {
+  std::string t;
+  for (const Span& s : sp) t += s.text;
+  return t;
+}
+
+Line make_line(Spans sp, bool highlight = false) {
+  Line l;
+  l.text = plain_text(sp);
+  l.spans = std::move(sp);
+  l.highlight = highlight;
+  return l;
+}
+
+std::string repeat(const char* s, std::size_t n) {
+  std::string out;
+  for (std::size_t i = 0; i < n; ++i) out += s;
+  return out;
+}
+
+// │ content … │ with the content clipped or padded to the inner width; `right` replaces the right border (scroll bar).
+Line boxed(Spans content, std::size_t w, bool highlight = false, const Span* right = nullptr) {
+  const std::size_t inner = w - 2;
+  content = clip(content, inner);
+  const std::size_t have = spans_width(content);
+  Spans sp{{kV, Style::frame}};
+  for (Span& c : content) sp.push_back(std::move(c));
+  if (have < inner) sp.push_back({std::string(inner - have, ' '), Style::plain});
+  sp.push_back(right ? *right : Span{kV, Style::frame});
+  return make_line(std::move(sp), highlight);
+}
+
+// ┌─ left ──────── right ─┐ : the corners are `l` and `r`; the right text is dropped when there is no room.
+Line border(const char* l, const char* r, Spans left, Spans right, std::size_t w) {
+  const std::size_t avail = w - 2;
+  auto padded = [](Spans sp) {
+    if (sp.empty()) return sp;
+    sp.insert(sp.begin(), Span{" ", Style::plain});
+    sp.push_back({" ", Style::plain});
+    return sp;
+  };
+  left = padded(std::move(left));
+  right = right.empty() ? Spans() : padded(std::move(right));
+  if (spans_width(left) + spans_width(right) + 2 > avail) right.clear();
+  left = clip(left, avail > 2 ? avail - 2 : 0);
+  const std::size_t used = spans_width(left) + spans_width(right);
+  Spans sp{{l, Style::frame}, {kH, Style::frame}};
+  for (Span& c : left) sp.push_back(std::move(c));
+  sp.push_back({repeat(kH, avail > used + 2 ? avail - used - 2 : 0), Style::frame});
+  for (Span& c : right) sp.push_back(std::move(c));
+  sp.push_back({kH, Style::frame});
+  sp.push_back({r, Style::frame});
+  return make_line(std::move(sp));
+}
+
+Style scope_style(Scope s) {
+  switch (s) {
+    case Scope::global: return Style::global;
+    case Scope::project: return Style::project;
+    case Scope::file: return Style::file;
+    case Scope::run: break;
+  }
+  return Style::run;
+}
+
+Style tag_style(Scope s) {
+  switch (s) {
+    case Scope::global: return Style::tag_global;
+    case Scope::project: return Style::tag_project;
+    case Scope::file: return Style::tag_file;
+    case Scope::run: break;
+  }
+  return Style::tag_run;
+}
+
+std::string upper(std::string s) {
+  for (char& c : s) c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+  return s;
+}
+
+// The home directory as ~, so a long path still shows what matters.
+std::string short_path(const std::string& p) {
+  const char* home = std::getenv("HOME");
+  if (home && *home && p.rfind(home, 0) == 0 && (p.size() == std::strlen(home) || p[std::strlen(home)] == '/'))
+    return "~" + p.substr(std::strlen(home));
+  return p;
+}
+
+}  // namespace
+
 std::vector<Line> Model::render(int rows, int cols) const {
   const std::size_t w = static_cast<std::size_t>(std::max(cols, 20));
   const std::size_t h = static_cast<std::size_t>(std::max(rows, 1));
+  const std::size_t inner = w - 2;
   const std::vector<std::size_t> vis = visible();
   const std::size_t sel = std::min(sel_, vis.empty() ? 0 : vis.size() - 1);
-  constexpr std::size_t kHeader = 2, kFooter = 7;
-  const std::size_t body = h > kHeader + kFooter ? h - kHeader - kFooter : 1;
+
+  // Top border, scope bar, list rule, [list], help rule, [help], command rule, [command], status, keys, bottom border.
+  const std::size_t help_n = h >= 34 ? 5 : (h >= 22 ? 3 : 2), cmd_n = h >= 34 ? 3 : (h >= 22 ? 2 : 1);
+  const std::size_t fixed = 8 + help_n + cmd_n;
+  const std::size_t body = h > fixed ? h - fixed : 1;
   if (sel < top_) top_ = sel;
   if (sel >= top_ + body) top_ = sel + 1 - body;
   if (top_ + body > vis.size()) top_ = vis.size() > body ? vis.size() - body : 0;
@@ -404,76 +618,152 @@ std::vector<Line> Model::render(int rows, int cols) const {
   std::size_t chosen = 0, hidden = 0, name_w = 0;
   for (const Field& f : fields_) chosen += f.value.empty() ? 0u : 1u, hidden += f.hidden ? 1u : 0u;
   for (std::size_t i : vis) name_w = std::max(name_w, width(fields_[i].label));
-  name_w = std::min(name_w, w / 2);
+  name_w = std::min(name_w, inner / 2);
+  constexpr std::size_t tag_w = 8;  // "this run" is the longest
+  const std::size_t val_w = inner > name_w + tag_w + 7 ? inner - name_w - tag_w - 8 : 1;
 
   std::vector<Line> out;
-  out.push_back({fit(command_ + " options: " + std::to_string(chosen) + " set, " + std::to_string(vis.size()) + " of " +
-                         std::to_string(fields_.size()) + " shown",
-                     w),
-                 Line::title});
-  std::string second;
-  if (mode_ == Mode::filter)
-    second = "filter: " + buffer_ + "_";
-  else if (!filter_.empty())
-    second = "filter: " + filter_ + "  (Esc clears)";
-  else if (!show_hidden_ && hidden > 0)
-    second = std::to_string(hidden) + " experimental options hidden (h shows them)";
-  out.push_back({fit(second, w), Line::dim});
+  out.push_back(border("\xe2\x94\x8c", "\xe2\x94\x90", {{"tracemaker " + command_.substr(command_.find(' ') == std::string::npos ? 0 : command_.find(' ') + 1) + " options", Style::title}},
+                       {{std::to_string(chosen) + " set \xc2\xb7 " + std::to_string(vis.size()) + " of " + std::to_string(fields_.size()) + " shown", Style::dim}}, w));
 
+  // Scope bar: where an edit goes. Every scope that is available is a tab; the target one is lit.
+  Spans bar{{" changes go to ", Style::dim}};
+  for (int i = 1; i < kScopes; ++i) {
+    if (!enabled_[i]) continue;
+    const Scope sc = static_cast<Scope>(i);
+    bar.push_back(sc == target_ ? Span{" " + upper(scope_name(sc)) + " ", tag_style(sc)} : Span{" " + upper(scope_name(sc)) + " ", Style::dim});
+  }
+  const int ti = static_cast<int>(target_);
+  if (dirty_[ti]) bar.push_back({"  \xe2\x97\x8f unsaved", Style::warn});
+  bar.push_back({exists_[ti] ? "  " : "  new: ", Style::dim});
+  bar.push_back({short_path(path_[ti]), Style::label});
+  out.push_back(boxed(bar, w));
+
+  Spans list_title{{"Options", Style::heading}};
+  if (mode_ == Mode::filter)
+    list_title.push_back({"  filter: " + buffer_ + "_", Style::accent});
+  else if (!filter_.empty())
+    list_title.push_back({"  filter: " + filter_ + "  (Esc clears)", Style::accent});
+  Spans list_right;
+  if (!show_hidden_ && hidden > 0) list_right.push_back({std::to_string(hidden) + " experimental options hidden (h shows them)", Style::dim});
+  out.push_back(border("\xe2\x94\x9c", "\xe2\x94\xa4", list_title, list_right, w));
+
+  // Scroll bar: the thumb replaces the right border on the rows it covers.
+  const std::size_t thumb = vis.size() > body ? std::max<std::size_t>(1, body * body / vis.size()) : body;
+  const std::size_t thumb_at = vis.size() > body ? (top_ * (body - thumb)) / (vis.size() - body) : 0;
   for (std::size_t r = 0; r < body; ++r) {
+    const bool bar_here = vis.size() > body && r >= thumb_at && r < thumb_at + thumb;
+    const Span right = bar_here ? Span{"\xe2\x94\x83", Style::accent} : Span{kV, Style::frame};
     if (top_ + r >= vis.size()) {
-      out.push_back({vis.empty() && r == 0 ? "  no option matches" : "", Line::dim});
+      out.push_back(boxed({{vis.empty() && r == 0 ? "  no option matches" : "", Style::dim}}, w, false, &right));
       continue;
     }
     const Field& f = fields_[vis[top_ + r]];
+    const bool cur = top_ + r == sel;
+    Spans sp{{cur ? " \xe2\x96\xb8 " : "   ", Style::accent}};
+    sp.push_back({fit(f.label, name_w, true) + "  ", f.value.empty() ? Style::label : scope_style(f.scope)});
     std::string v;
+    Style vs = f.value.empty() ? Style::dim : scope_style(f.scope);
     if (f.is_flag())
       v = f.value.empty() ? "[ ]" : (f.spellings.size() > 1 ? "[x] " + f.value : "[x]");
     else if (!f.value.empty())
       v = f.value;
     else
       v = f.def.empty() ? "-" : "(default " + f.def + ")";
-    const bool cur = top_ + r == sel;
-    const std::string text = std::string(cur ? "> " : "  ") + fit(f.label, name_w, true) + "  " + v;
-    out.push_back({fit(text, w, cur), cur ? Line::selected : (f.value.empty() ? Line::dim : Line::set)});
+    sp.push_back({fit(v, val_w, true) + "  ", vs});
+    sp.push_back({fit(f.value.empty() ? "" : scope_name(f.scope), tag_w, true) + " ", f.value.empty() ? Style::dim : scope_style(f.scope)});
+    out.push_back(boxed(std::move(sp), w, cur, &right));
   }
 
-  out.push_back({std::string(w, '-'), Line::dim});
-  std::string help;
+  // Help: the description of the option under the cursor, then where its value comes from.
+  Spans help_title{{"Help", Style::heading}};
+  if (!vis.empty()) help_title.push_back({"  " + fields_[vis[sel]].label, Style::label});
+  out.push_back(border("\xe2\x94\x9c", "\xe2\x94\xa4", help_title, {}, w));
+  std::vector<Spans> help(help_n);
   if (!vis.empty()) {
     const Field& f = fields_[vis[sel]];
-    help = f.label + ": " + (f.help.empty() ? "(no description)" : f.help);
-    if (!f.def.empty()) help += " [default " + f.def + "]";
+    const auto lines = wrap(f.help.empty() ? "(no description)" : f.help, inner - 2, help_n - 1);
+    for (std::size_t i = 0; i + 1 < help_n; ++i) help[i] = {{" " + lines[i], Style::plain}};
+    Spans meta{{" ", Style::plain}};
+    auto item = [&](const std::string& k, const std::string& val, Style st = Style::plain) {
+      if (meta.size() > 1) meta.push_back({"  \xc2\xb7  ", Style::dim});
+      meta.push_back({k + " ", Style::dim});
+      meta.push_back({val, st});
+    };
+    item(f.is_flag() ? "flag, Space cycles" : (f.arg.empty() ? "argument" : "value, Enter edits"), "");
+    if (f.save) item("default", f.def.empty() ? (f.is_flag() ? "off" : "none") : f.def);
+    if (f.value.empty()) {
+      item("now", "default");
+    } else {
+      item("now", f.value, scope_style(f.scope));
+      meta.push_back({std::string(" (") + scope_name(f.scope) + ")", scope_style(f.scope)});
+    }
+    if (f.save && !f.key.empty()) item("key", f.key);
+    if (f.save && !f.value.empty() && f.scope != target_ && f.layer[static_cast<int>(target_)].empty() &&
+        static_cast<int>(f.scope) > static_cast<int>(target_))
+      item("", std::string("overrides ") + scope_name(target_), Style::warn);
+    help[help_n - 1] = std::move(meta);
+  } else {
+    help[0] = {{" no option is selected", Style::dim}};
   }
-  for (const std::string& l : wrap(help, w, 2)) out.push_back({l, Line::plain});
-  for (const std::string& l : wrap("$ " + command_line(), w, 2)) out.push_back({l, Line::set});
+  for (Spans& sp : help) out.push_back(boxed(std::move(sp), w));
+
+  out.push_back(border("\xe2\x94\x9c", "\xe2\x94\xa4", {{"Command", Style::heading}}, {}, w));
+  for (const std::string& l : wrap("$ " + command_line(), inner - 2, cmd_n)) out.push_back(boxed({{" " + l, Style::code}}, w));
+
+  // Status: a prompt while editing, else the last message, else the parser's verdict.
+  Spans status;
   if (mode_ == Mode::edit && !vis.empty())
-    out.push_back({fit(fields_[vis[sel]].label + " = " + buffer_ + "_   (Enter keeps, Esc cancels, empty = default)", w), Line::title});
+    status = {{" " + fields_[vis[sel]].label + " = ", Style::label}, {buffer_ + "_", Style::accent}, {"   Enter keeps, Esc cancels, empty = default", Style::dim}};
   else if (mode_ == Mode::save)
-    out.push_back({fit("save options to: " + buffer_ + "_", w), Line::title});
+    status = {{std::string(" save ") + scope_name(target_) + " options to: ", Style::label}, {buffer_ + "_", Style::accent}};
   else if (!status_.empty())
-    out.push_back({fit(status_, w), status_.rfind("cannot", 0) == 0 ? Line::error : Line::title});
+    status = {{" " + status_, status_.rfind("cannot", 0) == 0 ? Style::error : Style::warn}};
   else if (!error_.empty())
-    out.push_back({fit("not runnable: " + error_, w), Line::error});
+    status = {{" not runnable: " + error_, Style::error}};
   else
-    out.push_back({"ready to run", Line::dim});
-  out.push_back({fit("Space change  d default  / filter  h hidden  s save  p print  r run  q quit", w), Line::dim});
+    status = {{" ready to run", Style::ok}};
+  out.push_back(boxed(std::move(status), w));
+
+  static const std::pair<const char*, const char*> keys[] = {{"Space", "edit"}, {"d", "reset"}, {"Tab", "scope"}, {"/", "find"},
+                                                            {"h", "more"},      {"s", "save"},    {"p", "print"},   {"r", "run"}, {"q", "quit"}};
+  auto hints = [&](const char* gap) {
+    Spans sp{{" ", Style::plain}};
+    for (const auto& [k, d] : keys) {
+      if (sp.size() > 1) sp.push_back({gap, Style::plain});
+      sp.push_back({k, Style::key});
+      sp.push_back({std::string(" ") + d, Style::dim});
+    }
+    return sp;
+  };
+  Spans hint = hints("  ");
+  if (spans_width(hint) > inner) hint = hints(" ");
+  out.push_back(boxed(std::move(hint), w));
+  out.push_back(border("\xe2\x94\x94", "\xe2\x94\x98", {}, {}, w));
   out.resize(h);
   return out;
 }
 
 void save_options(Model& m) {
-  std::ofstream f(m.save_path());
+  namespace fs = std::filesystem;
+  std::error_code ec;
+  const fs::path path(m.save_path());
+  if (path.has_parent_path()) fs::create_directories(path.parent_path(), ec);
+  std::ofstream f(path);
   f << m.config_text();
   f.close();
-  m.set_status(f ? "saved to " + m.save_path() : "cannot write " + m.save_path() + ": " + std::strerror(errno));
+  if (f)
+    m.mark_saved();
+  m.set_status(f ? std::string("saved ") + scope_name(m.target()) + " options to " + m.save_path()
+                 : "cannot write " + m.save_path() + ": " + std::strerror(errno));
 }
 
 Action run_keys(Model& m, const std::string& keys) {
   static const std::pair<const char*, int> names[] = {
       {"up", key::up},       {"down", key::down}, {"pgup", key::page_up}, {"pgdn", key::page_down},
       {"home", key::home},   {"end", key::end},   {"enter", key::enter},  {"space", ' '},
-      {"esc", key::esc},     {"bs", key::backspace}, {"del", key::del},   {"lt", '<'}};
+      {"esc", key::esc},     {"bs", key::backspace}, {"del", key::del},   {"lt", '<'},
+      {"tab", key::tab},     {"stab", key::shift_tab}};
   for (std::size_t i = 0; i < keys.size(); ++i) {
     int k = static_cast<unsigned char>(keys[i]);
     if (keys[i] == '<') {

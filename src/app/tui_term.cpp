@@ -67,21 +67,54 @@ class Terminal {
     }
   }
 
+  // Colours are 256-colour SGR codes; without colour (NO_COLOR) the same structure is drawn with bold, dim and reverse.
+  static const char* sgr(Style st, bool colour) {
+    if (colour) {
+      switch (st) {
+        case Style::plain: return "";
+        case Style::frame: return "\x1b[38;5;67m";
+        case Style::title: return "\x1b[1;38;5;231;48;5;24m";
+        case Style::heading: return "\x1b[1;38;5;75m";
+        case Style::dim: return "\x1b[38;5;245m";
+        case Style::label: return "\x1b[38;5;252m";
+        case Style::key: return "\x1b[1;38;5;221m";
+        case Style::code: return "\x1b[38;5;150m";
+        case Style::ok: return "\x1b[38;5;114m";
+        case Style::warn: return "\x1b[38;5;215m";
+        case Style::error: return "\x1b[1;38;5;203m";
+        case Style::accent: return "\x1b[1;38;5;117m";
+        case Style::global: return "\x1b[1;38;5;176m";
+        case Style::project: return "\x1b[1;38;5;114m";
+        case Style::file: return "\x1b[1;38;5;80m";
+        case Style::run: return "\x1b[1;38;5;179m";
+        case Style::tag_global: return "\x1b[1;38;5;16;48;5;176m";
+        case Style::tag_project: return "\x1b[1;38;5;16;48;5;114m";
+        case Style::tag_file: return "\x1b[1;38;5;16;48;5;80m";
+        case Style::tag_run: return "\x1b[1;38;5;16;48;5;179m";
+      }
+      return "";
+    }
+    switch (st) {
+      case Style::title: case Style::heading: case Style::key: case Style::accent: case Style::error:
+      case Style::global: case Style::project: case Style::file: case Style::run: return "\x1b[1m";
+      case Style::tag_global: case Style::tag_project: case Style::tag_file: case Style::tag_run: return "\x1b[7m";
+      case Style::frame: case Style::dim: return "\x1b[2m";
+      default: return "";
+    }
+  }
+
   void paint(const std::vector<Line>& lines) const {
     static const bool colour = std::getenv("NO_COLOR") == nullptr;
     std::string s = "\x1b[H";
     for (std::size_t i = 0; i < lines.size(); ++i) {
-      const char* on = "";
-      switch (lines[i].style) {
-        case Line::title: on = "\x1b[1m"; break;
-        case Line::selected: on = "\x1b[7m"; break;
-        case Line::set: on = "\x1b[1m"; break;
-        case Line::dim: on = "\x1b[2m"; break;
-        case Line::error: on = colour ? "\x1b[1;31m" : "\x1b[1m"; break;
-        case Line::plain: break;
+      // The current row has a background in colour, or is bold without.
+      const char* row = lines[i].highlight ? (colour ? "\x1b[48;5;238m" : "\x1b[1m") : "";
+      for (const Span& sp : lines[i].spans) {
+        s += "\x1b[0m";
+        s += row;
+        s += sgr(sp.style, colour);
+        s += sp.text;
       }
-      s += on;
-      s += lines[i].text;
       s += "\x1b[0m\x1b[K";
       if (i + 1 < lines.size()) s += "\r\n";
     }
@@ -103,6 +136,7 @@ class Terminal {
       case 'B': return key::down;
       case 'H': return key::home;
       case 'F': return key::end;
+      case 'Z': return key::shift_tab;
       default: break;
     }
     if (b >= '0' && b <= '9') {

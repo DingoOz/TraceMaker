@@ -514,14 +514,40 @@ int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std:
     all.insert(all.end(), args.begin(), args.end());
     return cli_check(app, all);
   });
-  if (!config.empty()) {
-    m.set_save_path(config);
-    std::ifstream f(config);
-    if (f) {
-      const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-      for (const std::string& p : m.load_config(text)) std::fprintf(stderr, "warning: %s: %s\n", config.c_str(), p.c_str());
+  // Three places keep options, the higher over the lower: the user's (global), the board's folder (project) and a file
+  // named with --config. Reading them here only fills the screen; `route` takes a file only when it is named, so a
+  // run never depends on a file it did not announce (the screen shows the whole command that stands for the choices).
+  namespace fs = std::filesystem;
+  const char* xdg = std::getenv("XDG_CONFIG_HOME");
+  const char* home = std::getenv("HOME");
+  std::string global_path;
+  if (xdg && *xdg)
+    global_path = (fs::path(xdg) / "tracemaker" / "route.conf").string();
+  else if (home && *home)
+    global_path = (fs::path(home) / ".config" / "tracemaker" / "route.conf").string();
+  const fs::path board_dir = board.empty() ? fs::path() : fs::path(board).parent_path();
+  const std::string project_path = (board_dir.empty() ? fs::path("tracemaker.conf") : board_dir / "tracemaker.conf").string();
+  std::string first_problem;
+  auto load = [&](tui::Scope sc, const std::string& path) {
+    std::ifstream f(path);
+    if (!f) return false;
+    const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+    for (const std::string& p : m.load_config(text, sc)) {
+      std::fprintf(stderr, "warning: %s: %s\n", path.c_str(), p.c_str());
+      if (first_problem.empty()) first_problem = path + ": " + p;
     }
+    return true;
+  };
+  if (!global_path.empty()) m.enable_scope(tui::Scope::global, global_path, load(tui::Scope::global, global_path));
+  m.enable_scope(tui::Scope::project, project_path, load(tui::Scope::project, project_path));
+  if (!config.empty()) {
+    m.enable_scope(tui::Scope::file, config, load(tui::Scope::file, config));
+    m.set_target(tui::Scope::file);
+  } else {
+    m.disable_scope(tui::Scope::file);
+    m.set_target(tui::Scope::project);
   }
+  if (!first_problem.empty()) m.set_status("cannot use a line of " + first_problem);
   if (!board.empty()) m.set("board", board);
   if (!out.empty()) m.set("--output", out);
   const tui::Action a = scripted ? tui::run_keys(m, keys) : tui::run_terminal(m);

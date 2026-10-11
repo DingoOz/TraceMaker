@@ -46,6 +46,9 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
     board = work / "in.kicad_pcb"
     board.write_text(BOARD)
+    # The screen also reads the user's and the board folder's options files: keep it away from the real ones.
+    os.environ["XDG_CONFIG_HOME"] = str(work / "xdg")
+    (work / "tracemaker.conf").unlink(missing_ok=True)
     failures = []
 
     def check(ok, what):
@@ -92,6 +95,28 @@ def main():
     # Without an output the screen refuses to run and says why.
     r = run("tui", board, "--keys", "r")
     check("cannot run yet" in r.stderr and "--output is required" in r.stderr, f"no refusal without --output: {r.stderr!r}")
+
+    # 4b. Scopes: the global file under the project file under --config; a save goes to the target scope only.
+    glob = work / "xdg" / "tracemaker" / "route.conf"
+    glob.parent.mkdir(parents=True, exist_ok=True)
+    glob.write_text("work = 100\nseed = 5\nvariants = 1\n")
+    proj = work / "tracemaker.conf"
+    proj.write_text("work = 200\n")
+    r = run("tui", board, "-o", work / "s.kicad_pcb", "--keys", "p")
+    want = f"tracemaker route {board} --output {work / 's.kicad_pcb'} --work 200 --seed 5 --variants 1"
+    check(r.stdout.strip() == want, f"global under project:\n  {r.stdout.strip()}\nwanted:\n  {want}")
+    # No --config: edits and `s` go to the project file (the default target); the global file is left alone.
+    r = run("tui", board, "-o", work / "s.kicad_pcb", "--keys", "/--seed<enter><enter><bs>9<enter><esc>s<enter>")
+    check(r.returncode == 0 and "seed = 9" in proj.read_text() and "work = 200" in proj.read_text(),
+          f"project save: {proj.read_text()!r}")
+    check("seed" not in proj.read_text().replace("seed = 9", "") and "variants" not in proj.read_text(),
+          f"project file took global values: {proj.read_text()!r}")
+    check(glob.read_text() == "work = 100\nseed = 5\nvariants = 1\n", f"global file changed: {glob.read_text()!r}")
+    # Tab moves the target: the same edit now lands in the global file.
+    r = run("tui", board, "-o", work / "s.kicad_pcb", "--keys", "<tab>/--variants<enter><enter><bs>2<enter><esc>s<enter>")
+    check("variants = 2" in glob.read_text(), f"global save: {glob.read_text()!r} {r.stderr!r}")
+    proj.unlink()
+    glob.unlink()
 
     # 5. Bad files are refused, with the file and line.
     for text, needle in (("work = 200000\nno-such-option = 1\n", "bad.toml:2: no route option named no-such-option"),
