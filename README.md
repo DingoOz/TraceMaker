@@ -153,7 +153,9 @@ down beside the board and reported.
 - `--bus 'DATA=/D[0-7]'` (repeatable), `--buses` (find them in the net names): route a bus lane by lane on the
   same layers with the same vias; `--bus-skew-mm 0.5` length-matches it with meanders (a custom `skew` rule of the
   board does the same); `--bus-first` routes buses before everything else. `tracemaker buses BOARD --bus …`
-  measures a routed board (doc 05 §38).
+  measures a routed board (doc 05 §38). Experimental: it meets the skew limits on generated bus boards, but on
+  real boards it has so far routed slightly fewer connections, and `--buses` can group indexed nets that are
+  not a bus.
 - `--component-rules on`: apply detected layout rules (keep-outs, widths from impedance and current).
 - `--rules-override FILE`: correct what was detected (doc 15 §6.3).
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
@@ -174,7 +176,8 @@ down beside the board and reported.
   component rules are targets for power nets), `--stitch-vias planes|return|all` (free vias of a plane's net on a
   grid where its fills overlap on two or more layers, `--stitch-pitch MM`; and one near each via of the nets that
   need a reference plane, from component rules or `--stitch-return 'PATTERN=PLANE_NET'`, `--stitch-distance MM`).
-  Refill the zones afterwards, as with `--soft-zones`.
+  Refill the zones afterwards, as with `--soft-zones`. Return-path stitching driven by component rules is
+  experimental: no test board has had a via placed by it yet.
 - `tracemaker style BOARD [--json FILE]`: how tidy a routed board is (bends per connection, acute angles,
   stair-steps, detours); the route summary carries the same `style` object for the new copper.
 

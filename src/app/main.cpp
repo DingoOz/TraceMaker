@@ -629,9 +629,9 @@ int main(int argc, char** argv) {
   tmk::app::RouteJob r_job;
   route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
   route->add_option("--bus", r_job.buses,
-                    "Route these nets as a bus, NAME=PATTERN (repeatable): lane by lane on the same layers, e.g. 'DATA=/D[0-7]' or 'LCD=/LCD_*'. "
+                    "Experimental. Route these nets as a bus, NAME=PATTERN (repeatable): lane by lane on the same layers, e.g. 'DATA=/D[0-7]' or 'LCD=/LCD_*'. "
                     "PATTERN matches whole net names: * and ? as in net-class patterns, [N-M] a number in that range (doc 05 §38)");
-  route->add_flag("--buses", r_job.detect_buses, "Also find buses in the net names: nets differing only in a trailing index, four or more between the same two components");
+  route->add_flag("--buses", r_job.detect_buses, "Experimental. Also find buses in the net names: nets differing only in a trailing index, four or more between the same two components");
   route->add_flag("--bus-first", ropt.bus_first, "Route the buses before everything else (default: each bus where the router's order puts its first connection)");
   route->add_option("--bus-skew-mm", r_job.bus_skew_mm, "Length-match the --bus groups: meanders until their lengths (tracks and via height, as KiCad's skew check) differ by at most this (0 = only the board's custom skew rules)");
   route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
@@ -676,7 +676,7 @@ int main(int argc, char** argv) {
   route->add_option("--stitch-pitch", r_job.stitch_pitch_mm, "Grid pitch of plane stitching vias, mm (default 5.08, the catalogue's value)")->check(CLI::PositiveNumber);
   route->add_option("--stitch-distance", r_job.stitch_distance_mm, "Return-path stitching: largest distance from a signal via to its plane via, mm (default: the rule's, else 5.08)")
       ->check(CLI::PositiveNumber);
-  route->add_option("--stitch-return", r_job.stitch_returns, "Return-path stitching for nets as PATTERN=PLANE_NET, e.g. 'USB_D*=GND' (repeatable)");
+  route->add_option("--stitch-return", r_job.stitch_returns, "Return-path stitching for nets as PATTERN=PLANE_NET, e.g. 'USB_D*=GND' (repeatable). Return-path stitching from component rules is experimental");
   route->add_option("--pass-work", r_job.pass_work, "Work budget of each after-route pass, in exact checks (default 2,000,000)")->check(CLI::PositiveNumber);
 
   auto* esc = app.add_subcommand("escape", "Escape feasibility of dense packages: pins that cannot leave their package under the board's rules");

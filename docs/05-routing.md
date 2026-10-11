@@ -1326,6 +1326,10 @@ together: a data or address bus, a parallel display interface. Its members were 
 them, each by its own cheapest path, so one took a via its neighbour did not need, one went round the other side of
 a mounting hole, and their lengths differed by millimetres.
 
+**Status: experimental.** The generated bus boards meet their skew limits, but six real boards routed slightly
+fewer connections with the options on (957 → 952 at 100 M work, 886 → 853 at 20 M), and `--buses` groups some
+indexed nets that are not a bus. The options stay opt-in until real boards gain from them.
+
 **What was built** (off by default: without the options the output is byte-identical, `quick` 30/30).
 
 | Part | What |
