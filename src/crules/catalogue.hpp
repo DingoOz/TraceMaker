@@ -50,6 +50,8 @@ struct Catalogue {
   int apply = 70, suggest = 40;  // confidence thresholds (doc 15 §3.2)
   // Skew ps -> mm without a stackup (doc 15 §4, §5.3): conservative FR-4 delays, outer / inner layers.
   double prop_delay_outer = 6.0, prop_delay_inner = 7.0;
+  // General high-speed guidance (defaults.general_high_speed): a stitching via within this distance of a layer change.
+  double stitch_via_within_mm = 5.08;
   std::vector<Category> categories;
   int index_of(std::string_view id) const;  // -1 if absent
   std::size_t rule_count() const;

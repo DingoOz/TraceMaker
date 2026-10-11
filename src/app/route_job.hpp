@@ -41,6 +41,20 @@ struct RouteJob {
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;
   std::vector<std::string> layer_costs;
+  // After-route passes (doc 05 §39), all off by default. Each changes the new copper only through the router's
+  // exact check and is kept only if no more items are unconnected with it than without (rule 4).
+  // --widen-power: new tracks narrower than their net class width go back up to it where there is room; nets with
+  // a target (--widen-net "PATTERN=WIDTH_MM", or a width the component rules computed) are widened towards it.
+  bool widen_power = false;
+  std::vector<std::string> widen_nets;
+  // --stitch-vias: "planes" (vias of a plane's net on a grid where its fills overlap on two or more layers),
+  // "return" (a plane via near each via of the signals that need a reference plane: component rules of kind
+  // reference_plane, and --stitch-return "PATTERN=PLANE_NET"), or "all". Empty = off.
+  std::string stitch_vias;
+  double stitch_pitch_mm = 0;      // 0 = the catalogue's stitch_via_within_mm
+  double stitch_distance_mm = 0;   // 0 = the rule's stitch_via_mm, else the catalogue value
+  std::vector<std::string> stitch_returns;
+  long pass_work = 2'000'000;      // work budget of each pass, in exact checks (rule 5)
   // Progress lines (the CLI's stdout text, one line per call, no trailing newline). Empty = silent.
   std::function<void(const std::string&)> log;
 };

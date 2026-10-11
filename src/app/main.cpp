@@ -19,6 +19,7 @@
 #include "io/kicad/project_reader.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
+#include "passes/style.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
@@ -52,6 +53,20 @@ int cmd_gpu_info() {
                   static_cast<double>(d.free_bytes) / kMiB, static_cast<double>(d.total_bytes) / kMiB, d.uuid.c_str());
     }
   }
+  return 0;
+}
+
+// Style metric of every track, arc and via of a board (doc 05 §39.2), whoever routed it.
+int cmd_style(const std::string& path, const std::string& json_path, bool connections) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto& b = lb.board;
+  const auto rep = tmk::passes::measure_style(b, b.tracks, b.arcs, b.vias);
+  const auto j = tmk::passes::style_json(b, rep, connections);
+  std::printf("%zu connections, %d segments, %.2f mm, %d vias\n", rep.connections.size(), rep.segments, tmk::nm_to_mm(rep.length), rep.vias);
+  std::printf("bends %d (%.2f per connection), acute angles %d, stair-steps %d, short segments %d, off-angle segments %d, arcs %d\n", rep.bends,
+              rep.bends_per_connection(), rep.acute, rep.stair_steps, rep.short_segments, rep.off_angle, rep.arcs);
+  std::printf("detour ratio %.3f, long detours %d\n", rep.detour_ratio(), rep.long_detours);
+  if (!json_path.empty()) std::ofstream(json_path) << j.dump(1) << "\n";
   return 0;
 }
 
@@ -556,6 +571,19 @@ int main(int argc, char** argv) {
       ->check(CLI::ExistingFile);
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
+  route->add_flag("--widen-power", r_job.widen_power,
+                  "After routing: widen new tracks that are narrower than their net class width back up to it where there is room, and nets "
+                  "with a target (--widen-net, or a width the component rules computed) towards the target (doc 05 §39)");
+  route->add_option("--widen-net", r_job.widen_nets, "With --widen-power: target width for nets as PATTERN=WIDTH_MM, e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)");
+  route->add_option("--stitch-vias", r_job.stitch_vias,
+                    "After routing: add stitching vias. planes: vias of a plane's net on a grid where its fills overlap on two or more layers; "
+                    "return: a plane via near each via of the nets that need a reference plane (component rules, --stitch-return); all: both")
+      ->check(CLI::IsMember({"planes", "return", "all"}));
+  route->add_option("--stitch-pitch", r_job.stitch_pitch_mm, "Grid pitch of plane stitching vias, mm (default 5.08, the catalogue's value)")->check(CLI::PositiveNumber);
+  route->add_option("--stitch-distance", r_job.stitch_distance_mm, "Return-path stitching: largest distance from a signal via to its plane via, mm (default: the rule's, else 5.08)")
+      ->check(CLI::PositiveNumber);
+  route->add_option("--stitch-return", r_job.stitch_returns, "Return-path stitching for nets as PATTERN=PLANE_NET, e.g. 'USB_D*=GND' (repeatable)");
+  route->add_option("--pass-work", r_job.pass_work, "Work budget of each after-route pass, in exact checks (default 2,000,000)")->check(CLI::PositiveNumber);
 
   auto* esc = app.add_subcommand("escape", "Escape feasibility of dense packages: pins that cannot leave their package under the board's rules");
   std::string esc_board, esc_json;
@@ -573,6 +601,12 @@ int main(int argc, char** argv) {
   pairs_cmd->add_option("board", pr_board)->required()->check(CLI::ExistingFile);
   pairs_cmd->add_option("--pair", pr_extra, "Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM");
   pairs_cmd->add_option("--json", pr_json, "Write the measurements as JSON");
+  auto* style_cmd = app.add_subcommand("style", "Style metric of a routed board: bends, acute angles, stair-steps, detours (doc 05 §39)");
+  std::string sty_board, sty_json;
+  bool sty_conn = false;
+  style_cmd->add_option("board", sty_board)->required()->check(CLI::ExistingFile);
+  style_cmd->add_option("--json", sty_json, "Write the metric as JSON");
+  style_cmd->add_flag("--connections", sty_conn, "With --json: also one row per connection");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -618,6 +652,7 @@ int main(int argc, char** argv) {
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
+    if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);

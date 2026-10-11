@@ -45,6 +45,7 @@ beside it). The place-and-route sets (unlocked footprints reset to a pile) are b
 | Work profile | per phase (setup, first pass, negotiation, clean-up): expansions, flood cells, searches, cell checks, fixed-copper checks, cost-field cells and fields, commits, rips; deterministic, in the route JSON as `work` (winner) and `work_all_variants` (D88) |
 | Route CPU time | user + system seconds of the `tracemaker route` process (`cpu_s` per board, `cpu_seconds` per run) |
 | Placement (P&R set) | HPWL, lower-bound gap, crossings, courtyard overlaps (must be 0), moved parts |
+| Style (informational) | per board `style`: connections, bends per connection, acute angles, stair-steps, short and off-angle segments, detour ratio, long detours (definitions in doc 05 §39.2), measured on the new copper by the engine and on the fixture's own routing (`style_ref`) by `tracemaker style`; totals in `summary.json` (`style`, `style_ref`, `style_same_boards`) and `report.md`; `compare_runs.py` lists boards whose metric changed. Never a gate |
 | Determinism | output hash per board at 1 and N threads, GPU on/off |
 
 ## 3. Baselines
