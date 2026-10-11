@@ -69,7 +69,7 @@ set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 3
 # (members routed, equal vias, skew within the limit from an option or a .kicad_dru rule), and a bus run at 1, 2 and
 # 4 threads giving identical bytes. Needs no fixtures and no KiCad.
 add_test(NAME bus_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/bus_route.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/bus_route)
-set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 1800 PROCESSORS 4)
+set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 3600 PROCESSORS 4)  # 1.3 minutes in release; over 30 under asan
 # After-route passes (doc 05 §39): style metric, power widening and stitching vias through the command line, on
 # generated boards; KiCad's DRC judges the stitched board when kicad-cli is on the PATH.
 add_test(NAME after_route_passes COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/after_route_passes.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/after_route_passes)
