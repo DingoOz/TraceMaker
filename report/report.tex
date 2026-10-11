@@ -322,12 +322,12 @@ existing unlocked copper, move footprints first and refill zones.
 \label{sec:testing}
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Unit and integration tests} (254 in the current code, run with \texttt{ctest}; release 0.8.0 had 132): exact unit conversion, Philox known-answer vectors, GPU-equals-CPU for the random generator and
+  \item \textbf{Unit and integration tests} (262 in the current code, run with \texttt{ctest}; release 0.8.0 had 132): exact unit conversion, Philox known-answer vectors, GPU-equals-CPU for the random generator and
   cost-to-go fields, s-expression parsing and byte-exact round trips, the board reader against KiCad's own model,
   rule reading, geometry predicates and the indexed paths against their linear references, placement legality and
   lower bounds, the component-rule catalogue and impedance formulas, differential-pair geometry, and the viewer
   server and replay log, and since 0.8.0 the Simple Route JSON importer, bus routing and the after-route passes.
-  The suite passes in the release build (254 of 254 on 11 October). The address-sanitizer build compiled and passed
+  The suite passes in the release build (262 of 262 on 11 October, after merging main). The address-sanitizer build compiled and passed
   all tests it finished; \texttt{bus\_route} and \texttt{thread\_determinism} are too slow under it and were not run to
   completion for this edition.
   \item \textbf{DRC parity.} TraceMaker's own DRC is compared with \texttt{kicad-cli} on the KiCad demo boards: 14
