@@ -32,6 +32,8 @@ Freerouting's figures are its own published results on the same boards.
 
 - Placing a board from scratch gives 85% clean boards on held-out designs; the project's target was 90%.
 - On boards with dense packages (BGAs, fine-pitch QFNs), 41% come out clean.
+- On tscircuit's public BGA breakout problems it routes 60% and 34% of the boards completely (sets srj19 and srj20, fixed
+  budget, no KiCad errors added); tscircuit's own router completes 92% and 77%.
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·
@@ -122,6 +124,7 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 | Run a design-rule check | `drc board.kicad_pcb --json report.json` |
 | See a summary of a board | `inspect board.kicad_pcb` |
 | Find pins that cannot escape their package | `escape board.kicad_pcb` |
+| Route a tscircuit Simple Route JSON problem | `srj-import problem.json -o board.kicad_pcb`, then `route`, then `srj-export routed.kicad_pcb --problem problem.json -o solved.json` |
 | See which parts and layout rules it detects | `rules board.kicad_pcb --mode on` |
 
 <details>
@@ -155,6 +158,12 @@ down beside the board and reported.
 - `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.
 - `--no-gpu`: compute on the CPU only. Results are identical.
 - `--diff-pairs`: route differential pairs side by side at the rule's gap.
+- `--bus 'DATA=/D[0-7]'` (repeatable), `--buses` (find them in the net names): route a bus lane by lane on the
+  same layers with the same vias; `--bus-skew-mm 0.5` length-matches it with meanders (a custom `skew` rule of the
+  board does the same); `--bus-first` routes buses before everything else. `tracemaker buses BOARD --bus …`
+  measures a routed board (doc 05 §38). Experimental: it meets the skew limits on generated bus boards, but on
+  real boards it has so far routed slightly fewer connections, and `--buses` can group indexed nets that are
+  not a bus.
 - `--component-rules on`: apply detected layout rules (keep-outs, widths from impedance and current).
 - `--rules-override FILE`: correct what was detected (doc 15 §6.3).
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
@@ -170,6 +179,15 @@ down beside the board and reported.
   the zones in memory, routes what the refill left unconnected once more, and reports `unconnected_after_refill`
   (the exit code follows it; `--no-refill-repair` only counts; doc 05 §36). The written board keeps its old fills.
 - `tracemaker drc --refill-zones`: judge the fills the current copper would get, like kicad-cli's flag.
+- After-route passes (doc 05 §39), all off by default: `--widen-power` (new tracks the router had to neck down go
+  back to their net class width where there is room; `--widen-net 'PATTERN=WIDTH_MM'` and widths computed by the
+  component rules are targets for power nets), `--stitch-vias planes|return|all` (free vias of a plane's net on a
+  grid where its fills overlap on two or more layers, `--stitch-pitch MM`; and one near each via of the nets that
+  need a reference plane, from component rules or `--stitch-return 'PATTERN=PLANE_NET'`, `--stitch-distance MM`).
+  Refill the zones afterwards, as with `--soft-zones`. Return-path stitching driven by component rules is
+  experimental: no test board has had a via placed by it yet.
+- `tracemaker style BOARD [--json FILE]`: how tidy a routed board is (bends per connection, acute angles,
+  stair-steps, detours); the route summary carries the same `style` object for the new copper.
 
 </details>
 
@@ -214,6 +232,10 @@ python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 
 - Each run writes `bench/results/<run>/`: the routed boards, a result per board, and `summary.json`.
 - Every board is compared with Freerouting's published result for the same file.
+- tscircuit's BGA breakout problems (400 Simple Route JSON files): `scripts/fetch_fixtures.sh tscircuit`, then
+  `python3 bench/run.py --set srj19 --work 10000000 --route-args "--variants 1 --no-gpu"` (or `--set srj20`) and
+  `python3 bench/srj_score.py <run>` for tscircuit's own pass criterion (`scripts/fetch_fixtures.sh tscircuit-checker`
+  installs its checker; needs node).
 
 <details>
 <summary><b>More benchmark results</b></summary>

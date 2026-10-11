@@ -2,8 +2,8 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_tui.cpp)
-target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::app_tui nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_bus.cpp test_passes.cpp test_srj.cpp test_tui.cpp)
+target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes tm::app_tui nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test-results)
@@ -68,3 +68,16 @@ set_tests_properties(tui_options PROPERTIES LABELS "integration" TIMEOUT 300)
 # Frozen KiCad 10 custom-rule item/pair multisets (expected.json names the judging version); normal runs do not require KiCad.
 add_test(NAME rule_parity COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/rule_parity/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/rule_parity)
 set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 300)
+# Buses (doc 05 §38, D91): generated boards routed lane by lane, judged by `tracemaker buses` on the written files
+# (members routed, equal vias, skew within the limit from an option or a .kicad_dru rule), and a bus run at 1, 2 and
+# 4 threads giving identical bytes. Needs no fixtures and no KiCad.
+add_test(NAME bus_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/bus_route.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/bus_route)
+set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 3600 PROCESSORS 4)  # 1.3 minutes in release; over 30 under asan
+# After-route passes (doc 05 §39): style metric, power widening and stitching vias through the command line, on
+# generated boards; KiCad's DRC judges the stitched board when kicad-cli is on the PATH.
+add_test(NAME after_route_passes COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/after_route_passes.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/after_route_passes)
+set_tests_properties(after_route_passes PROPERTIES LABELS "route;integration" TIMEOUT 900)
+# Simple Route JSON (doc 08 §9): import a hand-made problem, route it, export the traces; every trace point on routed
+# copper, every connection routed or reported; byte-identical conversion; KiCad's ratsnest when kicad-cli is there.
+add_test(NAME srj_roundtrip COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/srj_roundtrip.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/srj_roundtrip)
+set_tests_properties(srj_roundtrip PROPERTIES LABELS "route;integration" TIMEOUT 600)

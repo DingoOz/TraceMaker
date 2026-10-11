@@ -74,6 +74,8 @@ class Obstacles {
   void routed_items_in(const geom::Box& box, std::vector<int>& out) const;
 
   const drc::CopperModel& copper() const { return cm_; }
+  // Copper text as the model holds it: one estimated rectangle per line (copper index, rectangle).
+  const std::vector<std::pair<int, geom::Shape>>& copper_texts() const { return texts_; }
   const drc::RuleEngine& rules() const { return *re_; }
   index::UniformGrid& grid() { return *grid_; }
   geom::Box bounds() const { return bounds_; }

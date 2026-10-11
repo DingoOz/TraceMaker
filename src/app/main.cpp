@@ -20,8 +20,10 @@
 #include "drc/drc.hpp"
 #include "drc/refill.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "io/srj/srj.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
+#include "passes/style.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
@@ -55,6 +57,20 @@ int cmd_gpu_info() {
                   static_cast<double>(d.free_bytes) / kMiB, static_cast<double>(d.total_bytes) / kMiB, d.uuid.c_str());
     }
   }
+  return 0;
+}
+
+// Style metric of every track, arc and via of a board (doc 05 §39.2), whoever routed it.
+int cmd_style(const std::string& path, const std::string& json_path, bool connections) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto& b = lb.board;
+  const auto rep = tmk::passes::measure_style(b, b.tracks, b.arcs, b.vias);
+  const auto j = tmk::passes::style_json(b, rep, connections);
+  std::printf("%zu connections, %d segments, %.2f mm, %d vias\n", rep.connections.size(), rep.segments, tmk::nm_to_mm(rep.length), rep.vias);
+  std::printf("bends %d (%.2f per connection), acute angles %d, stair-steps %d, short segments %d, off-angle segments %d, arcs %d\n", rep.bends,
+              rep.bends_per_connection(), rep.acute, rep.stair_steps, rep.short_segments, rep.off_angle, rep.arcs);
+  std::printf("detour ratio %.3f, long detours %d\n", rep.detour_ratio(), rep.long_detours);
+  if (!json_path.empty()) std::ofstream(json_path) << j.dump(1) << "\n";
   return 0;
 }
 
@@ -275,6 +291,35 @@ int cmd_pairs(const std::string& path, const std::vector<std::string>& extra, co
   }
   if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"pairs", j}}.dump(1) << "\n";
   return 0;
+}
+
+// Buses of a routed board (doc 05 §38): per group the members routed, their vias, layers and lengths, and the skew
+// against the limit. Groups as in `route`: --bus NAME=PATTERN, --buses for detection, --bus-skew-mm.
+int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bool detect, double skew_mm, const std::string& json_path) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  std::vector<std::string> notes;
+  const auto groups = tmk::app::resolve_buses(lb.board, rules, specs, detect, skew_mm, &notes);
+  for (const auto& n : notes) std::printf("%s\n", n.c_str());
+  const auto joined = tmk::route::nets_joined(lb.board, rules);
+  nlohmann::json j = nlohmann::json::array();
+  bool ok = true;
+  for (const auto& g : groups) {
+    std::string line;
+    j.push_back(tmk::app::bus_report(lb.board, rules, joined, g, &line));
+    std::printf("%s\n", line.c_str());
+    std::printf("  %-28s %7s %9s %7s %5s  %s\n", "net", "routed", "len_mm", "via_mm", "vias", "layers");
+    for (const auto& m : j.back()["members"]) {
+      std::string layers;
+      for (const auto& l : m["layers"]) layers += (layers.empty() ? "" : " ") + l.get<std::string>();
+      std::printf("  %-28s %7s %9.3f %7.3f %5d  %s%s\n", m["net"].get<std::string>().c_str(), m["routed"].get<bool>() ? "yes" : "no", m["length_mm"].get<double>(),
+                  m["via_length_mm"].get<double>(), m["vias"].get<int>(), layers.c_str(), m["routed"].get<bool>() && !m["followed"].get<bool>() ? "  (left the bus)" : "");
+    }
+    if (j.back()["within_skew"].is_boolean() && !j.back()["within_skew"].get<bool>()) ok = false;
+  }
+  if (groups.empty()) std::printf("no buses\n");
+  if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"buses", j}}.dump(1) << "\n";
+  return ok ? 0 : 4;  // 4: a group with a skew limit is over it or not completely routed
 }
 
 int cmd_escape(const std::string& path, const std::string& json_path, bool flow, bool soft_zones, double vias_off_pads_below_mm) {
@@ -562,6 +607,64 @@ int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std:
   return 0;
 }
 
+// Simple Route JSON problem -> KiCad board, project and (if needed) custom rules next to each other (doc 08 §9).
+int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out) {
+  namespace fs = std::filesystem;
+  const auto problem = tmk::io::read_srj_file(in);
+  tmk::io::SrjImportOptions opt;
+  if (clearance_mm >= 0) opt.clearance = tmk::mm_to_nm(clearance_mm);
+  if (hole_to_hole_mm >= 0) opt.hole_to_hole = tmk::mm_to_nm(hole_to_hole_mm);
+  const auto files = tmk::io::srj_to_kicad(problem, opt);
+  auto write = [](const fs::path& p, const std::string& text) {
+    std::ofstream f(p, std::ios::binary);
+    f << text;
+    if (!f) throw std::runtime_error("cannot write " + p.string());
+  };
+  write(out, files.pcb);
+  write(fs::path(out).replace_extension(".kicad_pro"), files.pro);
+  // A rule file left by an earlier import must not judge this board.
+  const fs::path dru = fs::path(out).replace_extension(".kicad_dru");
+  if (!files.dru.empty()) write(dru, files.dru);
+  else fs::remove(dru);
+  std::printf("%s: %d layers, %d nets, %d pads, %d connections; clearance %.3f mm, track %.3f mm, via %.3f/%.3f mm\n", out.c_str(),
+              problem.layer_count, files.nets, files.pads, files.srj_pairs, tmk::nm_to_mm(files.clearance), tmk::nm_to_mm(files.track_width),
+              tmk::nm_to_mm(files.via_diameter), tmk::nm_to_mm(files.via_drill));
+  for (const auto& w : files.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j = {{"layers", problem.layer_count}, {"nets", files.nets}, {"pads", files.pads}, {"terminal_pads", files.terminal_pads},
+                        {"srj_connections", problem.connections.size()}, {"srj_pairs", files.srj_pairs}, {"board_pairs", files.board_pairs},
+                        {"clearance_mm", tmk::nm_to_mm(files.clearance)}, {"hole_to_hole_mm", tmk::nm_to_mm(files.hole_to_hole)}, {"track_width_mm", tmk::nm_to_mm(files.track_width)},
+                        {"via_diameter_mm", tmk::nm_to_mm(files.via_diameter)}, {"via_drill_mm", tmk::nm_to_mm(files.via_drill)},
+                        {"allow_blind_buried_vias", problem.rules.blind_buried_vias}, {"allow_via_in_pad", problem.rules.via_in_pad},
+                        {"custom_rules", !files.dru.empty()}, {"warnings", files.warnings}};
+    std::ofstream(json_out) << j.dump(1) << "\n";
+  }
+  return 0;
+}
+
+// Routed board -> the problem's SRJ with `traces` (doc 08 §9). Exit code 3 when a connection has no copper path,
+// like `route` with unrouted connections.
+int cmd_srj_export(const std::string& board, const std::string& problem, const std::string& out, const std::string& json_out) {
+  std::ifstream f(problem, std::ios::binary);
+  if (!f) throw std::runtime_error("cannot open " + problem);
+  const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+  const auto lb = tmk::io::read_board_file(board);
+  const auto res = tmk::io::srj_export(text, lb.board);
+  std::ofstream o(out, std::ios::binary);
+  o << res.json;
+  if (!o) throw std::runtime_error("cannot write " + out);
+  std::printf("%s: %d/%d connections routed, %d traces (%d of copper on no connection path), %d vias\n", out.c_str(), res.routed, res.connections,
+              res.traces + res.extra_traces, res.extra_traces, res.vias);
+  for (const auto& n : res.unrouted) std::printf("  unrouted: %s\n", n.c_str());
+  for (const auto& w : res.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j = {{"connections", res.connections}, {"routed", res.routed}, {"unrouted", res.unrouted}, {"traces", res.traces},
+                        {"extra_traces", res.extra_traces}, {"vias", res.vias}, {"warnings", res.warnings}};
+    std::ofstream(json_out) << j.dump(1) << "\n";
+  }
+  return res.routed == res.connections ? 0 : 3;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -691,7 +794,14 @@ int main(int argc, char** argv) {
   route->add_flag("--via-in-pad", ropt.via_in_pad, "Inner balls / enclosed SMD pads may take a minimum-size via in the pad (needs filled, capped vias)");
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
+  tmk::app::RouteJob r_job;
   route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
+  route->add_option("--bus", r_job.buses,
+                    "Experimental. Route these nets as a bus, NAME=PATTERN (repeatable): lane by lane on the same layers, e.g. 'DATA=/D[0-7]' or 'LCD=/LCD_*'. "
+                    "PATTERN matches whole net names: * and ? as in net-class patterns, [N-M] a number in that range (doc 05 §38)");
+  route->add_flag("--buses", r_job.detect_buses, "Experimental. Also find buses in the net names: nets differing only in a trailing index, four or more between the same two components");
+  route->add_flag("--bus-first", ropt.bus_first, "Route the buses before everything else (default: each bus where the router's order puts its first connection)");
+  route->add_option("--bus-skew-mm", r_job.bus_skew_mm, "Length-match the --bus groups: meanders until their lengths (tracks and via height, as KiCad's skew check) differ by at most this (0 = only the board's custom skew rules)");
   route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
   int r_threads = 8;
   std::string r_kb = tmk::learn::KnowledgeBase::default_path();
@@ -705,7 +815,6 @@ int main(int argc, char** argv) {
   route->add_option("--variants", r_variants,
                     "Portfolio size (1 = single router; default: all with --work, else --threads); the output never depends on --threads "
                     "with --work. --time applies to each variant from its start");
-  tmk::app::RouteJob r_job;
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
@@ -724,6 +833,19 @@ int main(int argc, char** argv) {
       ->check(CLI::ExistingFile);
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
+  route->add_flag("--widen-power", r_job.widen_power,
+                  "After routing: widen new tracks that are narrower than their net class width back up to it where there is room, and nets "
+                  "with a target (--widen-net, or a width the component rules computed) towards the target (doc 05 §39)");
+  route->add_option("--widen-net", r_job.widen_nets, "With --widen-power: target width for nets as PATTERN=WIDTH_MM, e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)");
+  route->add_option("--stitch-vias", r_job.stitch_vias,
+                    "After routing: add stitching vias. planes: vias of a plane's net on a grid where its fills overlap on two or more layers; "
+                    "return: a plane via near each via of the nets that need a reference plane (component rules, --stitch-return); all: both")
+      ->check(CLI::IsMember({"planes", "return", "all"}));
+  route->add_option("--stitch-pitch", r_job.stitch_pitch_mm, "Grid pitch of plane stitching vias, mm (default 5.08, the catalogue's value)")->check(CLI::PositiveNumber);
+  route->add_option("--stitch-distance", r_job.stitch_distance_mm, "Return-path stitching: largest distance from a signal via to its plane via, mm (default: the rule's, else 5.08)")
+      ->check(CLI::PositiveNumber);
+  route->add_option("--stitch-return", r_job.stitch_returns, "Return-path stitching for nets as PATTERN=PLANE_NET, e.g. 'USB_D*=GND' (repeatable). Return-path stitching from component rules is experimental");
+  route->add_option("--pass-work", r_job.pass_work, "Work budget of each after-route pass, in exact checks (default 2,000,000)")->check(CLI::PositiveNumber);
 
   auto* esc = app.add_subcommand("escape", "Escape feasibility of dense packages: pins that cannot leave their package under the board's rules");
   std::string esc_board, esc_json;
@@ -741,6 +863,40 @@ int main(int argc, char** argv) {
   pairs_cmd->add_option("board", pr_board)->required()->check(CLI::ExistingFile);
   pairs_cmd->add_option("--pair", pr_extra, "Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM");
   pairs_cmd->add_option("--json", pr_json, "Write the measurements as JSON");
+  auto* buses_cmd = app.add_subcommand("buses", "Buses of a routed board: members routed, vias and layers per member, lengths and skew (exit 4 when a limit is missed)");
+  std::string bu_board, bu_json;
+  std::vector<std::string> bu_specs;
+  bool bu_detect = false;
+  double bu_skew = 0;
+  buses_cmd->add_option("board", bu_board)->required()->check(CLI::ExistingFile);
+  buses_cmd->add_option("--bus", bu_specs, "A bus as NAME=PATTERN (repeatable), as in route");
+  buses_cmd->add_flag("--buses", bu_detect, "Also find buses in the net names, as in route");
+  buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
+  buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
+  auto* style_cmd = app.add_subcommand("style", "Style metric of a routed board: bends, acute angles, stair-steps, detours (doc 05 §39)");
+  std::string sty_board, sty_json;
+  bool sty_conn = false;
+  style_cmd->add_option("board", sty_board)->required()->check(CLI::ExistingFile);
+  style_cmd->add_option("--json", sty_json, "Write the metric as JSON");
+  style_cmd->add_flag("--connections", sty_conn, "With --json: also one row per connection");
+  auto* srj_in = app.add_subcommand("srj-import", "Convert a Simple Route JSON problem (tscircuit) to a KiCad board with its project and rules");
+  std::string si_in, si_out, si_json;
+  double si_clearance = -1, si_hole = -1;
+  srj_in->add_option("problem", si_in, "Simple Route JSON file")->required()->check(CLI::ExistingFile);
+  srj_in->add_option("-o,--output", si_out, "Output .kicad_pcb (the .kicad_pro, and a .kicad_dru if needed, are written next to it)")->required();
+  srj_in->add_option("--clearance-mm", si_clearance,
+                     "Copper clearance (default: the problem's defaultObstacleMargin, else tscircuit's fallback of 0.15 mm)")
+      ->check(CLI::NonNegativeNumber);
+  srj_in->add_option("--hole-to-hole-mm", si_hole,
+                     "Drill edge to drill edge clearance (default: the problem's via-hole / drill clearance fields, else no rule)")
+      ->check(CLI::NonNegativeNumber);
+  srj_in->add_option("--json", si_json, "Write the conversion summary (counts, rules used, warnings) as JSON");
+  auto* srj_out = app.add_subcommand("srj-export", "Write a routed board's copper as the `traces` of its Simple Route JSON problem");
+  std::string so_board, so_problem, so_out, so_json;
+  srj_out->add_option("board", so_board, "Routed .kicad_pcb made by srj-import")->required()->check(CLI::ExistingFile);
+  srj_out->add_option("--problem", so_problem, "The Simple Route JSON problem the board was imported from")->required()->check(CLI::ExistingFile);
+  srj_out->add_option("-o,--output", so_out, "Output Simple Route JSON (the problem plus traces)")->required();
+  srj_out->add_option("--json", so_json, "Write the export summary (routed and unrouted connections) as JSON");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -823,9 +979,13 @@ int main(int argc, char** argv) {
     }
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
+    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json);
+    if (*srj_out) return cmd_srj_export(so_board, so_problem, so_out, so_json);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
+    if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
+    if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);

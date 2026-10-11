@@ -58,7 +58,7 @@ library without the server.
   option's long spelling without the dashes, flags as `name = true`, `#` for comments. Options on the command line
   win over the file. The board and the output are not saved: they belong to one run, not to a set of options.
 
-**Look and scopes (D90).** The screen is a coloured frame: a title bar, a scope bar, the option list with a scroll
+**Look and scopes (D93).** The screen is a coloured frame: a title bar, a scope bar, the option list with a scroll
 bar, a **Help** panel, the **Command** the choices stand for and a status line with the keys. The Help panel shows
 the description of the option under the cursor, whether it is a flag or a value, its default, its value now and
 which scope that value comes from, and the key it has in an options file. Colours are 256-colour escapes; with

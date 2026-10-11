@@ -827,6 +827,20 @@ Coord RuleEngine::edge_clearance(const CopperItem& a, int layer) const {
 std::pair<Coord, Coord> RuleEngine::track_width(const CopperItem& t, int layer) const {
   Coord mn = r_.minimums.track_width, mx = 0;
   if (auto c = custom_min("track_width", &t, nullptr, layer)) mn = *c;
+  // The maximum of the last matching rule with a track_width constraint (later rules take precedence, as KiCad
+  // resolves it); a rule without `max` there means no upper limit.
+  for (const auto& c : rules_) {
+    if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
+    const model::Constraint* k = nullptr;
+    for (const auto& x : c.rule->constraints)
+      if (x.type == "track_width") k = &x;
+    if (!k) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &t, nullptr, layer};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    mx = k->max ? *k->max : 0;
+  }
   return {mn, mx};
 }
 

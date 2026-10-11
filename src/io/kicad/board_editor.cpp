@@ -60,6 +60,7 @@ void BoardEditor::add_via(const model::Via& v) {
   s += "\t(drill " + format_mm(v.drill) + ")\n";
   if (v.locked) s += "\t(locked yes)\n";
   s += "\t(layers " + quote(b.copper_file_name(v.layer_top)) + " " + quote(b.copper_file_name(v.layer_bottom)) + ")\n";
+  if (v.free) s += "\t(free yes)\n";  // stitching vias: KiCad must not re-assign their net (doc 05 §39.3)
   if (const std::string n = net_expr(v.net); !n.empty()) s += "\t" + n + "\n";
   s += "\t(uuid " + quote(next_uuid()) + ")\n)";
   lb_.doc.append_child(lb_.doc.root(), s);
