@@ -284,3 +284,12 @@ hole-to-hole rule: the reason the benchmark sets carry that rule.
 within 1 % of boards). The rules are an interpretation where the files are silent (clearance, hole spacing, via
 size for `srj20`; no board-edge clearance, which tscircuit's relaxed check does not apply either). The budgets are not matched to
 tscircuit's effort setting. The problems are synthetic and two-layer only.
+
+## 8. M14: srj19/srj20 against tscircuit's current run, and fanout31 (2026-10-11)
+
+tscircuit's dashboard run `38105514608-1` (commit `65522c8`): srj19 92.0 % completed / 90.0 % relaxed pass, srj20 78.5 % / 78.5 %
+(360 s per board, 32 vCPU; median 19–23 s). TraceMaker, one variant, 50 M work, `--fast-bends` and the new default limits (40 rips, 40
+passes): **srj19 176/200 = 88.0 %, srj20 117/200 = 58.5 %** (section 7: 79.5 % and 50.0 %). With the default eight-variant portfolio on the
+boards that miss: srj19 +10, srj20 +9 (about 93 % and 63 %). Per-board comparison with the dashboard run, the gap sets
+(`srj19-gap`, `srj20-gap`, `srj19-p1fail`, `srj20-p1fail`) and every experiment: doc 16 §10. `bench/fanout31_run.py` scores the 72 fan-out cases
+(solved = every connection routed, no unconnected item after the zone refill); results in doc 16 §10.1.

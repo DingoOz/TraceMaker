@@ -99,6 +99,17 @@ Each entry says what was tried, the evidence and its strength, and what TraceMak
 | M7 | More search budget | srj19 stops improving between 50 M and 200 M expansions (88 % on the first 50 boards); srj20 still rises (46 % → 56 %) |
 | M8 | Portfolio of eight variants at 10 M | About the same as one variant at 50 M (88 % / 48 % on the first 50) |
 
+### C4. From the M14 experiments (2026-10-11, doc 16 §10)
+
+| # | Attempt | Result |
+|---|---|---|
+| X1 | tscircuit's routes as soft/hard path guides | 440–499 of 570 connections routed vs 499 unguided: topology realised in another router's geometry does not complete a board |
+| X2 | Max-cut layer assignment of connection chords (two layers) | srj20 gap 18 % → 14 % clean |
+| X3 | Deep-pins-first / longest-first order | 68.6 % / 54.9 % routed vs 76.7 % |
+| X4 | Negotiate from the first pass; limit victims per route; growing crossing cost; history weight | 72.7 %; 2–7 % clean vs 28 %; 16 % vs 23 %; no effect |
+| X5 | More seeds (24 variants) on one hard board | all end at 33–40 of 52 |
+| X6 | Finer lattice (20 µm) at equal work | 61.6 % vs 76.7 % |
+
 ## D. Open questions the sources do not answer
 
 1. Whether the 17 srj19 and 43 srj20 boards neither router solves are infeasible. Nobody has published a feasibility

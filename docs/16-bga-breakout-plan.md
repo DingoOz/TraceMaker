@@ -2,7 +2,8 @@
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-11.
 >
-> **Status: plan only. Nothing here is built.** Where it says "TraceMaker will", read it as a proposal. The
+> **Status: partly built (2026-10-11, §10 has the outcomes).** §1–§9 are the plan as written before any experiment; §10 records
+> what the experiments found and what was built. Where §1–§9 say "TraceMaker will", read it as a proposal. The
 > evidence is in [`../research/bga-routing-2026-10.md`](../research/bga-routing-2026-10.md); evidence tags
 > [V] verified, [A] abstract only, [C] calculated are used the same way here. Proposed milestone: **M14**.
 > This note changes no code, so it adds no row to [12-decisions.md](12-decisions.md); the decisions it
@@ -235,3 +236,65 @@ softened criterion.
    the bottom). E1 and the bucket tables should be split by that too.
 4. Whether `fanout31`'s fixtures are the cases tscircuit's committed 48 / 72 refers to: the committed report is a
    month older than the latest fixes, so the gate may need re-pinning once B0 runs.
+
+## 10. Outcomes (2026-10-11)
+
+Measured on this machine (`bench/run.py`, KiCad's DRC as the judge, one variant, no GPU, work budgets; the gap sets are
+`bench/sets/srj19-gap.txt` and `srj20-gap.txt`: the 24 and 57 boards tscircuit's router solves and TraceMaker at 50 M did not).
+
+**Hypotheses.**
+
+| # | Result |
+|---|---|
+| H1 topology (E1) | **Not supported.** tscircuit's own routes, run locally (bun, `AutoroutingPipelineSolver9`) on 12 gap boards and given as soft or hard path guides (`--guide`, radii 1.5–8 pitches): 440–499 of 570 connections routed, baseline 499. Guiding a connection along tscircuit's geometry does not complete the board; the lattice cannot reproduce its off-grid copper and the neighbours' lanes then differ. As a sanity check, TraceMaker's *own* complete solution as a guide reproduced only 36–40 of 41 |
+| H2 vias (E2) | **Weak.** Via cost 3 → 0.3 mm: gap boards 76.7 → 80.9 % of connections, 0 → 2 clean of 24. tscircuit uses 43–66 % more vias, but cheaper vias alone do not close the gap |
+| H3 lattice (E3) | **Dropped.** 20 µm lattice 61.6 % (below 76.7 %), 50 µm 78.9 %, 60 µm 77.9 % at equal work |
+| H4 budget (E4) | **Supported for srj19**: the 24 gap boards reach 95.7 % of connections and 6 clean at 200 M (median 192 s), and most remaining failures are one to three connections. At 10 M the strict first pass and its reachability floods use the whole budget (flood cells count 1:1 toward `--work`), so negotiation never runs |
+| H5 feasibility (E5) | Not built. The failures TraceMaker leaves are dominated by negotiation churn ("ripped up by X and not routed again": 585 of about 1,170 srj20 failures), not by proven infeasibility |
+
+**What moved the numbers.**
+
+| Change | Result |
+|---|---|
+| `--max-rips 40 --max-passes 40` (now the defaults; were 8 and 12) | srj19 gap, 50 M, fast bends: 33 % → 54 % clean. `ctest` 253/253; `quick` and `mid` byte-identical at their budgets |
+| Fast bends (`--fast-bends`) | At equal wall time (srj19 gap, 21 s): 81.7 % → 85.9 % routed, 0 → 3 clean of 24; at 20 M: 7 clean (29 %) |
+| Profile P1 = fast bends + the two limits, 50 M, one variant, all 200 boards | **srj19 176/200 = 88.0 %** (79.5 % before; tscircuit 92.0 %); **srj20 117/200 = 58.5 %** (50.0 %; tscircuit 78.5 %); no board lost except srj19 sample 62 |
+| Default portfolio (8 variants, 50 M each, 8 threads, median 135–140 s) on the boards P1 misses | srj19: 10 of 24 closed → **about 186/200 = 93 %** (estimate: the full set was not re-run under the portfolio); srj20: 9 of 83 closed → about 126/200 = 63 % |
+| `--package-pen` (tracks on the pad layer inside a ball-grid package cost more) | srj20 gap, 30 M: 13 → 15 / 16 / 17 clean of 57 at 0.5 / 2 / 4 pitches, 10 at 8; srj19 gap: noise (9 / 8 / 11 of 24). Used (3 pitches) in the seeded portfolio variants only |
+
+**Tried and dropped** (all kept as hidden options, `--help` does not list them; every one measured at equal work):
+
+| Option | Result |
+|---|---|
+| `--layer-assign` (two-layer max-cut of the connections' straight chords: 396 crossing pairs → 128 on one layer) | srj20 gap 18 % → 14 % / 11 % clean |
+| `--order 1` (longest first), `--order 3` (deep package pins first) | srj19 gap: 76.7 % → 54.9 % and 68.6 % routed |
+| `--no-strict-first` (negotiate from the first pass) | 76.7 % → 72.7 % |
+| `--global`, `--global --global-confine`, `--global-congestion` | 69.8 %, 69.2 %, 76.5 % (baseline 76.7 %) |
+| `--lns-open` (lift the neighbours of an open connection, route it first, reroute them in seeded orders) | Never reached at 50 M: the passes use the whole budget first. Not measured further |
+| `--max-victims 1/2/3` | srj20 gap: 28 % → 2 / 5 / 7 % clean |
+| `--soft-growth` (PathFinder's growing crossing cost) | srj20 gap: 23 % → 16 % / 23 % |
+| `--history-weight 2/8/30/100` | 28 % / 26 % / 28 % / 28 %: no effect |
+| 24 seeded variants on one hard srj20 board (sample 100) | all 24 end at 33–40 of 52; more seeds do not complete it, and tscircuit's own run takes 399 s |
+
+**What tscircuit does that TraceMaker does not** (rendered, `bench/render_srj.py`): its solution of srj20 sample 100 has 168 vias for
+52 connections, long straight runs on both layers and parallel bundles to the edge pads; TraceMaker's best has 86 vias and long
+detours along the rim. The open connections are interior balls whose escapes were ripped. A planner that decides layer and via
+sites per connection before routing (F1, F2 of §5) is still the untried candidate; the cheap proxies above (via cost, package
+penalty, layer assignment, guides) did not stand in for it.
+
+**Track B (`fanout31`).** Built: `bench/prepare_fanout31.py`, `bench/fanout31_run.py`, and importer features (doc 08 §9):
+plane terminations become zones, breakout points take the layer their bus gives in `connectionExitTargets`, pads of a
+net that no connection point lies on become keep-outs (`--unpointed-keepout`; the problem asks only for the fan-out at the SoC),
+`--outline-margin-mm`, and the extension `tracemakerTrackLayers`. Without these the first case routed 51 of 149 connections;
+with them it routes 100 of 100. Trials at 60 M work, one variant, 40 µm lattice: AM62L top-centre 133/133, RK3308 top-centre
+160/160, i.MX6ULL left-centre 100/100, all with 0 unconnected after the zone refill; T113-S3 top-left 6 open of 123; AM3352
+top-centre 50 open of 316 (tscircuit solves none of the AM3352 cases). The full 72-case result is in §10.1 once the run has finished.
+
+### 10.1 Gate status
+
+| Gate | Target | Measured | Met |
+|---|---|---|---|
+| srj19 clean | ≥ 184/200 | 176 (one variant); about 186 with the portfolio (estimate) | estimate only |
+| srj20 clean | ≥ 157/200 | 117 (one variant); about 126 with the portfolio | **no** |
+| fanout31 | ≥ 48/72 | see below | see below |
+| No DRC error added, quick/mid unchanged | | 0 added on every run; byte-identical | yes |

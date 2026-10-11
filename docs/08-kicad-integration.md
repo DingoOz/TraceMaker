@@ -228,3 +228,12 @@ inline problems (one layer, a slot, tracks that only touch);
 `tests/integration/srj_roundtrip.py` imports `tests/srj/tiny.json`, routes it, exports it and checks every trace
 point against the routed copper and, when `kicad-cli` is there, KiCad's ratsnest and DRC. The benchmark built on
 this is doc 10 §7.
+
+### 9.1 Fan-out problems (M14, D95)
+
+`tracemaker srj-import` handles tscircuit's fan-out benchmark (`fanout31`) with these additions: plane terminations
+(`buses[].termination` of type `plane`) become zones of the net on that layer covering the bounds; a breakout point
+(`pointId` starting `pcb_breakout_point`) takes the layer its bus gives in `connectionExitTargets`; `--unpointed-keepout` turns the
+pads of a net that no connection point lies on into keep-outs; `--outline-margin-mm` grows the outline (breakout points lie on the
+bounds); the extension field `tracemakerTrackLayers` (layer names) closes the other layers to tracks with a rule area that lets vias
+through. `bench/prepare_fanout31.py` sets them for the 72 cases; `bench/fanout31_run.py` routes and scores them.

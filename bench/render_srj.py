@@ -13,8 +13,8 @@ srj_traces = None
 if sys.argv[2].endswith(".json"):  # solved SRJ: {"traces": [...]} from a router
     srj_traces = json.loads(txt)["traces"]
     txt = ""
-b = prob["bounds"]
-S = 140  # px per mm
+b = {k: v + (0.8 if k.startswith("max") else -0.8) for k, v in prob["bounds"].items()}  # tracks end on, or beside, the bounds
+S = 110  # px per mm
 W, H = int((b["maxX"] - b["minX"]) * S) + 20, int((b["maxY"] - b["minY"]) * S) + 20
 im = Image.new("RGB", (W, H), "white")
 d = ImageDraw.Draw(im, "RGBA")
@@ -24,13 +24,20 @@ for o in prob["obstacles"]:
     x0, y0 = P(cx - o["width"] / 2, cy + o["height"] / 2); x1, y1 = P(cx + o["width"] / 2, cy - o["height"] / 2)
     col = (0, 0, 255, 70) if "top" in o["layers"] else (255, 0, 0, 70)
     d.rectangle([x0, y0, x1, y1], fill=col, outline=(80, 80, 80, 255))
-for m in re.finditer(r'\(segment\s+\(start ([-\d.]+) ([-\d.]+)\)\s+\(end ([-\d.]+) ([-\d.]+)\)\s+\(width ([\d.]+)\)\s+\(layer "(\w)\.Cu"\)', txt):
+PALETTE = {"F": (30, 60, 255, 170), "B": (230, 40, 40, 170), "In1": (150, 150, 150, 90), "In2": (150, 150, 150, 90), "In3": (150, 150, 150, 90),
+           "In4": (255, 140, 0, 170), "In5": (0, 160, 140, 170), "In6": (150, 60, 200, 170), "In7": (120, 120, 0, 170), "In8": (200, 0, 150, 170)}
+for m in re.finditer(r'\(segment\s+\(start ([-\d.]+) ([-\d.]+)\)\s+\(end ([-\d.]+) ([-\d.]+)\)\s+\(width ([\d.]+)\)\s+\(layer "(\w+)\.Cu"\)', txt):
     x0, y0, x1, y1, w = map(float, m.groups()[:5])
-    col = (30, 60, 255, 150) if m.group(6) == "F" else (255, 40, 40, 150)
+    col = PALETTE.get(m.group(6), (0, 0, 0, 150))
     d.line([P(x0, -y0), P(x1, -y1)], fill=col, width=max(1, int(w * S)))
 for m in re.finditer(r'\(via\s+\(at ([-\d.]+) ([-\d.]+)\)\s+\(size ([\d.]+)\)', txt):
     x, y, s = map(float, m.groups()); px, py = P(x, -y)
     d.ellipse([px - s * S / 2, py - s * S / 2, px + s * S / 2, py + s * S / 2], fill=(0, 160, 0, 200), outline="black")
+for c in prob["connections"]:  # breakout points on the bounds
+    q = c["pointsToConnect"][-1]
+    if str(q.get("pointId", "")).startswith("pcb_breakout"):
+        px, py = P(q["x"], q["y"])
+        d.ellipse([px - 4, py - 4, px + 4, py + 4], fill=(0, 0, 0, 255))
 if srj_traces:
     for t in srj_traces:
         prev = None

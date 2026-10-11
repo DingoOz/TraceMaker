@@ -1754,3 +1754,24 @@ copper text, nothing without overlapping fills, return-path vias) and the ctest 
 (`tests/integration/after_route_passes.py`: the three passes through the command line on generated boards, style
 equal at 1 and 3 threads and equal to `tracemaker style`, KiCad's verdict on the stitched board when kicad-cli is
 there).
+
+## 40. Dense breakouts: limits, portfolio extras and the experiments that did not help (M14, 2026-10-11, D93, D94)
+
+Measured on tscircuit's BGA breakout sets (doc 10 §8, doc 16 §10); this section records what the router now does and what the
+hidden options are.
+
+- **Defaults.** `max_rips_per_connection` 40 and `max_passes` 40 (were 8 and 12): negotiation on a dense breakout ends because a
+  connection reached its rip limit, not because the budget ended. 33 % → 54 % clean on the srj19 gap boards at 50 M work.
+- **Budget accounting.** `--work` counts search expansions *and* reachability flood cells (1:1). On a 60-connection two-layer
+  breakout at 10 M the strict first pass and its floods use all of it (9.5 M of 10 M), so negotiation never runs; read a result at
+  10 M as "first pass only".
+- **Portfolio beyond eight.** `--variants N` (N > 8, up to 64) adds seeded variants: fast bends, jittered order (every fourth
+  shortest-first), via cost × {0.4, 1, 2.5}, crossing cost × {0.5, 1, 2}, escape plan on even indices, `--package-pen 3` on odd ones.
+- **`--package-pen P`.** Inside the pad box of a footprint with at least 30 SMD pads on one layer, tracks on that layer cost P
+  pitches more per lattice step, so an escape takes a dog-bone via early. srj20 gap, 30 M: 13 → 17 clean of 57 at P = 4, 10 at 8.
+- **Hidden experiment options** (results in doc 16 §10; none helps): `--guide FILE`, `--guide-pen`, `--guide-radius` (per-connection
+  preferred paths; a hard search inside the guide first, cut off at a few expansions per cell, then the usual search with a mild
+  preference), `--layer-assign`, `--order 3`, `--lns-open N`, `--no-strict-first`, `--max-victims`, `--soft-growth`,
+  `--history-weight`, `--max-rips`, `--max-passes`, `--max-restarts`, `--soft-cost-mm`.
+- **GPU.** The cost-to-go fields give the identical result 1.7× faster for one board alone (35.7 s → 20.7 s, sample 13 at 20 M); with
+  twelve boards routed in parallel they are slower (contention), so the benchmark runs use `--no-gpu`.
