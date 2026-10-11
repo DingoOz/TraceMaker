@@ -9,6 +9,7 @@ repository, judged by KiCad DRC on Freerouting's side).
   bench/run.py --tier A --limit 60 --time 60 --jobs 12 [--name run-id]
   bench/run.py --set quick --work 1000000 --name run-id          # deterministic regression tier (doc 10 §4)
   bench/run.py --fixtures build/demos --set planes --work 3000000 --refill --route-args=--soft-zones
+  bench/run.py --set srj19 --work 1000000 --route-args "--variants 1 --no-gpu"   # tscircuit BGA breakouts (doc 10 §7)
 
 --work routes with a deterministic work budget and no knowledge base, so the same binary gives the same boards;
 bench/compare_runs.py compares two runs. --refill makes KiCad refill zones before judging both input and output
@@ -166,6 +167,30 @@ def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
         return None
 
 
+STYLE_COUNTS = ("connections", "segments", "vias", "bends", "acute_angles", "stair_steps", "short_segments", "off_angle_segments",
+                "long_detours", "length_mm", "detour_length_mm", "detour_octile_mm")
+
+
+def style_of(board: pathlib.Path, out_json: pathlib.Path) -> dict | None:
+    """Style metric of every track of a board (`tracemaker style`, doc 05 §39), e.g. a fixture's reference routing."""
+    try:
+        subprocess.run([str(TM), "style", str(board), "--json", str(out_json)], capture_output=True, timeout=300)
+        return json.loads(out_json.read_text())
+    except (subprocess.TimeoutExpired, OSError, ValueError):
+        return None
+
+
+def style_total(styles: list[dict]) -> dict | None:
+    """Sums the per-board style metrics; the two ratios are recomputed from the sums."""
+    if not styles:
+        return None
+    t = {k: round(sum(s.get(k, 0) for s in styles), 6) for k in STYLE_COUNTS}
+    t["boards"] = len(styles)
+    t["bends_per_connection"] = round(t["bends"] / t["connections"], 4) if t["connections"] else 0.0
+    t["detour_ratio"] = round(t["detour_length_mm"] / t["detour_octile_mm"], 4) if t["detour_octile_mm"] else 1.0
+    return t
+
+
 def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
     """Runs cmd and returns (exit code, stdout, stderr, CPU seconds). CPU time is the child's own user + system time
     from os.wait4, so other boards routing at the same time do not count. Raises subprocess.TimeoutExpired."""
@@ -222,6 +247,12 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     if rj.exists():
         r = json.loads(rj.read_text())
         res.update({k: r[k] for k in ("routed", "connections", "tracks", "vias", "seconds")})
+        # Style metric of the new copper (doc 05 §39; informational) and what the after-route passes did.
+        res.update({k: r[k] for k in ("style", "widen", "stitch") if k in r})
+    # The fixture's own routing, where it has one (PCBench: processed.kicad_pcb), measured the same way.
+    ref = SRC_FIX / name / "processed.kicad_pcb"
+    if ref.exists() and "style" in res:
+        res["style_ref"] = style_of(ref, outdir / "boards" / f"{name}.style_ref.json")
     before = drc(src)
     after = drc(out) if out.exists() else None
     if before is None or after is None:
@@ -246,7 +277,7 @@ def main() -> int:
     ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
     ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
     ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
-    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes); also names the set in the summary")
+    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes, srj19, srj20); also names the set in the summary")
     ap.add_argument("--jobs", type=int, default=12)
     ap.add_argument("--seed", type=int, default=1, help="board sampling seed")
     ap.add_argument("--name")
@@ -275,11 +306,15 @@ def main() -> int:
     WORK, REFILL = a.work, a.refill
     if a.time is None:
         a.time = 3600.0 if a.work else 60.0
-    if a.fixtures:
-        SRC_FIX = pathlib.Path(a.fixtures).resolve()
     if a.set:
         a.board_list = a.board_list or str(ROOT / "bench/sets" / f"{a.set}.txt")
         a.set_name = a.set_name or a.set
+        # A set of boards that are not PCBench fixtures names its own directory: "#fixtures: <path from the repository root>".
+        for line in pathlib.Path(a.board_list).read_text().splitlines():
+            if line.startswith("#fixtures:") and not a.fixtures:
+                a.fixtures = str(ROOT / line.split(":", 1)[1].strip())
+    if a.fixtures:
+        SRC_FIX = pathlib.Path(a.fixtures).resolve()
     if a.board_list:
         a.boards = [x.strip() for x in pathlib.Path(a.board_list).read_text().splitlines() if x.strip() and not x.startswith("#")]
     base = fr_baseline()
@@ -351,6 +386,13 @@ def main() -> int:
     feasible = [r for r in judged if r.get("dead_pins") == 0]
     summary["feasible_boards"] = len(feasible)
     summary["clean_pass_feasible"] = round(sum(r["clean"] for r in feasible) / len(feasible), 4) if feasible else None
+    # Style metric (informational, never a gate): totals over the boards that have it, and over the reference
+    # routings of the same boards.
+    with_style = [r for r in rows if r.get("style")]
+    with_ref = [r for r in with_style if r.get("style_ref")]
+    summary["style"] = style_total([r["style"] for r in with_style])
+    summary["style_ref"] = style_total([r["style_ref"] for r in with_ref])
+    summary["style_same_boards"] = style_total([r["style"] for r in with_ref])  # TraceMaker on the boards that have a reference
     (outdir / "summary.json").write_text(json.dumps(summary, indent=1))
     notes = [f"{budget} per board"] + (["zones refilled before judging"] if a.refill else []) + ([f"route options `{' '.join(EXTRA)}`"] if EXTRA else [])
     lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
@@ -360,6 +402,17 @@ def main() -> int:
              f"| Route CPU time, all boards | {summary['cpu_seconds']:,.0f} s | | |", "",
              f"Both clean: {both}; only TraceMaker: {only_tm}; only Freerouting: {only_fr}.",
              f"Boards with added DRC errors: {summary['boards_with_added_errors']} ({dict(added_types)})."]
+    if summary["style"]:
+        def style_row(label: str, t: dict | None) -> str:
+            if not t:
+                return f"| {label} | – | | | | | | | |"
+            return (f"| {label} | {t['boards']} | {t['bends_per_connection']:.2f} | {t['acute_angles']} | {t['stair_steps']} | {t['short_segments']} | "
+                    f"{t['off_angle_segments']} | {t['detour_ratio']:.3f} | {t['long_detours']} |")
+        lines += ["", "Style of the routed copper (doc 05 §39, informational):", "",
+                  "| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |",
+                  "|---|--:|--:|--:|--:|--:|--:|--:|--:|", style_row("TraceMaker", summary["style"])]
+        if summary["style_ref"]:
+            lines += [style_row("TraceMaker, boards with a reference", summary["style_same_boards"]), style_row("Reference routing", summary["style_ref"])]
     (outdir / "report.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
     return 0
