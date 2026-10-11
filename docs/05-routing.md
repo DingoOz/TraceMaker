@@ -1755,7 +1755,7 @@ copper text, nothing without overlapping fills, return-path vias) and the ctest 
 equal at 1 and 3 threads and equal to `tracemaker style`, KiCad's verdict on the stitched board when kicad-cli is
 there).
 
-## 40. Dense breakouts: limits, portfolio extras and the experiments that did not help (M14, 2026-10-11, D93, D94)
+## 40. Dense breakouts: limits, portfolio extras and the experiments that did not help (M14, 2026-10-11, D94, D95)
 
 Measured on tscircuit's BGA breakout sets (doc 10 §8, doc 16 §10); this section records what the router now does and what the
 hidden options are.
@@ -1775,7 +1775,7 @@ hidden options are.
   `--history-weight`, `--max-rips`, `--max-passes`, `--max-restarts`, `--soft-cost-mm`.
 - **GPU.** The cost-to-go fields give the identical result 1.7× faster for one board alone (35.7 s → 20.7 s, sample 13 at 20 M); with
   twelve boards routed in parallel they are slower (contention), so the benchmark runs use `--no-gpu`.
-- **`--layer-dir-pen P`, `--layer-dir-swap`** (D97). Orthogonal steps against the layer's preferred direction (even layers horizontal, odd
+- **`--layer-dir-pen P`, `--layer-dir-swap`** (D98). Orthogonal steps against the layer's preferred direction (even layers horizontal, odd
   vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with `--package-pen 3`) on a breakout board: two copper layers and at least 70 %
   of the connections with an end on a ball-grid-like package (at least 30 same-layer SMD pads on at least 5 × 5 distinct positions, 40 % of the grid filled). Negative values mean "automatic at that strength" (the seeded
   portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.

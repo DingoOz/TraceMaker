@@ -2738,7 +2738,7 @@ struct Router::Impl {
       if (gx.size() < 5 || gy.size() < 5 || 10 * ids.size() < 4 * gx.size() * gy.size()) continue;
       pkg_boxes.push_back({bx.inflated(half), std::countr_zero(m), fp});
     }
-    // Automatic settings (doc 16 §10, D97): on a two-layer board with a ball-grid package the layers get preferred
+    // Automatic settings (doc 16 §10, D98): on a two-layer board with a ball-grid package the layers get preferred
     // directions and the package interior is dear on its pad layer; srj19/srj20 gap boards, 30 M work: +7 and +4 clean.
     // A breakout board: at least 70 % of the connections have an end on a ball-grid package (srj19/srj20; on ordinary
     // two-layer boards the same settings cost 1-3 points of completion: quick 89.2 -> 86.8 %, mid 53.5 -> 51.1 %).

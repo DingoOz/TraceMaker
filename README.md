@@ -12,8 +12,9 @@ writes them back into the file.
 - **What it does:** routes unrouted connections on KiCad 9 and 10 boards, and can place components first.
 - **How it is judged:** by KiCad's own design-rule check (`kicad-cli pcb drc`), not by its own opinion.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
-- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one.
-- **Status:** release 0.8.0. Licence GPL-3.0-or-later.
+- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
+  Metal backend is contributed and has not been run by the project.
+- **Status:** release 0.9.0. Licence GPL-3.0-or-later.
 
 ## How good is it?
 
@@ -22,8 +23,8 @@ Share of boards routed with **every connection made and no KiCad error added** (
 | Tier | Boards | TraceMaker | Freerouting 2.5 |
 |---|--:|--:|--:|
 | A (routine) | 40 | **100%** | 100% |
-| B | 40 | **70.0%** | 50.0% |
-| C | 30 | **63.3%** | 46.7% |
+| B | 40 | **72.5%** | 50.0% |
+| C | 30 | **60.0%** | 46.7% |
 | D (hardest) | 22 | **54.5%** | 36.4% |
 
 Freerouting's figures are its own published results on the same boards.
@@ -37,7 +38,7 @@ Freerouting's figures are its own published results on the same boards.
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·
-[roadmap and test report](report/roadmap_testing.pdf) (all 132 tests, every benchmark run).
+[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.9.0 has 165 tests).
 
 ## Quick start
 
@@ -119,6 +120,8 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 | Get the same result every time | `route board.kicad_pcb -o out.kicad_pcb --work 50000000` |
 | Watch the routing live | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
 | Route everything again, old tracks removed | `route board.kicad_pcb -o out.kicad_pcb --reroute` |
+| Pick the options on a screen instead of typing them | `tui board.kicad_pcb -o out.kicad_pcb` |
+| Route with a saved set of options | `route board.kicad_pcb -o out.kicad_pcb --config options.toml` |
 | Run a design-rule check | `drc board.kicad_pcb --json report.json` |
 | See a summary of a board | `inspect board.kicad_pcb` |
 | Find pins that cannot escape their package | `escape board.kicad_pcb` |
@@ -145,6 +148,12 @@ down beside the board and reported.
 <details>
 <summary><b>More route options</b></summary>
 
+- `tracemaker tui`: every option below (and the rest) on one screen, with its description and default. Space
+  toggles a flag or edits a value, `/` filters, `r` runs the route, `p` prints the command, `s` saves the choices to
+  a file for `route --config FILE`. In the file each line is `name = value`; options typed on the command line win.
+  A help panel describes the option under the cursor. Options can be kept globally
+  (`~/.config/tracemaker/route.conf`), per project (`tracemaker.conf` beside the board) or in the `--config` file;
+  each value shows where it comes from, and `Tab` chooses which of them receives your edits and the `s` save.
 - `--threads N`: threads. Eight differently configured routers run in parallel and the best result is kept.
 - `--variants N`: how many of those eight to run.
 - `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.
@@ -199,7 +208,7 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 ```
 scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
-ctest --preset release             # 132 tests, about 5 minutes
+ctest --preset release             # 165 tests, about 6 minutes
 ```
 
 - Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.

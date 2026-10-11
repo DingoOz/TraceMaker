@@ -229,7 +229,7 @@ inline problems (one layer, a slot, tracks that only touch);
 point against the routed copper and, when `kicad-cli` is there, KiCad's ratsnest and DRC. The benchmark built on
 this is doc 10 §7.
 
-### 9.1 Fan-out problems (M14, D95)
+### 9.1 Fan-out problems (M14, D96)
 
 `tracemaker srj-import` handles tscircuit's fan-out benchmark (`fanout31`) with these additions: plane terminations
 (`buses[].termination` of type `plane`) become zones of the net on that layer covering the bounds; a breakout point
