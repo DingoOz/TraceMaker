@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <map>
+#include <set>
 #include <nlohmann/json.hpp>
 #include <numeric>
 #include <sstream>
@@ -248,7 +249,26 @@ SrjProblem read_srj(const std::string& text) {
   auto present = [&](const char* key) { return d.contains(key) && d[key].is_array() && !d[key].empty(); };
   if (present("traces")) warn("the problem's preloaded 'traces' are not imported: the board starts without them");
   if (present("differentialPairs")) warn("'differentialPairs' are not imported: the pairs are routed as single nets");
-  if (present("buses")) warn("'buses' are not imported: their nets are routed one by one");
+  if (present("buses")) {
+    std::map<std::string, int> conn_of;
+    for (std::size_t i = 0; i < p.connections.size(); ++i) conn_of[p.connections[i].name] = static_cast<int>(i);
+    std::set<std::pair<int, int>> seen;
+    int plane_buses = 0;
+    for (const auto& bu : d["buses"]) {
+      if (!bu.contains("termination") || !bu["termination"].is_object() || opt_string(bu["termination"], "type") != "plane") continue;
+      const int layer = srj_layer_index(opt_string(bu["termination"], "layer"), p.layer_count);
+      if (layer < 0 || !bu.contains("connectionNames")) continue;
+      ++plane_buses;
+      for (const auto& cn : bu["connectionNames"]) {
+        const auto it = conn_of.find(cn.is_string() ? cn.get<std::string>() : std::string());
+        if (it == conn_of.end()) continue;
+        const int net = p.connections[static_cast<std::size_t>(it->second)].net;
+        if (seen.insert({net, layer}).second) p.planes.push_back(SrjPlane{net, layer});
+      }
+    }
+    warn("'buses' are not imported: their nets are routed one by one" +
+         std::string(plane_buses ? "; " + std::to_string(plane_buses) + " plane terminations become zones" : ""));
+  }
   if (present("jumpers") || flag(d, "allowJumpers")) warn("jumpers are not supported: connections are routed in copper only");
   if (off_board) warn(std::to_string(off_board) + " off-board connections are imported as ordinary connections");
   if (assignable) warn(std::to_string(assignable) + " obstacles with 'netIsAssignable' are imported with the net they have");

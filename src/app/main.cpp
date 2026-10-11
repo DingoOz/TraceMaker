@@ -443,12 +443,13 @@ int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int lay
 }
 
 // Simple Route JSON problem -> KiCad board, project and (if needed) custom rules next to each other (doc 08 §9).
-int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out) {
+int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out, double margin_mm = 0) {
   namespace fs = std::filesystem;
   const auto problem = tmk::io::read_srj_file(in);
   tmk::io::SrjImportOptions opt;
   if (clearance_mm >= 0) opt.clearance = tmk::mm_to_nm(clearance_mm);
   if (hole_to_hole_mm >= 0) opt.hole_to_hole = tmk::mm_to_nm(hole_to_hole_mm);
+  opt.outline_margin = tmk::mm_to_nm(margin_mm);
   const auto files = tmk::io::srj_to_kicad(problem, opt);
   auto write = [](const fs::path& p, const std::string& text) {
     std::ofstream f(p, std::ios::binary);
@@ -583,10 +584,24 @@ int main(int argc, char** argv) {
                     "Deterministic work budget in search expansions per router (e.g. 50000000); with the default portfolio every "
                     "variant gets the whole budget, so a run does up to --variants times this work");
   route->add_option("--pitch-um", r_pitch_um, "Lattice pitch in micrometres (default: automatic)");
+  std::string r_guide;
+  route->add_option("--guide", r_guide, "Preferred paths per connection (JSON, Simple Route JSON coordinates in mm; doc 16 F1)")->group("");
+  route->add_option("--guide-pen", ropt.guide_pen, "Guide: pitches per lattice step off the guide")->group("");
+  route->add_option("--guide-radius", ropt.guide_radius, "Guide: pitches around the guide that count as on it")->group("");
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
+  route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first")->group("");
   route->add_option("--seed", ropt.seed);
   route->add_option("--only-net", ropt.only_net, "Debugging: route only this net")->group("");
   route->add_option("--skip-net", ropt.skip_nets, "Experiments: leave this net unrouted (repeatable)")->group("");
+  route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
+  route->add_option("--lns-open", ropt.lns_open_trials, "Regional rebuild of open connections: orders tried per open connection (0 = off)")->group("");
+  route->add_option("--lns-open-radius-mm", ropt.lns_open_radius_mm, "Regional rebuild: radius around the open pin")->group("");
+  route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
+  route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
+  route->add_option("--max-rips", ropt.max_rips_per_connection, "Rip-ups allowed per connection")->group("");
+  route->add_option("--max-passes", ropt.max_passes, "Passes over still-unrouted connections")->group("");
+  route->add_option("--max-restarts", ropt.max_restarts, "Full restarts when negotiation stalls")->group("");
+  route->add_option("--soft-cost-mm", ropt.soft_cost_mm, "Base cost of crossing another net's copper in negotiation")->group("");
   route->add_option("--soft-attempts", ropt.soft_attempts, "Window sizes tried by negotiated searches (1-4)")->group("");
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
@@ -722,6 +737,8 @@ int main(int argc, char** argv) {
   srj_in->add_option("--hole-to-hole-mm", si_hole,
                      "Drill edge to drill edge clearance (default: the problem's via-hole / drill clearance fields, else no rule)")
       ->check(CLI::NonNegativeNumber);
+  double si_margin = 0;
+  srj_in->add_option("--outline-margin-mm", si_margin, "Grow the board outline by this on every side (breakout points on the bounds)")->check(CLI::NonNegativeNumber);
   srj_in->add_option("--json", si_json, "Write the conversion summary (counts, rules used, warnings) as JSON");
   auto* srj_out = app.add_subcommand("srj-export", "Write a routed board's copper as the `traces` of its Simple Route JSON problem");
   std::string so_board, so_problem, so_out, so_json;
@@ -771,7 +788,7 @@ int main(int argc, char** argv) {
     }
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
-    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json);
+    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json, si_margin);
     if (*srj_out) return cmd_srj_export(so_board, so_problem, so_out, so_json);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
@@ -788,6 +805,22 @@ int main(int argc, char** argv) {
     }
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
+      if (!r_guide.empty()) {
+        // [{"a":[x,y],"b":[x,y],"segs":[[x1,y1,x2,y2,layer],...],"vias":[[x,y],...]}]: Simple Route JSON millimetres, y up.
+        const auto gj = nlohmann::json::parse(std::ifstream(r_guide));
+        auto pt = [](double x, double y) { return tmk::geom::Point{tmk::mm_to_nm(x), -tmk::mm_to_nm(y)}; };
+        for (const auto& g : gj) {
+          tmk::route::RouterOptions::GuidePath gp;
+          gp.a = pt(g["a"][0].get<double>(), g["a"][1].get<double>());
+          gp.b = pt(g["b"][0].get<double>(), g["b"][1].get<double>());
+          for (const auto& sg : g["segs"]) {
+            gp.segs.push_back({pt(sg[0].get<double>(), sg[1].get<double>()), pt(sg[2].get<double>(), sg[3].get<double>())});
+            gp.seg_layer.push_back(sg[4].get<int>());
+          }
+          for (const auto& v : g["vias"]) gp.vias.push_back(pt(v[0].get<double>(), v[1].get<double>()));
+          ropt.guides.push_back(std::move(gp));
+        }
+      }
       ropt.pair_skew = static_cast<tmk::Coord>(r_pair_skew_mm * 1e6);
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
       auto job = std::move(r_job);

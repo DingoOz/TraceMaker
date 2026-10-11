@@ -51,9 +51,14 @@ struct RouterOptions {
   int soft_attempts = 3;        // window sizes tried by negotiated searches
   double via_cost_mm = 3.0;     // equivalent track length of one via
   bool allow_vias = true;
+  int lns_open_trials = 0;      // regional rebuild of open connections: seeded orders tried per open connection (0 = off, doc 16 F4)
+  double lns_open_radius_mm = 2.5;  // copper within this distance of the open connection's first pad is lifted
+  bool layer_assign = false;    // doc 16 F2: prefer, per connection, the layer that leaves the fewest crossings (two-layer boards)
+  double layer_assign_pen = 0.4;  // pitches per lattice step on the other layer
+  bool strict_first = true;     // the first pass is strict (no crossing of routed copper); off: negotiate from the first pass
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
-  int max_rips_per_connection = 8;
-  int max_passes = 12;          // passes over still-unrouted connections
+  int max_rips_per_connection = 40;  // was 8: at 50 M work on dense breakouts 33 % -> 54 % clean (doc 16 §4)
+  int max_passes = 40;          // passes over still-unrouted connections (was 12)
   // Micro vias (outer layer to the next one, the net class's microvia size) where a through via is blocked, on
   // boards whose rules allow them (doc 05 §21).
   bool micro_vias = false;
@@ -114,6 +119,19 @@ struct RouterOptions {
   };
   std::vector<Bus> buses;
   bool bus_first = false;  // the groups' connections before all others (after first_nets), also after restarts
+  // Path guidance (doc 16 F1): a preferred path for a connection, found by matching its two pad centres. Cells off
+  // the guide cost `guide_pen` pitches per lattice step in every search of that connection (a preference, never a
+  // block), so a guide that does not pass the exact checks only costs search effort. `--guide FILE` fills it
+  // from JSON (experiments); the breakout planner fills it itself.
+  struct GuidePath {
+    geom::Point a{}, b{};                       // pad centres of the two ends
+    std::vector<std::array<geom::Point, 2>> segs;  // track segments
+    std::vector<int> seg_layer;                 // copper layer index of each segment
+    std::vector<geom::Point> vias;              // through vias (all layers)
+  };
+  std::vector<GuidePath> guides;
+  double guide_pen = 0.1;       // pitches per lattice step off the guide
+  double guide_radius = 1.5;    // pitches around the guide that count as on it
   std::string only_net;         // debugging: route only this net
   std::vector<std::string> skip_nets;  // experiments: leave these nets unrouted (e.g. nets a designer would pour)
   // Layer limits (doc 05 §29; route/layer_limits.hpp turns layer names into these). Layers in no_track_layers get
@@ -172,6 +190,7 @@ struct RouteResult {
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
+  int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;

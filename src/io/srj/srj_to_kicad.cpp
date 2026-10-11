@@ -226,6 +226,10 @@ class Writer {
       zones_.push_back(ZoneOut{"srj_single_layer", -1, true, {1}, std::move(all)});
       warn("layerCount is 1: the board has a B.Cu layer closed to tracks and vias by a rule area");
     }
+    for (const auto& pl : p_.planes) {  // plane terminations (buses): a zone of the net over the whole board on that layer
+      std::vector<std::pair<Coord, Coord>> all{{kx(p_.min_x), ky(p_.max_y)}, {kx(p_.max_x), ky(p_.max_y)}, {kx(p_.max_x), ky(p_.min_y)}, {kx(p_.min_x), ky(p_.min_y)}};
+      zones_.push_back(ZoneOut{"srj_plane_" + std::to_string(pl.layer), pl.net, false, {pl.layer}, std::move(all)});
+    }
     if (pours) warn(std::to_string(pours) + " copper pours written as unfilled zones: refill them in KiCad after routing");
     if (plated)
       warn(std::to_string(plated) + " connected multi-layer obstacles written as plated through-hole pads drilled at half their smaller side (SRJ has no drill size)");
@@ -395,6 +399,15 @@ class Writer {
 
 }  // namespace
 
-SrjBoardFiles srj_to_kicad(const SrjProblem& problem, const SrjImportOptions& opt) { return Writer(problem, opt).run(); }
+SrjBoardFiles srj_to_kicad(const SrjProblem& problem, const SrjImportOptions& opt) {
+  if (opt.outline_margin == 0) return Writer(problem, opt).run();
+  SrjProblem grown = problem;
+  const double m = static_cast<double>(opt.outline_margin) / 1e6;
+  grown.min_x -= m;
+  grown.min_y -= m;
+  grown.max_x += m;
+  grown.max_y += m;
+  return Writer(grown, opt).run();
+}
 
 }  // namespace tmk::io

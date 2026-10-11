@@ -1,0 +1,26 @@
+# Boards tscircuit's router solves (dashboard run 38105514608-1) and TraceMaker at 50 M did not (doc 16 §3).
+#fixtures: bench/data/tscircuit/boards/srj19
+sample007
+sample013
+sample046
+sample068
+sample091
+sample100
+sample102
+sample105
+sample111
+sample121
+sample129
+sample132
+sample137
+sample140
+sample145
+sample147
+sample153
+sample154
+sample160
+sample178
+sample181
+sample185
+sample189
+sample196

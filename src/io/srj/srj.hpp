@@ -56,6 +56,13 @@ struct SrjRules {
   bool blind_buried_vias = false, via_in_pad = false;
 };
 
+// A bus whose `termination` is a plane: every connection of the bus ends in a plane on `layer`. Imported as a
+// zone of the net on that layer covering the bounds (the balls then reach it with a via, as plane drops do).
+struct SrjPlane {
+  int net = -1;
+  int layer = 0;
+};
+
 struct SrjProblem {
   int layer_count = 0;
   SrjRules rules;
@@ -64,6 +71,7 @@ struct SrjProblem {
   std::vector<SrjObstacle> obstacles;
   std::vector<SrjConnection> connections;
   std::vector<SrjNet> nets;
+  std::vector<SrjPlane> planes;
   std::vector<std::string> warnings;  // fields that were read but cannot be honoured
 };
 
@@ -86,6 +94,9 @@ struct SrjImportOptions {
   // Drill edge to drill edge, instead of the problem's minViaHoleEdgeToViaHoleEdgeClearance /
   // minPlatedHoleDrillEdgeToDrillEdgeClearance (no rule when it has neither).
   std::optional<Coord> hole_to_hole;
+  // The board outline (and plane zones) grow by this on every side; pads keep their coordinates. For problems whose
+  // connections end exactly on the bounds (breakout points), where the board-edge rule would forbid the copper.
+  Coord outline_margin = 0;
 };
 
 struct SrjBoardFiles {

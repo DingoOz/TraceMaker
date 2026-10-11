@@ -1,0 +1,2 @@
+{"ts":"2026-10-11T08:30:00+00:00","kind":"note","text":"M14 status page started; experiments E1-E5 done, profile P1 running on full srj19/srj20."}
+{"ts":"2026-10-11T08:40:00+00:00","kind":"build","text":"srj19 with profile P1 (--fast-bends --max-rips 40 --max-passes 40, 50M work): 176/200 clean = 88.0 % (baseline 79.5 %, tscircuit 92.0 %); 24 of 24 gap boards: 13 now clean; 1 board lost (sample062)."}
