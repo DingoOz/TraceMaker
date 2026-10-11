@@ -1775,3 +1775,10 @@ hidden options are.
   `--history-weight`, `--max-rips`, `--max-passes`, `--max-restarts`, `--soft-cost-mm`.
 - **GPU.** The cost-to-go fields give the identical result 1.7× faster for one board alone (35.7 s → 20.7 s, sample 13 at 20 M); with
   twelve boards routed in parallel they are slower (contention), so the benchmark runs use `--no-gpu`.
+- **`--layer-dir-pen P`, `--layer-dir-swap`** (D97). Orthogonal steps against the layer's preferred direction (even layers horizontal, odd
+  vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with `--package-pen 3`) on a breakout board: two copper layers and at least 70 %
+  of the connections with an end on a package of at least 30 same-layer SMD pads. Negative values mean "automatic at that strength" (the seeded
+  portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.
+- **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
+- **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
+  `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.

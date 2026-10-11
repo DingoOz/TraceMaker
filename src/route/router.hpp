@@ -55,9 +55,10 @@ struct RouterOptions {
   int polish_trials = 20;       // seeded orders tried per open connection in the polish
   int lns_open_trials = 0;      // regional rebuild of open connections: seeded orders tried per open connection (0 = off, doc 16 F4)
   double lns_open_radius_mm = 2.5;  // copper within this distance of the open connection's first pad is lifted
-  double layer_dir_pen = -1;    // -1 = automatic (0.3 on a two-layer board with a ball-grid package, else 0); extra cost (pitches per orthogonal step) against a layer's preferred direction: even layers horizontal, odd vertical (doc 16)
+  double layer_dir_pen = -1;    // negative = automatic (-1: 0.3; otherwise the strength is the absolute value) on breakout boards only, else 0; extra cost (pitches per orthogonal step) against a layer's preferred direction: even layers horizontal, odd vertical (doc 16)
   bool layer_dir_swap = false;  // preferred directions the other way round: even layers vertical, odd horizontal
   double package_pen = -1;      // -1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
+  bool layer_assign_angle = false;  // layer preference by chord direction instead of by crossings (uses layer_assign_pen)
   bool layer_assign = false;    // doc 16 F2: prefer, per connection, the layer that leaves the fewest crossings (two-layer boards)
   double layer_assign_pen = 0.4;  // pitches per lattice step on the other layer
   bool strict_first = true;     // the first pass is strict (no crossing of routed copper); off: negotiate from the first pass

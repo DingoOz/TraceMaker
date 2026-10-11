@@ -603,6 +603,7 @@ int main(int argc, char** argv) {
   route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
+  route->add_flag("--layer-assign-angle", ropt.layer_assign_angle, "Layer preference per connection by chord direction (two-layer boards)")->group("");
   route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
   route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");
   route->add_option("--max-victims", ropt.max_victims, "Negotiation: connections one route may rip at once (0 = no limit)")->group("");

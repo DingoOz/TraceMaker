@@ -1,0 +1,21 @@
+# srj19 boards not clean with P2 (50 M, one variant, automatic breakout settings; doc 16 §10)
+#fixtures: bench/data/tscircuit/boards/srj19
+sample007
+sample011
+sample013
+sample019
+sample031
+sample077
+sample080
+sample100
+sample105
+sample124
+sample129
+sample137
+sample147
+sample158
+sample163
+sample173
+sample178
+sample184
+sample193

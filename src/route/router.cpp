@@ -2749,7 +2749,7 @@ struct Router::Impl {
       breakout = 10 * touching >= 7 * cs.size();
     }
     if (breakout) {
-      if (opt.layer_dir_pen < 0) auto_dir_pen = 0.3;
+      if (opt.layer_dir_pen < 0) auto_dir_pen = opt.layer_dir_pen == -1.0 ? 0.3 : -opt.layer_dir_pen;
       if (opt.package_pen < 0) pen = 3.0;
     }
     pkg_pen = static_cast<std::int64_t>(pen * static_cast<double>(pitch));
@@ -2762,7 +2762,7 @@ struct Router::Impl {
   void layer_assign() {
     conn_lpref.assign(cs.size(), -1);
     const int k = std::min(nl, 2);  // two outer layers; inner layers are planes or left to the search
-    if (!opt.layer_assign || nl < 2) return;
+    if (!(opt.layer_assign || opt.layer_assign_angle) || nl < 2) return;
     const std::size_t n = cs.size();
     struct Chord { Point a, e; };
     std::vector<Chord> ch(n);
@@ -2776,6 +2776,11 @@ struct Router::Impl {
     auto ccw = [](Point a, Point bq, Point c) {
       return static_cast<long double>(c.y - a.y) * static_cast<long double>(bq.x - a.x) - static_cast<long double>(bq.y - a.y) * static_cast<long double>(c.x - a.x);
     };
+    if (opt.layer_assign_angle) {  // by direction: mostly horizontal chords prefer the horizontal layer, the others the vertical one
+      for (std::size_t i = 0; i < n; ++i)
+        if (use[i]) conn_lpref[i] = std::llabs(ch[i].e.x - ch[i].a.x) >= std::llabs(ch[i].e.y - ch[i].a.y) ? 0 : nl - 1;
+      return;
+    }
     std::vector<std::vector<int>> adj(n);
     for (std::size_t i = 0; i < n; ++i)
       for (std::size_t j = i + 1; j < n; ++j) {
@@ -4354,6 +4359,9 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       o.soft_cost_mm = base.soft_cost_mm * kSoft[(k / 3) % 3];
       o.escape_plan = k % 2 == 0;
       if (k % 2 == 1) o.package_pen = 3.0;
+      static const double kDir[3] = {-0.3, -0.6, -1.01};  // negative: automatic (breakout boards only) at that strength (doc 16 §11)
+      o.layer_dir_pen = kDir[(k / 2) % 3];
+      o.layer_dir_swap = k % 5 == 4;
     });
   }
   std::vector<int> chosen;

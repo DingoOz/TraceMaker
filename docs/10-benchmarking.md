@@ -293,3 +293,8 @@ passes): **srj19 176/200 = 88.0 %, srj20 117/200 = 58.5 %** (section 7: 79.5 % a
 boards that miss: srj19 +10, srj20 +9 (about 93 % and 63 %). Per-board comparison with the dashboard run, the gap sets
 (`srj19-gap`, `srj20-gap`, `srj19-p1fail`, `srj20-p1fail`) and every experiment: doc 16 §10. `bench/fanout31_run.py` scores the 72 fan-out cases
 (solved = every connection routed, no unconnected item after the zone refill); results in doc 16 §10.1.
+
+Update, same day (doc 16 §11): with preferred layer directions and the package penalty switched on automatically for breakout boards, one variant at 50 M
+gives **srj19 181/200 (90.5 %)** and **srj20 124/200 (62 %)**; the 16-variant portfolio (50 M each, 16 threads, median 164–168 s) closes 7 more on
+srj19 (**188/200 = 94.0 %**, tscircuit 92.0 %) and 9 more on srj20 (**133/200 = 66.5 %**, tscircuit 78.5 %). `fanout31`: 57 of the 60 cases run solved
+(tscircuit 48/72); AM3352 is not solved (6–23 connections open at best; tscircuit solves none of its 12 cases either).

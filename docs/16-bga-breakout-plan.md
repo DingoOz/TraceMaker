@@ -298,3 +298,27 @@ top-centre 50 open of 316 (tscircuit solves none of the AM3352 cases). The full 
 | srj20 clean | ≥ 157/200 | 117 (one variant); about 126 with the portfolio | **no** |
 | fanout31 | ≥ 48/72 | see below | see below |
 | No DRC error added, quick/mid unchanged | | 0 added on every run; byte-identical | yes |
+
+## 11. Second round (2026-10-11, afternoon)
+
+**What moved the numbers** (srj20 gap boards = the 57 that tscircuit solves and the first profile missed; 30 M work, one variant, fast bends):
+
+| Change | Result |
+|---|---|
+| Breakout-point model for `fanout31`: drop the layer override from `connectionExitTargets` (`TM_SRJ_EXIT_LAYERS` keeps it as an experiment) | K230 terminals: 8 open → 2 on case 28, 65 of 65 terminals escape (before: 57 of 65). Several buses' breakout points share coordinates and differ only by layer; overriding the layer stacked two or three terminals on one layer and made them unreachable |
+| `--layer-dir-pen P` (orthogonal steps against the layer's preferred direction cost P pitches; even layers horizontal, odd vertical) | srj20 gap: 28 % → 30 / 40 / 35 / 30 % clean at P = 0.15 / 0.3 / 0.5 / 1.0, routed 87.7 % → 89.0 / 89.8 / 90.7 / 91.0 %. srj19 gap: 46 % → 50 % at 0.3. Swapping the directions (`--layer-dir-swap`): 37 %, no difference. The first structural gain on srj20 |
+| Automatic settings (D97): direction penalty 0.3 and package penalty 3 on a *breakout board* (two layers, at least 70 % of the connections have an end on a package of at least 30 same-layer SMD pads) | Same results as setting them by hand (40 % clean on the srj20 gap boards). On ordinary two-layer boards the same two settings cost completion (quick 89.2 → 86.8 % with the direction penalty alone, 88.2 % with the package penalty alone; mid 53.5 → 51.1 %), which is why the rule is limited to breakout boards: with it `quick` (30) and `mid` (11) are byte-identical |
+| Portfolio of 16 variants (`--variants 16 --threads 16`) on the boards one variant misses, 50 M each | srj19: 7 of 19 closed (median 164 s); see §11.1 for srj20 |
+
+**Measured and dropped:** `--heuristic-weight` 1.5 / 2.5 (weighted A*): 4 % clean, so path quality matters a lot; `--layer-assign-angle` (layer preference by chord direction): 33 %; via cost 1.0 / 1.5 / 5.0 with the automatic settings: 26 / 37 / 37 % (default 3 mm: 40 %); `--polish 0.3` (reserve a share of the budget, restore the best state, rebuild the open connections' neighbourhoods): closes 0–1 of 3–6 open connections and loses more in the shortened main phase.
+
+**Where the srj20 gap is.** By connections per board (tscircuit solves / TraceMaker, first profile at 50 M → 200 M on the gap boards): fewer than 40: 99 / 99; 40–49: 29 / 21 → 23; 50–59: 21 / 4 → 7; 60–79: 7 / 0 → 1; 80 or more: 1 / 0. The deficit is the 50–79 connection boards. tscircuit's solution of sample 69 (53 connections) has 803 mm of copper and 188 vias, 173 of them outside the ball array (in the annulus between the array and the edge pads); inside the array it uses about as much wire as TraceMaker.
+
+### 11.1 Gate status (updated)
+
+| Gate | Target | Measured | Met |
+|---|---|---|---|
+| srj19 clean | ≥ 184/200 | **188/200 = 94.0 %**: 181 with one variant (50 M, fast bends, automatic settings) plus 7 of the 19 the 16-variant portfolio closes (the composite is not one run) | yes |
+| srj20 clean | ≥ 157/200 | one variant (50 M): 124/200 (62 %); 16-variant portfolio on the 76 boards that misses: 9 more = **133/200 (66.5 %)** (median 168 s); 200 M, one variant, on the 33 gap boards: 6 more (130) | **no** (24 short) |
+| fanout31 | ≥ 48/72 | **57 of the 60 cases run solved** (AM62L 12/12, RK3308 12/12, K230 12/12, i.MX6ULL 12/12, T113-S3 9/12; the 8-variant portfolio, 60 M each, closes the stragglers of a single variant: 44 → 57); AM3352 (not required: tscircuit solves 0/12): 6–23 connections open at best | yes |
+| No DRC error added, quick/mid unchanged | | 0 added on every run; byte-identical | yes |
