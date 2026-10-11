@@ -166,6 +166,30 @@ def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
         return None
 
 
+STYLE_COUNTS = ("connections", "segments", "vias", "bends", "acute_angles", "stair_steps", "short_segments", "off_angle_segments",
+                "long_detours", "length_mm", "detour_length_mm", "detour_octile_mm")
+
+
+def style_of(board: pathlib.Path, out_json: pathlib.Path) -> dict | None:
+    """Style metric of every track of a board (`tracemaker style`, doc 05 §39), e.g. a fixture's reference routing."""
+    try:
+        subprocess.run([str(TM), "style", str(board), "--json", str(out_json)], capture_output=True, timeout=300)
+        return json.loads(out_json.read_text())
+    except (subprocess.TimeoutExpired, OSError, ValueError):
+        return None
+
+
+def style_total(styles: list[dict]) -> dict | None:
+    """Sums the per-board style metrics; the two ratios are recomputed from the sums."""
+    if not styles:
+        return None
+    t = {k: round(sum(s.get(k, 0) for s in styles), 6) for k in STYLE_COUNTS}
+    t["boards"] = len(styles)
+    t["bends_per_connection"] = round(t["bends"] / t["connections"], 4) if t["connections"] else 0.0
+    t["detour_ratio"] = round(t["detour_length_mm"] / t["detour_octile_mm"], 4) if t["detour_octile_mm"] else 1.0
+    return t
+
+
 def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
     """Runs cmd and returns (exit code, stdout, stderr, CPU seconds). CPU time is the child's own user + system time
     from os.wait4, so other boards routing at the same time do not count. Raises subprocess.TimeoutExpired."""
@@ -222,6 +246,12 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     if rj.exists():
         r = json.loads(rj.read_text())
         res.update({k: r[k] for k in ("routed", "connections", "tracks", "vias", "seconds")})
+        # Style metric of the new copper (doc 05 §39; informational) and what the after-route passes did.
+        res.update({k: r[k] for k in ("style", "widen", "stitch") if k in r})
+    # The fixture's own routing, where it has one (PCBench: processed.kicad_pcb), measured the same way.
+    ref = SRC_FIX / name / "processed.kicad_pcb"
+    if ref.exists() and "style" in res:
+        res["style_ref"] = style_of(ref, outdir / "boards" / f"{name}.style_ref.json")
     before = drc(src)
     after = drc(out) if out.exists() else None
     if before is None or after is None:
@@ -351,6 +381,13 @@ def main() -> int:
     feasible = [r for r in judged if r.get("dead_pins") == 0]
     summary["feasible_boards"] = len(feasible)
     summary["clean_pass_feasible"] = round(sum(r["clean"] for r in feasible) / len(feasible), 4) if feasible else None
+    # Style metric (informational, never a gate): totals over the boards that have it, and over the reference
+    # routings of the same boards.
+    with_style = [r for r in rows if r.get("style")]
+    with_ref = [r for r in with_style if r.get("style_ref")]
+    summary["style"] = style_total([r["style"] for r in with_style])
+    summary["style_ref"] = style_total([r["style_ref"] for r in with_ref])
+    summary["style_same_boards"] = style_total([r["style"] for r in with_ref])  # TraceMaker on the boards that have a reference
     (outdir / "summary.json").write_text(json.dumps(summary, indent=1))
     notes = [f"{budget} per board"] + (["zones refilled before judging"] if a.refill else []) + ([f"route options `{' '.join(EXTRA)}`"] if EXTRA else [])
     lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
@@ -360,6 +397,17 @@ def main() -> int:
              f"| Route CPU time, all boards | {summary['cpu_seconds']:,.0f} s | | |", "",
              f"Both clean: {both}; only TraceMaker: {only_tm}; only Freerouting: {only_fr}.",
              f"Boards with added DRC errors: {summary['boards_with_added_errors']} ({dict(added_types)})."]
+    if summary["style"]:
+        def style_row(label: str, t: dict | None) -> str:
+            if not t:
+                return f"| {label} | – | | | | | | | |"
+            return (f"| {label} | {t['boards']} | {t['bends_per_connection']:.2f} | {t['acute_angles']} | {t['stair_steps']} | {t['short_segments']} | "
+                    f"{t['off_angle_segments']} | {t['detour_ratio']:.3f} | {t['long_detours']} |")
+        lines += ["", "Style of the routed copper (doc 05 §39, informational):", "",
+                  "| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |",
+                  "|---|--:|--:|--:|--:|--:|--:|--:|--:|", style_row("TraceMaker", summary["style"])]
+        if summary["style_ref"]:
+            lines += [style_row("TraceMaker, boards with a reference", summary["style_same_boards"]), style_row("Reference routing", summary["style_ref"])]
     (outdir / "report.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
     return 0

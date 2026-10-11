@@ -2,8 +2,8 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_bus.cpp)
-target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_bus.cpp test_passes.cpp)
+target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test-results)
@@ -70,3 +70,7 @@ set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 3
 # 4 threads giving identical bytes. Needs no fixtures and no KiCad.
 add_test(NAME bus_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/bus_route.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/bus_route)
 set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 1800 PROCESSORS 4)
+# After-route passes (doc 05 §39): style metric, power widening and stitching vias through the command line, on
+# generated boards; KiCad's DRC judges the stitched board when kicad-cli is on the PATH.
+add_test(NAME after_route_passes COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/after_route_passes.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/after_route_passes)
+set_tests_properties(after_route_passes PROPERTIES LABELS "route;integration" TIMEOUT 900)

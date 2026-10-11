@@ -104,6 +104,8 @@ Catalogue parse_catalogue(std::string_view json_text) {
     cat.prop_delay_outer = t.value("outer", cat.prop_delay_outer);
     cat.prop_delay_inner = t.value("inner", cat.prop_delay_inner);
   }
+  if (j.contains("defaults") && j["defaults"].contains("general_high_speed"))
+    cat.stitch_via_within_mm = j["defaults"]["general_high_speed"].value("stitch_via_within_mm", cat.stitch_via_within_mm);
   for (const auto& jc : j.at("categories")) {
     Category c;
     c.id = jc.at("id").get<std::string>();

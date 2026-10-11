@@ -166,6 +166,14 @@ down beside the board and reported.
   the zones in memory, routes what the refill left unconnected once more, and reports `unconnected_after_refill`
   (the exit code follows it; `--no-refill-repair` only counts; doc 05 §36). The written board keeps its old fills.
 - `tracemaker drc --refill-zones`: judge the fills the current copper would get, like kicad-cli's flag.
+- After-route passes (doc 05 §39), all off by default: `--widen-power` (new tracks the router had to neck down go
+  back to their net class width where there is room; `--widen-net 'PATTERN=WIDTH_MM'` and widths computed by the
+  component rules are targets for power nets), `--stitch-vias planes|return|all` (free vias of a plane's net on a
+  grid where its fills overlap on two or more layers, `--stitch-pitch MM`; and one near each via of the nets that
+  need a reference plane, from component rules or `--stitch-return 'PATTERN=PLANE_NET'`, `--stitch-distance MM`).
+  Refill the zones afterwards, as with `--soft-zones`.
+- `tracemaker style BOARD [--json FILE]`: how tidy a routed board is (bends per connection, acute angles,
+  stair-steps, detours); the route summary carries the same `style` object for the new copper.
 
 </details>
 

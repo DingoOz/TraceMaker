@@ -3,16 +3,20 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdarg>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <stdexcept>
 #include <thread>
 
 #include "crules/engine.hpp"
+#include "crules/names.hpp"
 #include "drc/copper.hpp"
 #include "drc/drc.hpp"
 #include "drc/refill.hpp"
@@ -24,6 +28,9 @@
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "learn/knowledge_base.hpp"
+#include "passes/stitch.hpp"
+#include "passes/style.hpp"
+#include "passes/widen.hpp"
 #include "server/messages.hpp"
 #include "server/replay_log.hpp"
 #include "server/viewer_server.hpp"
@@ -259,6 +266,42 @@ RouteJobResult run_route_job(RouteJob job) {
   // Component rules (doc 15 §5.5): generated keep-outs are added to an in-memory copy of the board the router
   // sees; the output is written from the original document, so the user's board never gains them.
   const crules::Mode cr_mode = crules::parse_mode(job.component_rules);
+  // After-route passes (doc 05 §39): what the options and the component rules ask of them.
+  if (!job.stitch_vias.empty() && job.stitch_vias != "planes" && job.stitch_vias != "return" && job.stitch_vias != "all")
+    throw std::invalid_argument("--stitch-vias: expected planes, return or all, got '" + job.stitch_vias + "'");
+  const bool stitch_planes = job.stitch_vias == "planes" || job.stitch_vias == "all";
+  const bool stitch_return = job.stitch_vias == "return" || job.stitch_vias == "all";
+  std::vector<passes::WidenOptions::Target> widen_targets;
+  std::vector<passes::StitchOptions::ReturnNet> stitch_returns;
+  // "PATTERN=VALUE": the nets whose name matches the pattern (KiCad wildcards), and the text after the last '='.
+  auto pattern_nets = [&](const std::string& opt_name, const std::string& entry, std::string& value) {
+    const auto eq = entry.rfind('=');
+    if (eq == std::string::npos || eq == 0 || eq + 1 == entry.size()) throw std::invalid_argument(opt_name + ": expected PATTERN=VALUE, got '" + entry + "'");
+    value = entry.substr(eq + 1);
+    std::vector<model::NetId> nets;
+    for (const auto& n : lb.board.nets)
+      if (n.id > 0 && !n.name.empty() && model::wildcard_match(entry.substr(0, eq), n.name)) nets.push_back(n.id);
+    if (nets.empty()) log("warning: " + opt_name + " " + entry + " matches no net");
+    return nets;
+  };
+  for (const auto& e : job.widen_nets) {
+    std::string v;
+    const auto nets = pattern_nets("--widen-net", e, v);
+    char* end = nullptr;
+    const double mm = std::strtod(v.c_str(), &end);
+    if (end == v.c_str() || *end != '\0' || !(mm > 0) || mm > 100) throw std::invalid_argument("--widen-net: bad width in '" + e + "' (millimetres)");
+    for (const auto n : nets) widen_targets.push_back({n, static_cast<Coord>(std::llround(mm * 1e6)), "option"});
+  }
+  if (stitch_return)
+    for (const auto& e : job.stitch_returns) {
+      std::string v;
+      const auto nets = pattern_nets("--stitch-return", e, v);
+      const model::NetId plane = lb.board.net_by_name(v);
+      if (plane == 0) throw std::invalid_argument("--stitch-return: no net named '" + v + "'");
+      const double mm = job.stitch_distance_mm > 0 ? job.stitch_distance_mm : crules::builtin_catalogue().stitch_via_within_mm;
+      for (const auto n : nets)
+        if (n != plane) stitch_returns.push_back({n, plane, static_cast<Coord>(mm * 1e6), "option"});
+    }
   model::Board with_rules;
   nlohmann::json cr_classes = nlohmann::json::array();
   const model::Board* route_board = &lb.board;
@@ -312,7 +355,43 @@ RouteJobResult run_route_job(RouteJob job) {
                               {"detail", c.detail}, {"applied", cr_mode == crules::Mode::On}});
       }
       if (cr_mode == crules::Mode::On && !sc.empty()) rules = crules::with_synthetic_classes(lb.board, std::move(rules), sc);
+      // --widen-power: a width a width_for_current rule computed is a target in every mode (impedance widths are
+      // not: a controlled-impedance track must not be wider than computed either).
+      if (job.widen_power)
+        for (const auto& c : sc)
+          for (const auto& cg : cat.categories)
+            for (const auto& r : cg.rules)
+              if (r.id == c.rule && r.kind == "width_for_current")
+                for (const auto n : c.nets) widen_targets.push_back({n, c.cls.track_width, c.rule});
     }
+    // --stitch-vias return: nets bound to a reference_plane rule want a via of the plane net near each of their
+    // vias (doc 15 §4; the rule's stitch_via_mm, else the catalogue's general high-speed distance).
+    if (stitch_return)
+      for (const auto& in : det.instances) {
+        if (in.confidence < cat.apply) continue;
+        for (const auto& r : cat.categories[static_cast<std::size_t>(in.category)].rules) {
+          if (r.kind != "reference_plane" || in.disabled(r.id)) continue;
+          const std::string plane_name = r.params.contains("plane_net") && r.params["plane_net"].is_string() ? r.params["plane_net"].get<std::string>() : "GND";
+          model::NetId plane = 0;
+          if (const crules::Role* pr = in.role(crules::lower(plane_name)); pr && !pr->nets.empty()) plane = pr->nets.front();
+          for (const auto& n : lb.board.nets)  // else the net of that name (last hierarchy component), lowest id
+            if (plane == 0 && n.id > 0 && crules::upper(crules::net_leaf(n.name)) == crules::upper(plane_name)) plane = n.id;
+          const std::string src = r.id + " " + lb.board.footprints[static_cast<std::size_t>(in.anchor)].reference;
+          if (plane == 0) {
+            log("  stitching: " + src + " names plane net " + plane_name + ", which this board does not have");
+            continue;
+          }
+          const double mm = job.stitch_distance_mm > 0 ? job.stitch_distance_mm
+                            : r.params.contains("stitch_via_mm") && r.params["stitch_via_mm"].is_number() ? r.params["stitch_via_mm"].get<double>()
+                            : cat.stitch_via_within_mm;
+          for (const auto& role : r.applies_to)
+            if (const crules::Role* x = in.role(role))
+              for (const auto n : x->nets) {
+                const bool seen = std::any_of(stitch_returns.begin(), stitch_returns.end(), [&](const auto& y) { return y.signal == n && y.plane == plane; });
+                if (n > 0 && n != plane && !seen) stitch_returns.push_back({n, plane, static_cast<Coord>(mm * 1e6), src});
+              }
+        }
+      }
     // USB2-02 (P3): route each detected USB 2.0 D+/D- pair coupled first (a soft preference: the router falls back
     // to single tracks). Only pairs bound to exactly one net each.
     if (cr_mode == crules::Mode::Soft || cr_mode == crules::Mode::On)
@@ -461,6 +540,138 @@ RouteJobResult run_route_job(RouteJob job) {
     }
     out.unconnected_after_refill = unconnected_after_refill;
   }
+  // After-route passes (doc 05 §39). Each works on the routed copper as a transaction: its result is judged by
+  // the number of unconnected items (after a refill when fills are soft or vias were added) and dropped if that
+  // number went up.
+  nlohmann::json widen_summary, stitch_summary;
+  {
+    auto judge = [&](const std::vector<model::Track>& tracks, const std::vector<model::Via>& vias, bool refill) {
+      model::Board bd = *route_board;
+      bd.tracks.insert(bd.tracks.end(), tracks.begin(), tracks.end());
+      bd.vias.insert(bd.vias.end(), vias.begin(), vias.end());
+      drc::DrcOptions d;
+      d.connectivity_only = true;
+      d.dangling = false;
+      return static_cast<int>(drc::run_drc(refill ? drc::refill_zones(bd, rules).board : bd, rules, d).unconnected.size());
+    };
+    auto mm = [](Coord v) { return fmt("%.3f", nm_to_mm(v)); };
+    if (job.widen_power) {
+      if (opt.sink) opt.sink->publish(server::stage("widen", "begin", "power track widening"));
+      passes::WidenOptions wo;
+      wo.targets = widen_targets;
+      wo.soft_zones = opt.soft_zones;
+      wo.work_limit = job.pass_work;
+      // Coupled pairs keep their pair width.
+      {
+        const drc::RuleEngine re(lb.board, rules);
+        auto pairs = opt.diff_pairs ? route::named_pairs(lb.board, re) : std::vector<std::pair<model::NetId, model::NetId>>{};
+        pairs.insert(pairs.end(), opt.pair_nets.begin(), opt.pair_nets.end());
+        for (const auto& [a, b2] : pairs) wo.skip_nets.push_back(a), wo.skip_nets.push_back(b2);
+      }
+      auto widened = res.tracks;
+      const auto wr = passes::widen_tracks(*route_board, rules, widened, res.vias, wo);
+      bool kept = wr.widened > 0;
+      int before = -1, after = -1;
+      if (kept) {
+        before = judge(res.tracks, res.vias, opt.soft_zones);
+        after = judge(widened, res.vias, opt.soft_zones);
+        kept = after <= before;
+      }
+      nlohmann::json nets = nlohmann::json::array();
+      Coord total = 0;
+      for (const auto& n : wr.nets) {
+        auto widths = [&](const std::map<Coord, Coord>& m) {
+          nlohmann::json j = nlohmann::json::object();
+          for (const auto& [w, len] : m) j[mm(w)] = nm_to_mm(len);
+          return j;
+        };
+        auto text = [&](const std::map<Coord, Coord>& m) {
+          std::string t;
+          for (const auto& [w, len] : m) t += (t.empty() ? "" : ", ") + fmt("%.2f mm at %s", nm_to_mm(len), mm(w).c_str());
+          return t;
+        };
+        const std::string& net_name = lb.board.nets[static_cast<std::size_t>(n.net)].name;
+        total += n.widened_length;
+        nets.push_back({{"net", net_name}, {"target_mm", nm_to_mm(n.target)}, {"source", n.source}, {"tracks_below_target", n.tracks},
+                        {"tracks_widened", n.widened}, {"tracks_at_target", n.at_target}, {"widened_mm", nm_to_mm(n.widened_length)},
+                        {"before_mm_by_width", widths(n.before)}, {"after_mm_by_width", widths(kept ? n.after : n.before)}});
+        if (n.widened > 0)
+          log(fmt("  widen %s (target %s mm, %s): %d of %d tracks, %.2f mm; before %s; after %s", net_name.c_str(), mm(n.target).c_str(), n.source.c_str(),
+                  n.widened, n.tracks, nm_to_mm(n.widened_length), text(n.before).c_str(), text(n.after).c_str()));
+      }
+      log(fmt("widen power: %d tracks of %zu nets widened, %.2f mm, %ld checks%s%s", wr.widened, wr.nets.size(), nm_to_mm(total), wr.checks,
+              wr.out_of_work ? " (work budget used up)" : "",
+              wr.widened > 0 && !kept ? fmt("; discarded: %d items unconnected with it, %d without", after, before).c_str() : ""));
+      widen_summary = {{"tracks_widened", kept ? wr.widened : 0}, {"widened_mm", kept ? nm_to_mm(total) : 0.0}, {"checks", wr.checks},
+                       {"out_of_work", wr.out_of_work}, {"kept", kept}, {"nets", nets}};
+      if (kept) {
+        res.tracks = std::move(widened);
+        if (unconnected_after_refill >= 0) out.unconnected_after_refill = unconnected_after_refill = after;
+      }
+      if (opt.sink) opt.sink->publish(server::stage("widen", "end", fmt("%d tracks widened", kept ? wr.widened : 0)));
+    }
+    if (stitch_planes || stitch_return) {
+      if (opt.sink) opt.sink->publish(server::stage("stitch", "begin", "stitching vias"));
+      passes::StitchOptions so;
+      so.planes = stitch_planes;
+      so.pitch = static_cast<Coord>((job.stitch_pitch_mm > 0 ? job.stitch_pitch_mm : crules::builtin_catalogue().stitch_via_within_mm) * 1e6);
+      so.returns = stitch_returns;
+      so.work_limit = job.pass_work;
+      model::Board bd = *route_board;
+      bd.tracks.insert(bd.tracks.end(), res.tracks.begin(), res.tracks.end());
+      bd.vias.insert(bd.vias.end(), res.vias.begin(), res.vias.end());
+      const auto sr = passes::stitch_vias(bd, rules, so);
+      for (const auto& w : sr.warnings) log("warning: " + w);
+      bool kept = !sr.vias.empty();
+      int before = -1, after = -1;
+      if (kept) {
+        auto with = res.vias;
+        with.insert(with.end(), sr.vias.begin(), sr.vias.end());
+        before = judge(res.tracks, res.vias, true);
+        after = judge(res.tracks, with, true);
+        kept = after <= before;
+      }
+      std::map<model::NetId, std::pair<int, int>> per_net;  // net -> (grid vias, return-path vias)
+      for (std::size_t i = 0; i < sr.vias.size() && kept; ++i) ++(sr.return_path[i] ? per_net[sr.vias[i].net].second : per_net[sr.vias[i].net].first);
+      nlohmann::json nets = nlohmann::json::array(), rets = nlohmann::json::array();
+      int grid = 0, ret = 0;
+      for (const auto& [n, c] : per_net) {
+        const std::string& net_name = lb.board.nets[static_cast<std::size_t>(n)].name;
+        nets.push_back({{"net", net_name}, {"plane", c.first}, {"return_path", c.second}});
+        log(fmt("  stitch %s: %d plane vias, %d return-path vias", net_name.c_str(), c.first, c.second));
+        grid += c.first;
+        ret += c.second;
+      }
+      for (const auto& r : sr.returns) {
+        const std::string& sig = lb.board.nets[static_cast<std::size_t>(r.signal)].name;
+        const std::string& pl = lb.board.nets[static_cast<std::size_t>(r.plane)].name;
+        const int now = kept ? r.stitched_after : r.stitched_before;
+        rets.push_back({{"net", sig}, {"plane_net", pl}, {"source", r.source}, {"distance_mm", nm_to_mm(r.distance)}, {"signal_vias", r.signal_vias},
+                        {"stitched_before", r.stitched_before}, {"stitched_after", now}, {"unstitched_before", r.signal_vias - r.stitched_before},
+                        {"unstitched_after", r.signal_vias - now}});
+        log(fmt("  return path %s over %s (%s, within %s mm): %d vias, %d stitched before, %d after", sig.c_str(), pl.c_str(), r.source.c_str(),
+                mm(r.distance).c_str(), r.signal_vias, r.stitched_before, now));
+      }
+      if (stitch_return && sr.returns.empty()) log("  stitching: no net needs a reference plane (component rules of kind reference_plane, or --stitch-return)");
+      log(fmt("stitch vias: %d plane, %d return-path; %d grid sites in overlapping fills (%d already tied, %d blocked), %d dropped after the refill, "
+              "%ld checks%s%s",
+              grid, ret, sr.sites, sr.site_served, sr.site_blocked, sr.dropped, sr.checks, sr.out_of_work ? " (work budget used up)" : "",
+              sr.discarded ? "; withdrawn: the refill with the vias cut a fill"
+              : !sr.vias.empty() && !kept ? fmt("; discarded: %d items unconnected with them, %d without", after, before).c_str() : ""));
+      stitch_summary = {{"plane_vias", grid}, {"return_path_vias", ret}, {"sites", sr.sites}, {"sites_already_tied", sr.site_served},
+                        {"sites_blocked", sr.site_blocked}, {"dropped", sr.dropped}, {"checks", sr.checks}, {"out_of_work", sr.out_of_work},
+                        {"kept", kept}, {"pitch_mm", nm_to_mm(so.pitch)}, {"nets", nets}, {"return_paths", rets}};
+      if (kept) {
+        for (std::size_t i = 0; i < sr.vias.size(); ++i) {
+          // Ids above the router's own, so the viewer shows the vias without replacing anything.
+          if (opt.sink) opt.sink->publish(server::via_add(static_cast<server::ObjectId>(1'000'000'000 + i), sr.vias[i]));
+          res.vias.push_back(sr.vias[i]);
+        }
+        if (unconnected_after_refill >= 0) out.unconnected_after_refill = unconnected_after_refill = after;
+      }
+      if (opt.sink) opt.sink->publish(server::stage("stitch", "end", fmt("%d vias added", grid + ret)));
+    }
+  }
   if (!job.out.empty()) {
     io::BoardEditor ed(lb, opt.seed);
     for (const auto& t : res.tracks) ed.add_track(t);
@@ -501,6 +712,10 @@ RouteJobResult run_route_job(RouteJob job) {
     out.summary["unconnected_after_refill"] = unconnected_after_refill;
   }
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
+  if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
+  if (!stitch_summary.is_null()) out.summary["stitch"] = stitch_summary;
+  // Style metric of the new copper (doc 05 §39.2): measured only, never fed back into routing.
+  out.summary["style"] = passes::style_json(lb.board, passes::measure_style(lb.board, res.tracks, {}, res.vias));
   out.summary["work"] = work_json(res.work);
   out.summary["work_all_variants"] = work_json(all_work);
   // Differential pairs (doc 05 §15): how each wanted pair came out, measured on the new copper (only when pairs are on).
