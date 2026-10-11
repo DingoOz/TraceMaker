@@ -333,6 +333,32 @@ TEST_CASE("widen: a neck-down goes back to the class width, never beyond", "[pas
   CHECK(r.out_of_work);
 }
 
+TEST_CASE("widen: a custom rule's maximum track width caps the widening", "[passes][widen]") {
+  // (rule back_max (layer "B.Cu") (constraint track_width (max 0.45mm))): the F.Cu track takes the target, the
+  // B.Cu track stops at the rule's maximum, and the DRC agrees with both.
+  auto l = load("maxw", board_text(""));
+  model::CustomRule rule;
+  rule.name = "back_max";
+  rule.layer = "B.Cu";
+  model::Constraint c;
+  c.type = "track_width";
+  c.max = 450'000;
+  rule.constraints.push_back(c);
+  l.rules.custom.push_back(rule);
+  std::vector<model::Track> t = {track(pt(5, 5), pt(25, 5), 3, 250'000, 0), track(pt(5, 15), pt(25, 15), 3, 250'000, 1)};
+  passes::WidenOptions o;
+  o.targets = {{3, 800'000, "option"}};
+  const auto r = passes::widen_tracks(l.board, l.rules, t, {}, o);
+  CHECK(t[0].width == 800'000);
+  CHECK(t[1].width == 450'000);
+  CHECK(r.widened == 2);
+  model::Board b = l.board;
+  b.tracks.insert(b.tracks.end(), t.begin(), t.end());
+  CHECK(errors(b, l.rules) == 0);
+  b.tracks.back().width = 451'000;  // the DRC reports a track above the maximum
+  CHECK(errors(b, l.rules) == 1);
+}
+
 // ---------------------------------------------------------------------------------------------- stitching vias
 
 namespace {

@@ -1502,7 +1502,9 @@ before and after (`before_mm_by_width`, `after_mm_by_width`); in total the check
 kept.
 
 **Limits.** One width per track as the router cut it: a long track with one tight spot stays narrow along its
-whole length (splitting a track at the obstacle is not done). Tracks are not moved to make room. Inner-layer
+whole length (splitting a track at the obstacle is not done). Tracks are not moved to make room. A custom rule's
+maximum `track_width` caps what this pass does (`RuleEngine::track_width` returns it, and the in-engine DRC reports
+tracks above it); the router itself still routes at the class width where such a rule asks for less. Inner-layer
 widths from IPC-2221 (wider than outer) are reported by the component rules but the pass uses the one width a net
 class holds. With `--soft-zones` the widened tracks are judged like the routing itself, after a refill.
 
