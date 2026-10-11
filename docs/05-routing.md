@@ -1456,9 +1456,10 @@ Three things that happen after routing has finished. Each is its own small modul
 style metric only measures), deterministic, and count their work in exact checks with a budget (`--pass-work`,
 default 2 M per pass; wall time does not stop them). The two that change copper do it through the router's own
 obstacle model (`route::Obstacles`, the check the router commits with), touch only copper of this run, and are
-transactions (rule 4): the job counts unconnected items with and without the pass's result (after an in-engine
-refill when fills are soft or vias were added) and drops the result if the count went up. Without the options the
-routed board is byte-identical to before.
+transactions (rule 4): the job counts unconnected items per net with and without the pass's result (after an
+in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
+(per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
+board is byte-identical to before.
 
 ### 39.1 Power track widening (`--widen-power`)
 
@@ -1619,7 +1620,7 @@ redraw them).
    two layers (KiCad joins a via to its net's zone solidly, without thermal relief). If a zone of another net has
    more pieces than before, the whole pass is withdrawn. A stitched net's own zone may gain a piece: an island the
    refill used to drop, now tied to its net by a via.
-4. The job's transaction: unconnected items after a refill, with and without the vias.
+4. The job's transaction: unconnected items per net after a refill, with and without the vias.
 
 The vias are written with `(free yes)`, so KiCad keeps their net although no track touches them.
 

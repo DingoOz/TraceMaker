@@ -546,6 +546,8 @@ RouteJobResult run_route_job(RouteJob job) {
   // number went up.
   nlohmann::json widen_summary, stitch_summary;
   {
+    // Unconnected items per net (keyed by the report's text, which names the net), and all of them under "".
+    using Unconnected = std::map<std::string, int>;
     auto judge = [&](const std::vector<model::Track>& tracks, const std::vector<model::Via>& vias, bool refill) {
       model::Board bd = *route_board;
       bd.tracks.insert(bd.tracks.end(), tracks.begin(), tracks.end());
@@ -553,7 +555,20 @@ RouteJobResult run_route_job(RouteJob job) {
       drc::DrcOptions d;
       d.connectivity_only = true;
       d.dangling = false;
-      return static_cast<int>(drc::run_drc(refill ? drc::refill_zones(bd, rules).board : bd, rules, d).unconnected.size());
+      Unconnected n;
+      n[""] = 0;
+      for (const auto& v : drc::run_drc(refill ? drc::refill_zones(bd, rules).board : bd, rules, d).unconnected) ++n[v.description], ++n[""];
+      return n;
+    };
+    // No net may have more unconnected items with a pass's result than without it. The total alone would let a
+    // connection the pass made in one net (a stitching via that ties a loose piece of its plane) hide one it broke
+    // in another.
+    auto no_worse = [](const Unconnected& without, const Unconnected& with) {
+      for (const auto& [net, n] : with) {
+        const auto it = without.find(net);
+        if (n > (it == without.end() ? 0 : it->second)) return false;
+      }
+      return true;
     };
     auto mm = [](Coord v) { return fmt("%.3f", nm_to_mm(v)); };
     if (job.widen_power) {
@@ -574,9 +589,10 @@ RouteJobResult run_route_job(RouteJob job) {
       bool kept = wr.widened > 0;
       int before = -1, after = -1;
       if (kept) {
-        before = judge(res.tracks, res.vias, opt.soft_zones);
-        after = judge(widened, res.vias, opt.soft_zones);
-        kept = after <= before;
+        const auto without = judge(res.tracks, res.vias, opt.soft_zones), with = judge(widened, res.vias, opt.soft_zones);
+        before = without.at("");
+        after = with.at("");
+        kept = no_worse(without, with);
       }
       nlohmann::json nets = nlohmann::json::array();
       Coord total = 0;
@@ -602,7 +618,7 @@ RouteJobResult run_route_job(RouteJob job) {
       }
       log(fmt("widen power: %d tracks of %zu nets widened, %.2f mm, %ld checks%s%s", wr.widened, wr.nets.size(), nm_to_mm(total), wr.checks,
               wr.out_of_work ? " (work budget used up)" : "",
-              wr.widened > 0 && !kept ? fmt("; discarded: %d items unconnected with it, %d without", after, before).c_str() : ""));
+              wr.widened > 0 && !kept ? fmt("; discarded: a net has more unconnected items with it (%d in all, %d without)", after, before).c_str() : ""));
       widen_summary = {{"tracks_widened", kept ? wr.widened : 0}, {"widened_mm", kept ? nm_to_mm(total) : 0.0}, {"checks", wr.checks},
                        {"out_of_work", wr.out_of_work}, {"kept", kept}, {"nets", nets}};
       if (kept) {
@@ -628,9 +644,10 @@ RouteJobResult run_route_job(RouteJob job) {
       if (kept) {
         auto with = res.vias;
         with.insert(with.end(), sr.vias.begin(), sr.vias.end());
-        before = judge(res.tracks, res.vias, true);
-        after = judge(res.tracks, with, true);
-        kept = after <= before;
+        const auto without = judge(res.tracks, res.vias, true), with_vias = judge(res.tracks, with, true);
+        before = without.at("");
+        after = with_vias.at("");
+        kept = no_worse(without, with_vias);
       }
       std::map<model::NetId, std::pair<int, int>> per_net;  // net -> (grid vias, return-path vias)
       for (std::size_t i = 0; i < sr.vias.size() && kept; ++i) ++(sr.return_path[i] ? per_net[sr.vias[i].net].second : per_net[sr.vias[i].net].first);
@@ -658,7 +675,7 @@ RouteJobResult run_route_job(RouteJob job) {
               "%ld checks%s%s",
               grid, ret, sr.sites, sr.site_served, sr.site_blocked, sr.dropped, sr.checks, sr.out_of_work ? " (work budget used up)" : "",
               sr.discarded ? "; withdrawn: the refill with the vias cut a fill"
-              : !sr.vias.empty() && !kept ? fmt("; discarded: %d items unconnected with them, %d without", after, before).c_str() : ""));
+              : !sr.vias.empty() && !kept ? fmt("; discarded: a net has more unconnected items with them (%d in all, %d without)", after, before).c_str() : ""));
       stitch_summary = {{"plane_vias", grid}, {"return_path_vias", ret}, {"sites", sr.sites}, {"sites_already_tied", sr.site_served},
                         {"sites_blocked", sr.site_blocked}, {"dropped", sr.dropped}, {"checks", sr.checks}, {"out_of_work", sr.out_of_work},
                         {"kept", kept}, {"pitch_mm", nm_to_mm(so.pitch)}, {"nets", nets}, {"return_paths", rets}};
