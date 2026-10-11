@@ -1511,9 +1511,10 @@ class holds. With `--soft-zones` the widened tracks are judged like the routing 
 
 ### 39.2 Style metric
 
-How tidy the copper is. It only measures: nothing in the router or the clean-up optimises it yet. Everything is
-integer arithmetic on nanometres (lengths rounded to the nanometre per segment, angles by cross and dot products),
-so the numbers are the same at every thread count and on every machine.
+How tidy the copper is. It only measures: nothing in the router or the clean-up optimises it yet. Counts and
+angles are integer arithmetic on nanometres (cross and dot products); lengths are each segment's `hypot` rounded
+to the nanometre and summed as integers. Nothing depends on the order of the input or on threads, so the numbers
+are the same at every thread count.
 
 A **connection** is copper of one net between two ends; an end is a pad of the net, a junction (three or more
 track ends, or a track end on the middle of another track) or a loose end. A via with exactly two track ends is
@@ -1638,7 +1639,15 @@ is the pass's main cost on boards with large fills. Fill outlines contain the ze
 to the outline (§36), and a site on such a bridge is refused although the copper is solid there. Signal vias in
 dense areas often have no legal site nearby and stay unstitched. Return-path sites are not chosen for the
 smallest loop beyond "nearest ring first". The written board keeps its old fills, as with `--soft-zones`: refill
-before fabrication output.
+before fabrication output. Every via through another net's plane takes its knock-out out of that plane: at a
+tight pitch that adds up (a 1 mm grid took 11 % of the +3.3 V plane of kit-dev-coldfire-xilinx_5213), and nothing
+limits it but the pitch. A stitching via beside a teardrop of another net is legal against the pad and the track;
+KiCad's refill then cuts the teardrop back around the via (measured on a generated board: no DRC item, the
+teardrop's fill 6 to 12 % smaller).
+
+**Status of return-path stitching.** The explicit form (`--stitch-return`) is tested like plane stitching. The
+form driven by `reference_plane` rules shares all of its placement code, but on real boards it has placed one via
+so far (see §39.4): treat it as experimental until a board set with unstitched high-speed vias exists.
 
 ### 39.4 Gates and tests
 
@@ -1700,15 +1709,44 @@ and 1.5 mm the unstitched vias on StickHub (2 at 1.5 mm), CM5_MINIMA_3 (4 at 1.5
 (2) have no legal site that close and stay unstitched; KiCad's reports are unchanged. That one via is all the
 evidence there is for the rule-driven path on real boards.
 
+**Second sample (review of the passes, same day, same judge; unconnected counts and violation counts per type
+and severity compared).**
+
+- Widening: 48 other PCBench boards (drawn with another seed from those under 500 kB, none from `quick` or the
+  16 above), 1 M work, targets of 0.5 to 0.8 mm for supply-like names: 40 boards widened, 3,466 tracks,
+  5,852.2 mm; nothing added, unconnected equal on all.
+- Widening under custom rules: ten `quick` boards with a generated `.kicad_dru` (a wider clearance for tracks of
+  0.4 mm and more, `track_width (max 0.45mm)` on B.Cu, `disallow track` above 0.7 mm), 0.8 mm targets: 865
+  tracks widened, nothing added. Before `RuleEngine::track_width` returned a rule's maximum, the same run added
+  96 `track_width` errors on eight of the boards.
+- Plane stitching on the designers' own routing (the unstripped demo boards, where the pass only adds vias), at
+  2 mm and 1 mm pitch: kit-dev-coldfire-xilinx_5213 251 and 491 vias, One-Air-Max 106 and 276, tinytapeout-demo
+  229 and 465, CM5_MINIMA_3 6 and 12, RoyalBlue54L-Feather 6 and 7; nothing added, unconnected equal. Fill
+  pieces per net and layer after KiCad's refill change only for the stitched nets (islands now tied), and other
+  nets' planes lose the holes only (kit-dev at 1 mm: +3.3 V on In2.Cu, one piece before and after, 10,757.8 to
+  9,536.1 mm²).
+- The two largest demo boards, with their own `.kicad_dru`, designers' routing: jetson-agx-thor-baseboard
+  (10 layers) 8 vias at 5.08 mm and 34 at 2 mm, vme-wren (12 layers, one hatched zone) 16 and 194; nothing added
+  (222 and 446 items before and after), unconnected 0 → 0. KiCad's `length_out_of_range` figures on vme-wren
+  differ by some hundredths of a millimetre between two runs on the same file, so those items are compared by
+  count.
+- Return-path stitching with `--stitch-return '*=GND' --stitch-distance 1.5` on the same designers' boards and
+  StickHub: 103 vias added over six boards (79 on tinytapeout-demo, 19 on One-Air-Max), nothing added.
+  `--component-rules report --stitch-vias return --stitch-distance 2`: six bound vias without a GND via in
+  reach (One-Air-Max 2, CM5_MINIMA_3 4), none with a legal site, no via added.
+- Stripped boards routed with `--soft-zones` at 3 M work, then all passes together (2 mm pitch, `'*=GND'`,
+  0.5 mm targets), six boards: nothing added, unconnected equal.
+
 **Shared.** `quick`, 1 M work, `--variants 1 --no-gpu`, no new option: all 30 routed boards byte-identical to the
 baseline binary of unmodified main (`compare_runs.py --expect-identical`, the baseline run made before the style
 metric existed compares without errors); `summary.json` carries `style`, `style_ref` and `style_same_boards`.
 
-Tests: `tests/test_passes.cpp` (18 cases: each style pattern on hand-made polylines, order independence; a
+Tests: `tests/test_passes.cpp` (21 cases: each style pattern on hand-made polylines, order independence; a
 channel that fits 0.8 mm but not 1.2 mm, a track with no room, a junction, a via limit, locked tracks, pairs,
-neck-down restored, the work budget; the expected grid in a two-layer overlap, an obstacle and a keep-out removing
-exactly their sites, a site inside another net's clearance, a via through the middle of another net's plane but
-not its edge, nothing without overlapping fills, return-path vias) and the ctest `after_route_passes`
+neck-down restored, the work budget, a custom rule's maximum width; the expected grid in a two-layer overlap, an
+obstacle and a keep-out removing exactly their sites, a site inside another net's clearance, a via through the
+middle of another net's plane but not its edge, holes through a plane with a wide minimum width, the margin from
+copper text, nothing without overlapping fills, return-path vias) and the ctest `after_route_passes`
 (`tests/integration/after_route_passes.py`: the three passes through the command line on generated boards, style
 equal at 1 and 3 threads and equal to `tracemaker style`, KiCad's verdict on the stitched board when kicad-cli is
 there).
