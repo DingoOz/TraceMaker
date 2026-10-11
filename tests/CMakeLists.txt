@@ -2,7 +2,7 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_bus.cpp test_passes.cpp)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_bus.cpp test_passes.cpp test_srj.cpp)
 target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
@@ -74,3 +74,7 @@ set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 180
 # generated boards; KiCad's DRC judges the stitched board when kicad-cli is on the PATH.
 add_test(NAME after_route_passes COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/after_route_passes.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/after_route_passes)
 set_tests_properties(after_route_passes PROPERTIES LABELS "route;integration" TIMEOUT 900)
+# Simple Route JSON (doc 08 §9): import a hand-made problem, route it, export the traces; every trace point on routed
+# copper, every connection routed or reported; byte-identical conversion; KiCad's ratsnest when kicad-cli is there.
+add_test(NAME srj_roundtrip COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/srj_roundtrip.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/srj_roundtrip)
+set_tests_properties(srj_roundtrip PROPERTIES LABELS "route;integration" TIMEOUT 600)

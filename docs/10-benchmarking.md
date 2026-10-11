@@ -14,6 +14,7 @@
 | **PCBWorld** | LGAI-Research/PCBWorld (BSD-3 code) | 679 real boards + 2 synthetic generators | kicad_pcb | Comparison with PCBWorld's published baselines (KiCad PNS, OrthoRoute, RL) |
 | **RL_PCB** | LukeVassallo/RL_PCB (MIT) | small circuits | kicad_pcb | Placement comparison with a learned placer |
 | **Place-and-route set** (own) | KiCad demos + PCBench boards with routing stripped and footprints scattered | built by script | kicad_pcb | Full schematic-to-routed-board evaluation |
+| **tscircuit SRJ19 / SRJ20** | github.com/tscircuit `dataset-srj19` (MIT), `dataset-srj20` (no licence file) | 2 × 200 synthetic BGA breakout problems, two layers | Simple Route JSON, converted to kicad_pcb | Dense-package escape with a public reference figure (§7) |
 | **Synthetic stress** (own) | generated: BGA fanout grids, dense buses, crossing lattices | parameterised | kicad_pcb | Unit benchmarks for escape, global routing and GPU kernels |
 
 Licences differ per set; the harness downloads sets into `bench/data/` (git-ignored) from their sources
@@ -160,3 +161,126 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
   this 14-core Mac, or a slow-down that left their output alone: one pair cannot tell);
   only sbc (+41 %) and kitspace_d20 (+24 %) moved beyond it. A 10 % threshold
   alone would have flagged seven boards. Single CPU-time comparisons of under about 15 % are not evidence here.
+
+## 7. tscircuit BGA breakouts: sets `srj19` and `srj20` (D90, measured 2026-10-11)
+
+The dense-package work (M9) had no public reference figure. tscircuit publishes 400 synthetic BGA breakout
+problems in Simple Route JSON and a dashboard with its own router's results on them, so these two sets give one.
+The format support is doc 08 §9.
+
+**Data.** Fetched into `bench/data/tscircuit/` at pinned commits by `scripts/fetch_fixtures.sh tscircuit`, never
+copied into this repository:
+
+| Set | Source | Commit | Licence | Problems |
+|---|---|---|---|---|
+| `srj19` | github.com/tscircuit/dataset-srj19 (BGA breakouts with passive components on the other side) | `c1206f3` | MIT | 200, two layers, 11–87 connections (7,395), 0.15 mm traces, vias 0.3 / 0.2 mm |
+| `srj20` | github.com/tscircuit/dataset-srj20 (BGAs with missing balls) | `9384fb8` | none stated (no licence file, none in `package.json`): local benchmarking only | 200, two layers, 11–108 connections (8,715), 0.12 mm traces, no via size given |
+
+Both use a 0.8 mm ball pitch with 0.36 mm square pads, every connection has two points, and neither states a
+clearance, a board-edge rule or blind vias.
+
+**Conversion.** `bench/prepare_srj.py` (run by the fetch step once the engine is built) converts every problem
+with `tracemaker srj-import --clearance-mm 0.1 --hole-to-hole-mm 0.1` into
+`bench/data/tscircuit/boards/<set>/<sample>/unrouted.kicad_pcb` with its project. The two distances are those of
+tscircuit's published pass criterion (below), so KiCad's judge and theirs test the same thing; the importer's own
+default (0.15 mm, tscircuit's router fallback, and no hole rule) is reported as a variant. Via size for `srj20` is
+tscircuit's fallback (0.3 / 0.15 mm). The script checks every board by counting: connections in the problem =
+ratsnest the board implies = connections `tracemaker route` reports. All 400 convert and all 400 pass.
+`bench/sets/srj19.txt` and `srj20.txt` name the fixture directory in a `#fixtures:` line, which `bench/run.py`
+now reads, so the sets run by name.
+
+**Judges.** The primary judge is unchanged: KiCad's DRC with the board's rules; a board is a clean pass when
+nothing is unconnected and no error involving a track or via was added. The second score is tscircuit's own.
+`bench/srj_score.py` exports every routed board with `tracemaker srj-export` and runs tscircuit's
+`evaluateRelaxedDrc` on it: the function behind the "relaxed DRC" column of its dashboard, from
+tscircuit-autorouter `5bcf774` (`lib/testing/`) with `@tscircuit/checks` 0.0.233, called as its benchmark calls it
+(`scripts/benchmark/benchmark-run-task.ts`): 0.1 mm between copper of different nets, 0.1 mm between via holes
+(same net included), traces continuous and inside the board. `scripts/fetch_fixtures.sh tscircuit-checker`
+installs it (node, packages pinned to the versions that repository names). A board passes when every connection
+is routed and the checker reports nothing. The checker was not re-implemented.
+
+tscircuit's dashboard counts boards: "completed" is the share of problems its router solved outright, comparable
+with *fully routed* below and not with mean completion; "relaxed DRC pass" is the share solved with no checker
+error. Its figures, read on 2026-10-10 for its router at 1× effort: `srj19` 91.5 % completed, 89.5 % passing;
+`srj20` 77 % and 77 %. They were not reproduced here: tscircuit's router was not run on this machine, and its run
+time per problem is not known to us.
+
+**Results.** `python3 bench/run.py --set <set> --work <N> --jobs 12 --threads 1 --route-args "--variants 1
+--no-gpu"`, then `python3 bench/srj_score.py <run>`. All 200 boards of each set, defaults otherwise.
+
+| Set | Work | Mean completion | Fully routed | Clean pass (KiCad) | Relaxed pass (tscircuit's checker) | Median s | p95 s |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| srj19 | 1 M | 75.7 % | 23.0 % | 23.0 % | 23.0 % | 1.5 | 2.2 |
+| srj19 | 10 M | 92.5 % | 60.5 % | 60.5 % | 60.0 % | 9.2 | 14.1 |
+| srj19 | 50 M | 96.7 % | 79.5 % | 79.5 % | 78.5 % | 34.2 | 50.2 |
+| srj19, tscircuit's router (its dashboard) | | | 91.5 % | | 89.5 % | | |
+| srj20 | 1 M | 53.1 % | 9.5 % | 9.5 % | 9.5 % | 1.4 | 1.9 |
+| srj20 | 10 M | 81.3 % | 33.5 % | 33.5 % | 33.5 % | 9.1 | 10.9 |
+| srj20 | 50 M | 87.6 % | 50.0 % | 50.0 % | 50.0 % | 40.9 | 51.9 |
+| srj20, tscircuit's router (its dashboard) | | | 77 % | | 77 % | | |
+
+10 M is the sets' standard budget (the trend rows show how much the figure depends on it). Seconds are the
+route's own wall time on one thread with twelve boards running at once on a machine shared with other jobs:
+indicative only.
+
+- TraceMaker is behind tscircuit's router on both sets at every budget tried: by 12 points of fully routed
+  boards on `srj19` and 27 on `srj20` at 50 M.
+- No run added a KiCad DRC error on any board (26 runs, 2,500 board routes): every fully routed board is a clean
+  pass. What is missing is completion.
+- KiCad and tscircuit's checker agree except on 1 board at 10 M and 2 at 50 M (`srj19`), which KiCad passes and
+  the checker fails with "overlaps … (accidental contact)" between two traces. An independent distance
+  calculation on the exported traces puts the copper of each reported pair at least 0.21 mm apart. The checker
+  (`checkEachPcbTraceNonOverlapping`) also reports two separate collinear segments of different nets as touching
+  at some spacings (reproduced with two-segment inputs), which a lattice router's output contains. The relaxed
+  column is the checker's verdict as it is.
+- TraceMaker's own count of routed connections is sometimes one lower than KiCad's (it joins tracks at their end
+  points; KiCad 10 also joins copper that overlaps). The harness uses KiCad's count, and the export follows
+  KiCad's rule; the two agreed on every board.
+
+**Budget and portfolio**, first 50 problems of each set (fully routed = clean pass in every row):
+
+| | srj19 | srj20 |
+|---|--:|--:|
+| 1 M, one variant | 22 % | 8 % |
+| 10 M, one variant | 66 % | 34 % |
+| 50 M, one variant | 88 % | 46 % |
+| 200 M, one variant | 88 % (median 30 s, p95 172 s) | 56 % (median 151 s, p95 195 s) |
+| 10 M, default portfolio (8 variants, each with the whole budget) | 88 % (median 143 s on one thread) | 48 % (median 135 s) |
+
+`srj19` stops improving between 50 M and 200 M; `srj20` is still rising. The default portfolio at 10 M does as
+well as one variant at 50 M for more total work.
+
+**Escape options**, 10 M, one variant, first 50 problems:
+
+| Option | srj19 fully routed (mean completion) | srj20 fully routed (mean completion) |
+|---|--:|--:|
+| none | 66 % (92.4 %) | 34 % (82.4 %) |
+| `--escape-plan` | 60 % (93.0 %) | 32 % (81.4 %) |
+| `--escape-flow` | 60 % (92.2 %) | 28 % (79.1 %) |
+| `--escape-plan --via-in-pad` | 60 % (93.0 %) | 32 % (81.4 %) |
+| `--via-in-pad` | byte-identical to none, 50/50 boards | byte-identical, 50/50 |
+| `--blind-vias`, `--micro-vias` | byte-identical to none, 50/50 | byte-identical, 50/50 |
+
+None helps. The escape plans route a few more connections on `srj19` but finish fewer boards on both sets. The
+problems allow neither blind nor micro vias, so those two options correctly do nothing. `--via-in-pad` (which the
+problems do not allow either: `allowViaInPad` is absent) changes no board, also not at 0.15 mm clearance where
+`tracemaker escape` reports dead balls; why it finds no pad to use was not investigated. The router was not
+tuned in this work.
+
+**Stricter variant**: the importer's defaults (`bench/prepare_srj.py --clearance-mm default --hole-to-hole-mm
+default`: 0.15 mm clearance, no hole-to-hole rule), 10 M, one variant, all 200 boards.
+
+| Set | Mean completion | Fully routed = clean pass | Relaxed pass |
+|---|--:|--:|--:|
+| srj19 | 81.8 % | 14.5 % | 10.0 % |
+| srj20 | 78.2 % | 29.0 % | 29.0 % |
+
+At 0.15 mm a 0.15 mm trace does not fit between two balls of `srj19` (0.44 mm gap), so inner balls can leave
+only through vias; `srj20`'s 0.12 mm traces still fit. The 9 `srj19` boards that are clean in KiCad and fail the
+relaxed check have vias of one net closer than 0.1 mm hole to hole, which KiCad does not test without a
+hole-to-hole rule: the reason the benchmark sets carry that rule.
+
+**Limits of the comparison.** The judges differ (KiCad's DRC against tscircuit's checker; here they agree to
+within 1 % of boards). The rules are an interpretation where the files are silent (clearance, hole spacing, via
+size for `srj20`; no board-edge clearance, which tscircuit's relaxed check does not apply either). The budgets are not matched to
+tscircuit's effort setting. The problems are synthetic and two-layer only.
