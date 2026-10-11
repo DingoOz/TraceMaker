@@ -2,7 +2,7 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_bus.cpp)
 target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
@@ -65,3 +65,8 @@ set_tests_properties(route_rule_warnings PROPERTIES LABELS "route;integration" T
 # Frozen KiCad 10 custom-rule item/pair multisets (expected.json names the judging version); normal runs do not require KiCad.
 add_test(NAME rule_parity COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/rule_parity/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/rule_parity)
 set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 300)
+# Buses (doc 05 §38, D91): generated boards routed lane by lane, judged by `tracemaker buses` on the written files
+# (members routed, equal vias, skew within the limit from an option or a .kicad_dru rule), and a bus run at 1, 2 and
+# 4 threads giving identical bytes. Needs no fixtures and no KiCad.
+add_test(NAME bus_route COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/bus_route.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/bus_route)
+set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 1800 PROCESSORS 4)

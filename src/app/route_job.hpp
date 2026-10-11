@@ -7,6 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "route/bus.hpp"
 #include "route/router.hpp"
 
 namespace tmk::app {
@@ -41,6 +42,11 @@ struct RouteJob {
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;
   std::vector<std::string> layer_costs;
+  // Buses (doc 05 §38): "NAME=PATTERN" groups (--bus), automatic detection (--buses) and the skew limit of the
+  // command-line groups in mm (--bus-skew-mm; 0 = none). A custom skew rule of the board wins over the option.
+  std::vector<std::string> buses;
+  bool detect_buses = false;
+  double bus_skew_mm = 0;
   // Progress lines (the CLI's stdout text, one line per call, no trailing newline). Empty = silent.
   std::function<void(const std::string&)> log;
 };
@@ -58,6 +64,15 @@ struct RouteJobResult {
 // Reads the board and its rules, routes (a portfolio when more than one variant runs), writes the requested outputs.
 // Throws std::exception on unreadable input.
 RouteJobResult run_route_job(RouteJob job);
+
+// Buses (doc 05 §38): the groups `specs` ("NAME=PATTERN") name on the board, then, with `detect`, the groups found in
+// the net names that share no net with an earlier group. Each group gets the skew limit of the board's custom
+// rules, else, for groups from `specs`, `skew_mm` (0 = none). `notes` receives warnings. Throws on a bad spec.
+std::vector<route::BusGroup> resolve_buses(const model::Board& b, const model::DesignRules& rules, const std::vector<std::string>& specs,
+                                           bool detect, double skew_mm, std::vector<std::string>* notes = nullptr);
+// A group measured on the copper of `b` (`joined`: route::nets_joined of the same board), as the JSON object of the
+// route summary's `buses` array and of `tracemaker buses --json`; `line`, if given, gets the one-line text form.
+nlohmann::json bus_report(const model::Board& b, const std::vector<std::uint8_t>& joined, const route::BusGroup& g, std::string* line = nullptr);
 
 // The GPU device used for cost-to-go fields: the first listed device, or -1 (none, or `use_gpu` false).
 int default_gpu_device(bool use_gpu);

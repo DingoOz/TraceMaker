@@ -274,6 +274,35 @@ int cmd_pairs(const std::string& path, const std::vector<std::string>& extra, co
   return 0;
 }
 
+// Buses of a routed board (doc 05 §38): per group the members routed, their vias, layers and lengths, and the skew
+// against the limit. Groups as in `route`: --bus NAME=PATTERN, --buses for detection, --bus-skew-mm.
+int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bool detect, double skew_mm, const std::string& json_path) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  std::vector<std::string> notes;
+  const auto groups = tmk::app::resolve_buses(lb.board, rules, specs, detect, skew_mm, &notes);
+  for (const auto& n : notes) std::printf("%s\n", n.c_str());
+  const auto joined = tmk::route::nets_joined(lb.board, rules);
+  nlohmann::json j = nlohmann::json::array();
+  bool ok = true;
+  for (const auto& g : groups) {
+    std::string line;
+    j.push_back(tmk::app::bus_report(lb.board, joined, g, &line));
+    std::printf("%s\n", line.c_str());
+    std::printf("  %-28s %7s %9s %5s  %s\n", "net", "routed", "len_mm", "vias", "layers");
+    for (const auto& m : j.back()["members"]) {
+      std::string layers;
+      for (const auto& l : m["layers"]) layers += (layers.empty() ? "" : " ") + l.get<std::string>();
+      std::printf("  %-28s %7s %9.3f %5d  %s%s\n", m["net"].get<std::string>().c_str(), m["routed"].get<bool>() ? "yes" : "no", m["length_mm"].get<double>(),
+                  m["vias"].get<int>(), layers.c_str(), m["routed"].get<bool>() && !m["followed"].get<bool>() ? "  (left the bus)" : "");
+    }
+    if (j.back()["within_skew"].is_boolean() && !j.back()["within_skew"].get<bool>()) ok = false;
+  }
+  if (groups.empty()) std::printf("no buses\n");
+  if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"buses", j}}.dump(1) << "\n";
+  return ok ? 0 : 4;  // 4: a group with a skew limit is over it or not completely routed
+}
+
 int cmd_escape(const std::string& path, const std::string& json_path, bool flow, bool soft_zones, double vias_off_pads_below_mm) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
@@ -523,7 +552,14 @@ int main(int argc, char** argv) {
   route->add_flag("--via-in-pad", ropt.via_in_pad, "Inner balls / enclosed SMD pads may take a minimum-size via in the pad (needs filled, capped vias)");
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
+  tmk::app::RouteJob r_job;
   route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
+  route->add_option("--bus", r_job.buses,
+                    "Route these nets as a bus, NAME=PATTERN (repeatable): lane by lane on the same layers, e.g. 'DATA=/D[0-7]' or 'LCD=/LCD_*'. "
+                    "PATTERN matches whole net names: * and ? as in net-class patterns, [N-M] a number in that range (doc 05 §38)");
+  route->add_flag("--buses", r_job.detect_buses, "Also find buses in the net names: nets differing only in a trailing index, four or more between the same two components");
+  route->add_flag("--bus-first", ropt.bus_first, "Route the buses before everything else (default: each bus where the router's order puts its first connection)");
+  route->add_option("--bus-skew-mm", r_job.bus_skew_mm, "Length-match the --bus groups: meanders until their track lengths differ by at most this (0 = only the board's custom skew rules)");
   route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
   int r_threads = 8;
   std::string r_kb = tmk::learn::KnowledgeBase::default_path();
@@ -537,7 +573,6 @@ int main(int argc, char** argv) {
   route->add_option("--variants", r_variants,
                     "Portfolio size (1 = single router; default: all with --work, else --threads); the output never depends on --threads "
                     "with --work. --time applies to each variant from its start");
-  tmk::app::RouteJob r_job;
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
@@ -573,6 +608,16 @@ int main(int argc, char** argv) {
   pairs_cmd->add_option("board", pr_board)->required()->check(CLI::ExistingFile);
   pairs_cmd->add_option("--pair", pr_extra, "Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM");
   pairs_cmd->add_option("--json", pr_json, "Write the measurements as JSON");
+  auto* buses_cmd = app.add_subcommand("buses", "Buses of a routed board: members routed, vias and layers per member, lengths and skew (exit 4 when a limit is missed)");
+  std::string bu_board, bu_json;
+  std::vector<std::string> bu_specs;
+  bool bu_detect = false;
+  double bu_skew = 0;
+  buses_cmd->add_option("board", bu_board)->required()->check(CLI::ExistingFile);
+  buses_cmd->add_option("--bus", bu_specs, "A bus as NAME=PATTERN (repeatable), as in route");
+  buses_cmd->add_flag("--buses", bu_detect, "Also find buses in the net names, as in route");
+  buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
+  buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -618,6 +663,7 @@ int main(int argc, char** argv) {
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
+    if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);

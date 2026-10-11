@@ -161,6 +161,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
 | Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Version 2 (2026-10-05): min-cost-flow channel and layer assignment for deep arrays, opt-in (`--escape-flow`), measured below version 1. Not built: NC fallback, escape templates. See §12, §14 | `route/escape.{hpp,cpp}`, `router.cpp` |
 | Differential pairs (version 2, M12): coupled pair search with coupled vias, breakout/fan-in legs, re-coupling after rip-up, enclosed-pin check; length tuning (custom `length` rules) and skew tuning (custom `skew` rules, `--pair-skew-mm`) | Done, opt-in (`--diff-pairs`, D50). Not built: pair twists, pairs ending on routed copper, pair-aware global routing. See §15 | `route/router.cpp` (`route_pair`, `tune_skew`), `route/diff_pair.{hpp,cpp}` |
+| Buses (2026-10-11): groups by `--bus NAME=PATTERN` or detection (`--buses`), lanes routed one after the other along the neighbour on the same layers, nets outside do not rip them, skew matching by meanders from a custom `skew` rule or `--bus-skew-mm`; `tracemaker buses` measures | Done, opt-in (D91). See §38 | `route/bus.cpp`, `order_buses`, `route_bus_lane`, `tune_bus_skew` |
 
 ## 12. Escape planning, version 1 (M9, 2026-10-04)
 
@@ -1317,3 +1318,128 @@ xilinx), and tracks ending in a deleted teardrop (complex_hierarchy, RoyalBlue; 
   judging).
 - The repair is one pass with the first pass's work budget and the rest of the time limit (none when the first
   pass used it up); no portfolio variant is chosen by its count after the refill.
+
+## 38. Buses (2026-10-11, D91)
+
+**Before.** The router knew pairs (§15) and single nets with a length rule, but not a group of nets that belong
+together: a data or address bus, a parallel display interface. Its members were routed wherever the order put
+them, each by its own cheapest path, so one took a via its neighbour did not need, one went round the other side of
+a mounting hole, and their lengths differed by millimetres.
+
+**What was built** (off by default: without the options the output is byte-identical, `quick` 30/30).
+
+| Part | What |
+|---|---|
+| Groups from the command line (`route/bus.cpp`, `bus_from_option`) | `--bus NAME=PATTERN`, repeatable. The pattern matches whole net names as KiCad writes them (sheet path included: `/D0`, `/MEM/DQ3`). `[N-M]` or `[N..M]` is an index range and matches any decimal number in it (`/D[0-15]`, zero-padded indices too); `*` and `?` are KiCad's net-class wildcards; everything else in a pattern with a range is literal (`A[[0-15]]` for nets named `A[0]`). A pattern without a range goes to KiCad's net-class matcher unchanged (`model::pattern_match`: wildcards, or a full regular expression, `/SPI_(SCK|MOSI)`). Members are ordered by natural sort (`D2` before `D10`); only nets with pads count; fewer than two is an error. A net named by two groups is routed with the first (warning) |
+| Detection (`detect_buses`, `--buses`) | Nets whose names differ only in a trailing decimal index of at most four digits (`D0`, `A[3]`, `/MEM/DQ12`), four or more of them with pads on the same two components. One stem may give several groups (`DQ0-7` to one memory, `DQ8-15` to another: `STEM(REF-REF)`). KiCad's generated names (`Net-(…)`, `unconnected-…`) and names without a letter are never grouped. A detected group that shares a net with a `--bus` group is dropped. The groups are listed in the log before routing and in the summary |
+| Skew limit (`bus_rule_skew`, `app::resolve_buses`) | A custom `skew` rule of the board applies to a group when every member matches one (the smallest maximum; `RuleEngine::net_constraint`, the call the pair code uses), e.g. `(rule "bus" (constraint skew (max 0.8mm)) (condition "A.NetClass == 'BUS'"))`. Rules marked `(within_diff_pairs)` do not count (the project reader now keeps such bracketed flags in `Constraint::items`). Otherwise `--bus-skew-mm X` gives the `--bus` groups a limit. With neither there is no length matching, only grouping: a limit is never invented, and detected groups get one from rules only |
+| Bundles and lanes (`Router::Impl::order_buses`) | The connections of a group between the same two components form a bundle (the planner's spanning tree gives a fan-out or a fly-by chain one bundle per component pair). All of a bundle's connections are turned the same way round and ordered along the pad row at one end (the wider of its x and y extents), so neighbouring lanes are neighbouring pins and do not cross. A bundle is routed as one block, lane by lane from one side, at the place the router's order gave its first connection; with `--bus-first` before everything else (after `--first-nets`). Restarts keep the blocks together |
+| Following (`route_bus_lane`, `bus_note`) | The first lane routed leads: it is an ordinary search. Each later lane is first searched inside a guide around the nearest lane already routed as a lane: cells within reach of that lane's tracks on the same layer, and on every layer around its vias and around the new lane's own pads; everything else is blocked (`bus_mode` 2 in `cell_cost`). The reach is the distance between the two lanes' pads (at most 5 mm) plus two track pitches and a via. So the lane runs beside its neighbour and can change layer only where the neighbour did. The search is the router's A* with its exact commit; it is cut off at four expansions per lattice point of the guide (at least 50,000), and a rejected commit is retried twice. The result is kept only if it has the neighbour's layers in the same order and as many vias, and its detour (length beyond the octilinear distance of its pads) exceeds the neighbour's by no more than half the pad distances plus 0.5 mm plus 2 % of the neighbour's length; otherwise it is taken back |
+| Leaving the bus | A lane that cannot be routed that way is routed like any other connection (strict, escapes, neck-down, negotiation), with the guide as a preference only: a quarter pitch per step outside it. If it still has the neighbour's layers and vias it is a lane, and later lanes may follow it (this is how a bundle passes an obstacle on both sides); if not, it has left the bus: it stays routed and is reported, and no lane follows it. No connection stays unrouted for the sake of its group |
+| Ripping | Nets outside the groups never rip a group's copper (as with `--first-nets`; `commit`); members rip each other as usual. A lane ripped is no lane any more. The via clean-up (`optimize_vias`, `lns_vias`) leaves lanes alone, since removing one member's vias would break the equality; smoothing keeps vias and layers and runs on them |
+| Length matching (`tune_bus_skew`) | In the clean-up, per group with a limit: the members with every connection routed are measured (track length of the net, as the pair skew is: vias add nothing), and each one shorter than the longest by more than half the limit gets meanders up to between half the limit below the longest and the longest. It is the length-tuning code (`tune_net`, §15) with two additions for bus members, both off elsewhere: every track is tried, longest first (the lanes beside a member leave its longest track no room), and the last meander is cut to the length still missing (the fixed heights step by 0.5 mm, too coarse for a 0.5 mm limit). Each meander is checked exactly |
+| Portfolio | Between variants with equal completion the one with fewer connections off their lanes wins, then vias and length as before (0 on both sides without buses) |
+| Report | `--json`: a `buses` array, per group `name`, `source`, `members` (`net`, `routed`, `followed`, `length_mm`, `vias`, `layers`), `routed`, `followed`, `left`, `reference_vias`, `reference_layers`, `vias_min`/`vias_max`, `length_min_mm`/`length_max_mm`, `skew_mm`, `skew_limit_mm`, `skew_source`, `within_skew`; and `bus_lanes` / `bus_left`, the router's own count of connections routed as lanes and off them. The array is measured on the board as written (`route::measure_bus`), not taken from the router's book-keeping |
+| Measurement (`tracemaker buses BOARD [--bus …] [--buses] [--bus-skew-mm X] [--json F]`) | The same numbers for any routed board. A member is routed when all its pads are joined (the router's connectivity). The reference is the via count and layer set most routed members share (the first member's among equals); `followed` members have exactly that, `left` are routed otherwise. Skew is the longest minus the shortest routed member. Exit 4 when a group with a limit is over it or not completely routed |
+| Events (doc 13) | `bus` (name, nets, per bundle), `bus_lane` (connection, net, `leader` / `followed` / `left`) and `bus_skew` (skew and limit after tuning) |
+
+Work is counted as for every search (expansions and flood cells of the guided and the ordinary attempts); building
+a guide and placing meanders are geometry and are not charged, like the pair legs' set-up and the existing tuning.
+Nothing is random and no hash container is iterated: the same job gives the same bytes at any thread count
+(`bus_route` test, 1, 2 and 4 threads).
+
+**Fixtures.** There is no public bus benchmark. `bench/make_bus_boards.py OUT` writes seven small KiCad 10 boards
+(s-expressions written directly, identifiers from a counter, so the bytes are the same everywhere) and a manifest
+with each board's bus options; `bench/bus_eval.py --fixtures OUT` routes each without and with them at the same
+budget, measures both written boards with `tracemaker buses` and judges both with KiCad.
+
+| Board | What it is |
+|---|---|
+| p2p8 | 8 bits between two facing ICs (mirror-image pin columns) on two layers; a mounting hole and two capacitors stand in the channel and the ICs are offset. `--bus 'DATA=/D[0-7]' --bus-skew-mm 0.5` |
+| p2p16 | 16 bits from an IC on the front to one on the back (footprint mirrored): every lane needs a via. Limit 1 mm |
+| lcd | 12 bits from a QFP to a through-hole header on four layers; a rule area across the board takes no tracks or vias on the front layer. `--bus 'LCD=/LCD_D*'`, limit 1 mm |
+| spi | SCK, MOSI, MISO from a controller to three devices in a column (four pads per net) on two layers. Limit 2 mm |
+| flyby | 8 address lines from a controller through three memories in a row, four layers. Limit 0.25 mm |
+| skewrule | p2p8 with a net class `BUS` and a `.kicad_dru` rule `skew (max 0.8mm)` on it; routed with `--buses` only |
+| twist | p2p8 with the pin order reversed at one end, so every lane must cross every other. Not in the gate |
+
+**Results** (one variant, `--work 20000000`, `--no-gpu`, KiCad 10.0.6 DRC; `bench/bus_eval.py`; "left" = routed
+members off the group's reference vias and layers; skew as `tracemaker buses` measures it on the written board).
+
+| Board | Routed off → on | Vias per member off → on | Left off → on | Skew mm off → on (limit) | KiCad added errors off → on |
+|---|---|---|---|---|---|
+| p2p8 | 16 → 16 / 16 | 2–2 → 2–2 | 0 → 0 | 0.820 → 0.217 (0.5) | 0 → 0 |
+| p2p16 | 24 → 24 / 24 | 1–1 → 1–1 | 0 → 0 | 2.665 → 0.289 (1) | 0 → 0 |
+| lcd | 16 → 16 / 16 | 1–1 → 1–1 | 1 → 0 | 4.033 → 0.268 (1) | 0 → 0 |
+| spi | 20 → 20 / 20 | 0–6 → 0–6 | 2 → 2 of 3 | 3.421 → 0.330 (2) | 0 → 0 |
+| flyby | 34 → 34 / 34 | 0–2 → 0–4 | 1 → 1 of 8 | 0.555 → 0.158 (0.25) | 0 → 0 |
+| skewrule | 16 → 16 / 16 | 0–2 → 2–2 | 2 → 0 | 0.847 → 0.214 (0.8, rule) | 6 → 0 |
+| twist (not gated) | 16 → 16 / 16 | 2–2 → 2–2 | 0 → 0 | 9.263 → 0.347 (1) | 0 → 0 |
+
+Every group is within its limit with the options and none without; completion is equal; where no member left, the
+via count per member is equal (p2p8, p2p16, lcd, skewrule, twist). The six errors on skewrule without the options
+are KiCad's own `skew_out_of_range` for the board's rule, so KiCad's judgement of the rule agrees with the
+measurement on both rows. On spi and flyby members leave. On spi the lanes between two devices with the same pin
+order must cross (SCK has to pass the MOSI and MISO pads of one device, MISO the SCK and MOSI pads of the next),
+so they cannot all have the same vias unless every one hops. On flyby one member takes four vias in the router's
+order and none with `--bus-first`; why was not examined. The members are matched in length all the same.
+
+With `--bus-first` (same boards and budget): p2p8 0–0 vias per member (6 vias on the board instead of 20), skew
+0.061; skewrule 0–0, 0.054; flyby 0–0, nobody left, 0.050; p2p16 and lcd unchanged; spi 0–6 with two left, 0.303;
+twist 0–2 with two left, 0.335. All gated groups within their limits, no added errors. Routed first, a bus gets the
+straight way across the channel; in the router's order the two power connections between the capacitors, which
+cross the channel, are there before it, and all eight lanes hop over them with the same two vias each (as they do
+without the options).
+
+**Real boards** (information, not a gate; PCBench, `--buses`, one variant, no skew limit: none of these boards has
+a skew rule). Six boards with memory buses, at 20 M and at 100 M work:
+
+| Board | Groups (nets) | Routed off → on, 20 M | Routed off → on, 100 M | Bus nets routed / on the reference / left, 100 M off → on | Vias on bus nets, 100 M off → on |
+|---|---|---|---|---|---|
+| lattice-ice40-hx8kevb-sdram | 6 (38) | 92 → 81 / 115 | 115 → 110 | 38 / 25 / 13 → 37 / 26 / 11 | 39 → 39 |
+| srambo_1 | 4 (34) | 114 → 114 / 132 | 122 → 127 | 26 / 20 / 6 → 34 / 20 / 14 | 37 → 49 |
+| NRC2016_z80 | 4 (32) | 276 → 269 / 290 | 289 → 290 | 31 / 10 / 21 → 32 / 16 / 16 | 50 → 67 |
+| NRC2016_banked_ram | 2 (23) | 120 → 121 / 148 | 133 → 129 | 14 / 5 / 9 → 14 / 6 / 8 | 36 → 20 |
+| FlashProgrammer | 3 (20) | 141 → 139 / 141 | 141 → 141 | 20 / 15 / 5 → 20 / 16 / 4 | 10 → 5 |
+| ice40_stm32_fsmc_test_pcb | 4 (35) | 143 → 129 / 183 | 157 → 155 | 21 / 14 / 7 → 21 / 15 / 6 | 30 → 22 |
+| Total | 23 (182) | 886 → 853 / 1009 | 957 → 952 | 150 / 89 / 61 → 158 / 99 / 59 | 202 → 202 |
+
+KiCad finds no added error on any of the 24 boards written. At 100 M the grouping is about neutral in completion
+(three boards down by 2 to 5 connections, two up by 1 and 5) and moves ten more bus nets onto their group's vias
+and layers; groups routed completely rise from 14 to 17 of 23, groups with equal vias per member from 1 to 5. At
+20 M these boards are still in their first pass when the budget ends (hx8kevb: 12 M of the 20 M went into failed
+strict searches without buses, 14 M with), and a bundle brings its long connections forward to where its first one
+stood, so the budget ends earlier in the order: 33 connections fewer in all. Four large boards of the `mid` set
+with detected buses (decelerator4030, Aleste-520EX, EEZ DIB MCU, sbc; 20 M) say little about buses: 301 → 281 of
+1009, 1001 → 955 of 1616, 470 → 470 of 634 and 310 → 310 of 410 connections, no added errors, and the budget ends
+before the buses are reached. On three of them no bus net is routed with or without the options (the last two have
+the same connection and via counts in both runs); on Aleste-520EX 32 → 31 of 150 bus nets are, and four of its 24
+groups completely in either run.
+
+**Tried and dropped.**
+- *Buses first by default.* Better on the fixtures (above), ruinous on dense boards at a fixed budget: the lanes out
+  of a ball grid are the hardest connections, each failed strict attempt costs up to the per-search limit, and with
+  all of them in front the four `mid` boards routed 11 / 1009, 40 / 1616, 11 / 634 and 1 / 410 connections at 20 M.
+  It is `--bus-first` now, for boards where the buses are what matters.
+- *Accepting any path found inside the guide* (with two pitches per step as the penalty afterwards): a lane then
+  winds through the guide or hops over what is in its way rather than pass the mounting hole on its own side.
+  p2p8's eight lanes came out at 25, 25, 25, 28 (with two vias), 37, 44, 49 and 54 mm, and the group at 23.6 mm of
+  skew, since the short lanes had no room for that much meander. A limit of an eighth of the neighbour's length plus
+  twice the pad distances changed nothing (each lane was only a little longer than the one before); the layer test,
+  the detour limit and the quarter-pitch penalty did.
+- *Ripping a group as a whole* when another net rips one lane, and *no protection at all* (six boards, 100 M): 936
+  and 947 connections against 952 with protection, and 92 and 94 bus nets on their reference against 99.
+
+**Limits.**
+- Following is by neighbour, not by plan: the leader takes its own cheapest path, and nothing reserves room for the
+  lanes behind it or picks the layer pattern that suits the whole bundle. A bundle whose lanes must cross (same pin
+  order at both ends of a chain, reversed order) loses members or gives every lane the same pair of vias.
+- "On the bus" in the report is the via count and the set of layers per net, measured on copper; the router's own
+  test per connection also compares the order of the layers. For nets with several connections the two can differ.
+- Length is track length. KiCad's `skew` check adds via height from the stackup, so a group whose members differ in
+  vias can be inside the limit here and outside in KiCad; where the via counts are equal the two agree (skewrule).
+- Meanders need room: a member squeezed between its neighbours and an obstacle stays short, and the group is then
+  reported over its limit. There is no spreading of lanes to make room, and no limit in picoseconds.
+- No pair-style coupling or fixed spacing between lanes; a group is not planned by the global router; `length` rules
+  on a group are tuned per net as before, not as a group.
+- Bus options are not in the Python bindings' keyword list (`RouteJob` carries them).

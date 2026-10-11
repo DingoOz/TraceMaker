@@ -103,6 +103,17 @@ struct RouterOptions {
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
   std::vector<std::string> first_nets;  // routed first, also after restarts; other nets do not rip them (crystal lines)
+  // Buses (doc 05 §38): groups of nets routed lane by lane. The connections of a group between two components are
+  // routed one after the other in the order of their pins, each steered along the neighbour routed before it, on
+  // the same layers; nets outside the groups do not rip them. `skew` > 0: meanders in the clean-up bring the
+  // members' track lengths within it. Empty = off.
+  struct Bus {
+    std::string name;
+    std::vector<model::NetId> nets;  // in bus order
+    Coord skew = 0;
+  };
+  std::vector<Bus> buses;
+  bool bus_first = false;  // the groups' connections before all others (after first_nets), also after restarts
   std::string only_net;         // debugging: route only this net
   std::vector<std::string> skip_nets;  // experiments: leave these nets unrouted (e.g. nets a designer would pour)
   // Layer limits (doc 05 §29; route/layer_limits.hpp turns layer names into these). Layers in no_track_layers get
@@ -164,6 +175,9 @@ struct RouteResult {
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;
+  // Buses: connections routed as a lane of their group (leaders and the members that followed one), and connections
+  // of a group routed otherwise ("left the bus"), in the state returned.
+  int bus_lanes = 0, bus_left = 0;
   int micro_vias = 0;           // micro vias placed
   int blind_vias = 0;           // blind/buried vias placed
   int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass

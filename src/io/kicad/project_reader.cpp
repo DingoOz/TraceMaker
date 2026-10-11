@@ -162,6 +162,10 @@ void read_dru(const fs::path& p, model::DesignRules& r) {
           continue;
         }
         const std::string_view h = d.head(x);
+        if (d.children(x).size() == 1) {  // a flag in brackets, e.g. skew's (within_diff_pairs)
+          k.items.push_back(std::string(h));
+          continue;
+        }
         const auto v = parse_length(d.str_at(x, 1));
         if (!v) {
           r.warnings.push_back("rule '" + cr.name + "': cannot read value of " + std::string(h));

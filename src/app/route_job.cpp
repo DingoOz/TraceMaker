@@ -101,6 +101,79 @@ nlohmann::json work_json(const route::WorkProfile& w) {
 
 }  // namespace
 
+std::vector<route::BusGroup> resolve_buses(const model::Board& b, const model::DesignRules& rules, const std::vector<std::string>& specs,
+                                           bool detect, double skew_mm, std::vector<std::string>* notes) {
+  std::vector<route::BusGroup> out;
+  std::vector<int> owner(b.nets.size(), -1);
+  auto claim = [&](const route::BusGroup& g) {
+    for (const auto n : g.members)
+      if (owner[static_cast<std::size_t>(n)] < 0) owner[static_cast<std::size_t>(n)] = static_cast<int>(out.size());
+  };
+  for (const auto& spec : specs) {
+    auto g = route::bus_from_option(b, spec);
+    for (const auto n : g.members)
+      if (owner[static_cast<std::size_t>(n)] >= 0 && notes)
+        notes->push_back("warning: net " + b.nets[static_cast<std::size_t>(n)].name + " is in bus " + out[static_cast<std::size_t>(owner[static_cast<std::size_t>(n)])].name +
+                         " and " + g.name + "; it is routed with " + out[static_cast<std::size_t>(owner[static_cast<std::size_t>(n)])].name);
+    claim(g);
+    out.push_back(std::move(g));
+  }
+  if (detect)
+    for (auto& g : route::detect_buses(b)) {
+      if (std::any_of(g.members.begin(), g.members.end(), [&](model::NetId n) { return owner[static_cast<std::size_t>(n)] >= 0; })) continue;
+      claim(g);
+      out.push_back(std::move(g));
+    }
+  const drc::RuleEngine re(b, rules);
+  for (auto& g : out) {
+    if (const auto s = route::bus_rule_skew(re, g)) {
+      g.skew_limit = *s;
+      g.skew_source = "rule";
+    } else if (g.source == "option" && skew_mm > 0) {
+      g.skew_limit = static_cast<Coord>(skew_mm * 1e6);
+      g.skew_source = "option";
+    }
+  }
+  return out;
+}
+
+nlohmann::json bus_report(const model::Board& b, const std::vector<std::uint8_t>& joined, const route::BusGroup& g, std::string* line) {
+  const auto st = route::measure_bus(b.tracks, b.arcs, b.vias, joined, g);
+  auto layer_names = [&](model::LayerMask m) {
+    nlohmann::json a = nlohmann::json::array();
+    for (int l = 0; l < b.copper_count(); ++l)
+      if (m & model::layer_bit(l)) a.push_back(b.copper_name(l));
+    return a;
+  };
+  nlohmann::json members = nlohmann::json::array();
+  for (const auto& m : st.members)
+    members.push_back({{"net", b.nets[static_cast<std::size_t>(m.net)].name}, {"routed", m.routed}, {"followed", m.followed},
+                       {"length_mm", m.length / 1e6}, {"vias", m.vias}, {"layers", layer_names(m.layers)}});
+  nlohmann::json j{{"name", g.name}, {"source", g.source}, {"members", members}, {"nets", st.members.size()}, {"routed", st.routed},
+                   {"followed", st.followed}, {"left", st.left}, {"reference_vias", st.ref_vias}, {"reference_layers", layer_names(st.ref_layers)},
+                   {"vias_min", st.vias_min}, {"vias_max", st.vias_max}, {"length_min_mm", st.length_min / 1e6},
+                   {"length_max_mm", st.length_max / 1e6}, {"skew_mm", st.skew() / 1e6}};
+  // Within the limit only when every member is routed: an unrouted member has no length to compare.
+  const bool all = st.routed == static_cast<int>(st.members.size());
+  if (g.skew_limit > 0) {
+    j["skew_limit_mm"] = nm_to_mm(g.skew_limit);
+    j["skew_source"] = g.skew_source;
+    j["within_skew"] = all && st.skew() <= static_cast<double>(g.skew_limit);
+  } else {
+    j["skew_limit_mm"] = nullptr;
+    j["within_skew"] = nullptr;
+  }
+  if (line) {
+    *line = fmt("%s (%s): %d/%zu nets routed, %d on the bus's layers, %d left the bus, vias %d-%d, length %.2f-%.2f mm, skew %.3f mm", g.name.c_str(),
+                g.source.c_str(), st.routed, st.members.size(), st.followed, st.left, st.vias_min, st.vias_max, st.length_min / 1e6, st.length_max / 1e6,
+                st.skew() / 1e6);
+    if (g.skew_limit > 0)
+      *line += fmt(" (limit %.3f mm from the %s: %s)", nm_to_mm(g.skew_limit), g.skew_source.c_str(),
+                   !all ? "not all routed" : st.skew() <= static_cast<double>(g.skew_limit) ? "within" : "OVER");
+  }
+  return j;
+}
+
 int default_gpu_device(bool use_gpu) {
   if (!use_gpu) return -1;
   const auto devs = gpu::list_devices();
@@ -283,6 +356,21 @@ RouteJobResult run_route_job(RouteJob job) {
     const drc::RuleEngine re(*route_board, rules);
     for (const auto& w : re.warnings()) log("warning: " + w);
   }
+  // Buses (doc 05 §38): the groups asked for, with the nets found for each, so a wrong pattern shows before routing.
+  std::vector<route::BusGroup> bus_groups;
+  if (!job.buses.empty() || job.detect_buses) {
+    std::vector<std::string> notes;
+    bus_groups = resolve_buses(*route_board, rules, job.buses, job.detect_buses, job.bus_skew_mm, &notes);
+    for (const auto& n : notes) log(n);
+    log(fmt("buses: %zu group%s", bus_groups.size(), bus_groups.size() == 1 ? "" : "s"));
+    for (const auto& g : bus_groups) {
+      std::string nets;
+      for (const auto n : g.members) nets += (nets.empty() ? "" : " ") + lb.board.nets[static_cast<std::size_t>(n)].name;
+      log(fmt("  bus %s (%s, %zu nets, %s): %s", g.name.c_str(), g.source.c_str(), g.members.size(),
+              g.skew_limit > 0 ? fmt("skew limit %.3f mm from the %s", nm_to_mm(g.skew_limit), g.skew_source.c_str()).c_str() : "no skew limit", nets.c_str()));
+      opt.buses.push_back({g.name, g.members, g.skew_limit});
+    }
+  }
   auto& res = out.result;
   const auto route_t0 = std::chrono::steady_clock::now();  // --time covers the whole job, the refill repair included
   std::vector<int> ran;
@@ -437,6 +525,24 @@ RouteJobResult run_route_job(RouteJob job) {
                     {"skew_mm", st.skew() / 1e6}, {"length_mm", (st.length_a + st.length_b) / 2e6}});
     }
     out.summary["pairs"] = pj;
+  }
+  // Buses: every group measured on the board as written (existing copper and the new), not on the router's own
+  // book-keeping; `tracemaker buses` gives the same numbers for the output file.
+  if (!bus_groups.empty()) {
+    model::Board routed = lb.board;
+    routed.tracks.insert(routed.tracks.end(), res.tracks.begin(), res.tracks.end());
+    routed.vias.insert(routed.vias.end(), res.vias.begin(), res.vias.end());
+    const auto joined = route::nets_joined(routed, rules);
+    nlohmann::json bj = nlohmann::json::array();
+    log(fmt("buses: %d connections routed as lanes, %d left their bus", res.bus_lanes, res.bus_left));
+    for (const auto& g : bus_groups) {
+      std::string line;
+      bj.push_back(bus_report(routed, joined, g, &line));
+      log("  " + line);
+    }
+    out.summary["buses"] = bj;
+    out.summary["bus_lanes"] = res.bus_lanes;
+    out.summary["bus_left"] = res.bus_left;
   }
   if (opt.cut_report) {
     auto cj = [](const route::CutLine& c) {

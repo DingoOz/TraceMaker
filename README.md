@@ -147,6 +147,10 @@ down beside the board and reported.
 - `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.
 - `--no-gpu`: compute on the CPU only. Results are identical.
 - `--diff-pairs`: route differential pairs side by side at the rule's gap.
+- `--bus 'DATA=/D[0-7]'` (repeatable), `--buses` (find them in the net names): route a bus lane by lane on the
+  same layers with the same vias; `--bus-skew-mm 0.5` length-matches it with meanders (a custom `skew` rule of the
+  board does the same); `--bus-first` routes buses before everything else. `tracemaker buses BOARD --bus …`
+  measures a routed board (doc 05 §38).
 - `--component-rules on`: apply detected layout rules (keep-outs, widths from impedance and current).
 - `--rules-override FILE`: correct what was detected (doc 15 §6.3).
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).

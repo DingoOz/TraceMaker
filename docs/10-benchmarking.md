@@ -103,6 +103,7 @@ quieter machine, a second run of one binary can. All of it is a pointer for gate
 | `quality.py`, `quality_bench.py`, `compare.py`, `human_baseline.py` | routing quality metrics; TraceMaker against Freerouting versions; the designers' own routing judged the same way | maintained |
 | `check_env.py`, `prepare_dac2020.py`, `prepare_demos.py`, `make_place_sets.py` | tool checks and fixture preparation | maintained |
 | `pair_eval.py`, `feasibility.py`, `crules_detect.py`, `crules_place.py`, `crules_tiers.py` | feature evaluations (diff pairs, escape feasibility, component rules) | kept for re-measuring their features |
+| `make_bus_boards.py`, `bus_eval.py` | generated bus boards and the bus evaluation (doc 05 §38): routes without and with the bus options at one budget, measures with `tracemaker buses`, judges with KiCad | kept for re-measuring bus routing |
 | `m6_bench.py`, `place_m8.py`, `place_auto.py`, `place_flip.py`, `place_intent.py`, `place_variants.py`, `compare_placed.py`, `rescore_placed.py`, `dsn_place.py` | milestone evaluations of the global router and placement | historical; results are in the docs that cite them |
 | `ses_import.py`, `record_fr.py` | import a Freerouting session; screen-record Freerouting | utilities |
 | `cpu_sample.py` | per-thread CPU sampling from `/proc` | Linux only |
