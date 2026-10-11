@@ -50,11 +50,13 @@ def main() -> int:
     ap.add_argument("--threads", type=int, default=1)
     ap.add_argument("--time", type=int, default=900)
     ap.add_argument("--only", default="", help="substring filter on case names")
+    ap.add_argument("--cases", default="", help="comma-separated case-number prefixes (e.g. 28,29,31)")
     ap.add_argument("--route-args", default="--fast-bends --no-gpu")
     a = ap.parse_args()
     out = ROOT / "bench/results" / a.name
     out.mkdir(parents=True, exist_ok=True)
-    cases = sorted(p.name for p in BOARDS.iterdir() if p.is_dir() and a.only in p.name)
+    want = [c for c in a.cases.split(",") if c]
+    cases = sorted(p.name for p in BOARDS.iterdir() if p.is_dir() and a.only in p.name and (not want or p.name.split("-")[0] in want))
     jobs = [(c, out, a.work, a.variants, a.threads, a.route_args.split(), a.time) for c in cases]
     rows = []
     with cf.ThreadPoolExecutor(a.jobs) as ex:

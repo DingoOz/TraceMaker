@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include <algorithm>
+#include <cstdlib>
 #include <cmath>
 #include <fstream>
 #include <map>
@@ -271,7 +272,7 @@ SrjProblem read_srj(const std::string& text) {
           auto& pts = p.connections[static_cast<std::size_t>(it->second)].points;
           const int z = srj_layer_index(opt_string(tgt, "layer"), p.layer_count);
           if (pts.size() < 2 || z < 0 || pts.back().point_id.rfind("pcb_breakout_point", 0) != 0) continue;
-          pts.back().layers = {z};
+          if (std::getenv("TM_SRJ_EXIT_LAYERS")) pts.back().layers = {z};  // experiment: exit layers can stack terminals of different buses on one layer
           ++exit_layers;
         }
       if (!bu.contains("termination") || !bu["termination"].is_object() || opt_string(bu["termination"], "type") != "plane") continue;

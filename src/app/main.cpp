@@ -595,9 +595,13 @@ int main(int argc, char** argv) {
   route->add_option("--only-net", ropt.only_net, "Debugging: route only this net")->group("");
   route->add_option("--skip-net", ropt.skip_nets, "Experiments: leave this net unrouted (repeatable)")->group("");
   route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
+  route->add_option("--polish", ropt.polish_fraction, "Reserve this share of the budget (0-0.9) to rebuild the open connections of the best state")->group("");
+  route->add_option("--polish-trials", ropt.polish_trials, "Polish: seeded orders tried per open connection")->group("");
   route->add_option("--lns-open", ropt.lns_open_trials, "Regional rebuild of open connections: orders tried per open connection (0 = off)")->group("");
   route->add_option("--lns-open-radius-mm", ropt.lns_open_radius_mm, "Regional rebuild: radius around the open pin")->group("");
   route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
+  route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
+  route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
   route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
   route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");

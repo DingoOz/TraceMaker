@@ -1,5 +1,5 @@
 {
- "phase": "M14.3: srj19 ~93 % with portfolio; srj20 63 %; fanout31 3 of 6 families solved in trials",
+ "phase": "M14.4: fanout31 gate met (57/60 run so far); srj19 90.5 %, srj20 62 % at one variant",
  "targets": {
   "srj19": 0.92,
   "srj20": 0.785,
@@ -68,9 +68,9 @@
   },
   {
    "id": "b0",
-   "state": "doing",
-   "title": "Track B: fanout31 import + trials",
-   "note": "AM62L 133/133, RK3308 160/160, i.MX6ULL 100/100 solved (0 unconnected); T113-S3 6 unconnected; AM3352 50 unconnected (tscircuit 0/12). Full 72-case run pending"
+   "state": "done",
+   "title": "Track B: fanout31 import + runs",
+   "note": "Fixed model (no exit-layer override) + 8-variant portfolio: am62l 12/12, rk3308 12/12, k230 12/12, imx6ull 12/12, t113s3 9/12 = 57 of 60 run; AM3352 not solved (6-23 open; tscircuit 0/12). Gate 48/72 met"
   },
   {
    "id": "d1",
@@ -80,8 +80,8 @@
   {
    "id": "f5",
    "state": "doing",
-   "title": "srj20: package penalty (+4 boards of 57), victim limit, via-heavy strategy",
-   "note": "remaining gap: 'ripped up and not routed again' churn dominates failures"
+   "title": "srj20: preferred layer directions (auto on breakout boards), package penalty",
+   "note": "srj20 gap boards 28 -> 40 % clean; full set 50M one variant: srj19 181/200, srj20 124/200"
   }
  ],
  "findings": [
@@ -94,6 +94,8 @@
   "Portfolio of 8 variants (50M each, 8 threads, median 135 s wall) closes 10 of the 24 srj19 boards that one variant misses: about 186/200 = 93 % against tscircuit's 92 %.",
   "Layer assignment from crossing chords (396 crossings -> 128 on one layer) does not help srj20 (18 % -> 14 % clean on gap boards).",
   "fanout31 needed importer modelling, not routing changes: planes as zones, per-connection exit layers, far-component pads as keep-outs, closed layers as rule areas, outline margin. Three trial cases then route completely.",
-  "srj20 failures are dominated by negotiation churn ('ripped up by X and not routed again', 585 of ~1,170 failures); 24 seeded variants on one hard board all stop at 33-40 of 52."
+  "srj20 failures are dominated by negotiation churn ('ripped up by X and not routed again', 585 of ~1,170 failures); 24 seeded variants on one hard board all stop at 33-40 of 52.",
+  "The K230 'dead terminals' were a modelling bug: several buses' breakout points share coordinates and differ only by layer, so overriding their layer from connectionExitTargets stacked terminals on one layer. Without the override all 65 terminals escape and K230 goes 0/12 -> 12/12 with the portfolio.",
+  "Preferred layer directions (even layers horizontal, odd vertical; --layer-dir-pen 0.3) are the first structural gain on srj20: gap boards 28 -> 40 % clean, 87.7 -> 89.8 % routed; swapping the directions is neutral. Applied automatically only to breakout boards (>= 70 % of connections touch a ball-grid package, two layers): on ordinary boards it cost 2.4 points of completion."
  ]
 }

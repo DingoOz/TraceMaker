@@ -136,10 +136,11 @@ struct Router::Impl {
 
   double elapsed() const { return std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); }
   // Out of budget? The work budget (search expansions) is deterministic; wall time is only a safety net.
+  double budget_scale = 1.0;  // < 1 while a share of the budget is reserved for the polish phase (opt.polish_fraction)
   bool out_of_budget() const {
     if (opt.deadline && res.routed < res.connections && elapsed() > opt.deadline->load(std::memory_order_relaxed)) return true;
-    if (opt.work_budget > 0 && res.expansions >= opt.work_budget) return true;
-    return elapsed() > opt.time_limit_s;
+    if (opt.work_budget > 0 && static_cast<double>(res.expansions) >= static_cast<double>(opt.work_budget) * budget_scale) return true;
+    return elapsed() > opt.time_limit_s * budget_scale;
   }
   // Work profile (D88): the phase now running and its counters.
   WorkPhase phase = WorkPhase::Setup;
@@ -1120,6 +1121,7 @@ struct Router::Impl {
     }
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
     const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6);
+    const std::int64_t dir_pen = static_cast<std::int64_t>(auto_dir_pen * static_cast<double>(pitch));
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
     const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
@@ -1212,6 +1214,7 @@ struct Router::Impl {
           extra = textra(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci));
         }
         std::int64_t cost = on_layer((d & 1) ? diag : step, l) + extra;
+        if (dir_pen > 0 && !(d & 1) && ((d == 0 || d == 4) != ((l % 2 == 0) != opt.layer_dir_swap))) cost += dir_pen;  // against the layer's preferred direction (doc 16)
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
         const std::size_t ns = sidx(l, nci, d);
         if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= gs + cost) continue;
@@ -2698,15 +2701,17 @@ struct Router::Impl {
   // they cannot. Each connection gets the layer that leaves the fewest crossings on its layer (a greedy start and
   // single flips until none improves, deterministic); tracks off that layer cost lp_pen per lattice step.
   std::int64_t soft_unit = 0;  // cost of crossing another net's copper: opt.soft_cost_mm, growing with the pass (PathFinder's present-sharing factor)
-  struct PkgBox { geom::Box box; int layer; };
+  struct PkgBox { geom::Box box; int layer; int footprint; };
   std::vector<PkgBox> pkg_boxes;
+  double auto_dir_pen = 0;  // opt.layer_dir_pen resolved for this board
   bool pkg_on = false;
   std::int64_t pkg_pen = 0;
   // Footprints with at least 30 SMD pads on one layer: the box of their pads, a pad pitch wider on every side.
   void package_boxes() {
     pkg_boxes.clear();
     pkg_on = false;
-    if (opt.package_pen <= 0) return;
+    auto_dir_pen = std::max(0.0, opt.layer_dir_pen);
+    double pen = std::max(0.0, opt.package_pen);
     std::map<int, std::vector<int>> by;
     for (std::size_t i = 0; i < b.pads.size(); ++i)
       if (b.pads[i].footprint >= 0 && b.pads[i].type == model::PadType::Smd) by[b.pads[i].footprint].push_back(static_cast<int>(i));
@@ -2723,10 +2728,32 @@ struct Router::Impl {
         half = std::max(half, std::max(pd.size_x, pd.size_y));
       }
       if (!same || m == 0) continue;
-      pkg_boxes.push_back({bx.inflated(half), std::countr_zero(m)});
+      pkg_boxes.push_back({bx.inflated(half), std::countr_zero(m), fp});
     }
-    pkg_pen = static_cast<std::int64_t>(opt.package_pen * static_cast<double>(pitch));
-    pkg_on = !pkg_boxes.empty();
+    // Automatic settings (doc 16 §10, D97): on a two-layer board with a ball-grid package the layers get preferred
+    // directions and the package interior is dear on its pad layer; srj19/srj20 gap boards, 30 M work: +7 and +4 clean.
+    // A breakout board: at least 70 % of the connections have an end on a ball-grid package (srj19/srj20; on ordinary
+    // two-layer boards the same settings cost 1-3 points of completion: quick 89.2 -> 86.8 %, mid 53.5 -> 51.1 %).
+    bool breakout = false;
+    if (nl == 2 && !pkg_boxes.empty() && !cs.empty()) {
+      std::size_t touching = 0;
+      for (const auto& st : cs) {
+        const int fa = st.c.pad_a >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_a)].footprint : -1;
+        const int fb = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].footprint : -1;
+        for (const auto& bx : pkg_boxes)
+          if (bx.footprint == fa || bx.footprint == fb) {
+            ++touching;
+            break;
+          }
+      }
+      breakout = 10 * touching >= 7 * cs.size();
+    }
+    if (breakout) {
+      if (opt.layer_dir_pen < 0) auto_dir_pen = 0.3;
+      if (opt.package_pen < 0) pen = 3.0;
+    }
+    pkg_pen = static_cast<std::int64_t>(pen * static_cast<double>(pitch));
+    pkg_on = !pkg_boxes.empty() && pen > 0;
   }
   std::vector<int> conn_lpref;
   bool lp_on = false;
@@ -3850,6 +3877,7 @@ struct Router::Impl {
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
     rip_cap = opt.max_rips_per_connection;
+    budget_scale = (opt.polish_fraction > 0 && opt.polish_fraction < 1) ? 1.0 - opt.polish_fraction : 1.0;
     soft_unit = static_cast<std::int64_t>(opt.soft_cost_mm * 1e6);
     const bool tdbg = std::getenv("TM_DEBUG_TIMING") != nullptr;
     setup();
@@ -3948,10 +3976,17 @@ struct Router::Impl {
     int best_routed = -1;
     std::vector<model::Track> best_tracks;
     std::vector<model::Via> best_vias;
+    std::vector<std::vector<OldItem>> best_items;  // per connection, for restoring the best state into the live board
     auto snapshot = [&]() {
       best_routed = res.routed;
       best_tracks.clear();
       best_vias.clear();
+      best_items.assign(cs.size(), {});
+      for (std::size_t ci = 0; ci < cs.size(); ++ci)
+        for (int item : cs[ci].items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          best_items[ci].push_back({it.kind, it.index});
+        }
       for (const auto& st : cs)
         for (int item : st.items) {
           const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
@@ -4171,6 +4206,32 @@ struct Router::Impl {
       snapshot_unrouted();
     }
     }  // restarts
+    // Polish (doc 16): the reserved share of the budget goes to the best state found, whose open connections are
+    // rebuilt one by one with their neighbours (lns_open). The live board is first put back to that state.
+    if (opt.polish_fraction > 0 && best_routed >= 0 && best_routed < res.connections && !best_items.empty()) {
+      budget_scale = 1.0;
+      phase = WorkPhase::Negotiation;
+      for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+        lift_items(static_cast<int>(ci));
+        cs[ci].routed = cs[ci].implicit = cs[ci].coupled = cs[ci].bus_lane = false;
+      }
+      for (std::size_t ci = 0; ci < cs.size(); ++ci)
+        if (!best_items[ci].empty() || (!best_unrouted.empty() && !best_unrouted[ci])) {
+          restore_items(static_cast<int>(ci), best_items[ci]);
+          cs[ci].routed = best_unrouted.empty() || !best_unrouted[ci];
+        }
+      res.routed = 0;
+      for (const auto& st : cs) res.routed += st.routed ? 1 : 0;
+      for (int round = 0; round < 4 && res.routed < res.connections && !out_of_budget(); ++round) {
+        const int f = lns_open(opt.polish_trials);
+        if (std::getenv("TM_DEBUG_LNS")) std::fprintf(stderr, "polish round %d: %d closed, %d of %d routed\n", round, f, res.routed, res.connections);
+        if (res.routed > best_routed) {
+          snapshot();
+          snapshot_unrouted();
+        }
+        if (f == 0) break;
+      }
+    }
     if (opt.deadline && best_routed == res.connections && res.connections > 0) {  // first complete variant sets the deadline
       const double d = 2 * elapsed() + 5;
       double cur = opt.deadline->load();
