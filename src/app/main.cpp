@@ -302,14 +302,14 @@ int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bo
   bool ok = true;
   for (const auto& g : groups) {
     std::string line;
-    j.push_back(tmk::app::bus_report(lb.board, joined, g, &line));
+    j.push_back(tmk::app::bus_report(lb.board, rules, joined, g, &line));
     std::printf("%s\n", line.c_str());
-    std::printf("  %-28s %7s %9s %5s  %s\n", "net", "routed", "len_mm", "vias", "layers");
+    std::printf("  %-28s %7s %9s %7s %5s  %s\n", "net", "routed", "len_mm", "via_mm", "vias", "layers");
     for (const auto& m : j.back()["members"]) {
       std::string layers;
       for (const auto& l : m["layers"]) layers += (layers.empty() ? "" : " ") + l.get<std::string>();
-      std::printf("  %-28s %7s %9.3f %5d  %s%s\n", m["net"].get<std::string>().c_str(), m["routed"].get<bool>() ? "yes" : "no", m["length_mm"].get<double>(),
-                  m["vias"].get<int>(), layers.c_str(), m["routed"].get<bool>() && !m["followed"].get<bool>() ? "  (left the bus)" : "");
+      std::printf("  %-28s %7s %9.3f %7.3f %5d  %s%s\n", m["net"].get<std::string>().c_str(), m["routed"].get<bool>() ? "yes" : "no", m["length_mm"].get<double>(),
+                  m["via_length_mm"].get<double>(), m["vias"].get<int>(), layers.c_str(), m["routed"].get<bool>() && !m["followed"].get<bool>() ? "  (left the bus)" : "");
     }
     if (j.back()["within_skew"].is_boolean() && !j.back()["within_skew"].get<bool>()) ok = false;
   }
@@ -574,7 +574,7 @@ int main(int argc, char** argv) {
                     "PATTERN matches whole net names: * and ? as in net-class patterns, [N-M] a number in that range (doc 05 §38)");
   route->add_flag("--buses", r_job.detect_buses, "Also find buses in the net names: nets differing only in a trailing index, four or more between the same two components");
   route->add_flag("--bus-first", ropt.bus_first, "Route the buses before everything else (default: each bus where the router's order puts its first connection)");
-  route->add_option("--bus-skew-mm", r_job.bus_skew_mm, "Length-match the --bus groups: meanders until their track lengths differ by at most this (0 = only the board's custom skew rules)");
+  route->add_option("--bus-skew-mm", r_job.bus_skew_mm, "Length-match the --bus groups: meanders until their lengths (tracks and via height, as KiCad's skew check) differ by at most this (0 = only the board's custom skew rules)");
   route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
   int r_threads = 8;
   std::string r_kb = tmk::learn::KnowledgeBase::default_path();

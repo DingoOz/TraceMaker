@@ -19,7 +19,7 @@ struct BusGroup {
   std::string name;
   std::vector<model::NetId> members;  // in bus order: natural sort of the net names (D2 before D10)
   std::string source;                 // "option" (--bus) or "detected" (--buses)
-  Coord skew_limit = 0;               // largest allowed difference in track length between members; 0 = none
+  Coord skew_limit = 0;               // largest allowed difference in length between members; 0 = none
   std::string skew_source;            // "rule" (a custom skew rule of the board), "option" (--bus-skew-mm) or empty
 };
 
@@ -49,12 +49,30 @@ std::vector<BusGroup> detect_buses(const model::Board& b, int min_members = 4);
 // (the smallest maximum wins); rules restricted to differential pairs (`within_diff_pairs`) do not count.
 std::optional<Coord> bus_rule_skew(const drc::RuleEngine& re, const BusGroup& g);
 
-// A group as routed, measured on copper. Length is track length (arcs included); vias add nothing, as in the pair
-// measurement (route/diff_pair.hpp), so two members with the same vias and layers compare track against track.
+// The length a via adds to its net in KiCad's length calculation, which its `skew` check uses (KiCad 10,
+// BOARD_STACKUP::GetLayerDistance): the stackup between the two copper layers the via joins, with the copper of an
+// outer layer in full and of an inner layer by half. A board without a stackup block gets KiCad's default one
+// (35 um copper, 10 um per solder mask, the rest of the board thickness shared evenly between the dielectrics).
+// Empty (every via 0) when the project turns "use height for length calculations" off.
+struct ViaHeights {
+  std::vector<Coord> from, to;  // per copper layer: where a via starting / ending on it begins / ends, nm from the top
+  Coord between(int a, int b) const;  // copper indices, either order; 0 for a == b
+};
+ViaHeights via_heights(const model::Board& b, const model::DesignRules& rules);
+// The via length of one net on the given copper, as KiCad sums it: each via counts between the outermost layers on
+// which a track of the net ends inside the via's pad, or a pad of the net touches the via (a surface pad's own
+// layer, its footprint's side for a through-hole pad); a via that joins nothing on a second layer adds nothing.
+double net_via_length(const model::Board& b, const ViaHeights& vh, model::NetId net, const std::vector<model::Track>& tracks,
+                      const std::vector<model::ArcTrack>& arcs, const std::vector<model::Via>& vias);
+
+// A group as routed, measured on copper. Length is what KiCad's skew check compares: track length (arcs included)
+// plus the via length above, so a member with more vias than the others is longer by their height. KiCad also
+// adds pad-to-die lengths and shortens a track end inside a pad or via; neither is modelled (micrometres, or zero).
 struct BusMember {
   model::NetId net = 0;
   bool routed = false;          // every pad of the net is joined
-  double length = 0;            // nm
+  double length = 0;            // nm, tracks and vias
+  double via_length = 0;        // nm, the vias' part of `length`
   int vias = 0;
   model::LayerMask layers = 0;  // copper layers carrying tracks of the net
   bool followed = false;        // routed with the group's reference via count and layers
@@ -71,8 +89,8 @@ struct BusStats {
   double length_min = 0, length_max = 0;
   double skew() const { return length_max - length_min; }  // over routed members
 };
-// `net_routed[net]`: nets_joined() of the board the copper belongs to.
-BusStats measure_bus(const std::vector<model::Track>& tracks, const std::vector<model::ArcTrack>& arcs, const std::vector<model::Via>& vias,
+// `net_routed[net]`: nets_joined() of the board the copper belongs to; `b` gives the pads, `vh` its via heights.
+BusStats measure_bus(const model::Board& b, const ViaHeights& vh, const std::vector<model::Track>& tracks, const std::vector<model::ArcTrack>& arcs, const std::vector<model::Via>& vias,
                      const std::vector<std::uint8_t>& net_routed, const BusGroup& g);
 
 // Per net: 1 when all its pads are joined by copper (the router's own connectivity; nets without pads count as joined).

@@ -14,10 +14,12 @@ judges the written boards with `tracemaker buses`, not with the router's own sum
             bus is reported as such by both the router and the measurement.
 p2p16 once more with --bus-first. Then the lcd run again at --threads 1, 2 and 4 with the whole portfolio: identical
 bytes (rule 2, D47).
-Needs no fixtures, no GPU and no KiCad.
+Needs no fixtures and no GPU. With kicad-cli present, KiCad's own skew check judges the spi board, whose members
+differ in vias: the measurement must count via height as KiCad does.
 """
 import json
 import pathlib
+import shutil
 import subprocess
 import sys
 
@@ -86,6 +88,18 @@ def main() -> int:
             check(abs(sg[0]["skew_mm"] - g["skew_mm"]) < 1e-9 and sg[0]["left"] == g["left"] and sg[0]["vias_max"] == g["vias_max"],
                   f"{name}: summary skew/left/vias differ from the measurement")
         check("bus_lanes" in summary and "bus_left" in summary, f"{name}: no lane counts in the summary")
+        if name == "spi":
+            # Members with different vias: the lengths compared include the vias' height (1.58 mm through this board).
+            check(g["vias_min"] == g["vias_max"] or any(m["via_length_mm"] > 0 for m in g["members"]), "spi: vias add no length")
+            check(all(abs(m["via_length_mm"] - 1.58 * m["vias"]) < 1e-6 for m in g["members"]), "spi: a via is not 1.58 mm long")
+            if shutil.which("kicad-cli"):
+                out.with_suffix(".kicad_dru").write_text(
+                    '(version 1)\n(rule "bus_skew"\n\t(constraint skew (max 2mm))\n\t(condition "A.NetName == \'/SPI_*\'"))\n')
+                drc = out.with_suffix(".drc.json")
+                subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "-o", str(drc), str(out)], capture_output=True)
+                skew = [v["description"] for v in json.loads(drc.read_text())["violations"] if v["type"] == "skew_out_of_range"]
+                print(f"spi: KiCad reports {len(skew)} skew violation(s) against the same 2 mm limit")
+                check(not skew, f"spi: within the limit here, but KiCad: {skew[:1]}")
     # Group definitions.
     out16 = (work / manifest["p2p16"]["board"]).with_name("p2p16.on.kicad_pcb")
     g16, _ = measure(out16, manifest["p2p16"]["bus_args"])

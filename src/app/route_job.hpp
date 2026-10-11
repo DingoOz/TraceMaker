@@ -86,7 +86,9 @@ std::vector<route::BusGroup> resolve_buses(const model::Board& b, const model::D
                                            bool detect, double skew_mm, std::vector<std::string>* notes = nullptr);
 // A group measured on the copper of `b` (`joined`: route::nets_joined of the same board), as the JSON object of the
 // route summary's `buses` array and of `tracemaker buses --json`; `line`, if given, gets the one-line text form.
-nlohmann::json bus_report(const model::Board& b, const std::vector<std::uint8_t>& joined, const route::BusGroup& g, std::string* line = nullptr);
+// Lengths are KiCad's: tracks plus the stackup height of the vias (`rules` says whether the project counts it).
+nlohmann::json bus_report(const model::Board& b, const model::DesignRules& rules, const std::vector<std::uint8_t>& joined, const route::BusGroup& g,
+                          std::string* line = nullptr);
 
 // The GPU device used for cost-to-go fields: the first listed device, or -1 (none, or `use_gpu` false).
 int default_gpu_device(bool use_gpu);

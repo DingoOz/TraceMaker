@@ -106,7 +106,7 @@ struct RouterOptions {
   // Buses (doc 05 §38): groups of nets routed lane by lane. The connections of a group between two components are
   // routed one after the other in the order of their pins, each steered along the neighbour routed before it, on
   // the same layers; nets outside the groups do not rip them. `skew` > 0: meanders in the clean-up bring the
-  // members' track lengths within it. Empty = off.
+  // members' lengths (tracks and via height, as KiCad's skew check) within it. Empty = off.
   struct Bus {
     std::string name;
     std::vector<model::NetId> nets;  // in bus order

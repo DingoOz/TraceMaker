@@ -238,12 +238,13 @@ TEST_CASE("bus: measurement of a routed group", "[bus]") {
     tracks.push_back(track(n, 0, len[i] / 2, 0));
     tracks.push_back(track(n, len[i] / 2, len[i], 1));
     vias.push_back(via(n));
+    vias.back().pos = Point{len[i] / 2, 0};  // where the two tracks meet
   }
   tracks.push_back(track(g.members[4], 0, 3'000'000, 0));  // a stub: copper, but the net is not joined
   std::vector<std::uint8_t> joined(s.b.nets.size(), 1);
   joined[static_cast<std::size_t>(g.members[4])] = 0;
 
-  const auto st = route::measure_bus(tracks, {}, vias, joined, g);
+  const auto st = route::measure_bus(s.b, {}, tracks, {}, vias, joined, g);
   REQUIRE(st.members.size() == 5);
   CHECK(st.routed == 4);
   CHECK(st.followed == 3);
@@ -264,11 +265,64 @@ TEST_CASE("bus: measurement of a routed group", "[bus]") {
   CHECK(st.length_max == 10'400'000.0);
   CHECK(st.skew() == 3'400'000.0);
 
+  SECTION("vias count by their height, as in KiCad's skew check") {
+    // No stackup block, two layers, 1.6 mm: KiCad's default stackup, 35 um copper each side of a 1.53 mm core
+    // (this board lists no mask layers), both outer layers in full.
+    s.b.layers.resize(2);
+    s.b.layers[0].name = "F.Cu";
+    s.b.layers[1].name = "B.Cu";
+    s.b.copper = {0, 1};
+    const auto vh = route::via_heights(s.b, model::DesignRules{});
+    CHECK(vh.between(0, 1) == 1'600'000);
+    CHECK(vh.between(1, 0) == 1'600'000);
+    CHECK(vh.between(0, 0) == 0);
+    const auto sv = route::measure_bus(s.b, vh, tracks, {}, vias, joined, g);
+    CHECK(sv.members[1].via_length == 1'600'000.0);
+    CHECK(sv.members[1].length == 12'000'000.0);
+    CHECK(sv.members[2].via_length == 0.0);  // no via
+    // The member without a via is shorter by the via's height too: 12.0 - 7.0 mm.
+    CHECK(sv.skew() == 5'000'000.0);
+    // A via no track of a second layer ends in adds nothing (KiCad: a stub via).
+    std::vector<model::Via> stub{via(g.members[2])};
+    stub[0].pos = Point{3'000'000, 5'000'000};
+    CHECK(route::net_via_length(s.b, vh, g.members[2], tracks, {}, stub) == 0.0);
+    // The project may turn the height off.
+    model::DesignRules flat;
+    flat.use_height_for_length = false;
+    CHECK(route::via_heights(s.b, flat).between(0, 1) == 0);
+  }
+  SECTION("via heights from a stackup: outer copper in full, inner copper by half") {
+    s.b.layers.resize(4);
+    s.b.copper = {0, 1, 2, 3};
+    s.b.stackup.present = true;
+    auto layer = [&](const char* name, const char* type, Coord th, int ci) {
+      model::StackupLayer l;
+      l.name = name;
+      l.type = type;
+      l.thickness = th;
+      l.copper_index = ci;
+      s.b.stackup.layers.push_back(l);
+    };
+    layer("F.Mask", "Top Solder Mask", 10'000, -1);
+    layer("F.Cu", "copper", 35'000, 0);
+    layer("dielectric 1", "prepreg", 100'000, -1);
+    layer("In1.Cu", "copper", 18'000, 1);
+    layer("dielectric 2", "core", 1'200'000, -1);
+    layer("In2.Cu", "copper", 18'000, 2);
+    layer("dielectric 3", "prepreg", 100'000, -1);
+    layer("B.Cu", "copper", 35'000, 3);
+    layer("B.Mask", "Bottom Solder Mask", 10'000, -1);
+    const auto vh = route::via_heights(s.b, model::DesignRules{});
+    CHECK(vh.between(0, 1) == 35'000 + 100'000 + 9'000);
+    CHECK(vh.between(1, 2) == 9'000 + 1'200'000 + 9'000);
+    CHECK(vh.between(0, 3) == 35'000 + 100'000 + 18'000 + 1'200'000 + 18'000 + 100'000 + 35'000);
+    CHECK(vh.between(2, 3) == 9'000 + 100'000 + 35'000);
+  }
   SECTION("ties in the reference go to the first member") {
     std::vector<model::Track> t2{track(g.members[0], 0, 5'000'000, 0), track(g.members[1], 0, 5'000'000, 1)};
     std::vector<std::uint8_t> j2(s.b.nets.size(), 0);
     j2[static_cast<std::size_t>(g.members[0])] = j2[static_cast<std::size_t>(g.members[1])] = 1;
-    const auto s2 = route::measure_bus(t2, {}, {}, j2, g);
+    const auto s2 = route::measure_bus(s.b, {}, t2, {}, {}, j2, g);
     CHECK(s2.routed == 2);
     CHECK(s2.ref_layers == model::layer_bit(0));
     CHECK(s2.followed == 1);
@@ -276,7 +330,7 @@ TEST_CASE("bus: measurement of a routed group", "[bus]") {
     CHECK(s2.skew() == 0.0);
   }
   SECTION("nothing routed") {
-    const auto s3 = route::measure_bus({}, {}, {}, std::vector<std::uint8_t>(s.b.nets.size(), 0), g);
+    const auto s3 = route::measure_bus(s.b, {}, {}, {}, {}, std::vector<std::uint8_t>(s.b.nets.size(), 0), g);
     CHECK(s3.routed == 0);
     CHECK(s3.followed == 0);
     CHECK(s3.skew() == 0.0);

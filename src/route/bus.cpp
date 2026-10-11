@@ -205,7 +205,91 @@ std::optional<Coord> bus_rule_skew(const drc::RuleEngine& re, const BusGroup& g)
   return out;
 }
 
-BusStats measure_bus(const std::vector<model::Track>& tracks, const std::vector<model::ArcTrack>& arcs, const std::vector<model::Via>& vias,
+Coord ViaHeights::between(int a, int b) const {
+  if (a > b) std::swap(a, b);
+  if (a < 0 || a == b || static_cast<std::size_t>(b) >= to.size()) return 0;
+  return to[static_cast<std::size_t>(b)] - from[static_cast<std::size_t>(a)];
+}
+
+ViaHeights via_heights(const model::Board& b, const model::DesignRules& rules) {
+  ViaHeights vh;
+  const int n = b.copper_count();
+  if (!rules.use_height_for_length || n < 2) return vh;
+  vh.from.assign(static_cast<std::size_t>(n), 0);
+  vh.to.assign(static_cast<std::size_t>(n), 0);
+  Coord z = 0;
+  // An inner layer counts by half (KiCad halves in integer nanometres), an outer one in full.
+  auto copper = [&](int ci, Coord th) {
+    const bool outer = ci == 0 || ci == n - 1;
+    vh.from[static_cast<std::size_t>(ci)] = outer ? z : z + th - th / 2;
+    vh.to[static_cast<std::size_t>(ci)] = outer ? z + th : z + th / 2;
+    z += th;
+  };
+  bool listed = b.stackup.present;
+  for (int ci = 0; ci < n && listed; ++ci) listed = b.stackup.position_of_copper(ci) >= 0;
+  if (listed) {
+    for (const auto& l : b.stackup.layers) {
+      if (l.is_copper() && l.copper_index >= 0 && l.copper_index < n) copper(l.copper_index, l.thickness);
+      else if (l.name.rfind("dielectric", 0) == 0) z += l.thickness;  // mask, silk and paste are not between copper
+    }
+    return vh;
+  }
+  // KiCad's default stackup (BOARD_STACKUP::BuildDefaultStackupList).
+  const Coord cu = 35'000, mask = 10'000;
+  Coord masks = 0;
+  for (const auto& l : b.layers)
+    if (l.name == "F.Mask" || l.name == "B.Mask") masks += mask;
+  const Coord diel = (b.thickness - cu * n - masks) / (n - 1);
+  for (int ci = 0; ci < n; ++ci) {
+    copper(ci, cu);
+    z += diel;
+  }
+  return vh;
+}
+
+double net_via_length(const model::Board& b, const ViaHeights& vh, NetId net, const std::vector<model::Track>& tracks,
+                      const std::vector<model::ArcTrack>& arcs, const std::vector<model::Via>& vias) {
+  if (vh.to.empty()) return 0;
+  std::vector<std::pair<model::Point, int>> ends;  // track and arc end points of the net, with their layer
+  for (const auto& t : tracks)
+    if (t.net == net && t.layer >= 0) ends.insert(ends.end(), {{t.a, t.layer}, {t.b, t.layer}});
+  for (const auto& a : arcs)
+    if (a.net == net && a.layer >= 0) ends.insert(ends.end(), {{a.a, a.layer}, {a.b, a.layer}});
+  double sum = 0;
+  for (const auto& v : vias) {
+    if (v.net != net) continue;
+    model::LayerMask span = 0;
+    const long double r = static_cast<long double>(v.size) / 2;
+    for (const auto& [p, layer] : ends) {
+      const long double dx = static_cast<long double>(p.x - v.pos.x), dy = static_cast<long double>(p.y - v.pos.y);
+      if (dx * dx + dy * dy <= r * r) span |= model::layer_bit(layer);
+    }
+    // KiCad takes one pad connected to the via; the first in board order here.
+    for (const auto& p : b.pads) {
+      if (p.net != net || p.copper == 0) continue;
+      const model::Point d = geom::rotate(v.pos - (p.pos + geom::rotate(p.drill_offset, p.angle)), -p.angle);
+      if (std::llabs(d.x) > p.size_x / 2 + v.size / 2 || std::llabs(d.y) > p.size_y / 2 + v.size / 2) continue;
+      const bool through = p.type == model::PadType::ThruHole || p.type == model::PadType::NpThruHole;
+      int side = 0;
+      if (through) {
+        side = p.footprint >= 0 && b.footprints[static_cast<std::size_t>(p.footprint)].back ? b.copper_count() - 1 : 0;
+      } else {
+        while (side < b.copper_count() - 1 && !(p.copper & model::layer_bit(side))) ++side;
+      }
+      span |= model::layer_bit(side);
+      break;
+    }
+    if (span == 0) continue;
+    int lo = 0, hi = 0;
+    for (int l = 0; l < static_cast<int>(vh.to.size()); ++l)
+      if (span & model::layer_bit(l)) hi = l;
+    while (!(span & model::layer_bit(lo))) ++lo;
+    sum += static_cast<double>(vh.between(lo, hi));
+  }
+  return sum;
+}
+
+BusStats measure_bus(const model::Board& b, const ViaHeights& vh, const std::vector<model::Track>& tracks, const std::vector<model::ArcTrack>& arcs, const std::vector<model::Via>& vias,
                      const std::vector<std::uint8_t>& net_routed, const BusGroup& g) {
   BusStats st;
   std::map<NetId, std::size_t> slot;
@@ -229,6 +313,10 @@ BusStats measure_bus(const std::vector<model::Track>& tracks, const std::vector<
     }
   for (const auto& v : vias)
     if (const auto it = slot.find(v.net); it != slot.end()) ++st.members[it->second].vias;
+  for (auto& m : st.members) {
+    m.via_length = net_via_length(b, vh, m.net, tracks, arcs, vias);
+    m.length += m.via_length;
+  }
   // Reference: the (vias, layers) most routed members share; the earliest member's among equals.
   std::size_t best = st.members.size();
   int best_n = 0;

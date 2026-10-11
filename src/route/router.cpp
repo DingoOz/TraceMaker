@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/router.hpp"
+#include "route/bus.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
@@ -2625,6 +2626,7 @@ struct Router::Impl {
   int bus_mode = 0;                          // 0 no guide; 1 cells off the guide cost bus_pen per step; 2 they are blocked
   std::int64_t bus_pen = 0;
   bool tune_bus = false;                     // tune_net is tuning a bus member
+  ViaHeights bus_vh;                         // what a via adds to a member's length in KiCad's skew check
 
   // Finds the bundles and makes each one's connections consecutive, lane by lane, at the place the router's order
   // gave the first of them. Bundles go to the front only with opt.bus_first: on a dense board the lanes out of a
@@ -2704,6 +2706,7 @@ struct Router::Impl {
       for (const auto& [l, k] : lanes) bundles[bi].conns.push_back(k);
     }
     bus_pen = pitch / 4;
+    bus_vh = via_heights(b, rules);
     if (opt.sink)
       for (const auto& bd : bundles) {
         std::string nets;
@@ -2883,9 +2886,25 @@ struct Router::Impl {
       std::fprintf(stderr, "bus lane %s conn %d: %s, %.3f mm, %zu items\n", b.nets[static_cast<std::size_t>(st.c.net)].name.c_str(), ci, state,
                    net_length({ci}) / 1e6, st.items.size());
   }
-  // Length matching of the groups with a skew limit: members with every connection routed are measured (track
-  // length, as the pair skew is), and each one shorter than the longest by more than half the limit gets meanders
-  // up to a quarter of the limit below the longest. Returns the number of groups within their limit afterwards.
+  // A net's routed length as KiCad's skew check sums it: tracks, and the stackup height of each via between the
+  // layers it joins (route/bus.hpp; `tracemaker buses` reports the same).
+  double bus_length(NetId net, const std::vector<int>& list, double* via_part = nullptr) const {
+    std::vector<model::Track> tr;
+    std::vector<model::Via> vi;
+    for (int ci : list)
+      for (int item : cs[static_cast<std::size_t>(ci)].items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Track) tr.push_back(b.tracks[static_cast<std::size_t>(it.index)]);
+        else if (it.kind == drc::ItemKind::Via) vi.push_back(b.vias[static_cast<std::size_t>(it.index)]);
+      }
+    const double v = net_via_length(b, bus_vh, net, tr, {}, vi);
+    if (via_part) *via_part = v;
+    return net_length(list) + v;
+  }
+  // Length matching of the groups with a skew limit: members with every connection routed are measured (tracks
+  // and via heights, as KiCad's skew check does), and each one shorter than the longest by more than half the limit
+  // gets meanders up to between half the limit below the longest and the longest. Returns the number of groups
+  // within their limit afterwards.
   int tune_bus_skew() {
     int within = 0;
     std::set<NetId> open;  // nets with a connection still unrouted: their length is not the net's
@@ -2899,7 +2918,7 @@ struct Router::Impl {
         for (NetId net : g.nets) {
           const auto it = by.find(net);
           if (open.count(net) || it == by.end()) continue;
-          const double len = net_length(it->second);
+          const double len = bus_length(net, it->second);
           lo = n ? std::min(lo, len) : len;
           hi = n ? std::max(hi, len) : len;
           ++n;
@@ -2914,13 +2933,15 @@ struct Router::Impl {
         for (NetId net : g.nets)
           if (const auto it = by.find(net); it != by.end())
             std::fprintf(stderr, "bus %s: %s %.3f mm before tuning%s\n", g.name.c_str(), b.nets[static_cast<std::size_t>(net)].name.c_str(),
-                         net_length(it->second) / 1e6, open.count(net) ? " (incomplete)" : "");
+                         bus_length(net, it->second) / 1e6, open.count(net) ? " (incomplete)" : "");
       tune_bus = true;
       for (NetId net : g.nets) {
         const auto it = by.find(net);
         if (open.count(net) || it == by.end()) continue;
-        if (longest - net_length(it->second) <= static_cast<double>(g.skew) / 2) continue;
-        tune_net(net, it->second, static_cast<Coord>(longest - static_cast<double>(g.skew) / 2), static_cast<Coord>(longest));
+        double via_part = 0;
+        if (longest - bus_length(net, it->second, &via_part) <= static_cast<double>(g.skew) / 2) continue;
+        // tune_net counts tracks; meanders add no via, so the net's via length comes off both bounds.
+        tune_net(net, it->second, static_cast<Coord>(longest - static_cast<double>(g.skew) / 2 - via_part), static_cast<Coord>(longest - via_part));
       }
       tune_bus = false;
       lengths(lo, hi);

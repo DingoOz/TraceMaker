@@ -144,8 +144,9 @@ std::vector<route::BusGroup> resolve_buses(const model::Board& b, const model::D
   return out;
 }
 
-nlohmann::json bus_report(const model::Board& b, const std::vector<std::uint8_t>& joined, const route::BusGroup& g, std::string* line) {
-  const auto st = route::measure_bus(b.tracks, b.arcs, b.vias, joined, g);
+nlohmann::json bus_report(const model::Board& b, const model::DesignRules& rules, const std::vector<std::uint8_t>& joined, const route::BusGroup& g,
+                          std::string* line) {
+  const auto st = route::measure_bus(b, route::via_heights(b, rules), b.tracks, b.arcs, b.vias, joined, g);
   auto layer_names = [&](model::LayerMask m) {
     nlohmann::json a = nlohmann::json::array();
     for (int l = 0; l < b.copper_count(); ++l)
@@ -155,7 +156,7 @@ nlohmann::json bus_report(const model::Board& b, const std::vector<std::uint8_t>
   nlohmann::json members = nlohmann::json::array();
   for (const auto& m : st.members)
     members.push_back({{"net", b.nets[static_cast<std::size_t>(m.net)].name}, {"routed", m.routed}, {"followed", m.followed},
-                       {"length_mm", m.length / 1e6}, {"vias", m.vias}, {"layers", layer_names(m.layers)}});
+                       {"length_mm", m.length / 1e6}, {"via_length_mm", m.via_length / 1e6}, {"vias", m.vias}, {"layers", layer_names(m.layers)}});
   nlohmann::json j{{"name", g.name}, {"source", g.source}, {"members", members}, {"nets", st.members.size()}, {"routed", st.routed},
                    {"followed", st.followed}, {"left", st.left}, {"reference_vias", st.ref_vias}, {"reference_layers", layer_names(st.ref_layers)},
                    {"vias_min", st.vias_min}, {"vias_max", st.vias_max}, {"length_min_mm", st.length_min / 1e6},
@@ -752,7 +753,7 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("buses: %d connections routed as lanes, %d left their bus", res.bus_lanes, res.bus_left));
     for (const auto& g : bus_groups) {
       std::string line;
-      bj.push_back(bus_report(routed, joined, g, &line));
+      bj.push_back(bus_report(routed, rules, joined, g, &line));
       log("  " + line);
     }
     out.summary["buses"] = bj;

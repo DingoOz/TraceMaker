@@ -68,6 +68,8 @@ void read_pro(const fs::path& p, model::DesignRules& r) {
     m.solder_mask_to_copper_clearance = mm(j, "solder_mask_to_copper_clearance", 0);
     m.allow_blind_buried_vias = j.value("allow_blind_buried_vias", false);
     m.allow_microvias = j.value("allow_microvias", false);
+    if (j.contains("use_height_for_length_calcs") && j["use_height_for_length_calcs"].is_boolean())
+      r.use_height_for_length = j["use_height_for_length_calcs"].get<bool>();
     const json& ds = d["board"]["design_settings"];
     if (ds.contains("rule_severities") && ds["rule_severities"].is_object())
       for (const auto& [type, sev] : ds["rule_severities"].items())
