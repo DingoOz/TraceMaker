@@ -1601,7 +1601,10 @@ redraw them).
 
 1. The router's exact check for a through via of the net's class size (`via_state`, 10 µm clearer than the rules
    ask), against every pad, track, via, hole, board edge, keep-out, mask opening and custom rule. Surface-mount
-   pads of any net, the via's own included, count as obstacles: a stitching via is never a via in pad.
+   pads of any net, the via's own included, count as obstacles: a stitching via is never a via in pad. Copper
+   text is in the obstacle model as an estimated box per line, not as KiCad's glyphs, so stitching vias keep
+   0.25 mm more than the clearance from those boxes (a grid via beside the text `JTAG_EN` on
+   kit-dev-coldfire-xilinx_5213 was 0.139 mm from a glyph where 0.15 mm is required).
 2. Other nets' fills. A through via may pass through another net's plane on a layer in between, as every via on a
    multilayer board does, but only through the middle of it: the hole a refill will cut (via radius + the largest
    clearance + 10 µm) plus the zone's minimum width as a web must lie wholly inside the fill, away from every edge

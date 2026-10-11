@@ -20,6 +20,7 @@
 #include "passes/stitch.hpp"
 #include "passes/style.hpp"
 #include "passes/widen.hpp"
+#include "route/obstacles.hpp"
 
 using namespace tmk;
 using geom::Point;
@@ -549,6 +550,26 @@ TEST_CASE("stitch: holes through another net's plane keep that plane's minimum w
   const double holes = static_cast<double>(r.vias.size()) * 3.14159265 * 0.52 * 0.52;  // radius 0.3 + 0.2 and the refill's margins
   CHECK(before - after > 0);
   CHECK(before - after <= holes);
+}
+
+TEST_CASE("stitch: vias keep a wide margin from copper text", "[passes][stitch]") {
+  const std::string text = R"(  (gr_text "TEST_q" (at 15 10 0) (layer "F.Cu") (uuid "t1")
+    (effects (font (size 1 1) (thickness 0.15))))
+)";
+  const auto plain = load("text0", board_text(kGndPin + gnd_zone("F.Cu") + gnd_zone("B.Cu") + gnd_zone("In1.Cu"), 4));
+  const auto l = load("text1", board_text(kGndPin + gnd_zone("F.Cu") + gnd_zone("B.Cu") + gnd_zone("In1.Cu") + text, 4));
+  passes::StitchOptions o;
+  o.planes = true;
+  o.pitch = 1 * mm;
+  const auto r0 = passes::stitch_vias(plain.board, plain.rules, o), r = passes::stitch_vias(l.board, l.rules, o);
+  CHECK(r.vias.size() < r0.vias.size());
+  // The boxes the obstacle model holds for the text are estimates of KiCad's glyphs: every via is clear of them by
+  // the clearance and a quarter millimetre more.
+  model::Board w = l.board;
+  const route::Obstacles obs(w, l.rules);
+  REQUIRE(!obs.copper_texts().empty());
+  for (const auto& v : r.vias)
+    for (const auto& [layer, box] : obs.copper_texts()) CHECK(!geom::closer_than(geom::Shape::point(v.pos, v.size / 2), box, 200'000 + 250'000));
 }
 
 TEST_CASE("stitch: a signal via gets one plane via within the distance", "[passes][stitch]") {

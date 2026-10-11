@@ -22,6 +22,11 @@ using model::Point;
 // reaches it, and the hole of a via through a fill is no larger than the one the placement tested.
 constexpr Coord kPlaceMargin = 10'000;
 
+// Copper text is in the obstacle model as an estimated box per line, not as KiCad's glyphs (a descender or a
+// trailing empty line can reach some tens of micrometres past it). A router's via rarely sits against text; a grid
+// puts one wherever it fits, so stitching vias keep this much further away from the boxes than the clearance.
+constexpr Coord kTextMargin = 250'000;
+
 // Sixteen directions, x 1000, for the candidate sites around a signal via (integers: the same sites everywhere).
 constexpr int kDirs[16][2] = {{1000, 0},  {924, 383},   {707, 707},   {383, 924},   {0, 1000},  {-383, 924},  {-707, 707},  {-924, 383},
                               {-1000, 0}, {-924, -383}, {-707, -707}, {-383, -924}, {0, -1000}, {383, -924},  {707, -707},  {924, -383}};
@@ -165,12 +170,19 @@ StitchResult stitch_vias(const model::Board& board, const model::DesignRules& ru
       if (within(p, v.pos, 2 * (r + reach) + web)) return false;
     return true;
   };
+  auto text_near = [&](Point p, Coord r) {
+    const geom::Shape disk = geom::Shape::point(p, r);
+    for (const auto& [layer, box] : obs.copper_texts())
+      if (geom::closer_than(disk, box, reach + kTextMargin)) return true;
+    return false;
+  };
   // The exact check (rule 1) against everything but the fills, the fill test above, then the two-layer test; a via
   // that passes is entered in the model at once.
   auto try_place = [&](NetId net, Point p, bool return_path, bool* blocked) {
     const model::Via v = via_for(net, p);
     if (!obs.rules().via_allowed(net) || !spend()) return false;
-    if (!apart(p, v.size / 2) || obs.via_state(p, v.size, v.drill, net, kPlaceMargin, false) != 0 || !fills_allow(net, p, v.size / 2)) {
+    if (!apart(p, v.size / 2) || text_near(p, v.size / 2) || obs.via_state(p, v.size, v.drill, net, kPlaceMargin, false) != 0 ||
+        !fills_allow(net, p, v.size / 2)) {
       if (blocked) *blocked = true;
       return false;
     }
