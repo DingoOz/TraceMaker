@@ -502,7 +502,7 @@ TEST_CASE("SRJ fan-out extensions: planes, exit layers, unpointed pads, track la
   const auto problem = io::read_srj(p.dump());
   REQUIRE(problem.planes.size() == 1);
   CHECK(problem.planes[0].layer == 2);
-  CHECK(problem.connections[0].points.back().layers == std::vector<int>{1});  // the breakout point moved to inner1
+  CHECK(problem.connections[0].points.back().layers == std::vector<int>{0});  // the breakout point keeps its own layer (the exit-layer override is an experiment, D97)
   CHECK(problem.track_layers == std::vector<int>{0, 3});
 
   io::SrjImportOptions opt;

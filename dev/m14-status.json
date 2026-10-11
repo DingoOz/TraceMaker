@@ -1,5 +1,5 @@
 {
- "phase": "M14.4: fanout31 gate met (57/60 run so far); srj19 90.5 %, srj20 62 % at one variant",
+ "phase": "M14 round 2 done: srj19 gate met (188/200), fanout31 gate met (60/72), srj20 133/200 (target 157)",
  "targets": {
   "srj19": 0.92,
   "srj20": 0.785,
@@ -63,25 +63,25 @@
   },
   {
    "id": "f4",
-   "state": "todo",
+   "state": "done",
    "title": "Regression: quick/mid tier byte-identical, ctest green"
   },
   {
    "id": "b0",
    "state": "done",
    "title": "Track B: fanout31 import + runs",
-   "note": "Fixed model (no exit-layer override) + 8-variant portfolio: am62l 12/12, rk3308 12/12, k230 12/12, imx6ull 12/12, t113s3 9/12 = 57 of 60 run; AM3352 not solved (6-23 open; tscircuit 0/12). Gate 48/72 met"
+   "note": "60 of 72 solved (tscircuit 48): am62l 12, rk3308 12, k230 12, imx6ull 12, t113s3 9, am3352 3 (16-variant portfolio)"
   },
   {
    "id": "d1",
-   "state": "todo",
+   "state": "done",
    "title": "Docs: doc 16 outcomes, doc 05/10 sections, decisions row"
   },
   {
    "id": "f5",
-   "state": "doing",
+   "state": "done",
    "title": "srj20: preferred layer directions (auto on breakout boards), package penalty",
-   "note": "srj20 gap boards 28 -> 40 % clean; full set 50M one variant: srj19 181/200, srj20 124/200"
+   "note": "srj20: 124 (one variant) + 9 (16-variant portfolio) = 133/200; gap is the 50-79 connection boards"
   }
  ],
  "findings": [
@@ -96,6 +96,7 @@
   "fanout31 needed importer modelling, not routing changes: planes as zones, per-connection exit layers, far-component pads as keep-outs, closed layers as rule areas, outline margin. Three trial cases then route completely.",
   "srj20 failures are dominated by negotiation churn ('ripped up by X and not routed again', 585 of ~1,170 failures); 24 seeded variants on one hard board all stop at 33-40 of 52.",
   "The K230 'dead terminals' were a modelling bug: several buses' breakout points share coordinates and differ only by layer, so overriding their layer from connectionExitTargets stacked terminals on one layer. Without the override all 65 terminals escape and K230 goes 0/12 -> 12/12 with the portfolio.",
-  "Preferred layer directions (even layers horizontal, odd vertical; --layer-dir-pen 0.3) are the first structural gain on srj20: gap boards 28 -> 40 % clean, 87.7 -> 89.8 % routed; swapping the directions is neutral. Applied automatically only to breakout boards (>= 70 % of connections touch a ball-grid package, two layers): on ordinary boards it cost 2.4 points of completion."
+  "Preferred layer directions (even layers horizontal, odd vertical; --layer-dir-pen 0.3) are the first structural gain on srj20: gap boards 28 -> 40 % clean, 87.7 -> 89.8 % routed; swapping the directions is neutral. Applied automatically only to breakout boards (>= 70 % of connections touch a ball-grid package, two layers): on ordinary boards it cost 2.4 points of completion.",
+  "Final: ctest 254/254, quick/mid byte-identical. srj19 188/200 (94.0 %) beats tscircuit 92.0 %; fanout31 60/72 beats 48/72; srj20 133/200 (66.5 %) is 24 boards short of 157."
  ]
 }

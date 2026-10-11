@@ -320,5 +320,11 @@ top-centre 50 open of 316 (tscircuit solves none of the AM3352 cases). The full 
 |---|---|---|---|
 | srj19 clean | ≥ 184/200 | **188/200 = 94.0 %**: 181 with one variant (50 M, fast bends, automatic settings) plus 7 of the 19 the 16-variant portfolio closes (the composite is not one run) | yes |
 | srj20 clean | ≥ 157/200 | one variant (50 M): 124/200 (62 %); 16-variant portfolio on the 76 boards that misses: 9 more = **133/200 (66.5 %)** (median 168 s); 200 M, one variant, on the 33 gap boards: 6 more (130) | **no** (24 short) |
-| fanout31 | ≥ 48/72 | **57 of the 60 cases run solved** (AM62L 12/12, RK3308 12/12, K230 12/12, i.MX6ULL 12/12, T113-S3 9/12; the 8-variant portfolio, 60 M each, closes the stragglers of a single variant: 44 → 57); AM3352 (not required: tscircuit solves 0/12): 6–23 connections open at best | yes |
+| fanout31 | ≥ 48/72 | **60 of 72 solved** (tscircuit 48): AM62L 12/12, RK3308 12/12, K230 12/12, i.MX6ULL 12/12, T113-S3 9/12 (55–57 stay 3 connections open), AM3352 3/12 (the left-edge cases 70–72 with a 16-variant portfolio; 61–69 stay 6–15 open; tscircuit solves none of the 12). One variant solves 44 of the first 59; the 8-variant portfolio (60 M each) closes the stragglers (57 of 60); 16 variants close the three AM3352 left-edge cases | yes |
 | No DRC error added, quick/mid unchanged | | 0 added on every run; byte-identical | yes |
+
+**Final checks (2026-10-11, evening).** `ctest` 254/254 on release; `quick` (30) and `mid` (11) byte-identical to the start of the day. The first version
+of the breakout rule (any package of at least 30 same-layer SMD pads) also matched the `bus_route` fixture's two connectors and failed it (13 of 24 routed);
+the rule now needs a ball-grid-like package: at least 5 distinct columns and rows with at least 40 % of the grid cells filled, so connectors and QFPs no longer
+qualify, and the srj results did not change (gap boards 23 of 57 clean either way). An asan build compiled and ran the suite: all tests passed except the
+importer test that expected the removed exit-layer override (fixed) and `bus_route` / `thread_determinism`, which are too slow under asan to finish in the time available (not run to completion).

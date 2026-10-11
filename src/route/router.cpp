@@ -2728,6 +2728,14 @@ struct Router::Impl {
         half = std::max(half, std::max(pd.size_x, pd.size_y));
       }
       if (!same || m == 0) continue;
+      // A ball-grid-like array: at least 5 distinct columns and rows, at least 40 % of the grid cells filled (a connector
+      // or a QFP has the pad count but not the filled grid).
+      std::set<Coord> gx, gy;
+      for (int i : ids) {
+        gx.insert(b.pads[static_cast<std::size_t>(i)].pos.x / 10'000);
+        gy.insert(b.pads[static_cast<std::size_t>(i)].pos.y / 10'000);
+      }
+      if (gx.size() < 5 || gy.size() < 5 || 10 * ids.size() < 4 * gx.size() * gy.size()) continue;
       pkg_boxes.push_back({bx.inflated(half), std::countr_zero(m), fp});
     }
     // Automatic settings (doc 16 §10, D97): on a two-layer board with a ball-grid package the layers get preferred
