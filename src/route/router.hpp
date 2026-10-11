@@ -65,6 +65,17 @@ struct RouterOptions {
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
   double history_weight = 2.0;  // PathFinder history: pitches of cost per recorded conflict on a cell
   int max_victims = 0;          // a negotiated route may rip at most this many connections at once (0 = no limit)
+  double txn_temp = 0;          // transactional negotiation: a route that loses k connections net is kept with probability exp(-k / txn_temp) (0 = never)
+  int txn_cool = 0;             // 1: the temperature falls linearly to zero over the work budget (simulated-annealing schedule)
+  int stall_passes = 0;         // > 0: a restart begins when this many passes in a row set no new best for the run since its last restart
+  long txn_cap = 0;             // transactional negotiation: expansion cap of each victim's re-route search (0 = none)
+  int txn_depth = 0;            // transactional negotiation: victims that cannot be re-routed strictly get a nested transaction of their own, this deep
+  int txn_nested = 4;           // nested transactions allowed per top-level transaction
+  int field_cache_mb = 0;       // > 0: cost-to-go fields are kept (this many MB per router) and reused when every input is identical; results are unchanged
+  int flood_work_pct = 100;     // reachability-flood cells count this percent of an expansion against the work budget (a flood cell costs far less time)
+  int field_prefill = 0;        // 1: fill a class's fixed-copper cache for the whole board before its first field, so fields depend on nothing learned later (and can be cached)
+  int txn = 0;                  // transactional negotiation (doc 16 §12): a route that rips victims is kept only if the victims
+                                // can be re-routed without ripping, so completion never falls: 0 = off, 1 = keep ties (net 0), 2 = strict gain only
   int max_rips_per_connection = 40;  // was 8: at 50 M work on dense breakouts 33 % -> 54 % clean (doc 16 §4)
   int max_passes = 40;          // passes over still-unrouted connections (was 12)
   // Micro vias (outer layer to the next one, the net class's microvia size) where a through via is blocked, on
@@ -200,6 +211,7 @@ struct RouteResult {
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
   int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
+  int txn_tried = 0, txn_kept = 0;  // transactional negotiation: routes with victims tried, and kept
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;

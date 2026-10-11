@@ -774,6 +774,16 @@ int main(int argc, char** argv) {
   route->add_flag("--layer-assign-angle", ropt.layer_assign_angle, "Layer preference per connection by chord direction (two-layer boards)")->group("");
   route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
   route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");
+  route->add_option("--txn", ropt.txn, "Negotiation as transactions: a route that rips others stays only if they can be re-routed (1 = ties kept, 2 = strict gain)")->group("");
+  route->add_option("--txn-temp", ropt.txn_temp, "With --txn: annealing temperature; a route losing k connections net is kept with probability exp(-k/T) (0 = never)")->group("");
+  route->add_option("--txn-cool", ropt.txn_cool, "With --txn-temp: 1 = the temperature falls linearly to zero over the budget")->group("");
+  route->add_option("--stall-passes", ropt.stall_passes, "Restart after this many negotiation passes without a new best (0 = only when the passes end)")->group("");
+  route->add_option("--txn-cap", ropt.txn_cap, "With --txn: expansion cap of each victim's re-route search (0 = none)")->group("");
+  route->add_option("--txn-depth", ropt.txn_depth, "With --txn: nested transaction depth for victims that cannot be re-routed strictly")->group("");
+  route->add_option("--txn-nested", ropt.txn_nested, "With --txn-depth: nested transactions allowed per top-level one")->group("");
+  route->add_option("--field-cache-mb", ropt.field_cache_mb, "Keep cost-to-go fields (MB per router) and reuse them when all inputs are identical (same results, less time)")->group("");
+  route->add_option("--flood-work-pct", ropt.flood_work_pct, "Percent of an expansion that a reachability-flood cell counts against --work (default 100)")->group("");
+  route->add_option("--field-prefill", ropt.field_prefill, "1: fill the fixed-copper cache of a net class for the whole board before its first cost-to-go field (stronger heuristic, fields cacheable)")->group("");
   route->add_option("--max-victims", ropt.max_victims, "Negotiation: connections one route may rip at once (0 = no limit)")->group("");
   route->add_option("--max-rips", ropt.max_rips_per_connection, "Rip-ups allowed per connection")->group("");
   route->add_option("--max-passes", ropt.max_passes, "Passes over still-unrouted connections")->group("");

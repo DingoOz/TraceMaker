@@ -16,6 +16,7 @@
 #include <map>
 #include <queue>
 #include <array>
+#include <cstring>
 #include <deque>
 #include <set>
 #include <thread>
@@ -103,6 +104,7 @@ struct Router::Impl {
   struct ClassCache {
     std::vector<std::int32_t> margin, tight, via;  // INT32_MIN = not computed yet
     model::NetId rep = 0;
+    bool prefilled = false;
   };
   std::map<std::pair<const model::NetClass*, Coord>, ClassCache> caches;  // per (net class, track width)
   bool use_cache = true;
@@ -919,7 +921,15 @@ struct Router::Impl {
   std::vector<std::int32_t> field;
   std::vector<std::uint8_t> f_pass, f_via, f_tgt;
   bool field_ok = false;
-  long field_runs = 0, field_gpu_fail = 0, field_cpu_runs = 0;
+  long field_runs = 0, field_gpu_fail = 0, field_cpu_runs = 0, field_hits = 0;
+  struct FieldEntry {
+    std::int64_t dims[6];
+    std::vector<std::uint8_t> pass, via, tgt;
+    std::vector<std::int32_t> field;
+  };
+  std::unordered_map<std::uint64_t, FieldEntry> fcache;
+  std::deque<std::uint64_t> fcache_order;
+  std::size_t fcache_bytes = 0;
   double field_seconds = 0;
   void build_field(const Window& w, NetId net, Coord hw, const Endpoint& dst, std::int64_t step, std::int64_t diag, std::int64_t viac) {
     (void)hw;
@@ -927,6 +937,28 @@ struct Router::Impl {
     field_ok = false;
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
     auto& cc = cache_for(net);
+    if (opt.field_prefill && !cc.prefilled && static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny) * static_cast<std::size_t>(nl) <= 4'000'000) {
+      // The same codes the searches would compute one cell at a time (same functions, same arguments), computed up front.
+      cc.prefilled = true;
+      const Coord twidth = track_width(net) / 2;
+      const Coord vmargin = pitch * 71 / 100 + 1;
+      for (int gy = 0; gy < ny; ++gy)
+        for (int gx = 0; gx < nx; ++gx) {
+          const Point p = at(gx, gy);
+          const std::size_t vi = static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
+          if (cc.via[vi] == INT32_MIN) {
+            cc.via[vi] = obs->fixed_via_code(p, via_diameter(net), via_drill(net), vmargin, cc.rep);
+            ++wc().fixed_checks;
+          }
+          for (int l = 0; l < nl; ++l) {
+            const std::size_t gi = (static_cast<std::size_t>(l) * static_cast<std::size_t>(ny) + static_cast<std::size_t>(gy)) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
+            if (cc.tight[gi] == INT32_MIN) {
+              cc.tight[gi] = obs->fixed_code(p, l, twidth, 0, cc.rep);
+              ++wc().fixed_checks;
+            }
+          }
+        }
+    }
     f_pass.assign(cells * static_cast<std::size_t>(nl), 1);
     f_via.assign(cells, 1);
     f_tgt.assign(cells * static_cast<std::size_t>(nl), 0);
@@ -958,6 +990,33 @@ struct Router::Impl {
     }
     gpu::FieldProblem fp{w.w, w.h, nl, static_cast<std::int32_t>(step), static_cast<std::int32_t>(diag), static_cast<std::int32_t>(std::min<std::int64_t>(viac, 1'000'000'000)),
                          f_pass.data(), f_via.data(), f_tgt.data()};
+    // Field cache: the field is a pure function of (window, costs, pass/via/target masks), so a stored field with identical
+    // inputs is the field this call would compute. Hash to find, byte comparison to confirm: results cannot change.
+    std::uint64_t fkey = 0;
+    if (opt.field_cache_mb > 0) {
+      std::uint64_t h = 1469598103934665603ull;
+      auto mix = [&](const void* d, std::size_t n) {
+        const auto* q = static_cast<const std::uint8_t*>(d);
+        for (std::size_t i = 0; i < n; ++i) h = (h ^ q[i]) * 1099511628211ull;
+      };
+      const std::int64_t dims[6] = {w.w, w.h, nl, step, diag, std::min<std::int64_t>(viac, 1'000'000'000)};
+      mix(dims, sizeof dims);
+      mix(f_pass.data(), f_pass.size());
+      mix(f_via.data(), f_via.size());
+      mix(f_tgt.data(), f_tgt.size());
+      fkey = h;
+      const auto it = fcache.find(fkey);
+      if (it != fcache.end()) {
+        const auto& e = it->second;
+        if (std::memcmp(e.dims, dims, sizeof dims) == 0 && e.pass == f_pass && e.via == f_via && e.tgt == f_tgt) {
+          field = e.field;
+          field_ok = true;
+          ++field_hits;
+          field_seconds += std::chrono::duration<double>(std::chrono::steady_clock::now() - t0f).count();
+          return;
+        }
+      }
+    }
     // Same field on the GPU or the CPU (identical by construction), so results do not depend on GPU availability.
     const auto st = opt.gpu_device >= 0 ? gpu::field_gpu(opt.gpu_device, fp, field) : gpu::GpuStatus{false, "no GPU"};
     if (st.ok) {
@@ -968,6 +1027,29 @@ struct Router::Impl {
       ++field_cpu_runs;
     }
     field_ok = true;
+    if (opt.field_cache_mb > 0) {
+      const std::size_t bytes = field.size() * sizeof(std::int32_t) + f_pass.size() + f_via.size() + f_tgt.size();
+      while (!fcache_order.empty() && fcache_bytes + bytes > static_cast<std::size_t>(opt.field_cache_mb) * 1'000'000) {
+        const auto old = fcache.find(fcache_order.front());
+        if (old != fcache.end()) {
+          fcache_bytes -= old->second.field.size() * sizeof(std::int32_t) + old->second.pass.size() + old->second.via.size() + old->second.tgt.size();
+          fcache.erase(old);
+        }
+        fcache_order.pop_front();
+      }
+      if (bytes <= static_cast<std::size_t>(opt.field_cache_mb) * 1'000'000) {
+        FieldEntry e;
+        const std::int64_t dims[6] = {w.w, w.h, nl, step, diag, std::min<std::int64_t>(viac, 1'000'000'000)};
+        std::memcpy(e.dims, dims, sizeof dims);
+        e.pass = f_pass;
+        e.via = f_via;
+        e.tgt = f_tgt;
+        e.field = field;
+        fcache_bytes += bytes;
+        fcache_order.push_back(fkey);
+        fcache[fkey] = std::move(e);
+      }
+    }
     ++wc().fields;
     wc().field_cells += static_cast<long>(cells) * nl;
     field_seconds += std::chrono::duration<double>(std::chrono::steady_clock::now() - t0f).count();
@@ -1102,7 +1184,7 @@ struct Router::Impl {
           }
       }
       const long visited = static_cast<long>(reach_q.size());
-      res.expansions += visited;  // counted as work so --work budgets stay deterministic
+      res.expansions += visited * opt.flood_work_pct / 100;  // counted as work so --work budgets stay deterministic
       wc().flood_cells += visited;
       ++wc().searches;
       reach_visits += visited;
@@ -1448,6 +1530,12 @@ struct Router::Impl {
           commit_why = "would rip a bus connection";
           return false;
         }
+    if (!txn_protect.empty())
+      for (int v : victims)
+        if (txn_protect[static_cast<std::size_t>(v)]) {
+          commit_why = "would rip a connection of the running transaction";
+          return false;
+        }
     if (opt.max_victims > 0 && static_cast<int>(victims.size()) > opt.max_victims) {
       commit_why = "would rip too many connections at once";
       return false;
@@ -1459,6 +1547,24 @@ struct Router::Impl {
       }
     // Rip up victims, and raise history on the contested cells so later searches avoid them.
     for (const auto& s : merged) bump_history(s, net);  // before the rip, while the conflicts still exist
+    if (txn_on) {  // transaction log: what rolling this route back must restore
+      for (int v : victims) {
+        TxnVictim tv;
+        tv.ci = v;
+        for (int item : cs[static_cast<std::size_t>(v)].items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          tv.items.push_back({it.kind, it.index});
+        }
+        txn_log.push_back(std::move(tv));
+      }
+      for (std::size_t k = 0; k < cs.size(); ++k)
+        if (cs[k].implicit && cs[k].routed)
+          for (int v : victims)
+            if (cs[static_cast<std::size_t>(v)].c.net == cs[k].c.net) {
+              txn_implicit.push_back(static_cast<int>(k));
+              break;
+            }
+    }
     for (int v : victims) {
       rip(v);
       // If the budget ends before the victim is tried again, the report must not show the reason of an attempt
@@ -1552,6 +1658,136 @@ struct Router::Impl {
         if (h < 60000) h = static_cast<std::uint16_t>(h + 1);
       }
     }
+  }
+
+  // Transactional negotiation (doc 16 §12). While txn_on, commit() logs the victims of a route; txn_finish() then tries
+  // to re-route each victim without ripping anything and keeps the route only if no more victims failed than the route gained
+  // (opt.txn: 1 keeps ties, 2 needs a gain). Otherwise the board goes back to exactly the state before the route.
+  struct OldItem { drc::ItemKind kind; int index; };
+  struct TxnVictim { int ci; std::vector<OldItem> items; };
+  bool txn_on = false;
+  std::vector<TxnVictim> txn_log;
+  std::vector<int> txn_implicit;
+  int txn_attempts_pass = 0;
+  std::uint64_t txn_draws = 0;
+  // Whole-board snapshot for rolling a transaction back (cheap next to one search: a few hundred copper items).
+  struct TxnSnap {
+    std::vector<std::vector<OldItem>> items;
+    std::vector<std::uint8_t> routed, implicit;
+    std::vector<int> rips;
+    int res_routed = 0, res_rips = 0;
+  };
+  TxnSnap txn_capture() {
+    TxnSnap snap_;
+    snap_.items.resize(cs.size());
+    for (std::size_t k = 0; k < cs.size(); ++k) {
+      for (int item : cs[k].items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        snap_.items[k].push_back({it.kind, it.index});
+      }
+      snap_.routed.push_back(cs[k].routed ? 1 : 0);
+      snap_.implicit.push_back(cs[k].implicit ? 1 : 0);
+      snap_.rips.push_back(cs[k].rips);
+    }
+    snap_.res_routed = res.routed;
+    snap_.res_rips = res.rips;
+    return snap_;
+  }
+  void txn_restore(const TxnSnap& snap_) {
+    for (std::size_t k = 0; k < cs.size(); ++k) lift_items(static_cast<int>(k));
+    for (std::size_t k = 0; k < cs.size(); ++k) {
+      restore_items(static_cast<int>(k), snap_.items[k]);
+      cs[k].routed = snap_.routed[k] != 0;
+      cs[k].implicit = snap_.implicit[k] != 0;
+      cs[k].rips = snap_.rips[k];
+    }
+    res.routed = snap_.res_routed;
+    res.rips = snap_.res_rips;
+  }
+  std::vector<std::uint8_t> txn_protect;  // connections a nested search must not rip: the transaction's route and its re-routed victims
+  int txn_nested_left = 0;
+  // Routes connection ci, negotiated, as a transaction. The route is kept only if the victims it rips can be re-routed
+  // (strictly, or at depth > 0 by a nested transaction of their own); `gain` is then 1 minus the victims left unrouted.
+  // Nested transactions need a full gain; the top level also keeps ties (opt.txn == 1) and, with a temperature, some losses.
+  bool txn_try(int ci, int depth, bool top, int& gain) {
+    gain = 0;
+    if (txn_protect.size() != cs.size()) txn_protect.assign(cs.size(), 0);
+    const int saved_current = current;
+    const Miss saved_miss = last_miss;
+    const TxnSnap snap = txn_capture();
+    current = ci;
+    txn_on = true;
+    txn_log.clear();
+    txn_implicit.clear();
+    const bool ok = search_and_commit(cs[static_cast<std::size_t>(ci)].c, true);
+    txn_on = false;
+    std::vector<TxnVictim> log;
+    log.swap(txn_log);
+    txn_implicit.clear();
+    current = saved_current;
+    if (!ok) return false;  // nothing was changed
+    if (log.empty()) {
+      gain = 1;
+      return true;
+    }
+    ++res.txn_tried;
+    ++txn_attempts_pass;
+    txn_protect[static_cast<std::size_t>(ci)] = 1;
+    std::vector<int> protectedv;
+    int loss = 0;
+    for (const auto& tv : log) {
+      auto& sv = cs[static_cast<std::size_t>(tv.ci)];
+      if (sv.routed) continue;
+      if (out_of_budget()) {
+        ++loss;
+        continue;
+      }
+      current = tv.ci;
+      expansion_cap = opt.txn_cap;
+      bool again = search_and_commit(sv.c, false);
+      expansion_cap = 0;
+      if (!again && depth > 0 && txn_nested_left > 0) {
+        --txn_nested_left;
+        int g = 0;
+        again = txn_try(tv.ci, depth - 1, false, g);
+      }
+      current = ci;
+      if (again) {
+        sv.routed = true;
+        ++res.routed;
+        txn_protect[static_cast<std::size_t>(tv.ci)] = 1;
+        protectedv.push_back(tv.ci);
+      } else {
+        ++loss;
+      }
+    }
+    txn_protect[static_cast<std::size_t>(ci)] = 0;
+    for (int v : protectedv) txn_protect[static_cast<std::size_t>(v)] = 0;
+    current = saved_current;
+    last_miss = saved_miss;
+    const int net = 1 - loss;
+    if (std::getenv("TM_DEBUG_TXN"))
+      std::fprintf(stderr, "txn pass %d conn %d depth %d: %zu victims, %d lost, net %d, expansions %ld\n", res.passes, ci, depth, log.size(), loss, net, res.expansions);
+    // Annealing acceptance (counter-based draw: deterministic): a loss of k connections is kept with probability exp(-k / T).
+    bool accept = net > 0 || (top && net == 0 && opt.txn == 1);
+    if (!accept && top && net < 0 && opt.txn_temp > 0) {
+      double temp = opt.txn_temp;
+      if (opt.txn_cool) {
+        const double frac = opt.work_budget > 0 ? static_cast<double>(res.expansions) / (static_cast<double>(opt.work_budget) * budget_scale)
+                                                : elapsed() / (opt.time_limit_s * budget_scale);
+        temp *= std::max(0.0, 1.0 - frac);
+      }
+      if (temp > 1e-9) accept = RngStream(opt.seed, 0x7A11u, 0).uniform(txn_draws++) < std::exp(static_cast<double>(net) / temp);
+    }
+    if (accept) {
+      ++res.txn_kept;
+      gain = net;
+      return true;
+    }
+    txn_restore(snap);
+    last_miss = saved_miss;
+    why = "transaction rolled back";
+    return false;
   }
 
   // Removes a connection's copper and marks it (and connections of its net satisfied implicitly) unrouted.
@@ -2597,7 +2833,6 @@ struct Router::Impl {
   // Routes wanted pairs coupled. Before routing (recouple = false): every unrouted pair of connections. In the
   // clean-up (recouple = true): pairs whose halves both ended up routed singly are ripped and routed coupled; the old
   // copper is restored exactly when that fails, so completion never changes (transaction, rule 4).
-  struct OldItem { drc::ItemKind kind; int index; };
   void restore_items(int ci, const std::vector<OldItem>& saved) {
     auto& st = cs[static_cast<std::size_t>(ci)];
     for (const auto& o : saved) {
@@ -4088,6 +4323,7 @@ struct Router::Impl {
       ++res.restarts;
       emit("{\"type\":\"stage\",\"name\":\"restart " + std::to_string(restart) + "\",\"state\":\"begin\",\"detail\":\"hardest connections first, history kept\"}");
     }
+    int run_best = -1, run_best_pass = 0;  // best routed count since this restart began, and the pass that set it
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
       strict_pass = pass == 0 && opt.strict_first;
@@ -4095,6 +4331,7 @@ struct Router::Impl {
       phase = strict_pass ? WorkPhase::FirstPass : WorkPhase::Negotiation;
       std::vector<int> failed;
       const int routed_before = res.routed;
+      txn_attempts_pass = 0;
       while (!pending.empty() && !out_of_budget()) {
         const int ci = pending.front();
         pending.pop_front();
@@ -4146,7 +4383,14 @@ struct Router::Impl {
           if (!ok) reason += "; escapes/neck-down: " + why;
         }
         if (!ok && opt.rip_up && (pass > 0 || !opt.strict_first)) {
-          ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
+          const bool use_txn = opt.txn > 0 && pair_partner.empty() && conn_bundle.empty();
+          if (use_txn) {
+            int gain = 0;
+            txn_nested_left = opt.txn_nested;
+            ok = txn_try(ci, opt.txn_depth, true, gain);
+          } else {
+            ok = search_and_commit(st.c, true);  // pass 0: strict; later: negotiate
+          }
           reason += "; negotiated: " + why;
           if (!ok && why.starts_with("boxed in")) {
             // Last check before giving the pin up: negotiated, with off-lattice escapes and the neck-down width.
@@ -4212,7 +4456,11 @@ struct Router::Impl {
       // Next pass: hardest (most failed) first.
       std::stable_sort(failed.begin(), failed.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
       for (int f : failed) pending.push_back(f);
-      if (pass > 0 && res.routed <= routed_before && res.rips == 0) break;
+      if (pass > 0 && res.routed <= routed_before && res.rips == 0 && txn_attempts_pass == 0) break;
+      if (opt.stall_passes > 0) {
+        if (res.routed > run_best) run_best = res.routed, run_best_pass = pass;
+        if (pass - run_best_pass >= opt.stall_passes) break;
+      }
     }
     if (res.routed > best_routed) {
       snapshot();
@@ -4294,11 +4542,11 @@ struct Router::Impl {
     }
     res.seconds = elapsed();
     res.nogood_skips = nogood_skips;
-    std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions); fields %ld GPU + %ld CPU (%.2f s, %ld GPU fallbacks)\n",
-                 n_ok, exp_ok, n_fail, exp_fail, field_runs, field_cpu_runs, field_seconds, field_gpu_fail);
+    std::fprintf(stderr, "searches: %ld ok (%ld expansions), %ld failed (%ld expansions); fields %ld GPU + %ld CPU (%.2f s, %ld GPU fallbacks, %ld cache hits)\n",
+                 n_ok, exp_ok, n_fail, exp_fail, field_runs, field_cpu_runs, field_seconds, field_gpu_fail, field_hits);
     std::fprintf(stderr, "clean-up: %d connections improved\n", res.optimized);
-    std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu\n", res.restarts, obs->checks, res.rips,
-                 res.passes, res.enclosed, nogood_skips, history.size());
+    std::fprintf(stderr, "restarts %d; legality checks %ld; rips %d, passes %d, boxed-in %d, nogood skips %ld, history cells %zu, transactions %d kept of %d\n", res.restarts, obs->checks, res.rips,
+                 res.passes, res.enclosed, nogood_skips, history.size(), res.txn_kept, res.txn_tried);
     if (confined_tried) std::fprintf(stderr, "global corridors: %ld of %ld confined searches committed\n", confined_ok, confined_tried);
     if (reach_checks) std::fprintf(stderr, "reachability checks: %ld, %ld proved unreachable, %ld cells visited%s\n", reach_checks, reach_pruned, reach_visits,
                                   opt.reach_verify ? (reach_mismatch ? ", MISMATCHES" : ", verified (0 mismatches)") : "");
