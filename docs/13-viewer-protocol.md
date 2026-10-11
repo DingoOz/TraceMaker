@@ -21,6 +21,9 @@ On connect the server sends the latest `board` snapshot, then every later messag
 | `escape_plan` | `corridors:[{id, net, pad:"REF.NUM", via, pts:[[x,y],…]}]` | Escape corridors reserved for dense-package pins (M9); `id` is the board pad index. With `--escape-flow` (doc 05 §14) `pts` continues past the dog-bone via site along the planned channels, on the layer the via changes to. Sent at the start and after each restart; the viewer draws them (toggle X) |
 | `escape_release` | `id` | The pin is connected (or given up): its corridor is gone |
 | `escape_dead` | `id`, `net`, `pad`, `p:[x,y]`, `why` | A pin enclosed by fixed copper even for a negotiated, necked-down search: not retried (red cross in the viewer) |
+| `bus` | `name`, `nets:[net,…]` | A bundle of a bus (doc 05 §38): the nets whose connections between two components are routed lane by lane, in lane order. Sent once per bundle when routing starts |
+| `bus_lane` | `bus`, `conn`, `net`, `state:"leader"|"followed"|"left"` | A connection of a bundle was routed: it leads, it has its neighbour lane's layers and vias, or it left the bus |
+| `bus_skew` | `bus`, `skew`, `limit` | Length matching of a group is done: longest minus shortest member and the limit, nm |
 | `heatmap` | `name`, `x0`, `y0`, `cell`, `w`, `h`, `layer`, `max`, `data:[…]` (row-major, 0–255), optional `scale` (`"sqrt"`: byte = round(255·√(v/max)), non-zero cells ≥ 1; absent: linear) | Overlays, latest per name replaces the previous one. The router sends `expansions` (A* expansions per cell, cumulative) and `history` (largest PathFinder history cost per cell), layer -1 |
 | `stats` | `stage`, `iteration`, `routed`, `total`, `unrouted`, `rips`, `failures`, `elapsed_s`, `extra:{}` | Progress counters (≤ 10 Hz) |
 | `stage` | `name`, `state:"begin"|"end"`, `detail` | Pipeline stage changes |

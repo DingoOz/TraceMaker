@@ -10,6 +10,7 @@ completion and clean pass before and after, added DRC errors. Exit status 1 when
   2. no added KiCad DRC errors on a board that was clean before;
   3. both runs hold the same boards, and at least one;
   with --expect-identical (speed-ups, refactors): every routed board byte-identical.
+The style metric (doc 05 §39) is shown per board where it changed; it is informational and never gated.
 Wall time and route CPU time are reported, not gated: they are only comparable from the same machine. When both runs
 used the same --work budget, boards whose routed output is byte-identical did the same work, so their CPU change is
 run-to-run noise or a change in speed that leaves the output alone; the report gives that band and lists the other
@@ -27,6 +28,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
+STYLE_KEYS = ("bends_per_connection", "acute_angles", "stair_steps", "short_segments", "off_angle_segments", "detour_ratio", "long_detours")
 CPU_FLAG = 0.10  # smallest relative change in route CPU time at equal work that the report points out
 
 
@@ -131,6 +133,20 @@ def main() -> int:
         failures.append("no board is in both runs")
     if rows:
         out += ["", "| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |", "|---|---|---|---|---|---|---|---|"] + rows
+    # Style metric (doc 05 §39): informational, never a gate. Runs made before the metric existed have none.
+    style_rows = []
+    for name in boards:
+        sb, sf = before[name].get("style"), after[name].get("style")
+        if not sb or not sf or all(sb.get(k) == sf.get(k) for k in STYLE_KEYS):
+            continue
+        style_rows.append(f"| {name} | " + " | ".join(f"{sb.get(k, '–')} → {sf.get(k, '–')}" for k in STYLE_KEYS) + " |")
+    tb, tf = summary(bdir).get("style"), summary(adir).get("style")
+    if tb and tf:
+        out += ["", "Style (informational): " + "; ".join(f"{k.replace('_', ' ')} {tb.get(k, '–')} → {tf.get(k, '–')}" for k in STYLE_KEYS) + "."]
+    elif tb or tf:
+        out += ["", "Style (informational): only one of the two runs recorded it."]
+    if style_rows:
+        out += ["", "| Board | " + " | ".join(k.replace("_", " ").capitalize() for k in STYLE_KEYS) + " |", "|---|" + "---|" * len(STYLE_KEYS)] + style_rows
     if notes:
         out += ["", "CPU time at equal work, beyond what the byte-identical boards show as noise (not a gate; check speed at equal wall time, doc 10 §5):"] + [f"- {x}" for x in notes]
     out += ["", "Gates: " + ("pass" if not failures else "FAIL")] + [f"- {x}" for x in failures]
