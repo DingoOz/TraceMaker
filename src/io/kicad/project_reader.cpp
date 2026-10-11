@@ -162,7 +162,9 @@ void read_dru(const fs::path& p, model::DesignRules& r) {
           continue;
         }
         const std::string_view h = d.head(x);
-        if (d.children(x).size() == 1) {  // a flag in brackets, e.g. skew's (within_diff_pairs)
+        // KiCad's only flag in brackets: the skew applies between the halves of each pair, not across the rule's
+        // nets. Anything else without a value stays unread and is warned about below (rule 6).
+        if (d.children(x).size() == 1 && h == "within_diff_pairs" && k.type == "skew") {
           k.items.push_back(std::string(h));
           continue;
         }

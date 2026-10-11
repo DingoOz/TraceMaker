@@ -959,3 +959,26 @@ TEST_CASE("Rules with a KiCad function TraceMaker does not evaluate are kept, un
   CHECK(engine.clearance(*sig, *gnd, 0) == 1'000'000);
   CHECK(engine.clearance(*sig, *sig, 0) < 1'000'000);
 }
+
+TEST_CASE("constraint flags in brackets: within_diff_pairs is kept, anything else without a value is warned about", "[rules]") {
+  const std::string dru =
+      "(version 1)\n"
+      "(rule \"pair skew\" (constraint skew (max 0.1mm) (within_diff_pairs)))\n"
+      "(rule \"no value\" (constraint skew (max)))\n"
+      "(rule \"unknown flag\" (constraint length (min 10mm) (some_new_flag)))\n";
+  const Files f("flags", board_text(""), dru);
+  const auto rules = io::read_design_rules(f.pcb.string());
+  REQUIRE(rules.custom.size() == 3);
+  const auto& pair = rules.custom[0].constraints.front();
+  CHECK(pair.max == std::optional<Coord>(100'000));
+  CHECK(pair.items == std::vector<std::string>{"within_diff_pairs"});
+  CHECK_FALSE(rules.custom[1].constraints.front().max.has_value());
+  CHECK(rules.custom[1].constraints.front().items.empty());
+  CHECK(rules.custom[2].constraints.front().items.empty());
+  auto warned = [&](const std::string& text) {
+    return std::any_of(rules.warnings.begin(), rules.warnings.end(), [&](const std::string& w) { return w.find(text) != std::string::npos; });
+  };
+  CHECK_FALSE(warned("pair skew"));
+  CHECK(warned("rule 'no value': cannot read value of max"));
+  CHECK(warned("rule 'unknown flag': cannot read value of some_new_flag"));
+}
