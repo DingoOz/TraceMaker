@@ -17,6 +17,7 @@
 #include "drc/drc.hpp"
 #include "drc/refill.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "io/srj/srj.hpp"
 #include "route/router.hpp"
 #include "learn/knowledge_base.hpp"
 #include "route/diff_pair.hpp"
@@ -397,6 +398,64 @@ int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int lay
   return 0;
 }
 
+// Simple Route JSON problem -> KiCad board, project and (if needed) custom rules next to each other (doc 08 §9).
+int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out) {
+  namespace fs = std::filesystem;
+  const auto problem = tmk::io::read_srj_file(in);
+  tmk::io::SrjImportOptions opt;
+  if (clearance_mm >= 0) opt.clearance = tmk::mm_to_nm(clearance_mm);
+  if (hole_to_hole_mm >= 0) opt.hole_to_hole = tmk::mm_to_nm(hole_to_hole_mm);
+  const auto files = tmk::io::srj_to_kicad(problem, opt);
+  auto write = [](const fs::path& p, const std::string& text) {
+    std::ofstream f(p, std::ios::binary);
+    f << text;
+    if (!f) throw std::runtime_error("cannot write " + p.string());
+  };
+  write(out, files.pcb);
+  write(fs::path(out).replace_extension(".kicad_pro"), files.pro);
+  // A rule file left by an earlier import must not judge this board.
+  const fs::path dru = fs::path(out).replace_extension(".kicad_dru");
+  if (!files.dru.empty()) write(dru, files.dru);
+  else fs::remove(dru);
+  std::printf("%s: %d layers, %d nets, %d pads, %d connections; clearance %.3f mm, track %.3f mm, via %.3f/%.3f mm\n", out.c_str(),
+              problem.layer_count, files.nets, files.pads, files.srj_pairs, tmk::nm_to_mm(files.clearance), tmk::nm_to_mm(files.track_width),
+              tmk::nm_to_mm(files.via_diameter), tmk::nm_to_mm(files.via_drill));
+  for (const auto& w : files.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j = {{"layers", problem.layer_count}, {"nets", files.nets}, {"pads", files.pads}, {"terminal_pads", files.terminal_pads},
+                        {"srj_connections", problem.connections.size()}, {"srj_pairs", files.srj_pairs}, {"board_pairs", files.board_pairs},
+                        {"clearance_mm", tmk::nm_to_mm(files.clearance)}, {"hole_to_hole_mm", tmk::nm_to_mm(files.hole_to_hole)}, {"track_width_mm", tmk::nm_to_mm(files.track_width)},
+                        {"via_diameter_mm", tmk::nm_to_mm(files.via_diameter)}, {"via_drill_mm", tmk::nm_to_mm(files.via_drill)},
+                        {"allow_blind_buried_vias", problem.rules.blind_buried_vias}, {"allow_via_in_pad", problem.rules.via_in_pad},
+                        {"custom_rules", !files.dru.empty()}, {"warnings", files.warnings}};
+    std::ofstream(json_out) << j.dump(1) << "\n";
+  }
+  return 0;
+}
+
+// Routed board -> the problem's SRJ with `traces` (doc 08 §9). Exit code 3 when a connection has no copper path,
+// like `route` with unrouted connections.
+int cmd_srj_export(const std::string& board, const std::string& problem, const std::string& out, const std::string& json_out) {
+  std::ifstream f(problem, std::ios::binary);
+  if (!f) throw std::runtime_error("cannot open " + problem);
+  const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+  const auto lb = tmk::io::read_board_file(board);
+  const auto res = tmk::io::srj_export(text, lb.board);
+  std::ofstream o(out, std::ios::binary);
+  o << res.json;
+  if (!o) throw std::runtime_error("cannot write " + out);
+  std::printf("%s: %d/%d connections routed, %d traces (%d of copper on no connection path), %d vias\n", out.c_str(), res.routed, res.connections,
+              res.traces + res.extra_traces, res.extra_traces, res.vias);
+  for (const auto& n : res.unrouted) std::printf("  unrouted: %s\n", n.c_str());
+  for (const auto& w : res.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j = {{"connections", res.connections}, {"routed", res.routed}, {"unrouted", res.unrouted}, {"traces", res.traces},
+                        {"extra_traces", res.extra_traces}, {"vias", res.vias}, {"warnings", res.warnings}};
+    std::ofstream(json_out) << j.dump(1) << "\n";
+  }
+  return res.routed == res.connections ? 0 : 3;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -573,6 +632,24 @@ int main(int argc, char** argv) {
   pairs_cmd->add_option("board", pr_board)->required()->check(CLI::ExistingFile);
   pairs_cmd->add_option("--pair", pr_extra, "Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM");
   pairs_cmd->add_option("--json", pr_json, "Write the measurements as JSON");
+  auto* srj_in = app.add_subcommand("srj-import", "Convert a Simple Route JSON problem (tscircuit) to a KiCad board with its project and rules");
+  std::string si_in, si_out, si_json;
+  double si_clearance = -1, si_hole = -1;
+  srj_in->add_option("problem", si_in, "Simple Route JSON file")->required()->check(CLI::ExistingFile);
+  srj_in->add_option("-o,--output", si_out, "Output .kicad_pcb (the .kicad_pro, and a .kicad_dru if needed, are written next to it)")->required();
+  srj_in->add_option("--clearance-mm", si_clearance,
+                     "Copper clearance (default: the problem's defaultObstacleMargin, else tscircuit's fallback of 0.15 mm)")
+      ->check(CLI::NonNegativeNumber);
+  srj_in->add_option("--hole-to-hole-mm", si_hole,
+                     "Drill edge to drill edge clearance (default: the problem's via-hole / drill clearance fields, else no rule)")
+      ->check(CLI::NonNegativeNumber);
+  srj_in->add_option("--json", si_json, "Write the conversion summary (counts, rules used, warnings) as JSON");
+  auto* srj_out = app.add_subcommand("srj-export", "Write a routed board's copper as the `traces` of its Simple Route JSON problem");
+  std::string so_board, so_problem, so_out, so_json;
+  srj_out->add_option("board", so_board, "Routed .kicad_pcb made by srj-import")->required()->check(CLI::ExistingFile);
+  srj_out->add_option("--problem", so_problem, "The Simple Route JSON problem the board was imported from")->required()->check(CLI::ExistingFile);
+  srj_out->add_option("-o,--output", so_out, "Output Simple Route JSON (the problem plus traces)")->required();
+  srj_out->add_option("--json", so_json, "Write the export summary (routed and unrouted connections) as JSON");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -615,6 +692,8 @@ int main(int argc, char** argv) {
     }
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
+    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json);
+    if (*srj_out) return cmd_srj_export(so_board, so_problem, so_out, so_json);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);

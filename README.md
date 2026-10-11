@@ -32,6 +32,8 @@ Freerouting's figures are its own published results on the same boards.
 
 - Placing a board from scratch gives 85% clean boards on held-out designs; the project's target was 90%.
 - On boards with dense packages (BGAs, fine-pitch QFNs), 41% come out clean.
+- On tscircuit's public BGA breakout problems it routes 60% and 34% of the boards completely (sets srj19 and srj20, fixed
+  budget, no KiCad errors added); tscircuit's own router completes 92% and 77%.
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·
@@ -120,6 +122,7 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 | Run a design-rule check | `drc board.kicad_pcb --json report.json` |
 | See a summary of a board | `inspect board.kicad_pcb` |
 | Find pins that cannot escape their package | `escape board.kicad_pcb` |
+| Route a tscircuit Simple Route JSON problem | `srj-import problem.json -o board.kicad_pcb`, then `route`, then `srj-export routed.kicad_pcb --problem problem.json -o solved.json` |
 | See which parts and layout rules it detects | `rules board.kicad_pcb --mode on` |
 
 <details>
@@ -206,6 +209,10 @@ python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 
 - Each run writes `bench/results/<run>/`: the routed boards, a result per board, and `summary.json`.
 - Every board is compared with Freerouting's published result for the same file.
+- tscircuit's BGA breakout problems (400 Simple Route JSON files): `scripts/fetch_fixtures.sh tscircuit`, then
+  `python3 bench/run.py --set srj19 --work 10000000 --route-args "--variants 1 --no-gpu"` (or `--set srj20`) and
+  `python3 bench/srj_score.py <run>` for tscircuit's own pass criterion (`scripts/fetch_fixtures.sh tscircuit-checker`
+  installs its checker; needs node).
 
 <details>
 <summary><b>More benchmark results</b></summary>

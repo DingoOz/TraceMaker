@@ -1,0 +1,28 @@
+{
+  "layerCount": 2,
+  "minTraceWidth": 0.15,
+  "minViaPadDiameter": 0.6,
+  "minViaHoleDiameter": 0.3,
+  "defaultObstacleMargin": 0.15,
+  "bounds": { "minX": -5, "maxX": 5, "minY": -5, "maxY": 5 },
+  "obstacles": [
+    { "type": "rect", "obstacleId": "a1", "componentId": "U1", "layers": ["top"], "center": { "x": -3, "y": 2 }, "width": 0.6, "height": 0.6, "connectedTo": ["a"] },
+    { "type": "rect", "obstacleId": "a2", "componentId": "U2", "layers": ["top"], "center": { "x": 3, "y": 2 }, "width": 0.6, "height": 0.6, "connectedTo": ["a"] },
+    { "type": "rect", "obstacleId": "b1", "componentId": "U1", "layers": ["top"], "center": { "x": -3, "y": -2 }, "width": 0.6, "height": 0.6, "connectedTo": ["b"] },
+    { "type": "rect", "obstacleId": "b2", "componentId": "U2", "layers": ["bottom"], "center": { "x": 3, "y": -2 }, "width": 0.6, "height": 0.6, "connectedTo": ["b"] },
+    { "type": "rect", "obstacleId": "c1", "componentId": "U3", "layers": ["top"], "center": { "x": 0, "y": 3.5 }, "width": 0.6, "height": 0.6, "ccwRotationDegrees": 45, "connectedTo": ["c"] },
+    { "type": "rect", "shape": "circle", "obstacleId": "c2", "componentId": "U3", "layers": ["top"], "center": { "x": 0, "y": -3.5 }, "width": 0.6, "height": 0.6, "connectedTo": ["c"] },
+    { "type": "rect", "obstacleId": "d1", "componentId": "U4", "layers": ["top"], "center": { "x": 0, "y": 0 }, "width": 0.4, "height": 0.4, "connectedTo": ["d"] },
+    { "type": "rect", "obstacleId": "d2", "componentId": "U4", "layers": ["top"], "center": { "x": 4, "y": 4 }, "width": 0.4, "height": 0.4, "connectedTo": ["d"] },
+    { "type": "rect", "obstacleId": "wall_n", "layers": ["top", "bottom"], "center": { "x": 0, "y": 0.9 }, "width": 2.2, "height": 0.4, "connectedTo": [] },
+    { "type": "rect", "obstacleId": "wall_s", "layers": ["top", "bottom"], "center": { "x": 0, "y": -0.9 }, "width": 2.2, "height": 0.4, "connectedTo": [] },
+    { "type": "rect", "obstacleId": "wall_w", "layers": ["top", "bottom"], "center": { "x": -0.9, "y": 0 }, "width": 0.4, "height": 2.2, "connectedTo": [] },
+    { "type": "rect", "obstacleId": "wall_e", "layers": ["top", "bottom"], "center": { "x": 0.9, "y": 0 }, "width": 0.4, "height": 2.2, "connectedTo": [] }
+  ],
+  "connections": [
+    { "name": "a", "pointsToConnect": [ { "x": -3, "y": 2, "layer": "top" }, { "x": 3, "y": 2, "layer": "top" } ] },
+    { "name": "b", "pointsToConnect": [ { "x": -3, "y": -2, "layer": "top" }, { "x": 3, "y": -2, "layer": "bottom" } ] },
+    { "name": "c", "pointsToConnect": [ { "x": 0, "y": 3.5, "layer": "top" }, { "x": 0, "y": -3.5, "layer": "top" } ] },
+    { "name": "d", "pointsToConnect": [ { "x": 0, "y": 0, "layer": "top" }, { "x": 4, "y": 4, "layer": "top" } ] }
+  ]
+}

@@ -9,6 +9,7 @@ repository, judged by KiCad DRC on Freerouting's side).
   bench/run.py --tier A --limit 60 --time 60 --jobs 12 [--name run-id]
   bench/run.py --set quick --work 1000000 --name run-id          # deterministic regression tier (doc 10 §4)
   bench/run.py --fixtures build/demos --set planes --work 3000000 --refill --route-args=--soft-zones
+  bench/run.py --set srj19 --work 1000000 --route-args "--variants 1 --no-gpu"   # tscircuit BGA breakouts (doc 10 §7)
 
 --work routes with a deterministic work budget and no knowledge base, so the same binary gives the same boards;
 bench/compare_runs.py compares two runs. --refill makes KiCad refill zones before judging both input and output
@@ -246,7 +247,7 @@ def main() -> int:
     ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
     ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
     ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
-    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes); also names the set in the summary")
+    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes, srj19, srj20); also names the set in the summary")
     ap.add_argument("--jobs", type=int, default=12)
     ap.add_argument("--seed", type=int, default=1, help="board sampling seed")
     ap.add_argument("--name")
@@ -275,11 +276,15 @@ def main() -> int:
     WORK, REFILL = a.work, a.refill
     if a.time is None:
         a.time = 3600.0 if a.work else 60.0
-    if a.fixtures:
-        SRC_FIX = pathlib.Path(a.fixtures).resolve()
     if a.set:
         a.board_list = a.board_list or str(ROOT / "bench/sets" / f"{a.set}.txt")
         a.set_name = a.set_name or a.set
+        # A set of boards that are not PCBench fixtures names its own directory: "#fixtures: <path from the repository root>".
+        for line in pathlib.Path(a.board_list).read_text().splitlines():
+            if line.startswith("#fixtures:") and not a.fixtures:
+                a.fixtures = str(ROOT / line.split(":", 1)[1].strip())
+    if a.fixtures:
+        SRC_FIX = pathlib.Path(a.fixtures).resolve()
     if a.board_list:
         a.boards = [x.strip() for x in pathlib.Path(a.board_list).read_text().splitlines() if x.strip() and not x.startswith("#")]
     base = fr_baseline()
