@@ -53,10 +53,13 @@ struct RouterOptions {
   bool allow_vias = true;
   int lns_open_trials = 0;      // regional rebuild of open connections: seeded orders tried per open connection (0 = off, doc 16 F4)
   double lns_open_radius_mm = 2.5;  // copper within this distance of the open connection's first pad is lifted
+  double package_pen = 0;       // pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
   bool layer_assign = false;    // doc 16 F2: prefer, per connection, the layer that leaves the fewest crossings (two-layer boards)
   double layer_assign_pen = 0.4;  // pitches per lattice step on the other layer
   bool strict_first = true;     // the first pass is strict (no crossing of routed copper); off: negotiate from the first pass
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
+  double history_weight = 2.0;  // PathFinder history: pitches of cost per recorded conflict on a cell
+  int max_victims = 0;          // a negotiated route may rip at most this many connections at once (0 = no limit)
   int max_rips_per_connection = 40;  // was 8: at 50 M work on dense breakouts 33 % -> 54 % clean (doc 16 §4)
   int max_passes = 40;          // passes over still-unrouted connections (was 12)
   // Micro vias (outer layer to the next one, the net class's microvia size) where a through via is blocked, on
@@ -102,6 +105,7 @@ struct RouterOptions {
   bool cut_report = false;
   bool escape_report = false;   // fill RouteResult::escape_rings (pins of deep arrays per ring, and how many connected)
   int max_restarts = 6;         // full restarts (hardest first, history kept) when negotiation stalls
+  double soft_growth = 0.0;     // crossing cost grows by this fraction of soft_cost_mm per negotiation pass (PathFinder, doc 16)
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
   int order = 0;                // connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter

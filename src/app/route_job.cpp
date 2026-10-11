@@ -460,8 +460,10 @@ RouteJobResult run_route_job(RouteJob job) {
   // The variant set is a setting, never derived from the thread count when a work budget makes the run
   // deterministic: then `--threads` only changes how fast the same variants finish (requirement N3, D47).
   const int threads = std::max(1, job.threads);
+  // An explicit --variants may go beyond the eight designed variants: the extras are seeded diversifications
+  // (doc 16: on hard dense breakouts the winning variant is spread over the portfolio, so more seeds find more).
   const int variants = std::clamp(job.variants > 0 ? job.variants : opt.work_budget > 0 ? route::portfolio_size() : threads, 1,
-                                  route::portfolio_size());
+                                  job.variants > 0 ? 64 : route::portfolio_size());
   route::WorkProfile all_work;  // summed over the portfolio's variants
   if (variants > 1) {
     std::vector<int> pick;

@@ -473,3 +473,54 @@ TEST_CASE("SRJ export joins copper that touches, as KiCad's connectivity does", 
   // crossing and leave as one more trace.
   CHECK(res.extra_traces == 1);
 }
+
+// Fan-out problems (doc 16 Track B): plane terminations become zones, breakout points leave on the layer their bus
+// names, the far component's pads are keep-outs, closed layers get a rule area, the outline can grow.
+TEST_CASE("SRJ fan-out extensions: planes, exit layers, unpointed pads, track layers, margin", "[srj]") {
+  const json p = {
+      {"bounds", {{"minX", -5}, {"maxX", 5}, {"minY", -5}, {"maxY", 5}}},
+      {"layerCount", 4},
+      {"minTraceWidth", 0.1},
+      {"tracemakerTrackLayers", json::array({"top", "bottom"})},
+      {"obstacles",
+       json::array({
+           // ball with a connection point, ball that is a plane drop, far-component pad with the same net as the ball
+           {{"type", "rect"}, {"layers", {"top"}}, {"center", {{"x", 0}, {"y", 0}}}, {"width", 0.3}, {"height", 0.3}, {"connectedTo", {"n1"}}},
+           {{"type", "rect"}, {"layers", {"top"}}, {"center", {{"x", 1}, {"y", 0}}}, {"width", 0.3}, {"height", 0.3}, {"connectedTo", {"gnd"}}},
+           {{"type", "rect"}, {"layers", {"top"}}, {"center", {{"x", 3}, {"y", 3}}}, {"width", 0.3}, {"height", 0.3}, {"connectedTo", {"n1"}}},
+       })},
+      {"connections",
+       json::array({
+           {{"name", "n1"}, {"pointsToConnect", json::array({{{"x", 0}, {"y", 0}, {"layer", "top"}}, {{"x", -5}, {"y", 1}, {"layer", "top"}, {"pointId", "pcb_breakout_point_0"}}})}},
+           {{"name", "gnd"}, {"pointsToConnect", json::array({{{"x", 1}, {"y", 0}, {"layer", "top"}}})}},
+       })},
+      {"buses",
+       json::array({
+           {{"busId", "A"}, {"connectionNames", {"n1"}}, {"connectionExitTargets", {{"n1", {{"x", -6}, {"y", 1}, {"layer", "inner1"}}}}}},
+           {{"busId", "G"}, {"connectionNames", {"gnd"}}, {"termination", {{"type", "plane"}, {"layer", "inner2"}}}},
+       })}};
+  const auto problem = io::read_srj(p.dump());
+  REQUIRE(problem.planes.size() == 1);
+  CHECK(problem.planes[0].layer == 2);
+  CHECK(problem.connections[0].points.back().layers == std::vector<int>{1});  // the breakout point moved to inner1
+  CHECK(problem.track_layers == std::vector<int>{0, 3});
+
+  io::SrjImportOptions opt;
+  opt.outline_margin = mm_to_nm(0.5);
+  opt.unpointed_keepout = true;
+  const auto files = io::srj_to_kicad(problem, opt);
+  const auto lb = load(files.pcb);
+  // The far pad at (3,3) is not a pad of net n1: nothing lies on it, so it is a keep-out without a net.
+  const auto* far = pad_at(lb.board, 3, -3, 0);
+  REQUIRE(far != nullptr);
+  CHECK(far->net == 0);
+  const auto* ball = pad_at(lb.board, 0, 0, 0);
+  REQUIRE(ball != nullptr);
+  CHECK(ball->net != 0);
+  // Zones: the plane of the gnd net on inner2 and the rule area closing inner1 and inner2 to tracks.
+  CHECK(files.pcb.find("srj_plane_2") != std::string::npos);
+  CHECK(files.pcb.find("srj_no_tracks") != std::string::npos);
+  CHECK(files.pcb.find("(vias allowed)") != std::string::npos);
+  // The outline grew by the margin.
+  CHECK(files.pcb.find("(start -5.5 -5.5)") != std::string::npos);
+}

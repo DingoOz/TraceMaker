@@ -72,6 +72,9 @@ struct SrjProblem {
   std::vector<SrjConnection> connections;
   std::vector<SrjNet> nets;
   std::vector<SrjPlane> planes;
+  // Extension (not tscircuit's): `tracemakerTrackLayers`, the layers tracks may use; the others get a rule area that
+  // forbids tracks and still lets vias through. Empty = every layer.
+  std::vector<int> track_layers;
   std::vector<std::string> warnings;  // fields that were read but cannot be honoured
 };
 
@@ -97,6 +100,9 @@ struct SrjImportOptions {
   // The board outline (and plane zones) grow by this on every side; pads keep their coordinates. For problems whose
   // connections end exactly on the bounds (breakout points), where the board-edge rule would forbid the copper.
   Coord outline_margin = 0;
+  // Obstacles of a net that no connection point lies on are keep-outs, not pads of the net: a fan-out problem lists
+  // the far component's pads in the nets (connectedTo) but only asks for the connections at the package.
+  bool unpointed_keepout = false;
 };
 
 struct SrjBoardFiles {

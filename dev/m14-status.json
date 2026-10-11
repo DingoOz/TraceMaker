@@ -1,26 +1,99 @@
 {
-  "phase": "M14.1: experiments, then build",
-  "targets": {"srj19": 0.92, "srj20": 0.785, "srj19_base": 0.795, "srj20_base": 0.5,
-              "fanout31_note": "fanout31: tscircuit 48/72 (committed report); not run here yet. Targets: tscircuit dashboard run 38105514608-1 (clean boards, all 200)."},
-  "tasks": [
-    {"id": "t0", "state": "done", "title": "M14.0: merge SRJ branches into m14-bga; gap boards sets (srj19-gap, srj20-gap)", "note": "81 boards tscircuit solves and TraceMaker did not"},
-    {"id": "e1", "state": "done", "title": "E1 topology oracle: tscircuit routes as path guides (--guide)", "note": "hypothesis H1 not supported: guided runs no better than baseline"},
-    {"id": "e2", "state": "done", "title": "E2 via cost sweep", "note": "small gain (+4 pts routed at 0.3 mm), not decisive"},
-    {"id": "e3", "state": "done", "title": "E3 lattice pitch", "note": "finer lattice is worse at equal work: H3 dropped"},
-    {"id": "e4", "state": "done", "title": "E4/E5 budget and negotiation limits", "note": "200M: 95.7 % routed; rip limit 40 + fast bends: 33 % -> 54 % clean at 50M"},
-    {"id": "f1", "state": "doing", "title": "Search efficiency for dense breakouts: fast bends, rip limits, regional rebuild (--lns-open)", "note": "profile P1 running on full srj19/srj20"},
-    {"id": "f2", "state": "todo", "title": "Cheaper strict pass: reachability floods use half the work budget"},
-    {"id": "f3", "state": "todo", "title": "Make the best profile the default for dense small boards; portfolio on all cores"},
-    {"id": "f4", "state": "todo", "title": "Regression: quick/mid tier byte-identical, ctest green"},
-    {"id": "b0", "state": "todo", "title": "Track B: fanout31 import + baseline"},
-    {"id": "d1", "state": "todo", "title": "Docs: doc 16 outcomes, doc 05/10 sections, decisions row"}
-  ],
-  "findings": [
-    "The gap is a cliff at >= 40 connections / >= 100 crossings; at 10M work the strict first pass plus reachability floods use the whole budget and negotiation never starts.",
-    "At 200M work (single variant) the 24 srj19 gap boards reach 95.7 % of connections and 6 are clean; most failures then are 'ripped up and not routed again' and rip-cap rejections.",
-    "Fast bends (approximate bend costs) give +4 pts routed and 0 -> 12 % clean at equal wall time; rip limit 40 + 40 passes: 33 % -> 54 % clean at 50M on the gap boards.",
-    "tscircuit's solutions used as hard/soft guides did not help: topology alone is not the missing piece; the lattice cannot reproduce its off-grid geometry.",
-    "Deep-ring-first and longest-first orders, global router corridors, a coarser/finer lattice and negotiating from the first pass all lose at equal work.",
-    "GPU fields give the identical result 1.7x faster on one board, but slower with 12 boards in parallel (contention)."
-  ]
+ "phase": "M14.3: srj19 ~93 % with portfolio; srj20 63 %; fanout31 3 of 6 families solved in trials",
+ "targets": {
+  "srj19": 0.92,
+  "srj20": 0.785,
+  "srj19_base": 0.795,
+  "srj20_base": 0.5,
+  "fanout31_note": "fanout31: tscircuit 48/72 (committed report); not run here yet. Targets: tscircuit dashboard run 38105514608-1 (clean boards, all 200)."
+ },
+ "tasks": [
+  {
+   "id": "t0",
+   "state": "done",
+   "title": "M14.0: merge SRJ branches into m14-bga; gap boards sets (srj19-gap, srj20-gap)",
+   "note": "81 boards tscircuit solves and TraceMaker did not"
+  },
+  {
+   "id": "e1",
+   "state": "done",
+   "title": "E1 topology oracle: tscircuit routes as path guides (--guide)",
+   "note": "hypothesis H1 not supported: guided runs no better than baseline"
+  },
+  {
+   "id": "e2",
+   "state": "done",
+   "title": "E2 via cost sweep",
+   "note": "small gain (+4 pts routed at 0.3 mm), not decisive"
+  },
+  {
+   "id": "e3",
+   "state": "done",
+   "title": "E3 lattice pitch",
+   "note": "finer lattice is worse at equal work: H3 dropped"
+  },
+  {
+   "id": "e4",
+   "state": "done",
+   "title": "E4/E5 budget and negotiation limits",
+   "note": "200M: 95.7 % routed; rip limit 40 + fast bends: 33 % -> 54 % clean at 50M"
+  },
+  {
+   "id": "f2a",
+   "state": "dropped",
+   "title": "Crossing-aware layer assignment (--layer-assign), regional rebuild (--lns-open), orders, guides",
+   "note": "no gain at equal work; kept as opt-in flags"
+  },
+  {
+   "id": "f1",
+   "state": "done",
+   "title": "Search profile: rip limit 40, 40 passes (now defaults), fast bends (portfolio variants)",
+   "note": "srj19 50M one variant: 88.0 % clean (was 79.5 %); srj20 58.5 % (was 50 %); ctest 253/253; quick/mid byte-identical"
+  },
+  {
+   "id": "f2",
+   "state": "todo",
+   "title": "Cheaper strict pass: reachability floods use half the work budget"
+  },
+  {
+   "id": "f3",
+   "state": "done",
+   "title": "Portfolio of 8 variants on the remaining boards",
+   "note": "srj19 10 of 24 rescued -> 186/200 = 93 %; srj20 9 of 83 rescued -> 126/200 = 63 % (target 157)"
+  },
+  {
+   "id": "f4",
+   "state": "todo",
+   "title": "Regression: quick/mid tier byte-identical, ctest green"
+  },
+  {
+   "id": "b0",
+   "state": "doing",
+   "title": "Track B: fanout31 import + trials",
+   "note": "AM62L 133/133, RK3308 160/160, i.MX6ULL 100/100 solved (0 unconnected); T113-S3 6 unconnected; AM3352 50 unconnected (tscircuit 0/12). Full 72-case run pending"
+  },
+  {
+   "id": "d1",
+   "state": "todo",
+   "title": "Docs: doc 16 outcomes, doc 05/10 sections, decisions row"
+  },
+  {
+   "id": "f5",
+   "state": "doing",
+   "title": "srj20: package penalty (+4 boards of 57), victim limit, via-heavy strategy",
+   "note": "remaining gap: 'ripped up and not routed again' churn dominates failures"
+  }
+ ],
+ "findings": [
+  "The gap is a cliff at >= 40 connections / >= 100 crossings; at 10M work the strict first pass plus reachability floods use the whole budget and negotiation never starts.",
+  "At 200M work (single variant) the 24 srj19 gap boards reach 95.7 % of connections and 6 are clean; most failures then are 'ripped up and not routed again' and rip-cap rejections.",
+  "Fast bends (approximate bend costs) give +4 pts routed and 0 -> 12 % clean at equal wall time; rip limit 40 + 40 passes: 33 % -> 54 % clean at 50M on the gap boards.",
+  "tscircuit's solutions used as hard/soft guides did not help: topology alone is not the missing piece; the lattice cannot reproduce its off-grid geometry.",
+  "Deep-ring-first and longest-first orders, global router corridors, a coarser/finer lattice and negotiating from the first pass all lose at equal work.",
+  "GPU fields give the identical result 1.7x faster on one board, but slower with 12 boards in parallel (contention).",
+  "Portfolio of 8 variants (50M each, 8 threads, median 135 s wall) closes 10 of the 24 srj19 boards that one variant misses: about 186/200 = 93 % against tscircuit's 92 %.",
+  "Layer assignment from crossing chords (396 crossings -> 128 on one layer) does not help srj20 (18 % -> 14 % clean on gap boards).",
+  "fanout31 needed importer modelling, not routing changes: planes as zones, per-connection exit layers, far-component pads as keep-outs, closed layers as rule areas, outline margin. Three trial cases then route completely.",
+  "srj20 failures are dominated by negotiation churn ('ripped up by X and not routed again', 585 of ~1,170 failures); 24 seeded variants on one hard board all stop at 33-40 of 52."
+ ]
 }

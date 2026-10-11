@@ -1,2 +1,4 @@
 {"ts":"2026-10-11T08:30:00+00:00","kind":"note","text":"M14 status page started; experiments E1-E5 done, profile P1 running on full srj19/srj20."}
 {"ts":"2026-10-11T08:40:00+00:00","kind":"build","text":"srj19 with profile P1 (--fast-bends --max-rips 40 --max-passes 40, 50M work): 176/200 clean = 88.0 % (baseline 79.5 %, tscircuit 92.0 %); 24 of 24 gap boards: 13 now clean; 1 board lost (sample062)."}
+{"ts":"2026-10-11T09:20:00+00:00","kind":"build","text":"Defaults max_rips 40 / max_passes 40; ctest 253/253; quick and mid byte-identical. srj19 portfolio on the 24 remaining boards: 10 more clean (about 93 % overall). srj20 portfolio run started."}
+{"ts":"2026-10-11T11:00:00+00:00","kind":"note","text":"srj20 portfolio (8 variants): 9 of 83 rescued, 126/200 estimated. fanout31 trials: AM62L, RK3308, i.MX6ULL solved; T113-S3 6 open; AM3352 50 open. package-pen 3-4 gives +4 boards of 57 on srj20 gap."}

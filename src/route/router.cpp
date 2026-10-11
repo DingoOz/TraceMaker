@@ -593,7 +593,7 @@ struct Router::Impl {
   std::int64_t hist_cost(int layer, int gx, int gy) const {
     if (history.empty()) return 0;
     const auto it = history.find(cell_key(layer, gx, gy));
-    return it == history.end() ? 0 : static_cast<std::int64_t>(it->second) * pitch * 2;
+    return it == history.end() ? 0 : static_cast<std::int64_t>(static_cast<double>(it->second) * static_cast<double>(pitch) * opt.history_weight);
   }
   // Consecutive per-cell lookups usually use the same net and width.
   NetId cc_net = -1;
@@ -704,6 +704,14 @@ struct Router::Impl {
       if (bus_mode == 2) return -1;
       hc += bus_pen;
     }
+    if (pkg_on) {  // inside a ball-grid package, tracks on its pad layer cost more: escapes take a dog-bone via early (doc 16 F3)
+      const Point p = at(gx, gy);
+      for (const auto& bx : pkg_boxes)
+        if (layer == bx.layer && p.x >= bx.box.x0 && p.x <= bx.box.x1 && p.y >= bx.box.y0 && p.y <= bx.box.y1) {
+          hc += pkg_pen;
+          break;
+        }
+    }
     if (lp_on && layer != lp_layer) hc += lp_pen;  // layer assignment: tracks off the preferred layer (doc 16 F2)
     if (gd_on && !gd_mask[lat_index(layer, gx, gy)]) {  // preferred path of the connection (doc 16 F1)
       if (gd_hard) return -1;
@@ -723,7 +731,7 @@ struct Router::Impl {
           std::max(std::abs(tx - cong_end[0]), std::abs(ty - cong_end[1])) > 1 && std::max(std::abs(tx - cong_end[2]), std::abs(ty - cong_end[3])) > 1)
         hc += (global.util[ti] - opt.global_congestion_from) * cong_pen;
     }
-    if (st == 1) return static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) + hc * 4;
+    if (st == 1) return soft_unit + hc * 4;
     if (st == 3) return 3 * pitch + hc;
     return hc;
   }
@@ -766,7 +774,7 @@ struct Router::Impl {
       if (rc < 0) return -1;
       extra = std::max(extra, rc);
     }
-    return extra + (via_state[idx] == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0);
+    return extra + (via_state[idx] == 1 ? soft_unit : 0);
   }
 
   // Lattice cells of the window inside a pad's copper on each of its layers (falls back to cells next to the
@@ -1238,7 +1246,7 @@ struct Router::Impl {
           if (vs == 2 && blind_for(net)) vs = obs->via_state_span(vp, vd, vdrill, net, vm, soft, nullptr, std::min(l, l2), std::max(l, l2));
           if (vs == 2) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
-          const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? static_cast<std::int64_t>(opt.soft_cost_mm * 1e6) : 0) +
+          const std::int64_t ng = gs + via_cost * 3 / 2 + (vs == 1 ? soft_unit : 0) +
                                   textra(static_cast<std::size_t>(l2) * cells + static_cast<std::size_t>(ci));
           if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= ng) continue;
           const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
@@ -1437,6 +1445,10 @@ struct Router::Impl {
           commit_why = "would rip a bus connection";
           return false;
         }
+    if (opt.max_victims > 0 && static_cast<int>(victims.size()) > opt.max_victims) {
+      commit_why = "would rip too many connections at once";
+      return false;
+    }
     for (int v : victims)
       if (cs[static_cast<std::size_t>(v)].rips >= rip_cap) {
         commit_why = "would rip a connection already ripped too often";
@@ -2685,6 +2697,37 @@ struct Router::Impl {
   // straight chords between a connection's pads that cross are the escapes that must swap sides, and on one layer
   // they cannot. Each connection gets the layer that leaves the fewest crossings on its layer (a greedy start and
   // single flips until none improves, deterministic); tracks off that layer cost lp_pen per lattice step.
+  std::int64_t soft_unit = 0;  // cost of crossing another net's copper: opt.soft_cost_mm, growing with the pass (PathFinder's present-sharing factor)
+  struct PkgBox { geom::Box box; int layer; };
+  std::vector<PkgBox> pkg_boxes;
+  bool pkg_on = false;
+  std::int64_t pkg_pen = 0;
+  // Footprints with at least 30 SMD pads on one layer: the box of their pads, a pad pitch wider on every side.
+  void package_boxes() {
+    pkg_boxes.clear();
+    pkg_on = false;
+    if (opt.package_pen <= 0) return;
+    std::map<int, std::vector<int>> by;
+    for (std::size_t i = 0; i < b.pads.size(); ++i)
+      if (b.pads[i].footprint >= 0 && b.pads[i].type == model::PadType::Smd) by[b.pads[i].footprint].push_back(static_cast<int>(i));
+    for (const auto& [fp, ids] : by) {
+      if (ids.size() < 30) continue;
+      const model::LayerMask m = b.pads[static_cast<std::size_t>(ids[0])].copper;
+      geom::Box bx;
+      Coord half = 0;
+      bool same = true;
+      for (int i : ids) {
+        const auto& pd = b.pads[static_cast<std::size_t>(i)];
+        same = same && pd.copper == m;
+        bx.add(pd.pos);
+        half = std::max(half, std::max(pd.size_x, pd.size_y));
+      }
+      if (!same || m == 0) continue;
+      pkg_boxes.push_back({bx.inflated(half), std::countr_zero(m)});
+    }
+    pkg_pen = static_cast<std::int64_t>(opt.package_pen * static_cast<double>(pitch));
+    pkg_on = !pkg_boxes.empty();
+  }
   std::vector<int> conn_lpref;
   bool lp_on = false;
   int lp_layer = 0;
@@ -3807,6 +3850,7 @@ struct Router::Impl {
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
     rip_cap = opt.max_rips_per_connection;
+    soft_unit = static_cast<std::int64_t>(opt.soft_cost_mm * 1e6);
     const bool tdbg = std::getenv("TM_DEBUG_TIMING") != nullptr;
     setup();
     if (tdbg) std::fprintf(stderr, "[%.2f s] setup done: lattice %d x %d x %d, pitch %.3f mm\n", elapsed(), nx, ny, nl, nm_to_mm(pitch));
@@ -3878,6 +3922,7 @@ struct Router::Impl {
     for (std::size_t i = 0; i < cs.size(); ++i) pending.push_back(static_cast<int>(i));
     guide_match();
     layer_assign();
+    package_boxes();
     if (opt.escape_plan || opt.escape_flow) {
       plan_escape_reservations();
       if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
@@ -3998,6 +4043,7 @@ struct Router::Impl {
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
       strict_pass = pass == 0 && opt.strict_first;
+      soft_unit = static_cast<std::int64_t>(opt.soft_cost_mm * 1e6 * (1.0 + opt.soft_growth * std::min(pass, 20)));
       phase = strict_pass ? WorkPhase::FirstPass : WorkPhase::Negotiation;
       std::vector<int> failed;
       const int routed_before = res.routed;
@@ -4234,6 +4280,21 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 0.4; o.pitch_scale = 2.0; if (base.fine_variant) o.pitch_scale_small = 0.5; });
   add("fast bends, cheap crossings, escape plan", [&](RouterOptions& o) { o.bend_states = false; o.soft_cost_mm = base.soft_cost_mm * 0.5; o.escape_plan = true; });
   add("fast bends, dear vias", [&](RouterOptions& o) { o.bend_states = false; o.via_cost_mm = base.via_cost_mm * 2.5; });
+  // (package_pen below: tracks inside ball-grid packages cost more, doc 16 F3; +4 boards of 57 at 3 pitches on srj20)
+  // Beyond the designed eight: seeded diversifications (fast bends, jittered order; via cost, crossing cost and
+  // escape planning cycle with the index).
+  for (int k = 0; static_cast<int>(vs.size()) < std::min(variants, 64); ++k) {
+    static const double kVia[3] = {0.4, 1.0, 2.5}, kSoft[3] = {0.5, 1.0, 2.0};
+    add("seeded " + std::to_string(k), [&](RouterOptions& o) {
+      o.bend_states = false;
+      o.order = k % 4 == 3 ? 0 : 2;
+      o.seed = base.seed + 10 + static_cast<std::uint64_t>(k);
+      o.via_cost_mm = base.via_cost_mm * kVia[k % 3];
+      o.soft_cost_mm = base.soft_cost_mm * kSoft[(k / 3) % 3];
+      o.escape_plan = k % 2 == 0;
+      if (k % 2 == 1) o.package_pen = 3.0;
+    });
+  }
   std::vector<int> chosen;
   if (!pick.empty()) {
     for (int i : pick)

@@ -45,6 +45,7 @@ struct ZoneOut {
   bool keepout = false;
   std::vector<int> layers;
   std::vector<std::pair<Coord, Coord>> pts;
+  bool vias_ok = false;  // keep-out for tracks only
 };
 
 class Writer {
@@ -103,6 +104,7 @@ class Writer {
     return w > 0 ? std::max(w, mm_to_nm(p_.rules.min_trace_width)) : out_.track_width;
   }
 
+ public:
   static bool contains(const SrjObstacle& o, double x, double y) {
     const double dx = x - o.x, dy = y - o.y;
     if (o.circle) return std::hypot(dx, dy) <= o.width / 2 + kOnObstacleTolMm;
@@ -111,6 +113,7 @@ class Writer {
     return std::abs(lx) <= o.width / 2 + kOnObstacleTolMm && std::abs(ly) <= o.height / 2 + kOnObstacleTolMm;
   }
 
+ private:
   static std::vector<std::pair<Coord, Coord>> outline_of(const SrjObstacle& o) {
     std::vector<std::pair<Coord, Coord>> pts;
     if (o.circle) {
@@ -226,6 +229,17 @@ class Writer {
       zones_.push_back(ZoneOut{"srj_single_layer", -1, true, {1}, std::move(all)});
       warn("layerCount is 1: the board has a B.Cu layer closed to tracks and vias by a rule area");
     }
+    if (!p_.track_layers.empty()) {
+      std::vector<std::pair<Coord, Coord>> all{{kx(p_.min_x), ky(p_.max_y)}, {kx(p_.max_x), ky(p_.max_y)}, {kx(p_.max_x), ky(p_.min_y)}, {kx(p_.min_x), ky(p_.min_y)}};
+      std::vector<int> closed;
+      for (int z = 0; z < n; ++z)
+        if (std::find(p_.track_layers.begin(), p_.track_layers.end(), z) == p_.track_layers.end()) closed.push_back(z);
+      if (!closed.empty()) {
+        ZoneOut zo{"srj_no_tracks", -1, true, closed, std::move(all)};
+        zo.vias_ok = true;
+        zones_.push_back(std::move(zo));
+      }
+    }
     for (const auto& pl : p_.planes) {  // plane terminations (buses): a zone of the net over the whole board on that layer
       std::vector<std::pair<Coord, Coord>> all{{kx(p_.min_x), ky(p_.max_y)}, {kx(p_.max_x), ky(p_.max_y)}, {kx(p_.max_x), ky(p_.min_y)}, {kx(p_.min_x), ky(p_.min_y)}};
       zones_.push_back(ZoneOut{"srj_plane_" + std::to_string(pl.layer), pl.net, false, {pl.layer}, std::move(all)});
@@ -320,7 +334,7 @@ class Writer {
       s += "\t\t(layers " + layer_names(zl, false) + ")\n\t\t(uuid " + quote(uuid()) + ")\n\t\t(name " + quote(z.name) + ")\n\t\t(hatch edge 0.5)\n";
       s += "\t\t(connect_pads yes\n\t\t\t(clearance 0)\n\t\t)\n\t\t(min_thickness " + format_mm(mm_to_nm(p_.rules.min_trace_width)) + ")\n";
       if (z.keepout)
-        s += "\t\t(keepout\n\t\t\t(tracks not_allowed)\n\t\t\t(vias not_allowed)\n\t\t\t(pads allowed)\n\t\t\t(copperpour not_allowed)\n\t\t\t(footprints allowed)\n\t\t)\n";
+        s += std::string("\t\t(keepout\n\t\t\t(tracks not_allowed)\n\t\t\t(vias ") + (z.vias_ok ? "allowed" : "not_allowed") + ")\n\t\t\t(pads allowed)\n\t\t\t(copperpour not_allowed)\n\t\t\t(footprints allowed)\n\t\t)\n";
       s += "\t\t(fill\n\t\t\t(thermal_gap 0.5)\n\t\t\t(thermal_bridge_width 0.5)\n\t\t\t(island_removal_mode 0)\n\t\t)\n\t\t(polygon\n\t\t\t(pts\n\t\t\t\t";
       for (std::size_t i = 0; i < z.pts.size(); ++i) s += std::string(i ? " " : "") + "(xy " + format_mm(z.pts[i].first) + " " + format_mm(z.pts[i].second) + ")";
       s += "\n\t\t\t)\n\t\t)\n\t)\n";
@@ -400,8 +414,21 @@ class Writer {
 }  // namespace
 
 SrjBoardFiles srj_to_kicad(const SrjProblem& problem, const SrjImportOptions& opt) {
-  if (opt.outline_margin == 0) return Writer(problem, opt).run();
+  if (opt.outline_margin == 0 && !opt.unpointed_keepout) return Writer(problem, opt).run();
   SrjProblem grown = problem;
+  if (opt.unpointed_keepout) {
+    for (auto& o : grown.obstacles) {
+      if (o.net < 0) continue;
+      bool pointed = false;
+      for (int ci : grown.nets[static_cast<std::size_t>(o.net)].connections)
+        for (const auto& pt : grown.connections[static_cast<std::size_t>(ci)].points)
+          if (Writer::contains(o, pt.x, pt.y) && std::any_of(pt.layers.begin(), pt.layers.end(), [&](int z) { return std::find(o.layers.begin(), o.layers.end(), z) != o.layers.end(); })) pointed = true;
+      if (!pointed) o.net = -1;
+    }
+    for (auto& nt : grown.nets) {
+      nt.obstacles.erase(std::remove_if(nt.obstacles.begin(), nt.obstacles.end(), [&](int i) { return grown.obstacles[static_cast<std::size_t>(i)].net < 0; }), nt.obstacles.end());
+    }
+  }
   const double m = static_cast<double>(opt.outline_margin) / 1e6;
   grown.min_x -= m;
   grown.min_y -= m;

@@ -245,6 +245,12 @@ SrjProblem read_srj(const std::string& text) {
     p.nets[static_cast<std::size_t>(it->second)].obstacles.push_back(static_cast<int>(i));
   }
 
+  if (d.contains("tracemakerTrackLayers") && d["tracemakerTrackLayers"].is_array())
+    for (const auto& l : d["tracemakerTrackLayers"])
+      if (l.is_string()) {
+        const int z = srj_layer_index(l.get<std::string>(), p.layer_count);
+        if (z >= 0) p.track_layers.push_back(z);
+      }
   auto warn = [&](const std::string& w) { p.warnings.push_back(w); };
   auto present = [&](const char* key) { return d.contains(key) && d[key].is_array() && !d[key].empty(); };
   if (present("traces")) warn("the problem's preloaded 'traces' are not imported: the board starts without them");
@@ -254,7 +260,20 @@ SrjProblem read_srj(const std::string& text) {
     for (std::size_t i = 0; i < p.connections.size(); ++i) conn_of[p.connections[i].name] = static_cast<int>(i);
     std::set<std::pair<int, int>> seen;
     int plane_buses = 0;
+    int exit_layers = 0;
     for (const auto& bu : d["buses"]) {
+      // A bus may name the layer each connection leaves on (connectionExitTargets, as the fan-out benchmark's problems
+      // do): the breakout point at the boundary is then on that layer, not on the layer the point was written with.
+      if (bu.contains("connectionExitTargets") && bu["connectionExitTargets"].is_object())
+        for (const auto& [name, tgt] : bu["connectionExitTargets"].items()) {
+          const auto it = conn_of.find(name);
+          if (it == conn_of.end() || !tgt.is_object()) continue;
+          auto& pts = p.connections[static_cast<std::size_t>(it->second)].points;
+          const int z = srj_layer_index(opt_string(tgt, "layer"), p.layer_count);
+          if (pts.size() < 2 || z < 0 || pts.back().point_id.rfind("pcb_breakout_point", 0) != 0) continue;
+          pts.back().layers = {z};
+          ++exit_layers;
+        }
       if (!bu.contains("termination") || !bu["termination"].is_object() || opt_string(bu["termination"], "type") != "plane") continue;
       const int layer = srj_layer_index(opt_string(bu["termination"], "layer"), p.layer_count);
       if (layer < 0 || !bu.contains("connectionNames")) continue;
@@ -266,6 +285,7 @@ SrjProblem read_srj(const std::string& text) {
         if (seen.insert({net, layer}).second) p.planes.push_back(SrjPlane{net, layer});
       }
     }
+    if (exit_layers) warn(std::to_string(exit_layers) + " breakout points moved to the layer their bus names in connectionExitTargets");
     warn("'buses' are not imported: their nets are routed one by one" +
          std::string(plane_buses ? "; " + std::to_string(plane_buses) + " plane terminations become zones" : ""));
   }

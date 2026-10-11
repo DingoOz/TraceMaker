@@ -443,13 +443,14 @@ int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int lay
 }
 
 // Simple Route JSON problem -> KiCad board, project and (if needed) custom rules next to each other (doc 08 §9).
-int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out, double margin_mm = 0) {
+int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out, double margin_mm = 0, bool unpointed = false) {
   namespace fs = std::filesystem;
   const auto problem = tmk::io::read_srj_file(in);
   tmk::io::SrjImportOptions opt;
   if (clearance_mm >= 0) opt.clearance = tmk::mm_to_nm(clearance_mm);
   if (hole_to_hole_mm >= 0) opt.hole_to_hole = tmk::mm_to_nm(hole_to_hole_mm);
   opt.outline_margin = tmk::mm_to_nm(margin_mm);
+  opt.unpointed_keepout = unpointed;
   const auto files = tmk::io::srj_to_kicad(problem, opt);
   auto write = [](const fs::path& p, const std::string& text) {
     std::ofstream f(p, std::ios::binary);
@@ -597,10 +598,14 @@ int main(int argc, char** argv) {
   route->add_option("--lns-open", ropt.lns_open_trials, "Regional rebuild of open connections: orders tried per open connection (0 = off)")->group("");
   route->add_option("--lns-open-radius-mm", ropt.lns_open_radius_mm, "Regional rebuild: radius around the open pin")->group("");
   route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
+  route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
   route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
+  route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");
+  route->add_option("--max-victims", ropt.max_victims, "Negotiation: connections one route may rip at once (0 = no limit)")->group("");
   route->add_option("--max-rips", ropt.max_rips_per_connection, "Rip-ups allowed per connection")->group("");
   route->add_option("--max-passes", ropt.max_passes, "Passes over still-unrouted connections")->group("");
   route->add_option("--max-restarts", ropt.max_restarts, "Full restarts when negotiation stalls")->group("");
+  route->add_option("--soft-growth", ropt.soft_growth, "Crossing cost growth per negotiation pass (fraction of --soft-cost-mm)")->group("");
   route->add_option("--soft-cost-mm", ropt.soft_cost_mm, "Base cost of crossing another net's copper in negotiation")->group("");
   route->add_option("--soft-attempts", ropt.soft_attempts, "Window sizes tried by negotiated searches (1-4)")->group("");
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
@@ -738,6 +743,8 @@ int main(int argc, char** argv) {
                      "Drill edge to drill edge clearance (default: the problem's via-hole / drill clearance fields, else no rule)")
       ->check(CLI::NonNegativeNumber);
   double si_margin = 0;
+  bool si_unpointed = false;
+  srj_in->add_flag("--unpointed-keepout", si_unpointed, "Pads of a net that no connection point lies on become keep-outs (fan-out problems)");
   srj_in->add_option("--outline-margin-mm", si_margin, "Grow the board outline by this on every side (breakout points on the bounds)")->check(CLI::NonNegativeNumber);
   srj_in->add_option("--json", si_json, "Write the conversion summary (counts, rules used, warnings) as JSON");
   auto* srj_out = app.add_subcommand("srj-export", "Write a routed board's copper as the `traces` of its Simple Route JSON problem");
@@ -788,7 +795,7 @@ int main(int argc, char** argv) {
     }
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
-    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json, si_margin);
+    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json, si_margin, si_unpointed);
     if (*srj_out) return cmd_srj_export(so_board, so_problem, so_out, so_json);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
