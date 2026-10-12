@@ -141,3 +141,20 @@ TEST_CASE("field cache: identical copper with and without it", "[route][txn]") {
   }
   CHECK(a.best.expansions == c.best.expansions);
 }
+
+TEST_CASE("saved state: written after each round, a resumed run starts from it and does not get worse", "[route][txn]") {
+  const auto l = load_problem();
+  const std::string path = (fs::temp_directory_path() / "tm_test_txn.state").string();
+  fs::remove(path);
+  route::RouterOptions first = options();
+  first.round_work = 300000;
+  first.rounds = 1;
+  first.state_out = path;
+  const auto a = route::route_portfolio(l.board, l.rules, first, 1, {}, 1);
+  REQUIRE(fs::exists(path));
+  route::RouterOptions again = first;
+  again.state_in = path;
+  const auto b = route::route_portfolio(l.board, l.rules, again, 1, {}, 1);
+  CHECK(b.best.routed >= a.best.routed);
+  fs::remove(path);
+}

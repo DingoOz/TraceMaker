@@ -85,7 +85,10 @@ struct RouterOptions {
   int txn_orders = 1;           // transactional negotiation: orders tried for re-routing the victims (the ones that failed go first in the next try)
   int breakout_profile = 1;     // 1: a breakout board (D98) also gets reach_check 2, flood_work_pct 25, field prefill and cache (when those are at their defaults)
   const std::vector<ConnRoute>* warm = nullptr;  // start from these routes (a previous result's conn_routes): they are kept, negotiation starts at once
+  std::string state_out;        // portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed
+  std::string state_in;         // portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored
   int breakout_portfolio = 1;   // 1: with more than one variant, a board that looks like a ball-grid breakout gets the breakout portfolio (D101) instead of the designed eight
+  long round_work = 0;          // portfolio: > 0 gives every round this work budget (instead of splitting the total), and rounds continue until the board is complete, `rounds` is reached or `time_limit_s` of the whole portfolio is used (--until-complete)
   int rounds = 0;               // portfolio: the work budget is split into this many rounds; after each, every variant continues from the best result so far (0 = automatic: 4 with the breakout portfolio, else 1)
   int txn = -1;                 // transactional negotiation (doc 16 §12): a route that rips victims is kept only if the victims can be re-routed
                                 // without ripping: 0 = off, 1 = keep ties (net 0), 2 = strict gain only, -1 = automatic (1 on a breakout board, else 0)

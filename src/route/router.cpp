@@ -17,6 +17,8 @@
 #include <queue>
 #include <array>
 #include <cstring>
+#include <fstream>
+#include <sstream>
 #include <deque>
 #include <set>
 #include <thread>
@@ -4757,6 +4759,61 @@ static bool looks_like_breakout(const model::Board& b) {
   return multi > 0 && 10 * touching >= 7 * multi;
 }
 
+// Saved search state (resume): text lines, "S <rounds done> <routed>", then per connection "R pad_a pad_b ntracks nvias",
+// "T ax ay bx by width layer net" and "V x y size drill top bottom type net". Connections are keyed by pad pair, so the state
+// applies to the same input board in any later run (RouterOptions::warm matches the same way).
+static bool save_state(const std::string& path, const std::vector<ConnRoute>& routes, int rounds_done, int routed) {
+  std::ostringstream o;
+  o << "S " << rounds_done << ' ' << routed << '\n';
+  for (const auto& cr : routes) {
+    o << "R " << cr.pad_a << ' ' << cr.pad_b << ' ' << cr.tracks.size() << ' ' << cr.vias.size() << '\n';
+    for (const auto& t : cr.tracks)
+      o << "T " << t.a.x << ' ' << t.a.y << ' ' << t.b.x << ' ' << t.b.y << ' ' << t.width << ' ' << t.layer << ' ' << t.net << '\n';
+    for (const auto& v : cr.vias)
+      o << "V " << v.pos.x << ' ' << v.pos.y << ' ' << v.size << ' ' << v.drill << ' ' << v.layer_top << ' ' << v.layer_bottom << ' '
+        << static_cast<int>(v.type) << ' ' << v.net << '\n';
+  }
+  const std::string tmp = path + ".tmp";
+  {
+    std::ofstream f(tmp, std::ios::trunc);
+    f << o.str();
+    if (!f) return false;
+  }
+  return std::rename(tmp.c_str(), path.c_str()) == 0;
+}
+
+static bool load_state(const std::string& path, std::vector<ConnRoute>& routes, int& rounds_done, int& routed) {
+  std::ifstream f(path);
+  if (!f) return false;
+  std::string tag;
+  routes.clear();
+  while (f >> tag) {
+    if (tag == "S") {
+      f >> rounds_done >> routed;
+    } else if (tag == "R") {
+      ConnRoute cr;
+      std::size_t nt = 0, nv = 0;
+      f >> cr.pad_a >> cr.pad_b >> nt >> nv;
+      for (std::size_t i = 0; i < nt && f >> tag; ++i) {
+        model::Track t;
+        f >> t.a.x >> t.a.y >> t.b.x >> t.b.y >> t.width >> t.layer >> t.net;
+        cr.tracks.push_back(t);
+      }
+      for (std::size_t i = 0; i < nv && f >> tag; ++i) {
+        model::Via v;
+        int ty = 0;
+        f >> v.pos.x >> v.pos.y >> v.size >> v.drill >> v.layer_top >> v.layer_bottom >> ty >> v.net;
+        v.type = static_cast<model::ViaType>(ty);
+        cr.vias.push_back(v);
+      }
+      routes.push_back(std::move(cr));
+    } else {
+      return false;
+    }
+  }
+  return !routes.empty();
+}
+
 PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
                                 const std::vector<int>& pick, int threads) {
   struct Variant {
@@ -4963,14 +5020,24 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   // outcome does not depend on thread timing.
   const int rounds = base.rounds > 0 ? base.rounds : (breakout_list ? 4 : 1);
   std::vector<ConnRoute> warm_routes;
-  if (rounds > 1)
+  int resumed_rounds = 0, saved_routed = -1;
+  bool resumed = false;
+  if (!base.state_in.empty() && load_state(base.state_in, warm_routes, resumed_rounds, saved_routed)) resumed = true;
+  if (base.round_work > 0)
+    for (auto& v : vs) v.o.work_budget = base.round_work;
+  else if (rounds > 1)
     for (auto& v : vs) {
       if (base.work_budget > 0) v.o.work_budget = std::max<long>(1, base.work_budget / rounds);
       else v.o.time_limit_s = base.time_limit_s / rounds;
     }
+  const auto t_start = std::chrono::steady_clock::now();
   for (int round = 0; round < rounds; ++round) {
-    if (round > 0)
+    if (round > 0 && base.round_work > 0 &&
+        std::chrono::duration<double>(std::chrono::steady_clock::now() - t_start).count() > base.time_limit_s)
+      break;
+    if (round > 0 || resumed)
       for (auto& v : vs) {
+        if (base.round_work > 0) v.o.seed += 7919u * static_cast<unsigned>(round > 0 ? 1 : resumed_rounds + 1);  // a new draw each round (a resumed run continues the sequence)
         v.o.warm = &warm_routes;
         v.o.sink = nullptr;
         v.o.deadline = nullptr;
@@ -4982,12 +5049,16 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
         for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
       });
     for (auto& t : pool) t.join();
-    if (round + 1 < rounds) {
+    {
       std::size_t bi = 0;
       for (std::size_t i = 1; i < rs.size(); ++i)
         if (better(i, bi)) bi = i;
+      // Save the best state of this round unless it is worse than the one this run started from.
+      if (!base.state_out.empty() && rs[bi].routed >= saved_routed) {
+        if (save_state(base.state_out, rs[bi].conn_routes, resumed_rounds + round + 1, rs[bi].routed)) saved_routed = rs[bi].routed;
+      }
       if (rs[bi].connections > 0 && rs[bi].routed == rs[bi].connections) break;  // complete: nothing left to improve
-      warm_routes = rs[bi].conn_routes;
+      if (round + 1 < rounds) warm_routes = rs[bi].conn_routes;
     }
   }
   PortfolioResult pr;

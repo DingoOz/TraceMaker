@@ -789,6 +789,9 @@ int main(int argc, char** argv) {
   route->add_option("--breakout-profile", ropt.breakout_profile, "1 (default): a breakout board also gets reach-check 2, flood weight 25 %, field prefill and cache; 0: only the layer-direction and package penalties")->group("");
   route->add_option("--rounds", ropt.rounds, "Portfolio: split the work budget into this many rounds; each round every variant continues from the best state of the last")->group("");
   route->add_option("--breakout-portfolio", ropt.breakout_portfolio, "1 (default): a ball-grid breakout board gets the breakout portfolio with --variants > 1; 0: the designed variants")->group("");
+  route->add_option("--state-out", ropt.state_out, "Portfolio: write the best routes after every round to this file so the run can be resumed")->group("");
+  route->add_option("--state-in", ropt.state_in, "Portfolio: resume from the routes in this file (written by --state-out)")->group("");
+  route->add_option("--round-work", ropt.round_work, "Portfolio rounds of this work each (not split), repeated until the board is complete, --rounds is reached or --time is used; each round reseeds the variants")->group("");
   route->add_option("--max-victims", ropt.max_victims, "Negotiation: connections one route may rip at once (0 = no limit)")->group("");
   route->add_option("--max-rips", ropt.max_rips_per_connection, "Rip-ups allowed per connection")->group("");
   route->add_option("--max-passes", ropt.max_passes, "Passes over still-unrouted connections")->group("");

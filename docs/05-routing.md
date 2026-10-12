@@ -1804,3 +1804,7 @@ least 70 % of the connections with an end on a ball-grid-like package) and off e
 - **`--breakout-portfolio`, `--rounds R` (D101).** See doc 16 §12.
 - **Warm start.** `RouterOptions::warm` (the `conn_routes` of a result) starts a run with those routes in place, matched by the two pads of each
   connection; negotiation begins at once (no strict first pass).
+
+### 41.1 Saved state and resume (D102)
+
+With `--round-work`/`--rounds`, `--state-out F` writes the best routes after each round (text: `S rounds routed`, then `R pad_a pad_b nt nv` with its `T`/`V` lines); `--state-in F` loads them as the warm start, so a run that ran out of time continues where it stopped. `bench/run.py --resume-run NAME` does this per board from `bench/results/NAME/boards/<board>.kicad_pcb.state`.

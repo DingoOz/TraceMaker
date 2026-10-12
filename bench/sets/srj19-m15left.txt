@@ -1,0 +1,11 @@
+# srj19 boards open after M15 (doc 16 §12.1)
+#fixtures: bench/data/tscircuit/boards/srj19
+sample011
+sample019
+sample031
+sample080
+sample124
+sample158
+sample163
+sample173
+sample178
