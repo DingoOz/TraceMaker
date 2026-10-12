@@ -298,3 +298,23 @@ Update, same day (doc 16 §11): with preferred layer directions and the package 
 gives **srj19 181/200 (90.5 %)** and **srj20 124/200 (62 %)**; the 16-variant portfolio (50 M each, 16 threads, median 164–168 s) closes 7 more on
 srj19 (**188/200 = 94.0 %**, tscircuit 92.0 %) and 9 more on srj20 (**133/200 = 66.5 %**, tscircuit 78.5 %). `fanout31`: 57 of the 60 cases run solved
 (tscircuit 48/72); AM3352 is not solved (6–23 connections open at best; tscircuit solves none of its 12 cases either).
+
+## 9. M15: negotiation as transactions (2026-10-11 evening, doc 16 §12, doc 05 §41)
+
+The breakout profile (D100: transactions, reach-check 2, flood weight 25 %, field prefill and cache) is automatic on breakout boards, so the commands of §8
+need no extra options and their results change: one variant at 30 M work gives **srj19 178/200** (was 181 at 50 M, 46 → 32 s CPU per board) and
+**srj20 129/200** (was 124 at 50 M, 67 → 59 s). The portfolio is the breakout portfolio with four rounds (D101):
+
+```
+python3 bench/run.py --set srj20 --work 30000000 --route-args "--variants 1 --no-gpu --fast-bends"
+python3 bench/run.py --set srj20-m15fail --work 30000000 --jobs 3 --threads 16 --route-args "--variants 16 --no-gpu"        # 71 boards: +19
+python3 bench/run.py --set srj20-m15fail3 --work 70000000 --time 330 --jobs 3 --threads 16 --route-args "--variants 16 --no-gpu"   # 24 boards: +8
+```
+
+Sets added: `srj20-p2fail` (76: the boards P2 leaves open), `srj20-e39` (39 of them), `srj20-m15fail` (71), `srj20-m15fail2` (52), `srj20-m15fail3` (24 of
+fewer than 70 connections), `srj20-m15fail4` (16), `srj19-m15fail` (22), `srj20-rem67`. Results: srj19 **191/200 = 95.5 %** (178 + 13), srj20 **160/200 = 80.0 %** (156 within 330 s)
+(129 + 19 + 8 + 4 with GPUs and 150 M, up to 433 s), tscircuit 184 and 157. These are composites of single-variant and portfolio runs (the wall limit of the last step makes it
+non-deterministic: 330 s, 16 threads; tscircuit's 360 s, 32 vCPU). `quick` and `mid` are byte-identical to the baseline outputs.
+
+Work-budget note: on a breakout board a reachability-flood cell counts a quarter of an expansion against `--work`, so `--work` budgets from §7–§8 are not comparable
+with these (30 M here is about 100–140 s of CPU per hard board; 50 M plain was 67–115 s).

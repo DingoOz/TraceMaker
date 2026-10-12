@@ -1782,3 +1782,25 @@ hidden options are.
 - **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
 - **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
   `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.
+
+## 41. Negotiation as transactions, the breakout profile and portfolio rounds (M15, 2026-10-11, D99–D101)
+
+Measured on tscircuit's BGA breakout sets (doc 16 §12). Everything here is automatic on a *breakout board* (D98: two copper layers, at
+least 70 % of the connections with an end on a ball-grid-like package) and off elsewhere, so `quick` and `mid` are unchanged.
+
+- **Transactions (`--txn 1`, D99).** `txn_try` runs a negotiated search for a connection with a log of the victims it rips. The victims
+  are then routed again strictly, one after the other (no ripping); the route is kept if no more victims are lost than the route gained
+  (`--txn 2`: strictly more), or with probability exp(−k/T) for a net loss of k (`--txn-temp T`, default 1.5 on breakout boards; seeded
+  counter-based draws), else a snapshot of every connection's copper, flags and rip counts is restored (`txn_capture`/`txn_restore`) and
+  history keeps what the failed attempt learned. A route without victims is kept at once. Pairs and buses are not run as transactions.
+  Hidden options that did not help: `--txn-depth` (nested transactions for victims that cannot re-route), `--txn-orders` (several victim
+  orders), `--txn-cap`, `--txn-cool`, `--tidy`, `--stall-passes`.
+- **Reachability floods and the budget (`--reach-check 2`, `--flood-work-pct 25`).** A flood cell counts a quarter of an expansion against
+  `--work` on breakout boards (it costs far less time); elsewhere the charge stays 1:1 (the work-profile identity
+  `expansions + flood cells = charged work` holds only at 100 %).
+- **Fields (`--field-prefill 1`, `--field-cache-mb 512`).** The fixed-copper cache of a net class is filled for the whole board before its
+  first cost-to-go field (boards up to 4 M lattice cells); a field is then a function of (window, target cells, costs) and is kept; a hit
+  needs byte-identical inputs. Identical copper with and without the cache (test), 38 % less wall time on a transaction run.
+- **`--breakout-portfolio`, `--rounds R` (D101).** See doc 16 §12.
+- **Warm start.** `RouterOptions::warm` (the `conn_routes` of a result) starts a run with those routes in place, matched by the two pads of each
+  connection; negotiation begins at once (no strict first pass).

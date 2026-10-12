@@ -110,6 +110,34 @@ Each entry says what was tried, the evidence and its strength, and what TraceMak
 | X5 | More seeds (24 variants) on one hard board | all end at 33–40 of 52 |
 | X6 | Finer lattice (20 µm) at equal work | 61.6 % vs 76.7 % |
 
+### C5. From the M15 experiments (2026-10-11 evening, doc 16 §12)
+
+| # | Approach | Result at equal work (30 M, one variant, no GPU) | Note |
+|---|---|---|---|
+| Y1 | Lattice pitch chosen so that track + clearance is a whole number of cells (36.7, 44, 45, 55 µm against the automatic 35 µm) | 18, 26, 21, 20 clean of 57 against 23: neutral | Run-to-run spread of negotiation on these boards is about ±3 boards; the five runs together reach 31 |
+| Y2 | Re-route victims in other orders (the ones that failed first), 2 or 4 orders per transaction | 4 and 1 clean of 76 against 7 | Every extra order costs searches the budget does not have |
+| Y3 | Nested transactions: a victim that cannot re-route strictly gets its own transaction (depth 1, 2) | 25 % and 23 % clean of 57 against 40 % | Fewer passes per budget |
+| Y4 | Cap on the expansions of a victim's re-route search (20 k, 60 k) | 37 % against 40 % | No gain |
+| Y5 | Tidy sweeps: re-route every routed connection alone and keep it if shorter | 3 and 5 clean of 76 against 7 | 10–20 connections get shorter per sweep, but the room does not close the last connection |
+| Y6 | Cooling the annealing temperature to zero over the budget | at 100 M: 53–60 % against 63 % uncooled | The last phase needs to keep moving among nearly complete states |
+| Y7 | Per-net cache of the routed-copper state of lattice points, invalidated by an epoch per cell | Identical copper, no speed-up | Consecutive searches are for different nets; a net-independent cache would be needed |
+
+**Literature consulted for M15 (lateral reading).**
+
+- Multi-agent path finding is the same problem with other names: agents are connections, a vertex conflict is a clearance conflict.
+  [MAPF-LNS2](https://ojs.aaai.org/index.php/AAAI/article/view/21266) (Li, Chen, Harabor, Stuckey, Koenig, AAAI 2022) repairs a plan with collisions by
+  re-planning a *chosen subset* of the colliding agents with randomised priorities and keeps the change only when the number of collisions does not grow.
+  That acceptance rule, not the choice of neighbourhood, is what M15 took over: negotiation that keeps a route only if the victims it displaces can be
+  re-routed ("transactions"), with a simulated-annealing exception for small losses. The two other MAPF families (conflict-based search and
+  [LaCAM/PIBT](https://arxiv.org/pdf/2211.13432)) assume time-expanded graphs or small agent counts and were not tried.
+- PathFinder's known weaknesses ([FPGA routing notes](https://arxiv.org/pdf/2407.00009), [Penn ESE 535 lecture](https://www.seas.upenn.edu/~ese5350/spring2008/slides/day20_6up.pdf)):
+  equal-cost alternatives make routes ping-pong, success depends on which nets are re-routed and in what order, and history alone does not break
+  the cycle. This matches what was measured on srj20: plain negotiation's routed count wobbles by ±5 around a level for the whole budget.
+- [OrthoRoute](https://github.com/bbenchoff/OrthoRoute) (GPU PathFinder for KiCad on a Manhattan lattice) works on backplanes with blind and buried vias;
+  nothing on its via model transfers to two-layer breakouts.
+- Escape-routing literature (exact SAT, flow with diagonal capacity, layer assignment: section B) is about *one* package on ordered pin sets; the srj
+  boards have random pad assignments, so the crossing structure, not the escape, decides.
+
 ## D. Open questions the sources do not answer
 
 1. Whether the 17 srj19 and 43 srj20 boards neither router solves are infeasible. Nobody has published a feasibility

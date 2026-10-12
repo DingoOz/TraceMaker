@@ -33,8 +33,9 @@ Freerouting's figures are its own published results on the same boards.
 
 - Placing a board from scratch gives 85% clean boards on held-out designs; the project's target was 90%.
 - On boards with dense packages (BGAs, fine-pitch QFNs), 41% come out clean.
-- On tscircuit's public BGA breakout problems it routes 60% and 34% of the boards completely (sets srj19 and srj20, fixed
-  budget, no KiCad errors added); tscircuit's own router completes 92% and 77%.
+- On tscircuit's public BGA breakout problems (sets srj19 and srj20, KiCad errors never added) it routes about 95% and 78% of the boards
+  completely with a 16-variant portfolio (about 2-7 minutes per board; a single 30-60 s run: 89% and 64%); tscircuit's own router completes 92% and 79%
+  (360 s on 32 vCPU). Both figures are composites of runs; srj20 is 156/200 within 330 s and 160/200 with up to 433 s.
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·

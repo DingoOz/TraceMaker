@@ -46,7 +46,7 @@ std::string jnum(Coord v) { return std::to_string(v); }
 
 struct Router::Impl {
   const model::DesignRules& rules;
-  const RouterOptions& opt;
+  RouterOptions opt;  // a copy: the breakout profile (package_boxes) sets some options for the board
   model::Board b;  // working copy
   std::unique_ptr<Obstacles> obs;
   RouteResult res;
@@ -1735,31 +1735,54 @@ struct Router::Impl {
     txn_protect[static_cast<std::size_t>(ci)] = 1;
     std::vector<int> protectedv;
     int loss = 0;
-    for (const auto& tv : log) {
-      auto& sv = cs[static_cast<std::size_t>(tv.ci)];
-      if (sv.routed) continue;
-      if (out_of_budget()) {
-        ++loss;
-        continue;
+    // The victims are re-routed one after the other, so their order matters (a bundle fits back only if its wires go in the
+    // right sequence). Up to opt.txn_orders orders are tried: the log order, then each time the victims that failed go first.
+    std::vector<int> order;
+    for (const auto& tv : log) order.push_back(tv.ci);
+    const int attempts = std::max(1, opt.txn_orders);
+    TxnSnap post;
+    if (attempts > 1) post = txn_capture();
+    for (int attempt = 0; attempt < attempts; ++attempt) {
+      if (attempt > 0) {
+        for (int v : protectedv) txn_protect[static_cast<std::size_t>(v)] = 0;
+        protectedv.clear();
+        txn_restore(post);
       }
-      current = tv.ci;
-      expansion_cap = opt.txn_cap;
-      bool again = search_and_commit(sv.c, false);
-      expansion_cap = 0;
-      if (!again && depth > 0 && txn_nested_left > 0) {
-        --txn_nested_left;
-        int g = 0;
-        again = txn_try(tv.ci, depth - 1, false, g);
+      loss = 0;
+      std::vector<int> failed_now, ok_now;
+      for (const int v : order) {
+        auto& sv = cs[static_cast<std::size_t>(v)];
+        if (sv.routed) continue;
+        if (out_of_budget()) {
+          ++loss;
+          failed_now.push_back(v);
+          continue;
+        }
+        current = v;
+        expansion_cap = opt.txn_cap;
+        bool again = search_and_commit(sv.c, false);
+        expansion_cap = 0;
+        if (!again && depth > 0 && txn_nested_left > 0) {
+          --txn_nested_left;
+          int g = 0;
+          again = txn_try(v, depth - 1, false, g);
+        }
+        current = ci;
+        if (again) {
+          sv.routed = true;
+          ++res.routed;
+          txn_protect[static_cast<std::size_t>(v)] = 1;
+          protectedv.push_back(v);
+          ok_now.push_back(v);
+        } else {
+          ++loss;
+          failed_now.push_back(v);
+        }
       }
-      current = ci;
-      if (again) {
-        sv.routed = true;
-        ++res.routed;
-        txn_protect[static_cast<std::size_t>(tv.ci)] = 1;
-        protectedv.push_back(tv.ci);
-      } else {
-        ++loss;
-      }
+      if (loss == 0 || out_of_budget()) break;
+      order = failed_now;  // the ones that did not fit go first next time
+      order.insert(order.end(), ok_now.begin(), ok_now.end());
+      std::reverse(order.begin() + static_cast<std::ptrdiff_t>(failed_now.size()), order.end());
     }
     txn_protect[static_cast<std::size_t>(ci)] = 0;
     for (int v : protectedv) txn_protect[static_cast<std::size_t>(v)] = 0;
@@ -2994,6 +3017,20 @@ struct Router::Impl {
     if (breakout) {
       if (opt.layer_dir_pen < 0) auto_dir_pen = opt.layer_dir_pen == -1.0 ? 0.3 : -opt.layer_dir_pen;
       if (opt.package_pen < 0) pen = 3.0;
+      // Search profile of M15 (doc 16 §12, D99): negotiation as transactions with annealing acceptance, reachability floods before
+      // every strict search and counted at a quarter of an expansion (they cost far less time), fields cached. Options the caller
+      // set explicitly (anything but the defaults) are left alone.
+      if (opt.txn < 0) opt.txn = 1;
+      if (opt.txn_temp < 0) opt.txn_temp = 1.5;
+      if (opt.breakout_profile) {
+        if (opt.reach_check == 1) opt.reach_check = 2;
+        if (opt.flood_work_pct == 100) opt.flood_work_pct = 25;
+        if (opt.field_prefill == 0) opt.field_prefill = 1;
+        if (opt.field_cache_mb == 0) opt.field_cache_mb = 512;
+      }
+    } else {
+      if (opt.txn < 0) opt.txn = 0;
+      if (opt.txn_temp < 0) opt.txn_temp = 0;
     }
     pkg_pen = static_cast<std::int64_t>(pen * static_cast<double>(pitch));
     pkg_on = !pkg_boxes.empty() && pen > 0;
@@ -3475,6 +3512,61 @@ struct Router::Impl {
       if (std::getenv("TM_DEBUG_BUS")) std::fprintf(stderr, "bus %s: skew %.3f mm (limit %.3f)\n", g.name.c_str(), (hi - lo) / 1e6, nm_to_mm(g.skew));
     }
     return within;
+  }
+
+  // Tidy sweep (doc 16 §12): every routed connection is lifted and searched again with nothing else moving (strict, the usual
+  // costs); the new copper is kept only if length + 2 mm per via went down, else the old copper comes back exactly. A route
+  // can only get cheaper, and the room a detour or loop gave up may be what an open connection needs. Longest excess first.
+  int tidy_sweep() {
+    struct Old { drc::ItemKind kind; int index; };
+    auto cost_of = [&](const std::vector<int>& items) {
+      double len = 0;
+      int vias = 0;
+      for (int item : items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (it.kind == drc::ItemKind::Via) ++vias;
+        else len += std::hypot(static_cast<double>(b.tracks[static_cast<std::size_t>(it.index)].b.x - b.tracks[static_cast<std::size_t>(it.index)].a.x),
+                               static_cast<double>(b.tracks[static_cast<std::size_t>(it.index)].b.y - b.tracks[static_cast<std::size_t>(it.index)].a.y));
+      }
+      return len + 2e6 * vias;
+    };
+    std::vector<std::pair<double, int>> order;  // (-excess over the straight distance, connection)
+    for (std::size_t i = 0; i < cs.size(); ++i) {
+      const auto& st = cs[i];
+      if (!st.routed || st.implicit || st.coupled || st.bus_lane || st.items.empty() || st.c.pad_b < 0) continue;
+      const Point a = b.pads[static_cast<std::size_t>(st.c.pad_a)].pos, e = b.pads[static_cast<std::size_t>(st.c.pad_b)].pos;
+      order.emplace_back(-(cost_of(st.items) - std::hypot(static_cast<double>(e.x - a.x), static_cast<double>(e.y - a.y))), static_cast<int>(i));
+    }
+    std::sort(order.begin(), order.end());
+    bypass_nogoods = true;
+    int done = 0;
+    for (const auto& [excess, ci] : order) {
+      if (out_of_budget()) break;
+      auto& st = cs[static_cast<std::size_t>(ci)];
+      const double old_cost = cost_of(st.items);
+      std::vector<Old> saved;
+      for (int item : st.items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        saved.push_back({it.kind, it.index});
+        remove_routed(item);
+      }
+      st.items.clear();
+      current = ci;
+      const bool ok = search_and_commit(st.c, false);
+      if (ok && cost_of(st.items) < old_cost - 1e3) {
+        ++done;
+        continue;
+      }
+      for (int item : st.items) remove_routed(item);
+      st.items.clear();
+      for (const auto& o : saved) {
+        const int id = o.kind == drc::ItemKind::Via ? obs->add_via(o.index, ci) : obs->add_track(o.index, ci);
+        near_mark(id, +1);
+        st.items.push_back(id);
+      }
+    }
+    bypass_nogoods = false;
+    return done;
   }
 
   void optimize_vias() {
@@ -4262,6 +4354,34 @@ struct Router::Impl {
     // After the planned restarts, keep restarting while budget remains (up to 40 more), diversified: nogoods
     // cleared, rip cap raised, history halved, ties in the hardest-first order shuffled (avr_ledprojector stopped
     // at 43 of 120 s with every remaining attempt a nogood).
+    if (opt.warm) {  // start from earlier routes: those connections count as routed, the rest are pending
+      std::map<std::pair<int, int>, const ConnRoute*> by_pads;
+      for (const auto& cr : *opt.warm) by_pads[{cr.pad_a, cr.pad_b}] = &cr;
+      for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+        if (cs[ci].routed) continue;
+        const auto it = by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b});
+        if (it == by_pads.end()) continue;
+        auto& st = cs[ci];
+        for (const auto& t : it->second->tracks) {
+          b.tracks.push_back(t);
+          st.items.push_back(obs->add_track(static_cast<int>(b.tracks.size() - 1), static_cast<int>(ci)));
+          near_mark(st.items.back(), +1);
+        }
+        for (const auto& v : it->second->vias) {
+          b.vias.push_back(v);
+          st.items.push_back(obs->add_via(static_cast<int>(b.vias.size() - 1), static_cast<int>(ci)));
+          near_mark(st.items.back(), +1);
+        }
+        st.routed = true;
+        ++res.routed;
+        release_escapes(static_cast<int>(ci));
+      }
+      pending.clear();
+      for (std::size_t i = 0; i < cs.size(); ++i)
+        if (!cs[i].routed) pending.push_back(static_cast<int>(i));
+      snapshot();
+      snapshot_unrouted();
+    }
     for (int restart = 0; restart <= opt.max_restarts + 40; ++restart) {
     if (restart > 0) {
       phase = WorkPhase::Setup;  // ripping everything, escape reservations and coupled pairs again
@@ -4326,7 +4446,7 @@ struct Router::Impl {
     int run_best = -1, run_best_pass = 0;  // best routed count since this restart began, and the pass that set it
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
-      strict_pass = pass == 0 && opt.strict_first;
+      strict_pass = pass == 0 && opt.strict_first && !opt.warm;
       soft_unit = static_cast<std::int64_t>(opt.soft_cost_mm * 1e6 * (1.0 + opt.soft_growth * std::min(pass, 20)));
       phase = strict_pass ? WorkPhase::FirstPass : WorkPhase::Negotiation;
       std::vector<int> failed;
@@ -4382,7 +4502,7 @@ struct Router::Impl {
           force_escapes = false;
           if (!ok) reason += "; escapes/neck-down: " + why;
         }
-        if (!ok && opt.rip_up && (pass > 0 || !opt.strict_first)) {
+        if (!ok && opt.rip_up && (pass > 0 || !opt.strict_first || opt.warm)) {
           const bool use_txn = opt.txn > 0 && pair_partner.empty() && conn_bundle.empty();
           if (use_txn) {
             int gain = 0;
@@ -4456,6 +4576,18 @@ struct Router::Impl {
       // Next pass: hardest (most failed) first.
       std::stable_sort(failed.begin(), failed.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].fails > cs[static_cast<std::size_t>(y)].fails; });
       for (int f : failed) pending.push_back(f);
+      if (opt.tidy > 0 && res.routed < res.connections && pass % opt.tidy == opt.tidy - 1 && !out_of_budget()) {
+        const WorkPhase keep_phase = phase;
+        phase = WorkPhase::Negotiation;
+        soft = false;
+        const int t = tidy_sweep();
+        phase = keep_phase;
+        res.tidied += t;
+        if (std::getenv("TM_DEBUG_TXN")) std::fprintf(stderr, "tidy after pass %d: %d connections shortened\n", pass, t);
+        // Room may have appeared: the open connections go round again at once.
+        for (std::size_t k = 0; k < cs.size(); ++k)
+          if (!cs[k].routed && !cs[k].dead && std::find(pending.begin(), pending.end(), static_cast<int>(k)) == pending.end()) pending.push_back(static_cast<int>(k));
+      }
       if (pass > 0 && res.routed <= routed_before && res.rips == 0 && txn_attempts_pass == 0) break;
       if (opt.stall_passes > 0) {
         if (res.routed > run_best) run_best = res.routed, run_best_pass = pass;
@@ -4525,6 +4657,17 @@ struct Router::Impl {
     }
     if (best_unrouted.empty()) snapshot_unrouted();
     res.routed = best_routed;
+    for (std::size_t ci = 0; ci < cs.size() && ci < best_items.size(); ++ci) {
+      if (best_items[ci].empty()) continue;
+      ConnRoute cr;
+      cr.pad_a = cs[ci].c.pad_a;
+      cr.pad_b = cs[ci].c.pad_b;
+      for (const auto& o : best_items[ci]) {
+        if (o.kind == drc::ItemKind::Via) cr.vias.push_back(b.vias[static_cast<std::size_t>(o.index)]);
+        else cr.tracks.push_back(b.tracks[static_cast<std::size_t>(o.index)]);
+      }
+      res.conn_routes.push_back(std::move(cr));
+    }
     res.tracks = std::move(best_tracks);
     res.vias = std::move(best_vias);
     for (std::size_t ci = 0; ci < cs.size(); ++ci) {
@@ -4578,6 +4721,42 @@ struct Router::Impl {
   }
 };
 
+// Does the board look like a ball-grid breakout (D98)? Two copper layers, a ball-grid-like package, and at least 70 % of the nets with two
+// or more pads having a pad on it. The router decides again, per connection, in package_boxes(); this is the portfolio's early guess.
+static bool looks_like_breakout(const model::Board& b) {
+  if (b.copper_count() != 2) return false;
+  std::map<int, std::vector<int>> by;
+  for (std::size_t i = 0; i < b.pads.size(); ++i)
+    if (b.pads[i].footprint >= 0 && b.pads[i].type == model::PadType::Smd) by[b.pads[i].footprint].push_back(static_cast<int>(i));
+  std::set<int> grid_fp;
+  for (const auto& [fp, ids] : by) {
+    if (ids.size() < 30) continue;
+    const model::LayerMask m = b.pads[static_cast<std::size_t>(ids[0])].copper;
+    std::set<Coord> gx, gy;
+    bool same = m != 0;
+    for (int i : ids) {
+      same = same && b.pads[static_cast<std::size_t>(i)].copper == m;
+      gx.insert(b.pads[static_cast<std::size_t>(i)].pos.x / 10'000);
+      gy.insert(b.pads[static_cast<std::size_t>(i)].pos.y / 10'000);
+    }
+    if (same && gx.size() >= 5 && gy.size() >= 5 && 10 * ids.size() >= 4 * gx.size() * gy.size()) grid_fp.insert(fp);
+  }
+  if (grid_fp.empty()) return false;
+  std::map<int, std::pair<int, int>> nets;  // net -> (pads, pads on a ball-grid package)
+  for (const auto& pd : b.pads) {
+    if (pd.net <= 0) continue;
+    ++nets[pd.net].first;
+    if (grid_fp.count(pd.footprint)) ++nets[pd.net].second;
+  }
+  int multi = 0, touching = 0;
+  for (const auto& [n, c] : nets)
+    if (c.first >= 2) {
+      ++multi;
+      if (c.second > 0) ++touching;
+    }
+  return multi > 0 && 10 * touching >= 7 * multi;
+}
+
 PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
                                 const std::vector<int>& pick, int threads) {
   struct Variant {
@@ -4591,6 +4770,31 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     if (!vs.empty()) o.sink = nullptr;  // only the first variant streams to the viewer
     vs.push_back({std::move(name), o});
   };
+  const bool breakout_list = variants > 1 && base.breakout_portfolio && looks_like_breakout(board);
+  if (breakout_list) {
+    // Breakout portfolio (D101): every variant has fast bends and the breakout profile (transactions etc.); variant 0 is the plain
+    // profile, the others draw order (shortest first, deep pins first, jittered), via cost, crossing cost, direction strength and
+    // package penalty from sets with a counter-based generator, so the list is the same on every run.
+    add("breakout profile", [&](RouterOptions& o) { o.bend_states = false; });
+    for (int k = 1; static_cast<int>(vs.size()) < std::min(variants, 64); ++k) {
+      const RngStream rg(base.seed, 0xB0B0u, static_cast<std::uint64_t>(k));
+      auto pick_of = [&](std::uint64_t slot, auto... v) {
+        const std::array<double, sizeof...(v)> a{static_cast<double>(v)...};
+        return a[static_cast<std::size_t>(rg.uniform(slot) * static_cast<double>(a.size())) % a.size()];
+      };
+      add("breakout seeded " + std::to_string(k), [&](RouterOptions& o) {
+        o.bend_states = false;
+        o.order = static_cast<int>(pick_of(0, 0, 3, 2));
+        o.seed = base.seed + 100 + static_cast<std::uint64_t>(k);
+        o.via_cost_mm = base.via_cost_mm * pick_of(1, 0.5, 1.0, 1.0, 1.5);
+        o.soft_cost_mm = base.soft_cost_mm * pick_of(2, 1.0, 1.0, 2.0);
+        o.layer_dir_pen = -pick_of(3, 0.3, 0.3, 0.6, 1.01);
+        o.package_pen = pick_of(4, 3.0, 3.0, 0.0) > 0 ? -1.0 : 0.0;
+        o.txn_temp = pick_of(5, 1.0, 1.5, 3.0);
+        o.layer_dir_swap = k % 7 == 6;
+      });
+    }
+  } else {
   add("exact bends, shortest first", [](RouterOptions&) {});
   add("fast bends, shortest first", [&](RouterOptions& o) { o.bend_states = false; });
   add("fast bends, longest first (2x pitch on large boards)", [&](RouterOptions& o) { o.bend_states = false; o.order = 1; o.pitch_scale = 2.0; });
@@ -4620,6 +4824,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       o.layer_dir_swap = k % 5 == 4;
     });
   }
+  }  // designed variants
   std::vector<int> chosen;
   if (!pick.empty()) {
     for (int i : pick)
@@ -4741,13 +4946,6 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   // result: each Router owns all of its state, its clock starts when it starts, and in work-budget mode nothing is
   // shared between variants (the shared deadline is wall-clock mode only).
   const std::size_t workers = threads <= 0 ? vs.size() : std::min(vs.size(), static_cast<std::size_t>(threads));
-  std::atomic<std::size_t> next{0};
-  for (std::size_t w = 0; w < workers; ++w)
-    pool.emplace_back([&] {
-      for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
-    });
-  for (auto& t : pool) t.join();
-  PortfolioResult pr;
   // Total order on (routed desc, vias asc, length asc, variant index asc): the winner depends neither on the order
   // in which variants finished nor on their positions in `pick`.
   auto better = [&](std::size_t i, std::size_t j) {
@@ -4760,6 +4958,39 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     if (la != lc) return la < lc;
     return chosen[i] < chosen[j];
   };
+  // Rounds (doc 16 §12): the budget is split; after each round every variant continues from the best result so far, so the
+  // searches of all variants work on the most promising state instead of on their own. Selection is by `better`, so the
+  // outcome does not depend on thread timing.
+  const int rounds = base.rounds > 0 ? base.rounds : (breakout_list ? 4 : 1);
+  std::vector<ConnRoute> warm_routes;
+  if (rounds > 1)
+    for (auto& v : vs) {
+      if (base.work_budget > 0) v.o.work_budget = std::max<long>(1, base.work_budget / rounds);
+      else v.o.time_limit_s = base.time_limit_s / rounds;
+    }
+  for (int round = 0; round < rounds; ++round) {
+    if (round > 0)
+      for (auto& v : vs) {
+        v.o.warm = &warm_routes;
+        v.o.sink = nullptr;
+        v.o.deadline = nullptr;
+      }
+    std::atomic<std::size_t> next{0};
+    pool.clear();
+    for (std::size_t w = 0; w < workers; ++w)
+      pool.emplace_back([&] {
+        for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
+      });
+    for (auto& t : pool) t.join();
+    if (round + 1 < rounds) {
+      std::size_t bi = 0;
+      for (std::size_t i = 1; i < rs.size(); ++i)
+        if (better(i, bi)) bi = i;
+      if (rs[bi].connections > 0 && rs[bi].routed == rs[bi].connections) break;  // complete: nothing left to improve
+      warm_routes = rs[bi].conn_routes;
+    }
+  }
+  PortfolioResult pr;
   std::size_t best = 0;
   pr.indices = chosen;
   for (std::size_t i = 0; i < rs.size(); ++i) {

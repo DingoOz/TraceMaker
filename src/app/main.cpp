@@ -784,6 +784,11 @@ int main(int argc, char** argv) {
   route->add_option("--field-cache-mb", ropt.field_cache_mb, "Keep cost-to-go fields (MB per router) and reuse them when all inputs are identical (same results, less time)")->group("");
   route->add_option("--flood-work-pct", ropt.flood_work_pct, "Percent of an expansion that a reachability-flood cell counts against --work (default 100)")->group("");
   route->add_option("--field-prefill", ropt.field_prefill, "1: fill the fixed-copper cache of a net class for the whole board before its first cost-to-go field (stronger heuristic, fields cacheable)")->group("");
+  route->add_option("--tidy", ropt.tidy, "Every N passes with open connections, re-route each routed connection alone and keep it if shorter (0 = off)")->group("");
+  route->add_option("--txn-orders", ropt.txn_orders, "With --txn: orders tried for re-routing a route's victims")->group("");
+  route->add_option("--breakout-profile", ropt.breakout_profile, "1 (default): a breakout board also gets reach-check 2, flood weight 25 %, field prefill and cache; 0: only the layer-direction and package penalties")->group("");
+  route->add_option("--rounds", ropt.rounds, "Portfolio: split the work budget into this many rounds; each round every variant continues from the best state of the last")->group("");
+  route->add_option("--breakout-portfolio", ropt.breakout_portfolio, "1 (default): a ball-grid breakout board gets the breakout portfolio with --variants > 1; 0: the designed variants")->group("");
   route->add_option("--max-victims", ropt.max_victims, "Negotiation: connections one route may rip at once (0 = no limit)")->group("");
   route->add_option("--max-rips", ropt.max_rips_per_connection, "Rip-ups allowed per connection")->group("");
   route->add_option("--max-passes", ropt.max_passes, "Passes over still-unrouted connections")->group("");
