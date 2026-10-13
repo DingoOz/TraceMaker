@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Prepare KiCad demo projects (and test boards) as bench/run.py fixtures: <out>/<name>/unrouted.kicad_pcb with
-tracks, arcs and vias removed (zones and their fills kept), next to copies of the project and custom rules, so the
-router and KiCad's judge read the same net classes and rules.
+tracks, arcs and vias removed (zones retained and natively refilled), next to copies of the project and custom
+rules, so the router and KiCad's judge read the same net classes and rules.
 
   bench/prepare_demos.py [--out build/demos] [--set planes | NAME ...]
 
@@ -11,10 +11,10 @@ tests/boards/*/. Prints the fixture directory for bench/run.py --fixtures.
 """
 import argparse
 import pathlib
-import shutil
 import sys
 
 from prepare_dac2020 import strip_routing
+from prepare_inputs import invalidate_fixture, prepare_board
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SEARCH = [ROOT / "bench/data/kicad/demos", ROOT / "tests/boards"]
@@ -29,14 +29,13 @@ def find(name: str) -> pathlib.Path:
 
 
 def prepare(name: str, out: pathlib.Path) -> pathlib.Path:
-    src = find(name)
-    dst = out / name / "unrouted.kicad_pcb"
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    for ext in (".kicad_pro", ".kicad_dru"):
-        if src.with_suffix(ext).exists():
-            shutil.copyfile(src.with_suffix(ext), dst.with_suffix(ext))
-    dst.write_text(strip_routing(src.read_text()))
-    return dst
+    destination = out / name / "unrouted.kicad_pcb"
+    try:
+        src = find(name)
+    except SystemExit:
+        invalidate_fixture(destination)
+        raise
+    return prepare_board(src, destination, strip_routing)
 
 
 def main() -> int:

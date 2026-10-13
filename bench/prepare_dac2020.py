@@ -5,11 +5,12 @@
 For each benchmark bmN with a Specctra file in Freerouting's fixture set (DAC2020_bmNN.dsn), writes
 bench/data/dac2020_prepared/bmN/ with:
   raw.kicad_pcb       the human-routed original
-  unrouted.kicad_pcb  the same board with its tracks, track arcs and vias removed (the DAC 2020 authors' intended use)
+  unrouted.kicad_pcb  tracks, track arcs and vias removed, zones retained and natively refilled
   unrouted.dsn        Freerouting's Specctra fixture for the board (unrouted; same coordinates as the KiCad file)
 """
 import pathlib
-import shutil
+
+from prepare_inputs import invalidate_fixture, prepare_board
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "bench/data/dac2020"
@@ -70,13 +71,12 @@ def main():
         dsn = DSN / f"DAC2020_bm{n:02d}.dsn"
         pcb = next(iter(d.glob("*.kicad_pcb")), None)
         if not dsn.exists() or pcb is None:
+            invalidate_fixture(OUT / d.name / "unrouted.kicad_pcb")
             print(f"skip {d.name}: no Specctra fixture" if pcb else f"skip {d.name}: no board")
             continue
         o = OUT / d.name
-        o.mkdir(exist_ok=True)
-        shutil.copy(pcb, o / "raw.kicad_pcb")
-        shutil.copy(dsn, o / "unrouted.dsn")
-        (o / "unrouted.kicad_pcb").write_text(strip_routing(pcb.read_text()))
+        prepare_board(pcb, o / "unrouted.kicad_pcb", strip_routing,
+                      extra_files={"raw.kicad_pcb": pcb, "unrouted.dsn": dsn})
         print("prepared", o)
 
 
