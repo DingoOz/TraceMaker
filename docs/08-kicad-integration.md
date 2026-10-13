@@ -29,6 +29,10 @@
 - **Round-trip guarantee**: parse → write without changes is byte-identical (gate of M1). Changes touch
   only the nodes TraceMaker owns: footprint `at`/`layer`/flipped pads, new `segment`/`arc`/`via` nodes,
   removed tracks it ripped.
+- **Legacy zone fills**: KiCad 5 `filled_polygon` nodes without a layer inherit the zone's copper
+  layer only when its copper mask contains exactly one bit. Explicit fill layers take precedence
+  (even an unknown explicit layer); missing, unknown or multi-copper-layer zones never guess a fill
+  layer. This affects the typed copper/connectivity view only; the original text stays untouched (D99).
 - **Project rules**: `.kicad_pro` (JSON) holds net classes, net-class patterns/assignments, board design
   settings (min track width, clearances, via sizes, hole clearances), and severity settings. `.kicad_dru`
   holds custom rules (constraint keywords in the research note §A). The rule compiler (doc 03) consumes both.

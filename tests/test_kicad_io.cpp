@@ -10,6 +10,7 @@
 #include <map>
 #include <nlohmann/json.hpp>
 
+#include "drc/connectivity.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 
@@ -249,6 +250,67 @@ TEST_CASE("stackup: boards without one say so; missing permittivity makes the ga
   CHECK(g.thickness == 1'510'000);
   CHECK(!g.complete);
   CHECK(g.epsilon_r == 0);
+}
+
+TEST_CASE("legacy inner-layer zone fills are copper and join separated tracks", "[kicad][io][zone]") {
+  const std::string text =
+      "(kicad_pcb (version 20171130) (layers (0 Front signal) (1 Inner1_GND signal) (31 Back signal))"
+      " (net 0 \"\") (net 1 GND)\n"
+      " (segment (start 2 2) (end 3 2) (width 0.2) (layer Inner1_GND) (net 1))\n"
+      " (segment (start 7 7) (end 8 7) (width 0.2) (layer Inner1_GND) (net 1))\n"
+      " (zone (net 1) (net_name GND) (layer Inner1_GND)"
+      " (polygon (pts (xy 0 0) (xy 10 0) (xy 10 10) (xy 0 10)))\n"
+      "  (filled_polygon (pts (xy 0.5 0.5) (xy 9.5 0.5) (xy 9.5 9.5) (xy 0.5 9.5)))))";
+  const auto doc = tmk::sexpr::Document::parse(text);
+  const auto b = tmk::io::read_board(doc);
+  CHECK(doc.write() == text);
+  REQUIRE(b.zones.size() == 1);
+  REQUIRE(b.zones[0].fills.size() == 1);
+  CHECK(b.zones[0].fills[0].first == 1);
+  const auto cm = tmk::drc::build_copper(b);
+  REQUIRE(cm.items.size() == 3);
+  REQUIRE(cm.items[2].kind == tmk::drc::ItemKind::Zone);
+  CHECK(cm.items[2].layers == tmk::model::layer_bit(1));
+  tmk::geom::Box all;
+  for (const auto& item : cm.items) all.add(item.box);
+  tmk::index::UniformGrid grid(all.inflated(1), 1'000'000, cm.items.size());
+  for (std::size_t i = 0; i < cm.items.size(); ++i) grid.insert(static_cast<int>(i), cm.items[i].box);
+  const auto linear = tmk::drc::compute_connectivity(b, cm, grid, true);
+  const tmk::drc::ZoneFills fills(cm);
+  const auto indexed = tmk::drc::compute_connectivity(b, cm, grid, true, &fills);
+  REQUIRE(linear.root.size() == 3);
+  CHECK(linear.root[0] == linear.root[1]);
+  CHECK(linear.root[0] == linear.root[2]);
+  CHECK(indexed.root == linear.root);
+  CHECK(indexed.end_hit == linear.end_hit);
+}
+
+TEST_CASE("zone fill layers prefer explicit tokens and never guess ambiguous copper", "[kicad][io][zone]") {
+  const std::string head =
+      "(kicad_pcb (version 20171130) (layers (0 Front signal) (1 Inner1_GND signal) (31 Back signal))"
+      " (net 0 \"\") (net 1 GND) (zone (net 1) ";
+  const std::string polygon = " (pts (xy 0 0) (xy 10 0) (xy 10 10) (xy 0 10))";
+  const auto check = [&](const std::string& zone_layer, const std::string& fill_layer, int expected) {
+    const std::string text = head + zone_layer + " (filled_polygon " + fill_layer + polygon + ")))";
+    const auto doc = tmk::sexpr::Document::parse(text);
+    const auto b = tmk::io::read_board(doc);
+    CHECK(doc.write() == text);
+    REQUIRE(b.zones.size() == 1);
+    REQUIRE(b.zones[0].fills.size() == 1);
+    CHECK(b.zones[0].fills[0].first == expected);
+    const auto cm = tmk::drc::build_copper(b);
+    if (expected < 0) CHECK(cm.items.empty());
+    else {
+      REQUIRE(cm.items.size() == 1);
+      CHECK(cm.items[0].layers == tmk::model::layer_bit(expected));
+    }
+  };
+  check("(layer Inner1_GND)", "(layer Back)", 2);
+  check("(layers Front Inner1_GND)", "(layer Back)", 2);
+  check("(layer Inner1_GND)", "(layer Unknown)", -1);
+  check("(layers Front Inner1_GND)", "", -1);
+  check("(layer Unknown)", "", -1);
+  check("", "", -1);
 }
 
 TEST_CASE("stackup: KiCad demo with dielectric sublayers round-trips", "[kicad][io][stackup]") {
