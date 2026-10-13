@@ -38,3 +38,11 @@ tidy sweeps 1 / 2: 3 / 5 clean. non-cooled T 2/4/8/1000: 6/3/2/5 clean.
 Full srj20 (200), one variant 30 M with the profile: 129 clean (P2 at 50 M: 124), 59 s CPU per board (67); lost sample014, sample123; gained 7.
 Full srj19 (200), one variant 30 M with the profile: 178 clean (P2: 181), 32 s CPU per board (46); completion 99.07 % (98.63 %).
 Portfolio, 39 boards of the 76: designed list + profile 11 clean / 342 open; breakout list 12 / 319; breakout list + 4 rounds 12 / 284.
+testing budget: 3 h from 05:53 (user, 2026-10-13)
+
+## 2026-10-13 plateau diagnostics (3 h testing budget, ended 08:53)
+- Slack test: 6 stuck boards (039, 048, 071, 072, 103, 104) re-routed with clearance 0.08 mm instead of 0.1 (until-complete, 30 min each, 16 variants): open 2, 1, 2, 5, 6, 3 (at 0.1 after 3 h: 4, 1, 3, 2, 5, 2). None completed with 20 % more room, so the plateau is not a packing-density limit (hex/any-angle lattices would not help).
+- Open balls are not sealed: of 8 open connections on near-complete boards, the four adjacent via sites are free (0-1 occupied) and the top corridors lightly used. The partner is 11-16 mm away; the blockage is along the path, not at the ball.
+- `--lns-open 200 --lns-open-radius-mm 3.5` resumed from saved state (sample103 72/77, sample104 70/72, 6 rounds x 20 M, 4 variants): no change (identical counts to the plain resume).
+- Best over all runs (files): 167 srj20 boards complete; 3 boards 1 open, 21 boards 10+ open.
+- Research: research/bga-plateau-2026-10.md (ranking: route-pool exact selection first; hex/Y/any-angle 0).
