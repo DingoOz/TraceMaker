@@ -216,6 +216,18 @@ def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
         return p.returncode, fo.read(), fe.read(), usage.ru_utime + usage.ru_stime
 
 
+RESUME_RUN = ""  # --resume-run: earlier run whose saved search state (<board>.kicad_pcb.state) each board starts from
+
+
+def state_args(name: str, out: pathlib.Path) -> list[str]:
+    """The portfolio saves its best routes after every round (so a run that ran out of time can be resumed)."""
+    a = ["--state-out", str(out) + ".state"]
+    prev = ROOT / "bench/results" / RESUME_RUN / "boards" / f"{name}.kicad_pcb.state" if RESUME_RUN else None
+    if prev and prev.exists():
+        a += ["--state-in", str(prev)]
+    return a
+
+
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     src0 = SRC_FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
@@ -233,7 +245,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
         code, stdout, stderr, cpu = run_measured(
-            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + EXTRA,
+            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + EXTRA,
             time_limit * 3 + 60)
         res["exit"] = code
         res["cpu_s"] = round(cpu, 2)
@@ -276,6 +288,7 @@ def main() -> int:
     ap.add_argument("--time", type=float, help="wall-clock limit per board (default 60 s; 3600 s as a safety stop with --work)")
     ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
     ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
+    ap.add_argument("--resume-run", help="earlier run name: boards start from the state it saved (portfolio runs only)")
     ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
     ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes, srj19, srj20); also names the set in the summary")
     ap.add_argument("--jobs", type=int, default=12)
@@ -299,6 +312,8 @@ def main() -> int:
     # With --work every board runs the whole portfolio whatever the thread count (D47); one thread runs its eight
     # variants one after another. Placement keeps one thread unless asked: its annealing runs follow --threads.
     # Successive halving splits the budget by the thread count, so there the default must not follow the machine.
+    global RESUME_RUN
+    RESUME_RUN = a.resume_run or ""
     EXTRA = EXTRA + (a.route_args or "").split()
     THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work and "--halving" not in EXTRA else 1)
     PLACE_THREADS = a.threads or 1

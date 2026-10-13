@@ -1,0 +1,14 @@
+# srj20 boards of fewer than 70 connections open after M15
+#fixtures: bench/data/tscircuit/boards/srj20
+sample031
+sample037
+sample054
+sample094
+sample095
+sample100
+sample117
+sample118
+sample142
+sample173
+sample174
+sample191

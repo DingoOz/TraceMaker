@@ -328,3 +328,80 @@ of the breakout rule (any package of at least 30 same-layer SMD pads) also match
 the rule now needs a ball-grid-like package: at least 5 distinct columns and rows with at least 40 % of the grid cells filled, so connectors and QFPs no longer
 qualify, and the srj results did not change (gap boards 23 of 57 clean either way). An asan build compiled and ran the suite: all tests passed except the
 importer test that expected the removed exit-layer override (fixed) and `bus_route` / `thread_determinism`, which are too slow under asan to finish in the time available (not run to completion).
+
+## 12. Third round (M15, 2026-10-11 evening): negotiation as transactions
+
+The goal was srj20 (133/200 against tscircuit's 157). Fifteen ideas were tried at equal work; one of them, and an accounting
+correction that came with it, moved the numbers. Raw numbers: `dev/m15-notes.md`; assumptions taken without asking: `dev/assumptions-m15.md`.
+
+**What was found about plain negotiation.** On a 53-connection board (srj20 sample 069, 30 M work) the routed count of the negotiation
+phase wobbles between 30 and 41 for the whole budget and the run ends at 30; only the best snapshot (41) is returned. A connection that
+cannot be routed rips the 1–10 connections in its way (median 4), those cannot all be routed again, and the next one rips them back: the
+oscillation PathFinder-type negotiation is known for (research note C5). The open connections that remain on boards with 1–2 open are
+mostly *outer-ring balls with a partner pad 10–17 mm away across the board*, not deep balls: the long connections are the ones left
+without a corridor.
+
+**Transactions (`--txn`, D99).** A negotiated route that rips victims is kept only if the victims can be routed again *strictly* (without
+ripping anything) and the net change in routed connections is at least zero (`--txn 1`; `--txn 2` needs a gain). Otherwise the whole
+board goes back to the state before the route (a snapshot of the copper of every connection; history stays, so the next try takes
+another path). This is MAPF-LNS2's acceptance rule applied to rip-up and re-route. A route that loses k connections net is still kept
+with probability exp(−k/T) (`--txn-temp T`, seeded counter-based draws: deterministic); T = 1.5 on breakout boards.
+
+| Experiment (srj20, 57 gap boards, 30 M, one variant) | Clean | Completion |
+|---|---|---|
+| plain negotiation | 23 | 90.9 % |
+| `--txn 1` (greedy: net ≥ 0 only) | 12 | 94.9 % |
+| `--txn 2` (net > 0 only) | 4 | 90.4 % |
+| `--txn 1 --txn-temp` 0.25 / 0.5 / 1 / 2 / 4 | 17 / 18 / 23 / 24 / 23 | 95.2–95.6 % |
+| temperature falling to 0 (`--txn-cool 1`), T = 1 / 2 | 20 / 22 | 95.4 / 95.5 % |
+| nested transactions for victims (`--txn-depth` 1 / 2) | 14 / 13 | 94.5 / 94.3 % |
+
+Greedy transactions raise completion by four points but leave 14 boards with exactly one connection open; annealing acceptance turns
+some of them into complete boards. At 100 M work (57 boards): plain 28 clean, T = 1/2/4 cooled 30/32/34, T = 2 uncooled **36** (completion
+97.8 % against 93.9 %). On the 76 boards that one variant at 50 M leaves open: 100 M plain 5 clean, with transactions 9.
+
+**Budget accounting and reachability floods.** `--work` counts a reachability-flood cell like an A* expansion, but a flood cell costs a
+small fraction of the time (field construction and the A* itself dominate). With `--reach-check 2` (flood before every strict search) and
+a flood cell counted at a quarter of an expansion (`--flood-work-pct 25`), 30 M work buys about twice the search: 30 of 57 clean
+(52.6 %) in 137 s CPU per board, against 23 in 106 s for transactions alone and 23 in 71 s for plain negotiation.
+
+**Engine speed.** The cost-to-go field was 47 % of the time of a transaction run. Its inputs (pass/via masks from the fixed-copper cache,
+target cells, costs) are identical for repeated searches of one connection once the fixed-copper cache is complete, so `--field-prefill 1`
+(fill the cache for the whole board at the first field) with `--field-cache-mb` (keep fields, reuse on an identical input, confirmed by a
+byte comparison) gives the same copper (sample 123: byte-identical) in 62 % of the time (hits 236 of 300 fields). It is not byte-identical on
+ordinary boards (6 of the 30 `quick` boards differ: a stronger heuristic breaks ties differently), so it is part of the breakout profile
+only. gprof of a transaction run: `search()` 26 % self, `field_cpu` 20 %, `routed_copper_part` 16 %, `point_state` 7.5 %.
+
+**Breakout profile (D100).** On a breakout board (D98) the router now also uses: `--txn 1 --txn-temp 1.5`, `--reach-check 2`,
+`--flood-work-pct 25`, `--field-prefill 1`, `--field-cache-mb 512`. Explicit options win; `--breakout-profile 0` turns the last four off.
+Elsewhere nothing changed: `quick` (30) and `mid` (11) are byte-identical (`ctest` 262 → see final checks).
+
+**Portfolio on a breakout board (D101).** With `--variants` > 1 a board that looks like a breakout gets its own list instead of the designed
+eight (exact bends, longest first and the 2× pitch variants are wrong for it): variant 0 is the plain profile, the others draw order
+(shortest first, deep pins first, jittered), via cost, crossing cost, direction strength, package penalty and temperature with a counter-based
+generator. `--rounds R` (automatic: 4) splits the budget; after each round every variant starts from the best state of all variants (their
+copper per connection is a warm start, matched by the two pads of each connection) and negotiates from there with its own parameters.
+Selection is by the usual total order, so the result does not depend on thread timing.
+On 39 of the 76 boards one variant leaves open (16 variants × 30 M, 16 threads, 107–117 s wall per board, no GPU): the designed list with the
+profile 11 clean and 342 connections open in total; the breakout list 12 clean, 319 open; with four rounds 12 clean, **284 open**. Rounds
+improve the boards that stay open more than they complete new ones.
+
+**Measured and dropped** (hidden options stay, D94 practice): lattice pitch 36.7/44/45/55 µm (neutral, ±3 boards of noise), victims
+re-routed in several orders (`--txn-orders`: 4 and 1 clean of 76 against 7), cap on victim re-route searches (`--txn-cap`), tidy sweeps
+(`--tidy`: re-route each connection alone, keep if shorter: 10–20 shortened per sweep, no extra boards), stall restarts
+(`--stall-passes`), net orders 1/2/3 under the new profile, per-net routed-state cache (identical, no speed-up).
+
+### 12.1 Gate status (M15)
+
+One variant at 30 M work with the breakout profile, then the 16-variant breakout portfolio (30 M each, four rounds, 16 threads, mean 118 s and at
+most 180 s wall per board, no GPU) on the boards the single variant leaves open. Composites of two runs, not one run.
+
+| Gate | Target | After M14 | After M15 |
+|---|---|---|---|
+| srj19 clean | ≥ 184/200 | 188 (181 + 7) | **191/200 = 95.5 %**: 178 (32 s CPU per board; P2 at 50 M plain: 181 at 46 s) + 13 of the 22 the portfolio takes (mean 91 s wall) |
+| srj20 clean | ≥ 157/200 | 133 (124 + 9) | **160/200 = 80.0 %** (tscircuit 157; 156 within 330 s): 129 (59 s CPU per board; P2: 124 at 67 s) + 19 of the 71 the portfolio takes + 8 of the 24 near boards (fewer than 70 connections) that 70 M work in four rounds (mean 227 s, at most 324 s wall; `--time 330`) closes + 4 of the 16 still open with GPUs on and 150 M work (mean 377 s, at most 433 s wall: over the 360 s of tscircuit's setting, so 156 is the matched figure) |
+| fanout31 | ≥ 48/72 | 60 | unchanged: not a breakout board (8–10 layers), the profile is off (three cases spot-checked at one variant, 60 M: K230 case 28 2 open, T113-S3 case 55 5 open, AM3352 case 70 6 open) |
+| No DRC error added, `quick`/`mid` unchanged | | yes | yes: 0 added on every run (about 3,000 board routes); `quick` (30) and `mid` (11) byte-identical to the baseline outputs; `ctest` 265/265 on release; the transaction tests pass under ASan |
+
+Where the srj20 boards that stay open are: 28 have 70 or more connections (tscircuit solves two of them) and are 8–40 connections short; of the 24
+with fewer, the larger budget closed 8 and left 16 with 1–8 open (three with exactly one).

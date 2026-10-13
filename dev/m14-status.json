@@ -1,5 +1,5 @@
 {
- "phase": "M14 round 2 done: srj19 gate met (188/200), fanout31 gate met (60/72), srj20 133/200 (target 157)",
+ "phase": "M15 (srj20 push, branch m15-srj20, started 20:30 UTC 2026-10-11): transactional negotiation (ejection chains with rollback + annealing) closes more boards; srj20 still 133/200 until the full re-run",
  "targets": {
   "srj19": 0.92,
   "srj20": 0.785,
@@ -82,6 +82,36 @@
    "state": "done",
    "title": "srj20: preferred layer directions (auto on breakout boards), package penalty",
    "note": "srj20: 124 (one variant) + 9 (16-variant portfolio) = 133/200; gap is the 50-79 connection boards"
+  },
+  {
+   "id": "m15a",
+   "state": "done",
+   "title": "M15 lattice pitch sweep (36.7/44/45/55 um)",
+   "note": "neutral: 18-26 clean of 57 vs 23 (noise +-3)"
+  },
+  {
+   "id": "m15b",
+   "state": "done",
+   "title": "M15 transactional negotiation --txn (rollback of rips whose victims cannot re-route)",
+   "note": "completion on 57 gap boards 90.9 -> 95.5 %; open connections 5.1 -> 2.8 mean"
+  },
+  {
+   "id": "m15c",
+   "state": "done",
+   "title": "M15 annealing acceptance, cooling, nested chains",
+   "note": "T 1-2 best; nested chains (depth 1-2) worse: 25 % / 23 % clean vs 40 %"
+  },
+  {
+   "id": "m15d",
+   "state": "done",
+   "title": "M15 reach-check 2 + flood weight 25 %: floods cost little time",
+   "note": "txn + rc2: 30 of 57 clean at 30 M (txn alone 23, plain 23)"
+  },
+  {
+   "id": "m15e",
+   "state": "running",
+   "title": "M15 evaluation on the 76 boards P2 leaves open; defaults for breakout boards; full 200-board run",
+   "note": ""
   }
  ],
  "findings": [
@@ -97,6 +127,9 @@
   "srj20 failures are dominated by negotiation churn ('ripped up by X and not routed again', 585 of ~1,170 failures); 24 seeded variants on one hard board all stop at 33-40 of 52.",
   "The K230 'dead terminals' were a modelling bug: several buses' breakout points share coordinates and differ only by layer, so overriding their layer from connectionExitTargets stacked terminals on one layer. Without the override all 65 terminals escape and K230 goes 0/12 -> 12/12 with the portfolio.",
   "Preferred layer directions (even layers horizontal, odd vertical; --layer-dir-pen 0.3) are the first structural gain on srj20: gap boards 28 -> 40 % clean, 87.7 -> 89.8 % routed; swapping the directions is neutral. Applied automatically only to breakout boards (>= 70 % of connections touch a ball-grid package, two layers): on ordinary boards it cost 2.4 points of completion.",
-  "Final: ctest 254/254, quick/mid byte-identical. srj19 188/200 (94.0 %) beats tscircuit 92.0 %; fanout31 60/72 beats 48/72; srj20 133/200 (66.5 %) is 24 boards short of 157."
+  "Final: ctest 254/254, quick/mid byte-identical. srj19 188/200 (94.0 %) beats tscircuit 92.0 %; fanout31 60/72 beats 48/72; srj20 133/200 (66.5 %) is 24 boards short of 157.",
+  "M15: plain negotiation thrashes (sample069 30 M: routed count wobbles 30-41 for 40 s); as transactions (rip only if the victims re-route) it climbs: 41 -> 50 of 53.",
+  "M15: the work budget counts a reachability-flood cell like an A* expansion, but a flood cell costs far less time: txn + reach-check 2 gets 52.6 % clean in 137 s/board against 40 % in 71 s for plain.",
+  "M15: on the 76 boards P2 leaves open, 100 M work one variant: plain 5 clean, txn 9; boards of 70+ connections stay 10-30 connections short."
  ]
 }

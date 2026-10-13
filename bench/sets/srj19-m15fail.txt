@@ -1,0 +1,24 @@
+# srj19 boards one variant (30 M work, breakout profile of M15, doc 16 §12) leaves open: 22
+#fixtures: bench/data/tscircuit/boards/srj19
+sample006
+sample011
+sample013
+sample019
+sample031
+sample035
+sample080
+sample091
+sample105
+sample124
+sample129
+sample142
+sample147
+sample158
+sample160
+sample163
+sample167
+sample173
+sample175
+sample178
+sample189
+sample193

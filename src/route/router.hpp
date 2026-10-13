@@ -17,6 +17,13 @@
 
 namespace tmk::route {
 
+// The copper of one routed connection, keyed by its two pads: what a later run can start from (RouterOptions::warm).
+struct ConnRoute {
+  int pad_a = -1, pad_b = -1;
+  std::vector<model::Track> tracks;
+  std::vector<model::Via> vias;
+};
+
 struct RouterOptions {
   Coord pitch = 0;              // lattice pitch; 0 = automatic from net-class widths and clearances
   // Auto pitch multiplier on small lattices (< 1M points per layer): a finer lattice finds fan-outs the default one
@@ -65,6 +72,26 @@ struct RouterOptions {
   bool rip_up = true;           // negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3)
   double history_weight = 2.0;  // PathFinder history: pitches of cost per recorded conflict on a cell
   int max_victims = 0;          // a negotiated route may rip at most this many connections at once (0 = no limit)
+  double txn_temp = -1;         // transactional negotiation: a route that loses k connections net is kept with probability exp(-k / txn_temp) (0 = never, -1 = automatic: 1.5 on a breakout board)
+  int txn_cool = 0;             // 1: the temperature falls linearly to zero over the work budget (simulated-annealing schedule)
+  int stall_passes = 0;         // > 0: a restart begins when this many passes in a row set no new best for the run since its last restart
+  long txn_cap = 0;             // transactional negotiation: expansion cap of each victim's re-route search (0 = none)
+  int txn_depth = 0;            // transactional negotiation: victims that cannot be re-routed strictly get a nested transaction of their own, this deep
+  int txn_nested = 4;           // nested transactions allowed per top-level transaction
+  int field_cache_mb = 0;       // > 0: cost-to-go fields are kept (this many MB per router) and reused when every input is identical; results are unchanged
+  int flood_work_pct = 100;     // reachability-flood cells count this percent of an expansion against the work budget (a flood cell costs far less time)
+  int field_prefill = 0;        // 1: fill a class's fixed-copper cache for the whole board before its first field, so fields depend on nothing learned later (and can be cached)
+  int tidy = 0;                 // > 0: every this many passes, with connections still open, each routed connection is re-routed alone and kept if shorter (frees room)
+  int txn_orders = 1;           // transactional negotiation: orders tried for re-routing the victims (the ones that failed go first in the next try)
+  int breakout_profile = 1;     // 1: a breakout board (D98) also gets reach_check 2, flood_work_pct 25, field prefill and cache (when those are at their defaults)
+  const std::vector<ConnRoute>* warm = nullptr;  // start from these routes (a previous result's conn_routes): they are kept, negotiation starts at once
+  std::string state_out;        // portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed
+  std::string state_in;         // portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored
+  int breakout_portfolio = 1;   // 1: with more than one variant, a board that looks like a ball-grid breakout gets the breakout portfolio (D101) instead of the designed eight
+  long round_work = 0;          // portfolio: > 0 gives every round this work budget (instead of splitting the total), and rounds continue until the board is complete, `rounds` is reached or `time_limit_s` of the whole portfolio is used (--until-complete)
+  int rounds = 0;               // portfolio: the work budget is split into this many rounds; after each, every variant continues from the best result so far (0 = automatic: 4 with the breakout portfolio, else 1)
+  int txn = -1;                 // transactional negotiation (doc 16 §12): a route that rips victims is kept only if the victims can be re-routed
+                                // without ripping: 0 = off, 1 = keep ties (net 0), 2 = strict gain only, -1 = automatic (1 on a breakout board, else 0)
   int max_rips_per_connection = 40;  // was 8: at 50 M work on dense breakouts 33 % -> 54 % clean (doc 16 §4)
   int max_passes = 40;          // passes over still-unrouted connections (was 12)
   // Micro vias (outer layer to the next one, the net class's microvia size) where a through via is blocked, on
@@ -191,6 +218,7 @@ struct WorkProfile {
 struct RouteResult {
   std::vector<model::Track> tracks;  // new copper, in commit order
   std::vector<model::Via> vias;
+  std::vector<ConnRoute> conn_routes;  // the same copper per connection (best state), for a warm start
   int connections = 0, routed = 0;
   long expansions = 0;
   long pair_work = 0;           // the part of `expansions` spent in coupled pair searches (closed states and leg checks)
@@ -200,6 +228,8 @@ struct RouteResult {
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
   int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
+  int tidied = 0;               // connections shortened by tidy sweeps
+  int txn_tried = 0, txn_kept = 0;  // transactional negotiation: routes with victims tried, and kept
   int optimized = 0;
   int pairs = 0;
   int length_tuned = 0;
