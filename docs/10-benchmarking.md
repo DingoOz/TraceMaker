@@ -40,7 +40,7 @@ beside it). The place-and-route sets (unlocked footprints reset to a pile) are b
 |---|---|
 | **Clean pass** | 100% connections routed **and** zero added KiCad DRC errors (input vs output, `kicad-cli pcb drc`) |
 | Completion | routed connections / routable connections (excluding pins proved dead) |
-| Added DRC errors | by KiCad violation type |
+| Added DRC errors | physical violation multiset difference, grouped by KiCad type for display (D101) |
 | Vias, wirelength, bends | totals; also normalised to the reference routing where it exists |
 | Wall time, work units | engine-reported, with hardware recorded: the time is the whole route job (every portfolio variant, D86), the work units (`expansions`) are the winning variant's only |
 | Work profile | per phase (setup, first pass, negotiation, clean-up): expansions, flood cells, searches, cell checks, fixed-copper checks, cost-field cells and fields, commits, rips; deterministic, in the route JSON as `work` (winner) and `work_all_variants` (D88) |
@@ -118,6 +118,36 @@ interval). Seeds: best-of-1 is the headline; best-of-5 is reported separately wh
 **Judge noise.** KiCad's `solder_mask_bridge` count can differ between runs on byte-identical boards when zones
 are refilled (StickHub: 17, 15 and 13); read a change in that type alone as noise.
 
+**Native error gates (D101).** `bench/drc_judge.py` compares physical error instances, not totals by type:
+removing one clearance cannot cancel a new clearance somewhere else. Item ordering and regenerated UUIDs or
+footprint references do not change an identity when positions are available; kind, net, layer, geometry
+description and position do. Coordinates and dimensions are normalised to nanometres from report units;
+items without positions use UUIDs as a fallback. Duplicate findings retain their multiplicity.
+Violation-level layer context is also identity: multilayer zone/PTH pad labels may not identify the affected
+layer of a thermal defect. Changing its layer is a new instance; changing its minimum/actual spoke-count
+diagnostic on the same layer is not.
+
+Routing gates include error-severity `starved_thermal` and `isolated_copper` even if KiCad names only pads or
+zones: routed copper can damage a refill without appearing in its report. Other pad/graphic-only changes
+remain diagnostic, including pad-only solder-mask refill noise and net-propagation clearance changes.
+Placement compares its existing placement-error types by instance, excluding internal errors of one rigid
+footprint; thermal/island findings are evaluated because they depend on surrounding zones, not only that
+footprint. Routing's existing immutable/type exclusions otherwise stay unchanged.
+
+KiCad 10.0.x reports may truncate at 499 clearance findings and 199 findings of other types, across severities
+(constants and assumption isolated in the helper). Reaching a cap on either side makes that type's difference
+unknown; it is not reported as an exact added count. A capped evaluated type with errors on either side sets
+`error_gate` (or `place_error_gate`) to `unknown`, never clean or a passing comparison, even if the visible
+errors name only pads. Warning-only caps and routing-immutable types remain diagnostic, with evaluated and
+non-evaluated capped types recorded separately. `added_errors`, quality's `router_errors`, and the existing
+CLI options retain their meanings and type-count display, now backed by instance differences.
+
+**Connectivity limitation.** Completion deliberately retains the existing ratio from KiCad's
+`unconnected_items` list. That list may truncate at 499; `connectivity_capped` discloses this independently
+of evaluated error caps. The ratio is not an exact connectivity measurement at saturation. No uncapped
+connectivity worker or new completion definition is included here.
+
+
 ## 5. Gates (used by the roadmap)
 
 1. No board in `quick` gets worse in clean pass or completion (`compare_runs.py`).
@@ -135,8 +165,9 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
 - `bench/run.py` samples PCBench boards per Freerouting tier, routes each with a binary snapshot, judges with
   `kicad-cli pcb drc`, and compares with Freerouting's published per-board results (`benchmarks.json`).
 - Samples: tier A 40 of 453 boards, tier B 40 of 560, tier C 30 of 122, tier D all 22 (seed 1).
-- Added errors count only violations involving a track, via or arc (decision A16); other new KiCad reports are
-  kept as diagnostics.
+- Added errors compare physical instances involving a track, via or arc (decision A16), plus error-severity
+  thermal/island findings after refill (D101); other new pad-only reports remain diagnostics. Evaluated capped
+  error reports are unknown, not clean.
 - Results go to `bench/results/<run>/` and the progress site's benchmark panel.
 - Latest (`final8`): tier A 100% clean, B 65.0%, C 56.7%, D 50.0% (Freerouting 2.5.0-RC12: 100%, 50.0%, 46.7%,
   36.4%); no router-introduced DRC errors on any board.
@@ -189,8 +220,9 @@ ratsnest the board implies = connections `tracemaker route` reports. All 400 con
 `bench/sets/srj19.txt` and `srj20.txt` name the fixture directory in a `#fixtures:` line, which `bench/run.py`
 now reads, so the sets run by name.
 
-**Judges.** The primary judge is unchanged: KiCad's DRC with the board's rules; a board is a clean pass when
-nothing is unconnected and no error involving a track or via was added. The second score is tscircuit's own.
+**Judges.** The primary judge is KiCad's DRC with the board's rules; a board is a clean pass when
+nothing is unconnected, no evaluated error instance was added, and no evaluated error type is capped (D101).
+The second score is tscircuit's own.
 `bench/srj_score.py` exports every routed board with `tracemaker srj-export` and runs tscircuit's
 `evaluateRelaxedDrc` on it: the function behind the "relaxed DRC" column of its dashboard, from
 tscircuit-autorouter `5bcf774` (`lib/testing/`) with `@tscircuit/checks` 0.0.233, called as its benchmark calls it
