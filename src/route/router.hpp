@@ -87,6 +87,21 @@ struct RouterOptions {
   const std::vector<ConnRoute>* warm = nullptr;  // start from these routes (a previous result's conn_routes): they are kept, negotiation starts at once
   std::string state_out;        // portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed
   std::string state_in;         // portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored
+  bool relax_late = false;      // with relax: plain rounds under the board's rules first; when they stall, start the stages afresh (not from the stalled state), and keep the best legal result of all
+  bool relax = false;           // portfolio: relax, route, legalise: ramp stages at 60 % and 80 % of the board's clearance with legalisation and breathing between (D104); needs round_work (20 M by default)
+  double ramp_from_mm = 0;      // portfolio: > 0 starts at this clearance (every class and the board minimum lowered by the difference) and raises it by ramp_step_mm per stage up to the board's own; each stage warm-starts from the last one's routes that are still legal (clearance continuation, doc 16 §12.3)
+  double ramp_step_mm = 0.005;  // clearance added per stage
+  int ramp_rounds = 2;          // a ramp stage ends after this many rounds in a row without gain over the best round of the stage (or when complete)
+  int ramp_cycle = 0;           // > 0: when the final stage (the board's rules) has not improved for ramp_stall rounds, go back this many stages and climb again ("breathing"); the best result under the board's rules is returned
+  bool ramp_late = false;       // start at the board's rules and use the ramp (with ramp_cycle) only once those stall
+  int ramp_fresh = 0;           // > 0: every n-th breathing cycle starts from nothing instead of the best state (a new topology; the best result under the board's rules is kept)
+  int ramp_stall = 3;           // rounds without improvement at the final stage before breathing
+  int island_slack = -1;        // portfolio rounds: >= 0 lets every variant continue the next round from its own final state when that routes at least (best - island_slack) connections, instead of all from the best (islands; the best state ever seen is returned)
+  bool keep_final = false;      // also return the live state at the end of the run (RouteResult::final_routes)
+  std::vector<model::Track> warm_tracks;  // copper of a routed board (--warm-pcb) to start from: a net with one connection takes all of its tracks and vias; only what is legal under this board's rules is kept
+  std::vector<model::Via> warm_vias;
+  bool legalize = false;        // warm start: first move the vertices of the taken-over routes until the board's clearances hold (route/legalize.hpp), then keep what is legal
+  bool state_recheck = false;   // warm start: take over only the routes that are legal under this board's rules (continuation from looser rules)
   int breakout_portfolio = 1;   // 1: with more than one variant, a board that looks like a ball-grid breakout gets the breakout portfolio (D101) instead of the designed eight
   long round_work = 0;          // portfolio: > 0 gives every round this work budget (instead of splitting the total), and rounds continue until the board is complete, `rounds` is reached or `time_limit_s` of the whole portfolio is used (--until-complete)
   int rounds = 0;               // portfolio: the work budget is split into this many rounds; after each, every variant continues from the best result so far (0 = automatic: 4 with the breakout portfolio, else 1)
@@ -219,6 +234,8 @@ struct RouteResult {
   std::vector<model::Track> tracks;  // new copper, in commit order
   std::vector<model::Via> vias;
   std::vector<ConnRoute> conn_routes;  // the same copper per connection (best state), for a warm start
+  std::vector<ConnRoute> final_routes;  // the state the search ended in (RouterOptions::keep_final): legal, perhaps worse than the best
+  int final_routed = 0;
   int connections = 0, routed = 0;
   long expansions = 0;
   long pair_work = 0;           // the part of `expansions` spent in coupled pair searches (closed states and leg checks)

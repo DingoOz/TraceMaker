@@ -28,6 +28,7 @@
 #include "drc/connectivity.hpp"
 #include "gpu/device.hpp"
 #include "gpu/field.hpp"
+#include "route/legalize.hpp"
 #include "route/obstacles.hpp"
 
 namespace tmk::route {
@@ -4356,14 +4357,128 @@ struct Router::Impl {
     // After the planned restarts, keep restarting while budget remains (up to 40 more), diversified: nogoods
     // cleared, rip cap raised, history halved, ties in the hardest-first order shuffled (avr_ledprojector stopped
     // at 43 of 120 s with every remaining attempt a nogood).
-    if (opt.warm) {  // start from earlier routes: those connections count as routed, the rest are pending
+    if (opt.warm || !opt.warm_tracks.empty()) {  // start from earlier routes: those connections count as routed, the rest are pending
       std::map<std::pair<int, int>, const ConnRoute*> by_pads;
-      for (const auto& cr : *opt.warm) by_pads[{cr.pad_a, cr.pad_b}] = &cr;
+      if (opt.warm)
+        for (const auto& cr : *opt.warm) by_pads[{cr.pad_a, cr.pad_b}] = &cr;
+      std::vector<ConnRoute> from_board;  // copper of a routed board: all of a net's tracks and vias go to its only connection
+      if (!opt.warm_tracks.empty() || !opt.warm_vias.empty()) {
+        std::map<NetId, int> per_net;
+        for (const auto& c : cs) ++per_net[c.c.net];
+        std::map<NetId, std::size_t> slot;
+        from_board.reserve(cs.size());
+        for (std::size_t ci = 0; ci < cs.size(); ++ci)
+          if (per_net[cs[ci].c.net] == 1) {
+            slot[cs[ci].c.net] = from_board.size();
+            ConnRoute cr;
+            cr.pad_a = cs[ci].c.pad_a;
+            cr.pad_b = cs[ci].c.pad_b;
+            from_board.push_back(std::move(cr));
+          }
+        for (const auto& t : opt.warm_tracks)
+          if (const auto it = slot.find(t.net); it != slot.end()) from_board[it->second].tracks.push_back(t);
+        for (const auto& v : opt.warm_vias)
+          if (const auto it = slot.find(v.net); it != slot.end()) from_board[it->second].vias.push_back(v);
+        for (const auto& cr : from_board)
+          if (!cr.tracks.empty()) by_pads[{cr.pad_a, cr.pad_b}] = &cr;
+      }
+      std::vector<ConnRoute> legalized;  // routes saved under looser rules, moved until the clearances of these rules hold
+      if (opt.legalize && !by_pads.empty()) {
+        legalized.reserve(by_pads.size());
+        for (const auto& [key, cr] : by_pads) legalized.push_back(*cr);
+        LegalizeOptions lo;
+        lo.outline = obs->outline();
+        lo.seed = opt.seed;
+        const LegalizeResult lr = legalize_routes(b, rules, legalized, lo);
+        if (std::getenv("TM_DEBUG_LEGALIZE"))
+          std::fprintf(stderr, "legalize: %d vertices, %d moved (at most %.3f mm), %d pairs too close before, %d after, %d sweeps\n", lr.nodes, lr.moved,
+                       lr.max_move_mm, lr.pairs_before, lr.pairs_after, lr.sweeps_used);
+        std::size_t k = 0;
+        for (auto& [key, cr] : by_pads) cr = &legalized[k++];
+      }
+      int taken = 0, dropped = 0;
+      // Saved under other (looser) rules: the routes that stay are a largest conflict-free subset of those legal against the fixed
+      // copper (greedy vertex cover of the conflict graph: drop the route with most conflicts until none is left), so a tighter rule
+      // costs as few routes as possible; each one still passes the strict exact check when it is put in below.
+      std::vector<std::uint8_t> drop(cs.size(), 0);
+      if (opt.state_recheck) {
+        std::vector<std::vector<int>> items_of(cs.size());
+        std::vector<std::uint8_t> cand(cs.size(), 0);
+        for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+          const auto it = cs[ci].routed ? by_pads.end() : by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b});
+          if (it == by_pads.end()) continue;
+          bool legal = true;
+          for (const auto& t : it->second->tracks)
+            if (!(t.a == t.b) && obs->segment_state(t.a, t.b, t.layer, t.width, t.net, false, nullptr) == 2) legal = false;
+          for (const auto& v : it->second->vias)
+            if (obs->via_state(v.pos, v.size, v.drill, v.net, 0, false, nullptr) == 2) legal = false;
+          if (legal) cand[ci] = 1;
+          else drop[ci] = 1;
+        }
+        for (std::size_t ci = 0; ci < cs.size(); ++ci) {  // all candidates in at once, to see who conflicts with whom
+          if (!cand[ci]) continue;
+          const auto& wr = *by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b})->second;
+          for (const auto& t : wr.tracks) {
+            b.tracks.push_back(t);
+            items_of[ci].push_back(obs->add_track(static_cast<int>(b.tracks.size() - 1), static_cast<int>(ci)));
+          }
+          for (const auto& v : wr.vias) {
+            b.vias.push_back(v);
+            items_of[ci].push_back(obs->add_via(static_cast<int>(b.vias.size() - 1), static_cast<int>(ci)));
+          }
+        }
+        std::vector<std::set<int>> adj(cs.size());
+        for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+          if (!cand[ci]) continue;
+          const auto& wr = *by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b})->second;
+          std::vector<int> owners;
+          for (const auto& t : wr.tracks)
+            if (!(t.a == t.b)) obs->segment_state(t.a, t.b, t.layer, t.width, t.net, true, &owners);
+          for (const auto& v : wr.vias) obs->via_state(v.pos, v.size, v.drill, v.net, 0, true, &owners);
+          for (int o : owners) {
+            if (o == static_cast<int>(ci)) continue;
+            if (o >= 0 && static_cast<std::size_t>(o) < cs.size() && cand[static_cast<std::size_t>(o)]) {
+              adj[ci].insert(o);
+              adj[static_cast<std::size_t>(o)].insert(static_cast<int>(ci));
+            } else {
+              drop[ci] = 1;  // conflicts with copper that is not a saved route (already routed here)
+            }
+          }
+        }
+        for (std::size_t ci = 0; ci < cs.size(); ++ci)
+          if (drop[ci]) {
+            for (int o : adj[ci]) adj[static_cast<std::size_t>(o)].erase(static_cast<int>(ci));
+            adj[ci].clear();
+          }
+        for (;;) {
+          std::size_t worst = cs.size();
+          for (std::size_t ci = 0; ci < cs.size(); ++ci)
+            if (!adj[ci].empty() && (worst == cs.size() || adj[ci].size() >= adj[worst].size())) worst = ci;
+          if (worst == cs.size()) break;
+          drop[worst] = 1;
+          for (int o : adj[worst]) adj[static_cast<std::size_t>(o)].erase(static_cast<int>(worst));
+          adj[worst].clear();
+        }
+        for (std::size_t ci = 0; ci < cs.size(); ++ci)
+          for (int item : items_of[ci]) obs->remove_item(item);
+      }
       for (std::size_t ci = 0; ci < cs.size(); ++ci) {
         if (cs[ci].routed) continue;
         const auto it = by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b});
         if (it == by_pads.end()) continue;
         auto& st = cs[ci];
+        if (opt.state_recheck) {
+          bool legal = !drop[ci];
+          for (const auto& t : it->second->tracks)
+            if (legal && !(t.a == t.b) && obs->segment_state(t.a, t.b, t.layer, t.width, t.net, false, nullptr) == 2) legal = false;
+          for (const auto& v : it->second->vias)
+            if (legal && obs->via_state(v.pos, v.size, v.drill, v.net, 0, false, nullptr) == 2) legal = false;
+          if (!legal) {
+            ++dropped;
+            continue;
+          }
+        }
+        ++taken;
         for (const auto& t : it->second->tracks) {
           b.tracks.push_back(t);
           st.items.push_back(obs->add_track(static_cast<int>(b.tracks.size() - 1), static_cast<int>(ci)));
@@ -4378,6 +4493,7 @@ struct Router::Impl {
         ++res.routed;
         release_escapes(static_cast<int>(ci));
       }
+      if (opt.state_recheck) std::fprintf(stderr, "warm start: %d saved routes taken over, %d not legal under these rules\n", taken, dropped);
       pending.clear();
       for (std::size_t i = 0; i < cs.size(); ++i)
         if (!cs[i].routed) pending.push_back(static_cast<int>(i));
@@ -4633,6 +4749,21 @@ struct Router::Impl {
       while (d < cur && !opt.deadline->compare_exchange_weak(cur, d)) {
       }
     }
+    if (opt.keep_final) {  // the state the search ended in (negotiation keeps the board legal at every step)
+      res.final_routed = res.routed;
+      for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+        if (cs[ci].items.empty()) continue;
+        ConnRoute cr;
+        cr.pad_a = cs[ci].c.pad_a;
+        cr.pad_b = cs[ci].c.pad_b;
+        for (int item : cs[ci].items) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+          if (it.kind == drc::ItemKind::Via) cr.vias.push_back(b.vias[static_cast<std::size_t>(it.index)]);
+          else cr.tracks.push_back(b.tracks[static_cast<std::size_t>(it.index)]);
+        }
+        res.final_routes.push_back(std::move(cr));
+      }
+    }
     // Clean-up only when the live state is a best state (it then stays one: every connection keeps a route).
     // Via-saving re-routes need search budget; smoothing is cheap geometry and always runs (it uses no budget and
     // no randomness, so --work runs stay deterministic).
@@ -4814,8 +4945,22 @@ static bool load_state(const std::string& path, std::vector<ConnRoute>& routes, 
   return !routes.empty();
 }
 
-PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
+PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base_in, int variants,
                                 const std::vector<int>& pick, int threads) {
+  RouterOptions base = base_in;
+  if (base.relax) {  // relax, route, legalise (doc 05 §41.3): the stages and the breathing are defaults of one switch
+    const double c_board = nm_to_mm(std::max(rules.classes.empty() ? Coord{0} : rules.classes.front().clearance, rules.minimums.clearance));
+    if (base.ramp_from_mm <= 0) base.ramp_from_mm = 0.6 * c_board;
+    if (base.ramp_step_mm == RouterOptions{}.ramp_step_mm) base.ramp_step_mm = 0.2 * c_board;
+    if (base.round_work <= 0) base.round_work = 20'000'000;
+    if (base.rounds <= 0) base.rounds = 200;
+    base.legalize = true;
+    if (base.relax_late) base.ramp_late = true;
+    if (base.ramp_cycle <= 0) base.ramp_cycle = 2;
+    if (base.ramp_fresh <= 0) base.ramp_fresh = 3;
+    if (base.ramp_stall == RouterOptions{}.ramp_stall) base.ramp_stall = 2;
+    if (base.ramp_rounds == RouterOptions{}.ramp_rounds) base.ramp_rounds = 3;
+  }
   struct Variant {
     std::string name;
     RouterOptions o;
@@ -5030,18 +5175,147 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       if (base.work_budget > 0) v.o.work_budget = std::max<long>(1, base.work_budget / rounds);
       else v.o.time_limit_s = base.time_limit_s / rounds;
     }
+  // Clearance continuation (doc 16 §12.3): stage k routes under rules whose clearances are lowered by (board clearance - c_k)
+  // for c_0 = ramp_from_mm, c_1 = c_0 + step, ... below the board's own; the stages hand their routes on, only those legal
+  // under the next stage's rules taken over (state_recheck). The last stage always runs under the board's rules, so what
+  // comes out is legal, and rounds after it continue as usual.
+  const bool islands = base.island_slack >= 0 && base.round_work > 0;
+  std::vector<std::vector<ConnRoute>> own_routes(vs.size());  // islands: a variant's own final state from the last round
+  if (islands && base.ramp_from_mm <= 0)
+    for (auto& v : vs) v.o.keep_final = true;
+  std::vector<model::DesignRules> ramp_rules;
+  if (base.ramp_from_mm > 0 && base.ramp_step_mm > 0 && base.round_work > 0) {
+    const Coord c_board = std::max(rules.classes.empty() ? Coord{0} : rules.classes.front().clearance, rules.minimums.clearance);
+    const Coord step = std::max<Coord>(mm_to_nm(base.ramp_step_mm), 1'000);
+    for (Coord c = mm_to_nm(base.ramp_from_mm); c < c_board; c += step) {
+      model::DesignRules rr = rules;
+      const Coord delta = c_board - c;
+      for (auto& cl : rr.classes) cl.clearance = std::max<Coord>(cl.clearance - delta, 0);
+      rr.minimums.clearance = std::max<Coord>(rr.minimums.clearance - delta, 0);
+      ramp_rules.push_back(std::move(rr));
+    }
+    for (auto& v : vs) v.o.state_recheck = true;
+  }
+  std::size_t stage = base.ramp_late ? ramp_rules.size() : 0;  // late: the board's own rules first
+  int rounds_at_stage = 0, stage_best = -1;
+  int cycles = 0;                        // breathing cycles started
+  bool fresh_start = false;              // the next round starts from nothing (relax_late)
+  bool ramp_started = !base.ramp_late;  // late ramp: the plain rounds have not yet stalled
+  bool last_relaxed = !ramp_rules.empty() && !base.ramp_late;  // the last round ran under lowered clearances
+  RouteResult best_final;                   // best result under the board's rules seen so far (ramp)
+  int best_final_routed = -1, final_stall = 0;
   const auto t_start = std::chrono::steady_clock::now();
   for (int round = 0; round < rounds; ++round) {
     if (round > 0 && base.round_work > 0 &&
         std::chrono::duration<double>(std::chrono::steady_clock::now() - t_start).count() > base.time_limit_s)
       break;
     if (round > 0 || resumed)
-      for (auto& v : vs) {
+      for (std::size_t vi = 0; vi < vs.size(); ++vi) {
+        auto& v = vs[vi];
         if (base.round_work > 0) v.o.seed += 7919u * static_cast<unsigned>(round > 0 ? 1 : resumed_rounds + 1);  // a new draw each round (a resumed run continues the sequence)
-        v.o.warm = &warm_routes;
+        v.o.warm = islands && !own_routes[vi].empty() ? &own_routes[vi] : fresh_start ? nullptr : &warm_routes;
+        v.o.warm_tracks.clear();  // copper of --warm-pcb is only the first round's start; later rounds continue from the best state
+        v.o.warm_vias.clear();
         v.o.sink = nullptr;
         v.o.deadline = nullptr;
       }
+    const model::DesignRules& round_rules = stage < ramp_rules.size() ? ramp_rules[stage] : rules;
+    last_relaxed = stage < ramp_rules.size();
+    std::atomic<std::size_t> next{0};
+    pool.clear();
+    for (std::size_t w = 0; w < workers; ++w)
+      pool.emplace_back([&] {
+        for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, round_rules, vs[i].o).run();
+      });
+    for (auto& t : pool) t.join();
+    fresh_start = false;
+    {
+      std::size_t bi = 0;
+      for (std::size_t i = 1; i < rs.size(); ++i)
+        if (better(i, bi)) bi = i;
+      // Save the best state of this round unless it is worse than the one this run started from.
+      // (A relaxed ramp stage always saves: its counts are not comparable with those under the board's rules.)
+      const bool relaxed = stage < ramp_rules.size();
+      if (!base.state_out.empty() && (relaxed || rs[bi].routed >= saved_routed)) {
+        if (save_state(base.state_out, rs[bi].conn_routes, resumed_rounds + round + 1, rs[bi].routed)) saved_routed = relaxed ? -1 : rs[bi].routed;
+      }
+      const bool complete = rs[bi].connections > 0 && rs[bi].routed == rs[bi].connections;
+      if (stage < ramp_rules.size()) {  // relaxed stage: done when complete or after ramp_rounds rounds, then the next one
+        std::fprintf(stderr, "ramp stage %zu/%zu (clearance -%.4f mm): %d of %d routed%s\n", stage + 1, ramp_rules.size(),
+                     nm_to_mm(std::max(rules.classes.front().clearance, rules.minimums.clearance) -
+                              std::max(ramp_rules[stage].classes.front().clearance, ramp_rules[stage].minimums.clearance)),
+                     rs[bi].routed, rs[bi].connections, complete ? " (complete)" : "");
+        // A stage ends when complete, or after ramp_rounds rounds in a row that did not route more than the best round of the stage.
+        if (rs[bi].routed > stage_best) {
+          stage_best = rs[bi].routed;
+          rounds_at_stage = 0;
+        } else {
+          ++rounds_at_stage;
+        }
+        if (complete || rounds_at_stage >= std::max(base.ramp_rounds, 1)) {
+          ++stage;
+          rounds_at_stage = 0;
+          stage_best = -1;
+        }
+        warm_routes = rs[bi].conn_routes;
+        continue;
+      }
+      if (islands) {  // each variant keeps its own state if it is close enough to the best, else it starts from the best again
+        std::string fin;
+        for (std::size_t vi = 0; vi < vs.size(); ++vi) fin += " " + std::to_string(ramp_rules.empty() ? rs[vi].final_routed : rs[vi].routed);
+        std::fprintf(stderr, "island round %d: best %d of %d, %s states:%s\n", round + 1, rs[bi].routed, rs[bi].connections,
+                     ramp_rules.empty() ? "final" : "best", fin.c_str());
+        // With a ramp every variant's best state of the stage is its own (16 different solutions of the stage, a beam); without one the
+        // state the search ended in, which wanders across the plateau.
+        const bool use_best = !ramp_rules.empty();
+        for (std::size_t vi = 0; vi < vs.size(); ++vi) {
+          const int have = use_best ? rs[vi].routed : rs[vi].final_routed;
+          auto& src = use_best ? rs[vi].conn_routes : rs[vi].final_routes;
+          if (have + base.island_slack >= rs[bi].routed && !src.empty()) own_routes[vi] = src;
+          else own_routes[vi].clear();
+        }
+      }
+      if (!ramp_rules.empty() || islands) {
+        if (rs[bi].routed > best_final_routed) {
+          best_final = rs[bi];
+          best_final_routed = rs[bi].routed;
+          final_stall = 0;
+        } else {
+          ++final_stall;
+        }
+        if (!ramp_rules.empty() && !complete && base.ramp_cycle > 0 && final_stall >= std::max(base.ramp_stall, 1)) {  // breathe: loosen again from the best state
+          const std::size_t back = std::min<std::size_t>(static_cast<std::size_t>(base.ramp_cycle), ramp_rules.size());
+          stage = ramp_rules.size() - back;
+          rounds_at_stage = 0;
+          stage_best = -1;
+          final_stall = 0;
+          ++cycles;
+          if ((base.relax_late && !ramp_started) || (base.ramp_fresh > 0 && cycles % base.ramp_fresh == 0)) {  // stuck in a basin: the stages start from nothing
+            stage = 0;
+            warm_routes.clear();
+            fresh_start = true;
+          } else {
+            warm_routes = best_final.conn_routes;
+          }
+          ramp_started = true;
+          std::fprintf(stderr, "ramp: %d of %d routed under the board's rules, back to stage %zu/%zu\n", best_final_routed, rs[bi].connections, stage + 1,
+                       ramp_rules.size());
+          continue;
+        }
+      }
+      if (complete) break;  // complete under the board's rules: nothing left to improve
+      if (round + 1 < rounds) warm_routes = islands ? best_final.conn_routes : rs[bi].conn_routes;
+    }
+  }
+  if (!ramp_rules.empty() && last_relaxed) {
+    // Out of time or rounds while relaxed: one round with next to no budget under the board's rules keeps what is legal.
+    for (auto& v : vs) {
+      v.o.warm = &warm_routes;
+      v.o.sink = nullptr;
+      v.o.deadline = nullptr;
+      v.o.work_budget = 1;
+      v.o.time_limit_s = 0;
+    }
     std::atomic<std::size_t> next{0};
     pool.clear();
     for (std::size_t w = 0; w < workers; ++w)
@@ -5049,17 +5323,6 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
         for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
       });
     for (auto& t : pool) t.join();
-    {
-      std::size_t bi = 0;
-      for (std::size_t i = 1; i < rs.size(); ++i)
-        if (better(i, bi)) bi = i;
-      // Save the best state of this round unless it is worse than the one this run started from.
-      if (!base.state_out.empty() && rs[bi].routed >= saved_routed) {
-        if (save_state(base.state_out, rs[bi].conn_routes, resumed_rounds + round + 1, rs[bi].routed)) saved_routed = rs[bi].routed;
-      }
-      if (rs[bi].connections > 0 && rs[bi].routed == rs[bi].connections) break;  // complete: nothing left to improve
-      if (round + 1 < rounds) warm_routes = rs[bi].conn_routes;
-    }
   }
   PortfolioResult pr;
   std::size_t best = 0;
@@ -5075,6 +5338,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   if (!bufs.empty())
     for (auto& m : bufs[best]->msgs) base.sink->publish(std::move(m));
   pr.best = std::move(rs[best]);
+  if (best_final_routed > pr.best.routed) pr.best = std::move(best_final);  // breathing ended relaxed or worse: the best legal one
   return pr;
 }
 

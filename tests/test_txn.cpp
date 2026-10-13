@@ -15,6 +15,7 @@
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "io/srj/srj.hpp"
+#include "route/legalize.hpp"
 #include "route/router.hpp"
 
 namespace fs = std::filesystem;
@@ -157,4 +158,132 @@ TEST_CASE("saved state: written after each round, a resumed run starts from it a
   const auto b = route::route_portfolio(l.board, l.rules, again, 1, {}, 1);
   CHECK(b.best.routed >= a.best.routed);
   fs::remove(path);
+}
+
+TEST_CASE("clearance ramp: loose stages first, the result is legal under the board's rules and the same at any thread count", "[route][txn]") {
+  const auto l = load_problem();
+  const double board_mm = nm_to_mm(std::max(l.rules.classes.front().clearance, l.rules.minimums.clearance));
+  route::RouterOptions o = options();
+  o.round_work = 300000;
+  o.rounds = 8;
+  o.ramp_from_mm = board_mm - 0.04;
+  o.ramp_step_mm = 0.02;
+  o.ramp_rounds = 1;
+  const auto one = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  const auto two = route::route_portfolio(l.board, l.rules, o, 2, {}, 2);
+  CHECK(one.best.routed == two.best.routed);
+  CHECK(one.best.tracks.size() == two.best.tracks.size());
+  CHECK(one.best.vias.size() == two.best.vias.size());
+  CHECK(one.best.routed > 0);
+  CHECK(errors(l.board, l.rules, one.best) == 0);
+}
+
+TEST_CASE("clearance ramp with breathing: still legal under the board's rules and the same at any thread count", "[route][txn]") {
+  const auto l = load_problem();
+  const double board_mm = nm_to_mm(std::max(l.rules.classes.front().clearance, l.rules.minimums.clearance));
+  route::RouterOptions o = options();
+  o.round_work = 150000;
+  o.rounds = 9;
+  o.ramp_from_mm = board_mm - 0.04;
+  o.ramp_step_mm = 0.02;
+  o.ramp_rounds = 1;
+  o.ramp_cycle = 1;
+  o.ramp_stall = 1;
+  const auto one = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  const auto two = route::route_portfolio(l.board, l.rules, o, 2, {}, 2);
+  CHECK(one.best.routed == two.best.routed);
+  CHECK(one.best.tracks.size() == two.best.tracks.size());
+  CHECK(one.best.routed > 0);
+  CHECK(errors(l.board, l.rules, one.best) == 0);
+  CHECK(errors(l.board, l.rules, two.best) == 0);
+}
+
+// Two long runs 0.06 mm apart (edge to edge) on a board that asks for 0.1 mm: legalisation moves their vertices apart, keeps the
+// ends on their pads, leaves nothing for the exact DRC to flag, and is deterministic.
+TEST_CASE("legalisation: parallel runs too close are moved apart, pad ends stay, the DRC is clean", "[route][legalize]") {
+  json p;
+  p["layerCount"] = 2;
+  p["minTraceWidth"] = 0.12;
+  p["bounds"] = {{"minX", -2.0}, {"maxX", 12.0}, {"minY", -4.0}, {"maxY", 4.0}};
+  json obstacles = json::array(), connections = json::array();
+  const double ys[4] = {-2.0, -2.0, 2.0, 2.0}, xs[4] = {0.0, 10.0, 0.0, 10.0};
+  for (int i = 0; i < 4; ++i) {
+    const std::string id = "p" + std::to_string(i);
+    obstacles.push_back({{"type", "rect"}, {"layers", {"top"}}, {"center", {{"x", xs[i]}, {"y", ys[i]}}}, {"width", 0.5}, {"height", 0.5},
+                         {"connectedTo", {id}}, {"obstacleId", "pad_" + id}, {"componentId", "c"}});
+  }
+  for (int c = 0; c < 2; ++c)
+    connections.push_back({{"name", "c" + std::to_string(c)},
+                           {"pointsToConnect",
+                            {{{"x", xs[2 * c]}, {"y", ys[2 * c]}, {"layer", "top"}, {"pointId", "p" + std::to_string(2 * c)}},
+                             {{"x", xs[2 * c + 1]}, {"y", ys[2 * c + 1]}, {"layer", "top"}, {"pointId", "p" + std::to_string(2 * c + 1)}}}},
+                           {"rootConnectionName", "c" + std::to_string(c)}});
+  p["obstacles"] = obstacles;
+  p["connections"] = connections;
+  const auto files = io::srj_to_kicad(io::read_srj(p.dump()));
+  const fs::path dir = fs::temp_directory_path() / ("tm_leg_test_" + std::to_string(::getpid()));
+  fs::create_directories(dir);
+  std::ofstream(dir / "b.kicad_pcb") << files.pcb;
+  std::ofstream(dir / "b.kicad_pro") << files.pro;
+  if (!files.dru.empty()) std::ofstream(dir / "b.kicad_dru") << files.dru;
+  const auto lb = io::read_board_file((dir / "b.kicad_pcb").string());
+  const auto rules = io::read_design_rules((dir / "b.kicad_pcb").string());
+  fs::remove_all(dir);
+  const auto& b = lb.board;
+  REQUIRE(b.pads.size() == 4);
+  // Hand-made routes (the importer flips y: pads 0 and 1 are at y = +2): their net runs at y = +0.09 between x = 3 and 7, the other at
+  // y = -0.09 (centres 0.18 apart, gap 0.06 < 0.1).
+  auto track = [&](model::Point a, model::Point c, model::NetId net) {
+    model::Track t;
+    t.a = a;
+    t.b = c;
+    t.width = mm_to_nm(0.12);
+    t.layer = 0;
+    t.net = net;
+    return t;
+  };
+  auto pt = [](double x, double y) { return model::Point{mm_to_nm(x), mm_to_nm(y)}; };
+  std::vector<route::ConnRoute> routes(2);
+  routes[0].tracks = {track(b.pads[0].pos, pt(3, 0.09), b.pads[0].net), track(pt(3, 0.09), pt(7, 0.09), b.pads[0].net),
+                      track(pt(7, 0.09), b.pads[1].pos, b.pads[0].net)};
+  routes[1].tracks = {track(b.pads[2].pos, pt(3, -0.09), b.pads[2].net), track(pt(3, -0.09), pt(7, -0.09), b.pads[2].net),
+                      track(pt(7, -0.09), b.pads[3].pos, b.pads[2].net)};
+  route::RouteResult before;
+  for (const auto& cr : routes) before.tracks.insert(before.tracks.end(), cr.tracks.begin(), cr.tracks.end());
+  CHECK(errors(b, rules, before) > 0);  // the clearance rule is broken before
+  auto moved = routes;
+  const auto r1 = route::legalize_routes(b, rules, moved);
+  CHECK(r1.pairs_before > 0);
+  CHECK(r1.pairs_after == 0);
+  route::RouteResult after;
+  for (const auto& cr : moved) after.tracks.insert(after.tracks.end(), cr.tracks.begin(), cr.tracks.end());
+  CHECK(errors(b, rules, after) == 0);
+  CHECK(moved[0].tracks.front().a == routes[0].tracks.front().a);  // the end on its pad stays
+  CHECK(moved[1].tracks.back().b == routes[1].tracks.back().b);
+  auto again = routes;
+  const auto r2 = route::legalize_routes(b, rules, again);
+  CHECK(r2.sweeps_used == r1.sweeps_used);
+  for (std::size_t i = 0; i < moved.size(); ++i)
+    for (std::size_t k = 0; k < moved[i].tracks.size(); ++k) {
+      CHECK(moved[i].tracks[k].a == again[i].tracks[k].a);
+      CHECK(moved[i].tracks[k].b == again[i].tracks[k].b);
+    }
+}
+
+TEST_CASE("relax late: plain rounds first, stages afresh when they stall; legal and the same at any thread count", "[route][txn]") {
+  const auto l = load_problem();
+  route::RouterOptions o = options();
+  o.relax = true;
+  o.relax_late = true;
+  o.round_work = 60000;  // too little to finish: the plain rounds stall and the stages start from nothing
+  o.rounds = 10;
+  o.ramp_rounds = 1;
+  o.ramp_stall = 1;
+  o.ramp_cycle = 1;
+  const auto one = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  const auto two = route::route_portfolio(l.board, l.rules, o, 2, {}, 2);
+  CHECK(one.best.routed == two.best.routed);
+  CHECK(one.best.tracks.size() == two.best.tracks.size());
+  CHECK(one.best.routed > 0);
+  CHECK(errors(l.board, l.rules, one.best) == 0);
 }
