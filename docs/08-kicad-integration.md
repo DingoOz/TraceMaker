@@ -32,6 +32,9 @@
 - **Project rules**: `.kicad_pro` (JSON) holds net classes, net-class patterns/assignments, board design
   settings (min track width, clearances, via sizes, hole clearances), and severity settings. `.kicad_dru`
   holds custom rules (constraint keywords in the research note §A). The rule compiler (doc 03) consumes both.
+  The reader seeds supported KiCad 10 defaults and applies legacy board rules. Project values overlay
+  defaults only where KiCad's legacy migration permits loading them; missing keys preserve current
+  values and explicit zeros remain zero (D100).
 - **Schematic**: netlist from the hierarchical `.kicad_sch` set (symbols, pins, labels, power symbols, net
   class directives, DNP / exclude-from-board flags). Cross-checked in tests against
   `kicad-cli sch export netlist --format kicadsexpr`.
@@ -40,6 +43,55 @@
 - **Specctra DSN reader / SES writer** for the Freerouting fixture set, plus a **DSN writer** so Freerouting
   can be run as a baseline on our own `.kicad_pcb` fixtures (KiCad 10 has no `kicad-cli` DSN export, and the
   SWIG exporter disappears in KiCad 11).
+
+### 3.1 Supported native rule defaults (D100)
+
+Defaults are taken from KiCad 10.0.3's
+[`include/board_design_settings.h`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/include/board_design_settings.h),
+[`BOARD_DESIGN_SETTINGS` constructor](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/pcbnew/board_design_settings.cpp)
+and [`common/netclass.cpp`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/common/netclass.cpp).
+The constructor sets `m_resetParamsIfMissing = false`: absent project keys keep constructor values or
+values read from the legacy board. In particular, use the constructor's 0.1 mm annular width, not the
+different reset default in the JSON parameter declaration.
+
+| Supported board constraint | Default (mm) |
+|---|---:|
+| Overall clearance / minimum connection width | 0 / 0 |
+| Minimum track width | 0.2 |
+| Minimum via diameter / annular width | 0.5 / 0.1 |
+| Minimum through-hole drill | 0.3 |
+| Minimum microvia diameter / drill | 0.2 / 0.1 |
+| Hole-to-copper / hole-to-hole clearance | 0.25 / 0.25 |
+| Copper-to-edge clearance | 0.5 |
+| Silk clearance / mask-to-copper clearance / mask web width | 0 / 0 / 0 |
+
+The native Default class has clearance/track width 0.2/0.2 mm, via diameter/drill 0.6/0.3 mm,
+microvia diameter/drill 0.3/0.1 mm and differential-pair width/gap/via-gap 0.2/0.25/0.25 mm.
+Class dimensions are routing preferences, not permission to violate a board or custom minimum.
+Project classes inherit missing/null fields from Default. Native legacy net-class migration takes
+precedence over project class definitions and assignments. Board-local fields retain their existing precedence.
+Missing or malformed projects remain warned about; they do not turn supported minimums into zero.
+
+**Legacy migration precedence:** the reader follows KiCad 10.0.6's
+[`BOARD::SetProject`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.6/pcbnew/board.cpp)
+and [`parseSetup` / `parseNETCLASS`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.6/pcbnew/pcb_io/kicad_sexpr/pcb_io_kicad_sexpr_parser.cpp):
+tokens that set `m_LegacyDesignSettingsLoaded` (for example `trace_min`, `via_min_size`,
+`user_trace_width` or `defaults`) suppress loading the project's board settings as a whole,
+including minimums and severities. The reader detects those exact legacy tokens, not merely `setup`.
+Local `pad_to_mask_clearance`, `solder_mask_min_width`, origins, stackup and plot settings do not
+set that flag and do not suppress project rules. Present project keys, including zero, remain
+authoritative on boards without a legacy design-settings trigger.
+
+Net classes migrate independently: any root `net_class` transfers legacy classes and assignments
+over project classes/patterns, but does not itself suppress project board minimums. Conversely,
+legacy design-setting tokens alone do not suppress project net classes.
+
+`tests/integration/no_project_defaults.py` generates isolated native DRC probes for absent, empty,
+partial and zero-valued projects, project overrides and legacy preservation/migration, then routes
+a legacy 0.15 mm class under the built-in 0.2 mm minimum and checks preservation of a wider legacy
+class despite a conflicting project class. Assertions use violation types and actual written
+copper widths, not rendered diagnostics or echoed options. Unit tests cover default boundaries,
+cross-property legacy suppression, nontriggering local fields and independent class migration.
 
 ## 4. Rule coverage policy
 

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Custom-rule routing and DRC (doc 05 §27): disallow, physical hole clearance and via-only keepouts.
+#include <catch2/catch_message.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include <unistd.h>
@@ -8,8 +9,10 @@
 #include <filesystem>
 #include <functional>
 #include <fstream>
+#include <initializer_list>
 #include <string>
 #include <tuple>
+#include <utility>
 
 #include "drc/drc.hpp"
 #include "drc/rule_engine.hpp"
@@ -80,6 +83,169 @@ bool has_track(const route::RouteResult& r, model::NetId net, bool inner) {
 }
 
 }  // namespace
+
+TEST_CASE("project rules retain KiCad 10 defaults key by key", "[rules][io]") {
+  const Files f("defaults", board_text(
+      "  (segment (start 4 3) (end 16 3) (width 0.15) (layer \"F.Cu\") (net 1))\n"
+      "  (segment (start 4 7) (end 16 7) (width 0.2) (layer \"F.Cu\") (net 2))\n"
+      "  (via (at 7 5) (size 0.4) (drill 0.3) (layers \"F.Cu\" \"B.Cu\") (net 1))\n"
+      "  (via (at 12 5) (size 0.5) (drill 0.3) (layers \"F.Cu\" \"B.Cu\") (net 1))\n"), "");
+  const auto lb = io::read_board_file(f.pcb.string());
+  auto check_defaults = [&](const model::DesignRules& r) {
+    const auto& m = r.minimums;
+    CHECK(m.clearance == 0);
+    CHECK(m.track_width == 200'000);
+    CHECK(m.connection_width == 0);
+    CHECK(m.via_diameter == 500'000);
+    CHECK(m.via_annular_width == 100'000);
+    CHECK(m.through_hole_diameter == 300'000);
+    CHECK(m.microvia_diameter == 200'000);
+    CHECK(m.microvia_drill == 100'000);
+    CHECK(m.hole_clearance == 250'000);
+    CHECK(m.hole_to_hole == 250'000);
+    CHECK(m.copper_edge_clearance == 500'000);
+    CHECK(m.silk_clearance == 0);
+    CHECK(m.solder_mask_to_copper_clearance == 0);
+    CHECK(m.solder_mask_min_width == 0);
+    CHECK_FALSE(m.allow_blind_buried_vias);
+    CHECK_FALSE(m.allow_microvias);
+    const auto& nc = r.default_class();
+    CHECK(nc.clearance == 200'000);
+    CHECK(nc.track_width == 200'000);
+    CHECK(nc.via_diameter == 600'000);
+    CHECK(nc.via_drill == 300'000);
+    CHECK(nc.uvia_diameter == 300'000);
+    CHECK(nc.uvia_drill == 100'000);
+    CHECK(nc.diff_pair_width == 200'000);
+    CHECK(nc.diff_pair_gap == 250'000);
+    CHECK(nc.diff_pair_via_gap == 250'000);
+    const auto counts = drc::run_drc(lb.board, r).counts();
+    REQUIRE(counts.contains("track_width"));
+    CHECK(counts.at("track_width") == 1);  // 0.15 mm fails, the 0.2 mm boundary is legal.
+    REQUIRE(counts.contains("via_diameter"));
+    CHECK(counts.at("via_diameter") == 1);  // 0.4 mm fails, 0.5 mm is legal.
+  };
+  check_defaults(io::read_design_rules(f.pcb.string()));
+  const auto pro = f.dir / "b.kicad_pro";
+  for (const char* project : {
+           "{}",
+           R"({"board":{"design_settings":{"rules":{"min_clearance":0}}}})",
+           R"({"board":{"design_settings":{"rules":{"min_track_width":null,"min_via_diameter":null}}},"net_settings":{"classes":[{"name":"Default"}]}})"}) {
+    std::ofstream(pro) << project;
+    check_defaults(io::read_design_rules(f.pcb.string()));
+  }
+  std::ofstream(pro) << R"({"board":{"design_settings":{"rules":{"min_track_width":0.12,"min_via_diameter":0,"min_hole_clearance":0.15}}},"net_settings":{"classes":[{"name":"Default","track_width":0.17}]}})";
+  const auto custom = io::read_design_rules(f.pcb.string());
+  CHECK(custom.minimums.track_width == 120'000);
+  CHECK(custom.minimums.via_diameter == 0);  // Explicit zero is a rule, not an absent key.
+  CHECK(custom.minimums.hole_clearance == 150'000);
+  CHECK(custom.minimums.through_hole_diameter == 300'000);
+  CHECK(custom.default_class().track_width == 170'000);
+  const auto counts = drc::run_drc(lb.board, custom).counts();
+  CHECK_FALSE(counts.contains("track_width"));
+  CHECK_FALSE(counts.contains("via_diameter"));
+}
+
+TEST_CASE("legacy design settings suppress project board settings like KiCad migration", "[rules][io]") {
+  const Files f("legacy_defaults", board_text(
+      "(setup (clearance_min 0.09) (trace_min 0.11) (via_min_size 0.45) (via_min_annulus 0.08)\n"
+      "  (through_hole_min 0.21) (hole_to_hole_min 0.22) (uvia_min_size 0.15)\n"
+      "  (uvia_min_drill 0.08) (defaults (edge_clearance 0.3)) (solder_mask_min_width 0.07)\n"
+      "  (blind_buried_vias_allowed yes) (uvias_allowed yes))\n"
+      "(net_class \"Default\" \"\" (clearance 0.12) (trace_width 0.15) (via_dia 0.55) (via_drill 0.2))\n"
+      "(segment (start 4 3) (end 16 3) (width 0.15) (layer \"F.Cu\") (net 1))\n"), "");
+  const auto lb = io::read_board_file(f.pcb.string());
+  auto check_legacy = [&](const model::DesignRules& r) {
+    CHECK(r.minimums.clearance == 90'000);
+    CHECK(r.minimums.via_annular_width == 80'000);
+    CHECK(r.minimums.hole_to_hole == 220'000);
+    CHECK(r.minimums.track_width == 110'000);
+    CHECK(r.minimums.via_diameter == 450'000);
+    CHECK(r.minimums.through_hole_diameter == 210'000);
+    CHECK(r.minimums.microvia_diameter == 150'000);
+    CHECK(r.minimums.microvia_drill == 80'000);
+    CHECK(r.minimums.copper_edge_clearance == 300'000);
+    CHECK(r.minimums.solder_mask_min_width == 70'000);
+    CHECK(r.minimums.allow_blind_buried_vias);
+    CHECK(r.minimums.allow_microvias);
+    CHECK(r.default_class().clearance == 120'000);
+    CHECK(r.default_class().track_width == 150'000);
+    CHECK(r.default_class().via_diameter == 550'000);
+    CHECK(r.default_class().via_drill == 200'000);
+    CHECK_FALSE(drc::run_drc(lb.board, r).counts().contains("track_width"));
+  };
+  check_legacy(io::read_design_rules(f.pcb.string()));
+  const auto pro = f.dir / "b.kicad_pro";
+  for (const char* project : {"{}", R"({"board":{"design_settings":{"rules":{"min_clearance":0.1}}}})"}) {
+    std::ofstream(pro) << project;
+    check_legacy(io::read_design_rules(f.pcb.string()));
+  }
+  std::ofstream(pro) << R"({"board":{"design_settings":{"rules":{"min_track_width":0.2,"allow_blind_buried_vias":false,"allow_microvias":false,"use_height_for_length_calcs":false},"rule_severities":{"track_width":"ignore"}}}})";
+  const auto ignored = io::read_design_rules(f.pcb.string());
+  check_legacy(ignored);
+  CHECK(ignored.minimums.clearance == 90'000);
+  CHECK(ignored.use_height_for_length);
+  CHECK_FALSE(ignored.severities.contains("track_width"));
+  std::ofstream(pro) << R"({"board":{"design_settings":{"rules":{"min_track_width":0,"min_via_diameter":0}}}})";
+  check_legacy(io::read_design_rules(f.pcb.string()));
+}
+
+TEST_CASE("legacy classes win project definitions without suppressing project board settings", "[rules][io]") {
+  const Files f("legacy_classes", board_text(
+      "(net_class \"Default\" \"\" (clearance 0.1) (trace_width 0.31))\n"
+      "(net_class \"Signal\" \"\" (trace_width 0.45) (add_net \"SIG\"))\n"
+      "(net_class \"LegacyOnly\" \"\" (add_net \"GND\"))\n"
+      "(segment (start 4 3) (end 16 3) (width 0.2) (layer \"F.Cu\") (net 1))\n"), "");
+  const auto lb = io::read_board_file(f.pcb.string());
+  auto rules = io::read_design_rules(f.pcb.string());
+  CHECK(rules.class_for("SIG").track_width == 450'000);
+  CHECK(rules.class_for("GND").track_width == 200'000);
+  std::ofstream(f.dir / "b.kicad_pro") << R"({"board":{"design_settings":{"rules":{"min_track_width":0.24}}},"net_settings":{"classes":[{"name":"Default","track_width":0.27},{"name":"Signal","track_width":null}],"netclass_patterns":[{"pattern":"*","netclass":"Signal"}],"netclass_assignments":{"GND":"Signal"}}})";
+  rules = io::read_design_rules(f.pcb.string());
+  REQUIRE(rules.classes.size() == 3);
+  CHECK(rules.default_class().track_width == 310'000);
+  CHECK(rules.class_for("SIG").track_width == 450'000);
+  CHECK(rules.class_for("SIG").clearance == 200'000);
+  CHECK(rules.class_for("GND").name == "LegacyOnly");
+  CHECK(rules.class_for("unassigned").name == "Default");
+  CHECK(rules.minimums.track_width == 240'000);
+  CHECK(drc::run_drc(lb.board, rules).counts().at("track_width") == 1);
+}
+
+TEST_CASE("nonlegacy project classes inherit Default dimensions and preserve explicit zero", "[rules][io]") {
+  const Files f("project_classes", board_text(""), "");
+  std::ofstream(f.dir / "b.kicad_pro") << R"({"net_settings":{"classes":[{"name":"Default","track_width":0.27},{"name":"Signal","track_width":null}],"netclass_assignments":{"SIG":"Signal"}}})";
+  auto rules = io::read_design_rules(f.pcb.string());
+  REQUIRE(rules.classes.size() == 2);
+  CHECK(rules.class_for("SIG").name == "Signal");
+  CHECK(rules.class_for("SIG").track_width == 270'000);
+  CHECK(rules.class_for("SIG").clearance == 200'000);
+  std::ofstream(f.dir / "b.kicad_pro") << R"({"net_settings":{"classes":[{"name":"Signal","track_width":0}],"netclass_assignments":{"SIG":"Signal"}}})";
+  rules = io::read_design_rules(f.pcb.string());
+  CHECK(rules.default_class().track_width == 200'000);
+  CHECK(rules.class_for("SIG").track_width == 0);
+}
+
+TEST_CASE("legacy migration is triggered by rule tokens, not the setup container or local mask fields", "[rules][io]") {
+  const std::string track = "(segment (start 4 3) (end 16 3) (width 0.25) (layer \"F.Cu\") (net 1))\n";
+  for (const auto& [setup, suppress] : std::initializer_list<std::pair<const char*, bool>>{
+           {"(setup (via_min_size 0.45))", true},
+           {"(setup (user_trace_width 0.4))", true},
+           {"(setup (defaults (edge_clearance 0.3)))", true},
+           {"(setup)", false},
+           {"(setup (pad_to_mask_clearance 0.1))", false},
+           {"(setup (solder_mask_min_width 0.07))", false},
+           {"(setup (last_trace_width 0.4))", false}}) {
+    INFO(setup);
+    const Files f("migration_trigger", board_text(std::string(setup) + track), "");
+    std::ofstream(f.dir / "b.kicad_pro") << R"({"board":{"design_settings":{"rules":{"min_track_width":0.3}}},"net_settings":{"classes":[{"name":"Default","track_width":0.27}]}})";
+    const auto lb = io::read_board_file(f.pcb.string());
+    const auto rules = io::read_design_rules(f.pcb.string());
+    CHECK(rules.minimums.track_width == (suppress ? 200'000 : 300'000));
+    CHECK(rules.default_class().track_width == 270'000);  // Design-settings migration does not suppress project classes.
+    CHECK(drc::run_drc(lb.board, rules).counts().contains("track_width") == !suppress);
+  }
+}
 
 TEST_CASE("disallow track on inner layers: other nets avoid them, GND may still use them", "[rules][route]") {
   const Files free_board("free", board_text(kOuterWall), "");

@@ -41,7 +41,12 @@ Coord mm(const json& j, const char* key, Coord def) {
   return static_cast<Coord>(v < 0 ? v - 0.5 : v + 0.5);
 }
 
-void read_pro(const fs::path& p, model::DesignRules& r) {
+struct LegacyRules {
+  bool design_settings = false;
+  bool netclasses = false;
+};
+
+void read_pro(const fs::path& p, model::DesignRules& r, const LegacyRules& legacy) {
   std::ifstream f(p);
   json d;
   try {
@@ -50,38 +55,39 @@ void read_pro(const fs::path& p, model::DesignRules& r) {
     r.warnings.push_back("cannot parse " + p.string() + ": " + e.what());
     return;
   }
-  if (d.contains("board") && d["board"].contains("design_settings") && d["board"]["design_settings"].contains("rules")) {
+  if (!legacy.design_settings && d.contains("board") && d["board"].contains("design_settings") && d["board"]["design_settings"].contains("rules")) {
     const json& j = d["board"]["design_settings"]["rules"];
     auto& m = r.minimums;
-    m.clearance = mm(j, "min_clearance", 0);
-    m.track_width = mm(j, "min_track_width", 0);
-    m.connection_width = mm(j, "min_connection", 0);
-    m.via_diameter = mm(j, "min_via_diameter", 0);
-    m.via_annular_width = mm(j, "min_via_annular_width", 0);
-    m.through_hole_diameter = mm(j, "min_through_hole_diameter", 0);
-    m.microvia_diameter = mm(j, "min_microvia_diameter", 0);
-    m.microvia_drill = mm(j, "min_microvia_drill", 0);
-    m.hole_clearance = mm(j, "min_hole_clearance", 0);
-    m.hole_to_hole = mm(j, "min_hole_to_hole", 0);
-    m.copper_edge_clearance = mm(j, "min_copper_edge_clearance", 0);
-    m.silk_clearance = mm(j, "min_silk_clearance", 0);
-    m.solder_mask_to_copper_clearance = mm(j, "solder_mask_to_copper_clearance", 0);
-    m.allow_blind_buried_vias = j.value("allow_blind_buried_vias", false);
-    m.allow_microvias = j.value("allow_microvias", false);
+    m.clearance = mm(j, "min_clearance", m.clearance);
+    m.track_width = mm(j, "min_track_width", m.track_width);
+    m.connection_width = mm(j, "min_connection", m.connection_width);
+    m.via_diameter = mm(j, "min_via_diameter", m.via_diameter);
+    m.via_annular_width = mm(j, "min_via_annular_width", m.via_annular_width);
+    m.through_hole_diameter = mm(j, "min_through_hole_diameter", m.through_hole_diameter);
+    m.microvia_diameter = mm(j, "min_microvia_diameter", m.microvia_diameter);
+    m.microvia_drill = mm(j, "min_microvia_drill", m.microvia_drill);
+    m.hole_clearance = mm(j, "min_hole_clearance", m.hole_clearance);
+    m.hole_to_hole = mm(j, "min_hole_to_hole", m.hole_to_hole);
+    m.copper_edge_clearance = mm(j, "min_copper_edge_clearance", m.copper_edge_clearance);
+    m.silk_clearance = mm(j, "min_silk_clearance", m.silk_clearance);
+    m.solder_mask_to_copper_clearance = mm(j, "solder_mask_to_copper_clearance", m.solder_mask_to_copper_clearance);
+    m.allow_blind_buried_vias = j.value("allow_blind_buried_vias", m.allow_blind_buried_vias);
+    m.allow_microvias = j.value("allow_microvias", m.allow_microvias);
     if (j.contains("use_height_for_length_calcs") && j["use_height_for_length_calcs"].is_boolean())
       r.use_height_for_length = j["use_height_for_length_calcs"].get<bool>();
     const json& ds = d["board"]["design_settings"];
     if (ds.contains("rule_severities") && ds["rule_severities"].is_object())
       for (const auto& [type, sev] : ds["rule_severities"].items())
         if (sev.is_string()) r.severities[type] = sev.get<std::string>();
-  } else {
-    r.warnings.push_back("project has no board design rules; using zeros");
+  } else if (!legacy.design_settings) {
+    r.warnings.push_back("project has no board design rules; using KiCad defaults and rules stored in the board");
   }
-  if (!d.contains("net_settings")) return;
+  if (legacy.netclasses || !d.contains("net_settings")) return;
   const json& ns = d["net_settings"];
   if (ns.contains("classes") && ns["classes"].is_array()) {
     // Default first; other classes inherit unset (null) values from Default.
     model::NetClass def;
+    def.track_width = 200'000;  // KiCad 10 common/netclass.cpp DEFAULT_TRACK_WIDTH
     def.name = "Default";
     def.priority = INT_MAX;
     for (const auto& c : ns["classes"])
@@ -97,6 +103,7 @@ void read_pro(const fs::path& p, model::DesignRules& r) {
         def.diff_pair_via_gap = mm(c, "diff_pair_via_gap", def.diff_pair_via_gap);
         def.has_diff_pair_gap = c.contains("diff_pair_gap") && c["diff_pair_gap"].is_number();
       }
+    r.classes.clear();
     r.classes.push_back(def);
     for (const auto& c : ns["classes"]) {
       const std::string name = c.value("name", "");
@@ -185,13 +192,13 @@ void read_dru(const fs::path& p, model::DesignRules& r) {
   }
 }
 
-// KiCad's built-in board minimums, used when there is no project file (observed with kicad-cli 10.0.6 on
-// project-less boards: annular 0.1, hole clearance 0.25, hole-to-hole 0.25, edge clearance 0.5, drill 0.3).
+// KiCad 10 include/board_design_settings.h DEFAULT_* and BOARD_DESIGN_SETTINGS constructor.
+// Missing project keys retain constructor or legacy parser values (m_resetParamsIfMissing = false).
 void kicad_defaults(model::DesignRules& r) {
   auto& m = r.minimums;
   m.clearance = 0;
-  m.track_width = 0;
-  m.via_diameter = 400'000;
+  m.track_width = 200'000;
+  m.via_diameter = 500'000;
   m.through_hole_diameter = 300'000;
   m.via_annular_width = 100'000;
   m.microvia_diameter = 200'000;
@@ -203,31 +210,54 @@ void kicad_defaults(model::DesignRules& r) {
 
 // KiCad <= 5 boards carry rules in the board file: (setup (trace_min) (via_min_size) (via_min_drill) ...) and
 // (net_class name "descr" (clearance) (trace_width) (via_dia) (via_drill) ... (add_net "x")).
-void read_legacy_board_rules(const fs::path& board, model::DesignRules& r) {
+LegacyRules read_legacy_board_rules(const fs::path& board, model::DesignRules& r) {
   sexpr::Document d;
   try {
     d = sexpr::Document::load(board.string());
   } catch (const std::exception&) {
-    return;
+    return {};
   }
+  LegacyRules legacy;
   auto nm = [&](sexpr::NodeId parent, const char* key) -> std::optional<Coord> {
     const auto c = d.find(parent, key);
     if (c == sexpr::kNoNode) return std::nullopt;
     return d.nm_at(c, 1);
   };
   if (const auto setup = d.find(d.root(), "setup"); setup != sexpr::kNoNode) {
+    // KiCad 10.0.6 parseSetup sets m_LegacyDesignSettingsLoaded for exactly these tokens.
+    // Local mask/paste settings, origins, stackup and plot settings do not suppress project rules.
+    for (const char* key : {
+             "user_trace_width", "trace_clearance", "zone_clearance", "zone_45_only", "clearance_min",
+             "trace_min", "via_size", "via_drill", "via_min_annulus", "via_min_size", "through_hole_min",
+             "via_min_drill", "hole_to_hole_min", "user_via", "uvia_size", "uvia_drill", "uvias_allowed",
+             "blind_buried_vias_allowed", "uvia_min_size", "uvia_min_drill", "user_diff_pair", "segment_width",
+             "edge_width", "mod_edge_width", "pcb_text_width", "mod_text_width", "pcb_text_size",
+             "mod_text_size", "defaults", "pad_size", "pad_drill", "max_error"}) {
+      if (d.find(setup, key) != sexpr::kNoNode) {
+        legacy.design_settings = true;
+        break;
+      }
+    }
+    if (auto v = nm(setup, "clearance_min")) r.minimums.clearance = *v;
     if (auto v = nm(setup, "trace_min")) r.minimums.track_width = *v;
     if (auto v = nm(setup, "via_min_size")) r.minimums.via_diameter = *v;
+    if (auto v = nm(setup, "via_min_annulus")) r.minimums.via_annular_width = *v;
     if (auto v = nm(setup, "via_min_drill")) r.minimums.through_hole_diameter = *v;
+    if (auto v = nm(setup, "through_hole_min")) r.minimums.through_hole_diameter = *v;
+    if (auto v = nm(setup, "hole_to_hole_min")) r.minimums.hole_to_hole = *v;
     if (auto v = nm(setup, "uvia_min_size")) r.minimums.microvia_diameter = *v;
     if (auto v = nm(setup, "uvia_min_drill")) r.minimums.microvia_drill = *v;
     if (auto v = nm(setup, "edge_clearance")) r.minimums.copper_edge_clearance = *v;
+    if (const auto defaults = d.find(setup, "defaults"); defaults != sexpr::kNoNode)
+      if (auto v = nm(defaults, "edge_clearance")) r.minimums.copper_edge_clearance = *v;
     if (auto v = nm(setup, "solder_mask_min_width")) r.minimums.solder_mask_min_width = *v;
     if (const auto bb = d.find(setup, "blind_buried_vias_allowed"); bb != sexpr::kNoNode) r.minimums.allow_blind_buried_vias = d.str_at(bb, 1) == "yes";
     if (const auto uv = d.find(setup, "uvias_allowed"); uv != sexpr::kNoNode) r.minimums.allow_microvias = d.str_at(uv, 1) == "yes";
   }
   for (const auto nc : d.find_all(d.root(), "net_class")) {
+    legacy.netclasses = true;  // BOARD::SetProject migrates these over project classes and patterns.
     model::NetClass k;
+    k.track_width = 200'000;  // KiCad 10 common/netclass.cpp DEFAULT_TRACK_WIDTH
     k.name = d.str_at(nc, 1);
     k.priority = k.name == "Default" ? INT_MAX : 0;
     if (auto v = nm(nc, "clearance")) k.clearance = *v;
@@ -245,6 +275,7 @@ void read_legacy_board_rules(const fs::path& board, model::DesignRules& r) {
     if (k.name == "Default") r.classes.insert(r.classes.begin(), k);
     else r.classes.push_back(k);
   }
+  return legacy;
 }
 
 }  // namespace
@@ -254,15 +285,16 @@ model::DesignRules read_design_rules(const std::string& board_path) {
   const fs::path b(board_path);
   const fs::path pro = fs::path(b).replace_extension(".kicad_pro");
   const fs::path dru = fs::path(b).replace_extension(".kicad_dru");
+  kicad_defaults(r);
+  const auto legacy = read_legacy_board_rules(b, r);
   if (fs::exists(pro)) {
-    read_pro(pro, r);
+    read_pro(pro, r, legacy);
   } else {
     r.warnings.push_back("no project file " + pro.filename().string() + "; using KiCad defaults and rules stored in the board");
-    kicad_defaults(r);
-    read_legacy_board_rules(b, r);
   }
   if (r.classes.empty() || r.classes.front().name != "Default") {
     model::NetClass def;
+    def.track_width = 200'000;  // KiCad 10 common/netclass.cpp DEFAULT_TRACK_WIDTH
     def.name = "Default";
     def.priority = INT_MAX;
     r.classes.insert(r.classes.begin(), def);
