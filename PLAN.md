@@ -45,6 +45,7 @@
 | 14 | [docs/14-placement-test-plan.md](docs/14-placement-test-plan.md) | Placement test plan: levels, datasets, metrics, baselines, gates |
 | 16 | [docs/16-bga-breakout-plan.md](docs/16-bga-breakout-plan.md) | **M14 + M15, with measured outcomes:** matching tscircuit on its BGA breakout sets (`srj19`, `srj20`, `fanout31`); hypotheses with experiments, negotiation as transactions (§12); research in [research/bga-routing-2026-10.md](research/bga-routing-2026-10.md) |
 | 17 | [docs/17-llm-advisor.md](docs/17-llm-advisor.md) | **M16, stages 0–3 built:** advice files and a pluggable advisor called only when the router is stuck (stuck report, strict advice file, advised portfolio variants, `--advisor CMD`); the engine never talks to a model |
+| 18 | [docs/18-next-features.md](docs/18-next-features.md) | **Proposals only (2026-10-14):** researched candidate features for the next milestones (KiCad 10 tuning profiles and time-domain matching, PCBWorld-Bench, installable releases, pin-swap feasibility, agent interface), with evidence tags, gates, a suggested order and what was rejected; nothing is on the roadmap until chosen |
 | 15 | [docs/15-component-rules.md](docs/15-component-rules.md) | **Partly built (M13 P0–P3):** component-aware layout rules (detect USB, Ethernet, crystals, regulators, RF, …; apply cited placement/routing rules); catalogue in [docs/component_rules.yaml](docs/component_rules.yaml); `tracemaker rules`, `--component-rules` (opt-in); status in §14 |
 
 Background material:
