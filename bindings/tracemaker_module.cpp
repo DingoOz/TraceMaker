@@ -123,7 +123,7 @@ tmk::app::RouteJobResult run_job(const std::string& in, const std::optional<std:
 
 #define TM_ROUTE_ARGS                                                                                                          \
   py::arg("path_in"), py::arg("path_out") = py::none(), py::kw_only(), py::arg("time_s") = 120.0, py::arg("threads") = 8,       \
-      py::arg("variants") = 0, py::arg("work") = 0L, py::arg("seed") = 1ULL, py::arg("view") = false, py::arg("view_host") = "0.0.0.0",                 \
+      py::arg("variants") = 0, py::arg("work") = 0L, py::arg("seed") = 1ULL, py::arg("view") = false, py::arg("view_host") = "",                 \
       py::arg("view_port") = 8766, py::arg("gpu") = true, py::arg("kb") = true, py::arg("pitch_um") = 0.0,                      \
       py::arg("via_cost_mm") = 3.0, py::arg("optimize") = true, py::arg("rip_up") = true, py::arg("global_route") = false,     \
       py::arg("items_out") = py::none(), py::arg("json_out") = py::none(), py::arg("record") = py::none(),                    \

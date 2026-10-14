@@ -3,7 +3,8 @@
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). v1 uses JSON for speed of development;
 > FlatBuffers (doc 09) replaces it once the message set is stable. Coordinates are integer nanometres.
 
-The engine serves the viewer at `http://<host>:<port>/` and streams messages on `ws://<host>:<port>/ws`.
+The engine serves the viewer at `http://<host>:<port>/` and streams messages on `ws://<host>:<port>/ws`. The host is the local machine unless the user asked otherwise;
+a viewer that other machines can reach requires a token (`?token=...` once, then a cookie) and every `/ws` upgrade must come from the server's own origin (docs/09, Security).
 On connect the server sends the latest `board` snapshot, then every later message in order. Messages marked
 *transient* may be dropped under load; all others are state and must be delivered.
 
