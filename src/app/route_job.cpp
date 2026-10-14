@@ -451,6 +451,14 @@ RouteJobResult run_route_job(RouteJob job) {
       opt.buses.push_back({g.name, g.members, g.skew_limit});
     }
   }
+  if (!job.warm_pcb.empty()) {  // copper of an earlier solution (looser rules, legalised): the router keeps what is legal
+    const auto wb = io::read_board_file(job.warm_pcb);
+    for (const auto& t : wb.board.tracks)
+      if (!t.locked) opt.warm_tracks.push_back(t);
+    for (const auto& v : wb.board.vias) opt.warm_vias.push_back(v);
+    opt.state_recheck = true;
+    log(fmt("warm start from %s: %zu tracks, %zu vias", job.warm_pcb.c_str(), opt.warm_tracks.size(), opt.warm_vias.size()));
+  }
   auto& res = out.result;
   const auto route_t0 = std::chrono::steady_clock::now();  // --time covers the whole job, the refill repair included
   std::vector<int> ran;

@@ -4,3 +4,4 @@
 {"ts":"2026-10-11T11:00:00+00:00","kind":"note","text":"srj20 portfolio (8 variants): 9 of 83 rescued, 126/200 estimated. fanout31 trials: AM62L, RK3308, i.MX6ULL solved; T113-S3 6 open; AM3352 50 open. package-pen 3-4 gives +4 boards of 57 on srj20 gap."}
 {"ts":"2026-10-11T14:00:00+00:00","kind":"milestone","text":"fanout31 gate met: 57 of 60 run cases solved (K230 fixed: modelling bug in breakout-point layers). srj19 181/200, srj20 124/200 at 50M one variant with preferred layer directions. Remaining: srj20 gap 33 boards."}
 {"ts":"2026-10-11T16:30:00+00:00","kind":"milestone","text":"M14 round 2 closed: srj19 188/200 (gate met), fanout31 60/72 (gate met), srj20 133/200 (24 short); ctest 254/254; quick and mid byte-identical."}
+{"ts": "2026-10-11T22:18:41+00:00", "kind": "note", "text": "M15 started: transactional negotiation (--txn) lifts completion on the srj20 gap boards from 90.9 to 95.5 % at 30 M; reach-check 2 with flood weighting gives 30/57 clean."}
