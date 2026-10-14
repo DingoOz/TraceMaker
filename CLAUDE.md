@@ -30,6 +30,9 @@ scripts/fetch_fixtures.sh [set ...]  # freerouting dac2020 kicad-demos derived (
   presets put `/usr/bin` first on PATH. `g++` on the user's PATH is a Nix toolchain whose linker cannot see the
   system CUDA libraries, so do not export `CXX` to it.
 - The C++ namespace is `tmk` (`tm` clashes with C's `struct tm`).
+- `bench/results/` is git-ignored. Results of a milestone's tests and experiments are copied into the repo before the work is called
+  done: `bench/records/<milestone>/` (raw result files, the advice/option files used, test outputs, a README with the tables) and a
+  summary in the design doc (see `bench/records/m16/`).
 - Fixtures live in `bench/data/` (git-ignored). Freerouting's PCBench set (1,158 boards with `.kicad_pcb` and
   `.dsn`) is at `bench/data/freerouting/scripts/benchmark/fixtures/PCBench`.
 

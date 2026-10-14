@@ -17,7 +17,9 @@ On connect the server sends the latest `board` snapshot, then every later messag
 | `ratsnest` | `edges:[[ax,ay,bx,by,net],…]` | Current unrouted connections |
 | `frontier` *(transient)* | `conn`, `layer`, `pts:[[x,y],…]` | Sampled points of an active search frontier |
 | `path_try` *(transient)* | `conn`, `pts:[[x,y,layer],…]` | A candidate path being evaluated |
-| `failure` | `conn`, `net`, `rung`, `cause`, `a:[x,y]`, `b:[x,y]`, `blockers:[track/via/pad ids]`, `region:[x0,y0,x1,y1]` | A failed attempt (failure memory) |
+| `failure` | `conn`, `net`, `rung`, `cause`, `a:[x,y]`, `b:[x,y]`, `blockers:[track/via/pad ids]` (still empty), `blocker_nets:[net ids]` (nets of the connections the rejected route would have ripped), `region:[x0,y0,x1,y1]` (the two pads ±1.5 mm, nm) | A failed attempt (failure memory) |
+| `advice.hint` | `kind`, `text`, `origin` (`file` or `advisor`) | One hint of an advice file in use (doc 17); `stage` events named `advisor` mark a consultation |
+| `advice.rejected` | `why` | The advisor failed, was too slow, or its advice was refused; the run goes on unadvised |
 | `escape_plan` | `corridors:[{id, net, pad:"REF.NUM", via, pts:[[x,y],…]}]` | Escape corridors reserved for dense-package pins (M9); `id` is the board pad index. With `--escape-flow` (doc 05 §14) `pts` continues past the dog-bone via site along the planned channels, on the layer the via changes to. Sent at the start and after each restart; the viewer draws them (toggle X) |
 | `escape_release` | `id` | The pin is connected (or given up): its corridor is gone |
 | `escape_dead` | `id`, `net`, `pad`, `p:[x,y]`, `why` | A pin enclosed by fixed copper even for a negotiated, necked-down search: not retried (red cross in the viewer) |

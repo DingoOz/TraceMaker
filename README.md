@@ -131,6 +131,9 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 | Find pins that cannot escape their package | `escape board.kicad_pcb` |
 | Route a tscircuit Simple Route JSON problem | `srj-import problem.json -o board.kicad_pcb`, then `route`, then `srj-export routed.kicad_pcb --problem problem.json -o solved.json` |
 | See which parts and layout rules it detects | `rules board.kicad_pcb --mode on` |
+| Let a script or a language model suggest hints when routing leaves connections open (experimental: the rule-based advisor measured no gain, [docs/17-llm-advisor.md](docs/17-llm-advisor.md) section 8) | `route board.kicad_pcb -o out.kicad_pcb --advisor "python3 advisors/heuristic_advisor.py"` |
+| Route with a hint file you wrote (nets first, layer costs, reserved regions) | `route board.kicad_pcb -o out.kicad_pcb --advice advice.json`; check it first with `advice-check board.kicad_pcb advice.json` |
+| Get a report of what failed and why | `route board.kicad_pcb -o out.kicad_pcb --stuck-report stuck.json` |
 
 <details>
 <summary><b>Placing components</b></summary>
@@ -270,6 +273,7 @@ Freerouting 2.5 10%; Freerouting 1.9 20%.
 | `src/drc` | the design-rule check |
 | `src/io/kicad` | reading and writing KiCad files |
 | `src/crules` | component-aware layout rules |
+| `src/advice`, `advisors/` | advice files, the stuck report and advisors (a model is optional and outside the engine) |
 | `src/gpu` | CUDA and Metal code, each with a CPU twin |
 | `src/server`, `viewer/` | the live viewer |
 | `kicad_plugin/` | the KiCad plugin |

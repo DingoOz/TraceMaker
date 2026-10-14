@@ -13,6 +13,7 @@
 
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
+#include "advice/advice.hpp"
 #include "app/route_job.hpp"
 #include "app/tui.hpp"
 #include "core/rng.hpp"
@@ -320,6 +321,20 @@ int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bo
   if (groups.empty()) std::printf("no buses\n");
   if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"buses", j}}.dump(1) << "\n";
   return ok ? 0 : 4;  // 4: a group with a skew limit is over it or not completely routed
+}
+
+// `advice-check`: read an advice file and check it against a board without routing (the refusals `route --advice` would give).
+int cmd_advice_check(const std::string& board_path, const std::string& advice_path, const std::string& json_path) {
+  const auto lb = tmk::io::read_board_file(board_path);
+  const auto adv = tmk::advice::load_advice_file(advice_path);
+  const auto ap = tmk::advice::apply_advice(adv, lb.board);
+  std::printf("%s: %zu hint%s, %d advised variant%s\n", advice_path.c_str(), ap.report["hints"].size(), ap.report["hints"].size() == 1 ? "" : "s", ap.set.variants,
+              ap.set.variants == 1 ? "" : "s");
+  if (!adv.note.empty()) std::printf("  note: %s\n", adv.note.c_str());
+  for (const auto& h : ap.report["hints"]) std::printf("  %-10s %s\n", h["kind"].get<std::string>().c_str(), h["text"].get<std::string>().c_str());
+  for (const auto& w : ap.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_path.empty()) std::ofstream(json_path) << ap.report.dump(1) << "\n";
+  return 0;
 }
 
 int cmd_escape(const std::string& path, const std::string& json_path, bool flow, bool soft_zones, double vias_off_pads_below_mm) {
@@ -888,6 +903,19 @@ int main(int argc, char** argv) {
   route->add_option("--rules-override", r_job.rules_override,
                     "User override file for --component-rules (JSON, doc 15 §6.3): disable rules, assert/deny categories, set parameters")
       ->check(CLI::ExistingFile);
+  route->add_option("--advice", r_job.advice,
+                    "Advice file (JSON, doc 17): typed hints (nets first, connection priority, layer costs, regions that reserve space for some nets). "
+                    "They run as extra portfolio variants next to the unadvised ones, so the result is never worse")
+      ->check(CLI::ExistingFile);
+  route->add_option("--advice-variants", r_job.advice_variants, "Advised variants to add (default: the file's \"variants\", else 4)")->check(CLI::Range(1, 8));
+  route->add_option("--advisor", r_job.advisor,
+                    "A command (run with sh -c) that reads the stuck report (JSON) on stdin and writes an advice file on stdout; consulted only if the "
+                    "route leaves connections open, then the board is routed again with its advice (advisors/ has a reference one)");
+  route->add_option("--advisor-timeout", r_job.advisor_timeout_s, "Seconds the advisor may take (default 120; not counted as routing work)")->check(CLI::PositiveNumber);
+  route->add_option("--advisor-rounds", r_job.advisor_rounds, "Consult the advisor again with the advised run's result while connections are open (default 1)")->check(CLI::Range(1, 8));
+  route->add_flag("--advisor-redact", r_job.advisor_redact, "Send net and part names to the advisor as aliases (N1, P3), without part values or library ids; the advice is mapped back");
+  route->add_option("--advice-out", r_job.advice_out, "Where the advisor's advice is saved (default <output>.advice.json); route again with --advice FILE to repeat the run");
+  route->add_option("--stuck-report", r_job.stuck_report_out, "Write the stuck report (what failed and why, JSON) of the run the advisor sees, or the final one");
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
   route->add_flag("--widen-power", r_job.widen_power,
@@ -930,6 +958,11 @@ int main(int argc, char** argv) {
   buses_cmd->add_flag("--buses", bu_detect, "Also find buses in the net names, as in route");
   buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
   buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
+  auto* advice_cmd = app.add_subcommand("advice-check", "Check an advice file (doc 17) against a board: the refusals `route --advice` would give, and what each hint does");
+  std::string ac_board, ac_advice, ac_json;
+  advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
+  advice_cmd->add_option("advice", ac_advice, "Advice file (JSON)")->required()->check(CLI::ExistingFile);
+  advice_cmd->add_option("--json", ac_json, "Write what each hint became as JSON");
   auto* style_cmd = app.add_subcommand("style", "Style metric of a routed board: bends, acute angles, stair-steps, detours (doc 05 §39)");
   std::string sty_board, sty_json;
   bool sty_conn = false;
@@ -1046,6 +1079,7 @@ int main(int argc, char** argv) {
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
+    if (*advice_cmd) return cmd_advice_check(ac_board, ac_advice, ac_json);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);

@@ -15,6 +15,9 @@
 #include <stdexcept>
 #include <thread>
 
+#include "advice/advice.hpp"
+#include "advice/advisor.hpp"
+#include "advice/stuck_report.hpp"
 #include "crules/engine.hpp"
 #include "crules/names.hpp"
 #include "drc/copper.hpp"
@@ -460,7 +463,7 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("warm start from %s: %zu tracks, %zu vias", job.warm_pcb.c_str(), opt.warm_tracks.size(), opt.warm_vias.size()));
   }
   auto& res = out.result;
-  const auto route_t0 = std::chrono::steady_clock::now();  // --time covers the whole job, the refill repair included
+  auto route_t0 = std::chrono::steady_clock::now();  // --time covers one routing run, the refill repair after it included
   std::vector<int> ran;
   int best_index = 0;
   std::string best_name;
@@ -472,30 +475,198 @@ RouteJobResult run_route_job(RouteJob job) {
   // (doc 16: on hard dense breakouts the winning variant is spread over the portfolio, so more seeds find more).
   const int variants = std::clamp(job.variants > 0 ? job.variants : opt.work_budget > 0 ? route::portfolio_size() : threads, 1,
                                   job.variants > 0 ? 64 : route::portfolio_size());
-  route::WorkProfile all_work;  // summed over the portfolio's variants
-  if (variants > 1) {
-    std::vector<int> pick;
-    if (kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, opt.seed);
-    log(fmt("portfolio: %d variants on %d thread%s", variants, std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
-    auto pr = route::route_portfolio(*route_board, rules, opt, variants, pick, threads);
-    for (std::size_t i = 0; i < pr.variants.size(); ++i) {
-      log(fmt("  variant %d %-30s routed %d in %.1f s%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], pr.seconds[i],
-              static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
-      variant_rows.push_back({{"variant", pr.indices[i]}, {"name", pr.variants[i]}, {"routed", pr.routed[i]}, {"seconds", pr.seconds[i]}});
+  route::WorkProfile all_work;  // summed over the portfolio's variants (and over the advised runs)
+
+  // Advice (doc 17): a file given with --advice is applied from the first run on. Its hints go to advised variants next to the
+  // unadvised ones, so the result can only be better than without it.
+  nlohmann::json advice_summary;  // null without advice
+  auto announce_advice = [&](const advice::Applied& ap, const char* origin) {
+    log(fmt("advice (%s): %s%s", origin, ap.set.source.c_str(), ap.report["note"].get<std::string>().empty() ? "" : (" - " + ap.report["note"].get<std::string>()).c_str()));
+    for (const auto& h : ap.report["hints"]) {
+      log("  " + h["text"].get<std::string>());
+      if (opt.sink) opt.sink->publish(nlohmann::json{{"type", "advice.hint"}, {"kind", h["kind"]}, {"text", h["text"]}, {"origin", origin}}.dump());
     }
-    ran = pr.indices;
-    best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
-    best_name = pr.variants[static_cast<std::size_t>(pr.best_variant)];
-    res = std::move(pr.best);
-    for (const auto& w : pr.work)
-      for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += w.phase[static_cast<std::size_t>(p)];
-  } else {
-    res = route::Router(*route_board, rules, opt).run();
-    ran = {0};
-    all_work = res.work;
+    for (const auto& w : ap.warnings) log("  warning: " + w);
+  };
+  if (!job.advice.empty()) {
+    const auto adv = advice::load_advice_file(job.advice);  // refused with the file and the entry on any problem
+    auto ap = advice::apply_advice(adv, lb.board);
+    if (job.advice_variants > 0) ap.set.variants = std::clamp(job.advice_variants, 1, advice::kMaxVariants);
+    announce_advice(ap, "file");
+    opt.advice = ap.set;
+    advice_summary = {{"file", ap.report}, {"warnings", ap.warnings}};
+  }
+  // Variants the knowledge base knows are the unadvised ones; advised copies are not recorded there.
+  auto unadvised_only = [](std::vector<int> v) {
+    v.erase(std::remove_if(v.begin(), v.end(), [](int i) { return i >= route::kAdvisedIndex; }), v.end());
+    return v;
+  };
+  // One routing run under the options `o`: the portfolio when several variants run or advice adds some, else one router.
+  struct Run {
+    route::RouteResult res;
+    std::vector<int> ran;
+    int best_index = 0;
+    std::string best_name;
+    nlohmann::json rows = nlohmann::json::array();
+    route::WorkProfile work;
+    int unadvised_best = -1, advised_best = -1;  // routed counts of the best variant of each kind (-1: none ran)
+  };
+  auto run_once = [&](const route::RouterOptions& o, int round, bool use_kb) {
+    Run r;
+    if (variants > 1 || o.advice.active()) {
+      std::vector<int> pick;
+      if (use_kb && kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, o.seed);
+      log(fmt("portfolio: %d variants%s on %d thread%s", variants, o.advice.active() ? fmt(" + %d advised", std::min(o.advice.variants, variants)).c_str() : "",
+              std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
+      auto pr = route::route_portfolio(*route_board, rules, o, variants, pick, threads);
+      for (std::size_t i = 0; i < pr.variants.size(); ++i) {
+        log(fmt("  variant %d %-30s routed %d in %.1f s%s", pr.indices[i], pr.variants[i].c_str(), pr.routed[i], pr.seconds[i],
+                static_cast<int>(i) == pr.best_variant ? "  <- best" : ""));
+        nlohmann::json row{{"variant", pr.indices[i]}, {"name", pr.variants[i]}, {"routed", pr.routed[i]}, {"seconds", pr.seconds[i]}};
+        if (round > 0) row["round"] = round;
+        r.rows.push_back(std::move(row));
+        int& best = pr.indices[i] >= route::kAdvisedIndex ? r.advised_best : r.unadvised_best;
+        best = std::max(best, pr.routed[i]);
+      }
+      r.ran = pr.indices;
+      r.best_index = pr.indices[static_cast<std::size_t>(pr.best_variant)];
+      r.best_name = pr.variants[static_cast<std::size_t>(pr.best_variant)];
+      r.res = std::move(pr.best);
+      for (const auto& w : pr.work)
+        for (int p = 0; p < route::kWorkPhases; ++p) r.work.phase[static_cast<std::size_t>(p)] += w.phase[static_cast<std::size_t>(p)];
+    } else {
+      r.res = route::Router(*route_board, rules, o).run();
+      r.ran = {0};
+      r.work = r.res.work;
+    }
+    return r;
+  };
+  {
+    Run first = run_once(opt, 0, true);
+    res = std::move(first.res);
+    ran = std::move(first.ran);
+    best_index = first.best_index;
+    best_name = std::move(first.best_name);
+    variant_rows = std::move(first.rows);
+    all_work = first.work;
+    if (!advice_summary.is_null()) {
+      advice_summary["unadvised_best_routed"] = first.unadvised_best;
+      advice_summary["advised_best_routed"] = first.advised_best;
+      advice_summary["winner_advised"] = best_index >= route::kAdvisedIndex;
+      log(fmt("advice: best unadvised variant routed %d, best advised %d%s", first.unadvised_best, first.advised_best,
+              best_index >= route::kAdvisedIndex ? " (an advised variant won)" : ""));
+    }
+  }
+  // The advisor (doc 17 §5): consulted only when connections are left. It gets the stuck report, answers with an advice file,
+  // and the board is routed again with it; the better result of the two stands. A missing, slow or nonsensical advisor is a
+  // warning and the run goes on as it was (rule 5).
+  nlohmann::json advisor_rounds = nlohmann::json::array();
+  if (!job.advisor.empty() || !job.stuck_report_out.empty()) {
+    const int total_rounds = job.advisor.empty() ? 1 : std::max(job.advisor_rounds, 1);
+    std::string advice_base = job.advice_out;
+    if (advice_base.empty() && !job.out.empty()) {
+      advice_base = job.out;
+      if (advice_base.ends_with(".kicad_pcb")) advice_base.resize(advice_base.size() - 10);
+      advice_base += ".advice.json";
+    }
+    nlohmann::json previous = advice_summary.is_null() ? nlohmann::json() : advice_summary["file"];
+    for (int round = 1; round <= total_rounds; ++round) {
+      nlohmann::json rj{{"round", round}, {"routed_before", res.routed}, {"connections", res.connections}};
+      advice::StuckInput si;
+      si.board = &lb.board;
+      si.rules = &rules;
+      si.result = &res;
+      si.board_name = name;
+      si.seconds = res.seconds;
+      si.variants = variant_rows;
+      si.previous_advice = previous;
+      si.redact = job.advisor_redact;
+      si.soft_zones = opt.soft_zones;
+      si.vias_off_pads_below_mm = opt.vias_off_pads ? opt.vias_off_pads_below_mm : 0.0;
+      const auto report = advice::build_stuck_report(si);
+      if (!job.stuck_report_out.empty() && round == 1) {
+        std::ofstream(job.stuck_report_out) << report.json.dump(1);
+        log("stuck report written to " + job.stuck_report_out);
+      }
+      if (job.advisor.empty()) break;
+      if (res.routed >= res.connections) {
+        log("advisor: every connection is routed, it is not consulted");
+        rj["skipped"] = "complete";
+        advisor_rounds.push_back(rj);
+        break;
+      }
+      if (opt.sink) opt.sink->publish(server::stage("advisor", "begin", fmt("%d connections open", res.connections - res.routed)));
+      log(fmt("advisor: %d of %d connections are open; consulting it (limit %.0f s%s)", res.connections - res.routed, res.connections, job.advisor_timeout_s,
+              job.advisor_redact ? ", names redacted" : ""));
+      const auto c = advice::consult_advisor({job.advisor, job.advisor_timeout_s}, report.json, report.aliases, "the advisor's answer");
+      rj["advisor"] = c.summary;
+      auto stop = [&](const std::string& why) {
+        log("warning: " + why + "; the run goes on without it");
+        rj["error"] = why;
+        advisor_rounds.push_back(rj);
+        if (opt.sink) {
+          opt.sink->publish(nlohmann::json{{"type", "advice.rejected"}, {"why", why}}.dump());
+          opt.sink->publish(server::stage("advisor", "end", why));
+        }
+      };
+      if (!c.ok) {
+        stop(c.error);
+        break;
+      }
+      advice::Applied ap;
+      try {
+        ap = advice::apply_advice(c.advice, lb.board);
+      } catch (const std::exception& e) {
+        stop(std::string("the advisor's advice was refused: ") + e.what());
+        break;
+      }
+      ap.set.source = "the advisor";
+      if (job.advice_variants > 0) ap.set.variants = std::clamp(job.advice_variants, 1, advice::kMaxVariants);
+      // Saved with the real names (aliases undone), so `--advice FILE` repeats this run.
+      std::string saved;
+      if (!advice_base.empty()) {
+        saved = total_rounds > 1 ? advice_base.substr(0, advice_base.size() - 5) + "." + std::to_string(round) + ".json" : advice_base;
+        std::ofstream(saved) << advice::advice_to_json(c.advice).dump(2) << "\n";
+        if (total_rounds > 1) std::ofstream(advice_base) << advice::advice_to_json(c.advice).dump(2) << "\n";
+        rj["advice_file"] = saved;
+        ap.set.source = saved;
+        log("advice saved to " + saved);
+      }
+      announce_advice(ap, "advisor");
+      rj["hints"] = ap.report["hints"];
+      route::RouterOptions o2 = opt;
+      o2.advice = ap.set;
+      o2.sink = nullptr;
+      route_t0 = std::chrono::steady_clock::now();
+      Run next = run_once(o2, round, false);
+      for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += next.work.phase[static_cast<std::size_t>(p)];
+      const bool adopt = route::route_result_better(next.res, res);
+      rj["routed_after"] = next.res.routed;
+      rj["unadvised_best_routed"] = next.unadvised_best;
+      rj["advised_best_routed"] = next.advised_best;
+      rj["adopted"] = adopt;
+      log(fmt("advisor round %d: %d -> %d routed%s", round, res.routed, next.res.routed, adopt ? " (the advised run's result is kept)" : " (no gain: the earlier result stands)"));
+      for (auto& row : next.rows) variant_rows.push_back(std::move(row));
+      previous = ap.report;
+      previous["routed_after"] = next.res.routed;
+      previous["routed_before"] = res.routed;
+      if (adopt) {
+        res = std::move(next.res);
+        ran = std::move(next.ran);
+        best_index = next.best_index;
+        best_name = std::move(next.best_name);
+      }
+      advisor_rounds.push_back(rj);
+      if (opt.sink) opt.sink->publish(server::stage("advisor", "end", fmt("%d routed", res.routed)));
+      if (res.routed >= res.connections) break;
+    }
+  }
+  if (!advisor_rounds.empty()) {
+    if (advice_summary.is_null()) advice_summary = nlohmann::json::object();
+    advice_summary["advisor"] = {{"program", job.advisor.substr(0, job.advisor.find_first_of(" \t"))}, {"rounds", advisor_rounds}};
   }
   if (kb) {
-    kb->record_run(feat, name, ran, best_index, res.routed, res.connections, res.seconds);
+    kb->record_run(feat, name, unadvised_only(ran), best_index >= route::kAdvisedIndex ? -1 : best_index, res.routed, res.connections, res.seconds);
     std::vector<learn::FailedConnection> failed;
     for (const auto& u : res.unrouted) failed.push_back({u.net, u.a, u.b, 1});
     kb->record_failures(feat.hash, failed);
@@ -739,6 +910,7 @@ RouteJobResult run_route_job(RouteJob job) {
     out.summary["refill"] = refill_summary;
     out.summary["unconnected_after_refill"] = unconnected_after_refill;
   }
+  if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
   if (!stitch_summary.is_null()) out.summary["stitch"] = stitch_summary;

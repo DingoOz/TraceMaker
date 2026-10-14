@@ -45,7 +45,31 @@ constexpr int kNoDir = 8;
 
 std::string jnum(Coord v) { return std::to_string(v); }
 
+// "[3,5]" for the failure event's blocker nets (net ids, as the other events name nets).
+std::string blocker_nets_json(const std::vector<NetId>& nets) {
+  std::string s = "[";
+  for (std::size_t i = 0; i < nets.size(); ++i) s += (i ? "," : "") + std::to_string(nets[i]);
+  return s + "]";
+}
+
 }  // namespace
+
+std::string failure_reason_code(const std::string& why) {
+  // The explanations nest ("exact check ...; negotiated: would rip too many connections at once"), the pin's own state first:
+  // a boxed-in pin is boxed in whatever the later attempts said, and a rip limit says more than the exact check before it.
+  const auto has = [&](const char* needle) { return why.find(needle) != std::string::npos; };
+  if (why.empty()) return "not_attempted";  // the budget ended before the connection was tried again
+  if (has("fixed copper encloses") || has("boxed in")) return "boxed_in";
+  if (has("track on a layer that takes no tracks")) return "layer_limit";
+  if (has("would rip a --first-nets") || has("would rip a bus") || has("would rip too many") || has("already ripped too often") ||
+      has("would rip a connection of the running"))
+    return "rip_limit";
+  if (has("exact check")) return "exact_check";
+  if (has("ripped up by")) return "ripped_not_rerouted";
+  if (has("out of budget") || has("search budget")) return "out_of_budget";
+  if (has("transaction rolled back")) return "rolled_back";
+  return "no_legal_path";
+}
 
 struct Router::Impl {
   const model::DesignRules& rules;
@@ -88,6 +112,7 @@ struct Router::Impl {
     std::vector<int> items;          // copper item indices owned by this connection
     int rips = 0, fails = 0;
     std::string why;                 // last failure explanation
+    std::vector<NetId> blockers;     // nets of the connections the last rejected route would have had to rip (stuck report, doc 17)
     bool coupled = false;            // routed as half of a differential pair: clean-up leaves it alone
     bool bus_lane = false;           // routed as a lane of its bus (leads its bundle or followed a lane): via clean-up leaves it alone
     // Boxed in even by a negotiated search, which may cross every other net's routed copper: only fixed copper
@@ -134,6 +159,8 @@ struct Router::Impl {
   }
 
   Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {
+    // Advice regions and other in-memory rule areas: part of the working copy only, so every obstacle test sees them.
+    b.zones.insert(b.zones.end(), opt.extra_zones.begin(), opt.extra_zones.end());
     // Name-pattern matching is too costly for per-cell lookups.
     net_class.reserve(b.nets.size());
     for (const auto& n : b.nets) net_class.push_back(&rules.class_for(n.name));
@@ -1516,12 +1543,19 @@ struct Router::Impl {
       }
       ok = false;
     }
+    std::sort(victims.begin(), victims.end());
+    victims.erase(std::unique(victims.begin(), victims.end()), victims.end());
+    if (!victims.empty() && current >= 0) {  // what stood in the way of this route, for the stuck report; a later success makes it moot
+      auto& bl = cs[static_cast<std::size_t>(current)].blockers;
+      bl.clear();
+      for (int v : victims) bl.push_back(cs[static_cast<std::size_t>(v)].c.net);
+      std::sort(bl.begin(), bl.end());
+      bl.erase(std::unique(bl.begin(), bl.end()), bl.end());
+    }
     if (!ok) {
       commit_why = "exact check rejected the lattice path";
       return false;
     }
-    std::sort(victims.begin(), victims.end());
-    victims.erase(std::unique(victims.begin(), victims.end()), victims.end());
     for (int v : victims)
       if (first_net_ids.count(cs[static_cast<std::size_t>(v)].c.net) && !first_net_ids.count(net)) {
         commit_why = "would rip a --first-nets connection";
@@ -4343,12 +4377,14 @@ struct Router::Impl {
 
     std::vector<std::uint8_t> best_unrouted;
     std::vector<std::string> best_why;  // reasons as they stood at the best state; later restarts overwrite cs[].why
+    std::vector<std::vector<NetId>> best_blockers;
     auto snapshot_unrouted = [&]() {
       best_unrouted.assign(cs.size(), 0);
       best_why.assign(cs.size(), {});
+      best_blockers.assign(cs.size(), {});
       for (std::size_t i = 0; i < cs.size(); ++i) {
         best_unrouted[i] = cs[i].routed ? 0 : 1;
-        if (!cs[i].routed) best_why[i] = cs[i].why;
+        if (!cs[i].routed) best_why[i] = cs[i].why, best_blockers[i] = cs[i].blockers;
       }
     };
     // Restarts that keep the lessons (design doc 06 §3.6): when negotiation stalls with budget left, rip
@@ -4670,7 +4706,9 @@ struct Router::Impl {
             const Point e = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].pos : a;
             emit("{\"type\":\"failure\",\"conn\":" + std::to_string(ci) + ",\"net\":" + std::to_string(st.c.net) + ",\"rung\":" +
                  std::to_string(pass > 0 ? 2 : 1) + ",\"cause\":\"no legal path (pass " + std::to_string(pass + 1) + ")\",\"a\":[" + jnum(a.x) + "," +
-                 jnum(a.y) + "],\"b\":[" + jnum(e.x) + "," + jnum(e.y) + "],\"blockers\":[],\"region\":[0,0,0,0]}");
+                 jnum(a.y) + "],\"b\":[" + jnum(e.x) + "," + jnum(e.y) + "],\"blockers\":[],\"blocker_nets\":" + blocker_nets_json(st.blockers) +
+                 ",\"region\":[" + jnum(std::min(a.x, e.x) - 1'500'000) + "," + jnum(std::min(a.y, e.y) - 1'500'000) + "," + jnum(std::max(a.x, e.x) + 1'500'000) + "," +
+                 jnum(std::max(a.y, e.y) + 1'500'000) + "]}");
           }
         }
         emit_stats("route");
@@ -4814,7 +4852,23 @@ struct Router::Impl {
       }
       res.failures.push_back(b.nets[static_cast<std::size_t>(st.c.net)].name + ": " + b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." +
                              pa.number + " -> " + to + "  (" + best_why[ci] + ")");
-      res.unrouted.push_back({b.nets[static_cast<std::size_t>(st.c.net)].name, b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." + pa.number, to});
+      RouteResult::Unrouted u;
+      u.net = b.nets[static_cast<std::size_t>(st.c.net)].name;
+      u.a = b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." + pa.number;
+      u.b = to;
+      u.why = best_why[ci];
+      u.reason = failure_reason_code(u.why);
+      u.rips = st.rips;
+      u.fails = st.fails;
+      u.pad_a = st.c.pad_a;
+      u.pad_b = st.c.pad_b;
+      u.pos_a = pa.pos;
+      u.pos_b = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].pos : pa.pos;
+      for (const NetId n : best_blockers[ci]) {
+        if (u.blockers.size() >= 6) break;
+        u.blockers.push_back(b.nets[static_cast<std::size_t>(n)].name);
+      }
+      res.unrouted.push_back(std::move(u));
     }
     res.seconds = elapsed();
     res.nogood_skips = nogood_skips;
@@ -4973,12 +5027,16 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     vs.push_back({std::move(name), o});
   };
   const bool breakout_list = variants > 1 && base.breakout_portfolio && looks_like_breakout(board);
+  // With advice the list is built that much longer: the advised variants are the next ones of the list (doc 17 §4), the very variants
+  // a plain run with that many more variants would run, so what advice adds is the hints and not a different draw of seeds.
+  const int advised_n = base.advice.active() ? std::clamp(base.advice.variants, 1, 8) : 0;
+  const int list_n = std::min(variants + advised_n, 64);
   if (breakout_list) {
     // Breakout portfolio (D101): every variant has fast bends and the breakout profile (transactions etc.); variant 0 is the plain
     // profile, the others draw order (shortest first, deep pins first, jittered), via cost, crossing cost, direction strength and
     // package penalty from sets with a counter-based generator, so the list is the same on every run.
     add("breakout profile", [&](RouterOptions& o) { o.bend_states = false; });
-    for (int k = 1; static_cast<int>(vs.size()) < std::min(variants, 64); ++k) {
+    for (int k = 1; static_cast<int>(vs.size()) < list_n; ++k) {
       const RngStream rg(base.seed, 0xB0B0u, static_cast<std::uint64_t>(k));
       auto pick_of = [&](std::uint64_t slot, auto... v) {
         const std::array<double, sizeof...(v)> a{static_cast<double>(v)...};
@@ -5011,7 +5069,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   // (package_pen below: tracks inside ball-grid packages cost more, doc 16 F3; +4 boards of 57 at 3 pitches on srj20)
   // Beyond the designed eight: seeded diversifications (fast bends, jittered order; via cost, crossing cost and
   // escape planning cycle with the index).
-  for (int k = 0; static_cast<int>(vs.size()) < std::min(variants, 64); ++k) {
+  for (int k = 0; static_cast<int>(vs.size()) < list_n; ++k) {
     static const double kVia[3] = {0.4, 1.0, 2.5}, kSoft[3] = {0.5, 1.0, 2.0};
     add("seeded " + std::to_string(k), [&](RouterOptions& o) {
       o.bend_states = false;
@@ -5034,6 +5092,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   } else {
     for (int i = 0; i < std::clamp(variants, 1, static_cast<int>(vs.size())); ++i) chosen.push_back(i);
   }
+  std::vector<Variant> advised_src;  // the variants that carry the advice
   {
     std::vector<Variant> sel;
     for (std::size_t k = 0; k < chosen.size(); ++k) {
@@ -5041,7 +5100,37 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       if (k > 0) sel.back().o.sink = nullptr;
       else sel.back().o.sink = base.sink;
     }
+    if (advised_n > 0) {
+      std::vector<char> taken(vs.size(), 0);
+      for (int c : chosen) taken[static_cast<std::size_t>(c)] = 1;
+      for (std::size_t i = 0; i < vs.size() && static_cast<int>(advised_src.size()) < advised_n; ++i)
+        if (!taken[i]) advised_src.push_back(vs[i]);
+      // The list had no more variants to give: advise copies of the first ones that run.
+      for (std::size_t j = 0; static_cast<int>(advised_src.size()) < advised_n && j < sel.size(); ++j) advised_src.push_back(sel[j]);
+    }
     vs = std::move(sel);
+  }
+  // Advice (doc 17): extra variants that carry the hints. They come after all the others and their indices start at kAdvisedIndex, so
+  // on a tie in the total order the unadvised variant wins: advice can only win by routing more, or the same with fewer vias or
+  // shorter copper (rule 4). Without advice nothing here runs, and the portfolio is what it was.
+  if (base.advice.active()) {
+    const auto& a = base.advice;
+    for (std::size_t j = 0; j < advised_src.size(); ++j) {
+      Variant v = advised_src[j];
+      RouterOptions& o = v.o;
+      o.sink = nullptr;
+      o.priority.insert(o.priority.end(), a.priority.begin(), a.priority.end());
+      for (const auto& f : a.first_nets)
+        if (std::find(o.first_nets.begin(), o.first_nets.end(), f) == o.first_nets.end()) o.first_nets.push_back(f);
+      o.no_track_layers |= a.no_track_layers;
+      if (o.layer_cost_pm.size() < a.layer_cost_pm.size()) o.layer_cost_pm.resize(a.layer_cost_pm.size(), 1000);
+      for (std::size_t l = 0; l < a.layer_cost_pm.size(); ++l) o.layer_cost_pm[l] = std::max(o.layer_cost_pm[l], a.layer_cost_pm[l]);
+      o.extra_zones.insert(o.extra_zones.end(), a.zones.begin(), a.zones.end());
+      o.extra_rules.insert(o.extra_rules.end(), a.rules.begin(), a.rules.end());
+      v.name += " + advice";
+      vs.push_back(std::move(v));
+      chosen.push_back(kAdvisedIndex + static_cast<int>(j));
+    }
   }
   // Spread variants over the visible GPUs (cost-to-go fields); CPU-only when none.
   if (base.gpu_device >= 0) {
@@ -5344,6 +5433,18 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
 
 int portfolio_size() { return 8; }
 
+bool route_result_better(const RouteResult& a, const RouteResult& b) {
+  if (a.routed != b.routed) return a.routed > b.routed;
+  if (a.bus_left != b.bus_left) return a.bus_left < b.bus_left;
+  if (a.vias.size() != b.vias.size()) return a.vias.size() < b.vias.size();
+  auto length = [](const RouteResult& r) {
+    double l = 0;
+    for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+    return l;
+  };
+  return length(a) < length(b);
+}
+
 WorkCounts& WorkCounts::operator+=(const WorkCounts& o) {
   expansions += o.expansions;
   flood_cells += o.flood_cells;
@@ -5376,6 +5477,12 @@ const char* work_phase_name(WorkPhase p) {
 Router::Router(const model::Board& board, const model::DesignRules& rules, RouterOptions opt) : in_(board), rules_(rules), opt_(opt) {}
 
 RouteResult Router::run() {
+  if (!opt_.extra_rules.empty()) {  // advice regions: the rules of this router only, the caller's stay as they are
+    model::DesignRules r = rules_;
+    r.custom.insert(r.custom.end(), opt_.extra_rules.begin(), opt_.extra_rules.end());
+    Impl impl(in_, r, opt_);
+    return impl.run();
+  }
   Impl impl(in_, rules_, opt_);
   return impl.run();
 }

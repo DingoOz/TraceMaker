@@ -37,6 +37,16 @@ struct RouteJob {
   bool reroute = false;
   std::string warm_pcb;           // --warm-pcb: a routed board whose tracks and vias are the starting point (kept where legal under the input's rules; nets of one connection)
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
+  // Advice (doc 17, issue #26). The engine never talks to a model: it reads an advice file, and an advisor (any program
+  // that turns a stuck report into an advice file) is consulted only when the deterministic route leaves connections open.
+  std::string advice;             // --advice FILE: typed hints (src/advice/advice.hpp); advised variants run next to the unadvised ones
+  int advice_variants = 0;        // --advice-variants N: advised variants (0 = the file's "variants", else 4)
+  std::string advisor;            // --advisor CMD: a shell command that reads the stuck report on stdin and writes advice on stdout
+  double advisor_timeout_s = 120; // --advisor-timeout S: the advisor's time limit (its wall time is not routing work)
+  int advisor_rounds = 1;         // --advisor-rounds N: consult again with the result of the advised run while connections are left
+  bool advisor_redact = false;    // --advisor-redact: the report names nets and parts by alias (N1, P3); the advice is mapped back
+  std::string advice_out;         // --advice-out FILE: where the advice that was used is saved (default: <out>.advice.json)
+  std::string stuck_report_out;   // --stuck-report FILE: write the stuck report (of the run the advisor saw, else the final one)
   // With soft zones: refill the zones after routing and route what the refill left unconnected (doc 05 §36).
   bool refill_repair = true;
   // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
