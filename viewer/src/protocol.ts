@@ -30,6 +30,8 @@ export interface BoardMsg {
   vias: ViaMsg[];
   zones: ZoneMsg[];
   footprints: FootprintMsg[];
+  /** `false` when the engine was started with --no-freeze: the viewer does not hold the scene on a stall. */
+  freeze?: boolean;
 }
 
 export interface StatsMsg {
@@ -55,6 +57,19 @@ export interface FailureMsg {
   b: XY;
   blockers?: number[];
   region?: [number, number, number, number];
+  // Issue #8 (docs/13-viewer-protocol.md "The failure verdict"): all optional, lengths in nm. Older engines send none of them.
+  blocker_nets?: number[];
+  reason?: string;
+  width_nm?: number;
+  clearance_nm?: number;
+  min_width_nm?: number;
+  gap_nm?: number;
+  gap_fixed_nm?: number;
+  gap_layer?: number;
+  at?: XY;
+  verdict?: 'placement' | 'rule' | 'contested' | 'unknown';
+  rule?: string;
+  rejected?: [number, number, number][];
 }
 
 /** Overlay grid (doc 13): row-major w*h bytes 0–255, cell size in nm, layer -1 = all layers. `scale` says how

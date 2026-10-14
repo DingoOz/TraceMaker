@@ -122,7 +122,7 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 |---|---|
 | Route a board (120 s limit) | `route board.kicad_pcb -o out.kicad_pcb --time 120` |
 | Get the same result every time | `route board.kicad_pcb -o out.kicad_pcb --work 50000000` |
-| Watch the routing live | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
+| Watch the routing live (it freezes on the stuck net with what rejected the path; Space resumes, `--no-freeze` turns that off) | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
 | Route everything again, old tracks removed | `route board.kicad_pcb -o out.kicad_pcb --reroute` |
 | Pick the options on a screen instead of typing them | `tui board.kicad_pcb -o out.kicad_pcb` |
 | Route with a saved set of options | `route board.kicad_pcb -o out.kicad_pcb --config options.toml` |

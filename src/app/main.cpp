@@ -891,6 +891,8 @@ int main(int argc, char** argv) {
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
+  bool r_nofreeze = false;
+  route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
@@ -1114,6 +1116,7 @@ int main(int argc, char** argv) {
       job.reroute = r_reroute;
       job.warm_pcb = r_warm_pcb;
       job.refill_repair = !r_no_repair;
+      job.view_freeze = !r_nofreeze;
       job.out = r_out;
       job.opt = ropt;
       job.threads = r_threads;

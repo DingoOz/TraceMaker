@@ -1,0 +1,15 @@
+# mid: origin/main 49fbd3c (CPU-only build) -> this branch (release build), bench/compare_runs.py --expect-identical
+# m16-mid-base → i8-mid
+11 boards; routed boards byte-identical: 11/11.
+Clean pass 0 → 0; mean completion 75.9% → 75.9%; router seconds 969.0 → 1112.6.
+Route CPU time 5,046 → 5,665 s (+12.3%) at the same work.
+Byte-identical boards moved -17% to +64% in CPU time (the same work: noise, or speed).
+Style (informational): bends per connection 0.6834 → 0.6834; acute angles 1 → 1; stair steps 86 → 86; short segments 2567 → 2567; off angle segments 7341 → 7341; detour ratio 1.1038 → 1.1038; long detours 382 → 382.
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+Gates: FAIL
+- LeeChee_1800: before evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: after evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: before evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: after evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: before evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: after evaluated DRC errors are capped or unavailable; gate unknown

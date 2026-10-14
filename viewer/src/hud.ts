@@ -3,6 +3,7 @@
 import { css, infernoGradient, layerColor } from './colors';
 import type { ConnState } from './connection';
 import type { StatsMsg } from './protocol';
+import { verdictColor, type Verdict } from './stall';
 
 const h = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
   const e = document.createElement(tag);
@@ -20,6 +21,15 @@ export function duration(s: number): string {
   const hh = Math.floor(t / 3600), mm = Math.floor((t % 3600) / 60), ss = t % 60;
   const p = (v: number) => String(v).padStart(2, '0');
   return hh > 0 ? `${hh}:${p(mm)}:${p(ss)}` : `${p(mm)}:${p(ss)}`;
+}
+
+/** What the stall panel shows (issue #8): one row per stalled connection, the selected one in full. */
+export interface StallView {
+  rows: { net: string; reason: string; verdict: Verdict; failures: number }[];
+  index: number;
+  label: string;
+  verdict: string;
+  rule: string;
 }
 
 export interface Toggles {
@@ -56,6 +66,8 @@ export class Hud {
   private coords = h('span', 'mono', '');
   private zoom = h('span', 'mono', '');
   readonly tooltip = h('div', 'tooltip');
+  private stallBox = h('section', 'section stall hidden');
+  private banner = h('div', 'panel stall-banner hidden');
   private fatalBox: HTMLElement | null = null;
 
   onLayerVisible: (layer: number, visible: boolean) => void = () => {};
@@ -63,6 +75,8 @@ export class Hud {
   onToggle: (key: keyof Toggles, value: boolean) => void = () => {};
   onFit: () => void = () => {};
   onHeatmap: (name: string) => void = () => {};
+  onStallDismiss: () => void = () => {};
+  onStallPick: (index: number) => void = () => {};
 
   constructor(parent: HTMLElement) {
     this.root = h('div', 'hud');
@@ -116,7 +130,7 @@ export class Hud {
     logHead.append(h('div', 'label', 'Events'), clear);
     logSec.append(logHead, this.log);
 
-    side.append(prog, layers, logSec);
+    side.append(this.stallBox, prog, layers, logSec);
     this.root.appendChild(side);
 
     // Status bar.
@@ -127,6 +141,39 @@ export class Hud {
     sb.append(fit, this.coords, this.zoom, h('span', 'hint', 'drag to pan · wheel to zoom · F fit · H high contrast · M heatmap'));
     this.root.appendChild(sb);
     this.root.appendChild(this.tooltip);
+    this.root.appendChild(this.banner);
+  }
+
+  /** The stall panel and banner (issue #8): null clears them. */
+  setStall(v: StallView | null) {
+    this.stallBox.textContent = '';
+    this.banner.textContent = '';
+    this.stallBox.classList.toggle('hidden', !v);
+    this.banner.classList.toggle('hidden', !v);
+    if (!v) return;
+    const cur = v.rows[v.index];
+    this.banner.append(
+      h('span', 'stall-dot'),
+      h('span', 'stall-title', `Stalled on ${cur?.net ?? '?'}`),
+      h('span', 'muted', `${v.index + 1} of ${v.rows.length} · [ ] other connections · Space resumes`),
+    );
+    const head = h('div', 'section-head');
+    const resume = h('button', 'btn', 'Resume');
+    resume.title = 'Release the scene (Space)';
+    resume.onclick = () => this.onStallDismiss();
+    head.append(h('div', 'label', 'Stalled'), resume);
+    this.stallBox.appendChild(head);
+    const list = h('div', 'stall-list');
+    v.rows.forEach((r, i) => {
+      const row = h('div', `stall-row${i === v.index ? ' on' : ''}`);
+      const chip = h('span', 'chip-verdict', r.verdict);
+      chip.style.background = verdictColor(r.verdict);
+      row.append(chip, h('span', 'stall-net', r.net), h('span', 'muted mono', `${r.reason || '–'} ×${r.failures}`));
+      row.onclick = () => this.onStallPick(i);
+      list.appendChild(row);
+    });
+    this.stallBox.append(list, h('div', 'stall-label', v.label), h('div', 'stall-verdict', v.verdict));
+    if (v.rule) this.stallBox.appendChild(h('div', 'hint', v.rule));
   }
 
   setConnection(s: ConnState) {

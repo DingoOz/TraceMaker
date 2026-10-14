@@ -1,0 +1,10 @@
+# planes-soft: origin/main 49fbd3c (CPU-only build) -> this branch (release build), bench/compare_runs.py --expect-identical
+# m16-planes-soft-base → i8-planes-soft
+8 boards; routed boards byte-identical: 8/8.
+Clean pass 2 → 2; mean completion 91.3% → 91.3%; router seconds 210.5 → 122.4.
+Route CPU time 601 → 425 s (-29.3%) at the same work.
+Byte-identical boards moved -43% to -15% in CPU time (the same work: noise, or speed).
+Style (informational): bends per connection 0.8687 → 0.8687; acute angles 0 → 0; stair steps 10 → 10; short segments 144 → 144; off angle segments 307 → 307; detour ratio 1.0812 → 1.0812; long detours 24 → 24.
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- every byte-identical board moved the same way, -43% to -15%: a change in speed (binary or machine), not scatter; run one binary twice to tell which
+Gates: pass
