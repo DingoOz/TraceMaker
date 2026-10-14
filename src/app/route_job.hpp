@@ -37,7 +37,7 @@ struct RouteJob {
   bool footprint_warn_only = false;
   analysis::FootprintCheckOptions footprint_opt;
   bool view_freeze = true;        // the viewer holds the scene on a routing stall (issue #8); --no-freeze says false in the board snapshot
-  std::string view_host = "127.0.0.1";  // loopback unless asked: a viewer on any other address needs a token (issue #4, D116)
+  std::string view_host;          // "" = $TM_VIEW_HOST, else loopback: a viewer on any other address needs a token (issue #4, D116)
   std::string view_token;         // the token for a non-loopback viewer (empty = a random one)
   bool view_insecure = false;     // a non-loopback viewer without a token (--view-insecure)
   int view_port = 8766;

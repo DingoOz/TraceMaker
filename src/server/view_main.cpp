@@ -343,7 +343,7 @@ class Demo {
 
 int main(int argc, char** argv) {
   CLI::App app{"TraceMaker live viewer server"};
-  std::string board_path, host = "127.0.0.1", web, token;
+  std::string board_path, host = server::default_host(), web, token;
   bool insecure = false;
   int port = 8766;
   bool demo = false, keep = false, loop = false;
@@ -351,7 +351,7 @@ int main(int argc, char** argv) {
   double speed = 1.0;
   app.add_option("board", board_path, ".kicad_pcb file to show")->required()->check(CLI::ExistingFile);
   app.add_option("--port", port, "TCP port (default 8766)")->check(CLI::Range(0, 65535));
-  app.add_option("--host", host, "bind address (default 127.0.0.1: this machine only; 0.0.0.0 or a LAN address lets other machines connect and then needs a token)");
+  app.add_option("--host", host, "bind address (default $TM_VIEW_HOST, else 127.0.0.1: this machine only; 0.0.0.0 or a LAN address lets other machines connect and then needs a token)");
   app.add_option("--token", token, "token for a viewer other machines can reach (16+ characters; default a random one, printed in the URL)");
   app.add_flag("--insecure", insecure, "serve a viewer other machines can reach WITHOUT a token");
   app.add_option("--web", web, "directory of the built viewer (default <repo>/viewer/dist)");

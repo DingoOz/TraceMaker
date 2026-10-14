@@ -38,8 +38,10 @@
   - Always: a WebSocket upgrade that names an `Origin` must come from the server's own origin. Browsers do not apply the same-origin rule to WebSockets, so without
     this a web page open in the user's browser could read the stream of a viewer on localhost. With a loopback bind and no token the `Host` header must also name
     this machine (a page on `evil.example` whose name resolves to `127.0.0.1` would otherwise pass the origin check: DNS rebinding).
-  - At most 16 WebSocket viewers (the next gets 503) and 128 open HTTP connections (beyond that a connection is closed at once). Answers carry `Referrer-Policy:
-    no-referrer`, `X-Content-Type-Options: nosniff` and `X-Frame-Options: DENY`; the token is compared in constant time.
+  - At most 16 WebSocket viewers (counted from the upgrade, so a burst cannot overshoot; the next gets 503) and 128 open HTTP connections, at most 16 of them from one address (a host
+    that opens idle sockets cannot use up the others' share before it has authenticated; many addresses together still can: this is not a defence against flooding). The cookie is named per port
+    (`tm_token_<port>`: cookies ignore ports). A `Host` that is not a name or address with a numeric port is refused. Answers carry `Referrer-Policy: no-referrer`,
+    `X-Content-Type-Options: nosniff` and `X-Frame-Options: DENY`; the token is compared in constant time.
   - Not built: TLS (the token and the stream cross the network unencrypted: on an untrusted network keep the loopback bind and use an SSH tunnel), accounts, the
     control channel. The stream is read-only; nothing a client sends is acted on.
 

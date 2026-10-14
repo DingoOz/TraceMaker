@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdlib>
 #include <cstdio>
 #include <deque>
 #include <filesystem>
@@ -68,7 +69,8 @@ class Hub;
 // One WebSocket client. All members are touched only from the server's single I/O thread.
 class WsSession : public std::enable_shared_from_this<WsSession> {
  public:
-  WsSession(tcp::socket&& socket, Hub& hub) : ws_(std::move(socket)), hub_(hub) {}
+  WsSession(tcp::socket&& socket, Hub& hub);
+  ~WsSession();
 
   void start(http::request<http::string_body> req);
   void enqueue(const Msg& m);
@@ -105,6 +107,21 @@ class Hub {
   std::string token_;        // "" = no token required
   bool loopback_ = true;     // bound to a loopback address
   std::atomic<std::size_t> http_open_{0};
+  std::atomic<std::size_t> ws_alive_{0};  // WebSocket sessions from their construction (an upgrade being accepted counts) to their destruction
+  std::string cookie_name_ = "tm_token";   // per port: cookies ignore ports, so two viewers on one host would overwrite each other's
+  std::mutex addr_mu_;
+  std::map<std::string, std::size_t> per_addr_;  // open HTTP connections per remote address
+  bool take_address(const std::string& a) {
+    std::lock_guard<std::mutex> lk(addr_mu_);
+    auto& n = per_addr_[a];
+    if (n >= opts_.max_connections_per_address) return false;
+    ++n;
+    return true;
+  }
+  void release_address(const std::string& a) {
+    std::lock_guard<std::mutex> lk(addr_mu_);
+    if (const auto it = per_addr_.find(a); it != per_addr_.end() && --it->second == 0) per_addr_.erase(it);
+  }
   net::io_context ioc_{1};
   tcp::acceptor acceptor_{ioc_};
   std::set<std::shared_ptr<WsSession>> sessions_;
@@ -134,13 +151,20 @@ class Hub {
         beast::error_code cec;  // too many open connections: this one is closed at once, the others are not affected
         s.close(cec);
       } else {
-        start_http(std::move(s));
+        beast::error_code rec;
+        const std::string addr = s.remote_endpoint(rec).address().to_string();
+        if (rec || !take_address(addr)) {  // one address holds its share already: it cannot crowd the others out
+          beast::error_code cec;
+          s.close(cec);
+        } else {
+          start_http(std::move(s), addr);
+        }
       }
       accept();
     });
   }
 
-  void start_http(tcp::socket&& s);
+  void start_http(tcp::socket&& s, const std::string& addr);
 
   void post_message(std::string json) {
     bool post = false;
@@ -265,6 +289,9 @@ class Hub {
 };
 
 // ---------------------------------------------------------------------------------------------------------
+WsSession::WsSession(tcp::socket&& socket, Hub& hub) : ws_(std::move(socket)), hub_(hub) { hub_.ws_alive_.fetch_add(1); }
+WsSession::~WsSession() { hub_.ws_alive_.fetch_sub(1); }
+
 void WsSession::start(http::request<http::string_body> req) {
   ws_.set_option(websocket::stream_base::timeout::suggested(beast::role_type::server));
   ws_.set_option(websocket::stream_base::decorator(
@@ -432,15 +459,30 @@ bool ct_equal(std::string_view a, std::string_view b) {
   return diff == 0;
 }
 
-// "Host: [::1]:8766" -> "::1", "LocalHost:8766" -> "localhost"
-std::string host_name(std::string_view hostport) {
+// "Host: [::1]:8766" -> "::1", "LocalHost:8766" -> "localhost". A value that is not a host name or an address with an optional numeric port is
+// nullopt (a browser never sends one; a name with an "@" or a "," in it is somebody trying something).
+std::optional<std::string> host_name(std::string_view hostport) {
   std::string h = lower_ascii(hostport);
+  auto digits = [](std::string_view s) { return !s.empty() && s.size() <= 5 && std::all_of(s.begin(), s.end(), [](char c) { return c >= '0' && c <= '9'; }); };
+  std::string name;
   if (!h.empty() && h.front() == '[') {
     const auto close = h.find(']');
-    return close == std::string::npos ? h : h.substr(1, close - 1);
+    if (close == std::string::npos) return std::nullopt;
+    name = h.substr(1, close - 1);
+    const std::string rest = h.substr(close + 1);
+    if (!rest.empty() && !(rest.front() == ':' && digits(std::string_view(rest).substr(1)))) return std::nullopt;
+    if (name.empty() || !std::all_of(name.begin(), name.end(), [](char c) { return std::isxdigit(static_cast<unsigned char>(c)) || c == ':' || c == '.'; })) return std::nullopt;
+    return name;
   }
-  if (const auto colon = h.rfind(':'); colon != std::string::npos && h.find(':') == colon) h.resize(colon);
-  return h;
+  const auto colon = h.find(':');
+  if (colon != std::string::npos) {
+    if (h.find(':', colon + 1) != std::string::npos || !digits(std::string_view(h).substr(colon + 1))) return std::nullopt;
+    name = h.substr(0, colon);
+  } else {
+    name = h;
+  }
+  if (name.empty() || !std::all_of(name.begin(), name.end(), [](char c) { return std::isalnum(static_cast<unsigned char>(c)) || c == '.' || c == '-'; })) return std::nullopt;
+  return name;
 }
 
 bool loopback_name(const std::string& name) {
@@ -464,12 +506,13 @@ std::optional<std::string> query_token(std::string_view target) {
   return std::nullopt;
 }
 
-std::optional<std::string> cookie_token(std::string_view cookies) {
+std::optional<std::string> cookie_token(std::string_view cookies, const std::string& name) {
+  const std::string prefix = name + "=";
   while (!cookies.empty()) {
     while (!cookies.empty() && (cookies.front() == ' ' || cookies.front() == ';')) cookies.remove_prefix(1);
     const auto semi = cookies.find(';');
     const std::string_view kv = cookies.substr(0, semi);
-    if (kv.starts_with("tm_token=")) return std::string(kv.substr(9));
+    if (kv.starts_with(prefix)) return std::string(kv.substr(prefix.size()));
     if (semi == std::string_view::npos) break;
     cookies.remove_prefix(semi + 1);
   }
@@ -481,7 +524,10 @@ enum class Access { Ok, OkNewCookie, Unauthorized, BadHost, BadOrigin };
 template <class Body>
 Access check_access(const Hub& hub, const http::request<Body>& req, bool upgrade) {
   const std::string_view host = req[http::field::host];
-  if (hub.token_.empty() && hub.loopback_ && !loopback_name(host_name(host))) return Access::BadHost;
+  if (hub.token_.empty() && hub.loopback_) {
+    const auto name = host_name(host);
+    if (!name || !loopback_name(*name)) return Access::BadHost;
+  }
   if (upgrade) {
     if (const std::string_view origin = req[http::field::origin]; !origin.empty()) {
       const auto scheme = origin.find("://");
@@ -493,7 +539,7 @@ Access check_access(const Hub& hub, const http::request<Body>& req, bool upgrade
   if (hub.token_.empty()) return Access::Ok;
   const std::string_view target(req.target().data(), req.target().size());
   if (const auto t = query_token(target); t && ct_equal(*t, hub.token_)) return Access::OkNewCookie;
-  if (const auto c = cookie_token(req[http::field::cookie]); c && ct_equal(*c, hub.token_)) return Access::Ok;
+  if (const auto c = cookie_token(req[http::field::cookie], hub.cookie_name_); c && ct_equal(*c, hub.token_)) return Access::Ok;
   return Access::Unauthorized;
 }
 
@@ -616,8 +662,11 @@ http::message_generator handle_request(const std::string& root, http::request<Bo
 
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
  public:
-  HttpSession(tcp::socket&& s, Hub& hub) : stream_(std::move(s)), hub_(hub) { hub_.http_open_.fetch_add(1); }
-  ~HttpSession() { hub_.http_open_.fetch_sub(1); }
+  HttpSession(tcp::socket&& s, Hub& hub, std::string addr) : stream_(std::move(s)), hub_(hub), addr_(std::move(addr)) { hub_.http_open_.fetch_add(1); }
+  ~HttpSession() {
+    hub_.release_address(addr_);
+    hub_.http_open_.fetch_sub(1);
+  }
 
   void run() {
     net::dispatch(stream_.get_executor(), [self = shared_from_this()] { self->do_read(); });
@@ -644,7 +693,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
     const bool upgrade = websocket::is_upgrade(req);
     const Access access = check_access(hub_, req, upgrade);
     std::string cookie;
-    if (access == Access::OkNewCookie) cookie = "tm_token=" + hub_.token_ + "; Path=/; HttpOnly; SameSite=Strict";
+    if (access == Access::OkNewCookie) cookie = hub_.cookie_name_ + "=" + hub_.token_ + "; Path=/; HttpOnly; SameSite=Strict";
     if (access == Access::Unauthorized || access == Access::BadHost || access == Access::BadOrigin) {
       const bool unauth = access == Access::Unauthorized;
       const http::status st = unauth ? http::status::unauthorized : http::status::forbidden;
@@ -658,7 +707,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
     }
     if (upgrade) {
       if (target == "/ws" || target.starts_with("/ws?")) {
-        if (hub_.clients_.load() >= hub_.opts_.max_clients) {
+        if (hub_.ws_alive_.load() >= hub_.opts_.max_clients) {
           beast::async_write(stream_, text_response(req, http::status::service_unavailable, "text/plain", "too many viewers are connected\n"),
                              [self = shared_from_this()](beast::error_code, std::size_t) {
                                beast::error_code sec;
@@ -686,11 +735,12 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
 
   beast::tcp_stream stream_;
   Hub& hub_;
+  std::string addr_;  // the remote address this connection is counted under
   beast::flat_buffer buf_;
   std::optional<http::request_parser<http::string_body>> parser_;
 };
 
-void Hub::start_http(tcp::socket&& s) { std::make_shared<HttpSession>(std::move(s), *this)->run(); }
+void Hub::start_http(tcp::socket&& s, const std::string& addr) { std::make_shared<HttpSession>(std::move(s), *this, addr)->run(); }
 
 // Address other machines on the LAN can use to reach this host (no packet is sent by a UDP connect).
 std::string lan_address() {
@@ -705,6 +755,11 @@ std::string lan_address() {
 }
 
 }  // namespace
+
+std::string default_host() {
+  const char* e = std::getenv("TM_VIEW_HOST");
+  return e != nullptr && *e != '\0' ? std::string(e) : std::string("127.0.0.1");
+}
 
 std::string default_web_root() { return (fs::path(TM_SOURCE_DIR) / "viewer" / "dist").string(); }
 
@@ -737,6 +792,7 @@ ViewerServer::ViewerServer(ServerOptions opts) : impl_(std::make_unique<Impl>(st
     throw std::runtime_error("viewer server: cannot listen on " + h.opts_.host + ":" + std::to_string(h.opts_.port) +
                              ": " + ec.message());
   impl_->port = h.acceptor_.local_endpoint().port();
+  h.cookie_name_ = "tm_token_" + std::to_string(impl_->port);
   h.accept();
   impl_->thread = std::thread([&h] {
     auto guard = net::make_work_guard(h.ioc_);
@@ -772,7 +828,7 @@ std::string ViewerServer::url() const {
   const std::string& host = impl_->hub.opts_.host;
   const std::string shown = (host == "0.0.0.0" || host == "::") ? lan_address() : host;
   const std::string& token = impl_->hub.token_;
-  return "http://" + shown + ":" + std::to_string(impl_->port) + "/" + (token.empty() ? "" : "?token=" + token);
+  return "http://" + (shown.find(':') != std::string::npos ? "[" + shown + "]" : shown) + ":" + std::to_string(impl_->port) + "/" + (token.empty() ? "" : "?token=" + token);
 }
 
 const std::string& ViewerServer::token() const { return impl_->hub.token_; }

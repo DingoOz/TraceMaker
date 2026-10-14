@@ -240,7 +240,7 @@ RouteJobResult run_route_job(RouteJob job) {
   std::unique_ptr<server::ViewerServer> server;
   if (job.view) {
     server::ServerOptions so;
-    so.host = job.view_host;
+    so.host = job.view_host.empty() ? server::default_host() : job.view_host;
     so.port = static_cast<std::uint16_t>(job.view_port);
     so.token = job.view_token;
     so.allow_open = job.view_insecure;

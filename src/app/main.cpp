@@ -331,7 +331,7 @@ int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bo
 // The viewer's address and who may use it (issue #4, D116): this machine only unless asked, a token when it is not.
 tmk::server::ServerOptions viewer_options(const std::string& host, int port, const std::string& token, bool insecure) {
   tmk::server::ServerOptions so;
-  so.host = host;
+  so.host = host.empty() ? tmk::server::default_host() : host;
   so.port = static_cast<std::uint16_t>(port);
   so.token = token;
   so.allow_open = insecure;
@@ -987,8 +987,7 @@ int main(int argc, char** argv) {
   route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host,
-                    "Viewer bind address (default 127.0.0.1: this machine only; env TM_VIEW_HOST). 0.0.0.0 or a LAN address lets other machines connect, and then a token is required")
-      ->envname("TM_VIEW_HOST");
+                    "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1: this machine only). 0.0.0.0 or a LAN address lets other machines connect, and then a token is required");
   route->add_option("--view-token", r_job.view_token, "Token for a viewer that other machines can reach (16+ characters; default: a random one, printed in the URL)");
   route->add_flag("--view-insecure", r_job.view_insecure, "Serve a viewer that other machines can reach WITHOUT a token (anyone who can reach the port can watch the board)");
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
@@ -1057,7 +1056,7 @@ int main(int argc, char** argv) {
   buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
   buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
   auto* rp_cmd = app.add_subcommand("return-paths", "Reference-return audit of high-speed nets: copper under each trace on its reference layer, the detour round voids, layer changes without a stitch (read-only; doc 05 §42)");
-  std::string rp_board, rp_json, rp_host = "127.0.0.1", rp_token;
+  std::string rp_board, rp_json, rp_host, rp_token;
   tmk::analysis::ReturnPathOptions rp_opt;
   std::vector<std::string> rp_refs;
   bool rp_strict = false, rp_view = false, rp_refill = false, rp_norefill = false, rp_insecure = false;
@@ -1078,11 +1077,11 @@ int main(int argc, char** argv) {
   rp_cmd->add_flag("--strict", rp_strict, "Exit 4 when any net has a warning (a threshold or a missing stitch)");
   rp_cmd->add_flag("--view", rp_view, "Serve the board and the return paths to the live viewer (until interrupted)");
   rp_cmd->add_option("--view-port", rp_port, "Viewer port (default 8766)");
-  rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default 127.0.0.1; env TM_VIEW_HOST; another address needs a token)")->envname("TM_VIEW_HOST");
+  rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1; another address needs a token)");
   rp_cmd->add_option("--view-token", rp_token, "Token for a viewer other machines can reach (16+ characters; default a random one)");
   rp_cmd->add_flag("--view-insecure", rp_insecure, "A viewer other machines can reach, without a token");
   auto* fc_cmd = app.add_subcommand("footprint-check", "Check every footprint against datasheet land patterns from a reference library of trusted brands: pad count, positions, sizes, drills, mirroring (read-only; doc 05 §43)");
-  std::string fc_board, fc_refs, fc_trusted, fc_json, fc_host = "127.0.0.1", fc_token;
+  std::string fc_board, fc_refs, fc_trusted, fc_json, fc_host, fc_token;
   tmk::analysis::FootprintCheckOptions fc_opt;
   bool fc_trust_all = false, fc_strict = false, fc_all = false, fc_view = false, fc_insecure = false;
   int fc_port = 8766;
@@ -1101,7 +1100,7 @@ int main(int argc, char** argv) {
   fc_cmd->add_flag("--strict", fc_strict, "Exit 4 on warnings too (a reference from an untrusted brand, a peg the datasheet does not show)");
   fc_cmd->add_flag("--view", fc_view, "Serve the board and the findings to the live viewer (until interrupted)");
   fc_cmd->add_option("--view-port", fc_port, "Viewer port (default 8766)");
-  fc_cmd->add_option("--view-host", fc_host, "Viewer bind address (default 127.0.0.1; env TM_VIEW_HOST; another address needs a token)")->envname("TM_VIEW_HOST");
+  fc_cmd->add_option("--view-host", fc_host, "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1; another address needs a token)");
   fc_cmd->add_option("--view-token", fc_token, "Token for a viewer other machines can reach (16+ characters; default a random one)");
   fc_cmd->add_flag("--view-insecure", fc_insecure, "A viewer other machines can reach, without a token");
   auto* advice_cmd = app.add_subcommand("advice-check", "Check an advice file (doc 17) against a board: the refusals `route --advice` would give, and what each hint does");
