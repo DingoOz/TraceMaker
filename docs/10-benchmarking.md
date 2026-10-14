@@ -29,10 +29,50 @@ the upstream repositories, not by a complete download and test run.
 
 ### Building unrouted fixtures
 
-`strip_routing` in `bench/prepare_dac2020.py` removes top-level `segment`/`arc`/`via` nodes and keeps everything
-else byte for byte (zones and their fills too). `bench/prepare_demos.py` uses it to turn KiCad demo projects and
-test boards into `bench/run.py` fixtures (`<out>/<name>/unrouted.kicad_pcb` with the project and custom rules
-beside it). The place-and-route sets (unlocked footprints reset to a pile) are built by `bench/make_place_sets.py`.
+`strip_routing` in `bench/prepare_dac2020.py` removes every top-level `segment`/`arc`/`via` node and keeps
+everything else byte for byte, including zones. Both DAC2020 and `bench/prepare_demos.py` then prepare the
+unrouted derivative through `bench/prepare_inputs.py`: private native `pcbnew.LoadBoard`/`SaveBoard`
+conversion **without refill**, deterministic identity repair and item ordering, then native refill/DRC.
+Unique nonzero native source UUIDs are preserved; loader-generated, missing, zero and duplicate identities
+are repaired before the first authoritative refill. Stale fill caches are discarded, not zone geometry.
+This does **not** change the all-tracks/arcs/vias strip policy or add thermal-array retention.
+
+Fixtures contain `<out>/<name>/unrouted.kicad_pcb`, byte-exact copies of the source `.kicad_pro`/`.kicad_dru`
+when present, and `preparation.drc.json`. DAC2020 also keeps its byte-exact human `raw.kicad_pcb` and Specctra
+fixture. Preparation never rewrites source/human boards. Work is private and the runnable board is published
+last; failure removes only generated unrouted board/rule/report artifacts, so an earlier successful board
+cannot masquerade as the requested input. Missing current rules do not reuse a previous fixture's rules.
+DRC findings are retained as evidence, not treated as a requirement that the unrouted input be clean.
+
+**Tools and reproducibility (D107).** Host Python 3.8+ and its standard library suffice; conversion additionally
+needs KiCad 10's `pcbnew` Python bindings, with the exact major.minor.patch version of the selected CLI.
+`KICAD_CLI` and `KICAD_PYTHON` select executable paths (not shell command strings). Without overrides,
+preparation finds `kicad-cli` on PATH, falling back to `scripts/kicad-cli`; the repository ships an executable
+`scripts/kicad-python` companion using the same `TRACEMAKER_KICAD_IMAGE` (default `kicad/kicad:10.0.6`),
+home/current-directory mounts and caller UID/GID as the CLI wrapper. Native CLI installs
+use the host Python, or KiCad.app's bundled Python on macOS; set `KICAD_PYTHON` when `pcbnew` belongs to a
+different interpreter. A version mismatch fails before loading/refilling the board. For Docker, source,
+checkout and output must be under `$HOME` or the mounted current directory (the wrappers' mount contract);
+no personal paths or additional packages are required.
+
+With the same source/rule bytes, fixture name and native tool versions, repeated preparations should yield
+byte-identical **boards and rules**. Native DRC report ordering/counts are not promised byte-identical
+(§4, judge noise); report hashes are not a determinism claim. Native conversion/refill intentionally changes
+the prepared input compared with the old strip-only scripts: rebuild inputs and measure fresh paired
+baselines against the same new fixtures, never compare old cached inputs with newly prepared ones.
+
+Fixture-independent controls (own generated legacy board, no downloaded/redistributed PCB) are:
+
+```
+python3 tests/integration/fixture_preparation.py
+python3 tests/integration/fixture_preparation_native.py
+```
+
+The native control first converts legacy zero-timestamp zones without refill and reports the missing/zero
+zone IDs, then invokes the actual demo entrypoint twice and compares board/project/custom-rule bytes,
+nonzero unique identities, preserved zone geometry, native fill presence and untouched source bytes. KiCad
+unavailability skips the native test; conversion/preparation failures do not. The place-and-route sets
+(unlocked footprints reset to a pile) remain built by `bench/make_place_sets.py`.
 
 ## 2. Metrics per board
 
