@@ -80,7 +80,7 @@ unavailability skips the native test; conversion/preparation failures do not. Th
 |---|---|
 | **Clean pass** | 100% connections routed **and** zero added KiCad DRC errors (input vs output, `kicad-cli pcb drc`) |
 | Completion | routed connections / routable connections (excluding pins proved dead) |
-| Added DRC errors | by KiCad violation type |
+| Added DRC errors | physical violation multiset difference, grouped by KiCad type for display (D106) |
 | Vias, wirelength, bends | totals; also normalised to the reference routing where it exists |
 | Wall time, work units | engine-reported, with hardware recorded: the time is the whole route job (every portfolio variant, D86), the work units (`expansions`) are the winning variant's only |
 | Work profile | per phase (setup, first pass, negotiation, clean-up): expansions, flood cells, searches, cell checks, fixed-copper checks, cost-field cells and fields, commits, rips; deterministic, in the route JSON as `work` (winner) and `work_all_variants` (D88) |
@@ -158,6 +158,36 @@ interval). Seeds: best-of-1 is the headline; best-of-5 is reported separately wh
 **Judge noise.** KiCad's `solder_mask_bridge` count can differ between runs on byte-identical boards when zones
 are refilled (StickHub: 17, 15 and 13); read a change in that type alone as noise.
 
+**Native error gates (D106).** `bench/drc_judge.py` compares physical error instances, not totals by type:
+removing one clearance cannot cancel a new clearance somewhere else. Item ordering and regenerated UUIDs or
+footprint references do not change an identity when positions are available; kind, net, layer, geometry
+description and position do. Coordinates and dimensions are normalised to nanometres from report units;
+items without positions use UUIDs as a fallback. Duplicate findings retain their multiplicity.
+Violation-level layer context is also identity: multilayer zone/PTH pad labels may not identify the affected
+layer of a thermal defect. Changing its layer is a new instance; changing its minimum/actual spoke-count
+diagnostic on the same layer is not.
+
+Routing gates include error-severity `starved_thermal` and `isolated_copper` even if KiCad names only pads or
+zones: routed copper can damage a refill without appearing in its report. Other pad/graphic-only changes
+remain diagnostic, including pad-only solder-mask refill noise and net-propagation clearance changes.
+Placement compares its existing placement-error types by instance, excluding internal errors of one rigid
+footprint; thermal/island findings are evaluated because they depend on surrounding zones, not only that
+footprint. Routing's existing immutable/type exclusions otherwise stay unchanged.
+
+KiCad 10.0.x reports may truncate at 499 clearance findings and 199 findings of other types, across severities
+(constants and assumption isolated in the helper). Reaching a cap on either side makes that type's difference
+unknown; it is not reported as an exact added count. A capped evaluated type with errors on either side sets
+`error_gate` (or `place_error_gate`) to `unknown`, never clean or a passing comparison, even if the visible
+errors name only pads. Warning-only caps and routing-immutable types remain diagnostic, with evaluated and
+non-evaluated capped types recorded separately. `added_errors`, quality's `router_errors`, and the existing
+CLI options retain their meanings and type-count display, now backed by instance differences.
+
+**Connectivity limitation.** Completion deliberately retains the existing ratio from KiCad's
+`unconnected_items` list. That list may truncate at 499; `connectivity_capped` discloses this independently
+of evaluated error caps. The ratio is not an exact connectivity measurement at saturation. No uncapped
+connectivity worker or new completion definition is included here.
+
+
 ## 5. Gates (used by the roadmap)
 
 1. No board in `quick` gets worse in clean pass or completion (`compare_runs.py`).
@@ -175,8 +205,9 @@ are refilled (StickHub: 17, 15 and 13); read a change in that type alone as nois
 - `bench/run.py` samples PCBench boards per Freerouting tier, routes each with a binary snapshot, judges with
   `kicad-cli pcb drc`, and compares with Freerouting's published per-board results (`benchmarks.json`).
 - Samples: tier A 40 of 453 boards, tier B 40 of 560, tier C 30 of 122, tier D all 22 (seed 1).
-- Added errors count only violations involving a track, via or arc (decision A16); other new KiCad reports are
-  kept as diagnostics.
+- Added errors compare physical instances involving a track, via or arc (decision A16), plus error-severity
+  thermal/island findings after refill (D106); other new pad-only reports remain diagnostics. Evaluated capped
+  error reports are unknown, not clean.
 - Results go to `bench/results/<run>/` and the progress site's benchmark panel.
 - Latest (`final8`): tier A 100% clean, B 65.0%, C 56.7%, D 50.0% (Freerouting 2.5.0-RC12: 100%, 50.0%, 46.7%,
   36.4%); no router-introduced DRC errors on any board.
@@ -229,8 +260,9 @@ ratsnest the board implies = connections `tracemaker route` reports. All 400 con
 `bench/sets/srj19.txt` and `srj20.txt` name the fixture directory in a `#fixtures:` line, which `bench/run.py`
 now reads, so the sets run by name.
 
-**Judges.** The primary judge is unchanged: KiCad's DRC with the board's rules; a board is a clean pass when
-nothing is unconnected and no error involving a track or via was added. The second score is tscircuit's own.
+**Judges.** The primary judge is KiCad's DRC with the board's rules; a board is a clean pass when
+nothing is unconnected, no evaluated error instance was added, and no evaluated error type is capped (D106).
+The second score is tscircuit's own.
 `bench/srj_score.py` exports every routed board with `tracemaker srj-export` and runs tscircuit's
 `evaluateRelaxedDrc` on it: the function behind the "relaxed DRC" column of its dashboard, from
 tscircuit-autorouter `5bcf774` (`lib/testing/`) with `@tscircuit/checks` 0.0.233, called as its benchmark calls it
@@ -338,3 +370,23 @@ Update, same day (doc 16 §11): with preferred layer directions and the package 
 gives **srj19 181/200 (90.5 %)** and **srj20 124/200 (62 %)**; the 16-variant portfolio (50 M each, 16 threads, median 164–168 s) closes 7 more on
 srj19 (**188/200 = 94.0 %**, tscircuit 92.0 %) and 9 more on srj20 (**133/200 = 66.5 %**, tscircuit 78.5 %). `fanout31`: 57 of the 60 cases run solved
 (tscircuit 48/72); AM3352 is not solved (6–23 connections open at best; tscircuit solves none of its 12 cases either).
+
+## 9. M15: negotiation as transactions (2026-10-11 evening, doc 16 §12, doc 05 §41)
+
+The breakout profile (D100: transactions, reach-check 2, flood weight 25 %, field prefill and cache) is automatic on breakout boards, so the commands of §8
+need no extra options and their results change: one variant at 30 M work gives **srj19 178/200** (was 181 at 50 M, 46 → 32 s CPU per board) and
+**srj20 129/200** (was 124 at 50 M, 67 → 59 s). The portfolio is the breakout portfolio with four rounds (D101):
+
+```
+python3 bench/run.py --set srj20 --work 30000000 --route-args "--variants 1 --no-gpu --fast-bends"
+python3 bench/run.py --set srj20-m15fail --work 30000000 --jobs 3 --threads 16 --route-args "--variants 16 --no-gpu"        # 71 boards: +19
+python3 bench/run.py --set srj20-m15fail3 --work 70000000 --time 330 --jobs 3 --threads 16 --route-args "--variants 16 --no-gpu"   # 24 boards: +8
+```
+
+Sets added: `srj20-p2fail` (76: the boards P2 leaves open), `srj20-e39` (39 of them), `srj20-m15fail` (71), `srj20-m15fail2` (52), `srj20-m15fail3` (24 of
+fewer than 70 connections), `srj20-m15fail4` (16), `srj19-m15fail` (22), `srj20-rem67`. Results: srj19 **191/200 = 95.5 %** (178 + 13), srj20 **160/200 = 80.0 %** (156 within 330 s)
+(129 + 19 + 8 + 4 with GPUs and 150 M, up to 433 s), tscircuit 184 and 157. These are composites of single-variant and portfolio runs (the wall limit of the last step makes it
+non-deterministic: 330 s, 16 threads; tscircuit's 360 s, 32 vCPU). `quick` and `mid` are byte-identical to the baseline outputs.
+
+Work-budget note: on a breakout board a reachability-flood cell counts a quarter of an expansion against `--work`, so `--work` budgets from §7–§8 are not comparable
+with these (30 M here is about 100–140 s of CPU per hard board; 50 M plain was 67–115 s).

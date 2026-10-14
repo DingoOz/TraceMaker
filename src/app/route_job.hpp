@@ -35,6 +35,7 @@ struct RouteJob {
   // --reroute: remove every unlocked track and via first and route the whole board again (locked copper, arcs and
   // zones stay; rule 6).
   bool reroute = false;
+  std::string warm_pcb;           // --warm-pcb: a routed board whose tracks and vias are the starting point (kept where legal under the input's rules; nets of one connection)
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
   // With soft zones: refill the zones after routing and route what the refill left unconnected (doc 05 §36).
   bool refill_repair = true;

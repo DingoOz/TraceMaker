@@ -1,0 +1,18 @@
+# srj20 boards of fewer than 70 connections still open after the 70 M portfolio run (M15, doc 16 §12): 16
+#fixtures: bench/data/tscircuit/boards/srj20
+sample031
+sample037
+sample054
+sample056
+sample094
+sample095
+sample100
+sample102
+sample117
+sample118
+sample119
+sample136
+sample142
+sample173
+sample174
+sample191

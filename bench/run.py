@@ -27,7 +27,6 @@ import json
 import os
 import pathlib
 import random
-import re
 import shutil
 import subprocess
 import sys
@@ -35,6 +34,7 @@ import tempfile
 import threading
 import time
 from collections import Counter
+import drc_judge
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
@@ -47,13 +47,7 @@ PLACE_THREADS = 1
 WORK = 0         # --work N: deterministic work budget per board (0: wall-clock --time only)
 REFILL = False   # --refill: KiCad refills zones before judging
 DRC_CACHE = ROOT / "build/drc/kicad"
-# Violation types that routing cannot cause; ignored when counting added errors.
-NOT_ROUTING = {"lib_footprint_issues", "lib_footprint_mismatch", "silk_overlap", "silk_over_copper", "silk_edge_clearance",
-               "text_height", "text_thickness", "courtyards_overlap", "missing_courtyard", "malformed_courtyard",
-               "footprint_type_mismatch", "footprint_filters_mismatch", "nonmirrored_text_on_back_layer",
-               "npth_inside_courtyard", "pth_inside_courtyard", "duplicate_footprints", "extra_footprint",
-               "missing_footprint", "footprint_symbol_mismatch", "unconnected_items", "track_dangling", "via_dangling",
-               "isolated_copper", "starved_thermal", "lib_footprint_mismatch", "holes_co_located"}
+# The judge's identity/cap contract is part of cached-report provenance.
 
 
 def fr_baseline() -> dict[str, dict]:
@@ -79,33 +73,21 @@ def fr_baseline() -> dict[str, dict]:
 def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
     DRC_CACHE.mkdir(parents=True, exist_ok=True)
     st = path.stat()
-    key = hashlib.sha1(f"{path.resolve()}:{st.st_mtime_ns}:{st.st_size}:{REFILL}".encode()).hexdigest()[:16]
+    key = hashlib.sha1(f"{path.resolve()}:{st.st_mtime_ns}:{st.st_size}:{REFILL}:{drc_judge.JUDGE_CODE_VERSION}".encode()).hexdigest()[:16]
     out = DRC_CACHE / f"{key}.json"
     if not out.exists():
         try:
-            subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "--all-track-errors"] +
+            subprocess.run(["kicad-cli", "pcb", "drc", *drc_judge.JUDGE_FLAGS] +
                            (["--refill-zones"] if REFILL else []) + ["-o", str(out), str(path)],
                            capture_output=True, timeout=timeout)
         except subprocess.TimeoutExpired:
             return None
     if not out.exists():
         return None
-    d = json.loads(out.read_text())
-    c = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error")
-    # Router-introduced = violations involving a track, arc or via (PCBench inputs have none). Pad-versus-footprint
-    # graphic violations can appear or disappear in KiCad's report once nets are connected; they are not caused by
-    # the router and are not counted (Freerouting's harness counts router-introduced violations the same way).
-    def routed_copper(v):
-        return any(i.get("description", "").startswith(("Track", "Via", "Arc")) for i in v.get("items", []))
-    r = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and routed_copper(v))
-    # Violations between items of one footprint (pads, its copper graphics) cannot be caused by moving it: the
-    # footprint is rigid. KiCad still re-classifies some of them (short <-> clearance) after a rotation, so
-    # placement-added errors count only violations that involve two footprints or board items.
-    def own_footprint(v):
-        refs = [re.search(r" of ([^ ]+)(?: on [^ ]+)?$", i.get("description", "")) for i in v.get("items", [])]
-        return bool(refs) and all(refs) and len({m.group(1) for m in refs}) == 1
-    x = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and not own_footprint(v))
-    return {"errors": dict(c), "routed_errors": dict(r), "cross_errors": dict(x), "unconnected": len(d.get("unconnected_items", []))}
+    try:
+        return drc_judge.summarize(json.loads(out.read_text()))
+    except (ValueError, KeyError, TypeError):
+        return None
 
 
 PLACE = ROOT / "build/release/src/place/tracemaker-place"
@@ -114,9 +96,6 @@ PLACE_TIMEOUT = 900      # seconds; on timeout the human placement is routed (re
 PLACE_WORK = 3_000_000   # router budget per placement evaluation (deterministic)
 PLACE_ARGS: list[str] = []  # --place-args: extra tracemaker-place options (e.g. --scratch for set S)
 PLACE_CRULES = None      # --place-crules MODE: tracemaker-place --component-rules (doc 15); None = its default
-# Errors placement can introduce (counted against the human board when parts move).
-PLACEMENT_ERRORS = {"courtyards_overlap", "pth_inside_courtyard", "npth_inside_courtyard", "copper_edge_clearance", "clearance",
-                    "shorting_items", "solder_mask_bridge", "hole_clearance", "hole_to_hole", "malformed_courtyard"}
 
 
 def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -> pathlib.Path:
@@ -148,13 +127,17 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     ref = FIX / name / "unrouted.kicad_pcb"
     human, moved = drc(ref if ref.exists() else src), drc(placed)
     if human and moved:
-        res["place_added"] = place_added(human, moved)
+        result = drc_judge.added_errors(human, moved, placement=True)
+        res["place_added"] = result["added_errors"]
+        res["place_error_gate"] = result["error_gate"]
+        res["place_capped_evaluated_types"] = result["capped_evaluated_types"]
+    else:
+        res["place_error_gate"] = "unknown"
     return placed
 
 
 def place_added(human: dict, moved: dict) -> dict:
-    hc, mc = human.get("cross_errors", human["errors"]), moved.get("cross_errors", moved["errors"])
-    return {t: n - hc.get(t, 0) for t, n in mc.items() if t in PLACEMENT_ERRORS and n - hc.get(t, 0) > 0}
+    return drc_judge.added_errors(human, moved, placement=True)["added_errors"]
 
 
 def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
@@ -216,6 +199,18 @@ def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
         return p.returncode, fo.read(), fe.read(), usage.ru_utime + usage.ru_stime
 
 
+RESUME_RUN = ""  # --resume-run: earlier run whose saved search state (<board>.kicad_pcb.state) each board starts from
+
+
+def state_args(name: str, out: pathlib.Path) -> list[str]:
+    """The portfolio saves its best routes after every round (so a run that ran out of time can be resumed)."""
+    a = ["--state-out", str(out) + ".state"]
+    prev = ROOT / "bench/results" / RESUME_RUN / "boards" / f"{name}.kicad_pcb.state" if RESUME_RUN else None
+    if prev and prev.exists():
+        a += ["--state-in", str(prev)]
+    return a
+
+
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     src0 = SRC_FIX / name / "unrouted.kicad_pcb"
     out = outdir / "boards" / f"{name}.kicad_pcb"
@@ -233,7 +228,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
         code, stdout, stderr, cpu = run_measured(
-            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + EXTRA,
+            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + EXTRA,
             time_limit * 3 + 60)
         res["exit"] = code
         res["cpu_s"] = round(cpu, 2)
@@ -258,14 +253,13 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     if before is None or after is None:
         res["judge"] = "failed"
         return res
-    added = {t: n - before["routed_errors"].get(t, 0) for t, n in after["routed_errors"].items()
-             if t not in NOT_ROUTING and n - before["routed_errors"].get(t, 0) > 0}
-    # All added error types too (diagnostics only).
-    res["added_any"] = {t: n - before["errors"].get(t, 0) for t, n in after["errors"].items()
-                        if t not in NOT_ROUTING and n - before["errors"].get(t, 0) > 0}
-    res.update({"unconnected_before": before["unconnected"], "unconnected_after": after["unconnected"], "added_errors": added})
+    result = drc_judge.added_errors(before, after)
+    res.update(result)
+    res.update({"unconnected_before": before["unconnected"], "unconnected_after": after["unconnected"]})
+    # Preserve the public completion metric: KiCad's list may be capped at 499.
+    res["connectivity_capped"] = before["unconnected"] >= drc_judge.CAPS["unconnected_items"] or after["unconnected"] >= drc_judge.CAPS["unconnected_items"]
     res["completion"] = 1.0 if before["unconnected"] == 0 else round(1 - after["unconnected"] / before["unconnected"], 4)
-    res["clean"] = after["unconnected"] == 0 and not added and not res.get("place_added")
+    res["clean"] = drc_judge.clean(result, after["unconnected"]) and not res.get("place_added") and res.get("place_error_gate", "pass") == "pass"
     return res
 
 
@@ -276,6 +270,7 @@ def main() -> int:
     ap.add_argument("--time", type=float, help="wall-clock limit per board (default 60 s; 3600 s as a safety stop with --work)")
     ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
     ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
+    ap.add_argument("--resume-run", help="earlier run name: boards start from the state it saved (portfolio runs only)")
     ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
     ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes, srj19, srj20); also names the set in the summary")
     ap.add_argument("--jobs", type=int, default=12)
@@ -299,6 +294,8 @@ def main() -> int:
     # With --work every board runs the whole portfolio whatever the thread count (D47); one thread runs its eight
     # variants one after another. Placement keeps one thread unless asked: its annealing runs follow --threads.
     # Successive halving splits the budget by the thread count, so there the default must not follow the machine.
+    global RESUME_RUN
+    RESUME_RUN = a.resume_run or ""
     EXTRA = EXTRA + (a.route_args or "").split()
     THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work and "--halving" not in EXTRA else 1)
     PLACE_THREADS = a.threads or 1
