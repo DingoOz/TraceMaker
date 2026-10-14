@@ -1,0 +1,115 @@
+{
+ "summary": {
+  "set": "srj20-m15fail4",
+  "half": "even",
+  "boards": 8,
+  "work": 20000000,
+  "variants": 8,
+  "advisor": "python3 h_adv2.py --strategy mixed",
+  "plain_routed": 430,
+  "final_routed": 431,
+  "better": 1,
+  "worse": 0,
+  "complete_plain": 0,
+  "complete_final": 0,
+  "advisor_failed": 0
+ },
+ "rows": [
+  {
+   "board": "sample031",
+   "seconds": 307.1,
+   "exit": 3,
+   "connections": 65,
+   "routed": 57,
+   "plain": 57,
+   "advised": 57,
+   "adopted": true,
+   "advised_variants_best": 57,
+   "error_advisor": null
+  },
+  {
+   "board": "sample054",
+   "seconds": 275.4,
+   "exit": 3,
+   "connections": 61,
+   "routed": 56,
+   "plain": 56,
+   "advised": 56,
+   "adopted": true,
+   "advised_variants_best": 56,
+   "error_advisor": null
+  },
+  {
+   "board": "sample094",
+   "seconds": 299.5,
+   "exit": 3,
+   "connections": 65,
+   "routed": 55,
+   "plain": 54,
+   "advised": 55,
+   "adopted": true,
+   "advised_variants_best": 54,
+   "error_advisor": null
+  },
+  {
+   "board": "sample100",
+   "seconds": 254.9,
+   "exit": 3,
+   "connections": 52,
+   "routed": 47,
+   "plain": 47,
+   "advised": 47,
+   "adopted": false,
+   "advised_variants_best": 46,
+   "error_advisor": null
+  },
+  {
+   "board": "sample117",
+   "seconds": 286.0,
+   "exit": 3,
+   "connections": 61,
+   "routed": 53,
+   "plain": 53,
+   "advised": 53,
+   "adopted": true,
+   "advised_variants_best": 53,
+   "error_advisor": null
+  },
+  {
+   "board": "sample119",
+   "seconds": 260.7,
+   "exit": 3,
+   "connections": 58,
+   "routed": 54,
+   "plain": 54,
+   "advised": 54,
+   "adopted": false,
+   "advised_variants_best": 52,
+   "error_advisor": null
+  },
+  {
+   "board": "sample142",
+   "seconds": 231.5,
+   "exit": 3,
+   "connections": 69,
+   "routed": 57,
+   "plain": 57,
+   "advised": 57,
+   "adopted": false,
+   "advised_variants_best": 54,
+   "error_advisor": null
+  },
+  {
+   "board": "sample174",
+   "seconds": 190.2,
+   "exit": 3,
+   "connections": 58,
+   "routed": 52,
+   "plain": 52,
+   "advised": 52,
+   "adopted": false,
+   "advised_variants_best": 51,
+   "error_advisor": null
+  }
+ ]
+}

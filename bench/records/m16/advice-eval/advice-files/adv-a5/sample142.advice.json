@@ -1,0 +1,74 @@
+{
+  "first_nets": [
+    "bga_conn_010",
+    "bga_conn_033",
+    "bga_conn_046",
+    "bga_conn_006",
+    "bga_conn_008",
+    "bga_conn_011",
+    "bga_conn_009",
+    "bga_conn_020",
+    "bga_conn_005",
+    "bga_conn_067",
+    "bga_conn_001",
+    "bga_conn_068"
+  ],
+  "layers": {
+    "cost": {
+      "F.Cu": 1.4
+    }
+  },
+  "note": "heuristic advisor, strategy stuck-first",
+  "priority": [
+    [
+      "bga_component.53",
+      "TP010.1"
+    ],
+    [
+      "bga_component.22",
+      "TP046.1"
+    ],
+    [
+      "bga_component.90",
+      "TP033.1"
+    ],
+    [
+      "bga_component.44",
+      "TP006.1"
+    ],
+    [
+      "bga_component.84",
+      "TP008.1"
+    ],
+    [
+      "bga_component.4",
+      "TP011.1"
+    ],
+    [
+      "bga_component.75",
+      "TP009.1"
+    ],
+    [
+      "bga_component.40",
+      "TP020.1"
+    ],
+    [
+      "bga_component.91",
+      "TP005.1"
+    ],
+    [
+      "bga_component.32",
+      "TP067.1"
+    ],
+    [
+      "bga_component.68",
+      "TP001.1"
+    ],
+    [
+      "bga_component.104",
+      "TP068.1"
+    ]
+  ],
+  "variants": 4,
+  "version": 1
+}

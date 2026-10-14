@@ -390,3 +390,13 @@ non-deterministic: 330 s, 16 threads; tscircuit's 360 s, 32 vCPU). `quick` and `
 
 Work-budget note: on a breakout board a reachability-flood cell counts a quarter of an expansion against `--work`, so `--work` budgets from §7–§8 are not comparable
 with these (30 M here is about 100–140 s of CPU per hard board; 50 M plain was 67–115 s).
+
+## 10. Advice (M16, doc 17 §8)
+
+`bench/advice_eval.py --set SET --name RUN --work W --variants V --advisor CMD [--half even|odd|all]` routes each board with
+`route --advisor CMD`: a plain portfolio, then, if connections are left, the advisor and a portfolio with its advice (the unadvised variants
+again plus advised ones); the better result stands. `bench/results/RUN/advice.json` has one row per board (connections routed by the plain run,
+by the advised run, whether it was kept, the best advised variant) and a summary; the stuck report and advice of each board are stored beside
+it, so a result can be reproduced with `route --advice FILE`. The gate of issue #26 stage 2 is read on the odd half of a set, the even half
+being where an advisor is tuned.
+

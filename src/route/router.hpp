@@ -191,6 +191,27 @@ struct RouterOptions {
   // length (1000 = normal, never less; missing entries are 1000).
   model::LayerMask no_track_layers = 0;
   std::vector<std::int32_t> layer_cost_pm;
+  // Rule areas and custom rules that exist only in this router's working copy of the board and rules (advice regions, doc 17
+  // §4): never written to the output, judged by the same exact checks as the board's own positional rules (doc 05 §34).
+  std::vector<model::Zone> extra_zones;
+  std::vector<model::CustomRule> extra_rules;
+  // Hints from an advice file (src/advice, doc 17). They are not applied to the variants the portfolio would run
+  // anyway: route_portfolio adds `variants` extra variants that carry them (the next ones of its list, the variants a plain run
+  // with that many more would have added), so the winner of the total order can only be better than without advice,
+  // never worse (rule 4).
+  struct AdviceSet {
+    std::string source;                                         // the advice file, for messages
+    std::vector<std::pair<std::string, std::string>> priority;  // "REF.NUM" pairs routed first (as RouterOptions::priority)
+    std::vector<std::string> first_nets;                        // as RouterOptions::first_nets
+    model::LayerMask no_track_layers = 0;                       // added to RouterOptions::no_track_layers
+    std::vector<std::int32_t> layer_cost_pm;                    // per copper layer, per mille (1000 or more); replaces entries that are lower
+    std::vector<model::Zone> zones;                             // regions: rule areas (no keep-out flags) ...
+    std::vector<model::CustomRule> rules;                       // ... and the disallow rules that name them and their nets
+    int variants = 4;                                           // advised variants added to the portfolio (at most the variants that run)
+    bool active() const {
+      return !priority.empty() || !first_nets.empty() || no_track_layers != 0 || !layer_cost_pm.empty() || !zones.empty() || !rules.empty();
+    }
+  } advice;
   events::Sink* sink = nullptr;
   // Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the
   // others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.
@@ -266,11 +287,23 @@ struct RouteResult {
   WorkProfile work;
   Coord pitch = 0;
   std::vector<std::string> failures;  // one line per unrouted connection
+  // One unrouted connection of the state returned, structured for the stuck report (doc 17 §3): where it is, why the
+  // last attempt failed (a code, and the search's own words), how often it was ripped or failed, and which nets stood in the way.
   struct Unrouted {
     std::string net, a, b;  // "REF.NUM" (b = "zone" for plane connections)
+    std::string reason;     // code: boxed_in, exact_check, rip_limit, ripped_not_rerouted, layer_limit, out_of_budget, rolled_back, not_attempted, no_legal_path
+    std::string why;        // the last explanation as the router wrote it (net and pad names are the board's)
+    int rips = 0, fails = 0;
+    int pad_a = -1, pad_b = -1;       // board pad indices (pad_b = -1: a zone fill)
+    geom::Point pos_a{}, pos_b{};     // pad centres (pos_b = pos_a for a zone)
+    std::vector<std::string> blockers;  // nets whose routed copper the last rejected route would have had to rip (at most 6)
   };
   std::vector<Unrouted> unrouted;
 };
+
+// The reason code of a failure explanation (RouteResult::Unrouted::reason). The text is matched, not parsed: the
+// router's explanations are sentences, and the code is only the class of the cause.
+std::string failure_reason_code(const std::string& why);
 
 // Runs several differently configured routers (portfolio variants) and keeps the best result. Variant i is a pure
 // function of (base options, i): it never depends on the thread count, and with a work budget each variant's result
@@ -292,6 +325,12 @@ struct PortfolioResult {
 PortfolioResult route_portfolio(const model::Board& board, const model::DesignRules& rules, const RouterOptions& base, int variants,
                                 const std::vector<int>& pick = {}, int threads = 0);
 int portfolio_size();
+// The portfolio's total order on results: true when `a` beats `b` (more routed, then fewer connections off their bus lanes, then
+// fewer vias, then shorter copper). Ties are not "better": the caller keeps the earlier result.
+bool route_result_better(const RouteResult& a, const RouteResult& b);
+// Variant indices from here up are the advised copies the portfolio adds when RouterOptions::advice is active (position
+// k of the advice's variants has index kAdvisedIndex + k).
+inline constexpr int kAdvisedIndex = 1000;
 
 class Router {
  public:

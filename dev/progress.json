@@ -1,6 +1,6 @@
 {
  "project": "TraceMaker",
- "current_milestone": "M13",
+ "current_milestone": "M16",
  "milestones": [
   {
    "id": "M0",
@@ -729,6 +729,35 @@
     {
      "text": "Turn component rules on by default for placement (soft; placed tiers B+C off vs soft: clean pass unchanged, crystals closer, decaps equal; D52). Routing stays off",
      "done": true
+    }
+   ]
+  },
+  {
+   "id": "M16",
+   "title": "Advice files and a pluggable advisor",
+   "status": "done",
+   "gate": "Options off: quick/mid/planes byte-identical; same advice at 1/2/4 threads identical; bad advice refused; advisor failure leaves the run unadvised; advised never fewer than unadvised; the hint channel proven without a model first (doc 17 section 8) | Result 2026-10-14: stages 0, 1 and 3 built; stage 4 (placement) not built. The stage 2 gate is NOT met: rule-based advice routes no more than the plain run on the held-out half (439 vs 439; the equal-compute control with 4 more variants routes 450) and ties the control on the tuning half (431 vs 431) (doc 17 section 8.1). Options off: quick/planes/mid byte-identical to main; 291/291 tests; no real model verified (bench/records/m16/).",
+   "deliverables": "Stuck report, advice file, advised portfolio variants, --advisor protocol, reference advisors (doc 17, issue #26)",
+   "tasks": [
+    {
+     "text": "Stage 0: structured unrouted list (reason, rips, blockers, positions), failure event region and blocker nets, stuck report with disclosure and redaction",
+     "done": true
+    },
+    {
+     "text": "Stage 1: src/advice (strict parser, board check, rule-area regions), --advice, advised portfolio variants, advice-check",
+     "done": true
+    },
+    {
+     "text": "Stage 2: prove the channel without a model (bench/advice_eval.py, heuristic advisor, equal-compute control): gate measured on a held-out half and NOT met (doc 17 section 8.1)",
+     "done": true
+    },
+    {
+     "text": "Stage 3: --advisor/--advisor-timeout/--advisor-rounds/--advisor-redact, advisor process runner, reference advisors, fake-server tests",
+     "done": true
+    },
+    {
+     "text": "Stage 4: placement seams (routability_loop seeds, ECO candidates) - not built",
+     "done": false
     }
    ]
   }

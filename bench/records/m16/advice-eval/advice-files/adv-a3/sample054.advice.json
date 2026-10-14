@@ -1,0 +1,152 @@
+{
+  "note": "heuristic advisor, strategy corridor",
+  "regions": [
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_041",
+      "polygon": [
+        [
+          1.235,
+          1.059
+        ],
+        [
+          2.656,
+          -8.39
+        ],
+        [
+          1.964,
+          -8.494
+        ],
+        [
+          0.543,
+          0.955
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_041"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_058",
+      "polygon": [
+        [
+          -0.906,
+          -0.761
+        ],
+        [
+          8.66,
+          -5.651
+        ],
+        [
+          8.341,
+          -6.275
+        ],
+        [
+          -1.225,
+          -1.385
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_058"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_028",
+      "polygon": [
+        [
+          1.72,
+          -2.541
+        ],
+        [
+          -8.578,
+          0.916
+        ],
+        [
+          -8.355,
+          1.58
+        ],
+        [
+          1.943,
+          -1.877
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_028"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_017",
+      "polygon": [
+        [
+          -0.572,
+          3.344
+        ],
+        [
+          -2.899,
+          -8.514
+        ],
+        [
+          -3.586,
+          -8.379
+        ],
+        [
+          -1.259,
+          3.479
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_017"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_015",
+      "polygon": [
+        [
+          0.255,
+          -3.569
+        ],
+        [
+          -4.425,
+          8.349
+        ],
+        [
+          -3.773,
+          8.604
+        ],
+        [
+          0.907,
+          -3.314
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_015"
+      ],
+      "tracks": true,
+      "vias": true
+    }
+  ],
+  "variants": 4,
+  "version": 1
+}

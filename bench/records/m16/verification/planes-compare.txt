@@ -1,0 +1,8 @@
+# planes: origin/main 49fbd3c (CPU-only build) -> this branch (CPU-only build), same machine, bench/compare_runs.py --expect-identical
+# m16-planes-base → m16-planes-new
+8 boards; routed boards byte-identical: 8/8.
+Clean pass 0 → 0; mean completion 56.5% → 56.5%; router seconds 302.1 → 289.3.
+Route CPU time 942 → 927 s (-1.7%) at the same work.
+Byte-identical boards moved -6% to +1% in CPU time (the same work: noise, or speed).
+Style (informational): bends per connection 0.8224 → 0.8224; acute angles 0 → 0; stair steps 14 → 14; short segments 43 → 43; off angle segments 377 → 377; detour ratio 1.1434 → 1.1434; long detours 23 → 23.
+Gates: pass

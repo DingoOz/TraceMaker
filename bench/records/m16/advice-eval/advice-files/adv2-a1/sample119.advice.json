@@ -1,0 +1,129 @@
+{
+  "first_nets": [
+    "bga_conn_012",
+    "bga_conn_040",
+    "bga_conn_057",
+    "bga_conn_026"
+  ],
+  "note": "heuristic advisor, strategy mixed",
+  "regions": [
+    {
+      "layers": [
+        "B.Cu"
+      ],
+      "name": "strip bga_conn_012",
+      "polygon": [
+        [
+          -1.08,
+          -2.656
+        ],
+        [
+          -9.121,
+          4.641
+        ],
+        [
+          -8.65,
+          5.159
+        ],
+        [
+          -0.609,
+          -2.138
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_012"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "B.Cu"
+      ],
+      "name": "strip bga_conn_040",
+      "polygon": [
+        [
+          2.344,
+          1.476
+        ],
+        [
+          -8.649,
+          -2.259
+        ],
+        [
+          -8.874,
+          -1.597
+        ],
+        [
+          2.119,
+          2.138
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_040"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "B.Cu"
+      ],
+      "name": "strip bga_conn_026",
+      "polygon": [
+        [
+          -3.84,
+          0.012
+        ],
+        [
+          8.696,
+          1.346
+        ],
+        [
+          8.77,
+          0.649
+        ],
+        [
+          -3.766,
+          -0.685
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_026"
+      ],
+      "tracks": true,
+      "vias": true
+    },
+    {
+      "layers": [
+        "B.Cu"
+      ],
+      "name": "strip bga_conn_057",
+      "polygon": [
+        [
+          0.21,
+          3.268
+        ],
+        [
+          7.414,
+          -8.635
+        ],
+        [
+          6.815,
+          -8.998
+        ],
+        [
+          -0.389,
+          2.905
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_057"
+      ],
+      "tracks": true,
+      "vias": true
+    }
+  ],
+  "variants": 4,
+  "version": 1
+}

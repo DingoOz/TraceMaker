@@ -1,0 +1,2 @@
+# tests/integration/advice_cli.py (command line end to end, generated board)
+advice_cli: ok
