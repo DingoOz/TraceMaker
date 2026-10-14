@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Stdlib-only physical-instance gates for KiCad DRC JSON (doc 10, D101)."""
+"""Stdlib-only physical-instance gates for KiCad DRC JSON (doc 10, D106)."""
 from collections import Counter
 from decimal import Decimal, ROUND_HALF_EVEN
 import re
