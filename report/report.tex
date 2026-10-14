@@ -26,7 +26,7 @@
 \title{\textbf{TraceMaker}\\[2pt]\large A learning, GPU-assisted PCB autorouter and placer for KiCad\\[2pt]
 \normalsize Design, method and benchmark results}
 \author{Development report}
-\date{6 October 2026 (release 0.8.0; first version 2 October 2026)}
+\date{12 October 2026 (development branch \texttt{m15-srj20}, after release 0.9.0; earlier editions: 2, 6 and 11 October 2026)}
 
 \begin{document}
 \maketitle
@@ -41,10 +41,14 @@ benchmark set TraceMaker routes 100\% of the sampled tier-A boards cleanly, 70.0
 36.4\%. No board in the final runs has a DRC error introduced by the router. On 60 boards never used during
 development, with Freerouting 2.5.0-RC12 and 1.9.0 run on the same machine and judged by the same KiCad DRC,
 TraceMaker's results are clean on 73--78\% of boards against 3\% and 32\%, with 5\% shorter tracks and 28\% fewer
-bends than Freerouting 2.5, but more vias. This edition brings the tier results, the testing section and the
-limitations up to release 0.8.0 and adds Section~\ref{sec:since} on what was built after the first version; the
-held-out quality study and the single-board comparison are as measured on 2--3 October. The companion document
-\texttt{report/roadmap\_testing.pdf} lists every milestone, test and benchmark run.
+bends than Freerouting 2.5, but more vias. This edition keeps all of that and adds Section~\ref{sec:m14}, on the
+work of 7--12 October: routing of ball-grid-array (BGA) breakout boards and SoC fan-outs from tscircuit's public
+benchmarks. On those, TraceMaker now solves 191 of 200 boards of \texttt{srj19} (tscircuit's router: 184) and 160 of 200
+of \texttt{srj20} (tscircuit: 157; 156 within 330\,s per board) and 60 of 72 \texttt{fanout31} cases (tscircuit:
+48). The tier results of Section~\ref{sec:results} were measured on release 0.8.0 and were not repeated on the new
+code; the sets that bound the router's behaviour on ordinary boards (30 boards of the \texttt{quick} tier and 11 of
+\texttt{mid}) give byte-identical output before and after the changes. The companion document
+\texttt{report/roadmap\_testing.pdf} lists every milestone, test and benchmark run up to release 0.8.0.
 \end{abstract}
 
 % ------------------------------------------------------------------------------------------------------------
@@ -318,13 +322,14 @@ existing unlocked copper, move footprints first and refill zones.
 \label{sec:testing}
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Unit and integration tests} (132, run with \texttt{ctest}; 116 unit tests and 16 integration
-  tests): exact unit conversion, Philox known-answer vectors, GPU-equals-CPU for the random generator and
+  \item \textbf{Unit and integration tests} (262 in the current code, run with \texttt{ctest}; release 0.8.0 had 132): exact unit conversion, Philox known-answer vectors, GPU-equals-CPU for the random generator and
   cost-to-go fields, s-expression parsing and byte-exact round trips, the board reader against KiCad's own model,
   rule reading, geometry predicates and the indexed paths against their linear references, placement legality and
   lower bounds, the component-rule catalogue and impedance formulas, differential-pair geometry, and the viewer
-  server and replay log. The suite passes in the release and CPU-only builds; the address-sanitizer build reports
-  no memory error.
+  server and replay log, and since 0.8.0 the Simple Route JSON importer, bus routing and the after-route passes.
+  The suite passes in the release build (262 of 262 on 11 October, after merging main). The address-sanitizer build compiled and passed
+  all tests it finished; \texttt{bus\_route} and \texttt{thread\_determinism} are too slow under it and were not run to
+  completion for this edition.
   \item \textbf{DRC parity.} TraceMaker's own DRC is compared with \texttt{kicad-cli} on the KiCad demo boards: 14
   of 17 match exactly on the 15 routing-relevant violation types, and 264 of 264 boards with injected defects match
   violation by violation; both are regression tests. The router uses the same rule engine, so parity problems show
@@ -342,6 +347,7 @@ existing unlocked copper, move footprints first and refill zones.
 
 % ------------------------------------------------------------------------------------------------------------
 \section{Results}
+\label{sec:results}
 
 \subsection{Clean pass by tier}
 
@@ -742,6 +748,243 @@ is more than 40\,\% full: the boards are not short of space, and what fails is t
 under rules coarser than the original design's.
 
 % ------------------------------------------------------------------------------------------------------------
+\section{BGA breakout and SoC fan-out (7--12 October)}
+\label{sec:m14}
+
+\paragraph{The task.} tscircuit, an open-source electronics toolkit, publishes the boards its autorouter is tested
+against. Two sets are ball-grid-array breakouts on two copper layers: \texttt{srj19} (200 boards, MIT licence) and
+\texttt{srj20} (200 boards with some balls missing, no licence, used locally only). A third, \texttt{fanout31}, has 72
+fan-out cases of six SoC packages (AM62L, RK3308, K230, i.MX6ULL, T113-S3, AM3352) on 8--10 layers with plane
+terminations, buses and skew goals. The goal was to route at least as many of them as tscircuit's router does,
+without adding a design-rule error to any board. Their published figures (dashboard run \texttt{38105514608-1}) are
+92.0\,\% of \texttt{srj19}, 78.5\,\% of \texttt{srj20} and 48 of 72 \texttt{fanout31} cases.
+
+\paragraph{How it was judged.} Each problem is imported as a self-contained KiCad board (\texttt{tracemaker
+srj-import}), routed by the ordinary pipeline, and judged by \texttt{kicad-cli pcb drc} at the distances of tscircuit's
+own pass criterion (0.1\,mm copper clearance, 0.1\,mm between via holes). The routed copper can be exported back to the
+Simple Route JSON format (\texttt{srj-export}), where tscircuit's checker gives a second score. A board counts as
+solved only when it is fully connected with no router-introduced violation. All work budgets are counted in search
+steps, so a run is reproducible and independent of the machine.
+
+\subsection{Research before building}
+
+The plan (\texttt{docs/16-bga-breakout-plan.md}) and the evidence behind it (\texttt{research/bga-routing-2026-10.md})
+rest on the literature on escape routing and on tscircuit's own public code and benchmark data. Three points shaped
+the work. First, the gap between the two routers is a cliff: boards with up to about 40 connections are solved by both,
+and the difference sits in boards of 50--79 connections. Second, escape feasibility for each ball separately does not
+imply that all balls can leave together, which is why exact methods for ordered escape routing (SAT, flow models with
+diagonal capacity) exist. Third, tscircuit's router uses many vias outside the ball array. The research note also
+catalogues approaches reported not to work (12 from the literature, 8 from tscircuit's history, 8 from TraceMaker's
+earlier milestones), so they were not repeated.
+
+\subsection{Results}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{m14_gates.pdf}
+  \caption{Boards solved in each tscircuit benchmark set. ``Before M14'': one variant, 50 million work units, as at the
+  start of the milestone (no \texttt{fanout31} importer existed). ``Now'' is a composite: one variant on all boards,
+  plus a 16-variant portfolio on the boards that one variant misses. tscircuit: its published dashboard run.}
+  \label{fig:m14gates}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrl}
+\toprule
+Set & tscircuit & TraceMaker now & Target & Met \\
+\midrule
+\texttt{srj19} & 184 of 200 (92.0\,\%) & \textbf{191 (95.5\,\%)} & $\ge$184 & yes \\
+\texttt{srj20} & 157 of 200 (78.5\,\%) & \textbf{160 (80.0\,\%)} & $\ge$157 & yes (156 within 330\,s) \\
+\texttt{fanout31} & 48 of 72 & \textbf{60} & $\ge$48 & yes \\
+KiCad errors added & & 0 on every run & none & yes \\
+\texttt{quick} (30) and \texttt{mid} (11) & & byte-identical & unchanged & yes \\
+\bottomrule
+\end{tabular}
+\caption{Gate status on 12 October (after the third round, below). \texttt{srj19}: 181 boards with one variant (50 million work units, fast bends,
+automatic breakout settings) plus 7 of the 19 that a 16-variant portfolio closes. \texttt{srj20}: 124 with one variant
+plus 9 of the 76 that the portfolio closes (median 168\,s per board). The composite is not a single run.}
+\label{tab:m14gates}
+\end{table}
+
+\paragraph{\texttt{fanout31}, case by case.} AM62L, RK3308, K230 and i.MX6ULL are solved in all 12 cases each; T113-S3
+in 9 of 12 (cases 55--57 keep three connections open); AM3352 in 3 of 12 (the left-edge cases 70--72, with 16
+variants; tscircuit solves none of the AM3352 cases). One variant solves 44 of the first 59 cases and an 8-variant
+portfolio closes the stragglers.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{m14_srj19.png}
+    \caption{\texttt{srj19} sample 196: 68 connections, two layers.}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{m14_am62l.png}
+    \caption{\texttt{fanout31} AM62L top-centre: 133 connections.}
+  \end{subfigure}
+  \caption{Boards routed by TraceMaker (TraceMaker's renderer, one colour per copper layer, vias dotted).}
+  \label{fig:m14boards}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{m14_kicad3d.jpg}
+  \caption{\texttt{srj19} sample 196 after routing, rendered by KiCad's 3D viewer (copper only).}
+  \label{fig:m14kicad}
+\end{figure}
+
+\subsection{What worked}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Higher rip and pass limits.} Allowing each connection to be ripped up 40 times and the negotiation 40
+  passes (were 8 and 12) raised the clean share of the 24 \texttt{srj19} boards that one variant first missed from 33\,\% to 54\,\%
+  at equal work. These are now the defaults; \texttt{quick} and \texttt{mid} are byte-identical.
+  \item \textbf{Fast bends} (cheaper search around bends): at equal wall time 81.7\,\% to 85.9\,\% of connections routed
+  on the same boards.
+  \item \textbf{Preferred layer directions and a package penalty.} Orthogonal steps against a layer's preferred
+  direction (even layers horizontal, odd layers vertical) cost extra, and tracks on the pad layer inside a ball
+  array cost more. This was the first structural gain on \texttt{srj20} (Figure~\ref{fig:m14dir}). On ordinary
+  two-layer boards the same settings cost one to three points of completion (\texttt{quick}: 89.2 to 86.8\,\%), so
+  they are applied automatically only to a \emph{breakout board}: two copper layers, at least 70\,\% of the
+  connections ending on a ball-grid-like package (at least 30 same-layer SMD pads on at least $5\times5$ positions with 40\,\% of
+  the grid filled). A first version of this test also matched the connectors of a bus-routing test board and broke
+  it; requiring the grid shape fixed that.
+  \item \textbf{A larger portfolio.} Beyond the designed eight variants, \texttt{--variants N} adds seeded variants
+  with different orders and via and crossing costs. Sixteen variants close 7 of 19 \texttt{srj19} boards and 9 of 76
+  \texttt{srj20} boards that one variant misses.
+  \item \textbf{A corrected fan-out model.} The first import of the K230 cases routed none of 12. The importer had
+  overridden the layer of each breakout point with the layer named for its bus, but several buses' breakout points share
+  coordinates and differ only by layer, so the override stacked two or three terminals on one layer and made them
+  unreachable. Dropping the override (the importer's other features stayed) took K230 to 12 of 12. Also needed:
+  plane terminations as zones, pads of nets with no connection point as keep-outs, and a board-outline margin.
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{m14_dirpen.pdf}
+    \caption{Direction penalty, 57 \texttt{srj20} boards that one variant first missed (30 M work).}
+    \label{fig:m14dir}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{m14_size.pdf}
+    \caption{Where \texttt{srj20} is lost: boards solved by connection count.}
+    \label{fig:m14size}
+  \end{subfigure}
+  \caption{Left: 0.3 gives the most clean boards; higher penalties route more connections but leave fewer boards
+  fully clean. Right: the first profile (50 M work) against tscircuit; the shortfall is the boards of 50--79 connections.}
+\end{figure}
+
+\subsection{Third round: negotiation as transactions (11--12 October)}
+
+The second round ended 24 boards short on \texttt{srj20}. Rendering a hard board's progress showed why: the routed count of the negotiation phase
+wobbles by $\pm5$ around one level for the whole work budget (30 to 41 of 53 connections on \texttt{sample069}, ending at 30; only the best snapshot is
+returned). A connection that cannot be routed rips the one to ten connections in its way, those cannot all be routed again, and the next one rips them
+back: the oscillation that negotiated-congestion routers are known for, and what multi-agent path finding calls a plan with collisions.
+MAPF-LNS2 (Li et al., AAAI 2022) repairs such plans by re-planning chosen agents and keeping the change only if the collisions do not increase.
+TraceMaker's version:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Transactions.} A negotiated route that rips victims is kept only if the victims can be routed again \emph{strictly} (without ripping
+  anything) and the net change in routed connections is not negative; otherwise a snapshot of every connection's copper is restored and the history
+  of the failed try stays, so the next try takes another path. A loss of $k$ connections is still accepted with probability $e^{-k/T}$ ($T=1.5$,
+  seeded draws, so runs stay deterministic). The same board goes from 41 to 50 of 53 connections at equal work.
+  \item \textbf{A budget that charges what costs time.} The work budget counted a reachability flood cell like an A* expansion, but a flood costs a
+  small fraction of the time. With floods before every strict search and counted at a quarter, the same nominal budget buys about twice the search.
+  \item \textbf{Fields kept.} The cost-to-go field was 47\,\% of the run time and repeats for each connection once the fixed-copper cache is complete;
+  keeping it (the same copper, checked by byte comparison) saves 38\,\% of the wall time.
+  \item \textbf{A portfolio made for breakouts, in rounds.} The designed eight variants (exact bends, longest first) are wrong for these boards. The
+  breakout portfolio draws order, via cost, crossing cost, direction strength and temperature from fixed sets; after each of four rounds every variant
+  continues from the best state of all.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+57 \texttt{srj20} boards, 30 M work, one variant & Clean & Completion \\
+\midrule
+plain negotiation & 23 & 90.9\,\% \\
+transactions, greedy ($k\le 0$) & 12 & 94.9\,\% \\
+transactions, annealing $T=0.25 / 1 / 2 / 4$ & 17 / 23 / 24 / 23 & 95.2--95.6\,\% \\
+transactions, $T=1$, reach-check 2 and flood weight & \textbf{30} & 96.3\,\% \\
+\midrule
+100 M work: plain / transactions $T=2$ & 28 / \textbf{36} & 93.9 / 97.8\,\% \\
+\bottomrule
+\end{tabular}
+\caption{Transactions on the 57 boards that tscircuit solves and the first profile missed. Greedy acceptance leaves 14 boards one connection short;
+annealing acceptance finishes some of them.}
+\label{tab:txn}
+\end{table}
+
+On the full sets, one variant at 30 M work (59 and 32\,s of CPU per board) completes \textbf{129 of 200} \texttt{srj20} boards (124 for the earlier profile at
+50 M) and 178 of 200 \texttt{srj19} (181). The breakout portfolio on the boards a single variant leaves open (16 variants of 30 M, 16 threads, 91--118\,s per board)
+adds 19 of 71 on \texttt{srj20} and 13 of 22 on \texttt{srj19}; 70 M per variant (at most 330\,s) adds 8 of 24 near boards on \texttt{srj20}.
+
+\subsection{What did not work}
+
+Every item below was measured at equal work and kept as a hidden option with its result recorded
+(\texttt{docs/16}, sections 10--11; decision D95), so nobody repeats it.
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{tscircuit's own routes as path guides} (soft or hard, radii of 1.5--8 pitches) on 12 boards: 440--499 of
+  570 connections against 499 without. A connection guided along another router's off-lattice geometry does not
+  complete the board. \textbf{Layer assignment} by crossing count (two-layer max-cut) or chord angle: clean boards fell from 18\,\% to 11--14\,\%.
+  \item \textbf{Different orders} (longest first, deep package pins first): 76.7\,\% of connections routed fell to 54.9\,\% and 68.6\,\%.
+  \item \textbf{Global routing} (three modes): 69.2--76.5\,\% against 76.7\,\%. \textbf{Negotiating from the first pass:} 72.7\,\%.
+  \item \textbf{Limiting how many connections one search may rip up} (1, 2, 3): clean boards fell from 28\,\% to 2, 5 and 7\,\%.
+  \item \textbf{A growing crossing cost} (the PathFinder schedule), \textbf{history weights} 2--100: worse or no effect.
+  \item \textbf{Weighted A*} (heuristic weight 1.5, 2.5): 4\,\% clean. Path quality matters here.
+  \item \textbf{Cheaper vias} alone (3 down to 0.3\,mm): clean boards 0 to 2 of 24; \textbf{finer lattices}: 20\,\textmu m was worse than 40 at equal work.
+  \item \textbf{A polishing phase} that reserves part of the budget to rebuild the neighbourhoods of the last open
+  connections: closed 0--1 of 3--6 and lost more in the shortened main phase. \textbf{24 seeded variants on one hard board} all stopped at 33--40 of 52 connections.
+  \item \textbf{More work} helps only a little: 200 million units on the 33 remaining \texttt{srj20} gap boards closed 6.
+\end{itemize}
+
+\subsection{Where \texttt{srj20} and \texttt{srj19} stand}
+
+Of the 40 \texttt{srj20} boards not completed, 28 have 70 or more connections and are 8--40 connections short (tscircuit solves two of them); the
+other 12 have 1--6 open. On \texttt{srj19}, 9 boards remain. Neither set is at 100\,\%: some of the remaining boards may have no solution under the
+rules, and nobody has published a feasibility bound.
+The earlier diagnosis (\texttt{sample069}, 188 vias for tscircuit, 173 of them outside the ball array) still stands as the difference in style.
+
+\subsection{Other changes since release 0.8.0}
+
+Besides the BGA work, the current code contains changes that were made after the 6 October edition:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Simple Route JSON} support at the edge of the engine (\texttt{srj-import}, \texttt{srj-export}) and
+  benchmark scripts for the tscircuit sets (decision D90).
+  \item \textbf{Bus routing} (opt-in): the connections of a bus run in pin order, each searched inside a guide around its
+  neighbour's lane, with skew tuning and a \texttt{tracemaker buses} measurement command (D91). Marked experimental.
+  \item \textbf{After-route passes} (off by default): widening power tracks, stitching vias for plane return paths against an
+  in-engine zone refill, and a track-style metric (D92). Zones are refilled in the engine with exact polygon operations
+  that follow KiCad 10, so plane boards are judged without calling KiCad for the fills (D85).
+  \item \textbf{Instrumentation:} per-phase work counters in the route report (D88).
+\end{itemize}
+Release 0.9.0 on the main branch also merges outside contributions (plane-aware routing of all-SMD boards, a macOS
+build, layer limits for tracks, and rule-reading fixes); its tier results are recorded in the development log as
+100, 72.5, 60.0 and 54.5\,\% clean on tiers A to D. The branch described in this section was cut before that release and is not
+merged to main or published; the two have not been combined or re-measured together.
+
+\subsection{Reproducing the BGA results}
+
+\begin{small}
+\begin{verbatim}
+python3 bench/run.py --set srj19          # also srj20, srj19-gap2, srj20-gap2 (gap sets), one variant
+python3 bench/fanout31_run.py             # --cases 55-57 --variants 8 --route-args=--no-gpu
+build/report-venv/bin/python report/make_m14_figures.py
+\end{verbatim}
+\end{small}
+The numbers are in \texttt{bench/results/srj19-p*, srj20-p*, fan31-*}; the status page at port 8767 shows them as they
+were during the work. Decisions D94--D98 are in \texttt{docs/12-decisions.md}.
+
+% ------------------------------------------------------------------------------------------------------------
 \section{Limitations and next steps}
 \label{sec:limits}
 
@@ -750,6 +993,8 @@ under rules coarser than the original design's.
   connections where two or three nets keep displacing each other at one package, or where the vias a crossing needs
   do not fit under KiCad's default rules. Neither global routing nor re-ordering helped; a lattice of half the
   pitch helps a little (one more clean board in tier B) at four times the work.
+  \item \textbf{Not 100\,\% on the tscircuit sets:} 9 \texttt{srj19} and 40 \texttt{srj20} boards stay open, 28 of them with 70 or more
+  connections (Section~\ref{sec:m14}). \texttt{fanout31} cases 55--57 (T113-S3) and 61--69 (AM3352) are unsolved.
   \item \textbf{Large boards are time-limited.} On the biggest boards the router finishes only one or two negotiation
   passes in 120\,s.
   \item \textbf{From-scratch placement is at 85\,\% clean, not the 90\,\% aimed for,} and a part that cannot be placed
@@ -768,7 +1013,9 @@ under rules coarser than the original design's.
   \item \textbf{Copper text} is modelled by generous estimated boxes rather than exact glyph outlines.
   \item \textbf{Not measured:} the placer against the SA-PCB annealer (that baseline did not build on the test
   machine), and the viewer's frame rate.
-  \item \textbf{Not built:} a gridless routing arm, learned net ordering, a GPU global router, per-layer track
+  \item \textbf{Not repeated on the current code:} the tier benchmark, the held-out quality study and the placement
+  study (Sections~\ref{sec:results}, \ref{sec:quality}, \ref{sec:since}); their numbers are those of release 0.8.0.
+  \item \textbf{Not built:} a planner that fixes layers and via sites before routing, a gridless routing arm, learned net ordering, a GPU global router, per-layer track
   widths, and a schematic reader of TraceMaker's own (netlists come from \texttt{kicad-cli}).
 \end{itemize}
 
@@ -784,6 +1031,7 @@ build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --tim
 build/release/src/place/tracemaker-place in.kicad_pcb -o out.kicad_pcb \
     --mode auto --route-check 3000000
 build/report-venv/bin/python report/make_figures.py   # figures for this report
+build/report-venv/bin/python report/make_m14_figures.py
 python3 report/make_test_report.py                    # tables of roadmap_testing.tex
 \end{verbatim}
 \end{small}

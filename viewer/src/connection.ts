@@ -21,7 +21,9 @@ export class Connection {
     const q = new URLSearchParams(location.search).get('ws');
     if (q) return q;
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${proto}//${location.host}/ws`;
+    // The server remembers the token in a cookie after the page load; sending it here too covers a browser that refuses cookies (issue #4).
+    const token = new URLSearchParams(location.search).get('token');
+    return `${proto}//${location.host}/ws${token ? `?token=${encodeURIComponent(token)}` : ''}`;
   }
 
   private setState(s: ConnState) {

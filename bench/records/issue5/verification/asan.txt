@@ -1,0 +1,6 @@
+# ASan + UBSan (cmake preset asan)
+===============================================================================
+All tests passed (191 assertions in 22 test cases)
+
+footprint_check.py (it routes) with the asan tracemaker: ok
+footprint-check on video and CM5_MINIMA_3 (references from real-boards/flipcheck.py): exit 0, 0 sanitizer reports

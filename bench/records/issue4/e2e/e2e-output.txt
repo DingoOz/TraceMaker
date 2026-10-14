@@ -1,0 +1,8 @@
+1a. page without the token: HTTP 401 | This TraceMaker viewer needs its token
+1b. page with the token: HTTP 200 | LIVE: true
+1c. cookie: tm_token httpOnly=true sameSite=Strict
+1d. later visit without the token in the URL: LIVE: true
+2a. the loopback viewer's own page: LIVE: true
+2b. a page from another origin opening the same /ws: CLOSED without a message
+before (binary from main before this change, viewer on port 8795; a page served from another origin reads the stream): OPEN, messages: 112
+after  (this branch, loopback viewer on port 8796; the same page): CLOSED without a message

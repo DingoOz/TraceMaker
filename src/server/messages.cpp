@@ -179,10 +179,11 @@ void add_shape_pads(J& pads, int id, const model::Pad& pad, const geom::Shape& s
 
 }  // namespace
 
-std::string board_snapshot_json(const model::Board& b, const std::string& name) {
+std::string board_snapshot_json(const model::Board& b, const std::string& name, bool freeze) {
   J j;
   j["type"] = "board";
   j["name"] = name;
+  if (!freeze) j["freeze"] = false;
 
   geom::Box bbox = b.edge_bbox();
   geom::Box content;
@@ -364,6 +365,24 @@ std::string failure(const Failure& f) {
   j["b"] = pt(f.b);
   j["blockers"] = f.blockers;
   if (!f.region.empty()) j["region"] = box_json(f.region);
+  if (!f.blocker_nets.empty()) j["blocker_nets"] = f.blocker_nets;
+  if (!f.reason.empty()) j["reason"] = f.reason;
+  if (f.width_nm > 0) {
+    j["width_nm"] = f.width_nm;
+    j["clearance_nm"] = f.clearance_nm;
+    j["min_width_nm"] = f.min_width_nm;
+  }
+  if (f.gap_nm >= 0) j["gap_nm"] = f.gap_nm;
+  if (f.gap_fixed_nm >= 0) j["gap_fixed_nm"] = f.gap_fixed_nm;
+  if (f.gap_layer >= 0) j["gap_layer"] = f.gap_layer;
+  if (f.at) j["at"] = pt(*f.at);
+  if (!f.verdict.empty()) j["verdict"] = f.verdict;
+  if (!f.rule.empty()) j["rule"] = f.rule;
+  if (!f.rejected.empty()) {
+    J a = J::array();
+    for (const auto& p : f.rejected) a.push_back(J::array({p.p.x, p.p.y, p.layer}));
+    j["rejected"] = std::move(a);
+  }
   return dump(j);
 }
 

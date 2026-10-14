@@ -12,8 +12,9 @@ writes them back into the file.
 - **What it does:** routes unrouted connections on KiCad 9 and 10 boards, and can place components first.
 - **How it is judged:** by KiCad's own design-rule check (`kicad-cli pcb drc`), not by its own opinion.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
-- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one.
-- **Status:** release 0.8.0. Licence GPL-3.0-or-later.
+- **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
+  Metal backend is contributed and has not been run by the project.
+- **Status:** release 0.9.0. Licence GPL-3.0-or-later.
 
 ## How good is it?
 
@@ -22,8 +23,8 @@ Share of boards routed with **every connection made and no KiCad error added** (
 | Tier | Boards | TraceMaker | Freerouting 2.5 |
 |---|--:|--:|--:|
 | A (routine) | 40 | **100%** | 100% |
-| B | 40 | **70.0%** | 50.0% |
-| C | 30 | **63.3%** | 46.7% |
+| B | 40 | **72.5%** | 50.0% |
+| C | 30 | **60.0%** | 46.7% |
 | D (hardest) | 22 | **54.5%** | 36.4% |
 
 Freerouting's figures are its own published results on the same boards.
@@ -32,10 +33,16 @@ Freerouting's figures are its own published results on the same boards.
 
 - Placing a board from scratch gives 85% clean boards on held-out designs; the project's target was 90%.
 - On boards with dense packages (BGAs, fine-pitch QFNs), 41% come out clean.
+- On tscircuit's public BGA breakout problems (sets srj19 and srj20, KiCad errors never added) it routes about 95% and 78% of the boards
+  completely with a 16-variant portfolio (about 2-7 minutes per board; a single 30-60 s run: 89% and 64%); tscircuit's own router completes 92% and 79%
+  (360 s on 32 vCPU). Both figures are composites of runs; srj20 is 156/200 within 330 s and 160/200 with up to 433 s.
+  Boards that stay open there are mostly limited by the lattice, not by room: `--relax` (route at 60-80 % of the clearance, then move the track
+  vertices off the lattice up to the real rules) closed sample031, 039, 048, 071, 072, 095, 103 and 159 with a clean KiCad DRC; sample104 is still one
+  connection short (doc 16 section 13).
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·
-[roadmap and test report](report/roadmap_testing.pdf) (all 132 tests, every benchmark run).
+[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.9.0 has 165 tests).
 
 ## Quick start
 
@@ -48,7 +55,7 @@ cmake --preset release && cmake --build --preset release
 No CUDA? Use `cpu-only` instead of `release` in both commands.
 
 On macOS (Apple silicon), with Apple's Command Line Tools and
-`brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost`:
+`brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost clipper2`:
 
 ```
 cmake --preset macos-metal -DCMAKE_PREFIX_PATH="$(brew --prefix)" && cmake --build --preset macos-metal
@@ -69,7 +76,9 @@ cd viewer && npm install && npm run build && cd ..
 build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --view --hold
 ```
 
-Then open `http://localhost:8766/` in a browser.
+Then open `http://localhost:8766/` in a browser. The viewer listens on this machine only. To watch from another machine add `--view-host 0.0.0.0` (or set
+`TM_VIEW_HOST=0.0.0.0` once): the viewer then requires a token, and the URL it prints contains it. The token and the stream cross the network unencrypted; on an untrusted
+network use an SSH tunnel (`ssh -L 8766:localhost:8766 host`) and leave the bind alone. `--view-token T` sets the token, `--view-insecure` drops it.
 
 **4. Check the result with KiCad**
 
@@ -84,7 +93,8 @@ No KiCad installed? `scripts/kicad-cli` runs it from the `kicad/kicad:10.0.6` Do
 - **Ubuntu 26.04** (what it is developed on).
 - **Compilers:** GCC 15 (what it is built and tested with; older versions are untried). With CUDA 12.x, also
   GCC 13 or 12 for the GPU code.
-- **Libraries:** Boost, Eigen, oneTBB, fmt, spdlog, FlatBuffers, SQLite, Catch2, pybind11.
+- **Libraries:** Boost, Eigen, oneTBB, fmt, spdlog, FlatBuffers, SQLite, Catch2, pybind11, Clipper2 (fetched and
+  built with the project when it is not installed).
 - **Docker**, only for the KiCad checks and the tests that compare with KiCad.
 
 <details>
@@ -114,12 +124,21 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 |---|---|
 | Route a board (120 s limit) | `route board.kicad_pcb -o out.kicad_pcb --time 120` |
 | Get the same result every time | `route board.kicad_pcb -o out.kicad_pcb --work 50000000` |
-| Watch the routing live | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
+| Watch the routing live (it freezes on the stuck net with what rejected the path; Space resumes, `--no-freeze` turns that off) | `route board.kicad_pcb -o out.kicad_pcb --view --hold` |
 | Route everything again, old tracks removed | `route board.kicad_pcb -o out.kicad_pcb --reroute` |
+| Pick the options on a screen instead of typing them | `tui board.kicad_pcb -o out.kicad_pcb` |
+| Route with a saved set of options | `route board.kicad_pcb -o out.kicad_pcb --config options.toml` |
 | Run a design-rule check | `drc board.kicad_pcb --json report.json` |
 | See a summary of a board | `inspect board.kicad_pcb` |
 | Find pins that cannot escape their package | `escape board.kicad_pcb` |
+| Route a tscircuit Simple Route JSON problem | `srj-import problem.json -o board.kicad_pcb`, then `route`, then `srj-export routed.kicad_pcb --problem problem.json -o solved.json` |
 | See which parts and layout rules it detects | `rules board.kicad_pcb --mode on` |
+| Let a script or a language model suggest hints when routing leaves connections open (experimental: the rule-based advisor measured no gain, [docs/17-llm-advisor.md](docs/17-llm-advisor.md) section 8) | `route board.kicad_pcb -o out.kicad_pcb --advisor "python3 advisors/heuristic_advisor.py"` |
+| Route with a hint file you wrote (nets first, layer costs, reserved regions) | `route board.kicad_pcb -o out.kicad_pcb --advice advice.json`; check it first with `advice-check board.kicad_pcb advice.json` |
+| Check whether fast nets have copper under them on their reference layer, and how far the return detours round voids (read-only; doc 05 §42) | `return-paths board.kicad_pcb --nets 'DDR*,*CLK*' --view` |
+| Route critical signals first, with dearer vias, and keep them off plane splits (JLCPCB's three rules; off by default; doc 05 §44) | `route board.kicad_pcb -o out.kicad_pcb --si-rules`, or `--critical-auto --critical-first --critical-via-cost 3 --split-cost 4` one by one; `--critical-nets 'CLK*'` names more |
+| Check every footprint against its datasheet land pattern, from references of brands you trust; errors stop a route (doc 05 §43) | `footprint-check board.kicad_pcb --refs refs/ --view`; or `route board.kicad_pcb -o out.kicad_pcb --footprint-refs refs/` (examples in `docs/footprint_refs/`) |
+| Get a report of what failed and why | `route board.kicad_pcb -o out.kicad_pcb --stuck-report stuck.json` |
 
 <details>
 <summary><b>Placing components</b></summary>
@@ -141,11 +160,23 @@ down beside the board and reported.
 <details>
 <summary><b>More route options</b></summary>
 
+- `tracemaker tui`: every option below (and the rest) on one screen, with its description and default. Space
+  toggles a flag or edits a value, `/` filters, `r` runs the route, `p` prints the command, `s` saves the choices to
+  a file for `route --config FILE`. In the file each line is `name = value`; options typed on the command line win.
+  A help panel describes the option under the cursor. Options can be kept globally
+  (`~/.config/tracemaker/route.conf`), per project (`tracemaker.conf` beside the board) or in the `--config` file;
+  each value shows where it comes from, and `Tab` chooses which of them receives your edits and the `s` save.
 - `--threads N`: threads. Eight differently configured routers run in parallel and the best result is kept.
 - `--variants N`: how many of those eight to run.
 - `--work N`: a budget in search steps instead of seconds. The output is then identical at any thread count.
 - `--no-gpu`: compute on the CPU only. Results are identical.
 - `--diff-pairs`: route differential pairs side by side at the rule's gap.
+- `--bus 'DATA=/D[0-7]'` (repeatable), `--buses` (find them in the net names): route a bus lane by lane on the
+  same layers with the same vias; `--bus-skew-mm 0.5` length-matches it with meanders (a custom `skew` rule of the
+  board does the same); `--bus-first` routes buses before everything else. `tracemaker buses BOARD --bus …`
+  measures a routed board (doc 05 §38). Experimental: it meets the skew limits on generated bus boards, but on
+  real boards it has so far routed slightly fewer connections, and `--buses` can group indexed nets that are
+  not a bus.
 - `--component-rules on`: apply detected layout rules (keep-outs, widths from impedance and current).
 - `--rules-override FILE`: correct what was detected (doc 15 §6.3).
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
@@ -157,7 +188,19 @@ down beside the board and reported.
   --save-board`): `--soft-zones` (zone fills do not block other nets; an inner plane no pad touches becomes a via
   target), `--keep-vias-off-pads` / `--vias-off-pads-below MM` (no via in an SMD pad narrower than 2 mm),
   `--via-in-pad` (the board's minimum via in an inner ball that has no other way out), `--first-nets A,B` (these
-  nets go first, also after restarts, and other nets do not rip them).
+  nets go first, also after restarts, and other nets do not rip them). With `--soft-zones` the job then refills
+  the zones in memory, routes what the refill left unconnected once more, and reports `unconnected_after_refill`
+  (the exit code follows it; `--no-refill-repair` only counts; doc 05 §36). The written board keeps its old fills.
+- `tracemaker drc --refill-zones`: judge the fills the current copper would get, like kicad-cli's flag.
+- After-route passes (doc 05 §39), all off by default: `--widen-power` (new tracks the router had to neck down go
+  back to their net class width where there is room; `--widen-net 'PATTERN=WIDTH_MM'` and widths computed by the
+  component rules are targets for power nets), `--stitch-vias planes|return|all` (free vias of a plane's net on a
+  grid where its fills overlap on two or more layers, `--stitch-pitch MM`; and one near each via of the nets that
+  need a reference plane, from component rules or `--stitch-return 'PATTERN=PLANE_NET'`, `--stitch-distance MM`).
+  Refill the zones afterwards, as with `--soft-zones`. Return-path stitching driven by component rules is
+  experimental: no test board has had a via placed by it yet.
+- `tracemaker style BOARD [--json FILE]`: how tidy a routed board is (bends per connection, acute angles,
+  stair-steps, detours); the route summary carries the same `style` object for the new copper.
 
 </details>
 
@@ -192,7 +235,7 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 ```
 scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
-ctest --preset release             # 132 tests, about 5 minutes
+ctest --preset release             # 165 tests, about 6 minutes
 ```
 
 - Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.
@@ -217,6 +260,10 @@ python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 
 - Each run writes `bench/results/<run>/`: the routed boards, a result per board, and `summary.json`.
 - Every board is compared with Freerouting's published result for the same file.
+- tscircuit's BGA breakout problems (400 Simple Route JSON files): `scripts/fetch_fixtures.sh tscircuit`, then
+  `python3 bench/run.py --set srj19 --work 10000000 --route-args "--variants 1 --no-gpu"` (or `--set srj20`) and
+  `python3 bench/srj_score.py <run>` for tscircuit's own pass criterion (`scripts/fetch_fixtures.sh tscircuit-checker`
+  installs its checker; needs node).
 
 <details>
 <summary><b>More benchmark results</b></summary>
@@ -246,6 +293,8 @@ Freerouting 2.5 10%; Freerouting 1.9 20%.
 | `src/drc` | the design-rule check |
 | `src/io/kicad` | reading and writing KiCad files |
 | `src/crules` | component-aware layout rules |
+| `src/analysis` | read-only audits KiCad's DRC cannot make (the reference return of high-speed nets) |
+| `src/advice`, `advisors/` | advice files, the stuck report and advisors (a model is optional and outside the engine) |
 | `src/gpu` | CUDA and Metal code, each with a CPU twin |
 | `src/server`, `viewer/` | the live viewer |
 | `kicad_plugin/` | the KiCad plugin |

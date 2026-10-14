@@ -1,0 +1,3 @@
+# --advice on a real srj20 board (sample100), advice from the advice_eval run adv2-a1, --work 3000000 --variants 4 --no-kb --time 3600: board bytes by thread count and repeat
+4 board(s) with sha256 1bcf82893d6119d207714dbf93e4d2eb42fb02f5aec68c741dc04a485bb45fc3
+files: 4

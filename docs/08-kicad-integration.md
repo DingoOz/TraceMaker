@@ -29,9 +29,16 @@
 - **Round-trip guarantee**: parse → write without changes is byte-identical (gate of M1). Changes touch
   only the nodes TraceMaker owns: footprint `at`/`layer`/flipped pads, new `segment`/`arc`/`via` nodes,
   removed tracks it ripped.
+- **Legacy zone fills**: KiCad 5 `filled_polygon` nodes without a layer inherit the zone's copper
+  layer only when its copper mask contains exactly one bit. Explicit fill layers take precedence
+  (even an unknown explicit layer); missing, unknown or multi-copper-layer zones never guess a fill
+  layer. This affects the typed copper/connectivity view only; the original text stays untouched (D105).
 - **Project rules**: `.kicad_pro` (JSON) holds net classes, net-class patterns/assignments, board design
   settings (min track width, clearances, via sizes, hole clearances), and severity settings. `.kicad_dru`
   holds custom rules (constraint keywords in the research note §A). The rule compiler (doc 03) consumes both.
+  The reader seeds supported KiCad 10 defaults and applies legacy board rules. Project values overlay
+  defaults only where KiCad's legacy migration permits loading them; missing keys preserve current
+  values and explicit zeros remain zero (D108).
 - **Schematic**: netlist from the hierarchical `.kicad_sch` set (symbols, pins, labels, power symbols, net
   class directives, DNP / exclude-from-board flags). Cross-checked in tests against
   `kicad-cli sch export netlist --format kicadsexpr`.
@@ -40,6 +47,55 @@
 - **Specctra DSN reader / SES writer** for the Freerouting fixture set, plus a **DSN writer** so Freerouting
   can be run as a baseline on our own `.kicad_pcb` fixtures (KiCad 10 has no `kicad-cli` DSN export, and the
   SWIG exporter disappears in KiCad 11).
+
+### 3.1 Supported native rule defaults (D108)
+
+Defaults are taken from KiCad 10.0.3's
+[`include/board_design_settings.h`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/include/board_design_settings.h),
+[`BOARD_DESIGN_SETTINGS` constructor](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/pcbnew/board_design_settings.cpp)
+and [`common/netclass.cpp`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/common/netclass.cpp).
+The constructor sets `m_resetParamsIfMissing = false`: absent project keys keep constructor values or
+values read from the legacy board. In particular, use the constructor's 0.1 mm annular width, not the
+different reset default in the JSON parameter declaration.
+
+| Supported board constraint | Default (mm) |
+|---|---:|
+| Overall clearance / minimum connection width | 0 / 0 |
+| Minimum track width | 0.2 |
+| Minimum via diameter / annular width | 0.5 / 0.1 |
+| Minimum through-hole drill | 0.3 |
+| Minimum microvia diameter / drill | 0.2 / 0.1 |
+| Hole-to-copper / hole-to-hole clearance | 0.25 / 0.25 |
+| Copper-to-edge clearance | 0.5 |
+| Silk clearance / mask-to-copper clearance / mask web width | 0 / 0 / 0 |
+
+The native Default class has clearance/track width 0.2/0.2 mm, via diameter/drill 0.6/0.3 mm,
+microvia diameter/drill 0.3/0.1 mm and differential-pair width/gap/via-gap 0.2/0.25/0.25 mm.
+Class dimensions are routing preferences, not permission to violate a board or custom minimum.
+Project classes inherit missing/null fields from Default. Native legacy net-class migration takes
+precedence over project class definitions and assignments. Board-local fields retain their existing precedence.
+Missing or malformed projects remain warned about; they do not turn supported minimums into zero.
+
+**Legacy migration precedence:** the reader follows KiCad 10.0.6's
+[`BOARD::SetProject`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.6/pcbnew/board.cpp)
+and [`parseSetup` / `parseNETCLASS`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.6/pcbnew/pcb_io/kicad_sexpr/pcb_io_kicad_sexpr_parser.cpp):
+tokens that set `m_LegacyDesignSettingsLoaded` (for example `trace_min`, `via_min_size`,
+`user_trace_width` or `defaults`) suppress loading the project's board settings as a whole,
+including minimums and severities. The reader detects those exact legacy tokens, not merely `setup`.
+Local `pad_to_mask_clearance`, `solder_mask_min_width`, origins, stackup and plot settings do not
+set that flag and do not suppress project rules. Present project keys, including zero, remain
+authoritative on boards without a legacy design-settings trigger.
+
+Net classes migrate independently: any root `net_class` transfers legacy classes and assignments
+over project classes/patterns, but does not itself suppress project board minimums. Conversely,
+legacy design-setting tokens alone do not suppress project net classes.
+
+`tests/integration/no_project_defaults.py` generates isolated native DRC probes for absent, empty,
+partial and zero-valued projects, project overrides and legacy preservation/migration, then routes
+a legacy 0.15 mm class under the built-in 0.2 mm minimum and checks preservation of a wider legacy
+class despite a conflicting project class. Assertions use violation types and actual written
+copper widths, not rendered diagnostics or echoed options. Unit tests cover default boundaries,
+cross-property legacy suppression, nontriggering local fields and independent class migration.
 
 ## 4. Rule coverage policy
 
@@ -141,3 +197,99 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
   File…): the manager lists TraceMaker 0.1.0 as installed and compatible, and the files are in
   `3rdparty/plugins/org_tracemaker_autoroute/` (`report/m11-gui/pcm-installed.png`). Not checked: that KiCad then
   builds the plugin's virtual environment and shows the toolbar button (the container had no network for pip).
+
+## 9. Simple Route JSON (`src/io/srj`, D90)
+
+tscircuit publishes autorouting problems as Simple Route JSON (SRJ): one JSON object with the layer count, the
+board bounds, rectangular or round obstacles, the connections to make and a few scalar rules; a solution adds
+`traces`. TraceMaker reads and writes it at the edge only. The model, the exact check and the judge stay KiCad's:
+a problem becomes a KiCad board with its project, the usual pipeline routes and judges it, and the routed board
+is written back as traces.
+
+```
+tracemaker srj-import problem.json -o board.kicad_pcb [--clearance-mm X] [--hole-to-hole-mm X] [--json summary.json]
+tracemaker route board.kicad_pcb -o routed.kicad_pcb ...
+tracemaker srj-export routed.kicad_pcb --problem problem.json -o solved.json [--json summary.json]
+```
+
+Field meanings are taken from `lib/types/srj-types.ts` and the code around it in
+github.com/tscircuit/tscircuit-autorouter (MIT, read at `5bcf774`) and from the page `advanced/simple-route-json`
+on docs.tscircuit.com, which is older and says less.
+
+**Geometry.** SRJ is millimetres with y up; KiCad has y down. A point (x, y) becomes (x, −y) and back, with no
+offset, so the board looks the same on screen and `ccwRotationDegrees` is KiCad's pad angle unchanged. Layers
+are `top`, `inner1` … `innerN`, `bottom` in stack order and map to `F.Cu`, `In1.Cu` …, `B.Cu`. A problem with one
+layer gets a `B.Cu` that a rule area closes to tracks and vias, since a KiCad board has two copper layers at
+least. The board edge is the `outline` polygon if there is one, else the `bounds` rectangle.
+
+**Nets.** SRJ has no net table. An obstacle lists ids in `connectedTo` (connection names, port ids, net ids of the
+tool that made the file) and a connection point carries a `pointId` and a `pcb_port_id`. The reader forms the same
+groups as tscircuit's `getConnectivityMapFromSimpleRouteJson`: ids that appear together are one group, and an
+obstacle and a point with the same centre (to 0.01 mm) and layers are too. A group that holds a connection is a
+net, named after its first connection. An obstacle in a group without a connection gets no net: it is copper to
+keep clear of, and KiCad's ratsnest must not ask for a connection the problem does not ask for. An obstacle with
+an empty `connectedTo` is a keep-out and joins nothing.
+
+**Obstacles.** One footprint per `componentId` at the origin; every obstacle is a pad at its absolute position.
+
+| Obstacle | KiCad |
+|---|---|
+| one layer | SMD pad, `rect` (rotated by `ccwRotationDegrees`) or `circle` (`shape: "circle"`, diameter = `width`) |
+| several layers, in a net | plated through-hole pad. SRJ has no drill size: the drill is half the smaller side, at least 0.1 mm, as tscircuit's own conversion to Circuit JSON does. A through-hole pad spans the whole stack even if the obstacle lists fewer layers (warned) |
+| several layers, no net | one SMD pad per layer: nothing has to join the layers, so no hole is invented |
+| `isNonPlatedHole` | non-plated hole; a rectangular one is a slot plus a rule area over the rectangle, since the slot leaves the corners out |
+| `isCopperPour` | zone of its net without a fill: tscircuit's pipelines leave pours out of their obstacle sets, so a pour is copper to be poured again around the routing (refill in KiCad) |
+
+A connection point that lies on no obstacle of its net gets a round pad of the track width, because KiCad's
+connectivity needs a pad to end on. The converter counts the point-to-point connections the problem asks for and
+the ratsnest the board implies (pads − 1 per net) and warns when they differ.
+
+**Rules.** `<board>.kicad_pro` carries one net class and the board minimums, and nothing the problem does not
+state:
+
+| SRJ | KiCad |
+|---|---|
+| `minTraceWidth` | minimum track width |
+| `nominalTraceWidth` (else `minTraceWidth`) | track width of the Default class; a connection's own `nominalTraceWidth` puts its net in a class of that width |
+| `min_via_pad_diameter` / `minViaPadDiameter` / `minViaDiameter`, `min_via_hole_diameter` / `minViaHoleDiameter` | via size and drill of the class, minimum via diameter, drill and annular width; resolved as tscircuit's `getViaDimensions` (pad 0.3 mm and hole half the pad when absent) |
+| `defaultObstacleMargin` | copper clearance (class and board minimum). Absent: 0.15 mm, the fallback tscircuit's routers use, with a warning; `--clearance-mm` sets it |
+| `minTraceToPadEdgeClearance`, `minViaEdgeToPadEdgeClearance` | custom rules in `<board>.kicad_dru` (track or via against pad) when they differ from the clearance |
+| `minTraceToHoleEdgeClearance` | minimum hole clearance (KiCad applies it to plated holes too) |
+| `minViaHoleEdgeToViaHoleEdgeClearance`, `minPlatedHoleDrillEdgeToDrillEdgeClearance` | minimum hole-to-hole distance (the larger); `--hole-to-hole-mm` sets it |
+| `minBoardEdgeClearance` | minimum copper-to-edge clearance |
+| `allowBlindAndBuriedVias` | the board setting; `route --blind-vias` then uses them |
+| `allowViaInPad` | no KiCad setting: reported, and `route --via-in-pad` is the user's choice |
+| `minPadEdgeToPadEdgeClearance` | not written: it concerns fixed pads only |
+
+Rules the problem leaves out are zero (no rule), not KiCad's defaults. Preloaded `traces`, `differentialPairs`,
+`buses`, jumpers, off-board connections and `terminalVia` hints are read and reported as not imported.
+
+**Determinism.** The output depends only on the problem and the options: obstacles, footprints and nets keep the
+file's order, numbers are exact nanometres, and UUIDs are counted from a fixed Philox stream, not drawn. Two
+conversions give the same bytes (tested).
+
+**Export.** `srj-export` writes the problem unchanged with `traces` set. Nets are matched by name and pads by
+position. A routed net is a graph (track pieces, vias, pads), joined wherever copper of the net touches, as KiCad 10's
+connectivity joins it: a track end or a via on another track, two tracks that cross, a track or a via over a pad; each
+connection gets the shortest path through its net's copper between the pads of its points, as wire points and
+`via` points (with `via_diameter`, `via_hole_diameter`, and the spanned `layers` when the problem allows blind
+vias). The trace starts and ends at the problem's own coordinates. A connection without a path is listed as
+unrouted and the exit code is 3. Copper that no connection path used (a stub, a partial route) follows as traces
+named `<net>_extra_<n>`, so a checker reading the file sees all the copper. Limits: arcs are exported as
+polylines; a path that changes layer through a through-hole pad has no `via` point there.
+
+Tests: `tests/test_srj.cpp` on the hand-made `tests/srj/mixed.json` (rotated rectangle, circle, plated hole with a
+multi-layer point, keep-out, non-plated hole, pour, outline, merged connections, a point on bare board) and on
+inline problems (one layer, a slot, tracks that only touch);
+`tests/integration/srj_roundtrip.py` imports `tests/srj/tiny.json`, routes it, exports it and checks every trace
+point against the routed copper and, when `kicad-cli` is there, KiCad's ratsnest and DRC. The benchmark built on
+this is doc 10 §7.
+
+### 9.1 Fan-out problems (M14, D96)
+
+`tracemaker srj-import` handles tscircuit's fan-out benchmark (`fanout31`) with these additions: plane terminations
+(`buses[].termination` of type `plane`) become zones of the net on that layer covering the bounds; a breakout point
+(`pointId` starting `pcb_breakout_point`) takes the layer its bus gives in `connectionExitTargets`; `--unpointed-keepout` turns the
+pads of a net that no connection point lies on into keep-outs; `--outline-margin-mm` grows the outline (breakout points lie on the
+bounds); the extension field `tracemakerTrackLayers` (layer names) closes the other layers to tracks with a rule area that lets vias
+through. `bench/prepare_fanout31.py` sets them for the 72 cases; `bench/fanout31_run.py` routes and scores them.

@@ -1,0 +1,6 @@
+# ASan + UBSan (cmake preset asan): the return-path tests and return-paths on two demo boards
+===============================================================================
+All tests passed (18090 assertions in 11 test cases)
+
+return-paths royalblue54L_feather/RoyalBlue54L-Feather: exit 0, 0 sanitizer reports (checked /tmp/claude-1000/-home-dingo-Programming-TraceMaker/2162231b-0c11-4b7d-9274-a28abd494a16/scratchpad/asan_RoyalBlue54L-Feather.txt)
+return-paths cm5_minima/CM5_MINIMA_3: exit 0, 0 sanitizer reports (checked /tmp/claude-1000/-home-dingo-Programming-TraceMaker/2162231b-0c11-4b7d-9274-a28abd494a16/scratchpad/asan_CM5_MINIMA_3.txt)

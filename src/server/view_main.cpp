@@ -343,14 +343,17 @@ class Demo {
 
 int main(int argc, char** argv) {
   CLI::App app{"TraceMaker live viewer server"};
-  std::string board_path, host = "0.0.0.0", web;
+  std::string board_path, host = server::default_host(), web, token;
+  bool insecure = false;
   int port = 8766;
   bool demo = false, keep = false, loop = false;
   std::string replay;
   double speed = 1.0;
   app.add_option("board", board_path, ".kicad_pcb file to show")->required()->check(CLI::ExistingFile);
   app.add_option("--port", port, "TCP port (default 8766)")->check(CLI::Range(0, 65535));
-  app.add_option("--host", host, "bind address (default 0.0.0.0)");
+  app.add_option("--host", host, "bind address (default $TM_VIEW_HOST, else 127.0.0.1: this machine only; 0.0.0.0 or a LAN address lets other machines connect and then needs a token)");
+  app.add_option("--token", token, "token for a viewer other machines can reach (16+ characters; default a random one, printed in the URL)");
+  app.add_flag("--insecure", insecure, "serve a viewer other machines can reach WITHOUT a token");
   app.add_option("--web", web, "directory of the built viewer (default <repo>/viewer/dist)");
   app.add_flag("--demo", demo, "stream synthetic routing events (tracks are cleared and re-routed in a loop)");
   app.add_flag("--keep-tracks", keep, "with --demo: keep the board's existing tracks and vias");
@@ -377,6 +380,8 @@ int main(int argc, char** argv) {
     opts.host = host;
     opts.port = static_cast<std::uint16_t>(port);
     opts.web_root = web;
+    opts.token = token;
+    opts.allow_open = insecure;
     server::ViewerServer srv(opts);
     std::signal(SIGINT, on_signal);
     std::signal(SIGTERM, on_signal);
@@ -384,7 +389,9 @@ int main(int argc, char** argv) {
     srv.publish(server::board_snapshot_json(board, name));
     std::printf("tracemaker-view: %s (%zu pads, %zu tracks, %zu vias, %d copper layers)\n", name.c_str(),
                 board.pads.size(), board.tracks.size(), board.vias.size(), board.copper_count());
-    std::printf("serving %s  ->  %s   (web root %s)\n", srv.url().c_str(), ("ws" + srv.url().substr(4) + "ws").c_str(), srv.web_root().c_str());
+    const std::string base = srv.url().substr(0, srv.url().find('?'));  // without the token
+    std::printf("serving %s  ->  %s   (web root %s)\n", srv.url().c_str(), ("ws" + base.substr(4) + "ws").c_str(), srv.web_root().c_str());
+    if (const auto notice = srv.notice(); !notice.empty()) std::printf("warning: %s\n", notice.c_str());
     if (!std::filesystem::exists(std::filesystem::path(srv.web_root()) / "index.html"))
       std::printf("note: viewer not built; run: cd viewer && npm install && npm run build\n");
     std::printf("press Ctrl-C to stop\n");

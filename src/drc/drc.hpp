@@ -30,6 +30,7 @@ struct DrcOptions {
   bool dangling = true;       // report dangling tracks and vias (warnings)
   bool propagate_nets = true; // check with the nets KiCad assigns on load (drc/connectivity.hpp propagate_nets)
   bool linear_zone_tests = false;  // reference path: test items against every edge of a zone fill (no edge index)
+  bool connectivity_only = false;  // only unconnected items (and dangling ends if `dangling`): no clearance or rule checks
 };
 
 struct DrcReport {

@@ -1,0 +1,14 @@
+# ctest --preset release -j16 on the issue-8 branch, 2026-10-14T08:55Z
+100% tests passed, 0 tests failed out of 297
+Total Test time (real) =  71.60 sec
+--- did not run:
+	293 - fixture_preparation_native (Skipped)
+--- new tests:
+  8/297 Test #209: relax late: plain rounds first, stages afresh when they stall; legal and the same at any thread count     Passed    7.48 sec
+ 62/297 Test #297: viewer_stall     Passed    0.29 sec
+213/297 Test  #37: board snapshot of pic_programmer has the board's objects     Passed    0.05 sec
+287/297 Test #267: stall: a connection that routes has no failure to explain     Passed    0.05 sec
+289/297 Test #263: stall: a gap too narrow for any legal track is a placement problem     Passed    1.08 sec
+290/297 Test #265: stall: routed copper of another net closing the way is contested     Passed    1.79 sec
+291/297 Test #264: stall: a gap a narrower legal track passes is a rule problem     Passed    1.93 sec
+292/297 Test #266: stall: a viewer changes nothing about the routing     Passed    5.57 sec

@@ -66,6 +66,9 @@ struct DesignRules {
   std::map<std::string, std::vector<std::string>> assignments; // explicit net → class names
   std::vector<CustomRule> custom;
   std::map<std::string, std::string> severities;  // KiCad violation type -> error | warning | ignore
+  // KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add
+  // the stackup height between the layers they join to a net's length (route/bus.hpp, via_heights).
+  bool use_height_for_length = true;
   std::vector<std::string> warnings;        // anything that could not be interpreted
 
   const NetClass& default_class() const { return classes.front(); }

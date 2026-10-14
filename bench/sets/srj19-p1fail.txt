@@ -1,0 +1,26 @@
+# srj19 boards not clean with profile P1 (doc 16)
+#fixtures: bench/data/tscircuit/boards/srj19
+sample007
+sample011
+sample013
+sample019
+sample031
+sample062
+sample080
+sample091
+sample100
+sample105
+sample121
+sample124
+sample129
+sample137
+sample142
+sample147
+sample158
+sample163
+sample167
+sample173
+sample178
+sample184
+sample189
+sample193

@@ -167,3 +167,4 @@ contribution, and their benefit must be shown by ablation in the benchmark (road
 | T3 | Persistent SQLite knowledge base: Thompson-sampling bandit over variants per board-feature bucket; per-board failed connections routed first on re-runs | Done | `learn/knowledge_base.cpp`, `tracemaker route --kb` |
 | T3 | Learned models (congestion predictor, ordering policy) | Not started | |
 | — | Conflict graph between nets, precedence learning, Luby restarts | Not started | |
+| — | Failure record for outside readers (2026-10-14, D112): structured unrouted list (reason code, rips, fails, pad positions, blocker nets), `failure` event `region` and `blocker_nets`, the stuck report; advice (typed hints) fed back through `--advice`. Advice changes costs, order and which attempts are made, never the legality check, exactly as the learned state does. The closed-set boundary `blockers` of §2 are not built | Done | `route/router.cpp`, `advice/`, doc 17 |

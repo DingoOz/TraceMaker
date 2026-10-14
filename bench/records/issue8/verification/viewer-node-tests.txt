@@ -1,0 +1,21 @@
+# viewer tests under Node v26.7.0 (viewer/src/stall.test.ts, stall_draw.test.ts)
+✔ a run of failures without progress latches; progress in between does not (2.291432ms)
+✔ budget expiry and the like do not freeze (1.902649ms)
+✔ failures replayed while catching up do not freeze (0.447852ms)
+✔ a finished run is not a stall: the final stats in the same frame, or before the failures, keep the viewer unfrozen (0.369141ms)
+✔ off: nothing is held back, whatever happens (0.65359ms)
+✔ while latched the scene is held, the HUD is not, and dismissal gives back everything in order (1.151392ms)
+✔ after dismissal the next stall needs a fresh run of failures (it re-arms) (0.276025ms)
+✔ [ and ] move through the stalled connections; a click picks one by net (0.435495ms)
+✔ rejected paths are kept per connection, the last PATHS_KEPT of them, newest last (0.367054ms)
+✔ a snapshot starts everything over (0.402201ms)
+✔ an old engine: failures without any of the new fields still work, and say they have no measurement (0.510382ms)
+✔ the label carries the engine numbers: width, clearance, the widest track that fits, the layer, and the verdict (0.565866ms)
+✔ colours differ by cause (0.187316ms)
+✔ draws each rejected path as a polyline, the two ends, the mark, and the label with the verdict (2.57869ms)
+✔ the path is drawn in the colour of its cause (0.707718ms)
+✔ no measurement and no path still draws the ends and says so (0.338205ms)
+✔ the label stays on the screen and clear of the side panel (1.406126ms)
+ℹ tests 17
+ℹ pass 17
+ℹ fail 0

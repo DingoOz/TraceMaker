@@ -46,29 +46,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   // outline, the others are cut-outs. If any pad centre falls outside, the outline is not trusted (edge
   // clearance still applies through the edge segments).
   {
-    std::vector<std::vector<Point>> pieces;
-    for (const auto& e : cm_.edges) pieces.push_back(e.pts);
-    auto near = [](Point a, Point c) { return std::llabs(a.x - c.x) < 2000 && std::llabs(a.y - c.y) < 2000; };
-    std::vector<std::uint8_t> used(pieces.size(), 0);
-    std::vector<std::vector<Point>> loops;
-    for (std::size_t s0 = 0; s0 < pieces.size(); ++s0) {
-      if (used[s0] || pieces[s0].size() < 2) continue;
-      used[s0] = 1;
-      std::vector<Point> chain = pieces[s0];
-      for (bool grown = true; grown && !near(chain.front(), chain.back());) {
-        grown = false;
-        for (std::size_t k = 0; k < pieces.size(); ++k) {
-          if (used[k] || pieces[k].size() < 2) continue;
-          if (near(chain.back(), pieces[k].front())) chain.insert(chain.end(), pieces[k].begin() + 1, pieces[k].end());
-          else if (near(chain.back(), pieces[k].back())) chain.insert(chain.end(), pieces[k].rbegin() + 1, pieces[k].rend());
-          else continue;
-          used[k] = 1;
-          grown = true;
-          break;
-        }
-      }
-      if (chain.size() >= 4 && near(chain.front(), chain.back())) loops.push_back(std::move(chain));
-    }
+    std::vector<std::vector<Point>> loops = drc::edge_loops(cm_.edges);
     auto area = [](const std::vector<Point>& l) {
       long double a = 0;
       for (std::size_t i = 0, j = l.size() - 1; i < l.size(); j = i++)

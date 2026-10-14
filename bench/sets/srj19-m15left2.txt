@@ -1,0 +1,5 @@
+# srj19 boards open after the maximum-effort run
+#fixtures: bench/data/tscircuit/boards/srj19
+sample011
+sample031
+sample173

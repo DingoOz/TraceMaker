@@ -30,8 +30,21 @@
   the start (seeking needs the control channel and periodic keyframes, not built yet).
 - **Control channel** (viewer → engine): pause/resume/step, change speed, pick an object, request detail
   (e.g., a failure record), adjust visual LOD. Changes to the routing itself stay in the CLI/plugin.
-- **Security**: binds to `127.0.0.1` by default; remote access through an SSH tunnel, or `--listen 0.0.0.0`
-  with a random token in the URL and optional TLS.
+- **Security** (issue #4, D116). The viewer streams a whole board, so who may connect matters.
+  - It binds `127.0.0.1` by default. `--view-host 0.0.0.0` (or a LAN address; `TM_VIEW_HOST` sets it once for every command) lets other machines connect, and then a
+    **token is required** on the page and on `/ws`: random per run (or `--view-token`, 16+ characters), printed in the URL (`http://host:8766/?token=...`). The first
+    request carries it in the URL; the server answers with an `HttpOnly; SameSite=Strict` cookie that the page sends back with every later request, the WebSocket
+    included (the page also puts the token on the `/ws` URL, for a browser that refuses cookies). `--view-insecure` serves without a token, and the log says so.
+  - Always: a WebSocket upgrade that names an `Origin` must come from the server's own origin. Browsers do not apply the same-origin rule to WebSockets, so without
+    this a web page open in the user's browser could read the stream of a viewer on localhost. With a loopback bind and no token the `Host` header must also name
+    this machine (a page on `evil.example` whose name resolves to `127.0.0.1` would otherwise pass the origin check: DNS rebinding). A reverse proxy or port-forwarding service that puts
+    another name in `Host` is therefore refused by a loopback viewer: bind a non-loopback address and use the token instead.
+  - At most 16 WebSocket viewers (counted from the upgrade, so a burst cannot overshoot; the next gets 503) and 128 open HTTP connections, at most 16 of them from one address (a host
+    that opens idle sockets cannot use up the others' share before it has authenticated; many addresses together still can: this is not a defence against flooding). The cookie is named per port
+    (`tm_token_<port>`: cookies ignore ports). A `Host` that is not a name or address with a numeric port is refused. Answers carry `Referrer-Policy: no-referrer`,
+    `X-Content-Type-Options: nosniff` and `X-Frame-Options: DENY`; the token is compared in constant time.
+  - Not built: TLS (the token and the stream cross the network unencrypted: on an untrusted network keep the loopback bind and use an SSH tunnel), accounts, the
+    control channel. The stream is read-only; nothing a client sends is acted on.
 
 ## 3. Renderer (browser, WebGL2 baseline, WebGPU when available)
 
@@ -63,7 +76,7 @@ thin backend interface; the WebGL2 path uses fragment-shader SDFs and render-to-
 | Main canvas | Board, copper per layer, pads, vias, zones, ratsnest (airwires fade as connections complete) |
 | **Search frontier** | The current A* frontier as a fading, glowing wave per active thread (sampled, not every node) |
 | **Rip-up** | Ripped tracks dissolve into particles; rerouted ones draw in along their path |
-| **Failure ghosts** | Failed attempts shown as dashed red paths for a few seconds, blockers outlined in red, the over-full cut drawn as a red bar with "demand / capacity" |
+| **Failure ghosts** | Failed attempts shown as dashed red paths for a few seconds, blockers outlined in red, the over-full cut drawn as a red bar with "demand / capacity". **On a stall the scene freezes** on the stuck connection (§8, issue #8): the rejected paths stay, coloured by cause, with the numbers that rejected them and a verdict |
 | **Placement motion** | Footprints glide (interpolated between frames) during global placement; the electrostatic density appears as a heat field; ECO moves pulse the moved part |
 | **Overlays** | Congestion, history `h`, learned penalties, RUDY, pin density, escape plan |
 | Layer stack | Toggle/solo layers; an exploded 2.5-D tilted view of the stack (each layer a translucent plane, vias as vertical glowing pillars) |
@@ -128,8 +141,8 @@ the control channel, the minimap and the WebGPU backend are not built yet.
 | Target | Contents |
 |---|---|
 | `tm_viz_messages` (`tm::viz`) | `server/messages.hpp`: `board_snapshot_json(board, name)` plus builders for `track_add/remove`, `via_add/remove`, `footprint_move`, `ratsnest`, `frontier`, `path_try`, `failure`, `stats`, `stage`, `log`, `heatmap`, and `message_type()`. Depends only on model, drc and nlohmann_json, so the router can link it without Boost |
-| `tm_server` (`tm::server`) | `tmk::server::ViewerServer : events::Sink`: Boost.Beast HTTP + WebSocket on one background I/O thread. Serves static files (MIME types, percent-decoding, `..` and symlink escape rejected) from `<repo>/viewer/dist` or `ServerOptions::web_root`; WebSocket at `/ws`. Default bind `0.0.0.0:8766` (8765 is the dev progress site) |
-| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--web DIR] [--demo] [--keep-tracks] [--replay LOG [--speed S] [--loop]]` |
+| `tm_server` (`tm::server`) | `tmk::server::ViewerServer : events::Sink`: Boost.Beast HTTP + WebSocket on one background I/O thread. Serves static files (MIME types, percent-decoding, `..` and symlink escape rejected) from `<repo>/viewer/dist` or `ServerOptions::web_root`; WebSocket at `/ws`. Default bind `127.0.0.1:8766` (8765 is the dev progress site), a token when the bind is not loopback, Origin and Host checks, client caps (§2 Security) |
+| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--token T] [--insecure] [--web DIR] [--demo] [--keep-tracks] [--replay LOG [--speed S] [--loop]]` |
 | `tm_replay` (`tm::replay`) | `server/replay_log.hpp`: `ReplayWriter` (plain, or zstd frames for `.zst`) and `ReplayReader` (format detected from the magic number; a truncated tail is ignored, corrupt frames throw). Links libzstd only |
 | `tm_server_tests` | Catch2: message builders, snapshot of `pic_programmer` (skipped if the fixture is missing), HTTP serving and traversal rejection, snapshot-then-deltas delivery, late-client catch-up, back-pressure; replay log round-trips (plain, zstd, multi-frame, truncated, corrupt), `HeatGrid` sizing/scaling, and routing C-BISCUIT with a capturing sink: heatmaps sent, copper identical to routing without one. Registered with ctest |
 
@@ -168,13 +181,52 @@ Server behaviour:
   animation frame; only the newest transient messages of a frame are kept after a stall.
 - Views can be linked as `#view=<x mm>,<y mm>,<px per mm>&layer=<n>&hc=0|1&follow=1`.
 
+### Freeze on a routing stall (issue #8, D113)
+
+- **When.** A stall is `threshold` (default 24, `#stall=N` in the URL) failed attempts without the routed count rising, the latest of them for a reason a
+  rule or a placement could explain (`boxed_in`, `no_legal_path`, `exact_check`, `rip_limit`, `layer_limit`; not a budget that ran out, a skipped
+  identical attempt, a rolled-back transaction). It is counted in the engine's own failures, not in seconds. Failures replayed while the viewer catches up
+  after a snapshot, and a frame that carries the final `done` stats (a late client joining a finished run), never freeze. On by default for `route --view`;
+  `route --no-freeze` (the board snapshot says `"freeze": false`) or `#freeze=0` turns it off and nothing changes.
+- **What freezes.** A viewer latch (`viewer/src/stall.ts`), not the engine: the router keeps going. While latched, copper, ratsnest, heatmap and footprint
+  messages are kept in order and applied when the user resumes (nothing is lost or reordered); the search frontier is dropped; the HUD (stats, stage, log)
+  keeps counting. More than 400,000 held messages cannot be applied reliably, and Resume then reloads the page for a fresh snapshot.
+- **What is shown.** The stuck net stays highlighted; every rejected path of the selected connection (the last 16) stays drawn, coloured by cause (pin boxed in,
+  blocked, exact check, rip limit), with rings at its two pads and a cross at the place the way is narrowest (or the closest approach). Beside it a label in
+  board millimetres, `need 0.25 mm track + 0.2 mm clearance; widest track that fits 0.12 mm on F.Cu`, a verdict line (`placement`, `rule`, `contested`,
+  `unknown`: doc 13 "The `failure` verdict") and the rule the numbers came from. The numbers are the engine's, measured with its own obstacle tests; the browser
+  measures nothing. The side panel lists the stalled connections with their verdict chips; `[` and `]` (or a click on the list, or on copper of one of those
+  nets) move between them. Space, Escape or the Resume button releases the scene and re-arms the latch.
+- **Control channel.** Still only this dismiss button, and it changes nothing in routing (§2).
+- **Tested.** `viewer/src/stall.test.ts` and `stall_draw.test.ts` (Node, no browser: the latch, the held messages, the label text, the drawing against a recording
+  context); ctest `viewer_stall`; and by hand in headless Chromium against a live router (`bench/records/issue8/`).
+
+### Return-path overlay (issue #7, D114)
+
+The viewer draws the reference-return audit of doc 05 §42 from `return_path` messages: the signal in cyan, the return in red (shifted a few pixels, with arrows
+from the end of the trace back to its start), and for the selected net callouts (signal pad, assumed return pad, signal via, return via or capacitor or a missing
+stitch, the separation). Callout labels never overlap: one with no room is left out and its marker stays. `P` toggles the overlay; the **Return paths** panel lists the
+audited nets worst first (chips: `+detour`, `split`, `stitch`, `ok`) and a click selects one and zooms onto it. Served by `route --return-paths ... --view` and by
+`tracemaker return-paths BOARD --nets ... --view`.
+
+The viewer draws the footprint check of doc 05 §43 from the `footprint_check` message: a ring on every footprint that differs from its datasheet (red) or has an
+untrusted reference (amber), and for the selected one a cross on each wrong pad with a short label (`pad 3: 0.15 mm off`, `pad 1: 1.8x0.6 vs 1.55x0.6 mm`,
+`missing pad 4`). The **Footprint check** panel lists the footprints with findings (errors first, the selected one scrolled into view); a click selects one, zooms
+onto it and prints the full sentences and the datasheet it was compared with (brand, part, document, revision, page). `D` toggles the overlay. Served by
+`footprint-check ... --view`, and by `route --footprint-refs ... --footprint-warn-only --view`.
+
+The viewer lists the critical nets of doc 05 §44 from the `critical_nets` message after a route: a **Critical nets** panel with a tier chip (T1 clocks, crystals and RF; T2 high-speed
+links; T3 memory and fast buses), the vias the route added to each net and the voids of its reference plane it runs over; amber where a rule was missed (a split crossed, vias over
+`--critical-via-max`), with the reason in the row's tooltip and below the list when a net is selected. A click on a net whose `return_path` message was sent (every critical net on a board
+with a plane) shows its return path in the overlay of doc 09 above.
+
 ### Running it
 
 ```
 cd viewer && npm install && npm run build            # -> viewer/dist (served by the engine)
 cmake --build --preset release --target tracemaker-view
 build/release/src/server/tracemaker-view bench/data/kicad/demos/video/video.kicad_pcb --demo
-# open http://<host>:8766/ ; --demo clears the board's tracks and "routes" them again with synthetic events
+# open http://localhost:8766/ (from another machine: add --host 0.0.0.0 and open the URL it prints, token included); --demo clears the board's tracks and "routes" them again with synthetic events
 cd viewer && npm run dev                              # hot-reload development, proxies /ws to :8766
 ```
 

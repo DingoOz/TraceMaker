@@ -1,0 +1,38 @@
+{
+  "board": {
+    "design_settings": {
+      "rules": {
+        "min_clearance": 0.1,
+        "min_track_width": 0.15,
+        "min_via_diameter": 0.3,
+        "min_through_hole_diameter": 0.2,
+        "min_via_annular_width": 0.05,
+        "min_hole_clearance": 0.0,
+        "min_hole_to_hole": 0.1,
+        "min_copper_edge_clearance": 0.0,
+        "allow_blind_buried_vias": false,
+        "allow_microvias": false
+      }
+    }
+  },
+  "meta": {
+    "filename": "srj.kicad_pro",
+    "version": 3
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "clearance": 0.1,
+        "track_width": 0.15,
+        "via_diameter": 0.3,
+        "via_drill": 0.2,
+        "priority": 2147483647
+      }
+    ],
+    "meta": {
+      "version": 4
+    },
+    "netclass_patterns": []
+  }
+}

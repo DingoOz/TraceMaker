@@ -1,0 +1,11 @@
+# ctest --preset release -j16 on the issue-4 branch, 2026-10-14T12:23Z
+100% tests passed, 0 tests failed out of 336
+Total Test time (real) =  72.17 sec
+--- did not run:
+	330 - fixture_preparation_native (Skipped)
+--- new tests:
+305/336 Test  #38: viewer server serves files, streams snapshot then deltas, shuts down ...................................................   Passed    0.02 sec
+328/336 Test  #40: viewer server: by default only this machine can reach it, and a page on another site cannot read the stream ............   Passed    0.01 sec
+329/336 Test  #42: viewer server: a token of your own, a viewer without one on purpose, and tokens that are refused .......................   Passed    0.01 sec
+330/336 Test  #41: viewer server: a viewer other machines can reach needs its token, in the URL once and then in a cookie .................   Passed    0.01 sec
+331/336 Test  #43: viewer server: the number of viewers and connections is capped .........................................................   Passed    0.43 sec

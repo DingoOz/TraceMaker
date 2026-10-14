@@ -1,0 +1,34 @@
+{
+  "first_nets": [
+    "bga_conn_012",
+    "bga_conn_040",
+    "bga_conn_057",
+    "bga_conn_026"
+  ],
+  "layers": {
+    "cost": {
+      "F.Cu": 1.4
+    }
+  },
+  "note": "heuristic advisor, strategy stuck-first",
+  "priority": [
+    [
+      "bga_component.29",
+      "TP012.1"
+    ],
+    [
+      "bga_component.86",
+      "TP040.1"
+    ],
+    [
+      "bga_component.65",
+      "TP026.1"
+    ],
+    [
+      "bga_component.111",
+      "TP057.1"
+    ]
+  ],
+  "variants": 4,
+  "version": 1
+}

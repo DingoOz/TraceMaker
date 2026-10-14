@@ -1,0 +1,10 @@
+# planes: origin/main 49fbd3c -> this branch (final binary, options off), --expect-identical
+
+8 boards; routed boards byte-identical: 8/8.
+Clean pass 0 → 0; mean completion 56.5% → 56.5%; router seconds 302.1 → 309.5.
+Route CPU time 942 → 1,223 s (+29.8%) at the same work.
+Byte-identical boards moved -15% to +164% in CPU time (the same work: noise, or speed).
+
+Style (informational): bends per connection 0.8224 → 0.8224; acute angles 0 → 0; stair steps 14 → 14; short segments 43 → 43; off angle segments 377 → 377; detour ratio 1.1434 → 1.1434; long detours 23 → 23.
+
+Gates: pass

@@ -1,0 +1,31 @@
+# i24g-planes-soft -> i24g-planes-soft-si (bench/compare_runs.py)
+
+8 boards; routed boards byte-identical: 4/8.
+Clean pass 2 → 2; mean completion 91.3% → 90.5%; router seconds 176.0 → 215.1.
+Route CPU time 675 → 777 s (+15.0%) at the same work.
+Byte-identical boards moved -4% to +6% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 103 → 102 / 147 | 61.0% → 59.6% | no → no | – | 42.2 → 49.6 | 138.1 → 167.5 | differs |
+| StickHub | 126 → 119 / 128 | 93.8% → 89.1% | no → no | {'solder_mask_bridge': 16} | 21.8 → 49.9 | 77.8 → 139.9 | differs |
+| interf_u | 140 → 140 / 164 | 84.2% → 84.2% | no → no | {'starved_thermal': 6} | 25.1 → 25.6 | 116.1 → 117.4 | differs |
+| plane_smd | 48 → 48 / 49 | 97.9% → 97.9% | no → no | – | 19.5 → 20.1 | 82.3 → 85.5 | differs |
+
+Style (informational): bends per connection 0.8687 → 0.8779; acute angles 0 → 0; stair steps 10 → 20; short segments 144 → 161; off angle segments 307 → 393; detour ratio 1.0812 → 1.0793; long detours 24 → 29.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 0.6064 → 0.7889 | 0 → 0 | 0 → 1 | 53 → 54 | 57 → 52 | 1.1028 → 1.1495 | 4 → 5 |
+| StickHub | 0.637 → 0.6138 | 0 → 0 | 1 → 10 | 33 → 52 | 103 → 202 | 1.302 → 1.2528 | 9 → 13 |
+| interf_u | 1.4439 → 1.4365 | 0 → 0 | 9 → 9 | 7 → 7 | 33 → 34 | 1.0809 → 1.0809 | 4 → 4 |
+| plane_smd | 0.5467 → 0.5352 | 0 → 0 | 0 → 0 | 27 → 24 | 38 → 29 | 1.1003 → 1.0993 | 1 → 1 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- route CPU time +15.0% in total
+- RoyalBlue54L-Feather: route CPU time 138.1 → 167.5 s (+21%)
+- StickHub: route CPU time 77.8 → 139.9 s (+80%)
+
+Gates: FAIL
+- RoyalBlue54L-Feather: worse (clean False -> False, completion 61.0% -> 59.6%)
+- StickHub: worse (clean False -> False, completion 93.8% -> 89.1%)

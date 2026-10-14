@@ -40,7 +40,7 @@ Environment variables (set them where KiCad is started, e.g. in the shell or a d
 |---|---|
 | `TRACEMAKER` | path to the `tracemaker` binary |
 | `TRACEMAKER_PYTHONPATH` | directory containing the `tracemaker` Python module |
-| `TRACEMAKER_ARGS` | route options in CLI spelling, default `--time 120`; e.g. `--time 60 --threads 8 --view` (`--view` streams the routing to the browser viewer) |
+| `TRACEMAKER_ARGS` | route options in CLI spelling, default `--time 120`; e.g. `--time 60 --threads 8 --view` (`--view` streams the routing to the browser viewer, on this machine only; `--view-host 0.0.0.0` lets other machines connect and prints a URL with a token in the log) |
 | `TRACEMAKER_NO_BINDINGS=1` | always use the binary |
 | `TRACEMAKER_REROUTE=1` | remove the unlocked tracks and vias and route the whole board again, in the same commit (locked copper, arcs and zones stay) |
 | `TRACEMAKER_PLACE` | let TraceMaker move footprints first (`refine`, `auto`, `routable`, `eco`, `full`), in the same commit; when parts move, the existing unlocked copper is routed again and the zones are refilled; needs `tracemaker-place` (`TRACEMAKER_PLACE_BIN`, else next to the router binary). Side changes are not applied |

@@ -1,0 +1,4 @@
+| run | boards with critical nets | critical nets | routed | vias | void crossings | splits | routed connections (all nets) |
+|---|---|---|---|---|---|---|---|
+| i24h-planes-report | 4 | 28 | 3 | 0 | 2 | 0 | 396 / 879 |
+| i24h-planes-si | 4 | 28 | 4 | 0 | 6 | 0 | 396 / 879 |

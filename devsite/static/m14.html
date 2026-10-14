@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TraceMaker M14 · BGA breakout</title>
+<style>
+/*BASE_CSS*/
+.tgt { color: var(--muted); font-size: 12px; }
+.bar.t { height: 12px; }
+.mark { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--warn); }
+.pill { display: inline-block; font-size: 11px; border-radius: 999px; padding: 1px 8px; border: 1px solid var(--border); color: var(--text-2); }
+.pill.run { color: var(--accent); border-color: var(--accent); }
+.pill.ok { color: var(--good-text); border-color: var(--good-text); }
+.state-done { color: var(--good-text); } .state-doing { color: var(--accent); } .state-dropped { color: var(--muted); text-decoration: line-through; } .state-todo { color: var(--text-2); }
+.find { font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.find:last-child { border-bottom: 0; }
+td.args { color: var(--muted); font-size: 11.5px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="logo" viewBox="0 0 34 34" aria-hidden="true">
+      <rect x="1" y="1" width="32" height="32" rx="8" fill="none" stroke="var(--border)" stroke-width="2"/>
+      <path d="M7 24 H14 L20 12 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="7" cy="24" r="3" fill="var(--accent)"/><circle cx="27" cy="12" r="3" fill="var(--accent)"/>
+    </svg>
+    <div>
+      <h1>M14 · BGA breakout routing</h1>
+      <div class="sub" id="sub">Matching tscircuit on srj19 / srj20 / fanout31 · docs/16-bga-breakout-plan.md</div>
+    </div>
+    <div class="spacer"></div>
+    <span class="live"><span class="dot" id="livedot"></span><span id="updated">connecting…</span></span>
+    <button class="toggle" id="theme" type="button">Theme</button>
+  </header>
+  <section class="tiles" id="tiles"></section>
+  <div class="grid">
+    <div class="col">
+      <section class="panel"><h2>Scoreboard (clean boards, all 200)</h2><div id="score"></div></section>
+      <section class="panel"><h2>Runs (last 36 h)</h2><div id="runs"></div></section>
+      <section class="panel"><h2>Findings</h2><div id="finds"></div></section>
+    </div>
+    <div class="col">
+      <section class="panel"><h2>Tasks</h2><div id="tasks"></div></section>
+      <section class="panel"><h2>Activity</h2><div id="activity" class="feed"></div></section>
+      <section class="panel"><h2>Machine</h2><div id="machine"></div></section>
+      <section class="panel"><h2>Commits</h2><div id="commits"></div></section>
+    </div>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct = x => (100 * x).toFixed(1) + ' %';
+const ago = t => { const s = Math.max(0, Date.now() / 1000 - t); return s < 90 ? Math.round(s) + ' s' : s < 5400 ? Math.round(s / 60) + ' min' : (s / 3600).toFixed(1) + ' h'; };
+const th = localStorage.getItem('theme'); if (th) document.documentElement.dataset.theme = th;
+$('theme').onclick = () => { const d = document.documentElement; const n = (d.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark' ? 'light' : 'dark'; d.dataset.theme = n; localStorage.setItem('theme', n); };
+
+function meter(name, v, target, hint) {
+  return `<div class="meter"><div class="row"><span>${esc(name)}</span><span class="num">${v == null ? '–' : pct(v)} <span class="tgt">/ tscircuit ${pct(target)}</span></span></div>
+  <div class="bar t"><div class="fill ${v != null && v >= target ? '' : 'active'}" style="width:${Math.min(100, 100 * (v || 0))}%"></div><div class="mark" style="left:${100 * target}%"></div></div>
+  <div class="meta">${esc(hint || '')}</div></div>`;
+}
+
+function render(s) {
+  const plan = s.plan || {}, runs = s.runs || [];
+  const tg = plan.targets || {};
+  const full = (set) => runs.filter(r => r.set === set && r.total >= 200 && r.boards > 0);
+  const best = (set, doneOnly) => { const l = full(set).filter(r => !doneOnly || r.done); return l.sort((a, b) => b.clean_pct - a.clean_pct)[0]; };
+  const tasks = plan.tasks || [];
+  const done = tasks.filter(t => t.state === 'done').length;
+  const live = runs.filter(r => !r.done);
+  $('tiles').innerHTML = [
+    ['srj19 best', best('srj19') ? pct(best('srj19').clean_pct) : '–', `tscircuit ${pct(tg.srj19 ?? .92)} · baseline ${pct(tg.srj19_base ?? .795)}`],
+    ['srj20 best', best('srj20') ? pct(best('srj20').clean_pct) : '–', `tscircuit ${pct(tg.srj20 ?? .785)} · baseline ${pct(tg.srj20_base ?? .5)}`],
+    ['Tasks', `${done}/${tasks.length}`, plan.phase || ''],
+    ['Jobs running', String((s.running || {}).routes ?? 0), `${(s.running || {}).benches?.length ?? 0} bench run(s) · load ${(s.load || []).join(' ')}`],
+    ['Branch', (s.git || {}).branch || '', `${(s.git || {}).dirty ?? 0} changed files`],
+  ].map(([l, v, h]) => `<div class="tile"><div class="label">${esc(l)}</div><div class="value num">${esc(v)}</div><div class="hint">${esc(h)}</div></div>`).join('');
+
+  $('score').innerHTML = ['srj19', 'srj20'].map(set => {
+    const b = best(set); const t = tg[set] ?? (set === 'srj19' ? .92 : .785);
+    return meter(set, b ? b.clean_pct : null, t, b ? `${b.run}: ${b.clean}/${b.boards} boards${b.done ? '' : ' (running)'} · completion ${pct(b.completion)} · ${b.args || ''}` : 'no full-set run yet');
+  }).join('') + (tg.fanout31_note ? `<div class="meta">${esc(tg.fanout31_note)}</div>` : '');
+
+  $('runs').innerHTML = runs.length ? `<table><thead><tr><th>Run</th><th>Set</th><th class="r">Boards</th><th class="r">Clean</th><th class="r">Routed</th><th class="r">Vias</th><th class="r">Med s</th><th>Args</th></tr></thead><tbody>` +
+    runs.slice(0, 40).map(r => `<tr><td class="mono nw">${esc(r.run)} ${r.done ? '' : '<span class="pill run">running</span>'}</td><td>${esc(r.set)}</td>
+    <td class="r num">${r.boards}/${r.total}</td><td class="r num">${r.clean} <span class="tgt">${pct(r.clean_pct)}</span></td><td class="r num">${pct(r.completion)}</td><td class="r num">${r.vias.toFixed(0)}</td><td class="r num">${r.median_s.toFixed(0)}</td><td class="args" title="${esc(r.args)}">${esc((r.work ? (r.work / 1e6) + 'M ' : '') + (r.args || ''))}</td></tr>`).join('') + '</tbody></table>' : '<div class="empty">No runs yet.</div>';
+
+  $('finds').innerHTML = (plan.findings || []).map(f => `<div class="find">${esc(f)}</div>`).join('') || '<div class="empty">–</div>';
+  $('tasks').innerHTML = '<ul class="tasks">' + tasks.map(t => `<li class="state-${esc(t.state)}"><span>${t.state === 'done' ? '✔' : t.state === 'doing' ? '▶' : t.state === 'dropped' ? '✖' : '○'}</span><span><b>${esc(t.title)}</b>${t.note ? '<br><span class="tgt">' + esc(t.note) + '</span>' : ''}</span></li>`).join('') + '</ul>';
+  $('activity').innerHTML = (s.activity || []).map(e => `<div class="ev"><div class="t">${esc((e.ts || '').slice(11, 16))}</div><div><span class="kind ${esc(e.kind)}">${esc(e.kind)}</span>${esc(e.text)}</div></div>`).join('') || '<div class="empty">–</div>';
+  $('machine').innerHTML = (s.gpus || []).map(g => `<div class="meter"><div class="row"><span>${esc(g.name)}</span><span class="num">${g.util.toFixed(0)} % · ${(g.mem_used / 1024).toFixed(1)}/${(g.mem_total / 1024).toFixed(0)} GB</span></div><div class="bar"><div class="fill" style="width:${100 * g.mem_used / g.mem_total}%"></div></div></div>`).join('') +
+    ((s.running || {}).benches || []).map(b => `<div class="meta mono">${esc(b)}</div>`).join('');
+  $('commits').innerHTML = ((s.git || {}).commits || []).map(c => `<div class="commit"><span class="h mono">${esc(c.hash)}</span><span>${esc(c.subject)} <span class="tgt">${ago(+c.ts)} ago</span></span></div>`).join('');
+  $('updated').textContent = 'updated ' + new Date().toLocaleTimeString();
+  $('livedot').classList.remove('stale');
+}
+async function tick() {
+  try { render(await (await fetch('/api/status')).json()); } catch (e) { $('livedot').classList.add('stale'); $('updated').textContent = 'offline'; }
+}
+tick(); setInterval(tick, 3000);
+</script>
+</body>
+</html>

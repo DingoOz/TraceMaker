@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Tests for the viewer protocol messages and the WebSocket/HTTP server.
+#include <algorithm>
+#include <cctype>
+#include <memory>
+#include <vector>
+#include <atomic>
+#include <mutex>
+#include <cstdlib>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -92,12 +99,45 @@ TEST_CASE("message builders put type first and classify", "[server]") {
   CHECK(fj["type"] == "failure");
   CHECK(fj["blockers"].size() == 2);
   CHECK_FALSE(fj.contains("region"));
+  // The diagnostic fields are optional: a plain failure has none of them, so an old reader sees what it always saw.
+  for (const char* k : {"blocker_nets", "reason", "width_nm", "clearance_nm", "min_width_nm", "gap_nm", "gap_fixed_nm", "gap_layer", "at", "verdict", "rule", "rejected"})
+    CHECK_FALSE(fj.contains(k));
+
+  server::Failure d = f;
+  d.blocker_nets = {7};
+  d.reason = "boxed_in";
+  d.width_nm = 250'000;
+  d.clearance_nm = 200'000;
+  d.min_width_nm = 100'000;
+  d.gap_nm = 0;
+  d.gap_fixed_nm = 120'000;
+  d.gap_layer = 1;
+  d.at = model::Point{-600'000, 0};
+  d.verdict = "placement";
+  d.rule = "netclass Default: width 0.25 mm, clearance 0.2 mm";
+  d.rejected = {{{-7'950'000, 0}, 0}, {{-600'000, 0}, 0}};
+  const auto dj = json::parse(server::failure(d));
+  CHECK(dj["type"] == "failure");
+  CHECK(dj["width_nm"] == 250'000);
+  CHECK(dj["clearance_nm"] == 200'000);
+  CHECK(dj["min_width_nm"] == 100'000);
+  CHECK(dj["gap_nm"] == 0);  // a gap of zero is a value, not "unset"
+  CHECK(dj["gap_fixed_nm"] == 120'000);
+  CHECK(dj["gap_layer"] == 1);
+  CHECK(dj["at"] == json::array({-600'000, 0}));
+  CHECK(dj["verdict"] == "placement");
+  CHECK(dj["blocker_nets"] == json::array({7}));
+  REQUIRE(dj["rejected"].size() == 2);
+  CHECK(dj["rejected"][1] == json::array({-600'000, 0, 0}));
+  CHECK(dj["blockers"].size() == 2);  // the old fields are untouched
 }
 
 TEST_CASE("board snapshot of pic_programmer has the board's objects", "[server]") {
   if (!std::filesystem::exists(kPic)) SKIP("fixture missing: " << kPic.string());
   const auto loaded = io::read_board_file(kPic.string());
   const auto& b = loaded.board;
+  CHECK_FALSE(json::parse(server::board_snapshot_json(b, "pic_programmer")).contains("freeze"));  // on by default: nothing said
+  CHECK(json::parse(server::board_snapshot_json(b, "pic_programmer", false))["freeze"] == false);
   const auto j = json::parse(server::board_snapshot_json(b, "pic_programmer"));
   CHECK(j["type"] == "board");
   CHECK(j["name"] == "pic_programmer");
@@ -221,4 +261,321 @@ TEST_CASE("slow clients lose transient messages but not state", "[server]") {
   CHECK(adds == 30);
   CHECK(frontiers < 3000);
   CHECK(srv.counters().dropped > 0);
+}
+
+// ---------------------------------------------------------------------------------------------------------
+// Who may connect (issue #4, doc 09 "Security", D116).
+namespace {
+
+struct Reply {
+  http::status status = http::status::internal_server_error;
+  std::string body, set_cookie, referrer_policy;
+};
+
+Reply get_with(std::uint16_t port, const std::string& target, const std::string& host, const std::string& cookie = "") {
+  net::io_context ioc;
+  beast::tcp_stream s(ioc);
+  tcp::resolver r(ioc);
+  s.expires_after(std::chrono::seconds(10));
+  s.connect(r.resolve("127.0.0.1", std::to_string(port)));
+  http::request<http::empty_body> req{http::verb::get, target, 11};
+  req.set(http::field::host, host);
+  if (!cookie.empty()) req.set(http::field::cookie, cookie);
+  req.keep_alive(false);
+  http::write(s, req);
+  beast::flat_buffer buf;
+  http::response<http::string_body> res;
+  http::read(s, buf, res);
+  return {res.result(), res.body(), std::string(res[http::field::set_cookie]), std::string(res["Referrer-Policy"])};
+}
+
+// A WebSocket handshake with the given headers: the status of the answer (101 = accepted).
+http::status ws_status(std::uint16_t port, const std::string& target, const std::string& host, const std::string& origin = "", const std::string& cookie = "") {
+  net::io_context ioc;
+  websocket::stream<beast::tcp_stream> ws{ioc};
+  tcp::resolver r(ioc);
+  beast::get_lowest_layer(ws).expires_after(std::chrono::seconds(10));
+  beast::get_lowest_layer(ws).connect(r.resolve("127.0.0.1", std::to_string(port)));
+  ws.set_option(websocket::stream_base::decorator([&](websocket::request_type& req) {
+    if (!origin.empty()) req.set(http::field::origin, origin);
+    if (!cookie.empty()) req.set(http::field::cookie, cookie);
+  }));
+  websocket::response_type res;
+  beast::error_code ec;
+  ws.handshake(res, host, target, ec);
+  return res.result();
+}
+
+server::ServerOptions test_options(const std::filesystem::path& dir, const std::string& host) {
+  server::ServerOptions o;
+  o.host = host;
+  o.port = 0;
+  o.web_root = dir.string();
+  return o;
+}
+
+struct WebDir {
+  std::filesystem::path dir = std::filesystem::temp_directory_path() / ("tm_server_auth_" + std::to_string(::getpid()));
+  WebDir() {
+    std::filesystem::create_directories(dir / "assets");
+    std::ofstream(dir / "index.html") << "<!doctype html><title>viewer</title>";
+    std::ofstream(dir / "assets" / "app.js") << "console.log(1)";
+  }
+  ~WebDir() { std::filesystem::remove_all(dir); }
+};
+
+}  // namespace
+
+TEST_CASE("viewer server: by default only this machine can reach it, and a page on another site cannot read the stream", "[server][security]") {
+  WebDir w;
+  CHECK(server::ServerOptions{}.host == "127.0.0.1");  // the default, not 0.0.0.0
+  server::ViewerServer srv(test_options(w.dir, "127.0.0.1"));
+  const auto port = srv.port();
+  CHECK_FALSE(srv.exposed());
+  CHECK(srv.token().empty());
+  CHECK(srv.notice().empty());
+  CHECK(srv.url() == "http://127.0.0.1:" + std::to_string(port) + "/");
+  const std::string here = "127.0.0.1:" + std::to_string(port);
+  CHECK(get_with(port, "/", here).status == http::status::ok);
+  CHECK(get_with(port, "/", "localhost:" + std::to_string(port)).status == http::status::ok);
+  CHECK(get_with(port, "/", "[::1]:" + std::to_string(port)).status == http::status::ok);
+  // DNS rebinding: a name that is not this machine's, even if it resolves here, is refused.
+  CHECK(get_with(port, "/", "evil.example:" + std::to_string(port)).status == http::status::forbidden);
+  CHECK(get_with(port, "/assets/app.js", "evil.example").status == http::status::forbidden);
+  // WebSocket: no Origin (a script or tool), the server's own origin, and the same page on localhost are fine ...
+  CHECK(ws_status(port, "/ws", here) == http::status::switching_protocols);
+  CHECK(ws_status(port, "/ws", here, "http://" + here) == http::status::switching_protocols);
+  CHECK(ws_status(port, "/ws", "localhost:" + std::to_string(port), "http://localhost:" + std::to_string(port)) == http::status::switching_protocols);
+  // ... a page of any other site is not: browsers do not apply the same-origin rule to WebSockets, the server has to.
+  CHECK(ws_status(port, "/ws", here, "http://evil.example") == http::status::forbidden);
+  CHECK(ws_status(port, "/ws", here, "http://evil.example:" + std::to_string(port)) == http::status::forbidden);
+  CHECK(ws_status(port, "/ws", here, "http://localhost:9999") == http::status::forbidden);  // another port is another origin
+  CHECK(ws_status(port, "/ws", here, "null") == http::status::forbidden);
+  // Every answer says not to leak the address, and nothing was cached.
+  CHECK(get_with(port, "/", here).referrer_policy == "no-referrer");
+}
+
+TEST_CASE("viewer server: a viewer other machines can reach needs its token, in the URL once and then in a cookie", "[server][security]") {
+  WebDir w;
+  server::ViewerServer srv(test_options(w.dir, "0.0.0.0"));
+  const auto port = srv.port();
+  const std::string host = "127.0.0.1:" + std::to_string(port);
+  REQUIRE(srv.exposed());
+  const std::string token = srv.token();
+  REQUIRE(token.size() == 32);  // 128 random bits
+  CHECK(std::all_of(token.begin(), token.end(), [](char c) { return std::isxdigit(static_cast<unsigned char>(c)); }));
+  CHECK(srv.url().find("/?token=" + token) != std::string::npos);
+  CHECK(srv.notice().find("other machines can reach it") != std::string::npos);
+  server::ViewerServer other(test_options(w.dir, "0.0.0.0"));
+  CHECK(other.token() != token);  // a new token every run
+
+  // No token, a wrong one, one of the wrong length: the page, the files and the stream are all closed.
+  for (const std::string& target : {std::string("/"), std::string("/assets/app.js"), std::string("/?token=nope"), "/?token=" + token.substr(1), "/?token=" + token + "0", std::string("/?other=" + token)}) {
+    INFO(target);
+    const auto r = get_with(port, target, host);
+    CHECK(r.status == http::status::unauthorized);
+    CHECK(r.body.find("needs its token") != std::string::npos);
+    CHECK(r.body.find("<title>viewer</title>") == std::string::npos);  // nothing of the page itself
+  }
+  CHECK(ws_status(port, "/ws", host) == http::status::unauthorized);
+  CHECK(ws_status(port, "/ws?token=nope", host) == http::status::unauthorized);
+  CHECK(get_with(port, "/", host, "tm_token_" + std::to_string(port) + "=nope").status == http::status::unauthorized);
+
+  // The token in the URL opens the page and is remembered in a cookie the page sends back with every request, the stream included.
+  const auto first = get_with(port, "/?token=" + token, host);
+  CHECK(first.status == http::status::ok);
+  CHECK(first.body.find("<title>viewer</title>") != std::string::npos);
+  const std::string cname = "tm_token_" + std::to_string(port);  // cookies ignore ports: the name carries it
+  CHECK(first.set_cookie == cname + "=" + token + "; Path=/; HttpOnly; SameSite=Strict");
+  const std::string cookie = "theme=dark; " + cname + "=" + token;
+  const auto asset = get_with(port, "/assets/app.js", host, cookie);
+  CHECK(asset.status == http::status::ok);
+  CHECK(asset.set_cookie.empty());
+  CHECK(ws_status(port, "/ws", host, "http://" + host, cookie) == http::status::switching_protocols);
+  CHECK(ws_status(port, "/ws?token=" + token, host) == http::status::switching_protocols);  // where cookies are refused
+  // The token does not make a foreign page welcome: its Origin is still checked.
+  CHECK(ws_status(port, "/ws?token=" + token, host, "http://evil.example") == http::status::forbidden);
+  CHECK(ws_status(port, "/ws", host, "http://evil.example", cookie) == http::status::forbidden);
+}
+
+TEST_CASE("viewer server: a token of your own, a viewer without one on purpose, and tokens that are refused", "[server][security]") {
+  WebDir w;
+  auto o = test_options(w.dir, "0.0.0.0");
+  o.token = "my-own.token_0123456789";
+  {
+    server::ViewerServer srv(o);
+    CHECK(srv.token() == o.token);
+    const std::string host = "127.0.0.1:" + std::to_string(srv.port());
+    CHECK(get_with(srv.port(), "/?token=my-own.token_0123456789", host).status == http::status::ok);
+    CHECK(get_with(srv.port(), "/", host).status == http::status::unauthorized);
+  }
+  o.token = "";
+  o.allow_open = true;  // --view-insecure
+  {
+    server::ViewerServer srv(o);
+    CHECK(srv.token().empty());
+    CHECK(srv.exposed());
+    CHECK(srv.notice().find("WITHOUT a token") != std::string::npos);
+    const std::string host = "127.0.0.1:" + std::to_string(srv.port());
+    CHECK(get_with(srv.port(), "/", host).status == http::status::ok);
+    CHECK(ws_status(srv.port(), "/ws", host) == http::status::switching_protocols);
+    CHECK(ws_status(srv.port(), "/ws", host, "http://evil.example") == http::status::forbidden);  // the origin check stays
+  }
+  for (const char* bad : {"short", "0123456789abcde", "has a space in it 1234", "slash/in/the/token/1234", "semi;colon;in;it;1234567"}) {
+    auto b = test_options(w.dir, "0.0.0.0");
+    b.token = bad;
+    INFO(bad);
+    CHECK_THROWS_AS(server::ViewerServer(b), std::runtime_error);
+  }
+  // A token on a loopback viewer is allowed too (a shared machine).
+  auto l = test_options(w.dir, "127.0.0.1");
+  l.token = "loopback-token-0123456789";
+  server::ViewerServer srv(l);
+  CHECK(srv.token() == l.token);
+  CHECK(get_with(srv.port(), "/", "127.0.0.1:" + std::to_string(srv.port())).status == http::status::unauthorized);
+}
+
+TEST_CASE("viewer server: the number of viewers and connections is capped", "[server][security]") {
+  WebDir w;
+  auto o = test_options(w.dir, "127.0.0.1");
+  o.max_clients = 2;
+  o.max_connections = 4;
+  server::ViewerServer srv(o);
+  const std::string host = "127.0.0.1:" + std::to_string(srv.port());
+  net::io_context ioc;
+  websocket::stream<beast::tcp_stream> a{ioc}, b{ioc};
+  tcp::resolver r(ioc);
+  for (auto* ws : {&a, &b}) {
+    beast::get_lowest_layer(*ws).expires_after(std::chrono::seconds(10));
+    beast::get_lowest_layer(*ws).connect(r.resolve("127.0.0.1", std::to_string(srv.port())));
+    ws->handshake(host, "/ws");
+  }
+  for (int i = 0; i < 100 && srv.client_count() < 2; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(20));
+  REQUIRE(srv.client_count() == 2);
+  CHECK(ws_status(srv.port(), "/ws", host) == http::status::service_unavailable);  // the third viewer is told so
+  CHECK(get_with(srv.port(), "/", host).status == http::status::ok);               // the page is still served
+  // Connections that only sit there (a slow-loris) are closed once there are too many; the ones before them and the page are unaffected.
+  std::vector<std::unique_ptr<tcp::socket>> idle;
+  for (int i = 0; i < 4; ++i) {
+    idle.push_back(std::make_unique<tcp::socket>(ioc));
+    idle.back()->connect({net::ip::make_address("127.0.0.1"), srv.port()});
+  }
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+  tcp::socket extra(ioc);
+  extra.connect({net::ip::make_address("127.0.0.1"), srv.port()});
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+  char c;
+  beast::error_code ec;
+  extra.non_blocking(false);
+  const std::size_t n = extra.read_some(net::buffer(&c, 1), ec);
+  CHECK((ec == net::error::eof || ec == net::error::connection_reset));  // closed at once, nothing served
+  CHECK(n == 0);
+}
+
+TEST_CASE("viewer server: what the review of the first version found", "[server][security]") {
+  WebDir w;
+  // Host values that are not a name and a numeric port are refused by a loopback viewer, however they start.
+  {
+    server::ViewerServer srv(test_options(w.dir, "127.0.0.1"));
+    const auto port = srv.port();
+    const std::string p = std::to_string(port);
+    for (const std::string& bad : std::vector<std::string>{"localhost:80@evil.com", "127.0.0.1:" + p + ", evil.com", "evil.com#.localhost", "localhost:", "localhost:abc", "[::1", "[::1]x", "local host", "localhost:1:2", ""}) {
+      INFO("Host: " << bad);
+      CHECK(get_with(port, "/", bad).status == http::status::forbidden);
+    }
+    for (const std::string& good : std::vector<std::string>{"localhost:" + p, "LOCALHOST", "127.0.0.1", "[::1]:" + p, "[::1]", "app.localhost:" + p}) {
+      INFO("Host: " << good);
+      CHECK(get_with(port, "/", good).status == http::status::ok);
+    }
+  }
+  // A cookie is for its own viewer: the token of one does not open another that has the same token on another port (cookies ignore ports).
+  {
+    auto o = test_options(w.dir, "0.0.0.0");
+    o.token = "shared-token-0123456789";
+    server::ViewerServer a(o), b(o);
+    const std::string cookie_a = "tm_token_" + std::to_string(a.port()) + "=" + o.token;
+    CHECK(get_with(a.port(), "/", "127.0.0.1:" + std::to_string(a.port()), cookie_a).status == http::status::ok);
+    CHECK(get_with(b.port(), "/", "127.0.0.1:" + std::to_string(b.port()), cookie_a).status == http::status::unauthorized);
+  }
+  // An IPv6 address in the printed URL has its brackets.
+  {
+    server::ServerOptions o = test_options(w.dir, "::1");
+    try {
+      server::ViewerServer srv(o);
+      CHECK(srv.url() == "http://[::1]:" + std::to_string(srv.port()) + "/");
+    } catch (const std::runtime_error&) {
+      SKIP("no IPv6 loopback here");
+    }
+  }
+  // The default host follows TM_VIEW_HOST.
+  {
+    ::setenv("TM_VIEW_HOST", "0.0.0.0", 1);
+    CHECK(server::default_host() == "0.0.0.0");
+    CHECK(server::ServerOptions{}.host == "0.0.0.0");
+    ::unsetenv("TM_VIEW_HOST");
+    CHECK(server::default_host() == "127.0.0.1");
+    ::setenv("TM_VIEW_HOST", "", 1);
+    CHECK(server::default_host() == "127.0.0.1");  // an empty value is no value
+    ::unsetenv("TM_VIEW_HOST");
+  }
+}
+
+TEST_CASE("viewer server: a burst of upgrades cannot overshoot the cap, and one address cannot use up the connections", "[server][security]") {
+  WebDir w;
+  {
+    auto o = test_options(w.dir, "127.0.0.1");
+    o.max_clients = 4;
+    o.max_connections = 128;
+    o.max_connections_per_address = 128;
+    server::ViewerServer srv(o);
+    const std::string host = "127.0.0.1:" + std::to_string(srv.port());
+    // 40 upgrades at once: the cap counts a session from the moment it is accepted, so exactly 4 get through however they interleave.
+    std::vector<std::thread> threads;
+    std::atomic<int> ok{0}, busy{0};
+    std::vector<std::unique_ptr<net::io_context>> keep_ioc;
+    std::vector<std::unique_ptr<websocket::stream<beast::tcp_stream>>> keep_ws;
+    std::mutex mu;
+    for (int i = 0; i < 40; ++i)
+      threads.emplace_back([&] {
+        auto ioc = std::make_unique<net::io_context>();
+        auto ws = std::make_unique<websocket::stream<beast::tcp_stream>>(*ioc);
+        tcp::resolver r(*ioc);
+        beast::get_lowest_layer(*ws).expires_after(std::chrono::seconds(10));
+        beast::get_lowest_layer(*ws).connect(r.resolve("127.0.0.1", std::to_string(srv.port())));
+        websocket::response_type res;
+        beast::error_code ec;
+        ws->handshake(res, host, "/ws", ec);
+        (res.result() == http::status::switching_protocols ? ok : busy)++;
+        std::lock_guard<std::mutex> lk(mu);  // keep the accepted ones open until the count is taken
+        keep_ioc.push_back(std::move(ioc));
+        keep_ws.push_back(std::move(ws));
+      });
+    for (auto& t : threads) t.join();
+    CHECK(ok == 4);
+    CHECK(busy == 36);
+  }
+  {
+    // Idle sockets from one address stop at its share; the page is still served to a connection of the same address within it.
+    auto o = test_options(w.dir, "127.0.0.1");
+    o.max_connections = 64;
+    o.max_connections_per_address = 8;
+    server::ViewerServer srv(o);
+    net::io_context ioc;
+    std::vector<std::unique_ptr<tcp::socket>> idle;
+    for (int i = 0; i < 8; ++i) {
+      idle.push_back(std::make_unique<tcp::socket>(ioc));
+      idle.back()->connect({net::ip::make_address("127.0.0.1"), srv.port()});
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    tcp::socket extra(ioc);
+    extra.connect({net::ip::make_address("127.0.0.1"), srv.port()});
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    char c;
+    beast::error_code ec;
+    CHECK(extra.read_some(net::buffer(&c, 1), ec) == 0);  // closed at once
+    CHECK((ec == net::error::eof || ec == net::error::connection_reset));
+    idle.clear();  // the share is free again
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    CHECK(get_with(srv.port(), "/", "127.0.0.1").status == http::status::ok);
+  }
 }

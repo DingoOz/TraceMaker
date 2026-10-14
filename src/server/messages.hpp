@@ -8,6 +8,7 @@
 // looking at the first bytes without parsing them.
 #include <cstdint>
 #include <span>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -24,7 +25,8 @@ using ObjectId = std::int64_t;
 // (-1, -2, …) so producers that number new tracks from Board::tracks.size() upwards never collide with them.
 
 // Full scene snapshot (`board`).
-std::string board_snapshot_json(const model::Board& b, const std::string& name);
+// `freeze` false adds `"freeze": false` to the snapshot: the viewer does not hold the scene on a routing stall (route --no-freeze, issue #8).
+std::string board_snapshot_json(const model::Board& b, const std::string& name, bool freeze = true);
 
 std::string track_add(ObjectId id, const model::Track& t);
 std::string track_add(ObjectId id, model::Point a, model::Point b, Coord width, int layer, model::NetId net);
@@ -57,6 +59,16 @@ struct Failure {
   model::Point a, b;
   std::vector<ObjectId> blockers;
   geom::Box region;  // empty box = none
+  // Why the attempt was rejected (doc 13, issue #8); all optional, and an old reader ignores them. Lengths in nm; unset = left out.
+  std::vector<model::NetId> blocker_nets;    // nets of the connections the rejected route would have ripped
+  std::string reason;                        // boxed_in, no_legal_path, exact_check, rip_limit, ...
+  std::int64_t width_nm = 0, clearance_nm = 0, min_width_nm = 0;  // the attempt's track width and clearance, and the narrowest legal width
+  std::int64_t gap_nm = -1, gap_fixed_nm = -1;                    // widest track that gets through (routed copper counted / only fixed copper)
+  int gap_layer = -1;
+  std::optional<model::Point> at;            // where the way is narrowest (or the closest approach)
+  std::string verdict;                       // placement | rule | contested | unknown
+  std::string rule;                          // where the width and clearance came from
+  std::vector<PathPoint> rejected;           // the path that was tried
 };
 std::string failure(const Failure& f);
 

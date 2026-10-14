@@ -24,7 +24,8 @@ TraceMaker's GPU paths are optional: every one has a CPU reference path, and a b
 Third-party components (linked, not included in this repository)
 ----------------------------------------------------------------
 
-Boost (BSL-1.0), Catch2 (BSL-1.0, tests only), CLI11 (BSD-3-Clause), Eigen (MPL-2.0), nlohmann/json (MIT),
+Boost (BSL-1.0), Catch2 (BSL-1.0, tests only), CLI11 (BSD-3-Clause), Clipper2 (BSL-1.0; fetched at configure time
+when it is not installed), Eigen (MPL-2.0), nlohmann/json (MIT),
 pybind11 (BSD-3-Clause), SQLite (public domain), zstd (BSD-3-Clause), NVIDIA CUDA Toolkit (NVIDIA EULA; optional),
 TypeScript and Vite (MIT; viewer build only).
 

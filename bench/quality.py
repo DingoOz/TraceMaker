@@ -6,7 +6,7 @@
 
 Per routed board:
   completion, unconnected       from kicad-cli DRC (connections left unrouted)
-  router_errors                 KiCad DRC errors involving routed copper that the input did not have
+  router_errors                 added routed-copper or refill-derived KiCad error instances (doc 10)
   length_mm (and per layer)     total track length
   vias                          via count
   detour                        track length / sum over nets of the pad-centre minimum spanning tree
@@ -170,11 +170,12 @@ def metrics(unrouted: pathlib.Path, routed: pathlib.Path) -> dict:
     before, after = bench_run.drc(unrouted), bench_run.drc(routed)
     res = {"board": str(routed)}
     if before and after:
-        added = {t: n - before["routed_errors"].get(t, 0) for t, n in after["routed_errors"].items()
-                 if t not in bench_run.NOT_ROUTING and n - before["routed_errors"].get(t, 0) > 0}
-        res.update({"unconnected": after["unconnected"], "router_errors": added,
+        result = bench_run.drc_judge.added_errors(before, after)
+        res.update(result)
+        res.update({"unconnected": after["unconnected"], "router_errors": result["added_errors"],
                     "completion": 1.0 if before["unconnected"] == 0 else round(1 - after["unconnected"] / before["unconnected"], 4),
-                    "clean": after["unconnected"] == 0 and not added})
+                    "connectivity_capped": before["unconnected"] >= bench_run.drc_judge.CAPS["unconnected_items"] or after["unconnected"] >= bench_run.drc_judge.CAPS["unconnected_items"],
+                    "clean": bench_run.drc_judge.clean(result, after["unconnected"])})
     bj = board_json(routed)
     res.update(geometry(bj))
     res.update(coupling(bj))

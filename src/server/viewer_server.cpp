@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "server/viewer_server.hpp"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdlib>
+#include <cstdio>
 #include <deque>
 #include <filesystem>
 #include <future>
 #include <map>
 #include <mutex>
 #include <optional>
+#include <random>
 #include <set>
 #include <stdexcept>
 #include <thread>
@@ -65,7 +69,8 @@ class Hub;
 // One WebSocket client. All members are touched only from the server's single I/O thread.
 class WsSession : public std::enable_shared_from_this<WsSession> {
  public:
-  WsSession(tcp::socket&& socket, Hub& hub) : ws_(std::move(socket)), hub_(hub) {}
+  WsSession(tcp::socket&& socket, Hub& hub);
+  ~WsSession();
 
   void start(http::request<http::string_body> req);
   void enqueue(const Msg& m);
@@ -99,6 +104,24 @@ class Hub {
 
   ServerOptions opts_;
   std::string root_;
+  std::string token_;        // "" = no token required
+  bool loopback_ = true;     // bound to a loopback address
+  std::atomic<std::size_t> http_open_{0};
+  std::atomic<std::size_t> ws_alive_{0};  // WebSocket sessions from their construction (an upgrade being accepted counts) to their destruction
+  std::string cookie_name_ = "tm_token";   // per port: cookies ignore ports, so two viewers on one host would overwrite each other's
+  std::mutex addr_mu_;
+  std::map<std::string, std::size_t> per_addr_;  // open HTTP connections per remote address
+  bool take_address(const std::string& a) {
+    std::lock_guard<std::mutex> lk(addr_mu_);
+    auto& n = per_addr_[a];
+    if (n >= opts_.max_connections_per_address) return false;
+    ++n;
+    return true;
+  }
+  void release_address(const std::string& a) {
+    std::lock_guard<std::mutex> lk(addr_mu_);
+    if (const auto it = per_addr_.find(a); it != per_addr_.end() && --it->second == 0) per_addr_.erase(it);
+  }
   net::io_context ioc_{1};
   tcp::acceptor acceptor_{ioc_};
   std::set<std::shared_ptr<WsSession>> sessions_;
@@ -115,8 +138,8 @@ class Hub {
   Text board_;
   std::map<ObjectId, Text> track_adds_, via_adds_;
   std::set<ObjectId> track_removed_, via_removed_;  // snapshot ids removed since
-  std::map<std::string, Text> fp_moves_, heatmaps_;
-  Text ratsnest_, stats_;
+  std::map<std::string, Text> fp_moves_, heatmaps_, return_paths_;  // return_paths_: the latest `return_path` per net (doc 13)
+  Text ratsnest_, stats_, footprint_check_, critical_nets_;  // footprint_check_: the latest `footprint_check` (doc 13)
   std::deque<Text> history_;  // recent stage / log / failure messages
   static constexpr std::size_t kHistory = 300;
 
@@ -124,14 +147,24 @@ class Hub {
     acceptor_.async_accept(net::make_strand(ioc_), [this](beast::error_code ec, tcp::socket s) {
       if (ec) {
         if (ec == net::error::operation_aborted || !acceptor_.is_open()) return;
+      } else if (http_open_.load() >= opts_.max_connections) {
+        beast::error_code cec;  // too many open connections: this one is closed at once, the others are not affected
+        s.close(cec);
       } else {
-        start_http(std::move(s));
+        beast::error_code rec;
+        const std::string addr = s.remote_endpoint(rec).address().to_string();
+        if (rec || !take_address(addr)) {  // one address holds its share already: it cannot crowd the others out
+          beast::error_code cec;
+          s.close(cec);
+        } else {
+          start_http(std::move(s), addr);
+        }
       }
       accept();
     });
   }
 
-  void start_http(tcp::socket&& s);
+  void start_http(tcp::socket&& s, const std::string& addr);
 
   void post_message(std::string json) {
     bool post = false;
@@ -181,6 +214,9 @@ class Hub {
         track_removed_.clear();
         via_removed_.clear();
         fp_moves_.clear();
+        return_paths_.clear();
+        footprint_check_.reset();
+        critical_nets_.reset();
         return;
       case Kind::Stats: stats_ = t; return;
       case Kind::Transient: return;
@@ -200,11 +236,15 @@ class Hub {
     else if (type == "track_remove") remove(track_adds_, track_removed_);
     else if (type == "via_remove") remove(via_adds_, via_removed_);
     else if (type == "ratsnest") ratsnest_ = t;
-    else if (type == "footprint_move" || type == "heatmap") {
+    else if (type == "footprint_check") footprint_check_ = t;
+    else if (type == "critical_nets") critical_nets_ = t;
+    else if (type == "footprint_move" || type == "heatmap" || type == "return_path") {
       const auto j = nlohmann::json::parse(*t, nullptr, false);
       if (!j.is_object()) return;
       if (type == "footprint_move") {
         fp_moves_[j.value("ref", std::string())] = t;
+      } else if (type == "return_path") {
+        return_paths_[j.value("name", std::string())] = t;
       } else {
         heatmaps_[j.value("name", std::string()) + "@" + std::to_string(j.value("layer", -1))] = t;
       }
@@ -239,6 +279,9 @@ class Hub {
     }
     if (ratsnest_) s->enqueue({ratsnest_, Kind::Info});
     for (const auto& [k, t] : heatmaps_) s->enqueue({t, Kind::Info});
+    for (const auto& [k, t] : return_paths_) s->enqueue({t, Kind::Info});
+    if (footprint_check_) s->enqueue({footprint_check_, Kind::Info});
+    if (critical_nets_) s->enqueue({critical_nets_, Kind::Info});
     for (const auto& t : history_) s->enqueue({t, Kind::Info});
     if (stats_) s->enqueue({stats_, Kind::Stats});
   }
@@ -249,6 +292,9 @@ class Hub {
 };
 
 // ---------------------------------------------------------------------------------------------------------
+WsSession::WsSession(tcp::socket&& socket, Hub& hub) : ws_(std::move(socket)), hub_(hub) { hub_.ws_alive_.fetch_add(1); }
+WsSession::~WsSession() { hub_.ws_alive_.fetch_sub(1); }
+
 void WsSession::start(http::request<http::string_body> req) {
   ws_.set_option(websocket::stream_base::timeout::suggested(beast::role_type::server));
   ws_.set_option(websocket::stream_base::decorator(
@@ -381,6 +427,132 @@ int hex_value(char c) {
   return -1;
 }
 
+// ---------------------------------------------------------------------------------------------------------
+// Access control (issue #4, D116). The viewer streams a whole board, so who may connect matters.
+//  - Bound to a non-loopback address it needs a token, on the page and on /ws: in the URL once (`?token=`), then in a cookie the page sends back.
+//  - Every WebSocket upgrade that names an Origin must be from the server's own origin (a page on another site cannot read the stream: browsers
+//    do not apply the same-origin rule to WebSockets, the server has to).
+//  - Bound to loopback without a token, the Host header must name this machine (DNS rebinding: a page on evil.example whose name resolves to
+//    127.0.0.1 would otherwise pass the origin check, which compares Origin with Host).
+bool token_char(char c) { return std::isalnum(static_cast<unsigned char>(c)) || c == '.' || c == '_' || c == '~' || c == '-'; }
+
+std::string lower_ascii(std::string_view v) {
+  std::string out(v);
+  for (auto& c : out) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+  return out;
+}
+
+std::string random_token() {
+  std::random_device rd;  // getrandom(2) / /dev/urandom on Linux
+  std::string out;
+  for (int i = 0; i < 4; ++i) {
+    const std::uint32_t v = rd();
+    char buf[9];
+    std::snprintf(buf, sizeof buf, "%08x", v);
+    out += buf;
+  }
+  return out;  // 128 bits
+}
+
+// Compares without stopping at the first difference.
+bool ct_equal(std::string_view a, std::string_view b) {
+  unsigned diff = a.size() == b.size() ? 0u : 1u;
+  const std::size_t n = std::min(a.size(), b.size());
+  for (std::size_t i = 0; i < n; ++i) diff |= static_cast<unsigned>(static_cast<unsigned char>(a[i]) ^ static_cast<unsigned char>(b[i]));
+  return diff == 0;
+}
+
+// "Host: [::1]:8766" -> "::1", "LocalHost:8766" -> "localhost". A value that is not a host name or an address with an optional numeric port is
+// nullopt (a browser never sends one; a name with an "@" or a "," in it is somebody trying something).
+std::optional<std::string> host_name(std::string_view hostport) {
+  std::string h = lower_ascii(hostport);
+  auto digits = [](std::string_view s) { return !s.empty() && s.size() <= 5 && std::all_of(s.begin(), s.end(), [](char c) { return c >= '0' && c <= '9'; }); };
+  std::string name;
+  if (!h.empty() && h.front() == '[') {
+    const auto close = h.find(']');
+    if (close == std::string::npos) return std::nullopt;
+    name = h.substr(1, close - 1);
+    const std::string rest = h.substr(close + 1);
+    if (!rest.empty() && !(rest.front() == ':' && digits(std::string_view(rest).substr(1)))) return std::nullopt;
+    if (name.empty() || !std::all_of(name.begin(), name.end(), [](char c) { return std::isxdigit(static_cast<unsigned char>(c)) || c == ':' || c == '.'; })) return std::nullopt;
+    return name;
+  }
+  const auto colon = h.find(':');
+  if (colon != std::string::npos) {
+    if (h.find(':', colon + 1) != std::string::npos || !digits(std::string_view(h).substr(colon + 1))) return std::nullopt;
+    name = h.substr(0, colon);
+  } else {
+    name = h;
+  }
+  if (name.empty() || !std::all_of(name.begin(), name.end(), [](char c) { return std::isalnum(static_cast<unsigned char>(c)) || c == '.' || c == '-'; })) return std::nullopt;
+  return name;
+}
+
+bool loopback_name(const std::string& name) {
+  if (name == "localhost" || name.ends_with(".localhost") || name == "::1") return true;
+  beast::error_code ec;
+  const auto a = net::ip::make_address(name, ec);
+  return !ec && a.is_loopback();
+}
+
+std::optional<std::string> query_token(std::string_view target) {
+  const auto q = target.find('?');
+  if (q == std::string_view::npos) return std::nullopt;
+  std::string_view rest = target.substr(q + 1);
+  while (!rest.empty()) {
+    const auto amp = rest.find('&');
+    const std::string_view kv = rest.substr(0, amp);
+    if (kv.starts_with("token=")) return std::string(kv.substr(6));
+    if (amp == std::string_view::npos) break;
+    rest.remove_prefix(amp + 1);
+  }
+  return std::nullopt;
+}
+
+std::optional<std::string> cookie_token(std::string_view cookies, const std::string& name) {
+  const std::string prefix = name + "=";
+  while (!cookies.empty()) {
+    while (!cookies.empty() && (cookies.front() == ' ' || cookies.front() == ';')) cookies.remove_prefix(1);
+    const auto semi = cookies.find(';');
+    const std::string_view kv = cookies.substr(0, semi);
+    if (kv.starts_with(prefix)) return std::string(kv.substr(prefix.size()));
+    if (semi == std::string_view::npos) break;
+    cookies.remove_prefix(semi + 1);
+  }
+  return std::nullopt;
+}
+
+enum class Access { Ok, OkNewCookie, Unauthorized, BadHost, BadOrigin };
+
+template <class Body>
+Access check_access(const Hub& hub, const http::request<Body>& req, bool upgrade) {
+  const std::string_view host = req[http::field::host];
+  if (hub.token_.empty() && hub.loopback_) {
+    const auto name = host_name(host);
+    if (!name || !loopback_name(*name)) return Access::BadHost;
+  }
+  if (upgrade) {
+    if (const std::string_view origin = req[http::field::origin]; !origin.empty()) {
+      const auto scheme = origin.find("://");
+      std::string_view authority = scheme == std::string_view::npos ? std::string_view() : origin.substr(scheme + 3);
+      if (const auto slash = authority.find('/'); slash != std::string_view::npos) authority = authority.substr(0, slash);
+      if (authority.empty() || lower_ascii(authority) != lower_ascii(host)) return Access::BadOrigin;
+    }
+  }
+  if (hub.token_.empty()) return Access::Ok;
+  const std::string_view target(req.target().data(), req.target().size());
+  if (const auto t = query_token(target); t && ct_equal(*t, hub.token_)) return Access::OkNewCookie;
+  if (const auto c = cookie_token(req[http::field::cookie], hub.cookie_name_); c && ct_equal(*c, hub.token_)) return Access::Ok;
+  return Access::Unauthorized;
+}
+
+template <class Res>
+void harden(Res& res) {
+  res.set("X-Content-Type-Options", "nosniff");
+  res.set("Referrer-Policy", "no-referrer");  // the token is in the URL
+  res.set("X-Frame-Options", "DENY");
+}
+
 // Maps a request target to a file under root, or nullopt if the path is malformed or escapes the root.
 std::optional<fs::path> resolve_target(const std::string& root, std::string_view target) {
   if (auto q = target.find_first_of("?#"); q != std::string_view::npos) target = target.substr(0, q);
@@ -426,17 +598,30 @@ code{background:#151c33;padding:2px 6px;border-radius:4px}</style></head><body><
 <h2>TraceMaker viewer is not built</h2><p>Run <code>cd viewer &amp;&amp; npm install &amp;&amp; npm run build</code>,
 or pass <code>--web DIR</code>. The event stream is live at <code>/ws</code>.</p></div></body></html>)";
 
+constexpr std::string_view kNeedsTokenPage = R"(<!doctype html><html><head><meta charset="utf-8"><title>TraceMaker</title>
+<style>body{background:#0b1020;color:#cfd8ea;font:15px/1.5 system-ui,sans-serif;display:grid;place-items:center;height:100vh;margin:0}
+code{background:#151c33;padding:2px 6px;border-radius:4px}</style></head><body><div>
+<h2>This TraceMaker viewer needs its token</h2><p>Open the address that <code>tracemaker</code> printed when it started the viewer:
+it ends in <code>/?token=...</code>.</p></div></body></html>)";
+
 template <class Body>
-http::message_generator handle_request(const std::string& root, http::request<Body>&& req) {
-  auto text = [&](http::status st, std::string_view type, std::string body) {
-    http::response<http::string_body> res{st, req.version()};
-    res.set(http::field::server, "tracemaker-view");
-    res.set(http::field::content_type, type);
-    res.keep_alive(req.keep_alive());
-    res.body() = std::move(body);
-    res.prepare_payload();
-    return http::message_generator(std::move(res));
-  };
+http::message_generator text_response(const http::request<Body>& req, http::status st, std::string_view type, std::string body, std::string_view cookie = {}) {
+  http::response<http::string_body> res{st, req.version()};
+  res.set(http::field::server, "tracemaker-view");
+  res.set(http::field::content_type, type);
+  res.set(http::field::cache_control, "no-store");
+  harden(res);
+  if (!cookie.empty()) res.set(http::field::set_cookie, cookie);
+  res.keep_alive(req.keep_alive());
+  res.body() = std::move(body);
+  res.prepare_payload();
+  return http::message_generator(std::move(res));
+}
+
+// `cookie` is the Set-Cookie value that remembers the token after it came in the URL ("" = none).
+template <class Body>
+http::message_generator handle_request(const std::string& root, http::request<Body>&& req, std::string_view cookie) {
+  auto text = [&](http::status st, std::string_view type, std::string body) { return text_response(req, st, type, std::move(body), cookie); };
   if (req.method() != http::verb::get && req.method() != http::verb::head)
     return text(http::status::method_not_allowed, "text/plain", "method not allowed\n");
   const auto path = resolve_target(root, std::string_view(req.target().data(), req.target().size()));
@@ -460,6 +645,8 @@ http::message_generator handle_request(const std::string& root, http::request<Bo
     http::response<http::empty_body> res{http::status::ok, req.version()};
     res.set(http::field::server, "tracemaker-view");
     res.set(http::field::content_type, mime);
+    harden(res);
+    if (!cookie.empty()) res.set(http::field::set_cookie, cookie);
     res.content_length(size);
     res.keep_alive(req.keep_alive());
     return res;
@@ -468,7 +655,9 @@ http::message_generator handle_request(const std::string& root, http::request<Bo
                                       std::make_tuple(http::status::ok, req.version())};
   res.set(http::field::server, "tracemaker-view");
   res.set(http::field::content_type, mime);
-  res.set(http::field::cache_control, immutable ? "public, max-age=31536000, immutable" : "no-cache");
+  res.set(http::field::cache_control, immutable && cookie.empty() ? "public, max-age=31536000, immutable" : "no-cache");
+  harden(res);
+  if (!cookie.empty()) res.set(http::field::set_cookie, cookie);
   res.content_length(size);
   res.keep_alive(req.keep_alive());
   return res;
@@ -476,7 +665,11 @@ http::message_generator handle_request(const std::string& root, http::request<Bo
 
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
  public:
-  HttpSession(tcp::socket&& s, Hub& hub) : stream_(std::move(s)), hub_(hub) {}
+  HttpSession(tcp::socket&& s, Hub& hub, std::string addr) : stream_(std::move(s)), hub_(hub), addr_(std::move(addr)) { hub_.http_open_.fetch_add(1); }
+  ~HttpSession() {
+    hub_.release_address(addr_);
+    hub_.http_open_.fetch_sub(1);
+  }
 
   void run() {
     net::dispatch(stream_.get_executor(), [self = shared_from_this()] { self->do_read(); });
@@ -500,15 +693,38 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
     if (ec) return;
     auto req = parser_->release();
     const std::string_view target(req.target().data(), req.target().size());
-    if (websocket::is_upgrade(req)) {
+    const bool upgrade = websocket::is_upgrade(req);
+    const Access access = check_access(hub_, req, upgrade);
+    std::string cookie;
+    if (access == Access::OkNewCookie) cookie = hub_.cookie_name_ + "=" + hub_.token_ + "; Path=/; HttpOnly; SameSite=Strict";
+    if (access == Access::Unauthorized || access == Access::BadHost || access == Access::BadOrigin) {
+      const bool unauth = access == Access::Unauthorized;
+      const http::status st = unauth ? http::status::unauthorized : http::status::forbidden;
+      std::string body = unauth ? std::string(kNeedsTokenPage) : access == Access::BadHost ? "this viewer does not answer to that host name\n" : "cross-origin WebSocket refused\n";
+      beast::async_write(stream_, text_response(req, st, unauth ? "text/html; charset=utf-8" : "text/plain", std::move(body)),
+                         [self = shared_from_this()](beast::error_code, std::size_t) {
+                           beast::error_code sec;
+                           self->stream_.socket().shutdown(tcp::socket::shutdown_both, sec);
+                         });
+      return;
+    }
+    if (upgrade) {
       if (target == "/ws" || target.starts_with("/ws?")) {
+        if (hub_.ws_alive_.load() >= hub_.opts_.max_clients) {
+          beast::async_write(stream_, text_response(req, http::status::service_unavailable, "text/plain", "too many viewers are connected\n"),
+                             [self = shared_from_this()](beast::error_code, std::size_t) {
+                               beast::error_code sec;
+                               self->stream_.socket().shutdown(tcp::socket::shutdown_both, sec);
+                             });
+          return;
+        }
         stream_.expires_never();  // the websocket stream manages its own timeouts
         std::make_shared<WsSession>(stream_.release_socket(), hub_)->start(std::move(req));
       }
       return;
     }
     const bool keep_alive = req.keep_alive();
-    beast::async_write(stream_, handle_request(hub_.root_, std::move(req)),
+    beast::async_write(stream_, handle_request(hub_.root_, std::move(req), cookie),
                        [self = shared_from_this(), keep_alive](beast::error_code wec, std::size_t) {
                          if (wec) return;
                          if (!keep_alive) {
@@ -522,11 +738,12 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
 
   beast::tcp_stream stream_;
   Hub& hub_;
+  std::string addr_;  // the remote address this connection is counted under
   beast::flat_buffer buf_;
   std::optional<http::request_parser<http::string_body>> parser_;
 };
 
-void Hub::start_http(tcp::socket&& s) { std::make_shared<HttpSession>(std::move(s), *this)->run(); }
+void Hub::start_http(tcp::socket&& s, const std::string& addr) { std::make_shared<HttpSession>(std::move(s), *this, addr)->run(); }
 
 // Address other machines on the LAN can use to reach this host (no packet is sent by a UDP connect).
 std::string lan_address() {
@@ -542,6 +759,11 @@ std::string lan_address() {
 
 }  // namespace
 
+std::string default_host() {
+  const char* e = std::getenv("TM_VIEW_HOST");
+  return e != nullptr && *e != '\0' ? std::string(e) : std::string("127.0.0.1");
+}
+
 std::string default_web_root() { return (fs::path(TM_SOURCE_DIR) / "viewer" / "dist").string(); }
 
 struct ViewerServer::Impl {
@@ -556,6 +778,14 @@ ViewerServer::ViewerServer(ServerOptions opts) : impl_(std::make_unique<Impl>(st
   beast::error_code ec;
   const auto addr = net::ip::make_address(h.opts_.host, ec);
   if (ec) throw std::runtime_error("viewer server: bad address '" + h.opts_.host + "'");
+  h.loopback_ = addr.is_loopback();
+  if (!h.opts_.token.empty()) {
+    if (h.opts_.token.size() < 16 || !std::all_of(h.opts_.token.begin(), h.opts_.token.end(), token_char))
+      throw std::runtime_error("viewer server: the token must be at least 16 characters of letters, digits and . _ ~ -");
+    h.token_ = h.opts_.token;
+  } else if (!h.loopback_ && !h.opts_.allow_open) {
+    h.token_ = random_token();  // reachable from the network: never without a token unless that was asked for
+  }
   const tcp::endpoint ep{addr, h.opts_.port};
   h.acceptor_.open(ep.protocol(), ec);
   if (!ec) h.acceptor_.set_option(net::socket_base::reuse_address(true), ec);
@@ -565,6 +795,7 @@ ViewerServer::ViewerServer(ServerOptions opts) : impl_(std::make_unique<Impl>(st
     throw std::runtime_error("viewer server: cannot listen on " + h.opts_.host + ":" + std::to_string(h.opts_.port) +
                              ": " + ec.message());
   impl_->port = h.acceptor_.local_endpoint().port();
+  h.cookie_name_ = "tm_token_" + std::to_string(impl_->port);
   h.accept();
   impl_->thread = std::thread([&h] {
     auto guard = net::make_work_guard(h.ioc_);
@@ -599,7 +830,22 @@ std::uint16_t ViewerServer::port() const { return impl_->port; }
 std::string ViewerServer::url() const {
   const std::string& host = impl_->hub.opts_.host;
   const std::string shown = (host == "0.0.0.0" || host == "::") ? lan_address() : host;
-  return "http://" + shown + ":" + std::to_string(impl_->port) + "/";
+  const std::string& token = impl_->hub.token_;
+  return "http://" + (shown.find(':') != std::string::npos ? "[" + shown + "]" : shown) + ":" + std::to_string(impl_->port) + "/" + (token.empty() ? "" : "?token=" + token);
+}
+
+const std::string& ViewerServer::token() const { return impl_->hub.token_; }
+
+bool ViewerServer::exposed() const { return !impl_->hub.loopback_; }
+
+std::string ViewerServer::notice() const {
+  const Hub& h = impl_->hub;
+  if (h.loopback_) return "";
+  if (h.token_.empty())
+    return "the viewer listens on " + h.opts_.host + " WITHOUT a token (--view-insecure): anyone who can reach this machine's port " + std::to_string(impl_->port) +
+           " can watch the board being routed and read its geometry and net names";
+  return "the viewer listens on " + h.opts_.host + ", so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use "
+         "--view-host 127.0.0.1 and an SSH tunnel instead)";
 }
 
 std::size_t ViewerServer::client_count() const { return impl_->hub.clients_.load(); }

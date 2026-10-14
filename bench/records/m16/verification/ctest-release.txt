@@ -1,0 +1,16 @@
+# ctest --preset release -j16 (CUDA build; GPU tests run on whatever device memory is free), 2026-10-14T07:47Z, PATH with scripts/ for the KiCad Docker wrappers
+100% tests passed, 0 tests failed out of 291
+Total Test time (real) =  72.42 sec
+--- did not run:
+	288 - fixture_preparation_native (Skipped)
+--- new tests in this run:
+271/291 Test #255: advice: a full file is read, and nothing it does not understand is     Passed    0.01 sec
+272/291 Test #256: advice: names are checked against the board, with hints     Passed    0.01 sec
+273/291 Test #257: advice: hints become router options; regions become a rule area and disallow rules     Passed    0.00 sec
+274/291 Test #260: advice: the order of results is the portfolio's, and a tie is not better     Passed    0.00 sec
+275/291 Test #261: stuck report: names what failed, where, and why; redaction hides the board's names     Passed    0.02 sec
+278/291 Test #262: advisor: a process is run with a time limit; whatever it does, the answer is checked     Passed    0.66 sec
+279/291 Test #258: advice: a region reserved for one net keeps the others out, and the others route around it     Passed    0.73 sec
+282/291 Test #259: advice: the portfolio adds advised variants after the others and never does worse     Passed    1.76 sec
+284/291 Test #291: advisor_scripts     Passed    2.08 sec
+287/291 Test #290: advice_cli     Passed   19.63 sec

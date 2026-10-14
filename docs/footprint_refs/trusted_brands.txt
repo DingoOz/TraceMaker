@@ -1,0 +1,26 @@
+# Brands whose datasheets you trust for land patterns (docs/05-routing.md section 43).
+#
+# This is YOUR decision. A reference record is only used to judge a footprint when its brand is on this list; a record from any other source gives no
+# verdict (the footprint is reported as "untrusted", not as fine). Being on the list means: you believe the land pattern this manufacturer prints in its
+# datasheet, and the record you made from it says what the datasheet says.
+#
+# One brand per line: `Canonical name | alias | alias`. Case, punctuation and corporate suffixes ("Inc.", "GmbH", "N.V.") do not matter. `#` starts a comment.
+# Copy this file next to your references as trusted_brands.txt, or give it with --trusted-brands. Remove what you do not trust and add what you do.
+Texas Instruments | TI
+STMicroelectronics | ST
+NXP Semiconductors | NXP
+Analog Devices | ADI | Maxim Integrated | Linear Technology
+Microchip Technology | Microchip | Atmel
+Infineon Technologies | Infineon
+Renesas Electronics | Renesas | Intersil
+onsemi | ON Semiconductor
+Nordic Semiconductor | Nordic
+Espressif Systems | Espressif
+Diodes Incorporated | Diodes
+Murata Manufacturing | Murata
+TDK
+Molex
+TE Connectivity | TE
+Amphenol
+Samtec
+Wurth Elektronik | Würth Elektronik

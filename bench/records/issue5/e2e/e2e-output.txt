@@ -1,0 +1,6 @@
+rows in the Footprint check list: 32
+first rows: 2 errC101C_0402_1005Metric | 2 errC102C_0402_1005Metric | 2 errC401C_0402_1005Metric
+row title: CM5IO:DFN2510A-10_L2.5-W1.0-P0.50-BL vs Scratch CM5IO:DFN2510A-10_L2.5-W1.0-P0.50-BL (derived from the front instance of D401)
+selected row classes: stall-row on
+messages shown for it: pad 1 is 0.2 mm from where the datasheet land pattern puts it (tolerance 0.05 mm) || pad 3 is 0.25 x 0.68 mm, the datasheet land pattern has 0.55 x 0.68 mm (tolerance 0.05 mm)
+no console errors

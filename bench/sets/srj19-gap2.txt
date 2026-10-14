@@ -1,0 +1,10 @@
+# Boards tscircuit's router solves (run 38105514608-1) and TraceMaker's P2 run (50 M, one variant) does not.
+#fixtures: bench/data/tscircuit/boards/srj19
+sample007
+sample013
+sample100
+sample105
+sample129
+sample137
+sample147
+sample178

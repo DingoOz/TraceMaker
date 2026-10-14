@@ -1,0 +1,6 @@
+Critical nets panel shown: true
+rows: 6
+first rows: T1Net-(U1-P1.01{slash}XL2)0 vias | T1Net-(U1-P1.00{slash}XL1)0 vias | T1Net-(U5-XC1)0 vias | T1Net-(U5-XC2)0 vias
+row tooltip: Quartz crystal with load capacitors (crystal xin)
+selected: stall-row on
+no console errors

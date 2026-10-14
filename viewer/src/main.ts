@@ -8,6 +8,10 @@ import { Hud, num, type Toggles } from './hud';
 import { Picker, type Hit } from './picking';
 import { Renderer, type ViewOptions } from './renderer';
 import { Scene } from './scene';
+import { StallTracker, stallLines } from './stall';
+import { drawStall } from './stall_draw';
+import { drawFootprintCheck, findingBox } from './footprintcheck_draw';
+import { drawReturnPaths, pathBox } from './returnpath_draw';
 
 const PANEL_PX = 340; // side panel width incl. margin, kept clear when fitting the board
 
@@ -19,6 +23,14 @@ const hud = new Hud(document.getElementById('app')!);
 const scene = new Scene();
 const cam = new Camera();
 const picker = new Picker();
+const stall = new StallTracker();
+{
+  // #freeze=0 turns the hold off, #stall=N sets how many failed attempts without progress make a stall.
+  const q = new URLSearchParams(location.hash.slice(1));
+  if (q.get('freeze') === '0') stall.enabled = false;
+  const n = Number(q.get('stall'));
+  if (q.has('stall') && Number.isInteger(n) && n > 0) stall.threshold = n;
+}
 
 let renderer: Renderer | null = null;
 try {
@@ -31,7 +43,7 @@ try {
 canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
 canvas.addEventListener('webglcontextrestored', () => location.reload());
 
-const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false };
+const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false, returnPaths: true, footprintCheck: true };
 const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, hoverNet: 0, heatmap: '' };
 
 const conn = new Connection(Connection.defaultUrl());
@@ -116,9 +128,20 @@ canvas.addEventListener('wheel', (e) => {
   dirty = labelsDirty = true;
 }, { passive: false });
 canvas.addEventListener('dblclick', () => hud.onFit());
+// A click on copper of a stalled net selects that connection (issue #8).
+let downAt: { x: number; y: number } | null = null;
+canvas.addEventListener('pointerdown', (e) => { downAt = { x: e.clientX, y: e.clientY }; });
+canvas.addEventListener('click', (e) => {
+  if (!stall.latched || !downAt || Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 4) return;
+  const [wx, wy] = cam.toWorld(e.clientX, e.clientY);
+  const hit = picker.pick(scene, wx, wy, 3 / cam.zoom, view.visible, view.active);
+  if (hit && stall.selectNet(hit.item.net)) { refreshStall(); focusStall(); }
+});
 window.addEventListener('keydown', (e) => {
   if (e.target instanceof HTMLInputElement || e.ctrlKey || e.metaKey || e.altKey) return;
   const k = e.key.toLowerCase();
+  if (stall.latched && (k === ' ' || k === 'escape')) { e.preventDefault(); dismissStall(); return; }
+  if (stall.latched && (k === '[' || k === ']')) { stall.select(k === ']' ? 1 : -1); refreshStall(); focusStall(); return; }
   if (k === 'f') hud.onFit();
   else if (k === 'h') hud.onToggle('activeOnTop', !toggles.activeOnTop);
   else if (k === 'z') hud.onToggle('zones', !toggles.zones);
@@ -126,6 +149,8 @@ window.addEventListener('keydown', (e) => {
   else if (k === 'x') hud.onToggle('escape', !toggles.escape);
   else if (k === 'e') hud.onToggle('effects', !toggles.effects);
   else if (k === 'l') hud.onToggle('follow', !toggles.follow);
+  else if (k === 'p') hud.onToggle('returnPaths', !toggles.returnPaths);
+  else if (k === 'd') hud.onToggle('footprintCheck', !toggles.footprintCheck);
   else if (k === 'm') cycleHeatmap();
   else if (/^[1-9]$/.test(k) && Number(k) <= scene.layerNames.length) hud.onActiveLayer(Number(k) - 1);
 });
@@ -161,9 +186,21 @@ function applyHashView() {
 // ----------------------------------------------------------------------------------------------- messages
 let msgCount = 0;
 function processMessages(now: number) {
-  const msgs = conn.drain();
+  const raw = conn.drain();
+  if (!raw.length) return;
+  msgCount += raw.length;
+  // The stall latch (issue #8) decides what the scene gets: everything, or, while the scene is held, only what the HUD needs.
+  const wasLatched = stall.latched;
+  applyMessages(stall.consume(raw, now >= scene.quietUntil), now);
+  if (returnPathsDirty) refreshReturnPaths();
+  if (footprintCheckDirty) refreshFootprintCheck();
+  if (criticalNetsDirty) refreshCriticalNets();
+  if (stall.latched && !wasLatched) onStallLatched();
+  else if (stall.latched) refreshStall();
+}
+
+function applyMessages(msgs: import('./protocol').Message[], now: number) {
   if (!msgs.length) return;
-  msgCount += msgs.length;
   // After a stall (background tab, slow GPU) a frame can carry seconds of transient messages; only the most
   // recent ones are still meaningful, so skip the rest instead of piling up stale effects.
   let transient = 0, state = 0;
@@ -183,6 +220,12 @@ function processMessages(now: number) {
     switch (m.type) {
       case 'board': {
         scene.quietUntil = now + 0.75; // the server replays state after the snapshot
+        rpSelected = null;
+        fcSelected = null;
+        cnSelected = null;
+        criticalNetsDirty = true;
+        returnPathsDirty = true;
+        footprintCheckDirty = true;
         view.visible = scene.layerNames.map(() => true);
         view.active = 0;
         hud.setBoard(scene.name, scene.layerNames, view.visible, view.active);
@@ -203,7 +246,17 @@ function processMessages(now: number) {
         break;
       case 'log': hud.addLog(m.level, m.text); break;
       case 'failure':
-        hud.addLog('error', `${scene.netName(m.net)}: ${m.cause}${m.rung ? ` (rung ${m.rung})` : ''}`, 'failure');
+        hud.addLog('error', `${scene.netName(m.net)}: ${m.cause}${m.rung ? ` (rung ${m.rung})` : ''}${m.verdict && m.verdict !== 'unknown' ? ` · ${m.verdict}` : ''}`, 'failure');
+        break;
+      case 'return_path':
+        returnPathsDirty = true;
+        break;
+      case 'critical_nets':
+        criticalNetsDirty = true;
+        break;
+      case 'footprint_check':
+        footprintCheckDirty = true;
+        hud.addLog(m.errors ? 'error' : 'info', `footprint check: ${m.checked} footprints, ${m.mismatch} differ from their datasheet, ${m.untrusted} with an untrusted reference`, 'stage');
         break;
       case 'heatmap':
         // The legend changes only when the list of overlays or the shown one's maximum does.
@@ -220,6 +273,105 @@ function processMessages(now: number) {
   }
   dirty = labelsDirty = true;
 }
+
+// ------------------------------------------------------------------------------------------------ return paths
+// The reference-return audit (issue #7): cyan signal, red return, callouts for the selected net.
+let returnPathsDirty = false;
+let rpSelected: string | null = null;
+function refreshReturnPaths() {
+  const rows = [...scene.returnPaths.values()].sort((a, b) => (b.splits - a.splits) || (b.detourMm - a.detourMm) || a.name.localeCompare(b.name));
+  hud.setReturnPaths(rows, rpSelected);
+  returnPathsDirty = false;
+  dirty = labelsDirty = true;
+}
+hud.onReturnPath = (name) => {
+  rpSelected = name;
+  const p = name ? scene.returnPaths.get(name) : undefined;
+  const box = p ? pathBox(p) : null;
+  if (box) cam.fit([box[0] - 1, box[1] - 1, box[2] + 1, box[3] + 1], 0.1, PANEL_PX); // zoom onto the net
+  refreshReturnPaths();
+};
+
+// ------------------------------------------------------------------------------------------------ critical nets
+// The critical nets after a route (issue #24): the list, and a click shows the net's return path over the plane when it was sent.
+let criticalNetsDirty = false;
+let cnSelected: string | null = null;
+function refreshCriticalNets() {
+  const cn = scene.criticalNets;
+  criticalNetsDirty = false;
+  if (!cn || !cn.nets.length) { hud.setCriticalNets(null, null); return; }
+  const rows = cn.nets.map((n) => ({ name: n.name, tier: n.tier, why: n.why, vias: n.vias, crossings: n.void_crossings ?? 0, unrouted: n.unrouted ?? 0, warnings: n.warnings }));
+  hud.setCriticalNets({ summary: `${cn.totals.nets} nets, ${cn.totals.vias} vias, ${cn.totals.void_crossings} plane void crossings`, rows }, cnSelected);
+}
+hud.onCriticalNet = (name) => {
+  cnSelected = cnSelected === name ? null : name;
+  if (cnSelected && scene.returnPaths.has(cnSelected)) hud.onReturnPath(cnSelected); // the overlay and the zoom of the return-path list
+  refreshCriticalNets();
+};
+
+// ------------------------------------------------------------------------------------------------ footprint check
+// Footprints against datasheet land patterns (issue #5): a ring on each footprint that differs, marks and messages for the selected one.
+let footprintCheckDirty = false;
+let fcSelected: string | null = null;
+function refreshFootprintCheck() {
+  const fc = scene.footprintCheck;
+  footprintCheckDirty = false;
+  dirty = labelsDirty = true;
+  if (!fc || !fc.findings.length) { hud.setFootprintCheck(null, null); return; }
+  const count = (f: { issues: { severity: string }[] }, sev: string) => f.issues.filter((i) => i.severity === sev).length;
+  const rows = fc.findings
+    .map((f) => ({ ref: f.ref, libId: f.libId, status: f.status, errors: count(f, 'error'), warnings: count(f, 'warning'), datasheet: f.datasheet, issues: f.issues }))
+    .sort((a, b) => (b.errors - a.errors) || a.ref.localeCompare(b.ref));
+  hud.setFootprintCheck({ summary: `${fc.checked} checked: ${fc.ok} ok, ${fc.mismatch} differ, ${fc.untrusted} untrusted, ${fc.unverified} without a reference`, rows }, fcSelected);
+}
+hud.onFootprintCheck = (ref) => {
+  fcSelected = ref;
+  const f = ref ? scene.footprintCheck?.findings.find((x) => x.ref === ref) : undefined;
+  if (f) { const b = findingBox(f); cam.fit([b[0] - 3, b[1] - 3, b[2] + 3, b[3] + 3], 0.1, PANEL_PX); }
+  refreshFootprintCheck();
+};
+
+// ------------------------------------------------------------------------------------------------- stall
+// Freeze on a routing stall (issue #8): the scene is held on the connection that stopped, with the rejected paths and the numbers beside
+// them, until the user resumes. The engine keeps going; what it sends meanwhile is applied on resume.
+function refreshStall() {
+  const sel = stall.selected;
+  if (!sel) { hud.setStall(null); return; }
+  const lines = stallLines(sel, scene.layerNames);
+  hud.setStall({
+    rows: stall.entries.map((e) => ({ net: scene.netName(e.net), reason: e.reason, verdict: e.verdict, failures: e.failures })),
+    index: stall.selectedIndex,
+    label: lines.label,
+    verdict: lines.verdict,
+    rule: lines.rule,
+  });
+  dirty = labelsDirty = true;
+}
+function focusStall() {
+  const sel = stall.selected;
+  if (!sel) return;
+  const p = sel.at ?? sel.a;
+  cam.followTo(scene.wx(p[0]) + PANEL_PX / 2 / cam.zoom, scene.wy(p[1]));
+}
+function onStallLatched() {
+  const sel = stall.selected;
+  refreshStall();
+  focusStall();
+  if (sel) hud.addLog('error', `stalled on ${scene.netName(sel.net)} (${sel.reason || sel.cause}${sel.verdict !== 'unknown' ? `, ${sel.verdict}` : ''}): the scene is held, Space resumes`, 'stage');
+}
+function dismissStall() {
+  if (!stall.latched) return;
+  if (stall.overflowed) { location.reload(); return; } // too much arrived while held to apply it: take a fresh snapshot
+  const held = stall.dismiss();
+  hud.setStall(null);
+  view.hoverNet = 0;
+  scene.quietUntil = Math.max(scene.quietUntil, performance.now() / 1000 + 0.05);
+  applyMessages(held, performance.now() / 1000);
+  hud.addLog('info', 'resumed', 'stage');
+  dirty = labelsDirty = true;
+}
+hud.onStallDismiss = dismissStall;
+hud.onStallPick = (i) => { stall.selectIndex(i); refreshStall(); focusStall(); };
 
 // --------------------------------------------------------------------------------------------------- hover
 function describe(hit: Hit): { title: string; rows: [string, string][]; color: string } {
@@ -244,9 +396,10 @@ function describe(hit: Hit): { title: string; rows: [string, string][]; color: s
 }
 
 function updateHover() {
+  const pinned = stall.selected?.net ?? 0; // while the scene is held, the stalled net stays highlighted
   if (!mouse || drag) {
     hud.hideTooltip();
-    if (view.hoverNet !== 0) { view.hoverNet = 0; dirty = true; }
+    if (view.hoverNet !== pinned) { view.hoverNet = pinned; dirty = true; }
     hud.setCursor(null, null, cam.zoom);
     return;
   }
@@ -255,7 +408,7 @@ function updateHover() {
   let hit = picker.pick(scene, wx, wy, 3 / cam.zoom, view.visible, view.active);
   if (hit?.kind === 'track' && scene.tracks.get(hit.item.id) !== hit.item) hit = null;
   if (hit?.kind === 'via' && scene.vias.get(hit.item.id) !== hit.item) hit = null;
-  const net = hit ? hit.item.net : 0;
+  const net = pinned || (hit ? hit.item.net : 0);
   if (net !== view.hoverNet) { view.hoverNet = net; dirty = true; }
   if (hit) {
     const d = describe(hit);
@@ -270,11 +423,11 @@ function drawLabels() {
   const dpr = window.devicePixelRatio || 1;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, labels.width, labels.height);
-  if (!scene.loaded || !toggles.footprints) return;
+  if (!scene.loaded) return;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  for (const f of scene.footprints) {
+  for (const f of toggles.footprints ? scene.footprints : []) {
     const [x0, y0] = cam.toScreen(f.bbox[0], f.bbox[1]);
     const [x1, y1] = cam.toScreen(f.bbox[2], f.bbox[3]);
     const w = x1 - x0, hgt = y1 - y0;
@@ -285,6 +438,26 @@ function drawLabels() {
     ctx.shadowColor = 'rgba(0,0,0,0.85)';
     ctx.shadowBlur = 4;
     ctx.fillText(f.ref, (x0 + x1) / 2, (y0 + y1) / 2);
+  }
+  if (toggles.returnPaths && scene.returnPaths.size) {
+    ctx.shadowBlur = 0;
+    drawReturnPaths(ctx, scene.returnPaths.values(), rpSelected, {
+      toScreen: (x, y) => cam.toScreen(x, y), width: cam.width, height: cam.height, rightMargin: PANEL_PX,
+    });
+  }
+  if (toggles.footprintCheck && scene.footprintCheck?.findings.length) {
+    ctx.shadowBlur = 0;
+    drawFootprintCheck(ctx, scene.footprintCheck.findings, fcSelected, {
+      toScreen: (x, y) => cam.toScreen(x, y), width: cam.width, height: cam.height, rightMargin: PANEL_PX,
+    });
+  }
+  const sel = stall.selected;
+  if (sel) {
+    ctx.shadowBlur = 0;
+    drawStall(ctx, sel, {
+      toScreen: (x, y) => cam.toScreen(scene.wx(x), scene.wy(y)),
+      width: cam.width, height: cam.height, activeLayer: view.active, layerNames: scene.layerNames, rightMargin: PANEL_PX,
+    });
   }
 }
 

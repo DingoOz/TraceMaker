@@ -353,9 +353,11 @@ class Condition {
   }
 
   // Area and courtyard functions of a zone fill are remembered by (condition node, zone, fill): a fill has tens
-  // of thousands of points and is asked again for every pair it is in. Other items are computed each time.
+  // of thousands of points and is asked again for every pair it is in. Other items are computed each time, and so
+  // is a zone asked as a whole (sub < 0, the refill's outline on one layer): its answer depends on the layer, which
+  // the key does not hold, and the refill asks for all layers at once.
   template <class F> static bool cached_for_fill(const Node& n, const CopperItem& it, EvalCtx& ctx, F&& compute) {
-    if (it.kind != ItemKind::Zone) return compute();
+    if (it.kind != ItemKind::Zone || it.sub < 0) return compute();
     const std::tuple<const void*, int, int> key{&n, it.index, it.sub};
     {
       const std::lock_guard lock(ctx.eng->area_mutex_);
@@ -825,6 +827,20 @@ Coord RuleEngine::edge_clearance(const CopperItem& a, int layer) const {
 std::pair<Coord, Coord> RuleEngine::track_width(const CopperItem& t, int layer) const {
   Coord mn = r_.minimums.track_width, mx = 0;
   if (auto c = custom_min("track_width", &t, nullptr, layer)) mn = *c;
+  // The maximum of the last matching rule with a track_width constraint (later rules take precedence, as KiCad
+  // resolves it); a rule without `max` there means no upper limit.
+  for (const auto& c : rules_) {
+    if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
+    const model::Constraint* k = nullptr;
+    for (const auto& x : c.rule->constraints)
+      if (x.type == "track_width") k = &x;
+    if (!k) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &t, nullptr, layer};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    mx = k->max ? *k->max : 0;
+  }
   return {mn, mx};
 }
 

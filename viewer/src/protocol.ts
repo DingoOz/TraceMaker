@@ -30,6 +30,8 @@ export interface BoardMsg {
   vias: ViaMsg[];
   zones: ZoneMsg[];
   footprints: FootprintMsg[];
+  /** `false` when the engine was started with --no-freeze: the viewer does not hold the scene on a stall. */
+  freeze?: boolean;
 }
 
 export interface StatsMsg {
@@ -55,6 +57,64 @@ export interface FailureMsg {
   b: XY;
   blockers?: number[];
   region?: [number, number, number, number];
+  // Issue #8 (docs/13-viewer-protocol.md "The failure verdict"): all optional, lengths in nm. Older engines send none of them.
+  blocker_nets?: number[];
+  reason?: string;
+  width_nm?: number;
+  clearance_nm?: number;
+  min_width_nm?: number;
+  gap_nm?: number;
+  gap_fixed_nm?: number;
+  gap_layer?: number;
+  at?: XY;
+  verdict?: 'placement' | 'rule' | 'contested' | 'unknown';
+  rule?: string;
+  rejected?: [number, number, number][];
+}
+
+/** One net's reference-return audit (docs/13-viewer-protocol.md `return_path`, issue #7): the signal, the return along it (the trace over
+ *  copper, the detour across a void), and callouts. Polylines are in nm; the return is drawn from the chain's end to its start. */
+export interface ReturnPathMsg {
+  type: 'return_path';
+  net: number;
+  name: string;
+  detour_mm: number;
+  max_separation_mm: number;
+  voids: number;
+  splits: number;
+  missing_stitches: number;
+  signal: { layer: number; pts: XY[] }[];
+  return: { layer: number; pts: XY[] }[];
+  callouts: { kind: string; p: XY; text: string }[];
+}
+
+/** The footprint check against datasheet land patterns (docs/13-viewer-protocol.md `footprint_check`, issue #5): the footprints with something to
+ *  say (a discrepancy, an untrusted reference, a missing required reference) and where each finding is. */
+export interface FootprintCheckMsg {
+  type: 'footprint_check';
+  checked: number;
+  ok: number;
+  mismatch: number;
+  unverified: number;
+  untrusted: number;
+  errors: number;
+  warnings: number;
+  footprints: {
+    ref: string;
+    lib_id: string;
+    status: string;
+    p: XY;
+    datasheet?: { id: string; brand: string; part: string; document: string; revision?: string; page?: number; figure?: string; url?: string };
+    issues: { severity: string; kind: string; pad: string; text: string; label?: string; p: XY }[];
+  }[];
+}
+
+/** The critical nets after a route with --critical-* / --si-rules (docs/13-viewer-protocol.md `critical_nets`, issue #24): per net its tier, vias added,
+ *  length added and, where the board has a reference plane, the voids of it that the net runs over. */
+export interface CriticalNetsMsg {
+  type: 'critical_nets';
+  nets: { name: string; tier: number; why: string; vias: number; length_mm: number; unrouted?: number; void_crossings?: number; detour_mm?: number; splits?: number; warnings: string[] }[];
+  totals: { nets: number; vias: number; void_crossings: number; over_via_limit: number };
 }
 
 /** Overlay grid (doc 13): row-major w*h bytes 0–255, cell size in nm, layer -1 = all layers. `scale` says how
@@ -86,6 +146,9 @@ export type Message =
   | { type: 'frontier'; conn: number; layer: number; pts: XY[] }
   | { type: 'path_try'; conn: number; pts: [number, number, number][] }
   | HeatmapMsg
+  | ReturnPathMsg
+  | FootprintCheckMsg
+  | CriticalNetsMsg
   | { type: 'stage'; name: string; state: 'begin' | 'end'; detail?: string }
   | { type: 'log'; level: string; text: string }
   // Escape planning (M9): reserved corridor per dense-package pin, released when the pin is connected; dead pins.

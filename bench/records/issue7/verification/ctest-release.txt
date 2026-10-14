@@ -1,0 +1,19 @@
+# ctest --preset release -j16 on the issue-7 branch, 2026-10-14T10:08Z
+100% tests passed, 0 tests failed out of 309
+Total Test time (real) =  71.90 sec
+--- did not run:
+	304 - fixture_preparation_native (Skipped)
+--- new tests:
+  1/309 Test #309: return_paths_cli .......................................................................................................   Passed    6.25 sec
+ 51/309 Test #278: return path: the indexed region queries equal the linear reference .....................................................   Passed    0.63 sec
+ 66/309 Test #308: viewer_stall ...........................................................................................................   Passed    0.27 sec
+151/309 Test #275: return path: nets are chosen by name, class or pair, and nothing is analysed by default ................................   Passed    0.01 sec
+154/309 Test #273: return path: a layer change closes through a stitching via, a capacitor, or is flagged .................................   Passed    0.01 sec
+166/309 Test #271: return path: a split plane leaves no return path .......................................................................   Passed    0.01 sec
+168/309 Test #274: return path: the assumed return pad is the nearest pad of the reference net, not a fixed ground ball ...................   Passed    0.00 sec
+194/309 Test #270: return path: a hole off the trace's line is a smaller detour than one on it ............................................   Passed    0.00 sec
+195/309 Test #277: return path: the report and the viewer message carry the numbers and the callouts ......................................   Passed    0.00 sec
+207/309 Test #269: return path: a rectangular void under the trace forces a measured detour ...............................................   Passed    0.00 sec
+208/309 Test #272: return path: a stretch over no copper at all is a void, a short one is not .............................................   Passed    0.00 sec
+210/309 Test #268: return path: copper under the whole trace means no void and no detour ..................................................   Passed    0.00 sec
+230/309 Test #276: return path: no copper zone, no reference: said so, not a fake clean result ............................................   Passed    0.00 sec

@@ -1,23 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker: command-line front end. Subcommands grow with the roadmap (route, place, bench, serve, replay).
 #include <CLI/CLI.hpp>
+#include <sys/wait.h>
+#include <unistd.h>
 
+#include <chrono>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <thread>
 
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
+#include "advice/advice.hpp"
+#include "analysis/return_path.hpp"
 #include "app/route_job.hpp"
+#include "app/tui.hpp"
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
 #include "drc/drc.hpp"
+#include "drc/refill.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "io/srj/srj.hpp"
 #include "route/router.hpp"
+#include "server/messages.hpp"
+#include "server/viewer_server.hpp"
 #include "learn/knowledge_base.hpp"
+#include "passes/style.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
@@ -51,6 +63,20 @@ int cmd_gpu_info() {
                   static_cast<double>(d.free_bytes) / kMiB, static_cast<double>(d.total_bytes) / kMiB, d.uuid.c_str());
     }
   }
+  return 0;
+}
+
+// Style metric of every track, arc and via of a board (doc 05 §39.2), whoever routed it.
+int cmd_style(const std::string& path, const std::string& json_path, bool connections) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto& b = lb.board;
+  const auto rep = tmk::passes::measure_style(b, b.tracks, b.arcs, b.vias);
+  const auto j = tmk::passes::style_json(b, rep, connections);
+  std::printf("%zu connections, %d segments, %.2f mm, %d vias\n", rep.connections.size(), rep.segments, tmk::nm_to_mm(rep.length), rep.vias);
+  std::printf("bends %d (%.2f per connection), acute angles %d, stair-steps %d, short segments %d, off-angle segments %d, arcs %d\n", rep.bends,
+              rep.bends_per_connection(), rep.acute, rep.stair_steps, rep.short_segments, rep.off_angle, rep.arcs);
+  std::printf("detour ratio %.3f, long detours %d\n", rep.detour_ratio(), rep.long_detours);
+  if (!json_path.empty()) std::ofstream(json_path) << j.dump(1) << "\n";
   return 0;
 }
 
@@ -118,13 +144,20 @@ int cmd_perturb(const std::string& in, const std::string& out, std::uint64_t see
   return 0;
 }
 
-int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon, bool linear_zones) {
+int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord epsilon, bool linear_zones, bool refill) {
   const auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   tmk::drc::DrcOptions opt;
   opt.epsilon = epsilon;
   opt.linear_zone_tests = linear_zones;
-  const auto rep = tmk::drc::run_drc(lb.board, rules, opt);
+  // As kicad-cli's --refill-zones: judge the fills the current copper would get, not the stored ones (doc 05 §36).
+  tmk::drc::RefillResult refilled;
+  if (refill) {
+    refilled = tmk::drc::refill_zones(lb.board, rules);
+    std::printf("zones refilled           %d (%d islands removed)\n", refilled.zones, refilled.islands_removed);
+    for (const auto& w : refilled.warnings) std::printf("warning: %s\n", w.c_str());
+  }
+  const auto rep = tmk::drc::run_drc(refill ? refilled.board : lb.board, rules, opt);
   for (const auto& [type, n] : rep.counts()) std::printf("%-24s %d\n", type.c_str(), n);
   for (const auto& w : rep.warnings) std::printf("warning: %s\n", w.c_str());
   if (!json_out.empty()) tmk::drc::write_drc_json(rep, json_out);
@@ -266,6 +299,119 @@ int cmd_pairs(const std::string& path, const std::vector<std::string>& extra, co
   return 0;
 }
 
+// Buses of a routed board (doc 05 §38): per group the members routed, their vias, layers and lengths, and the skew
+// against the limit. Groups as in `route`: --bus NAME=PATTERN, --buses for detection, --bus-skew-mm.
+int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bool detect, double skew_mm, const std::string& json_path) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  std::vector<std::string> notes;
+  const auto groups = tmk::app::resolve_buses(lb.board, rules, specs, detect, skew_mm, &notes);
+  for (const auto& n : notes) std::printf("%s\n", n.c_str());
+  const auto joined = tmk::route::nets_joined(lb.board, rules);
+  nlohmann::json j = nlohmann::json::array();
+  bool ok = true;
+  for (const auto& g : groups) {
+    std::string line;
+    j.push_back(tmk::app::bus_report(lb.board, rules, joined, g, &line));
+    std::printf("%s\n", line.c_str());
+    std::printf("  %-28s %7s %9s %7s %5s  %s\n", "net", "routed", "len_mm", "via_mm", "vias", "layers");
+    for (const auto& m : j.back()["members"]) {
+      std::string layers;
+      for (const auto& l : m["layers"]) layers += (layers.empty() ? "" : " ") + l.get<std::string>();
+      std::printf("  %-28s %7s %9.3f %7.3f %5d  %s%s\n", m["net"].get<std::string>().c_str(), m["routed"].get<bool>() ? "yes" : "no", m["length_mm"].get<double>(),
+                  m["via_length_mm"].get<double>(), m["vias"].get<int>(), layers.c_str(), m["routed"].get<bool>() && !m["followed"].get<bool>() ? "  (left the bus)" : "");
+    }
+    if (j.back()["within_skew"].is_boolean() && !j.back()["within_skew"].get<bool>()) ok = false;
+  }
+  if (groups.empty()) std::printf("no buses\n");
+  if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"buses", j}}.dump(1) << "\n";
+  return ok ? 0 : 4;  // 4: a group with a skew limit is over it or not completely routed
+}
+
+// The viewer's address and who may use it (issue #4, D116): this machine only unless asked, a token when it is not.
+tmk::server::ServerOptions viewer_options(const std::string& host, int port, const std::string& token, bool insecure) {
+  tmk::server::ServerOptions so;
+  so.host = host.empty() ? tmk::server::default_host() : host;
+  so.port = static_cast<std::uint16_t>(port);
+  so.token = token;
+  so.allow_open = insecure;
+  return so;
+}
+void print_viewer_notice(const tmk::server::ViewerServer& server) {
+  if (const auto notice = server.notice(); !notice.empty()) std::printf("warning: %s\n", notice.c_str());
+}
+
+// `return-paths`: the reference-return audit of selected nets on a board as it is (issue #7, doc 05 §42). Read-only. Exit 4 with --strict when
+// any net has a warning. With --view the board and each net's return path are served to the live viewer until interrupted.
+int cmd_return_paths(const std::string& path, tmk::analysis::ReturnPathOptions opt, bool refill_flag, bool strict, const std::string& json_path, bool view, int view_port,
+                     const std::string& view_host, const std::string& view_token, bool view_insecure) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  if (opt.diff_pairs) {
+    const tmk::drc::RuleEngine re(lb.board, rules);
+    opt.pair_nets = tmk::route::named_pairs(lb.board, re);
+  }
+  opt.refill_always = refill_flag;
+  if (opt.name_patterns.empty() && opt.net_classes.empty() && !opt.diff_pairs) {
+    std::fprintf(stderr, "error: no nets selected: give --nets PATTERNS, --netclass NAMES or --diff-pairs\n");
+    return 1;
+  }
+  const auto rep = tmk::analysis::analyse_return_paths(lb.board, rules, opt);
+  for (const auto& l : tmk::analysis::return_path_lines(lb.board, rep)) std::printf("%s\n", l.c_str());
+  if (rep.nets.empty()) std::printf("no nets matched\n");
+  if (!json_path.empty()) std::ofstream(json_path) << tmk::analysis::return_path_json(lb.board, rep).dump(1) << "\n";
+  bool warned = false;
+  for (const auto& n : rep.nets) warned = warned || !n.warnings.empty();
+  if (view) {
+    tmk::server::ViewerServer server(viewer_options(view_host, view_port, view_token, view_insecure));
+    server.publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(path).filename().string()));
+    for (const auto& n : rep.nets) server.publish(tmk::analysis::return_path_message(lb.board, n));
+    std::printf("live view: %s (Ctrl-C to quit)\n", server.url().c_str());
+    print_viewer_notice(server);
+    std::fflush(stdout);
+    for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  return strict && warned ? 4 : 0;
+}
+
+// `footprint-check`: every footprint of a board against datasheet land patterns from a reference library of trusted brands (issue #5, doc 05 §43).
+// Read-only. Exit 4 when a footprint differs from its datasheet (and, with --strict, on any warning). With --view the board and the findings are
+// served to the live viewer until interrupted.
+int cmd_footprint_check(const std::string& path, const std::string& refs, const std::string& trusted_file, bool trust_all, const tmk::analysis::FootprintCheckOptions& opt, bool all,
+                        bool strict, const std::string& json_path, bool view, int view_port, const std::string& view_host, const std::string& view_token,
+                        bool view_insecure) {
+  const auto lb = tmk::io::read_board_file(path);
+  auto lib = tmk::analysis::load_references(refs, trusted_file);
+  lib.trusted.trust_all = trust_all;
+  const auto rep = tmk::analysis::check_footprints(lb.board, lib, opt);
+  for (const auto& l : tmk::analysis::footprint_check_lines(rep, all)) std::printf("%s\n", l.c_str());
+  if (!json_path.empty()) std::ofstream(json_path) << tmk::analysis::footprint_check_json(lb.board, rep).dump(1) << "\n";
+  if (view) {
+    tmk::server::ViewerServer server(viewer_options(view_host, view_port, view_token, view_insecure));
+    server.publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(path).filename().string()));
+    server.publish(tmk::analysis::footprint_check_message(rep));
+    std::printf("live view: %s (Ctrl-C to quit)\n", server.url().c_str());
+    print_viewer_notice(server);
+    std::fflush(stdout);
+    for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  return rep.errors > 0 || (strict && rep.warnings > 0) ? 4 : 0;
+}
+
+// `advice-check`: read an advice file and check it against a board without routing (the refusals `route --advice` would give).
+int cmd_advice_check(const std::string& board_path, const std::string& advice_path, const std::string& json_path) {
+  const auto lb = tmk::io::read_board_file(board_path);
+  const auto adv = tmk::advice::load_advice_file(advice_path);
+  const auto ap = tmk::advice::apply_advice(adv, lb.board);
+  std::printf("%s: %zu hint%s, %d advised variant%s\n", advice_path.c_str(), ap.report["hints"].size(), ap.report["hints"].size() == 1 ? "" : "s", ap.set.variants,
+              ap.set.variants == 1 ? "" : "s");
+  if (!adv.note.empty()) std::printf("  note: %s\n", adv.note.c_str());
+  for (const auto& h : ap.report["hints"]) std::printf("  %-10s %s\n", h["kind"].get<std::string>().c_str(), h["text"].get<std::string>().c_str());
+  for (const auto& w : ap.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_path.empty()) std::ofstream(json_path) << ap.report.dump(1) << "\n";
+  return 0;
+}
+
 int cmd_escape(const std::string& path, const std::string& json_path, bool flow, bool soft_zones, double vias_off_pads_below_mm) {
   auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
@@ -389,6 +535,228 @@ int cmd_debug_seg(const std::string& path, const std::vector<double>& v, int lay
   return 0;
 }
 
+// The options of a command as the options screen lists them, read from the command-line definitions.
+std::vector<tmk::app::tui::Field> tui_fields(CLI::App& cmd) {
+  std::vector<tmk::app::tui::Field> out;
+  for (CLI::Option* o : cmd.get_options()) {
+    if (o == cmd.get_help_ptr() || o->check_lname("config")) continue;  // the screen is the options file's editor
+    tmk::app::tui::Field f;
+    f.help = o->get_description();
+    f.hidden = o->get_group().empty();
+    const auto& longs = o->get_lnames();
+    const auto& shorts = o->get_snames();
+    if (o->get_expected_max() == 0) {  // a flag: one row, every spelling a state
+      for (const auto& n : longs) f.spellings.push_back("--" + n);
+      if (f.spellings.empty())
+        for (const auto& n : shorts) f.spellings.push_back("-" + n);
+      for (const auto& sp : f.spellings) f.label += (f.label.empty() ? "" : " / ") + sp;
+    } else if (longs.empty() && shorts.empty()) {
+      f.label = o->get_name();
+      f.save = false;
+    } else {
+      f.arg = longs.empty() ? "-" + shorts.front() : "--" + longs.front();
+      f.label = (shorts.empty() || longs.empty() ? "" : "-" + shorts.front() + ", ") + f.arg;
+      f.key = longs.empty() ? std::string() : longs.front();
+      o->capture_default_str();
+      f.def = o->get_default_str();
+      if (f.def == "[]" || f.def == "\"\"") f.def.clear();
+    }
+    if (f.label == "board" || f.arg == "--output") f.save = false;  // they belong to one run, not to a set of options
+    if (!f.label.empty()) out.push_back(std::move(f));
+  }
+  return out;
+}
+
+// What the command-line parser says about `args` (subcommand first), without touching this process: the variables
+// the options are bound to keep their defaults for the run that may follow. Empty if the arguments parse.
+std::string cli_check(CLI::App& app, const std::vector<std::string>& args) {
+  int fd[2];
+  if (::pipe(fd) != 0) return {};
+  std::fflush(nullptr);
+  const pid_t pid = ::fork();
+  if (pid < 0) {
+    ::close(fd[0]), ::close(fd[1]);
+    return {};
+  }
+  if (pid == 0) {
+    ::close(fd[0]);
+    std::string msg;
+    try {
+      std::vector<std::string> rev(args.rbegin(), args.rend());
+      app.clear();
+      app.parse(rev);
+    } catch (const CLI::ParseError& e) {
+      msg = e.what();
+    } catch (const std::exception& e) {
+      msg = e.what();
+    }
+    if (!msg.empty() && ::write(fd[1], msg.data(), msg.size()) < 0) ::_exit(1);
+    ::_exit(0);
+  }
+  ::close(fd[1]);
+  std::string msg;
+  char buf[512];
+  for (ssize_t n; (n = ::read(fd[0], buf, sizeof buf)) > 0;) msg.append(buf, static_cast<std::size_t>(n));
+  ::close(fd[0]);
+  int st = 0;
+  ::waitpid(pid, &st, 0);
+  for (char& c : msg)
+    if (c == '\n') c = ' ';
+  return msg;
+}
+
+// The arguments an options file stands for (`route --config`, doc 02 §2.1): one `name = value` per line. An option
+// that is also on the command line is left out, so the command line wins. Throws on a line that names no option.
+std::vector<std::string> config_args(CLI::App& cmd, const std::string& path) {
+  std::ifstream f(path);
+  if (!f) throw std::runtime_error("cannot read the options file " + path);
+  const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+  std::vector<std::string> out;
+  for (const auto& e : tmk::app::tui::parse_options(text)) {
+    const std::string where = path + ":" + std::to_string(e.line) + ": ";
+    CLI::Option* o = e.name.empty() || e.name == "config" ? nullptr : cmd.get_option_no_throw("--" + e.name);
+    if (o == nullptr) throw std::runtime_error(where + "no route option named " + e.name);
+    if (o->count() > 0) continue;
+    if (o->get_expected_max() != 0) {
+      out.push_back("--" + e.name + "=" + e.value);
+      continue;
+    }
+    const int t = tmk::app::tui::truth(e.value);
+    if (t < 0) throw std::runtime_error(where + e.name + " is a flag, its value must be true or false");
+    if (t == 1) {
+      out.push_back("--" + e.name);
+      continue;
+    }
+    // "x = false": the flag's spelling of the other sense (--x against --no-x), if it has one.
+    const auto& off = o->get_fnames();
+    const bool negative = std::find(off.begin(), off.end(), e.name) != off.end();
+    std::string other;
+    for (const auto& n : o->get_lnames())
+      if ((std::find(off.begin(), off.end(), n) != off.end()) != negative) other = n;
+    if (other.empty()) throw std::runtime_error(where + e.name + " = false has no meaning: the flag has no opposite, remove the line");
+    out.push_back("--" + other);
+  }
+  return out;
+}
+
+// `tracemaker tui`: the options screen for `route`. Returns the exit code; `next` holds the arguments of the run the
+// user asked for, if any.
+int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std::string& out, const std::string& config,
+            const std::string& keys, bool scripted, std::vector<std::string>& next) {
+  namespace tui = tmk::app::tui;
+  tui::Model m("tracemaker route", tui_fields(route), [&](const std::vector<std::string>& args) {
+    std::vector<std::string> all{"route"};
+    all.insert(all.end(), args.begin(), args.end());
+    return cli_check(app, all);
+  });
+  // Three places keep options, the higher over the lower: the user's (global), the board's folder (project) and a file
+  // named with --config. Reading them here only fills the screen; `route` takes a file only when it is named, so a
+  // run never depends on a file it did not announce (the screen shows the whole command that stands for the choices).
+  namespace fs = std::filesystem;
+  const char* xdg = std::getenv("XDG_CONFIG_HOME");
+  const char* home = std::getenv("HOME");
+  std::string global_path;
+  if (xdg && *xdg)
+    global_path = (fs::path(xdg) / "tracemaker" / "route.conf").string();
+  else if (home && *home)
+    global_path = (fs::path(home) / ".config" / "tracemaker" / "route.conf").string();
+  const fs::path board_dir = board.empty() ? fs::path() : fs::path(board).parent_path();
+  const std::string project_path = (board_dir.empty() ? fs::path("tracemaker.conf") : board_dir / "tracemaker.conf").string();
+  std::string first_problem;
+  auto load = [&](tui::Scope sc, const std::string& path) {
+    std::ifstream f(path);
+    if (!f) return false;
+    const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+    for (const std::string& p : m.load_config(text, sc)) {
+      std::fprintf(stderr, "warning: %s: %s\n", path.c_str(), p.c_str());
+      if (first_problem.empty()) first_problem = path + ": " + p;
+    }
+    return true;
+  };
+  if (!global_path.empty()) m.enable_scope(tui::Scope::global, global_path, load(tui::Scope::global, global_path));
+  m.enable_scope(tui::Scope::project, project_path, load(tui::Scope::project, project_path));
+  if (!config.empty()) {
+    m.enable_scope(tui::Scope::file, config, load(tui::Scope::file, config));
+    m.set_target(tui::Scope::file);
+  } else {
+    m.disable_scope(tui::Scope::file);
+    m.set_target(tui::Scope::project);
+  }
+  if (!first_problem.empty()) m.set_status("cannot use a line of " + first_problem);
+  if (!board.empty()) m.set("board", board);
+  if (!out.empty()) m.set("--output", out);
+  const tui::Action a = scripted ? tui::run_keys(m, keys) : tui::run_terminal(m);
+  if (scripted && !m.status().empty()) std::fprintf(stderr, "%s\n", m.status().c_str());
+  if (a == tui::Action::print) {
+    std::printf("%s\n", m.command_line().c_str());
+  } else if (a == tui::Action::run) {
+    std::fprintf(stderr, "%s\n", m.command_line().c_str());
+    next = m.args();
+    next.insert(next.begin(), "route");
+  }
+  return 0;
+}
+
+// Simple Route JSON problem -> KiCad board, project and (if needed) custom rules next to each other (doc 08 §9).
+int cmd_srj_import(const std::string& in, const std::string& out, double clearance_mm, double hole_to_hole_mm, const std::string& json_out, double margin_mm = 0, bool unpointed = false) {
+  namespace fs = std::filesystem;
+  const auto problem = tmk::io::read_srj_file(in);
+  tmk::io::SrjImportOptions opt;
+  if (clearance_mm >= 0) opt.clearance = tmk::mm_to_nm(clearance_mm);
+  if (hole_to_hole_mm >= 0) opt.hole_to_hole = tmk::mm_to_nm(hole_to_hole_mm);
+  opt.outline_margin = tmk::mm_to_nm(margin_mm);
+  opt.unpointed_keepout = unpointed;
+  const auto files = tmk::io::srj_to_kicad(problem, opt);
+  auto write = [](const fs::path& p, const std::string& text) {
+    std::ofstream f(p, std::ios::binary);
+    f << text;
+    if (!f) throw std::runtime_error("cannot write " + p.string());
+  };
+  write(out, files.pcb);
+  write(fs::path(out).replace_extension(".kicad_pro"), files.pro);
+  // A rule file left by an earlier import must not judge this board.
+  const fs::path dru = fs::path(out).replace_extension(".kicad_dru");
+  if (!files.dru.empty()) write(dru, files.dru);
+  else fs::remove(dru);
+  std::printf("%s: %d layers, %d nets, %d pads, %d connections; clearance %.3f mm, track %.3f mm, via %.3f/%.3f mm\n", out.c_str(),
+              problem.layer_count, files.nets, files.pads, files.srj_pairs, tmk::nm_to_mm(files.clearance), tmk::nm_to_mm(files.track_width),
+              tmk::nm_to_mm(files.via_diameter), tmk::nm_to_mm(files.via_drill));
+  for (const auto& w : files.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j = {{"layers", problem.layer_count}, {"nets", files.nets}, {"pads", files.pads}, {"terminal_pads", files.terminal_pads},
+                        {"srj_connections", problem.connections.size()}, {"srj_pairs", files.srj_pairs}, {"board_pairs", files.board_pairs},
+                        {"clearance_mm", tmk::nm_to_mm(files.clearance)}, {"hole_to_hole_mm", tmk::nm_to_mm(files.hole_to_hole)}, {"track_width_mm", tmk::nm_to_mm(files.track_width)},
+                        {"via_diameter_mm", tmk::nm_to_mm(files.via_diameter)}, {"via_drill_mm", tmk::nm_to_mm(files.via_drill)},
+                        {"allow_blind_buried_vias", problem.rules.blind_buried_vias}, {"allow_via_in_pad", problem.rules.via_in_pad},
+                        {"custom_rules", !files.dru.empty()}, {"warnings", files.warnings}};
+    std::ofstream(json_out) << j.dump(1) << "\n";
+  }
+  return 0;
+}
+
+// Routed board -> the problem's SRJ with `traces` (doc 08 §9). Exit code 3 when a connection has no copper path,
+// like `route` with unrouted connections.
+int cmd_srj_export(const std::string& board, const std::string& problem, const std::string& out, const std::string& json_out) {
+  std::ifstream f(problem, std::ios::binary);
+  if (!f) throw std::runtime_error("cannot open " + problem);
+  const std::string text((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+  const auto lb = tmk::io::read_board_file(board);
+  const auto res = tmk::io::srj_export(text, lb.board);
+  std::ofstream o(out, std::ios::binary);
+  o << res.json;
+  if (!o) throw std::runtime_error("cannot write " + out);
+  std::printf("%s: %d/%d connections routed, %d traces (%d of copper on no connection path), %d vias\n", out.c_str(), res.routed, res.connections,
+              res.traces + res.extra_traces, res.extra_traces, res.vias);
+  for (const auto& n : res.unrouted) std::printf("  unrouted: %s\n", n.c_str());
+  for (const auto& w : res.warnings) std::printf("  warning: %s\n", w.c_str());
+  if (!json_out.empty()) {
+    nlohmann::json j = {{"connections", res.connections}, {"routed", res.routed}, {"unrouted", res.unrouted}, {"traces", res.traces},
+                        {"extra_traces", res.extra_traces}, {"vias", res.vias}, {"warnings", res.warnings}};
+    std::ofstream(json_out) << j.dump(1) << "\n";
+  }
+  return res.routed == res.connections ? 0 : 3;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -434,6 +802,8 @@ int main(int argc, char** argv) {
   drc->add_option("--epsilon-um", drc_eps_um, "Tolerance below the required clearance, micrometres");
   bool drc_linear_zones = false;
   drc->add_flag("--linear-zones", drc_linear_zones, "Reference path: test items against every edge of a zone fill")->group("");
+  bool drc_refill = false;
+  drc->add_flag("--refill-zones", drc_refill, "Refill zones for the current copper before checking (not written)");
 
   auto* pert = app.add_subcommand("selftest-perturb", "Add random tracks/vias and footprint moves (DRC parity fuzzing)");
   pert->group("");
@@ -463,15 +833,75 @@ int main(int argc, char** argv) {
   std::string r_in, r_out, r_json;
   tmk::route::RouterOptions ropt;
   double r_pitch_um = 0;
-  route->add_option("board", r_in)->required()->check(CLI::ExistingFile);
+  route->add_option("board", r_in, "Board file (.kicad_pcb)")->required()->check(CLI::ExistingFile);
+  std::string r_config;
+  route->add_option("--config", r_config, "Read options from a file of `name = value` lines, as `tracemaker tui` saves them; options on the command line win")
+      ->check(CLI::ExistingFile);
   route->add_option("-o,--output", r_out, "Output .kicad_pcb")->required();
   route->add_option("--time", ropt.time_limit_s, "Time limit, seconds (safety net; results then depend on machine speed)");
-  route->add_option("--work", ropt.work_budget, "Deterministic work budget in search expansions per router (e.g. 50000000)");
+  route->add_option("--work", ropt.work_budget,
+                    "Deterministic work budget in search expansions per router (e.g. 50000000); with the default portfolio every "
+                    "variant gets the whole budget, so a run does up to --variants times this work");
   route->add_option("--pitch-um", r_pitch_um, "Lattice pitch in micrometres (default: automatic)");
+  std::string r_guide;
+  route->add_option("--guide", r_guide, "Preferred paths per connection (JSON, Simple Route JSON coordinates in mm; doc 16 F1)")->group("");
+  route->add_option("--guide-pen", ropt.guide_pen, "Guide: pitches per lattice step off the guide")->group("");
+  route->add_option("--guide-radius", ropt.guide_radius, "Guide: pitches around the guide that count as on it")->group("");
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
+  route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first")->group("");
   route->add_option("--seed", ropt.seed);
   route->add_option("--only-net", ropt.only_net, "Debugging: route only this net")->group("");
   route->add_option("--skip-net", ropt.skip_nets, "Experiments: leave this net unrouted (repeatable)")->group("");
+  route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
+  route->add_option("--polish", ropt.polish_fraction, "Reserve this share of the budget (0-0.9) to rebuild the open connections of the best state")->group("");
+  route->add_option("--polish-trials", ropt.polish_trials, "Polish: seeded orders tried per open connection")->group("");
+  route->add_option("--lns-open", ropt.lns_open_trials, "Regional rebuild of open connections: orders tried per open connection (0 = off)")->group("");
+  route->add_option("--lns-open-radius-mm", ropt.lns_open_radius_mm, "Regional rebuild: radius around the open pin")->group("");
+  route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
+  route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
+  route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
+  route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
+  route->add_flag("--layer-assign-angle", ropt.layer_assign_angle, "Layer preference per connection by chord direction (two-layer boards)")->group("");
+  route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
+  route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");
+  route->add_option("--txn", ropt.txn, "Negotiation as transactions: a route that rips others stays only if they can be re-routed (1 = ties kept, 2 = strict gain)")->group("");
+  route->add_option("--txn-temp", ropt.txn_temp, "With --txn: annealing temperature; a route losing k connections net is kept with probability exp(-k/T) (0 = never)")->group("");
+  route->add_option("--txn-cool", ropt.txn_cool, "With --txn-temp: 1 = the temperature falls linearly to zero over the budget")->group("");
+  route->add_option("--stall-passes", ropt.stall_passes, "Restart after this many negotiation passes without a new best (0 = only when the passes end)")->group("");
+  route->add_option("--txn-cap", ropt.txn_cap, "With --txn: expansion cap of each victim's re-route search (0 = none)")->group("");
+  route->add_option("--txn-depth", ropt.txn_depth, "With --txn: nested transaction depth for victims that cannot be re-routed strictly")->group("");
+  route->add_option("--txn-nested", ropt.txn_nested, "With --txn-depth: nested transactions allowed per top-level one")->group("");
+  route->add_option("--field-cache-mb", ropt.field_cache_mb, "Keep cost-to-go fields (MB per router) and reuse them when all inputs are identical (same results, less time)")->group("");
+  route->add_option("--flood-work-pct", ropt.flood_work_pct, "Percent of an expansion that a reachability-flood cell counts against --work (default 100)")->group("");
+  route->add_option("--field-prefill", ropt.field_prefill, "1: fill the fixed-copper cache of a net class for the whole board before its first cost-to-go field (stronger heuristic, fields cacheable)")->group("");
+  route->add_option("--tidy", ropt.tidy, "Every N passes with open connections, re-route each routed connection alone and keep it if shorter (0 = off)")->group("");
+  route->add_option("--txn-orders", ropt.txn_orders, "With --txn: orders tried for re-routing a route's victims")->group("");
+  route->add_option("--breakout-profile", ropt.breakout_profile, "1 (default): a breakout board also gets reach-check 2, flood weight 25 %, field prefill and cache; 0: only the layer-direction and package penalties")->group("");
+  route->add_option("--rounds", ropt.rounds, "Portfolio: split the work budget into this many rounds; each round every variant continues from the best state of the last")->group("");
+  route->add_option("--breakout-portfolio", ropt.breakout_portfolio, "1 (default): a ball-grid breakout board gets the breakout portfolio with --variants > 1; 0: the designed variants")->group("");
+  std::string r_warm_pcb;
+  route->add_flag("--legalize", ropt.legalize, "Warm start: move the vertices of the saved routes until the clearances hold (gridless compaction), then keep what is legal")->group("");
+  route->add_option("--warm-pcb", r_warm_pcb, "Start from the tracks and vias of this routed board (e.g. a relaxed-clearance solution after legalisation); what is not legal under the input's rules is dropped and routed again")->group("");
+  route->add_option("--state-out", ropt.state_out, "Portfolio: write the best routes after every round to this file so the run can be resumed")->group("");
+  route->add_option("--state-in", ropt.state_in, "Portfolio: resume from the routes in this file (written by --state-out)")->group("");
+  route->add_option("--island-slack", ropt.island_slack, "Portfolio rounds: a variant continues from its own final state if it routes at least best-slack connections (>= 0 turns islands on)")->group("");
+  route->add_flag("--relax", ropt.relax, "Portfolio: route under 60 % and 80 % of the clearance first, legalise (move vertices off the lattice) up to the real rules, repeat on stalls; until complete, with --round-work (20 M default)");
+  route->add_flag("--relax-late", ropt.relax_late, "With --relax: begin under the real rules and relax only when those stall (fresh start from the loosest stage)");
+  route->add_option("--ramp-from", ropt.ramp_from_mm, "Portfolio: clearance continuation, start at this clearance (mm) and raise it stage by stage to the board's, warm-starting each stage")->group("");
+  route->add_option("--ramp-step", ropt.ramp_step_mm, "Clearance added per ramp stage (mm)")->group("");
+  route->add_option("--ramp-cycle", ropt.ramp_cycle, "Ramp: after --ramp-stall rounds without gain under the board's rules, go back this many stages and climb again")->group("");
+  route->add_flag("--ramp-late", ropt.ramp_late, "Ramp: begin under the board's rules and climb from the ramp only after --ramp-stall rounds without gain (with --ramp-cycle)")->group("");
+  route->add_option("--ramp-fresh", ropt.ramp_fresh, "Ramp: every n-th breathing cycle starts afresh from the loosest stage instead of from the best state")->group("");
+  route->add_option("--ramp-stall", ropt.ramp_stall, "Ramp: rounds without gain at the final stage before going back")->group("");
+  route->add_option("--ramp-rounds", ropt.ramp_rounds, "Ramp: rounds in a row without gain before the next stage (a stage also ends when complete)")->group("");
+  route->add_flag("--state-recheck", ropt.state_recheck, "With --state-in: keep only the saved routes that are legal under this board's rules")->group("");
+  route->add_option("--round-work", ropt.round_work, "Portfolio rounds of this work each (not split), repeated until the board is complete, --rounds is reached or --time is used; each round reseeds the variants")->group("");
+  route->add_option("--max-victims", ropt.max_victims, "Negotiation: connections one route may rip at once (0 = no limit)")->group("");
+  route->add_option("--max-rips", ropt.max_rips_per_connection, "Rip-ups allowed per connection")->group("");
+  route->add_option("--max-passes", ropt.max_passes, "Passes over still-unrouted connections")->group("");
+  route->add_option("--max-restarts", ropt.max_restarts, "Full restarts when negotiation stalls")->group("");
+  route->add_option("--soft-growth", ropt.soft_growth, "Crossing cost growth per negotiation pass (fraction of --soft-cost-mm)")->group("");
+  route->add_option("--soft-cost-mm", ropt.soft_cost_mm, "Base cost of crossing another net's copper in negotiation")->group("");
   route->add_option("--soft-attempts", ropt.soft_attempts, "Window sizes tried by negotiated searches (1-4)")->group("");
   route->add_option("--heuristic-weight", ropt.heuristic_weight, "Weighted A* factor (1.0 = optimal searches)");
   route->add_flag("!--no-rip-up", ropt.rip_up, "Disable negotiated rip-up and reroute");
@@ -506,10 +936,19 @@ int main(int argc, char** argv) {
   route->add_flag("--reach-verify", ropt.reach_verify, "Test: check every unreachable verdict with the full A*")->group("");
   route->add_option("--reach-check", ropt.reach_check, "Reachability check before strict searches: 0 off, 1 likely failures, 2 all")->group("");
   route->add_flag("--soft-zones", ropt.soft_zones, "Zone fills do not block other nets (refill the zones afterwards); unused fills become plane targets");
+  bool r_no_repair = false;
+  route->add_flag("--no-refill-repair", r_no_repair, "With --soft-zones: only count what the zone refill leaves unconnected, do not route it");
   route->add_flag("--via-in-pad", ropt.via_in_pad, "Inner balls / enclosed SMD pads may take a minimum-size via in the pad (needs filled, capped vias)");
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
+  tmk::app::RouteJob r_job;
   route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
+  route->add_option("--bus", r_job.buses,
+                    "Experimental. Route these nets as a bus, NAME=PATTERN (repeatable): lane by lane on the same layers, e.g. 'DATA=/D[0-7]' or 'LCD=/LCD_*'. "
+                    "PATTERN matches whole net names: * and ? as in net-class patterns, [N-M] a number in that range (doc 05 §38)");
+  route->add_flag("--buses", r_job.detect_buses, "Experimental. Also find buses in the net names: nets differing only in a trailing index, four or more between the same two components");
+  route->add_flag("--bus-first", ropt.bus_first, "Route the buses before everything else (default: each bus where the router's order puts its first connection)");
+  route->add_option("--bus-skew-mm", r_job.bus_skew_mm, "Length-match the --bus groups: meanders until their lengths (tracks and via height, as KiCad's skew check) differ by at most this (0 = only the board's custom skew rules)");
   route->add_flag("!--no-field", ropt.field_heuristic, "Use the octile heuristic only (no cost-to-go fields)");
   int r_threads = 8;
   std::string r_kb = tmk::learn::KnowledgeBase::default_path();
@@ -523,13 +962,48 @@ int main(int argc, char** argv) {
   route->add_option("--variants", r_variants,
                     "Portfolio size (1 = single router; default: all with --work, else --threads); the output never depends on --threads "
                     "with --work. --time applies to each variant from its start");
-  tmk::app::RouteJob r_job;
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
+  bool r_nofreeze = false;
+  double r_fp_tol = -1;
+  route->add_option("--return-paths", r_job.return_paths.name_patterns,
+                    "After routing, audit the reference return of nets matching these KiCad wildcards (comma separated, e.g. 'DDR*'): copper under each trace on its reference layer, the "
+                    "detour round voids, layer changes without a stitching via. Read-only; the report is in the log and the summary, the paths in the viewer (doc 05 §42)")
+      ->delimiter(',');
+  route->add_option("--return-path-classes", r_job.return_paths.net_classes, "With --return-paths: also the nets of these net classes")->delimiter(',');
+  route->add_flag("--return-path-pairs", r_job.return_paths.diff_pairs, "Audit the nets that are halves of a differential pair too");
+  route->add_option("--return-path-radius-mm", r_job.return_paths.stitch_radius_mm, "How far a stitching via or capacitor may be from a layer change (default 5)")->check(CLI::PositiveNumber);
+  route->add_option("--footprint-refs", r_job.footprint_refs,
+                    "Before routing, check every footprint against datasheet land patterns from this reference library (a directory or a JSON file; doc 05 §43). A footprint that differs from "
+                    "its datasheet is an error and stops the job");
+  route->add_option("--footprint-trusted", r_job.footprint_trusted, "With --footprint-refs: the trusted brand list (default: trusted_brands.txt beside the references); references of other brands give no verdict")
+      ->check(CLI::ExistingFile);
+  route->add_flag("--footprint-trust-all", r_job.footprint_trust_all, "With --footprint-refs: use the references of every brand (nobody vouched for them)");
+  route->add_option("--footprint-require", r_job.footprint_opt.require, "With --footprint-refs: designators (KiCad wildcards, comma separated) that must have a trusted reference, else it is an error")->delimiter(',');
+  route->add_flag("--footprint-warn-only", r_job.footprint_warn_only, "With --footprint-refs: report the discrepancies and route anyway");
+  route->add_option("--footprint-tol-mm", r_fp_tol, "With --footprint-refs: tolerance of pad positions, sizes and drills in millimetres (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
+  route->add_flag("--si-rules", r_job.si_rules,
+                  "JLCPCB's three routing rules at once (doc 05 §44): critical nets (from the component rules' roles and differential pairs) routed first, dearer vias for them (x3), and a cost "
+                  "for their tracks over a void of the adjacent reference plane (+4 pitches per lattice step); each can be set with the options below instead");
+  route->add_option("--critical-nets", r_job.critical_nets, "Nets that are critical whatever their role, KiCad wildcards comma separated (e.g. 'CLK*,USB_D*'); they are tier 1, like clocks, and the nets found by --critical-auto follow in their own tiers")
+      ->delimiter(',');
+  route->add_flag("--critical-auto", r_job.critical_auto, "Critical nets from the component rules' roles (clock, crystal, USB, Ethernet, PCIe, DDR ...) and from differential pairs");
+  route->add_flag("--critical-first", r_job.critical_first, "Route the critical nets before all others, tier by tier (clocks and crystals, differential links, memory buses); --first-nets stay in front");
+  auto* r_crit_via = route->add_option("--critical-via-cost", r_job.critical_via_mult, "A via costs a critical net this many times --via-cost-mm (default 1; 3 with --si-rules)")
+                         ->check(CLI::Range(1.0, 100.0));
+  route->add_option("--critical-via-max", r_job.critical_via_max, "Warn in the report when a critical net has more vias than this (0 = no limit)")->check(CLI::NonNegativeNumber);
+  auto* r_split = route->add_option("--split-cost", r_job.split_cost,
+                    "Cost, in pitches per lattice step, of a critical net's track over a void of the adjacent reference plane: a split, a slot or an antipad field (default 0; 4 with --si-rules)")
+                      ->check(CLI::NonNegativeNumber);
+  route->add_flag("--split-hard", r_job.split_hard, "Close plane voids to critical nets instead of charging for them: a critical net with no way round a split stays unrouted");
+  route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
-  route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
+  route->add_option("--view-host", r_job.view_host,
+                    "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1: this machine only). 0.0.0.0 or a LAN address lets other machines connect, and then a token is required");
+  route->add_option("--view-token", r_job.view_token, "Token for a viewer that other machines can reach (16+ characters; default: a random one, printed in the URL)");
+  route->add_flag("--view-insecure", r_job.view_insecure, "Serve a viewer that other machines can reach WITHOUT a token (anyone who can reach the port can watch the board)");
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
   route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
@@ -540,8 +1014,34 @@ int main(int argc, char** argv) {
   route->add_option("--rules-override", r_job.rules_override,
                     "User override file for --component-rules (JSON, doc 15 §6.3): disable rules, assert/deny categories, set parameters")
       ->check(CLI::ExistingFile);
+  route->add_option("--advice", r_job.advice,
+                    "Advice file (JSON, doc 17): typed hints (nets first, connection priority, layer costs, regions that reserve space for some nets). "
+                    "They run as extra portfolio variants next to the unadvised ones, so the result is never worse")
+      ->check(CLI::ExistingFile);
+  route->add_option("--advice-variants", r_job.advice_variants, "Advised variants to add (default: the file's \"variants\", else 4)")->check(CLI::Range(1, 8));
+  route->add_option("--advisor", r_job.advisor,
+                    "A command (run with sh -c) that reads the stuck report (JSON) on stdin and writes an advice file on stdout; consulted only if the "
+                    "route leaves connections open, then the board is routed again with its advice (advisors/ has a reference one)");
+  route->add_option("--advisor-timeout", r_job.advisor_timeout_s, "Seconds the advisor may take (default 120; not counted as routing work)")->check(CLI::PositiveNumber);
+  route->add_option("--advisor-rounds", r_job.advisor_rounds, "Consult the advisor again with the advised run's result while connections are open (default 1)")->check(CLI::Range(1, 8));
+  route->add_flag("--advisor-redact", r_job.advisor_redact, "Send net and part names to the advisor as aliases (N1, P3), without part values or library ids; the advice is mapped back");
+  route->add_option("--advice-out", r_job.advice_out, "Where the advisor's advice is saved (default <output>.advice.json); route again with --advice FILE to repeat the run");
+  route->add_option("--stuck-report", r_job.stuck_report_out, "Write the stuck report (what failed and why, JSON) of the run the advisor sees, or the final one");
   std::string r_items;
   route->add_option("--emit-items", r_items, "Write the new tracks and vias as JSON (for the KiCad plugin)");
+  route->add_flag("--widen-power", r_job.widen_power,
+                  "After routing: widen new tracks that are narrower than their net class width back up to it where there is room, and nets "
+                  "with a target (--widen-net, or a width the component rules computed) towards the target (doc 05 §39)");
+  route->add_option("--widen-net", r_job.widen_nets, "With --widen-power: target width for nets as PATTERN=WIDTH_MM, e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)");
+  route->add_option("--stitch-vias", r_job.stitch_vias,
+                    "After routing: add stitching vias. planes: vias of a plane's net on a grid where its fills overlap on two or more layers; "
+                    "return: a plane via near each via of the nets that need a reference plane (component rules, --stitch-return); all: both")
+      ->check(CLI::IsMember({"planes", "return", "all"}));
+  route->add_option("--stitch-pitch", r_job.stitch_pitch_mm, "Grid pitch of plane stitching vias, mm (default 5.08, the catalogue's value)")->check(CLI::PositiveNumber);
+  route->add_option("--stitch-distance", r_job.stitch_distance_mm, "Return-path stitching: largest distance from a signal via to its plane via, mm (default: the rule's, else 5.08)")
+      ->check(CLI::PositiveNumber);
+  route->add_option("--stitch-return", r_job.stitch_returns, "Return-path stitching for nets as PATTERN=PLANE_NET, e.g. 'USB_D*=GND' (repeatable). Return-path stitching from component rules is experimental");
+  route->add_option("--pass-work", r_job.pass_work, "Work budget of each after-route pass, in exact checks (default 2,000,000)")->check(CLI::PositiveNumber);
 
   auto* esc = app.add_subcommand("escape", "Escape feasibility of dense packages: pins that cannot leave their package under the board's rules");
   std::string esc_board, esc_json;
@@ -559,6 +1059,97 @@ int main(int argc, char** argv) {
   pairs_cmd->add_option("board", pr_board)->required()->check(CLI::ExistingFile);
   pairs_cmd->add_option("--pair", pr_extra, "Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM");
   pairs_cmd->add_option("--json", pr_json, "Write the measurements as JSON");
+  auto* buses_cmd = app.add_subcommand("buses", "Buses of a routed board: members routed, vias and layers per member, lengths and skew (exit 4 when a limit is missed)");
+  std::string bu_board, bu_json;
+  std::vector<std::string> bu_specs;
+  bool bu_detect = false;
+  double bu_skew = 0;
+  buses_cmd->add_option("board", bu_board)->required()->check(CLI::ExistingFile);
+  buses_cmd->add_option("--bus", bu_specs, "A bus as NAME=PATTERN (repeatable), as in route");
+  buses_cmd->add_flag("--buses", bu_detect, "Also find buses in the net names, as in route");
+  buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
+  buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
+  auto* rp_cmd = app.add_subcommand("return-paths", "Reference-return audit of high-speed nets: copper under each trace on its reference layer, the detour round voids, layer changes without a stitch (read-only; doc 05 §42)");
+  std::string rp_board, rp_json, rp_host, rp_token;
+  tmk::analysis::ReturnPathOptions rp_opt;
+  std::vector<std::string> rp_refs;
+  bool rp_strict = false, rp_view = false, rp_refill = false, rp_norefill = false, rp_insecure = false;
+  int rp_port = 8766;
+  rp_cmd->add_option("board", rp_board)->required()->check(CLI::ExistingFile);
+  rp_cmd->add_option("--nets", rp_opt.name_patterns, "Nets to analyse, KiCad wildcards, comma separated (e.g. 'DDR*,*CLK*')")->delimiter(',');
+  rp_cmd->add_option("--netclass", rp_opt.net_classes, "Also the nets of these net classes")->delimiter(',');
+  rp_cmd->add_flag("--diff-pairs", rp_opt.diff_pairs, "Also the nets that are halves of a differential pair (names ending in P/N or +/-)");
+  rp_cmd->add_option("--reference-layer", rp_refs, "PATTERN=LAYER: the reference layer of the nets that match, instead of the adjacent layer with the most copper under the trace (repeatable)");
+  rp_cmd->add_option("--stitch-radius-mm", rp_opt.stitch_radius_mm, "How far a stitching via or a capacitor may be from a layer change (default 5)")->check(CLI::PositiveNumber);
+  rp_cmd->add_option("--warn-detour-mm", rp_opt.warn_detour_mm, "Warn when a net's return detours more than this (default 2)");
+  rp_cmd->add_option("--warn-separation-mm", rp_opt.warn_separation_mm, "Warn when the return gets farther than this from the trace (default 1)");
+  rp_cmd->add_option("--min-void-mm", rp_opt.min_void_mm, "Stretches without copper shorter than this are ignored (default 0.1)");
+  rp_cmd->add_option("--sample-mm", rp_opt.sample_mm, "Spacing of the samples along a trace (default 0.05)")->check(CLI::PositiveNumber);
+  rp_cmd->add_flag("--refill", rp_refill, "Refill every zone with the engine's refill instead of using the fills in the file");
+  rp_cmd->add_flag("--no-refill", rp_norefill, "Do not refill zones that have no fill (they are then not reference copper)");
+  rp_cmd->add_option("--json", rp_json, "Write the report as JSON");
+  rp_cmd->add_flag("--strict", rp_strict, "Exit 4 when any net has a warning (a threshold or a missing stitch)");
+  rp_cmd->add_flag("--view", rp_view, "Serve the board and the return paths to the live viewer (until interrupted)");
+  rp_cmd->add_option("--view-port", rp_port, "Viewer port (default 8766)");
+  rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1; another address needs a token)");
+  rp_cmd->add_option("--view-token", rp_token, "Token for a viewer other machines can reach (16+ characters; default a random one)");
+  rp_cmd->add_flag("--view-insecure", rp_insecure, "A viewer other machines can reach, without a token");
+  auto* fc_cmd = app.add_subcommand("footprint-check", "Check every footprint against datasheet land patterns from a reference library of trusted brands: pad count, positions, sizes, drills, mirroring (read-only; doc 05 §43)");
+  std::string fc_board, fc_refs, fc_trusted, fc_json, fc_host, fc_token;
+  tmk::analysis::FootprintCheckOptions fc_opt;
+  bool fc_trust_all = false, fc_strict = false, fc_all = false, fc_view = false, fc_insecure = false;
+  int fc_port = 8766;
+  fc_cmd->add_option("board", fc_board)->required()->check(CLI::ExistingFile);
+  fc_cmd->add_option("--refs", fc_refs, "The reference library: a directory of JSON files (and a trusted_brands.txt) or one JSON file")->required();
+  fc_cmd->add_option("--trusted-brands", fc_trusted, "The trusted brand list, one `Brand | alias` per line (default: trusted_brands.txt beside the references)")->check(CLI::ExistingFile);
+  fc_cmd->add_flag("--trust-all", fc_trust_all, "Use the references of every brand (nobody vouched for them; the report says so)");
+  fc_cmd->add_option("--only", fc_opt.only, "Check only these designators (KiCad wildcards, comma separated)")->delimiter(',');
+  fc_cmd->add_option("--require", fc_opt.require, "Designators that must have a trusted reference; without one it is an error (e.g. 'U*,J*')")->delimiter(',');
+  fc_cmd->add_option("--mpn-field", fc_opt.mpn_fields, "Footprint properties that hold the manufacturer part number, besides MPN, Manufacturer_Part_Number and the like")->delimiter(',');
+  fc_cmd->add_option("--position-tol-mm", fc_opt.position_tol_mm, "Pad position tolerance (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
+  fc_cmd->add_option("--size-tol-mm", fc_opt.size_tol_mm, "Pad size tolerance (default 0.05)")->check(CLI::NonNegativeNumber);
+  fc_cmd->add_option("--drill-tol-mm", fc_opt.drill_tol_mm, "Drill size tolerance (default 0.05)")->check(CLI::NonNegativeNumber);
+  fc_cmd->add_flag("--all", fc_all, "Also list the footprints that are fine and those without a reference");
+  fc_cmd->add_option("--json", fc_json, "Write the report as JSON");
+  fc_cmd->add_flag("--strict", fc_strict, "Exit 4 on warnings too (a reference from an untrusted brand, a peg the datasheet does not show)");
+  fc_cmd->add_flag("--view", fc_view, "Serve the board and the findings to the live viewer (until interrupted)");
+  fc_cmd->add_option("--view-port", fc_port, "Viewer port (default 8766)");
+  fc_cmd->add_option("--view-host", fc_host, "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1; another address needs a token)");
+  fc_cmd->add_option("--view-token", fc_token, "Token for a viewer other machines can reach (16+ characters; default a random one)");
+  fc_cmd->add_flag("--view-insecure", fc_insecure, "A viewer other machines can reach, without a token");
+  auto* advice_cmd = app.add_subcommand("advice-check", "Check an advice file (doc 17) against a board: the refusals `route --advice` would give, and what each hint does");
+  std::string ac_board, ac_advice, ac_json;
+  advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
+  advice_cmd->add_option("advice", ac_advice, "Advice file (JSON)")->required()->check(CLI::ExistingFile);
+  advice_cmd->add_option("--json", ac_json, "Write what each hint became as JSON");
+  auto* style_cmd = app.add_subcommand("style", "Style metric of a routed board: bends, acute angles, stair-steps, detours (doc 05 §39)");
+  std::string sty_board, sty_json;
+  bool sty_conn = false;
+  style_cmd->add_option("board", sty_board)->required()->check(CLI::ExistingFile);
+  style_cmd->add_option("--json", sty_json, "Write the metric as JSON");
+  style_cmd->add_flag("--connections", sty_conn, "With --json: also one row per connection");
+  auto* srj_in = app.add_subcommand("srj-import", "Convert a Simple Route JSON problem (tscircuit) to a KiCad board with its project and rules");
+  std::string si_in, si_out, si_json;
+  double si_clearance = -1, si_hole = -1;
+  srj_in->add_option("problem", si_in, "Simple Route JSON file")->required()->check(CLI::ExistingFile);
+  srj_in->add_option("-o,--output", si_out, "Output .kicad_pcb (the .kicad_pro, and a .kicad_dru if needed, are written next to it)")->required();
+  srj_in->add_option("--clearance-mm", si_clearance,
+                     "Copper clearance (default: the problem's defaultObstacleMargin, else tscircuit's fallback of 0.15 mm)")
+      ->check(CLI::NonNegativeNumber);
+  srj_in->add_option("--hole-to-hole-mm", si_hole,
+                     "Drill edge to drill edge clearance (default: the problem's via-hole / drill clearance fields, else no rule)")
+      ->check(CLI::NonNegativeNumber);
+  double si_margin = 0;
+  bool si_unpointed = false;
+  srj_in->add_flag("--unpointed-keepout", si_unpointed, "Pads of a net that no connection point lies on become keep-outs (fan-out problems)");
+  srj_in->add_option("--outline-margin-mm", si_margin, "Grow the board outline by this on every side (breakout points on the bounds)")->check(CLI::NonNegativeNumber);
+  srj_in->add_option("--json", si_json, "Write the conversion summary (counts, rules used, warnings) as JSON");
+  auto* srj_out = app.add_subcommand("srj-export", "Write a routed board's copper as the `traces` of its Simple Route JSON problem");
+  std::string so_board, so_problem, so_out, so_json;
+  srj_out->add_option("board", so_board, "Routed .kicad_pcb made by srj-import")->required()->check(CLI::ExistingFile);
+  srj_out->add_option("--problem", so_problem, "The Simple Route JSON problem the board was imported from")->required()->check(CLI::ExistingFile);
+  srj_out->add_option("-o,--output", so_out, "Output Simple Route JSON (the problem plus traces)")->required();
+  srj_out->add_option("--json", so_json, "Write the export summary (routed and unrouted connections) as JSON");
   auto* dseg = app.add_subcommand("debug-seg", "Explain the router's verdict on one segment");
   dseg->group("");
   std::string ds_board, ds_net;
@@ -583,7 +1174,47 @@ int main(int argc, char** argv) {
   dbg->add_option("--width", d_width);
   dbg->add_flag("--via", d_via, "Also print where a via of the pad's net is legal");
 
+  auto* tui = app.add_subcommand("tui", "Choose the route options on a terminal screen, then run, print or save them");
+  std::string t_board, t_out, t_config, t_keys;
+  tui->add_option("board", t_board, "Board file to route");
+  tui->add_option("-o,--output", t_out, "Output .kicad_pcb");
+  tui->add_option("--config", t_config, "Options file to start from (if it exists) and to save to");
+  auto* t_keys_opt = tui->add_option("--keys", t_keys, "Test: take these keys instead of opening the terminal, then print the command")->group("");
+
   CLI11_PARSE(app, argc, argv);
+  if (*tui) {
+    // The screen ends in a `route` run, a printed command or nothing. A run goes through the parser again, exactly
+    // as if the user had typed the command.
+    std::vector<std::string> next;
+    try {
+      const int rc = cmd_tui(app, *route, t_board, t_out, t_config, t_keys, t_keys_opt->count() > 0, next);
+      if (next.empty()) return rc;
+      std::reverse(next.begin(), next.end());
+      app.clear();
+      app.parse(next);
+    } catch (const CLI::ParseError& e) {
+      return app.exit(e);
+    } catch (const std::exception& e) {
+      std::fprintf(stderr, "error: %s\n", e.what());
+      return 1;
+    }
+  }
+  if (*route && !r_config.empty()) {
+    // The file's options join the command line and the whole goes through the parser again, so a value from the
+    // file is checked and converted exactly like a typed one.
+    try {
+      std::vector<std::string> all = config_args(*route, r_config);
+      for (int i = argc - 1; i >= 1; --i) all.insert(all.begin(), argv[i]);
+      std::reverse(all.begin(), all.end());
+      app.clear();
+      app.parse(all);
+    } catch (const CLI::ParseError& e) {
+      return app.exit(e);
+    } catch (const std::exception& e) {
+      std::fprintf(stderr, "error: %s\n", e.what());
+      return 1;
+    }
+  }
   try {
     if (*version) {
       std::printf("tracemaker %s\n", std::string(tmk::version()).c_str());
@@ -601,11 +1232,26 @@ int main(int argc, char** argv) {
     }
     if (*crules_cmd) return cmd_rules(cr_path, cr_mode, cr_json, cr_dru, cr_roles_from, cr_cat, cr_override);
     if (*selftest) return cmd_selftest_edit(st_in, st_out);
+    if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json, si_margin, si_unpointed);
+    if (*srj_out) return cmd_srj_export(so_board, so_problem, so_out, so_json);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
+    if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
+    if (*advice_cmd) return cmd_advice_check(ac_board, ac_advice, ac_json);
+    if (*rp_cmd) {
+      for (const auto& r : rp_refs) {
+        const auto eq = r.rfind('=');
+        if (eq == std::string::npos || eq == 0 || eq + 1 == r.size()) throw std::invalid_argument("--reference-layer: expected PATTERN=LAYER, got '" + r + "'");
+        rp_opt.reference_layers.emplace_back(r.substr(0, eq), r.substr(eq + 1));
+      }
+      rp_opt.refill = !rp_norefill;
+      return cmd_return_paths(rp_board, rp_opt, rp_refill, rp_strict, rp_json, rp_view, rp_port, rp_host, rp_token, rp_insecure);
+    }
+    if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host, fc_token, fc_insecure);
+    if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
-    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones);
+    if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
     if (*brk) {
       const int n = tmk::app::inject_defects(bk_in, bk_out, bk_manifest, bk_kind, bk_seed, bk_count);
@@ -614,11 +1260,33 @@ int main(int argc, char** argv) {
     }
     if (*route) {
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
+      if (!r_guide.empty()) {
+        // [{"a":[x,y],"b":[x,y],"segs":[[x1,y1,x2,y2,layer],...],"vias":[[x,y],...]}]: Simple Route JSON millimetres, y up.
+        const auto gj = nlohmann::json::parse(std::ifstream(r_guide));
+        auto pt = [](double x, double y) { return tmk::geom::Point{tmk::mm_to_nm(x), -tmk::mm_to_nm(y)}; };
+        for (const auto& g : gj) {
+          tmk::route::RouterOptions::GuidePath gp;
+          gp.a = pt(g["a"][0].get<double>(), g["a"][1].get<double>());
+          gp.b = pt(g["b"][0].get<double>(), g["b"][1].get<double>());
+          for (const auto& sg : g["segs"]) {
+            gp.segs.push_back({pt(sg[0].get<double>(), sg[1].get<double>()), pt(sg[2].get<double>(), sg[3].get<double>())});
+            gp.seg_layer.push_back(sg[4].get<int>());
+          }
+          for (const auto& v : g["vias"]) gp.vias.push_back(pt(v[0].get<double>(), v[1].get<double>()));
+          ropt.guides.push_back(std::move(gp));
+        }
+      }
       ropt.pair_skew = static_cast<tmk::Coord>(r_pair_skew_mm * 1e6);
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
       auto job = std::move(r_job);
       job.in = r_in;
       job.reroute = r_reroute;
+      job.warm_pcb = r_warm_pcb;
+      job.refill_repair = !r_no_repair;
+      job.view_freeze = !r_nofreeze;
+      job.critical_via_given = r_crit_via->count() > 0;
+      job.split_cost_given = r_split->count() > 0;
+      if (r_fp_tol >= 0) job.footprint_opt.position_tol_mm = job.footprint_opt.size_tol_mm = job.footprint_opt.drill_tol_mm = r_fp_tol;
       job.out = r_out;
       job.opt = ropt;
       job.threads = r_threads;

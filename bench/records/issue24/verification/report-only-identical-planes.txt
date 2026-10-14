@@ -1,0 +1,3 @@
+
+8 boards; routed boards byte-identical: 8/8.
+Clean pass 0 → 0; mean completion 56.5% → 56.5%; router seconds 309.5 → 315.8.

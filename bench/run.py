@@ -9,6 +9,7 @@ repository, judged by KiCad DRC on Freerouting's side).
   bench/run.py --tier A --limit 60 --time 60 --jobs 12 [--name run-id]
   bench/run.py --set quick --work 1000000 --name run-id          # deterministic regression tier (doc 10 §4)
   bench/run.py --fixtures build/demos --set planes --work 3000000 --refill --route-args=--soft-zones
+  bench/run.py --set srj19 --work 1000000 --route-args "--variants 1 --no-gpu"   # tscircuit BGA breakouts (doc 10 §7)
 
 --work routes with a deterministic work budget and no knowledge base, so the same binary gives the same boards;
 bench/compare_runs.py compares two runs. --refill makes KiCad refill zones before judging both input and output
@@ -26,12 +27,14 @@ import json
 import os
 import pathlib
 import random
-import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import threading
 import time
 from collections import Counter
+import drc_judge
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
@@ -40,16 +43,11 @@ FR_RESULTS = ROOT / "bench/data/freerouting/scripts/benchmark/results/benchmarks
 TM = pathlib.Path(os.environ.get("TM_BINARY", ROOT / "build/release/src/app/tracemaker"))
 EXTRA = os.environ.get("TM_ROUTE_ARGS", "").split()  # extra route options for experiments, e.g. "--via-cost-mm 3"
 THREADS = 1
+PLACE_THREADS = 1
 WORK = 0         # --work N: deterministic work budget per board (0: wall-clock --time only)
 REFILL = False   # --refill: KiCad refills zones before judging
 DRC_CACHE = ROOT / "build/drc/kicad"
-# Violation types that routing cannot cause; ignored when counting added errors.
-NOT_ROUTING = {"lib_footprint_issues", "lib_footprint_mismatch", "silk_overlap", "silk_over_copper", "silk_edge_clearance",
-               "text_height", "text_thickness", "courtyards_overlap", "missing_courtyard", "malformed_courtyard",
-               "footprint_type_mismatch", "footprint_filters_mismatch", "nonmirrored_text_on_back_layer",
-               "npth_inside_courtyard", "pth_inside_courtyard", "duplicate_footprints", "extra_footprint",
-               "missing_footprint", "footprint_symbol_mismatch", "unconnected_items", "track_dangling", "via_dangling",
-               "isolated_copper", "starved_thermal", "lib_footprint_mismatch", "holes_co_located"}
+# The judge's identity/cap contract is part of cached-report provenance.
 
 
 def fr_baseline() -> dict[str, dict]:
@@ -75,33 +73,21 @@ def fr_baseline() -> dict[str, dict]:
 def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
     DRC_CACHE.mkdir(parents=True, exist_ok=True)
     st = path.stat()
-    key = hashlib.sha1(f"{path.resolve()}:{st.st_mtime_ns}:{st.st_size}:{REFILL}".encode()).hexdigest()[:16]
+    key = hashlib.sha1(f"{path.resolve()}:{st.st_mtime_ns}:{st.st_size}:{REFILL}:{drc_judge.JUDGE_CODE_VERSION}".encode()).hexdigest()[:16]
     out = DRC_CACHE / f"{key}.json"
     if not out.exists():
         try:
-            subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "--all-track-errors"] +
+            subprocess.run(["kicad-cli", "pcb", "drc", *drc_judge.JUDGE_FLAGS] +
                            (["--refill-zones"] if REFILL else []) + ["-o", str(out), str(path)],
                            capture_output=True, timeout=timeout)
         except subprocess.TimeoutExpired:
             return None
     if not out.exists():
         return None
-    d = json.loads(out.read_text())
-    c = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error")
-    # Router-introduced = violations involving a track, arc or via (PCBench inputs have none). Pad-versus-footprint
-    # graphic violations can appear or disappear in KiCad's report once nets are connected; they are not caused by
-    # the router and are not counted (Freerouting's harness counts router-introduced violations the same way).
-    def routed_copper(v):
-        return any(i.get("description", "").startswith(("Track", "Via", "Arc")) for i in v.get("items", []))
-    r = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and routed_copper(v))
-    # Violations between items of one footprint (pads, its copper graphics) cannot be caused by moving it: the
-    # footprint is rigid. KiCad still re-classifies some of them (short <-> clearance) after a rotation, so
-    # placement-added errors count only violations that involve two footprints or board items.
-    def own_footprint(v):
-        refs = [re.search(r" of ([^ ]+)(?: on [^ ]+)?$", i.get("description", "")) for i in v.get("items", [])]
-        return bool(refs) and all(refs) and len({m.group(1) for m in refs}) == 1
-    x = Counter(v["type"] for v in d.get("violations", []) if v.get("severity") == "error" and not own_footprint(v))
-    return {"errors": dict(c), "routed_errors": dict(r), "cross_errors": dict(x), "unconnected": len(d.get("unconnected_items", []))}
+    try:
+        return drc_judge.summarize(json.loads(out.read_text()))
+    except (ValueError, KeyError, TypeError):
+        return None
 
 
 PLACE = ROOT / "build/release/src/place/tracemaker-place"
@@ -110,9 +96,6 @@ PLACE_TIMEOUT = 900      # seconds; on timeout the human placement is routed (re
 PLACE_WORK = 3_000_000   # router budget per placement evaluation (deterministic)
 PLACE_ARGS: list[str] = []  # --place-args: extra tracemaker-place options (e.g. --scratch for set S)
 PLACE_CRULES = None      # --place-crules MODE: tracemaker-place --component-rules (doc 15); None = its default
-# Errors placement can introduce (counted against the human board when parts move).
-PLACEMENT_ERRORS = {"courtyards_overlap", "pth_inside_courtyard", "npth_inside_courtyard", "copper_edge_clearance", "clearance",
-                    "shorting_items", "solder_mask_bridge", "hole_clearance", "hole_to_hole", "malformed_courtyard"}
 
 
 def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -> pathlib.Path:
@@ -122,7 +105,7 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     t0 = time.time()
     try:
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
-                            "--threads", str(THREADS), "--json", str(js)]
+                            "--threads", str(PLACE_THREADS), "--json", str(js)]
                            + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else []) + PLACE_ARGS
                            + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT)
         res["place_exit"] = p.returncode
@@ -144,13 +127,17 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     ref = FIX / name / "unrouted.kicad_pcb"
     human, moved = drc(ref if ref.exists() else src), drc(placed)
     if human and moved:
-        res["place_added"] = place_added(human, moved)
+        result = drc_judge.added_errors(human, moved, placement=True)
+        res["place_added"] = result["added_errors"]
+        res["place_error_gate"] = result["error_gate"]
+        res["place_capped_evaluated_types"] = result["capped_evaluated_types"]
+    else:
+        res["place_error_gate"] = "unknown"
     return placed
 
 
 def place_added(human: dict, moved: dict) -> dict:
-    hc, mc = human.get("cross_errors", human["errors"]), moved.get("cross_errors", moved["errors"])
-    return {t: n - hc.get(t, 0) for t, n in mc.items() if t in PLACEMENT_ERRORS and n - hc.get(t, 0) > 0}
+    return drc_judge.added_errors(human, moved, placement=True)["added_errors"]
 
 
 def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
@@ -161,6 +148,67 @@ def dead_pins(board: pathlib.Path, out_json: pathlib.Path) -> int | None:
         return int(json.loads(out_json.read_text())["dead"])
     except (subprocess.TimeoutExpired, OSError, ValueError, KeyError):
         return None
+
+
+STYLE_COUNTS = ("connections", "segments", "vias", "bends", "acute_angles", "stair_steps", "short_segments", "off_angle_segments",
+                "long_detours", "length_mm", "detour_length_mm", "detour_octile_mm")
+
+
+def style_of(board: pathlib.Path, out_json: pathlib.Path) -> dict | None:
+    """Style metric of every track of a board (`tracemaker style`, doc 05 §39), e.g. a fixture's reference routing."""
+    try:
+        subprocess.run([str(TM), "style", str(board), "--json", str(out_json)], capture_output=True, timeout=300)
+        return json.loads(out_json.read_text())
+    except (subprocess.TimeoutExpired, OSError, ValueError):
+        return None
+
+
+def style_total(styles: list[dict]) -> dict | None:
+    """Sums the per-board style metrics; the two ratios are recomputed from the sums."""
+    if not styles:
+        return None
+    t = {k: round(sum(s.get(k, 0) for s in styles), 6) for k in STYLE_COUNTS}
+    t["boards"] = len(styles)
+    t["bends_per_connection"] = round(t["bends"] / t["connections"], 4) if t["connections"] else 0.0
+    t["detour_ratio"] = round(t["detour_length_mm"] / t["detour_octile_mm"], 4) if t["detour_octile_mm"] else 1.0
+    return t
+
+
+def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
+    """Runs cmd and returns (exit code, stdout, stderr, CPU seconds). CPU time is the child's own user + system time
+    from os.wait4, so other boards routing at the same time do not count. Raises subprocess.TimeoutExpired."""
+    with tempfile.TemporaryFile("w+") as fo, tempfile.TemporaryFile("w+") as fe:
+        p = subprocess.Popen(cmd, stdout=fo, stderr=fe, text=True)
+        killed = threading.Event()
+
+        def kill() -> None:
+            killed.set()
+            p.kill()
+
+        timer = threading.Timer(timeout, kill)
+        timer.start()
+        try:
+            _, status, usage = os.wait4(p.pid, 0)
+        finally:
+            timer.cancel()
+        p.returncode = os.waitstatus_to_exitcode(status)  # reaped here: Popen must not wait again
+        if killed.is_set():
+            raise subprocess.TimeoutExpired(cmd, timeout)
+        fo.seek(0)
+        fe.seek(0)
+        return p.returncode, fo.read(), fe.read(), usage.ru_utime + usage.ru_stime
+
+
+RESUME_RUN = ""  # --resume-run: earlier run whose saved search state (<board>.kicad_pcb.state) each board starts from
+
+
+def state_args(name: str, out: pathlib.Path) -> list[str]:
+    """The portfolio saves its best routes after every round (so a run that ran out of time can be resumed)."""
+    a = ["--state-out", str(out) + ".state"]
+    prev = ROOT / "bench/results" / RESUME_RUN / "boards" / f"{name}.kicad_pcb.state" if RESUME_RUN else None
+    if prev and prev.exists():
+        a += ["--state-in", str(prev)]
+    return a
 
 
 def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
@@ -179,11 +227,13 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     try:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
-        p = subprocess.run([str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + EXTRA,
-                           capture_output=True, text=True, timeout=time_limit * 3 + 60)
-        res["exit"] = p.returncode
-        if p.returncode not in (0, 3):
-            res["error"] = (p.stderr or p.stdout)[-500:]
+        code, stdout, stderr, cpu = run_measured(
+            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + EXTRA,
+            time_limit * 3 + 60)
+        res["exit"] = code
+        res["cpu_s"] = round(cpu, 2)
+        if code not in (0, 3):
+            res["error"] = (stderr or stdout)[-500:]
     except subprocess.TimeoutExpired:
         res["exit"] = -1
         res["error"] = "timeout"
@@ -192,19 +242,24 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     if rj.exists():
         r = json.loads(rj.read_text())
         res.update({k: r[k] for k in ("routed", "connections", "tracks", "vias", "seconds")})
+        # Style metric of the new copper (doc 05 §39; informational) and what the after-route passes did.
+        res.update({k: r[k] for k in ("style", "widen", "stitch") if k in r})
+    # The fixture's own routing, where it has one (PCBench: processed.kicad_pcb), measured the same way.
+    ref = SRC_FIX / name / "processed.kicad_pcb"
+    if ref.exists() and "style" in res:
+        res["style_ref"] = style_of(ref, outdir / "boards" / f"{name}.style_ref.json")
     before = drc(src)
     after = drc(out) if out.exists() else None
     if before is None or after is None:
         res["judge"] = "failed"
         return res
-    added = {t: n - before["routed_errors"].get(t, 0) for t, n in after["routed_errors"].items()
-             if t not in NOT_ROUTING and n - before["routed_errors"].get(t, 0) > 0}
-    # All added error types too (diagnostics only).
-    res["added_any"] = {t: n - before["errors"].get(t, 0) for t, n in after["errors"].items()
-                        if t not in NOT_ROUTING and n - before["errors"].get(t, 0) > 0}
-    res.update({"unconnected_before": before["unconnected"], "unconnected_after": after["unconnected"], "added_errors": added})
+    result = drc_judge.added_errors(before, after)
+    res.update(result)
+    res.update({"unconnected_before": before["unconnected"], "unconnected_after": after["unconnected"]})
+    # Preserve the public completion metric: KiCad's list may be capped at 499.
+    res["connectivity_capped"] = before["unconnected"] >= drc_judge.CAPS["unconnected_items"] or after["unconnected"] >= drc_judge.CAPS["unconnected_items"]
     res["completion"] = 1.0 if before["unconnected"] == 0 else round(1 - after["unconnected"] / before["unconnected"], 4)
-    res["clean"] = after["unconnected"] == 0 and not added and not res.get("place_added")
+    res["clean"] = drc_judge.clean(result, after["unconnected"]) and not res.get("place_added") and res.get("place_error_gate", "pass") == "pass"
     return res
 
 
@@ -215,13 +270,16 @@ def main() -> int:
     ap.add_argument("--time", type=float, help="wall-clock limit per board (default 60 s; 3600 s as a safety stop with --work)")
     ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
     ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
+    ap.add_argument("--resume-run", help="earlier run name: boards start from the state it saved (portfolio runs only)")
     ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
-    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes); also names the set in the summary")
+    ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes, srj19, srj20); also names the set in the summary")
     ap.add_argument("--jobs", type=int, default=12)
     ap.add_argument("--seed", type=int, default=1, help="board sampling seed")
     ap.add_argument("--name")
     ap.add_argument("--boards", nargs="*", help="explicit board folder names")
-    ap.add_argument("--threads", type=int, default=1, help="router portfolio size per board")
+    ap.add_argument("--threads", type=int, help="router threads per board (default with --work: the cores per job, at most 8, "
+                    "since the output does not depend on it, but 1 with --halving in the route options, where it does; "
+                    "without --work it is also the portfolio size, default 1)")
     ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full"], help="let TraceMaker move components first")
     ap.add_argument("--place-timeout", type=int, default=900)
     ap.add_argument("--place-work", type=int, default=3_000_000)
@@ -231,18 +289,29 @@ def main() -> int:
     ap.add_argument("--board-list", help="file with one board name per line (# comments)")
     ap.add_argument("--set-name", help="name of the board set for the summary (default: the tier)")
     a = ap.parse_args()
-    global THREADS, SRC_FIX, PLACE_ARGS, WORK, REFILL, EXTRA
+    global THREADS, PLACE_THREADS, SRC_FIX, PLACE_ARGS, WORK, REFILL, EXTRA
     PLACE_ARGS = (a.place_args or "").split()
-    THREADS = a.threads
-    WORK, REFILL = a.work, a.refill
+    # With --work every board runs the whole portfolio whatever the thread count (D47); one thread runs its eight
+    # variants one after another. Placement keeps one thread unless asked: its annealing runs follow --threads.
+    # Successive halving splits the budget by the thread count, so there the default must not follow the machine.
+    global RESUME_RUN
+    RESUME_RUN = a.resume_run or ""
     EXTRA = EXTRA + (a.route_args or "").split()
+    THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work and "--halving" not in EXTRA else 1)
+    PLACE_THREADS = a.threads or 1
+    a.threads = THREADS
+    WORK, REFILL = a.work, a.refill
     if a.time is None:
         a.time = 3600.0 if a.work else 60.0
-    if a.fixtures:
-        SRC_FIX = pathlib.Path(a.fixtures).resolve()
     if a.set:
         a.board_list = a.board_list or str(ROOT / "bench/sets" / f"{a.set}.txt")
         a.set_name = a.set_name or a.set
+        # A set of boards that are not PCBench fixtures names its own directory: "#fixtures: <path from the repository root>".
+        for line in pathlib.Path(a.board_list).read_text().splitlines():
+            if line.startswith("#fixtures:") and not a.fixtures:
+                a.fixtures = str(ROOT / line.split(":", 1)[1].strip())
+    if a.fixtures:
+        SRC_FIX = pathlib.Path(a.fixtures).resolve()
     if a.board_list:
         a.boards = [x.strip() for x in pathlib.Path(a.board_list).read_text().splitlines() if x.strip() and not x.startswith("#")]
     base = fr_baseline()
@@ -302,6 +371,7 @@ def main() -> int:
         "clean_pass": round(clean / n, 4) if n else None,
         "completion": round(sum(r["completion"] for r in judged) / n, 4) if n else None,
         "seconds": round(sum(r.get("seconds", 0) for r in judged), 1),
+        "cpu_seconds": round(sum(r.get("cpu_s", 0) for r in judged), 1),
         "time_limit_s": a.time, "threads": a.threads, "work": a.work, "refill": a.refill, "route_args": " ".join(EXTRA),
         "fr_rc12_clean_pass": round(fr_clean / len(fr_rows), 4) if fr_rows else None,
         "fr_241_clean_pass": round(sum(r["fr_241"]["clean"] for r in fr241) / len(fr241), 4) if fr241 else None,
@@ -313,14 +383,33 @@ def main() -> int:
     feasible = [r for r in judged if r.get("dead_pins") == 0]
     summary["feasible_boards"] = len(feasible)
     summary["clean_pass_feasible"] = round(sum(r["clean"] for r in feasible) / len(feasible), 4) if feasible else None
+    # Style metric (informational, never a gate): totals over the boards that have it, and over the reference
+    # routings of the same boards.
+    with_style = [r for r in rows if r.get("style")]
+    with_ref = [r for r in with_style if r.get("style_ref")]
+    summary["style"] = style_total([r["style"] for r in with_style])
+    summary["style_ref"] = style_total([r["style_ref"] for r in with_ref])
+    summary["style_same_boards"] = style_total([r["style"] for r in with_ref])  # TraceMaker on the boards that have a reference
     (outdir / "summary.json").write_text(json.dumps(summary, indent=1))
     notes = [f"{budget} per board"] + (["zones refilled before judging"] if a.refill else []) + ([f"route options `{' '.join(EXTRA)}`"] if EXTRA else [])
     lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
              "| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |", "|---|--:|--:|--:|",
              f"| Clean pass (KiCad DRC) | {summary['clean_pass']:.1%} | {summary['fr_rc12_clean_pass'] or 0:.1%} | {summary['fr_241_clean_pass'] or 0:.1%} |",
-             f"| Mean completion | {summary['completion']:.1%} | | |", "",
+             f"| Mean completion | {summary['completion']:.1%} | | |",
+             f"| Route CPU time, all boards | {summary['cpu_seconds']:,.0f} s | | |", "",
              f"Both clean: {both}; only TraceMaker: {only_tm}; only Freerouting: {only_fr}.",
              f"Boards with added DRC errors: {summary['boards_with_added_errors']} ({dict(added_types)})."]
+    if summary["style"]:
+        def style_row(label: str, t: dict | None) -> str:
+            if not t:
+                return f"| {label} | – | | | | | | | |"
+            return (f"| {label} | {t['boards']} | {t['bends_per_connection']:.2f} | {t['acute_angles']} | {t['stair_steps']} | {t['short_segments']} | "
+                    f"{t['off_angle_segments']} | {t['detour_ratio']:.3f} | {t['long_detours']} |")
+        lines += ["", "Style of the routed copper (doc 05 §39, informational):", "",
+                  "| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |",
+                  "|---|--:|--:|--:|--:|--:|--:|--:|--:|", style_row("TraceMaker", summary["style"])]
+        if summary["style_ref"]:
+            lines += [style_row("TraceMaker, boards with a reference", summary["style_same_boards"]), style_row("Reference routing", summary["style_ref"])]
     (outdir / "report.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
     return 0

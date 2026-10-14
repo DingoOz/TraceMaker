@@ -36,7 +36,11 @@ struct Connectivity {
 // `overlap_links`: tracks, arcs, vias and board graphics of one net are also joined where their copper merely
 // overlaps (KiCad 10 links connectivity items by shape collision, so a track crossing another of its net joins
 // it). The DRC uses it; the router keeps end-point anchors (more conservative: it may route a redundant link).
-Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, index::UniformGrid& grid, bool overlap_links = false);
+// `fills` (optional): edge buckets of the zone fills, so an item is tested against the fill edges near it only;
+// the result is the same as without (the linear test is the reference path, tests/test_refill.cpp).
+struct ZoneFills;
+Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, index::UniformGrid& grid, bool overlap_links = false,
+                                  const ZoneFills* fills = nullptr);
 
 // KiCad 10's item graph (pcbnew/connectivity, CN_VISITOR): items of any nets are linked when their copper touches
 // on a common layer, except two items that cannot change net (pads, zone fills, free vias) on different nets.

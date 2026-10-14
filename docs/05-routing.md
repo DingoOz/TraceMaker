@@ -161,6 +161,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 | Clean-up (section 8): via-saving re-routes, region rip-up around vias, path smoothing | Done | `optimize_vias`, `lns_vias`, `smooth_paths` |
 | Escape planning (section 3), version 1 (M9, 2026-10-04) | Partly done: escape corridors (opt-in), feasibility analysis, via neck-down, dead pins. Version 2 (2026-10-05): min-cost-flow channel and layer assignment for deep arrays, opt-in (`--escape-flow`), measured below version 1. Not built: NC fallback, escape templates. See §12, §14 | `route/escape.{hpp,cpp}`, `router.cpp` |
 | Differential pairs (version 2, M12): coupled pair search with coupled vias, breakout/fan-in legs, re-coupling after rip-up, enclosed-pin check; length tuning (custom `length` rules) and skew tuning (custom `skew` rules, `--pair-skew-mm`) | Done, opt-in (`--diff-pairs`, D50). Not built: pair twists, pairs ending on routed copper, pair-aware global routing. See §15 | `route/router.cpp` (`route_pair`, `tune_skew`), `route/diff_pair.{hpp,cpp}` |
+| Buses (2026-10-11): groups by `--bus NAME=PATTERN` or detection (`--buses`), lanes routed one after the other along the neighbour on the same layers, nets outside do not rip them, skew matching by meanders from a custom `skew` rule or `--bus-skew-mm`; `tracemaker buses` measures | Done, opt-in (D91). See §38 | `route/bus.cpp`, `order_buses`, `route_bus_lane`, `tune_bus_skew` |
 
 ## 12. Escape planning, version 1 (M9, 2026-10-04)
 
@@ -715,7 +716,8 @@ see the pull request that brought this section (numbers measured on the merged t
 **Not built.** The options are in no portfolio variant and are not chosen automatically (a board with inner planes and
 only SMD pads could switch `--soft-zones` and `--keep-vias-off-pads` on by itself; the component-rule catalogue could
 feed crystal nets to `--first-nets`). The output keeps the old, now stale fills: refill before judging. Connectivity
-still trusts the stale fills (a fill that a refill would split is one target). `--first-nets` takes net names only,
+still trusts the stale fills during routing (a fill that a refill would split is one target); since §36 the route
+job refills in memory afterwards and routes what the refill left unconnected. `--first-nets` takes net names only,
 and the protected nets may rip each other. A second connection at a pad that already has a via in it must use the
 pad's own layer.
 
@@ -1236,3 +1238,807 @@ rules". The router reports the same pin boxed in.
   `--no-tracks-on` limits and the router's off-lattice escape rungs are not modelled.
 - Satisfied means the net is complete. A pin whose cluster still has to reach another cluster is searched from
   its pad, through its own net's copper.
+
+## 36. Zone refill in the engine (2026-10-09, D85)
+
+**Before.** With `--soft-zones` the router cuts through fills and trusts the stale polygons for connectivity (§26).
+KiCad refills before judging, and the refill undoes connections the router counted; the router neither saw nor
+repaired that. Measured on the `planes` set at 3 M work units with `--soft-zones` (KiCad 10.0.3, unconnected items):
+
+| Board | Router gap | KiCad, stale fills | `tracemaker drc`, stale | KiCad `--refill-zones` | `tracemaker drc`, KiCad's fills |
+|---|--:|--:|--:|--:|--:|
+| RoyalBlue54L-Feather | 52 | 52 | 52 | 63 | 63 |
+| StickHub | 2 | 1 | 1 | 15 | 15 |
+| complex_hierarchy | 1 | 1 | 1 | 17 | 17 |
+| interf_u | 23 | 23 | 23 | 33 | 33 |
+| multichannel_mixer | 0 | 0 | 0 | 4 | 4 |
+| pic_programmer | 4 | 4 | 4 | 7 | 7 |
+| plane_smd | 1 | 1 | 1 | 1 | 1 |
+| sonde xilinx | 0 | 0 | 0 | 2 | 2 |
+
+The engine's connectivity already agreed with KiCad's on all 16 boards (also routed with fills fixed); only the
+fill polygons were missing. The last column uses KiCad's `ZONE_FILLER` fills with teardrop zones removed, which is
+what `kicad-cli --refill-zones` does first: `ZONE_FILLER_TOOL::FillAllZones` calls
+`TEARDROP_MANAGER::UpdateTeardrops` with a forced full update, so a teardrop whose track was deleted disappears (a
+rebuilt teardrop joins a pad to a track that already touches it). What the refill broke: the GND pour split into
+islands by new tracks (StickHub), through-hole pads cut off from their plane (interf_u, pic_programmer, sonde
+xilinx), and tracks ending in a deleted teardrop (complex_hierarchy, RoyalBlue; also with fills fixed: 0 → 18).
+
+**What was built**
+
+| Part | What |
+|---|---|
+| `geom/clip` | Polygon union, difference, intersection, even-odd union, offsets and point tests over Clipper2 (int64, deterministic for a given input order); `fracture` joins holes to the outline by zero-width bridges, as KiCad writes `filled_polygon` |
+| `drc::refill_zones` | Follows `ZONE_FILLER::fillCopperZone` per copper zone and layer, layers in parallel and zones by priority: outline within the board outline (not clipped when the outline does not close at 10 µm, as KiCad); thermal gaps around same-net pads with a thermal connection (pad, then footprint, then zone setting; `thru_hole_only` thermal for plated holes only; coincident pads once); every other-net pad, track, via, hole, copper graphic, board edge, pour keep-out and higher-priority zone of another net knocked out at the `RuleEngine` clearance + 0.5 µm; four spokes per thermal pad kept when their end lands in the fill after the minimum-width test or in another pad's spoke; minimum-width pruning (deflate and re-inflate by `min_thickness/2 − 1 µm`, blobs dropped); same-net higher-priority zones' areas removed; islands whose cluster holds no pad removed by `island_removal_mode`, unless every island of the zone is one. Teardrop zones lose their fill; a hatched zone is not redrawn: its stored fill is kept where the solid fill for the current copper still is (warning), so copper a refill knocks out carries no connection |
+| Reader | Zone `connect_pads` mode, `min_thickness`, `thermal_gap`, `thermal_bridge_width`, `island_removal_mode`, `island_area_min`, hatch mode and uuid; pad and footprint `zone_connect`, pad thermal gap, width and angle. Copper layers with free names (`Gnd.Cu`, `Vcc.Cu` in KiCad 5 boards) get their canonical name from the ordinal; before, they were not copper at all |
+| `tracemaker drc --refill-zones` | Judges the refilled board, like kicad-cli's flag; the fills are not written |
+| Route with `--soft-zones` | Refills in memory after routing, reports `unconnected_after_refill` and a `refill` object in the summary, then routes what is unconnected once more with the refilled fills as fixed copper (pass 2, the same work budget as the first pass, within what is left of `--time`); the repair's copper is kept only if the count after refilling again is lower (rule 4). `refill.warnings` lists what the refill could not model. `--no-refill-repair` only counts. The exit code follows the count after the refill |
+| Connectivity | `compute_connectivity` can test items against fills through the fill edge index (`geom::PolygonIndex`); the DRC and the refill use it, `drc --linear-zones` keeps the linear reference (ctest `drc_zone_index`, now on refilled boards too). A refilled keyboard (mechkeys LFK78, 478 islands) went from 39 s to 1.7 s |
+| `bench/refill_parity.py` | Unconnected items per net, `tracemaker drc --refill-zones` against `kicad-cli pcb drc --refill-zones` |
+
+**Results**
+
+- **Parity.** The 16 routed `planes` boards above (soft and fixed fills): unconnected items equal KiCad's on all
+  16. PCBench, 200 of the original boards (`raw.kicad_pcb`) with zones, evenly spaced in name order: the same unconnected items per
+  net on 191. Eight of the nine others are KiCad 5 files whose zones share one id (`tstamp 0`): KiCad breaks
+  priority ties by that id, and its own fills of those boards empty or misattribute zones (on OpenMPPT four zones
+  fill alone but are empty together). The refill warns on such boards. The ninth has a `target` on Edge.Cuts,
+  which the reader does not read. Engine refill and judge take 0.02-2 s per board, `kicad-cli` 1.4-8.7 s.
+- **No DRC errors from the fills.** On the refilled `planes` boards `tracemaker drc` finds the same clearance and
+  edge errors as KiCad and none on new fills.
+- **Repair.** `planes`, 3 M work units, `--soft-zones`, KiCad after `--refill-zones`:
+
+| Board | Soft 3 M | Soft 6 M | Soft 3 M + repair 3 M |
+|---|--:|--:|--:|
+| complex_hierarchy | 3 | 3 | 0 |
+| RoyalBlue54L-Feather | 54 | 46 | 51 |
+| multichannel_mixer | 4 | 4 | 3 |
+| StickHub | 15 | 14 | 8 |
+| sonde xilinx | 2 | 2 | 0 |
+| pic_programmer | 7 | 7 | 4 |
+| interf_u | 33 | 26 | 28 |
+| plane_smd | 1 | 1 | 1 |
+| Total | 119 | 103 | 95 |
+
+  The engine's `unconnected_after_refill` equals KiCad's count on all eight. No board gained a DRC error
+  (StickHub's `solder_mask_bridge` count moves between runs: doc 10 §4, judge noise). On RoyalBlue and interf_u more
+  soft work beats the repair; the repair spends the same budget as the first pass whatever is left.
+- **Unchanged elsewhere.** `quick` (30 boards) and the `planes` set with `--no-refill-repair` are byte-identical
+  to `origin/main`. In `mid`, oskirby_logicbone changed: its six inner layers are named `Gnd1.Cu` … `Sig2.Cu`, so
+  the router saw a two-layer board before; it now routes on eight, 966 → 936 of 1188 at 20 M work units (KiCad:
+  completion 55.5 % → 49.5 %, no added errors). The other ten are byte-identical.
+
+**Limits**
+
+- Not modelled: KiCad's iterative refill (lower zones reclaim area from removed islands), corner smoothing,
+  hatched fills, copper text knock-outs, net ties, courtyard and physical clearance rules, custom
+  `zone_connection` / thermal rules (warned), Margin line widths, and the islands-outside-the-board test (fills
+  are clipped to the outline instead).
+- Fills are for judging only: the routed board still carries the stale fills (doc 08 asks for a refill before
+  judging).
+- The repair is one pass with the first pass's work budget and the rest of the time limit (none when the first
+  pass used it up); no portfolio variant is chosen by its count after the refill.
+
+## 38. Buses (2026-10-11, D91)
+
+**Before.** The router knew pairs (§15) and single nets with a length rule, but not a group of nets that belong
+together: a data or address bus, a parallel display interface. Its members were routed wherever the order put
+them, each by its own cheapest path, so one took a via its neighbour did not need, one went round the other side of
+a mounting hole, and their lengths differed by millimetres.
+
+**Status: experimental.** The generated bus boards meet their skew limits, but six real boards routed slightly
+fewer connections with the options on (957 → 952 at 100 M work, 886 → 853 at 20 M), and `--buses` groups some
+indexed nets that are not a bus. The options stay opt-in until real boards gain from them.
+
+**What was built** (off by default: without the options the output is byte-identical, `quick` 30/30).
+
+| Part | What |
+|---|---|
+| Groups from the command line (`route/bus.cpp`, `bus_from_option`) | `--bus NAME=PATTERN`, repeatable. The pattern matches whole net names as KiCad writes them (sheet path included: `/D0`, `/MEM/DQ3`). `[N-M]` or `[N..M]` is an index range and matches any decimal number in it (`/D[0-15]`, zero-padded indices too); `*` and `?` are KiCad's net-class wildcards; everything else in a pattern with a range is literal (`A[[0-15]]` for nets named `A[0]`). A pattern without a range goes to KiCad's net-class matcher unchanged (`model::pattern_match`: wildcards, or a full regular expression, `/SPI_(SCK|MOSI)`). Members are ordered by natural sort (`D2` before `D10`); only nets with pads count; fewer than two is an error. A net named by two groups is routed with the first (warning) |
+| Detection (`detect_buses`, `--buses`) | Nets whose names differ only in a trailing decimal index of at most four digits (`D0`, `A[3]`, `/MEM/DQ12`), four or more of them with pads on the same two components. One stem may give several groups (`DQ0-7` to one memory, `DQ8-15` to another: `STEM(REF-REF)`). KiCad's generated names (`Net-(…)`, `unconnected-…`) and names without a letter are never grouped. A detected group that shares a net with a `--bus` group is dropped. The groups are listed in the log before routing and in the summary |
+| Skew limit (`bus_rule_skew`, `app::resolve_buses`) | A custom `skew` rule of the board applies to a group when every member matches one (the smallest maximum; `RuleEngine::net_constraint`, the call the pair code uses), e.g. `(rule "bus" (constraint skew (max 0.8mm)) (condition "A.NetClass == 'BUS'"))`. Rules marked `(within_diff_pairs)` do not count (the project reader now keeps such bracketed flags in `Constraint::items`). Otherwise `--bus-skew-mm X` gives the `--bus` groups a limit. With neither there is no length matching, only grouping: a limit is never invented, and detected groups get one from rules only |
+| Bundles and lanes (`Router::Impl::order_buses`) | The connections of a group between the same two components form a bundle (the planner's spanning tree gives a fan-out or a fly-by chain one bundle per component pair). All of a bundle's connections are turned the same way round and ordered along the pad row at one end (the wider of its x and y extents), so neighbouring lanes are neighbouring pins and do not cross. A bundle is routed as one block, lane by lane from one side, at the place the router's order gave its first connection; with `--bus-first` before everything else (after `--first-nets`). Restarts keep the blocks together |
+| Following (`route_bus_lane`, `bus_note`) | The first lane routed leads: it is an ordinary search. Each later lane is first searched inside a guide around the nearest lane already routed as a lane: cells within reach of that lane's tracks on the same layer, and on every layer around its vias and around the new lane's own pads; everything else is blocked (`bus_mode` 2 in `cell_cost`). The reach is the distance between the two lanes' pads (at most 5 mm) plus two track pitches and a via. So the lane runs beside its neighbour and can change layer only where the neighbour did. The search is the router's A* with its exact commit; it is cut off at four expansions per lattice point of the guide (at least 50,000), and a rejected commit is retried twice. The result is kept only if it has the neighbour's layers in the same order and as many vias, and its detour (length beyond the octilinear distance of its pads) exceeds the neighbour's by no more than half the pad distances plus 0.5 mm plus 2 % of the neighbour's length; otherwise it is taken back |
+| Leaving the bus | A lane that cannot be routed that way is routed like any other connection (strict, escapes, neck-down, negotiation), with the guide as a preference only: a quarter pitch per step outside it. If it still has the neighbour's layers and vias it is a lane, and later lanes may follow it (this is how a bundle passes an obstacle on both sides); if not, it has left the bus: it stays routed and is reported, and no lane follows it. No connection stays unrouted for the sake of its group |
+| Ripping | Nets outside the groups never rip a group's copper (as with `--first-nets`; `commit`); members rip each other as usual. A lane ripped is no lane any more. The via clean-up (`optimize_vias`, `lns_vias`) leaves lanes alone, since removing one member's vias would break the equality; smoothing keeps vias and layers and runs on them |
+| Length matching (`tune_bus_skew`) | In the clean-up, per group with a limit: the members with every connection routed are measured as KiCad's `skew` check measures them (track length of the net plus the stackup height of each via between the layers it joins; `route/bus.hpp`, `via_heights`, `net_via_length`), and each one shorter than the longest by more than half the limit gets meanders up to between half the limit below the longest and the longest. It is the length-tuning code (`tune_net`, §15) with two additions for bus members, both off elsewhere: every track is tried, longest first (the lanes beside a member leave its longest track no room), and the last meander is cut to the length still missing (the fixed heights step by 0.5 mm, too coarse for a 0.5 mm limit). Each meander is checked exactly |
+| Portfolio | Between variants with equal completion the one with fewer connections off their lanes wins, then vias and length as before (0 on both sides without buses) |
+| Report | `--json`: a `buses` array, per group `name`, `source`, `members` (`net`, `routed`, `followed`, `length_mm`, `via_length_mm`, `vias`, `layers`; `length_mm` includes the vias), `routed`, `followed`, `left`, `reference_vias`, `reference_layers`, `vias_min`/`vias_max`, `length_min_mm`/`length_max_mm`, `skew_mm`, `skew_limit_mm`, `skew_source`, `within_skew`; and `bus_lanes` / `bus_left`, the router's own count of connections routed as lanes and off them. The array is measured on the board as written (`route::measure_bus`), not taken from the router's book-keeping |
+| Measurement (`tracemaker buses BOARD [--bus …] [--buses] [--bus-skew-mm X] [--json F]`) | The same numbers for any routed board. A member is routed when all its pads are joined (the router's connectivity). The reference is the via count and layer set most routed members share (the first member's among equals); `followed` members have exactly that, `left` are routed otherwise. Length is what KiCad's skew check sums: tracks and arcs, plus per via the stackup between the outermost layers on which a track of the net ends in the via (outer copper in full, inner copper by half, as `BOARD_STACKUP::GetLayerDistance`; KiCad's default stackup when the board has none; nothing when the project turns "use height for length calculations" off). Skew is the longest minus the shortest routed member. Exit 4 when a group with a limit is over it or not completely routed |
+| Events (doc 13) | `bus` (name, nets, per bundle), `bus_lane` (connection, net, `leader` / `followed` / `left`) and `bus_skew` (skew and limit after tuning) |
+
+Work is counted as for every search (expansions and flood cells of the guided and the ordinary attempts); building
+a guide and placing meanders are geometry and are not charged, like the pair legs' set-up and the existing tuning.
+Nothing is random and no hash container is iterated: the same job gives the same bytes at any thread count
+(`bus_route` test, 1, 2 and 4 threads).
+
+**Fixtures.** There is no public bus benchmark. `bench/make_bus_boards.py OUT` writes seven small KiCad 10 boards
+(s-expressions written directly, identifiers from a counter, so the bytes are the same everywhere) and a manifest
+with each board's bus options; `bench/bus_eval.py --fixtures OUT` routes each without and with them at the same
+budget, measures both written boards with `tracemaker buses` and judges both with KiCad.
+
+| Board | What it is |
+|---|---|
+| p2p8 | 8 bits between two facing ICs (mirror-image pin columns) on two layers; a mounting hole and two capacitors stand in the channel and the ICs are offset. `--bus 'DATA=/D[0-7]' --bus-skew-mm 0.5` |
+| p2p16 | 16 bits from an IC on the front to one on the back (footprint mirrored): every lane needs a via. Limit 1 mm |
+| lcd | 12 bits from a QFP to a through-hole header on four layers; a rule area across the board takes no tracks or vias on the front layer. `--bus 'LCD=/LCD_D*'`, limit 1 mm |
+| spi | SCK, MOSI, MISO from a controller to three devices in a column (four pads per net) on two layers. Limit 2 mm |
+| flyby | 8 address lines from a controller through three memories in a row, four layers. Limit 0.25 mm |
+| skewrule | p2p8 with a net class `BUS` and a `.kicad_dru` rule `skew (max 0.8mm)` on it; routed with `--buses` only |
+| twist | p2p8 with the pin order reversed at one end, so every lane must cross every other. Not in the gate |
+
+**Results** (one variant, `--work 20000000`, `--no-gpu`, KiCad 10.0.6 DRC; `bench/bus_eval.py`; "left" = routed
+members off the group's reference vias and layers; skew as `tracemaker buses` measures it on the written board, via
+height included).
+
+| Board | Routed off → on | Vias per member off → on | Left off → on | Skew mm off → on (limit) | KiCad added errors off → on |
+|---|---|---|---|---|---|
+| p2p8 | 16 → 16 / 16 | 2–2 → 2–2 | 0 → 0 | 0.820 → 0.217 (0.5) | 0 → 0 |
+| p2p16 | 24 → 24 / 24 | 1–1 → 1–1 | 0 → 0 | 2.665 → 0.289 (1) | 0 → 0 |
+| lcd | 16 → 16 / 16 | 1–1 → 1–1 | 1 → 0 | 4.033 → 0.268 (1) | 0 → 0 |
+| spi | 20 → 20 / 20 | 0–6 → 0–6 | 2 → 2 of 3 | 9.092 → 0.210 (2) | 0 → 0 |
+| flyby | 34 → 34 / 34 | 0–2 → 0–4 | 1 → 1 of 8 | 0.560 → 0.063 (0.25) | 0 → 0 |
+| skewrule | 16 → 16 / 16 | 0–2 → 2–2 | 2 → 0 | 3.946 → 0.214 (0.8, rule) | 6 → 0 |
+| twist (not gated) | 16 → 16 / 16 | 2–2 → 2–2 | 0 → 0 | 9.263 → 0.347 (1) | 0 → 0 |
+
+Every group is within its limit with the options and none without; completion is equal; where no member left, the
+via count per member is equal (p2p8, p2p16, lcd, skewrule, twist). The six errors on skewrule without the options
+are KiCad's own `skew_out_of_range` for the board's rule, so KiCad's judgement of the rule agrees with the
+measurement on both rows. On spi and flyby members leave. On spi the lanes between two devices with the same pin
+order must cross (SCK has to pass the MOSI and MISO pads of one device, MISO the SCK and MOSI pads of the next),
+so they cannot all have the same vias unless every one hops. On flyby one member takes four vias in the router's
+order and none with `--bus-first`; why was not examined. The members are matched in length all the same, vias
+counted: on spi the member without vias gets 9 mm of meanders against the one with six. With a 2 mm `skew` rule
+beside the routed spi board and a 0.25 mm one beside flyby, KiCad's DRC reports no `skew_out_of_range`; measured on
+track length alone (as this was first built) the same check reported 2 and 7.
+
+With `--bus-first` (same boards and budget): p2p8 0–0 vias per member (6 vias on the board instead of 20), skew
+0.061; skewrule 0–0, 0.054; flyby 0–0, nobody left, 0.050; p2p16 and lcd unchanged; spi 0–6 with two left, 0.237;
+twist 0–2 with two left, 0.300. All gated groups within their limits, no added errors. Routed first, a bus gets the
+straight way across the channel; in the router's order the two power connections between the capacitors, which
+cross the channel, are there before it, and all eight lanes hop over them with the same two vias each (as they do
+without the options).
+
+**Real boards** (information, not a gate; PCBench, `--buses`, one variant, no skew limit: none of these boards has
+a skew rule). Six boards with memory buses, at 20 M and at 100 M work:
+
+| Board | Groups (nets) | Routed off → on, 20 M | Routed off → on, 100 M | Bus nets routed / on the reference / left, 100 M off → on | Vias on bus nets, 100 M off → on |
+|---|---|---|---|---|---|
+| lattice-ice40-hx8kevb-sdram | 6 (38) | 92 → 81 / 115 | 115 → 110 | 38 / 25 / 13 → 37 / 26 / 11 | 39 → 39 |
+| srambo_1 | 4 (34) | 114 → 114 / 132 | 122 → 127 | 26 / 20 / 6 → 34 / 20 / 14 | 37 → 49 |
+| NRC2016_z80 | 4 (32) | 276 → 269 / 290 | 289 → 290 | 31 / 10 / 21 → 32 / 16 / 16 | 50 → 67 |
+| NRC2016_banked_ram | 2 (23) | 120 → 121 / 148 | 133 → 129 | 14 / 5 / 9 → 14 / 6 / 8 | 36 → 20 |
+| FlashProgrammer | 3 (20) | 141 → 139 / 141 | 141 → 141 | 20 / 15 / 5 → 20 / 16 / 4 | 10 → 5 |
+| ice40_stm32_fsmc_test_pcb | 4 (35) | 143 → 129 / 183 | 157 → 155 | 21 / 14 / 7 → 21 / 15 / 6 | 30 → 22 |
+| Total | 23 (182) | 886 → 853 / 1009 | 957 → 952 | 150 / 89 / 61 → 158 / 99 / 59 | 202 → 202 |
+
+KiCad finds no added error on any of the 24 boards written. At 100 M the grouping is about neutral in completion
+(three boards down by 2 to 5 connections, two up by 1 and 5) and moves ten more bus nets onto their group's vias
+and layers; groups routed completely rise from 14 to 17 of 23, groups with equal vias per member from 1 to 5. At
+20 M these boards are still in their first pass when the budget ends (hx8kevb: 12 M of the 20 M went into failed
+strict searches without buses, 14 M with), and a bundle brings its long connections forward to where its first one
+stood, so the budget ends earlier in the order: 33 connections fewer in all. Four large boards of the `mid` set
+with detected buses (decelerator4030, Aleste-520EX, EEZ DIB MCU, sbc; 20 M) say little about buses: 301 → 281 of
+1009, 1001 → 955 of 1616, 470 → 470 of 634 and 310 → 310 of 410 connections, no added errors, and the budget ends
+before the buses are reached. On three of them no bus net is routed with or without the options (the last two have
+the same connection and via counts in both runs); on Aleste-520EX 32 → 31 of 150 bus nets are, and four of its 24
+groups completely in either run.
+
+**Tried and dropped.**
+- *Buses first by default.* Better on the fixtures (above), ruinous on dense boards at a fixed budget: the lanes out
+  of a ball grid are the hardest connections, each failed strict attempt costs up to the per-search limit, and with
+  all of them in front the four `mid` boards routed 11 / 1009, 40 / 1616, 11 / 634 and 1 / 410 connections at 20 M.
+  It is `--bus-first` now, for boards where the buses are what matters.
+- *Accepting any path found inside the guide* (with two pitches per step as the penalty afterwards): a lane then
+  winds through the guide or hops over what is in its way rather than pass the mounting hole on its own side.
+  p2p8's eight lanes came out at 25, 25, 25, 28 (with two vias), 37, 44, 49 and 54 mm, and the group at 23.6 mm of
+  skew, since the short lanes had no room for that much meander. A limit of an eighth of the neighbour's length plus
+  twice the pad distances changed nothing (each lane was only a little longer than the one before); the layer test,
+  the detour limit and the quarter-pitch penalty did.
+- *Ripping a group as a whole* when another net rips one lane, and *no protection at all* (six boards, 100 M): 936
+  and 947 connections against 952 with protection, and 92 and 94 bus nets on their reference against 99.
+
+**Limits.**
+- Following is by neighbour, not by plan: the leader takes its own cheapest path, and nothing reserves room for the
+  lanes behind it or picks the layer pattern that suits the whole bundle. A bundle whose lanes must cross (same pin
+  order at both ends of a chain, reversed order) loses members or gives every lane the same pair of vias.
+- "On the bus" in the report is the via count and the set of layers per net, measured on copper; the router's own
+  test per connection also compares the order of the layers. For nets with several connections the two can differ.
+- Length follows KiCad's skew check (tracks plus via height) but not its last details: pad-to-die lengths are not
+  read, and KiCad shortens a track end inside a pad or a via (differences of a few micrometres on the fixtures). KiCad
+  compares every net its rule matches; a group is compared within itself, so a rule matching more nets than the group
+  can still fail in KiCad. The pair skew (§15) is still track length only.
+- Meanders need room: a member squeezed between its neighbours and an obstacle stays short, and the group is then
+  reported over its limit. There is no spreading of lanes to make room, and no limit in picoseconds.
+- No pair-style coupling or fixed spacing between lanes; a group is not planned by the global router; `length` rules
+  on a group are tuned per net as before, not as a group.
+- Bus options are not in the Python bindings' keyword list (`RouteJob` carries them).
+## 39. After-route passes: power widening, style metric, stitching vias (2026-10-11, D92)
+
+Three things that happen after routing has finished. Each is its own small module in `src/passes/`, attached in
+`app/route_job.cpp` after the soft-zone refill repair and before the board is written. All are off by default (the
+style metric only measures), deterministic, and count their work in exact checks with a budget (`--pass-work`,
+default 2 M per pass; wall time does not stop them). The two that change copper do it through the router's own
+obstacle model (`route::Obstacles`, the check the router commits with), touch only copper of this run, and are
+transactions (rule 4): the job counts unconnected items per net with and without the pass's result (after an
+in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
+(per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
+board is byte-identical to before.
+
+### 39.1 Power track widening (`--widen-power`)
+
+**Which tracks, and how wide.** Nothing is invented: a track is widened only towards a width something stated.
+
+| Source | Target | Applies to |
+|---|---|---|
+| Net class (`source: "net class"`) | The class's track width (raised to the board minimum) | New tracks narrower than that: the router's neck-down (§6, §14), on every net except coupled pairs |
+| `--widen-net PATTERN=WIDTH_MM` (repeatable; KiCad wildcards on the net name) | The stated width | Every new track of the matching nets |
+| Component rules (`--component-rules report`, `soft` or `on`) | The width a `width_for_current` rule computed (IPC-2221 from the rule's current, or its `min_width_mm`; doc 15 §16) | The nets the rule binds, as `synthetic_net_classes` gives them: instances at the apply threshold, nets in the Default class only |
+
+The largest stated target of a net counts, and a stated target replaces the class width for that net, also when
+it is narrower: the pass never widens beyond a stated target. Impedance widths are not targets (a
+controlled-impedance track must not be wider than computed either), and the halves of coupled pairs
+(`--diff-pairs`, USB pairs from component rules) are skipped: they were routed at their pair width on purpose.
+With `--component-rules on` the computed widths are already the nets' class widths, so the first row restores
+whatever the router had to neck.
+
+**Method.** Per track, in commit order, nets with a stated target first. The candidates are the goal and seven
+evenly spaced widths below it, down to (not including) the track's own width, rounded down to a micrometre; the
+widest whose `segment_state` is free against everything else is kept and entered in the obstacle model at once, so
+later tracks are checked against it. "Everything" is what the router checks: other nets' copper at the pair's
+clearance, holes, the board edge, keep-outs, mask openings, custom rules (positional `disallow`, a rule's maximum
+`track_width` caps the goal), and the neighbours of the net's own pads. No other copper is moved or narrowed in
+this version, so a track in a tight channel simply stays as it is.
+
+**Junctions.**
+
+- *Wide meets narrow.* Tracks are stadium shapes: both keep their round caps at the shared end point, the copper
+  stays joined, and the wide cap is part of what the exact check tested. No taper is added.
+- *Via.* A track that ends on a via of its net (at the via's centre, on a layer the via spans) is widened to the
+  via's diameter at most, so the track never sticks out around the via.
+- *Pad.* A track that ends inside a pad of its net is widened to the pad's smaller side at most: the neck stays at
+  the pin, as a designer draws it, and the wide copper starts at the first bend or junction away from it. Such a
+  track counts as "at target" in the report when it reaches that size.
+- Locked tracks and every track that was on the board before the run keep their width.
+
+**Report.** One log line per widened net and a `widen` object in the JSON summary: per net the target and its
+source, tracks below the target, tracks widened, tracks at target, widened length, and the length at each width
+before and after (`before_mm_by_width`, `after_mm_by_width`); in total the checks done and whether the result was
+kept.
+
+**Limits.** One width per track as the router cut it: a long track with one tight spot stays narrow along its
+whole length (splitting a track at the obstacle is not done). Tracks are not moved to make room. A custom rule's
+maximum `track_width` caps what this pass does (`RuleEngine::track_width` returns it, and the in-engine DRC reports
+tracks above it); the router itself still routes at the class width where such a rule asks for less. Inner-layer
+widths from IPC-2221 (wider than outer) are reported by the component rules but the pass uses the one width a net
+class holds. With `--soft-zones` the widened tracks are judged like the routing itself, after a refill.
+
+### 39.2 Style metric
+
+How tidy the copper is. It only measures: nothing in the router or the clean-up optimises it yet. Counts and
+angles are integer arithmetic on nanometres (cross and dot products); lengths are each segment's `hypot` rounded
+to the nanometre and summed as integers. Nothing depends on the order of the input or on threads, so the numbers
+are the same at every thread count.
+
+A **connection** is copper of one net between two ends; an end is a pad of the net, a junction (three or more
+track ends, or a track end on the middle of another track) or a loose end. A via with exactly two track ends is
+passed through. Collinear pieces of one width are joined first (the router commits a straight run as several
+steps), so a **segment** is a maximal straight run.
+
+| Measure | Definition |
+|---|---|
+| `bends`, `bends_per_connection` | Direction changes between consecutive segments on one layer (not across a via, not at an arc) |
+| `acute_angles` | Bends where the two segments enclose less than 90° (the direction turns by more than 90°) |
+| `stair_steps` | Maximal runs of three or more consecutive segments on one layer, each shorter than four track widths, whose bends turn alternately left and right. A single Z-shaped jog (two short segments) is not one |
+| `short_segments` | Segments shorter than their own width |
+| `off_angle_segments` | Segments more than 0.1° away from the eight octilinear directions |
+| `detour_ratio` | Copper length over the shortest octilinear path between the connection's ends (max + (√2 − 1) · min of the two offsets); per board the two sums are divided (`detour_length_mm`, `detour_octile_mm`), closed loops excluded |
+| `long_detours` | Connections longer than 1.5 times that path |
+| `arcs`, `vias`, `segments`, `connections`, `length_mm` | Counts; arcs are measured by their length and not judged for bends or angles |
+
+The patterns follow what tscircuit's open-source linters flag (`pcb-trace-linter`: segments off the 45°
+directions; `check-ugly-traces`: removable jogs and off-angle segments; both MIT). They were read for which
+patterns to count; no code was taken.
+
+**Where.** `passes::measure_style` runs on the new copper of every route job: the JSON summary has a `style`
+object. `tracemaker style BOARD [--json FILE] [--connections]` measures every track, arc and via of any board
+(Freerouting's output, a designer's routing); on a board that had no tracks before routing both give the same
+numbers. `bench/run.py` records `style` per board, `style_ref` for the fixture's own routing where it has one
+(PCBench `processed.kicad_pcb`), and the totals in `summary.json` and `report.md`; `bench/compare_runs.py` lists
+the boards whose metric changed. Informational everywhere, never a gate.
+
+**Does it tell routings apart?** `quick` set, 1 M work units, `--variants 1`: TraceMaker's new copper against the
+boards' reference routing (all 30 have one). TraceMaker routed 89.2 % of the connections on average at this
+budget, the references are complete and include the copper of poured nets, so the counts are not for the same
+copper; the per-connection figures and the ratios are comparable.
+
+| Routing | Connections | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| TraceMaker | 2,447 | 0.62 | 0 | 29 | 268 | 409 | 1.031 | 23 |
+| Reference routing | 3,568 | 1.23 | 75 | 209 | 1,673 | 599 | 1.103 | 67 |
+
+Per board (TraceMaker / reference), the first eight of the set:
+
+| Board | Bends per connection | Acute | Stair-steps | Short segments | Off-angle | Detour ratio |
+|---|--:|--:|--:|--:|--:|--:|
+| 655_testboard | 0.87 / 1.96 | 0 / 4 | 0 / 42 | 11 / 284 | 5 / 109 | 1.094 / 1.233 |
+| C-BISCUIT_buck-reg-5v | 0.43 / 0.85 | 0 / 0 | 0 / 1 | 8 / 26 | 5 / 0 | 1.031 / 1.039 |
+| CubeSAT-Reaction-Wheel_Edison_Motor_Servo | 1.00 / 2.75 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 1.000 / 1.065 |
+| Dekada_dekada_TopoR_curves | 0.23 / 1.62 | 0 / 64 | 0 / 105 | 45 / 556 | 0 / 402 | 1.015 / 1.003 |
+| ESP8266-MQTT-battery-monitor-hw_battery-monitor | 0.25 / 1.05 | 0 / 0 | 0 / 4 | 22 / 33 | 38 / 7 | 1.010 / 1.090 |
+| HES-V2__autosave-hes | 0.51 / 0.83 | 0 / 0 | 0 / 0 | 1 / 4 | 0 / 5 | 1.002 / 1.043 |
+| Hangul-Clock_Hangul | 0.80 / 1.60 | 0 / 0 | 0 / 12 | 0 / 86 | 16 / 0 | 1.000 / 1.118 |
+| Hardware_Playground_rpi_zero_ws2812 | 0.61 / 0.70 | 0 / 0 | 0 / 2 | 7 / 70 | 4 / 1 | 1.018 / 1.031 |
+
+The metric separates them: the any-angle TopoR board stands out in off-angle and short segments, hand routing has
+about twice the bends per connection, and TraceMaker's own weak spots show too (409 off-angle segments, the
+off-lattice pad entries of §5, and 29 stair-steps, 27 of them on one board). Widths matter to two measures: after
+`--widen-power` the same polylines have more short segments and stair-steps, because both are counted in track
+widths.
+
+**Limits.** A T-junction on the middle of a track ends the incoming connection but does not split the track it
+lands on. Connections are pieces between junctions, so a net's detour is judged piece by piece, not pad to pad
+along the whole tree. The metric says nothing about spacing, symmetry or how pairs look.
+
+### 39.3 Stitching vias (`--stitch-vias planes|return|all`)
+
+Vias of an existing net, added where they tie that net's copper on two or more layers together. Two uses:
+
+- **Plane stitching** (`planes`): for every net with solid fills on two or more layers, a via at each site of a
+  grid (`--stitch-pitch`, default 5.08 mm, the catalogue's `general_high_speed.stitch_via_within_mm`; one grid for
+  the board, anchored half a pitch inside the outline's bounding-box corner) where the via's pad lies wholly inside
+  that net's fill on at least two layers. A site with a via or plated through-hole pad of the net within half a
+  pitch is already tied and gets none.
+- **Return-path stitching** (`return`): every via of a signal that needs a reference plane wants a via or plated
+  pad of the plane's net within a distance, centre to centre. Signals come from component rules of kind
+  `reference_plane` (doc 15 §4; with `--component-rules report`, `soft` or `on`, instances at the apply threshold:
+  the nets of the rule's roles, the plane net from the rule's `plane_net`, by role or by name, default GND) and
+  from `--stitch-return PATTERN=PLANE_NET`. The distance is `--stitch-distance`, else the rule's `stitch_via_mm`,
+  else the catalogue's 5.08 mm. For a signal via without one, candidate sites on rings around it are tried,
+  nearest first (16 directions, ring spacing half a via, positions on whole micrometres); the first site that
+  passes is used. The same two-layer condition holds: a return via ties planes together, so a board with the
+  plane net on one layer only gets none, and the via is reported as unstitched.
+
+**Which fills.** The fills stored in the file may be older than the routing. The pass refills the zones in the
+engine for the routed board (§36) and places against those; hatched zones are left out (the refill does not
+redraw them).
+
+**What a site must pass.**
+
+1. The router's exact check for a through via of the net's class size (`via_state`, 10 µm clearer than the rules
+   ask), against every pad, track, via, hole, board edge, keep-out, mask opening and custom rule. Surface-mount
+   pads of any net, the via's own included, count as obstacles: a stitching via is never a via in pad. Copper
+   text is in the obstacle model as an estimated box per line, not as KiCad's glyphs, so stitching vias keep
+   0.25 mm more than the clearance from those boxes (a grid via beside the text `JTAG_EN` on
+   kit-dev-coldfire-xilinx_5213 was 0.139 mm from a glyph where 0.15 mm is required).
+2. Other nets' fills. A through via may pass through another net's plane on a layer in between, as every via on a
+   multilayer board does, but only through the middle of it: the hole a refill will cut (via radius + the largest
+   clearance + 10 µm) plus the zone's minimum width as a web must lie wholly inside the fill, away from every edge
+   of it (outline, other knock-outs, thermal gaps). So the hole cannot cut the fill into islands, sever a spoke or
+   leave a sliver. A fill the via neither clears completely nor sits in the middle of blocks the site, and so does
+   any hatched fill within reach. New vias keep two knock-outs and a web apart, so their holes never merge. The
+   web is the largest minimum width of any zone on the board (at least 0.25 mm): the refill prunes copper narrower
+   than a zone's minimum width, and with a fixed 0.25 mm web a 1.4 mm grid through a plane with a 0.5 mm minimum
+   width left that plane in loose pieces between the holes, which the refill dropped as islands (KiCad: 270 of
+   495 mm² gone where the 164 holes account for 130; no DRC item, no unconnected item).
+3. After all sites: a second refill with the vias. A via stays only if its own net's fill overlaps it on at least
+   two layers (KiCad joins a via to its net's zone solidly, without thermal relief). If a zone of another net has
+   more pieces than before, the whole pass is withdrawn. A stitched net's own zone may gain a piece: an island the
+   refill used to drop, now tied to its net by a via.
+4. The job's transaction: unconnected items per net after a refill, with and without the vias.
+
+The vias are written with `(free yes)`, so KiCad keeps their net although no track touches them.
+
+**Report.** `stitch` in the JSON summary and log lines: vias per net and purpose, grid sites (in overlapping
+fills, already tied, blocked), vias dropped by the second refill, and per signal net its vias and how many have a
+plane via within the distance before and after.
+
+**The `reference_plane` rule.** `crules::evaluate` still reports rules of this kind as not applied (the
+no-split-crossing part needs plane-coverage checks, doc 15 P4). The stitching part is satisfied and measured here,
+per rule instance, as `return_paths` rows with `source` naming the rule and its anchor; it is not fed back into the
+component-rule report.
+
+**Limits.** Through vias only. The containment tests walk every edge of the fill a site lies in (no index), which
+is the pass's main cost on boards with large fills. Fill outlines contain the zero-width bridges that join holes
+to the outline (§36), and a site on such a bridge is refused although the copper is solid there. Signal vias in
+dense areas often have no legal site nearby and stay unstitched. Return-path sites are not chosen for the
+smallest loop beyond "nearest ring first". The written board keeps its old fills, as with `--soft-zones`: refill
+before fabrication output. Every via through another net's plane takes its knock-out out of that plane: at a
+tight pitch that adds up (a 1 mm grid took 11 % of the +3.3 V plane of kit-dev-coldfire-xilinx_5213), and nothing
+limits it but the pitch. A stitching via beside a teardrop of another net is legal against the pad and the track;
+KiCad's refill then cuts the teardrop back around the via (measured on a generated board: no DRC item, the
+teardrop's fill 6 to 12 % smaller).
+
+**Status of return-path stitching.** The explicit form (`--stitch-return`) is tested like plane stitching. The
+form driven by `reference_plane` rules shares all of its placement code, but on real boards it has placed one via
+so far (see §39.4): treat it as experimental until a board set with unstitched high-speed vias exists.
+
+### 39.4 Gates and tests
+
+Measured on 2026-10-11 with `bench/passes_gate.py`: every board is routed twice at the same work budget
+(`--variants 1 --no-gpu`), without and with the pass options, and `kicad-cli pcb drc --severity-all
+--all-track-errors` (KiCad 10.0.6) judges both. A board passes when the second report has no additional
+violation of any type or severity, no additional unconnected item, and the same connections routed.
+
+**Widening.** PCBench boards have no project file; their widths come from the net classes stored in the KiCad 5
+board. Boards with necked power nets were found by routing 220 PCBench boards (drawn at random with seed 3 from
+those under 400 kB) with `--widen-power` and keeping those where a net with a supply-like name had tracks below
+its class width: 16 boards.
+
+| Run | Boards | Pass options | Boards widened | Tracks | Length | Added violations | Unconnected |
+|---|--:|---|--:|--:|--:|--:|---|
+| `widen-necked` (those 16, 1 M work) | 16 | `--widen-power` | 16 | 144 | 231.7 mm | 0 | equal on all |
+| `widen-quick` (`quick` set, 1 M work) | 30 | `--widen-power` and a 0.5 mm target for `GND*`, `+*`, `VCC*`, `VDD*`, `VBUS*`, `VIN*` | 26 | 2,023 | 5,699.6 mm | 0 | equal on all |
+| `widen-planes` (`planes` set without RoyalBlue, 3 M work, `--refill`) | 7 | the same | 6 | 274 | 415.3 mm | 0 | equal on all |
+
+The four `quick` boards and the one `planes` board without a widened track have no new track of a matching net
+below its target that had room.
+
+**Stitching.** PCBench fixtures carry no zones, so the boards are KiCad demo projects with a net poured on two or
+more layers, routing stripped (`bench/prepare_demos.py`), 3 M work, judged with `--refill`. `via_dangling` is
+KiCad's item for a via that is not connected or connected on one layer only.
+
+| Board | Layers | `--stitch-vias planes`: vias added | Sites: in fills / tied / blocked | Added violations | Unconnected | `via_dangling` |
+|---|--:|--:|---|--:|---|---|
+| StickHub | 2 | 1 | 7 / 3 / 3 | 0 | 29 → 29 | 0 → 0 |
+| multichannel_mixer | 2 | 210 | 212 / 1 / 1 | 0 | 10 → 10 | 0 → 0 |
+| RoyalBlue54L-Feather | 8 | 12 | 61 / 4 / 45 | 0 | 146 → 146 | 0 → 0 |
+| kit-dev-coldfire-xilinx_5213 | 4 | 106 | 257 / 14 / 137 | 0 | 451 → 451 | 0 → 0 |
+| tinytapeout-demo | 4 | 137 | 255 / 93 / 25 | 0 | 214 → 214 | 0 → 0 |
+| CM5_MINIMA_3 | 6 | 19 | 83 / 13 / 51 | 0 | 123 → 123 | 0 → 0 |
+| One-Air-Max | 4 | 93 | 215 / 22 / 100 | 0 (one `isolated_copper` warning fewer) | 147 → 147 | 0 → 0 |
+| complex_hierarchy | 2 | 0 | 0 / 0 / 0 | 0 | 3 → 3 | 0 → 0 |
+
+Seven boards got vias; no via was dropped by the second refill. complex_hierarchy's two-layer pours are too small
+to hold a 5.08 mm grid site. (The router completes few connections on the large boards at this budget and without
+`--soft-zones`; the stitching is judged on whatever was routed.)
+
+Return-path stitching, the same boards and budget, `--stitch-vias return --stitch-return '*=GND'` (every net as a
+signal, to have vias to stitch), distance 5.08 mm:
+
+| Board | Signal vias | Unstitched before → after | Vias added | Added violations | Unconnected | `via_dangling` |
+|---|--:|---|--:|--:|---|---|
+| StickHub | 12 | 1 → 0 | 1 | 0 | 29 → 29 | 0 → 0 |
+| multichannel_mixer | 9 | 9 → 4 | 5 | 0 | 10 → 10 | 0 → 0 |
+| tinytapeout-demo | 18 | 1 → 0 | 1 | 0 | 214 → 214 | 0 → 0 |
+| One-Air-Max | 46 | 34 → 19 | 11 | 0 | 147 → 147 | 0 → 0 |
+| kit-dev-coldfire-xilinx_5213, CM5_MINIMA_3 | 0 | – | 0 | 0 | equal | 0 → 0, 0 → 0 |
+
+Driven by the `reference_plane` rule (`--component-rules report --stitch-vias return`): on the stripped boards the
+router brings the USB pairs in without vias, so there is nothing to stitch. On the designers' own routings (the
+unstripped demo boards, where the pass only adds vias) USB2-09 binds D+/D- on StickHub, CM5_MINIMA_3,
+RoyalBlue54L-Feather and One-Air-Max; at the catalogue's 5.08 mm every bound via already has a GND via in reach
+except one on One-Air-Max (`/USB_D+`), which the pass stitches (1 → 0 unstitched, KiCad: nothing added). At 3 mm
+and 1.5 mm the unstitched vias on StickHub (2 at 1.5 mm), CM5_MINIMA_3 (4 at 1.5 mm, 1 at 3 mm) and One-Air-Max
+(2) have no legal site that close and stay unstitched; KiCad's reports are unchanged. That one via is all the
+evidence there is for the rule-driven path on real boards.
+
+**Second sample (review of the passes, same day, same judge; unconnected counts and violation counts per type
+and severity compared).**
+
+- Widening: 48 other PCBench boards (drawn with another seed from those under 500 kB, none from `quick` or the
+  16 above), 1 M work, targets of 0.5 to 0.8 mm for supply-like names: 40 boards widened, 3,466 tracks,
+  5,852.2 mm; nothing added, unconnected equal on all.
+- Widening under custom rules: ten `quick` boards with a generated `.kicad_dru` (a wider clearance for tracks of
+  0.4 mm and more, `track_width (max 0.45mm)` on B.Cu, `disallow track` above 0.7 mm), 0.8 mm targets: 865
+  tracks widened, nothing added. Before `RuleEngine::track_width` returned a rule's maximum, the same run added
+  96 `track_width` errors on eight of the boards.
+- Plane stitching on the designers' own routing (the unstripped demo boards, where the pass only adds vias), at
+  2 mm and 1 mm pitch: kit-dev-coldfire-xilinx_5213 251 and 491 vias, One-Air-Max 106 and 276, tinytapeout-demo
+  229 and 465, CM5_MINIMA_3 6 and 12, RoyalBlue54L-Feather 6 and 7; nothing added, unconnected equal. Fill
+  pieces per net and layer after KiCad's refill change only for the stitched nets (islands now tied), and other
+  nets' planes lose the holes only (kit-dev at 1 mm: +3.3 V on In2.Cu, one piece before and after, 10,757.8 to
+  9,536.1 mm²).
+- The two largest demo boards, with their own `.kicad_dru`, designers' routing: jetson-agx-thor-baseboard
+  (10 layers) 8 vias at 5.08 mm and 34 at 2 mm, vme-wren (12 layers, one hatched zone) 16 and 194; nothing added
+  (222 and 446 items before and after), unconnected 0 → 0. KiCad's `length_out_of_range` figures on vme-wren
+  differ by some hundredths of a millimetre between two runs on the same file, so those items are compared by
+  count.
+- Return-path stitching with `--stitch-return '*=GND' --stitch-distance 1.5` on the same designers' boards and
+  StickHub: 103 vias added over six boards (79 on tinytapeout-demo, 19 on One-Air-Max), nothing added.
+  `--component-rules report --stitch-vias return --stitch-distance 2`: six bound vias without a GND via in
+  reach (One-Air-Max 2, CM5_MINIMA_3 4), none with a legal site, no via added.
+- Stripped boards routed with `--soft-zones` at 3 M work, then all passes together (2 mm pitch, `'*=GND'`,
+  0.5 mm targets), six boards: nothing added, unconnected equal.
+
+**Shared.** `quick`, 1 M work, `--variants 1 --no-gpu`, no new option: all 30 routed boards byte-identical to the
+baseline binary of unmodified main (`compare_runs.py --expect-identical`, the baseline run made before the style
+metric existed compares without errors); `summary.json` carries `style`, `style_ref` and `style_same_boards`.
+
+Tests: `tests/test_passes.cpp` (21 cases: each style pattern on hand-made polylines, order independence; a
+channel that fits 0.8 mm but not 1.2 mm, a track with no room, a junction, a via limit, locked tracks, pairs,
+neck-down restored, the work budget, a custom rule's maximum width; the expected grid in a two-layer overlap, an
+obstacle and a keep-out removing exactly their sites, a site inside another net's clearance, a via through the
+middle of another net's plane but not its edge, holes through a plane with a wide minimum width, the margin from
+copper text, nothing without overlapping fills, return-path vias) and the ctest `after_route_passes`
+(`tests/integration/after_route_passes.py`: the three passes through the command line on generated boards, style
+equal at 1 and 3 threads and equal to `tracemaker style`, KiCad's verdict on the stitched board when kicad-cli is
+there).
+
+## 40. Dense breakouts: limits, portfolio extras and the experiments that did not help (M14, 2026-10-11, D94, D95)
+
+Measured on tscircuit's BGA breakout sets (doc 10 §8, doc 16 §10); this section records what the router now does and what the
+hidden options are.
+
+- **Defaults.** `max_rips_per_connection` 40 and `max_passes` 40 (were 8 and 12): negotiation on a dense breakout ends because a
+  connection reached its rip limit, not because the budget ended. 33 % → 54 % clean on the srj19 gap boards at 50 M work.
+- **Budget accounting.** `--work` counts search expansions *and* reachability flood cells (1:1). On a 60-connection two-layer
+  breakout at 10 M the strict first pass and its floods use all of it (9.5 M of 10 M), so negotiation never runs; read a result at
+  10 M as "first pass only".
+- **Portfolio beyond eight.** `--variants N` (N > 8, up to 64) adds seeded variants: fast bends, jittered order (every fourth
+  shortest-first), via cost × {0.4, 1, 2.5}, crossing cost × {0.5, 1, 2}, escape plan on even indices, `--package-pen 3` on odd ones.
+- **`--package-pen P`.** Inside the pad box of a footprint with at least 30 SMD pads on one layer, tracks on that layer cost P
+  pitches more per lattice step, so an escape takes a dog-bone via early. srj20 gap, 30 M: 13 → 17 clean of 57 at P = 4, 10 at 8.
+- **Hidden experiment options** (results in doc 16 §10; none helps): `--guide FILE`, `--guide-pen`, `--guide-radius` (per-connection
+  preferred paths; a hard search inside the guide first, cut off at a few expansions per cell, then the usual search with a mild
+  preference), `--layer-assign`, `--order 3`, `--lns-open N`, `--no-strict-first`, `--max-victims`, `--soft-growth`,
+  `--history-weight`, `--max-rips`, `--max-passes`, `--max-restarts`, `--soft-cost-mm`.
+- **GPU.** The cost-to-go fields give the identical result 1.7× faster for one board alone (35.7 s → 20.7 s, sample 13 at 20 M); with
+  twelve boards routed in parallel they are slower (contention), so the benchmark runs use `--no-gpu`.
+- **`--layer-dir-pen P`, `--layer-dir-swap`** (D98). Orthogonal steps against the layer's preferred direction (even layers horizontal, odd
+  vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with `--package-pen 3`) on a breakout board: two copper layers and at least 70 %
+  of the connections with an end on a ball-grid-like package (at least 30 same-layer SMD pads on at least 5 × 5 distinct positions, 40 % of the grid filled). Negative values mean "automatic at that strength" (the seeded
+  portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.
+- **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
+- **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
+  `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.
+
+## 41. Negotiation as transactions, the breakout profile and portfolio rounds (M15, 2026-10-11, D99–D101)
+
+Measured on tscircuit's BGA breakout sets (doc 16 §12). Everything here is automatic on a *breakout board* (D98: two copper layers, at
+least 70 % of the connections with an end on a ball-grid-like package) and off elsewhere, so `quick` and `mid` are unchanged.
+
+- **Transactions (`--txn 1`, D99).** `txn_try` runs a negotiated search for a connection with a log of the victims it rips. The victims
+  are then routed again strictly, one after the other (no ripping); the route is kept if no more victims are lost than the route gained
+  (`--txn 2`: strictly more), or with probability exp(−k/T) for a net loss of k (`--txn-temp T`, default 1.5 on breakout boards; seeded
+  counter-based draws), else a snapshot of every connection's copper, flags and rip counts is restored (`txn_capture`/`txn_restore`) and
+  history keeps what the failed attempt learned. A route without victims is kept at once. Pairs and buses are not run as transactions.
+  Hidden options that did not help: `--txn-depth` (nested transactions for victims that cannot re-route), `--txn-orders` (several victim
+  orders), `--txn-cap`, `--txn-cool`, `--tidy`, `--stall-passes`.
+- **Reachability floods and the budget (`--reach-check 2`, `--flood-work-pct 25`).** A flood cell counts a quarter of an expansion against
+  `--work` on breakout boards (it costs far less time); elsewhere the charge stays 1:1 (the work-profile identity
+  `expansions + flood cells = charged work` holds only at 100 %).
+- **Fields (`--field-prefill 1`, `--field-cache-mb 512`).** The fixed-copper cache of a net class is filled for the whole board before its
+  first cost-to-go field (boards up to 4 M lattice cells); a field is then a function of (window, target cells, costs) and is kept; a hit
+  needs byte-identical inputs. Identical copper with and without the cache (test), 38 % less wall time on a transaction run.
+- **`--breakout-portfolio`, `--rounds R` (D101).** See doc 16 §12.
+- **Warm start.** `RouterOptions::warm` (the `conn_routes` of a result) starts a run with those routes in place, matched by the two pads of each
+  connection; negotiation begins at once (no strict first pass).
+
+### 41.1 Saved state and resume (D102)
+
+With `--round-work`/`--rounds`, `--state-out F` writes the best routes after each round (text: `S rounds routed`, then `R pad_a pad_b nt nv` with its `T`/`V` lines); `--state-in F` loads them as the warm start, so a run that ran out of time continues where it stopped. `bench/run.py --resume-run NAME` does this per board from `bench/results/NAME/boards/<board>.kicad_pcb.state`.
+
+### 41.2 Clearance continuation (`--ramp-from`, `--state-recheck`; D103)
+
+A homotopy on the design rules. `--ramp-from C0 --ramp-step S` (portfolio with `--round-work`) first routes under rules whose clearances (every net class and the board minimum) are lowered by `c_board - C0`, then raises them by S per stage until they are the board's own; each stage runs rounds until the board is complete or `--ramp-rounds` rounds in a row (default 2) routed no more than the best round of the stage, and hands its routes on as the warm start of the next stage. Only routes that are legal under the next stage's rules are taken over (`--state-recheck`, implied by the ramp; also usable with `--state-in` for a state saved under other rules): the saved routes legal against the fixed copper are put in together, their conflicts are collected from the obstacle index's owner lists, and the route with most conflicts is dropped until none is left (greedy vertex cover); each remaining route then passes the strict exact check once more. The last stage always runs under the board's rules, and if time or rounds run out before it a final round with no search budget keeps what is legal, so the output never violates the real rules. A relaxed stage always writes `--state-out`, the final stage only when it does not lose routes. Stage lines go to stderr (`ramp stage k/n (clearance -d mm): r of c routed`).
+
+### 41.3 Relax, route, legalise (`--legalize`, `--warm-pcb`, `--relax`; D104)
+
+`route/legalize.{hpp,cpp}`. The lattice router puts every track on a lattice point (0.035 mm for 0.12 mm tracks with 0.1 mm clearance) and cannot move a committed route, so it cannot use the room between tracks that a continuous layout would have; a board that is complete under looser rules usually has the *topology* of a legal board under the real ones. `legalize_routes` takes the routes of a warm start and moves their vertices (tracks and vias merged by net and position; ends at the centre of their own pad stay; a via in its own pad stays inside it; the board outline and the trust box of 0.25 mm bound every move) until every pair of copper items of different nets is at least the clearance of their classes apart (track-track and track-via by endpoint-to-segment distances, pads as their bounding rectangles or circles with the four corners against the segments, via-via also by hole gap, fixed tracks and vias of the board as fixed vertices). Each pair that is too close pushes the vertices involved along its normal by the missing distance, weighted as in position-based dynamics; sweeps run until nothing is closer than the rule minus 3 µm or 300 sweeps are done. The warm start then keeps the largest conflict-free subset of the routes that pass the strict exact check, and the portfolio routes the rest.
+
+- `--warm-pcb FILE` starts from the tracks and vias of a routed board (nets with one connection take all of theirs); `--legalize` legalises every warm start (also `--state-in` and the ramp's stage hand-over); `--relax` = `--ramp-from 0.6 c --ramp-step 0.2 c --ramp-rounds 3 --ramp-cycle 2 --ramp-stall 2 --legalize` with `--round-work 20000000 --rounds 200` unless given: stage 1 routes under 60 % of the clearance, the solution is legalised to 80 %, routed again for what is missing, legalised to 100 %, and when the real rules stall for two rounds the run goes back two stages and climbs again, returning the best result under the real rules.
+- Vertices end off the lattice and off 45° multiples; track lengths grow by the small moves (at most 0.3 mm). Zones, keep-outs, mounting holes and custom `.kicad_dru` clearances are not constraints of the legaliser; they are caught by the exact check that follows, which drops the routes involved. A projection step is a heuristic: it can leave pairs too close (3-9 on the hard boards), never an illegal result.
+- Prototype with a linear-programming step (sequential LP with a trust region, HiGHS, minimum total movement, scratchpad only) on the six stuck boards: 071, 039, 104 legal in one or two iterations, 103/048/072 with 3/6/11 pairs left; projection: 071, 104 legal, 039/103/048/072 with 2/5/4/9 left. Both turn a 0.06 mm solution (about 800-1000 pairs too close at 0.10 mm) into one with a handful left.
+
+## 42. Reference-return audit of high-speed nets (issue #7, 2026-10-14, D114)
+
+**Problem.** KiCad's DRC does not know whether a fast trace has continuous copper under it. A dogbone escape punches antipads through the reference
+pour, a plane can be split, a layer change can come without a nearby stitch: the signal is DRC-clean and its return current still walks around the void,
+which grows the loop area and raises the inductance. The actionable question is per net: does this trace have copper under it, and if not, how far
+does the return detour?
+
+**What it is.** A read-only pass in the family of `--cut-report` and `escape` (`src/analysis/return_path.{hpp,cpp}`). It adds no copper and changes no
+file. Off unless nets are selected:
+
+```
+tracemaker return-paths BOARD --nets 'DDR*,*CLK*' [--netclass NAMES] [--diff-pairs] [--reference-layer PATTERN=LAYER]
+                              [--stitch-radius-mm 5] [--warn-detour-mm 2] [--warn-separation-mm 1] [--min-void-mm 0.1] [--sample-mm 0.05]
+                              [--refill | --no-refill] [--json FILE] [--strict] [--view [--view-port N]]
+tracemaker route BOARD -o OUT --return-paths 'DDR*' [--return-path-classes NAMES] [--return-path-pairs] [--return-path-radius-mm 5]
+```
+
+`route --return-paths` audits the board as routed, refilling the zones first (the fills in the file predate the new vias, which have antipads); the report
+goes to the log and the `--json` summary (`return_paths`) and each net's path to the viewer. `--strict` exits 4 when any net has a warning (thresholds are
+warnings, not DRC errors). Net selection: KiCad wildcards on net names, net classes, and the halves of differential pairs (`route::named_pairs`).
+
+**Model.** A geometric model, not a field solver (no Palace; no impedance, skew or length matching).
+
+1. *Reference copper.* The filled zones of each copper layer (antipads and zone holes are holes in the reference polygon; zones without fills are refilled with
+   the engine's refill, doc 05 §36, and the report says so).
+2. *Reference layer.* Of the layers adjacent to the signal layer, the one with the most copper under the net's traces (a power plane is a valid reference);
+   `--reference-layer` forces it per net pattern.
+3. *Over copper.* The trace is sampled every 0.05 mm; where copper is under it the return is its mirror image. A stretch without copper longer than `--min-void-mm`
+   is a void; its ends are found to within a micrometre by bisection.
+4. *Across a void.* The return is the shortest path from the void's entry to its exit that stays on the remaining reference copper: A* over the visibility graph
+   of the region's vertices near the void (Lee and Preparata, 1984), the window growing until a path exists. The **detour** is that path minus the trace
+   between the same two points (at least 0), the **separation** the farthest the path gets from the trace. If the copper does not connect the two ends (a split
+   plane) there is no return path on that layer: the void is reported as a split.
+5. *Layer changes.* At a signal via, the reference nets above and below are the nets of the copper around it (the via's own antipad is a void by design). If they
+   are the same net the return closes through the nearest stitching via or through-hole pad of that net inside `--stitch-radius-mm`; if they differ, through the
+   nearest capacitor that has a pad on each. Otherwise the change is counted as a missing stitch.
+6. *Ends.* At a pad the assumed return pad is the nearest pad of the reference net, not one assumed ground ball (the comment on the issue).
+
+**Report** (text, JSON, and the `return_path` viewer message, docs/13): per net the layers and their reference, length, `void_crossings`, `detour_mm`,
+`max_separation_mm`, `splits`, `missing_stitches`, length with no reference layer, and per void, layer change and trace end the numbers behind them. Warnings:
+detour or separation over the thresholds, a split, a missing stitch, a trace with no reference layer (no zone fill on either adjacent layer).
+
+**Viewer.** An overlay (`viewer/src/returnpath_draw.ts`): the signal in cyan, the return in red shifted a few pixels so the two can be told
+apart, with arrows (the return flows from the end of the trace back to its start), and for the selected net callouts for the signal pad, the assumed return pad,
+the signal via, the return via or capacitor (or a missing stitch), and the separation. `P` toggles the overlay; the side panel lists the audited nets worst first and
+a click zooms onto one. `return-paths --view` serves a board and its audit with no router running; `route --return-paths --view` shows it after the routing.
+
+**Cost.** The reference copper of a layer is indexed (`src/analysis/region.hpp`): edges and vertices in a 1 mm grid, and 0.25 mm rows for the inside test, so a query
+costs its neighbourhood and not the whole pour (the plane of a large board has hundreds of thousands of edges, mostly antipads). Every indexed query has a linear
+reference (`island_of_linear`, `crosses_linear`, `nearest_boundary_distance_linear`, `vertices_near_linear`) and `tests/test_return_path.cpp` compares them on a pour with
+antipads, a slot and an island (and on square antipads, where a pad at the centre is exactly as near to four edges: the first edge in the region's order wins in both, so
+the answer does not depend on the order the grid is walked in). Measured on this machine (one core): the Jetson AGX Thor baseboard demo, 291 nets of `*CLK*,*DQ*,*USB*`, took 105 s before the index and
+9 s after; the 12-layer vme-wren demo, 236 nets, 38 s including the refill of its 123 zones (it did not finish in 8 minutes before); RoyalBlue54L-Feather, 7 nets,
+0.5 s (`bench/records/issue7/samples/timings.txt`). Most of what is left is the shortest paths across many small voids.
+
+**Hooks left, not built.** A router cost for crossing a reference void, suggested stitch-via sites, and automatic rerouting: the issue's non-goals.
+
+**Limits.** Arc tracks are not analysed (a warning says so). The detour of a trace that starts or ends over a void is measured from the nearest reference copper, not
+from a modelled return pad. Return current also flows through the plane on both sides of the trace and through other layers; this is the shortest-path estimate on the
+adjacent one. Where a trace starts or ends over a void (a pad at the centre of an antipad) the return regains copper at the nearest boundary point; when
+several are exactly as near the first in the region's edge order is taken, and the detour of such an end can change by half a millimetre with that choice (1.6 mm
+or 2.1 mm for one SWD net of the RoyalBlue demo), so a number near a threshold there is an estimate, not a verdict. Antipad polygons come from the fills as drawn (a 32-gon circle, not a true circle), a few micrometres in a 1 mm antipad. Results on the acceptance picture
+of the issue (about 4.87 mm separation at a processor dogbone field, about 1.00 mm at the memory) were not reproduced: that board is not here.
+
+
+## 43. Footprint check against datasheet land patterns (issue #5, 2026-10-14, D115)
+
+**Problem.** A footprint can be DRC-clean and still not be the part's land pattern: a library footprint that is for the wrong package, a pad that was nudged
+to make a route fit, pins numbered the wrong way, a drill that is too small for the lead. Routing such a board is wasted effort. The issue asks for an
+option that checks components against their datasheet footprints and calls any discrepancy an error, with a trusted list of datasheet brands.
+
+**What it is, and what it is not.** TraceMaker does not read datasheets: a land pattern in a PDF is a drawing, and extracting numbers from it is a job for a
+person (or a model) whose result must itself be checked. The check works on **references**: records of a land pattern made from a datasheet, each saying where it
+came from. A footprint is compared with the reference made for it, and only with a reference whose **brand is on the trusted list**; a reference from any other
+source gives no verdict (the footprint is reported `untrusted`, never as fine). The check verifies a footprint against a record somebody vouched for, it does
+not vouch for the record. Read-only; nothing is fetched from the network.
+
+```
+tracemaker footprint-check BOARD --refs DIR_OR_FILE [--trusted-brands FILE | --trust-all] [--only 'U*,J*'] [--require 'U*,J*']
+                           [--mpn-field NAMES] [--position-tol-mm 0.05] [--size-tol-mm 0.05] [--drill-tol-mm 0.05]
+                           [--all] [--json FILE] [--strict] [--view [--view-port N]]
+tracemaker route BOARD -o OUT --footprint-refs DIR_OR_FILE [--footprint-trusted FILE | --footprint-trust-all] [--footprint-require 'U*']
+                           [--footprint-tol-mm 0.05] [--footprint-warn-only]
+```
+
+`footprint-check` exits 4 when a footprint differs from its datasheet (with `--strict` also on a warning), 1 when the library cannot be read. `route
+--footprint-refs` runs the same check **before the first track is routed**: a discrepancy is an error and stops the job (exit 1, nothing written) unless
+`--footprint-warn-only`; the findings go to the log, the `--json` summary (`footprint_check`, only the footprints with something to say) and the viewer.
+
+**References.** A directory of JSON files (read in path order) or one file; `docs/footprint_refs/example-synthetic.json` is a synthetic example of the format
+(its brand does not exist). Each entry names the brand, the part, the datasheet it was made from (`document` is required: a record that cannot be traced to a
+document is not a reference; revision, page, figure and URL are kept and shown in the report), which footprints it is for (`match`: `mpn`, `lib_id`, `value`,
+`ref`, KiCad wildcards, every list given must be satisfied; part numbers and values ignore case) and the pads: inline (`number`, `type` smd, thru_hole or
+np_thru_hole, `shape`, `at`, `size`, `angle`, `drill`; millimetres, KiCad's y-down footprint frame) or `"footprint": "file.kicad_mod"`, the manufacturer's own KiCad
+footprint, read by the engine's board reader (paste and mask apertures are not land pattern and are dropped). A reference may carry its own `tolerance_mm`.
+Unknown keys, a missing datasheet, a match that selects nothing and a through hole without a drill are refused: a misspelt tolerance that is silently the
+default would be a wrong answer from a verification tool.
+
+**Trusted brands.** `trusted_brands.txt` beside the references, or `--trusted-brands FILE`: one brand per line, `Canonical | alias | alias`, compared without case,
+punctuation or corporate suffixes ("Texas Instruments Incorporated" = "TI" if listed so). No list means nothing is trusted and the report says what to do;
+`--trust-all` uses every reference and the report says that too. `docs/footprint_refs/trusted_brands.txt` is a starting point to copy and edit, not something
+the tool applies by itself: whose datasheets to believe is the user's decision.
+
+**Finding the reference.** For each footprint with pads and a designator: the references whose `match` it satisfies, the most specific (most selector kinds) first,
+then library order; the first whose brand is trusted is used, and when several matched a note says which. The manufacturer part number is read from the
+footprint's properties named MPN, Manufacturer_Part_Number, Mfr Part Number and the like (`--mpn-field` adds names). A footprint with no reference is
+`unverified` (counted, listed with `--all`); `--require 'U*'` makes that an error for those designators. A reference only from untrusted brands gives status
+`untrusted` and a warning (an error where required).
+
+**The comparison.** The datasheet pattern is laid over the footprint: the library's choice of origin and of orientation is not part of a land pattern, so the
+alignment is a translation and a rotation by a multiple of 90 degrees, mirrored or not (8 candidates; the translation is the median of the offsets of the pads
+that share a number, which one or two wrong pads cannot move; the candidate with the most pads paired, then the smallest worst deviation, wins; a pattern that fits
+several ways because it is symmetric is taken the way that agrees with the footprint's side). A mirror is not free: a footprint on the front must match as drawn, one
+on the back mirrored (that is what flipping does); a pattern that fits only the other way is the error `mirrored`, the pin numbers run the wrong way. Then every pad:
+
+| kind | an error when |
+|---|---|
+| `pad_count`, `missing_pad`, `extra_pad` | the footprint has other pads than the datasheet (an unnumbered non-plated peg the datasheet does not show is a warning) |
+| `position` | a pad is farther than the tolerance (default 0.05 mm) from where the pattern puts it, after alignment |
+| `size` | width or height differ by more than the tolerance; a quarter turn of the pad swaps them; custom-shaped pads are not compared |
+| `drill` | a hole where the datasheet has none or the reverse, or a drill off by more than the tolerance (oval drills compared by their two sides) |
+| `pad_type` | SMD, plated through hole and non-plated hole differ |
+| `orientation` | a pad is turned to an angle that is not a quarter turn from the datasheet's (its size cannot be compared) |
+| `pattern` | no pad number of the footprint is in the datasheet pattern |
+
+Pad shape (rect, roundrect, oval) is not compared, only its extent. With two pads a displacement shows on both by half (the pair's distance is what is wrong).
+
+**Report** (text, JSON, the `footprint_check` viewer message of docs/13): per footprint its status (`ok`, `mismatch`, `unverified`, `untrusted`), the datasheet it was
+compared with (brand, part, document, revision, page), the alignment found, and each issue with its pad, a sentence, a few words for the board and where it is.
+**Viewer:** a **Footprint check** panel lists the footprints with findings (errors first) and a click selects one, zooms onto it and lists its messages; rings on the
+footprints that differ (red) or have an untrusted reference (amber), marks and short labels on the wrong pads of the selected one; `D` toggles it.
+
+**Checked on real boards** (`bench/records/issue5/real-boards/`). These runs test the alignment, the rotation and the flip, not the datasheets: the references
+are derived from the boards themselves. (1) On nine KiCad demo boards, a reference taken from the first front instance of every library footprint was compared
+with every instance on the board: 3,144 footprints, front and back, at every rotation they had, all `ok` (the back ones aligned mirrored), none called out. (An
+earlier version of the script derived references from back instances and read oval drills as round; the check rightly reported 'mirrored' and drill errors there, which is
+what those references said.) (2) On video, CM5_MINIMA_3, vme-wren and the Jetson baseboard, the library footprints that appear on both sides: 2,257 footprints,
+all `ok`. (3) A negative control: the same references with one pad moved by 0.2 mm and another widened by 0.3 mm were called out on all 32 footprints they applied
+to on CM5_MINIMA_3 (61 position and 3 size errors). The check takes about a second on the largest of these boards (1,500 footprints).
+
+**Limits.** The references are as good as whoever made them: a typo in a record is a typo in the verdict, and a reference from a trusted brand is only trusted
+because the list says so. Only copper pads and non-plated holes are compared (not courtyard, silkscreen, paste or mask, not 3D models, not the pin functions
+of the symbol). Pads of arbitrary angle are not compared by size. Footprints are matched by part number, library id, value or designator, not by reading the
+datasheet link in a footprint's properties. Nobody has used the check on a board of their own against references made from real datasheets, and no list of
+references ships with the tool: the example is synthetic.
+
+## 44. Critical nets: JLCPCB's three routing rules (issue #24, 2026-10-14, D117)
+
+**Problem.** JLCPCB's advice on routing is three rules: *route the critical signals first, keep vias few, keep a solid reference plane and never cross a split*. TraceMaker had the pieces
+(`--first-nets`, `--via-cost-mm` and the via clean-up, `return-paths` after the route in §42, the component rules' roles in doc 15) but nothing joined them: the user had to name the
+critical nets, vias cost the same for every net, and the router neither avoided nor reported a track over a plane void. This adds the three rules as options, off by default.
+
+```
+tracemaker route BOARD -o OUT --si-rules                       # the three rules together, with the settings below
+tracemaker route BOARD -o OUT [--critical-auto] [--critical-nets 'CLK*,USB_D*'] [--critical-first]
+                              [--critical-via-cost 3] [--critical-via-max 2]
+                              [--split-cost 4 | --split-hard]
+```
+
+**Which nets are critical.** `--critical-nets` names them (KiCad wildcards, tier 1). `--critical-auto` adds the nets that the component rules' roles make critical (doc 15; the table is
+`crules::critical_roles()`, every row a role that carries an impedance, differential-pair, length-match or via-limit rule in the catalogue) and the halves of differential pairs
+(`named_pairs`, tier 2):
+
+| tier | what | roles |
+|---|---|---|
+| 1 | clocks, crystals, RF lines: the signals that radiate and that nothing may disturb | crystal xin/xout, oscillator out, rf_line line, and the clocks of PCIe (refclk), MIPI, DDR3/DDR4 (ck), SDRAM, QSPI, SD/SDIO |
+| 2 | high-speed differential links | USB 2.0 dp/dm, USB 3 sstx/ssrx, Ethernet mdi_pairs and line_pairs, HDMI/DP tmds, LVDS pairs, MIPI data, PCIe tx/rx, SATA pairs, and named pairs |
+| 3 | memory and other fast parallel buses | DDR byte lanes and address/command, SDRAM data and address, QSPI data, SD/SDIO bus, Ethernet MAC bus |
+
+The detection runs on the board whatever `--component-rules` says (it reads, it does not apply rules; a `--rules-override` file is honoured). The user's `--critical-nets` are tier 1, like clocks, and win over a role; the log names the nets per tier.
+
+**1. Order (`--critical-first`).** Critical connections are routed before all others, tier by tier, shortest first within a tier, after `--first-nets` (which stay in front), and again
+after every restart. Unlike `--first-nets` this is an order only: other nets may still rip a critical net during negotiation.
+
+**2. Vias (`--critical-via-cost F`, `--critical-via-max N`).** A via costs a critical net F times as much as `--via-cost-mm` in every search, the clean-up stages included (their own
+multiplier compounds), so it takes a longer way on one layer where there is one. `--critical-via-max` is a report threshold: a critical net with more vias than N is listed with a
+warning. The vias of each critical net are counted in the report whether or not the option is given.
+
+**3. Plane splits (`--split-cost P`, `--split-hard`).** `route/ref_map.hpp` answers, for every cell of the router's lattice on a layer that has a plane next to it, whether the cell's
+centre is over the plane's copper. The reference of a layer is the adjacent layer whose zone fills cover at least 30 % of the board's bounding box (the larger if both; the fills in the file,
+refilled by the engine where there are none); a plane layer with no plane beside it (the outer plane of a two-layer board) counts its own gaps, so a net cannot hop onto the plane to cross its
+slot on the cheap. The fill is rasterised by scanline; `tests/test_critical.cpp` compares it with a point-in-region scan of the same region, cell by cell. A critical net pays P pitches
+per lattice step (`--split-cost`) over a void, or may not enter one (`--split-hard`: a net with no way round a split stays unrouted, and the report lists it as not routed). It is a cost in the search, not a
+change to the exact check of a commit. Cells within a critical net's own pad's radius plus 1 mm are never counted (the plane's antipad round a through-hole pad would otherwise close the pad in under `--split-hard`).
+Three things make it effective: the smoothing pass (`smooth_paths`) may not shortcut a critical net over more void than the path it replaces; a critical net whose first path ran over a void, or hopped layers where a dearer
+via was asked for, is searched again in a 20 mm window (`refine_critical`; A* is optimal in its window, which contains the first, and the first path is committed as it was if the refined one fails the exact check); and
+a net with no void on its first path costs nothing extra. Connections that fail never get the wider search: a window that size on a connection that cannot be routed would spend the work budget.
+
+**Report.** After the route, for the critical nets: the log (`critical nets after the route: N nets, V vias, C plane void crossings` and one line per warning), the `--json` summary
+(`critical_nets`: options, per net tier, why, vias and length added, and where the board has a plane the voids it runs over, the detour and the splits from the audit of §42 on the refilled
+board), a `critical_nets` event and each net's `return_path` event for the viewer (doc 09, doc 13). Warnings: a split crossed (no return path on that layer), a void run over, more vias than
+`--critical-via-max`. The tiers and the options are on the `tui` screen with their help text like every `route` option.
+
+**Off by default.** Without these options the route is the run it was: `tests/test_critical.cpp` and `bench/records/issue24/` show byte-identical boards on the `quick`, `planes` and
+`planes --soft-zones` tiers. `--critical-nets` alone, with no cost or order, is a report only and also changes nothing about the copper.
+
+**Measured** (`bench/records/issue24/`). Planes tier with `--soft-zones`, 4 boards with 28 critical nets (by role or pair), 3M work units, one seed; the baseline is `--critical-auto` alone (the audit on the unchanged copper). Compared on the nets
+that both runs routed, so that a net one run could not route does not count as having no crossings:
+
+| options | critical nets routed | connections routed (of 882) | common nets | vias | void crossings | splits |
+|---|---|---|---|---|---|---|
+| baseline | 25 / 28 | 807 | | | | |
+| `--critical-first` | 26 | 806 | 23 | 18 -> 20 | 62 -> 72 | 22 -> 23 |
+| `--split-cost 4` | 21 | 805 | 21 | 18 -> 16 | 57 -> 52 | 20 -> 11 |
+| `--critical-via-cost 3` | 21 | 805 | 21 | 18 -> 12 | 57 -> 47 | 20 -> 11 |
+| `--split-cost 4 --critical-via-cost 3` | 21 | 805 | 21 | 18 -> 14 | 57 -> 48 | 20 -> 11 |
+| `--critical-first --split-cost 4` | 25 | 801 | 22 | 17 -> 17 | 63 -> 68 | 21 -> 18 |
+| `--si-rules` (all three) | 27 | 799 | 24 | 19 -> 15 | 70 -> 68 | 26 -> 25 |
+
+Read as: the split cost and the via cost, without the order, roughly halve the splits crossed (20 -> 11) and cut vias; `--critical-first` by itself adds crossings, and with it the benefit of the split cost mostly goes (21 -> 18 with the split cost,
+26 -> 25 with all three), so `--si-rules`, which is all three as the issue lists them, is not the best measured combination: `--critical-auto --split-cost 4 --critical-via-cost 3` is. Variation between runs is as large as some of these
+differences: the critical nets that two of the runs fail to route (four USB pairs on StickHub) are also unrouted in a single-variant run of the baseline, so which portfolio variant wins moves the routed counts by a few nets and a few
+connections, and the clean-pass count (2 of 8) did not move at all. Without `--soft-zones` (plane fills block routing) the baseline routes 3 of the 28 critical nets and `--si-rules` 4, with the same 396 of 879 connections. Crossings count voids
+under the net including via antipads. A first version that searched a 20 mm window from the start made `--si-rules` route 3 of 147 on RoyalBlue (failing critical connections spent the work budget); the wider window is now searched
+only after a critical net's first path crossed a void or hopped layers. With all options off the quick, mid, planes and planes `--soft-zones` tiers are byte-identical to `main`.
+
+**Limits.** The tweet the issue quotes gives no numbers, and none were copied: 3 for the via multiplier and 4 pitches per step for the split cost are the values of `--si-rules`, chosen on the
+benchmark runs recorded, not derived. The cost map knows the zone fills of the file, not the antipads of vias the route adds (the audit after the route does, on a refilled board). Only the
+smoothing pass is made split-aware; the other post-passes (length tuning, pair coupling) are not. A rule's own `plane_net` parameter (doc 15 USB2-09, ETH-13) is not read: the reference of a layer
+is the adjacent layer with most copper. A plane that covers under 30 % of the board is not a reference plane. Net classes, via budgets per role and a hard cap on vias were not built (the
+report threshold is the cap).
