@@ -1,0 +1,23 @@
+# ctest --preset release -j16 on the issue-24 branch, 2026-10-14T14:58Z
+100% tests passed, 0 tests failed out of 348
+Total Test time (real) =  72.55 sec
+--- did not run:
+	341 - fixture_preparation_native (Skipped)
+--- new tests:
+  2/348 Test #313: critical: critical nets are routed before the others, tier by tier ......................................................   Passed   10.73 sec
+ 12/348 Test #307: critical: the rasterised plane equals a scan of the region, cell by cell ................................................   Passed   23.98 sec
+ 19/348 Test #310: critical: with no way round a split the net crosses it and the audit says so, or stays unrouted when that is the rule ...   Passed    4.77 sec
+ 20/348 Test #348: critical_nets_cli .......................................................................................................   Passed    5.72 sec
+ 33/348 Test #314: critical: a critical net pays more for a via and takes the longer way on one layer ......................................   Passed    1.88 sec
+ 39/348 Test #309: critical: a critical net goes round a split when there is a way, and only a critical one ................................   Passed    1.79 sec
+ 52/348 Test #311: critical: a critical net can leave a pad that sits in an antipad, even under the hard rule ..............................   Passed    0.83 sec
+ 63/348 Test  #45: viewer server: a burst of upgrades cannot overshoot the cap, and one address cannot use up the connections ..............   Passed    0.69 sec
+ 72/348 Test  #43: viewer server: the number of viewers and connections is capped ..........................................................   Passed    0.43 sec
+ 83/348 Test #312: critical: a board without a reference plane routes as it always did .....................................................   Passed    0.13 sec
+ 96/348 Test #315: critical: roles make nets critical, in tiers, and a differential pair is tier 2 .........................................   Passed    0.07 sec
+127/348 Test  #41: viewer server: a viewer other machines can reach needs its token, in the URL once and then in a cookie ..................   Passed    0.01 sec
+130/348 Test  #44: viewer server: what the review of the first version found ...............................................................   Passed    0.01 sec
+137/348 Test  #40: viewer server: by default only this machine can reach it, and a page on another site cannot read the stream .............   Passed    0.01 sec
+171/348 Test  #42: viewer server: a token of your own, a viewer without one on purpose, and tokens that are refused ........................   Passed    0.01 sec
+174/348 Test #308: critical: the reference map finds the plane a layer has next to it and the cells over its voids .........................   Passed    0.01 sec
+317/348 Test  #38: viewer server serves files, streams snapshot then deltas, shuts down ....................................................   Passed    0.01 sec

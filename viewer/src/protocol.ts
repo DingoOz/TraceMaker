@@ -109,6 +109,14 @@ export interface FootprintCheckMsg {
   }[];
 }
 
+/** The critical nets after a route with --critical-* / --si-rules (docs/13-viewer-protocol.md `critical_nets`, issue #24): per net its tier, vias added,
+ *  length added and, where the board has a reference plane, the voids of it that the net runs over. */
+export interface CriticalNetsMsg {
+  type: 'critical_nets';
+  nets: { name: string; tier: number; why: string; vias: number; length_mm: number; unrouted?: number; void_crossings?: number; detour_mm?: number; splits?: number; warnings: string[] }[];
+  totals: { nets: number; vias: number; void_crossings: number; over_via_limit: number };
+}
+
 /** Overlay grid (doc 13): row-major w*h bytes 0–255, cell size in nm, layer -1 = all layers. `scale` says how
  *  raw values became bytes ("sqrt": byte = 255·sqrt(v / max); absent: linear). */
 export interface HeatmapMsg {
@@ -140,6 +148,7 @@ export type Message =
   | HeatmapMsg
   | ReturnPathMsg
   | FootprintCheckMsg
+  | CriticalNetsMsg
   | { type: 'stage'; name: string; state: 'begin' | 'end'; detail?: string }
   | { type: 'log'; level: string; text: string }
   // Escape planning (M9): reserved corridor per dense-package pin, released when the pin is connected; dead pins.

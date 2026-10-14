@@ -1,0 +1,27 @@
+# mid: origin/main 49fbd3c -> this branch (final binary, options off), --expect-identical
+
+11 boards; routed boards byte-identical: 11/11.
+Clean pass 0 → 0; mean completion 75.9% → 75.9%; router seconds 969.0 → 1578.0.
+Route CPU time 5,046 → 6,748 s (+33.7%) at the same work.
+Byte-identical boards moved +8% to +73% in CPU time (the same work: noise, or speed).
+
+Style (informational): bends per connection 0.6834 → 0.6834; acute angles 1 → 1; stair steps 86 → 86; short segments 2567 → 2567; off angle segments 7341 → 7341; detour ratio 1.1038 → 1.1038; long detours 382 → 382.
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- Aleste-520EX_aleste: completion uses KiCad's capped unconnected list, not exact connectivity
+- CoreOne-xCORE200-Original_CoreOne: completion uses KiCad's capped unconnected list, not exact connectivity
+- KiCad-Library_Teensy_test_layout: completion uses KiCad's capped unconnected list, not exact connectivity
+- LeeChee_1800: completion uses KiCad's capped unconnected list, not exact connectivity
+- MonApollo_analog-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- decelerator4030_decelerator4030: completion uses KiCad's capped unconnected list, not exact connectivity
+- front-end-modules_LimeSDR_Sony: completion uses KiCad's capped unconnected list, not exact connectivity
+- kitspace_EEZ%20DIB%20MCU%20r1B2: completion uses KiCad's capped unconnected list, not exact connectivity
+- oskirby_logicbone: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- LeeChee_1800: before evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: after evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: before evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: after evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: before evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: after evaluated DRC errors are capped or unavailable; gate unknown

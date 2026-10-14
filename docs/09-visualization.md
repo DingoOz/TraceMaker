@@ -37,7 +37,8 @@
     included (the page also puts the token on the `/ws` URL, for a browser that refuses cookies). `--view-insecure` serves without a token, and the log says so.
   - Always: a WebSocket upgrade that names an `Origin` must come from the server's own origin. Browsers do not apply the same-origin rule to WebSockets, so without
     this a web page open in the user's browser could read the stream of a viewer on localhost. With a loopback bind and no token the `Host` header must also name
-    this machine (a page on `evil.example` whose name resolves to `127.0.0.1` would otherwise pass the origin check: DNS rebinding).
+    this machine (a page on `evil.example` whose name resolves to `127.0.0.1` would otherwise pass the origin check: DNS rebinding). A reverse proxy or port-forwarding service that puts
+    another name in `Host` is therefore refused by a loopback viewer: bind a non-loopback address and use the token instead.
   - At most 16 WebSocket viewers (counted from the upgrade, so a burst cannot overshoot; the next gets 503) and 128 open HTTP connections, at most 16 of them from one address (a host
     that opens idle sockets cannot use up the others' share before it has authenticated; many addresses together still can: this is not a defence against flooding). The cookie is named per port
     (`tm_token_<port>`: cookies ignore ports). A `Host` that is not a name or address with a numeric port is refused. Answers carry `Referrer-Policy: no-referrer`,
@@ -213,6 +214,11 @@ untrusted reference (amber), and for the selected one a cross on each wrong pad 
 `missing pad 4`). The **Footprint check** panel lists the footprints with findings (errors first, the selected one scrolled into view); a click selects one, zooms
 onto it and prints the full sentences and the datasheet it was compared with (brand, part, document, revision, page). `D` toggles the overlay. Served by
 `footprint-check ... --view`, and by `route --footprint-refs ... --footprint-warn-only --view`.
+
+The viewer lists the critical nets of doc 05 §44 from the `critical_nets` message after a route: a **Critical nets** panel with a tier chip (T1 clocks, crystals and RF; T2 high-speed
+links; T3 memory and fast buses), the vias the route added to each net and the voids of its reference plane it runs over; amber where a rule was missed (a split crossed, vias over
+`--critical-via-max`), with the reason in the row's tooltip and below the list when a net is selected. A click on a net whose `return_path` message was sent (every critical net on a board
+with a plane) shows its return path in the overlay of doc 09 above.
 
 ### Running it
 

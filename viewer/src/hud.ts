@@ -70,6 +70,7 @@ export class Hud {
   readonly tooltip = h('div', 'tooltip');
   private rpBox = h('section', 'section hidden');
   private fcBox = h('section', 'section hidden');
+  private cnBox = h('section', 'section hidden');
   private stallBox = h('section', 'section stall hidden');
   private banner = h('div', 'panel stall-banner hidden');
   private fatalBox: HTMLElement | null = null;
@@ -83,6 +84,7 @@ export class Hud {
   onStallPick: (index: number) => void = () => {};
   onReturnPath: (name: string | null) => void = () => {};
   onFootprintCheck: (ref: string | null) => void = () => {};
+  onCriticalNet: (name: string) => void = () => {};
 
   constructor(parent: HTMLElement) {
     this.root = h('div', 'hud');
@@ -136,7 +138,7 @@ export class Hud {
     logHead.append(h('div', 'label', 'Events'), clear);
     logSec.append(logHead, this.log);
 
-    side.append(this.stallBox, prog, this.fcBox, this.rpBox, layers, logSec);
+    side.append(this.stallBox, prog, this.cnBox, this.fcBox, this.rpBox, layers, logSec);
     this.root.appendChild(side);
 
     // Status bar.
@@ -170,6 +172,38 @@ export class Hud {
       list.appendChild(row);
     }
     this.rpBox.appendChild(list);
+  }
+
+  /** The critical nets after a route (issue #24): tier chip, name, vias; amber when a rule was missed (a split crossed, vias over the limit). A click on a net
+   *  whose return path was sent shows it. */
+  setCriticalNets(
+    v: { summary: string; rows: { name: string; tier: number; why: string; vias: number; crossings: number; unrouted: number; warnings: string[] }[] } | null,
+    selected: string | null,
+  ) {
+    this.cnBox.textContent = '';
+    this.cnBox.classList.toggle('hidden', !v);
+    if (!v) return;
+    const head = h('div', 'section-head');
+    head.append(h('div', 'label', 'Critical nets'), h('div', 'hint', 'tier 1 clocks · 2 links · 3 buses'));
+    this.cnBox.append(head, h('div', 'hint', v.summary));
+    const list = h('div', 'stall-list');
+    for (const r of v.rows) {
+      const row = h('div', `stall-row${r.name === selected ? ' on' : ''}`);
+      const chip = h('span', 'chip-verdict', `T${r.tier}`);
+      chip.style.background = r.warnings.length ? '#f2b84b' : '#5fd38d';
+      chip.style.whiteSpace = 'nowrap';
+      row.append(chip, h('span', 'stall-net', r.name), h('span', 'muted mono', r.unrouted ? `${r.unrouted} not routed` : `${r.vias} via${r.vias === 1 ? '' : 's'}${r.crossings ? ` · ${r.crossings} void${r.crossings === 1 ? '' : 's'}` : ''}`));
+      row.title = [r.why, ...r.warnings].join('\n');
+      row.onclick = () => this.onCriticalNet(r.name);
+      list.appendChild(row);
+      if (r.name === selected) queueMicrotask(() => row.scrollIntoView({ block: 'nearest' }));
+    }
+    this.cnBox.appendChild(list);
+    const sel = v.rows.find((r) => r.name === selected);
+    if (sel) {
+      this.cnBox.appendChild(h('div', 'hint', sel.why));
+      for (const w of sel.warnings) this.cnBox.appendChild(h('div', 'stall-label', w));
+    }
   }
 
   /** The footprint-check list (issue #5): one row per footprint with something to say, errors first; a click selects it (and again deselects) and lists its issues. */

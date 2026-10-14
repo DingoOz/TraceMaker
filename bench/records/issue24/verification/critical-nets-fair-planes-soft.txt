@@ -1,0 +1,9 @@
+baseline i24g-planes-soft-report: 25 of 28 critical nets routed, 807 of 882 connections
+| variant | critical nets routed | connections routed | common nets | vias (base -> variant) | void crossings | splits |
+|---|---|---|---|---|---|---|
+| i24h-planes-soft-order | 26 / 28 | 806 / 882 | 23 | 18 -> 20 | 62 -> 72 | 22 -> 23 |
+| i24h-planes-soft-split | 21 / 28 | 805 / 882 | 21 | 18 -> 16 | 57 -> 52 | 20 -> 11 |
+| i24h-planes-soft-via | 21 / 28 | 805 / 882 | 21 | 18 -> 12 | 57 -> 47 | 20 -> 11 |
+| i24i-planes-soft-order-split | 25 / 28 | 801 / 882 | 22 | 17 -> 17 | 63 -> 68 | 21 -> 18 |
+| i24i-planes-soft-split-via | 21 / 28 | 805 / 882 | 21 | 18 -> 14 | 57 -> 48 | 20 -> 11 |
+| i24g-planes-soft-si | 27 / 28 | 799 / 882 | 24 | 19 -> 15 | 70 -> 68 | 26 -> 25 |

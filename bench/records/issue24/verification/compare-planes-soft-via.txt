@@ -1,0 +1,28 @@
+# i24g-planes-soft -> i24h-planes-soft-via (bench/compare_runs.py)
+
+8 boards; routed boards byte-identical: 5/8.
+Clean pass 2 → 2; mean completion 91.3% → 91.1%; router seconds 176.0 → 200.0.
+Route CPU time 675 → 763 s (+13.0%) at the same work.
+Byte-identical boards moved +0% to +5% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 103 → 103 / 147 | 61.0% → 57.5% | no → no | – | 42.2 → 46.6 | 138.1 → 162.7 | differs |
+| StickHub | 126 → 124 / 128 | 93.8% → 95.3% | no → no | {'solder_mask_bridge': 13} | 21.8 → 35.5 | 77.8 → 125.7 | differs |
+| plane_smd | 48 → 48 / 49 | 97.9% → 97.9% | no → no | – | 19.5 → 20.5 | 82.3 → 85.2 | differs |
+
+Style (informational): bends per connection 0.8687 → 0.8457; acute angles 0 → 0; stair steps 10 → 10; short segments 144 → 133; off angle segments 307 → 294; detour ratio 1.0812 → 1.0745; long detours 24 → 28.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 0.6064 → 0.6809 | 0 → 0 | 0 → 0 | 53 → 56 | 57 → 57 | 1.1028 → 1.1767 | 4 → 7 |
+| StickHub | 0.637 → 0.4697 | 0 → 0 | 1 → 1 | 33 → 22 | 103 → 99 | 1.302 → 1.1286 | 9 → 10 |
+| plane_smd | 0.5467 → 0.5352 | 0 → 0 | 0 → 0 | 27 → 24 | 38 → 29 | 1.1003 → 1.0993 | 1 → 1 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- route CPU time +13.0% in total
+- RoyalBlue54L-Feather: route CPU time 138.1 → 162.7 s (+18%)
+- StickHub: route CPU time 77.8 → 125.7 s (+62%)
+
+Gates: FAIL
+- RoyalBlue54L-Feather: worse (clean False -> False, completion 61.0% -> 57.5%)

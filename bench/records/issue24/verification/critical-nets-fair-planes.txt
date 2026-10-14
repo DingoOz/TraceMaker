@@ -1,0 +1,4 @@
+baseline i24h-planes-report: 3 of 28 critical nets routed, 396 of 879 connections
+| variant | critical nets routed | connections routed | common nets | vias (base -> variant) | void crossings | splits |
+|---|---|---|---|---|---|---|
+| i24h-planes-si | 4 / 28 | 396 / 879 | 3 | 0 -> 0 | 2 -> 2 | 0 -> 0 |

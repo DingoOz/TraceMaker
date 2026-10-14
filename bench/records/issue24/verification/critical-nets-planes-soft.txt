@@ -1,0 +1,7 @@
+| run | boards with critical nets | critical nets | routed | vias | void crossings | splits | routed connections (all nets) |
+|---|---|---|---|---|---|---|---|
+| i24g-planes-soft-report | 4 | 28 | 25 | 22 | 75 | 27 | 807 / 882 |
+| i24h-planes-soft-order | 4 | 28 | 26 | 22 | 80 | 23 | 806 / 882 |
+| i24h-planes-soft-split | 4 | 28 | 21 | 16 | 52 | 11 | 805 / 882 |
+| i24h-planes-soft-via | 4 | 28 | 21 | 12 | 47 | 11 | 805 / 882 |
+| i24g-planes-soft-si | 4 | 28 | 27 | 17 | 76 | 25 | 799 / 882 |

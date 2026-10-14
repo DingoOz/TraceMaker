@@ -1,0 +1,30 @@
+# i24g-planes-soft -> i24i-planes-soft-split-via
+
+8 boards; routed boards byte-identical: 4/8.
+Clean pass 2 → 2; mean completion 91.3% → 91.1%; router seconds 176.0 → 195.4.
+Route CPU time 675 → 755 s (+11.8%) at the same work.
+Byte-identical boards moved +1% to +3% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 103 → 103 / 147 | 61.0% → 57.5% | no → no | – | 42.2 → 45.5 | 138.1 → 158.7 | differs |
+| StickHub | 126 → 124 / 128 | 93.8% → 95.3% | no → no | {'solder_mask_bridge': 12} | 21.8 → 34.6 | 77.8 → 127.8 | differs |
+| interf_u | 140 → 140 / 164 | 84.2% → 84.2% | no → no | {'starved_thermal': 6} | 25.1 → 25.5 | 116.1 → 119.6 | differs |
+| plane_smd | 48 → 48 / 49 | 97.9% → 97.9% | no → no | – | 19.5 → 19.8 | 82.3 → 81.7 | differs |
+
+Style (informational): bends per connection 0.8687 → 0.8418; acute angles 0 → 0; stair steps 10 → 9; short segments 144 → 135; off angle segments 307 → 296; detour ratio 1.0812 → 1.0736; long detours 24 → 27.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 0.6064 → 0.6809 | 0 → 0 | 0 → 0 | 53 → 56 | 57 → 57 | 1.1028 → 1.1767 | 4 → 7 |
+| StickHub | 0.637 → 0.4566 | 0 → 0 | 1 → 0 | 33 → 24 | 103 → 100 | 1.302 → 1.1101 | 9 → 9 |
+| interf_u | 1.4439 → 1.4365 | 0 → 0 | 9 → 9 | 7 → 7 | 33 → 34 | 1.0809 → 1.0809 | 4 → 4 |
+| plane_smd | 0.5467 → 0.5352 | 0 → 0 | 0 → 0 | 27 → 24 | 38 → 29 | 1.1003 → 1.0993 | 1 → 1 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- route CPU time +11.8% in total
+- RoyalBlue54L-Feather: route CPU time 138.1 → 158.7 s (+15%)
+- StickHub: route CPU time 77.8 → 127.8 s (+64%)
+
+Gates: FAIL
+- RoyalBlue54L-Feather: worse (clean False -> False, completion 61.0% -> 57.5%)

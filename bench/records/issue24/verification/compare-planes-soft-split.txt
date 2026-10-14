@@ -1,0 +1,20 @@
+# i24g-planes-soft -> i24h-planes-soft-split (bench/compare_runs.py)
+
+8 boards; routed boards byte-identical: 6/8.
+Clean pass 2 → 2; mean completion 91.3% → 91.5%; router seconds 176.0 → 183.2.
+Route CPU time 675 → 681 s (+0.9%) at the same work.
+Byte-identical boards moved -2% to +2% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| StickHub | 126 → 124 / 128 | 93.8% → 95.3% | no → no | {'solder_mask_bridge': 13} | 21.8 → 28.2 | 77.8 → 84.8 | differs |
+| interf_u | 140 → 140 / 164 | 84.2% → 84.2% | no → no | {'starved_thermal': 6} | 25.1 → 25.2 | 116.1 → 114.9 | differs |
+
+Style (informational): bends per connection 0.8687 → 0.8302; acute angles 0 → 0; stair steps 10 → 9; short segments 144 → 135; off angle segments 307 → 305; detour ratio 1.0812 → 1.0704; long detours 24 → 24.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| StickHub | 0.637 → 0.4566 | 0 → 0 | 1 → 0 | 33 → 24 | 103 → 100 | 1.302 → 1.1101 | 9 → 9 |
+| interf_u | 1.4439 → 1.4365 | 0 → 0 | 9 → 9 | 7 → 7 | 33 → 34 | 1.0809 → 1.0809 | 4 → 4 |
+
+Gates: pass

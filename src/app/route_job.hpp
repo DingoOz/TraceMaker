@@ -29,6 +29,18 @@ struct RouteJob {
   // Reference-return audit of selected nets on the routed board (issue #7, doc 05 §42): off unless a selector is given. Read-only; the
   // report goes to the log and the summary, and each net's return path to the viewer.
   analysis::ReturnPathOptions return_paths;
+  // Critical nets (issue #24, doc 05 §44, D117): route critical signals first, give them dearer vias, keep them over solid reference copper. Off
+  // unless asked; `si_rules` turns the three on with the settings below unless they were given.
+  std::vector<std::string> critical_nets;  // KiCad wildcards: nets that are critical whatever their role (tier 1)
+  bool critical_auto = false;              // also the nets the component rules' roles make critical, and differential pairs
+  bool critical_first = false;             // route them before all other nets, tier by tier
+  double critical_via_mult = 1;            // a via costs them this many times as much
+  bool critical_via_given = false;         // set by the command line: with si_rules, a value that was given is kept (else x3)
+  int critical_via_max = 0;                // warn when a critical net has more vias than this (0 = no limit)
+  double split_cost = 0;                   // pitches per lattice step over a void of the reference plane
+  bool split_cost_given = false;           // as critical_via_given (else +4 with si_rules)
+  bool split_hard = false;                 // such cells are closed to critical nets
+  bool si_rules = false;
   // --footprint-refs (issue #5, doc 05 §43): every footprint is checked against the datasheet land patterns of a reference library before the first track is
   // routed; a discrepancy is an error and stops the job unless footprint_warn_only.
   std::string footprint_refs;     // the library: a directory or a JSON file; empty = no check

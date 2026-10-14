@@ -194,6 +194,7 @@ function processMessages(now: number) {
   applyMessages(stall.consume(raw, now >= scene.quietUntil), now);
   if (returnPathsDirty) refreshReturnPaths();
   if (footprintCheckDirty) refreshFootprintCheck();
+  if (criticalNetsDirty) refreshCriticalNets();
   if (stall.latched && !wasLatched) onStallLatched();
   else if (stall.latched) refreshStall();
 }
@@ -221,6 +222,8 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
         scene.quietUntil = now + 0.75; // the server replays state after the snapshot
         rpSelected = null;
         fcSelected = null;
+        cnSelected = null;
+        criticalNetsDirty = true;
         returnPathsDirty = true;
         footprintCheckDirty = true;
         view.visible = scene.layerNames.map(() => true);
@@ -247,6 +250,9 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
         break;
       case 'return_path':
         returnPathsDirty = true;
+        break;
+      case 'critical_nets':
+        criticalNetsDirty = true;
         break;
       case 'footprint_check':
         footprintCheckDirty = true;
@@ -284,6 +290,23 @@ hud.onReturnPath = (name) => {
   const box = p ? pathBox(p) : null;
   if (box) cam.fit([box[0] - 1, box[1] - 1, box[2] + 1, box[3] + 1], 0.1, PANEL_PX); // zoom onto the net
   refreshReturnPaths();
+};
+
+// ------------------------------------------------------------------------------------------------ critical nets
+// The critical nets after a route (issue #24): the list, and a click shows the net's return path over the plane when it was sent.
+let criticalNetsDirty = false;
+let cnSelected: string | null = null;
+function refreshCriticalNets() {
+  const cn = scene.criticalNets;
+  criticalNetsDirty = false;
+  if (!cn || !cn.nets.length) { hud.setCriticalNets(null, null); return; }
+  const rows = cn.nets.map((n) => ({ name: n.name, tier: n.tier, why: n.why, vias: n.vias, crossings: n.void_crossings ?? 0, unrouted: n.unrouted ?? 0, warnings: n.warnings }));
+  hud.setCriticalNets({ summary: `${cn.totals.nets} nets, ${cn.totals.vias} vias, ${cn.totals.void_crossings} plane void crossings`, rows }, cnSelected);
+}
+hud.onCriticalNet = (name) => {
+  cnSelected = cnSelected === name ? null : name;
+  if (cnSelected && scene.returnPaths.has(cnSelected)) hud.onReturnPath(cnSelected); // the overlay and the zoom of the return-path list
+  refreshCriticalNets();
 };
 
 // ------------------------------------------------------------------------------------------------ footprint check
