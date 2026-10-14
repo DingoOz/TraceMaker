@@ -81,6 +81,9 @@ set_tests_properties(after_route_passes PROPERTIES LABELS "route;integration" TI
 # copper, every connection routed or reported; byte-identical conversion; KiCad's ratsnest when kicad-cli is there.
 add_test(NAME srj_roundtrip COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/srj_roundtrip.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/srj_roundtrip)
 set_tests_properties(srj_roundtrip PROPERTIES LABELS "route;integration" TIMEOUT 600)
+# Native defaults and project overrides on generated boards; no downloaded fixtures.
+add_test(NAME no_project_defaults COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/no_project_defaults.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/no_project_defaults)
+set_tests_properties(no_project_defaults PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;kicad;integration" TIMEOUT 600)
 add_test(NAME fixture_preparation COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/fixture_preparation.py)
 set_tests_properties(fixture_preparation PROPERTIES LABELS "integration" TIMEOUT 60)
 add_test(NAME fixture_preparation_native COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/fixture_preparation_native.py)
