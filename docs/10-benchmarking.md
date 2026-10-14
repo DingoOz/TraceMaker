@@ -44,7 +44,7 @@ last; failure removes only generated unrouted board/rule/report artifacts, so an
 cannot masquerade as the requested input. Missing current rules do not reuse a previous fixture's rules.
 DRC findings are retained as evidence, not treated as a requirement that the unrouted input be clean.
 
-**Tools and reproducibility (D102).** Host Python 3.8+ and its standard library suffice; conversion additionally
+**Tools and reproducibility (D107).** Host Python 3.8+ and its standard library suffice; conversion additionally
 needs KiCad 10's `pcbnew` Python bindings, with the exact major.minor.patch version of the selected CLI.
 `KICAD_CLI` and `KICAD_PYTHON` select executable paths (not shell command strings). Without overrides,
 preparation finds `kicad-cli` on PATH, falling back to `scripts/kicad-cli`; the repository ships an executable
