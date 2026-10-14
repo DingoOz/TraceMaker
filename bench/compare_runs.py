@@ -79,12 +79,17 @@ def main() -> int:
         if "clean" not in b or "clean" not in f:
             failures.append(f"{name}: judge failed ({'before' if 'clean' not in b else 'after'})")
             continue
+        for label, result in (("before", b), ("after", f)):
+            if result.get("error_gate") == "unknown" or result.get("place_error_gate") == "unknown":
+                failures.append(f"{name}: {label} evaluated DRC errors are capped or unavailable; gate unknown")
         worse = (b["clean"] and not f["clean"]) or f["completion"] < b["completion"]
         added = f["added_errors"] if b["clean"] and f["added_errors"] else {}
         if worse:
             failures.append(f"{name}: worse (clean {b['clean']} -> {f['clean']}, completion {b['completion']:.1%} -> {f['completion']:.1%})")
         if added:
             failures.append(f"{name}: added DRC errors on a board clean before: {added}")
+        if b.get("connectivity_capped") or f.get("connectivity_capped"):
+            notes.append(f"{name}: completion uses KiCad's capped unconnected list, not exact connectivity")
         if not same and a.expect_identical:
             failures.append(f"{name}: routed board differs")
         dc = cpu_change(b, f)
@@ -148,7 +153,7 @@ def main() -> int:
     if style_rows:
         out += ["", "| Board | " + " | ".join(k.replace("_", " ").capitalize() for k in STYLE_KEYS) + " |", "|---|" + "---|" * len(STYLE_KEYS)] + style_rows
     if notes:
-        out += ["", "CPU time at equal work, beyond what the byte-identical boards show as noise (not a gate; check speed at equal wall time, doc 10 §5):"] + [f"- {x}" for x in notes]
+        out += ["", "Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):"] + [f"- {x}" for x in notes]
     out += ["", "Gates: " + ("pass" if not failures else "FAIL")] + [f"- {x}" for x in failures]
     text = "\n".join(out) + "\n"
     print(text, end="")
