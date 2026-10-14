@@ -227,7 +227,8 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
   not apply or that slow it, planes, thermal reliefs, teardrops, via sizes, pair names and dense-package
   escape, with a preflight script.
 - `tracemaker-route` chooses route options, routes, and signs off with KiCad's refilled DRC under the board's
-  own project rules.
+  own project rules. When connections are left it says what to try: more search, `--relax`, the stuck report
+  and, last, an advice file the agent writes itself (`docs/17-llm-advisor.md`; the measured gain so far is none).
 
 </details>
 

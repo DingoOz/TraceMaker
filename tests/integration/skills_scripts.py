@@ -13,7 +13,9 @@ people's coding agents, which act on what the scripts print. Checked here, witho
 - a board whose net and rule names hold line breaks, fenced blocks and a differential pair: every finding stays on
   one line, the report has exactly one `sh` block, the rule the engine drops is a `block`, the pair is found;
 - the sign-off's verdicts and exit codes against a stand-in kicad-cli (0 CLEAN, 1 INCOMPLETE, 2 ILLEGAL, 3 for
-  any failure of the tool itself), and that both boards are judged beside a copy of the input's project.
+  any failure of the tool itself), and that both boards are judged beside a copy of the input's project;
+- every `--option` the skills' texts name is one the engine's commands, the two scripts or kicad-cli have: an option
+  that is renamed or dropped in the engine must not stay in advice that agents follow.
 
 The parts that need the engine are skipped when the binary is absent; the rest always runs.
 """
@@ -21,6 +23,7 @@ import ast
 import json
 import os
 import pathlib
+import re
 import shutil
 import stat
 import subprocess
@@ -58,6 +61,31 @@ def check(ok, what):
         sys.exit(1)
 
 
+# kicad-cli's own options, as the skills use them (the engine cannot vouch for these).
+KICAD_CLI_OPTIONS = {"--refill-zones", "--save-board", "--format", "--severity-all", "--all-track-errors", "--exit-code-violations",
+                     "--schematic-parity"}
+ENGINE_COMMANDS = ("route", "escape", "drc", "advice-check", "return-paths", "footprint-check")
+
+
+def options_of(argv):
+    p = subprocess.run(argv, capture_output=True, text=True, timeout=60)
+    check(p.returncode == 0, f"{' '.join(map(str, argv))} exit {p.returncode}")
+    return set(re.findall(r"--[a-z][a-z0-9-]*", p.stdout + p.stderr))
+
+
+def skills_name_real_options(tm):
+    known = set(KICAD_CLI_OPTIONS)
+    for command in ENGINE_COMMANDS:
+        known |= options_of([str(tm), command, "--help"])
+    for script in (PREFLIGHT, SIGNOFF):
+        known |= options_of([sys.executable, str(script), "--help"])
+    texts = sorted((ROOT / "skills").rglob("*.md"))
+    check(len(texts) >= 5, f"the skills' texts were found ({len(texts)})")
+    for text in texts:
+        unknown = sorted(set(re.findall(r"--[a-z][a-z0-9-]*", text.read_text())) - known)
+        check(not unknown, f"{text.relative_to(ROOT)} names options no command has: {' '.join(unknown)}")
+
+
 def preflight(board, tm, report):
     p = subprocess.run([sys.executable, str(PREFLIGHT), str(board), "--tracemaker", str(tm), "--json", str(report)],
                        capture_output=True, text=True, timeout=600)
@@ -83,6 +111,9 @@ def main():
         command = report["recommended_command"]
         check(" --soft-zones --keep-vias-off-pads " in command and command.endswith(" --work 1000000 --time 3600"), command)
         check(("escape" in report) == (engine == tm), "escape analysis runs exactly when the engine is found")
+
+    if tm.is_file():
+        skills_name_real_options(tm)
 
     # Hostile text: a net name and a rule name with line breaks and a fenced block; two nets renamed into a pair.
     hostile = work / "hostile board"
