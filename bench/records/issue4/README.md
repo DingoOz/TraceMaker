@@ -18,7 +18,7 @@ Issue: the viewer bound `0.0.0.0:8766` with no authentication (the design doc pr
 
 ## What was checked (`verification/`, `e2e/`)
 
-- `verification/ctest-release.txt`: the full suite, 336 of 336 pass; 4 new server test cases (`[security]`): the loopback default and the Host and Origin checks, the token and cookie flow (page, files and
+- `verification/ctest-release.txt`: the full suite as it stood at the first commit, 336 of 336 pass (the review then added 2 cases: 15 server cases in all); 6 new server test cases (`[security]`): the loopback default and the Host and Origin checks, the token and cookie flow (page, files and
   stream; wrong and wrong-length tokens; a token does not excuse a foreign Origin), a token of one's own / `allow_open` / refused tokens, the client and connection caps.
 - `verification/sanitizers.txt`: the server tests (15 cases) under ASan + UBSan and TSan, on the final code.
 - `e2e/e2e-output.txt`, `e2e/viewer-auth-no-token.png`, `viewer-auth-with-token.png`: headless Chromium against live viewers. A viewer on `0.0.0.0`: the page without the token is a 401
