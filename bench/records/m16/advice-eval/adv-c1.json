@@ -1,0 +1,83 @@
+{
+ "summary": {
+  "set": "srj20-m15fail4",
+  "half": "even",
+  "boards": 8,
+  "work": 20000000,
+  "variants": 8,
+  "advisor": "",
+  "plain_routed": 431,
+  "final_routed": 431,
+  "better": 0,
+  "worse": 0,
+  "complete_plain": 0,
+  "complete_final": 0,
+  "advisor_failed": 0
+ },
+ "rows": [
+  {
+   "board": "sample031",
+   "seconds": 223.9,
+   "exit": 3,
+   "connections": 65,
+   "routed": 57,
+   "plain": 57
+  },
+  {
+   "board": "sample054",
+   "seconds": 136.5,
+   "exit": 3,
+   "connections": 61,
+   "routed": 55,
+   "plain": 55
+  },
+  {
+   "board": "sample094",
+   "seconds": 169.4,
+   "exit": 3,
+   "connections": 65,
+   "routed": 56,
+   "plain": 56
+  },
+  {
+   "board": "sample100",
+   "seconds": 152.4,
+   "exit": 3,
+   "connections": 52,
+   "routed": 47,
+   "plain": 47
+  },
+  {
+   "board": "sample117",
+   "seconds": 159.2,
+   "exit": 3,
+   "connections": 61,
+   "routed": 53,
+   "plain": 53
+  },
+  {
+   "board": "sample119",
+   "seconds": 161.4,
+   "exit": 3,
+   "connections": 58,
+   "routed": 55,
+   "plain": 55
+  },
+  {
+   "board": "sample142",
+   "seconds": 160.5,
+   "exit": 3,
+   "connections": 69,
+   "routed": 56,
+   "plain": 56
+  },
+  {
+   "board": "sample174",
+   "seconds": 150.7,
+   "exit": 3,
+   "connections": 58,
+   "routed": 52,
+   "plain": 52
+  }
+ ]
+}

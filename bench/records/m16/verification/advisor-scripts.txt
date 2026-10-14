@@ -1,0 +1,18 @@
+# python3 advisors/test_advisors.py (reference advisors against fake servers)
+test_a_long_report_is_trimmed_to_the_shortest_connections (__main__.AdvisorTests.test_a_long_report_is_trimmed_to_the_shortest_connections) ... ok
+test_a_remote_endpoint_is_refused_unless_allowed (__main__.AdvisorTests.test_a_remote_endpoint_is_refused_unless_allowed) ... ok
+test_anthropic (__main__.AdvisorTests.test_anthropic) ... ok
+test_anthropic_needs_a_key (__main__.AdvisorTests.test_anthropic_needs_a_key) ... ok
+test_dry_run_sends_nothing (__main__.AdvisorTests.test_dry_run_sends_nothing) ... ok
+test_not_a_report (__main__.AdvisorTests.test_not_a_report) ... ok
+test_one_retry_with_the_problems (__main__.AdvisorTests.test_one_retry_with_the_problems) ... ok
+test_openai_compatible (__main__.AdvisorTests.test_openai_compatible) ... ok
+test_server_error_is_a_failure_not_a_retry (__main__.AdvisorTests.test_server_error_is_a_failure_not_a_retry) ... ok
+test_two_bad_answers_is_a_failure (__main__.AdvisorTests.test_two_bad_answers_is_a_failure) ... ok
+test_mixed (__main__.HeuristicTests.test_mixed) ... ok
+test_strategies (__main__.HeuristicTests.test_strategies) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.800s
+
+OK

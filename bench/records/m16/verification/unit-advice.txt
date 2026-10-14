@@ -1,0 +1,24 @@
+# unit tests tagged [advice] (tests/test_advice.cpp), release preset, 2026-10-14T07:03Z
+Matching test cases:
+  advice: a full file is read, and nothing it does not understand is
+      [advice]
+  advice: names are checked against the board, with hints
+      [advice]
+  advice: hints become router options; regions become a rule area and disallow
+  rules
+      [advice]
+  advice: a region reserved for one net keeps the others out, and the others
+  route around it
+      [advice][route]
+  advice: the portfolio adds advised variants after the others and never does
+  worse
+      [advice][route]
+  advice: the order of results is the portfolio's, and a tie is not better
+      [advice][route]
+  stuck report: names what failed, where, and why; redaction hides the board's
+  names
+      [advice][route]
+  advisor: a process is run with a time limit; whatever it does, the answer is
+searches: 1 ok (77 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+All tests passed (187 assertions in 8 test cases)

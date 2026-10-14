@@ -1,0 +1,13 @@
+# KiCad 10.0.6 DRC of advised boards (final design, advice_eval runs adv2-a1 and adv2-b1): router-introduced errors = violations that involve a track, via or arc
+sample031 adv2a1 router-introduced errors: 0 {} unconnected: 8
+sample054 adv2a1 router-introduced errors: 0 {} unconnected: 5
+sample094 adv2a1 router-introduced errors: 0 {} unconnected: 10
+sample117 adv2a1 router-introduced errors: 0 {} unconnected: 8
+sample037 adv2b1 router-introduced errors: 0 {} unconnected: 7
+
+# the first design's boards (advised copies; from the first, later invalidated advice_eval batch, but the router output is real): same check
+sample054 (first design) router-introduced errors: 0 {} unconnected: 5
+sample094 (first design) router-introduced errors: 0 {} unconnected: 10
+sample174 (first design) router-introduced errors: 0 {} unconnected: 6
+sample031 (first design) router-introduced errors: 0 {} unconnected: 8
+sample100 (first design) router-introduced errors: 0 {} unconnected: 5

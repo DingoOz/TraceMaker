@@ -1,0 +1,326 @@
+{
+  "note": "heuristic advisor, strategy corridor",
+  "regions": [
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_028",
+      "polygon": [
+        [
+          0.092,
+          -1.131
+        ],
+        [
+          -8.722,
+          1.19
+        ],
+        [
+          -8.467,
+          2.157
+        ],
+        [
+          0.347,
+          -0.164
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_028"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_051",
+      "polygon": [
+        [
+          -0.31,
+          -2.483
+        ],
+        [
+          3.003,
+          8.741
+        ],
+        [
+          3.962,
+          8.458
+        ],
+        [
+          0.649,
+          -2.766
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_051"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_044",
+      "polygon": [
+        [
+          2.832,
+          2.511
+        ],
+        [
+          -8.431,
+          -2.063
+        ],
+        [
+          -8.807,
+          -1.137
+        ],
+        [
+          2.456,
+          3.437
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_044"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_021",
+      "polygon": [
+        [
+          2.632,
+          2.454
+        ],
+        [
+          -2.047,
+          -8.813
+        ],
+        [
+          -2.971,
+          -8.429
+        ],
+        [
+          1.708,
+          2.838
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_021"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_033",
+      "polygon": [
+        [
+          3.544,
+          3.299
+        ],
+        [
+          0.627,
+          -8.71
+        ],
+        [
+          -0.344,
+          -8.474
+        ],
+        [
+          2.573,
+          3.535
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_033"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_034",
+      "polygon": [
+        [
+          -3.535,
+          -2.573
+        ],
+        [
+          8.474,
+          0.344
+        ],
+        [
+          8.71,
+          -0.627
+        ],
+        [
+          -3.299,
+          -3.544
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_034"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_017",
+      "polygon": [
+        [
+          0.322,
+          3.288
+        ],
+        [
+          -3.01,
+          -8.73
+        ],
+        [
+          -3.974,
+          -8.463
+        ],
+        [
+          -0.642,
+          3.555
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_017"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_004",
+      "polygon": [
+        [
+          0.819,
+          -1.603
+        ],
+        [
+          -9.031,
+          6.536
+        ],
+        [
+          -8.394,
+          7.307
+        ],
+        [
+          1.456,
+          -0.832
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_004"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_061",
+      "polygon": [
+        [
+          -3.221,
+          0.745
+        ],
+        [
+          6.304,
+          -8.399
+        ],
+        [
+          5.612,
+          -9.12
+        ],
+        [
+          -3.913,
+          0.024
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_061"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_007",
+      "polygon": [
+        [
+          0.861,
+          -3.746
+        ],
+        [
+          -6.507,
+          8.403
+        ],
+        [
+          -5.652,
+          8.921
+        ],
+        [
+          1.716,
+          -3.228
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_007"
+      ],
+      "tracks": true,
+      "vias": false
+    },
+    {
+      "layers": [
+        "F.Cu"
+      ],
+      "name": "strip bga_conn_062",
+      "polygon": [
+        [
+          -3.221,
+          3.251
+        ],
+        [
+          8.984,
+          -5.634
+        ],
+        [
+          8.396,
+          -6.442
+        ],
+        [
+          -3.809,
+          2.443
+        ]
+      ],
+      "reserve_for": [
+        "bga_conn_062"
+      ],
+      "tracks": true,
+      "vias": false
+    }
+  ],
+  "variants": 4,
+  "version": 1
+}

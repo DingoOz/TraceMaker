@@ -1,0 +1,54 @@
+{
+  "first_nets": [
+    "bga_conn_049",
+    "bga_conn_027",
+    "bga_conn_015",
+    "bga_conn_037",
+    "bga_conn_003",
+    "bga_conn_010",
+    "bga_conn_005",
+    "bga_conn_061"
+  ],
+  "layers": {
+    "cost": {
+      "F.Cu": 1.4
+    }
+  },
+  "note": "heuristic advisor, strategy stuck-first",
+  "priority": [
+    [
+      "bga_component.53",
+      "TP049.1"
+    ],
+    [
+      "bga_component.40",
+      "TP003.1"
+    ],
+    [
+      "bga_component.26",
+      "TP027.1"
+    ],
+    [
+      "bga_component.76",
+      "TP037.1"
+    ],
+    [
+      "bga_component.25",
+      "TP015.1"
+    ],
+    [
+      "bga_component.7",
+      "TP010.1"
+    ],
+    [
+      "bga_component.87",
+      "TP005.1"
+    ],
+    [
+      "bga_component.77",
+      "TP061.1"
+    ]
+  ],
+  "variants": 4,
+  "version": 1
+}

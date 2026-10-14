@@ -1,0 +1,19 @@
+{
+  "first_nets": [
+    "bga_conn_010",
+    "bga_conn_033",
+    "bga_conn_046",
+    "bga_conn_006",
+    "bga_conn_008",
+    "bga_conn_011",
+    "bga_conn_009",
+    "bga_conn_020",
+    "bga_conn_005",
+    "bga_conn_067",
+    "bga_conn_001",
+    "bga_conn_068"
+  ],
+  "note": "heuristic advisor, strategy stuck-first",
+  "variants": 4,
+  "version": 1
+}

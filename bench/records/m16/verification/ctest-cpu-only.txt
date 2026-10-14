@@ -1,0 +1,10 @@
+# ctest --preset cpu-only -j12 (the CI configuration: no GPU), 2026-10-14T07:49Z, PATH with scripts/ for the KiCad Docker wrappers
+100% tests passed, 0 tests failed out of 291
+Total Test time (real) = 113.07 sec
+--- did not run:
+	 80 - GPU Philox fill is bit-identical to the CPU reference on every device (Skipped)
+	 82 - cost-to-go field: GPU equals CPU on random grids (Skipped)
+	 84 - cost-to-go field: thin grids, blocked targets and reused buffers match CPU (Skipped)
+	 85 - cost-to-go field: a winding corridor needing many rounds matches CPU (Skipped)
+	 86 - cost-to-go field: concurrent callers have independent state (Skipped)
+	288 - fixture_preparation_native (Skipped)
