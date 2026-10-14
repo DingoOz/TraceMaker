@@ -1,0 +1,7 @@
+# server tests under ASan + UBSan (preset asan)
+===============================================================================
+All tests passed (1038 assertions in 13 test cases)
+
+
+# server tests under ThreadSanitizer (preset tsan)
+All tests passed (1038 assertions in 13 test cases)

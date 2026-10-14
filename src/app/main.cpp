@@ -328,10 +328,23 @@ int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bo
   return ok ? 0 : 4;  // 4: a group with a skew limit is over it or not completely routed
 }
 
+// The viewer's address and who may use it (issue #4, D116): this machine only unless asked, a token when it is not.
+tmk::server::ServerOptions viewer_options(const std::string& host, int port, const std::string& token, bool insecure) {
+  tmk::server::ServerOptions so;
+  so.host = host;
+  so.port = static_cast<std::uint16_t>(port);
+  so.token = token;
+  so.allow_open = insecure;
+  return so;
+}
+void print_viewer_notice(const tmk::server::ViewerServer& server) {
+  if (const auto notice = server.notice(); !notice.empty()) std::printf("warning: %s\n", notice.c_str());
+}
+
 // `return-paths`: the reference-return audit of selected nets on a board as it is (issue #7, doc 05 §42). Read-only. Exit 4 with --strict when
 // any net has a warning. With --view the board and each net's return path are served to the live viewer until interrupted.
 int cmd_return_paths(const std::string& path, tmk::analysis::ReturnPathOptions opt, bool refill_flag, bool strict, const std::string& json_path, bool view, int view_port,
-                     const std::string& view_host) {
+                     const std::string& view_host, const std::string& view_token, bool view_insecure) {
   const auto lb = tmk::io::read_board_file(path);
   const auto rules = tmk::io::read_design_rules(path);
   if (opt.diff_pairs) {
@@ -350,13 +363,11 @@ int cmd_return_paths(const std::string& path, tmk::analysis::ReturnPathOptions o
   bool warned = false;
   for (const auto& n : rep.nets) warned = warned || !n.warnings.empty();
   if (view) {
-    tmk::server::ServerOptions so;
-    so.host = view_host;
-    so.port = static_cast<std::uint16_t>(view_port);
-    tmk::server::ViewerServer server(so);
+    tmk::server::ViewerServer server(viewer_options(view_host, view_port, view_token, view_insecure));
     server.publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(path).filename().string()));
     for (const auto& n : rep.nets) server.publish(tmk::analysis::return_path_message(lb.board, n));
     std::printf("live view: %s (Ctrl-C to quit)\n", server.url().c_str());
+    print_viewer_notice(server);
     std::fflush(stdout);
     for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
   }
@@ -367,7 +378,8 @@ int cmd_return_paths(const std::string& path, tmk::analysis::ReturnPathOptions o
 // Read-only. Exit 4 when a footprint differs from its datasheet (and, with --strict, on any warning). With --view the board and the findings are
 // served to the live viewer until interrupted.
 int cmd_footprint_check(const std::string& path, const std::string& refs, const std::string& trusted_file, bool trust_all, const tmk::analysis::FootprintCheckOptions& opt, bool all,
-                        bool strict, const std::string& json_path, bool view, int view_port, const std::string& view_host) {
+                        bool strict, const std::string& json_path, bool view, int view_port, const std::string& view_host, const std::string& view_token,
+                        bool view_insecure) {
   const auto lb = tmk::io::read_board_file(path);
   auto lib = tmk::analysis::load_references(refs, trusted_file);
   lib.trusted.trust_all = trust_all;
@@ -375,13 +387,11 @@ int cmd_footprint_check(const std::string& path, const std::string& refs, const 
   for (const auto& l : tmk::analysis::footprint_check_lines(rep, all)) std::printf("%s\n", l.c_str());
   if (!json_path.empty()) std::ofstream(json_path) << tmk::analysis::footprint_check_json(lb.board, rep).dump(1) << "\n";
   if (view) {
-    tmk::server::ServerOptions so;
-    so.host = view_host;
-    so.port = static_cast<std::uint16_t>(view_port);
-    tmk::server::ViewerServer server(so);
+    tmk::server::ViewerServer server(viewer_options(view_host, view_port, view_token, view_insecure));
     server.publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(path).filename().string()));
     server.publish(tmk::analysis::footprint_check_message(rep));
     std::printf("live view: %s (Ctrl-C to quit)\n", server.url().c_str());
+    print_viewer_notice(server);
     std::fflush(stdout);
     for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
   }
@@ -976,7 +986,11 @@ int main(int argc, char** argv) {
   route->add_option("--footprint-tol-mm", r_fp_tol, "With --footprint-refs: tolerance of pad positions, sizes and drills in millimetres (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
   route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
-  route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
+  route->add_option("--view-host", r_job.view_host,
+                    "Viewer bind address (default 127.0.0.1: this machine only; env TM_VIEW_HOST). 0.0.0.0 or a LAN address lets other machines connect, and then a token is required")
+      ->envname("TM_VIEW_HOST");
+  route->add_option("--view-token", r_job.view_token, "Token for a viewer that other machines can reach (16+ characters; default: a random one, printed in the URL)");
+  route->add_flag("--view-insecure", r_job.view_insecure, "Serve a viewer that other machines can reach WITHOUT a token (anyone who can reach the port can watch the board)");
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
   route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
@@ -1043,10 +1057,10 @@ int main(int argc, char** argv) {
   buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
   buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
   auto* rp_cmd = app.add_subcommand("return-paths", "Reference-return audit of high-speed nets: copper under each trace on its reference layer, the detour round voids, layer changes without a stitch (read-only; doc 05 §42)");
-  std::string rp_board, rp_json, rp_host = "0.0.0.0";
+  std::string rp_board, rp_json, rp_host = "127.0.0.1", rp_token;
   tmk::analysis::ReturnPathOptions rp_opt;
   std::vector<std::string> rp_refs;
-  bool rp_strict = false, rp_view = false, rp_refill = false, rp_norefill = false;
+  bool rp_strict = false, rp_view = false, rp_refill = false, rp_norefill = false, rp_insecure = false;
   int rp_port = 8766;
   rp_cmd->add_option("board", rp_board)->required()->check(CLI::ExistingFile);
   rp_cmd->add_option("--nets", rp_opt.name_patterns, "Nets to analyse, KiCad wildcards, comma separated (e.g. 'DDR*,*CLK*')")->delimiter(',');
@@ -1064,11 +1078,13 @@ int main(int argc, char** argv) {
   rp_cmd->add_flag("--strict", rp_strict, "Exit 4 when any net has a warning (a threshold or a missing stitch)");
   rp_cmd->add_flag("--view", rp_view, "Serve the board and the return paths to the live viewer (until interrupted)");
   rp_cmd->add_option("--view-port", rp_port, "Viewer port (default 8766)");
-  rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default 0.0.0.0)");
+  rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default 127.0.0.1; env TM_VIEW_HOST; another address needs a token)")->envname("TM_VIEW_HOST");
+  rp_cmd->add_option("--view-token", rp_token, "Token for a viewer other machines can reach (16+ characters; default a random one)");
+  rp_cmd->add_flag("--view-insecure", rp_insecure, "A viewer other machines can reach, without a token");
   auto* fc_cmd = app.add_subcommand("footprint-check", "Check every footprint against datasheet land patterns from a reference library of trusted brands: pad count, positions, sizes, drills, mirroring (read-only; doc 05 §43)");
-  std::string fc_board, fc_refs, fc_trusted, fc_json, fc_host = "0.0.0.0";
+  std::string fc_board, fc_refs, fc_trusted, fc_json, fc_host = "127.0.0.1", fc_token;
   tmk::analysis::FootprintCheckOptions fc_opt;
-  bool fc_trust_all = false, fc_strict = false, fc_all = false, fc_view = false;
+  bool fc_trust_all = false, fc_strict = false, fc_all = false, fc_view = false, fc_insecure = false;
   int fc_port = 8766;
   fc_cmd->add_option("board", fc_board)->required()->check(CLI::ExistingFile);
   fc_cmd->add_option("--refs", fc_refs, "The reference library: a directory of JSON files (and a trusted_brands.txt) or one JSON file")->required();
@@ -1085,7 +1101,9 @@ int main(int argc, char** argv) {
   fc_cmd->add_flag("--strict", fc_strict, "Exit 4 on warnings too (a reference from an untrusted brand, a peg the datasheet does not show)");
   fc_cmd->add_flag("--view", fc_view, "Serve the board and the findings to the live viewer (until interrupted)");
   fc_cmd->add_option("--view-port", fc_port, "Viewer port (default 8766)");
-  fc_cmd->add_option("--view-host", fc_host, "Viewer bind address (default 0.0.0.0)");
+  fc_cmd->add_option("--view-host", fc_host, "Viewer bind address (default 127.0.0.1; env TM_VIEW_HOST; another address needs a token)")->envname("TM_VIEW_HOST");
+  fc_cmd->add_option("--view-token", fc_token, "Token for a viewer other machines can reach (16+ characters; default a random one)");
+  fc_cmd->add_flag("--view-insecure", fc_insecure, "A viewer other machines can reach, without a token");
   auto* advice_cmd = app.add_subcommand("advice-check", "Check an advice file (doc 17) against a board: the refusals `route --advice` would give, and what each hint does");
   std::string ac_board, ac_advice, ac_json;
   advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
@@ -1215,9 +1233,9 @@ int main(int argc, char** argv) {
         rp_opt.reference_layers.emplace_back(r.substr(0, eq), r.substr(eq + 1));
       }
       rp_opt.refill = !rp_norefill;
-      return cmd_return_paths(rp_board, rp_opt, rp_refill, rp_strict, rp_json, rp_view, rp_port, rp_host);
+      return cmd_return_paths(rp_board, rp_opt, rp_refill, rp_strict, rp_json, rp_view, rp_port, rp_host, rp_token, rp_insecure);
     }
-    if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host);
+    if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host, fc_token, fc_insecure);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);

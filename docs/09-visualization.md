@@ -30,8 +30,18 @@
   the start (seeking needs the control channel and periodic keyframes, not built yet).
 - **Control channel** (viewer → engine): pause/resume/step, change speed, pick an object, request detail
   (e.g., a failure record), adjust visual LOD. Changes to the routing itself stay in the CLI/plugin.
-- **Security**: binds to `127.0.0.1` by default; remote access through an SSH tunnel, or `--listen 0.0.0.0`
-  with a random token in the URL and optional TLS.
+- **Security** (issue #4, D116). The viewer streams a whole board, so who may connect matters.
+  - It binds `127.0.0.1` by default. `--view-host 0.0.0.0` (or a LAN address; `TM_VIEW_HOST` sets it once for every command) lets other machines connect, and then a
+    **token is required** on the page and on `/ws`: random per run (or `--view-token`, 16+ characters), printed in the URL (`http://host:8766/?token=...`). The first
+    request carries it in the URL; the server answers with an `HttpOnly; SameSite=Strict` cookie that the page sends back with every later request, the WebSocket
+    included (the page also puts the token on the `/ws` URL, for a browser that refuses cookies). `--view-insecure` serves without a token, and the log says so.
+  - Always: a WebSocket upgrade that names an `Origin` must come from the server's own origin. Browsers do not apply the same-origin rule to WebSockets, so without
+    this a web page open in the user's browser could read the stream of a viewer on localhost. With a loopback bind and no token the `Host` header must also name
+    this machine (a page on `evil.example` whose name resolves to `127.0.0.1` would otherwise pass the origin check: DNS rebinding).
+  - At most 16 WebSocket viewers (the next gets 503) and 128 open HTTP connections (beyond that a connection is closed at once). Answers carry `Referrer-Policy:
+    no-referrer`, `X-Content-Type-Options: nosniff` and `X-Frame-Options: DENY`; the token is compared in constant time.
+  - Not built: TLS (the token and the stream cross the network unencrypted: on an untrusted network keep the loopback bind and use an SSH tunnel), accounts, the
+    control channel. The stream is read-only; nothing a client sends is acted on.
 
 ## 3. Renderer (browser, WebGL2 baseline, WebGPU when available)
 
@@ -128,8 +138,8 @@ the control channel, the minimap and the WebGPU backend are not built yet.
 | Target | Contents |
 |---|---|
 | `tm_viz_messages` (`tm::viz`) | `server/messages.hpp`: `board_snapshot_json(board, name)` plus builders for `track_add/remove`, `via_add/remove`, `footprint_move`, `ratsnest`, `frontier`, `path_try`, `failure`, `stats`, `stage`, `log`, `heatmap`, and `message_type()`. Depends only on model, drc and nlohmann_json, so the router can link it without Boost |
-| `tm_server` (`tm::server`) | `tmk::server::ViewerServer : events::Sink`: Boost.Beast HTTP + WebSocket on one background I/O thread. Serves static files (MIME types, percent-decoding, `..` and symlink escape rejected) from `<repo>/viewer/dist` or `ServerOptions::web_root`; WebSocket at `/ws`. Default bind `0.0.0.0:8766` (8765 is the dev progress site) |
-| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--web DIR] [--demo] [--keep-tracks] [--replay LOG [--speed S] [--loop]]` |
+| `tm_server` (`tm::server`) | `tmk::server::ViewerServer : events::Sink`: Boost.Beast HTTP + WebSocket on one background I/O thread. Serves static files (MIME types, percent-decoding, `..` and symlink escape rejected) from `<repo>/viewer/dist` or `ServerOptions::web_root`; WebSocket at `/ws`. Default bind `127.0.0.1:8766` (8765 is the dev progress site), a token when the bind is not loopback, Origin and Host checks, client caps (§2 Security) |
+| `tracemaker-view` | `tracemaker-view <board.kicad_pcb> [--port N] [--host H] [--token T] [--insecure] [--web DIR] [--demo] [--keep-tracks] [--replay LOG [--speed S] [--loop]]` |
 | `tm_replay` (`tm::replay`) | `server/replay_log.hpp`: `ReplayWriter` (plain, or zstd frames for `.zst`) and `ReplayReader` (format detected from the magic number; a truncated tail is ignored, corrupt frames throw). Links libzstd only |
 | `tm_server_tests` | Catch2: message builders, snapshot of `pic_programmer` (skipped if the fixture is missing), HTTP serving and traversal rejection, snapshot-then-deltas delivery, late-client catch-up, back-pressure; replay log round-trips (plain, zstd, multi-frame, truncated, corrupt), `HeatGrid` sizing/scaling, and routing C-BISCUIT with a capturing sink: heatmaps sent, copper identical to routing without one. Registered with ctest |
 
@@ -208,7 +218,7 @@ onto it and prints the full sentences and the datasheet it was compared with (br
 cd viewer && npm install && npm run build            # -> viewer/dist (served by the engine)
 cmake --build --preset release --target tracemaker-view
 build/release/src/server/tracemaker-view bench/data/kicad/demos/video/video.kicad_pcb --demo
-# open http://<host>:8766/ ; --demo clears the board's tracks and "routes" them again with synthetic events
+# open http://localhost:8766/ (from another machine: add --host 0.0.0.0 and open the URL it prints, token included); --demo clears the board's tracks and "routes" them again with synthetic events
 cd viewer && npm run dev                              # hot-reload development, proxies /ws to :8766
 ```
 

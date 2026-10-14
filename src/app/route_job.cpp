@@ -242,10 +242,13 @@ RouteJobResult run_route_job(RouteJob job) {
     server::ServerOptions so;
     so.host = job.view_host;
     so.port = static_cast<std::uint16_t>(job.view_port);
+    so.token = job.view_token;
+    so.allow_open = job.view_insecure;
     server = std::make_unique<server::ViewerServer>(so);
     server->publish(server::board_snapshot_json(lb.board, name, job.view_freeze));
     out.viewer_url = server->url();
     log("live view: " + out.viewer_url);
+    if (const auto notice = server->notice(); !notice.empty()) log("warning: " + notice);
     opt.sink = server.get();
   }
   std::unique_ptr<FileSink> recorder;

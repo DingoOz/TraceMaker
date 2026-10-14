@@ -1,0 +1,12 @@
+<!doctype html><title>probe</title><pre id=out>starting</pre>
+<script>
+// A page on another origin (this one) trying to read a viewer's event stream, as a malicious web page could.
+const target = new URLSearchParams(location.search).get('ws');
+const out = document.getElementById('out');
+const ws = new WebSocket(target);
+let got = 0;
+ws.onopen = () => { out.textContent = 'OPEN'; };
+ws.onmessage = () => { got++; out.textContent = 'OPEN, messages: ' + got; };
+ws.onerror = () => { out.textContent = 'ERROR (connection refused by the server)'; };
+ws.onclose = () => { if (!got && !out.textContent.startsWith('OPEN')) out.textContent = 'CLOSED without a message'; };
+</script>

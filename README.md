@@ -76,7 +76,9 @@ cd viewer && npm install && npm run build && cd ..
 build/release/src/app/tracemaker route board.kicad_pcb -o routed.kicad_pcb --view --hold
 ```
 
-Then open `http://localhost:8766/` in a browser.
+Then open `http://localhost:8766/` in a browser. The viewer listens on this machine only. To watch from another machine add `--view-host 0.0.0.0` (or set
+`TM_VIEW_HOST=0.0.0.0` once): the viewer then requires a token, and the URL it prints contains it. The token and the stream cross the network unencrypted; on an untrusted
+network use an SSH tunnel (`ssh -L 8766:localhost:8766 host`) and leave the bind alone. `--view-token T` sets the token, `--view-insecure` drops it.
 
 **4. Check the result with KiCad**
 
