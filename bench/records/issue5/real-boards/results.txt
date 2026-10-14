@@ -1,0 +1,21 @@
+# flipcheck.py: references derived from the first FRONT instance of every library footprint that is also on the BACK of the board; the whole board checked against them (final binary of this branch)
+== video/video
+exit 0 
+{('ok', 'front'): 26, ('ok', 'back'): 98}
+== cm5_minima/CM5_MINIMA_3
+exit 0 
+{('ok', 'front'): 24, ('ok', 'back'): 8}
+== vme-wren/vme-wren
+exit 0 
+{('ok', 'front'): 836, ('ok', 'back'): 350}
+== jetson-agx-thor-baseboard/jetson-agx-thor-baseboard
+exit 0 
+{('ok', 'front'): 500, ('ok', 'back'): 415}
+
+# negative_control.py, CM5_MINIMA_3
+exit 4; applied to 32 footprints, 32 called out; summary {'checked': 84, 'errors': 64, 'mismatch': 32, 'ok': 0, 'skipped': 28, 'untrusted': 0, 'unverified': 52, 'warnings': 0}
+issues by kind: {'position': 61, 'size': 3}
+
+# footprint-check timings, one core, all footprints of the board
+vme-wren: 1.04 s
+jetson-agx-thor-baseboard: 1.29 s

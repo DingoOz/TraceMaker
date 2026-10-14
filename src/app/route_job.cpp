@@ -255,6 +255,21 @@ RouteJobResult run_route_job(RouteJob job) {
     opt.sink = recorder.get();
     opt.buffer_events = true;
   }
+  // Footprints against datasheet land patterns (issue #5, doc 05 §43): before anything is routed, because a wrong footprint makes the routing worthless.
+  nlohmann::json footprint_summary;
+  if (!job.footprint_refs.empty()) {
+    auto lib = analysis::load_references(job.footprint_refs, job.footprint_trusted);
+    lib.trusted.trust_all = job.footprint_trust_all;
+    const auto fr = analysis::check_footprints(lb.board, lib, job.footprint_opt);
+    log(fmt("footprint check: %d footprints against %d datasheet references", fr.checked, fr.references));
+    for (const auto& l : analysis::footprint_check_lines(fr, false)) log("  " + l);
+    footprint_summary = analysis::footprint_check_json(lb.board, fr);
+    auto& fps = footprint_summary["footprints"];
+    fps.erase(std::remove_if(fps.begin(), fps.end(), [](const nlohmann::json& f) { return f["issues"].empty(); }), fps.end());  // only what has something to say
+    if (opt.sink) opt.sink->publish(analysis::footprint_check_message(fr));
+    if (fr.errors > 0 && !job.footprint_warn_only)
+      throw std::runtime_error(fmt("footprint check: %d error%s; fix the footprints, or route anyway with --footprint-warn-only", fr.errors, fr.errors == 1 ? "" : "s"));
+  }
   // Knowledge base (failure memory T3): earlier failures on this board go first; variant choice by bandit.
   std::unique_ptr<learn::KnowledgeBase> kb;
   if (!job.kb_path.empty()) {
@@ -934,6 +949,7 @@ RouteJobResult run_route_job(RouteJob job) {
     out.summary["unconnected_after_refill"] = unconnected_after_refill;
   }
   if (!return_path_summary.is_null()) out.summary["return_paths"] = return_path_summary;
+  if (!footprint_summary.is_null()) out.summary["footprint_check"] = footprint_summary;
   if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;

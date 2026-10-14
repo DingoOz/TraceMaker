@@ -288,6 +288,7 @@ class Reader {
       }
     for (NodeId p : d_.find_all(f, "property")) {
       const std::string key = d_.str_at(p, 1);
+      fp.properties.emplace_back(key, d_.str_at(p, 2));
       if (key == "Reference") fp.reference = d_.str_at(p, 2);
       else if (key == "Value") fp.value = d_.str_at(p, 2);
       else if (key == "Description" && fp.description.empty()) fp.description = d_.str_at(p, 2);

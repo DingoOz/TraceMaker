@@ -1,0 +1,13 @@
+# quick: origin/main 49fbd3c -> this branch (release build, route options off), bench/compare_runs.py --expect-identical
+
+30 boards; routed boards byte-identical: 30/30.
+Clean pass 12 → 12; mean completion 89.2% → 89.2%; router seconds 39.2 → 56.1.
+Route CPU time 39 → 71 s (+82.1%) at the same work.
+Byte-identical boards moved +28% to +261% in CPU time (the same work: noise, or speed).
+
+Style (informational): bends per connection 0.6236 → 0.6236; acute angles 0 → 0; stair steps 29 → 29; short segments 268 → 268; off angle segments 409 → 409; detour ratio 1.0308 → 1.0308; long detours 23 → 23.
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- every byte-identical board moved the same way, +28% to +261%: a change in speed (binary or machine), not scatter; run one binary twice to tell which
+
+Gates: pass

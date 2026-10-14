@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "core/units.hpp"
@@ -102,6 +103,7 @@ struct Footprint {
   std::string lib_id;
   std::string reference, value;
   std::string description, keywords;  // footprint (descr ...)/(tags ...) or Description property; read-only
+  std::vector<std::pair<std::string, std::string>> properties;  // every (property "key" "value") in file order (MPN, Manufacturer, Datasheet ...); read-only
   Point pos;
   double angle = 0;
   bool back = false;

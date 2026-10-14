@@ -363,6 +363,31 @@ int cmd_return_paths(const std::string& path, tmk::analysis::ReturnPathOptions o
   return strict && warned ? 4 : 0;
 }
 
+// `footprint-check`: every footprint of a board against datasheet land patterns from a reference library of trusted brands (issue #5, doc 05 §43).
+// Read-only. Exit 4 when a footprint differs from its datasheet (and, with --strict, on any warning). With --view the board and the findings are
+// served to the live viewer until interrupted.
+int cmd_footprint_check(const std::string& path, const std::string& refs, const std::string& trusted_file, bool trust_all, const tmk::analysis::FootprintCheckOptions& opt, bool all,
+                        bool strict, const std::string& json_path, bool view, int view_port, const std::string& view_host) {
+  const auto lb = tmk::io::read_board_file(path);
+  auto lib = tmk::analysis::load_references(refs, trusted_file);
+  lib.trusted.trust_all = trust_all;
+  const auto rep = tmk::analysis::check_footprints(lb.board, lib, opt);
+  for (const auto& l : tmk::analysis::footprint_check_lines(rep, all)) std::printf("%s\n", l.c_str());
+  if (!json_path.empty()) std::ofstream(json_path) << tmk::analysis::footprint_check_json(lb.board, rep).dump(1) << "\n";
+  if (view) {
+    tmk::server::ServerOptions so;
+    so.host = view_host;
+    so.port = static_cast<std::uint16_t>(view_port);
+    tmk::server::ViewerServer server(so);
+    server.publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(path).filename().string()));
+    server.publish(tmk::analysis::footprint_check_message(rep));
+    std::printf("live view: %s (Ctrl-C to quit)\n", server.url().c_str());
+    std::fflush(stdout);
+    for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  return rep.errors > 0 || (strict && rep.warnings > 0) ? 4 : 0;
+}
+
 // `advice-check`: read an advice file and check it against a board without routing (the refusals `route --advice` would give).
 int cmd_advice_check(const std::string& board_path, const std::string& advice_path, const std::string& json_path) {
   const auto lb = tmk::io::read_board_file(board_path);
@@ -932,6 +957,7 @@ int main(int argc, char** argv) {
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
   bool r_nofreeze = false;
+  double r_fp_tol = -1;
   route->add_option("--return-paths", r_job.return_paths.name_patterns,
                     "After routing, audit the reference return of nets matching these KiCad wildcards (comma separated, e.g. 'DDR*'): copper under each trace on its reference layer, the "
                     "detour round voids, layer changes without a stitching via. Read-only; the report is in the log and the summary, the paths in the viewer (doc 05 §42)")
@@ -939,6 +965,15 @@ int main(int argc, char** argv) {
   route->add_option("--return-path-classes", r_job.return_paths.net_classes, "With --return-paths: also the nets of these net classes")->delimiter(',');
   route->add_flag("--return-path-pairs", r_job.return_paths.diff_pairs, "Audit the nets that are halves of a differential pair too");
   route->add_option("--return-path-radius-mm", r_job.return_paths.stitch_radius_mm, "How far a stitching via or capacitor may be from a layer change (default 5)")->check(CLI::PositiveNumber);
+  route->add_option("--footprint-refs", r_job.footprint_refs,
+                    "Before routing, check every footprint against datasheet land patterns from this reference library (a directory or a JSON file; doc 05 §43). A footprint that differs from "
+                    "its datasheet is an error and stops the job");
+  route->add_option("--footprint-trusted", r_job.footprint_trusted, "With --footprint-refs: the trusted brand list (default: trusted_brands.txt beside the references); references of other brands give no verdict")
+      ->check(CLI::ExistingFile);
+  route->add_flag("--footprint-trust-all", r_job.footprint_trust_all, "With --footprint-refs: use the references of every brand (nobody vouched for them)");
+  route->add_option("--footprint-require", r_job.footprint_opt.require, "With --footprint-refs: designators (KiCad wildcards, comma separated) that must have a trusted reference, else it is an error")->delimiter(',');
+  route->add_flag("--footprint-warn-only", r_job.footprint_warn_only, "With --footprint-refs: report the discrepancies and route anyway");
+  route->add_option("--footprint-tol-mm", r_fp_tol, "With --footprint-refs: tolerance of pad positions, sizes and drills in millimetres (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
   route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
@@ -1030,6 +1065,27 @@ int main(int argc, char** argv) {
   rp_cmd->add_flag("--view", rp_view, "Serve the board and the return paths to the live viewer (until interrupted)");
   rp_cmd->add_option("--view-port", rp_port, "Viewer port (default 8766)");
   rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default 0.0.0.0)");
+  auto* fc_cmd = app.add_subcommand("footprint-check", "Check every footprint against datasheet land patterns from a reference library of trusted brands: pad count, positions, sizes, drills, mirroring (read-only; doc 05 §43)");
+  std::string fc_board, fc_refs, fc_trusted, fc_json, fc_host = "0.0.0.0";
+  tmk::analysis::FootprintCheckOptions fc_opt;
+  bool fc_trust_all = false, fc_strict = false, fc_all = false, fc_view = false;
+  int fc_port = 8766;
+  fc_cmd->add_option("board", fc_board)->required()->check(CLI::ExistingFile);
+  fc_cmd->add_option("--refs", fc_refs, "The reference library: a directory of JSON files (and a trusted_brands.txt) or one JSON file")->required();
+  fc_cmd->add_option("--trusted-brands", fc_trusted, "The trusted brand list, one `Brand | alias` per line (default: trusted_brands.txt beside the references)")->check(CLI::ExistingFile);
+  fc_cmd->add_flag("--trust-all", fc_trust_all, "Use the references of every brand (nobody vouched for them; the report says so)");
+  fc_cmd->add_option("--only", fc_opt.only, "Check only these designators (KiCad wildcards, comma separated)")->delimiter(',');
+  fc_cmd->add_option("--require", fc_opt.require, "Designators that must have a trusted reference; without one it is an error (e.g. 'U*,J*')")->delimiter(',');
+  fc_cmd->add_option("--mpn-field", fc_opt.mpn_fields, "Footprint properties that hold the manufacturer part number, besides MPN, Manufacturer_Part_Number and the like")->delimiter(',');
+  fc_cmd->add_option("--position-tol-mm", fc_opt.position_tol_mm, "Pad position tolerance (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
+  fc_cmd->add_option("--size-tol-mm", fc_opt.size_tol_mm, "Pad size tolerance (default 0.05)")->check(CLI::NonNegativeNumber);
+  fc_cmd->add_option("--drill-tol-mm", fc_opt.drill_tol_mm, "Drill size tolerance (default 0.05)")->check(CLI::NonNegativeNumber);
+  fc_cmd->add_flag("--all", fc_all, "Also list the footprints that are fine and those without a reference");
+  fc_cmd->add_option("--json", fc_json, "Write the report as JSON");
+  fc_cmd->add_flag("--strict", fc_strict, "Exit 4 on warnings too (a reference from an untrusted brand, a peg the datasheet does not show)");
+  fc_cmd->add_flag("--view", fc_view, "Serve the board and the findings to the live viewer (until interrupted)");
+  fc_cmd->add_option("--view-port", fc_port, "Viewer port (default 8766)");
+  fc_cmd->add_option("--view-host", fc_host, "Viewer bind address (default 0.0.0.0)");
   auto* advice_cmd = app.add_subcommand("advice-check", "Check an advice file (doc 17) against a board: the refusals `route --advice` would give, and what each hint does");
   std::string ac_board, ac_advice, ac_json;
   advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
@@ -1161,6 +1217,7 @@ int main(int argc, char** argv) {
       rp_opt.refill = !rp_norefill;
       return cmd_return_paths(rp_board, rp_opt, rp_refill, rp_strict, rp_json, rp_view, rp_port, rp_host);
     }
+    if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
@@ -1196,6 +1253,7 @@ int main(int argc, char** argv) {
       job.warm_pcb = r_warm_pcb;
       job.refill_repair = !r_no_repair;
       job.view_freeze = !r_nofreeze;
+      if (r_fp_tol >= 0) job.footprint_opt.position_tol_mm = job.footprint_opt.size_tol_mm = job.footprint_opt.drill_tol_mm = r_fp_tol;
       job.out = r_out;
       job.opt = ropt;
       job.threads = r_threads;

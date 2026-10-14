@@ -1,0 +1,9 @@
+video.kicad_pcb: 29 library footprints, exit 0, statuses {'ok': 180, 'unverified': 9}
+CM5_MINIMA_3.kicad_pcb: 22 library footprints, exit 0, statuses {'ok': 65, 'skipped': 28, 'unverified': 19}
+StickHub.kicad_pcb: 5 library footprints, exit 0, statuses {'ok': 41, 'unverified': 49, 'skipped': 4}
+One-Air-Max.kicad_pcb: 10 library footprints, exit 0, statuses {'ok': 60, 'skipped': 6, 'unverified': 144}
+kit-dev-coldfire-xilinx_5213.kicad_pcb: 34 library footprints, exit 0, statuses {'ok': 154, 'unverified': 6}
+tinytapeout-demo.kicad_pcb: 28 library footprints, exit 0, statuses {'ok': 139, 'unverified': 160, 'skipped': 10}
+vme-wren.kicad_pcb: 68 library footprints, exit 0, statuses {'ok': 1475, 'unverified': 20, 'skipped': 13}
+jetson-agx-thor-baseboard.kicad_pcb: 49 library footprints, exit 0, statuses {'ok': 974, 'unverified': 146, 'skipped': 5}
+pic_programmer.kicad_pcb: 19 library footprints, exit 0, statuses {'ok': 56, 'unverified': 7}

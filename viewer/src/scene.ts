@@ -42,6 +42,27 @@ export interface ReturnPath {
   callouts: { kind: string; x: number; y: number; text: string }[];
 }
 
+/** One footprint's findings of the datasheet check, in world millimetres (docs/13 `footprint_check`). */
+export interface FootprintFinding {
+  ref: string;
+  libId: string;
+  status: string;
+  x: number;
+  y: number;
+  datasheet: string; // "Brand Part (document rev, p.N)", "" if none
+  issues: { severity: string; kind: string; pad: string; text: string; label: string; x: number; y: number }[];
+}
+export interface FootprintCheck {
+  checked: number;
+  ok: number;
+  mismatch: number;
+  unverified: number;
+  untrusted: number;
+  errors: number;
+  warnings: number;
+  findings: FootprintFinding[];
+}
+
 export interface Activity { x: number; y: number; t: number }
 
 /** Latest overlay grid per name (doc 13 `heatmap`), in world millimetres. `version` bumps on every update. */
@@ -90,6 +111,7 @@ export class Scene {
   escDirty = true;
   footprintsDirty = true;
   heatmaps = new Map<string, Heatmap>();  // by name; layer -1 (all layers) is what the router sends
+  footprintCheck: FootprintCheck | null = null;  // the latest `footprint_check` (issue #5)
   returnPaths = new Map<string, ReturnPath>();  // by net name, from `return_path` messages (issue #7)
   private heatVersion = 0;
 
@@ -205,6 +227,22 @@ export class Scene {
         } satisfies ReturnPath);
         break;
       }
+      case 'footprint_check': {
+        if (!this.loaded) return;
+        this.footprintCheck = {
+          checked: m.checked, ok: m.ok, mismatch: m.mismatch, unverified: m.unverified, untrusted: m.untrusted, errors: m.errors, warnings: m.warnings,
+          findings: m.footprints.map((f) => {
+            const [x, y] = this.pt(f.p);
+            const d = f.datasheet;
+            return {
+              ref: f.ref, libId: f.lib_id, status: f.status, x, y,
+              datasheet: d ? `${d.brand} ${d.part} (${d.document}${d.revision ? ` rev ${d.revision}` : ''}${d.page ? `, p.${d.page}` : ''})` : '',
+              issues: f.issues.map((i) => { const [ix, iy] = this.pt(i.p); return { severity: i.severity, kind: i.kind, pad: i.pad, text: i.text, label: i.label ?? i.text, x: ix, y: iy }; }),
+            } satisfies FootprintFinding;
+          }),
+        };
+        break;
+      }
       case 'failure': {
         if (!this.loaded) return;
         const [ax, ay] = this.pt(m.a), [bx, by] = this.pt(m.b);
@@ -272,6 +310,7 @@ export class Scene {
     this.escDirty = true;
     this.heatmaps.clear();  // the server resends the current overlays after a snapshot
     this.returnPaths.clear();
+    this.footprintCheck = null;
     this.fx = { newTracks: [], frontier: [], paths: [], failures: [] };
     this.activity = null;
     for (let i = 0; i < this.layerNames.length; i++) this.dirtyTrackLayers.add(i);

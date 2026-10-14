@@ -1,0 +1,30 @@
+# ctest --preset release -j16 on the issue-5 branch, 2026-10-14T10:38Z
+100% tests passed, 0 tests failed out of 332
+Total Test time (real) =  71.72 sec
+--- did not run:
+	326 - fixture_preparation_native (Skipped)
+--- new tests:
+ 65/332 Test #330: viewer_stall ...........................................................................................................   Passed    0.28 sec
+303/332 Test #279: footprint check: a footprint that is the datasheet's land pattern is ok, wherever and however it is placed .............   Passed    0.01 sec
+304/332 Test #280: footprint check: the library's origin is not part of the land pattern ..................................................   Passed    0.01 sec
+305/332 Test #281: footprint check: the pattern may be turned a quarter turn in the library ...............................................   Passed    0.01 sec
+306/332 Test #282: footprint check: one pad moved is called out with its number and by how much ...........................................   Passed    0.01 sec
+307/332 Test #283: footprint check: a wrong pitch shows on the pads farthest from the centre ..............................................   Passed    0.01 sec
+308/332 Test #284: footprint check: size, drill and pad type differences are errors .......................................................   Passed    0.01 sec
+309/332 Test #285: footprint check: a pad turned a quarter turn has its width and height compared the other way ...........................   Passed    0.01 sec
+310/332 Test #286: footprint check: a missing pad, an extra pad and the count .............................................................   Passed    0.01 sec
+311/332 Test #287: footprint check: a non-plated peg that the datasheet does not show is a warning, not an error ..........................   Passed    0.01 sec
+312/332 Test #288: footprint check: pin numbers that run the wrong way are a mirror .......................................................   Passed    0.01 sec
+313/332 Test #289: footprint check: a pattern that is its own mirror image is never called mirrored .......................................   Passed    0.01 sec
+314/332 Test #290: footprint check: a footprint whose pads are not the pattern's at all ...................................................   Passed    0.01 sec
+315/332 Test #291: footprint check: a reference from a brand that is not trusted gives no verdict .........................................   Passed    0.01 sec
+316/332 Test #292: footprint check: a trusted brand is found through its aliases and without corporate suffixes ...........................   Passed    0.01 sec
+317/332 Test #293: footprint check: references are found by part number, library id, value or designator; the most specific wins ..........   Passed    0.01 sec
+318/332 Test #294: footprint check: a footprint without a reference is unverified, and an error where one is required .....................   Passed    0.00 sec
+319/332 Test #295: footprint check: the designator filter, and footprints that are not parts ..............................................   Passed    0.01 sec
+320/332 Test #296: footprint check: tolerances: the run's, and a reference's own ..........................................................   Passed    0.01 sec
+321/332 Test #297: footprint check: the reference library loads from JSON with a footprint file, and refuses what it cannot take ..........   Passed    0.01 sec
+322/332 Test #299: footprint check: the report is the same every time, and says what it found in JSON, text and a viewer message ..........   Passed    0.01 sec
+323/332 Test #298: footprint check: inline pads in JSON give the same pattern as a footprint file .........................................   Passed    0.01 sec
+324/332 Test #300: footprint check: a footprint on the back is compared with the datasheet as the flipped front ...........................   Passed    0.01 sec
+328/332 Test #332: footprint_check_cli ....................................................................................................   Passed    3.08 sec

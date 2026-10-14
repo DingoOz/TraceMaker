@@ -1,0 +1,24 @@
+{
+ "format": "tracemaker-footprint-refs/1",
+ "description": "A SYNTHETIC example of the format: 'Example Semiconductor' and 'EX1234' do not exist and these pads are not from any datasheet. Make your own from the datasheet's recommended land pattern (docs/05-routing.md section 43).",
+ "references": [
+  {
+   "brand": "Example Semiconductor",
+   "part": "EX1234",
+   "package": "SOIC-8",
+   "datasheet": { "document": "EX1234 datasheet (synthetic)", "revision": "C", "page": 21, "figure": "Recommended land pattern", "url": "https://example.invalid/ex1234.pdf" },
+   "match": { "mpn": ["EX1234*"], "lib_id": ["*SOIC-8*"] },
+   "tolerance_mm": { "position": 0.05, "size": 0.05, "drill": 0.05 },
+   "pads": [
+    { "number": "1", "at": [-2.7, -1.905], "size": [1.55, 0.6] },
+    { "number": "2", "at": [-2.7, -0.635], "size": [1.55, 0.6] },
+    { "number": "3", "at": [-2.7,  0.635], "size": [1.55, 0.6] },
+    { "number": "4", "at": [-2.7,  1.905], "size": [1.55, 0.6] },
+    { "number": "5", "at": [ 2.7,  1.905], "size": [1.55, 0.6] },
+    { "number": "6", "at": [ 2.7,  0.635], "size": [1.55, 0.6] },
+    { "number": "7", "at": [ 2.7, -0.635], "size": [1.55, 0.6] },
+    { "number": "8", "at": [ 2.7, -1.905], "size": [1.55, 0.6] }
+   ]
+  }
+ ]
+}
