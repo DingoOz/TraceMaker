@@ -1821,3 +1821,67 @@ A homotopy on the design rules. `--ramp-from C0 --ramp-step S` (portfolio with `
 - Vertices end off the lattice and off 45° multiples; track lengths grow by the small moves (at most 0.3 mm). Zones, keep-outs, mounting holes and custom `.kicad_dru` clearances are not constraints of the legaliser; they are caught by the exact check that follows, which drops the routes involved. A projection step is a heuristic: it can leave pairs too close (3-9 on the hard boards), never an illegal result.
 - Prototype with a linear-programming step (sequential LP with a trust region, HiGHS, minimum total movement, scratchpad only) on the six stuck boards: 071, 039, 104 legal in one or two iterations, 103/048/072 with 3/6/11 pairs left; projection: 071, 104 legal, 039/103/048/072 with 2/5/4/9 left. Both turn a 0.06 mm solution (about 800-1000 pairs too close at 0.10 mm) into one with a handful left.
 
+## 42. Reference-return audit of high-speed nets (issue #7, 2026-10-14, D114)
+
+**Problem.** KiCad's DRC does not know whether a fast trace has continuous copper under it. A dogbone escape punches antipads through the reference
+pour, a plane can be split, a layer change can come without a nearby stitch: the signal is DRC-clean and its return current still walks around the void,
+which grows the loop area and raises the inductance. The actionable question is per net: does this trace have copper under it, and if not, how far
+does the return detour?
+
+**What it is.** A read-only pass in the family of `--cut-report` and `escape` (`src/analysis/return_path.{hpp,cpp}`). It adds no copper and changes no
+file. Off unless nets are selected:
+
+```
+tracemaker return-paths BOARD --nets 'DDR*,*CLK*' [--netclass NAMES] [--diff-pairs] [--reference-layer PATTERN=LAYER]
+                              [--stitch-radius-mm 5] [--warn-detour-mm 2] [--warn-separation-mm 1] [--min-void-mm 0.1] [--sample-mm 0.05]
+                              [--refill | --no-refill] [--json FILE] [--strict] [--view [--view-port N]]
+tracemaker route BOARD -o OUT --return-paths 'DDR*' [--return-path-classes NAMES] [--return-path-pairs] [--return-path-radius-mm 5]
+```
+
+`route --return-paths` audits the board as routed, refilling the zones first (the fills in the file predate the new vias, which have antipads); the report
+goes to the log and the `--json` summary (`return_paths`) and each net's path to the viewer. `--strict` exits 4 when any net has a warning (thresholds are
+warnings, not DRC errors). Net selection: KiCad wildcards on net names, net classes, and the halves of differential pairs (`route::named_pairs`).
+
+**Model.** A geometric model, not a field solver (no Palace; no impedance, skew or length matching).
+
+1. *Reference copper.* The filled zones of each copper layer (antipads and zone holes are holes in the reference polygon; zones without fills are refilled with
+   the engine's refill, doc 05 §36, and the report says so).
+2. *Reference layer.* Of the layers adjacent to the signal layer, the one with the most copper under the net's traces (a power plane is a valid reference);
+   `--reference-layer` forces it per net pattern.
+3. *Over copper.* The trace is sampled every 0.05 mm; where copper is under it the return is its mirror image. A stretch without copper longer than `--min-void-mm`
+   is a void; its ends are found to within a micrometre by bisection.
+4. *Across a void.* The return is the shortest path from the void's entry to its exit that stays on the remaining reference copper: A* over the visibility graph
+   of the region's vertices near the void (Lee and Preparata, 1984), the window growing until a path exists. The **detour** is that path minus the trace
+   between the same two points (at least 0), the **separation** the farthest the path gets from the trace. If the copper does not connect the two ends (a split
+   plane) there is no return path on that layer: the void is reported as a split.
+5. *Layer changes.* At a signal via, the reference nets above and below are the nets of the copper around it (the via's own antipad is a void by design). If they
+   are the same net the return closes through the nearest stitching via or through-hole pad of that net inside `--stitch-radius-mm`; if they differ, through the
+   nearest capacitor that has a pad on each. Otherwise the change is counted as a missing stitch.
+6. *Ends.* At a pad the assumed return pad is the nearest pad of the reference net, not one assumed ground ball (the comment on the issue).
+
+**Report** (text, JSON, and the `return_path` viewer message, docs/13): per net the layers and their reference, length, `void_crossings`, `detour_mm`,
+`max_separation_mm`, `splits`, `missing_stitches`, length with no reference layer, and per void, layer change and trace end the numbers behind them. Warnings:
+detour or separation over the thresholds, a split, a missing stitch, a trace with no reference layer (no zone fill on either adjacent layer).
+
+**Viewer.** An overlay (`viewer/src/returnpath_draw.ts`): the signal in cyan, the return in red shifted a few pixels so the two can be told
+apart, with arrows (the return flows from the end of the trace back to its start), and for the selected net callouts for the signal pad, the assumed return pad,
+the signal via, the return via or capacitor (or a missing stitch), and the separation. `P` toggles the overlay; the side panel lists the audited nets worst first and
+a click zooms onto one. `return-paths --view` serves a board and its audit with no router running; `route --return-paths --view` shows it after the routing.
+
+**Cost.** The reference copper of a layer is indexed (`src/analysis/region.hpp`): edges and vertices in a 1 mm grid, and 0.25 mm rows for the inside test, so a query
+costs its neighbourhood and not the whole pour (the plane of a large board has hundreds of thousands of edges, mostly antipads). Every indexed query has a linear
+reference (`island_of_linear`, `crosses_linear`, `nearest_boundary_distance_linear`, `vertices_near_linear`) and `tests/test_return_path.cpp` compares them on a pour with
+antipads, a slot and an island (and on square antipads, where a pad at the centre is exactly as near to four edges: the first edge in the region's order wins in both, so
+the answer does not depend on the order the grid is walked in). Measured on this machine (one core): the Jetson AGX Thor baseboard demo, 291 nets of `*CLK*,*DQ*,*USB*`, took 105 s before the index and
+9 s after; the 12-layer vme-wren demo, 236 nets, 38 s including the refill of its 123 zones (it did not finish in 8 minutes before); RoyalBlue54L-Feather, 7 nets,
+0.5 s (`bench/records/issue7/samples/timings.txt`). Most of what is left is the shortest paths across many small voids.
+
+**Hooks left, not built.** A router cost for crossing a reference void, suggested stitch-via sites, and automatic rerouting: the issue's non-goals.
+
+**Limits.** Arc tracks are not analysed (a warning says so). The detour of a trace that starts or ends over a void is measured from the nearest reference copper, not
+from a modelled return pad. Return current also flows through the plane on both sides of the trace and through other layers; this is the shortest-path estimate on the
+adjacent one. Where a trace starts or ends over a void (a pad at the centre of an antipad) the return regains copper at the nearest boundary point; when
+several are exactly as near the first in the region's edge order is taken, and the detour of such an end can change by half a millimetre with that choice (1.6 mm
+or 2.1 mm for one SWD net of the RoyalBlue demo), so a number near a threshold there is an estimate, not a verdict. Antipad polygons come from the fills as drawn (a 32-gon circle, not a true circle), a few micrometres in a 1 mm antipad. Results on the acceptance picture
+of the issue (about 4.87 mm separation at a processor dogbone field, about 1.00 mm at the memory) were not reproduced: that board is not here.
+

@@ -4,16 +4,19 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <chrono>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <map>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <thread>
 
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "advice/advice.hpp"
+#include "analysis/return_path.hpp"
 #include "app/route_job.hpp"
 #include "app/tui.hpp"
 #include "core/rng.hpp"
@@ -23,6 +26,8 @@
 #include "io/kicad/project_reader.hpp"
 #include "io/srj/srj.hpp"
 #include "route/router.hpp"
+#include "server/messages.hpp"
+#include "server/viewer_server.hpp"
 #include "learn/knowledge_base.hpp"
 #include "passes/style.hpp"
 #include "route/diff_pair.hpp"
@@ -321,6 +326,41 @@ int cmd_buses(const std::string& path, const std::vector<std::string>& specs, bo
   if (groups.empty()) std::printf("no buses\n");
   if (!json_path.empty()) std::ofstream(json_path) << nlohmann::json{{"board", path}, {"buses", j}}.dump(1) << "\n";
   return ok ? 0 : 4;  // 4: a group with a skew limit is over it or not completely routed
+}
+
+// `return-paths`: the reference-return audit of selected nets on a board as it is (issue #7, doc 05 §42). Read-only. Exit 4 with --strict when
+// any net has a warning. With --view the board and each net's return path are served to the live viewer until interrupted.
+int cmd_return_paths(const std::string& path, tmk::analysis::ReturnPathOptions opt, bool refill_flag, bool strict, const std::string& json_path, bool view, int view_port,
+                     const std::string& view_host) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  if (opt.diff_pairs) {
+    const tmk::drc::RuleEngine re(lb.board, rules);
+    opt.pair_nets = tmk::route::named_pairs(lb.board, re);
+  }
+  opt.refill_always = refill_flag;
+  if (opt.name_patterns.empty() && opt.net_classes.empty() && !opt.diff_pairs) {
+    std::fprintf(stderr, "error: no nets selected: give --nets PATTERNS, --netclass NAMES or --diff-pairs\n");
+    return 1;
+  }
+  const auto rep = tmk::analysis::analyse_return_paths(lb.board, rules, opt);
+  for (const auto& l : tmk::analysis::return_path_lines(lb.board, rep)) std::printf("%s\n", l.c_str());
+  if (rep.nets.empty()) std::printf("no nets matched\n");
+  if (!json_path.empty()) std::ofstream(json_path) << tmk::analysis::return_path_json(lb.board, rep).dump(1) << "\n";
+  bool warned = false;
+  for (const auto& n : rep.nets) warned = warned || !n.warnings.empty();
+  if (view) {
+    tmk::server::ServerOptions so;
+    so.host = view_host;
+    so.port = static_cast<std::uint16_t>(view_port);
+    tmk::server::ViewerServer server(so);
+    server.publish(tmk::server::board_snapshot_json(lb.board, std::filesystem::path(path).filename().string()));
+    for (const auto& n : rep.nets) server.publish(tmk::analysis::return_path_message(lb.board, n));
+    std::printf("live view: %s (Ctrl-C to quit)\n", server.url().c_str());
+    std::fflush(stdout);
+    for (;;) std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  return strict && warned ? 4 : 0;
 }
 
 // `advice-check`: read an advice file and check it against a board without routing (the refusals `route --advice` would give).
@@ -892,6 +932,13 @@ int main(int argc, char** argv) {
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
   bool r_nofreeze = false;
+  route->add_option("--return-paths", r_job.return_paths.name_patterns,
+                    "After routing, audit the reference return of nets matching these KiCad wildcards (comma separated, e.g. 'DDR*'): copper under each trace on its reference layer, the "
+                    "detour round voids, layer changes without a stitching via. Read-only; the report is in the log and the summary, the paths in the viewer (doc 05 §42)")
+      ->delimiter(',');
+  route->add_option("--return-path-classes", r_job.return_paths.net_classes, "With --return-paths: also the nets of these net classes")->delimiter(',');
+  route->add_flag("--return-path-pairs", r_job.return_paths.diff_pairs, "Audit the nets that are halves of a differential pair too");
+  route->add_option("--return-path-radius-mm", r_job.return_paths.stitch_radius_mm, "How far a stitching via or capacitor may be from a layer change (default 5)")->check(CLI::PositiveNumber);
   route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host, "Viewer bind address (default 0.0.0.0)");
@@ -960,6 +1007,29 @@ int main(int argc, char** argv) {
   buses_cmd->add_flag("--buses", bu_detect, "Also find buses in the net names, as in route");
   buses_cmd->add_option("--bus-skew-mm", bu_skew, "Skew limit of the --bus groups (0 = only the board's custom skew rules)");
   buses_cmd->add_option("--json", bu_json, "Write the measurements as JSON");
+  auto* rp_cmd = app.add_subcommand("return-paths", "Reference-return audit of high-speed nets: copper under each trace on its reference layer, the detour round voids, layer changes without a stitch (read-only; doc 05 §42)");
+  std::string rp_board, rp_json, rp_host = "0.0.0.0";
+  tmk::analysis::ReturnPathOptions rp_opt;
+  std::vector<std::string> rp_refs;
+  bool rp_strict = false, rp_view = false, rp_refill = false, rp_norefill = false;
+  int rp_port = 8766;
+  rp_cmd->add_option("board", rp_board)->required()->check(CLI::ExistingFile);
+  rp_cmd->add_option("--nets", rp_opt.name_patterns, "Nets to analyse, KiCad wildcards, comma separated (e.g. 'DDR*,*CLK*')")->delimiter(',');
+  rp_cmd->add_option("--netclass", rp_opt.net_classes, "Also the nets of these net classes")->delimiter(',');
+  rp_cmd->add_flag("--diff-pairs", rp_opt.diff_pairs, "Also the nets that are halves of a differential pair (names ending in P/N or +/-)");
+  rp_cmd->add_option("--reference-layer", rp_refs, "PATTERN=LAYER: the reference layer of the nets that match, instead of the adjacent layer with the most copper under the trace (repeatable)");
+  rp_cmd->add_option("--stitch-radius-mm", rp_opt.stitch_radius_mm, "How far a stitching via or a capacitor may be from a layer change (default 5)")->check(CLI::PositiveNumber);
+  rp_cmd->add_option("--warn-detour-mm", rp_opt.warn_detour_mm, "Warn when a net's return detours more than this (default 2)");
+  rp_cmd->add_option("--warn-separation-mm", rp_opt.warn_separation_mm, "Warn when the return gets farther than this from the trace (default 1)");
+  rp_cmd->add_option("--min-void-mm", rp_opt.min_void_mm, "Stretches without copper shorter than this are ignored (default 0.1)");
+  rp_cmd->add_option("--sample-mm", rp_opt.sample_mm, "Spacing of the samples along a trace (default 0.05)")->check(CLI::PositiveNumber);
+  rp_cmd->add_flag("--refill", rp_refill, "Refill every zone with the engine's refill instead of using the fills in the file");
+  rp_cmd->add_flag("--no-refill", rp_norefill, "Do not refill zones that have no fill (they are then not reference copper)");
+  rp_cmd->add_option("--json", rp_json, "Write the report as JSON");
+  rp_cmd->add_flag("--strict", rp_strict, "Exit 4 when any net has a warning (a threshold or a missing stitch)");
+  rp_cmd->add_flag("--view", rp_view, "Serve the board and the return paths to the live viewer (until interrupted)");
+  rp_cmd->add_option("--view-port", rp_port, "Viewer port (default 8766)");
+  rp_cmd->add_option("--view-host", rp_host, "Viewer bind address (default 0.0.0.0)");
   auto* advice_cmd = app.add_subcommand("advice-check", "Check an advice file (doc 17) against a board: the refusals `route --advice` would give, and what each hint does");
   std::string ac_board, ac_advice, ac_json;
   advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
@@ -1082,6 +1152,15 @@ int main(int argc, char** argv) {
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
     if (*advice_cmd) return cmd_advice_check(ac_board, ac_advice, ac_json);
+    if (*rp_cmd) {
+      for (const auto& r : rp_refs) {
+        const auto eq = r.rfind('=');
+        if (eq == std::string::npos || eq == 0 || eq + 1 == r.size()) throw std::invalid_argument("--reference-layer: expected PATTERN=LAYER, got '" + r + "'");
+        rp_opt.reference_layers.emplace_back(r.substr(0, eq), r.substr(eq + 1));
+      }
+      rp_opt.refill = !rp_norefill;
+      return cmd_return_paths(rp_board, rp_opt, rp_refill, rp_strict, rp_json, rp_view, rp_port, rp_host);
+    }
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);

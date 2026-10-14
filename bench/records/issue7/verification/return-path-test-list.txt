@@ -1,0 +1,20 @@
+Matching test cases:
+  return path: copper under the whole trace means no void and no detour
+      [return_path]
+  return path: a rectangular void under the trace forces a measured detour
+      [return_path]
+  return path: a hole off the trace's line is a smaller detour than one on it
+      [return_path]
+  return path: a split plane leaves no return path
+      [return_path]
+  return path: a stretch over no copper at all is a void, a short one is not
+      [return_path]
+  return path: a layer change closes through a stitching via, a capacitor, or
+  is flagged
+      [return_path]
+  return path: the assumed return pad is the nearest pad of the reference net,
+  not a fixed ground ball
+      [return_path]
+  return path: nets are chosen by name, class or pair, and nothing is analysed
+  by default
+      [return_path]

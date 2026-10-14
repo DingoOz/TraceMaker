@@ -40,6 +40,7 @@ export interface Toggles {
   footprints: boolean;
   effects: boolean;
   follow: boolean;
+  returnPaths: boolean;
 }
 
 const LOGO = `<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#101a33"/>
@@ -66,6 +67,7 @@ export class Hud {
   private coords = h('span', 'mono', '');
   private zoom = h('span', 'mono', '');
   readonly tooltip = h('div', 'tooltip');
+  private rpBox = h('section', 'section hidden');
   private stallBox = h('section', 'section stall hidden');
   private banner = h('div', 'panel stall-banner hidden');
   private fatalBox: HTMLElement | null = null;
@@ -77,6 +79,7 @@ export class Hud {
   onHeatmap: (name: string) => void = () => {};
   onStallDismiss: () => void = () => {};
   onStallPick: (index: number) => void = () => {};
+  onReturnPath: (name: string | null) => void = () => {};
 
   constructor(parent: HTMLElement) {
     this.root = h('div', 'hud');
@@ -130,7 +133,7 @@ export class Hud {
     logHead.append(h('div', 'label', 'Events'), clear);
     logSec.append(logHead, this.log);
 
-    side.append(this.stallBox, prog, layers, logSec);
+    side.append(this.stallBox, prog, this.rpBox, layers, logSec);
     this.root.appendChild(side);
 
     // Status bar.
@@ -142,6 +145,28 @@ export class Hud {
     this.root.appendChild(sb);
     this.root.appendChild(this.tooltip);
     this.root.appendChild(this.banner);
+  }
+
+  /** The return-path list (issue #7): one row per audited net, worst detour first; a click selects it (and again deselects). */
+  setReturnPaths(rows: { name: string; detourMm: number; maxSeparationMm: number; voids: number; splits: number; missingStitches: number }[], selected: string | null) {
+    this.rpBox.textContent = '';
+    this.rpBox.classList.toggle('hidden', rows.length === 0);
+    if (!rows.length) return;
+    const head = h('div', 'section-head');
+    head.append(h('div', 'label', 'Return paths'), h('div', 'hint', 'cyan signal · red return · P toggles'));
+    this.rpBox.appendChild(head);
+    const list = h('div', 'stall-list');
+    for (const r of rows) {
+      const bad = r.splits > 0 || r.missingStitches > 0 || r.detourMm > 0;
+      const row = h('div', `stall-row${r.name === selected ? ' on' : ''}`);
+      const chip = h('span', 'chip-verdict', r.splits ? 'split' : r.detourMm > 0 ? `+${r.detourMm.toFixed(1)}` : r.missingStitches ? 'stitch' : 'ok');
+      chip.style.background = r.splits ? '#ff5d6c' : bad ? '#f2b84b' : '#5fd38d';
+      row.append(chip, h('span', 'stall-net', r.name), h('span', 'muted mono', `${r.maxSeparationMm.toFixed(2)} mm`));
+      row.title = `${r.voids} void(s), detour ${r.detourMm.toFixed(2)} mm, farthest ${r.maxSeparationMm.toFixed(2)} mm, ${r.missingStitches} missing stitch(es)`;
+      row.onclick = () => this.onReturnPath(r.name === selected ? null : r.name);
+      list.appendChild(row);
+    }
+    this.rpBox.appendChild(list);
   }
 
   /** The stall panel and banner (issue #8): null clears them. */
@@ -223,7 +248,7 @@ export class Hud {
   setToggles(t: Toggles) {
     const labels: [keyof Toggles, string, string][] = [
       ['activeOnTop', 'Active on top', 'H'], ['zones', 'Zones', 'Z'], ['ratsnest', 'Ratsnest', 'R'], ['escape', 'Escape plan', 'X'],
-      ['footprints', 'Footprints', ''], ['effects', 'Effects', 'E'], ['follow', 'Follow activity', 'L'],
+      ['footprints', 'Footprints', ''], ['effects', 'Effects', 'E'], ['follow', 'Follow activity', 'L'], ['returnPaths', 'Return paths', 'P'],
     ];
     this.chips.textContent = '';
     for (const [key, label, k] of labels) {

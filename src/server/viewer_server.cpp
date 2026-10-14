@@ -115,7 +115,7 @@ class Hub {
   Text board_;
   std::map<ObjectId, Text> track_adds_, via_adds_;
   std::set<ObjectId> track_removed_, via_removed_;  // snapshot ids removed since
-  std::map<std::string, Text> fp_moves_, heatmaps_;
+  std::map<std::string, Text> fp_moves_, heatmaps_, return_paths_;  // return_paths_: the latest `return_path` per net (doc 13)
   Text ratsnest_, stats_;
   std::deque<Text> history_;  // recent stage / log / failure messages
   static constexpr std::size_t kHistory = 300;
@@ -181,6 +181,7 @@ class Hub {
         track_removed_.clear();
         via_removed_.clear();
         fp_moves_.clear();
+        return_paths_.clear();
         return;
       case Kind::Stats: stats_ = t; return;
       case Kind::Transient: return;
@@ -200,11 +201,13 @@ class Hub {
     else if (type == "track_remove") remove(track_adds_, track_removed_);
     else if (type == "via_remove") remove(via_adds_, via_removed_);
     else if (type == "ratsnest") ratsnest_ = t;
-    else if (type == "footprint_move" || type == "heatmap") {
+    else if (type == "footprint_move" || type == "heatmap" || type == "return_path") {
       const auto j = nlohmann::json::parse(*t, nullptr, false);
       if (!j.is_object()) return;
       if (type == "footprint_move") {
         fp_moves_[j.value("ref", std::string())] = t;
+      } else if (type == "return_path") {
+        return_paths_[j.value("name", std::string())] = t;
       } else {
         heatmaps_[j.value("name", std::string()) + "@" + std::to_string(j.value("layer", -1))] = t;
       }
@@ -239,6 +242,7 @@ class Hub {
     }
     if (ratsnest_) s->enqueue({ratsnest_, Kind::Info});
     for (const auto& [k, t] : heatmaps_) s->enqueue({t, Kind::Info});
+    for (const auto& [k, t] : return_paths_) s->enqueue({t, Kind::Info});
     for (const auto& t : history_) s->enqueue({t, Kind::Info});
     if (stats_) s->enqueue({stats_, Kind::Stats});
   }

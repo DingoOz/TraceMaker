@@ -16,6 +16,7 @@
 #include <thread>
 
 #include "advice/advice.hpp"
+#include "analysis/return_path.hpp"
 #include "advice/advisor.hpp"
 #include "advice/stuck_report.hpp"
 #include "crules/engine.hpp"
@@ -877,6 +878,28 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& v : res.vias) ed.add_via(v);
     ed.save(job.out);
   }
+  // Reference-return audit (issue #7, doc 05 §42): the selected nets on the board as routed, fills redone for the new copper.
+  nlohmann::json return_path_summary;
+  {
+    const auto& rp = job.return_paths;
+    if (!rp.name_patterns.empty() || !rp.net_classes.empty() || rp.diff_pairs) {
+      auto ro = rp;
+      ro.refill_always = true;  // the fills in the file predate the new vias and tracks
+      if (ro.diff_pairs) {
+        const drc::RuleEngine re(*route_board, rules);
+        ro.pair_nets = route::named_pairs(*route_board, re);
+      }
+      model::Board routed = *route_board;
+      routed.tracks.insert(routed.tracks.end(), res.tracks.begin(), res.tracks.end());
+      routed.vias.insert(routed.vias.end(), res.vias.begin(), res.vias.end());
+      const auto rpr = analysis::analyse_return_paths(routed, rules, ro);
+      log(fmt("return paths: %zu net%s analysed", rpr.nets.size(), rpr.nets.size() == 1 ? "" : "s"));
+      for (const auto& l : analysis::return_path_lines(routed, rpr)) log("  " + l);
+      return_path_summary = analysis::return_path_json(routed, rpr);
+      if (opt.sink)
+        for (const auto& n : rpr.nets) opt.sink->publish(analysis::return_path_message(routed, n));
+    }
+  }
   // The whole job, every variant included: a portfolio on fewer threads than variants runs them one after
   // another, so the winner's own time understates the run several times over (by more than the variant count
   // when the winner is one of the quicker variants).
@@ -910,6 +933,7 @@ RouteJobResult run_route_job(RouteJob job) {
     out.summary["refill"] = refill_summary;
     out.summary["unconnected_after_refill"] = unconnected_after_refill;
   }
+  if (!return_path_summary.is_null()) out.summary["return_paths"] = return_path_summary;
   if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;

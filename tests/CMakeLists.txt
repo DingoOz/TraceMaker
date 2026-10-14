@@ -2,8 +2,8 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_txn.cpp test_bus.cpp test_passes.cpp test_srj.cpp test_tui.cpp test_advice.cpp test_stall.cpp)
-target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes tm::advice tm::app_tui nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_txn.cpp test_bus.cpp test_passes.cpp test_srj.cpp test_tui.cpp test_advice.cpp test_stall.cpp test_return_path.cpp)
+target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes tm::advice tm::analysis tm::app_tui nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test-results)
@@ -100,5 +100,9 @@ add_test(NAME advisor_scripts COMMAND python3 ${PROJECT_SOURCE_DIR}/advisors/tes
 set_tests_properties(advisor_scripts PROPERTIES LABELS "python;integration" TIMEOUT 120)
 
 # The viewer's stall latch and its drawing (issue #8), under Node without a browser; skipped where node is missing or too old to strip types (22.6+).
-add_test(NAME viewer_stall COMMAND sh -c "node --experimental-strip-types -e 0 >/dev/null 2>&1 || exit 77; cd '${PROJECT_SOURCE_DIR}/viewer' && node --experimental-strip-types --no-warnings --test src/stall.test.ts src/stall_draw.test.ts")
+add_test(NAME viewer_stall COMMAND sh -c "node --experimental-strip-types -e 0 >/dev/null 2>&1 || exit 77; cd '${PROJECT_SOURCE_DIR}/viewer' && node --experimental-strip-types --no-warnings --test src/stall.test.ts src/stall_draw.test.ts src/returnpath_draw.test.ts")
 set_tests_properties(viewer_stall PROPERTIES SKIP_RETURN_CODE 77 LABELS "viewer;integration" TIMEOUT 120)
+
+# The reference-return audit (issue #7) through the command line; the board part needs the KiCad demo fixtures and skips without them.
+add_test(NAME return_paths_cli COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/return_paths.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/return_paths)
+set_tests_properties(return_paths_cli PROPERTIES LABELS "route;integration" TIMEOUT 300)
