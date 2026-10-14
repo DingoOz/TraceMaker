@@ -7,6 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "analysis/footprint_check.hpp"
 #include "analysis/return_path.hpp"
 #include "route/bus.hpp"
 #include "route/router.hpp"
@@ -28,6 +29,13 @@ struct RouteJob {
   // Reference-return audit of selected nets on the routed board (issue #7, doc 05 §42): off unless a selector is given. Read-only; the
   // report goes to the log and the summary, and each net's return path to the viewer.
   analysis::ReturnPathOptions return_paths;
+  // --footprint-refs (issue #5, doc 05 §43): every footprint is checked against the datasheet land patterns of a reference library before the first track is
+  // routed; a discrepancy is an error and stops the job unless footprint_warn_only.
+  std::string footprint_refs;     // the library: a directory or a JSON file; empty = no check
+  std::string footprint_trusted;  // trusted brand list; empty = trusted_brands.txt beside the references
+  bool footprint_trust_all = false;
+  bool footprint_warn_only = false;
+  analysis::FootprintCheckOptions footprint_opt;
   bool view_freeze = true;        // the viewer holds the scene on a routing stall (issue #8); --no-freeze says false in the board snapshot
   std::string view_host = "0.0.0.0";
   int view_port = 8766;

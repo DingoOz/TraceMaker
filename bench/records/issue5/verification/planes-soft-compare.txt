@@ -1,0 +1,10 @@
+# planes-soft: origin/main 49fbd3c -> this branch (release build, route options off), bench/compare_runs.py --expect-identical
+
+8 boards; routed boards byte-identical: 8/8.
+Clean pass 2 → 2; mean completion 91.3% → 91.3%; router seconds 210.5 → 175.7.
+Route CPU time 601 → 674 s (+12.1%) at the same work.
+Byte-identical boards moved -5% to +43% in CPU time (the same work: noise, or speed).
+
+Style (informational): bends per connection 0.8687 → 0.8687; acute angles 0 → 0; stair steps 10 → 10; short segments 144 → 144; off angle segments 307 → 307; detour ratio 1.0812 → 1.0812; long detours 24 → 24.
+
+Gates: pass

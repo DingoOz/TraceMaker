@@ -196,6 +196,12 @@ stitch, the separation). Callout labels never overlap: one with no room is left 
 audited nets worst first (chips: `+detour`, `split`, `stitch`, `ok`) and a click selects one and zooms onto it. Served by `route --return-paths ... --view` and by
 `tracemaker return-paths BOARD --nets ... --view`.
 
+The viewer draws the footprint check of doc 05 §43 from the `footprint_check` message: a ring on every footprint that differs from its datasheet (red) or has an
+untrusted reference (amber), and for the selected one a cross on each wrong pad with a short label (`pad 3: 0.15 mm off`, `pad 1: 1.8x0.6 vs 1.55x0.6 mm`,
+`missing pad 4`). The **Footprint check** panel lists the footprints with findings (errors first, the selected one scrolled into view); a click selects one, zooms
+onto it and prints the full sentences and the datasheet it was compared with (brand, part, document, revision, page). `D` toggles the overlay. Served by
+`footprint-check ... --view`, and by `route --footprint-refs ... --footprint-warn-only --view`.
+
 ### Running it
 
 ```

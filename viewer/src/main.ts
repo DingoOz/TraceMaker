@@ -10,6 +10,7 @@ import { Renderer, type ViewOptions } from './renderer';
 import { Scene } from './scene';
 import { StallTracker, stallLines } from './stall';
 import { drawStall } from './stall_draw';
+import { drawFootprintCheck, findingBox } from './footprintcheck_draw';
 import { drawReturnPaths, pathBox } from './returnpath_draw';
 
 const PANEL_PX = 340; // side panel width incl. margin, kept clear when fitting the board
@@ -42,7 +43,7 @@ try {
 canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
 canvas.addEventListener('webglcontextrestored', () => location.reload());
 
-const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false, returnPaths: true };
+const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false, returnPaths: true, footprintCheck: true };
 const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, hoverNet: 0, heatmap: '' };
 
 const conn = new Connection(Connection.defaultUrl());
@@ -149,6 +150,7 @@ window.addEventListener('keydown', (e) => {
   else if (k === 'e') hud.onToggle('effects', !toggles.effects);
   else if (k === 'l') hud.onToggle('follow', !toggles.follow);
   else if (k === 'p') hud.onToggle('returnPaths', !toggles.returnPaths);
+  else if (k === 'd') hud.onToggle('footprintCheck', !toggles.footprintCheck);
   else if (k === 'm') cycleHeatmap();
   else if (/^[1-9]$/.test(k) && Number(k) <= scene.layerNames.length) hud.onActiveLayer(Number(k) - 1);
 });
@@ -191,6 +193,7 @@ function processMessages(now: number) {
   const wasLatched = stall.latched;
   applyMessages(stall.consume(raw, now >= scene.quietUntil), now);
   if (returnPathsDirty) refreshReturnPaths();
+  if (footprintCheckDirty) refreshFootprintCheck();
   if (stall.latched && !wasLatched) onStallLatched();
   else if (stall.latched) refreshStall();
 }
@@ -217,7 +220,9 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
       case 'board': {
         scene.quietUntil = now + 0.75; // the server replays state after the snapshot
         rpSelected = null;
+        fcSelected = null;
         returnPathsDirty = true;
+        footprintCheckDirty = true;
         view.visible = scene.layerNames.map(() => true);
         view.active = 0;
         hud.setBoard(scene.name, scene.layerNames, view.visible, view.active);
@@ -242,6 +247,10 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
         break;
       case 'return_path':
         returnPathsDirty = true;
+        break;
+      case 'footprint_check':
+        footprintCheckDirty = true;
+        hud.addLog(m.errors ? 'error' : 'info', `footprint check: ${m.checked} footprints, ${m.mismatch} differ from their datasheet, ${m.untrusted} with an untrusted reference`, 'stage');
         break;
       case 'heatmap':
         // The legend changes only when the list of overlays or the shown one's maximum does.
@@ -275,6 +284,28 @@ hud.onReturnPath = (name) => {
   const box = p ? pathBox(p) : null;
   if (box) cam.fit([box[0] - 1, box[1] - 1, box[2] + 1, box[3] + 1], 0.1, PANEL_PX); // zoom onto the net
   refreshReturnPaths();
+};
+
+// ------------------------------------------------------------------------------------------------ footprint check
+// Footprints against datasheet land patterns (issue #5): a ring on each footprint that differs, marks and messages for the selected one.
+let footprintCheckDirty = false;
+let fcSelected: string | null = null;
+function refreshFootprintCheck() {
+  const fc = scene.footprintCheck;
+  footprintCheckDirty = false;
+  dirty = labelsDirty = true;
+  if (!fc || !fc.findings.length) { hud.setFootprintCheck(null, null); return; }
+  const count = (f: { issues: { severity: string }[] }, sev: string) => f.issues.filter((i) => i.severity === sev).length;
+  const rows = fc.findings
+    .map((f) => ({ ref: f.ref, libId: f.libId, status: f.status, errors: count(f, 'error'), warnings: count(f, 'warning'), datasheet: f.datasheet, issues: f.issues }))
+    .sort((a, b) => (b.errors - a.errors) || a.ref.localeCompare(b.ref));
+  hud.setFootprintCheck({ summary: `${fc.checked} checked: ${fc.ok} ok, ${fc.mismatch} differ, ${fc.untrusted} untrusted, ${fc.unverified} without a reference`, rows }, fcSelected);
+}
+hud.onFootprintCheck = (ref) => {
+  fcSelected = ref;
+  const f = ref ? scene.footprintCheck?.findings.find((x) => x.ref === ref) : undefined;
+  if (f) { const b = findingBox(f); cam.fit([b[0] - 3, b[1] - 3, b[2] + 3, b[3] + 3], 0.1, PANEL_PX); }
+  refreshFootprintCheck();
 };
 
 // ------------------------------------------------------------------------------------------------- stall
@@ -388,6 +419,12 @@ function drawLabels() {
   if (toggles.returnPaths && scene.returnPaths.size) {
     ctx.shadowBlur = 0;
     drawReturnPaths(ctx, scene.returnPaths.values(), rpSelected, {
+      toScreen: (x, y) => cam.toScreen(x, y), width: cam.width, height: cam.height, rightMargin: PANEL_PX,
+    });
+  }
+  if (toggles.footprintCheck && scene.footprintCheck?.findings.length) {
+    ctx.shadowBlur = 0;
+    drawFootprintCheck(ctx, scene.footprintCheck.findings, fcSelected, {
       toScreen: (x, y) => cam.toScreen(x, y), width: cam.width, height: cam.height, rightMargin: PANEL_PX,
     });
   }

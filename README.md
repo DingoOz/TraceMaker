@@ -134,6 +134,7 @@ Every command below starts with `build/release/src/app/tracemaker` unless it say
 | Let a script or a language model suggest hints when routing leaves connections open (experimental: the rule-based advisor measured no gain, [docs/17-llm-advisor.md](docs/17-llm-advisor.md) section 8) | `route board.kicad_pcb -o out.kicad_pcb --advisor "python3 advisors/heuristic_advisor.py"` |
 | Route with a hint file you wrote (nets first, layer costs, reserved regions) | `route board.kicad_pcb -o out.kicad_pcb --advice advice.json`; check it first with `advice-check board.kicad_pcb advice.json` |
 | Check whether fast nets have copper under them on their reference layer, and how far the return detours round voids (read-only; doc 05 §42) | `return-paths board.kicad_pcb --nets 'DDR*,*CLK*' --view` |
+| Check every footprint against its datasheet land pattern, from references of brands you trust; errors stop a route (doc 05 §43) | `footprint-check board.kicad_pcb --refs refs/ --view`; or `route board.kicad_pcb -o out.kicad_pcb --footprint-refs refs/` (examples in `docs/footprint_refs/`) |
 | Get a report of what failed and why | `route board.kicad_pcb -o out.kicad_pcb --stuck-report stuck.json` |
 
 <details>

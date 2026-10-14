@@ -41,6 +41,7 @@ export interface Toggles {
   effects: boolean;
   follow: boolean;
   returnPaths: boolean;
+  footprintCheck: boolean;
 }
 
 const LOGO = `<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#101a33"/>
@@ -68,6 +69,7 @@ export class Hud {
   private zoom = h('span', 'mono', '');
   readonly tooltip = h('div', 'tooltip');
   private rpBox = h('section', 'section hidden');
+  private fcBox = h('section', 'section hidden');
   private stallBox = h('section', 'section stall hidden');
   private banner = h('div', 'panel stall-banner hidden');
   private fatalBox: HTMLElement | null = null;
@@ -80,6 +82,7 @@ export class Hud {
   onStallDismiss: () => void = () => {};
   onStallPick: (index: number) => void = () => {};
   onReturnPath: (name: string | null) => void = () => {};
+  onFootprintCheck: (ref: string | null) => void = () => {};
 
   constructor(parent: HTMLElement) {
     this.root = h('div', 'hud');
@@ -133,7 +136,7 @@ export class Hud {
     logHead.append(h('div', 'label', 'Events'), clear);
     logSec.append(logHead, this.log);
 
-    side.append(this.stallBox, prog, this.rpBox, layers, logSec);
+    side.append(this.stallBox, prog, this.fcBox, this.rpBox, layers, logSec);
     this.root.appendChild(side);
 
     // Status bar.
@@ -167,6 +170,38 @@ export class Hud {
       list.appendChild(row);
     }
     this.rpBox.appendChild(list);
+  }
+
+  /** The footprint-check list (issue #5): one row per footprint with something to say, errors first; a click selects it (and again deselects) and lists its issues. */
+  setFootprintCheck(
+    v: { summary: string; rows: { ref: string; libId: string; status: string; errors: number; warnings: number; datasheet: string; issues: { severity: string; text: string }[] }[] } | null,
+    selected: string | null,
+  ) {
+    this.fcBox.textContent = '';
+    this.fcBox.classList.toggle('hidden', !v);
+    if (!v) return;
+    const head = h('div', 'section-head');
+    head.append(h('div', 'label', 'Footprint check'), h('div', 'hint', 'red differs from its datasheet · D toggles'));
+    this.fcBox.append(head, h('div', 'hint', v.summary));
+    const list = h('div', 'stall-list');
+    for (const r of v.rows) {
+      const row = h('div', `stall-row${r.ref === selected ? ' on' : ''}`);
+      const chip = h('span', 'chip-verdict', r.errors ? `${r.errors} err` : r.status === 'untrusted' ? 'untrusted' : `${r.warnings} warn`);
+      chip.style.background = r.errors ? '#ff5d6c' : '#f2b84b';
+      chip.style.whiteSpace = 'nowrap';
+      const lib = r.libId.split(':').pop() ?? r.libId;
+      row.append(chip, h('span', 'stall-net', r.ref), h('span', 'muted mono', lib.length > 18 ? `${lib.slice(0, 17)}…` : lib));
+      row.title = r.datasheet ? `${r.libId} vs ${r.datasheet}` : r.libId;
+      row.onclick = () => this.onFootprintCheck(r.ref === selected ? null : r.ref);
+      list.appendChild(row);
+      if (r.ref === selected) queueMicrotask(() => row.scrollIntoView({ block: 'nearest' })); // a long list scrolls to the one that was picked
+    }
+    this.fcBox.appendChild(list);
+    const sel = v.rows.find((r) => r.ref === selected);
+    if (sel) {
+      if (sel.datasheet) this.fcBox.appendChild(h('div', 'hint', `vs ${sel.datasheet}`));
+      for (const i of sel.issues) this.fcBox.appendChild(h('div', i.severity === 'error' ? 'stall-label' : 'hint', i.text));
+    }
   }
 
   /** The stall panel and banner (issue #8): null clears them. */
@@ -248,7 +283,7 @@ export class Hud {
   setToggles(t: Toggles) {
     const labels: [keyof Toggles, string, string][] = [
       ['activeOnTop', 'Active on top', 'H'], ['zones', 'Zones', 'Z'], ['ratsnest', 'Ratsnest', 'R'], ['escape', 'Escape plan', 'X'],
-      ['footprints', 'Footprints', ''], ['effects', 'Effects', 'E'], ['follow', 'Follow activity', 'L'], ['returnPaths', 'Return paths', 'P'],
+      ['footprints', 'Footprints', ''], ['effects', 'Effects', 'E'], ['follow', 'Follow activity', 'L'], ['returnPaths', 'Return paths', 'P'], ['footprintCheck', 'Footprint check', 'D'],
     ];
     this.chips.textContent = '';
     for (const [key, label, k] of labels) {

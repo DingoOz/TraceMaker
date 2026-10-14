@@ -1885,3 +1885,84 @@ several are exactly as near the first in the region's edge order is taken, and t
 or 2.1 mm for one SWD net of the RoyalBlue demo), so a number near a threshold there is an estimate, not a verdict. Antipad polygons come from the fills as drawn (a 32-gon circle, not a true circle), a few micrometres in a 1 mm antipad. Results on the acceptance picture
 of the issue (about 4.87 mm separation at a processor dogbone field, about 1.00 mm at the memory) were not reproduced: that board is not here.
 
+
+## 43. Footprint check against datasheet land patterns (issue #5, 2026-10-14, D115)
+
+**Problem.** A footprint can be DRC-clean and still not be the part's land pattern: a library footprint that is for the wrong package, a pad that was nudged
+to make a route fit, pins numbered the wrong way, a drill that is too small for the lead. Routing such a board is wasted effort. The issue asks for an
+option that checks components against their datasheet footprints and calls any discrepancy an error, with a trusted list of datasheet brands.
+
+**What it is, and what it is not.** TraceMaker does not read datasheets: a land pattern in a PDF is a drawing, and extracting numbers from it is a job for a
+person (or a model) whose result must itself be checked. The check works on **references**: records of a land pattern made from a datasheet, each saying where it
+came from. A footprint is compared with the reference made for it, and only with a reference whose **brand is on the trusted list**; a reference from any other
+source gives no verdict (the footprint is reported `untrusted`, never as fine). The check verifies a footprint against a record somebody vouched for, it does
+not vouch for the record. Read-only; nothing is fetched from the network.
+
+```
+tracemaker footprint-check BOARD --refs DIR_OR_FILE [--trusted-brands FILE | --trust-all] [--only 'U*,J*'] [--require 'U*,J*']
+                           [--mpn-field NAMES] [--position-tol-mm 0.05] [--size-tol-mm 0.05] [--drill-tol-mm 0.05]
+                           [--all] [--json FILE] [--strict] [--view [--view-port N]]
+tracemaker route BOARD -o OUT --footprint-refs DIR_OR_FILE [--footprint-trusted FILE | --footprint-trust-all] [--footprint-require 'U*']
+                           [--footprint-tol-mm 0.05] [--footprint-warn-only]
+```
+
+`footprint-check` exits 4 when a footprint differs from its datasheet (with `--strict` also on a warning), 1 when the library cannot be read. `route
+--footprint-refs` runs the same check **before the first track is routed**: a discrepancy is an error and stops the job (exit 1, nothing written) unless
+`--footprint-warn-only`; the findings go to the log, the `--json` summary (`footprint_check`, only the footprints with something to say) and the viewer.
+
+**References.** A directory of JSON files (read in path order) or one file; `docs/footprint_refs/example-synthetic.json` is a synthetic example of the format
+(its brand does not exist). Each entry names the brand, the part, the datasheet it was made from (`document` is required: a record that cannot be traced to a
+document is not a reference; revision, page, figure and URL are kept and shown in the report), which footprints it is for (`match`: `mpn`, `lib_id`, `value`,
+`ref`, KiCad wildcards, every list given must be satisfied; part numbers and values ignore case) and the pads: inline (`number`, `type` smd, thru_hole or
+np_thru_hole, `shape`, `at`, `size`, `angle`, `drill`; millimetres, KiCad's y-down footprint frame) or `"footprint": "file.kicad_mod"`, the manufacturer's own KiCad
+footprint, read by the engine's board reader (paste and mask apertures are not land pattern and are dropped). A reference may carry its own `tolerance_mm`.
+Unknown keys, a missing datasheet, a match that selects nothing and a through hole without a drill are refused: a misspelt tolerance that is silently the
+default would be a wrong answer from a verification tool.
+
+**Trusted brands.** `trusted_brands.txt` beside the references, or `--trusted-brands FILE`: one brand per line, `Canonical | alias | alias`, compared without case,
+punctuation or corporate suffixes ("Texas Instruments Incorporated" = "TI" if listed so). No list means nothing is trusted and the report says what to do;
+`--trust-all` uses every reference and the report says that too. `docs/footprint_refs/trusted_brands.txt` is a starting point to copy and edit, not something
+the tool applies by itself: whose datasheets to believe is the user's decision.
+
+**Finding the reference.** For each footprint with pads and a designator: the references whose `match` it satisfies, the most specific (most selector kinds) first,
+then library order; the first whose brand is trusted is used, and when several matched a note says which. The manufacturer part number is read from the
+footprint's properties named MPN, Manufacturer_Part_Number, Mfr Part Number and the like (`--mpn-field` adds names). A footprint with no reference is
+`unverified` (counted, listed with `--all`); `--require 'U*'` makes that an error for those designators. A reference only from untrusted brands gives status
+`untrusted` and a warning (an error where required).
+
+**The comparison.** The datasheet pattern is laid over the footprint: the library's choice of origin and of orientation is not part of a land pattern, so the
+alignment is a translation and a rotation by a multiple of 90 degrees, mirrored or not (8 candidates; the translation is the median of the offsets of the pads
+that share a number, which one or two wrong pads cannot move; the candidate with the most pads paired, then the smallest worst deviation, wins; a pattern that fits
+several ways because it is symmetric is taken the way that agrees with the footprint's side). A mirror is not free: a footprint on the front must match as drawn, one
+on the back mirrored (that is what flipping does); a pattern that fits only the other way is the error `mirrored`, the pin numbers run the wrong way. Then every pad:
+
+| kind | an error when |
+|---|---|
+| `pad_count`, `missing_pad`, `extra_pad` | the footprint has other pads than the datasheet (an unnumbered non-plated peg the datasheet does not show is a warning) |
+| `position` | a pad is farther than the tolerance (default 0.05 mm) from where the pattern puts it, after alignment |
+| `size` | width or height differ by more than the tolerance; a quarter turn of the pad swaps them; custom-shaped pads are not compared |
+| `drill` | a hole where the datasheet has none or the reverse, or a drill off by more than the tolerance (oval drills compared by their two sides) |
+| `pad_type` | SMD, plated through hole and non-plated hole differ |
+| `orientation` | a pad is turned to an angle that is not a quarter turn from the datasheet's (its size cannot be compared) |
+| `pattern` | no pad number of the footprint is in the datasheet pattern |
+
+Pad shape (rect, roundrect, oval) is not compared, only its extent. With two pads a displacement shows on both by half (the pair's distance is what is wrong).
+
+**Report** (text, JSON, the `footprint_check` viewer message of docs/13): per footprint its status (`ok`, `mismatch`, `unverified`, `untrusted`), the datasheet it was
+compared with (brand, part, document, revision, page), the alignment found, and each issue with its pad, a sentence, a few words for the board and where it is.
+**Viewer:** a **Footprint check** panel lists the footprints with findings (errors first) and a click selects one, zooms onto it and lists its messages; rings on the
+footprints that differ (red) or have an untrusted reference (amber), marks and short labels on the wrong pads of the selected one; `D` toggles it.
+
+**Checked on real boards** (`bench/records/issue5/real-boards/`). These runs test the alignment, the rotation and the flip, not the datasheets: the references
+are derived from the boards themselves. (1) On nine KiCad demo boards, a reference taken from the first front instance of every library footprint was compared
+with every instance on the board: 3,144 footprints, front and back, at every rotation they had, all `ok` (the back ones aligned mirrored), none called out. (An
+earlier version of the script derived references from back instances and read oval drills as round; the check rightly reported 'mirrored' and drill errors there, which is
+what those references said.) (2) On video, CM5_MINIMA_3, vme-wren and the Jetson baseboard, the library footprints that appear on both sides: 2,257 footprints,
+all `ok`. (3) A negative control: the same references with one pad moved by 0.2 mm and another widened by 0.3 mm were called out on all 32 footprints they applied
+to on CM5_MINIMA_3 (61 position and 3 size errors). The check takes about a second on the largest of these boards (1,500 footprints).
+
+**Limits.** The references are as good as whoever made them: a typo in a record is a typo in the verdict, and a reference from a trusted brand is only trusted
+because the list says so. Only copper pads and non-plated holes are compared (not courtyard, silkscreen, paste or mask, not 3D models, not the pin functions
+of the symbol). Pads of arbitrary angle are not compared by size. Footprints are matched by part number, library id, value or designator, not by reading the
+datasheet link in a footprint's properties. Nobody has used the check on a board of their own against references made from real datasheets, and no list of
+references ships with the tool: the example is synthetic.

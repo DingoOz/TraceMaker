@@ -88,6 +88,27 @@ export interface ReturnPathMsg {
   callouts: { kind: string; p: XY; text: string }[];
 }
 
+/** The footprint check against datasheet land patterns (docs/13-viewer-protocol.md `footprint_check`, issue #5): the footprints with something to
+ *  say (a discrepancy, an untrusted reference, a missing required reference) and where each finding is. */
+export interface FootprintCheckMsg {
+  type: 'footprint_check';
+  checked: number;
+  ok: number;
+  mismatch: number;
+  unverified: number;
+  untrusted: number;
+  errors: number;
+  warnings: number;
+  footprints: {
+    ref: string;
+    lib_id: string;
+    status: string;
+    p: XY;
+    datasheet?: { id: string; brand: string; part: string; document: string; revision?: string; page?: number; figure?: string; url?: string };
+    issues: { severity: string; kind: string; pad: string; text: string; label?: string; p: XY }[];
+  }[];
+}
+
 /** Overlay grid (doc 13): row-major w*h bytes 0–255, cell size in nm, layer -1 = all layers. `scale` says how
  *  raw values became bytes ("sqrt": byte = 255·sqrt(v / max); absent: linear). */
 export interface HeatmapMsg {
@@ -118,6 +139,7 @@ export type Message =
   | { type: 'path_try'; conn: number; pts: [number, number, number][] }
   | HeatmapMsg
   | ReturnPathMsg
+  | FootprintCheckMsg
   | { type: 'stage'; name: string; state: 'begin' | 'end'; detail?: string }
   | { type: 'log'; level: string; text: string }
   // Escape planning (M9): reserved corridor per dense-package pin, released when the pin is connected; dead pins.
