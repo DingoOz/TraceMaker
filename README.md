@@ -36,6 +36,9 @@ Freerouting's figures are its own published results on the same boards.
 - On tscircuit's public BGA breakout problems (sets srj19 and srj20, KiCad errors never added) it routes about 95% and 78% of the boards
   completely with a 16-variant portfolio (about 2-7 minutes per board; a single 30-60 s run: 89% and 64%); tscircuit's own router completes 92% and 79%
   (360 s on 32 vCPU). Both figures are composites of runs; srj20 is 156/200 within 330 s and 160/200 with up to 433 s.
+  Boards that stay open there are mostly limited by the lattice, not by room: `--relax` (route at 60-80 % of the clearance, then move the track
+  vertices off the lattice up to the real rules) closed sample031, 039, 048, 071, 072, 095, 103 and 159 with a clean KiCad DRC; sample104 is still one
+  connection short (doc 16 section 13).
 - It uses more vias than Freerouting.
 
 Full detail: [design and results report](report/report.pdf) ·

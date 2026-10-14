@@ -405,3 +405,32 @@ most 180 s wall per board, no GPU) on the boards the single variant leaves open.
 
 Where the srj20 boards that stay open are: 28 have 70 or more connections (tscircuit solves two of them) and are 8–40 connections short; of the 24
 with fewer, the larger budget closed 8 and left 16 with 1–8 open (three with exactly one).
+
+## 13. Fourth round (2026-10-13): the plateau was the lattice, not the capacity (D103, D104)
+
+**Question.** After M15 the single configuration stood at srj19 191/200 and srj20 160/200, and up to 199 and about 168 over many long runs; 28 srj20 boards of 70+ connections sat 8-40 connections short and six of them (039, 048, 071, 072, 103, 104) at 1-6 open after three-hour runs that no longer improved. Was that a capacity limit (not enough room between the balls for the tracks) or a search limit?
+
+**Measurements** (srj20 boards 039, 048, 071, 072, 103, 104; 16-variant portfolio, until complete, 30 min):
+
+| Rules | Routed of 453 | Complete |
+|---|---|---|
+| true (0.10 mm clearance), 3 h | 436 | 0 (1-5 open each) |
+| clearance 0.08 mm | 434 | 0 |
+| clearance 0.06 mm (two tracks fit in a pad gap and between two vias) | **453** | **6**, in 3-27 min |
+| via 0.25 mm / drill 0.12, clearance 0.1 (via gap 0.55 holds two tracks) | 435 | 0 |
+| ball pads 0.26 mm instead of 0.36, clearance 0.1 (pad gap 0.54 holds two tracks) | 421 | 0 |
+
+Doubling one gap alone did nothing and the step to 0.06 completed everything, which looked like a capacity wall. It is not: (i) warm-starting a run from the 0.06 mm solution *completes sample048 at 0.07, 0.08 and 0.085 mm and sample071 at 0.065*, rules at which scratch runs stay one connection short; (ii) the 0.085 mm solution of sample048 has no pad gap with two tracks, four via gaps with two (0.9 mm apart, which hold two at 0.10 anyway), and all 131 pairs that are too close at 0.10 mm are 0.087-0.098 mm squeezes; (iii) **moving the vertices of the 0.06 mm solutions off the lattice until the 0.10 mm rules hold** (`route/legalize.cpp`, doc 05 §41.3) leaves 071, 104 and (with more sweeps) 039 without a single pair too close, and 103, 048, 072 with 3-9.
+
+**Result.** Relax, route, legalise (`--relax`, D104): stage 1 routes under 60 % of the clearance, the solution is legalised to 80 %, the missing connections routed, legalised to 100 %, and a stall at the real rules sends the run back two stages. On the six boards, with the 0.06 mm solutions as the start: 071 (0.2 s), 039, 103 and 048 complete under the real rules in 3-13 min, KiCad DRC with no router-introduced error and nothing unconnected, boards on which three hours of scratch search had stopped with 1-5 connections open.
+
+**Reading.** The lattice router puts tracks on lattice points (0.035 mm) and cannot move committed routes, so a solution needs more room than the continuous geometry does (spacing 7 steps = 0.245 mm for a 0.22 mm requirement, vias and pad escapes on points); the room is there, it is just not reachable by a router that only commits lattice paths. The remaining failures are local pinches of a topology (a via between a pad and the board edge, a track between a via and a pad) that need a different topology of the nets around them, which the router then has to find.
+
+### 13.1 What was measured, and what was not
+
+- **Six stuck boards, from the 0.06 mm solutions** (`--warm-pcb` + ramp + `--legalize`, 16 variants, 20 M per round): 071 (0.2 s, one legalisation), 039 (175 s), 103 (173 s), 048 (764 s), 072 (41 min, after several breathing cycles) complete under the real rules, each checked with `kicad-cli pcb drc` against the true project rules: 0 router-introduced errors, 0 unconnected items. 104 stays one connection short (71/72) after 40 and 60 min runs.
+- **From scratch with `--relax`** through `bench/run.py` (KiCad DRC judged): sample095 65/65 clean (736 s), sample031 65/65 clean (1312 s) and sample159 76/76 clean (1786 s), three boards that had stayed open for hours of earlier search. A batch over the remaining open srj20 boards (27 boards, three lanes) was stopped by decision after these; no composite srj19/srj20 figure was re-measured, so the 191/200 and 160/200 of §12.1 remain the headline figures and the boards above are additional closures from longer runs.
+- **Did not help** on the last missing connection of sample104/072/031: islands (variants continue from their own stage solutions), finer ramp steps (0.01 mm), a half-pitch lattice (0.0175 mm) for the repair rounds, more projection sweeps (3,000 instead of 300). What helped on 072 and 031 was repeated breathing cycles, i.e. more random re-routes at the relaxed rules followed by legalisation; the fresh restart every third cycle (`--ramp-fresh`) was added for the same reason and not measured on its own.
+- Cost: the relaxed stage takes minutes on the 60-80 connection boards; a board that fails to complete after the cycles keeps going until `--time` or the round limit (default 200 rounds of 20 M per variant).
+- Limits of the legaliser: pads count as their bounding rectangles (circles exactly), zones, keep-outs, mounting holes and custom `.kicad_dru` clearances are not constraints (the exact check that follows drops what they break), and the vertices end off the 45° grid.
+
