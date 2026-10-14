@@ -191,6 +191,20 @@ struct RouterOptions {
   // length (1000 = normal, never less; missing entries are 1000).
   model::LayerMask no_track_layers = 0;
   std::vector<std::int32_t> layer_cost_pm;
+  // Critical nets (issue #24, doc 05 §44; route_job fills these from --critical-nets and the component rules' roles). `critical` is net name and tier
+  // (1 = most critical). With `critical_first` they are routed before all other nets, tier by tier (after first_nets), also after restarts. A via
+  // costs them `critical_via_mult` times as much (>= 1). A track of theirs over a void of the adjacent reference plane (route/ref_map.hpp) costs
+  // `split_cost` pitches more per lattice step; `split_hard` closes those cells to them instead. All off by default: a run without these options is
+  // the run it was.
+  std::vector<std::pair<std::string, int>> critical;
+  bool critical_first = false;
+  double critical_via_mult = 1.0;
+  double split_cost = 0;
+  bool split_hard = false;
+  double split_min_coverage = 0.3;  // a layer is a reference plane when its zone fills cover this share of the board
+  // The board with its zones refilled by the engine, for the reference map: made once by the caller when the file's zones have no fills (every portfolio variant
+  // would otherwise refill the whole board itself). Null = use the board's own fills, refilling here if it has none.
+  std::shared_ptr<const model::Board> reference_fills;
   // Rule areas and custom rules that exist only in this router's working copy of the board and rules (advice regions, doc 17
   // §4): never written to the output, judged by the same exact checks as the board's own positional rules (doc 05 §34).
   std::vector<model::Zone> extra_zones;

@@ -1966,3 +1966,79 @@ because the list says so. Only copper pads and non-plated holes are compared (no
 of the symbol). Pads of arbitrary angle are not compared by size. Footprints are matched by part number, library id, value or designator, not by reading the
 datasheet link in a footprint's properties. Nobody has used the check on a board of their own against references made from real datasheets, and no list of
 references ships with the tool: the example is synthetic.
+
+## 44. Critical nets: JLCPCB's three routing rules (issue #24, 2026-10-14, D117)
+
+**Problem.** JLCPCB's advice on routing is three rules: *route the critical signals first, keep vias few, keep a solid reference plane and never cross a split*. TraceMaker had the pieces
+(`--first-nets`, `--via-cost-mm` and the via clean-up, `return-paths` after the route in §42, the component rules' roles in doc 15) but nothing joined them: the user had to name the
+critical nets, vias cost the same for every net, and the router neither avoided nor reported a track over a plane void. This adds the three rules as options, off by default.
+
+```
+tracemaker route BOARD -o OUT --si-rules                       # the three rules together, with the settings below
+tracemaker route BOARD -o OUT [--critical-auto] [--critical-nets 'CLK*,USB_D*'] [--critical-first]
+                              [--critical-via-cost 3] [--critical-via-max 2]
+                              [--split-cost 4 | --split-hard]
+```
+
+**Which nets are critical.** `--critical-nets` names them (KiCad wildcards, tier 1). `--critical-auto` adds the nets that the component rules' roles make critical (doc 15; the table is
+`crules::critical_roles()`, every row a role that carries an impedance, differential-pair, length-match or via-limit rule in the catalogue) and the halves of differential pairs
+(`named_pairs`, tier 2):
+
+| tier | what | roles |
+|---|---|---|
+| 1 | clocks, crystals, RF lines: the signals that radiate and that nothing may disturb | crystal xin/xout, oscillator out, rf_line line, and the clocks of PCIe (refclk), MIPI, DDR3/DDR4 (ck), SDRAM, QSPI, SD/SDIO |
+| 2 | high-speed differential links | USB 2.0 dp/dm, USB 3 sstx/ssrx, Ethernet mdi_pairs and line_pairs, HDMI/DP tmds, LVDS pairs, MIPI data, PCIe tx/rx, SATA pairs, and named pairs |
+| 3 | memory and other fast parallel buses | DDR byte lanes and address/command, SDRAM data and address, QSPI data, SD/SDIO bus, Ethernet MAC bus |
+
+The detection runs on the board whatever `--component-rules` says (it reads, it does not apply rules; a `--rules-override` file is honoured). The user's `--critical-nets` are tier 1, like clocks, and win over a role; the log names the nets per tier.
+
+**1. Order (`--critical-first`).** Critical connections are routed before all others, tier by tier, shortest first within a tier, after `--first-nets` (which stay in front), and again
+after every restart. Unlike `--first-nets` this is an order only: other nets may still rip a critical net during negotiation.
+
+**2. Vias (`--critical-via-cost F`, `--critical-via-max N`).** A via costs a critical net F times as much as `--via-cost-mm` in every search, the clean-up stages included (their own
+multiplier compounds), so it takes a longer way on one layer where there is one. `--critical-via-max` is a report threshold: a critical net with more vias than N is listed with a
+warning. The vias of each critical net are counted in the report whether or not the option is given.
+
+**3. Plane splits (`--split-cost P`, `--split-hard`).** `route/ref_map.hpp` answers, for every cell of the router's lattice on a layer that has a plane next to it, whether the cell's
+centre is over the plane's copper. The reference of a layer is the adjacent layer whose zone fills cover at least 30 % of the board's bounding box (the larger if both; the fills in the file,
+refilled by the engine where there are none); a plane layer with no plane beside it (the outer plane of a two-layer board) counts its own gaps, so a net cannot hop onto the plane to cross its
+slot on the cheap. The fill is rasterised by scanline; `tests/test_critical.cpp` compares it with a point-in-region scan of the same region, cell by cell. A critical net pays P pitches
+per lattice step (`--split-cost`) over a void, or may not enter one (`--split-hard`: a net with no way round a split stays unrouted, and the report lists it as not routed). It is a cost in the search, not a
+change to the exact check of a commit. Cells within a critical net's own pad's radius plus 1 mm are never counted (the plane's antipad round a through-hole pad would otherwise close the pad in under `--split-hard`).
+Three things make it effective: the smoothing pass (`smooth_paths`) may not shortcut a critical net over more void than the path it replaces; a critical net whose first path ran over a void, or hopped layers where a dearer
+via was asked for, is searched again in a 20 mm window (`refine_critical`; A* is optimal in its window, which contains the first, and the first path is committed as it was if the refined one fails the exact check); and
+a net with no void on its first path costs nothing extra. Connections that fail never get the wider search: a window that size on a connection that cannot be routed would spend the work budget.
+
+**Report.** After the route, for the critical nets: the log (`critical nets after the route: N nets, V vias, C plane void crossings` and one line per warning), the `--json` summary
+(`critical_nets`: options, per net tier, why, vias and length added, and where the board has a plane the voids it runs over, the detour and the splits from the audit of §42 on the refilled
+board), a `critical_nets` event and each net's `return_path` event for the viewer (doc 09, doc 13). Warnings: a split crossed (no return path on that layer), a void run over, more vias than
+`--critical-via-max`. The tiers and the options are on the `tui` screen with their help text like every `route` option.
+
+**Off by default.** Without these options the route is the run it was: `tests/test_critical.cpp` and `bench/records/issue24/` show byte-identical boards on the `quick`, `planes` and
+`planes --soft-zones` tiers. `--critical-nets` alone, with no cost or order, is a report only and also changes nothing about the copper.
+
+**Measured** (`bench/records/issue24/`). Planes tier with `--soft-zones`, 4 boards with 28 critical nets (by role or pair), 3M work units, one seed; the baseline is `--critical-auto` alone (the audit on the unchanged copper). Compared on the nets
+that both runs routed, so that a net one run could not route does not count as having no crossings:
+
+| options | critical nets routed | connections routed (of 882) | common nets | vias | void crossings | splits |
+|---|---|---|---|---|---|---|
+| baseline | 25 / 28 | 807 | | | | |
+| `--critical-first` | 26 | 806 | 23 | 18 -> 20 | 62 -> 72 | 22 -> 23 |
+| `--split-cost 4` | 21 | 805 | 21 | 18 -> 16 | 57 -> 52 | 20 -> 11 |
+| `--critical-via-cost 3` | 21 | 805 | 21 | 18 -> 12 | 57 -> 47 | 20 -> 11 |
+| `--split-cost 4 --critical-via-cost 3` | 21 | 805 | 21 | 18 -> 14 | 57 -> 48 | 20 -> 11 |
+| `--critical-first --split-cost 4` | 25 | 801 | 22 | 17 -> 17 | 63 -> 68 | 21 -> 18 |
+| `--si-rules` (all three) | 27 | 799 | 24 | 19 -> 15 | 70 -> 68 | 26 -> 25 |
+
+Read as: the split cost and the via cost, without the order, roughly halve the splits crossed (20 -> 11) and cut vias; `--critical-first` by itself adds crossings, and with it the benefit of the split cost mostly goes (21 -> 18 with the split cost,
+26 -> 25 with all three), so `--si-rules`, which is all three as the issue lists them, is not the best measured combination: `--critical-auto --split-cost 4 --critical-via-cost 3` is. Variation between runs is as large as some of these
+differences: the critical nets that two of the runs fail to route (four USB pairs on StickHub) are also unrouted in a single-variant run of the baseline, so which portfolio variant wins moves the routed counts by a few nets and a few
+connections, and the clean-pass count (2 of 8) did not move at all. Without `--soft-zones` (plane fills block routing) the baseline routes 3 of the 28 critical nets and `--si-rules` 4, with the same 396 of 879 connections. Crossings count voids
+under the net including via antipads. A first version that searched a 20 mm window from the start made `--si-rules` route 3 of 147 on RoyalBlue (failing critical connections spent the work budget); the wider window is now searched
+only after a critical net's first path crossed a void or hopped layers. With all options off the quick, mid, planes and planes `--soft-zones` tiers are byte-identical to `main`.
+
+**Limits.** The tweet the issue quotes gives no numbers, and none were copied: 3 for the via multiplier and 4 pitches per step for the split cost are the values of `--si-rules`, chosen on the
+benchmark runs recorded, not derived. The cost map knows the zone fills of the file, not the antipads of vias the route adds (the audit after the route does, on a refilled board). Only the
+smoothing pass is made split-aware; the other post-passes (length tuning, pair coupling) are not. A rule's own `plane_net` parameter (doc 15 USB2-09, ETH-13) is not read: the reference of a layer
+is the adjacent layer with most copper. A plane that covers under 30 % of the board is not a reference plane. Net classes, via budgets per role and a hard cap on vias were not built (the
+report threshold is the cap).

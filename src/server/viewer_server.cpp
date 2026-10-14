@@ -139,7 +139,7 @@ class Hub {
   std::map<ObjectId, Text> track_adds_, via_adds_;
   std::set<ObjectId> track_removed_, via_removed_;  // snapshot ids removed since
   std::map<std::string, Text> fp_moves_, heatmaps_, return_paths_;  // return_paths_: the latest `return_path` per net (doc 13)
-  Text ratsnest_, stats_, footprint_check_;  // footprint_check_: the latest `footprint_check` (doc 13)
+  Text ratsnest_, stats_, footprint_check_, critical_nets_;  // footprint_check_: the latest `footprint_check` (doc 13)
   std::deque<Text> history_;  // recent stage / log / failure messages
   static constexpr std::size_t kHistory = 300;
 
@@ -216,6 +216,7 @@ class Hub {
         fp_moves_.clear();
         return_paths_.clear();
         footprint_check_.reset();
+        critical_nets_.reset();
         return;
       case Kind::Stats: stats_ = t; return;
       case Kind::Transient: return;
@@ -236,6 +237,7 @@ class Hub {
     else if (type == "via_remove") remove(via_adds_, via_removed_);
     else if (type == "ratsnest") ratsnest_ = t;
     else if (type == "footprint_check") footprint_check_ = t;
+    else if (type == "critical_nets") critical_nets_ = t;
     else if (type == "footprint_move" || type == "heatmap" || type == "return_path") {
       const auto j = nlohmann::json::parse(*t, nullptr, false);
       if (!j.is_object()) return;
@@ -279,6 +281,7 @@ class Hub {
     for (const auto& [k, t] : heatmaps_) s->enqueue({t, Kind::Info});
     for (const auto& [k, t] : return_paths_) s->enqueue({t, Kind::Info});
     if (footprint_check_) s->enqueue({footprint_check_, Kind::Info});
+    if (critical_nets_) s->enqueue({critical_nets_, Kind::Info});
     for (const auto& t : history_) s->enqueue({t, Kind::Info});
     if (stats_) s->enqueue({stats_, Kind::Stats});
   }

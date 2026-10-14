@@ -984,6 +984,20 @@ int main(int argc, char** argv) {
   route->add_option("--footprint-require", r_job.footprint_opt.require, "With --footprint-refs: designators (KiCad wildcards, comma separated) that must have a trusted reference, else it is an error")->delimiter(',');
   route->add_flag("--footprint-warn-only", r_job.footprint_warn_only, "With --footprint-refs: report the discrepancies and route anyway");
   route->add_option("--footprint-tol-mm", r_fp_tol, "With --footprint-refs: tolerance of pad positions, sizes and drills in millimetres (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
+  route->add_flag("--si-rules", r_job.si_rules,
+                  "JLCPCB's three routing rules at once (doc 05 §44): critical nets (from the component rules' roles and differential pairs) routed first, dearer vias for them (x3), and a cost "
+                  "for their tracks over a void of the adjacent reference plane (+4 pitches per lattice step); each can be set with the options below instead");
+  route->add_option("--critical-nets", r_job.critical_nets, "Nets that are critical whatever their role, KiCad wildcards comma separated (e.g. 'CLK*,USB_D*'); they are tier 1, like clocks, and the nets found by --critical-auto follow in their own tiers")
+      ->delimiter(',');
+  route->add_flag("--critical-auto", r_job.critical_auto, "Critical nets from the component rules' roles (clock, crystal, USB, Ethernet, PCIe, DDR ...) and from differential pairs");
+  route->add_flag("--critical-first", r_job.critical_first, "Route the critical nets before all others, tier by tier (clocks and crystals, differential links, memory buses); --first-nets stay in front");
+  auto* r_crit_via = route->add_option("--critical-via-cost", r_job.critical_via_mult, "A via costs a critical net this many times --via-cost-mm (default 1; 3 with --si-rules)")
+                         ->check(CLI::Range(1.0, 100.0));
+  route->add_option("--critical-via-max", r_job.critical_via_max, "Warn in the report when a critical net has more vias than this (0 = no limit)")->check(CLI::NonNegativeNumber);
+  auto* r_split = route->add_option("--split-cost", r_job.split_cost,
+                    "Cost, in pitches per lattice step, of a critical net's track over a void of the adjacent reference plane: a split, a slot or an antipad field (default 0; 4 with --si-rules)")
+                      ->check(CLI::NonNegativeNumber);
+  route->add_flag("--split-hard", r_job.split_hard, "Close plane voids to critical nets instead of charging for them: a critical net with no way round a split stays unrouted");
   route->add_flag("--no-freeze", r_nofreeze, "With --view: the viewer does not hold the scene on a routing stall (it normally freezes on the stuck net, with the rejected paths and what rejected them; Space resumes)");
   route->add_option("--record", r_job.record, "Write the routing events (JSON lines, time-stamped) to a file for replay; zstd-compressed if FILE ends in .zst");
   route->add_option("--view-host", r_job.view_host,
@@ -1270,6 +1284,8 @@ int main(int argc, char** argv) {
       job.warm_pcb = r_warm_pcb;
       job.refill_repair = !r_no_repair;
       job.view_freeze = !r_nofreeze;
+      job.critical_via_given = r_crit_via->count() > 0;
+      job.split_cost_given = r_split->count() > 0;
       if (r_fp_tol >= 0) job.footprint_opt.position_tol_mm = job.footprint_opt.size_tol_mm = job.footprint_opt.drill_tol_mm = r_fp_tol;
       job.out = r_out;
       job.opt = ropt;

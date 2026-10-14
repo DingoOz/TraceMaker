@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Scene state in world units (millimetres relative to the board centre), updated by protocol messages.
 import { earClip, rotate } from './geometry';
-import type { BoardMsg, FootprintMsg, Message, PadMsg, TrackMsg, ViaMsg, XY } from './protocol';
+import type { BoardMsg, CriticalNetsMsg, FootprintMsg, Message, PadMsg, TrackMsg, ViaMsg, XY } from './protocol';
 
 export interface Track { id: number; ax: number; ay: number; bx: number; by: number; r: number; layer: number; net: number }
 export interface Via { id: number; x: number; y: number; r: number; rh: number; net: number; top: number; bottom: number }
@@ -112,6 +112,7 @@ export class Scene {
   footprintsDirty = true;
   heatmaps = new Map<string, Heatmap>();  // by name; layer -1 (all layers) is what the router sends
   footprintCheck: FootprintCheck | null = null;  // the latest `footprint_check` (issue #5)
+  criticalNets: CriticalNetsMsg | null = null;   // the latest `critical_nets` (issue #24)
   returnPaths = new Map<string, ReturnPath>();  // by net name, from `return_path` messages (issue #7)
   private heatVersion = 0;
 
@@ -227,6 +228,10 @@ export class Scene {
         } satisfies ReturnPath);
         break;
       }
+      case 'critical_nets':
+        if (!this.loaded) return;
+        this.criticalNets = m;
+        break;
       case 'footprint_check': {
         if (!this.loaded) return;
         this.footprintCheck = {
@@ -311,6 +316,7 @@ export class Scene {
     this.heatmaps.clear();  // the server resends the current overlays after a snapshot
     this.returnPaths.clear();
     this.footprintCheck = null;
+    this.criticalNets = null;
     this.fx = { newTracks: [], frontier: [], paths: [], failures: [] };
     this.activity = null;
     for (let i = 0; i < this.layerNames.length; i++) this.dirtyTrackLayers.add(i);

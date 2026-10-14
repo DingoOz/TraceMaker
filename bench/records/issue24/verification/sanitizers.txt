@@ -1,0 +1,3 @@
+# ASan + UBSan (cmake preset asan), final router code
+tm_tests [critical]: All tests passed (788114 assertions in 9 test cases)
+tests/integration/critical_nets.py and footprint_check.py with the asan tracemaker: ok

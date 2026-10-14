@@ -19,6 +19,7 @@
 #include "analysis/return_path.hpp"
 #include "advice/advisor.hpp"
 #include "advice/stuck_report.hpp"
+#include "crules/critical.hpp"
 #include "crules/engine.hpp"
 #include "crules/names.hpp"
 #include "drc/copper.hpp"
@@ -473,6 +474,63 @@ RouteJobResult run_route_job(RouteJob job) {
       opt.buses.push_back({g.name, g.members, g.skew_limit});
     }
   }
+  // Critical nets (issue #24, doc 05 §44): the names the user gave and, with --critical-auto, the nets the component rules' roles make critical.
+  std::vector<crules::CriticalNet> critical;
+  {
+    const bool si = job.si_rules;
+    const bool want_auto = job.critical_auto || si;
+    const bool want_first = job.critical_first || si;
+    const double via_mult = job.critical_via_given || !si ? job.critical_via_mult : 3.0;
+    const double split = job.split_cost_given || !si ? job.split_cost : 4.0;
+    if (!job.critical_nets.empty() || want_auto) {
+      std::map<model::NetId, crules::CriticalNet> found;
+      for (const auto& n : lb.board.nets) {
+        if (n.id <= 0 || n.name.empty()) continue;
+        for (const auto& pat : job.critical_nets)
+          if (model::wildcard_match(pat, n.name)) {
+            found[n.id] = {n.id, 1, "named (--critical-nets " + pat + ")"};
+            break;
+          }
+      }
+      if (want_auto) {
+        const auto& cat = crules::builtin_catalogue();
+        crules::Overrides ov;  // the user's override file (doc 15 §6.3) changes what a part is, and so which nets are critical
+        if (!job.rules_override.empty()) ov = crules::load_overrides_file(job.rules_override, cat);
+        const auto det = crules::detect(lb.board, cat, job.rules_override.empty() ? nullptr : &ov);
+        auto pairs = opt.pair_nets;
+        for (const auto& p : route::named_pairs(lb.board, drc::RuleEngine(lb.board, rules)))
+          if (std::find(pairs.begin(), pairs.end(), p) == pairs.end()) pairs.push_back(p);
+        for (const auto& c : crules::critical_nets(lb.board, cat, det, pairs))
+          if (!found.count(c.net)) found[c.net] = c;
+      }
+      for (const auto& [id, c] : found) critical.push_back(c);
+      std::stable_sort(critical.begin(), critical.end(), [](const crules::CriticalNet& a, const crules::CriticalNet& c) { return a.tier < c.tier; });
+    }
+    for (const auto& c : critical) opt.critical.emplace_back(lb.board.nets[static_cast<std::size_t>(c.net)].name, c.tier);
+    opt.critical_first = want_first && !critical.empty();
+    opt.critical_via_mult = via_mult;
+    opt.split_cost = critical.empty() ? 0.0 : split;
+    opt.split_hard = job.split_hard && !critical.empty();
+    if ((opt.split_cost > 0 || opt.split_hard) && !critical.empty()) {  // zones without fills are refilled once here, not by every variant
+      bool unfilled = false;
+      for (const auto& z : route_board->zones) unfilled = unfilled || (!z.rule_area && z.net > 0 && z.fills.empty());
+      if (unfilled) opt.reference_fills = std::make_shared<const model::Board>(drc::refill_zones(*route_board, rules).board);
+    }
+    if (!critical.empty() || job.critical_auto || si || !job.critical_nets.empty()) {
+      std::string lines;
+      for (int tier = 1; tier <= 3; ++tier) {
+        std::string names;
+        int n = 0;
+        for (const auto& c : critical)
+          if (c.tier == tier && ++n <= 8) names += (names.empty() ? "" : ", ") + lb.board.nets[static_cast<std::size_t>(c.net)].name;
+        const int total = static_cast<int>(std::count_if(critical.begin(), critical.end(), [&](const crules::CriticalNet& c) { return c.tier == tier; }));
+        if (total > 0) lines += fmt("%s tier %d: %d (%s%s)", lines.empty() ? "" : "; ", tier, total, names.c_str(), total > 8 ? ", ..." : "");
+      }
+      log(fmt("critical nets: %zu%s%s", critical.size(), lines.empty() ? "" : " - ", lines.c_str()));
+      log(fmt("  routed first: %s; via cost x%.3g; over a plane void: %s", opt.critical_first ? "yes" : "no", opt.critical_via_mult,
+              opt.split_hard ? "not allowed" : opt.split_cost > 0 ? fmt("+%.3g pitches per lattice step", opt.split_cost).c_str() : "free"));
+    }
+  }
   if (!job.warm_pcb.empty()) {  // copper of an earlier solution (looser rules, legalised): the router keeps what is legal
     const auto wb = io::read_board_file(job.warm_pcb);
     for (const auto& t : wb.board.tracks)
@@ -918,6 +976,72 @@ RouteJobResult run_route_job(RouteJob job) {
         for (const auto& n : rpr.nets) opt.sink->publish(analysis::return_path_message(routed, n));
     }
   }
+  // Critical nets after the route (issue #24): vias, length and the plane crossings of each, so the three rules can be judged on the board they produced.
+  nlohmann::json critical_summary;
+  if (!critical.empty()) {
+    std::map<model::NetId, int> vias_by_net;
+    std::map<model::NetId, double> length_by_net;
+    for (const auto& v : res.vias) ++vias_by_net[v.net];
+    for (const auto& t : res.tracks) length_by_net[t.net] += std::hypot(static_cast<double>(t.a.x - t.b.x), static_cast<double>(t.a.y - t.b.y)) / 1e6;
+    std::map<std::string, analysis::NetReturn> audit;
+    std::vector<std::string> audit_messages;  // each critical net's return path for the viewer's overlay
+    bool has_zones = false;
+    for (const auto& z : route_board->zones) has_zones = has_zones || (!z.rule_area && z.net > 0);
+    if (has_zones && route_board->copper_count() > 1) {
+      analysis::ReturnPathOptions ro;
+      for (const auto& c : critical) ro.name_patterns.push_back(lb.board.nets[static_cast<std::size_t>(c.net)].name);
+      ro.refill_always = true;  // the fills in the file predate the new vias and tracks
+      model::Board routed = *route_board;
+      routed.tracks.insert(routed.tracks.end(), res.tracks.begin(), res.tracks.end());
+      routed.vias.insert(routed.vias.end(), res.vias.begin(), res.vias.end());
+      for (auto& n : analysis::analyse_return_paths(routed, rules, ro).nets) {
+        audit_messages.push_back(analysis::return_path_message(routed, n));
+        audit[n.name] = std::move(n);
+      }
+    }
+    critical_summary = nlohmann::json::object();
+    critical_summary["options"] = {{"first", opt.critical_first}, {"via_mult", opt.critical_via_mult}, {"split_cost", opt.split_cost}, {"split_hard", opt.split_hard},
+                                   {"via_max", job.critical_via_max}};
+    critical_summary["nets"] = nlohmann::json::array();
+    int total_vias = 0, total_crossings = 0, over_limit = 0;
+    for (const auto& c : critical) {
+      const std::string& net_name = lb.board.nets[static_cast<std::size_t>(c.net)].name;
+      const int vias = vias_by_net.count(c.net) ? vias_by_net[c.net] : 0;
+      nlohmann::json row{{"name", net_name}, {"tier", c.tier}, {"why", c.why}, {"vias", vias}, {"length_mm", std::round((length_by_net.count(c.net) ? length_by_net[c.net] : 0.0) * 1000) / 1000}};
+      std::vector<std::string> warn;
+      int unrouted = 0;  // failures are written "NET: A -> B (...)"
+      for (const auto& f : res.failures)
+        if (f.rfind(net_name + ": ", 0) == 0) ++unrouted;
+      row["unrouted"] = unrouted;
+      if (unrouted > 0) warn.push_back(fmt("%d connection%s not routed", unrouted, unrouted == 1 ? "" : "s"));
+      if (job.critical_via_max > 0 && vias > job.critical_via_max) {
+        warn.push_back(fmt("%d vias, over the limit of %d", vias, job.critical_via_max));
+        ++over_limit;
+      }
+      if (const auto it = audit.find(net_name); it != audit.end()) {
+        const auto& n = it->second;
+        row["void_crossings"] = n.void_count;
+        row["detour_mm"] = std::round(n.detour_mm * 1000) / 1000;
+        row["splits"] = n.split_count;
+        row["uncovered_mm"] = std::round(n.uncovered_mm * 1000) / 1000;
+        total_crossings += n.void_count;
+        if (n.split_count > 0) warn.push_back(fmt("crosses %d split%s of its reference plane", n.split_count, n.split_count == 1 ? "" : "s"));
+        else if (n.void_count > 0) warn.push_back(fmt("runs over %d void%s of its reference plane (detour %.2f mm)", n.void_count, n.void_count == 1 ? "" : "s", n.detour_mm));
+      }
+      row["warnings"] = warn;
+      total_vias += vias;
+      critical_summary["nets"].push_back(row);
+    }
+    critical_summary["totals"] = {{"nets", critical.size()}, {"vias", total_vias}, {"void_crossings", total_crossings}, {"over_via_limit", over_limit}};
+    log(fmt("critical nets after the route: %zu nets, %d vias, %d plane void crossings%s", critical.size(), total_vias, total_crossings,
+            audit.empty() ? " (no reference plane on the board: crossings not measured)" : ""));
+    for (const auto& row : critical_summary["nets"])
+      for (const auto& w : row["warnings"]) log("  " + row["name"].get<std::string>() + ": " + w.get<std::string>());
+    if (opt.sink) {
+      for (const auto& m : audit_messages) opt.sink->publish(m);
+      opt.sink->publish(nlohmann::json{{"type", "critical_nets"}, {"nets", critical_summary["nets"]}, {"totals", critical_summary["totals"]}}.dump());
+    }
+  }
   // The whole job, every variant included: a portfolio on fewer threads than variants runs them one after
   // another, so the winner's own time understates the run several times over (by more than the variant count
   // when the winner is one of the quicker variants).
@@ -952,6 +1076,7 @@ RouteJobResult run_route_job(RouteJob job) {
     out.summary["unconnected_after_refill"] = unconnected_after_refill;
   }
   if (!return_path_summary.is_null()) out.summary["return_paths"] = return_path_summary;
+  if (!critical_summary.is_null()) out.summary["critical_nets"] = critical_summary;
   if (!footprint_summary.is_null()) out.summary["footprint_check"] = footprint_summary;
   if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/router.hpp"
+
+#include "drc/refill.hpp"
 #include "route/bus.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
@@ -29,6 +31,7 @@
 #include "gpu/device.hpp"
 #include "gpu/field.hpp"
 #include "route/legalize.hpp"
+#include "route/ref_map.hpp"
 #include "route/obstacles.hpp"
 
 namespace tmk::route {
@@ -121,6 +124,21 @@ struct Router::Impl {
   };
   std::vector<ConnState> cs;
   std::set<NetId> first_net_ids;  // --first-nets
+  // Critical nets (issue #24, doc 05 §44): the order rank of each net (0 = not critical, else its tier), the via price factor and whether the
+  // split-crossing cost applies to it; the reference map is built in setup() when that cost is on.
+  std::vector<std::int32_t> crit_rank;
+  std::vector<double> net_via_mult;
+  std::vector<std::uint8_t> crit_split;
+  ReferenceMap refmap;
+  std::int64_t split_pen = 0;
+  bool split_on = false;
+  bool crit_order_on = false;
+  // Order of routing: --first-nets, then critical tiers, then the rest.
+  int order_key(NetId n) const {
+    if (first_net_ids.count(n)) return 0;
+    return n >= 0 && static_cast<std::size_t>(n) < crit_rank.size() && crit_rank[static_cast<std::size_t>(n)] > 0 ? crit_rank[static_cast<std::size_t>(n)] : 1000;
+  }
+  double via_mult_of(NetId n) const { return n >= 0 && static_cast<std::size_t>(n) < net_via_mult.size() ? net_via_mult[static_cast<std::size_t>(n)] : 1.0; }
   std::unordered_map<std::int64_t, std::uint16_t> history;  // contested lattice cells (PathFinder history cost)
   std::vector<int> init_root;        // copper item -> initial cluster root (fixed copper)
   // With soft zones: routed copper item -> initial clusters of the same-net plane fills it touches, so a via that
@@ -263,6 +281,25 @@ struct Router::Impl {
     if (opt.soft_zones) soft_fills = std::make_unique<drc::ZoneFills>(obs->copper());
     for (std::size_t n = 0; n < b.nets.size(); ++n)
       if (std::find(opt.first_nets.begin(), opt.first_nets.end(), b.nets[n].name) != opt.first_nets.end()) first_net_ids.insert(static_cast<NetId>(n));
+    if (!opt.critical.empty()) {
+      crit_rank.assign(b.nets.size(), 0);
+      net_via_mult.assign(b.nets.size(), 1.0);
+      crit_split.assign(b.nets.size(), 0);
+      std::unordered_map<std::string, int> tiers;  // a board can have thousands of critical nets: look names up, do not scan the list per net
+      for (const auto& [name, tier] : opt.critical) {
+        const auto it = tiers.find(name);
+        if (it == tiers.end() || tier < it->second) tiers[name] = tier;
+      }
+      for (std::size_t n = 0; n < b.nets.size(); ++n) {
+        if (b.nets[n].name.empty()) continue;
+        const auto it = tiers.find(b.nets[n].name);
+        if (it == tiers.end()) continue;
+        crit_rank[n] = std::max(1, it->second);
+        net_via_mult[n] = std::max(1.0, opt.critical_via_mult);
+        crit_split[n] = 1;
+      }
+      crit_order_on = opt.critical_first;
+    }
     obs->set_vias_off_pads(opt.vias_off_pads, static_cast<Coord>(opt.vias_off_pads_below_mm * 1e6));
     if (opt.via_in_pad) find_inner_balls();
     use_cache = !obs->needs_exact_routing();
@@ -318,6 +355,43 @@ struct Router::Impl {
     const Coord vm = b.vias_tented ? 0 : std::max<Coord>(b.pad_to_mask_clearance, 0);
     near_infl = probe + pitch * 71 / 100 + 1 + std::max({obs->rules().max_clearance(), hc, 2 * vm + 1'000}) + 2 * pitch + 2;
     near_r.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
+    if (!opt.critical.empty() && (opt.split_cost > 0 || opt.split_hard) && nl > 1) build_split_map();
+  }
+  // The cells of each layer over a void of the adjacent reference plane, from the zone fills (refilled by the engine where the file has none).
+  void build_split_map() {
+    bool unfilled = false, any = false;
+    for (const auto& z : b.zones)
+      if (!z.rule_area && z.net > 0) {
+        any = true;
+        unfilled = unfilled || z.fills.empty();
+      }
+    if (!any) return;
+    if (opt.reference_fills) {
+      refmap = build_reference_map(*opt.reference_fills, lat, pitch, nx, ny, opt.split_min_coverage);
+    } else if (unfilled) {
+      const auto rf = drc::refill_zones(b, rules);
+      refmap = build_reference_map(rf.board, lat, pitch, nx, ny, opt.split_min_coverage);
+    } else {
+      refmap = build_reference_map(b, lat, pitch, nx, ny, opt.split_min_coverage);
+    }
+    split_on = refmap.any();
+    split_pen = static_cast<std::int64_t>(opt.split_cost * static_cast<double>(pitch));
+    if (!split_on) return;
+    // The plane has an antipad round every through-hole pad (and its clearance is several lattice cells), so the cells next to a critical net's own pad are
+    // voids by construction. A net must be able to leave its pad: within the pad's radius plus 1 mm nothing counts (on every layer). Without this
+    // --split-hard closed a through-hole pad in.
+    const std::size_t layer_cells = static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
+    for (const auto& p : b.pads) {
+      if (p.net <= 0 || static_cast<std::size_t>(p.net) >= crit_split.size() || !crit_split[static_cast<std::size_t>(p.net)]) continue;
+      const double r = static_cast<double>(std::max(p.size_x, p.size_y)) / 2.0 + 1'000'000.0;
+      const int cx = to_ix(p.pos.x), cy = to_iy(p.pos.y), span = static_cast<int>(r / static_cast<double>(pitch)) + 1;
+      for (int y = std::max(0, cy - span); y <= std::min(ny - 1, cy + span); ++y)
+        for (int x = std::max(0, cx - span); x <= std::min(nx - 1, cx + span); ++x) {
+          const double dx = static_cast<double>(x - cx) * static_cast<double>(pitch), dy = static_cast<double>(y - cy) * static_cast<double>(pitch);
+          if (dx * dx + dy * dy > r * r) continue;
+          for (int l = 0; l < nl; ++l) refmap.over_void[static_cast<std::size_t>(l) * layer_cells + static_cast<std::size_t>(y) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(x)] = 0;
+        }
+    }
   }
   std::vector<std::uint16_t> near_r;
   Coord near_infl = 0;
@@ -543,7 +617,9 @@ struct Router::Impl {
       };
       std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return pri.count({label(c.pad_a), label(c.pad_b)}) > 0; });
     }
-    if (!first_net_ids.empty())
+    if (crit_order_on)
+      std::stable_sort(out.begin(), out.end(), [&](const Connection& a, const Connection& c) { return order_key(a.net) < order_key(c.net); });
+    else if (!first_net_ids.empty())
       std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return first_net_ids.count(c.net) > 0; });
     if (!opt.buses.empty()) order_buses(out);
     return out;
@@ -746,6 +822,10 @@ struct Router::Impl {
         }
     }
     if (lp_on && layer != lp_layer) hc += lp_pen;  // layer assignment: tracks off the preferred layer (doc 16 F2)
+    if (split_on && crit_split[static_cast<std::size_t>(net)] && refmap.over_void[lat_index(layer, gx, gy)]) {  // a critical net over a void of its reference plane (issue #24)
+      if (opt.split_hard) return -1;
+      hc += split_pen;
+    }
     if (gd_on && !gd_mask[lat_index(layer, gx, gy)]) {  // preferred path of the connection (doc 16 F1)
       if (gd_hard) return -1;
       hc += gd_pen;
@@ -934,7 +1014,7 @@ struct Router::Impl {
     if (e.in_pad_from == SIZE_MAX) e.in_pad_from = e.cells.size();
     // Four vias' worth at the current via price (the clean-up stages raise via_cost_mult; a fixed price would make
     // the in-pad via the cheap option there).
-    const std::int64_t cost = static_cast<std::int64_t>(4 * opt.via_cost_mm * via_cost_mult * 1e6) +
+    const std::int64_t cost = static_cast<std::int64_t>(4 * opt.via_cost_mm * via_cost_mult * via_mult_of(p.net) * 1e6) +
                               static_cast<std::int64_t>(std::hypot(static_cast<double>(C.x - p.pos.x), static_cast<double>(C.y - p.pos.y)));
     for (int l = 0; l < nl; ++l) {
       if ((p.copper & model::layer_bit(l)) || !layer_ok(p.net, l)) continue;
@@ -1276,14 +1356,15 @@ struct Router::Impl {
       }
     }
     const std::int64_t step = pitch, diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
-    const std::int64_t via_cost = static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6);
+    const double via_price = opt.via_cost_mm * via_cost_mult * via_mult_of(net);  // critical nets pay more for a via (issue #24)
+    const std::int64_t via_cost = static_cast<std::int64_t>(via_price * 1e6);
     const std::int64_t dir_pen = static_cast<std::int64_t>(auto_dir_pen * static_cast<double>(pitch));
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
     const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
                            cells * static_cast<std::size_t>(nl) >= static_cast<std::size_t>(opt.field_min_cells);
     if (use_field) {
-      build_field(w, net, hw, dst, step, diag, static_cast<std::int64_t>(opt.via_cost_mm * via_cost_mult * 1e6));
+      build_field(w, net, hw, dst, step, diag, via_cost);
       // Wall-clock mode only (keeps --work runs deterministic): when shared GPUs make fields cost more than
       // 30% of the run, this variant continues with the octile heuristic.
       const double el = elapsed();
@@ -2131,10 +2212,37 @@ struct Router::Impl {
         }
         continue;
       }
+      std::vector<PathNode> refined;
+      if (refine_critical(c, a, e, path, refined) && commit(c, refined)) return true;  // else the first path, which was legal, is tried as it was
       if (commit(c, path)) return true;
       why = commit_why;
     }
     return false;
+  }
+
+  // A critical net's first path may run over a void of its reference plane or hop layers where a dearer via was asked for: the way round can lie outside the
+  // small first window. Then, and only then, the connection is searched again in a 20 mm window (issue #24). A* is optimal in its window and this one contains
+  // the first, so the new path costs no more; a search that does not finish (budget) leaves the first path, and so does a refined path that fails the exact
+  // check at the commit (the caller tries the first one then). Connections that fail, or that have nothing to improve, cost no extra search: a window this
+  // size on a connection that cannot be routed would eat the work budget.
+  bool refine_critical(const Connection& c, Point a, Point e, const std::vector<PathNode>& path, std::vector<PathNode>& refined) {
+    if (c.pad_b < 0 || path.size() < 2 || crit_rank.empty() || crit_rank[static_cast<std::size_t>(c.net)] == 0) return false;
+    bool voids = false, hops = false;
+    for (std::size_t i = 0; i < path.size(); ++i) {
+      if (split_on && crit_split[static_cast<std::size_t>(c.net)] && refmap.over_void[lat_index(path[i].layer, path[i].gx, path[i].gy)]) voids = true;
+      if (i > 0 && path[i].layer != path[i - 1].layer) hops = true;
+    }
+    if (!voids && !(hops && via_mult_of(c.net) > 1.0)) return false;
+    const Coord m = 20'000'000 + c.length / 4;
+    Window w;
+    w.x0 = std::max(0, to_ix(std::min(a.x, e.x) - m));
+    w.y0 = std::max(0, to_iy(std::min(a.y, e.y) - m));
+    w.w = std::min(nx - 1, to_ix(std::max(a.x, e.x) + m)) - w.x0 + 1;
+    w.h = std::min(ny - 1, to_iy(std::max(a.y, e.y) + m)) - w.y0 + 1;
+    const Miss saved_miss = last_miss;
+    const bool found = search(c, w, refined) && refined.size() >= 2;
+    last_miss = saved_miss;
+    return found;
   }
 
   // The widest track that can get from the closest approach on towards the target (issue #8): the bottleneck of the best way, a
@@ -3579,7 +3687,8 @@ struct Router::Impl {
     }
     if (opt.bus_first) std::stable_partition(order.begin(), order.end(), [&](std::size_t i) { return bundle_of[i] >= 0; });
     // --first-nets keep their place in front.
-    if (!first_net_ids.empty()) std::stable_partition(order.begin(), order.end(), [&](std::size_t i) { return first_net_ids.count(out[i].net) > 0; });
+    if (crit_order_on) std::stable_sort(order.begin(), order.end(), [&](std::size_t i, std::size_t j) { return order_key(out[i].net) < order_key(out[j].net); });
+    else if (!first_net_ids.empty()) std::stable_partition(order.begin(), order.end(), [&](std::size_t i) { return first_net_ids.count(out[i].net) > 0; });
     std::vector<Connection> sorted;
     conn_bundle.assign(out.size(), -1);
     conn_lane.assign(out.size(), -1);
@@ -4317,6 +4426,20 @@ struct Router::Impl {
     return tuned;
   }
 
+  // Lattice samples of the segment a-c over a void of the layer's reference plane (issue #24): how much of it a critical net would run over a split.
+  std::size_t void_samples(int layer, Point a, Point c) const {
+    if (!split_on) return 0;
+    const double len = std::hypot(static_cast<double>(c.x - a.x), static_cast<double>(c.y - a.y));
+    const int n = std::max(1, static_cast<int>(std::ceil(len / static_cast<double>(pitch))));
+    std::size_t hits = 0;
+    for (int k = 0; k <= n; ++k) {
+      const Point p{a.x + static_cast<Coord>(std::llround(static_cast<double>(c.x - a.x) * k / n)), a.y + static_cast<Coord>(std::llround(static_cast<double>(c.y - a.y) * k / n))};
+      const int gx = to_ix(p.x), gy = to_iy(p.y);
+      if (gx >= 0 && gy >= 0 && gx < nx && gy < ny && refmap.over_void[lat_index(layer, gx, gy)]) ++hits;
+    }
+    return hits;
+  }
+
   int smooth_paths() {
     int changed = 0;
     auto octi = [](Point a, Point c) {
@@ -4324,14 +4447,22 @@ struct Router::Impl {
       return dx == 0 || dy == 0 || std::llabs(dx) == std::llabs(dy);
     };
     // Up to two octilinear segments from a to c (straight if already octilinear), or empty if none is legal.
-    auto shortcut = [&](Point a, Point c, int layer, Coord width, NetId net) -> std::vector<Point> {
+    // `max_void`: a critical net's shortcut may not run over more of its reference plane's voids than the path it replaces did (the shortest way is
+    // not the one the search chose when the split cost made it dear).
+    auto shortcut = [&](Point a, Point c, int layer, Coord width, NetId net, std::size_t max_void) -> std::vector<Point> {
       auto legal = [&](Point u, Point v) { return u == v || obs->segment_state(u, v, layer, width, net, false, nullptr) == 0; };
-      if (octi(a, c)) return legal(a, c) ? std::vector<Point>{a, c} : std::vector<Point>{};
+      auto over = [&](const std::vector<Point>& v) {
+        if (!split_on || !crit_split[static_cast<std::size_t>(net)]) return false;
+        std::size_t n = 0;
+        for (std::size_t i = 0; i + 1 < v.size(); ++i) n += void_samples(layer, v[i], v[i + 1]);
+        return n > max_void;
+      };
+      if (octi(a, c)) return legal(a, c) && !over({a, c}) ? std::vector<Point>{a, c} : std::vector<Point>{};
       const Coord dx = c.x - a.x, dy = c.y - a.y, m = std::min(std::llabs(dx), std::llabs(dy));
       const Point diag{a.x + (dx > 0 ? m : -m), a.y + (dy > 0 ? m : -m)};       // diagonal first
-      if (legal(a, diag) && legal(diag, c)) return {a, diag, c};
+      if (legal(a, diag) && legal(diag, c) && !over({a, diag, c})) return {a, diag, c};
       const Point straight{c.x - (dx > 0 ? m : -m), c.y - (dy > 0 ? m : -m)};  // straight first
-      if (legal(a, straight) && legal(straight, c)) return {a, straight, c};
+      if (legal(a, straight) && legal(straight, c) && !over({a, straight, c})) return {a, straight, c};
       return {};
     };
     for (std::size_t ci = 0; ci < cs.size(); ++ci) {
@@ -4354,12 +4485,17 @@ struct Router::Impl {
         std::vector<Point> pts{tr[k].a};
         for (std::size_t q = k; q < e; ++q) pts.push_back(tr[q].b);
         std::vector<Point> npts{pts.front()};
+        // Void samples of the run up to each vertex (critical nets with the split cost only): the part a shortcut would replace is a difference.
+        std::vector<std::size_t> void_to(pts.size(), 0);
+        const bool crit_run = split_on && crit_split[static_cast<std::size_t>(tr[k].net)];
+        if (crit_run)
+          for (std::size_t q = 0; q + 1 < pts.size(); ++q) void_to[q + 1] = void_to[q] + void_samples(tr[k].layer, pts[q], pts[q + 1]);
         std::size_t i = 0;
         while (i + 1 < pts.size()) {
           std::size_t best = i + 1;
           std::vector<Point> via_pts;
           for (std::size_t j = pts.size() - 1; j >= i + 2; --j) {
-            auto sc = shortcut(pts[i], pts[j], tr[k].layer, tr[k].width, tr[k].net);
+            auto sc = shortcut(pts[i], pts[j], tr[k].layer, tr[k].width, tr[k].net, void_to[j] - void_to[i]);
             if (!sc.empty() && sc.size() - 1 < j - i) {
               best = j;
               via_pts.assign(sc.begin() + 1, sc.end());
@@ -4885,7 +5021,9 @@ struct Router::Impl {
         if (opt.bus_first) std::stable_partition(order.begin(), order.end(), [&](int c) { return conn_bundle[static_cast<std::size_t>(c)] >= 0; });
       }
       // --first-nets go first again: a restart rips everything, including them.
-      if (!first_net_ids.empty())
+      if (crit_order_on)
+        std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return order_key(cs[static_cast<std::size_t>(x)].c.net) < order_key(cs[static_cast<std::size_t>(y)].c.net); });
+      else if (!first_net_ids.empty())
         std::stable_partition(order.begin(), order.end(), [&](int c) { return first_net_ids.count(cs[static_cast<std::size_t>(c)].c.net) > 0; });
       pending.assign(order.begin(), order.end());
       pending.erase(std::remove_if(pending.begin(), pending.end(), [&](int c) { return cs[static_cast<std::size_t>(c)].routed || cs[static_cast<std::size_t>(c)].dead; }),

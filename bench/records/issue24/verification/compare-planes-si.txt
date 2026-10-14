@@ -1,0 +1,22 @@
+# i24g-planes -> i24h-planes-si (bench/compare_runs.py)
+
+8 boards; routed boards byte-identical: 4/8.
+Clean pass 0 → 0; mean completion 56.5% → 56.5%; router seconds 309.5 → 313.3.
+Route CPU time 1,223 → 1,230 s (+0.5%) at the same work.
+Byte-identical boards moved -1% to +3% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| RoyalBlue54L-Feather | 6 → 6 / 146 | 4.1% → 4.1% | no → no | – | 119.0 → 120.0 | 447.7 → 455.6 | differs |
+| StickHub | 24 → 24 / 128 | 18.8% → 18.8% | no → no | – | 58.9 → 62.3 | 105.0 → 108.0 | differs |
+| interf_u | 113 → 113 / 164 | 68.9% → 68.9% | no → no | – | 28.3 → 26.6 | 154.7 → 154.2 | differs |
+| plane_smd | 41 → 41 / 47 | 87.2% → 87.2% | no → no | – | 22.7 → 22.3 | 121.1 → 114.6 | differs |
+
+Style (informational): bends per connection 0.8224 → 0.8155; acute angles 0 → 0; stair steps 14 → 16; short segments 43 → 40; off angle segments 377 → 389; detour ratio 1.1434 → 1.1506; long detours 23 → 24.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| interf_u | 1.7206 → 1.7708 | 0 → 0 | 11 → 15 | 2 → 1 | 17 → 22 | 1.1242 → 1.145 | 6 → 7 |
+| plane_smd | 0.85 → 0.6947 | 0 → 0 | 2 → 0 | 11 → 9 | 71 → 78 | 1.1948 → 1.1538 | 5 → 5 |
+
+Gates: pass
