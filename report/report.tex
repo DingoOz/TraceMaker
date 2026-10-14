@@ -26,7 +26,7 @@
 \title{\textbf{TraceMaker}\\[2pt]\large A learning, GPU-assisted PCB autorouter and placer for KiCad\\[2pt]
 \normalsize Design, method and benchmark results}
 \author{Development report}
-\date{11 October 2026 (development branch \texttt{m14-bga}, after release 0.8.0; earlier editions: 2 and 6 October 2026)}
+\date{12 October 2026 (development branch \texttt{m15-srj20}, after release 0.9.0; earlier editions: 2, 6 and 11 October 2026)}
 
 \begin{document}
 \maketitle
@@ -42,9 +42,9 @@ benchmark set TraceMaker routes 100\% of the sampled tier-A boards cleanly, 70.0
 development, with Freerouting 2.5.0-RC12 and 1.9.0 run on the same machine and judged by the same KiCad DRC,
 TraceMaker's results are clean on 73--78\% of boards against 3\% and 32\%, with 5\% shorter tracks and 28\% fewer
 bends than Freerouting 2.5, but more vias. This edition keeps all of that and adds Section~\ref{sec:m14}, on the
-work of 7--11 October: routing of ball-grid-array (BGA) breakout boards and SoC fan-outs from tscircuit's public
-benchmarks. On those, TraceMaker now solves 188 of 200 boards of \texttt{srj19} (tscircuit's router: 184), 133 of 200
-of \texttt{srj20} (tscircuit: 157, so the target is \emph{not} met) and 60 of 72 \texttt{fanout31} cases (tscircuit:
+work of 7--12 October: routing of ball-grid-array (BGA) breakout boards and SoC fan-outs from tscircuit's public
+benchmarks. On those, TraceMaker now solves 191 of 200 boards of \texttt{srj19} (tscircuit's router: 184) and 160 of 200
+of \texttt{srj20} (tscircuit: 157; 156 within 330\,s per board) and 60 of 72 \texttt{fanout31} cases (tscircuit:
 48). The tier results of Section~\ref{sec:results} were measured on release 0.8.0 and were not repeated on the new
 code; the sets that bound the router's behaviour on ordinary boards (30 boards of the \texttt{quick} tier and 11 of
 \texttt{mid}) give byte-identical output before and after the changes. The companion document
@@ -748,7 +748,7 @@ is more than 40\,\% full: the boards are not short of space, and what fails is t
 under rules coarser than the original design's.
 
 % ------------------------------------------------------------------------------------------------------------
-\section{BGA breakout and SoC fan-out (7--11 October)}
+\section{BGA breakout and SoC fan-out (7--12 October)}
 \label{sec:m14}
 
 \paragraph{The task.} tscircuit, an open-source electronics toolkit, publishes the boards its autorouter is tested
@@ -795,14 +795,14 @@ earlier milestones), so they were not repeated.
 \toprule
 Set & tscircuit & TraceMaker now & Target & Met \\
 \midrule
-\texttt{srj19} & 184 of 200 (92.0\,\%) & \textbf{188 (94.0\,\%)} & $\ge$184 & yes \\
-\texttt{srj20} & 157 of 200 (78.5\,\%) & 133 (66.5\,\%) & $\ge$157 & \textbf{no, 24 short} \\
+\texttt{srj19} & 184 of 200 (92.0\,\%) & \textbf{191 (95.5\,\%)} & $\ge$184 & yes \\
+\texttt{srj20} & 157 of 200 (78.5\,\%) & \textbf{160 (80.0\,\%)} & $\ge$157 & yes (156 within 330\,s) \\
 \texttt{fanout31} & 48 of 72 & \textbf{60} & $\ge$48 & yes \\
 KiCad errors added & & 0 on every run & none & yes \\
 \texttt{quick} (30) and \texttt{mid} (11) & & byte-identical & unchanged & yes \\
 \bottomrule
 \end{tabular}
-\caption{Gate status on 11 October. \texttt{srj19}: 181 boards with one variant (50 million work units, fast bends,
+\caption{Gate status on 12 October (after the third round, below). \texttt{srj19}: 181 boards with one variant (50 million work units, fast bends,
 automatic breakout settings) plus 7 of the 19 that a 16-variant portfolio closes. \texttt{srj20}: 124 with one variant
 plus 9 of the 76 that the portfolio closes (median 168\,s per board). The composite is not a single run.}
 \label{tab:m14gates}
@@ -880,6 +880,53 @@ portfolio closes the stragglers.
   fully clean. Right: the first profile (50 M work) against tscircuit; the shortfall is the boards of 50--79 connections.}
 \end{figure}
 
+\subsection{Third round: negotiation as transactions (11--12 October)}
+
+The second round ended 24 boards short on \texttt{srj20}. Rendering a hard board's progress showed why: the routed count of the negotiation phase
+wobbles by $\pm5$ around one level for the whole work budget (30 to 41 of 53 connections on \texttt{sample069}, ending at 30; only the best snapshot is
+returned). A connection that cannot be routed rips the one to ten connections in its way, those cannot all be routed again, and the next one rips them
+back: the oscillation that negotiated-congestion routers are known for, and what multi-agent path finding calls a plan with collisions.
+MAPF-LNS2 (Li et al., AAAI 2022) repairs such plans by re-planning chosen agents and keeping the change only if the collisions do not increase.
+TraceMaker's version:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Transactions.} A negotiated route that rips victims is kept only if the victims can be routed again \emph{strictly} (without ripping
+  anything) and the net change in routed connections is not negative; otherwise a snapshot of every connection's copper is restored and the history
+  of the failed try stays, so the next try takes another path. A loss of $k$ connections is still accepted with probability $e^{-k/T}$ ($T=1.5$,
+  seeded draws, so runs stay deterministic). The same board goes from 41 to 50 of 53 connections at equal work.
+  \item \textbf{A budget that charges what costs time.} The work budget counted a reachability flood cell like an A* expansion, but a flood costs a
+  small fraction of the time. With floods before every strict search and counted at a quarter, the same nominal budget buys about twice the search.
+  \item \textbf{Fields kept.} The cost-to-go field was 47\,\% of the run time and repeats for each connection once the fixed-copper cache is complete;
+  keeping it (the same copper, checked by byte comparison) saves 38\,\% of the wall time.
+  \item \textbf{A portfolio made for breakouts, in rounds.} The designed eight variants (exact bends, longest first) are wrong for these boards. The
+  breakout portfolio draws order, via cost, crossing cost, direction strength and temperature from fixed sets; after each of four rounds every variant
+  continues from the best state of all.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+57 \texttt{srj20} boards, 30 M work, one variant & Clean & Completion \\
+\midrule
+plain negotiation & 23 & 90.9\,\% \\
+transactions, greedy ($k\le 0$) & 12 & 94.9\,\% \\
+transactions, annealing $T=0.25 / 1 / 2 / 4$ & 17 / 23 / 24 / 23 & 95.2--95.6\,\% \\
+transactions, $T=1$, reach-check 2 and flood weight & \textbf{30} & 96.3\,\% \\
+\midrule
+100 M work: plain / transactions $T=2$ & 28 / \textbf{36} & 93.9 / 97.8\,\% \\
+\bottomrule
+\end{tabular}
+\caption{Transactions on the 57 boards that tscircuit solves and the first profile missed. Greedy acceptance leaves 14 boards one connection short;
+annealing acceptance finishes some of them.}
+\label{tab:txn}
+\end{table}
+
+On the full sets, one variant at 30 M work (59 and 32\,s of CPU per board) completes \textbf{129 of 200} \texttt{srj20} boards (124 for the earlier profile at
+50 M) and 178 of 200 \texttt{srj19} (181). The breakout portfolio on the boards a single variant leaves open (16 variants of 30 M, 16 threads, 91--118\,s per board)
+adds 19 of 71 on \texttt{srj20} and 13 of 22 on \texttt{srj19}; 70 M per variant (at most 330\,s) adds 8 of 24 near boards on \texttt{srj20}.
+
 \subsection{What did not work}
 
 Every item below was measured at equal work and kept as a hidden option with its result recorded
@@ -900,15 +947,12 @@ Every item below was measured at equal work and kept as a hidden option with its
   \item \textbf{More work} helps only a little: 200 million units on the 33 remaining \texttt{srj20} gap boards closed 6.
 \end{itemize}
 
-\subsection{Why \texttt{srj20} is not met}
+\subsection{Where \texttt{srj20} and \texttt{srj19} stand}
 
-TraceMaker's failures on these boards are mostly negotiation churn, not proved infeasibility: 585 of about 1,170 failure
-reports on \texttt{srj20} read ``ripped up by another connection and not routed again''. The boards of 50--79 connections
-are where tscircuit's router solves 28 and TraceMaker about 8 (Figure~\ref{fig:m14size}). Rendering both routers' answers on
-the same board shows what differs: tscircuit's solution of one 53-connection board has 188 vias, 173 of them outside the
-ball array, and long straight runs on both layers; TraceMaker's best uses fewer vias and long detours along the rim.
-The untried candidate is a planner that decides layers and via sites per connection before the search starts; the cheap
-stand-ins above did not replace it.
+Of the 40 \texttt{srj20} boards not completed, 28 have 70 or more connections and are 8--40 connections short (tscircuit solves two of them); the
+other 12 have 1--6 open. On \texttt{srj19}, 9 boards remain. Neither set is at 100\,\%: some of the remaining boards may have no solution under the
+rules, and nobody has published a feasibility bound.
+The earlier diagnosis (\texttt{sample069}, 188 vias for tscircuit, 173 of them outside the ball array) still stands as the difference in style.
 
 \subsection{Other changes since release 0.8.0}
 
@@ -949,8 +993,8 @@ were during the work. Decisions D94--D98 are in \texttt{docs/12-decisions.md}.
   connections where two or three nets keep displacing each other at one package, or where the vias a crossing needs
   do not fit under KiCad's default rules. Neither global routing nor re-ordering helped; a lattice of half the
   pitch helps a little (one more clean board in tier B) at four times the work.
-  \item \textbf{\texttt{srj20} is 24 boards short of tscircuit} (133 against 157), as is the 50--79 connection range in
-  general (Section~\ref{sec:m14}). \texttt{fanout31} cases 55--57 (T113-S3) and 61--69 (AM3352) are unsolved.
+  \item \textbf{Not 100\,\% on the tscircuit sets:} 9 \texttt{srj19} and 40 \texttt{srj20} boards stay open, 28 of them with 70 or more
+  connections (Section~\ref{sec:m14}). \texttt{fanout31} cases 55--57 (T113-S3) and 61--69 (AM3352) are unsolved.
   \item \textbf{Large boards are time-limited.} On the biggest boards the router finishes only one or two negotiation
   passes in 120\,s.
   \item \textbf{From-scratch placement is at 85\,\% clean, not the 90\,\% aimed for,} and a part that cannot be placed

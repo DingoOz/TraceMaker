@@ -23,8 +23,8 @@ plt.rcParams.update({"font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.
                      "axes.spines.top": False, "axes.spines.right": False, "pdf.fonttype": 42})
 
 # (set, boards, TraceMaker before M14, TraceMaker now, tscircuit)
-rows = [("srj19\n(200 BGA breakouts)", 200, 159, 188, 184),
-        ("srj20\n(200, missing balls)", 200, 100, 133, 157),
+rows = [("srj19\n(200 BGA breakouts)", 200, 159, 191, 184),
+        ("srj20\n(200, missing balls)", 200, 100, 160, 157),
         ("fanout31\n(72 SoC fan-outs)", 72, 0, 60, 48)]
 fig, ax = plt.subplots(figsize=(6.4, 2.9))
 w = 0.26

@@ -1,0 +1,27 @@
+# srj20 large boards not yet run (25)
+#fixtures: bench/data/tscircuit/boards/srj20
+sample032
+sample039
+sample040
+sample048
+sample064
+sample070
+sample071
+sample072
+sample088
+sample096
+sample103
+sample104
+sample120
+sample127
+sample128
+sample135
+sample144
+sample152
+sample159
+sample160
+sample166
+sample167
+sample176
+sample184
+sample200

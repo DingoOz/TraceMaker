@@ -4,6 +4,7 @@
 #include "geom/shape.hpp"
 
 #include <algorithm>
+#include <bit>
 #include <charconv>
 #include <cmath>
 #include <stdexcept>
@@ -637,6 +638,8 @@ class Reader {
     for (NodeId fill : d_.find_all(z, "filled_polygon")) {
       int li = -1;
       if (NodeId l = d_.find(fill, "layer"); l != kNoNode) li = b_.copper_index(d_.str_at(l, 1));
+      // KiCad 5 omits the fill layer; only a single copper layer makes it unambiguous.
+      else if (std::popcount(zone.copper) == 1) li = std::countr_zero(zone.copper);
       std::vector<Point> pts;
       if (NodeId p = d_.find(fill, "pts"); p != kNoNode) read_pts(p, pts, Point{}, 0);
       zone.fills.emplace_back(li, std::move(pts));

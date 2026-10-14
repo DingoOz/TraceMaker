@@ -1782,3 +1782,42 @@ hidden options are.
 - **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
 - **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
   `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.
+
+## 41. Negotiation as transactions, the breakout profile and portfolio rounds (M15, 2026-10-11, D99–D101)
+
+Measured on tscircuit's BGA breakout sets (doc 16 §12). Everything here is automatic on a *breakout board* (D98: two copper layers, at
+least 70 % of the connections with an end on a ball-grid-like package) and off elsewhere, so `quick` and `mid` are unchanged.
+
+- **Transactions (`--txn 1`, D99).** `txn_try` runs a negotiated search for a connection with a log of the victims it rips. The victims
+  are then routed again strictly, one after the other (no ripping); the route is kept if no more victims are lost than the route gained
+  (`--txn 2`: strictly more), or with probability exp(−k/T) for a net loss of k (`--txn-temp T`, default 1.5 on breakout boards; seeded
+  counter-based draws), else a snapshot of every connection's copper, flags and rip counts is restored (`txn_capture`/`txn_restore`) and
+  history keeps what the failed attempt learned. A route without victims is kept at once. Pairs and buses are not run as transactions.
+  Hidden options that did not help: `--txn-depth` (nested transactions for victims that cannot re-route), `--txn-orders` (several victim
+  orders), `--txn-cap`, `--txn-cool`, `--tidy`, `--stall-passes`.
+- **Reachability floods and the budget (`--reach-check 2`, `--flood-work-pct 25`).** A flood cell counts a quarter of an expansion against
+  `--work` on breakout boards (it costs far less time); elsewhere the charge stays 1:1 (the work-profile identity
+  `expansions + flood cells = charged work` holds only at 100 %).
+- **Fields (`--field-prefill 1`, `--field-cache-mb 512`).** The fixed-copper cache of a net class is filled for the whole board before its
+  first cost-to-go field (boards up to 4 M lattice cells); a field is then a function of (window, target cells, costs) and is kept; a hit
+  needs byte-identical inputs. Identical copper with and without the cache (test), 38 % less wall time on a transaction run.
+- **`--breakout-portfolio`, `--rounds R` (D101).** See doc 16 §12.
+- **Warm start.** `RouterOptions::warm` (the `conn_routes` of a result) starts a run with those routes in place, matched by the two pads of each
+  connection; negotiation begins at once (no strict first pass).
+
+### 41.1 Saved state and resume (D102)
+
+With `--round-work`/`--rounds`, `--state-out F` writes the best routes after each round (text: `S rounds routed`, then `R pad_a pad_b nt nv` with its `T`/`V` lines); `--state-in F` loads them as the warm start, so a run that ran out of time continues where it stopped. `bench/run.py --resume-run NAME` does this per board from `bench/results/NAME/boards/<board>.kicad_pcb.state`.
+
+### 41.2 Clearance continuation (`--ramp-from`, `--state-recheck`; D103)
+
+A homotopy on the design rules. `--ramp-from C0 --ramp-step S` (portfolio with `--round-work`) first routes under rules whose clearances (every net class and the board minimum) are lowered by `c_board - C0`, then raises them by S per stage until they are the board's own; each stage runs rounds until the board is complete or `--ramp-rounds` rounds in a row (default 2) routed no more than the best round of the stage, and hands its routes on as the warm start of the next stage. Only routes that are legal under the next stage's rules are taken over (`--state-recheck`, implied by the ramp; also usable with `--state-in` for a state saved under other rules): the saved routes legal against the fixed copper are put in together, their conflicts are collected from the obstacle index's owner lists, and the route with most conflicts is dropped until none is left (greedy vertex cover); each remaining route then passes the strict exact check once more. The last stage always runs under the board's rules, and if time or rounds run out before it a final round with no search budget keeps what is legal, so the output never violates the real rules. A relaxed stage always writes `--state-out`, the final stage only when it does not lose routes. Stage lines go to stderr (`ramp stage k/n (clearance -d mm): r of c routed`).
+
+### 41.3 Relax, route, legalise (`--legalize`, `--warm-pcb`, `--relax`; D104)
+
+`route/legalize.{hpp,cpp}`. The lattice router puts every track on a lattice point (0.035 mm for 0.12 mm tracks with 0.1 mm clearance) and cannot move a committed route, so it cannot use the room between tracks that a continuous layout would have; a board that is complete under looser rules usually has the *topology* of a legal board under the real ones. `legalize_routes` takes the routes of a warm start and moves their vertices (tracks and vias merged by net and position; ends at the centre of their own pad stay; a via in its own pad stays inside it; the board outline and the trust box of 0.25 mm bound every move) until every pair of copper items of different nets is at least the clearance of their classes apart (track-track and track-via by endpoint-to-segment distances, pads as their bounding rectangles or circles with the four corners against the segments, via-via also by hole gap, fixed tracks and vias of the board as fixed vertices). Each pair that is too close pushes the vertices involved along its normal by the missing distance, weighted as in position-based dynamics; sweeps run until nothing is closer than the rule minus 3 µm or 300 sweeps are done. The warm start then keeps the largest conflict-free subset of the routes that pass the strict exact check, and the portfolio routes the rest.
+
+- `--warm-pcb FILE` starts from the tracks and vias of a routed board (nets with one connection take all of theirs); `--legalize` legalises every warm start (also `--state-in` and the ramp's stage hand-over); `--relax` = `--ramp-from 0.6 c --ramp-step 0.2 c --ramp-rounds 3 --ramp-cycle 2 --ramp-stall 2 --legalize` with `--round-work 20000000 --rounds 200` unless given: stage 1 routes under 60 % of the clearance, the solution is legalised to 80 %, routed again for what is missing, legalised to 100 %, and when the real rules stall for two rounds the run goes back two stages and climbs again, returning the best result under the real rules.
+- Vertices end off the lattice and off 45° multiples; track lengths grow by the small moves (at most 0.3 mm). Zones, keep-outs, mounting holes and custom `.kicad_dru` clearances are not constraints of the legaliser; they are caught by the exact check that follows, which drops the routes involved. A projection step is a heuristic: it can leave pairs too close (3-9 on the hard boards), never an illegal result.
+- Prototype with a linear-programming step (sequential LP with a trust region, HiGHS, minimum total movement, scratchpad only) on the six stuck boards: 071, 039, 104 legal in one or two iterations, 103/048/072 with 3/6/11 pairs left; projection: 071, 104 legal, 039/103/048/072 with 2/5/4/9 left. Both turn a 0.06 mm solution (about 800-1000 pairs too close at 0.10 mm) into one with a handful left.
+

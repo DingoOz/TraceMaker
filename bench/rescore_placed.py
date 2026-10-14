@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Re-judges placement-added errors of finished `run.py --place` runs with the current rule (run.place_added):
-violations inside one footprint are not counted. KiCad reports are cached, so this is quick.
+"""Re-judges placement-added errors of finished `run.py --place` runs with the shared native instance gate:
+rigid single-footprint defects are not counted; zone-dependent thermal/island errors are. KiCad reports are cached.
 
   bench/rescore_placed.py placed2-tierA placed2-tierB ...
 """
@@ -24,13 +24,18 @@ def main() -> int:
                 continue
             human, moved = run.drc(run.FIX / r["board"] / "unrouted.kicad_pcb"), run.drc(placed)
             if not (human and moved):
+                r["place_error_gate"] = "unknown"
+                r["clean"] = False
                 continue
-            pa = run.place_added(human, moved)
+            result = run.drc_judge.added_errors(human, moved, placement=True)
+            pa = result["added_errors"]
             if pa != r.get("place_added"):
                 print(f"{rid} {r['board']}: place_added {r.get('place_added')} -> {pa}")
                 changed += 1
             r["place_added"] = pa
-            r["clean"] = r.get("unconnected_after", 1) == 0 and not r.get("added_errors") and not pa
+            r["place_error_gate"] = result["error_gate"]
+            r["place_capped_evaluated_types"] = result["capped_evaluated_types"]
+            r["clean"] = r.get("unconnected_after", 1) == 0 and not r.get("added_errors") and r.get("error_gate", "pass") == "pass" and not pa and result["error_gate"] == "pass"
         (d / "boards.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
         s = json.loads((d / "summary.json").read_text())
         s["clean_pass"] = round(sum(1 for r in rows if r["clean"]) / len(rows), 4)

@@ -61,11 +61,6 @@ def measure(board: pathlib.Path, bus_args: list[str]) -> list[dict]:
     return json.loads(js.read_text())["buses"]
 
 
-def added_errors(before: dict, after: dict) -> dict:
-    return {t: n - before["routed_errors"].get(t, 0) for t, n in after["routed_errors"].items()
-            if t not in bench_run.NOT_ROUTING and n - before["routed_errors"].get(t, 0) > 0}
-
-
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fixtures")
@@ -120,7 +115,8 @@ def main() -> int:
             before, after = drcs.get(out / tag / f"{tag}.kicad_pcb"), drcs.get(dst)
             if before and after:
                 row["unconnected"] = after["unconnected"]
-                row["added_errors"] = added_errors(before, after)
+                result = bench_run.drc_judge.added_errors(before, after)
+                row.update(result)
             rows.append(row)
     print(f"{'board':10} {'mode':4} {'routed':>9} {'vias':>4} {'added':>5}  group: routed, vias per member min-max, left the bus, skew / limit")
     for r in rows:
@@ -141,6 +137,8 @@ def main() -> int:
             fails.append(f"{tag}: completion {on['routed']} below {off['routed']} without buses")
         if "added_errors" in on and on["added_errors"]:
             fails.append(f"{tag}: KiCad errors added: {on['added_errors']}")
+        if on.get("error_gate") == "unknown":
+            fails.append(f"{tag}: KiCad evaluated errors capped; gate unknown")
         for g in on["buses"]:
             if g["skew_limit_mm"] is not None and not g["within_skew"]:
                 fails.append(f"{tag}: bus {g['name']} skew {g['skew_mm']:.3f} mm over {g['skew_limit_mm']:.3f} mm (or not all routed)")
