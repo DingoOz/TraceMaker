@@ -24,6 +24,7 @@ struct RouteJob {
   std::string items_out;          // --emit-items file; empty = none
   std::string json_out;           // --json summary file; empty = none
   bool view = false;              // stream to the browser viewer
+  bool view_freeze = true;        // the viewer holds the scene on a routing stall (issue #8); --no-freeze says false in the board snapshot
   std::string view_host = "0.0.0.0";
   int view_port = 8766;
   bool hold = false;              // keep serving the viewer after routing; never returns (CLI only)

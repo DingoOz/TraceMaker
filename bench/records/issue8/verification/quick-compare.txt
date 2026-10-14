@@ -1,0 +1,8 @@
+# quick: origin/main 49fbd3c (CPU-only build) -> this branch (release build), bench/compare_runs.py --expect-identical
+# m16-quick-base → i8-quick
+30 boards; routed boards byte-identical: 30/30.
+Clean pass 12 → 12; mean completion 89.2% → 89.2%; router seconds 39.2 → 33.9.
+Route CPU time 39 → 51 s (+31.0%) at the same work.
+Byte-identical boards moved -21% to +190% in CPU time (the same work: noise, or speed).
+Style (informational): bends per connection 0.6236 → 0.6236; acute angles 0 → 0; stair steps 29 → 29; short segments 268 → 268; off angle segments 409 → 409; detour ratio 1.0308 → 1.0308; long detours 23 → 23.
+Gates: pass

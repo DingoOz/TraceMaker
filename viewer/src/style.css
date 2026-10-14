@@ -144,3 +144,18 @@ button { font: inherit; color: inherit; }
   .side { top: auto; height: 46vh; left: var(--gap); width: auto; }
   .statusbar { display: none; }
 }
+
+/* Stall freeze (issue #8) */
+.hidden { display: none !important; }
+.stall { border-left: 3px solid #ff5d6c; }
+.stall-list { display: flex; flex-direction: column; gap: 2px; margin: 6px 0; max-height: 180px; overflow-y: auto; }
+.stall-row { display: flex; align-items: center; gap: 8px; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.stall-row:hover { background: rgba(140, 170, 230, 0.12); }
+.stall-row.on { background: rgba(140, 170, 230, 0.22); }
+.stall-net { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip-verdict { color: #0b1020; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; padding: 1px 6px; border-radius: 8px; }
+.stall-label { font-size: 12px; margin-top: 4px; }
+.stall-verdict { font-size: 12px; margin-top: 4px; color: #f2b84b; }
+.stall-banner { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid #ff5d6c; }
+.stall-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5d6c; box-shadow: 0 0 10px #ff5d6c; }
+.stall-title { font-weight: 700; }

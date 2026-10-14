@@ -1,0 +1,6 @@
+# timing: previous binary (M16 branch) vs this branch, sample104, --work 20000000 --variants 1 --no-gpu, no viewer, alternating, idle machine
+tm_adv2 (before) 17.27 s / 17.44 s / 17.37 s
+this branch 17.16 s / 17.31 s / 17.22 s
+
+# a recorded run and a plain run of the same board give the same bytes (sample104, --work 30000000 --variants 1, --record vs none)
+identical

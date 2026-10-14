@@ -242,7 +242,7 @@ RouteJobResult run_route_job(RouteJob job) {
     so.host = job.view_host;
     so.port = static_cast<std::uint16_t>(job.view_port);
     server = std::make_unique<server::ViewerServer>(so);
-    server->publish(server::board_snapshot_json(lb.board, name));
+    server->publish(server::board_snapshot_json(lb.board, name, job.view_freeze));
     out.viewer_url = server->url();
     log("live view: " + out.viewer_url);
     opt.sink = server.get();

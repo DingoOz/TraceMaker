@@ -92,12 +92,45 @@ TEST_CASE("message builders put type first and classify", "[server]") {
   CHECK(fj["type"] == "failure");
   CHECK(fj["blockers"].size() == 2);
   CHECK_FALSE(fj.contains("region"));
+  // The diagnostic fields are optional: a plain failure has none of them, so an old reader sees what it always saw.
+  for (const char* k : {"blocker_nets", "reason", "width_nm", "clearance_nm", "min_width_nm", "gap_nm", "gap_fixed_nm", "gap_layer", "at", "verdict", "rule", "rejected"})
+    CHECK_FALSE(fj.contains(k));
+
+  server::Failure d = f;
+  d.blocker_nets = {7};
+  d.reason = "boxed_in";
+  d.width_nm = 250'000;
+  d.clearance_nm = 200'000;
+  d.min_width_nm = 100'000;
+  d.gap_nm = 0;
+  d.gap_fixed_nm = 120'000;
+  d.gap_layer = 1;
+  d.at = model::Point{-600'000, 0};
+  d.verdict = "placement";
+  d.rule = "netclass Default: width 0.25 mm, clearance 0.2 mm";
+  d.rejected = {{{-7'950'000, 0}, 0}, {{-600'000, 0}, 0}};
+  const auto dj = json::parse(server::failure(d));
+  CHECK(dj["type"] == "failure");
+  CHECK(dj["width_nm"] == 250'000);
+  CHECK(dj["clearance_nm"] == 200'000);
+  CHECK(dj["min_width_nm"] == 100'000);
+  CHECK(dj["gap_nm"] == 0);  // a gap of zero is a value, not "unset"
+  CHECK(dj["gap_fixed_nm"] == 120'000);
+  CHECK(dj["gap_layer"] == 1);
+  CHECK(dj["at"] == json::array({-600'000, 0}));
+  CHECK(dj["verdict"] == "placement");
+  CHECK(dj["blocker_nets"] == json::array({7}));
+  REQUIRE(dj["rejected"].size() == 2);
+  CHECK(dj["rejected"][1] == json::array({-600'000, 0, 0}));
+  CHECK(dj["blockers"].size() == 2);  // the old fields are untouched
 }
 
 TEST_CASE("board snapshot of pic_programmer has the board's objects", "[server]") {
   if (!std::filesystem::exists(kPic)) SKIP("fixture missing: " << kPic.string());
   const auto loaded = io::read_board_file(kPic.string());
   const auto& b = loaded.board;
+  CHECK_FALSE(json::parse(server::board_snapshot_json(b, "pic_programmer")).contains("freeze"));  // on by default: nothing said
+  CHECK(json::parse(server::board_snapshot_json(b, "pic_programmer", false))["freeze"] == false);
   const auto j = json::parse(server::board_snapshot_json(b, "pic_programmer"));
   CHECK(j["type"] == "board");
   CHECK(j["name"] == "pic_programmer");

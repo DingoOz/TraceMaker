@@ -63,7 +63,7 @@ thin backend interface; the WebGL2 path uses fragment-shader SDFs and render-to-
 | Main canvas | Board, copper per layer, pads, vias, zones, ratsnest (airwires fade as connections complete) |
 | **Search frontier** | The current A* frontier as a fading, glowing wave per active thread (sampled, not every node) |
 | **Rip-up** | Ripped tracks dissolve into particles; rerouted ones draw in along their path |
-| **Failure ghosts** | Failed attempts shown as dashed red paths for a few seconds, blockers outlined in red, the over-full cut drawn as a red bar with "demand / capacity" |
+| **Failure ghosts** | Failed attempts shown as dashed red paths for a few seconds, blockers outlined in red, the over-full cut drawn as a red bar with "demand / capacity". **On a stall the scene freezes** on the stuck connection (§8, issue #8): the rejected paths stay, coloured by cause, with the numbers that rejected them and a verdict |
 | **Placement motion** | Footprints glide (interpolated between frames) during global placement; the electrostatic density appears as a heat field; ECO moves pulse the moved part |
 | **Overlays** | Congestion, history `h`, learned penalties, RUDY, pin density, escape plan |
 | Layer stack | Toggle/solo layers; an exploded 2.5-D tilted view of the stack (each layer a translucent plane, vias as vertical glowing pillars) |
@@ -167,6 +167,26 @@ Server behaviour:
 - WebSocket client reconnects with exponential backoff (0.4–5 s) and applies all queued messages once per
   animation frame; only the newest transient messages of a frame are kept after a stall.
 - Views can be linked as `#view=<x mm>,<y mm>,<px per mm>&layer=<n>&hc=0|1&follow=1`.
+
+### Freeze on a routing stall (issue #8, D113)
+
+- **When.** A stall is `threshold` (default 24, `#stall=N` in the URL) failed attempts without the routed count rising, the latest of them for a reason a
+  rule or a placement could explain (`boxed_in`, `no_legal_path`, `exact_check`, `rip_limit`, `layer_limit`; not a budget that ran out, a skipped
+  identical attempt, a rolled-back transaction). It is counted in the engine's own failures, not in seconds. Failures replayed while the viewer catches up
+  after a snapshot, and a frame that carries the final `done` stats (a late client joining a finished run), never freeze. On by default for `route --view`;
+  `route --no-freeze` (the board snapshot says `"freeze": false`) or `#freeze=0` turns it off and nothing changes.
+- **What freezes.** A viewer latch (`viewer/src/stall.ts`), not the engine: the router keeps going. While latched, copper, ratsnest, heatmap and footprint
+  messages are kept in order and applied when the user resumes (nothing is lost or reordered); the search frontier is dropped; the HUD (stats, stage, log)
+  keeps counting. More than 400,000 held messages cannot be applied reliably, and Resume then reloads the page for a fresh snapshot.
+- **What is shown.** The stuck net stays highlighted; every rejected path of the selected connection (the last 16) stays drawn, coloured by cause (pin boxed in,
+  blocked, exact check, rip limit), with rings at its two pads and a cross at the place the way is narrowest (or the closest approach). Beside it a label in
+  board millimetres, `need 0.25 mm track + 0.2 mm clearance; widest track that fits 0.12 mm on F.Cu`, a verdict line (`placement`, `rule`, `contested`,
+  `unknown`: doc 13 "The `failure` verdict") and the rule the numbers came from. The numbers are the engine's, measured with its own obstacle tests; the browser
+  measures nothing. The side panel lists the stalled connections with their verdict chips; `[` and `]` (or a click on the list, or on copper of one of those
+  nets) move between them. Space, Escape or the Resume button releases the scene and re-arms the latch.
+- **Control channel.** Still only this dismiss button, and it changes nothing in routing (§2).
+- **Tested.** `viewer/src/stall.test.ts` and `stall_draw.test.ts` (Node, no browser: the latch, the held messages, the label text, the drawing against a recording
+  context); ctest `viewer_stall`; and by hand in headless Chromium against a live router (`bench/records/issue8/`).
 
 ### Running it
 
