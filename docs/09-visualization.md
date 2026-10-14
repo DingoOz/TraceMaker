@@ -188,6 +188,14 @@ Server behaviour:
 - **Tested.** `viewer/src/stall.test.ts` and `stall_draw.test.ts` (Node, no browser: the latch, the held messages, the label text, the drawing against a recording
   context); ctest `viewer_stall`; and by hand in headless Chromium against a live router (`bench/records/issue8/`).
 
+### Return-path overlay (issue #7, D114)
+
+The viewer draws the reference-return audit of doc 05 §42 from `return_path` messages: the signal in cyan, the return in red (shifted a few pixels, with arrows
+from the end of the trace back to its start), and for the selected net callouts (signal pad, assumed return pad, signal via, return via or capacitor or a missing
+stitch, the separation). Callout labels never overlap: one with no room is left out and its marker stays. `P` toggles the overlay; the **Return paths** panel lists the
+audited nets worst first (chips: `+detour`, `split`, `stitch`, `ok`) and a click selects one and zooms onto it. Served by `route --return-paths ... --view` and by
+`tracemaker return-paths BOARD --nets ... --view`.
+
 ### Running it
 
 ```

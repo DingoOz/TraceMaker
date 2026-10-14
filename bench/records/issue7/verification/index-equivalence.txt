@@ -1,0 +1,16 @@
+# The grid index of the reference copper (src/analysis/region.hpp) against the linear scans it replaced.
+#
+# Unit level (tests/test_return_path.cpp, "the indexed region queries equal the linear reference"): 6,000 points (island_of), 3,000 segments (crosses),
+# 800 + 120 points (nearest_boundary: the same point, ties included), 300 ellipses (vertices_near) on a pour with about 150 round antipads, a slot, a big hole and an
+# island in it, and on 120 square antipads whose centres are exactly as near to four edges. With the tie-break removed (first edge in the region's order)
+# the test fails: it was checked.
+#
+# End to end: the audit was run twice on real boards, once with the index and once with every query forced to the linear scan (a temporary
+# TM_REGION_LINEAR switch in region.hpp, not committed). The JSON report and the text report were byte-identical:
+#   RoyalBlue54L-Feather  --nets 'USB*,*CLK*,*SWD*,SPI*,TRG*'                      indexed 0.53 s   linear 4.05 s   JSON identical, text identical
+#   CM5_MINIMA_3          --nets '*CLK*,*DQ*,*USB*,*D+*,*RX*,*TX*'                  indexed 0.41 s   linear 5.26 s   JSON identical, text identical
+# The first version of the index chose a different one of several equally near boundary points than the linear scan (a pad at the centre of a square
+# antipad); it changed one net's detour from 2.10 mm to 1.59 mm. That is how the tie rule came to be written down and tested.
+#
+# On the Jetson AGX Thor demo (about 290 nets) one query in 256 of "is this point on copper" was also compared with the linear scan inside the run (a
+# temporary check): no mismatch, 2 runs.

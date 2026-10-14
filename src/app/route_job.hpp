@@ -7,6 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "analysis/return_path.hpp"
 #include "route/bus.hpp"
 #include "route/router.hpp"
 
@@ -24,6 +25,9 @@ struct RouteJob {
   std::string items_out;          // --emit-items file; empty = none
   std::string json_out;           // --json summary file; empty = none
   bool view = false;              // stream to the browser viewer
+  // Reference-return audit of selected nets on the routed board (issue #7, doc 05 §42): off unless a selector is given. Read-only; the
+  // report goes to the log and the summary, and each net's return path to the viewer.
+  analysis::ReturnPathOptions return_paths;
   bool view_freeze = true;        // the viewer holds the scene on a routing stall (issue #8); --no-freeze says false in the board snapshot
   std::string view_host = "0.0.0.0";
   int view_port = 8766;

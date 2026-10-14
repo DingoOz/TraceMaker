@@ -22,6 +22,7 @@ export interface Canvas2D {
   fillStyle: string | CanvasGradient | CanvasPattern;
   lineWidth: number;
   lineCap: CanvasLineCap;
+  lineJoin: CanvasLineJoin;
   font: string;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;

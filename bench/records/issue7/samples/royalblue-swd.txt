@@ -1,0 +1,12 @@
+/Debugger/SWD_TRG.~{RESET} F.Cu over In1.Cu, In4.Cu (no reference), B.Cu over In6.Cu    51.7 mm  voids 10  detour  2.27 mm  max separation  0.98 mm  missing stitches 0  WARN
+    warning: return detours 2.27 mm (over 2.00 mm)
+    warning: 0.1 mm of trace has no reference layer (no zone fill on the adjacent layers)
+Net-(J8-SWDIO)           F.Cu over In1.Cu, B.Cu over In6.Cu    13.1 mm  voids 4  detour  2.10 mm  max separation  0.35 mm  missing stitches 0  WARN
+    warning: return detours 2.10 mm (over 2.00 mm)
+/Debugger/SWD_TRG.SWDIO  F.Cu over In1.Cu, B.Cu over In6.Cu    24.8 mm  voids 3  detour  1.05 mm  max separation  0.38 mm  missing stitches 0
+Net-(J8-SWCLK)           F.Cu over In1.Cu, B.Cu over In6.Cu    18.9 mm  voids 4  detour  1.41 mm  max separation  0.35 mm  missing stitches 0
+/Debugger/TRG_SWDCLK_NRF52 F.Cu over In1.Cu, B.Cu over In6.Cu    31.0 mm  voids 4  detour  0.96 mm  max separation  0.38 mm  missing stitches 0
+/Debugger/TRG_SWDIO_NRF52 F.Cu over In1.Cu, B.Cu over In6.Cu    31.3 mm  voids 4  detour  4.12 mm  max separation  1.10 mm  missing stitches 0  WARN
+    warning: return detours 4.12 mm (over 2.00 mm)
+    warning: return is 1.10 mm from the trace at the farthest (over 1.00 mm)
+/Debugger/SWD_TRG.SWDCLK F.Cu over In1.Cu, B.Cu over In6.Cu    22.1 mm  voids 2  detour  0.00 mm  max separation  0.10 mm  missing stitches 0

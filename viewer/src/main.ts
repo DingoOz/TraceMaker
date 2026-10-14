@@ -10,6 +10,7 @@ import { Renderer, type ViewOptions } from './renderer';
 import { Scene } from './scene';
 import { StallTracker, stallLines } from './stall';
 import { drawStall } from './stall_draw';
+import { drawReturnPaths, pathBox } from './returnpath_draw';
 
 const PANEL_PX = 340; // side panel width incl. margin, kept clear when fitting the board
 
@@ -41,7 +42,7 @@ try {
 canvas.addEventListener('webglcontextlost', (e) => e.preventDefault());
 canvas.addEventListener('webglcontextrestored', () => location.reload());
 
-const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false };
+const toggles: Toggles = { activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, follow: false, returnPaths: true };
 const view: ViewOptions = { visible: [], active: 0, activeOnTop: true, zones: true, ratsnest: true, escape: true, footprints: true, effects: true, hoverNet: 0, heatmap: '' };
 
 const conn = new Connection(Connection.defaultUrl());
@@ -147,6 +148,7 @@ window.addEventListener('keydown', (e) => {
   else if (k === 'x') hud.onToggle('escape', !toggles.escape);
   else if (k === 'e') hud.onToggle('effects', !toggles.effects);
   else if (k === 'l') hud.onToggle('follow', !toggles.follow);
+  else if (k === 'p') hud.onToggle('returnPaths', !toggles.returnPaths);
   else if (k === 'm') cycleHeatmap();
   else if (/^[1-9]$/.test(k) && Number(k) <= scene.layerNames.length) hud.onActiveLayer(Number(k) - 1);
 });
@@ -188,6 +190,7 @@ function processMessages(now: number) {
   // The stall latch (issue #8) decides what the scene gets: everything, or, while the scene is held, only what the HUD needs.
   const wasLatched = stall.latched;
   applyMessages(stall.consume(raw, now >= scene.quietUntil), now);
+  if (returnPathsDirty) refreshReturnPaths();
   if (stall.latched && !wasLatched) onStallLatched();
   else if (stall.latched) refreshStall();
 }
@@ -213,6 +216,8 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
     switch (m.type) {
       case 'board': {
         scene.quietUntil = now + 0.75; // the server replays state after the snapshot
+        rpSelected = null;
+        returnPathsDirty = true;
         view.visible = scene.layerNames.map(() => true);
         view.active = 0;
         hud.setBoard(scene.name, scene.layerNames, view.visible, view.active);
@@ -235,6 +240,9 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
       case 'failure':
         hud.addLog('error', `${scene.netName(m.net)}: ${m.cause}${m.rung ? ` (rung ${m.rung})` : ''}${m.verdict && m.verdict !== 'unknown' ? ` · ${m.verdict}` : ''}`, 'failure');
         break;
+      case 'return_path':
+        returnPathsDirty = true;
+        break;
       case 'heatmap':
         // The legend changes only when the list of overlays or the shown one's maximum does.
         if (m.name === view.heatmap || [...scene.heatmaps.keys()].sort().join('\n') !== heatNames) updateHeatHud();
@@ -250,6 +258,24 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
   }
   dirty = labelsDirty = true;
 }
+
+// ------------------------------------------------------------------------------------------------ return paths
+// The reference-return audit (issue #7): cyan signal, red return, callouts for the selected net.
+let returnPathsDirty = false;
+let rpSelected: string | null = null;
+function refreshReturnPaths() {
+  const rows = [...scene.returnPaths.values()].sort((a, b) => (b.splits - a.splits) || (b.detourMm - a.detourMm) || a.name.localeCompare(b.name));
+  hud.setReturnPaths(rows, rpSelected);
+  returnPathsDirty = false;
+  dirty = labelsDirty = true;
+}
+hud.onReturnPath = (name) => {
+  rpSelected = name;
+  const p = name ? scene.returnPaths.get(name) : undefined;
+  const box = p ? pathBox(p) : null;
+  if (box) cam.fit([box[0] - 1, box[1] - 1, box[2] + 1, box[3] + 1], 0.1, PANEL_PX); // zoom onto the net
+  refreshReturnPaths();
+};
 
 // ------------------------------------------------------------------------------------------------- stall
 // Freeze on a routing stall (issue #8): the scene is held on the connection that stopped, with the rejected paths and the numbers beside
@@ -358,6 +384,12 @@ function drawLabels() {
     ctx.shadowColor = 'rgba(0,0,0,0.85)';
     ctx.shadowBlur = 4;
     ctx.fillText(f.ref, (x0 + x1) / 2, (y0 + y1) / 2);
+  }
+  if (toggles.returnPaths && scene.returnPaths.size) {
+    ctx.shadowBlur = 0;
+    drawReturnPaths(ctx, scene.returnPaths.values(), rpSelected, {
+      toScreen: (x, y) => cam.toScreen(x, y), width: cam.width, height: cam.height, rightMargin: PANEL_PX,
+    });
   }
   const sel = stall.selected;
   if (sel) {

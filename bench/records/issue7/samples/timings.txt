@@ -1,0 +1,5 @@
+# return-paths timings, one core, final binary of this branch (release build); the machine was otherwise busy with one long background job
+RoyalBlue54L-Feather: --nets 'USB*,*CLK*,*SWD*,SPI*,TRG*': 7 nets, 0.51 s
+CM5_MINIMA_3: --nets '*CLK*,*DQ*,*USB*,*D+*,*RX*,*TX*': 30 nets, 0.40 s
+jetson-agx-thor-baseboard: --nets '*CLK*,*DQ*,*USB*': 291 nets, 9.06 s
+vme-wren: --nets '*CLK*,*DQ*,*USB*,*D+*,*RX*,*TX*': 236 nets, 38.28 s

@@ -1,0 +1,5 @@
+rows in the Return paths list: 7
+first rows: +4.1/Debugger/TRG_SWDIO_NRF521.10 mm | +2.3/Debugger/SWD_TRG.~{RESET}0.98 mm | +2.1Net-(J8-SWDIO)0.35 mm | +1.4Net-(J8-SWCLK)0.35 mm
+row title: 4 void(s), detour 4.12 mm, farthest 1.10 mm, 0 missing stitch(es)
+selected row classes: stall-row on
+no console errors

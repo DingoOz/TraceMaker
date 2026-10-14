@@ -28,6 +28,20 @@ export interface Fx {
   failures: { ax: number; ay: number; bx: number; by: number; t0: number }[];
 }
 
+/** A net's return-path audit in world millimetres (flat x,y arrays), as the overlay draws it. */
+export interface ReturnPath {
+  name: string;
+  net: number;
+  detourMm: number;
+  maxSeparationMm: number;
+  voids: number;
+  splits: number;
+  missingStitches: number;
+  signal: number[][];
+  ret: number[][];
+  callouts: { kind: string; x: number; y: number; text: string }[];
+}
+
 export interface Activity { x: number; y: number; t: number }
 
 /** Latest overlay grid per name (doc 13 `heatmap`), in world millimetres. `version` bumps on every update. */
@@ -76,6 +90,7 @@ export class Scene {
   escDirty = true;
   footprintsDirty = true;
   heatmaps = new Map<string, Heatmap>();  // by name; layer -1 (all layers) is what the router sends
+  returnPaths = new Map<string, ReturnPath>();  // by net name, from `return_path` messages (issue #7)
   private heatVersion = 0;
 
   fx: Fx = { newTracks: [], frontier: [], paths: [], failures: [] };
@@ -180,6 +195,16 @@ export class Scene {
         });
         break;
       }
+      case 'return_path': {
+        if (!this.loaded) return;
+        const flat = (pl: { pts: XY[] }) => pl.pts.flatMap((p) => this.pt(p));
+        this.returnPaths.set(m.name, {
+          name: m.name, net: m.net, detourMm: m.detour_mm, maxSeparationMm: m.max_separation_mm, voids: m.voids, splits: m.splits,
+          missingStitches: m.missing_stitches, signal: m.signal.map(flat), ret: m.return.map(flat),
+          callouts: m.callouts.map((c) => { const [x, y] = this.pt(c.p); return { kind: c.kind, x, y, text: c.text }; }),
+        } satisfies ReturnPath);
+        break;
+      }
       case 'failure': {
         if (!this.loaded) return;
         const [ax, ay] = this.pt(m.a), [bx, by] = this.pt(m.b);
@@ -246,6 +271,7 @@ export class Scene {
     this.deadPins = [];
     this.escDirty = true;
     this.heatmaps.clear();  // the server resends the current overlays after a snapshot
+    this.returnPaths.clear();
     this.fx = { newTracks: [], frontier: [], paths: [], failures: [] };
     this.activity = null;
     for (let i = 0; i < this.layerNames.length; i++) this.dirtyTrackLayers.add(i);

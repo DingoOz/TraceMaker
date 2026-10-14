@@ -72,6 +72,22 @@ export interface FailureMsg {
   rejected?: [number, number, number][];
 }
 
+/** One net's reference-return audit (docs/13-viewer-protocol.md `return_path`, issue #7): the signal, the return along it (the trace over
+ *  copper, the detour across a void), and callouts. Polylines are in nm; the return is drawn from the chain's end to its start. */
+export interface ReturnPathMsg {
+  type: 'return_path';
+  net: number;
+  name: string;
+  detour_mm: number;
+  max_separation_mm: number;
+  voids: number;
+  splits: number;
+  missing_stitches: number;
+  signal: { layer: number; pts: XY[] }[];
+  return: { layer: number; pts: XY[] }[];
+  callouts: { kind: string; p: XY; text: string }[];
+}
+
 /** Overlay grid (doc 13): row-major w*h bytes 0–255, cell size in nm, layer -1 = all layers. `scale` says how
  *  raw values became bytes ("sqrt": byte = 255·sqrt(v / max); absent: linear). */
 export interface HeatmapMsg {
@@ -101,6 +117,7 @@ export type Message =
   | { type: 'frontier'; conn: number; layer: number; pts: XY[] }
   | { type: 'path_try'; conn: number; pts: [number, number, number][] }
   | HeatmapMsg
+  | ReturnPathMsg
   | { type: 'stage'; name: string; state: 'begin' | 'end'; detail?: string }
   | { type: 'log'; level: string; text: string }
   // Escape planning (M9): reserved corridor per dense-package pin, released when the pin is connected; dead pins.
