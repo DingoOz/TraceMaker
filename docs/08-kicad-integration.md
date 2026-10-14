@@ -38,7 +38,7 @@
   holds custom rules (constraint keywords in the research note §A). The rule compiler (doc 03) consumes both.
   The reader seeds supported KiCad 10 defaults and applies legacy board rules. Project values overlay
   defaults only where KiCad's legacy migration permits loading them; missing keys preserve current
-  values and explicit zeros remain zero (D100).
+  values and explicit zeros remain zero (D108).
 - **Schematic**: netlist from the hierarchical `.kicad_sch` set (symbols, pins, labels, power symbols, net
   class directives, DNP / exclude-from-board flags). Cross-checked in tests against
   `kicad-cli sch export netlist --format kicadsexpr`.
@@ -48,7 +48,7 @@
   can be run as a baseline on our own `.kicad_pcb` fixtures (KiCad 10 has no `kicad-cli` DSN export, and the
   SWIG exporter disappears in KiCad 11).
 
-### 3.1 Supported native rule defaults (D100)
+### 3.1 Supported native rule defaults (D108)
 
 Defaults are taken from KiCad 10.0.3's
 [`include/board_design_settings.h`](https://github.com/KiCad/kicad-source-mirror/blob/10.0.3/include/board_design_settings.h),
