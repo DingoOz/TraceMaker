@@ -68,6 +68,10 @@ set_tests_properties(tui_options PROPERTIES LABELS "integration" TIMEOUT 300)
 # Frozen KiCad 10 custom-rule item/pair multisets (expected.json names the judging version); normal runs do not require KiCad.
 add_test(NAME rule_parity COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/rule_parity/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/rule_parity)
 set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 300)
+# The agent skills' scripts (D84): preflight findings on plane_smd, reports that board text cannot forge, sign-off
+# verdicts and exit codes against a stand-in kicad-cli. Needs neither KiCad nor, for most of it, the engine.
+add_test(NAME skills_scripts COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/skills_scripts.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/skills_scripts)
+set_tests_properties(skills_scripts PROPERTIES LABELS "integration;skills" TIMEOUT 300)
 # Buses (doc 05 §38, D91): generated boards routed lane by lane, judged by `tracemaker buses` on the written files
 # (members routed, equal vias, skew within the limit from an option or a .kicad_dru rule), and a bus run at 1, 2 and
 # 4 threads giving identical bytes. Needs no fixtures and no KiCad.
