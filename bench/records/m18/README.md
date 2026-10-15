@@ -91,6 +91,63 @@ Where the plain run leaves only a few connections open (all `boxed_in`), the rep
 many (22 per board on average), the loop gains 7 over plain and 3 over the control. Eight boards and one run each: a lead for the next experiment, not a result.
 `sample020` is complete after the plain run. The engine's DRC reports the edge-clearance difference below on `sample007` (all three arms) and `sample039` (control).
 
+## A model-driven arm (D118: "lets try")
+
+Four general-purpose subagents (Claude, the same model family as the one writing this) drove the 16 boards of `srj20-agent-heldout` through `inspect_pad`,
+`inspect_net`, `route`, `rip_net`, `restore` and the other tools of doc 19, by `agents/relay.py`, four boards each, with the limit of each board's control work. The brief
+made the first call the plain route and forbade nothing else; it named no technique except "rip the neighbours that fence a pin in and route the stuck net first".
+Scored independently by `bench/agent_score.py` from the boards they saved (their own reports were not used; they agree with the scores). `model-heldout.json` has the
+rows; `model-arm/<board>.session.log` replays (two were replayed from their logs, sample030 with 98 calls and sample069 with 88: every result and state digest matched and the
+saved boards were byte-identical); `model-arm/<board>.transcript.jsonl.gz` has every request and answer.
+
+| board | open | plain-8 | control-12 | scripted `persist` | **model** | model work / control work | route calls (kept) | calls |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| sample013 | 54 | 49 | 49 | 49 | **49** | 95 M / 99 M | 11 (8) | 73 |
+| sample020 | 46 | 46 | 46 | 46 | **46** | 63 M / 91 M | 1 (1) | 4 |
+| sample024 | 66 | 61 | 61 | 61 | **61** | 101 M / 102 M | 9 (9) | 38 |
+| sample030 | 59 | 56 | 58 | 56 | **57** | 95 M / 98 M | 20 (12) | 98 |
+| sample069 | 53 | 50 | 50 | 50 | **51** | 87 M / 94 M | 14 (11) | 88 |
+| sample150 | 56 | 53 | 54 | 53 | **53** | 91 M / 98 M | 13 (11) | 93 |
+| sample190 | 61 | 57 | 59 | 57 | **57** | 93 M / 100 M | 15 (10) | 98 |
+| sample192 | 60 | 57 | 56 | 57 | **58** | 93 M / 98 M | 20 (9) | 88 |
+| sample007 | 72 | 66 | 67 | 67 | **66** | 97 M / 101 M | 18 (10) | 384 |
+| sample008 | 101 | 68 | 66 | 69 | **69** | 107 M / 110 M | 17 (10) | 111 |
+| sample016 | 84 | 70 | 72 | 71 | **70** | 98 M / 100 M | 11 (6) | 31 |
+| sample032 | 108 | 67 | 67 | 69 | **69** | 95 M / 114 M | 10 (5) | 35 |
+| sample039 | 78 | 66 | 64 | 66 | **66** | 96 M / 97 M | 6 (4) | 36 |
+| sample040 | 91 | 65 | 68 | 65 | **65** | 102 M / 103 M | 6 (3) | 25 |
+| sample048 | 74 | 61 | 62 | 62 | **62** | 97 M / 103 M | 18 (7) | 67 |
+| sample064 | 99 | 68 | 69 | 69 | **69** | 104 M / 106 M | 16 (7) | 53 |
+| **total** | **1162** | **960** | **968** | **967** | **968** | **1512 M / 1613 M** | | |
+
+**Stop rule: not met.** The model-driven arm routes 968 connections, the control 968 (and the scripted `persist` agent 967, the plain run 960). It never routed fewer than the
+plain run, gained +8 over it (one connection on seven boards, two on sample032), spent 94 % of the control's work, and is better than the control on 5 boards and worse on 6.
+By group (exploratory): first 8 boards (plain leaves 26 open): plain 429, control 433, scripted 429, **model 432**; second 8 (plain leaves 176 open): plain 531, control 535,
+scripted 538, **model 536**. The model gained where the scripted loop did not (030, 069, 192 in the first group), and gave less than it where the loop did (008, 016, 064
+equal, 007 lower). One run, 16 boards: the three ways of spending the extra allowance (four more seeds, a scripted repair loop, a model) end within one connection of each other.
+
+What it cost: 615 k tokens for the four agents (144 k to 163 k each, 16 to 20 minutes of wall time each), about 1,300 tool calls, 205 route calls, for +8 connections; the four
+extra seeds cost nothing but compute and gave the same +8.
+
+What the agents did: the technique that worked was the single-net one, `inspect_pad` on the stuck ball and its target pad, rip the nets whose copper lies right beside it, route
+the stuck net alone (often 0.5 to 2 M of work), and it succeeded almost every time, but the ripped neighbours then mostly failed to come back, because the new track boxed
+their own pins in: a gain of 0 to 1 per cycle, then a plateau (the same finding as the scripted loop's). Mistakes that cost budget, in their words: restarting from the input
+board with all stuck nets as `first_nets` (two agents, 14 to 23 M each, far worse results), repair calls with 8 variants (4 to 9 M), and ripping nets that had no session copper.
+
+What they asked of the tools (the right column is what was done about it):
+
+| Asked | Done |
+|---|---|
+| `open_after` counts only the nets the call named; the board's total needs another call | `route` answers `open_total` (the board's) |
+| `not_attempted` for connections that were tried and for ones never tried | every unrouted entry and open connection says `tried` (fails or rips above 0) |
+| `check` gives counts per DRC type, not which net or where (bisecting by `rip_net` found the net) | `check` gives up to five `examples` per added type, new relative to the input board, with items and positions (checked on sample007: it names `bga_conn_061` and the three places) |
+| `inspect_pad` gives distances only; a track passing under a stuck ball (0.01 to 0.07 mm) was the recurring blocker | a row of another net's copper within the pad's own area says `within_pad_area` |
+| `work` is not a hard cap per call (1 M used 1.5 to 3 M; one router at 14 M used 21 to 23 M; 8 variants at 1.5 M used 4 to 9 M) | said in the tool description and in doc 19; not changed |
+| Which end of a connection is boxed in, which lanes are blocked and which via sites are free | not done (needs the router's escape analysis per pad) |
+| A dry run that names the minimal set of nets to rip to free a pin; a "would net X route alone if Y were ripped" probe | not done (the single-net `commit: false` probe at 0.5 to 1 M is the nearest) |
+| A per-call "stopped at net X" field; per-net reasons and blockers for every open connection of a multi-net call | not done (router change) |
+| Helper scripts overwritten (all four agents shared one folder) | not a tool matter; the brief should give each agent its own folder |
+
 ## Checks that came with it
 
 - **The session's first call is the command line's.** `route --work 20000000 --variants 8 --threads 8` and the session's `route` with the same arguments on
@@ -121,7 +178,8 @@ copper, not "routed copper by net" of that run). A read-only query tool for the 
 
 ## Whole-machine checks on this branch
 
-- `ctest --preset release`: 361 of 361 pass (one skip, `fixture_preparation_native`, as before). New: 12 session cases and `session_cli`.
+- `ctest --preset release`: 362 of 362 pass (one skip, `fixture_preparation_native`, as before). New: 13 session cases and `session_cli`.
 - ASan + UBSan and TSan: the session unit tests clean; the CLI test also under ASan + UBSan.
+- The model-driven arm ran on the binary of commit `d75869f`; the fields added afterwards from the agents' feedback (`open_total`, `tried`, `examples`, `within_pad_area`) change no routing.
 - `quick` tier (30 boards, `--work 1000000 --no-gpu`), the new binary against `main` `0099768` built CPU-only: routed boards byte-identical 30/30
   (`quick-identity.txt`). The only router change is `RouterOptions::plan_only`, off by default.

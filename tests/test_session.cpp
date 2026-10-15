@@ -99,6 +99,7 @@ TEST_CASE("session: the open connections are listed and a route closes them", "[
   CHECK(r["committed"] == true);
   CHECK(r["routed"] == 3);
   CHECK(r["open_after"] == 0);
+  CHECK(r["open_total"] == 0);
   CHECK(r["state"] == 1);
   CHECK_FALSE(r.contains("added_errors"));
   CHECK(r["work"]["used"].get<long>() > 0);
@@ -148,6 +149,9 @@ TEST_CASE("session: rip, undo and restore move between states", "[session]") {
   CHECK(rip["state"] == 2);
   CHECK(rip["removed_tracks"].get<int>() > 0);
   CHECK(s.call("open_connections", json::object())["open"] == 1);
+  // A route of one net reports the board's total as well as its own open count.
+  const auto again = s.call("route", {{"nets", {"NET_A"}}, {"work", 100000}, {"commit", false}});
+  CHECK(again["open_total"] == 1);
   CHECK(is_error(s.call("rip_net", {{"net", "NET_B"}}), "not_allowed"));  // nothing of the session's left on it
   CHECK(s.call("undo", json::object())["id"] == 1);
   CHECK(s.call("open_connections", json::object())["open"] == 0);
@@ -167,6 +171,7 @@ TEST_CASE("session: a dry run and a refused route change nothing", "[session]") 
   session::Session s(tb.options());
   const auto dry = s.call("route", {{"work", 300000}, {"commit", false}});
   CHECK(dry["committed"] == false);
+  CHECK(dry["open_total"] == 3);  // the board's total, whatever nets the call named
   CHECK(dry["reason"] == "dry_run");
   CHECK(dry["routed"] == 3);
   CHECK(s.state() == 0);

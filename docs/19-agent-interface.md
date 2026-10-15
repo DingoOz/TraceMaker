@@ -55,11 +55,11 @@ Millimetres and the board file's axes; connections are named `REF.PIN`, as in do
 |---|---|---|
 | `board_info` | none | board name, copper layers, counts (parts, pads, nets, tracks and vias of the board and of the session), open connections, state id, work used and left, rules summary (clearance, track width, via) and the warnings from reading the rules |
 | `open_connections` | `net` (name, optional), `limit`, `soft_zones` | the connections still open in the current state: `net`, `a`, `b` (`REF.PIN`, or `zone` for a plane), `length_mm` (not for a plane), and, if a route has tried them, `reason`, `why`, `rips`, `fails`, `blockers`. `soft_zones` plans the plane connections too (default: on once a route with soft zones was kept) |
-| `route` | `nets` (names; default: every net with an open connection), `work` (default 2 M, at most 50 M), `variants` (1 to 8, default 1), `seed`, `hints` (an advice object: `first_nets`, `priority`, `layers`, `regions`), `options` (a whitelist of booleans: `soft_zones`, `via_in_pad`, `diff_pairs`, `vias_off_pads`, `escape_plan`), `verify` (`refuse` by default, `report`, `off`), `commit` (default true) | `routed_before`, `routed_after`, `connections`, `committed`, `reason` (when not), the new copper per net (tracks, vias, length), `added_errors` (DRC types), the connections still open with their reasons, `work_used`, `state` |
+| `route` | `nets` (names; default: every net with an open connection), `work` (default 2 M, at most 50 M), `variants` (1 to 8, default 1), `seed`, `hints` (an advice object: `first_nets`, `priority`, `layers`, `regions`), `options` (a whitelist of booleans: `soft_zones`, `via_in_pad`, `diff_pairs`, `vias_off_pads`, `escape_plan`), `verify` (`refuse` by default, `report`, `off`), `commit` (default true) | `committed`, `reason` (when not), `state`, `connections` and `routed` and `open_after` (for the nets this call named), `open_total` (the board's), the new copper per net (tracks, vias, length), `added_errors` (DRC types, relative to the state the call started from), the connections still open with `reason`, `why`, `tried` (a search ran or the pin was ruled out; false: never attempted), `rips`, `fails`, `blockers`, and `work` (`used`, `total_used`, `left`). A call can spend more than `work` (proofs of boxed-in pins and the clean-up count on top; observed up to 1.6 times with one router) |
 | `rip_net` | `net` | the session copper of that net removed (a new state); how many tracks and vias; refuses a net with none |
-| `check` | `full` (default true), `refill` | unconnected items and DRC errors by type, and the types and counts the session added relative to the input board. `refill` judges with the zones refilled, as `kicad-cli --refill-zones` does (default: on once a route with soft zones was kept; a route with soft zones is verified refilled, because the router counts on the refill) |
+| `check` | `full` (default true), `refill` | unconnected items and DRC errors by type, the types and counts the session added relative to the input board, and for those up to five `examples` each (items with positions: which net, where) that the input board does not have. `refill` judges with the zones refilled, as `kicad-cli --refill-zones` does (default: on once a route with soft zones was kept; a route with soft zones is verified refilled, because the router counts on the refill) |
 | `stuck_report` | `redact` | doc 17's report for the last `route` (reasons, crowding, parts at the open ends, `advice_schema`) |
-| `inspect_pad` | `pad` (`REF.PIN`), `radius_mm` (0.1 to 10, default 1.5) | read-only: the pad (net, position, layers, size, distance to the box of the outline), the open connections that end on it with the last route's reason and blockers, the other pads within the radius (at most 40, nearest first), and the copper within it (the board's and the session's, per net and layer, nearest first, at most 30 rows) |
+| `inspect_pad` | `pad` (`REF.PIN`), `radius_mm` (0.1 to 10, default 1.5) | read-only: the pad (net, position, layers, size, distance to the box of the outline), the open connections that end on it with the last route's reason and blockers, the other pads within the radius (at most 40, nearest first), and the copper within it (the board's and the session's, per net and layer, nearest first, at most 30 rows; `within_pad_area` marks another net's copper that lies in the pad's own area) |
 | `inspect_net` | `net` | read-only: its pads (at most 60), the board's and the session's tracks and vias on it, the session's length per layer, the open connections, the box it spans, and its class width and clearance |
 | `history` | none | the states: id, the call that made it, routed connections, vias, copper length |
 | `undo` / `restore` | none / `state` | the session goes back one state / to that state (states stay; a new change after a restore starts a new branch) |
@@ -174,10 +174,29 @@ Because `persist` was designed after the `tabu` result on both halves, it was co
 | control, 12 variants (the agent's compute) | **968** |
 | agent, policy `persist` (95 % of the control's work) | 967 |
 
-**Stop rule: not met, by one connection.** Exploratory reading by group: on the 8 boards where the plain run leaves only 3 to 6 connections open the agent gains
+**Stop rule: not met, by one connection.** A model-driven arm (§9.3.1) then tied the control. Exploratory reading by group: on the 8 boards where the plain run leaves only 3 to 6 connections open the agent gains
 nothing (429, plain 429, control 433); on the 8 where it leaves 22 on average it routes 538 against the control's 535 and the plain run's 531. Eight boards, one
 run: a lead, not a result. A repair loop earns something where there is something to repair, and the extra seeds of the control earn their gain where little is
 left. Whether a model does better than this loop is untested.
+
+#### 9.3.1 A model-driven arm
+
+Four model agents (subagents, one brief, four boards each; the first call mandated to be the plain route; scored from the boards they saved, never from their own
+reports; two sessions replayed from their logs byte for byte) drove the same 16 boards through the tools of §4, `inspect_pad` and `inspect_net` included:
+
+| Arm (16 held-out boards, 1,162 open at the start) | Routed |
+|---|---:|
+| plain, 8 variants | 960 |
+| control, 12 variants (the agents' compute) | 968 |
+| scripted agent, policy `persist` | 967 |
+| **model-driven agents** (94 % of the control's work) | **968** |
+
+**Stop rule: not met, by a tie** (968 against 968). The model never routed less than the plain run, gained +8 over it, used 94 % of the allowance, was better than the
+control on 5 boards and worse on 6. It gained on boards where the scripted loop did not, and the loop gained where the model did not; one run each. The technique that
+worked was single-net: look at the stuck ball and its target pad with `inspect_pad`, remove the nets beside it, route the stuck net alone. The removed nets then
+mostly failed to return, so a cycle gained 0 or 1 and every board reached a plateau. It cost 615 k tokens for +8 connections; four more seeds give +8 for compute alone.
+So: with this router and these boards, an agent matches what extra seeds give and does not exceed it, and by D118 nothing more is built for agents until the router can
+tell an agent more than it does now (below). What the agents asked of the tools, and what was done, is in `bench/records/m18/README.md`.
 
 ### 9.4 What a session showed that the measurement did not
 
@@ -192,7 +211,8 @@ left. Whether a model does better than this loop is untested.
 
 ### 9.5 Not built, and what follows
 
-- A model-driven arm of §7. It needs a model; the session is built for one (`claude mcp add ...`, §6). The scripted result says the connection-by-connection
-  loop does not beat seeds on these boards; it does not say a model cannot, and by D118 the interface is not built further for agents until one does.
+- What the agents asked for and the router cannot yet say: which end of a boxed-in connection is fenced and which lanes and via sites are free; a dry run that names the
+  minimal set of nets to remove to free a pin; "stopped at net X" and a reason with blockers for every open connection of a multi-net call. These are router
+  questions (escape analysis per pad, doc 05 §14), not session ones; they are the thing to build if agents are worth another try.
 - The daemon (`tracemakerd`) and the KiCad assistant that uses it (the other half of M18).
 - Redaction in the session, `propose_path`, placement moves (§8).

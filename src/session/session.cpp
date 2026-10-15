@@ -178,7 +178,7 @@ json Session::tools() {
       "Route open connections. Kept only if it routes something and (verify=refuse, the default) adds no design-rule error; commit=false is a dry run. `hints` is an advice object: "
       "first_nets, priority [[REF.PIN, REF.PIN]], layers {no_tracks: [...], cost: {layer: factor}}, regions [{rect|polygon, layers, reserve_for|avoid_nets}].",
       {{"nets", {{"type", "array"}, {"items", {{"type", "string"}}}, {"description", "net names to route (default: every net with an open connection; at most 64)"}}},
-       {"work", prop("integer", "search-step budget per router (1000 to 50000000, default 2000000): it stops new searches from starting, a search in progress finishes")},
+       {"work", prop("integer", "search-step budget per router (1000 to 50000000, default 2000000). Not a hard cap: it stops new searches from starting, and the proofs that a pin is boxed in and the clean-up count on top (a call has spent up to 1.6 times its budget with one router, and a call with 8 variants several times the budget of one); the answer says what it spent")},
        {"variants", prop("integer", "differently configured routers, the best result is kept (1 to 8, default 1: one plain router; `tracemaker route` runs all 8)")},
        {"seed", prop("integer", "router seed (default: the session's)")},
        {"hints", prop("object", "an advice object, see above")},
@@ -389,6 +389,7 @@ json Session::open_connections(const json& args) {
       if (!it->second.why.empty()) j["why"] = it->second.why;
       j["rips"] = it->second.rips;
       j["fails"] = it->second.fails;
+      j["tried"] = it->second.fails + it->second.rips > 0;  // "not_attempted" with tried=true: a search ran (or was ruled out) and left no explanation
       if (!it->second.blockers.empty()) j["blockers"] = it->second.blockers;
     }
     list.push_back(std::move(j));
@@ -527,7 +528,7 @@ json Session::route(const json& args) {
     Reason r{u.reason, u.why, u.rips, u.fails, u.blockers};
     reasons[{u.a, u.b}] = r;
     if (unrouted.size() < kMaxUnroutedShown) {
-      json j{{"net", u.net}, {"a", u.a}, {"b", u.b}, {"reason", u.reason}, {"rips", u.rips}, {"fails", u.fails}};
+      json j{{"net", u.net}, {"a", u.a}, {"b", u.b}, {"reason", u.reason}, {"rips", u.rips}, {"fails", u.fails}, {"tried", u.fails + u.rips > 0}};
       if (!u.why.empty()) j["why"] = u.why;
       if (!u.blockers.empty()) j["blockers"] = u.blockers;
       unrouted.push_back(std::move(j));
@@ -566,6 +567,8 @@ json Session::route(const json& args) {
   out["work"]["total_used"] = work_used_;
   out["work"]["limit"] = opt_.work_limit > 0 ? json(opt_.work_limit) : json(nullptr);
   out["work"]["left"] = opt_.work_limit > 0 ? json(std::max(0L, opt_.work_limit - work_used_)) : json(nullptr);
+  // `open_after` is for the nets this call named; the board's total is what an agent compares between calls.
+  out["open_total"] = open_of(states_[static_cast<std::size_t>(cur_)], soft_used_).size();
   if (!refusal.empty()) out["reason"] = refusal;
   if (!added.empty()) out["added_errors"] = added;
   if (variants > 1) out["variants"] = variant_rows;
@@ -611,8 +614,37 @@ json Session::check(const json& args) {
     const int b = it == base.end() ? 0 : it->second;
     if (n > b) added[type] = n - b;
   }
-  return {{"state", cur_}, {"refilled", refill}, {"unconnected", s.unconnected[refill ? 1 : 0]}, {"errors", errs}, {"added_errors", added},
-          {"unconnected_input_board", states_[0].unconnected[refill ? 1 : 0]}};
+  json out{{"state", cur_}, {"refilled", refill}, {"unconnected", s.unconnected[refill ? 1 : 0]}, {"errors", errs}, {"added_errors", added},
+           {"unconnected_input_board", states_[0].unconnected[refill ? 1 : 0]}};
+  if (!added.empty()) out["examples"] = added_examples(s, added, refill);
+  return out;
+}
+
+// Up to five violations of each type in `added` that the input board does not have, with their items and positions: which net, where.
+json Session::added_examples(State& s, const std::map<std::string, int>& added, bool refill) {
+  auto violations = [&](State& st) {
+    model::Board b = working(st.copper);
+    if (refill) b = drc::refill_zones(b, rules_).board;
+    return drc::run_drc(b, rules_).violations;
+  };
+  auto key = [](const drc::Violation& v) {
+    std::string k = v.type;
+    for (const auto& i : v.items) k += "|" + i.description + "@" + std::to_string(i.pos.x) + "," + std::to_string(i.pos.y);
+    return k;
+  };
+  std::set<std::string> base;
+  for (const auto& v : violations(states_[0])) base.insert(key(v));
+  json out = json::object();
+  for (const auto& v : violations(s)) {
+    if (v.severity != "error" || !added.count(v.type) || base.count(key(v))) continue;
+    auto& list = out[v.type];
+    if (list.is_null()) list = json::array();
+    if (list.size() >= 5) continue;
+    json items = json::array();
+    for (const auto& i : v.items) items.push_back({{"description", i.description}, {"x_mm", mm(static_cast<double>(i.pos.x))}, {"y_mm", mm(static_cast<double>(i.pos.y))}});
+    list.push_back({{"description", v.description}, {"items", items}});
+  }
+  return out;
 }
 
 json Session::stuck_report(const json&) {
@@ -714,7 +746,9 @@ json Session::inspect_pad(const json& args) {
   struct Cu {
     int tracks = 0, vias = 0;
     double nearest = 1e9, length = 0;
+    bool under = false;  // some of it lies within the pad's own copper area (a track passing under a ball)
   };
+  const double pad_half_mm = static_cast<double>(std::max(pad.size_x, pad.size_y)) / 2e6;
   std::map<std::pair<std::string, std::string>, Cu> cu;  // (net, layer) -> counts
   auto net_name = [&](model::NetId n) { return n > 0 ? b.nets[static_cast<std::size_t>(n)].name : std::string(); };
   auto add_track = [&](const model::Track& t) {
@@ -723,6 +757,7 @@ json Session::inspect_pad(const json& args) {
     auto& c = cu[{net_name(t.net), b.copper_name(t.layer)}];
     ++c.tracks;
     c.nearest = std::min(c.nearest, d);
+    c.under = c.under || (t.net != pad.net && d <= pad_half_mm + static_cast<double>(t.width) / 2e6);
     c.length += dist_mm(t.a, t.b);  // the whole segment: segments are short on a lattice
   };
   for (const auto& t : b.tracks) add_track(t);
@@ -733,6 +768,7 @@ json Session::inspect_pad(const json& args) {
     auto& c = cu[{net_name(v.net), "via"}];
     ++c.vias;
     c.nearest = std::min(c.nearest, d);
+    c.under = c.under || (v.net != pad.net && d <= pad_half_mm + static_cast<double>(v.size) / 2e6);
   };
   for (const auto& v : b.vias) add_via(v);
   for (const auto& v : cur.copper.vias) add_via(v);
@@ -744,6 +780,7 @@ json Session::inspect_pad(const json& args) {
     json j{{"net", key.first}, {"layer", key.second}, {"nearest_mm", round3(c.nearest)}};
     if (key.second == "via") j["vias"] = c.vias;
     else j["tracks"] = c.tracks, j["length_mm"] = round3(c.length);
+    if (c.under) j["within_pad_area"] = true;  // another net's copper this close to the centre is at the pad's own copper (the box of the pad, to a first approximation)
     copper.push_back(std::move(j));
   }
   out["near_copper"] = copper;

@@ -99,6 +99,7 @@ class Session {
   nlohmann::json rip_net(const nlohmann::json& args);
   nlohmann::json check(const nlohmann::json& args);
   nlohmann::json stuck_report(const nlohmann::json& args);
+  nlohmann::json added_examples(State& s, const std::map<std::string, int>& added, bool refill);
   nlohmann::json inspect_pad(const nlohmann::json& args);
   nlohmann::json inspect_net(const nlohmann::json& args);
   nlohmann::json history();
