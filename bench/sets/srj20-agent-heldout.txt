@@ -1,0 +1,20 @@
+# srj20 boards for the agent evaluation (doc 19 section 7) that no advisor or agent was developed on: the 8 boards of srj20-m15fail3 that are not in srj20-m15fail4, then
+# the first 8 (by name) of srj20-m15fail2 that are not in srj20-m15fail3. All were open after the M15 portfolio run (doc 16 section 12); fewer than 70 connections each
+# in the first group. Run with --half all.
+#fixtures: bench/data/tscircuit/boards/srj20
+sample013
+sample020
+sample024
+sample030
+sample069
+sample150
+sample190
+sample192
+sample007
+sample008
+sample016
+sample032
+sample039
+sample040
+sample048
+sample064

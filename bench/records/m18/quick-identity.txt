@@ -1,0 +1,10 @@
+# m18-quick-base → m18-quick-new
+
+30 boards; routed boards byte-identical: 30/30.
+Clean pass 25 → 25; mean completion 99.0% → 99.0%; router seconds 118.9 → 121.2.
+Route CPU time 530 → 548 s (+3.5%) at the same work.
+Byte-identical boards moved -10% to +30% in CPU time (the same work: noise, or speed).
+
+Style (informational): bends per connection 0.7406 → 0.7406; acute angles 0 → 0; stair steps 35 → 35; short segments 364 → 364; off angle segments 761 → 761; detour ratio 1.0556 → 1.0556; long detours 35 → 35.
+
+Gates: pass

@@ -154,16 +154,25 @@ Sixteen boards (the even and odd halves of `srj20-m15fail4`), connections routed
 | plain, 8 variants | 430 | 439 |
 | control, 12 variants (the agent's compute) | 431 | **450** |
 | agent, policy `tabu` (each stuck connection once) | 430 | 439 |
-| agent, policy `persist` (retries with other blockers and seeds, plateau moves kept) | 430 | not run (see below) |
+| agent, policy `persist` (retries with other blockers and seeds, plateau moves kept) | 430 | not run (confirmed on a fresh set, below) |
 
 Policy `tabu` used 77 % of the control's work; none of its 43 repair rounds was kept. Policy `persist` used 95 % and kept 150 plateau rounds that never
-reduced the open connections. Neither agent routed one connection more than the plain run on any of the 16 boards. The control's gain on the odd half (+11)
+reduced the open connections. Neither routed one connection more than the plain run on any of these 16 boards. The control's gain on the odd half (+11)
 comes from the four extra seeds, which a repair of three stuck connections does not reproduce. Every unrouted connection on these boards is `boxed_in` (a ball
 fenced by its neighbours' copper), and the proof of it is the expensive part of a repair call (8.6 M flood cells against 0.85 M expansions in one case).
 
-Because `persist` was designed after the `tabu` result on both halves, it is not run on the odd half; it is confirmed on boards no agent was developed on:
+Because `persist` was designed after the `tabu` result on both halves, it was confirmed on 16 boards no agent was developed on (`srj20-agent-heldout`), run once:
 
-FRESH_RESULT
+| Arm (16 held-out boards, 1,162 open at the start) | Routed |
+|---|---:|
+| plain, 8 variants | 960 |
+| control, 12 variants (the agent's compute) | **968** |
+| agent, policy `persist` (95 % of the control's work) | 967 |
+
+**Stop rule: not met, by one connection.** Exploratory reading by group: on the 8 boards where the plain run leaves only 3 to 6 connections open the agent gains
+nothing (429, plain 429, control 433); on the 8 where it leaves 22 on average it routes 538 against the control's 535 and the plain run's 531. Eight boards, one
+run: a lead, not a result. A repair loop earns something where there is something to repair, and the extra seeds of the control earn their gain where little is
+left. Whether a model does better than this loop is untested.
 
 ### 9.4 What a session showed that the measurement did not
 
