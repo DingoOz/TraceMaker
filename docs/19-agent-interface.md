@@ -127,4 +127,60 @@ test of a model: a negative result for it says that these rules do not beat seed
 
 ## 9. Built and measured
 
-*(Filled in as the stages land.)*
+Records: [`bench/records/m18/`](../bench/records/m18/README.md).
+
+### 9.1 Built
+
+- `src/session/` (`session.{hpp,cpp}`, `transport.{hpp,cpp}`): the ten tools of §4, the states, the log and its replay, MCP and JSON-lines transports;
+  `tracemaker session`. One engine change: `RouterOptions::plan_only` (plan the connections and stop), used to list a state's open connections; off by default.
+- `agents/session_client.py` (a Python client), `agents/repair_agent.py` (the scripted baseline, two policies), `bench/agent_eval.py` (the three arms),
+  `bench/sets/srj20-agent-heldout.txt`.
+- Tests: `tests/test_session.cpp` (12 cases, 176 assertions: listing and routing, equality with the plain router, rip/undo/restore, dry runs and refusals, hints,
+  the work limit, `save` only to `--out`, replay and a changed log, thread-count independence, every listed tool dispatchable, both transports on bad
+  requests), `tests/integration/session_cli.py` (the real binary over both transports, a net name that carries an instruction, replay to the same bytes, equality
+  with `route --variants 1`). ASan + UBSan and TSan clean on the session tests; the CLI test also under ASan + UBSan.
+
+### 9.2 The first call is the command line's
+
+`route --work 20000000 --variants 8 --threads 8` and the session's first `route` with the same arguments on `srj20` sample054 give 56 routed, 596 tracks, 154 vias
+and 69,573,838 work, both. The plain and control columns of the evaluation reproduce doc 17 §8.1's totals exactly (430 / 431 and 439 / 450).
+
+### 9.3 The stop-rule test with a scripted agent: not met
+
+Sixteen boards (the even and odd halves of `srj20-m15fail4`), connections routed, summed:
+
+| Arm | Even half (489 open) | Odd half (492 open, held out) |
+|---|---:|---:|
+| plain, 8 variants | 430 | 439 |
+| control, 12 variants (the agent's compute) | 431 | **450** |
+| agent, policy `tabu` (each stuck connection once) | 430 | 439 |
+| agent, policy `persist` (retries with other blockers and seeds, plateau moves kept) | 430 | not run (see below) |
+
+Policy `tabu` used 77 % of the control's work; none of its 43 repair rounds was kept. Policy `persist` used 95 % and kept 150 plateau rounds that never
+reduced the open connections. Neither agent routed one connection more than the plain run on any of the 16 boards. The control's gain on the odd half (+11)
+comes from the four extra seeds, which a repair of three stuck connections does not reproduce. Every unrouted connection on these boards is `boxed_in` (a ball
+fenced by its neighbours' copper), and the proof of it is the expensive part of a repair call (8.6 M flood cells against 0.85 M expansions in one case).
+
+Because `persist` was designed after the `tabu` result on both halves, it is not run on the odd half; it is confirmed on boards no agent was developed on:
+
+FRESH_RESULT
+
+### 9.4 What a session showed that the measurement did not
+
+- **The engine's DRC and KiCad disagree on two boards of this set** (`sample031`, `sample191`): the engine counts 3 added `copper_edge_clearance` errors where
+  `kicad-cli` counts none. The router puts a track with its edge exactly on the centre line of an outline whose stroke is 0.05 mm and whose clearance rule is 0;
+  `check_edges` (`src/drc/drc.cpp`) counts touching as a violation at zero clearance, KiCad does not. Not fixed here; it is why `verify` has the modes of §4 and why
+  the agent's first call uses `report`.
+- **A model cannot choose blockers blind.** A session driven by hand on `sample119` (`bench/records/m18/README.md`) swapped one stuck connection for another and
+  never reduced the open count: the tools name nets and pads, and say nothing of what lies around a pad. And `stuck_report` after a route restricted to a few
+  nets has no crowding (the other nets are locked copper, not routed copper of that run).
+- **Listing the open connections costs a router set-up** per state. Fine on these boards; on a large board it is the reason for the daemon.
+
+### 9.5 Not built, and what follows
+
+- A tool that describes the neighbourhood of a pad (nets, pads, session copper within a radius, distance to the edge), read-only: the missing eyes of a model.
+  Without it a model-driven arm would be a blind one, and the hand-driven session says so.
+- A model-driven arm of §7. It needs a model; the session is built for one (`claude mcp add ...`, §6). The scripted result says the connection-by-connection
+  loop does not beat seeds on these boards; it does not say a model cannot, and by D118 the interface is not built further for agents until one does.
+- The daemon (`tracemakerd`) and the KiCad assistant that uses it (the other half of M18).
+- Redaction in the session, `propose_path`, placement moves (§8).
