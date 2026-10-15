@@ -91,6 +91,9 @@ One `Session::call(tool, args)` serves both, so they cannot differ.
   To attach it to Claude Code, for example: `claude mcp add tracemaker -- /path/to/tracemaker session /path/to/board.kicad_pcb --out /path/to/routed.kicad_pcb`
   (other clients take the same command and arguments in their MCP server configuration). `--log FILE` records the session for `--replay`, and `--view` lets a
   person watch the agent route in the browser viewer. The server speaks on standard input and output only; the router's own text goes to standard error.
+  An agent that has a shell tool but no MCP client can drive a session with `agents/relay.py`: `start NAME BOARD OUT` holds a session under a small daemon,
+  `call NAME TOOL '{...}'` sends one tool call and prints the answer (`result NAME` fetches an answer that took longer than `--wait`), `stop NAME` ends it. Every
+  request and answer is also appended to the session folder's `transcript.jsonl`, which `bench/agent_score.py` reads to score the board the agent saved.
 - **JSON lines** (`--jsonl`): one request `{"tool", "args"}` per line, one response per line. For scripts, tests and the evaluation harness.
 
 ## 7. The evaluation and its stop rule
