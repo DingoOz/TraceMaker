@@ -200,6 +200,7 @@ TEST_CASE("session: the work limit ends the session's routing for good", "[sessi
   const auto r = s.call("route", {{"work", 1000000}});
   REQUIRE(r.contains("work"));
   CHECK(r["work"]["limit"] == 40000);
+  CHECK(r["work"]["left"] == 0);  // one call spent more than the limit: the limit is soft, the next call is refused
   // The budget stops new searches from starting; the search in progress and the clean-up after the last one finish, so a call can pass it. What was
   // really spent is counted, and it is what the next call is refused on.
   CHECK(s.work_used() > 0);

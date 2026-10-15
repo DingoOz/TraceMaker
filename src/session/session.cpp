@@ -336,6 +336,7 @@ json Session::board_info() {
           {"state", cur_},
           {"work_used", work_used_},
           {"work_limit", opt_.work_limit > 0 ? json(opt_.work_limit) : json(nullptr)},
+          {"work_left", opt_.work_limit > 0 ? json(std::max(0L, opt_.work_limit - work_used_)) : json(nullptr)},
           {"rules",
            {{"clearance_mm", mm(static_cast<double>(std::max(def.clearance, rules_.minimums.clearance)))},
             {"track_width_mm", mm(static_cast<double>(std::max(def.track_width, rules_.minimums.track_width)))},
@@ -387,19 +388,14 @@ json Session::route(const json& args) {
     if (lb_.board.net_by_name(n) == 0) throw ToolError("unknown_name", "route.nets: no net '" + n + "'");
     wanted.insert(n);
   }
-  long per_router = work;
-  if (opt_.work_limit > 0) {
-    const long left = opt_.work_limit - work_used_;
-    per_router = std::min(work, left / variants);
-    if (per_router < 1000) throw ToolError("limit", "the session's work limit leaves less than 1000 steps per router (used " + std::to_string(work_used_) + " of " + std::to_string(opt_.work_limit) + ")");
-  }
+  // The limit is checked before a call and is soft: a call runs with the budget it asks for (the router's budgets are soft stops too), and what it really
+  // spent is counted. An agent that must stay under the limit sizes `work` from board_info's work_left.
+  if (opt_.work_limit > 0 && work_used_ >= opt_.work_limit)
+    throw ToolError("limit", "the session's work limit is spent (used " + std::to_string(work_used_) + " of " + std::to_string(opt_.work_limit) + ")");
 
   route::RouterOptions o;
   o.seed = seed;
-  o.work_budget = per_router;
-  // The router's budget stops it from starting more searches; one search may still run to max_expansions. With a session limit that would let a call
-  // overshoot it by millions of steps, so each search is capped at the budget it has (without a limit nothing changes: the result is the CLI's).
-  if (opt_.work_limit > 0) o.max_expansions = std::min<long>(o.max_expansions, per_router);
+  o.work_budget = work;
   o.time_limit_s = 3600;  // a safety net only: the budget is the stop (rule 5)
   o.gpu_device = opt_.gpu_device;
   o.sink = opt_.sink;
@@ -547,6 +543,7 @@ json Session::route(const json& args) {
            {"work", work_json(spent)}};
   out["work"]["total_used"] = work_used_;
   out["work"]["limit"] = opt_.work_limit > 0 ? json(opt_.work_limit) : json(nullptr);
+  out["work"]["left"] = opt_.work_limit > 0 ? json(std::max(0L, opt_.work_limit - work_used_)) : json(nullptr);
   if (!refusal.empty()) out["reason"] = refusal;
   if (!added.empty()) out["added_errors"] = added;
   if (variants > 1) out["variants"] = variant_rows;
