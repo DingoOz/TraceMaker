@@ -59,6 +59,8 @@ Millimetres and the board file's axes; connections are named `REF.PIN`, as in do
 | `rip_net` | `net` | the session copper of that net removed (a new state); how many tracks and vias; refuses a net with none |
 | `check` | `full` (default true), `refill` | unconnected items and DRC errors by type, and the types and counts the session added relative to the input board. `refill` judges with the zones refilled, as `kicad-cli --refill-zones` does (default: on once a route with soft zones was kept; a route with soft zones is verified refilled, because the router counts on the refill) |
 | `stuck_report` | `redact` | doc 17's report for the last `route` (reasons, crowding, parts at the open ends, `advice_schema`) |
+| `inspect_pad` | `pad` (`REF.PIN`), `radius_mm` (0.1 to 10, default 1.5) | read-only: the pad (net, position, layers, size, distance to the box of the outline), the open connections that end on it with the last route's reason and blockers, the other pads within the radius (at most 40, nearest first), and the copper within it (the board's and the session's, per net and layer, nearest first, at most 30 rows) |
+| `inspect_net` | `net` | read-only: its pads (at most 60), the board's and the session's tracks and vias on it, the session's length per layer, the open connections, the box it spans, and its class width and clearance |
 | `history` | none | the states: id, the call that made it, routed connections, vias, copper length |
 | `undo` / `restore` | none / `state` | the session goes back one state / to that state (states stay; a new change after a restore starts a new branch) |
 | `save` | `refill` | writes the board to `--out` (the result does not name the path: a replay may write elsewhere); returns counts and the DRC types added |
@@ -178,17 +180,15 @@ left. Whether a model does better than this loop is untested.
 
 - **The engine's DRC and KiCad disagree on two boards of this set** (`sample031`, `sample191`): the engine counts 3 added `copper_edge_clearance` errors where
   `kicad-cli` counts none. The router puts a track with its edge exactly on the centre line of an outline whose stroke is 0.05 mm and whose clearance rule is 0;
-  `check_edges` (`src/drc/drc.cpp`) counts touching as a violation at zero clearance, KiCad does not. Not fixed here; it is why `verify` has the modes of §4 and why
+  `check_edges` (`src/drc/drc.cpp`) counts touching as a violation at zero clearance, KiCad does not. Not fixed here (issue #42, with a minimal board: KiCad flags a track from 1 µm of crossing, not from touching); it is why `verify` has the modes of §4 and why
   the agent's first call uses `report`.
-- **A model cannot choose blockers blind.** A session driven by hand on `sample119` (`bench/records/m18/README.md`) swapped one stuck connection for another and
+- **A model cannot choose blockers blind** (this is why `inspect_pad` and `inspect_net` exist, §4). A session driven by hand on `sample119` (`bench/records/m18/README.md`) swapped one stuck connection for another and
   never reduced the open count: the tools name nets and pads, and say nothing of what lies around a pad. And `stuck_report` after a route restricted to a few
   nets has no crowding (the other nets are locked copper, not routed copper of that run).
 - **Listing the open connections costs a router set-up** per state. Fine on these boards; on a large board it is the reason for the daemon.
 
 ### 9.5 Not built, and what follows
 
-- A tool that describes the neighbourhood of a pad (nets, pads, session copper within a radius, distance to the edge), read-only: the missing eyes of a model.
-  Without it a model-driven arm would be a blind one, and the hand-driven session says so.
 - A model-driven arm of §7. It needs a model; the session is built for one (`claude mcp add ...`, §6). The scripted result says the connection-by-connection
   loop does not beat seeds on these boards; it does not say a model cannot, and by D118 the interface is not built further for agents until one does.
 - The daemon (`tracemakerd`) and the KiCad assistant that uses it (the other half of M18).

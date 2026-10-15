@@ -15,6 +15,7 @@
 #include "drc/drc.hpp"
 #include "drc/refill.hpp"
 #include "io/kicad/board_editor.hpp"
+#include "geom/shape.hpp"
 #include "io/kicad/project_reader.hpp"
 
 namespace tmk::session {
@@ -191,6 +192,12 @@ json Session::tools() {
                    {{"full", prop("boolean", "false: unconnected items only (faster); default true")},
                     {"refill", prop("boolean", "judge with the zones refilled, as KiCad's refill does; default: true once a route with soft_zones was kept")}}));
   t.push_back(tool("stuck_report", "The stuck report (doc 17) of the last route: what failed and why, the crowding, the parts at the open ends, and the hint types the engine reads."));
+  t.push_back(tool("inspect_pad",
+                   "Read-only: what lies around a pad. The pad (net, position, layers, size), the open connections that end on it, the other pads within the radius, and the copper "
+                   "(the board's and the session's) within the radius, per net and layer, nearest first. Use it to choose which nets to remove from a boxed-in pin.",
+                   {{"pad", prop("string", "REF.PIN")}, {"radius_mm", prop("number", "0.1 to 10, default 1.5")}}, {"pad"}));
+  t.push_back(tool("inspect_net", "Read-only: a net's pads, its copper (the board's and the session's), how many pieces it is in, and the box it spans.",
+                   {{"net", prop("string", "net name")}}, {"net"}));
   t.push_back(tool("history", "The states of the session: id, parent, the call that made it, tracks and vias added."));
   t.push_back(tool("undo", "Go back to the state before the current one."));
   t.push_back(tool("restore", "Go back to any earlier state (states are kept; a change made after a restore starts a new branch).",
@@ -319,6 +326,8 @@ json Session::dispatch(const std::string& t, const json& args) {
   if (t == "rip_net") return rip_net(args);
   if (t == "check") return check(args);
   if (t == "stuck_report") return (Args(args, t, {}), stuck_report(args));
+  if (t == "inspect_pad") return inspect_pad(args);
+  if (t == "inspect_net") return inspect_net(args);
   if (t == "history") return (Args(args, t, {}), history());
   if (t == "undo") return (Args(args, t, {}), undo());
   if (t == "restore") return restore(args);
@@ -617,6 +626,186 @@ json Session::stuck_report(const json&) {
   auto rep = advice::build_stuck_report(in);
   rep.json["session_state"] = last_->state;
   return rep.json;
+}
+
+namespace {
+
+double dist_mm(const geom::Point& a, const geom::Point& b) { return std::hypot(static_cast<double>(a.x - b.x), static_cast<double>(a.y - b.y)) / 1e6; }
+
+}  // namespace
+
+json Session::inspect_pad(const json& args) {
+  Args a(args, "inspect_pad", {"pad", "radius_mm"});
+  const std::string name = a.string("pad", true);
+  double radius_mm = 1.5;
+  if (a.has("radius_mm")) {
+    const auto& v = args.at("radius_mm");
+    if (!v.is_number()) throw ToolError("bad_argument", "inspect_pad.radius_mm: expected a number");
+    radius_mm = v.get<double>();
+    if (!(radius_mm >= 0.1 && radius_mm <= 10)) throw ToolError("bad_argument", "inspect_pad.radius_mm: expected 0.1 to 10");
+  }
+  const auto& b = lb_.board;
+  auto pad_name = [&](const model::Pad& p) { return p.footprint >= 0 ? b.footprints[static_cast<std::size_t>(p.footprint)].reference + "." + p.number : "." + p.number; };
+  int found = -1, matches = 0;
+  for (std::size_t i = 0; i < b.pads.size(); ++i)
+    if (pad_name(b.pads[i]) == name) {
+      if (found < 0) found = static_cast<int>(i);
+      ++matches;
+    }
+  if (found < 0) throw ToolError("unknown_name", "inspect_pad.pad: no pad '" + name + "'");
+  const auto& pad = b.pads[static_cast<std::size_t>(found)];
+  auto layers_of = [&](model::LayerMask m) {
+    json l = json::array();
+    for (int i = 0; i < b.copper_count(); ++i)
+      if (m & model::layer_bit(i)) l.push_back(b.copper_name(i));
+    return l;
+  };
+  json out{{"pad", name},
+           {"matches", matches},
+           {"net", pad.net > 0 ? b.nets[static_cast<std::size_t>(pad.net)].name : std::string()},
+           {"x_mm", mm(static_cast<double>(pad.pos.x))},
+           {"y_mm", mm(static_cast<double>(pad.pos.y))},
+           {"layers", layers_of(pad.copper)},
+           {"size_mm", {mm(static_cast<double>(pad.size_x)), mm(static_cast<double>(pad.size_y))}},
+           {"radius_mm", radius_mm}};
+  if (pad.drill_x > 0) out["drill_mm"] = mm(static_cast<double>(pad.drill_x));
+  const geom::Box eb = b.edge_bbox();
+  if (!eb.empty()) {
+    const double d = static_cast<double>(std::min({pad.pos.x - eb.x0, eb.x1 - pad.pos.x, pad.pos.y - eb.y0, eb.y1 - pad.pos.y})) / 1e6;
+    out["edge_distance_mm"] = round3(d);  // to the box of the board outline
+  }
+  // The open connections that end on this pad, with what the last route said.
+  State& cur = states_[static_cast<std::size_t>(cur_)];
+  json open = json::array();
+  for (const auto& c : open_of(cur, soft_used_))
+    if (c.a == name || c.b == name) {
+      json j{{"net", c.net}, {"a", c.a}, {"b", c.b}};
+      auto it = cur.reasons.find({c.a, c.b});
+      if (it == cur.reasons.end()) it = cur.reasons.find({c.b, c.a});
+      if (it != cur.reasons.end()) {
+        j["reason"] = it->second.reason;
+        if (!it->second.blockers.empty()) j["blockers"] = it->second.blockers;
+      }
+      open.push_back(std::move(j));
+    }
+  out["open_connections"] = open;
+  // Other pads within the radius, nearest first.
+  struct Near {
+    double d;
+    std::string name;
+    int idx;
+  };
+  std::vector<Near> pads;
+  for (std::size_t i = 0; i < b.pads.size(); ++i) {
+    if (static_cast<int>(i) == found) continue;
+    const double d = dist_mm(pad.pos, b.pads[i].pos);
+    if (d <= radius_mm) pads.push_back({d, pad_name(b.pads[i]), static_cast<int>(i)});
+  }
+  std::sort(pads.begin(), pads.end(), [](const Near& x, const Near& y) { return x.d != y.d ? x.d < y.d : x.name < y.name; });
+  json near_pads = json::array();
+  for (std::size_t i = 0; i < pads.size() && i < 40; ++i) {
+    const auto& p = b.pads[static_cast<std::size_t>(pads[i].idx)];
+    near_pads.push_back({{"pad", pads[i].name}, {"net", p.net > 0 ? b.nets[static_cast<std::size_t>(p.net)].name : std::string()}, {"distance_mm", round3(pads[i].d)},
+                         {"layers", layers_of(p.copper)}});
+  }
+  out["near_pads"] = near_pads;
+  out["near_pads_not_shown"] = pads.size() > 40 ? pads.size() - 40 : 0;
+  // Copper within the radius, per net and layer: how many tracks come within it, the length of them inside, and the nearest approach.
+  struct Cu {
+    int tracks = 0, vias = 0;
+    double nearest = 1e9, length = 0;
+  };
+  std::map<std::pair<std::string, std::string>, Cu> cu;  // (net, layer) -> counts
+  auto net_name = [&](model::NetId n) { return n > 0 ? b.nets[static_cast<std::size_t>(n)].name : std::string(); };
+  auto add_track = [&](const model::Track& t) {
+    const double d = static_cast<double>(geom::point_seg_dist(pad.pos, t.a, t.b)) / 1e6;
+    if (d > radius_mm) return;
+    auto& c = cu[{net_name(t.net), b.copper_name(t.layer)}];
+    ++c.tracks;
+    c.nearest = std::min(c.nearest, d);
+    c.length += dist_mm(t.a, t.b);  // the whole segment: segments are short on a lattice
+  };
+  for (const auto& t : b.tracks) add_track(t);
+  for (const auto& t : cur.copper.tracks) add_track(t);
+  auto add_via = [&](const model::Via& v) {
+    const double d = dist_mm(pad.pos, v.pos);
+    if (d > radius_mm) return;
+    auto& c = cu[{net_name(v.net), "via"}];
+    ++c.vias;
+    c.nearest = std::min(c.nearest, d);
+  };
+  for (const auto& v : b.vias) add_via(v);
+  for (const auto& v : cur.copper.vias) add_via(v);
+  std::vector<std::pair<std::pair<std::string, std::string>, Cu>> rows(cu.begin(), cu.end());
+  std::sort(rows.begin(), rows.end(), [](const auto& x, const auto& y) { return x.second.nearest != y.second.nearest ? x.second.nearest < y.second.nearest : x.first < y.first; });
+  json copper = json::array();
+  for (std::size_t i = 0; i < rows.size() && i < 30; ++i) {
+    const auto& [key, c] = rows[i];
+    json j{{"net", key.first}, {"layer", key.second}, {"nearest_mm", round3(c.nearest)}};
+    if (key.second == "via") j["vias"] = c.vias;
+    else j["tracks"] = c.tracks, j["length_mm"] = round3(c.length);
+    copper.push_back(std::move(j));
+  }
+  out["near_copper"] = copper;
+  out["near_copper_not_shown"] = rows.size() > 30 ? rows.size() - 30 : 0;
+  return out;
+}
+
+json Session::inspect_net(const json& args) {
+  Args a(args, "inspect_net", {"net"});
+  const std::string net = a.string("net", true);
+  const auto& b = lb_.board;
+  const model::NetId id = b.net_by_name(net);
+  if (id == 0) throw ToolError("unknown_name", "inspect_net.net: no net '" + net + "'");
+  State& cur = states_[static_cast<std::size_t>(cur_)];
+  json pads = json::array();
+  geom::Box box;
+  std::size_t npads = 0;
+  for (const auto& p : b.pads) {
+    if (p.net != id) continue;
+    ++npads;
+    box.add(p.pos);
+    if (pads.size() < 60) {
+      json l = json::array();
+      for (int i = 0; i < b.copper_count(); ++i)
+        if (p.copper & model::layer_bit(i)) l.push_back(b.copper_name(i));
+      pads.push_back({{"pad", (p.footprint >= 0 ? b.footprints[static_cast<std::size_t>(p.footprint)].reference : std::string()) + "." + p.number},
+                      {"x_mm", mm(static_cast<double>(p.pos.x))}, {"y_mm", mm(static_cast<double>(p.pos.y))}, {"layers", l}});
+    }
+  }
+  std::size_t board_tracks = 0, board_vias = 0;
+  for (const auto& t : b.tracks) board_tracks += t.net == id;
+  for (const auto& v : b.vias) board_vias += v.net == id;
+  std::size_t tracks = 0, vias = 0;
+  double length = 0;
+  std::map<std::string, std::size_t> per_layer;
+  for (const auto& t : cur.copper.tracks)
+    if (t.net == id) {
+      ++tracks;
+      length += dist_mm(t.a, t.b);
+      ++per_layer[b.copper_name(t.layer)];
+      box.add(t.a);
+      box.add(t.b);
+    }
+  for (const auto& v : cur.copper.vias) vias += v.net == id;
+  json open = json::array();
+  for (const auto& c : open_of(cur, soft_used_))
+    if (c.net == net) open.push_back({{"a", c.a}, {"b", c.b}});
+  const auto& cls = rules_.class_for(net);
+  json out{{"net", net},
+           {"pads", npads},
+           {"pad_list", pads},
+           {"board_tracks", board_tracks},
+           {"board_vias", board_vias},
+           {"session_tracks", tracks},
+           {"session_vias", vias},
+           {"session_length_mm", round3(length)},
+           {"session_tracks_per_layer", per_layer},
+           {"open_connections", open},
+           {"track_width_mm", mm(static_cast<double>(std::max(cls.track_width, rules_.minimums.track_width)))},
+           {"clearance_mm", mm(static_cast<double>(std::max(cls.clearance, rules_.minimums.clearance)))}};
+  if (!box.empty()) out["box_mm"] = {mm(static_cast<double>(box.x0)), mm(static_cast<double>(box.y0)), mm(static_cast<double>(box.x1)), mm(static_cast<double>(box.y1))};
+  return out;
 }
 
 json Session::history() {

@@ -100,7 +100,7 @@ many (22 per board on average), the loop gains 7 over plain and 3 over the contr
   none added: sample031 input and output both 65 `copper_edge_clearance`, sample191 input and output both 69. The boards' outline is a rectangle at 9.825 mm
   with a 0.05 mm stroke and the project's `min_copper_edge_clearance` is 0, so the router's tracks lie with their edge exactly on the centre line of the
   outline; the engine's check (`check_edges`, `src/drc/drc.cpp`) takes "touching" as a violation at zero clearance, KiCad does not. This is the reason the session's
-  `verify` has the modes `refuse`, `report` and `off`; the agent's first call uses `report`. The DRC difference itself is not fixed here.
+  `verify` has the modes `refuse`, `report` and `off`; the agent's first call uses `report`. The DRC difference itself is not fixed here; it is issue #42, with a minimal board (KiCad flags a track from 1 µm of crossing, not from touching).
 
 ## What went wrong first (so the numbers above are read with it)
 

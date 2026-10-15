@@ -99,6 +99,8 @@ class Session {
   nlohmann::json rip_net(const nlohmann::json& args);
   nlohmann::json check(const nlohmann::json& args);
   nlohmann::json stuck_report(const nlohmann::json& args);
+  nlohmann::json inspect_pad(const nlohmann::json& args);
+  nlohmann::json inspect_net(const nlohmann::json& args);
   nlohmann::json history();
   nlohmann::json undo();
   nlohmann::json restore(const nlohmann::json& args);

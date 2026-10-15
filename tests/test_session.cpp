@@ -292,6 +292,47 @@ TEST_CASE("session: the thread count does not change a portfolio result", "[sess
   CHECK(digest[0] == digest[1]);
 }
 
+TEST_CASE("session: inspect_pad and inspect_net describe what lies around a pad", "[session]") {
+  TestBoard tb;
+  session::Session s(tb.options());
+  const auto open = s.call("open_connections", {{"net", "NET_A"}});
+  REQUIRE(open["connections"].size() == 1);
+  const std::string pad = open["connections"][0]["a"];
+  const std::string other = open["connections"][0]["b"];
+  const auto before = s.call("inspect_pad", {{"pad", pad}, {"radius_mm", 3}});
+  REQUIRE(before.contains("net"));
+  CHECK(before["net"] == "NET_A");
+  CHECK(before["open_connections"].size() == 1);
+  CHECK(before["near_copper"].empty());  // nothing routed yet
+  CHECK(before["layers"].size() >= 1);
+  CHECK(before["edge_distance_mm"].get<double>() > 0);
+  const auto net_before = s.call("inspect_net", {{"net", "NET_A"}});
+  CHECK(net_before["pads"] == 2);
+  CHECK(net_before["session_tracks"] == 0);
+  CHECK(net_before["open_connections"].size() == 1);
+
+  REQUIRE(s.call("route", {{"work", 300000}})["committed"] == true);
+  const auto after = s.call("inspect_pad", {{"pad", pad}, {"radius_mm", 3}});
+  CHECK(after["open_connections"].empty());
+  REQUIRE_FALSE(after["near_copper"].empty());
+  bool own = false;
+  for (const auto& c : after["near_copper"]) own = own || c["net"] == "NET_A";
+  CHECK(own);  // the track that leaves the pad
+  for (std::size_t i = 1; i < after["near_copper"].size(); ++i)  // nearest first
+    CHECK(after["near_copper"][i - 1]["nearest_mm"].get<double>() <= after["near_copper"][i]["nearest_mm"].get<double>());
+  const auto net_after = s.call("inspect_net", {{"net", "NET_A"}});
+  CHECK(net_after["session_tracks"].get<int>() > 0);
+  CHECK(net_after["open_connections"].empty());
+  CHECK(net_after["session_length_mm"].get<double>() > 10.0);
+
+  CHECK(is_error(s.call("inspect_pad", {{"pad", "NOPE.1"}}), "unknown_name"));
+  CHECK(is_error(s.call("inspect_pad", {{"pad", pad}, {"radius_mm", 50}}), "bad_argument"));
+  CHECK(is_error(s.call("inspect_pad", {{"pad", pad}, {"radius_mm", "wide"}}), "bad_argument"));
+  CHECK(is_error(s.call("inspect_pad", json::object()), "bad_argument"));
+  CHECK(is_error(s.call("inspect_net", {{"net", "NO_SUCH_NET"}}), "unknown_name"));
+  (void)other;
+}
+
 TEST_CASE("session: every listed tool exists and has a schema", "[session]") {
   TestBoard tb;
   session::Session s(tb.options());
@@ -302,7 +343,7 @@ TEST_CASE("session: every listed tool exists and has a schema", "[session]") {
     CHECK(t["description"].get<std::string>().size() > 20);
     CHECK(t["inputSchema"]["type"] == "object");
     CHECK(t["inputSchema"]["additionalProperties"] == false);
-    if (t["name"] == "route" || t["name"] == "save" || t["name"] == "rip_net" || t["name"] == "restore") continue;  // those need arguments or change the state
+    if (t["name"] == "route" || t["name"] == "save" || t["name"] == "rip_net" || t["name"] == "restore" || t["name"] == "inspect_pad" || t["name"] == "inspect_net") continue;  // those need arguments or change the state
     const auto r = s.call(t["name"].get<std::string>(), json::object());
     CHECK_FALSE(is_error(r, "unknown_name"));
   }
