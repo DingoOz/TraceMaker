@@ -1,8 +1,8 @@
 # 18 — Candidate features for the roadmap (research and plan)
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-14 after M16, issues #4–#8 and #24 were closed.
-> **Status: proposals. Nothing here is built, no decision row exists, and no milestone below is on the roadmap until it is chosen.**
-> This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
+> **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
+> candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
 
 ## 1. How this was made, and what it cannot tell you
@@ -116,14 +116,22 @@ a reference path for every accelerated path, off by default until measured, resu
 | D4 | **Viewer control channel**: pause, step, seek on a recording, click a net to route it first, minimap | Not built [R]; value is explanation and debugging more than routing quality | M | Seeking in a recording within one second on the largest log |
 | D5 | **Leftovers from #37 / #38**: `--view-token` / `--view-insecure` in the plugin and Python module, TLS (or a documented tunnel recipe), `--si-rules` map ignoring the antipads of vias the route adds | Named limits in the issue comments [R] | S | The plugin and module accept the flags; the antipad limit has a test |
 
-## 5. Suggested order
+## 5. Order (after the answers of §7)
 
-1. **M17 — Evidence and install** (A1, A2, A5, C1, A4). Cheap, and each answers a question the later choices depend on: how TraceMaker does on someone else's boards, whether anyone can install it, whether `--relax` is a free gain, and what to default.
-2. **M18 — KiCad 10 high-speed** (B1, then B2, B3, A3 in parallel as the test set). The largest gap between what KiCad 10 stores and what the engine reads, and it makes the existing SI work provable. A3 should start with M17 because B1–B3 are unmeasurable without it.
-3. **M19 — Capability experiments** (C2's experiment, C4's spike, C3, C5's classification). Experiments with a stop rule each, before any of them gets a build.
-4. **M20 — Interaction and agents** (D1, D2 with its stop rule, D3, D4, D5). After M17 shows who the users are.
+The audience is hobbyists first, with high-speed work limited to the Kookabus boards; KiCad 11 support is wanted; a proposal-only pin swap is
+acceptable; the agent interface is wanted, with the stop rule of D2. That puts install and measurement first, then the session server that the
+agent interface and the KiCad assistant share, then KiCad 11 (due about February 2027 [W]), then the hobbyist wins, and the high-speed work last
+and only as far as the Kookabus boards need it.
 
-C6 and C7 wait for a board that needs them; B4 waits for evidence.
+| Milestone | Candidates | Why here |
+|---|---|---|
+| **M17 — Installable and measured** | A2 prebuilt releases and plugin archive; A1 PCBWorld-Bench run; C1 `--relax`/`--txn` on the PCBench B–D failures | Hobbyists cannot use what they cannot install; the other two answer, cheaply, how TraceMaker does on boards nobody tuned it on, and whether a known capability is a free gain |
+| **M18 — Session server and agent interface** | D2 (the agent API) on top of a long-running board session (`tracemakerd`, the core of D1) | Asked for. One session process serves two users: an agent that routes connection by connection, and the KiCad plugin that routes the selected nets without restarting the engine. The stop rule of D2 decides whether anything beyond the interface is built |
+| **M19 — KiCad 11 readiness** | A4 made a milestone: file format, DRC parity and plugin for 11 | KiCad 11 is expected about February 2027 [W]: headless IPC (`kicad-cli api-server`), plotting and export through the API, no bundled Python. No official file-format change list was found [W], so the first task is the watch job, the second is reading a release candidate when one exists |
+| **M20 — Hobbyist wins** | C3 pours and a layer-count advisor; D3 run report; C2's experiment and a proposal-only pin swap; C5's classification | Two-layer and four-layer boards are the common case; the layer count is a direct cost; a report makes a run auditable |
+| **M21 — High speed for the Kookabus boards** | A3 reduced to the Kookabus boards; B1 tuning profiles; B2 time-domain matching; B3 the audit loop; A5 | Only as far as those boards need. The files must be found first (§7) |
+
+C6, C7, C4 and B4 wait for a board that needs them.
 
 ## 6. Considered and not recommended now
 
@@ -134,17 +142,19 @@ C6 and C7 wait for a board that needs them; B4 waits for evidence.
 - **Rigid-flex.** No demand in the repository or the sources read [A].
 - **A hosted service.** The determinism and "your board never leaves the machine" are strengths; nothing here argues for it [A].
 
-## 7. Decisions needed from you
+## 7. Decisions (2026-10-15)
 
-1. **Who is this for?** Hobbyists with two- and four-layer boards (favours A2, C3, D1), or people with high-speed boards (favours B1–B3, A3)? I assumed both and ordered for the second after the install work.
-2. **Boards.** A3 needs boards you are allowed to keep. Do you have designs of your own (with stackups) that can be used in the repository, or should it be open-hardware only?
-3. **KiCad versions.** Stay on KiCad 10 only, or plan a KiCad 11 port as soon as it is out (A4 makes the cost visible)?
-4. **Pin swap.** Is a proposal-only pass (a file you review) acceptable, or must swaps never be written? The experiment (C2) is safe either way.
-5. **Agent interface (D2).** Is a research bet with a stop rule worth a session, given that M16 found no gain from passive hints?
+| Question | Answer | Effect |
+|---|---|---|
+| Who is it for? | Hobbyists mostly; some high-speed users, "just the Kookabus boards" | Install, assistance and the layer count come before signal integrity; A3 shrinks to the Kookabus boards and B1–B3 are scoped to them |
+| Boards you may keep | The Kookabus boards | **Open:** I found no Kookabus KiCad files on this machine (`~/kookabus-render` holds renders and promo tooling, `~/promo_render` the promo videos). Where are the `.kicad_pcb` files, and may they go in the repository (or a fetch script)? |
+| KiCad versions | Support KiCad 11 | M19; the version-drift watch (A4) starts first |
+| Pin swap | A proposal-only pass is acceptable | C2: a proposal file for review; the pass never writes swaps into a board. The feasibility experiment still comes before the pass |
+| Agent interface | Do it | M18 with the stop rule of D2: if an agent loop does not route more than the plain run at the same compute on a held-out half, the interface stays a library and nothing more is built |
 
 ## 8. What could make this plan wrong
 
-- The ranking leans on KiCad 10 adoption: if few users define tuning profiles, B1 matters less. A3 would show how many modern boards have them.
+- B1 leans on KiCad 10 adoption: if the Kookabus boards (and hobbyists) do not define tuning profiles, B1 matters little. A3 will show it, and M21 is last for that reason.
 - PCBWorld's boards may be mostly simple, so A1 could look good and teach little; the failure classification is the useful output, not the percentage.
 - C1 may find nothing: `--relax` may need the breakout structure to help. A recorded negative still removes a guess.
 - Vendor comparisons are self-reported; the pull toward "AI layout" features may be marketing rather than need.
