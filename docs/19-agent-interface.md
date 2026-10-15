@@ -41,7 +41,7 @@ engine afresh. Only the first half is specified here.
   a program or reads a file.
 - **Names are data.** Net names, references and layer names come from the board and may say anything. They appear only as JSON string values, never in the tool
   descriptions or in error templates, and the server's `instructions` tell the agent so (doc 17 §6 wording).
-- **Caps.** At most 512 open connections listed per call, 64 nets per `route`, `work` at most 50 M per call, 256 states kept, a request line of at most 1 MB.
+- **Caps.** At most 512 open connections listed per call, 64 nets per `route`, `work` at most 50 M per call (times up to 8 variants), 256 states kept, a request line of at most 1 MB. Start an unattended agent with `--work-limit`: without it nothing but the per-call caps bounds what an agent can spend.
 - **No redaction in the session.** An agent that drives it sees the board's names. Where names must not leave the machine, the advisor protocol's `--advisor-redact`
   (doc 17 §3) is the tool; a redacted session would need aliases in every result and is not built.
 - **No network.** The server speaks over standard input and output only. A model, a key or a network stays in the agent's own process.
