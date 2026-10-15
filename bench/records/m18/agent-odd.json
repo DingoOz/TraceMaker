@@ -1,0 +1,226 @@
+{
+ "summary": {
+  "set": "srj20-m15fail4",
+  "half": "odd",
+  "boards": 8,
+  "scored": 8,
+  "work": 20000000,
+  "variants": 8,
+  "agent": "python3 agents/repair_agent.py",
+  "open": 492,
+  "plain_routed": 439,
+  "control_routed": 450,
+  "agent_routed": 439,
+  "agent_work": 611076602,
+  "control_work": 795396010,
+  "plain_work": 538132486,
+  "agent_better_than_plain": 0,
+  "agent_better_than_control": 1,
+  "agent_worse_than_control": 6,
+  "added_errors": 1
+ },
+ "rows": [
+  {
+   "board": "sample037",
+   "connections_open": 58,
+   "plain": {
+    "routed": 51,
+    "work": 66871044,
+    "added_errors": {},
+    "seconds": 62.5
+   },
+   "control": {
+    "routed": 53,
+    "work": 100788549,
+    "added_errors": {},
+    "seconds": 94.6
+   },
+   "agent": {
+    "routed": 51,
+    "work": 69424436,
+    "added_errors": {},
+    "seconds": 70.3,
+    "calls": 25,
+    "rounds_kept": 0,
+    "rounds_undone": 3
+   }
+  },
+  {
+   "board": "sample056",
+   "connections_open": 57,
+   "plain": {
+    "routed": 52,
+    "work": 68292461,
+    "added_errors": {},
+    "seconds": 65.0
+   },
+   "control": {
+    "routed": 54,
+    "work": 96509411,
+    "added_errors": {},
+    "seconds": 95.2
+   },
+   "agent": {
+    "routed": 52,
+    "work": 77737015,
+    "added_errors": {},
+    "seconds": 85.1,
+    "calls": 19,
+    "rounds_kept": 0,
+    "rounds_undone": 2
+   }
+  },
+  {
+   "board": "sample095",
+   "connections_open": 65,
+   "plain": {
+    "routed": 58,
+    "work": 66508243,
+    "added_errors": {},
+    "seconds": 61.2
+   },
+   "control": {
+    "routed": 59,
+    "work": 98454775,
+    "added_errors": {},
+    "seconds": 95.5
+   },
+   "agent": {
+    "routed": 58,
+    "work": 81203388,
+    "added_errors": {},
+    "seconds": 112.2,
+    "calls": 25,
+    "rounds_kept": 0,
+    "rounds_undone": 3
+   }
+  },
+  {
+   "board": "sample102",
+   "connections_open": 54,
+   "plain": {
+    "routed": 52,
+    "work": 65672227,
+    "added_errors": {},
+    "seconds": 44.3
+   },
+   "control": {
+    "routed": 52,
+    "work": 97563156,
+    "added_errors": {},
+    "seconds": 93.3
+   },
+   "agent": {
+    "routed": 52,
+    "work": 73187047,
+    "added_errors": {},
+    "seconds": 67.6,
+    "calls": 13,
+    "rounds_kept": 0,
+    "rounds_undone": 1
+   }
+  },
+  {
+   "board": "sample118",
+   "connections_open": 67,
+   "plain": {
+    "routed": 59,
+    "work": 66570475,
+    "added_errors": {},
+    "seconds": 52.1
+   },
+   "control": {
+    "routed": 57,
+    "work": 97241430,
+    "added_errors": {},
+    "seconds": 94.2
+   },
+   "agent": {
+    "routed": 59,
+    "work": 68864507,
+    "added_errors": {},
+    "seconds": 69.2,
+    "calls": 25,
+    "rounds_kept": 0,
+    "rounds_undone": 3
+   }
+  },
+  {
+   "board": "sample136",
+   "connections_open": 62,
+   "plain": {
+    "routed": 58,
+    "work": 69664279,
+    "added_errors": {},
+    "seconds": 66.6
+   },
+   "control": {
+    "routed": 61,
+    "work": 105715282,
+    "added_errors": {},
+    "seconds": 90.4
+   },
+   "agent": {
+    "routed": 58,
+    "work": 86229010,
+    "added_errors": {},
+    "seconds": 91.3,
+    "calls": 19,
+    "rounds_kept": 0,
+    "rounds_undone": 2
+   }
+  },
+  {
+   "board": "sample173",
+   "connections_open": 60,
+   "plain": {
+    "routed": 49,
+    "work": 63340291,
+    "added_errors": {},
+    "seconds": 45.4
+   },
+   "control": {
+    "routed": 53,
+    "work": 94555427,
+    "added_errors": {},
+    "seconds": 87.9
+   },
+   "agent": {
+    "routed": 49,
+    "work": 67158403,
+    "added_errors": {},
+    "seconds": 76.0,
+    "calls": 31,
+    "rounds_kept": 0,
+    "rounds_undone": 4
+   }
+  },
+  {
+   "board": "sample191",
+   "connections_open": 69,
+   "plain": {
+    "routed": 60,
+    "work": 71213466,
+    "added_errors": {},
+    "seconds": 48.3
+   },
+   "control": {
+    "routed": 61,
+    "work": 104567980,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 80.5
+   },
+   "agent": {
+    "routed": 60,
+    "work": 87272796,
+    "added_errors": {},
+    "seconds": 81.3,
+    "calls": 25,
+    "rounds_kept": 0,
+    "rounds_undone": 3
+   }
+  }
+ ]
+}
