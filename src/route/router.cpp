@@ -4757,6 +4757,27 @@ struct Router::Impl {
       cs.push_back(std::move(st));
     }
     for (std::size_t i = 0; i < cs.size(); ++i) pending.push_back(static_cast<int>(i));
+    if (opt.plan_only) {
+      for (const auto& st : cs) {
+        const auto& pa = b.pads[static_cast<std::size_t>(st.c.pad_a)];
+        RouteResult::Unrouted u;
+        u.net = b.nets[static_cast<std::size_t>(st.c.net)].name;
+        u.a = b.footprints[static_cast<std::size_t>(pa.footprint)].reference + "." + pa.number;
+        u.b = "zone";
+        if (st.c.pad_b >= 0) {
+          const auto& pb = b.pads[static_cast<std::size_t>(st.c.pad_b)];
+          u.b = b.footprints[static_cast<std::size_t>(pb.footprint)].reference + "." + pb.number;
+        }
+        u.reason = "not_attempted";
+        u.pad_a = st.c.pad_a;
+        u.pad_b = st.c.pad_b;
+        u.pos_a = pa.pos;
+        u.pos_b = st.c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(st.c.pad_b)].pos : pa.pos;
+        res.unrouted.push_back(std::move(u));
+      }
+      res.seconds = elapsed();
+      return res;
+    }
     guide_match();
     layer_assign();
     package_boxes();
