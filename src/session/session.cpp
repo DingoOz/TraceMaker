@@ -103,6 +103,16 @@ class Args {
     }
     return out;
   }
+  std::string choice(const char* k, const std::string& def, std::initializer_list<const char*> allowed) const {
+    if (!has(k)) return def;
+    const auto& v = j_.at(k);
+    if (v.is_string())
+      for (const char* a : allowed)
+        if (v.get<std::string>() == a) return v.get<std::string>();
+    std::string list;
+    for (const char* a : allowed) list += (list.empty() ? "" : ", ") + std::string(a);
+    throw ToolError("bad_argument", tool_ + "." + k + ": expected one of " + list);
+  }
   const json* object(const char* k) const {
     if (!has(k)) return nullptr;
     if (!j_.at(k).is_object()) throw ToolError("bad_argument", tool_ + "." + k + ": expected an object");
@@ -164,7 +174,7 @@ json Session::tools() {
                     {"soft_zones", prop("boolean", "also list the connections that end in a plane, as a route with soft_zones plans them (default: true once such a route was kept)")}}));
   t.push_back(tool(
       "route",
-      "Route open connections. Kept only if it adds no design-rule error (verify) and routes something; commit=false is a dry run. `hints` is an advice object: "
+      "Route open connections. Kept only if it routes something and (verify=refuse, the default) adds no design-rule error; commit=false is a dry run. `hints` is an advice object: "
       "first_nets, priority [[REF.PIN, REF.PIN]], layers {no_tracks: [...], cost: {layer: factor}}, regions [{rect|polygon, layers, reserve_for|avoid_nets}].",
       {{"nets", {{"type", "array"}, {"items", {{"type", "string"}}}, {"description", "net names to route (default: every net with an open connection; at most 64)"}}},
        {"work", prop("integer", "search-step budget per router (1000 to 50000000, default 2000000): it stops new searches from starting, a search in progress finishes")},
@@ -172,7 +182,8 @@ json Session::tools() {
        {"seed", prop("integer", "router seed (default: the session's)")},
        {"hints", prop("object", "an advice object, see above")},
        {"options", prop("object", "booleans: soft_zones, via_in_pad, diff_pairs, vias_off_pads, escape_plan")},
-       {"verify", prop("boolean", "run the design-rule check on the result before keeping it (default true)")},
+       {"verify", {{"type", "string"}, {"enum", {"refuse", "report", "off"}},
+                   {"description", "refuse (default): keep the result only if it adds no design-rule error; report: keep it and name the added errors; off: no check"}}},
        {"commit", prop("boolean", "keep the result (default true)")}}));
   t.push_back(tool("rip_net", "Remove the copper this session added for a net (a new state). The board's own tracks and vias are never removed.",
                    {{"net", prop("string", "net name")}}, {"net"}));
@@ -382,7 +393,8 @@ json Session::route(const json& args) {
   const long work = a.integer("work", kDefaultWork, 1000, kMaxWork);
   const int variants = static_cast<int>(a.integer("variants", 1, 1, 8));
   const std::uint64_t seed = static_cast<std::uint64_t>(a.integer("seed", static_cast<long>(opt_.seed), 0, 2'000'000'000));
-  const bool verify = a.boolean("verify", true), commit = a.boolean("commit", true);
+  const std::string verify = a.choice("verify", "refuse", {"refuse", "report", "off"});
+  const bool commit = a.boolean("commit", true);
   std::set<std::string> wanted;
   for (const auto& n : nets) {
     if (lb_.board.net_by_name(n) == 0) throw ToolError("unknown_name", "route.nets: no net '" + n + "'");
@@ -474,14 +486,15 @@ json Session::route(const json& args) {
   json nets_json = json::array();
   for (const auto& [n, p] : per_net) nets_json.push_back({{"net", n}, {"tracks", p.tracks}, {"vias", p.vias}, {"length_mm", mm(p.length)}});
 
-  // Transaction (rule 4): keep the result only if it routes something and, with `verify`, adds no design-rule error.
+  // Transaction (rule 4): keep the result only if it routes something and, with verify "refuse", adds no design-rule error ("report" keeps it and says
+  // which; "off" does not run the check).
   std::string refusal;
   std::map<std::string, int> added;
   Copper next = cur.copper;
   next.tracks.insert(next.tracks.end(), res.tracks.begin(), res.tracks.end());
   next.vias.insert(next.vias.end(), res.vias.begin(), res.vias.end());
   if (res.tracks.empty() && res.vias.empty()) refusal = "nothing_routed";
-  if (refusal.empty() && verify) {
+  if (refusal.empty() && verify != "off") {
     // With soft zones the router counts on the zones being refilled around its copper, so the result is judged the way KiCad judges it: refilled.
     const bool refill = o.soft_zones;
     const auto& before = errors_of(cur, refill);
@@ -495,7 +508,7 @@ json Session::route(const json& args) {
       const auto it = before.find(type);
       if (n > (it == before.end() ? 0 : it->second)) added[type] = n - (it == before.end() ? 0 : it->second);
     }
-    if (!added.empty()) refusal = "added_errors";
+    if (!added.empty() && verify == "refuse") refusal = "added_errors";
   }
   if (refusal.empty() && !commit) refusal = "dry_run";
 

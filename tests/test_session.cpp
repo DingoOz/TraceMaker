@@ -192,6 +192,18 @@ TEST_CASE("session: hints are an advice object and are reported", "[session]") {
   CHECK(r["routed"] == 3);
 }
 
+TEST_CASE("session: verify chooses what happens to a result with added errors", "[session]") {
+  TestBoard tb;
+  session::Session s(tb.options());
+  CHECK(is_error(s.call("route", {{"verify", "maybe"}}), "bad_argument"));
+  CHECK(is_error(s.call("route", {{"verify", true}}), "bad_argument"));  // a mode, not a flag
+  const auto off = s.call("route", {{"work", 100000}, {"verify", "off"}, {"nets", {"NET_A"}}});
+  CHECK(off["committed"] == true);
+  const auto report = s.call("route", {{"work", 100000}, {"verify", "report"}, {"nets", {"NET_C"}}});
+  CHECK(report["committed"] == true);
+  CHECK_FALSE(report.contains("added_errors"));  // none on this board
+}
+
 TEST_CASE("session: the work limit ends the session's routing for good", "[session]") {
   TestBoard tb;
   auto o = tb.options();

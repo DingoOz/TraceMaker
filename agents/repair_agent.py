@@ -46,7 +46,9 @@ def main():
             calls += 1
             return s.call(tool, **args)
 
-        call("route", work=a.work, variants=a.variants)
+        # "report": the first call is the command line's route whatever the engine's DRC says of it (on some boards that DRC counts edge errors KiCad does not);
+        # the repair rounds below are judged against the state they start from, so they may add nothing.
+        call("route", work=a.work, variants=a.variants, verify="report")
         for rnd in range(a.rounds):
             # Size each repair so that a call cannot spend more than half of what is left: a router spends at most its budget (and a little more).
             left = call("board_info")["work_left"]
