@@ -158,6 +158,10 @@ about twice a plain one; `--advice FILE` alone costs one run with the extra vari
   refused unless `--allow-remote` is given; what is sent is printed to stderr first. The reply is parsed leniently (a code fence is
   tolerated), checked against the advice format, and sent back to the model once with the problems if it fails.
 - `test_advisors.py` — both, against fake servers (no network, no model).
+- **A coding agent needs no advisor process.** The `tracemaker-route` skill (`skills/`, D84) has the agent read `--stuck-report`, write the
+  advice file itself, check it with `tracemaker advice-check` and route again with `--advice`; it puts that after more search (§8.1: the
+  control wins) and says that the hint channel's measured gain is none. Whether a model's own hints do better is the open question of §8.1,
+  not something the skill claims.
 
 Benchmarks always run from **recorded advice files** (`bench/advice_eval.py` stores them), so results stay reproducible.
 

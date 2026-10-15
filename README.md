@@ -216,6 +216,22 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 </details>
 
+<details>
+<summary><b>Agent skills</b></summary>
+
+`skills/` holds two skills for coding agents (Claude Code, Codex, ...), installable with the
+[skills CLI](https://skills.sh): `npx skills add DingoOz/TraceMaker`. They follow on from American Embedded's
+[kistack](https://github.com/American-Embedded/kistack) KiCad skills.
+
+- `tracemaker-board-prep` prepares a placed board: net classes and lattice pitch, custom rules TraceMaker does
+  not apply or that slow it, planes, thermal reliefs, teardrops, via sizes, pair names and dense-package
+  escape, with a preflight script.
+- `tracemaker-route` chooses route options, routes, and signs off with KiCad's refilled DRC under the board's
+  own project rules. When connections are left it says what to try: more search, `--relax`, the stuck report
+  and, last, an advice file the agent writes itself (`docs/17-llm-advisor.md`; the measured gain so far is none).
+
+</details>
+
 ## Run the tests
 
 ```
@@ -283,6 +299,7 @@ Freerouting 2.5 10%; Freerouting 1.9 20%.
 | `src/gpu` | CUDA and Metal code, each with a CPU twin |
 | `src/server`, `viewer/` | the live viewer |
 | `kicad_plugin/` | the KiCad plugin |
+| `skills/` | agent skills: board preparation and routing sign-off |
 | `bench/` | benchmark tools |
 | `tests/` | tests |
 | `docs/` | design documents; start at [PLAN.md](PLAN.md) |
