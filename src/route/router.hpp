@@ -184,6 +184,9 @@ struct RouterOptions {
   double guide_pen = 0.1;       // pitches per lattice step off the guide
   double guide_radius = 1.5;    // pitches around the guide that count as on it
   std::string only_net;         // debugging: route only this net
+  // Plan the connections and stop: RouteResult::connections and ::unrouted list every connection that is open (reason `not_attempted`), nothing is
+  // searched or committed. A board session (doc 19) lists the open connections of a state this way. Off by default: a run is what it was.
+  bool plan_only = false;
   std::vector<std::string> skip_nets;  // experiments: leave these nets unrouted (e.g. nets a designer would pour)
   // Layer limits (doc 05 §29; route/layer_limits.hpp turns layer names into these). Layers in no_track_layers get
   // no new tracks: vias still pass through them and still connect into zone fills there, and pads that exist only

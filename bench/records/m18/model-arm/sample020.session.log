@@ -1,0 +1,4 @@
+{"args":{"variants":8,"verify":"report","work":20000000},"n":1,"result_digest":"59cd97b39a814f1f","state":1,"state_digest":"2356cd185f7bfc9e","tool":"route"}
+{"args":{"limit":5},"n":2,"result_digest":"b0cb438ac928f8bb","state":1,"state_digest":"2356cd185f7bfc9e","tool":"open_connections"}
+{"args":{},"n":3,"result_digest":"a197956d5976f54d","state":1,"state_digest":"2356cd185f7bfc9e","tool":"check"}
+{"args":{},"n":4,"result_digest":"aba6c8c3ceaf9145","state":1,"state_digest":"2356cd185f7bfc9e","tool":"save"}

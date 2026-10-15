@@ -26,6 +26,8 @@
 #include "io/kicad/project_reader.hpp"
 #include "io/srj/srj.hpp"
 #include "route/router.hpp"
+#include "session/session.hpp"
+#include "session/transport.hpp"
 #include "server/messages.hpp"
 #include "server/viewer_server.hpp"
 #include "learn/knowledge_base.hpp"
@@ -399,6 +401,39 @@ int cmd_footprint_check(const std::string& path, const std::string& refs, const 
 }
 
 // `advice-check`: read an advice file and check it against a board without routing (the refusals `route --advice` would give).
+// `session`: a board session an agent can drive over MCP (standard input and output) or JSON lines (doc 19). Standard output carries the protocol only, so
+// everything else goes to standard error. `--replay LOG` runs the calls of a log again and checks every result and state digest.
+int cmd_session(const std::string& board, const std::string& out, std::uint64_t seed, long work_limit, int threads, bool use_gpu, const std::string& log, bool jsonl,
+                const std::string& replay, bool view, int view_port, const std::string& view_host, const std::string& view_token, bool view_insecure) {
+  tmk::session::SessionOptions so;
+  so.in = board;
+  so.out = out;
+  so.seed = seed;
+  so.work_limit = work_limit;
+  so.threads = threads;
+  so.gpu_device = tmk::app::default_gpu_device(use_gpu);
+  so.log = log;
+  std::unique_ptr<tmk::server::ViewerServer> server;
+  if (view) {
+    server = std::make_unique<tmk::server::ViewerServer>(viewer_options(view_host, view_port, view_token, view_insecure));
+    so.sink = server.get();
+  }
+  tmk::session::Session session(so);
+  if (server) {
+    server->publish(tmk::server::board_snapshot_json(session.base(), std::filesystem::path(board).filename().string()));
+    std::fprintf(stderr, "live view: %s\n", server->url().c_str());
+    if (const auto notice = server->notice(); !notice.empty()) std::fprintf(stderr, "warning: %s\n", notice.c_str());
+  }
+  if (!replay.empty()) {
+    const auto r = session.replay(replay);
+    std::fprintf(stderr, "%s\n", r.message.c_str());
+    return r.ok ? 0 : 1;
+  }
+  if (jsonl) tmk::session::run_jsonl(session, std::cin, std::cout);
+  else tmk::session::run_mcp(session, std::cin, std::cout);
+  return 0;
+}
+
 int cmd_advice_check(const std::string& board_path, const std::string& advice_path, const std::string& json_path) {
   const auto lb = tmk::io::read_board_file(board_path);
   const auto adv = tmk::advice::load_advice_file(advice_path);
@@ -1122,6 +1157,26 @@ int main(int argc, char** argv) {
   advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
   advice_cmd->add_option("advice", ac_advice, "Advice file (JSON)")->required()->check(CLI::ExistingFile);
   advice_cmd->add_option("--json", ac_json, "Write what each hint became as JSON");
+  auto* session_cmd = app.add_subcommand("session", "Serve a board session to an agent over MCP (stdin/stdout) or JSON lines: list open connections, route with hints, rip, undo, save (doc 19)");
+  std::string se_board, se_out, se_log, se_replay, se_host, se_token;
+  std::uint64_t se_seed = 1;
+  long se_limit = 0;
+  int se_threads = 4, se_port = 8766;
+  bool se_jsonl = false, se_gpu = false, se_view = false, se_insecure = false;
+  session_cmd->add_option("board", se_board)->required()->check(CLI::ExistingFile);
+  session_cmd->add_option("--out", se_out, "Where the `save` tool writes the board (without it `save` is refused; the agent cannot name a path)");
+  session_cmd->add_option("--seed", se_seed, "Router seed of a route call that gives none")->default_val(1);
+  session_cmd->add_option("--work-limit", se_limit, "Search work (steps) of the whole session; 0 = none")->default_val(0);
+  session_cmd->add_option("--threads", se_threads, "Portfolio threads of a route call with several variants (the result does not depend on it)")->default_val(4);
+  session_cmd->add_option("--log", se_log, "Write every call, result digest and state digest here (JSON lines), to replay the session");
+  session_cmd->add_option("--replay", se_replay, "Run the calls of this log again and check every digest instead of serving an agent");
+  session_cmd->add_flag("--jsonl", se_jsonl, "JSON lines ({\"tool\": NAME, \"args\": {...}} per line) instead of MCP");
+  session_cmd->add_flag("--gpu", se_gpu, "Cost-to-go fields on the GPU (default: the CPU reference; same results)");
+  session_cmd->add_flag("--view", se_view, "Stream the router's events to the browser viewer, so a person can watch the agent");
+  session_cmd->add_option("--view-host", se_host, "Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1; another address needs a token)");
+  session_cmd->add_option("--view-port", se_port, "Viewer port")->default_val(8766);
+  session_cmd->add_option("--view-token", se_token, "Token for a viewer other machines can reach");
+  session_cmd->add_flag("--view-insecure", se_insecure, "A viewer other machines can reach WITHOUT a token");
   auto* style_cmd = app.add_subcommand("style", "Style metric of a routed board: bends, acute angles, stair-steps, detours (doc 05 §39)");
   std::string sty_board, sty_json;
   bool sty_conn = false;
@@ -1239,6 +1294,7 @@ int main(int argc, char** argv) {
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
     if (*advice_cmd) return cmd_advice_check(ac_board, ac_advice, ac_json);
+    if (*session_cmd) return cmd_session(se_board, se_out, se_seed, se_limit, se_threads, se_gpu, se_log, se_jsonl, se_replay, se_view, se_port, se_host, se_token, se_insecure);
     if (*rp_cmd) {
       for (const auto& r : rp_refs) {
         const auto eq = r.rfind('=');

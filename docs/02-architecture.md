@@ -213,6 +213,7 @@ TraceMaker/
     route/escape/ route/global/ route/detail/ route/repair/ route/cleanup/
     learn/       failure records, nogood store, history maps, activity, bandits, persistent KB
     advice/      advice files (strict hints for the router), the stuck report, the advisor process protocol (doc 17); no model, network or keys
+    session/     a board session an agent drives (tools over MCP and JSON lines, transactions, undo, replayable log; doc 19); no model, network or keys
     drc/         rule checks equivalent to KiCad's
     gpu/         CUDA kernels + host wrappers; each with a CPU reference
     sched/       job scheduler, portfolio, stage state machine
@@ -222,6 +223,7 @@ TraceMaker/
   viewer/            TypeScript app, WebGL2 + WebGPU backends (Vite)
   kicad_plugin/      IPC plugin (Python, PCM package)
   advisors/          reference advisors (a rule-based one and a language-model client, standard library only; doc 17)
+  agents/            a client for the board session and a scripted baseline agent (standard library only; doc 19)
   bench/             harness, fixture manifests, KiCad-DRC judge, Freerouting runner, report generator
   tests/             unit, property, golden-file, CPU-vs-GPU equivalence
   third_party/       pinned via CMake FetchContent / vcpkg manifest

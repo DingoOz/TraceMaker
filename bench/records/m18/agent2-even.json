@@ -1,0 +1,230 @@
+{
+ "summary": {
+  "set": "srj20-m15fail4",
+  "half": "even",
+  "boards": 8,
+  "scored": 8,
+  "work": 20000000,
+  "variants": 8,
+  "agent": "python3 agents/repair_agent.py --policy persist --rounds 40",
+  "open": 489,
+  "plain_routed": 430,
+  "control_routed": 431,
+  "agent_routed": 430,
+  "agent_work": 757508705,
+  "control_work": 793970739,
+  "plain_work": 539961414,
+  "agent_better_than_plain": 0,
+  "agent_better_than_control": 2,
+  "agent_worse_than_control": 2,
+  "added_errors": 3
+ },
+ "rows": [
+  {
+   "board": "sample031",
+   "connections_open": 65,
+   "plain": {
+    "routed": 57,
+    "work": 65194745,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 63.2
+   },
+   "control": {
+    "routed": 57,
+    "work": 96986142,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 94.4
+   },
+   "agent": {
+    "routed": 57,
+    "work": 93450522,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 185.8,
+    "calls": 90,
+    "rounds_kept": 17,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample054",
+   "connections_open": 61,
+   "plain": {
+    "routed": 56,
+    "work": 69573838,
+    "added_errors": {},
+    "seconds": 59.5
+   },
+   "control": {
+    "routed": 55,
+    "work": 98820131,
+    "added_errors": {},
+    "seconds": 94.2
+   },
+   "agent": {
+    "routed": 56,
+    "work": 95460689,
+    "added_errors": {},
+    "seconds": 149.5,
+    "calls": 75,
+    "rounds_kept": 14,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample094",
+   "connections_open": 65,
+   "plain": {
+    "routed": 54,
+    "work": 68601400,
+    "added_errors": {},
+    "seconds": 60.3
+   },
+   "control": {
+    "routed": 56,
+    "work": 95920668,
+    "added_errors": {},
+    "seconds": 95.7
+   },
+   "agent": {
+    "routed": 54,
+    "work": 92694303,
+    "added_errors": {},
+    "seconds": 151.0,
+    "calls": 75,
+    "rounds_kept": 14,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample100",
+   "connections_open": 52,
+   "plain": {
+    "routed": 47,
+    "work": 66490395,
+    "added_errors": {},
+    "seconds": 47.9
+   },
+   "control": {
+    "routed": 47,
+    "work": 97937714,
+    "added_errors": {},
+    "seconds": 91.6
+   },
+   "agent": {
+    "routed": 47,
+    "work": 94258686,
+    "added_errors": {},
+    "seconds": 181.7,
+    "calls": 120,
+    "rounds_kept": 23,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample117",
+   "connections_open": 61,
+   "plain": {
+    "routed": 53,
+    "work": 68888818,
+    "added_errors": {},
+    "seconds": 48.2
+   },
+   "control": {
+    "routed": 53,
+    "work": 100632039,
+    "added_errors": {},
+    "seconds": 89.8
+   },
+   "agent": {
+    "routed": 53,
+    "work": 89050498,
+    "added_errors": {},
+    "seconds": 264.2,
+    "calls": 204,
+    "rounds_kept": 40,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample119",
+   "connections_open": 58,
+   "plain": {
+    "routed": 54,
+    "work": 67199650,
+    "added_errors": {},
+    "seconds": 54.9
+   },
+   "control": {
+    "routed": 55,
+    "work": 99164932,
+    "added_errors": {},
+    "seconds": 82.5
+   },
+   "agent": {
+    "routed": 54,
+    "work": 95510617,
+    "added_errors": {},
+    "seconds": 177.3,
+    "calls": 80,
+    "rounds_kept": 15,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample142",
+   "connections_open": 69,
+   "plain": {
+    "routed": 57,
+    "work": 65938270,
+    "added_errors": {},
+    "seconds": 41.5
+   },
+   "control": {
+    "routed": 56,
+    "work": 103784845,
+    "added_errors": {},
+    "seconds": 81.4
+   },
+   "agent": {
+    "routed": 57,
+    "work": 99800614,
+    "added_errors": {},
+    "seconds": 176.5,
+    "calls": 85,
+    "rounds_kept": 16,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample174",
+   "connections_open": 58,
+   "plain": {
+    "routed": 52,
+    "work": 68074298,
+    "added_errors": {},
+    "seconds": 47.5
+   },
+   "control": {
+    "routed": 52,
+    "work": 100724268,
+    "added_errors": {},
+    "seconds": 79.5
+   },
+   "agent": {
+    "routed": 52,
+    "work": 97282776,
+    "added_errors": {},
+    "seconds": 145.2,
+    "calls": 66,
+    "rounds_kept": 11,
+    "rounds_undone": 1
+   }
+  }
+ ]
+}

@@ -13,5 +13,5 @@ target_include_directories(tm_app_tui PUBLIC ${PROJECT_SOURCE_DIR}/src)
 tm_set_warnings(tm_app_tui)
 
 add_executable(tracemaker main.cpp inspect.cpp defects.cpp)
-target_link_libraries(tracemaker PRIVATE tm::analysis tm::advice tm::app_route tm::app_tui tm::passes tm::crules tm::core tm::gpu tm::io tm::drc tm::route tm::learn tm::server tm::viz CLI11::CLI11 nlohmann_json::nlohmann_json)
+target_link_libraries(tracemaker PRIVATE tm::analysis tm::advice tm::app_route tm::app_tui tm::passes tm::crules tm::core tm::gpu tm::io tm::drc tm::route tm::learn tm::server tm::session tm::viz CLI11::CLI11 nlohmann_json::nlohmann_json)
 tm_set_warnings(tracemaker)

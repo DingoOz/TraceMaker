@@ -1,0 +1,432 @@
+{
+ "summary": {
+  "set": "srj20-agent-heldout",
+  "half": "all",
+  "boards": 16,
+  "scored": 16,
+  "work": 20000000,
+  "variants": 8,
+  "agent": "python3 agents/repair_agent.py --policy persist --rounds 40",
+  "open": 1162,
+  "plain_routed": 960,
+  "control_routed": 968,
+  "agent_routed": 967,
+  "agent_work": 1512051841,
+  "control_work": 1612792086,
+  "plain_work": 1100842530,
+  "agent_better_than_plain": 6,
+  "agent_better_than_control": 4,
+  "agent_worse_than_control": 5,
+  "added_errors": 4
+ },
+ "rows": [
+  {
+   "board": "sample013",
+   "connections_open": 54,
+   "plain": {
+    "routed": 49,
+    "work": 66419087,
+    "added_errors": {},
+    "seconds": 58.5
+   },
+   "control": {
+    "routed": 49,
+    "work": 98546305,
+    "added_errors": {},
+    "seconds": 89.8
+   },
+   "agent": {
+    "routed": 49,
+    "work": 94961698,
+    "added_errors": {},
+    "seconds": 220.0,
+    "calls": 145,
+    "rounds_kept": 28,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample020",
+   "connections_open": 46,
+   "plain": {
+    "routed": 46,
+    "work": 62789525,
+    "added_errors": {},
+    "seconds": 42.3
+   },
+   "control": {
+    "routed": 46,
+    "work": 91452033,
+    "added_errors": {},
+    "seconds": 67.8
+   },
+   "agent": {
+    "routed": 46,
+    "work": 62789525,
+    "added_errors": {},
+    "seconds": 33.9,
+    "calls": 6,
+    "rounds_kept": 0,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample024",
+   "connections_open": 66,
+   "plain": {
+    "routed": 61,
+    "work": 67972256,
+    "added_errors": {},
+    "seconds": 64.2
+   },
+   "control": {
+    "routed": 61,
+    "work": 101567785,
+    "added_errors": {},
+    "seconds": 94.1
+   },
+   "agent": {
+    "routed": 61,
+    "work": 98514669,
+    "added_errors": {},
+    "seconds": 199.1,
+    "calls": 81,
+    "rounds_kept": 14,
+    "rounds_undone": 1
+   }
+  },
+  {
+   "board": "sample030",
+   "connections_open": 59,
+   "plain": {
+    "routed": 56,
+    "work": 70641520,
+    "added_errors": {},
+    "seconds": 42.7
+   },
+   "control": {
+    "routed": 58,
+    "work": 98201949,
+    "added_errors": {},
+    "seconds": 75.3
+   },
+   "agent": {
+    "routed": 56,
+    "work": 93172720,
+    "added_errors": {},
+    "seconds": 271.7,
+    "calls": 204,
+    "rounds_kept": 40,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample069",
+   "connections_open": 53,
+   "plain": {
+    "routed": 50,
+    "work": 67079137,
+    "added_errors": {},
+    "seconds": 45.3
+   },
+   "control": {
+    "routed": 50,
+    "work": 93921159,
+    "added_errors": {},
+    "seconds": 79.0
+   },
+   "agent": {
+    "routed": 50,
+    "work": 90047704,
+    "added_errors": {},
+    "seconds": 120.6,
+    "calls": 59,
+    "rounds_kept": 0,
+    "rounds_undone": 9
+   }
+  },
+  {
+   "board": "sample150",
+   "connections_open": 56,
+   "plain": {
+    "routed": 53,
+    "work": 66920038,
+    "added_errors": {},
+    "seconds": 47.0
+   },
+   "control": {
+    "routed": 54,
+    "work": 98472280,
+    "added_errors": {},
+    "seconds": 78.4
+   },
+   "agent": {
+    "routed": 53,
+    "work": 81763738,
+    "added_errors": {},
+    "seconds": 267.0,
+    "calls": 204,
+    "rounds_kept": 40,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample190",
+   "connections_open": 61,
+   "plain": {
+    "routed": 57,
+    "work": 68785514,
+    "added_errors": {},
+    "seconds": 40.3
+   },
+   "control": {
+    "routed": 59,
+    "work": 100123027,
+    "added_errors": {},
+    "seconds": 79.3
+   },
+   "agent": {
+    "routed": 57,
+    "work": 94910341,
+    "added_errors": {},
+    "seconds": 294.9,
+    "calls": 204,
+    "rounds_kept": 40,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample192",
+   "connections_open": 60,
+   "plain": {
+    "routed": 57,
+    "work": 70121222,
+    "added_errors": {},
+    "seconds": 48.4
+   },
+   "control": {
+    "routed": 56,
+    "work": 97893632,
+    "added_errors": {},
+    "seconds": 77.9
+   },
+   "agent": {
+    "routed": 57,
+    "work": 94255033,
+    "added_errors": {},
+    "seconds": 190.3,
+    "calls": 59,
+    "rounds_kept": 0,
+    "rounds_undone": 9
+   }
+  },
+  {
+   "board": "sample007",
+   "connections_open": 72,
+   "plain": {
+    "routed": 66,
+    "work": 68944369,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 48.0
+   },
+   "control": {
+    "routed": 67,
+    "work": 100729580,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 84.8
+   },
+   "agent": {
+    "routed": 67,
+    "work": 93139792,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 341.7,
+    "calls": 204,
+    "rounds_kept": 40,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample008",
+   "connections_open": 101,
+   "plain": {
+    "routed": 68,
+    "work": 71033901,
+    "added_errors": {},
+    "seconds": 47.1
+   },
+   "control": {
+    "routed": 66,
+    "work": 110161384,
+    "added_errors": {},
+    "seconds": 87.8
+   },
+   "agent": {
+    "routed": 69,
+    "work": 107133094,
+    "added_errors": {},
+    "seconds": 174.0,
+    "calls": 55,
+    "rounds_kept": 10,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample016",
+   "connections_open": 84,
+   "plain": {
+    "routed": 70,
+    "work": 66236322,
+    "added_errors": {},
+    "seconds": 50.1
+   },
+   "control": {
+    "routed": 72,
+    "work": 99663937,
+    "added_errors": {},
+    "seconds": 81.7
+   },
+   "agent": {
+    "routed": 71,
+    "work": 96751334,
+    "added_errors": {},
+    "seconds": 203.3,
+    "calls": 75,
+    "rounds_kept": 14,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample032",
+   "connections_open": 108,
+   "plain": {
+    "routed": 67,
+    "work": 75675974,
+    "added_errors": {},
+    "seconds": 54.8
+   },
+   "control": {
+    "routed": 67,
+    "work": 113747841,
+    "added_errors": {},
+    "seconds": 105.4
+   },
+   "agent": {
+    "routed": 69,
+    "work": 110850344,
+    "added_errors": {},
+    "seconds": 177.7,
+    "calls": 70,
+    "rounds_kept": 13,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample039",
+   "connections_open": 78,
+   "plain": {
+    "routed": 66,
+    "work": 69190947,
+    "added_errors": {},
+    "seconds": 59.0
+   },
+   "control": {
+    "routed": 64,
+    "work": 97040822,
+    "added_errors": {
+     "copper_edge_clearance": 3
+    },
+    "seconds": 96.9
+   },
+   "agent": {
+    "routed": 66,
+    "work": 93210517,
+    "added_errors": {},
+    "seconds": 172.3,
+    "calls": 75,
+    "rounds_kept": 14,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample040",
+   "connections_open": 91,
+   "plain": {
+    "routed": 65,
+    "work": 70964399,
+    "added_errors": {},
+    "seconds": 69.0
+   },
+   "control": {
+    "routed": 68,
+    "work": 103097472,
+    "added_errors": {},
+    "seconds": 89.6
+   },
+   "agent": {
+    "routed": 65,
+    "work": 99482148,
+    "added_errors": {},
+    "seconds": 179.0,
+    "calls": 67,
+    "rounds_kept": 10,
+    "rounds_undone": 2
+   }
+  },
+  {
+   "board": "sample048",
+   "connections_open": 74,
+   "plain": {
+    "routed": 61,
+    "work": 69271852,
+    "added_errors": {},
+    "seconds": 53.2
+   },
+   "control": {
+    "routed": 62,
+    "work": 102615582,
+    "added_errors": {},
+    "seconds": 89.0
+   },
+   "agent": {
+    "routed": 62,
+    "work": 98633624,
+    "added_errors": {},
+    "seconds": 235.9,
+    "calls": 105,
+    "rounds_kept": 20,
+    "rounds_undone": 0
+   }
+  },
+  {
+   "board": "sample064",
+   "connections_open": 99,
+   "plain": {
+    "routed": 68,
+    "work": 68796467,
+    "added_errors": {},
+    "seconds": 53.5
+   },
+   "control": {
+    "routed": 69,
+    "work": 105557298,
+    "added_errors": {},
+    "seconds": 88.8
+   },
+   "agent": {
+    "routed": 69,
+    "work": 102435560,
+    "added_errors": {},
+    "seconds": 166.1,
+    "calls": 60,
+    "rounds_kept": 11,
+    "rounds_undone": 0
+   }
+  }
+ ]
+}
