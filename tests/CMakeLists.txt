@@ -33,6 +33,8 @@ set_tests_properties(python_bindings PROPERTIES SKIP_RETURN_CODE 77 LABELS "pyth
 # KiCad PCM package: build the archive and check its layout and metadata.
 add_test(NAME pcm_package COMMAND sh -c "python3 '${PROJECT_SOURCE_DIR}/scripts/make_pcm_package.py' --out '${CMAKE_BINARY_DIR}/pcm-test' && python3 '${PROJECT_SOURCE_DIR}/scripts/validate_pcm.py' '${CMAKE_BINARY_DIR}/pcm-test/tracemaker-${PROJECT_VERSION}.zip'")
 set_tests_properties(pcm_package PROPERTIES LABELS "kicad" TIMEOUT 120)
+add_test(NAME pcm_package_bundled COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/pcm_bundled.py $<TARGET_FILE:tracemaker> $<TARGET_FILE:tracemaker-place> ${CMAKE_BINARY_DIR}/integration/pcm_bundled)
+set_tests_properties(pcm_package_bundled PROPERTIES LABELS "kicad;integration" TIMEOUT 300)
 add_test(NAME length_tuning COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/length_tuning.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/length)
 set_tests_properties(length_tuning PROPERTIES SKIP_RETURN_CODE 77 LABELS "kicad;integration" TIMEOUT 600)
 
