@@ -590,7 +590,10 @@ RouteJobResult run_route_job(RouteJob job) {
   };
   auto run_once = [&](const route::RouterOptions& o, int round, bool use_kb) {
     Run r;
-    if (variants > 1 || o.advice.active()) {
+    // The round-based options (--relax, --rounds, --round-work, --ramp-from) are implemented in the portfolio; given with one
+    // variant they were silently ignored, so they run a portfolio of one (M17: the C1 experiment found it).
+    const bool rounds_asked = o.relax || o.rounds > 1 || o.round_work > 0 || o.ramp_from_mm > 0;
+    if (variants > 1 || o.advice.active() || rounds_asked) {
       std::vector<int> pick;
       if (use_kb && kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, o.seed);
       log(fmt("portfolio: %d variants%s on %d thread%s", variants, o.advice.active() ? fmt(" + %d advised", std::min(o.advice.variants, variants)).c_str() : "",
