@@ -200,10 +200,11 @@ tell an agent more than it does now (below). What the agents asked of the tools,
 
 ### 9.4 What a session showed that the measurement did not
 
-- **The engine's DRC and KiCad disagree on two boards of this set** (`sample031`, `sample191`): the engine counts 3 added `copper_edge_clearance` errors where
-  `kicad-cli` counts none. The router puts a track with its edge exactly on the centre line of an outline whose stroke is 0.05 mm and whose clearance rule is 0;
-  `check_edges` (`src/drc/drc.cpp`) counts touching as a violation at zero clearance, KiCad does not. Not fixed here (issue #42, with a minimal board: KiCad flags a track from 1 µm of crossing, not from touching); it is why `verify` has the modes of §4 and why
-  the agent's first call uses `report`.
+- **The engine's DRC and KiCad disagreed on two boards of this set** (`sample031`, `sample191`): the engine counted 3 added `copper_edge_clearance` errors where
+  `kicad-cli` counted none. The router puts a track with its edge exactly on the centre line of an outline whose stroke is 0.05 mm and whose clearance rule is 0;
+  `check_edges` (`src/drc/drc.cpp`) counted touching as a violation at zero clearance, KiCad does not for a straight track. **Fixed afterwards** (issue #42, D120: the edge
+  threshold depends on the shape, frozen against KiCad in `tests/integration/edge_touch`); the numbers of this section were measured before the fix. It is why `verify`
+  has the modes of §4 and why the agent's first call uses `report`; after it the engine and KiCad agree on `copper_edge_clearance` for the plain route of `sample031`, `sample007`, `sample191` and `sample039` (65, 72, 69 and 78; `bench/records/issue42`). The session's `refuse` mode was not re-run.
 - **A model cannot choose blockers blind** (this is why `inspect_pad` and `inspect_net` exist, §4). A session driven by hand on `sample119` (`bench/records/m18/README.md`) swapped one stuck connection for another and
   never reduced the open count: the tools name nets and pads, and say nothing of what lies around a pad. And `stuck_report` after a route restricted to a few
   nets has no crowding (the other nets are locked copper, not routed copper of that run).

@@ -493,6 +493,16 @@ class Checker {
     }
   }
 
+  // The gap below which copper violates a required edge clearance. At zero KiCad 10.0.6 flags the rounded shapes (a straight
+  // track, a via, a circle, oval or round-rect pad) only when they cross the outline's centre line, and flags rect and
+  // trapezoid pads and arc tracks already when they touch it (measured per shape, issue #42, D120, tests/integration/edge_touch).
+  // Zone fills and copper graphics were not measured and keep the touching rule.
+  Coord edge_threshold(const CopperItem& it, const geom::Shape& s, Coord req) const {
+    if (req > 0) return req - o_.epsilon;
+    const bool rounded = s.r > 0 && it.kind != ItemKind::Arc && it.kind != ItemKind::Graphic;
+    return rounded ? 0 : 1;  // 0: crossing; 1: touching or crossing
+  }
+
   void check_edges() {
     if (cm_.edges.empty() && cm_.margins.empty()) return;
     std::vector<const geom::Shape*> edges;
@@ -506,11 +516,10 @@ class Checker {
         const geom::Shape& e = *ep;
         if (!e.box.inflated(req).intersects(it.box)) continue;
         bool hit = false;
-        const Coord thr = req > 0 ? req - o_.epsilon : 1;  // 0: touching or crossing
-        if (const geom::PolygonIndex* zi = fill_index(it)) hit = zi->shape_closer(e, thr);
+        if (const geom::PolygonIndex* zi = fill_index(it)) hit = zi->shape_closer(e, req > 0 ? req - o_.epsilon : 1);
         else
           for (const auto& s : it.shapes)
-            if (geom::closer_than(s, e, thr)) { hit = true; break; }
+            if (geom::closer_than(s, e, edge_threshold(it, s, req))) { hit = true; break; }
         if (hit) {
           add("copper_edge_clearance", &it, nullptr, -1, req, layer);
           break;

@@ -70,6 +70,9 @@ set_tests_properties(tui_options PROPERTIES LABELS "integration" TIMEOUT 300)
 # Frozen KiCad 10 custom-rule item/pair multisets (expected.json names the judging version); normal runs do not require KiCad.
 add_test(NAME rule_parity COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/rule_parity/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/rule_parity)
 set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 300)
+# Copper against the outline at zero clearance, per shape, against frozen KiCad 10.0.6 counts (issue #42, D120); normal runs do not require KiCad.
+add_test(NAME edge_touch COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/edge_touch/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/edge_touch)
+set_tests_properties(edge_touch PROPERTIES LABELS "integration;rules" TIMEOUT 300)
 # --relax and the other round-based options run with --variants 1 instead of being ignored (M17, D122).
 add_test(NAME round_options COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/round_options.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/round_options)
 set_tests_properties(round_options PROPERTIES LABELS "route;integration" TIMEOUT 600)
