@@ -68,6 +68,9 @@ set_tests_properties(tui_options PROPERTIES LABELS "integration" TIMEOUT 300)
 # Frozen KiCad 10 custom-rule item/pair multisets (expected.json names the judging version); normal runs do not require KiCad.
 add_test(NAME rule_parity COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/rule_parity/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/rule_parity)
 set_tests_properties(rule_parity PROPERTIES LABELS "integration;rules" TIMEOUT 300)
+# Copper against the outline at zero clearance, per shape, against frozen KiCad 10.0.6 counts (issue #42, D120); normal runs do not require KiCad.
+add_test(NAME edge_touch COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/edge_touch/run.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/edge_touch)
+set_tests_properties(edge_touch PROPERTIES LABELS "integration;rules" TIMEOUT 300)
 # The agent skills' scripts (D84): preflight findings on plane_smd, reports that board text cannot forge, sign-off
 # verdicts and exit codes against a stand-in kicad-cli. Needs neither KiCad nor, for most of it, the engine.
 add_test(NAME skills_scripts COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/skills_scripts.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/skills_scripts)

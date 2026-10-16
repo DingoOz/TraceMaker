@@ -84,7 +84,10 @@ The own DRC must match `kicad-cli pcb drc` (verified per KiCad version in CI on 
    layer, so a via against a through pad or via is reported on each common layer (hole clearances too, plus
    the pad loop's via-hole test when the hole clearance is positive); via and pad holes are tested against
    other nets' fills. Tracks and vias are tested against holes, and copper against the board edge, even at
-   zero clearance; slots are left out of hole-to-hole. Copper of a net may touch a net-tie footprint's items
+   zero clearance; slots are left out of hole-to-hole. At zero edge clearance KiCad 10.0.6 flags a straight track, a via
+   and a circle, oval or round-rect pad only once it crosses the outline's centre line (touching is allowed, with no
+   epsilon: 1 nm of crossing is flagged), and a rect or trapezoid pad or an arc track already when it touches it; above
+   zero the gap must be at least the clearance minus the 0.5 µm epsilon (measured on a straight track; D120, `edge_touch` test). Copper of a net may touch a net-tie footprint's items
    on its own net-tie pad. Harness: `scripts/drc_broken_parity.py` injects defects (`tracemaker
    selftest-defects`: stubs, stray and stitched vias, cut and shortened tracks, crossings, overlaps, vias on
    other nets' tracks and fills, tracks into pads) and matches violations one to one (`--base-delta` for bases
