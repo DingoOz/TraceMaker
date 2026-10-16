@@ -400,3 +400,77 @@ by the advised run, whether it was kept, the best advised variant) and a summary
 it, so a result can be reproduced with `route --advice FILE`. The gate of issue #26 stage 2 is read on the odd half of a set, the even half
 being where an advisor is tuned.
 
+
+## 11. M17: PCBWorld-Bench's real boards and the failing tier B-D boards (2026-10-16, D121, D122)
+
+Records: `bench/records/m17/` (README with all tables; raw `boards.jsonl` of every run).
+
+### 11.1 What PCBWorld-Bench's "679 real boards" are
+
+Doc 18 (A1) took PCBWorld's D3 for an independent second corpus of real boards. Reading the paper (arXiv 2607.05915, the PDF is in the repository clone) and its data
+tools shows it is not: **D3 is derived from PCBench**, the corpus this repository already benchmarks. The authors convert PCBench boards to KiCad 9 (design rules kept, then
+`drc_fix_v9.py` lowers severities to *ignore* and a few rule floors to 0), keep the 679 whose converted human layout is fully connected and has no violation, build a "guide
+board" with one uniform width per net, and split the pool by pad count into D3-A (100 smallest boards), D3-B (287) and D3-C (292). Their evaluation uses fixed test lists
+(`configs/datasets/d3.json`): **99 D3-A boards, 10 D3-B, 10 D3-C**, and publishes results for D3-A and D3-B only (D3-C is "reserved for future research"). All 119 test
+boards are PCBench fixtures here by name (`bench/sets/pcbworld-d3-test.txt`). The PCBWorld repository holds no boards and its conversion needs a KiCad 9 `pcbnew` built from
+their engine; that conversion was not reproduced.
+
+What D3 gives, then, is a fixed, published, pad-count-ordered subset with published baselines, not new boards.
+
+### 11.2 TraceMaker on the 119 test boards
+
+`TM_BINARY=build/dist/src/app/tracemaker python3 bench/run.py --set pcbworld-d3-test --time 120 --jobs 3 --threads 8 --name m17-pcbworld-d3` (the release binary, default
+eight-variant portfolio, KiCad 10.0.6 judge: every connection routed and no error added against the input). `bench/pcbworld_d3.py` prints the tables.
+
+| class | boards | TraceMaker clean | mean routability | boards open | median s | Freerouting 2.5.0-RC12 clean (PCBench nightly) |
+|---|---:|---:|---:|---:|---:|---:|
+| D3-A | 99 | **97** (98.0 %) | 0.994 | 2 | 1.3 | 94 (94.9 %) |
+| D3-B | 10 | **10** (100 %) | 1.000 | 0 | 10.0 | 9 (90.0 %) |
+| D3-C | 10 | **9** (90.0 %) | 0.996 | 1 | 61.4 | 8 (80.0 %) |
+
+The same boards with Freerouting **2.1.0 and the paper's settings** (`-mp 10`, 4 GiB heap, the jar's other defaults; the paper's Table 20), three runs per board from the
+fixture's DSN, session imported (`bench/ses_import.py`) and judged by the same judge (`bench/pcbworld_fr.py`; a run over 600 s counts as a failure: 10 of 357 runs, on four boards):
+
+| class | Freerouting 2.1.0 clean, mean of 3 runs | clean in any of 3 runs | mean routability | TraceMaker clean, Freerouting not | Freerouting clean, TraceMaker not |
+|---|---:|---:|---:|---:|---:|
+| D3-A | 0.670 | 73 (73.7 %) | 0.978 | 24 | 0 |
+| D3-B | 0.500 | 5 (50.0 %) | 0.992 | 5 | 0 |
+| D3-C | 0.200 | 3 (30.0 %) | 0.758 | 6 | 0 |
+
+**Boards lost.** To Freerouting 2.1.0 (this judge): none. To the 2.5.0-RC12 nightly flag: one, D3-A `AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm`, where 3 of 6 connections stay
+open ("boxed in"; the footprint is a row of 0.4 mm strip pads 0.15 to 0.3 mm apart; its stuck report names fixed copper around the pin; no cause beyond that was found). The other
+two boards TraceMaker leaves open, D3-A `memsarray_mems_modules` (9 of 10 routed) and D3-C `kitspace_f-91w` (80 of 83, the 120 s limit), are not clean in the nightly run either, and
+Freerouting 2.1.0 hit the 600 s limit on both in all three runs. Against the paper's other methods (KiCadRoutingTools, OrthoRoute, the agents and the RL policies) no per-board
+result is published, so no board can be named.
+
+**What these numbers do not say.** The paper's Table 3 (Freerouting 2.1.0 0.80 / 0.78 clean pass on D3-A / D3-B, KiCadRoutingTools 0.74 / 0.20, PPO 0.86 / 0.45, GPT-5.4 0.65 / 0.00;
+best of five rollouts selected by the paper's potential function) comes from a different judge: KiCad 9, the converted boards with their patched rule files, absolute violations.
+Freerouting 2.1.0 with the same jar and settings scores 0.670 at one run and 73.7 % over three runs under this repository's judge, against the paper's 0.75 at one run and 0.80 over
+five, so this judge is not the paper's and the paper's rows for the other methods cannot be set beside TraceMaker's. The only like-for-like comparison here is TraceMaker against Freerouting
+2.1.0 under one judge, from one DSN, and it is not the paper's DSN. There is no "better than the paper's methods" claim. D3 test boards are small (median 1.3 s); tier D of this
+repository is the harder test, and doc 18 §8's expectation that A1 "could look good and teach little" holds.
+
+### 11.3 `--txn` and `--relax` on the failing tier B-D boards (C1)
+
+The 33 boards of tiers B, C and D that the 0.9.0 run left open (`bench/sets/pcbench-bd-fail.txt`; 16,935 connections; none added an error). Same work for every arm; KiCad-judged.
+
+| arm (100 M work per variant) | routed | boards better / worse than the base | clean boards | CPU |
+|---|---:|---:|---:|---:|
+| one variant, base | 15,289 | | 0 | 4,858 s |
+| one variant, `--txn 1` | 15,320 (+31) | 7 / 0 | 0 | 3,924 s |
+| one variant, `--relax` (5 rounds of 20 M) | 14,206 (-1,083) | 3 / 28 | 0 | 4,644 s |
+| eight variants, base | 16,105 | | 0 | 77,014 s |
+| eight variants, `--txn 1` | 16,223 (+118) | 15 / 4 (by one connection each) | 0 | 96,039 s |
+| eight variants, `--relax` (5 rounds of 20 M) | 15,596 (-509) | 11 / 16 | **2** | 106,470 s |
+
+- **`--txn 1`** (negotiation as transactions, automatic on breakout boards only) routes more connections on non-breakout boards in both settings: up to +16 on `mechkeys_LFK78`, never more than one fewer on a board.
+  It completes no board that the base leaves open, so clean pass does not move. It costs more CPU for the same work in the portfolio (+25 %).
+- **`--relax`** is a rescue, not a better default: it loses connections on most of these boards (down to -107 on `kitspace_d20_tri_r0.3`) and finishes `kitspace_ardfpga` and
+  `Hardware_Playground_multisensor_cr2032` with no error added, which nothing else did. Taking the better of base and relax per board gives 16,148 routed (+43) and the two clean boards.
+- **Bug found by the experiment:** `--relax` (and `--rounds`, `--round-work`, `--ramp-from`) did nothing with `--variants 1`; the first relax arm was identical to the base on all 33 boards
+  (`bench/records/m17/c1-relax-ignored.md`). They now run a portfolio of one (`tests/integration/round_options.py`).
+- **Not concluded:** whether `--txn 1` as one or two of the eight default variants beats the current default at equal wall time on tiers A to D, which is what changing the default needs;
+  whether a relax pass after a plain run that leaves connections open pays for its time. One seed, one budget, and `mini_mass_prog_bench_prog_rig` hit the one-hour safety stop in the `--txn` and
+  `--relax` arms. Records and caveats: `bench/records/m17/README.md`.
+
+Quick tier with the release binary: 30 of 30 routed boards byte-identical to main's.

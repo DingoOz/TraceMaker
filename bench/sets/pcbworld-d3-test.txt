@@ -1,0 +1,125 @@
+# PCBWorld-Bench D3 test boards (arXiv 2607.05915, Table 3): D3-A 99 easy boards, D3-B 10 medium, D3-C 10 hard (the paper reserves D3-C for future work).
+# D3 is derived from PCBench, so these are our PCBench fixtures by name (the paper's NNNN_ prefix removed). Taken from
+# configs/datasets/d3.json of LGAI-Research/PCBWorld @ b3d62f5, the test split of each difficulty. bench/pcbworld_d3.py reads the class from the comment lines below.
+# D3-A
+rufs__autosave-simple_kicad_schema_and_pcb_v1
+rufs_simple_kicad_schema_and_pcb_v1
+kitspace_grove_adaptor
+S1G-Mod_JST_Adapter
+AVR-Playground_hello_world
+raspberry_pi_pullup_button_pullup_shutdown_button
+raspberry_pi_pullup_button_pullup_shutdown_button(revB)
+CapPCB_CapPcb
+SmartLaserCO2-PCB_WaterCool
+SmartLaserCO2-PCB_OptAdjust
+PixyWirelessShield_Shield PIXY
+kitspace_ir_sensor
+crossover-schiit-stack_xover4schiit
+hardware-designs_m-trigger
+kitspace_tt_opt101_module_b1
+breakout-boards_avr-isp-x2
+Blink-Eras_AVR_ISP_Pogo
+Hardware_Playground_hy_adapter
+CubeSAT-Reaction-Wheel_Edison_Motor_Servo
+Cherry-Mx-Bitboard_Cherry Mx Bitboard
+RPi-PWM-Fan-interface_RPi PWM Fan interface
+OpenVNAVI_motor unit
+hardware-designs_si7021-board
+memsarray_mems_modules
+kitspace_hum_temp_sensor
+PCB_constant_current_ac_hv
+ID-FIX_scanConnect
+hardware-designs_c-trigger
+espeverywhere__autosave-espeverywhere_breakout
+kitspace_sop8breakout
+kitspace_Potentiometer_mount_4LED
+kitspace_Potentiometer_mount_8LED
+breakout-boards_swd-to-wires
+NavigationThing_NavigationThingBacklight
+KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1
+nRF24breakoutBoard_nRF24-breakout
+hardware-designs_spsgrf-board
+PCB_serie_led_strip
+drawduino_drawduino
+oshtimer_transponder
+FogDrive_attiny45_slim
+starsynctrackers_reset_switch
+breakout-boards_swd-and-uart
+blink-errr_blink-errr
+retroreflectors_TANGOFLOCK
+mearm-base-pcb_ServoPCB
+LoLin_Designs_LoLin
+MySRaspiGW_MySRaspiGW
+MySRaspiGW_MySRaspiGW_PA_LNA
+MySRaspiGW_MySRaspiGW_PA_LNA_Pimoroni
+MySRaspiGW_MySRaspiGW_Pimoroni
+breakout-boards_50-to-100
+mechkeys_lfk78-jtag
+induction-hob_temperature-sensor
+dustbox_Dustbox
+nrf2rfm69_nrf2rfm69
+tepmachcha_tepmachcha
+scimpy_powersupply
+marlin-neopixel-bridge_ATtiny85_Marneo
+Paperino_HW_paperino_breakout
+kitspace_temp_breakout
+I2CTempsensor_sensors
+stlinkv2_breakout_stlink_breakout
+kicad-guitar-preamp_Preamp-Instructables
+DiscoDanceFloorV1_BusTerminator
+ESP8266-WS2811-LEDs_ws2811controller_panels
+radio_saw_dcc6c
+AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm
+C-BISCUIT_crowbar
+Raspberry-Pi-Soft-Power-Controller_Switching Supply TPS563208 MCI
+hackyflasher_Flasher
+esp8266_wi07_3_adapter_esp
+z2amiller_sensorboard_programmer
+kitspace_12V5A_breakout
+RPi-ATtiny85-Programmer_rpi_attiny85_programmer
+breakout-boards_usb-5v-3v3
+HaveSome_PCB_HaveSomePCB
+Hardware_Playground_buck_led_driver
+Inkjet_InkjetBreakout
+kitspace_RPi_shield
+everled_everled
+firefly-jar_solar_lamp
+DustSensorShield_DustSensorShield
+kitspace__autosave-nunchuk_breakout
+mini-whip_mini-whip-power-feed
+BB-PWR-8009_BB-PWR-8009_revA
+solar-lanterns_proto1
+DA_Lamp_attiny44a_servo_i2c
+cobwebb-junction-box_CobwebbJunctionBox
+keyboard_converter_adapter_ibm4704_converter_adapter_ibm4704
+rufs_dra818v_breakout_board
+DerKnopf_power-supply
+kitspace_nunchuk_breakout
+kitspace_gas_sensor
+PsuFanController_FanController
+bristle_bot_light_follow_bristle_bot
+MSGEQ7-Breakout-Board_MSGEQ7_Breakout_Board
+SparkSwitch_SparkProtectionSwitch
+smt-zvs-driver_IH10-mc
+# D3-B
+maytal_Maytal
+ottawa-badges-2016_ottawa-badge-tagger-2016
+sensorboard_DiffIR
+MOD-MPU9150_mod-mpu9150
+ATtiny461Breakout_ATTiny461DevBoard
+NiMH-Charger_NiMH Charger
+raspberrypi-3-usb-hub_usb_hub
+kicad-workshop_fancyboard
+mavbridge_mavbridge
+cat-trainer_teensy_base_pcb
+# D3-C
+laptimer58_Chickadee
+induction-hob_temperature-sender
+uedaino_uedaino
+data-manager_data-manager
+kitspace_f-91w
+RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD_negative
+ozinverter_ozinverterkicad
+Brushless_ESC_Brushless_ESC
+RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD
+TOBS_HybridChargeController

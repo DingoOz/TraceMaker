@@ -1,6 +1,8 @@
 # 18 — Candidate features for the roadmap (research and plan)
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-14 after M16, issues #4–#8 and #24 were closed.
+> **Update (2026-10-16): M17 was built and measured (docs/10 §11, D121, D122, `bench/records/m17`). Two statements below are corrected by it: PCBWorld's "679 real boards" (§2, §3, A1) are derived from PCBench, so A1 is
+> not an independent second corpus; and the paper was read in full (§1). The rest of this note is as written on 2026-10-14.**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -18,7 +20,7 @@ Limits, so the ranking is read with them in mind:
   and two guesses about the audience (§7).
 - **Vendor material is self-reported.** Quilter, DeepPCB and Flux publish comparisons of themselves; I found no independent validation [W]
   and quote no vendor number.
-- **PCBWorld's paper was not read in full.** Only the abstract page: its baselines and metric tables are not quoted [W].
+- **PCBWorld's paper was not read in full** when this note was written (only the abstract page); it was read in full on 2026-10-16 for M17, and its D3 set is derived from PCBench (docs/10 §11.1).
 - **Nothing was run for this note** except reading. No candidate has a measurement of its own gain yet; each carries the experiment that
   would give one.
 

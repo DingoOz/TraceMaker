@@ -1,0 +1,12 @@
+ok   KiCad started and opened its API socket
+ok   the API answers (first-run wizard dismissed)
+plugin from build/release-files/tracemaker-0.9.0-pcm-linux-x86_64.zip: engine /home/dingo/Programming/TraceMaker/build/gui-pkg/pkg/plugins/bin/tracemaker (executable bit: False)
+routed 117/141 connections, 498 tracks, 15 vias, pitch 0.100 mm, 49218313 expansions, 71.45 s (best variant 60.03 s)
+TraceMaker: added 498 tracks and 15 vias
+ok   the plugin ran against the live board
+ok   copper changed in the open board: tracks 140 -> 638; vias 19 -> 34
+ok   one undo remove the whole result: 140 tracks, 19 vias
+ok   redo brings it back
+ok   KiCad DRC of the board saved from the GUI: unconnected 148 -> 28
+ok   no new DRC errors (none)
+exit=0

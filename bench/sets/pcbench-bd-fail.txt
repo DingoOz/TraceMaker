@@ -1,0 +1,38 @@
+# The 33 PCBench boards of tiers B-D (40 + 30 + 22 boards of the 0.9.0 run, 120 s, 8 variants, `bench/results/rel090-tier{B,C,D}`) that were not clean:
+# all 33 left connections open and none added an error. The boards of M17's C1 experiment (`--txn`, `--relax`; doc 10 section 11).
+# tier B
+EtherCAT_shield_v1_EtherCAT_shield_v1
+Hardware_Playground_E3_Pcb_rev0.3
+Hardware_Playground_serial_gw_ATMEGA328P
+MicroMaple_MicroMaple
+fifogfx_c64cart
+kitspace_OtterPill
+kitspace_ardfpga
+kitspace_teensy-fx
+kitspace_test-jig
+memsarray_mems_modules
+poncho_fpga_fpga-dongle
+# tier C
+96boards-robomezzi_96boards-robomezzi
+DronPi_dronPi
+ErgodoneWithHole_ErgoDone
+Hardware_Playground_multisensor_cr2032
+Hardware_Playground_sd_wav_pcm5100
+P8000_WDC_Emulator_P8000_WDC_Emulator
+PCIE-to-MXM-Adapter_PCIEx1toMXM3.0
+kitspace_d20_tri_r0.3
+mechkeys_58r-mxalps
+motor-high-current-sensors_CurrentSensorPCB_line
+rvi_v2x_hardware_V2X
+zx-sizif-512-ext_sizif512ext
+# tier D
+Aleste-520EX_aleste
+CoreOne-xCORE200-Original_CoreOne
+KiCad-Library_Teensy_test_layout
+LeeChee_1800
+MonApollo_analog-board
+TCKB_Kicad_TCKB
+dorkyboard_keyboard
+front-end-modules_LimeSDR_Sony
+mechkeys_LFK78
+mini_mass_prog_bench_prog_rig
