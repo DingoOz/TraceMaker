@@ -1,0 +1,45 @@
+{
+ "sample031": {
+  "engine": {
+   "copper_edge_clearance": 65
+  },
+  "kicad": {
+   "copper_edge_clearance": 65,
+   "lib_footprint_issues": 66
+  }
+ },
+ "sample007": {
+  "engine": {
+   "clearance": 68,
+   "copper_edge_clearance": 72
+  },
+  "kicad": {
+   "clearance": 68,
+   "copper_edge_clearance": 72,
+   "lib_footprint_issues": 73
+  }
+ },
+ "sample191": {
+  "engine": {
+   "clearance": 65,
+   "copper_edge_clearance": 69
+  },
+  "kicad": {
+   "clearance": 65,
+   "copper_edge_clearance": 69,
+   "lib_footprint_issues": 70
+  }
+ },
+ "sample039": {
+  "engine": {
+   "copper_edge_clearance": 78,
+   "shorting_items": 74
+  },
+  "kicad": {
+   "copper_edge_clearance": 78,
+   "lib_footprint_issues": 79,
+   "shorting_items": 74,
+   "solder_mask_bridge": 74
+  }
+ }
+}
