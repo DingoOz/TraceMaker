@@ -4,7 +4,7 @@
 
   build/plugin-venv/bin/python scripts/kicad_gui_roundtrip.py
       [--board bench/data/kicad/demos/multichannel/multichannel_mixer-unrouted.kicad_pcb]
-      [--work-dir build/gui] [--route-args "--time 60 --threads 8 --no-kb"] [--place MODE]
+      [--work-dir build/gui] [--route-args "--time 60 --threads 8 --no-kb"] [--place MODE] [--package tracemaker-V-pcm-linux-x86_64.zip]
 
 What it does: starts Xvfb, runs `pcbnew <board>` from the kicad/kicad Docker image on that display with the IPC API
 enabled, clicks through KiCad's first-run wizard, runs kicad_plugin/tracemaker_route.py against the live board, and
@@ -36,6 +36,7 @@ def main() -> int:
     ap.add_argument("--board", default=str(ROOT / "bench/data/kicad/demos/multichannel/multichannel_mixer-unrouted.kicad_pcb"))
     ap.add_argument("--work-dir", default=str(ROOT / "build/gui"))
     ap.add_argument("--route-args", default="--time 60 --threads 8 --no-kb")
+    ap.add_argument("--package", help="run the plugin from this PCM package (scripts/make_release.py) unpacked, with the engine it carries and no TRACEMAKER variable")
     ap.add_argument("--place", default="", help="also let the plugin move footprints first (TRACEMAKER_PLACE: refine, auto, ...)")
     a = ap.parse_args()
     try:
@@ -136,9 +137,18 @@ def main() -> int:
         shot("1-before.png")
         env = dict(os.environ, KICAD_API_SOCKET=sock, TMPDIR=str(g / "tmp"), TRACEMAKER=str(ROOT / "build/release/src/app/tracemaker"),
                    TRACEMAKER_NO_BINDINGS="1", TRACEMAKER_ARGS=a.route_args)
+        plugin_py = ROOT / "kicad_plugin/tracemaker_route.py"
+        if a.package:  # what KiCad's Plugin and Content Manager unpacks: no executable bits kept, the engine is the bundled one
+            import zipfile
+            with zipfile.ZipFile(a.package) as z:
+                z.extractall(g / "pkg")
+            plugin_py = g / "pkg/plugins/tracemaker_route.py"
+            env.pop("TRACEMAKER")
+            env.pop("PYTHONPATH", None)
+            print(f"plugin from {a.package}: engine {g / 'pkg/plugins/bin/tracemaker'} (executable bit: {os.access(g / 'pkg/plugins/bin/tracemaker', os.X_OK)})")
         if a.place:
             env["TRACEMAKER_PLACE"] = a.place
-        p = subprocess.run([sys.executable, str(ROOT / "kicad_plugin/tracemaker_route.py")], env=env, capture_output=True, text=True, timeout=3600)
+        p = subprocess.run([sys.executable, str(plugin_py)], env=env, capture_output=True, text=True, timeout=3600)
         print("\n".join(line for line in p.stdout.splitlines() if line.startswith(("routed", "TraceMaker"))))
         if p.returncode != 0:
             print(p.stderr[-1500:])

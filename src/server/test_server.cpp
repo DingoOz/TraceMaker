@@ -326,6 +326,21 @@ struct WebDir {
 
 }  // namespace
 
+TEST_CASE("the viewer is found through TM_VIEW_DIR when it holds an index.html, and the variable is ignored when it does not", "[server]") {
+  WebDir w;  // a directory with an index.html
+  const auto empty = std::filesystem::temp_directory_path() / ("tm_view_empty_" + std::to_string(::getpid()));
+  std::filesystem::create_directories(empty);
+  const char* before = std::getenv("TM_VIEW_DIR");
+  const std::string saved = before != nullptr ? before : "";
+  ::setenv("TM_VIEW_DIR", w.dir.c_str(), 1);
+  CHECK(server::default_web_root() == w.dir.string());
+  ::setenv("TM_VIEW_DIR", empty.c_str(), 1);
+  CHECK(server::default_web_root() != empty.string());  // no index.html there: the next candidate is used
+  if (before != nullptr) ::setenv("TM_VIEW_DIR", saved.c_str(), 1);
+  else ::unsetenv("TM_VIEW_DIR");
+  std::filesystem::remove_all(empty);
+}
+
 TEST_CASE("viewer server: by default only this machine can reach it, and a page on another site cannot read the stream", "[server][security]") {
   WebDir w;
   CHECK(server::ServerOptions{}.host == "127.0.0.1");  // the default, not 0.0.0.0

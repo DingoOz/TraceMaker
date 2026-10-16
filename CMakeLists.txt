@@ -56,6 +56,7 @@ if(TM_ENABLE_METAL AND NOT APPLE)
   message(FATAL_ERROR "TM_ENABLE_METAL requires Apple platforms")
 endif()
 option(TM_BUILD_TESTS "Build unit tests" ON)
+option(TM_STATIC_RELEASE "Link libstdc++, libgcc, SQLite and zstd statically so a release binary runs where those libraries are missing or older (D121)" OFF)
 option(TM_WERROR "Treat warnings as errors" ON)
 option(TM_BUILD_PYTHON "Build the Python module `tracemaker` (needs pybind11; skipped with a message if missing)" ON)
 
@@ -114,6 +115,10 @@ if(TM_BUILD_PYTHON)
   endif()
 endif()
 
+if(TM_STATIC_RELEASE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  add_link_options(-static-libstdc++ -static-libgcc)
+endif()
+
 add_subdirectory(src)
 if(TM_BUILD_PYTHON)
   add_subdirectory(bindings)
@@ -123,3 +128,11 @@ if(TM_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
 endif()
+
+# What a release carries (scripts/make_release.py: cmake --install --strip --prefix DIR). The viewer is the built
+# viewer/dist (npm run build); the binary finds it as ../share/tracemaker/viewer (default_web_root, D121).
+install(TARGETS tracemaker tracemaker-place tracemaker-view RUNTIME DESTINATION bin)
+install(DIRECTORY viewer/dist/ DESTINATION share/tracemaker/viewer OPTIONAL PATTERN "*.map" EXCLUDE)
+install(FILES tests/boards/plane_smd/plane_smd.kicad_pcb tests/boards/plane_smd/plane_smd.kicad_pro DESTINATION share/tracemaker/examples/plane_smd)
+install(DIRECTORY skills/ DESTINATION share/tracemaker/skills)
+install(FILES LICENSE NOTICE README.md DESTINATION share/doc/tracemaker)

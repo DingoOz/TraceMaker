@@ -1,0 +1,101 @@
+# Release files (M17, D121): a Linux x86_64 tarball and the KiCad plugin package, built in the same container as CI,
+# installed in a clean Ubuntu 24.04 container with no compiler to route the example board, and (on a tag) attached
+# to the GitHub release.
+#
+# On a pull request that touches the packaging, and by hand (Actions > Release files > Run workflow), the files are
+# built and tested and kept as workflow artifacts; nothing is published. A tag `v*` pushed by the owner builds them
+# again and attaches them to the tag's release (created as a draft when it does not exist yet, so the owner reads the
+# notes and publishes it).
+name: Release files
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - '.github/workflows/release.yml'
+      - 'scripts/make_release.py'
+      - 'scripts/make_pcm_package.py'
+      - 'scripts/test_release_install.py'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'kicad_plugin/**'
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build the release files (Linux x86_64)
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 60
+    steps:
+      - name: Install build dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            g++-15 cmake ninja-build git ca-certificates python3 binutils nodejs npm \
+            libboost-dev libboost-system-dev libeigen3-dev nlohmann-json3-dev libcli11-dev \
+            libsqlite3-dev libzstd-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Build and package
+        run: python3 scripts/make_release.py --build-viewer --out release-files
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-files
+          path: release-files/*
+          if-no-files-found: error
+
+  install-test:
+    name: Install on a machine with no compiler and route the example
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-files
+          path: release-files
+
+      - name: Ubuntu 24.04, no compiler, no Python
+        run: |
+          mkdir -p build
+          python3 scripts/test_release_install.py release-files/tracemaker-*-linux-x86_64.tar.gz release-files/tracemaker-*-pcm-linux-x86_64.zip --image ubuntu:24.04
+
+  publish:
+    name: Attach the files to the release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: install-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-files
+          path: release-files
+
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            gh release upload "$TAG" release-files/* --repo "$REPO" --clobber
+          else
+            gh release create "$TAG" release-files/* --repo "$REPO" --draft --verify-tag --title "TraceMaker ${TAG#v}" \
+              --notes "Linux x86_64 tarball and KiCad 10 plugin package. See INSTALL.txt in the tarball; SHA256SUMS lists the checksums."
+          fi
