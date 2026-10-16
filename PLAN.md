@@ -40,7 +40,7 @@
 | 8 | [docs/08-kicad-integration.md](docs/08-kicad-integration.md) | File I/O, `kicad-cli`, IPC plugin, DRC judge |
 | 9 | [docs/09-visualization.md](docs/09-visualization.md) | Live viewer, streaming, replay, visual design |
 | 10 | [docs/10-benchmarking.md](docs/10-benchmarking.md) | Datasets, metrics, baselines, harness, gates |
-| 11 | [docs/11-roadmap.md](docs/11-roadmap.md) | Milestones M0–M13, M16 and the planned M17–M21 with gates |
+| 11 | [docs/11-roadmap.md](docs/11-roadmap.md) | Milestones M0–M13, M16–M18 (M17 built, its CI run pending; M18 stages A–B) and the planned M19–M21 with gates |
 | 12 | [docs/12-decisions.md](docs/12-decisions.md) | Decision log and risks |
 | 14 | [docs/14-placement-test-plan.md](docs/14-placement-test-plan.md) | Placement test plan: levels, datasets, metrics, baselines, gates |
 | 16 | [docs/16-bga-breakout-plan.md](docs/16-bga-breakout-plan.md) | **M14 + M15, with measured outcomes:** matching tscircuit on its BGA breakout sets (`srj19`, `srj20`, `fanout31`); hypotheses with experiments, negotiation as transactions (§12); research in [research/bga-routing-2026-10.md](research/bga-routing-2026-10.md) |

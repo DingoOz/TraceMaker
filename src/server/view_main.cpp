@@ -354,7 +354,7 @@ int main(int argc, char** argv) {
   app.add_option("--host", host, "bind address (default $TM_VIEW_HOST, else 127.0.0.1: this machine only; 0.0.0.0 or a LAN address lets other machines connect and then needs a token)");
   app.add_option("--token", token, "token for a viewer other machines can reach (16+ characters; default a random one, printed in the URL)");
   app.add_flag("--insecure", insecure, "serve a viewer other machines can reach WITHOUT a token");
-  app.add_option("--web", web, "directory of the built viewer (default <repo>/viewer/dist)");
+  app.add_option("--web", web, "directory of the built viewer (default $TM_VIEW_DIR, else ../share/tracemaker/viewer beside the binary, else <repo>/viewer/dist)");
   app.add_flag("--demo", demo, "stream synthetic routing events (tracks are cleared and re-routed in a loop)");
   app.add_flag("--keep-tracks", keep, "with --demo: keep the board's existing tracks and vias");
   app.add_option("--replay", replay, "replay a recording made with `tracemaker route --record FILE`")->check(CLI::ExistingFile);

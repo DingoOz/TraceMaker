@@ -1,0 +1,8 @@
+{
+ "set": "pcbworld-d3-test",
+ "boards": 119,
+ "runs": 357,
+ "clean_pass": 0.6162464985994398,
+ "completion": 0.960932492997199,
+ "seconds": 10694.2
+}

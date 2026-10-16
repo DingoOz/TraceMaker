@@ -68,7 +68,7 @@ class ViewerServer final : public events::Sink {
   std::unique_ptr<Impl> impl_;
 };
 
-// Default directory of the built viewer: <repo>/viewer/dist.
+// Default directory of the built viewer: $TM_VIEW_DIR, else <prefix>/share/tracemaker/viewer for a binary in <prefix>/bin, else <repo>/viewer/dist.
 std::string default_web_root();
 
 }  // namespace tmk::server

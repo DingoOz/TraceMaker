@@ -764,7 +764,19 @@ std::string default_host() {
   return e != nullptr && *e != '\0' ? std::string(e) : std::string("127.0.0.1");
 }
 
-std::string default_web_root() { return (fs::path(TM_SOURCE_DIR) / "viewer" / "dist").string(); }
+// Where the built viewer is: TM_VIEW_DIR, else share/tracemaker/viewer beside the binary's bin/ (an installed release, D121),
+// else the source tree the binary was built from. A candidate counts only if it holds an index.html.
+std::string default_web_root() {
+  std::vector<fs::path> candidates;
+  if (const char* e = std::getenv("TM_VIEW_DIR"); e != nullptr && *e != '\0') candidates.emplace_back(e);
+  std::error_code ec;
+  const fs::path exe = fs::read_symlink("/proc/self/exe", ec);  // Linux; elsewhere the release layout is not looked for
+  if (!ec && exe.has_parent_path()) candidates.push_back(exe.parent_path().parent_path() / "share" / "tracemaker" / "viewer");
+  candidates.push_back(fs::path(TM_SOURCE_DIR) / "viewer" / "dist");
+  for (const auto& c : candidates)
+    if (fs::exists(c / "index.html", ec)) return c.string();
+  return candidates.back().string();  // none found: the caller says index.html is missing, naming this path
+}
 
 struct ViewerServer::Impl {
   Hub hub;

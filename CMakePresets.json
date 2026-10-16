@@ -78,6 +78,16 @@
       }
     },
     {
+      "name": "dist",
+      "inherits": "cpu-only",
+      "displayName": "Release binaries: no CUDA, libstdc++, SQLite and zstd linked statically, no tests (scripts/make_release.py)",
+      "cacheVariables": {
+        "TM_STATIC_RELEASE": "ON",
+        "TM_BUILD_TESTS": "OFF",
+        "TM_BUILD_PYTHON": "OFF"
+      }
+    },
+    {
       "name": "asan",
       "inherits": "base",
       "displayName": "ASan + UBSan (CPU only)",
@@ -118,6 +128,10 @@
     {
       "name": "cpu-only",
       "configurePreset": "cpu-only"
+    },
+    {
+      "name": "dist",
+      "configurePreset": "dist"
     },
     {
       "name": "asan",

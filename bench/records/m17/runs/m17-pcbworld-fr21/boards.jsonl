@@ -1,0 +1,357 @@
+{"board": "rufs__autosave-simple_kicad_schema_and_pcb_v1", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 50.4}
+{"board": "rufs_simple_kicad_schema_and_pcb_v1", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 51.5}
+{"board": "rufs_simple_kicad_schema_and_pcb_v1", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 50.4}
+{"board": "kitspace_grove_adaptor", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 16.8}
+{"board": "rufs_simple_kicad_schema_and_pcb_v1", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 50.4}
+{"board": "rufs__autosave-simple_kicad_schema_and_pcb_v1", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 51.5}
+{"board": "rufs__autosave-simple_kicad_schema_and_pcb_v1", "run": 2, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 50.4}
+{"board": "kitspace_grove_adaptor", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 16.8}
+{"board": "kitspace_grove_adaptor", "run": 2, "seconds": 3.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 17.7}
+{"board": "S1G-Mod_JST_Adapter", "run": 0, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 3}, "unconnected": 0, "vias": 0, "length_mm": 59.5}
+{"board": "S1G-Mod_JST_Adapter", "run": 1, "seconds": 3.5, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 3}, "unconnected": 0, "vias": 0, "length_mm": 59.5}
+{"board": "S1G-Mod_JST_Adapter", "run": 2, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 3}, "unconnected": 0, "vias": 0, "length_mm": 59.6}
+{"board": "raspberry_pi_pullup_button_pullup_shutdown_button", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 59.1}
+{"board": "AVR-Playground_hello_world", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 135.6}
+{"board": "AVR-Playground_hello_world", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 144.8}
+{"board": "AVR-Playground_hello_world", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 144.8}
+{"board": "raspberry_pi_pullup_button_pullup_shutdown_button", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 52.4}
+{"board": "raspberry_pi_pullup_button_pullup_shutdown_button", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 52.8}
+{"board": "raspberry_pi_pullup_button_pullup_shutdown_button(revB)", "run": 0, "seconds": 3.5, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 53.5}
+{"board": "raspberry_pi_pullup_button_pullup_shutdown_button(revB)", "run": 1, "seconds": 3.5, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 53.5}
+{"board": "raspberry_pi_pullup_button_pullup_shutdown_button(revB)", "run": 2, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 53.5}
+{"board": "SmartLaserCO2-PCB_WaterCool", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 107.2}
+{"board": "SmartLaserCO2-PCB_WaterCool", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 112.0}
+{"board": "SmartLaserCO2-PCB_WaterCool", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 109.9}
+{"board": "SmartLaserCO2-PCB_OptAdjust", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 79.3}
+{"board": "SmartLaserCO2-PCB_OptAdjust", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 79.3}
+{"board": "CapPCB_CapPcb", "run": 2, "seconds": 9.9, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 75.0}
+{"board": "CapPCB_CapPcb", "run": 0, "seconds": 10.4, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 75.0}
+{"board": "CapPCB_CapPcb", "run": 1, "seconds": 10.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 75.3}
+{"board": "SmartLaserCO2-PCB_OptAdjust", "run": 2, "seconds": 3.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 79.3}
+{"board": "PixyWirelessShield_Shield PIXY", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 153.2}
+{"board": "PixyWirelessShield_Shield PIXY", "run": 2, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 163.5}
+{"board": "kitspace_ir_sensor", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 229.5}
+{"board": "PixyWirelessShield_Shield PIXY", "run": 1, "seconds": 4.1, "clean": false, "completion": 0.8, "router_errors": {}, "unconnected": 1, "vias": 0, "length_mm": 120.7}
+{"board": "kitspace_ir_sensor", "run": 1, "seconds": 3.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 229.7}
+{"board": "kitspace_ir_sensor", "run": 2, "seconds": 3.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 228.5}
+{"board": "crossover-schiit-stack_xover4schiit", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 174.5}
+{"board": "crossover-schiit-stack_xover4schiit", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 170.9}
+{"board": "hardware-designs_m-trigger", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 98.9}
+{"board": "crossover-schiit-stack_xover4schiit", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 171.0}
+{"board": "hardware-designs_m-trigger", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 100.9}
+{"board": "kitspace_tt_opt101_module_b1", "run": 0, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 63.2}
+{"board": "kitspace_tt_opt101_module_b1", "run": 1, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 61.3}
+{"board": "kitspace_tt_opt101_module_b1", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 63.2}
+{"board": "breakout-boards_avr-isp-x2", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 42.2}
+{"board": "breakout-boards_avr-isp-x2", "run": 2, "seconds": 3.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 42.2}
+{"board": "breakout-boards_avr-isp-x2", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 42.2}
+{"board": "Blink-Eras_AVR_ISP_Pogo", "run": 0, "seconds": 3.7, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 6}, "unconnected": 0, "vias": 0, "length_mm": 97.0}
+{"board": "Blink-Eras_AVR_ISP_Pogo", "run": 1, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 7}, "unconnected": 0, "vias": 0, "length_mm": 97.0}
+{"board": "Blink-Eras_AVR_ISP_Pogo", "run": 2, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 6}, "unconnected": 0, "vias": 0, "length_mm": 97.0}
+{"board": "CubeSAT-Reaction-Wheel_Edison_Motor_Servo", "run": 0, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 0, "vias": 1, "length_mm": 118.5}
+{"board": "CubeSAT-Reaction-Wheel_Edison_Motor_Servo", "run": 1, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 0, "vias": 1, "length_mm": 118.5}
+{"board": "Hardware_Playground_hy_adapter", "run": 0, "seconds": 7.0, "clean": false, "completion": 0.8333, "router_errors": {"copper_edge_clearance": 1}, "unconnected": 1, "vias": 3, "length_mm": 55.6}
+{"board": "CubeSAT-Reaction-Wheel_Edison_Motor_Servo", "run": 2, "seconds": 4.4, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 0, "vias": 1, "length_mm": 118.5}
+{"board": "Cherry-Mx-Bitboard_Cherry Mx Bitboard", "run": 0, "seconds": 3.9, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 69.3}
+{"board": "Hardware_Playground_hy_adapter", "run": 2, "seconds": 7.7, "clean": false, "completion": 0.8333, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 1, "vias": 3, "length_mm": 52.1}
+{"board": "hardware-designs_m-trigger", "run": 1, "seconds": 18.1, "clean": false, "completion": 0.875, "router_errors": {}, "unconnected": 1, "vias": 0, "length_mm": 81.3}
+{"board": "Cherry-Mx-Bitboard_Cherry Mx Bitboard", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 73.3}
+{"board": "Cherry-Mx-Bitboard_Cherry Mx Bitboard", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 73.3}
+{"board": "RPi-PWM-Fan-interface_RPi PWM Fan interface", "run": 0, "seconds": 3.7, "clean": false, "completion": 1.0, "router_errors": {"shorting_items": 1, "solder_mask_bridge": 8}, "unconnected": 0, "vias": 0, "length_mm": 70.1}
+{"board": "RPi-PWM-Fan-interface_RPi PWM Fan interface", "run": 1, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"clearance": 1, "solder_mask_bridge": 8}, "unconnected": 0, "vias": 0, "length_mm": 70.1}
+{"board": "RPi-PWM-Fan-interface_RPi PWM Fan interface", "run": 2, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"clearance": 1, "solder_mask_bridge": 8}, "unconnected": 0, "vias": 0, "length_mm": 70.3}
+{"board": "OpenVNAVI_motor unit", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 63.9}
+{"board": "OpenVNAVI_motor unit", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 58.7}
+{"board": "OpenVNAVI_motor unit", "run": 2, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 59.0}
+{"board": "hardware-designs_si7021-board", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 111.5}
+{"board": "hardware-designs_si7021-board", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 113.9}
+{"board": "hardware-designs_si7021-board", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 112.1}
+{"board": "kitspace_hum_temp_sensor", "run": 0, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 98.6}
+{"board": "kitspace_hum_temp_sensor", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 92.3}
+{"board": "kitspace_hum_temp_sensor", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 92.2}
+{"board": "Hardware_Playground_hy_adapter", "run": 1, "seconds": 22.2, "clean": false, "completion": 0.8333, "router_errors": {"copper_edge_clearance": 1}, "unconnected": 1, "vias": 3, "length_mm": 51.8}
+{"board": "PCB_constant_current_ac_hv", "run": 0, "seconds": 3.8, "clean": false, "completion": 1.0, "router_errors": {"clearance": 4, "shorting_items": 3}, "unconnected": 0, "vias": 0, "length_mm": 140.8}
+{"board": "ID-FIX_scanConnect", "run": 0, "seconds": 3.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 50.8}
+{"board": "PCB_constant_current_ac_hv", "run": 1, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"clearance": 4, "shorting_items": 2}, "unconnected": 0, "vias": 0, "length_mm": 138.3}
+{"board": "PCB_constant_current_ac_hv", "run": 2, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"clearance": 1, "shorting_items": 3}, "unconnected": 0, "vias": 0, "length_mm": 136.8}
+{"board": "ID-FIX_scanConnect", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 50.8}
+{"board": "ID-FIX_scanConnect", "run": 2, "seconds": 3.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 51.9}
+{"board": "hardware-designs_c-trigger", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 86.6}
+{"board": "hardware-designs_c-trigger", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 86.6}
+{"board": "hardware-designs_c-trigger", "run": 1, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 85.5}
+{"board": "espeverywhere__autosave-espeverywhere_breakout", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 137.3}
+{"board": "espeverywhere__autosave-espeverywhere_breakout", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 135.6}
+{"board": "espeverywhere__autosave-espeverywhere_breakout", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 135.6}
+{"board": "kitspace_sop8breakout", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 34.6}
+{"board": "kitspace_sop8breakout", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 34.9}
+{"board": "kitspace_sop8breakout", "run": 2, "seconds": 3.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 34.6}
+{"board": "kitspace_Potentiometer_mount_4LED", "run": 0, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 198.2}
+{"board": "kitspace_Potentiometer_mount_4LED", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 201.7}
+{"board": "kitspace_Potentiometer_mount_4LED", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 196.4}
+{"board": "kitspace_Potentiometer_mount_8LED", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 313.2}
+{"board": "kitspace_Potentiometer_mount_8LED", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 313.2}
+{"board": "kitspace_Potentiometer_mount_8LED", "run": 2, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 313.2}
+{"board": "breakout-boards_swd-to-wires", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 99.2}
+{"board": "breakout-boards_swd-to-wires", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 106.4}
+{"board": "breakout-boards_swd-to-wires", "run": 1, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 101.3}
+{"board": "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1", "run": 0, "seconds": 3.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 191.1}
+{"board": "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 194.3}
+{"board": "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1", "run": 2, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 194.3}
+{"board": "nRF24breakoutBoard_nRF24-breakout", "run": 0, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 10}, "unconnected": 0, "vias": 0, "length_mm": 91.0}
+{"board": "nRF24breakoutBoard_nRF24-breakout", "run": 1, "seconds": 4.3, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 10}, "unconnected": 0, "vias": 0, "length_mm": 89.3}
+{"board": "nRF24breakoutBoard_nRF24-breakout", "run": 2, "seconds": 4.3, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 10}, "unconnected": 0, "vias": 0, "length_mm": 89.2}
+{"board": "hardware-designs_spsgrf-board", "run": 0, "seconds": 4.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 5, "length_mm": 178.6}
+{"board": "hardware-designs_spsgrf-board", "run": 1, "seconds": 5.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 5, "length_mm": 210.0}
+{"board": "PCB_serie_led_strip", "run": 0, "seconds": 3.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 39.1}
+{"board": "hardware-designs_spsgrf-board", "run": 2, "seconds": 4.9, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 201.1}
+{"board": "NavigationThing_NavigationThingBacklight", "run": 2, "seconds": 31.6, "clean": false, "completion": 0.8571, "router_errors": {}, "unconnected": 2, "vias": 0, "length_mm": 49.5}
+{"board": "PCB_serie_led_strip", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 39.1}
+{"board": "PCB_serie_led_strip", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 39.1}
+{"board": "drawduino_drawduino", "run": 0, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 223.8}
+{"board": "NavigationThing_NavigationThingBacklight", "run": 1, "seconds": 42.7, "clean": false, "completion": 0.6429, "router_errors": {}, "unconnected": 5, "vias": 0, "length_mm": 28.5}
+{"board": "drawduino_drawduino", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 218.0}
+{"board": "drawduino_drawduino", "run": 2, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 1}, "unconnected": 0, "vias": 1, "length_mm": 216.4}
+{"board": "oshtimer_transponder", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 68.6}
+{"board": "NavigationThing_NavigationThingBacklight", "run": 0, "seconds": 49.1, "clean": false, "completion": 0.3571, "router_errors": {}, "unconnected": 9, "vias": 0, "length_mm": 16.3}
+{"board": "oshtimer_transponder", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 78.3}
+{"board": "FogDrive_attiny45_slim", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 52.5}
+{"board": "oshtimer_transponder", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 71.4}
+{"board": "FogDrive_attiny45_slim", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 52.5}
+{"board": "FogDrive_attiny45_slim", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 52.5}
+{"board": "starsynctrackers_reset_switch", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 79.5}
+{"board": "starsynctrackers_reset_switch", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 79.0}
+{"board": "starsynctrackers_reset_switch", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 78.4}
+{"board": "breakout-boards_swd-and-uart", "run": 0, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 127.0}
+{"board": "breakout-boards_swd-and-uart", "run": 1, "seconds": 4.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 113.9}
+{"board": "breakout-boards_swd-and-uart", "run": 2, "seconds": 5.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 3, "length_mm": 129.1}
+{"board": "blink-errr_blink-errr", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 160.1}
+{"board": "blink-errr_blink-errr", "run": 1, "seconds": 5.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 0, "vias": 3, "length_mm": 174.9}
+{"board": "blink-errr_blink-errr", "run": 2, "seconds": 4.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 161.8}
+{"board": "retroreflectors_TANGOFLOCK", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 124.4}
+{"board": "retroreflectors_TANGOFLOCK", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 124.4}
+{"board": "retroreflectors_TANGOFLOCK", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 125.7}
+{"board": "LoLin_Designs_LoLin", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 217.7}
+{"board": "LoLin_Designs_LoLin", "run": 0, "seconds": 4.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 230.0}
+{"board": "mearm-base-pcb_ServoPCB", "run": 2, "seconds": 7.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 33}, "unconnected": 0, "vias": 3, "length_mm": 434.3}
+{"board": "mearm-base-pcb_ServoPCB", "run": 0, "seconds": 9.8, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 24}, "unconnected": 0, "vias": 2, "length_mm": 412.2}
+{"board": "mearm-base-pcb_ServoPCB", "run": 1, "seconds": 8.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 22}, "unconnected": 0, "vias": 3, "length_mm": 407.3}
+{"board": "LoLin_Designs_LoLin", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 221.4}
+{"board": "MySRaspiGW_MySRaspiGW", "run": 0, "seconds": 4.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 6}, "unconnected": 0, "vias": 2, "length_mm": 108.0}
+{"board": "MySRaspiGW_MySRaspiGW", "run": 1, "seconds": 4.7, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 4}, "unconnected": 0, "vias": 3, "length_mm": 94.5}
+{"board": "MySRaspiGW_MySRaspiGW", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 2, "length_mm": 100.6}
+{"board": "MySRaspiGW_MySRaspiGW_PA_LNA", "run": 0, "seconds": 4.4, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 2, "length_mm": 107.7}
+{"board": "MySRaspiGW_MySRaspiGW_PA_LNA", "run": 2, "seconds": 4.0, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 5}, "unconnected": 0, "vias": 3, "length_mm": 87.4}
+{"board": "MySRaspiGW_MySRaspiGW_PA_LNA", "run": 1, "seconds": 5.7, "clean": false, "completion": 0.9231, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 1, "vias": 2, "length_mm": 94.5}
+{"board": "MySRaspiGW_MySRaspiGW_PA_LNA_Pimoroni", "run": 0, "seconds": 4.7, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 5}, "unconnected": 0, "vias": 3, "length_mm": 105.2}
+{"board": "MySRaspiGW_MySRaspiGW_Pimoroni", "run": 1, "seconds": 5.3, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 6}, "unconnected": 0, "vias": 3, "length_mm": 111.7}
+{"board": "MySRaspiGW_MySRaspiGW_Pimoroni", "run": 0, "seconds": 7.7, "clean": false, "completion": 0.9231, "router_errors": {}, "unconnected": 1, "vias": 2, "length_mm": 89.0}
+{"board": "breakout-boards_50-to-100", "run": 0, "seconds": 4.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 114.6}
+{"board": "breakout-boards_50-to-100", "run": 1, "seconds": 4.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 3, "length_mm": 135.3}
+{"board": "breakout-boards_50-to-100", "run": 2, "seconds": 5.0, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 6}, "unconnected": 0, "vias": 2, "length_mm": 150.9}
+{"board": "mechkeys_lfk78-jtag", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 124.0}
+{"board": "MySRaspiGW_MySRaspiGW_PA_LNA_Pimoroni", "run": 1, "seconds": 23.7, "clean": false, "completion": 0.9231, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 1, "vias": 2, "length_mm": 106.1}
+{"board": "mechkeys_lfk78-jtag", "run": 1, "seconds": 3.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 115.4}
+{"board": "mechkeys_lfk78-jtag", "run": 2, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 124.8}
+{"board": "induction-hob_temperature-sensor", "run": 2, "seconds": 7.2, "clean": false, "completion": 0.8, "router_errors": {"copper_edge_clearance": 8}, "unconnected": 3, "vias": 7, "length_mm": 41.9}
+{"board": "dustbox_Dustbox", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 261.9}
+{"board": "dustbox_Dustbox", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 261.2}
+{"board": "induction-hob_temperature-sensor", "run": 0, "seconds": 23.6, "clean": false, "completion": 0.8667, "router_errors": {"copper_edge_clearance": 9}, "unconnected": 2, "vias": 5, "length_mm": 40.8}
+{"board": "MySRaspiGW_MySRaspiGW_PA_LNA_Pimoroni", "run": 2, "seconds": 51.8, "clean": false, "completion": 0.9231, "router_errors": {}, "unconnected": 1, "vias": 2, "length_mm": 87.7}
+{"board": "dustbox_Dustbox", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 261.2}
+{"board": "nrf2rfm69_nrf2rfm69", "run": 0, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 9}, "unconnected": 0, "vias": 5, "length_mm": 181.2}
+{"board": "MySRaspiGW_MySRaspiGW_Pimoroni", "run": 2, "seconds": 48.7, "clean": false, "completion": 0.9231, "router_errors": {"copper_edge_clearance": 2}, "unconnected": 1, "vias": 3, "length_mm": 99.0}
+{"board": "nrf2rfm69_nrf2rfm69", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 3, "length_mm": 179.2}
+{"board": "nrf2rfm69_nrf2rfm69", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 169.0}
+{"board": "tepmachcha_tepmachcha", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 202.7}
+{"board": "tepmachcha_tepmachcha", "run": 1, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 207.9}
+{"board": "scimpy_powersupply", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 242.7}
+{"board": "tepmachcha_tepmachcha", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 205.2}
+{"board": "scimpy_powersupply", "run": 1, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 236.5}
+{"board": "scimpy_powersupply", "run": 2, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 229.1}
+{"board": "Paperino_HW_paperino_breakout", "run": 0, "seconds": 4.7, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 1}, "unconnected": 0, "vias": 0, "length_mm": 163.2}
+{"board": "induction-hob_temperature-sensor", "run": 1, "seconds": 45.6, "clean": false, "completion": 0.9333, "router_errors": {"copper_edge_clearance": 15}, "unconnected": 1, "vias": 8, "length_mm": 54.8}
+{"board": "Paperino_HW_paperino_breakout", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 163.2}
+{"board": "Paperino_HW_paperino_breakout", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 1}, "unconnected": 0, "vias": 0, "length_mm": 163.2}
+{"board": "kitspace_temp_breakout", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 251.9}
+{"board": "kitspace_temp_breakout", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 251.9}
+{"board": "kitspace_temp_breakout", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 252.9}
+{"board": "I2CTempsensor_sensors", "run": 0, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 141.3}
+{"board": "I2CTempsensor_sensors", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 141.7}
+{"board": "marlin-neopixel-bridge_ATtiny85_Marneo", "run": 1, "seconds": 29.1, "clean": false, "completion": 0.9375, "router_errors": {}, "unconnected": 1, "vias": 0, "length_mm": 118.3}
+{"board": "I2CTempsensor_sensors", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 139.6}
+{"board": "marlin-neopixel-bridge_ATtiny85_Marneo", "run": 0, "seconds": 31.1, "clean": false, "completion": 0.875, "router_errors": {}, "unconnected": 2, "vias": 0, "length_mm": 105.5}
+{"board": "stlinkv2_breakout_stlink_breakout", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 70.7}
+{"board": "marlin-neopixel-bridge_ATtiny85_Marneo", "run": 2, "seconds": 32.7, "clean": false, "completion": 0.875, "router_errors": {}, "unconnected": 2, "vias": 0, "length_mm": 105.5}
+{"board": "stlinkv2_breakout_stlink_breakout", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 70.7}
+{"board": "stlinkv2_breakout_stlink_breakout", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 70.7}
+{"board": "kicad-guitar-preamp_Preamp-Instructables", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 155.2}
+{"board": "kicad-guitar-preamp_Preamp-Instructables", "run": 1, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 154.9}
+{"board": "kicad-guitar-preamp_Preamp-Instructables", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 148.9}
+{"board": "DiscoDanceFloorV1_BusTerminator", "run": 0, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 95.7}
+{"board": "DiscoDanceFloorV1_BusTerminator", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 91.4}
+{"board": "DiscoDanceFloorV1_BusTerminator", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 91.5}
+{"board": "ESP8266-WS2811-LEDs_ws2811controller_panels", "run": 0, "seconds": 3.5, "clean": false, "completion": 1.0, "router_errors": {"clearance": 2}, "unconnected": 0, "vias": 2, "length_mm": 175.8}
+{"board": "ESP8266-WS2811-LEDs_ws2811controller_panels", "run": 1, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"clearance": 2}, "unconnected": 0, "vias": 2, "length_mm": 179.2}
+{"board": "ESP8266-WS2811-LEDs_ws2811controller_panels", "run": 2, "seconds": 3.5, "clean": false, "completion": 1.0, "router_errors": {"clearance": 2}, "unconnected": 0, "vias": 2, "length_mm": 180.6}
+{"board": "radio_saw_dcc6c", "run": 0, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 110.0}
+{"board": "radio_saw_dcc6c", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 106.9}
+{"board": "radio_saw_dcc6c", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 106.6}
+{"board": "AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm", "run": 0, "seconds": 3.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 7, "solder_mask_bridge": 34}, "unconnected": 0, "vias": 0, "length_mm": 60.0}
+{"board": "AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm", "run": 1, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 4, "solder_mask_bridge": 34}, "unconnected": 0, "vias": 0, "length_mm": 61.8}
+{"board": "AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm", "run": 2, "seconds": 4.0, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 7, "solder_mask_bridge": 36}, "unconnected": 0, "vias": 0, "length_mm": 60.7}
+{"board": "C-BISCUIT_crowbar", "run": 0, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 145.7}
+{"board": "C-BISCUIT_crowbar", "run": 1, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 1, "length_mm": 138.7}
+{"board": "C-BISCUIT_crowbar", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 150.3}
+{"board": "Raspberry-Pi-Soft-Power-Controller_Switching Supply TPS563208 MCI", "run": 0, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 165.9}
+{"board": "Raspberry-Pi-Soft-Power-Controller_Switching Supply TPS563208 MCI", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 170.3}
+{"board": "Raspberry-Pi-Soft-Power-Controller_Switching Supply TPS563208 MCI", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 172.7}
+{"board": "hackyflasher_Flasher", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 683.3}
+{"board": "hackyflasher_Flasher", "run": 0, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 673.6}
+{"board": "hackyflasher_Flasher", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 702.2}
+{"board": "z2amiller_sensorboard_programmer", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 145.7}
+{"board": "esp8266_wi07_3_adapter_esp", "run": 0, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 1, "length_mm": 156.6}
+{"board": "esp8266_wi07_3_adapter_esp", "run": 1, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 1, "length_mm": 130.5}
+{"board": "esp8266_wi07_3_adapter_esp", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 1, "length_mm": 131.4}
+{"board": "z2amiller_sensorboard_programmer", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 151.1}
+{"board": "z2amiller_sensorboard_programmer", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 146.2}
+{"board": "kitspace_12V5A_breakout", "run": 2, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 223.3}
+{"board": "kitspace_12V5A_breakout", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 222.0}
+{"board": "kitspace_12V5A_breakout", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 222.9}
+{"board": "RPi-ATtiny85-Programmer_rpi_attiny85_programmer", "run": 0, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 216.8}
+{"board": "RPi-ATtiny85-Programmer_rpi_attiny85_programmer", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 209.8}
+{"board": "breakout-boards_usb-5v-3v3", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 99.5}
+{"board": "RPi-ATtiny85-Programmer_rpi_attiny85_programmer", "run": 2, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 209.7}
+{"board": "breakout-boards_usb-5v-3v3", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 102.8}
+{"board": "breakout-boards_usb-5v-3v3", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 102.8}
+{"board": "HaveSome_PCB_HaveSomePCB", "run": 0, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3, "solder_mask_bridge": 3}, "unconnected": 0, "vias": 0, "length_mm": 86.6}
+{"board": "HaveSome_PCB_HaveSomePCB", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 10}, "unconnected": 0, "vias": 0, "length_mm": 83.0}
+{"board": "HaveSome_PCB_HaveSomePCB", "run": 1, "seconds": 4.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3, "solder_mask_bridge": 8}, "unconnected": 0, "vias": 0, "length_mm": 89.6}
+{"board": "Inkjet_InkjetBreakout", "run": 0, "seconds": 4.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 262.8}
+{"board": "Inkjet_InkjetBreakout", "run": 1, "seconds": 5.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 262.7}
+{"board": "Inkjet_InkjetBreakout", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 254.2}
+{"board": "kitspace_RPi_shield", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 334.6}
+{"board": "kitspace_RPi_shield", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 335.4}
+{"board": "kitspace_RPi_shield", "run": 2, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 334.6}
+{"board": "Hardware_Playground_buck_led_driver", "run": 0, "seconds": 25.6, "clean": false, "completion": 0.9333, "router_errors": {"copper_edge_clearance": 11}, "unconnected": 1, "vias": 2, "length_mm": 85.8}
+{"board": "everled_everled", "run": 0, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 3, "length_mm": 140.6}
+{"board": "everled_everled", "run": 1, "seconds": 3.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 148.5}
+{"board": "Hardware_Playground_buck_led_driver", "run": 1, "seconds": 26.1, "clean": false, "completion": 0.9333, "router_errors": {"copper_edge_clearance": 11}, "unconnected": 1, "vias": 2, "length_mm": 81.9}
+{"board": "everled_everled", "run": 2, "seconds": 3.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 147.3}
+{"board": "Hardware_Playground_buck_led_driver", "run": 2, "seconds": 26.7, "clean": false, "completion": 0.9333, "router_errors": {"copper_edge_clearance": 15}, "unconnected": 1, "vias": 2, "length_mm": 79.9}
+{"board": "firefly-jar_solar_lamp", "run": 0, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 277.8}
+{"board": "firefly-jar_solar_lamp", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 279.1}
+{"board": "firefly-jar_solar_lamp", "run": 2, "seconds": 4.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 279.6}
+{"board": "DustSensorShield_DustSensorShield", "run": 0, "seconds": 4.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 8, "length_mm": 496.2}
+{"board": "DustSensorShield_DustSensorShield", "run": 1, "seconds": 5.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 8, "length_mm": 513.7}
+{"board": "kitspace__autosave-nunchuk_breakout", "run": 0, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 153.8}
+{"board": "DustSensorShield_DustSensorShield", "run": 2, "seconds": 7.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 10, "length_mm": 492.3}
+{"board": "kitspace__autosave-nunchuk_breakout", "run": 1, "seconds": 4.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 152.7}
+{"board": "kitspace__autosave-nunchuk_breakout", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 152.2}
+{"board": "mini-whip_mini-whip-power-feed", "run": 1, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 6, "length_mm": 223.9}
+{"board": "mini-whip_mini-whip-power-feed", "run": 0, "seconds": 4.7, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 6, "length_mm": 236.9}
+{"board": "mini-whip_mini-whip-power-feed", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 6, "length_mm": 225.9}
+{"board": "BB-PWR-8009_BB-PWR-8009_revA", "run": 2, "seconds": 5.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 75.5}
+{"board": "solar-lanterns_proto1", "run": 1, "seconds": 4.3, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 183.4}
+{"board": "solar-lanterns_proto1", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 182.9}
+{"board": "DA_Lamp_attiny44a_servo_i2c", "run": 0, "seconds": 4.6, "clean": false, "completion": 1.0, "router_errors": {"clearance": 1, "shorting_items": 1}, "unconnected": 0, "vias": 3, "length_mm": 198.0}
+{"board": "DA_Lamp_attiny44a_servo_i2c", "run": 1, "seconds": 4.8, "clean": false, "completion": 1.0, "router_errors": {"clearance": 2}, "unconnected": 0, "vias": 6, "length_mm": 211.0}
+{"board": "DA_Lamp_attiny44a_servo_i2c", "run": 2, "seconds": 4.8, "clean": false, "completion": 1.0, "router_errors": {"clearance": 1, "shorting_items": 1}, "unconnected": 0, "vias": 3, "length_mm": 217.5}
+{"board": "solar-lanterns_proto1", "run": 0, "seconds": 20.3, "clean": false, "completion": 0.9524, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 1, "vias": 0, "length_mm": 174.7}
+{"board": "cobwebb-junction-box_CobwebbJunctionBox", "run": 0, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 452.5}
+{"board": "BB-PWR-8009_BB-PWR-8009_revA", "run": 0, "seconds": 25.6, "clean": false, "completion": 0.9545, "router_errors": {}, "unconnected": 1, "vias": 1, "length_mm": 64.8}
+{"board": "cobwebb-junction-box_CobwebbJunctionBox", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 452.9}
+{"board": "cobwebb-junction-box_CobwebbJunctionBox", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 451.9}
+{"board": "keyboard_converter_adapter_ibm4704_converter_adapter_ibm4704", "run": 0, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 4}, "unconnected": 0, "vias": 1, "length_mm": 192.6}
+{"board": "keyboard_converter_adapter_ibm4704_converter_adapter_ibm4704", "run": 1, "seconds": 4.2, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 4}, "unconnected": 0, "vias": 4, "length_mm": 193.3}
+{"board": "keyboard_converter_adapter_ibm4704_converter_adapter_ibm4704", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"clearance": 7, "copper_edge_clearance": 4, "shorting_items": 4, "tracks_crossing": 4}, "unconnected": 0, "vias": 1, "length_mm": 190.2}
+{"board": "BB-PWR-8009_BB-PWR-8009_revA", "run": 1, "seconds": 33.5, "clean": false, "completion": 0.9091, "router_errors": {}, "unconnected": 2, "vias": 0, "length_mm": 57.3}
+{"board": "rufs_dra818v_breakout_board", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 293.4}
+{"board": "rufs_dra818v_breakout_board", "run": 1, "seconds": 3.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 297.7}
+{"board": "rufs_dra818v_breakout_board", "run": 2, "seconds": 4.1, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 4, "length_mm": 312.7}
+{"board": "DerKnopf_power-supply", "run": 1, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 197.6}
+{"board": "DerKnopf_power-supply", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 202.9}
+{"board": "kitspace_nunchuk_breakout", "run": 0, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 155.1}
+{"board": "kitspace_nunchuk_breakout", "run": 1, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 155.4}
+{"board": "kitspace_gas_sensor", "run": 0, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 252.2}
+{"board": "kitspace_gas_sensor", "run": 1, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 243.0}
+{"board": "kitspace_gas_sensor", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 241.1}
+{"board": "PsuFanController_FanController", "run": 0, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 162.7}
+{"board": "kitspace_nunchuk_breakout", "run": 2, "seconds": 11.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 156.7}
+{"board": "PsuFanController_FanController", "run": 1, "seconds": 4.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 160.4}
+{"board": "PsuFanController_FanController", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 163.2}
+{"board": "bristle_bot_light_follow_bristle_bot", "run": 1, "seconds": 4.8, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 381.5}
+{"board": "bristle_bot_light_follow_bristle_bot", "run": 0, "seconds": 5.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 357.1}
+{"board": "bristle_bot_light_follow_bristle_bot", "run": 2, "seconds": 4.7, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 386.2}
+{"board": "MSGEQ7-Breakout-Board_MSGEQ7_Breakout_Board", "run": 0, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 191.7}
+{"board": "DerKnopf_power-supply", "run": 0, "seconds": 28.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 189.6}
+{"board": "MSGEQ7-Breakout-Board_MSGEQ7_Breakout_Board", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 194.3}
+{"board": "MSGEQ7-Breakout-Board_MSGEQ7_Breakout_Board", "run": 2, "seconds": 4.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 200.5}
+{"board": "SparkSwitch_SparkProtectionSwitch", "run": 0, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 193.5}
+{"board": "SparkSwitch_SparkProtectionSwitch", "run": 1, "seconds": 4.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 194.4}
+{"board": "SparkSwitch_SparkProtectionSwitch", "run": 2, "seconds": 4.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 194.4}
+{"board": "smt-zvs-driver_IH10-mc", "run": 0, "seconds": 5.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 239.6}
+{"board": "maytal_Maytal", "run": 0, "seconds": 4.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 537.8}
+{"board": "smt-zvs-driver_IH10-mc", "run": 1, "seconds": 7.2, "clean": false, "completion": 1.0, "router_errors": {"hole_clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 235.4}
+{"board": "smt-zvs-driver_IH10-mc", "run": 2, "seconds": 6.7, "clean": false, "completion": 1.0, "router_errors": {"hole_clearance": 2}, "unconnected": 0, "vias": 0, "length_mm": 243.2}
+{"board": "maytal_Maytal", "run": 1, "seconds": 4.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 537.2}
+{"board": "maytal_Maytal", "run": 2, "seconds": 4.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 536.8}
+{"board": "ottawa-badges-2016_ottawa-badge-tagger-2016", "run": 2, "seconds": 5.8, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 3}, "unconnected": 0, "vias": 4, "length_mm": 316.9}
+{"board": "ottawa-badges-2016_ottawa-badge-tagger-2016", "run": 1, "seconds": 6.2, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 4}, "unconnected": 0, "vias": 4, "length_mm": 305.8}
+{"board": "ottawa-badges-2016_ottawa-badge-tagger-2016", "run": 0, "seconds": 7.4, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 5}, "unconnected": 0, "vias": 4, "length_mm": 333.3}
+{"board": "sensorboard_DiffIR", "run": 0, "seconds": 5.8, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 247.9}
+{"board": "sensorboard_DiffIR", "run": 1, "seconds": 4.9, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 253.7}
+{"board": "sensorboard_DiffIR", "run": 2, "seconds": 4.7, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 257.7}
+{"board": "ATtiny461Breakout_ATTiny461DevBoard", "run": 0, "seconds": 7.3, "clean": false, "completion": 1.0, "router_errors": {"clearance": 3}, "unconnected": 0, "vias": 0, "length_mm": 351.1}
+{"board": "ATtiny461Breakout_ATTiny461DevBoard", "run": 1, "seconds": 7.0, "clean": false, "completion": 1.0, "router_errors": {"clearance": 3}, "unconnected": 0, "vias": 1, "length_mm": 325.3}
+{"board": "ATtiny461Breakout_ATTiny461DevBoard", "run": 2, "seconds": 5.3, "clean": false, "completion": 1.0, "router_errors": {"clearance": 2, "shorting_items": 1}, "unconnected": 0, "vias": 1, "length_mm": 328.4}
+{"board": "NiMH-Charger_NiMH Charger", "run": 0, "seconds": 5.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 2, "length_mm": 889.2}
+{"board": "NiMH-Charger_NiMH Charger", "run": 1, "seconds": 5.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 861.4}
+{"board": "NiMH-Charger_NiMH Charger", "run": 2, "seconds": 5.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 890.9}
+{"board": "raspberrypi-3-usb-hub_usb_hub", "run": 0, "seconds": 8.3, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 0, "length_mm": 856.1}
+{"board": "raspberrypi-3-usb-hub_usb_hub", "run": 1, "seconds": 9.6, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 854.4}
+{"board": "raspberrypi-3-usb-hub_usb_hub", "run": 2, "seconds": 8.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 3, "length_mm": 855.7}
+{"board": "kicad-workshop_fancyboard", "run": 0, "seconds": 8.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 7, "length_mm": 522.9}
+{"board": "kicad-workshop_fancyboard", "run": 1, "seconds": 7.0, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 554.8}
+{"board": "kicad-workshop_fancyboard", "run": 2, "seconds": 6.9, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 1, "length_mm": 537.2}
+{"board": "mavbridge_mavbridge", "run": 0, "seconds": 10.6, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 4, "solder_mask_bridge": 6}, "unconnected": 0, "vias": 21, "length_mm": 528.2}
+{"board": "MOD-MPU9150_mod-mpu9150", "run": 2, "seconds": 80.4, "clean": false, "completion": 0.9737, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 1, "vias": 6, "length_mm": 205.8}
+{"board": "cat-trainer_teensy_base_pcb", "run": 0, "seconds": 7.2, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 49}, "unconnected": 0, "vias": 1, "length_mm": 976.2}
+{"board": "mavbridge_mavbridge", "run": 2, "seconds": 23.7, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 3, "solder_mask_bridge": 8}, "unconnected": 0, "vias": 19, "length_mm": 513.4}
+{"board": "cat-trainer_teensy_base_pcb", "run": 1, "seconds": 7.4, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 46}, "unconnected": 0, "vias": 0, "length_mm": 1005.2}
+{"board": "cat-trainer_teensy_base_pcb", "run": 2, "seconds": 6.6, "clean": false, "completion": 1.0, "router_errors": {"solder_mask_bridge": 40}, "unconnected": 0, "vias": 0, "length_mm": 966.2}
+{"board": "laptimer58_Chickadee", "run": 0, "seconds": 9.8, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 6}, "unconnected": 0, "vias": 22, "length_mm": 899.3}
+{"board": "MOD-MPU9150_mod-mpu9150", "run": 0, "seconds": 114.3, "clean": false, "completion": 0.8684, "router_errors": {}, "unconnected": 5, "vias": 4, "length_mm": 149.3}
+{"board": "laptimer58_Chickadee", "run": 1, "seconds": 19.2, "clean": false, "completion": 0.9873, "router_errors": {"copper_edge_clearance": 8}, "unconnected": 1, "vias": 25, "length_mm": 894.1}
+{"board": "laptimer58_Chickadee", "run": 2, "seconds": 11.8, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 12}, "unconnected": 0, "vias": 24, "length_mm": 853.3}
+{"board": "mavbridge_mavbridge", "run": 1, "seconds": 100.9, "clean": false, "completion": 0.9688, "router_errors": {"solder_mask_bridge": 3}, "unconnected": 2, "vias": 17, "length_mm": 477.0}
+{"board": "MOD-MPU9150_mod-mpu9150", "run": 1, "seconds": 181.3, "clean": false, "completion": 0.9474, "router_errors": {"copper_edge_clearance": 6}, "unconnected": 2, "vias": 6, "length_mm": 185.1}
+{"board": "uedaino_uedaino", "run": 0, "seconds": 21.5, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 14}, "unconnected": 0, "vias": 29, "length_mm": 1637.0}
+{"board": "uedaino_uedaino", "run": 1, "seconds": 18.8, "clean": false, "completion": 1.0, "router_errors": {"copper_edge_clearance": 16}, "unconnected": 0, "vias": 29, "length_mm": 1572.8}
+{"board": "uedaino_uedaino", "run": 2, "seconds": 26.8, "clean": false, "completion": 0.9688, "router_errors": {"copper_edge_clearance": 15}, "unconnected": 3, "vias": 29, "length_mm": 1547.7}
+{"board": "memsarray_mems_modules", "run": 0, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "memsarray_mems_modules", "run": 1, "seconds": 600.1, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "memsarray_mems_modules", "run": 2, "seconds": 600.1, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "induction-hob_temperature-sender", "run": 0, "seconds": 102.5, "clean": false, "completion": 0.9884, "router_errors": {}, "unconnected": 1, "vias": 23, "length_mm": 692.1}
+{"board": "data-manager_data-manager", "run": 1, "seconds": 32.0, "clean": false, "completion": 0.9783, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 2, "vias": 31, "length_mm": 1269.7}
+{"board": "data-manager_data-manager", "run": 2, "seconds": 31.6, "clean": false, "completion": 0.9891, "router_errors": {"copper_edge_clearance": 3}, "unconnected": 1, "vias": 29, "length_mm": 1274.6}
+{"board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD_negative", "run": 0, "seconds": 12.9, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 16, "length_mm": 1231.8}
+{"board": "induction-hob_temperature-sender", "run": 2, "seconds": 149.3, "clean": false, "completion": 0.9884, "router_errors": {}, "unconnected": 1, "vias": 25, "length_mm": 664.4}
+{"board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD_negative", "run": 2, "seconds": 11.2, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 14, "length_mm": 1261.1}
+{"board": "ozinverter_ozinverterkicad", "run": 0, "seconds": 12.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 5, "length_mm": 2201.8}
+{"board": "ozinverter_ozinverterkicad", "run": 1, "seconds": 12.4, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 4, "length_mm": 2205.7}
+{"board": "Brushless_ESC_Brushless_ESC", "run": 0, "seconds": 25.3, "clean": false, "completion": 0.9753, "router_errors": {"clearance": 2}, "unconnected": 4, "vias": 30, "length_mm": 1337.2}
+{"board": "data-manager_data-manager", "run": 0, "seconds": 116.3, "clean": false, "completion": 0.9783, "router_errors": {"copper_edge_clearance": 4}, "unconnected": 2, "vias": 35, "length_mm": 1211.5}
+{"board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD_negative", "run": 1, "seconds": 98.5, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 20, "length_mm": 1257.7}
+{"board": "Brushless_ESC_Brushless_ESC", "run": 2, "seconds": 31.2, "clean": false, "completion": 0.9568, "router_errors": {"clearance": 1, "shorting_items": 1}, "unconnected": 7, "vias": 28, "length_mm": 1277.7}
+{"board": "Brushless_ESC_Brushless_ESC", "run": 1, "seconds": 34.2, "clean": false, "completion": 0.9753, "router_errors": {}, "unconnected": 4, "vias": 33, "length_mm": 1314.4}
+{"board": "induction-hob_temperature-sender", "run": 1, "seconds": 237.9, "clean": false, "completion": 0.9884, "router_errors": {}, "unconnected": 1, "vias": 21, "length_mm": 679.6}
+{"board": "ozinverter_ozinverterkicad", "run": 2, "seconds": 131.8, "clean": false, "completion": 0.9931, "router_errors": {}, "unconnected": 1, "vias": 5, "length_mm": 2212.9}
+{"board": "kitspace_f-91w", "run": 0, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "kitspace_f-91w", "run": 1, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "kitspace_f-91w", "run": 2, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "TOBS_HybridChargeController", "run": 0, "seconds": 505.1, "clean": true, "completion": 1.0, "router_errors": {}, "unconnected": 0, "vias": 38, "length_mm": 2529.3}
+{"board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD", "run": 0, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD", "run": 1, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "RGBMatrixPanelCPLD-PhotonBackpack_RGBMatrixPanel_CPLD", "run": 2, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}
+{"board": "TOBS_HybridChargeController", "run": 1, "seconds": 595.2, "clean": false, "completion": 0.9762, "router_errors": {}, "unconnected": 5, "vias": 36, "length_mm": 2319.7}
+{"board": "TOBS_HybridChargeController", "run": 2, "seconds": 600.2, "error": "timeout", "clean": false, "completion": 0.0}

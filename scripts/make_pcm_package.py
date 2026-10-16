@@ -9,7 +9,9 @@ Archive layout (KiCad PCM, metadata schema v2 as shipped with KiCad 10):
     metadata.json            package metadata (no download_* fields inside the archive)
     plugins/                 the IPC action plugin (kicad_plugin/): plugin.json, tracemaker_route.py, ...
     plugins/bin/tracemaker   optional (--binary): bundled engine binary, Linux only
+    plugins/bin/tracemaker-place  optional (--place-binary): bundled placer (TRACEMAKER_PLACE)
     plugins/lib/tracemaker*.so  optional (--module): bundled Python module (must match KiCad's Python version)
+    plugins/share/tracemaker/viewer/  optional (--viewer DIR): the built live viewer, where the bundled binary looks (../share/tracemaker/viewer)
     resources/icon.png       64x64 package icon (generated here with the standard library)
 
 The archive is reproducible: fixed timestamps, sorted entries. Binaries are never committed; bundle them at
@@ -103,7 +105,7 @@ def icon_png(size: int = 64) -> bytes:
 
 def metadata(version: str, args) -> dict:
     v = {"version": version, "status": args.status, "kicad_version": "10.0", "runtime": "ipc"}
-    if args.binary or args.module:
+    if args.binary or args.module or args.place_binary:
         v["platforms"] = ["linux"]  # bundled native code
     return {
         "$schema": "https://go.kicad.org/pcm/schemas/v2",
@@ -152,7 +154,9 @@ def main() -> int:
     ap.add_argument("--license", default="GPL-3.0-or-later", help="SPDX licence identifier (default GPL-3.0-or-later)")
     ap.add_argument("--author", help="author name (default: git user.name)")
     ap.add_argument("--binary", help="bundle this tracemaker binary as plugins/bin/tracemaker (Linux only)")
+    ap.add_argument("--place-binary", help="bundle this tracemaker-place binary as plugins/bin/tracemaker-place (Linux only)")
     ap.add_argument("--module", help="bundle this tracemaker Python module (.so) under plugins/lib/")
+    ap.add_argument("--viewer", help="bundle this built viewer directory (viewer/dist) as plugins/share/tracemaker/viewer/")
     ap.add_argument("--strip", action="store_true", help="strip debug information from bundled binaries (needs `strip`)")
     args = ap.parse_args()
 
@@ -163,8 +167,19 @@ def main() -> int:
             entries[f"plugins/{f}"] = (fh.read(), 0o644)
     if args.binary:
         entries["plugins/bin/tracemaker"] = (read_native(args.binary, args.strip), 0o755)
+    if args.place_binary:
+        entries["plugins/bin/tracemaker-place"] = (read_native(args.place_binary, args.strip), 0o755)
     if args.module:
         entries[f"plugins/lib/{os.path.basename(args.module)}"] = (read_native(args.module, args.strip), 0o755)
+    if args.viewer:
+        for dirpath, _, files in os.walk(args.viewer):
+            for name in files:
+                full = os.path.join(dirpath, name)
+                rel = os.path.relpath(full, args.viewer).replace(os.sep, "/")
+                if rel.endswith(".map"):
+                    continue  # source maps are 3x the viewer and only for developers
+                with open(full, "rb") as fh:
+                    entries[f"plugins/share/tracemaker/viewer/{rel}"] = (fh.read(), 0o644)
     entries["resources/icon.png"] = (icon_png(), 0o644)
     entries["metadata.json"] = (json.dumps(metadata(version, args), indent=2).encode() + b"\n", 0o644)
 

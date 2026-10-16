@@ -1,6 +1,6 @@
 {
  "project": "TraceMaker",
- "current_milestone": "M16",
+ "current_milestone": "M17",
  "milestones": [
   {
    "id": "M0",
@@ -760,6 +760,88 @@
      "done": false
     }
    ]
+  },
+  {
+   "id": "M17",
+   "title": "Installable and measured",
+   "status": "in_progress",
+   "gate": "A machine without a compiler installs the plugin and routes plane_smd in under five minutes (CI does the same in a clean container); the PCBWorld report states boards lost to each baseline; --relax gains and losses counted at equal work, KiCad-judged (docs/18 section 5, D121, D122) | Result 2026-10-16: release files built and installed in clean Ubuntu 24.04 / Debian 13 / Fedora containers in 5 s, the unpacked plugin ran in a live KiCad 10.0.6; the release workflow's package and install jobs passed on GitHub in PR #44 (the tag publish step has not run) and macOS is not built; PCBWorld's D3 is a PCBench subset (119 test boards run: 97/99, 10/10, 9/10 clean; Freerouting 2.1.0 under this judge 73.7 / 50 / 30 %; no comparison with the paper's own rows, other judge); --txn 1 +118 and --relax -509 connections on the 33 failing tier B-D boards at eight variants (bench/records/m17).",
+   "deliverables": "Release files (tarball, KiCad plugin package) built and tested by CI on a tag; PCBWorld-Bench D3 test boards run beside Freerouting 2.1.0 with the paper's settings; --txn and --relax on the 33 failing tier B-D boards",
+   "tasks": [
+    {
+     "text": "Release files: dist preset (static libstdc++/SQLite/zstd), install rules, viewer lookup beside the binary, scripts/make_release.py",
+     "done": true
+    },
+    {
+     "text": "Install gate: scripts/test_release_install.py in clean Ubuntu 24.04 / Debian 13 / Fedora containers (5 s from unpacking to a routed, DRC-clean example); packaged plugin run in a live KiCad 10.0.6 GUI",
+     "done": true
+    },
+    {
+     "text": "Release files workflow (.github/workflows/release.yml): package and install jobs green on GitHub in PR #44 (4 min 26 s, 17 s); the tag-triggered publish to a draft release has not run",
+     "done": true
+    },
+    {
+     "text": "macOS arm64 release files - not built",
+     "done": false
+    },
+    {
+     "text": "PCBWorld-Bench: D3 is a PCBench subset; 119 test boards run, Freerouting 2.1.0 re-run with the paper's settings under this judge, boards lost listed (doc 10 section 11)",
+     "done": true
+    },
+    {
+     "text": "C1: --txn and --relax on the 33 failing tier B-D boards at equal work, one and eight variants (bench/records/m17); --relax ignored with --variants 1 fixed",
+     "done": true
+    },
+    {
+     "text": "Open: --txn 1 as a portfolio variant needs tiers A-D at equal wall time before it can be a default",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M18",
+   "title": "Session server and agent interface",
+   "status": "done",
+   "gate": "The agent must route more than the plain run at the same compute on a held-out half, otherwise the interface stays a library (D118). Result 2026-10-15: NOT met (model-driven agents 968 against the equal-compute control's 968); `tracemaker session` stays a library; nothing more built for agents until the router can say which end of a boxed-in pin is fenced (doc 19, D119). The long-running daemon for the KiCad plugin is not built.",
+   "deliverables": "tracemaker session over MCP and JSON lines, scripted and model-driven evaluation, doc 19",
+   "tasks": [
+    {
+     "text": "tracemaker session (MCP stdio and JSON lines), transactions, replayable log, inspect tools",
+     "done": true
+    },
+    {
+     "text": "Stop-rule test: scripted agent (tabu, persist) and a model-driven arm of four agents on 16 held-out boards",
+     "done": true
+    },
+    {
+     "text": "Long-running daemon shared with the KiCad plugin - not built",
+     "done": false
+    }
+   ]
+  },
+  {
+   "id": "M19",
+   "title": "KiCad 11 readiness",
+   "status": "planned",
+   "gate": "Round trip, DRC parity and plugin on KiCad 11 once a release candidate exists (docs/18 section 5)",
+   "deliverables": "Version-drift watch job; file format, DRC parity and plugin for KiCad 11",
+   "tasks": []
+  },
+  {
+   "id": "M20",
+   "title": "Hobbyist wins",
+   "status": "planned",
+   "gate": "Pours and a layer-count advisor, a run report, a proposal-only pin swap experiment (docs/18 section 5)",
+   "deliverables": "C3, D3, C2 experiment",
+   "tasks": []
+  },
+  {
+   "id": "M21",
+   "title": "High speed for the Kookabus boards",
+   "status": "planned",
+   "gate": "Only as far as the Kookabus boards need it; the board files are not on this machine yet (docs/18 section 7)",
+   "deliverables": "B1 tuning profiles, B2 time-domain matching, B3 audit loop, A5",
+   "tasks": []
   }
  ]
 }
