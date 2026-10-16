@@ -58,8 +58,8 @@ def install_text(version: str, glibc: str, os_name: str, arch: str) -> str:
     return f"""TraceMaker {version} ({os_name} {arch})
 
 This archive holds the command line tools, the live viewer, an example board and the agent skills. Nothing else is needed:
-the programs carry their own C++ runtime, SQLite and zstd. They need glibc {glibc} or newer (Ubuntu 24.04, Debian 13,
-Fedora 39 or newer); `ldd --version` shows yours.
+the programs carry their own C++ runtime, SQLite and zstd. They need glibc {glibc} or newer; `ldd --version` shows yours.
+Tried: Ubuntu 24.04, Debian 13 and the current Fedora run them; Debian 12 (glibc 2.36) does not, and older systems have older glibc still.
 
   bin/tracemaker          route, check (DRC), inspect, session (for agents) ... : `tracemaker --help`
   bin/tracemaker-place    placement

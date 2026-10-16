@@ -48,7 +48,7 @@ Full detail: [design and results report](report/report.pdf) ·
 
 **0. Or skip the build (Linux x86_64).** A tagged release carries `tracemaker-VERSION-linux-x86_64.tar.gz` (the programs, the live viewer, an example board, the agent skills; start with its
 `INSTALL.txt`) and `tracemaker-VERSION-pcm-linux-x86_64.zip` (the KiCad 10 plugin with the router inside: Plugin and Content Manager > Install from File...). They need no compiler, no CUDA
-and no library beyond glibc 2.38 or newer: tested on Ubuntu 24.04, Debian 13 and current Fedora; Debian 12 and Ubuntu 22.04 are too old. CI builds and tests them (the `Release files` workflow
+and no library beyond glibc 2.38 or newer: tried on Ubuntu 24.04, Debian 13 and current Fedora; Debian 12 (glibc 2.36) fails, and Ubuntu 22.04 (2.35) is older still. CI builds and tests them (the `Release files` workflow
 installs them in a clean container and routes the example board) and attaches them when a version tag is pushed. 0.9.0 predates this and has no such files, so the first release that has them is
 the next one. To make them yourself: `python3 scripts/make_release.py --build-viewer`. No macOS build yet.
 
