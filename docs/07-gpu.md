@@ -162,3 +162,25 @@ Placement's 600 s router safety limit gave 55–147 s per route, 987 s for 7 rou
 The same 30-board sample gave 30/30 byte-identical CPU/Metal boards, 43.3% clean pass, 89.3% completion, and
 no added errors (`bench/results/macos-metal-scan-quick/`). The `[gpu][field]` tests cover thin grids, blocked
 targets, buffer reuse, concurrent callers, and a 300-cell winding corridor requiring more than 32 rounds.
+
+### 8.2 macOS 15 (2026-10-17, D124)
+
+The port in §8 was built on macOS 26.4. On macOS 15 it did not compile: Apple's libc++ makes floating-point
+`std::from_chars` available only from macOS 26. `tmk::parse_double` (`core/parse_double.hpp`) uses `from_chars`
+elsewhere and `strtod_l` in the "C" locale on Apple platforms, held to `from_chars`' grammar. The test scripts
+also needed changes for macOS's bash 3.2 (no `mapfile`; an empty array is unbound under `set -u`), and clang
+rejected an unused constant that GCC accepts.
+
+**Results.** Apple M2, macOS 15.7.9, Apple clang 17, native `kicad-cli` 10.0.6 (Homebrew cask), KiCad demo and
+Freerouting fixtures fetched. Records: `bench/records/macos15/`.
+
+| Check | Result |
+|---|---|
+| CTest, `macos-metal` and `macos-cpu` | all pass, including DRC parity against `kicad-cli` (14/14 boards) and broken-board parity |
+| CTest under ASan + UBSan (`macos-cpu` flags plus the `asan` preset's) | no sanitizer report; 367/368, `crules_two_stage` over its time limit at `-j4` (see the records) |
+| `parse_double` on macOS against libstdc++'s `from_chars` | 2,000,000 strings, 0 mismatches |
+| Quick tier, 1M work, CPU against Metal | 30/30 byte-identical, 25/30 clean, 99.0 % completion |
+| Quick tier against Linux (`bench/records/m17`, `--no-gpu`) | 30/30 boards with the same routed count, tracks, vias, completion and style metric |
+
+The Linux comparison uses what `boards.jsonl` keeps, not the routed files, which stay on the machine that made
+them (`compare_boards.py` in the records).

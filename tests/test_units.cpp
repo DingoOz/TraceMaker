@@ -18,7 +18,7 @@ TEST_CASE("millimetre <-> nanometre conversion is exact for KiCad values", "[cor
   CHECK(tmk::nm_to_mm(254'000) == 0.254);
 }
 
-// parse_double (core/parse_double.hpp, D118): the strtod_l path used on Apple platforms takes exactly what
+// parse_double (core/parse_double.hpp, D124): the strtod_l path used on Apple platforms takes exactly what
 // std::from_chars takes and gives the same double.
 TEST_CASE("parse_double accepts from_chars' grammar only", "[core][units]") {
   using tmk::detail::parse_double_strtod;
