@@ -73,8 +73,6 @@ cmake --preset macos-metal -DCMAKE_PREFIX_PATH="$(brew --prefix)" && cmake --bui
 ```
 
 `macos-cpu` builds without Metal. Metal speeds up the cost-to-go fields only; see [docs/07-gpu.md](docs/07-gpu.md) §8.
-Builds and tests on macOS 15 as well as 26 (D124). `brew install --cask kicad` gives a native `kicad-cli` for the KiCad tests
-and the benchmark, so Docker is not needed there.
 
 **2. Route a board**
 
