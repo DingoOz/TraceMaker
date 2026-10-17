@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ROOT"
 command -v kicad-cli >/dev/null || { echo "SKIP: kicad-cli missing"; exit 77; }
-mapfile -t boards < <(grep -v '^#' tests/integration/drc_parity_boards.txt)
+boards=(); while IFS= read -r b; do boards+=("$b"); done < <(grep -v '^#' tests/integration/drc_parity_boards.txt)  # no mapfile in macOS's bash 3.2
 for b in "${boards[@]}"; do [[ -f $b ]] || { echo "SKIP: fixtures missing ($b)"; exit 77; }; done
 tm=(); [[ $# -ge 1 ]] && tm=(--tm "$1")
-python3 scripts/drc_parity.py "${tm[@]}" --jobs 8 --timeout 900 "${boards[@]}"  # jetson takes minutes on a loaded machine
+python3 scripts/drc_parity.py ${tm[@]+"${tm[@]}"} --jobs 8 --timeout 900 "${boards[@]}"  # jetson takes minutes on a loaded machine
