@@ -159,3 +159,4 @@
 {"ts": "2026-10-17T04:20:24+00:00", "kind": "note", "text": "Branding: logo option 04 (trace, via, trace) added to branding/ and used in the README, viewer, devsite and KiCad package (D123)"}
 {"ts": "2026-10-17T15:40:50+02:00", "kind": "build", "text": "macOS 15 builds and tests (D124): parse_double replaces float from_chars (macOS 26+ only in Apple libc++); bash 3.2 fixes in test scripts"}
 {"ts": "2026-10-17T15:40:50+02:00", "kind": "test", "text": "macOS 15 (M2): ctest 368/368 metal and cpu with fixtures; quick tier CPU vs Metal byte-identical 30/30, matches Linux M17 board for board (25/30 clean, 99.0%); ASan no reports, crules_two_stage over time limit at -j4"}
+{"ts": "2026-10-17T17:37:47+02:00", "kind": "test", "text": "macOS 15 ASan: crules_two_stage passes run alone (6,389 s wall, 1,104 s CPU; over its 3,600 s ctest limit at -j4); sanitizer suite 368/368, no reports"}

@@ -25,7 +25,9 @@ fixtures (KiCad 10.0 at 7a7d026) and Freerouting's PCBench boards from `scripts/
 - `sanitizers.txt`: the full suite built with the `asan` preset's flags (`-fsanitize=address,undefined -fno-sanitize-recover=all`,
   Debug) on Apple clang, `macos-cpu` otherwise, `ctest -j4`: no ASan or UBSan report; 367/368 pass. `crules_two_stage` (a placement
   run, no code this change touches) passed its checks up to stage 2 and then hit its 3,600 s limit at 4,360 s, with three other tests
-  on 8 cores; it passes in both release suites. `asan-crules_two_stage.txt`: the same test alone with a 4-hour limit.
+  on 8 cores; it passes in both release suites. `asan-crules_two_stage.txt`: the same script run alone, outside ctest, under the same ASan build:
+  passed (exit 0, no sanitizer report) in 6,389 s wall and 1,104 s CPU. The test's 3,600 s limit is too short for an ASan Debug
+  build on this machine; it is left as it is, since the Linux `asan` preset is the one the project runs.
 - `parse-double-xcheck.txt`: `parse_double_xcheck.cpp` compiled with Homebrew GCC 16, so the macOS `strtod_l` path runs against
   libstdc++'s `from_chars`: 2,000,000 strings (random number-like characters, `%.17g`/`%f`/`%g` renderings of random doubles, values
   near the subnormal range), 0 mismatches in what is accepted and in the double's bits. The first version rejected subnormals

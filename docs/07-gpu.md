@@ -177,7 +177,7 @@ Freerouting fixtures fetched. Records: `bench/records/macos15/`.
 | Check | Result |
 |---|---|
 | CTest, `macos-metal` and `macos-cpu` | all pass, including DRC parity against `kicad-cli` (14/14 boards) and broken-board parity |
-| CTest under ASan + UBSan (`macos-cpu` flags plus the `asan` preset's) | no sanitizer report; 367/368, `crules_two_stage` over its time limit at `-j4` (see the records) |
+| CTest under ASan + UBSan (`macos-cpu` flags plus the `asan` preset's) | no sanitizer report; 368/368, `crules_two_stage` run alone: at `-j4` it went over its 3,600 s limit (records) |
 | `parse_double` on macOS against libstdc++'s `from_chars` | 2,000,000 strings, 0 mismatches |
 | Quick tier, 1M work, CPU against Metal | 30/30 byte-identical, 25/30 clean, 99.0 % completion |
 | Quick tier against Linux (`bench/records/m17`, `--no-gpu`) | 30/30 boards with the same routed count, tracks, vias, completion and style metric |
