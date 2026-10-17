@@ -1,0 +1,474 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 237/276 connections, 1160 tracks, 163 vias, pitch 0.0",
+   "open": 19,
+   "violations": 9,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB",
+    "E0_DIR",
+    "E0_EN",
+    "E0_OA1",
+    "E0_OB2",
+    "E0_UART",
+    "GND",
+    "LCD_ENC_A",
+    "LCD_MOSI",
+    "SD_MOSI",
+    "THB",
+    "X_DIR",
+    "X_EN",
+    "X_STOP",
+    "Y_DIR",
+    "Y_EN",
+    "Z_DIR",
+    "Z_EN"
+   ]
+  },
+  {
+   "round": 0,
+   "kind": "hard",
+   "nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 311/341 connections, 1233 tracks, 228 vias, pitch 0.0",
+   "open": 12,
+   "violations": 4,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB",
+    "LCD_CS",
+    "LCD_MOSI",
+    "SD_CS",
+    "SD_MOSI",
+    "SD_SCK",
+    "U4_4",
+    "USB_D+",
+    "X_STOP",
+    "Y_DIR",
+    "Y_EN"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "escape",
+   "dense_hits": 12,
+   "open": 15,
+   "violations": 6,
+   "accepted": false
+  },
+  {
+   "round": 1,
+   "kind": "copper_graphics"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 312/328 connections, 1528 tracks, 191 vias, pitch 0.0",
+   "open": 12,
+   "violations": 3,
+   "placement_errors": 0,
+   "open_nets": [
+    "+3V3",
+    "E0_UART",
+    "LCD_CS",
+    "LCD_MOSI",
+    "SD_CS",
+    "SD_MOSI",
+    "THB",
+    "USB_D+",
+    "X_EN",
+    "X_STOP",
+    "Y_DIR",
+    "Y_EN"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 53,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 324/328 connections, 1740 tracks, 252 vias, pitch 0.0",
+   "open": 4,
+   "violations": 110,
+   "placement_errors": 0,
+   "open_nets": [
+    "FAN_PWM",
+    "SD_CS",
+    "SD_MOSI",
+    "Y_EN"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 49,
+   "open": 9,
+   "violations": 49,
+   "was_open": 4,
+   "was_violations": 110,
+   "kept_back": 43,
+   "accepted": false,
+   "router": "routed 317/328 connections, 1693 tracks, 230 vias, pitch 0.0"
+  },
+  {
+   "round": 4,
+   "kind": "route",
+   "relaxed_nets": 55,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 327/328 connections, 1305 tracks, 248 vias, pitch 0.0",
+   "open": 1,
+   "violations": 262,
+   "placement_errors": 0,
+   "open_nets": [
+    "+3V3"
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "shove",
+   "nets": 27,
+   "open": 4,
+   "violations": 147,
+   "was_open": 1,
+   "was_violations": 262,
+   "kept_back": 23,
+   "accepted": true,
+   "router": "routed 323/328 connections, 1623 tracks, 228 vias, pitch 0.0"
+  },
+  {
+   "round": 4,
+   "kind": "fine",
+   "pitch_um": 14.0,
+   "open": 1,
+   "violations": 262,
+   "steps": [
+    {
+     "net": "E0_EN",
+     "router": "routed 0/0 connections, 0 tracks, 0 vias, pitch 0.014 mm, 0 "
+    },
+    {
+     "net": "SD_MOSI",
+     "router": "routed 0/0 connections, 0 tracks, 0 vias, pitch 0.014 mm, 0 "
+    },
+    {
+     "net": "SD_CS",
+     "router": "routed 0/0 connections, 0 tracks, 0 vias, pitch 0.014 mm, 0 "
+    },
+    {
+     "net": "Y_EN",
+     "router": "routed 0/0 connections, 0 tracks, 0 vias, pitch 0.014 mm, 0 "
+    }
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "window",
+   "trials": [
+    {
+     "net": "E0_EN",
+     "radius": 2.0,
+     "removed": 121,
+     "open": 4,
+     "violations": 211
+    },
+    {
+     "net": "SD_CS",
+     "radius": 2.0,
+     "removed": 154,
+     "open": 3,
+     "violations": 298
+    },
+    {
+     "net": "SD_MOSI",
+     "radius": 2.0,
+     "removed": 149,
+     "open": 6,
+     "violations": 173
+    },
+    {
+     "net": "Y_EN",
+     "radius": 2.0,
+     "removed": 173,
+     "open": 2,
+     "violations": 335
+    }
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "move",
+   "trials": [
+    {
+     "ref": "C11",
+     "step": 0.25,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C11",
+     "step": 0.5,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C11",
+     "step": 1.0,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C23",
+     "step": 0.25,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C23",
+     "step": 0.5,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C23",
+     "step": 1.0,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C33",
+     "step": 0.25,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C33",
+     "step": 0.5,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C33",
+     "step": 1.0,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C34",
+     "step": 0.25,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C34",
+     "step": 0.5,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "C34",
+     "step": 1.0,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "R23",
+     "step": 0.25,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "R23",
+     "step": 0.5,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "R23",
+     "step": 1.0,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "R24",
+     "step": 0.25,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "R24",
+     "step": 0.5,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "R24",
+     "step": 1.0,
+     "open": 0,
+     "placement": 0
+    },
+    {
+     "ref": "U5",
+     "step": 0.25,
+     "open": 3,
+     "placement": 0
+    },
+    {
+     "ref": "U5",
+     "step": 0.5,
+     "open": 4,
+     "placement": 0
+    },
+    {
+     "ref": "U5",
+     "step": 1.0,
+     "open": 4,
+     "placement": 0
+    }
+   ],
+   "accepted": {
+    "ref": "C11",
+    "dx": -0.247151943595719,
+    "dy": 0.03762866961318907,
+    "open": 0
+   }
+  },
+  {
+   "round": 5,
+   "kind": "route",
+   "relaxed_nets": 55,
+   "relaxed_power": 0,
+   "moved_parts": 1,
+   "router": "routed 328/328 connections, 1332 tracks, 235 vias, pitch 0.0",
+   "open": 0,
+   "violations": 249,
+   "placement_errors": 0,
+   "open_nets": []
+  }
+ ],
+ "assign": {
+  "BED_PWM": "T1",
+  "C11_1": "T1",
+  "C11_2": "T1",
+  "E0_DIR": "T1",
+  "E0_EN": "T2",
+  "E0_STP": "T1",
+  "E0_UART": "T1",
+  "FAN_PWM": "T1",
+  "HE0_PWM": "T1",
+  "LCD_BEEP": "T1",
+  "LCD_CS": "T1",
+  "LCD_ENC_A": "T1",
+  "LCD_ENC_B": "T1",
+  "LCD_ENC_BTN": "T1",
+  "LCD_MOSI": "T1",
+  "LCD_SCK": "T1",
+  "Q3_3": "T1",
+  "Q4_1": "T1",
+  "RESET": "T1",
+  "SD_CS": "T2",
+  "SD_DET": "T1",
+  "SD_MISO": "T1",
+  "SD_MOSI": "T2",
+  "SD_SCK": "T1",
+  "SWCLK": "T1",
+  "SWDIO": "T1",
+  "TH0": "T1",
+  "THB": "T1",
+  "U1_4": "T1",
+  "U1_5": "T1",
+  "U2_13": "T1",
+  "U2_5": "T1",
+  "U2_6": "T1",
+  "U2_60": "T1",
+  "USB_CONN": "T1",
+  "USB_D+": "T1",
+  "USB_D-": "T1",
+  "X_DIR": "T1",
+  "X_EN": "T1",
+  "X_OB2": "T1",
+  "X_STOP": "T1",
+  "X_STP": "T1",
+  "X_UART": "T1",
+  "Y_DIR": "T1",
+  "Y_EN": "T2",
+  "Y_OA2": "T1",
+  "Y_OB2": "T1",
+  "Y_STOP": "T1",
+  "Y_STP": "T1",
+  "Y_UART": "T1",
+  "Z_DIR": "T1",
+  "Z_EN": "T1",
+  "Z_STOP": "T1",
+  "Z_STP": "T1",
+  "Z_UART": "T1"
+ },
+ "moves": {
+  "C11": [
+   -0.247151943595719,
+   0.03762866961318907
+  ]
+ },
+ "power": [
+  "+3V3",
+  "+5V",
+  "+VB",
+  "GND"
+ ],
+ "hard": [
+  "GND"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.8,
+   "drill": 0.4,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

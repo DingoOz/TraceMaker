@@ -1072,7 +1072,8 @@ RouteJobResult run_route_job(RouteJob job) {
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
                  {"vias", res.vias.size()},  {"seconds", job_seconds},         {"variant_seconds", res.seconds},
                  {"expansions", res.expansions}, {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures},
-                 {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors}};
+                 {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors},
+                 {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"escape_reclaimed", res.escape_reclaimed}};
   if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
   if (!refill_summary.is_null()) {
     out.summary["refill"] = refill_summary;

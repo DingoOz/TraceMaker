@@ -18,7 +18,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   // KiCad checks routed copper against footprint copper graphics as net-less copper (keyboard-switch
   // footprints, logos), whatever pad they touch: block them for every net.
   for (auto& it : cm_.items)
-    if (it.kind == drc::ItemKind::Graphic) it.net = 0;
+    if (it.kind == drc::ItemKind::Graphic && !(b_.infer_graphic_nets && it.footprint < 0)) it.net = 0;  // board graphics keep the net inferred from the pads they touch (Board::infer_graphic_nets)
   re_ = std::make_unique<drc::RuleEngine>(b_, r_);
   fills_ = std::make_unique<drc::ZoneFills>(cm_);
   reach_ = std::max<Coord>(re_->max_clearance(), 1'000'000) + 2'000'000;  // clearance + generous track/via size
@@ -311,7 +311,7 @@ int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int la
     if (state == 2) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.removed || !(it.layers & model::layer_bit(layer))) return;
-    if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;
+    if (soft_item(it)) return;
     if (it.net == probe.net && probe.net != 0 && !(probe.kind == drc::ItemKind::Via && via_keeps_off(it))) return;
     Coord req = re_->clearance(probe, it, layer);
     // Untented vias open the mask around themselves: other nets' copper must stay outside that opening.
@@ -412,7 +412,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   for (const auto& [area, z] : keepouts_)
     if ((z->copper & model::layer_bit(layer)) && (is_via_hole ? z->keepout_vias : z->keepout_tracks) && geom::closer_than(s, area, 1)) return 2;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
-  if (side >= 0)
+  if (side >= 0 && !soft_mask_graphics_)
     for (const auto& m : mask_open_[side])
       if (m.box.inflated(100'000).intersects(s.box) && geom::closer_than(s, m, 100'000)) return 2;
   return state;
@@ -529,7 +529,7 @@ int Obstacles::physical_hole_state(const Shape& hole, model::NetId net, int laye
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     const bool is_routed = it.owner >= 0;
     if (it.removed || (is_routed ? !routed : !fixed) || !(it.layers & model::layer_bit(layer))) return;
-    if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;  // refilled after routing, around the new hole
+    if (soft_item(it)) return;  // refilled after routing, around the new hole
     const Coord req = re_->physical_hole_clearance(&probe, it, layer);
     if (req <= 0) return;
     if (item_closer(hole, it, req)) {
@@ -692,7 +692,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
     if (code == kBlocked) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer))) return;
-    if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;
+    if (soft_item(it)) return;
     if (via_probe && via_keeps_off(it)) {
       const Coord rq = re_->clearance(probe, it, layer);
       if (item_closer(s, it, rq)) {
@@ -732,7 +732,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   for (const auto& [area, z] : keepouts_)
     if ((z->copper & model::layer_bit(layer)) && (via_probe ? z->keepout_vias : z->keepout_tracks) && geom::closer_than(s, area, 1)) return kBlocked;
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
-  if (side >= 0)
+  if (side >= 0 && !soft_mask_graphics_)
     for (const auto& m : mask_open_[side])
       if (m.box.inflated(100'000).intersects(s.box) && geom::closer_than(s, m, 100'000)) return kBlocked;  // 0.1 mm: KiCad flags near misses
   return code;
@@ -762,7 +762,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
       if (it.owner >= 0 || it.removed || !(it.layers & all)) return;
       // Same order as fixed_code, so the two paths agree with the plane-aware options on (doc 05 §26): soft
       // zone fills are no obstacle, and a pad that vias keep off blocks the via whatever its net.
-      if (soft_zones_ && it.kind == drc::ItemKind::Zone) return;
+      if (soft_item(it)) return;
       if (via_keeps_off(it)) {
         for (int l = 0; l < nl; ++l) {
           if (!(it.layers & model::layer_bit(l))) continue;
@@ -811,7 +811,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
   const model::LayerMask copper = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
   for (const auto& [area, z] : keepouts_)
     if (z->keepout_vias && (z->copper & copper) && geom::closer_than(s, area, 1)) return kBlocked;
-  for (int side = 0; side < (nl > 1 ? 2 : 1); ++side)
+  for (int side = 0; side < (nl > 1 ? 2 : 1) && !soft_mask_graphics_; ++side)
     for (const auto& m : mask_open_[side])
       if (m.box.inflated(100'000).intersects(s.box) && geom::closer_than(s, m, 100'000)) return kBlocked;  // 0.1 mm: KiCad flags near misses
   return via_hole_code(p, drill, margin, probe_net, code);

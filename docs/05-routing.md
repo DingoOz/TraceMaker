@@ -2042,3 +2042,63 @@ benchmark runs recorded, not derived. The cost map knows the zone fills of the f
 smoothing pass is made split-aware; the other post-passes (length tuning, pair coupling) are not. A rule's own `plane_net` parameter (doc 15 USB2-09, ETH-13) is not read: the reference of a layer
 is the adjacent layer with most copper. A plane that covers under 30 % of the board is not a reference plane. Net classes, via budgets per role and a hard cap on vias were not built (the
 report threshold is the cap).
+
+## 45. Rule relaxation spends nothing on power nets (`--no-neck-nets`, 2026-10-17, D124)
+
+When a board only routes under looser rules (reports/realworld, the rule-escalation ladder), the relaxation goes to signals. Power and ground nets have the least margin (current, drop), so they keep the
+board's own values. Two parts: (1) the **rule file** of a relaxed stage keeps each power net in a copy of its class (`<class>_keep`) with the board's own clearance and via sizes while the other nets take
+the tier's values (`reports/realworld/py/rules.py: apply(..., keep=power_nets(text))`: names such as `+3V3`, `5V`, `VBAT`, `GND`, and every net of a class the designer made 0.4 mm wide or more); (2) the router
+option **`--no-neck-nets A,B,...`** (`RouterOptions::no_neck_nets`) takes those nets out of the escalation ladder's **neck-down** (the narrower track and the small via the router falls back to when a pad is boxed in): they keep
+their class width and class via or stay unrouted. Empty by default: no other behaviour changes. Test: `tests/test_stall.cpp` "no_neck_nets" (a 0.35 mm gap routes only by necking down to 0.15 mm; listed, the net does not route).
+A relaxed routing is also **simulated** before it counts: `reports/realworld/py/safety.py` (crosstalk of every compromised signal pair, IPC-2221 and ngspice DC drop of every narrowed net, via impedance; verdict PASS/WARN/FAIL).
+
+## 46. Shove with bending: legalisation that can cut a track (`--legalize-subdivide`, 2026-10-17, D125)
+
+**Problem.** `legalize_routes` (§41.3) moves the vertices a route has. A long straight track has two, both often on pads, so it can only move as a whole or not at all: where an existing neighbour sits too close to its
+middle, nothing can give, although a kink would. (The case raised by the owner: a via jump needs room that a nearby track could free by bending.)
+
+**What was built.** `LegalizeOptions::subdivide_mm` (router option `--legalize-subdivide MM`, off by default; with `--legalize` or `--relax`). Every unlocked route track is cut into pieces of at most that length
+before the sweeps, at the vertices of same-net copper that lie on it (a junction or via stays a vertex, so the copper stays joined whichever way the pieces bend) and evenly in between. The projection moves
+only vertices that are in a violated pair, so the track bends only where it is pinched. After the sweeps a vertex that is within 0.5 um of the line through its kept neighbours (and is not a junction) is merged away, so a
+track that did not need to bend comes back as the one segment it was. Locked tracks and foreign copper are untouched; every route that is kept still passes the exact check. Test (`tests/test_txn.cpp`, `[legalize]`): a straight
+10 mm track between two fixed pads with a locked neighbour 0.06 mm from its middle (rule 0.1 mm) cannot be resolved without cutting, resolves with a 1 mm cut (it bends, the pieces that stayed straight merge, the DRC is clean, ends and
+chain intact, same result twice).
+
+**In the closure loop** (`reports/realworld/py/closure.py`, the real-world study): after a relaxation lets nets through, the *shove* step puts the nets that just took a tier back one tier and runs the router with
+`--legalize --legalize-subdivide 0.5` on the copper of that round (violations the relaxation left are pushed apart where room exists); the result is kept if it removes violations and no connection opens (a connection that opens
+has to be paid for by ten violations removed). It runs again after every further relaxation. Measured on the stuck boards before it was made selective (DronPi, closure-2): putting *every* relaxed net back at once gave
+8 open (was 1) and 518 DRC violations (was 728), and routing again under `--relax` gave 4-5 open (E3: 29, was 3), so neither is used.
+
+## 47. Escape features from the EtherCAT shield review (2026-10-17, D126)
+
+`reports/realworld/ethercat_qfn_analysis.md` (a review of the EtherCAT shield, a LAN9252 in a QFN-64 at 0.5 mm pitch that no run closed) suggested five changes in order of expected payoff. Four are built, each **off by default** (no routed
+board changes without them), each with a test in `tests/test_stall.cpp` (`[escape]`):
+
+| Option | Review item | What it does |
+|---|---|---|
+| `--escape-length MM` | 1 (bundles) and 3 (length) | Perimeter corridors of the escape plan run MM past the package edge (2 mm by default), one lattice step at a time, as long as a track of the net fits against the fixed copper: parallel straight escapes of the pins of one side, which keep their order, as the designer draws them. `RouteResult::escape_corridor_mm` is the reserved length. |
+| `--escape-persist` | 3 (persistence) | A ripped-up connection gets its pins' corridors back (`pad_plan` keeps the planned cells; `unrelease_escapes` in `rip`), and a pin's corridor is not released while another connection of its net with a pin on the same package is open. `escape_reclaimed` counts the returns. |
+| `--radial-supply`, `--radial-penalty MM` | 2 (radial supply pins) | In the spanning tree an edge between two pins of one dense package costs MM (10 by default) more for a net with 3+ pins there (exposed pads exempt): each pin goes to a capacitor or via beyond the package. `package_pin_edges` counts the pin-to-pin edges of the plan. |
+| `--via-drops` | 4 (off-lattice via sites) | A pin of a dense package may drop to a via off the lattice, up to about 1.5 mm (20 lattice pitches) out in one of 8 directions, between the neighbours' tracks, then go on on another layer (endpoint cost = both legs plus a via); `commit` writes the track, the via and the track. |
+| `--escape-stubs` | 1 (bundles), the exact part | With the escape plan: a pin offers the end of its straight corridor (`--escape-length`) as a start point, reached by one exact off-lattice segment at a quarter of its length: parallel escapes at the pad pitch, which the lattice cannot draw. EtherCAT: stubs of 3 mm or more on 13 pins instead of 1 (183 of 207 routed, no better than the corridors alone). |
+
+Not built: review item 1's planar-order bundle router proper (the long straight corridors and stubs are its first-order effect; `--buses` lanes on the EtherCAT GPIO group and on the fpga-dongle's I/O banks made it worse, 177 -> 177/181 and 307 -> 262), and item 5 (a back-layer tunnel under the QFN for same-net supply pins). In the closure loop the escape plan is a *trial* round (kept only if KiCad then shows fewer open connections): EtherCAT 28 -> 21 open at 40 M work.
+
+**Measured** (router's own count at the board's rules, 20 M work, first closure round, `--escape-plan` plus the option): EtherCAT 177 of 207 routed (base) -> 184 with length 12, 185 with length 12 and drops, persistence and radial supply alone or together 179-182; the other seven boards
+see no change or a few connections either way (E3 242 -> 237 with length 12). See `bench/records/escape-features/`.
+
+## 48. Net-less mask openings and the fine-lattice finish (2026-10-17, D127)
+
+Two causes of "fixed copper encloses the pin", found on the real-world boards (reports/realworld, py/closure.py):
+
+1. **Mask graphics.** A footprint that draws a solder-mask opening over the pads of two or more nets (a solder jumper, a microphone's pad group) makes a net-less opening, and the router keeps every track and via 0.1 mm away from it (the
+   solder-mask rule of the DAC 2020 boards). A pin inside cannot start. `--soft-mask-graphics` (`Obstacles::set_soft_mask_graphics`, off by default) takes those openings off the router's keep-outs; KiCad's mask checks then flag
+   what lies in them (judgement class in the ledger). kitspace_test-jig: its solder-jumper net `Net-(JP3-Pad1)` routes 0/2 -> 2/2 connections. Test `[mask]` (a pin inside a drawn opening routes only with the option).
+2. **Narrow channels.** Pad 2 of memsarray's microphone (DVDD) has 0.35-0.4 mm gaps to the pads around it, and the only way out is a diagonal between two ground pads. It routes at a lattice pitch of 10 um and not at 15, and only when the net
+   and its neighbours (a gap is judged with the larger clearance of the two nets) are at the loosest tier. The closure loop's *fine finish* does this for each open net in turn, on the copper of the best state: `--only-net NET --pitch-um 10..20` (10 um up to
+   60 x 60 mm, 14 um up to 100 x 100 mm, 20 um beyond), kept only if KiCad then shows fewer open connections. memsarray: 1 -> 0 open. No router change: the option existed.
+3. **Copper graphics.** Net-less copper drawn as *board* graphics (polygons on a copper layer: Hardware_Playground E3, an EasyEDA import, has nine of them; three boards of 1,164 in PCBench have any) is fixed copper that no track may touch,
+   and the pins inside it are enclosed (E3: the two `+VB` pads of the MP1584 module U7 and of U6, "boxed in" in every run; reproduced on a board with nothing but U7, `reports/realworld/repro/`). The polygons are the designer's manual pours.
+   `--soft-copper-graphics` (`Board::infer_graphic_nets`; `drc::build_copper`, `Obstacles`) gives each one the net of the pads, tracks and vias it touches when that is exactly one net (several nets or none: it stays net-less and blocks as before):
+   that net may touch it and has its pins in it connected through it, no other net may. **First version, wrong:** ignoring the polygons altogether closed E3 (0 open) with 68 added `shorting_items` (tracks of different nets touching one polygon),
+   which is a short, not a compromise; the ledger now counts `shorting_items` as a failure of acceptance. E3 `+VB` alone: 20 of 31 -> 22 of 22 connections (nine are satisfied by the pour). Test `[mask]` (a pin inside a polygon on both copper layers routes only with the option).

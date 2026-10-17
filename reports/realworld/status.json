@@ -1,0 +1,97 @@
+{
+ "boards": [
+  {
+   "name": "kitspace_teensy-fx",
+   "layers": 4,
+   "note": "first study board",
+   "test": false
+  },
+  {
+   "name": "Hardware_Playground_serial_gw_ATMEGA328P",
+   "layers": 2,
+   "note": "first study board",
+   "test": false
+  },
+  {
+   "name": "96boards-robomezzi_96boards-robomezzi",
+   "layers": 4,
+   "note": "GND + 5V planes on In1/In2",
+   "test": true
+  },
+  {
+   "name": "DronPi_dronPi",
+   "layers": 2,
+   "note": "GND pour on F.Cu, power pour on B.Cu",
+   "test": true
+  },
+  {
+   "name": "Hardware_Playground_E3_Pcb_rev0.3",
+   "layers": 2,
+   "note": "20 A fuse, big +VB pads",
+   "test": true
+  },
+  {
+   "name": "EtherCAT_shield_v1_EtherCAT_shield_v1",
+   "layers": 2,
+   "note": "64-pin QFN",
+   "test": true
+  },
+  {
+   "name": "kitspace_test-jig",
+   "layers": 2,
+   "note": "2 layers, 106 parts; fails its own rules at 120 s (placement-closure set)",
+   "test": true
+  },
+  {
+   "name": "poncho_fpga_fpga-dongle",
+   "layers": 2,
+   "note": "2 layers, 115 parts, 15 pours; fails its own rules at 120 s (placement-closure set)",
+   "test": true
+  },
+  {
+   "name": "PocketBone_pocketbone-kicad",
+   "layers": 4,
+   "note": "4 layers, GND/+3V3 planes on In1/In2",
+   "test": true
+  },
+  {
+   "name": "Own-Mailbox-Hardware_mailbox-before",
+   "layers": 4,
+   "note": "4 layers, GND/VCC/VDD_RAM planes; the designer's own routing has 58 open: a work-in-progress board",
+   "test": true
+  }
+ ],
+ "runs": {
+  "ladder-A": "plain ladder, designer's pours restored, T0 20 M / T1 20 M / T2 50 M work",
+  "ladder-B": "ladder-A + --si-rules critical nets first (teensy)",
+  "ladder-C": "critical nets first + stitching vias (gateway)",
+  "ladder-S": "ladder-A + --stitch-vias planes",
+  "ladder-S2": "ladder-S with 200 M at T2",
+  "ladder-P": "ladder-A with --no-tracks-on In1.Cu,In2.Cu (planes kept free of signals)",
+  "ladder-F": "ladder-A + --first-nets +VB,F1_1 (power first)",
+  "ladder-L": "ladder-A + --layer-assign",
+  "ladder-R": "ladder-A + --relax",
+  "ladder-V": "ladder-A + --via-in-pad",
+  "ladder-O": "re-run with each board's own rules as T0 (robomezzi 0.178 mm, via 0.61/0.30; DronPi/EtherCAT via 0.6/0.4)",
+  "human": "the designer's own routing judged the same way",
+  "ladder-W": "ladder with a fourth tier T3 (0.4/0.2 via, experiment); E3 also with --layer-assign",
+  "ladder-LS": "ladder-L + --stitch-vias planes",
+  "ladder-LF": "ladder-L + --first-nets +VB,F1_1",
+  "ladder-K": "keep-power: supply AND ground nets stay at the board's own rules and are never narrowed (--no-neck-nets); relaxation spent on signals only",
+  "ladder-K2": "ladder-K with 200 M work at T2 (same result: more work does not help)",
+  "ladder-G": "keep-supply: supply rails stay strict, ground may relax (pours carry the ground current)",
+  "ladder-M": "graded power policy: signals take the whole ladder with power at the board's own rules (never narrowed); only if the board is still open do the power nets relax, one tier at a time (stage labels SIGNAL/POWER)",
+  "closure-5": "closure loop: relax only the nets in the way (power last), shove with track bending (D125), part moves, 5x-work round",
+  "closure-5w": "closure-5 with the designer's power widths (robomezzi human routing) as non-negotiable widths"
+ },
+ "findings": [
+  "A board counts as routed only when KiCad reports 0 open AND the safety simulation (py/safety.py) does not FAIL; the router's 'routed N/N' alone is not enough.",
+  "Relaxing everything: robomezzi (ladder-O/P) and DronPi (ladder-O) close with 0 open and PASS the simulation (worst crosstalk 1.4 % / 0 % of swing) - but 216 / 111 of their compromises touch supply or ground copper.",
+  "Policy 'no relaxation on power nets' (ladder-K, --keep-power): zero compromises on power copper, but the boards no longer close at this budget: robomezzi 2 open, DronPi 35, E3 15, EtherCAT 13. More work (K2, 200 M) changes nothing.",
+  "Keeping supply rails strict but relaxing ground (ladder-G): robomezzi 1 open, DronPi 34, E3 14, EtherCAT 14; the rest are GND pour fragments plus pads of +3v3/1V8 that only route by necking down.",
+  "E3 best: 5 open (ladder-L, relaxes power) with a crosstalk WARN (10.8 % of swing); strict-power E3 (K) 15 open, WARN 16.7 %.",
+  "EtherCAT: the simulation rejects several routes (22 % and 42 % crosstalk of swing); the passing ones still have 9+ open QFN pins.",
+  "The designers' own layouts of all four judge clean (0 open): the placements are routable; the open pins are a router limit, not a rule limit.",
+  "Assumed, not datasheet: 40 ohm drivers, 1.5 ns edges, 5 pF loads, 50 mA per power pin of an IC/transistor, IPC-2221 outer 1 oz 10 C."
+ ]
+}

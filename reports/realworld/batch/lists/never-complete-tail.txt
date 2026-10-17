@@ -1,0 +1,17 @@
+# the last 16 boards of never-complete.txt, largest first (a second batch worker from the other end)
+Aleste-520EX_aleste
+KiCad-Library_Teensy_test_layout
+MonApollo_analog-board
+oskirby_logicbone
+decelerator4030_decelerator4030
+mini_mass_prog_bench_prog_rig
+mechkeys_LFK78
+dorkyboard_keyboard
+CoreOne-xCORE200-Original_CoreOne
+mechkeys_lfk_revd
+mechkeys_lfk_revc
+kitspace_EEZ%20DIB%20MCU%20r1B2
+MonApollo_digital-board
+TCKB_Kicad_TCKB
+kitspace_d20_tri_r0.3
+kitspace_d20_tri_r1.0

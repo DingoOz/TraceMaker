@@ -1,0 +1,6 @@
+{"board": "Aleste-520EX_aleste", "run": "closure-b2z", "layers": 2, "rounds": 4, "open_first": 278, "open_best": 270, "relaxed": 24, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 2315}
+{"board": "KiCad-Library_Teensy_test_layout", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 4, "open_first": 73, "open_best": 25, "relaxed": 16, "relaxed_power": 0, "moves": 0, "hard": 6, "seconds": 2701}
+{"board": "MonApollo_analog-board", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 5, "open_first": 105, "open_best": 28, "relaxed": 157, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2701}
+{"board": "oskirby_logicbone", "run": "closure-b2z", "layers": 2, "rounds": 5, "open_first": 250, "open_best": 188, "relaxed": 359, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 2467}
+{"board": "mini_mass_prog_bench_prog_rig", "run": "closure-b2z", "layers": 4, "rounds": 6, "open_first": 15, "open_best": 2, "relaxed": 37, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2968}
+{"board": "decelerator4030_decelerator4030", "run": "closure-b2z", "layers": 2, "rounds": 6, "open_first": 411, "open_best": 321, "relaxed": 202, "relaxed_power": 3, "moves": 0, "hard": 1, "seconds": 3041}

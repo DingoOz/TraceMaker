@@ -100,6 +100,7 @@ struct RouterOptions {
   bool keep_final = false;      // also return the live state at the end of the run (RouteResult::final_routes)
   std::vector<model::Track> warm_tracks;  // copper of a routed board (--warm-pcb) to start from: a net with one connection takes all of its tracks and vias; only what is legal under this board's rules is kept
   std::vector<model::Via> warm_vias;
+  double legalize_subdivide_mm = 0;  // > 0 with legalize: route tracks are cut into pieces of at most this length so they can bend (route/legalize.hpp)
   bool legalize = false;        // warm start: first move the vertices of the taken-over routes until the board's clearances hold (route/legalize.hpp), then keep what is legal
   bool state_recheck = false;   // warm start: take over only the routes that are legal under this board's rules (continuation from looser rules)
   int breakout_portfolio = 1;   // 1: with more than one variant, a board that looks like a ball-grid breakout gets the breakout portfolio (D101) instead of the designed eight
@@ -143,6 +144,15 @@ struct RouterOptions {
   bool plan_gap = true;
   bool optimize = true;         // post-routing clean-up: re-route connections to save vias and length
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
+  // Corridors of the review of the EtherCAT shield (reports/realworld/ethercat_qfn_analysis.md, doc 05 §47). All off by default: no change without them.
+  double escape_length_mm = 0;  // > 0: perimeter corridors run this far past the package edge (2 mm by default), as far as no fixed copper is in the way (bundles of parallel straight escapes)
+  bool escape_stubs = false;    // with the escape plan: a pin offers the end of its (long, straight) corridor as a start point, reached by one exact off-lattice segment at a discount: parallel escapes at the pad pitch, which the lattice cannot draw
+  bool soft_mask_graphics = false;  // net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them
+  bool soft_copper_graphics = false;  // board copper graphics (polygons on a copper layer) take the net of the pads, tracks and vias of the one net they touch (a manual pour), so that net's pins inside are not enclosed and no other net may touch them
+  bool via_drops = false;       // pins of dense packages may drop to a via 0.7-1.5 mm out, off the lattice, between the neighbours' tracks (the designer's supply vias), then go on on the other layer
+  bool escape_persist = false;  // a ripped-up connection gets its pins' corridors back; a corridor is kept while the net has other open connections at that package
+  bool radial_supply = false;   // spanning tree: no edge between two pins of one dense package for a net with 3+ pins there (each pin goes to a capacitor or via; the trunk forms outside the escape band)
+  double radial_penalty_mm = 10;  // what such an edge costs in the spanning tree
   bool escape_second_ring = false;  // second-ring balls escape between two outer balls instead of by dog-bone
   // Escape planning version 2 (route/escape_flow.hpp): deep ball-grid arrays get min-cost-flow channel and layer
   // assignment; other dense packages keep version 1's corridors. Implies escape_plan.
@@ -159,6 +169,9 @@ struct RouterOptions {
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
   std::vector<std::string> first_nets;  // routed first, also after restarts; other nets do not rip them (crystal lines)
+  // Nets that are never narrowed below their class width nor given the neck-down via (power nets in a rule-relaxed routing: they have the least margin,
+  // so the relaxation is spent on signals only). Empty = every net may be necked down.
+  std::vector<std::string> no_neck_nets;
   // Buses (doc 05 §38): groups of nets routed lane by lane. The connections of a group between two components are
   // routed one after the other in the order of their pins, each steered along the neighbour routed before it, on
   // the same layers; nets outside the groups do not rip them. `skew` > 0: meanders in the clean-up bring the
@@ -293,6 +306,9 @@ struct RouteResult {
   int bus_lanes = 0, bus_left = 0;
   int micro_vias = 0;           // micro vias placed
   int blind_vias = 0;           // blind/buried vias placed
+  double escape_corridor_mm = 0;   // total length of the corridors reserved (centrelines, version 1)
+  int package_pin_edges = 0;       // spanning-tree edges between two pins of one dense package, for nets with 3+ pins there (--radial-supply makes them rarer)
+  int escape_reclaimed = 0;        // --escape-persist: corridors given back to the pins of a ripped-up connection
   int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   // With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route, pins with every
   // connection routed}.

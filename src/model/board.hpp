@@ -177,6 +177,9 @@ struct Zone {
 };
 
 struct Board {
+  // Board-level copper graphics (polygons on a copper layer) take the net of the one net whose pads, tracks or vias they touch (a designer's manual pour); ones touching
+  // several nets stay net-less. Off: every board copper graphic is net-less copper that no track may touch (route --soft-copper-graphics turns it on).
+  bool infer_graphic_nets = false;
   std::int64_t version = 0;
   std::string generator;
   std::vector<LayerDef> layers;

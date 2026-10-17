@@ -1,0 +1,86 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 152/152 connections, 700 tracks, 116 vias, pitch 0.05",
+   "open": 4,
+   "violations": 4,
+   "placement_errors": 3,
+   "open_nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 0,
+   "kind": "hard",
+   "nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 201/201 connections, 838 tracks, 133 vias, pitch 0.05",
+   "open": 0,
+   "violations": 4,
+   "placement_errors": 3,
+   "open_nets": []
+  }
+ ],
+ "assign": {},
+ "moves": {},
+ "power": [
+  "+3V3",
+  "+5V",
+  "GND",
+  "OSC0_GND",
+  "VBAT",
+  "VDD_1V8",
+  "VDD_RTC"
+ ],
+ "hard": [
+  "GND"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.1524,
+   "tmin": 0.127,
+   "via": 0.508,
+   "drill": 0.3302,
+   "vmin": 0.508,
+   "dmin": 0.3302
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

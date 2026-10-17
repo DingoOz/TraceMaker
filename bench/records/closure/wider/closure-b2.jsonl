@@ -1,0 +1,28 @@
+{"board": "AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm", "run": "closure-b2", "layers": 2, "rounds": 3, "open_first": 3, "open_best": 3, "relaxed": 0, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 84}
+{"board": "memsarray_mems_modules", "run": "closure-b2", "layers": 2, "rounds": 4, "open_first": 3, "open_best": 0, "relaxed": 4, "relaxed_power": 1, "moves": 0, "hard": 0, "kicad_open": 0, "compromises": 10, "safety": "PASS", "seconds": 88}
+{"board": "kitspace_f-91w", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 9, "open_best": 2, "relaxed": 46, "relaxed_power": 3, "moves": 0, "hard": 0, "seconds": 921}
+{"board": "kitspace_OtterPill", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 23, "open_best": 4, "relaxed": 44, "relaxed_power": 3, "moves": 0, "hard": 2, "seconds": 1618}
+{"board": "MicroMaple_MicroMaple", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 17, "open_best": 7, "relaxed": 40, "relaxed_power": 4, "moves": 0, "hard": 1, "seconds": 1688}
+{"board": "kitspace_hack", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 7, "open_best": 3, "relaxed": 20, "relaxed_power": 6, "moves": 0, "hard": 3, "seconds": 2319}
+{"board": "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0", "run": "closure-b2", "layers": 2, "rounds": 4, "open_first": 31, "open_best": 22, "relaxed": 30, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 1397}
+{"board": "f4fc_f4fc", "run": "closure-b2", "layers": 4, "timeout": true, "rounds": 4, "open_first": 30, "open_best": 25, "relaxed": 89, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2400}
+{"board": "kitspace_120-channel-test-board", "run": "closure-b2", "layers": 2, "timeout": true, "rounds": 5, "open_first": 46, "open_best": 19, "relaxed": 63, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2400}
+{"board": "iso50_pcb", "run": "closure-b2", "layers": 2, "timeout": true, "rounds": 5, "open_first": 40, "open_best": 1, "relaxed": 33, "relaxed_power": 1, "moves": 0, "hard": 1, "seconds": 2401}
+{"board": "kitspace_OtterCastAudioV2", "run": "closure-b2", "layers": 2, "timeout": true, "rounds": 5, "open_first": 94, "open_best": 40, "relaxed": 116, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2401}
+{"board": "smart-meter_SmartMeter", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 3, "open_best": 0, "relaxed": 12, "relaxed_power": 1, "moves": 0, "hard": 1, "kicad_open": 0, "compromises": 42, "safety": "PASS", "seconds": 537}
+{"board": "DoroidOscillo-Board_Android_Oscilloscope", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 10, "open_best": 2, "relaxed": 22, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 1203}
+{"board": "59pct_keyboard", "run": "closure-b2", "layers": 2, "rounds": 4, "open_first": 11, "open_best": 1, "relaxed": 24, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 2019}
+{"board": "ErgodoneWithHole_ErgoDone", "run": "closure-b2", "layers": 2, "rounds": 4, "open_first": 6, "open_best": 2, "relaxed": 6, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 1840}
+{"board": "kitspace_d20_r0.1", "run": "closure-b2", "layers": 4, "timeout": true, "seconds": 2400}
+{"board": "Hardware_Playground_sd_wav_pcm5100", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 3, "open_best": 0, "relaxed": 10, "relaxed_power": 0, "moves": 0, "hard": 1, "kicad_open": 0, "compromises": 3, "safety": "PASS", "seconds": 655}
+{"board": "P8000_WDC_Emulator_P8000_WDC_Emulator", "run": "closure-b2", "layers": 2, "timeout": true, "rounds": 5, "open_first": 51, "open_best": 27, "relaxed": 41, "relaxed_power": 0, "moves": 0, "hard": 2, "seconds": 2400}
+{"board": "mppt-2420-hpx_mppt-2420-hpx", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 7, "open_best": 1, "relaxed": 47, "relaxed_power": 3, "moves": 0, "hard": 5, "seconds": 1572}
+{"board": "bms-8s50-ic_bms-8s50-ic", "run": "closure-b2", "layers": 2, "timeout": true, "rounds": 5, "open_first": 48, "open_best": 4, "relaxed": 84, "relaxed_power": 0, "moves": 0, "hard": 5, "seconds": 2400}
+{"board": "sbc_sbc", "run": "closure-b2", "layers": 4, "timeout": true, "rounds": 5, "open_first": 61, "open_best": 46, "relaxed": 101, "relaxed_power": 5, "moves": 0, "hard": 1, "seconds": 2400}
+{"board": "Own-Mailbox-Hardware_pierre", "run": "closure-b2", "layers": 4, "rounds": 4, "open_first": 21, "open_best": 11, "relaxed": 45, "relaxed_power": 0, "moves": 0, "hard": 2, "seconds": 2393}
+{"board": "freeDSPx-AMP-x4_freeDSPx-AMPx4", "run": "closure-b2", "layers": 2, "seconds": 2024}
+{"board": "kitspace_XassetteAsterisk", "run": "closure-b2", "layers": 2, "rounds": 5, "open_first": 67, "open_best": 48, "relaxed": 138, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 1577}
+{"board": "motor-high-current-sensors_CurrentSensorPCB_line", "run": "closure-b2", "layers": 2, "rounds": 4, "open_first": 29, "open_best": 0, "relaxed": 0, "relaxed_power": 0, "moves": 0, "hard": 4, "kicad_open": 0, "compromises": 24, "safety": "PASS", "seconds": 579}
+{"board": "freeDSP-CLASSIC-SMD-BALANCED_FreeDSP_BAL", "run": "closure-b2", "layers": 2, "rounds": 4, "open_first": 23, "open_best": 0, "relaxed": 30, "relaxed_power": 1, "moves": 0, "hard": 1, "kicad_open": 0, "compromises": 0, "safety": "PASS", "seconds": 746}
+{"board": "74Logic_SA_ADC_SA-ADC", "run": "closure-b2", "layers": 2, "rounds": 6, "open_first": 47, "open_best": 1, "relaxed": 50, "relaxed_power": 2, "moves": 0, "hard": 2, "seconds": 2143}
+{"board": "rvi_v2x_hardware_V2X", "run": "closure-b2", "layers": 2, "timeout": true, "rounds": 6, "open_first": 51, "open_best": 18, "relaxed": 87, "relaxed_power": 0, "moves": 0, "hard": 6, "seconds": 2701}

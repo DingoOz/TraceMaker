@@ -1,0 +1,391 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 415/422 connections, 1361 tracks, 243 vias, pitch 0.0",
+   "open": 6,
+   "violations": 55,
+   "placement_errors": 21,
+   "open_nets": [
+    "LED1",
+    "Net-(C39-Pad2)",
+    "RPX_P",
+    "SVREF",
+    "TPX_N",
+    "VDDPLL"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 28,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 409/422 connections, 1791 tracks, 251 vias, pitch 0.0",
+   "open": 12,
+   "violations": 56,
+   "placement_errors": 21,
+   "open_nets": [
+    "1V5",
+    "Net-(C91-Pad2)",
+    "RPX_P",
+    "SVREF",
+    "TPX_N",
+    "TPX_P",
+    "USB_ETH_N",
+    "VDDBUSPLL",
+    "VDDCORE"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "shove",
+   "nets": 22,
+   "open": 13,
+   "violations": 55,
+   "was_open": 12,
+   "was_violations": 56,
+   "kept_back": 21,
+   "accepted": true,
+   "router": "routed 409/422 connections, 1736 tracks, 239 vias, pitch 0.0"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 38,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 421/422 connections, 1452 tracks, 255 vias, pitch 0.0",
+   "open": 1,
+   "violations": 133,
+   "placement_errors": 20,
+   "open_nets": [
+    "USB_ETH_N"
+   ]
+  },
+  {
+   "round": 2,
+   "kind": "shove",
+   "nets": 37,
+   "open": 11,
+   "violations": 56,
+   "was_open": 1,
+   "was_violations": 133,
+   "kept_back": 32,
+   "accepted": true,
+   "router": "routed 411/422 connections, 1759 tracks, 249 vias, pitch 0.0"
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 38,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 413/422 connections, 1780 tracks, 252 vias, pitch 0.0",
+   "open": 9,
+   "violations": 108,
+   "placement_errors": 20,
+   "open_nets": [
+    "1V5",
+    "Net-(C91-Pad2)",
+    "RPX_P",
+    "SVREF",
+    "TPX_N",
+    "TPX_P",
+    "USB_ETH_N"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 8,
+   "open": 9,
+   "violations": 108,
+   "was_open": 9,
+   "was_violations": 108,
+   "kept_back": 8,
+   "accepted": false,
+   "router": "routed 413/422 connections, 1780 tracks, 252 vias, pitch 0.0"
+  },
+  {
+   "round": 4,
+   "kind": "route",
+   "relaxed_nets": 38,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 414/422 connections, 1753 tracks, 255 vias, pitch 0.0",
+   "open": 8,
+   "violations": 116,
+   "placement_errors": 20,
+   "open_nets": [
+    "1V5",
+    "RPX_P",
+    "SVREF",
+    "TPX_N",
+    "TPX_P",
+    "USB_ETH_N"
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "shove",
+   "nets": 8,
+   "open": 9,
+   "violations": 113,
+   "was_open": 8,
+   "was_violations": 116,
+   "kept_back": 7,
+   "accepted": true,
+   "router": "routed 413/422 connections, 1764 tracks, 252 vias, pitch 0.0"
+  },
+  {
+   "round": 4,
+   "kind": "move",
+   "trials": [
+    {
+     "ref": "C33",
+     "step": 0.25,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "C33",
+     "step": 0.5,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "C33",
+     "step": 1.0,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "C90",
+     "step": 0.25,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "C90",
+     "step": 0.5,
+     "open": 7,
+     "placement": 20
+    },
+    {
+     "ref": "C90",
+     "step": 1.0,
+     "open": 7,
+     "placement": 20
+    },
+    {
+     "ref": "L7",
+     "step": 0.25,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "L7",
+     "step": 0.5,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "L7",
+     "step": 1.0,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "L8",
+     "step": 0.25,
+     "open": 7,
+     "placement": 20
+    },
+    {
+     "ref": "L8",
+     "step": 0.5,
+     "open": 7,
+     "placement": 20
+    },
+    {
+     "ref": "L8",
+     "step": 1.0,
+     "open": 10,
+     "placement": 20
+    },
+    {
+     "ref": "R14",
+     "step": 0.25,
+     "open": 10,
+     "placement": 20
+    },
+    {
+     "ref": "R14",
+     "step": 0.5,
+     "open": 10,
+     "placement": 20
+    },
+    {
+     "ref": "R14",
+     "step": 1.0,
+     "open": 7,
+     "placement": 20
+    },
+    {
+     "ref": "R6",
+     "step": 0.25,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "R6",
+     "step": 0.5,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "R6",
+     "step": 1.0,
+     "open": 11,
+     "placement": 20
+    },
+    {
+     "ref": "U2",
+     "step": 0.25,
+     "open": 10,
+     "placement": 20
+    },
+    {
+     "ref": "U2",
+     "step": 0.5,
+     "open": 10,
+     "placement": 20
+    },
+    {
+     "ref": "U2",
+     "step": 1.0,
+     "open": 6,
+     "placement": 20
+    },
+    {
+     "ref": "U6",
+     "step": 0.25,
+     "open": 12,
+     "placement": 20
+    },
+    {
+     "ref": "U6",
+     "step": 0.5,
+     "open": 8,
+     "placement": 20
+    },
+    {
+     "ref": "U6",
+     "step": 1.0,
+     "open": 13,
+     "placement": 20
+    }
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "effort",
+   "open": 5,
+   "placement_errors": 20,
+   "router": "routed 417/422 connections, 1905 tracks, 289 vias, pitch 0.0"
+  }
+ ],
+ "assign": {
+  "DDR3_BA1": "T2",
+  "DDR3_CAS": "T2",
+  "DDR3_CKE": "T2",
+  "DDR3_CK_N": "T2",
+  "DDR3_CK_P": "T2",
+  "DDR3_D02": "T2",
+  "DDR3_D04": "T2",
+  "DDR3_D05": "T2",
+  "DDR3_D06": "T2",
+  "DDR3_D07": "T2",
+  "DDR3_ODT": "T2",
+  "DDR3_RAS": "T2",
+  "Net-(C22-Pad2)": "T2",
+  "Net-(C39-Pad2)": "T2",
+  "Net-(C6-Pad2)": "T2",
+  "Net-(C7-Pad2)": "T2",
+  "Net-(C90-Pad2)": "T2",
+  "Net-(C91-Pad2)": "T2",
+  "Net-(R14-Pad2)": "T2",
+  "Net-(R15-Pad2)": "T2",
+  "Net-(R6-Pad1)": "T2",
+  "Net-(T1-Pad4)": "T2",
+  "Net-(U2-PadJ1)": "T2",
+  "Net-(U2-PadJ9)": "T2",
+  "Net-(U2-PadL9)": "T2",
+  "Net-(U6-Pad1)": "T2",
+  "Net-(U6-Pad56)": "T2",
+  "RPX_N": "T2",
+  "RPX_P": "T2",
+  "SVREF": "T2",
+  "TPX_N": "T2",
+  "TPX_P": "T2",
+  "USB_ETH_N": "T2",
+  "USB_ETH_P": "T2",
+  "USB_HOST_N": "T2",
+  "USB_HOST_P": "T2",
+  "X1_N": "T2",
+  "X1_P": "T2"
+ },
+ "moves": {},
+ "power": [
+  "+5V",
+  "1V5",
+  "3VA",
+  "VCC",
+  "VDD33A",
+  "VDDBUSPLL",
+  "VDDCORE",
+  "VDDPLL",
+  "VDD_CPU",
+  "VDD_INT"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.13,
+   "tmin": 0.13,
+   "via": 0.56,
+   "drill": 0.3,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

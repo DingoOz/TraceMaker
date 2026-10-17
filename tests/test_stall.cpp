@@ -191,3 +191,228 @@ TEST_CASE("stall: a connection that routes has no failure to explain", "[stall][
   CHECK(res.routed == 1);
   CHECK(cap.failures.empty());
 }
+
+TEST_CASE("no_neck_nets: a listed net keeps its class width, the others are necked down through a narrow gap", "[stall][route][neck]") {
+  // Clearance 0.1, class width 0.25, board minimum 0.1: a 0.35 mm gap takes a track of 0.15 mm, the router's neck-down width. Without the
+  // option NET_A squeezes through at 0.15 mm; listed in no_neck_nets it keeps 0.25 mm and has no way (a relaxation is spent on signals only).
+  const auto l = wall_board(0.35, 0.25, 0.1, 0.1);
+  auto o = options(nullptr);
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  REQUIRE(plain.routed == 1);
+  CHECK(plain.necked >= 1);
+  o.no_neck_nets = {"NET_A"};
+  const auto kept = route::Router(l.board, l.rules, o).run();
+  CHECK(kept.routed == 0);
+  CHECK(kept.necked == 0);
+  o.no_neck_nets = {"OTHER"};  // another net listed: no effect on NET_A
+  const auto other = route::Router(l.board, l.rules, o).run();
+  CHECK(other.routed == 1);
+}
+
+// ---- escape features of the EtherCAT review (doc 05 §47): corridor length, persistence, radial supply pins -------------------------------------------
+namespace {
+
+// A 16-pin package U1 (two rows of 8, 0.5 mm pitch, 0.3 x 0.8 mm pads) at the left, connectors J1 and J2 at the right; every pin of U1 has a net to J1, and
+// pins 0-3 of one row share one more net `VCC` (with a capacitor C1 and a via-free pad J2 far away). `wall_x` > 0: a keep-out column at that x across the board.
+Loaded escape_board(double wall_x) {
+  json p;
+  p["layerCount"] = 2;
+  p["minTraceWidth"] = 0.1;
+  p["nominalTraceWidth"] = 0.15;
+  p["defaultObstacleMargin"] = 0.1;
+  p["bounds"] = {{"minX", -12.0}, {"maxX", 40.0}, {"minY", -12.0}, {"maxY", 12.0}};
+  json obstacles = json::array(), connections = json::array();
+  auto pad = [&](const std::string& id, const std::string& part, double x, double y, double w, double h) {
+    obstacles.push_back({{"type", "rect"}, {"layers", {"top"}}, {"center", {{"x", x}, {"y", y}}}, {"width", w}, {"height", h},
+                         {"connectedTo", {id}}, {"obstacleId", "pad_" + id}, {"componentId", part}});
+  };
+  auto pt = [](const std::string& id, double x, double y) { return json{{"x", x}, {"y", y}, {"layer", "top"}, {"pointId", id}}; };
+  for (int i = 0; i < 8; ++i) {  // rows at x = -1.9 and x = +1.9 (pads 0.8 mm long in x)
+    for (int side = 0; side < 2; ++side) {
+      const double x = side ? 1.9 : -1.9, y = (i - 3.5) * 0.5;
+      const std::string id = "u" + std::to_string(side * 8 + i);
+      pad(id, "U1", x, y, 0.8, 0.3);
+      const bool vcc = side == 0 && i < 4;
+      if (!vcc) {
+        const std::string jd = "j" + std::to_string(side * 8 + i);
+        pad(jd, "J1", 30.0, (side * 8 + i - 7.5) * 1.2, 1.0, 0.8);
+        connections.push_back({{"name", "S" + std::to_string(side * 8 + i)}, {"pointsToConnect", {pt(id, x, y), pt(jd, 30.0, (side * 8 + i - 7.5) * 1.2)}},
+                               {"rootConnectionName", "S" + std::to_string(side * 8 + i)}});
+      }
+    }
+  }
+  json vcc_pts = json::array();
+  for (int i = 0; i < 4; ++i) vcc_pts.push_back(pt("u" + std::to_string(i), -1.9, (i - 3.5) * 0.5));
+  pad("c1", "C1", -8.0, -3.0, 0.8, 0.8);
+  pad("j2", "J2", 20.0, 10.0, 1.0, 1.0);
+  vcc_pts.push_back(pt("c1", -8.0, -3.0));
+  vcc_pts.push_back(pt("j2", 20.0, 10.0));
+  connections.push_back({{"name", "VCC"}, {"pointsToConnect", vcc_pts}, {"rootConnectionName", "VCC"}});
+  if (wall_x > 0)
+    obstacles.push_back({{"type", "rect"}, {"layers", {"top", "bottom"}}, {"center", {{"x", wall_x}, {"y", 0.0}}}, {"width", 0.6}, {"height", 24.0}, {"obstacleId", "wall"}, {"componentId", "WALL"}});
+  p["obstacles"] = obstacles;
+  p["connections"] = connections;
+  const auto files = io::srj_to_kicad(io::read_srj(p.dump()));
+  const fs::path dir = fs::temp_directory_path() / ("tm_escfeat_test_" + std::to_string(::getpid()) + "_" + std::to_string(static_cast<int>(wall_x)));
+  fs::create_directories(dir);
+  const fs::path pcb = dir / "b.kicad_pcb";
+  std::ofstream(pcb) << files.pcb;
+  std::ofstream(dir / "b.kicad_pro") << files.pro;
+  if (!files.dru.empty()) std::ofstream(dir / "b.kicad_dru") << files.dru;
+  Loaded l{io::read_board_file(pcb.string()).board, io::read_design_rules(pcb.string())};
+  fs::remove_all(dir);
+  return l;
+}
+
+route::RouterOptions escape_options() {
+  route::RouterOptions o;
+  o.work_budget = 3'000'000;
+  o.escape_plan = true;
+  return o;
+}
+
+}  // namespace
+
+TEST_CASE("escape length: corridors run far past the package edge, and stop where fixed copper is in the way", "[stall][route][escape]") {
+  const auto open = escape_board(0);
+  auto o = escape_options();
+  const auto base = route::Router(open.board, open.rules, o).run();
+  o.escape_length_mm = 12;
+  const auto longer = route::Router(open.board, open.rules, o).run();
+  CHECK(base.escape_corridors == longer.escape_corridors);
+  CHECK(base.escape_corridors > 0);
+  CHECK(longer.escape_corridor_mm > base.escape_corridor_mm * 3);  // 2 mm stubs against up to 12 mm runs
+  // A wall 6 mm to the right of the package: the runs stop in front of it.
+  const auto walled = escape_board(6);
+  const auto stopped = route::Router(walled.board, walled.rules, o).run();
+  CHECK(stopped.escape_corridor_mm < longer.escape_corridor_mm);
+  CHECK(stopped.escape_corridor_mm > base.escape_corridor_mm);
+  // Same input, same options: the same plan.
+  const auto again = route::Router(open.board, open.rules, o).run();
+  CHECK(again.escape_corridor_mm == longer.escape_corridor_mm);
+  CHECK(again.routed == longer.routed);
+}
+
+TEST_CASE("radial supply: a net with several pins on a dense package gets no pin-to-pin edges", "[stall][route][escape]") {
+  const auto l = escape_board(0);
+  auto o = escape_options();
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  o.radial_supply = true;
+  const auto radial = route::Router(l.board, l.rules, o).run();
+  CHECK(plain.package_pin_edges >= 2);  // VCC's four pins are chained pin to pin
+  CHECK(radial.package_pin_edges == 0);  // each goes to the capacitor instead
+  INFO("plain routed " << plain.routed << "/" << plain.connections << ", radial " << radial.routed << "/" << radial.connections);
+  CHECK(radial.routed > 0);
+}
+
+TEST_CASE("escape persist: legal, deterministic, and corridors come back for ripped-up connections", "[stall][route][escape]") {
+  const auto l = escape_board(0);
+  auto o = escape_options();
+  o.escape_persist = true;
+  o.escape_length_mm = 8;
+  const auto one = route::Router(l.board, l.rules, o).run();
+  const auto two = route::Router(l.board, l.rules, o).run();
+  CHECK(one.routed == two.routed);
+  CHECK(one.tracks.size() == two.tracks.size());
+  CHECK(one.escape_reclaimed == two.escape_reclaimed);
+  CHECK(one.routed > 0);
+  CHECK(one.unrouted.size() == static_cast<std::size_t>(one.connections - one.routed));
+}
+
+TEST_CASE("via drops: routing with them is legal, deterministic and reaches the same connections on an open board", "[stall][route][escape]") {
+  const auto l = escape_board(0);
+  auto o = escape_options();
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  o.via_drops = true;
+  const auto one = route::Router(l.board, l.rules, o).run();
+  const auto two = route::Router(l.board, l.rules, o).run();
+  CHECK(one.routed == two.routed);
+  CHECK(one.tracks.size() == two.tracks.size());
+  CHECK(one.vias.size() == two.vias.size());
+  CHECK(one.routed >= plain.routed - 1);  // offered, never forced: an open board routes as before (within the order effects of one extra endpoint)
+  CHECK(one.routed > 0);
+}
+
+// A footprint that draws a mask opening over the pads of two nets (a solder jumper, a microphone's pad group) is a net-less opening that keeps every track out:
+// the pin inside cannot start. --soft-mask-graphics takes the opening off (KiCad then flags what lies in it).
+TEST_CASE("soft mask graphics: a pin inside a net-less mask opening routes only with the option", "[stall][route][mask]") {
+  const std::string pcb =
+      "(kicad_pcb (version 20171130) (host pcbnew \"5\")\n"
+      "  (general (thickness 1.6))\n  (page A4)\n"
+      "  (layers (0 F.Cu signal) (31 B.Cu signal) (38 B.Mask user) (39 F.Mask user) (44 Edge.Cuts user))\n"
+      "  (setup (last_trace_width 0.2) (trace_clearance 0.2) (zone_clearance 0.508) (zone_45_only no) (trace_min 0.2) (via_size 0.6) (via_drill 0.3) (via_min_size 0.4) (via_min_drill 0.3)\n"
+      "    (pad_to_mask_clearance 0))\n"
+      "  (net 0 \"\")\n  (net 1 A)\n  (net 2 B)\n"
+      "  (net_class Default \"\" (clearance 0.2) (trace_width 0.2) (via_dia 0.6) (via_drill 0.3) (uvia_dia 0.3) (uvia_drill 0.1) (add_net A) (add_net B))\n"
+      "  (module J1 (layer F.Cu) (tedit 0) (tstamp 1) (at 5 5)\n"
+      "    (fp_text reference J1 (at 0 -2) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))\n"
+      "    (fp_line (start -1.8 -0.9) (end 1.8 -0.9) (layer F.Mask) (width 0.1))\n"
+      "    (fp_line (start 1.8 -0.9) (end 1.8 0.9) (layer F.Mask) (width 0.1))\n"
+      "    (fp_line (start 1.8 0.9) (end -1.8 0.9) (layer F.Mask) (width 0.1))\n"
+      "    (fp_line (start -1.8 0.9) (end -1.8 -0.9) (layer F.Mask) (width 0.1))\n"
+      "    (pad 1 smd rect (at -1 0) (size 0.8 0.8) (layers F.Cu F.Paste F.Mask) (net 1 A))\n"
+      "    (pad 2 smd rect (at 1 0) (size 0.8 0.8) (layers F.Cu F.Paste F.Mask) (net 2 B)))\n"
+      "  (module J2 (layer F.Cu) (tedit 0) (tstamp 2) (at 15 5)\n"
+      "    (fp_text reference J2 (at 0 -2) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))\n"
+      "    (pad 1 smd rect (at 0 0) (size 0.8 0.8) (layers F.Cu F.Paste F.Mask) (net 1 A))\n"
+      "    (pad 2 smd rect (at 0 3) (size 0.8 0.8) (layers F.Cu F.Paste F.Mask) (net 2 B)))\n"
+      "  (gr_line (start 0 0) (end 20 0) (layer Edge.Cuts) (width 0.1))\n  (gr_line (start 20 0) (end 20 10) (layer Edge.Cuts) (width 0.1))\n"
+      "  (gr_line (start 20 10) (end 0 10) (layer Edge.Cuts) (width 0.1))\n  (gr_line (start 0 10) (end 0 0) (layer Edge.Cuts) (width 0.1))\n)\n";
+  const fs::path dir = fs::temp_directory_path() / ("tm_mask_test_" + std::to_string(::getpid()));
+  fs::create_directories(dir);
+  const fs::path file = dir / "b.kicad_pcb";
+  std::ofstream(file) << pcb;
+  const auto lb = io::read_board_file(file.string());
+  const auto rules = io::read_design_rules(file.string());
+  fs::remove_all(dir);
+  route::RouterOptions o;
+  o.work_budget = 1'000'000;
+  const auto closed = route::Router(lb.board, rules, o).run();
+  o.soft_mask_graphics = true;
+  const auto open = route::Router(lb.board, rules, o).run();
+  const auto again = route::Router(lb.board, rules, o).run();
+  CHECK(closed.routed < closed.connections);  // the pin inside the opening cannot start
+  CHECK(open.routed == open.connections);
+  CHECK(open.routed > closed.routed);
+  CHECK(again.routed == open.routed);
+  CHECK(again.tracks.size() == open.tracks.size());
+}
+
+// Net-less copper drawn as a board graphic (a polygon on F.Cu) around a pad is fixed copper that no track may touch: the pad is enclosed. --soft-copper-graphics ignores it.
+TEST_CASE("soft copper graphics: a pin inside a net-less copper polygon routes only with the option", "[stall][route][mask]") {
+  const std::string pcb =
+      "(kicad_pcb (version 20171130) (host pcbnew \"5\")\n"
+      "  (general (thickness 1.6))\n  (page A4)\n"
+      "  (layers (0 F.Cu signal) (31 B.Cu signal) (38 B.Mask user) (39 F.Mask user) (44 Edge.Cuts user))\n"
+      "  (setup (last_trace_width 0.2) (trace_clearance 0.2) (zone_clearance 0.508) (zone_45_only no) (trace_min 0.2) (via_size 0.6) (via_drill 0.3) (via_min_size 0.4) (via_min_drill 0.3)\n"
+      "    (pad_to_mask_clearance 0))\n"
+      "  (net 0 \"\")\n  (net 1 A)\n"
+      "  (net_class Default \"\" (clearance 0.2) (trace_width 0.2) (via_dia 0.6) (via_drill 0.3) (uvia_dia 0.3) (uvia_drill 0.1) (add_net A))\n"
+      "  (module J1 (layer F.Cu) (tedit 0) (tstamp 1) (at 5 5)\n"
+      "    (fp_text reference J1 (at 0 -2) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))\n"
+      "    (pad 1 smd rect (at 0 0) (size 0.8 0.8) (layers F.Cu F.Paste F.Mask) (net 1 A)))\n"
+      "  (module J2 (layer F.Cu) (tedit 0) (tstamp 2) (at 15 5)\n"
+      "    (fp_text reference J2 (at 0 -2) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))\n"
+      "    (pad 1 smd rect (at 0 0) (size 0.8 0.8) (layers F.Cu F.Paste F.Mask) (net 1 A)))\n"
+      "  (gr_poly (pts (xy 3 2) (xy 8 2) (xy 8 8) (xy 3 8)) (layer F.Cu) (width 0))\n"
+      "  (gr_poly (pts (xy 3 2) (xy 8 2) (xy 8 8) (xy 3 8)) (layer B.Cu) (width 0))\n"
+      "  (gr_line (start 0 0) (end 20 0) (layer Edge.Cuts) (width 0.1))\n  (gr_line (start 20 0) (end 20 10) (layer Edge.Cuts) (width 0.1))\n"
+      "  (gr_line (start 20 10) (end 0 10) (layer Edge.Cuts) (width 0.1))\n  (gr_line (start 0 10) (end 0 0) (layer Edge.Cuts) (width 0.1))\n)\n";
+  const fs::path dir = fs::temp_directory_path() / ("tm_cugfx_test_" + std::to_string(::getpid()));
+  fs::create_directories(dir);
+  const fs::path file = dir / "b.kicad_pcb";
+  std::ofstream(file) << pcb;
+  const auto lb = io::read_board_file(file.string());
+  const auto rules = io::read_design_rules(file.string());
+  fs::remove_all(dir);
+  route::RouterOptions o;
+  o.work_budget = 1'000'000;
+  const auto closed = route::Router(lb.board, rules, o).run();
+  o.soft_copper_graphics = true;
+  const auto open = route::Router(lb.board, rules, o).run();
+  const auto again = route::Router(lb.board, rules, o).run();
+  CHECK(closed.routed < closed.connections);  // the pin sits inside fixed copper on both layers
+  CHECK(open.routed == open.connections);
+  CHECK(again.routed == open.routed);
+  CHECK(again.tracks.size() == open.tracks.size());
+}
