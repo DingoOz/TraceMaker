@@ -20,10 +20,10 @@ fail=0
 for b in "${boards[@]}"; do
   for mode in stored refilled; do
     n=$(basename "$b" .kicad_pcb).$mode
-    extra=()
+    extra=()  # expanded as ${extra[@]+...}: an empty array is unbound under set -u in macOS's bash 3.2
     [[ $mode == refilled ]] && extra=(--refill-zones)
-    "$TM" drc "$b" "${extra[@]}" --json "$OUT/$n.index.json" >/dev/null || true       # exit 5 = violations found
-    "$TM" drc "$b" "${extra[@]}" --json "$OUT/$n.linear.json" --linear-zones >/dev/null || true
+    "$TM" drc "$b" ${extra[@]+"${extra[@]}"} --json "$OUT/$n.index.json" >/dev/null || true       # exit 5 = violations found
+    "$TM" drc "$b" ${extra[@]+"${extra[@]}"} --json "$OUT/$n.linear.json" --linear-zones >/dev/null || true
     if cmp -s "$OUT/$n.index.json" "$OUT/$n.linear.json"; then echo "$n: identical"; else echo "$n: reports differ"; fail=1; fi
   done
 done
