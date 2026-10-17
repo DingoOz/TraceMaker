@@ -1,4 +1,9 @@
-# TraceMaker
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="branding/tracemaker-logo-dark.svg">
+    <img src="branding/tracemaker-logo.svg" alt="TraceMaker" width="360">
+  </picture>
+</h1>
 
 **An autorouter and component placer for KiCad.** You give it a `.kicad_pcb`; it draws the tracks and vias and
 writes them back into the file.

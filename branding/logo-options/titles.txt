@@ -1,0 +1,25 @@
+01 Trace T
+02 Via fan-out
+03 TM monogram tile
+04 Routed path
+05 Two-layer cross
+06 IC package
+07 Pen nib
+08 Maze solved
+09 Lowercase + trace
+10 Terminal
+11 Hex badge
+12 Bus bend
+13 Ratsnest to routed
+14 Pad grid T
+15 Shield + DRC check
+16 Neon
+17 Blueprint
+18 Gold ENIG pad
+19 Soldermask + silkscreen
+20 Isometric cube
+21 Speed chevrons
+22 M trace
+23 Seal
+24 Octagonal spiral
+25 Trace critter

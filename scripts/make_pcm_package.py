@@ -12,7 +12,7 @@ Archive layout (KiCad PCM, metadata schema v2 as shipped with KiCad 10):
     plugins/bin/tracemaker-place  optional (--place-binary): bundled placer (TRACEMAKER_PLACE)
     plugins/lib/tracemaker*.so  optional (--module): bundled Python module (must match KiCad's Python version)
     plugins/share/tracemaker/viewer/  optional (--viewer DIR): the built live viewer, where the bundled binary looks (../share/tracemaker/viewer)
-    resources/icon.png       64x64 package icon (generated here with the standard library)
+    resources/icon.png       64x64 package icon (branding/png/tracemaker-icon-64.png)
 
 The archive is reproducible: fixed timestamps, sorted entries. Binaries are never committed; bundle them at
 packaging time only.
@@ -25,16 +25,15 @@ import io
 import json
 import os
 import re
-import struct
 import subprocess
 import sys
 import tempfile
 import zipfile
-import zlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLUGIN_DIR = os.path.join(ROOT, "kicad_plugin")
-PLUGIN_FILES = ["plugin.json", "tracemaker_route.py", "requirements.txt", "README.md"]
+PLUGIN_FILES = ["plugin.json", "tracemaker_route.py", "requirements.txt", "README.md",
+                "icons/tracemaker-24.png", "icons/tracemaker-48.png"]
 IDENTIFIER = "org.tracemaker.autoroute"
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)
 
@@ -55,52 +54,10 @@ def git_user() -> str:
     return name or "TraceMaker developers"
 
 
-def png(width: int, height: int, pixel) -> bytes:
-    """Encodes an RGBA image; pixel(x, y) -> (r, g, b, a)."""
-    raw = bytearray()
-    for y in range(height):
-        raw.append(0)  # filter: none
-        for x in range(width):
-            raw.extend(pixel(x, y))
-
-    def chunk(kind: bytes, data: bytes) -> bytes:
-        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
-
-    ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
-    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(bytes(raw), 9)) + chunk(b"IEND", b"")
-
-
-def icon_png(size: int = 64) -> bytes:
-    """A green board with two octilinear copper traces (not crossing) between round pads."""
-    board, copper, pad, hole = (20, 92, 52, 255), (214, 140, 52, 255), (232, 190, 96, 255), (20, 40, 30, 255)
-    s = size / 64.0
-    pads = [(12, 14), (52, 14), (12, 50), (52, 50)]
-    # Trace polylines in 64-unit coordinates (45-degree bends, as the router produces).
-    traces = [[(12, 14), (20, 14), (30, 24), (42, 24), (52, 14)], [(12, 50), (24, 38), (40, 38), (52, 50)]]
-
-    def near_segment(px, py, a, b, r):
-        ax, ay, bx, by = a[0] * s, a[1] * s, b[0] * s, b[1] * s
-        dx, dy = bx - ax, by - ay
-        t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
-        qx, qy = ax + t * dx - px, ay + t * dy - py
-        return qx * qx + qy * qy <= r * r
-
-    def pixel(x, y):
-        px, py = x + 0.5, y + 0.5
-        if min(x, y, size - 1 - x, size - 1 - y) < 2 * s:
-            return (12, 60, 34, 255)  # board edge
-        for cx, cy in pads:
-            d2 = (px - cx * s) ** 2 + (py - cy * s) ** 2
-            if d2 <= (2.2 * s) ** 2:
-                return hole
-            if d2 <= (6 * s) ** 2:
-                return pad
-        for tr in traces:
-            if any(near_segment(px, py, tr[i], tr[i + 1], 2.6 * s) for i in range(len(tr) - 1)):
-                return copper
-        return board
-
-    return png(size, size, pixel)
+def icon_png() -> bytes:
+    """The 64x64 package icon: the brand icon rendered from branding/tracemaker-icon.svg (see branding/README.md)."""
+    with open(os.path.join(ROOT, "branding", "png", "tracemaker-icon-64.png"), "rb") as fh:
+        return fh.read()
 
 
 def metadata(version: str, args) -> dict:

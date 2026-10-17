@@ -52,7 +52,7 @@ def page(run, set_name):
             rows.append((b, "q", "queued", "", ""))
     body = "".join("<tr class=%s><td>%s<td>%s<td>%s<td>%s" % (c, html.escape(b), html.escape(s), r, t)
                    for b, c, s, r, t in rows)
-    return ("<meta http-equiv=refresh content=30><title>%s</title><style>body{font:14px sans-serif;margin:20px}"
+    return ("<meta http-equiv=refresh content=30><title>%s</title><link rel=\"icon\" href=\"data:image/svg+xml,%%3Csvg%%20xmlns='http://www.w3.org/2000/svg'%%20viewBox='0%%200%%2064%%2064'%%3E%%3Crect%%20width='64'%%20height='64'%%20rx='14'%%20fill='%%23101a2e'/%%3E%%3Cg%%20fill='none'%%20stroke-linejoin='round'%%3E%%3Cpolyline%%20points='15,42%%2017,42%%2027,32%%2028.2,32'%%20stroke='%%23ef5b5b'%%20stroke-width='5'/%%3E%%3Cpolyline%%20points='35.8,32%%2037,32%%2047,42%%2049,42'%%20stroke='%%235b9cf5'%%20stroke-width='5'/%%3E%%3Ccircle%%20cx='11'%%20cy='42'%%20r='4.5'%%20stroke='%%23ef5b5b'%%20stroke-width='3.2'/%%3E%%3Ccircle%%20cx='53'%%20cy='42'%%20r='4.5'%%20stroke='%%235b9cf5'%%20stroke-width='3.2'/%%3E%%3Ccircle%%20cx='32'%%20cy='32'%%20r='3.8'%%20stroke='%%23e8ecf2'%%20stroke-width='3.4'/%%3E%%3C/g%%3E%%3C/svg%%3E\" /><style>body{font:14px sans-serif;margin:20px}"
             "td{padding:2px 12px}.ok{background:#cfc}.part{background:#fec}.run{background:#cdf}.q{color:#888}</style>"
             "<h2>%s (%s)</h2><p>%d boards, %d finished, %d complete, %d running. %s</p><table>"
             "<tr><th>board<th>state<th>routed<th>time%s</table>" %

@@ -189,8 +189,9 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
   give byte-identical boards (ctest `python_bindings` checks this on a PCBench board). The GIL is released while
   routing and checking. The module is built into `build/<preset>/python/` (D18).
 - **PCM package**: `scripts/make_pcm_package.py` writes `build/pcm/tracemaker-<version>.zip` (metadata schema v2
-  as shipped with KiCad 10, `type: plugin`, `runtime: ipc`, `kicad_version: 10.0`, the plugin under `plugins/`, a
-  generated 64×64 `resources/icon.png`; reproducible archive). `scripts/validate_pcm.py` checks the layout and
+  as shipped with KiCad 10, `type: plugin`, `runtime: ipc`, `kicad_version: 10.0`, the plugin under `plugins/`, the
+  brand icon as `resources/icon.png` (64×64) and as the action's toolbar icons (`icons-light`/`icons-dark`, 24 and 48 px,
+  D123); reproducible archive). `scripts/validate_pcm.py` checks the layout and
   metadata and also runs kicad-python's official validator when it is installed; ctest `pcm_package` builds and
   validates the archive. The engine is not bundled by default (D19); `--binary`/`--module` bundle the Linux builds
   for use on the same machine. Installed through the Plugin and Content Manager of a running KiCad 10.0.6 (headless, as above; Install from
