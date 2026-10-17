@@ -44,9 +44,7 @@ export interface Toggles {
   footprintCheck: boolean;
 }
 
-const LOGO = `<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#101a33"/>
-<path d="M6 22h7.5l5-8H26" stroke="#e8545c" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="26" cy="14" r="3.2" fill="#5b9cf5"/><circle cx="6" cy="22" r="2.2" fill="#d4ad3f"/></svg>`;
+const LOGO = `<svg viewBox="0 0 64 64" width="24" height="24" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#101a2e"/><g fill="none" stroke-linejoin="round"><polyline points="15,42 17,42 27,32 28.2,32" stroke="#ef5b5b" stroke-width="5"/><polyline points="35.8,32 37,32 47,42 49,42" stroke="#5b9cf5" stroke-width="5"/><circle cx="11" cy="42" r="4.5" stroke="#ef5b5b" stroke-width="3.2"/><circle cx="53" cy="42" r="4.5" stroke="#5b9cf5" stroke-width="3.2"/><circle cx="32" cy="32" r="3.8" stroke="#e8ecf2" stroke-width="3.4"/></g></svg>`;
 
 export class Hud {
   readonly root: HTMLElement;

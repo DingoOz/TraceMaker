@@ -53,6 +53,7 @@ def render(per_set):
 
 
 PAGE = """<!doctype html><meta charset=utf-8><title>TraceMaker: routed boards</title>
+<link rel="icon" href="data:image/svg+xml,%%3Csvg%%20xmlns='http://www.w3.org/2000/svg'%%20viewBox='0%%200%%2064%%2064'%%3E%%3Crect%%20width='64'%%20height='64'%%20rx='14'%%20fill='%%23101a2e'/%%3E%%3Cg%%20fill='none'%%20stroke-linejoin='round'%%3E%%3Cpolyline%%20points='15,42%%2017,42%%2027,32%%2028.2,32'%%20stroke='%%23ef5b5b'%%20stroke-width='5'/%%3E%%3Cpolyline%%20points='35.8,32%%2037,32%%2047,42%%2049,42'%%20stroke='%%235b9cf5'%%20stroke-width='5'/%%3E%%3Ccircle%%20cx='11'%%20cy='42'%%20r='4.5'%%20stroke='%%23ef5b5b'%%20stroke-width='3.2'/%%3E%%3Ccircle%%20cx='53'%%20cy='42'%%20r='4.5'%%20stroke='%%235b9cf5'%%20stroke-width='3.2'/%%3E%%3Ccircle%%20cx='32'%%20cy='32'%%20r='3.8'%%20stroke='%%23e8ecf2'%%20stroke-width='3.4'/%%3E%%3C/g%%3E%%3C/svg%%3E" />
 <style>body{font:14px system-ui;background:#111;color:#ddd;margin:20px}h1{font-weight:500}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .c{background:#1b1b1b;border:1px solid #333;border-radius:6px;padding:6px}.c img{width:100%%;background:#fff;border-radius:3px}
