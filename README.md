@@ -19,20 +19,26 @@ writes them back into the file.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
 - **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
   Metal backend is contributed and has not been run by the project.
-- **Status:** release 0.9.0. Licence GPL-3.0-or-later.
+- **Status:** release 0.10.0. Licence GPL-3.0-or-later.
 
 ## How good is it?
 
 Share of boards routed with **every connection made and no KiCad error added** (PCBench, 120 s per board):
 
-| Tier | Boards | TraceMaker | Freerouting 2.5 |
+| Tier | Boards | TraceMaker 0.10.0 | Freerouting 2.5 |
 |---|--:|--:|--:|
 | A (routine) | 40 | **100%** | 100% |
-| B | 40 | **72.5%** | 50.0% |
-| C | 30 | **60.0%** | 46.7% |
-| D (hardest) | 22 | **54.5%** | 36.4% |
+| B | 40 | **70.0%** | 50.0% |
+| C | 30 | **46.7%** | 46.7% |
+| D (hardest) | 22 | **40.9%** | 36.4% |
 
-Freerouting's figures are its own published results on the same boards.
+Freerouting's figures are its own published results on the same boards. Since 2026-10-14 the judge compares physical
+violation instances and calls a board *unknown*, never clean, when KiCad's report is truncated at a capped error type
+on either side (199 solder-mask bridges the board had before routing, say), because a zero delta cannot then be proved
+(decision D106); three tier C and three tier D boards that are fully routed with no added error fall under that. By
+the 0.9.0 criterion the same runs give 100%, 70.0%, 56.7% and 54.5%, against 100%, 72.5%, 60.0% and 54.5% at release
+0.9.0 (one board each way in tiers B and C, on a machine shared with other jobs; the 0.9.0 binary run beside it under
+the same load scored within one board of it in every tier, `bench/records/release-0.10.0`).
 
 **Known limits, stated plainly:**
 
@@ -45,17 +51,20 @@ Freerouting's figures are its own published results on the same boards.
   vertices off the lattice up to the real rules) closed sample031, 039, 048, 071, 072, 095, 103 and 159 with a clean KiCad DRC; sample104 is still one
   connection short (doc 16 section 13).
 - It uses more vias than Freerouting.
+- Eight real-world KiCad boards that it could not route under their own rules ([reports/realworld](reports/realworld/README.md))
+  all reach zero open connections in KiCad, but only through a closure loop that relaxes the rules of signal nets step by step,
+  writes every compromise down and checks it with a circuit simulation; power nets keep the board's rules.
 
 Full detail: [design and results report](report/report.pdf) ·
-[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.9.0 has 165 tests).
+[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.10.0 has 379 tests).
 
 ## Quick start
 
 **0. Or skip the build (Linux x86_64).** A tagged release carries `tracemaker-VERSION-linux-x86_64.tar.gz` (the programs, the live viewer, an example board, the agent skills; start with its
 `INSTALL.txt`) and `tracemaker-VERSION-pcm-linux-x86_64.zip` (the KiCad 10 plugin with the router inside: Plugin and Content Manager > Install from File...). They need no compiler, no CUDA
 and no library beyond glibc 2.38 or newer: tried on Ubuntu 24.04, Debian 13 and current Fedora; Debian 12 (glibc 2.36) fails, and Ubuntu 22.04 (2.35) is older still. CI builds and tests them (the `Release files` workflow
-installs them in a clean container and routes the example board) and attaches them when a version tag is pushed. 0.9.0 predates this and has no such files, so the first release that has them is
-the next one. To make them yourself: `python3 scripts/make_release.py --build-viewer`. No macOS build yet.
+installs them in a clean container and routes the example board) and attaches them when a version tag is pushed; 0.10.0 is the first release that carries them.
+To make them yourself: `python3 scripts/make_release.py --build-viewer`. No macOS build yet.
 
 **1. Build**
 
@@ -193,6 +202,14 @@ down beside the board and reported.
 - `--rules-override FILE`: correct what was detected (doc 15 §6.3).
 - `--escape-plan`: reserve exit paths from dense packages in every variant (two use them by default).
 - `--cut-report`: report lines across the board that more nets must cross than tracks fit.
+- Dense packages, from the real-world boards study (doc 05 §47 and §50-52; all off by default): `--bundle-escape`
+  (one side of a package escapes as a block of parallel lanes in pin order, placed before the search),
+  `--supply-first` (supply nets with two or more pins on a dense package are routed first), `--package-tunnels` (a
+  stub, a via and a run on the other layer between two pins of one net on a package), `--escape-length MM`,
+  `--escape-persist`, `--radial-supply`, `--via-drops`. Also off by default: `--no-neck-nets` (power nets are never
+  necked down, §45), `--legalize-subdivide MM` (legalisation may cut a track so that it bends, §46),
+  `--first-nets-ordered` (the `--first-nets` list is also the order, §49), `--soft-mask-graphics` and
+  `--soft-copper-graphics` (net-less mask openings and copper graphics stop keeping copper out, §48).
 - `--no-tracks-on In1.Cu,In2.Cu`: no new tracks on these layers (vias still pass through and reach the planes).
   `--layer-cost In1.Cu=4,In2.Cu=4`: tracks there cost that many times their length, so they are a last resort.
 - `--kb FILE` / `--no-kb`: the knowledge base of earlier runs.
@@ -248,7 +265,7 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 ```
 scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
-ctest --preset release             # 165 tests, about 6 minutes
+ctest --preset release             # 379 tests, about 20 minutes
 ```
 
 - Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.
