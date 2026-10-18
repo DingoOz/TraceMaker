@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23101a2e'/%3E%3Cg%20fill='none'%20stroke-linejoin='round'%3E%3Cpolyline%20points='15,42%2017,42%2027,32%2028.2,32'%20stroke='%23ef5b5b'%20stroke-width='5'/%3E%3Cpolyline%20points='35.8,32%2037,32%2047,42%2049,42'%20stroke='%235b9cf5'%20stroke-width='5'/%3E%3Ccircle%20cx='11'%20cy='42'%20r='4.5'%20stroke='%23ef5b5b'%20stroke-width='3.2'/%3E%3Ccircle%20cx='53'%20cy='42'%20r='4.5'%20stroke='%235b9cf5'%20stroke-width='3.2'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='3.8'%20stroke='%23e8ecf2'%20stroke-width='3.4'/%3E%3C/g%3E%3C/svg%3E" />
+<title>TraceMaker · real-world routing study</title>
+<style>
+/*BASE_CSS*/
+.tgt { color: var(--muted); font-size: 12px; }
+.pill { display: inline-block; font-size: 11px; border-radius: 999px; padding: 1px 8px; border: 1px solid var(--border); color: var(--text-2); }
+.pill.run { color: var(--accent); border-color: var(--accent); }
+.pill.ok { color: var(--good-text); border-color: var(--good-text); }
+.pill.bad { color: var(--warn); border-color: var(--warn); }
+.board { margin-bottom: 18px; }
+.board h3 { margin: 0 0 4px; font-size: 15px; }
+.cell { white-space: nowrap; }
+.find { font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.find:last-child { border-bottom: 0; }
+.thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.thumb { width: 170px; font-size: 11px; color: var(--text-2); }
+.thumb img { width: 170px; height: 110px; object-fit: contain; background: #0e1624; border: 1px solid var(--border); border-radius: 4px; display: block; }
+.thumb.best img { border-color: var(--good-text); }
+.thumb.live img { border-color: var(--accent); }
+#burn svg { width: 100%; height: auto; display: block; }
+.lg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; font-size: 12px; }
+.lg i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.seg { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--border); margin: 6px 0 4px; }
+.seg div { height: 100%; }
+.dot2 { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin: 0 3px 0 8px; }
+.dot2.fail { background: #ff3b3b; } .dot2.warn { background: #ff9f1a; } .dot2.watch { background: #ffd23f; } .dot2.ok { background: #3fbf6a; }
+.bigboard { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: #0e1624; margin: 6px 0; }
+details.sim { margin-top: 8px; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; }
+details.sim summary { cursor: pointer; font-size: 13px; }
+.simbody h4 { margin: 12px 0 4px; font-size: 13px; }
+.simbody table { margin-bottom: 6px; }
+details.bd { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; padding: 0 12px; }
+details.bd[open] { padding-bottom: 10px; }
+details.bd > summary { cursor: pointer; padding: 8px 0; font-size: 14px; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+details.bd > summary::-webkit-details-marker { display: none; }
+details.bd > summary::before { content: '▸'; color: var(--muted); width: 12px; }
+details.bd[open] > summary::before { content: '▾'; }
+details.bd.done { border-color: var(--good-text); }
+details.bd.done:not([open]) { opacity: 0.85; }
+.grp { margin: 14px 0 6px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.grid { grid-template-columns: minmax(0, 1fr); }  /* one column: the page has no side panels */
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#101a2e"/><g fill="none" stroke-linejoin="round"><polyline points="15,42 17,42 27,32 28.2,32" stroke="#ef5b5b" stroke-width="5"/><polyline points="35.8,32 37,32 47,42 49,42" stroke="#5b9cf5" stroke-width="5"/><circle cx="11" cy="42" r="4.5" stroke="#ef5b5b" stroke-width="3.2"/><circle cx="53" cy="42" r="4.5" stroke="#5b9cf5" stroke-width="3.2"/><circle cx="32" cy="32" r="3.8" stroke="#e8ecf2" stroke-width="3.4"/></g></svg>
+    <div>
+      <h1>Real-world routing study</h1>
+      <div class="sub" id="sub">Rule-escalation ladder (T0 own rules, T1 0.15 mm, T2 0.127 mm) on boards that did not route under their own rules · reports/realworld/</div>
+    </div>
+    <div class="spacer"></div>
+    <span class="live"><span class="dot" id="livedot"></span><span id="updated">connecting…</span></span>
+    <button class="toggle" id="theme" type="button">Theme</button>
+  </header>
+  <section class="tiles" id="tiles"></section>
+  <div class="grid">
+    <div class="col">
+      <section class="panel"><h2>Burn-down: connections still open, best run so far</h2><div id="burn"></div></section>
+      <section class="panel"><h2>Boards</h2><div id="boards"></div></section>
+    </div>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const th = localStorage.getItem('theme'); if (th) document.documentElement.dataset.theme = th;
+$('theme').onclick = () => { const d = document.documentElement; const n = (d.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark' ? 'light' : 'dark'; d.dataset.theme = n; localStorage.setItem('theme', n); };
+const short = n => n.replace('robomezzi_96boards-robomezzi', 'robomezzi').replace(/^(Hardware_Playground_|kitspace_|96boards-|EtherCAT_shield_v1_|DronPi_)/, '');
+
+function stageCell(st) {
+  const lab = st.label ? `<span class="tgt" title="signal tier / power tier of this stage">${esc(st.label)}</span> ` : '';
+  if (st.state === 'done') return lab + `<span class="num">${st.routed}/${st.total}</span> <span class="tgt">${st.seconds.toFixed(0)} s</span>`;
+  if (st.state === 'running') return lab + `<span class="pill run">running</span> <span class="tgt">${st.variants} variants done${st.best != null ? ', best ' + st.best : ''}</span>`;
+  if (st.state === 'stopped') return '<span class="pill bad">stopped</span>';
+  return '<span class="tgt">–</span>';
+}
+const PAL = ['#5b9cf5', '#ef5b5b', '#3fbf6a', '#d8b13a', '#b07cf0', '#34c3c3', '#f08c4a'];
+const verified = r => r.ledger && r.ledger.unconnected === 0 && !r.ledger.shorts && r.safety && r.safety.status === 'done' && r.safety.verdict !== 'FAIL';
+function bestOf(b) {
+  // the verdict of a board: routed AND simulated safe (KiCad 0 open and the safety simulation not FAIL) > fewest open connections
+  let best = null, state = 'open';
+  for (const r of b.runs) {
+    if (r.run === 'human') continue;
+    const l = r.ledger;
+    const routerDone = r.stages.length && r.stages[r.stages.length - 1].state === 'done' ? r.stages[r.stages.length - 1] : null;
+    const cand = l ? {frac: l.baseline_unconnected ? l.unconnected / l.baseline_unconnected : 1, open: l.unconnected, total: l.baseline_unconnected, run: r.run, kicad: true, ok: verified(r), power: l.on_power || 0}
+      : routerDone ? {frac: (routerDone.total - routerDone.routed) / routerDone.total, open: routerDone.total - routerDone.routed, total: routerDone.total, run: r.run, kicad: false, ok: false, power: 0} : null;
+    if (!cand) continue;
+    const rank = c => c.ok ? (c.power ? 1 : 0) : 2;
+    if (!best || rank(cand) < rank(best) || (rank(cand) === rank(best) && ((cand.ok && cand.power !== best.power && cand.power < best.power) || (!(cand.ok && cand.power !== best.power) && cand.frac < best.frac) || (cand.frac === best.frac && cand.kicad && !best.kicad)))) best = cand;
+  }
+  const closedRuns = b.runs.filter(r => r.run !== 'human' && r.ledger && r.ledger.unconnected === 0);
+  if (best && best.ok) state = 'verified';
+  else if (closedRuns.some(r => r.safety && r.safety.verdict === 'FAIL') && !closedRuns.some(r => !r.safety || r.safety.status !== 'done')) state = 'unsafe';
+  else if (closedRuns.length) state = 'unsimulated';
+  const routerComplete = b.runs.some(r => r.stages.some(s => s.state === 'done' && s.routed === s.total));
+  return {best, closed: state === 'verified', state, routerComplete};
+}
+function burn(boards, now) {
+  const tb = boards.filter(b => (b.meta || {}).test);
+  if (!tb.length) return '<div class="empty">No boards marked "test" in status.json.</div>';
+  const series = tb.map((b, k) => {
+    const ev = b.runs.flatMap(r => r.events || []).sort((a, c) => a.t - c.t);
+    let m = 1, pts = []; const t0 = ev.length ? ev[0].t : now;
+    for (const e of ev) { m = Math.min(m, e.frac); pts.push([e.t, m, e]); }
+    const closed = ev.find(e => e.src === 'kicad' && e.open === 0 && e.safe && e.safe !== 'FAIL');
+    return {b, k, pts, t0, closed: closed ? closed.t : null, col: PAL[k % PAL.length]};
+  });
+  const T0 = Math.min(...series.map(s => s.t0)), T1 = Math.max(now, T0 + 60);
+  const W = 860, H = 300, L = 46, R = 40, T = 14, B = 30, pw = W - L - R, ph = H - T - B;
+  const x = t => L + pw * (t - T0) / (T1 - T0), y = f => T + ph * (1 - f), n = tb.length;
+  const yc = c => T + ph * (1 - c / n);
+  let g = '';
+  for (const f of [0, .25, .5, .75, 1]) g += `<line x1="${L}" x2="${W - R}" y1="${y(f)}" y2="${y(f)}" stroke="var(--border)"/><text x="${L - 6}" y="${y(f) + 4}" text-anchor="end" fill="var(--muted)" font-size="11">${Math.round(100 * f)}%</text>`;
+  for (let c = 0; c <= n; c++) g += `<text x="${W - R + 6}" y="${yc(c) + 4}" fill="var(--muted)" font-size="11">${c}</text>`;
+  g += `<text x="${W - R + 6}" y="${T - 2}" fill="var(--muted)" font-size="10">boards done</text>`;
+  const nt = 6; for (let i = 0; i <= nt; i++) { const t = T0 + (T1 - T0) * i / nt; g += `<text x="${x(t)}" y="${H - 10}" text-anchor="middle" fill="var(--muted)" font-size="11">${new Date(t * 1000).toTimeString().slice(0, 5)}</text>`; }
+  for (const s of series) {
+    let d = `M${x(s.t0)},${y(1)}`, last = 1;
+    for (const [t, m] of s.pts) { d += ` L${x(t)},${y(last)} L${x(t)},${y(m)}`; last = m; }
+    d += ` L${x(T1)},${y(last)}`;
+    g += `<path d="${d}" fill="none" stroke="${s.col}" stroke-width="2" opacity="0.95"/>`;
+    for (const [t, m, e] of s.pts) if (e.src !== 'start') g += `<circle cx="${x(t)}" cy="${y(m)}" r="3" fill="${s.col}"><title>${esc(short(s.b.name))}: ${e.open} of ${e.total} open (${e.src === 'kicad' ? 'KiCad' : 'router'})</title></circle>`;
+    if (s.closed) g += `<path d="M${x(s.closed) - 6},${y(0) - 2} l6,-9 l6,9 z" fill="${s.col}"/>`;
+  }
+  // boards fully routed (KiCad: 0 open), step line on the right-hand scale
+  const closes = series.filter(s => s.closed).map(s => s.closed).sort((a, c) => a - c);
+  let d = `M${x(T0)},${yc(0)}`, c = 0;
+  for (const t of closes) { d += ` L${x(t)},${yc(c)} L${x(t)},${yc(++c)}`; }
+  d += ` L${x(T1)},${yc(c)}`;
+  g += `<path d="${d}" fill="none" stroke="var(--text)" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.85"/>`;
+  const legend = series.map(s => { const v = bestOf(s.b); const bst = v.best;
+    return `<span><i style="background:${s.col}"></i><b>${esc(short(s.b.name))}</b> ${v.closed ? '<span class="pill ok">routed + simulated ✔</span>' + (bst && bst.power ? ' <span class="pill bad">relaxes power nets</span>' : ' <span class="pill ok">power kept</span>') : v.state === 'unsafe' ? '<span class="pill bad">routed, simulation FAILS</span>' : v.state === 'unsimulated' ? '<span class="pill bad">routed, not simulated yet</span>' : bst ? `${bst.open}/${bst.total} open <span class="tgt">(${(100 * bst.frac).toFixed(1)} %${bst.kicad ? ', KiCad' : ', router'})</span>${v.routerComplete ? ' <span class="pill bad">router complete, KiCad open</span>' : ''}` : '<span class="tgt">waiting</span>'}</span>`; }).join('');
+  const done = series.filter(s => bestOf(s.b).closed).length, near = series.filter(s => { const v = bestOf(s.b); return !v.closed && v.best && v.best.frac <= 0.05; }).length, rest = n - done - near;
+  const bar = `<div class="seg"><div style="width:${100 * done / n}%;background:var(--good-text)" title="routed and simulated safe"></div><div style="width:${100 * near / n}%;background:var(--warn)" title="within 5 % of routed"></div><div style="width:${100 * rest / n}%;background:transparent"></div></div>
+    <div class="meta">${done} routed and simulated safe (KiCad 0 open, safety not FAIL) · ${near} within 5 % · ${rest} further off — of ${n} boards under test. Solid lines: share of connections still open, best run so far (▲ = closed). Dashed: boards routed and simulated safe (right-hand scale).</div>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="burn-down">${g}</svg>${bar}<div class="lg">${legend}</div>`;
+}
+const SAF = {}, BIG = {}, OPEN = new Set();
+const pillFor = v => v === 'PASS' ? 'ok' : v === 'WARN' ? 'bad' : v === 'FAIL' ? 'bad' : '';
+function safetyPill(s, run) {
+  if (!s) return '<span class="tgt" title="no safety simulation of this run yet">not simulated</span>';
+  if (s.status !== 'done') return `<span class="pill run">simulating ${s.progress[0]}/${s.progress[1]}</span>${s.flags.fail + s.flags.warn ? ` <span class="pill bad">${s.flags.fail + s.flags.warn} flagged</span>` : ''}`;
+  const fl = s.flags.fail + s.flags.warn;
+  return `<span class="pill ${pillFor(s.verdict)}" title="crosstalk ${esc(s.crosstalk.verdict)}, current ${esc(s.current.verdict)}, vias ${esc(s.vias.verdict)}">${esc(s.verdict)}</span>${fl ? ` <span class="tgt">${fl} flagged</span>` : ''}`;
+}
+function detailsBlock(board, r) {
+  const key = board + '/' + r.run, s = r.safety, run = s.status !== 'done';
+  const verdict = run ? `<span class="pill run">simulating ${s.progress[0]}/${s.progress[1]} pairs</span>` : `<span class="pill ${pillFor(s.verdict)}">${esc(s.verdict)}</span>`;
+  return `<details class="sim" data-key="${esc(key)}" ${OPEN.has(key) ? 'open' : ''}><summary><b>Simulation · ${esc(r.run)}</b> ${verdict}
+    <span class="tgt">${s.flags.fail} fail · ${s.flags.warn} warn · ${s.flags.watch} watch · ${s.flags.ok} fine on the board · crosstalk ${esc(s.crosstalk.verdict || '…')} (worst ${s.crosstalk.sim} % of swing) · current ${esc(s.current.verdict)} · vias ${esc(s.vias.verdict)}</span></summary>
+    <div class="simbody">${SAF[key] ? safetyBody(SAF[key], key) : '<div class="tgt">loading…</div>'}</div></details>`;
+}
+function waveSvg(w) {
+  if (!w || !w.t_ns) return '';
+  const W = 520, H = 120, L = 36, R = 8, T = 8, B = 18, series = [['routed_mV', 'var(--accent)'], ['nominal_mV', 'var(--muted)']];
+  const all = series.flatMap(([k]) => w[k] || []), m = Math.max(10, ...all.map(Math.abs)) * 1.1;
+  const x = t => L + (W - L - R) * (t - w.t_ns[0]) / (w.t_ns[w.t_ns.length - 1] - w.t_ns[0]), y = v => T + (H - T - B) * (1 - (v + m) / (2 * m));
+  let g = `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--border)"/><text x="${L - 4}" y="${y(m) + 8}" text-anchor="end" fill="var(--muted)" font-size="10">+${m.toFixed(0)} mV</text><text x="${L - 4}" y="${y(-m)}" text-anchor="end" fill="var(--muted)" font-size="10">−${m.toFixed(0)}</text><text x="${W - R}" y="${H - 4}" text-anchor="end" fill="var(--muted)" font-size="10">${w.t_ns[w.t_ns.length - 1].toFixed(0)} ns</text>`;
+  for (const [k, c] of series) if (w[k]) g += `<polyline fill="none" stroke="${c}" stroke-width="1.4" points="${w[k].map((v, i) => x(w.t_ns[i]).toFixed(1) + ',' + y(v).toFixed(1)).join(' ')}"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:560px">${g}</svg><div class="meta"><span style="color:var(--accent)">━</span> as routed &nbsp; <span style="color:var(--muted)">━</span> gap restored to the board's rule (the no-compromise reference)</div>`;
+}
+function flagList(j) {
+  const fl = (j.flags || []).filter(f => f.sev !== 'ok');
+  if (!fl.length) return '<div class="tgt">Nothing flagged: every compromised pair and every narrowed power track is within its limit.</div>';
+  return '<table><tbody>' + fl.slice(0, 40).map(f => `<tr><td><span class="dot2 ${f.sev}"></span> ${esc(f.sev)}</td><td class="tgt">${esc(f.kind)}</td><td>${esc(f.text)}</td></tr>`).join('') + '</tbody></table>';
+}
+function safetyBody(j, key) {
+  const A = j.assumptions || {}, c = j.crosstalk || {}, cu = j.current || {}, v = j.vias || {};
+  const sims = (c.simulated || []).map(s => {
+    const worst = (s.dirs || []).filter(d => d.routed != null).sort((a, b) => b.routed - a.routed)[0];
+    return `<tr><td class="mono">${esc(s.nets.join(' ↔ '))}</td><td class="r num">${s.run_mm}</td><td class="r num">${s.gap_mm}</td><td class="r num">${s.worst_routed_pct ?? '–'}</td><td class="r num">${s.worst_nominal_pct ?? '–'}</td><td class="tgt">${esc(worst ? worst.victim_pin || '' : (s.dirs[0] || {}).skipped || '')}</td></tr>`;
+  }).join('');
+  const topWave = (c.simulated || []).flatMap(s => (s.dirs || []).filter(d => d.wave).map(d => ({s, d}))).sort((a, b) => (b.d.routed || 0) - (a.d.routed || 0))[0];
+  const screen = (c.screen || []).slice(0, 8).map(r => `<tr><td class="mono">${esc(r.nets.join(' ↔ '))}</td><td class="r num">${r.run_mm}</td><td class="r num">${r.gap_mm}</td><td class="r num">${r.bound_pct}</td><td class="r num">${r.bound_nominal_pct}</td></tr>`).join('');
+  const nn = (cu.narrowed_nets || []).map(r => `<tr><td class="mono">${esc(r.net)}${r.power_like ? ' <span class="pill">power</span>' : ''}</td><td class="r num">${r.narrowest_mm}</td><td class="r num">${r.ipc_A}</td><td class="r num">${(+r.assumed_A).toFixed(3)}</td><td class="r">${r.ipc_ok ? '<span class="pill ok">ok</span>' : '<span class="pill bad">over limit</span>'}</td></tr>`).join('');
+  const dc = (cu.dc || []).map(d => `<tr><td class="mono">${esc(d.net)}</td><td class="r num">${d.rail_V}</td><td class="r num">${d.sinks}</td><td class="r num">${d.assumed_total_A}</td><td class="r num">${d.worst_drop_mV} (${d.worst_drop_pct} %)</td></tr>`).join('');
+  const big = BIG[key] ? `<div class="bigboard">${BIG[key].svg}</div>` : '<div class="tgt">drawing the board…</div>';
+  const legend = '<div class="meta legend"><span class="dot2 fail"></span> fail <span class="dot2 warn"></span> warn <span class="dot2 watch"></span> watch <span class="dot2 ok"></span> checked, fine &nbsp;·&nbsp; lit tracks are the copper the simulation is flagging; rings mark where a compromised pair sits; hover for the numbers</div>';
+  return `${j.status === 'running' ? '<div class="meta"><span class="pill run">live</span> simulation running: results appear here as each pair finishes</div>' : ''}${big}${legend}<h4>Flagged by the simulation</h4>${flagList(j)}<div class="meta">Layers ${j.layers}, board clearance ${j.clearance_mm} mm; rails and planes treated as AC ground: ${esc((j.rails_as_ac_ground || []).slice(0, 8).join(', '))}${(j.rails_as_ac_ground || []).length > 8 ? ' …' : ''}. ${c.pairs_skipped_next_to_rail || 0} compromised pairs sit beside a rail or plane (not an aggressor).</div>
+  <h4>1 · Crosstalk — ${esc(c.verdict)} <span class="tgt">(every compromised signal pair screened with the field-solver + ngspice sweep, worst bound ${c.bound_worst_pct} % of swing; the worst ${(c.simulated || []).length} simulated in full on the extracted copper, both directions)</span></h4>
+  ${sims ? `<table><thead><tr><th>Pair</th><th class="r">Run mm</th><th class="r">Gap mm</th><th class="r">Noise as routed % of swing</th><th class="r">Gap restored %</th><th>Victim pin</th></tr></thead><tbody>${sims}</tbody></table>` : '<div class="tgt">No compromised pair of two signals.</div>'}
+  ${topWave ? `<div class="meta">Worst case: ${esc(topWave.s.nets.join(' ↔ '))}, noise at ${esc(topWave.d.victim_pin || '')} (aggressor ${esc(topWave.d.aggressor)} switching):</div>${waveSvg(topWave.d.wave)}` : ''}
+  ${screen ? `<details><summary class="tgt">Screening table (sweep bound, both nets active)</summary><table><thead><tr><th>Pair</th><th class="r">Run mm</th><th class="r">Gap mm</th><th class="r">Bound %</th><th class="r">At nominal gap %</th></tr></thead><tbody>${screen}</tbody></table></details>` : ''}
+  <h4>2 · Current capacity and voltage drop — ${esc(cu.verdict)}</h4>
+  ${nn ? `<table><thead><tr><th>Net with a narrowed track</th><th class="r">Narrowest mm</th><th class="r">IPC-2221 limit A</th><th class="r">Assumed current A</th><th class="r">Verdict</th></tr></thead><tbody>${nn}</tbody></table>` : '<div class="tgt">No track was narrowed.</div>'}
+  ${dc ? `<table><thead><tr><th>Power net (ngspice DC)</th><th class="r">Rail V</th><th class="r">Sinks</th><th class="r">Assumed load A</th><th class="r">Worst drop mV</th></tr></thead><tbody>${dc}</tbody></table>` : ''}
+  <h4>3 · Vias — ${esc(v.verdict)}</h4>
+  <div class="meta">Smallest via ${v.smallest_size_mm}/${v.smallest_drill_mm} mm (of ${v.count}): R ${v.R_mohm} mΩ, L ${v.L_nH} nH, which at a ${A.edge_ns} ns edge is ${v.Z_at_edge_ohm} Ω = ${v.pct_of_driver} % of the ${A.driver_ohm} Ω driver.</div>
+  <div class="meta"><b>Assumptions</b> (not datasheet values): ${A.edge_ns} ns edges, ${A.driver_ohm} Ω drivers, ${A.load_pF} pF loads, ${A.frequency_MHz} MHz; crosstalk PASS under ${A.xtalk_pass_pct} % of swing, FAIL over ${A.xtalk_fail_pct} %; ${A.sink_mA} mA per power sink, drop PASS under ${A.drop_pass_pct} % of the rail, FAIL over ${A.drop_fail_pct} %; IPC-2221 limit needs ${A.ipc_margin}× margin (outer layer, 1 oz, 10 °C rise).</div>`;
+}
+async function loadSafety(key, ver) {
+  if (SAF[key] && SAF[key].__v === ver) return false;
+  try { SAF[key] = await (await fetch('/api/safety/' + key + '?v=' + ver)).json(); } catch (e) { SAF[key] = {}; }
+  SAF[key].__v = ver; return true;
+}
+async function loadBig(key, ver) {
+  if (BIG[key] && BIG[key].ver === ver) return false;
+  try { BIG[key] = {ver, svg: (await (await fetch('/render/' + key.split('/').map(encodeURIComponent).join('/') + '.svg?v=' + ver)).text()).replace('<svg ', '<svg style="width:100%;height:auto;max-height:560px" ')}; } catch (e) { BIG[key] = {ver, svg: ''}; }
+  return true;
+}
+let LAST_BOARDS = '';
+async function refreshOpen(boards) {
+  let changed = false;
+  for (const b of boards) for (const r of b.runs) {
+    const key = b.name + '/' + r.run;
+    if (OPEN.has(key) && r.safety) { const a = await loadSafety(key, r.safety.t), c = await loadBig(key, r.safety.t); changed = changed || a || c; }
+  }
+  if (changed) { LAST_BOARDS = ''; tick(); }
+}
+const USER = {};  // a board the viewer opened or closed by hand keeps that state; the others are open until they are routed
+document.addEventListener('toggle', e => {
+  const d = e.target; if (d.classList && d.classList.contains('bd')) { USER[d.dataset.name] = d.open; return; }
+  if (!d.classList || !d.classList.contains('sim')) return;
+  const key = d.dataset.key;
+  if (d.open) { OPEN.add(key); LAST_BOARDS = ''; tick(); } else OPEN.delete(key);
+}, true);
+function render(s) {
+  const plan = s.plan || {}, boards = s.boards || [];
+  const runs = boards.flatMap(b => b.runs.map(r => ({b, r})));
+  const live = runs.filter(x => x.r.alive).length;
+  const test = boards.filter(b => (b.meta || {}).test);
+  const wide = boards.filter(b => !(b.meta || {}).test && b.batch);
+  const batchOk = r => r && r.kicad_open === 0 && r.safety && r.safety !== 'FAIL' && !r.shorts;
+  const wideDone = wide.filter(b => bestOf(b).closed || batchOk(b.batch)).length;
+  const verdicts = test.map(bestOf);
+  const closed = verdicts.filter(v => v.closed).length;
+  const open = verdicts.reduce((a, v) => a + (v.best ? v.best.open : 0), 0);
+  $('tiles').innerHTML = [
+    ['Boards under test', String(test.length), 'previously unroutable under their own rules'],
+    ['Wider test', `${wideDone}/${wide.length}`, 'more boards that no benchmark run completed: routed and simulated safe'],
+    ['Routed and simulated safe', `${closed}/${test.length}`, 'KiCad: 0 open, and the safety simulation not FAIL'],
+    ['Open connections', String(open), 'best run per board, summed'],
+    ['Ladder runs live', String(live), `${s.routes} router process(es) · load ${(s.load || []).join(' ')}`],
+  ].map(([l, v, h]) => `<div class="tile"><div class="label">${esc(l)}</div><div class="value num">${esc(v)}</div><div class="hint">${esc(h)}</div></div>`).join('');
+
+  refreshOpen(boards);
+  $('burn').innerHTML = burn(boards, s.generated);
+  const refs = boards.filter(b => !(b.meta || {}).test && !b.batch);
+  const wideSorted = [...wide].sort((a, c) => (bestOf(c).closed || batchOk(c.batch)) - (bestOf(a).closed || batchOk(a.batch)) || short(a.name).localeCompare(short(c.name)));
+  const draw = b => {
+    const v = bestOf(b);
+    const done = v.closed || batchOk(b.batch);
+    const bo = v.best ? v.best.open : (b.batch && b.batch.open_best != null ? b.batch.open_best : null);
+    const live = b.runs.some(r => r.alive);
+    const open = b.name in USER ? USER[b.name] : (!done && ((b.meta || {}).test || live));
+    const head = done ? '<span class="pill ok">fully routed ✔</span>' : bo != null ? `<span class="pill bad">${bo} open</span>` : '<span class="tgt">waiting</span>';
+    const info = b.batch ? `<span class="tgt">${b.batch.layers ?? ''} layers · ${b.batch.compromises ?? '–'} compromises · ${b.batch.relaxed ?? '–'} relaxed</span>` : '';
+    const rows = b.runs.map(({run, stages, ledger, alive, safety, power_tier, closure, view}) => {
+      const shown = stages.length > 6 ? stages.slice(-6) : stages;
+      const cells = [0, 1, 2, 3, 4, 5].map(i => `<td class="r cell">${shown[i] ? (i === 0 && stages.length > 6 ? '<span class="tgt">… ' : '') + stageCell(shown[i]) + (i === 0 && stages.length > 6 ? '</span>' : '') : '<span class="tgt">–</span>'}</td>`).join('');
+      const lg = ledger ? `<td class="r num">${ledger.unconnected === 0 ? '<span class="pill ok">0</span>' : '<span class="pill bad">' + ledger.unconnected + '</span>'}</td><td class="r">${safetyPill(safety, run)}</td><td class="r num">${ledger.added}${ledger.shorts ? ` <span class="pill bad" title="tracks touching copper of another net: a short, not a compromise">${ledger.shorts} shorts</span>` : ''}${ledger.on_power ? ` <span class="pill bad" title="compromises on supply or ground copper: the relaxation was spent on power nets">${ledger.on_power} on power</span>` : ' <span class="tgt" title="no compromise touches supply or ground copper">power kept</span>'}${closure ? ` <span class="tgt" title="closure loop: ${esc(JSON.stringify(closure.tiers))}; open connections per round ${closure.open_by_round.join(' → ')}">${closure.relaxed} nets relaxed${closure.relaxed_power ? ' (' + closure.relaxed_power + ' power)' : ''}</span>` + (closure.moves.length ? ` <span class="pill bad" title="${esc(closure.moves.map(m => m.ref + ' ' + m.dx.toFixed(2) + ',' + m.dy.toFixed(2)).join('; '))}">${closure.moves.length} parts moved</span>` : '') : ''}${power_tier && power_tier !== 'T0' ? ` <span class="pill bad" title="the power nets were relaxed to this tier in the last stage, after the signals had taken the whole ladder">power → ${esc(power_tier)}</span>` : ''}</td><td class="r num">${ledger.min_gap != null ? ledger.min_gap.toFixed(3) : '–'}</td>` : '<td class="r tgt">…</td><td></td><td></td><td></td>';
+      return `<tr><td class="mono nw">${esc(run)} ${alive ? '<span class="pill run">live</span>' : ''}${view ? ` <a href="${esc(view)}" target="_blank" title="the router's own viewer: tracks as they are laid, the stuck net and what blocks it">watch live ↗</a>` : ''}</td>${run === 'human' ? '<td colspan="6" class="tgt">designer\'s own routing</td>' : cells}${lg}</tr>`;
+    }).join('');
+    const thumbs = b.runs.map(r => {
+      const cap = r.run === 'human' ? 'designer' : r.run;
+      const open = r.ledger ? `${r.ledger.unconnected} open` : (r.stages.length ? (r.stages[r.stages.length - 1].state === 'done' ? `${r.stages[r.stages.length - 1].total - r.stages[r.stages.length - 1].routed} open (router)` : 'routing…') : '');
+      const cls = (v.best && v.best.run === r.run ? ' best' : '') + (r.alive ? ' live' : '');
+      return `<div class="thumb${cls}"><a href="/render/${encodeURIComponent(b.name)}/${encodeURIComponent(r.run)}.svg" target="_blank"><img loading="lazy" alt="${esc(b.name)} ${esc(cap)}" src="/render/${encodeURIComponent(b.name)}/${encodeURIComponent(r.run)}.svg?v=${r.ver}"></a>${esc(cap)} · ${esc(open)}</div>`;
+    }).join('');
+    const m = b.meta || {};
+    return `<details class="bd${done ? ' done' : ''}" data-name="${esc(b.name)}" ${open ? 'open' : ''}><summary><b>${esc(short(b.name))}</b> ${head} ${live ? '<span class="pill run">live</span>' : ''} ${info} <span class="tgt">${esc(m.layers ? m.layers + ' layers' : '')} ${esc(m.note || '')}${m.test || b.batch ? '' : ' · reference board (done earlier)'}</span></summary>
+    <table><thead><tr><th>Run</th><th class="r" title="stage labels are signal tier/power tier: power relaxes last">stage 1 (own rules)</th><th class="r">2</th><th class="r">3</th><th class="r">4</th><th class="r">5</th><th class="r">6</th><th class="r">KiCad open</th><th class="r">Safety sim</th><th class="r">Compromises</th><th class="r">Min gap mm</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="thumbs">${thumbs}</div>${b.runs.filter(r => r.safety).map(r => detailsBlock(b.name, r)).join('')}<div class="meta">Renders: red = top copper, blue = bottom, magenta dashed/rings = connections still open. Click to enlarge.</div></details>`;
+  };
+  const grp = (t, l) => l.length ? `<div class="grp">${t} (${l.length})</div>` + l.map(draw).join('') : '';
+  const html = grp('Boards under test', test) + grp('Wider test (py/batch.py)', wideSorted) + grp('Reference boards', refs) || '<div class="empty">No boards yet.</div>';
+  if (html !== LAST_BOARDS) { LAST_BOARDS = html; $('boards').innerHTML = html; }  // rewritten only when something changed: an open panel keeps its scroll and the images do not blink
+  $('updated').textContent = 'updated ' + new Date().toLocaleTimeString();
+  $('livedot').classList.remove('stale');
+}
+async function tick() {
+  try { render(await (await fetch('/api/status')).json()); } catch (e) { $('livedot').classList.add('stale'); $('updated').textContent = 'offline'; }
+}
+tick(); setInterval(tick, 3000);
+</script>
+</body>
+</html>

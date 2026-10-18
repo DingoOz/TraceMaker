@@ -1,0 +1,356 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{../figs/}}
+\newcommand{\file}[1]{\texttt{\small #1}}
+\newcommand{\cls}[1]{\textsc{#1}}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\renewcommand{\arraystretch}{1.12}
+
+\title{Making two failing PCBench boards work in real life\\[2pt]\large A compromise-ledger approach, checked by KiCad DRC, a return-path audit and ngspice}
+\author{TraceMaker experiment, 2026-10-17\\\small Boards: \texttt{kitspace\_teensy-fx} and \texttt{Hardware\_Playground\_serial\_gw\_ATMEGA328P}}
+\date{Revision 2: baseline, compromise routing and simulation}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Two PCBench boards that TraceMaker could not finish under the boards' own design rules were routed to completion by loosening rules only where a connection needed it,
+and every loosened rule was written to a \emph{compromise ledger}: the KiCad 10.0.6 violation, the required and the actual value, the nets and the place, and where the actual value
+sits against a real manufacturer's stated capability. The same copper was then extracted into SPICE (resistance, field-solved capacitance and inductance, coupling between neighbouring tracks)
+and simulated in ngspice beside the designer's own layout, and its fast nets were audited for return-path continuity.
+\textbf{Result.} The serial gateway routes completely under its own rules once the designer's ground pours are restored and the fast nets are routed first:
+the only items left are five thermal-relief warnings and one floating copper island.
+The Teensy audio board needs a gap of 0.127~mm, 0.15~mm tracks and 0.45--0.5~mm vias in places: 292 to 311 clearance items, 72 to 82 narrowed tracks and 114 to 140 small-via items, all inside the stated fab
+capability and none worse than 0.128~mm. In simulation, the worst coupled noise caused by those gaps is a few millivolts on the nets simulated, the worst-case bound over \emph{every} compromised track pair is
+26~mV on a 3.3~V logic swing, the voltage drops on power nets are under 10~mV, and the narrowest power copper (0.15~mm) carries its load with a factor of 3.6 or more to spare under IPC-2221.
+The designer's own layout meets the nominal rules, so these compromises compensate for the router's limits, not for the boards' physics. Real-world limits of this study (no schematic-level simulation, assumed drivers,
+no prototype) are stated in Section~\ref{sec:limits}.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%% ------------------------------------------------------------------
+\section{Purpose and method}
+
+The question is how to turn a board that a router cannot finish under its design rules into one that would work when built, and how to say honestly what was given up. The working rule is:
+\emph{a design-rule violation is acceptable only if (1) it is within what the manufacturer says it can build, (2) its electrical and assembly effect has been measured or bounded, and (3) it is written down.}
+
+\subsection{The flow}
+
+\begin{enumerate}
+\item \textbf{Baseline.} Route the board as given (TraceMaker, eight portfolio variants, a deterministic work budget) and judge it with KiCad 10.0.6's own DRC. Record what stays open and why.
+\item \textbf{Reference.} Judge the designer's routed layout (\file{raw.kicad\_pcb}) the same way. It shows which rules the designer actually kept, and it is the comparison for the simulation.
+\item \textbf{Design intent.} The PCBench fixtures drop the designers' copper pours. Put the designers' ground zones back and keep signals off the plane layers, as the designers did.
+\item \textbf{Rule ladder.} Route under the board's own rules (tier T0). The connections that do not fit are routed in a second stage under slightly looser rules (T1), the rest in a third (T2); every stage starts from the copper of the one
+before. Compromises then sit only where a connection needed them (Section~\ref{sec:tiers}).
+\item \textbf{Critical nets first.} Route the fast and sensitive nets first, with dearer vias and a cost for crossing plane voids (TraceMaker's \texttt{--si-rules}, issue \#24).
+\item \textbf{Ledger.} Put the routed copper back on a copy with the board's \emph{own} rules and run KiCad DRC; what is not in the unrouted board's DRC is a compromise. Classify each against the fab limits (Section~\ref{sec:fab}).
+\item \textbf{Electrical checks.} Extract parasitics into SPICE and simulate crosstalk (transient) and voltage drop (DC); audit return paths; check current capacity against IPC-2221 (Section~\ref{sec:sim}). The extraction chain is validated against textbook theory (Section~\ref{sec:valid}).
+\end{enumerate}
+
+\subsection{Tools used}
+
+TraceMaker (router, escape analysis, return-path audit, zone refill, stitching vias, critical-net rules); KiCad 10.0.6 \texttt{kicad-cli} (DRC with zone refill); a small KiCad board reader and geometry library written for this study;
+a two-dimensional finite-difference electrostatic solver for the trace cross-sections; ngspice 44.2; Python 3.13, NumPy, SciPy and matplotlib; \LaTeX{} (TeX Live 2025). Everything ran in a Docker toolbox image,
+nothing was installed on the host. All scripts are in \file{reports/realworld/py/}; Section~\ref{sec:repro} lists the commands.
+
+%% ------------------------------------------------------------------
+\section{What can be pushed: the manufacturer's limits}\label{sec:fab}
+
+The limits below are JLCPCB's standard-service capabilities (\url{https://jlcpcb.com/capabilities/pcb-capabilities}, read 2026-10-17), 1~oz outer copper, green solder mask. They were read through a summarising web fetch,
+not from the manufacturer's own PDF: \textbf{check them against the order form before building}. Any other manufacturer needs its own column.
+
+\begin{table}[H]\centering\small
+\begin{tabular}{p{5.2cm}p{2.4cm}p{2.4cm}p{3.6cm}}
+\toprule
+Parameter & 2 layers & 4 layers & Used here as \\
+\midrule
+Minimum track width / space & 0.10 / 0.10~mm & 0.09 / 0.09~mm & hard floor for class D\\
+SMD pad to pad (different nets) & 0.15~mm & 0.15~mm & floor for pad--pad gaps\\
+Minimum via hole / via pad & 0.15 / 0.25~mm & 0.15 / 0.25~mm & via floor\\
+Annular ring, plated hole, 1~oz & 0.18 abs.\ min, 0.25 rec. & 0.15 abs.\ min, 0.20 rec. & flag below 0.15\\
+Solder mask bridge & 0.10~mm & 0.10~mm & mask web\\
+Copper to routed board edge & $\geq$0.2~mm & $\geq$0.2~mm & edge floor\\
+Silkscreen line / text height & 0.15 / 1.0~mm & same & not a routing matter\\
+\bottomrule
+\end{tabular}
+\caption{Fab limits used to classify compromises (source above).}
+\end{table}
+
+\paragraph{Classes.} A violation of the board's own rule is classed by its \emph{actual} value against the limit: \cls{A}~conventional (a gap or width of at least 0.15~mm, 6~mil, which every fab builds);
+\cls{B}~reduced margin (0.127 to 0.15~mm, 5 to 6~mil, 27\,\% or more above the 2-layer limit); \cls{C}~at the fab limit (between the limit and 0.127~mm); \cls{D}~below capability (reject).
+Violations the fab data say nothing about (copper to hole, via drill, thermal-relief spokes) are \emph{judgement} items, each argued in the text. Courtyard overlaps and mask bridges are assembly and fab-process items.
+No violation of class C or D was accepted.
+
+\subsection{The rule tiers}\label{sec:tiers}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{lrrrr}
+\toprule
+Tier & clearance & minimum track & via pad / drill & smallest via allowed\\
+\midrule
+T0 (the boards' own rules, KiCad defaults) & 0.200 & 0.200 & 0.80 / 0.40 & 0.40 / 0.30\\
+T1 & 0.150 & 0.150 & 0.60 / 0.30 & 0.50 / 0.25\\
+T2 & 0.127 & 0.127 & 0.50 / 0.25 & 0.45 / 0.20\\
+\bottomrule
+\end{tabular}
+\caption{Rule tiers in mm. Net-class track widths (0.25 and 0.6~mm) stay as the default; the router narrows a track to the tier's minimum only where it must.}
+\end{table}
+
+%% ------------------------------------------------------------------
+\section{Board 1: \texttt{kitspace\_teensy-fx} (Teensy 4.0 audio effects)}
+
+\subsection{The board}
+
+An audio effects board (source repository \texttt{mattvenn/teensy-audio-fx}, no licence found: used for study only, nothing here is redistributed). A Teensy~4.0 module (U1, 28 castellated pads)
+drives an SGTL5000 audio codec (U3, QFN-32, 0.5~mm pitch) over I2S (BCLK, LRCLK, I2S\_IN, I2S\_OUT, MCLK through a 100\,$\Omega$ series resistor) and I2C (2.2\,k$\Omega$ pull-ups); a TLC5947 LED driver (U5, HTSSOP-32) lights
+20 LEDs from a filtered 5~V rail (+5VA); a 4067 analog multiplexer (U4) reads 12 potentiometers; a W25Q128 flash (U6) shares the SPI bus; three 3.5~mm jacks carry line in, line out and a pedal input.
+The designer used four copper layers: signals on the outside, a ground pour on each inner layer.
+
+\begin{table}[H]\centering\small\input{gen/facts_T.tex}\caption{The board.}\end{table}
+
+\begin{figure}[H]\centering
+\includegraphics[height=9.3cm]{teensy_place.pdf}\hfill\includegraphics[height=9.3cm]{teensy_human.pdf}
+\caption{Left: the placement (front pads red, back pads blue, through-hole gold). Right: the designer's routing (front red, back blue, inner layers pours not drawn), which meets the board's own rules.}
+\end{figure}
+
+\subsection{Baseline}
+
+\begin{table}[H]\centering\small\input{gen/baseline_T.tex}\caption{TraceMaker under the board's own rules. The two lower rows keep signals off the inner (plane) layers, as the designer did.}\end{table}
+
+The baseline never completes: 11 to 22 connections stay open at every budget. The router's own reason for almost all of them is \emph{boxed in}: the pin's escape is sealed by its own package's pads and the clearance rules,
+mainly at the SGTL5000 (U3: \texttt{LRCLK}, the analog support nets \texttt{Net-(C13-Pad1)} and \texttt{Net-(C15-Pad1)}), the TLC5947 (U5: the LED cathode nets) and the multiplexer (U4: the pot wipers). Placement cannot help here:
+an earlier experiment (eight boards including this one, eleven placer arms; \file{bench/results/place-closure/report.md}) found no placement that closed these boards, and the escape analysis (\file{tracemaker escape}) reports that every pin \emph{can} escape on its own, so the failure is congestion around the packages.
+
+\begin{figure}[H]\centering
+\includegraphics[height=9.3cm]{teensy_base.pdf}
+\caption{Baseline route (fixture, own rules, 50 M work). The dashed lines are the 14 connections that stay open. This is KiCad's view: 0 added violations, 14 unconnected.}
+\end{figure}
+
+\paragraph{Designer's layout as a reference.} The designer's routing (1218 track segments, 115 vias of 0.8/0.4~mm, signals on the outer layers only) has \emph{no} clearance violation at 0.2~mm: two copper-to-hole items and two dangling-track items are all that KiCad finds.
+So a solution at the board's own rules exists; the compromises below make up for the router, not for the board.
+
+\paragraph{What was already wrong in the unrouted board.} KiCad finds the items in Table~\ref{tab:inhT} before any routing. They come from the footprints and the placement and are \emph{inherited}; the ledger does not count them.
+\begin{table}[H]\centering\small\input{gen/inherited_T.tex}\caption{Violations already present in the board with the designer's planes and no routing.}\label{tab:inhT}\end{table}
+The 109 mask-bridge items are fine-pitch packages whose mask openings merge (the QFN codec, the TSSOP LED driver, the SSOP multiplexer): the fab drops mask webs under 0.10~mm. The two courtyard overlaps are part of the placement. Neither was changed.
+
+\subsection{The route that works}\label{sec:routeT}
+
+\paragraph{Two routes are reported.} \textbf{A}: the rule ladder only. \textbf{B}: the rule ladder with the critical nets first (\texttt{--si-rules}: BCLK, LRCLK, I2S, MCLK and its resistor, SCLK, MOSI), which was added after the return-path audit of A (below) found layer hops on the I2S clock lines
+that the designer did not have. Both complete all 177 connections of the board with the designer's ground pours, signals kept off the inner layers.
+
+\begin{table}[H]\centering\small\input{gen/layouts_T.tex}\caption{The layouts side by side (KiCad 10.0.6, zones refilled).}\end{table}
+
+\paragraph{Ledger.} Table~\ref{tab:ledgerT} lists every violation the routing added, by KiCad rule and fab class; Table~\ref{tab:clrT} splits the clearance items by what is next to what.
+\begin{table}[H]\centering\small\input{gen/ledger_T.tex}\caption{Compromise ledger by rule and class (counts of KiCad violations).}\label{tab:ledgerT}\end{table}
+\begin{table}[H]\centering\small\input{gen/clrkinds_T.tex}\caption{Clearance items by pair, with the smallest actual gap in mm (required: 0.2).}\label{tab:clrT}\end{table}
+
+\paragraph{Where each compromise is, in words.}
+\begin{itemize}
+\item \textbf{Copper clearance, 0.2 $\to$ no less than 0.128~mm.} 292 (A) and 311 (B) items; class \cls{A}/\cls{B}. Most are a track passing a pad or via of another net (203 and 211 items), the rest track to track (55 and 47) and via to via or pad. The smallest gap is 0.128~mm: 28\,\% above JLCPCB's 2-layer limit and 42\,\% above the 4-layer one.
+\item \textbf{Track width, 0.25 $\to$ 0.15~mm.} 72 (A) and 82 (B) tracks, none below 0.15~mm. These are mostly short necks where a track passes between pads; the nets with the longest narrowed stretch are \texttt{+3V3} (14.3~mm of 327) and \texttt{+5VA} (19~mm of 280) in route B (Table~\ref{tab:netsT}). The narrowest power track is 0.15~mm.
+\item \textbf{Vias, 0.8/0.4 $\to$ 0.5/0.25 and 0.45/0.2~mm.} 114 (A) and 140 (B) items. A hole of 0.2--0.25~mm in a 1.6~mm board is an aspect ratio of 6.4 to 8; the annular ring is 0.125~mm, below JLCPCB's 0.15~mm figure for plated component holes (their via-specific limit is hole 0.15, pad 0.25). This is the compromise with the least margin and is flagged \emph{judgement}: use 0.5/0.25 where possible and check with the fab.
+\item \textbf{Nothing else.} No copper-to-edge, hole-clearance, annular-ring (of pads), courtyard or mask-bridge violation was \emph{added}; the 111 inherited ones stand as in the designer's design.
+\end{itemize}
+\begin{table}[H]\centering\small\input{gen/nets_T_B.tex}\caption{Nets carrying the most compromises in route B.}\label{tab:netsT}\end{table}
+
+\begin{figure}[H]\centering
+\includegraphics[height=9.6cm]{teensy_sol_ladder-B.pdf}\hfill\includegraphics[height=9.6cm]{teensy_zoom_ladder-B.pdf}
+\caption{Route B with every ledger item marked (green: class A, orange: class B, blue: judgement item such as a small via). Right: the densest 15~mm square, around the SGTL5000 and its support parts.}
+\end{figure}
+
+\subsection{Return-path audit}
+
+TraceMaker's audit (\texttt{tracemaker return-paths}) asks, for each fast net, whether there is reference copper under the trace and how far the return current must detour round a void. Table~\ref{tab:rpT} lists
+signal length (mm), layer changes and the longest detour (mm); a star marks a warning (detour over 2~mm, or a layer change without a stitching via or capacitor within 5~mm).
+\begin{table}[H]\centering\small\input{gen/rp_T.tex}\caption{Return-path audit of the fast nets: signal mm / layer changes / detour mm.}\label{tab:rpT}\end{table}
+Route A hopped layers on seven of the eight nets (two layer changes each, detours up to 2.8~mm), where the designer kept five of them on one layer without a void. Route B restores that for MCLK, BCLK, the MCLK resistor net, I2S\_OUT and MOSI;
+LRCLK, SCLK and I2S\_IN still change layers (detours 0.7, 2.2 and 2.0~mm; the last two warn). Against the designer, B is equal on five nets, better on SCLK (the designer has three layer changes and 3.8~mm of detour) and MOSI (2.6~mm), and worse on LRCLK and I2S\_IN.
+This is the kind of defect DRC cannot see: a clean-by-DRC route can be worse in practice, which is why the critical-net rules matter.
+
+\subsection{Simulation}\label{sec:simT}
+
+Method and assumptions are in Section~\ref{sec:sim}. All results compare the designer's layout, route A, route B, and route B with every coupling gap lifted to the board's 0.2~mm (the no-compromise reference).
+
+\paragraph{I2S, master clock, I2C and the analog line inputs.} Aggressors: BCLK 2.82~MHz, MCLK 11.29~MHz, I2S data 1.41~MHz, all 3.3~V with 1.5~ns edges from a 40\,$\Omega$ driver (assumed). Victims: LRCLK (held low), SDA/SCL (held high through the 2.2\,k$\Omega$ pull-ups) and the two codec line inputs
+(1\,$\mu$F coupling capacitor to a 1\,k$\Omega$ source, 10~pF and 17.5\,k$\Omega$ at the pin). Table: peak deviation in mV at the receiving pin (for the aggressor nets, the level including over- and undershoot).
+\begin{table}[H]\centering\small\input{gen/xtalk_T_audio.tex}\caption{I2S case: peak deviation (mV) at the codec pin. 2 $\mu$s transient, 0.05~ns step.}\end{table}
+The quiet logic nets pick up at most 13~mV (the designer's LRCLK) and 4.9~mV (route A's SDA); the analog inputs pick up nothing measurable in any layout because no aggressor runs beside them within 0.6~mm. Lifting the coupling gaps
+of route B to 0.2~mm changes no value by more than the rounding shown, so the clearance compromise has no measurable effect on these nets.
+
+\paragraph{SPI to the LED driver and flash, beside latch, output enable, chip select and the pot wipers.} SCLK at 10~MHz, MOSI at 5~Mbit/s (assumed).
+\begin{table}[H]\centering\small\input{gen/xtalk_T_spi.tex}\caption{SPI case: peak deviation (mV).}\end{table}
+The latch and chip-select pins see 0.0~mV; the output-enable pin sees 5.4~mV in the designer's layout, 3.6~mV in route A and 0.0~mV in route B; the pot wipers (high-impedance analog inputs of the multiplexer, which sit under the digital bus) see 0.0~mV.
+
+\paragraph{Bound over every compromised track pair.} The cases above cover chosen nets. To cover all of them, each compromised track-to-track pair in the ledger (a gap under 0.2~mm over a run of at least 0.5~mm) was looked up in a field-solver and ngspice sweep (Section~\ref{sec:sweep}), assuming the worst case that both nets are active
+signals (3.3~V, 1.5~ns edges, 40\,$\Omega$, 4-layer stack, quiet logic victim). The ten to twelve such pairs are bounded by 25~mV (A) and 26~mV (B), against 22 and 20~mV at the full 0.2~mm gap.
+\begin{table}[H]\centering\small\input{gen/bound_T_B.tex}\caption{Worst compromised track pairs of route B: bound in mV at the actual gap and at 0.2~mm.}\end{table}
+
+\paragraph{Voltage drop and current.} Currents are assumed worst-case values (Table~\ref{tab:assume}); the rail voltage is held at the source pin. All drops are below 10~mV.
+\begin{table}[H]\centering\small\input{gen/dc_T.tex}\caption{DC drop at the worst sink (mV) and the narrowest track against its IPC-2221 limit (outer layer, 10\,$^\circ$C rise).}\end{table}
+The narrowest power copper in route B is 0.15~mm: on \texttt{+3V3} (14~mm of its 327~mm) it carries at most 76~mA against an IPC-2221 limit of 0.6~A (a factor of 7.9); on \texttt{+5VA} (19~mm of 280~mm) it can carry up to the 166~mA of all 20 LEDs, a factor of 3.6. The 0.6~mm stretches have 1.65~A. Each LED cathode net carries 8.3~mA over up to 99~mm of copper; the drop is under 3~mV.
+
+\subsection{Verdict for board 1}
+
+Route B is a board that, within the scope of Section~\ref{sec:limits}, would work: no violation is outside the fab's stated capability, the worst simulated coupled noise is a few millivolts on the nets simulated and 26~mV bounded over all compromised pairs, and the power and LED currents are carried with a margin of 3.6 or more.
+The residual risks, in order: (1)~the 0.45--0.5~mm vias (hole 0.2--0.25, ring 0.125~mm) need the fab's confirmation; (2)~SCLK and I2S\_IN still change layers with 2~mm return detours (add stitching vias or reroute those two nets); (3)~the designer's mask-bridge and courtyard items remain.
+
+%% ------------------------------------------------------------------
+\section{Board 2: \texttt{Hardware\_Playground\_serial\_gw\_ATMEGA328P} (MySensors serial gateway)}
+
+\subsection{The board}
+
+A MySensors serial gateway (source repository \texttt{mtiutiu/Hardware\_Playground}, no licence: used for study only). An ATmega328P (IC1, QFN-32, 0.5~mm pitch) at 5~V and 16~MHz (ceramic resonator X1) talks to a PC through a CP2102 USB-UART bridge (U3, QFN-28)
+and to an RFM69 radio module (U4) through a TXB0104 level shifter (U1) on SPI; an MCP1703A regulator (U2) makes the 3.3~V rail; a USB-A plug is printed on the board (P1, bottom side); an ISP header (CON1) programs the AVR.
+Two layers, 115 footprints (22 on the back) on 44.5 $\times$ 19.8~mm, mostly 0603 parts with a 0.2~mm mask expansion, and ground pours on both sides.
+
+\begin{table}[H]\centering\small\input{gen/facts_S.tex}\caption{The board.}\end{table}
+\begin{figure}[H]\centering
+\includegraphics[width=0.48\textwidth]{serial_place.pdf}\hfill\includegraphics[width=0.48\textwidth]{serial_human.pdf}
+\caption{Left: placement. Right: the designer's routing (front red, back blue).}
+\end{figure}
+
+\subsection{Baseline}
+
+\begin{table}[H]\centering\small\input{gen/baseline_S.tex}\caption{TraceMaker under the board's own rules.}\end{table}
+Without the designer's pours the router leaves one of 172 connections open at every budget (\texttt{+5V}: IC1.6 $\to$ IC1.4, ``ripped up by GND and not routed again''): a negotiation loss between two supply pins of the same QFN.
+With the pours, 80 of 81 are routed and the one open item is the ground pin IC1.5 of the QFN, boxed in on its way to the pour. The designer's layout, judged the same way, adds 104 violations in KiCad (76 annular-ring items on through-hole pads, 10 edge-clearance items, 13 courtyard overlaps, 5 plated holes inside courtyards): so, unlike the Teensy board, this designer's layout does \emph{not} keep the board's own rules.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.9\textwidth]{serial_base.pdf}
+\caption{Baseline route (fixture, own rules, 50 M work): one connection open.}
+\end{figure}
+\begin{table}[H]\centering\small\input{gen/inherited_S.tex}\caption{Violations already present in the board with the designer's planes and no routing. The 140 mask bridges come from the 0.2~mm mask expansion of the 0603 hand-soldering footprints.}\end{table}
+
+\subsection{The route that works}
+
+Route \textbf{A} (rule ladder: T0 80 of 81, then T1 completes) and route \textbf{C} (critical nets first, \texttt{--si-rules}, plus one stitching via): C completes all 81 connections \emph{in stage T0}, i.e.\ under the board's own rules, so it has no clearance, track-width or via compromise at all.
+\begin{table}[H]\centering\small\input{gen/layouts_S.tex}\caption{The layouts side by side.}\end{table}
+\begin{table}[H]\centering\small\input{gen/ledger_S.tex}\caption{Compromise ledger by rule and class.}\end{table}
+What is left in route C: five \emph{starved thermal} items (a ground pad of 0603 parts connected to the pour by one spoke instead of the zone's two: soldering is slightly harder to heat, the connection is intact), and one floating ground-copper island on the front
+(KiCad reports it as an unconnected item; it has no electrical role and is removed by the zone setting ``remove islands''; one stitching via was added and did not clear it, so it is recorded here rather than hidden).
+Route A (T1) has 6 clearance items (smallest gap 0.168~mm, class A), 10 tracks at 0.15~mm (15~mm of the SPI net \texttt{/MOSI} is narrower than the 0.25~mm class width), 2 small vias, 3 starved-thermal items and one dangling track, and no unconnected item.
+\begin{figure}[H]\centering
+\includegraphics[width=0.95\textwidth]{serial_sol_ladder-C.pdf}
+\caption{Route C with the ledger items marked.}
+\end{figure}
+
+\subsection{Return-path audit}
+\begin{table}[H]\centering\small\input{gen/rp_S.tex}\caption{Return-path audit: signal mm / layer changes / detour mm.}\end{table}
+On a two-layer board with pours broken by routing, nearly every fast net warns, including all eight of the designer's. Route C's SCK detours 11~mm (the designer's 15.5~mm) and changes layer four times where the designer's does not; its USB D$-$ line detours 20.5~mm (the designer's 18.2~mm); its MOSI 25.5~mm where the designer's has 0.2~mm. Route A is worse on SCK (36.6~mm).
+That is the main real-world weakness of route C: the SPI at 8~MHz and the 12~Mbit/s USB pair run over a pour that has gaps (Section~\ref{sec:simS} measures what that costs; the answer is little, because the nets are short and slow).
+
+\subsection{Simulation}\label{sec:simS}
+
+\paragraph{SPI beside USB, the crystal, reset and slave select.} SCK 8~MHz and MOSI 4~Mbit/s at 5~V, 30\,$\Omega$, 3~ns edges (assumed); the victims are held through realistic impedances (USB lines idle in J state through 45\,$\Omega$, the crystal nodes 1\,k$\Omega$ with 18~pF, reset through its 10\,k$\Omega$ pull-up).
+\begin{table}[H]\centering\small\input{gen/xtalk_S_spi_usb.tex}\caption{SPI case: peak deviation (mV) at the receiving pin. Route A also with the 0.2~mm reference.}\end{table}
+The USB data pins and the crystal pins see 0.0~mV; the slave-select line sees 98~mV (designer), 97~mV (A) and 102~mV (C); the reset pin 78~mV in the designer's layout and 0.0~mV in both of ours. These are small against a logic threshold of 1.5~V; the 0.2~mm reference changes route A's values by 0.2~mV at most.
+
+\paragraph{Bound over compromised pairs.} Route C has no compromised track pair. Route A has one, at the same 23~mV as at the full 0.2~mm gap; the two-layer curves of the sweep (Section~\ref{sec:sweep}) show why: over a distant reference the gap barely matters (457~mV at 0.2~mm and 484~mV at 0.127~mm for a 25~mm run at 1.5~ns edges), so the 2-layer risk is the \emph{distance to the reference}, not the compromise.
+\begin{figure}[H]\centering
+\includegraphics[width=0.85\textwidth]{waves.pdf}
+\caption{Simulated waveforms: the I2S bit clock and the quiet LRCLK (top and bottom left, Teensy) and SPI SCK and slave select (right, gateway), designer against ours.}
+\end{figure}
+
+\paragraph{Voltage drop.}
+\begin{table}[H]\centering\small\input{gen/dc_S.tex}\caption{DC drop at the worst sink (mV).}\end{table}
+The 5~V rail drops 1.2~mV (designer) and 0.9~mV (route C) at 98~mA, the 3.3~V rail 2.3~mV (designer) and 1.5~mV (C) at 51~mA. The narrowest power track in route C is 0.25~mm, so the IPC-2221 limit is 0.88~A.
+
+\subsection{Verdict for board 2}
+
+Route C is the better of the two: it needs \emph{no} rule below the board's own, and in simulation it behaves like the designer's layout or better. Its remaining items are cosmetic or process items (five thermal spokes, one floating island). Its weakness, shared with the designer's layout, is the gaps in the pour under the fast nets, plus four layer changes on SCK. If this
+board were built, I would add stitching vias along SCK and MOSI and re-run the audit.
+
+%% ------------------------------------------------------------------
+\section{How the simulation works}\label{sec:sim}
+
+\subsection{Extraction}
+
+For each net the routed copper is a graph (tracks, vias, pads merged within 20~$\mu$m; a track that runs through a pad of its net is split there; pads of one part with the same number are one piece of copper). Each track is a chain of sections of at most 2~mm:
+series resistance $R=\rho L/(wt)$ with $\rho=1.72\cdot10^{-8}\,\Omega$m, $t=35~\mu$m outer and 17.5~$\mu$m inner copper; inductance and shunt capacitance per unit length from a 2-D finite-difference electrostatic solver for the trace
+(rectangle, 35~$\mu$m thick) over its reference plane in FR4 ($\varepsilon_r=4.5$): $C'$ with the dielectric, $L'=\mu_0\varepsilon_0C_{\text{air}}'^{-1}$ (quasi-TEM). Stack-ups: 4 layers, 0.2104~mm from each outer layer to the plane beneath; 2 layers, 1.6~mm to the opposite
+side. Vias: plated barrel of 25~$\mu$m, $R=\rho h/(\pi(d+t_p)t_p)\approx1.3$~m$\Omega$, $L=0.2h[\ln(4h/d)+1]$~nH. Two nets that run side by side (gap under 0.6~mm, angle under 10$^\circ$) are coupled section against section by the mutual capacitance
+$C_m'$ and the inductive coupling factor $k=L_m/\sqrt{L_1L_2}$ from the solver for the actual widths and gap. Neighbouring nets that are not the subject of a case are included: power rails and ground are held by their decoupling (AC ground), other signals quiet with 10\,k$\Omega$ at their pins.
+
+\subsection{Cases and assumptions}
+
+\begin{table}[H]\centering\small
+\begin{tabular}{p{4.3cm}p{10.2cm}}
+\toprule
+Item & Assumption (not measured; the layouts are compared under identical assumptions)\\
+\midrule
+Teensy pad driver & 3.3~V, 40\,$\Omega$ output, 1.5~ns rise and fall; inputs 5~pF (analog input 10~pF and 17.5\,k$\Omega$)\\
+ATmega pad driver & 5~V, 30\,$\Omega$, 3~ns; inputs 5~pF; crystal pins 18~pF\\
+Frequencies & BCLK 2.8224~MHz, MCLK 11.2896~MHz, I2S data 1.4112~MHz (alternating bits, worst case), SCLK 10~MHz, MOSI 5~Mbit/s (Teensy); SCK 8~MHz, MOSI 4~Mbit/s (ATmega)\\
+Analog input source & 1\,k$\Omega$ behind the 1\,$\mu$F coupling capacitor\\
+Rail currents (Teensy) & +5V/+5VA: 20 LEDs $\times$ 8.3~mA (TLC5947 with 4.7\,k$\Omega$: $1.24/4.7\text{k}\times31.5$); +3V3: TLC5947 20~mA, flash 15~mA, regulator 25~mA, codec 11~mA, mux 1~mA, 12 pots 0.33~mA each (76~mA total)\\
+Rail currents (gateway) & +5V: regulator 60~mA, ATmega 12~mA, CP2102 26~mA (98~mA); +3V3: radio 50~mA\\
+Simulation & ngspice 44.2, Gear integration, 0.05~ns step, 1--2~$\mu$s window, first 0.2--0.3~$\mu$s skipped; peak deviation from the median level\\
+\bottomrule
+\end{tabular}
+\caption{Assumptions. The currents are engineering assumptions chosen on the high side, not datasheet readings; none was looked up.}\label{tab:assume}
+\end{table}
+
+\subsection{Validation of the chain}\label{sec:valid}
+
+The 2-D solver reproduces Hammerstad and Jensen's microstrip impedance to within 1.5\,\% for the 4-layer geometries (59.8 against 58.7~$\Omega$ for 0.30~mm, 83.0 against 82.1~$\Omega$ for 0.15~mm over 0.2104~mm) and 8\,\% for 0.25~mm over 1.6~mm (147 against 136~$\Omega$, limited by the truncated domain: conservative for crosstalk).
+The coupled-line chain (extraction, section coupling, ngspice) was checked on two matched 0.15~mm traces, 0.127~mm apart, 120~mm long: near-end crosstalk 185~mV for a 3.3~V step against 201~mV from $K_b=\tfrac14(C_m/C+L_m/L)$ ($-8\,\%$);
+the result changes by under 1\,\% when the section length goes from 4 to 0.5~mm; the through voltage is half the step (matched). Far-end crosstalk is non-zero, as expected for microstrip (inhomogeneous dielectric). Section length 2~mm is used in the boards.
+
+\subsection{Sensitivity: how much does the gap matter?}\label{sec:sweep}
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.95\textwidth]{xtalk_sweep.pdf}
+\caption{Peak noise on a quiet neighbour against the gap, for 10, 25 and 50~mm of side-by-side run (blue, orange, red), 1.5~ns (solid) and 0.5~ns (dashed) edges, 0.15~mm tracks. Dotted lines: 0.127 and 0.2~mm. Digital victim: 40\,$\Omega$ hold, 5~pF; analog victim: 1\,k$\Omega$ near, 10~pF and 17.5\,k$\Omega$ far.}
+\end{figure}
+On four layers, 25~mm of parallel run at 1.5~ns edges gives 67~mV at 0.2~mm and 93~mV at 0.127~mm: the compromise costs 37\,\% more noise, from 8\,\% to 12\,\% of a 0.8~V low threshold. With 0.5~ns edges and 50~mm of run the noise is 296~mV at 0.2~mm and 384~mV at 0.127~mm (48\,\% of the threshold): that is where the gap starts to matter, and where I would not go below 0.2~mm without simulating. On two layers the noise is high at every gap and nearly independent of it.
+
+%% ------------------------------------------------------------------
+\section{Lessons: a general approach to workable boards}
+
+\begin{enumerate}
+\item \textbf{Restore design intent before loosening rules.} The fixtures omit ground pours and the layer policy; with both restored, the gateway (one open connection) needed no rule loosened at all, once the fast nets went first.
+\item \textbf{Loosen late and locally.} The ladder makes compromises appear only on the connections that did not fit: route A of the Teensy board has 478 compromise items, a one-shot run under the loosest rules had 671 (a 29\,\% reduction).
+\item \textbf{Judge against the board's own rules and classify against a real fab.} DRC at loosened rules reports nothing; the ledger is what makes the compromise visible and bounded.
+\item \textbf{DRC is not enough.} The route that DRC liked (A) had layer hops on the I2S clock lines that the designer avoided; the return-path audit found them and the critical-net rules removed most.
+\item \textbf{Simulate the pairs, bound the rest.} A handful of ngspice cases per board and a sweep-based bound over all compromised pairs show where the physics starts to bite (long parallel runs, 2-layer boards, sub-nanosecond edges) and where it does not.
+\item \textbf{The designer's layout is the best test.} It showed that the Teensy board meets its own rules (the algorithm's gap, not the board's) and that the gateway's designer used rules below its own (so the ``clean pass'' target is not always a fair one).
+\end{enumerate}
+
+For the algorithm: the ledger and the ladder should be built in (a ``compromise budget'' per connection, class A before B, never C or D); critical nets should be on by default for nets with a detected role; the return-path audit should run after every route; and the router should keep signals off plane layers when planes are present.
+
+%% ------------------------------------------------------------------
+\section{Limits of this study}\label{sec:limits}
+
+\begin{itemize}
+\item \textbf{No schematic.} PCBench ships boards, not schematics or models. The simulation is of the \emph{interconnect} (extracted copper) with assumed drivers, loads and currents, not of the whole circuit; it cannot say that a codec's audio performance is met.
+\item \textbf{Assumptions are not measurements.} Driver strengths, edge rates, load capacitances and rail currents (Table~\ref{tab:assume}) are typical CMOS values chosen by me; the layouts are compared under the same assumptions, and the sweep shows the sensitivity, but absolute millivolts should not be quoted.
+\item \textbf{Extraction is quasi-static.} 2-D field solution, lossless dielectric, no frequency-dependent loss, no radiation, no cross-section of pours beside the traces (conservative), planes assumed continuous (the audit says where they are not), no vias' return currents, no thermal analysis, no EMC or ESD.
+\item \textbf{Fab data.} Taken from JLCPCB's public capability page through a summarising fetch; verify before ordering. The annular ring of 0.125~mm vias is below a figure on that page for plated component holes and needs the fab's confirmation.
+\item \textbf{Nothing was built.} ``Would work in real life'' means: no violation outside the stated capability, and no simulated or bounded effect large enough to matter, within the scope above. It is not a prototype result.
+\item \textbf{Judging.} KiCad 10.0.6 DRC with zones refilled by KiCad; the engine's own refill and DRC were used inside the router only. One seed and one budget per route.
+\end{itemize}
+
+\section{Reproducing}\label{sec:repro}
+All files are under \file{reports/realworld/}. Routing: \file{py/sweep.py} (single tier), \file{py/ladder.py BOARD[+planes] NAME T0:N,T1:N,T2:N [options]}; ledger: \file{py/ledger.py ROUTED BASELINE OUT.json --layers N};
+simulation: \file{run\_all\_sim.sh} (transient and DC), \file{py/sweep\_xtalk.py}, \file{py/bound\_pairs.py}; tables: \file{py/gen\_tex.py}; figures: \file{py/figs\_*.py}; the toolbox image: \file{../../build/report-image/Dockerfile}; compile: \file{./dk.sh latexmk -pdf tex/report.tex}.
+The commands of the final routes were:
+\begin{itemize}\small
+\item Teensy A: \texttt{ladder.py kitspace\_teensy-fx+planes ladder-A T0:20000000,T1:20000000,T2:50000000 --no-tracks-on In1.Cu,In2.Cu}
+\item Teensy B: the same with \texttt{--si-rules --critical-nets "BCLK,LRCLK,I2S\_*,MCLK,Net-(R3-Pad1),SCLK,MOSI"}
+\item Gateway A: \texttt{ladder.py Hardware\_Playground\_serial\_gw\_ATMEGA328P+planes ladder-A T0:10000000,T1:10000000,T2:10000000}
+\item Gateway C: \texttt{ladder.py ...+planes ladder-C T0:10000000,T1:10000000 --si-rules --critical-nets "Net-(P1-Pad2),Net-(P1-Pad3),Net-(R7-Pad1),Net-(R8-Pad1),Net-(IC1-Pad7),Net-(IC1-Pad8),/SCK,/MOSI" --stitch-vias planes}
+\end{itemize}
+\end{document}

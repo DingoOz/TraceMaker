@@ -27,6 +27,10 @@ struct LegalizeOptions {
   double margin_mm = 0.003;  // clearance asked for beyond the rule (rounding to nanometres, the pairs between sweeps)
   int sweeps = 300;          // projection sweeps at most
   double edge_mm = 0.035;    // copper stays this far inside the board outline (plus the rule's edge clearance)
+  // > 0: every unlocked route track is cut into pieces of at most this length (at the vertices of same-net copper that lie on it, and evenly
+  // in between), so that a long straight track can bend where its neighbours are too close, instead of only moving as a whole; after the
+  // sweeps the vertices that stayed on a straight line are merged again. 0 = the vertices the routes have (unchanged behaviour).
+  double subdivide_mm = 0;
   std::uint64_t seed = 0;    // != 0: the pairs are visited in another (seeded) order, which leaves other pinches unresolved: portfolio variants differ
   std::vector<geom::Point> outline;  // board outline polygon (Obstacles::outline()); empty = unbounded
 };

@@ -1,0 +1,454 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 303/334 connections, 1683 tracks, 225 vias, pitch 0.0",
+   "open": 59,
+   "violations": 223,
+   "placement_errors": 1,
+   "open_nets": [
+    "+1V2",
+    "+3V3",
+    "+5V",
+    "/DBG_~{ISP}",
+    "/FPGA_IO_BANK1_1",
+    "/FPGA_IO_BANK1_10",
+    "/FPGA_IO_BANK1_12",
+    "/FPGA_IO_BANK1_14",
+    "/FPGA_IO_BANK1_16",
+    "/FPGA_IO_BANK1_2",
+    "/FPGA_IO_BANK1_22",
+    "/FPGA_IO_BANK1_3",
+    "/FPGA_IO_BANK1_4",
+    "/FPGA_IO_BANK1_5",
+    "/FPGA_IO_BANK1_6",
+    "/FPGA_IO_BANK1_8",
+    "/FPGA_IO_BANK2_16",
+    "/FPGA_IO_BANK2_18",
+    "/FPGA_IO_BANK2_20",
+    "/FPGA_IO_BANK2_21",
+    "/FPGA_IO_BANK2_22",
+    "/FPGA_IO_BANK2_23",
+    "/FPGA_IO_BANK2_8",
+    "/FPGM_SCK",
+    "/I2C_SDA",
+    "/RxD",
+    "/SPI_CS",
+    "/iCE40-CDONE",
+    "/iCE40-SCK",
+    "GND",
+    "Net-(C38-Pad1)"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 83,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 315/334 connections, 2278 tracks, 356 vias, pitch 0.1",
+   "open": 47,
+   "violations": 660,
+   "placement_errors": 1,
+   "open_nets": [
+    "+1V2",
+    "+3V3",
+    "/FPGA_IO_BANK1_16",
+    "/FPGA_IO_BANK1_18",
+    "/FPGA_IO_BANK1_21",
+    "/FPGA_IO_BANK1_5",
+    "/FPGA_IO_BANK1_6",
+    "/FPGA_IO_BANK1_7",
+    "/FPGA_IO_BANK2_15",
+    "/FPGA_IO_BANK2_17",
+    "/FPGA_IO_BANK2_18",
+    "/FPGA_IO_BANK2_5",
+    "/FPGA_IO_BANK2_6",
+    "/FPGA_IO_BANK2_8",
+    "/I2C_SDA",
+    "/RxD",
+    "/SPI_MISO",
+    "/iCE40-SCK",
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "shove",
+   "nets": 67,
+   "open": 61,
+   "violations": 319,
+   "was_open": 47,
+   "was_violations": 660,
+   "kept_back": 52,
+   "accepted": true,
+   "router": "routed 300/334 connections, 1280 tracks, 237 vias, pitch 0.0"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 68,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 322/334 connections, 2078 tracks, 364 vias, pitch 0.1",
+   "open": 55,
+   "violations": 641,
+   "placement_errors": 1,
+   "open_nets": [
+    "+1V2",
+    "+3V3",
+    "/BUT1",
+    "/FPGA_IO_BANK1_18",
+    "/FPGA_IO_BANK1_4",
+    "/FPGA_IO_BANK2_16",
+    "/FPGA_IO_BANK2_18",
+    "/FPGA_IO_BANK2_19",
+    "/FPGA_IO_BANK2_8",
+    "/FPGA_IO_BANK2_9",
+    "/GPIO0",
+    "/I2C_SCL",
+    "/RxD",
+    "GND"
+   ]
+  },
+  {
+   "round": 2,
+   "kind": "shove",
+   "nets": 47,
+   "open": 59,
+   "violations": 572,
+   "was_open": 55,
+   "was_violations": 641,
+   "kept_back": 38,
+   "accepted": true,
+   "router": "routed 305/334 connections, 1930 tracks, 317 vias, pitch 0.1"
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 87,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 322/334 connections, 2273 tracks, 396 vias, pitch 0.1",
+   "open": 47,
+   "violations": 846,
+   "placement_errors": 1,
+   "open_nets": [
+    "+1V2",
+    "+3V3",
+    "/FPGA_IO_BANK1_21",
+    "/FPGA_IO_BANK1_5",
+    "/FPGA_IO_BANK2_15",
+    "/FPGA_IO_BANK2_16",
+    "/FPGA_IO_BANK2_21",
+    "/FPGA_IO_BANK2_26",
+    "/RxD",
+    "GND"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 66,
+   "open": 53,
+   "violations": 645,
+   "was_open": 47,
+   "was_violations": 846,
+   "kept_back": 52,
+   "accepted": true,
+   "router": "routed 309/334 connections, 2056 tracks, 313 vias, pitch 0.1"
+  },
+  {
+   "round": 3,
+   "kind": "move",
+   "trials": [
+    {
+     "ref": "C12",
+     "step": 0.25,
+     "open": 56,
+     "placement": 1
+    },
+    {
+     "ref": "C12",
+     "step": 0.5,
+     "open": 57,
+     "placement": 2
+    },
+    {
+     "ref": "C12",
+     "step": 1.0,
+     "open": 57,
+     "placement": 2
+    },
+    {
+     "ref": "C14",
+     "step": 0.25,
+     "open": 56,
+     "placement": 1
+    },
+    {
+     "ref": "C14",
+     "step": 0.5,
+     "open": 56,
+     "placement": 1
+    },
+    {
+     "ref": "C14",
+     "step": 1.0,
+     "open": 55,
+     "placement": 1
+    },
+    {
+     "ref": "C16",
+     "step": 0.25,
+     "open": 56,
+     "placement": 1
+    },
+    {
+     "ref": "C16",
+     "step": 0.5,
+     "open": 56,
+     "placement": 1
+    },
+    {
+     "ref": "C16",
+     "step": 1.0,
+     "open": 58,
+     "placement": 1
+    },
+    {
+     "ref": "C26",
+     "step": 0.25,
+     "open": 57,
+     "placement": 1
+    },
+    {
+     "ref": "C26",
+     "step": 0.5,
+     "open": 57,
+     "placement": 1
+    },
+    {
+     "ref": "C26",
+     "step": 1.0,
+     "open": 57,
+     "placement": 1
+    },
+    {
+     "ref": "R12",
+     "step": 0.25,
+     "open": 56,
+     "placement": 1
+    },
+    {
+     "ref": "R12",
+     "step": 0.5,
+     "open": 52,
+     "placement": 1
+    },
+    {
+     "ref": "R12",
+     "step": 1.0,
+     "open": 52,
+     "placement": 1
+    },
+    {
+     "ref": "U4",
+     "step": 0.25,
+     "open": 54,
+     "placement": 1
+    },
+    {
+     "ref": "U4",
+     "step": 0.5,
+     "open": 55,
+     "placement": 1
+    },
+    {
+     "ref": "U4",
+     "step": 1.0,
+     "open": 58,
+     "placement": 1
+    },
+    {
+     "ref": "U5",
+     "step": 0.25,
+     "open": 48,
+     "placement": 1
+    },
+    {
+     "ref": "U5",
+     "step": 0.5,
+     "open": 59,
+     "placement": 1
+    },
+    {
+     "ref": "U5",
+     "step": 1.0,
+     "open": 57,
+     "placement": 1
+    },
+    {
+     "ref": "U6",
+     "step": 0.25,
+     "open": 59,
+     "placement": 1
+    },
+    {
+     "ref": "U6",
+     "step": 0.5,
+     "open": 58,
+     "placement": 1
+    },
+    {
+     "ref": "U6",
+     "step": 1.0,
+     "open": 58,
+     "placement": 1
+    }
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "effort",
+   "open": 58,
+   "placement_errors": 1,
+   "router": "routed 333/334 connections, 2440 tracks, 370 vias, pitch 0.1"
+  }
+ ],
+ "assign": {
+  "/AUX_SPI_SCK": "T1",
+  "/BUT1": "T1",
+  "/DBG_SWDIO": "T1",
+  "/DBG_~ISP~": "T1",
+  "/DBG_~RST~": "T1",
+  "/DBG_~{ISP}": "T1",
+  "/FPGA_IO_BANK1_0": "T1",
+  "/FPGA_IO_BANK1_1": "T1",
+  "/FPGA_IO_BANK1_10": "T1",
+  "/FPGA_IO_BANK1_11": "T1",
+  "/FPGA_IO_BANK1_12": "T1",
+  "/FPGA_IO_BANK1_13": "T1",
+  "/FPGA_IO_BANK1_14": "T1",
+  "/FPGA_IO_BANK1_15": "T1",
+  "/FPGA_IO_BANK1_16": "T1",
+  "/FPGA_IO_BANK1_17": "T1",
+  "/FPGA_IO_BANK1_18": "T1",
+  "/FPGA_IO_BANK1_19": "T1",
+  "/FPGA_IO_BANK1_2": "T1",
+  "/FPGA_IO_BANK1_20": "T1",
+  "/FPGA_IO_BANK1_21": "T1",
+  "/FPGA_IO_BANK1_22": "T1",
+  "/FPGA_IO_BANK1_23": "T1",
+  "/FPGA_IO_BANK1_3": "T1",
+  "/FPGA_IO_BANK1_4": "T1",
+  "/FPGA_IO_BANK1_5": "T1",
+  "/FPGA_IO_BANK1_6": "T1",
+  "/FPGA_IO_BANK1_7": "T1",
+  "/FPGA_IO_BANK1_8": "T1",
+  "/FPGA_IO_BANK1_9": "T1",
+  "/FPGA_IO_BANK2_10": "T1",
+  "/FPGA_IO_BANK2_12": "T1",
+  "/FPGA_IO_BANK2_13": "T1",
+  "/FPGA_IO_BANK2_14": "T1",
+  "/FPGA_IO_BANK2_15": "T1",
+  "/FPGA_IO_BANK2_16": "T1",
+  "/FPGA_IO_BANK2_17": "T1",
+  "/FPGA_IO_BANK2_18": "T1",
+  "/FPGA_IO_BANK2_19": "T1",
+  "/FPGA_IO_BANK2_20": "T1",
+  "/FPGA_IO_BANK2_21": "T1",
+  "/FPGA_IO_BANK2_22": "T1",
+  "/FPGA_IO_BANK2_23": "T1",
+  "/FPGA_IO_BANK2_24": "T1",
+  "/FPGA_IO_BANK2_25": "T1",
+  "/FPGA_IO_BANK2_27": "T1",
+  "/FPGA_IO_BANK2_5": "T1",
+  "/FPGA_IO_BANK2_6": "T1",
+  "/FPGA_IO_BANK2_7": "T1",
+  "/FPGA_IO_BANK2_8": "T1",
+  "/FPGA_IO_BANK2_9": "T1",
+  "/FPGM_MOSI": "T1",
+  "/FPGM_SCK": "T1",
+  "/GNDPLL": "T1",
+  "/GPIO0": "T1",
+  "/I2C_SCL": "T1",
+  "/I2C_SDA": "T1",
+  "/LED1": "T1",
+  "/P_RxD": "T1",
+  "/P_TxD": "T1",
+  "/RxD": "T1",
+  "/SPI_CLK": "T1",
+  "/SPI_CS": "T1",
+  "/SPI_MISO": "T1",
+  "/SPI_MOSI": "T1",
+  "/SYSCLK": "T1",
+  "/TxD": "T1",
+  "/VCCPLL": "T1",
+  "/iCE40-CDONE": "T1",
+  "/iCE40-CRESET": "T1",
+  "/iCE40-SCK": "T1",
+  "/iCE40-SDO": "T1",
+  "Net-(C38-Pad1)": "T1",
+  "Net-(C39-Pad1)": "T1",
+  "Net-(D2-Pad1)": "T1",
+  "Net-(P4-Pad5)": "T1",
+  "Net-(R42-Pad1)": "T1",
+  "Net-(U4-Pad109)": "T1",
+  "Net-(U4-Pad133)": "T1",
+  "Net-(U6-Pad1)": "T1",
+  "Net-(U6-Pad2)": "T1",
+  "Net-(U6-Pad37)": "T1",
+  "Net-(U6-Pad9)": "T1"
+ },
+ "moves": {},
+ "power": [
+  "+1V2",
+  "+3V3",
+  "+5V",
+  "/CIAA_3V3_1",
+  "/CIAA_3V3_2",
+  "/CIAA_5V1",
+  "/CIAA_5V2",
+  "GND"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.1905,
+   "tmin": 0.2032,
+   "via": 0.762,
+   "drill": 0.4064,
+   "vmin": 0.7112,
+   "dmin": 0.4064
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

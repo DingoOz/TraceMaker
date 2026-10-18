@@ -1,0 +1,65 @@
+{
+ "board": "PocketBone_pocketbone-kicad",
+ "run": "closure-5",
+ "layers": 4,
+ "clearance_mm": 0.1524,
+ "assumptions": {
+  "edge_ns": 1.5,
+  "driver_ohm": 40.0,
+  "load_pF": 5.0,
+  "frequency_MHz": 10.0,
+  "xtalk_pass_pct": 10.0,
+  "xtalk_fail_pct": 25.0,
+  "sink_mA": 50.0,
+  "drop_pass_pct": 3.0,
+  "drop_fail_pct": 8.0,
+  "ipc_margin": 2.0,
+  "via_pass_pct": 5.0,
+  "via_fail_pct": 20.0
+ },
+ "rails_as_ac_ground": [
+  "+3V3",
+  "+5V",
+  "AGND",
+  "DGND",
+  "GND",
+  "GNDA",
+  "GNDD",
+  "GNDPWR"
+ ],
+ "unconnected_kicad": 1,
+ "compromises": 21,
+ "status": "done",
+ "vias": {
+  "verdict": "PASS",
+  "smallest_drill_mm": 0.25,
+  "smallest_size_mm": 0.5,
+  "R_mohm": 1.274,
+  "L_nH": 1.358,
+  "Z_at_edge_ohm": 0.905,
+  "pct_of_driver": 2.26,
+  "count": 117
+ },
+ "current": {
+  "verdict": "PASS",
+  "narrowed_nets": [],
+  "dc": [],
+  "sections": []
+ },
+ "flags": [],
+ "crosstalk": {
+  "verdict": "PASS",
+  "pairs_screened": 0,
+  "pairs_skipped_next_to_rail": 0,
+  "bound_worst_pct": 0.0,
+  "sim_worst_pct": 0.0,
+  "screen": [],
+  "simulated": [],
+  "progress": {
+   "done": 0,
+   "total": 0
+  },
+  "pairs_open": 0
+ },
+ "verdict": "PASS"
+}

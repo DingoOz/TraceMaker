@@ -362,6 +362,14 @@ TEST_CASE("critical: critical nets are routed before the others, tier by tier", 
   f.critical = {{"NET_A", 1}};
   f.critical_first = true;
   CHECK(routed_nets(f) == std::set<std::string>{"NET_B"});  // --first-nets stay in front of the critical tiers
+  // Both nets in --first-nets: within the group the router's own order (shortest first) decides, unless --first-nets-ordered asks for the order of the list.
+  auto g = options();
+  g.first_nets = {"NET_A", "NET_B"};
+  CHECK(routed_nets(g) == std::set<std::string>{"NET_B"});
+  g.first_nets_ordered = true;
+  CHECK(routed_nets(g) == std::set<std::string>{"NET_A"});  // A is first in the list: A gets the crossing
+  g.first_nets = {"NET_B", "NET_A"};
+  CHECK(routed_nets(g) == std::set<std::string>{"NET_B"});
 }
 
 TEST_CASE("critical: a critical net pays more for a via and takes the longer way on one layer", "[critical][route]") {

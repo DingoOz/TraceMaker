@@ -1,0 +1,5 @@
+kitspace_hack 3 2
+iso50_pcb 1 2
+59pct_keyboard 1 2
+bms-8s50-ic_bms-8s50-ic 4 2
+dorkyboard_keyboard 10 2

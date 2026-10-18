@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "drc/copper.hpp"
 
+#include <cstdio>
+#include <cstdlib>
+
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
@@ -282,6 +285,29 @@ CopperModel build_copper(const model::Board& b) {
         g.net = p.net;
         break;
       }
+    }
+  }
+  // Board copper graphics (a manual pour drawn as a polygon) are copper of the net they touch: pads, tracks and vias of exactly one net. Touching several nets, or none: net-less.
+  if (b.infer_graphic_nets) {
+    for (auto& g : m.items) {
+      if (g.kind != ItemKind::Graphic || g.net != 0 || g.footprint >= 0) continue;
+      model::NetId only = 0;
+      bool many = false;
+      for (const auto& p : m.items) {
+        if (many) break;
+        if ((p.kind != ItemKind::Pad && p.kind != ItemKind::Track && p.kind != ItemKind::Via) || p.net == 0 || !(p.layers & g.layers) || p.net == only) continue;
+        bool touch = false;
+        for (const auto& s : g.shapes) {
+          for (const auto& u : p.shapes)
+            if (geom::closer_than(s, u, 1)) touch = true;
+          if (touch) break;
+        }
+        if (!touch) continue;
+        if (only == 0) only = p.net;
+        else many = true;
+      }
+      if (!many) g.net = only;
+      if (std::getenv("TM_DEBUG_GFX")) std::fprintf(stderr, "board copper graphic %d: net %d%s\n", g.index, static_cast<int>(g.net), many ? " (several nets: net-less)" : "");
     }
   }
   return m;

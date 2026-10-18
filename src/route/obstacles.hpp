@@ -88,6 +88,12 @@ class Obstacles {
   void set_via_mask(Coord m) { via_mask_ = m; }
   // Zone fills are ignored as obstacles (they are refilled after routing); they remain connection targets.
   void set_soft_zones(bool on) { soft_zones_ = on; }
+  // Net-less solder-mask openings drawn as footprint graphics (a solder-jumper's bridge, a MEMS microphone's pad group) no longer keep copper out; KiCad's
+  // mask checks flag what then lies in them (judgement, not a short). Off by default.
+  void set_soft_mask_graphics(bool on) { soft_mask_graphics_ = on; }
+  // Net-less copper drawn as BOARD graphics (an EasyEDA import's pours as polygons on a copper layer) is fixed copper that no track may touch, and pins inside it are
+  // enclosed; soft, it is ignored like a zone fill (KiCad then flags what touches it). Off by default.
+  void set_soft_copper_graphics(bool on) { soft_copper_graphics_ = on; }  // (unused since the net inference of board copper graphics: Board::infer_graphic_nets)
   bool soft_zones() const { return soft_zones_; }
   // Vias keep clear of SMD pads narrower than `max_pad` (any net, net-class clearance), as if they were another
   // net's copper; larger pads (exposed thermal pads) still take vias. set_pad_via_exempt(true) lifts this around the
@@ -139,6 +145,11 @@ class Obstacles {
   Coord ir_cell_ = 250'000;
   bool inside_exact(geom::Point p) const;
   bool soft_zones_ = false;
+  bool soft_mask_graphics_ = false;
+  bool soft_copper_graphics_ = false;
+  bool soft_item(const drc::CopperItem& it) const {
+    return soft_zones_ && it.kind == drc::ItemKind::Zone;
+  }
   bool vias_off_pads_ = false;
   Coord vias_off_pads_max_ = 2'000'000;
   mutable bool pad_via_exempt_ = false;

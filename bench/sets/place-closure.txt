@@ -1,0 +1,10 @@
+# Placement-closure experiment (2026-10-16): PCBench tier B and C boards that the human placement does not route clean (rel090, 120 s),
+# 82-141 parts, gap of 1-36 connections at 120 s. See bench/records/place-closure/.
+Hardware_Playground_serial_gw_ATMEGA328P
+96boards-robomezzi_96boards-robomezzi
+kitspace_teensy-fx
+DronPi_dronPi
+Hardware_Playground_E3_Pcb_rev0.3
+EtherCAT_shield_v1_EtherCAT_shield_v1
+kitspace_test-jig
+poncho_fpga_fpga-dongle

@@ -1,0 +1,318 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 237/276 connections, 1160 tracks, 163 vias, pitch 0.0",
+   "open": 19,
+   "violations": 9,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB",
+    "E0_DIR",
+    "E0_EN",
+    "E0_OA1",
+    "E0_OB2",
+    "E0_UART",
+    "GND",
+    "LCD_ENC_A",
+    "LCD_MOSI",
+    "SD_MOSI",
+    "THB",
+    "X_DIR",
+    "X_EN",
+    "X_STOP",
+    "Y_DIR",
+    "Y_EN",
+    "Z_DIR",
+    "Z_EN"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 66,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 259/276 connections, 1060 tracks, 226 vias, pitch 0.0",
+   "open": 6,
+   "violations": 132,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB",
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "shove",
+   "nets": 66,
+   "open": 18,
+   "violations": 65,
+   "was_open": 6,
+   "was_violations": 132,
+   "kept_back": 55,
+   "accepted": true,
+   "router": "routed 245/276 connections, 908 tracks, 178 vias, pitch 0.07"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 14,
+   "relaxed_power": 2,
+   "moved_parts": 0,
+   "router": "routed 250/276 connections, 977 tracks, 197 vias, pitch 0.06",
+   "open": 13,
+   "violations": 137,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB",
+    "E0_UART",
+    "GND",
+    "SD_CS",
+    "SD_DET",
+    "TH0",
+    "THB",
+    "USB_D+",
+    "X_EN",
+    "Z_EN"
+   ]
+  },
+  {
+   "round": 2,
+   "kind": "shove",
+   "nets": 1,
+   "open": 13,
+   "violations": 143,
+   "was_open": 13,
+   "was_violations": 137,
+   "kept_back": 1,
+   "accepted": false,
+   "router": "routed 250/276 connections, 991 tracks, 202 vias, pitch 0.06"
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 49,
+   "relaxed_power": 2,
+   "moved_parts": 0,
+   "router": "routed 261/276 connections, 1412 tracks, 228 vias, pitch 0.0",
+   "open": 2,
+   "violations": 461,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 46,
+   "open": 7,
+   "violations": 285,
+   "was_open": 2,
+   "was_violations": 461,
+   "kept_back": 41,
+   "accepted": true,
+   "router": "routed 256/276 connections, 1272 tracks, 214 vias, pitch 0.0"
+  },
+  {
+   "round": 4,
+   "kind": "route",
+   "relaxed_nets": 48,
+   "relaxed_power": 2,
+   "moved_parts": 0,
+   "router": "routed 261/276 connections, 1406 tracks, 224 vias, pitch 0.0",
+   "open": 3,
+   "violations": 362,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB",
+    "GND"
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "shove",
+   "nets": 1,
+   "open": 7,
+   "violations": 331,
+   "was_open": 3,
+   "was_violations": 362,
+   "kept_back": 1,
+   "accepted": true,
+   "router": "routed 257/276 connections, 1360 tracks, 225 vias, pitch 0.0"
+  },
+  {
+   "round": 5,
+   "kind": "route",
+   "relaxed_nets": 51,
+   "relaxed_power": 2,
+   "moved_parts": 0,
+   "router": "routed 261/276 connections, 1454 tracks, 254 vias, pitch 0.0",
+   "open": 2,
+   "violations": 499,
+   "placement_errors": 0,
+   "open_nets": [
+    "+VB"
+   ]
+  },
+  {
+   "round": 5,
+   "kind": "shove",
+   "nets": 27,
+   "open": 5,
+   "violations": 367,
+   "was_open": 2,
+   "was_violations": 499,
+   "kept_back": 27,
+   "accepted": true,
+   "router": "routed 261/276 connections, 1384 tracks, 216 vias, pitch 0.0"
+  },
+  {
+   "round": 5,
+   "kind": "move",
+   "trials": [
+    {
+     "ref": "C11",
+     "step": 0.25,
+     "open": 4,
+     "placement": 0
+    },
+    {
+     "ref": "C11",
+     "step": 0.5,
+     "open": 4,
+     "placement": 0
+    },
+    {
+     "ref": "C11",
+     "step": 1.0,
+     "open": 4,
+     "placement": 0
+    },
+    {
+     "ref": "C26",
+     "step": 0.25,
+     "open": 3,
+     "placement": 0
+    },
+    {
+     "ref": "C26",
+     "step": 0.5,
+     "open": 3,
+     "placement": 0
+    },
+    {
+     "ref": "C26",
+     "step": 1.0,
+     "open": 3,
+     "placement": 0
+    }
+   ]
+  },
+  {
+   "round": 5,
+   "kind": "effort",
+   "open": 29,
+   "placement_errors": 0,
+   "router": "routed 261/276 connections, 1314 tracks, 195 vias, pitch 0.0"
+  }
+ ],
+ "assign": {
+  "+VB": "T1",
+  "C11_2": "T1",
+  "E0_DIR": "T2",
+  "E0_EN": "T2",
+  "E0_STP": "T2",
+  "E0_UART": "T2",
+  "FAN_PWM": "T2",
+  "GND": "T1",
+  "HE0_PWM": "T2",
+  "LCD_ENC_A": "T2",
+  "LCD_ENC_B": "T2",
+  "LCD_ENC_BTN": "T2",
+  "LCD_SCK": "T2",
+  "Q3_3": "T2",
+  "RESET": "T1",
+  "SD_CS": "T2",
+  "SD_DET": "T1",
+  "SD_MISO": "T2",
+  "SD_MOSI": "T2",
+  "SD_SCK": "T2",
+  "SWCLK": "T2",
+  "SWDIO": "T2",
+  "TH0": "T2",
+  "THB": "T1",
+  "U1_4": "T2",
+  "U1_5": "T2",
+  "U2_13": "T2",
+  "U4_4": "T2",
+  "U4_5": "T2",
+  "USB_CONN": "T2",
+  "USB_D+": "T2",
+  "USB_D-": "T2",
+  "X_DIR": "T2",
+  "X_EN": "T2",
+  "X_OB2": "T2",
+  "X_STOP": "T1",
+  "X_STP": "T2",
+  "X_UART": "T2",
+  "Y_DIR": "T2",
+  "Y_EN": "T2",
+  "Y_STOP": "T1",
+  "Y_STP": "T2",
+  "Y_UART": "T2",
+  "Z_DIR": "T2",
+  "Z_EN": "T2",
+  "Z_OB2": "T2",
+  "Z_STOP": "T2",
+  "Z_STP": "T2",
+  "Z_UART": "T2"
+ },
+ "moves": {},
+ "power": [
+  "+3V3",
+  "+5V",
+  "+VB",
+  "GND"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.8,
+   "drill": 0.4,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}
