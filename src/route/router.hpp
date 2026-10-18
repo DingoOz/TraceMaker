@@ -169,6 +169,7 @@ struct RouterOptions {
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
   std::vector<std::string> first_nets;  // routed first, also after restarts; other nets do not rip them (crystal lines)
+  bool first_nets_ordered = false;      // route the --first-nets in the order of the list (default: the router's own order within the group)
   // Nets that are never narrowed below their class width nor given the neck-down via (power nets in a rule-relaxed routing: they have the least margin,
   // so the relaxation is spent on signals only). Empty = every net may be necked down.
   std::vector<std::string> no_neck_nets;

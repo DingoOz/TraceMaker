@@ -987,6 +987,7 @@ int main(int argc, char** argv) {
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
   tmk::app::RouteJob r_job;
   route->add_option("--no-neck-nets", ropt.no_neck_nets, "Comma-separated nets that are never narrowed below their class width nor given the small neck-down via (power nets of a rule-relaxed routing)")->delimiter(',');
+  route->add_flag("--first-nets-ordered", ropt.first_nets_ordered, "Route the --first-nets in the order of the list (e.g. the pins of a package round its perimeter), not in the router's own order");
   route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
   route->add_option("--bus", r_job.buses,
                     "Experimental. Route these nets as a bus, NAME=PATTERN (repeatable): lane by lane on the same layers, e.g. 'DATA=/D[0-7]' or 'LCD=/LCD_*'. "

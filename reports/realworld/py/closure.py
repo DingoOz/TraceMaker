@@ -20,6 +20,7 @@ import concurrent.futures as cf
 import json
 import math
 import pathlib
+import random
 import re
 import subprocess
 import sys
@@ -27,6 +28,7 @@ import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import kgeom
+import combine as combine_mod
 import ledger
 import pcbtext
 import rules
@@ -184,6 +186,8 @@ def main() -> int:
     ap.add_argument("--deadline-min", type=float, default=0, help="after this many minutes no new round or remedy is started: the best state so far is written (0 = no deadline)")
     ap.add_argument("--no-power-neck", action="store_true", help="power nets are never necked (kept at their class width), in every round, not only in the finishing phase")
     ap.add_argument("--seed", type=int, default=0, help="router seed for every route call (0 = the router default)")
+    ap.add_argument("--no-combine", action="store_true", help="skip the combine step: a net that is open here but complete in another judged state of the same board (another run, seed or remedy) is taken over from it")
+    ap.add_argument("--no-package", action="store_true", help="skip the package reroute: the nets of the pins around an open pin of a dense package are ripped up whole and routed again as a group, in the order of the pins, with a widening scope")
     ap.add_argument("--no-finish", action="store_true", help="skip the finishing phase after the rounds (fine finish and window reroute on the best state)")
     ap.add_argument("--no-fine", action="store_true", help="skip the fine-lattice finish: each open net alone, its rules and its neighbours' at the loosest tier, on a lattice of 10-20 um")
     ap.add_argument("--no-effort", action="store_true", help="skip the last resort before stopping: one round at 5x the work")
@@ -305,6 +309,170 @@ def main() -> int:
             return False
         w_ = min(ok_w, key=lambda r_: (r_["open"], r_["violations"], r_["removed"]))
         log(f"{board[:24]} window reroute of {w_['net']} kept: {best['open']} -> {w_['open']} open")
+        best.update(open=w_["open"], violations=w_["violations"], placement=w_["placement"], routed=w_["routed"], opens=w_["opens"], dir=w_["routed"].parent, hard=set(HARD), assign=dict(assign))
+        return True
+
+    def combine() -> bool:
+        """Cross-run effort: the judged states of the board's other runs (and of this run's own stages) close different nets. For each open net that another
+        state has complete, the crossover of the two (combine.merge_closure: that net comes from the donor with every net its copper touches, the rest stays) is
+        ranked by the open connections it should have (the best state's outside the taken nets plus the donor's inside); the best 8 get the router on what is
+        still open (those nets first) and KiCad decides."""
+        if a.no_combine or late() or any(r_.get("kind") == "combine" and r_.get("round") == k for r_ in rounds):
+            return False
+        names = [n for n in j["opens"] if n and "," not in n]
+        if not names:
+            return False
+        base_text = best["routed"].read_text()
+        bd = best["dir"] / "routed.drc.json"
+        own = (combine_mod.drc_open_counts(bd) if bd.exists() else None) or {n: max(1, len(j["opens"][n]) // 2) for n in names}
+        pool = combine_mod.donors(out.parent, best["routed"], moves, 200)
+        seen, cand = set(), []
+        for o, f, cnt in pool:
+            try:
+                dtext = f.read_text()
+            except OSError:
+                continue
+            for n in names:
+                if n in cnt:
+                    continue
+                r_ = combine_mod.merge_closure(base_text, dtext, [n])
+                if r_ is None or hash(r_[0]) in seen:
+                    continue
+                seen.add(hash(r_[0]))
+                est = sum(v for q, v in own.items() if q not in r_[1]) + sum(cnt.get(q, 0) for q in r_[1])
+                cand.append((est, len(r_[1]), o, str(f), n, r_, cnt))
+        cand = sorted(cand, key=lambda t: (t[0], t[1], t[2], t[3], t[4]))
+        cand = [c for c in cand if c[0] <= best["open"] + 1][:8]
+        if not cand:
+            log(f"{board[:24]} round {k}: combine: no crossover with another state should leave fewer than {best['open']} open ({len(pool)} states, {len(seen)} crossovers)")
+            return False
+        tt, st = text_for(assign, cur_src, neck_power=False)
+
+        def one(ti: int, c):
+            est, ntaken, o, f, n, (text, taken), cnt = c
+            wd = out / f"comb-{k:02d}-{ti}"
+            wd.mkdir(exist_ok=True)
+            (wd / "warm.kicad_pcb").write_text(text)
+            still = sorted({q for q in own if q not in taken} | {q for q in taken if cnt.get(q, 0)})
+            direct = judge(wd / "warm.kicad_pcb", cur_src, wd)  # the crossover as it is: nothing ripped, nothing routed
+            rpt, jj = wd / "warm.kicad_pcb", direct
+            if still and direct["open"] > 0:  # then the router on what is still open (it may rip, so it is a second candidate, kept only if it is better)
+                wr = wd / "route"
+                rd_, ln = route(tt, wr, wd / "warm.kicad_pcb", a.work, extra + ["--first-nets", ",".join(q for q in still if "," not in q)], st, 1 + ti)
+                j2 = judge(rd_, cur_src, wr)
+                if j2["open"] < direct["open"]:
+                    rpt, jj = rd_, j2
+            return {"net": n, "from": pathlib.Path(f).parent.relative_to(out.parent).as_posix(), "taken": ntaken, "est": est, "opens": jj["opens"], "open": jj["open"], "violations": jj["violations"], "placement": jj["placement"], "routed": rpt}
+
+        res_c = []
+        with cf.ThreadPoolExecutor(TRIAL_JOBS) as ex:
+            futs = [ex.submit(one, ti, c) for ti, c in enumerate(cand)]
+            for f in cf.as_completed(futs):
+                try:
+                    res_c.append(f.result())
+                except Exception as e:
+                    log(f"combine trial failed: {e}")
+        rounds.append({"round": k, "kind": "combine", "trials": [{x: r_[x] for x in ("net", "from", "taken", "est", "open", "violations")} for r_ in sorted(res_c, key=lambda r_: (r_["net"], r_["from"]))]})
+        log(f"{board[:24]} round {k}: combine: " + ", ".join(f"{r_['net'][:14]} from {r_['from']}: {r_['open']} open (est {r_['est']}, {r_['taken']} nets taken)" for r_ in sorted(res_c, key=lambda r_: (r_["net"], r_["from"]))))
+        write_state()
+        ok_c = [r_ for r_ in res_c if r_["open"] < best["open"] and r_["placement"] <= max(base_placement, best["placement"])]
+        if not ok_c:
+            return False
+        w_ = min(ok_c, key=lambda r_: (r_["open"], r_["violations"], r_["taken"]))
+        log(f"{board[:24]} combine: {w_['net']} taken from {w_['from']}: {best['open']} -> {w_['open']} open")
+        best.update(open=w_["open"], violations=w_["violations"], placement=w_["placement"], routed=w_["routed"], opens=w_["opens"], dir=w_["routed"].parent, hard=set(HARD), assign=dict(assign))
+        return True
+
+    package_done: set = set()       # open-net sets the package reroute has been tried on
+    def package_reroute() -> bool:
+        """The fix a designer makes by eye: not the neighbourhood of the open end point, but the whole group of pins of the dense package around it. The nets of
+        the pins within a reach of 4 and of 10 pins either way of the open pins (along the package's perimeter) are ripped up whole, wherever they run, and routed
+        again ONE AT A TIME (--only-net: nothing placed is ripped, so the order alone decides who gets which channel) in several orders: round the package (the order
+        a bundle leaves it in), the open nets first, reversed, and three seeded shuffles. Kept only if KiCad then shows fewer open connections. (Routing the whole group
+        at once with --first-nets-ordered and the escape plan ended at 9-15 open on EtherCAT, against 3 before: the router does not build the comb from scratch.)"""
+        if a.no_package or late() or any(r_.get("kind") == "package" and r_.get("round") == k for r_ in rounds):
+            return False
+        names_open = frozenset(n for n in j["opens"] if n)
+        if not names_open or names_open in package_done:
+            return False
+        bq = kgeom.load(str(best["routed"]))
+        ids = {nm: i_ for i_, nm in bq.nets.items()}
+        pick = None
+        for part in bq.parts:
+            if len(part.pads) < 16:
+                continue
+            pitch_p = min((math.hypot(p1.x - p2.x, p1.y - p2.y) for i1, p1 in enumerate(part.pads) for p2 in part.pads[i1 + 1:] if math.hypot(p1.x - p2.x, p1.y - p2.y) > 0.05), default=9.0)
+            if pitch_p > 0.65:
+                continue
+            hits = [i_ for i_, pd in enumerate(part.pads) if any(math.hypot(pd.x - x_, pd.y - y_) < 0.05 for pts in j["opens"].values() for (x_, y_) in pts)]
+            if hits and (pick is None or len(hits) > len(pick[1])):
+                pick = (part, hits)
+        if pick is None:
+            return False
+        package_done.add(names_open)
+        part, hits = pick
+        cx = sum(p.x for p in part.pads) / len(part.pads)
+        cy = sum(p.y for p in part.pads) / len(part.pads)
+        ring = sorted(range(len(part.pads)), key=lambda i_: math.atan2(part.pads[i_].y - cy, part.pads[i_].x - cx))  # the pins in the order round the package
+        pos = {i_: n_ for n_, i_ in enumerate(ring)}
+        skip = set(power) | set(HARD) | zone_nets
+        base_text = best["routed"].read_text()
+        tt, st = text_for(assign, cur_src, neck_power=False)
+        trials = []
+        rng = random.Random(len(names_open) * 7919 + len(ring))  # fixed seed: the same state gives the same trials
+        for reach in (4, 10):
+            near = [i_ for i_ in ring if min(min((pos[i_] - pos[h]) % len(ring), (pos[h] - pos[i_]) % len(ring)) for h in hits) <= reach]
+            order = []
+            for i_ in near:
+                nm = part.pads[i_].netname
+                if nm and nm not in skip and "," not in nm and nm not in order:
+                    order.append(nm)
+            if not order:
+                continue
+            first = [n_ for n_ in order if n_ in names_open]
+            orders = [("ring", order), ("open first", first + [n_ for n_ in order if n_ not in names_open]), ("ring reversed", order[::-1])]
+            for sh in range(3):
+                sq = order[:]
+                rng.shuffle(sq)
+                orders.append((f"shuffle {sh + 1}", sq))
+            for tag, seq in orders:
+                if all(seq != t_[2] for t_ in trials):  # a small package: the wider reach adds nothing
+                    trials.append((reach, tag, seq))
+        if not trials:
+            return False
+
+        def one(ti: int, tr):
+            """The group is ripped up and its nets routed one at a time, in the order of the trial, each on the copper of the ones before (--only-net: nothing
+            already placed is ripped, so the order alone decides who gets which channel)."""
+            reach, tag, seq = tr
+            stripped, nrem = pcbtext.strip_nets(base_text, {ids[n_] for n_ in seq if n_ in ids})
+            wd = out / f"pkg-{k:02d}-{ti}"
+            wd.mkdir(exist_ok=True)
+            cur_t = stripped
+            rpt = None
+            for ni, n_ in enumerate(seq):
+                rpt, ln = route(pcbtext.merge_copper(tt, cur_t), wd / f"n{ni:02d}", None, a.work, extra + ["--only-net", n_, "--pitch-um", "50", "--time", "40"], st, 1 + ti)
+                cur_t = rpt.read_text()
+            jj = judge(rpt, cur_src, wd)
+            return {"reach": reach, "order": tag, "nets": len(seq), "removed": nrem, "opens": jj["opens"], "open": jj["open"], "violations": jj["violations"], "placement": jj["placement"], "routed": rpt}
+
+        res_p = []
+        with cf.ThreadPoolExecutor(TRIAL_JOBS) as ex:
+            futs = [ex.submit(one, ti, tr) for ti, tr in enumerate(trials)]
+            for f in cf.as_completed(futs):
+                try:
+                    res_p.append(f.result())
+                except Exception as e:
+                    log(f"package trial failed: {e}")
+        key_ = lambda r_: (r_["reach"], r_["order"])
+        rounds.append({"round": k, "kind": "package", "part": part.ref, "trials": [{x: r_[x] for x in ("reach", "order", "nets", "removed", "open", "violations")} for r_ in sorted(res_p, key=key_)]})
+        log(f"{board[:24]} round {k}: package reroute of {part.ref} (open pins {len(hits)}): " + ", ".join(f"{r_['nets']} nets {r_['order']}: {r_['open']} open" for r_ in sorted(res_p, key=key_)))
+        write_state()
+        ok_p = [r_ for r_ in res_p if r_["open"] < best["open"] and r_["placement"] <= max(base_placement, best["placement"])]
+        if not ok_p:
+            return False
+        w_ = min(ok_p, key=lambda r_: (r_["open"], r_["violations"], r_["nets"]))
+        log(f"{board[:24]} package reroute of {part.ref} kept ({w_['nets']} nets, {w_['order']}): {best['open']} -> {w_['open']} open")
         best.update(open=w_["open"], violations=w_["violations"], placement=w_["placement"], routed=w_["routed"], opens=w_["opens"], dir=w_["routed"].parent, hard=set(HARD), assign=dict(assign))
         return True
 
@@ -615,7 +783,7 @@ def main() -> int:
         log(f"{board[:24]} finishing phase on the best state ({best['open']} open)")
         for finish_pass in range(a.finish_passes):  # until neither step gains any more
             gained = False
-            for step in (fine_finish, window_reroute):
+            for step in (combine, package_reroute, fine_finish, window_reroute):
                 if best["open"] == 0:
                     break
                 k = len(rounds) + 100

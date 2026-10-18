@@ -231,3 +231,17 @@ def merge_copper(base: str, routed: str) -> str:
         return base
     end = base.rstrip().rfind(")")
     return base[:end].rstrip("\n") + "\n" + "\n".join("  " + f for f in forms) + "\n)\n"
+
+
+def strip_nets(text: str, net_ids) -> tuple[str, int]:
+    """The board without any track or via of the nets `net_ids` (whole nets, wherever they run): a group of nets that is to be routed again from its pads."""
+    ids = set(net_ids)
+    items = [(a, b) for kind, a, b, net, _ in copper(text) if net in ids]
+    for a, b in reversed(items):
+        j = a
+        while j > 0 and text[j - 1] in " \t":
+            j -= 1
+        if j > 0 and text[j - 1] == "\n":
+            j -= 1
+        text = text[:j] + text[b:]
+    return text, len(items)

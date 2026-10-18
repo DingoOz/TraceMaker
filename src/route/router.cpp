@@ -124,6 +124,7 @@ struct Router::Impl {
   };
   std::vector<ConnState> cs;
   std::set<NetId> first_net_ids;  // --first-nets
+  std::map<NetId, int> first_rank;  // --first-nets-ordered: position of each net in the --first-nets list
   // Critical nets (issue #24, doc 05 §44): the order rank of each net (0 = not critical, else its tier), the via price factor and whether the
   // split-crossing cost applies to it; the reference map is built in setup() when that cost is on.
   std::vector<std::int32_t> crit_rank;
@@ -134,6 +135,13 @@ struct Router::Impl {
   bool split_on = false;
   bool crit_order_on = false;
   // Order of routing: --first-nets, then critical tiers, then the rest.
+  // Position in the --first-nets list when --first-nets-ordered is on (the nets of the list are then routed in that order, e.g. the pins of a package round its
+  // perimeter, so that no escape has to cross its neighbour's), else 0 for all of them (the router's own order within the group).
+  int first_pos(NetId n) const {
+    if (!opt.first_nets_ordered) return 0;
+    const auto it = first_rank.find(n);
+    return it == first_rank.end() ? 0 : it->second;
+  }
   int order_key(NetId n) const {
     if (first_net_ids.count(n)) return 0;
     return n >= 0 && static_cast<std::size_t>(n) < crit_rank.size() && crit_rank[static_cast<std::size_t>(n)] > 0 ? crit_rank[static_cast<std::size_t>(n)] : 1000;
@@ -290,7 +298,10 @@ struct Router::Impl {
     obs->set_soft_copper_graphics(opt.soft_copper_graphics);
     if (opt.soft_zones) soft_fills = std::make_unique<drc::ZoneFills>(obs->copper());
     for (std::size_t n = 0; n < b.nets.size(); ++n)
-      if (std::find(opt.first_nets.begin(), opt.first_nets.end(), b.nets[n].name) != opt.first_nets.end()) first_net_ids.insert(static_cast<NetId>(n));
+      if (const auto it = std::find(opt.first_nets.begin(), opt.first_nets.end(), b.nets[n].name); it != opt.first_nets.end()) {
+        first_net_ids.insert(static_cast<NetId>(n));
+        first_rank[static_cast<NetId>(n)] = static_cast<int>(it - opt.first_nets.begin());
+      }
     if (!opt.no_neck_nets.empty()) {
       no_neck.assign(b.nets.size(), 0);
       for (std::size_t n = 0; n < b.nets.size(); ++n)
@@ -687,7 +698,10 @@ struct Router::Impl {
     if (crit_order_on)
       std::stable_sort(out.begin(), out.end(), [&](const Connection& a, const Connection& c) { return order_key(a.net) < order_key(c.net); });
     else if (!first_net_ids.empty())
-      std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return first_net_ids.count(c.net) > 0; });
+    {
+      const auto mid = std::stable_partition(out.begin(), out.end(), [&](const Connection& c) { return first_net_ids.count(c.net) > 0; });
+      if (opt.first_nets_ordered) std::stable_sort(out.begin(), mid, [&](const Connection& a, const Connection& c) { return first_pos(a.net) < first_pos(c.net); });
+    }
     if (!opt.buses.empty()) order_buses(out);
     return out;
   }
@@ -3889,7 +3903,10 @@ struct Router::Impl {
     if (opt.bus_first) std::stable_partition(order.begin(), order.end(), [&](std::size_t i) { return bundle_of[i] >= 0; });
     // --first-nets keep their place in front.
     if (crit_order_on) std::stable_sort(order.begin(), order.end(), [&](std::size_t i, std::size_t j) { return order_key(out[i].net) < order_key(out[j].net); });
-    else if (!first_net_ids.empty()) std::stable_partition(order.begin(), order.end(), [&](std::size_t i) { return first_net_ids.count(out[i].net) > 0; });
+    else if (!first_net_ids.empty()) {
+      const auto mid = std::stable_partition(order.begin(), order.end(), [&](std::size_t i) { return first_net_ids.count(out[i].net) > 0; });
+      if (opt.first_nets_ordered) std::stable_sort(order.begin(), mid, [&](std::size_t i, std::size_t j) { return first_pos(out[i].net) < first_pos(out[j].net); });
+    }
     std::vector<Connection> sorted;
     conn_bundle.assign(out.size(), -1);
     conn_lane.assign(out.size(), -1);
@@ -5314,8 +5331,11 @@ struct Router::Impl {
       // --first-nets go first again: a restart rips everything, including them.
       if (crit_order_on)
         std::stable_sort(order.begin(), order.end(), [&](int x, int y) { return order_key(cs[static_cast<std::size_t>(x)].c.net) < order_key(cs[static_cast<std::size_t>(y)].c.net); });
-      else if (!first_net_ids.empty())
-        std::stable_partition(order.begin(), order.end(), [&](int c) { return first_net_ids.count(cs[static_cast<std::size_t>(c)].c.net) > 0; });
+      else if (!first_net_ids.empty()) {
+        const auto mid = std::stable_partition(order.begin(), order.end(), [&](int c) { return first_net_ids.count(cs[static_cast<std::size_t>(c)].c.net) > 0; });
+        if (opt.first_nets_ordered)
+          std::stable_sort(order.begin(), mid, [&](int x, int y) { return first_pos(cs[static_cast<std::size_t>(x)].c.net) < first_pos(cs[static_cast<std::size_t>(y)].c.net); });
+      }
       pending.assign(order.begin(), order.end());
       pending.erase(std::remove_if(pending.begin(), pending.end(), [&](int c) { return cs[static_cast<std::size_t>(c)].routed || cs[static_cast<std::size_t>(c)].dead; }),
                     pending.end());

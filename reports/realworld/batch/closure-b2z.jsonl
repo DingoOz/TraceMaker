@@ -13,3 +13,4 @@
 {"board": "MonApollo_digital-board", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 83, "open_best": 19, "relaxed": 125, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 3300}
 {"board": "TCKB_Kicad_TCKB", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 71, "open_best": 22, "relaxed": 63, "relaxed_power": 63, "moves": 0, "hard": 1, "seconds": 3300}
 {"board": "kitspace_d20_tri_r0.3", "run": "closure-b2z", "layers": 4, "rounds": 5, "open_first": 143, "open_best": 138, "relaxed": 95, "relaxed_power": 1, "moves": 0, "hard": 0, "seconds": 3206}
+{"board": "kitspace_d20_tri_r1.0", "run": "closure-b2z", "layers": 2, "rounds": 6, "open_first": 381, "open_best": 252, "relaxed": 92, "relaxed_power": 1, "moves": 0, "hard": 0, "seconds": 3168}

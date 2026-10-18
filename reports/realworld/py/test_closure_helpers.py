@@ -6,6 +6,7 @@ import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
+import combine
 import pcbtext
 import rules
 
@@ -61,6 +62,29 @@ def test_move_part():
     x2, y2 = pcbtext.part_xy(t2, "R53")
     assert abs(x2 - x - 0.5) < 1e-3 and abs(y2 - y + 0.25) < 1e-3
     assert len(t2) - len(t) < 20  # nothing else changed
+
+def _seg(x0, y0, x1, y1, net, layer="F.Cu"):
+    return f'  (segment\n    (start {x0} {y0})\n    (end {x1} {y1})\n    (width 0.25)\n    (layer "{layer}")\n    (net {net})\n    (uuid "u{x0}{y0}{x1}{y1}{net}{layer}")\n  )\n'
+
+
+def _board(*segs):
+    return '(kicad_pcb\n  (net 0 "")\n  (net 1 "A")\n  (net 2 B)\n  (net 3 "C")\n' + "".join(segs) + ")\n"
+
+
+def test_merge_closure():
+    # donor: net A complete, its track crosses B's track on F.Cu; B is taken along (donor's B goes around); C does not touch and stays the base's
+    donor = _board(_seg(0, 0, 5, 0, 1), _seg(5, 0, 5, 10, 1), _seg(0, 5, 3, 5, 2), _seg(3, 5, 3, 12, 2))
+    base = _board(_seg(0, 0, 4, 0, 1), _seg(0, 5, 10, 5, 2), _seg(0, 7, 10, 7, 3, "B.Cu"))
+    r = combine.merge_closure(base, donor, ["A"])
+    assert r is not None
+    text, taken = r
+    assert taken == ["A", "B"]
+    items = combine.copper_geom(text)
+    assert sorted((i["net"], i["layer"], i["pts"][0], i["pts"][1]) for i in items) == sorted([(1, "F.Cu", (0.0, 0.0), (5.0, 0.0)), (1, "F.Cu", (5.0, 0.0), (5.0, 10.0)), (2, "F.Cu", (0.0, 5.0), (3.0, 5.0)), (2, "F.Cu", (3.0, 5.0), (3.0, 12.0)), (3, "B.Cu", (0.0, 7.0), (10.0, 7.0))])
+    assert combine.merge_closure(base, donor, ["NOPE"]) is None
+    assert combine.merge_closure(base, _board(), ["A"]) is None  # the donor has no copper of the net
+    assert combine.merge_closure(base, donor, ["A"], max_nets=1) is None  # the set of nets that have to come along is capped
+    assert combine.net_table(text) == {0: "", 1: "A", 2: "B", 3: "C"}
 
 
 if __name__ == "__main__":
