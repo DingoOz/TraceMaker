@@ -157,6 +157,22 @@ def donors(board_dir: pathlib.Path, skip: pathlib.Path | None, moves: dict, limi
     return found[:limit]
 
 
+def nets_near(text: str, points: list[tuple[float, float]], radius: float) -> set[str]:
+    """Names of the nets that have copper (a segment or a via, its centre line) within `radius` mm of any of `points`: the seeds of a region crossover."""
+    nt = net_table(text)
+    out: set[str] = set()
+    for it in copper_geom(text):
+        nm = nt.get(it["net"], "")
+        if not nm or nm in out:
+            continue
+        for (px, py) in points:
+            d = math.hypot(px - it["pts"][0][0], py - it["pts"][0][1]) if it["kind"] == "via" else _pt_seg(px, py, *it["pts"][0], *it["pts"][1])
+            if d <= radius + it["w"] / 2:
+                out.add(nm)
+                break
+    return out
+
+
 def merge_closure(base: str, donor: str, seeds, max_nets: int = 60, margin: float = 0.12):
     """The crossover of two judged states: the nets in `seeds` come from `donor` together with every net of `base` their copper would touch (and so on until
     nothing touches), so the result is made of two consistent halves and nothing has to be ripped and routed again. Returns (text, nets taken) or None when

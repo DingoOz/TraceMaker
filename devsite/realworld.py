@@ -313,9 +313,10 @@ def boards() -> list[dict]:
             def key(r):
                 l = r.get("ledger")
                 if l:
-                    return (l["unconnected"] + (1000 if l.get("shorts") else 0), l["added"])  # a run with shorts is no candidate
+                    sv = (r.get("safety") or {}).get("verdict")
+                    return (l["unconnected"] + (1000 if l.get("shorts") else 0) + (1000 if sv == "FAIL" else 0), 0 if sv == "PASS" else 1, l["added"])  # a run with shorts or a failed simulation is no candidate; PASS before WARN
                 c = r.get("closure")
-                return (min(c["open_by_round"]) if c and c["open_by_round"] else 10 ** 6, 10 ** 6)
+                return (min(c["open_by_round"]) if c and c["open_by_round"] else 10 ** 6, 1, 10 ** 6)
             cand = [r for r in runs if r["run"] != "human"]
             keep = {r["run"] for r in sorted(cand, key=key)[:1]} | {r["run"] for r in sorted(cand, key=lambda r: -r["mtime"])[:3]} | {r["run"] for r in runs if r["alive"] or r["run"] == "human"}
             runs = [r for r in runs if r["run"] in keep]

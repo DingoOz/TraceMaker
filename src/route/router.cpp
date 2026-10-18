@@ -2,6 +2,7 @@
 #include "route/router.hpp"
 
 #include "drc/refill.hpp"
+#include "route/bundle.hpp"
 #include "route/bus.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
@@ -118,6 +119,7 @@ struct Router::Impl {
     std::vector<NetId> blockers;     // nets of the connections the last rejected route would have had to rip (stuck report, doc 17)
     bool coupled = false;            // routed as half of a differential pair: clean-up leaves it alone
     bool bus_lane = false;           // routed as a lane of its bus (leads its bundle or followed a lane): via clean-up leaves it alone
+    bool bundle_lane = false;        // placed as a lane of a bundle escape (--bundle-escape): nothing else may rip it; clean-up leaves it alone (bus_lane is set too)
     // Boxed in even by a negotiated search, which may cross every other net's routed copper: only fixed copper
     // encloses the pin (M9). Retrying it in later passes and restarts only spends budget others could use.
     bool dead = false;
@@ -302,6 +304,19 @@ struct Router::Impl {
         first_net_ids.insert(static_cast<NetId>(n));
         first_rank[static_cast<NetId>(n)] = static_cast<int>(it - opt.first_nets.begin());
       }
+    if (opt.supply_first) {  // doc 05 §51
+      const auto perim = perimeter_directions(b, {});
+      std::set<NetId> planes;
+      for (const auto& zn : b.zones) planes.insert(zn.net);
+      std::map<std::pair<NetId, int>, int> pins;  // (net, footprint) -> perimeter pins
+      for (std::size_t i = 0; i < b.pads.size(); ++i)
+        if (perim[i] >= 0 && b.pads[i].net > 0 && b.pads[i].footprint >= 0) ++pins[{b.pads[i].net, b.pads[i].footprint}];
+      for (const auto& [key, n] : pins)
+        if (n >= 2 && !planes.count(key.first) && first_net_ids.insert(key.first).second) {
+          first_rank[key.first] = static_cast<int>(first_rank.size());
+          if (std::getenv("TM_DEBUG_BUNDLE")) std::fprintf(stderr, "supply first: %s (%d perimeter pins)\n", b.nets[static_cast<std::size_t>(key.first)].name.c_str(), n);
+        }
+    }
     if (!opt.no_neck_nets.empty()) {
       no_neck.assign(b.nets.size(), 0);
       for (std::size_t n = 0; n < b.nets.size(); ++n)
@@ -1933,6 +1948,12 @@ struct Router::Impl {
           commit_why = "would rip a bus connection";
           return false;
         }
+    if (opt.bundle_escape || opt.package_tunnels)  // the lanes of a bundle escape and the tunnels are what the rest of the board is routed around
+      for (int v : victims)
+        if (cs[static_cast<std::size_t>(v)].bundle_lane) {
+          commit_why = "would rip a bundle lane";
+          return false;
+        }
     if (!txn_protect.empty())
       for (int v : victims)
         if (txn_protect[static_cast<std::size_t>(v)]) {
@@ -2231,6 +2252,7 @@ struct Router::Impl {
     const bool was_coupled = st.coupled;
     st.coupled = false;
     st.bus_lane = false;
+    st.bundle_lane = false;
     ++st.rips;
     ++res.rips;
     ++wc().rips;
@@ -4753,6 +4775,112 @@ struct Router::Impl {
     return changed;
   }
 
+  // ---------------------------------------------------------------------------------------------------
+  // Bundle escapes (doc 05 §50, route/bundle.hpp): lanes placed as geometry before the search starts. The planner proposes polylines; every piece is checked
+  // by the router's own exact test, here and again when the lane is placed, so the plan cannot introduce a violation.
+  // ---------------------------------------------------------------------------------------------------
+  bool place_bundle_lane(int ci, int layer, const std::vector<Point>& pts) {
+    auto& st = cs[static_cast<std::size_t>(ci)];
+    if (st.routed || pts.size() < 2) return false;
+    const NetId net = st.c.net;
+    const Coord width = class_width(net);
+    if (!layer_ok(net, layer)) return false;
+    const Point pa = b.pads[static_cast<std::size_t>(st.c.pad_a)].pos, pb = b.pads[static_cast<std::size_t>(st.c.pad_b)].pos;
+    if (!((pts.front() == pa && pts.back() == pb) || (pts.front() == pb && pts.back() == pa))) return false;
+    for (std::size_t i = 1; i < pts.size(); ++i)
+      if (obs->segment_state(pts[i - 1], pts[i], layer, width, net, false, nullptr) != 0) return false;
+    for (std::size_t i = 1; i < pts.size(); ++i) {
+      b.tracks.push_back(model::Track{pts[i - 1], pts[i], width, layer, net, false, sexpr::kNoNode});
+      const int id = static_cast<int>(b.tracks.size() - 1);
+      st.items.push_back(obs->add_track(id, ci));
+      near_mark(st.items.back(), +1);
+      emit_track_add(id);
+    }
+    st.routed = true;
+    st.bus_lane = true;     // clean-up leaves it alone
+    st.bundle_lane = true;  // and nothing may rip it
+    ++res.routed;
+    release_escapes(ci);
+    return true;
+  }
+  bool place_bundle_tunnel(int ci, const std::vector<std::pair<int, std::vector<Point>>>& tracks, const std::vector<Point>& vias) {
+    auto& st = cs[static_cast<std::size_t>(ci)];
+    if (st.routed) return false;
+    const NetId net = st.c.net;
+    const Coord width = class_width(net), vd = via_diameter(net), vdrill = via_drill(net);
+    for (const auto& [layer, pts] : tracks) {
+      if (!layer_ok(net, layer)) return false;
+      for (std::size_t i = 1; i < pts.size(); ++i)
+        if (obs->segment_state(pts[i - 1], pts[i], layer, width, net, false, nullptr) != 0) return false;
+    }
+    for (const Point v : vias)
+      if (obs->via_state(v, vd, vdrill, net, 0, false, nullptr) != 0) return false;
+    for (const auto& [layer, pts] : tracks)
+      for (std::size_t i = 1; i < pts.size(); ++i) {
+        b.tracks.push_back(model::Track{pts[i - 1], pts[i], width, layer, net, false, sexpr::kNoNode});
+        const int id = static_cast<int>(b.tracks.size() - 1);
+        st.items.push_back(obs->add_track(id, ci));
+        near_mark(st.items.back(), +1);
+        emit_track_add(id);
+      }
+    for (const Point v : vias) {
+      b.vias.push_back(model::Via{v, vd, vdrill, 0, nl - 1, model::ViaType::Through, net, false, sexpr::kNoNode});
+      const int id = static_cast<int>(b.vias.size() - 1);
+      st.items.push_back(obs->add_via(id, ci));
+      near_mark(st.items.back(), +1);
+      emit_via_add(id);
+    }
+    st.routed = true;
+    st.bus_lane = true;
+    st.bundle_lane = true;
+    ++res.routed;
+    release_escapes(ci);
+    return true;
+  }
+  int route_bundle_escapes() {
+    std::vector<BundleConn> in;
+    for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+      const auto& st = cs[ci];
+      if (st.routed || st.implicit || st.dead || st.c.pad_a < 0 || st.c.pad_b < 0 || st.c.zone_b >= 0) continue;
+      if (!pair_partner.empty() && pair_partner[ci] >= 0) continue;
+      in.push_back({static_cast<int>(ci), st.c.net, st.c.pad_a, st.c.pad_b});
+    }
+    BundleHooks h;
+    const bool dbg_legs = std::getenv("TM_DEBUG_BUNDLE_LEGS") != nullptr;
+    h.free = [&](Point a, Point c, int layer, Coord w, NetId net) {
+      const bool ok = layer_ok(net, layer) && obs->segment_state(a, c, layer, w, net, false, nullptr) == 0;
+      if (!ok && dbg_legs) {
+        std::vector<int> owners;
+        const int st = obs->segment_state(a, c, layer, w, net, true, &owners);
+        std::fprintf(stderr, "      blocked (%.2f,%.2f)-(%.2f,%.2f) w %.3f net %s: ignoring routed copper %d, %zu routed owners\n", nm_to_mm(a.x), nm_to_mm(a.y), nm_to_mm(c.x), nm_to_mm(c.y),
+                     nm_to_mm(w), b.nets[static_cast<std::size_t>(net)].name.c_str(), st, owners.size());
+      }
+      return ok;
+    };
+    h.width = [&](NetId n) { return class_width(n); };
+    h.clearance = [&](NetId n) { return std::max(netclass(n).clearance, rules.minimums.clearance); };
+    h.layer_ok = [&](int l, NetId n) { return layer_ok(n, l); };
+    h.place = [&](const BundleConn& c, int layer, const std::vector<Point>& pts) { return place_bundle_lane(c.ci, layer, pts); };
+    h.via_ok = [&](Point p, NetId n) { return obs->via_state(p, via_diameter(n), via_drill(n), n, 0, false, nullptr) == 0 && vias_ok(n); };
+    h.via_diameter = [&](NetId n) { return via_diameter(n); };
+    h.place_tunnel = [&](const BundleConn& c, const std::vector<std::pair<int, std::vector<Point>>>& tr, const std::vector<Point>& vs) { return place_bundle_tunnel(c.ci, tr, vs); };
+    BundleOptions bo;
+    bo.min_lanes = std::max(1, opt.bundle_min_lanes);
+    if (opt.package_tunnels) {  // first: the lanes then go round the stubs and vias (after the lanes there is no room for a via between two pins' lanes)
+      res.tunnels = route_tunnels(b, in, h, bo).placed;
+      std::vector<BundleConn> left;
+      for (const auto& c : in)
+        if (!cs[static_cast<std::size_t>(c.ci)].routed) left.push_back(c);
+      in = std::move(left);
+    }
+    BundleStats bs;
+    if (opt.bundle_escape) bs = route_bundles(b, in, h, bo);
+    res.bundle_groups = bs.groups, res.bundle_spines = bs.spines, res.bundle_conns = bs.lanes, res.bundle_lanes = bs.placed;
+    if (std::getenv("TM_DEBUG_TIMING")) std::fprintf(stderr, "[%.2f s] bundle escapes: %d groups, %d with a spine, %d of %d connections placed as lanes\n", elapsed(), bs.groups, bs.spines, bs.placed, bs.lanes);
+    if (opt.sink) emit("{\"type\":\"stage\",\"name\":\"bundle escapes\",\"state\":\"done\",\"detail\":\"" + std::to_string(bs.placed) + " lanes in " + std::to_string(bs.spines) + " bundles\"}");
+    return bs.placed;
+  }
+
   // Escape planning (M9): reserve each dense-package pin's escape corridor for its net (route/escape.hpp).
   void plan_escape_reservations() {
     std::vector<char> needs(b.pads.size(), 0);
@@ -5086,6 +5214,12 @@ struct Router::Impl {
           if (!cs[i].routed) pending.push_back(static_cast<int>(i));
       }
     }
+    if ((opt.bundle_escape || opt.package_tunnels) && !opt.warm && opt.warm_tracks.empty()) {
+      route_bundle_escapes();
+      pending.clear();
+      for (std::size_t i = 0; i < cs.size(); ++i)
+        if (!cs[i].routed) pending.push_back(static_cast<int>(i));
+    }
     emit_ratsnest();
 
     // Best legal state seen (most connections routed): connection -> its tracks/vias.
@@ -5270,6 +5404,7 @@ struct Router::Impl {
         release_escapes(static_cast<int>(ci));
       }
       if (opt.state_recheck) std::fprintf(stderr, "warm start: %d saved routes taken over, %d not legal under these rules\n", taken, dropped);
+      if (opt.bundle_escape || opt.package_tunnels) route_bundle_escapes();  // the connections that are still open, as blocks, on the copper taken over
       pending.clear();
       for (std::size_t i = 0; i < cs.size(); ++i)
         if (!cs[i].routed) pending.push_back(static_cast<int>(i));
@@ -5288,11 +5423,12 @@ struct Router::Impl {
           remove_routed(item);
         }
         st.items.clear();
-        st.routed = st.implicit = st.coupled = st.bus_lane = false;
+        st.routed = st.implicit = st.coupled = st.bus_lane = st.bundle_lane = false;
       }
       res.routed = 0;
       if (opt.escape_plan || opt.escape_flow) plan_escape_reservations();  // everything is unrouted again: corridors back
       if (opt.diff_pairs || !opt.pair_nets.empty()) route_diff_pairs();  // pairs first again, coupled
+      if (opt.bundle_escape || opt.package_tunnels) route_bundle_escapes();  // and the bundles
       std::vector<int> order(cs.size());
       for (std::size_t i = 0; i < cs.size(); ++i) order[i] = static_cast<int>(i);
       if (restart > opt.max_restarts) {
@@ -5508,7 +5644,7 @@ struct Router::Impl {
       phase = WorkPhase::Negotiation;
       for (std::size_t ci = 0; ci < cs.size(); ++ci) {
         lift_items(static_cast<int>(ci));
-        cs[ci].routed = cs[ci].implicit = cs[ci].coupled = cs[ci].bus_lane = false;
+        cs[ci].routed = cs[ci].implicit = cs[ci].coupled = cs[ci].bus_lane = cs[ci].bundle_lane = false;
       }
       for (std::size_t ci = 0; ci < cs.size(); ++ci)
         if (!best_items[ci].empty() || (!best_unrouted.empty() && !best_unrouted[ci])) {

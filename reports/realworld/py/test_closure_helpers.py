@@ -87,6 +87,14 @@ def test_merge_closure():
     assert combine.net_table(text) == {0: "", 1: "A", 2: "B", 3: "C"}
 
 
+def test_nets_near():
+    donor = _board(_seg(0, 0, 5, 0, 1), _seg(0, 5, 3, 5, 2), _seg(30, 30, 40, 30, 3))
+    assert combine.nets_near(donor, [(2.0, 0.5)], 1.0) == {"A"}
+    assert combine.nets_near(donor, [(2.0, 2.5)], 3.0) == {"A", "B"}  # the track's own half width counts, the centre line is what is measured
+    assert combine.nets_near(donor, [(2.0, 2.5)], 1.0) == set()
+    assert combine.nets_near(donor, [(35.0, 29.0), (2.0, 0.0)], 1.5) == {"A", "C"}
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

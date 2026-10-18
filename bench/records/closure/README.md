@@ -42,3 +42,24 @@ New remedies that closed boards: **hard** pour (PocketBone: 0 relaxed, 1 comprom
 the first version, which ignored the polygons, closed E3 with 68 short circuits and was withdrawn), **plane-layer rule** (Own-Mailbox: only the solid GND plane In1 kept free of tracks, In2 with split pours is a routing layer: 0 open, 0 compromises), **fine finish** (memsarray of the wider test, a 0.4 mm gap routable only at a 10 um lattice).
 
 Checks after the router changes of this session (`--soft-mask-graphics`, `--soft-copper-graphics`, the escape options): `ctest --preset release` 375 of 375 (one skip as before); `quick` tier (30 boards, `--work 1000000 --no-gpu`) against `m18-quick-new`: `quick-identity-d127.txt`, `quick-identity-d127b.txt` (gates pass, routed boards byte-identical).
+
+## EtherCAT shield closes (2026-10-18, bundle escapes; doc 05 §50-§52, D129-D131)
+
+The last of the eight boards. closure-52: KiCad **0 open**, safety **PASS** (crosstalk bound 1.79 %, simulated worst 5.2 %; 11 narrowed nets, 0 power; vias 2.4 % of the driver), no `shorting_items`; 377 compromises (clearance 124, track width 128, drill 128, solder-mask bridge 151, ...), 56 nets relaxed (3 power), no part moved, the GND/GNDPWR pours kept (`--no-hard`).
+`closure-54` (resumed from closure-51) also closes, PASS (381 compromises); `closure-53` (with `--package-tunnels`) closes with crosstalk WARN (worst 22 %), 374 compromises: not the record.
+
+How the board went from 3 open to 0:
+
+| Step | Run | Open |
+|---|---|--:|
+| Before this session's router work (best of 40 runs: seeds, work 120 M, group reroutes, combine) | closure-30 | 3 |
+| Bundle (river) escape `--bundle-escape` from scratch, finishing steps | closure-42 | 27 (round 0) -> 6 (round 11) -> 2 |
+| Resumed from closure-42, window reroute of RX1_N | closure-44 | 1 |
+| Seeds 11 and 12 with the bundle escape | closure-45, 46 | 1, 1 |
+| Seeds 11-13 with `--supply-first`, region crossover | closure-49, 50, 51 | 1, 1, 2 |
+| Seed 11, `--supply-first --no-hard` (GND stays a pour), combine in finishing pass 2 | **closure-52** | **0** |
+
+Router's own count at the board's rules, 20 M work (`bench`-style, KiCad not run, `exp-bundle` in the board directory): base 177/207 routed; escape features 179; `--bundle-escape` 185; + `--escape-plan --escape-length 12` 189; + `--bundle-min 1` 193; + `--supply-first` 194; `--package-tunnels` first-round 190 (loose rules; the closure loop is where it counts).
+
+What mattered (honest reading): (1) the bundle escape moved round 0 from 32 to 27 open and made every later round start from a better state; (2) every 1-open state of every run was the same connection (the core rail, U1 pin 38 to its trunk under the package); (3) the finishing steps that closed it are the **combine** crossover (a net taken from the judged state of another run: 4 -> 3, 3 -> 2, 1 -> 0 in different runs) fed by **seed diversity** (runs with seeds 11, 12, 13 and different option sets), not a single new remedy; (4) closure-52 was the one run with `--no-hard` (the ground pours stay pours instead of pad-to-pad copper from round 0); closure-49 (same seed, hard pours) ended at 1 open, closure-54 and 53 (hard pours) also closed, so whether `--no-hard` mattered is not established.
+Tests: `[bundle]` in `tests/test_stall.cpp` (bundle lanes, planarity, supply first, tunnels), `reports/realworld/py/test_closure_helpers.py` (`nets_near`). Files: `EtherCAT_shield_v1_EtherCAT_shield_v1.closure-{42,44,52,54}.{closure,safety}.json`.

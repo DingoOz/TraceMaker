@@ -150,6 +150,10 @@ struct RouterOptions {
   bool soft_mask_graphics = false;  // net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them
   bool soft_copper_graphics = false;  // board copper graphics (polygons on a copper layer) take the net of the pads, tracks and vias of the one net they touch (a manual pour), so that net's pins inside are not enclosed and no other net may touch them
   bool via_drops = false;       // pins of dense packages may drop to a via 0.7-1.5 mm out, off the lattice, between the neighbours' tracks (the designer's supply vias), then go on on the other layer
+  bool bundle_escape = false;   // doc 05 §50: the connections that leave one side of a dense package for one side of another part are placed first as a block of parallel straight lanes in pin order (route/bundle.hpp); the rest is routed as usual and may not rip the lanes
+  int bundle_min_lanes = 3;     // fewer connections than this in a group are left to the ordinary router
+  bool package_tunnels = false; // doc 05 §52: a connection between two perimeter pins of one dense package on one net gets a stub and a via at each pin and its run between them on the other layer (the core rail's tunnel under the package), placed before the search
+  bool supply_first = false;    // doc 05 §51: nets with 2+ perimeter pins on one dense package (supply and core nets: +3V3, a core rail) and no pour are routed before everything else and may not be ripped (as --first-nets); the bundles of --bundle-escape are still placed first (placing them after the supply nets was worse: 20 against 13 unrouted on the EtherCAT shield)
   bool escape_persist = false;  // a ripped-up connection gets its pins' corridors back; a corridor is kept while the net has other open connections at that package
   bool radial_supply = false;   // spanning tree: no edge between two pins of one dense package for a net with 3+ pins there (each pin goes to a capacitor or via; the trunk forms outside the escape band)
   double radial_penalty_mm = 10;  // what such an edge costs in the spanning tree
@@ -305,6 +309,9 @@ struct RouteResult {
   // Buses: connections routed as a lane of their group (leaders and the members that followed one), and connections
   // of a group routed otherwise ("left the bus"), in the state returned.
   int bus_lanes = 0, bus_left = 0;
+  // Bundle escapes (--bundle-escape): groups found, groups with a spine, connections in them, lanes placed (in the state returned).
+  int bundle_groups = 0, bundle_spines = 0, bundle_conns = 0, bundle_lanes = 0;
+  int tunnels = 0;              // package tunnels placed (--package-tunnels)
   int micro_vias = 0;           // micro vias placed
   int blind_vias = 0;           // blind/buried vias placed
   double escape_corridor_mm = 0;   // total length of the corridors reserved (centrelines, version 1)

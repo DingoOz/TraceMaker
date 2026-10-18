@@ -6,6 +6,7 @@
 
 #include <unistd.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <filesystem>
@@ -16,6 +17,7 @@
 
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "drc/drc.hpp"
 #include "io/srj/srj.hpp"
 #include "route/router.hpp"
 
@@ -214,7 +216,7 @@ namespace {
 
 // A 16-pin package U1 (two rows of 8, 0.5 mm pitch, 0.3 x 0.8 mm pads) at the left, connectors J1 and J2 at the right; every pin of U1 has a net to J1, and
 // pins 0-3 of one row share one more net `VCC` (with a capacitor C1 and a via-free pad J2 far away). `wall_x` > 0: a keep-out column at that x across the board.
-Loaded escape_board(double wall_x) {
+Loaded escape_board(double wall_x, bool tunnel = false) {
   json p;
   p["layerCount"] = 2;
   p["minTraceWidth"] = 0.1;
@@ -233,6 +235,7 @@ Loaded escape_board(double wall_x) {
       const std::string id = "u" + std::to_string(side * 8 + i);
       pad(id, "U1", x, y, 0.8, 0.3);
       const bool vcc = side == 0 && i < 4;
+      if (tunnel && (side * 8 + i == 5 || side * 8 + i == 13)) continue;  // these two pins of U1 are one net T instead (a tunnel from the left row to the right row)
       if (!vcc) {
         const std::string jd = "j" + std::to_string(side * 8 + i);
         pad(jd, "J1", 30.0, (side * 8 + i - 7.5) * 1.2, 1.0, 0.8);
@@ -243,6 +246,7 @@ Loaded escape_board(double wall_x) {
   }
   json vcc_pts = json::array();
   for (int i = 0; i < 4; ++i) vcc_pts.push_back(pt("u" + std::to_string(i), -1.9, (i - 3.5) * 0.5));
+  if (tunnel) connections.push_back({{"name", "T"}, {"pointsToConnect", {pt("u5", -1.9, (5 - 3.5) * 0.5), pt("u13", 1.9, (5 - 3.5) * 0.5)}}, {"rootConnectionName", "T"}});
   pad("c1", "C1", -8.0, -3.0, 0.8, 0.8);
   pad("j2", "J2", 20.0, 10.0, 1.0, 1.0);
   vcc_pts.push_back(pt("c1", -8.0, -3.0));
@@ -253,7 +257,7 @@ Loaded escape_board(double wall_x) {
   p["obstacles"] = obstacles;
   p["connections"] = connections;
   const auto files = io::srj_to_kicad(io::read_srj(p.dump()));
-  const fs::path dir = fs::temp_directory_path() / ("tm_escfeat_test_" + std::to_string(::getpid()) + "_" + std::to_string(static_cast<int>(wall_x)));
+  const fs::path dir = fs::temp_directory_path() / ("tm_escfeat_test_" + std::to_string(::getpid()) + "_" + std::to_string(static_cast<int>(wall_x)) + (tunnel ? "t" : ""));
   fs::create_directories(dir);
   const fs::path pcb = dir / "b.kicad_pcb";
   std::ofstream(pcb) << files.pcb;
@@ -415,4 +419,113 @@ TEST_CASE("soft copper graphics: a pin inside a net-less copper polygon routes o
   CHECK(open.routed == open.connections);
   CHECK(again.routed == open.routed);
   CHECK(again.tracks.size() == open.tracks.size());
+}
+
+// ---- bundle escapes (doc 05 §50): the connections that leave one side of a dense package for one side of another part are placed as a block of parallel lanes -----
+TEST_CASE("bundle escape: the pins of one side leave as straight parallel lanes, deterministic and legal", "[stall][route][bundle]") {
+  const auto l = escape_board(0);
+  auto o = escape_options();
+  o.work_budget = 4'000'000;
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  CHECK(plain.bundle_lanes == 0);  // off by default
+  o.bundle_escape = true;
+  const auto one = route::Router(l.board, l.rules, o).run();
+  const auto two = route::Router(l.board, l.rules, o).run();
+  CHECK(one.bundle_groups >= 1);
+  CHECK(one.bundle_spines >= 1);
+  CHECK(one.bundle_lanes >= 6);  // the right-hand row of U1: eight pins, each to J1; the two at the ends are corner pins and go the ordinary way
+  CHECK(one.routed >= plain.routed);
+  CHECK(one.routed == two.routed);
+  CHECK(one.bundle_lanes == two.bundle_lanes);
+  REQUIRE(one.tracks.size() == two.tracks.size());
+  for (std::size_t i = 0; i < one.tracks.size(); ++i) {
+    CHECK(one.tracks[i].a == two.tracks[i].a);
+    CHECK(one.tracks[i].b == two.tracks[i].b);
+  }
+  // A lane leaves its pad straight out of the package, as far as the block is wide: every pad of the right row starts a track going right, at the pad's own y.
+  int straight = 0;
+  for (const auto& pd : l.board.pads) {
+    if (pd.footprint < 0 || l.board.footprints[static_cast<std::size_t>(pd.footprint)].reference != "U1" || pd.pos.x < 0) continue;
+    for (const auto& t : one.tracks)
+      if (t.a == pd.pos && t.b.y == pd.pos.y && t.b.x - t.a.x >= 1'500'000) {
+        ++straight;
+        break;
+      }
+  }
+  CHECK(straight >= 6);
+  // Legal: no copper rule is broken by the lanes (clearance, shorts), as KiCad's own checks count them.
+  model::Board routed = l.board;
+  routed.tracks.insert(routed.tracks.end(), one.tracks.begin(), one.tracks.end());
+  routed.vias.insert(routed.vias.end(), one.vias.begin(), one.vias.end());
+  const auto counts = drc::run_drc(routed, l.rules).counts();
+  CHECK_FALSE(counts.contains("clearance"));
+  CHECK_FALSE(counts.contains("shorting_items"));
+}
+
+TEST_CASE("bundle escape: lanes that cannot all be planar are left to the router", "[stall][route][bundle]") {
+  // Same board, but the nets of two neighbouring right-row pins swap their pads on J1: those two lanes would cross, so at most one of them is a lane.
+  auto l = escape_board(0);
+  auto o = escape_options();
+  o.bundle_escape = true;
+  const auto base = route::Router(l.board, l.rules, o).run();
+  REQUIRE(base.bundle_lanes >= 6);
+  std::vector<std::size_t> j1;
+  for (std::size_t i = 0; i < l.board.pads.size(); ++i)
+    if (l.board.pads[i].footprint >= 0 && l.board.footprints[static_cast<std::size_t>(l.board.pads[i].footprint)].reference == "J1") j1.push_back(i);
+  REQUIRE(j1.size() >= 12);
+  std::sort(j1.begin(), j1.end(), [&](std::size_t a, std::size_t c) { return l.board.pads[a].pos.y < l.board.pads[c].pos.y; });
+  std::swap(l.board.pads[j1[3]].net, l.board.pads[j1[4]].net);  // two pads of the right row's lanes trade nets
+  const auto crossed = route::Router(l.board, l.rules, o).run();
+  CHECK(crossed.bundle_lanes < base.bundle_lanes);
+  CHECK(crossed.routed > 0);
+}
+
+// ---- supply first (doc 05 §51): the nets with two or more perimeter pins on a dense package and no pour go first and are not ripped ---------------------------
+TEST_CASE("supply first: a net with several pins on a package is routed first, legal and deterministic", "[stall][route][bundle]") {
+  const auto l = escape_board(0);
+  auto o = escape_options();
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  o.supply_first = true;
+  const auto one = route::Router(l.board, l.rules, o).run();
+  const auto two = route::Router(l.board, l.rules, o).run();
+  CHECK(one.routed == two.routed);
+  REQUIRE(one.tracks.size() == two.tracks.size());
+  for (std::size_t i = 0; i < one.tracks.size(); ++i) {
+    CHECK(one.tracks[i].a == two.tracks[i].a);
+    CHECK(one.tracks[i].b == two.tracks[i].b);
+  }
+  CHECK(one.routed >= plain.routed - 1);  // VCC (four pins of U1) is the only such net: moving it to the front costs at most the order effects of one connection
+  const auto vcc = [&](const model::Track& t) { return l.board.nets[static_cast<std::size_t>(t.net)].name == "VCC"; };
+  CHECK(std::any_of(one.tracks.begin(), one.tracks.end(), vcc));
+}
+
+// ---- package tunnels (doc 05 §52): two pins of one net on opposite sides of a package are joined by a via at each pin and a run on the other layer -------------
+TEST_CASE("package tunnels: two pins of one net on opposite sides get a stub and a via each and a run on the back layer", "[stall][route][bundle]") {
+  const auto l = escape_board(0, true);
+  auto o = escape_options();
+  o.work_budget = 4'000'000;
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  CHECK(plain.tunnels == 0);  // off by default
+  o.package_tunnels = true;
+  const auto one = route::Router(l.board, l.rules, o).run();
+  const auto two = route::Router(l.board, l.rules, o).run();
+  CHECK(one.tunnels == 1);
+  CHECK(one.routed == two.routed);
+  CHECK(one.tracks.size() == two.tracks.size());
+  CHECK(one.vias.size() == two.vias.size());
+  // Net T: two vias, and tracks on both layers, between its two pins.
+  int t_vias = 0, t_front = 0, t_back = 0;
+  for (const auto& v : one.vias)
+    if (l.board.nets[static_cast<std::size_t>(v.net)].name == "T") ++t_vias;
+  for (const auto& t : one.tracks)
+    if (l.board.nets[static_cast<std::size_t>(t.net)].name == "T") ++(t.layer == 0 ? t_front : t_back);
+  CHECK(t_vias == 2);
+  CHECK(t_front >= 2);
+  CHECK(t_back >= 1);
+  model::Board routed = l.board;
+  routed.tracks.insert(routed.tracks.end(), one.tracks.begin(), one.tracks.end());
+  routed.vias.insert(routed.vias.end(), one.vias.begin(), one.vias.end());
+  const auto counts = drc::run_drc(routed, l.rules).counts();
+  CHECK_FALSE(counts.contains("clearance"));
+  CHECK_FALSE(counts.contains("shorting_items"));
 }

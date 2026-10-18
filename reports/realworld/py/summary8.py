@@ -29,11 +29,11 @@ def main() -> int:
             saf = json.loads(sj.read_text()).get("verdict") if sj.exists() else None
             shorts = sum(1 for x in led["added"] if x["type"] == "shorting_items" and any(i.startswith(("Track", "Via", "Arc")) for i in x.get("items", []))) if led else 0  # a track touching copper of another net: a short, never a compromise
             verified = led is not None and led["unconnected"] == 0 and saf and saf != "FAIL" and shorts == 0
-            cand = (not verified, key, d.name, m["open"], led, (saf + (f" + {shorts} SHORTS" if shorts else "")) if saf else saf, len(c["assign"]), sum(1 for n in c["assign"] if n in c["power"]), len(c.get("hard", [])), len(c["moves"]))
-            if best is None or cand[:2] < best[:2]:
+            cand = (not verified, saf != "PASS", key, d.name, m["open"], led, (saf + (f" + {shorts} SHORTS" if shorts else "")) if saf else saf, len(c["assign"]), sum(1 for n in c["assign"] if n in c["power"]), len(c.get("hard", [])), len(c["moves"]))
+            if best is None or cand[:3] < best[:3]:
                 best = cand
         if best:
-            _, _, run, op, led, saf, rel, relp, hard, mv = best
+            _, _, _, run, op, led, saf, rel, relp, hard, mv = best
             rows.append(f"| {b[:36]} | {run} | {led['unconnected'] if led else op} | {len(led['added']) if led else ''} | {rel} ({relp}) | {hard} | {mv} | {saf or ''} |")
     out = ["| board | best run | open (KiCad if judged, else the loop's) | compromises | nets relaxed (power) | pours hard | parts moved | safety |", "|---|---|--:|--:|--:|--:|--:|---|"] + rows
     text = "\n".join(out) + "\n"
