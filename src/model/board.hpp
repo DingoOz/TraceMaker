@@ -61,7 +61,14 @@ struct Pad {
   double chamfer_ratio = 0;
   std::uint8_t chamfer_corners = 0;  // bit 0 TL, 1 TR, 2 BL, 3 BR
   Coord trapezoid_dx = 0, trapezoid_dy = 0;  // rect_delta
-  std::vector<std::vector<Point>> custom_polys;  // custom primitives (gr_poly) in the pad frame
+  // Custom-pad primitives in the pad frame, each already grown by half its stroke width (KiCad draws them with a round pen and fills
+  // them): a polygon or rectangle, a polyline (line, arc) or a disc (circle; pts[0] is the centre).
+  struct CustomPrim {
+    enum class Kind { Polygon, Polyline, Disc } kind = Kind::Polygon;
+    std::vector<Point> pts;
+    Coord radius = 0;
+  };
+  std::vector<CustomPrim> custom_prims;
   Coord clearance = -1;      // local override, -1 = none
   Coord mask_margin = INT64_MIN;  // local solder-mask expansion (unset = INT64_MIN)
   ZoneConnect zone_connect = ZoneConnect::Inherited;  // (zone_connect n)

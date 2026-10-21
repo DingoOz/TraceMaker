@@ -4,7 +4,9 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cctype>
 #include <cstdlib>
+#include <cstring>
 #include <cstdio>
 #include <deque>
 #include <filesystem>
@@ -547,10 +549,14 @@ Access check_access(const Hub& hub, const http::request<Body>& req, bool upgrade
 }
 
 template <class Res>
-void harden(Res& res) {
+void harden(Res& res, std::string_view embed = {}) {
   res.set("X-Content-Type-Options", "nosniff");
   res.set("Referrer-Policy", "no-referrer");  // the token is in the URL
-  res.set("X-Frame-Options", "DENY");
+  if (embed.empty()) {
+    res.set("X-Frame-Options", "DENY");
+  } else {  // --view-embed: one named page may frame the viewer (a dashboard); every other page still may not
+    res.set("Content-Security-Policy", "frame-ancestors " + std::string(embed));
+  }
 }
 
 // Maps a request target to a file under root, or nullopt if the path is malformed or escapes the root.
@@ -605,12 +611,13 @@ code{background:#151c33;padding:2px 6px;border-radius:4px}</style></head><body><
 it ends in <code>/?token=...</code>.</p></div></body></html>)";
 
 template <class Body>
-http::message_generator text_response(const http::request<Body>& req, http::status st, std::string_view type, std::string body, std::string_view cookie = {}) {
+http::message_generator text_response(const http::request<Body>& req, http::status st, std::string_view type, std::string body, std::string_view cookie = {},
+                                    std::string_view embed = {}) {
   http::response<http::string_body> res{st, req.version()};
   res.set(http::field::server, "tracemaker-view");
   res.set(http::field::content_type, type);
   res.set(http::field::cache_control, "no-store");
-  harden(res);
+  harden(res, embed);
   if (!cookie.empty()) res.set(http::field::set_cookie, cookie);
   res.keep_alive(req.keep_alive());
   res.body() = std::move(body);
@@ -620,8 +627,8 @@ http::message_generator text_response(const http::request<Body>& req, http::stat
 
 // `cookie` is the Set-Cookie value that remembers the token after it came in the URL ("" = none).
 template <class Body>
-http::message_generator handle_request(const std::string& root, http::request<Body>&& req, std::string_view cookie) {
-  auto text = [&](http::status st, std::string_view type, std::string body) { return text_response(req, st, type, std::move(body), cookie); };
+http::message_generator handle_request(const std::string& root, http::request<Body>&& req, std::string_view cookie, std::string_view embed = {}) {
+  auto text = [&](http::status st, std::string_view type, std::string body) { return text_response(req, st, type, std::move(body), cookie, embed); };
   if (req.method() != http::verb::get && req.method() != http::verb::head)
     return text(http::status::method_not_allowed, "text/plain", "method not allowed\n");
   const auto path = resolve_target(root, std::string_view(req.target().data(), req.target().size()));
@@ -645,7 +652,7 @@ http::message_generator handle_request(const std::string& root, http::request<Bo
     http::response<http::empty_body> res{http::status::ok, req.version()};
     res.set(http::field::server, "tracemaker-view");
     res.set(http::field::content_type, mime);
-    harden(res);
+    harden(res, embed);
     if (!cookie.empty()) res.set(http::field::set_cookie, cookie);
     res.content_length(size);
     res.keep_alive(req.keep_alive());
@@ -656,7 +663,7 @@ http::message_generator handle_request(const std::string& root, http::request<Bo
   res.set(http::field::server, "tracemaker-view");
   res.set(http::field::content_type, mime);
   res.set(http::field::cache_control, immutable && cookie.empty() ? "public, max-age=31536000, immutable" : "no-cache");
-  harden(res);
+  harden(res, embed);
   if (!cookie.empty()) res.set(http::field::set_cookie, cookie);
   res.content_length(size);
   res.keep_alive(req.keep_alive());
@@ -724,7 +731,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
       return;
     }
     const bool keep_alive = req.keep_alive();
-    beast::async_write(stream_, handle_request(hub_.root_, std::move(req), cookie),
+    beast::async_write(stream_, handle_request(hub_.root_, std::move(req), cookie, hub_.opts_.embed),
                        [self = shared_from_this(), keep_alive](beast::error_code wec, std::size_t) {
                          if (wec) return;
                          if (!keep_alive) {
@@ -798,6 +805,9 @@ ViewerServer::ViewerServer(ServerOptions opts) : impl_(std::make_unique<Impl>(st
   } else if (!h.loopback_ && !h.opts_.allow_open) {
     h.token_ = random_token();  // reachable from the network: never without a token unless that was asked for
   }
+  for (const char c : h.opts_.embed)  // goes into a header: sources only, no ';' or ',' or control characters
+    if (!(std::isalnum(static_cast<unsigned char>(c)) || std::strchr(".:/*-_[] ", c) != nullptr))
+      throw std::runtime_error("viewer server: --view-embed takes origins such as http://192.168.1.83:8771, separated by spaces");
   const tcp::endpoint ep{addr, h.opts_.port};
   h.acceptor_.open(ep.protocol(), ec);
   if (!ec) h.acceptor_.set_option(net::socket_base::reuse_address(true), ec);

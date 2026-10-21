@@ -52,6 +52,7 @@ struct RouteJob {
   std::string view_host;          // "" = $TM_VIEW_HOST, else loopback: a viewer on any other address needs a token (issue #4, D116)
   std::string view_token;         // the token for a non-loopback viewer (empty = a random one)
   bool view_insecure = false;     // a non-loopback viewer without a token (--view-insecure)
+  std::string view_embed;         // pages that may frame the viewer (--view-embed); empty = none
   int view_port = 8766;
   bool hold = false;              // keep serving the viewer after routing; never returns (CLI only)
   std::string record;             // events file for replay (ignored while viewing)

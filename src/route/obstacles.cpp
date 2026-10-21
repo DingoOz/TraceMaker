@@ -39,7 +39,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   // Board edge as individual segments in a grid, so edge tests cost O(nearby segments).
   for (const auto* list : {&cm_.edges, &cm_.margins})  // Margin graphics keep copper away like the edge (KiCad)
     for (const auto& e : *list)
-      for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) edge_segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], 0));
+      for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) edge_segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], e.r));
   egrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, edge_segs_.size() + 16);
   for (std::size_t i = 0; i < edge_segs_.size(); ++i) egrid_->insert(static_cast<int>(i), edge_segs_[i].box);
   // Board outline: chain all Edge.Cuts pieces into closed loops; the loop with the largest area is the
@@ -205,7 +205,12 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       Coord mm = pad.mask_margin;
       if (mm == INT64_MIN) mm = b_.footprints[static_cast<std::size_t>(pad.footprint)].mask_margin;
       if (mm == INT64_MIN) mm = b_.pad_to_mask_clearance;
-      a.margin = std::max<Coord>(mm, 0);
+      // A negative local margin (an exposed pad opened smaller than its copper) does not shrink the opening in KiCad's solder_mask_bridge
+      // test, it widens the reach of the bridge: 8 mm pad, board expansion 0.2, a track of another net bridges at a copper gap of up to
+      // 0.19 mm with margin -0.5 (not at 0.29) and up to 0.39 mm with margin -1.25 (not at 0.49); margin 0 and +0.2 bridge nothing at those
+      // gaps (kicad-cli 10.0.6, PCBench free-of-charge_BMS). Modelled as an expansion of 0.2 + 0.2 |margin| (capped at 0.6 mm), which
+      // covers both measurements.
+      a.margin = mm < 0 ? std::min<Coord>(std::max<Coord>(b_.pad_to_mask_clearance, 0) + (-mm) / 5, std::max<Coord>(b_.pad_to_mask_clearance, 600'000)) : mm;
       a.net = pad.net;
       for (const auto& sh : a.shapes) a.box.add(sh.box);
       a.box = a.box.inflated(a.margin);
@@ -222,15 +227,24 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     agrid_[side]->insert(static_cast<int>(apertures_[side].size()), a.box);
     apertures_[side].push_back(std::move(a));
   }
-  // Copper text: one rectangle per line, sized from approximate KiCad stroke-font advances (upper case 0.8,
-  // lower case 0.68, digits 0.72, narrow glyphs 0.4 of the glyph width; line pitch 1.62 x height), justified
-  // and mirrored as in the file, plus the stroke thickness and a 5% margin.
+  // Copper text: one rectangle per line, sized from KiCad's stroke-font advances (measured with `kicad-cli pcb export svg` on a board
+  // of 20 repeats of each printable ASCII character: advance in 1/21 of the text height, space included; the old estimate was 10 to 50 %
+  // too narrow, so a track could run under a line with long runs of spaces: PCBench domotics_base-board-arranged), line pitch 1.62 x
+  // height, justified and mirrored as in the file, plus the stroke thickness and a margin.
+  static constexpr int kAdv21[95] = {
+      16, 10, 16, 21, 20, 24, 26, 10, 14, 14, 16, 26, 10, 26, 10, 22,
+      20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 10, 10, 26, 26, 26, 18,
+      27, 18, 21, 21, 21, 19, 18, 21, 22, 10, 16, 21, 17, 24, 22, 22,
+      21, 22, 21, 20, 16, 22, 18, 24, 20, 18, 20, 14, 14, 14, 12, 16,
+      8, 19, 19, 18, 19, 18, 12, 19, 19, 10, 10, 17, 11, 28, 19, 19,
+      19, 19, 13, 17, 12, 19, 16, 22, 17, 16, 17, 14, 20, 14, 15,
+  };
   for (const auto& t : b_.texts) {
     if (t.hidden || t.text.empty()) continue;
     const int l = b_.copper_index(t.layer);
     const int mask_side = t.layer == "F.Mask" ? 0 : t.layer == "B.Mask" ? 1 : -1;
     if (l < 0 && mask_side < 0) continue;
-    std::vector<double> widths(1, 0.0);  // per line, in glyph widths
+    std::vector<double> widths(1, 0.0);  // per line, in text heights
     for (std::size_t i = 0; i < t.text.size(); ++i) {
       const unsigned char ch = static_cast<unsigned char>(t.text[i]);
       if (ch == '\n') {
@@ -238,13 +252,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
         continue;
       }
       if ((ch & 0xC0) == 0x80) continue;  // UTF-8 continuation byte
-      double a = 0.9;
-      if (ch >= 'a' && ch <= 'z') a = (ch == 'i' || ch == 'l' || ch == 'j' || ch == 't' || ch == 'f' || ch == 'r') ? 0.5 : (ch == 'm' || ch == 'w') ? 1.0 : 0.75;
-      else if (ch >= '0' && ch <= '9') a = 0.85;
-      else if (ch == ' ' || ch == '.' || ch == ',' || ch == ':' || ch == ';' || ch == '\'' || ch == '!' || ch == '|' || ch == 'I') a = 0.4;
-      else if (ch == 'M' || ch == 'W') a = 0.95;
-      else if (ch >= 0x80) a = 0.8;
-      widths.back() += a;
+      widths.back() += ch >= 32 && ch < 127 ? kAdv21[ch - 32] / 21.0 : 1.0;  // other glyphs: a full height
     }
     // The file's two font sizes are taken as the larger for the advance (their order differs between versions).
     const Coord h = std::max<Coord>(std::max(t.height, t.width), 300'000), cw = h, th = std::max<Coord>(t.thickness, 100'000);
@@ -252,7 +260,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     const Coord H = static_cast<Coord>(static_cast<double>(widths.size() - 1) * pitchl) + h;
     const Coord ytop = t.justify_v < 0 ? 0 : t.justify_v > 0 ? -H : -H / 2;
     for (std::size_t li = 0; li < widths.size(); ++li) {
-      const Coord W = static_cast<Coord>(widths[li] * static_cast<double>(cw) * 1.05);
+      const Coord W = static_cast<Coord>(widths[li] * static_cast<double>(cw));
       if (W <= 0) continue;
       Coord x0 = t.justify_h < 0 ? 0 : t.justify_h > 0 ? -W : -W / 2;
       if (t.mirror) x0 = -x0 - W;

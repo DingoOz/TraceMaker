@@ -31,6 +31,15 @@ class PhysicalGateTests(unittest.TestCase):
         self.assertEqual(result["added_errors"], {"clearance": 1})
         self.assertFalse(judge.clean(result, 0))
 
+    def test_netless_arc_graphic_is_not_routed_copper(self):
+        # KiCad names a different piece of the same footprint graphic from run to run (PCBench MySensors_RNDKeyfob, livolo): not an added error.
+        arc = lambda x: {"uuid": "a", "description": "Arc [<no net>] on F.Cu", "pos": {"x": x, "y": 2}}
+        pad = item("Pad", x=3)
+        before, after = report(violation("shorting_items", items=[arc(1), pad])), report(violation("shorting_items", items=[arc(2), pad]))
+        self.assertEqual(judge.added_errors(before, after)["added_errors"], {})
+        routed = {"uuid": "a", "description": "Arc [GND] on F.Cu, length 2 mm", "pos": {"x": 2, "y": 2}}
+        self.assertEqual(judge.added_errors(before, report(violation("clearance", items=[routed, pad])))["added_errors"], {"clearance": 1})
+
     def test_multiplicity_and_item_order(self):
         a = violation(items=[item(), item("Pad", x=3)])
         b = violation(items=list(reversed(a["items"])))

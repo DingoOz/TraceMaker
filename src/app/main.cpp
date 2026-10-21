@@ -1055,6 +1055,7 @@ int main(int argc, char** argv) {
   route->add_option("--view-token", r_job.view_token, "Token for a viewer that other machines can reach (16+ characters; default: a random one, printed in the URL)");
   route->add_flag("--view-insecure", r_job.view_insecure, "Serve a viewer that other machines can reach WITHOUT a token (anyone who can reach the port can watch the board)");
   route->add_option("--view-port", r_job.view_port, "Viewer port (default 8766)");
+  route->add_option("--view-embed", r_job.view_embed, "Pages that may show the viewer in a frame, origins separated by spaces (e.g. a dashboard: http://host:8771); default: none");
   route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
   route->add_option("--component-rules", r_job.component_rules,

@@ -4,7 +4,7 @@ from collections import Counter
 from decimal import Decimal, ROUND_HALF_EVEN
 import re
 
-JUDGE_CODE_VERSION = "instance-v2-layer-context"
+JUDGE_CODE_VERSION = "instance-v3-graphic-arcs"
 JUDGE_FLAGS = ["--format", "json", "--severity-all", "--all-track-errors"]
 # KiCad 10.0.x stops reporting at these counts, across severities. A report at
 # the boundary is potentially truncated, not proof that exactly this many exist.
@@ -40,9 +40,16 @@ def _description(text):
                   lambda m: f"{_nm(m[1], m[2])}nm", text)
 
 
+def _routed_item(description):
+    # An arc without a net is a copper graphic of the board or of a footprint, not a routed arc track. KiCad names a different piece of the same
+    # graphic from run to run (PCBench MySensors_RNDKeyfob, livolo), so counting it as routed made a pre-existing defect look added.
+    if description.startswith(("Track", "Via")):
+        return True
+    return description.startswith("Arc") and "[<no net>]" not in description
+
+
 def routed_copper(violation):
-    return any(i.get("description", "").startswith(("Track", "Via", "Arc"))
-               for i in violation.get("items", []))
+    return any(_routed_item(i.get("description", "")) for i in violation.get("items", []))
 
 
 def own_footprint(violation):

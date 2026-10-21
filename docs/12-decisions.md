@@ -148,6 +148,8 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D129](decisions/D129.md) | `--bundle-escape` river escapes on dense packages | accepted |
 | [D130](decisions/D130.md) | `--supply-first` routes dense-package supply nets first | accepted |
 | [D131](decisions/D131.md) | `--package-tunnels` under dense packages | accepted |
+| [D132](decisions/D132.md) | KiCad-measured shapes and net-less arcs in the judge | accepted |
+| [D133](decisions/D133.md) | Viewer framing for named pages (--view-embed) | accepted |
 | [D134](decisions/D134.md) | Documentation site: MkDocs, Diátaxis, decision records, Doxygen | accepted |
 <!-- END decision index -->
 

@@ -245,6 +245,7 @@ RouteJobResult run_route_job(RouteJob job) {
     so.port = static_cast<std::uint16_t>(job.view_port);
     so.token = job.view_token;
     so.allow_open = job.view_insecure;
+    so.embed = job.view_embed;
     server = std::make_unique<server::ViewerServer>(so);
     server->publish(server::board_snapshot_json(lb.board, name, job.view_freeze));
     out.viewer_url = server->url();

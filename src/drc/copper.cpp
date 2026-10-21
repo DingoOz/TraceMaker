@@ -84,8 +84,18 @@ std::vector<Shape> pad_shapes(const model::Pad& p) {
     case model::PadShape::Custom: {
       // Anchor (a small circle or rect of the pad size) plus the primitive polygons.
       out.push_back(rect(w / 2, h / 2, 0));
-      for (const auto& cp : p.custom_polys)
-        if (cp.size() >= 3) out.push_back(poly(cp, 0));
+      for (const auto& cp : p.custom_prims) {
+        using K = model::Pad::CustomPrim::Kind;
+        if (cp.kind == K::Disc) {
+          out.push_back(Shape::point(tf(cp.pts[0]), cp.radius));
+        } else if (cp.kind == K::Polyline) {
+          std::vector<Point> q = cp.pts;
+          for (auto& v : q) v = tf(v);
+          out.push_back(Shape::polyline(std::move(q), cp.radius));
+        } else if (cp.pts.size() >= 3) {
+          out.push_back(poly(cp.pts, cp.radius));
+        }
+      }
       break;
     }
   }
@@ -254,7 +264,9 @@ CopperModel build_copper(const model::Board& b) {
     if (shapes.empty()) continue;
     if (layer < 0) {  // Edge.Cuts: outline pieces, compared at zero width
       for (auto& s : shapes) {
-        s.r = 0;
+        // Edge.Cuts pieces count at zero width; Margin pieces with their stroke (KiCad's actual distance to a 2 mm Margin line is 0 for
+        // copper that touches the stroke: PCBench RaspberryPi-PoE_PoELLi_PI).
+        if (!margin) s.r = 0;
         s.update_box();
         (margin ? m.margins : m.edges).push_back(std::move(s));
       }
