@@ -46,6 +46,7 @@ var hierarchy =
     [ "tmk::crules::CriticalNet", "structtmk_1_1crules_1_1CriticalNet.html", null ],
     [ "tmk::crules::CriticalRole", "structtmk_1_1crules_1_1CriticalRole.html", null ],
     [ "tmk::crules::CurrentPlan", "structtmk_1_1crules_1_1CurrentPlan.html", null ],
+    [ "tmk::model::Pad::CustomPrim", "structtmk_1_1model_1_1Pad_1_1CustomPrim.html", null ],
     [ "tmk::model::CustomRule", "structtmk_1_1model_1_1CustomRule.html", null ],
     [ "tmk::route::CutLine", "structtmk_1_1route_1_1CutLine.html", null ],
     [ "tmk::route::DeadPin", "structtmk_1_1route_1_1DeadPin.html", null ],

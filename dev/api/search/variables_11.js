@@ -3,7 +3,7 @@ var searchData=
   ['r_0',['r',['../structtmk_1_1geom_1_1Shape.html#a725434b8f08a977fee04fb08602a12eb',1,'tmk::geom::Shape::r'],['../structtmk_1_1place_1_1Shape.html#a725434b8f08a977fee04fb08602a12eb',1,'tmk::place::Shape::r']]],
   ['radial_5fpenalty_5fmm_1',['radial_penalty_mm',['../structtmk_1_1route_1_1RouterOptions.html#a8e33968c4d810f571dc1e186dcf8654b',1,'tmk::route::RouterOptions']]],
   ['radial_5fsupply_2',['radial_supply',['../structtmk_1_1route_1_1RouterOptions.html#ada5e3bda53f42ebf2a4f9b48b2d65dfd',1,'tmk::route::RouterOptions']]],
-  ['radius_3',['radius',['../structtmk_1_1place_1_1detail_1_1Slot.html#a6bcf654279a4741a4be0ed01998a5d32',1,'tmk::place::detail::Slot']]],
+  ['radius_3',['radius',['../structtmk_1_1model_1_1Pad_1_1CustomPrim.html#a78d1614aaff2a297b3a940f093407029',1,'tmk::model::Pad::CustomPrim::radius'],['../structtmk_1_1place_1_1detail_1_1Slot.html#a6bcf654279a4741a4be0ed01998a5d32',1,'tmk::place::detail::Slot::radius']]],
   ['ramp_5fcycle_4',['ramp_cycle',['../structtmk_1_1route_1_1RouterOptions.html#a0360d340bd0862be5064c6f0eae9aa90',1,'tmk::route::RouterOptions']]],
   ['ramp_5ffresh_5',['ramp_fresh',['../structtmk_1_1route_1_1RouterOptions.html#ac2ebbf05d14d4e5a4a37f8e2037405b5',1,'tmk::route::RouterOptions']]],
   ['ramp_5ffrom_5fmm_6',['ramp_from_mm',['../structtmk_1_1route_1_1RouterOptions.html#aefc6acd6e2cf1d21023ea9b960e6dbc2',1,'tmk::route::RouterOptions']]],

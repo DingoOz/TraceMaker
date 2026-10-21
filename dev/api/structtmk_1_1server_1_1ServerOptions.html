@@ -105,6 +105,8 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:aac81f9ae825c58e3fc77c8e07bbc501f"><td class="mdescLeft">&#160;</td><td class="mdescRight">at least 16 characters of [A-Za-z0-9._~-]; empty = generated when the host is not a loopback address  <br /></td></tr>
 <tr class="memitem:ad75da42b993ec78627831f0f06048e8b" id="r_ad75da42b993ec78627831f0f06048e8b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad75da42b993ec78627831f0f06048e8b">allow_open</a> = false</td></tr>
 <tr class="memdesc:ad75da42b993ec78627831f0f06048e8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">a non-loopback host without any token (&ndash;view-insecure)  <br /></td></tr>
+<tr class="memitem:ad97b0298d301e021fb2a4828d3610aac" id="r_ad97b0298d301e021fb2a4828d3610aac"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad97b0298d301e021fb2a4828d3610aac">embed</a></td></tr>
+<tr class="memdesc:ad97b0298d301e021fb2a4828d3610aac"><td class="mdescLeft">&#160;</td><td class="mdescRight">pages that may frame the viewer, as CSP sources separated by spaces (&ndash;view-embed); empty = nobody (X-Frame-Options: DENY)  <br /></td></tr>
 <tr class="memitem:a0bdecdc4f6c91470403d9dcea143aa7e" id="r_a0bdecdc4f6c91470403d9dcea143aa7e"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0bdecdc4f6c91470403d9dcea143aa7e">max_clients</a> = 16</td></tr>
 <tr class="memdesc:a0bdecdc4f6c91470403d9dcea143aa7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">WebSocket viewers, counted from the upgrade on (a burst cannot overshoot); the next gets 503.  <br /></td></tr>
 <tr class="memitem:adca5b6710298075ef4954f7d7c52c2f5" id="r_adca5b6710298075ef4954f7d7c52c2f5"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adca5b6710298075ef4954f7d7c52c2f5">max_connections</a> = 128</td></tr>
@@ -156,7 +158,25 @@ Public Attributes</h2></td></tr>
 
 <p>per client: state backlog that drops the connection </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00037">37</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00038">38</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad97b0298d301e021fb2a4828d3610aac" name="ad97b0298d301e021fb2a4828d3610aac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad97b0298d301e021fb2a4828d3610aac">&#9670;&#160;</a></span>embed</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::server::ServerOptions::embed</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>pages that may frame the viewer, as CSP sources separated by spaces (&ndash;view-embed); empty = nobody (X-Frame-Options: DENY) </p>
+
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00031">31</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -192,7 +212,7 @@ Public Attributes</h2></td></tr>
 
 <p>WebSocket viewers, counted from the upgrade on (a burst cannot overshoot); the next gets 503. </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00031">31</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00032">32</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -210,7 +230,7 @@ Public Attributes</h2></td></tr>
 
 <p>concurrent HTTP connections (a page load is one); beyond it a connection is closed at once </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00032">32</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00033">33</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -228,7 +248,7 @@ Public Attributes</h2></td></tr>
 
 <p>of those, from one address: one host cannot use them all up before it has authenticated </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00033">33</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00034">34</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -246,7 +266,7 @@ Public Attributes</h2></td></tr>
 
 <p>per client: same, by bytes </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00036">36</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00037">37</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -264,7 +284,7 @@ Public Attributes</h2></td></tr>
 
 <p>per client: beyond this, transient messages are dropped </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00035">35</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00036">36</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>
@@ -318,7 +338,7 @@ Public Attributes</h2></td></tr>
 
 <p>directory with index.html; empty = &lt;source dir&gt;/viewer/dist </p>
 
-<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00034">34</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="viewer__server_8hpp_source.html#l00035">35</a> of file <a class="el" href="viewer__server_8hpp_source.html">viewer_server.hpp</a>.</p>
 
 </div>
 </div>

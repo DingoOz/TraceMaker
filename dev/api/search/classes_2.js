@@ -21,6 +21,7 @@ var searchData=
   ['criticalnet_18',['CriticalNet',['../structtmk_1_1crules_1_1CriticalNet.html',1,'tmk::crules']]],
   ['criticalrole_19',['CriticalRole',['../structtmk_1_1crules_1_1CriticalRole.html',1,'tmk::crules']]],
   ['currentplan_20',['CurrentPlan',['../structtmk_1_1crules_1_1CurrentPlan.html',1,'tmk::crules']]],
-  ['customrule_21',['CustomRule',['../structtmk_1_1model_1_1CustomRule.html',1,'tmk::model']]],
-  ['cutline_22',['CutLine',['../structtmk_1_1route_1_1CutLine.html',1,'tmk::route']]]
+  ['customprim_21',['CustomPrim',['../structtmk_1_1model_1_1Pad_1_1CustomPrim.html',1,'tmk::model::Pad']]],
+  ['customrule_22',['CustomRule',['../structtmk_1_1model_1_1CustomRule.html',1,'tmk::model']]],
+  ['cutline_23',['CutLine',['../structtmk_1_1route_1_1CutLine.html',1,'tmk::route']]]
 ];

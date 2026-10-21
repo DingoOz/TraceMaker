@@ -2806,6 +2806,8 @@ OPTIONS:
           --view-insecure     Serve a viewer that other machines can reach WITHOUT a token
                               (anyone who can reach the port can watch the board)
           --view-port INT     Viewer port (default 8766)
+          --view-embed TEXT   Pages that may show the viewer in a frame, origins separated by
+                              spaces (e.g. a dashboard: http://host:8771); default: none
           --hold              Keep serving the viewer after routing finishes
           --json TEXT         Write a result summary as JSON
           --component-rules TEXT:{off,report,soft,on}

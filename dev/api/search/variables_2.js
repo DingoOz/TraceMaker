@@ -85,7 +85,7 @@ var searchData=
   ['ctrl_5fu_82',['ctrl_u',['../namespacetmk_1_1app_1_1tui_1_1key.html#ae14c6714563974e2d3807ee2151922a1',1,'tmk::app::tui::key']]],
   ['current_83',['current',['../structtmk_1_1crules_1_1EffectiveRule.html#a6e3a2c56c49821d0e1f7ae5305784f00',1,'tmk::crules::EffectiveRule']]],
   ['custom_84',['custom',['../structtmk_1_1model_1_1DesignRules.html#a258b55bfc45748c4aab056e86fa7040a',1,'tmk::model::DesignRules']]],
-  ['custom_5fpolys_85',['custom_polys',['../structtmk_1_1model_1_1Pad.html#a5ab8dbe57d9eaa8b0362e6ec4d4eff67',1,'tmk::model::Pad']]],
+  ['custom_5fprims_85',['custom_prims',['../structtmk_1_1model_1_1Pad.html#a8f315033470dddb7e49a4ae83ec65efb',1,'tmk::model::Pad']]],
   ['cut_5freport_86',['cut_report',['../structtmk_1_1route_1_1RouterOptions.html#a3da81bee48d8bb53d2c257ce119b2c25',1,'tmk::route::RouterOptions']]],
   ['cutouts_87',['cutouts',['../structtmk_1_1place_1_1Problem.html#a2ea88f32f924ce9c40d870abe74820fe',1,'tmk::place::Problem']]],
   ['cy_88',['cy',['../structtmk_1_1place_1_1PartGeom.html#a55317640ccabc1ca3076e3b677cc46aa',1,'tmk::place::PartGeom']]],

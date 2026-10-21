@@ -95,6 +95,11 @@ $(function(){initNavTree('structtmk_1_1model_1_1Pad.html','','structtmk_1_1model
 
 <p><code>#include &lt;<a class="el" href="board_8hpp_source.html">model/board.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:CustomPrim" id="r_CustomPrim"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1Pad_1_1CustomPrim.html">CustomPrim</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom-pad primitives in the pad frame, each already grown by half its stroke width (KiCad draws them with a round pen and fills them): a polygon or rectangle, a polyline (line, arc) or a disc (circle; pts[0] is the centre).  <a href="structtmk_1_1model_1_1Pad_1_1CustomPrim.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:adbc6bac9f256832704cd95bb67ed4960" id="r_adbc6bac9f256832704cd95bb67ed4960"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbc6bac9f256832704cd95bb67ed4960">footprint</a> = -1</td></tr>
@@ -124,8 +129,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aa94aa5b2142190e2546bf357b2594eeb" id="r_aa94aa5b2142190e2546bf357b2594eeb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa94aa5b2142190e2546bf357b2594eeb">trapezoid_dx</a> = 0</td></tr>
 <tr class="memitem:a8dc17ca455efabca9a8f39437783de97" id="r_a8dc17ca455efabca9a8f39437783de97"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8dc17ca455efabca9a8f39437783de97">trapezoid_dy</a> = 0</td></tr>
 <tr class="memdesc:a8dc17ca455efabca9a8f39437783de97"><td class="mdescLeft">&#160;</td><td class="mdescRight">rect_delta  <br /></td></tr>
-<tr class="memitem:a5ab8dbe57d9eaa8b0362e6ec4d4eff67" id="r_a5ab8dbe57d9eaa8b0362e6ec4d4eff67"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ab8dbe57d9eaa8b0362e6ec4d4eff67">custom_polys</a></td></tr>
-<tr class="memdesc:a5ab8dbe57d9eaa8b0362e6ec4d4eff67"><td class="mdescLeft">&#160;</td><td class="mdescRight">custom primitives (gr_poly) in the pad frame  <br /></td></tr>
+<tr class="memitem:a8f315033470dddb7e49a4ae83ec65efb" id="r_a8f315033470dddb7e49a4ae83ec65efb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Pad_1_1CustomPrim.html">CustomPrim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f315033470dddb7e49a4ae83ec65efb">custom_prims</a></td></tr>
 <tr class="memitem:a70ec0228c1b320cbd4a27aad6ba730d9" id="r_a70ec0228c1b320cbd4a27aad6ba730d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70ec0228c1b320cbd4a27aad6ba730d9">clearance</a> = -1</td></tr>
 <tr class="memdesc:a70ec0228c1b320cbd4a27aad6ba730d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">local override, -1 = none  <br /></td></tr>
 <tr class="memitem:aee5e5e061b0f67a5ef5528aeb2b8371c" id="r_aee5e5e061b0f67a5ef5528aeb2b8371c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee5e5e061b0f67a5ef5528aeb2b8371c">mask_margin</a> = INT64_MIN</td></tr>
@@ -213,7 +217,7 @@ Public Attributes</h2></td></tr>
 
 <p>local override, -1 = none </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00065">65</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00072">72</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -235,21 +239,19 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a5ab8dbe57d9eaa8b0362e6ec4d4eff67" name="a5ab8dbe57d9eaa8b0362e6ec4d4eff67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ab8dbe57d9eaa8b0362e6ec4d4eff67">&#9670;&#160;</a></span>custom_polys</h2>
+<a id="a8f315033470dddb7e49a4ae83ec65efb" name="a8f315033470dddb7e49a4ae83ec65efb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f315033470dddb7e49a4ae83ec65efb">&#9670;&#160;</a></span>custom_prims</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::vector&lt;<a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a>&gt; &gt; tmk::model::Pad::custom_polys</td>
+          <td class="memname">std::vector&lt;<a class="el" href="structtmk_1_1model_1_1Pad_1_1CustomPrim.html">CustomPrim</a>&gt; tmk::model::Pad::custom_prims</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>custom primitives (gr_poly) in the pad frame </p>
-
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00064">64</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00071">71</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -369,7 +371,7 @@ Public Attributes</h2></td></tr>
 
 <p>local solder-mask expansion (unset = INT64_MIN) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00066">66</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00073">73</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -385,7 +387,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00073">73</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00080">80</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -401,7 +403,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00074">74</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00081">81</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -436,7 +438,7 @@ Public Attributes</h2></td></tr>
 <p>Schematic pin name and electrical type (KiCad 6+ boards; empty in older files). </p>
 <p>Read-only, used to recognise component roles (doc 15 §3.1). </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00072">72</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00079">79</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -452,7 +454,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00072">72</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00079">79</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -552,7 +554,7 @@ Public Attributes</h2></td></tr>
 
 <p>degrees; -1 = KiCad's default (45 for round pads, 90 otherwise) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00069">69</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00076">76</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -570,7 +572,7 @@ Public Attributes</h2></td></tr>
 
 <p>local overrides, -1 = none </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00068">68</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00075">75</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -586,7 +588,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00068">68</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00075">75</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -654,7 +656,7 @@ Public Attributes</h2></td></tr>
 
 <p>(zone_connect n) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00067">67</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00074">74</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>

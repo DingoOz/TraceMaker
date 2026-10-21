@@ -50,6 +50,7 @@ var structtmk_1_1app_1_1RouteJob =
     [ "threads", "structtmk_1_1app_1_1RouteJob.html#a8e29caab5cbc5307e5ec7f02e8d97eff", null ],
     [ "variants", "structtmk_1_1app_1_1RouteJob.html#a622d4e6c1b878d3d0cef0a8f464aad45", null ],
     [ "view", "structtmk_1_1app_1_1RouteJob.html#afb18fbc75a5087fad660b5877627deb6", null ],
+    [ "view_embed", "structtmk_1_1app_1_1RouteJob.html#aa2fa938c5e064427fdb2fa2cfd1a5cb4", null ],
     [ "view_freeze", "structtmk_1_1app_1_1RouteJob.html#ae7c3eda45a05d46f9d494e97ab055854", null ],
     [ "view_host", "structtmk_1_1app_1_1RouteJob.html#a7b7eb17d7e458cc20529c215399761e7", null ],
     [ "view_insecure", "structtmk_1_1app_1_1RouteJob.html#a9b494bf19108632c65accd94764c336f", null ],

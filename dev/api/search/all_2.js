@@ -177,11 +177,12 @@ var searchData=
   ['curve_174',['Curve',['../structtmk_1_1model_1_1Graphic.html#a70242c3d64235ce7ff6d53bac7f9487ea2cb4d4a3f8dacd623fa045a44febd476',1,'tmk::model::Graphic']]],
   ['custom_175',['Custom',['../namespacetmk_1_1model.html#ab3db8176b25434570aee6f919c8b1e0fa90589c47f06eb971d548591f23c285af',1,'tmk::model']]],
   ['custom_176',['custom',['../structtmk_1_1model_1_1DesignRules.html#a258b55bfc45748c4aab056e86fa7040a',1,'tmk::model::DesignRules']]],
-  ['custom_5fpolys_177',['custom_polys',['../structtmk_1_1model_1_1Pad.html#a5ab8dbe57d9eaa8b0362e6ec4d4eff67',1,'tmk::model::Pad']]],
-  ['customrule_178',['CustomRule',['../structtmk_1_1model_1_1CustomRule.html',1,'tmk::model']]],
-  ['cut_5freport_179',['cut_report',['../structtmk_1_1route_1_1RouterOptions.html#a3da81bee48d8bb53d2c257ce119b2c25',1,'tmk::route::RouterOptions']]],
-  ['cutline_180',['CutLine',['../structtmk_1_1route_1_1CutLine.html',1,'tmk::route']]],
-  ['cutouts_181',['cutouts',['../structtmk_1_1place_1_1Problem.html#a2ea88f32f924ce9c40d870abe74820fe',1,'tmk::place::Problem']]],
-  ['cy_182',['cy',['../structtmk_1_1place_1_1PartGeom.html#a55317640ccabc1ca3076e3b677cc46aa',1,'tmk::place::PartGeom']]],
-  ['cy_5fin_183',['cy_in',['../structtmk_1_1place_1_1PartGeom.html#a2714678403a39fb54f62b2b1a5fb10e5',1,'tmk::place::PartGeom']]]
+  ['custom_5fprims_177',['custom_prims',['../structtmk_1_1model_1_1Pad.html#a8f315033470dddb7e49a4ae83ec65efb',1,'tmk::model::Pad']]],
+  ['customprim_178',['CustomPrim',['../structtmk_1_1model_1_1Pad_1_1CustomPrim.html',1,'tmk::model::Pad']]],
+  ['customrule_179',['CustomRule',['../structtmk_1_1model_1_1CustomRule.html',1,'tmk::model']]],
+  ['cut_5freport_180',['cut_report',['../structtmk_1_1route_1_1RouterOptions.html#a3da81bee48d8bb53d2c257ce119b2c25',1,'tmk::route::RouterOptions']]],
+  ['cutline_181',['CutLine',['../structtmk_1_1route_1_1CutLine.html',1,'tmk::route']]],
+  ['cutouts_182',['cutouts',['../structtmk_1_1place_1_1Problem.html#a2ea88f32f924ce9c40d870abe74820fe',1,'tmk::place::Problem']]],
+  ['cy_183',['cy',['../structtmk_1_1place_1_1PartGeom.html#a55317640ccabc1ca3076e3b677cc46aa',1,'tmk::place::PartGeom']]],
+  ['cy_5fin_184',['cy_in',['../structtmk_1_1place_1_1PartGeom.html#a2714678403a39fb54f62b2b1a5fb10e5',1,'tmk::place::PartGeom']]]
 ];

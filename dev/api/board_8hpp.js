@@ -3,6 +3,7 @@ var board_8hpp =
     [ "tmk::model::LayerDef", "structtmk_1_1model_1_1LayerDef.html", "structtmk_1_1model_1_1LayerDef" ],
     [ "tmk::model::Net", "structtmk_1_1model_1_1Net.html", "structtmk_1_1model_1_1Net" ],
     [ "tmk::model::Pad", "structtmk_1_1model_1_1Pad.html", "structtmk_1_1model_1_1Pad" ],
+    [ "tmk::model::Pad::CustomPrim", "structtmk_1_1model_1_1Pad_1_1CustomPrim.html", "structtmk_1_1model_1_1Pad_1_1CustomPrim" ],
     [ "tmk::model::Graphic", "structtmk_1_1model_1_1Graphic.html", "structtmk_1_1model_1_1Graphic" ],
     [ "tmk::model::Text", "structtmk_1_1model_1_1Text.html", "structtmk_1_1model_1_1Text" ],
     [ "tmk::model::Footprint", "structtmk_1_1model_1_1Footprint.html", "structtmk_1_1model_1_1Footprint" ],
