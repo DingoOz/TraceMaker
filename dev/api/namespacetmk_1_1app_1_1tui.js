@@ -1,0 +1,67 @@
+var namespacetmk_1_1app_1_1tui =
+[
+    [ "key", "namespacetmk_1_1app_1_1tui_1_1key.html", [
+      [ "backspace", "namespacetmk_1_1app_1_1tui_1_1key.html#ad55f21ad62b26440d872f3b30091cdf6", null ],
+      [ "ctrl_c", "namespacetmk_1_1app_1_1tui_1_1key.html#a58c744768c32513bff573032133310aa", null ],
+      [ "ctrl_u", "namespacetmk_1_1app_1_1tui_1_1key.html#ae14c6714563974e2d3807ee2151922a1", null ],
+      [ "del", "namespacetmk_1_1app_1_1tui_1_1key.html#afd0991e3e8e9ed38946a1589ed46f959", null ],
+      [ "down", "namespacetmk_1_1app_1_1tui_1_1key.html#ad08e484b237f586c816b468fa87a1729", null ],
+      [ "end", "namespacetmk_1_1app_1_1tui_1_1key.html#a68f846e41a880f856c3a098952b1acc8", null ],
+      [ "enter", "namespacetmk_1_1app_1_1tui_1_1key.html#ae4d667289fe15f3cb5932f685547807d", null ],
+      [ "esc", "namespacetmk_1_1app_1_1tui_1_1key.html#aa299e3a6e70fbfed29193fec59df50ab", null ],
+      [ "home", "namespacetmk_1_1app_1_1tui_1_1key.html#a6828b7ae5a7ef90da86b1c0164d3d8ce", null ],
+      [ "page_down", "namespacetmk_1_1app_1_1tui_1_1key.html#a3e070fd1d27c8e338a3e15295385ee03", null ],
+      [ "page_up", "namespacetmk_1_1app_1_1tui_1_1key.html#a1ff89284553b744920715ed54b2b7678", null ],
+      [ "shift_tab", "namespacetmk_1_1app_1_1tui_1_1key.html#a110bbb781f278731762f033005eae4e6", null ],
+      [ "tab", "namespacetmk_1_1app_1_1tui_1_1key.html#a17054ec8c75be770386c503ab86d9218", null ],
+      [ "up", "namespacetmk_1_1app_1_1tui_1_1key.html#ab6dacb750930bd02da22271bf0322ddc", null ]
+    ] ],
+    [ "Field", "structtmk_1_1app_1_1tui_1_1Field.html", "structtmk_1_1app_1_1tui_1_1Field" ],
+    [ "Entry", "structtmk_1_1app_1_1tui_1_1Entry.html", "structtmk_1_1app_1_1tui_1_1Entry" ],
+    [ "Span", "structtmk_1_1app_1_1tui_1_1Span.html", "structtmk_1_1app_1_1tui_1_1Span" ],
+    [ "Line", "structtmk_1_1app_1_1tui_1_1Line.html", "structtmk_1_1app_1_1tui_1_1Line" ],
+    [ "Model", "classtmk_1_1app_1_1tui_1_1Model.html", "classtmk_1_1app_1_1tui_1_1Model" ],
+    [ "Action", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42", [
+      [ "none", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a334c4a4c42fdb79d7ebc3e73b517e6f8", null ],
+      [ "quit", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42adbd73c2b545209688ed794c0d5413d5a", null ],
+      [ "run", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42aa53108f7543b75adbb34afc035d4cdf6", null ],
+      [ "print", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42af7531e2d0ea27233ce00b5f01c5bf335", null ],
+      [ "save", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a43781db5c40ecc39fd718685594f0956", null ]
+    ] ],
+    [ "Scope", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41", [
+      [ "run", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41aa53108f7543b75adbb34afc035d4cdf6", null ],
+      [ "global", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41a9c70933aff6b2a6d08c687a6cbb6b765", null ],
+      [ "project", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41a46f86faa6bbf9ac94a7e459509a20ed0", null ],
+      [ "file", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41a8c7dd922ad47494fc02c388e12c00eac", null ]
+    ] ],
+    [ "Style", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101e", [
+      [ "plain", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eaac7938d40cfc2307e2bf325d28e7884e", null ],
+      [ "frame", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eadcf3e36ee8115282aad46485cab6a4be", null ],
+      [ "title", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ead5d3db1765287eef77d7927cc956f50a", null ],
+      [ "heading", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eaf74f539fcf46601998e5b17104c7f4c1", null ],
+      [ "dim", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea563728df0fdd90631ac1e51258e2857d", null ],
+      [ "label", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ead304ba20e96d87411588eeabac850e34", null ],
+      [ "key", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea3c6e0b8a9c15224a8228b9a98ca1531d", null ],
+      [ "code", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eac13367945d5d4c91047b3b50234aa7ab", null ],
+      [ "ok", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea444bcb3a3fcf8389296c49467f27e1d6", null ],
+      [ "warn", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea1ea4c3ab05ee0c6d4de30740443769cb", null ],
+      [ "error", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eacb5e100e5a9a3e7f6d1fd97512215282", null ],
+      [ "accent", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea727b79a9a430ccddcf9260a381d5ab10", null ],
+      [ "global", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea9c70933aff6b2a6d08c687a6cbb6b765", null ],
+      [ "project", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea46f86faa6bbf9ac94a7e459509a20ed0", null ],
+      [ "file", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea8c7dd922ad47494fc02c388e12c00eac", null ],
+      [ "run", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eaa53108f7543b75adbb34afc035d4cdf6", null ],
+      [ "tag_global", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea1c9684b84c6b76999ad18ced817e483b", null ],
+      [ "tag_project", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ead7fa06e09011f38ecec35ac14643a9e3", null ],
+      [ "tag_file", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eac80a13ba87b4ccfc37291b52f8d87b1b", null ],
+      [ "tag_run", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eaf5d21e93ed39e31ccedf7759fccc5cd8", null ]
+    ] ],
+    [ "display_width", "namespacetmk_1_1app_1_1tui.html#a12806bdb7911be327bf348f46bf4ddaa", null ],
+    [ "parse_options", "namespacetmk_1_1app_1_1tui.html#a6ad579d1d9a5c73d87bc9dc69f0d0a0e", null ],
+    [ "run_keys", "namespacetmk_1_1app_1_1tui.html#a20aa2fa0d706efc7f338c40e0ac4587f", null ],
+    [ "run_terminal", "namespacetmk_1_1app_1_1tui.html#a4174f010511e7b92595293dc8d60d46b", null ],
+    [ "save_options", "namespacetmk_1_1app_1_1tui.html#a45269a2f7aaddb1639db85ba04dd4071", null ],
+    [ "scope_name", "namespacetmk_1_1app_1_1tui.html#ac7445048c8baac8f26a9c18747f26979", null ],
+    [ "truth", "namespacetmk_1_1app_1_1tui.html#ab0e8cf2b7b4c06cf7d8a5a58e6ee5575", null ],
+    [ "kScopes", "namespacetmk_1_1app_1_1tui.html#ad82a996edf25fcd699914ac31817c9b3", null ]
+];

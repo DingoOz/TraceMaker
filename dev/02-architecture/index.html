@@ -1,0 +1,2784 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An autorouter and component placer for KiCad">
+      
+      
+      
+        <link rel="canonical" href="https://dingooz.github.io/TraceMaker/dev/02-architecture/">
+      
+      
+        <link rel="prev" href="../01-requirements/">
+      
+      
+        <link rel="next" href="../03-data-structures/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Architecture - TraceMaker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#02-system-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TraceMaker" class="md-header__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TraceMaker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../how-to/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  How-to guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../explanation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../project/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TraceMaker" class="md-nav__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    TraceMaker
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/first-board/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route your first board
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/kicad-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route from inside KiCad
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/build-and-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build and test
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/kicad-cli-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run kicad-cli from Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fetch boards and run benchmarks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Make a release
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write and publish the docs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-viewer-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer protocol
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../explanation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-process-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Process model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Process model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-options-screen-and-options-file-2026-10-10-d89" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Options screen and options file (2026-10-10, D89)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-board-model-and-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The board model and transactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pipeline-and-control-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pipeline and control flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-placement-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Placement modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-execution-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Execution model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Execution model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Threads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-determinism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Determinism
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-budgets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Budgets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-event-bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Event bus
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Repository layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-technology-choices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Technology choices
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data structures and DRC
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-placement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-failure-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Failure memory
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU acceleration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-kicad-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KiCad integration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live viewer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-placement-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement test plan
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-component-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component-aware rules
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-bga-breakout-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGA breakout
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-llm-advisor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-agent-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../project/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-next-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions and risks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-big-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Big picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-process-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Process model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Process model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-options-screen-and-options-file-2026-10-10-d89" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Options screen and options file (2026-10-10, D89)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-board-model-and-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The board model and transactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pipeline-and-control-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pipeline and control flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-placement-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Placement modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-execution-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Execution model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Execution model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Threads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-determinism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Determinism
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-budgets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Budgets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-event-bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Event bus
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Repository layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-technology-choices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Technology choices
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/DingoOz/TraceMaker/edit/main/docs/02-architecture.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="02-system-architecture">02 — System architecture<a class="headerlink" href="#02-system-architecture" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/main/PLAN.md"><code>../PLAN.md</code></a>.
+This document supersedes §3, §6 and §8 of <a href="https://github.com/DingoOz/TraceMaker/blob/main/cpp_autorouter_clean_sheet.md"><code>../cpp_autorouter_clean_sheet.md</code></a>
+and keeps its routing stages (§5) as the routing core. The main changes: placement is in scope,
+failure learning is a first-class subsystem, GPUs are used, and there is a live viewer.</p>
+</blockquote>
+<h2 id="1-big-picture">1. Big picture<a class="headerlink" href="#1-big-picture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code> ┌──────────── KiCad project ─────────────┐                 ┌──────────── Viewer (browser) ─────────────┐
+ │ .kicad_pro  .kicad_sch  .kicad_pcb     │                 │ WebGL2/WebGPU · timeline · inspectors    │
+ │ .kicad_dru  footprint libs             │                 └─────────────▲─────────────────────────────┘
+ └──────┬─────────────────────────────────┘                               │ WebSocket (FlatBuffers deltas)
+        │ io::kicad (s-expr)  /  IPC API (live)                            │
+ ┌──────▼──────────────────────────────────────────────────────────────────┴───────────────────────────┐
+ │ tracemakerd  (C++20 + CUDA engine, one process)                                                     │
+ │                                                                                                     │
+ │  Ingest ─▶ Rules compile ─▶ Analysis ─▶ PLACE ─▶ Escape ─▶ Global NCR ─▶ Detailed ─▶ Repair ─▶ Last │
+ │                                ▲          │                                     │           gasp    │
+ │                                │          └────────── ECO placement ◀───────────┴── proofs of ──┘   │
+ │                                │                       moves (transactional)       unroutability    │
+ │                                └───────── Failure memory (in-attempt / in-run / persistent KB) ─────┤
+ │                                                                                                     │
+ │  Board model: geometry + spatial indices + transactions   │  Scheduler: budgets, portfolio, seeds   │
+ │  GPU service: maze/BFS fields, density FFT, DRC broadphase │  Event bus ─▶ viewer, replay log, report│
+ └─────────────────────────────────────────────────────────────────────────────────────────────────────┘
+        │ io::kicad writer  /  IPC commit                       │ kicad-cli pcb drc (sign-off judge)
+        ▼                                                       ▼
+   routed .kicad_pcb                                       report.json + events.tmlog
+</code></pre></div>
+<h2 id="2-process-model">2. Process model<a class="headerlink" href="#2-process-model" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Process</th>
+<th>Language</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tracemakerd</code></td>
+<td>C++20 + CUDA</td>
+<td>The engine. Runs one job or serves many over a local API. Embeds the HTTP/WebSocket server for the viewer.</td>
+</tr>
+<tr>
+<td><code>tracemaker</code></td>
+<td>C++ (thin)</td>
+<td>CLI front end: <code>tracemaker route|place|bench|serve|replay</code>. Links the engine in-process.</td>
+</tr>
+<tr>
+<td>Viewer</td>
+<td>TypeScript + WebGL2/WebGPU</td>
+<td>Static web app served by the engine. Works on the server's own display or remotely.</td>
+</tr>
+<tr>
+<td>KiCad plugin</td>
+<td>Python (<code>kicad-python</code>/IPC)</td>
+<td>Launched from pcbnew; streams the board to the engine and applies results as one undoable commit.</td>
+</tr>
+<tr>
+<td>Bench harness</td>
+<td>Python 3 + <code>kicad-cli</code></td>
+<td>Drives fixture sets, calls KiCad DRC as the judge, runs Freerouting baselines, writes result tables.</td>
+</tr>
+</tbody>
+</table>
+<p>One engine process keeps the board model, GPU contexts and memory pools warm. The CLI is the same
+library without the server.</p>
+<h3 id="21-options-screen-and-options-file-2026-10-10-d89">2.1 Options screen and options file (2026-10-10, D89)<a class="headerlink" href="#21-options-screen-and-options-file-2026-10-10-d89" title="Permanent link">&para;</a></h3>
+<p><code>tracemaker route</code> has some sixty options. Two things make them manageable without a second place that lists them.</p>
+<ul>
+<li><strong><code>tracemaker tui [BOARD] [-o OUTPUT] [--config FILE]</code></strong> opens a screen in the terminal with one row per <code>route</code>
+  option: its name, its value or default, and its description. Flags toggle (a flag with two spellings, such as
+  <code>--pair-twists</code> / <code>--no-pair-twists</code>, cycles default, on, off), value options are edited in place, <code>/</code> filters by
+  name or description and <code>h</code> shows the experimental options. The command the choices stand for is shown as they
+  change, with the command-line parser's verdict on it ("--output is required", a value that is not a number).
+  <code>r</code> runs it, <code>p</code> prints it to standard output (the screen itself is on <code>/dev/tty</code>, so <code>cmd=$(tracemaker tui ...)</code>
+  works) and <code>s</code> saves an options file.</li>
+<li><strong><code>tracemaker route ... --config FILE</code></strong> reads such a file: one <code>name = value</code> per line, the name being the
+  option's long spelling without the dashes, flags as <code>name = true</code>, <code>#</code> for comments. Options on the command line
+  win over the file. The board and the output are not saved: they belong to one run, not to a set of options.</li>
+</ul>
+<p><strong>Look and scopes (D93).</strong> The screen is a coloured frame: a title bar, a scope bar, the option list with a scroll
+bar, a <strong>Help</strong> panel, the <strong>Command</strong> the choices stand for and a status line with the keys. The Help panel shows
+the description of the option under the cursor, whether it is a flag or a value, its default, its value now and
+which scope that value comes from, and the key it has in an options file. Colours are 256-colour escapes; with
+<code>NO_COLOR</code> the same frame is drawn with bold, dim and reverse.</p>
+<p>Options can be kept in three files, the higher over the lower, and every value shows the scope it comes from:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>File</th>
+<th>For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>global</td>
+<td><code>$XDG_CONFIG_HOME/tracemaker/route.conf</code> (else <code>~/.config/tracemaker/route.conf</code>)</td>
+<td>every board of this user</td>
+</tr>
+<tr>
+<td>project</td>
+<td><code>tracemaker.conf</code> in the board's folder (the current folder without a board)</td>
+<td>the boards of that folder</td>
+</tr>
+<tr>
+<td>file</td>
+<td>the file given with <code>--config</code></td>
+<td>one named set</td>
+</tr>
+</tbody>
+</table>
+<p>The scope bar shows which scope <strong>receives edits</strong>; <code>Tab</code> / <code>Shift-Tab</code> move it and <code>s</code> writes that scope's file
+(creating its folder). A file holds only the values that belong to its scope, so saving "project" never copies the
+global values into it. An edit made while a lower scope is the target is kept there, and the status line says so when a
+higher scope's value hides it; <code>d</code> resets the target scope's own value, letting the next lower one show through. The
+board and the output belong to one run and are never written.</p>
+<p><code>route</code> reads an options file only when it is named with <code>--config</code>; it never looks for the global or project file by
+itself, so a run cannot depend on a file it did not announce. The screen reads all three to fill itself and prints the
+whole command (<code>p</code>), which is explicit and reproducible.</p>
+<p>How it is built:</p>
+<ul>
+<li>The rows are read from the <code>route</code> command's own option definitions at start-up (name, spellings, description,
+  default, hidden group), so a new option appears on the screen without further work.</li>
+<li>Neither path sets options itself. The screen's choices and a file's lines become ordinary arguments, and the
+  parser runs again on them, exactly as if they had been typed: a value from a file is checked and converted like
+  any other, and a line that names no option is an error with the file and line.</li>
+<li>The screen asks the parser for its verdict in a forked child, because parsing writes into the variables the
+  options are bound to, and those must still hold their defaults when the chosen run starts.</li>
+<li>The model (<code>src/app/tui.hpp</code>: keys in, lines of text out) holds no terminal code and is unit-tested. The terminal
+  layer is plain termios and ANSI escape sequences; there is no curses dependency. <code>tests/integration/tui_options.py</code>
+  drives it through a pseudo-terminal and checks that a file routes a board byte for byte like the typed options.</li>
+</ul>
+<p>Limits: <code>route</code> only (the placer and the other subcommands have no screen); POSIX terminals only; a value option's
+choices are not offered as a list, the parser's message names them when the value is wrong; writing a file drops
+comments added by hand (the screen rewrites the file from its values).</p>
+<h2 id="3-the-board-model-and-transactions">3. The board model and transactions<a class="headerlink" href="#3-the-board-model-and-transactions" title="Permanent link">&para;</a></h2>
+<p>All stages share one <strong>board model</strong> and change it only through <strong>transactions</strong> (copy-on-write
+branches, commit only if the score improves, O(changes) rollback). This is unchanged from the clean-sheet
+doc §4.4 and is the single most important structural decision.</p>
+<p>Additions for placement:
+- Footprints are first-class movable objects. A <strong>footprint move</strong> is a transaction operation that
+  re-transforms the pads and graphics, invalidates the attached connections' routing, and marks the
+  old and new footprint regions dirty in every spatial index.
+- <strong>Placement state</strong> (position, rotation, side per footprint) is versioned with the board, so a
+  placement ECO and the reroute it triggers commit or roll back together.</p>
+<p>Score (lexicographic, smaller is better), computed incrementally over dirty regions:</p>
+<div class="highlight"><pre><span></span><code>score = ( added_drc_errors,           // hard: must be 0 to be a clean pass
+          unrouted_connections,
+          unrouted_nets,
+          rule_soft_violations,       // length / skew targets
+          via_count * w_via + wirelength_mm + w_bend * bends + w_place * placement_penalty )
+</code></pre></div>
+<h2 id="4-pipeline-and-control-flow">4. Pipeline and control flow<a class="headerlink" href="#4-pipeline-and-control-flow" title="Permanent link">&para;</a></h2>
+<p>The pipeline is a <strong>state machine driven by the scheduler</strong>, not a fixed sequence. Normal flow:</p>
+<ol>
+<li><strong>Ingest</strong> project → board model, netlist, rules (doc 08).</li>
+<li><strong>Rules compile</strong> → constant-time rule queries per (object class, object class, layer).</li>
+<li><strong>Analysis</strong> → routability report: RUDY demand, airline crossings, pin-escape capacity, dead pins.</li>
+<li><strong>Placement</strong> (if allowed) → global analytic, legalisation, discrete optimisation, exact windows (doc 04).</li>
+<li><strong>Routing</strong> → escape, global negotiated-congestion routing, detailed, repair, last gasp, cleanup (doc 05).</li>
+<li><strong>Sign-off</strong> → own DRC, then optionally <code>kicad-cli pcb drc</code> (doc 08).</li>
+</ol>
+<p>Feedback edges (the reason it is a state machine):
+- <strong>Repair/last gasp → ECO placement</strong>: when a connection is <em>proved</em> blocked by a cut whose capacity is
+  below demand on every layer, the router asks the placer for moves that raise that cut's capacity.
+- <strong>Global routing → placement</strong> (full-placement mode only): an overflow map inflates the footprints in
+  hot regions and re-runs incremental analytic placement (routability-driven placement).
+- <strong>Every stage → failure memory → every later attempt</strong> (doc 06).
+- <strong>Portfolio</strong>: the scheduler runs several variants (seeds, schedules, orderings) in sibling branches and
+  gives more budget to the leaders (successive halving).</p>
+<h2 id="5-placement-modes">5. Placement modes<a class="headerlink" href="#5-placement-modes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>What may move</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>none</code></td>
+<td>Nothing. Pure router.</td>
+<td>Benchmarking against Freerouting, user-placed boards</td>
+</tr>
+<tr>
+<td><code>eco</code> (default for placed boards)</td>
+<td>Unlocked parts, by small moves only, only on proof of unroutability</td>
+<td>Finishing a nearly routable board</td>
+</tr>
+<tr>
+<td><code>refine</code></td>
+<td>Unlocked parts, by local optimisation from the current placement</td>
+<td>Improving a hand placement</td>
+</tr>
+<tr>
+<td><code>full</code> (default for unplaced boards)</td>
+<td>All unlocked parts, global placement from scratch</td>
+<td>Schematic-to-board</td>
+</tr>
+</tbody>
+</table>
+<p>Locked footprints, footprints with the <code>fixed</code> user attribute and parts in user-fixed groups never move in
+any mode. Edge connectors and mounting holes are fixed by default (configurable).</p>
+<h2 id="6-execution-model">6. Execution model<a class="headerlink" href="#6-execution-model" title="Permanent link">&para;</a></h2>
+<h3 id="61-threads">6.1 Threads<a class="headerlink" href="#61-threads" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>CPU</strong>: one work-stealing pool (oneTBB). Stages submit region-partitioned work items; overlapping items
+  never run together. A deterministic scheduler orders item starts and merges results in a fixed order.</li>
+<li><strong>GPU</strong>: a <code>GpuService</code> owns one CUDA context per device, streams per stage, and pinned host buffers.
+  Each GPU job is pure (inputs → outputs), so the CPU reference path can be swapped in and compared.</li>
+<li>Default device roles: <strong>V100</strong> for routing fields and DRC broad-phase, <strong>P100</strong> for placement (density
+  FFT, batched multi-start). Both are used for the portfolio when the other role is idle.</li>
+</ul>
+<h3 id="62-determinism">6.2 Determinism<a class="headerlink" href="#62-determinism" title="Permanent link">&para;</a></h3>
+<ul>
+<li>One <code>uint64</code> job seed; a counter-based RNG (Philox4x32 or SplitMix64) keyed by (seed, stage, item id),
+  identical on CPU and GPU.</li>
+<li>Stable tie-breaks by object id then coordinates. Never iterate hash containers in output-affecting order.</li>
+<li>GPU reductions on costs use integer fixed-point (costs are <code>int64</code> micro-units) so atomics are
+  order-independent. Floating point is allowed only where the result is snapped before it affects a
+  decision (placement positions are snapped to a 1 µm grid each iteration).</li>
+<li>Budgets are <strong>work units</strong>, not wall time, at decision points. Wall time only stops the job early.</li>
+<li>Portfolio variants are defined by (settings, variant index), never by the thread count; threads only schedule
+  them, and the best variant is chosen by a total order ending in the variant index, so a work-budget run is
+  bit-identical at any thread count (router: <code>--variants</code>, default all eight with <code>--work</code>; D47).</li>
+</ul>
+<h3 id="63-budgets">6.3 Budgets<a class="headerlink" href="#63-budgets" title="Permanent link">&para;</a></h3>
+<p>The scheduler gives each stage a deadline plus a work quota; callees check the work quota in inner loops.
+Default split of the remaining time: placement ≤ 30% (full mode), escape 5%, global 10%, detailed 25%,
+repair 15%, last gasp ≤ min(120 s, 50% of remainder), cleanup ≥ 5% reserved.</p>
+<h2 id="7-event-bus">7. Event bus<a class="headerlink" href="#7-event-bus" title="Permanent link">&para;</a></h2>
+<p>Every stage emits typed events (doc 09 lists them): <code>NetRouted</code>, <code>SearchFrontier</code>, <code>RipUp</code>, <code>FailureRecorded</code>,
+<code>FootprintMoved</code>, <code>CongestionMap</code>, <code>DrcMarker</code>, <code>StageBegin/End</code>, <code>ScoreChanged</code>. The bus fans out to:
+1. the <strong>viewer stream</strong> (coalesced to ≤ 60 Hz, level-of-detail filtered);
+2. the <strong>replay log</strong> (append-only, zstd-compressed FlatBuffers, keyframe every N events);
+3. the <strong>report builder</strong>.</p>
+<p>Emitting must never block a stage: lock-free single-producer ring buffer per thread, drained by one
+publisher thread; if the viewer falls behind, frontier events are dropped (state events never are).</p>
+<h2 id="8-repository-layout">8. Repository layout<a class="headerlink" href="#8-repository-layout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>TraceMaker/
+  CMakeLists.txt  CMakePresets.json  cmake/
+  src/
+    core/        ids, arena allocators, RNG, fixed-point, budgets, logging, events
+    geom/        int64-nm kernel, predicates, octilinear ops, Clipper2 wrappers
+    model/       board, layers, stackup, footprints, nets, net classes, transactions, scoring
+    rules/       rule compiler (net classes, .kicad_dru, board constraints), rule query object
+    index/       R-trees, uniform spatial hash, bit-packed layer grids, tile planes, congestion maps
+    io/kicad/    s-expression lexer/parser/writer; .kicad_pcb/.kicad_sch/.kicad_pro/.kicad_dru/.kicad_mod
+    io/dsn/      Specctra DSN reader / SES writer (benchmarks and legacy)
+    analysis/    RUDY, crossings, escape capacity, cut (Maley) analysis, routability report
+    place/       analytic (quadratic + electrostatic), legaliser, discrete optimiser, exact (CP-SAT), ECO
+    route/escape/ route/global/ route/detail/ route/repair/ route/cleanup/
+    learn/       failure records, nogood store, history maps, activity, bandits, persistent KB
+    advice/      advice files (strict hints for the router), the stuck report, the advisor process protocol (doc 17); no model, network or keys
+    session/     a board session an agent drives (tools over MCP and JSON lines, transactions, undo, replayable log; doc 19); no model, network or keys
+    drc/         rule checks equivalent to KiCad's
+    gpu/         CUDA kernels + host wrappers; each with a CPU reference
+    sched/       job scheduler, portfolio, stage state machine
+    server/      HTTP + WebSocket server, FlatBuffers schema, replay log
+    app/         CLI entry points
+  bindings/python/   pybind11 module `tracemaker`
+  viewer/            TypeScript app, WebGL2 + WebGPU backends (Vite)
+  kicad_plugin/      IPC plugin (Python, PCM package)
+  advisors/          reference advisors (a rule-based one and a language-model client, standard library only; doc 17)
+  agents/            a client for the board session and a scripted baseline agent (standard library only; doc 19)
+  bench/             harness, fixture manifests, KiCad-DRC judge, Freerouting runner, report generator
+  tests/             unit, property, golden-file, CPU-vs-GPU equivalence
+  third_party/       pinned via CMake FetchContent / vcpkg manifest
+  docs/              the documentation site (MkDocs, D134): tutorials/ how-to/ reference/ explanation/ project/,
+                     the numbered design docs, decisions/ (one record per decision), api/ (Doxygen configuration)
+  research/
+</code></pre></div>
+<h2 id="9-technology-choices">9. Technology choices<a class="headerlink" href="#9-technology-choices" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Choice</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Engine language</td>
+<td>C++20 (GCC 15), CUDA 12.4 (<code>sm_60;sm_70</code>)</td>
+<td>Performance, CUDA, matches the existing design doc</td>
+</tr>
+<tr>
+<td>Build</td>
+<td>CMake ≥ 3.28 + Ninja, presets <code>debug</code>, <code>release</code>, <code>asan</code>, <code>tsan</code>, <code>cpu-only</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Dependencies</td>
+<td>Clipper2, Boost.Geometry, oneTBB, Eigen, OR-Tools (CP-SAT), ankerl::unordered_dense, fmt, spdlog, FlatBuffers, zstd, uWebSockets (or Boost.Beast), SQLite, Catch2, pybind11, CUB/Thrust</td>
+<td>All permissive licences</td>
+</tr>
+<tr>
+<td>Viewer</td>
+<td>TypeScript, WebGL2 baseline + WebGPU backend, Vite</td>
+<td>Remote-capable, GPU-rendered, no install on the viewing machine</td>
+</tr>
+<tr>
+<td>Harness</td>
+<td>Python 3.12+ (uv-managed venv), pandas, matplotlib</td>
+<td>Matches <code>kicad-cli</code> and Freerouting tooling</td>
+</tr>
+</tbody>
+</table>
+<p>Note: the machine has GCC 15 but no clang. CUDA 12.4's <code>nvcc</code> supports host GCC only up to 13, so the
+build must use a GCC 13 host compiler for <code>.cu</code> files (<code>-ccbin</code>), or upgrade CUDA. Verify this first
+(roadmap M0).</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../01-requirements/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Requirements">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Requirements
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../03-data-structures/" class="md-footer__link md-footer__link--next" aria-label="Next: Data structures and DRC">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Data structures and DRC
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      GPL-3.0-or-later
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../assets/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
