@@ -8,6 +8,9 @@
 **An autorouter and component placer for KiCad.** You give it a `.kicad_pcb`; it draws the tracks and vias and
 writes them back into the file.
 
+**Documentation: [dingooz.github.io/TraceMaker](https://dingooz.github.io/TraceMaker/)**: tutorials, how-to guides,
+reference (command line, C++ API) and the design documents.
+
 ![TraceMaker's live viewer after routing a motor-driver board: 195 of 195 connections](docs/img/viewer.png)
 
 *The live viewer after routing a three-channel motor driver: 195 of 195 connections, front copper in red, back in blue.*
