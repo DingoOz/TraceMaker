@@ -18,6 +18,7 @@ want to do now.
 
 | I want to… | Go to |
 |---|---|
+| Get it running in five minutes, on Linux, macOS or Windows | [Quick start](quick-start.md) |
 | Try it for the first time, step by step | [Tutorials](tutorials/index.md): route your first board, route from inside KiCad |
 | Get a particular job done | [How-to guides](how-to/index.md): build and test, run `kicad-cli` from Docker, use the GPUs, run benchmarks, release, write docs |
 | Look up an option, a message or a number | [Reference](reference/index.md): every command-line option, the viewer protocol, benchmark results, the C++ API |

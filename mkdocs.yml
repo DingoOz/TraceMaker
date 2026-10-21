@@ -92,6 +92,7 @@ validation:
 
 nav:
   - Home: index.md
+  - Quick start: quick-start.md
   - Tutorials:
       - tutorials/index.md
       - Route your first board: tutorials/first-board.md
