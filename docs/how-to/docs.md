@@ -76,7 +76,7 @@ A branch started before the records existed may still append a row to the old ta
 | [Command line](../reference/cli.md) | `scripts/gen_reference.py cli --build build/release` | after changing an option or its help text |
 | [Benchmark results](../reference/benchmarks.md) | `scripts/gen_reference.py bench` | after adding a record to `bench/records/` |
 | [Decision index](../12-decisions.md) | `scripts/decisions.py index` | `new` does it; after editing a record's title or status |
-| [C++ API](../reference/api.md) | `doxygen docs/api/Doxyfile` | not committed; CI builds it |
+| [C++ API](../reference/api.md) | `mkdir -p build/api && doxygen docs/api/Doxyfile` | not committed; CI builds it |
 
 CI fails when a committed generated page differs from what the script makes now.
 

@@ -68,6 +68,7 @@ jobs:
 
       - name: C++ API reference
         run: |
+          mkdir -p build/api   # Doxygen does not create missing parent folders
           doxygen docs/api/Doxyfile
           python3 scripts/check_api_docs.py
 
