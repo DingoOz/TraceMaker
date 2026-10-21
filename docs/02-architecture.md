@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/app, src/core]
+---
+
 # 02 — System architecture
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).
@@ -227,7 +232,9 @@ TraceMaker/
   bench/             harness, fixture manifests, KiCad-DRC judge, Freerouting runner, report generator
   tests/             unit, property, golden-file, CPU-vs-GPU equivalence
   third_party/       pinned via CMake FetchContent / vcpkg manifest
-  docs/  research/
+  docs/              the documentation site (MkDocs, D134): tutorials/ how-to/ reference/ explanation/ project/,
+                     the numbered design docs, decisions/ (one record per decision), api/ (Doxygen configuration)
+  research/
 ```
 
 ## 9. Technology choices

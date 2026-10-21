@@ -17,7 +17,8 @@ Thank you for wanting to help. This page tells you how to get a change accepted 
 - **Report a bug.** A board that routes wrongly, or a result that KiCad's design-rule check rejects, is the most
   useful report there is.
 - **Fix a bug** from the [issue list](https://github.com/DingoOz/TraceMaker/issues).
-- **Improve the documentation**, including this page.
+- **Improve the documentation**, including this page. The site is built from `docs/`
+  ([how](docs/how-to/docs.md)).
 - **Try it on your own boards** and say what happened.
 - **Add a feature.** Send the pull request; say what it is for and what you measured.
 
@@ -71,8 +72,8 @@ A checklist. Tick what applies to your change.
 - [ ] New behaviour has a test. A bug fix has a test that failed before the fix.
 - [ ] If it touches routing or placement: the quick benchmark tier was run (see below) and the result is in the
       pull request.
-- [ ] If the design changed: the matching file in `docs/` is updated in the same pull request, with a row in
-      [docs/12-decisions.md](docs/12-decisions.md).
+- [ ] If the design changed: the matching file in `docs/` is updated in the same pull request, with a decision
+      record (`scripts/decisions.py new "Short title"`; see [Write and publish the docs](docs/how-to/docs.md)).
 - [ ] No benchmark boards, build output or personal paths are in the commit.
 
 ### The quick benchmark tier

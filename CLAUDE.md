@@ -2,7 +2,8 @@
 
 Read `PLAN.md`, then the docs for the milestone you are working on (`docs/11-roadmap.md` lists them).
 The design docs are the source of truth. If the code needs to differ, update the doc in the same change
-and add a row to `docs/12-decisions.md`.
+and add a decision record: `scripts/decisions.py new "Short title" --docs NN` writes `docs/decisions/DNNN.md` and
+updates the index in `docs/12-decisions.md` (never add a table row there; D134).
 
 ## Machine
 
@@ -35,6 +36,18 @@ scripts/fetch_fixtures.sh [set ...]  # freerouting dac2020 kicad-demos derived (
   summary in the design doc (see `bench/records/m16/`).
 - Fixtures live in `bench/data/` (git-ignored). Freerouting's PCBench set (1,158 boards with `.kicad_pcb` and
   `.dsn`) is at `bench/data/freerouting/scripts/benchmark/fixtures/PCBench`.
+
+## Documentation site
+
+- MkDocs + Material from `docs/`, organised by Diátaxis (tutorials, how-to, reference, explanation, project); see
+  `docs/how-to/docs.md`. Preview: `pip install -r docs/requirements.txt`, `mkdocs serve`; CI runs `mkdocs build --strict`.
+- The numbered design docs keep their names (`docs/05-routing.md`, "doc 05 §34"); new pages go in `nav` in `mkdocs.yml`.
+- Every page starts with a YAML header: `status` (current | partly-built | plan | historical), `code` (paths it
+  describes), optional `reviewed` (date checked against the code). `scripts/docs_check.py` checks them.
+- Generated, committed pages: `scripts/gen_reference.py cli --build build/release` after changing an option or its help,
+  `scripts/gen_reference.py bench` after adding to `bench/records/`. CI fails when they are out of date.
+- C++ API: Doxygen reads the headers' plain `//` comments through `scripts/doxygen_filter.py`; keep writing `//`
+  comments above declarations. New undocumented declarations raise a CI warning (`scripts/check_api_docs.py`).
 
 ## Progress website
 

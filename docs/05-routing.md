@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/route, src/passes]
+---
+
 # 05 — Routing
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).
