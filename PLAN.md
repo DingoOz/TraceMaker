@@ -28,6 +28,9 @@
 
 ## Reading order
 
+The documentation is published as a site ([docs/index.md](docs/index.md), D134) with tutorials, how-to guides and
+reference pages beside these design documents.
+
 | # | Document | Content |
 |---|---|---|
 | 1 | [docs/01-requirements.md](docs/01-requirements.md) | Requirements, scope, success criteria, glossary |

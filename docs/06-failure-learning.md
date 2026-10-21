@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/learn]
+---
+
 # 06 — Failure memory: learning from every failed attempt
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

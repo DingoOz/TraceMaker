@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/server, viewer]
+---
+
 # 09 — Real-time visualisation
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

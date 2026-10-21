@@ -1,3 +1,8 @@
+---
+status: partly-built
+code: [src/crules]
+---
+
 # 15 — Component-aware layout rules
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-03.

@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/io, src/sexpr, kicad_plugin]
+---
+
 # 08 — KiCad integration
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

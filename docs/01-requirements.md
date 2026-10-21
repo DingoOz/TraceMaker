@@ -1,3 +1,8 @@
+---
+status: current
+code: []
+---
+
 # 01 — Requirements, scope and success criteria
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

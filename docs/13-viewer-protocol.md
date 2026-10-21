@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/server, viewer]
+---
+
 # 13 — Viewer protocol (v1, JSON over WebSocket)
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). v1 uses JSON for speed of development;

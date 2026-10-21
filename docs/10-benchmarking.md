@@ -1,3 +1,8 @@
+---
+status: current
+code: [bench]
+---
+
 # 10 — Benchmarking and evaluation
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

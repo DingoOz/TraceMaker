@@ -1,0 +1,94 @@
+# Documentation site (D134): checks the docs on pull requests; publishes them to GitHub Pages (branch gh-pages) with
+# mike on a push to main (version `dev`) and on a version tag (version `X.Y`, alias `latest`, the default).
+#
+# Runs in the same Ubuntu 26.04 container as CI, so Doxygen's undocumented counts match the committed baseline.
+# The command line reference is checked by ci.yml, which has the built binary.
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'src/**/*.hpp'
+      - 'bench/records/**'
+      - 'scripts/mkdocs_hooks.py'
+      - 'scripts/decisions.py'
+      - 'scripts/docs_check.py'
+      - 'scripts/gen_reference.py'
+      - 'scripts/doxygen_filter.py'
+      - 'scripts/check_api_docs.py'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: Check, build and publish the docs
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 20
+    permissions:
+      contents: write   # mike pushes to gh-pages (only on main and tags)
+    steps:
+      - name: Install tools
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git ca-certificates python3 python3-venv doxygen
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # docs_check.py reads each page's history; mike needs gh-pages
+
+      - name: Python packages
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python3 -m venv /opt/docs
+          /opt/docs/bin/pip install -q -r docs/requirements.txt
+          echo /opt/docs/bin >> "$GITHUB_PATH"   # mike runs `mkdocs` from PATH
+
+      - name: Decision records
+        run: python3 scripts/decisions.py check
+
+      - name: Page headers and staleness
+        run: python3 scripts/docs_check.py
+
+      - name: Generated benchmark page is up to date
+        run: python3 scripts/gen_reference.py bench --check
+
+      - name: C++ API reference
+        run: |
+          mkdir -p build/api   # Doxygen does not create missing parent folders
+          doxygen docs/api/Doxyfile
+          python3 scripts/check_api_docs.py
+
+      - name: Build the site (strict)
+        run: mkdocs build --strict
+
+      - name: Publish
+        if: github.event_name == 'push'
+        env:
+          NO_MKDOCS_2_WARNING: '1'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages:gh-pages || true
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then
+            version="${GITHUB_REF_NAME#v}"; version="${version%.*}"
+            TM_DOCS_REF="${GITHUB_REF_NAME}" mike deploy --push --update-aliases "$version" latest
+            mike set-default --push latest
+          else
+            mike deploy --push dev
+            # Until the first tag publishes `latest`, the site opens on `dev`.
+            mike list | grep -q latest || mike set-default --push dev
+          fi

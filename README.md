@@ -331,15 +331,17 @@ Freerouting 2.5 10%; Freerouting 1.9 20%.
 | `skills/` | agent skills: board preparation and routing sign-off |
 | `bench/` | benchmark tools |
 | `tests/` | tests |
-| `docs/` | design documents; start at [PLAN.md](PLAN.md) |
+| `docs/` | the documentation site: tutorials, how-to guides, reference, design documents, decision records |
 | `report/` | the two PDF reports |
 
 Other folders: `src/core`, `src/sexpr`, `src/model`, `src/geom`, `src/learn`, `devsite/` (a progress dashboard).
 
 ## Read more
 
-- [PLAN.md](PLAN.md) and [docs/](docs/): how it is designed.
-- [docs/12-decisions.md](docs/12-decisions.md): every design decision and why.
+- **[The documentation site](https://dingooz.github.io/TraceMaker/)** (built from [docs/](docs/index.md)): tutorials,
+  how-to guides, the command line reference, the design documents and the C++ API.
+- [PLAN.md](PLAN.md): the plan the design started from.
+- [docs/12-decisions.md](docs/12-decisions.md): every design decision and why, one [record](docs/decisions/) each.
 - [dev/assumptions.md](dev/assumptions.md): choices made without asking the owner.
 - [report/report.pdf](report/report.pdf): method and results, with figures.
 - [report/roadmap_testing.pdf](report/roadmap_testing.pdf): the roadmap and all testing.

@@ -1,3 +1,8 @@
+---
+status: partly-built
+code: [src/advice, advisors]
+---
+
 # 17 — Advice files and a pluggable advisor, called only when the router is stuck
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-14 for issue #26. **Milestone M16.**

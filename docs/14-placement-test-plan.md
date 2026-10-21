@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/place]
+---
+
 # 14 — Placement test plan
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Design: [04-placement.md](04-placement.md).
