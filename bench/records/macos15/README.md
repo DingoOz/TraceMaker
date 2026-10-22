@@ -1,6 +1,6 @@
 # macOS 15 records: building and testing on macOS before 26
 
-Design: [docs/07-gpu.md](../../../docs/07-gpu.md) section 8.2, decision D124. Machine: Apple M2, 8 cores, 16 GB, macOS 15.7.9,
+Design: [docs/07-gpu.md](../../../docs/07-gpu.md) section 8.2, decision D135. Machine: Apple M2, 8 cores, 16 GB, macOS 15.7.9,
 Apple clang 17.0.0, CMake presets `macos-metal` and `macos-cpu`, native `kicad-cli` 10.0.6 (Homebrew cask `kicad`), KiCad demo
 fixtures (KiCad 10.0 at 7a7d026) and Freerouting's PCBench boards from `scripts/fetch_fixtures.sh`.
 

@@ -53,7 +53,7 @@ inline std::optional<double> parse_double_from_chars(std::string_view s) {
 
 // Parses all of `s` as a decimal floating-point number, independent of the C locale; nullopt if it is not one
 // or a character is left over. Apple's libc++ marks floating-point std::from_chars unavailable before macOS 26,
-// so Apple platforms use the strtod_l path (D124).
+// so Apple platforms use the strtod_l path (D135).
 inline std::optional<double> parse_double(std::string_view s) {
 #if defined(__APPLE__)
   return detail::parse_double_strtod(s);

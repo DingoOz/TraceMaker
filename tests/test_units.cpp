@@ -18,7 +18,7 @@ TEST_CASE("millimetre <-> nanometre conversion is exact for KiCad values", "[cor
   CHECK(tmk::nm_to_mm(254'000) == 0.254);
 }
 
-// parse_double (core/parse_double.hpp, D124): the strtod_l path used on Apple platforms takes exactly what
+// parse_double (core/parse_double.hpp, D135): the strtod_l path used on Apple platforms takes exactly what
 // std::from_chars takes and gives the same double.
 TEST_CASE("parse_double accepts from_chars' grammar only", "[core][units]") {
   using tmk::detail::parse_double_strtod;
@@ -50,8 +50,9 @@ TEST_CASE("parse_double: the strtod_l path equals from_chars bit for bit", "[cor
       const std::uint64_t bits = (std::uint64_t{b.v[0]} << 32 | b.v[1]) & 0x7FEF'FFFF'FFFF'FFFFull;  // finite
       double d = 0;
       std::memcpy(&d, &bits, sizeof d);
-      char buf[64];
-      std::snprintf(buf, sizeof buf, b.v[2] % 2 ? "%.17g" : "%.*f", b.v[2] % 2 ? 0 : static_cast<int>(b.v[3] % 9), d);
+      char buf[512];  // %f of the largest double is 309 digits before the point
+      if (b.v[2] % 2) std::snprintf(buf, sizeof buf, "%.17g", d);
+      else std::snprintf(buf, sizeof buf, "%.*f", static_cast<int>(b.v[3] % 9), d);
       s = (b.v[3] & 0x100u ? "-" : "") + std::string(buf);
     }
     INFO('"' << s << '"');

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// The macOS path of tmk::parse_double (strtod_l, D124) against libstdc++'s std::from_chars, which Apple's libc++ lacks
+// The macOS path of tmk::parse_double (strtod_l, D135) against libstdc++'s std::from_chars, which Apple's libc++ lacks
 // before macOS 26. Built on a Mac with Homebrew GCC, so __APPLE__ selects the strtod_l path:
 //   g++-16 -std=c++20 -O2 -I src bench/records/macos15/parse_double_xcheck.cpp -o xcheck && ./xcheck
 // Exit status 1 on any mismatch (accepted by one and not the other, or a different double).

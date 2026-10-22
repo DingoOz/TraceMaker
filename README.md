@@ -21,7 +21,7 @@ reference (command line, C++ API) and the design documents.
 - **How it is judged:** by KiCad's own design-rule check (`kicad-cli pcb drc`), not by its own opinion.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
 - **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
-  Metal backend is contributed and has not been run by the project.
+  Metal backend (macOS 15 and 26, Apple silicon) is contributed; it is tested on contributors' Macs, not in CI.
 - **Status:** release 0.10.0. Licence GPL-3.0-or-later.
 
 ## How good is it?
@@ -79,7 +79,7 @@ cmake --preset release && cmake --build --preset release
 
 No CUDA? Use `cpu-only` instead of `release` in both commands.
 
-On macOS (Apple silicon; **untested**: the presets were contributed and the project has not built or run them), with Apple's Command Line Tools and
+On macOS 15 or 26 (Apple silicon; tested by [Chris Hemingway](https://github.com/cHemingway) on an M2 with macOS 15, not in CI), with Apple's Command Line Tools and
 `brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost clipper2`:
 
 ```
@@ -121,7 +121,7 @@ No KiCad installed? `scripts/kicad-cli` runs it from the `kicad/kicad:10.0.6` Do
 |---|---|---|
 | Linux x86_64, glibc 2.38+ (Ubuntu 24.04+, Debian 13, current Fedora) | release download | yes: CI installs and runs it in a clean container on every release |
 | Linux, built from source | `cmake --preset release` or `cpu-only` | Ubuntu 26.04 only (development machine and CI); other distributions untested |
-| macOS, Apple silicon | `cmake --preset macos-metal` or `macos-cpu` | **untested**: contributed presets, never built or run by the project |
+| macOS 15 or 26, Apple silicon | `cmake --preset macos-metal` or `macos-cpu` | by a contributor, not in CI: [Chris Hemingway](https://github.com/cHemingway), Apple M2 with macOS 15, every test passes and the `quick` tier matches Linux board for board ([doc 07 §8.2](docs/07-gpu.md)) |
 | Windows 10/11 | the Linux release inside WSL2 | **untested** |
 | KiCad plugin | release `pcm` zip, KiCad 10 | Linux only; KiCad for Windows or macOS cannot use it |
 

@@ -168,7 +168,7 @@ The same 30-board sample gave 30/30 byte-identical CPU/Metal boards, 43.3% clean
 no added errors (`bench/results/macos-metal-scan-quick/`). The `[gpu][field]` tests cover thin grids, blocked
 targets, buffer reuse, concurrent callers, and a 300-cell winding corridor requiring more than 32 rounds.
 
-### 8.2 macOS 15 (2026-10-17, D124)
+### 8.2 macOS 15 (2026-10-17, D135; contributed by Chris Hemingway, PR #46)
 
 The port in §8 was built on macOS 26.4. On macOS 15 it did not compile: Apple's libc++ makes floating-point
 `std::from_chars` available only from macOS 26. `tmk::parse_double` (`core/parse_double.hpp`) uses `from_chars`
