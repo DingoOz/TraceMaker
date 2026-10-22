@@ -79,7 +79,7 @@ cmake --preset release && cmake --build --preset release
 
 No CUDA? Use `cpu-only` instead of `release` in both commands.
 
-On macOS (Apple silicon), with Apple's Command Line Tools and
+On macOS (Apple silicon; **untested**: the presets were contributed and the project has not built or run them), with Apple's Command Line Tools and
 `brew install cmake ninja eigen cli11 nlohmann-json catch2 zstd boost clipper2`:
 
 ```
@@ -87,6 +87,8 @@ cmake --preset macos-metal -DCMAKE_PREFIX_PATH="$(brew --prefix)" && cmake --bui
 ```
 
 `macos-cpu` builds without Metal. Metal speeds up the cost-to-go fields only; see [docs/07-gpu.md](docs/07-gpu.md) §8.
+
+On Windows, there is no native build; the Linux release should run inside WSL2 (Ubuntu 24.04), but this is **untested**.
 
 **2. Route a board**
 
@@ -114,6 +116,17 @@ kicad-cli pcb drc --format json -o drc.json routed.kicad_pcb
 No KiCad installed? `scripts/kicad-cli` runs it from the `kicad/kicad:10.0.6` Docker image; put it on your `PATH`.
 
 ## What you need
+
+| Platform | How | Tested |
+|---|---|---|
+| Linux x86_64, glibc 2.38+ (Ubuntu 24.04+, Debian 13, current Fedora) | release download | yes: CI installs and runs it in a clean container on every release |
+| Linux, built from source | `cmake --preset release` or `cpu-only` | Ubuntu 26.04 only (development machine and CI); other distributions untested |
+| macOS, Apple silicon | `cmake --preset macos-metal` or `macos-cpu` | **untested**: contributed presets, never built or run by the project |
+| Windows 10/11 | the Linux release inside WSL2 | **untested** |
+| KiCad plugin | release `pcm` zip, KiCad 10 | Linux only; KiCad for Windows or macOS cannot use it |
+
+If you try an untested platform, please [open an issue](https://github.com/DingoOz/TraceMaker/issues) with what
+happened, whether it worked or not.
 
 - **Ubuntu 26.04** (what it is developed on).
 - **Compilers:** GCC 15 (what it is built and tested with; older versions are untried). With CUDA 12.x, also
