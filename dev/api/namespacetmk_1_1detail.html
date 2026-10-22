@@ -95,6 +95,9 @@ $(function(){initNavTree('namespacetmk_1_1detail.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a8dc82c1fd92626bc8f2f0a36627ad4bb" id="r_a8dc82c1fd92626bc8f2f0a36627ad4bb"><td class="memItemLeft" align="right" valign="top">std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8dc82c1fd92626bc8f2f0a36627ad4bb">parse_double_strtod</a> (std::string_view s)</td></tr>
+<tr class="memdesc:a8dc82c1fd92626bc8f2f0a36627ad4bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">strtod_l with the "C" locale, restricted to the grammar of std::from_chars(chars_format::general): strtod also takes leading whitespace, '+' and hex, which from_chars does not.  <br /></td></tr>
+<tr class="memitem:a95d05a79e6b2588bcc2f935dc6e1c546" id="r_a95d05a79e6b2588bcc2f935dc6e1c546"><td class="memItemLeft" align="right" valign="top">std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95d05a79e6b2588bcc2f935dc6e1c546">parse_double_from_chars</a> (std::string_view s)</td></tr>
 <tr class="memitem:aea790e64a28869ed69714dd72a1f052a" id="r_aea790e64a28869ed69714dd72a1f052a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hd_8hpp.html#a9b20818c4cade1d81427963263cb1026">TM_HD_INLINE</a> constexpr void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea790e64a28869ed69714dd72a1f052a">mul_hi_lo</a> (std::uint32_t a, std::uint32_t b, std::uint32_t &amp;hi, std::uint32_t &amp;lo)</td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
@@ -136,6 +139,65 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="rng_8hpp_source.html#l00028">28</a> of file <a class="el" href="rng_8hpp_source.html">rng.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a95d05a79e6b2588bcc2f935dc6e1c546" name="a95d05a79e6b2588bcc2f935dc6e1c546"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95d05a79e6b2588bcc2f935dc6e1c546">&#9670;&#160;</a></span>parse_double_from_chars()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; double &gt; tmk::detail::parse_double_from_chars </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parse__double_8hpp_source.html#l00044">44</a> of file <a class="el" href="parse__double_8hpp_source.html">parse_double.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a8dc82c1fd92626bc8f2f0a36627ad4bb" name="a8dc82c1fd92626bc8f2f0a36627ad4bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8dc82c1fd92626bc8f2f0a36627ad4bb">&#9670;&#160;</a></span>parse_double_strtod()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; double &gt; tmk::detail::parse_double_strtod </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>strtod_l with the "C" locale, restricted to the grammar of std::from_chars(chars_format::general): strtod also takes leading whitespace, '+' and hex, which from_chars does not. </p>
+<p>Correctly rounded on glibc and Apple's libc, so it gives the same double as from_chars; tests/test_units.cpp checks that wherever from_chars exists. </p>
+<p>&lt; strtod needs a terminated string</p>
+<p>strtod also sets ERANGE for a subnormal result, which from_chars returns; only overflow and underflow to zero are result_out_of_range there.</p>
+
+<p class="definition">Definition at line <a class="el" href="parse__double_8hpp_source.html#l00024">24</a> of file <a class="el" href="parse__double_8hpp_source.html">parse_double.hpp</a>.</p>
 
 </div>
 </div>

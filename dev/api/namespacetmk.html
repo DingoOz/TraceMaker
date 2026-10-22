@@ -129,6 +129,8 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a955e4b79c24ff1361f3e85a814bb550e" id="r_a955e4b79c24ff1361f3e85a814bb550e"><td class="memItemLeft" align="right" valign="top">std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a955e4b79c24ff1361f3e85a814bb550e">parse_double</a> (std::string_view s)</td></tr>
+<tr class="memdesc:a955e4b79c24ff1361f3e85a814bb550e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses all of <span class="tt">s</span> as a decimal floating-point number, independent of the C locale; nullopt if it is not one or a character is left over.  <br /></td></tr>
 <tr class="memitem:a11ae099c78d5af3094d99a8fdf307a93" id="r_a11ae099c78d5af3094d99a8fdf307a93"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hd_8hpp.html#a9b20818c4cade1d81427963263cb1026">TM_HD_INLINE</a> constexpr <a class="el" href="structtmk_1_1U32x4.html">U32x4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11ae099c78d5af3094d99a8fdf307a93">philox4x32_10</a> (<a class="el" href="structtmk_1_1U32x4.html">U32x4</a> ctr, <a class="el" href="structtmk_1_1U32x2.html">U32x2</a> key)</td></tr>
 <tr class="memdesc:a11ae099c78d5af3094d99a8fdf307a93"><td class="mdescLeft">&#160;</td><td class="mdescRight">One Philox4x32-10 block: 128 random bits for a 128-bit counter under a 64-bit key.  <br /></td></tr>
 <tr class="memitem:a29d1992943fb15d4937b32ea0f749255" id="r_a29d1992943fb15d4937b32ea0f749255"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hd_8hpp.html#a9b20818c4cade1d81427963263cb1026">TM_HD_INLINE</a> constexpr std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29d1992943fb15d4937b32ea0f749255">splitmix64</a> (std::uint64_t x)</td></tr>
@@ -210,6 +212,36 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="units_8hpp_source.html#l00020">20</a> of file <a class="el" href="units_8hpp_source.html">units.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a955e4b79c24ff1361f3e85a814bb550e" name="a955e4b79c24ff1361f3e85a814bb550e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a955e4b79c24ff1361f3e85a814bb550e">&#9670;&#160;</a></span>parse_double()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; double &gt; tmk::parse_double </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parses all of <span class="tt">s</span> as a decimal floating-point number, independent of the C locale; nullopt if it is not one or a character is left over. </p>
+<p>Apple's libc++ marks floating-point std::from_chars unavailable before macOS 26, so Apple platforms use the strtod_l path (D135). </p>
+
+<p class="definition">Definition at line <a class="el" href="parse__double_8hpp_source.html#l00057">57</a> of file <a class="el" href="parse__double_8hpp_source.html">parse_double.hpp</a>.</p>
 
 </div>
 </div>

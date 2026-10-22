@@ -1656,6 +1656,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#82-macos-15-2026-10-17-d135-contributed-by-chris-hemingway-pr-46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 macOS 15 (2026-10-17, D135; contributed by Chris Hemingway, PR #46)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2275,6 +2286,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#82-macos-15-2026-10-17-d135-contributed-by-chris-hemingway-pr-46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 macOS 15 (2026-10-17, D135; contributed by Chris Hemingway, PR #46)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2609,6 +2631,46 @@ Placement's 600 s router safety limit gave 55–147 s per route, 987 s for 7 rou
 <p>The same 30-board sample gave 30/30 byte-identical CPU/Metal boards, 43.3% clean pass, 89.3% completion, and
 no added errors (<code>bench/results/macos-metal-scan-quick/</code>). The <code>[gpu][field]</code> tests cover thin grids, blocked
 targets, buffer reuse, concurrent callers, and a 300-cell winding corridor requiring more than 32 rounds.</p>
+<h3 id="82-macos-15-2026-10-17-d135-contributed-by-chris-hemingway-pr-46">8.2 macOS 15 (2026-10-17, D135; contributed by Chris Hemingway, PR #46)<a class="headerlink" href="#82-macos-15-2026-10-17-d135-contributed-by-chris-hemingway-pr-46" title="Permanent link">&para;</a></h3>
+<p>The port in §8 was built on macOS 26.4. On macOS 15 it did not compile: Apple's libc++ makes floating-point
+<code>std::from_chars</code> available only from macOS 26. <code>tmk::parse_double</code> (<code>core/parse_double.hpp</code>) uses <code>from_chars</code>
+elsewhere and <code>strtod_l</code> in the "C" locale on Apple platforms, held to <code>from_chars</code>' grammar. The test scripts
+also needed changes for macOS's bash 3.2 (no <code>mapfile</code>; an empty array is unbound under <code>set -u</code>), and clang
+rejected an unused constant that GCC accepts.</p>
+<p><strong>Results.</strong> Apple M2, macOS 15.7.9, Apple clang 17, native <code>kicad-cli</code> 10.0.6 (Homebrew cask), KiCad demo and
+Freerouting fixtures fetched. Records: <code>bench/records/macos15/</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CTest, <code>macos-metal</code> and <code>macos-cpu</code></td>
+<td>all pass, including DRC parity against <code>kicad-cli</code> (14/14 boards) and broken-board parity</td>
+</tr>
+<tr>
+<td>CTest under ASan + UBSan (<code>macos-cpu</code> flags plus the <code>asan</code> preset's)</td>
+<td>no sanitizer report; 368/368, <code>crules_two_stage</code> run alone: at <code>-j4</code> it went over its 3,600 s limit (records)</td>
+</tr>
+<tr>
+<td><code>parse_double</code> on macOS against libstdc++'s <code>from_chars</code></td>
+<td>2,000,000 strings, 0 mismatches</td>
+</tr>
+<tr>
+<td>Quick tier, 1M work, CPU against Metal</td>
+<td>30/30 byte-identical, 25/30 clean, 99.0 % completion</td>
+</tr>
+<tr>
+<td>Quick tier against Linux (<code>bench/records/m17</code>, <code>--no-gpu</code>)</td>
+<td>30/30 boards with the same routed count, tracks, vias, completion and style metric</td>
+</tr>
+</tbody>
+</table>
+<p>The Linux comparison uses what <code>boards.jsonl</code> keeps, not the routed files, which stay on the machine that made
+them (<code>compare_boards.py</code> in the records).</p>
 
 
 

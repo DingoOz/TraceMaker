@@ -5,7 +5,9 @@ var namespacetmk =
     [ "app", "namespacetmk_1_1app.html", "namespacetmk_1_1app" ],
     [ "events", "namespacetmk_1_1events.html", "namespacetmk_1_1events" ],
     [ "detail", "namespacetmk_1_1detail.html", [
-      [ "mul_hi_lo", "namespacetmk_1_1detail.html#aea790e64a28869ed69714dd72a1f052a", null ]
+      [ "mul_hi_lo", "namespacetmk_1_1detail.html#aea790e64a28869ed69714dd72a1f052a", null ],
+      [ "parse_double_from_chars", "namespacetmk_1_1detail.html#a95d05a79e6b2588bcc2f935dc6e1c546", null ],
+      [ "parse_double_strtod", "namespacetmk_1_1detail.html#a8dc82c1fd92626bc8f2f0a36627ad4bb", null ]
     ] ],
     [ "crules", "namespacetmk_1_1crules.html", "namespacetmk_1_1crules" ],
     [ "drc", "namespacetmk_1_1drc.html", "namespacetmk_1_1drc" ],
@@ -27,6 +29,7 @@ var namespacetmk =
     [ "Coord", "namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6", null ],
     [ "mm_to_nm", "namespacetmk.html#a709bc89cdffe94a46f8bf11ab87ae818", null ],
     [ "nm_to_mm", "namespacetmk.html#a7c6278eb8dc585295857402ec85e7338", null ],
+    [ "parse_double", "namespacetmk.html#a955e4b79c24ff1361f3e85a814bb550e", null ],
     [ "philox4x32_10", "namespacetmk.html#a11ae099c78d5af3094d99a8fdf307a93", null ],
     [ "splitmix64", "namespacetmk.html#a29d1992943fb15d4937b32ea0f749255", null ],
     [ "version", "namespacetmk.html#aa03a0d691db43504fd8b479a756bea11", null ],
