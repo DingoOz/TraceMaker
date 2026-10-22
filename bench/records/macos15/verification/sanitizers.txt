@@ -1,0 +1,769 @@
+Test project /Users/chris/repos/TraceMaker/build/macos-asan
+        Start   1: D25 ties are reproduced and the generalised decoupling is a superset
+        Start   2: IPC-2221 width for current
+        Start   3: KiCad demo stackups parse and give sane geometry
+        Start   4: PCBench fixture: detection report is stable and finds the crystal
+  1/368 Test   #2: IPC-2221 width for current ..............................................................................................   Passed    0.08 sec
+        Start   5: USB 2.0 pairs for coupled routing (USB2-02)
+  2/368 Test   #1: D25 ties are reproduced and the generalised decoupling is a superset ....................................................   Passed    0.09 sec
+        Start   6: boards without pin names: binding by nets and pad numbers, capped confidence
+  3/368 Test   #6: boards without pin names: binding by nets and pad numbers, capped confidence ............................................   Passed    0.29 sec
+        Start   7: catalogue: embedded JSON loads with every category and rule
+  4/368 Test   #7: catalogue: embedded JSON loads with every category and rule .............................................................   Passed    0.12 sec
+        Start   8: catalogue: schema errors are reported, not ignored
+  5/368 Test   #8: catalogue: schema errors are reported, not ignored ......................................................................   Passed    0.06 sec
+        Start   9: coupled microstrip: Kirschning & Jansen against KiCad
+  6/368 Test   #9: coupled microstrip: Kirschning & Jansen against KiCad ...................................................................   Passed    0.06 sec
+        Start  10: coupled stripline: Cohn 1955 exact and against KiCad
+  7/368 Test   #5: USB 2.0 pairs for coupled routing (USB2-02) .............................................................................   Passed    0.58 sec
+        Start  11: detection and role binding on a synthetic board with pin names
+  8/368 Test  #10: coupled stripline: Cohn 1955 exact and against KiCad ....................................................................   Passed    0.08 sec
+        Start  12: detection is deterministic and independent of footprint order
+  9/368 Test   #3: KiCad demo stackups parse and give sane geometry ........................................................................   Passed    0.81 sec
+        Start  13: elliptic integral ratio K(k)/K(k')
+ 10/368 Test  #13: elliptic integral ratio K(k)/K(k') ......................................................................................   Passed    0.05 sec
+        Start  14: ethernet: discrete magnetics bound and voided on the adjacent layer (ETH-05)
+ 11/368 Test  #11: detection and role binding on a synthetic board with pin names ..........................................................   Passed    0.36 sec
+        Start  15: ethernet: four layers, MagJack, through-hole magnetics
+ 12/368 Test  #14: ethernet: discrete magnetics bound and voided on the adjacent layer (ETH-05) ............................................   Passed    0.35 sec
+        Start  16: evaluation: proximity measured, statuses follow the mode
+ 13/368 Test  #15: ethernet: four layers, MagJack, through-hole magnetics ..................................................................   Passed    0.51 sec
+        Start  17: grounded coplanar waveguide: exact and against KiCad
+ 14/368 Test  #12: detection is deterministic and independent of footprint order ...........................................................   Passed    0.85 sec
+        Start  18: impedance is monotone where the solver relies on it
+ 15/368 Test  #16: evaluation: proximity measured, statuses follow the mode ................................................................   Passed    0.37 sec
+        Start  19: impedance rules: widths per layer with a stackup, never without one
+ 16/368 Test  #17: grounded coplanar waveguide: exact and against KiCad ....................................................................   Passed    0.06 sec
+        Start  20: keep-outs: crystal area on the free layer, tracks only, named; sidecar rule
+ 17/368 Test  #18: impedance is monotone where the solver relies on it .....................................................................   Passed    0.06 sec
+        Start  21: microstrip: 50 ohm on 1.6 mm FR-4 is about 3 mm wide (doc 15 §5.3)
+ 18/368 Test  #21: microstrip: 50 ohm on 1.6 mm FR-4 is about 3 mm wide (doc 15 §5.3) .....................................................   Passed    0.06 sec
+        Start  22: microstrip: Hammerstad & Jensen against textbook, KiCad and IPC-2141A
+ 19/368 Test  #22: microstrip: Hammerstad & Jensen against textbook, KiCad and IPC-2141A ...................................................   Passed    0.05 sec
+        Start  23: names: references, supplies, voltages, capacitances
+ 20/368 Test  #23: names: references, supplies, voltages, capacitances .....................................................................   Passed    0.06 sec
+        Start  24: net classes from rules: computed widths become classes for Default-class nets only
+ 21/368 Test  #19: impedance rules: widths per layer with a stackup, never without one .....................................................   Passed    0.22 sec
+        Start  25: overrides: deny and assert change which instances exist
+ 22/368 Test  #24: net classes from rules: computed widths become classes for Default-class nets only ......................................   Passed    0.16 sec
+        Start  26: overrides: disable a rule, a rule on one part, a category
+ 23/368 Test  #20: keep-outs: crystal area on the free layer, tracks only, named; sidecar rule .............................................   Passed    0.56 sec
+        Start  27: overrides: every form parses, in file order
+ 24/368 Test  #27: overrides: every form parses, in file order .............................................................................   Passed    0.13 sec
+        Start  28: overrides: set changes parameters; @REF wins over global, later wins among equals
+ 25/368 Test  #25: overrides: deny and assert change which instances exist .................................................................   Passed    0.57 sec
+        Start  29: overrides: typos and contradictions are errors with a clear message
+ 26/368 Test  #29: overrides: typos and contradictions are errors with a clear message .....................................................   Passed    0.38 sec
+        Start  30: placement affinities: each part pulled by one rule, locked parts never
+ 27/368 Test  #26: overrides: disable a rule, a rule on one part, a category ...............................................................   Passed    1.07 sec
+        Start  31: propagation delay
+ 28/368 Test  #31: propagation delay .......................................................................................................   Passed    0.06 sec
+        Start  32: solving: integer-nm bisection round trips and is deterministic
+ 29/368 Test  #32: solving: integer-nm bisection round trips and is deterministic ..........................................................   Passed    0.06 sec
+        Start  33: stackup geometry: microstrip outside, stripline inside, reference zones
+ 30/368 Test  #33: stackup geometry: microstrip outside, stripline inside, reference zones .................................................   Passed    0.06 sec
+        Start  34: stripline: Cohn/Wheeler against textbook and KiCad
+ 31/368 Test  #34: stripline: Cohn/Wheeler against textbook and KiCad ......................................................................   Passed    0.05 sec
+        Start  35: width for current from a rule's current, with the stackup's copper
+ 32/368 Test   #4: PCBench fixture: detection report is stable and finds the crystal .......................................................   Passed    3.31 sec
+        Start  36: a truncated compressed log yields its complete lines, a corrupt one throws
+ 33/368 Test  #30: placement affinities: each part pulled by one rule, locked parts never ..................................................   Passed    0.58 sec
+        Start  37: board snapshot of pic_programmer has the board's objects
+ 34/368 Test  #35: width for current from a rule's current, with the stackup's copper ......................................................   Passed    0.12 sec
+        Start  38: heat grid sizing, scaling and message
+ 35/368 Test  #38: heat grid sizing, scaling and message ...................................................................................   Passed    0.11 sec
+        Start  39: message builders put type first and classify
+ 36/368 Test  #39: message builders put type first and classify ............................................................................   Passed    0.10 sec
+        Start  40: replay log keeps empty lines, long lines and end_frame boundaries
+ 37/368 Test  #36: a truncated compressed log yields its complete lines, a corrupt one throws ..............................................   Passed    0.26 sec
+        Start  41: replay log round-trips plain and zstd
+ 38/368 Test  #28: overrides: set changes parameters; @REF wins over global, later wins among equals .......................................   Passed    1.31 sec
+        Start  42: router heatmaps: emitted with a sink, routing unchanged by it
+ 39/368 Test  #40: replay log keeps empty lines, long lines and end_frame boundaries .......................................................   Passed    0.10 sec
+        Start  43: slow clients lose transient messages but not state
+ 40/368 Test  #41: replay log round-trips plain and zstd ...................................................................................   Passed    0.28 sec
+        Start  44: the viewer is found through TM_VIEW_DIR when it holds an index.html, and the variable is ignored when it does not
+ 41/368 Test  #44: the viewer is found through TM_VIEW_DIR when it holds an index.html, and the variable is ignored when it does not .......   Passed    0.12 sec
+        Start  45: viewer server serves files, streams snapshot then deltas, shuts down
+ 42/368 Test  #45: viewer server serves files, streams snapshot then deltas, shuts down ....................................................   Passed    0.11 sec
+        Start  46: viewer server: a burst of upgrades cannot overshoot the cap, and one address cannot use up the connections
+ 43/368 Test  #37: board snapshot of pic_programmer has the board's objects ................................................................   Passed    1.17 sec
+        Start  47: viewer server: a token of your own, a viewer without one on purpose, and tokens that are refused
+ 44/368 Test  #47: viewer server: a token of your own, a viewer without one on purpose, and tokens that are refused ........................   Passed    0.10 sec
+        Start  48: viewer server: a viewer other machines can reach needs its token, in the URL once and then in a cookie
+ 45/368 Test  #48: viewer server: a viewer other machines can reach needs its token, in the URL once and then in a cookie ..................   Passed    0.10 sec
+        Start  49: viewer server: by default only this machine can reach it, and a page on another site cannot read the stream
+ 46/368 Test  #46: viewer server: a burst of upgrades cannot overshoot the cap, and one address cannot use up the connections ..............   Passed    0.73 sec
+        Start  50: viewer server: the number of viewers and connections is capped
+ 47/368 Test  #49: viewer server: by default only this machine can reach it, and a page on another site cannot read the stream .............   Passed    0.12 sec
+        Start  51: viewer server: what the review of the first version found
+ 48/368 Test  #51: viewer server: what the review of the first version found ...............................................................   Passed    0.12 sec
+        Start  52: ECO: only improving moves, locked parts never move, legal
+ 49/368 Test  #50: viewer server: the number of viewers and connections is capped ..........................................................   Passed    0.57 sec
+        Start  53: HPWL lower bound is exact on a chain and bounds random placements
+ 50/368 Test  #53: HPWL lower bound is exact on a chain and bounds random placements .......................................................   Passed    0.29 sec
+        Start  54: LNS never worsens the cost and keeps the placement legal
+ 51/368 Test  #43: slow clients lose transient messages but not state ......................................................................   Passed    4.70 sec
+        Start  55: P5: byte-identical board for 1, 3 and 16 threads (tempering + LNS + RUDY, refine)
+ 52/368 Test  #52: ECO: only improving moves, locked parts never move, legal ...............................................................   Passed    4.94 sec
+        Start  56: RUDY map: capacity inside the outline, scaling, incremental demand equals the reference
+ 53/368 Test  #56: RUDY map: capacity inside the outline, scaling, incremental demand equals the reference .................................   Passed   13.06 sec
+        Start  57: component-rule proximity pseudo-nets are objective only and skip D25-tied parts
+ 54/368 Test  #57: component-rule proximity pseudo-nets are objective only and skip D25-tied parts .........................................   Passed    1.84 sec
+        Start  58: convex hull
+ 55/368 Test  #58: convex hull .............................................................................................................   Passed    0.07 sec
+        Start  59: decoupling capacitors are tied to an IC supply pin, objective only
+ 56/368 Test  #59: decoupling capacitors are tied to an IC supply pin, objective only ......................................................   Passed    0.15 sec
+        Start  60: edge pulls from component rules: movable connectors only, objective only
+ 57/368 Test  #60: edge pulls from component rules: movable connectors only, objective only ................................................   Passed    1.95 sec
+        Start  61: edge pulls: one-pin anchored nets, exact incremental cost, objective only
+ 58/368 Test  #54: LNS never worsens the cost and keeps the placement legal ................................................................   Passed   32.64 sec
+        Start  62: exact window: branch and bound equals full enumeration and never worsens
+ 59/368 Test  #62: exact window: branch and bound equals full enumeration and never worsens ................................................   Passed   21.47 sec
+        Start  63: extraction from a KiCad board
+ 60/368 Test  #63: extraction from a KiCad board ...........................................................................................   Passed    0.34 sec
+        Start  64: flip: legal, exact incremental cost with the via term, deterministic, only allowed parts flip
+ 61/368 Test  #42: router heatmaps: emitted with a sink, routing unchanged by it ...........................................................   Passed   63.62 sec
+        Start  65: flip: swap states exchange absolute poses on either side
+ 62/368 Test  #65: flip: swap states exchange absolute poses on either side ................................................................   Passed    0.07 sec
+        Start  66: flip: the placer's mirrored geometry is what the KiCad writer produces
+ 63/368 Test  #66: flip: the placer's mirrored geometry is what the KiCad writer produces ..................................................   Passed    0.58 sec
+        Start  67: flip: with no part allowed to flip, --flip changes nothing
+ 64/368 Test  #67: flip: with no part allowed to flip, --flip changes nothing ..............................................................   Passed  975.60 sec
+        Start  68: full pipeline: legal, deterministic, incremental cost exact
+ 65/368 Test  #55: P5: byte-identical board for 1, 3 and 16 threads (tempering + LNS + RUDY, refine) .......................................   Passed  1439.53 sec
+        Start  69: ground-like net names
+ 66/368 Test  #69: ground-like net names ...................................................................................................   Passed    0.07 sec
+        Start  70: legalisation removes every overlap
+ 67/368 Test  #64: flip: legal, exact incremental cost with the via term, deterministic, only allowed parts flip ...........................   Passed  1389.17 sec
+        Start  71: min-cost flow on a small graph
+ 68/368 Test  #71: min-cost flow on a small graph ..........................................................................................   Passed    0.08 sec
+        Start  72: minimal repair: only parts in a conflict move, and the result is legal
+ 69/368 Test  #72: minimal repair: only parts in a conflict move, and the result is legal ..................................................   Passed    2.79 sec
+        Start  73: parallel tempering: legal, exact cost, identical for any thread count
+ 70/368 Test  #61: edge pulls: one-pin anchored nets, exact incremental cost, objective only ...............................................   Passed  1425.63 sec
+        Start  74: parts dropped beside the board are placed; parts overhanging the edge stay
+ 71/368 Test  #74: parts dropped beside the board are placed; parts overhanging the edge stay ..............................................   Passed    2.03 sec
+        Start  75: power-like net names
+ 72/368 Test  #75: power-like net names ....................................................................................................   Passed    0.08 sec
+        Start  76: raster fast path is conservative (raster free implies exactly legal)
+ 73/368 Test  #76: raster fast path is conservative (raster free implies exactly legal) ....................................................   Passed  173.15 sec
+        Start  77: recording a placement never changes it
+ 74/368 Test  #70: legalisation removes every overlap ......................................................................................   Passed  577.67 sec
+        Start  78: rot90 matches KiCad rotation
+ 75/368 Test  #78: rot90 matches KiCad rotation ............................................................................................   Passed    0.09 sec
+        Start  79: rotation descent is monotone
+ 76/368 Test  #79: rotation descent is monotone ............................................................................................   Passed    0.07 sec
+        Start  80: routability loop: never worse than its best seed, locked parts fixed
+ 77/368 Test  #80: routability loop: never worse than its best seed, locked parts fixed ....................................................   Passed   23.26 sec
+        Start  81: routability loop: with absolute seed legality illegal seeds are reference only unless the input is accepted as it is
+ 78/368 Test  #77: recording a placement never changes it ..................................................................................   Passed  497.78 sec
+        Start  82: translated closer() agrees with geom::closer_than
+ 79/368 Test  #82: translated closer() agrees with geom::closer_than .......................................................................   Passed    0.64 sec
+        Start  83: A courtyard that cannot be read is warned about when a rule asks for courtyards
+ 80/368 Test  #83: A courtyard that cannot be read is warned about when a rule asks for courtyards .........................................   Passed    0.46 sec
+        Start  84: Arc circle and polygon courtyards use contours rather than bounding boxes
+ 81/368 Test  #84: Arc circle and polygon courtyards use contours rather than bounding boxes ...............................................   Passed    0.20 sec
+        Start  85: CPU reference fill is deterministic
+ 82/368 Test  #85: CPU reference fill is deterministic .....................................................................................   Passed    0.14 sec
+        Start  86: Courtyard selectors resolved once give the results of matching every footprint
+ 83/368 Test  #86: Courtyard selectors resolved once give the results of matching every footprint ..........................................   Passed    0.12 sec
+        Start  87: Courtyard side selection is independent of copper side and matches wildcard refs
+ 84/368 Test  #87: Courtyard side selection is independent of copper side and matches wildcard refs ........................................   Passed    0.09 sec
+        Start  88: Courtyards chain unordered reversed lines but reject open outlines
+ 85/368 Test  #88: Courtyards chain unordered reversed lines but reject open outlines ......................................................   Passed    0.09 sec
+        Start  89: DRC reports disallowed tracks and vias in pads as KiCad does
+ 86/368 Test  #89: DRC reports disallowed tracks and vias in pads as KiCad does ............................................................   Passed    0.10 sec
+        Start  90: GPU Philox fill is bit-identical to the CPU reference on every device
+ 87/368 Test  #90: GPU Philox fill is bit-identical to the CPU reference on every device ...................................................***Skipped   0.09 sec
+        Start  91: KiCad disallow severity follows later typed rules without clearing other item types
+ 88/368 Test  #91: KiCad disallow severity follows later typed rules without clearing other item types .....................................   Passed    0.09 sec
+        Start  92: KiCad multilayer pad Layer and transformed pad anchors follow their footprint
+ 89/368 Test  #92: KiCad multilayer pad Layer and transformed pad anchors follow their footprint ...........................................   Passed    0.12 sec
+        Start  93: KiCad quoted numbers stay strings, while pad dimensions and positions use nanometres
+ 90/368 Test  #93: KiCad quoted numbers stay strings, while pad dimensions and positions use nanometres ....................................   Passed    0.11 sec
+        Start  94: KiCad rule Layer is the item layer and blind and buried disallow use the span
+ 91/368 Test  #94: KiCad rule Layer is the item layer and blind and buried disallow use the span ...........................................   Passed    0.11 sec
+        Start  95: KiCad rule Width is a track property: undefined for pads and vias
+ 92/368 Test  #95: KiCad rule Width is a track property: undefined for pads and vias .......................................................   Passed    0.11 sec
+        Start  96: KiCad rule compilation drops lone unitless literals and unknown symbols structurally
+ 93/368 Test  #96: KiCad rule compilation drops lone unitless literals and unknown symbols structurally ....................................   Passed    0.19 sec
+        Start  97: KiCad rule numbers retain units, fractional nanometres and comparison precision
+ 94/368 Test  #97: KiCad rule numbers retain units, fractional nanometres and comparison precision .........................................   Passed    0.53 sec
+        Start  98: KiCad rule numbers: exact equality and plain decimal literals
+ 95/368 Test  #98: KiCad rule numbers: exact equality and plain decimal literals ...........................................................   Passed    0.44 sec
+        Start  99: KiCad rule operators: || binds tighter than &&, and ! tighter than comparisons
+ 96/368 Test  #99: KiCad rule operators: || binds tighter than &&, and ! tighter than comparisons ..........................................   Passed    0.17 sec
+        Start 100: Overlapping and touching courtyard outlines are merged; unreadable ones are marked
+ 97/368 Test #100: Overlapping and touching courtyard outlines are merged; unreadable ones are marked ......................................   Passed    0.11 sec
+        Start 101: PTH Layer is footprint side, not the zone fill or checked copper layer
+ 98/368 Test #101: PTH Layer is footprint side, not the zone fill or checked copper layer ..................................................   Passed    0.10 sec
+        Start 102: Philox4x32-10 matches the Random123 known-answer vectors
+ 99/368 Test #102: Philox4x32-10 matches the Random123 known-answer vectors ................................................................   Passed    0.12 sec
+        Start 103: RNG streams are pure functions of (seed, stage, item, n)
+100/368 Test #103: RNG streams are pure functions of (seed, stage, item, n) ................................................................   Passed    0.10 sec
+        Start 104: Rule area enclosure checks full rounded copper, not its box
+101/368 Test #104: Rule area enclosure checks full rounded copper, not its box .............................................................   Passed    0.11 sec
+        Start 105: Rule area holes serialized as slit bridges retain material topology
+102/368 Test #105: Rule area holes serialized as slit bridges retain material topology .....................................................   Passed    0.09 sec
+        Start 106: Rule area intersection and enclosure use common copper layers
+103/368 Test #106: Rule area intersection and enclosure use common copper layers ...........................................................   Passed    0.09 sec
+        Start 107: Rule areas respect concavity and holes including vertex crossings
+104/368 Test #107: Rule areas respect concavity and holes including vertex crossings .......................................................   Passed    0.08 sec
+        Start 108: Rules with a KiCad function TraceMaker does not evaluate are kept, unknown symbols drop the rule
+105/368 Test #108: Rules with a KiCad function TraceMaker does not evaluate are kept, unknown symbols drop the rule ........................   Passed    0.10 sec
+        Start 109: SRJ export joins copper that touches, as KiCad's connectivity does
+106/368 Test #109: SRJ export joins copper that touches, as KiCad's connectivity does ......................................................   Passed    0.11 sec
+        Start 110: SRJ export refuses a board that is not the problem's
+107/368 Test #110: SRJ export refuses a board that is not the problem's ....................................................................   Passed    0.11 sec
+        Start 111: SRJ export: traces follow the routed copper and unrouted connections are named
+108/368 Test #111: SRJ export: traces follow the routed copper and unrouted connections are named ..........................................   Passed    0.12 sec
+        Start 112: SRJ fan-out extensions: planes, exit layers, unpointed pads, track layers, margin
+109/368 Test #112: SRJ fan-out extensions: planes, exit layers, unpointed pads, track layers, margin .......................................   Passed    0.10 sec
+        Start 113: SRJ layer names follow tscircuit's stack order
+110/368 Test #113: SRJ layer names follow tscircuit's stack order ..........................................................................   Passed    0.08 sec
+        Start 114: SRJ reader rejects what it cannot interpret
+111/368 Test #114: SRJ reader rejects what it cannot interpret .............................................................................   Passed    0.13 sec
+        Start 115: SRJ reader: nets, shapes, layers and rules
+112/368 Test #115: SRJ reader: nets, shapes, layers and rules ..............................................................................   Passed    0.16 sec
+        Start 116: SRJ to KiCad: one layer, a rectangular hole, a point on a foreign obstacle
+113/368 Test #116: SRJ to KiCad: one layer, a rectangular hole, a point on a foreign obstacle ..............................................   Passed    0.24 sec
+        Start 117: SRJ to KiCad: pads, nets, outline and zones as the board reader sees them
+114/368 Test #117: SRJ to KiCad: pads, nets, outline and zones as the board reader sees them ...............................................   Passed    0.18 sec
+        Start 118: SRJ to KiCad: the project carries the problem's rules, no more and no less
+115/368 Test #118: SRJ to KiCad: the project carries the problem's rules, no more and no less ..............................................   Passed    0.44 sec
+        Start 119: SRJ via sizes resolve as tscircuit's getViaDimensions
+116/368 Test #119: SRJ via sizes resolve as tscircuit's getViaDimensions ...................................................................   Passed    0.18 sec
+        Start 120: Via Layer is unavailable in pair conditions, even on a shared copper layer
+117/368 Test #120: Via Layer is unavailable in pair conditions, even on a shared copper layer ..............................................   Passed    0.12 sec
+        Start 121: Zone Layer belongs to the original zone, not each projected fill
+118/368 Test #121: Zone Layer belongs to the original zone, not each projected fill ........................................................   Passed    0.09 sec
+        Start 122: a keepout that forbids only vias blocks vias and lets tracks through
+119/368 Test #122: a keepout that forbids only vias blocks vias and lets tracks through ....................................................   Passed    0.09 sec
+        Start 123: advice: a full file is read, and nothing it does not understand is
+120/368 Test #123: advice: a full file is read, and nothing it does not understand is ......................................................   Passed    0.09 sec
+        Start 124: advice: a region reserved for one net keeps the others out, and the others route around it
+121/368 Test  #81: routability loop: with absolute seed legality illegal seeds are reference only unless the input is accepted as it is ....   Passed  104.45 sec
+        Start 125: advice: hints become router options; regions become a rule area and disallow rules
+122/368 Test #125: advice: hints become router options; regions become a rule area and disallow rules ......................................   Passed    0.14 sec
+        Start 126: advice: names are checked against the board, with hints
+123/368 Test #126: advice: names are checked against the board, with hints .................................................................   Passed    0.12 sec
+        Start 127: advice: the order of results is the portfolio's, and a tie is not better
+124/368 Test #127: advice: the order of results is the portfolio's, and a tie is not better ................................................   Passed    0.09 sec
+        Start 128: advice: the portfolio adds advised variants after the others and never does worse
+125/368 Test #124: advice: a region reserved for one net keeps the others out, and the others route around it ..............................   Passed   22.54 sec
+        Start 129: advisor: a process is run with a time limit; whatever it does, the answer is checked
+126/368 Test #129: advisor: a process is run with a time limit; whatever it does, the answer is checked ....................................   Passed    1.26 sec
+        Start 130: append to an inline list moves the closing paren to its own line
+127/368 Test #130: append to an inline list moves the closing paren to its own line ........................................................   Passed    0.07 sec
+        Start 131: arcs flatten within the error bound
+128/368 Test #131: arcs flatten within the error bound .....................................................................................   Passed    0.08 sec
+        Start 132: board reader matches KiCad's own model
+129/368 Test #132: board reader matches KiCad's own model ..................................................................................   Passed    6.33 sec
+        Start 133: bus: a group from --bus NAME=PATTERN
+130/368 Test #133: bus: a group from --bus NAME=PATTERN ....................................................................................   Passed    0.10 sec
+        Start 134: bus: detection in the net names
+131/368 Test #134: bus: detection in the net names .........................................................................................   Passed    0.08 sec
+        Start 135: bus: measurement of a routed group
+132/368 Test #135: bus: measurement of a routed group ......................................................................................   Passed    0.10 sec
+        Start 136: bus: natural order of net names
+133/368 Test #136: bus: natural order of net names .........................................................................................   Passed    0.07 sec
+        Start 137: bus: pattern syntax
+134/368 Test #137: bus: pattern syntax .....................................................................................................   Passed    0.08 sec
+        Start 138: bus: skew limit from the board's custom rules
+135/368 Test #138: bus: skew limit from the board's custom rules ...........................................................................   Passed    0.08 sec
+        Start 139: classes inherit null values from Default; explicit assignments and custom rules are read
+136/368 Test #139: classes inherit null values from Default; explicit assignments and custom rules are read ................................   Passed   25.09 sec
+        Start 140: clearance ramp with breathing: still legal under the board's rules and the same at any thread count
+137/368 Test #128: advice: the portfolio adds advised variants after the others and never does worse .......................................   Passed   43.41 sec
+        Start 141: clearance ramp: loose stages first, the result is legal under the board's rules and the same at any thread count
+138/368 Test  #73: parallel tempering: legal, exact cost, identical for any thread count ...................................................   Passed  751.81 sec
+        Start 142: clip: a polygon with holes fractures into one ring of the same area
+139/368 Test #142: clip: a polygon with holes fractures into one ring of the same area .....................................................   Passed    0.09 sec
+        Start 143: closer-than with a point (disk core) equals the general four-way segment test, exactly
+140/368 Test #143: closer-than with a point (disk core) equals the general four-way segment test, exactly ..................................   Passed    0.77 sec
+        Start 144: constraint flags in brackets: within_diff_pairs is kept, anything else without a value is warned about
+141/368 Test #144: constraint flags in brackets: within_diff_pairs is kept, anything else without a value is warned about ..................   Passed    0.11 sec
+        Start 145: cost-to-go field: CPU reference is the exact shortest-path distance on a small case
+142/368 Test #145: cost-to-go field: CPU reference is the exact shortest-path distance on a small case .....................................   Passed    0.10 sec
+        Start 146: cost-to-go field: GPU equals CPU on random grids
+143/368 Test #146: cost-to-go field: GPU equals CPU on random grids ........................................................................***Skipped   0.11 sec
+        Start 147: cost-to-go field: a winding corridor needing many rounds matches CPU
+144/368 Test #147: cost-to-go field: a winding corridor needing many rounds matches CPU ....................................................***Skipped   0.10 sec
+        Start 148: cost-to-go field: concurrent callers have independent state
+145/368 Test #148: cost-to-go field: concurrent callers have independent state .............................................................***Skipped   0.11 sec
+        Start 149: cost-to-go field: thin grids, blocked targets and reused buffers match CPU
+146/368 Test #149: cost-to-go field: thin grids, blocked targets and reused buffers match CPU ..............................................***Skipped   0.10 sec
+        Start 150: cost-to-go field: unavailable device clears the result
+147/368 Test #150: cost-to-go field: unavailable device clears the result ..................................................................   Passed    0.10 sec
+        Start 151: critical: a board without a reference plane routes as it always did
+148/368 Test #151: critical: a board without a reference plane routes as it always did .....................................................   Passed    1.40 sec
+        Start 152: critical: a critical net can leave a pad that sits in an antipad, even under the hard rule
+149/368 Test #152: critical: a critical net can leave a pad that sits in an antipad, even under the hard rule ..............................   Passed   10.74 sec
+        Start 153: critical: a critical net goes round a split when there is a way, and only a critical one
+150/368 Test  #68: full pipeline: legal, deterministic, incremental cost exact .............................................................   Passed  1191.07 sec
+        Start 154: critical: a critical net pays more for a via and takes the longer way on one layer
+151/368 Test #153: critical: a critical net goes round a split when there is a way, and only a critical one ................................   Passed   17.08 sec
+        Start 155: critical: critical nets are routed before the others, tier by tier
+152/368 Test #154: critical: a critical net pays more for a via and takes the longer way on one layer ......................................   Passed   24.18 sec
+        Start 156: critical: roles make nets critical, in tiers, and a differential pair is tier 2
+153/368 Test #156: critical: roles make nets critical, in tiers, and a differential pair is tier 2 .........................................   Passed    3.39 sec
+        Start 157: critical: the rasterised plane equals a scan of the region, cell by cell
+154/368 Test #140: clearance ramp with breathing: still legal under the board's rules and the same at any thread count .....................   Passed  164.26 sec
+        Start 158: critical: the reference map finds the plane a layer has next to it and the cells over its voids
+155/368 Test #158: critical: the reference map finds the plane a layer has next to it and the cells over its voids .........................   Passed    0.16 sec
+        Start 159: critical: with no way round a split the net crosses it and the audit says so, or stays unrouted when that is the rule
+156/368 Test #141: clearance ramp: loose stages first, the result is legal under the board's rules and the same at any thread count ........   Passed  205.50 sec
+        Start 160: demo boards round-trip byte for byte
+157/368 Test #160: demo boards round-trip byte for byte ....................................................................................   Passed    4.67 sec
+        Start 161: disallow blind_via or buried_via or micro_via alone stops the router placing that via type
+158/368 Test #159: critical: with no way round a split the net crosses it and the audit says so, or stays unrouted when that is the rule ...   Passed  105.07 sec
+        Start 162: disallow rules the router cannot apply are named in the rule warnings
+159/368 Test #162: disallow rules the router cannot apply are named in the rule warnings ...................................................   Passed    0.13 sec
+        Start 163: disallow track on inner layers: other nets avoid them, GND may still use them
+160/368 Test #155: critical: critical nets are routed before the others, tier by tier ......................................................   Passed  224.03 sec
+        Start 164: disallow via also forbids blind and buried vias
+161/368 Test #164: disallow via also forbids blind and buried vias .........................................................................   Passed   21.09 sec
+        Start 165: documents parse into a navigable tree
+162/368 Test #165: documents parse into a navigable tree ...................................................................................   Passed    0.09 sec
+        Start 166: edits remove, replace and append with KiCad indentation
+163/368 Test #166: edits remove, replace and append with KiCad indentation .................................................................   Passed    0.08 sec
+        Start 167: escape analysis: a pin that custom disallow rules wall in is dead, and named as such
+164/368 Test #167: escape analysis: a pin that custom disallow rules wall in is dead, and named as such ....................................   Passed    0.45 sec
+        Start 168: escape analysis: pins of nets the existing copper already completes are satisfied, not obligations
+165/368 Test #168: escape analysis: pins of nets the existing copper already completes are satisfied, not obligations ......................   Passed    0.20 sec
+        Start 169: escape analysis: sbc's DRAM balls are blocked only by the solder-mask rule
+166/368 Test #163: disallow track on inner layers: other nets avoid them, GND may still use them ...........................................   Passed   23.01 sec
+        Start 170: escape analysis: with soft zones a plane no pad touches keeps its net outstanding, as in the router's plan
+167/368 Test #170: escape analysis: with soft zones a plane no pad touches keeps its net outstanding, as in the router's plan ..............   Passed    2.77 sec
+        Start 171: escape flow: a 6 x 6 array escapes on its pad layer within every channel's capacity
+168/368 Test #171: escape flow: a 6 x 6 array escapes on its pad layer within every channel's capacity .....................................   Passed    0.11 sec
+        Start 172: escape flow: shallow packages are planned exactly as version 1
+169/368 Test #172: escape flow: shallow packages are planned exactly as version 1 ..........................................................   Passed    0.09 sec
+        Start 173: escape flow: without channels between balls, inner rings take dog-bone vias and leave on the next layer
+170/368 Test #173: escape flow: without channels between balls, inner rings take dog-bone vias and leave on the next layer .................   Passed    0.12 sec
+        Start 174: escape plan: perimeter pins fan out, inner balls get one dog-bone site each
+171/368 Test #174: escape plan: perimeter pins fan out, inner balls get one dog-bone site each .............................................   Passed    0.09 sec
+        Start 175: exact closer-than agrees with floating-point distance away from the boundary
+172/368 Test #175: exact closer-than agrees with floating-point distance away from the boundary ............................................   Passed    0.21 sec
+        Start 176: field cache: identical copper with and without it
+173/368 Test #169: escape analysis: sbc's DRAM balls are blocked only by the solder-mask rule ..............................................   Passed   70.47 sec
+        Start 177: fixed via codes: one-pass and per-layer paths agree with soft zones and vias off pads
+174/368 Test #177: fixed via codes: one-pass and per-layer paths agree with soft zones and vias off pads ...................................   Passed    1.70 sec
+        Start 178: fixed via codes: the one-pass check equals the per-layer reference
+175/368 Test #178: fixed via codes: the one-pass check equals the per-layer reference ......................................................   Passed    2.36 sec
+        Start 179: flipping a KiCad 5 module: user copper names, signed arc sweeps
+176/368 Test #179: flipping a KiCad 5 module: user copper names, signed arc sweeps .........................................................   Passed    0.08 sec
+        Start 180: flipping a footprint: KiCad's mirror, layers swapped, the rest byte for byte
+177/368 Test #180: flipping a footprint: KiCad's mirror, layers swapped, the rest byte for byte ............................................   Passed    0.09 sec
+        Start 181: footprint check: a footprint on the back is compared with the datasheet as the flipped front
+178/368 Test #181: footprint check: a footprint on the back is compared with the datasheet as the flipped front ............................   Passed    0.09 sec
+        Start 182: footprint check: a footprint that is the datasheet's land pattern is ok, wherever and however it is placed
+179/368 Test #182: footprint check: a footprint that is the datasheet's land pattern is ok, wherever and however it is placed ..............   Passed    0.09 sec
+        Start 183: footprint check: a footprint whose pads are not the pattern's at all
+180/368 Test #183: footprint check: a footprint whose pads are not the pattern's at all ....................................................   Passed    0.09 sec
+        Start 184: footprint check: a footprint without a reference is unverified, and an error where one is required
+181/368 Test #184: footprint check: a footprint without a reference is unverified, and an error where one is required ......................   Passed    0.09 sec
+        Start 185: footprint check: a missing pad, an extra pad and the count
+182/368 Test #185: footprint check: a missing pad, an extra pad and the count ..............................................................   Passed    0.10 sec
+        Start 186: footprint check: a non-plated peg that the datasheet does not show is a warning, not an error
+183/368 Test #186: footprint check: a non-plated peg that the datasheet does not show is a warning, not an error ...........................   Passed    0.08 sec
+        Start 187: footprint check: a pad turned a quarter turn has its width and height compared the other way
+184/368 Test #187: footprint check: a pad turned a quarter turn has its width and height compared the other way ............................   Passed    0.09 sec
+        Start 188: footprint check: a pattern that is its own mirror image is never called mirrored
+185/368 Test #188: footprint check: a pattern that is its own mirror image is never called mirrored ........................................   Passed    0.08 sec
+        Start 189: footprint check: a reference from a brand that is not trusted gives no verdict
+186/368 Test #189: footprint check: a reference from a brand that is not trusted gives no verdict ..........................................   Passed    0.09 sec
+        Start 190: footprint check: a trusted brand is found through its aliases and without corporate suffixes
+187/368 Test #190: footprint check: a trusted brand is found through its aliases and without corporate suffixes ............................   Passed    0.08 sec
+        Start 191: footprint check: a wrong pitch shows on the pads farthest from the centre
+188/368 Test #191: footprint check: a wrong pitch shows on the pads farthest from the centre ...............................................   Passed    0.08 sec
+        Start 192: footprint check: inline pads in JSON give the same pattern as a footprint file
+189/368 Test #192: footprint check: inline pads in JSON give the same pattern as a footprint file ..........................................   Passed    0.09 sec
+        Start 193: footprint check: one pad moved is called out with its number and by how much
+190/368 Test #193: footprint check: one pad moved is called out with its number and by how much ............................................   Passed    0.08 sec
+        Start 194: footprint check: pin numbers that run the wrong way are a mirror
+191/368 Test #194: footprint check: pin numbers that run the wrong way are a mirror ........................................................   Passed    0.09 sec
+        Start 195: footprint check: references are found by part number, library id, value or designator; the most specific wins
+192/368 Test #195: footprint check: references are found by part number, library id, value or designator; the most specific wins ...........   Passed    0.09 sec
+        Start 196: footprint check: size, drill and pad type differences are errors
+193/368 Test #196: footprint check: size, drill and pad type differences are errors ........................................................   Passed    0.08 sec
+        Start 197: footprint check: the designator filter, and footprints that are not parts
+194/368 Test #197: footprint check: the designator filter, and footprints that are not parts ...............................................   Passed    0.09 sec
+        Start 198: footprint check: the library's origin is not part of the land pattern
+195/368 Test #198: footprint check: the library's origin is not part of the land pattern ...................................................   Passed    0.09 sec
+        Start 199: footprint check: the pattern may be turned a quarter turn in the library
+196/368 Test #199: footprint check: the pattern may be turned a quarter turn in the library ................................................   Passed    0.09 sec
+        Start 200: footprint check: the reference library loads from JSON with a footprint file, and refuses what it cannot take
+197/368 Test #200: footprint check: the reference library loads from JSON with a footprint file, and refuses what it cannot take ...........   Passed    0.09 sec
+        Start 201: footprint check: the report is the same every time, and says what it found in JSON, text and a viewer message
+198/368 Test #201: footprint check: the report is the same every time, and says what it found in JSON, text and a viewer message ...........   Passed    0.13 sec
+        Start 202: footprint check: tolerances: the run's, and a reference's own
+199/368 Test #202: footprint check: tolerances: the run's, and a reference's own ...........................................................   Passed    0.09 sec
+        Start 203: inpad_cost: a via in pad costs the same at either end, at every via price
+200/368 Test #176: field cache: identical copper with and without it .......................................................................   Passed   82.34 sec
+        Start 204: layer limits: a dearer layer is avoided while a plain one will do, and used when none will
+201/368 Test #203: inpad_cost: a via in pad costs the same at either end, at every via price ...............................................   Passed   26.69 sec
+        Start 205: layer limits: a layer without tracks gets none, and vias still reach its zone fill
+202/368 Test #157: critical: the rasterised plane equals a scan of the region, cell by cell ................................................   Passed  337.08 sec
+        Start 206: layer limits: names resolve to copper layers; what cannot be applied is an error
+203/368 Test #206: layer limits: names resolve to copper layers; what cannot be applied is an error ........................................   Passed    0.10 sec
+        Start 207: layer limits: pads only on a layer without tracks stay unrouted
+204/368 Test #207: layer limits: pads only on a layer without tracks stay unrouted .........................................................   Passed    0.82 sec
+        Start 208: legacy classes win project definitions without suppressing project board settings
+205/368 Test #208: legacy classes win project definitions without suppressing project board settings .......................................   Passed    0.09 sec
+        Start 209: legacy design settings suppress project board settings like KiCad migration
+206/368 Test #209: legacy design settings suppress project board settings like KiCad migration .............................................   Passed    0.09 sec
+        Start 210: legacy inner-layer zone fills are copper and join separated tracks
+207/368 Test #210: legacy inner-layer zone fills are copper and join separated tracks ......................................................   Passed    0.08 sec
+        Start 211: legacy migration is triggered by rule tokens, not the setup container or local mask fields
+208/368 Test #211: legacy migration is triggered by rule tokens, not the setup container or local mask fields ..............................   Passed    0.10 sec
+        Start 212: legalisation: parallel runs too close are moved apart, pad ends stay, the DRC is clean
+209/368 Test #212: legalisation: parallel runs too close are moved apart, pad ends stay, the DRC is clean ..................................   Passed    0.11 sec
+        Start 213: lengths with units convert to nanometres
+210/368 Test #213: lengths with units convert to nanometres ................................................................................   Passed    0.09 sec
+        Start 214: malformed documents raise ParseError with a line number
+211/368 Test #214: malformed documents raise ParseError with a line number .................................................................   Passed    0.09 sec
+        Start 215: millimetre <-> nanometre conversion is exact for KiCad values
+212/368 Test #215: millimetre <-> nanometre conversion is exact for KiCad values ...........................................................   Passed    0.08 sec
+        Start 216: millimetre strings convert to nanometres exactly
+213/368 Test #216: millimetre strings convert to nanometres exactly ........................................................................   Passed    0.08 sec
+        Start 217: net-class wildcard patterns
+214/368 Test #217: net-class wildcard patterns .............................................................................................   Passed    0.08 sec
+        Start 218: nonlegacy project classes inherit Default dimensions and preserve explicit zero
+215/368 Test #218: nonlegacy project classes inherit Default dimensions and preserve explicit zero .........................................   Passed    0.08 sec
+        Start 219: pair geometry: offsets are symmetric and miters keep the offset distance
+216/368 Test #219: pair geometry: offsets are symmetric and miters keep the offset distance ................................................   Passed    0.08 sec
+        Start 220: pair measurement: coupled share, gap and skew
+217/368 Test #220: pair measurement: coupled share, gap and skew ...........................................................................   Passed    0.08 sec
+        Start 221: pair rule: a custom diff_pair_gap rule wins, diff_pair_uncoupled limits the legs
+218/368 Test #221: pair rule: a custom diff_pair_gap rule wins, diff_pair_uncoupled limits the legs ........................................   Passed    0.08 sec
+        Start 222: pair rule: net-class diff-pair width and gap, relaxed clearance only for KiCad pairs
+219/368 Test #222: pair rule: net-class diff-pair width and gap, relaxed clearance only for KiCad pairs ....................................   Passed    0.08 sec
+        Start 223: pair rule: tightest legal coupling without diff-pair settings
+220/368 Test #223: pair rule: tightest legal coupling without diff-pair settings ...........................................................   Passed    0.08 sec
+        Start 224: pair search: rejected candidates are work, and the work budget stops an attempt
+221/368 Test #204: layer limits: a dearer layer is avoided while a plain one will do, and used when none will ..............................   Passed   36.01 sec
+        Start 225: parse_double accepts from_chars' grammar only
+222/368 Test #225: parse_double accepts from_chars' grammar only ...........................................................................   Passed    0.08 sec
+        Start 226: physical_hole_clearance between a net's vias and its own tracks leaves the net without vias
+223/368 Test #226: physical_hole_clearance between a net's vias and its own tracks leaves the net without vias .............................   Passed   22.88 sec
+        Start 227: physical_hole_clearance keeps vias out of same-net SMD pads, except where the condition excludes them
+224/368 Test #227: physical_hole_clearance keeps vias out of same-net SMD pads, except where the condition excludes them ...................   Passed    0.10 sec
+        Start 228: physical_hole_clearance: new tracks keep the rule's distance from holes
+225/368 Test #228: physical_hole_clearance: new tracks keep the rule's distance from holes .................................................   Passed    1.18 sec
+        Start 229: physical_hole_clearance: via holes and routed copper of any net keep the rule's distance
+226/368 Test #229: physical_hole_clearance: via holes and routed copper of any net keep the rule's distance ................................   Passed    0.09 sec
+        Start 230: plane_smd: a rule area that forbids vias but allows tracks blocks vias only
+227/368 Test #230: plane_smd: a rule area that forbids vias but allows tracks blocks vias only .............................................   Passed    0.12 sec
+        Start 231: plane_smd: defaults leave the board incomplete without a via; the options route it
+228/368 Test #205: layer limits: a layer without tracks gets none, and vias still reach its zone fill ......................................   Passed   50.80 sec
+        Start 232: plane_smd: no via in pad when the board's minimum via cannot be read
+229/368 Test #224: pair search: rejected candidates are work, and the work budget stops an attempt .........................................   Passed   86.24 sec
+        Start 233: plane_smd: plane fills block other nets' vias unless soft; no-track areas leave vias alone
+230/368 Test #233: plane_smd: plane fills block other nets' vias unless soft; no-track areas leave vias alone ..............................   Passed    0.13 sec
+        Start 234: plane_smd: planes of a net without pads are not connection targets
+231/368 Test #232: plane_smd: no via in pad when the board's minimum via cannot be read ....................................................   Passed   69.65 sec
+        Start 235: plane_smd: vias keep off small SMD pads, exposed pads still take them
+232/368 Test #235: plane_smd: vias keep off small SMD pads, exposed pads still take them ...................................................   Passed    0.12 sec
+        Start 236: polygon edge index answers disk tests exactly like closer_than
+233/368 Test #236: polygon edge index answers disk tests exactly like closer_than ..........................................................   Passed    0.82 sec
+        Start 237: polygon edge index answers shape tests and gaps exactly like the linear reference
+234/368 Test #234: plane_smd: planes of a net without pads are not connection targets ......................................................   Passed   20.11 sec
+        Start 238: positional disallow through_via: a blind via over the whole stack is a through via
+235/368 Test #237: polygon edge index answers shape tests and gaps exactly like the linear reference .......................................   Passed    7.83 sec
+        Start 239: positional disallow: no vias in a footprint courtyard
+236/368 Test #239: positional disallow: no vias in a footprint courtyard ...................................................................   Passed    9.55 sec
+        Start 240: positional disallow: the router keeps a named net out of an area and lets other nets through
+237/368 Test #240: positional disallow: the router keeps a named net out of an area and lets other nets through ............................   Passed    4.40 sec
+        Start 241: project net classes, patterns and minimums are read
+238/368 Test #241: project net classes, patterns and minimums are read .....................................................................   Passed    0.99 sec
+        Start 242: project rules retain KiCad 10 defaults key by key
+239/368 Test #242: project rules retain KiCad 10 defaults key by key .......................................................................   Passed    0.09 sec
+        Start 243: reader: custom-named copper layers and zone connection settings
+240/368 Test #243: reader: custom-named copper layers and zone connection settings .........................................................   Passed    0.08 sec
+        Start 244: reading an edited document gives the edited board
+241/368 Test #244: reading an edited document gives the edited board .......................................................................   Passed    0.59 sec
+        Start 245: refill: a hatched zone's stored fill does not carry a connection across new copper
+242/368 Test #245: refill: a hatched zone's stored fill does not carry a connection across new copper ......................................   Passed    0.10 sec
+        Start 246: refill: a thermal pad joins the plane by the spokes that reach it
+243/368 Test #246: refill: a thermal pad joins the plane by the spokes that reach it .......................................................   Passed    0.10 sec
+        Start 247: refill: a track across the plane splits it, the stored fill does not
+244/368 Test #247: refill: a track across the plane splits it, the stored fill does not ....................................................   Passed    0.09 sec
+        Start 248: refill: an area rule applies on the layers of its area only
+245/368 Test #248: refill: an area rule applies on the layers of its area only .............................................................   Passed    0.15 sec
+        Start 249: refill: connectivity through the fill edge index equals the linear test
+246/368 Test #249: refill: connectivity through the fill edge index equals the linear test .................................................   Passed    0.09 sec
+        Start 250: refill: islands without a pad follow island_removal_mode
+247/368 Test #250: refill: islands without a pad follow island_removal_mode ................................................................   Passed    0.11 sec
+        Start 251: refill: pads join the plane by their zone connection
+248/368 Test #251: refill: pads join the plane by their zone connection ....................................................................   Passed    0.12 sec
+        Start 252: refill: teardrops lose their fill
+249/368 Test #252: refill: teardrops lose their fill .......................................................................................   Passed    0.10 sec
+        Start 253: relax late: plain rounds first, stages afresh when they stall; legal and the same at any thread count
+250/368 Test #231: plane_smd: defaults leave the board incomplete without a via; the options route it ......................................   Passed  105.81 sec
+        Start 254: replacing the same node twice keeps the last replacement
+251/368 Test #254: replacing the same node twice keeps the last replacement ................................................................   Passed    0.09 sec
+        Start 255: return path: a hole off the trace's line is a smaller detour than one on it
+252/368 Test #255: return path: a hole off the trace's line is a smaller detour than one on it .............................................   Passed    0.08 sec
+        Start 256: return path: a layer change closes through a stitching via, a capacitor, or is flagged
+253/368 Test #256: return path: a layer change closes through a stitching via, a capacitor, or is flagged ..................................   Passed    0.10 sec
+        Start 257: return path: a rectangular void under the trace forces a measured detour
+254/368 Test #257: return path: a rectangular void under the trace forces a measured detour ................................................   Passed    0.08 sec
+        Start 258: return path: a split plane leaves no return path
+255/368 Test #258: return path: a split plane leaves no return path ........................................................................   Passed    0.08 sec
+        Start 259: return path: a stretch over no copper at all is a void, a short one is not
+256/368 Test #259: return path: a stretch over no copper at all is a void, a short one is not ..............................................   Passed    0.09 sec
+        Start 260: return path: copper under the whole trace means no void and no detour
+257/368 Test #260: return path: copper under the whole trace means no void and no detour ...................................................   Passed    0.08 sec
+        Start 261: return path: nets are chosen by name, class or pair, and nothing is analysed by default
+258/368 Test #261: return path: nets are chosen by name, class or pair, and nothing is analysed by default .................................   Passed    0.09 sec
+        Start 262: return path: no copper zone, no reference: said so, not a fake clean result
+259/368 Test #262: return path: no copper zone, no reference: said so, not a fake clean result .............................................   Passed    0.09 sec
+        Start 263: return path: the assumed return pad is the nearest pad of the reference net, not a fixed ground ball
+260/368 Test #263: return path: the assumed return pad is the nearest pad of the reference net, not a fixed ground ball ....................   Passed    0.09 sec
+        Start 264: return path: the indexed region queries equal the linear reference
+261/368 Test #264: return path: the indexed region queries equal the linear reference ......................................................   Passed    5.98 sec
+        Start 265: return path: the report and the viewer message carry the numbers and the callouts
+262/368 Test #265: return path: the report and the viewer message carry the numbers and the callouts .......................................   Passed    0.08 sec
+        Start 266: rotation follows KiCad's convention and is exact for right angles
+263/368 Test #266: rotation follows KiCad's convention and is exact for right angles .......................................................   Passed    0.08 sec
+        Start 267: router rule probes: bound selectors and box prefilters agree with the direct geometry tests
+264/368 Test #267: router rule probes: bound selectors and box prefilters agree with the direct geometry tests .............................   Passed    0.13 sec
+        Start 268: saved state: written after each round, a resumed run starts from it and does not get worse
+265/368 Test #268: saved state: written after each round, a resumed run starts from it and does not get worse ..............................   Passed    6.27 sec
+        Start 269: schematic netlist agrees with the board's pad nets
+266/368 Test #269: schematic netlist agrees with the board's pad nets ......................................................................   Passed    0.30 sec
+        Start 270: segment intersection handles crossing, touching and collinear cases
+267/368 Test #270: segment intersection handles crossing, touching and collinear cases .....................................................   Passed    0.08 sec
+        Start 271: session transports: MCP and JSON lines answer a bad request instead of failing
+268/368 Test #271: session transports: MCP and JSON lines answer a bad request instead of failing ..........................................   Passed    0.14 sec
+        Start 272: session: a dry run and a refused route change nothing
+269/368 Test #272: session: a dry run and a refused route change nothing ...................................................................   Passed    3.67 sec
+        Start 273: session: a route with one plain router is the router's own result (the reference path)
+270/368 Test #273: session: a route with one plain router is the router's own result (the reference path) ..................................   Passed    7.13 sec
+        Start 274: session: every listed tool exists and has a schema
+271/368 Test #274: session: every listed tool exists and has a schema ......................................................................   Passed    0.13 sec
+        Start 275: session: hints are an advice object and are reported
+272/368 Test #275: session: hints are an advice object and are reported ....................................................................   Passed   83.08 sec
+        Start 276: session: inspect_pad and inspect_net describe what lies around a pad
+273/368 Test #276: session: inspect_pad and inspect_net describe what lies around a pad ....................................................   Passed    3.34 sec
+        Start 277: session: rip, undo and restore move between states
+274/368 Test #277: session: rip, undo and restore move between states ......................................................................   Passed   13.01 sec
+        Start 278: session: save writes only to the file the session was started with
+275/368 Test #278: session: save writes only to the file the session was started with ......................................................   Passed    3.53 sec
+        Start 279: session: the log replays to the same results and states, and a changed log is caught
+276/368 Test #279: session: the log replays to the same results and states, and a changed log is caught ....................................   Passed    7.14 sec
+        Start 280: session: the open connections are listed and a route closes them
+277/368 Test #280: session: the open connections are listed and a route closes them ........................................................   Passed    3.26 sec
+        Start 281: session: the thread count does not change a portfolio result
+278/368 Test #281: session: the thread count does not change a portfolio result ............................................................   Passed   21.10 sec
+        Start 282: session: the work limit ends the session's routing for good
+279/368 Test #282: session: the work limit ends the session's routing for good .............................................................   Passed    9.87 sec
+        Start 283: session: verify chooses what happens to a result with added errors
+280/368 Test #283: session: verify chooses what happens to a result with added errors ......................................................   Passed    0.62 sec
+        Start 284: shape gaps: round pads, tracks and polygons
+281/368 Test #284: shape gaps: round pads, tracks and polygons .............................................................................   Passed    0.10 sec
+        Start 285: soft zones: a plane no pad of the net can reach is no target
+282/368 Test #285: soft zones: a plane no pad of the net can reach is no target ............................................................   Passed    2.22 sec
+        Start 286: soft zones: a teardrop is read as one and is never a plane target
+283/368 Test #286: soft zones: a teardrop is read as one and is never a plane target .......................................................   Passed    0.53 sec
+        Start 287: soft zones: one through via joins every same-net plane it passes through
+284/368 Test #287: soft zones: one through via joins every same-net plane it passes through ................................................   Passed    1.29 sec
+        Start 288: stackup: KiCad demo with dielectric sublayers round-trips
+285/368 Test #288: stackup: KiCad demo with dielectric sublayers round-trips ...............................................................   Passed    1.30 sec
+        Start 289: stackup: boards without one say so; missing permittivity makes the gap incomplete
+286/368 Test #289: stackup: boards without one say so; missing permittivity makes the gap incomplete .......................................   Passed    0.08 sec
+        Start 290: stackup: layers, sublayers, permittivity and copper mapping are read; text is untouched
+287/368 Test #290: stackup: layers, sublayers, permittivity and copper mapping are read; text is untouched .................................   Passed    0.10 sec
+        Start 291: stall: a connection that routes has no failure to explain
+288/368 Test #291: stall: a connection that routes has no failure to explain ...............................................................   Passed    0.57 sec
+        Start 292: stall: a gap a narrower legal track passes is a rule problem
+289/368 Test #253: relax late: plain rounds first, stages afresh when they stall; legal and the same at any thread count ...................   Passed  182.60 sec
+        Start 293: stall: a gap too narrow for any legal track is a placement problem
+290/368 Test #293: stall: a gap too narrow for any legal track is a placement problem ......................................................   Passed   11.77 sec
+        Start 294: stall: a viewer changes nothing about the routing
+291/368 Test #292: stall: a gap a narrower legal track passes is a rule problem ............................................................   Passed   21.26 sec
+        Start 295: stall: routed copper of another net closing the way is contested
+292/368 Test #238: positional disallow through_via: a blind via over the whole stack is a through via ......................................   Passed  230.27 sec
+        Start 296: stitch: a signal via gets one plane via within the distance
+293/368 Test #296: stitch: a signal via gets one plane via within the distance .............................................................   Passed    0.13 sec
+        Start 297: stitch: a site inside another net's clearance is skipped
+294/368 Test #297: stitch: a site inside another net's clearance is skipped ................................................................   Passed    0.14 sec
+        Start 298: stitch: a via may pass through the middle of another net's plane, not through its edge
+295/368 Test #298: stitch: a via may pass through the middle of another net's plane, not through its edge ..................................   Passed    0.14 sec
+        Start 299: stitch: an obstacle removes exactly the sites it blocks
+296/368 Test #299: stitch: an obstacle removes exactly the sites it blocks .................................................................   Passed    0.13 sec
+        Start 300: stitch: holes through another net's plane keep that plane's minimum width between them
+297/368 Test #300: stitch: holes through another net's plane keep that plane's minimum width between them ..................................   Passed    0.28 sec
+        Start 301: stitch: nothing is placed without overlapping fills
+298/368 Test #301: stitch: nothing is placed without overlapping fills .....................................................................   Passed    0.12 sec
+        Start 302: stitch: two overlapping fills get the grid
+299/368 Test #302: stitch: two overlapping fills get the grid ..............................................................................   Passed    0.16 sec
+        Start 303: stitch: vias keep a wide margin from copper text
+300/368 Test #303: stitch: vias keep a wide margin from copper text ........................................................................   Passed    0.24 sec
+        Start 304: stuck report: names what failed, where, and why; redaction hides the board's names
+301/368 Test #304: stuck report: names what failed, where, and why; redaction hides the board's names ......................................   Passed    0.20 sec
+        Start 305: style: a straight run in pieces is one segment without bends
+302/368 Test #305: style: a straight run in pieces is one segment without bends ............................................................   Passed    0.09 sec
+        Start 306: style: bends, and which of them are acute
+303/368 Test #306: style: bends, and which of them are acute ...............................................................................   Passed    0.10 sec
+        Start 307: style: connections end at pads and junctions and pass through vias
+304/368 Test #307: style: connections end at pads and junctions and pass through vias ......................................................   Passed    0.09 sec
+        Start 308: style: detour ratio against the shortest octilinear path
+305/368 Test #308: style: detour ratio against the shortest octilinear path ................................................................   Passed    0.08 sec
+        Start 309: style: short and off-angle segments
+306/368 Test #309: style: short and off-angle segments .....................................................................................   Passed    0.09 sec
+        Start 310: style: stair-steps are runs of short alternating jogs
+307/368 Test #310: style: stair-steps are runs of short alternating jogs ...................................................................   Passed    0.08 sec
+        Start 311: style: the result does not depend on the order or direction of the tracks
+308/368 Test #311: style: the result does not depend on the order or direction of the tracks ...............................................   Passed    0.08 sec
+        Start 312: transactional negotiation: legal result, identical at any thread count
+309/368 Test #295: stall: routed copper of another net closing the way is contested ........................................................   Passed   21.38 sec
+        Start 313: transactional negotiation: routes that rip others are tried and judged, plain negotiation tries none
+310/368 Test #294: stall: a viewer changes nothing about the routing .......................................................................   Passed   64.46 sec
+        Start 314: tui: keys set values and flags; the command line follows
+311/368 Test #314: tui: keys set values and flags; the command line follows ................................................................   Passed    0.08 sec
+        Start 315: tui: the filter narrows the list, names before descriptions; hidden options appear on request
+312/368 Test #315: tui: the filter narrows the list, names before descriptions; hidden options appear on request ...........................   Passed    0.08 sec
+        Start 316: tui: the options file round-trips and leaves out what belongs to one run
+313/368 Test #316: tui: the options file round-trips and leaves out what belongs to one run ................................................   Passed    0.09 sec
+        Start 317: tui: the parser's verdict is shown and gates the run
+314/368 Test #317: tui: the parser's verdict is shown and gates the run ....................................................................   Passed    0.08 sec
+        Start 318: tui: the screen fits any size and keeps the selection in view
+315/368 Test #318: tui: the screen fits any size and keeps the selection in view ...........................................................   Passed    0.09 sec
+        Start 319: tui: the screen is a frame with a help panel for the option under the cursor
+316/368 Test #319: tui: the screen is a frame with a help panel for the option under the cursor ............................................   Passed    0.08 sec
+        Start 320: tui: values live in scopes; an edit goes to the target scope and a higher scope wins
+317/368 Test #320: tui: values live in scopes; an edit goes to the target scope and a higher scope wins ....................................   Passed    0.08 sec
+        Start 321: unmodified documents write back byte for byte
+318/368 Test #321: unmodified documents write back byte for byte ...........................................................................   Passed    0.08 sec
+        Start 322: widen: a custom rule's maximum track width caps the widening
+319/368 Test #322: widen: a custom rule's maximum track width caps the widening ............................................................   Passed    0.09 sec
+        Start 323: widen: a neck-down goes back to the class width, never beyond
+320/368 Test #323: widen: a neck-down goes back to the class width, never beyond ...........................................................   Passed    0.10 sec
+        Start 324: widen: a track in a channel takes the widest candidate that fits
+321/368 Test #324: widen: a track in a channel takes the widest candidate that fits ........................................................   Passed    0.09 sec
+        Start 325: widen: a track with no room keeps its width
+322/368 Test #325: widen: a track with no room keeps its width .............................................................................   Passed    0.08 sec
+        Start 326: widen: a wide track meets a narrow one, and a via limits the width
+323/368 Test #326: widen: a wide track meets a narrow one, and a via limits the width ......................................................   Passed    0.09 sec
+        Start 327: widen: locked tracks, pairs and nets without a target are left alone
+324/368 Test #327: widen: locked tracks, pairs and nets without a target are left alone ....................................................   Passed    0.08 sec
+        Start 328: work profile: charged work equals counted expansions and flood cells, at any thread count
+325/368 Test #313: transactional negotiation: routes that rip others are tried and judged, plain negotiation tries none ....................   Passed   83.12 sec
+        Start 329: zone fill layers prefer explicit tokens and never guess ambiguous copper
+326/368 Test #329: zone fill layers prefer explicit tokens and never guess ambiguous copper ................................................   Passed    0.09 sec
+        Start 330: zone fills: indexed and linear obstacle tests agree
+327/368 Test #330: zone fills: indexed and linear obstacle tests agree .....................................................................   Passed   11.52 sec
+        Start 331: kicad_edit_roundtrip
+328/368 Test #331: kicad_edit_roundtrip ....................................................................................................***Skipped   0.11 sec
+        Start 332: kicad_drc_parity
+329/368 Test #332: kicad_drc_parity ........................................................................................................   Passed   60.02 sec
+        Start 333: kicad_drc_broken_parity
+330/368 Test #312: transactional negotiation: legal result, identical at any thread count ..................................................   Passed  187.84 sec
+        Start 334: drc_zone_index
+331/368 Test #328: work profile: charged work equals counted expansions and flood cells, at any thread count ...............................   Passed  185.55 sec
+        Start 335: global_route
+332/368 Test #161: disallow blind_via or buried_via or micro_via alone stops the router placing that via type ..............................   Passed  1190.18 sec
+        Start 336: record_replay
+333/368 Test #333: kicad_drc_broken_parity .................................................................................................   Passed  581.27 sec
+        Start 337: python_bindings
+334/368 Test #337: python_bindings .........................................................................................................***Skipped   0.06 sec
+        Start 338: pcm_package
+335/368 Test #338: pcm_package .............................................................................................................   Passed    0.13 sec
+        Start 339: pcm_package_bundled
+336/368 Test #339: pcm_package_bundled .....................................................................................................   Passed    5.22 sec
+        Start 340: length_tuning
+337/368 Test #340: length_tuning ...........................................................................................................   Passed   29.41 sec
+        Start 341: crules_catalogue_sync
+338/368 Test #341: crules_catalogue_sync ...................................................................................................***Skipped   0.07 sec
+        Start 342: crules_route
+339/368 Test #335: global_route ............................................................................................................   Passed  566.78 sec
+        Start 343: crules_dru_parses
+340/368 Test #343: crules_dru_parses .......................................................................................................   Passed   13.13 sec
+        Start 344: crules_two_stage
+341/368 Test #336: record_replay ...........................................................................................................   Passed  168.46 sec
+        Start 345: reach_verify
+342/368 Test #342: crules_route ............................................................................................................   Passed   78.11 sec
+        Start 347: diff_pair
+343/368 Test #345: reach_verify ............................................................................................................   Passed  125.33 sec
+        Start 348: plane_smd
+344/368 Test #348: plane_smd ...............................................................................................................   Passed  152.54 sec
+        Start 349: route_rule_warnings
+345/368 Test #349: route_rule_warnings .....................................................................................................   Passed   12.52 sec
+        Start 350: tui_options
+346/368 Test #350: tui_options .............................................................................................................   Passed   10.52 sec
+        Start 351: rule_parity
+347/368 Test #347: diff_pair ...............................................................................................................   Passed  289.27 sec
+        Start 352: edge_touch
+348/368 Test #352: edge_touch ..............................................................................................................   Passed   12.54 sec
+        Start 353: round_options
+349/368 Test #351: rule_parity .............................................................................................................   Passed   38.61 sec
+        Start 354: skills_scripts
+350/368 Test #354: skills_scripts ..........................................................................................................   Passed    5.99 sec
+        Start 356: after_route_passes
+351/368 Test #356: after_route_passes ......................................................................................................   Passed   11.57 sec
+        Start 357: srj_roundtrip
+352/368 Test #357: srj_roundtrip ...........................................................................................................   Passed   30.02 sec
+        Start 358: no_project_defaults
+353/368 Test #358: no_project_defaults .....................................................................................................   Passed   43.90 sec
+        Start 359: fixture_preparation
+354/368 Test #359: fixture_preparation .....................................................................................................   Passed    0.16 sec
+        Start 360: fixture_preparation_native
+355/368 Test #360: fixture_preparation_native ..............................................................................................   Passed   17.43 sec
+        Start 361: benchmark_drc_judge
+356/368 Test #361: benchmark_drc_judge .....................................................................................................   Passed    0.49 sec
+        Start 362: advice_cli
+357/368 Test #362: advice_cli ..............................................................................................................   Passed  125.69 sec
+        Start 363: advisor_scripts
+358/368 Test #363: advisor_scripts .........................................................................................................   Passed    1.75 sec
+        Start 364: viewer_stall
+359/368 Test #364: viewer_stall ............................................................................................................   Passed    0.84 sec
+        Start 365: return_paths_cli
+360/368 Test #334: drc_zone_index ..........................................................................................................   Passed  1236.62 sec
+        Start 366: footprint_check_cli
+361/368 Test #366: footprint_check_cli .....................................................................................................   Passed    5.35 sec
+        Start 367: critical_nets_cli
+362/368 Test #365: return_paths_cli ........................................................................................................   Passed   47.27 sec
+        Start 368: session_cli
+363/368 Test #353: round_options ...........................................................................................................   Passed  298.58 sec
+364/368 Test #367: critical_nets_cli .......................................................................................................   Passed   58.94 sec
+365/368 Test #368: session_cli .............................................................................................................   Passed   46.26 sec
+366/368 Test #344: crules_two_stage ........................................................................................................***Timeout 4359.69 sec
+legal True, notes ok True, parts moved by stage 2: ['J1', 'C3', 'C15', 'C16', 'C17', 'L1', 'R1', 'R2', 'C6', 'C7', 'X1']
+
+        Start 346: thread_determinism
+367/368 Test #346: thread_determinism ......................................................................................................   Passed  449.11 sec
+        Start 355: bus_route
+368/368 Test #355: bus_route ...............................................................................................................   Passed  3145.54 sec
+
+99% tests passed, 1 tests failed out of 368
+
+Label Time Summary:
+benchmark      =   0.49 sec*proc (1 test)
+crules         =  78.17 sec*proc (2 tests)
+integration    = 22812.56 sec*proc (35 tests)
+kicad          = 1039.89 sec*proc (10 tests)
+python         =   2.30 sec*proc (3 tests)
+route          = 16146.36 sec*proc (15 tests)
+rules          =  51.15 sec*proc (2 tests)
+session        =  46.26 sec*proc (1 test)
+skills         =   5.99 sec*proc (1 test)
+viewer         =   0.84 sec*proc (1 test)
+
+Total Test time (real) = 11709.74 sec
+
+The following tests did not run:
+	 90 - GPU Philox fill is bit-identical to the CPU reference on every device (Skipped)
+	146 - cost-to-go field: GPU equals CPU on random grids (Skipped)
+	147 - cost-to-go field: a winding corridor needing many rounds matches CPU (Skipped)
+	148 - cost-to-go field: concurrent callers have independent state (Skipped)
+	149 - cost-to-go field: thin grids, blocked targets and reused buffers match CPU (Skipped)
+	331 - kicad_edit_roundtrip (Skipped)
+	337 - python_bindings (Skipped)
+	341 - crules_catalogue_sync (Skipped)
+
+The following tests FAILED:
+	344 - crules_two_stage (Timeout)                        integration
+Errors while running CTest

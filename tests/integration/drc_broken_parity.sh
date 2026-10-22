@@ -10,11 +10,11 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ROOT"
 command -v kicad-cli >/dev/null || { echo "SKIP: kicad-cli missing"; exit 77; }
-mapfile -t boards < <(grep -v '^#' tests/integration/drc_broken_boards.txt)
+boards=(); while IFS= read -r b; do boards+=("$b"); done < <(grep -v '^#' tests/integration/drc_broken_boards.txt)  # no mapfile in macOS's bash 3.2
 for b in "${boards[@]}"; do [[ -f $b ]] || { echo "SKIP: fixtures missing ($b)"; exit 77; }; done
 tm=(); [[ $# -ge 1 ]] && tm=(--tm "$1")
 status=0
 for seed in 1 2; do
-  python3 scripts/drc_broken_parity.py "${tm[@]}" --kicad-jobs 2 --jobs 4 --count 3 --seed "$seed" "${boards[@]}" || status=1
+  python3 scripts/drc_broken_parity.py ${tm[@]+"${tm[@]}"} --kicad-jobs 2 --jobs 4 --count 3 --seed "$seed" "${boards[@]}" || status=1
 done
 exit $status

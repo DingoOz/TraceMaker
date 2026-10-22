@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "core/parse_double.hpp"
+
 namespace tmk::sexpr {
 namespace {
 
@@ -140,11 +142,7 @@ std::string Document::str_at(NodeId list, std::size_t i) const {
 std::optional<double> Document::number_at(NodeId list, std::size_t i) const {
   const NodeId c = child(list, i);
   if (c == kNoNode || nodes_[c].kind != Kind::Symbol) return std::nullopt;
-  const std::string_view r = raw(c);
-  double v = 0;
-  const auto res = std::from_chars(r.data(), r.data() + r.size(), v);
-  if (res.ec != std::errc{} || res.ptr != r.data() + r.size()) return std::nullopt;
-  return v;
+  return parse_double(raw(c));
 }
 
 std::optional<std::int64_t> Document::nm_at(NodeId list, std::size_t i) const {
@@ -333,10 +331,9 @@ std::optional<std::int64_t> parse_mm(std::string_view s) {
   }
   if (i < s.size() && (s[i] == 'e' || s[i] == 'E')) {
     // Exponent notation is not written by KiCad, but accept it through floating point.
-    double v = 0;
-    const auto r = std::from_chars(s.data(), s.data() + s.size(), v);
-    if (r.ec != std::errc{} || r.ptr != s.data() + s.size()) return std::nullopt;
-    return static_cast<std::int64_t>(v * 1e6 + (v < 0 ? -0.5 : 0.5));
+    const auto v = parse_double(s);
+    if (!v) return std::nullopt;
+    return static_cast<std::int64_t>(*v * 1e6 + (*v < 0 ? -0.5 : 0.5));
   }
   if (!digits || i != s.size()) return std::nullopt;
   for (int k = fd > 6 ? 6 : fd; k < 6; ++k) fp *= 10;

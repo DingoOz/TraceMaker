@@ -1,0 +1,6 @@
+crules_two_stage.py under ASan+UBSan (macos-asan), alone, no ctest time limit
+legal True, notes ok True, parts moved by stage 2: ['J1', 'C3', 'C15', 'C16', 'C17', 'L1', 'R1', 'R2', 'C6', 'C7', 'X1']
+real 6388.78
+user 1104.36
+sys 2.96
+exit 0

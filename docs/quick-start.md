@@ -12,7 +12,7 @@ fifteen with a build. Pick your platform:
 |---|---|---|
 | Linux x86_64, glibc 2.38 or newer (Ubuntu 24.04+, Debian 13, current Fedora) | download a release | yes: CI installs it in a clean container on every release |
 | Any Linux with GCC 13 or newer | build from source | Ubuntu 26.04 (what CI and development use) |
-| macOS on Apple silicon | build from source | the presets were contributed; the project does not build or run them |
+| macOS 15 or 26 on Apple silicon | build from source | by a contributor ([Chris Hemingway](https://github.com/cHemingway), M2, macOS 15): every test passes, results match Linux; not in CI |
 | Windows 10 or 11 | the Linux download inside WSL2 | not yet tried |
 
 No GPU, no CUDA and no KiCad are needed for any of them. A CUDA 12.x GPU on Linux makes routing faster
@@ -84,8 +84,9 @@ and gives the same results ([Use the GPUs](how-to/gpu.md)).
     ([GPU, §8](07-gpu.md)). For the live viewer, build its page once:
     `cd viewer && npm install && npm run build && cd ..` (`brew install node`).
 
-    !!! warning "Not run by the project"
-        The macOS presets were contributed and the project does not build them in CI. If a step fails, please
+    !!! note "Tested by a contributor, not in CI"
+        [Chris Hemingway](https://github.com/cHemingway) built and tested this on an Apple M2 with macOS 15 ([GPU, §8.2](07-gpu.md)); CI does not
+        build macOS, so a change can break it unnoticed. If a step fails, please
         [open an issue](https://github.com/DingoOz/TraceMaker/issues) with the output.
 
 === "Windows (WSL2)"

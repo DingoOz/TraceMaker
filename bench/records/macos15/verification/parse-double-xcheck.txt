@@ -1,0 +1,1 @@
+2000000 strings, 999576 valid numbers, 0 mismatches

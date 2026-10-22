@@ -14,8 +14,6 @@ namespace tmk::route {
 
 namespace {
 
-constexpr double kMm = 1e-6;  // one nanometre in millimetres
-
 struct PadI {
   double cx, cy, hx, hy;  // centre and half sizes (a circle: hx = hy = radius)
   bool circle;

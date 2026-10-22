@@ -6,6 +6,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "core/parse_double.hpp"
 #include "sexpr/sexpr.hpp"
 
 namespace tmk::io {
@@ -26,10 +27,9 @@ std::optional<Coord> parse_length(std::string_view s) {
   else if (strip("um")) scale = 0.001;
   else if (strip("in")) scale = 25.4;
   if (scale == 1.0) return sexpr::parse_mm(s);
-  double v = 0;
-  const auto r = std::from_chars(s.data(), s.data() + s.size(), v);
-  if (r.ec != std::errc{} || r.ptr != s.data() + s.size()) return std::nullopt;
-  const double nm = v * scale * 1e6;
+  const auto v = parse_double(s);
+  if (!v) return std::nullopt;
+  const double nm = *v * scale * 1e6;
   return static_cast<Coord>(nm < 0 ? nm - 0.5 : nm + 0.5);
 }
 
