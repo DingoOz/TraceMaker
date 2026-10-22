@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/route, src/passes]
+---
+
 # 05 — Routing
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).
@@ -2042,3 +2047,108 @@ benchmark runs recorded, not derived. The cost map knows the zone fills of the f
 smoothing pass is made split-aware; the other post-passes (length tuning, pair coupling) are not. A rule's own `plane_net` parameter (doc 15 USB2-09, ETH-13) is not read: the reference of a layer
 is the adjacent layer with most copper. A plane that covers under 30 % of the board is not a reference plane. Net classes, via budgets per role and a hard cap on vias were not built (the
 report threshold is the cap).
+
+## 45. Rule relaxation spends nothing on power nets (`--no-neck-nets`, 2026-10-17, D124)
+
+When a board only routes under looser rules (reports/realworld, the rule-escalation ladder), the relaxation goes to signals. Power and ground nets have the least margin (current, drop), so they keep the
+board's own values. Two parts: (1) the **rule file** of a relaxed stage keeps each power net in a copy of its class (`<class>_keep`) with the board's own clearance and via sizes while the other nets take
+the tier's values (`reports/realworld/py/rules.py: apply(..., keep=power_nets(text))`: names such as `+3V3`, `5V`, `VBAT`, `GND`, and every net of a class the designer made 0.4 mm wide or more); (2) the router
+option **`--no-neck-nets A,B,...`** (`RouterOptions::no_neck_nets`) takes those nets out of the escalation ladder's **neck-down** (the narrower track and the small via the router falls back to when a pad is boxed in): they keep
+their class width and class via or stay unrouted. Empty by default: no other behaviour changes. Test: `tests/test_stall.cpp` "no_neck_nets" (a 0.35 mm gap routes only by necking down to 0.15 mm; listed, the net does not route).
+A relaxed routing is also **simulated** before it counts: `reports/realworld/py/safety.py` (crosstalk of every compromised signal pair, IPC-2221 and ngspice DC drop of every narrowed net, via impedance; verdict PASS/WARN/FAIL).
+
+## 46. Shove with bending: legalisation that can cut a track (`--legalize-subdivide`, 2026-10-17, D125)
+
+**Problem.** `legalize_routes` (§41.3) moves the vertices a route has. A long straight track has two, both often on pads, so it can only move as a whole or not at all: where an existing neighbour sits too close to its
+middle, nothing can give, although a kink would. (The case raised by the owner: a via jump needs room that a nearby track could free by bending.)
+
+**What was built.** `LegalizeOptions::subdivide_mm` (router option `--legalize-subdivide MM`, off by default; with `--legalize` or `--relax`). Every unlocked route track is cut into pieces of at most that length
+before the sweeps, at the vertices of same-net copper that lie on it (a junction or via stays a vertex, so the copper stays joined whichever way the pieces bend) and evenly in between. The projection moves
+only vertices that are in a violated pair, so the track bends only where it is pinched. After the sweeps a vertex that is within 0.5 um of the line through its kept neighbours (and is not a junction) is merged away, so a
+track that did not need to bend comes back as the one segment it was. Locked tracks and foreign copper are untouched; every route that is kept still passes the exact check. Test (`tests/test_txn.cpp`, `[legalize]`): a straight
+10 mm track between two fixed pads with a locked neighbour 0.06 mm from its middle (rule 0.1 mm) cannot be resolved without cutting, resolves with a 1 mm cut (it bends, the pieces that stayed straight merge, the DRC is clean, ends and
+chain intact, same result twice).
+
+**In the closure loop** (`reports/realworld/py/closure.py`, the real-world study): after a relaxation lets nets through, the *shove* step puts the nets that just took a tier back one tier and runs the router with
+`--legalize --legalize-subdivide 0.5` on the copper of that round (violations the relaxation left are pushed apart where room exists); the result is kept if it removes violations and no connection opens (a connection that opens
+has to be paid for by ten violations removed). It runs again after every further relaxation. Measured on the stuck boards before it was made selective (DronPi, closure-2): putting *every* relaxed net back at once gave
+8 open (was 1) and 518 DRC violations (was 728), and routing again under `--relax` gave 4-5 open (E3: 29, was 3), so neither is used.
+
+## 47. Escape features from the EtherCAT shield review (2026-10-17, D126)
+
+`reports/realworld/ethercat_qfn_analysis.md` (a review of the EtherCAT shield, a LAN9252 in a QFN-64 at 0.5 mm pitch that no run closed) suggested five changes in order of expected payoff. Four are built, each **off by default** (no routed
+board changes without them), each with a test in `tests/test_stall.cpp` (`[escape]`):
+
+| Option | Review item | What it does |
+|---|---|---|
+| `--escape-length MM` | 1 (bundles) and 3 (length) | Perimeter corridors of the escape plan run MM past the package edge (2 mm by default), one lattice step at a time, as long as a track of the net fits against the fixed copper: parallel straight escapes of the pins of one side, which keep their order, as the designer draws them. `RouteResult::escape_corridor_mm` is the reserved length. |
+| `--escape-persist` | 3 (persistence) | A ripped-up connection gets its pins' corridors back (`pad_plan` keeps the planned cells; `unrelease_escapes` in `rip`), and a pin's corridor is not released while another connection of its net with a pin on the same package is open. `escape_reclaimed` counts the returns. |
+| `--radial-supply`, `--radial-penalty MM` | 2 (radial supply pins) | In the spanning tree an edge between two pins of one dense package costs MM (10 by default) more for a net with 3+ pins there (exposed pads exempt): each pin goes to a capacitor or via beyond the package. `package_pin_edges` counts the pin-to-pin edges of the plan. |
+| `--via-drops` | 4 (off-lattice via sites) | A pin of a dense package may drop to a via off the lattice, up to about 1.5 mm (20 lattice pitches) out in one of 8 directions, between the neighbours' tracks, then go on on another layer (endpoint cost = both legs plus a via); `commit` writes the track, the via and the track. |
+| `--escape-stubs` | 1 (bundles), the exact part | With the escape plan: a pin offers the end of its straight corridor (`--escape-length`) as a start point, reached by one exact off-lattice segment at a quarter of its length: parallel escapes at the pad pitch, which the lattice cannot draw. EtherCAT: stubs of 3 mm or more on 13 pins instead of 1 (183 of 207 routed, no better than the corridors alone). |
+
+Not built: review item 1's planar-order bundle router proper (the long straight corridors and stubs are its first-order effect; `--buses` lanes on the EtherCAT GPIO group and on the fpga-dongle's I/O banks made it worse, 177 -> 177/181 and 307 -> 262), and item 5 (a back-layer tunnel under the QFN for same-net supply pins). In the closure loop the escape plan is a *trial* round (kept only if KiCad then shows fewer open connections): EtherCAT 28 -> 21 open at 40 M work.
+
+**Measured** (router's own count at the board's rules, 20 M work, first closure round, `--escape-plan` plus the option): EtherCAT 177 of 207 routed (base) -> 184 with length 12, 185 with length 12 and drops, persistence and radial supply alone or together 179-182; the other seven boards
+see no change or a few connections either way (E3 242 -> 237 with length 12). See `bench/records/escape-features/`.
+
+## 48. Net-less mask openings and the fine-lattice finish (2026-10-17, D127)
+
+Two causes of "fixed copper encloses the pin", found on the real-world boards (reports/realworld, py/closure.py):
+
+1. **Mask graphics.** A footprint that draws a solder-mask opening over the pads of two or more nets (a solder jumper, a microphone's pad group) makes a net-less opening, and the router keeps every track and via 0.1 mm away from it (the
+   solder-mask rule of the DAC 2020 boards). A pin inside cannot start. `--soft-mask-graphics` (`Obstacles::set_soft_mask_graphics`, off by default) takes those openings off the router's keep-outs; KiCad's mask checks then flag
+   what lies in them (judgement class in the ledger). kitspace_test-jig: its solder-jumper net `Net-(JP3-Pad1)` routes 0/2 -> 2/2 connections. Test `[mask]` (a pin inside a drawn opening routes only with the option).
+2. **Narrow channels.** Pad 2 of memsarray's microphone (DVDD) has 0.35-0.4 mm gaps to the pads around it, and the only way out is a diagonal between two ground pads. It routes at a lattice pitch of 10 um and not at 15, and only when the net
+   and its neighbours (a gap is judged with the larger clearance of the two nets) are at the loosest tier. The closure loop's *fine finish* does this for each open net in turn, on the copper of the best state: `--only-net NET --pitch-um 10..20` (10 um up to
+   60 x 60 mm, 14 um up to 100 x 100 mm, 20 um beyond), kept only if KiCad then shows fewer open connections. memsarray: 1 -> 0 open. No router change: the option existed.
+3. **Copper graphics.** Net-less copper drawn as *board* graphics (polygons on a copper layer: Hardware_Playground E3, an EasyEDA import, has nine of them; three boards of 1,164 in PCBench have any) is fixed copper that no track may touch,
+   and the pins inside it are enclosed (E3: the two `+VB` pads of the MP1584 module U7 and of U6, "boxed in" in every run; reproduced on a board with nothing but U7, `reports/realworld/repro/`). The polygons are the designer's manual pours.
+   `--soft-copper-graphics` (`Board::infer_graphic_nets`; `drc::build_copper`, `Obstacles`) gives each one the net of the pads, tracks and vias it touches when that is exactly one net (several nets or none: it stays net-less and blocks as before):
+   that net may touch it and has its pins in it connected through it, no other net may. **First version, wrong:** ignoring the polygons altogether closed E3 (0 open) with 68 added `shorting_items` (tracks of different nets touching one polygon),
+   which is a short, not a compromise; the ledger now counts `shorting_items` as a failure of acceptance. E3 `+VB` alone: 20 of 31 -> 22 of 22 connections (nine are satisfied by the pour). Test `[mask]` (a pin inside a polygon on both copper layers routes only with the option).
+
+## 49. Ordered first nets (2026-10-18, D128)
+
+`--first-nets` moved the listed nets to the front as a group (a stable partition); within the group the router's own order (shortest first) applied, whatever the order of the list. `--first-nets-ordered` (off by default) routes them in the order of the list, in all three places the front group is built (connection list, bundle order, restart order). Use: the pins of a dense package listed round its perimeter, so that no escape has to cross its neighbour's.
+Found while testing the EtherCAT shield: a "ring order" and an "open nets first" reroute of the same 13-52 nets gave identical results, because the order was ignored. Test `[critical]` (two crossing nets: the first of the list gets the crossing only with the option).
+Result on the shield (study tool, `reports/realworld/py/closure.py` package reroute): ripping the 13-52 nets of the pins round the open ones and routing them together, in pin order and with the escape plan, ended at 9-15 open against 3 before; routing them one at a time (`--only-net`) in 12 orders ended at 4-15 open. The router does not rebuild a comb from scratch; the group reroute is kept in the study tools as a trial that is accepted only when KiCad shows fewer open connections.
+
+## 50. Bundle (river) escapes (2026-10-18, D129)
+
+**Before.** The router routes one connection at a time, each along its own cheapest path. The sixteen to thirty pins that leave one side of a QFN for one connector therefore take diagonal shortcuts that cut across their neighbours' channels, and the pins behind them are "boxed in": on the EtherCAT shield (LAN9252, QFN-64, 0.5 mm pitch) no run closed fewer than 3 connections, and the designer's own routing, a straight 0.5 mm-pitch comb of 5-19 mm that peels off at the pads of a header 40 mm away, was out of the router's reach: group rerouting in any order (§49) ended at 4-15 open, escape corridors only reserve ground (the net still bends early), and `--buses` lanes follow a leader that has already bent (§38). Review item 1 of `reports/realworld/ethercat_qfn_analysis.md`.
+
+**What it is** (`--bundle-escape`, off by default: without it nothing changes; `--bundle-min N`, default 3; `route/bundle.{hpp,cpp}`, called from `Router::route_bundle_escapes` after the escape plan and the coupled pairs, again after every restart). Not a search per connection:
+
+| Step | What |
+|---|---|
+| Groups | Unrouted two-pad connections with one pad on the perimeter of a dense package (≥ 8 copper pads, pitch ≤ 1.3 mm, SMD, within 3/4 pitch of one side of the pad-centre box; corner pins and thermal pads are not perimeter pins, as in the escape plan) and the other pad on another part, keyed by (package, side it leaves from, other part, **side of that part its pad is nearest to** (ties: the side facing the package); a header's two columns arrive from their own sides). Fewer than `--bundle-min` connections: left to the router. Larger groups first. |
+| Spine | One A* for a track as wide as the whole block (lane span + a track width) on an octilinear grid (0.5 mm), from just outside the pad row (the block's round cap clears the pins by one clearance) to the neighbourhood of the front of the destination side. Turns are 45° and at least `2·half-span·tan 22.5° + 2 steps` apart so that the inner lanes of a turn keep a positive length; each edge is the router's exact segment check (`Obstacles::segment_state`, strict) of the wide track, memoised. Cost: length + 6 steps per turn; at most 3 M expansions (geometry, not charged to `--work`, like the pair legs' set-up). |
+| Planarity | Lanes peel toward their pads, so the lane nearest the pads' side must have the pad that comes first along the lanes' last direction. Pins and pads come in whatever order the netlist gave them; the longest run of lanes that agree (strictly, 0.3 mm apart) is the bundle, the others are left to the router. Fewer than `--bundle-min` agreeing: no bundle. |
+| Lanes | Lane k is the spine offset by its pin's distance from the middle of the block (rigid offsets, mitred at the corners: the order of the pins is the order of the lanes, so lanes cannot cross), prefixed by the straight run from the pad. It is walked in 0.25 mm pieces while each passes the exact check; the lane peels off at the **last** place from which a leg to its pad passes: a diagonal then a straight run, or a straight run then a diagonal, no turn over 45° (so lanes hug the block and leave one by one, as in the designer's comb), but never behind the pad. A lane with no such place is left to the router. |
+| Placing | `place_bundle_lane` checks every piece again with the exact test and adds the tracks as the connection's copper: routed, `bus_lane` (clean-up leaves it alone) and `bundle_lane`: no other connection may rip it (`commit`: "would rip a bundle lane"). A restart rips everything and the bundles are placed again. |
+
+Everything is checked by the router's own exact test before it is committed (rule 1), the order of groups, lanes and searches is fixed (rule 2), a connection without a lane is routed as before, and a lane is a transaction in the sense that a refused lane changes nothing.
+
+**Result.** Router's own count on the EtherCAT shield at the board's rules, 20 M work, `--soft-zones`: base 177/207 routed; escape features alone 179; `--bundle-escape` 185; with `--escape-plan --escape-length 12` **189** (30 unrouted -> 18). Eight lanes are placed: five to the right column and three to the left column of P1, straight 0.5 mm-pitch runs for 10-15 mm (render `reports/realworld/tmp_img/ec/b_Ba.png`). With the designer's own copper as seed the same board stopped at 163-182 (§47 table): the comb alone is not enough; what is left is the top side (the Ethernet pairs and their passives, short connections no bundle covers), the supply pins, and lanes that are not planar on one layer (the designer puts those on the back layer with vias). Tests `[bundle]` (`tests/test_stall.cpp`): the pins of one side leave as straight parallel lanes, deterministic and DRC-clean; a pair of crossed pads loses lanes; off by default.
+
+**Not built.** A second layer for the lanes that are not planar (pin-to-via drops at 0.5 mm pitch need two staggered rows), merging the lanes of two sides that go to one destination side, bundles to passives (short) and to parts beside the package, a spine that bends round placed bundles' future neighbours.
+
+## 51. Supply first (2026-10-18, D130)
+
+**Before.** After the bundle escape (§50) the last open connections of the EtherCAT shield were all on the core-supply net (`Net-(C12-Pad1)`: U1 pins 6, 24 and 38, tied under the package on the back layer by the designer) and on `+3V3` (seven pins on all four sides, each going radially to a via): nets with several pins on one package, which the router routes late, as spanning-tree edges between pins 1-3 mm apart, round the package and across the pins' escape band.
+
+**What it is** (`--supply-first`, off by default). Every net with two or more perimeter pins (§50's definition) on one dense package and no pour (no zone of the net) is added to the `--first-nets` set: routed before everything else and not ripped by anything that is not first itself (`commit`: "would rip a --first-nets connection"). The bundles of `--bundle-escape` are still placed before it. Placing them after the supply nets (so that the comb would leave the supply pins' via sites free) was tried and was worse: 20 against 13 unrouted on the shield.
+Nothing else changes: the order within the group is the router's own. On the shield it picks `+3V3`, `Net-(C12-Pad1)` and `Net-(C16-Pad1)`.
+
+**Result** (router's own count, 20 M work, `--soft-zones --escape-plan --escape-length 12`): bundles alone 18 unrouted, with `--bundle-min 1` 14; `--supply-first --bundle-min 1` **13** (194 of 207). `--bundle-min 1` makes every package connection a lane of its own (a block one track wide: the spine search is then an ordinary 45-degree search before the others); alone it gained 4 connections on the shield. Test `[bundle]` (supply nets first: legal, deterministic).
+
+**Study tools** (`reports/realworld/py/closure.py`, `combine.py`): `--round0 "ARGS"` adds router arguments to the first from-scratch route only; `bundle_reroute` (a finishing step: every signal net of the package round an open pin is ripped up and the package's connections are placed again as bundles, in four option sets and three seeds); `--region-crossover` (the combine step also takes the nets of a donor state within 3, 6 or 10 mm of the open end points together, `combine.nets_near`).
+
+## 52. Package tunnels (2026-10-18, D131)
+
+**Before.** The designer ties the core rail of the EtherCAT shield (`Net-(C12-Pad1)`: U1 pins 6, 24 and 38, on three sides) under the package on the back layer, with a via a millimetre out of each pin (review item 5, `ethercat_qfn_analysis.md`). The router connects such pins as spanning-tree edges round the package on both layers. In the best states of this study (§50) the only open connection was always this net: pin 38 and its capacitor, cut off from the trunk by the ground vias of the thermal pad and the tracks of the neighbouring pins.
+
+**What it is** (`--package-tunnels`, off by default; `route_tunnels` in `route/bundle.cpp`, run before the bundles in `Router::route_bundle_escapes`, also on a warm start for the connections still open). For every unrouted connection whose two pads are perimeter pins of one dense package on the same copper layer, at least 2 mm apart: a stub straight out of each pin to the nearest place (0.1 mm steps, up to 1.8 mm past the pad edge) where the stub and a via of the net pass the router's exact checks; then the run on the other outer layer between the two vias, one A* (octilinear, 0.25 mm grid, exact checks per step, the spine search of §50 with a track as wide as the net) and a last piece to the via. Nothing is placed unless the whole tunnel passes; it becomes the connection's copper, routed and protected from ripping like a lane. Tunnels go **before** the lanes: after them no via fits between the pins' lanes at the board's rules (tried: no via site for any of the three tunnels on the shield).
+
+**Result.** Without lanes all three tunnels of the shield are placed (`+3V3` 14-7 and 20-14, the core rail 24-38). In the router's own count at the first-round rules (T0 vias of 0.6 mm) they cost connections (190 against 194 of 207 with lanes and supply first); the closure loop, which works at its relaxed tiers (0.4 mm vias), is the test: see `bench/records/closure/README.md`. Test `[bundle]` (a net between two opposite pins of the package: two vias, tracks on both layers, DRC-clean, deterministic).

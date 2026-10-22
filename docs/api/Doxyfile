@@ -1,0 +1,43 @@
+# C++ API reference (D134). From the repository root: `mkdir -p build/api && doxygen docs/api/Doxyfile` -> build/api/html/.
+# The headers keep their plain `//` comments; scripts/doxygen_filter.py turns them into documentation for Doxygen.
+# scripts/check_api_docs.py runs the same configuration with EXTRACT_ALL = NO to count undocumented declarations.
+PROJECT_NAME           = TraceMaker
+PROJECT_BRIEF          = "C++ API of the engine"
+OUTPUT_DIRECTORY       = build/api
+INPUT                  = src
+FILE_PATTERNS          = *.hpp
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */test_* */tests/*
+INPUT_FILTER           = "python3 scripts/doxygen_filter.py"
+FILTER_SOURCE_FILES    = NO
+STRIP_FROM_PATH        = src
+STRIP_FROM_INC_PATH    = src
+FULL_PATH_NAMES        = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_RELATIONS   = YES
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+BUILTIN_STL_SUPPORT    = YES
+JAVADOC_AUTOBRIEF      = YES
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+VERBATIM_HEADERS       = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+PREDEFINED             = TM_HAVE_CUDA=0
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_TREEVIEW      = YES
+SEARCHENGINE           = YES
+GENERATE_LATEX         = NO
+HAVE_DOT               = NO
+CLASS_GRAPH            = YES
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+WARN_LOGFILE           = build/api/warnings.log

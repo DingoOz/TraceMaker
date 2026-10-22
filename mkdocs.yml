@@ -1,0 +1,135 @@
+# The documentation site (D134): `pip install -r docs/requirements.txt`, then `mkdocs serve` (or `mkdocs build --strict`).
+# The design docs keep their numbered names in docs/ so the many references to "doc 05 §34" and docs/05-routing.md
+# in code, commits and issues stay valid; the navigation below sorts them into tutorials, how-to guides, reference,
+# explanation and project records (Diátaxis).
+site_name: TraceMaker
+site_description: An autorouter and component placer for KiCad
+site_url: https://dingooz.github.io/TraceMaker/
+repo_url: https://github.com/DingoOz/TraceMaker
+repo_name: DingoOz/TraceMaker
+edit_uri: edit/main/docs/
+copyright: GPL-3.0-or-later
+
+docs_dir: docs
+site_dir: build/site
+
+# Not pages: design-data files beside the docs, the Doxygen configuration and the ADR template.
+exclude_docs: |
+  /api/Doxyfile
+  /api/undocumented-baseline.txt
+  /decisions/_template.md
+  /footprint_refs/
+  /requirements.txt
+
+hooks:
+  - scripts/mkdocs_hooks.py
+
+theme:
+  name: material
+  logo: assets/tracemaker-icon.svg
+  favicon: assets/favicon.ico
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle: {icon: material/weather-sunny, name: Light mode}
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+
+extra:
+  version:
+    provider: mike
+    default: latest
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_javascript:
+  - assets/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+
+# The decision records are reached from the index in 12-decisions.md, not from the navigation.
+not_in_nav: |
+  /decisions/D*.md
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: info
+
+nav:
+  - Home: index.md
+  - Quick start: quick-start.md
+  - Tutorials:
+      - tutorials/index.md
+      - Route your first board: tutorials/first-board.md
+      - Route from inside KiCad: tutorials/kicad-plugin.md
+  - How-to guides:
+      - how-to/index.md
+      - Build and test: how-to/build-and-test.md
+      - Run kicad-cli from Docker: how-to/kicad-cli-docker.md
+      - Use the GPUs: how-to/gpu.md
+      - Fetch boards and run benchmarks: how-to/benchmarks.md
+      - Make a release: how-to/release.md
+      - Write and publish the docs: how-to/docs.md
+  - Reference:
+      - reference/index.md
+      - Command line: reference/cli.md
+      - Viewer protocol: 13-viewer-protocol.md
+      - Benchmark results: reference/benchmarks.md
+      - C++ API: reference/api.md
+  - Explanation:
+      - explanation/index.md
+      - Requirements: 01-requirements.md
+      - Architecture: 02-architecture.md
+      - Data structures and DRC: 03-data-structures.md
+      - Placement: 04-placement.md
+      - Routing: 05-routing.md
+      - Failure memory: 06-failure-learning.md
+      - GPU acceleration: 07-gpu.md
+      - KiCad integration: 08-kicad-integration.md
+      - Live viewer: 09-visualization.md
+      - Benchmarking: 10-benchmarking.md
+      - Placement test plan: 14-placement-test-plan.md
+      - Component-aware rules: 15-component-rules.md
+      - BGA breakout: 16-bga-breakout-plan.md
+      - Advice files and advisors: 17-llm-advisor.md
+      - Agent interface: 19-agent-interface.md
+  - Project:
+      - project/index.md
+      - Roadmap: 11-roadmap.md
+      - Candidate features: 18-next-features.md
+      - Decisions and risks: 12-decisions.md

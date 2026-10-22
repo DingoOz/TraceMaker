@@ -1,0 +1,151 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 263/281 connections, 1312 tracks, 124 vias, pitch 0.0",
+   "open": 22,
+   "violations": 184,
+   "placement_errors": 5,
+   "open_nets": [
+    "+3v3",
+    "BBB_+3v3",
+    "GND",
+    "Net-(C13-Pad1)",
+    "SPI_CLK",
+    "SPI_CS_MPU",
+    "SPI_MISO"
+   ]
+  },
+  {
+   "round": 0,
+   "kind": "hard",
+   "nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 14,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 338/353 connections, 1734 tracks, 156 vias, pitch 0.0",
+   "open": 14,
+   "violations": 242,
+   "placement_errors": 5,
+   "open_nets": [
+    "+3v3",
+    "+5v_SERV",
+    "BBB_+3v3",
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "shove",
+   "nets": 14,
+   "open": 18,
+   "violations": 202,
+   "was_open": 14,
+   "was_violations": 242,
+   "kept_back": 12,
+   "accepted": true,
+   "router": "routed 334/353 connections, 1703 tracks, 137 vias, pitch 0.0"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 24,
+   "relaxed_power": 4,
+   "moved_parts": 0,
+   "router": "routed 353/353 connections, 1243 tracks, 157 vias, pitch 0.0",
+   "open": 0,
+   "violations": 326,
+   "placement_errors": 5,
+   "open_nets": []
+  }
+ ],
+ "assign": {
+  "+3v3": "T1",
+  "+5v_SERV": "T1",
+  "/I2C/SCL2": "T1",
+  "/PWM-PPM-SBUS/SBUS_": "T1",
+  "/Proteccion/REG_FAULT": "T1",
+  "BBB_+3v3": "T1",
+  "GND": "T1",
+  "INT_CAN": "T1",
+  "MPU_INT": "T1",
+  "Net-(C13-Pad1)": "T1",
+  "Net-(C3-Pad1)": "T1",
+  "Net-(IC11-Pad4)": "T1",
+  "Net-(IC2-Pad19)": "T1",
+  "Net-(IC2-Pad21)": "T1",
+  "Net-(IC2-Pad7)": "T1",
+  "Net-(IC5-Pad6)": "T1",
+  "Net-(IC5-Pad7)": "T1",
+  "PPM": "T1",
+  "SCL": "T1",
+  "SDA": "T1",
+  "SPI_CLK": "T1",
+  "SPI_CS_MPU": "T1",
+  "SPI_MISO": "T1",
+  "SPI_MOSI": "T1"
+ },
+ "moves": {},
+ "power": [
+  "+3v3",
+  "+5v_SERV",
+  "3v3",
+  "3v3_EN",
+  "BBB_+3v3",
+  "GND",
+  "Net-(C4-Pad1)",
+  "Net-(F2-Pad1)",
+  "Power",
+  "VCC_AUX",
+  "VDD",
+  "VDD_5v"
+ ],
+ "hard": [
+  "GND"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.6,
+   "drill": 0.4,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

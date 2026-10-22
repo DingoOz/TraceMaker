@@ -18,7 +18,7 @@ Not a table: the checks and what each showed.
 | the tarball and the zip built twice from one build | identical `SHA256SUMS` |
 | plugin zip unpacked by Python's `zipfile` (no executable bit kept), no `TRACEMAKER` variable, run in the live KiCad 10.0.6 GUI by `scripts/kicad_gui_roundtrip.py --package` (`gui-package.log`) | the plugin found `plugins/bin/tracemaker`, added 498 tracks and 15 vias; one Ctrl+Z removes all, redo brings them back; KiCad's DRC: unconnected 148 to 28, no new error |
 
-GitHub: `.github/workflows/release.yml` ran on the pull request (#44): package job 4 min 26 s, install job 17 s, both green; the publish job is skipped off a tag, so uploading to a draft release has not run.
+GitHub: `.github/workflows/release.yml` ran on the pull request (#44): package job 4 min 26 s, install job 17 s, both green; the publish job is skipped off a tag, so uploading to a draft release had not run at the time (it ran on the `v0.10.0` tag on 2026-10-18: package, install and publish all green, draft release with the two files and `SHA256SUMS`).
 
 Not checked: the publish step on a tag, KiCad's own *Install from File* on this archive and the virtual environment it builds for
 kicad-python, macOS arm64 (not built), Ubuntu 22.04.

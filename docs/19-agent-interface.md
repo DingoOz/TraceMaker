@@ -1,3 +1,8 @@
+---
+status: partly-built
+code: [src/session]
+---
+
 # 19 — A board session and an agent interface (M18)
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-15. Milestone **M18** ([11-roadmap.md](11-roadmap.md)), candidate D2 of

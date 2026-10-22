@@ -1,0 +1,7 @@
+{"board": "kitspace_OtterPill", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 0, "kicad_open": 0, "compromises": 312, "shorts": 0, "safety": "PASS"}
+{"board": "DoroidOscillo-Board_Android_Oscilloscope", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 0, "kicad_open": 0, "compromises": 42, "shorts": 0, "safety": "PASS"}
+{"board": "kitspace_f-91w", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 2}
+{"board": "MicroMaple_MicroMaple", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 2}
+{"board": "mppt-2420-hpx_mppt-2420-hpx", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 1}
+{"board": "ErgodoneWithHole_ErgoDone", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 2}
+{"board": "74Logic_SA_ADC_SA-ADC", "run": "closure-b3", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 1}

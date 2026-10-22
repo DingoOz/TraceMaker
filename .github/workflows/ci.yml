@@ -43,3 +43,6 @@ jobs:
 
       - name: Test
         run: ctest --preset cpu-only --output-on-failure
+
+      - name: Command line reference is up to date (docs/reference/cli.md)
+        run: python3 scripts/gen_reference.py cli --build build/cpu-only --check

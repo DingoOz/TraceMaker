@@ -1,0 +1,16 @@
+{"board": "Aleste-520EX_aleste", "run": "closure-b2z", "layers": 2, "rounds": 4, "open_first": 278, "open_best": 270, "relaxed": 24, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 2315}
+{"board": "KiCad-Library_Teensy_test_layout", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 4, "open_first": 73, "open_best": 25, "relaxed": 16, "relaxed_power": 0, "moves": 0, "hard": 6, "seconds": 2701}
+{"board": "MonApollo_analog-board", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 5, "open_first": 105, "open_best": 28, "relaxed": 157, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2701}
+{"board": "oskirby_logicbone", "run": "closure-b2z", "layers": 2, "rounds": 5, "open_first": 250, "open_best": 188, "relaxed": 359, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 2467}
+{"board": "mini_mass_prog_bench_prog_rig", "run": "closure-b2z", "layers": 4, "rounds": 6, "open_first": 15, "open_best": 2, "relaxed": 37, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2968}
+{"board": "decelerator4030_decelerator4030", "run": "closure-b2z", "layers": 2, "rounds": 6, "open_first": 411, "open_best": 321, "relaxed": 202, "relaxed_power": 3, "moves": 0, "hard": 1, "seconds": 3041}
+{"board": "mechkeys_LFK78", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 56, "open_best": 27, "relaxed": 71, "relaxed_power": 1, "moves": 0, "hard": 1, "seconds": 3301}
+{"board": "dorkyboard_keyboard", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 30, "open_best": 10, "relaxed": 34, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 3301}
+{"board": "mechkeys_lfk_revd", "run": "closure-b2z", "layers": 2, "rounds": 6, "open_first": 68, "open_best": 26, "relaxed": 80, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2561}
+{"board": "CoreOne-xCORE200-Original_CoreOne", "run": "closure-b2z", "layers": 4, "timeout": true, "rounds": 6, "open_first": 53, "open_best": 16, "relaxed": 102, "relaxed_power": 0, "moves": 0, "hard": 2, "seconds": 3300}
+{"board": "mechkeys_lfk_revc", "run": "closure-b2z", "layers": 2, "rounds": 5, "open_first": 71, "open_best": 22, "relaxed": 73, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 2029}
+{"board": "kitspace_EEZ%20DIB%20MCU%20r1B2", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 92, "open_best": 69, "relaxed": 197, "relaxed_power": 4, "moves": 0, "hard": 5, "seconds": 3301}
+{"board": "MonApollo_digital-board", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 83, "open_best": 19, "relaxed": 125, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 3300}
+{"board": "TCKB_Kicad_TCKB", "run": "closure-b2z", "layers": 2, "timeout": true, "rounds": 6, "open_first": 71, "open_best": 22, "relaxed": 63, "relaxed_power": 63, "moves": 0, "hard": 1, "seconds": 3300}
+{"board": "kitspace_d20_tri_r0.3", "run": "closure-b2z", "layers": 4, "rounds": 5, "open_first": 143, "open_best": 138, "relaxed": 95, "relaxed_power": 1, "moves": 0, "hard": 0, "seconds": 3206}
+{"board": "kitspace_d20_tri_r1.0", "run": "closure-b2z", "layers": 2, "rounds": 6, "open_first": 381, "open_best": 252, "relaxed": 92, "relaxed_power": 1, "moves": 0, "hard": 0, "seconds": 3168}

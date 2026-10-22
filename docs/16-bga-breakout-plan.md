@@ -1,3 +1,8 @@
+---
+status: partly-built
+code: [src/route]
+---
+
 # 16 — Plan: matching tscircuit on BGA breakout boards
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-11.

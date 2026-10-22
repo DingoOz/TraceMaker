@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/server, viewer]
+---
+
 # 09 — Real-time visualisation
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).
@@ -42,7 +47,7 @@
   - At most 16 WebSocket viewers (counted from the upgrade, so a burst cannot overshoot; the next gets 503) and 128 open HTTP connections, at most 16 of them from one address (a host
     that opens idle sockets cannot use up the others' share before it has authenticated; many addresses together still can: this is not a defence against flooding). The cookie is named per port
     (`tm_token_<port>`: cookies ignore ports). A `Host` that is not a name or address with a numeric port is refused. Answers carry `Referrer-Policy: no-referrer`,
-    `X-Content-Type-Options: nosniff` and `X-Frame-Options: DENY`; the token is compared in constant time.
+    `X-Content-Type-Options: nosniff` and `X-Frame-Options: DENY` (`route --view-embed "<origins>"` instead sends `Content-Security-Policy: frame-ancestors <origins>`, so a dashboard can frame the viewer, D133); the token is compared in constant time.
   - Not built: TLS (the token and the stream cross the network unencrypted: on an untrusted network keep the loopback bind and use an SSH tunnel), accounts, the
     control channel. The stream is read-only; nothing a client sends is acted on.
 

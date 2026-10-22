@@ -1,0 +1,984 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 182/207 connections, 972 tracks, 112 vias, pitch 0.07",
+   "open": 27,
+   "violations": 173,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/RUNLED",
+    "/LAN9252/VDDTXRX2",
+    "GND",
+    "GNDPWR",
+    "GPIO10",
+    "LAN9252_IRQ",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "Net-(R12-Pad1)",
+    "Net-(R20-Pad2)",
+    "RX1_P",
+    "SIO0",
+    "SIO2",
+    "SIO3",
+    "TX1_P",
+    "TX2_P"
+   ]
+  },
+  {
+   "round": 0,
+   "kind": "hard",
+   "nets": [
+    "GND",
+    "GNDPWR"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 244/272 connections, 1131 tracks, 139 vias, pitch 0.0",
+   "open": 24,
+   "violations": 159,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/LINKACTLED1",
+    "/LAN9252/VDD33TXRX1",
+    "GPIO0",
+    "GPIO1",
+    "GPIO12",
+    "GPIO13",
+    "GPIO15",
+    "GPIO2",
+    "GPIO4",
+    "GPIO5",
+    "GPIO6",
+    "GPIO8",
+    "GPIO9",
+    "LAN9252_IRQ",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "Net-(R13-Pad1)",
+    "Net-(R20-Pad2)",
+    "RX1_N",
+    "RX1_P",
+    "SCK",
+    "SIO2",
+    "TX1_P"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "escape",
+   "dense_hits": 24,
+   "open": 24,
+   "violations": 157,
+   "accepted": true
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 245/272 connections, 1104 tracks, 139 vias, pitch 0.0",
+   "open": 24,
+   "violations": 157,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/LINKACTLED1",
+    "GPIO0",
+    "GPIO1",
+    "GPIO11",
+    "GPIO13",
+    "GPIO15",
+    "GPIO4",
+    "GPIO6",
+    "GPIO8",
+    "GPIO9",
+    "LAN9252_IRQ",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "SCK",
+    "SIO2",
+    "TX1_P",
+    "TX2_N",
+    "TX2_P"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 55,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 248/272 connections, 1315 tracks, 182 vias, pitch 0.0",
+   "open": 21,
+   "violations": 159,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/RUNLED",
+    "/LAN9252/VDD33TXRX1",
+    "GPIO0",
+    "GPIO1",
+    "GPIO10",
+    "GPIO13",
+    "GPIO14",
+    "GPIO5",
+    "GPIO9",
+    "Net-(C17-Pad1)",
+    "Net-(R13-Pad1)",
+    "Net-(R19-Pad2)",
+    "RX1_N",
+    "RX1_P",
+    "SIO2",
+    "SYNC1"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 39,
+   "open": 26,
+   "violations": 157,
+   "was_open": 21,
+   "was_violations": 159,
+   "kept_back": 28,
+   "accepted": false,
+   "router": "routed 240/272 connections, 1236 tracks, 150 vias, pitch 0.0"
+  },
+  {
+   "round": 4,
+   "kind": "route",
+   "relaxed_nets": 55,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 249/272 connections, 845 tracks, 145 vias, pitch 0.06",
+   "open": 15,
+   "violations": 207,
+   "placement_errors": 1,
+   "open_nets": [
+    "/LAN9252/RUNLED",
+    "GPIO0",
+    "GPIO1",
+    "GPIO13",
+    "GPIO14",
+    "GPIO2",
+    "GPIO5",
+    "GPIO8",
+    "LAN9252_IRQ",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "Net-(R18-Pad1)",
+    "SCK"
+   ]
+  },
+  {
+   "round": 4,
+   "kind": "shove",
+   "nets": 36,
+   "open": 20,
+   "violations": 214,
+   "was_open": 15,
+   "was_violations": 207,
+   "kept_back": 31,
+   "accepted": false,
+   "router": "routed 248/272 connections, 841 tracks, 157 vias, pitch 0.06"
+  },
+  {
+   "round": 5,
+   "kind": "route",
+   "relaxed_nets": 55,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 253/272 connections, 1313 tracks, 173 vias, pitch 0.0",
+   "open": 14,
+   "violations": 455,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "GPIO13",
+    "GPIO6",
+    "GPIO8",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "SIO0",
+    "SIO3"
+   ]
+  },
+  {
+   "round": 6,
+   "kind": "route",
+   "relaxed_nets": 58,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 257/272 connections, 1285 tracks, 165 vias, pitch 0.0",
+   "open": 13,
+   "violations": 364,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/RUNLED",
+    "/LAN9252/VDDTXRX2",
+    "GPIO12",
+    "GPIO5",
+    "GPIO6",
+    "LAN9252_IRQ",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "SCK",
+    "SYNC0",
+    "TX1_P"
+   ]
+  },
+  {
+   "round": 7,
+   "kind": "route",
+   "relaxed_nets": 59,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 255/272 connections, 1351 tracks, 173 vias, pitch 0.0",
+   "open": 13,
+   "violations": 451,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/LINKACTLED1",
+    "GPIO1",
+    "GPIO2",
+    "GPIO6",
+    "Net-(C17-Pad1)",
+    "Net-(R13-Pad1)",
+    "SYNC0",
+    "TX1_P",
+    "TX2_P"
+   ]
+  },
+  {
+   "round": 8,
+   "kind": "route",
+   "relaxed_nets": 60,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 255/272 connections, 1011 tracks, 174 vias, pitch 0.0",
+   "open": 12,
+   "violations": 418,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "/LAN9252/RUNLED",
+    "GPIO12",
+    "GPIO6",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "RX1_N"
+   ]
+  },
+  {
+   "round": 9,
+   "kind": "route",
+   "relaxed_nets": 60,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 256/272 connections, 933 tracks, 171 vias, pitch 0.06",
+   "open": 12,
+   "violations": 360,
+   "placement_errors": 1,
+   "open_nets": [
+    "GPIO1",
+    "GPIO10",
+    "GPIO4",
+    "GPIO5",
+    "GPIO6",
+    "Net-(C12-Pad1)",
+    "Net-(C17-Pad1)",
+    "Net-(R13-Pad1)",
+    "SYNC0",
+    "SYNC1",
+    "TX1_N"
+   ]
+  },
+  {
+   "round": 10,
+   "kind": "route",
+   "relaxed_nets": 60,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 257/272 connections, 1387 tracks, 184 vias, pitch 0.0",
+   "open": 9,
+   "violations": 493,
+   "placement_errors": 1,
+   "open_nets": [
+    "+3V3",
+    "GPIO5",
+    "Net-(C17-Pad1)",
+    "Net-(R13-Pad1)",
+    "TX2_P"
+   ]
+  },
+  {
+   "round": 11,
+   "kind": "route",
+   "relaxed_nets": 60,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 263/272 connections, 1424 tracks, 198 vias, pitch 0.0",
+   "open": 6,
+   "violations": 532,
+   "placement_errors": 1,
+   "open_nets": [
+    "GPIO14",
+    "Net-(C12-Pad1)",
+    "Net-(C16-Pad1)",
+    "Net-(C17-Pad1)",
+    "Net-(R13-Pad1)"
+   ]
+  },
+  {
+   "round": 116,
+   "kind": "combine",
+   "trials": [
+    {
+     "net": "Net-(C17-Pad1)",
+     "from": "closure-30-f1",
+     "taken": 6,
+     "est": 4,
+     "open": 4,
+     "violations": 545
+    },
+    {
+     "net": "Net-(C17-Pad1)",
+     "from": "closure-30-f1/win-101-1",
+     "taken": 7,
+     "est": 4,
+     "open": 4,
+     "violations": 550
+    },
+    {
+     "net": "Net-(C17-Pad1)",
+     "from": "closure-32/win-117-2",
+     "taken": 4,
+     "est": 4,
+     "open": 4,
+     "violations": 541
+    },
+    {
+     "net": "Net-(C17-Pad1)",
+     "from": "closure-33s2/win-117-3",
+     "taken": 4,
+     "est": 4,
+     "open": 4,
+     "violations": 546
+    },
+    {
+     "net": "Net-(C17-Pad1)",
+     "from": "closure-36/comb-100-5",
+     "taken": 7,
+     "est": 4,
+     "open": 4,
+     "violations": 538
+    },
+    {
+     "net": "Net-(R13-Pad1)",
+     "from": "closure-30-f1",
+     "taken": 6,
+     "est": 4,
+     "open": 4,
+     "violations": 545
+    },
+    {
+     "net": "Net-(R13-Pad1)",
+     "from": "closure-30-f1/win-101-1",
+     "taken": 7,
+     "est": 4,
+     "open": 4,
+     "violations": 550
+    },
+    {
+     "net": "Net-(R13-Pad1)",
+     "from": "closure-33s2/win-117-3",
+     "taken": 4,
+     "est": 4,
+     "open": 4,
+     "violations": 546
+    }
+   ]
+  },
+  {
+   "round": 117,
+   "kind": "package",
+   "part": "U1",
+   "trials": [
+    {
+     "reach": 4,
+     "order": "open first",
+     "nets": 16,
+     "removed": 225,
+     "open": 8,
+     "violations": 480
+    },
+    {
+     "reach": 4,
+     "order": "ring",
+     "nets": 16,
+     "removed": 225,
+     "open": 8,
+     "violations": 486
+    },
+    {
+     "reach": 4,
+     "order": "ring reversed",
+     "nets": 16,
+     "removed": 225,
+     "open": 3,
+     "violations": 514
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 1",
+     "nets": 16,
+     "removed": 225,
+     "open": 3,
+     "violations": 511
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 2",
+     "nets": 16,
+     "removed": 225,
+     "open": 4,
+     "violations": 509
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 3",
+     "nets": 16,
+     "removed": 225,
+     "open": 8,
+     "violations": 479
+    },
+    {
+     "reach": 10,
+     "order": "open first",
+     "nets": 39,
+     "removed": 651,
+     "open": 17,
+     "violations": 383
+    },
+    {
+     "reach": 10,
+     "order": "ring",
+     "nets": 39,
+     "removed": 651,
+     "open": 19,
+     "violations": 383
+    },
+    {
+     "reach": 10,
+     "order": "ring reversed",
+     "nets": 39,
+     "removed": 651,
+     "open": 24,
+     "violations": 430
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 1",
+     "nets": 39,
+     "removed": 651,
+     "open": 11,
+     "violations": 386
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 2",
+     "nets": 39,
+     "removed": 651,
+     "open": 13,
+     "violations": 480
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 3",
+     "nets": 39,
+     "removed": 651,
+     "open": 13,
+     "violations": 400
+    }
+   ]
+  },
+  {
+   "round": 118,
+   "kind": "fine",
+   "pitch_um": 14.0,
+   "open": 3,
+   "violations": 511,
+   "steps": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "router": "routed 0/2 connections, 0 tracks, 0 vias, pitch 0.014 mm, 19"
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "router": "routed 0/1 connections, 0 tracks, 0 vias, pitch 0.014 mm, 18"
+    }
+   ]
+  },
+  {
+   "round": 119,
+   "kind": "window",
+   "trials": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "radius": 2.0,
+     "removed": 24,
+     "open": 4,
+     "violations": 540
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "radius": 2.0,
+     "removed": 216,
+     "open": 4,
+     "violations": 497
+    }
+   ]
+  },
+  {
+   "round": 120,
+   "kind": "combine",
+   "trials": [
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-30-f1",
+     "taken": 4,
+     "est": 1,
+     "open": 2,
+     "violations": 529
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-30-f1/win-101-1",
+     "taken": 4,
+     "est": 1,
+     "open": 2,
+     "violations": 539
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-30-f1/win-102-1",
+     "taken": 4,
+     "est": 1,
+     "open": 2,
+     "violations": 539
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-30-f2/win-102-1",
+     "taken": 4,
+     "est": 1,
+     "open": 2,
+     "violations": 539
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-30/fine-114",
+     "taken": 3,
+     "est": 2,
+     "open": 3,
+     "violations": 526
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-30/win-115-0",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 519
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-36/comb-100-5",
+     "taken": 4,
+     "est": 1,
+     "open": 2,
+     "violations": 529
+    },
+    {
+     "net": "Net-(C16-Pad1)",
+     "from": "closure-42/comb-116-1",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 525
+    }
+   ]
+  },
+  {
+   "round": 121,
+   "kind": "package",
+   "part": "U1",
+   "trials": [
+    {
+     "reach": 4,
+     "order": "open first",
+     "nets": 5,
+     "removed": 43,
+     "open": 2,
+     "violations": 519
+    },
+    {
+     "reach": 4,
+     "order": "ring",
+     "nets": 5,
+     "removed": 43,
+     "open": 2,
+     "violations": 519
+    },
+    {
+     "reach": 4,
+     "order": "ring reversed",
+     "nets": 5,
+     "removed": 43,
+     "open": 2,
+     "violations": 519
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 1",
+     "nets": 5,
+     "removed": 43,
+     "open": 2,
+     "violations": 522
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 2",
+     "nets": 5,
+     "removed": 43,
+     "open": 2,
+     "violations": 519
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 3",
+     "nets": 5,
+     "removed": 43,
+     "open": 2,
+     "violations": 519
+    },
+    {
+     "reach": 10,
+     "order": "open first",
+     "nets": 13,
+     "removed": 181,
+     "open": 2,
+     "violations": 526
+    },
+    {
+     "reach": 10,
+     "order": "ring",
+     "nets": 13,
+     "removed": 181,
+     "open": 2,
+     "violations": 526
+    },
+    {
+     "reach": 10,
+     "order": "ring reversed",
+     "nets": 13,
+     "removed": 181,
+     "open": 4,
+     "violations": 525
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 1",
+     "nets": 13,
+     "removed": 181,
+     "open": 5,
+     "violations": 503
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 2",
+     "nets": 13,
+     "removed": 181,
+     "open": 3,
+     "violations": 514
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 3",
+     "nets": 13,
+     "removed": 181,
+     "open": 3,
+     "violations": 511
+    }
+   ]
+  },
+  {
+   "round": 122,
+   "kind": "fine",
+   "pitch_um": 14.0,
+   "open": 2,
+   "violations": 519,
+   "steps": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "router": "routed 0/2 connections, 0 tracks, 0 vias, pitch 0.014 mm, 19"
+    },
+    {
+     "net": "RX1_N",
+     "router": "routed 0/0 connections, 0 tracks, 0 vias, pitch 0.014 mm, 0 "
+    }
+   ]
+  },
+  {
+   "round": 123,
+   "kind": "window",
+   "trials": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "radius": 3.0,
+     "removed": 78,
+     "open": 7,
+     "violations": 510
+    },
+    {
+     "net": "RX1_N",
+     "radius": 3.0,
+     "removed": 213,
+     "open": 5,
+     "violations": 551
+    }
+   ]
+  },
+  {
+   "round": 124,
+   "kind": "combine",
+   "trials": [
+    {
+     "net": "RX1_N",
+     "from": "closure-30-f1/win-100-1",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-30-f2/win-100-1",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-32/fine-06",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-32/win-06-1",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 521
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-36/comb-100-6",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-42/comb-120-2",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-42/comb-120-4",
+     "taken": 2,
+     "est": 1,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "net": "RX1_N",
+     "from": "closure-42/pkg-121-0",
+     "taken": 1,
+     "est": 1,
+     "open": 2,
+     "violations": 519
+    }
+   ]
+  },
+  {
+   "round": 125,
+   "kind": "window",
+   "trials": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "radius": 3.0,
+     "removed": 443,
+     "open": 7,
+     "violations": 510
+    },
+    {
+     "net": "RX1_N",
+     "radius": 3.0,
+     "removed": 578,
+     "open": 5,
+     "violations": 551
+    }
+   ]
+  }
+ ],
+ "assign": {
+  "+3V3": "T2",
+  "/LAN9252/LINKACTLED0": "T3",
+  "/LAN9252/LINKACTLED1": "T3",
+  "/LAN9252/RUNLED": "T3",
+  "/LAN9252/VDD33TXRX1": "T2",
+  "/LAN9252/VDDTXRX2": "T2",
+  "GPIO0": "T3",
+  "GPIO1": "T3",
+  "GPIO10": "T3",
+  "GPIO11": "T3",
+  "GPIO12": "T3",
+  "GPIO13": "T3",
+  "GPIO14": "T3",
+  "GPIO15": "T3",
+  "GPIO2": "T3",
+  "GPIO3": "T3",
+  "GPIO4": "T3",
+  "GPIO5": "T3",
+  "GPIO6": "T3",
+  "GPIO7": "T3",
+  "GPIO8": "T3",
+  "GPIO9": "T3",
+  "LAN9252_IRQ": "T3",
+  "LAN9252_RST": "T3",
+  "Net-(C12-Pad1)": "T3",
+  "Net-(C16-Pad1)": "T3",
+  "Net-(C17-Pad1)": "T3",
+  "Net-(C19-Pad1)": "T2",
+  "Net-(C20-Pad1)": "T2",
+  "Net-(R12-Pad1)": "T3",
+  "Net-(R13-Pad1)": "T3",
+  "Net-(R18-Pad1)": "T3",
+  "Net-(R19-Pad2)": "T3",
+  "Net-(R20-Pad2)": "T3",
+  "Net-(R21-Pad1)": "T2",
+  "Net-(U1-Pad25)": "T3",
+  "Net-(U1-Pad3)": "T3",
+  "PA6": "T3",
+  "PA7": "T3",
+  "PB0": "T3",
+  "PB1": "T3",
+  "PB10": "T2",
+  "PB2": "T2",
+  "PC9": "T3",
+  "RX1_N": "T3",
+  "RX1_P": "T3",
+  "RX2_N": "T3",
+  "RX2_P": "T3",
+  "SCK": "T3",
+  "SIO0": "T3",
+  "SIO1": "T3",
+  "SIO2": "T3",
+  "SIO3": "T3",
+  "SYNC0": "T3",
+  "SYNC1": "T3",
+  "TX1_N": "T2",
+  "TX1_P": "T3",
+  "TX2_N": "T2",
+  "TX2_P": "T3",
+  "~SCS": "T3"
+ },
+ "moves": {},
+ "power": [
+  "+3V3",
+  "+5V",
+  "GND",
+  "GNDPWR"
+ ],
+ "hard": [
+  "GND",
+  "GNDPWR"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.6,
+   "drill": 0.4,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  },
+  "V": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.4,
+   "drill": 0.3,
+   "vmin": 0.4,
+   "dmin": 0.3
+  }
+ },
+ "max_tier": "T3",
+ "fine_done": [
+  [
+   "Net-(C12-Pad1)",
+   "RX1_N"
+  ],
+  [
+   "Net-(C12-Pad1)",
+   "Net-(C16-Pad1)"
+  ]
+ ]
+}

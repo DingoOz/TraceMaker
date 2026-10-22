@@ -1,0 +1,2811 @@
+(kicad_pcb (version 20171130) (host pcbnew "(5.1.12)-1")
+
+  (general
+    (thickness 1.6)
+    (drawings 35)
+    (tracks 2016)
+    (zones 0)
+    (modules 140)
+    (nets 115)
+  )
+
+  (page A4)
+  (layers
+    (0 F.Cu signal)
+    (31 B.Cu signal)
+    (32 B.Adhes user)
+    (33 F.Adhes user)
+    (34 B.Paste user)
+    (35 F.Paste user)
+    (36 B.SilkS user)
+    (37 F.SilkS user)
+    (38 B.Mask user)
+    (39 F.Mask user)
+    (40 Dwgs.User user)
+    (41 Cmts.User user hide)
+    (42 Eco1.User user)
+    (43 Eco2.User user)
+    (44 Edge.Cuts user)
+    (45 Margin user)
+    (46 B.CrtYd user)
+    (47 F.CrtYd user)
+    (48 B.Fab user hide)
+    (49 F.Fab user hide)
+  )
+
+  (setup
+    (last_trace_width 0.25)
+    (trace_clearance 0.2)
+    (zone_clearance 0.408)
+    (zone_45_only no)
+    (trace_min 0.2)
+    (via_size 0.8)
+    (via_drill 0.4)
+    (via_min_size 0.4)
+    (via_min_drill 0.3)
+    (uvia_size 0.3)
+    (uvia_drill 0.1)
+    (uvias_allowed no)
+    (uvia_min_size 0.2)
+    (uvia_min_drill 0.1)
+    (edge_width 0.05)
+    (segment_width 0.2)
+    (pcb_text_width 0.3)
+    (pcb_text_size 1.5 1.5)
+    (mod_edge_width 0.12)
+    (mod_text_size 1 1)
+    (mod_text_width 0.15)
+    (pad_size 0.8 0.9)
+    (pad_drill 0)
+    (pad_to_mask_clearance 0)
+    (aux_axis_origin 0 0)
+    (visible_elements 7FFFFFFF)
+    (pcbplotparams
+      (layerselection 0x010fc_ffffffff)
+      (usegerberextensions false)
+      (usegerberattributes true)
+      (usegerberadvancedattributes true)
+      (creategerberjobfile true)
+      (excludeedgelayer true)
+      (linewidth 0.100000)
+      (plotframeref false)
+      (viasonmask false)
+      (mode 1)
+      (useauxorigin false)
+      (hpglpennumber 1)
+      (hpglpenspeed 20)
+      (hpglpendiameter 15.000000)
+      (psnegative false)
+      (psa4output false)
+      (plotreference true)
+      (plotvalue true)
+      (plotinvisibletext false)
+      (padsonsilk false)
+      (subtractmaskfromsilk false)
+      (outputformat 1)
+      (mirror false)
+      (drillshape 1)
+      (scaleselection 1)
+      (outputdirectory ""))
+  )
+
+  (net 0 "")
+  (net 1 GND)
+  (net 2 USB_D+)
+  (net 3 +3V3)
+  (net 4 SWDIO)
+  (net 5 +VB)
+  (net 6 X_STOP)
+  (net 7 LCD_ENC_A)
+  (net 8 LCD_ENC_B)
+  (net 9 FAN_PWM)
+  (net 10 HE0_PWM)
+  (net 11 USB_D-)
+  (net 12 E0_DIR)
+  (net 13 E0_UART)
+  (net 14 X_STP)
+  (net 15 Y_UART)
+  (net 16 E0_EN)
+  (net 17 SD_MOSI)
+  (net 18 LCD_BEEP)
+  (net 19 LCD_MOSI)
+  (net 20 Y_STOP)
+  (net 21 X_DIR)
+  (net 22 X_UART)
+  (net 23 SD_MISO)
+  (net 24 SD_CS)
+  (net 25 SD_SCK)
+  (net 26 Z_UART)
+  (net 27 Z_STOP)
+  (net 28 RESET)
+  (net 29 TH0)
+  (net 30 USB_CONN)
+  (net 31 X_EN)
+  (net 32 Y_EN)
+  (net 33 Z_EN)
+  (net 34 THB)
+  (net 35 SWCLK)
+  (net 36 E0_STP)
+  (net 37 Q4_3)
+  (net 38 Q3_3)
+  (net 39 +5V)
+  (net 40 VUSB)
+  (net 41 FB1_1)
+  (net 42 C44_1)
+  (net 43 R39_1)
+  (net 44 R38_1)
+  (net 45 R29_2)
+  (net 46 JP2_2)
+  (net 47 JP1_2)
+  (net 48 U6_3)
+  (net 49 U2_6)
+  (net 50 U2_5)
+  (net 51 U2_13)
+  (net 52 LCD_CS)
+  (net 53 LCD_ENC_BTN)
+  (net 54 R20_1)
+  (net 55 C21_1)
+  (net 56 U4_13)
+  (net 57 U4_8)
+  (net 58 R10_1)
+  (net 59 C9_1)
+  (net 60 C22_1)
+  (net 61 C23_2)
+  (net 62 C23_1)
+  (net 63 U4_6)
+  (net 64 U4_5)
+  (net 65 C10_1)
+  (net 66 C11_2)
+  (net 67 C11_1)
+  (net 68 X_OB1)
+  (net 69 X_OA2)
+  (net 70 X_OB2)
+  (net 71 X_OA1)
+  (net 72 U1_5)
+  (net 73 U1_4)
+  (net 74 U1_6)
+  (net 75 U1_8)
+  (net 76 U1_13)
+  (net 77 Y_OA2)
+  (net 78 Z_OB2)
+  (net 79 Z_OB1)
+  (net 80 Z_OA1)
+  (net 81 Z_OA2)
+  (net 82 U5_27)
+  (net 83 E0_OA1)
+  (net 84 E0_OB1)
+  (net 85 U3_27)
+  (net 86 U1_23)
+  (net 87 U1_27)
+  (net 88 Y_OB1)
+  (net 89 Y_OA1)
+  (net 90 Y_OB2)
+  (net 91 E0_OB2)
+  (net 92 U5_23)
+  (net 93 U4_23)
+  (net 94 U4_27)
+  (net 95 U3_23)
+  (net 96 E0_OA2)
+  (net 97 U4_4)
+  (net 98 SD_DET)
+  (net 99 Q4_1)
+  (net 100 LCD_SCK)
+  (net 101 R30_1)
+  (net 102 BED_PWM)
+  (net 103 Z_DIR)
+  (net 104 Z_STP)
+  (net 105 U7_3)
+  (net 106 R28_2)
+  (net 107 U8_6)
+  (net 108 R37_2)
+  (net 109 U2_60)
+  (net 110 Y_DIR)
+  (net 111 Y_STP)
+  (net 112 Q1_2)
+  (net 113 Q2_2)
+  (net 114 F1_1)
+
+  (net_class Default "This is the default net class."
+    (clearance 0.2)
+    (trace_width 0.25)
+    (via_dia 0.8)
+    (via_drill 0.4)
+    (uvia_dia 0.3)
+    (uvia_drill 0.1)
+    (add_net +3V3)
+    (add_net +5V)
+    (add_net +VB)
+    (add_net BED_PWM)
+    (add_net C10_1)
+    (add_net C11_1)
+    (add_net C11_2)
+    (add_net C21_1)
+    (add_net C22_1)
+    (add_net C23_1)
+    (add_net C23_2)
+    (add_net C44_1)
+    (add_net C9_1)
+    (add_net E0_DIR)
+    (add_net E0_EN)
+    (add_net E0_OA1)
+    (add_net E0_OA2)
+    (add_net E0_OB1)
+    (add_net E0_OB2)
+    (add_net E0_STP)
+    (add_net E0_UART)
+    (add_net F1_1)
+    (add_net FAN_PWM)
+    (add_net FB1_1)
+    (add_net GND)
+    (add_net HE0_PWM)
+    (add_net JP1_2)
+    (add_net JP2_2)
+    (add_net LCD_BEEP)
+    (add_net LCD_CS)
+    (add_net LCD_ENC_A)
+    (add_net LCD_ENC_B)
+    (add_net LCD_ENC_BTN)
+    (add_net LCD_MOSI)
+    (add_net LCD_SCK)
+    (add_net Q1_2)
+    (add_net Q2_2)
+    (add_net Q3_3)
+    (add_net Q4_1)
+    (add_net Q4_3)
+    (add_net R10_1)
+    (add_net R20_1)
+    (add_net R28_2)
+    (add_net R29_2)
+    (add_net R30_1)
+    (add_net R37_2)
+    (add_net R38_1)
+    (add_net R39_1)
+    (add_net RESET)
+    (add_net SD_CS)
+    (add_net SD_DET)
+    (add_net SD_MISO)
+    (add_net SD_MOSI)
+    (add_net SD_SCK)
+    (add_net SWCLK)
+    (add_net SWDIO)
+    (add_net TH0)
+    (add_net THB)
+    (add_net U1_13)
+    (add_net U1_23)
+    (add_net U1_27)
+    (add_net U1_4)
+    (add_net U1_5)
+    (add_net U1_6)
+    (add_net U1_8)
+    (add_net U2_13)
+    (add_net U2_5)
+    (add_net U2_6)
+    (add_net U2_60)
+    (add_net U3_23)
+    (add_net U3_27)
+    (add_net U4_13)
+    (add_net U4_23)
+    (add_net U4_27)
+    (add_net U4_4)
+    (add_net U4_5)
+    (add_net U4_6)
+    (add_net U4_8)
+    (add_net U5_23)
+    (add_net U5_27)
+    (add_net U6_3)
+    (add_net U7_3)
+    (add_net U8_6)
+    (add_net USB_CONN)
+    (add_net USB_D+)
+    (add_net USB_D-)
+    (add_net VUSB)
+    (add_net X_DIR)
+    (add_net X_EN)
+    (add_net X_OA1)
+    (add_net X_OA2)
+    (add_net X_OB1)
+    (add_net X_OB2)
+    (add_net X_STOP)
+    (add_net X_STP)
+    (add_net X_UART)
+    (add_net Y_DIR)
+    (add_net Y_EN)
+    (add_net Y_OA1)
+    (add_net Y_OA2)
+    (add_net Y_OB1)
+    (add_net Y_OB2)
+    (add_net Y_STOP)
+    (add_net Y_STP)
+    (add_net Y_UART)
+    (add_net Z_DIR)
+    (add_net Z_EN)
+    (add_net Z_OA1)
+    (add_net Z_OA2)
+    (add_net Z_OB1)
+    (add_net Z_OB2)
+    (add_net Z_STOP)
+    (add_net Z_STP)
+    (add_net Z_UART)
+  )
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  (module "easyeda:MP1584 STEP DOWN MODULE - PCB" locked (layer F.Cu) (tedit 0) (tstamp 0)
+    (at 143.129 65.405 270)
+    (fp_text reference U7 (at -9.398 -1.27) (layer F.SilkS)
+      (effects (font (size 1.143 1.143) (thickness 0.152)) (justify left))
+    )
+    (fp_text value GND (at -4.826 -7.62 90) (layer F.SilkS)
+      (effects (font (size 0.5 0.5) (thickness 0.1)) (justify left))
+    )
+    (fp_circle (center -0.508 3.048) (end -0.381 3.048) (layer F.SilkS) (width 0.254))
+    (fp_circle (center 5.461 -3.429) (end 6.858 -3.429) (layer F.SilkS) (width 0.254))
+    (fp_line (start 4.508 -4.382) (end 6.413 -2.477) (layer F.SilkS) (width 0.254))
+    (fp_line (start 6.35 -4.318) (end 4.572 -2.54) (layer F.SilkS) (width 0.254))
+    (fp_line (start -8.382 -10.922) (end 8.382 -10.922) (layer F.SilkS) (width 0.254))
+    (fp_line (start 8.382 -10.922) (end 8.382 11.176) (layer F.SilkS) (width 0.254))
+    (fp_line (start 8.382 11.176) (end -8.382 11.176) (layer F.SilkS) (width 0.254))
+    (fp_line (start -8.382 11.176) (end -8.382 -10.922) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.524 8.763) (end 1.397 8.763) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.397 8.763) (end 1.397 9.906) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.397 9.906) (end -1.524 9.906) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.524 9.906) (end -1.524 8.763) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.524 -9.779) (end 1.397 -9.779) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.397 -9.779) (end 1.397 -8.636) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.397 -8.636) (end -1.524 -8.636) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.524 -8.636) (end -1.524 -9.779) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.016 2.54) (end 1.016 2.54) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 2.54) (end 1.016 5.969) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 5.969) (end -1.016 5.969) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.016 5.969) (end -1.016 2.54) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 5.461) (end 1.778 5.461) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 5.461) (end 1.778 5.715) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 5.715) (end 1.016 5.715) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 5.715) (end 1.016 5.461) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 4.572) (end 1.778 4.572) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 4.572) (end 1.778 4.826) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 4.826) (end 1.016 4.826) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 4.826) (end 1.016 4.572) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 3.683) (end 1.778 3.683) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 3.683) (end 1.778 3.937) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 3.937) (end 1.016 3.937) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 3.937) (end 1.016 3.683) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 2.921) (end 1.778 2.921) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 2.921) (end 1.778 3.175) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.778 3.175) (end 1.016 3.175) (layer F.SilkS) (width 0.254))
+    (fp_line (start 1.016 3.175) (end 1.016 2.921) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 2.921) (end -1.143 2.921) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 2.921) (end -1.143 3.175) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 3.175) (end -1.905 3.175) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 3.175) (end -1.905 2.921) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 3.683) (end -1.143 3.683) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 3.683) (end -1.143 3.937) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 3.937) (end -1.905 3.937) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 3.937) (end -1.905 3.683) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 4.572) (end -1.143 4.572) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 4.572) (end -1.143 4.826) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 4.826) (end -1.905 4.826) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 4.826) (end -1.905 4.572) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 5.461) (end -1.143 5.461) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 5.461) (end -1.143 5.715) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.143 5.715) (end -1.905 5.715) (layer F.SilkS) (width 0.254))
+    (fp_line (start -1.905 5.715) (end -1.905 5.461) (layer F.SilkS) (width 0.254))
+    (fp_line (start -7.112 2.794) (end -5.715 2.794) (layer F.SilkS) (width 0.254))
+    (fp_line (start -5.715 2.794) (end -5.715 5.715) (layer F.SilkS) (width 0.254))
+    (fp_line (start -5.715 5.715) (end -7.112 5.715) (layer F.SilkS) (width 0.254))
+    (fp_line (start -7.112 5.715) (end -7.112 2.794) (layer F.SilkS) (width 0.254))
+    (fp_line (start -7.112 2.921) (end -5.842 2.921) (layer F.SilkS) (width 0.254))
+    (fp_line (start -5.842 2.921) (end -5.842 3.175) (layer F.SilkS) (width 0.254))
+    (fp_line (start -5.842 3.175) (end -7.112 3.175) (layer F.SilkS) (width 0.254))
+    (fp_line (start -7.112 3.175) (end -7.112 2.921) (layer F.SilkS) (width 0.254))
+    (fp_line (start -5.334 -6.096) (end -0.134 -6.096) (layer F.SilkS) (width 0.254))
+    (fp_line (start -0.134 -6.096) (end -0.134 -0.896) (layer F.SilkS) (width 0.254))
+    (fp_line (start -0.134 -0.896) (end -5.334 -0.896) (layer F.SilkS) (width 0.254))
+    (fp_line (start -5.334 -0.896) (end -5.334 -6.096) (layer F.SilkS) (width 0.254))
+    (fp_text user gge87e526fb76afafe3 (at 0 0) (layer Cmts.User)
+      (effects (font (size 1 1) (thickness 0.15)))
+    )
+    (pad 4 thru_hole circle (at -6.604 -9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 1 GND))
+    (pad 3 thru_hole rect (at 6.604 -9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 105 U7_3))
+    (pad 4 thru_hole circle (at -4.064 -9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 1 GND))
+    (pad 3 thru_hole rect (at 4.064 -9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 105 U7_3))
+    (pad 1 thru_hole circle (at -6.604 9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 1 GND))
+    (pad 1 thru_hole circle (at -4.064 9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 1 GND))
+    (pad 2 thru_hole rect (at 4.064 9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 5 +VB))
+    (pad 2 thru_hole rect (at 6.604 9.271 270) (size 2 2) (drill 0.914) (layers *.Cu *.Paste *.Mask)
+      (net 5 +VB))
+    (model ${KIPRJMOD}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x02_P2.54mm_Vertical.step
+      (offset (xyz -4 -9.25 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
+    (model ${KIPRJMOD}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x02_P2.54mm_Vertical.step
+      (offset (xyz 6.5 -9.25 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
+    (model ${KIPRJMOD}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x02_P2.54mm_Vertical.step
+      (offset (xyz -4 9.25 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
+    (model ${KIPRJMOD}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x02_P2.54mm_Vertical.step
+      (offset (xyz 6.5 9.25 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
+    (model ${KIPRJMOD}/models/D-SUN_SD_Module.step
+      (offset (xyz 0 0 2.5))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 -90))
+    )
+  )
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  (gr_line (start 107.315 28.448) (end 207.264 28.448) (layer Edge.Cuts) (width 0.254) (status 40000))
+  (gr_line (start 207.264 28.448) (end 207.264 98.552) (layer Edge.Cuts) (width 0.254) (status 40000))
+  (gr_line (start 207.264 98.552) (end 107.315 98.552) (layer Edge.Cuts) (width 0.254) (status 40000))
+  (gr_line (start 107.315 98.552) (end 107.315 28.448) (layer Edge.Cuts) (width 0.254) (status 40000))
+  (gr_text "+   -" (at 109.601 92.202 180) (layer B.SilkS)
+    (effects (font (size 1.651 1.651) (thickness 0.305)) (justify left mirror))
+  )
+  (gr_text "+   -" (at 130.302 92.075) (layer B.SilkS)
+    (effects (font (size 1.651 1.651) (thickness 0.305)) (justify left mirror))
+  )
+  (gr_text SWD (at 164.719 80.645 45) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text SWC (at 167.386 80.645 45) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text 3V3 (at 170.053 80.645 45) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text GND (at 172.847 80.645 45) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text * (at 205.486 87.757) (layer F.SilkS)
+    (effects (font (size 1.524 1.524) (thickness 0.203)) (justify left))
+  )
+  (gr_text "REV 0.3" (at 191.516 76.2) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text X-MOT (at 110.236 35.052 90) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text Y-MOT (at 130.302 34.29 90) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text Z-MOT (at 150.876 34.417 90) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text E-MOT (at 169.037 34.29 90) (layer F.SilkS)
+    (effects (font (size 1.016 1.016) (thickness 0.152)) (justify left))
+  )
+  (gr_text 3V3_EN (at 154.051 74.803) (layer F.SilkS)
+    (effects (font (size 0.762 0.762) (thickness 0.127)) (justify left))
+  )
+  (gr_text 5V_EN (at 133.731 56.642 90) (layer F.SilkS)
+    (effects (font (size 0.762 0.762) (thickness 0.127)) (justify left))
+  )
+  (gr_text "-     +" (at 119.634 89.916 180) (layer F.SilkS)
+    (effects (font (size 1.397 1.397) (thickness 0.254)) (justify left))
+  )
+  (gr_text "-     +" (at 120.904 89.916) (layer F.SilkS) (tstamp 5FB823BF)
+    (effects (font (size 1.397 1.397) (thickness 0.254)) (justify left))
+  )
+  (gr_poly (pts (xy 131.318 68.453) (xy 122.555 78.994) (xy 122.555 89.662) (xy 126.746 92.202) (xy 126.746 97.79) (xy 131.953 97.79) (xy 137.541 97.79) (xy 137.541 95.758) (xy 139.7 93.091) (xy 142.875 93.091) (xy 144.653 95.758) (xy 144.653 97.79) (xy 151.511 97.79) (xy 151.511 88.519) (xy 130.556 88.519) (xy 130.556 78.232) (xy 130.556 74.041) (xy 131.318 73.025) (xy 132.842 73.025) (xy 134.874 73.025) (xy 134.874 68.453)) (layer B.Cu) (width 0))
+  (gr_poly (pts (xy 112.649 82.677) (xy 118.491 82.677) (xy 118.491 89.662) (xy 114.3 92.202) (xy 114.3 97.79) (xy 109.093 97.79) (xy 109.093 90.678) (xy 109.982 89.789) (xy 111.125 89.789) (xy 111.125 82.677)) (layer B.Cu) (width 0))
+  (gr_poly (pts (xy 155.702 87.757) (xy 146.939 87.757) (xy 146.939 74.422) (xy 155.702 74.422)) (layer B.Cu) (width 0))
+  (gr_poly (pts (xy 139.954 87.503) (xy 131.699 87.503) (xy 131.699 74.295) (xy 139.827 74.295)) (layer B.Cu) (width 0))
+  (gr_poly (pts (xy 139.573 81.534) (xy 131.826 81.534) (xy 131.826 89.154) (xy 139.15 92.202) (xy 139.15 97.79) (xy 146.431 97.663) (xy 146.431 87.503) (xy 139.573 87.503)) (layer F.Cu) (width 0))
+  (gr_poly (pts (xy 112.649 82.677) (xy 118.491 82.677) (xy 118.491 89.662) (xy 114.3 92.202) (xy 114.3 97.79) (xy 109.093 97.79) (xy 109.093 90.678) (xy 109.982 89.789) (xy 111.125 89.789) (xy 111.125 82.677)) (layer F.Cu) (width 0))
+  (gr_poly (pts (xy 130.556 78.232) (xy 132.842 73.025) (xy 135.001 73.025) (xy 135.001 68.453) (xy 131.318 68.453) (xy 123.063 78.867) (xy 114.554 78.867) (xy 114.554 76.454) (xy 112.903 77.089) (xy 108.966 77.089) (xy 108.966 80.772) (xy 119.126 80.772) (xy 122.555 82.677) (xy 122.555 89.662) (xy 126.746 92.202) (xy 126.746 97.79) (xy 131.953 97.79) (xy 137.541 97.79) (xy 137.541 93.218) (xy 130.556 89.916)) (layer F.Cu) (width 0))
+  (gr_poly (pts (xy 155.702 81.661) (xy 148.209 81.661) (xy 148.209 89.535) (xy 151.553 92.202) (xy 151.553 97.79) (xy 158.877 97.79) (xy 159.004 88.265) (xy 155.702 88.265)) (layer F.Cu) (width 0))
+  (gr_poly (pts (xy 200.914 61.976) (xy 200.914 72.136) (xy 206.629 72.136) (xy 206.756 72.009) (xy 206.756 62.103) (xy 206.629 61.976) (xy 200.914 61.976)) (layer F.Cu) (width 0))
+  (gr_poly (pts (xy 115.443 43.434) (xy 118.999 43.434) (xy 118.999 46.99) (xy 115.443 46.99)) (layer B.Mask) (width 0))
+  (gr_poly (pts (xy 135.763 43.434) (xy 139.319 43.434) (xy 139.319 46.99) (xy 135.763 46.99)) (layer B.Mask) (width 0))
+  (gr_poly (pts (xy 156.083 43.434) (xy 159.639 43.434) (xy 159.639 46.99) (xy 156.083 46.99)) (layer B.Mask) (width 0))
+  (gr_poly (pts (xy 175.006 43.561) (xy 178.562 43.561) (xy 178.562 47.117) (xy 175.006 47.117)) (layer B.Mask) (width 0))
+  (gr_poly (pts (xy 132.461 82.042) (xy 138.938 82.042) (xy 138.938 87.249) (xy 132.461 87.249)) (layer B.Mask) (width 0))
+  (gr_poly (pts (xy 148.124 82.55) (xy 154.601 82.55) (xy 154.601 87.757) (xy 148.124 87.757)) (layer B.Mask) (width 0))
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+)

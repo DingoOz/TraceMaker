@@ -1,0 +1,17 @@
+{"board": "AVR-ISP_pogo-plug_1.27mm_AVR-ISP_pogo-plug_1.27mm", "run": "closure-b1", "layers": 2, "rounds": 4, "open_first": 3, "open_best": 3, "relaxed": 0, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 49}
+{"board": "memsarray_mems_modules", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 3, "open_best": 1, "relaxed": 3, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 186}
+{"board": "kitspace_f-91w", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 9, "open_best": 3, "relaxed": 37, "relaxed_power": 0, "moves": 1, "hard": 1, "seconds": 714}
+{"board": "MicroMaple_MicroMaple", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 17, "open_best": 10, "relaxed": 17, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 700}
+{"board": "kitspace_OtterPill", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 23, "open_best": 11, "relaxed": 29, "relaxed_power": 0, "moves": 0, "hard": 2, "seconds": 382}
+{"board": "kitspace_hack", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 7, "open_best": 5, "relaxed": 1, "relaxed_power": 0, "moves": 0, "hard": 3, "seconds": 1164}
+{"board": "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 31, "open_best": 22, "relaxed": 0, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 843}
+{"board": "f4fc_f4fc", "run": "closure-b1", "layers": 4, "rounds": 5, "open_first": 30, "open_best": 17, "relaxed": 83, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 765}
+{"board": "kitspace_OtterCastAudioV2", "run": "closure-b1", "layers": 4, "seconds": 1}
+{"board": "kitspace_120-channel-test-board", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 46, "open_best": 19, "relaxed": 63, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 344}
+{"board": "iso50_pcb", "run": "closure-b1", "layers": 2, "rounds": 6, "open_first": 40, "open_best": 7, "relaxed": 15, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 1305}
+{"board": "DoroidOscillo-Board_Android_Oscilloscope", "run": "closure-b1", "layers": 4, "rounds": 6, "open_first": 10, "open_best": 2, "relaxed": 21, "relaxed_power": 0, "moves": 0, "hard": 1, "seconds": 1361}
+{"board": "59pct_keyboard", "run": "closure-b1", "layers": 2, "rounds": 4, "open_first": 10, "open_best": 4, "relaxed": 17, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 1096}
+{"board": "kitspace_d20_r0.1", "run": "closure-b1", "layers": 4, "timeout": true, "seconds": 2100}
+{"board": "smart-meter_SmartMeter", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 3, "open_best": 1, "relaxed": 9, "relaxed_power": 1, "moves": 0, "hard": 1, "seconds": 632}
+{"board": "ErgodoneWithHole_ErgoDone", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 6, "open_best": 2, "relaxed": 6, "relaxed_power": 0, "moves": 0, "hard": 0, "seconds": 1085}
+{"board": "P8000_WDC_Emulator_P8000_WDC_Emulator", "run": "closure-b1", "layers": 2, "rounds": 5, "open_first": 52, "open_best": 28, "relaxed": 42, "relaxed_power": 0, "moves": 0, "hard": 2, "seconds": 1236}

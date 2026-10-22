@@ -1,0 +1,211 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 152/152 connections, 700 tracks, 116 vias, pitch 0.05",
+   "open": 4,
+   "violations": 4,
+   "placement_errors": 3,
+   "open_nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 6,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 152/152 connections, 721 tracks, 120 vias, pitch 0.05",
+   "open": 2,
+   "violations": 27,
+   "placement_errors": 3,
+   "open_nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "shove",
+   "nets": 5,
+   "open": 1,
+   "violations": 24,
+   "was_open": 2,
+   "was_violations": 27,
+   "kept_back": 5,
+   "accepted": true,
+   "router": "routed 152/152 connections, 692 tracks, 117 vias, pitch 0.05"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 6,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 152/152 connections, 683 tracks, 115 vias, pitch 0.04",
+   "open": 3,
+   "violations": 43,
+   "placement_errors": 3,
+   "open_nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 2,
+   "kind": "shove",
+   "nets": 5,
+   "open": 3,
+   "violations": 41,
+   "was_open": 3,
+   "was_violations": 43,
+   "kept_back": 5,
+   "accepted": true,
+   "router": "routed 152/152 connections, 680 tracks, 115 vias, pitch 0.04"
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 8,
+   "relaxed_power": 1,
+   "moved_parts": 0,
+   "router": "routed 152/152 connections, 681 tracks, 115 vias, pitch 0.04",
+   "open": 4,
+   "violations": 57,
+   "placement_errors": 3,
+   "open_nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 7,
+   "open": 3,
+   "violations": 55,
+   "was_open": 4,
+   "was_violations": 57,
+   "kept_back": 7,
+   "accepted": true,
+   "router": "routed 152/152 connections, 683 tracks, 115 vias, pitch 0.04"
+  },
+  {
+   "round": 3,
+   "kind": "move",
+   "trials": [
+    {
+     "ref": "RN4",
+     "step": 0.25,
+     "open": 3,
+     "placement": 3
+    },
+    {
+     "ref": "RN4",
+     "step": 0.5,
+     "open": 4,
+     "placement": 3
+    },
+    {
+     "ref": "RN4",
+     "step": 1.0,
+     "open": 2,
+     "placement": 3
+    },
+    {
+     "ref": "TP1",
+     "step": 0.25,
+     "open": 4,
+     "placement": 3
+    },
+    {
+     "ref": "TP1",
+     "step": 0.5,
+     "open": 4,
+     "placement": 3
+    },
+    {
+     "ref": "TP1",
+     "step": 1.0,
+     "open": 4,
+     "placement": 3
+    },
+    {
+     "ref": "TP4",
+     "step": 0.25,
+     "open": 4,
+     "placement": 3
+    },
+    {
+     "ref": "TP4",
+     "step": 0.5,
+     "open": 3,
+     "placement": 3
+    },
+    {
+     "ref": "TP4",
+     "step": 1.0,
+     "open": 3,
+     "placement": 3
+    }
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "effort",
+   "open": 2,
+   "placement_errors": 3,
+   "router": "routed 152/152 connections, 690 tracks, 115 vias, pitch 0.04"
+  }
+ ],
+ "assign": {
+  "GND": "T1"
+ },
+ "moves": {},
+ "power": [
+  "+3V3",
+  "+5V",
+  "GND",
+  "OSC0_GND",
+  "VBAT",
+  "VDD_1V8",
+  "VDD_RTC"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.1524,
+   "tmin": 0.127,
+   "via": 0.508,
+   "drill": 0.3302,
+   "vmin": 0.508,
+   "dmin": 0.3302
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

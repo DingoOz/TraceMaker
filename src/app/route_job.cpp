@@ -245,6 +245,7 @@ RouteJobResult run_route_job(RouteJob job) {
     so.port = static_cast<std::uint16_t>(job.view_port);
     so.token = job.view_token;
     so.allow_open = job.view_insecure;
+    so.embed = job.view_embed;
     server = std::make_unique<server::ViewerServer>(so);
     server->publish(server::board_snapshot_json(lb.board, name, job.view_freeze));
     out.viewer_url = server->url();
@@ -1072,7 +1073,9 @@ RouteJobResult run_route_job(RouteJob job) {
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
                  {"vias", res.vias.size()},  {"seconds", job_seconds},         {"variant_seconds", res.seconds},
                  {"expansions", res.expansions}, {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures},
-                 {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors}};
+                 {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors},
+                 {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"escape_reclaimed", res.escape_reclaimed},
+                 {"bundle_groups", res.bundle_groups}, {"bundle_spines", res.bundle_spines}, {"bundle_conns", res.bundle_conns}, {"bundle_lanes", res.bundle_lanes}, {"tunnels", res.tunnels}};
   if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
   if (!refill_summary.is_null()) {
     out.summary["refill"] = refill_summary;

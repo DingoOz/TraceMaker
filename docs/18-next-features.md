@@ -1,3 +1,8 @@
+---
+status: plan
+code: []
+---
+
 # 18 — Candidate features for the roadmap (research and plan)
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-14 after M16, issues #4–#8 and #24 were closed.

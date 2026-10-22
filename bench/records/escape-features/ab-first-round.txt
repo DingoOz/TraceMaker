@@ -1,0 +1,56 @@
+== 96boards-robomezzi_96boards-robomezzi
+ base  243/245
+ E     243/245
+ EL    243/245
+ ELP   243/245
+ ELR   243/245
+ ALL   243/245
+== DronPi_dronPi
+ base  272/281
+ E     272/281
+ EL    272/281
+ ELP   272/281
+ ELR   272/281
+ ALL   272/281
+== Hardware_Playground_E3_Pcb_rev0.3
+ base  242/276
+ E     242/276
+ EL    237/276
+ ELP   237/276
+ ELR   237/276
+ ALL   236/276
+== EtherCAT_shield_v1_EtherCAT_shield_v1
+ base  177/207
+ E     178/207
+ EL    184/207
+ ELP   181/207
+ ELR   182/207
+ ALL   180/207
+== kitspace_test-jig
+ base  236/267
+ E     236/267
+ EL    236/267
+ ELP   236/267
+ ELR   236/267
+ ALL   236/267
+== poncho_fpga_fpga-dongle
+ base  307/334
+ E     307/334
+ EL    309/334
+ ELP   307/334
+ ELR   309/334
+ ALL   307/334
+== PocketBone_pocketbone-kicad
+ base  152/152
+ E     152/152
+ EL    152/152
+ ELP   152/152
+ ELR   152/152
+ ALL   152/152
+== Own-Mailbox-Hardware_mailbox-before
+ base  415/422
+ E     419/422
+ EL    413/422
+ ELP   411/422
+ ELR   415/422
+ ALL   412/422

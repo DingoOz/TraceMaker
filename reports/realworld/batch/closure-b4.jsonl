@@ -1,0 +1,4 @@
+{"board": "iso50_pcb", "run": "closure-b4", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 1}
+{"board": "kitspace_hack", "run": "closure-b4", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 3}
+{"board": "59pct_keyboard", "run": "closure-b4", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 1}
+{"board": "bms-8s50-ic_bms-8s50-ic", "run": "closure-b4", "layers": 2, "from": "closure-b2", "best_run": "closure-b2-f1", "open_best": 3}

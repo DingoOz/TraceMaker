@@ -35,6 +35,7 @@ import threading
 import time
 from collections import Counter
 import drc_judge
+import viewport
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
@@ -199,6 +200,7 @@ def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
         return p.returncode, fo.read(), fe.read(), usage.ru_utime + usage.ru_stime
 
 
+VIEW = False  # --view: every board streams to its own live viewer (bench/viewport.py)
 RESUME_RUN = ""  # --resume-run: earlier run whose saved search state (<board>.kicad_pcb.state) each board starts from
 
 
@@ -228,7 +230,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
         code, stdout, stderr, cpu = run_measured(
-            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + EXTRA,
+            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + (viewport.route_args() if VIEW else []) + EXTRA,
             time_limit * 3 + 60)
         res["exit"] = code
         res["cpu_s"] = round(cpu, 2)
@@ -270,6 +272,7 @@ def main() -> int:
     ap.add_argument("--time", type=float, help="wall-clock limit per board (default 60 s; 3600 s as a safety stop with --work)")
     ap.add_argument("--work", type=int, default=0, help="deterministic work budget per board (no knowledge base)")
     ap.add_argument("--refill", action="store_true", help="KiCad refills zones before judging input and output")
+    ap.add_argument("--view", action="store_true", help="every board streams to a live viewer on its own port (8800-8899, shared token; the stack devsite embeds them)")
     ap.add_argument("--resume-run", help="earlier run name: boards start from the state it saved (portfolio runs only)")
     ap.add_argument("--route-args", help="extra route options, space-separated; adds to TM_ROUTE_ARGS (write --route-args=--opt for one option)")
     ap.add_argument("--set", help="board set in bench/sets/<SET>.txt (quick, mid, planes, srj19, srj20); also names the set in the summary")
@@ -294,8 +297,9 @@ def main() -> int:
     # With --work every board runs the whole portfolio whatever the thread count (D47); one thread runs its eight
     # variants one after another. Placement keeps one thread unless asked: its annealing runs follow --threads.
     # Successive halving splits the budget by the thread count, so there the default must not follow the machine.
-    global RESUME_RUN
+    global RESUME_RUN, VIEW
     RESUME_RUN = a.resume_run or ""
+    VIEW = a.view
     EXTRA = EXTRA + (a.route_args or "").split()
     THREADS = a.threads or (max(1, min(8, (os.cpu_count() or 1) // a.jobs)) if a.work and "--halving" not in EXTRA else 1)
     PLACE_THREADS = a.threads or 1
@@ -339,7 +343,9 @@ def main() -> int:
     print(f"run {run_id}: {len(names)} boards, {a.set_name or 'tier ' + a.tier}, {budget} per board, {a.jobs} jobs", flush=True)
     rows = []
     with cf.ThreadPoolExecutor(a.jobs) as ex, (outdir / "boards.jsonl").open("w") as f:
-        for r in ex.map(lambda n: run_board(n, outdir, a.time), names):
+        # Rows are written as boards finish (not in board order), so a long board does not hide the ones that finished before it.
+        futs = [ex.submit(run_board, n, outdir, a.time) for n in names]
+        for r in (fu.result() for fu in cf.as_completed(futs)):
             fr = base.get(r["board"], {})
             r["fr_rc12"] = fr.get("2.5.0-RC12")
             r["fr_241"] = fr.get("2.4.1")

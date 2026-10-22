@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/geom, src/index, src/model, src/drc]
+---
+
 # 03 — Core data structures, spatial indexing and DRC
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

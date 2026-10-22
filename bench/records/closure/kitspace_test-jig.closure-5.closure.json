@@ -1,0 +1,370 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 236/267 connections, 952 tracks, 86 vias, pitch 0.065",
+   "open": 26,
+   "violations": 253,
+   "placement_errors": 11,
+   "open_nets": [
+    "+3V3",
+    "/TP_5V",
+    "/port-connection/TP_A_Vio",
+    "/port-connection/TP_A_Vsns",
+    "/port-connection/TP_B_Vio",
+    "/port-connection/TP_B_Vsns",
+    "GND",
+    "Net-(JP1-Pad2)",
+    "Net-(JP10-Pad1)",
+    "Net-(JP11-Pad1)",
+    "Net-(JP12-Pad1)",
+    "Net-(JP13-Pad1)",
+    "Net-(JP3-Pad1)"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 26,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 236/267 connections, 973 tracks, 90 vias, pitch 0.055",
+   "open": 25,
+   "violations": 263,
+   "placement_errors": 11,
+   "open_nets": [
+    "+3V3",
+    "/TP_5V",
+    "/port-connection/TP_A_Vio",
+    "/port-connection/TP_A_Vsns",
+    "/port-connection/TP_B_Vio",
+    "/port-connection/TP_B_Vsns",
+    "Net-(JP1-Pad2)",
+    "Net-(JP10-Pad1)",
+    "Net-(JP11-Pad1)",
+    "Net-(JP12-Pad1)",
+    "Net-(JP13-Pad1)",
+    "Net-(JP3-Pad1)"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "shove",
+   "nets": 15,
+   "open": 26,
+   "violations": 252,
+   "was_open": 25,
+   "was_violations": 263,
+   "kept_back": 15,
+   "accepted": true,
+   "router": "routed 235/267 connections, 617 tracks, 92 vias, pitch 0.055"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 28,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 236/267 connections, 771 tracks, 89 vias, pitch 0.050",
+   "open": 25,
+   "violations": 306,
+   "placement_errors": 11,
+   "open_nets": [
+    "+3V3",
+    "/TP_5V",
+    "/port-connection/TP_A_Vio",
+    "/port-connection/TP_A_Vsns",
+    "/port-connection/TP_B_Vio",
+    "/port-connection/TP_B_Vsns",
+    "Net-(JP1-Pad2)",
+    "Net-(JP10-Pad1)",
+    "Net-(JP11-Pad1)",
+    "Net-(JP12-Pad1)",
+    "Net-(JP13-Pad1)",
+    "Net-(JP3-Pad1)"
+   ]
+  },
+  {
+   "round": 2,
+   "kind": "shove",
+   "nets": 17,
+   "open": 25,
+   "violations": 254,
+   "was_open": 25,
+   "was_violations": 306,
+   "kept_back": 17,
+   "accepted": true,
+   "router": "routed 236/267 connections, 597 tracks, 94 vias, pitch 0.050"
+  },
+  {
+   "round": 3,
+   "kind": "route",
+   "relaxed_nets": 25,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 236/267 connections, 779 tracks, 89 vias, pitch 0.050",
+   "open": 25,
+   "violations": 298,
+   "placement_errors": 11,
+   "open_nets": [
+    "+3V3",
+    "/TP_5V",
+    "/port-connection/TP_A_Vio",
+    "/port-connection/TP_A_Vsns",
+    "/port-connection/TP_B_Vio",
+    "/port-connection/TP_B_Vsns",
+    "Net-(JP1-Pad2)",
+    "Net-(JP10-Pad1)",
+    "Net-(JP11-Pad1)",
+    "Net-(JP12-Pad1)",
+    "Net-(JP13-Pad1)",
+    "Net-(JP3-Pad1)"
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "shove",
+   "nets": 14,
+   "open": 25,
+   "violations": 283,
+   "was_open": 25,
+   "was_violations": 298,
+   "kept_back": 14,
+   "accepted": true,
+   "router": "routed 236/267 connections, 605 tracks, 94 vias, pitch 0.050"
+  },
+  {
+   "round": 3,
+   "kind": "move",
+   "trials": [
+    {
+     "ref": "C14",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "C14",
+     "step": 0.5,
+     "open": 25,
+     "placement": 10
+    },
+    {
+     "ref": "C14",
+     "step": 1.0,
+     "open": 25,
+     "placement": 10
+    },
+    {
+     "ref": "JP11",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP11",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP11",
+     "step": 1.0,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP12",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP12",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP12",
+     "step": 1.0,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP13",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP13",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP13",
+     "step": 1.0,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP3",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP3",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP3",
+     "step": 1.0,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP4",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP4",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP4",
+     "step": 1.0,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP5",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP5",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "JP5",
+     "step": 1.0,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "U4",
+     "step": 0.25,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "U4",
+     "step": 0.5,
+     "open": 25,
+     "placement": 11
+    },
+    {
+     "ref": "U4",
+     "step": 1.0,
+     "open": 25,
+     "placement": 13
+    }
+   ]
+  },
+  {
+   "round": 3,
+   "kind": "effort",
+   "open": 28,
+   "placement_errors": 11,
+   "router": "routed 236/267 connections, 737 tracks, 85 vias, pitch 0.050"
+  }
+ ],
+ "assign": {
+  "/DUT_Supply": "T1",
+  "/LED_FAIL": "T1",
+  "/LED_PASS": "T1",
+  "/LED_RUN": "T1",
+  "/SCL": "T1",
+  "/SDA": "T1",
+  "/TP_5V": "T2",
+  "/port-connection/TP_A7": "T1",
+  "/port-connection/TP_A_Vio": "T2",
+  "/port-connection/TP_A_Vsns": "T2",
+  "/port-connection/TP_B7": "T1",
+  "/port-connection/TP_B_Vio": "T2",
+  "/port-connection/TP_B_Vsns": "T2",
+  "/port-connection/~Aux_conn_ctrl": "T1",
+  "/port-connection/~Port_conn_ctrl": "T1",
+  "Net-(J4-Pad1)": "T1",
+  "Net-(JP1-Pad2)": "T2",
+  "Net-(JP10-Pad1)": "T2",
+  "Net-(JP11-Pad1)": "T2",
+  "Net-(JP12-Pad1)": "T2",
+  "Net-(JP13-Pad1)": "T2",
+  "Net-(JP2-Pad2)": "T1",
+  "Net-(JP3-Pad1)": "T2",
+  "Net-(R13-Pad2)": "T1",
+  "Net-(U4-Pad13)": "T1"
+ },
+ "moves": {},
+ "power": [
+  "+3V3",
+  "/LED_1V2",
+  "/LED_3V3",
+  "/TP_1V2",
+  "/TP_3V3",
+  "GND",
+  "VBUS"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.7,
+   "drill": 0.3,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

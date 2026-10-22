@@ -1,0 +1,127 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 236/267 connections, 952 tracks, 86 vias, pitch 0.065",
+   "open": 26,
+   "violations": 253,
+   "placement_errors": 11,
+   "open_nets": [
+    "+3V3",
+    "/TP_5V",
+    "/port-connection/TP_A_Vio",
+    "/port-connection/TP_A_Vsns",
+    "/port-connection/TP_B_Vio",
+    "/port-connection/TP_B_Vsns",
+    "GND",
+    "Net-(JP1-Pad2)",
+    "Net-(JP10-Pad1)",
+    "Net-(JP11-Pad1)",
+    "Net-(JP12-Pad1)",
+    "Net-(JP13-Pad1)",
+    "Net-(JP3-Pad1)"
+   ]
+  },
+  {
+   "round": 0,
+   "kind": "hard",
+   "nets": [
+    "GND"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 260/292 connections, 1251 tracks, 78 vias, pitch 0.06",
+   "open": 25,
+   "violations": 247,
+   "placement_errors": 11,
+   "open_nets": [
+    "+3V3",
+    "/TP_5V",
+    "/port-connection/TP_A_Vio",
+    "/port-connection/TP_A_Vsns",
+    "/port-connection/TP_B_Vio",
+    "/port-connection/TP_B_Vsns",
+    "Net-(JP1-Pad2)",
+    "Net-(JP10-Pad1)",
+    "Net-(JP11-Pad1)",
+    "Net-(JP12-Pad1)",
+    "Net-(JP13-Pad1)",
+    "Net-(JP3-Pad1)"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "mask"
+  },
+  {
+   "round": 2,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 292/292 connections, 880 tracks, 102 vias, pitch 0.06",
+   "open": 0,
+   "violations": 245,
+   "placement_errors": 11,
+   "open_nets": []
+  }
+ ],
+ "assign": {},
+ "moves": {},
+ "power": [
+  "+3V3",
+  "/LED_1V2",
+  "/LED_3V3",
+  "/TP_1V2",
+  "/TP_3V3",
+  "GND",
+  "VBUS"
+ ],
+ "hard": [
+  "GND"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.7,
+   "drill": 0.3,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

@@ -114,10 +114,20 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
   };
   std::vector<SegI> segs;
   std::vector<ViaI> vias;
-  for (const auto& cr : routes) {
-    for (const auto& t : cr.tracks) {
+  // Tracks to cut into pieces (opt.subdivide_mm): their end nodes now, the pieces once every node of the board exists.
+  struct Cut {
+    std::size_t route, track;
+    SegI seg;  // the whole track
+  };
+  std::vector<Cut> cuts;
+  for (std::size_t ri = 0; ri < routes.size(); ++ri) {
+    const auto& cr = routes[ri];
+    for (std::size_t ti = 0; ti < cr.tracks.size(); ++ti) {
+      const auto& t = cr.tracks[ti];
       if (t.a == t.b) continue;
-      segs.push_back({node(t.net, t.a, t.locked), node(t.net, t.b, t.locked), nm_to_mm(t.width), t.layer, t.net});
+      const SegI whole{node(t.net, t.a, t.locked), node(t.net, t.b, t.locked), nm_to_mm(t.width), t.layer, t.net};
+      if (opt.subdivide_mm > 0 && !t.locked) cuts.push_back({ri, ti, whole});
+      else segs.push_back(whole);
     }
     for (const auto& v : cr.vias) vias.push_back({node(v.net, v.pos, v.locked), nm_to_mm(v.size) / 2, nm_to_mm(v.drill), v.layer_top, v.layer_bottom, v.net});
   }
@@ -127,8 +137,45 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
     segs.push_back({node(t.net, t.a, true), node(t.net, t.b, true), nm_to_mm(t.width), t.layer, t.net});
   }
   for (const auto& v : board.vias) vias.push_back({node(v.net, v.pos, true), nm_to_mm(v.size) / 2, nm_to_mm(v.drill), v.layer_top, v.layer_bottom, v.net});
+  // The pieces of the cut tracks. A vertex of the same net that lies on the track (a junction, a via) stays a vertex of it, so the
+  // copper stays joined whichever way the pieces bend; between those the track is cut evenly.
+  std::map<std::pair<std::size_t, std::size_t>, std::vector<int>> chain_of;
+  std::size_t n_cut_nodes = 0;
+  const std::size_t known = px.size();
+  if (!cuts.empty()) {
+    for (const auto& c : cuts) {
+      const double ax = px[static_cast<std::size_t>(c.seg.a)], ay = py[static_cast<std::size_t>(c.seg.a)];
+      const double bx = px[static_cast<std::size_t>(c.seg.b)], by = py[static_cast<std::size_t>(c.seg.b)];
+      std::vector<std::pair<double, int>> anchors{{0.0, c.seg.a}, {1.0, c.seg.b}};
+      for (std::size_t k = 0; k < known; ++k) {
+        if (node_net[k] != c.seg.net || static_cast<int>(k) == c.seg.a || static_cast<int>(k) == c.seg.b) continue;
+        const double t = seg_param(px[k], py[k], ax, ay, bx, by);
+        if (t <= 1e-9 || t >= 1 - 1e-9) continue;
+        if (std::hypot(px[k] - (ax + t * (bx - ax)), py[k] - (ay + t * (by - ay))) < 1e-3) anchors.emplace_back(t, static_cast<int>(k));
+      }
+      std::sort(anchors.begin(), anchors.end());
+      std::vector<int> chain;
+      const double len = std::hypot(bx - ax, by - ay);
+      for (std::size_t k = 0; k + 1 < anchors.size(); ++k) {
+        chain.push_back(anchors[k].second);
+        const double gap = (anchors[k + 1].first - anchors[k].first) * len;
+        const int pieces = std::max(1, static_cast<int>(std::ceil(gap / opt.subdivide_mm)));
+        for (int j = 1; j < pieces; ++j) {
+          const double t = anchors[k].first + (anchors[k + 1].first - anchors[k].first) * j / pieces;
+          const std::size_t before = px.size();
+          chain.push_back(node(c.seg.net, {mm_to_nm(ax + t * (bx - ax)), mm_to_nm(ay + t * (by - ay))}, false));
+          n_cut_nodes += px.size() - before;
+        }
+      }
+      chain.push_back(c.seg.b);
+      for (std::size_t k = 0; k + 1 < chain.size(); ++k) segs.push_back({chain[k], chain[k + 1], c.seg.w, c.seg.layer, c.seg.net});
+      chain_of[{c.route, c.track}] = std::move(chain);
+    }
+  }
   const std::size_t n = px.size();
-  res.nodes = static_cast<int>(n_route_nodes);
+  std::vector<std::uint8_t> is_anchor(n, 0);  // the vertices the copper had before the cutting
+  std::fill(is_anchor.begin(), is_anchor.begin() + static_cast<std::ptrdiff_t>(known), 1);
+  res.nodes = static_cast<int>(n_route_nodes + n_cut_nodes);
   if (segs.empty() && vias.empty()) return res;
 
   // Half extent of the copper at a node (for the outline), and the pad a node lies in when it belongs to that pad's net.
@@ -428,13 +475,48 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
     res.max_move_mm = std::max(res.max_move_mm, mv);
   }
   res.moved = std::min(res.moved, res.nodes);
-  for (auto& cr : routes) {
-    for (auto& t : cr.tracks) {
-      if (t.a == t.b || t.locked) continue;
+  // A cut track comes back as the vertices that matter: those that moved, and the ones the pieces need to stay on the same line.
+  auto merged = [&](const std::vector<int>& chain) {
+    std::vector<int> kept{chain.front()};
+    for (std::size_t k = 1; k + 1 < chain.size(); ++k) {
+      const auto a = static_cast<std::size_t>(kept.back()), m = static_cast<std::size_t>(chain[k]), b = static_cast<std::size_t>(chain[k + 1]);
+      const double dx = nm_to_mm(new_pos[b].x - new_pos[a].x), dy = nm_to_mm(new_pos[b].y - new_pos[a].y), l = std::hypot(dx, dy);
+      const double ex = nm_to_mm(new_pos[m].x - new_pos[a].x), ey = nm_to_mm(new_pos[m].y - new_pos[a].y);
+      const double cross = l > 0 ? std::fabs(dx * ey - dy * ex) / l : std::hypot(ex, ey);
+      const double along = l > 0 ? (dx * ex + dy * ey) / l : 0;
+      const bool joint = node_net[m] == node_net[a] && is_anchor[m];  // a junction or a via sits here: it stays a vertex
+      if (!joint && cross < 5e-4 && along > 0 && along < l) continue;
+      kept.push_back(chain[k]);
+    }
+    kept.push_back(chain.back());
+    return kept;
+  };
+  for (std::size_t ri = 0; ri < routes.size(); ++ri) {
+    auto& cr = routes[ri];
+    std::vector<model::Track> out;
+    out.reserve(cr.tracks.size());
+    for (std::size_t ti = 0; ti < cr.tracks.size(); ++ti) {
+      auto t = cr.tracks[ti];
+      if (t.a == t.b || t.locked) {
+        out.push_back(t);
+        continue;
+      }
+      if (const auto it = chain_of.find({ri, ti}); it != chain_of.end()) {
+        const auto kept = merged(it->second);
+        for (std::size_t k = 0; k + 1 < kept.size(); ++k) {
+          model::Track u = t;
+          u.a = new_pos[static_cast<std::size_t>(kept[k])];
+          u.b = new_pos[static_cast<std::size_t>(kept[k + 1])];
+          if (!(u.a == u.b)) out.push_back(u);
+        }
+        continue;
+      }
       const int a = node_of.at(std::make_tuple(t.net, t.a.x, t.a.y)), b = node_of.at(std::make_tuple(t.net, t.b.x, t.b.y));
       t.a = new_pos[static_cast<std::size_t>(a)];
       t.b = new_pos[static_cast<std::size_t>(b)];
+      out.push_back(t);
     }
+    cr.tracks = std::move(out);
     for (auto& v : cr.vias) {
       if (v.locked) continue;
       v.pos = new_pos[static_cast<std::size_t>(node_of.at(std::make_tuple(v.net, v.pos.x, v.pos.y)))];

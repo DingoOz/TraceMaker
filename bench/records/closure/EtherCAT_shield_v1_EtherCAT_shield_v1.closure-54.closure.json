@@ -1,0 +1,542 @@
+{
+ "rounds": [
+  {
+   "round": 100,
+   "kind": "combine",
+   "trials": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-0",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-1",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-2",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-3",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-4",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-45/comb-122-0",
+     "taken": 45,
+     "est": 2,
+     "open": 2,
+     "violations": 413
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-46/comb-125-0",
+     "taken": 45,
+     "est": 2,
+     "open": 2,
+     "violations": 414
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-46/pkg-121-11",
+     "taken": 39,
+     "est": 3,
+     "open": 3,
+     "violations": 427
+    }
+   ]
+  },
+  {
+   "round": 101,
+   "kind": "package",
+   "part": "U1",
+   "trials": [
+    {
+     "reach": 4,
+     "order": "open first",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "open first +drops",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "ring",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "ring +drops",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "ring reversed",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "ring reversed +drops",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 1",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 1 +drops",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 2",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 2 +drops",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 3",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 4,
+     "order": "shuffle 3 +drops",
+     "nets": 5,
+     "removed": 44,
+     "open": 2,
+     "violations": 507
+    },
+    {
+     "reach": 10,
+     "order": "open first",
+     "nets": 13,
+     "removed": 182,
+     "open": 2,
+     "violations": 526
+    },
+    {
+     "reach": 10,
+     "order": "open first +drops",
+     "nets": 13,
+     "removed": 182,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "reach": 10,
+     "order": "ring",
+     "nets": 13,
+     "removed": 182,
+     "open": 2,
+     "violations": 526
+    },
+    {
+     "reach": 10,
+     "order": "ring +drops",
+     "nets": 13,
+     "removed": 182,
+     "open": 2,
+     "violations": 528
+    },
+    {
+     "reach": 10,
+     "order": "ring reversed",
+     "nets": 13,
+     "removed": 182,
+     "open": 5,
+     "violations": 515
+    },
+    {
+     "reach": 10,
+     "order": "ring reversed +drops",
+     "nets": 13,
+     "removed": 182,
+     "open": 5,
+     "violations": 515
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 1",
+     "nets": 13,
+     "removed": 182,
+     "open": 5,
+     "violations": 517
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 1 +drops",
+     "nets": 13,
+     "removed": 182,
+     "open": 5,
+     "violations": 517
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 2",
+     "nets": 13,
+     "removed": 182,
+     "open": 3,
+     "violations": 508
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 2 +drops",
+     "nets": 13,
+     "removed": 182,
+     "open": 3,
+     "violations": 508
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 3",
+     "nets": 13,
+     "removed": 182,
+     "open": 3,
+     "violations": 513
+    },
+    {
+     "reach": 10,
+     "order": "shuffle 3 +drops",
+     "nets": 13,
+     "removed": 182,
+     "open": 3,
+     "violations": 513
+    }
+   ]
+  },
+  {
+   "round": 102,
+   "kind": "bundle",
+   "part": "U1",
+   "nets": 52,
+   "trials": [
+    {
+     "opt": "bundle",
+     "seed": 0,
+     "removed": 870,
+     "open": 19,
+     "violations": 298
+    },
+    {
+     "opt": "bundle + corridors",
+     "seed": 0,
+     "removed": 870,
+     "open": 9,
+     "violations": 465
+    },
+    {
+     "opt": "bundle + corridors + persist",
+     "seed": 0,
+     "removed": 870,
+     "open": 12,
+     "violations": 381
+    },
+    {
+     "opt": "bundle + corridors + supply first",
+     "seed": 0,
+     "removed": 870,
+     "open": 12,
+     "violations": 363
+    },
+    {
+     "opt": "bundle + corridors + supply first + tunnels",
+     "seed": 0,
+     "removed": 870,
+     "open": 12,
+     "violations": 363
+    },
+    {
+     "opt": "bundle + corridors + tunnels",
+     "seed": 0,
+     "removed": 870,
+     "open": 8,
+     "violations": 342
+    },
+    {
+     "opt": "bundle + corridors, min 1",
+     "seed": 0,
+     "removed": 870,
+     "open": 12,
+     "violations": 363
+    }
+   ]
+  },
+  {
+   "round": 103,
+   "kind": "fine",
+   "pitch_um": 14.0,
+   "open": 2,
+   "violations": 507,
+   "steps": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "router": "routed 0/2 connections, 0 tracks, 0 vias, pitch 0.014 mm, 19"
+    }
+   ]
+  },
+  {
+   "round": 104,
+   "kind": "window",
+   "trials": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "radius": 2.0,
+     "removed": 23,
+     "open": 12,
+     "violations": 416
+    }
+   ]
+  },
+  {
+   "round": 105,
+   "kind": "combine",
+   "trials": [
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-0",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-1",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-36/comb-100-2",
+     "taken": 42,
+     "est": 3,
+     "open": 3,
+     "violations": 593
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-45/comb-122-0",
+     "taken": 45,
+     "est": 2,
+     "open": 2,
+     "violations": 413
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-46/comb-125-0",
+     "taken": 45,
+     "est": 2,
+     "open": 2,
+     "violations": 414
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-46/pkg-121-11",
+     "taken": 39,
+     "est": 3,
+     "open": 3,
+     "violations": 427
+    },
+    {
+     "net": "Net-(C12-Pad1)",
+     "from": "closure-52/bun-115-0",
+     "taken": 46,
+     "est": 0,
+     "open": 0,
+     "violations": 539
+    },
+    {
+     "net": "Net-(C12-Pad1)@13",
+     "from": "closure-52/bun-115-0",
+     "taken": 49,
+     "est": 0,
+     "open": 0,
+     "violations": 540
+    }
+   ]
+  }
+ ],
+ "assign": {
+  "/LAN9252/LINKACTLED0": "T2",
+  "/LAN9252/LINKACTLED1": "T2",
+  "/LAN9252/RUNLED": "T2",
+  "/LAN9252/VDD33TXRX1": "T3",
+  "/LAN9252/VDDTXRX2": "T2",
+  "GPIO0": "T3",
+  "GPIO1": "T3",
+  "GPIO10": "T3",
+  "GPIO11": "T2",
+  "GPIO12": "T2",
+  "GPIO13": "T3",
+  "GPIO14": "T3",
+  "GPIO15": "T3",
+  "GPIO2": "T3",
+  "GPIO3": "T3",
+  "GPIO5": "V",
+  "GPIO6": "V",
+  "GPIO7": "T3",
+  "GPIO8": "T3",
+  "GPIO9": "T3",
+  "LAN9252_IRQ": "T3",
+  "LAN9252_RST": "T3",
+  "Net-(C12-Pad1)": "T3",
+  "Net-(C16-Pad1)": "T3",
+  "Net-(C17-Pad1)": "T3",
+  "Net-(C19-Pad1)": "T2",
+  "Net-(R12-Pad1)": "T3",
+  "Net-(R13-Pad1)": "T3",
+  "Net-(R18-Pad1)": "T3",
+  "Net-(R19-Pad2)": "T2",
+  "Net-(R20-Pad2)": "T3",
+  "Net-(R21-Pad1)": "T3",
+  "Net-(U1-Pad25)": "T2",
+  "Net-(U1-Pad3)": "T3",
+  "PB0": "T3",
+  "PB1": "V",
+  "PB10": "V",
+  "PB2": "V",
+  "PC10": "T3",
+  "RX1_N": "T3",
+  "RX1_P": "T3",
+  "RX2_N": "T3",
+  "RX2_P": "T3",
+  "SCK": "V",
+  "SIO0": "V",
+  "SIO1": "T3",
+  "SIO2": "T3",
+  "SIO3": "T3",
+  "SYNC0": "T3",
+  "SYNC1": "V",
+  "TX1_N": "T3",
+  "TX1_P": "T3",
+  "TX2_N": "T3",
+  "TX2_P": "T2",
+  "~SCS": "T3"
+ },
+ "moves": {},
+ "power": [
+  "+3V3",
+  "+5V",
+  "GND",
+  "GNDPWR"
+ ],
+ "hard": [
+  "GND",
+  "GNDPWR"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.6,
+   "drill": 0.4,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  },
+  "V": {
+   "clr": 0.2,
+   "tmin": 0.2,
+   "via": 0.4,
+   "drill": 0.3,
+   "vmin": 0.4,
+   "dmin": 0.3
+  }
+ },
+ "max_tier": "T3",
+ "fine_done": [
+  [
+   "Net-(C12-Pad1)"
+  ]
+ ]
+}

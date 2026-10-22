@@ -1,0 +1,89 @@
+{
+ "rounds": [
+  {
+   "round": 0,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 422/422 connections, 1380 tracks, 250 vias, pitch 0.0",
+   "open": 1,
+   "violations": 55,
+   "placement_errors": 21,
+   "open_nets": [
+    "VCC"
+   ]
+  },
+  {
+   "round": 0,
+   "kind": "hard",
+   "nets": [
+    "VCC"
+   ]
+  },
+  {
+   "round": 1,
+   "kind": "route",
+   "relaxed_nets": 0,
+   "relaxed_power": 0,
+   "moved_parts": 0,
+   "router": "routed 421/421 connections, 1398 tracks, 209 vias, pitch 0.0",
+   "open": 0,
+   "violations": 54,
+   "placement_errors": 20,
+   "open_nets": []
+  }
+ ],
+ "assign": {},
+ "moves": {},
+ "power": [
+  "+5V",
+  "1V5",
+  "3VA",
+  "VCC",
+  "VDD33A",
+  "VDDBUSPLL",
+  "VDDCORE",
+  "VDDPLL",
+  "VDD_CPU",
+  "VDD_INT"
+ ],
+ "hard": [
+  "VCC"
+ ],
+ "tiers": {
+  "T0": {
+   "clr": 0.13,
+   "tmin": 0.13,
+   "via": 0.56,
+   "drill": 0.3,
+   "vmin": 0.4,
+   "dmin": 0.3
+  },
+  "T1": {
+   "clr": 0.15,
+   "tmin": 0.15,
+   "via": 0.6,
+   "drill": 0.3,
+   "vmin": 0.5,
+   "dmin": 0.25
+  },
+  "T2": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.5,
+   "drill": 0.25,
+   "vmin": 0.45,
+   "dmin": 0.2
+  },
+  "T3": {
+   "clr": 0.127,
+   "tmin": 0.127,
+   "via": 0.4,
+   "drill": 0.2,
+   "vmin": 0.4,
+   "dmin": 0.2
+  }
+ },
+ "max_tier": "T3"
+}

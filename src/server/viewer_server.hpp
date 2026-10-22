@@ -28,6 +28,7 @@ struct ServerOptions {
   std::uint16_t port = 8766;       // 0 = pick a free port (tests)
   std::string token;               // at least 16 characters of [A-Za-z0-9._~-]; empty = generated when the host is not a loopback address
   bool allow_open = false;         // a non-loopback host without any token (--view-insecure)
+  std::string embed;               // pages that may frame the viewer, as CSP sources separated by spaces (--view-embed); empty = nobody (X-Frame-Options: DENY)
   std::size_t max_clients = 16;        // WebSocket viewers, counted from the upgrade on (a burst cannot overshoot); the next gets 503
   std::size_t max_connections = 128;   // concurrent HTTP connections (a page load is one); beyond it a connection is closed at once
   std::size_t max_connections_per_address = 16;  // of those, from one address: one host cannot use them all up before it has authenticated

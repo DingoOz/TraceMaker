@@ -1,3 +1,8 @@
+---
+status: current
+code: [src/gpu]
+---
+
 # 07 — GPU acceleration
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md).

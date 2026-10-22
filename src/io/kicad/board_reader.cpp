@@ -7,6 +7,7 @@
 #include <bit>
 #include <charconv>
 #include <cmath>
+#include <numbers>
 #include <stdexcept>
 
 namespace tmk::io {
@@ -391,10 +392,47 @@ class Reader {
     if (NodeId a = d_.find(p, "thermal_bridge_angle"); a != kNoNode) pad.thermal_bridge_angle = d_.number_at(a, 1).value_or(-1);
     if (NodeId mm = d_.find(p, "solder_mask_margin"); mm != kNoNode) pad.mask_margin = d_.nm_at(mm, 1).value_or(INT64_MIN);
     if (NodeId prim = d_.find(p, "primitives"); prim != kNoNode) {
-      for (NodeId g : d_.find_all(prim, "gr_poly")) {
-        std::vector<Point> poly;
-        if (NodeId pts = d_.find(g, "pts"); pts != kNoNode) read_pts(pts, poly, Point{}, 0);
-        pad.custom_polys.push_back(std::move(poly));
+      auto stroke = [&](NodeId g) -> Coord {  // half the pen width, 0 when absent
+        NodeId w = d_.find(g, "width");
+        return w == kNoNode ? 0 : d_.nm_at(w, 1).value_or(0) / 2;
+      };
+      auto pt = [&](NodeId g, const char* key) { NodeId n = d_.find(g, key); return n == kNoNode ? Point{} : xy(n); };
+      for (NodeId g : d_.children(prim)) {
+        if (!d_.is_list(g)) continue;
+        const std::string_view h = d_.head(g);
+        model::Pad::CustomPrim cp;
+        cp.radius = stroke(g);
+        if (h == "gr_poly") {
+          if (NodeId pts = d_.find(g, "pts"); pts != kNoNode) read_pts(pts, cp.pts, Point{}, 0);
+        } else if (h == "gr_rect") {
+          const Point a = pt(g, "start"), c = pt(g, "end");
+          cp.pts = {a, {c.x, a.y}, c, {a.x, c.y}};
+        } else if (h == "gr_line") {
+          cp.kind = model::Pad::CustomPrim::Kind::Polyline;
+          cp.pts = {pt(g, "start"), pt(g, "end")};
+        } else if (h == "gr_circle") {
+          cp.kind = model::Pad::CustomPrim::Kind::Disc;
+          const Point c = pt(g, "center"), e = pt(g, "end");
+          cp.pts = {c};
+          cp.radius += static_cast<Coord>(std::llround(std::hypot(static_cast<double>(e.x - c.x), static_cast<double>(e.y - c.y))));
+        } else if (h == "gr_arc") {
+          cp.kind = model::Pad::CustomPrim::Kind::Polyline;
+          if (d_.find(g, "mid") != kNoNode) {
+            cp.pts = geom::arc_points(pt(g, "start"), pt(g, "mid"), pt(g, "end"), 5'000);
+          } else if (NodeId an = d_.find(g, "angle"); an != kNoNode) {  // KiCad 5/6: start = centre, end = first point, angle in degrees
+            const Point c = pt(g, "start"), e = pt(g, "end");
+            const double a = d_.number_at(an, 1).value_or(0) * std::numbers::pi / 180.0;
+            const double dx = static_cast<double>(e.x - c.x), dy = static_cast<double>(e.y - c.y);
+            const int n = std::max(2, static_cast<int>(std::fabs(a) / 0.05) + 1);
+            for (int i = 0; i <= n; ++i) {
+              const double t = a * i / n, ct = std::cos(t), st = std::sin(t);
+              cp.pts.push_back(c + Point{static_cast<Coord>(std::llround(dx * ct - dy * st)), static_cast<Coord>(std::llround(dx * st + dy * ct))});
+            }
+          }
+        } else {
+          continue;
+        }
+        if (!cp.pts.empty()) pad.custom_prims.push_back(std::move(cp));
       }
     }
     if (NodeId pf = d_.find(p, "pinfunction"); pf != kNoNode) pad.pinfunction = d_.str_at(pf, 1);
