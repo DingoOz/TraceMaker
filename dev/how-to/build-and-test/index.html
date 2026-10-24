@@ -2288,7 +2288,7 @@ and <code>/usr/bin/g++-13</code> or <code>-12</code> for CUDA host code (<code>n
 <p>Stay on CUDA 12.x: CUDA 13 cannot compile for the Pascal (P100) and Volta (V100) GPUs.</p>
 <p>Warnings are errors (<code>-Wall -Wextra -Werror</code>), and the sanitizer presets must stay green.</p>
 <h2 id="test">Test<a class="headerlink" href="#test" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>ctest<span class="w"> </span>--preset<span class="w"> </span>release<span class="w">                 </span><span class="c1"># 379 tests, about 20 minutes</span>
+<div class="highlight"><pre><span></span><code>ctest<span class="w"> </span>--preset<span class="w"> </span>release<span class="w">                 </span><span class="c1"># 391 tests, about 20 minutes</span>
 ctest<span class="w"> </span>--preset<span class="w"> </span>release<span class="w"> </span>-R<span class="w"> </span>route<span class="w">        </span><span class="c1"># only tests whose name matches</span>
 ctest<span class="w"> </span>--preset<span class="w"> </span>asan<span class="w">                    </span><span class="c1"># memory errors; its integration tests are slow</span>
 </code></pre></div>
