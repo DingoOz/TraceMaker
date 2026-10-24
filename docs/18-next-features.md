@@ -8,6 +8,7 @@ code: []
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-14 after M16, issues #4–#8 and #24 were closed.
 > **Update (2026-10-16): M17 was built and measured (docs/10 §11, D121, D122, `bench/records/m17`). Two statements below are corrected by it: PCBWorld's "679 real boards" (§2, §3, A1) are derived from PCBench, so A1 is
 > not an independent second corpus; and the paper was read in full (§1). The rest of this note is as written on 2026-10-14.**
+> **Update (2026-10-24): D3, the run report, was built (§9, D136).**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -166,3 +167,21 @@ C6, C7, C4 and B4 wait for a board that needs them.
 - C1 may find nothing: `--relax` may need the breakout structure to help. A recorded negative still removes a guess.
 - Vendor comparisons are self-reported; the pull toward "AI layout" features may be marketing rather than need.
 - All effort figures are guesses from past sessions.
+
+## 9. D3 built: the run report (2026-10-24)
+
+`route --report FILE` writes one HTML (or Markdown) file per run, rendered from the route summary alone, so every number in it is a JSON field
+(decision [D136](decisions/D136.md), how-to [Read a run report](how-to/run-report.md)). It covers the candidate's list: what was routed; what is open
+and why (the stuck report of doc 17 §3 for the final result, with what each cause means, cut proofs, pins that cannot escape their package,
+and the items the refilled board leaves unconnected); the rules read and not read; the SI audit (critical nets, pairs, buses, return paths);
+the DRC of the board before and after (TraceMaker's DRC, zones refilled); the options as given and the seed. `tracemaker report` renders it
+again from a saved summary.
+
+Gate, as far as it goes (`bench/records/m20-run-report`): reports for seven of the eight plane-tier boards, `--soft-zones --si-rules`, 3 M
+work. No routing error added on any board; the unconnected count after the refill equals the report's own DRC count on every board. A unit
+test checks every value of the HTML against its JSON pointer and that the renderer's own words hold no number. The extra work after the
+route took 0.1 to 2.1 s per board. Options off, the quick tier is byte-identical to `main` (30/30).
+
+Not met yet: the review by someone who did not write it, and interf_u, which spends more than 20 minutes on one core after its portfolio
+with `main`'s binary as well (27 s in the 14 October records; open). Found on the way: under load the default 120 s time limit, not the
+work budget, ended some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.

@@ -25,6 +25,8 @@ SUBCOMMANDS:
                               rules (doc 15)
   drc                         Check a board against its KiCad design rules
   route                       Route all unrouted connections of a board
+  report                      Render the run report from a route summary (route --json, with
+                              the sections route --report adds)
   escape                      Escape feasibility of dense packages: pins that cannot leave
                               their package under the board's rules
   pairs                       Differential pairs of a routed board: coupled share, gap,
@@ -343,6 +345,12 @@ OPTIONS:
                               spaces (e.g. a dashboard: http://host:8771); default: none
           --hold              Keep serving the viewer after routing finishes
           --json TEXT         Write a result summary as JSON
+          --report TEXT       Write a run report for designers: what was routed, what is open
+                              and why, the rules read and not read, the signal-integrity audit,
+                              the DRC before and after, the options and the seed. HTML, or
+                              Markdown if FILE ends in .md. Every number in it is a field of
+                              the --json summary (written to FILE.json when --json is not
+                              given)
           --component-rules TEXT:{off,report,soft,on}
                               Component-aware rules (doc 15): off (default); report/soft write
                               <output>.tracemaker.kicad_dru; on also routes with the generated
@@ -400,6 +408,25 @@ OPTIONS:
           --pass-work INT:POSITIVE
                               Work budget of each after-route pass, in exact checks (default
                               2,000,000)
+```
+
+### `tracemaker report`
+
+```text
+Render the run report from a route summary (route --json, with the sections
+route --report adds)
+
+
+tracemaker report [OPTIONS] summary
+
+
+POSITIONALS:
+  summary TEXT:FILE REQUIRED  Summary file (JSON)
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+  -o,     --output TEXT REQUIRED
+                              Report file: HTML, or Markdown if it ends in .md
 ```
 
 ### `tracemaker escape`

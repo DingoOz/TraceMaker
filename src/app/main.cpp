@@ -37,6 +37,7 @@
 #include "route/escape_flow.hpp"
 #include "route/obstacles.hpp"
 #include "core/version.hpp"
+#include "report/render.hpp"
 #include "gpu/device.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
@@ -1058,6 +1059,10 @@ int main(int argc, char** argv) {
   route->add_option("--view-embed", r_job.view_embed, "Pages that may show the viewer in a frame, origins separated by spaces (e.g. a dashboard: http://host:8771); default: none");
   route->add_flag("--hold", r_job.hold, "Keep serving the viewer after routing finishes");
   route->add_option("--json", r_json, "Write a result summary as JSON");
+  route->add_option("--report", r_job.report_out,
+                    "Write a run report for designers: what was routed, what is open and why, the rules read and not read, the signal-integrity "
+                    "audit, the DRC before and after, the options and the seed. HTML, or Markdown if FILE ends in .md. Every number in it is a "
+                    "field of the --json summary (written to FILE.json when --json is not given)");
   route->add_option("--component-rules", r_job.component_rules,
                     "Component-aware rules (doc 15): off (default); report/soft write <output>.tracemaker.kicad_dru; on also routes "
                     "with the generated keep-outs (crystal, switching-regulator inductor) as in-memory rule areas")
@@ -1093,6 +1098,11 @@ int main(int argc, char** argv) {
       ->check(CLI::PositiveNumber);
   route->add_option("--stitch-return", r_job.stitch_returns, "Return-path stitching for nets as PATTERN=PLANE_NET, e.g. 'USB_D*=GND' (repeatable). Return-path stitching from component rules is experimental");
   route->add_option("--pass-work", r_job.pass_work, "Work budget of each after-route pass, in exact checks (default 2,000,000)")->check(CLI::PositiveNumber);
+
+  auto* rep = app.add_subcommand("report", "Render the run report from a route summary (route --json, with the sections route --report adds)");
+  std::string rep_json, rep_out;
+  rep->add_option("summary", rep_json, "Summary file (JSON)")->required()->check(CLI::ExistingFile);
+  rep->add_option("-o,--output", rep_out, "Report file: HTML, or Markdown if it ends in .md")->required();
 
   auto* esc = app.add_subcommand("escape", "Escape feasibility of dense packages: pins that cannot leave their package under the board's rules");
   std::string esc_board, esc_json;
@@ -1306,6 +1316,12 @@ int main(int argc, char** argv) {
     if (*srj_in) return cmd_srj_import(si_in, si_out, si_clearance, si_hole, si_json, si_margin, si_unpointed);
     if (*srj_out) return cmd_srj_export(so_board, so_problem, so_out, so_json);
     if (*dseg) return cmd_debug_seg(ds_board, ds_pts, ds_layer, ds_width, ds_net);
+    if (*rep) {
+      const auto summary = nlohmann::json::parse(std::ifstream(rep_json));
+      std::ofstream(rep_out) << tmk::report::render(summary, tmk::report::format_for_path(rep_out), std::filesystem::path(rep_json).filename().string());
+      std::printf("report written to %s\n", rep_out.c_str());
+      return 0;
+    }
     if (*esc) return cmd_escape(esc_board, esc_json, esc_flow, esc_soft, esc_vop ? esc_vop_below : 0.0);
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
@@ -1366,6 +1382,14 @@ int main(int argc, char** argv) {
       job.kb_path = r_nokb ? std::string() : r_kb;
       job.items_out = r_items;
       job.json_out = r_json;
+      // The options as given (command line and --config), for the run report: what a reader needs to repeat the run.
+      job.options_given = nlohmann::json::array();
+      for (const CLI::Option* o : route->get_options()) {
+        if (o->count() == 0 || o->get_name() == "board" || o->get_name() == "--help") continue;
+        std::string v;
+        for (const auto& r : o->results()) v += (v.empty() ? "" : ",") + r;
+        job.options_given.push_back({{"name", o->get_name()}, {"value", v.empty() ? std::string("on") : v}});
+      }
       return cmd_route(std::move(job));
     }
     if (*rt) {

@@ -152,6 +152,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D133](decisions/D133.md) | Viewer framing for named pages (--view-embed) | accepted |
 | [D134](decisions/D134.md) | Documentation site: MkDocs, Diátaxis, decision records, Doxygen | accepted |
 | [D135](decisions/D135.md) | macOS 15: floating-point parsing without std::from_chars | accepted |
+| [D136](decisions/D136.md) | Run report rendered from the route summary alone | accepted |
 <!-- END decision index -->
 
 ## Risks

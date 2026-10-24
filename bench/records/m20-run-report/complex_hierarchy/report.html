@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Run report: unrouted.kicad_pcb</title>
+<style>
+:root{--bg:#fbfaf8;--fg:#1d1f21;--muted:#6b6f76;--line:#e3e1dc;--card:#ffffff;--warn-bg:#fff4e0;--warn-fg:#7a4a00;--ok:#1f7a4d;--accent:#2f5d9e}
+@media (prefers-color-scheme: dark){:root{--bg:#16181b;--fg:#e6e6e3;--muted:#9a9ea5;--line:#2c3036;--card:#1d2024;--warn-bg:#3a2d12;--warn-fg:#f4c97a;--ok:#6fcf9f;--accent:#8fb3ec}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:18px;margin:32px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+nav{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 16px;font-size:14px}
+nav a{color:var(--accent);text-decoration:none}
+p{margin:8px 0}
+.warn{background:var(--warn-bg);color:var(--warn-fg);padding:8px 12px;border-radius:6px}
+.scroll{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;background:var(--card);font-size:14px;min-width:40%}
+th,td{border:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
+th{font-weight:600}
+caption{caption-side:bottom;text-align:left;color:var(--muted);font-size:12px;padding-top:2px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.v{border-bottom:1px dotted var(--muted)}
+caption,.srcnote{display:none}
+.src caption,.src .srcnote{display:block}
+.src .v::after{content:" " attr(data-src);font:11px ui-monospace,monospace;color:var(--muted)}
+footer{margin-top:40px;color:var(--muted);font-size:13px}
+label{font-size:14px;color:var(--muted)}
+</style></head>
+<body><main>
+<h1>Run report: <span class="v" data-src="/run/board" title="/run/board">unrouted.kicad_pcb</span></h1>
+<label><input type="checkbox" onchange="document.body.classList.toggle('src',this.checked)"> Show the JSON field of every value</label>
+<nav><a href="#result">Result</a><a href="#open">What is open and why</a><a href="#rules">Rules</a><a href="#si">Signal-integrity audit</a><a href="#drc">DRC before and after</a><a href="#options">Options and seed</a></nav>
+<section id="summary">
+<p>TraceMaker <span class="v" data-src="/run/version" title="/run/version">0.10.0</span>, <span class="v" data-src="/run/date" title="/run/date">2026-10-24T01:46:11Z</span>. Input <span class="v" data-src="/run/input" title="/run/input">build/demos/complex_hierarchy//unrouted.kicad_pcb</span>, output <span class="v" data-src="/run/output" title="/run/output">bench/results/run-report/complex_hierarchy/routed.kicad_pcb</span>.</p>
+<p>Every connection was routed: <span class="v" data-src="/routed" title="/routed">87</span> of <span class="v" data-src="/connections" title="/connections">87</span>.</p>
+<p>After the zones are refilled for the new copper, <span class="v" data-src="/unconnected_after_refill" title="/unconnected_after_refill">0</span> items are unconnected.</p>
+<p>The route added <span class="v" data-src="/drc/added_routing_errors" title="/drc/added_routing_errors">0</span> DRC errors of types routing can cause.</p>
+</section>
+<section id="result"><h2>Result</h2>
+<div class="scroll"><table><thead><tr><th></th><th>Value</th></tr></thead><tbody>
+<tr><td>Connections</td><td><span class="v" data-src="/connections" title="/connections">87</span></td></tr>
+<tr><td>Routed</td><td><span class="v" data-src="/routed" title="/routed">87</span></td></tr>
+<tr><td>Open</td><td><span class="v" data-src="/open" title="/open">0</span></td></tr>
+<tr><td>Routed, %</td><td><span class="v" data-src="/completion_pct" title="/completion_pct">100</span></td></tr>
+<tr><td>Unconnected after zone refill</td><td><span class="v" data-src="/unconnected_after_refill" title="/unconnected_after_refill">0</span></td></tr>
+<tr><td>Tracks added</td><td><span class="v" data-src="/tracks" title="/tracks">188</span></td></tr>
+<tr><td>Vias added</td><td><span class="v" data-src="/vias" title="/vias">0</span></td></tr>
+<tr><td>Winning variant</td><td><span class="v" data-src="/variant_name" title="/variant_name">fast bends, longest first (2x pitch on large boards)</span></td></tr>
+<tr><td>Lattice pitch, mm</td><td><span class="v" data-src="/pitch_mm" title="/pitch_mm">0.1</span></td></tr>
+<tr><td>Search expansions, all variants</td><td><span class="v" data-src="/work_all_variants/total/expansions" title="/work_all_variants/total/expansions">9787791</span></td></tr>
+<tr><td>Wall time, s</td><td><span class="v" data-src="/seconds" title="/seconds">35.04</span></td></tr>
+</tbody></table></div>
+</section>
+<section id="open"><h2>What is open and why</h2>
+<p>Nothing is open.</p>
+</section>
+<section id="rules"><h2>Rules</h2>
+<div class="scroll"><table><caption><code>/rules/files</code></caption><thead><tr><th>File</th><th>Name</th><th>Found</th></tr></thead><tbody>
+<tr><td>Project</td><td><span class="v" data-src="/rules/files/project" title="/rules/files/project">unrouted.kicad_pro</span></td><td><span class="v" data-src="/rules/files/project_found" title="/rules/files/project_found">yes</span></td></tr>
+<tr><td>Custom rules</td><td><span class="v" data-src="/rules/files/custom_rules" title="/rules/files/custom_rules">unrouted.kicad_dru</span></td><td><span class="v" data-src="/rules/files/custom_rules_found" title="/rules/files/custom_rules_found">no</span></td></tr>
+</tbody></table></div>
+<p>The readers reported nothing they could not read.</p>
+<p>Board minimums:</p>
+<div class="scroll"><table><thead><tr><th></th><th>Value</th></tr></thead><tbody>
+<tr><td>Clearance, mm</td><td><span class="v" data-src="/rules/minimums/clearance_mm" title="/rules/minimums/clearance_mm">0.2</span></td></tr>
+<tr><td>Track width, mm</td><td><span class="v" data-src="/rules/minimums/track_width_mm" title="/rules/minimums/track_width_mm">0.203</span></td></tr>
+<tr><td>Via diameter, mm</td><td><span class="v" data-src="/rules/minimums/via_diameter_mm" title="/rules/minimums/via_diameter_mm">0.889</span></td></tr>
+<tr><td>Via annular width, mm</td><td><span class="v" data-src="/rules/minimums/via_annular_width_mm" title="/rules/minimums/via_annular_width_mm">0.05</span></td></tr>
+<tr><td>Drill, mm</td><td><span class="v" data-src="/rules/minimums/drill_mm" title="/rules/minimums/drill_mm">0.508</span></td></tr>
+<tr><td>Hole clearance, mm</td><td><span class="v" data-src="/rules/minimums/hole_clearance_mm" title="/rules/minimums/hole_clearance_mm">0</span></td></tr>
+<tr><td>Hole to hole, mm</td><td><span class="v" data-src="/rules/minimums/hole_to_hole_mm" title="/rules/minimums/hole_to_hole_mm">0.25</span></td></tr>
+<tr><td>Copper to edge, mm</td><td><span class="v" data-src="/rules/minimums/copper_edge_clearance_mm" title="/rules/minimums/copper_edge_clearance_mm">0.01</span></td></tr>
+<tr><td>Blind and buried vias</td><td><span class="v" data-src="/rules/minimums/blind_buried_vias" title="/rules/minimums/blind_buried_vias">no</span></td></tr>
+<tr><td>Microvias</td><td><span class="v" data-src="/rules/minimums/microvias" title="/rules/minimums/microvias">no</span></td></tr>
+</tbody></table></div>
+<p>Net classes:</p>
+<div class="scroll"><table><caption><code>/rules/net_classes/&lt;row&gt;</code></caption><thead><tr><th>Class</th><th>Nets</th><th>Clearance, mm</th><th>Track, mm</th><th>Via, mm</th><th>Drill, mm</th><th>Pair width, mm</th><th>Pair gap, mm</th></tr></thead><tbody>
+<tr><td><span class="v" data-src="/rules/net_classes/0/name" title="/rules/net_classes/0/name">Default</span></td><td><span class="v" data-src="/rules/net_classes/0/nets" title="/rules/net_classes/0/nets">47</span></td><td><span class="v" data-src="/rules/net_classes/0/clearance_mm" title="/rules/net_classes/0/clearance_mm">0.3</span></td><td><span class="v" data-src="/rules/net_classes/0/track_width_mm" title="/rules/net_classes/0/track_width_mm">0.4</span></td><td><span class="v" data-src="/rules/net_classes/0/via_diameter_mm" title="/rules/net_classes/0/via_diameter_mm">1.651</span></td><td><span class="v" data-src="/rules/net_classes/0/via_drill_mm" title="/rules/net_classes/0/via_drill_mm">0.6</span></td><td><span class="v" data-src="/rules/net_classes/0/diff_pair_width_mm" title="/rules/net_classes/0/diff_pair_width_mm">0.4</span></td><td><span class="v" data-src="/rules/net_classes/0/diff_pair_gap_mm" title="/rules/net_classes/0/diff_pair_gap_mm">0.35</span></td></tr>
+<tr><td><span class="v" data-src="/rules/net_classes/1/name" title="/rules/net_classes/1/name">power</span></td><td><span class="v" data-src="/rules/net_classes/1/nets" title="/rules/net_classes/1/nets">5</span></td><td><span class="v" data-src="/rules/net_classes/1/clearance_mm" title="/rules/net_classes/1/clearance_mm">0.3</span></td><td><span class="v" data-src="/rules/net_classes/1/track_width_mm" title="/rules/net_classes/1/track_width_mm">0.6</span></td><td><span class="v" data-src="/rules/net_classes/1/via_diameter_mm" title="/rules/net_classes/1/via_diameter_mm">1.651</span></td><td><span class="v" data-src="/rules/net_classes/1/via_drill_mm" title="/rules/net_classes/1/via_drill_mm">0.6</span></td><td><span class="v" data-src="/rules/net_classes/1/diff_pair_width_mm" title="/rules/net_classes/1/diff_pair_width_mm">0.4</span></td><td><span class="v" data-src="/rules/net_classes/1/diff_pair_gap_mm" title="/rules/net_classes/1/diff_pair_gap_mm">0.35</span></td></tr>
+</tbody></table></div>
+<p>No custom rules.</p>
+</section>
+<section id="si"><h2>Signal-integrity audit</h2>
+<p>The options that turn the audit on were given, but the board has nothing for them: no critical nets, differential pairs, buses or return-path nets were found.</p>
+</section>
+<section id="drc"><h2>DRC before and after</h2>
+<p>Checked with <span class="v" data-src="/drc/checker" title="/drc/checker">tracemaker drc</span> (KiCad's violation names); zones refilled first: <span class="v" data-src="/drc/zones_refilled" title="/drc/zones_refilled">yes</span>. The comparison counts violations by type; sign off with kicad-cli pcb drc.</p>
+<div class="scroll"><table><caption><code>/drc/before, /drc/after</code></caption><thead><tr><th></th><th>Before</th><th>After</th></tr></thead><tbody>
+<tr><td>Errors</td><td><span class="v" data-src="/drc/before/errors" title="/drc/before/errors">0</span></td><td><span class="v" data-src="/drc/after/errors" title="/drc/after/errors">0</span></td></tr>
+<tr><td>Warnings</td><td><span class="v" data-src="/drc/before/warnings" title="/drc/before/warnings">0</span></td><td><span class="v" data-src="/drc/after/warnings" title="/drc/after/warnings">0</span></td></tr>
+<tr><td>Unconnected items</td><td><span class="v" data-src="/drc/before/unconnected" title="/drc/before/unconnected">87</span></td><td><span class="v" data-src="/drc/after/unconnected" title="/drc/after/unconnected">0</span></td></tr>
+</tbody></table></div>
+<p>Errors added of types routing can cause: <span class="v" data-src="/drc/added_routing_errors" title="/drc/added_routing_errors">0</span>; violations gone: <span class="v" data-src="/drc/removed" title="/drc/removed">0</span>.</p>
+</section>
+<section id="options"><h2>Options and seed</h2>
+<div class="scroll"><table><thead><tr><th></th><th>Value</th></tr></thead><tbody>
+<tr><td>Seed</td><td><span class="v" data-src="/run/seed" title="/run/seed">1</span></td></tr>
+<tr><td>Work budget per variant, expansions</td><td><span class="v" data-src="/run/work_budget" title="/run/work_budget">3000000</span></td></tr>
+<tr><td>Time limit, s</td><td><span class="v" data-src="/run/time_limit_s" title="/run/time_limit_s">3600</span></td></tr>
+<tr><td>Stopped by the time limit</td><td><span class="v" data-src="/time_limited" title="/time_limited">no</span></td></tr>
+<tr><td>Variants</td><td><span class="v" data-src="/run/variants" title="/run/variants">8</span></td></tr>
+<tr><td>Threads</td><td><span class="v" data-src="/run/threads" title="/run/threads">4</span></td></tr>
+</tbody></table></div>
+<p>Options given (command line and --config):</p>
+<div class="scroll"><table><caption><code>/run/options/&lt;row&gt;</code></caption><thead><tr><th>Option</th><th>Value</th></tr></thead><tbody>
+<tr><td><span class="v" data-src="/run/options/0/name" title="/run/options/0/name">--output</span></td><td><span class="v" data-src="/run/options/0/value" title="/run/options/0/value">bench/results/run-report/complex_hierarchy/routed.kicad_pcb</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/1/name" title="/run/options/1/name">--time</span></td><td><span class="v" data-src="/run/options/1/value" title="/run/options/1/value">3600</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/2/name" title="/run/options/2/name">--work</span></td><td><span class="v" data-src="/run/options/2/value" title="/run/options/2/value">3000000</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/3/name" title="/run/options/3/name">--soft-zones</span></td><td><span class="v" data-src="/run/options/3/value" title="/run/options/3/value">true</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/4/name" title="/run/options/4/name">--threads</span></td><td><span class="v" data-src="/run/options/4/value" title="/run/options/4/value">4</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/5/name" title="/run/options/5/name">--view</span></td><td><span class="v" data-src="/run/options/5/value" title="/run/options/5/value">true</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/6/name" title="/run/options/6/name">--si-rules</span></td><td><span class="v" data-src="/run/options/6/value" title="/run/options/6/value">true</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/7/name" title="/run/options/7/name">--view-port</span></td><td><span class="v" data-src="/run/options/7/value" title="/run/options/7/value">8810</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/8/name" title="/run/options/8/name">--json</span></td><td><span class="v" data-src="/run/options/8/value" title="/run/options/8/value">bench/results/run-report/complex_hierarchy/summary.json</span></td></tr>
+<tr><td><span class="v" data-src="/run/options/9/name" title="/run/options/9/name">--report</span></td><td><span class="v" data-src="/run/options/9/value" title="/run/options/9/value">bench/results/run-report/complex_hierarchy/report.html</span></td></tr>
+</tbody></table></div>
+<p>Portfolio variants:</p>
+<div class="scroll"><table><caption><code>/variants/&lt;row&gt;</code></caption><thead><tr><th>Variant</th><th>Name</th><th>Routed</th><th>Seconds</th></tr></thead><tbody>
+<tr><td><span class="v" data-src="/variants/0/variant" title="/variants/0/variant">0</span></td><td><span class="v" data-src="/variants/0/name" title="/variants/0/name">exact bends, shortest first</span></td><td><span class="v" data-src="/variants/0/routed" title="/variants/0/routed">87</span></td><td><span class="v" data-src="/variants/0/seconds" title="/variants/0/seconds">31.562</span></td></tr>
+<tr><td><span class="v" data-src="/variants/1/variant" title="/variants/1/variant">1</span></td><td><span class="v" data-src="/variants/1/name" title="/variants/1/name">fast bends, shortest first</span></td><td><span class="v" data-src="/variants/1/routed" title="/variants/1/routed">87</span></td><td><span class="v" data-src="/variants/1/seconds" title="/variants/1/seconds">4.277</span></td></tr>
+<tr><td><span class="v" data-src="/variants/2/variant" title="/variants/2/variant">2</span></td><td><span class="v" data-src="/variants/2/name" title="/variants/2/name">fast bends, longest first (2x pitch on large boards)</span></td><td><span class="v" data-src="/variants/2/routed" title="/variants/2/routed">87</span></td><td><span class="v" data-src="/variants/2/seconds" title="/variants/2/seconds">19.103</span></td></tr>
+<tr><td><span class="v" data-src="/variants/3/variant" title="/variants/3/variant">3</span></td><td><span class="v" data-src="/variants/3/name" title="/variants/3/name">fast bends, jittered order, escape plan</span></td><td><span class="v" data-src="/variants/3/routed" title="/variants/3/routed">87</span></td><td><span class="v" data-src="/variants/3/seconds" title="/variants/3/seconds">5.299</span></td></tr>
+<tr><td><span class="v" data-src="/variants/4/variant" title="/variants/4/variant">4</span></td><td><span class="v" data-src="/variants/4/name" title="/variants/4/name">exact bends, jittered order</span></td><td><span class="v" data-src="/variants/4/routed" title="/variants/4/routed">87</span></td><td><span class="v" data-src="/variants/4/seconds" title="/variants/4/seconds">28.559</span></td></tr>
+<tr><td><span class="v" data-src="/variants/5/variant" title="/variants/5/variant">5</span></td><td><span class="v" data-src="/variants/5/name" title="/variants/5/name">fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)</span></td><td><span class="v" data-src="/variants/5/routed" title="/variants/5/routed">87</span></td><td><span class="v" data-src="/variants/5/seconds" title="/variants/5/seconds">19.468</span></td></tr>
+<tr><td><span class="v" data-src="/variants/6/variant" title="/variants/6/variant">6</span></td><td><span class="v" data-src="/variants/6/name" title="/variants/6/name">fast bends, cheap crossings, escape plan</span></td><td><span class="v" data-src="/variants/6/routed" title="/variants/6/routed">87</span></td><td><span class="v" data-src="/variants/6/seconds" title="/variants/6/seconds">12.864</span></td></tr>
+<tr><td><span class="v" data-src="/variants/7/variant" title="/variants/7/variant">7</span></td><td><span class="v" data-src="/variants/7/name" title="/variants/7/name">fast bends, dear vias</span></td><td><span class="v" data-src="/variants/7/routed" title="/variants/7/routed">87</span></td><td><span class="v" data-src="/variants/7/seconds" title="/variants/7/seconds">5.085</span></td></tr>
+</tbody></table></div>
+</section>
+<footer>Every number and name in this report is a field of <code>summary.json</code>. Hover over a value, or tick the box at the top, to see its JSON pointer.</footer>
+</main></body></html>

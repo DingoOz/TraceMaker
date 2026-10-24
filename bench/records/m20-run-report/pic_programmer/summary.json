@@ -1,0 +1,705 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 95.35,
+ "connections": 86,
+ "drc": {
+  "added_routing_errors": 0,
+  "after": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 7,
+   "unconnected_items": [
+    {
+     "from": "Pad 1 of C1 [VCC]",
+     "to": "Pad 1 of JP1 [VCC]",
+     "what": "Missing connection in net VCC",
+     "x_mm": 110.49,
+     "y_mm": 78.867
+    },
+    {
+     "from": "Pad 2 of C1 [GND]",
+     "to": "Pad 5 of U5 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 85.49,
+     "y_mm": 78.867
+    },
+    {
+     "from": "Pad 5 of U5 [GND]",
+     "to": "Pad 4 of U2 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 207.899,
+     "y_mm": 118.11
+    },
+    {
+     "from": "Pad 4 of U2 [GND]",
+     "to": "Pad 13 of U2 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 123.19,
+     "y_mm": 119.38
+    },
+    {
+     "from": "Pad 11 of P3 [/pic_sockets/VCC_PIC]",
+     "to": "Pad 1 of Q3 [/pic_sockets/VCC_PIC]",
+     "what": "Missing connection in net /pic_sockets/VCC_PIC",
+     "x_mm": 175.26,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 1 of Q3 [/pic_sockets/VCC_PIC]",
+     "to": "Pad 2 of R21 [/pic_sockets/VCC_PIC]",
+     "what": "Missing connection in net /pic_sockets/VCC_PIC",
+     "x_mm": 142.24,
+     "y_mm": 97.79
+    },
+    {
+     "from": "Pad 2 of R21 [/pic_sockets/VCC_PIC]",
+     "to": "Pad 2 of JP1 [/pic_sockets/VCC_PIC]",
+     "what": "Missing connection in net /pic_sockets/VCC_PIC",
+     "x_mm": 147.955,
+     "y_mm": 102.235
+    }
+   ],
+   "warnings": 0
+  },
+  "before": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 86,
+   "warnings": 0
+  },
+  "checker": "tracemaker drc",
+  "removed": 0,
+  "types": [],
+  "unconnected_change": -79,
+  "zones_refilled": true
+ },
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3304529,
+ "failures": [
+  "VCC: Q3.3 -> JP1.1  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/pic_sockets/VCC_PIC: JP1.2 -> R21.2  (boxed in; escapes/neck-down: boxed in; negotiated: boxed in; fixed copper encloses the pin)",
+  "/pic_sockets/VCC_PIC: JP1.2 -> Q3.1  (boxed in; escapes/neck-down: boxed in; negotiated: boxed in; fixed copper encloses the pin)",
+  "/pic_sockets/VCC_PIC: P3.11 -> JP1.2  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); negotiated escapes/neck-down: out of budget)"
+ ],
+ "open": 4,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.1,
+ "refill": {
+  "repair": {
+   "connections": 7,
+   "expansions": 3371877,
+   "kept": false,
+   "routed": 0,
+   "tracks": 0,
+   "unconnected": 7,
+   "vias": 0
+  },
+  "unconnected": 7,
+  "warnings": [],
+  "zones": 1
+ },
+ "routed": 82,
+ "rules": {
+  "custom_rule_count": 0,
+  "custom_rules": [],
+  "files": {
+   "custom_rules": "unrouted.kicad_dru",
+   "custom_rules_found": false,
+   "project": "unrouted.kicad_pro",
+   "project_found": true
+  },
+  "minimums": {
+   "blind_buried_vias": false,
+   "clearance_mm": 0.0,
+   "copper_edge_clearance_mm": 0.01,
+   "drill_mm": 0.5,
+   "hole_clearance_mm": 0.0,
+   "hole_to_hole_mm": 0.25,
+   "microvias": false,
+   "track_width_mm": 0.25,
+   "via_annular_width_mm": 0.05,
+   "via_diameter_mm": 0.9
+  },
+  "net_classes": [
+   {
+    "clearance_mm": 0.25,
+    "diff_pair_gap_mm": 0.25,
+    "diff_pair_width_mm": 0.25,
+    "name": "Default",
+    "nets": 109,
+    "track_width_mm": 0.5,
+    "via_diameter_mm": 1.6,
+    "via_drill_mm": 0.6
+   },
+   {
+    "clearance_mm": 0.28,
+    "diff_pair_gap_mm": 0.28,
+    "diff_pair_width_mm": 0.28,
+    "name": "POWER",
+    "nets": 2,
+    "track_width_mm": 0.8,
+    "via_diameter_mm": 1.6,
+    "via_drill_mm": 0.6
+   }
+  ],
+  "not_read": [],
+  "not_read_count": 0
+ },
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-24T01:47:13Z",
+  "input": "build/demos/pic_programmer//unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "bench/results/run-report/pic_programmer/routed.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--si-rules",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "8812"
+   },
+   {
+    "name": "--json",
+    "value": "bench/results/run-report/pic_programmer/summary.json"
+   },
+   {
+    "name": "--report",
+    "value": "bench/results/run-report/pic_programmer/report.html"
+   }
+  ],
+  "output": "bench/results/run-report/pic_programmer/routed.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.10.0",
+  "work_budget": 3000000
+ },
+ "seconds": 98.274988415,
+ "stuck": {
+  "board": {
+   "copper_layers": [
+    "F.Cu",
+    "B.Cu"
+   ],
+   "name": "unrouted.kicad_pcb",
+   "nets": 111,
+   "outline_mm": [
+    73.66,
+    40.64,
+    233.68,
+    139.7
+   ],
+   "pads": 247,
+   "parts": 63
+  },
+  "escape_analysis": [],
+  "parts": [
+   {
+    "kind": "grid_array",
+    "library_id": "footprints:40tex-Ell600",
+    "pads": 42,
+    "part": "P3",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "SUPP40",
+    "x_mm": 175.26,
+    "y_mm": 50.8
+   },
+   {
+    "kind": "passive",
+    "library_id": "footprints:TO-92",
+    "pads": 3,
+    "part": "Q3",
+    "side": "front",
+    "unrouted_ends": 2,
+    "value": "BC307",
+    "x_mm": 142.24,
+    "y_mm": 97.79
+   },
+   {
+    "kind": "passive",
+    "library_id": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+    "pads": 2,
+    "part": "R21",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "470",
+    "x_mm": 158.115,
+    "y_mm": 102.235
+   },
+   {
+    "kind": "passive",
+    "library_id": "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm",
+    "pads": 2,
+    "part": "JP1",
+    "side": "back",
+    "unrouted_ends": 4,
+    "value": "JUMPER",
+    "x_mm": 148.082,
+    "y_mm": 97.79
+   }
+  ],
+  "result": {
+   "connections": 86,
+   "routed": 82,
+   "seconds": 13.56,
+   "tracks": 219,
+   "unrouted": 4,
+   "vias": 2
+  },
+  "rules": {
+   "clearance_mm": 0.25,
+   "copper_edge_clearance_mm": 0.01,
+   "min_track_width_mm": 0.25,
+   "track_width_mm": 0.5,
+   "via_diameter_mm": 1.6,
+   "via_drill_mm": 0.6
+  },
+  "unrouted": [
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 2,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "Net-(Q3-B)",
+       "track_mm": 0.46
+      }
+     ]
+    },
+    "fails": 2,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "3",
+     "part": "Q3",
+     "x_mm": 144.78,
+     "y_mm": 97.79
+    },
+    "length_mm": 2.577,
+    "net": "VCC",
+    "reason": "boxed_in",
+    "region_mm": [
+     143.28,
+     96.29,
+     148.857,
+     99.29
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "JP1",
+     "x_mm": 147.357,
+     "y_mm": 97.79
+    },
+    "why": "boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); fixed copper encloses the pin"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 1,
+     "other_vias": 0,
+     "routed_copper_by_net": []
+    },
+    "fails": 2,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "JP1",
+     "x_mm": 148.807,
+     "y_mm": 97.79
+    },
+    "length_mm": 4.526,
+    "net": "/pic_sockets/VCC_PIC",
+    "reason": "boxed_in",
+    "region_mm": [
+     146.455,
+     96.29,
+     150.307,
+     103.735
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "R21",
+     "x_mm": 147.955,
+     "y_mm": 102.235
+    },
+    "why": "boxed in; escapes/neck-down: boxed in; negotiated: boxed in; fixed copper encloses the pin"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 3,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "VCC",
+       "track_mm": 3.04
+      },
+      {
+       "net": "Net-(Q3-B)",
+       "track_mm": 3.0
+      }
+     ]
+    },
+    "fails": 2,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "JP1",
+     "x_mm": 148.807,
+     "y_mm": 97.79
+    },
+    "length_mm": 6.567,
+    "net": "/pic_sockets/VCC_PIC",
+    "reason": "boxed_in",
+    "region_mm": [
+     140.74,
+     96.29,
+     150.307,
+     99.29
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "Q3",
+     "x_mm": 142.24,
+     "y_mm": 97.79
+    },
+    "why": "boxed in; escapes/neck-down: boxed in; negotiated: boxed in; fixed copper encloses the pin"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 20,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "Net-(Q1-B)",
+       "track_mm": 6.011
+      },
+      {
+       "net": "Net-(D8-A)",
+       "track_mm": 4.445
+      },
+      {
+       "net": "Net-(D9-A)",
+       "track_mm": 4.445
+      },
+      {
+       "net": "Net-(D11-A)",
+       "track_mm": 3.347
+      },
+      {
+       "net": "Net-(D12-A)",
+       "track_mm": 2.756
+      }
+     ]
+    },
+    "fails": 2,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "11",
+     "part": "P3",
+     "x_mm": 175.26,
+     "y_mm": 76.2
+    },
+    "length_mm": 34.145,
+    "net": "/pic_sockets/VCC_PIC",
+    "reason": "boxed_in",
+    "region_mm": [
+     147.307,
+     74.7,
+     176.76,
+     99.29
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "JP1",
+     "x_mm": 148.807,
+     "y_mm": 97.79
+    },
+    "why": "boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); negotiated escapes/neck-down: out of budget"
+   }
+  ],
+  "unrouted_by_net": [
+   {
+    "count": 3,
+    "name": "/pic_sockets/VCC_PIC"
+   },
+   {
+    "count": 1,
+    "name": "VCC"
+   }
+  ],
+  "unrouted_by_part": [
+   {
+    "count": 4,
+    "name": "JP1"
+   },
+   {
+    "count": 2,
+    "name": "Q3"
+   },
+   {
+    "count": 1,
+    "name": "P3"
+   },
+   {
+    "count": 1,
+    "name": "R21"
+   }
+  ],
+  "unrouted_by_reason": [
+   {
+    "count": 4,
+    "name": "boxed_in"
+   }
+  ]
+ },
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 117,
+  "bends_per_connection": 1.17,
+  "connections": 100,
+  "detour_length_mm": 1418.327635,
+  "detour_octile_mm": 1331.479414,
+  "detour_ratio": 1.0652,
+  "length_mm": 1418.327635,
+  "long_detours": 1,
+  "off_angle_segments": 8,
+  "segments": 219,
+  "short_segments": 7,
+  "stair_steps": 0,
+  "vias": 2
+ },
+ "time_limited": false,
+ "tracks": 219,
+ "tunnels": 0,
+ "unconnected_after_refill": 7,
+ "variant": 7,
+ "variant_name": "fast bends, dear vias",
+ "variant_seconds": 13.560990085,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 0,
+   "seconds": 9.429990817,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 82,
+   "seconds": 17.016694268,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 80,
+   "seconds": 76.161642216,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 82,
+   "seconds": 17.616258917,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 0,
+   "seconds": 7.177532513,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 82,
+   "seconds": 14.439483175,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 82,
+   "seconds": 66.835639595,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 82,
+   "seconds": 13.560990085,
+   "variant": 7
+  }
+ ],
+ "vias": 2,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1772121,
+   "commits": 81,
+   "expansions": 1624833,
+   "field_cells": 10126792,
+   "fields": 40,
+   "fixed_checks": 1673703,
+   "flood_cells": 55100,
+   "rips": 0,
+   "searches": 102
+  },
+  "negotiation": {
+   "cell_checks": 1490295,
+   "commits": 1,
+   "expansions": 366290,
+   "field_cells": 2609760,
+   "fields": 7,
+   "fixed_checks": 180272,
+   "flood_cells": 1258306,
+   "rips": 0,
+   "searches": 33
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3262416,
+   "commits": 82,
+   "expansions": 1991123,
+   "field_cells": 12736552,
+   "fields": 47,
+   "fixed_checks": 1853975,
+   "flood_cells": 1313406,
+   "rips": 0,
+   "searches": 135
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 11444182,
+   "commits": 485,
+   "expansions": 16023670,
+   "field_cells": 62756208,
+   "fields": 250,
+   "fixed_checks": 11263079,
+   "flood_cells": 569260,
+   "rips": 0,
+   "searches": 651
+  },
+  "negotiation": {
+   "cell_checks": 8598701,
+   "commits": 5,
+   "expansions": 2151948,
+   "field_cells": 14992020,
+   "fields": 40,
+   "fixed_checks": 893246,
+   "flood_cells": 7213573,
+   "rips": 0,
+   "searches": 173
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 20042883,
+   "commits": 490,
+   "expansions": 18175618,
+   "field_cells": 77748228,
+   "fields": 290,
+   "fixed_checks": 12156325,
+   "flood_cells": 7782833,
+   "rips": 0,
+   "searches": 824
+  }
+ }
+}

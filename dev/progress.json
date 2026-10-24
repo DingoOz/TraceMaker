@@ -830,10 +830,31 @@
   {
    "id": "M20",
    "title": "Hobbyist wins",
-   "status": "planned",
+   "status": "in_progress",
    "gate": "Pours and a layer-count advisor, a run report, a proposal-only pin swap experiment (docs/18 section 5)",
    "deliverables": "C3, D3, C2 experiment",
-   "tasks": []
+   "tasks": [
+    {
+     "text": "D3 run report: route --report FILE (HTML or Markdown) and tracemaker report SUMMARY.json, rendered from the summary alone; rules read and not read, stuck report, DRC before and after, SI audit, options and seed (D136)",
+     "done": true
+    },
+    {
+     "text": "D3 gate: reports for the plane boards, every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
+     "done": false
+    },
+    {
+     "text": "C3 pour generation and a layer-count advisor",
+     "done": false
+    },
+    {
+     "text": "C2 pin-swap feasibility experiment, then a proposal-only pass if the gain is clear",
+     "done": false
+    },
+    {
+     "text": "C5 classification of dense-package failures by cause",
+     "done": false
+    }
+   ]
   },
   {
    "id": "M21",

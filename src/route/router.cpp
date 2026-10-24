@@ -200,10 +200,13 @@ struct Router::Impl {
   double elapsed() const { return std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count(); }
   // Out of budget? The work budget (search expansions) is deterministic; wall time is only a safety net.
   double budget_scale = 1.0;  // < 1 while a share of the budget is reserved for the polish phase (opt.polish_fraction)
+  // Set when wall time, not work, ended the search: the result then depends on machine speed (reported, never read here).
+  mutable bool time_stopped = false;
   bool out_of_budget() const {
-    if (opt.deadline && res.routed < res.connections && elapsed() > opt.deadline->load(std::memory_order_relaxed)) return true;
+    if (opt.deadline && res.routed < res.connections && elapsed() > opt.deadline->load(std::memory_order_relaxed)) return time_stopped = true;
     if (opt.work_budget > 0 && static_cast<double>(res.expansions) >= static_cast<double>(opt.work_budget) * budget_scale) return true;
-    return elapsed() > opt.time_limit_s * budget_scale;
+    if (elapsed() > opt.time_limit_s * budget_scale) return time_stopped = true;
+    return false;
   }
   // Work profile (D88): the phase now running and its counters.
   WorkPhase phase = WorkPhase::Setup;
@@ -5190,6 +5193,7 @@ struct Router::Impl {
         res.unrouted.push_back(std::move(u));
       }
       res.seconds = elapsed();
+      res.time_limited = time_stopped;
       return res;
     }
     guide_match();
@@ -5786,6 +5790,7 @@ struct Router::Impl {
     emit_heatmaps(true);
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
+    res.time_limited = time_stopped;
     return std::move(res);
   }
 };
@@ -6176,10 +6181,13 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   RouteResult best_final;                   // best result under the board's rules seen so far (ramp)
   int best_final_routed = -1, final_stall = 0;
   const auto t_start = std::chrono::steady_clock::now();
+  bool rounds_timed_out = false;  // the time limit ended the rounds (reported as RouteResult::time_limited)
   for (int round = 0; round < rounds; ++round) {
     if (round > 0 && base.round_work > 0 &&
-        std::chrono::duration<double>(std::chrono::steady_clock::now() - t_start).count() > base.time_limit_s)
+        std::chrono::duration<double>(std::chrono::steady_clock::now() - t_start).count() > base.time_limit_s) {
+      rounds_timed_out = true;
       break;
+    }
     if (round > 0 || resumed)
       for (std::size_t vi = 0; vi < vs.size(); ++vi) {
         auto& v = vs[vi];
@@ -6308,8 +6316,12 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   pr.best_variant = static_cast<int>(best);
   if (!bufs.empty())
     for (auto& m : bufs[best]->msgs) base.sink->publish(std::move(m));
+  // Any variant stopped by time, not work, could have beaten the winner on a faster machine: the result depends on machine speed.
+  bool timed = rounds_timed_out;
+  for (const auto& r : rs) timed = timed || r.time_limited;
   pr.best = std::move(rs[best]);
   if (best_final_routed > pr.best.routed) pr.best = std::move(best_final);  // breathing ended relaxed or worse: the best legal one
+  pr.best.time_limited = timed;
   return pr;
 }
 

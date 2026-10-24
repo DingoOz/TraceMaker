@@ -340,6 +340,7 @@ struct RouteResult {
     std::vector<std::string> blockers;  // nets whose routed copper the last rejected route would have had to rip (at most 6)
   };
   std::vector<Unrouted> unrouted;
+  bool time_limited = false;  // the wall-clock limit (--time), not the work budget, ended a search: the result depends on machine speed
 };
 
 // The reason code of a failure explanation (RouteResult::Unrouted::reason). The text is matched, not parsed: the

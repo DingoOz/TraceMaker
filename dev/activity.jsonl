@@ -178,3 +178,4 @@
 {"ts": "2026-10-20T04:21:33+00:00", "kind": "note", "text": "srj20 185/200: sample135 closed by a resumed run (1 open -> clean in 1 h); islands and fresh seeds did not help; 8 h resumed runs on 072 128 103 152"}
 {"ts": "2026-10-20T06:27:21+00:00", "kind": "note", "text": "campaign paused 06:26 on request: srj20 185/200, states saved, resume notes in bench/results/RESUME.md"}
 {"ts": "2026-10-21T11:00:45+00:00", "kind": "note", "text": "Docs site (D134) on branch docs-site, PR #48: MkDocs + Di\u00e1taxis, decision records D1-D131, generated CLI/bench reference, Doxygen API; not merged"}
+{"ts": "2026-10-24T01:50:46+00:00", "kind": "milestone", "text": "M20 D3: route --report run report (HTML/Markdown from the summary alone, D136); 7 of 8 plane boards reported, 0 routing errors added; quick tier byte-identical to main 30/30; interf_u post-portfolio stall found on main too (open)"}

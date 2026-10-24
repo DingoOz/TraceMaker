@@ -1,0 +1,49 @@
+live view: http://127.0.0.1:8810/
+critical nets: 0
+  routed first: no; via cost x3; over a plane void: free
+portfolio: 8 variants on 4 threads
+searches: 90 ok (412834 expansions), 0 failed (0 expansions); fields 17 GPU + 0 CPU (3.29 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 468641; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 93 ok (502380 expansions), 0 failed (0 expansions); fields 19 GPU + 0 CPU (4.04 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 98 connections improved
+restarts 0; legality checks 564033; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 87 ok (195652 expansions), 0 failed (0 expansions); fields 0 GPU + 14 CPU (18.44 s, 14 GPU fallbacks, 0 cache hits)
+clean-up: 98 connections improved
+restarts 0; legality checks 238211; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 92 ok (2382259 expansions), 0 failed (0 expansions); fields 73 GPU + 0 CPU (14.57 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 101 connections improved
+restarts 0; legality checks 2515949; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 90 ok (427116 expansions), 0 failed (0 expansions); fields 17 GPU + 0 CPU (4.01 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 483771; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 91 ok (2450310 expansions), 0 failed (0 expansions); fields 0 GPU + 17 CPU (28.59 s, 17 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 482421; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 90 ok (412834 expansions), 0 failed (0 expansions); fields 0 GPU + 17 CPU (11.85 s, 17 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 468641; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 92 ok (3004406 expansions), 0 failed (0 expansions); fields 0 GPU + 19 CPU (25.32 s, 19 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 561240; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 87 in 31.6 s
+  variant 1 fast bends, shortest first     routed 87 in 4.3 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 87 in 19.1 s  <- best
+  variant 3 fast bends, jittered order, escape plan routed 87 in 5.3 s
+  variant 4 exact bends, jittered order    routed 87 in 28.6 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones) routed 87 in 19.5 s
+  variant 6 fast bends, cheap crossings, escape plan routed 87 in 12.9 s
+  variant 7 fast bends, dear vias          routed 87 in 5.1 s
+soft zones: after refilling 1 zones, 0 items unconnected
+routed 87/87 connections, 188 tracks, 0 vias, pitch 0.100 mm, 195652 expansions, 35.04 s (best variant 19.10 s)
+work (all variants): 9787791 expansions, 0 flood cells, 5782907 cell checks, 5241282 fixed-copper checks, 67948238 field cells in 193 fields, 725 commits, 0 rips
+report: DRC before and after (zones refilled): 0 routing errors added (0.5 s)
+report written to bench/results/run-report/complex_hierarchy/report.html (its numbers are the fields of bench/results/run-report/complex_hierarchy/summary.json)
