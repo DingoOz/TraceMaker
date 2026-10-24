@@ -1,0 +1,62 @@
+# rel0100-tierC2 → rel0110-tierC
+
+30 boards; routed boards byte-identical: 15/30.
+Clean pass 14 → 14; mean completion 97.4% → 97.4%; router seconds 3162.6 → 3190.6.
+Route CPU time 15,034 → 14,872 s (-1.1%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| 96boards-robomezzi_96boards-robomezzi | 280 → 280 / 282 | 99.3% → 99.3% | no → no | – | 123.0 → 123.6 | 643.7 → 707.9 | differs |
+| AmpOne_dev-AmpOne | 321 → 321 / 321 | 100.0% → 100.0% | yes → yes | – | 120.6 → 120.8 | 621.1 → 573.1 | differs |
+| ErgodoneWithHole_ErgoDone | 354 → 354 / 356 | 99.4% → 99.4% | no → no | – | 121.6 → 123.2 | 661.1 → 609.8 | differs |
+| Microdox-PCB_Microdox | 223 → 223 / 223 | 100.0% → 100.0% | no → no | – | 120.3 → 120.6 | 406.4 → 392.9 | differs |
+| P8000_WDC_Emulator_P8000_WDC_Emulator | 325 → 324 / 361 | 90.0% → 89.8% | no → no | – | 135.7 → 133.6 | 697.8 → 686.3 | differs |
+| PCIE-to-MXM-Adapter_PCIEx1toMXM3.0 | 157 → 158 / 188 | 83.5% → 84.0% | no → no | – | 128.0 → 125.8 | 646.4 → 687.9 | differs |
+| draco_draco | 418 → 418 / 418 | 100.0% → 100.0% | yes → yes | – | 121.5 → 123.7 | 604.3 → 612.8 | differs |
+| kitspace_PSLab | 339 → 339 / 339 | 100.0% → 100.0% | yes → yes | – | 121.8 → 122.3 | 498.9 → 436.3 | differs |
+| kitspace_d20_tri_r0.3 | 414 → 414 / 553 | 72.5% → 72.5% | no → no | – | 121.0 → 121.1 | 614.4 → 667.6 | differs |
+| kitspace_dropbot_control_board | 307 → 307 / 307 | 100.0% → 100.0% | yes → yes | – | 120.6 → 122.3 | 548.7 → 538.8 | differs |
+| mechkeys_58r-mxalps | 352 → 351 / 361 | 97.5% → 97.2% | no → no | – | 124.9 → 124.7 | 622.9 → 576.2 | differs |
+| mechkeys_MF68+10 | 414 → 413 / 415 | 99.8% → 99.5% | no → no | – | 123.1 → 122.6 | 621.2 → 639.8 | differs |
+| motor-high-current-sensors_CurrentSensorPCB_line | 461 → 461 / 472 | 97.9% → 97.9% | no → no | – | 121.6 → 122.1 | 654.5 → 591.3 | differs |
+| tiny-8088_Computer | 284 → 284 / 284 | 100.0% → 100.0% | yes → yes | – | 120.2 → 120.1 | 413.1 → 423.8 | differs |
+| zx-sizif-512-ext_sizif512ext | 450 → 451 / 498 | 90.4% → 90.6% | no → no | – | 121.8 → 121.6 | 964.8 → 956.8 | differs |
+
+Style (informational): bends per connection 0.7459 → 0.7112; acute angles 8 → 17; stair steps 257 → 280; short segments 3592 → 3799; off angle segments 8617 → 8899; detour ratio 1.1197 → 1.0881; long detours 442 → 330.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| 96boards-robomezzi_96boards-robomezzi | 0.5625 → 0.3658 | 0 → 1 | 2 → 10 | 69 → 127 | 154 → 535 | 1.0437 → 1.0273 | 8 → 7 |
+| AmpOne_dev-AmpOne | 0.7298 → 0.7367 | 0 → 0 | 0 → 0 | 19 → 21 | 62 → 64 | 1.086 → 1.0872 | 21 → 21 |
+| ErgodoneWithHole_ErgoDone | 0.4569 → 0.8245 | 0 → 0 | 0 → 1 | 22 → 20 | 572 → 157 | 1.0508 → 1.093 | 2 → 5 |
+| P8000_WDC_Emulator_P8000_WDC_Emulator | 1.1839 → 1.159 | 0 → 0 | 1 → 3 | 39 → 40 | 32 → 26 | 1.1728 → 1.1507 | 20 → 8 |
+| PCIE-to-MXM-Adapter_PCIEx1toMXM3.0 | 1.9724 → 0.9963 | 0 → 7 | 1 → 45 | 48 → 348 | 35 → 315 | 1.1976 → 1.0826 | 70 → 11 |
+| draco_draco | 0.6801 → 0.6792 | 1 → 1 | 4 → 4 | 121 → 121 | 273 → 274 | 1.0914 → 1.0914 | 20 → 20 |
+| kitspace_PSLab | 0.6627 → 0.6627 | 0 → 0 | 1 → 1 | 100 → 100 | 280 → 280 | 1.0767 → 1.0768 | 9 → 9 |
+| kitspace_d20_tri_r0.3 | 0.9136 → 0.9128 | 0 → 0 | 33 → 33 | 320 → 320 | 826 → 826 | 1.3073 → 1.3074 | 91 → 91 |
+| kitspace_dropbot_control_board | 0.4805 → 0.551 | 0 → 0 | 0 → 0 | 87 → 89 | 164 → 156 | 1.0423 → 1.0631 | 4 → 6 |
+| mechkeys_58r-mxalps | 0.6566 → 0.8346 | 0 → 0 | 14 → 1 | 239 → 92 | 663 → 99 | 1.0784 → 1.0609 | 10 → 5 |
+| mechkeys_MF68+10 | 1.9204 → 0.9721 | 0 → 3 | 4 → 22 | 87 → 131 | 209 → 823 | 1.2635 → 1.0449 | 42 → 5 |
+| tiny-8088_Computer | 1.9927 → 2.0024 | 0 → 0 | 0 → 0 | 10 → 10 | 94 → 95 | 1.1192 → 1.12 | 6 → 5 |
+| zx-sizif-512-ext_sizif512ext | 1.1796 → 0.997 | 2 → 0 | 52 → 15 | 206 → 155 | 865 → 861 | 1.1737 → 1.1559 | 23 → 21 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- kitspace_40-channel-hv-switching-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- kitspace_d20_tri_r0.3: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- ErgodoneWithHole_ErgoDone: before evaluated DRC errors are capped or unavailable; gate unknown
+- ErgodoneWithHole_ErgoDone: after evaluated DRC errors are capped or unavailable; gate unknown
+- Hardware_Playground_sd_wav_pcm5100: before evaluated DRC errors are capped or unavailable; gate unknown
+- Hardware_Playground_sd_wav_pcm5100: after evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox: before evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox: after evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox-topMCU: before evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox-topMCU: after evaluated DRC errors are capped or unavailable; gate unknown
+- P8000_WDC_Emulator_P8000_WDC_Emulator: worse (clean False -> False, completion 90.0% -> 89.8%)
+- PCIE-to-MXM-Adapter_PCIEx1toMXM3.0: before evaluated DRC errors are capped or unavailable; gate unknown
+- PCIE-to-MXM-Adapter_PCIEx1toMXM3.0: after evaluated DRC errors are capped or unavailable; gate unknown
+- mechkeys_58r-mxalps: worse (clean False -> False, completion 97.5% -> 97.2%)
+- mechkeys_MF68+10: worse (clean False -> False, completion 99.8% -> 99.5%)
+- wordclock_ledboard2: before evaluated DRC errors are capped or unavailable; gate unknown
+- wordclock_ledboard2: after evaluated DRC errors are capped or unavailable; gate unknown

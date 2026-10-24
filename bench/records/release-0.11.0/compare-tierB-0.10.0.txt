@@ -1,0 +1,57 @@
+# rel0100-tierB → rel0110-tierB
+
+40 boards; routed boards byte-identical: 21/40.
+Clean pass 28 → 28; mean completion 97.2% → 97.1%; router seconds 3389.9 → 3320.9.
+Route CPU time 10,011 → 12,409 s (+24.0%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| Hardware_Playground_E3_Pcb_rev0.3 | 321 → 323 / 341 | 97.9% → 98.5% | no → no | – | 120.8 → 122.6 | 421.1 → 594.5 | differs |
+| MicroMaple_MicroMaple | 104 → 102 / 111 | 93.7% → 91.9% | no → no | – | 121.3 → 120.6 | 440.5 → 607.5 | differs |
+| NavigationThing_NavigationThing | 90 → 90 / 90 | 100.0% → 100.0% | yes → yes | – | 30.9 → 19.4 | 68.2 → 66.1 | differs |
+| TOBS_HybridChargeController | 210 → 210 / 210 | 100.0% → 100.0% | yes → yes | – | 125.4 → 122.0 | 365.4 → 481.2 | differs |
+| bumps_bumps | 330 → 330 / 330 | 100.0% → 100.0% | yes → yes | – | 120.9 → 121.3 | 404.3 → 472.2 | differs |
+| digital_clock_led_clock_3_and_4_digit | 253 → 253 / 253 | 100.0% → 100.0% | yes → yes | – | 125.1 → 121.8 | 330.6 → 418.6 | differs |
+| fifogfx_c64cart | 64 → 64 / 104 | 61.5% → 61.5% | no → no | – | 125.9 → 125.0 | 409.0 → 577.4 | differs |
+| kitspace_OtterPill | 124 → 123 / 137 | 90.5% → 89.8% | no → no | – | 121.0 → 120.4 | 390.5 → 512.8 | differs |
+| kitspace_ardfpga | 202 → 202 / 214 | 94.4% → 94.4% | no → no | – | 126.0 → 123.2 | 382.8 → 506.9 | differs |
+| kitspace_sympetrum-v2%20FF1.1 | 146 → 146 / 146 | 100.0% → 100.0% | yes → yes | – | 117.5 → 101.0 | 202.6 → 223.2 | differs |
+| kitspace_sympetrum-v2%20NFF1.1 | 115 → 115 / 115 | 100.0% → 100.0% | yes → yes | – | 120.3 → 120.5 | 252.3 → 275.0 | differs |
+| kitspace_teensy-fx | 180 → 180 / 196 | 91.8% → 91.8% | no → no | – | 126.9 → 125.1 | 430.6 → 578.3 | differs |
+| kitspace_test-jig | 260 → 260 / 292 | 89.0% → 89.0% | no → no | – | 126.8 → 121.1 | 417.9 → 506.2 | differs |
+| motor-3xdrv8833-hw_ver1 | 195 → 195 / 195 | 100.0% → 100.0% | yes → yes | – | 126.4 → 120.7 | 455.3 → 631.5 | differs |
+| ourglass__autosave-watch-v4 | 134 → 134 / 134 | 100.0% → 100.0% | yes → yes | – | 121.2 → 120.6 | 257.0 → 357.0 | differs |
+| poncho_fpga_fpga-dongle | 367 → 367 / 413 | 88.9% → 88.9% | no → no | – | 121.5 → 121.5 | 531.1 → 640.0 | differs |
+| retroreflectors_SALSAFLOCK | 40 → 40 / 40 | 100.0% → 100.0% | yes → yes | – | 120.4 → 107.7 | 194.2 → 243.0 | differs |
+| rxadc_14_rxadc_14 | 124 → 124 / 124 | 100.0% → 100.0% | yes → yes | – | 87.8 → 73.9 | 283.1 → 259.7 | differs |
+| scimpy_amp | 90 → 90 / 90 | 100.0% → 100.0% | yes → yes | – | 56.1 → 120.3 | 190.8 → 349.5 | differs |
+
+Style (informational): bends per connection 0.746 → 0.7418; acute angles 5 → 5; stair steps 186 → 196; short segments 2109 → 2101; off angle segments 4996 → 4978; detour ratio 1.1319 → 1.127; long detours 248 → 239.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| Hardware_Playground_E3_Pcb_rev0.3 | 0.6039 → 0.7497 | 0 → 0 | 19 → 31 | 159 → 187 | 632 → 636 | 1.227 → 1.277 | 18 → 25 |
+| MicroMaple_MicroMaple | 1.0804 → 0.7966 | 0 → 0 | 12 → 13 | 109 → 99 | 193 → 186 | 1.3713 → 1.2077 | 14 → 11 |
+| TOBS_HybridChargeController | 0.7808 → 0.7688 | 0 → 0 | 0 → 0 | 30 → 36 | 73 → 72 | 1.0509 → 1.0515 | 1 → 1 |
+| bumps_bumps | 1.0972 → 1.0364 | 0 → 0 | 6 → 7 | 140 → 152 | 87 → 81 | 1.231 → 1.163 | 16 → 16 |
+| digital_clock_led_clock_3_and_4_digit | 0.5489 → 0.5348 | 0 → 0 | 0 → 0 | 28 → 28 | 62 → 63 | 1.0466 → 1.0471 | 0 → 0 |
+| fifogfx_c64cart | 1.7176 → 1.5765 | 0 → 0 | 1 → 2 | 25 → 15 | 19 → 22 | 1.2533 → 1.2317 | 11 → 6 |
+| kitspace_OtterPill | 0.8144 → 0.8516 | 0 → 0 | 27 → 27 | 161 → 145 | 244 → 241 | 1.2013 → 1.2909 | 15 → 17 |
+| kitspace_ardfpga | 0.7274 → 0.7274 | 0 → 0 | 6 → 5 | 44 → 45 | 399 → 399 | 1.1991 → 1.1986 | 13 → 13 |
+| kitspace_sympetrum-v2%20NFF1.1 | 0.6901 → 0.7583 | 0 → 0 | 0 → 0 | 10 → 9 | 70 → 66 | 1.0473 → 1.0653 | 1 → 2 |
+| kitspace_teensy-fx | 0.8682 → 0.8956 | 0 → 0 | 0 → 0 | 38 → 40 | 97 → 98 | 1.0477 → 1.0492 | 1 → 1 |
+| kitspace_test-jig | 0.5098 → 0.5097 | 0 → 0 | 7 → 7 | 106 → 104 | 497 → 499 | 1.0829 → 1.0977 | 6 → 8 |
+| motor-3xdrv8833-hw_ver1 | 1.3488 → 1.2229 | 0 → 0 | 2 → 0 | 47 → 44 | 80 → 76 | 1.3239 → 1.3119 | 25 → 19 |
+| ourglass__autosave-watch-v4 | 0.4753 → 0.5212 | 0 → 0 | 1 → 1 | 42 → 40 | 110 → 102 | 1.0625 → 1.0535 | 5 → 1 |
+| poncho_fpga_fpga-dongle | 0.7727 → 0.7411 | 2 → 2 | 22 → 20 | 152 → 140 | 706 → 708 | 1.1015 → 1.0888 | 12 → 10 |
+| retroreflectors_SALSAFLOCK | 1.3443 → 1.2542 | 0 → 0 | 0 → 0 | 10 → 9 | 14 → 11 | 1.1166 → 1.1326 | 0 → 0 |
+| rxadc_14_rxadc_14 | 0.7688 → 0.7594 | 0 → 0 | 1 → 1 | 35 → 35 | 30 → 31 | 1.0519 → 1.0512 | 4 → 4 |
+| scimpy_amp | 1.459 → 1.3333 | 0 → 0 | 6 → 6 | 26 → 26 | 15 → 19 | 1.0958 → 1.0943 | 4 → 3 |
+
+Gates: FAIL
+- MicroMaple_MicroMaple: worse (clean False -> False, completion 93.7% -> 91.9%)
+- kitspace_OtterPill: worse (clean False -> False, completion 90.5% -> 89.8%)
+- kitspace_test-jig: before evaluated DRC errors are capped or unavailable; gate unknown
+- kitspace_test-jig: after evaluated DRC errors are capped or unavailable; gate unknown
+- poncho_fpga_fpga-dongle: before evaluated DRC errors are capped or unavailable; gate unknown
+- poncho_fpga_fpga-dongle: after evaluated DRC errors are capped or unavailable; gate unknown

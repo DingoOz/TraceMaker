@@ -1,0 +1,83 @@
+# rel0100-tierD2 → rel0110-tierD
+
+22 boards; routed boards byte-identical: 7/22.
+Clean pass 9 → 8; mean completion 95.1% → 94.9%; router seconds 2384.9 → 2403.1.
+Route CPU time 12,761 → 12,242 s (-4.1%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| Aleste-520EX_aleste | 1360 → 1359 / 1616 | 48.7% → 48.5% | no → no | – | 122.9 → 121.4 | 574.8 → 590.8 | differs |
+| CoreOne-xCORE200-Original_CoreOne | 751 → 751 / 807 | 88.8% → 88.8% | no → no | – | 121.9 → 123.8 | 664.2 → 628.9 | differs |
+| DSP-ADAU1452_DSP-ADAU1452 | 742 → 742 / 742 | 100.0% → 100.0% | yes → yes | – | 115.9 → 121.4 | 400.1 → 464.5 | differs |
+| Keyboard_PCB_Keyboard | 534 → 530 / 534 | 100.0% → 99.2% | yes → no | – | 124.7 → 123.5 | 672.5 → 635.6 | differs |
+| KiCad-Library_Teensy_test_layout | 1253 → 1253 / 1268 | 97.0% → 97.0% | no → no | – | 123.7 → 123.3 | 601.0 → 606.6 | differs |
+| LeeChee_1800 | 1118 → 1114 / 1160 | 91.6% → 90.8% | no → no | – | 156.5 → 161.2 | 643.9 → 604.4 | differs |
+| MonApollo_analog-board | 1109 → 1108 / 1190 | 83.8% → 83.6% | no → no | – | 123.5 → 122.5 | 573.1 → 585.5 | differs |
+| TCKB_Kicad_TCKB | 566 → 566 / 597 | 93.8% → 93.8% | no → no | – | 121.9 → 121.9 | 631.3 → 606.3 | differs |
+| dorkyboard_keyboard | 820 → 820 / 830 | 98.0% → 98.0% | no → no | – | 129.3 → 127.2 | 681.0 → 693.1 | differs |
+| front-end-modules_LimeSDR_Sony | 810 → 810 / 814 | 99.2% → 99.2% | no → no | – | 123.3 → 123.5 | 775.0 → 743.5 | differs |
+| m2-electronics_m2fc | 724 → 724 / 724 | 100.0% → 100.0% | yes → yes | – | 122.5 → 123.6 | 896.3 → 804.2 | differs |
+| mechkeys_LFK78 | 862 → 862 / 893 | 93.8% → 93.8% | no → no | – | 125.6 → 124.3 | 894.3 → 800.9 | differs |
+| memsarray_mems_array | 245 → 245 / 245 | 100.0% → 100.0% | yes → yes | – | 125.5 → 125.5 | 917.8 → 829.7 | differs |
+| mini_mass_prog_bench_prog_rig | 980 → 974 / 995 | 97.0% → 95.8% | no → no | – | 123.2 → 123.8 | 913.7 → 815.9 | differs |
+| newer-motor-controllers_busparts | 316 → 316 / 316 | 100.0% → 100.0% | yes → yes | – | 123.7 → 124.5 | 772.3 → 731.8 | differs |
+
+Style (informational): bends per connection 0.636 → 0.6259; acute angles 3 → 3; stair steps 85 → 82; short segments 4006 → 4032; off angle segments 9151 → 9074; detour ratio 1.0831 → 1.0792; long detours 419 → 379.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| Aleste-520EX_aleste | 1.7091 → 1.705 | 0 → 0 | 5 → 5 | 56 → 56 | 277 → 274 | 1.1513 → 1.1496 | 61 → 60 |
+| CoreOne-xCORE200-Original_CoreOne | 0.6807 → 0.6807 | 0 → 0 | 0 → 0 | 99 → 99 | 242 → 242 | 1.054 → 1.0541 | 32 → 32 |
+| DSP-ADAU1452_DSP-ADAU1452 | 0.4101 → 0.4101 | 0 → 0 | 3 → 3 | 323 → 323 | 310 → 310 | 1.0435 → 1.0434 | 11 → 11 |
+| Keyboard_PCB_Keyboard | 1.0084 → 0.8276 | 0 → 0 | 1 → 0 | 29 → 31 | 215 → 116 | 1.0765 → 1.0242 | 27 → 1 |
+| KiCad-Library_Teensy_test_layout | 0.5092 → 0.5092 | 2 → 2 | 37 → 37 | 1030 → 1028 | 2440 → 2441 | 1.1344 → 1.1344 | 27 → 27 |
+| LeeChee_1800 | 0.7609 → 0.7415 | 1 → 1 | 2 → 2 | 268 → 265 | 321 → 317 | 1.0395 → 1.0392 | 14 → 14 |
+| MonApollo_analog-board | 0.7726 → 0.7674 | 0 → 0 | 0 → 0 | 213 → 213 | 472 → 471 | 1.154 → 1.155 | 68 → 68 |
+| TCKB_Kicad_TCKB | 1.1237 → 1.1237 | 0 → 0 | 5 → 5 | 91 → 92 | 247 → 246 | 1.0636 → 1.0636 | 6 → 6 |
+| dorkyboard_keyboard | 0.3102 → 0.3102 | 0 → 0 | 2 → 2 | 104 → 103 | 1612 → 1612 | 1.0247 → 1.0247 | 4 → 4 |
+| front-end-modules_LimeSDR_Sony | 0.3366 → 0.3358 | 0 → 0 | 16 → 16 | 178 → 178 | 1452 → 1452 | 1.092 → 1.0922 | 46 → 46 |
+| m2-electronics_m2fc | 0.5967 → 0.5907 | 0 → 0 | 2 → 2 | 126 → 143 | 226 → 244 | 1.1062 → 1.0917 | 38 → 33 |
+| mechkeys_LFK78 | 1.3382 → 1.3357 | 0 → 0 | 6 → 5 | 263 → 263 | 324 → 329 | 1.1104 → 1.1093 | 23 → 23 |
+| memsarray_mems_array | 0.9252 → 0.9042 | 0 → 0 | 0 → 0 | 30 → 31 | 139 → 143 | 1.0334 → 1.0334 | 15 → 15 |
+| mini_mass_prog_bench_prog_rig | 0.7785 → 0.7498 | 0 → 0 | 1 → 0 | 118 → 128 | 311 → 313 | 1.0257 → 1.0246 | 14 → 6 |
+| newer-motor-controllers_busparts | 0.4656 → 0.4696 | 0 → 0 | 0 → 0 | 59 → 60 | 99 → 100 | 1.0155 → 1.0155 | 3 → 3 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- Aleste-520EX_aleste: completion uses KiCad's capped unconnected list, not exact connectivity
+- CoreOne-xCORE200-Original_CoreOne: completion uses KiCad's capped unconnected list, not exact connectivity
+- DSP-ADAU1452_DSP-ADAU1452: completion uses KiCad's capped unconnected list, not exact connectivity
+- EUC-VESC_electronics_sept: completion uses KiCad's capped unconnected list, not exact connectivity
+- Hardware_Playground_heater_actuator_node: completion uses KiCad's capped unconnected list, not exact connectivity
+- Keyboard_PCB_Keyboard: completion uses KiCad's capped unconnected list, not exact connectivity
+- KiCad-Library_Teensy_test_layout: completion uses KiCad's capped unconnected list, not exact connectivity
+- LeeChee_1800: completion uses KiCad's capped unconnected list, not exact connectivity
+- MonApollo_analog-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- TCKB_Kicad_TCKB: completion uses KiCad's capped unconnected list, not exact connectivity
+- dorkyboard_keyboard: completion uses KiCad's capped unconnected list, not exact connectivity
+- front-end-modules_LimeSDR_Sony: completion uses KiCad's capped unconnected list, not exact connectivity
+- m2-electronics_m2fc: completion uses KiCad's capped unconnected list, not exact connectivity
+- mechkeys_LFK78: completion uses KiCad's capped unconnected list, not exact connectivity
+- mini_mass_prog_bench_prog_rig: completion uses KiCad's capped unconnected list, not exact connectivity
+- opendous_Upconverter: completion uses KiCad's capped unconnected list, not exact connectivity
+- perfplusplus_Ard-perf++: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- Aleste-520EX_aleste: worse (clean False -> False, completion 48.7% -> 48.5%)
+- Hardware_Playground_heater_actuator_node: before evaluated DRC errors are capped or unavailable; gate unknown
+- Hardware_Playground_heater_actuator_node: after evaluated DRC errors are capped or unavailable; gate unknown
+- Keyboard_PCB_Keyboard: worse (clean True -> False, completion 100.0% -> 99.2%)
+- LeeChee_1800: before evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: after evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: worse (clean False -> False, completion 91.6% -> 90.8%)
+- MonApollo_analog-board: worse (clean False -> False, completion 83.8% -> 83.6%)
+- badge2016_Badge_init: before evaluated DRC errors are capped or unavailable; gate unknown
+- badge2016_Badge_init: after evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: before evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: after evaluated DRC errors are capped or unavailable; gate unknown
+- mechkeys_LFK78: before evaluated DRC errors are capped or unavailable; gate unknown
+- mechkeys_LFK78: after evaluated DRC errors are capped or unavailable; gate unknown
+- mini_mass_prog_bench_prog_rig: before evaluated DRC errors are capped or unavailable; gate unknown
+- mini_mass_prog_bench_prog_rig: after evaluated DRC errors are capped or unavailable; gate unknown
+- mini_mass_prog_bench_prog_rig: worse (clean False -> False, completion 97.0% -> 95.8%)
+- perfplusplus_Ard-perf++: before evaluated DRC errors are capped or unavailable; gate unknown
+- perfplusplus_Ard-perf++: after evaluated DRC errors are capped or unavailable; gate unknown

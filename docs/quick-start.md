@@ -26,9 +26,9 @@ and gives the same results ([Use the GPUs](how-to/gpu.md)).
     build from source there).
 
     ```bash
-    curl -LO https://github.com/DingoOz/TraceMaker/releases/download/v0.10.0/tracemaker-0.10.0-linux-x86_64.tar.gz
-    tar xzf tracemaker-0.10.0-linux-x86_64.tar.gz
-    cd tracemaker-0.10.0-linux-x86_64
+    curl -LO https://github.com/DingoOz/TraceMaker/releases/download/v0.11.0/tracemaker-0.11.0-linux-x86_64.tar.gz
+    tar xzf tracemaker-0.11.0-linux-x86_64.tar.gz
+    cd tracemaker-0.11.0-linux-x86_64
     export PATH="$PWD/bin:$PATH"
     EX=share/tracemaker/examples/plane_smd
     tracemaker version

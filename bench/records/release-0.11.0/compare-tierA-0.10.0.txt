@@ -1,0 +1,49 @@
+# rel0100-tierA → rel0110-tierA
+
+40 boards; routed boards byte-identical: 22/40.
+Clean pass 40 → 40; mean completion 100.0% → 100.0%; router seconds 1595.0 → 1702.9.
+Route CPU time 4,643 → 4,500 s (-3.1%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| 655_testboard | 57 → 57 / 57 | 100.0% → 100.0% | yes → yes | – | 98.3 → 58.9 | 257.3 → 94.7 | differs |
+| CubeSAT-Reaction-Wheel_Edison_Motor_Servo | 8 → 8 / 8 | 100.0% → 100.0% | yes → yes | – | 3.3 → 46.0 | 4.0 → 12.6 | differs |
+| Dekada_dekada_TopoR_curves | 117 → 117 / 117 | 100.0% → 100.0% | yes → yes | – | 2.3 → 46.4 | 3.6 → 14.3 | differs |
+| ESP8266-MQTT-battery-monitor-hw_battery-monitor | 95 → 95 / 95 | 100.0% → 100.0% | yes → yes | – | 79.1 → 47.0 | 174.3 → 42.6 | differs |
+| ESP_WiFiSwitch_WifiSwitch | 22 → 22 / 22 | 100.0% → 100.0% | yes → yes | – | 44.9 → 52.6 | 59.7 → 45.2 | differs |
+| Hangul-Clock_Hangul | 209 → 209 / 209 | 100.0% → 100.0% | yes → yes | – | 120.5 → 126.3 | 481.0 → 418.6 | differs |
+| Hardware_Playground_rpi_zero_ws2812 | 46 → 46 / 46 | 100.0% → 100.0% | yes → yes | – | 8.5 → 46.4 | 10.5 → 17.7 | differs |
+| Inkjet__autosave-InkjetDriver | 65 → 65 / 65 | 100.0% → 100.0% | yes → yes | – | 79.0 → 129.4 | 240.4 → 302.2 | differs |
+| LogicBoxen_LogicBoxen | 116 → 116 / 116 | 100.0% → 100.0% | yes → yes | – | 120.3 → 126.1 | 307.1 → 197.4 | differs |
+| Photodiode_dethead | 40 → 40 / 40 | 100.0% → 100.0% | yes → yes | – | 8.9 → 47.6 | 11.1 → 18.5 | differs |
+| QRPCard_QRPCard | 92 → 92 / 92 | 100.0% → 100.0% | yes → yes | – | 42.0 → 81.7 | 117.3 → 218.5 | differs |
+| SmartLaserCO2-PCB__autosave-SmartLaserShield | 107 → 107 / 107 | 100.0% → 100.0% | yes → yes | – | 96.7 → 59.9 | 327.8 → 321.9 | differs |
+| atmel-programmer_atmel_programmer | 39 → 39 / 39 | 100.0% → 100.0% | yes → yes | – | 32.4 → 107.8 | 92.2 → 252.3 | differs |
+| custom_cpu--ALU_custom_cpu--ALU | 83 → 83 / 83 | 100.0% → 100.0% | yes → yes | – | 120.6 → 123.8 | 463.2 → 593.0 | differs |
+| devttys0_IRis | 52 → 52 / 52 | 100.0% → 100.0% | yes → yes | – | 9.5 → 11.1 | 19.8 → 30.9 | differs |
+| kitspace_threeboard | 119 → 119 / 119 | 100.0% → 100.0% | yes → yes | – | 71.6 → 52.6 | 232.8 → 232.6 | differs |
+| mosavr_pcie1x_backplane | 110 → 110 / 110 | 100.0% → 100.0% | yes → yes | – | 65.7 → 45.1 | 227.5 → 210.2 | differs |
+| opentilt_opentilt1 | 24 → 24 / 24 | 100.0% → 100.0% | yes → yes | – | 15.6 → 16.5 | 42.2 → 54.5 | differs |
+
+Style (informational): bends per connection 0.8111 → 0.8198; acute angles 0 → 0; stair steps 29 → 30; short segments 454 → 450; off angle segments 745 → 734; detour ratio 1.0593 → 1.0591; long detours 65 → 66.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| 655_testboard | 1.4468 → 1.4412 | 0 → 0 | 0 → 1 | 27 → 24 | 20 → 23 | 1.1628 → 1.1326 | 4 → 5 |
+| Dekada_dekada_TopoR_curves | 0.227 → 0.227 | 0 → 0 | 0 → 0 | 45 → 45 | 0 → 0 | 1.015 → 1.0154 | 0 → 0 |
+| ESP8266-MQTT-battery-monitor-hw_battery-monitor | 0.3488 → 0.3372 | 0 → 0 | 1 → 1 | 23 → 24 | 49 → 48 | 1.0292 → 1.0329 | 1 → 2 |
+| ESP_WiFiSwitch_WifiSwitch | 1.0 → 0.7813 | 0 → 0 | 0 → 0 | 1 → 1 | 6 → 8 | 1.0319 → 1.0081 | 0 → 0 |
+| Hangul-Clock_Hangul | 1.0141 → 1.0789 | 0 → 0 | 0 → 0 | 5 → 4 | 70 → 65 | 1.0408 → 1.0425 | 7 → 7 |
+| Hardware_Playground_rpi_zero_ws2812 | 0.6667 → 0.6667 | 0 → 0 | 0 → 0 | 9 → 9 | 3 → 3 | 1.0139 → 1.0142 | 0 → 0 |
+| Inkjet__autosave-InkjetDriver | 1.1707 → 0.916 | 0 → 0 | 0 → 0 | 10 → 9 | 47 → 50 | 1.1026 → 1.0927 | 2 → 1 |
+| LogicBoxen_LogicBoxen | 0.9026 → 0.8148 | 0 → 0 | 0 → 0 | 47 → 43 | 46 → 41 | 1.1685 → 1.1213 | 10 → 4 |
+| QRPCard_QRPCard | 0.4231 → 0.4744 | 0 → 0 | 0 → 0 | 19 → 23 | 42 → 42 | 1.0184 → 1.0111 | 1 → 0 |
+| SmartLaserCO2-PCB__autosave-SmartLaserShield | 0.8735 → 1.0062 | 0 → 0 | 0 → 0 | 26 → 28 | 40 → 34 | 1.0806 → 1.075 | 1 → 1 |
+| atmel-programmer_atmel_programmer | 1.6667 → 1.6667 | 0 → 0 | 0 → 0 | 3 → 3 | 8 → 8 | 1.0213 → 1.0212 | 0 → 0 |
+| custom_cpu--ALU_custom_cpu--ALU | 1.6042 → 1.61 | 0 → 0 | 0 → 0 | 5 → 4 | 9 → 17 | 1.0514 → 1.0481 | 0 → 2 |
+| devttys0_IRis | 0.5114 → 0.4944 | 0 → 0 | 0 → 0 | 19 → 19 | 8 → 9 | 1.0779 → 1.0779 | 1 → 1 |
+| kitspace_threeboard | 0.6947 → 0.884 | 0 → 0 | 0 → 0 | 10 → 8 | 47 → 36 | 1.0374 → 1.1184 | 0 → 5 |
+| mosavr_pcie1x_backplane | 1.3742 → 1.3701 | 0 → 0 | 26 → 26 | 42 → 43 | 21 → 22 | 1.1079 → 1.1069 | 5 → 5 |
+| opentilt_opentilt1 | 1.0741 → 1.2692 | 0 → 0 | 0 → 0 | 0 → 0 | 3 → 2 | 1.0471 → 1.0457 | 0 → 0 |
+
+Gates: pass

@@ -47,7 +47,7 @@ Warnings are errors (`-Wall -Wextra -Werror`), and the sanitizer presets must st
 ## Test
 
 ```bash
-ctest --preset release                 # 379 tests, about 20 minutes
+ctest --preset release                 # 391 tests, about 20 minutes
 ctest --preset release -R route        # only tests whose name matches
 ctest --preset asan                    # memory errors; its integration tests are slow
 ```

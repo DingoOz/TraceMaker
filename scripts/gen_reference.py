@@ -73,6 +73,8 @@ def bench_page() -> str:
             path = os.path.join(dirpath, "summary.json")
             with open(path) as f:
                 summary = json.load(f)
+            if isinstance(summary.get("run"), dict):
+                continue  # a single route's summary (`route --json`, D136), not a benchmark run
             record = os.path.relpath(path, records).split(os.sep)[0]
             groups.setdefault(record, []).append((os.path.relpath(dirpath, ROOT), summary))
     parts = [HEADER.format(what="bench"), "# Benchmark results\n\n",
