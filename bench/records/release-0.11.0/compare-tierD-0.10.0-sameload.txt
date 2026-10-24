@@ -1,0 +1,85 @@
+# rel0100w-tierD → rel0110-tierD
+
+22 boards; routed boards byte-identical: 4/22.
+Clean pass 7 → 8; mean completion 94.5% → 94.9%; router seconds 2526.8 → 2403.1.
+Route CPU time 9,463 → 12,242 s (+29.4%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| Aleste-520EX_aleste | 1363 → 1359 / 1616 | 49.3% → 48.5% | no → no | – | 122.3 → 121.4 | 398.5 → 590.8 | differs |
+| CoreOne-xCORE200-Original_CoreOne | 748 → 751 / 807 | 88.2% → 88.8% | no → no | – | 122.9 → 123.8 | 461.1 → 628.9 | differs |
+| DSP-ADAU1452_DSP-ADAU1452 | 742 → 742 / 742 | 100.0% → 100.0% | yes → yes | – | 125.7 → 121.4 | 370.8 → 464.5 | differs |
+| EUC-VESC_electronics_sept | 759 → 760 / 760 | 99.8% → 100.0% | no → yes | – | 136.3 → 127.5 | 509.9 → 647.8 | differs |
+| Horticulture_Light_EQ_3-Band_light | 422 → 422 / 422 | 100.0% → 100.0% | yes → yes | – | 71.5 → 55.6 | 219.5 → 210.3 | differs |
+| Keyboard_PCB_Keyboard | 528 → 530 / 534 | 98.8% → 99.2% | no → no | – | 139.5 → 123.5 | 488.6 → 635.6 | differs |
+| KiCad-Library_Teensy_test_layout | 1245 → 1253 / 1268 | 95.4% → 97.0% | no → no | – | 127.3 → 123.3 | 426.8 → 606.6 | differs |
+| LeeChee_1800 | 1097 → 1114 / 1160 | 87.4% → 90.8% | no → no | – | 178.3 → 161.2 | 494.8 → 604.4 | differs |
+| MonApollo_analog-board | 1097 → 1108 / 1190 | 81.4% → 83.6% | no → no | – | 125.6 → 122.5 | 370.1 → 585.5 | differs |
+| TCKB_Kicad_TCKB | 563 → 566 / 597 | 93.2% → 93.8% | no → no | – | 123.0 → 121.9 | 475.7 → 606.3 | differs |
+| dorkyboard_keyboard | 817 → 820 / 830 | 97.4% → 98.0% | no → no | – | 132.4 → 127.2 | 483.3 → 693.1 | differs |
+| front-end-modules_LimeSDR_Sony | 810 → 810 / 814 | 99.2% → 99.2% | no → no | – | 123.5 → 123.5 | 565.4 → 743.5 | differs |
+| m2-electronics_m2fc | 724 → 724 / 724 | 100.0% → 100.0% | yes → yes | – | 124.5 → 123.6 | 635.7 → 804.2 | differs |
+| mechkeys_LFK78 | 862 → 862 / 893 | 93.8% → 93.8% | no → no | – | 121.5 → 124.3 | 673.9 → 800.9 | differs |
+| memsarray_mems_array | 245 → 245 / 245 | 100.0% → 100.0% | yes → yes | – | 124.7 → 125.5 | 626.2 → 829.7 | differs |
+| mini_mass_prog_bench_prog_rig | 973 → 974 / 995 | 95.6% → 95.8% | no → no | – | 124.9 → 123.8 | 626.4 → 815.9 | differs |
+| newer-motor-controllers_busparts | 316 → 316 / 316 | 100.0% → 100.0% | yes → yes | – | 124.9 → 124.5 | 551.2 → 731.8 | differs |
+| newer-motor-controllers_si31-3 | 316 → 316 / 316 | 100.0% → 100.0% | yes → yes | – | 124.3 → 122.4 | 600.6 → 706.9 | differs |
+
+Style (informational): bends per connection 0.6213 → 0.6259; acute angles 2 → 3; stair steps 170 → 82; short segments 4125 → 4032; off angle segments 9286 → 9074; detour ratio 1.0749 → 1.0792; long detours 365 → 379.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| Aleste-520EX_aleste | 1.7312 → 1.705 | 0 → 0 | 6 → 5 | 57 → 56 | 276 → 274 | 1.1559 → 1.1496 | 64 → 60 |
+| CoreOne-xCORE200-Original_CoreOne | 0.6778 → 0.6807 | 0 → 0 | 0 → 0 | 100 → 99 | 237 → 242 | 1.0542 → 1.0541 | 32 → 32 |
+| DSP-ADAU1452_DSP-ADAU1452 | 0.4173 → 0.4101 | 0 → 0 | 4 → 3 | 317 → 323 | 312 → 310 | 1.0531 → 1.0434 | 14 → 11 |
+| EUC-VESC_electronics_sept | 0.241 → 0.2752 | 0 → 0 | 3 → 0 | 273 → 234 | 191 → 134 | 1.0104 → 1.0174 | 8 → 8 |
+| Horticulture_Light_EQ_3-Band_light | 0.55 → 0.5492 | 0 → 0 | 3 → 3 | 332 → 323 | 59 → 58 | 1.1549 → 1.1546 | 5 → 5 |
+| Keyboard_PCB_Keyboard | 0.8088 → 0.8276 | 0 → 0 | 0 → 0 | 31 → 31 | 117 → 116 | 1.0232 → 1.0242 | 1 → 1 |
+| KiCad-Library_Teensy_test_layout | 0.4351 → 0.5092 | 1 → 2 | 32 → 37 | 972 → 1028 | 2428 → 2441 | 1.0798 → 1.1344 | 13 → 27 |
+| LeeChee_1800 | 0.6947 → 0.7415 | 1 → 1 | 2 → 2 | 261 → 265 | 299 → 317 | 1.0406 → 1.0392 | 14 → 14 |
+| MonApollo_analog-board | 0.7417 → 0.7674 | 0 → 0 | 0 → 0 | 207 → 213 | 461 → 471 | 1.1396 → 1.155 | 65 → 68 |
+| TCKB_Kicad_TCKB | 1.102 → 1.1237 | 0 → 0 | 3 → 5 | 92 → 92 | 247 → 246 | 1.0594 → 1.0636 | 6 → 6 |
+| dorkyboard_keyboard | 0.5945 → 0.3102 | 0 → 0 | 0 → 2 | 21 → 103 | 232 → 1612 | 1.0252 → 1.0247 | 2 → 4 |
+| front-end-modules_LimeSDR_Sony | 0.311 → 0.3358 | 0 → 0 | 14 → 16 | 169 → 178 | 1451 → 1452 | 1.0733 → 1.0922 | 43 → 46 |
+| m2-electronics_m2fc | 0.5783 → 0.5907 | 0 → 0 | 2 → 2 | 138 → 143 | 244 → 244 | 1.089 → 1.0917 | 31 → 33 |
+| mechkeys_LFK78 | 1.3389 → 1.3357 | 0 → 0 | 5 → 5 | 264 → 263 | 329 → 329 | 1.1095 → 1.1093 | 23 → 23 |
+| memsarray_mems_array | 0.9066 → 0.9042 | 0 → 0 | 0 → 0 | 31 → 31 | 144 → 143 | 1.0332 → 1.0334 | 15 → 15 |
+| mini_mass_prog_bench_prog_rig | 0.559 → 0.7498 | 0 → 0 | 94 → 0 | 336 → 128 | 1886 → 313 | 1.021 → 1.0246 | 10 → 6 |
+| newer-motor-controllers_busparts | 0.4907 → 0.4696 | 0 → 0 | 0 → 0 | 58 → 60 | 100 → 100 | 1.0233 → 1.0155 | 2 → 3 |
+| newer-motor-controllers_si31-3 | 0.4939 → 0.4949 | 0 → 0 | 0 → 0 | 54 → 50 | 106 → 105 | 1.0271 → 1.0271 | 3 → 3 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- Aleste-520EX_aleste: completion uses KiCad's capped unconnected list, not exact connectivity
+- CoreOne-xCORE200-Original_CoreOne: completion uses KiCad's capped unconnected list, not exact connectivity
+- DSP-ADAU1452_DSP-ADAU1452: completion uses KiCad's capped unconnected list, not exact connectivity
+- EUC-VESC_electronics_sept: completion uses KiCad's capped unconnected list, not exact connectivity
+- Hardware_Playground_heater_actuator_node: completion uses KiCad's capped unconnected list, not exact connectivity
+- Keyboard_PCB_Keyboard: completion uses KiCad's capped unconnected list, not exact connectivity
+- KiCad-Library_Teensy_test_layout: completion uses KiCad's capped unconnected list, not exact connectivity
+- LeeChee_1800: completion uses KiCad's capped unconnected list, not exact connectivity
+- MonApollo_analog-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- TCKB_Kicad_TCKB: completion uses KiCad's capped unconnected list, not exact connectivity
+- dorkyboard_keyboard: completion uses KiCad's capped unconnected list, not exact connectivity
+- front-end-modules_LimeSDR_Sony: completion uses KiCad's capped unconnected list, not exact connectivity
+- m2-electronics_m2fc: completion uses KiCad's capped unconnected list, not exact connectivity
+- mechkeys_LFK78: completion uses KiCad's capped unconnected list, not exact connectivity
+- mini_mass_prog_bench_prog_rig: completion uses KiCad's capped unconnected list, not exact connectivity
+- opendous_Upconverter: completion uses KiCad's capped unconnected list, not exact connectivity
+- perfplusplus_Ard-perf++: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- Aleste-520EX_aleste: worse (clean False -> False, completion 49.3% -> 48.5%)
+- Hardware_Playground_heater_actuator_node: before evaluated DRC errors are capped or unavailable; gate unknown
+- Hardware_Playground_heater_actuator_node: after evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: before evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: after evaluated DRC errors are capped or unavailable; gate unknown
+- badge2016_Badge_init: before evaluated DRC errors are capped or unavailable; gate unknown
+- badge2016_Badge_init: after evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: before evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: after evaluated DRC errors are capped or unavailable; gate unknown
+- mechkeys_LFK78: before evaluated DRC errors are capped or unavailable; gate unknown
+- mechkeys_LFK78: after evaluated DRC errors are capped or unavailable; gate unknown
+- mini_mass_prog_bench_prog_rig: before evaluated DRC errors are capped or unavailable; gate unknown
+- mini_mass_prog_bench_prog_rig: after evaluated DRC errors are capped or unavailable; gate unknown
+- perfplusplus_Ard-perf++: before evaluated DRC errors are capped or unavailable; gate unknown
+- perfplusplus_Ard-perf++: after evaluated DRC errors are capped or unavailable; gate unknown

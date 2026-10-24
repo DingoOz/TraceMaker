@@ -22,26 +22,26 @@ reference (command line, C++ API) and the design documents.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
 - **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
   Metal backend (macOS 15 and 26, Apple silicon) is contributed; it is tested on contributors' Macs, not in CI.
-- **Status:** release 0.10.0. Licence GPL-3.0-or-later.
+- **Status:** release 0.11.0. Licence GPL-3.0-or-later.
 
 ## How good is it?
 
 Share of boards routed with **every connection made and no KiCad error added** (PCBench, 120 s per board):
 
-| Tier | Boards | TraceMaker 0.10.0 | Freerouting 2.5 |
+| Tier | Boards | TraceMaker 0.11.0 | Freerouting 2.5 |
 |---|--:|--:|--:|
 | A (routine) | 40 | **100%** | 100% |
 | B | 40 | **70.0%** | 50.0% |
 | C | 30 | **46.7%** | 46.7% |
-| D (hardest) | 22 | **40.9%** | 36.4% |
+| D (hardest) | 22 | **36.4%** | 36.4% |
 
 Freerouting's figures are its own published results on the same boards. Since 2026-10-14 the judge compares physical
 violation instances and calls a board *unknown*, never clean, when KiCad's report is truncated at a capped error type
 on either side (199 solder-mask bridges the board had before routing, say), because a zero delta cannot then be proved
-(decision D106); three tier C and three tier D boards that are fully routed with no added error fall under that. By
-the 0.9.0 criterion the same runs give 100%, 70.0%, 56.7% and 54.5%, against 100%, 72.5%, 60.0% and 54.5% at release
-0.9.0 (one board each way in tiers B and C, on a machine shared with other jobs; the 0.9.0 binary run beside it under
-the same load scored within one board of it in every tier, `bench/records/release-0.10.0`).
+(decision D106); three tier C and three tier D boards that are fully routed with no added error fall under that.
+Tiers A to C match release 0.10.0 board for board in count; tier D is one board lower (40.9% at 0.10.0). The machine
+was shared with other jobs and the limit is wall-clock time: the 0.10.0 binary, run beside it under the same load,
+scored one board lower still (31.8%), so the difference is load, not the router (`bench/records/release-0.11.0`).
 
 **Known limits, stated plainly:**
 
@@ -54,12 +54,14 @@ the same load scored within one board of it in every tier, `bench/records/releas
   vertices off the lattice up to the real rules) closed sample031, 039, 048, 071, 072, 095, 103 and 159 with a clean KiCad DRC; sample104 is still one
   connection short (doc 16 section 13).
 - It uses more vias than Freerouting.
+- On one plane-tier board (`interf_u`, with `--soft-zones --si-rules`) a run stays on one core for more than 20 minutes after its
+  variants finish, before it writes the board (27 s in the 14 October records); not yet explained (`bench/records/m20-run-report`).
 - Eight real-world KiCad boards that it could not route under their own rules ([reports/realworld](reports/realworld/README.md))
   all reach zero open connections in KiCad, but only through a closure loop that relaxes the rules of signal nets step by step,
   writes every compromise down and checks it with a circuit simulation; power nets keep the board's rules.
 
 Full detail: [design and results report](report/report.pdf) ·
-[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.10.0 has 379 tests).
+[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.11.0 has 391 tests).
 
 ## Quick start
 
@@ -283,7 +285,7 @@ single Ctrl-Z removes it. It can also re-route existing copper, move footprints 
 
 ```
 scripts/fetch_fixtures.sh          # downloads the test boards (about 2.4 GB), once
-ctest --preset release             # 379 tests, about 20 minutes
+ctest --preset release             # 391 tests, about 20 minutes
 ```
 
 - Tests that need a board or `kicad-cli` **skip** when it is missing; they do not fail.

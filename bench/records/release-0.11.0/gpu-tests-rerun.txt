@@ -1,0 +1,9 @@
+Sat Oct 24 03:01:13 AM UTC 2026
+Tesla P100-PCIE-12GB, 0 MiB
+Tesla V100-PCIE-16GB, 0 MiB
+== GPU Philox fill is bit-identical to the CPU reference on every device
+All tests passed (2 assertions in 1 test case)
+
+== cost-to-go field: concurrent callers have independent state
+All tests passed (2 assertions in 1 test case)
+

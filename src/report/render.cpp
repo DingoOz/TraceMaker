@@ -152,12 +152,15 @@ Section Builder::header() {
   }
   if (soft && !joined_all)
     warn(s, {t("After the zones are refilled for the new copper, "), src_.v("/unconnected_after_refill"),
-             t(" items are unconnected: the board is not finished. See What is open and why.")});
+             t(src_.num("/unconnected_after_refill") == 1 ? " item is" : " items are"),
+             t(" unconnected: the board is not finished. See What is open and why.")});
   else if (soft)
-    text(s, {t("After the zones are refilled for the new copper, "), src_.v("/unconnected_after_refill"), t(" items are unconnected.")});
+    text(s, {t("After the zones are refilled for the new copper, "), src_.v("/unconnected_after_refill"),
+              t(src_.num("/unconnected_after_refill") == 1 ? " item is unconnected." : " items are unconnected.")});
   if (src_.has("/drc/added_routing_errors")) {
     if (src_.num("/drc/added_routing_errors") > 0)
-      warn(s, {t("The route added "), src_.v("/drc/added_routing_errors"), t(" DRC errors of types routing can cause; see the DRC section.")});
+      warn(s, {t("The route added "), src_.v("/drc/added_routing_errors"),
+               t(src_.num("/drc/added_routing_errors") == 1 ? " DRC error" : " DRC errors"), t(" of types routing can cause; see the DRC section.")});
     else
       text(s, {t("The route added "), src_.v("/drc/added_routing_errors"), t(" DRC errors of types routing can cause.")});
   }
@@ -165,7 +168,9 @@ Section Builder::header() {
     warn(s, {t("The time limit ("), src_.v("/run/time_limit_s"), t(" s), not the work budget, ended the search: this result depends on how fast the machine "
              "was, and another run may differ. Give a larger --time for a repeatable run.")});
   if (src_.num("/rules/not_read_count") > 0)
-    warn(s, {src_.v("/rules/not_read_count"), t(" rules or settings could not be read; the route may break them. See Rules.")});
+    warn(s, {src_.v("/rules/not_read_count"),
+             t(src_.num("/rules/not_read_count") == 1 ? " rule or setting could not be read; the route may break it. See Rules."
+                                                       : " rules or settings could not be read; the route may break them. See Rules.")});
   return s;
 }
 
@@ -402,8 +407,14 @@ Section Builder::drc() {
   if (src_.num("/drc/added_routing_errors") > 0) warn(s, std::move(added));
   else text(s, std::move(added));
   table(s, rows("/drc/types", {{"Type", "type"}, {"Severity", "severity"}, {"Routing", "routing"}, {"Before", "before"}, {"After", "after"}, {"Added", "added"}}));
-  for (const char* side : {"/drc/before/notes", "/drc/after/notes"})
-    for (std::size_t i = 0; i < src_.size(side); ++i) text(s, {t("Note: "), src_.v(idx(side, i))});
+  // A note the check of both boards gave (no project file, say) is printed once, from the before side.
+  for (std::size_t i = 0; i < src_.size("/drc/before/notes"); ++i) text(s, {t("Note: "), src_.v(idx("/drc/before/notes", i))});
+  for (std::size_t i = 0; i < src_.size("/drc/after/notes"); ++i) {
+    const auto& note = src_.at(idx("/drc/after/notes", i));
+    bool seen = false;
+    for (std::size_t j = 0; j < src_.size("/drc/before/notes"); ++j) seen = seen || src_.at(idx("/drc/before/notes", j)) == note;
+    if (!seen) text(s, {t("Note: "), src_.v(idx("/drc/after/notes", i))});
+  }
   return s;
 }
 
