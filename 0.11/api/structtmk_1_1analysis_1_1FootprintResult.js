@@ -1,0 +1,28 @@
+var structtmk_1_1analysis_1_1FootprintResult =
+[
+    [ "errors", "structtmk_1_1analysis_1_1FootprintResult.html#a24ce9fb564ec478f1aad5d1641b379a9", null ],
+    [ "warnings", "structtmk_1_1analysis_1_1FootprintResult.html#a887ddff958912dec085a830ef0c95f18", null ],
+    [ "at", "structtmk_1_1analysis_1_1FootprintResult.html#ad8ab64fd34fc5615319153fc53e1c805", null ],
+    [ "brand", "structtmk_1_1analysis_1_1FootprintResult.html#af17d6dc72099a8a7f35beedde3fbbe12", null ],
+    [ "document", "structtmk_1_1analysis_1_1FootprintResult.html#aec1150704e58702c709c8241e19376f3", null ],
+    [ "figure", "structtmk_1_1analysis_1_1FootprintResult.html#af1c3e8554802f7d1de2198295a806116", null ],
+    [ "footprint", "structtmk_1_1analysis_1_1FootprintResult.html#a6ddbccd6f6a259d0d0c150afb6239e15", null ],
+    [ "issues", "structtmk_1_1analysis_1_1FootprintResult.html#a44943a5a6ed49913d91b85a81fa18fda", null ],
+    [ "lib_id", "structtmk_1_1analysis_1_1FootprintResult.html#aabc1d45439aa14399f9935b6c8493950", null ],
+    [ "max_position_mm", "structtmk_1_1analysis_1_1FootprintResult.html#aba39ad7a74ad2f1ad1b62f14398c7508", null ],
+    [ "mirrored", "structtmk_1_1analysis_1_1FootprintResult.html#afef7125fbb922863ad6d58f2ec85277a", null ],
+    [ "mpn", "structtmk_1_1analysis_1_1FootprintResult.html#a3afcb3548fc871796fc341a32283336b", null ],
+    [ "other_matches", "structtmk_1_1analysis_1_1FootprintResult.html#a5ea4e93f246d9581bc7a20ca84414178", null ],
+    [ "pads_board", "structtmk_1_1analysis_1_1FootprintResult.html#afee0e2ce149a5e0829e5a53a5d472af7", null ],
+    [ "pads_matched", "structtmk_1_1analysis_1_1FootprintResult.html#af5ea4d201e8b5ff420b485fc5e1ad5cb", null ],
+    [ "pads_ref", "structtmk_1_1analysis_1_1FootprintResult.html#a95713bc4d70c7fa525e49f3bf4e99499", null ],
+    [ "page", "structtmk_1_1analysis_1_1FootprintResult.html#adfaa783819678a3bb72d8c9eb277a493", null ],
+    [ "part", "structtmk_1_1analysis_1_1FootprintResult.html#acd54ebb3a59bb4bc782fe24090ee3ed4", null ],
+    [ "ref", "structtmk_1_1analysis_1_1FootprintResult.html#a4df7bc765005e5e408643ec89495ab44", null ],
+    [ "ref_id", "structtmk_1_1analysis_1_1FootprintResult.html#a64cde6c176fb9ead340900e01af82f16", null ],
+    [ "revision", "structtmk_1_1analysis_1_1FootprintResult.html#a1887f13f950fb4701a0b3d22076b020c", null ],
+    [ "rotation", "structtmk_1_1analysis_1_1FootprintResult.html#ad6b90bf7cde143f7126387635c84ad6a", null ],
+    [ "status", "structtmk_1_1analysis_1_1FootprintResult.html#a77662441c2576852099862b2fcdfd98e", null ],
+    [ "url", "structtmk_1_1analysis_1_1FootprintResult.html#a4843b9c0f64b354ad985be9171425438", null ],
+    [ "value", "structtmk_1_1analysis_1_1FootprintResult.html#a666929d7daa38e539756ac1ba16fb9ed", null ]
+];

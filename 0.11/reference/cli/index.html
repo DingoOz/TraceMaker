@@ -1,0 +1,3537 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An autorouter and component placer for KiCad">
+      
+      
+      
+        <link rel="canonical" href="https://dingooz.github.io/TraceMaker/0.11/reference/cli/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../13-viewer-protocol/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Command line - TraceMaker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#command-line" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TraceMaker" class="md-header__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TraceMaker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Command line
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../quick-start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quick start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../how-to/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  How-to guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../explanation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../project/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TraceMaker" class="md-nav__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    TraceMaker
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/first-board/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route your first board
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/kicad-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route from inside KiCad
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/build-and-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build and test
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/kicad-cli-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run kicad-cli from Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/run-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fetch boards and run benchmarks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Make a release
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write and publish the docs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tracemaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="tracemaker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-gpu-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker gpu-info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-inspect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker inspect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-drc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker drc
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-escape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker escape
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-pairs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker pairs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-buses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker buses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-return-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker return-paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-footprint-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker footprint-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-advice-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker advice-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-srj-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker srj-import
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-srj-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker srj-export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-tui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker tui
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracemaker-place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker-place
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracemaker-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker-view
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-viewer-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer protocol
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../explanation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data structures and DRC
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-placement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-failure-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Failure memory
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU acceleration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-kicad-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KiCad integration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09-visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live viewer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-placement-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement test plan
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-component-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component-aware rules
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16-bga-breakout-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGA breakout
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-llm-advisor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-agent-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../project/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-next-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions and risks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tracemaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="tracemaker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-gpu-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker gpu-info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-inspect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker inspect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-drc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker drc
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-escape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker escape
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-pairs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker pairs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-buses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker buses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-return-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker return-paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-footprint-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker footprint-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-advice-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker advice-check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker session
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker style
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-srj-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker srj-import
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-srj-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker srj-export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracemaker-tui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker tui
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracemaker-place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker-place
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracemaker-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker-view
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/DingoOz/TraceMaker/edit/main/docs/reference/cli.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<!-- Generated by scripts/gen_reference.py cli; do not edit by hand. -->
+
+<h1 id="command-line">Command line<a class="headerlink" href="#command-line" title="Permanent link">&para;</a></h1>
+<p>Every option of every program, as its own <code>--help</code> prints it. This page is generated from the build, so it
+is what the code accepts; the README's <em>Common tasks</em> table says which options to reach for first.</p>
+<h2 id="tracemaker"><code>tracemaker</code><a class="headerlink" href="#tracemaker" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>TraceMaker: placement-aware PCB autorouter for KiCad
+
+
+tracemaker [OPTIONS] SUBCOMMAND
+
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+
+SUBCOMMANDS:
+  version                     Print the version
+  gpu-info                    List GPU devices and their available memory budget
+  inspect                     Read a .kicad_pcb and print a summary
+  rules                       Detect component categories and report the component-aware layout
+                              rules (doc 15)
+  drc                         Check a board against its KiCad design rules
+  route                       Route all unrouted connections of a board
+  report                      Render the run report from a route summary (route --json, with
+                              the sections route --report adds)
+  escape                      Escape feasibility of dense packages: pins that cannot leave
+                              their package under the board's rules
+  pairs                       Differential pairs of a routed board: coupled share, gap,
+                              intra-pair skew
+  buses                       Buses of a routed board: members routed, vias and layers per
+                              member, lengths and skew (exit 4 when a limit is missed)
+  return-paths                Reference-return audit of high-speed nets: copper under each
+                              trace on its reference layer, the detour round voids, layer
+                              changes without a stitch (read-only; doc 05 §42)
+  footprint-check             Check every footprint against datasheet land patterns from a
+                              reference library of trusted brands: pad count, positions, sizes,
+                              drills, mirroring (read-only; doc 05 §43)
+  advice-check                Check an advice file (doc 17) against a board: the refusals
+                              `route --advice` would give, and what each hint does
+  session                     Serve a board session to an agent over MCP (stdin/stdout) or JSON
+                              lines: list open connections, route with hints, rip, undo, save
+                              (doc 19)
+  style                       Style metric of a routed board: bends, acute angles, stair-steps,
+                              detours (doc 05 §39)
+  srj-import                  Convert a Simple Route JSON problem (tscircuit) to a KiCad board
+                              with its project and rules
+  srj-export                  Write a routed board's copper as the `traces` of its Simple Route
+                              JSON problem
+  tui                         Choose the route options on a terminal screen, then run, print or
+                              save them
+</code></pre></div>
+<h3 id="tracemaker-version"><code>tracemaker version</code><a class="headerlink" href="#tracemaker-version" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Print the version
+
+
+tracemaker version [OPTIONS]
+
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+</code></pre></div>
+<h3 id="tracemaker-gpu-info"><code>tracemaker gpu-info</code><a class="headerlink" href="#tracemaker-gpu-info" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>List GPU devices and their available memory budget
+
+
+tracemaker gpu-info [OPTIONS]
+
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+</code></pre></div>
+<h3 id="tracemaker-inspect"><code>tracemaker inspect</code><a class="headerlink" href="#tracemaker-inspect" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Read a .kicad_pcb and print a summary
+
+
+tracemaker inspect [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    Board file
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Also write the board as JSON (KiCad truth schema)
+</code></pre></div>
+<h3 id="tracemaker-rules"><code>tracemaker rules</code><a class="headerlink" href="#tracemaker-rules" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Detect component categories and report the component-aware layout rules (doc 15)
+
+
+tracemaker rules [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    Board file
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the full report (every rule of every instance) as JSON
+          --mode TEXT:{report,soft,on}
+                              Which statuses to report: report (check only), soft (as placement
+                              would apply them), on (with keep-outs)
+          --dru TEXT          Write the generated custom rules (sidecar .kicad_dru) to this
+                              file
+          --roles-from TEXT   Detect and bind roles on this version of the board (e.g. the
+                              placement input), measure on the given one
+          --catalogue TEXT    Catalogue JSON to use instead of the built-in one
+                              (scripts/crules_catalogue.py output)
+          --rules-override TEXT:FILE
+                              User override file (JSON, doc 15 §6.3): disable rules,
+                              assert/deny categories, set parameters
+</code></pre></div>
+<h3 id="tracemaker-drc"><code>tracemaker drc</code><a class="headerlink" href="#tracemaker-drc" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Check a board against its KiCad design rules
+
+
+tracemaker drc [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the report as JSON (kicad-cli layout)
+          --epsilon-um FLOAT  Tolerance below the required clearance, micrometres
+          --refill-zones      Refill zones for the current copper before checking (not written)
+</code></pre></div>
+<h3 id="tracemaker-route"><code>tracemaker route</code><a class="headerlink" href="#tracemaker-route" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Route all unrouted connections of a board
+
+
+tracemaker route [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    Board file (.kicad_pcb)
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --config TEXT:FILE  Read options from a file of `name = value` lines, as `tracemaker
+                              tui` saves them; options on the command line win
+  -o,     --output TEXT REQUIRED
+                              Output .kicad_pcb
+          --time FLOAT        Time limit, seconds (safety net; results then depend on machine
+                              speed)
+          --work INT          Deterministic work budget in search expansions per router (e.g.
+                              50000000); with the default portfolio every variant gets the
+                              whole budget, so a run does up to --variants times this work
+          --pitch-um FLOAT    Lattice pitch in micrometres (default: automatic)
+          --via-cost-mm FLOAT Cost of a via as equivalent track length
+          --seed UINT
+          --layer-assign      Prefer per connection the layer with the fewest crossings
+                              (two-layer boards; doc 16 F2)
+          --relax             Portfolio: route under 60 % and 80 % of the clearance first,
+                              legalise (move vertices off the lattice) up to the real rules,
+                              repeat on stalls; until complete, with --round-work (20 M
+                              default)
+          --relax-late        With --relax: begin under the real rules and relax only when
+                              those stall (fresh start from the loosest stage)
+          --heuristic-weight FLOAT
+                              Weighted A* factor (1.0 = optimal searches)
+          --no-rip-up{false}  Disable negotiated rip-up and reroute
+          --micro-vias        Use micro vias (outer layer to the next) where a through via is
+                              blocked (only on boards that allow them)
+          --blind-vias        Use blind/buried vias where a through via is blocked (only on
+                              boards that allow them)
+          --diff-pairs        Route differential pairs (KiCad P/N or +/- names) as coupled
+                              pairs first (doc 05 §15)
+          --pair-twists, --no-pair-twists{false}
+                              Coupled pairs may swap sides at a layer change, for pairs whose
+                              pin order is mirrored between the ends (default on; only with
+                              pair routing)
+          --pair-skew-mm FLOAT
+                              Intra-pair skew limit for coupled pairs: meanders on the shorter
+                              half (0 = custom skew rules only)
+          --global            Global routing first: detailed search follows coarse corridors
+          --no-optimize{false}
+                              Skip the post-routing clean-up pass (fewer vias, shorter tracks)
+          --plan-gap, --no-plan-gap{false}
+                              Plan connections by copper-to-copper distance between pads rather
+                              than centre to centre (default on)
+          --escape-plan, --no-escape-plan{false}
+                              Reserve escape corridors for the pins of dense packages (QFP,
+                              BGA) before routing
+          --escape-flow       Escape plan v2: min-cost-flow channel and layer assignment for
+                              deep BGA arrays (implies --escape-plan; experimental)
+          --reroute           Remove every unlocked track and via first and route the whole
+                              board again
+          --halving           With more --variants than --threads: successive halving over all
+                              the variants instead of running only the first ones
+          --cut-report        Report straight lines across the board that more nets must cross
+                              than tracks fit (proof that the placement cannot be routed)
+          --escape-report     Report the pins of deep BGA arrays per ring and how many were
+                              connected
+          --fast-bends{false} Approximate bend costs (1 state per lattice point instead of 9)
+          --no-gpu            Compute cost-to-go fields on the CPU instead of the GPU (same
+                              results)
+          --soft-zones        Zone fills do not block other nets (refill the zones afterwards);
+                              unused fills become plane targets
+          --no-refill-repair  With --soft-zones: only count what the zone refill leaves
+                              unconnected, do not route it
+          --via-in-pad        Inner balls / enclosed SMD pads may take a minimum-size via in
+                              the pad (needs filled, capped vias)
+          --keep-vias-off-pads
+                              Vias keep clear of SMD pads narrower than --vias-off-pads-below
+                              (via-in-pad excepted)
+          --vias-off-pads-below FLOAT
+                              Pad width (mm) below which --keep-vias-off-pads applies (default
+                              2)
+          --no-neck-nets TEXT ...
+                              Comma-separated nets that are never narrowed below their class
+                              width nor given the small neck-down via (power nets of a
+                              rule-relaxed routing)
+          --first-nets-ordered
+                              Route the --first-nets in the order of the list (e.g. the pins of
+                              a package round its perimeter), not in the router's own order
+          --first-nets TEXT ...
+                              Comma-separated nets routed first, also after restarts; other
+                              nets do not rip them (e.g. crystal lines)
+          --bus TEXT ...      Experimental. Route these nets as a bus, NAME=PATTERN
+                              (repeatable): lane by lane on the same layers, e.g.
+                              'DATA=/D[0-7]' or 'LCD=/LCD_*'. PATTERN matches whole net names:
+                              * and ? as in net-class patterns, [N-M] a number in that range
+                              (doc 05 §38)
+          --buses             Experimental. Also find buses in the net names: nets differing
+                              only in a trailing index, four or more between the same two
+                              components
+          --bus-first         Route the buses before everything else (default: each bus where
+                              the router's order puts its first connection)
+          --bus-skew-mm FLOAT Length-match the --bus groups: meanders until their lengths
+                              (tracks and via height, as KiCad's skew check) differ by at most
+                              this (0 = only the board's custom skew rules)
+          --no-field{false}   Use the octile heuristic only (no cost-to-go fields)
+          --kb TEXT           Knowledge base file (failure memory across runs)
+          --no-kb             Do not read or update the knowledge base
+          --threads INT       Threads for the portfolio (differently configured routers, best
+                              kept). Without --variants it is also the portfolio size, except
+                              with --work, where all variants run and the output is identical
+                              for any thread count
+          --variants INT      Portfolio size (1 = single router; default: all with --work, else
+                              --threads); the output never depends on --threads with --work.
+                              --time applies to each variant from its start
+          --no-tracks-on TEXT ...
+                              Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias
+                              still pass through and reach zone fills there)
+          --layer-cost TEXT ...
+                              Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 =
+                              normal, at most 1000)
+          --view              Stream the routing live to the browser viewer
+          --return-paths TEXT ...
+                              After routing, audit the reference return of nets matching these
+                              KiCad wildcards (comma separated, e.g. 'DDR*'): copper under each
+                              trace on its reference layer, the detour round voids, layer
+                              changes without a stitching via. Read-only; the report is in the
+                              log and the summary, the paths in the viewer (doc 05 §42)
+          --return-path-classes TEXT ...
+                              With --return-paths: also the nets of these net classes
+          --return-path-pairs Audit the nets that are halves of a differential pair too
+          --return-path-radius-mm FLOAT:POSITIVE
+                              How far a stitching via or capacitor may be from a layer change
+                              (default 5)
+          --footprint-refs TEXT
+                              Before routing, check every footprint against datasheet land
+                              patterns from this reference library (a directory or a JSON file;
+                              doc 05 §43). A footprint that differs from its datasheet is an
+                              error and stops the job
+          --footprint-trusted TEXT:FILE
+                              With --footprint-refs: the trusted brand list (default:
+                              trusted_brands.txt beside the references); references of other
+                              brands give no verdict
+          --footprint-trust-all
+                              With --footprint-refs: use the references of every brand (nobody
+                              vouched for them)
+          --footprint-require TEXT ...
+                              With --footprint-refs: designators (KiCad wildcards, comma
+                              separated) that must have a trusted reference, else it is an
+                              error
+          --footprint-warn-only
+                              With --footprint-refs: report the discrepancies and route anyway
+          --footprint-tol-mm FLOAT:NONNEGATIVE
+                              With --footprint-refs: tolerance of pad positions, sizes and
+                              drills in millimetres (default 0.05; a reference may set its own)
+          --si-rules          JLCPCB's three routing rules at once (doc 05 §44): critical nets
+                              (from the component rules' roles and differential pairs) routed
+                              first, dearer vias for them (x3), and a cost for their tracks
+                              over a void of the adjacent reference plane (+4 pitches per
+                              lattice step); each can be set with the options below instead
+          --critical-nets TEXT ...
+                              Nets that are critical whatever their role, KiCad wildcards comma
+                              separated (e.g. 'CLK*,USB_D*'); they are tier 1, like clocks, and
+                              the nets found by --critical-auto follow in their own tiers
+          --critical-auto     Critical nets from the component rules' roles (clock, crystal,
+                              USB, Ethernet, PCIe, DDR ...) and from differential pairs
+          --critical-first    Route the critical nets before all others, tier by tier (clocks
+                              and crystals, differential links, memory buses); --first-nets
+                              stay in front
+          --critical-via-cost FLOAT:FLOAT in [1 - 100]
+                              A via costs a critical net this many times --via-cost-mm (default
+                              1; 3 with --si-rules)
+          --critical-via-max INT:NONNEGATIVE
+                              Warn in the report when a critical net has more vias than this (0
+                              = no limit)
+          --split-cost FLOAT:NONNEGATIVE
+                              Cost, in pitches per lattice step, of a critical net's track over
+                              a void of the adjacent reference plane: a split, a slot or an
+                              antipad field (default 0; 4 with --si-rules)
+          --split-hard        Close plane voids to critical nets instead of charging for them:
+                              a critical net with no way round a split stays unrouted
+          --no-freeze         With --view: the viewer does not hold the scene on a routing
+                              stall (it normally freezes on the stuck net, with the rejected
+                              paths and what rejected them; Space resumes)
+          --record TEXT       Write the routing events (JSON lines, time-stamped) to a file for
+                              replay; zstd-compressed if FILE ends in .zst
+          --view-host TEXT    Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1: this
+                              machine only). 0.0.0.0 or a LAN address lets other machines
+                              connect, and then a token is required
+          --view-token TEXT   Token for a viewer that other machines can reach (16+ characters;
+                              default: a random one, printed in the URL)
+          --view-insecure     Serve a viewer that other machines can reach WITHOUT a token
+                              (anyone who can reach the port can watch the board)
+          --view-port INT     Viewer port (default 8766)
+          --view-embed TEXT   Pages that may show the viewer in a frame, origins separated by
+                              spaces (e.g. a dashboard: http://host:8771); default: none
+          --hold              Keep serving the viewer after routing finishes
+          --json TEXT         Write a result summary as JSON
+          --report TEXT       Write a run report for designers: what was routed, what is open
+                              and why, the rules read and not read, the signal-integrity audit,
+                              the DRC before and after, the options and the seed. HTML, or
+                              Markdown if FILE ends in .md. Every number in it is a field of
+                              the --json summary (written to FILE.json when --json is not
+                              given)
+          --component-rules TEXT:{off,report,soft,on}
+                              Component-aware rules (doc 15): off (default); report/soft write
+                              &lt;output&gt;.tracemaker.kicad_dru; on also routes with the generated
+                              keep-outs (crystal, switching-regulator inductor) as in-memory
+                              rule areas
+          --rules-override TEXT:FILE
+                              User override file for --component-rules (JSON, doc 15 §6.3):
+                              disable rules, assert/deny categories, set parameters
+          --advice TEXT:FILE  Advice file (JSON, doc 17): typed hints (nets first, connection
+                              priority, layer costs, regions that reserve space for some nets).
+                              They run as extra portfolio variants next to the unadvised ones,
+                              so the result is never worse
+          --advice-variants INT:INT in [1 - 8]
+                              Advised variants to add (default: the file's "variants", else 4)
+          --advisor TEXT      A command (run with sh -c) that reads the stuck report (JSON) on
+                              stdin and writes an advice file on stdout; consulted only if the
+                              route leaves connections open, then the board is routed again
+                              with its advice (advisors/ has a reference one)
+          --advisor-timeout FLOAT:POSITIVE
+                              Seconds the advisor may take (default 120; not counted as routing
+                              work)
+          --advisor-rounds INT:INT in [1 - 8]
+                              Consult the advisor again with the advised run's result while
+                              connections are open (default 1)
+          --advisor-redact    Send net and part names to the advisor as aliases (N1, P3),
+                              without part values or library ids; the advice is mapped back
+          --advice-out TEXT   Where the advisor's advice is saved (default
+                              &lt;output&gt;.advice.json); route again with --advice FILE to repeat
+                              the run
+          --stuck-report TEXT Write the stuck report (what failed and why, JSON) of the run the
+                              advisor sees, or the final one
+          --emit-items TEXT   Write the new tracks and vias as JSON (for the KiCad plugin)
+          --widen-power       After routing: widen new tracks that are narrower than their net
+                              class width back up to it where there is room, and nets with a
+                              target (--widen-net, or a width the component rules computed)
+                              towards the target (doc 05 §39)
+          --widen-net TEXT ...
+                              With --widen-power: target width for nets as PATTERN=WIDTH_MM,
+                              e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)
+          --stitch-vias TEXT:{planes,return,all}
+                              After routing: add stitching vias. planes: vias of a plane's net
+                              on a grid where its fills overlap on two or more layers; return:
+                              a plane via near each via of the nets that need a reference plane
+                              (component rules, --stitch-return); all: both
+          --stitch-pitch FLOAT:POSITIVE
+                              Grid pitch of plane stitching vias, mm (default 5.08, the
+                              catalogue's value)
+          --stitch-distance FLOAT:POSITIVE
+                              Return-path stitching: largest distance from a signal via to its
+                              plane via, mm (default: the rule's, else 5.08)
+          --stitch-return TEXT ...
+                              Return-path stitching for nets as PATTERN=PLANE_NET, e.g.
+                              'USB_D*=GND' (repeatable). Return-path stitching from component
+                              rules is experimental
+          --pass-work INT:POSITIVE
+                              Work budget of each after-route pass, in exact checks (default
+                              2,000,000)
+</code></pre></div>
+<h3 id="tracemaker-report"><code>tracemaker report</code><a class="headerlink" href="#tracemaker-report" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Render the run report from a route summary (route --json, with the sections
+route --report adds)
+
+
+tracemaker report [OPTIONS] summary
+
+
+POSITIONALS:
+  summary TEXT:FILE REQUIRED  Summary file (JSON)
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+  -o,     --output TEXT REQUIRED
+                              Report file: HTML, or Markdown if it ends in .md
+</code></pre></div>
+<h3 id="tracemaker-escape"><code>tracemaker escape</code><a class="headerlink" href="#tracemaker-escape" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Escape feasibility of dense packages: pins that cannot leave their package under
+the board's rules
+
+
+tracemaker escape [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the analysis as JSON
+          --flow              Also plan deep BGA arrays by min-cost flow and report the
+                              channel/layer assignment per ring
+          --soft-zones        Zone fills do not block (as route --soft-zones): analyse what a
+                              refill would leave
+          --keep-vias-off-pads
+                              Vias keep clear of SMD pads narrower than --vias-off-pads-below
+                              (as route)
+          --vias-off-pads-below FLOAT
+                              Pad width (mm) below which --keep-vias-off-pads applies (default
+                              2)
+</code></pre></div>
+<h3 id="tracemaker-pairs"><code>tracemaker pairs</code><a class="headerlink" href="#tracemaker-pairs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Differential pairs of a routed board: coupled share, gap, intra-pair skew
+
+
+tracemaker pairs [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --pair TEXT ...     Also measure this pair (NET_A,NET_B), e.g. USB nets named DP/DM
+          --json TEXT         Write the measurements as JSON
+</code></pre></div>
+<h3 id="tracemaker-buses"><code>tracemaker buses</code><a class="headerlink" href="#tracemaker-buses" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Buses of a routed board: members routed, vias and layers per member, lengths and
+skew (exit 4 when a limit is missed)
+
+
+tracemaker buses [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --bus TEXT ...      A bus as NAME=PATTERN (repeatable), as in route
+          --buses             Also find buses in the net names, as in route
+          --bus-skew-mm FLOAT Skew limit of the --bus groups (0 = only the board's custom skew
+                              rules)
+          --json TEXT         Write the measurements as JSON
+</code></pre></div>
+<h3 id="tracemaker-return-paths"><code>tracemaker return-paths</code><a class="headerlink" href="#tracemaker-return-paths" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Reference-return audit of high-speed nets: copper under each trace on its
+reference layer, the detour round voids, layer changes without a stitch
+(read-only; doc 05 §42)
+
+
+tracemaker return-paths [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --nets TEXT ...     Nets to analyse, KiCad wildcards, comma separated (e.g.
+                              'DDR*,*CLK*')
+          --netclass TEXT ... Also the nets of these net classes
+          --diff-pairs        Also the nets that are halves of a differential pair (names
+                              ending in P/N or +/-)
+          --reference-layer TEXT ...
+                              PATTERN=LAYER: the reference layer of the nets that match,
+                              instead of the adjacent layer with the most copper under the
+                              trace (repeatable)
+          --stitch-radius-mm FLOAT:POSITIVE
+                              How far a stitching via or a capacitor may be from a layer change
+                              (default 5)
+          --warn-detour-mm FLOAT
+                              Warn when a net's return detours more than this (default 2)
+          --warn-separation-mm FLOAT
+                              Warn when the return gets farther than this from the trace
+                              (default 1)
+          --min-void-mm FLOAT Stretches without copper shorter than this are ignored (default
+                              0.1)
+          --sample-mm FLOAT:POSITIVE
+                              Spacing of the samples along a trace (default 0.05)
+          --refill            Refill every zone with the engine's refill instead of using the
+                              fills in the file
+          --no-refill         Do not refill zones that have no fill (they are then not
+                              reference copper)
+          --json TEXT         Write the report as JSON
+          --strict            Exit 4 when any net has a warning (a threshold or a missing
+                              stitch)
+          --view              Serve the board and the return paths to the live viewer (until
+                              interrupted)
+          --view-port INT     Viewer port (default 8766)
+          --view-host TEXT    Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1;
+                              another address needs a token)
+          --view-token TEXT   Token for a viewer other machines can reach (16+ characters;
+                              default a random one)
+          --view-insecure     A viewer other machines can reach, without a token
+</code></pre></div>
+<h3 id="tracemaker-footprint-check"><code>tracemaker footprint-check</code><a class="headerlink" href="#tracemaker-footprint-check" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Check every footprint against datasheet land patterns from a reference library
+of trusted brands: pad count, positions, sizes, drills, mirroring (read-only;
+doc 05 §43)
+
+
+tracemaker footprint-check [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --refs TEXT REQUIRED
+                              The reference library: a directory of JSON files (and a
+                              trusted_brands.txt) or one JSON file
+          --trusted-brands TEXT:FILE
+                              The trusted brand list, one `Brand | alias` per line (default:
+                              trusted_brands.txt beside the references)
+          --trust-all         Use the references of every brand (nobody vouched for them; the
+                              report says so)
+          --only TEXT ...     Check only these designators (KiCad wildcards, comma separated)
+          --require TEXT ...  Designators that must have a trusted reference; without one it is
+                              an error (e.g. 'U*,J*')
+          --mpn-field TEXT ...
+                              Footprint properties that hold the manufacturer part number,
+                              besides MPN, Manufacturer_Part_Number and the like
+          --position-tol-mm FLOAT:NONNEGATIVE
+                              Pad position tolerance (default 0.05; a reference may set its
+                              own)
+          --size-tol-mm FLOAT:NONNEGATIVE
+                              Pad size tolerance (default 0.05)
+          --drill-tol-mm FLOAT:NONNEGATIVE
+                              Drill size tolerance (default 0.05)
+          --all               Also list the footprints that are fine and those without a
+                              reference
+          --json TEXT         Write the report as JSON
+          --strict            Exit 4 on warnings too (a reference from an untrusted brand, a
+                              peg the datasheet does not show)
+          --view              Serve the board and the findings to the live viewer (until
+                              interrupted)
+          --view-port INT     Viewer port (default 8766)
+          --view-host TEXT    Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1;
+                              another address needs a token)
+          --view-token TEXT   Token for a viewer other machines can reach (16+ characters;
+                              default a random one)
+          --view-insecure     A viewer other machines can reach, without a token
+</code></pre></div>
+<h3 id="tracemaker-advice-check"><code>tracemaker advice-check</code><a class="headerlink" href="#tracemaker-advice-check" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Check an advice file (doc 17) against a board: the refusals `route --advice`
+would give, and what each hint does
+
+
+tracemaker advice-check [OPTIONS] board advice
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+  advice TEXT:FILE REQUIRED   Advice file (JSON)
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write what each hint became as JSON
+</code></pre></div>
+<h3 id="tracemaker-session"><code>tracemaker session</code><a class="headerlink" href="#tracemaker-session" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Serve a board session to an agent over MCP (stdin/stdout) or JSON lines: list
+open connections, route with hints, rip, undo, save (doc 19)
+
+
+tracemaker session [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --out TEXT          Where the `save` tool writes the board (without it `save` is
+                              refused; the agent cannot name a path)
+          --seed UINT [1]     Router seed of a route call that gives none
+          --work-limit INT [0]
+                              Search work (steps) of the whole session; 0 = none
+          --threads INT [4]   Portfolio threads of a route call with several variants (the
+                              result does not depend on it)
+          --log TEXT          Write every call, result digest and state digest here (JSON
+                              lines), to replay the session
+          --replay TEXT       Run the calls of this log again and check every digest instead of
+                              serving an agent
+          --jsonl             JSON lines ({"tool": NAME, "args": {...}} per line) instead of
+                              MCP
+          --gpu               Cost-to-go fields on the GPU (default: the CPU reference; same
+                              results)
+          --view              Stream the router's events to the browser viewer, so a person can
+                              watch the agent
+          --view-host TEXT    Viewer bind address (default $TM_VIEW_HOST, else 127.0.0.1;
+                              another address needs a token)
+          --view-port INT [8766]
+                              Viewer port
+          --view-token TEXT   Token for a viewer other machines can reach
+          --view-insecure     A viewer other machines can reach WITHOUT a token
+</code></pre></div>
+<h3 id="tracemaker-style"><code>tracemaker style</code><a class="headerlink" href="#tracemaker-style" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Style metric of a routed board: bends, acute angles, stair-steps, detours (doc
+05 §39)
+
+
+tracemaker style [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the metric as JSON
+          --connections       With --json: also one row per connection
+</code></pre></div>
+<h3 id="tracemaker-srj-import"><code>tracemaker srj-import</code><a class="headerlink" href="#tracemaker-srj-import" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Convert a Simple Route JSON problem (tscircuit) to a KiCad board with its
+project and rules
+
+
+tracemaker srj-import [OPTIONS] problem
+
+
+POSITIONALS:
+  problem TEXT:FILE REQUIRED  Simple Route JSON file
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+  -o,     --output TEXT REQUIRED
+                              Output .kicad_pcb (the .kicad_pro, and a .kicad_dru if needed,
+                              are written next to it)
+          --clearance-mm FLOAT:NONNEGATIVE
+                              Copper clearance (default: the problem's defaultObstacleMargin,
+                              else tscircuit's fallback of 0.15 mm)
+          --hole-to-hole-mm FLOAT:NONNEGATIVE
+                              Drill edge to drill edge clearance (default: the problem's
+                              via-hole / drill clearance fields, else no rule)
+          --unpointed-keepout Pads of a net that no connection point lies on become keep-outs
+                              (fan-out problems)
+          --outline-margin-mm FLOAT:NONNEGATIVE
+                              Grow the board outline by this on every side (breakout points on
+                              the bounds)
+          --json TEXT         Write the conversion summary (counts, rules used, warnings) as
+                              JSON
+</code></pre></div>
+<h3 id="tracemaker-srj-export"><code>tracemaker srj-export</code><a class="headerlink" href="#tracemaker-srj-export" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Write a routed board's copper as the `traces` of its Simple Route JSON problem
+
+
+tracemaker srj-export [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    Routed .kicad_pcb made by srj-import
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --problem TEXT:FILE REQUIRED
+                              The Simple Route JSON problem the board was imported from
+  -o,     --output TEXT REQUIRED
+                              Output Simple Route JSON (the problem plus traces)
+          --json TEXT         Write the export summary (routed and unrouted connections) as
+                              JSON
+</code></pre></div>
+<h3 id="tracemaker-tui"><code>tracemaker tui</code><a class="headerlink" href="#tracemaker-tui" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Choose the route options on a terminal screen, then run, print or save them
+
+
+tracemaker tui [OPTIONS] [board]
+
+
+POSITIONALS:
+  board TEXT                  Board file to route
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+  -o,     --output TEXT       Output .kicad_pcb
+          --config TEXT       Options file to start from (if it exists) and to save to
+</code></pre></div>
+<h2 id="tracemaker-place"><code>tracemaker-place</code><a class="headerlink" href="#tracemaker-place" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>TraceMaker placer: quadratic + SimPL global placement, legalisation and
+annealing
+
+
+tracemaker-place [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    Input .kicad_pcb
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+  -o,     --output TEXT REQUIRED
+                              Output .kicad_pcb
+          --mode TEXT:{full,refine,auto,routable,eco}
+                              full (place from scratch) or refine (improve the current
+                              placement)
+          --time FLOAT        Wall-time stop for the annealer, seconds (0 = none; budgets are
+                              in moves)
+          --seed UINT         Random seed
+          --threads INT       Threads for parallel annealing runs (0 = min(cores, 16))
+          --runs INT          Independent annealing runs (0 = one per thread)
+          --effort FLOAT      Annealing moves per run = effort x 4000 x movable parts
+          --alpha-cross-mm FLOAT
+                              Cost of one airwire crossing in mm of signal HPWL
+          --courtyard-clearance-mm FLOAT
+                              Override the courtyard clearance (default: rules, else 0.25 mm)
+          --move-connectors   Also move connectors that touch the board edge
+          --scratch           The input has no placement (parts piled or beside the board, as
+                              after importing a schematic): input positions of movable parts
+                              carry no intent and are never fallen back to
+          --repair-input      routable, eco and --route-check: an input placement with overlaps
+                              or parts off the board is replaced, as the baseline and fallback,
+                              by its minimal repair (only the conflicting parts moved to the
+                              nearest legal spot). Off by default: the placement model is
+                              stricter than KiCad's DRC
+          --no-decap-affinity Do not tie decoupling capacitors to their IC's supply pins
+          --component-rules TEXT:{off,report,soft,on}
+                              Component-aware layout rules (doc 15): off, report (detect and
+                              list only), soft (proximity pseudo-nets: crystal, ESD, regulator
+                              caps, generalised decoupling); default soft (D52)
+          --decap-weight INT:INT in [1 - 1000]
+                              Weight of each decoupling-capacitor tie (D25); a signal net
+                              weighs 10 (the default)
+          --crules-weight INT:INT in [1 - 1000]
+                              Scale of the component-rule proximity weights in percent (100 =
+                              as the rules say)
+          --crules-two-stage, --no-crules-two-stage{false}
+                              Full mode with component rules (default on): place with the
+                              decoupling ties first, lock those capacitors and their ICs, then
+                              refine with the component-rule pulls
+          --edge-attraction   With --component-rules soft/on: pull movable connectors (CONN-01,
+                              USB2-11, DISP-02) toward the nearest board edge (objective only;
+                              pin headers are not pulled)
+          --rules-override TEXT:FILE
+                              User override file for --component-rules (JSON, doc 15 §6.3):
+                              disable rules, assert/deny categories, set parameters
+          --json TEXT         Write the placement report as JSON
+  -v,     --verbose           Log the spreading iterations
+          --route-check INT   Route the input and the new placement with this work budget (A*
+                              expansions per variant) and keep the placement that routes more
+                              connections (0 = off)
+          --route-threads INT Router portfolio size for --route-check
+          --no-fallback       Full mode: keep the result even if some parts could not be placed
+          --debug-part TEXT   Print the legality map of one part and exit
+          --tempering         Parallel tempering over the annealing runs (replica exchange)
+                              instead of independent runs
+          --lns-rate FLOAT    Share of annealing steps that are large-neighbourhood (window
+                              rip-up and re-place) moves
+          --lns-window INT    Parts per LNS window (2..12)
+          --lns-polish INT    LNS windows run on the annealing result
+          --beta FLOAT        Routability weight: mm of signal HPWL per mm of RUDY overflow (0
+                              = off)
+          --flip              Side assignment (D48): movable surface-mount parts may move to
+                              the other side (KiCad-mirrored footprints); through-hole, locked
+                              and fixed parts never do
+          --flip-via-mm FLOAT With --flip: cost of one estimated via (a net's surface-mount pin
+                              on its minority side) in mm of signal HPWL
+          --flip-rate FLOAT   With --flip: share of annealing moves that are flips
+          --keep-side TEXT    With --flip: references that must stay on their side (comma
+                              separated)
+          --debug-flip TEXT   Write the input with these footprints (comma separated
+                              references, or 'all') flipped in place, KiCad style, and exit
+          --rounds INT        routable: re-placement rounds after the seeds
+          --eco-rounds INT    eco: commit rounds
+          --eco-candidates INT
+                              eco/routable: moves routed per round
+          --loop-beta FLOAT   routable/eco: routability weight in the loop
+          --final-work INT    routable/eco: route the winner and the input again with this
+                              budget; keep the winner only if not worse (default 4 x
+                              --route-check, 0 = off)
+          --record TEXT       routable: write the placement timelapse (JSONL: header, then one
+                              frame per stage)
+          --loop-time FLOAT   routable: wall-time stop in seconds; checked between seeds and
+                              routes, keeps the best placement so far (0 = none)
+</code></pre></div>
+<h2 id="tracemaker-view"><code>tracemaker-view</code><a class="headerlink" href="#tracemaker-view" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>TraceMaker live viewer server
+
+
+tracemaker-view [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    .kicad_pcb file to show
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --port INT:INT in [0 - 65535]
+                              TCP port (default 8766)
+          --host TEXT         bind address (default $TM_VIEW_HOST, else 127.0.0.1: this machine
+                              only; 0.0.0.0 or a LAN address lets other machines connect and
+                              then needs a token)
+          --token TEXT        token for a viewer other machines can reach (16+ characters;
+                              default a random one, printed in the URL)
+          --insecure          serve a viewer other machines can reach WITHOUT a token
+          --web TEXT          directory of the built viewer (default $TM_VIEW_DIR, else
+                              ../share/tracemaker/viewer beside the binary, else
+                              &lt;repo&gt;/viewer/dist)
+          --demo              stream synthetic routing events (tracks are cleared and re-routed
+                              in a loop)
+          --keep-tracks       with --demo: keep the board's existing tracks and vias
+          --replay TEXT:FILE  replay a recording made with `tracemaker route --record FILE`
+          --speed FLOAT:POSITIVE
+                              replay speed (1 = real time)
+          --loop              with --replay: start again after the end
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Reference">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Reference
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../13-viewer-protocol/" class="md-footer__link md-footer__link--next" aria-label="Next: Viewer protocol">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Viewer protocol
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      GPL-3.0-or-later
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

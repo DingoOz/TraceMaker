@@ -1,0 +1,28 @@
+var structtmk_1_1model_1_1Footprint =
+[
+    [ "allow_missing_courtyard", "structtmk_1_1model_1_1Footprint.html#ac64934d923a9eff55d939083862b018c", null ],
+    [ "angle", "structtmk_1_1model_1_1Footprint.html#aeec945c1ddbd795ad15ff0bce8b2aa1a", null ],
+    [ "attr_smd", "structtmk_1_1model_1_1Footprint.html#a54effd2a09ee43d3c6b55e91d2acbed0", null ],
+    [ "attr_through_hole", "structtmk_1_1model_1_1Footprint.html#a21c3741b6f1cbd960991afca459c1f9a", null ],
+    [ "back", "structtmk_1_1model_1_1Footprint.html#a54131cfbcea3d168fd4ec82aced6e494", null ],
+    [ "board_only", "structtmk_1_1model_1_1Footprint.html#a6c91ad0f8e3cd1216e24762c40b09c7b", null ],
+    [ "clearance", "structtmk_1_1model_1_1Footprint.html#a05a21f61cc324a65c31ad412ffb35034", null ],
+    [ "description", "structtmk_1_1model_1_1Footprint.html#a91782d0d2f70c643eea1485319f4dda2", null ],
+    [ "dnp", "structtmk_1_1model_1_1Footprint.html#a7cf0de5ed0e05ec63287de0815632330", null ],
+    [ "exclude_from_bom", "structtmk_1_1model_1_1Footprint.html#a8e25bcbf365deca51bfd580516ede127", null ],
+    [ "exclude_from_pos", "structtmk_1_1model_1_1Footprint.html#aaa0364ccd07ef4aa97729e865e9f50f8", null ],
+    [ "graphics", "structtmk_1_1model_1_1Footprint.html#a8b877ba795f2f5b456b6c33ac8a3492a", null ],
+    [ "keywords", "structtmk_1_1model_1_1Footprint.html#ad9c3de8d120e23c4fd31be443c86f643", null ],
+    [ "lib_id", "structtmk_1_1model_1_1Footprint.html#aa85520b51700c1755cffde14ef640333", null ],
+    [ "locked", "structtmk_1_1model_1_1Footprint.html#a93f33133441afb22e9830a6af5ef44f2", null ],
+    [ "mask_margin", "structtmk_1_1model_1_1Footprint.html#a4ad6f3542e76b2fb72d614da3726f3f4", null ],
+    [ "net_tie_groups", "structtmk_1_1model_1_1Footprint.html#a7bee4b3835de14573eaf95ea093520ab", null ],
+    [ "node", "structtmk_1_1model_1_1Footprint.html#ac617cbafd06a0a7e9c2bd655e60d4037", null ],
+    [ "pads", "structtmk_1_1model_1_1Footprint.html#a441ac6c2ff464c04c2c151b13fe24923", null ],
+    [ "pos", "structtmk_1_1model_1_1Footprint.html#a56f4f3cde28003c73d13a1673a483d4a", null ],
+    [ "properties", "structtmk_1_1model_1_1Footprint.html#a658a6f1a109ce56e33cc8ab4cd909517", null ],
+    [ "reference", "structtmk_1_1model_1_1Footprint.html#a7b1904ee3b501679bdad34e30b77964b", null ],
+    [ "uuid", "structtmk_1_1model_1_1Footprint.html#a5c03c164639b6229e23bca1fe396d049", null ],
+    [ "value", "structtmk_1_1model_1_1Footprint.html#ac6163acf0839659e9def09c1865422a7", null ],
+    [ "zone_connect", "structtmk_1_1model_1_1Footprint.html#a4f1e1197e704a4e05ae05069bcdb8083", null ]
+];

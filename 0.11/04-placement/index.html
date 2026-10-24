@@ -1,0 +1,4256 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An autorouter and component placer for KiCad">
+      
+      
+      
+        <link rel="canonical" href="https://dingooz.github.io/TraceMaker/0.11/04-placement/">
+      
+      
+        <link rel="prev" href="../03-data-structures/">
+      
+      
+        <link rel="next" href="../05-routing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Placement - TraceMaker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#04-component-placement" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TraceMaker" class="md-header__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TraceMaker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Placement
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../quick-start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quick start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../how-to/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  How-to guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../explanation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../project/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TraceMaker" class="md-nav__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    TraceMaker
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/first-board/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route your first board
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/kicad-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route from inside KiCad
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/build-and-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build and test
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/kicad-cli-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run kicad-cli from Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/run-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fetch boards and run benchmarks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Make a release
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write and publish the docs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-viewer-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer protocol
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../explanation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data structures and DRC
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-mathematically-optimal-can-honestly-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. What "mathematically optimal" can honestly mean
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-inputs-and-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Inputs and constraints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-quadratic-initial-placement-l1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (A) Quadratic initial placement — L1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-nonlinear-global-placement-electrostatic-eplace-replace-dreamplace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (B) Nonlinear global placement — electrostatic (ePlace / RePlAce / DREAMPlace)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-side-and-rotation-assignment-l3-per-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (C) Side and rotation assignment — L3 per part
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-legalisation-l2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (D) Legalisation — L2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-detailed-placement-simulated-annealing-and-large-neighbourhood-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (E) Detailed placement — simulated annealing and large-neighbourhood search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f-exact-windows-cp-sat-l3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (F) Exact windows — CP-SAT — L3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g-routability-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (G) Routability loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-eco-placement-during-routing-eco-mode-and-all-later-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ECO placement during routing (eco mode and all later routing)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-prior-art-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Prior art used
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-implementation-status-m7-first-version-2026-10-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Implementation status (M7, first version — 2026-10-02)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Implementation status (M7, first version — 2026-10-02)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-what-is-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 What is built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-optimality-levels-actually-reached" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Optimality levels actually reached
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-results-on-23-pcbench-boards-human-placement-unroutedkicad_pcb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Results on 23 PCBench boards (human placement = unrouted.kicad_pcb)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-limitations-and-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Limitations and next steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7x-router-in-the-loop-2026-10-02-evening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.x Router in the loop (2026-10-02, evening)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-implementation-status-m8-first-version-2026-10-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Implementation status (M8, first version — 2026-10-03)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Implementation status (M8, first version — 2026-10-03)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-what-is-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 What is built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-annealer-variants-placement-only-equal-move-budgets-23-boards-of-73-seed-1-4-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Annealer variants (placement only, equal move budgets, 23 boards of §7.3, seed 1, 4 threads)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-routability-results-23-boards-of-73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Routability results (23 boards of §7.3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83a-wall-time-stop-for-the-loop-2026-10-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3a Wall-time stop for the loop (2026-10-03)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83b-final-verification-route-2026-10-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3b Final verification route (2026-10-03)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-not-done-in-m8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Not done in M8
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-side-assignment-d48-2026-10-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Side assignment (D48, 2026-10-05)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-the-m8-gate-from-scratch-placement-on-held-out-boards-2026-10-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. The M8 gate: from-scratch placement on held-out boards (2026-10-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-failure-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Failure memory
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU acceleration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-kicad-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KiCad integration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live viewer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-placement-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement test plan
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-component-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component-aware rules
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-bga-breakout-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGA breakout
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-llm-advisor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-agent-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../project/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-next-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions and risks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-mathematically-optimal-can-honestly-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. What "mathematically optimal" can honestly mean
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-inputs-and-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Inputs and constraints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-quadratic-initial-placement-l1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (A) Quadratic initial placement — L1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-nonlinear-global-placement-electrostatic-eplace-replace-dreamplace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (B) Nonlinear global placement — electrostatic (ePlace / RePlAce / DREAMPlace)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-side-and-rotation-assignment-l3-per-part" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (C) Side and rotation assignment — L3 per part
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-legalisation-l2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (D) Legalisation — L2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-detailed-placement-simulated-annealing-and-large-neighbourhood-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (E) Detailed placement — simulated annealing and large-neighbourhood search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f-exact-windows-cp-sat-l3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (F) Exact windows — CP-SAT — L3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g-routability-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        (G) Routability loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-eco-placement-during-routing-eco-mode-and-all-later-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ECO placement during routing (eco mode and all later routing)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-prior-art-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Prior art used
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-implementation-status-m7-first-version-2026-10-02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Implementation status (M7, first version — 2026-10-02)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Implementation status (M7, first version — 2026-10-02)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-what-is-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 What is built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-optimality-levels-actually-reached" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Optimality levels actually reached
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-results-on-23-pcbench-boards-human-placement-unroutedkicad_pcb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Results on 23 PCBench boards (human placement = unrouted.kicad_pcb)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-limitations-and-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Limitations and next steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7x-router-in-the-loop-2026-10-02-evening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.x Router in the loop (2026-10-02, evening)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-implementation-status-m8-first-version-2026-10-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Implementation status (M8, first version — 2026-10-03)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Implementation status (M8, first version — 2026-10-03)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-what-is-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 What is built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-annealer-variants-placement-only-equal-move-budgets-23-boards-of-73-seed-1-4-threads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Annealer variants (placement only, equal move budgets, 23 boards of §7.3, seed 1, 4 threads)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-routability-results-23-boards-of-73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Routability results (23 boards of §7.3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83a-wall-time-stop-for-the-loop-2026-10-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3a Wall-time stop for the loop (2026-10-03)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83b-final-verification-route-2026-10-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3b Final verification route (2026-10-03)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-not-done-in-m8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Not done in M8
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-side-assignment-d48-2026-10-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Side assignment (D48, 2026-10-05)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-the-m8-gate-from-scratch-placement-on-held-out-boards-2026-10-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. The M8 gate: from-scratch placement on held-out boards (2026-10-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/DingoOz/TraceMaker/edit/main/docs/04-placement.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="04-component-placement">04 — Component placement<a class="headerlink" href="#04-component-placement" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/v0.11.0/PLAN.md"><code>../PLAN.md</code></a>.</p>
+</blockquote>
+<h2 id="1-what-mathematically-optimal-can-honestly-mean">1. What "mathematically optimal" can honestly mean<a class="headerlink" href="#1-what-mathematically-optimal-can-honestly-mean" title="Permanent link">&para;</a></h2>
+<p>Placement of rectangles to minimise wirelength without overlap is NP-hard (it contains bin packing and
+the quadratic assignment problem), so no tool can promise a <em>global</em> optimum for a real board in useful
+time. TraceMaker therefore makes four precise, checkable claims, and reports them per run:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Claim</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td><strong>Global optimum of the convex relaxation.</strong> The quadratic (B2B) wirelength problem without overlap constraints is strictly convex once one part is fixed, so its minimum is unique and found to tolerance.</td>
+<td>Sparse SPD solve (PCG)</td>
+</tr>
+<tr>
+<td>L2</td>
+<td><strong>Optimal for fixed topology.</strong> Given the left/right and above/below order of parts, minimum-displacement legalisation and minimum-wirelength compaction are linear programs and are solved to optimality.</td>
+<td>LP whose dual is min-cost flow</td>
+</tr>
+<tr>
+<td>L3</td>
+<td><strong>Exact optimum of discrete sub-problems</strong>: rotation of each part given its neighbours (enumerate 4 or 8 states), assignment of interchangeable parts to slots (Hungarian algorithm), side assignment for small clusters, and <strong>whole windows of up to ~15–25 parts</strong> with rotations (CP-SAT, proved optimal or gap reported).</td>
+<td>Enumeration, Hungarian, CP-SAT</td>
+</tr>
+<tr>
+<td>L4</td>
+<td><strong>Certified gap for the whole board.</strong> The L1 linear-wirelength lower bound (an LP with no overlap constraints) bounds every legal placement from below; the report shows <code>HPWL_final / LB</code>.</td>
+<td>LP / min-cost flow</td>
+</tr>
+</tbody>
+</table>
+<p>The report states, per run, which level each part of the placement reached, so "optimal" is never claimed
+beyond what was proved. (The L4 bound is weak on dense boards; it is still a true bound.)</p>
+<h2 id="2-inputs-and-constraints">2. Inputs and constraints<a class="headerlink" href="#2-inputs-and-constraints" title="Permanent link">&para;</a></h2>
+<p>Extracted from the KiCad project (doc 08):
+- <strong>Footprint geometry</strong>: courtyard polygons (<code>F.CrtYd</code>/<code>B.CrtYd</code>; fallback: pad + fab bounding box with
+  margin), pads per layer, through-hole flag (blocks both sides), 3D height if present (for keepouts).
+- <strong>Fixed objects</strong>: locked footprints, user-fixed groups, mounting holes, edge connectors (default),
+  board outline, cutouts, keepout rule areas with <code>footprints</code> disallowed.
+- <strong>Allowed states</strong> per footprint: sides (SMD both, THT top only by default), rotations (0/90/180/270
+  default; 45° steps opt-in; free angle opt-in), placement region (rule-area membership).
+- <strong>Courtyard clearance</strong> from the board's <code>courtyard_clearance</code> rule and custom rules.
+- <strong>Netlist weights</strong>: power/ground nets get low weight (they go to planes or pours); high-speed/diff-pair
+  nets get high weight; nets with &gt; 64 pins use a star/B2B model, never cliques.
+- <strong>Derived proximity groups</strong> (constraints the placer infers, user can override):
+  - <strong>decoupling capacitors</strong>: a two-terminal part whose nets are {power net, ground net} and which
+    shares that power net with an IC power pin → soft constraint "within <em>d</em> of that pin", with the
+    capacitor-to-pin assignment solved by the Hungarian algorithm (L3);
+    <em>built (2026-10-03, D25)</em>: each such capacitor is tied to the nearest IC pad on its supply in the input
+    placement by a two-pin pseudo-net at signal weight (objective only, not reported as wirelength); the
+    Hungarian assignment is not built;
+  - <strong>crystal/oscillator</strong> near its MCU pins; <strong>termination resistors</strong> near the driver or receiver
+    (by net topology); <strong>ESD/TVS</strong> near the connector pin.
+  - schematic <strong>hierarchical sheets</strong> and KiCad <strong>groups/rooms</strong> as cluster hints.</p>
+<h2 id="3-pipeline">3. Pipeline<a class="headerlink" href="#3-pipeline" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code> constraints ─▶ (A) quadratic init ─▶ (B) electrostatic global ─▶ (C) side + rotation assignment
+            ─▶ (D) legalisation (LP) ─▶ (E) detailed: SA / LNS (GPU, parallel tempering)
+            ─▶ (F) exact windows (CP-SAT) ─▶ (G) routability loop with the router ─▶ ECO during routing
+</code></pre></div>
+<h3 id="a-quadratic-initial-placement-l1">(A) Quadratic initial placement — L1<a class="headerlink" href="#a-quadratic-initial-placement-l1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Bound-to-bound (B2B) net model (Spindler, Kraftwerk2): for each net, connect each pin to the net's
+  extreme pins with weights <code>2 / ((p−1)·|x_i − x_j|)</code>; this reproduces HPWL exactly at the linearisation
+  point.</li>
+<li>Solve <code>L_x x = b_x</code> and <code>L_y y = b_y</code> (Laplacian with fixed pins on the right-hand side) with
+  Jacobi-preconditioned conjugate gradient (Eigen); re-linearise 5–10 times.</li>
+<li>Pins are offsets from part centres; the rotation is fixed at its current or default value here.</li>
+<li>Output is the unique global minimum of the relaxed problem: a good, deterministic starting point.</li>
+</ul>
+<h3 id="b-nonlinear-global-placement-electrostatic-eplace-replace-dreamplace">(B) Nonlinear global placement — electrostatic (ePlace / RePlAce / DREAMPlace)<a class="headerlink" href="#b-nonlinear-global-placement-electrostatic-eplace-replace-dreamplace" title="Permanent link">&para;</a></h3>
+<p>Objective: <code>min_x  W_WA(x; γ) + λ · D(x) + μ · R(x) + ν · P(x)</code></p>
+<ul>
+<li><code>W_WA</code>: weighted-average wirelength (smooth HPWL approximation with smoothing γ, annealed).</li>
+<li><code>D</code>: electrostatic density penalty. Parts are positive charges; the potential comes from solving
+  Poisson's equation on a bin grid with a DCT/DST (cuFFT on GPU, FFTW-style on CPU fallback).</li>
+<li><code>R</code>: routability term: RUDY demand over the copper supply per bin (supply = layers × tracks per bin
+  minus pad blockage), so congested bins push parts apart (cell inflation, as in RePlAce).</li>
+<li><code>P</code>: proximity springs for the derived groups (decoupling, crystals) and the user's soft constraints.</li>
+<li>Nesterov's method with Lipschitz step estimation <code>‖v_k − v_{k−1}‖ / ‖∇f_k − ∇f_{k−1}‖</code> plus backtracking,
+  and the diagonal preconditioner <code>(pin count + λ·area)</code> (ePlace); <code>λ</code> grows until the density overflow is
+  below 10%. WA wirelength per net and axis:
+  <code>WA_x = Σ x_i e^{x_i/γ} / Σ e^{x_i/γ} − Σ x_i e^{−x_i/γ} / Σ e^{−x_i/γ}</code>, γ annealed with overflow.</li>
+<li><strong>Net separation</strong> (NS-Place): a margin term that pushes airwires of different nets apart where they would
+  cross, which on PCBs reduces vias.</li>
+<li>Mixed-size by design: large ICs and connectors are just large charges.</li>
+<li><strong>Batched multi-start on GPU</strong>: the problem is small for a PCB (tens to a few thousand parts), so a single
+  run underuses a GPU. Run B = 32–256 placements at once with different seeds, net-weight perturbations and
+  rotation guesses in one batched kernel set (one bin grid per start). Keep the best K by a fast
+  estimate (HPWL + RUDY overflow + crossings) for the next stages.</li>
+</ul>
+<h3 id="c-side-and-rotation-assignment-l3-per-part">(C) Side and rotation assignment — L3 per part<a class="headerlink" href="#c-side-and-rotation-assignment-l3-per-part" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Rotation</strong>: coordinate descent. For each movable part, with all others fixed, enumerate all allowed
+  rotations and keep the one minimising the local cost (pin-to-target HPWL + airline crossings). Each
+  step is exactly optimal for that part; iterate to a fixed point (monotone, so it terminates).</li>
+<li><strong>Side</strong> (two-sided boards): minimum-cut style partition with area capacity per side: start with
+  FM (Fiduccia–Mattheyses) on the hypergraph where cutting a net costs a via estimate; exact by CP-SAT
+  when the movable part count is ≤ ~40. THT parts are pinned to the top.
+  <em>built (2026-10-05, D48)</em>: opt-in <code>--flip</code>; the side is chosen by the annealer's flip move with a via-estimate
+  cost, not by a partition (§9). THT parts keep their side (top or bottom).</li>
+</ul>
+<h3 id="d-legalisation-l2">(D) Legalisation — L2<a class="headerlink" href="#d-legalisation-l2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Choose a <strong>relative order</strong> for every overlapping or near pair from the global result (horizontal if
+   the x-overlap is smaller than the y-overlap, else vertical).</li>
+<li>Build horizontal and vertical <strong>constraint graphs</strong>: <code>x_j − x_i ≥ (w_i + w_j)/2 + clearance</code>.</li>
+<li>Solve <code>min Σ |x_i − x_i*|</code> (L1 displacement) subject to the graphs: an LP whose dual is a min-cost
+   flow → exactly optimal for that order.</li>
+<li>If the board outline makes it infeasible, relax the order for the parts in the infeasible cycle
+   (reported by the flow solver) and repeat.</li>
+<li>Non-rectangular courtyards and outlines: exact polygon check (Clipper2 Minkowski) after the LP;
+   residual overlaps are fixed by a Tetris/Abacus pass with polygon tests.</li>
+</ol>
+<h3 id="e-detailed-placement-simulated-annealing-and-large-neighbourhood-search">(E) Detailed placement — simulated annealing and large-neighbourhood search<a class="headerlink" href="#e-detailed-placement-simulated-annealing-and-large-neighbourhood-search" title="Permanent link">&para;</a></h3>
+<p>SA is the proven workhorse for PCB placement (TimberWolf, OpenROAD SA-PCB; see
+<a href="https://github.com/DingoOz/TraceMaker/blob/v0.11.0/pcb-routing-optimization.md"><code>../pcb-routing-optimization.md</code></a>). TraceMaker runs it <em>after</em> the analytic
+stages, so it refines rather than searches blindly.</p>
+<ul>
+<li><strong>Moves</strong>: shift (Gaussian, radius shrinks with temperature), swap two same-footprint parts, rotate,
+  flip side, move a whole cluster, "pull toward the median of the connected pins" (greedy, exact for HPWL
+  of one part in 1-D).</li>
+<li><strong>Cost</strong> (incremental, O(degree) per move): weighted HPWL + α·airline crossings per layer group +
+  β·RUDY overflow + γ·proximity-group violations + ∞ for overlap (moves are legal by construction:
+  checked in a per-side bit-packed occupancy grid at 50 µm, then exactly by polygon).</li>
+<li><strong>Airline crossings</strong> matter more on PCBs than on chips: every crossing on a 2-layer board costs a via
+  or a detour. Crossings of MST airwires are counted with a uniform-grid segment hash (doc 03), updated
+  incrementally per move.</li>
+<li><strong>Parallel tempering on GPU</strong>: R replicas at geometric temperatures per surviving start; replicas
+  exchange states (Metropolis criterion on the temperature swap). Each replica evaluates many
+  independent candidate moves in parallel and applies a non-conflicting subset (moves whose parts and
+  nets do not overlap) — deterministic because the subset is chosen by a fixed priority order.</li>
+<li><strong>LNS</strong>: periodically destroy a region (k parts in a window or along a congested cut) and repair it by
+  (F), keeping it if better.</li>
+<li>Alternative strategy: <strong>NSGA-II</strong> multi-objective GA (wirelength vs routability) as in the Cadence
+  Allegro X AI work; included as a portfolio arm, not the default.</li>
+</ul>
+<h3 id="f-exact-windows-cp-sat-l3">(F) Exact windows — CP-SAT — L3<a class="headerlink" href="#f-exact-windows-cp-sat-l3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Window of n ≤ ~20 parts (a decoupling cluster around an IC, a connector's support parts).</li>
+<li>Variables: integer position on a 50 µm (configurable) lattice, rotation literal, side literal;
+  <code>NoOverlap2D</code> with optional intervals per rotation; HPWL linearised with min/max auxiliaries; boundary
+  pins from the parts outside the window are fixed.</li>
+<li>Time-limited; the result is <strong>proved optimal</strong> or returned with its gap. Accepted only if the board
+  score improves (transaction).</li>
+</ul>
+<h3 id="g-routability-loop">(G) Routability loop<a class="headerlink" href="#g-routability-loop" title="Permanent link">&para;</a></h3>
+<p>In <code>full</code> mode, after placement:
+1. Run escape + global routing (fast, GPU) on the placement.
+2. Inflate parts in overflowed tiles by <code>(overflow / capacity)^k</code> (RePlAce) and add cut-capacity springs
+   for cuts proved over-full.
+3. Re-run (B)…(E) incrementally from the current placement with anchor springs (to keep the result
+   stable), at most 3–5 rounds or until overflow stops falling.
+4. Continue into detailed routing.</p>
+<h2 id="4-eco-placement-during-routing-eco-mode-and-all-later-routing">4. ECO placement during routing (<code>eco</code> mode and all later routing)<a class="headerlink" href="#4-eco-placement-during-routing-eco-mode-and-all-later-routing" title="Permanent link">&para;</a></h2>
+<p>When repair/last gasp proves a connection blocked (doc 05 §6 and doc 06 §3), it sends a
+<code>PlacementRequest { cut geometry, deficit (tracks), connections affected, parts adjacent to the cut }</code>.
+The ECO placer:
+1. generates candidate moves for unlocked parts adjacent to the cut: shift along the cut normal by
+   1…k track pitches, rotate 90/180°, swap with an equivalent part, move a passive to the other side,
+   change the decoupling-cap slot;
+2. ranks them by predicted capacity gain ÷ displacement (cheap geometric estimate), skipping moves recorded
+   as failed for this cut signature (failure memory);
+3. for the top N: opens a transaction, applies the move, legalises locally (D on the window), rips up the
+   nets touching the moved parts, reroutes them plus the blocked connection, scores;
+4. commits the best improving transaction, records the others as failures with their cause.</p>
+<p>The bandit in doc 06 learns which move types pay off on this board.</p>
+<h2 id="5-output">5. Output<a class="headerlink" href="#5-output" title="Permanent link">&para;</a></h2>
+<ul>
+<li>New positions, rotations and sides written to the <code>.kicad_pcb</code>: a moved part changes only its <code>at</code> and the
+  absolute angles of its pads and texts; a flipped part (§9, D48) is mirrored the way KiCad's own Flip does it
+  (local y, orientations, side-specific layers, text mirroring), which touches its child items too. Everything else
+  is preserved byte-for-byte.</li>
+<li>Placement report: per-level optimality claims, HPWL, lower bound and gap, crossings, overflow, moved
+  parts, constraint violations.</li>
+</ul>
+<h2 id="6-prior-art-used">6. Prior art used<a class="headerlink" href="#6-prior-art-used" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GORDIAN, Kraftwerk2 (B2B), SimPL</td>
+<td>Quadratic placement (A)</td>
+</tr>
+<tr>
+<td>ePlace, RePlAce, DREAMPlace (BSD-3)</td>
+<td>Electrostatic density, Nesterov, GPU FFT (B), cell inflation (G)</td>
+</tr>
+<tr>
+<td>Abacus, Tetris; constraint-graph compaction</td>
+<td>Legalisation (D)</td>
+</tr>
+<tr>
+<td>TimberWolf; OpenROAD SA-PCB (BSD-3, archived 2026)</td>
+<td>Annealing moves and schedule (E)</td>
+</tr>
+<tr>
+<td>Allegro X AI GA; Ngô 2024 MIT thesis</td>
+<td>NSGA-II portfolio arm (E)</td>
+</tr>
+<tr>
+<td><strong>NS-Place</strong> (ASP-DAC 2022): max-margin net separation, MILP legalisation; up to −50% vias, −79% DRVs</td>
+<td>Net-separation term in the detailed cost (E) and as a cross-check for the LP legaliser (D)</td>
+</tr>
+<tr>
+<td>ISPCBPlace (TCAD 2026): gradient placement on irregular boards with surface-layer routability</td>
+<td>Outline-aware density and surface-layer routability term (B)</td>
+</tr>
+<tr>
+<td>Xplace (BSD-3, ~3× per iteration vs DREAMPlace)</td>
+<td>Kernel design reference for (B)</td>
+</tr>
+<tr>
+<td>RL_PCB (Vassallo et al., DATE 2024)</td>
+<td>Benchmark boards and a learned-placement baseline</td>
+</tr>
+<tr>
+<td>Google OR-Tools CP-SAT (Apache-2.0)</td>
+<td>Exact windows (F), side assignment (C)</td>
+</tr>
+<tr>
+<td>Hungarian algorithm (Kuhn–Munkres)</td>
+<td>Slot assignment (C, decoupling caps)</td>
+</tr>
+<tr>
+<td>KiCadRoutingTools "placement quench / route-in-the-loop"</td>
+<td>Prior art for the routability loop (G)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-implementation-status-m7-first-version-2026-10-02">7. Implementation status (M7, first version — 2026-10-02)<a class="headerlink" href="#7-implementation-status-m7-first-version-2026-10-02" title="Permanent link">&para;</a></h2>
+<p>Code: <code>src/place/</code> (library <code>tm_place</code>, executable <code>tracemaker-place</code>, tests <code>tm_place_tests</code>, evaluation script
+<code>src/place/eval_place.py</code>). No GPU code yet; everything below runs on the CPU and is deterministic for a given
+seed, independent of the thread count (budgets are counted in moves; <code>--time</code> is only a safety stop).</p>
+<div class="highlight"><pre><span></span><code>tracemaker-place in.kicad_pcb -o out.kicad_pcb [--mode full|refine] [--seed N] [--threads N] [--runs N]
+                 [--effort E] [--time S] [--alpha-cross-mm A] [--courtyard-clearance-mm C] [--move-connectors]
+                 [--json report.json] [-v]
+src/place/eval_place.py --route --truth --jobs 12 &lt;PCBench board names&gt;   # the table below
+</code></pre></div>
+<h3 id="71-what-is-built">7.1 What is built<a class="headerlink" href="#71-what-is-built" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>File</th>
+<th>As built</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem</td>
+<td><code>problem.cpp</code></td>
+<td>Parts with courtyards per side (convex hull of the <code>F/B.CrtYd</code> graphics; no courtyard → pad box + 0.25 mm, or one box per pad for sparse footprints), through obstacles (PTH pad copper and holes, both sides), copper shapes with layers, net and required clearance (net class, local overrides, board minimum, 2 × solder-mask expansion so masks cannot bridge; with custom clearance rules their largest minimum, conservatively), pins per rotation, net weights (power-like names or &gt; 30 pins: 0.1, else 1), outline = largest Edge.Cuts loop containing ≥ 80 % of the pads within the Edge.Cuts extents (gap tolerance up to 0.5 mm, else the Edge.Cuts bounding box), cut-outs, footprint keepouts, fixed board copper (tracks, vias, copper graphics and text).</td>
+</tr>
+<tr>
+<td>Fixed parts</td>
+<td><code>problem.cpp</code></td>
+<td>locked, <code>board_only</code>, no pads, <code>REF**</code>, single-pad footprints (vias, test points, fiducials), mounting holes (<code>H*</code>/<code>MH*</code> without nets, <code>MountingHole</code> libs), footprints owning Edge.Cuts or keepouts, footprints touching routed copper, connectors (<code>J*</code>, <code>P&lt;n&gt;</code>, <code>CN*</code>, <code>USB*</code>) within 2 mm of the edge (<code>--move-connectors</code> frees them), and parts that already overhang the outline in the input. Parts entirely clear of the outline's bounding box stay movable: KiCad drops new footprints beside the board. Pads outside the Edge.Cuts extents do not count toward outline selection (D74).</td>
+</tr>
+<tr>
+<td>(A)</td>
+<td><code>global.cpp</code></td>
+<td>B2B quadratic placement, Eigen CG with Jacobi preconditioner, 10 re-linearisations from the board centre, weak (1e-4) pull to the centre for strict convexity.</td>
+</tr>
+<tr>
+<td>(B)</td>
+<td><code>global.cpp</code></td>
+<td>SimPL: lower-bound solve ↔ rough legalisation, anchor pseudo-nets of weight 0.1·k × the part's own net weight, until the bin overflow of the lower-bound placement is ≤ 10 % (≤ 40 iterations). Rough legalisation is recursive bisection over a capacity grid (free area per bin after the outline, keepouts and fixed parts), cutting parts at their area median and the region where its capacity is in the same proportion. <strong>Why SimPL, not electrostatics:</strong> boards have tens to a few hundred parts, so the per-iteration cost is negligible either way; SimPL needs no step-size control or γ annealing, reuses the B2B solver of (A), is deterministic, and its rough legaliser handles irregular outlines and fixed blockages through the capacity grid. The electrostatic method remains the plan for the GPU multi-start version.</td>
+</tr>
+<tr>
+<td>(C)</td>
+<td><code>global.cpp</code></td>
+<td>Rotation coordinate descent (4 states per part, about the body centre, strict improvement only, so it terminates).</td>
+</tr>
+<tr>
+<td>(D)</td>
+<td><code>legalize.cpp</code></td>
+<td>Largest-extent-first greedy: each part to the nearest legal lattice point (rings: 50–100 µm steps within 3 mm, 0.25 mm within 15 mm, 1 mm beyond), own rotation first. Fast path: conservative per-side occupancy raster (0.05 mm, 0.1 mm on large boards) with summed-area tables; every candidate is then confirmed by the exact test. Rip-up-and-re-place when a part finds no spot (evicts the least total area of movable parts), look-ahead for big parts (≥ 2 % of the board: refuse spots that leave another waiting big part no free spot), and retries with earlier failures first. In refine mode only parts that are illegal in the input move, at most 5 mm, and fall back to their (reserved) input spot.</td>
+</tr>
+<tr>
+<td>(E)</td>
+<td><code>anneal.cpp</code></td>
+<td>Simulated annealing, every move checked exactly before it is applied (state always legal). Moves: shift (radius adapted to 44 % acceptance), weighted-median pull, rotate, swap same footprint, swap nearby parts. Integer cost = Σ w·HPWL + α·(crossings of MST airwires of different signal nets), α = 2 mm; crossings counted incrementally against a segment grid. <code>runs</code> independent runs (default one per thread, ≤ 16) with different Philox streams; best kept, ties to the lowest run. Budget: <code>effort × 4000 × movable parts</code> moves per run (effort 4 by default).</td>
+</tr>
+<tr>
+<td>Bound</td>
+<td><code>lower_bound.cpp</code></td>
+<td>Exact LP lower bound of weighted HPWL (no overlap/outline constraints) via its min-cost-flow dual, integer costs, successive shortest paths. Two variants: input rotations, and "any rotation" (each pin takes its most favourable offset over the four rotations, per axis), which bounds every placement <code>tracemaker-place</code> can output.</td>
+</tr>
+<tr>
+<td>Legality</td>
+<td><code>legality.cpp</code></td>
+<td>Exact integer tests (geom::Shape): courtyard vs courtyard with the courtyard clearance; through obstacles vs courtyards on both sides (0.1 mm) and each other (0.25 mm); copper vs copper of other parts and fixed copper (shared layer, different nets, max of both clearances); courtyards shrunk by 0.25 mm inside the outline and out of cut-outs; pads inside with the copper-to-edge clearance; courtyards out of footprint keepouts.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Courtyard clearance.</strong> <code>full</code> uses the board's <code>courtyard_clearance</code> rule if present (custom rule or
+<code>.kicad_pro</code>), else 0.25 mm; if some parts still cannot be placed it retries with KiCad's default (0), then keeps the
+parts that found no position at their input positions (as fixed) and places the rest around them, and as a last
+resort writes the <code>refine</code> result (all reported in <code>notes</code>). <code>refine</code> uses the rule or KiCad's default 0, so the
+spacing a designer chose is never declared illegal. <em>This deviates from the single 0.25 mm default in the M7 brief;
+it needs a row in doc 12.</em></p>
+<p><strong>Not implemented:</strong> side flipping (parts keep their side; added 2026-10-05 as opt-in <code>--flip</code>, §9), the LP legaliser (L2),
+CP-SAT windows and Hungarian slot assignment (L3 beyond single-part rotation), decoupling/crystal proximity
+groups, GPU kernels. (RUDY, the routability loop (G), parallel tempering, LNS, exact windows and ECO were added in
+M8: §8.)</p>
+<h3 id="72-optimality-levels-actually-reached">7.2 Optimality levels actually reached<a class="headerlink" href="#72-optimality-levels-actually-reached" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>Computed but <strong>not a bound</strong>: the reported "L1 quadratic" value is the HPWL of the B2B optimum, i.e. the exact (CG-tolerance) minimum of a quadratic model linearised at the previous iterate. It approximates the relaxed HPWL optimum from above. The exact relaxed optimum is the L4 number with input rotations.</td>
+</tr>
+<tr>
+<td>L2</td>
+<td><strong>Not reached.</strong> Legalisation is greedy minimum-displacement per part, not the LP over a fixed order.</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>Only single-part rotation: after (C) each part's rotation is the exact HPWL optimum given its neighbours (full mode). The annealer moves on from that state, so the final placement carries no L3 claim.</td>
+</tr>
+<tr>
+<td>L4</td>
+<td><strong>Reached.</strong> <code>lb_any_rotation</code> is an exact LP optimum (integer min-cost flow) and a true lower bound on the weighted HPWL of every placement with the same fixed parts and sides. The report gives <code>HPWL_final / LB</code>. The bound is weak (median <code>HPWL_final / LB</code> 4.2 full, 4.8 refine on the boards below; ~0 on boards with few fixed parts, where everything may collapse to a point); it is still a true bound.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-results-on-23-pcbench-boards-human-placement-unroutedkicad_pcb">7.3 Results on 23 PCBench boards (human placement = <code>unrouted.kicad_pcb</code>)<a class="headerlink" href="#73-results-on-23-pcbench-boards-human-placement-unroutedkicad_pcb" title="Permanent link">&para;</a></h3>
+<p>Seed 1, defaults (effort 4, 8 threads per board), machine shared with other jobs. HPWL is unweighted Σ HPWL in mm
+over all nets with pins on ≥ 2 parts. "New DRC errors" = KiCad 10 <code>kicad-cli pcb drc</code> errors of type
+courtyards_overlap, pth/npth_inside_courtyard, copper_edge_clearance (count increase) plus any other
+inter-footprint error (clearance, shorting_items, solder_mask_bridge, …) whose item pair is not in the human
+board's report. Routing: <code>tracemaker route --time 60 --threads 4</code> (engine build of 2026-10-02 13:22), routed /
+connections. Every output re-reads with <code>tracemaker inspect</code>, and the KiCad round trip (<code>kicad_truth.py</code> vs
+<code>inspect --json</code>) matches on 17 boards; the other 6 show exactly the same differences as the unmodified human
+board (pre-existing reader issues: unnamed NPTH pad numbers, <code>~{…}</code> escaped references), so nothing is
+introduced by placement.</p>
+<p>¹ clearance fell back to 0 · ² some parts kept at their input positions · ³ refine result written</p>
+<table>
+<thead>
+<tr>
+<th>Board</th>
+<th style="text-align: right;">movable (full)</th>
+<th style="text-align: right;">HPWL human</th>
+<th style="text-align: right;">HPWL full</th>
+<th style="text-align: right;">HPWL refine</th>
+<th style="text-align: right;">LB (any rot.)</th>
+<th>crossings h / f / r</th>
+<th>new courtyard/edge/copper DRC errors f / r</th>
+<th>routed human</th>
+<th>routed full</th>
+<th>routed refine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1Bitsy_1bitsy</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">813</td>
+<td style="text-align: right;">852 ²</td>
+<td style="text-align: right;">801</td>
+<td style="text-align: right;">673</td>
+<td>130 / 127 / 113</td>
+<td>0 / 0</td>
+<td>149/160</td>
+<td>149/160</td>
+<td>148/160</td>
+</tr>
+<tr>
+<td>AzizLight_AzizLight</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">463</td>
+<td style="text-align: right;">427</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">5</td>
+<td>8 / 0 / 2</td>
+<td>0 / 0</td>
+<td>102/102</td>
+<td>102/102</td>
+<td>102/102</td>
+</tr>
+<tr>
+<td>ChirpHardware_chirp</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">629</td>
+<td style="text-align: right;">370</td>
+<td style="text-align: right;">395</td>
+<td style="text-align: right;">68</td>
+<td>32 / 7 / 3</td>
+<td>0 / 0</td>
+<td>96/97</td>
+<td>97/97</td>
+<td>92/97</td>
+</tr>
+<tr>
+<td>ESP_nRF_Relay_Relay_WiFi_nRF24</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">642</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">297</td>
+<td style="text-align: right;">68</td>
+<td>18 / 4 / 5</td>
+<td>0 / 0</td>
+<td>36/36</td>
+<td>34/36</td>
+<td>34/36</td>
+</tr>
+<tr>
+<td>Hardware_Playground_Touch_Switch_2ch_PCB</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">523</td>
+<td style="text-align: right;">487</td>
+<td style="text-align: right;">261</td>
+<td>29 / 18 / 13</td>
+<td>0 / 0</td>
+<td>107/116</td>
+<td>101/116</td>
+<td>98/116</td>
+</tr>
+<tr>
+<td>IGN01A_IGN01A</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">533</td>
+<td style="text-align: right;">206</td>
+<td style="text-align: right;">220</td>
+<td style="text-align: right;">0</td>
+<td>5 / 0 / 0</td>
+<td>0 / 0</td>
+<td>67/67</td>
+<td>67/67</td>
+<td>67/67</td>
+</tr>
+<tr>
+<td>LadybugLiteBlue_HW_LadybugBlueLite</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">663</td>
+<td style="text-align: right;">548</td>
+<td style="text-align: right;">468</td>
+<td style="text-align: right;">28</td>
+<td>9 / 3 / 1</td>
+<td>0 / 0</td>
+<td>140/140</td>
+<td>140/140</td>
+<td>140/140</td>
+</tr>
+<tr>
+<td>Microdox-PCB_Microdox</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">2788</td>
+<td style="text-align: right;">1353</td>
+<td style="text-align: right;">1839</td>
+<td style="text-align: right;">75</td>
+<td>87 / 26 / 36</td>
+<td>0 / 0</td>
+<td>223/223</td>
+<td>223/223</td>
+<td>223/223</td>
+</tr>
+<tr>
+<td>PiPlay_SDHat</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">444</td>
+<td style="text-align: right;">530</td>
+<td style="text-align: right;">365</td>
+<td style="text-align: right;">36</td>
+<td>20 / 13 / 7</td>
+<td>0 / 0</td>
+<td>57/57</td>
+<td>57/57</td>
+<td>57/57</td>
+</tr>
+<tr>
+<td>RX5808_rx5808_4button</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">774</td>
+<td style="text-align: right;">640</td>
+<td style="text-align: right;">542</td>
+<td style="text-align: right;">65</td>
+<td>65 / 15 / 24</td>
+<td>0 / 0</td>
+<td>126/126</td>
+<td>125/125</td>
+<td>123/123</td>
+</tr>
+<tr>
+<td>Solare-BQ24210_Solare-BQ24210</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">40</td>
+<td>0 / 0 / 0</td>
+<td>0 / 0</td>
+<td>28/28</td>
+<td>28/28</td>
+<td>28/28</td>
+</tr>
+<tr>
+<td>a123-battery-integration_BCM</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">1194</td>
+<td style="text-align: right;">839</td>
+<td style="text-align: right;">811</td>
+<td style="text-align: right;">114</td>
+<td>29 / 11 / 11</td>
+<td>0 / 0</td>
+<td>159/162</td>
+<td>157/162</td>
+<td>155/162</td>
+</tr>
+<tr>
+<td>beast-phat_beast-phat</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">260</td>
+<td style="text-align: right;">195</td>
+<td style="text-align: right;">201</td>
+<td style="text-align: right;">54</td>
+<td>0 / 0 / 0</td>
+<td>0 / 0</td>
+<td>42/42</td>
+<td>42/42</td>
+<td>42/42</td>
+</tr>
+<tr>
+<td>bullion_bullion</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">421</td>
+<td style="text-align: right;">291</td>
+<td style="text-align: right;">266</td>
+<td style="text-align: right;">25</td>
+<td>6 / 2 / 6</td>
+<td>0 / 0</td>
+<td>23/46</td>
+<td>24/46</td>
+<td>24/46</td>
+</tr>
+<tr>
+<td>domotics_out-board</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">658</td>
+<td style="text-align: right;">378</td>
+<td style="text-align: right;">428</td>
+<td style="text-align: right;">12</td>
+<td>6 / 0 / 0</td>
+<td>0 / 0</td>
+<td>42/50</td>
+<td>44/50</td>
+<td>41/50</td>
+</tr>
+<tr>
+<td>esp32stack_esp32stack</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">1040</td>
+<td style="text-align: right;">792</td>
+<td style="text-align: right;">780</td>
+<td style="text-align: right;">462</td>
+<td>24 / 5 / 4</td>
+<td>0 / 0</td>
+<td>92/95</td>
+<td>94/95</td>
+<td>94/95</td>
+</tr>
+<tr>
+<td>jadonk_PocketBone</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">1229</td>
+<td style="text-align: right;">1129 ²</td>
+<td style="text-align: right;">1059</td>
+<td style="text-align: right;">326</td>
+<td>124 / 48 / 43</td>
+<td>0 / 0</td>
+<td>202/202</td>
+<td>202/202</td>
+<td>202/202</td>
+</tr>
+<tr>
+<td>kitspace_hbridge_driver</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">455</td>
+<td style="text-align: right;">449</td>
+<td style="text-align: right;">388</td>
+<td style="text-align: right;">79</td>
+<td>3 / 0 / 0</td>
+<td>0 / 0</td>
+<td>61/61</td>
+<td>61/61</td>
+<td>61/61</td>
+</tr>
+<tr>
+<td>kitspace_training_board_v02</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">1170</td>
+<td style="text-align: right;">737</td>
+<td style="text-align: right;">713</td>
+<td style="text-align: right;">21</td>
+<td>56 / 5 / 11</td>
+<td>0 / 0</td>
+<td>129/129</td>
+<td>129/129</td>
+<td>129/129</td>
+</tr>
+<tr>
+<td>nanoTracer_nanoTracer</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">1301</td>
+<td style="text-align: right;">994</td>
+<td style="text-align: right;">886</td>
+<td style="text-align: right;">8</td>
+<td>22 / 11 / 7</td>
+<td>0 / 0</td>
+<td>112/112</td>
+<td>106/112</td>
+<td>108/112</td>
+</tr>
+<tr>
+<td>phone_amp_phone_amp</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">412</td>
+<td style="text-align: right;">411 ³</td>
+<td style="text-align: right;">384</td>
+<td style="text-align: right;">288</td>
+<td>34 / 30 / 21</td>
+<td>4 / 1</td>
+<td>73/88</td>
+<td>71/88</td>
+<td>73/88</td>
+</tr>
+<tr>
+<td>scimpy_volumebuffer</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">590</td>
+<td style="text-align: right;">565</td>
+<td style="text-align: right;">553</td>
+<td style="text-align: right;">46</td>
+<td>33 / 11 / 13</td>
+<td>0 / 0</td>
+<td>67/67</td>
+<td>67/67</td>
+<td>67/67</td>
+</tr>
+<tr>
+<td>uC3Moy_uC3Moy</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">329</td>
+<td style="text-align: right;">329 ²</td>
+<td style="text-align: right;">302</td>
+<td style="text-align: right;">103</td>
+<td>2 / 0 / 0</td>
+<td>0 / 0</td>
+<td>41/41</td>
+<td>38/41</td>
+<td>41/41</td>
+</tr>
+</tbody>
+</table>
+<p>Totals: HPWL human 17 464 mm, full 12 930 mm (median ratio 0.83), refine 12 603 mm (0.74); airwire crossings
+fall on almost every board. <strong>No new courtyard, edge, clearance, short or mask-bridge errors on any board</strong>
+(silkscreen warnings do increase: reference text is not moved or checked). Routability did <strong>not</strong> improve:
+routed connections human 2174/2247 (15 boards complete), full 2158/2246 (13), refine 2149/2244 (13). Lower HPWL
+from denser packing does not buy routability with this router; the routability terms and loop (B <code>R(x)</code>, G) are
+needed before placement can be expected to help routing. Run time per board 1–30 s (placement only).</p>
+<p>Earlier iterations, kept here because they shaped the design: courtyard-only checks introduced shorts, clearance
+and mask-bridge errors (pads outside courtyards, 2.5 mm high-voltage net classes, copper text), which led to the
+copper model; footprints without courtyards (shield headers, BGAs) and broken outlines (gaps up to 0.5 mm, a
+mounting-hole circle as the only loop) led to the fallbacks above.</p>
+<h3 id="74-limitations-and-next-steps">7.4 Limitations and next steps<a class="headerlink" href="#74-limitations-and-next-steps" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Routability: add RUDY/crossing density to (B) and the router-in-the-loop (G); compare with routed completion,
+  not HPWL.</li>
+<li>Full mode from scratch is weaker than refine (lower HPWL than refine on 5 of 23 boards; below the human HPWL on 21 of 23, refine on 23 of 23); the annealer is far from
+  converged at effort 4 (effort 16 lowers HPWL another 5–10 %). Parallel tempering / GPU multi-start (doc 07).</li>
+<li>Courtyards are convex hulls (conservative for L-shaped courtyards); no 45° or free rotations; no flipping (opt-in
+  since 2026-10-05, §9).</li>
+<li>Custom clearance rules are applied as a global maximum, not per condition.</li>
+<li>Zone fills are ignored (they are refilled after placement); silkscreen is ignored.</li>
+<li>Proximity constraints (decoupling caps, crystals) are not modelled: power-only parts can drift away from
+  their IC.</li>
+</ul>
+<h3 id="7x-router-in-the-loop-2026-10-02-evening">7.x Router in the loop (2026-10-02, evening)<a class="headerlink" href="#7x-router-in-the-loop-2026-10-02-evening" title="Permanent link">&para;</a></h3>
+<p><code>--route-check N</code> routes the input and the new placement with the same deterministic budget and keeps the input
+when the new placement leaves more connections unrouted. <code>--mode auto</code> runs refine and full this way and keeps the
+fewest unrouted, then the shortest wirelength. On the 23 evaluation boards at N = 3M expansions it kept a new
+placement on 18 boards, total HPWL fell from 17,464 mm to 13,190 mm, and unrouted connections fell from 61 to 59;
+no board got worse (<code>bench/place_auto.py</code>).</p>
+<p><strong>An illegal input can be compared as its minimal repair</strong> (<code>--repair-input</code>, 2026-10-06, D75; opt-in since 2026-10-07).</p>
+<p><strong>Before.</strong> A routable run on a private 4-layer sensor board kept an input with three overlaps plus one ECO
+move and reported it as "legal": only conflicts involving moved parts counted. KiCad's DRC found courtyard
+overlaps and two shorts.</p>
+<p><strong>What was built.</strong> <code>place::repaired</code> uses refine's legaliser to re-place only conflicting movable parts at the
+nearest legal spot. Other parts stay put. Conflicts are overlaps or outline violations involving a movable
+part, judged with the board's courtyard rule (else 0).</p>
+<p>All of this runs only with <code>--repair-input</code>. Without the flag the input is the baseline and the fallback as it
+is, a seed may keep the input's conflicts as long as it adds none, and the report names the conflicts
+("input not legal: … compared as it is"). The reason is in the results below: the model is stricter than KiCad.</p>
+<ul>
+<li><code>--route-check</code> (refine, full, auto): compare with the repair and write it if the new placement leaves more
+  connections unrouted.</li>
+<li><code>routable</code>: use the repair as the first seed ("input repaired (N part(s) moved)") and the final verification
+  baseline. Other seeds must have no conflicts, including those already present in the input.</li>
+<li><code>eco</code>: start from the repair.</li>
+</ul>
+<p>If repair fails, compare the input as it is: convex-hull courtyards and through-hole margins are conservative.
+The input can then seed re-placement and ECO rounds. Reports name any remaining conflicts separately from
+illegal moves ("legal moves, N conflict(s) of the input remain").</p>
+<p><strong>Results.</strong> The model finds conflicts in 14 of the 30 PCBench tier-A hand placements. Some are clean in KiCad
+(threeboard: U1 against fixed copper; esp-com: pads near the edge); others have KiCad courtyard overlaps
+(Hangul 2, phone_rtty 8). LogicBoxen has 7 model conflicts and none in KiCad's DRC. Minimal repair preserves
+the rest of each hand layout.</p>
+<p><strong>Why it is opt-in.</strong> The repair replaces the input without ever being compared with it, so nothing shows that
+the result is better than what the user drew (CLAUDE.md rule 4). On kitspace_threeboard, which KiCad's DRC
+accepts, <code>--mode eco --repair-input</code> reports one model conflict (U1 against fixed copper), moves U1 by 0.25 mm
+in x and y and keeps "input repaired"; without the flag U1 stays and the output is the same as before D75. Where
+the repair fails (LogicBoxen, esp-com, phone_rtty) the input is kept either way. From scratch (<code>--scratch</code>) the
+flag has no effect: a pile is not a placement to repair.</p>
+<h2 id="8-implementation-status-m8-first-version-2026-10-03">8. Implementation status (M8, first version — 2026-10-03)<a class="headerlink" href="#8-implementation-status-m8-first-version-2026-10-03" title="Permanent link">&para;</a></h2>
+<p>Code: <code>src/place/congestion.*</code> (RUDY map), <code>anneal_state.hpp</code> + <code>anneal.cpp</code> (incremental state), <code>tempering.cpp</code>
+(parallel tempering), <code>lns.cpp</code> (LNS and exact windows), <code>routable.*</code> (routability loop and ECO), <code>place_main.cpp</code>
+(modes). All CPU, deterministic for a seed at any thread count; no GPU code (the doc 07 GPU version of (E) remains
+open). Evaluation scripts: <code>bench/place_variants.py</code> (annealer variants, placement only), <code>bench/place_m8.py</code>
+(auto / routable / eco / full+eco with routing and KiCad DRC).</p>
+<div class="highlight"><pre><span></span><code>tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode routable --route-check 3000000 --route-threads 4 [--rounds 3]
+                 [--eco-candidates 4] [--loop-beta 1.0]
+tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode eco --route-check 3000000 [--eco-rounds 4] [--eco-candidates 5]
+tracemaker-place ... [--tempering] [--lns-rate R] [--lns-window K] [--lns-polish N] [--beta B]   # any mode
+</code></pre></div>
+<h3 id="81-what-is-built">8.1 What is built<a class="headerlink" href="#81-what-is-built" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>File</th>
+<th>As built</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(E) routability term</td>
+<td><code>congestion.cpp</code></td>
+<td>RUDY (Spindler &amp; Johannes, DATE 2007) over a grid of ≤ 32 bins on the longer side (≥ 1 mm): each signal net spreads its HPWL uniformly over its pin box (widened to one bin), every pin consumes 0.5 track across its bin; capacity = layers × bin²/0.5 mm × 0.6 × fraction inside the outline. Cost β·Σ max(0, demand − capacity), integer nm; kept incrementally by the annealer (only bins of the moved nets and pins change) and checked against the from-scratch reference in a test. Power nets are excluded.</td>
+</tr>
+<tr>
+<td>(E) parallel tempering</td>
+<td><code>tempering.cpp</code></td>
+<td><code>runs</code> replicas; geometric ladder that follows the annealing schedule (annealed replica exchange): refine 16× → 1× the annealing temperature, full √8× → 1/√8×. Sweeps of moves/200 (500–20 000) moves run in parallel; exchanges of neighbouring slots (even/odd alternation) are decided at a <code>std::barrier</code> from their own Philox stream; a slot keeps its tuned shift radius. Byte-identical boards for 1, 3 and 16 threads (test).</td>
+</tr>
+<tr>
+<td>(E) LNS</td>
+<td><code>lns.cpp</code></td>
+<td>Window = the k (2…<code>--lns-window</code>) movable parts nearest a seed part (or a focus part from the router). Windows ≤ 4 parts are solved exactly (below); larger ones greedily: largest part first, each to its cheapest legal candidate (own spot, any window part's spot, HPWL-median spot, a 5 × 5 lattice of 0.5 mm around it; four rotations). Kept only if the total cost strictly falls; LNS steps run only in the last 30 % of an annealing budget.</td>
+</tr>
+<tr>
+<td>(F) exact windows</td>
+<td><code>lns.cpp</code></td>
+<td>Branch and bound instead of CP-SAT (OR-Tools is not installed): candidates per part = own spot, the other window parts' spots, the HPWL-median spot, four rotations each; bound = Σ w·HPWL of the pins already fixed or assigned − the largest possible fall of the crossing and overflow terms. Exact over that candidate set (not over the continuous plane); a full-enumeration reference path gives identical optima (test). Leaf cap 200 000 standalone, 4 000 inside annealing (then not proven).</td>
+</tr>
+<tr>
+<td>(G) routability loop</td>
+<td><code>routable.cpp</code></td>
+<td>Seeds: input, refine, refine+RUDY, full, full+RUDY (the plain seeds are exactly <code>--mode auto</code>'s candidates; the RUDY seeds use β = 1, tempering and LNS). All routed with the same work budget; the best (fewest unrouted, then HPWL) is the incumbent. Up to 3 rounds: shrink the capacity of bins around the failed connections' pads (× 0.6 per round, cumulative), triple the weight of the failed nets, refine-anneal from the incumbent with β = 1, tempering and LNS windows seeded on the parts near the failures, route; then one ECO round. A candidate replaces the incumbent only with fewer unrouted connections.</td>
+</tr>
+<tr>
+<td>ECO</td>
+<td><code>routable.cpp</code></td>
+<td>For movable parts at, or within 1.5 mm of, a failed connection: shifts of 0.5–2 mm in ±x/±y, rotations about the body centre, swaps with an identical part; each checked exactly for legality, ranked by the annealing cost with boosted failed nets and penalised bins + 0.25 mm per mm of displacement − 4 mm per mm of extra room around a failed pad; the top N are routed, the best strict improvement is committed; failed moves are remembered (across loop rounds too). Locked/fixed parts never move (test).</td>
+</tr>
+<tr>
+<td>Router callback</td>
+<td><code>place_main.cpp</code></td>
+<td><code>RouteFn</code>: the input document with the placement applied, re-parsed from the written text and routed by <code>route::route_portfolio</code> with <code>work_budget</code>; unrouted connections are mapped back to parts and pad positions.</td>
+</tr>
+</tbody>
+</table>
+<p>Two bugs found on the way: <code>--route-check</code> "kept the input" by re-saving the edited document, i.e. it wrote the new
+placement anyway (fixed: the input file is copied); and reading the board model straight from an edited document tree
+gave different routing results than reading the saved file (Microdox: 3 vs 0 unrouted for the same placement), so
+the loop re-parses the written text. The second one is an <code>io::</code> issue left for a separate fix (<code>read_board</code> on an
+edited <code>sexpr::Document</code>).</p>
+<h3 id="82-annealer-variants-placement-only-equal-move-budgets-23-boards-of-73-seed-1-4-threads">8.2 Annealer variants (placement only, equal move budgets, 23 boards of §7.3, seed 1, 4 threads)<a class="headerlink" href="#82-annealer-variants-placement-only-equal-move-budgets-23-boards-of-73-seed-1-4-threads" title="Permanent link">&para;</a></h3>
+<p>Cost = weighted HPWL + 2 mm × crossings (what the annealer minimises). <code>bench/place_variants.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Parallel tempering vs independent runs</th>
+<th>PT + LNS (rate 0.02, window 8)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>refine</td>
+<td>geometric-mean cost ×0.960 (better on 15, worse on 8)</td>
+<td>×0.959 (15 / 8)</td>
+</tr>
+<tr>
+<td>full</td>
+<td>×1.004 (10 / 12)</td>
+<td>×1.005 (9 / 14)</td>
+</tr>
+</tbody>
+</table>
+<p>Parallel tempering helps refine (whose single-run schedule starts cool) and is neutral for full. LNS adds nothing
+measurable at the end of a converged anneal: in the cold phase it found an improvement in ~0.1 % of windows. Neither
+is on by default for <code>full</code>/<code>refine</code>; <code>routable</code> uses both in its RUDY seeds and rounds. The PT ladder was tuned on
+8 of these boards, so the refine number is optimistic.</p>
+<h3 id="83-routability-results-23-boards-of-73">8.3 Routability results (23 boards of §7.3)<a class="headerlink" href="#83-routability-results-23-boards-of-73" title="Permanent link">&para;</a></h3>
+<p>Router: <code>route_portfolio</code>, 3 000 000 expansions × 4 variants (deterministic), engine of 2026-10-03; placement seed 1,
+4 threads; 4 boards in parallel (16 threads). "Unrouted" = connections the router left open on the written board.
+"New DRC" = KiCad 10 errors of the legality group (courtyards, holes in courtyards, copper-edge clearance; plus any
+other inter-footprint error by item pair: clearance, shorts, mask bridges, hole clearance) that the human board
+does not have. <code>full+eco</code> = ECO applied to the unchecked full-mode placement (a placement that routes worse than the
+human one). Times are wall seconds per board including all routing. <code>bench/place_m8.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Board</th>
+<th style="text-align: right;">unrouted human</th>
+<th style="text-align: right;">auto</th>
+<th style="text-align: right;">routable</th>
+<th style="text-align: right;">eco</th>
+<th style="text-align: right;">full → full+eco</th>
+<th style="text-align: right;">HPWL human</th>
+<th style="text-align: right;">auto</th>
+<th style="text-align: right;">routable</th>
+<th>routable kept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1Bitsy_1bitsy</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;"><strong>13</strong></td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">25 → 18</td>
+<td style="text-align: right;">813</td>
+<td style="text-align: right;">812</td>
+<td style="text-align: right;">801</td>
+<td>round 3 re-place</td>
+</tr>
+<tr>
+<td>AzizLight_AzizLight</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">463</td>
+<td style="text-align: right;">349</td>
+<td style="text-align: right;">341</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>ChirpHardware_chirp</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">629</td>
+<td style="text-align: right;">370</td>
+<td style="text-align: right;">370</td>
+<td>full</td>
+</tr>
+<tr>
+<td>ESP_nRF_Relay_Relay_WiFi_nRF24</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2 → <strong>0</strong></td>
+<td style="text-align: right;">642</td>
+<td style="text-align: right;">642</td>
+<td style="text-align: right;">305</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>Hardware_Playground_Touch_Switch_2ch_PCB</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;"><strong>4</strong></td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">16 → 14</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">568</td>
+<td style="text-align: right;">491</td>
+<td>round 3 re-place</td>
+</tr>
+<tr>
+<td>IGN01A_IGN01A</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">533</td>
+<td style="text-align: right;">206</td>
+<td style="text-align: right;">195</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>LadybugLiteBlue_HW_LadybugBlueLite</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">663</td>
+<td style="text-align: right;">473</td>
+<td style="text-align: right;">473</td>
+<td>refine</td>
+</tr>
+<tr>
+<td>Microdox-PCB_Microdox</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">2788</td>
+<td style="text-align: right;">1384</td>
+<td style="text-align: right;">1319</td>
+<td>full+rudy</td>
+</tr>
+<tr>
+<td>PiPlay_SDHat</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">444</td>
+<td style="text-align: right;">366</td>
+<td style="text-align: right;">366</td>
+<td>refine</td>
+</tr>
+<tr>
+<td>RX5808_rx5808_4button</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">774</td>
+<td style="text-align: right;">640</td>
+<td style="text-align: right;">554</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>Solare-BQ24210_Solare-BQ24210</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">75</td>
+<td>refine</td>
+</tr>
+<tr>
+<td>a123-battery-integration_BCM</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;">10 → 9</td>
+<td style="text-align: right;">1194</td>
+<td style="text-align: right;">811</td>
+<td style="text-align: right;">830</td>
+<td>round 2 re-place</td>
+</tr>
+<tr>
+<td>beast-phat_beast-phat</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">260</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">180</td>
+<td>full</td>
+</tr>
+<tr>
+<td>bullion_bullion</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">16 → 16</td>
+<td style="text-align: right;">421</td>
+<td style="text-align: right;">421</td>
+<td style="text-align: right;">294</td>
+<td>round 3 re-place</td>
+</tr>
+<tr>
+<td>domotics_out-board</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">658</td>
+<td style="text-align: right;">381</td>
+<td style="text-align: right;">381</td>
+<td>full</td>
+</tr>
+<tr>
+<td>esp32stack_esp32stack</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">1040</td>
+<td style="text-align: right;">777</td>
+<td style="text-align: right;">777</td>
+<td>refine</td>
+</tr>
+<tr>
+<td>jadonk_PocketBone</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;">11 → 11</td>
+<td style="text-align: right;">1229</td>
+<td style="text-align: right;">1229</td>
+<td style="text-align: right;">1025</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>kitspace_hbridge_driver</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">455</td>
+<td style="text-align: right;">388</td>
+<td style="text-align: right;">377</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>kitspace_training_board_v02</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">1170</td>
+<td style="text-align: right;">721</td>
+<td style="text-align: right;">696</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>nanoTracer_nanoTracer</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8 → 8</td>
+<td style="text-align: right;">1301</td>
+<td style="text-align: right;">1301</td>
+<td style="text-align: right;">1301</td>
+<td>input</td>
+</tr>
+<tr>
+<td>phone_amp_phone_amp</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;"><strong>5</strong></td>
+<td style="text-align: right;"><strong>5</strong></td>
+<td style="text-align: right;">10 → 8</td>
+<td style="text-align: right;">412</td>
+<td style="text-align: right;">384</td>
+<td style="text-align: right;">382</td>
+<td>round 1 eco</td>
+</tr>
+<tr>
+<td>scimpy_volumebuffer</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 → 0</td>
+<td style="text-align: right;">590</td>
+<td style="text-align: right;">553</td>
+<td style="text-align: right;">542</td>
+<td>refine+rudy</td>
+</tr>
+<tr>
+<td>uC3Moy_uC3Moy</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3 → 3</td>
+<td style="text-align: right;">329</td>
+<td style="text-align: right;">329</td>
+<td style="text-align: right;">329</td>
+<td>input</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>64</strong></td>
+<td style="text-align: right;"><strong>60</strong></td>
+<td style="text-align: right;"><strong>35</strong></td>
+<td style="text-align: right;"><strong>48</strong></td>
+<td style="text-align: right;">101 → 87</td>
+<td style="text-align: right;">17 464</td>
+<td style="text-align: right;">13 360</td>
+<td style="text-align: right;">12 403</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Legality:</strong> 0 new KiCad DRC errors of the legality group on every output of every mode (92 boards).</li>
+<li><strong>Routability:</strong> completely routed boards: human 16, auto 17, routable 19, eco 19. Unrouted connections: human 64,
+  auto 60, routable 35 (−45 %), eco 48 (−25 %); no board got worse in any mode.</li>
+<li><strong>ECO</strong> (<code>--mode eco</code> on the human placement, ≤ 4 rounds × 5 routed moves) closed 3 of the 7 boards the router
+  leaves incomplete (Microdox: one switch rotated 270°; a123: two ICs shifted 2 mm and 1 mm; PocketBone: U2 shifted
+  1 mm) and reduced 3 more (10 → 7, 15 → 14, 8 → 5) with 1–2 moved parts each. On the worse full-mode placements it
+  closed 1 of 9 (101 → 87 unrouted).</li>
+<li><strong>Wirelength:</strong> total HPWL human 17 464 mm, auto 13 360 mm, routable 12 403 mm (−29 %); eco leaves HPWL as it is.</li>
+<li><strong>Time:</strong> total wall time auto 1 354 s, routable 3 481 s (21–630 s per board), eco 1 541 s (2–301 s).</li>
+<li><strong>Doc 14 quick set Q</strong> (10 boards, all routed completely by hand placement): unrouted 0 in every mode; HPWL human
+  4 649 mm, auto 3 322 mm, routable 3 289 mm; 0 new DRC errors.</li>
+</ul>
+<p>Caveats: these 23 boards are the development set (doc 14 set D), and the router budget is the same one the loop
+optimises against, so part of the gain is the loop exploiting this router's behaviour at this budget (a small move
+perturbs a budget-limited router; ECO is partly sampling such perturbations). Most remaining failures are pads the
+router reports as "boxed in" (pad escape), which placement cannot fix. Not measured: Freerouting on the placed boards,
+the held-out set H, and the schematic-to-board set S of the M8 gate (clean pass ≥ 90 %) — it does not exist yet.</p>
+<h3 id="83a-wall-time-stop-for-the-loop-2026-10-03">8.3a Wall-time stop for the loop (2026-10-03)<a class="headerlink" href="#83a-wall-time-stop-for-the-loop-2026-10-03" title="Permanent link">&para;</a></h3>
+<p><code>--loop-time S</code> stops <code>routable</code> between seeds and routes once S seconds have passed and keeps the best
+placement so far (the input is always routed first, so the result is never worse than the input at the check
+budget). The benchmark passes 0.6 × its placement timeout. Without it, 16 of 22 tier D boards hit the 900 s
+timeout and fell back to the human placement. The route check runs without the router's clean-up stage, which
+never changes the routed count.</p>
+<h3 id="83b-final-verification-route-2026-10-03">8.3b Final verification route (2026-10-03)<a class="headerlink" href="#83b-final-verification-route-2026-10-03" title="Permanent link">&para;</a></h3>
+<p>In the tier B benchmark with placement (<code>placed2-tierB</code>), three boards that route clean on the human placement
+lost connections after placement: at the 3M check budget the human placement left 6–23 connections unrouted
+(the full 120 s route completes them), so the loop accepted placements that suit a short route. Routed at 4×
+the budget, the order matched the full route on all four changed boards. <code>routable</code> and <code>eco</code> now route the
+winner and the input again at <code>--final-work</code> (default 4 × <code>--route-check</code>) and keep the winner only if it leaves
+no more connections unrouted there.</p>
+<h3 id="84-not-done-in-m8">8.4 Not done in M8<a class="headerlink" href="#84-not-done-in-m8" title="Permanent link">&para;</a></h3>
+<p>GPU parallel tempering (CPU only), CP-SAT (replaced by the exact window B&amp;B), the router rungs R4 exact window
+solve / R5 trial ordering / R6 cut proofs (they live in <code>src/route</code>, outside this placement change), ECO driven by
+the router's own <code>PlacementRequest</code> during routing (ECO runs between complete routes instead), side flipping in ECO,
+decoupling-cap slot moves, the bandit over ECO move types (doc 06).</p>
+<h2 id="9-side-assignment-d48-2026-10-05">9. Side assignment (D48, 2026-10-05)<a class="headerlink" href="#9-side-assignment-d48-2026-10-05" title="Permanent link">&para;</a></h2>
+<p>Opt-in: <code>tracemaker-place ... --flip [--flip-via-mm 2] [--flip-rate 0.1] [--keep-side R1,C3]</code> (all modes; off by
+default, and with it off every output is byte-identical to the build before the change: 23/23 boards, full and
+refine).</p>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>File</th>
+<th>As built</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>States</td>
+<td><code>problem.hpp</code></td>
+<td><code>Placement::rot</code> is an orientation state 0–7: bits 0–1 quarter turns, bit 2 = on the other side. A flipped state is KiCad's top/bottom flip about the origin (offsets mirrored in y, orientation −angle0) followed by the turns. Geometry (courtyards moved to the other side, pads, copper with mirrored layer masks, inset courtyards) and pin offsets are built per state; every stage that enumerates rotations keeps the side bit (rotation descent, legaliser, LNS/window candidates, ECO).</td>
+</tr>
+<tr>
+<td>Who may flip</td>
+<td><code>problem.cpp</code>, <code>place_main.cpp</code></td>
+<td>Movable parts (never locked or fixed ones, rule 6), surface mount only (no drilled hole of any kind: THT parts stay on their side, doc 04 §2), boards with ≥ 2 copper layers, not listed in <code>--keep-side</code>, and footprints the writer can mirror exactly (<code>io::flip_supported</code>: no padstacks, no copper on inner layers, no text on copper, no zones/text boxes/dimensions/groups/points in the footprint). Each excluded movable part gets a <code>flip_reason</code>.</td>
+</tr>
+<tr>
+<td>Move</td>
+<td><code>anneal.cpp</code></td>
+<td>With probability <code>--flip-rate</code> a step is a flip of a random flippable part to the other side with a random turn, about its body centre or (half the time) at the weighted median of its nets — e.g. under the IC it serves. Swaps of identical parts on different sides exchange sides only if both may flip. The extra random draw happens only when some part may flip.</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td><code>anneal.cpp</code>, <code>wirelength.cpp</code></td>
+<td>Via estimate: per real net, min(front, back) surface-mount pins (THT pins reach both sides), weighted like HPWL; one via costs <code>--flip-via-mm</code> (2) mm of signal HPWL. Kept incrementally (pin counts per net) and checked against the reference <code>anneal_cost(..., via_mm)</code> in a test.</td>
+</tr>
+<tr>
+<td>Bound</td>
+<td><code>lower_bound.cpp</code></td>
+<td>The "any rotation" L4 bound lets each pin of a flippable part take its best offset over all 8 states, so it stays a true bound.</td>
+</tr>
+<tr>
+<td>Writer</td>
+<td><code>io/kicad/board_editor.cpp</code></td>
+<td><code>flip_footprint</code>: KiCad's FOOTPRINT::Flip (top/bottom about the origin) then the rotation: local y of every child negated (pads, graphics incl. pts/arcs and custom-pad primitives, texts), pad angles −a, text angles 180° − a, footprint angle −angle0, F.<em>↔B.</em> layers (copper by the board's layer table, so KiCad 5 "Front"/"Back" work), text mirrored on side-specific layers only, legacy arc sweeps negated (not normalised), trapezoid <code>rect_delta</code> dy negated, chamfer corners top↔bottom, drill offsets mirrored. Only the changed tokens are replaced; everything else in the file is untouched.</td>
+</tr>
+<tr>
+<td>Reader fix</td>
+<td><code>io/kicad/board_reader.cpp</code></td>
+<td>A footprint on the last copper layer under its file name ("Back" in some KiCad 5 boards) is now read as a back-side footprint (it was read as front).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>KiCad verification.</strong> <code>scripts/flip_check.py</code> (pcbnew in the KiCad 10 image) flips every footprint of a board
+in memory with KiCad's own <code>FOOTPRINT::Flip</code> and compares it with ours as KiCad loads it: side, position,
+orientation; per pad position, orientation, layers, drill and the exact copper polygon (XOR area); per graphic and
+text layer, bounding box, angle, mirroring, justification; courtyards. On the 23 boards of §7.3, 6 more PCBench
+boards with trapezoid/custom pads and renamed copper layers, and 8 KiCad demo boards (KiCad 6–10 formats): 2,529
+footprints (SMD and THT), 0 differences. The first runs found four writer bugs (legacy arc sweeps normalised to
+0–360°, the trapezoid delta axis, text on non-side layers mirrored, user-named copper layers) and one reader bug,
+all fixed before the evaluation. Tests: <code>[flip]</code> in <code>test_place.cpp</code> (placer geometry = what the writer produces,
+read back and re-extracted; exact incremental cost; determinism across thread counts; locked/THT/pinned parts never
+flip) and <code>test_kicad_io.cpp</code> (writer rules, KiCad 5 and 10 syntax, flip and flip back).</p>
+<p><strong>Evaluation</strong> (<code>bench/place_flip.py</code>, 23 boards of §7.3, seed 1, 4 threads, 2 boards at a time; KiCad 10 DRC):</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Total HPWL off → flip</th>
+<th>Median ratio</th>
+<th>Crossings off → flip</th>
+<th>Parts flipped</th>
+<th>Via estimate off → flip</th>
+<th>New KiCad DRC errors off / flip</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>full</td>
+<td>13,041 → 12,014 mm (−7.9 %)</td>
+<td>0.962</td>
+<td>378 → 259</td>
+<td>255 on 16 boards</td>
+<td>85 → 471</td>
+<td>0 / 0</td>
+</tr>
+<tr>
+<td>refine</td>
+<td>12,811 → 11,843 mm (−7.6 %)</td>
+<td>0.967</td>
+<td>320 → 218</td>
+<td>262 on 17 boards</td>
+<td>85 → 481</td>
+<td>0 / 0</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Legal on every board in every configuration; no new courtyard, hole, edge, clearance, short or mask-bridge error
+  (KiCad's <code>nonmirrored_text_on_back_layer</code> count stays at the human boards' 4: flipped texts are mirrored).</li>
+<li>6 boards have no flippable part (all through-hole); their outputs equal flip-off. On nanoTracer one part may flip
+  and the different random stream alone gave full mode +11 % HPWL; esp32stack full +4 % HPWL (crossings 20 → 1);
+  ESP_nRF refine +5 %. Every other board is equal or better.</li>
+<li>The price is vias: the estimate rises from 85 to ~480 in total (≈ 1.5 more per flipped part), and assembly becomes
+  double-sided. Routability was not measured (no router runs here); on 2-layer boards the parts on the back also
+  occupy the bottom routing layer, so <code>--flip</code> is not a routability feature yet. Decoupling capacitors get closer
+  to their IC pins (median distance falls on 11 (full) and 13 (refine) of the 17 boards with decaps, rises on 2 and
+  1; they often go under the IC).</li>
+<li>Not built: the FM/CP-SAT partition of stage (C) (the annealer's flip move does the side assignment), side
+  capacity in global placement (B), flips in ECO and in the exact windows.</li>
+</ul>
+<h2 id="10-the-m8-gate-from-scratch-placement-on-held-out-boards-2026-10-06">10. The M8 gate: from-scratch placement on held-out boards (2026-10-06)<a class="headerlink" href="#10-the-m8-gate-from-scratch-placement-on-held-out-boards-2026-10-06" title="Permanent link">&para;</a></h2>
+<p><strong>Sets</strong> (<code>bench/make_place_sets.py</code>, lists in <code>bench/place_sets/</code>, doc 14 §3). <em>H</em>: 40 PCBench boards never used
+before (not in any result, list, test or doc: 342 boards excluded), 10 to 300 parts with at least 10 movable, a
+courtyard on at least 80 % of the parts, routed completely in the human placement in 120 s; seed 7; 20 boards at or
+below the candidates' median of 33 parts and 20 above (14 to 138 parts, 4,022 connections, 132 candidates tried).
+<em>S</em>: the H boards with every part that full mode may move piled at the centre of the board, so the file no longer
+holds the human placement. Parts full mode holds in the human board (locked, edge connectors, mounting holes,
+parts overhanging the edge) stay: a schematic does not say where a connector goes.</p>
+<p><strong>What a board without a placement needed</strong> (<code>--scratch</code>). The placer's fallbacks all lead back to the input,
+which is right for a human placement and wrong for a pile:</p>
+<ul>
+<li>a part that "overhangs the board edge in the input" is no longer held there (at the pile, large parts do);</li>
+<li>the input is no candidate in <code>routable</code>, refine has nothing to refine, legality is absolute rather than "no
+  worse than the input", and neither mode reverts to the input when it routes more;</li>
+<li>a part with no legal position is tried by its pad outline instead of its courtyard (<code>pads_only</code>), then by copper
+  and holes alone (<code>copper_only</code>: it may lie across other courtyards), and failing that is set down beside the
+  board and reported. It is never left on top of the others.</li>
+<li>Solder-mask openings drawn as graphics (logos) keep pads away: kitspace_postcard had LEDs under one.</li>
+</ul>
+<p>24 of the 40 human placements have courtyard conflicts by the placer's own rules; designers overlap courtyards.
+Three boards have a part that fits nowhere without breaking copper, hole or mask rules that the human placement
+itself breaks (tt_nano: an Arduino module; Mini-Ultra: a 15 mm IC between two pin headers 12.4 mm apart;
+ottawa-badge-tagging: a battery holder).</p>
+<p><strong>Two router faults the held-out boards exposed</strong> (both fixed, both in the human placement too): copper ran across
+Margin-layer lines, which KiCad treats as the board edge (kitspace_hack, 13–24 errors); and a pad without a hole
+listed on both sides was connected on the far side, which KiCad does not accept (Kefersender: "84 of 84 routed",
+2 unconnected in KiCad).</p>
+<p><strong>Result</strong> (8 router variants, 120 s, KiCad's DRC as judge; clean = everything connected, no error added by
+placement or routing relative to the human board):</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>Clean pass</th>
+<th>Connections routed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H, human placement, before the two fixes</td>
+<td>38 of 40 (95 %)</td>
+<td>4,021 of 4,022</td>
+</tr>
+<tr>
+<td>H, human placement, Margin fix</td>
+<td>38 of 40 (95 %); with the pad fix Kefersender is clean too: 39</td>
+<td>4,019 of 4,022</td>
+</tr>
+<tr>
+<td>S, <code>full</code>, as the placer was</td>
+<td>28 of 40 (70 %)</td>
+<td>3,900 of 4,002</td>
+</tr>
+<tr>
+<td>S, <code>routable --scratch</code>, first version</td>
+<td>33 of 40 (82.5 %)</td>
+<td>3,944 of 4,022</td>
+</tr>
+<tr>
+<td><strong>S, <code>routable --scratch</code>, final</strong> (<code>S-routable-7</code>)</td>
+<td><strong>34 of 40 (85 %)</strong></td>
+<td>3,939 of 4,013</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The gate (clean pass ≥ 90 % of S) is not met: 85 %.</strong> The six boards: the three above with a part that cannot be
+placed legally; kitspace_hack, which is not routable clean in its human placement either once Margin lines count
+(89 of 92; <code>eco</code> moved two parts and still left 3); ottawa-badges-2016 and pico-pi, each 3 connections short (197
+of 200, 216 of 219). Without the four boards no placement can make clean, 34 of 36 are. Placement takes 91 s at the
+median in <code>routable</code> (up to 9 minutes of routing checks per board).</p>
+<p>The gate's second clause, "<code>eco</code> closes at least half of the H boards that the human placement leaves unrouted",
+has one board to act on (kitspace_hack) and does not close it; on the development set <code>eco</code> closed 3 of 7 (§8).</p>
+<p><strong>Not built</strong> (D57). <em>GPU parallel-tempering annealing</em>: annealing takes 1.9 s at the median and 56 s at most
+(138 parts) on these boards, the routing checks take minutes, and CPU tempering measured neutral on routability
+(§8). <em>CP-SAT windows</em>: OR-tools is not available as a C++ library here, and exact windows by branch and bound
+already equal full enumeration (§8).</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../03-data-structures/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Data structures and DRC">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Data structures and DRC
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../05-routing/" class="md-footer__link md-footer__link--next" aria-label="Next: Routing">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Routing
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      GPL-3.0-or-later
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../assets/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

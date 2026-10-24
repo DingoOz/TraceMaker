@@ -1,0 +1,28 @@
+var structtmk_1_1model_1_1Zone =
+[
+    [ "clearance", "structtmk_1_1model_1_1Zone.html#acbad5240a020debbd5cfebfdd3912445", null ],
+    [ "connect", "structtmk_1_1model_1_1Zone.html#a4a97366de119e9daede5049870f509e2", null ],
+    [ "copper", "structtmk_1_1model_1_1Zone.html#a35d35fcafed554aae6893b6a63c4a1cb", null ],
+    [ "fills", "structtmk_1_1model_1_1Zone.html#ae862994ad85823d1382c8d090a78daf2", null ],
+    [ "footprint", "structtmk_1_1model_1_1Zone.html#a0946356670f253992872d1a5d9253dd5", null ],
+    [ "hatched", "structtmk_1_1model_1_1Zone.html#ad0ef153ee7f4540cab2a3aa36f067549", null ],
+    [ "island_area_min", "structtmk_1_1model_1_1Zone.html#a9bcae8d041b0ca32c9b34aa55a2b1ec2", null ],
+    [ "island_removal", "structtmk_1_1model_1_1Zone.html#adee0b97488a2c181a42b6bacd4d6218d", null ],
+    [ "keepout_footprints", "structtmk_1_1model_1_1Zone.html#a6dc978fea6d94affa1893c63aa84c503", null ],
+    [ "keepout_pads", "structtmk_1_1model_1_1Zone.html#a998712496a958fafb1586e12f5b59615", null ],
+    [ "keepout_pour", "structtmk_1_1model_1_1Zone.html#ae1d86d26962075dba1ab2c1da2ef1ff6", null ],
+    [ "keepout_tracks", "structtmk_1_1model_1_1Zone.html#a34508a7277f3156234d9c41f441a75d7", null ],
+    [ "keepout_vias", "structtmk_1_1model_1_1Zone.html#a48705fae7b27d21dfa4756e0145a1976", null ],
+    [ "layers", "structtmk_1_1model_1_1Zone.html#ad432befad3a1fc192dc524a8ec766518", null ],
+    [ "min_thickness", "structtmk_1_1model_1_1Zone.html#abc5d73fc885aa2ec562c1cf1a979c3c9", null ],
+    [ "name", "structtmk_1_1model_1_1Zone.html#aa0472deb2b53e43f5a40ee6902250761", null ],
+    [ "net", "structtmk_1_1model_1_1Zone.html#a2fbb36bbb92cc5bfc8096070d6f3e5f5", null ],
+    [ "node", "structtmk_1_1model_1_1Zone.html#a5a11eae2726d9a24e68cc2ed8390e992", null ],
+    [ "outline", "structtmk_1_1model_1_1Zone.html#a2c7f93e8443efe05e5ea173eb1d6d177", null ],
+    [ "priority", "structtmk_1_1model_1_1Zone.html#a7419e8cc26917a86696d767638ec4a06", null ],
+    [ "rule_area", "structtmk_1_1model_1_1Zone.html#ab209168995829c0c19d914f89306c8b8", null ],
+    [ "teardrop", "structtmk_1_1model_1_1Zone.html#ab6ab0144fc930dbbe26c3e79d70155c2", null ],
+    [ "thermal_bridge_width", "structtmk_1_1model_1_1Zone.html#a7676cc16db287c7be40baac96db7d018", null ],
+    [ "thermal_gap", "structtmk_1_1model_1_1Zone.html#a94ff6c4014e070e4eacc693e5dbc84dc", null ],
+    [ "uuid", "structtmk_1_1model_1_1Zone.html#a2fb778dfb5e92a17c5331bfc53f21e66", null ]
+];
