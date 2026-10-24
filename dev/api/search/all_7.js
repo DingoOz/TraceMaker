@@ -40,5 +40,6 @@ var searchData=
   ['hpwl_37',['hpwl',['../structtmk_1_1place_1_1Metrics.html#a891a826fa2a5b98896c9892ef41bdece',1,'tmk::place::Metrics::hpwl'],['../structtmk_1_1place_1_1Candidate.html#ae6f212576b7933e57efdaab6e091334d',1,'tmk::place::Candidate::hpwl']]],
   ['hpwl_5flower_38',['hpwl_lower',['../structtmk_1_1place_1_1SpreadStats.html#a4101a094341f4786a06b6762bd7feca2',1,'tmk::place::SpreadStats']]],
   ['hpwl_5flower_5fbound_39',['hpwl_lower_bound',['../namespacetmk_1_1place.html#ac9abcfb7c989d49b8bad7ab167fc0d07',1,'tmk::place']]],
-  ['hpwl_5fupper_40',['hpwl_upper',['../structtmk_1_1place_1_1SpreadStats.html#a12e23713c3eb1f5efe3eb3a7ebb45215',1,'tmk::place::SpreadStats']]]
+  ['hpwl_5fupper_40',['hpwl_upper',['../structtmk_1_1place_1_1SpreadStats.html#a12e23713c3eb1f5efe3eb3a7ebb45215',1,'tmk::place::SpreadStats']]],
+  ['html_41',['Html',['../namespacetmk_1_1report.html#ab6bbea67ab7024c5a1cc39c5b071713da3135f4019bee015e2d1ae7f77f9f3f64',1,'tmk::report']]]
 ];

@@ -664,6 +664,8 @@
       
         
       
+        
+      
     
     
     
@@ -810,6 +812,41 @@
     
   
     Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/run-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Read a run report
   
 
     
@@ -2131,6 +2168,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#9-d3-built-the-run-report-2026-10-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. D3 built: the run report (2026-10-24)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2346,6 +2394,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#9-d3-built-the-run-report-2026-10-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. D3 built: the run report (2026-10-24)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2380,6 +2439,7 @@
 <p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/main/PLAN.md"><code>../PLAN.md</code></a>. Written 2026-10-14 after M16, issues #4–#8 and #24 were closed.
 <strong>Update (2026-10-16): M17 was built and measured (docs/10 §11, D121, D122, <code>bench/records/m17</code>). Two statements below are corrected by it: PCBWorld's "679 real boards" (§2, §3, A1) are derived from PCBench, so A1 is
 not an independent second corpus; and the paper was read in full (§1). The rest of this note is as written on 2026-10-14.</strong>
+<strong>Update (2026-10-24): D3, the run report, was built (§9, D136).</strong>
 <strong>Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.</strong> The
 candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: <strong>[R]</strong> checked in this repository (file or doc named), <strong>[W]</strong> from a web source (vendor
 claims are marked as self-reported), <strong>[A]</strong> my estimate or assumption.</p>
@@ -2799,6 +2859,20 @@ and only as far as the Kookabus boards need it.</p>
 <li>Vendor comparisons are self-reported; the pull toward "AI layout" features may be marketing rather than need.</li>
 <li>All effort figures are guesses from past sessions.</li>
 </ul>
+<h2 id="9-d3-built-the-run-report-2026-10-24">9. D3 built: the run report (2026-10-24)<a class="headerlink" href="#9-d3-built-the-run-report-2026-10-24" title="Permanent link">&para;</a></h2>
+<p><code>route --report FILE</code> writes one HTML (or Markdown) file per run, rendered from the route summary alone, so every number in it is a JSON field
+(decision <a href="../decisions/D136/">D136</a>, how-to <a href="../how-to/run-report/">Read a run report</a>). It covers the candidate's list: what was routed; what is open
+and why (the stuck report of doc 17 §3 for the final result, with what each cause means, cut proofs, pins that cannot escape their package,
+and the items the refilled board leaves unconnected); the rules read and not read; the SI audit (critical nets, pairs, buses, return paths);
+the DRC of the board before and after (TraceMaker's DRC, zones refilled); the options as given and the seed. <code>tracemaker report</code> renders it
+again from a saved summary.</p>
+<p>Gate, as far as it goes (<code>bench/records/m20-run-report</code>): reports for seven of the eight plane-tier boards, <code>--soft-zones --si-rules</code>, 3 M
+work. No routing error added on any board; the unconnected count after the refill equals the report's own DRC count on every board. A unit
+test checks every value of the HTML against its JSON pointer and that the renderer's own words hold no number. The extra work after the
+route took 0.1 to 2.1 s per board. Options off, the quick tier is byte-identical to <code>main</code> (30/30).</p>
+<p>Not met yet: the review by someone who did not write it, and interf_u, which spends more than 20 minutes on one core after its portfolio
+with <code>main</code>'s binary as well (27 s in the 14 October records; open). Found on the way: under load the default 120 s time limit, not the
+work budget, ended some runs, and their results moved between runs; the summary now says so (<code>time_limited</code>) and the report warns.</p>
 
 
 

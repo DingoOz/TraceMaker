@@ -22,5 +22,6 @@ var searchData=
   ['disk_5fstate_19',['disk_state',['../classtmk_1_1route_1_1Obstacles.html#aa6b4a7e50a8c63675e0859f9738049b0',1,'tmk::route::Obstacles']]],
   ['display_5fwidth_20',['display_width',['../namespacetmk_1_1app_1_1tui.html#a12806bdb7911be327bf348f46bf4ddaa',1,'tmk::app::tui']]],
   ['dist_21',['dist',['../namespacetmk_1_1analysis_1_1detail.html#acf77e39d035221c2b69e4e4fd19415fd',1,'tmk::analysis::detail']]],
-  ['dru_5fsidecar_22',['dru_sidecar',['../namespacetmk_1_1crules.html#af47efd6cbfc66b505456e8b94728096c',1,'tmk::crules']]]
+  ['drc_5fjson_22',['drc_json',['../namespacetmk_1_1report.html#a75e9b1d24abbb8201cc8cb5694f37f33',1,'tmk::report']]],
+  ['dru_5fsidecar_23',['dru_sidecar',['../namespacetmk_1_1crules.html#af47efd6cbfc66b505456e8b94728096c',1,'tmk::crules']]]
 ];

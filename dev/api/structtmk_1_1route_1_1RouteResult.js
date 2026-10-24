@@ -37,6 +37,7 @@ var structtmk_1_1route_1_1RouteResult =
     [ "seconds", "structtmk_1_1route_1_1RouteResult.html#af47d3dfda3c2a20d84a2736e62b8576b", null ],
     [ "tidied", "structtmk_1_1route_1_1RouteResult.html#a262a1cbe5e8ee2d287ff7090ffeb710f", null ],
     [ "tightest_cut", "structtmk_1_1route_1_1RouteResult.html#a246f87387c359a1345853fba53f2123f", null ],
+    [ "time_limited", "structtmk_1_1route_1_1RouteResult.html#af5c11709eae8d9970e7f1feaf1220428", null ],
     [ "tracks", "structtmk_1_1route_1_1RouteResult.html#a38d4e043e7c8ca9d655c05d4acde0312", null ],
     [ "tunnels", "structtmk_1_1route_1_1RouteResult.html#a0c0bc7fe52c78d9d77321a81f49d2885", null ],
     [ "txn_kept", "structtmk_1_1route_1_1RouteResult.html#a63ffd77916accb68763545a995bf0a28", null ],
