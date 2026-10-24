@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <map>
@@ -19,6 +20,7 @@
 #include "analysis/return_path.hpp"
 #include "advice/advisor.hpp"
 #include "advice/stuck_report.hpp"
+#include "core/version.hpp"
 #include "crules/critical.hpp"
 #include "crules/engine.hpp"
 #include "crules/names.hpp"
@@ -36,6 +38,8 @@
 #include "passes/stitch.hpp"
 #include "passes/style.hpp"
 #include "passes/widen.hpp"
+#include "report/render.hpp"
+#include "report/run_report.hpp"
 #include "server/messages.hpp"
 #include "server/replay_log.hpp"
 #include "server/viewer_server.hpp"
@@ -456,9 +460,11 @@ RouteJobResult run_route_job(RouteJob job) {
   }
   // Custom rules the router cannot apply (unreadable conditions, position-dependent disallow rules) are named
   // here, not only by `tracemaker drc`: the routed board may break them (rule 6).
+  std::vector<std::string> engine_warnings;  // kept for the run report's list of what was not read
   {
     const drc::RuleEngine re(*route_board, rules);
-    for (const auto& w : re.warnings()) log("warning: " + w);
+    engine_warnings = re.warnings();
+    for (const auto& w : engine_warnings) log("warning: " + w);
   }
   // Buses (doc 05 §38): the groups asked for, with the nets found for each, so a wrong pattern shows before routing.
   std::vector<route::BusGroup> bus_groups;
@@ -1145,6 +1151,58 @@ RouteJobResult run_route_job(RouteJob job) {
     nlohmann::json rings = nlohmann::json::array();
     for (const auto& [pins, done] : res.escape_rings) rings.push_back({{"pins", pins}, {"connected", done}});
     out.summary["escape_rings"] = rings;
+  }
+  out.summary["time_limited"] = res.time_limited;
+  if (res.time_limited) log(fmt("warning: the time limit (%.0f s) ended the search before the work budget did: the result depends on machine speed", opt.time_limit_s));
+  out.summary["open"] = res.connections - res.routed;
+  out.summary["completion_pct"] = res.connections > 0 ? std::round(10000.0 * res.routed / res.connections) / 100.0 : 100.0;
+  {
+    std::time_t now = std::time(nullptr);
+    char date[32];
+    std::strftime(date, sizeof date, "%Y-%m-%dT%H:%M:%SZ", std::gmtime(&now));
+    out.summary["run"] = {{"version", std::string(version())}, {"board", name},  {"input", job.in},          {"output", job.out},
+                          {"date", date},                      {"seed", opt.seed}, {"work_budget", opt.work_budget}, {"time_limit_s", opt.time_limit_s},
+                          {"variants", variants},              {"threads", threads}};
+    if (!job.options_given.is_null()) out.summary["run"]["options"] = job.options_given;
+  }
+  if (!job.report_out.empty()) {
+    // The run report (doc 18 D3): what the router read of the rules, why connections are open, and the DRC before and after.
+    const auto t_report = std::chrono::steady_clock::now();
+    out.summary["rules"] = report::rules_json(job.in, lb.board, rules, engine_warnings);
+    if (res.routed < res.connections) {
+      advice::StuckInput si;
+      si.board = &lb.board;
+      si.rules = &rules;
+      si.result = &res;
+      si.board_name = name;
+      si.seconds = res.seconds;
+      si.max_unrouted = 500;
+      si.soft_zones = opt.soft_zones;
+      si.vias_off_pads_below_mm = opt.vias_off_pads ? opt.vias_off_pads_below_mm : 0.0;
+      auto stuck = advice::build_stuck_report(si).json;
+      for (const char* k : {"task", "disclosure", "advice_schema", "tracemaker_stuck_report"}) stuck.erase(k);  // for an advisor, not a designer
+      out.summary["stuck"] = std::move(stuck);
+    }
+    // DRC of the board the router started from and of the board as written (KiCad reads that one), zones refilled as KiCad's judge does.
+    model::Board after;
+    if (!job.out.empty()) {
+      after = io::read_board_file(job.out).board;
+    } else {
+      after = lb.board;
+      after.tracks.insert(after.tracks.end(), res.tracks.begin(), res.tracks.end());
+      after.vias.insert(after.vias.end(), res.vias.begin(), res.vias.end());
+    }
+    bool zones = false;
+    for (const auto& z : lb.board.zones) zones = zones || (!z.rule_area && z.net > 0);
+    out.summary["drc"] = report::drc_json(lb.board, after, rules, zones);
+    log(fmt("report: DRC before and after%s: %d routing errors added (%.1f s)", zones ? " (zones refilled)" : "",
+            out.summary["drc"]["added_routing_errors"].get<int>(), std::chrono::duration<double>(std::chrono::steady_clock::now() - t_report).count()));
+    std::string json_path = job.json_out;
+    if (json_path.empty()) json_path = job.report_out + ".json";
+    std::ofstream(job.report_out) << report::render(out.summary, report::format_for_path(job.report_out),
+                                                    std::filesystem::path(json_path).filename().string());
+    if (job.json_out.empty()) std::ofstream(json_path) << out.summary.dump(1);
+    log("report written to " + job.report_out + " (its numbers are the fields of " + json_path + ")");
   }
   if (!job.json_out.empty()) std::ofstream(job.json_out) << out.summary.dump(1);
   if (server && job.hold) {

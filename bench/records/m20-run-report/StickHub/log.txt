@@ -1,0 +1,95 @@
+live view: http://127.0.0.1:8816/
+knowledge base: 12 connections that failed before are routed first
+critical nets: 18 -  tier 1: 2 (/XI, /XO);  tier 2: 16 (/U2D+, /U6D-, /U6D+, /U7D-, /U7D+, /U5D+, /U4D+, /U5D-, ...)
+  routed first: yes; via cost x3; over a plane void: +4 pitches per lattice step
+portfolio: 8 variants on 4 threads
+searches: 125 ok (1105156 expansions), 68 failed (1512594 expansions); fields 60 GPU + 0 CPU (15.07 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 68 connections improved
+restarts 0; legality checks 2834699; rips 0, passes 1, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 22, 16 proved unreachable, 1097367 cells visited
+failed-search expansions: strict confined 0, strict wide 828195, negotiated confined 0, negotiated wide 0
+searches: 143 ok (1133893 expansions), 124 failed (1013100 expansions); fields 68 GPU + 0 CPU (17.22 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 80 connections improved
+restarts 0; legality checks 2590940; rips 6, passes 2, boxed-in 51, nogood skips 0, history cells 66, transactions 0 kept of 0
+reachability checks: 62, 38 proved unreachable, 1282088 cells visited
+failed-search expansions: strict confined 0, strict wide 630663, negotiated confined 0, negotiated wide 0
+searches: 110 ok (1649100 expansions), 16 failed (1351100 expansions); fields 119 GPU + 0 CPU (24.71 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 65 connections improved
+restarts 0; legality checks 2966186; rips 0, passes 1, boxed-in 4, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 4, 4 proved unreachable, 908754 cells visited
+failed-search expansions: strict confined 0, strict wide 442346, negotiated confined 0, negotiated wide 0
+searches: 52 ok (2654364 expansions), 10 failed (325584 expansions); fields 0 GPU + 34 CPU (92.22 s, 34 GPU fallbacks, 0 cache hits)
+clean-up: 18 connections improved
+restarts 0; legality checks 530277; rips 0, passes 1, boxed-in 4, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 3, 0 proved unreachable, 112382 cells visited
+failed-search expansions: strict confined 0, strict wide 325584, negotiated confined 0, negotiated wide 0
+searches: 50 ok (2785688 expansions), 8 failed (200826 expansions); fields 0 GPU + 30 CPU (76.90 s, 30 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 0; legality checks 486567; rips 0, passes 1, boxed-in 4, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 77370 cells visited
+failed-search expansions: strict confined 0, strict wide 200826, negotiated confined 0, negotiated wide 0
+searches: 142 ok (1227325 expansions), 122 failed (965719 expansions); fields 66 GPU + 0 CPU (11.93 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 80 connections improved
+restarts 0; legality checks 2550817; rips 6, passes 2, boxed-in 50, nogood skips 0, history cells 66, transactions 0 kept of 0
+reachability checks: 60, 37 proved unreachable, 1197525 cells visited
+failed-search expansions: strict confined 0, strict wide 630263, negotiated confined 0, negotiated wide 0
+searches: 139 ok (1101293 expansions), 147 failed (1593691 expansions); fields 0 GPU + 67 CPU (175.13 s, 67 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 2914053; rips 20, passes 2, boxed-in 64, nogood skips 0, history cells 71, transactions 0 kept of 0
+reachability checks: 55, 38 proved unreachable, 1295439 cells visited
+failed-search expansions: strict confined 0, strict wide 603958, negotiated confined 0, negotiated wide 0
+searches: 137 ok (817212 expansions), 107 failed (1886497 expansions); fields 0 GPU + 63 CPU (131.48 s, 63 GPU fallbacks, 0 cache hits)
+clean-up: 68 connections improved
+restarts 0; legality checks 2880119; rips 8, passes 2, boxed-in 28, nogood skips 0, history cells 79, transactions 0 kept of 0
+reachability checks: 52, 41 proved unreachable, 1633533 cells visited
+failed-search expansions: strict confined 0, strict wide 720464, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 37 in 95.0 s
+  variant 1 fast bends, shortest first     routed 121 in 20.8 s  <- best
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 101 in 178.6 s
+  variant 3 fast bends, jittered order, escape plan routed 110 in 18.7 s
+  variant 4 exact bends, jittered order    routed 35 in 79.5 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones) routed 94 in 29.0 s
+  variant 6 fast bends, cheap crossings, escape plan routed 113 in 134.5 s
+  variant 7 fast bends, dear vias          routed 120 in 14.7 s
+soft zones: after refilling 5 zones, 22 items unconnected
+searches: 112 ok (2628241 expansions), 68 failed (377533 expansions); fields 0 GPU + 24 CPU (16.17 s, 24 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 9; legality checks 436907; rips 0, passes 1, boxed-in 54, nogood skips 6, history cells 0, transactions 0 kept of 0
+reachability checks: 12, 12 proved unreachable, 10756 cells visited
+failed-search expansions: strict confined 0, strict wide 189942, negotiated confined 0, negotiated wide 176835
+refill repair: routed 12/22 connections, 12 tracks, 13 vias, 3005774 expansions
+refill repair: 10 items unconnected after refilling again
+critical nets after the route: 18 nets, 13 vias, 48 plane void crossings
+  /XI: crosses 1 split of its reference plane
+  /XO: crosses 1 split of its reference plane
+  /U2D+: runs over 2 voids of its reference plane (detour 0.00 mm)
+  /U6D-: runs over 2 voids of its reference plane (detour 4.67 mm)
+  /U6D+: runs over 3 voids of its reference plane (detour 0.54 mm)
+  /U7D-: crosses 3 splits of its reference plane
+  /U7D+: 1 connection not routed
+  /U7D+: runs over 1 void of its reference plane (detour 0.00 mm)
+  /U5D+: crosses 3 splits of its reference plane
+  /U4D+: crosses 3 splits of its reference plane
+  /U5D-: crosses 2 splits of its reference plane
+  /U1D-: crosses 1 split of its reference plane
+  /U3D-: crosses 3 splits of its reference plane
+  /U2D-: crosses 1 split of its reference plane
+  /U1D+: crosses 1 split of its reference plane
+  /U4D-: 1 connection not routed
+  /U4D-: runs over 1 void of its reference plane (detour 0.00 mm)
+  /U3D+: 1 connection not routed
+  /U3D+: crosses 1 split of its reference plane
+  /D-: crosses 1 split of its reference plane
+  /D+: 1 connection not routed
+  /D+: crosses 1 split of its reference plane
+routed 121/128 connections, 504 tracks, 70 vias, pitch 0.050 mm, 3046644 expansions, 210.10 s (best variant 20.77 s)
+  unrouted: /D+: D23.2 -> U1.30  (ripped up by /D- and not routed again)
+  unrouted: /U7D+: J8.3 -> U1.38  (ripped up by Net-(U1-VBUS_SENSE) and not routed again)
+  unrouted: /U3D+: J4.3 -> U1.14  (ripped up by /U3D- and not routed again)
+  unrouted: /U4D-: J5.2 -> U1.11  (ripped up by +1V8 and not routed again)
+  unrouted: Net-(D19-1): D19.GA -> R11.1  (ripped up by +3.3V and not routed again)
+  unrouted: +5V: J3.1 -> U1.8  (ripped up by +1V8 and not routed again)
+  unrouted: Net-(D17-1): D17.GA -> R9.1  (boxed in (target); escapes/neck-down: out of budget; negotiated: out of budget)
+work (all variants): 16856330 expansions, 7604458 flood cells, 17723386 cell checks, 5430856 fixed-copper checks, 226776698 field cells in 507 fields, 772 commits, 40 rips
+report: DRC before and after (zones refilled): 0 routing errors added (0.4 s)
+report written to bench/results/run-report/StickHub/report.html (its numbers are the fields of bench/results/run-report/StickHub/summary.json)

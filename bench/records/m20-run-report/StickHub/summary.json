@@ -1,0 +1,1384 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 94.53,
+ "connections": 128,
+ "critical_nets": {
+  "nets": [
+   {
+    "detour_mm": 0.0,
+    "length_mm": 3.443,
+    "name": "/XI",
+    "splits": 1,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 4.954,
+    "name": "/XO",
+    "splits": 1,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 6.622,
+    "name": "/U2D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 1.169,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 2,
+    "warnings": [
+     "runs over 2 voids of its reference plane (detour 0.00 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 4.666,
+    "length_mm": 5.29,
+    "name": "/U6D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 1.721,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 2,
+    "warnings": [
+     "runs over 2 voids of its reference plane (detour 4.67 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.544,
+    "length_mm": 4.856,
+    "name": "/U6D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 3,
+    "warnings": [
+     "runs over 3 voids of its reference plane (detour 0.54 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.268,
+    "length_mm": 10.622,
+    "name": "/U7D-",
+    "splits": 3,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 4,
+    "warnings": [
+     "crosses 3 splits of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.452,
+    "name": "/U7D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "runs over 1 void of its reference plane (detour 0.00 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 10.269,
+    "name": "/U5D+",
+    "splits": 3,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 5,
+    "warnings": [
+     "crosses 3 splits of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.615,
+    "length_mm": 19.003,
+    "name": "/U4D+",
+    "splits": 3,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 5,
+    "warnings": [
+     "crosses 3 splits of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 6.712,
+    "name": "/U5D-",
+    "splits": 2,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 3,
+    "warnings": [
+     "crosses 2 splits of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 2.692,
+    "length_mm": 7.493,
+    "name": "/U1D-",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 4,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 3.432,
+    "length_mm": 16.834,
+    "name": "/U3D-",
+    "splits": 3,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 5,
+    "warnings": [
+     "crosses 3 splits of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 5.199,
+    "name": "/U2D-",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 1.845,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 2,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 6.221,
+    "name": "/U1D+",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 1.016,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 1,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.452,
+    "name": "/U4D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "runs over 1 void of its reference plane (detour 0.00 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "name": "/U3D+",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 20.578,
+    "length_mm": 16.827,
+    "name": "/D-",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 5,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 7.986,
+    "name": "/D+",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 1,
+    "void_crossings": 2,
+    "warnings": [
+     "1 connection not routed",
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
+   }
+  ],
+  "options": {
+   "first": true,
+   "split_cost": 4.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 3.0
+  },
+  "totals": {
+   "nets": 18,
+   "over_via_limit": 0,
+   "vias": 13,
+   "void_crossings": 48
+  }
+ },
+ "drc": {
+  "added_routing_errors": 0,
+  "after": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 10,
+   "unconnected_items": [
+    {
+     "from": "Pad 1 of D4 [GND]",
+     "to": "Pad 2 of C9 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 150.4,
+     "y_mm": 96.3
+    },
+    {
+     "from": "Pad 1 of J7 [+5V]",
+     "to": "Pad 1 of J5 [+5V]",
+     "what": "Missing connection in net +5V",
+     "x_mm": 148.15,
+     "y_mm": 96.25
+    },
+    {
+     "from": "Pad 1 of J5 [+5V]",
+     "to": "Pad 8 of U1 [+5V]",
+     "what": "Missing connection in net +5V",
+     "x_mm": 151.85,
+     "y_mm": 85.25
+    },
+    {
+     "from": "Pad 3 of J8 [/U7D+]",
+     "to": "Pad 38 of U1 [/U7D+]",
+     "what": "Missing connection in net /U7D+",
+     "x_mm": 148.15,
+     "y_mm": 91.25
+    },
+    {
+     "from": "Pad GA of D19 [Net-(D19-1)]",
+     "to": "Pad 1 of R11 [Net-(D19-1)]",
+     "what": "Missing connection in net Net-(D19-1)",
+     "x_mm": 145.753,
+     "y_mm": 86.5
+    },
+    {
+     "from": "Pad 2 of J5 [/U4D-]",
+     "to": "Pad 11 of U1 [/U4D-]",
+     "what": "Missing connection in net /U4D-",
+     "x_mm": 151.85,
+     "y_mm": 84.25
+    },
+    {
+     "from": "Pad 2 of D6 [/U3D+]",
+     "to": "Pad 14 of U1 [/U3D+]",
+     "what": "Missing connection in net /U3D+",
+     "x_mm": 150.4,
+     "y_mm": 90.2
+    },
+    {
+     "from": "Pad 3 of J1 [/D+]",
+     "to": "Pad 30 of U1 [/D+]",
+     "what": "Missing connection in net /D+",
+     "x_mm": 148.73,
+     "y_mm": 114.775
+    },
+    {
+     "from": "Pad GA of D17 [Net-(D17-1)]",
+     "to": "Pad 1 of R9 [Net-(D17-1)]",
+     "what": "Missing connection in net Net-(D17-1)",
+     "x_mm": 147.753,
+     "y_mm": 83.7
+    },
+    {
+     "from": "Pad 1 of C11 [+1V8]",
+     "to": "Pad 28 of U1 [+1V8]",
+     "what": "Missing connection in net +1V8",
+     "x_mm": 154.644,
+     "y_mm": 94.252
+    }
+   ],
+   "warnings": 0
+  },
+  "before": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 128,
+   "warnings": 0
+  },
+  "checker": "tracemaker drc",
+  "removed": 0,
+  "types": [],
+  "unconnected_change": -118,
+  "zones_refilled": true
+ },
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3046644,
+ "failures": [
+  "/D+: D23.2 -> U1.30  (ripped up by /D- and not routed again)",
+  "/U7D+: J8.3 -> U1.38  (ripped up by Net-(U1-VBUS_SENSE) and not routed again)",
+  "/U3D+: J4.3 -> U1.14  (ripped up by /U3D- and not routed again)",
+  "/U4D-: J5.2 -> U1.11  (ripped up by +1V8 and not routed again)",
+  "Net-(D19-1): D19.GA -> R11.1  (ripped up by +3.3V and not routed again)",
+  "+5V: J3.1 -> U1.8  (ripped up by +1V8 and not routed again)",
+  "Net-(D17-1): D17.GA -> R9.1  (boxed in (target); escapes/neck-down: out of budget; negotiated: out of budget)"
+ ],
+ "open": 7,
+ "package_pin_edges": 6,
+ "pitch_mm": 0.05,
+ "refill": {
+  "repair": {
+   "connections": 22,
+   "expansions": 3005774,
+   "kept": true,
+   "routed": 12,
+   "tracks": 12,
+   "unconnected": 10,
+   "vias": 13
+  },
+  "unconnected": 22,
+  "warnings": [],
+  "zones": 5
+ },
+ "routed": 121,
+ "rules": {
+  "custom_rule_count": 0,
+  "custom_rules": [],
+  "files": {
+   "custom_rules": "unrouted.kicad_dru",
+   "custom_rules_found": false,
+   "project": "unrouted.kicad_pro",
+   "project_found": true
+  },
+  "minimums": {
+   "blind_buried_vias": false,
+   "clearance_mm": 0.15,
+   "copper_edge_clearance_mm": 0.0,
+   "drill_mm": 0.25,
+   "hole_clearance_mm": 0.0,
+   "hole_to_hole_mm": 0.25,
+   "microvias": false,
+   "track_width_mm": 0.15,
+   "via_annular_width_mm": 0.1,
+   "via_diameter_mm": 0.5
+  },
+  "net_classes": [
+   {
+    "clearance_mm": 0.15,
+    "diff_pair_gap_mm": 0.15,
+    "diff_pair_width_mm": 0.15,
+    "name": "Default",
+    "nets": 47,
+    "track_width_mm": 0.15,
+    "via_diameter_mm": 0.5,
+    "via_drill_mm": 0.3
+   }
+  ],
+  "not_read": [],
+  "not_read_count": 0
+ },
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-24T01:49:02Z",
+  "input": "build/demos/StickHub//unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "bench/results/run-report/StickHub/routed.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--si-rules",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "8816"
+   },
+   {
+    "name": "--json",
+    "value": "bench/results/run-report/StickHub/summary.json"
+   },
+   {
+    "name": "--report",
+    "value": "bench/results/run-report/StickHub/report.html"
+   }
+  ],
+  "output": "bench/results/run-report/StickHub/routed.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.10.0",
+  "work_budget": 3000000
+ },
+ "seconds": 210.103249954,
+ "stuck": {
+  "board": {
+   "copper_layers": [
+    "F.Cu",
+    "B.Cu"
+   ],
+   "name": "unrouted.kicad_pcb",
+   "nets": 47,
+   "outline_mm": [
+    141.75,
+    80.0,
+    158.25,
+    120.0
+   ],
+   "pads": 278,
+   "parts": 94
+  },
+  "escape_analysis": [
+   {
+    "already_connected": 0,
+    "cannot_escape": 0,
+    "dead": [],
+    "escapable": 46,
+    "part": "U1",
+    "pins": 46,
+    "pitch_mm": 0.5
+   }
+  ],
+  "parts": [
+   {
+    "kind": "small_ic",
+    "library_id": "footprints:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+    "pads": 6,
+    "part": "J8",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "USB7",
+    "x_mm": 146.15,
+    "y_mm": 90.75
+   },
+   {
+    "kind": "small_ic",
+    "library_id": "footprints:Duo_LED_1.6x0.8_Kingbright_APHB1608LZGKSURKC",
+    "pads": 4,
+    "part": "D19",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "USB",
+    "x_mm": 145.153,
+    "y_mm": 86.15
+   },
+   {
+    "kind": "small_ic",
+    "library_id": "footprints:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+    "pads": 6,
+    "part": "J5",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "USB4",
+    "x_mm": 153.85,
+    "y_mm": 83.75
+   },
+   {
+    "kind": "small_ic",
+    "library_id": "footprints:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+    "pads": 6,
+    "part": "J4",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "USB3",
+    "x_mm": 153.85,
+    "y_mm": 90.75
+   },
+   {
+    "kind": "small_ic",
+    "library_id": "footprints:Duo_LED_1.6x0.8_Kingbright_APHB1608LZGKSURKC",
+    "pads": 4,
+    "part": "D17",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "USB",
+    "x_mm": 147.153,
+    "y_mm": 83.35
+   },
+   {
+    "kind": "small_ic",
+    "library_id": "footprints:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal",
+    "pads": 6,
+    "part": "J3",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "USB2",
+    "x_mm": 153.85,
+    "y_mm": 97.75
+   },
+   {
+    "kind": "passive",
+    "library_id": "footprints:D_0402",
+    "pads": 2,
+    "part": "D23",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "TVS",
+    "x_mm": 146.25,
+    "y_mm": 107.2
+   },
+   {
+    "kind": "passive",
+    "library_id": "footprints:R_1005_C",
+    "pads": 2,
+    "part": "R11",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "470",
+    "x_mm": 148.952,
+    "y_mm": 91.813
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "footprints:LQFP-48_7x7mm_P0.5mm",
+    "pads": 48,
+    "part": "U1",
+    "side": "back",
+    "unrouted_ends": 5,
+    "value": "MaxLinear_XR22417-48",
+    "x_mm": 150.75,
+    "y_mm": 98.75
+   },
+   {
+    "kind": "passive",
+    "library_id": "footprints:R_1005_C",
+    "pads": 2,
+    "part": "R9",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "470",
+    "x_mm": 154.432,
+    "y_mm": 93.404
+   }
+  ],
+  "result": {
+   "connections": 128,
+   "routed": 121,
+   "seconds": 20.77,
+   "tracks": 504,
+   "unrouted": 7,
+   "vias": 70
+  },
+  "rules": {
+   "clearance_mm": 0.15,
+   "copper_edge_clearance_mm": 0.0,
+   "min_track_width_mm": 0.15,
+   "track_width_mm": 0.15,
+   "via_diameter_mm": 0.5,
+   "via_drill_mm": 0.3
+  },
+  "unrouted": [
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 31,
+     "other_vias": 5,
+     "routed_copper_by_net": [
+      {
+       "net": "+3.3V",
+       "track_mm": 32.613
+      },
+      {
+       "net": "+5V",
+       "track_mm": 10.953
+      },
+      {
+       "net": "/D-",
+       "track_mm": 9.402
+      },
+      {
+       "net": "/U5D+",
+       "track_mm": 8.54
+      },
+      {
+       "net": "/U5D-",
+       "track_mm": 6.594
+      },
+      {
+       "net": "+1V8",
+       "track_mm": 2.658
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "D23",
+     "x_mm": 146.25,
+     "y_mm": 107.65
+    },
+    "length_mm": 6.034,
+    "net": "/D+",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     144.75,
+     100.37,
+     149.483,
+     109.15
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "30",
+     "part": "U1",
+     "x_mm": 147.983,
+     "y_mm": 101.87
+    },
+    "why": "ripped up by /D- and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 40,
+     "other_vias": 6,
+     "routed_copper_by_net": [
+      {
+       "net": "+3.3V",
+       "track_mm": 19.752
+      },
+      {
+       "net": "+5V",
+       "track_mm": 10.789
+      },
+      {
+       "net": "/U7D-",
+       "track_mm": 10.622
+      },
+      {
+       "net": "Net-(U1-VBUS_SENSE)",
+       "track_mm": 3.935
+      },
+      {
+       "net": "/U6D+",
+       "track_mm": 3.468
+      },
+      {
+       "net": "Net-(D21-1)",
+       "track_mm": 3.333
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "3",
+     "part": "J8",
+     "x_mm": 148.15,
+     "y_mm": 91.25
+    },
+    "length_mm": 6.445,
+    "net": "/U7D+",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     144.716,
+     89.75,
+     149.65,
+     98.898
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "38",
+     "part": "U1",
+     "x_mm": 146.216,
+     "y_mm": 97.398
+    },
+    "why": "ripped up by Net-(U1-VBUS_SENSE) and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 60,
+     "other_vias": 16,
+     "routed_copper_by_net": [
+      {
+       "net": "+5V",
+       "track_mm": 28.541
+      },
+      {
+       "net": "+3.3V",
+       "track_mm": 18.405
+      },
+      {
+       "net": "/U3D-",
+       "track_mm": 9.083
+      },
+      {
+       "net": "+1V8",
+       "track_mm": 8.714
+      },
+      {
+       "net": "/U2D+",
+       "track_mm": 6.622
+      },
+      {
+       "net": "/LC",
+       "track_mm": 6.272
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "3",
+     "part": "J4",
+     "x_mm": 151.85,
+     "y_mm": 90.25
+    },
+    "length_mm": 10.434,
+    "net": "/U3D+",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     150.35,
+     88.75,
+     156.784,
+     101.602
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "14",
+     "part": "U1",
+     "x_mm": 155.284,
+     "y_mm": 100.102
+    },
+    "why": "ripped up by /U3D- and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 62,
+     "other_vias": 16,
+     "routed_copper_by_net": [
+      {
+       "net": "+5V",
+       "track_mm": 20.634
+      },
+      {
+       "net": "/U4D+",
+       "track_mm": 13.831
+      },
+      {
+       "net": "+3.3V",
+       "track_mm": 13.233
+      },
+      {
+       "net": "Net-(D18-1)",
+       "track_mm": 12.25
+      },
+      {
+       "net": "Net-(D15-1)",
+       "track_mm": 11.313
+      },
+      {
+       "net": "Net-(D16-1)",
+       "track_mm": 10.189
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "2",
+     "part": "J5",
+     "x_mm": 151.85,
+     "y_mm": 84.25
+    },
+    "length_mm": 13.589,
+    "net": "/U4D-",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     150.35,
+     82.75,
+     156.784,
+     98.898
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "11",
+     "part": "U1",
+     "x_mm": 155.284,
+     "y_mm": 97.398
+    },
+    "why": "ripped up by +1V8 and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 31,
+     "other_vias": 10,
+     "routed_copper_by_net": [
+      {
+       "net": "/LC",
+       "track_mm": 12.192
+      },
+      {
+       "net": "+3.3V",
+       "track_mm": 11.165
+      },
+      {
+       "net": "Net-(D20-1)",
+       "track_mm": 8.129
+      },
+      {
+       "net": "Net-(D21-1)",
+       "track_mm": 8.083
+      },
+      {
+       "net": "/U7D-",
+       "track_mm": 5.285
+      },
+      {
+       "net": "Net-(D15-1)",
+       "track_mm": 3.573
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "GA",
+     "part": "D19",
+     "x_mm": 145.753,
+     "y_mm": 86.5
+    },
+    "length_mm": 5.766,
+    "net": "Net-(D19-1)",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     144.253,
+     85.0,
+     150.134,
+     92.995
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "R11",
+     "x_mm": 148.634,
+     "y_mm": 91.495
+    },
+    "why": "ripped up by +3.3V and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 19,
+     "other_vias": 4,
+     "routed_copper_by_net": [
+      {
+       "net": "+3.3V",
+       "track_mm": 13.554
+      },
+      {
+       "net": "+1V8",
+       "track_mm": 7.139
+      },
+      {
+       "net": "/U2D+",
+       "track_mm": 5.877
+      },
+      {
+       "net": "/U2D-",
+       "track_mm": 5.103
+      },
+      {
+       "net": "/LED4",
+       "track_mm": 1.725
+      },
+      {
+       "net": "GND",
+       "track_mm": 0.99
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "1",
+     "part": "J3",
+     "x_mm": 151.85,
+     "y_mm": 99.25
+    },
+    "length_mm": 3.758,
+    "net": "+5V",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     150.35,
+     94.837,
+     155.724,
+     100.75
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "8",
+     "part": "U1",
+     "x_mm": 154.224,
+     "y_mm": 96.337
+    },
+    "why": "ripped up by +1V8 and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 91,
+     "other_vias": 25,
+     "routed_copper_by_net": [
+      {
+       "net": "/LC",
+       "track_mm": 20.594
+      },
+      {
+       "net": "Net-(D15-1)",
+       "track_mm": 18.067
+      },
+      {
+       "net": "Net-(D16-1)",
+       "track_mm": 16.6
+      },
+      {
+       "net": "+5V",
+       "track_mm": 15.303
+      },
+      {
+       "net": "Net-(D18-1)",
+       "track_mm": 15.159
+      },
+      {
+       "net": "+3.3V",
+       "track_mm": 11.692
+      }
+     ]
+    },
+    "fails": 2,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "GA",
+     "part": "D17",
+     "x_mm": 147.753,
+     "y_mm": 83.7
+    },
+    "length_mm": 11.707,
+    "net": "Net-(D17-1)",
+    "reason": "boxed_in",
+    "region_mm": [
+     146.253,
+     82.2,
+     156.25,
+     94.586
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "R9",
+     "x_mm": 154.75,
+     "y_mm": 93.086
+    },
+    "why": "boxed in (target); escapes/neck-down: out of budget; negotiated: out of budget"
+   }
+  ],
+  "unrouted_by_net": [
+   {
+    "count": 1,
+    "name": "+5V"
+   },
+   {
+    "count": 1,
+    "name": "/D+"
+   },
+   {
+    "count": 1,
+    "name": "/U3D+"
+   },
+   {
+    "count": 1,
+    "name": "/U4D-"
+   },
+   {
+    "count": 1,
+    "name": "/U7D+"
+   },
+   {
+    "count": 1,
+    "name": "Net-(D17-1)"
+   },
+   {
+    "count": 1,
+    "name": "Net-(D19-1)"
+   }
+  ],
+  "unrouted_by_part": [
+   {
+    "count": 5,
+    "name": "U1"
+   },
+   {
+    "count": 1,
+    "name": "D17"
+   },
+   {
+    "count": 1,
+    "name": "D19"
+   },
+   {
+    "count": 1,
+    "name": "D23"
+   },
+   {
+    "count": 1,
+    "name": "J3"
+   },
+   {
+    "count": 1,
+    "name": "J4"
+   },
+   {
+    "count": 1,
+    "name": "J5"
+   },
+   {
+    "count": 1,
+    "name": "J8"
+   },
+   {
+    "count": 1,
+    "name": "R11"
+   },
+   {
+    "count": 1,
+    "name": "R9"
+   }
+  ],
+  "unrouted_by_reason": [
+   {
+    "count": 6,
+    "name": "ripped_not_rerouted"
+   },
+   {
+    "count": 1,
+    "name": "boxed_in"
+   }
+  ]
+ },
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 194,
+  "bends_per_connection": 0.7106,
+  "connections": 273,
+  "detour_length_mm": 559.17601,
+  "detour_octile_mm": 473.323954,
+  "detour_ratio": 1.1814,
+  "length_mm": 559.17601,
+  "long_detours": 11,
+  "off_angle_segments": 91,
+  "segments": 504,
+  "short_segments": 34,
+  "stair_steps": 0,
+  "vias": 70
+ },
+ "time_limited": false,
+ "tracks": 504,
+ "tunnels": 0,
+ "unconnected_after_refill": 10,
+ "variant": 1,
+ "variant_name": "fast bends, shortest first",
+ "variant_seconds": 20.768178534,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 37,
+   "seconds": 94.98254329,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 121,
+   "seconds": 20.768178534,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 101,
+   "seconds": 178.585323937,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 110,
+   "seconds": 18.724129586,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 35,
+   "seconds": 79.522814152,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 94,
+   "seconds": 29.031847688,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 113,
+   "seconds": 134.457859468,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 120,
+   "seconds": 14.706948196,
+   "variant": 7
+  }
+ ],
+ "vias": 70,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1834090,
+   "commits": 103,
+   "expansions": 1309492,
+   "field_cells": 20936714,
+   "fields": 57,
+   "fixed_checks": 536314,
+   "flood_cells": 713249,
+   "rips": 0,
+   "searches": 216
+  },
+  "negotiation": {
+   "cell_checks": 755975,
+   "commits": 24,
+   "expansions": 455064,
+   "field_cells": 3884284,
+   "fields": 11,
+   "fixed_checks": 106554,
+   "flood_cells": 568839,
+   "rips": 6,
+   "searches": 75
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2590065,
+   "commits": 127,
+   "expansions": 1764556,
+   "field_cells": 24820998,
+   "fields": 68,
+   "fixed_checks": 642868,
+   "flood_cells": 1282088,
+   "rips": 6,
+   "searches": 291
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 14815392,
+   "commits": 687,
+   "expansions": 15412113,
+   "field_cells": 212571468,
+   "fields": 463,
+   "fixed_checks": 5109844,
+   "flood_cells": 5341797,
+   "rips": 0,
+   "searches": 1312
+  },
+  "negotiation": {
+   "cell_checks": 2907994,
+   "commits": 85,
+   "expansions": 1444217,
+   "field_cells": 14205230,
+   "fields": 44,
+   "fixed_checks": 320954,
+   "flood_cells": 2262661,
+   "rips": 40,
+   "searches": 274
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 58,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 17723386,
+   "commits": 772,
+   "expansions": 16856330,
+   "field_cells": 226776698,
+   "fields": 507,
+   "fixed_checks": 5430856,
+   "flood_cells": 7604458,
+   "rips": 40,
+   "searches": 1586
+  }
+ }
+}
