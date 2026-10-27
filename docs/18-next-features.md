@@ -201,3 +201,15 @@ the refill 1,368 → 1,290), and 1 against 1 at 4 layers, 2 against 1 at 6 on th
 pour closes few boards. On two layers the plane is cut up by the tracks that share its layer; the pour's thermal spokes,
 KiCad's default, were starved on 22 boards, so the pour connects pads solid.
 
+
+## 11. C2 measured: pin swap is not worth a pass (2026-10-27)
+
+`bench/pin_swap.py` gave each board an oracle's freedom: connector signal pins and resistor-array resistors taken as swappable by
+construction, the nets assigned to them by a minimum-cost assignment of pad-to-net distance, the board routed as designed and as
+swapped at the same work and judged by KiCad (doc 05 §56, decision [D141](decisions/D141.md), records in `bench/records/m20-c2`).
+
+Gate (a table on at least ten boards): 30 boards. On the 20 failing tier B-D boards with a group, open connections 982 → 978 (five
+boards better, five worse), vias −3 %, length −1 %, none clean either way; on the 10 quick boards with one, 27 → 26 open and 7 → 6
+clean. The median gain is zero, so the proposal-only pass is not built and C2 is closed. The oracle is an upper bound: a real design
+can swap fewer pins.
+

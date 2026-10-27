@@ -1,0 +1,541 @@
+{
+ "ESP8266-MQTT-battery-monitor-hw_battery-monitor": [
+  {
+   "ref": "J2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "nets": [
+    "/VBIN",
+    "Net-(C3-Pad1)",
+    "Net-(J2-Pad3)",
+    "Net-(J2-Pad4)",
+    "/ODRTN",
+    "/OD1",
+    "/OD2"
+   ],
+   "assign": {
+    "1": "/VBIN",
+    "2": "Net-(C3-Pad1)",
+    "3": "Net-(J2-Pad3)",
+    "4": "Net-(J2-Pad4)",
+    "5": "/OD1",
+    "6": "/ODRTN",
+    "7": "/OD2"
+   },
+   "before_mm": 41.586,
+   "after_mm": 41.294,
+   "moved": 2
+  }
+ ],
+ "Hangul-Clock_Hangul": [
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "Net-(P2-Pad14)",
+    "CLK",
+    "DAT",
+    "RST"
+   ],
+   "assign": {
+    "1": "CLK",
+    "3": "DAT",
+    "4": "RST",
+    "5": "Net-(P2-Pad14)"
+   },
+   "before_mm": 205.591,
+   "after_mm": 202.94,
+   "moved": 4
+  }
+ ],
+ "Inkjet__autosave-InkjetDriver": [
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "4",
+    "25",
+    "31",
+    "32",
+    "35",
+    "40"
+   ],
+   "nets": [
+    "Net-(JP1-Pad2)",
+    "Net-(P1-Pad25)",
+    "Net-(P1-Pad31)",
+    "Net-(P1-Pad32)",
+    "Net-(P1-Pad35)",
+    "Net-(P1-Pad40)"
+   ],
+   "assign": {
+    "4": "Net-(JP1-Pad2)",
+    "25": "Net-(P1-Pad31)",
+    "31": "Net-(P1-Pad25)",
+    "32": "Net-(P1-Pad40)",
+    "35": "Net-(P1-Pad32)",
+    "40": "Net-(P1-Pad35)"
+   },
+   "before_mm": 128.874,
+   "after_mm": 125.47,
+   "moved": 5
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14"
+   ],
+   "nets": [
+    "Net-(P3-Pad3)",
+    "Net-(P3-Pad4)",
+    "Net-(P3-Pad5)",
+    "Net-(P3-Pad6)",
+    "Net-(P3-Pad7)",
+    "Net-(P3-Pad8)",
+    "Net-(P3-Pad9)",
+    "Net-(P3-Pad10)",
+    "Net-(P3-Pad11)",
+    "Net-(P3-Pad12)",
+    "Net-(P3-Pad13)",
+    "Net-(P3-Pad14)"
+   ],
+   "assign": {
+    "3": "Net-(P3-Pad6)",
+    "4": "Net-(P3-Pad4)",
+    "5": "Net-(P3-Pad9)",
+    "6": "Net-(P3-Pad3)",
+    "7": "Net-(P3-Pad7)",
+    "8": "Net-(P3-Pad5)",
+    "9": "Net-(P3-Pad8)",
+    "10": "Net-(P3-Pad10)",
+    "11": "Net-(P3-Pad11)",
+    "12": "Net-(P3-Pad12)",
+    "13": "Net-(P3-Pad13)",
+    "14": "Net-(P3-Pad14)"
+   },
+   "before_mm": 346.427,
+   "after_mm": 346.017,
+   "moved": 5
+  }
+ ],
+ "breakout-boards_swd-and-uart": [
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "2",
+    "4",
+    "6",
+    "8",
+    "10"
+   ],
+   "nets": [
+    "/SWDIO",
+    "/SWCLK",
+    "/TXD",
+    "/RXD",
+    "/nRESET"
+   ],
+   "assign": {
+    "2": "/TXD",
+    "4": "/SWDIO",
+    "6": "/SWCLK",
+    "8": "/RXD",
+    "10": "/nRESET"
+   },
+   "before_mm": 50.694,
+   "after_mm": 50.531,
+   "moved": 3
+  }
+ ],
+ "custom_cpu--ALU_custom_cpu--ALU": [
+  {
+   "ref": "J1",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "Net-(J1-Pad1)",
+    "Net-(J1-Pad2)",
+    "Net-(J1-Pad3)",
+    "Net-(J1-Pad4)",
+    "Net-(J1-Pad5)",
+    "Net-(J1-Pad6)",
+    "Net-(J1-Pad7)",
+    "Net-(J1-Pad8)"
+   ],
+   "assign": {
+    "1": "Net-(J1-Pad2)",
+    "2": "Net-(J1-Pad1)",
+    "3": "Net-(J1-Pad3)",
+    "4": "Net-(J1-Pad4)",
+    "5": "Net-(J1-Pad5)",
+    "6": "Net-(J1-Pad6)",
+    "7": "Net-(J1-Pad8)",
+    "8": "Net-(J1-Pad7)"
+   },
+   "before_mm": 336.449,
+   "after_mm": 336.324,
+   "moved": 4
+  },
+  {
+   "ref": "J2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "Net-(J2-Pad1)",
+    "Net-(J2-Pad2)",
+    "Net-(J2-Pad3)",
+    "Net-(J2-Pad4)",
+    "Net-(J2-Pad5)",
+    "Net-(J2-Pad6)",
+    "Net-(J2-Pad7)",
+    "Net-(J2-Pad8)"
+   ],
+   "assign": {
+    "1": "Net-(J2-Pad1)",
+    "2": "Net-(J2-Pad2)",
+    "3": "Net-(J2-Pad4)",
+    "4": "Net-(J2-Pad3)",
+    "5": "Net-(J2-Pad5)",
+    "6": "Net-(J2-Pad6)",
+    "7": "Net-(J2-Pad8)",
+    "8": "Net-(J2-Pad7)"
+   },
+   "before_mm": 136.397,
+   "after_mm": 135.503,
+   "moved": 4
+  }
+ ],
+ "esp-serial-terminal_esp-com": [
+  {
+   "ref": "P6",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "N-0000045",
+    "N-0000012",
+    "N-0000019"
+   ],
+   "assign": {
+    "3": "N-0000012",
+    "4": "N-0000019",
+    "5": "N-0000045"
+   },
+   "before_mm": 46.845,
+   "after_mm": 43.274,
+   "moved": 3
+  }
+ ],
+ "komputer-klavier_KomputerKlavier": [
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "Net-(IC1-Pad18)",
+    "Net-(IC1-Pad19)",
+    "Net-(IC1-Pad17)",
+    "Net-(IC1-Pad1)"
+   ],
+   "assign": {
+    "1": "Net-(IC1-Pad1)",
+    "3": "Net-(IC1-Pad18)",
+    "4": "Net-(IC1-Pad19)",
+    "5": "Net-(IC1-Pad17)"
+   },
+   "before_mm": 41.558,
+   "after_mm": 37.786,
+   "moved": 4
+  },
+  {
+   "ref": "P6",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "5",
+    "7",
+    "9",
+    "11",
+    "13",
+    "15",
+    "17",
+    "19",
+    "21",
+    "23",
+    "25",
+    "27",
+    "29",
+    "31"
+   ],
+   "nets": [
+    "Net-(P6-Pad1)",
+    "Net-(P6-Pad3)",
+    "Net-(P6-Pad5)",
+    "Net-(P6-Pad7)",
+    "Net-(P6-Pad9)",
+    "Net-(P6-Pad11)",
+    "Net-(P6-Pad13)",
+    "Net-(P6-Pad15)",
+    "Net-(P6-Pad17)",
+    "Net-(P6-Pad19)",
+    "Net-(P6-Pad21)",
+    "Net-(P6-Pad23)",
+    "Net-(P6-Pad25)",
+    "Net-(P6-Pad27)",
+    "Net-(P6-Pad29)",
+    "Net-(P6-Pad31)"
+   ],
+   "assign": {
+    "1": "Net-(P6-Pad1)",
+    "3": "Net-(P6-Pad3)",
+    "5": "Net-(P6-Pad5)",
+    "7": "Net-(P6-Pad7)",
+    "9": "Net-(P6-Pad15)",
+    "11": "Net-(P6-Pad9)",
+    "13": "Net-(P6-Pad11)",
+    "15": "Net-(P6-Pad13)",
+    "17": "Net-(P6-Pad17)",
+    "19": "Net-(P6-Pad31)",
+    "21": "Net-(P6-Pad19)",
+    "23": "Net-(P6-Pad21)",
+    "25": "Net-(P6-Pad23)",
+    "27": "Net-(P6-Pad25)",
+    "29": "Net-(P6-Pad27)",
+    "31": "Net-(P6-Pad29)"
+   },
+   "before_mm": 121.593,
+   "after_mm": 113.18,
+   "moved": 11
+  }
+ ],
+ "mosavr_pcie1x_backplane": [
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "15"
+   ],
+   "nets": [
+    "Net-(M0-PadB6)",
+    "/SCL",
+    "Net-(M0-PadB8)",
+    "Net-(M0-PadB9)",
+    "Net-(M0-PadB10)",
+    "Net-(M0-PadB11)",
+    "Net-(M0-PadB12)",
+    "Net-(M0-PadB13)",
+    "Net-(M0-PadB14)",
+    "Net-(M0-PadB15)",
+    "Net-(M0-PadB18)"
+   ],
+   "assign": {
+    "3": "/SCL",
+    "4": "Net-(M0-PadB6)",
+    "5": "Net-(M0-PadB8)",
+    "6": "Net-(M0-PadB9)",
+    "7": "Net-(M0-PadB10)",
+    "8": "Net-(M0-PadB11)",
+    "9": "Net-(M0-PadB12)",
+    "10": "Net-(M0-PadB13)",
+    "11": "Net-(M0-PadB14)",
+    "12": "Net-(M0-PadB15)",
+    "15": "Net-(M0-PadB18)"
+   },
+   "before_mm": 98.489,
+   "after_mm": 98.392,
+   "moved": 2
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "15"
+   ],
+   "nets": [
+    "Net-(M3-PadA6)",
+    "/SDA",
+    "Net-(M3-PadA8)",
+    "Net-(M3-PadA9)",
+    "Net-(M3-PadA10)",
+    "Net-(M3-PadA11)",
+    "Net-(M3-PadA12)",
+    "Net-(M3-PadA13)",
+    "Net-(M3-PadA14)",
+    "Net-(M3-PadA15)",
+    "Net-(M3-PadA18)"
+   ],
+   "assign": {
+    "3": "/SDA",
+    "4": "Net-(M3-PadA6)",
+    "5": "Net-(M3-PadA8)",
+    "6": "Net-(M3-PadA9)",
+    "7": "Net-(M3-PadA10)",
+    "8": "Net-(M3-PadA11)",
+    "9": "Net-(M3-PadA12)",
+    "10": "Net-(M3-PadA13)",
+    "11": "Net-(M3-PadA14)",
+    "12": "Net-(M3-PadA15)",
+    "15": "Net-(M3-PadA18)"
+   },
+   "before_mm": 117.569,
+   "after_mm": 117.522,
+   "moved": 2
+  }
+ ],
+ "scimpy_volumebuffer": [
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "nets": [
+    "/left_bass",
+    "/left_tweet",
+    "/right_bass",
+    "/right_tweet"
+   ],
+   "assign": {
+    "4": "/right_bass",
+    "5": "/right_tweet",
+    "6": "/left_tweet",
+    "7": "/left_bass"
+   },
+   "before_mm": 60.527,
+   "after_mm": 48.948,
+   "moved": 4
+  }
+ ],
+ "spisolator_spisolator": [
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/MBSCK",
+    "/MBMOSI",
+    "/MBMISO",
+    "/~MBCS"
+   ],
+   "assign": {
+    "2": "/MBMOSI",
+    "3": "/MBSCK",
+    "4": "/MBMISO",
+    "5": "/~MBCS"
+   },
+   "before_mm": 25.473,
+   "after_mm": 23.753,
+   "moved": 2
+  },
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "4",
+    "5",
+    "6",
+    "8"
+   ],
+   "nets": [
+    "/~CS",
+    "/SCK",
+    "/MISO",
+    "/MOSI",
+    "/BUFEN"
+   ],
+   "assign": {
+    "3": "/SCK",
+    "4": "/MISO",
+    "5": "/BUFEN",
+    "6": "/MOSI",
+    "8": "/~CS"
+   },
+   "before_mm": 42.102,
+   "after_mm": 40.255,
+   "moved": 4
+  }
+ ]
+}

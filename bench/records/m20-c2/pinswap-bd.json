@@ -1,0 +1,542 @@
+[
+ {
+  "board": "Aleste-520EX_aleste",
+  "groups": 5,
+  "pads": 71,
+  "rat_before": 3215.8,
+  "rat_after": 3077.6,
+  "routed": [
+   1253,
+   1255
+  ],
+  "connections": [
+   1616,
+   1616
+  ],
+  "vias": [
+   428,
+   401
+  ],
+  "length": [
+   20624.6,
+   20667.3
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "CoreOne-xCORE200-Original_CoreOne",
+  "groups": 2,
+  "pads": 5,
+  "rat_before": 172.9,
+  "rat_after": 170.8,
+  "routed": [
+   747,
+   747
+  ],
+  "connections": [
+   807,
+   807
+  ],
+  "vias": [
+   230,
+   232
+  ],
+  "length": [
+   4295.2,
+   4290.5
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "EtherCAT_shield_v1_EtherCAT_shield_v1",
+  "groups": 5,
+  "pads": 17,
+  "rat_before": 435.0,
+  "rat_after": 418.3,
+  "routed": [
+   238,
+   238
+  ],
+  "connections": [
+   272,
+   272
+  ],
+  "vias": [
+   127,
+   124
+  ],
+  "length": [
+   1751.2,
+   1731.3
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "Hardware_Playground_multisensor_cr2032",
+  "groups": 1,
+  "pads": 2,
+  "rat_before": 69.5,
+  "rat_after": 65.2,
+  "routed": [
+   204,
+   204
+  ],
+  "connections": [
+   205,
+   205
+  ],
+  "vias": [
+   67,
+   63
+  ],
+  "length": [
+   831.9,
+   767.2
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "Hardware_Playground_sd_wav_pcm5100",
+  "groups": 1,
+  "pads": 2,
+  "rat_before": 34.2,
+  "rat_after": 32.0,
+  "routed": [
+   393,
+   393
+  ],
+  "connections": [
+   396,
+   396
+  ],
+  "vias": [
+   91,
+   95
+  ],
+  "length": [
+   1362.2,
+   1384.2
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "Hardware_Playground_serial_gw_ATMEGA328P",
+  "groups": 1,
+  "pads": 3,
+  "rat_before": 45.9,
+  "rat_after": 39.9,
+  "routed": [
+   171,
+   171
+  ],
+  "connections": [
+   172,
+   172
+  ],
+  "vias": [
+   65,
+   59
+  ],
+  "length": [
+   733.0,
+   720.2
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "KiCad-Library_Teensy_test_layout",
+  "groups": 14,
+  "pads": 77,
+  "rat_before": 1427.0,
+  "rat_after": 1402.0,
+  "routed": [
+   1238,
+   1233
+  ],
+  "connections": [
+   1268,
+   1268
+  ],
+  "vias": [
+   460,
+   421
+  ],
+  "length": [
+   11342.5,
+   10823.5
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "MicroMaple_MicroMaple",
+  "groups": 3,
+  "pads": 32,
+  "rat_before": 611.1,
+  "rat_after": 534.8,
+  "routed": [
+   100,
+   102
+  ],
+  "connections": [
+   111,
+   111
+  ],
+  "vias": [
+   81,
+   64
+  ],
+  "length": [
+   990.2,
+   982.9
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "MonApollo_analog-board",
+  "groups": 1,
+  "pads": 34,
+  "rat_before": 2305.2,
+  "rat_after": 2248.3,
+  "routed": [
+   1094,
+   1094
+  ],
+  "connections": [
+   1190,
+   1190
+  ],
+  "vias": [
+   572,
+   578
+  ],
+  "length": [
+   9493.1,
+   9557.8
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "P8000_WDC_Emulator_P8000_WDC_Emulator",
+  "groups": 4,
+  "pads": 50,
+  "rat_before": 2000.2,
+  "rat_after": 1815.2,
+  "routed": [
+   324,
+   323
+  ],
+  "connections": [
+   361,
+   361
+  ],
+  "vias": [
+   109,
+   85
+  ],
+  "length": [
+   5320.9,
+   4912.6
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0",
+  "groups": 1,
+  "pads": 3,
+  "rat_before": 105.8,
+  "rat_after": 105.8,
+  "routed": [
+   153,
+   155
+  ],
+  "connections": [
+   188,
+   188
+  ],
+  "vias": [
+   43,
+   49
+  ],
+  "length": [
+   1698.3,
+   1813.9
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "dorkyboard_keyboard",
+  "groups": 1,
+  "pads": 2,
+  "rat_before": 46.2,
+  "rat_after": 45.3,
+  "routed": [
+   810,
+   810
+  ],
+  "connections": [
+   830,
+   830
+  ],
+  "vias": [
+   123,
+   125
+  ],
+  "length": [
+   11094.2,
+   11093.8
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "fifogfx_c64cart",
+  "groups": 2,
+  "pads": 61,
+  "rat_before": 1958.4,
+  "rat_after": 1923.8,
+  "routed": [
+   62,
+   60
+  ],
+  "connections": [
+   104,
+   104
+  ],
+  "vias": [
+   23,
+   16
+  ],
+  "length": [
+   1218.2,
+   1145.0
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "kitspace_OtterPill",
+  "groups": 2,
+  "pads": 19,
+  "rat_before": 224.4,
+  "rat_after": 212.9,
+  "routed": [
+   122,
+   126
+  ],
+  "connections": [
+   137,
+   137
+  ],
+  "vias": [
+   71,
+   73
+  ],
+  "length": [
+   539.4,
+   624.6
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "kitspace_ardfpga",
+  "groups": 3,
+  "pads": 20,
+  "rat_before": 276.1,
+  "rat_after": 270.2,
+  "routed": [
+   199,
+   197
+  ],
+  "connections": [
+   214,
+   214
+  ],
+  "vias": [
+   135,
+   125
+  ],
+  "length": [
+   2052.0,
+   1929.8
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "kitspace_test-jig",
+  "groups": 1,
+  "pads": 3,
+  "rat_before": 46.6,
+  "rat_after": 45.7,
+  "routed": [
+   260,
+   260
+  ],
+  "connections": [
+   292,
+   292
+  ],
+  "vias": [
+   93,
+   95
+  ],
+  "length": [
+   2084.9,
+   2085.6
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "mechkeys_58r-mxalps",
+  "groups": 2,
+  "pads": 17,
+  "rat_before": 1043.2,
+  "rat_after": 928.5,
+  "routed": [
+   349,
+   349
+  ],
+  "connections": [
+   361,
+   361
+  ],
+  "vias": [
+   100,
+   97
+  ],
+  "length": [
+   5516.0,
+   5461.9
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "mini_mass_prog_bench_prog_rig",
+  "groups": 19,
+  "pads": 57,
+  "rat_before": 1604.3,
+  "rat_after": 1588.2,
+  "routed": [
+   969,
+   969
+  ],
+  "connections": [
+   995,
+   995
+  ],
+  "vias": [
+   324,
+   321
+  ],
+  "length": [
+   11141.8,
+   11103.0
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "poncho_fpga_fpga-dongle",
+  "groups": 6,
+  "pads": 53,
+  "rat_before": 2346.4,
+  "rat_after": 2308.9,
+  "routed": [
+   333,
+   338
+  ],
+  "connections": [
+   413,
+   413
+  ],
+  "vias": [
+   161,
+   162
+  ],
+  "length": [
+   3520.6,
+   3663.7
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "zx-sizif-512-ext_sizif512ext",
+  "groups": 3,
+  "pads": 26,
+  "rat_before": 673.8,
+  "rat_after": 655.4,
+  "routed": [
+   429,
+   428
+  ],
+  "connections": [
+   498,
+   498
+  ],
+  "vias": [
+   245,
+   249
+  ],
+  "length": [
+   6569.3,
+   6502.2
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ }
+]

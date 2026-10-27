@@ -2271,3 +2271,22 @@ DRC still checks it as written. Test `[rules]` ("custom hole_clearance rules").
 
 Not done: rules whose condition uses `A.Net` (JLCPCB's "Hole to hole" between different nets, 0.5 mm) are still not
 applied by the router or the DRC (the engine does not evaluate `Net`); KiCad found no such error on that board.
+
+## 56. Pin swap: what the freedom would be worth (M20 C2, 2026-10-27, D141)
+
+`bench/pin_swap.py` measures an upper bound before any pass is built. Groups of pins are taken as swappable by construction
+(assumption A73), not from the design: a connector's signal pins (reference J, P, CN, CON or X; one pad type and size; not a supply,
+ground or differential-pair net; the net's only pad on the connector), standing for a connector wired to interchangeable GPIO, and
+the resistors of a resistor array (RN/RP, 4, 8 or 16 pads; a resistor moves as a unit, either way round). An oracle assigns the
+group's nets to its pads by a minimum-cost assignment of the distance from each pad to the nearest pad of its net elsewhere
+(Kuhn 1955, the Hungarian method). A minimum Euclidean bipartite matching has no crossing pairs, so the group's own ratsnest
+untangles. The swapped board permutes the pads' own `(net ...)` nodes; everything else is byte-identical.
+
+| Set | Boards | Ratsnest of the groups | Open connections | Vias | Length | Clean (KiCad) |
+|---|--:|---|---|---|---|---|
+| Failing tier B-D boards with a group, 10 M work | 20 | 0 to −12 % | 982 → 978 (5 better, 5 worse) | 3,548 → 3,434 | 102.2 → 101.3 m | 0 → 0 |
+| Quick boards with a group, 1 M work | 10 | 0 to −19 % | 27 → 26 (2 better, 1 worse) | 228 → 224 | 8.56 → 8.51 m | 7 → 6 |
+
+The median change in open connections is 0 on both sets; doc 18's condition for building the pass ("only if a median gain is
+clear") is not met, and the proposal-only pin-swap pass is not built. The order of connector pins is not what leaves connections open
+on these boards (§55 says what does); free assignment buys about 3 % of vias. Records: `bench/records/m20-c2/`.

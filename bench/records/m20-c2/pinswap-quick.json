@@ -1,0 +1,272 @@
+[
+ {
+  "board": "ESP8266-MQTT-battery-monitor-hw_battery-monitor",
+  "groups": 1,
+  "pads": 2,
+  "rat_before": 41.6,
+  "rat_after": 41.3,
+  "routed": [
+   95,
+   95
+  ],
+  "connections": [
+   95,
+   95
+  ],
+  "vias": [
+   36,
+   36
+  ],
+  "length": [
+   549.1,
+   548.0
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "Hangul-Clock_Hangul",
+  "groups": 1,
+  "pads": 4,
+  "rat_before": 205.6,
+  "rat_after": 202.9,
+  "routed": [
+   198,
+   199
+  ],
+  "connections": [
+   209,
+   209
+  ],
+  "vias": [
+   80,
+   80
+  ],
+  "length": [
+   2113.9,
+   2168.1
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "Inkjet__autosave-InkjetDriver",
+  "groups": 2,
+  "pads": 10,
+  "rat_before": 475.3,
+  "rat_after": 471.5,
+  "routed": [
+   65,
+   64
+  ],
+  "connections": [
+   65,
+   65
+  ],
+  "vias": [
+   46,
+   40
+  ],
+  "length": [
+   1111.1,
+   1047.6
+  ],
+  "clean": [
+   true,
+   false
+  ]
+ },
+ {
+  "board": "breakout-boards_swd-and-uart",
+  "groups": 1,
+  "pads": 3,
+  "rat_before": 50.7,
+  "rat_after": 50.5,
+  "routed": [
+   11,
+   11
+  ],
+  "connections": [
+   11,
+   11
+  ],
+  "vias": [
+   2,
+   3
+  ],
+  "length": [
+   116.6,
+   117.4
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "custom_cpu--ALU_custom_cpu--ALU",
+  "groups": 2,
+  "pads": 8,
+  "rat_before": 472.8,
+  "rat_after": 471.8,
+  "routed": [
+   71,
+   71
+  ],
+  "connections": [
+   83,
+   83
+  ],
+  "vias": [
+   20,
+   19
+  ],
+  "length": [
+   1201.7,
+   1200.8
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "esp-serial-terminal_esp-com",
+  "groups": 1,
+  "pads": 3,
+  "rat_before": 46.8,
+  "rat_after": 43.3,
+  "routed": [
+   59,
+   59
+  ],
+  "connections": [
+   59,
+   59
+  ],
+  "vias": [
+   14,
+   14
+  ],
+  "length": [
+   556.4,
+   563.8
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "komputer-klavier_KomputerKlavier",
+  "groups": 2,
+  "pads": 15,
+  "rat_before": 163.2,
+  "rat_after": 151.0,
+  "routed": [
+   87,
+   87
+  ],
+  "connections": [
+   87,
+   87
+  ],
+  "vias": [
+   2,
+   2
+  ],
+  "length": [
+   728.9,
+   707.1
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "mosavr_pcie1x_backplane",
+  "groups": 2,
+  "pads": 4,
+  "rat_before": 216.1,
+  "rat_after": 215.9,
+  "routed": [
+   106,
+   107
+  ],
+  "connections": [
+   110,
+   110
+  ],
+  "vias": [
+   13,
+   13
+  ],
+  "length": [
+   1287.5,
+   1305.2
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "scimpy_volumebuffer",
+  "groups": 1,
+  "pads": 4,
+  "rat_before": 60.5,
+  "rat_after": 48.9,
+  "routed": [
+   67,
+   67
+  ],
+  "connections": [
+   67,
+   67
+  ],
+  "vias": [
+   3,
+   4
+  ],
+  "length": [
+   672.4,
+   642.5
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "spisolator_spisolator",
+  "groups": 2,
+  "pads": 6,
+  "rat_before": 67.6,
+  "rat_after": 64.0,
+  "routed": [
+   31,
+   31
+  ],
+  "connections": [
+   31,
+   31
+  ],
+  "vias": [
+   12,
+   13
+  ],
+  "length": [
+   222.7,
+   208.6
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ }
+]

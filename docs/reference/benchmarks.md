@@ -25,6 +25,17 @@ comparable (judge version, time limit, machine load).
 | [m17-pcbworld-fr21](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-fr21/summary.json) | pcbworld-d3-test | 119 |  | 61.6% | 96.1% |  | 10694 |  |
 | [m17-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-quick-new/summary.json) | quick | 30 | 6cb3d65 | 83.3% | 99.0% | 100.0% | 124 | `--no-gpu` |
 
+## m20-c2
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m20-c2)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [c2-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2-base/summary.json) | pcbench-bd-swap | 20 | ec7cc9b | 0.0% | 86.1% | 15.0% | 1308 | `--no-gpu` |
+| [c2-swap](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2-swap/summary.json) | pcbench-bd-swap | 20 | ec7cc9b | 0.0% | 86.3% | 15.0% | 1305 | `--no-gpu` |
+| [c2q-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2q-base/summary.json) | quick-swap | 10 | ec7cc9b | 70.0% | 97.7% | 100.0% | 74 | `--no-gpu` |
+| [c2q-swap](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2q-swap/summary.json) | quick-swap | 10 | ec7cc9b | 60.0% | 97.7% | 100.0% | 72 | `--no-gpu` |
+
 ## m20-c3
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m20-c3)
