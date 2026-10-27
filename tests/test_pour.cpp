@@ -312,3 +312,30 @@ TEST_CASE("Layer advisor: counts the board cannot take are skipped, the fewest t
   CHECK(r4.summary["layers"]["tried"][0]["tried"] == false);  // the zone on In1.Cu
   CHECK(r4.summary["layers"]["chosen"] == 4);
 }
+
+// `route -o OUT`: KiCad reads the rules from the project files beside OUT, so the input's are copied there, never over existing ones.
+TEST_CASE("route -o copies the project files beside the output when it has none", "[pour][route]") {
+  Dir d("project");
+  const fs::path in = d.dir / "b.kicad_pcb", out = d.dir / "out.kicad_pcb", out2 = d.dir / "out2.kicad_pcb";
+  std::ofstream(in) << kTwoLayer;
+  std::ofstream(d.dir / "b.kicad_pro") << "{\"board\": {}}\n";
+  std::ofstream(d.dir / "b.kicad_dru") << "(version 1)\n";
+  std::ofstream(d.dir / "out2.kicad_pro") << "{\"mine\": true}\n";
+  app::RouteJob job;
+  job.in = in.string();
+  job.opt.work_budget = 300'000;
+  job.variants = 1;
+  job.threads = 1;
+  for (const auto& o : {out, out2}) {
+    job.out = o.string();
+    app::run_route_job(job);
+  }
+  auto text = [](const fs::path& p) {
+    std::ifstream f(p);
+    return std::string(std::istreambuf_iterator<char>(f), {});
+  };
+  CHECK(text(d.dir / "out.kicad_pro") == "{\"board\": {}}\n");
+  CHECK(text(d.dir / "out.kicad_dru") == "(version 1)\n");
+  CHECK(text(d.dir / "out2.kicad_pro") == "{\"mine\": true}\n");  // kept
+  CHECK(text(d.dir / "out2.kicad_dru") == "(version 1)\n");
+}

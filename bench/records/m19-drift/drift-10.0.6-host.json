@@ -1,0 +1,97 @@
+{
+ "kicad": "10.0.6",
+ "boards": [
+  {
+   "board": "tests/boards/plane_smd/plane_smd.kicad_pcb",
+   "checks": {
+    "upgrade": {
+     "ok": true,
+     "detail": "Successfully saved board file using the latest format"
+    },
+    "roundtrip": {
+     "ok": true,
+     "detail": "1 ok, 0 failed"
+    },
+    "drc_parity": {
+     "ok": true,
+     "detail": {}
+    },
+    "route_judged": {
+     "ok": true,
+     "detail": "unconnected 47 -> 6"
+    }
+   },
+   "format": 20260206,
+   "ok": true
+  },
+  {
+   "board": "kicad-demos/ecc83/ecc83-pp.kicad_pcb",
+   "checks": {
+    "upgrade": {
+     "ok": true,
+     "detail": "Successfully saved board file using the latest format"
+    },
+    "roundtrip": {
+     "ok": true,
+     "detail": "1 ok, 0 failed"
+    },
+    "drc_parity": {
+     "ok": true,
+     "detail": {}
+    },
+    "route_judged": {
+     "ok": true,
+     "detail": "unconnected 0 -> 0"
+    }
+   },
+   "format": 20260206,
+   "ok": true
+  },
+  {
+   "board": "kicad-demos/pic_programmer/pic_programmer.kicad_pcb",
+   "checks": {
+    "upgrade": {
+     "ok": true,
+     "detail": "Successfully saved board file using the latest format"
+    },
+    "roundtrip": {
+     "ok": true,
+     "detail": "1 ok, 0 failed"
+    },
+    "drc_parity": {
+     "ok": true,
+     "detail": {}
+    },
+    "route_judged": {
+     "ok": true,
+     "detail": "unconnected 0 -> 0"
+    }
+   },
+   "format": 20260206,
+   "ok": true
+  },
+  {
+   "board": "kicad-demos/complex_hierarchy/complex_hierarchy.kicad_pcb",
+   "checks": {
+    "upgrade": {
+     "ok": true,
+     "detail": "Successfully saved board file using the latest format"
+    },
+    "roundtrip": {
+     "ok": true,
+     "detail": "1 ok, 0 failed"
+    },
+    "drc_parity": {
+     "ok": true,
+     "detail": {}
+    },
+    "route_judged": {
+     "ok": true,
+     "detail": "unconnected 0 -> 0"
+    }
+   },
+   "format": 20260206,
+   "ok": true
+  }
+ ]
+}

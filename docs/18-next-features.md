@@ -213,3 +213,12 @@ boards better, five worse), vias −3 %, length −1 %, none clean either way; o
 clean. The median gain is zero, so the proposal-only pass is not built and C2 is closed. The oracle is an upper bound: a real design
 can swap fewer pins.
 
+## 12. M19 started: the KiCad drift job (2026-10-27)
+
+`scripts/kicad_drift.py` and the weekly workflow `kicad-drift.yml` (decision [D142](decisions/D142.md), records in
+`bench/records/m19-drift`): the newest `kicad/kicad` release, and the newest release candidate when it is newer, upgrades four boards
+to its own format; this build must re-write them byte for byte, match kicad-cli's DRC counts on the routing-relevant types, and write
+a routed copy kicad-cli finds no new error type in. 4 of 4 pass on KiCad 10.0.6, 10.0.7 (released 2026-10-18) and the image tagged
+`nightly`, which turned out to be a 10.0 release candidate from February, so the job reads the version tags instead of trusting that
+tag. No KiCad 11 release candidate exists yet; the format, DRC and plugin work of M19 waits for one, and the job will check it the
+week it appears.

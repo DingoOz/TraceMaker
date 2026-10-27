@@ -120,6 +120,18 @@ nlohmann::json work_json(const route::WorkProfile& w) {
   return j;
 }
 
+// KiCad reads a board's rules (net classes, custom rules) from the project files beside it, so `route -o OUT` copies the input's
+// .kicad_pro and .kicad_dru to OUT's name when OUT has none (never over existing ones; not for temporary outputs).
+void copy_project_files(const std::string& in, const std::string& out) {
+  namespace fs = std::filesystem;
+  if (out.empty() || fs::path(out).extension() != ".kicad_pcb") return;
+  std::error_code ec;
+  if (fs::equivalent(in, out, ec)) return;
+  for (const char* ext : {".kicad_pro", ".kicad_dru"}) {
+    const fs::path src = fs::path(in).replace_extension(ext), dst = fs::path(out).replace_extension(ext);
+    if (fs::exists(src, ec) && !fs::exists(dst, ec)) fs::copy_file(src, dst, ec);
+  }
+}
 }  // namespace
 
 std::vector<route::BusGroup> resolve_buses(const model::Board& b, const model::DesignRules& rules, const std::vector<std::string>& specs,
@@ -1203,6 +1215,7 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& v : res.vias) ed.add_via(v);
     for (const auto& [i, p] : pours) ed.set_zone_fills(i, p.zone.fills);
     ed.save(job.out);
+    copy_project_files(job.in, job.out);
   }
   // Reference-return audit (issue #7, doc 05 §42): the selected nets on the board as routed, fills redone for the new copper.
   nlohmann::json return_path_summary;
@@ -1511,7 +1524,10 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
     if (complete) break;  // fewest first: the first count that completes is the answer
   }
   if (!best) throw std::runtime_error("--try-layers: the board can take none of the layer counts given");
-  if (!final_out.empty()) std::filesystem::rename(best_tmp, final_out);
+  if (!final_out.empty()) {
+    std::filesystem::rename(best_tmp, final_out);
+    copy_project_files(job.in, final_out);
+  }
   const bool complete = best->exit_code() == 0;
   log(complete ? fmt("layers: %d copper layers is the fewest of those tried that completes; written to %s", best_count,
                      final_out.empty() ? "(no output)" : final_out.c_str())
