@@ -843,8 +843,8 @@
      "done": false
     },
     {
-     "text": "C3 pour generation and a layer-count advisor",
-     "done": false
+     "text": "C3 pour generation and a layer-count advisor: route --pour, --copper-layers, --try-layers, tracemaker layers (D138); advisor equals brute force 28/28; pours close 0 of 33 non-clean boards (open 1,368 -> 1,290)",
+     "done": true
     },
     {
      "text": "C2 pin-swap feasibility experiment, then a proposal-only pass if the gain is clear",

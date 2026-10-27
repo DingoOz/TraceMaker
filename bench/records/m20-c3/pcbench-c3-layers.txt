@@ -1,0 +1,16 @@
+# The two-layer tier B and C boards of pcbench-bd-fail (none clean at two layers in 0.9.0): the M20 C3 layer-advisor check
+# (bench/layer_advisor_check.py, doc 05 section 53). Each is converted to 2, 4 and 6 copper layers for the brute force.
+EtherCAT_shield_v1_EtherCAT_shield_v1
+Hardware_Playground_E3_Pcb_rev0.3
+Hardware_Playground_serial_gw_ATMEGA328P
+MicroMaple_MicroMaple
+fifogfx_c64cart
+kitspace_OtterPill
+kitspace_ardfpga
+kitspace_test-jig
+memsarray_mems_modules
+poncho_fpga_fpga-dongle
+DronPi_dronPi
+Hardware_Playground_multisensor_cr2032
+Hardware_Playground_sd_wav_pcm5100
+PCIE-to-MXM-Adapter_PCIEx1toMXM3.0

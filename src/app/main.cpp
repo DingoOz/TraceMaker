@@ -214,6 +214,27 @@ int cmd_rules(const std::string& path, const std::string& mode_s, const std::str
   return 0;
 }
 
+// A copy of a board with `count` copper layers (BoardEditor::set_copper_layer_count), its project files beside it so KiCad and the
+// router read the same rules: the boards `route --try-layers` routes, for judging each count on its own (doc 05 §53).
+int cmd_layers(const std::string& in, int count, const std::string& out) {
+  namespace fs = std::filesystem;
+  auto lb = tmk::io::read_board_file(in);
+  const int had = lb.board.copper_count();
+  std::string why;
+  std::vector<std::string> notes;
+  tmk::io::BoardEditor ed(lb);
+  if (!ed.set_copper_layer_count(count, &why, &notes)) {
+    std::fprintf(stderr, "error: %d copper layers: %s\n", count, why.c_str());
+    return 1;
+  }
+  ed.save(out);
+  for (const char* ext : {".kicad_pro", ".kicad_dru"})
+    if (const fs::path src = fs::path(in).replace_extension(ext); fs::exists(src)) fs::copy_file(src, fs::path(out).replace_extension(ext), fs::copy_options::overwrite_existing);
+  std::printf("%s: %d -> %d copper layers, written to %s\n", in.c_str(), had, count, out.c_str());
+  for (const auto& n : notes) std::printf("  %s\n", n.c_str());
+  return 0;
+}
+
 int cmd_route(tmk::app::RouteJob job) {
   job.log = [](const std::string& line) {
     std::printf("%s\n", line.c_str());
@@ -1026,6 +1047,17 @@ int main(int argc, char** argv) {
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
+  route->add_option("--pour", r_job.pours,
+                    "Add a copper pour before routing: auto (the ground net on the first inner layer, else the back layer, when the board has no "
+                    "zone) or NET@LAYER; repeatable. Turns on --soft-zones; the pour is written with its fill")
+      ->delimiter(',');
+  route->add_option("--copper-layers", r_job.copper_layers, "Route with this many copper layers (even): inner layers are added, or empty ones removed, in the output too")
+      ->check(CLI::Range(2, 32));
+  std::vector<int> r_try_layers;
+  route->add_option("--try-layers", r_try_layers,
+                    "Layer-count advisor: route with each count (e.g. 2,4,6), fewest first, stop at the first that completes and write that board; "
+                    "the summary's \"layers\" lists every count tried")
+      ->delimiter(',');
   route->add_flag("--view", r_job.view, "Stream the routing live to the browser viewer");
   bool r_nofreeze = false;
   double r_fp_tol = -1;
@@ -1219,6 +1251,12 @@ int main(int argc, char** argv) {
   style_cmd->add_option("board", sty_board)->required()->check(CLI::ExistingFile);
   style_cmd->add_option("--json", sty_json, "Write the metric as JSON");
   style_cmd->add_flag("--connections", sty_conn, "With --json: also one row per connection");
+  auto* layers_cmd = app.add_subcommand("layers", "Write a copy of a board with another copper layer count (inner layers added, or empty ones removed; doc 05 §53)");
+  std::string ly_in, ly_out;
+  int ly_count = 0;
+  layers_cmd->add_option("board", ly_in)->required()->check(CLI::ExistingFile);
+  layers_cmd->add_option("--count", ly_count, "Copper layers of the copy (even, 2 to 32)")->required()->check(CLI::Range(2, 32));
+  layers_cmd->add_option("-o,--output", ly_out, "Output .kicad_pcb (the board's .kicad_pro and .kicad_dru are copied next to it)")->required();
   auto* srj_in = app.add_subcommand("srj-import", "Convert a Simple Route JSON problem (tscircuit) to a KiCad board with its project and rules");
   std::string si_in, si_out, si_json;
   double si_clearance = -1, si_hole = -1;
@@ -1348,6 +1386,7 @@ int main(int argc, char** argv) {
     }
     if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host, fc_token, fc_insecure);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
+    if (*layers_cmd) return cmd_layers(ly_in, ly_count, ly_out);
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);
@@ -1400,6 +1439,14 @@ int main(int argc, char** argv) {
         for (const auto& r : o->results()) v += (v.empty() ? "" : ",") + r;
         if (o->get_name() == "--view-token") v = "(not recorded)";  // it opens the viewer to whoever reads a shared summary or report
         job.options_given.push_back({{"name", o->get_name()}, {"value", v.empty() ? std::string("on") : v}});
+      }
+      if (!r_try_layers.empty()) {
+        if (job.copper_layers > 0) throw std::invalid_argument("--try-layers and --copper-layers: give one");
+        job.log = [](const std::string& line) {
+          std::printf("%s\n", line.c_str());
+          std::fflush(stdout);
+        };
+        return tmk::app::run_layer_advisor(std::move(job), r_try_layers).exit_code();
       }
       return cmd_route(std::move(job));
     }

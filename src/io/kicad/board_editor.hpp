@@ -29,6 +29,19 @@ class BoardEditor {
   // plus any rotation). Only for footprints where flip_supported() holds.
   void flip_footprint(std::size_t index, model::Point pos, double angle);
 
+  // Adds a board-level copper zone as KiCad writes one: net, layer (the zone's single copper layer), outline (first
+  // ring), clearance, minimum width, thermal and island settings, and its fills when it has any (doc 05 §53).
+  void add_zone(const model::Zone& z);
+  // Replaces the filled polygons of zone `index` (board.zones order) with `fills` (copper index, fractured polygon, as
+  // drc::refill_zones gives them) and marks the zone filled.
+  void set_zone_fills(std::size_t index, const std::vector<std::pair<int, std::vector<model::Point>>>& fills);
+  // Gives the board `n` copper layers (even, 2..32; doc 05 §53): inner layers are added after the last one, or the last
+  // ones removed. Removing needs those layers empty (no track, arc, blind via, zone, graphic, text or pad that names
+  // them); through vias and plated holes follow the layer count by themselves. A (stackup) block is removed, since its
+  // copper and dielectrics no longer match, and KiCad builds its default stackup for the new count. Returns false with
+  // the reason in `why` (and the document unchanged) when it cannot; `notes` receives what changed besides the layers.
+  bool set_copper_layer_count(int n, std::string* why = nullptr, std::vector<std::string>* notes = nullptr);
+
   std::string write() const { return lb_.doc.write(); }
   void save(const std::string& path) const { lb_.doc.save(path); }
 

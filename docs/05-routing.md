@@ -504,7 +504,8 @@ expansions, the designer's zone nets skipped): 4 boards complete (serial_gw, mec
 connections 938 → 723; large drops on poncho_fpga (46 → 3), MonApollo (58 → 25), V2X (24 → 9), prog_rig (11 → 3);
 no change on EtherCAT, P8000, memsarray, robomezzi. Ground and power routed as tracks take channel space on some
 boards, but most of the open connections remain: the fan-outs do not fit under the default rules. Keeping or
-creating pours for power nets is a possible feature (not built); it would close a few boards, not most.
+creating pours for power nets is a possible feature; it would close a few boards, not most. (Built in 2026-10 as
+`route --pour`, §53: on two layers it closes none of these boards.)
 
 ## 19. Global router v2 and the close of M6 (2026-10-06)
 
@@ -2168,3 +2169,80 @@ Nothing else changes: the order within the group is the router's own. On the shi
 **What it is** (`--package-tunnels`, off by default; `route_tunnels` in `route/bundle.cpp`, run before the bundles in `Router::route_bundle_escapes`, also on a warm start for the connections still open). For every unrouted connection whose two pads are perimeter pins of one dense package on the same copper layer, at least 2 mm apart: a stub straight out of each pin to the nearest place (0.1 mm steps, up to 1.8 mm past the pad edge) where the stub and a via of the net pass the router's exact checks; then the run on the other outer layer between the two vias, one A* (octilinear, 0.25 mm grid, exact checks per step, the spine search of §50 with a track as wide as the net) and a last piece to the via. Nothing is placed unless the whole tunnel passes; it becomes the connection's copper, routed and protected from ripping like a lane. Tunnels go **before** the lanes: after them no via fits between the pins' lanes at the board's rules (tried: no via site for any of the three tunnels on the shield).
 
 **Result.** Without lanes all three tunnels of the shield are placed (`+3V3` 14-7 and 20-14, the core rail 24-38). In the router's own count at the first-round rules (T0 vias of 0.6 mm) they cost connections (190 against 194 of 207 with lanes and supply first); the closure loop, which works at its relaxed tiers (0.4 mm vias), is the test: see `bench/records/closure/README.md`. Test `[bundle]` (a net between two opposite pins of the package: two vias, tracks on both layers, DRC-clean, deterministic).
+
+## 53. Generated pours and the layer-count advisor (2026-10-27, D138)
+
+M20's C3 (doc 18 §4). PCBench boards have no zones; §18 measured what leaving the poured nets to a pour could give
+(4 of 34 boards complete when those nets are skipped) and called creating pours a possible feature. This section builds
+it, with a way to change the copper layer count and an advisor that tries several counts.
+
+**Pours** (`route --pour auto|NET@LAYER`, repeatable; `passes::plan_pours`, `BoardEditor::add_zone`). `auto` adds one
+pour, only to a board without copper zones: the ground net by name (`crules::ground_like_name`; the one with the most
+pads) on In1.Cu when the board has inner layers, else on B.Cu. `NET@LAYER` adds that net on that layer. The zone is the
+outline's box plus 0.5 mm (the fill stops at the board edge), clearance the net class clearance but at least 0.3 mm,
+minimum width 0.25 mm, islands removed, and **solid pad connections** (below). A pour turns on soft zones (§36): it is
+filled before routing so the router sees the plane, other nets route through it, and the refill, the refill repair and
+the thermal check after routing decide what it connects. The output holds the zone with the engine's last fill; the
+summary lists each pour (`pours`: net, layer, reason, clearance, polygons, filled area).
+
+**Layer count** (`route --copper-layers N`; `tracemaker layers BOARD --count N -o OUT`;
+`BoardEditor::set_copper_layer_count`). Inner layers are added after the last inner entry of the layer table, in the
+file's own numbering (KiCad 9's even ordinals, In1 = 4, or the older In1 = 1, told apart by B.Cu's ordinal) and quoting;
+through-hole pads take the new layers through their `*.Cu`. Layers are removed from the top inner one down, and only if
+nothing names them (tracks, arcs, blind or micro vias, zones, graphics, texts, pads); otherwise the edit is refused and
+the file is untouched. A stackup block is removed so KiCad builds its default one for the new count. Untouched content
+stays byte for byte; 2 → 4 → 2 gives the input back (test `[layers]`).
+
+**Advisor** (`route --try-layers 2,4,6`; `app::run_layer_advisor`). Each count is routed in turn, fewest first, with the
+same options; a count the board cannot take (inner layers in use) is recorded as not tried. It stops at the first count
+the engine judges complete (every connection routed and, with zones, nothing unconnected after the refill) and writes
+that board; if none completes it writes the count with the fewest open connections (ties to fewer layers). The summary's
+`layers` holds the chosen count, whether it completed, and per count the routed and open connections, vias and seconds.
+
+**Thermal reliefs or solid.** The first run gave the pour KiCad's default, thermal reliefs. On the 33 non-clean
+PCBench boards of tiers B to D (`pcbench-bd-fail`, 10 M work, no GPU, KiCad judging with zones refilled) 22 boards gained
+`starved_thermal` errors, 2 to 18 each: routed tracks of other nets cut the spokes off the pour. The thermal repair of
+D137 rerouted one pad at a time with the first pass's whole budget, which took Aleste from 28 s to 3,708 s (3,400 s of it
+in that repair) and still left 12. Solid connections only need the fill to touch the pad: the second run has no starved
+reliefs and no other added errors except two `solder_mask_bridge` on the Teensy test layout (routed B.Cu tracks of
+other nets across a net-less B.Mask circle that now exposes pour copper; §48's mask openings are not yet kept out of a
+generated pour).
+
+**Pours on the 33 boards** (`bench/records/m20-c3/`; KiCad's count after its refill):
+
+| Run | Clean boards | Open after refill (sum) | Better / worse than without | Wall time (3 jobs) |
+|---|--:|--:|---|--:|
+| Without a pour (`c3-bd-base`) | 0 | 1,368 | | 1,267 s |
+| `--pour auto`, thermal reliefs (`c3-bd-pour`) | 0 | 1,297 | 20 / 8, 22 boards with starved reliefs | 11,240 s |
+| `--pour auto`, solid (`c3-bd-pour2`) | 0 | 1,290 | 18 / 10 | 3,905 s |
+
+The pour takes the ground net off the track router (serial_gw routes 78 connections instead of 172), but on two layers
+the back-layer plane is cut into pieces by the signal tracks that share it, so what the pour joins is not all of the
+ground net: the refill repair then has to route the pieces together through fixed fills. Large drops are on MonApollo
+(96 → 55), poncho_fpga (80 → 55), dorkyboard (20 → 13) and Aleste (363 → 341); E3 (13 → 22), Teensy (30 → 48) and
+LFK78 (45 → 51) are worse. No board completes, with or without the pour: on these boards the open connections are the
+fan-outs of §18 that do not fit under the default rules, and a pour does not move them. §18's what-if, which treated
+the poured nets as connected for free, is the upper bound this does not reach on two layers. The pour run is about three
+times slower: the soft-zone first pass checks the fills, and the refill repair routes against them as fixed copper.
+
+**The advisor against a brute force** (`bench/layer_advisor_check.py`). The 14 two-layer boards of tiers B and C in
+`pcbench-bd-fail` are converted to 2, 4 and 6 layers (`tracemaker layers`), each copy routed and judged by KiCad with
+zones refilled; the brute force's answer is the fewest count KiCad calls clean. The advisor, on the original board,
+gives the same answer on all 14: MicroMaple completes at 4 layers (its written board is byte-identical to the brute
+force's 4-layer board), the other 13 complete at none of 2, 4 or 6, at this budget and the default rules. With
+`--pour auto` on both sides (the pour goes on In1.Cu once there are inner layers) the answers match on all 14 again:
+serial_gw completes at 4 layers with the ground plane and at none without it; MicroMaple needs 6 with the plane and 4
+without it.
+
+| 14 boards, KiCad's count | 2 layers | 4 layers | 6 layers |
+|---|--:|--:|--:|
+| Clean without a pour (`c3-layers`) | 0 | 1 | 1 |
+| Open after refill without a pour | 293 | 296 | 329 |
+| Clean with `--pour auto` (`c3-layers-pour`) | 0 | 1 | 2 |
+| Open after refill with `--pour auto` | 262 | 286 | 322 |
+
+No run added a routing error. More layers did not lower the open count at the same budget; why is not established (the
+open connections are mostly fan-outs of fine-pitch parts on the outer layers, which inner layers reach only through a
+via in the fan-out). Advisor and brute force agree on 28 of 28 answers, so the gate's second half is met; the first
+half, boards completed with a pour against without, is 0 against 0 on the 33 boards at their own layer counts and 1 against 1
+(4 layers) and 2 against 1 (6 layers) on the 14. Tests `[pour]`, `[layers]`.

@@ -1,0 +1,308 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 92.99,
+ "connections": 214,
+ "copper_layers": 2,
+ "escape_corridor_mm": 384.45355300000006,
+ "escape_corridors": 153,
+ "escape_reclaimed": 0,
+ "expansions": 10103017,
+ "failures": [
+  "FRST: Q1.D -> U1.10  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "FSDI: U2.2 -> U1.13  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "FSCK: RN4.1 -> U1.15  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "FSCK: U1.15 -> U2.6  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "DONE: R6.2 -> U1.11  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN2-Pad6): RN2.6 -> U1.31  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN1-Pad8): RN1.8 -> U1.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN3-Pad3): RN3.3 -> U1.20  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN3-Pad1): RN3.1 -> U1.23  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "IO1: R4.1 -> R11.2  ()",
+  "AREF: RN8.5 -> U3.20  ()",
+  "IO1: R4.1 -> U3.31  ()",
+  "+5V: U6.1 -> J2.3  ()",
+  "+5V: J2.3 -> J3.2  ()",
+  "MSCK: U3.17 -> RN4.8  ()"
+ ],
+ "layers": {
+  "chosen": 2,
+  "complete": false,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 214,
+    "copper_layers": 2,
+    "routed": 199,
+    "seconds": 26.178079002,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 135
+   },
+   {
+    "complete": false,
+    "connections": 214,
+    "copper_layers": 4,
+    "routed": 192,
+    "seconds": 33.151926659,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 96
+   },
+   {
+    "complete": false,
+    "connections": 214,
+    "copper_layers": 6,
+    "routed": 184,
+    "seconds": 36.095831007,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 83
+   }
+  ]
+ },
+ "open": 15,
+ "package_pin_edges": 10,
+ "pitch_mm": 0.05,
+ "routed": 199,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T03:27:03Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_ardfpga/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers/advisor/kitspace_ardfpga/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "10000000"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--try-layers",
+    "value": "2,4,6"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers/advisor/kitspace_ardfpga/route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers/advisor/kitspace_ardfpga/out.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 10000000
+ },
+ "seconds": 26.178079002,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 348,
+  "bends_per_connection": 0.964,
+  "connections": 361,
+  "detour_length_mm": 2052.035282,
+  "detour_octile_mm": 1759.842941,
+  "detour_ratio": 1.166,
+  "length_mm": 2052.035282,
+  "long_detours": 18,
+  "off_angle_segments": 106,
+  "segments": 828,
+  "short_segments": 30,
+  "stair_steps": 0,
+  "vias": 135
+ },
+ "time_limited": false,
+ "tracks": 828,
+ "tunnels": 0,
+ "variant": 3,
+ "variant_name": "fast bends, jittered order, escape plan",
+ "variant_seconds": 25.378282325,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 138,
+   "seconds": 8.777171849,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 177,
+   "seconds": 25.817946817,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 35,
+   "seconds": 15.990784318,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 199,
+   "seconds": 25.378282325,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 133,
+   "seconds": 7.818254708,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 175,
+   "seconds": 23.820450831,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 193,
+   "seconds": 17.815014225,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 176,
+   "seconds": 26.133265045,
+   "variant": 7
+  }
+ ],
+ "vias": 135,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 9160412,
+   "commits": 199,
+   "expansions": 8069689,
+   "field_cells": 48882674,
+   "fields": 157,
+   "fixed_checks": 2933963,
+   "flood_cells": 2033328,
+   "rips": 0,
+   "searches": 248
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 1,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 9160412,
+   "commits": 199,
+   "expansions": 8069689,
+   "field_cells": 48882674,
+   "fields": 157,
+   "fixed_checks": 2933964,
+   "flood_cells": 2033328,
+   "rips": 0,
+   "searches": 248
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 62854239,
+   "commits": 1226,
+   "expansions": 75880365,
+   "field_cells": 286657256,
+   "fields": 1032,
+   "fixed_checks": 17513863,
+   "flood_cells": 5290572,
+   "rips": 0,
+   "searches": 1637
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 2,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 62854239,
+   "commits": 1226,
+   "expansions": 75880365,
+   "field_cells": 286657256,
+   "fields": 1032,
+   "fixed_checks": 17513865,
+   "flood_cells": 5290572,
+   "rips": 0,
+   "searches": 1637
+  }
+ }
+}

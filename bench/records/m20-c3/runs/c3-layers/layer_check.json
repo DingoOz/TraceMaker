@@ -1,0 +1,649 @@
+[
+ {
+  "board": "EtherCAT_shield_v1_EtherCAT_shield_v1",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 272,
+    "copper_layers": 2,
+    "routed": 238,
+    "seconds": 29.402259249,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 127
+   },
+   {
+    "complete": false,
+    "connections": 272,
+    "copper_layers": 4,
+    "routed": 234,
+    "seconds": 31.090985176,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 106
+   },
+   {
+    "complete": false,
+    "connections": 272,
+    "copper_layers": 6,
+    "routed": 231,
+    "seconds": 36.361748719,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 102
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "Hardware_Playground_E3_Pcb_rev0.3",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 341,
+    "copper_layers": 2,
+    "routed": 315,
+    "seconds": 36.827813927,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 167
+   },
+   {
+    "complete": false,
+    "connections": 341,
+    "copper_layers": 4,
+    "routed": 323,
+    "seconds": 48.817175754,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 140
+   },
+   {
+    "complete": false,
+    "connections": 341,
+    "copper_layers": 6,
+    "routed": 322,
+    "seconds": 54.154302681,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 132
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "Hardware_Playground_serial_gw_ATMEGA328P",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 172,
+    "copper_layers": 2,
+    "routed": 171,
+    "seconds": 25.808975673,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 65
+   },
+   {
+    "complete": false,
+    "connections": 172,
+    "copper_layers": 4,
+    "routed": 171,
+    "seconds": 34.670659801,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 55
+   },
+   {
+    "complete": false,
+    "connections": 172,
+    "copper_layers": 6,
+    "routed": 171,
+    "seconds": 35.527508002,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 55
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "MicroMaple_MicroMaple",
+  "kicad_clean": {
+   "2": false,
+   "4": true,
+   "6": true
+  },
+  "refused": {},
+  "brute_force": 4,
+  "advisor": 4,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 111,
+    "copper_layers": 2,
+    "routed": 100,
+    "seconds": 38.804629152,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 81
+   },
+   {
+    "complete": true,
+    "connections": 111,
+    "copper_layers": 4,
+    "routed": 111,
+    "seconds": 62.424417454,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 96
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "fifogfx_c64cart",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 104,
+    "copper_layers": 2,
+    "routed": 62,
+    "seconds": 25.027012212,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 23
+   },
+   {
+    "complete": false,
+    "connections": 104,
+    "copper_layers": 4,
+    "routed": 64,
+    "seconds": 32.917418627,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 5
+   },
+   {
+    "complete": false,
+    "connections": 104,
+    "copper_layers": 6,
+    "routed": 63,
+    "seconds": 45.557344187,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 4
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "kitspace_OtterPill",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 137,
+    "copper_layers": 2,
+    "routed": 122,
+    "seconds": 35.194206589,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 71
+   },
+   {
+    "complete": false,
+    "connections": 137,
+    "copper_layers": 4,
+    "routed": 131,
+    "seconds": 40.583687163,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 80
+   },
+   {
+    "complete": false,
+    "connections": 137,
+    "copper_layers": 6,
+    "routed": 127,
+    "seconds": 43.057424961,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 68
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "kitspace_ardfpga",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 214,
+    "copper_layers": 2,
+    "routed": 199,
+    "seconds": 26.178079002,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 135
+   },
+   {
+    "complete": false,
+    "connections": 214,
+    "copper_layers": 4,
+    "routed": 192,
+    "seconds": 33.151926659,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 96
+   },
+   {
+    "complete": false,
+    "connections": 214,
+    "copper_layers": 6,
+    "routed": 184,
+    "seconds": 36.095831007,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 83
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "kitspace_test-jig",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 292,
+    "copper_layers": 2,
+    "routed": 260,
+    "seconds": 29.334831917,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 93
+   },
+   {
+    "complete": false,
+    "connections": 292,
+    "copper_layers": 4,
+    "routed": 260,
+    "seconds": 32.936601341,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 85
+   },
+   {
+    "complete": false,
+    "connections": 292,
+    "copper_layers": 6,
+    "routed": 260,
+    "seconds": 35.225972535,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 85
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "memsarray_mems_modules",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 10,
+    "copper_layers": 2,
+    "routed": 9,
+    "seconds": 22.749526243,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 2
+   },
+   {
+    "complete": false,
+    "connections": 10,
+    "copper_layers": 4,
+    "routed": 9,
+    "seconds": 15.659561989,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 2
+   },
+   {
+    "complete": false,
+    "connections": 10,
+    "copper_layers": 6,
+    "routed": 9,
+    "seconds": 18.225217274,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 2
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "poncho_fpga_fpga-dongle",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 413,
+    "copper_layers": 2,
+    "routed": 333,
+    "seconds": 35.041639522,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 161
+   },
+   {
+    "complete": false,
+    "connections": 413,
+    "copper_layers": 4,
+    "routed": 326,
+    "seconds": 39.85631802,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 122
+   },
+   {
+    "complete": false,
+    "connections": 413,
+    "copper_layers": 6,
+    "routed": 312,
+    "seconds": 42.524139427,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 106
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "DronPi_dronPi",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 352,
+    "copper_layers": 2,
+    "routed": 341,
+    "seconds": 29.525014094,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 176
+   },
+   {
+    "complete": false,
+    "connections": 352,
+    "copper_layers": 4,
+    "routed": 341,
+    "seconds": 41.009688378,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 135
+   },
+   {
+    "complete": false,
+    "connections": 352,
+    "copper_layers": 6,
+    "routed": 339,
+    "seconds": 47.223568801,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 125
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "Hardware_Playground_multisensor_cr2032",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 205,
+    "copper_layers": 2,
+    "routed": 204,
+    "seconds": 47.444698959,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 67
+   },
+   {
+    "complete": false,
+    "connections": 205,
+    "copper_layers": 4,
+    "routed": 204,
+    "seconds": 68.426488088,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 51
+   },
+   {
+    "complete": false,
+    "connections": 205,
+    "copper_layers": 6,
+    "routed": 204,
+    "seconds": 98.875423345,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 51
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "Hardware_Playground_sd_wav_pcm5100",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 396,
+    "copper_layers": 2,
+    "routed": 393,
+    "seconds": 31.247195606,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 91
+   },
+   {
+    "complete": false,
+    "connections": 396,
+    "copper_layers": 4,
+    "routed": 392,
+    "seconds": 40.487068442,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 59
+   },
+   {
+    "complete": false,
+    "connections": 396,
+    "copper_layers": 6,
+    "routed": 392,
+    "seconds": 41.010923507,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 55
+   }
+  ],
+  "match": true
+ },
+ {
+  "board": "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0",
+  "kicad_clean": {
+   "2": false,
+   "4": false,
+   "6": false
+  },
+  "refused": {},
+  "brute_force": null,
+  "advisor": null,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 188,
+    "copper_layers": 2,
+    "routed": 153,
+    "seconds": 37.017544681,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 43
+   },
+   {
+    "complete": false,
+    "connections": 188,
+    "copper_layers": 4,
+    "routed": 150,
+    "seconds": 46.856747749,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 38
+   },
+   {
+    "complete": false,
+    "connections": 188,
+    "copper_layers": 6,
+    "routed": 150,
+    "seconds": 43.272788032,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 38
+   }
+  ],
+  "match": true
+ }
+]

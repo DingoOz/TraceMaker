@@ -9,6 +9,7 @@ code: []
 > **Update (2026-10-16): M17 was built and measured (docs/10 §11, D121, D122, `bench/records/m17`). Two statements below are corrected by it: PCBWorld's "679 real boards" (§2, §3, A1) are derived from PCBench, so A1 is
 > not an independent second corpus; and the paper was read in full (§1). The rest of this note is as written on 2026-10-14.**
 > **Update (2026-10-24): D3, the run report, was built (§9, D136).**
+> **Update (2026-10-27): C3, pours and the layer-count advisor, was built (§10, D138).**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -185,3 +186,18 @@ route took 0.1 to 2.1 s per board. Options off, the quick tier is byte-identical
 Not met yet: the review by someone who did not write it, and interf_u, which spends more than 20 minutes on one core after its portfolio
 with `main`'s binary as well (27 s in the 14 October records; open). Found on the way: under load the default 120 s time limit, not the
 work budget, ended some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
+
+## 10. C3 built: generated pours and the layer-count advisor (2026-10-27)
+
+`route --pour auto|NET@LAYER` adds a ground (or named) pour to a board without zones and routes with soft zones;
+`route --copper-layers N` and `tracemaker layers` change the copper layer count; `route --try-layers 2,4,6` routes each
+count, fewest first, and writes the first that completes (doc 05 §53, decision [D138](decisions/D138.md), records in
+`bench/records/m20-c3`).
+
+Gate: the advisor's answer equals a brute-force run (each count converted, routed and judged by KiCad) on 28 of 28
+board-and-option pairs (14 two-layer boards, with and without a pour): met. Boards completed with a generated pour
+against without: 0 against 0 on the 33 non-clean tier B to D boards at their own layer counts (open connections after
+the refill 1,368 → 1,290), and 1 against 1 at 4 layers, 2 against 1 at 6 on the 14. The candidate's estimate holds: a
+pour closes few boards. On two layers the plane is cut up by the tracks that share its layer; the pour's thermal spokes,
+KiCad's default, were starved on 22 boards, so the pour connects pads solid.
+

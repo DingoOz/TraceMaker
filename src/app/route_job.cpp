@@ -2,6 +2,7 @@
 #include "app/route_job.hpp"
 
 #include <algorithm>
+#include <bit>
 #include <chrono>
 #include <cmath>
 #include <cstdarg>
@@ -12,6 +13,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -37,6 +39,7 @@
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "learn/knowledge_base.hpp"
+#include "passes/pour.hpp"
 #include "passes/stitch.hpp"
 #include "passes/style.hpp"
 #include "passes/widen.hpp"
@@ -223,6 +226,22 @@ RouteJobResult run_route_job(RouteJob job) {
     }
     log(fmt("reroute: %d unlocked tracks and vias removed", removed));
   }
+  // The document after edits, parsed again, so the model and the node ids match what will be written.
+  auto reparse = [&] {
+    lb.doc = sexpr::Document::parse(lb.doc.write());
+    lb.board = io::read_board(lb.doc);
+  };
+  if (job.copper_layers > 0 && job.copper_layers != lb.board.copper_count()) {
+    const int had = lb.board.copper_count();
+    std::string why;
+    std::vector<std::string> notes;
+    io::BoardEditor ed(lb, opt.seed);
+    if (!ed.set_copper_layer_count(job.copper_layers, &why, &notes))
+      throw std::invalid_argument(fmt("--copper-layers %d: %s", job.copper_layers, why.c_str()));
+    reparse();
+    log(fmt("copper layers: %d -> %d", had, lb.board.copper_count()));
+    for (const auto& n : notes) log("  " + n);
+  }
   if (!job.no_tracks_on.empty() || !job.layer_costs.empty()) {
     const auto& bd = lb.board;
     const auto lim = route::layer_limits(bd, job.no_tracks_on, job.layer_costs);
@@ -240,6 +259,34 @@ RouteJobResult run_route_job(RouteJob job) {
     if (stranded) log(fmt("warning: %d pads lie only on layers that take no tracks; their connections stay unrouted", stranded));
   }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
+  // Generated pours (doc 05 §53): added to the document (so they are written), filled in memory for the router, routed with soft
+  // zones. Their fills in the output are redone for the final copper before writing.
+  std::vector<std::pair<std::size_t, passes::PourPlan>> pours;  // (index in lb.board.zones, plan)
+  if (!job.pours.empty()) {
+    std::vector<std::string> notes;
+    auto plans = passes::plan_pours(lb.board, rules, job.pours, &notes);
+    for (const auto& n : notes) log(n);
+    if (!plans.empty()) {
+      io::BoardEditor ed(lb, opt.seed ^ 0x9047u);
+      for (auto& p : plans) {
+        p.zone.uuid = ed.next_uuid();
+        ed.add_zone(p.zone);
+      }
+      reparse();
+      const auto filled = drc::refill_zones(lb.board, rules);
+      for (auto& p : plans)
+        for (std::size_t i = 0; i < lb.board.zones.size(); ++i)
+          if (lb.board.zones[i].uuid == p.zone.uuid) {
+            lb.board.zones[i].fills = filled.board.zones[i].fills;
+            double area = 0;
+            for (const auto& [l, ring] : filled.board.zones[i].fills) area += std::abs(geom::area(ring));
+            log(fmt("pour: %s, %.0f mm2 filled before routing", p.reason.c_str(), area / 1e12));
+            pours.emplace_back(i, std::move(p));
+          }
+      if (!opt.soft_zones) log("pour: zone fills are soft for this run (--soft-zones), so other nets route through the pour");
+      opt.soft_zones = true;
+    }
+  }
   if (opt.via_in_pad && (rules.minimums.via_diameter <= 0 || rules.minimums.through_hole_diameter <= 0))
     log("warning: --via-in-pad: the board's minimum via diameter or drill could not be read, so no via in pad is placed");
   const std::string name = std::filesystem::path(job.in).filename().string();
@@ -1105,10 +1152,31 @@ RouteJobResult run_route_job(RouteJob job) {
       if (opt.sink) opt.sink->publish(server::stage("stitch", "end", fmt("%d vias added", grid + ret)));
     }
   }
+  nlohmann::json pour_summary;
+  if (!pours.empty()) {
+    // The pours' fills for the copper as written: the engine's refill (doc 05 §36), as KiCad's would be after pressing B.
+    model::Board routed = lb.board;
+    routed.tracks.insert(routed.tracks.end(), res.tracks.begin(), res.tracks.end());
+    routed.vias.insert(routed.vias.end(), res.vias.begin(), res.vias.end());
+    const auto filled = drc::refill_zones(routed, rules);
+    pour_summary = nlohmann::json::array();
+    for (auto& [i, p] : pours) {
+      p.zone.fills = filled.board.zones[i].fills;
+      double area = 0;
+      for (const auto& [l, ring] : p.zone.fills) area += std::abs(geom::area(ring));
+      const int layer = std::countr_zero(p.zone.copper);
+      log(fmt("pour %s on %s: %zu filled polygons, %.0f mm2 after routing", lb.board.nets[static_cast<std::size_t>(p.zone.net)].name.c_str(),
+              lb.board.copper_name(layer).c_str(), p.zone.fills.size(), area / 1e12));
+      pour_summary.push_back({{"net", lb.board.nets[static_cast<std::size_t>(p.zone.net)].name}, {"layer", lb.board.copper_name(layer)},
+                              {"reason", p.reason}, {"clearance_mm", nm_to_mm(p.zone.clearance)}, {"polygons", p.zone.fills.size()},
+                              {"area_mm2", std::round(area / 1e10) / 100.0}});
+    }
+  }
   if (!job.out.empty()) {
     io::BoardEditor ed(lb, opt.seed);
     for (const auto& t : res.tracks) ed.add_track(t);
     for (const auto& v : res.vias) ed.add_via(v);
+    for (const auto& [i, p] : pours) ed.set_zone_fills(i, p.zone.fills);
     ed.save(job.out);
   }
   // Reference-return audit (issue #7, doc 05 §42): the selected nets on the board as routed, fills redone for the new copper.
@@ -1241,6 +1309,8 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
   if (!stitch_summary.is_null()) out.summary["stitch"] = stitch_summary;
+  if (!pour_summary.is_null()) out.summary["pours"] = pour_summary;
+  out.summary["copper_layers"] = lb.board.copper_count();
   // Style metric of the new copper (doc 05 §39.2): measured only, never fed back into routing.
   out.summary["style"] = passes::style_json(lb.board, passes::measure_style(lb.board, res.tracks, {}, res.vias));
   out.summary["work"] = work_json(res.work);
@@ -1358,6 +1428,76 @@ RouteJobResult run_route_job(RouteJob job) {
   }
   opt.sink = nullptr;
   return out;
+}
+
+RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
+  auto log = [&](const std::string& line) {
+    if (job.log) job.log(line);
+  };
+  std::sort(counts.begin(), counts.end());
+  counts.erase(std::unique(counts.begin(), counts.end()), counts.end());
+  if (counts.empty()) throw std::invalid_argument("--try-layers: no layer count given");
+  if (!job.report_out.empty())
+    throw std::invalid_argument("--try-layers: --report is not produced for the counts tried; route the chosen count again with --copper-layers N --report FILE");
+  const auto input = io::read_board_file(job.in);
+  const std::string final_out = job.out, final_json = job.json_out, final_items = job.items_out;
+  nlohmann::json tried = nlohmann::json::array();
+  std::optional<RouteJobResult> best;
+  int best_count = 0, best_open = 0;
+  std::string best_tmp;
+  for (const int c : counts) {
+    {  // A count the board cannot take is reported, not routed.
+      auto lb = input;
+      std::string why;
+      io::BoardEditor ed(lb, job.opt.seed);
+      if (!ed.set_copper_layer_count(c, &why)) {
+        log(fmt("layers: %d copper layers not tried: %s", c, why.c_str()));
+        tried.push_back({{"copper_layers", c}, {"tried", false}, {"why", why}});
+        continue;
+      }
+    }
+    RouteJob j = job;
+    j.copper_layers = c;
+    j.out = final_out.empty() ? std::string() : final_out + fmt(".%d-layers.tmp", c);
+    j.json_out.clear();
+    j.items_out.clear();
+    j.hold = false;
+    j.log = [&, c](const std::string& line) { log(fmt("[%d layers] ", c) + line); };
+    log(fmt("layers: routing with %d copper layers", c));
+    RouteJobResult r = run_route_job(std::move(j));
+    const int open = r.unconnected_after_refill >= 0 ? r.unconnected_after_refill : r.result.connections - r.result.routed;
+    const bool complete = r.exit_code() == 0;
+    log(fmt("layers: %d copper layers: %d/%d routed%s, %zu vias, %s", c, r.result.routed, r.result.connections,
+            r.unconnected_after_refill >= 0 ? fmt(", %d unconnected after the refill", r.unconnected_after_refill).c_str() : "", r.result.vias.size(),
+            complete ? "complete" : "not complete"));
+    tried.push_back({{"copper_layers", c}, {"tried", true}, {"routed", r.result.routed}, {"connections", r.result.connections},
+                     {"unconnected_after_refill", r.unconnected_after_refill}, {"vias", r.result.vias.size()}, {"complete", complete},
+                     {"seconds", r.summary.value("seconds", 0.0)}, {"time_limited", r.summary.value("time_limited", false)}});
+    const std::string tmp = final_out.empty() ? std::string() : final_out + fmt(".%d-layers.tmp", c);
+    if (!best || open < best_open) {
+      if (!best_tmp.empty()) std::filesystem::remove(best_tmp);
+      best = std::move(r);
+      best_count = c;
+      best_open = open;
+      best_tmp = tmp;
+    } else if (!tmp.empty()) {
+      std::filesystem::remove(tmp);
+    }
+    if (complete) break;  // fewest first: the first count that completes is the answer
+  }
+  if (!best) throw std::runtime_error("--try-layers: the board can take none of the layer counts given");
+  if (!final_out.empty()) std::filesystem::rename(best_tmp, final_out);
+  const bool complete = best->exit_code() == 0;
+  log(complete ? fmt("layers: %d copper layers is the fewest of those tried that completes; written to %s", best_count,
+                     final_out.empty() ? "(no output)" : final_out.c_str())
+               : fmt("layers: no count tried completes; %d copper layers left the fewest open (%d)%s", best_count, best_open,
+                     final_out.empty() ? "" : ("; written to " + final_out).c_str()));
+  best->summary["layers"] = {{"tried", tried}, {"chosen", best_count}, {"complete", complete}};
+  best->summary["run"]["output"] = final_out;
+  best->summary["run"]["input"] = job.in;
+  if (!final_items.empty()) std::ofstream(final_items) << best->items.dump();
+  if (!final_json.empty()) std::ofstream(final_json) << best->summary.dump(1);
+  return std::move(*best);
 }
 
 }  // namespace tmk::app

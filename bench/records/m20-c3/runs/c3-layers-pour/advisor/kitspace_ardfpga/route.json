@@ -1,0 +1,341 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 93.33,
+ "connections": 210,
+ "copper_layers": 2,
+ "escape_corridor_mm": 384.45355300000006,
+ "escape_corridors": 153,
+ "escape_reclaimed": 0,
+ "expansions": 10060077,
+ "failures": [
+  "GND: J4.5 -> zone  (exact check rejected the lattice path; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: exact check rejected the lattice path)",
+  "FSS: U1.14 -> U2.1  (ripped up by FSDI and not routed again)",
+  "FSS: Q2.D -> U1.14  (ripped up by FSDI and not routed again)",
+  "FSDI: U2.2 -> U1.13  (ripped up by FSDO and not routed again)",
+  "FSDO: RN4.2 -> U1.12  (ripped up by FSDI and not routed again)",
+  "FRST: Q1.D -> U1.10  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: out of budget)",
+  "DONE: R6.2 -> U1.11  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "FSEL: Q2.S -> U3.8  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN2-Pad6): RN2.6 -> U1.31  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN3-Pad1): RN3.1 -> U1.23  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN1-Pad8): RN1.8 -> U1.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(RN3-Pad3): RN3.3 -> U1.20  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "MSS: RN7.6 -> U3.14  (no path in window)",
+  "AD4: R12.1 -> U3.27  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))"
+ ],
+ "layers": {
+  "chosen": 2,
+  "complete": false,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 210,
+    "copper_layers": 2,
+    "routed": 196,
+    "seconds": 35.345288714,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": 13,
+    "vias": 172
+   },
+   {
+    "complete": false,
+    "connections": 210,
+    "copper_layers": 4,
+    "routed": 186,
+    "seconds": 37.255868669,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": 22,
+    "vias": 115
+   },
+   {
+    "complete": false,
+    "connections": 210,
+    "copper_layers": 6,
+    "routed": 176,
+    "seconds": 41.549012327,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": 30,
+    "vias": 96
+   }
+  ]
+ },
+ "open": 14,
+ "package_pin_edges": 6,
+ "pitch_mm": 0.05,
+ "pours": [
+  {
+   "area_mm2": 2460.98,
+   "clearance_mm": 0.3,
+   "layer": "B.Cu",
+   "net": "GND",
+   "polygons": 10,
+   "reason": "auto: ground net GND on B.Cu (back layer)"
+  }
+ ],
+ "refill": {
+  "repair": {
+   "connections": 22,
+   "expansions": 10130670,
+   "kept": true,
+   "routed": 9,
+   "tracks": 44,
+   "unconnected": 13,
+   "vias": 16
+  },
+  "starved_thermals": 0,
+  "unconnected": 22,
+  "warnings": [],
+  "zones": 1
+ },
+ "routed": 196,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T03:55:09Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_ardfpga/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers-pour/advisor/kitspace_ardfpga/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "10000000"
+   },
+   {
+    "name": "--no-gpu",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--pour",
+    "value": "auto"
+   },
+   {
+    "name": "--try-layers",
+    "value": "2,4,6"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers-pour/advisor/kitspace_ardfpga/route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers-pour/advisor/kitspace_ardfpga/out.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 10000000
+ },
+ "seconds": 35.345288714,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 314,
+  "bends_per_connection": 0.9318,
+  "connections": 337,
+  "detour_length_mm": 1926.044729,
+  "detour_octile_mm": 1663.156221,
+  "detour_ratio": 1.1581,
+  "length_mm": 1926.044729,
+  "long_detours": 10,
+  "off_angle_segments": 123,
+  "segments": 766,
+  "short_segments": 58,
+  "stair_steps": 0,
+  "vias": 172
+ },
+ "time_limited": false,
+ "tracks": 766,
+ "tunnels": 0,
+ "unconnected_after_refill": 13,
+ "variant": 3,
+ "variant_name": "fast bends, jittered order, escape plan",
+ "variant_seconds": 20.0972197,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 135,
+   "seconds": 7.459002528,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 171,
+   "seconds": 15.959579686,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 34,
+   "seconds": 17.181538032,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 196,
+   "seconds": 20.0972197,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 139,
+   "seconds": 7.529437213,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 170,
+   "seconds": 16.303698075,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 192,
+   "seconds": 17.353664986,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 171,
+   "seconds": 16.681996424,
+   "variant": 7
+  }
+ ],
+ "vias": 172,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 9382784,
+   "commits": 199,
+   "expansions": 8501551,
+   "field_cells": 51914338,
+   "fields": 141,
+   "fixed_checks": 2975401,
+   "flood_cells": 946603,
+   "rips": 0,
+   "searches": 252
+  },
+  "negotiation": {
+   "cell_checks": 540725,
+   "commits": 16,
+   "expansions": 199339,
+   "field_cells": 1269506,
+   "fields": 8,
+   "fixed_checks": 7935,
+   "flood_cells": 412584,
+   "rips": 4,
+   "searches": 27
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 1,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 9923509,
+   "commits": 215,
+   "expansions": 8700890,
+   "field_cells": 53183844,
+   "fields": 149,
+   "fixed_checks": 2983337,
+   "flood_cells": 1359187,
+   "rips": 4,
+   "searches": 279
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 62596620,
+   "commits": 1235,
+   "expansions": 77068060,
+   "field_cells": 274180086,
+   "fields": 887,
+   "fixed_checks": 17340830,
+   "flood_cells": 4583787,
+   "rips": 0,
+   "searches": 1643
+  },
+  "negotiation": {
+   "cell_checks": 540725,
+   "commits": 16,
+   "expansions": 199339,
+   "field_cells": 1269506,
+   "fields": 8,
+   "fixed_checks": 7935,
+   "flood_cells": 412584,
+   "rips": 4,
+   "searches": 27
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 2,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 63137345,
+   "commits": 1251,
+   "expansions": 77267399,
+   "field_cells": 275449592,
+   "fields": 895,
+   "fixed_checks": 17348767,
+   "flood_cells": 4996371,
+   "rips": 4,
+   "searches": 1670
+  }
+ }
+}
