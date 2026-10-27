@@ -22,13 +22,14 @@ var searchData=
   ['srjrules_19',['SrjRules',['../structtmk_1_1io_1_1SrjRules.html',1,'tmk::io']]],
   ['stackup_20',['Stackup',['../structtmk_1_1model_1_1Stackup.html',1,'tmk::model']]],
   ['stackuplayer_21',['StackupLayer',['../structtmk_1_1model_1_1StackupLayer.html',1,'tmk::model']]],
-  ['stats_22',['Stats',['../structtmk_1_1server_1_1Stats.html',1,'tmk::server']]],
-  ['stitchoptions_23',['StitchOptions',['../structtmk_1_1passes_1_1StitchOptions.html',1,'tmk::passes']]],
-  ['stitchresult_24',['StitchResult',['../structtmk_1_1passes_1_1StitchResult.html',1,'tmk::passes']]],
-  ['stitchreturn_25',['StitchReturn',['../structtmk_1_1passes_1_1StitchReturn.html',1,'tmk::passes']]],
-  ['stuckinput_26',['StuckInput',['../structtmk_1_1advice_1_1StuckInput.html',1,'tmk::advice']]],
-  ['stuckreport_27',['StuckReport',['../structtmk_1_1advice_1_1StuckReport.html',1,'tmk::advice']]],
-  ['styleoptions_28',['StyleOptions',['../structtmk_1_1passes_1_1StyleOptions.html',1,'tmk::passes']]],
-  ['stylereport_29',['StyleReport',['../structtmk_1_1passes_1_1StyleReport.html',1,'tmk::passes']]],
-  ['syntheticclass_30',['SyntheticClass',['../structtmk_1_1crules_1_1SyntheticClass.html',1,'tmk::crules']]]
+  ['starvedthermal_22',['StarvedThermal',['../structtmk_1_1drc_1_1StarvedThermal.html',1,'tmk::drc']]],
+  ['stats_23',['Stats',['../structtmk_1_1server_1_1Stats.html',1,'tmk::server']]],
+  ['stitchoptions_24',['StitchOptions',['../structtmk_1_1passes_1_1StitchOptions.html',1,'tmk::passes']]],
+  ['stitchresult_25',['StitchResult',['../structtmk_1_1passes_1_1StitchResult.html',1,'tmk::passes']]],
+  ['stitchreturn_26',['StitchReturn',['../structtmk_1_1passes_1_1StitchReturn.html',1,'tmk::passes']]],
+  ['stuckinput_27',['StuckInput',['../structtmk_1_1advice_1_1StuckInput.html',1,'tmk::advice']]],
+  ['stuckreport_28',['StuckReport',['../structtmk_1_1advice_1_1StuckReport.html',1,'tmk::advice']]],
+  ['styleoptions_29',['StyleOptions',['../structtmk_1_1passes_1_1StyleOptions.html',1,'tmk::passes']]],
+  ['stylereport_30',['StyleReport',['../structtmk_1_1passes_1_1StyleReport.html',1,'tmk::passes']]],
+  ['syntheticclass_31',['SyntheticClass',['../structtmk_1_1crules_1_1SyntheticClass.html',1,'tmk::crules']]]
 ];

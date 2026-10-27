@@ -9,6 +9,7 @@ var namespacetmk_1_1app =
     [ "inject_defects", "namespacetmk_1_1app.html#a3088faf6b68c9093bc0f30baed7dc3a0", null ],
     [ "print_summary", "namespacetmk_1_1app.html#a6f1fa42b7e5b6f2120a0d71d38c2d5c8", null ],
     [ "resolve_buses", "namespacetmk_1_1app.html#a735cf82542e6cd4a3cc9c8b04e78d93a", null ],
+    [ "run_layer_advisor", "namespacetmk_1_1app.html#a257511015fa231832028fd1fa05e08ab", null ],
     [ "run_route_job", "namespacetmk_1_1app.html#a73ef09b838a1f15a08bc83053aaa92dd", null ],
     [ "write_truth_json", "namespacetmk_1_1app.html#a8b363f51016083c972b45ad687e3a5a3", null ]
 ];

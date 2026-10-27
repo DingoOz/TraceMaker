@@ -9,6 +9,7 @@ var structtmk_1_1model_1_1BoardMinimums =
     [ "hole_to_hole", "structtmk_1_1model_1_1BoardMinimums.html#af40b6243d304d99269958e7d67901f52", null ],
     [ "microvia_diameter", "structtmk_1_1model_1_1BoardMinimums.html#a39d508b6d74992fc3805fe4f4e06a36e", null ],
     [ "microvia_drill", "structtmk_1_1model_1_1BoardMinimums.html#a38abad7e79d8cfd29a02c38cc7b8c3e3", null ],
+    [ "min_resolved_spokes", "structtmk_1_1model_1_1BoardMinimums.html#a199ce47c85f22645673217ee7fa36cbe", null ],
     [ "silk_clearance", "structtmk_1_1model_1_1BoardMinimums.html#a42ce6ad7dda94d2c92ef52790fee5c23", null ],
     [ "solder_mask_min_width", "structtmk_1_1model_1_1BoardMinimums.html#a75f48d08f4cd577996aea15ba346ccf4", null ],
     [ "solder_mask_to_copper_clearance", "structtmk_1_1model_1_1BoardMinimums.html#a45e74057631e76de62cd047566f5e2b4", null ],

@@ -59,7 +59,7 @@ var searchData=
   ['copper_5fedge_5fclearance_56',['copper_edge_clearance',['../structtmk_1_1model_1_1BoardMinimums.html#a2c7d168aa836bcb4f45575cf7f61d1db',1,'tmk::model::BoardMinimums']]],
   ['copper_5ffinish_57',['copper_finish',['../structtmk_1_1model_1_1Stackup.html#a931950a3533617dc2daf65865d8c52f7',1,'tmk::model::Stackup']]],
   ['copper_5findex_58',['copper_index',['../structtmk_1_1model_1_1LayerDef.html#a5e4023ae4d8e6c3583e563c694ed75d0',1,'tmk::model::LayerDef::copper_index'],['../structtmk_1_1model_1_1StackupLayer.html#a6d5cb46980257449752f2339051ab0b7',1,'tmk::model::StackupLayer::copper_index']]],
-  ['copper_5flayers_59',['copper_layers',['../structtmk_1_1place_1_1Problem.html#a79e40d759df97007b3375711d809f895',1,'tmk::place::Problem']]],
+  ['copper_5flayers_59',['copper_layers',['../structtmk_1_1app_1_1RouteJob.html#a2e60d368bd9c724fff5a6249cd10d71d',1,'tmk::app::RouteJob::copper_layers'],['../structtmk_1_1place_1_1Problem.html#a79e40d759df97007b3375711d809f895',1,'tmk::place::Problem::copper_layers']]],
   ['copper_5fonly_60',['copper_only',['../structtmk_1_1place_1_1Part.html#aac58b049ddd238168c0118082ba7addb',1,'tmk::place::Part::copper_only'],['../structtmk_1_1place_1_1ExtractOptions.html#a2dd74c05927d4afa6557ea2c7cce6e26',1,'tmk::place::ExtractOptions::copper_only']]],
   ['copper_5fpour_61',['copper_pour',['../structtmk_1_1io_1_1SrjObstacle.html#acc3f3d8f0576b5ee296b5acf85a3c7a1',1,'tmk::io::SrjObstacle']]],
   ['corridor_62',['corridor',['../structtmk_1_1place_1_1EcoOptions.html#a400006f4956188f2e105689c8e61dc68',1,'tmk::place::EcoOptions::corridor'],['../structtmk_1_1route_1_1GlobalResult.html#ad0b9f22d4b7a88d2fc86ef9d2cc86635',1,'tmk::route::GlobalResult::corridor']]],

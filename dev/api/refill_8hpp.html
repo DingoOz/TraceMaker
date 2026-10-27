@@ -97,6 +97,7 @@ $(function(){initNavTree('refill_8hpp.html','',''); });
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &quot;<a class="el" href="clip_8hpp_source.html">geom/clip.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="board_8hpp_source.html">model/board.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="rules_8hpp_source.html">model/rules.hpp</a>&quot;</code><br />
 </div>
@@ -105,6 +106,8 @@ $(function(){initNavTree('refill_8hpp.html','',''); });
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:tmk_3A_3Adrc_3A_3ARefillResult" id="r_tmk_3A_3Adrc_3A_3ARefillResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1RefillResult.html">tmk::drc::RefillResult</a></td></tr>
+<tr class="memitem:tmk_3A_3Adrc_3A_3AStarvedThermal" id="r_tmk_3A_3Adrc_3A_3AStarvedThermal"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">tmk::drc::StarvedThermal</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A thermal relief KiCad's DRC reports as starved_thermal (DRC_TEST_PROVIDER_ZONE_CONNECTIONS::testZoneLayer): fewer spokes reach the zone's fill than the board's minimum (min_resolved_spokes, 2 by default), counting tracks that run from the pad into the fill; spokes into a fill island that touches nothing but this pad do not count unless the pad has no other.  <a href="structtmk_1_1drc_1_1StarvedThermal.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -115,6 +118,10 @@ Namespaces</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a470288fee11a06e3436448ee1fc852d1" id="r_a470288fee11a06e3436448ee1fc852d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1RefillResult.html">RefillResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1drc.html#a470288fee11a06e3436448ee1fc852d1">tmk::drc::refill_zones</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
 <tr class="memdesc:a470288fee11a06e3436448ee1fc852d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Follows ZONE_FILLER::fillCopperZone: outline within the board, thermal gaps around same-net pads, every other item knocked out at its clearance, spokes that reach the fill, minimum-width pruning, then islands without a pad removed by each zone's island_removal_mode.  <br /></td></tr>
+<tr class="memitem:a610b48b03f3a71ecb6ac395888be205c" id="r_a610b48b03f3a71ecb6ac395888be205c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">StarvedThermal</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1drc.html#a610b48b03f3a71ecb6ac395888be205c">tmk::drc::starved_thermals</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;filled, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
+<tr class="memdesc:a610b48b03f3a71ecb6ac395888be205c"><td class="mdescLeft">&#160;</td><td class="mdescRight">On a board whose fills are current (refill_zones' board): every pad KiCad would report, in pad then zone order.  <br /></td></tr>
+<tr class="memitem:a3e1ec7ee4383d9084ff52b123f6eadd1" id="r_a3e1ec7ee4383d9084ff52b123f6eadd1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespacetmk_1_1geom.html#aae06d019a16d5bd35eb338477d09182c">geom::Ring</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1drc.html#a3e1ec7ee4383d9084ff52b123f6eadd1">tmk::drc::thermal_spokes</a> (const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;pad, const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;zone)</td></tr>
+<tr class="memdesc:a3e1ec7ee4383d9084ff52b123f6eadd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The four spoke polygons of a pad's thermal relief to a zone, as the zone filler draws them (buildThermalSpokes).  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Zone refill in the engine (doc 05 §36): the fills KiCad 10's zone filler would draw for the board's current copper, so connectivity can be judged as <span class="tt">kicad-cli pcb drc --refill-zones</span> judges it. </p>

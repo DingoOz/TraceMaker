@@ -6,6 +6,7 @@ var namespacetmk_1_1gpu =
       [ "device_count", "namespacetmk_1_1gpu_1_1metal.html#af78d2f3201d77ede91ac88a5a5de7d7e", null ],
       [ "working_set_headroom", "namespacetmk_1_1gpu_1_1metal.html#a4432f5aca9304959f13f4fb8a27b0924", null ]
     ] ],
+    [ "DeviceBackOff", "classtmk_1_1gpu_1_1DeviceBackOff.html", "classtmk_1_1gpu_1_1DeviceBackOff" ],
     [ "DeviceInfo", "structtmk_1_1gpu_1_1DeviceInfo.html", "structtmk_1_1gpu_1_1DeviceInfo" ],
     [ "FieldProblem", "structtmk_1_1gpu_1_1FieldProblem.html", "structtmk_1_1gpu_1_1FieldProblem" ],
     [ "GpuStatus", "structtmk_1_1gpu_1_1GpuStatus.html", "structtmk_1_1gpu_1_1GpuStatus" ],

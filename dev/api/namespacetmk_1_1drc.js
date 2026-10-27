@@ -12,6 +12,7 @@ var namespacetmk_1_1drc =
     [ "DrcOptions", "structtmk_1_1drc_1_1DrcOptions.html", "structtmk_1_1drc_1_1DrcOptions" ],
     [ "DrcReport", "structtmk_1_1drc_1_1DrcReport.html", "structtmk_1_1drc_1_1DrcReport" ],
     [ "RefillResult", "structtmk_1_1drc_1_1RefillResult.html", "structtmk_1_1drc_1_1RefillResult" ],
+    [ "StarvedThermal", "structtmk_1_1drc_1_1StarvedThermal.html", "structtmk_1_1drc_1_1StarvedThermal" ],
     [ "RuleEngine", "classtmk_1_1drc_1_1RuleEngine.html", "classtmk_1_1drc_1_1RuleEngine" ],
     [ "CourtyardRegion", "structtmk_1_1drc_1_1CourtyardRegion.html", "structtmk_1_1drc_1_1CourtyardRegion" ],
     [ "CourtyardEntry", "structtmk_1_1drc_1_1CourtyardEntry.html", "structtmk_1_1drc_1_1CourtyardEntry" ],
@@ -41,6 +42,8 @@ var namespacetmk_1_1drc =
     [ "propagate_nets", "namespacetmk_1_1drc.html#a09362386988fefd8f99cea52226debfc", null ],
     [ "refill_zones", "namespacetmk_1_1drc.html#a470288fee11a06e3436448ee1fc852d1", null ],
     [ "run_drc", "namespacetmk_1_1drc.html#a65dbead7747b642204eae3d310ad85d8", null ],
+    [ "starved_thermals", "namespacetmk_1_1drc.html#a610b48b03f3a71ecb6ac395888be205c", null ],
+    [ "thermal_spokes", "namespacetmk_1_1drc.html#a3e1ec7ee4383d9084ff52b123f6eadd1", null ],
     [ "write_drc_json", "namespacetmk_1_1drc.html#a4550789200edec8ef61885cb80b481f5", null ],
     [ "zones_touching", "namespacetmk_1_1drc.html#aa5d8aa9a8b376b374b142ef04c01f85f", null ]
 ];

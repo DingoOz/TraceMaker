@@ -114,6 +114,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:a8b363f51016083c972b45ad687e3a5a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the board in the same JSON schema as scripts/kicad_truth.py, for comparison with KiCad.  <br /></td></tr>
 <tr class="memitem:a73ef09b838a1f15a08bc83053aaa92dd" id="r_a73ef09b838a1f15a08bc83053aaa92dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1app_1_1RouteJobResult.html">RouteJobResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73ef09b838a1f15a08bc83053aaa92dd">run_route_job</a> (<a class="el" href="structtmk_1_1app_1_1RouteJob.html">RouteJob</a> job)</td></tr>
 <tr class="memdesc:a73ef09b838a1f15a08bc83053aaa92dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the board and its rules, routes (a portfolio when more than one variant runs), writes the requested outputs.  <br /></td></tr>
+<tr class="memitem:a257511015fa231832028fd1fa05e08ab" id="r_a257511015fa231832028fd1fa05e08ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1app_1_1RouteJobResult.html">RouteJobResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a257511015fa231832028fd1fa05e08ab">run_layer_advisor</a> (<a class="el" href="structtmk_1_1app_1_1RouteJob.html">RouteJob</a> job, std::vector&lt; int &gt; counts)</td></tr>
+<tr class="memdesc:a257511015fa231832028fd1fa05e08ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The layer-count advisor (<span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a> --try-layers</span>, doc 05 §53, M20 C3): routes the board with each copper layer count in <span class="tt">counts</span>, fewest first, and stops at the first that completes (exit code 0: everything routed and, with soft zones, nothing unconnected after the refill).  <br /></td></tr>
 <tr class="memitem:a735cf82542e6cd4a3cc9c8b04e78d93a" id="r_a735cf82542e6cd4a3cc9c8b04e78d93a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1BusGroup.html">route::BusGroup</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a735cf82542e6cd4a3cc9c8b04e78d93a">resolve_buses</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const std::vector&lt; std::string &gt; &amp;specs, bool detect, double skew_mm, std::vector&lt; std::string &gt; *notes=nullptr)</td></tr>
 <tr class="memdesc:a735cf82542e6cd4a3cc9c8b04e78d93a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buses (doc 05 §38): the groups <span class="tt">specs</span> ("NAME=PATTERN") name on the board, then, with <span class="tt">detect</span>, the groups found in the net names that share no net with an earlier group.  <br /></td></tr>
 <tr class="memitem:ae70362c5f3d6fb89606b961add6816d8" id="r_ae70362c5f3d6fb89606b961add6816d8"><td class="memItemLeft" align="right" valign="top">nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae70362c5f3d6fb89606b961add6816d8">bus_report</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const std::vector&lt; std::uint8_t &gt; &amp;joined, const <a class="el" href="structtmk_1_1route_1_1BusGroup.html">route::BusGroup</a> &amp;g, std::string *line=nullptr)</td></tr>
@@ -307,6 +309,30 @@ Functions</h2></td></tr>
 
 <p>Buses (doc 05 §38): the groups <span class="tt">specs</span> ("NAME=PATTERN") name on the board, then, with <span class="tt">detect</span>, the groups found in the net names that share no net with an earlier group. </p>
 <p>Each group gets the skew limit of the board's custom rules, else, for groups from <span class="tt">specs</span>, <span class="tt">skew_mm</span> (0 = none). <span class="tt">notes</span> receives warnings. Throws on a bad spec. </p>
+
+</div>
+</div>
+<a id="a257511015fa231832028fd1fa05e08ab" name="a257511015fa231832028fd1fa05e08ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a257511015fa231832028fd1fa05e08ab">&#9670;&#160;</a></span>run_layer_advisor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1app_1_1RouteJobResult.html">RouteJobResult</a> tmk::app::run_layer_advisor </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1app_1_1RouteJob.html">RouteJob</a></td>          <td class="paramname"><span class="paramname"><em>job</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; int &gt;</td>          <td class="paramname"><span class="paramname"><em>counts</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The layer-count advisor (<span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a> --try-layers</span>, doc 05 §53, M20 C3): routes the board with each copper layer count in <span class="tt">counts</span>, fewest first, and stops at the first that completes (exit code 0: everything routed and, with soft zones, nothing unconnected after the refill). </p>
+<p>Its board is written to <span class="tt">job.out</span> and its summary returned, with a "layers" object listing every count tried. A count the board cannot take (inner layers that are not empty) is reported and skipped. When none completes, the result of the count that left the fewest connections open is returned (the first such count on a tie). </p>
 
 </div>
 </div>

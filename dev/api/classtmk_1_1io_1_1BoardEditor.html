@@ -107,6 +107,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a97c49209eb7bdeed416b64a3244f49a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves footprint <span class="tt"><a class="el" href="namespacetmk_1_1index.html">index</a></span> to <span class="tt">pos</span> with orientation <span class="tt">angle</span> (degrees).  <br /></td></tr>
 <tr class="memitem:a3fcb6245774a695124242467f1e5eb1c" id="r_a3fcb6245774a695124242467f1e5eb1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3fcb6245774a695124242467f1e5eb1c">flip_footprint</a> (std::size_t <a class="el" href="namespacetmk_1_1index.html">index</a>, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> pos, double angle)</td></tr>
 <tr class="memdesc:a3fcb6245774a695124242467f1e5eb1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves footprint <span class="tt"><a class="el" href="namespacetmk_1_1index.html">index</a></span> to the other side of the board the way KiCad does (FOOTPRINT::Flip, top/bottom, about its own origin: local y and pad orientations negated, text angles 180° − a, F.  <br /></td></tr>
+<tr class="memitem:a1ffc2eb4de6b5cff8c3baa04df6af574" id="r_a1ffc2eb4de6b5cff8c3baa04df6af574"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ffc2eb4de6b5cff8c3baa04df6af574">add_zone</a> (const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;z)</td></tr>
+<tr class="memdesc:a1ffc2eb4de6b5cff8c3baa04df6af574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a board-level copper zone as KiCad writes one: net, layer (the zone's single copper layer), outline (first ring), clearance, minimum width, thermal and island settings, and its fills when it has any (doc 05 §53).  <br /></td></tr>
+<tr class="memitem:a052dcaf3f71c73a4974c7998cf893f34" id="r_a052dcaf3f71c73a4974c7998cf893f34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a052dcaf3f71c73a4974c7998cf893f34">set_zone_fills</a> (std::size_t <a class="el" href="namespacetmk_1_1index.html">index</a>, const std::vector&lt; std::pair&lt; int, std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> &gt; &gt; &gt; &amp;fills)</td></tr>
+<tr class="memdesc:a052dcaf3f71c73a4974c7998cf893f34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces the filled polygons of zone <span class="tt"><a class="el" href="namespacetmk_1_1index.html">index</a></span> (board.zones order) with <span class="tt">fills</span> (copper index, fractured polygon, as <a class="el" href="namespacetmk_1_1drc.html#a470288fee11a06e3436448ee1fc852d1" title="Follows ZONE_FILLER::fillCopperZone: outline within the board, thermal gaps around same-net pads,...">drc::refill_zones</a> gives them) and marks the zone filled.  <br /></td></tr>
+<tr class="memitem:afc25e9a4e07a1bd2dd5a7d260a4d1534" id="r_afc25e9a4e07a1bd2dd5a7d260a4d1534"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc25e9a4e07a1bd2dd5a7d260a4d1534">set_copper_layer_count</a> (int n, std::string *why=nullptr, std::vector&lt; std::string &gt; *notes=nullptr)</td></tr>
+<tr class="memdesc:afc25e9a4e07a1bd2dd5a7d260a4d1534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gives the board <span class="tt">n</span> copper layers (even, 2..32; doc 05 §53): inner layers are added after the last one, or the last ones removed.  <br /></td></tr>
 <tr class="memitem:a6745095e332dfebe0534cac64fd89198" id="r_a6745095e332dfebe0534cac64fd89198"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6745095e332dfebe0534cac64fd89198">write</a> () const</td></tr>
 <tr class="memitem:a4dc9e55f77fdbdce3f91a5671c18f19b" id="r_a4dc9e55f77fdbdce3f91a5671c18f19b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4dc9e55f77fdbdce3f91a5671c18f19b">save</a> (const std::string &amp;path) const</td></tr>
 <tr class="memitem:a6423a0fabd9e9c25587c3b41e28a93fd" id="r_a6423a0fabd9e9c25587c3b41e28a93fd"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6423a0fabd9e9c25587c3b41e28a93fd">next_uuid</a> ()</td></tr>
@@ -181,6 +187,25 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1ffc2eb4de6b5cff8c3baa04df6af574" name="a1ffc2eb4de6b5cff8c3baa04df6af574"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ffc2eb4de6b5cff8c3baa04df6af574">&#9670;&#160;</a></span>add_zone()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::io::BoardEditor::add_zone </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>z</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a board-level copper zone as KiCad writes one: net, layer (the zone's single copper layer), outline (first ring), clearance, minimum width, thermal and island settings, and its fills when it has any (doc 05 §53). </p>
 
 </div>
 </div>
@@ -320,7 +345,59 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board__editor_8hpp_source.html#l00033">33</a> of file <a class="el" href="board__editor_8hpp_source.html">board_editor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board__editor_8hpp_source.html#l00046">46</a> of file <a class="el" href="board__editor_8hpp_source.html">board_editor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afc25e9a4e07a1bd2dd5a7d260a4d1534" name="afc25e9a4e07a1bd2dd5a7d260a4d1534"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc25e9a4e07a1bd2dd5a7d260a4d1534">&#9670;&#160;</a></span>set_copper_layer_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::io::BoardEditor::set_copper_layer_count </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string *</td>          <td class="paramname"><span class="paramname"><em>why</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::string &gt; *</td>          <td class="paramname"><span class="paramname"><em>notes</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gives the board <span class="tt">n</span> copper layers (even, 2..32; doc 05 §53): inner layers are added after the last one, or the last ones removed. </p>
+<p>Removing needs those layers empty (no track, arc, blind via, zone, graphic, text or pad that names them); through vias and plated holes follow the layer count by themselves. A (stackup) block is removed, since its copper and dielectrics no longer match, and KiCad builds its default stackup for the new count. Returns false with the reason in <span class="tt">why</span> (and the document unchanged) when it cannot; <span class="tt">notes</span> receives what changed besides the layers. </p>
+
+</div>
+</div>
+<a id="a052dcaf3f71c73a4974c7998cf893f34" name="a052dcaf3f71c73a4974c7998cf893f34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a052dcaf3f71c73a4974c7998cf893f34">&#9670;&#160;</a></span>set_zone_fills()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::io::BoardEditor::set_zone_fills </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::pair&lt; int, std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> &gt; &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>fills</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replaces the filled polygons of zone <span class="tt"><a class="el" href="namespacetmk_1_1index.html">index</a></span> (board.zones order) with <span class="tt">fills</span> (copper index, fractured polygon, as <a class="el" href="namespacetmk_1_1drc.html#a470288fee11a06e3436448ee1fc852d1" title="Follows ZONE_FILLER::fillCopperZone: outline within the board, thermal gaps around same-net pads,...">drc::refill_zones</a> gives them) and marks the zone filled. </p>
 
 </div>
 </div>
@@ -347,7 +424,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board__editor_8hpp_source.html#l00032">32</a> of file <a class="el" href="board__editor_8hpp_source.html">board_editor.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board__editor_8hpp_source.html#l00045">45</a> of file <a class="el" href="board__editor_8hpp_source.html">board_editor.hpp</a>.</p>
 
 </div>
 </div>

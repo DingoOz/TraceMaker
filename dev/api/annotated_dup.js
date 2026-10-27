@@ -96,6 +96,7 @@ var annotated_dup =
         [ "DrcOptions", "structtmk_1_1drc_1_1DrcOptions.html", "structtmk_1_1drc_1_1DrcOptions" ],
         [ "DrcReport", "structtmk_1_1drc_1_1DrcReport.html", "structtmk_1_1drc_1_1DrcReport" ],
         [ "RefillResult", "structtmk_1_1drc_1_1RefillResult.html", "structtmk_1_1drc_1_1RefillResult" ],
+        [ "StarvedThermal", "structtmk_1_1drc_1_1StarvedThermal.html", "structtmk_1_1drc_1_1StarvedThermal" ],
         [ "RuleEngine", "classtmk_1_1drc_1_1RuleEngine.html", "classtmk_1_1drc_1_1RuleEngine" ],
         [ "CourtyardRegion", "structtmk_1_1drc_1_1CourtyardRegion.html", "structtmk_1_1drc_1_1CourtyardRegion" ],
         [ "CourtyardEntry", "structtmk_1_1drc_1_1CourtyardEntry.html", "structtmk_1_1drc_1_1CourtyardEntry" ],
@@ -109,6 +110,7 @@ var annotated_dup =
         [ "Shape", "structtmk_1_1geom_1_1Shape.html", "structtmk_1_1geom_1_1Shape" ]
       ] ],
       [ "gpu", "namespacetmk_1_1gpu.html", [
+        [ "DeviceBackOff", "classtmk_1_1gpu_1_1DeviceBackOff.html", "classtmk_1_1gpu_1_1DeviceBackOff" ],
         [ "DeviceInfo", "structtmk_1_1gpu_1_1DeviceInfo.html", "structtmk_1_1gpu_1_1DeviceInfo" ],
         [ "FieldProblem", "structtmk_1_1gpu_1_1FieldProblem.html", "structtmk_1_1gpu_1_1FieldProblem" ],
         [ "GpuStatus", "structtmk_1_1gpu_1_1GpuStatus.html", "structtmk_1_1gpu_1_1GpuStatus" ]
@@ -163,6 +165,7 @@ var annotated_dup =
         [ "Point", "structtmk_1_1model_1_1Point.html", "structtmk_1_1model_1_1Point" ]
       ] ],
       [ "passes", "namespacetmk_1_1passes.html", [
+        [ "PourPlan", "structtmk_1_1passes_1_1PourPlan.html", "structtmk_1_1passes_1_1PourPlan" ],
         [ "StitchOptions", "structtmk_1_1passes_1_1StitchOptions.html", "structtmk_1_1passes_1_1StitchOptions" ],
         [ "StitchReturn", "structtmk_1_1passes_1_1StitchReturn.html", "structtmk_1_1passes_1_1StitchReturn" ],
         [ "StitchResult", "structtmk_1_1passes_1_1StitchResult.html", "structtmk_1_1passes_1_1StitchResult" ],

@@ -95,6 +95,7 @@ $(function(){initNavTree('namespacetmk_1_1passes.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:PourPlan" id="r_PourPlan"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1PourPlan.html">PourPlan</a></td></tr>
 <tr class="memitem:StitchOptions" id="r_StitchOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1StitchOptions.html">StitchOptions</a></td></tr>
 <tr class="memitem:StitchReturn" id="r_StitchReturn"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1StitchReturn.html">StitchReturn</a></td></tr>
 <tr class="memitem:StitchResult" id="r_StitchResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1StitchResult.html">StitchResult</a></td></tr>
@@ -108,6 +109,8 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a358e1d8a371b9b3951378d161532ca1b" id="r_a358e1d8a371b9b3951378d161532ca1b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1passes_1_1PourPlan.html">PourPlan</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a358e1d8a371b9b3951378d161532ca1b">plan_pours</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const std::vector&lt; std::string &gt; &amp;specs, std::vector&lt; std::string &gt; *notes=nullptr)</td></tr>
+<tr class="memdesc:a358e1d8a371b9b3951378d161532ca1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves <span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a> --pour</span> entries against the board:  <br /></td></tr>
 <tr class="memitem:a23e68691017894926218e1fac6ac95c3" id="r_a23e68691017894926218e1fac6ac95c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1StitchResult.html">StitchResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23e68691017894926218e1fac6ac95c3">stitch_vias</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1passes_1_1StitchOptions.html">StitchOptions</a> &amp;opt)</td></tr>
 <tr class="memdesc:a23e68691017894926218e1fac6ac95c3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">board</span> holds the routed copper (the run's new tracks and vias appended).  <br /></td></tr>
 <tr class="memitem:ad9c8875a09d7cf6713ded3307309d89d" id="r_ad9c8875a09d7cf6713ded3307309d89d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1StyleReport.html">StyleReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9c8875a09d7cf6713ded3307309d89d">measure_style</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1ArcTrack.html">model::ArcTrack</a> &gt; &amp;arcs, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias, const <a class="el" href="structtmk_1_1passes_1_1StyleOptions.html">StyleOptions</a> &amp;opt={})</td></tr>
@@ -154,6 +157,43 @@ Functions</h2></td></tr>
 
 <p>Measures <span class="tt">tracks</span>, <span class="tt">arcs</span> and <span class="tt">vias</span> (any subset of a board's copper, e.g. </p>
 <p>only what a run added). <span class="tt">b</span> supplies the pads that end connections. The result does not depend on the order of the three lists. </p>
+
+</div>
+</div>
+<a id="a358e1d8a371b9b3951378d161532ca1b" name="a358e1d8a371b9b3951378d161532ca1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a358e1d8a371b9b3951378d161532ca1b">&#9670;&#160;</a></span>plan_pours()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="structtmk_1_1passes_1_1PourPlan.html">PourPlan</a> &gt; tmk::passes::plan_pours </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rules</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>specs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::string &gt; *</td>          <td class="paramname"><span class="paramname"><em>notes</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resolves <span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a> --pour</span> entries against the board: </p>
+<ul>
+<li>"auto": only when the board has no copper zone (rule areas and teardrops aside); its ground net (a ground name such as GND, GNDD or VSS, with pads; the one with the most pads) on the first inner layer, else on the back layer. A board without such a net gets no pour (a note says why).</li>
+<li>"NET\@LAYER": that net on that copper layer (KiCad or file layer name). Settings are KiCad's defaults for a new zone (minimum width 0.25 mm, islands removed) except: pads connect solid, not through thermal reliefs (spokes the routed copper cuts off are KiCad starved_thermal errors), and the clearance is the net class clearance but at least 0.3 mm, so the fill keeps out of fine-pitch gaps it could not use. Throws std::invalid_argument on a bad entry, an unknown net or a layer that is not copper. </li>
+</ul>
 
 </div>
 </div>

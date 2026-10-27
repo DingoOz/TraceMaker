@@ -113,6 +113,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a45e74057631e76de62cd047566f5e2b4" id="r_a45e74057631e76de62cd047566f5e2b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45e74057631e76de62cd047566f5e2b4">solder_mask_to_copper_clearance</a> = 0</td></tr>
 <tr class="memitem:a75f48d08f4cd577996aea15ba346ccf4" id="r_a75f48d08f4cd577996aea15ba346ccf4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75f48d08f4cd577996aea15ba346ccf4">solder_mask_min_width</a> = 0</td></tr>
 <tr class="memdesc:a75f48d08f4cd577996aea15ba346ccf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">minimum mask web between openings (KiCad solder_mask_bridge test)  <br /></td></tr>
+<tr class="memitem:a199ce47c85f22645673217ee7fa36cbe" id="r_a199ce47c85f22645673217ee7fa36cbe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a199ce47c85f22645673217ee7fa36cbe">min_resolved_spokes</a> = 2</td></tr>
+<tr class="memdesc:a199ce47c85f22645673217ee7fa36cbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">thermal spokes a pad needs into its zone (KiCad starved_thermal; project rules.min_resolved_spokes)  <br /></td></tr>
 <tr class="memitem:a5e6a6d0c98eeecb93b7812ce91783032" id="r_a5e6a6d0c98eeecb93b7812ce91783032"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e6a6d0c98eeecb93b7812ce91783032">allow_blind_buried_vias</a> = false</td></tr>
 <tr class="memitem:ac1d8a8db49e9a9f47320fad29f547dfb" id="r_ac1d8a8db49e9a9f47320fad29f547dfb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1d8a8db49e9a9f47320fad29f547dfb">allow_microvias</a> = false</td></tr>
 </table>
@@ -132,7 +134,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00043">43</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00044">44</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -148,7 +150,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00044">44</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00045">45</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -261,6 +263,24 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00036">36</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a199ce47c85f22645673217ee7fa36cbe" name="a199ce47c85f22645673217ee7fa36cbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a199ce47c85f22645673217ee7fa36cbe">&#9670;&#160;</a></span>min_resolved_spokes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::model::BoardMinimums::min_resolved_spokes = 2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>thermal spokes a pad needs into its zone (KiCad starved_thermal; project rules.min_resolved_spokes) </p>
+
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00043">43</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>

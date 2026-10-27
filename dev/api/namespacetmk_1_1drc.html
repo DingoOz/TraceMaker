@@ -109,6 +109,8 @@ Classes</h2></td></tr>
 <tr class="memitem:DrcOptions" id="r_DrcOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DrcOptions.html">DrcOptions</a></td></tr>
 <tr class="memitem:DrcReport" id="r_DrcReport"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a></td></tr>
 <tr class="memitem:RefillResult" id="r_RefillResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1RefillResult.html">RefillResult</a></td></tr>
+<tr class="memitem:StarvedThermal" id="r_StarvedThermal"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">StarvedThermal</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A thermal relief KiCad's DRC reports as starved_thermal (DRC_TEST_PROVIDER_ZONE_CONNECTIONS::testZoneLayer): fewer spokes reach the zone's fill than the board's minimum (min_resolved_spokes, 2 by default), counting tracks that run from the pad into the fill; spokes into a fill island that touches nothing but this pad do not count unless the pad has no other.  <a href="structtmk_1_1drc_1_1StarvedThermal.html#details">More...</a><br /></td></tr>
 <tr class="memitem:RuleEngine" id="r_RuleEngine"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1drc_1_1RuleEngine.html">RuleEngine</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">compiled custom-rule condition  <a href="classtmk_1_1drc_1_1RuleEngine.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CourtyardRegion" id="r_CourtyardRegion"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CourtyardRegion.html">CourtyardRegion</a></td></tr>
@@ -150,6 +152,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:a4550789200edec8ef61885cb80b481f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the report in kicad-cli's JSON layout (violations, unconnected_items; positions in mm).  <br /></td></tr>
 <tr class="memitem:a470288fee11a06e3436448ee1fc852d1" id="r_a470288fee11a06e3436448ee1fc852d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1RefillResult.html">RefillResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a470288fee11a06e3436448ee1fc852d1">refill_zones</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
 <tr class="memdesc:a470288fee11a06e3436448ee1fc852d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Follows ZONE_FILLER::fillCopperZone: outline within the board, thermal gaps around same-net pads, every other item knocked out at its clearance, spokes that reach the fill, minimum-width pruning, then islands without a pad removed by each zone's island_removal_mode.  <br /></td></tr>
+<tr class="memitem:a610b48b03f3a71ecb6ac395888be205c" id="r_a610b48b03f3a71ecb6ac395888be205c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">StarvedThermal</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a610b48b03f3a71ecb6ac395888be205c">starved_thermals</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;filled, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
+<tr class="memdesc:a610b48b03f3a71ecb6ac395888be205c"><td class="mdescLeft">&#160;</td><td class="mdescRight">On a board whose fills are current (refill_zones' board): every pad KiCad would report, in pad then zone order.  <br /></td></tr>
+<tr class="memitem:a3e1ec7ee4383d9084ff52b123f6eadd1" id="r_a3e1ec7ee4383d9084ff52b123f6eadd1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespacetmk_1_1geom.html#aae06d019a16d5bd35eb338477d09182c">geom::Ring</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e1ec7ee4383d9084ff52b123f6eadd1">thermal_spokes</a> (const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;pad, const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;zone)</td></tr>
+<tr class="memdesc:a3e1ec7ee4383d9084ff52b123f6eadd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The four spoke polygons of a pad's thermal relief to a zone, as the zone filler draws them (buildThermalSpokes).  <br /></td></tr>
 <tr class="memitem:a1b5415acd3683760e7e74dc3129b30bd" id="r_a1b5415acd3683760e7e74dc3129b30bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b5415acd3683760e7e74dc3129b30bd">area_matches</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;item, const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;area, bool enclosed)</td></tr>
 <tr class="memdesc:a1b5415acd3683760e7e74dc3129b30bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requires a common copper layer.  <br /></td></tr>
 <tr class="memitem:af92a21648a2a5d925118ccd58c7c45b4" id="r_af92a21648a2a5d925118ccd58c7c45b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1CourtyardCache.html">CourtyardCache</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af92a21648a2a5d925118ccd58c7c45b4">build_courtyards</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board)</td></tr>
@@ -622,6 +628,53 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a610b48b03f3a71ecb6ac395888be205c" name="a610b48b03f3a71ecb6ac395888be205c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a610b48b03f3a71ecb6ac395888be205c">&#9670;&#160;</a></span>starved_thermals()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">StarvedThermal</a> &gt; tmk::drc::starved_thermals </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>filled</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>r</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>On a board whose fills are current (refill_zones' board): every pad KiCad would report, in pad then zone order. </p>
+<p>Not covered: custom-pad spoke primitives and min_resolved_spokes constraints in custom rules (the board setup's applies). </p>
+
+</div>
+</div>
+<a id="a3e1ec7ee4383d9084ff52b123f6eadd1" name="a3e1ec7ee4383d9084ff52b123f6eadd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e1ec7ee4383d9084ff52b123f6eadd1">&#9670;&#160;</a></span>thermal_spokes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="namespacetmk_1_1geom.html#aae06d019a16d5bd35eb338477d09182c">geom::Ring</a> &gt; tmk::drc::thermal_spokes </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>pad</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>zone</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The four spoke polygons of a pad's thermal relief to a zone, as the zone filler draws them (buildThermalSpokes). </p>
 
 </div>
 </div>

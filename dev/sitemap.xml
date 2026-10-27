@@ -2,694 +2,702 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/01-requirements/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/02-architecture/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/03-data-structures/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/04-placement/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/05-routing/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/06-failure-learning/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/07-gpu/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/08-kicad-integration/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/09-visualization/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/10-benchmarking/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/11-roadmap/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/12-decisions/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/13-viewer-protocol/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/14-placement-test-plan/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/15-component-rules/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/16-bga-breakout-plan/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/17-llm-advisor/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/18-next-features/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/19-agent-interface/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/quick-start/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D001/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D002/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D003/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D004/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D005/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D006/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D007/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D008/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D009/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D010/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D011/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D012/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D013/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D014/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D015/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D016/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D017/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D018/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D019/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D020/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D021/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D022/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D023/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D024/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D025/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D026/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D027/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D028/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D029/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D030/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D031/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D032/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D033/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D034/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D035/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D036/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D037/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D038/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D039/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D040/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D041/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D042/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D043/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D044/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D045/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D046/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D047/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D048/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D049/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D050/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D051/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D052/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D053/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D054/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D055/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D056/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D057/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D058/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D059/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D060/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D061/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D062/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D063/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D064/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D065/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D066/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D067/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D068/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D069/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D070/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D071/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D072/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D073/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D074/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D075/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D076/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D077/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D078/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D079/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D080/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D081/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D082/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D083/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D084/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D085/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D086/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D088/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D089/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D090/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D091/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D092/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D093/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D094/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D095/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D096/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D097/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D098/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D099/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D100/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D101/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D102/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D103/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D104/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D105/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D106/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D107/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D108/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D109/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D110/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D111/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D112/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D113/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D114/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D115/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D116/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D117/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D118/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D119/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D120/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D121/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D122/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D123/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D124/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D125/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D126/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D127/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D128/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D129/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D130/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D131/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D132/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D133/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D134/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D135/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D136/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D137/</loc>
+         <lastmod>2026-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://dingooz.github.io/TraceMaker/dev/decisions/D138/</loc>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/explanation/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/benchmarks/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/build-and-test/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/docs/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/gpu/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/kicad-cli-docker/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/release/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/how-to/run-report/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/project/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/reference/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/reference/api/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/reference/benchmarks/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/reference/cli/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/tutorials/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/tutorials/first-board/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://dingooz.github.io/TraceMaker/dev/tutorials/kicad-plugin/</loc>
-         <lastmod>2026-10-24</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
 </urlset>
