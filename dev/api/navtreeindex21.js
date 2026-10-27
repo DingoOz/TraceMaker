@@ -1,5 +1,9 @@
 var NAVTREEINDEX21 =
 {
+"structtmk_1_1route_1_1RouterOptions.html#a1940390acea6795a8801779653c9cb97":[1,0,0,14,32,70],
+"structtmk_1_1route_1_1RouterOptions.html#a1b10118c0a31d84e37f996eed6cfada1":[0,0,0,16,32,110],
+"structtmk_1_1route_1_1RouterOptions.html#a1b10118c0a31d84e37f996eed6cfada1":[1,0,0,14,32,110],
+"structtmk_1_1route_1_1RouterOptions.html#a1b3cb48e611cc4f8e0c1936de2a9d5f7":[0,0,0,16,32,47],
 "structtmk_1_1route_1_1RouterOptions.html#a1b3cb48e611cc4f8e0c1936de2a9d5f7":[1,0,0,14,32,47],
 "structtmk_1_1route_1_1RouterOptions.html#a1f2cd80891a234a6f18fccf9ff12daa4":[0,0,0,16,32,126],
 "structtmk_1_1route_1_1RouterOptions.html#a1f2cd80891a234a6f18fccf9ff12daa4":[1,0,0,14,32,126],
@@ -245,9 +249,5 @@ var NAVTREEINDEX21 =
 "structtmk_1_1route_1_1RouterOptions.html#afd870146215ec6d90e00b0bebf2455fc":[1,0,0,14,32,86],
 "structtmk_1_1route_1_1RouterOptions.html#afdd4ad0a73e135e54cff43ff77f614cd":[0,0,0,16,32,63],
 "structtmk_1_1route_1_1RouterOptions.html#afdd4ad0a73e135e54cff43ff77f614cd":[1,0,0,14,32,63],
-"structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html":[0,0,0,16,32,2],
-"structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html":[1,0,0,14,32,2],
-"structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html#a0a92d2857b9c6f5c443b778c5ee0dcb1":[0,0,0,16,32,2,2],
-"structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html#a0a92d2857b9c6f5c443b778c5ee0dcb1":[1,0,0,14,32,2,2],
-"structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html#a6bd54a12ccca6155ee3470abb0be2486":[0,0,0,16,32,2,3]
+"structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html":[0,0,0,16,32,2]
 };

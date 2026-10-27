@@ -1,5 +1,9 @@
 var NAVTREEINDEX19 =
 {
+"structtmk_1_1route_1_1BusStats.html#a22f81cec2b260aef3240cc67553dc8cd":[1,0,0,14,8,3],
+"structtmk_1_1route_1_1BusStats.html#a32999620d422652d5b273bd7bcb0103f":[0,0,0,16,8,2],
+"structtmk_1_1route_1_1BusStats.html#a32999620d422652d5b273bd7bcb0103f":[1,0,0,14,8,2],
+"structtmk_1_1route_1_1BusStats.html#a3bc4281aa691a03bf43d527c21f8b67e":[0,0,0,16,8,9],
 "structtmk_1_1route_1_1BusStats.html#a3bc4281aa691a03bf43d527c21f8b67e":[1,0,0,14,8,9],
 "structtmk_1_1route_1_1BusStats.html#a4a5451b5b41f75e3830cf50d6c0d24f7":[0,0,0,16,8,10],
 "structtmk_1_1route_1_1BusStats.html#a4a5451b5b41f75e3830cf50d6c0d24f7":[1,0,0,14,8,10],
@@ -245,9 +249,5 @@ var NAVTREEINDEX19 =
 "structtmk_1_1route_1_1PairRule.html#a5ce489d4e17673611d4be8c6192a477b":[1,0,0,14,9,7],
 "structtmk_1_1route_1_1PairRule.html#a632ffed00c9e43ff8a5b846d14e0d952":[0,0,0,16,9,8],
 "structtmk_1_1route_1_1PairRule.html#a632ffed00c9e43ff8a5b846d14e0d952":[1,0,0,14,9,8],
-"structtmk_1_1route_1_1PairRule.html#a8f73f56d56183e84357f8379f2f5a41d":[0,0,0,16,9,1],
-"structtmk_1_1route_1_1PairRule.html#a8f73f56d56183e84357f8379f2f5a41d":[1,0,0,14,9,1],
-"structtmk_1_1route_1_1PairRule.html#a91ef34248e06b56f8a20e2323fece99f":[0,0,0,16,9,3],
-"structtmk_1_1route_1_1PairRule.html#a91ef34248e06b56f8a20e2323fece99f":[1,0,0,14,9,3],
-"structtmk_1_1route_1_1PairRule.html#a9688a814b545cc23280bbbaf27749ba6":[0,0,0,16,9,6]
+"structtmk_1_1route_1_1PairRule.html#a8f73f56d56183e84357f8379f2f5a41d":[0,0,0,16,9,1]
 };

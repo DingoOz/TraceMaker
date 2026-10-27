@@ -2872,6 +2872,9 @@ OPTIONS:
           --layer-cost TEXT ...
                               Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 =
                               normal, at most 1000)
+          --no-fill-planes    Leave zones that have no fill unfilled while routing (default:
+                              fill them in memory and route with --soft-zones, so plane nets
+                              drop vias into their planes)
           --pour TEXT ...     Add a copper pour before routing: auto (the ground net on the
                               first inner layer, else the back layer, when the board has no
                               zone) or NET@LAYER; repeatable. Turns on --soft-zones; the pour

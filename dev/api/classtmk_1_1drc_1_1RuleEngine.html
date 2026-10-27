@@ -142,6 +142,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a291d2c26905f5de190695bd23a3b2b50" id="r_a291d2c26905f5de190695bd23a3b2b50"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a291d2c26905f5de190695bd23a3b2b50">via_hole_rule_hits_own_tracks</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net) const</td></tr>
 <tr class="memdesc:a291d2c26905f5de190695bd23a3b2b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when a physical_hole_clearance rule holds between a via of <span class="tt">net</span> and a track of the same net: the tracks that end in a via touch its hole, so every via of that net would break the rule.  <br /></td></tr>
 <tr class="memitem:a55109b35a2259ab30cf0ff6600d086f6" id="r_a55109b35a2259ab30cf0ff6600d086f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55109b35a2259ab30cf0ff6600d086f6">max_physical_hole_clearance</a> () const</td></tr>
+<tr class="memitem:a9de5903f24f907a91d1dfba2b558a897" id="r_a9de5903f24f907a91d1dfba2b558a897"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9de5903f24f907a91d1dfba2b558a897">router_hole_clearance</a> () const</td></tr>
+<tr class="memdesc:a9de5903f24f907a91d1dfba2b558a897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule.  <br /></td></tr>
 <tr class="memitem:a22092f2f48bd1167966005c66b94ad39" id="r_a22092f2f48bd1167966005c66b94ad39"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22092f2f48bd1167966005c66b94ad39">needs_exact_routing</a> () const</td></tr>
 <tr class="memdesc:a22092f2f48bd1167966005c66b94ad39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.  <br /></td></tr>
 <tr class="memitem:a3ba01a7c7f578bd8d2ddd22fa5444d6f" id="r_a3ba01a7c7f578bd8d2ddd22fa5444d6f"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ba01a7c7f578bd8d2ddd22fa5444d6f">warnings</a> () const</td></tr>
@@ -499,7 +501,7 @@ Friends</h2></td></tr>
 
 <p>Custom rules that the per-class obstacle cache cannot represent require exact per-point checks. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00076">76</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00081">81</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -620,6 +622,36 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>A new track or via (index -1, actual shape, width and layers; a via's layers are its span, which tells blind from buried) is disallowed on one of its layers, every custom rule applied in order as in <a class="el" href="#a23635b4d0aa25d136d20b3561f991e5c" title="Name of the last rule disallowing it on layer, if any (KiCad: items_not_allowed).">disallowed()</a>. </p>
+
+</div>
+</div>
+<a id="a9de5903f24f907a91d1dfba2b558a897" name="a9de5903f24f907a91d1dfba2b558a897"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9de5903f24f907a91d1dfba2b558a897">&#9670;&#160;</a></span>router_hole_clearance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::drc::RuleEngine::router_hole_clearance </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule. </p>
+<p>The router's checks and caches have no per-pair hole rule, so a rule with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact (hole_clearance above). </p>
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00079">79</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -791,7 +823,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00077">77</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00082">82</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -816,7 +848,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00117">117</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00123">123</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>

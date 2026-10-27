@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea444bcb3a3fcf8389296c49467f27e1d6":[0,0,0,2,0,8,8],
+"namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea46f86faa6bbf9ac94a7e459509a20ed0":[0,0,0,2,0,8,13],
 "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea563728df0fdd90631ac1e51258e2857d":[0,0,0,2,0,8,4],
 "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea727b79a9a430ccddcf9260a381d5ab10":[0,0,0,2,0,8,11],
 "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101ea8c7dd922ad47494fc02c388e12c00eac":[0,0,0,2,0,8,14],
@@ -247,7 +249,5 @@ var NAVTREEINDEX4 =
 "namespacetmk_1_1io.html#ad581f447aaaea9cc490ec4030f14d1be":[0,0,0,10,19],
 "namespacetmk_1_1io.html#ae243c7493787382e868d5fdcced8611d":[0,0,0,10,22],
 "namespacetmk_1_1io.html#ae92b90acf38dda1dc060e09818a7fb01":[0,0,0,10,13],
-"namespacetmk_1_1learn.html":[0,0,0,11],
-"namespacetmk_1_1learn.html#a018755000b631162b679203530c2393c":[0,0,0,11,3],
-"namespacetmk_1_1model.html":[0,0,0,12]
+"namespacetmk_1_1learn.html":[0,0,0,11]
 };

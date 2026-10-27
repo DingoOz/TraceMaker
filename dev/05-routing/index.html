@@ -2251,6 +2251,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#54-unfilled-zones-as-planes-and-custom-hole-clearance-in-the-router-2026-10-27-d140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        54. Unfilled zones as planes, and custom hole clearance in the router (2026-10-27, D140)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3557,6 +3568,17 @@
     <span class="md-ellipsis">
       
         53. Generated pours and the layer-count advisor (2026-10-27, D138)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54-unfilled-zones-as-planes-and-custom-hole-clearance-in-the-router-2026-10-27-d140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        54. Unfilled zones as planes, and custom hole clearance in the router (2026-10-27, D140)
       
     </span>
   </a>
@@ -7401,6 +7423,26 @@ open connections are mostly fan-outs of fine-pitch parts on the outer layers, wh
 via in the fan-out). Advisor and brute force agree on 28 of 28 answers, so the gate's second half is met; the first
 half, boards completed with a pour against without, is 0 against 0 on the 33 boards at their own layer counts and 1 against 1
 (4 layers) and 2 against 1 (6 layers) on the 14. Tests <code>[pour]</code>, <code>[layers]</code>.</p>
+<h2 id="54-unfilled-zones-as-planes-and-custom-hole-clearance-in-the-router-2026-10-27-d140">54. Unfilled zones as planes, and custom hole clearance in the router (2026-10-27, D140)<a class="headerlink" href="#54-unfilled-zones-as-planes-and-custom-hole-clearance-in-the-router-2026-10-27-d140" title="Permanent link">&para;</a></h2>
+<p>Found on a 1,194-connection, four-layer WholeBoard board (an eight-port PoE switch: every part on F.Cu, GND zone on In1.Cu,
++54V zone on In2.Cu, both written without a fill, JLCPCB rules).</p>
+<p><strong>Unfilled zones.</strong> A zone with no <code>filled_polygon</code> gave the router nothing: it neither saw the plane as a target nor kept
+other nets off it. The plane nets were joined pad to pad by tracks (1,359 mm of GND and 414 mm of +54V on the routed board,
+some of it on the other net's plane layer), and those 0.8 mm power tracks crowded the escapes of the 0.5 mm-pitch QFN-56
+controllers where the last open connections were. Now (<code>RouteJob::fill_planes</code>, on by default; <code>route --no-fill-planes</code>
+turns it off) every copper zone without a fill is filled in memory before routing, as KiCad will fill it, and the run uses
+soft zones (§36): a plane net's pads drop a via into their plane (plane targets), other nets route through, and the zones
+are refilled after routing to judge connectivity. The output keeps the zones as they were written; KiCad fills them. Test
+<code>[pour]</code> ("a zone without a fill is filled for routing").</p>
+<p><strong>Custom hole clearance.</strong> The router kept only the board minimum hole clearance (0.2 mm here); custom <code>hole_clearance</code> rules
+were checked by the DRC but not by the router. JLCPCB's "Hole to copper" (0.254 mm, no condition) was then broken wherever a
+0.5 mm neck-down via (0.1 mm annular) sat at the 0.15 mm copper clearance from another net: 14 KiCad <code>hole_clearance</code> errors
+(0.2395 mm) on the routed board. <code>RuleEngine::router_hole_clearance()</code> is the board minimum raised to every applied custom
+<code>hole_clearance</code> rule; every router check (<code>route::Obstacles</code>, the lattice margin, stitching reach, pair via spacing) uses
+it. A rule with a condition or a layer is kept round every hole, which is conservative (rule 6), and a warning says so; the
+DRC still checks it as written. Test <code>[rules]</code> ("custom hole_clearance rules").</p>
+<p>Not done: rules whose condition uses <code>A.Net</code> (JLCPCB's "Hole to hole" between different nets, 0.5 mm) are still not
+applied by the router or the DRC (the engine does not evaluate <code>Net</code>); KiCad found no such error on that board.</p>
 
 
 

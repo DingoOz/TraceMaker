@@ -20,6 +20,7 @@ var classtmk_1_1drc_1_1RuleEngine =
     [ "physical_hole_clearance", "classtmk_1_1drc_1_1RuleEngine.html#aa1b97b421ea68072387f731f00a6df92", null ],
     [ "positional_disallow", "classtmk_1_1drc_1_1RuleEngine.html#a5a53887504d09afa4cca4f6ac1990686", null ],
     [ "probe_disallowed", "classtmk_1_1drc_1_1RuleEngine.html#abf1c9a69a304c094f7ea438bd0dc1616", null ],
+    [ "router_hole_clearance", "classtmk_1_1drc_1_1RuleEngine.html#a9de5903f24f907a91d1dfba2b558a897", null ],
     [ "skew_constraint", "classtmk_1_1drc_1_1RuleEngine.html#a6348e87032430f61e28f5841e1dca7b2", null ],
     [ "track_allowed", "classtmk_1_1drc_1_1RuleEngine.html#a011cff6f61b68847287d4b2d6b56576d", null ],
     [ "track_width", "classtmk_1_1drc_1_1RuleEngine.html#a5dcee5588df0b98c97f0594d82f8c5d4", null ],
