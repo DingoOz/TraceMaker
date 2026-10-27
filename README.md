@@ -311,7 +311,7 @@ python3 bench/run.py --tier B --limit 40 --time 120 --jobs 2 --threads 8
 - Each run writes `bench/results/<run>/`: the routed boards, a result per board, and `summary.json`.
 - Every board is compared with Freerouting's published result for the same file.
 - tscircuit's BGA breakout problems (400 Simple Route JSON files): `scripts/fetch_fixtures.sh tscircuit`, then
-  `python3 bench/run.py --set srj19 --work 10000000 --route-args "--variants 1 --no-gpu"` (or `--set srj20`) and
+  `python3 bench/run.py --set srj19 --work 30000000 --route-args "--variants 1 --no-gpu --fast-bends"` (or `--set srj20`) and
   `python3 bench/srj_score.py <run>` for tscircuit's own pass criterion (`scripts/fetch_fixtures.sh tscircuit-checker`
   installs its checker; needs node).
 

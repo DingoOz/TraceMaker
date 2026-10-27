@@ -27,7 +27,7 @@ PCBench, 8 router variants, 120 s per board, judged by KiCad's own DRC (`kicad-c
 | C | 30 | **46.7%** | 46.7% | 46.7% | 97.4% |
 | D | 22 | **36.4%** | 40.9% | 36.4% | 94.9% |
 
-Tier D is one board lower: Keyboard_PCB_Keyboard routed 530 of its 534 connections. The machine was shared with other jobs (load 40 to 78 on 56 cores) and the limit is wall-clock time, so the 0.10.0 binary was run beside it under the same load: it scored 31.8% (7 boards, and 528 of 534 on that keyboard). The difference is load, not the router. With its options off, the run report changes no copper: the quick tier at a fixed work budget is byte-identical with and without it on all 30 boards.
+Tier D is one board lower: Keyboard_PCB_Keyboard routed 530 of its 534 connections. The machine was shared with other jobs (load 40 to 78 on 56 cores) and the limit is wall-clock time, so the 0.10.0 binary was run beside it under the same load: it scored 31.8% (7 boards, and 528 of 534 on that keyboard). The difference is not the router: at a fixed work budget both binaries give the same keyboard board, and on an idle machine (2026-10-26) both score 8 boards with 530 of 534 on it, so that board moves with the 120 s wall-clock limit from run to run. With its options off, the run report changes no copper: the quick tier at a fixed work budget is byte-identical with and without it on all 30 boards.
 
 Records: `bench/records/release-0.11.0/` (every run's summary and per-board results, the comparisons, the test log).
 

@@ -6,6 +6,7 @@
 #include <future>
 #include <utility>
 
+#include "gpu/backoff.hpp"
 #include "gpu/device.hpp"
 #include "gpu/philox_fill.hpp"
 
@@ -82,6 +83,22 @@ TEST_CASE("cost-to-go field: GPU equals CPU on random grids", "[gpu][field]") {
     }
   }
   if (ran == 0) SKIP("no device could execute a field");
+}
+
+TEST_CASE("A device that refused is not asked again until its back-off ends, which doubles up to a cap", "[gpu][backoff]") {
+  using tmk::gpu::DeviceBackOff;
+  DeviceBackOff b;
+  CHECK_FALSE(b.waiting(0));
+  b.refused(1000);
+  CHECK(b.waiting(1000 + DeviceBackOff::kFirstMs - 1));
+  CHECK_FALSE(b.waiting(1000 + DeviceBackOff::kFirstMs));
+  b.refused(100'000);
+  CHECK(b.waiting(100'000 + 2 * DeviceBackOff::kFirstMs - 1));
+  for (int i = 0; i < 20; ++i) b.refused(0);
+  CHECK(b.next_delay_ms() == DeviceBackOff::kMaxMs);
+  CHECK_FALSE(b.waiting(DeviceBackOff::kMaxMs));
+  b.accepted();
+  CHECK(b.next_delay_ms() == DeviceBackOff::kFirstMs);
 }
 
 TEST_CASE("cost-to-go field: unavailable device clears the result", "[gpu][field]") {

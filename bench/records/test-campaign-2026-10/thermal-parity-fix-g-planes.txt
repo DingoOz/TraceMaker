@@ -1,0 +1,8 @@
+RoyalBlue54L-Feather                     kicad 0 ours 0  only-kicad [] only-ours []
+StickHub                                 kicad 0 ours 0  only-kicad [] only-ours []
+complex_hierarchy                        kicad 0 ours 0  only-kicad [] only-ours []
+interf_u                                 kicad 4 ours 4  only-kicad [] only-ours []
+multichannel_mixer                       kicad 0 ours 0  only-kicad [] only-ours []
+pic_programmer                           kicad 0 ours 0  only-kicad [] only-ours []
+plane_smd                                kicad 0 ours 0  only-kicad [] only-ours []
+sonde xilinx                             kicad 0 ours 0  only-kicad [] only-ours []

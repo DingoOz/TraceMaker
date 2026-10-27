@@ -25,6 +25,23 @@ comparable (judge version, time limit, machine load).
 | [m17-pcbworld-fr21](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-fr21/summary.json) | pcbworld-d3-test | 119 |  | 61.6% | 96.1% |  | 10694 |  |
 | [m17-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-quick-new/summary.json) | quick | 30 | 6cb3d65 | 83.3% | 99.0% | 100.0% | 124 | `--no-gpu` |
 
+## m20-c3
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m20-c3)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [c3-bd-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-bd-base/summary.json) | pcbench-bd-fail | 33 | 2adbac9 | 0.0% | 88.6% | 12.1% | 1267 | `--no-gpu` |
+| [c3-bd-pour](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-bd-pour/summary.json) | pcbench-bd-fail | 33 | 2adbac9 | 0.0% | 89.2% | 12.1% | 11240 | `--no-gpu --pour auto` |
+| [c3-bd-pour2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-bd-pour2/summary.json) | pcbench-bd-fail | 33 | 2adbac9 | 0.0% | 89.3% | 12.1% | 3905 | `--no-gpu --pour auto` |
+| [c3-layers-L2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-L2/summary.json) | PCBench tier A | 14 | 2adbac9 | 0.0% | 89.4% | 14.3% | 386 |  |
+| [c3-layers-L4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-L4/summary.json) | PCBench tier A | 14 | 2adbac9 | 7.1% | 90.1% | 14.3% | 555 |  |
+| [c3-layers-L6](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-L6/summary.json) | PCBench tier A | 14 | 2adbac9 | 7.1% | 89.1% | 14.3% | 691 |  |
+| [c3-layers-pour-L2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-pour-L2/summary.json) | PCBench tier A | 14 | 2adbac9 | 0.0% | 90.4% | 14.3% | 530 | `--no-gpu --pour auto` |
+| [c3-layers-pour-L4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-pour-L4/summary.json) | PCBench tier A | 14 | 2adbac9 | 7.1% | 90.4% | 14.3% | 492 | `--no-gpu --pour auto` |
+| [c3-layers-pour-L6](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-pour-L6/summary.json) | PCBench tier A | 14 | 2adbac9 | 14.3% | 89.3% | 14.3% | 614 | `--no-gpu --pour auto` |
+| [c3-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-quick/summary.json) | quick | 30 | 2adbac9 | 83.3% | 99.0% | 100.0% | 138 |  |
+
 ## macos15
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/macos15)
@@ -61,3 +78,12 @@ comparable (judge version, time limit, machine load).
 | [rel0110-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.11.0/runs/rel0110-tierB/summary.json) | PCBench tier B | 40 | 225b68f | 70.0% | 97.1% | 50.0% | 3321 |  |
 | [rel0110-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.11.0/runs/rel0110-tierC/summary.json) | PCBench tier C | 30 | 225b68f | 46.7% | 97.4% | 46.7% | 3191 |  |
 | [rel0110-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.11.0/runs/rel0110-tierD/summary.json) | PCBench tier D | 22 | 225b68f | 36.4% | 94.9% | 36.4% | 2403 |  |
+
+## test-campaign-2026-10
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/test-campaign-2026-10)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [fix-g-planes](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/test-campaign-2026-10/runs/fix-g-planes/summary.json) | planes | 8 | 2adbac9 | 25.0% | 90.4% |  | 220 | `--soft-zones --si-rules` |
+| [fix-g-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/test-campaign-2026-10/runs/fix-g-quick/summary.json) | quick | 30 | 2adbac9 | 83.3% | 99.0% | 100.0% | 389 |  |

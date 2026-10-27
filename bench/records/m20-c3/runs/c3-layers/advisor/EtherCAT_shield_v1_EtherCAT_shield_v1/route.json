@@ -1,0 +1,327 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 87.5,
+ "connections": 272,
+ "copper_layers": 2,
+ "escape_corridor_mm": 153.53197700000004,
+ "escape_corridors": 71,
+ "escape_reclaimed": 0,
+ "expansions": 10323737,
+ "failures": [
+  "Net-(C12-Pad1): C12.1 -> U1.6  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+3V3: U1.7 -> U1.5  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "Net-(R13-Pad1): R13.1 -> U1.57  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+3V3: U1.5 -> C10.1  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R12-Pad1): R12.1 -> U1.9  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+3V3: U1.14 -> U1.7  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "Net-(C20-Pad1): Y1.3 -> U1.2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "RX1_P: R11.1 -> U1.55  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "RX2_N: R16.1 -> U1.61  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "RX2_P: R17.1 -> U1.60  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "RX1_N: R10.1 -> U1.54  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "TX2_P: R15.1 -> U1.62  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "Net-(C12-Pad1): U1.24 -> U1.38  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "TX1_P: R9.1 -> U1.53  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "TX2_N: R14.1 -> U1.63  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+3V3: U1.5 -> L3.1  (boxed in; escapes/neck-down: boxed in)",
+  "TX1_N: R8.1 -> U1.52  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "Net-(R20-Pad2): U2.5 -> U1.42  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO8: P1.18 -> U1.15  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO0: P1.17 -> U1.36  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "SIO1: U1.13 -> J5.2  (boxed in; escapes/neck-down: boxed in)",
+  "/LAN9252/LINKACTLED1: R44.1 -> U1.46  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO1: P1.15 -> U1.39  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO2: P1.13 -> U1.40  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO4: P1.9 -> U1.23  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO13: P1.8 -> U1.28  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO5: P1.7 -> U1.22  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GPIO6: P1.5 -> U1.21  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "~SCS: U1.50 -> J3.2  (boxed in; escapes/neck-down: boxed in)",
+  "GPIO15: P1.4 -> U1.31  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "SCK: U1.19 -> J4.2  (boxed in; escapes/neck-down: boxed in)",
+  "SYNC1: P2.27 -> U1.18  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "LAN9252_IRQ: P2.21 -> U1.44  (boxed in (target); escapes/neck-down: out of budget)",
+  "SYNC0: P2.25 -> U1.34  ()"
+ ],
+ "layers": {
+  "chosen": 2,
+  "complete": false,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 272,
+    "copper_layers": 2,
+    "routed": 238,
+    "seconds": 29.402259249,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 127
+   },
+   {
+    "complete": false,
+    "connections": 272,
+    "copper_layers": 4,
+    "routed": 234,
+    "seconds": 31.090985176,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 106
+   },
+   {
+    "complete": false,
+    "connections": 272,
+    "copper_layers": 6,
+    "routed": 231,
+    "seconds": 36.361748719,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": -1,
+    "vias": 102
+   }
+  ]
+ },
+ "open": 34,
+ "package_pin_edges": 5,
+ "pitch_mm": 0.075,
+ "routed": 238,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T03:23:48Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/EtherCAT_shield_v1_EtherCAT_shield_v1/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers/advisor/EtherCAT_shield_v1_EtherCAT_shield_v1/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "10000000"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--try-layers",
+    "value": "2,4,6"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers/advisor/EtherCAT_shield_v1_EtherCAT_shield_v1/route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers/advisor/EtherCAT_shield_v1_EtherCAT_shield_v1/out.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 10000000
+ },
+ "seconds": 29.402259249,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 234,
+  "bends_per_connection": 0.5924,
+  "connections": 395,
+  "detour_length_mm": 1751.2116,
+  "detour_octile_mm": 1626.001611,
+  "detour_ratio": 1.077,
+  "length_mm": 1751.2116,
+  "long_detours": 11,
+  "off_angle_segments": 122,
+  "segments": 701,
+  "short_segments": 61,
+  "stair_steps": 0,
+  "vias": 127
+ },
+ "time_limited": false,
+ "tracks": 701,
+ "tunnels": 0,
+ "variant": 6,
+ "variant_name": "fast bends, cheap crossings, escape plan",
+ "variant_seconds": 21.330229189,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 220,
+   "seconds": 7.678920598,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 234,
+   "seconds": 29.338580983,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 19,
+   "seconds": 18.264659306,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 232,
+   "seconds": 27.120914544,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 211,
+   "seconds": 10.56574963,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 235,
+   "seconds": 29.325330796,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 238,
+   "seconds": 21.330229189,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 234,
+   "seconds": 28.811838357,
+   "variant": 7
+  }
+ ],
+ "vias": 127,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 10988241,
+   "commits": 238,
+   "expansions": 10135196,
+   "field_cells": 42489234,
+   "fields": 137,
+   "fixed_checks": 3306557,
+   "flood_cells": 188541,
+   "rips": 0,
+   "searches": 434
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 10,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 10988241,
+   "commits": 238,
+   "expansions": 10135196,
+   "field_cells": 42489234,
+   "fields": 137,
+   "fixed_checks": 3306567,
+   "flood_cells": 188541,
+   "rips": 0,
+   "searches": 434
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 67688083,
+   "commits": 1632,
+   "expansions": 80904888,
+   "field_cells": 240609602,
+   "fields": 890,
+   "fixed_checks": 19682017,
+   "flood_cells": 746763,
+   "rips": 0,
+   "searches": 2862
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 20,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 67688083,
+   "commits": 1632,
+   "expansions": 80904888,
+   "field_cells": 240609602,
+   "fields": 890,
+   "fixed_checks": 19682037,
+   "flood_cells": 746763,
+   "rips": 0,
+   "searches": 2862
+  }
+ }
+}

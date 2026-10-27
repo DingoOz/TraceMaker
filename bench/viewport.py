@@ -8,6 +8,9 @@ machines out of the viewer, and the page that embeds it is as open as the devsit
 on a routing stall. Only the first portfolio variant streams, and the viewer does not change the result (checked: identical board with and without).
 
   bench/viewport.py            prints the route options of a new viewer, one per line (claims its port for 5 minutes)
+
+A claim only bridges the moment between choosing a port and the router binding it: callers that route in-process
+(bench/run.py) release it when the route ends, so a fast board set does not run out of the 100 ports.
 """
 from __future__ import annotations
 
@@ -54,7 +57,8 @@ def _free(port: int) -> bool:
         s.close()
 
 
-def new_port() -> int:
+def _claims(change) -> int | None:
+    """Runs change(claims, now) on the live claims (port -> time) under the file lock and saves the result."""
     RES.mkdir(parents=True, exist_ok=True)
     with open(RES / ".view-claims", "a+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
@@ -65,18 +69,39 @@ def new_port() -> int:
             claims = {}
         now = time.time()
         claims = {p: t for p, t in claims.items() if now - t < CLAIM_S}
+        got = change(claims, now)
+        lock.seek(0)
+        lock.truncate()
+        lock.write(json.dumps(claims))
+        return got
+
+
+def new_port() -> int:
+    def claim(claims: dict, now: float) -> int | None:
         for p in range(LO, HI + 1):
             if p not in claims and _free(p):
                 claims[p] = now
-                lock.seek(0)
-                lock.truncate()
-                lock.write(json.dumps(claims))
                 return p
-    raise RuntimeError("no free viewer port")
+        return None
+    p = _claims(claim)
+    if p is None:
+        raise RuntimeError("no free viewer port")
+    return p
 
 
-def route_args() -> list[str]:
-    return ["--view", "--view-host", "0.0.0.0", "--view-port", str(new_port()), "--view-token", token(), "--no-freeze", "--view-embed", embed_origins()]
+def release_port(port: int) -> None:
+    """The route that used the port has ended (its viewer is closed), so the port may be handed out again."""
+    _claims(lambda claims, now: claims.pop(port, None))
+
+
+def port_of(args: list[str]) -> int:
+    return int(args[args.index("--view-port") + 1])
+
+
+def route_args(embed: bool = True) -> list[str]:
+    """embed=False for binaries older than 0.11.0, which reject --view-embed (the stack page then cannot frame them)."""
+    a = ["--view", "--view-host", "0.0.0.0", "--view-port", str(new_port()), "--view-token", token(), "--no-freeze"]
+    return a + (["--view-embed", embed_origins()] if embed else [])
 
 
 if __name__ == "__main__":

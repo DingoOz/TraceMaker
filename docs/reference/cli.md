@@ -46,6 +46,8 @@ SUBCOMMANDS:
                               (doc 19)
   style                       Style metric of a routed board: bends, acute angles, stair-steps,
                               detours (doc 05 §39)
+  layers                      Write a copy of a board with another copper layer count (inner
+                              layers added, or empty ones removed; doc 05 §53)
   srj-import                  Convert a Simple Route JSON problem (tscircuit) to a KiCad board
                               with its project and rules
   srj-export                  Write a routed board's copper as the `traces` of its Simple Route
@@ -175,8 +177,9 @@ OPTIONS:
                               (two-layer boards; doc 16 F2)
           --relax             Portfolio: route under 60 % and 80 % of the clearance first,
                               legalise (move vertices off the lattice) up to the real rules,
-                              repeat on stalls; until complete, with --round-work (20 M
-                              default)
+                              repeat on stalls; until complete, in rounds of --round-work (20 M
+                              default, up to --rounds 200): --work does not limit it, --time
+                              does
           --relax-late        With --relax: begin under the real rules and relax only when
                               those stall (fresh start from the loosest stage)
           --heuristic-weight FLOAT
@@ -268,6 +271,17 @@ OPTIONS:
           --layer-cost TEXT ...
                               Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 =
                               normal, at most 1000)
+          --pour TEXT ...     Add a copper pour before routing: auto (the ground net on the
+                              first inner layer, else the back layer, when the board has no
+                              zone) or NET@LAYER; repeatable. Turns on --soft-zones; the pour
+                              is written with its fill
+          --copper-layers INT:INT in [2 - 32]
+                              Route with this many copper layers (even): inner layers are
+                              added, or empty ones removed, in the output too
+          --try-layers INT ...
+                              Layer-count advisor: route with each count (e.g. 2,4,6), fewest
+                              first, stop at the first that completes and write that board; the
+                              summary's "layers" lists every count tried
           --view              Stream the routing live to the browser viewer
           --return-paths TEXT ...
                               After routing, audit the reference return of nets matching these
@@ -679,6 +693,28 @@ OPTIONS:
   -h,     --help              Print this help message and exit
           --json TEXT         Write the metric as JSON
           --connections       With --json: also one row per connection
+```
+
+### `tracemaker layers`
+
+```text
+Write a copy of a board with another copper layer count (inner layers added, or
+empty ones removed; doc 05 §53)
+
+
+tracemaker layers [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --count INT:INT in [2 - 32] REQUIRED
+                              Copper layers of the copy (even, 2 to 32)
+  -o,     --output TEXT REQUIRED
+                              Output .kicad_pcb (the board's .kicad_pro and .kicad_dru are
+                              copied next to it)
 ```
 
 ### `tracemaker srj-import`

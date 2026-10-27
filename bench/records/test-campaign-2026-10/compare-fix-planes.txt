@@ -1,0 +1,22 @@
+# full-g-planes → fix-g-planes
+
+8 boards; routed boards byte-identical: 7/8.
+Clean pass 2 → 2; mean completion 90.4% → 90.4%; router seconds 140.1 → 220.0.
+Route CPU time 439 → 523 s (+18.9%) at the same work.
+Byte-identical boards moved -2% to +15% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| interf_u | 140 → 140 / 164 | 84.2% → 84.2% | no → no | {'starved_thermal': 4} | 15.1 → 75.8 | 60.8 → 121.2 | differs |
+
+Style (informational): bends per connection 0.8721 → 0.8829; acute angles 0 → 0; stair steps 21 → 22; short segments 164 → 163; off angle segments 394 → 394; detour ratio 1.0791 → 1.0862; long detours 29 → 29.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| interf_u | 1.4365 → 1.5102 | 0 → 0 | 9 → 10 | 7 → 6 | 34 → 34 | 1.0809 → 1.1028 | 4 → 4 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- route CPU time +18.9% in total
+- interf_u: route CPU time 60.8 → 121.2 s (+99%)
+
+Gates: pass

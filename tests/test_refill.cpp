@@ -134,6 +134,42 @@ TEST_CASE("refill: a thermal pad joins the plane by the spokes that reach it", "
   CHECK(unconnected(drc::refill_zones(closed.board, closed.rules).board, closed.rules) == 1);
 }
 
+TEST_CASE("refill: a thermal relief with fewer spokes into the plane than the board asks for is starved", "[refill][thermal]") {
+  // KiCad's starved_thermal (DRC_TEST_PROVIDER_ZONE_CONNECTIONS). Four spokes into the plane: nothing to report.
+  const auto free = load("starved_free", board_text(""));
+  CHECK(drc::starved_thermals(drc::refill_zones(free.board, free.rules).board, free.rules).empty());
+  // Walls above and below R1 and a track across its left spoke: only the right spoke is left. kicad-cli 10.0.6 on this
+  // board: "zone min spoke count 2; actual 1".
+  const std::string walls = segment(0.5, 8.7, 9, 8.7) + segment(0.5, 11.3, 9, 11.3) + track(3.9, 8.7, 11.3);
+  auto cut = load("starved_cut", board_text(walls));
+  const auto filled = drc::refill_zones(cut.board, cut.rules).board;
+  const auto st = drc::starved_thermals(filled, cut.rules);
+  REQUIRE(st.size() == 1);
+  CHECK(st[0].pad == 0);
+  CHECK(st[0].layer == 0);
+  CHECK(st[0].spokes == 1);
+  CHECK(st[0].island_spokes == 0);
+  // A board that asks for one spoke (rules.min_resolved_spokes 1) is satisfied.
+  cut.rules.minimums.min_resolved_spokes = 1;
+  CHECK(drc::starved_thermals(filled, cut.rules).empty());
+  // Walls that leave the left spoke a pocket of its own: KiCad reports nothing here either.
+  const auto pocket = load("starved_pocket", board_text(segment(0.5, 8.7, 9, 8.7) + segment(0.5, 11.3, 9, 11.3) + track(2.5, 8.7, 11.3)));
+  CHECK(drc::starved_thermals(drc::refill_zones(pocket.board, pocket.rules).board, pocket.rules).empty());
+}
+
+TEST_CASE("refill: thermal spokes are four polygons from the pad out past its gap", "[refill][thermal]") {
+  const auto l = load("spoke_rings", board_text(""));
+  const auto rings = drc::thermal_spokes(l.board.pads[0], l.board.zones[0]);
+  REQUIRE(rings.size() == 4);
+  for (const auto& r : rings) {
+    geom::Box b;
+    for (const auto& p : r) b.add(p);
+    // 0.5 mm wide spokes from the centre of the 1 mm pad to beyond its 0.5 mm gap.
+    CHECK(std::min(b.x1 - b.x0, b.y1 - b.y0) == 500'000);
+    CHECK(std::max(b.x1 - b.x0, b.y1 - b.y0) > 1'000'000);
+  }
+}
+
 TEST_CASE("refill: teardrops lose their fill", "[refill]") {
   const std::string teardrop =
       "  (zone (net 1) (net_name \"GND\") (layer \"B.Cu\") (uuid \"t\") (attr (teardrop (type padvia))) (connect_pads (clearance 0))"

@@ -1,0 +1,358 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 88.77,
+ "connections": 276,
+ "copper_layers": 4,
+ "escape_corridor_mm": 223.50999999999976,
+ "escape_corridors": 82,
+ "escape_reclaimed": 0,
+ "expansions": 10102122,
+ "failures": [
+  "GND: JP4.2 -> zone  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "GND: JP5.2 -> zone  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "GND: JP8.2 -> zone  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "GND: JP9.2 -> zone  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "GND: JP14.2 -> zone  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP3-Pad1): JP4.1 -> JP3.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "/TP_5V: JP1.1 -> C10.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP11-Pad1): JP5.1 -> JP11.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP12-Pad1): JP12.1 -> JP8.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP13-Pad1): JP13.1 -> JP9.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP10-Pad1): JP10.1 -> JP14.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP1-Pad2): JP1.2 -> TP1.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "+3V3: JP10.2 -> JP13.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "+3V3: JP13.2 -> JP12.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP10-Pad1): U10.3 -> JP10.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/port-connection/TP_B_Vsns: J8.3 -> JP7.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "Net-(JP13-Pad1): U10.2 -> JP13.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "Net-(JP11-Pad1): U4.4 -> JP5.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/port-connection/TP_B_Vio: J8.4 -> JP7.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "+3V3: JP3.2 -> JP11.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "Net-(JP12-Pad1): U10.1 -> JP12.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "Net-(JP3-Pad1): U4.5 -> JP4.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "+3V3: JP10.2 -> R37.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)",
+  "+3V3: U4.10 -> JP3.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/port-connection/TP_A_Vsns: J7.3 -> JP6.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/port-connection/TP_A_Vio: J7.4 -> JP6.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/TP_5V: J1.1 -> JP1.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "+3V3: C14.1 -> JP10.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: out of budget)",
+  "Net-(J4-Pad2): J5.4 -> J4.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(JP1-Pad2): U4.12 -> JP1.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "+3V3: JP10.2 -> J2.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))"
+ ],
+ "layers": {
+  "chosen": 4,
+  "complete": false,
+  "tried": [
+   {
+    "complete": false,
+    "connections": 276,
+    "copper_layers": 2,
+    "routed": 246,
+    "seconds": 32.449999486,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": 31,
+    "vias": 101
+   },
+   {
+    "complete": false,
+    "connections": 276,
+    "copper_layers": 4,
+    "routed": 245,
+    "seconds": 29.614993842,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": 30,
+    "vias": 98
+   },
+   {
+    "complete": false,
+    "connections": 276,
+    "copper_layers": 6,
+    "routed": 245,
+    "seconds": 32.82231989,
+    "time_limited": false,
+    "tried": true,
+    "unconnected_after_refill": 31,
+    "vias": 97
+   }
+  ]
+ },
+ "open": 31,
+ "package_pin_edges": 18,
+ "pitch_mm": 0.065,
+ "pours": [
+  {
+   "area_mm2": 3808.24,
+   "clearance_mm": 0.3,
+   "layer": "In1.Cu",
+   "net": "GND",
+   "polygons": 1,
+   "reason": "auto: ground net GND on In1.Cu (first inner layer)"
+  }
+ ],
+ "refill": {
+  "repair": {
+   "connections": 31,
+   "expansions": 10211882,
+   "kept": true,
+   "routed": 1,
+   "tracks": 11,
+   "unconnected": 30,
+   "vias": 0
+  },
+  "starved_thermals": 0,
+  "unconnected": 31,
+  "warnings": [],
+  "zones": 1
+ },
+ "routed": 245,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T03:55:36Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_test-jig/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers-pour/advisor/kitspace_test-jig/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "10000000"
+   },
+   {
+    "name": "--no-gpu",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--pour",
+    "value": "auto"
+   },
+   {
+    "name": "--try-layers",
+    "value": "2,4,6"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers-pour/advisor/kitspace_test-jig/route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker/bench/results/c3-layers-pour/advisor/kitspace_test-jig/out.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 10000000
+ },
+ "seconds": 29.614993842,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 198,
+  "bends_per_connection": 0.5982,
+  "connections": 331,
+  "detour_length_mm": 1620.981065,
+  "detour_octile_mm": 1566.311067,
+  "detour_ratio": 1.0349,
+  "length_mm": 1620.981065,
+  "long_detours": 2,
+  "off_angle_segments": 88,
+  "segments": 578,
+  "short_segments": 55,
+  "stair_steps": 1,
+  "vias": 98
+ },
+ "time_limited": false,
+ "tracks": 578,
+ "tunnels": 0,
+ "unconnected_after_refill": 30,
+ "variant": 6,
+ "variant_name": "fast bends, cheap crossings, escape plan",
+ "variant_seconds": 18.848673141,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 184,
+   "seconds": 7.052804014,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 243,
+   "seconds": 19.313848231,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 240,
+   "seconds": 17.628518687,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 245,
+   "seconds": 18.647892711,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 187,
+   "seconds": 6.852132897,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 243,
+   "seconds": 18.494267039,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 245,
+   "seconds": 18.848673141,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 243,
+   "seconds": 19.773851271,
+   "variant": 7
+  }
+ ],
+ "vias": 98,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 6980951,
+   "commits": 245,
+   "expansions": 6679284,
+   "field_cells": 47178516,
+   "fields": 132,
+   "fixed_checks": 3044397,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 335
+  },
+  "negotiation": {
+   "cell_checks": 3258212,
+   "commits": 0,
+   "expansions": 1742852,
+   "field_cells": 5608936,
+   "fields": 59,
+   "fixed_checks": 698055,
+   "flood_cells": 1679986,
+   "rips": 0,
+   "searches": 154
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 10239163,
+   "commits": 245,
+   "expansions": 8422136,
+   "field_cells": 52787452,
+   "fields": 191,
+   "fixed_checks": 3742452,
+   "flood_cells": 1679986,
+   "rips": 0,
+   "searches": 489
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 50558639,
+   "commits": 1830,
+   "expansions": 66745238,
+   "field_cells": 303233744,
+   "fields": 909,
+   "fixed_checks": 19757157,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 2534
+  },
+  "negotiation": {
+   "cell_checks": 13386825,
+   "commits": 0,
+   "expansions": 7039634,
+   "field_cells": 27242344,
+   "fields": 223,
+   "fixed_checks": 2448661,
+   "flood_cells": 7334566,
+   "rips": 0,
+   "searches": 672
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 63945464,
+   "commits": 1830,
+   "expansions": 73784872,
+   "field_cells": 330476088,
+   "fields": 1132,
+   "fixed_checks": 22205818,
+   "flood_cells": 7334566,
+   "rips": 0,
+   "searches": 3206
+  }
+ }
+}

@@ -52,6 +52,78 @@ bool higher_priority(const model::Zone& a, const model::Zone& b) {
   return a.uuid > b.uuid;
 }
 
+// EvalZoneConnection: the pad's own setting, else its footprint's, else the zone's; thru_hole_only is thermal
+// for plated through holes and solid for every other pad.
+ZoneConnect zone_connection(const model::Board& b, const model::Pad& pad, const model::Zone& zone) {
+  ZoneConnect c = pad.zone_connect;
+  if (c == ZoneConnect::Inherited && pad.footprint >= 0) c = b.footprints[static_cast<std::size_t>(pad.footprint)].zone_connect;
+  if (c == ZoneConnect::Inherited) c = zone.connect;
+  if (c == ZoneConnect::ThtThermal) c = pad.type == model::PadType::ThruHole ? ZoneConnect::Thermal : ZoneConnect::Full;
+  return c;
+}
+
+Coord thermal_gap(const model::Pad& pad, const model::Zone& zone) { return pad.thermal_gap > 0 ? pad.thermal_gap : zone.thermal_gap; }
+
+// The four spokes of a thermal pad (buildThermalSpokes), each as its polygon and its outer test point.
+struct Spoke {
+  Ring ring;
+  Point test;
+};
+void spokes(const model::Pad& pad, const model::Zone& zone, std::vector<Spoke>& out) {
+  Coord w = zone.thermal_bridge_width;
+  if (pad.thermal_bridge_width > 0) w = std::max(pad.thermal_bridge_width, zone.min_thickness);
+  w = std::min(w, std::min(pad.size_x, pad.size_y));  // a spoke wider than the pad is no thermal relief
+  if (w < zone.min_thickness) return;
+  const Coord half_w = w / 2;
+  const bool circular = pad.shape == model::PadShape::Circle || (pad.shape == model::PadShape::Oval && pad.size_x == pad.size_y);
+  double angle = pad.thermal_bridge_angle;
+  if (angle < 0) angle = pad.shape == model::PadShape::Circle ? 45 : 90;
+  // Box of the pad's copper and hole at the origin, unrotated, grown past the thermal gap.
+  model::Pad local = pad;
+  local.pos = {};
+  local.angle = 0;
+  local.drill_offset = {};
+  geom::Box box;
+  for (const auto& s : pad_shapes(local)) box.add(s.box);
+  if (pad.drill_x > 0) box.add(geom::Box{-pad.drill_x / 2, -pad.drill_y / 2, pad.drill_x / 2, pad.drill_y / 2});
+  box = box.inflated(thermal_gap(pad, zone) + kMaxError + zone.min_thickness / 2);
+  const Point centre{(box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2};
+  const double hx = static_cast<double>(box.x1 - box.x0) / 2, hy = static_cast<double>(box.y1 - box.y0) / 2;
+  const double base = circular ? 0 : angle;
+  const Point shape_pos = pad.pos + geom::rotate(pad.drill_offset, pad.angle);
+  for (int k = 0; k < 4; ++k) {
+    const double a = geom::norm_deg(base + 90.0 * k);
+    Point side, hit;
+    if (a == 90.0 || a == 270.0) {
+      side = {half_w, 0};
+      hit = {0, geom::kiround((a == 90.0 ? 1 : -1) * hy)};  // EDA_ANGLE: dx = cos, dy = sin
+    } else if (a == 0.0 || a == 180.0) {
+      side = {0, half_w};
+      hit = {geom::kiround((a == 0.0 ? 1 : -1) * hx), 0};
+    } else {
+      const double rad = a * std::numbers::pi / 180.0, dx = std::cos(rad), dy = std::sin(rad);
+      const double tx = hx / std::abs(dx), ty = hy / std::abs(dy);
+      if (tx < ty) {
+        side = {0, geom::kiround(static_cast<double>(half_w) / std::cos(rad))};
+        hit = {geom::kiround(dx * tx), geom::kiround(dy * tx)};
+      } else {
+        side = {geom::kiround(static_cast<double>(half_w) / std::sin(rad)), 0};
+        hit = {geom::kiround(dx * ty), geom::kiround(dy * ty)};
+      }
+    }
+    Ring r{centre + side, centre - side, centre + hit - side, centre + hit, centre + hit + side};
+    Point test = centre + hit;
+    auto place = [&](Point p) {
+      if (circular) p = geom::rotate(p, angle);
+      return shape_pos + geom::rotate(p, pad.angle);
+    };
+    for (auto& p : r) p = place(p);
+    // Outer orientation: under the non-zero rule a reversed ring would cancel the fill it overlaps.
+    if (geom::area(r) < 0) std::reverse(r.begin(), r.end());
+    out.push_back({std::move(r), place(test)});
+  }
+}
+
 class Filler {
  public:
   Filler(const model::Board& b, const model::DesignRules& r) : b_(b), re_(b, r), cm_(build_copper(b)) {
@@ -157,78 +229,6 @@ class Filler {
     return it;
   }
 
-  // EvalZoneConnection: the pad's own setting, else its footprint's, else the zone's; thru_hole_only is thermal
-  // for plated through holes and solid for every other pad.
-  ZoneConnect connection(const model::Pad& pad, const model::Zone& zone) const {
-    ZoneConnect c = pad.zone_connect;
-    if (c == ZoneConnect::Inherited && pad.footprint >= 0) c = b_.footprints[static_cast<std::size_t>(pad.footprint)].zone_connect;
-    if (c == ZoneConnect::Inherited) c = zone.connect;
-    if (c == ZoneConnect::ThtThermal) c = pad.type == model::PadType::ThruHole ? ZoneConnect::Thermal : ZoneConnect::Full;
-    return c;
-  }
-
-  Coord thermal_gap(const model::Pad& pad, const model::Zone& zone) const { return pad.thermal_gap > 0 ? pad.thermal_gap : zone.thermal_gap; }
-
-  // The four spokes of a thermal pad (buildThermalSpokes), each as its polygon and its outer test point.
-  struct Spoke {
-    Ring ring;
-    Point test;
-  };
-  void spokes(const model::Pad& pad, const model::Zone& zone, std::vector<Spoke>& out) const {
-    Coord w = zone.thermal_bridge_width;
-    if (pad.thermal_bridge_width > 0) w = std::max(pad.thermal_bridge_width, zone.min_thickness);
-    w = std::min(w, std::min(pad.size_x, pad.size_y));  // a spoke wider than the pad is no thermal relief
-    if (w < zone.min_thickness) return;
-    const Coord half_w = w / 2;
-    const bool circular = pad.shape == model::PadShape::Circle || (pad.shape == model::PadShape::Oval && pad.size_x == pad.size_y);
-    double angle = pad.thermal_bridge_angle;
-    if (angle < 0) angle = pad.shape == model::PadShape::Circle ? 45 : 90;
-    // Box of the pad's copper and hole at the origin, unrotated, grown past the thermal gap.
-    model::Pad local = pad;
-    local.pos = {};
-    local.angle = 0;
-    local.drill_offset = {};
-    geom::Box box;
-    for (const auto& s : pad_shapes(local)) box.add(s.box);
-    if (pad.drill_x > 0) box.add(geom::Box{-pad.drill_x / 2, -pad.drill_y / 2, pad.drill_x / 2, pad.drill_y / 2});
-    box = box.inflated(thermal_gap(pad, zone) + kMaxError + zone.min_thickness / 2);
-    const Point centre{(box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2};
-    const double hx = static_cast<double>(box.x1 - box.x0) / 2, hy = static_cast<double>(box.y1 - box.y0) / 2;
-    const double base = circular ? 0 : angle;
-    const Point shape_pos = pad.pos + geom::rotate(pad.drill_offset, pad.angle);
-    for (int k = 0; k < 4; ++k) {
-      const double a = geom::norm_deg(base + 90.0 * k);
-      Point side, hit;
-      if (a == 90.0 || a == 270.0) {
-        side = {half_w, 0};
-        hit = {0, geom::kiround((a == 90.0 ? 1 : -1) * hy)};  // EDA_ANGLE: dx = cos, dy = sin
-      } else if (a == 0.0 || a == 180.0) {
-        side = {0, half_w};
-        hit = {geom::kiround((a == 0.0 ? 1 : -1) * hx), 0};
-      } else {
-        const double rad = a * std::numbers::pi / 180.0, dx = std::cos(rad), dy = std::sin(rad);
-        const double tx = hx / std::abs(dx), ty = hy / std::abs(dy);
-        if (tx < ty) {
-          side = {0, geom::kiround(static_cast<double>(half_w) / std::cos(rad))};
-          hit = {geom::kiround(dx * tx), geom::kiround(dy * tx)};
-        } else {
-          side = {geom::kiround(static_cast<double>(half_w) / std::sin(rad)), 0};
-          hit = {geom::kiround(dx * ty), geom::kiround(dy * ty)};
-        }
-      }
-      Ring r{centre + side, centre - side, centre + hit - side, centre + hit, centre + hit + side};
-      Point test = centre + hit;
-      auto place = [&](Point p) {
-        if (circular) p = geom::rotate(p, angle);
-        return shape_pos + geom::rotate(p, pad.angle);
-      };
-      for (auto& p : r) p = place(p);
-      // Outer orientation: under the non-zero rule a reversed ring would cancel the fill it overlaps.
-      if (geom::area(r) < 0) std::reverse(r.begin(), r.end());
-      out.push_back({std::move(r), place(test)});
-    }
-  }
-
   Rings fill(int z, int layer) const {
     const auto& zone = b_.zones[static_cast<std::size_t>(z)];
     const model::LayerMask lb = model::layer_bit(layer);
@@ -264,7 +264,7 @@ class Filler {
         no_connection.push_back(static_cast<int>(i));
         continue;
       }
-      ZoneConnect c = connection(pad, zone);
+      ZoneConnect c = zone_connection(b_, pad, zone);
       if (c == ZoneConnect::Thermal && !(pad.copper & lb)) c = ZoneConnect::None;
       if (c == ZoneConnect::Thermal) {
         if (pi == pad_item_.end()) continue;
@@ -477,5 +477,117 @@ class Filler {
 }  // namespace
 
 RefillResult refill_zones(const model::Board& b, const model::DesignRules& r) { return Filler(b, r).run(); }
+
+std::vector<geom::Ring> thermal_spokes(const model::Pad& pad, const model::Zone& zone) {
+  std::vector<Spoke> sp;
+  spokes(pad, zone, sp);
+  std::vector<geom::Ring> out;
+  for (auto& s : sp) out.push_back(std::move(s.ring));
+  return out;
+}
+
+namespace {
+
+// Points where two closed rings cross (SHAPE_LINE_CHAIN::Intersect with aExcludeColinearAndTouching): proper
+// crossings only, each rounded to the nanometre; `near` limits the first ring's edges to those meeting that box.
+std::vector<Point> crossings(const Ring& a, const Ring& b, const geom::Box& near) {
+  std::vector<Point> out;
+  for (std::size_t i = 0; i < a.size(); ++i) {
+    const Point p = a[i], q = a[(i + 1) % a.size()];
+    geom::Box eb;
+    eb.add(p);
+    eb.add(q);
+    if (!eb.intersects(near)) continue;
+    for (std::size_t j = 0; j < b.size(); ++j) {
+      const Point c = b[j], d = b[(j + 1) % b.size()];
+      const auto o1 = geom::orient(p, q, c), o2 = geom::orient(p, q, d), o3 = geom::orient(c, d, p), o4 = geom::orient(c, d, q);
+      if (o1 == 0 || o2 == 0 || o3 == 0 || o4 == 0 || (o1 > 0) == (o2 > 0) || (o3 > 0) == (o4 > 0)) continue;
+      const long double t = static_cast<long double>(o3) / static_cast<long double>(o3 - o4);
+      out.push_back({geom::kiround(static_cast<double>(p.x + t * (q.x - p.x))), geom::kiround(static_cast<double>(p.y + t * (q.y - p.y)))});
+    }
+  }
+  return out;
+}
+
+}  // namespace
+
+std::vector<StarvedThermal> starved_thermals(const model::Board& b, const model::DesignRules& r) {
+  std::vector<StarvedThermal> out;
+  const int min_spokes = r.minimums.min_resolved_spokes;  // the board setup's MIN_RESOLVED_SPOKES (custom rules are not read)
+  if (const auto sev = r.severities.find("starved_thermal"); min_spokes <= 0 || (sev != r.severities.end() && sev->second == "ignore")) return out;
+  const CopperModel cm = build_copper(b);
+  geom::Box all;
+  for (const auto& it : cm.items) all.add(it.box);
+  if (all.empty()) return out;
+  index::UniformGrid grid(all.inflated(1), 1'000'000, cm.items.size());
+  for (std::size_t i = 0; i < cm.items.size(); ++i) grid.insert(static_cast<int>(i), cm.items[i].box);
+  const ZoneFills zf(cm);
+  // Items each fill polygon touches directly (CN_ZONE_LAYER::HasSingleConnection counts its graph neighbours): items of
+  // its net, and items of any net that can change net; other zones' fills of the net that overlap it.
+  std::vector<int> touching(cm.items.size(), 0);
+  std::map<std::pair<int, int>, int> fill_item;  // (zone, fill index) -> copper item
+  for (std::size_t i = 0; i < cm.items.size(); ++i) {
+    const auto& it = cm.items[i];
+    if (it.kind == ItemKind::Zone) fill_item[{it.index, it.sub}] = static_cast<int>(i);
+    if (it.kind != ItemKind::Zone && !in_item_graph(it)) continue;
+    std::set<int> hit;
+    for (const auto& s : it.shapes)
+      for (const int z : zones_touching(cm, zf, grid, s, it.layers, 1))  // touching counts, as SHAPE::Collide at 0
+        if (z != static_cast<int>(i) && (cm.items[static_cast<std::size_t>(z)].net == it.net || (it.kind != ItemKind::Zone && can_change_net(it)))) hit.insert(z);
+    for (const int z : hit) ++touching[static_cast<std::size_t>(z)];
+  }
+  for (std::size_t pi = 0; pi < b.pads.size(); ++pi) {
+    const auto& pad = b.pads[pi];
+    if (pad.net <= 0) continue;
+    for (std::size_t zi = 0; zi < b.zones.size(); ++zi) {
+      const auto& zone = b.zones[zi];
+      if (zone.rule_area || zone.teardrop || zone.net != pad.net || zone.fills.empty()) continue;
+      if (zone_connection(b, pad, zone) != ZoneConnect::Thermal) continue;
+      for (int layer = 0; layer < b.copper_count(); ++layer) {
+        const model::LayerMask lb = model::layer_bit(layer);
+        if (!(pad.copper & lb) || !(zone.copper & lb)) continue;
+        // The pad grown by half its thermal gap: every spoke crosses this outline twice.
+        const auto pad_copper = pad_shapes(pad);
+        const Rings grown = geom::unite(shapes_rings(pad_copper, thermal_gap(pad, zone) / 2));
+        if (grown.empty()) continue;
+        const Ring& outline = grown.front();
+        const geom::Box near = rings_box({outline});
+        int spokes_ok = 0, island = 0;
+        for (std::size_t k = 0; k < zone.fills.size(); ++k) {
+          const auto& [l, pts] = zone.fills[k];
+          if (l != layer || pts.size() < 3) continue;
+          auto xs = crossings(pts, outline, near);
+          std::sort(xs.begin(), xs.end(), [](Point a, Point c) { return std::pair(a.x, a.y) < std::pair(c.x, c.y); });
+          xs.erase(std::unique(xs.begin(), xs.end()), xs.end());
+          if (xs.size() < 2) continue;
+          const auto f = fill_item.find({static_cast<int>(zi), static_cast<int>(k)});
+          const bool single = f != fill_item.end() && touching[static_cast<std::size_t>(f->second)] == 1;
+          (single ? island : spokes_ok) += static_cast<int>(xs.size() / 2);
+        }
+        if (spokes_ok == 0 && island == 0) continue;  // not connected at all: the connectivity check's business
+        if (spokes_ok < min_spokes) {
+          // Tracks of the net from inside the outline into the fill are spokes too. KiCad takes every track connected
+          // to the pad, on any layer, and tests only its far end against this layer's fill.
+          for (const auto& t : b.tracks) {
+            if (t.net != pad.net || !(pad.copper & model::layer_bit(t.layer))) continue;
+            const auto seg = geom::Shape::segment(t.a, t.b, t.width / 2);
+            if (std::none_of(pad_copper.begin(), pad_copper.end(), [&](const geom::Shape& ps) { return geom::closer_than(seg, ps, 1); })) continue;
+            const bool a_in = geom::point_in_polygon(t.a, outline), b_in = geom::point_in_polygon(t.b, outline);
+            if (a_in == b_in) continue;
+            const Point other = a_in ? t.b : t.a;
+            for (const auto& [l, pts] : zone.fills)
+              if (l == layer && geom::point_in_polygon(other, pts)) {
+                ++spokes_ok;
+                break;
+              }
+          }
+        }
+        if (spokes_ok == 0) std::swap(spokes_ok, island);  // only islands: left to the connectivity check
+        if (spokes_ok < min_spokes) out.push_back({static_cast<int>(pi), static_cast<int>(zi), layer, spokes_ok, island});
+      }
+    }
+  }
+  return out;
+}
 
 }  // namespace tmk::drc

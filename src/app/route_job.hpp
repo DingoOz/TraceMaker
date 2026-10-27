@@ -68,6 +68,12 @@ struct RouteJob {
   // --reroute: remove every unlocked track and via first and route the whole board again (locked copper, arcs and
   // zones stay; rule 6).
   bool reroute = false;
+  // --copper-layers N (doc 05 §53): route the board with N copper layers, inner layers added (or empty ones removed) in memory and in the
+  // output; 0 = as the file has them. `route --try-layers` sets it for each count it tries.
+  int copper_layers = 0;
+  // --pour (doc 05 §53, M20 C3): zones to add before routing, "auto" or "NET@LAYER" (passes::plan_pours). They are routed with soft
+  // zones (switched on with them) and written into the output with the engine's fill.
+  std::vector<std::string> pours;
   std::string warm_pcb;           // --warm-pcb: a routed board whose tracks and vias are the starting point (kept where legal under the input's rules; nets of one connection)
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
   // Advice (doc 17, issue #26). The engine never talks to a model: it reads an advice file, and an advisor (any program
@@ -122,6 +128,13 @@ struct RouteJobResult {
 // Reads the board and its rules, routes (a portfolio when more than one variant runs), writes the requested outputs.
 // Throws std::exception on unreadable input.
 RouteJobResult run_route_job(RouteJob job);
+
+// The layer-count advisor (`route --try-layers`, doc 05 §53, M20 C3): routes the board with each copper layer count in `counts`,
+// fewest first, and stops at the first that completes (exit code 0: everything routed and, with soft zones, nothing unconnected after
+// the refill). Its board is written to `job.out` and its summary returned, with a "layers" object listing every count tried. A count
+// the board cannot take (inner layers that are not empty) is reported and skipped. When none completes, the result of the count that
+// left the fewest connections open is returned (the first such count on a tie).
+RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts);
 
 // Buses (doc 05 §38): the groups `specs` ("NAME=PATTERN") name on the board, then, with `detect`, the groups found in
 // the net names that share no net with an earlier group. Each group gets the skew limit of the board's custom

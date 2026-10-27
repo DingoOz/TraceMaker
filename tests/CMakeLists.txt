@@ -2,8 +2,8 @@ find_package(Catch2 3 REQUIRED)
 include(Catch)
 
 find_package(nlohmann_json 3 REQUIRED)
-add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_txn.cpp test_bus.cpp test_passes.cpp test_srj.cpp test_tui.cpp test_advice.cpp test_stall.cpp test_return_path.cpp test_footprint_check.cpp test_critical.cpp test_session.cpp test_kicad_measured_shapes.cpp test_report.cpp)
-target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes tm::advice tm::session tm::analysis tm::crules tm::app_tui tm::report nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
+add_executable(tm_tests test_units.cpp test_rng.cpp test_gpu.cpp test_sexpr.cpp test_kicad_io.cpp test_rules.cpp test_netlist.cpp test_geom.cpp test_escape.cpp test_diff_pair.cpp test_plane_smd.cpp test_design_rules.cpp test_rule_geometry.cpp test_rule_layer_context.cpp test_layer_limits.cpp test_soft_zones.cpp test_refill.cpp test_work_profile.cpp test_txn.cpp test_bus.cpp test_passes.cpp test_srj.cpp test_tui.cpp test_advice.cpp test_stall.cpp test_return_path.cpp test_footprint_check.cpp test_critical.cpp test_session.cpp test_kicad_measured_shapes.cpp test_report.cpp test_pour.cpp)
+target_link_libraries(tm_tests PRIVATE tm::core tm::gpu tm::sexpr tm::model tm::io tm::geom tm::drc tm::route tm::passes tm::app_route tm::advice tm::session tm::analysis tm::crules tm::app_tui tm::report nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
 target_compile_definitions(tm_tests PRIVATE TM_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 tm_set_warnings(tm_tests)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test-results)
@@ -75,7 +75,7 @@ add_test(NAME edge_touch COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration
 set_tests_properties(edge_touch PROPERTIES LABELS "integration;rules" TIMEOUT 300)
 # --relax and the other round-based options run with --variants 1 instead of being ignored (M17, D122).
 add_test(NAME round_options COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/round_options.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/round_options)
-set_tests_properties(round_options PROPERTIES LABELS "route;integration" TIMEOUT 600)
+set_tests_properties(round_options PROPERTIES LABELS "route;integration" TIMEOUT 1800)  # 9 minutes under asan, over 10 under tsan
 # The agent skills' scripts (D84): preflight findings on plane_smd, reports that board text cannot forge, sign-off
 # verdicts and exit codes against a stand-in kicad-cli. Needs neither KiCad nor, for most of it, the engine.
 add_test(NAME skills_scripts COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/skills_scripts.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/skills_scripts)
