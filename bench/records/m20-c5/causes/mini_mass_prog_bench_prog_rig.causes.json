@@ -1,0 +1,636 @@
+{
+ "baseline": {
+  "connections": 26,
+  "open": 25,
+  "routed": 1,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/mini_mass_prog_bench_prog_rig.kicad_pcb",
+ "by_cause": {
+  "near_and_far": 3,
+  "no_path_bare": 1,
+  "package_fanout": 11,
+  "through_traffic": 10
+ },
+ "by_cause_at_dense_packages": {
+  "near_and_far": 3,
+  "no_path_bare": 1,
+  "package_fanout": 11,
+  "through_traffic": 10
+ },
+ "by_dense_package": {
+  "R6": {
+   "package_fanout": 6,
+   "through_traffic": 2
+  },
+  "R7": {
+   "through_traffic": 2
+  },
+  "U1": {
+   "package_fanout": 1
+  },
+  "U12": {
+   "near_and_far": 1
+  },
+  "U15": {
+   "near_and_far": 1
+  },
+  "U18": {
+   "through_traffic": 1
+  },
+  "U2": {
+   "near_and_far": 2,
+   "no_path_bare": 1,
+   "package_fanout": 10,
+   "through_traffic": 7
+  },
+  "U21": {
+   "package_fanout": 1
+  },
+  "U24": {
+   "package_fanout": 1
+  },
+  "U27": {
+   "package_fanout": 2,
+   "through_traffic": 1
+  },
+  "U6": {
+   "no_path_bare": 1
+  },
+  "U9": {
+   "near_and_far": 1
+  }
+ },
+ "connections": [
+  {
+   "a": "R5.2",
+   "at_dense_package": true,
+   "b": "U2.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R5.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U2.4",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/USB_D+",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R4.2",
+   "at_dense_package": true,
+   "b": "U2.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R4.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U2.3",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/USB_D-",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.3",
+   "at_dense_package": true,
+   "b": "R7.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.3",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "R7.14",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    }
+   ],
+   "net": "/LCD_DnC",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.5",
+   "at_dense_package": true,
+   "b": "R7.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.5",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "R7.12",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    }
+   ],
+   "net": "/LCD_SS",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "Y1.1",
+   "at_dense_package": true,
+   "b": "U2.16",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "Y1.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U2.16",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "Net-(C16-Pad1)",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.4",
+   "at_dense_package": true,
+   "b": "U1.9",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.4",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U1.9",
+     "part_pads": 26,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/LCD_nRES",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.14",
+   "at_dense_package": true,
+   "b": "U2.25",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.14",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U2.25",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/LCD_HV_DnC",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.13",
+   "at_dense_package": true,
+   "b": "U2.26",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.13",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U2.26",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/LCD_HV_nRES",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.12",
+   "at_dense_package": true,
+   "b": "U2.27",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.12",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U2.27",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/LCD_HV_SS",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "R6.11",
+   "at_dense_package": true,
+   "b": "U2.28",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.11",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U2.28",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/FLASH_HV_nS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D1.2",
+   "at_dense_package": true,
+   "b": "U2.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D1.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U2.8",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "Net-(D1-Pad2)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R6.16",
+   "at_dense_package": true,
+   "b": "U2.21",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "R6.16",
+     "part_pads": 16,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U2.21",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/SPI2_HV_MOSI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "CON1.3",
+   "at_dense_package": true,
+   "b": "U2.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "CON1.3",
+     "part_pads": 6
+    },
+    {
+     "dense": true,
+     "pad": "U2.9",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/SCK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D81.1",
+   "at_dense_package": true,
+   "b": "U2.41",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D81.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U2.41",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/Programming Socket #8/LED3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "SW9.1",
+   "at_dense_package": true,
+   "b": "U2.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "SW9.1",
+     "part_pads": 7
+    },
+    {
+     "dense": true,
+     "pad": "U2.1",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/Programming Socket #8/SWITCH",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.29",
+   "at_dense_package": true,
+   "b": "U27.13",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.29",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U27.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #7/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.19",
+   "at_dense_package": true,
+   "b": "U27.15",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.19",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U27.15",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #0/I2C_SDA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.18",
+   "at_dense_package": true,
+   "b": "U27.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.18",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U27.14",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #0/I2C_SCL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.30",
+   "at_dense_package": true,
+   "b": "U24.13",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.30",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U24.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #6/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.12",
+   "at_dense_package": true,
+   "b": "U21.13",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.12",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U21.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #5/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U18.13",
+   "at_dense_package": true,
+   "b": "R127.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U18.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    },
+    {
+     "pad": "R127.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Programming Socket #4/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U15.13",
+   "at_dense_package": true,
+   "b": "R3.2",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U15.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    },
+    {
+     "pad": "R3.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Programming Socket #3/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.31",
+   "at_dense_package": true,
+   "b": "U12.13",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.31",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U12.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #2/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.32",
+   "at_dense_package": true,
+   "b": "U9.13",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.32",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U9.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #1/INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.36",
+   "at_dense_package": true,
+   "b": "U6.13",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.36",
+     "part_pads": 45,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U6.13",
+     "part_pads": 16,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/Programming Socket #0/INT",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 4,
+ "dense_packages": 23,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

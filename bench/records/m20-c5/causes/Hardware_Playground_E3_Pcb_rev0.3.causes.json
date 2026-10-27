@@ -1,0 +1,559 @@
+{
+ "baseline": {
+  "connections": 26,
+  "open": 26,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/Hardware_Playground_E3_Pcb_rev0.3.kicad_pcb",
+ "by_cause": {
+  "no_path_bare": 15,
+  "package_fanout": 8,
+  "through_traffic": 3
+ },
+ "by_cause_at_dense_packages": {
+  "package_fanout": 8,
+  "through_traffic": 3
+ },
+ "by_dense_package": {
+  "U1": {
+   "package_fanout": 1
+  },
+  "U2": {
+   "package_fanout": 8,
+   "through_traffic": 3
+  },
+  "U3": {
+   "package_fanout": 2
+  }
+ },
+ "connections": [
+  {
+   "a": "U7.2",
+   "at_dense_package": false,
+   "b": "U7.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "U7.2",
+     "part_pads": 8
+    },
+    {
+     "pad": "U7.2",
+     "part_pads": 8
+    }
+   ],
+   "net": "+VB",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U6.2",
+   "at_dense_package": false,
+   "b": "U6.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "U6.2",
+     "part_pads": 8
+    },
+    {
+     "pad": "U6.2",
+     "part_pads": 8
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "F1.2",
+   "at_dense_package": false,
+   "b": "F1.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "F1.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "F1.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "F1.1",
+   "at_dense_package": false,
+   "b": "F1.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "F1.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "F1.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "F1_1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D3.2",
+   "at_dense_package": false,
+   "b": "LED4.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D3.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "LED4.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U7.2",
+   "at_dense_package": false,
+   "b": "U6.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "U7.2",
+     "part_pads": 8
+    },
+    {
+     "pad": "U6.2",
+     "part_pads": 8
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U6.2",
+   "at_dense_package": false,
+   "b": "F1.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "U6.2",
+     "part_pads": 8
+    },
+    {
+     "pad": "F1.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "Q2.2",
+   "at_dense_package": false,
+   "b": "P3.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "Q2.2",
+     "part_pads": 3
+    },
+    {
+     "pad": "P3.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "Q2_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "F1.2",
+   "at_dense_package": false,
+   "b": "P4.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "F1.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "P4.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P4.2",
+   "at_dense_package": false,
+   "b": "P2.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "P4.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P2.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "F1.1",
+   "at_dense_package": false,
+   "b": "P1.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "F1.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "P1.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "F1_1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "Q1.2",
+   "at_dense_package": false,
+   "b": "P2.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "Q1.2",
+     "part_pads": 3
+    },
+    {
+     "pad": "P2.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "Q1_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P2.1",
+   "at_dense_package": false,
+   "b": "P3.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "P2.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "P3.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U6.2",
+   "at_dense_package": false,
+   "b": "D3.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "U6.2",
+     "part_pads": 8
+    },
+    {
+     "pad": "D3.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "C10.2",
+   "at_dense_package": false,
+   "b": "U7.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "C10.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "U7.2",
+     "part_pads": 8
+    }
+   ],
+   "net": "+VB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.8",
+   "at_dense_package": true,
+   "b": "R31.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.8",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R31.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "X_STOP",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.11",
+   "at_dense_package": true,
+   "b": "R35.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.11",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R35.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "THB",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.21",
+   "at_dense_package": true,
+   "b": "R25.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.21",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R25.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "SD_SCK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.19",
+   "at_dense_package": true,
+   "b": "U2.28",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U3.19",
+     "part_pads": 29,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U2.28",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "Y_DIR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.23",
+   "at_dense_package": true,
+   "b": "R24.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.23",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R24.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "SD_MOSI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.20",
+   "at_dense_package": true,
+   "b": "R23.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.20",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R23.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "SD_CS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.2",
+   "at_dense_package": true,
+   "b": "U2.30",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U3.2",
+     "part_pads": 29,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U2.30",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "Y_EN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.44",
+   "at_dense_package": true,
+   "b": "R39.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.44",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R39.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "USB_D-",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.58",
+   "at_dense_package": true,
+   "b": "H2.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.58",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "H2.9",
+     "part_pads": 10
+    }
+   ],
+   "net": "LCD_ENC_BTN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.59",
+   "at_dense_package": true,
+   "b": "H2.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.59",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "H2.3",
+     "part_pads": 10
+    }
+   ],
+   "net": "LCD_MOSI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.33",
+   "at_dense_package": true,
+   "b": "U1.19",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.33",
+     "part_pads": 64,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U1.19",
+     "part_pads": 29,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "X_DIR",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 2,
+ "dense_packages": 9,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

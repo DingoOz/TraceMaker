@@ -2272,6 +2272,88 @@ DRC still checks it as written. Test `[rules]` ("custom hole_clearance rules").
 Not done: rules whose condition uses `A.Net` (JLCPCB's "Hole to hole" between different nets, 0.5 mm) are still not
 applied by the router or the DRC (the engine does not evaluate `Net`); KiCad found no such error on that board.
 
+## 55. Why connections stay open, and strict searches from the crowded end (M20 C5, 2026-10-27, D143)
+
+**The question** (doc 18 C5): of the connections the failing tier B-D boards leave open, which fail at a dense package, and why?
+The 33 boards are `bench/sets/pcbench-bd-fail.txt`; the run is 10 M work per board, eight variants, KiCad judging (`c5-base`, 1,383
+open, 1,368 unconnected items after KiCad's refill).
+
+**Classification** (`tracemaker causes BOARD [--json FILE]`, `src/app/causes.{hpp,cpp}`; `bench/failure_causes.py` runs it over a
+benchmark run). Every open connection of a routed board is routed again alone (one router, 2 M work) on copies of the board whose
+routed copper is locked, each copy with other nets' copper removed in one region; its cause is the first copy on which it routes:
+
+| Cause | The copy on which it routes | Meaning |
+|---|---|---|
+| `pin_cannot_escape` | none: the escape analysis (§35) on the bare board says the pin cannot leave its package | the footprint and the rules, not the routing |
+| `through_traffic` | copper within 2 mm of an end removed, of nets with no pad on that end's part | other nets' tracks passing through the pin's fan-out region |
+| `package_fanout` | all copper within 2 mm of an end removed (the part's own nets too) | the package's own fan-out |
+| `channel` | the copper farther than 2 mm from both ends removed | a routing channel away from the pins |
+| `near_and_far` | all other copper removed | both |
+| `no_path_bare` | none at this work | the rules, keep-outs or the work budget |
+
+A connection that routes alone on the board as it is ("routes as is", 63 of 1,383) was left by the order or the budget, not by
+copper. "At a dense package" means an end on a package the escape analysis calls dense. Radius 2 mm: the scale of a package's
+fan-out (EtherCAT at 1 mm moved 4 of 30 connections from `package_fanout` to `channel`). Records: `bench/records/m20-c5/causes.md`.
+
+| Cause | Open | At a dense package |
+|---|--:|--:|
+| `through_traffic` | 444 | 204 |
+| `package_fanout` | 335 | 264 |
+| `channel` | 259 | 69 |
+| `no_path_bare` | 182 | 64 |
+| `near_and_far` | 51 | 34 |
+| `pin_cannot_escape` | 49 | 49 |
+
+Two more inner layers (`tracemaker layers`, routed at 10 M): 1,320 → 1,196 open, two boards complete. The largest class is copper
+near the pins, the pins' own fan-out and other nets passing through it (779 of 1,320), and more than half of it is at dense packages.
+
+**Where the work went** (`work-profile.md`, from each board's `route.json`): 17 of the 33 boards spend the whole budget in the strict
+first pass and never negotiate; they hold 1,156 of the 1,383 open connections, and only 79 open connections in all were tried in
+negotiation. Failed strict searches take 70 to 90 % of those budgets. A strict search whose *source* is boxed in is proved so in a
+few expansions (the enclosure proof, `enclosed`); one whose *target* is boxed in floods its window first, then the reverse probe
+(capped at 60,000 expansions) finds the target enclosed. The cheap proof depends on which end the search starts from.
+
+**The fix: start from the crowded end** (`RouterOptions::crowded_source`, `route --crowded-source`). In the strict pass a connection's
+search starts from the end with the higher crowding: the copper of other nets routed in this run, plus the pads of other nets of the
+end's own part, within 1 mm of the pad's box (copper already on the input board is not counted: the routed-item index holds only this
+run's). A boxed-in pin is then proved at once, and a pin that can be left by one narrow way is left that way instead of being
+reached by a flood from the open end (test `[causes][route]`: 2,126 expansions against 395,412 on a pin in a 3 × 3 grid of its
+part's pads).
+
+| 33 failing boards, 10 M work | Open | KiCad unconnected | Better / worse boards | Clean |
+|---|--:|--:|---|--:|
+| base (`c5-base`) | 1,383 | 1,368 | | 0 |
+| pin halo: 2 pitches per step within 0.3 mm of another part's pad, for nets without a pad on it | 1,394 | 1,378 | 6 / 9 | 0 |
+| strict searches capped at 100,000 expansions | 1,422 | 1,407 | 6 / 15 | 0 |
+| strict pass stops at 70 % of the budget, negotiation gets the rest | 1,536 | 1,521 | 1 / 16 | 0 |
+| crowded source, routed copper only, all variants | 1,217 | 1,203 | 18 / 9 | 1 |
+| crowded source, routed copper and own pads, all variants | 1,204 | 1,188 | 19 / 8 | 1 |
+| **crowded source in variants 1, 5, 6, 7 (the default)** (`c5x-fail`) | **1,220** | **1,204** | 18 / 6 | 1 |
+
+The halo, the cap and the share move work around without proving anything sooner, and lose. The polish pass (`--polish`) was worse on
+three boards of the first few tried and was not run on all.
+
+**Why half the portfolio.** In all eight variants the crowded source lost two boards of the 59 tier B-D boards that the 0.9.0 run
+finished clean (`pcbench-bd-clean`, at 10 M work 44 of them are clean in KiCad's judgement): AmpOne and bumps, one connection each.
+Each portfolio variant runs with the whole budget and keeps its own result, and `route.json` records every variant's routed count,
+so every subset of the eight could be scored from the two runs without routing again. On the 71 boards first finished (33 + 38),
+the four variants 1 ("fast bends, shortest first"), 5 ("cheap vias"), 6 ("cheap crossings, escape plan") and 7 ("dear vias") keep
+nearly all of the gain and lose no board. Variants 0, 2, 3 and 4 search from the first end as before; `--crowded-source` turns it on in
+all of them, and the hidden `--no-crowded-portfolio` restores the old portfolio. Checked with the real binary afterwards:
+
+| Set | Base | Default (variants 1, 5, 6, 7) | Better / worse boards | Clean |
+|---|--:|--:|---|---|
+| 33 failing boards, 10 M (`c5x-fail`) | 1,383 open | 1,220 | 18 / 6 | 0 → 1 |
+| 59 boards clean in the 0.9.0 run, 10 M (`c5x-clean`; 21 of them were not used to choose) | 69 open | 46 | 5 / 1 | 44 → 46 |
+| mid tier, 11 boards, 20 M (`c5x-mid`; not used to choose) | 1,306 open | 1,093 | 7 / 2 | 0 → 0 |
+| quick tier, 30 boards, 1 M (`c5x-quick`; not used to choose) | 32 open | 24 | 4 / 0 | 25 → 26 |
+
+No board in any set gained a KiCad error. The worse boards lose one to four connections (E3 Pcb six); the two mid-tier boards one
+each. The subset is the smallest of the ties with the fewest open connections and no complete board lost (`portfolio_subsets.py`,
+`portfolio-subsets.md`); on the mid tier alone a different subset scores a little better, so it is not a precise optimum.
+
+Records: `bench/records/m20-c5/` (README, causes, runs).
+
 ## 56. Pin swap: what the freedom would be worth (M20 C2, 2026-10-27, D141)
 
 `bench/pin_swap.py` measures an upper bound before any pass is built. Groups of pins are taken as swappable by construction

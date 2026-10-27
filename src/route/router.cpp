@@ -6002,6 +6002,14 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       o.layer_dir_swap = k % 5 == 4;
     });
   }
+    // Strict searches from the crowded end (doc 05 §55, D143) in half the designed eight: on in every variant it routed 1,383 -> 1,204
+    // of the 33 failing tier B-D boards but lost two of the clean ones; in these four (chosen on those 71 boards) it loses none.
+    if (base.crowded_portfolio)
+      for (const std::size_t i : {1u, 5u, 6u, 7u})
+        if (i < vs.size() && !vs[i].o.crowded_source) {
+          vs[i].o.crowded_source = true;
+          vs[i].name += ", crowded source";
+        }
   }  // designed variants
   std::vector<int> chosen;
   if (!pick.empty()) {

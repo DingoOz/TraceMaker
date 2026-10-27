@@ -223,3 +223,17 @@ a routed copy kicad-cli finds no new error type in. 4 of 4 pass on KiCad 10.0.6,
 `nightly`, which turned out to be a 10.0 release candidate from February, so the job reads the version tags instead of trusting that
 tag. No KiCad 11 release candidate exists yet; the format, DRC and plugin work of M19 waits for one, and the job will check it the
 week it appears.
+
+## 13. C5 classified and fixed: strict searches from the crowded end (2026-10-27)
+
+`tracemaker causes` routes each open connection of a routed board again alone, with other nets' copper removed near its ends, away
+from them or everywhere, and names the first change that lets it route (doc 05 §55, decision [D143](decisions/D143.md), records in
+`bench/records/m20-c5`). On the 33 failing tier B-D boards (1,320 open on the board as it is): other nets' copper passing through a
+pin's fan-out region 444, the package's own fan-out 335, a channel away from the pins 259, no path even alone 182, both 51, pins that
+cannot leave their package 49; 684 of them at dense packages. Two more layers close 124.
+
+The largest class is near the pins, and the work profile says why it is not repaired: 17 boards spend their whole budget in failed
+strict searches that flood their window before finding the *target* boxed in, and never negotiate. Starting each strict search from the
+more crowded end proves a boxed-in pin at once. In four of the portfolio's eight variants (all eight lost two clean boards), by
+default: open connections on the 33 boards 1,383 → 1,220 (KiCad 1,368 → 1,204; 18 boards better, 6 worse; one completes); the other
+sets in the table of doc 05 §55. Gate (a table of failures by cause; the fix chosen from it): met.

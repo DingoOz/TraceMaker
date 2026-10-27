@@ -929,7 +929,9 @@ int main(int argc, char** argv) {
   route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
-  route->add_flag("--crowded-source", ropt.crowded_source, "A strict search starts from the end with more routed copper of other nets near it: a boxed-in pin is proved at once (doc 05 §55)");
+  route->add_flag("--crowded-source", ropt.crowded_source,
+                  "Every strict search starts from the end with more copper and pads of other nets near it, a boxed-in pin is proved at once (doc 05 §55; the portfolio does so in four of its eight variants by default)");
+  route->add_flag("!--no-crowded-portfolio", ropt.crowded_portfolio, "The portfolio's variants search from the first end of each connection, as before D143")->group("");
   route->add_flag("--layer-assign-angle", ropt.layer_assign_angle, "Layer preference per connection by chord direction (two-layer boards)")->group("");
   route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
   route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");
