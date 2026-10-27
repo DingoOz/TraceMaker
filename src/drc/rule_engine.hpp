@@ -72,6 +72,11 @@ class RuleEngine {
   // tracks that end in a via touch its hole, so every via of that net would break the rule.
   bool via_hole_rule_hits_own_tracks(model::NetId net) const;
   Coord max_physical_hole_clearance() const { return max_physical_hole_; }
+  // Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to
+  // every applied custom hole_clearance rule. The router's checks and caches have no per-pair hole rule, so a rule
+  // with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact
+  // (hole_clearance above).
+  Coord router_hole_clearance() const { return router_hole_; }
   // Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.
   bool needs_exact_routing() const { return needs_exact_; }
   const std::vector<std::string>& warnings() const { return warnings_; }
@@ -114,6 +119,7 @@ class RuleEngine {
   bool zone_overrides_ = false;
   bool needs_exact_ = false;
   Coord max_physical_hole_ = 0;
+  Coord router_hole_ = 0;
   friend class Condition;
 };
 

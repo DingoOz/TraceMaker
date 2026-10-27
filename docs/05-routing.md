@@ -2246,3 +2246,28 @@ open connections are mostly fan-outs of fine-pitch parts on the outer layers, wh
 via in the fan-out). Advisor and brute force agree on 28 of 28 answers, so the gate's second half is met; the first
 half, boards completed with a pour against without, is 0 against 0 on the 33 boards at their own layer counts and 1 against 1
 (4 layers) and 2 against 1 (6 layers) on the 14. Tests `[pour]`, `[layers]`.
+
+## 54. Unfilled zones as planes, and custom hole clearance in the router (2026-10-27, D140)
+
+Found on a 1,194-connection, four-layer WholeBoard board (an eight-port PoE switch: every part on F.Cu, GND zone on In1.Cu,
++54V zone on In2.Cu, both written without a fill, JLCPCB rules).
+
+**Unfilled zones.** A zone with no `filled_polygon` gave the router nothing: it neither saw the plane as a target nor kept
+other nets off it. The plane nets were joined pad to pad by tracks (1,359 mm of GND and 414 mm of +54V on the routed board,
+some of it on the other net's plane layer), and those 0.8 mm power tracks crowded the escapes of the 0.5 mm-pitch QFN-56
+controllers where the last open connections were. Now (`RouteJob::fill_planes`, on by default; `route --no-fill-planes`
+turns it off) every copper zone without a fill is filled in memory before routing, as KiCad will fill it, and the run uses
+soft zones (§36): a plane net's pads drop a via into their plane (plane targets), other nets route through, and the zones
+are refilled after routing to judge connectivity. The output keeps the zones as they were written; KiCad fills them. Test
+`[pour]` ("a zone without a fill is filled for routing").
+
+**Custom hole clearance.** The router kept only the board minimum hole clearance (0.2 mm here); custom `hole_clearance` rules
+were checked by the DRC but not by the router. JLCPCB's "Hole to copper" (0.254 mm, no condition) was then broken wherever a
+0.5 mm neck-down via (0.1 mm annular) sat at the 0.15 mm copper clearance from another net: 14 KiCad `hole_clearance` errors
+(0.2395 mm) on the routed board. `RuleEngine::router_hole_clearance()` is the board minimum raised to every applied custom
+`hole_clearance` rule; every router check (`route::Obstacles`, the lattice margin, stitching reach, pair via spacing) uses
+it. A rule with a condition or a layer is kept round every hole, which is conservative (rule 6), and a warning says so; the
+DRC still checks it as written. Test `[rules]` ("custom hole_clearance rules").
+
+Not done: rules whose condition uses `A.Net` (JLCPCB's "Hole to hole" between different nets, 0.5 mm) are still not
+applied by the router or the DRC (the engine does not evaluate `Net`); KiCad found no such error on that board.

@@ -5,6 +5,7 @@
 
 #include <unistd.h>
 
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -253,6 +254,40 @@ TEST_CASE("route --pour auto writes a filled ground pour and leaves nothing unco
   CHECK(drc::run_drc(written.board, rules, o).unconnected.empty());
   const auto refilled = drc::refill_zones(written.board, rules).board;
   CHECK(refilled.zones[0].fills == written.board.zones[0].fills);
+}
+
+// A zone without a fill (doc 05 §54): filled in memory and routed with soft zones, so the GND pads use the plane, and written as it was.
+TEST_CASE("route: a zone without a fill is filled for routing, so its net drops vias into the plane", "[pour][route]") {
+  Dir d("planes");
+  const fs::path in = d.dir / "b.kicad_pcb", out = d.dir / "out.kicad_pcb";
+  std::string text = kTwoLayer;
+  const std::string zone =
+      "  (zone (net 1) (net_name GND) (layer B.Cu) (hatch edge 0.508) (connect_pads (clearance 0.3)) (min_thickness 0.25)\n"
+      "    (fill yes (arc_segments 32) (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 0 0) (xy 30 0) (xy 30 20) (xy 0 20))))\n";
+  text.insert(text.find("  (gr_line"), zone);
+  std::ofstream(in) << text;
+  auto gnd_track_mm = [&](const route::RouteResult& r) {
+    double mm = 0;
+    for (const auto& t : r.tracks)
+      if (t.net == 1) mm += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y)) / 1e6;
+    return mm;
+  };
+  app::RouteJob job;
+  job.in = in.string();
+  job.out = out.string();
+  job.opt.work_budget = 2'000'000;
+  job.variants = 1;
+  job.threads = 1;
+  const auto filled = app::run_route_job(job);
+  CHECK(filled.exit_code() == 0);
+  CHECK(filled.unconnected_after_refill == 0);  // soft zones: judged after a refill
+  const auto written = io::read_board_file(out.string());
+  REQUIRE(written.board.zones.size() == 1);
+  CHECK(written.board.zones[0].fills.empty());  // the zone is written as it was: KiCad fills it
+  job.fill_planes = false;
+  const auto plain = app::run_route_job(job);
+  CHECK(plain.unconnected_after_refill == -1);  // no soft zones
+  CHECK(gnd_track_mm(filled.result) + 5 < gnd_track_mm(plain.result));  // tracks round the board without the plane
 }
 
 TEST_CASE("Layer advisor: counts the board cannot take are skipped, the fewest that completes is written", "[pour][layers][route]") {

@@ -74,6 +74,9 @@ struct RouteJob {
   // --pour (doc 05 §53, M20 C3): zones to add before routing, "auto" or "NET@LAYER" (passes::plan_pours). They are routed with soft
   // zones (switched on with them) and written into the output with the engine's fill.
   std::vector<std::string> pours;
+  // Zones without a fill (doc 05 §54): filled in memory before routing and routed with soft zones, so a plane net's pads drop a via into
+  // their plane instead of being joined by tracks; --no-fill-planes turns it off (the zones are then ignored while routing).
+  bool fill_planes = true;
   std::string warm_pcb;           // --warm-pcb: a routed board whose tracks and vias are the starting point (kept where legal under the input's rules; nets of one connection)
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
   // Advice (doc 17, issue #26). The engine never talks to a model: it reads an advice file, and an advisor (any program
