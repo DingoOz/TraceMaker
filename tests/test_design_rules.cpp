@@ -384,6 +384,49 @@ TEST_CASE("physical_hole_clearance: via holes and routed copper of any net keep 
   }
 }
 
+// The JLCPCB rule set's "Hole to copper": a custom hole_clearance rule above the board minimum (0.254 mm against 0.2 on a
+// 1,194-connection WholeBoard board, where 0.5 mm vias with 0.15 mm clearance came 0.2395 mm from other nets' copper).
+TEST_CASE("custom hole_clearance rules: the router keeps them between holes and other nets' copper", "[rules][route]") {
+  const Files plain("hc_track_plain", board_text(kHoleInTheWay), "");
+  const Files ruled("hc_track_ruled", board_text(kHoleInTheWay), "(version 1)\n(rule \"hole to copper\" (constraint hole_clearance (min 1mm)))\n");
+  const geom::Shape hole = geom::Shape::point({10'000'000, 3'000'000}, 400'000);
+  // A 0.25 mm track 1.2 mm from the hole's centre: legal by clearance, 0.675 mm from the hole.
+  const geom::Point a{8'000'000, 4'200'000}, b{12'000'000, 4'200'000};
+  {
+    auto lb = io::read_board_file(plain.pcb.string());
+    const auto rules = io::read_design_rules(plain.pcb.string());
+    route::Obstacles obs(lb.board, rules);
+    CHECK(obs.segment_state(a, b, 0, 250'000, 1, false) == 0);
+    CHECK(obs.rules().router_hole_clearance() == rules.minimums.hole_clearance);
+  }
+  auto lb = io::read_board_file(ruled.pcb.string());
+  const auto rules = io::read_design_rules(ruled.pcb.string());
+  route::Obstacles obs(lb.board, rules);
+  CHECK(obs.rules().router_hole_clearance() == 1'000'000);
+  CHECK(obs.rules().warnings().empty());  // no condition, no layer: exact, nothing to warn about
+  for (int l = 0; l < 4; ++l) CHECK(obs.segment_state(a, b, l, 250'000, 1, false) == 2);
+  CHECK(obs.fixed_code({10'000'000, 4'200'000}, 0, 125'000, 0, 1) == route::Obstacles::kBlocked);  // cached path agrees
+  CHECK(obs.segment_state({8'000'000, 5'000'000}, {12'000'000, 5'000'000}, 0, 250'000, 1, false) == 0);  // 1.475 mm away
+  // A new via of another net 1.5 mm from the pad's centre: copper 0.6 mm apart (legal by clearance), its hole 0.75 mm from the pad.
+  CHECK(obs.via_state({10'000'000, 4'500'000}, 600'000, 300'000, 1, 0, false) == 2);
+  // Routed: the tracks keep the rule's distance, and the DRC finds no hole_clearance violation.
+  const auto after = route_board(ruled);
+  CHECK(after.routed == 2);
+  for (const auto& t : after.tracks) CHECK_FALSE(geom::closer_than(geom::Shape::segment(t.a, t.b, t.width / 2), hole, 1'000'000));
+  lb.board.tracks.insert(lb.board.tracks.end(), after.tracks.begin(), after.tracks.end());
+  lb.board.vias.insert(lb.board.vias.end(), after.vias.begin(), after.vias.end());
+  CHECK_FALSE(drc::run_drc(lb.board, rules).counts().contains("hole_clearance"));
+  // A rule with a condition is kept everywhere by the router, and says so.
+  const Files cond("hc_cond", board_text(kHoleInTheWay),
+                   "(version 1)\n(rule \"hv holes\" (condition \"A.NetName == 'SIG'\") (constraint hole_clearance (min 0.8mm)))\n");
+  auto lc = io::read_board_file(cond.pcb.string());
+  const auto rc = io::read_design_rules(cond.pcb.string());
+  const drc::RuleEngine re(lc.board, rc);
+  CHECK(re.router_hole_clearance() == 800'000);
+  REQUIRE(re.warnings().size() == 1);
+  CHECK(re.warnings().front().find("rule 'hv holes'") != std::string::npos);
+}
+
 TEST_CASE("physical_hole_clearance between a net's vias and its own tracks leaves the net without vias", "[rules][route]") {
   // Both nets need a via to cross the wall, and the tracks that end in a via touch its hole: KiCad reports each
   // such pair, so no via may be placed.

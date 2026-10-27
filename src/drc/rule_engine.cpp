@@ -5,6 +5,7 @@
 #include <bit>
 #include <cctype>
 #include <cmath>
+#include <cstdio>
 #include <initializer_list>
 #include <cstdlib>
 #include <string_view>
@@ -456,7 +457,7 @@ class Condition {
 
 // ---------------------------------------------------------------------------------------------------------
 
-RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r) {
+RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r), router_hole_(std::max<Coord>(r.minimums.hole_clearance, 0)) {
   for (const auto& rule : r_.custom) {
     Compiled c{&rule, nullptr, true};
     if (!rule.condition.empty()) {
@@ -485,6 +486,15 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
+      if (k.type == "hole_clearance" && k.min && c.valid && *k.min > r_.minimums.hole_clearance) {
+        router_hole_ = std::max(router_hole_, *k.min);
+        if (c.cond || !rule.layer.empty()) {
+          char mm[32];
+          std::snprintf(mm, sizeof mm, "%.3f", static_cast<double>(*k.min) / 1e6);
+          warnings_.push_back("rule '" + rule.name + "': the router keeps its hole clearance (" + mm +
+                              " mm) round every hole, not only where the rule applies (the DRC checks it as written)");
+        }
+      }
       // Rules outside the per-class cache need exact checks, including unreadable conditions.
       if (!c.valid || (k.type != "disallow" && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
       if (k.type != "disallow" || !c.valid) continue;

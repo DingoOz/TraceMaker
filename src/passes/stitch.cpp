@@ -134,7 +134,7 @@ StitchResult stitch_vias(const model::Board& board, const model::DesignRules& ru
   // around it, must lie inside the fill and away from every edge of it, so the hole cannot cut the fill in two,
   // sever a thermal spoke or leave a sliver. Anywhere else the fill counts as fixed copper: the via keeps the full
   // clearance. Hatched fills are never cut (the refill does not redraw them).
-  Coord reach = std::max(obs.rules().max_clearance(), rules.minimums.hole_clearance);
+  Coord reach = std::max(obs.rules().max_clearance(), obs.rules().router_hole_clearance());
   for (const auto& z : w.zones) reach = std::max(reach, z.clearance);  // a zone's own clearance widens its knock-outs
   reach += kPlaceMargin;
   std::vector<int> near;

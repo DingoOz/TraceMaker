@@ -395,7 +395,7 @@ struct Router::Impl {
       const auto net = static_cast<NetId>(n);
       probe = std::max({probe, class_width(net) / 2, via_diameter(net) / 2});
     }
-    const Coord hc = std::max<Coord>(rules.minimums.hole_clearance, 0);
+    const Coord hc = obs->rules().router_hole_clearance();
     const Coord vm = b.vias_tented ? 0 : std::max<Coord>(b.pad_to_mask_clearance, 0);
     near_infl = probe + pitch * 71 / 100 + 1 + std::max({obs->rules().max_clearance(), hc, 2 * vm + 1'000}) + 2 * pitch + 2;
     near_r.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);

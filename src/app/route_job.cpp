@@ -259,6 +259,31 @@ RouteJobResult run_route_job(RouteJob job) {
     if (stranded) log(fmt("warning: %d pads lie only on layers that take no tracks; their connections stay unrouted", stranded));
   }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
+  // Zones without a fill (a generated board, or one saved before filling; doc 05 §54): left unfilled, the router does not see the planes,
+  // so a plane net's pads are joined by tracks round the board (1,773 mm of GND and +54V track, some on the other net's plane layer, on
+  // a 1,194-connection WholeBoard board) and fine-pitch escapes fight them. Filled in memory as KiCad will fill them and routed with soft
+  // zones, the pads drop a via into their plane. The output keeps the zones as written: KiCad fills them.
+  if (job.fill_planes) {
+    std::vector<std::size_t> empty;
+    for (std::size_t i = 0; i < lb.board.zones.size(); ++i) {
+      const auto& z = lb.board.zones[i];
+      if (!z.rule_area && !z.teardrop && z.net > 0 && z.copper != 0 && z.fills.empty()) empty.push_back(i);
+    }
+    if (!empty.empty()) {
+      const auto filled = drc::refill_zones(lb.board, rules);
+      for (const auto& w : filled.warnings) log("warning: " + w);
+      for (const std::size_t i : empty) {
+        lb.board.zones[i].fills = filled.board.zones[i].fills;
+        double area = 0;
+        for (const auto& [l, ring] : lb.board.zones[i].fills) area += std::abs(geom::area(ring));
+        const auto& z = lb.board.zones[i];
+        log(fmt("planes: zone %s (%s on %s) has no fill: filled in memory for routing, %.0f mm2", z.name.empty() ? "(unnamed)" : z.name.c_str(),
+                lb.board.nets[static_cast<std::size_t>(z.net)].name.c_str(), z.layers.empty() ? "?" : z.layers.front().c_str(), area / 1e12));
+      }
+      if (!opt.soft_zones) log("planes: zone fills are soft for this run (--soft-zones): plane nets drop vias into their planes, other nets route through");
+      opt.soft_zones = true;
+    }
+  }
   // Generated pours (doc 05 §53): added to the document (so they are written), filled in memory for the router, routed with soft
   // zones. Their fills in the output are redone for the final copper before writing.
   std::vector<std::pair<std::size_t, passes::PourPlan>> pours;  // (index in lb.board.zones, plan)

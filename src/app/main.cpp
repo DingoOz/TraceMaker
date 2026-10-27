@@ -1047,6 +1047,10 @@ int main(int argc, char** argv) {
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
+  bool r_no_fill_planes = false;
+  route->add_flag("--no-fill-planes", r_no_fill_planes,
+                  "Leave zones that have no fill unfilled while routing (default: fill them in memory and route with --soft-zones, so plane "
+                  "nets drop vias into their planes)");
   route->add_option("--pour", r_job.pours,
                     "Add a copper pour before routing: auto (the ground net on the first inner layer, else the back layer, when the board has no "
                     "zone) or NET@LAYER; repeatable. Turns on --soft-zones; the pour is written with its fill")
@@ -1420,6 +1424,7 @@ int main(int argc, char** argv) {
       job.reroute = r_reroute;
       job.warm_pcb = r_warm_pcb;
       job.refill_repair = !r_no_repair;
+      job.fill_planes = !r_no_fill_planes;
       job.view_freeze = !r_nofreeze;
       job.critical_via_given = r_crit_via->count() > 0;
       job.split_cost_given = r_split->count() > 0;

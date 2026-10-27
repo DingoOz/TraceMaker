@@ -353,7 +353,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
                                  std::vector<int>* owners) const {
   // Copper (or a new via's hole) against other items' holes.
   int state = 0;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Coord hc = re_->router_hole_clearance();
   const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
   hgrid_->query(s.box.inflated(std::max({hc, h2h, max_hole_local_}) + 1), [&](int id) {
     if (state == 2) return;
@@ -719,7 +719,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   if (code == kBlocked) return code;
   aperture_codes(s, layer, via_probe, add_net);
   if (code == kBlocked) return code;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Coord hc = re_->router_hole_clearance();
   hgrid_->query(s.box.inflated(std::max(hc, max_hole_local_) + 1), [&](int id) {
     if (code == kBlocked) return;
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
@@ -797,7 +797,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
   if (code == kBlocked) return code;
   for (int l = 0; l < nl && code != kBlocked; ++l) aperture_codes(s, l, true, add_net);
   if (code == kBlocked) return code;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Coord hc = re_->router_hole_clearance();
   hgrid_->query(s.box.inflated(std::max(hc, max_hole_local_) + 1), [&](int id) {
     if (code == kBlocked) return;
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
@@ -853,7 +853,7 @@ std::int32_t Obstacles::via_hole_code(Point p, Coord drill, Coord margin, model:
   if (!ok) return kBlocked;
   for (int l = 0; l < b_.copper_count(); ++l)
     if (physical_hole_state(hole, probe_net, l, true, false, false, nullptr) != 0) return kBlocked;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Coord hc = re_->router_hole_clearance();
   if (hc > 0) {
     const Shape& h = hole;
     grid_->query(h.box.inflated(hc + 1), [&](int id) {
@@ -967,7 +967,7 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
                             bool via_hole, Coord hole_r) const {
   int state = routed_copper_part(s, layer, net, kind, soft, owners);
   if (state == 2) return state;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Coord hc = re_->router_hole_clearance();
   if (hc > 0) {
     state = std::max(state, routed_via_holes_part(s, net, hc, soft, owners));
     if (via_hole && state != 2) state = std::max(state, routed_hole_copper_part(scratch_hole(s.pts[0], hole_r), layer, net, hc, soft, owners));
@@ -981,7 +981,7 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
 
 int Obstacles::routed_via_state(const Shape& s, model::LayerMask layers, model::NetId net, bool soft, Coord hole_r) const {
   if (!layers) return 0;
-  const Coord hc = std::max<Coord>(r_.minimums.hole_clearance, 0);
+  const Coord hc = re_->router_hole_clearance();
   const Shape& hole = scratch_hole(s.pts[0], hole_r);
   int state = 0;
   for (int l = 0; l < b_.copper_count(); ++l) {
