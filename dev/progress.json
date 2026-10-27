@@ -822,24 +822,37 @@
   {
    "id": "M19",
    "title": "KiCad 11 readiness",
-   "status": "planned",
+   "status": "in_progress",
    "gate": "Round trip, DRC parity and plugin on KiCad 11 once a release candidate exists (docs/18 section 5)",
    "deliverables": "Version-drift watch job; file format, DRC parity and plugin for KiCad 11",
-   "tasks": []
+   "tasks": [
+    {
+     "text": "Version-drift watch: scripts/kicad_drift.py and the weekly kicad-drift workflow (newest kicad/kicad release and newer release candidate); 4/4 boards pass on 10.0.6, 10.0.7 and nightly (D142)",
+     "done": true
+    },
+    {
+     "text": "route -o copies the input's .kicad_pro and .kicad_dru beside the output (found by the drift job)",
+     "done": true
+    },
+    {
+     "text": "KiCad 11 file format, DRC parity and plugin, once a KiCad 11 release candidate exists",
+     "done": false
+    }
+   ]
   },
   {
    "id": "M20",
    "title": "Hobbyist wins",
    "status": "in_progress",
    "gate": "Pours and a layer-count advisor, a run report, a proposal-only pin swap experiment (docs/18 section 5)",
-   "deliverables": "C3, D3, C2 experiment",
+   "deliverables": "C3, D3, C2 experiment, C5 classification",
    "tasks": [
     {
      "text": "D3 run report: route --report FILE (HTML or Markdown) and tracemaker report SUMMARY.json, rendered from the summary alone; rules read and not read, stuck report, DRC before and after, SI audit, options and seed (D136)",
      "done": true
     },
     {
-     "text": "D3 gate: reports for the plane boards, every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
+     "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
      "done": false
     },
     {
@@ -847,8 +860,8 @@
      "done": true
     },
     {
-     "text": "C2 pin-swap feasibility experiment, then a proposal-only pass if the gain is clear",
-     "done": false
+     "text": "C2 pin-swap feasibility experiment: oracle on 30 boards, open 982 -> 978 and 27 -> 26, median gain zero; pass not built (D141)",
+     "done": true
     },
     {
      "text": "C5 classification of dense-package failures by cause",
