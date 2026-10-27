@@ -13,6 +13,7 @@
 #include <string>
 #include <thread>
 
+#include "app/causes.hpp"
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "advice/advice.hpp"
@@ -928,6 +929,7 @@ int main(int argc, char** argv) {
   route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
+  route->add_flag("--crowded-source", ropt.crowded_source, "A strict search starts from the end with more routed copper of other nets near it: a boxed-in pin is proved at once (doc 05 §55)");
   route->add_flag("--layer-assign-angle", ropt.layer_assign_angle, "Layer preference per connection by chord direction (two-layer boards)")->group("");
   route->add_option("--layer-assign-pen", ropt.layer_assign_pen, "Layer assignment: pitches per lattice step on the other layer")->group("");
   route->add_option("--history-weight", ropt.history_weight, "Negotiation: pitches of cost per recorded conflict on a cell (default 2)")->group("");
@@ -1255,6 +1257,18 @@ int main(int argc, char** argv) {
   style_cmd->add_option("board", sty_board)->required()->check(CLI::ExistingFile);
   style_cmd->add_option("--json", sty_json, "Write the metric as JSON");
   style_cmd->add_flag("--connections", sty_conn, "With --json: also one row per connection");
+  auto* causes_cmd = app.add_subcommand("causes", "Why connections stay open on a routed board: each open connection is routed again with other nets' copper removed near its ends, away from them or everywhere (doc 05 §55)");
+  std::string ca_board, ca_json;
+  tmk::app::CausesOptions ca_opt;
+  causes_cmd->add_option("board", ca_board, "A routed board")->required()->check(CLI::ExistingFile);
+  causes_cmd->add_option("--json", ca_json, "Write the classification as JSON");
+  causes_cmd->add_option("--rules-from", ca_opt.rules_from, "Read the design rules beside this board instead")->check(CLI::ExistingFile);
+  causes_cmd->add_option("--baseline-work", ca_opt.baseline_work, "Work of the run on the board as it is (default 10 M)");
+  causes_cmd->add_option("--work", ca_opt.work, "Work of each run on a changed copy, per net (default 2 M)");
+  causes_cmd->add_option("--radius", ca_opt.radius_mm, "Near an end: within this distance (mm) of an end pad (default 2)")->check(CLI::Range(0.1, 20.0));
+  causes_cmd->add_option("--threads", ca_opt.threads, "Nets classified at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
+  causes_cmd->add_option("--seed", ca_opt.seed, "Router seed (default 1)");
+  causes_cmd->add_flag("--baseline-only", ca_opt.baseline_only, "Only the run on the board as it is (for a copy with more layers)");
   auto* layers_cmd = app.add_subcommand("layers", "Write a copy of a board with another copper layer count (inner layers added, or empty ones removed; doc 05 §53)");
   std::string ly_in, ly_out;
   int ly_count = 0;
@@ -1391,6 +1405,11 @@ int main(int argc, char** argv) {
     if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host, fc_token, fc_insecure);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*layers_cmd) return cmd_layers(ly_in, ly_count, ly_out);
+    if (*causes_cmd) {
+      const auto j = tmk::app::classify_open_connections(ca_board, ca_opt, true);
+      if (!ca_json.empty()) std::ofstream(ca_json) << j.dump(1) << "\n";
+      return 0;
+    }
     if (*dbg) return cmd_debug_pad(d_board, d_ref, d_num, d_pitch, d_radius, d_width, d_via);
     if (*drc) return cmd_drc(drc_path, drc_json, static_cast<tmk::Coord>(drc_eps_um * 1000.0), drc_linear_zones, drc_refill);
     if (*pert) return cmd_perturb(pin, pout, pseed, ptracks, pvias, pmoves);

@@ -2366,7 +2366,38 @@ struct Router::Impl {
     return ok;
   }
 
+  // How crowded a connection's end is: copper of other nets routed in this run, and pads of other nets of the pad's own part, within
+  // 1 mm of the pad's box. Copper on the input board is not counted (the routed-item index holds only this run's).
+  int end_crowding(int pad, NetId net) const {
+    const auto& pd = b.pads[static_cast<std::size_t>(pad)];
+    const Coord h = std::max(pd.size_x, pd.size_y) / 2 + 1'000'000;
+    geom::Box bx;
+    bx.add(Point{pd.pos.x - h, pd.pos.y - h});
+    bx.add(Point{pd.pos.x + h, pd.pos.y + h});
+    std::vector<int> ids;
+    obs->routed_items_in(bx, ids);
+    int n = 0;
+    for (const int id : ids) n += obs->copper().items[static_cast<std::size_t>(id)].net != net;
+    if (pd.footprint >= 0)
+      for (const int q : b.footprints[static_cast<std::size_t>(pd.footprint)].pads) {
+        const auto& o = b.pads[static_cast<std::size_t>(q)];
+        n += o.net != net && o.pos.x >= bx.x0 && o.pos.x <= bx.x1 && o.pos.y >= bx.y0 && o.pos.y <= bx.y1;
+      }
+    return n;
+  }
+
+  // opt.crowded_source: a strict search starts from the more crowded end. A boxed-in source is proved in a few expansions; a boxed-in
+  // target is found only after the search has flooded its window (doc 05 §55).
   bool search_and_commit_inner(const Connection& c) {
+    if (opt.crowded_source && strict_pass && !soft && c.pad_b >= 0 && end_crowding(c.pad_b, c.net) > end_crowding(c.pad_a, c.net)) {
+      Connection r = c;
+      std::swap(r.pad_a, r.pad_b);
+      return search_and_commit_dir(r);
+    }
+    return search_and_commit_dir(c);
+  }
+
+  bool search_and_commit_dir(const Connection& c) {
     const Point a = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
     const Point e = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : a;
     static const Coord margins[] = {2'000'000, 6'000'000, 20'000'000, 1'000'000'000};
