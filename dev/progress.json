@@ -864,8 +864,8 @@
      "done": true
     },
     {
-     "text": "C5 classification of dense-package failures by cause",
-     "done": false
+     "text": "C5 open connections by cause (tracemaker causes; near the pins 779 of 1,320) and the fix: half the portfolio searches from the crowded end (D143); 33 failing boards 1,383 -> 1,220 open, clean set 69 -> 46, mid 1,306 -> 1,093, quick 32 -> 24, no board gains an error",
+     "done": true
     }
    ]
   },
