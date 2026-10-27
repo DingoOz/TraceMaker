@@ -530,6 +530,10 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
                                                "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
                                                "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
     const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", "hasNetclass", kImplicitExactNetclass});
+    // The per-class cache judges a lattice point with one net of the class standing in for all of them (as a
+    // track, or as a via for via codes), so a clearance rule is cached unless its condition tells nets of one
+    // class apart.
+    const bool net_seen = c.cond && c.cond->references({"NetName", "inDiffPair"});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
@@ -542,10 +546,10 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
                               " mm) round every hole, not only where the rule applies (the DRC checks it as written)");
         }
       }
-      // Rules outside the per-class cache need exact checks, including unreadable conditions.
-      // KiCad's own tuning-profile rules set widths and pair gaps, never a clearance: the cache stays (doc 05 §58).
-      const bool width_only = rule.implicit && (k.type == "track_width" || k.type == "diff_pair_gap");
-      if (!c.valid || (k.type != "disallow" && !width_only && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
+      // Exact checks only where the cache could judge differently. Rules that are not applied (unreadable
+      // conditions) and constraints the router does not read per point (sizes, hole and edge minimums, silk,
+      // text, length, and KiCad's own tuning-profile width and gap rules, doc 05 §58) are the same either way (D139).
+      if (c.valid && ((k.type == "clearance" && net_seen) || (k.type == "physical_hole_clearance" && nets_seen))) needs_exact_ = true;
       if (k.type != "disallow" || !c.valid) continue;
       for (const auto& w : k.items) {
         const std::uint16_t bit = w == "track" ? kTrack : w == "via" ? kVia : w == "through_via" ? kThroughVia : w == "micro_via" ? kMicroVia

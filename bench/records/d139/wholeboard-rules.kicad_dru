@@ -1,0 +1,45 @@
+# JLCPCB manufacturing limits for a 4-layer, 1.6 mm board.
+# Written by WholeBoard from wholeboard/jlc/capabilities.json; edit that file, not this one.
+(version 1)
+(rule "JLCPCB: Track width"
+  (constraint track_width (min 0.09mm)))
+(rule "JLCPCB: Copper clearance"
+  (condition "A.Type != 'Zone' && B.Type != 'Zone'")
+  (constraint clearance (min 0.09mm)))
+(rule "JLCPCB: Via drill"
+  (condition "A.Type == 'Via'")
+  (constraint hole_size (min 0.16mm)))
+(rule "JLCPCB: Via diameter"
+  (condition "A.Type == 'Via'")
+  (constraint via_diameter (min 0.25mm)))
+(rule "JLCPCB: Via annular ring"
+  (condition "A.Type == 'Via'")
+  (constraint annular_width (min 0.05mm)))
+(rule "JLCPCB: Pad annular ring"
+  (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+  (constraint annular_width (min 0.13mm)))
+(rule "JLCPCB: Plated hole size"
+  (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+  (constraint hole_size (min 0.2mm)))
+(rule "JLCPCB: Hole to hole"
+  (condition "!(A.Type == 'Via' && B.Type == 'Via') && A.Net != B.Net")
+  (constraint hole_to_hole (min 0.5mm)))
+(rule "JLCPCB: Via hole to via hole"
+  (condition "A.Type == 'Via' && B.Type == 'Via'")
+  (constraint hole_to_hole (min 0.254mm)))
+(rule "JLCPCB: Hole to copper"
+  (constraint hole_clearance (min 0.254mm)))
+(rule "JLCPCB: Copper to board edge"
+  (constraint edge_clearance (min 0.3mm)))
+(rule "JLCPCB: Silkscreen to pads"
+  (layer outer)
+  (condition "A.Type == 'Pad' && (B.Type == 'Text' || B.Type == 'Graphic')")
+  (constraint silk_clearance (min 0.15mm)))
+(rule "JLCPCB: Silkscreen text height"
+  (layer "?.Silkscreen")
+  (condition "A.Type == 'Text' || A.Type == 'Text Box'")
+  (constraint text_height (min 1mm)))
+(rule "JLCPCB: Silkscreen text thickness"
+  (layer "?.Silkscreen")
+  (condition "A.Type == 'Text' || A.Type == 'Text Box'")
+  (constraint text_thickness (min 0.15mm)))

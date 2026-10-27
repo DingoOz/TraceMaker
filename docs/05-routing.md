@@ -747,7 +747,9 @@ pad's own layer.
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
 
 Disallow masks retain the per-class cache. Physical-hole rules do too when independent of `NetName`, `NetClass`
-and `inDiffPair`. Other custom rules, including unparseable conditions, require exact checks.
+and `inDiffPair`, and clearance rules when independent of `NetName` and `inDiffPair` (cached via codes probe a via, so
+`Type`, `Width` and position conditions agree with the exact check). Other constraints are not read per point, and
+rules that cannot be read are not applied, so neither needs exact checks (D139).
 
 KiCad's violation names and counts were checked with kicad-cli 10.0.3. Example: inner layers for GND only;
 no via in an SMD pad except on U1.

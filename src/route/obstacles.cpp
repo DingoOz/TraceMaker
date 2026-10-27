@@ -786,7 +786,8 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   if (!inside_board(p, 0)) return kBlocked;
   static thread_local Shape s;  // scratch disk; fixed_code does not re-enter
   s.set_point(p, hw + margin);
-  const Probe pp(drc::ItemKind::Track, s, probe_net, layer, 2 * hw, p);
+  // A via probe is a via, as in via_state, so custom rules on Type, Width or Position see what the exact check sees.
+  const Probe pp(via_probe ? drc::ItemKind::Via : drc::ItemKind::Track, s, probe_net, layer, 2 * hw, p);
   const drc::CopperItem& probe = *pp;
   std::int32_t code = kFree;
   auto add_net = [&](model::NetId n) {
@@ -860,7 +861,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
   };
   {
     std::array<std::optional<Probe>, 64> probes;  // one per layer; reverse destruction preserves the pool stack
-    for (int l = 0; l < nl; ++l) probes[static_cast<std::size_t>(l)].emplace(drc::ItemKind::Track, s, probe_net, l, 2 * hw, p);
+    for (int l = 0; l < nl; ++l) probes[static_cast<std::size_t>(l)].emplace(drc::ItemKind::Via, s, probe_net, l, 2 * hw, p);
     const model::LayerMask all = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
     grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
       if (code == kBlocked) return;
