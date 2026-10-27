@@ -178,14 +178,15 @@ and the items the refilled board leaves unconnected); the rules read and not rea
 the DRC of the board before and after (TraceMaker's DRC, zones refilled); the options as given and the seed. `tracemaker report` renders it
 again from a saved summary.
 
-Gate, as far as it goes (`bench/records/m20-run-report`): reports for seven of the eight plane-tier boards, `--soft-zones --si-rules`, 3 M
+Gate, as far as it goes (`bench/records/m20-run-report`): reports for all eight plane-tier boards, `--soft-zones --si-rules`, 3 M
 work. No routing error added on any board; the unconnected count after the refill equals the report's own DRC count on every board. A unit
 test checks every value of the HTML against its JSON pointer and that the renderer's own words hold no number. The extra work after the
 route took 0.1 to 2.1 s per board. Options off, the quick tier is byte-identical to `main` (30/30).
 
-Not met yet: the review by someone who did not write it, and interf_u, which spends more than 20 minutes on one core after its portfolio
-with `main`'s binary as well (27 s in the 14 October records; open). Found on the way: under load the default 120 s time limit, not the
-work budget, ended some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
+Not met yet: the review by someone who did not write it. interf_u, which on 2026-10-24 spent more than 20 minutes on one core after its
+portfolio, finished in 128 s on 2026-10-27 after D137's GPU back-off (the stall was the GPU fallback cliff), and RoyalBlue54L-Feather was
+re-run under `--time 3600` (72 s, not time-limited). Found on the way: under load the default 120 s time limit, not the work budget, ended
+some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
 
 ## 10. C3 built: generated pours and the layer-count advisor (2026-10-27)
 
