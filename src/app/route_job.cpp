@@ -12,6 +12,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <thread>
@@ -28,6 +29,7 @@
 #include "drc/drc.hpp"
 #include "drc/refill.hpp"
 #include "drc/rule_engine.hpp"
+#include "geom/clip.hpp"
 #include "route/diff_pair.hpp"
 #include "route/layer_limits.hpp"
 #include "gpu/device.hpp"
@@ -601,6 +603,9 @@ RouteJobResult run_route_job(RouteJob job) {
     // variant they were silently ignored, so they run a portfolio of one (M17: the C1 experiment found it).
     const bool rounds_asked = o.relax || o.rounds > 1 || o.round_work > 0 || o.ramp_from_mm > 0;
     if (variants > 1 || o.advice.active() || rounds_asked) {
+      // --relax budgets by rounds, not by --work (soak 2026-10-25: a --work run took the full --time); say so instead of surprising.
+      if (round <= 0 && o.relax && o.work_budget > 0 && o.round_work <= 0)
+        log("relax: rounds of 20 M work until the board is complete; --work does not limit them (bound with --round-work, --rounds or --time)");
       std::vector<int> pick;
       if (use_kb && kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, o.seed);
       log(fmt("portfolio: %d variants%s on %d thread%s", variants, o.advice.active() ? fmt(" + %d advised", std::min(o.advice.variants, variants)).c_str() : "",
@@ -777,6 +782,7 @@ RouteJobResult run_route_job(RouteJob job) {
     };
     add_copper(routed, res);
     auto rf = drc::refill_zones(routed, rules);
+    model::Board filled_now = rf.board;  // the refilled board for the copper res holds (judged for thermal reliefs below)
     for (const auto& w : rf.warnings) log("warning: " + w);
     const int before = unconnected(rf.board);
     log(fmt("soft zones: after refilling %d zones, %d items unconnected", rf.zones, before));
@@ -796,17 +802,155 @@ RouteJobResult run_route_job(RouteJob job) {
       // The repair's copper changes the fills once more. It is kept only if the count after that refill is lower
       // (rule 4); otherwise the first pass stands.
       add_copper(routed, r2);
-      const int after = unconnected(drc::refill_zones(routed, rules).board);
+      model::Board refilled_again = drc::refill_zones(routed, rules).board;
+      const int after = unconnected(refilled_again);
       const bool kept = after < before;
       log(fmt("refill repair: %d items unconnected after refilling again%s", after, kept ? "" : " (no better: repair discarded)"));
       if (kept) {
         res.tracks.insert(res.tracks.end(), r2.tracks.begin(), r2.tracks.end());
         res.vias.insert(res.vias.end(), r2.vias.begin(), r2.vias.end());
         unconnected_after_refill = after;
+        filled_now = std::move(refilled_again);
       }
       refill_summary["repair"] = {{"connections", r2.connections}, {"routed", r2.routed}, {"tracks", r2.tracks.size()},
                                   {"vias", r2.vias.size()}, {"expansions", r2.expansions}, {"unconnected", after}, {"kept", kept}};
     }
+    // Thermal reliefs (KiCad's starved_thermal). New copper of other nets can cut a pad's spokes off the pour, or leave them
+    // in an island only that pad reaches: the soak of 2026-10-25 found six on interf_u, which the unconnected count above
+    // cannot see. They are named in the log and the summary, and repaired pad by pad where new copper crosses the spokes.
+    std::set<std::pair<int, int>> starved_before;  // (pad, layer) the input board already has
+    bool before_known = false;
+    auto starved_new = [&](const model::Board& filled) {
+      std::vector<drc::StarvedThermal> found = drc::starved_thermals(filled, rules), fresh;
+      if (!found.empty() && !before_known) {
+        for (const auto& s : drc::starved_thermals(drc::refill_zones(*route_board, rules).board, rules)) starved_before.insert({s.pad, s.layer});
+        before_known = true;
+      }
+      for (const auto& s : found)
+        if (!starved_before.count({s.pad, s.layer})) fresh.push_back(s);
+      return fresh;
+    };
+    const auto starved = starved_new(filled_now);
+    int starved_after = static_cast<int>(starved.size());
+    if (!starved.empty()) {
+      std::string pads;
+      for (const auto& s : starved) {
+        const auto& pad = route_board->pads[static_cast<std::size_t>(s.pad)];
+        pads += fmt("%s%s.%s", pads.empty() ? "" : ", ", pad.footprint >= 0 ? route_board->footprints[static_cast<std::size_t>(pad.footprint)].reference.c_str() : "",
+                    pad.number.c_str());
+      }
+      log(fmt("thermal reliefs: %zu starved by the new copper (%s)", starved.size(), pads.c_str()));
+      const double thermal_time = opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();
+      if (job.refill_repair && thermal_time <= 0) log("thermal repair: skipped, the time limit is used up");
+      if (job.refill_repair && thermal_time > 0) {
+        const Coord clearance = std::max(rules.minimums.clearance, rules.classes.empty() ? Coord{0} : rules.default_class().clearance);
+        auto touches = [](const std::vector<model::Zone>& ks, const geom::Shape& sh, model::LayerMask layers) {
+          return std::any_of(ks.begin(), ks.end(), [&](const model::Zone& k) {
+            return (k.copper & layers) && geom::closer_than(sh, geom::Shape::polygon(k.outline.front(), 0), 1);
+          });
+        };
+        auto via_layers = [](const model::Via& v) { return ((model::LayerMask{2} << v.layer_bottom) - 1) & ~(model::layer_bit(v.layer_top) - 1); };
+        auto nets_into = [&](const std::vector<model::Zone>& ks) {
+          std::set<model::NetId> n;
+          for (const auto& t : res.tracks)
+            if (touches(ks, geom::Shape::segment(t.a, t.b, t.width / 2), model::layer_bit(t.layer))) n.insert(t.net);
+          for (const auto& v : res.vias)
+            if (touches(ks, geom::Shape::point(v.pos, v.size / 2), via_layers(v))) n.insert(v.net);
+          return n;
+        };
+        // Keep-outs per starved pad: as many of its spokes as the board asks for (those the fewest new nets cross), each with a
+        // minimum-width band of pour beside it, stopping short of other nets' pads so those stay reachable on this layer.
+        std::vector<std::vector<model::Zone>> lanes_of(starved.size());
+        std::vector<model::Zone> keepouts;
+        for (std::size_t i = 0; i < starved.size(); ++i) {
+          const auto& s = starved[i];
+          const auto& pad = route_board->pads[static_cast<std::size_t>(s.pad)];
+          const auto& zone = route_board->zones[static_cast<std::size_t>(s.zone)];
+          const geom::Box near = geom::Box{pad.pos.x, pad.pos.y, pad.pos.x, pad.pos.y}.inflated(10'000'000);
+          geom::Rings others;
+          for (const auto& p : route_board->pads)
+            if (p.net != pad.net && (p.copper & model::layer_bit(s.layer)))
+              for (const auto& sh : drc::pad_shapes(p))
+                if (sh.box.intersects(near))
+                  for (auto& r : geom::shape_rings(sh, clearance, 5'000)) others.push_back(std::move(r));
+          std::vector<std::pair<std::size_t, std::vector<model::Zone>>> spoke_lanes;  // (nets crossing it, keep-outs)
+          for (auto& ring : drc::thermal_spokes(pad, zone)) {
+            geom::Rings lane = geom::offset(geom::Rings{std::move(ring)}, zone.min_thickness + clearance, geom::Corners::Chamfer, 5'000);
+            if (!others.empty()) lane = geom::subtract(lane, others);
+            std::vector<model::Zone> ks;
+            for (auto& poly : geom::polygons(lane)) {
+              model::Zone k;
+              k.rule_area = k.keepout_tracks = k.keepout_vias = true;
+              k.copper = model::layer_bit(s.layer);
+              k.outline = {std::move(poly.outer)};
+              ks.push_back(std::move(k));
+            }
+            spoke_lanes.push_back({nets_into(ks).size(), std::move(ks)});
+          }
+          std::stable_sort(spoke_lanes.begin(), spoke_lanes.end(), [](const auto& x, const auto& y) { return x.first < y.first; });
+          const std::size_t need = spoke_lanes.size();
+          for (std::size_t k = 0; k < need; ++k)
+            for (auto& z : spoke_lanes[k].second) {
+              lanes_of[i].push_back(z);
+              keepouts.push_back(std::move(z));
+            }
+        }
+        // One transaction per starved pad, in pad order: the nets whose new copper crosses its lanes lose their new copper
+        // and are routed again (alone: the other nets are skipped) with every starved pad's lanes kept out. Kept only if
+        // fewer reliefs are starved and nothing more is unconnected after a refill (rule 4). Ripping all such nets at once
+        // cured interf_u's seven reliefs but lost seven connections.
+        int u_cur = unconnected_after_refill;
+        int s_cur = static_cast<int>(starved.size());
+        int tried = 0, kept_pads = 0;
+        std::size_t ripped = 0;
+        for (std::size_t i = 0; i < starved.size() && s_cur > 0; ++i) {
+          const double left = opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();
+          if (left <= 0) {
+            log("thermal repair: stopped, the time limit is used up");
+            break;
+          }
+          const std::set<model::NetId> rip = nets_into(lanes_of[i]);
+          if (rip.empty()) continue;  // spokes cut off further away: nothing of this pad's to move
+          ++tried;
+          route::RouteResult kept;
+          for (const auto& t : res.tracks)
+            if (!rip.count(t.net)) kept.tracks.push_back(t);
+          for (const auto& v : res.vias)
+            if (!rip.count(v.net)) kept.vias.push_back(v);
+          model::Board b3 = *route_board;
+          add_copper(b3, kept);
+          model::Board b3f = drc::refill_zones(b3, rules).board;
+          b3f.zones.insert(b3f.zones.end(), keepouts.begin(), keepouts.end());
+          route::RouterOptions o3 = opt;
+          o3.soft_zones = false;
+          o3.sink = nullptr;
+          o3.time_limit_s = left;
+          for (const auto& n : route_board->nets)
+            if (n.id > 0 && !rip.count(n.id)) o3.skip_nets.push_back(n.name);
+          const auto r3 = route::Router(b3f, rules, o3).run();
+          add_copper(b3, r3);
+          const model::Board judged = drc::refill_zones(b3, rules).board;
+          const int u3 = unconnected(judged), s3 = static_cast<int>(starved_new(judged).size());
+          if (s3 < s_cur && u3 <= u_cur) {
+            kept.tracks.insert(kept.tracks.end(), r3.tracks.begin(), r3.tracks.end());
+            kept.vias.insert(kept.vias.end(), r3.vias.begin(), r3.vias.end());
+            res.tracks = std::move(kept.tracks);
+            res.vias = std::move(kept.vias);
+            u_cur = u3;
+            s_cur = s3;
+            ++kept_pads;
+            ripped += rip.size();
+          }
+        }
+        log(fmt("thermal repair: %d of %d pads repaired (%zu nets routed again); %d starved and %d unconnected after refilling", kept_pads, tried, ripped,
+                s_cur, u_cur));
+        if (kept_pads > 0) unconnected_after_refill = u_cur;
+        starved_after = s_cur;
+        refill_summary["thermal_repair"] = {{"starved", starved.size()}, {"pads_tried", tried}, {"pads_repaired", kept_pads}, {"nets_rerouted", ripped},
+                                            {"starved_after", s_cur}, {"unconnected", u_cur}};
+      }
+    }
+    refill_summary["starved_thermals"] = starved_after;
     out.unconnected_after_refill = unconnected_after_refill;
   }
   // After-route passes (doc 05 §39). Each works on the routed copper as a transaction: its result is judged by
@@ -825,7 +969,10 @@ RouteJobResult run_route_job(RouteJob job) {
       d.dangling = false;
       Unconnected n;
       n[""] = 0;
-      for (const auto& v : drc::run_drc(refill ? drc::refill_zones(bd, rules).board : bd, rules, d).unconnected) ++n[v.description], ++n[""];
+      if (refill) bd = drc::refill_zones(bd, rules).board;
+      for (const auto& v : drc::run_drc(bd, rules, d).unconnected) ++n[v.description], ++n[""];
+      // A wider track or a stitching via must not starve a thermal relief either (KiCad's starved_thermal).
+      if (refill) n["starved thermal reliefs"] = static_cast<int>(drc::starved_thermals(bd, rules).size());
       return n;
     };
     // No net may have more unconnected items with a pass's result than without it. The total alone would let a

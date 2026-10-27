@@ -28,6 +28,7 @@ TEST_CASE("Copper text boxes cover KiCad's stroke-font advances", "[route][text]
   // domotics_base-board-arranged: 'Main Board     -       08/2016', size 1.5 on B.Cu, centred: KiCad plots it from x 81.04 to 118.89 around x = 100.
   auto b = read("(gr_text \"Main Board     -       08/2016\" (at 100 50) (layer \"B.Cu\") (effects (font (size 1.5 1.5) (thickness 0.3)) (justify mirror)))\n");
   model::DesignRules rules;
+  rules.classes.push_back(model::NetClass{});  // Obstacles reads the Default class, which the project reader always adds
   route::Obstacles obs(b, rules);
   REQUIRE(obs.copper_texts().size() == 1);
   const auto& box = obs.copper_texts()[0].second.box;

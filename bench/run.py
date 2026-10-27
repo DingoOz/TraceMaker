@@ -175,6 +175,11 @@ def style_total(styles: list[dict]) -> dict | None:
     return t
 
 
+def pct(x: float | None) -> str:
+    """No board judged (every one failed or errored) leaves the rates empty rather than zero."""
+    return "–" if x is None else f"{x:.1%}"
+
+
 def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
     """Runs cmd and returns (exit code, stdout, stderr, CPU seconds). CPU time is the child's own user + system time
     from os.wait4, so other boards routing at the same time do not count. Raises subprocess.TimeoutExpired."""
@@ -201,6 +206,7 @@ def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
 
 
 VIEW = False  # --view: every board streams to its own live viewer (bench/viewport.py)
+VIEW_EMBED = True  # the binary takes --view-embed (0.11.0 on); older ones exit with a usage error when given it
 RESUME_RUN = ""  # --resume-run: earlier run whose saved search state (<board>.kicad_pcb.state) each board starts from
 
 
@@ -226,11 +232,12 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     src = place_board(name, src0, outdir, res) if PLACE_MODE else src0
     res["dead_pins"] = dead_pins(src, outdir / "boards" / f"{name}.escape.json")
     t0 = time.time()
+    view = viewport.route_args(VIEW_EMBED) if VIEW else []
     try:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
         code, stdout, stderr, cpu = run_measured(
-            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + (viewport.route_args() if VIEW else []) + EXTRA,
+            [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + view + EXTRA,
             time_limit * 3 + 60)
         res["exit"] = code
         res["cpu_s"] = round(cpu, 2)
@@ -239,6 +246,9 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     except subprocess.TimeoutExpired:
         res["exit"] = -1
         res["error"] = "timeout"
+    finally:
+        if view:
+            viewport.release_port(viewport.port_of(view))
     res["wall_s"] = round(time.time() - t0, 2)
     rj = pathlib.Path(str(out) + ".route.json")
     if rj.exists():
@@ -329,10 +339,12 @@ def main() -> int:
     outdir = ROOT / "bench/results" / run_id
     outdir.mkdir(parents=True, exist_ok=True)
     # Snapshot the engine binary so rebuilding during a run cannot mix versions.
-    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES
+    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES, VIEW_EMBED
     snap = outdir / "tracemaker"
     shutil.copy2(TM, snap)
     TM = snap
+    if VIEW:
+        VIEW_EMBED = "--view-embed" in subprocess.run([str(TM), "route", "--help"], capture_output=True, text=True).stdout
     PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES = a.place, a.place_timeout, a.place_work, a.place_crules
     if PLACE_MODE:
         psnap = outdir / "tracemaker-place"
@@ -400,8 +412,8 @@ def main() -> int:
     notes = [f"{budget} per board"] + (["zones refilled before judging"] if a.refill else []) + ([f"route options `{' '.join(EXTRA)}`"] if EXTRA else [])
     lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
              "| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |", "|---|--:|--:|--:|",
-             f"| Clean pass (KiCad DRC) | {summary['clean_pass']:.1%} | {summary['fr_rc12_clean_pass'] or 0:.1%} | {summary['fr_241_clean_pass'] or 0:.1%} |",
-             f"| Mean completion | {summary['completion']:.1%} | | |",
+             f"| Clean pass (KiCad DRC) | {pct(summary['clean_pass'])} | {summary['fr_rc12_clean_pass'] or 0:.1%} | {summary['fr_241_clean_pass'] or 0:.1%} |",
+             f"| Mean completion | {pct(summary['completion'])} | | |",
              f"| Route CPU time, all boards | {summary['cpu_seconds']:,.0f} s | | |", "",
              f"Both clean: {both}; only TraceMaker: {only_tm}; only Freerouting: {only_fr}.",
              f"Boards with added DRC errors: {summary['boards_with_added_errors']} ({dict(added_types)})."]
@@ -418,7 +430,7 @@ def main() -> int:
             lines += [style_row("TraceMaker, boards with a reference", summary["style_same_boards"]), style_row("Reference routing", summary["style_ref"])]
     (outdir / "report.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
-    return 0
+    return 1 if rows and not n else 0  # every board failed: a run to look at, not a result
 
 
 if __name__ == "__main__":

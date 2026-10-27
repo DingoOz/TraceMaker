@@ -1324,6 +1324,22 @@ xilinx), and tracks ending in a deleted teardrop (complex_hierarchy, RoyalBlue; 
 - The repair is one pass with the first pass's work budget and the rest of the time limit (none when the first
   pass used it up); no portfolio variant is chosen by its count after the refill.
 
+### 36.1 Starved thermal reliefs (2026-10-26, D137)
+
+"No board gained a DRC error" above holds for the engine's DRC, not for KiCad's `starved_thermal`, which the engine did not
+check: on interf_u every soft-zone run at 3 M work added six (the October soak, `bench/records/test-campaign-2026-10/`). New
+B.Cu tracks between the pins of DIP packages cut a GND pad's spokes off the pour, or left them in an island only that pad
+reaches; the pad stays connected through F.Cu, so the unconnected count does not change.
+
+- `drc::starved_thermals` follows KiCad 10's `DRC_TEST_PROVIDER_ZONE_CONNECTIONS` (D137 has the rules); `tracemaker drc` lists
+  the pads. On the eight plane boards it finds KiCad's pads, plus one on interf_u that KiCad does not report.
+- With `--soft-zones`, the starved pads the new copper caused are named in the log and counted in `refill.starved_thermals`.
+  A thermal repair follows the refill repair: per starved pad, the nets whose new copper crosses its spoke lanes are routed
+  again alone with the lanes kept out, kept only if fewer reliefs are starved and nothing more is unconnected (rule 4).
+  Widening and stitching are judged on starved reliefs too.
+- interf_u, 3 M work, `--soft-zones --si-rules`: KiCad `starved_thermal` 6 → 4, 26 unconnected either way, route time 15 → 76 s.
+  The other seven plane boards are byte-identical. The four left are spokes into islands whose boundary does not cross the spokes.
+
 ## 38. Buses (2026-10-11, D91)
 
 **Before.** The router knew pairs (§15) and single nets with a length rule, but not a group of nets that belong

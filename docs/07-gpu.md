@@ -62,6 +62,10 @@ code: [src/gpu]
 - **Memory admission control**: at start and before each large job, query `cudaMemGetInfo`; size batches to
   the free memory minus a safety margin; on `cudaErrorMemoryAllocation` shrink the batch and retry, then fall
   back to CPU for that job. Results are identical either way (rule §3.1), so this never changes output.
+- **Back-off after a refusal** (2026-10-26, `src/gpu/backoff.hpp`): a CUDA device that refused a job is not asked again for
+  30 s, the delay doubling while it keeps refusing (up to 15 min) and resetting when it accepts. With both GPUs full of other
+  jobs, asking before every field queued the router's threads on the driver lock for seconds per field: the soak of 2026-10-25
+  measured interf_u at 2,900 s against 20 s with `--no-gpu`, byte-identical boards.
 - Settings: `--gpu auto|off|<uuid,...>` and `--gpu-mem-limit` per device; the report records which jobs ran
   where.
 

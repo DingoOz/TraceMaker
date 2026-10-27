@@ -153,6 +153,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D134](decisions/D134.md) | Documentation site: MkDocs, Diátaxis, decision records, Doxygen | accepted |
 | [D135](decisions/D135.md) | macOS 15: floating-point parsing without std::from_chars | accepted |
 | [D136](decisions/D136.md) | Run report rendered from the route summary alone | accepted |
+| [D137](decisions/D137.md) | Starved thermal reliefs and GPU back-off from the October test campaign | accepted |
 <!-- END decision index -->
 
 ## Risks

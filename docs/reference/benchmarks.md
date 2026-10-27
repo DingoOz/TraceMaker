@@ -61,3 +61,12 @@ comparable (judge version, time limit, machine load).
 | [rel0110-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.11.0/runs/rel0110-tierB/summary.json) | PCBench tier B | 40 | 225b68f | 70.0% | 97.1% | 50.0% | 3321 |  |
 | [rel0110-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.11.0/runs/rel0110-tierC/summary.json) | PCBench tier C | 30 | 225b68f | 46.7% | 97.4% | 46.7% | 3191 |  |
 | [rel0110-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.11.0/runs/rel0110-tierD/summary.json) | PCBench tier D | 22 | 225b68f | 36.4% | 94.9% | 36.4% | 2403 |  |
+
+## test-campaign-2026-10
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/test-campaign-2026-10)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [fix-g-planes](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/test-campaign-2026-10/runs/fix-g-planes/summary.json) | planes | 8 | 2adbac9 | 25.0% | 90.4% |  | 220 | `--soft-zones --si-rules` |
+| [fix-g-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/test-campaign-2026-10/runs/fix-g-quick/summary.json) | quick | 30 | 2adbac9 | 83.3% | 99.0% | 100.0% | 389 |  |

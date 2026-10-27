@@ -175,8 +175,9 @@ OPTIONS:
                               (two-layer boards; doc 16 F2)
           --relax             Portfolio: route under 60 % and 80 % of the clearance first,
                               legalise (move vertices off the lattice) up to the real rules,
-                              repeat on stalls; until complete, with --round-work (20 M
-                              default)
+                              repeat on stalls; until complete, in rounds of --round-work (20 M
+                              default, up to --rounds 200): --work does not limit it, --time
+                              does
           --relax-late        With --relax: begin under the real rules and relax only when
                               those stall (fresh start from the loosest stage)
           --heuristic-weight FLOAT

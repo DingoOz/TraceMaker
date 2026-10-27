@@ -40,6 +40,7 @@ struct BoardMinimums {
   Coord silk_clearance = 0;
   Coord solder_mask_to_copper_clearance = 0;
   Coord solder_mask_min_width = 0;  // minimum mask web between openings (KiCad solder_mask_bridge test)
+  int min_resolved_spokes = 2;      // thermal spokes a pad needs into its zone (KiCad starved_thermal; project rules.min_resolved_spokes)
   bool allow_blind_buried_vias = false;
   bool allow_microvias = false;
 };

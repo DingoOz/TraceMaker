@@ -6,7 +6,7 @@ kicad-cli classify them (shorts between nets, crossings, dangling tracks and via
 Usage: drc_broken_parity.py [--kicad-jobs 2] [--jobs 4] [--count 3] [--seed 1] [--kinds k1,k2] [--json out]
                             board.kicad_pcb ...
 For every base board and defect kind, `tracemaker selftest-defects` writes a variant (with the base's project
-and rules files) to build/scratch/broken/<board>/<kind>.kicad_pcb; both DRCs then run on it. Violations are
+and rules files) to build/scratch/broken/<binary>/<board>/<kind>.kicad_pcb; both DRCs then run on it. Violations are
 matched one to one by type and item positions (0.06 mm), so a disagreement in classification (e.g. a short
 reported as a clearance violation) shows as one unmatched violation on each side. KiCad results are cached
 in build/drc/kicad/ like drc_parity.py. Exit status 1 when any variant disagrees.
@@ -148,12 +148,23 @@ def subtract(found, base):
     return rest
 
 
-def variant_dir(base: pathlib.Path) -> pathlib.Path:
-    return SCRATCH / f"{base.parent.name}__{base.stem}".replace(" ", "_")  # PCBench boards share file names
+def scratch_for(tm: pathlib.Path) -> pathlib.Path:
+    """One scratch directory per binary: two presets' test suites run at once would otherwise overwrite each other's
+    variants mid-check (build/release/... -> broken/release, a binary elsewhere -> broken/<hash of its path>)."""
+    path = tm.resolve()
+    try:
+        name = path.relative_to(ROOT / "build").parts[0]
+    except ValueError:
+        name = "tm-" + hashlib.sha1(str(path).encode()).hexdigest()[:10]
+    return SCRATCH / name
+
+
+def variant_dir(base: pathlib.Path, tm: pathlib.Path) -> pathlib.Path:
+    return scratch_for(tm) / f"{base.parent.name}__{base.stem}".replace(" ", "_")  # PCBench boards share file names
 
 
 def make_variant(base: pathlib.Path, kind: str, seed: int, count: int, tm: pathlib.Path = TM) -> tuple[pathlib.Path, int]:
-    d = variant_dir(base)
+    d = variant_dir(base, tm)
     d.mkdir(parents=True, exist_ok=True)
     out = d / f"{kind}.kicad_pcb"
     for ext in (".kicad_pro", ".kicad_dru"):  # both DRCs read the rules from the project next to the board
@@ -204,7 +215,7 @@ def main() -> int:
         with cf.ThreadPoolExecutor(a.kicad_jobs) as ex:
             kb = dict(zip(bases, ex.map(lambda b: kicad_report(b, a.timeout), bases)))
         with cf.ThreadPoolExecutor(a.jobs) as ex:
-            tb = dict(zip(bases, ex.map(lambda b: tm_report(b, a.timeout, pathlib.Path(a.tm), variant_dir(b) / "base.tm.json"), bases)))
+            tb = dict(zip(bases, ex.map(lambda b: tm_report(b, a.timeout, pathlib.Path(a.tm), variant_dir(b, pathlib.Path(a.tm)) / "base.tm.json"), bases)))
         for b in bases:
             if kb[b] is not None and tb[b] is not None:
                 _, bk, bt = match(violations(kb[b], Counter()), violations(tb[b]))

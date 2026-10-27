@@ -162,6 +162,16 @@ int cmd_drc(const std::string& path, const std::string& json_out, tmk::Coord eps
   }
   const auto rep = tmk::drc::run_drc(refill ? refilled.board : lb.board, rules, opt);
   for (const auto& [type, n] : rep.counts()) std::printf("%-24s %d\n", type.c_str(), n);
+  // KiCad's starved_thermal, from the fills judged above; listed here only (the JSON keeps the parity-checked types).
+  const auto& judged = refill ? refilled.board : lb.board;
+  const auto starved = tmk::drc::starved_thermals(judged, rules);
+  if (!starved.empty()) std::printf("%-24s %zu\n", "starved_thermal", starved.size());
+  for (const auto& st : starved) {
+    const auto& pad = judged.pads[static_cast<std::size_t>(st.pad)];
+    const std::string ref = pad.footprint >= 0 ? judged.footprints[static_cast<std::size_t>(pad.footprint)].reference : "";
+    std::printf("  pad %s.%s on %s: %d spokes, %d into an island only it reaches\n", ref.c_str(), pad.number.c_str(),
+                judged.layers[static_cast<std::size_t>(judged.copper[static_cast<std::size_t>(st.layer)])].name.c_str(), st.spokes, st.island_spokes);
+  }
   for (const auto& w : rep.warnings) std::printf("warning: %s\n", w.c_str());
   if (!json_out.empty()) tmk::drc::write_drc_json(rep, json_out);
   return rep.violations.empty() && rep.unconnected.empty() ? 0 : 5;
@@ -922,7 +932,7 @@ int main(int argc, char** argv) {
   route->add_option("--state-out", ropt.state_out, "Portfolio: write the best routes after every round to this file so the run can be resumed")->group("");
   route->add_option("--state-in", ropt.state_in, "Portfolio: resume from the routes in this file (written by --state-out)")->group("");
   route->add_option("--island-slack", ropt.island_slack, "Portfolio rounds: a variant continues from its own final state if it routes at least best-slack connections (>= 0 turns islands on)")->group("");
-  route->add_flag("--relax", ropt.relax, "Portfolio: route under 60 % and 80 % of the clearance first, legalise (move vertices off the lattice) up to the real rules, repeat on stalls; until complete, with --round-work (20 M default)");
+  route->add_flag("--relax", ropt.relax, "Portfolio: route under 60 % and 80 % of the clearance first, legalise (move vertices off the lattice) up to the real rules, repeat on stalls; until complete, in rounds of --round-work (20 M default, up to --rounds 200): --work does not limit it, --time does");
   route->add_flag("--relax-late", ropt.relax_late, "With --relax: begin under the real rules and relax only when those stall (fresh start from the loosest stage)");
   route->add_option("--ramp-from", ropt.ramp_from_mm, "Portfolio: clearance continuation, start at this clearance (mm) and raise it stage by stage to the board's, warm-starting each stage")->group("");
   route->add_option("--ramp-step", ropt.ramp_step_mm, "Clearance added per ramp stage (mm)")->group("");
@@ -1388,6 +1398,7 @@ int main(int argc, char** argv) {
         if (o->count() == 0 || o->get_name() == "board" || o->get_name() == "--help") continue;
         std::string v;
         for (const auto& r : o->results()) v += (v.empty() ? "" : ",") + r;
+        if (o->get_name() == "--view-token") v = "(not recorded)";  // it opens the viewer to whoever reads a shared summary or report
         job.options_given.push_back({{"name", o->get_name()}, {"value", v.empty() ? std::string("on") : v}});
       }
       return cmd_route(std::move(job));

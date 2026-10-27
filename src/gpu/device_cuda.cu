@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include <cuda_runtime.h>
 
+#include <chrono>
 #include <cstdio>
 
+#include "gpu/backoff.hpp"
 #include "gpu/device.hpp"
 
 namespace tmk::gpu {
@@ -14,6 +16,15 @@ std::string format_uuid(const cudaUUID_t& id) {
   std::snprintf(buf, sizeof buf, "GPU-%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", b[0], b[1],
                 b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
   return buf;
+}
+
+constexpr int kMaxDevices = 64;
+DeviceBackOff g_backoff[kMaxDevices];  // per CUDA index, shared by every thread of the process
+
+DeviceBackOff* backoff_of(int cuda_index) { return cuda_index >= 0 && cuda_index < kMaxDevices ? &g_backoff[cuda_index] : nullptr; }
+
+std::int64_t now_ms() {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
 }  // namespace
@@ -58,6 +69,8 @@ std::optional<DeviceInfo> find_device(std::string_view uuid_or_name) {
 }
 
 bool has_free_memory(int cuda_index, std::size_t bytes) {
+  DeviceBackOff* bo = backoff_of(cuda_index);
+  if (bo && bo->waiting(now_ms())) return false;  // refused recently: do not queue on the driver lock again (backoff.hpp)
   int previous = 0;
   cudaGetDevice(&previous);
   bool ok = false;
@@ -67,6 +80,8 @@ bool has_free_memory(int cuda_index, std::size_t bytes) {
     else cudaGetLastError();
   }
   cudaSetDevice(previous);
+  if (bo && ok) bo->accepted();
+  else if (bo) bo->refused(now_ms());
   return ok;
 }
 

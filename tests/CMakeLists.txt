@@ -75,7 +75,7 @@ add_test(NAME edge_touch COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration
 set_tests_properties(edge_touch PROPERTIES LABELS "integration;rules" TIMEOUT 300)
 # --relax and the other round-based options run with --variants 1 instead of being ignored (M17, D122).
 add_test(NAME round_options COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/round_options.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/round_options)
-set_tests_properties(round_options PROPERTIES LABELS "route;integration" TIMEOUT 600)
+set_tests_properties(round_options PROPERTIES LABELS "route;integration" TIMEOUT 1800)  # 9 minutes under asan, over 10 under tsan
 # The agent skills' scripts (D84): preflight findings on plane_smd, reports that board text cannot forge, sign-off
 # verdicts and exit codes against a stand-in kicad-cli. Needs neither KiCad nor, for most of it, the engine.
 add_test(NAME skills_scripts COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/skills_scripts.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/skills_scripts)

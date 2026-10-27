@@ -1,6 +1,6 @@
 # tscircuit Simple Route JSON partial BGA breakouts (tscircuit/dataset-srj20, no licence file: fetched for local use only): 200 two-layer problems,
 # converted to KiCad boards by bench/prepare_srj.py with 0.1 mm copper and via-hole clearance (doc 10 §7).
-# Standard run: bench/run.py --set srj20 --work 10000000 --route-args "--variants 1 --no-gpu"
+# Standard run (doc 10 §9, the published single-variant figure): bench/run.py --set srj20 --work 30000000 --route-args "--variants 1 --no-gpu --fast-bends"
 # Fetch and convert: scripts/fetch_fixtures.sh tscircuit. Score with tscircuit's own checker: bench/srj_score.py.
 #fixtures: bench/data/tscircuit/boards/srj20
 sample001

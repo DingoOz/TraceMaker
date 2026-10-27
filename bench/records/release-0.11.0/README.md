@@ -33,7 +33,7 @@ boards whose error gate is *unknown* are the same in both releases (6 in C and 7
 types the boards had before routing, see the 0.10.0 record). No board in
 any run has an added routing error.
 
-## 3. Load, not the code: the 0.10.0 binary under the same conditions
+## 3. Not the code: the 0.10.0 binary under the same conditions
 
 The how-to asks for the previous binary beside the new one on a shared machine. The 0.10.0 snapshot binary
 (`bench/results/rel0100-tierD2/tracemaker`, `tracemaker version` 0.10.0) was run on tier D with today's `run.py` right after the 0.11.0
@@ -44,9 +44,15 @@ runs (`rel0100w-tierD`, load average 33 rising to 78):
 | D | 0.10.0 at release (`rel0100-tierD2`, load ~20) | 9 (40.9%) | 12 | 95.1% | 534/534 | 2385 |
 | D | 0.10.0 today (`rel0100w-tierD`, load 33-78) | 7 (31.8%) | 10 | 94.5% | 528/534 | 2527 |
 | D | 0.11.0 (`rel0110-tierD`, load 40-66) | 8 (36.4%) | 11 | 94.9% | 530/534 | 2403 |
+| D | 0.10.0, idle machine (`full-tierD-v0100`, 2026-10-26, load < 1) | 8 (36.4%) | 11 | 95.2% | 530/534 | 2365 |
+| D | 0.11.0, idle machine (`full-tierD`, 2026-10-26, load < 1) | 8 (36.4%) | 11 | 95.1% | 530/534 | 2376 |
 
-Under today's load the 0.10.0 binary scores one board below 0.11.0, so the tier D difference is the shared machine at a 120 s wall-clock
-limit, not the code. The changes since 0.10.0 do not touch the router's search: the run report reads the result after the route, and the
+Under today's load the 0.10.0 binary scores one board below 0.11.0, so the tier D difference is not the code.
+
+**Correction (2026-10-26, `bench/records/test-campaign-2026-10/full-test-2026-10-26.md` §4 and §10):** "load" was only half the explanation. On an idle machine both
+binaries score 8 and route the keyboard 530/534, and at a fixed work budget (10 M and 30 M) they give byte-identical keyboard boards. So
+the code is the same, and the board moves with the 120 s wall-clock limit itself: the same 0.10.0 binary routed it 534/534 at its
+release (load ~20) and 530/534 idle. Tier figures from time-limited runs vary by a board or so in either direction from run to run. The changes since 0.10.0 do not touch the router's search: the run report reads the result after the route, and the
 `time_limited` flag it adds is written when the time check fires and read by nothing in the router (D136). With options off, the quick tier
 at a fixed work budget was byte-identical to `main` on 30 of 30 boards (`bench/records/m20-run-report/quick-compare.txt`).
 
