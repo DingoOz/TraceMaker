@@ -330,8 +330,7 @@ int Obstacles::coupling_state(Point a, Point b, int layer, Coord width, model::N
   const model::NetId q = re_->dp_partner(net);
   if (q <= 0 || static_cast<std::size_t>(q) >= net_tracks_.size()) return 0;
   constexpr Coord kEpsilon = 500;  // KiCad's DRC epsilon
-  const std::string& name = b_.nets[static_cast<std::size_t>(net)].name;
-  const bool positive = name.back() == 'P' || name.back() == '+';
+  const bool positive = re_->dp_positive(net);
   int state = 0;
   for (const int id : net_tracks_[static_cast<std::size_t>(q)]) {
     const auto& it = cm_.items[static_cast<std::size_t>(id)];

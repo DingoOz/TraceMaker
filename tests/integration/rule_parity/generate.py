@@ -51,7 +51,7 @@ def generate(root: Path) -> dict:
                 graphics += f'(fp_rect (start {a} {b}) (end {c} {d}) (stroke (width 0.05) (type solid)) (fill none) (layer "{side}.CrtYd") (uuid "{uid(ref+side+'court')}"))'
         return capture(f'(footprint "Test:R" (layer "{layer}") (at {x} {y} {angle}) (uuid "{uid(ref)}") (property "Reference" "{ref}" (at 0 -3) (layer "F.SilkS")) {graphics} (pad "1" {padtype} rect (at {pad_at[0]} {pad_at[1]}) (size {size[0]} {size[1]}) {drill} (layers {layers}) (net 1 "X") (uuid "{uid(ref+":pad1")}")))', [ref+':pad1'])
     def board(items):
-        return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (net 3 "D_P") (net 4 "D_N") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
+        return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (net 3 "D_P") (net 4 "D_N") (net 5 "L_P1") (net 6 "L_N1") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
     def rule(condition='',word='track',layer='',severity='',constraint=None,name='C'):
         return f'(rule "{name}" '+ (f'(condition {json.dumps(condition)}) ' if condition else '') + (f'(layer {layer}) ' if layer else '') + (f'(severity {severity}) ' if severity else '') + (constraint or f'(constraint disallow {word})') + ')\n'
     def case(name,items,rules,note='',project=None,types=None):
@@ -127,6 +127,14 @@ def generate(root: Path) -> dict:
     case('diff_pair_uncoupled',dp,gap_rule+rule("A.inDiffPair('*')",constraint='(constraint diff_pair_uncoupled (max 5mm))',name='dp_unc'),
          types=['diff_pair_gap_out_of_range','diff_pair_uncoupled_length_too_long'],
          note='With a maximum uncoupled length too: KiCad keys the items twice, so the gap errors stay, and the 10 mm coupled at 0.2 mm leave most of the length uncoupled.')
+    # Pair names as MatchDpSuffix reads them: digits and underscores after the P or N are skipped, so L_P1 pairs with L_N1 on base
+    # "L_", and inDiffPair('L') matches a base ending in an underscore without it. Both pairs are 0.4 mm apart.
+    suffixed=[track('dps-L-P',5,10,15,10,width=0.2,net=5),track('dps-L-N',5,10.6,15,10.6,width=0.2,net=6),
+              track('dps-D-P',20,10,30,10,width=0.2,net=3),track('dps-D-N',20,10.6,30,10.6,width=0.2,net=4)]
+    case('diff_pair_suffix',suffixed,rule("A.inDiffPair('L')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
+         types=['diff_pair_gap_out_of_range'],note='L_P1/L_N1 are a pair whose base L_ matches L; D_P/D_N (base D_) does not.')
+    case('diff_pair_suffix_base',suffixed,rule("A.inDiffPair('D_')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
+         types=['diff_pair_gap_out_of_range'],note="The base itself matches: D_ for D_P/D_N; L_ is not D_.")
     case('static_layer_track',static,rule(layer='"F.Cu"'))
     case('static_inner_track',static,rule(layer='inner'))
     case('static_inner_via',static,rule(word='via',layer='inner'))

@@ -320,6 +320,22 @@
       ]
     },
     "diff_pair_gap_ignored": {},
+    "diff_pair_suffix": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dps-L-N",
+          "dps-L-P"
+        ]
+      ]
+    },
+    "diff_pair_suffix_base": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dps-D-N",
+          "dps-D-P"
+        ]
+      ]
+    },
     "diff_pair_uncoupled": {
       "diff_pair_gap_out_of_range": [
         [

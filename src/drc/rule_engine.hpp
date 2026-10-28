@@ -8,6 +8,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "drc/copper.hpp"
@@ -18,6 +19,15 @@
 namespace tmk::drc {
 
 class Condition;  // compiled custom-rule condition
+
+// A differential-pair net name as KiCad 10.0.6 reads it (DRC_ENGINE::MatchDpSuffix): from the end, digits and underscores are
+// skipped, then P or + makes the positive half and N or - the negative one. `complement` is the other half's name and `base` the name
+// before the polarity character, so D_P1 pairs with D_N1 on base "D_". Polarity 0: not a pair name.
+struct DpSuffix {
+  int polarity = 0;
+  std::string complement, base;
+};
+DpSuffix match_dp_suffix(std::string_view name);
 
 class RuleEngine {
  public:
@@ -64,6 +74,10 @@ class RuleEngine {
   // The other half of `net`'s differential pair (KiCad's DpCoupledNet), or 0.
   model::NetId dp_partner(model::NetId net) const {
     return static_cast<std::size_t>(net) < dp_partner_.size() ? dp_partner_[static_cast<std::size_t>(net)] : 0;
+  }
+  // True when `net` is the positive half of a pair (P or +, match_dp_suffix); only meaningful when dp_partner(net) is set.
+  bool dp_positive(model::NetId net) const {
+    return static_cast<std::size_t>(net) < dp_positive_.size() && dp_positive_[static_cast<std::size_t>(net)];
   }
 
   // Name of the last rule disallowing `it` on `layer`, if any (KiCad: items_not_allowed).
@@ -122,6 +136,8 @@ class RuleEngine {
   Coord max_clearance_ = 0;
   std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
   std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
+  std::vector<char> dp_positive_;                 // by net id: the positive half of a pair
+  std::vector<std::string> dp_base_;              // by net id: the pair's base name (inDiffPair), for pair nets
   std::vector<std::vector<std::string>> net_classes_;  // by net id: DesignRules::classes_of
   // Area and courtyard functions of a zone fill, by (condition node, zone, fill): a fill has tens of thousands
   // of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).

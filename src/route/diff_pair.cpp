@@ -147,14 +147,11 @@ PairStats measure_pair(const std::vector<model::Track>& tracks, const std::vecto
 }
 
 std::vector<std::pair<NetId, NetId>> named_pairs(const model::Board& b, const drc::RuleEngine& re) {
-  std::map<std::string, NetId> by_name;
-  for (std::size_t i = 1; i < b.nets.size(); ++i) by_name.emplace(b.nets[i].name, static_cast<NetId>(i));
+  // Positive half first, by net id (drc::match_dp_suffix: D_P1 pairs with D_N1, as KiCad pairs them).
   std::vector<std::pair<NetId, NetId>> out;
   for (std::size_t i = 1; i < b.nets.size(); ++i) {
-    const std::string& n = b.nets[i].name;
-    if (n.size() < 2 || (n.back() != 'P' && n.back() != '+')) continue;
-    const auto it = by_name.find(n.substr(0, n.size() - 1) + (n.back() == 'P' ? "N" : "-"));
-    if (it != by_name.end() && re.coupled_diff_pair(static_cast<NetId>(i), it->second)) out.emplace_back(static_cast<NetId>(i), it->second);
+    const auto n = static_cast<NetId>(i);
+    if (const NetId q = re.dp_partner(n); q > 0 && re.dp_positive(n)) out.emplace_back(n, q);
   }
   return out;
 }

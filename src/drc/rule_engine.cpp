@@ -408,10 +408,12 @@ class Condition {
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
       // P/N or +/-) matches the pattern.
+      // KiCad matches the base name, or with a trailing underscore the base without it (pcbexpr_functions.cpp, inDiffPairFunc).
       const auto net = static_cast<std::size_t>(it->net);
       if (it->net != 0 && net < ctx.eng->dp_partner_.size() && ctx.eng->dp_partner_[net] != 0) {
-        const std::string& name = b.nets[net].name;
-        v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
+        const std::string& base = ctx.eng->dp_base_[net];
+        v.b = model::wildcard_match(n.args[0], base) ||
+              (!base.empty() && base.back() == '_' && model::wildcard_match(n.args[0], std::string_view(base).substr(0, base.rfind('_'))));
       }
     } else if (n.name == "hasNetclass" && !n.args.empty()) {
       // KiCad: the item's effective net class contains a class of that name (NETCLASS::ContainsNetclassWithName),
@@ -479,6 +481,27 @@ class Condition {
 };
 
 // ---------------------------------------------------------------------------------------------------------
+
+DpSuffix match_dp_suffix(std::string_view name) {
+  // KiCad's loop also counts the polarity character, so `count` is the length of the suffix from it to the end.
+  DpSuffix r;
+  std::size_t count = 0;
+  char other = 0;
+  for (auto it = name.rbegin(); it != name.rend(); ++it) {
+    const char ch = *it;
+    ++count;
+    if ((ch >= '0' && ch <= '9') || ch == '_') continue;
+    if (ch == '+' || ch == 'P') r.polarity = 1;
+    else if (ch == '-' || ch == 'N') r.polarity = -1;
+    else return {};
+    other = ch == '+' ? '-' : ch == '-' ? '+' : ch == 'P' ? 'N' : 'P';
+    break;
+  }
+  if (r.polarity == 0) return {};
+  r.base = std::string(name.substr(0, name.size() - count));
+  r.complement = r.base + other + std::string(name.substr(name.size() - count + 1));
+  return r;
+}
 
 RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r), router_hole_(std::max<Coord>(r.minimums.hole_clearance, 0)) {
   for (const auto& rule : r_.custom) {
@@ -568,20 +591,21 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   net_class_.resize(b_.nets.size());
   net_classes_.resize(b_.nets.size());
   dp_partner_.assign(b_.nets.size(), 0);
+  dp_positive_.assign(b_.nets.size(), 0);
+  dp_base_.assign(b_.nets.size(), {});
   std::map<std::string, model::NetId> by_name;
   for (const auto& n : b_.nets) by_name[n.name] = n.id;
   for (const auto& n : b_.nets) {
     net_class_[static_cast<std::size_t>(n.id)] = &r_.class_for(n.name);
     net_classes_[static_cast<std::size_t>(n.id)] = r_.classes_of(n.name);
-    if (n.name.size() < 2) continue;
-    std::string other = n.name;
-    char& last = other.back();
-    if (last == 'P') last = 'N';
-    else if (last == 'N') last = 'P';
-    else if (last == '+') last = '-';
-    else if (last == '-') last = '+';
-    else continue;
-    if (auto it = by_name.find(other); it != by_name.end()) dp_partner_[static_cast<std::size_t>(n.id)] = it->second;
+    if (n.id == 0) continue;
+    auto dp = match_dp_suffix(n.name);
+    if (dp.polarity == 0) continue;
+    if (auto it = by_name.find(dp.complement); it != by_name.end() && it->second != 0) {
+      dp_partner_[static_cast<std::size_t>(n.id)] = it->second;
+      dp_positive_[static_cast<std::size_t>(n.id)] = dp.polarity > 0;
+      dp_base_[static_cast<std::size_t>(n.id)] = std::move(dp.base);
+    }
   }
   for (const auto& rule : r_.custom)
     for (const auto& k : rule.constraints)
@@ -832,12 +856,7 @@ bool RuleEngine::via_hole_rule_hits_own_tracks(model::NetId net) const {
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   if (a == 0 || b == 0 || a == b) return false;
   if (static_cast<std::size_t>(a) < dp_partner_.size()) return dp_partner_[static_cast<std::size_t>(a)] == b;
-  const std::string& x = b_.nets[static_cast<std::size_t>(a)].name;
-  const std::string& y = b_.nets[static_cast<std::size_t>(b)].name;
-  if (x.size() != y.size() || x.empty()) return false;
-  const char cx = x.back(), cy = y.back();
-  const bool pair = (cx == 'P' && cy == 'N') || (cx == 'N' && cy == 'P') || (cx == '+' && cy == '-') || (cx == '-' && cy == '+');
-  return pair && x.compare(0, x.size() - 1, y, 0, y.size() - 1) == 0;
+  return match_dp_suffix(b_.nets[static_cast<std::size_t>(a)].name).complement == b_.nets[static_cast<std::size_t>(b)].name;
 }
 
 Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer) const {

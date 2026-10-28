@@ -164,6 +164,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D146](decisions/D146.md) | --si-rules keeps critical-first: five seeds settle #24's options | accepted |
 | [D147](decisions/D147.md) | Time-domain matching measured as KiCad 10.0.6 measures it, and KiCad's net-class and pair-coupling semantics | accepted |
 | [D148](decisions/D148.md) | The router avoids KiCad's diff-pair coupling-gap errors | accepted |
+| [D149](decisions/D149.md) | Differential pairs named as KiCad's MatchDpSuffix names them | accepted |
 <!-- END decision index -->
 
 ## Risks

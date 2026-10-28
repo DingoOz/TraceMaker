@@ -2,7 +2,7 @@
 
 Asked on 2026-10-27 at about 22:10 UTC: "work on the roadmap features without stopping until I tell you". Everything is on the local
 branch `m20-c5-fanout` in the worktree `/home/dingo/Programming/TraceMaker-roadmap`, from `origin/main` `ec7cc9b` (PR #51). Nothing is
-pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A90).
+pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A91).
 
 ## What was done
 
@@ -34,6 +34,9 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
   exactly 0.15 mm wherever the halves see each other. The router now runs KiCad's coupling test in the exact check and on each search
   step for pair nets under a bounded gap rule. Result: 104/147 as before, with no gap errors. The other seven B1/B2 fixture boards are
   identical. Testing at commit only was not enough: it lost 3 connections, because the search kept finding paths the check refused.
+- **Pair names as KiCad reads them** (D149). `DQS_P0`/`DQS_N0` are now a pair, as `MatchDpSuffix` makes them, and `inDiffPair('D')`
+  matches `D_P`. The rule-parity corpus has 231 cases, all matching KiCad. Of 4,143 fixture boards only vme-wren and one freerouting
+  fixture pair differently.
 - **D139 is not on this branch.** On `m20-c5-fanout`, any custom rule other than a disallow (a skew rule, say) switches the router to
   exact checks and turns the distance fields off: RoyalBlue routes 119 with B2's rule file and 125 without it. D139
   (`cache-safe-custom-rules`) fixes that, and merging the two is yours.

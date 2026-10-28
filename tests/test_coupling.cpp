@@ -12,6 +12,7 @@
 #include "app/route_job.hpp"
 #include "drc/coupling.hpp"
 #include "drc/drc.hpp"
+#include "drc/rule_engine.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 
@@ -42,6 +43,24 @@ TEST_CASE("coupling: tracks that meet as lines, lie on one line or do not overla
   CHECK_FALSE(drc::couple({0, 0}, {10'000'000, 0}, 200'000, {12'000'000, 0}, {20'000'000, 0}, 200'000));     // collinear
   CHECK_FALSE(drc::couple({0, 0}, {10'000'000, 0}, 200'000, {10'000'000, 500'000}, {20'000'000, 500'000}, 200'000));  // end to end
   CHECK_FALSE(drc::couple({0, 0}, {1, 1}, 200'000, {0, 500'000}, {10'000'000, 500'000}, 200'000));          // about 1 nm long
+}
+
+TEST_CASE("pair names: KiCad's MatchDpSuffix", "[drc][coupling]") {
+  const auto d = drc::match_dp_suffix("USB_DP");
+  CHECK(d.polarity == 1);
+  CHECK(d.complement == "USB_DN");
+  CHECK(d.base == "USB_D");
+  // Digits and underscores after the polarity character are kept on the complement.
+  const auto l = drc::match_dp_suffix("LVDS_N0_1");
+  CHECK(l.polarity == -1);
+  CHECK(l.complement == "LVDS_P0_1");
+  CHECK(l.base == "LVDS_");
+  CHECK(drc::match_dp_suffix("CLK+").complement == "CLK-");
+  CHECK(drc::match_dp_suffix("CLK-").polarity == -1);
+  CHECK(drc::match_dp_suffix("P").complement == "N");
+  CHECK(drc::match_dp_suffix("GND").polarity == 0);   // D is not a polarity
+  CHECK(drc::match_dp_suffix("+3V3").polarity == 0);  // the scan stops at V
+  CHECK(drc::match_dp_suffix("12_3").polarity == 0);
 }
 
 namespace {

@@ -2568,6 +2568,16 @@ measures with the same calculation as the check, and its last meander is cut to 
 or each pair with `within_diff_pairs`, are brought to within a quarter of the limit below the net with the most delay. Nets of a profiled
 class are not necked down (§58).
 
+**Pair names** (`drc::match_dp_suffix`, D149). Nets are paired as KiCad 10.0.6's `MatchDpSuffix` pairs them:
+- From the end of the name, digits and underscores are skipped. The next character must be P or + (positive) or N or − (negative).
+- The partner's name swaps that character, so `LVDS_N0_1` pairs with `LVDS_P0_1`.
+- `inDiffPair('x')` matches the base, which is the name before that character. If the base ends in an underscore, it also matches the
+  base without it. So `D_P1` is in `inDiffPair('D')` and in `inDiffPair('D_')`.
+
+Before, the engine looked only at the last character and matched the whole name minus that character, or the whole name. Among the
+4,143 fixture boards, only vme-wren (its DDR4 `DQS_P0..3`/`DQS_N0..3`) and one freerouting fixture pair differently. Pair routing,
+the relaxed gap between pair halves and the DRC's pair polarity all use the same pairing.
+
 **Routing around coupling errors** (`Obstacles::coupling_state`, D148). This applies when a pair net has a `diff_pair_gap` rule, not
 ignored, with a minimum or a maximum on a layer. A new track of that net is then tested against each track of its partner on that
 layer with the same coupling test as the check, the same epsilon included. A coupling out of range blocks the track if the partner
@@ -2604,15 +2614,15 @@ without such a rule do not run the test.
 - `fromTo()` is not evaluated, so length rules written with it (vme-wren) are unchecked.
 - The bus tuner (§38) ignores ps skew rules.
 - A net in two classes takes its parameters from the first.
-- Pair names with trailing digits or underscores (`D_P1`), which KiCad's `MatchDpSuffix` accepts, are not paired.
 
 Tests:
 
 - `[length]`, four cases: the QA board's delays and its one skew violation; clipping, via span, a stub, and height off; layer, via and
   override delays with time-domain tuning on and off; ps parsing.
-- `[coupling]`, three cases: coupled stretch and gap, direction, diagonals; lines that meet, collinear, end to end, about 1 nm; and a
-  routed pair whose pads are 2 mm apart under a 0.15–0.25 mm gap rule. With the rule ignored, the straight tracks break the rule;
-  with the rule in force, the routed pair has no gap errors.
+- `[coupling]`, four cases: pair names as `MatchDpSuffix` reads them; coupled stretch and gap, direction, diagonals; lines that meet,
+  collinear, end to end, about 1 nm; and a routed pair whose pads are 2 mm apart under a 0.15–0.25 mm gap rule. With the rule
+  ignored, the straight tracks break the rule; with the rule in force, the routed pair has no gap errors.
 - rule_parity: `static_has_class_*` (four), `tuning_profile_inherited`, `tuning_profile_schema4`, and `diff_pair_gap`,
-  `diff_pair_gap_ignored` and `diff_pair_uncoupled` (cross-stretch couplings, a shielded pair, and the doubled key). All 229 cases match.
+  `diff_pair_gap_ignored` and `diff_pair_uncoupled` (cross-stretch couplings, a shielded pair, and the doubled key). Two more with
+  D149: `diff_pair_suffix` and `diff_pair_suffix_base`. All 231 cases match; the build before D149 fails `diff_pair_suffix`.
 - `delay_tuning` (integration): ddr8 routed with the rules is clean by the engine's DRC and by KiCad; routed without them, it misses.

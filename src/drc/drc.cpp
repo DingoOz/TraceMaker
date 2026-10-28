@@ -711,10 +711,7 @@ class Checker {
       std::string gap_name, unc_name;
       std::vector<int> p_items, n_items;  // copper item indices
     };
-    auto positive = [&](model::NetId n) {
-      const std::string& s = net_name(n);
-      return s.back() == 'P' || s.back() == '+';
-    };
+    auto positive = [&](model::NetId n) { return re_.dp_positive(n); };
     auto last_of = [](const model::CustomRule& rule, const char* type) {
       const model::Constraint* k = nullptr;
       for (const auto& x : rule.constraints)
