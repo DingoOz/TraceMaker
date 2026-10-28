@@ -54,6 +54,17 @@ class RuleEngine {
   std::optional<Coord> skew_constraint(model::NetId net) const;
   // Last custom constraint of `type` (e.g. diff_pair_gap, diff_pair_uncoupled) whose rule matches a track of `net`.
   std::optional<model::Constraint> net_constraint(model::NetId net, const std::string& type) const;
+  // KiCad's matched-length check groups items by the rule that gives them a constraint (DRC_ENGINE::EvalRules'
+  // parent rule; doc 05 §59): the position in rule order of the last rule with a `type` constraint matching `it` on
+  // `layer`, or -1. rule(i) is that rule.
+  int last_rule_with(const CopperItem& it, int layer, const std::string& type) const;
+  const model::CustomRule& rule(int i) const { return *rules_[static_cast<std::size_t>(i)].rule; }
+  // The same for a net as a whole (a track of `net` on any layer), as length_constraint and net_constraint see it.
+  int net_rule_with(model::NetId net, const std::string& type) const;
+  // The other half of `net`'s differential pair (KiCad's DpCoupledNet), or 0.
+  model::NetId dp_partner(model::NetId net) const {
+    return static_cast<std::size_t>(net) < dp_partner_.size() ? dp_partner_[static_cast<std::size_t>(net)] : 0;
+  }
 
   // Name of the last rule disallowing `it` on `layer`, if any (KiCad: items_not_allowed).
   std::optional<std::string> disallowed(const CopperItem& it, int layer) const;
@@ -111,6 +122,7 @@ class RuleEngine {
   Coord max_clearance_ = 0;
   std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
   std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
+  std::vector<std::vector<std::string>> net_classes_;  // by net id: DesignRules::classes_of
   // Area and courtyard functions of a zone fill, by (condition node, zone, fill): a fill has tens of thousands
   // of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).
   mutable std::map<std::tuple<const void*, int, int>, bool> area_cache_;

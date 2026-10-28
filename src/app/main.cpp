@@ -1467,6 +1467,7 @@ int main(int argc, char** argv) {
         std::string v;
         for (const auto& r : o->results()) v += (v.empty() ? "" : ",") + r;
         if (o->get_name() == "--view-token") v = "(not recorded)";  // it opens the viewer to whoever reads a shared summary or report
+        if (o->get_name() == "--view-embed") v = "(not recorded)";  // the pages allowed to embed the viewer: the machine's addresses
         job.options_given.push_back({{"name", o->get_name()}, {"value", v.empty() ? std::string("on") : v}});
       }
       if (!r_try_layers.empty()) {

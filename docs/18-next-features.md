@@ -283,3 +283,24 @@ critical-net measure moves with the seed. `--critical-first` routes 27 of 28 cri
 RoyalBlue's crystal net and debugger USB pair, at 6 connections of the other nets. The via and split costs alone save a few vias and
 crossings on common nets, and nothing once critical-first is on. `--si-rules` keeps all three, and defaults stay off. Gate (settle
 the defaults on five seeds): met.
+
+## 17. B2 built: time-domain matching (2026-10-28)
+
+The engine measures a net's length and delay as KiCad 10.0.6 does, quirks included, and checks `length` and `skew` rules in ps against
+the delay. The router tunes nets into ps windows and skew groups, weighting meanders by each layer's delay per mm. The DRC now also has
+KiCad's diff-pair coupling test (doc 05 §59, decision [D147](decisions/D147.md), records in `bench/records/m21-b2`).
+
+Checking B2 against KiCad showed that B1's fixtures were judged by a KiCad that read no profile, because their net settings were at
+schema 4. Rejudged (doc 05 §58), B1 needed profile inheritance from Default, the pair width from a single-ended profile, and no
+neck-down on profiled nets. A single-ended profile on Default costs RoyalBlue 23 of 147 connections, and the pair profile leaves 5
+coupling-gap errors at its USB-C connector, which the router does not yet avoid.
+
+Gate (doc 18 §4 B2):
+
+- A DDR-style generated fixture within tolerance by KiCad's DRC, in delay: met. ddr8's 20 window and skew errors are now 0, and the
+  `delay_tuning` test checks this.
+- Two real boards within tolerance in delay: met on interf_u (four memory-data lanes: 7 errors before, 0 after) and RoyalBlue (the
+  debugger USB pair: 1 before, 0 after), both given profiles and rules by `make_fixtures.py`, at the same routed counts. No fixture
+  board has delay rules of its own.
+- The measurement itself: KiCad's QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm. Four branched power nets
+  differ, where 10.0.6 depends on pointer order.

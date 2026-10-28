@@ -606,12 +606,16 @@ RouteJobResult run_route_job(RouteJob job) {
     } else {
       for (const auto* l : on)
         if (l->width > from->width) from = l;
-      c.track_width = from->width;
+      // KiCad's width rule holds every track of the class, a pair's halves too.
+      c.diff_pair_width = c.track_width = from->width;
       std::vector<Coord> widths(static_cast<std::size_t>(lb.board.copper_count()), 0);
       for (const auto* l : on) widths[static_cast<std::size_t>(lb.board.copper_index(l->layer))] = std::max(l->width, rules.minimums.track_width);
       for (std::size_t n = 1; n < lb.board.nets.size(); ++n)
         if (rules.class_for(lb.board.nets[n].name).name == c.name) tuning_widths[static_cast<model::NetId>(n)] = widths;
     }
+    // The profile's width is also KiCad's minimum there: no neck-down for the class's nets.
+    for (std::size_t n = 1; n < lb.board.nets.size(); ++n)
+      if (rules.class_for(lb.board.nets[n].name).name == c.name) opt.no_neck_nets.push_back(lb.board.nets[n].name);
     nlohmann::json layers = nlohmann::json::array();
     for (const auto* l : on) layers.push_back({{"layer", l->layer}, {"width_mm", nm_to_mm(l->width)}, {"gap_mm", nm_to_mm(l->gap)}});
     log(fmt("tuning profile %s (net class %s, %s): routed at %.3f mm (the width on %s)%s", p->name.c_str(), c.name.c_str(),

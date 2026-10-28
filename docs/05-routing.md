@@ -2493,3 +2493,114 @@ tracks to narrow.
 
 The profile rules set widths and pair gaps, never a clearance, so they do not switch the router to exact checks
 (`RuleEngine::needs_exact_routing`). Before that was fixed, a profiled board routed without its distance fields.
+
+**Rejudged (B2, same night).** The B1 fixtures above wrote their net settings at schema 4. KiCad migrates such settings and gives
+every class an empty tuning profile (`migrateSchema4to5`), so KiCad checked no profile at all and "adds no error" was vacuous. With the
+fixtures at schema 5 (`bench/records/m21-b1/runs/b1-v5`), the first build had 20 `track_width` errors on plane_smd (0.15 mm neck-downs),
+97 on RoyalBlue with both profiles and 175 with the single-ended one. Three fixes followed (§59):
+
+- A class that names no profile takes Default's, as KiCad does (`addMissingDefaults`), so RoyalBlue's USB pairs fall under SE50.
+- A single-ended profile also sets the class's pair width.
+- Profiled nets get no neck-down, because the profile's width is also KiCad's minimum.
+
+The reader now also drops the profiles of schema-4 settings, with a warning, as KiCad does. After the fixes, plane_smd routes 48/49
+with no added error. RoyalBlue drops from 125/147 to 102/147 with the single-ended profile (every Default net now keeps 0.25 mm on the
+outer layers and 0.2 mm inside, with no neck-down at fine-pitch pads) and to 104/147 with both profiles. Neither has a `track_width`
+error. The pair profile leaves 5 `diff_pair_gap_out_of_range` errors, which §59 explains. "Narrowing is free" no longer holds: the
+earlier 125 came from the judge that read no profile.
+
+## 59. Time-domain matching: delays as KiCad 10.0.6 measures them (doc 18 B2, 2026-10-28, D147)
+
+KiCad 10 measures a net's length and propagation delay in `LENGTH_DELAY_CALCULATION` (`pcbnew/length_delay_calculation`). A
+`length` or `skew` constraint given in ps or fs is compared with the delay. The engine read the units but measured lengths its own
+way, ignored time rules, and had no tuner aiming at a delay.
+
+**Measurement** (`drc/length.hpp`, `drc::net_length`). This is a port of 10.0.6's calculation, with its quirks:
+
+- *Pieces.* A net's tracks and arcs, in file order, are chained where ends meet. In 10.0.6 a chain grows at an end only where exactly
+  one other line end remains, on the same layer, and the first line of each chain is taken out of the search first. On a branched net
+  the result therefore depends on the order KiCad visits the lines, which is the order of their addresses (a `std::set` of pointers).
+  KiCad master merges only at simple two-end joints.
+- *Vias.* A via counts when its span is used: a line ends at its centre or strictly inside its disc, or a pad it touches is on the net
+  (an SMD pad on its copper layer, a through-hole pad on its footprint's side). Its height is the stackup distance between the outermost
+  layers used (doc 05 §38's `via_heights`, moved to `drc`). A via joining one layer only is a stub: counted, with no height. Without
+  "use height for length calculations", vias count for nothing.
+- *Clipping.* A chain end inside a via's disc is replaced by a straight line from the via's centre to where the chain crosses the
+  disc's edge. A chain end exactly on a pad's position is clipped at the pad's outline.
+- *Rounding.* Segment lengths are rounded to the nanometre and arc lengths are truncated. A layer's delay is its delay per mm times the
+  length in mm, truncated to the attosecond. A via's delay is the profile's override for its signal and via layers (upper layer first),
+  else its delay per mm times its height, and only with time-domain tuning on. A pad's die delay counts only when the net has a profile.
+
+**Check** (`drc.cpp`, `check_lengths`). This is KiCad's matched-length test:
+
+- Every pad, track, arc and via is grouped by the last rule giving it a `length` or `skew` constraint at its layer, then by net. Each
+  group is sorted by net name.
+- A length outside the window is reported on its minimum first. A rule in ps compares the delay.
+- Skew is measured against the net with the most length or delay. In 10.0.6 that net is measured against itself too, so a minimum skew
+  always fails on it (KiCad's QA board shows exactly that one violation). `within_diff_pairs` pairs each net with its partner.
+- A rule at severity `ignore` is skipped.
+
+**Net classes, as 10.0.6 resolves them** (`DesignRules::classes_of`). A net's effective class is built from every class that matches
+it. Default joins when the matched classes leave any of ten fields unset (clearance, track width, via and microvia sizes, pair width
+and gap, wire and bus width), or when none of them has a tuning profile and Default has one. Such a composite is named "A,Default", so
+`hasExactNetclass('A')` misses it. `hasNetclass('A')` is true when any constituent is named exactly A; it is now evaluated, and was
+taken as false before. A class with an empty profile takes Default's. Net settings older than schema 5 lose every profile when KiCad
+migrates them, and the reader does the same and warns. A missing schema version means no migration.
+
+**Coupling check** (`drc/coupling.hpp`, `check_diff_pairs`). This is a port of KiCad's diff-pair coupling test, which the engine did
+not have, so `diff_pair_gap` rules were not checked at all:
+
+- A P track and an N track on one layer are coupled where their lines are exactly parallel (a zero integer cross product) and not
+  collinear, and their projections overlap. The pair is skipped when anything else on the layer crosses the line between their nearest
+  points, apart from tracks and vias touching the coupled ends and pads that either track leaves.
+- The gap is the centreline distance minus the half widths, with KiCad's rounding. It must lie within the rule, with the DRC epsilon.
+- Items are grouped by pair and rule names under KiCad's key comparator. Its quirk keys an item twice when both a gap and an uncoupled
+  rule apply, so the gap errors are reported even then. `diff_pair_uncoupled` compares the longer half's track length minus the
+  coupled length.
+- Arc pairs are not coupled (the router writes no arcs).
+
+A tuning profile's pair gap is a rule with min = max = gap and no uncoupled limit. Every parallel stretch of the two halves that can
+see the other must therefore be at exactly the gap, which includes stretches far apart with nothing between them.
+
+**Routing** (`Router::tune_delays`, after `tune_lengths` and `tune_skew`). Each net with a `length` rule in ps is tuned into its window.
+A meander raises the delay by the delay per mm of the layer it is on, so only tracks on layers with a delay are candidates. The tuner
+measures with the same calculation as the check, and its last meander is cut to fit. Then each `skew` rule in ps: the nets it groups,
+or each pair with `within_diff_pairs`, are brought to within a quarter of the limit below the net with the most delay. Nets of a profiled
+class are not necked down (§58).
+
+**Results** (`bench/records/m21-b2`, KiCad 10.0.6 as the judge):
+
+- *KiCad's QA board* `time_calculations` (copied into `tests/boards`): the six classes' delays match KiCad's to 0.01 ps, and the DRC
+  reports the same single CLASS7 skew violation.
+- *Length parity* on four demo boards (StickHub, RoyalBlue, interf_u, CM5_MINIMA_3), with a rule no net can meet so that both DRCs
+  print every length: 329 nets were measured by both. 313 agree to 0.0001 mm and 12 more to under 1 µm. Four power or mesh nets differ
+  by 0.04 to 1.58 mm (StickHub GND and +5V, RoyalBlue GND and /Debugger/D-), all branched inside vias, where 10.0.6's result depends on
+  pointer order. A simulation of the merge in file order gave the engine's value on /Debugger/D-.
+- *ddr8* (`bench/make_delay_boards.py`): a byte lane from a front controller to a back memory, with a 205–215 ps window, at most 3 ps
+  of skew and 0.5 ps within the strobe pair. Before: 11 window and 9 skew errors. After: 17/17 routed and KiCad finds none.
+- *interf_u* (four memory-data lanes, 2 layers, a 245–260 ps window and 3 ps skew) and *RoyalBlue* (the debugger USB pair, 0.5 ps
+  within the pair), both 3 M work. The build before B2 left 4 window and 3 skew errors on interf_u and 1 pair-skew error on RoyalBlue.
+  B2 leaves none, at the same routed counts (145/164 and 119/147). The engine's DRC gives the same verdicts as KiCad on all four
+  boards (`timing-verdicts.json`). RoyalBlue's 119, against 125 without the rule file, is the exact-check mode that any custom rule
+  other than a disallow turns on in this branch. D139, on its own branch, fixes that.
+- *B1 rejudged* (§58): the five `diff_pair_gap_out_of_range` errors on RoyalBlue with the USB pair profile are found by the engine's
+  DRC as well, at the same places with the same gaps. They are where the USB-C connector's interleaved D+/D− pads, 0.5 mm apart, are
+  joined pad to pad and leave in parallel before the pair forms.
+
+**Not done.**
+
+- The router does not avoid coupling-gap errors, so RoyalBlue's five remain. That needs the coupling test in the router's commit
+  check for pair nets with a maximum gap.
+- `fromTo()` is not evaluated, so length rules written with it (vme-wren) are unchecked.
+- The bus tuner (§38) ignores ps skew rules.
+- A net in two classes takes its parameters from the first.
+- Pair names with trailing digits or underscores (`D_P1`), which KiCad's `MatchDpSuffix` accepts, are not paired.
+
+Tests:
+
+- `[length]`, four cases: the QA board's delays and its one skew violation; clipping, via span, a stub, and height off; layer, via and
+  override delays with time-domain tuning on and off; ps parsing.
+- `[coupling]`, two cases: coupled stretch and gap, direction, diagonals; lines that meet, collinear, end to end, about 1 nm.
+- rule_parity: `static_has_class_*` (four), `tuning_profile_inherited`, `tuning_profile_schema4`, and `diff_pair_gap`,
+  `diff_pair_gap_ignored` and `diff_pair_uncoupled` (cross-stretch couplings, a shielded pair, and the doubled key). All 229 cases match.
+- `delay_tuning` (integration): ddr8 routed with the rules is clean by the engine's DRC and by KiCad; routed without them, it misses.

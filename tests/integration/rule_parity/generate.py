@@ -51,7 +51,7 @@ def generate(root: Path) -> dict:
                 graphics += f'(fp_rect (start {a} {b}) (end {c} {d}) (stroke (width 0.05) (type solid)) (fill none) (layer "{side}.CrtYd") (uuid "{uid(ref+side+'court')}"))'
         return capture(f'(footprint "Test:R" (layer "{layer}") (at {x} {y} {angle}) (uuid "{uid(ref)}") (property "Reference" "{ref}" (at 0 -3) (layer "F.SilkS")) {graphics} (pad "1" {padtype} rect (at {pad_at[0]} {pad_at[1]}) (size {size[0]} {size[1]}) {drill} (layers {layers}) (net 1 "X") (uuid "{uid(ref+":pad1")}")))', [ref+':pad1'])
     def board(items):
-        return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
+        return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (net 3 "D_P") (net 4 "D_N") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
     def rule(condition='',word='track',layer='',severity='',constraint=None,name='C'):
         return f'(rule "{name}" '+ (f'(condition {json.dumps(condition)}) ' if condition else '') + (f'(layer {layer}) ' if layer else '') + (f'(severity {severity}) ' if severity else '') + (constraint or f'(constraint disallow {word})') + ')\n'
     def case(name,items,rules,note='',project=None,types=None):
@@ -77,6 +77,17 @@ def generate(root: Path) -> dict:
     case('static_exact_class_track',static,rule("A.hasExactNetclass('Special')"),project=project)
     case('static_exact_class_case',static,rule("A.hasExactNetclass('special')"),project=project,
          note='Exact: a different case selects nothing.')
+    # hasNetclass (evaluated since D147): the item's effective class contains the name, exactly (doc 05 §59).
+    case('static_has_class_track',static,rule("A.hasNetclass('Special')"),project=project)
+    case('static_has_class_case',static,rule("A.hasNetclass('special')"),project=project,
+         note='Exact: a different case selects nothing.')
+    case('static_has_class_default',static,rule("A.hasNetclass('Default')"),project=project,
+         note='Special leaves microvia, pair and schematic sizes unset: KiCad 10.0.6 fills them from Default, which then counts as one of its classes, so X is selected too.')
+    full=json.loads(json.dumps(project))
+    for c in full['net_settings']['classes']:
+        c.update({'microvia_diameter':0.3,'microvia_drill':0.1,'diff_pair_width':0.2,'diff_pair_gap':0.25,'wire_width':6,'bus_width':12})
+    case('static_has_class_default_full',static,rule("A.hasNetclass('Default')"),project=full,
+         note='Special sets every size: its nets are not in Default.')
     def tuned(severity):
         q=json.loads(json.dumps(project))
         q['net_settings']['classes'][1]['tuning_profile']='MS'
@@ -92,6 +103,30 @@ def generate(root: Path) -> dict:
          note='Profile MS (0.15 mm outside, 0.1 mm inside) on class Special: its tracks of another width on a layer are track_width errors.')
     case('tuning_profile_ignored',profiled,'',project=tuned('ignore'),types=['track_width'],
          note="With tuning_profile_track_geometries at KiCad's default (ignore) there is no such rule.")
+    inherited=tuned('error')
+    inherited['net_settings']['classes'][0]['tuning_profile'],inherited['net_settings']['classes'][1]['tuning_profile']='MS',''
+    case('tuning_profile_inherited',profiled,'',project=inherited,types=['track_width'],
+         note="Profile MS on Default only: Special, which names none, takes Default's (D147), so both nets' tracks are held to it.")
+    old_settings=tuned('error')
+    old_settings['net_settings']['meta']={'version':4}
+    case('tuning_profile_schema4',profiled,'',project=old_settings,types=['track_width'],
+         note='Net settings of schema 4: KiCad migrates them and every class loses its tuning profile (D147).')
+    # Diff-pair coupling (D147): P and N tracks on parallel lines whose projections overlap are coupled, unless other copper lies
+    # between them; each coupling's gap must be within the rule (doc 05 §59). 0.2 mm tracks, so the gaps are 0.4, 0.2, 0.1 and 0.8 mm.
+    dp=[track('dp-wide-P',5,30,15,30,width=0.2,net=3),track('dp-wide-N',7,30.6,17,30.6,width=0.2,net=4),
+        track('dp-ok-P',20,30,30,30,width=0.2,net=3),track('dp-ok-N',20,30.4,30,30.4,width=0.2,net=4),
+        track('dp-close-P',5,35,15,35,width=0.2,net=3),track('dp-close-N',5,35.3,15,35.3,width=0.2,net=4),
+        track('dp-shield-P',20,34,30,34,width=0.2,net=3),track('dp-shield-N',20,35,30,35,width=0.2,net=4),track('dp-shield-Y',20,34.5,30,34.5,width=0.2,net=2),
+        track('dp-apart-P',35,30,40,30,width=0.2,net=3),track('dp-apart-N',41,30.6,46,30.6,width=0.2,net=4),
+        track('dp-bend-P',35,35,40,35,width=0.2,net=3),track('dp-bend-N',35,35.6,40,37,width=0.2,net=4)]
+    gap_rule=rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (min 0.15mm) (max 0.25mm))',name='dp_gap')
+    case('diff_pair_gap',dp,gap_rule,types=['diff_pair_gap_out_of_range'],
+         note='0.4 mm too wide, 0.1 mm too narrow; 0.2 mm fine; a Y track between two halves hides them; no overlap, or not parallel: no coupling.')
+    case('diff_pair_gap_ignored',dp,rule("A.inDiffPair('*')",severity='ignore',constraint='(constraint diff_pair_gap (min 0.15mm) (max 0.25mm))'),
+         types=['diff_pair_gap_out_of_range'],note='A rule at severity ignore checks nothing.')
+    case('diff_pair_uncoupled',dp,gap_rule+rule("A.inDiffPair('*')",constraint='(constraint diff_pair_uncoupled (max 5mm))',name='dp_unc'),
+         types=['diff_pair_gap_out_of_range','diff_pair_uncoupled_length_too_long'],
+         note='With a maximum uncoupled length too: KiCad keys the items twice, so the gap errors stay, and the 10 mm coupled at 0.2 mm leave most of the length uncoupled.')
     case('static_layer_track',static,rule(layer='"F.Cu"'))
     case('static_inner_track',static,rule(layer='inner'))
     case('static_inner_via',static,rule(word='via',layer='inner'))

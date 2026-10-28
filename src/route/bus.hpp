@@ -9,6 +9,7 @@
 #include <string_view>
 #include <vector>
 
+#include "drc/length.hpp"
 #include "drc/rule_engine.hpp"
 #include "model/board.hpp"
 #include "model/rules.hpp"
@@ -49,16 +50,9 @@ std::vector<BusGroup> detect_buses(const model::Board& b, int min_members = 4);
 // (the smallest maximum wins); rules restricted to differential pairs (`within_diff_pairs`) do not count.
 std::optional<Coord> bus_rule_skew(const drc::RuleEngine& re, const BusGroup& g);
 
-// The length a via adds to its net in KiCad's length calculation, which its `skew` check uses (KiCad 10,
-// BOARD_STACKUP::GetLayerDistance): the stackup between the two copper layers the via joins, with the copper of an
-// outer layer in full and of an inner layer by half. A board without a stackup block gets KiCad's default one
-// (35 um copper, 10 um per solder mask, the rest of the board thickness shared evenly between the dielectrics).
-// Empty (every via 0) when the project turns "use height for length calculations" off.
-struct ViaHeights {
-  std::vector<Coord> from, to;  // per copper layer: where a via starting / ending on it begins / ends, nm from the top
-  Coord between(int a, int b) const;  // copper indices, either order; 0 for a == b
-};
-ViaHeights via_heights(const model::Board& b, const model::DesignRules& rules);
+// What a via adds to a net's length (drc/length.hpp, where KiCad's length check lives).
+using drc::ViaHeights;
+using drc::via_heights;
 // The via length of one net on the given copper, as KiCad sums it: each via counts between the outermost layers on
 // which a track of the net ends inside the via's pad, or a pad of the net touches the via (a surface pad's own
 // layer, its footprint's side for a through-hole pad); a via that joins nothing on a second layer adds nothing.

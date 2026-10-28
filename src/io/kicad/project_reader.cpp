@@ -98,16 +98,35 @@ void read_pro(const fs::path& p, model::DesignRules& r, const LegacyRules& legac
           if (!l.is_object() || !l.contains("signal_layer") || !l["signal_layer"].is_string()) continue;
           tp.layers.push_back({l["signal_layer"].get<std::string>(), l.value("width", Coord{0}), l.value("diff_pair_gap", Coord{0}), l.value("delay", std::int64_t{0})});
         }
+      if (e.contains("via_overrides") && e["via_overrides"].is_array())
+        for (const auto& o : e["via_overrides"]) {
+          if (!o.is_object()) continue;
+          tp.via_overrides.push_back({o.value("signal_layer_from", ""), o.value("signal_layer_to", ""), o.value("via_layer_from", ""),
+                                      o.value("via_layer_to", ""), o.value("delay", std::int64_t{0})});
+        }
       r.tuning_profiles.push_back(std::move(tp));
     }
   if (legacy.netclasses || !d.contains("net_settings")) return;
   const json& ns = d["net_settings"];
+  // KiCad migrates net settings written before schema 5 (NET_SETTINGS::migrateSchema4to5) by giving every class an empty
+  // tuning profile; settings without a version are read as they are (NESTED_SETTINGS::LoadFromFile).
+  const bool profiles_dropped = ns.contains("meta") && ns["meta"].is_object() && ns["meta"].contains("version") &&
+                                ns["meta"]["version"].is_number_integer() && ns["meta"]["version"].get<int>() < 5;
+  auto profile_of = [&](const json& c) -> std::string {
+    if (!c.contains("tuning_profile") || !c["tuning_profile"].is_string()) return "";
+    const std::string tp = c["tuning_profile"].get<std::string>();
+    if (!profiles_dropped || tp.empty()) return tp;
+    r.warnings.push_back("net class '" + c.value("name", "") + "' names tuning profile '" + tp +
+                         "', but the project's net settings are older than schema 5: KiCad drops the profile, and so does TraceMaker");
+    return "";
+  };
   if (ns.contains("classes") && ns["classes"].is_array()) {
     // Default first; other classes inherit unset (null) values from Default.
     model::NetClass def;
     def.track_width = 200'000;  // KiCad 10 common/netclass.cpp DEFAULT_TRACK_WIDTH
     def.name = "Default";
     def.priority = INT_MAX;
+    def.fields = model::NetClass::kAllFields;  // Default lacks nothing: it is what the others' gaps are filled from
     for (const auto& c : ns["classes"])
       if (c.value("name", "") == "Default") {
         def.clearance = mm(c, "clearance", def.clearance);
@@ -139,12 +158,22 @@ void read_pro(const fs::path& p, model::DesignRules& r, const LegacyRules& legac
       k.diff_pair_gap = mm(c, "diff_pair_gap", def.diff_pair_gap);
       k.diff_pair_via_gap = mm(c, "diff_pair_via_gap", def.diff_pair_via_gap);
       k.has_diff_pair_gap = c.contains("diff_pair_gap") && c["diff_pair_gap"].is_number();
-      k.tuning_profile = c.contains("tuning_profile") && c["tuning_profile"].is_string() ? c["tuning_profile"].get<std::string>() : "";
+      k.tuning_profile = profile_of(c);
+      static constexpr const char* kFields[] = {"clearance", "track_width", "via_diameter", "via_drill", "microvia_diameter",
+                                                "microvia_drill", "diff_pair_width", "diff_pair_gap", "wire_width", "bus_width"};
+      k.fields = 0;  // k started as a copy of Default
+      for (std::size_t i = 0; i < std::size(kFields); ++i)
+        if (c.contains(kFields[i]) && c[kFields[i]].is_number()) k.fields |= static_cast<std::uint16_t>(1u << i);
       r.classes.push_back(k);
     }
     for (const auto& c : ns["classes"])
-      if (c.value("name", "") == "Default" && c.contains("tuning_profile") && c["tuning_profile"].is_string())
-        r.classes.front().tuning_profile = c["tuning_profile"].get<std::string>();
+      if (c.value("name", "") == "Default") r.classes.front().tuning_profile = profile_of(c);
+    // A class that names no tuning profile takes Default's (NET_SETTINGS::addMissingDefaults, KiCad 10.0.6).
+    for (auto& k : r.classes)
+      if (&k != &r.classes.front() && k.tuning_profile.empty() && !r.classes.front().tuning_profile.empty()) {
+        k.tuning_profile = r.classes.front().tuning_profile;
+        k.profile_from_default = true;
+      }
   }
   if (ns.contains("netclass_patterns") && ns["netclass_patterns"].is_array())
     for (const auto& pat : ns["netclass_patterns"]) r.patterns.emplace_back(pat.value("pattern", ""), pat.value("netclass", ""));
@@ -199,7 +228,19 @@ void read_dru(const fs::path& p, model::DesignRules& r) {
           k.items.push_back(std::string(h));
           continue;
         }
-        const auto v = parse_length(d.str_at(x, 1));
+        // KiCad's time units (pcbexpr_evaluator.cpp): ps and fs, for length and skew only; attoseconds inside.
+        std::optional<Coord> v;
+        const std::string vtext = d.str_at(x, 1);
+        const bool ps = vtext.ends_with("ps"), fs = vtext.ends_with("fs");
+        if ((ps || fs) && (k.type == "length" || k.type == "skew")) {
+          if (const auto t = parse_double(std::string_view(vtext).substr(0, vtext.size() - 2))) {
+            const double as = *t * (ps ? 1e6 : 1e3);
+            v = static_cast<Coord>(as < 0 ? as - 0.5 : as + 0.5);
+            k.time = true;
+          }
+        } else {
+          v = parse_length(vtext);
+        }
         if (!v) {
           r.warnings.push_back("rule '" + cr.name + "': cannot read value of " + std::string(h));
           continue;
@@ -352,6 +393,7 @@ model::DesignRules read_design_rules(const std::string& board_path) {
     def.track_width = 200'000;  // KiCad 10 common/netclass.cpp DEFAULT_TRACK_WIDTH
     def.name = "Default";
     def.priority = INT_MAX;
+    def.fields = model::NetClass::kAllFields;  // Default lacks nothing: it is what the others' gaps are filled from
     r.classes.insert(r.classes.begin(), def);
   }
   add_tuning_rules(r);

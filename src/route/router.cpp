@@ -3899,6 +3899,7 @@ struct Router::Impl {
   std::int64_t bus_pen = 0;
   bool tune_bus = false;                     // tune_net is tuning a bus member
   ViaHeights bus_vh;                         // what a via adds to a member's length in KiCad's skew check
+  drc::ViaHeights len_vh;                    // the same for delay tuning (kicad_measure), computed when first needed
 
   // Finds the bundles and makes each one's connections consecutive, lane by lane, at the place the router's order
   // gave the first of them. Bundles go to the front only with opt.bus_first: on a dense board the lanes out of a
@@ -4556,14 +4557,22 @@ struct Router::Impl {
   }
 
   // Adds meanders to `net` (its routed connections `list`) until its length is at least `mn` and at most `mx`.
-  bool tune_net(NetId net, const std::vector<int>& list, std::optional<Coord> mn, std::optional<Coord> mx) {
+  // `rate`: tune a delay instead (doc 05 §59): `mn` and `mx` are attoseconds, the net is measured as KiCad measures
+  // it (vias and pad-to-die delays included), and a nanometre of meander on copper layer l adds rate[l]; tracks on a
+  // layer whose rate is 0 get none.
+  bool tune_net(NetId net, const std::vector<int>& list, std::optional<Coord> mn, std::optional<Coord> mx, const std::vector<double>* rate = nullptr) {
     auto seg_len = [](const model::Track& t) { return std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y)); };
+    auto rate_on = [&](int layer) { return rate ? (*rate)[static_cast<std::size_t>(layer)] : 1.0; };
       double len = 0;
-      for (int ci : list)
-        for (int item : cs[static_cast<std::size_t>(ci)].items) {
-          const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
-          if (it.kind == drc::ItemKind::Track) len += seg_len(b.tracks[static_cast<std::size_t>(it.index)]);
-        }
+      if (rate) {
+        len = kicad_measure(net).total_delay();
+      } else {
+        for (int ci : list)
+          for (int item : cs[static_cast<std::size_t>(ci)].items) {
+            const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+            if (it.kind == drc::ItemKind::Track) len += seg_len(b.tracks[static_cast<std::size_t>(it.index)]);
+          }
+      }
       const double target = mx ? (static_cast<double>(*mn) + static_cast<double>(*mx)) / 2 : static_cast<double>(*mn) * 1.005;
       double deficit = target - len;
       if (static_cast<double>(*mn) <= len) return true;
@@ -4572,7 +4581,9 @@ struct Router::Impl {
       // Bus members (tune_bus): the lanes beside a member leave its longest track no room, so every track is tried,
       // longest first, and the last meander is cut to the length still missing (the fixed heights step by 0.5 mm).
       std::vector<int> tried;
-      for (int round = 0; round < (tune_bus ? 400 : 50) && deficit > 1'000; ++round) {
+      // A bus member or a delay may need several tracks: each is tried, longest first.
+      const bool every_track = tune_bus || rate;
+      for (int round = 0; round < (every_track ? 400 : 50) && deficit > 1'000; ++round) {
         // Longest track of the net first.
         int best_ci = -1, best_item = -1;
         double best_l = 0;
@@ -4581,6 +4592,7 @@ struct Router::Impl {
             const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
             if (it.kind != drc::ItemKind::Track) continue;
             if (!tried.empty() && std::find(tried.begin(), tried.end(), item) != tried.end()) continue;
+            if (rate_on(b.tracks[static_cast<std::size_t>(it.index)].layer) <= 0) continue;
             const double l = seg_len(b.tracks[static_cast<std::size_t>(it.index)]);
             if (l > best_l && l > static_cast<double>(3 * p)) { best_l = l; best_ci = ci; best_item = item; }
           }
@@ -4588,14 +4600,16 @@ struct Router::Impl {
         const model::Track t = b.tracks[static_cast<std::size_t>(obs->copper().items[static_cast<std::size_t>(best_item)].index)];
         const double ux = static_cast<double>(t.b.x - t.a.x) / best_l, uy = static_cast<double>(t.b.y - t.a.y) / best_l;
         bool placed = false;
+        const double r = rate_on(t.layer);
         std::array<double, 6> heights{1.5, 1.0, 0.6, 0.4, 0.25, 0.0};
-        if (tune_bus && deficit >= 100'000 && deficit <= 3e6) heights[5] = deficit / 2e6;
+        // A bus member or a delay is brought into a narrow window: the last meander is cut to what is still missing.
+        if ((tune_bus || rate) && deficit / r >= 100'000 && deficit / r <= 3e6) heights[5] = deficit / r / 2e6;
         for (double h_mm : heights) {
           if (h_mm <= 0) continue;
           const double h = h_mm * 1e6;
           int k = static_cast<int>(std::floor((best_l - static_cast<double>(p)) / (2.0 * static_cast<double>(p))));
-          k = std::min(k, static_cast<int>(std::ceil(deficit / (2 * h))));
-          if (mx) k = std::min(k, static_cast<int>(std::floor((static_cast<double>(*mx) - len) / (2 * h))));
+          k = std::min(k, static_cast<int>(std::ceil(deficit / (2 * h * r))));
+          if (mx) k = std::min(k, static_cast<int>(std::floor((static_cast<double>(*mx) - len) / (2 * h * r))));
           if (k <= 0) continue;
           for (double side : {1.0, -1.0}) {
             const double nx_ = -uy * side, ny_ = ux * side;
@@ -4630,21 +4644,51 @@ struct Router::Impl {
             std::vector<PairSeg> segs;
             for (std::size_t i = 0; i + 1 < pts.size(); ++i) segs.push_back({pts[i], pts[i + 1], t.width});
             commit_segments(best_ci, segs, t.layer);
-            len += 2 * h * k;
-            deficit -= 2 * h * k;
+            len += 2 * h * k * r;
+            deficit -= 2 * h * k * r;
             placed = true;
             break;
           }
           if (placed) break;
         }
-        if (!placed && tune_bus) {
+        if (!placed && every_track) {
           tried.push_back(best_item);
           continue;
         }
         if (!placed) break;
         tried.clear();
       }
+      if (rate) len = kicad_measure(net).total_delay();
       return len >= static_cast<double>(*mn) && (!mx || len <= static_cast<double>(*mx));
+  }
+
+  // `net` as KiCad's length check measures it now (drc/length.hpp): every live pad, track, arc and via of the net.
+  drc::NetLength kicad_measure(NetId net) {
+    if (len_vh.to.empty() && rules.use_height_for_length) len_vh = drc::via_heights(b, rules);
+    drc::LengthItems li;
+    for (const auto& it : obs->copper().items) {
+      if (it.net != net || it.removed) continue;
+      switch (it.kind) {
+        case drc::ItemKind::Pad: li.pads.push_back(it.index); break;
+        case drc::ItemKind::Track: li.tracks.push_back(it.index); break;
+        case drc::ItemKind::Arc: li.arcs.push_back(it.index); break;
+        case drc::ItemKind::Via: li.vias.push_back(it.index); break;
+        default: break;
+      }
+    }
+    return drc::net_length(b, rules, len_vh, li, rules.profile_of(netclass(net)));
+  }
+
+  // Delay per nanometre of track on each copper layer for `net` (attoseconds), from its class's tuning profile; empty
+  // when the net has no profile.
+  std::vector<double> delay_rates(NetId net) const {
+    const auto* tp = rules.profile_of(netclass(net));
+    if (!tp) return {};
+    std::vector<double> out(static_cast<std::size_t>(b.copper_count()), 0.0);
+    for (int l = 0; l < b.copper_count(); ++l)
+      for (const auto& e : tp->layers)
+        if (e.layer == b.copper_name(l)) out[static_cast<std::size_t>(l)] = static_cast<double>(e.delay) / 1e6;
+    return out;
   }
 
   std::map<NetId, std::vector<int>> routed_conns_by_net() const {
@@ -4662,6 +4706,53 @@ struct Router::Impl {
     for (const auto& [net, list] : routed_conns_by_net()) {
       const auto [mn, mx] = obs->rules().length_constraint(net);
       if (mn && tune_net(net, list, mn, mx)) ++tuned;
+    }
+    return tuned;
+  }
+
+  // Delay tuning (doc 05 §59): a `length` rule in ps or fs is a window on the net's delay, which meanders raise by the
+  // delay per mm of the layer they are on (the class's tuning profile). Then each `skew` rule in ps: the nets it groups
+  // (or each pair, with within_diff_pairs) are brought to within half the limit below the one with the most delay,
+  // which KiCad measures the others against. Returns the nets brought into range.
+  int tune_delays() {
+    int tuned = 0;
+    const auto by = routed_conns_by_net();
+    for (const auto& [net, list] : by) {
+      const auto k = obs->rules().net_constraint(net, "length");
+      if (!k || !k->time || !k->min) continue;
+      const auto rate = delay_rates(net);
+      if (rate.empty()) continue;
+      if (tune_net(net, list, k->min, k->max, &rate)) ++tuned;
+    }
+    std::map<int, std::vector<NetId>> groups;  // skew rule position → its routed nets
+    for (const auto& [net, list] : by) {
+      const int ri = obs->rules().net_rule_with(net, "skew");
+      if (ri < 0) continue;
+      const auto k = obs->rules().net_constraint(net, "skew");
+      if (k && k->time && k->max) groups[ri].push_back(net);
+    }
+    for (const auto& [ri, nets] : groups) {
+      const auto k = obs->rules().net_constraint(nets.front(), "skew");
+      std::vector<std::vector<NetId>> sets;
+      if (std::find(k->items.begin(), k->items.end(), "within_diff_pairs") != k->items.end()) {
+        for (NetId n : nets) {
+          const NetId q = obs->rules().dp_partner(n);
+          if (q > n && std::find(nets.begin(), nets.end(), q) != nets.end()) sets.push_back({n, q});
+        }
+      } else {
+        sets.push_back(nets);
+      }
+      for (const auto& set : sets) {
+        double longest = 0;
+        for (NetId n : set) longest = std::max(longest, kicad_measure(n).total_delay());
+        for (NetId n : set) {
+          if (longest - kicad_measure(n).total_delay() <= static_cast<double>(*k->max) / 2) { ++tuned; continue; }
+          const auto rate = delay_rates(n);
+          if (rate.empty()) continue;
+          const auto mn = static_cast<Coord>(longest - static_cast<double>(*k->max) / 4), mx = static_cast<Coord>(longest);
+          if (tune_net(n, by.at(n), mn, mx, &rate)) ++tuned;
+        }
+      }
     }
     return tuned;
   }
@@ -5737,7 +5828,7 @@ struct Router::Impl {
         res.optimized += n;
         if (n == 0) break;
       }
-      res.length_tuned = tune_lengths() + tune_skew();
+      res.length_tuned = tune_lengths() + tune_skew() + tune_delays();
       if (!opt.buses.empty()) res.length_tuned += tune_bus_skew();
       if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "tuned nets: %d\n", res.length_tuned);
       snapshot();

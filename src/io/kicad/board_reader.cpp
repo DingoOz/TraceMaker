@@ -385,6 +385,9 @@ class Reader {
       pad.trapezoid_dy = d_.nm_at(r, 2).value_or(0);
     }
     if (NodeId c = d_.find(p, "clearance"); c != kNoNode) pad.clearance = d_.nm_at(c, 1).value_or(-1);
+    if (NodeId c = d_.find(p, "die_length"); c != kNoNode) pad.die_length = d_.nm_at(c, 1).value_or(0);
+    // (die_delay) is in picoseconds, as a board unit before format 20250926 and as a time after: either way x 1e6 to attoseconds.
+    if (NodeId c = d_.find(p, "die_delay"); c != kNoNode) pad.die_delay = d_.nm_at(c, 1).value_or(0);
     if (NodeId zc = d_.find(p, "zone_connect"); zc != kNoNode) pad.zone_connect = zone_connect(zc);
     if (NodeId g = d_.find(p, "thermal_gap"); g != kNoNode) pad.thermal_gap = d_.nm_at(g, 1).value_or(-1);
     for (const char* key : {"thermal_bridge_width", "thermal_width"})  // KiCad 7+, KiCad 6

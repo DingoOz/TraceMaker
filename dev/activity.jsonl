@@ -188,3 +188,8 @@
 {"ts": "2026-10-27T23:20:10+00:00", "kind": "build", "text": "M19 drift job (D142): scripts/kicad_drift.py + weekly kicad-drift workflow; 4/4 boards pass on KiCad 10.0.6, 10.0.7 and nightly (a stale 10.0 rc); route -o now copies .kicad_pro/.kicad_dru beside the output"}
 {"ts": "2026-10-27T23:20:10+00:00", "kind": "test", "text": "D3 records complete: interf_u 140/164 in 128 s (the old 20-minute stall was the GPU fallback cliff fixed by D137), RoyalBlue54L-Feather 102/147 in 72 s, not time-limited"}
 {"ts": "2026-10-27T23:52:16+00:00", "kind": "milestone", "text": "M20 C5 (D143): open connections by cause on the 33 failing tier B-D boards (near the pins 779 of 1,320); crowded-source strict searches in portfolio variants 1,5,6,7 by default: open 1,383 -> 1,220, clean set 69 -> 46 (clean 44 -> 46), mid 1,306 -> 1,093, quick 32 -> 24 (clean 25 -> 26); no added errors"}
+{"ts": "2026-10-28T00:46:10+00:00", "kind": "milestone", "text": "M21 B3: --si-rules stitches critical nets' unstitched layer changes (D144); nothing to stitch on the plane tier"}
+{"ts": "2026-10-28T00:46:10+00:00", "kind": "milestone", "text": "M21 B1: KiCad 10 tuning profiles read, compiled and routed with per-layer widths (D145); 0 added KiCad errors"}
+{"ts": "2026-10-28T00:46:10+00:00", "kind": "milestone", "text": "M21 A5: five seeds; --si-rules keeps critical-first (D146)"}
+{"ts": "2026-10-28T00:46:10+00:00", "kind": "note", "text": "C5 follow-up: --txn on top 1,220 -> 1,198 open but loses the one clean board; plane_smd test widened to four variants (A84)"}
+{"ts": "2026-10-28T02:10:06+00:00", "kind": "milestone", "text": "M21 B2 built: time-domain matching as KiCad 10.0.6 measures it (D147); ddr8, interf_u, RoyalBlue KiCad-clean in delay; B1 rejudged at schema 5"}

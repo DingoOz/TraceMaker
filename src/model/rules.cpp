@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "model/rules.hpp"
 
+#include <algorithm>
 #include <regex>
 
 namespace tmk::model {
@@ -55,6 +56,30 @@ const NetClass& DesignRules::class_for(const std::string& net_name) const {
     if (pattern_match(pattern, net_name))
       if (const NetClass* c = find_class(cls)) return *c;
   return default_class();
+}
+
+std::vector<std::string> DesignRules::classes_of(const std::string& net_name) const {
+  std::vector<const NetClass*> found;
+  auto add = [&](const std::string& cls) {
+    if (const NetClass* c = find_class(cls); c && std::find(found.begin(), found.end(), c) == found.end()) found.push_back(c);
+  };
+  if (auto it = assignments.find(net_name); it != assignments.end())
+    for (const auto& cls : it->second) add(cls);
+  for (const auto& [pattern, cls] : patterns)
+    if (pattern_match(pattern, net_name)) add(cls);
+  // NET_SETTINGS::GetEffectiveNetClass (KiCad 10.0.6): no class is Default alone; otherwise Default joins when the classes leave a
+  // parameter unset, or when none names a tuning profile and Default does (rule_parity static_has_class_default*).
+  std::uint16_t fields = 0;
+  bool profile = false;
+  for (const NetClass* c : found) {
+    fields |= c->fields;
+    profile |= !c->tuning_profile.empty() && !c->profile_from_default;
+  }
+  const NetClass& def = default_class();
+  if (found.empty() || fields != NetClass::kAllFields || (!profile && !def.tuning_profile.empty())) add(def.name);
+  std::vector<std::string> out;
+  for (const NetClass* c : found) out.push_back(c->name);
+  return out;
 }
 
 }  // namespace tmk::model

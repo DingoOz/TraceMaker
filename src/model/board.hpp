@@ -70,6 +70,10 @@ struct Pad {
   };
   std::vector<CustomPrim> custom_prims;
   Coord clearance = -1;      // local override, -1 = none
+  // Pad-to-die length and delay (KiCad's (die_length) and (die_delay); the delay in attoseconds, KiCad's time unit), added to the
+  // net's length and delay by length rules (drc/length.hpp).
+  Coord die_length = 0;
+  std::int64_t die_delay = 0;
   Coord mask_margin = INT64_MIN;  // local solder-mask expansion (unset = INT64_MIN)
   ZoneConnect zone_connect = ZoneConnect::Inherited;  // (zone_connect n)
   Coord thermal_gap = -1, thermal_bridge_width = -1;  // local overrides, -1 = none

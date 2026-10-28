@@ -134,6 +134,17 @@ comparable (judge version, time limit, machine load).
 | [b1-profiles2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-profiles2/summary.json) | b1-profiles | 4 | d849fd3 | 0.0% | 84.2% |  | 289 | `--soft-zones` |
 | [b1-profiles3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-profiles3/summary.json) | b1-profiles | 2 | d849fd3 | 0.0% | 83.2% |  | 110 | `--soft-zones` |
 | [b1-se](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-se/summary.json) | b1-profiles | 1 | d849fd3 | 0.0% | 71.9% |  | 62 | `--soft-zones` |
+| [b1-v5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-v5/summary.json) | b1-profiles | 5 | 17b2178 | 0.0% | 77.0% |  | 183 | `--soft-zones` |
+
+## m21-b2
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m21-b2)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [b2-delay-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-delay-new/summary.json) | b2-delay | 3 | 17b2178 | 0.0% | 79.6% |  | 165 | `--soft-zones` |
+| [b2-delay-old](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-delay-old/summary.json) | b2-delay | 2 | 17b2178 | 0.0% | 77.3% |  | 88 | `--soft-zones` |
+| [b2-profile](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-profile/summary.json) | b2-delay | 2 | 17b2178 | 0.0% | 78.0% |  | 121 | `--soft-zones` |
 
 ## macos15
 

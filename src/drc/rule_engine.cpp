@@ -242,7 +242,7 @@ class Condition {
     static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
                                                  "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
-                                                 kImplicitExactNetclass, "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
+                                                 kImplicitExactNetclass, "hasNetclass", "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
     if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls) && !kicad_only(n.name))
       return n.name + "()";
@@ -257,7 +257,7 @@ class Condition {
   // (false) here, as before D80, and a disallow whose evaluation reached it does not fire (disallow_hit).
   static bool kicad_only(std::string_view name) {
     static constexpr std::string_view names[] = {
-        "hasNetclass", "hasExactNetclass", "hasComponentClass", "fromTo", "isMicroVia", "isBlindBuriedVia", "isBlindVia",
+        "hasExactNetclass", "hasComponentClass", "fromTo", "isMicroVia", "isBlindBuriedVia", "isBlindVia",
         "isBuriedVia", "isCoupledDiffPair", "getField", "memberOf", "memberOfGroup", "memberOfSheet",
         "memberOfSheetOrChildren", "insideCourtyard", "insideFrontCourtyard", "insideBackCourtyard"};
     return std::find(std::begin(names), std::end(names), name) != std::end(names);
@@ -413,6 +413,14 @@ class Condition {
         const std::string& name = b.nets[net].name;
         v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
       }
+    } else if (n.name == "hasNetclass" && !n.args.empty()) {
+      // KiCad: the item's effective net class contains a class of that name (NETCLASS::ContainsNetclassWithName),
+      // compared exactly. QA board time_calculations (doc 05 §59) and rule_parity has_netclass_* check it.
+      const auto net = static_cast<std::size_t>(it->net);
+      if (net < ctx.eng->net_classes_.size()) {
+        const auto& cs = ctx.eng->net_classes_[net];
+        v.b = std::find(cs.begin(), cs.end(), n.args[0]) != cs.end();
+      }
     } else if (n.name == kImplicitExactNetclass && !n.args.empty()) {
       // hasExactNetclass() in the rules KiCad compiles itself (tuning profiles, doc 05 §58): the name of the item's effective net class,
       // compared exactly (pcbexpr_functions.cpp). In a user's rule KiCad 10.0.6 never matches it (rule_parity static_exact_class_*), so
@@ -498,7 +506,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
                                                "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
                                                "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
-    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", kImplicitExactNetclass});
+    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", "hasNetclass", kImplicitExactNetclass});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
@@ -558,11 +566,13 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
   net_class_.resize(b_.nets.size());
+  net_classes_.resize(b_.nets.size());
   dp_partner_.assign(b_.nets.size(), 0);
   std::map<std::string, model::NetId> by_name;
   for (const auto& n : b_.nets) by_name[n.name] = n.id;
   for (const auto& n : b_.nets) {
     net_class_[static_cast<std::size_t>(n.id)] = &r_.class_for(n.name);
+    net_classes_[static_cast<std::size_t>(n.id)] = r_.classes_of(n.name);
     if (n.name.size() < 2) continue;
     std::string other = n.name;
     char& last = other.back();
@@ -641,7 +651,8 @@ std::pair<std::optional<Coord>, std::optional<Coord>> RuleEngine::length_constra
       EvalCtx ctx{this, &probe, nullptr, -1};
       if (!c.cond->eval(ctx)) continue;
     }
-    out = {k->min, k->max};  // later rules take precedence
+    // Later rules take precedence. A delay (ps) is not a length, and the router does not tune delays (doc 05 §59).
+    out = k->time ? std::pair<std::optional<Coord>, std::optional<Coord>>{} : std::pair{k->min, k->max};
   }
   return out;
 }
@@ -662,7 +673,7 @@ std::optional<Coord> RuleEngine::skew_constraint(model::NetId net) const {
       EvalCtx ctx{this, &probe, nullptr, -1};
       if (!c.cond->eval(ctx)) continue;
     }
-    out = k->max;
+    out = k->time ? std::nullopt : k->max;  // a skew in ps is a delay (see length_constraint)
   }
   return out;
 }
@@ -686,6 +697,29 @@ std::optional<model::Constraint> RuleEngine::net_constraint(model::NetId net, co
     out = *k;  // later rules take precedence
   }
   return out;
+}
+
+int RuleEngine::last_rule_with(const CopperItem& it, int layer, const std::string& type) const {
+  int out = -1;
+  for (std::size_t i = 0; i < rules_.size(); ++i) {
+    const auto& c = rules_[i];
+    if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
+    if (std::none_of(c.rule->constraints.begin(), c.rule->constraints.end(), [&](const model::Constraint& x) { return x.type == type; })) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &it, nullptr, layer};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = static_cast<int>(i);
+  }
+  return out;
+}
+
+int RuleEngine::net_rule_with(model::NetId net, const std::string& type) const {
+  CopperItem probe;
+  probe.kind = ItemKind::Track;
+  probe.net = net;
+  probe.layers = ~model::LayerMask{0};
+  return last_rule_with(probe, -1, type);
 }
 
 // KiCad's disallow item keywords (DRC_RULES_PARSER): "via" covers every via type. `words` holds the rule's

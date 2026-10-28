@@ -162,6 +162,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D144](decisions/D144.md) | --si-rules stitches the critical nets' unstitched layer changes and says where the rest are | accepted |
 | [D145](decisions/D145.md) | KiCad 10 tuning profiles: KiCad's width rules, and per-layer widths by narrowing | accepted |
 | [D146](decisions/D146.md) | --si-rules keeps critical-first: five seeds settle #24's options | accepted |
+| [D147](decisions/D147.md) | Time-domain matching measured as KiCad 10.0.6 measures it, and KiCad's net-class and pair-coupling semantics | accepted |
 <!-- END decision index -->
 
 ## Risks

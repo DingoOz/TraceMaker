@@ -1,0 +1,144 @@
+[
+ {
+  "board": "StickHub",
+  "kicad_nets": 45,
+  "engine_nets": 45,
+  "both": 45,
+  "only_kicad": [],
+  "only_engine": [],
+  "max_diff_mm": 1.5827000000000169,
+  "over_0.0001mm": 9,
+  "worst": [
+   {
+    "net": "GND",
+    "kicad": 236.8736,
+    "engine": 235.2909
+   },
+   {
+    "net": "+5V",
+    "kicad": 101.52,
+    "engine": 101.4774
+   },
+   {
+    "net": "/U5D+",
+    "kicad": 11.4564,
+    "engine": 11.456
+   },
+   {
+    "net": "/XI",
+    "kicad": 3.3391,
+    "engine": 3.3387
+   },
+   {
+    "net": "/D-",
+    "kicad": 21.5817,
+    "engine": 21.5814
+   },
+   {
+    "net": "/U7D+",
+    "kicad": 13.9009,
+    "engine": 13.9006
+   },
+   {
+    "net": "/LED5",
+    "kicad": 1.8864,
+    "engine": 1.8862
+   },
+   {
+    "net": "/LED1",
+    "kicad": 2.14,
+    "engine": 2.1398
+   },
+   {
+    "net": "/U3D-",
+    "kicad": 16.1173,
+    "engine": 16.1171
+   }
+  ]
+ },
+ {
+  "board": "RoyalBlue54L-Feather",
+  "kicad_nets": 68,
+  "engine_nets": 68,
+  "both": 66,
+  "only_kicad": [
+   "Net-(U1-P1.00/XL1)",
+   "Net-(U1-P1.01/XL2)"
+  ],
+  "only_engine": [
+   "Net-(U1-P1.00{slash}XL1)",
+   "Net-(U1-P1.01{slash}XL2)"
+  ],
+  "max_diff_mm": 0.14229999999999876,
+  "over_0.0001mm": 3,
+  "worst": [
+   {
+    "net": "/Debugger/D-",
+    "kicad": 24.1001,
+    "engine": 24.2424
+   },
+   {
+    "net": "GND",
+    "kicad": 31.3652,
+    "engine": 31.3249
+   },
+   {
+    "net": "/Debugger/SWD_TRG.SWDCLK",
+    "kicad": 23.5728,
+    "engine": 23.5725
+   }
+  ]
+ },
+ {
+  "board": "interf_u",
+  "kicad_nets": 110,
+  "engine_nets": 110,
+  "both": 109,
+  "only_kicad": [
+   "Net-(U9-P/A3)"
+  ],
+  "only_engine": [
+   "Net-(U9-P{slash}A3)"
+  ],
+  "max_diff_mm": 0.0009000000000014552,
+  "over_0.0001mm": 2,
+  "worst": [
+   {
+    "net": "/PC-A9",
+    "kicad": 101.1166,
+    "engine": 101.1157
+   },
+   {
+    "net": "/BIT7",
+    "kicad": 25.6708,
+    "engine": 25.6705
+   }
+  ]
+ },
+ {
+  "board": "CM5_MINIMA_3",
+  "kicad_nets": 110,
+  "engine_nets": 110,
+  "both": 109,
+  "only_kicad": [
+   "Net-(J701-DAS/~{DSS}/~{LED1})"
+  ],
+  "only_engine": [
+   "Net-(J701-DAS{slash}~{DSS}{slash}~{LED1})"
+  ],
+  "max_diff_mm": 0.0008000000000016882,
+  "over_0.0001mm": 2,
+  "worst": [
+   {
+    "net": "+5V",
+    "kicad": 29.8232,
+    "engine": 29.8224
+   },
+   {
+    "net": "/CM5/USB2P.D_N",
+    "kicad": 22.5016,
+    "engine": 22.5011
+   }
+  ]
+ }
+]

@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
+#include <map>
 #include <numeric>
 #include <set>
 #include <tuple>
@@ -17,6 +18,8 @@
 
 #include "drc/connectivity.hpp"
 #include "drc/copper.hpp"
+#include "drc/coupling.hpp"
+#include "drc/length.hpp"
 #include "drc/rule_engine.hpp"
 #include "index/uniform_grid.hpp"
 
@@ -95,6 +98,10 @@ class Checker {
       tick("check_disallow");
       check_physical_holes();
       tick("check_physical_holes");
+      check_lengths();
+      tick("check_lengths");
+      check_diff_pairs();
+      tick("check_diff_pairs");
     }
     check_connectivity();
     tick("check_connectivity");
@@ -568,6 +575,294 @@ class Checker {
   }
 
   // Physical hole clearance applies to any net; KiCad reports one hole_clearance per hole and copper item.
+  // KiCad's matched-length check (DRC_TEST_PROVIDER_MATCHED_LENGTH, KiCad 10.0.6; doc 05 §59). Every pad, track,
+  // arc and via is grouped by the last rule giving it a `length` or `skew` constraint, then by net; each group is
+  // measured as KiCad measures it (drc/length.hpp). A constraint in ps or fs is checked against the delay.
+  void check_lengths() {
+    const bool any = std::any_of(r_.custom.begin(), r_.custom.end(), [](const model::CustomRule& c) {
+      return std::any_of(c.constraints.begin(), c.constraints.end(), [](const model::Constraint& k) { return k.type == "length" || k.type == "skew"; });
+    });
+    if (!any) return;
+    struct Entry {
+      model::NetId net = 0;
+      LengthItems items;
+      const CopperItem* first = nullptr;
+      NetLength len;
+    };
+    std::map<int, std::map<model::NetId, Entry>> groups;  // rule position → net → items
+    for (const auto& it : cm_.items) {
+      if (it.kind == ItemKind::Zone || it.kind == ItemKind::Graphic || it.layers == 0) continue;
+      const int layer = std::countr_zero(it.layers);
+      const int rl = re_.last_rule_with(it, layer, "length"), rs = re_.last_rule_with(it, layer, "skew");
+      // A rule with both constraints takes the item once (KiCad keeps a set of items per rule).
+      for (const int ri : {rl, rs == rl ? -1 : rs}) {
+        if (ri < 0) continue;
+        Entry& e = groups[ri][it.net];
+        e.net = it.net;
+        if (!e.first) e.first = &it;
+        auto& v = it.kind == ItemKind::Pad ? e.items.pads : it.kind == ItemKind::Track ? e.items.tracks : it.kind == ItemKind::Arc ? e.items.arcs : e.items.vias;
+        v.push_back(it.index);
+      }
+    }
+    if (groups.empty()) return;
+    const ViaHeights vh = via_heights(b_, r_);
+    auto value = [](double v, bool time) {
+      char buf[48];
+      if (time) std::snprintf(buf, sizeof buf, "%.2f ps", v / 1e6);
+      else std::snprintf(buf, sizeof buf, "%.4f mm", v / 1e6);
+      return std::string(buf);
+    };
+    for (auto& [ri, nets] : groups) {
+      const model::CustomRule& rule = re_.rule(ri);
+      if (rule.severity == "ignore") continue;
+      const std::string sev = rule.severity == "warning" ? "warning" : "error";
+      std::vector<Entry*> ents;
+      for (auto& [net, e] : nets) {
+        e.len = net_length(b_, r_, vh, e.items, r_.profile_of(re_.netclass(*e.first)));
+        ents.push_back(&e);
+      }
+      std::stable_sort(ents.begin(), ents.end(), [&](const Entry* a, const Entry* c) { return net_name(a->net) < net_name(c->net); });
+      const model::Constraint* lk = nullptr;
+      const model::Constraint* sk = nullptr;
+      for (const auto& k : rule.constraints) {
+        if (k.type == "length") lk = &k;
+        if (k.type == "skew") sk = &k;
+      }
+      auto report = [&](const char* type, const Entry& e, double actual, Coord required, std::string detail) {
+        add(type, e.first, nullptr, static_cast<Coord>(std::llround(actual)), required, -1, sev);
+        rep_.violations.back().description = std::move(detail);
+      };
+      if (lk)
+        for (const Entry* e : ents) {
+          const double v = lk->time ? e->len.total_delay() : e->len.total();
+          const char* which = lk->min && v < static_cast<double>(*lk->min) ? "min" : lk->max && v > static_cast<double>(*lk->max) ? "max" : nullptr;
+          if (!which) continue;
+          const Coord req = *(which[1] == 'i' ? lk->min : lk->max);
+          report("length_out_of_range", *e, v, req,
+                 "(" + rule.name + " " + which + " length " + value(static_cast<double>(req), lk->time) + "; actual " + value(v, lk->time) + ") [" + net_name(e->net) + "]");
+        }
+      if (!sk) continue;
+      // KiCad 10.0.6 measures each member against the longest, the longest included: a minimum skew fails on it.
+      auto check_skews = [&](const std::vector<Entry*>& group) {
+        double longest = 0;
+        std::string longest_name;
+        for (const Entry* e : group) {
+          const double v = sk->time ? e->len.total_delay() : e->len.total();
+          if (v > longest) longest = v, longest_name = net_name(e->net);
+        }
+        for (const Entry* e : group) {
+          const double v = sk->time ? e->len.total_delay() : e->len.total();
+          const std::int64_t skew = std::llabs(std::llround(v - longest));
+          const char* which = sk->max && skew > *sk->max ? "max" : sk->min && skew < *sk->min ? "min" : nullptr;
+          if (!which) continue;
+          const Coord req = *(which[1] == 'i' ? sk->min : sk->max);
+          report("skew_out_of_range", *e, static_cast<double>(skew), req,
+                 "(" + rule.name + " " + which + " skew " + value(static_cast<double>(req), sk->time) + "; actual " +
+                     value(static_cast<double>(std::llround(v - longest)), sk->time) + "; target net length " + value(longest, sk->time) + " (from " +
+                     longest_name + "); actual " + value(v, sk->time) + ") [" + net_name(e->net) + "]");
+        }
+      };
+      if (std::find(sk->items.begin(), sk->items.end(), "within_diff_pairs") != sk->items.end()) {
+        // Each net with its pair partner, in net order; a net whose partner has no entry is not checked.
+        std::map<model::NetId, Entry*> left;
+        for (Entry* e : ents) left[e->net] = e;
+        std::vector<std::vector<Entry*>> pairs;
+        for (auto it = left.begin(); it != left.end(); ++it) {
+          const model::NetId q = re_.dp_partner(it->first);
+          if (q == 0 || q == it->first) continue;
+          const auto jt = left.find(q);
+          if (jt == left.end()) continue;
+          pairs.push_back({it->second, jt->second});
+          left.erase(jt);
+        }
+        for (const auto& pr : pairs) check_skews(pr);
+      } else {
+        check_skews(ents);
+      }
+    }
+  }
+
+  // KiCad 10.0.6's diff-pair coupling test (drc_test_provider_diff_pair_coupling.cpp; doc 05 §59). Each track, arc and via of
+  // a pair net joins a group per constraint it gets (diff_pair_gap, then diff_pair_uncoupled, from the last matching rule at its
+  // layer), keyed by the pair and the rule names with KiCad's comparator, whose quirks decide which items share a group. In a
+  // group every P track is tried against every N track (drc/coupling.hpp); a coupling counts when nothing on the layer crosses the
+  // line between the nearest points, apart from the two tracks, items touching the coupled ends, and pads either track leaves.
+  // Arc pairs are not coupled here (the router writes no arcs).
+  void check_diff_pairs() {
+    const bool any = std::any_of(r_.custom.begin(), r_.custom.end(), [](const model::CustomRule& c) {
+      return std::any_of(c.constraints.begin(), c.constraints.end(),
+                         [](const model::Constraint& k) { return k.type == "diff_pair_gap" || k.type == "diff_pair_uncoupled"; });
+    });
+    if (!any) return;
+    struct Key {
+      model::NetId p = 0, n = 0;
+      std::string gap_name, unc_name;
+      // DIFF_PAIR_KEY::operator<, asymmetry included.
+      bool operator<(const Key& o) const {
+        if (p != o.p) return p < o.p;
+        if (n != o.n) return n < o.n;
+        if (gap_name.empty()) return gap_name < o.gap_name;
+        return unc_name < o.unc_name;
+      }
+    };
+    struct Group {
+      std::optional<model::Constraint> gap, unc;
+      int gap_rule = -1, unc_rule = -1;
+      std::string gap_name, unc_name;
+      std::vector<int> p_items, n_items;  // copper item indices
+    };
+    auto positive = [&](model::NetId n) {
+      const std::string& s = net_name(n);
+      return s.back() == 'P' || s.back() == '+';
+    };
+    auto last_of = [](const model::CustomRule& rule, const char* type) {
+      const model::Constraint* k = nullptr;
+      for (const auto& x : rule.constraints)
+        if (x.type == type) k = &x;
+      return *k;
+    };
+    std::map<Key, Group> groups;
+    for (std::size_t i = 0; i < cm_.items.size(); ++i) {
+      const CopperItem& it = cm_.items[i];
+      if ((it.kind != ItemKind::Track && it.kind != ItemKind::Arc && it.kind != ItemKind::Via) || it.layers == 0) continue;
+      const model::NetId q = re_.dp_partner(it.net);
+      if (q == 0) continue;
+      Key key;
+      key.p = positive(it.net) ? it.net : q;
+      key.n = key.p == it.net ? q : it.net;
+      const int layer = std::countr_zero(it.layers);
+      Group cur;  // the key as KiCad fills it in, constraint by constraint
+      for (const char* type : {"diff_pair_gap", "diff_pair_uncoupled"}) {
+        const int ri = re_.last_rule_with(it, layer, type);
+        if (ri < 0 || re_.rule(ri).severity == "ignore") continue;
+        if (type[10] == 'g') {
+          key.gap_name = cur.gap_name = re_.rule(ri).name;
+          cur.gap = last_of(re_.rule(ri), type);
+          cur.gap_rule = ri;
+        } else {
+          key.unc_name = cur.unc_name = re_.rule(ri).name;
+          cur.unc = last_of(re_.rule(ri), type);
+          cur.unc_rule = ri;
+        }
+        // The map keeps the key it was first given, constraints included.
+        auto [g, fresh] = groups.try_emplace(key, cur);
+        (it.net == key.n ? g->second.n_items : g->second.p_items).push_back(static_cast<int>(i));
+      }
+    }
+    if (groups.empty()) return;
+    std::vector<const geom::Shape*> pad_hole(cm_.items.size(), nullptr);
+    for (const auto& h : cm_.holes)
+      if (h.pad >= 0 && h.item >= 0) pad_hole[static_cast<std::size_t>(h.item)] = &h.shape;
+    auto mm = [](double v) {
+      char buf[40];
+      std::snprintf(buf, sizeof buf, "%.4f mm", v / 1e6);
+      return std::string(buf);
+    };
+    struct Coupled {
+      int p, n;
+      Coupling c;
+      bool fail_min = false, fail_max = false;
+    };
+    for (auto& [key, g] : groups) {
+      std::vector<Coupled> coupled;
+      for (const int pi : g.p_items) {
+        const CopperItem& ip = cm_.items[static_cast<std::size_t>(pi)];
+        if (ip.kind != ItemKind::Track) continue;
+        const model::Track& sp = b_.tracks[static_cast<std::size_t>(ip.index)];
+        for (const int ni : g.n_items) {
+          const CopperItem& in = cm_.items[static_cast<std::size_t>(ni)];
+          if (in.kind != ItemKind::Track || !(in.layers & ip.layers)) continue;
+          const model::Track& sn = b_.tracks[static_cast<std::size_t>(in.index)];
+          const auto c = couple(sp.a, sp.b, sp.width, sn.a, sn.b, sn.width);
+          if (!c) continue;
+          const geom::Shape line = geom::Shape::segment(c->near_n, c->near_p, 0);
+          const model::Point ends[4] = {c->na, c->nb, c->pa, c->pb};
+          bool blocked = false;
+          grid_->query(line.box, [&](int j) {
+            if (blocked || j == pi || j == ni) return;
+            const CopperItem& o = cm_.items[static_cast<std::size_t>(j)];
+            if (o.kind == ItemKind::Zone) return;  // fills are not in KiCad's copper item tree
+            const bool on = (o.layers & ip.layers) != 0;
+            const geom::Shape* hole = o.kind == ItemKind::Pad && !on ? pad_hole[static_cast<std::size_t>(j)] : nullptr;
+            if (!on && !hole) return;
+            auto touches = [&](model::Point pt) {
+              return std::any_of(o.shapes.begin(), o.shapes.end(), [&](const geom::Shape& s) { return geom::closer_than_disk(s, pt, 0, 1); });
+            };
+            if (o.kind == ItemKind::Track || o.kind == ItemKind::Arc || o.kind == ItemKind::Via) {
+              if (std::any_of(std::begin(ends), std::end(ends), touches)) return;
+            } else if (o.kind == ItemKind::Pad) {
+              if (touches(sp.a) != touches(sp.b) || touches(sn.a) != touches(sn.b)) return;
+            }
+            if (hole) blocked = geom::closer_than(line, *hole, 1);
+            else blocked = std::any_of(o.shapes.begin(), o.shapes.end(), [&](const geom::Shape& s) { return geom::closer_than(line, s, 1); });
+          });
+          if (!blocked) coupled.push_back({pi, ni, *c});
+        }
+      }
+      // Totals over the group's tracks, each once, truncated as KiCad's int += double does.
+      Coord len_n = 0, len_p = 0, total_coupled = 0;
+      std::vector<int> seen;
+      auto add_len = [&](const std::vector<int>& items, Coord& total) {
+        for (const int j : items) {
+          if (std::find(seen.begin(), seen.end(), j) != seen.end()) continue;
+          seen.push_back(j);
+          const CopperItem& o = cm_.items[static_cast<std::size_t>(j)];
+          double l = 0;
+          if (o.kind == ItemKind::Track) {
+            const auto& t = b_.tracks[static_cast<std::size_t>(o.index)];
+            l = std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+          } else if (o.kind == ItemKind::Arc) {
+            for (const auto& sh : o.shapes)  // the arc's 0.1 um chords
+              for (std::size_t k = 1; k < sh.pts.size(); ++k)
+                l += std::hypot(static_cast<double>(sh.pts[k].x - sh.pts[k - 1].x), static_cast<double>(sh.pts[k].y - sh.pts[k - 1].y));
+          }
+          total = static_cast<Coord>(static_cast<double>(total) + l);
+        }
+      };
+      add_len(g.n_items, len_n);
+      add_len(g.p_items, len_p);
+      for (auto& cp : coupled) {
+        if (g.gap) {
+          if (g.gap->min && *g.gap->min >= 0 && cp.c.gap < *g.gap->min - o_.epsilon) cp.fail_min = true;
+          if (g.gap->max && *g.gap->max >= 0 && cp.c.gap > *g.gap->max + o_.epsilon) cp.fail_max = true;
+        }
+        if (!cp.fail_min && !cp.fail_max) total_coupled += cp.c.length;
+      }
+      const Coord uncoupled = std::max(len_n, len_p) - total_coupled;
+      bool unc_violation = false;
+      if (g.unc && g.unc->max && *g.unc->max >= 0 && uncoupled > *g.unc->max && (!g.p_items.empty() || !g.n_items.empty())) {
+        const std::string sev = re_.rule(g.unc_rule).severity == "warning" ? "warning" : "error";
+        const CopperItem* a = g.p_items.empty() ? nullptr : &cm_.items[static_cast<std::size_t>(g.p_items[0])];
+        const CopperItem* c = g.n_items.empty() ? nullptr : &cm_.items[static_cast<std::size_t>(g.n_items[0])];
+        // KiCad adds every item of the group, but its report lists the first two: the first P and the first N.
+        add("diff_pair_uncoupled_length_too_long", a ? a : c, a ? c : nullptr, uncoupled, *g.unc->max, -1, sev);
+        rep_.violations.back().description = "(" + g.unc_name + " maximum uncoupled length " + mm(static_cast<double>(*g.unc->max)) + "; actual " +
+                                             mm(static_cast<double>(uncoupled)) + ")";
+        unc_violation = true;
+      }
+      if (!g.gap || (g.unc && !unc_violation)) continue;
+      for (auto& cp : coupled) {
+        if (!cp.fail_min && !cp.fail_max) continue;
+        // KiCad asks again for the pair's own constraint at the P track's layer (a rule may depend on the place).
+        const CopperItem& ip = cm_.items[static_cast<std::size_t>(cp.p)];
+        const int layer = std::countr_zero(ip.layers);
+        const int ri = re_.last_rule_with(ip, layer, "diff_pair_gap");
+        std::optional<model::Constraint> val;
+        if (ri >= 0) val = last_of(re_.rule(ri), "diff_pair_gap");
+        if (!val || !val->min || *val->min < 0 || cp.c.gap >= *val->min) cp.fail_min = false;
+        if (!val || !val->max || *val->max < 0 || cp.c.gap <= *val->max) cp.fail_max = false;
+        if (!cp.fail_min && !cp.fail_max) continue;
+        const Coord req = cp.fail_min ? *val->min : *val->max;
+        const std::string sev = re_.rule(g.gap_rule).severity == "warning" ? "warning" : "error";
+        add("diff_pair_gap_out_of_range", &ip, &cm_.items[static_cast<std::size_t>(cp.n)], cp.c.gap, req, layer, sev);
+        rep_.violations.back().description = "(" + g.gap_name + (cp.fail_min ? " minimum gap " : " maximum gap ") + mm(static_cast<double>(req)) +
+                                             "; actual " + mm(static_cast<double>(cp.c.gap)) + ")";
+      }
+    }
+  }
+
+  const std::string& net_name(model::NetId n) const { return b_.nets[static_cast<std::size_t>(n)].name; }
+
   void check_physical_holes() {
     if (!re_.any_physical_hole_clearance()) return;
     for (const auto& h : cm_.holes) {

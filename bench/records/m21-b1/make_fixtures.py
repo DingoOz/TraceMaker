@@ -71,6 +71,8 @@ def main():
                         c["tuning_profile"] = name
                         profiles.append(profile(name, diff, [layer(l, *geom(l)) for l in layers]))
                 pro["tuning_profiles"] = {"meta": {"version": 0}, "tuning_profiles_impedance_geometric": profiles}
+                # KiCad gives every class an empty profile when it migrates net settings older than schema 5 (D147).
+                pro["net_settings"].setdefault("meta", {})["version"] = 5
             (dst / "unrouted.kicad_pro").write_text(json.dumps(pro, indent=2) + "\n")
             print(dst)
 

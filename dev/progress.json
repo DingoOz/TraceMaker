@@ -872,10 +872,31 @@
   {
    "id": "M21",
    "title": "High speed for the Kookabus boards",
-   "status": "planned",
+   "status": "in_progress",
    "gate": "Only as far as the Kookabus boards need it; the board files are not on this machine yet (docs/18 section 7)",
    "deliverables": "B1 tuning profiles, B2 time-domain matching, B3 audit loop, A5",
-   "tasks": []
+   "tasks": [
+    {
+     "text": "B3 audit loop: --si-rules stitches the critical nets' unstitched layer changes and places the rest in the report (D144); plane tier: one change left (StickHub, no plane copper), nothing to stitch",
+     "done": true
+    },
+    {
+     "text": "B1 KiCad 10 tuning profiles: read, KiCad's implicit width/gap rules as KiCad 10.0.6 applies them, per-layer widths by narrowing, pairs on one geometry (D145); rejudged at schema 5 with B2 (D147): 0 width errors, 5 coupling-gap errors left at RoyalBlue's USB-C",
+     "done": true
+    },
+    {
+     "text": "A5 five seeds of #24's options on the plane tier: no critical-net measure moves with the seed; --si-rules keeps critical-first (D146)",
+     "done": true
+    },
+    {
+     "text": "B2 time-domain matching: delays measured as KiCad 10.0.6 does, ps windows and skew tuned, KiCad's coupling check in the DRC (D147); ddr8, interf_u and RoyalBlue KiCad-clean in delay; 229 parity cases",
+     "done": true
+    },
+    {
+     "text": "A3 Kookabus boards as a fixture set (files still missing)",
+     "done": false
+    }
+   ]
   }
  ]
 }

@@ -1,0 +1,41 @@
+{
+ "judge": "KiCad 10.0.6 and tracemaker drc, with the fixture rules",
+ "runs": {
+  "b2-delay-old/interf_u-delay": {
+   "kicad": [
+    "Track length out of range (rule 'memdata_window' min length 245.00 ps; actual 234.90 ps)",
+    "Track length out of range (rule 'memdata_window' min length 245.00 ps; actual 224.79 ps)",
+    "Track length out of range (rule 'memdata_window' min length 245.00 ps; actual 198.66 ps)",
+    "Track length out of range (rule 'memdata_window' min length 245.00 ps; actual 244.42 ps)",
+    "Skew between tracks out of range (rule 'memdata_skew' max skew 3.00 ps; actual -9.52 ps; target net length 244.42 ps (from /MD4); actual 234.90 ps)",
+    "Skew between tracks out of range (rule 'memdata_skew' max skew 3.00 ps; actual -19.63 ps; target net length 244.42 ps (from /MD4); actual 224.79 ps)",
+    "Skew between tracks out of range (rule 'memdata_skew' max skew 3.00 ps; actual -45.76 ps; target net length 244.42 ps (from /MD4); actual 198.66 ps)"
+   ],
+   "tracemaker": [
+    "(memdata_window min length 245.00 ps; actual 234.90 ps) [/MD1]",
+    "(memdata_window min length 245.00 ps; actual 224.79 ps) [/MD2]",
+    "(memdata_window min length 245.00 ps; actual 198.66 ps) [/MD3]",
+    "(memdata_window min length 245.00 ps; actual 244.42 ps) [/MD4]",
+    "(memdata_skew max skew 3.00 ps; actual -9.52 ps; target net length 244.42 ps (from /MD4); actual 234.90 ps) [/MD1]",
+    "(memdata_skew max skew 3.00 ps; actual -19.63 ps; target net length 244.42 ps (from /MD4); actual 224.79 ps) [/MD2]",
+    "(memdata_skew max skew 3.00 ps; actual -45.76 ps; target net length 244.42 ps (from /MD4); actual 198.66 ps) [/MD3]"
+   ]
+  },
+  "b2-delay-old/RoyalBlue54L-Feather-delay": {
+   "kicad": [
+    "Skew between tracks out of range (rule 'usb_pair_skew' max skew 0.50 ps; actual -8.48 ps; target net length 79.78 ps (from /Debugger/D-); actual 71.30 ps)"
+   ],
+   "tracemaker": [
+    "(usb_pair_skew max skew 0.50 ps; actual -8.48 ps; target net length 79.78 ps (from /Debugger/D-); actual 71.30 ps) [/Debugger/D+]"
+   ]
+  },
+  "b2-delay-new/interf_u-delay": {
+   "kicad": [],
+   "tracemaker": []
+  },
+  "b2-delay-new/RoyalBlue54L-Feather-delay": {
+   "kicad": [],
+   "tracemaker": []
+  }
+ }
+}

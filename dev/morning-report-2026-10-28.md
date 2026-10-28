@@ -1,0 +1,55 @@
+# Morning report, 2026-10-28: roadmap night
+
+Asked on 2026-10-27 at about 22:10 UTC: "work on the roadmap features without stopping until I tell you". Everything is on the local
+branch `m20-c5-fanout` in the worktree `/home/dingo/Programming/TraceMaker-roadmap`, from `origin/main` `ec7cc9b` (PR #51). Nothing is
+pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A89).
+
+## What was done
+
+| Item | Result | Decision | Records |
+|---|---|---|---|
+| M20 C2, pin swap | An oracle (minimum-cost assignment of connector pins and resistor arrays) on 30 boards: open 982 → 978 and 27 → 26, median gain zero. **The pass is not built**; C2 is closed | D141 | `bench/records/m20-c2` |
+| M19, KiCad drift | `scripts/kicad_drift.py` and a weekly workflow against the newest `kicad/kicad` release and release candidate; 4/4 boards pass on 10.0.6, 10.0.7 and `nightly` (a stale 10.0 rc). Found: `route -o` did not copy `.kicad_pro`/`.kicad_dru` beside the output, so KiCad judged it with default rules; fixed | D142 | `bench/records/m19-drift` |
+| M20 D3, run report | interf_u (128 s, 140/164) and RoyalBlue54L-Feather (72 s, 102/147, not time-limited) now finish; all eight plane boards have reports. Still missing: a review by someone who did not write it | — | `bench/records/m20-run-report` |
+| M20 C5, failures by cause | `tracemaker causes`: of 1,320 open connections on the 33 failing boards, 779 are blocked by copper near their pins. Strict searches now start from the more crowded end, in four of the eight portfolio variants: open 1,383 → 1,220 on the failing boards, 69 → 46 on the 59 clean ones (clean 44 → 46), mid tier 1,306 → 1,093, quick tier 32 → 24. No board gained an error | D143 | `bench/records/m20-c5` |
+| M21 B3, audit loop | `--si-rules` stitches the critical nets' unstitched layer changes (`--no-si-stitch` turns it off), and the report names each change left and why. On the plane tier there was nothing to stitch: one change on StickHub is left, with no plane copper on one side | D144 | `bench/records/m21-b3` |
+| M21 A5, settle `--si-rules` | Five seeds on the plane tier: no critical-net measure moves with the seed. `--critical-first` routes 27 of 28 critical nets against 23 to 25 without it. `--si-rules` keeps all three rules, and defaults stay off | D146 | `bench/records/m21-a5` |
+| M21 B1, KiCad 10 tuning profiles | Profiles are read, KiCad's implicit width and gap rules are compiled as 10.0.6 applies them, single-ended widths are narrowed per layer, and pairs stay on one geometry. **The first result was wrong**: see "B1 rejudged" below | D145 | `bench/records/m21-b1` |
+| M21 B2, time-domain matching | Delays are measured as KiCad 10.0.6 measures them (its QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm). ps windows and skew groups are tuned. ddr8 goes from 20 errors to 0, interf_u from 7 to 0 and RoyalBlue from 1 to 0, by KiCad's DRC and at the same routed counts. KiCad's diff-pair coupling test is now in the DRC. Parity corpus 229/229 | D147 | `bench/records/m21-b2` |
+
+## Things to know
+
+- **B1 rejudged.** B1's fixtures kept the demos' net settings at schema 4. KiCad migrates those and drops every class's tuning profile,
+  so B1's "0 added KiCad errors" came from a KiCad that checked nothing. At schema 5 the first build had 20 to 175 `track_width` errors
+  per board. Three fixes (KiCad semantics):
+  - classes with no profile take Default's;
+  - a single-ended profile sets the pair width;
+  - profiled nets get no neck-down.
+
+  With them, plane_smd is 48/49 with no added error. RoyalBlue drops to 102/147 (single-ended profile) and 104/147 (both), from 125, with
+  no width errors. So a single-ended profile on Default is not free: KiCad wants exactly its width on every Default track. D145 and
+  doc 05 §58 say so.
+- **5 coupling-gap errors left** on RoyalBlue with the USB pair profile. They are at the USB-C connector, whose D+/D− pads are interleaved
+  at 0.5 mm: the halves leave in parallel 0.35 mm apart, and a profile's gap is exactly 0.15 mm wherever the two halves see each other.
+  The engine's DRC now finds the same five (ported coupling test); **the router does not yet avoid them** (A88). That is the next job
+  for B1/B2.
+- **D139 is not on this branch.** On `m20-c5-fanout`, any custom rule other than a disallow (a skew rule, say) switches the router to
+  exact checks and turns the distance fields off: RoyalBlue routes 119 with B2's rule file and 125 without it. D139
+  (`cache-safe-custom-rules`) fixes that, and merging the two is yours.
+- **LAN addresses in route summaries.** `route --json` recorded `--view-embed`, which lists the machine's LAN, VPN and host addresses.
+  The engine now records it as "(not recorded)" like the token. The B1 records committed earlier tonight had them, so I scrubbed them
+  and amended that local commit (17b2178 → 69bb1af; nothing was pushed). Check before pushing anything older.
+- **`tracemaker drc` is slow on the Jetson board** after the checks finish, in the old binary too (over 5 minutes, CPU bound, probably
+  `starved_thermals`, which runs after the DRC). `kicad_drc_parity` still passes within its timeout. Not looked into.
+- **Not done:**
+  - `fromTo()` in rules (vme-wren's length rules are unchecked);
+  - ps skew in the bus tuner;
+  - a net in two classes takes its parameters from the first;
+  - pair names with trailing digits;
+  - A3 (the Kookabus files are still missing).
+- From earlier in the night:
+  - multichannel_mixer gains one `starved_thermal` with the crowded variants under `--soft-zones` (D143, "found afterwards");
+  - the `plane_smd` test now uses four variants (A84);
+  - the D3 run report still needs a review by someone who did not write it;
+  - the progress website serves the main checkout, not this worktree;
+  - direct `route` runs without `--no-kb` read the knowledge base, so two runs can differ.

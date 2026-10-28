@@ -54,3 +54,36 @@ The DRC parity corpus has four new cases (`tests/integration/rule_parity`, froze
     182 now). The count was 120 either way. Width and pair-gap rules set no clearance, so they no longer do this.
 - `ctest` subset (rule, DRC, parity, pair, report, causes, critical, pour, `plane_smd`): 130 of 130 passed with the build before the
   last fix. Full suite: see the morning report.
+
+## Rejudged at schema 5 (B2, same night; D147)
+
+The fixtures above kept the demos' net settings at schema 4. KiCad migrates such settings and gives every class an empty tuning
+profile, so KiCad 10.0.6 checked no profile at all, and the "Added KiCad errors: none" column above is vacuous. `make_fixtures.py` now
+writes schema 5. Judged at schema 5, the build above had:
+
+- plane_smd-profiles: 20 `track_width` errors (0.15 mm neck-downs);
+- RoyalBlue-profiles: 97 `track_width` and 5 `diff_pair_gap_out_of_range`;
+- RoyalBlue-se: 175 `track_width`, including D+/D−, which inherit Default's SE50.
+
+Three fixes followed (doc 05 §58 and §59):
+
+- classes with no profile take Default's;
+- a single-ended profile sets the pair width;
+- profiled nets are not necked down.
+
+`runs/b1-v5/` holds the five fixtures with the fixed build, at 3 M work with soft zones and KiCad 10.0.6 as the judge:
+
+| Board | Routed | Added KiCad errors |
+|---|--:|---|
+| RoyalBlue base | 125/147 | none |
+| RoyalBlue, single-ended profile | 102/147 | none |
+| RoyalBlue, both profiles | 104/147 | 5 `diff_pair_gap_out_of_range` |
+| plane_smd base | 48/49 | none |
+| plane_smd profiles | 48/49 | none |
+
+- **A single-ended profile on Default is not free.** It costs RoyalBlue 23 connections, because every Default net must have exactly the
+  profile's width on each layer. There is no neck-down at fine-pitch pads, and the USB pairs are 0.25 mm too.
+- **The five gap errors** are at the USB-C connector, whose D+/D− pads are interleaved at a 0.5 mm pitch. Each net's two pads are
+  joined, and the halves leave in parallel 0.35 mm apart before the pair forms. A profile's gap is min = max = 0.15 mm on every
+  parallel stretch of the two halves that can see the other. The engine's DRC now finds the same five (KiCad's coupling test, ported);
+  the router does not yet avoid them.
