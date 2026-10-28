@@ -2328,6 +2328,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#61-delay-tuning-that-makes-room-2026-10-28-d152" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        61. Delay tuning that makes room (2026-10-28, D152)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3717,6 +3728,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#61-delay-tuning-that-makes-room-2026-10-28-d152" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        61. Delay tuning that makes room (2026-10-28, D152)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -5054,7 +5076,9 @@ pad's own layer.</p>
 </tbody>
 </table>
 <p>Disallow masks retain the per-class cache. Physical-hole rules do too when independent of <code>NetName</code>, <code>NetClass</code>
-and <code>inDiffPair</code>. Other custom rules, including unparseable conditions, require exact checks.</p>
+and <code>inDiffPair</code>, and clearance rules when independent of <code>NetName</code> and <code>inDiffPair</code> (cached via codes probe a via, so
+<code>Type</code>, <code>Width</code> and position conditions agree with the exact check). Other constraints are not read per point, and
+rules that cannot be read are not applied, so neither needs exact checks (D139).</p>
 <p>KiCad's violation names and counts were checked with kicad-cli 10.0.3. Example: inner layers for GND only;
 no via in an SMD pad except on U1.</p>
 <div class="highlight"><pre><span></span><code>(rule "Inner layers carry GND only" (layer inner) (condition "A.NetName != 'GND'") (constraint disallow track))
@@ -8013,7 +8037,7 @@ see the other must therefore be at exactly the gap, which includes stretches far
 A meander raises the delay by the delay per mm of the layer it is on, so only tracks on layers with a delay are candidates. The tuner
 measures with the same calculation as the check, and its last meander is cut to fit. Then each <code>skew</code> rule in ps: the nets it groups,
 or each pair with <code>within_diff_pairs</code>, are brought to within a quarter of the limit below the net with the most delay. Nets of a profiled
-class are not necked down (§58).</p>
+class are not necked down (§58). When the meanders do not fit, the tuner rips the routed connections in their way and routes them again (§61, D152).</p>
 <p><strong>Pair names</strong> (<code>drc::match_dp_suffix</code>, D149). Nets are paired as KiCad 10.0.6's <code>MatchDpSuffix</code> pairs them:
 - From the end of the name, digits and underscores are skipped. The next character must be P or + (positive) or N or − (negative).
 - The partner's name swaps that character, so <code>LVDS_N0_1</code> pairs with <code>LVDS_P0_1</code>.
@@ -8116,6 +8140,34 @@ boards with pair rules route byte for byte as before.</p>
 <li>rule_parity: <code>via_unused_layers</code> (four vias, each passed by tracks inside the ring's clearance and outside the hole's) and
   <code>diff_pair_tuning_pattern</code> and <code>diff_pair_near_parallel</code>. All 234 cases match; the build before D150 fails these three.</li>
 </ul>
+<h2 id="61-delay-tuning-that-makes-room-2026-10-28-d152">61. Delay tuning that makes room (2026-10-28, D152)<a class="headerlink" href="#61-delay-tuning-that-makes-room-2026-10-28-d152" title="Permanent link">&para;</a></h2>
+<p>The delay tuner (§59) puts a meander only where nothing else is. When it runs, after negotiation and clean-up, the board's other
+connections are all in place. On RoyalBlue54L-Feather-delay with D139, the extra connections took the room beside the USB pair. D+
+stayed 2.7 ps short of D- against a 0.5 ps rule, and KiCad reported <code>skew_out_of_range</code>.</p>
+<p><strong><code>Router::tune_with_room</code>.</strong> It applies to every delay window and every delay skew group or pair.</p>
+<ol>
+<li><strong>Plain tuning first.</strong> If the net ends in range, the step stops there.</li>
+<li><strong>Start over from the untuned net.</strong> The board goes back to the net with no meanders, because the small meanders of the plain
+   attempt fill the free room.</li>
+<li><strong>Try ripping at each height.</strong> After both free sides of a meander, the tuner tries each side that only routed copper of other
+   nets blocks. The rippable owners are those <code>segment_state</code> reports when routed copper is ignored. Those connections are ripped
+   and the meander is placed.</li>
+<li><strong>Who may be ripped.</strong> A connection may be ripped if it is:</li>
+<li>routed, and not implicit;</li>
+<li>not coupled, and not a bus or bundle lane;</li>
+<li>not of the net or of its pair partner;</li>
+<li>of a net with no length or skew rule of its own.</li>
+</ol>
+<p>At most 16 connections are ripped.
+5. <strong>Route them again.</strong> The ripped connections, and those of their nets that lose an implicit route, are routed again strictly, in
+   connection order. Each gets the transaction cap. Together they get 400,000 work units beyond the spent budget (2 % of the time
+   limit with <code>--time</code>).
+6. <strong>Keep or roll back.</strong> The board is kept if the net is in range and all of them route again. Otherwise it goes back to the plain
+   attempt's result.</p>
+<p><strong>Result</strong> (<code>bench/records/d152-room</code>, 3 M work, <code>--refill --soft-zones</code>). RoyalBlue54L-Feather-delay routes 125/147 with no added
+KiCad errors. One connection is ripped and routed again, and D+ ends at 79.43 ps against D-'s 79.49 ps. The other B2 boards never reach
+the step. Test: <code>delay_room</code> (it skips without <code>build/demos</code>).</p>
+<p><strong>Open.</strong> mm length windows, mm pair skew and the bus tuner do not make room yet.</p>
 
 
 
