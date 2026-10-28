@@ -331,7 +331,10 @@ class Checker {
       if (it.kind == ItemKind::Track || it.kind == ItemKind::Arc) {
         const int layer = std::countr_zero(it.layers);
         const auto [mn, mx] = re_.track_width(it, layer);
-        if (it.width < mn || (mx > 0 && it.width > mx)) add("track_width", &it, nullptr, it.width, mn, layer);
+        if (it.width < mn || (mx > 0 && it.width > mx)) {
+          const std::string sev = re_.track_width_severity(it, layer);
+          if (sev != "ignore") add("track_width", &it, nullptr, it.width, mn, layer, sev == "warning" ? "warning" : "error");
+        }
       } else if (it.kind == ItemKind::Via) {
         const auto& v = b_.vias[static_cast<std::size_t>(it.index)];
         if (const Coord mn = re_.via_diameter_min(it); v.size < mn) add("via_diameter", &it, nullptr, v.size, mn, -1);

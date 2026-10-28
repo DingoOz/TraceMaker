@@ -1,0 +1,286 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 95.35,
+ "connections": 86,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3272622,
+ "failures": [
+  "VCC: Q3.3 -> JP1.1  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); fixed copper encloses the pin)",
+  "/pic_sockets/VCC_PIC: JP1.2 -> R21.2  (boxed in; escapes/neck-down: boxed in; negotiated: boxed in; fixed copper encloses the pin)",
+  "/pic_sockets/VCC_PIC: JP1.2 -> Q3.1  (boxed in; escapes/neck-down: boxed in; negotiated: boxed in; fixed copper encloses the pin)",
+  "/pic_sockets/VCC_PIC: P3.11 -> JP1.2  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); negotiated escapes/neck-down: out of budget)"
+ ],
+ "open": 4,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.1,
+ "refill": {
+  "repair": {
+   "connections": 7,
+   "expansions": 3456765,
+   "kept": true,
+   "routed": 3,
+   "tracks": 6,
+   "unconnected": 4,
+   "vias": 2
+  },
+  "starved_thermals": 0,
+  "unconnected": 7,
+  "warnings": [],
+  "zones": 1
+ },
+ "routed": 82,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T23:31:55Z",
+  "input": "build/demos/pic_programmer//unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "build/scratch/b3/nostitch/pic_programmer/routed.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--si-rules",
+    "value": "true"
+   },
+   {
+    "name": "--no-si-stitch",
+    "value": "false"
+   },
+   {
+    "name": "--view-port",
+    "value": "8833"
+   },
+   {
+    "name": "--json",
+    "value": "build/scratch/b3/nostitch/pic_programmer/summary.json"
+   }
+  ],
+  "output": "build/scratch/b3/nostitch/pic_programmer/routed.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 3000000
+ },
+ "seconds": 64.595193466,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 116,
+  "bends_per_connection": 1.0943,
+  "connections": 106,
+  "detour_length_mm": 1429.191854,
+  "detour_octile_mm": 1342.496609,
+  "detour_ratio": 1.0646,
+  "length_mm": 1429.191854,
+  "long_detours": 1,
+  "off_angle_segments": 11,
+  "segments": 224,
+  "short_segments": 7,
+  "stair_steps": 0,
+  "vias": 4
+ },
+ "time_limited": false,
+ "tracks": 224,
+ "tunnels": 0,
+ "unconnected_after_refill": 4,
+ "variant": 7,
+ "variant_name": "fast bends, dear vias, crowded source",
+ "variant_seconds": 18.885982501,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 74,
+   "seconds": 15.694213921,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 82,
+   "seconds": 20.812078905,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 80,
+   "seconds": 14.428098361,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 82,
+   "seconds": 20.799631056,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 64,
+   "seconds": 13.428206446,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 82,
+   "seconds": 19.107495463,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 82,
+   "seconds": 9.522255641,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 82,
+   "seconds": 18.885982501,
+   "variant": 7
+  }
+ ],
+ "vias": 4,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1745943,
+   "commits": 81,
+   "expansions": 1592918,
+   "field_cells": 10126792,
+   "fields": 40,
+   "fixed_checks": 1628179,
+   "flood_cells": 55100,
+   "rips": 0,
+   "searches": 105
+  },
+  "negotiation": {
+   "cell_checks": 1490109,
+   "commits": 1,
+   "expansions": 366290,
+   "field_cells": 2609760,
+   "fields": 7,
+   "fixed_checks": 190404,
+   "flood_cells": 1258314,
+   "rips": 0,
+   "searches": 33
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3236052,
+   "commits": 82,
+   "expansions": 1959208,
+   "field_cells": 12736552,
+   "fields": 47,
+   "fixed_checks": 1818583,
+   "flood_cells": 1313414,
+   "rips": 0,
+   "searches": 138
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 11857272,
+   "commits": 623,
+   "expansions": 18278430,
+   "field_cells": 68275232,
+   "fields": 290,
+   "fixed_checks": 11753624,
+   "flood_cells": 569148,
+   "rips": 0,
+   "searches": 801
+  },
+  "negotiation": {
+   "cell_checks": 8597561,
+   "commits": 5,
+   "expansions": 2151948,
+   "field_cells": 14992020,
+   "fields": 40,
+   "fixed_checks": 926286,
+   "flood_cells": 7213605,
+   "rips": 0,
+   "searches": 173
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 20454833,
+   "commits": 628,
+   "expansions": 20430378,
+   "field_cells": 83267252,
+   "fields": 330,
+   "fixed_checks": 12679910,
+   "flood_cells": 7782753,
+   "rips": 0,
+   "searches": 974
+  }
+ }
+}

@@ -1,0 +1,458 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 81.63,
+ "connections": 147,
+ "copper_layers": 8,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3643602,
+ "failures": [
+  "Net-(U5-XC1): Y2.1 -> U5.28  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/D+: U3.4 -> U5.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/D-: U3.2 -> U5.12  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/Connectors/UART.RX: U1.A3 -> U6.14  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/UART.TX: U1.B2 -> U6.13  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/ANALOG.A3: U1.G9 -> J1.8  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/UART.RX: U6.14 -> J1.14  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D10: U1.K6 -> J2.7  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/ANALOG.A2: U1.F9 -> J1.7  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D12: U1.J5 -> J2.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/UART_RX_NRF52: U6.3 -> U5.36  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/UART_TX_NRF52: U6.4 -> U5.35  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  (boxed in; escapes/neck-down: boxed in (target))",
+  "/Connectors/DIG.D13: U1.J6 -> J2.4  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/ANALOG.A1: U1.F8 -> J1.6  (boxed in; escapes/neck-down: boxed in)",
+  "/nPM1300/NPM1300.INT: U1.K2 -> U2.7  (boxed in (target); escapes/neck-down: out of budget)",
+  "/Connectors/ANALOG.A0: U1.E9 -> J1.5  ()",
+  "/Debugger/SWD_TRG.~{RESET}: SW1.2 -> J1.1  ()",
+  "/Debugger/USB.CC2: U2.24 -> J3.B5  ()",
+  "/Debugger/USB.CC1: U2.23 -> J3.A5  ()",
+  "/Connectors/SHPHLD: U2.15 -> J1.16  ()",
+  "Net-(J6-Pin_2): U1.D9 -> C14.1  ()",
+  "Net-(J6-Pin_4): U1.E8 -> C13.1  ()",
+  "/Connectors/I2C.SCL: U1.G8 -> R2.2  ()",
+  "/Connectors/I2C.SDA: U1.B3 -> R3.2  ()"
+ ],
+ "open": 27,
+ "package_pin_edges": 2,
+ "pitch_mm": 0.055,
+ "refill": {
+  "repair": {
+   "connections": 47,
+   "expansions": 3395947,
+   "kept": true,
+   "routed": 1,
+   "tracks": 3,
+   "unconnected": 46,
+   "vias": 1
+  },
+  "starved_thermals": 0,
+  "unconnected": 47,
+  "warnings": [],
+  "zones": 4
+ },
+ "routed": 120,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-28T00:40:07Z",
+  "input": "build/scratch/b1/fixtures/RoyalBlue54L-Feather-profiles/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "bench/results/b1-profiles3/boards/RoyalBlue54L-Feather-profiles.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600.0"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "",
+    "value": "bench/results/b1-profiles3/boards/RoyalBlue54L-Feather-profiles.kicad_pcb.state"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "2"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-token",
+    "value": "(not recorded)"
+   },
+   {
+    "name": "--view-port",
+    "value": "8801"
+   },
+   {
+    "name": "--view-embed",
+    "value": "(not recorded)"
+   },
+   {
+    "name": "--json",
+    "value": "bench/results/b1-profiles3/boards/RoyalBlue54L-Feather-profiles.kicad_pcb.route.json"
+   }
+  ],
+  "output": "bench/results/b1-profiles3/boards/RoyalBlue54L-Feather-profiles.kicad_pcb",
+  "seed": 1,
+  "threads": 2,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 3000000
+ },
+ "seconds": 84.534812082,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 192,
+  "bends_per_connection": 0.8889,
+  "connections": 216,
+  "detour_length_mm": 646.774315,
+  "detour_octile_mm": 578.610492,
+  "detour_ratio": 1.1178,
+  "length_mm": 646.774315,
+  "long_detours": 11,
+  "off_angle_segments": 70,
+  "segments": 458,
+  "short_segments": 69,
+  "stair_steps": 3,
+  "vias": 83
+ },
+ "time_limited": false,
+ "tracks": 458,
+ "tuning_profiles": [
+  {
+   "differential": false,
+   "layers": [
+    {
+     "gap_mm": 0.0,
+     "layer": "F.Cu",
+     "width_mm": 0.25
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "In1.Cu",
+     "width_mm": 0.2
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "In2.Cu",
+     "width_mm": 0.2
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "In3.Cu",
+     "width_mm": 0.2
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "In4.Cu",
+     "width_mm": 0.2
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "In5.Cu",
+     "width_mm": 0.2
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "In6.Cu",
+     "width_mm": 0.2
+    },
+    {
+     "gap_mm": 0.0,
+     "layer": "B.Cu",
+     "width_mm": 0.25
+    }
+   ],
+   "layers_without_tracks": [],
+   "net_class": "Default",
+   "pair_gap_mm": 0.0,
+   "profile": "SE50",
+   "route_width_from": "F.Cu",
+   "route_width_mm": 0.25,
+   "tracks_narrowed": 60
+  },
+  {
+   "differential": true,
+   "layers": [
+    {
+     "gap_mm": 0.15,
+     "layer": "F.Cu",
+     "width_mm": 0.15
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In1.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In2.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In3.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In4.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In5.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In6.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.15,
+     "layer": "B.Cu",
+     "width_mm": 0.15
+    }
+   ],
+   "layers_without_tracks": [
+    {
+     "gap_mm": 0.2,
+     "layer": "In1.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In2.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In3.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In4.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In5.Cu",
+     "width_mm": 0.1
+    },
+    {
+     "gap_mm": 0.2,
+     "layer": "In6.Cu",
+     "width_mm": 0.1
+    }
+   ],
+   "net_class": "USB_DIFF",
+   "pair_gap_mm": 0.15,
+   "profile": "USB90",
+   "route_width_from": "F.Cu",
+   "route_width_mm": 0.15,
+   "tracks_narrowed": 0
+  }
+ ],
+ "tunnels": 0,
+ "unconnected_after_refill": 46,
+ "variant": 1,
+ "variant_name": "fast bends, shortest first, crowded source",
+ "variant_seconds": 25.695271504,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 60,
+   "seconds": 3.58569399,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 120,
+   "seconds": 25.695271504,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 12,
+   "seconds": 6.351848615,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 93,
+   "seconds": 8.715815797,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 57,
+   "seconds": 3.044172307,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 106,
+   "seconds": 14.021399924,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 112,
+   "seconds": 9.837742473,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 120,
+   "seconds": 17.872005534,
+   "variant": 7
+  }
+ ],
+ "vias": 83,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 3951922,
+   "commits": 120,
+   "expansions": 3643602,
+   "field_cells": 103540216,
+   "fields": 182,
+   "fixed_checks": 2628828,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 206
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3951922,
+   "commits": 120,
+   "expansions": 3643602,
+   "field_cells": 103540216,
+   "fields": 182,
+   "fixed_checks": 2628828,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 206
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 23278281,
+   "commits": 684,
+   "expansions": 26417516,
+   "field_cells": 441072896,
+   "fields": 851,
+   "fixed_checks": 16516575,
+   "flood_cells": 1310645,
+   "rips": 0,
+   "searches": 1022
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 40,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 23278281,
+   "commits": 684,
+   "expansions": 26417516,
+   "field_cells": 441072896,
+   "fields": 851,
+   "fixed_checks": 16516615,
+   "flood_cells": 1310645,
+   "rips": 0,
+   "searches": 1022
+  }
+ }
+}

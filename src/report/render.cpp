@@ -345,6 +345,13 @@ Section Builder::si() {
   if (src_.has("/critical_nets")) {
     text(s, {t("Critical nets: "), src_.v("/critical_nets/totals/nets"), t(" nets, "), src_.v("/critical_nets/totals/vias"), t(" vias, "),
              src_.v("/critical_nets/totals/void_crossings"), t(" crossings of a reference-plane void.")});
+    if (src_.has("/critical_nets/totals/missing_stitches")) {
+      Para p{t("Layer changes without a return via within reach: "), src_.v("/critical_nets/totals/missing_stitches")};
+      if (src_.has("/critical_nets/totals/missing_stitches_before_stitching"))
+        p.insert(p.end(), {t(" (before the stitching pass of --si-rules: "), src_.v("/critical_nets/totals/missing_stitches_before_stitching"), t(")")});
+      p.push_back(t("."));
+      text(s, p);
+    }
     table(s, rows("/critical_nets/nets", {{"Net", "name"},
                                           {"Tier", "tier"},
                                           {"Why critical", "why"},
@@ -352,6 +359,7 @@ Section Builder::si() {
                                           {"Length, mm", "length_mm"},
                                           {"Unrouted", "unrouted"},
                                           {"Void crossings", "void_crossings"},
+                                          {"Unstitched layer changes", "missing_stitches"},
                                           {"Warnings", "warnings"}}));
   }
   if (src_.has("/pairs")) {

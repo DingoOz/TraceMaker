@@ -83,6 +83,23 @@ void read_pro(const fs::path& p, model::DesignRules& r, const LegacyRules& legac
   } else if (!legacy.design_settings) {
     r.warnings.push_back("project has no board design rules; using KiCad defaults and rules stored in the board");
   }
+  // KiCad 10 tuning profiles (common/project/tuning_profiles.cpp): lengths in nanometres, as KiCad stores them.
+  if (d.contains("tuning_profiles") && d["tuning_profiles"].is_object() && d["tuning_profiles"].contains("tuning_profiles_impedance_geometric") &&
+      d["tuning_profiles"]["tuning_profiles_impedance_geometric"].is_array())
+    for (const auto& e : d["tuning_profiles"]["tuning_profiles_impedance_geometric"]) {
+      if (!e.is_object() || !e.contains("profile_name") || !e["profile_name"].is_string()) continue;
+      model::TuningProfile tp;
+      tp.name = e["profile_name"].get<std::string>();
+      tp.differential = e.value("type", 0) == 1;
+      tp.time_domain = e.value("enable_time_domain_tuning", false);
+      tp.via_delay = e.value("via_prop_delay", std::int64_t{0});
+      if (e.contains("layer_entries") && e["layer_entries"].is_array())
+        for (const auto& l : e["layer_entries"]) {
+          if (!l.is_object() || !l.contains("signal_layer") || !l["signal_layer"].is_string()) continue;
+          tp.layers.push_back({l["signal_layer"].get<std::string>(), l.value("width", Coord{0}), l.value("diff_pair_gap", Coord{0}), l.value("delay", std::int64_t{0})});
+        }
+      r.tuning_profiles.push_back(std::move(tp));
+    }
   if (legacy.netclasses || !d.contains("net_settings")) return;
   const json& ns = d["net_settings"];
   if (ns.contains("classes") && ns["classes"].is_array()) {
@@ -122,8 +139,12 @@ void read_pro(const fs::path& p, model::DesignRules& r, const LegacyRules& legac
       k.diff_pair_gap = mm(c, "diff_pair_gap", def.diff_pair_gap);
       k.diff_pair_via_gap = mm(c, "diff_pair_via_gap", def.diff_pair_via_gap);
       k.has_diff_pair_gap = c.contains("diff_pair_gap") && c["diff_pair_gap"].is_number();
+      k.tuning_profile = c.contains("tuning_profile") && c["tuning_profile"].is_string() ? c["tuning_profile"].get<std::string>() : "";
       r.classes.push_back(k);
     }
+    for (const auto& c : ns["classes"])
+      if (c.value("name", "") == "Default" && c.contains("tuning_profile") && c["tuning_profile"].is_string())
+        r.classes.front().tuning_profile = c["tuning_profile"].get<std::string>();
   }
   if (ns.contains("netclass_patterns") && ns["netclass_patterns"].is_array())
     for (const auto& pat : ns["netclass_patterns"]) r.patterns.emplace_back(pat.value("pattern", ""), pat.value("netclass", ""));
@@ -281,6 +302,39 @@ LegacyRules read_legacy_board_rules(const fs::path& board, model::DesignRules& r
 
 }  // namespace
 
+namespace {
+
+// KiCad 10 compiles each net class's tuning profile into implicit rules (pcbnew/drc/drc_engine.cpp, "tuning profile rules"), placed
+// before the custom rules so that a custom rule overrides them. On each layer the profile gives a width for, tracks of the class's nets
+// (an exact class match) have exactly that width, at least the board minimum; a differential profile says so for pair nets only and fixes
+// their pair gap there too. The rules carry the severity of `tuning_profile_track_geometries`, KiCad's default "ignore" included: an
+// ignored rule still decides the track's width constraint, so it hides the board minimum as well (rule_parity tuning_profile_ignored).
+// KiCad's third rule, a clearance at the pair gap for coupled halves (AB.isCoupledDiffPair()), is not added: the engine does not evaluate
+// that function, and its coupled-pair clearance comes from the class's pair gap (RuleEngine::clearance).
+void add_tuning_rules(model::DesignRules& r) {
+  const auto sev = r.severities.find("tuning_profile_track_geometries");
+  const std::string severity = sev == r.severities.end() ? "ignore" : sev->second;
+  std::vector<model::CustomRule> rules;
+  for (const auto& c : r.classes) {
+    const model::TuningProfile* p = r.profile_of(c);
+    if (!p) continue;
+    for (const auto& l : p->layers) {
+      if (l.width <= 0 || (p->differential && l.gap <= 0)) continue;
+      const std::string cond = "A.hasExactNetclass('" + c.name + "') && A.Layer == '" + l.layer + "'" + (p->differential ? " && A.inDiffPair('*')" : "");
+      model::CustomRule w{"tuning profile '" + p->name + "'", cond, "", severity, {}, true};
+      w.constraints.push_back({"track_width", std::max(r.minimums.track_width, l.width), l.width, l.width, {}});
+      rules.push_back(w);
+      if (!p->differential) continue;
+      model::CustomRule g{"tuning profile '" + p->name + "'", cond, "", severity, {}, true};
+      g.constraints.push_back({"diff_pair_gap", std::max(r.minimums.clearance, l.gap), l.gap, l.gap, {}});
+      rules.push_back(g);
+    }
+  }
+  r.custom.insert(r.custom.begin(), rules.begin(), rules.end());
+}
+
+}  // namespace
+
 model::DesignRules read_design_rules(const std::string& board_path) {
   model::DesignRules r;
   const fs::path b(board_path);
@@ -300,6 +354,7 @@ model::DesignRules read_design_rules(const std::string& board_path) {
     def.priority = INT_MAX;
     r.classes.insert(r.classes.begin(), def);
   }
+  add_tuning_rules(r);
   if (fs::exists(dru)) read_dru(dru, r);
   return r;
 }

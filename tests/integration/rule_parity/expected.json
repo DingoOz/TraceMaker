@@ -1197,6 +1197,8 @@
         ]
       ]
     },
+    "static_exact_class_case": {},
+    "static_exact_class_track": {},
     "static_inner_track": {
       "items_not_allowed": [
         [
@@ -1325,6 +1327,26 @@
         ],
         [
           "Y-through"
+        ]
+      ]
+    },
+    "tuning_profile_ignored": {},
+    "tuning_profile_width": {
+      "track_width": [
+        [
+          "tp-back-narrow"
+        ],
+        [
+          "tp-front-ok"
+        ],
+        [
+          "tp-front-wide"
+        ],
+        [
+          "tp-inner-ok"
+        ],
+        [
+          "tp-inner-wide"
         ]
       ]
     },

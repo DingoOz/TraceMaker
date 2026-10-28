@@ -739,7 +739,7 @@ pad's own layer.
 | `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). Blind/buried router probes have no span yet, so either keyword conservatively stops both; `micro_via` alone stops micro vias. | `items_not_allowed`; `blind_via` has exactly one outer span endpoint, `buried_via` none, micro remains separate (D80). |
 | Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Applied to every new track and via with its actual shape, width, position and span, in the exact checks before commit, escapes, pair legs and clean-up, and in the search's lattice tests (§34, D82). Not warned. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
 | Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
-| Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasExactNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
+| Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
 | Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
 | Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have no layer property. A zone uses its source layer, not a fill projection; a multilayer zone has an unset layer ID (`==` false, `!=` true). Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
@@ -2059,6 +2059,19 @@ connections, and the clean-pass count (2 of 8) did not move at all. Without `--s
 under the net including via antipads. A first version that searched a 20 mm window from the start made `--si-rules` route 3 of 147 on RoyalBlue (failing critical connections spent the work budget); the wider window is now searched
 only after a critical net's first path crossed a void or hopped layers. With all options off the quick, mid, planes and planes `--soft-zones` tiers are byte-identical to `main`.
 
+**Five seeds (doc 18 A5, 2026-10-28, D146; `bench/records/m21-a5`).** The same comparison was repeated over seeds 1-5 on a later
+binary (C5's crowded-source portfolio). No critical-net measure varies with the seed: the differences between the options are
+systematic. On the nets both runs route:
+
+- `--critical-via-cost 3` cuts their vias by 4 and crossings by 3.
+- `--split-cost 4` cuts crossings by 6 and adds 2 vias.
+- Both together cut vias by 2 and crossings by 4.
+
+The one-seed table's 20 -> 11 splits did not recur. `--critical-first` routes 27 of the 28 critical nets against 23 to 25 without it
+(RoyalBlue's crystal net and debugger USB pair are routed only with it). It costs 6 connections of the other nets in every seed, and
+with it the cost terms change nothing on the common nets. `--si-rules` keeps all three: its purpose is the critical nets, and the
+costs alone are still available.
+
 **Limits.** The tweet the issue quotes gives no numbers, and none were copied: 3 for the via multiplier and 4 pitches per step for the split cost are the values of `--si-rules`, chosen on the
 benchmark runs recorded, not derived. The cost map knows the zone fills of the file, not the antipads of vias the route adds (the audit after the route does, on a refilled board). Only the
 smoothing pass is made split-aware; the other post-passes (length tuning, pair coupling) are not. A rule's own `plane_net` parameter (doc 15 USB2-09, ETH-13) is not read: the reference of a layer
@@ -2372,3 +2385,111 @@ untangles. The swapped board permutes the pads' own `(net ...)` nodes; everythin
 The median change in open connections is 0 on both sets; doc 18's condition for building the pass ("only if a median gain is
 clear") is not met, and the proposal-only pin-swap pass is not built. The order of connector pins is not what leaves connections open
 on these boards (§55 says what does); free assignment buys about 3 % of vias. Records: `bench/records/m20-c2/`.
+
+## 57. `--si-rules` closes the audit loop: return stitching of critical nets (doc 18 B3, 2026-10-27, D144)
+
+The reference-return audit (§42) and the return-path stitching pass (§39.3) were two commands; `--si-rules` routed the critical nets
+with their three rules (§44) and reported void crossings without places. Now, with `--si-rules`:
+
+1. After routing, the audit runs on the critical nets. Each layer change it finds with no closure and the same reference net on both
+   sides makes that net a return-path stitching target of that reference net at 5 mm, the audit's own radius (the catalogue's 5.08 mm
+   would leave a stitch the audit does not count).
+2. The stitching pass runs with those targets added to any from `--stitch-vias return` and the component rules, as a transaction: its
+   vias are kept only if no net has more unconnected items with them after a refill.
+3. The audit runs again. The critical-net report (log, `--json` `critical_nets`, the run report) carries `missing_stitches` per net and
+   in the totals, `missing_stitches_before_stitching`, and a warning per place: each unstitched layer change with its layers, its
+   position in millimetres and why (no via of the plane net within 5 mm; two different reference nets and no capacitor between them;
+   no reference copper on one side), and each void whose return detour is over 2 mm, with its layer and position. At most eight places
+   per net are listed, then a count.
+
+`--no-si-stitch` turns step 2 off. A change between two different reference nets needs a capacitor between them, which is a placement
+decision: it stays a warning. A layer with no plane copper near the via cannot be fixed with a via either.
+
+The audit at a layer change also changed: a signal layer whose trace is only a stub from a pad to its via can lie wholly over the
+via's own antipad, which left that layer with no reference by coverage and reported "no reference copper on one side" between two
+solid planes. At the via, such a layer now takes the adjacent layer (N+1, then N-1) that has copper within 2 mm of it.
+
+Test `[pour][route][critical]` ("route --si-rules stitches the critical nets' layer changes the audit finds without a return via"): a
+four-layer board, CLK from an F.Cu pad to a B.Cu pad between GND planes on In1.Cu and In2.Cu, the nearest GND pin 10 mm away: one
+unstitched change before the pass, a GND via beside it after, none in the audit; with `--no-si-stitch` the warning names the place.
+
+On the plane tier (`bench/records/m21-b3`) the critical nets' layer changes are nearly all closed already by the GND pads and stitching
+the boards carry: one change on StickHub stays open, and it has no plane copper on one side. The pass matters on boards whose critical
+nets change layers far from any plane via.
+
+## 58. KiCad 10 tuning profiles: per-layer width (doc 18 B1, 2026-10-28, D145)
+
+KiCad 10 lets a project define tuning profiles (Board Setup → Tuning Profiles), stored in the `.kicad_pro` as
+`tuning_profiles.tuning_profiles_impedance_geometric`. Each profile has a name, a type (single-ended or differential) and, for each signal
+layer, a track width and pair gap in nanometres, its reference layers and a propagation delay, plus via delays. A net class names its
+profile in its `tuning_profile` field. The engine read none of it.
+
+**Reading.** `read_design_rules` reads the profiles (`model::TuningProfile`) and each class's `tuning_profile`, Default's included.
+
+**KiCad's rule.** KiCad's DRC engine (`pcbnew/drc/drc_engine.cpp`) compiles each class's profile into implicit rules. They come before
+the custom rules, so a `.kicad_dru` rule overrides them. On each layer with a width, the class's tracks have exactly that width:
+`track_width` with min = the larger of the width and the board minimum, and opt = max = the width, under the condition
+`A.hasExactNetclass('C') && A.Layer == 'L'`. A differential profile constrains only the pair nets (`&& A.inDiffPair('*')`) and fixes their
+gap the same way. When that gap is below the class clearance, it adds a clearance at the gap for `AB.isCoupledDiffPair()`. The rules
+carry the severity of `tuning_profile_track_geometries`, which is `ignore` unless the project sets it. `read_design_rules` adds the width
+and gap rules in the same place (`CustomRule::implicit`) with that severity, so the engine's DRC judges a board as KiCad does.
+
+What KiCad 10.0.6 does, measured with `kicad-cli` (rule_parity cases `tuning_profile_*` and `static_exact_class_*`, and the boards in
+`bench/records/m21-b1`), differs from the source in three places, and the engine follows the measurement:
+
+- **An ignored rule still decides.** At `ignore`, a profiled track below the board minimum is not reported either: the profile's rule
+  is the one that decides the track's width check, and it is ignored. The DRC now takes `track_width`'s severity from the last matching
+  rule (`RuleEngine::track_width_severity`).
+- **`hasExactNetclass` matches only in KiCad's own rules.** In a user's rule it never matched, whether alone, under `&&` or in a
+  `track_width` rule, while the profile's rules with the same text did. The engine evaluates it only in implicit rules (renamed
+  internally when compiled). In a user's rule it stays one of the functions taken as false (the table in §27).
+- **The coupled clearance covers tracks only.** On RoyalBlue with a 0.15 mm profile gap under a 0.2032 mm class clearance, KiCad
+  passed the coupled tracks at 0.15 mm but reported a half's track 0.19 mm from the other half's connector pad. With the same gap set
+  on the net class instead, the pad passes. The engine's reader does not add the coupled rule (it does not evaluate
+  `isCoupledDiffPair`). The route job sets `NetClass::tuning_pair_gap`, which relaxes only the halves' tracks against each other
+  (`RuleEngine::clearance`, `route::pair_rule`). Pads and the pair's vias keep the class clearance, or the class's own pair gap.
+
+**Routing.** The router has one width per net (doc 15 §15). A profiled class is routed as follows:
+
+- *Single-ended.* At the widest width the profile gives on the board's layers, so every clearance holds at any of the widths. After
+  routing, each track of the class's nets is narrowed to the profile's width on its layer, in `run_route_job`. Narrower copper cannot
+  break a clearance, and a track keeps its ends. The step is judged like the other after-route passes: it is dropped if a net has more
+  unconnected items with it.
+- *Differential.* A pair's gap changes with its width when the centrelines stay put, so narrowing would leave the inner layers at the
+  wrong gap. The pairs are routed at one layer's width and gap: a layer the class's SMD pads are on (a pair kept off its pads' layer
+  could not leave them), then the geometry most of the profile's layers share, then the first. A `disallow track` rule for the class's
+  pair nets keeps them off every layer with another width or gap. Their uncoupled pieces take the same width, and the tracks of the
+  two halves may sit at the profile's gap (above).
+
+The profile is applied whatever the severity of KiCad's check: it states the impedance the designer wants, and the check is only
+whether KiCad reports a miss.
+
+The log names each profile and its route width. `--json` has `tuning_profiles`: the class, the profile, the route width and its layer,
+each layer's width and gap, the layers kept clear, and the tracks narrowed. A class naming a profile the project does not define is
+warned about (KiCad's `missing_tuning_profile`) and routed with its class width.
+
+**Not used yet.** The delays (per layer and per via) and time-domain tuning: they belong to B2's length and skew matching. The profile's
+reference layers are not used: the audit (§42) finds the reference copper itself.
+
+Tests `[tuning]`:
+
+- "tuning profiles: read from the project and compiled into KiCad's width rules, with its severity": a four-layer project with profile
+  MS (0.15 mm on the outer layers, 0.1 mm inside) for class FAST. The profile is read and four implicit rules are compiled. At
+  `error`, a 0.25 mm CLK track on F.Cu is one `track_width` error and a 0.15 mm one is none. At `ignore`, neither is reported, nor is a
+  track below the board minimum. A user's rule with `hasExactNetclass('FAST')` selects nothing, and the same rule with
+  `A.NetClass == 'FAST'` selects the track.
+- "route: a profiled net has its profile's width on each layer": CLK from an F.Cu pad to a B.Cu pad, with a track keepout across the
+  outer layers so that it crosses inside. Every track is 0.15 mm outside and 0.1 mm inside, and the written board has no
+  `track_width` error by the project's own rules.
+- rule_parity (`tests/integration/rule_parity`, frozen KiCad 10.0.6 verdicts): `static_exact_class_track` and
+  `static_exact_class_case` (a user's `hasExactNetclass` selects nothing), and `tuning_profile_width` and `tuning_profile_ignored` (six
+  tracks of a profiled and an unprofiled net: five `track_width` errors at `error`, none at `ignore`). All 220 cases match.
+
+On two plane-tier boards given profiles (`bench/records/m21-b1`; KiCad 10.0.6 with the check at `error`, 3 M work, soft zones), KiCad
+adds no error. On RoyalBlue (8 layers), 68 inner tracks are narrowed to 0.2 mm, and with only the single-ended profile the routing is
+the same as without profiles: 125/147, with the same count in every variant. The USB pair profile (0.15/0.15 mm outside, 0.1/0.2 mm
+inside) keeps the pairs on the outer layers and costs five connections (120/147). plane_smd: 48/49 either way, with no inner signal
+tracks to narrow.
+
+The profile rules set widths and pair gaps, never a clearance, so they do not switch the router to exact checks
+(`RuleEngine::needs_exact_routing`). Before that was fixed, a profiled board routed without its distance fields.

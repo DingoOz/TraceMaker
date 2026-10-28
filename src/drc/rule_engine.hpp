@@ -32,6 +32,9 @@ class RuleEngine {
   Coord edge_clearance(const CopperItem& a, int layer) const;
   // Minimum and maximum track width (max = 0: none).
   std::pair<Coord, Coord> track_width(const CopperItem& t, int layer) const;
+  // The severity of the last rule with a track_width constraint that matches the track ("" when none matches or it sets none): in KiCad
+  // that rule decides the track's width check, so an ignored rule hides the board minimum too (tuning profiles, doc 05 §58).
+  std::string track_width_severity(const CopperItem& t, int layer) const;
   Coord via_diameter_min(const CopperItem& v) const;
   Coord annular_width_min(const CopperItem& v) const;
   Coord hole_size_min(const CopperItem* owner) const;

@@ -1087,7 +1087,10 @@ int main(int argc, char** argv) {
   route->add_option("--footprint-tol-mm", r_fp_tol, "With --footprint-refs: tolerance of pad positions, sizes and drills in millimetres (default 0.05; a reference may set its own)")->check(CLI::NonNegativeNumber);
   route->add_flag("--si-rules", r_job.si_rules,
                   "JLCPCB's three routing rules at once (doc 05 §44): critical nets (from the component rules' roles and differential pairs) routed first, dearer vias for them (x3), and a cost "
-                  "for their tracks over a void of the adjacent reference plane (+4 pitches per lattice step); each can be set with the options below instead");
+                  "for their tracks over a void of the adjacent reference plane (+4 pitches per lattice step); each can be set with the options below instead. After "
+                  "routing, layer changes of critical nets without a return via get one (doc 05 §57; --no-si-stitch)");
+  route->add_flag("!--no-si-stitch", r_job.si_stitch,
+                  "With --si-rules: no return-path stitching vias for the critical nets' layer changes that the reference-return audit finds without one (doc 05 §57)");
   route->add_option("--critical-nets", r_job.critical_nets, "Nets that are critical whatever their role, KiCad wildcards comma separated (e.g. 'CLK*,USB_D*'); they are tier 1, like clocks, and the nets found by --critical-auto follow in their own tiers")
       ->delimiter(',');
   route->add_flag("--critical-auto", r_job.critical_auto, "Critical nets from the component rules' roles (clock, crystal, USB, Ethernet, PCIe, DDR ...) and from differential pairs");

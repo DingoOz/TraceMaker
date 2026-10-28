@@ -12,6 +12,9 @@
 
 namespace tmk::drc {
 
+// hasExactNetclass() in a rule KiCad compiles itself (model::CustomRule::implicit); no condition text can spell this name.
+constexpr std::string_view kImplicitExactNetclass = "hasExactNetclass#implicit";
+
 // ---------------------------------------------------------------------------------------------------------
 // Condition expressions: a small recursive-descent parser for the subset of KiCad's rule language used in
 // practice: A./B. properties, string/number literals, comparisons, && || ! and a few functions.
@@ -71,6 +74,8 @@ class Condition {
   std::string unsupported() const { return unsupported(*root_); }
   // First function that KiCad knows and call() below does not evaluate ("" if none).
   std::string unevaluated() const { return unevaluated(*root_); }
+  // KiCad's own rules (model::CustomRule::implicit): their hasExactNetclass() is evaluated (see call()).
+  void mark_implicit() { mark_implicit(*root_); }
   // Resolves the name patterns of area and courtyard functions against the board.
   void bind(const model::Board& b, const CourtyardCache& courtyards) { bind(*root_, b, courtyards); }
 
@@ -237,7 +242,7 @@ class Condition {
     static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
                                                  "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
-                                                 "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
+                                                 kImplicitExactNetclass, "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
     if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls) && !kicad_only(n.name))
       return n.name + "()";
@@ -262,6 +267,11 @@ class Condition {
     for (const auto& k : n.kids)
       if (auto u = unevaluated(*k); !u.empty()) return u;
     return {};
+  }
+
+  static void mark_implicit(Node& n) {
+    if (n.op == Node::Op::Call && n.name == "hasExactNetclass") n.name = kImplicitExactNetclass;
+    for (auto& k : n.kids) mark_implicit(*k);
   }
 
   static bool area_call(const Node& n) {
@@ -403,6 +413,11 @@ class Condition {
         const std::string& name = b.nets[net].name;
         v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
       }
+    } else if (n.name == kImplicitExactNetclass && !n.args.empty()) {
+      // hasExactNetclass() in the rules KiCad compiles itself (tuning profiles, doc 05 §58): the name of the item's effective net class,
+      // compared exactly (pcbexpr_functions.cpp). In a user's rule KiCad 10.0.6 never matches it (rule_parity static_exact_class_*), so
+      // there it stays one of the unevaluated functions.
+      v.b = !n.args[0].empty() && ctx.eng->netclass(*it).name == n.args[0];
     } else if (n.name == "memberOfFootprint" && !n.args.empty()) {
       if (it->footprint >= 0) {
         const auto& fp = b.footprints[static_cast<std::size_t>(it->footprint)];
@@ -463,6 +478,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     if (!rule.condition.empty()) {
       std::string err;
       c.cond = Condition::parse(rule.condition, err);
+      if (c.cond && rule.implicit) c.cond->mark_implicit();
       if (!c.cond) {
         c.valid = false;
         warnings_.push_back("rule '" + rule.name + "': cannot parse condition (" + err + "); rule ignored");
@@ -482,7 +498,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
                                                "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
                                                "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
-    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair"});
+    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", kImplicitExactNetclass});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
@@ -496,7 +512,9 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         }
       }
       // Rules outside the per-class cache need exact checks, including unreadable conditions.
-      if (!c.valid || (k.type != "disallow" && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
+      // KiCad's own tuning-profile rules set widths and pair gaps, never a clearance: the cache stays (doc 05 §58).
+      const bool width_only = rule.implicit && (k.type == "track_width" || k.type == "diff_pair_gap");
+      if (!c.valid || (k.type != "disallow" && !width_only && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
       if (k.type != "disallow" || !c.valid) continue;
       for (const auto& w : k.items) {
         const std::uint16_t bit = w == "track" ? kTrack : w == "via" ? kVia : w == "through_via" ? kThroughVia : w == "micro_via" ? kMicroVia
@@ -803,7 +821,11 @@ Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer)
   // replaces the clearance (verified on CM5_MINIMA_3: PCIe P/N at 0.177 mm under a 0.2 mm class clearance).
   // Observed: the smaller of clearance and diff-pair gap applies (0.154 gap passes under a 0.2 class; 0.2 mm
   // pads pass under a 0.25 gap).
-  if (la < 0 && lb < 0 && coupled_diff_pair(a.net, b.net)) req = std::min(req, netclass(a).diff_pair_gap);
+  if (la < 0 && lb < 0 && coupled_diff_pair(a.net, b.net)) {
+    req = std::min(req, netclass(a).diff_pair_gap);
+    auto track = [](const CopperItem& it) { return it.kind == ItemKind::Track || it.kind == ItemKind::Arc; };
+    if (const Coord g = netclass(a).tuning_pair_gap; g > 0 && track(a) && track(b)) req = std::min(req, g);
+  }
   bool custom = false;
   if (any_custom_clearance_)
     if (auto c = custom_min("clearance", &a, &b, layer)) req = *c, custom = true;
@@ -852,6 +874,20 @@ std::pair<Coord, Coord> RuleEngine::track_width(const CopperItem& t, int layer) 
     mx = k->max ? *k->max : 0;
   }
   return {mn, mx};
+}
+
+std::string RuleEngine::track_width_severity(const CopperItem& t, int layer) const {
+  std::string out;
+  for (const auto& c : rules_) {
+    if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
+    if (std::none_of(c.rule->constraints.begin(), c.rule->constraints.end(), [](const auto& x) { return x.type == "track_width"; })) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &t, nullptr, layer};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = c.rule->severity;
+  }
+  return out;
 }
 
 Coord RuleEngine::via_diameter_min(const CopperItem& v) const {

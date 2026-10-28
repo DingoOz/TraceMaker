@@ -73,6 +73,25 @@ def generate(root: Path) -> dict:
     project={'meta':{'filename':'b.kicad_pro','version':1},'net_settings':{'classes':[{'name':'Default','clearance':0.2,'track_width':0.25,'via_diameter':0.8,'via_drill':0.4},{'name':'Special','clearance':0.2,'track_width':0.25,'via_diameter':0.8,'via_drill':0.4}], 'netclass_assignments':{'X':'Special'}, 'netclass_patterns':[{'netclass':'Special','pattern':'X'}]},'board':{'design_settings':{'rules':{'allow_blind_buried_vias':True,'allow_microvias':True}}}}
     case('static_class_track',static,rule("A.NetClass == 'Special'"),project=project)
     case('static_class_via',static,rule("A.NetClass == 'Special'",'via'),project=project)
+    # hasExactNetclass (evaluated since D145) and KiCad 10's tuning profiles, which compile into exact-width rules with it (doc 05 §58).
+    case('static_exact_class_track',static,rule("A.hasExactNetclass('Special')"),project=project)
+    case('static_exact_class_case',static,rule("A.hasExactNetclass('special')"),project=project,
+         note='Exact: a different case selects nothing.')
+    def tuned(severity):
+        q=json.loads(json.dumps(project))
+        q['net_settings']['classes'][1]['tuning_profile']='MS'
+        q['board']['design_settings']['rule_severities']={'tuning_profile_track_geometries':severity}
+        entry=lambda layer,w: {'signal_layer':layer,'top_reference_layer':'UNDEFINED','bottom_reference_layer':'UNDEFINED','width':w,'diff_pair_gap':0,'delay':0}
+        q['tuning_profiles']={'meta':{'version':0},'tuning_profiles_impedance_geometric':[{'profile_name':'MS','type':0,'target_impedance':50.0,
+            'enable_time_domain_tuning':False,'via_prop_delay':0,'via_overrides':[],
+            'layer_entries':[entry('F.Cu',150000),entry('In1.Cu',100000),entry('In2.Cu',100000),entry('B.Cu',150000)]}]}
+        return q
+    profiled=[track('tp-front-wide',5,25,8,25),track('tp-front-ok',5,29,8,29,width=0.15),track('tp-inner-wide',12,25,15,25,width=0.15,layer='In1.Cu'),
+              track('tp-inner-ok',12,29,15,29,width=0.1,layer='In1.Cu'),track('tp-other-net',20,25,23,25,net=2),track('tp-back-narrow',20,29,23,29,width=0.1,layer='B.Cu')]
+    case('tuning_profile_width',profiled,'',project=tuned('error'),types=['track_width'],
+         note='Profile MS (0.15 mm outside, 0.1 mm inside) on class Special: its tracks of another width on a layer are track_width errors.')
+    case('tuning_profile_ignored',profiled,'',project=tuned('ignore'),types=['track_width'],
+         note="With tuning_profile_track_geometries at KiCad's default (ignore) there is no such rule.")
     case('static_layer_track',static,rule(layer='"F.Cu"'))
     case('static_inner_track',static,rule(layer='inner'))
     case('static_inner_via',static,rule(word='via',layer='inner'))

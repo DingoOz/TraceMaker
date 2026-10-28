@@ -159,6 +159,9 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D141](decisions/D141.md) | Pin swap: the free-assignment oracle gains too little to build the pass | accepted |
 | [D142](decisions/D142.md) | KiCad drift job: the newest KiCad image upgrades, re-reads, judges and routes four boards weekly | accepted |
 | [D143](decisions/D143.md) | Open connections by cause; half the portfolio searches from the crowded end | accepted |
+| [D144](decisions/D144.md) | --si-rules stitches the critical nets' unstitched layer changes and says where the rest are | accepted |
+| [D145](decisions/D145.md) | KiCad 10 tuning profiles: KiCad's width rules, and per-layer widths by narrowing | accepted |
+| [D146](decisions/D146.md) | --si-rules keeps critical-first: five seeds settle #24's options | accepted |
 <!-- END decision index -->
 
 ## Risks

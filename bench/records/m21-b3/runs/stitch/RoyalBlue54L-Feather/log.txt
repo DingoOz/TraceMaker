@@ -1,0 +1,96 @@
+critical nets: 6 -  tier 1: 4 (Net-(U1-P1.01{slash}XL2), Net-(U1-P1.00{slash}XL1), Net-(U5-XC1), Net-(U5-XC2));  tier 2: 2 (/Debugger/D+, /Debugger/D-)
+  routed first: yes; via cost x3; over a plane void: +4 pitches per lattice step
+portfolio: 8 variants on 4 threads
+searches: 56 ok (891966 expansions), 6 failed (2552278 expansions); fields 38 GPU + 0 CPU (4.76 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 29 connections improved
+restarts 0; legality checks 459601; rips 0, passes 1, boxed-in 3, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 2552278, negotiated confined 0, negotiated wide 0
+searches: 61 ok (894618 expansions), 8 failed (2547941 expansions); fields 45 GPU + 0 CPU (3.13 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 36 connections improved
+restarts 0; legality checks 460484; rips 0, passes 1, boxed-in 5, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 2547941, negotiated confined 0, negotiated wide 0
+searches: 28 ok (1957550 expansions), 12 failed (2302958 expansions); fields 40 GPU + 0 CPU (12.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 26 connections improved
+restarts 0; legality checks 4413719; rips 0, passes 1, boxed-in 7, nogood skips 1, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 2302958, negotiated confined 0, negotiated wide 0
+searches: 116 ok (771563 expansions), 60 failed (2244147 expansions); fields 152 GPU + 0 CPU (9.42 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 89 connections improved
+restarts 0; legality checks 3244740; rips 0, passes 1, boxed-in 55, nogood skips 1, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 2244147, negotiated confined 0, negotiated wide 0
+searches: 106 ok (903062 expansions), 49 failed (2504786 expansions); fields 131 GPU + 0 CPU (60.14 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 78 connections improved
+restarts 0; legality checks 3613477; rips 0, passes 1, boxed-in 38, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 2504786, negotiated confined 0, negotiated wide 0
+searches: 81 ok (596936 expansions), 20 failed (2427094 expansions); fields 76 GPU + 0 CPU (37.69 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 51 connections improved
+restarts 0; legality checks 3125047; rips 0, passes 1, boxed-in 16, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 2 proved unreachable, 650 cells visited
+failed-search expansions: strict confined 0, strict wide 2426444, negotiated confined 0, negotiated wide 0
+searches: 124 ok (818645 expansions), 79 failed (2005284 expansions); fields 179 GPU + 0 CPU (77.86 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 96 connections improved
+restarts 0; legality checks 3221169; rips 0, passes 1, boxed-in 74, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 214812 cells visited
+failed-search expansions: strict confined 0, strict wide 2005284, negotiated confined 0, negotiated wide 0
+searches: 124 ok (863235 expansions), 79 failed (1997084 expansions); fields 179 GPU + 0 CPU (35.19 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 98 connections improved
+restarts 0; legality checks 3289176; rips 0, passes 1, boxed-in 74, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 214812 cells visited
+failed-search expansions: strict confined 0, strict wide 1997084, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 53 in 15.6 s
+  variant 1 fast bends, shortest first, crowded source routed 120 in 91.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 25 in 33.0 s
+  variant 3 fast bends, jittered order, escape plan routed 98 in 76.7 s
+  variant 4 exact bends, jittered order    routed 58 in 15.4 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 76 in 51.0 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 110 in 19.6 s
+  variant 7 fast bends, dear vias, crowded source routed 120 in 48.5 s  <- best
+soft zones: after refilling 4 zones, 47 items unconnected
+searches: 0 ok (0 expansions), 165 failed (4042129 expansions); fields 81 GPU + 0 CPU (11.10 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 572369; rips 0, passes 2, boxed-in 126, nogood skips 13, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 3971749, negotiated confined 0, negotiated wide 70380
+refill repair: routed 0/47 connections, 0 tracks, 0 vias, 4042129 expansions
+refill repair: 47 items unconnected after refilling again (no better: repair discarded)
+si-rules: 0 layer changes of critical nets without a return stitch; 0 nets to stitch to their plane
+critical nets after the route: 6 nets, 2 vias, 13 plane void crossings, 0 layer changes without a return stitch (0 before the stitching pass)
+  Net-(U1-P1.01{slash}XL2): runs over 1 void of its reference plane (detour 12.86 mm)
+  Net-(U1-P1.01{slash}XL2): detour of 12.86 mm round a void on F.Cu at (160.900, 101.970) mm
+  Net-(U1-P1.00{slash}XL1): crosses 1 split of its reference plane
+  Net-(U1-P1.00{slash}XL1): detour of 18.06 mm round a void on F.Cu at (164.524, 102.350) mm
+  Net-(U1-P1.00{slash}XL1): detour of 2.10 mm round a void on F.Cu at (168.280, 102.350) mm
+  Net-(U1-P1.00{slash}XL1): detour of 3.20 mm round a void on F.Cu at (168.996, 100.246) mm
+  /Debugger/D+: runs over 4 voids of its reference plane (detour 8.35 mm)
+  /Debugger/D+: detour of 3.90 mm round a void on F.Cu at (127.680, 105.950) mm
+  /Debugger/D+: detour of 3.63 mm round a void on F.Cu at (137.174, 104.424) mm
+  /Debugger/D-: runs over 4 voids of its reference plane (detour 14.92 mm)
+  /Debugger/D-: detour of 9.65 mm round a void on F.Cu at (128.550, 104.526) mm
+  /Debugger/D-: detour of 4.25 mm round a void on F.Cu at (137.726, 104.426) mm
+routed 120/147 connections, 448 tracks, 81 vias, pitch 0.050 mm, 3075131 expansions, 178.75 s (best variant 48.46 s)
+  unrouted: Net-(J8-~{RESET}): U5.16 -> TP10.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(J8-~{RESET}): U5.16 -> J8.3  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /Connectors/UART.TX: U1.B2 -> U6.13  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /Connectors/ANALOG.A5: U1.B5 -> J1.10  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /Connectors/DIG.D12: U1.J5 -> J2.5  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /Debugger/UART_RX_NRF52: U6.3 -> U5.36  (boxed in; escapes/neck-down: boxed in (target))
+  unrouted: /Debugger/UART_TX_NRF52: U6.4 -> U5.35  ()
+  unrouted: /Connectors/ANALOG.A4: U1.B4 -> J1.9  ()
+  unrouted: /Debugger/USB.VBUS: C5.1 -> U3.5  ()
+  unrouted: /Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  ()
+  unrouted: /nPM1300/NPM1300.SDA: U1.H2 -> U2.13  ()
+  unrouted: /Debugger/TRG_SWDCLK_NRF52: U6.7 -> U5.32  ()
+  unrouted: /nPM1300/NPM1300.SCL: U1.J2 -> U2.14  ()
+  unrouted: /Connectors/DIG.D13: U1.J6 -> J2.4  ()
+  unrouted: /Connectors/ANALOG.A1: U1.F8 -> J1.6  ()
+  unrouted: /nPM1300/NPM1300.INT: U1.K2 -> U2.7  ()
+  unrouted: /Connectors/ANALOG.A0: U1.E9 -> J1.5  ()
+  unrouted: /Debugger/SWD_TRG.~{RESET}: SW1.2 -> J1.1  ()
+  unrouted: /Debugger/USB.CC2: U2.24 -> J3.B5  ()
+  unrouted: /Debugger/USB.CC1: U2.23 -> J3.A5  ()
+  unrouted: /Connectors/SHPHLD: U2.15 -> J1.16  ()
+  unrouted: Net-(J6-Pin_2): U1.D9 -> C14.1  ()
+  unrouted: Net-(J6-Pin_4): U1.E8 -> C13.1  ()
+  unrouted: /Connectors/I2C.SCL: U1.G8 -> R2.2  ()
+  unrouted: /Connectors/I2C.SDA: U1.B3 -> R3.2  ()
+work (all variants): 26278497 expansions, 430274 flood cells, 21827403 cell checks, 15312970 fixed-copper checks, 526345272 field cells in 840 fields, 664 commits, 0 rips

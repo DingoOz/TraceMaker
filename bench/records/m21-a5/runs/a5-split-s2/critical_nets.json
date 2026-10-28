@@ -1,0 +1,712 @@
+{
+ "RoyalBlue54L-Feather": {
+  "routed": 125,
+  "connections": 147,
+  "variant": "fast bends, shortest first, crowded source",
+  "critical_nets": {
+   "nets": [
+    {
+     "detour_mm": 0.0,
+     "length_mm": 5.609,
+     "missing_stitches": 0,
+     "name": "Net-(U1-P1.01{slash}XL2)",
+     "splits": 0,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 0,
+     "warnings": [],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    },
+    {
+     "detour_mm": 10.233,
+     "length_mm": 6.087,
+     "missing_stitches": 0,
+     "name": "Net-(U1-P1.00{slash}XL1)",
+     "splits": 0,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 2,
+     "void_crossings": 4,
+     "warnings": [
+      "runs over 4 voids of its reference plane (detour 10.23 mm)",
+      "detour of 7.14 mm round a void on In1.Cu at (161.850, 101.226) mm"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 1.326,
+     "missing_stitches": 0,
+     "name": "Net-(U5-XC1)",
+     "splits": 0,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 1,
+     "vias": 0,
+     "void_crossings": 0,
+     "warnings": [
+      "1 connection not routed"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    },
+    {
+     "detour_mm": 4.537,
+     "length_mm": 3.959,
+     "missing_stitches": 0,
+     "name": "Net-(U5-XC2)",
+     "splits": 0,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 1,
+     "warnings": [
+      "runs over 1 void of its reference plane (detour 4.54 mm)",
+      "detour of 4.54 mm round a void on F.Cu at (134.110, 109.530) mm"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xout)"
+    },
+    {
+     "detour_mm": 0.821,
+     "length_mm": 10.158,
+     "missing_stitches": 0,
+     "name": "/Debugger/D+",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 1,
+     "vias": 1,
+     "void_crossings": 2,
+     "warnings": [
+      "1 connection not routed",
+      "runs over 2 voids of its reference plane (detour 0.82 mm)"
+     ],
+     "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
+    },
+    {
+     "detour_mm": 1.024,
+     "length_mm": 11.601,
+     "missing_stitches": 0,
+     "name": "/Debugger/D-",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 1,
+     "vias": 1,
+     "void_crossings": 2,
+     "warnings": [
+      "1 connection not routed",
+      "runs over 2 voids of its reference plane (detour 1.02 mm)"
+     ],
+     "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
+    }
+   ],
+   "options": {
+    "first": false,
+    "split_cost": 4.0,
+    "split_hard": false,
+    "via_max": 0,
+    "via_mult": 1.0
+   },
+   "totals": {
+    "missing_stitches": 0,
+    "nets": 6,
+    "over_via_limit": 0,
+    "vias": 4,
+    "void_crossings": 9
+   }
+  },
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 43,
+    "expansions": 3146265,
+    "kept": true,
+    "routed": 1,
+    "tracks": 3,
+    "unconnected": 42,
+    "vias": 1
+   },
+   "starved_thermals": 0,
+   "unconnected": 43,
+   "warnings": [],
+   "zones": 4
+  }
+ },
+ "StickHub": {
+  "routed": 128,
+  "connections": 128,
+  "variant": "fast bends, shortest first, crowded source",
+  "critical_nets": {
+   "nets": [
+    {
+     "detour_mm": 0.0,
+     "length_mm": 3.443,
+     "missing_stitches": 0,
+     "name": "/XI",
+     "splits": 1,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 1,
+     "warnings": [
+      "crosses 1 split of its reference plane"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 4.945,
+     "missing_stitches": 0,
+     "name": "/XO",
+     "splits": 1,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 1,
+     "warnings": [
+      "crosses 1 split of its reference plane"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xout)"
+    },
+    {
+     "detour_mm": 0.819,
+     "length_mm": 6.844,
+     "missing_stitches": 0,
+     "name": "/U2D+",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 5.072,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 1,
+     "warnings": [
+      "runs over 1 void of its reference plane (detour 0.82 mm)"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 8.695,
+     "missing_stitches": 0,
+     "name": "/U6D-",
+     "splits": 2,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 2,
+     "warnings": [
+      "crosses 2 splits of its reference plane"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 4.132,
+     "missing_stitches": 0,
+     "name": "/U6D+",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 1.452,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 1,
+     "warnings": [
+      "runs over 1 void of its reference plane (detour 0.00 mm)"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 7.482,
+     "length_mm": 12.814,
+     "missing_stitches": 0,
+     "name": "/U7D-",
+     "splits": 2,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 3,
+     "void_crossings": 7,
+     "warnings": [
+      "crosses 2 splits of its reference plane",
+      "detour of 6.31 mm round a void on F.Cu at (144.503, 96.453) mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 11.306,
+     "length_mm": 15.221,
+     "missing_stitches": 0,
+     "name": "/U7D+",
+     "splits": 2,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 3,
+     "void_crossings": 9,
+     "warnings": [
+      "crosses 2 splits of its reference plane",
+      "detour of 9.10 mm round a void on B.Cu at (147.082, 98.457) mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 5.707,
+     "length_mm": 28.229,
+     "missing_stitches": 0,
+     "name": "/U5D+",
+     "splits": 3,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 3,
+     "void_crossings": 11,
+     "warnings": [
+      "crosses 3 splits of its reference plane",
+      "detour of 4.05 mm round a void on B.Cu at (152.776, 106.274) mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 26.503,
+     "length_mm": 20.024,
+     "missing_stitches": 0,
+     "name": "/U4D+",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 3,
+     "warnings": [
+      "runs over 3 voids of its reference plane (detour 26.50 mm)",
+      "detour of 3.42 mm round a void on F.Cu at (152.815, 83.815) mm",
+      "detour of 22.85 mm round a void on B.Cu at (154.182, 84.643) mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 7.252,
+     "missing_stitches": 0,
+     "name": "/U5D-",
+     "splits": 2,
+     "tier": 2,
+     "uncovered_mm": 1.016,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 3,
+     "warnings": [
+      "crosses 2 splits of its reference plane"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.143,
+     "length_mm": 9.122,
+     "missing_stitches": 1,
+     "name": "/U1D-",
+     "splits": 2,
+     "tier": 2,
+     "uncovered_mm": 1.662,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 3,
+     "warnings": [
+      "crosses 2 splits of its reference plane",
+      "layer change F.Cu to B.Cu at (152.650, 100.450) mm: no reference copper on one side"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.978,
+     "length_mm": 13.699,
+     "missing_stitches": 1,
+     "name": "/U3D-",
+     "splits": 3,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 3,
+     "void_crossings": 8,
+     "warnings": [
+      "crosses 3 splits of its reference plane",
+      "layer change F.Cu to B.Cu at (155.300, 99.200) mm: no via of GND within 5.0 mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 5.212,
+     "missing_stitches": 0,
+     "name": "/U2D-",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 5.212,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 0,
+     "warnings": [],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 6.224,
+     "missing_stitches": 1,
+     "name": "/U1D+",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 1.016,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 2,
+     "warnings": [
+      "runs over 2 voids of its reference plane (detour 0.00 mm)",
+      "layer change F.Cu to B.Cu at (152.800, 101.150) mm: no reference copper on one side"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 16.495,
+     "length_mm": 18.648,
+     "missing_stitches": 0,
+     "name": "/U4D-",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 4,
+     "warnings": [
+      "runs over 4 voids of its reference plane (detour 16.50 mm)",
+      "detour of 2.26 mm round a void on F.Cu at (152.233, 84.397) mm",
+      "detour of 11.81 mm round a void on B.Cu at (154.182, 86.357) mm",
+      "detour of 2.43 mm round a void on B.Cu at (156.520, 96.850) mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 5.708,
+     "length_mm": 13.832,
+     "missing_stitches": 0,
+     "name": "/U3D+",
+     "splits": 3,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 4,
+     "warnings": [
+      "crosses 3 splits of its reference plane",
+      "detour of 5.71 mm round a void on B.Cu at (154.927, 97.733) mm"
+     ],
+     "why": "differential pair"
+    },
+    {
+     "detour_mm": 0.234,
+     "length_mm": 15.837,
+     "missing_stitches": 1,
+     "name": "/D-",
+     "splits": 1,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 1,
+     "void_crossings": 4,
+     "warnings": [
+      "crosses 1 split of its reference plane",
+      "layer change F.Cu to B.Cu at (149.750, 111.600) mm: no reference copper on one side"
+     ],
+     "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
+    },
+    {
+     "detour_mm": 12.902,
+     "length_mm": 14.614,
+     "missing_stitches": 0,
+     "name": "/D+",
+     "splits": 0,
+     "tier": 2,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 3,
+     "void_crossings": 6,
+     "warnings": [
+      "runs over 6 voids of its reference plane (detour 12.90 mm)",
+      "detour of 12.16 mm round a void on B.Cu at (148.787, 101.213) mm"
+     ],
+     "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
+    }
+   ],
+   "options": {
+    "first": false,
+    "split_cost": 4.0,
+    "split_hard": false,
+    "via_max": 0,
+    "via_mult": 1.0
+   },
+   "totals": {
+    "missing_stitches": 4,
+    "nets": 18,
+    "over_via_limit": 0,
+    "vias": 26,
+    "void_crossings": 70
+   }
+  },
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 12,
+    "expansions": 3001725,
+    "kept": true,
+    "routed": 9,
+    "tracks": 11,
+    "unconnected": 3,
+    "vias": 9
+   },
+   "starved_thermals": 0,
+   "unconnected": 12,
+   "warnings": [],
+   "zones": 5
+  }
+ },
+ "complex_hierarchy": {
+  "routed": 87,
+  "connections": 87,
+  "variant": "fast bends, longest first (2x pitch on large boards)",
+  "critical_nets": null,
+  "stitch": null,
+  "refill": {
+   "starved_thermals": 0,
+   "unconnected": 0,
+   "warnings": [],
+   "zones": 1
+  }
+ },
+ "interf_u": {
+  "routed": 139,
+  "connections": 164,
+  "variant": "fast bends, jittered order, escape plan",
+  "critical_nets": {
+   "nets": [
+    {
+     "detour_mm": 3.287,
+     "length_mm": 30.305,
+     "missing_stitches": 0,
+     "name": "Net-(U9-P{slash}A3)",
+     "splits": 1,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 4,
+     "warnings": [
+      "crosses 1 split of its reference plane",
+      "detour of 2.36 mm round a void on F.Cu at (112.457, 92.386) mm"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    },
+    {
+     "detour_mm": 1.767,
+     "length_mm": 15.766,
+     "missing_stitches": 0,
+     "name": "/8MH-OUT",
+     "splits": 1,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 2,
+     "warnings": [
+      "crosses 1 split of its reference plane"
+     ],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    }
+   ],
+   "options": {
+    "first": false,
+    "split_cost": 4.0,
+    "split_hard": false,
+    "via_max": 0,
+    "via_mult": 1.0
+   },
+   "totals": {
+    "missing_stitches": 0,
+    "nets": 2,
+    "over_via_limit": 0,
+    "vias": 0,
+    "void_crossings": 6
+   }
+  },
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 36,
+    "expansions": 3198072,
+    "kept": true,
+    "routed": 10,
+    "tracks": 60,
+    "unconnected": 26,
+    "vias": 14
+   },
+   "starved_thermals": 2,
+   "thermal_repair": {
+    "nets_rerouted": 2,
+    "pads_repaired": 2,
+    "pads_tried": 4,
+    "starved": 4,
+    "starved_after": 2,
+    "unconnected": 26
+   },
+   "unconnected": 36,
+   "warnings": [],
+   "zones": 1
+  }
+ },
+ "multichannel_mixer": {
+  "routed": 173,
+  "connections": 173,
+  "variant": "fast bends, dear vias, crowded source",
+  "critical_nets": null,
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 8,
+    "expansions": 2136755,
+    "kept": true,
+    "routed": 5,
+    "tracks": 2,
+    "unconnected": 3,
+    "vias": 5
+   },
+   "starved_thermals": 1,
+   "thermal_repair": {
+    "nets_rerouted": 0,
+    "pads_repaired": 0,
+    "pads_tried": 1,
+    "starved": 1,
+    "starved_after": 1,
+    "unconnected": 3
+   },
+   "unconnected": 8,
+   "warnings": [],
+   "zones": 2
+  }
+ },
+ "pic_programmer": {
+  "routed": 82,
+  "connections": 86,
+  "variant": "fast bends, dear vias, crowded source",
+  "critical_nets": null,
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 7,
+    "expansions": 3456765,
+    "kept": true,
+    "routed": 3,
+    "tracks": 6,
+    "unconnected": 4,
+    "vias": 2
+   },
+   "starved_thermals": 0,
+   "unconnected": 7,
+   "warnings": [],
+   "zones": 1
+  }
+ },
+ "plane_smd": {
+  "routed": 48,
+  "connections": 49,
+  "variant": "fast bends, cheap crossings, escape plan, crowded source",
+  "critical_nets": {
+   "nets": [
+    {
+     "detour_mm": 0.0,
+     "length_mm": 6.335,
+     "missing_stitches": 0,
+     "name": "XOUT",
+     "splits": 0,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 0,
+     "warnings": [],
+     "why": "Quartz crystal with load capacitors (crystal xout)"
+    },
+    {
+     "detour_mm": 0.0,
+     "length_mm": 11.462,
+     "missing_stitches": 0,
+     "name": "XIN",
+     "splits": 0,
+     "tier": 1,
+     "uncovered_mm": 0.0,
+     "unrouted": 0,
+     "vias": 0,
+     "void_crossings": 0,
+     "warnings": [],
+     "why": "Quartz crystal with load capacitors (crystal xin)"
+    }
+   ],
+   "options": {
+    "first": false,
+    "split_cost": 4.0,
+    "split_hard": false,
+    "via_max": 0,
+    "via_mult": 1.0
+   },
+   "totals": {
+    "missing_stitches": 0,
+    "nets": 2,
+    "over_via_limit": 0,
+    "vias": 0,
+    "void_crossings": 0
+   }
+  },
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 1,
+    "expansions": 1158092,
+    "kept": false,
+    "routed": 0,
+    "tracks": 0,
+    "unconnected": 1,
+    "vias": 0
+   },
+   "starved_thermals": 0,
+   "unconnected": 1,
+   "warnings": [],
+   "zones": 2
+  }
+ },
+ "sonde xilinx": {
+  "routed": 48,
+  "connections": 48,
+  "variant": "fast bends, dear vias, crowded source",
+  "critical_nets": null,
+  "stitch": null,
+  "refill": {
+   "repair": {
+    "connections": 1,
+    "expansions": 10538,
+    "kept": true,
+    "routed": 1,
+    "tracks": 2,
+    "unconnected": 0,
+    "vias": 0
+   },
+   "starved_thermals": 0,
+   "unconnected": 1,
+   "warnings": [],
+   "zones": 1
+  }
+ }
+}

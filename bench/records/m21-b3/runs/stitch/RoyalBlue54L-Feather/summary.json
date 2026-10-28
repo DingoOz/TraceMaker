@@ -1,0 +1,424 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 81.63,
+ "connections": 147,
+ "copper_layers": 8,
+ "critical_nets": {
+  "nets": [
+   {
+    "detour_mm": 12.858,
+    "length_mm": 5.175,
+    "missing_stitches": 0,
+    "name": "Net-(U1-P1.01{slash}XL2)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "runs over 1 void of its reference plane (detour 12.86 mm)",
+     "detour of 12.86 mm round a void on F.Cu at (160.900, 101.970) mm"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 23.356,
+    "length_mm": 16.951,
+    "missing_stitches": 0,
+    "name": "Net-(U1-P1.00{slash}XL1)",
+    "splits": 1,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 4,
+    "warnings": [
+     "crosses 1 split of its reference plane",
+     "detour of 18.06 mm round a void on F.Cu at (164.524, 102.350) mm",
+     "detour of 2.10 mm round a void on F.Cu at (168.280, 102.350) mm",
+     "detour of 3.20 mm round a void on F.Cu at (168.996, 100.246) mm"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 5.147,
+    "missing_stitches": 0,
+    "name": "Net-(U5-XC1)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 3.959,
+    "missing_stitches": 0,
+    "name": "Net-(U5-XC2)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 8.353,
+    "length_mm": 20.563,
+    "missing_stitches": 0,
+    "name": "/Debugger/D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 4,
+    "warnings": [
+     "runs over 4 voids of its reference plane (detour 8.35 mm)",
+     "detour of 3.90 mm round a void on F.Cu at (127.680, 105.950) mm",
+     "detour of 3.63 mm round a void on F.Cu at (137.174, 104.424) mm"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
+   },
+   {
+    "detour_mm": 14.921,
+    "length_mm": 24.277,
+    "missing_stitches": 0,
+    "name": "/Debugger/D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 1,
+    "void_crossings": 4,
+    "warnings": [
+     "runs over 4 voids of its reference plane (detour 14.92 mm)",
+     "detour of 9.65 mm round a void on F.Cu at (128.550, 104.526) mm",
+     "detour of 4.25 mm round a void on F.Cu at (137.726, 104.426) mm"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
+   }
+  ],
+  "options": {
+   "first": true,
+   "split_cost": 4.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 3.0
+  },
+  "totals": {
+   "missing_stitches": 0,
+   "missing_stitches_before_stitching": 0,
+   "nets": 6,
+   "over_via_limit": 0,
+   "vias": 2,
+   "void_crossings": 13
+  }
+ },
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3075131,
+ "failures": [
+  "Net-(J8-~{RESET}): U5.16 -> TP10.1  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(J8-~{RESET}): U5.16 -> J8.3  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/UART.TX: U1.B2 -> U6.13  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/ANALOG.A5: U1.B5 -> J1.10  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D12: U1.J5 -> J2.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/UART_RX_NRF52: U6.3 -> U5.36  (boxed in; escapes/neck-down: boxed in (target))",
+  "/Debugger/UART_TX_NRF52: U6.4 -> U5.35  ()",
+  "/Connectors/ANALOG.A4: U1.B4 -> J1.9  ()",
+  "/Debugger/USB.VBUS: C5.1 -> U3.5  ()",
+  "/Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  ()",
+  "/nPM1300/NPM1300.SDA: U1.H2 -> U2.13  ()",
+  "/Debugger/TRG_SWDCLK_NRF52: U6.7 -> U5.32  ()",
+  "/nPM1300/NPM1300.SCL: U1.J2 -> U2.14  ()",
+  "/Connectors/DIG.D13: U1.J6 -> J2.4  ()",
+  "/Connectors/ANALOG.A1: U1.F8 -> J1.6  ()",
+  "/nPM1300/NPM1300.INT: U1.K2 -> U2.7  ()",
+  "/Connectors/ANALOG.A0: U1.E9 -> J1.5  ()",
+  "/Debugger/SWD_TRG.~{RESET}: SW1.2 -> J1.1  ()",
+  "/Debugger/USB.CC2: U2.24 -> J3.B5  ()",
+  "/Debugger/USB.CC1: U2.23 -> J3.A5  ()",
+  "/Connectors/SHPHLD: U2.15 -> J1.16  ()",
+  "Net-(J6-Pin_2): U1.D9 -> C14.1  ()",
+  "Net-(J6-Pin_4): U1.E8 -> C13.1  ()",
+  "/Connectors/I2C.SCL: U1.G8 -> R2.2  ()",
+  "/Connectors/I2C.SDA: U1.B3 -> R3.2  ()"
+ ],
+ "open": 27,
+ "package_pin_edges": 2,
+ "pitch_mm": 0.05,
+ "refill": {
+  "repair": {
+   "connections": 47,
+   "expansions": 4042129,
+   "kept": false,
+   "routed": 0,
+   "tracks": 0,
+   "unconnected": 47,
+   "vias": 0
+  },
+  "starved_thermals": 0,
+  "unconnected": 47,
+  "warnings": [],
+  "zones": 4
+ },
+ "routed": 120,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T23:33:50Z",
+  "input": "build/demos/RoyalBlue54L-Feather//unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "build/scratch/b3/stitch/RoyalBlue54L-Feather/routed.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--si-rules",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "8843"
+   },
+   {
+    "name": "--json",
+    "value": "build/scratch/b3/stitch/RoyalBlue54L-Feather/summary.json"
+   }
+  ],
+  "output": "build/scratch/b3/stitch/RoyalBlue54L-Feather/routed.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 3000000
+ },
+ "seconds": 178.748532253,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 181,
+  "bends_per_connection": 0.8227,
+  "connections": 220,
+  "detour_length_mm": 616.877294,
+  "detour_octile_mm": 547.91543,
+  "detour_ratio": 1.1259,
+  "length_mm": 616.877294,
+  "long_detours": 6,
+  "off_angle_segments": 72,
+  "segments": 448,
+  "short_segments": 68,
+  "stair_steps": 0,
+  "vias": 81
+ },
+ "time_limited": false,
+ "tracks": 448,
+ "tunnels": 0,
+ "unconnected_after_refill": 47,
+ "variant": 7,
+ "variant_name": "fast bends, dear vias, crowded source",
+ "variant_seconds": 48.455959988,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 53,
+   "seconds": 15.611343273,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 120,
+   "seconds": 91.143568857,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 25,
+   "seconds": 32.979039453,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 98,
+   "seconds": 76.749457086,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 58,
+   "seconds": 15.431718883,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 76,
+   "seconds": 50.979403939,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 110,
+   "seconds": 19.645694956,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 120,
+   "seconds": 48.455959988,
+   "variant": 7
+  }
+ ],
+ "vias": 81,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 3289174,
+   "commits": 121,
+   "expansions": 2860319,
+   "field_cells": 99638832,
+   "fields": 179,
+   "fixed_checks": 2699626,
+   "flood_cells": 214812,
+   "rips": 0,
+   "searches": 204
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3289174,
+   "commits": 121,
+   "expansions": 2860319,
+   "field_cells": 99638832,
+   "fields": 179,
+   "fixed_checks": 2699626,
+   "flood_cells": 214812,
+   "rips": 0,
+   "searches": 204
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 21827403,
+   "commits": 664,
+   "expansions": 26278497,
+   "field_cells": 526345272,
+   "fields": 840,
+   "fixed_checks": 15312930,
+   "flood_cells": 430274,
+   "rips": 0,
+   "searches": 1011
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 40,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 21827403,
+   "commits": 664,
+   "expansions": 26278497,
+   "field_cells": 526345272,
+   "fields": 840,
+   "fixed_checks": 15312970,
+   "flood_cells": 430274,
+   "rips": 0,
+   "searches": 1011
+  }
+ }
+}

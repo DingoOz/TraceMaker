@@ -567,6 +567,65 @@ RouteJobResult run_route_job(RouteJob job) {
       opt.buses.push_back({g.name, g.members, g.skew_limit});
     }
   }
+  // KiCad 10 tuning profiles (doc 05 §58, D145). The router has one width per net. A single-ended profile's nets are routed at the widest
+  // of the profile's widths (so their clearance holds at any of them) and narrowed afterwards, layer by layer, to the profile's width there:
+  // narrower copper cannot break a clearance. A pair's gap would change with the width, so a differential profile's pairs are routed at the
+  // width and gap of one layer and kept off the layers with another width or gap: a layer the class's SMD pads are on, then the geometry
+  // most of the profile's layers share, then the first.
+  nlohmann::json tuning_summary;
+  std::map<model::NetId, std::vector<Coord>> tuning_widths;  // net -> profile width per copper index (0 = none)
+  for (auto& c : rules.classes) {
+    const model::TuningProfile* p = rules.profile_of(c);
+    if (!p) continue;
+    std::vector<const model::TuningLayer*> on;  // the profile's layers that the board has, with a width
+    for (const auto& l : p->layers)
+      if (l.width > 0 && lb.board.copper_index(l.layer) >= 0) on.push_back(&l);
+    if (on.empty()) continue;
+    const model::TuningLayer* from = on[0];
+    nlohmann::json excluded = nlohmann::json::array();
+    if (p->differential) {
+      auto same = [](const model::TuningLayer* x, const model::TuningLayer* y) { return x->width == y->width && x->gap == y->gap; };
+      auto uses = [&](const model::TuningLayer* x) { return std::count_if(on.begin(), on.end(), [&](const auto* y) { return same(x, y); }); };
+      // Prefer the layers the class's SMD pads are on: a pair kept off its own pads' layer could not leave them.
+      std::vector<bool> pad_layer(static_cast<std::size_t>(lb.board.copper_count()), false);
+      for (const auto& pad : lb.board.pads)
+        if (pad.net > 0 && std::popcount(pad.copper) == 1 && rules.class_for(lb.board.nets[static_cast<std::size_t>(pad.net)].name).name == c.name)
+          pad_layer[static_cast<std::size_t>(std::countr_zero(pad.copper))] = true;
+      auto on_pads = [&](const model::TuningLayer* x) { return pad_layer[static_cast<std::size_t>(lb.board.copper_index(x->layer))]; };
+      for (const auto* l : on)
+        if (std::pair(on_pads(l), uses(l)) > std::pair(on_pads(from), uses(from))) from = l;
+      c.diff_pair_width = c.track_width = from->width;  // uncoupled pieces of a pair have the profile's width too
+      c.tuning_pair_gap = from->gap;
+      for (const auto* l : on) {
+        if (same(l, from)) continue;
+        model::CustomRule no_track{"tuning profile '" + p->name + "' on " + l->layer, "A.hasExactNetclass('" + c.name + "') && A.inDiffPair('*')", l->layer, "error", {}};
+        no_track.constraints.push_back({"disallow", std::nullopt, std::nullopt, std::nullopt, {"track"}});
+        opt.extra_rules.push_back(no_track);
+        excluded.push_back({{"layer", l->layer}, {"width_mm", nm_to_mm(l->width)}, {"gap_mm", nm_to_mm(l->gap)}});
+      }
+    } else {
+      for (const auto* l : on)
+        if (l->width > from->width) from = l;
+      c.track_width = from->width;
+      std::vector<Coord> widths(static_cast<std::size_t>(lb.board.copper_count()), 0);
+      for (const auto* l : on) widths[static_cast<std::size_t>(lb.board.copper_index(l->layer))] = std::max(l->width, rules.minimums.track_width);
+      for (std::size_t n = 1; n < lb.board.nets.size(); ++n)
+        if (rules.class_for(lb.board.nets[n].name).name == c.name) tuning_widths[static_cast<model::NetId>(n)] = widths;
+    }
+    nlohmann::json layers = nlohmann::json::array();
+    for (const auto* l : on) layers.push_back({{"layer", l->layer}, {"width_mm", nm_to_mm(l->width)}, {"gap_mm", nm_to_mm(l->gap)}});
+    log(fmt("tuning profile %s (net class %s, %s): routed at %.3f mm (the width on %s)%s", p->name.c_str(), c.name.c_str(),
+            p->differential ? "differential pairs" : "single-ended", nm_to_mm(from->width), from->layer.c_str(),
+            p->differential ? (excluded.empty() ? "" : fmt("; pairs kept off %zu layer%s with another width or gap", excluded.size(), excluded.size() == 1 ? "" : "s").c_str())
+                            : "; narrowed to each layer's width after routing"));
+    if (tuning_summary.is_null()) tuning_summary = nlohmann::json::array();
+    tuning_summary.push_back({{"net_class", c.name}, {"profile", p->name}, {"differential", p->differential}, {"route_width_mm", nm_to_mm(from->width)},
+                              {"route_width_from", from->layer}, {"pair_gap_mm", p->differential ? nm_to_mm(from->gap) : 0.0}, {"layers", layers},
+                              {"layers_without_tracks", excluded}});
+  }
+  for (const auto& c : rules.classes)
+    if (!c.tuning_profile.empty() && !rules.profile_of(c))
+      log("warning: net class " + c.name + " names tuning profile " + c.tuning_profile + ", which the project does not define (KiCad: missing_tuning_profile)");
   // Critical nets (issue #24, doc 05 §44): the names the user gave and, with --critical-auto, the nets the component rules' roles make critical.
   std::vector<crules::CriticalNet> critical;
   {
@@ -1041,6 +1100,10 @@ RouteJobResult run_route_job(RouteJob job) {
   // the number of unconnected items (after a refill when fills are soft or vias were added) and dropped if that
   // number went up.
   nlohmann::json widen_summary, stitch_summary;
+  bool plane_zones = false;
+  for (const auto& z : route_board->zones) plane_zones = plane_zones || (!z.rule_area && z.net > 0);
+  const bool si_stitch = job.si_rules && job.si_stitch && !critical.empty() && plane_zones && route_board->copper_count() > 1;
+  int si_missing_before = 0;
   {
     // Unconnected items per net (keyed by the report's text, which names the net), and all of them under "".
     using Unconnected = std::map<std::string, int>;
@@ -1126,12 +1189,55 @@ RouteJobResult run_route_job(RouteJob job) {
       }
       if (opt.sink) opt.sink->publish(server::stage("widen", "end", fmt("%d tracks widened", kept ? wr.widened : 0)));
     }
-    if (stitch_planes || stitch_return) {
+    // Tuning profiles: each track of a single-ended profiled net narrowed to its profile's width on its layer (see above). Judged like the
+    // other passes, though a narrower track keeps its ends, so it should never lose a connection.
+    if (!tuning_widths.empty()) {
+      auto narrowed = res.tracks;
+      int n_narrowed = 0;
+      std::map<std::string, int> by_class;
+      for (auto& t : narrowed) {
+        const auto it = tuning_widths.find(t.net);
+        if (it == tuning_widths.end() || t.layer < 0 || static_cast<std::size_t>(t.layer) >= it->second.size()) continue;
+        const Coord w = it->second[static_cast<std::size_t>(t.layer)];
+        if (w > 0 && t.width > w) t.width = w, ++n_narrowed, ++by_class[rules.class_for(lb.board.nets[static_cast<std::size_t>(t.net)].name).name];
+      }
+      bool kept = n_narrowed > 0;
+      if (kept) kept = no_worse(judge(res.tracks, res.vias, opt.soft_zones), judge(narrowed, res.vias, opt.soft_zones));
+      log(fmt("tuning profiles: %d track%s narrowed to the profile's width on their layer%s", n_narrowed, n_narrowed == 1 ? "" : "s",
+              n_narrowed > 0 && !kept ? "; discarded: a net has more unconnected items with it" : ""));
+      for (auto& e : tuning_summary) e["tracks_narrowed"] = kept ? by_class[e["net_class"].get<std::string>()] : 0;
+      if (kept) res.tracks = std::move(narrowed);
+    }
+    // --si-rules closes the audit loop (doc 18 B3, doc 05 §57): a layer change of a critical net that the reference-return audit finds with
+    // the same reference net on both sides and no via of that net within the audit's radius asks for return-path stitching of that net
+    // to that plane. A change between two different reference nets closes through a capacitor, which no pass places; it stays a warning.
+    auto returns = stitch_returns;
+    if (si_stitch) {
+      model::Board routed = *route_board;
+      routed.tracks.insert(routed.tracks.end(), res.tracks.begin(), res.tracks.end());
+      routed.vias.insert(routed.vias.end(), res.vias.begin(), res.vias.end());
+      analysis::ReturnPathOptions ro;
+      for (const auto& c : critical) ro.name_patterns.push_back(lb.board.nets[static_cast<std::size_t>(c.net)].name);
+      ro.refill_always = true;
+      const Coord radius = static_cast<Coord>(ro.stitch_radius_mm * 1e6);
+      for (const auto& n : analysis::analyse_return_paths(routed, rules, ro).nets) {
+        si_missing_before += n.missing_stitches;
+        for (const auto& ch : n.changes) {
+          if (!ch.missing || ch.ref_from.empty() || ch.ref_from != ch.ref_to) continue;
+          const model::NetId plane = lb.board.net_by_name(ch.ref_from);
+          const bool seen = std::any_of(returns.begin(), returns.end(), [&](const auto& y) { return y.signal == n.net && y.plane == plane; });
+          if (plane > 0 && plane != n.net && !seen) returns.push_back({n.net, plane, std::min(radius, static_cast<Coord>(crules::builtin_catalogue().stitch_via_within_mm * 1e6)), "si-rules"});
+        }
+      }
+      log(fmt("si-rules: %d layer change%s of critical nets without a return stitch; %zu net%s to stitch to their plane", si_missing_before,
+              si_missing_before == 1 ? "" : "s", returns.size() - stitch_returns.size(), returns.size() - stitch_returns.size() == 1 ? "" : "s"));
+    }
+    if (stitch_planes || !returns.empty() || stitch_return) {
       if (opt.sink) opt.sink->publish(server::stage("stitch", "begin", "stitching vias"));
       passes::StitchOptions so;
       so.planes = stitch_planes;
       so.pitch = static_cast<Coord>((job.stitch_pitch_mm > 0 ? job.stitch_pitch_mm : crules::builtin_catalogue().stitch_via_within_mm) * 1e6);
-      so.returns = stitch_returns;
+      so.returns = returns;
       so.work_limit = job.pass_work;
       model::Board bd = *route_board;
       bd.tracks.insert(bd.tracks.end(), res.tracks.begin(), res.tracks.end());
@@ -1266,7 +1372,8 @@ RouteJobResult run_route_job(RouteJob job) {
     critical_summary["options"] = {{"first", opt.critical_first}, {"via_mult", opt.critical_via_mult}, {"split_cost", opt.split_cost}, {"split_hard", opt.split_hard},
                                    {"via_max", job.critical_via_max}};
     critical_summary["nets"] = nlohmann::json::array();
-    int total_vias = 0, total_crossings = 0, over_limit = 0;
+    int total_vias = 0, total_crossings = 0, over_limit = 0, total_missing = 0;
+    const double ro_radius_mm = analysis::ReturnPathOptions{}.stitch_radius_mm, ro_warn_detour_mm = analysis::ReturnPathOptions{}.warn_detour_mm;
     for (const auto& c : critical) {
       const std::string& net_name = lb.board.nets[static_cast<std::size_t>(c.net)].name;
       const int vias = vias_by_net.count(c.net) ? vias_by_net[c.net] : 0;
@@ -1287,17 +1394,36 @@ RouteJobResult run_route_job(RouteJob job) {
         row["detour_mm"] = std::round(n.detour_mm * 1000) / 1000;
         row["splits"] = n.split_count;
         row["uncovered_mm"] = std::round(n.uncovered_mm * 1000) / 1000;
+        row["missing_stitches"] = n.missing_stitches;
         total_crossings += n.void_count;
+        total_missing += n.missing_stitches;
         if (n.split_count > 0) warn.push_back(fmt("crosses %d split%s of its reference plane", n.split_count, n.split_count == 1 ? "" : "s"));
         else if (n.void_count > 0) warn.push_back(fmt("runs over %d void%s of its reference plane (detour %.2f mm)", n.void_count, n.void_count == 1 ? "" : "s", n.detour_mm));
+        // Where (doc 18 B3): each layer change without a return closure and each void whose detour is over the audit's threshold, with its place.
+        int listed = 0, more = 0;
+        auto place = [&](const std::string& w) { (++listed <= 8 ? warn.push_back(w) : void(++more)); };
+        for (const auto& ch : n.changes)
+          if (ch.missing)
+            place(fmt("layer change %s to %s at (%.3f, %.3f) mm: %s", lb.board.copper_name(ch.from_layer).c_str(), lb.board.copper_name(ch.to_layer).c_str(),
+                      nm_to_mm(ch.at.x), nm_to_mm(ch.at.y),
+                      ch.ref_from.empty() || ch.ref_to.empty() ? "no reference copper on one side"
+                      : ch.ref_from == ch.ref_to ? fmt("no via of %s within %.1f mm", ch.ref_from.c_str(), ro_radius_mm).c_str()
+                                                 : fmt("references %s and %s, no capacitor between them within %.1f mm", ch.ref_from.c_str(), ch.ref_to.c_str(), ro_radius_mm).c_str()));
+        for (const auto& v : n.voids)
+          if (!v.no_path && v.detour_mm > ro_warn_detour_mm)
+            place(fmt("detour of %.2f mm round a void on %s at (%.3f, %.3f) mm", v.detour_mm, lb.board.copper_name(v.layer).c_str(), nm_to_mm(v.entry.x), nm_to_mm(v.entry.y)));
+        if (more > 0) warn.push_back(fmt("and %d more place%s", more, more == 1 ? "" : "s"));
       }
       row["warnings"] = warn;
       total_vias += vias;
       critical_summary["nets"].push_back(row);
     }
     critical_summary["totals"] = {{"nets", critical.size()}, {"vias", total_vias}, {"void_crossings", total_crossings}, {"over_via_limit", over_limit}};
-    log(fmt("critical nets after the route: %zu nets, %d vias, %d plane void crossings%s", critical.size(), total_vias, total_crossings,
-            audit.empty() ? " (no reference plane on the board: crossings not measured)" : ""));
+    if (!audit.empty()) critical_summary["totals"]["missing_stitches"] = total_missing;
+    if (si_stitch) critical_summary["totals"]["missing_stitches_before_stitching"] = si_missing_before;
+    log(fmt("critical nets after the route: %zu nets, %d vias, %d plane void crossings%s%s", critical.size(), total_vias, total_crossings,
+            audit.empty() ? " (no reference plane on the board: crossings not measured)" : fmt(", %d layer changes without a return stitch", total_missing).c_str(),
+            si_stitch ? fmt(" (%d before the stitching pass)", si_missing_before).c_str() : ""));
     for (const auto& row : critical_summary["nets"])
       for (const auto& w : row["warnings"]) log("  " + row["name"].get<std::string>() + ": " + w.get<std::string>());
     if (opt.sink) {
@@ -1342,6 +1468,7 @@ RouteJobResult run_route_job(RouteJob job) {
   }
   if (!return_path_summary.is_null()) out.summary["return_paths"] = return_path_summary;
   if (!critical_summary.is_null()) out.summary["critical_nets"] = critical_summary;
+  if (!tuning_summary.is_null()) out.summary["tuning_profiles"] = tuning_summary;
   if (!footprint_summary.is_null()) out.summary["footprint_check"] = footprint_summary;
   if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;

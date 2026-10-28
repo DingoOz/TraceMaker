@@ -237,3 +237,49 @@ strict searches that flood their window before finding the *target* boxed in, an
 more crowded end proves a boxed-in pin at once. In four of the portfolio's eight variants (all eight lost two clean boards), by
 default: open connections on the 33 boards 1,383 → 1,220 (KiCad 1,368 → 1,204; 18 boards better, 6 worse; one completes); the other
 sets in the table of doc 05 §55. Gate (a table of failures by cause; the fix chosen from it): met.
+
+## 14. B3 built: `--si-rules` closes the audit loop (2026-10-27)
+
+With `--si-rules`, the reference-return audit runs on the critical nets after routing; every layer change it finds with the same plane
+net on both sides and no via of it within 5 mm gets a return-path stitching via (the stitching pass of doc 05 §39.3, as a
+transaction), the audit runs again, and the report names each unstitched change and each detour over 2 mm with its place
+(`--no-si-stitch` turns the stitching off; doc 05 §57, decision [D144](decisions/D144.md), records in `bench/records/m21-b3`).
+
+Gate (doc 18 §4 B3): on the plane boards unstitched layer changes of critical nets fall, 0 added DRC errors, quick/mid/planes unchanged
+with the options off. Not met on the plane tier, because there is nothing to fix there. Under `--si-rules` routing, one change stays without a return via in
+every seed (StickHub, with no plane copper on one side, which a via cannot fix). The other option sets leave 2 to 7, so the
+`--si-rules` routing already avoids them (`bench/records/m21-a5`). The pass is shown working on a constructed board (doc 05 §57),
+and no KiCad error was added in any run. A3's modern-boards set does not exist yet (the Kookabus files are still missing).
+
+## 15. B1 built: KiCad 10 tuning profiles (2026-10-28)
+
+The project reader reads KiCad 10's tuning profiles and compiles KiCad's implicit width and pair-gap rules, so the engine's DRC
+judges profiled tracks as KiCad does. Single-ended profiles are routed at their widest width and narrowed afterwards to each layer's
+width. Differential profiles keep their pairs on the layers that share one width and gap (doc 05 §58, decision
+[D145](decisions/D145.md), records in `bench/records/m21-b1`).
+
+KiCad 10.0.6 was measured where its behaviour and its source disagree, and the engine follows the behaviour:
+
+- an ignored profile rule still decides the width check;
+- `hasExactNetclass` never matches in a user's rule;
+- the coupled clearance at the profile's gap covers tracks, not pads.
+
+The DRC parity corpus has four new cases, and all 220 match KiCad.
+
+Gate (doc 18 §4 B1):
+
+- Boards with profiles route with each layer's profile width: met for single-ended profiles, and for pairs on the layers they keep.
+- `kicad-cli` with `tuning_profile_track_geometries` enabled adds 0 errors: met on the two boards given profiles. On RoyalBlue,
+  routing with the single-ended profile alone is the same as without one. The pair profile costs 5 of 147 connections.
+- Parity corpus extended: met.
+- Options off byte-identical: the quick tier at the end of the night (morning report).
+
+No real board with profiles exists in the fixtures; the delays are left to B2.
+
+## 16. A5 settled: `--si-rules` keeps critical-first (2026-10-28)
+
+Five seeds of #24's options on the plane tier (decision [D146](decisions/D146.md), records in `bench/records/m21-a5`). No
+critical-net measure moves with the seed. `--critical-first` routes 27 of 28 critical nets against 23 to 25 without it, including
+RoyalBlue's crystal net and debugger USB pair, at 6 connections of the other nets. The via and split costs alone save a few vias and
+crossings on common nets, and nothing once critical-first is on. `--si-rules` keeps all three, and defaults stay off. Gate (settle
+the defaults on five seeds): met.

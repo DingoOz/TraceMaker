@@ -51,6 +51,15 @@ PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const
     gap = std::max(na.has_diff_pair_gap ? na.diff_pair_gap : 0, nc.has_diff_pair_gap ? nc.diff_pair_gap : 0);
     r.source = "net class";
   }
+  // A differential tuning profile (doc 05 §58): its gap, at which the halves' tracks may sit (drc::RuleEngine::clearance); vias and pads
+  // keep the clearance above.
+  const Coord item_req = req;
+  if (const Coord tg = std::max(na.tuning_pair_gap, nc.tuning_pair_gap); tg > 0 && re.coupled_diff_pair(a, c)) {
+    req = std::max(std::min(req, tg), m.clearance);
+    r.required_gap = req;
+    gap = tg;
+    r.source = "tuning profile";
+  }
   if (const auto k = re.net_constraint(a, "diff_pair_gap"); k && (k->opt || k->min)) {
     gap = k->opt ? *k->opt : *k->min;
     r.source = "rule";
@@ -60,7 +69,7 @@ PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const
   // Vias: the class via raised to the board minimums (as the router's own vias), side by side at the via gap.
   r.via_drill = std::max({na.via_drill, nc.via_drill, m.through_hole_diameter});
   r.via_diameter = std::max({na.via_diameter, nc.via_diameter, m.via_diameter, r.via_drill + 2 * m.via_annular_width});
-  Coord vgap = req;
+  Coord vgap = item_req;
   if (na.has_diff_pair_gap) vgap = std::max(vgap, na.diff_pair_via_gap);
   if (nc.has_diff_pair_gap) vgap = std::max(vgap, nc.diff_pair_via_gap);
   if (via_mask > 0) vgap = std::max(vgap, 2 * via_mask + 1'000);  // as route::Obstacles checks untented vias
