@@ -747,7 +747,9 @@ pad's own layer.
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
 
 Disallow masks retain the per-class cache. Physical-hole rules do too when independent of `NetName`, `NetClass`
-and `inDiffPair`. Other custom rules, including unparseable conditions, require exact checks.
+and `inDiffPair`, and clearance rules when independent of `NetName` and `inDiffPair` (cached via codes probe a via, so
+`Type`, `Width` and position conditions agree with the exact check). Other constraints are not read per point, and
+rules that cannot be read are not applied, so neither needs exact checks (D139).
 
 KiCad's violation names and counts were checked with kicad-cli 10.0.3. Example: inner layers for GND only;
 no via in an SMD pad except on U1.
@@ -2566,7 +2568,7 @@ see the other must therefore be at exactly the gap, which includes stretches far
 A meander raises the delay by the delay per mm of the layer it is on, so only tracks on layers with a delay are candidates. The tuner
 measures with the same calculation as the check, and its last meander is cut to fit. Then each `skew` rule in ps: the nets it groups,
 or each pair with `within_diff_pairs`, are brought to within a quarter of the limit below the net with the most delay. Nets of a profiled
-class are not necked down (§58).
+class are not necked down (§58). When the meanders do not fit, the tuner rips the routed connections in their way and routes them again (§61, D152).
 
 **Pair names** (`drc::match_dp_suffix`, D149). Nets are paired as KiCad 10.0.6's `MatchDpSuffix` pairs them:
 - From the end of the name, digits and underscores are skipped. The next character must be P or + (positive) or N or − (negative).
@@ -2683,3 +2685,37 @@ Tests:
   parallel are coupled at KiCad's 1.8573 mm.
 - rule_parity: `via_unused_layers` (four vias, each passed by tracks inside the ring's clearance and outside the hole's) and
   `diff_pair_tuning_pattern` and `diff_pair_near_parallel`. All 234 cases match; the build before D150 fails these three.
+
+## 61. Delay tuning that makes room (2026-10-28, D152)
+
+The delay tuner (§59) puts a meander only where nothing else is. When it runs, after negotiation and clean-up, the board's other
+connections are all in place. On RoyalBlue54L-Feather-delay with D139, the extra connections took the room beside the USB pair. D+
+stayed 2.7 ps short of D- against a 0.5 ps rule, and KiCad reported `skew_out_of_range`.
+
+**`Router::tune_with_room`.** It applies to every delay window and every delay skew group or pair.
+
+1. **Plain tuning first.** If the net ends in range, the step stops there.
+2. **Start over from the untuned net.** The board goes back to the net with no meanders, because the small meanders of the plain
+   attempt fill the free room.
+3. **Try ripping at each height.** After both free sides of a meander, the tuner tries each side that only routed copper of other
+   nets blocks. The rippable owners are those `segment_state` reports when routed copper is ignored. Those connections are ripped
+   and the meander is placed.
+4. **Who may be ripped.** A connection may be ripped if it is:
+   - routed, and not implicit;
+   - not coupled, and not a bus or bundle lane;
+   - not of the net or of its pair partner;
+   - of a net with no length or skew rule of its own.
+
+   At most 16 connections are ripped.
+5. **Route them again.** The ripped connections, and those of their nets that lose an implicit route, are routed again strictly, in
+   connection order. Each gets the transaction cap. Together they get 400,000 work units beyond the spent budget (2 % of the time
+   limit with `--time`).
+6. **Keep or roll back.** The board is kept if the net is in range and all of them route again. Otherwise it goes back to the plain
+   attempt's result.
+
+**Result** (`bench/records/d152-room`, 3 M work, `--refill --soft-zones`). RoyalBlue54L-Feather-delay routes 125/147 with no added
+KiCad errors. One connection is ripped and routed again, and D+ ends at 79.43 ps against D-'s 79.49 ps. The other B2 boards never reach
+the step. Test: `delay_room` (it skips without `build/demos`).
+
+**Open.** mm length windows, mm pair skew and the bus tuner do not make room yet.
+

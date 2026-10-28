@@ -89,6 +89,8 @@ set_tests_properties(bus_route PROPERTIES LABELS "route;integration" TIMEOUT 360
 # measurement (and by KiCad when kicad-cli is on the PATH). Needs no fixtures and no GPU.
 add_test(NAME delay_tuning COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/delay_tuning.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/delay_tuning)
 set_tests_properties(delay_tuning PROPERTIES LABELS "route;integration" TIMEOUT 1800 PROCESSORS 4)  # 15 s in release
+add_test(NAME delay_room COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/delay_room.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/delay_room)
+set_tests_properties(delay_room PROPERTIES SKIP_RETURN_CODE 77 LABELS "route;integration" TIMEOUT 1800 PROCESSORS 8)  # 45 s in release
 # After-route passes (doc 05 §39): style metric, power widening and stitching vias through the command line, on
 # generated boards; KiCad's DRC judges the stitched board when kicad-cli is on the PATH.
 add_test(NAME after_route_passes COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/after_route_passes.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/after_route_passes)

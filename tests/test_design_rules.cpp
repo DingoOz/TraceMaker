@@ -1193,3 +1193,50 @@ TEST_CASE("constraint flags in brackets: within_diff_pairs is kept, anything els
   CHECK(warned("rule 'no value': cannot read value of max"));
   CHECK(warned("rule 'unknown flag': cannot read value of some_new_flag"));
 }
+
+// WholeBoard's JLCPCB limits (wholeboard/kicad/dru.py): manufacturing minimums the router does not read per
+// point, a clearance rule on item types and a rule whose condition uses Net, which TraceMaker cannot read.
+const char* kFabLimits =
+    "(version 1)\n"
+    "(rule \"Track width\" (constraint track_width (min 0.09mm)))\n"
+    "(rule \"Copper clearance\" (condition \"A.Type != 'Zone' && B.Type != 'Zone'\") (constraint clearance (min 0.09mm)))\n"
+    "(rule \"Via drill\" (condition \"A.Type == 'Via'\") (constraint hole_size (min 0.16mm)))\n"
+    "(rule \"Via annular ring\" (condition \"A.Type == 'Via'\") (constraint annular_width (min 0.05mm)))\n"
+    "(rule \"Hole to hole\" (condition \"!(A.Type == 'Via' && B.Type == 'Via') && A.Net != B.Net\")\n"
+    "  (constraint hole_to_hole (min 0.5mm)))\n"
+    "(rule \"Hole to copper\" (constraint hole_clearance (min 0.254mm)))\n"
+    "(rule \"Copper to board edge\" (constraint edge_clearance (min 0.3mm)))\n"
+    "(rule \"Silkscreen to pads\" (layer outer) (condition \"A.Type == 'Pad' && (B.Type == 'Text' || B.Type == 'Graphic')\")\n"
+    "  (constraint silk_clearance (min 0.15mm)))\n";
+
+TEST_CASE("Rules the cache judges as the exact check does keep the per-class cache (D139)", "[rules][route]") {
+  auto exact = [](const std::string& name, const std::string& dru) {
+    const Files f(name, board_text(""), dru);
+    auto lb = io::read_board_file(f.pcb.string());
+    const auto rules = io::read_design_rules(f.pcb.string());
+    return route::Obstacles(lb.board, rules).needs_exact_routing();
+  };
+  CHECK_FALSE(exact("fab_limits", kFabLimits));
+  CHECK_FALSE(exact("class_clearance", "(version 1)\n(rule \"c\" (condition \"A.NetClass == 'Default'\") (constraint clearance (min 0.3mm)))\n"));
+  // Nets of one class told apart: the cache's stand-in net would be judged for all of them.
+  CHECK(exact("net_clearance", "(version 1)\n(rule \"c\" (condition \"A.NetName == 'SIG'\") (constraint clearance (min 0.3mm)))\n"));
+  CHECK(exact("pair_clearance", "(version 1)\n(rule \"c\" (condition \"A.inDiffPair('*')\") (constraint clearance (min 0.3mm)))\n"));
+}
+
+TEST_CASE("A clearance rule for vias: cached via codes probe a via, as via_state does", "[rules][route]") {
+  // 1 mm from vias only. A SIG via (0.6 mm) at (4, 8.3) is 0.5 mm from R1's GND pad (y 6.5..7.5); a track is not.
+  const Files f("via_clearance", board_text(""),
+                "(version 1)\n(rule \"via keep\" (condition \"A.Type == 'Via'\") (constraint clearance (min 1mm)))\n");
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  route::Obstacles obs(lb.board, rules);
+  REQUIRE_FALSE(obs.needs_exact_routing());
+  const geom::Point p{4'000'000, 8'300'000};
+  const Coord d = 600'000, drill = 300'000;
+  auto blocks_sig = [](std::int32_t code) { return code != route::Obstacles::kFree && code != 1; };
+  CHECK(obs.via_state(p, d, drill, 1, 0, false) == 2);
+  CHECK(blocks_sig(obs.fixed_via_code(p, d, drill, 0, 1)));
+  CHECK(blocks_sig(obs.fixed_via_code_reference(p, d, drill, 0, 1)));
+  CHECK(obs.disk_state(p, 0, 125'000, 1, 0, false) == 0);  // tracks keep the class clearance
+  CHECK(obs.fixed_code(p, 0, 125'000, 0, 1) == route::Obstacles::kFree);
+}

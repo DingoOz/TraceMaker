@@ -17,6 +17,17 @@ comparable (judge version, time limit, machine load).
 | [flash-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d150-padstacks/runs/flash-b1/summary.json) | b1-profiles | 5 | c6d0f4b | 0.0% | 77.0% |  | 207 | `--soft-zones` |
 | [flash-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d150-padstacks/runs/flash-b2/summary.json) | b2-delay | 3 | c6d0f4b | 0.0% | 79.6% |  | 162 | `--soft-zones` |
 
+## d152-room
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d152-room)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [d139-rb](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d152-room/runs/d139-rb/summary.json) | b2-delay | 1 | ca40050 | 0.0% | 71.9% |  | 53 | `--soft-zones` |
+| [d152-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d152-room/runs/d152-b2/summary.json) | b2-delay | 3 | ca40050 | 0.0% | 80.1% |  | 208 | `--soft-zones` |
+| [d152-room](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d152-room/runs/d152-room/summary.json) | b2-delay | 1 | ca40050 | 0.0% | 71.9% |  | 41 | `--soft-zones` |
+| [main-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d152-room/runs/main-b2/summary.json) | b2-delay | 3 | ca40050 | 0.0% | 80.5% |  | 188 | `--soft-zones` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)

@@ -4562,7 +4562,8 @@ struct Router::Impl {
   // `rate`: tune a delay instead (doc 05 §59): `mn` and `mx` are attoseconds, the net is measured as KiCad measures
   // it (vias and pad-to-die delays included), and a nanometre of meander on copper layer l adds rate[l]; tracks on a
   // layer whose rate is 0 get none.
-  bool tune_net(NetId net, const std::vector<int>& list, std::optional<Coord> mn, std::optional<Coord> mx, const std::vector<double>* rate = nullptr) {
+  bool tune_net(NetId net, const std::vector<int>& list, std::optional<Coord> mn, std::optional<Coord> mx, const std::vector<double>* rate = nullptr,
+                std::vector<int>* ripped = nullptr, NetId keep = 0) {
     auto seg_len = [](const model::Track& t) { return std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y)); };
     auto rate_on = [&](int layer) { return rate ? (*rate)[static_cast<std::size_t>(layer)] : 1.0; };
       double len = 0;
@@ -4613,7 +4614,11 @@ struct Router::Impl {
           k = std::min(k, static_cast<int>(std::ceil(deficit / (2 * h * r))));
           if (mx) k = std::min(k, static_cast<int>(std::floor((static_cast<double>(*mx) - len) / (2 * h * r))));
           if (k <= 0) continue;
-          for (double side : {1.0, -1.0}) {
+          // With `ripped` (tune_with_room), a meander of this height that only routed copper of other nets blocks is
+          // placed when neither side is free: the connections in its way are ripped (and appended to `ripped`).
+          for (int trial = 0; trial < (ripped ? 4 : 2); ++trial) {
+            const int pass_rip = trial / 2;
+            const double side = trial % 2 == 0 ? 1.0 : -1.0;
             const double nx_ = -uy * side, ny_ = ux * side;
             auto P = [&](double along, double up) {
               return Point{t.a.x + static_cast<Coord>(std::llround(ux * along + nx_ * up)), t.a.y + static_cast<Coord>(std::llround(uy * along + ny_ * up))};
@@ -4633,6 +4638,30 @@ struct Router::Impl {
             bool good = true;
             for (std::size_t i = 0; i + 1 < pts.size() && good; ++i)
               if (!(pts[i] == pts[i + 1]) && obs->segment_state(pts[i], pts[i + 1], t.layer, t.width, net, false, nullptr) != 0) good = false;
+            if (!good && pass_rip == 1) {
+              std::vector<int> owners;
+              bool soft_only = true;
+              for (std::size_t i = 0; i + 1 < pts.size() && soft_only; ++i)
+                if (!(pts[i] == pts[i + 1]) && obs->segment_state(pts[i], pts[i + 1], t.layer, t.width, net, true, &owners) == 2) soft_only = false;
+              std::sort(owners.begin(), owners.end());
+              owners.erase(std::unique(owners.begin(), owners.end()), owners.end());
+              if (std::getenv("TM_DEBUG_ROOM")) {
+                std::fprintf(stderr, "room cand track (%.3f,%.3f)-(%.3f,%.3f) L%d h%.2f side%+.0f k%d fixed=%d owners:", nm_to_mm(t.a.x), nm_to_mm(t.a.y), nm_to_mm(t.b.x), nm_to_mm(t.b.y), t.layer, h_mm, side, k, soft_only ? 0 : 1);
+                for (int o : owners) std::fprintf(stderr, " %d(%s%s)", o, o >= 0 ? b.nets[static_cast<std::size_t>(cs[static_cast<std::size_t>(o)].c.net)].name.c_str() : "-", o >= 0 && !room_rippable(o, net, keep) ? ",keep" : "");
+                std::fprintf(stderr, "\n");
+              }
+              for (int o : owners)
+                if (!room_rippable(o, net, keep)) soft_only = false;
+              if (soft_only && !owners.empty() && ripped->size() + owners.size() <= 16) {
+                for (int o : owners) {
+                  if (cs[static_cast<std::size_t>(o)].routed) rip(o);
+                  ripped->push_back(o);
+                }
+                good = true;
+                for (std::size_t i = 0; i + 1 < pts.size() && good; ++i)
+                  if (!(pts[i] == pts[i + 1]) && obs->segment_state(pts[i], pts[i + 1], t.layer, t.width, net, false, nullptr) != 0) good = false;
+              }
+            }
             auto& items = cs[static_cast<std::size_t>(best_ci)].items;
             items.erase(std::remove(items.begin(), items.end(), best_item), items.end());
             if (!good) {  // put the original back
@@ -4662,6 +4691,77 @@ struct Router::Impl {
       }
       if (rate) len = kicad_measure(net).total_delay();
       return len >= static_cast<double>(*mn) && (!mx || len <= static_cast<double>(*mx));
+  }
+
+  // A routed connection tune_with_room may rip to make room for the meanders of `net`: one of another net, not `keep`
+  // (the pair partner), with no length, delay or skew rule of its own, not coupled and not a bus or bundle lane.
+  bool room_rippable(int ci, NetId net, NetId keep) const {
+    if (ci < 0) return false;
+    const auto& st = cs[static_cast<std::size_t>(ci)];
+    if (!st.routed || st.implicit || st.coupled || st.bus_lane || st.bundle_lane || st.c.net == net || st.c.net == keep) return false;
+    return !obs->rules().net_constraint(st.c.net, "length") && obs->rules().net_rule_with(st.c.net, "skew") < 0 && !obs->rules().skew_constraint(st.c.net);
+  }
+
+  // Delay tuning that makes room (D152, doc 05 §61): when the meanders of `net` do not fit, tuning goes on with meanders
+  // that only routed connections of other nets block (room_rippable): those are ripped, then re-routed strictly. The
+  // result is kept only if the net is in range and every ripped connection routes again; otherwise the board goes back
+  // to how it was after the plain attempt.
+  bool tune_with_room(NetId net, const std::vector<int>& list, Coord mn, Coord mx, const std::vector<double>& rate, NetId keep) {
+    const TxnSnap before = txn_capture();
+    if (tune_net(net, list, mn, mx, &rate)) return true;
+    // The plain attempt filled the free room with small meanders; the room attempt starts again from the untuned net so
+    // that a tall meander can take the place of routed copper. On failure the plain attempt's result is restored.
+    const TxnSnap snap = txn_capture();
+    txn_restore(before);
+    const std::size_t pend = pending.size();
+    const int saved_current = current;
+    const double saved_scale = budget_scale;
+    std::vector<std::uint8_t> was(cs.size());
+    for (std::size_t k = 0; k < cs.size(); ++k) was[k] = cs[k].routed ? 1 : 0;
+    std::vector<int> victims;
+    bool ok = tune_net(net, list, mn, mx, &rate, &victims, keep);
+    if (victims.empty()) {  // nothing was ripped: the same free meanders as the plain attempt
+      if (!ok) txn_restore(snap);
+      return ok;
+    }
+    if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "  room for %s: retune %s, now %.3f ps\n", b.nets[static_cast<std::size_t>(net)].name.c_str(), ok ? "yes" : "no", kicad_measure(net).total_delay() / 1e3);
+    if (ok) {
+      // Tuning runs after the search budget is spent: the re-routes get an allowance of their own, in work units.
+      constexpr long kRoomWork = 400'000;
+      if (opt.work_budget > 0)
+        budget_scale = std::max(budget_scale, static_cast<double>(res.expansions + kRoomWork) / static_cast<double>(opt.work_budget));
+      else
+        budget_scale = std::max(budget_scale, elapsed() / opt.time_limit_s + 0.02);
+      for (std::size_t k = 0; k < cs.size() && ok; ++k) {
+        auto& st = cs[k];
+        if (!was[k] || st.routed) continue;
+        current = static_cast<int>(k);
+        bool again = false;
+        if (joined(static_cast<int>(k))) {
+          st.implicit = again = true;
+        } else {
+          expansion_cap = opt.txn_cap > 0 ? opt.txn_cap : 200'000;
+          again = search_and_commit(st.c, false);
+          expansion_cap = 0;
+        }
+        if (!again) {
+          ok = false;
+          break;
+        }
+        st.routed = true;
+        ++res.routed;
+        release_escapes(static_cast<int>(k));
+      }
+      budget_scale = saved_scale;
+    }
+    pending.resize(pend);
+    current = saved_current;
+    if (std::getenv("TM_DEBUG_TUNE"))
+      std::fprintf(stderr, "  room for %s: %zu ripped, %s\n", b.nets[static_cast<std::size_t>(net)].name.c_str(), victims.size(), ok ? "kept" : "rolled back");
+    if (ok) return true;
+    txn_restore(snap);
+    for (int v : victims) release_escapes(v);
+    return false;
   }
 
   // `net` as KiCad's length check measures it now (drc/length.hpp): every live pad, track, arc and via of the net.
@@ -4724,7 +4824,7 @@ struct Router::Impl {
       if (!k || !k->time || !k->min) continue;
       const auto rate = delay_rates(net);
       if (rate.empty()) continue;
-      if (tune_net(net, list, k->min, k->max, &rate)) ++tuned;
+      if (k->max ? tune_with_room(net, list, *k->min, *k->max, rate, obs->rules().dp_partner(net)) : tune_net(net, list, k->min, k->max, &rate)) ++tuned;
     }
     std::map<int, std::vector<NetId>> groups;  // skew rule position → its routed nets
     for (const auto& [net, list] : by) {
@@ -4748,11 +4848,16 @@ struct Router::Impl {
         double longest = 0;
         for (NetId n : set) longest = std::max(longest, kicad_measure(n).total_delay());
         for (NetId n : set) {
+          if (std::getenv("TM_DEBUG_TUNE"))
+            std::fprintf(stderr, "delay skew %s: %.3f ps, longest %.3f ps, max %.3f ps\n", b.nets[static_cast<std::size_t>(n)].name.c_str(),
+                         kicad_measure(n).total_delay() / 1e3, longest / 1e3, static_cast<double>(*k->max) / 1e3);
           if (longest - kicad_measure(n).total_delay() <= static_cast<double>(*k->max) / 2) { ++tuned; continue; }
           const auto rate = delay_rates(n);
           if (rate.empty()) continue;
           const auto mn = static_cast<Coord>(longest - static_cast<double>(*k->max) / 4), mx = static_cast<Coord>(longest);
-          if (tune_net(n, by.at(n), mn, mx, &rate)) ++tuned;
+          const bool ok = tune_with_room(n, by.at(n), mn, mx, rate, obs->rules().dp_partner(n));
+          if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "  tuned %s: %s, now %.3f ps\n", b.nets[static_cast<std::size_t>(n)].name.c_str(), ok ? "yes" : "no", kicad_measure(n).total_delay() / 1e3);
+          if (ok) ++tuned;
         }
       }
     }

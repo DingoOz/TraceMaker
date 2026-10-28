@@ -1,0 +1,2 @@
+(version 1)
+(rule "c" (constraint clearance (min 0.15mm)))
