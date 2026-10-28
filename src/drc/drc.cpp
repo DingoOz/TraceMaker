@@ -134,6 +134,12 @@ class Checker {
     }
     return "?";
   }
+  // A hole as KiCad names it: its owner, or for a pad without copper "NPTH pad of <reference>".
+  std::string describe(const Hole& h) const {
+    if (h.item >= 0) return describe(cm_.items[static_cast<std::size_t>(h.item)]);
+    if (h.pad >= 0) return "NPTH pad of " + b_.footprints[static_cast<std::size_t>(b_.pads[static_cast<std::size_t>(h.pad)].footprint)].reference;
+    return "Hole";
+  }
   void add(std::string type, const CopperItem* a, const CopperItem* c, Coord actual, Coord required, int layer, std::string sev = "error") {
     Violation v;
     v.type = std::move(type);
@@ -213,6 +219,14 @@ class Checker {
         const bool conn_pair = (track_like(a) && (track_like(c) || c.kind == ItemKind::Pad)) || (track_like(c) && a.kind == ItemKind::Pad);
         // KiCad tests a track or via only against items of another net code: two net-less ones are never checked.
         if (conn_pair && a.net == c.net) return;
+        // KiCad compares nets by pointer (testSingleLayerItemAgainstItem): a footprint's copper graphic has none (PCB_SHAPE::IsConnected;
+        // the net the engine gives it from its pad is the engine's own), a board graphic, pad, track or via without a net has the shared
+        // "no net". So two footprint graphics are never tested against each other (vme-wren's U.FL outlines, microwave's POLY
+        // footprints), and neither are two board items without a net when one is a graphic.
+        const auto fp_graphic = [](const CopperItem& x) { return x.kind == ItemKind::Graphic && x.footprint >= 0; };
+        if (fp_graphic(a) && fp_graphic(c)) return;
+        const auto board_netless = [&](const CopperItem& x) { return x.net == 0 && x.kind != ItemKind::Zone && !fp_graphic(x); };
+        if ((a.kind == ItemKind::Graphic || c.kind == ItemKind::Graphic) && board_netless(a) && board_netless(c)) return;
         if (a.footprint >= 0 && a.footprint == c.footprint) {
           // A footprint's own copper graphics are not checked against its pads when those carry a net, or in
           // net-tie footprints (KiCad: One-Air-Max USB1 shield copper); net-less pads are (microwave POLY).
@@ -243,7 +257,7 @@ class Checker {
         // KiCad (drc_test_provider_copper_clearance.cpp): copper overlapping a zone fill is a clearance violation
         // with zero gap; two pads short only when both have a net; a track or via overlapping a pad, track or via
         // of another net shorts even when one side is net-less. Copper graphics: overlapping copper of two nets,
-        // or of two net-less items, is a short; when only one side has a net it is a clearance violation.
+        // or of a footprint's graphic and a net-less item, is a short; when only one side has a net it is a clearance violation.
         bool short_ = false;
         double g_rep = g;  // the gap KiCad reports
         if (g <= 0) {
@@ -404,8 +418,8 @@ class Checker {
             Violation v;
             v.type = "holes_co_located";
             v.severity = "warning";
-            v.items.push_back({ao ? describe(*ao) : "Hole", a.pos});
-            v.items.push_back({co ? describe(*co) : "Hole", c.pos});
+            v.items.push_back({describe(a), a.pos});
+            v.items.push_back({describe(c), c.pos});
             rep_.violations.push_back(std::move(v));
           }
           return;
@@ -415,8 +429,8 @@ class Checker {
           for (int k = 0; k < reps; ++k) {
             Violation v;
             v.type = "hole_to_hole";
-            v.items.push_back({ao ? describe(*ao) : "Hole", a.pos});
-            v.items.push_back({co ? describe(*co) : "Hole", c.pos});
+            v.items.push_back({describe(a), a.pos});
+            v.items.push_back({describe(c), c.pos});
             v.required = req;
             rep_.violations.push_back(std::move(v));
           }
@@ -453,6 +467,7 @@ class Checker {
         for (const auto& s : c.shapes)
           if (geom::closer_than(cshape(a), s, thr)) {
             add("hole_clearance", &c, ao, -1, req, layer);
+            if (!ao) rep_.violations.back().items.push_back({describe(a), a.pos});
             break;
           }
       });

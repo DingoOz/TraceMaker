@@ -893,7 +893,7 @@
      "done": true
     },
     {
-     "text": "KiCad parity on pair boards: pair names as MatchDpSuffix (D149); vias/pads that remove unconnected copper flashed and refilled as KiCad does, tuning patterns and nearly parallel tracks in the coupling test (D150); vme-wren pair verdicts identical to KiCad's, 234 parity cases",
+     "text": "KiCad parity on pair boards: pair names as MatchDpSuffix (D149); vias/pads that remove unconnected copper flashed and refilled as KiCad does, tuning patterns and nearly parallel tracks in the coupling test (D150); vme-wren pair verdicts identical to KiCad's, 234 parity cases; clearances in KiCad's order and same-footprint graphics (D151): vme-wren matches KiCad on all routing-relevant types, 239 parity cases",
      "done": true
     },
     {

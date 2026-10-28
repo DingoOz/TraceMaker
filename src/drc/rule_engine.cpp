@@ -860,8 +860,10 @@ bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
 }
 
 Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer) const {
-  // Local overrides (pad, then footprint) win over net classes: KiCad uses the larger of the two items'
-  // overrides when either has one (verified on tinytapeout-demo: U6 footprint 0.18 mm vs GND class 0.23 mm).
+  // KiCad 10.0.6's order (DRC_ENGINE::EvalRules): a local override (pad, then footprint; the larger of the two items') wins over
+  // everything but the board minimum (verified on tinytapeout-demo: U6 footprint 0.18 mm vs GND class 0.23 mm). Then the custom
+  // rules: the one that applies is final, below the board minimum too (vme-wren: 0.1 mm under the FPGA, 0.125 mm minimum). Only
+  // the net-class value is raised by a zone's own clearance and floored at the board minimum.
   auto local = [&](const CopperItem& it) -> Coord {
     if (it.kind != ItemKind::Pad) return -1;
     const auto& pad = b_.pads[static_cast<std::size_t>(it.index)];
@@ -869,38 +871,37 @@ Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer)
     return b_.footprints[static_cast<std::size_t>(pad.footprint)].clearance;
   };
   const Coord la = local(a), lb = local(b);
-  Coord req = (la >= 0 || lb >= 0) ? std::max(la, lb) : std::max(netclass(a).clearance, netclass(b).clearance);
+  if (la >= 0 || lb >= 0) return std::max(std::max(la, lb), r_.minimums.clearance);
+  if (any_custom_clearance_)
+    if (auto c = custom_min("clearance", &a, &b, layer)) return *c;
+  Coord req = std::max(netclass(a).clearance, netclass(b).clearance);
   // KiCad's implicit diff-pair rule: between the two halves of a coupled pair, the class's diff-pair gap
   // replaces the clearance (verified on CM5_MINIMA_3: PCIe P/N at 0.177 mm under a 0.2 mm class clearance).
   // Observed: the smaller of clearance and diff-pair gap applies (0.154 gap passes under a 0.2 class; 0.2 mm
   // pads pass under a 0.25 gap).
-  if (la < 0 && lb < 0 && coupled_diff_pair(a.net, b.net)) {
+  if (coupled_diff_pair(a.net, b.net)) {
     req = std::min(req, netclass(a).diff_pair_gap);
     auto track = [](const CopperItem& it) { return it.kind == ItemKind::Track || it.kind == ItemKind::Arc; };
     if (const Coord g = netclass(a).tuning_pair_gap; g > 0 && track(a) && track(b)) req = std::min(req, g);
   }
-  bool custom = false;
-  if (any_custom_clearance_)
-    if (auto c = custom_min("clearance", &a, &b, layer)) req = *c, custom = true;
-  // A copper zone's own clearance is a local clearance: without a pad override or a custom rule, the larger of
-  // it and the net-class value applies (DRC_ENGINE::EvalRules; KiCad names it "zone clearance").
-  if (zone_overrides_ && la < 0 && lb < 0 && !custom)
+  // A copper zone's own clearance is a local clearance: the larger of it and the net-class value applies (KiCad names it
+  // "zone clearance").
+  if (zone_overrides_)
     for (const CopperItem* z : {&a, &b})
       if (z->kind == ItemKind::Zone) req = std::max(req, b_.zones[static_cast<std::size_t>(z->index)].clearance);
-  // The board minimum is always a floor (multichannel_mixer: 0.3 mm minimum over a 0.2 mm class).
+  // The board minimum is a floor here (multichannel_mixer: 0.3 mm minimum over a 0.2 mm class).
   return std::max(req, r_.minimums.clearance);
 }
 
+// A custom rule replaces the board minimum here as well: it is the board setup's implicit rule, which any custom rule overrides.
 Coord RuleEngine::hole_clearance(const CopperItem* owner, const CopperItem& other, int layer) const {
-  Coord req = r_.minimums.hole_clearance;
-  if (auto c = custom_min("hole_clearance", owner, &other, layer)) req = std::max(req, *c);
-  return req;
+  if (auto c = custom_min("hole_clearance", owner, &other, layer)) return *c;
+  return r_.minimums.hole_clearance;
 }
 
 Coord RuleEngine::hole_to_hole(const CopperItem* a, const CopperItem* b) const {
-  Coord req = r_.minimums.hole_to_hole;
-  if (auto c = custom_min("hole_to_hole", a, b, -1)) req = std::max(req, *c);
-  return req;
+  if (auto c = custom_min("hole_to_hole", a, b, -1)) return *c;
+  return r_.minimums.hole_to_hole;
 }
 
 Coord RuleEngine::edge_clearance(const CopperItem& a, int layer) const {

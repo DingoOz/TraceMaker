@@ -166,6 +166,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D148](decisions/D148.md) | The router avoids KiCad's diff-pair coupling-gap errors | accepted |
 | [D149](decisions/D149.md) | Differential pairs named as KiCad's MatchDpSuffix names them | accepted |
 | [D150](decisions/D150.md) | Vias and pads that remove unconnected copper, and tuning patterns left out of pair coupling | accepted |
+| [D151](decisions/D151.md) | Clearances resolved in KiCad's order; copper graphics compared as KiCad compares their nets | accepted |
 <!-- END decision index -->
 
 ## Risks

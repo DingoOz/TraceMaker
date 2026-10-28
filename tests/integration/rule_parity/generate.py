@@ -37,7 +37,7 @@ def generate(root: Path) -> dict:
     def via(label, x, y, kind='', layers=('F.Cu','B.Cu'), net=1, extra=''):
         ITEMS[label] = {'kind':'Via','pos':[x,y]}
         return capture(f'(via {kind} (at {x} {y}) (size 0.8) (drill 0.4) (layers "{layers[0]}" "{layers[1]}") {extra} (net {net}) (uuid "{uid(label)}"))', [label])
-    def footprint(ref,x,y,padtype='smd',size=(1,1),back=False,courtyard=False,angle=0,pad_at=(0,0),graphics=''):
+    def footprint(ref,x,y,padtype='smd',size=(1,1),back=False,courtyard=False,angle=0,pad_at=(0,0),graphics='',pad_extra=''):
         layer = 'B.Cu' if back else 'F.Cu'
         radians = math.radians(angle)
         px = x + pad_at[0]*math.cos(radians) + pad_at[1]*math.sin(radians)
@@ -49,7 +49,7 @@ def generate(root: Path) -> dict:
             for side,coords in [('F',( -2,-2,2,2)),('B',(3,-2,7,2))]:
                 a,b,c,d=coords
                 graphics += f'(fp_rect (start {a} {b}) (end {c} {d}) (stroke (width 0.05) (type solid)) (fill none) (layer "{side}.CrtYd") (uuid "{uid(ref+side+'court')}"))'
-        return capture(f'(footprint "Test:R" (layer "{layer}") (at {x} {y} {angle}) (uuid "{uid(ref)}") (property "Reference" "{ref}" (at 0 -3) (layer "F.SilkS")) {graphics} (pad "1" {padtype} rect (at {pad_at[0]} {pad_at[1]}) (size {size[0]} {size[1]}) {drill} (layers {layers}) (net 1 "X") (uuid "{uid(ref+":pad1")}")))', [ref+':pad1'])
+        return capture(f'(footprint "Test:R" (layer "{layer}") (at {x} {y} {angle}) (uuid "{uid(ref)}") (property "Reference" "{ref}" (at 0 -3) (layer "F.SilkS")) {graphics} (pad "1" {padtype} rect (at {pad_at[0]} {pad_at[1]}) (size {size[0]} {size[1]}) {drill} (layers {layers}) {pad_extra} (net 1 "X") (uuid "{uid(ref+":pad1")}")))', [ref+':pad1'])
     def board(items):
         return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (net 3 "D_P") (net 4 "D_N") (net 5 "L_P1") (net 6 "L_N1") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
     def rule(condition='',word='track',layer='',severity='',constraint=None,name='C'):
@@ -149,6 +149,40 @@ def generate(root: Path) -> dict:
             track('dpn-L-P',20,10,30,10,width=0.2,net=5),track('dpn-L-N',20,10.6,30,10.7,width=0.2,net=6)]
     case('diff_pair_near_parallel',skewed,rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
          types=['diff_pair_gap_out_of_range'],note='Only the D pair, 10 nm off parallel, is coupled.')
+    # The order KiCad resolves a clearance in (DRC_ENGINE::EvalRules): a pad's local clearance first, floored at the board minimum;
+    # then the custom rules, whose value is final even below the board minimum; only then the net class, floored. Holes alike: a
+    # custom hole_clearance or hole_to_hole replaces the board's.
+    def minimums(**rules):
+        p = json.loads(json.dumps(project))
+        p['board']['design_settings']['rules'].update(rules)
+        return p
+    clr_box='(zone (net 0) (net_name "") (layer "F.Cu") (uuid "'+uid('clr-box')+'") (name "box") (hatch edge 0.5) (connect_pads (clearance 0)) (min_thickness 0.25) (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed)) (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 10 5) (xy 20 5) (xy 20 15) (xy 10 15))))'
+    below=[clr_box,track('cb-in-X',12,7,18,7,width=0.2,net=1),track('cb-in-Y',12,7.3,18,7.3,width=0.2,net=2),
+           track('cb-out-X',25,7,30,7,width=0.2,net=1),track('cb-out-Y',25,7.3,30,7.3,width=0.2,net=2)]
+    case('clearance_custom_below_minimum',below,rule("A.intersectsArea('box')",constraint='(constraint clearance (min 0.1mm))',name='clr'),
+         project=minimums(min_clearance=0.125),types=['clearance'],note='0.1 mm gaps under a 0.125 mm board minimum: the rule in the box allows them.')
+    local=[footprint('LC',10,20,pad_extra='(clearance 0.3)'),track('lc-Y',8,20.8,12,20.8,width=0.2,net=2)]
+    case('clearance_local_over_custom',local,rule(constraint='(constraint clearance (min 0.1mm))',name='clr'),
+         project=project,types=['clearance'],note="A 0.2 mm gap to a pad with a 0.3 mm local clearance; the custom 0.1 mm rule does not override the pad's.")
+    holes=[footprint('H1',10,25,padtype='np_thru_hole',size=(0.4,0.4)),track('h1-Y',8,25.45,12,25.45,width=0.2,net=2),
+           footprint('H2',20,25,padtype='np_thru_hole',size=(0.4,0.4)),footprint('H3',20.7,25,padtype='np_thru_hole',size=(0.4,0.4))]
+    case('hole_rules_custom_below_minimum',holes,rule(constraint='(constraint hole_clearance (min 0.1mm)) (constraint hole_to_hole (min 0.2mm))',name='holes'),
+         project=minimums(min_hole_clearance=0.3,min_hole_to_hole=0.5),types=['hole_clearance','hole_to_hole'],
+         note='A track 0.15 mm from a hole, and holes 0.3 mm apart, under 0.3/0.5 mm board minimums and 0.1/0.2 mm rules.')
+    case('hole_rules_minimum',holes,'',project=minimums(min_hole_clearance=0.3,min_hole_to_hole=0.5),types=['hole_clearance','hole_to_hole'],
+         note='The same without the rule: the board minimums apply.')
+    # Copper graphics: two touching shapes of one footprint are never tested (KiCad treats them as one compound shape); two touching
+    # net-less board graphics are.
+    fp_copper=''.join(f'(fp_line (start {a} {b}) (end {c} {d}) (stroke (width 0.1) (type solid)) (layer "F.Cu") (uuid "{uid("gfp"+str(k))}"))'
+                      for k,(a,b,c,d) in enumerate([(-2,-2,2,-2),(2,-2,2,2)]))
+    def gr_line(label,x1,y1,x2,y2):
+        ITEMS[label]={'kind':'Copper','pos':[x1,y1]}
+        return capture(f'(gr_line (start {x1} {y1}) (end {x2} {y2}) (stroke (width 0.1) (type solid)) (layer "F.Cu") (uuid "{uid(label)}"))',[label])
+    fp_copper2=f'(fp_line (start -2 -2) (end -2 2) (stroke (width 0.1) (type solid)) (layer "F.Cu") (uuid "{uid("gfp2")}"))'
+    graphics=[footprint('G1',10,30,graphics=fp_copper),footprint('G2',14,30,graphics=fp_copper2),
+              gr_line('gr-a',30,30,34,30),gr_line('gr-b',34,30,34,34)]
+    case('copper_graphics_compound',graphics,'',types=['shorting_items','clearance'],
+         note="G1's two copper lines meet at a corner, and G2's line lies on G1's right-hand one; two net-less board lines meet.")
     # Vias that remove unconnected copper (D150): a Y track 0.7 mm from an X via's centre is inside the ring's clearance but clear of
     # the hole. KiCad keeps the ring on F.Cu (keep_end_layers), on In1.Cu where an X track reaches the hole, and on In2.Cu where the
     # file says a zone joins it; elsewhere only the hole is there. keep_end_layers no removes the end layers too.

@@ -1,8 +1,8 @@
 # Morning report, 2026-10-28: roadmap night
 
 Asked on 2026-10-27 at about 22:10 UTC: "work on the roadmap features without stopping until I tell you". Everything is on the local
-branch `m20-c5-fanout` in the worktree `/home/dingo/Programming/TraceMaker-roadmap`, from `origin/main` `ec7cc9b` (PR #51). Nothing is
-pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A92).
+branch `m20-c5-fanout` in a separate worktree, from `origin/main` `ec7cc9b` (PR #51). Nothing is
+pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A93).
 
 ## What was done
 
@@ -44,6 +44,11 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
   comparison: tracks of a tuning pattern are left out, and tracks a few nanometres off parallel are coupled (SEG::Intersect gives up
   beyond 32 bits). vme-wren's 28 gap and 6 uncoupled-length errors are now KiCad's exactly. Only four fixture boards use the option,
   none in a bench tier; the router treats it more strictly than KiCad (A92). Records in `bench/records/d150-padstacks`.
+- **Clearances in KiCad's order** (D151). A custom clearance rule is final in KiCad, even below the board minimum, and a pad's local
+  override beats custom rules; the engine had it the other way round on both counts. Two shapes of one footprint are never tested
+  against each other in KiCad. With this, vme-wren matches KiCad on all 15 routing-relevant types (it had 22,362 clearance reports
+  before D150). The other demo boards are unchanged. **When merging with D139**, its per-class cache check must use this order.
+  Records in `bench/records/d151-clearance`.
 - **D139 is not on this branch.** On `m20-c5-fanout`, any custom rule other than a disallow (a skew rule, say) switches the router to
   exact checks and turns the distance fields off: RoyalBlue routes 119 with B2's rule file and 125 without it. D139
   (`cache-safe-custom-rules`) fixes that, and merging the two is yours.
@@ -76,6 +81,10 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
 - After D150: rule parity 234/234 (three new cases, which the D149 build fails); vme-wren pair verdicts identical to KiCad's; jetson
   still matches; the eight B1/B2 pair-rule boards route byte for byte as with D148 (`d150-padstacks/runs`). The quick tier was not
   rerun: none of its boards has a pair rule, a tuning pattern or a via that removes copper (checked). Full `ctest`: 420 of 420 passed (1 skipped).
+- After D151: rule parity 239/239; vme-wren and jetson match KiCad; the other demo boards as before (microwave closer). Full `ctest`
+  420 of 420 (1 skipped) before the last change (footprint graphics of two footprints); after it, the DRC, rules, refill and coupling
+  unit tests (90 cases) and the DRC and rule-parity integration tests. The quick tier was not run: no bench board has a rule below
+  its board minimum or a pad override next to a custom clearance rule (checked on all 76 rule files).
 
 ## Commits (local, branch `m20-c5-fanout`, nothing pushed)
 
@@ -85,4 +94,5 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
 - `b0e6dc7`: B2 quick-tier record and this report
 - `82f81cf`: coupling-gap avoidance in the router (D148, A90)
 - `c6d0f4b`: pair names as `MatchDpSuffix` reads them (D149, A91)
-- vias and pads that remove unconnected copper, tuning patterns, nearly parallel pairs (D150, A92)
+- `5b8b4ca`: vias and pads that remove unconnected copper, tuning patterns, nearly parallel pairs (D150, A92)
+- clearances in KiCad's order, copper graphics, NPTH hole names (D151, A93)

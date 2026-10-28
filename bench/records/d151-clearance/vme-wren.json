@@ -1,0 +1,24 @@
+{
+ "board": "vme-wren (KiCad demos)",
+ "judge": "kicad-cli 10.0.6",
+ "kicad_counts": {
+  "connection_width": 193,
+  "courtyards_overlap": 22,
+  "diff_pair_gap_out_of_range": 28,
+  "diff_pair_uncoupled_length_too_long": 6,
+  "length_out_of_range": 34,
+  "nonmirrored_text_on_back_layer": 10,
+  "padstack": 7,
+  "silk_overlap": 199,
+  "solder_mask_bridge": 6,
+  "track_dangling": 1,
+  "via_dangling": 92,
+  "zones_intersect": 12
+ },
+ "engine_counts": {
+  "diff_pair_gap_out_of_range": 28,
+  "diff_pair_uncoupled_length_too_long": 6,
+  "track_dangling": 1,
+  "via_dangling": 92
+ }
+}

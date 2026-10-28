@@ -82,6 +82,23 @@
       ]
     },
     "bare_layer_front": {},
+    "clearance_custom_below_minimum": {
+      "clearance": [
+        [
+          "cb-out-X",
+          "cb-out-Y"
+        ]
+      ]
+    },
+    "clearance_local_over_custom": {
+      "clearance": [
+        [
+          "LC:pad1",
+          "lc-Y"
+        ]
+      ]
+    },
+    "copper_graphics_compound": {},
     "court_arc_intersectsCourtyard": {
       "items_not_allowed": [
         [
@@ -479,6 +496,21 @@
         ],
         [
           "wide"
+        ]
+      ]
+    },
+    "hole_rules_custom_below_minimum": {},
+    "hole_rules_minimum": {
+      "hole_clearance": [
+        [
+          "H1:pad1",
+          "h1-Y"
+        ]
+      ],
+      "hole_to_hole": [
+        [
+          "H2:pad1",
+          "H3:pad1"
         ]
       ]
     },
