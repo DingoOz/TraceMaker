@@ -16,6 +16,9 @@ var namespacetmk_1_1model =
     [ "NetlistNet", "structtmk_1_1model_1_1NetlistNet.html", "structtmk_1_1model_1_1NetlistNet" ],
     [ "Netlist", "structtmk_1_1model_1_1Netlist.html", "structtmk_1_1model_1_1Netlist" ],
     [ "NetClass", "structtmk_1_1model_1_1NetClass.html", "structtmk_1_1model_1_1NetClass" ],
+    [ "TuningLayer", "structtmk_1_1model_1_1TuningLayer.html", "structtmk_1_1model_1_1TuningLayer" ],
+    [ "TuningViaOverride", "structtmk_1_1model_1_1TuningViaOverride.html", "structtmk_1_1model_1_1TuningViaOverride" ],
+    [ "TuningProfile", "structtmk_1_1model_1_1TuningProfile.html", "structtmk_1_1model_1_1TuningProfile" ],
     [ "BoardMinimums", "structtmk_1_1model_1_1BoardMinimums.html", "structtmk_1_1model_1_1BoardMinimums" ],
     [ "Constraint", "structtmk_1_1model_1_1Constraint.html", "structtmk_1_1model_1_1Constraint" ],
     [ "CustomRule", "structtmk_1_1model_1_1CustomRule.html", "structtmk_1_1model_1_1CustomRule" ],
@@ -41,6 +44,12 @@ var namespacetmk_1_1model =
       [ "ThruHole", "namespacetmk_1_1model.html#a2f879606938248b903f414d21acbf5ecaffefb264aaa56c272d65c9ef95e27e10", null ],
       [ "NpThruHole", "namespacetmk_1_1model.html#a2f879606938248b903f414d21acbf5eca6d037a197e02acfb72e93c67f7373733", null ],
       [ "Connect", "namespacetmk_1_1model.html#a2f879606938248b903f414d21acbf5eca49ab28040dfa07f53544970c6d147e1e", null ]
+    ] ],
+    [ "UnconnectedLayers", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dad", [
+      [ "KeepAll", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dada98e4e92f8ed10755a2fde1531cf6593f", null ],
+      [ "RemoveAll", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dadaacdfe07ce0b00334b0b17e5e825dcc4d", null ],
+      [ "RemoveExceptStartEnd", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dada1192ff8cd24cca5165e6d8063eb3bf65", null ],
+      [ "StartEndOnly", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dadab5b15418b96519ec281528479059f253", null ]
     ] ],
     [ "ViaType", "namespacetmk_1_1model.html#a54928fcfe51e9342bfc375b805d6c033", [
       [ "Through", "namespacetmk_1_1model.html#a54928fcfe51e9342bfc375b805d6c033ac0c5c886246d1d539c668f5a0bebdb45", null ],

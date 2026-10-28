@@ -104,15 +104,25 @@ Classes</h2></td></tr>
 <tr class="memitem:CopperItem" id="r_CopperItem"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a></td></tr>
 <tr class="memitem:Hole" id="r_Hole"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1Hole.html">Hole</a></td></tr>
 <tr class="memitem:CopperModel" id="r_CopperModel"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CopperModel.html">CopperModel</a></td></tr>
+<tr class="memitem:Flashing" id="r_Flashing"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1Flashing.html">Flashing</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The copper layers of each via (<span class="tt"><a class="el" href="structtmk_1_1drc_1_1Flashing.html#a88b7b83d7925a603033fb16d9a9b67bd">vias</a></span>) and pad (<span class="tt"><a class="el" href="structtmk_1_1drc_1_1Flashing.html#aa01188d1a7f4fe7640b8a18b98a05cd2">pads</a></span>) as KiCad 10.0.6 flashes them (PCB_VIA::FlashLayer, PAD::FlashLayer): a layer keeps its copper unless the padstack removes unconnected copper there and neither a zone connection (zone_layers) nor a track, arc, via or pad of the net (not of the pad's own footprint) touches it.  <a href="structtmk_1_1drc_1_1Flashing.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Coupling" id="r_Coupling"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1Coupling.html">Coupling</a></td></tr>
 <tr class="memitem:ViolationItem" id="r_ViolationItem"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1ViolationItem.html">ViolationItem</a></td></tr>
 <tr class="memitem:Violation" id="r_Violation"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1Violation.html">Violation</a></td></tr>
 <tr class="memitem:DrcOptions" id="r_DrcOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DrcOptions.html">DrcOptions</a></td></tr>
 <tr class="memitem:DrcReport" id="r_DrcReport"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a></td></tr>
+<tr class="memitem:ViaHeights" id="r_ViaHeights"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The length a via adds to its net in KiCad's length calculation (KiCad 10, BOARD_STACKUP::GetLayerDistance): the stackup between the two copper layers the via joins, with the copper of an outer layer in full and of an inner layer by half.  <a href="structtmk_1_1drc_1_1ViaHeights.html#details">More...</a><br /></td></tr>
+<tr class="memitem:LengthItems" id="r_LengthItems"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1LengthItems.html">LengthItems</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The items of one net that a length or skew rule matched: indices into the board's pads, tracks, arcs and vias.  <a href="structtmk_1_1drc_1_1LengthItems.html#details">More...</a><br /></td></tr>
+<tr class="memitem:NetLength" id="r_NetLength"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1NetLength.html">NetLength</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's LENGTH_DELAY_STATS. Lengths in nm, delays in attoseconds.  <a href="structtmk_1_1drc_1_1NetLength.html#details">More...</a><br /></td></tr>
 <tr class="memitem:RefillResult" id="r_RefillResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1RefillResult.html">RefillResult</a></td></tr>
 <tr class="memitem:StarvedThermal" id="r_StarvedThermal"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">StarvedThermal</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A thermal relief KiCad's DRC reports as starved_thermal (DRC_TEST_PROVIDER_ZONE_CONNECTIONS::testZoneLayer): fewer spokes reach the zone's fill than the board's minimum (min_resolved_spokes, 2 by default), counting tracks that run from the pad into the fill; spokes into a fill island that touches nothing but this pad do not count unless the pad has no other.  <a href="structtmk_1_1drc_1_1StarvedThermal.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DpSuffix" id="r_DpSuffix"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DpSuffix.html">DpSuffix</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">compiled custom-rule condition  <a href="structtmk_1_1drc_1_1DpSuffix.html#details">More...</a><br /></td></tr>
 <tr class="memitem:RuleEngine" id="r_RuleEngine"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1drc_1_1RuleEngine.html">RuleEngine</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">compiled custom-rule condition  <a href="classtmk_1_1drc_1_1RuleEngine.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CourtyardRegion" id="r_CourtyardRegion"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CourtyardRegion.html">CourtyardRegion</a></td></tr>
 <tr class="memitem:CourtyardEntry" id="r_CourtyardEntry"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CourtyardEntry.html">CourtyardEntry</a></td></tr>
 <tr class="memitem:CourtyardCache" id="r_CourtyardCache"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CourtyardCache.html">CourtyardCache</a></td></tr>
@@ -145,17 +155,27 @@ Functions</h2></td></tr>
 <tr class="memitem:a9a0aa8aa1e4621d4382f818c9074702b" id="r_a9a0aa8aa1e4621d4382f818c9074702b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Shape.html">geom::Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a0aa8aa1e4621d4382f818c9074702b">pad_shapes</a> (const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;pad)</td></tr>
 <tr class="memdesc:a9a0aa8aa1e4621d4382f818c9074702b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pad copper shape in absolute coordinates.  <br /></td></tr>
 <tr class="memitem:a7eaf40c6625473359ee2ed4d9f2ea43d" id="r_a7eaf40c6625473359ee2ed4d9f2ea43d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1CopperModel.html">CopperModel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7eaf40c6625473359ee2ed4d9f2ea43d">build_copper</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b)</td></tr>
+<tr class="memitem:a67e9bc3bae28d9852d16c98b06f12594" id="r_a67e9bc3bae28d9852d16c98b06f12594"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67e9bc3bae28d9852d16c98b06f12594">conditional_layers</a> (const <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &amp;v)</td></tr>
+<tr class="memdesc:a67e9bc3bae28d9852d16c98b06f12594"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's ConditionallyFlashed: the layers of a via, or of a plated through-hole pad on a board of <span class="tt">copper_count</span> layers, whose copper depends on what connects there.  <br /></td></tr>
+<tr class="memitem:af03fa6258a09733f430e467f792ecaf8" id="r_af03fa6258a09733f430e467f792ecaf8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af03fa6258a09733f430e467f792ecaf8">conditional_layers</a> (const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;p, int copper_count)</td></tr>
+<tr class="memitem:aaa7a15024249a63890b4468724f1941c" id="r_aaa7a15024249a63890b4468724f1941c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1Flashing.html">Flashing</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa7a15024249a63890b4468724f1941c">flash_layers</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b)</td></tr>
 <tr class="memitem:abea99f9c9bb7ea30e7d51aa9648afd85" id="r_abea99f9c9bb7ea30e7d51aa9648afd85"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abea99f9c9bb7ea30e7d51aa9648afd85">edge_loops</a> (const std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Shape.html">geom::Shape</a> &gt; &amp;edges, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tol=2 '000, bool *all_closed=nullptr)</td></tr>
 <tr class="memdesc:abea99f9c9bb7ea30e7d51aa9648afd85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closed loops chained from Edge.Cuts pieces whose ends meet within <span class="tt">tol</span>; pieces that close no loop are dropped (<span class="tt">all_closed</span>, if given, tells whether any was).  <br /></td></tr>
+<tr class="memitem:a6f7a87f85ac92d11c2e2177bcfd7b761" id="r_a6f7a87f85ac92d11c2e2177bcfd7b761"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structtmk_1_1drc_1_1Coupling.html">Coupling</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f7a87f85ac92d11c2e2177bcfd7b761">couple</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> p0, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> p1, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> wp, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> n0, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> n1, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> wn)</td></tr>
+<tr class="memdesc:a6f7a87f85ac92d11c2e2177bcfd7b761"><td class="mdescLeft">&#160;</td><td class="mdescRight">The two centrelines (a P track from p0 to p1 of width wp, an N track likewise) coupled as KiCad couples them, or nothing: both longer than about 1 nm, exactly parallel (a zero cross product) and not collinear, with overlapping projections.  <br /></td></tr>
 <tr class="memitem:a65dbead7747b642204eae3d310ad85d8" id="r_a65dbead7747b642204eae3d310ad85d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a65dbead7747b642204eae3d310ad85d8">run_drc</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r, const <a class="el" href="structtmk_1_1drc_1_1DrcOptions.html">DrcOptions</a> &amp;opt={})</td></tr>
 <tr class="memitem:a4550789200edec8ef61885cb80b481f5" id="r_a4550789200edec8ef61885cb80b481f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4550789200edec8ef61885cb80b481f5">write_drc_json</a> (const <a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a> &amp;rep, const std::string &amp;path)</td></tr>
 <tr class="memdesc:a4550789200edec8ef61885cb80b481f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the report in kicad-cli's JSON layout (violations, unconnected_items; positions in mm).  <br /></td></tr>
+<tr class="memitem:a1a7db7bba9f75137230a69fa3a34307f" id="r_a1a7db7bba9f75137230a69fa3a34307f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a7db7bba9f75137230a69fa3a34307f">via_heights</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
+<tr class="memitem:a03ff68f31a7926da698be24e9d122e05" id="r_a03ff68f31a7926da698be24e9d122e05"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1NetLength.html">NetLength</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03ff68f31a7926da698be24e9d122e05">net_length</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;vh, const <a class="el" href="structtmk_1_1drc_1_1LengthItems.html">LengthItems</a> &amp;items, const <a class="el" href="structtmk_1_1model_1_1TuningProfile.html">model::TuningProfile</a> *profile)</td></tr>
+<tr class="memdesc:a03ff68f31a7926da698be24e9d122e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length and delay of <span class="tt">items</span>, all of one net.  <br /></td></tr>
 <tr class="memitem:a470288fee11a06e3436448ee1fc852d1" id="r_a470288fee11a06e3436448ee1fc852d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1RefillResult.html">RefillResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a470288fee11a06e3436448ee1fc852d1">refill_zones</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
 <tr class="memdesc:a470288fee11a06e3436448ee1fc852d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Follows ZONE_FILLER::fillCopperZone: outline within the board, thermal gaps around same-net pads, every other item knocked out at its clearance, spokes that reach the fill, minimum-width pruning, then islands without a pad removed by each zone's island_removal_mode.  <br /></td></tr>
 <tr class="memitem:a610b48b03f3a71ecb6ac395888be205c" id="r_a610b48b03f3a71ecb6ac395888be205c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1drc_1_1StarvedThermal.html">StarvedThermal</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a610b48b03f3a71ecb6ac395888be205c">starved_thermals</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;filled, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
 <tr class="memdesc:a610b48b03f3a71ecb6ac395888be205c"><td class="mdescLeft">&#160;</td><td class="mdescRight">On a board whose fills are current (refill_zones' board): every pad KiCad would report, in pad then zone order.  <br /></td></tr>
 <tr class="memitem:a3e1ec7ee4383d9084ff52b123f6eadd1" id="r_a3e1ec7ee4383d9084ff52b123f6eadd1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespacetmk_1_1geom.html#aae06d019a16d5bd35eb338477d09182c">geom::Ring</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e1ec7ee4383d9084ff52b123f6eadd1">thermal_spokes</a> (const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;pad, const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;zone)</td></tr>
 <tr class="memdesc:a3e1ec7ee4383d9084ff52b123f6eadd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The four spoke polygons of a pad's thermal relief to a zone, as the zone filler draws them (buildThermalSpokes).  <br /></td></tr>
+<tr class="memitem:a9f113c61c2a085da3d9e6d2dd3fe0c6f" id="r_a9f113c61c2a085da3d9e6d2dd3fe0c6f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1DpSuffix.html">DpSuffix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f113c61c2a085da3d9e6d2dd3fe0c6f">match_dp_suffix</a> (std::string_view name)</td></tr>
 <tr class="memitem:a1b5415acd3683760e7e74dc3129b30bd" id="r_a1b5415acd3683760e7e74dc3129b30bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b5415acd3683760e7e74dc3129b30bd">area_matches</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;item, const <a class="el" href="structtmk_1_1model_1_1Zone.html">model::Zone</a> &amp;area, bool enclosed)</td></tr>
 <tr class="memdesc:a1b5415acd3683760e7e74dc3129b30bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requires a common copper layer.  <br /></td></tr>
 <tr class="memitem:af92a21648a2a5d925118ccd58c7c45b4" id="r_af92a21648a2a5d925118ccd58c7c45b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1CourtyardCache.html">CourtyardCache</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af92a21648a2a5d925118ccd58c7c45b4">build_courtyards</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board)</td></tr>
@@ -320,6 +340,89 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="af03fa6258a09733f430e467f792ecaf8" name="af03fa6258a09733f430e467f792ecaf8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af03fa6258a09733f430e467f792ecaf8">&#9670;&#160;</a></span>conditional_layers() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a> tmk::drc::conditional_layers </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Pad.html">model::Pad</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>copper_count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a67e9bc3bae28d9852d16c98b06f12594" name="a67e9bc3bae28d9852d16c98b06f12594"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67e9bc3bae28d9852d16c98b06f12594">&#9670;&#160;</a></span>conditional_layers() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a> tmk::drc::conditional_layers </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>KiCad's ConditionallyFlashed: the layers of a via, or of a plated through-hole pad on a board of <span class="tt">copper_count</span> layers, whose copper depends on what connects there. </p>
+
+</div>
+</div>
+<a id="a6f7a87f85ac92d11c2e2177bcfd7b761" name="a6f7a87f85ac92d11c2e2177bcfd7b761"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f7a87f85ac92d11c2e2177bcfd7b761">&#9670;&#160;</a></span>couple()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="structtmk_1_1drc_1_1Coupling.html">Coupling</a> &gt; tmk::drc::couple </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a></td>          <td class="paramname"><span class="paramname"><em>p0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a></td>          <td class="paramname"><span class="paramname"><em>p1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a></td>          <td class="paramname"><span class="paramname"><em>wp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a></td>          <td class="paramname"><span class="paramname"><em>n0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a></td>          <td class="paramname"><span class="paramname"><em>n1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a></td>          <td class="paramname"><span class="paramname"><em>wn</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The two centrelines (a P track from p0 to p1 of width wp, an N track likewise) coupled as KiCad couples them, or nothing: both longer than about 1 nm, exactly parallel (a zero cross product) and not collinear, with overlapping projections. </p>
+
+</div>
+</div>
 <a id="a60377b2005627866d13ed90450d82019" name="a60377b2005627866d13ed90450d82019"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a60377b2005627866d13ed90450d82019">&#9670;&#160;</a></span>courtyard_entries()</h2>
 
@@ -437,6 +540,23 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="aaa7a15024249a63890b4468724f1941c" name="aaa7a15024249a63890b4468724f1941c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa7a15024249a63890b4468724f1941c">&#9670;&#160;</a></span>flash_layers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1drc_1_1Flashing.html">Flashing</a> tmk::drc::flash_layers </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac0282dbb3ee9ffebc5386165de7927b2" name="ac0282dbb3ee9ffebc5386165de7927b2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac0282dbb3ee9ffebc5386165de7927b2">&#9670;&#160;</a></span>footprint_selected()</h2>
 
@@ -525,6 +645,62 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>KiCad expression type names: Pad, Track, Arc, Via, Zone, Graphic. </p>
+
+</div>
+</div>
+<a id="a9f113c61c2a085da3d9e6d2dd3fe0c6f" name="a9f113c61c2a085da3d9e6d2dd3fe0c6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f113c61c2a085da3d9e6d2dd3fe0c6f">&#9670;&#160;</a></span>match_dp_suffix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1drc_1_1DpSuffix.html">DpSuffix</a> tmk::drc::match_dp_suffix </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a03ff68f31a7926da698be24e9d122e05" name="a03ff68f31a7926da698be24e9d122e05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03ff68f31a7926da698be24e9d122e05">&#9670;&#160;</a></span>net_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1drc_1_1NetLength.html">NetLength</a> tmk::drc::net_length </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rules</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>vh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1LengthItems.html">LengthItems</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>items</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1TuningProfile.html">model::TuningProfile</a> *</td>          <td class="paramname"><span class="paramname"><em>profile</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Length and delay of <span class="tt">items</span>, all of one net. </p>
+<p><span class="tt">profile</span> is the tuning profile of the net's class (null: every delay is 0, as in KiCad). </p>
 
 </div>
 </div>
@@ -675,6 +851,27 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The four spoke polygons of a pad's thermal relief to a zone, as the zone filler draws them (buildThermalSpokes). </p>
+
+</div>
+</div>
+<a id="a1a7db7bba9f75137230a69fa3a34307f" name="a1a7db7bba9f75137230a69fa3a34307f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a7db7bba9f75137230a69fa3a34307f">&#9670;&#160;</a></span>via_heights()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> tmk::drc::via_heights </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rules</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

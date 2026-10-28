@@ -1673,6 +1673,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#32-the-order-a-clearance-is-resolved-in-d151" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 The order a clearance is resolved in (D151)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2285,6 +2296,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#32-the-order-a-clearance-is-resolved-in-d151" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 The order a clearance is resolved in (D151)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2562,6 +2584,23 @@ a legacy 0.15 mm class under the built-in 0.2 mm minimum and checks preservation
 class despite a conflicting project class. Assertions use violation types and actual written
 copper widths, not rendered diagnostics or echoed options. Unit tests cover default boundaries,
 cross-property legacy suppression, nontriggering local fields and independent class migration.</p>
+<h3 id="32-the-order-a-clearance-is-resolved-in-d151">3.2 The order a clearance is resolved in (D151)<a class="headerlink" href="#32-the-order-a-clearance-is-resolved-in-d151" title="Permanent link">&para;</a></h3>
+<p>The engine resolves a copper clearance in the order of KiCad 10.0.6's <code>DRC_ENGINE::EvalRules</code> (<code>drc/rule_engine.cpp</code>,
+<code>RuleEngine::clearance</code>):</p>
+<ol>
+<li><strong>Net tie</strong>: 0.</li>
+<li><strong>Local override</strong> of either item (a pad's clearance, else its footprint's; the larger of the two items'): wins over everything
+   but the board minimum, which floors it.</li>
+<li><strong>Custom rule</strong> (the last matching <code>.kicad_dru</code> rule with a <code>clearance</code> minimum): final, <em>even below the board minimum</em>. vme-wren
+   allows 0.1 mm under its FPGA and DDR with a 0.125 mm board minimum.</li>
+<li><strong>Net class</strong>: the larger of the two items' classes, with the coupled-pair relaxation and a zone's own clearance; floored at the
+   board minimum.</li>
+</ol>
+<p><code>hole_clearance</code> and <code>hole_to_hole</code> work alike: a matching custom rule replaces the board's value instead of being raised to it.
+Rule parity checks each step against KiCad: <code>clearance_custom_below_minimum</code>, <code>clearance_local_over_custom</code>,
+<code>hole_rules_custom_below_minimum</code> and <code>hole_rules_minimum</code>.</p>
+<p>The router's exact check, which decides what is committed, uses the same function. Its class-level shortcuts (grid costs, escape
+planning, the ramp) still take the class clearance floored at the board minimum; they only steer the search.</p>
 <h2 id="4-rule-coverage-policy">4. Rule coverage policy<a class="headerlink" href="#4-rule-coverage-policy" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Every rule TraceMaker cannot interpret is reported as a warning with its location, and the router uses

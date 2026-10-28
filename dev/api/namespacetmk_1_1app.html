@@ -99,11 +99,14 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:CausesOptions" id="r_CausesOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1app_1_1CausesOptions.html">CausesOptions</a></td></tr>
 <tr class="memitem:RouteJob" id="r_RouteJob"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1app_1_1RouteJob.html">RouteJob</a></td></tr>
 <tr class="memitem:RouteJobResult" id="r_RouteJobResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1app_1_1RouteJobResult.html">RouteJobResult</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a2a6697208a690598cf06cfc31ccac525" id="r_a2a6697208a690598cf06cfc31ccac525"><td class="memItemLeft" align="right" valign="top">nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a6697208a690598cf06cfc31ccac525">classify_open_connections</a> (const std::string &amp;board, const <a class="el" href="structtmk_1_1app_1_1CausesOptions.html">CausesOptions</a> &amp;opt, bool print)</td></tr>
+<tr class="memdesc:a2a6697208a690598cf06cfc31ccac525"><td class="mdescLeft">&#160;</td><td class="mdescRight">Classifies the open connections of <span class="tt">board</span> and returns the report (also printed as a table when <span class="tt">print</span>).  <br /></td></tr>
 <tr class="memitem:a50618364f0e4e1d7907f0e0a73cde988" id="r_a50618364f0e4e1d7907f0e0a73cde988"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50618364f0e4e1d7907f0e0a73cde988">defect_kinds</a> ()</td></tr>
 <tr class="memdesc:a50618364f0e4e1d7907f0e0a73cde988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defect kinds in a fixed order.  <br /></td></tr>
 <tr class="memitem:a3088faf6b68c9093bc0f30baed7dc3a0" id="r_a3088faf6b68c9093bc0f30baed7dc3a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3088faf6b68c9093bc0f30baed7dc3a0">inject_defects</a> (const std::string &amp;in, const std::string &amp;out, const std::string &amp;manifest, const std::string &amp;kind, std::uint64_t seed, int count)</td></tr>
@@ -160,6 +163,34 @@ Functions</h2></td></tr>
 
 <p>A group measured on the copper of <span class="tt">b</span> (<span class="tt">joined</span>: <a class="el" href="namespacetmk_1_1route.html#aae11d853bcf1effbdbdd0e421a0b6a72" title="Per net: 1 when all its pads are joined by copper (the router&#39;s own connectivity; nets without pads c...">route::nets_joined</a> of the same board), as the JSON object of the route summary's <span class="tt">buses</span> array and of <span class="tt">tracemaker buses --json</span>; <span class="tt">line</span>, if given, gets the one-line text form. </p>
 <p>Lengths are KiCad's: tracks plus the stackup height of the vias (<span class="tt">rules</span> says whether the project counts it). </p>
+
+</div>
+</div>
+<a id="a2a6697208a690598cf06cfc31ccac525" name="a2a6697208a690598cf06cfc31ccac525"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a6697208a690598cf06cfc31ccac525">&#9670;&#160;</a></span>classify_open_connections()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nlohmann::json tmk::app::classify_open_connections </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>board</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1app_1_1CausesOptions.html">CausesOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>print</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Classifies the open connections of <span class="tt">board</span> and returns the report (also printed as a table when <span class="tt">print</span>). </p>
 
 </div>
 </div>

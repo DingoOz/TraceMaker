@@ -119,11 +119,47 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a72ecffa13c1023cdd6206628da6569a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">ripped up (router working model only)  <br /></td></tr>
 <tr class="memitem:a0ae43a8dda218551e8e3be5727be840b" id="r_a0ae43a8dda218551e8e3be5727be840b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ae43a8dda218551e8e3be5727be840b">free_via</a> = false</td></tr>
 <tr class="memdesc:a0ae43a8dda218551e8e3be5727be840b"><td class="mdescLeft">&#160;</td><td class="mdescRight">via marked (free yes): its net is fixed for KiCad's net propagation  <br /></td></tr>
+<tr class="memitem:a7b5aa0b61185d3b49da302883f31398f" id="r_a7b5aa0b61185d3b49da302883f31398f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b5aa0b61185d3b49da302883f31398f">span</a> = 0</td></tr>
+<tr class="memdesc:a7b5aa0b61185d3b49da302883f31398f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vias and pads whose copper KiCad removes on layers nothing connects to (<a class="el" href="namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dad" title="A padstack&#39;s copper on layers nothing connects to (KiCad&#39;s UNCONNECTED_LAYER_MODE; doc 05 §60): kept ...">model::UnconnectedLayers</a>, doc 05 §60).  <br /></td></tr>
+<tr class="memitem:af1649890a9bfc0c8f64cc55dd53ca6a8" id="r_af1649890a9bfc0c8f64cc55dd53ca6a8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1649890a9bfc0c8f64cc55dd53ca6a8">bare_part</a> = -1</td></tr>
+<tr class="memitem:ae4709af147fb4d140438661d59c7fb28" id="r_ae4709af147fb4d140438661d59c7fb28"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4709af147fb4d140438661d59c7fb28">bare_of</a> = -1</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="copper_8hpp_source.html#l00014">14</a> of file <a class="el" href="copper_8hpp_source.html">copper.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="ae4709af147fb4d140438661d59c7fb28" name="ae4709af147fb4d140438661d59c7fb28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4709af147fb4d140438661d59c7fb28">&#9670;&#160;</a></span>bare_of</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::drc::CopperItem::bare_of = -1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="copper_8hpp_source.html#l00035">35</a> of file <a class="el" href="copper_8hpp_source.html">copper.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af1649890a9bfc0c8f64cc55dd53ca6a8" name="af1649890a9bfc0c8f64cc55dd53ca6a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1649890a9bfc0c8f64cc55dd53ca6a8">&#9670;&#160;</a></span>bare_part</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::drc::CopperItem::bare_part = -1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="copper_8hpp_source.html#l00035">35</a> of file <a class="el" href="copper_8hpp_source.html">copper.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ac0629adc8e7bc4d53751c7bffb328563" name="ac0629adc8e7bc4d53751c7bffb328563"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac0629adc8e7bc4d53751c7bffb328563">&#9670;&#160;</a></span>box</h2>
 
@@ -311,6 +347,25 @@ Public Attributes</h2></td></tr>
 <p>copper shape (identical on every layer in <span class="tt"><a class="el" href="#ad5d73d8448a73d50dbe8c7010e77a858" title="copper layers the shape is on">layers</a></span>) </p>
 
 <p class="definition">Definition at line <a class="el" href="copper_8hpp_source.html#l00020">20</a> of file <a class="el" href="copper_8hpp_source.html">copper.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7b5aa0b61185d3b49da302883f31398f" name="a7b5aa0b61185d3b49da302883f31398f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b5aa0b61185d3b49da302883f31398f">&#9670;&#160;</a></span>span</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a> tmk::drc::CopperItem::span = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Vias and pads whose copper KiCad removes on layers nothing connects to (<a class="el" href="namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dad" title="A padstack&#39;s copper on layers nothing connects to (KiCad&#39;s UNCONNECTED_LAYER_MODE; doc 05 §60): kept ...">model::UnconnectedLayers</a>, doc 05 §60). </p>
+<p>On those layers only the hole is left, and KiCad's clearance test takes the hole for the item's copper there. Such an item is split: the item with the copper (<span class="tt"><a class="el" href="#ad5d73d8448a73d50dbe8c7010e77a858" title="copper layers the shape is on">layers</a></span> without the bare layers) and a second item of the same kind and index whose layers are the bare ones and whose shape is the hole. <span class="tt"><a class="el" href="#af1649890a9bfc0c8f64cc55dd53ca6a8">bare_part</a></span> on the first points to the second, <span class="tt"><a class="el" href="#ae4709af147fb4d140438661d59c7fb28">bare_of</a></span> on the second to the first. The second is no node of the connectivity graph and is not reported on its own. <span class="tt"><a class="el" href="#a7b5aa0b61185d3b49da302883f31398f" title="Vias and pads whose copper KiCad removes on layers nothing connects to (model::UnconnectedLayers,...">span</a></span> is the padstack's whole layer set (KiCad's GetLayerSet), which rule conditions see; 0 for items that are not split. </p>
+
+<p class="definition">Definition at line <a class="el" href="copper_8hpp_source.html#l00034">34</a> of file <a class="el" href="copper_8hpp_source.html">copper.hpp</a>.</p>
 
 </div>
 </div>

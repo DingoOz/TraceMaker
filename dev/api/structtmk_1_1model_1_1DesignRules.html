@@ -101,6 +101,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a71b9efd8ebe060df6b66f3c697b73c20" id="r_a71b9efd8ebe060df6b66f3c697b73c20"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structtmk_1_1model_1_1NetClass.html">NetClass</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71b9efd8ebe060df6b66f3c697b73c20">class_for</a> (const std::string &amp;net_name) const</td></tr>
 <tr class="memdesc:a71b9efd8ebe060df6b66f3c697b73c20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Effective net class for a net name (explicit assignment, then the first matching pattern, else Default).  <br /></td></tr>
 <tr class="memitem:a0edd82322f19827bc9500bf17830f11c" id="r_a0edd82322f19827bc9500bf17830f11c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structtmk_1_1model_1_1NetClass.html">NetClass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0edd82322f19827bc9500bf17830f11c">find_class</a> (const std::string &amp;name) const</td></tr>
+<tr class="memitem:a8c34fae96fae26750bf1c0a90d88f643" id="r_a8c34fae96fae26750bf1c0a90d88f643"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c34fae96fae26750bf1c0a90d88f643">classes_of</a> (const std::string &amp;net_name) const</td></tr>
+<tr class="memdesc:a8c34fae96fae26750bf1c0a90d88f643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Names of every class that applies to a net (explicit assignments, then matching patterns), and "Default", which KiCad 10.0.6 counts in every net's effective class: the constituents hasNetclass() searches.  <br /></td></tr>
+<tr class="memitem:abf48c4d4361acf6c05a697a6d1b3cb27" id="r_abf48c4d4361acf6c05a697a6d1b3cb27"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structtmk_1_1model_1_1TuningProfile.html">TuningProfile</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf48c4d4361acf6c05a697a6d1b3cb27">profile_of</a> (const <a class="el" href="structtmk_1_1model_1_1NetClass.html">NetClass</a> &amp;c) const</td></tr>
+<tr class="memdesc:abf48c4d4361acf6c05a697a6d1b3cb27"><td class="mdescLeft">&#160;</td><td class="mdescRight">The tuning profile a class names, if the project has one of that name.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -114,14 +118,16 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a258b55bfc45748c4aab056e86fa7040a" id="r_a258b55bfc45748c4aab056e86fa7040a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1CustomRule.html">CustomRule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a258b55bfc45748c4aab056e86fa7040a">custom</a></td></tr>
 <tr class="memitem:a4941beaac51ddbcda7ac7a783760ac66" id="r_a4941beaac51ddbcda7ac7a783760ac66"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4941beaac51ddbcda7ac7a783760ac66">severities</a></td></tr>
 <tr class="memdesc:a4941beaac51ddbcda7ac7a783760ac66"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad violation type -&gt; error | warning | ignore.  <br /></td></tr>
+<tr class="memitem:a6dbe699f3c8581f108e4aae5d6cdeef2" id="r_a6dbe699f3c8581f108e4aae5d6cdeef2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1TuningProfile.html">TuningProfile</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6dbe699f3c8581f108e4aae5d6cdeef2">tuning_profiles</a></td></tr>
+<tr class="memdesc:a6dbe699f3c8581f108e4aae5d6cdeef2"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad 10 tuning profiles, as the project lists them.  <br /></td></tr>
 <tr class="memitem:a030271b817f79539d0cafa3f913416a5" id="r_a030271b817f79539d0cafa3f913416a5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a030271b817f79539d0cafa3f913416a5">use_height_for_length</a> = true</td></tr>
-<tr class="memdesc:a030271b817f79539d0cafa3f913416a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add the stackup height between the layers they join to a net's length (<a class="el" href="bus_8hpp.html" title="Buses (design doc 05 §38): groups of nets that belong together (a data bus, an address bus,...">route/bus.hpp</a>, via_heights).  <br /></td></tr>
+<tr class="memdesc:a030271b817f79539d0cafa3f913416a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add the stackup height between the layers they join to a net's length (<a class="el" href="length_8hpp.html" title="Net length and propagation delay as KiCad 10.0.6 measures them for its length and skew checks (design...">drc/length.hpp</a>, via_heights).  <br /></td></tr>
 <tr class="memitem:a59f26a9a4b67bda8b40e03c0698bfb22" id="r_a59f26a9a4b67bda8b40e03c0698bfb22"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59f26a9a4b67bda8b40e03c0698bfb22">warnings</a></td></tr>
 <tr class="memdesc:a59f26a9a4b67bda8b40e03c0698bfb22"><td class="mdescLeft">&#160;</td><td class="mdescRight">anything that could not be interpreted  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00063">63</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00110">110</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a71b9efd8ebe060df6b66f3c697b73c20" name="a71b9efd8ebe060df6b66f3c697b73c20"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a71b9efd8ebe060df6b66f3c697b73c20">&#9670;&#160;</a></span>class_for()</h2>
@@ -139,6 +145,25 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Effective net class for a net name (explicit assignment, then the first matching pattern, else Default). </p>
+
+</div>
+</div>
+<a id="a8c34fae96fae26750bf1c0a90d88f643" name="a8c34fae96fae26750bf1c0a90d88f643"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c34fae96fae26750bf1c0a90d88f643">&#9670;&#160;</a></span>classes_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::string &gt; tmk::model::DesignRules::classes_of </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>net_name</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Names of every class that applies to a net (explicit assignments, then matching patterns), and "Default", which KiCad 10.0.6 counts in every net's effective class: the constituents hasNetclass() searches. </p>
 
 </div>
 </div>
@@ -165,7 +190,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00075">75</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00123">123</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -186,6 +211,35 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="abf48c4d4361acf6c05a697a6d1b3cb27" name="abf48c4d4361acf6c05a697a6d1b3cb27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf48c4d4361acf6c05a697a6d1b3cb27">&#9670;&#160;</a></span>profile_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structtmk_1_1model_1_1TuningProfile.html">TuningProfile</a> * tmk::model::DesignRules::profile_of </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1NetClass.html">NetClass</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The tuning profile a class names, if the project has one of that name. </p>
+
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00131">131</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+
+</div>
+</div>
 <a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="aaa9545ae307efaf17af8d3ef5b516b35" name="aaa9545ae307efaf17af8d3ef5b516b35"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa9545ae307efaf17af8d3ef5b516b35">&#9670;&#160;</a></span>assignments</h2>
@@ -201,7 +255,7 @@ Public Attributes</h2></td></tr>
 
 <p>explicit net → class names </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00067">67</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00114">114</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -219,7 +273,7 @@ Public Attributes</h2></td></tr>
 
 <p>classes[0] is "Default" </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00065">65</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00112">112</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -235,7 +289,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00068">68</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00115">115</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -251,7 +305,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00064">64</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00111">111</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -269,7 +323,7 @@ Public Attributes</h2></td></tr>
 
 <p>(net-name pattern, class name), in file order </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00066">66</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00113">113</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -287,7 +341,25 @@ Public Attributes</h2></td></tr>
 
 <p>KiCad violation type -&gt; error | warning | ignore. </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00069">69</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00116">116</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6dbe699f3c8581f108e4aae5d6cdeef2" name="a6dbe699f3c8581f108e4aae5d6cdeef2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dbe699f3c8581f108e4aae5d6cdeef2">&#9670;&#160;</a></span>tuning_profiles</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="structtmk_1_1model_1_1TuningProfile.html">TuningProfile</a>&gt; tmk::model::DesignRules::tuning_profiles</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>KiCad 10 tuning profiles, as the project lists them. </p>
+
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00117">117</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -303,9 +375,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add the stackup height between the layers they join to a net's length (<a class="el" href="bus_8hpp.html" title="Buses (design doc 05 §38): groups of nets that belong together (a data bus, an address bus,...">route/bus.hpp</a>, via_heights). </p>
+<p>KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add the stackup height between the layers they join to a net's length (<a class="el" href="length_8hpp.html" title="Net length and propagation delay as KiCad 10.0.6 measures them for its length and skew checks (design...">drc/length.hpp</a>, via_heights). </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00072">72</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00120">120</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -323,7 +395,7 @@ Public Attributes</h2></td></tr>
 
 <p>anything that could not be interpreted </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00073">73</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00121">121</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>

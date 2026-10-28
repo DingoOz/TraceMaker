@@ -101,6 +101,7 @@ $(function(){initNavTree('rule__engine_8hpp.html','',''); });
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &quot;<a class="el" href="copper_8hpp_source.html">drc/copper.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="rule__geometry_8hpp_source.html">drc/rule_geometry.hpp</a>&quot;</code><br />
@@ -111,13 +112,18 @@ $(function(){initNavTree('rule__engine_8hpp.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:tmk_3A_3Adrc_3A_3ADpSuffix" id="r_tmk_3A_3Adrc_3A_3ADpSuffix"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DpSuffix.html">tmk::drc::DpSuffix</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">compiled custom-rule condition  <a href="structtmk_1_1drc_1_1DpSuffix.html#details">More...</a><br /></td></tr>
 <tr class="memitem:tmk_3A_3Adrc_3A_3ARuleEngine" id="r_tmk_3A_3Adrc_3A_3ARuleEngine"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1drc_1_1RuleEngine.html">tmk::drc::RuleEngine</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">compiled custom-rule condition  <a href="classtmk_1_1drc_1_1RuleEngine.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:tmk" id="r_tmk"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk.html">tmk</a></td></tr>
 <tr class="memitem:tmk_3A_3Adrc" id="r_tmk_3A_3Adrc"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1drc.html">tmk::drc</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a9f113c61c2a085da3d9e6d2dd3fe0c6f" id="r_a9f113c61c2a085da3d9e6d2dd3fe0c6f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1DpSuffix.html">DpSuffix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1drc.html#a9f113c61c2a085da3d9e6d2dd3fe0c6f">tmk::drc::match_dp_suffix</a> (std::string_view name)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Resolves KiCad constraints for pairs of copper items (design doc 03 §6): net-class clearances, local pad overrides, board minimums and custom .kicad_dru rules with their conditions. </p>

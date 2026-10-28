@@ -102,8 +102,6 @@ Classes</h2></td></tr>
 <tr class="memitem:TunnelStats" id="r_TunnelStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1TunnelStats.html">TunnelStats</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Package tunnels (doc 05 §52): a connection between two perimeter pins of one dense package on the same net (the core rail's three pins, the supply pins of a package) goes where the designer puts it: a short stub and a via straight out of each pin, and the run between the two vias on the other layer, under the package.  <a href="structtmk_1_1route_1_1TunnelStats.html#details">More...</a><br /></td></tr>
 <tr class="memitem:BusGroup" id="r_BusGroup"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1BusGroup.html">BusGroup</a></td></tr>
-<tr class="memitem:ViaHeights" id="r_ViaHeights"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The length a via adds to its net in KiCad's length calculation, which its <span class="tt">skew</span> check uses (KiCad 10, BOARD_STACKUP::GetLayerDistance): the stackup between the two copper layers the via joins, with the copper of an outer layer in full and of an inner layer by half.  <a href="structtmk_1_1route_1_1ViaHeights.html#details">More...</a><br /></td></tr>
 <tr class="memitem:BusMember" id="r_BusMember"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1BusMember.html">BusMember</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A group as routed, measured on copper.  <a href="structtmk_1_1route_1_1BusMember.html#details">More...</a><br /></td></tr>
 <tr class="memitem:BusStats" id="r_BusStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1BusStats.html">BusStats</a></td></tr>
@@ -146,6 +144,8 @@ Classes</h2></td></tr>
 <tr class="memitem:PortfolioResult" id="r_PortfolioResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1PortfolioResult.html">PortfolioResult</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs several differently configured routers (portfolio variants) and keeps the best result.  <a href="structtmk_1_1route_1_1PortfolioResult.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Router" id="r_Router"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1route_1_1Router.html">Router</a></td></tr>
+<tr class="memitem:ViaHeights" id="r_ViaHeights"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The length a via adds to its net in KiCad's length calculation (KiCad 10, BOARD_STACKUP::GetLayerDistance): the stackup between the two copper layers the via joins, with the copper of an outer layer in full and of an inner layer by half.  <a href="structtmk_1_1route_1_1ViaHeights.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Point" id="r_Point"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1Point.html">Point</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -173,10 +173,9 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9cf3699f5f5243e2b66d3780e1e181da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Automatic detection (&ndash;buses), conservative: nets whose names differ only in a trailing decimal index ("D0", "A[3]", "/MEM/DQ12"), at least <span class="tt">min_members</span> of them with pads on the same two components.  <br /></td></tr>
 <tr class="memitem:a3106ae39207d435759bc5cbaa5632597" id="r_a3106ae39207d435759bc5cbaa5632597"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3106ae39207d435759bc5cbaa5632597">bus_rule_skew</a> (const <a class="el" href="classtmk_1_1drc_1_1RuleEngine.html">drc::RuleEngine</a> &amp;re, const <a class="el" href="structtmk_1_1route_1_1BusGroup.html">BusGroup</a> &amp;g)</td></tr>
 <tr class="memdesc:a3106ae39207d435759bc5cbaa5632597"><td class="mdescLeft">&#160;</td><td class="mdescRight">The skew limit the board's custom rules give a group: every member must match a rule with a <span class="tt">skew</span> constraint (the smallest maximum wins); rules restricted to differential pairs (<span class="tt">within_diff_pairs</span>) do not count.  <br /></td></tr>
-<tr class="memitem:afc54067851847a3a14755482e9da3bea" id="r_afc54067851847a3a14755482e9da3bea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc54067851847a3a14755482e9da3bea">via_heights</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
-<tr class="memitem:ade9d3b3d7d27bc046ff2c512679a205e" id="r_ade9d3b3d7d27bc046ff2c512679a205e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade9d3b3d7d27bc046ff2c512679a205e">net_via_length</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a> &amp;vh, <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1ArcTrack.html">model::ArcTrack</a> &gt; &amp;arcs, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias)</td></tr>
+<tr class="memitem:ade9d3b3d7d27bc046ff2c512679a205e" id="r_ade9d3b3d7d27bc046ff2c512679a205e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade9d3b3d7d27bc046ff2c512679a205e">net_via_length</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;vh, <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1ArcTrack.html">model::ArcTrack</a> &gt; &amp;arcs, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias)</td></tr>
 <tr class="memdesc:ade9d3b3d7d27bc046ff2c512679a205e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The via length of one net on the given copper, as KiCad sums it: each via counts between the outermost layers on which a track of the net ends inside the via's pad, or a pad of the net touches the via (a surface pad's own layer, its footprint's side for a through-hole pad); a via that joins nothing on a second layer adds nothing.  <br /></td></tr>
-<tr class="memitem:a478cde627ebb7e97b682422ea50048f1" id="r_a478cde627ebb7e97b682422ea50048f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1BusStats.html">BusStats</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a478cde627ebb7e97b682422ea50048f1">measure_bus</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a> &amp;vh, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1ArcTrack.html">model::ArcTrack</a> &gt; &amp;arcs, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias, const std::vector&lt; std::uint8_t &gt; &amp;net_routed, const <a class="el" href="structtmk_1_1route_1_1BusGroup.html">BusGroup</a> &amp;g)</td></tr>
+<tr class="memitem:a478cde627ebb7e97b682422ea50048f1" id="r_a478cde627ebb7e97b682422ea50048f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1BusStats.html">BusStats</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a478cde627ebb7e97b682422ea50048f1">measure_bus</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;vh, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1ArcTrack.html">model::ArcTrack</a> &gt; &amp;arcs, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias, const std::vector&lt; std::uint8_t &gt; &amp;net_routed, const <a class="el" href="structtmk_1_1route_1_1BusGroup.html">BusGroup</a> &amp;g)</td></tr>
 <tr class="memdesc:a478cde627ebb7e97b682422ea50048f1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">net_routed[net]</span>: <a class="el" href="#aae11d853bcf1effbdbdd0e421a0b6a72" title="Per net: 1 when all its pads are joined by copper (the router&#39;s own connectivity; nets without pads c...">nets_joined()</a> of the board the copper belongs to; <span class="tt">b</span> gives the pads, <span class="tt">vh</span> its via heights.  <br /></td></tr>
 <tr class="memitem:aae11d853bcf1effbdbdd0e421a0b6a72" id="r_aae11d853bcf1effbdbdd0e421a0b6a72"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae11d853bcf1effbdbdd0e421a0b6a72">nets_joined</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
 <tr class="memdesc:aae11d853bcf1effbdbdd0e421a0b6a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per net: 1 when all its pads are joined by copper (the router's own connectivity; nets without pads count as joined).  <br /></td></tr>
@@ -221,6 +220,7 @@ Functions</h2></td></tr>
 <tr class="memitem:aab2e31777f6ffab8d925f74d779830cf" id="r_aab2e31777f6ffab8d925f74d779830cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab2e31777f6ffab8d925f74d779830cf">portfolio_size</a> ()</td></tr>
 <tr class="memitem:aa00363c1f27d1499e716818d7750b05b" id="r_aa00363c1f27d1499e716818d7750b05b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa00363c1f27d1499e716818d7750b05b">route_result_better</a> (const <a class="el" href="structtmk_1_1route_1_1RouteResult.html">RouteResult</a> &amp;a, const <a class="el" href="structtmk_1_1route_1_1RouteResult.html">RouteResult</a> &amp;b)</td></tr>
 <tr class="memdesc:aa00363c1f27d1499e716818d7750b05b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The portfolio's total order on results: true when <span class="tt">a</span> beats <span class="tt">b</span> (more routed, then fewer connections off their bus lanes, then fewer vias, then shorter copper).  <br /></td></tr>
+<tr class="memitem:a1a7db7bba9f75137230a69fa3a34307f" id="r_a1a7db7bba9f75137230a69fa3a34307f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a7db7bba9f75137230a69fa3a34307f">via_heights</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -258,7 +258,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970" name="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970"></a>Cleanup&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00281">281</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00286">286</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -648,7 +648,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>vh</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>vh</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -811,7 +811,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>vh</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>vh</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1264,14 +1264,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="afc54067851847a3a14755482e9da3bea" name="afc54067851847a3a14755482e9da3bea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc54067851847a3a14755482e9da3bea">&#9670;&#160;</a></span>via_heights()</h2>
+<a id="a1a7db7bba9f75137230a69fa3a34307f" name="a1a7db7bba9f75137230a69fa3a34307f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a7db7bba9f75137230a69fa3a34307f">&#9670;&#160;</a></span>via_heights()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtmk_1_1route_1_1ViaHeights.html">ViaHeights</a> tmk::route::via_heights </td>
+          <td class="memname"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> <a class="el" href="namespacetmk_1_1drc.html#a1a7db7bba9f75137230a69fa3a34307f">tmk::drc::via_heights</a> </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
         </tr>
@@ -1348,7 +1348,7 @@ Variables</h2></td></tr>
 
 <p>Variant indices from here up are the advised copies the portfolio adds when <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a71e9bf1534dd6edf71aa3fc97724afd3">RouterOptions::advice</a> is active (position k of the advice's variants has index kAdvisedIndex + k). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00375">375</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00380">380</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1399,7 +1399,7 @@ Variables</h2></td></tr>
 <p>With soft zones a fill of at least this area that no pad touches is its net's plane: a connection target of its own (doc 05 §26). </p>
 <p>Smaller ones are slivers of a stale fill, which a refill may drop or reshape. 1 mm^2 </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00178">178</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00193">193</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1423,7 +1423,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00282">282</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00287">287</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

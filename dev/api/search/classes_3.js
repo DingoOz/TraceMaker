@@ -10,6 +10,7 @@ var searchData=
   ['dielectricgap_7',['DielectricGap',['../structtmk_1_1model_1_1DielectricGap.html',1,'tmk::model']]],
   ['dir2_8',['Dir2',['../structtmk_1_1route_1_1Dir2.html',1,'tmk::route']]],
   ['document_9',['Document',['../classtmk_1_1sexpr_1_1Document.html',1,'tmk::sexpr']]],
-  ['drcoptions_10',['DrcOptions',['../structtmk_1_1drc_1_1DrcOptions.html',1,'tmk::drc']]],
-  ['drcreport_11',['DrcReport',['../structtmk_1_1drc_1_1DrcReport.html',1,'tmk::drc']]]
+  ['dpsuffix_10',['DpSuffix',['../structtmk_1_1drc_1_1DpSuffix.html',1,'tmk::drc']]],
+  ['drcoptions_11',['DrcOptions',['../structtmk_1_1drc_1_1DrcOptions.html',1,'tmk::drc']]],
+  ['drcreport_12',['DrcReport',['../structtmk_1_1drc_1_1DrcReport.html',1,'tmk::drc']]]
 ];

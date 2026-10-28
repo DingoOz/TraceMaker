@@ -6,6 +6,8 @@ var classtmk_1_1route_1_1Obstacles =
     [ "bounds", "classtmk_1_1route_1_1Obstacles.html#a195df9e056a43fef413e0e56cf2c5cf3", null ],
     [ "copper", "classtmk_1_1route_1_1Obstacles.html#af479d231bbf6cef1e480f529c7fffcab", null ],
     [ "copper_texts", "classtmk_1_1route_1_1Obstacles.html#a6096267a17c6fa69362fb0ca5ab9552c", null ],
+    [ "coupling_net", "classtmk_1_1route_1_1Obstacles.html#a1a5fe5a49ee6c7a90a3c7b1592d3d38e", null ],
+    [ "coupling_state", "classtmk_1_1route_1_1Obstacles.html#a83a7db654de5fbc9e23c800de75fda55", null ],
     [ "disk_ok", "classtmk_1_1route_1_1Obstacles.html#a765c08e736dcc09fc755638d1b6c4b73", null ],
     [ "disk_state", "classtmk_1_1route_1_1Obstacles.html#aa6b4a7e50a8c63675e0859f9738049b0", null ],
     [ "fixed_code", "classtmk_1_1route_1_1Obstacles.html#ae7c21dde4577eb8f5ae203bfa76536b8", null ],

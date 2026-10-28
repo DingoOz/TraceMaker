@@ -1,6 +1,9 @@
 var rules_8hpp =
 [
     [ "tmk::model::NetClass", "structtmk_1_1model_1_1NetClass.html", "structtmk_1_1model_1_1NetClass" ],
+    [ "tmk::model::TuningLayer", "structtmk_1_1model_1_1TuningLayer.html", "structtmk_1_1model_1_1TuningLayer" ],
+    [ "tmk::model::TuningViaOverride", "structtmk_1_1model_1_1TuningViaOverride.html", "structtmk_1_1model_1_1TuningViaOverride" ],
+    [ "tmk::model::TuningProfile", "structtmk_1_1model_1_1TuningProfile.html", "structtmk_1_1model_1_1TuningProfile" ],
     [ "tmk::model::BoardMinimums", "structtmk_1_1model_1_1BoardMinimums.html", "structtmk_1_1model_1_1BoardMinimums" ],
     [ "tmk::model::Constraint", "structtmk_1_1model_1_1Constraint.html", "structtmk_1_1model_1_1Constraint" ],
     [ "tmk::model::CustomRule", "structtmk_1_1model_1_1CustomRule.html", "structtmk_1_1model_1_1CustomRule" ],

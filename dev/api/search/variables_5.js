@@ -10,7 +10,7 @@ var searchData=
   ['field_5fheuristic_7',['field_heuristic',['../structtmk_1_1route_1_1RouterOptions.html#a4fdd21e9770063671be8e7e279514f6b',1,'tmk::route::RouterOptions']]],
   ['field_5fmin_5fcells_8',['field_min_cells',['../structtmk_1_1route_1_1RouterOptions.html#a9d9e39ff16b36b1698a41cad3949c936',1,'tmk::route::RouterOptions']]],
   ['field_5fprefill_9',['field_prefill',['../structtmk_1_1route_1_1RouterOptions.html#a347556dc5fd67640369f4ee837213f1b',1,'tmk::route::RouterOptions']]],
-  ['fields_10',['fields',['../structtmk_1_1route_1_1WorkCounts.html#a50cd99cd8e931545a4f8573003a95e7c',1,'tmk::route::WorkCounts']]],
+  ['fields_10',['fields',['../structtmk_1_1model_1_1NetClass.html#a6341b190d0a74fa29e7efed38f5b4617',1,'tmk::model::NetClass::fields'],['../structtmk_1_1route_1_1WorkCounts.html#a50cd99cd8e931545a4f8573003a95e7c',1,'tmk::route::WorkCounts::fields']]],
   ['figure_11',['figure',['../structtmk_1_1analysis_1_1FootprintResult.html#af1c3e8554802f7d1de2198295a806116',1,'tmk::analysis::FootprintResult::figure'],['../structtmk_1_1analysis_1_1FootprintRef.html#a969c21311a293e6e00b38d44eb0bd51f',1,'tmk::analysis::FootprintRef::figure']]],
   ['file_5fname_12',['file_name',['../structtmk_1_1model_1_1LayerDef.html#abe3175f2e07e68f1e8f5ec15ccc66864',1,'tmk::model::LayerDef']]],
   ['file_5fnumber_13',['file_number',['../structtmk_1_1model_1_1Net.html#ae71296f1d9156f82abd431724f882dff',1,'tmk::model::Net']]],
@@ -52,7 +52,7 @@ var searchData=
   ['free_49',['free',['../structtmk_1_1model_1_1Via.html#a7fb0ef826c78fe8367d901b7e5ca9696',1,'tmk::model::Via::free'],['../structtmk_1_1route_1_1BundleHooks.html#a4663774415ce1f4737bcbf900f6c0082',1,'tmk::route::BundleHooks::free']]],
   ['free_5fbytes_50',['free_bytes',['../structtmk_1_1gpu_1_1DeviceInfo.html#a4fdc286677233fcdfb2990d9dd4b753d',1,'tmk::gpu::DeviceInfo']]],
   ['free_5fvia_51',['free_via',['../structtmk_1_1drc_1_1CopperItem.html#a0ae43a8dda218551e8e3be5727be840b',1,'tmk::drc::CopperItem']]],
-  ['from_52',['from',['../structtmk_1_1route_1_1ViaHeights.html#af0220d3b84ef323c2e480814f8a8d5fd',1,'tmk::route::ViaHeights']]],
+  ['from_52',['from',['../structtmk_1_1drc_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747',1,'tmk::drc::ViaHeights::from'],['../structtmk_1_1route_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747',1,'tmk::route::ViaHeights::from']]],
   ['from_5flayer_53',['from_layer',['../structtmk_1_1analysis_1_1ReturnLayerChange.html#abd0d0cfc54777b390c1e35fe1beae29d',1,'tmk::analysis::ReturnLayerChange']]],
   ['from_5fstackup_54',['from_stackup',['../structtmk_1_1crules_1_1LayerDelay.html#a63298d2b343589a0230c86f75d4a7fc4',1,'tmk::crules::LayerDelay']]]
 ];

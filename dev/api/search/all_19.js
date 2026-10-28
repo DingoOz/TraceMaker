@@ -10,8 +10,9 @@ var searchData=
   ['zone_5fb_7',['zone_b',['../structtmk_1_1route_1_1Connection.html#a0670e26528b9b208947c058041317673',1,'tmk::route::Connection']]],
   ['zone_5fconnect_8',['zone_connect',['../structtmk_1_1model_1_1Pad.html#aab513108860396a1bb183d3bd85fd75c',1,'tmk::model::Pad::zone_connect'],['../structtmk_1_1model_1_1Footprint.html#a4f1e1197e704a4e05ae05069bcdb8083',1,'tmk::model::Footprint::zone_connect']]],
   ['zone_5ffill_5farea_9',['zone_fill_area',['../namespacetmk_1_1route.html#a70cc99cb4e45c31015a4b330a96a0291',1,'tmk::route']]],
-  ['zoneconnect_10',['ZoneConnect',['../namespacetmk_1_1model.html#a2141efc76521ae3d0c5a990313ab5bf0',1,'tmk::model']]],
-  ['zonefills_11',['ZoneFills',['../structtmk_1_1drc_1_1ZoneFills.html',1,'tmk::drc::ZoneFills'],['../structtmk_1_1drc_1_1ZoneFills.html#ae6b6a56bf3dd080982e0ff45b3b9c714',1,'tmk::drc::ZoneFills::ZoneFills()']]],
-  ['zones_12',['zones',['../structtmk_1_1drc_1_1RefillResult.html#a18bf2bcf6dbc7cf9aea93520056d7f46',1,'tmk::drc::RefillResult::zones'],['../structtmk_1_1model_1_1Board.html#a92a9feaef3cb34b8810627f8743d343f',1,'tmk::model::Board::zones'],['../structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html#acb0cc0713ac7469d4a09dc42aa435ee5',1,'tmk::route::RouterOptions::AdviceSet::zones']]],
-  ['zones_5ftouching_13',['zones_touching',['../namespacetmk_1_1drc.html#aa5d8aa9a8b376b374b142ef04c01f85f',1,'tmk::drc']]]
+  ['zone_5flayers_10',['zone_layers',['../structtmk_1_1model_1_1Pad.html#a42fb278fce5fe60c566c5c6ef27046ff',1,'tmk::model::Pad::zone_layers'],['../structtmk_1_1model_1_1Via.html#afdaed95b6caad440e06e6713e8a6ead7',1,'tmk::model::Via::zone_layers']]],
+  ['zoneconnect_11',['ZoneConnect',['../namespacetmk_1_1model.html#a2141efc76521ae3d0c5a990313ab5bf0',1,'tmk::model']]],
+  ['zonefills_12',['ZoneFills',['../structtmk_1_1drc_1_1ZoneFills.html',1,'tmk::drc::ZoneFills'],['../structtmk_1_1drc_1_1ZoneFills.html#ae6b6a56bf3dd080982e0ff45b3b9c714',1,'tmk::drc::ZoneFills::ZoneFills()']]],
+  ['zones_13',['zones',['../structtmk_1_1drc_1_1RefillResult.html#a18bf2bcf6dbc7cf9aea93520056d7f46',1,'tmk::drc::RefillResult::zones'],['../structtmk_1_1model_1_1Board.html#a92a9feaef3cb34b8810627f8743d343f',1,'tmk::model::Board::zones'],['../structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html#acb0cc0713ac7469d4a09dc42aa435ee5',1,'tmk::route::RouterOptions::AdviceSet::zones']]],
+  ['zones_5ftouching_14',['zones_touching',['../namespacetmk_1_1drc.html#aa5d8aa9a8b376b374b142ef04c01f85f',1,'tmk::drc']]]
 ];

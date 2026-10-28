@@ -6,7 +6,7 @@ var searchData=
   ['best_5fcost_3',['best_cost',['../classtmk_1_1place_1_1detail_1_1Annealer.html#af4437605bda21f5574dd057209b71b62',1,'tmk::place::detail::Annealer']]],
   ['beta_5funits_4',['beta_units',['../namespacetmk_1_1place_1_1detail.html#a04ef286ff9f9ff1ef412506b1d269556',1,'tmk::place::detail']]],
   ['better_5',['better',['../namespacetmk_1_1place.html#a4db74605b9d1035c927bf01e8a47f60d',1,'tmk::place']]],
-  ['between_6',['between',['../structtmk_1_1model_1_1Stackup.html#a8b4845c61a0e6e258d749b555f9b847f',1,'tmk::model::Stackup::between()'],['../structtmk_1_1route_1_1ViaHeights.html#a800e29c43b12acc223ff4e16bf261ec9',1,'tmk::route::ViaHeights::between()']]],
+  ['between_6',['between',['../structtmk_1_1drc_1_1ViaHeights.html#abc2f60e301b496aa9ce4c3464e35a195',1,'tmk::drc::ViaHeights::between()'],['../structtmk_1_1model_1_1Stackup.html#a8b4845c61a0e6e258d749b555f9b847f',1,'tmk::model::Stackup::between()'],['../structtmk_1_1route_1_1ViaHeights.html#abc2f60e301b496aa9ce4c3464e35a195',1,'tmk::route::ViaHeights::between()']]],
   ['bin_7',['bin',['../structtmk_1_1place_1_1CongestionMap.html#abae25884d2b1a023d37e5e92801b79d0',1,'tmk::place::CongestionMap']]],
   ['bin_5foverflow_8',['bin_overflow',['../namespacetmk_1_1place.html#a3ed8678a51f4158a832e47f2eb1a3f83',1,'tmk::place']]],
   ['block_9',['block',['../classtmk_1_1RngStream.html#a2e4f835b4de077627ebb6319fbbea8c7',1,'tmk::RngStream']]],

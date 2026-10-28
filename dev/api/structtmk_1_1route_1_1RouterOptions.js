@@ -17,6 +17,8 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "critical", "structtmk_1_1route_1_1RouterOptions.html#ad0e008baee0fdfab6749ea4417690cab", null ],
     [ "critical_first", "structtmk_1_1route_1_1RouterOptions.html#af3c4f95225511bd9139f44a27ad2d28a", null ],
     [ "critical_via_mult", "structtmk_1_1route_1_1RouterOptions.html#af590e3093f1573e1f16b8cb98670ed3d", null ],
+    [ "crowded_portfolio", "structtmk_1_1route_1_1RouterOptions.html#a17bcd2359515d759ef69c00eb8a68abe", null ],
+    [ "crowded_source", "structtmk_1_1route_1_1RouterOptions.html#a2d66c9079d0261c02ef0382104e2679c", null ],
     [ "cut_report", "structtmk_1_1route_1_1RouterOptions.html#a3da81bee48d8bb53d2c257ce119b2c25", null ],
     [ "deadline", "structtmk_1_1route_1_1RouterOptions.html#afd71cc2ca001afee18b90f5156d5a79d", null ],
     [ "diff_pairs", "structtmk_1_1route_1_1RouterOptions.html#aba1cfcf5b36512b0864fc8e3bb28c040", null ],

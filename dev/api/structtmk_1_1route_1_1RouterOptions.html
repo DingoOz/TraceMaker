@@ -163,6 +163,10 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a052a9f780fcf6155625ac420e135c60a"><td class="mdescLeft">&#160;</td><td class="mdescRight">preferred directions the other way round: even layers vertical, odd horizontal  <br /></td></tr>
 <tr class="memitem:a0cb0ade417b559cb65dc75fccdcb4e69" id="r_a0cb0ade417b559cb65dc75fccdcb4e69"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cb0ade417b559cb65dc75fccdcb4e69">package_pen</a> = -1</td></tr>
 <tr class="memdesc:a0cb0ade417b559cb65dc75fccdcb4e69"><td class="mdescLeft">&#160;</td><td class="mdescRight">-1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)  <br /></td></tr>
+<tr class="memitem:a2d66c9079d0261c02ef0382104e2679c" id="r_a2d66c9079d0261c02ef0382104e2679c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d66c9079d0261c02ef0382104e2679c">crowded_source</a> = false</td></tr>
+<tr class="memdesc:a2d66c9079d0261c02ef0382104e2679c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Strict searches from the crowded end (doc 05 §55, M20 C5): a strict search starts from the end with more routed copper of other nets and more pads of other nets of its own part near it.  <br /></td></tr>
+<tr class="memitem:a17bcd2359515d759ef69c00eb8a68abe" id="r_a17bcd2359515d759ef69c00eb8a68abe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17bcd2359515d759ef69c00eb8a68abe">crowded_portfolio</a> = true</td></tr>
+<tr class="memdesc:a17bcd2359515d759ef69c00eb8a68abe"><td class="mdescLeft">&#160;</td><td class="mdescRight">crowded_source in four of the portfolio's designed eight variants (1, 5, 6, 7; D143)  <br /></td></tr>
 <tr class="memitem:ab4abc357e4365c79471c20989e9efaff" id="r_ab4abc357e4365c79471c20989e9efaff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4abc357e4365c79471c20989e9efaff">layer_assign_angle</a> = false</td></tr>
 <tr class="memdesc:ab4abc357e4365c79471c20989e9efaff"><td class="mdescLeft">&#160;</td><td class="mdescRight">layer preference by chord direction instead of by crossings (uses layer_assign_pen)  <br /></td></tr>
 <tr class="memitem:a4a1d8e3bea0da232d9e9361bd678dd55" id="r_a4a1d8e3bea0da232d9e9361bd678dd55"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a1d8e3bea0da232d9e9361bd678dd55">layer_assign</a> = false</td></tr>
@@ -432,7 +436,7 @@ Public Attributes</h2></td></tr>
 
 <p>use blind/buried vias where a through via is blocked, if the board allows them </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00116">116</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00121">121</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -450,7 +454,7 @@ Public Attributes</h2></td></tr>
 
 <p>1: with more than one variant, a board that looks like a ball-grid breakout gets the breakout portfolio (D101) instead of the designed eight </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00106">106</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00111">111</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -468,7 +472,7 @@ Public Attributes</h2></td></tr>
 
 <p>1: a breakout board (D98) also gets reach_check 2, flood_work_pct 25, field prefill and cache (when those are at their defaults) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00086">86</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00091">91</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -486,7 +490,7 @@ Public Attributes</h2></td></tr>
 
 <p>Recording: every variant buffers its events and only the winning variant's are forwarded to <span class="tt"><a class="el" href="#adb09d94af3f7e9ed37c05e777abd3b91">sink</a></span> (each message gains a leading "t" field, seconds since that variant started). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00256">256</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00261">261</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -504,7 +508,7 @@ Public Attributes</h2></td></tr>
 
 <p>doc 05 §50: the connections that leave one side of a dense package for one side of another part are placed first as a block of parallel straight lanes in pin order (<a class="el" href="bundle_8hpp.html" title="Bundle (river) escapes (design doc 05 §50).">route/bundle.hpp</a>); the rest is routed as usual and may not rip the lanes </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00153">153</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00158">158</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -522,7 +526,7 @@ Public Attributes</h2></td></tr>
 
 <p>fewer connections than this in a group are left to the ordinary router </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00154">154</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00159">159</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -540,7 +544,7 @@ Public Attributes</h2></td></tr>
 
 <p>the groups' connections before all others (after first_nets), also after restarts </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00190">190</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00195">195</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -556,7 +560,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00189">189</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00194">194</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -575,7 +579,7 @@ Public Attributes</h2></td></tr>
 <p>Critical nets (issue #24, doc 05 §44; route_job fills these from &ndash;critical-nets and the component rules' roles). </p>
 <p><span class="tt"><a class="el" href="#ad0e008baee0fdfab6749ea4417690cab" title="Critical nets (issue #24, doc 05 §44; route_job fills these from –critical-nets and the component rul...">critical</a></span> is net name and tier (1 = most critical). With <span class="tt"><a class="el" href="#af3c4f95225511bd9139f44a27ad2d28a">critical_first</a></span> they are routed before all other nets, tier by tier (after first_nets), also after restarts. A via costs them <span class="tt"><a class="el" href="#af590e3093f1573e1f16b8cb98670ed3d">critical_via_mult</a></span> times as much (&gt;= 1). A track of theirs over a void of the adjacent reference plane (<a class="el" href="ref__map_8hpp.html" title="Where a track is over a void of its reference plane (issue #24, docs/05-routing.md §44,...">route/ref_map.hpp</a>) costs <span class="tt"><a class="el" href="#af8044ef9402f8589516bed26460e1efc">split_cost</a></span> pitches more per lattice step; <span class="tt"><a class="el" href="#acd155e3f3d3d068e24cd524a4f880c32">split_hard</a></span> closes those cells to them instead. All off by default: a run without these options is the run it was. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00220">220</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00225">225</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -591,7 +595,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00221">221</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00226">226</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -607,7 +611,44 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00222">222</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00227">227</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a17bcd2359515d759ef69c00eb8a68abe" name="a17bcd2359515d759ef69c00eb8a68abe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17bcd2359515d759ef69c00eb8a68abe">&#9670;&#160;</a></span>crowded_portfolio</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::route::RouterOptions::crowded_portfolio = true</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>crowded_source in four of the portfolio's designed eight variants (1, 5, 6, 7; D143) </p>
+
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00072">72</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2d66c9079d0261c02ef0382104e2679c" name="a2d66c9079d0261c02ef0382104e2679c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d66c9079d0261c02ef0382104e2679c">&#9670;&#160;</a></span>crowded_source</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::route::RouterOptions::crowded_source = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Strict searches from the crowded end (doc 05 §55, M20 C5): a strict search starts from the end with more routed copper of other nets and more pads of other nets of its own part near it. </p>
+<p>A boxed-in source is proved in a few expansions; a boxed-in target only after the search has flooded its window, which on the failing tier B-D boards spent most of the budget of the first pass. </p>
+
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00071">71</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -626,7 +667,7 @@ Public Attributes</h2></td></tr>
 <p>R6 cut proofs (doc 05 §20): measure every straight line across the board (capacity past fixed copper against the nets that must cross) and fill <a class="el" href="structtmk_1_1route_1_1RouteResult.html#aa523774f2a9ba6779954cd328a499205" title="With cut_report: lines across the board that more nets must cross than tracks fit,...">RouteResult::over_cuts</a> / tightest_cut. </p>
 <p>Costs the global router's set-up. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00166">166</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00171">171</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -644,7 +685,7 @@ Public Attributes</h2></td></tr>
 
 <p>Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00253">253</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00258">258</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -662,7 +703,7 @@ Public Attributes</h2></td></tr>
 
 <p>route P/N pairs together as coupled tracks first (falls back to single routing) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00117">117</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00122">122</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -681,7 +722,7 @@ Public Attributes</h2></td></tr>
 <p>Escape planning version 2 (<a class="el" href="escape__flow_8hpp.html" title="Escape planning, version 2 (roadmap M9; design doc 05 §3 and §14): min-cost-flow channel assignment f...">route/escape_flow.hpp</a>): deep ball-grid arrays get min-cost-flow channel and layer assignment; other dense packages keep version 1's corridors. </p>
 <p>Implies escape_plan. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00163">163</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00168">168</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -700,7 +741,7 @@ Public Attributes</h2></td></tr>
 <p>Corridors of the review of the EtherCAT shield (reports/realworld/ethercat_qfn_analysis.md, doc 05 §47). All off by default: no change without them. </p>
 <p>&gt; 0: perimeter corridors run this far past the package edge (2 mm by default), as far as no fixed copper is in the way (bundles of parallel straight escapes) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00148">148</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00153">153</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -718,7 +759,7 @@ Public Attributes</h2></td></tr>
 
 <p>a ripped-up connection gets its pins' corridors back; a corridor is kept while the net has other open connections at that package </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00157">157</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00162">162</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -736,7 +777,7 @@ Public Attributes</h2></td></tr>
 
 <p>reserve escape corridors for the pins of dense packages (<a class="el" href="escape_8hpp.html" title="Escape (fanout) planning, version 1 (roadmap M9; design doc 05 §3).">route/escape.hpp</a>, M9) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00146">146</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00151">151</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -754,7 +795,7 @@ Public Attributes</h2></td></tr>
 
 <p>fill <a class="el" href="structtmk_1_1route_1_1RouteResult.html#a89c845b14452cac97e4e5a890fe9a364" title="With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route,...">RouteResult::escape_rings</a> (pins of deep arrays per ring, and how many connected) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00167">167</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00172">172</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -772,7 +813,7 @@ Public Attributes</h2></td></tr>
 
 <p>second-ring balls escape between two outer balls instead of by dog-bone </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00160">160</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00165">165</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -790,7 +831,7 @@ Public Attributes</h2></td></tr>
 
 <p>with the escape plan: a pin offers the end of its (long, straight) corridor as a start point, reached by one exact off-lattice segment at a discount: parallel escapes at the pad pitch, which the lattice cannot draw </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00149">149</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00154">154</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -806,7 +847,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00232">232</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00237">237</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -824,7 +865,7 @@ Public Attributes</h2></td></tr>
 
 <p>Rule areas and custom rules that exist only in this router's working copy of the board and rules (advice regions, doc 17 §4): never written to the output, judged by the same exact checks as the board's own positional rules (doc 05 §34). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00231">231</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00236">236</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -842,7 +883,7 @@ Public Attributes</h2></td></tr>
 
 <p>&gt; 0: cost-to-go fields are kept (this many MB per router) and reused when every input is identical; results are unchanged </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00081">81</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00086">86</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -896,7 +937,7 @@ Public Attributes</h2></td></tr>
 
 <p>1: fill a class's fixed-copper cache for the whole board before its first field, so fields depend on nothing learned later (and can be cached) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00083">83</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00088">88</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -932,7 +973,7 @@ Public Attributes</h2></td></tr>
 
 <p>routed first, also after restarts; other nets do not rip them (crystal lines) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00175">175</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00180">180</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -950,7 +991,7 @@ Public Attributes</h2></td></tr>
 
 <p>route the &ndash;first-nets in the order of the list (default: the router's own order within the group) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00176">176</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00181">181</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -968,7 +1009,7 @@ Public Attributes</h2></td></tr>
 
 <p>reachability-flood cells count this percent of an expansion against the work budget (a flood cell costs far less time) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00082">82</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00087">87</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -986,7 +1027,7 @@ Public Attributes</h2></td></tr>
 
 <p>Global router v2 (M6): the first search of each connection is confined to its corridor (cells outside are blocked, window cropped to the corridor); only if that fails do the usual unconfined windows run. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00133">133</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00138">138</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1005,7 +1046,7 @@ Public Attributes</h2></td></tr>
 <p>Global congestion map (M6, doc 05 §16): plan on the tile graph, then charge detailed steps through tiles the plan fills beyond global_congestion_from eighths of capacity, except near the connection's own ends. </p>
 <p>No corridors. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00140">140</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00145">145</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1021,7 +1062,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00141">141</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00146">146</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1039,7 +1080,7 @@ Public Attributes</h2></td></tr>
 
 <p>pitches per lattice step, per eighth of capacity above the threshold </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00142">142</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00147">147</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1057,7 +1098,7 @@ Public Attributes</h2></td></tr>
 
 <p>plan every connection on a coarse tile graph first; detailed search follows the corridors </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00130">130</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00135">135</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1075,7 +1116,7 @@ Public Attributes</h2></td></tr>
 
 <p>Strict pass with corridors: a connection that cannot be routed inside its corridor goes straight to negotiation instead of flooding the wide strict windows (on logicbone those failed floods were 76 % of all search expansions; doc 05 §13). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00137">137</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00142">142</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1111,7 +1152,7 @@ Public Attributes</h2></td></tr>
 
 <p>pitches per lattice step off the guide </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00202">202</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00207">207</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1129,7 +1170,7 @@ Public Attributes</h2></td></tr>
 
 <p>pitches around the guide that count as on it </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00203">203</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00208">208</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1145,7 +1186,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00201">201</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00206">206</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1198,7 +1239,7 @@ Public Attributes</h2></td></tr>
 
 <p>PathFinder history: pitches of cost per recorded conflict on a cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00073">73</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00078">78</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1216,7 +1257,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio rounds: &gt;= 0 lets every variant continue the next round from its own final state when that routes at least (best - island_slack) connections, instead of all from the best (islands; the best state ever seen is returned) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00099">99</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00104">104</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1234,7 +1275,7 @@ Public Attributes</h2></td></tr>
 
 <p>also return the live state at the end of the run (<a class="el" href="structtmk_1_1route_1_1RouteResult.html#ab7921e29e6add7087f6cb11634f23447" title="the state the search ended in (RouterOptions::keep_final): legal, perhaps worse than the best">RouteResult::final_routes</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00100">100</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00105">105</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1252,7 +1293,7 @@ Public Attributes</h2></td></tr>
 
 <p>doc 16 F2: prefer, per connection, the layer that leaves the fewest crossings (two-layer boards) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00069">69</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00074">74</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1311,7 @@ Public Attributes</h2></td></tr>
 
 <p>layer preference by chord direction instead of by crossings (uses layer_assign_pen) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00068">68</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00073">73</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1288,7 +1329,7 @@ Public Attributes</h2></td></tr>
 
 <p>pitches per lattice step on the other layer </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00070">70</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00075">75</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1304,7 +1345,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00214">214</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00219">219</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1358,7 +1399,7 @@ Public Attributes</h2></td></tr>
 
 <p>warm start: first move the vertices of the taken-over routes until the board's clearances hold (<a class="el" href="route_2legalize_8hpp.html" title="Gridless legalisation of routed copper (doc 05 §41.3, D104).">route/legalize.hpp</a>), then keep what is legal </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00104">104</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00109">109</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1376,7 +1417,7 @@ Public Attributes</h2></td></tr>
 
 <p>&gt; 0 with legalize: route tracks are cut into pieces of at most this length so they can bend (<a class="el" href="route_2legalize_8hpp.html" title="Gridless legalisation of routed copper (doc 05 §41.3, D104).">route/legalize.hpp</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00103">103</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00108">108</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1467,7 +1508,7 @@ Public Attributes</h2></td></tr>
 
 <p>passes over still-unrouted connections (was 12) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00112">112</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00117">117</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1485,7 +1526,7 @@ Public Attributes</h2></td></tr>
 
 <p>full restarts (hardest first, history kept) when negotiation stalls </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00168">168</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00173">173</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1503,7 +1544,7 @@ Public Attributes</h2></td></tr>
 
 <p>was 8: at 50 M work on dense breakouts 33 % -&gt; 54 % clean (doc 16 §4) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00111">111</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00116">116</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1521,7 +1562,7 @@ Public Attributes</h2></td></tr>
 
 <p>a negotiated route may rip at most this many connections at once (0 = no limit) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00074">74</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00079">79</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1539,7 +1580,7 @@ Public Attributes</h2></td></tr>
 
 <p>Micro vias (outer layer to the next one, the net class's microvia size) where a through via is blocked, on boards whose rules allow them (doc 05 §21). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00115">115</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00120">120</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1558,7 +1599,7 @@ Public Attributes</h2></td></tr>
 <p>Nets that are never narrowed below their class width nor given the neck-down via (power nets in a rule-relaxed routing: they have the least margin, so the relaxation is spent on signals only). </p>
 <p>Empty = every net may be necked down. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00179">179</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00184">184</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1577,7 +1618,7 @@ Public Attributes</h2></td></tr>
 <p>Layer limits (doc 05 §29; <a class="el" href="layer__limits_8hpp.html" title="Which copper layers may carry new tracks, and what a track costs on each (doc 05 §29): the user&#39;s --n...">route/layer_limits.hpp</a> turns layer names into these). </p>
 <p>Layers in no_track_layers get no new tracks: vias still pass through them and still connect into zone fills there, and pads that exist only on such layers stay unrouted. layer_cost_pm[l] is the cost of a track on copper layer l per mille of its length (1000 = normal, never less; missing entries are 1000). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00213">213</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00218">218</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1595,7 +1636,7 @@ Public Attributes</h2></td></tr>
 
 <p>debugging: route only this net </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00204">204</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00209">209</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1613,7 +1654,7 @@ Public Attributes</h2></td></tr>
 
 <p>post-routing clean-up: re-route connections to save vias and length </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00145">145</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00150">150</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1631,7 +1672,7 @@ Public Attributes</h2></td></tr>
 
 <p>connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00172">172</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00177">177</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1667,7 +1708,7 @@ Public Attributes</h2></td></tr>
 
 <p>doc 05 §52: a connection between two perimeter pins of one dense package on one net gets a stub and a via at each pin and its run between them on the other layer (the core rail's tunnel under the package), placed before the search </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00155">155</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00160">160</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1685,7 +1726,7 @@ Public Attributes</h2></td></tr>
 
 <p>Per-pair limits for <a class="el" href="#a135c0f809eaec98644adc86dfad400cd" title="Component rules (doc 15 P3): these net pairs only are routed coupled first when diff_pairs is off (e....">RouterOptions::pair_nets</a> (same index; 0 or missing = pair_skew): component rules give each interface its own limit (USB 2.0 1.27 mm, doc 15 USB2-02). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00129">129</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00134">134</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1704,7 +1745,7 @@ Public Attributes</h2></td></tr>
 <p>Component rules (doc 15 P3): these net pairs only are routed coupled first when diff_pairs is off (e.g. </p>
 <p>USB 2.0 D+/D- bound by tm::crules, whose names need not end in P/N or +/-). Empty = none. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00120">120</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00125">125</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1720,7 +1761,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00126">126</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00131">131</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1739,7 +1780,7 @@ Public Attributes</h2></td></tr>
 <p>Intra-pair skew limit for pairs routed coupled (0 = only KiCad custom <span class="tt">skew</span> rules): the shorter half gets meanders in the clean-up until the halves differ by at most half of it (length tuning code, doc 05 §15). </p>
 <p>Coupled pairs may twist: change layer one half after the other and cross in between, so that a pair whose pin order is mirrored between its ends can still be routed coupled (doc 05 §24). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00125">125</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00130">130</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1811,7 +1852,7 @@ Public Attributes</h2></td></tr>
 
 <p><a class="el" href="structtmk_1_1route_1_1Connection.html">Connection</a> planning measures pad copper to pad copper instead of centre to centre (doc 05 §17). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00144">144</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00149">149</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1830,7 +1871,7 @@ Public Attributes</h2></td></tr>
 <p>Plan the connections and stop: <a class="el" href="structtmk_1_1route_1_1RouteResult.html#a02975ee4617ce21e3e11826ddff9ad65">RouteResult::connections</a> and ::unrouted list every connection that is open (reason <span class="tt">not_attempted</span>), nothing is searched or committed. </p>
 <p>A board session (doc 19) lists the open connections of a state this way. Off by default: a run is what it was. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00207">207</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00212">212</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1884,7 +1925,7 @@ Public Attributes</h2></td></tr>
 
 <p>Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00174">174</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00179">179</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1902,7 +1943,7 @@ Public Attributes</h2></td></tr>
 
 <p>what such an edge costs in the spanning tree </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00159">159</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00164">164</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1920,7 +1961,7 @@ Public Attributes</h2></td></tr>
 
 <p>spanning tree: no edge between two pins of one dense package for a net with 3+ pins there (each pin goes to a capacitor or via; the trunk forms outside the escape band) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00158">158</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00163">163</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1938,7 +1979,7 @@ Public Attributes</h2></td></tr>
 
 <p>&gt; 0: when the final stage (the board's rules) has not improved for ramp_stall rounds, go back this many stages and climb again ("breathing"); the best result under the board's rules is returned </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00095">95</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00100">100</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1956,7 +1997,7 @@ Public Attributes</h2></td></tr>
 
 <p>&gt; 0: every n-th breathing cycle starts from nothing instead of the best state (a new topology; the best result under the board's rules is kept) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00097">97</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00102">102</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1974,7 +2015,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio: &gt; 0 starts at this clearance (every class and the board minimum lowered by the difference) and raises it by ramp_step_mm per stage up to the board's own; each stage warm-starts from the last one's routes that are still legal (clearance continuation, doc 16 §12.3) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00092">92</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00097">97</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1992,7 +2033,7 @@ Public Attributes</h2></td></tr>
 
 <p>start at the board's rules and use the ramp (with ramp_cycle) only once those stall </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00096">96</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00101">101</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2010,7 +2051,7 @@ Public Attributes</h2></td></tr>
 
 <p>a ramp stage ends after this many rounds in a row without gain over the best round of the stage (or when complete) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00094">94</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00099">99</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2028,7 +2069,7 @@ Public Attributes</h2></td></tr>
 
 <p>rounds without improvement at the final stage before breathing </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00098">98</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00103">103</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2046,7 +2087,7 @@ Public Attributes</h2></td></tr>
 
 <p>clearance added per stage </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00093">93</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00098">98</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2101,7 +2142,7 @@ Public Attributes</h2></td></tr>
 <p>The board with its zones refilled by the engine, for the reference map: made once by the caller when the file's zones have no fills (every portfolio variant would otherwise refill the whole board itself). </p>
 <p>Null = use the board's own fills, refilling here if it has none. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00228">228</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00233">233</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2119,7 +2160,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio: relax, route, legalise: ramp stages at 60 % and 80 % of the board's clearance with legalisation and breathing between (D104); needs round_work (20 M by default) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00091">91</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00096">96</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2137,7 +2178,7 @@ Public Attributes</h2></td></tr>
 
 <p>with relax: plain rounds under the board's rules first; when they stall, start the stages afresh (not from the stalled state), and keep the best legal result of all </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00090">90</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00095">95</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2155,7 +2196,7 @@ Public Attributes</h2></td></tr>
 
 <p>negotiated rip-up and reroute (design doc 05 §6 rung R2, doc 06 §3) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00072">72</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00077">77</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2173,7 +2214,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio: &gt; 0 gives every round this work budget (instead of splitting the total), and rounds continue until the board is complete, <span class="tt"><a class="el" href="#acf1a0112042bd6f315ec16792a8043fd" title="portfolio: the work budget is split into this many rounds; after each, every variant continues from t...">rounds</a></span> is reached or <span class="tt"><a class="el" href="#ad4ca8b4d1ae60ef03ad3865548ab618d" title="wall-clock safety limit for the whole run">time_limit_s</a></span> of the whole portfolio is used (&ndash;until-complete) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00107">107</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00112">112</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2191,7 +2232,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio: the work budget is split into this many rounds; after each, every variant continues from the best result so far (0 = automatic: 4 with the breakout portfolio, else 1) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00108">108</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00113">113</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2207,7 +2248,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00171">171</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00176">176</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2223,7 +2264,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00250">250</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00255">255</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2242,7 +2283,7 @@ Public Attributes</h2></td></tr>
 <p>experiments: leave these nets unrouted (e.g. </p>
 <p>nets a designer would pour) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00208">208</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00213">213</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2278,7 +2319,7 @@ Public Attributes</h2></td></tr>
 
 <p>board copper graphics (polygons on a copper layer) take the net of the pads, tracks and vias of the one net they touch (a manual pour), so that net's pins inside are not enclosed and no other net may touch them </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00151">151</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00156">156</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2296,7 +2337,7 @@ Public Attributes</h2></td></tr>
 
 <p>base cost of crossing another net's routed copper (before history) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00170">170</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00175">175</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2314,7 +2355,7 @@ Public Attributes</h2></td></tr>
 
 <p>crossing cost grows by this fraction of soft_cost_mm per negotiation pass (PathFinder, doc 16) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00169">169</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00174">174</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2332,7 +2373,7 @@ Public Attributes</h2></td></tr>
 
 <p>net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00150">150</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00155">155</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2367,7 +2408,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00223">223</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00228">228</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2383,7 +2424,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00224">224</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00229">229</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2401,7 +2442,7 @@ Public Attributes</h2></td></tr>
 
 <p>a layer is a reference plane when its zone fills cover this share of the board </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00225">225</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00230">230</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2419,7 +2460,7 @@ Public Attributes</h2></td></tr>
 
 <p>&gt; 0: a restart begins when this many passes in a row set no new best for the run since its last restart </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00077">77</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00082">82</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2437,7 +2478,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00089">89</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00094">94</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2455,7 +2496,7 @@ Public Attributes</h2></td></tr>
 
 <p>portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00088">88</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00093">93</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2473,7 +2514,7 @@ Public Attributes</h2></td></tr>
 
 <p>warm start: take over only the routes that are legal under this board's rules (continuation from looser rules) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00105">105</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00110">110</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2491,7 +2532,7 @@ Public Attributes</h2></td></tr>
 
 <p>the first pass is strict (no crossing of routed copper); off: negotiate from the first pass </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00071">71</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00076">76</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2509,7 +2550,7 @@ Public Attributes</h2></td></tr>
 
 <p>doc 05 §51: nets with 2+ perimeter pins on one dense package (supply and core nets: +3V3, a core rail) and no pour are routed before everything else and may not be ripped (as &ndash;first-nets); the bundles of &ndash;bundle-escape are still placed first (placing them after the supply nets was worse: 20 against 13 unrouted on the EtherCAT shield) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00156">156</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00161">161</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2527,7 +2568,7 @@ Public Attributes</h2></td></tr>
 
 <p>&gt; 0: every this many passes, with connections still open, each routed connection is re-routed alone and kept if shorter (frees room) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00084">84</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00089">89</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2563,7 +2604,7 @@ Public Attributes</h2></td></tr>
 
 <p>transactional negotiation (doc 16 §12): a route that rips victims is kept only if the victims can be re-routed without ripping: 0 = off, 1 = keep ties (net 0), 2 = strict gain only, -1 = automatic (1 on a breakout board, else 0) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00109">109</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00114">114</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2581,7 +2622,7 @@ Public Attributes</h2></td></tr>
 
 <p>transactional negotiation: expansion cap of each victim's re-route search (0 = none) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00078">78</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00083">83</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2599,7 +2640,7 @@ Public Attributes</h2></td></tr>
 
 <p>1: the temperature falls linearly to zero over the work budget (simulated-annealing schedule) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00076">76</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00081">81</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2617,7 +2658,7 @@ Public Attributes</h2></td></tr>
 
 <p>transactional negotiation: victims that cannot be re-routed strictly get a nested transaction of their own, this deep </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00079">79</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00084">84</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2635,7 +2676,7 @@ Public Attributes</h2></td></tr>
 
 <p>nested transactions allowed per top-level transaction </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00080">80</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00085">85</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2653,7 +2694,7 @@ Public Attributes</h2></td></tr>
 
 <p>transactional negotiation: orders tried for re-routing the victims (the ones that failed go first in the next try) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00085">85</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00090">90</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2671,7 +2712,7 @@ Public Attributes</h2></td></tr>
 
 <p>transactional negotiation: a route that loses k connections net is kept with probability exp(-k / txn_temp) (0 = never, -1 = automatic: 1.5 on a breakout board) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00075">75</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00080">80</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2707,7 +2748,7 @@ Public Attributes</h2></td></tr>
 
 <p>pins of dense packages may drop to a via 0.7-1.5 mm out, off the lattice, between the neighbours' tracks (the designer's supply vias), then go on on the other layer </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00152">152</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00157">157</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2777,7 +2818,7 @@ Public Attributes</h2></td></tr>
 
 <p>start from these routes (a previous result's conn_routes): they are kept, negotiation starts at once </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00087">87</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00092">92</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2795,7 +2836,7 @@ Public Attributes</h2></td></tr>
 
 <p>copper of a routed board (&ndash;warm-pcb) to start from: a net with one connection takes all of its tracks and vias; only what is legal under this board's rules is kept </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00101">101</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00106">106</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -2811,7 +2852,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00102">102</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00107">107</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

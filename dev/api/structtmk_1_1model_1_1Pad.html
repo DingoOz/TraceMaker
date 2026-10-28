@@ -132,6 +132,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a8f315033470dddb7e49a4ae83ec65efb" id="r_a8f315033470dddb7e49a4ae83ec65efb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Pad_1_1CustomPrim.html">CustomPrim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f315033470dddb7e49a4ae83ec65efb">custom_prims</a></td></tr>
 <tr class="memitem:a70ec0228c1b320cbd4a27aad6ba730d9" id="r_a70ec0228c1b320cbd4a27aad6ba730d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70ec0228c1b320cbd4a27aad6ba730d9">clearance</a> = -1</td></tr>
 <tr class="memdesc:a70ec0228c1b320cbd4a27aad6ba730d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">local override, -1 = none  <br /></td></tr>
+<tr class="memitem:a5cb80157ee6bca7ba8dd2254460bdbae" id="r_a5cb80157ee6bca7ba8dd2254460bdbae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cb80157ee6bca7ba8dd2254460bdbae">die_length</a> = 0</td></tr>
+<tr class="memdesc:a5cb80157ee6bca7ba8dd2254460bdbae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pad-to-die length and delay (KiCad's (die_length) and (die_delay); the delay in attoseconds, KiCad's time unit), added to the net's length and delay by length rules (<a class="el" href="length_8hpp.html" title="Net length and propagation delay as KiCad 10.0.6 measures them for its length and skew checks (design...">drc/length.hpp</a>).  <br /></td></tr>
+<tr class="memitem:a556ade7189dc6d8930d77b5eeb00d759" id="r_a556ade7189dc6d8930d77b5eeb00d759"><td class="memItemLeft" align="right" valign="top">std::int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a556ade7189dc6d8930d77b5eeb00d759">die_delay</a> = 0</td></tr>
 <tr class="memitem:aee5e5e061b0f67a5ef5528aeb2b8371c" id="r_aee5e5e061b0f67a5ef5528aeb2b8371c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee5e5e061b0f67a5ef5528aeb2b8371c">mask_margin</a> = INT64_MIN</td></tr>
 <tr class="memdesc:aee5e5e061b0f67a5ef5528aeb2b8371c"><td class="mdescLeft">&#160;</td><td class="mdescRight">local solder-mask expansion (unset = INT64_MIN)  <br /></td></tr>
 <tr class="memitem:aab513108860396a1bb183d3bd85fd75c" id="r_aab513108860396a1bb183d3bd85fd75c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a2141efc76521ae3d0c5a990313ab5bf0">ZoneConnect</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab513108860396a1bb183d3bd85fd75c">zone_connect</a> = <a class="el" href="namespacetmk_1_1model.html#a2141efc76521ae3d0c5a990313ab5bf0ab0b517d3de3f2b55489e488a238a8c25">ZoneConnect::Inherited</a></td></tr>
@@ -145,11 +148,15 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a02a0244d1b959882a0e864bd75df350e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Schematic pin name and electrical type (KiCad 6+ boards; empty in older files).  <br /></td></tr>
 <tr class="memitem:a7dabb044f0999df7278b720f5e7ece06" id="r_a7dabb044f0999df7278b720f5e7ece06"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7dabb044f0999df7278b720f5e7ece06">pintype</a></td></tr>
 <tr class="memitem:aa147654f29aac2761333e0a26e2cd93e" id="r_aa147654f29aac2761333e0a26e2cd93e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">NetId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa147654f29aac2761333e0a26e2cd93e">net</a> = 0</td></tr>
+<tr class="memitem:a2b888ffe7eaaf67190d1129cab30ef62" id="r_a2b888ffe7eaaf67190d1129cab30ef62"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dad">UnconnectedLayers</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b888ffe7eaaf67190d1129cab30ef62">unconnected</a> = <a class="el" href="namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dada98e4e92f8ed10755a2fde1531cf6593f">UnconnectedLayers::KeepAll</a></td></tr>
+<tr class="memdesc:a2b888ffe7eaaf67190d1129cab30ef62"><td class="mdescLeft">&#160;</td><td class="mdescRight">plated through-hole pads only  <br /></td></tr>
+<tr class="memitem:a42fb278fce5fe60c566c5c6ef27046ff" id="r_a42fb278fce5fe60c566c5c6ef27046ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">LayerMask</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42fb278fce5fe60c566c5c6ef27046ff">zone_layers</a> = 0</td></tr>
+<tr class="memdesc:a42fb278fce5fe60c566c5c6ef27046ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">(zone_layer_connections): layers where a zone fill joins the pad, so it keeps its copper  <br /></td></tr>
 <tr class="memitem:ab2d0ca187689f27198d15794e4556529" id="r_ab2d0ca187689f27198d15794e4556529"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1sexpr.html#a54f220ec5c6a8db6da6cd2bf4183b2b6">sexpr::NodeId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2d0ca187689f27198d15794e4556529">node</a> = <a class="el" href="namespacetmk_1_1sexpr.html#a86e0e37623497a5fe137adacb09f0a8e">sexpr::kNoNode</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00047">47</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00051">51</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="afb90fadf4a101a58cccc33bffcbfb7e3" name="afb90fadf4a101a58cccc33bffcbfb7e3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afb90fadf4a101a58cccc33bffcbfb7e3">&#9670;&#160;</a></span>angle</h2>
@@ -165,7 +172,7 @@ Public Attributes</h2></td></tr>
 
 <p>absolute orientation, degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00053">53</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00057">57</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -183,7 +190,7 @@ Public Attributes</h2></td></tr>
 
 <p>bit 0 TL, 1 TR, 2 BL, 3 BR </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00062">62</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00066">66</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -199,7 +206,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00061">61</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00065">65</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -217,7 +224,7 @@ Public Attributes</h2></td></tr>
 
 <p>local override, -1 = none </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00072">72</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00076">76</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -235,7 +242,7 @@ Public Attributes</h2></td></tr>
 
 <p>copper layers the pad has copper on </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00058">58</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00062">62</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -251,7 +258,41 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00071">71</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00075">75</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a556ade7189dc6d8930d77b5eeb00d759" name="a556ade7189dc6d8930d77b5eeb00d759"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a556ade7189dc6d8930d77b5eeb00d759">&#9670;&#160;</a></span>die_delay</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::int64_t tmk::model::Pad::die_delay = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00080">80</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5cb80157ee6bca7ba8dd2254460bdbae" name="a5cb80157ee6bca7ba8dd2254460bdbae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5cb80157ee6bca7ba8dd2254460bdbae">&#9670;&#160;</a></span>die_length</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::model::Pad::die_length = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pad-to-die length and delay (KiCad's (die_length) and (die_delay); the delay in attoseconds, KiCad's time unit), added to the net's length and delay by length rules (<a class="el" href="length_8hpp.html" title="Net length and propagation delay as KiCad 10.0.6 measures them for its length and skew checks (design...">drc/length.hpp</a>). </p>
+
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00079">79</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -269,7 +310,7 @@ Public Attributes</h2></td></tr>
 
 <p>copper shape offset from the hole (pad position), in the pad's own frame </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00057">57</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00061">61</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -285,7 +326,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00056">56</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00060">60</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -301,7 +342,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00055">55</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00059">59</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -319,7 +360,7 @@ Public Attributes</h2></td></tr>
 
 <p>0 = no hole </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00055">55</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00059">59</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -335,7 +376,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00048">48</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00052">52</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -353,7 +394,7 @@ Public Attributes</h2></td></tr>
 
 <p>all layer names as written (incl. mask/paste, wildcards expanded) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00059">59</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00063">63</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -371,7 +412,7 @@ Public Attributes</h2></td></tr>
 
 <p>local solder-mask expansion (unset = INT64_MIN) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00073">73</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00081">81</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -387,7 +428,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00080">80</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00088">88</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -403,7 +444,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00081">81</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00091">91</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -419,7 +460,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00049">49</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00053">53</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -438,7 +479,7 @@ Public Attributes</h2></td></tr>
 <p>Schematic pin name and electrical type (KiCad 6+ boards; empty in older files). </p>
 <p>Read-only, used to recognise component roles (doc 15 §3.1). </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00079">79</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00087">87</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -454,7 +495,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00079">79</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00087">87</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -472,7 +513,7 @@ Public Attributes</h2></td></tr>
 
 <p>absolute centre </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00052">52</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00056">56</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -488,7 +529,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00060">60</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00064">64</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -504,7 +545,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00051">51</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00055">55</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -520,7 +561,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00054">54</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00058">58</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -536,7 +577,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00054">54</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00058">58</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -554,7 +595,7 @@ Public Attributes</h2></td></tr>
 
 <p>degrees; -1 = KiCad's default (45 for round pads, 90 otherwise) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00076">76</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00084">84</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -572,7 +613,7 @@ Public Attributes</h2></td></tr>
 
 <p>local overrides, -1 = none </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00075">75</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00083">83</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -588,7 +629,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00075">75</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00083">83</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -604,7 +645,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00063">63</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00067">67</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -622,7 +663,7 @@ Public Attributes</h2></td></tr>
 
 <p>rect_delta </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00063">63</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00067">67</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -638,7 +679,25 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00050">50</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00054">54</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2b888ffe7eaaf67190d1129cab30ef62" name="a2b888ffe7eaaf67190d1129cab30ef62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b888ffe7eaaf67190d1129cab30ef62">&#9670;&#160;</a></span>unconnected</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dad">UnconnectedLayers</a> tmk::model::Pad::unconnected = <a class="el" href="namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dada98e4e92f8ed10755a2fde1531cf6593f">UnconnectedLayers::KeepAll</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>plated through-hole pads only </p>
+
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00089">89</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>
@@ -656,7 +715,25 @@ Public Attributes</h2></td></tr>
 
 <p>(zone_connect n) </p>
 
-<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00074">74</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00082">82</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a42fb278fce5fe60c566c5c6ef27046ff" name="a42fb278fce5fe60c566c5c6ef27046ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42fb278fce5fe60c566c5c6ef27046ff">&#9670;&#160;</a></span>zone_layers</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">LayerMask</a> tmk::model::Pad::zone_layers = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>(zone_layer_connections): layers where a zone fill joins the pad, so it keeps its copper </p>
+
+<p class="definition">Definition at line <a class="el" href="board_8hpp_source.html#l00090">90</a> of file <a class="el" href="board_8hpp_source.html">board.hpp</a>.</p>
 
 </div>
 </div>

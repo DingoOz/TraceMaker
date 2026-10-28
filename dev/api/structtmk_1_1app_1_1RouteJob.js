@@ -44,6 +44,7 @@ var structtmk_1_1app_1_1RouteJob =
     [ "return_paths", "structtmk_1_1app_1_1RouteJob.html#a9a88a27b86997dac6476e1249d7e4cb7", null ],
     [ "rules_override", "structtmk_1_1app_1_1RouteJob.html#a0638d1a7c6ff8284a9af0177de373f7d", null ],
     [ "si_rules", "structtmk_1_1app_1_1RouteJob.html#ae31339bcb8fa1593e1bae86662425e3f", null ],
+    [ "si_stitch", "structtmk_1_1app_1_1RouteJob.html#a7d2ccd04045f53f2e5023f2a0a8b6301", null ],
     [ "split_cost", "structtmk_1_1app_1_1RouteJob.html#a6d6fc1ec4429c2dcd17795ff769837a7", null ],
     [ "split_cost_given", "structtmk_1_1app_1_1RouteJob.html#ac1f60d90532c5b1158fba5d85da3c161", null ],
     [ "split_hard", "structtmk_1_1app_1_1RouteJob.html#ac68aa05e140878b4ff78e22e6e5b2572", null ],

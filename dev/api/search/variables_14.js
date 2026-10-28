@@ -1,7 +1,7 @@
 var searchData=
 [
   ['unbound_0',['unbound',['../structtmk_1_1crules_1_1ProximityPairs.html#ab258bbfa33abfc329c85171d159296b4',1,'tmk::crules::ProximityPairs']]],
-  ['unconnected_1',['unconnected',['../structtmk_1_1drc_1_1DrcReport.html#a103f4c8a4ef8cf3825c3127a8fb7bb24',1,'tmk::drc::DrcReport']]],
+  ['unconnected_1',['unconnected',['../structtmk_1_1drc_1_1DrcReport.html#a103f4c8a4ef8cf3825c3127a8fb7bb24',1,'tmk::drc::DrcReport::unconnected'],['../structtmk_1_1model_1_1Pad.html#a2b888ffe7eaaf67190d1129cab30ef62',1,'tmk::model::Pad::unconnected'],['../structtmk_1_1model_1_1Via.html#a1a3aa2092093cf568b0976d401042e00',1,'tmk::model::Via::unconnected']]],
   ['unconnected_5fafter_5frefill_2',['unconnected_after_refill',['../structtmk_1_1app_1_1RouteJobResult.html#a7053a1c6fc4cf9c836518c3152161d0f',1,'tmk::app::RouteJobResult']]],
   ['uncovered_5fmm_3',['uncovered_mm',['../structtmk_1_1analysis_1_1NetReturn.html#afc4f1ee4cacd9c34c3437436c1444d19',1,'tmk::analysis::NetReturn']]],
   ['unpointed_5fkeepout_4',['unpointed_keepout',['../structtmk_1_1io_1_1SrjImportOptions.html#a44188d157fcfb462abab15222f364d15',1,'tmk::io::SrjImportOptions']]],

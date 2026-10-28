@@ -95,7 +95,8 @@ $(function(){initNavTree('rules_8hpp.html','',''); });
 
 <p>Design rules as KiCad defines them (design doc 08 §3–4): board minimums and net classes from the .kicad_pro project file, plus custom rules from the .kicad_dru file.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;map&gt;</code><br />
+<div class="textblock"><code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;map&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
@@ -106,6 +107,11 @@ $(function(){initNavTree('rules_8hpp.html','',''); });
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:tmk_3A_3Amodel_3A_3ANetClass" id="r_tmk_3A_3Amodel_3A_3ANetClass"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1NetClass.html">tmk::model::NetClass</a></td></tr>
+<tr class="memitem:tmk_3A_3Amodel_3A_3ATuningLayer" id="r_tmk_3A_3Amodel_3A_3ATuningLayer"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1TuningLayer.html">tmk::model::TuningLayer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A KiCad 10 tuning profile (<span class="tt">.kicad_pro</span> <span class="tt">tuning_profiles</span>, doc 05 §58): per signal layer the track width and pair gap of the class's nets there (0 = not set) and the propagation delay per millimetre (KiCad's time units; used only with time-domain tuning).  <a href="structtmk_1_1model_1_1TuningLayer.html#details">More...</a><br /></td></tr>
+<tr class="memitem:tmk_3A_3Amodel_3A_3ATuningViaOverride" id="r_tmk_3A_3Amodel_3A_3ATuningViaOverride"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1TuningViaOverride.html">tmk::model::TuningViaOverride</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A via's delay for one signal-layer and via-layer span, instead of the profile's delay per mm (layer names as the project gives them; KiCad matches them exactly, upper layer first).  <a href="structtmk_1_1model_1_1TuningViaOverride.html#details">More...</a><br /></td></tr>
+<tr class="memitem:tmk_3A_3Amodel_3A_3ATuningProfile" id="r_tmk_3A_3Amodel_3A_3ATuningProfile"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1TuningProfile.html">tmk::model::TuningProfile</a></td></tr>
 <tr class="memitem:tmk_3A_3Amodel_3A_3ABoardMinimums" id="r_tmk_3A_3Amodel_3A_3ABoardMinimums"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1BoardMinimums.html">tmk::model::BoardMinimums</a></td></tr>
 <tr class="memitem:tmk_3A_3Amodel_3A_3AConstraint" id="r_tmk_3A_3Amodel_3A_3AConstraint"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1model_1_1Constraint.html">tmk::model::Constraint</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One constraint inside a custom rule, e.g. (constraint clearance (min 0.2mm)).  <a href="structtmk_1_1model_1_1Constraint.html#details">More...</a><br /></td></tr>

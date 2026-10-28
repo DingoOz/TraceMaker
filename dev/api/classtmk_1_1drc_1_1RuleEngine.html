@@ -93,9 +93,6 @@ $(function(){initNavTree('classtmk_1_1drc_1_1RuleEngine.html','','classtmk_1_1dr
 </div><!--header-->
 <div class="contents">
 
-<p>compiled custom-rule condition  
- <a href="#details">More...</a></p>
-
 <p><code>#include &lt;<a class="el" href="rule__engine_8hpp_source.html">drc/rule_engine.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -110,6 +107,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae005c4b31e3856f0b58a6bcaf9491a01" id="r_ae005c4b31e3856f0b58a6bcaf9491a01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae005c4b31e3856f0b58a6bcaf9491a01">edge_clearance</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;a, int layer) const</td></tr>
 <tr class="memitem:a5dcee5588df0b98c97f0594d82f8c5d4" id="r_a5dcee5588df0b98c97f0594d82f8c5d4"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dcee5588df0b98c97f0594d82f8c5d4">track_width</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;t, int layer) const</td></tr>
 <tr class="memdesc:a5dcee5588df0b98c97f0594d82f8c5d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum and maximum track width (max = 0: none).  <br /></td></tr>
+<tr class="memitem:ad675992ff2629e8b3810cbc8eabeacfc" id="r_ad675992ff2629e8b3810cbc8eabeacfc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad675992ff2629e8b3810cbc8eabeacfc">track_width_severity</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;t, int layer) const</td></tr>
+<tr class="memdesc:ad675992ff2629e8b3810cbc8eabeacfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The severity of the last rule with a track_width constraint that matches the track ("" when none matches or it sets none): in KiCad that rule decides the track's width check, so an ignored rule hides the board minimum too (tuning profiles, doc 05 §58).  <br /></td></tr>
 <tr class="memitem:afc502e7f91470b77fc0424c08478caa1" id="r_afc502e7f91470b77fc0424c08478caa1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc502e7f91470b77fc0424c08478caa1">via_diameter_min</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;v) const</td></tr>
 <tr class="memitem:a6cb9ad3bf59ed38ff3978ab690358b1d" id="r_a6cb9ad3bf59ed38ff3978ab690358b1d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cb9ad3bf59ed38ff3978ab690358b1d">annular_width_min</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;v) const</td></tr>
 <tr class="memitem:aa97ef81bfe11afc917ff32b143c40e32" id="r_aa97ef81bfe11afc917ff32b143c40e32"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa97ef81bfe11afc917ff32b143c40e32">hole_size_min</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> *owner) const</td></tr>
@@ -126,6 +125,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a6348e87032430f61e28f5841e1dca7b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum skew of the last custom rule with a <span class="tt">skew</span> constraint matching a track of <span class="tt">net</span>, if any.  <br /></td></tr>
 <tr class="memitem:aadb9bf46dc431c385b689c8e0a34e271" id="r_aadb9bf46dc431c385b689c8e0a34e271"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structtmk_1_1model_1_1Constraint.html">model::Constraint</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aadb9bf46dc431c385b689c8e0a34e271">net_constraint</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, const std::string &amp;type) const</td></tr>
 <tr class="memdesc:aadb9bf46dc431c385b689c8e0a34e271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last custom constraint of <span class="tt">type</span> (e.g. diff_pair_gap, diff_pair_uncoupled) whose rule matches a track of <span class="tt">net</span>.  <br /></td></tr>
+<tr class="memitem:ad883378a913b1a9cd54f05db01a80e35" id="r_ad883378a913b1a9cd54f05db01a80e35"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad883378a913b1a9cd54f05db01a80e35">last_rule_with</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;it, int layer, const std::string &amp;type) const</td></tr>
+<tr class="memdesc:ad883378a913b1a9cd54f05db01a80e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's matched-length check groups items by the rule that gives them a constraint (DRC_ENGINE::EvalRules' parent rule; doc 05 §59): the position in rule order of the last rule with a <span class="tt">type</span> constraint matching <span class="tt">it</span> on <span class="tt">layer</span>, or -1.  <br /></td></tr>
+<tr class="memitem:a764ea418b12bc15ad4b35ddcbd76f006" id="r_a764ea418b12bc15ad4b35ddcbd76f006"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structtmk_1_1model_1_1CustomRule.html">model::CustomRule</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a764ea418b12bc15ad4b35ddcbd76f006">rule</a> (int i) const</td></tr>
+<tr class="memitem:a3730445ac73da59ed0e58de3787bf20d" id="r_a3730445ac73da59ed0e58de3787bf20d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3730445ac73da59ed0e58de3787bf20d">net_rule_with</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, const std::string &amp;type) const</td></tr>
+<tr class="memdesc:a3730445ac73da59ed0e58de3787bf20d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The same for a net as a whole (a track of <span class="tt">net</span> on any layer), as length_constraint and net_constraint see it.  <br /></td></tr>
+<tr class="memitem:a41c22bdc4a3d41b9aeea114b970dfb98" id="r_a41c22bdc4a3d41b9aeea114b970dfb98"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41c22bdc4a3d41b9aeea114b970dfb98">dp_partner</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net) const</td></tr>
+<tr class="memdesc:a41c22bdc4a3d41b9aeea114b970dfb98"><td class="mdescLeft">&#160;</td><td class="mdescRight">The other half of <span class="tt">net</span>'s differential pair (KiCad's DpCoupledNet), or 0.  <br /></td></tr>
+<tr class="memitem:af94e0179ede3e718aa525396c295cef2" id="r_af94e0179ede3e718aa525396c295cef2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af94e0179ede3e718aa525396c295cef2">dp_positive</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net) const</td></tr>
+<tr class="memdesc:af94e0179ede3e718aa525396c295cef2"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when <span class="tt">net</span> is the positive half of a pair (P or +, match_dp_suffix); only meaningful when dp_partner(net) is set.  <br /></td></tr>
 <tr class="memitem:a23635b4d0aa25d136d20b3561f991e5c" id="r_a23635b4d0aa25d136d20b3561f991e5c"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23635b4d0aa25d136d20b3561f991e5c">disallowed</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;it, int layer) const</td></tr>
 <tr class="memdesc:a23635b4d0aa25d136d20b3561f991e5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the last rule disallowing <span class="tt">it</span> on <span class="tt">layer</span>, if any (KiCad: items_not_allowed).  <br /></td></tr>
 <tr class="memitem:a011cff6f61b68847287d4b2d6b56576d" id="r_a011cff6f61b68847287d4b2d6b56576d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a011cff6f61b68847287d4b2d6b56576d">track_allowed</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, int layer) const</td></tr>
@@ -153,9 +161,8 @@ Friends</h2></td></tr>
 <tr class="memitem:a0705c7682858f6dcf7fe85cba92f0a5c" id="r_a0705c7682858f6dcf7fe85cba92f0a5c"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0705c7682858f6dcf7fe85cba92f0a5c">Condition</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>compiled custom-rule condition </p>
-
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00022">22</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<div class="textblock">
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00032">32</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af8263289ab08f200ed3cb41516c029c0" name="af8263289ab08f200ed3cb41516c029c0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af8263289ab08f200ed3cb41516c029c0">&#9670;&#160;</a></span>RuleEngine()</h2>
@@ -236,7 +243,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00070">70</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00098">98</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -311,6 +318,64 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Name of the last rule disallowing <span class="tt">it</span> on <span class="tt">layer</span>, if any (KiCad: items_not_allowed). </p>
+
+</div>
+</div>
+<a id="a41c22bdc4a3d41b9aeea114b970dfb98" name="a41c22bdc4a3d41b9aeea114b970dfb98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41c22bdc4a3d41b9aeea114b970dfb98">&#9670;&#160;</a></span>dp_partner()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> tmk::drc::RuleEngine::dp_partner </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a></td>          <td class="paramname"><span class="paramname"><em>net</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The other half of <span class="tt">net</span>'s differential pair (KiCad's DpCoupledNet), or 0. </p>
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00075">75</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af94e0179ede3e718aa525396c295cef2" name="af94e0179ede3e718aa525396c295cef2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af94e0179ede3e718aa525396c295cef2">&#9670;&#160;</a></span>dp_positive()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::drc::RuleEngine::dp_positive </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a></td>          <td class="paramname"><span class="paramname"><em>net</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>True when <span class="tt">net</span> is the positive half of a pair (P or +, match_dp_suffix); only meaningful when dp_partner(net) is set. </p>
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00079">79</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -401,6 +466,35 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="ad883378a913b1a9cd54f05db01a80e35" name="ad883378a913b1a9cd54f05db01a80e35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad883378a913b1a9cd54f05db01a80e35">&#9670;&#160;</a></span>last_rule_with()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::drc::RuleEngine::last_rule_with </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>it</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>KiCad's matched-length check groups items by the rule that gives them a constraint (DRC_ENGINE::EvalRules' parent rule; doc 05 §59): the position in rule order of the last rule with a <span class="tt">type</span> constraint matching <span class="tt">it</span> on <span class="tt">layer</span>, or -1. </p>
+<p>rule(i) is that rule. </p>
+
+</div>
+</div>
 <a id="a76dc8b61c8147162a237323396d61616" name="a76dc8b61c8147162a237323396d61616"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a76dc8b61c8147162a237323396d61616">&#9670;&#160;</a></span>length_constraint()</h2>
 
@@ -445,7 +539,7 @@ Friends</h2></td></tr>
 
 <p>Largest clearance any pair could need (for spatial-index inflation). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00039">39</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00052">52</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -472,7 +566,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00074">74</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00102">102</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -501,7 +595,7 @@ Friends</h2></td></tr>
 
 <p>Custom rules that the per-class obstacle cache cannot represent require exact per-point checks. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00081">81</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00109">109</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -525,6 +619,29 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Last custom constraint of <span class="tt">type</span> (e.g. diff_pair_gap, diff_pair_uncoupled) whose rule matches a track of <span class="tt">net</span>. </p>
+
+</div>
+</div>
+<a id="a3730445ac73da59ed0e58de3787bf20d" name="a3730445ac73da59ed0e58de3787bf20d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3730445ac73da59ed0e58de3787bf20d">&#9670;&#160;</a></span>net_rule_with()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::drc::RuleEngine::net_rule_with </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a></td>          <td class="paramname"><span class="paramname"><em>net</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The same for a net as a whole (a track of <span class="tt">net</span> on any layer), as length_constraint and net_constraint see it. </p>
 
 </div>
 </div>
@@ -598,7 +715,7 @@ Friends</h2></td></tr>
 
 <p>A disallow rule on tracks or vias depends on position, size or footprint: the router asks probe_disallowed. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00064">64</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00092">92</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -651,7 +768,34 @@ Friends</h2></td></tr>
 <p>Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule. </p>
 <p>The router's checks and caches have no per-pair hole rule, so a rule with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact (hole_clearance above). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00079">79</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00107">107</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a764ea418b12bc15ad4b35ddcbd76f006" name="a764ea418b12bc15ad4b35ddcbd76f006"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a764ea418b12bc15ad4b35ddcbd76f006">&#9670;&#160;</a></span>rule()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structtmk_1_1model_1_1CustomRule.html">model::CustomRule</a> &amp; tmk::drc::RuleEngine::rule </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00071">71</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -717,6 +861,29 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Minimum and maximum track width (max = 0: none). </p>
+
+</div>
+</div>
+<a id="ad675992ff2629e8b3810cbc8eabeacfc" name="ad675992ff2629e8b3810cbc8eabeacfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad675992ff2629e8b3810cbc8eabeacfc">&#9670;&#160;</a></span>track_width_severity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::drc::RuleEngine::track_width_severity </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>t</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The severity of the last rule with a track_width constraint that matches the track ("" when none matches or it sets none): in KiCad that rule decides the track's width check, so an ignored rule hides the board minimum too (tuning profiles, doc 05 §58). </p>
 
 </div>
 </div>
@@ -823,7 +990,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00082">82</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00110">110</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -848,7 +1015,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00123">123</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00154">154</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>

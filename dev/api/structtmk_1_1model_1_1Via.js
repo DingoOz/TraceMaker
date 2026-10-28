@@ -9,5 +9,7 @@ var structtmk_1_1model_1_1Via =
     [ "node", "structtmk_1_1model_1_1Via.html#aa67f0c853ed7d12f40b46c10390cd165", null ],
     [ "pos", "structtmk_1_1model_1_1Via.html#a9f5b780e57dca5146cb28ba851fea212", null ],
     [ "size", "structtmk_1_1model_1_1Via.html#a684a306f535d3216c1681140aa5b435c", null ],
-    [ "type", "structtmk_1_1model_1_1Via.html#a95d0fc761be0ccb5e798caad8b084d18", null ]
+    [ "type", "structtmk_1_1model_1_1Via.html#a95d0fc761be0ccb5e798caad8b084d18", null ],
+    [ "unconnected", "structtmk_1_1model_1_1Via.html#a1a3aa2092093cf568b0976d401042e00", null ],
+    [ "zone_layers", "structtmk_1_1model_1_1Via.html#afdaed95b6caad440e06e6713e8a6ead7", null ]
 ];

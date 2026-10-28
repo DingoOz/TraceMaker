@@ -125,6 +125,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a59234e2715ac9469c765d243dae9b8ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Routed (rippable) copper only: 0 free, 1 conflicts (owners appended), 2 blocked when !soft.  <br /></td></tr>
 <tr class="memitem:ad77f3aaa3a1d48d0263428cae22c33fe" id="r_ad77f3aaa3a1d48d0263428cae22c33fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad77f3aaa3a1d48d0263428cae22c33fe">routed_via_state</a> (const <a class="el" href="structtmk_1_1geom_1_1Shape.html">geom::Shape</a> &amp;s, <a class="el" href="namespacetmk_1_1model.html#a93040ef7a08f62c7ebfd97681c58e51d">model::LayerMask</a> layers, <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, bool soft, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> hole_r) const</td></tr>
 <tr class="memdesc:ad77f3aaa3a1d48d0263428cae22c33fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum routed_state over <span class="tt">layers</span> for a via and its hole; layer-independent hole checks run once.  <br /></td></tr>
+<tr class="memitem:a83a7db654de5fbc9e23c800de75fda55" id="r_a83a7db654de5fbc9e23c800de75fda55"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83a7db654de5fbc9e23c800de75fda55">coupling_state</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> a, <a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> b, int layer, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> width, <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net, bool ignore_routed, std::vector&lt; int &gt; *owners) const</td></tr>
+<tr class="memdesc:a83a7db654de5fbc9e23c800de75fda55"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's diff-pair coupling for a new track of a pair net with a bounded gap (doc 05 §59): 0, 1 (a routed partner track; owners appended) or 2.  <br /></td></tr>
+<tr class="memitem:a1a5fe5a49ee6c7a90a3c7b1592d3d38e" id="r_a1a5fe5a49ee6c7a90a3c7b1592d3d38e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a5fe5a49ee6c7a90a3c7b1592d3d38e">coupling_net</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net) const</td></tr>
 <tr class="memitem:a191fcf6f442bcb9e763e76df54a5bd12" id="r_a191fcf6f442bcb9e763e76df54a5bd12"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a191fcf6f442bcb9e763e76df54a5bd12">needs_exact_routing</a> () const</td></tr>
 <tr class="memdesc:a191fcf6f442bcb9e763e76df54a5bd12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rules outside the per-class cache require exact per-point checks.  <br /></td></tr>
 <tr class="memitem:a972bbcc8c4877ae6d40e2d2821f4390f" id="r_a972bbcc8c4877ae6d40e2d2821f4390f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a972bbcc8c4877ae6d40e2d2821f4390f">routed_items_in</a> (const <a class="el" href="structtmk_1_1geom_1_1Box.html">geom::Box</a> &amp;box, std::vector&lt; int &gt; &amp;out) const</td></tr>
@@ -170,7 +173,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00018">18</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00019">19</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a6a67fdf51d9ed081372e827bedb19f20" name="a6a67fdf51d9ed081372e827bedb19f20"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6a67fdf51d9ed081372e827bedb19f20">&#9670;&#160;</a></span>Obstacles()</h2>
@@ -264,7 +267,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00081">81</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00088">88</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -291,7 +294,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00076">76</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00083">83</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -320,7 +323,83 @@ Static Public Attributes</h2></td></tr>
 
 <p>Copper text as the model holds it: one estimated rectangle per line (copper index, rectangle). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00078">78</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00085">85</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1a5fe5a49ee6c7a90a3c7b1592d3d38e" name="a1a5fe5a49ee6c7a90a3c7b1592d3d38e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a5fe5a49ee6c7a90a3c7b1592d3d38e">&#9670;&#160;</a></span>coupling_net()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::route::Obstacles::coupling_net </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a></td>          <td class="paramname"><span class="paramname"><em>net</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00075">75</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a83a7db654de5fbc9e23c800de75fda55" name="a83a7db654de5fbc9e23c800de75fda55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83a7db654de5fbc9e23c800de75fda55">&#9670;&#160;</a></span>coupling_state()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::route::Obstacles::coupling_state </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a></td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a></td>          <td class="paramname"><span class="paramname"><em>width</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a></td>          <td class="paramname"><span class="paramname"><em>net</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>ignore_routed</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; int &gt; *</td>          <td class="paramname"><span class="paramname"><em>owners</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>KiCad's diff-pair coupling for a new track of a pair net with a bounded gap (doc 05 §59): 0, 1 (a routed partner track; owners appended) or 2. </p>
+<p>Part of segment_state; the search also asks it for each step of a net that <a class="el" href="#a1a5fe5a49ee6c7a90a3c7b1592d3d38e">coupling_net()</a> names. </p>
 
 </div>
 </div>
@@ -366,7 +445,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00035">35</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00036">36</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -557,7 +636,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00080">80</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00087">87</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -607,7 +686,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Rules outside the per-class cache require exact per-point checks. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00072">72</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00079">79</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -636,7 +715,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00083">83</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00090">90</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -666,7 +745,7 @@ Static Public Attributes</h2></td></tr>
 <p>Custom disallow rules that depend on position, size or footprint (doc 05 §34), for new copper of <span class="tt">net</span>: a track whose copper is <span class="tt">s</span> with <span class="tt">width</span> on <span class="tt">layer</span>, or a via of diameter <span class="tt">d</span> spanning [l0, l1]. </p>
 <p>The state checks above include them (blocked, 2); a disk's rules are judged on its copper, without the margin. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00047">47</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00048">48</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -826,7 +905,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00079">79</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00086">86</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -872,7 +951,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00038">38</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00039">39</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -947,7 +1026,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Reference path: test probes against every edge of a zone fill instead of the fill's edge index (the answers are the same; tests/test_design_rules.cpp). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00105">105</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00112">112</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -974,7 +1053,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00102">102</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00109">109</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1004,7 +1083,7 @@ Static Public Attributes</h2></td></tr>
 <p>Net-less copper drawn as BOARD graphics (an EasyEDA import's pours as polygons on a copper layer) is fixed copper that no track may touch, and pins inside it are enclosed; soft, it is ignored like a zone fill (KiCad then flags what touches it). </p>
 <p>Off by default. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00096">96</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00103">103</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1113,7 @@ Static Public Attributes</h2></td></tr>
 <p>Net-less solder-mask openings drawn as footprint graphics (a solder-jumper's bridge, a MEMS microphone's pad group) no longer keep copper out; KiCad's mask checks flag what then lies in them (judgement, not a short). </p>
 <p>Off by default. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00093">93</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00100">100</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1063,7 +1142,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Zone fills are ignored as obstacles (they are refilled after routing); they remain connection targets. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00090">90</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00097">97</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1090,7 +1169,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00088">88</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00095">95</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1124,7 +1203,7 @@ Static Public Attributes</h2></td></tr>
 <p>Vias keep clear of SMD pads narrower than <span class="tt">max_pad</span> (any net, net-class clearance), as if they were another net's copper; larger pads (exposed thermal pads) still take vias. </p>
 <p>set_pad_via_exempt(true) lifts this around the checks of one deliberate via in pad (the router's &ndash;via-in-pad). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00101">101</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00108">108</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1151,7 +1230,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00097">97</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00104">104</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1253,7 +1332,7 @@ Static Public Attributes</h2></td></tr>
 <p>Solder-mask expansion the checks give untented vias (0 when the board tents them). </p>
 <p>Escape analysis sets it to 0 to ask "would a via fit here if vias were tented?"; routing never changes it. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00087">87</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00094">94</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1299,7 +1378,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00041">41</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00042">42</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1425,7 +1504,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00107">107</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1449,7 +1528,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00061">61</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00062">62</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1476,7 +1555,7 @@ Static Public Attributes</h2></td></tr>
 <p>Fixed-obstacle code of a disk (fixed copper, fixed holes, edges, keepouts, outline), independent of the probe's own net: kFree, kBlocked, or the single net id whose own copper is the only conflict (so the disk is legal for that net only). </p>
 <p>Clearances use <span class="tt">probe_net</span>'s class; diff-pair relief is not applied (safe). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00061">61</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00062">62</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1492,7 +1571,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00107">107</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1508,7 +1587,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00107">107</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1534,7 +1613,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Rejection counters (diagnostics): outside board, copper, holes/edges/keepouts. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00107">107</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>

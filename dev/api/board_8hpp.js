@@ -31,6 +31,12 @@ var board_8hpp =
       [ "tmk::model::PadType::NpThruHole", "namespacetmk_1_1model.html#a2f879606938248b903f414d21acbf5eca6d037a197e02acfb72e93c67f7373733", null ],
       [ "tmk::model::PadType::Connect", "namespacetmk_1_1model.html#a2f879606938248b903f414d21acbf5eca49ab28040dfa07f53544970c6d147e1e", null ]
     ] ],
+    [ "tmk::model::UnconnectedLayers", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dad", [
+      [ "tmk::model::UnconnectedLayers::KeepAll", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dada98e4e92f8ed10755a2fde1531cf6593f", null ],
+      [ "tmk::model::UnconnectedLayers::RemoveAll", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dadaacdfe07ce0b00334b0b17e5e825dcc4d", null ],
+      [ "tmk::model::UnconnectedLayers::RemoveExceptStartEnd", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dada1192ff8cd24cca5165e6d8063eb3bf65", null ],
+      [ "tmk::model::UnconnectedLayers::StartEndOnly", "namespacetmk_1_1model.html#aec7ca9c2ac4aecbb6690d4aabf3b9dadab5b15418b96519ec281528479059f253", null ]
+    ] ],
     [ "tmk::model::ViaType", "namespacetmk_1_1model.html#a54928fcfe51e9342bfc375b805d6c033", [
       [ "tmk::model::ViaType::Through", "namespacetmk_1_1model.html#a54928fcfe51e9342bfc375b805d6c033ac0c5c886246d1d539c668f5a0bebdb45", null ],
       [ "tmk::model::ViaType::Blind", "namespacetmk_1_1model.html#a54928fcfe51e9342bfc375b805d6c033ae9861abd49cc6b3041a735d66434a070", null ],
