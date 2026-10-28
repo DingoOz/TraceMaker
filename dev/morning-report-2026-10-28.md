@@ -2,7 +2,7 @@
 
 Asked on 2026-10-27 at about 22:10 UTC: "work on the roadmap features without stopping until I tell you". Everything is on the local
 branch `m20-c5-fanout` in the worktree `/home/dingo/Programming/TraceMaker-roadmap`, from `origin/main` `ec7cc9b` (PR #51). Nothing is
-pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A89).
+pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A90).
 
 ## What was done
 
@@ -15,7 +15,7 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A8
 | M21 B3, audit loop | `--si-rules` stitches the critical nets' unstitched layer changes (`--no-si-stitch` turns it off), and the report names each change left and why. On the plane tier there was nothing to stitch: one change on StickHub is left, with no plane copper on one side | D144 | `bench/records/m21-b3` |
 | M21 A5, settle `--si-rules` | Five seeds on the plane tier: no critical-net measure moves with the seed. `--critical-first` routes 27 of 28 critical nets against 23 to 25 without it. `--si-rules` keeps all three rules, and defaults stay off | D146 | `bench/records/m21-a5` |
 | M21 B1, KiCad 10 tuning profiles | Profiles are read, KiCad's implicit width and gap rules are compiled as 10.0.6 applies them, single-ended widths are narrowed per layer, and pairs stay on one geometry. **The first result was wrong**: see "B1 rejudged" below | D145 | `bench/records/m21-b1` |
-| M21 B2, time-domain matching | Delays are measured as KiCad 10.0.6 measures them (its QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm). ps windows and skew groups are tuned. ddr8 goes from 20 errors to 0, interf_u from 7 to 0 and RoyalBlue from 1 to 0, by KiCad's DRC and at the same routed counts. KiCad's diff-pair coupling test is now in the DRC. Parity corpus 229/229 | D147 | `bench/records/m21-b2` |
+| M21 B2, time-domain matching | Delays are measured as KiCad 10.0.6 measures them (its QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm). ps windows and skew groups are tuned. ddr8 goes from 20 errors to 0, interf_u from 7 to 0 and RoyalBlue from 1 to 0, by KiCad's DRC and at the same routed counts. KiCad's diff-pair coupling test is now in the DRC (parity corpus 229/229), and the router avoids coupling-gap errors (RoyalBlue's 5 → 0) | D147, D148 | `bench/records/m21-b2` |
 
 ## Things to know
 
@@ -29,10 +29,11 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A8
   With them, plane_smd is 48/49 with no added error. RoyalBlue drops to 102/147 (single-ended profile) and 104/147 (both), from 125, with
   no width errors. So a single-ended profile on Default is not free: KiCad wants exactly its width on every Default track. D145 and
   doc 05 §58 say so.
-- **5 coupling-gap errors left** on RoyalBlue with the USB pair profile. They are at the USB-C connector, whose D+/D− pads are interleaved
-  at 0.5 mm: the halves leave in parallel 0.35 mm apart, and a profile's gap is exactly 0.15 mm wherever the two halves see each other.
-  The engine's DRC now finds the same five (ported coupling test); **the router does not yet avoid them** (A88). That is the next job
-  for B1/B2.
+- **The 5 coupling-gap errors on RoyalBlue are fixed** (D148, after B2). RoyalBlue with the USB pair profile had them at the USB-C
+  connector. Its D+/D− pads are interleaved at 0.5 mm, so the two halves leave in parallel 0.35 mm apart, and a profile's gap must be
+  exactly 0.15 mm wherever the halves see each other. The router now runs KiCad's coupling test in the exact check and on each search
+  step for pair nets under a bounded gap rule. Result: 104/147 as before, with no gap errors. The other seven B1/B2 fixture boards are
+  identical. Testing at commit only was not enough: it lost 3 connections, because the search kept finding paths the check refused.
 - **D139 is not on this branch.** On `m20-c5-fanout`, any custom rule other than a disallow (a skew rule, say) switches the router to
   exact checks and turns the distance fields off: RoyalBlue routes 119 with B2's rule file and 125 without it. D139
   (`cache-safe-custom-rules`) fixes that, and merging the two is yours.
@@ -60,6 +61,9 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A8
 - Quick tier, run once at the end (`b2-quick`): identical to `m21-quick` (17b2178) on all 30 boards in routed counts, tracks, vias and
   added errors; clean 0.8667, completion 0.9931.
 - Rule parity corpus: 229/229 against KiCad 10.0.6.
+- After D148 (coupling-gap avoidance): full `ctest` 416 of 416 passed (1 skipped), with the new `[coupling][route]` case. The eight
+  B1/B2 fixture boards were rerun (`m21-b2/runs/couple-b1`, `couple-b2`). The quick tier was not rerun: none of its 30 boards has a
+  `diff_pair_gap` rule or a tuning profile, so the new check never runs on them.
 
 ## Commits (local, branch `m20-c5-fanout`, nothing pushed)
 

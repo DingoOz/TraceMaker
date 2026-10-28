@@ -2568,6 +2568,15 @@ measures with the same calculation as the check, and its last meander is cut to 
 or each pair with `within_diff_pairs`, are brought to within a quarter of the limit below the net with the most delay. Nets of a profiled
 class are not necked down (§58).
 
+**Routing around coupling errors** (`Obstacles::coupling_state`, D148). This applies when a pair net has a `diff_pair_gap` rule, not
+ignored, with a minimum or a maximum on a layer. A new track of that net is then tested against each track of its partner on that
+layer with the same coupling test as the check, the same epsilon included. A coupling out of range blocks the track if the partner
+track is fixed copper. If the partner track was routed, it can be ripped up. The test is part of `segment_state`, so the exact check
+at commit applies it to merged segments. The search also applies it to each lattice step of such a net, because otherwise a path
+that the exact check rejects at the end is found again and again. When looking for something between the two tracks, the router does
+not consider pad holes on layers that have none of the pad's copper. It is therefore stricter than KiCad there, never looser. Boards
+without such a rule do not run the test.
+
 **Results** (`bench/records/m21-b2`, KiCad 10.0.6 as the judge):
 
 - *KiCad's QA board* `time_calculations` (copied into `tests/boards`): the six classes' delays match KiCad's to 0.01 ps, and the DRC
@@ -2586,11 +2595,12 @@ class are not necked down (§58).
 - *B1 rejudged* (§58): the five `diff_pair_gap_out_of_range` errors on RoyalBlue with the USB pair profile are found by the engine's
   DRC as well, at the same places with the same gaps. They are where the USB-C connector's interleaved D+/D− pads, 0.5 mm apart, are
   joined pad to pad and leave in parallel before the pair forms.
+- *Routing around coupling errors* (`runs/couple-b1`, `runs/couple-b2`, same settings): RoyalBlue with the pair profile still routes
+  104/147, with 353 tracks against 349. KiCad's five gap errors are gone. The other four B1 boards and the three B2 boards are
+  identical to the runs before the change (routed counts, tracks, vias, added errors).
 
 **Not done.**
 
-- The router does not avoid coupling-gap errors, so RoyalBlue's five remain. That needs the coupling test in the router's commit
-  check for pair nets with a maximum gap.
 - `fromTo()` is not evaluated, so length rules written with it (vme-wren) are unchecked.
 - The bus tuner (§38) ignores ps skew rules.
 - A net in two classes takes its parameters from the first.
@@ -2600,7 +2610,9 @@ Tests:
 
 - `[length]`, four cases: the QA board's delays and its one skew violation; clipping, via span, a stub, and height off; layer, via and
   override delays with time-domain tuning on and off; ps parsing.
-- `[coupling]`, two cases: coupled stretch and gap, direction, diagonals; lines that meet, collinear, end to end, about 1 nm.
+- `[coupling]`, three cases: coupled stretch and gap, direction, diagonals; lines that meet, collinear, end to end, about 1 nm; and a
+  routed pair whose pads are 2 mm apart under a 0.15–0.25 mm gap rule. With the rule ignored, the straight tracks break the rule;
+  with the rule in force, the routed pair has no gap errors.
 - rule_parity: `static_has_class_*` (four), `tuning_profile_inherited`, `tuning_profile_schema4`, and `diff_pair_gap`,
   `diff_pair_gap_ignored` and `diff_pair_uncoupled` (cross-stretch couplings, a shielded pair, and the doubled key). All 229 cases match.
 - `delay_tuning` (integration): ddr8 routed with the rules is clean by the engine's DRC and by KiCad; routed without them, it misses.

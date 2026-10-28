@@ -881,7 +881,7 @@
      "done": true
     },
     {
-     "text": "B1 KiCad 10 tuning profiles: read, KiCad's implicit width/gap rules as KiCad 10.0.6 applies them, per-layer widths by narrowing, pairs on one geometry (D145); rejudged at schema 5 with B2 (D147): 0 width errors, 5 coupling-gap errors left at RoyalBlue's USB-C",
+     "text": "B1 KiCad 10 tuning profiles: read, KiCad's implicit width/gap rules as KiCad 10.0.6 applies them, per-layer widths by narrowing, pairs on one geometry (D145); rejudged at schema 5 with B2 (D147): 0 width errors, RoyalBlue's 5 USB-C coupling-gap errors avoided by the router since D148",
      "done": true
     },
     {
@@ -889,7 +889,7 @@
      "done": true
     },
     {
-     "text": "B2 time-domain matching: delays measured as KiCad 10.0.6 does, ps windows and skew tuned, KiCad's coupling check in the DRC (D147); ddr8, interf_u and RoyalBlue KiCad-clean in delay; 229 parity cases",
+     "text": "B2 time-domain matching: delays measured as KiCad 10.0.6 does, ps windows and skew tuned, KiCad's coupling check in the DRC (D147) and in the router (D148); ddr8, interf_u and RoyalBlue KiCad-clean in delay; 229 parity cases",
      "done": true
     },
     {

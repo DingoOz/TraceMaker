@@ -146,6 +146,8 @@ comparable (judge version, time limit, machine load).
 | [b2-delay-old](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-delay-old/summary.json) | b2-delay | 2 | 17b2178 | 0.0% | 77.3% |  | 88 | `--soft-zones` |
 | [b2-profile](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-profile/summary.json) | b2-delay | 2 | 17b2178 | 0.0% | 78.0% |  | 121 | `--soft-zones` |
 | [b2-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-quick/summary.json) | quick | 30 | 6e9b774 | 86.7% | 99.3% | 100.0% | 381 |  |
+| [couple-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b1/summary.json) | b1-profiles | 5 | b0e6dc7 | 0.0% | 77.0% |  | 205 | `--soft-zones` |
+| [couple-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b2/summary.json) | b2-delay | 3 | b0e6dc7 | 0.0% | 79.6% |  | 165 | `--soft-zones` |
 
 ## macos15
 

@@ -14,6 +14,8 @@ by work (`--work 3000000`, `--refill`, `--soft-zones`).
 | `runs/b2-profile/` | the two `-profile` fixtures routed by the B2 build, to measure the delays the windows were set from |
 | `runs/b2-delay-old/` | the `-delay` fixtures routed by the build before B2 (commit 17b2178) |
 | `runs/b2-delay-new/` | the same with the B2 build, plus interf_u-profile again with the final class |
+| `runs/couple-b1/` | B1's five fixtures (`bench/records/m21-b1`, schema 5) routed by the build that avoids coupling-gap errors (D148) |
+| `runs/couple-b2/` | the three B2 boards of `runs/b2-delay-new` routed by that build |
 | `timing-verdicts.json` | KiCad's and the engine's `length_out_of_range` and `skew_out_of_range` on the four routed `-delay` boards |
 
 The generated DDR fixture is `bench/make_delay_boards.py` (`ddr8`), checked by `tests/integration/delay_tuning.py`. KiCad's QA board
@@ -70,6 +72,20 @@ D139, on branch `cache-safe-custom-rules`, keeps the fields for rules like these
 The ported coupling check reports the same five `diff_pair_gap_out_of_range` errors on B1's RoyalBlue-profiles as KiCad, with the same
 gaps (0.35, 0.35, 0.355, 0.8625 and 1.995 mm against a 0.15 mm maximum) and positions. The rule parity corpus has three new cases:
 `diff_pair_gap`, `diff_pair_gap_ignored` and `diff_pair_uncoupled`. All 229 cases match KiCad 10.0.6.
+
+The router now avoids these errors (D148, doc 05 §59): pair nets under a bounded gap rule run the coupling test in the exact check and
+on each search step. All runs used 3 M work, `--soft-zones`, and KiCad 10.0.6 as the judge with zones refilled.
+
+| Board | Before (`m21-b1/runs/b1-v5`, `runs/b2-delay-new`) | After (`runs/couple-b1`, `runs/couple-b2`) |
+|---|---|---|
+| RoyalBlue54L-Feather-profiles | 104/147, 349 tracks, 66 vias, 5 `diff_pair_gap_out_of_range` | 104/147, 353 tracks, 66 vias, none |
+| RoyalBlue54L-Feather-base, -se | 125/147, 102/147 | identical |
+| plane_smd-base, -profiles | 48/49, 48/49 | identical |
+| RoyalBlue54L-Feather-delay | 119/147 | identical |
+| interf_u-delay, -profile | 145/164 (1 `starved_thermal`), 140/164 (4) | identical |
+
+"Identical" means the same routed count, tracks, vias and added errors. A first version tested couplings only at commit. It routed
+RoyalBlue-profiles 101/147: the search kept finding the USB-C paths that the check then refused.
 
 ## No regression
 

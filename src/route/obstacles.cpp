@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/obstacles.hpp"
 
+#include "drc/coupling.hpp"
+
 #include <array>
 #include <optional>
 #include <tuple>
@@ -278,6 +280,93 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   for (const auto& z : b_.zones)
     if (z.rule_area && (z.keepout_tracks || z.keepout_vias) && !z.outline.empty() && z.outline.front().size() >= 3)
       keepouts_.emplace_back(Shape::polygon(z.outline.front(), 0), &z);
+  setup_coupling();
+}
+
+// The pair gap each pair net's tracks must keep on each layer, from the last diff_pair_gap rule (not ignored) with a minimum or a
+// maximum that matches a track of the net there, as the DRC's coupling check takes it (drc.cpp, check_diff_pairs). A rule that
+// depends on the place is taken as it matches a track anywhere.
+void Obstacles::setup_coupling() {
+  const bool any = std::any_of(r_.custom.begin(), r_.custom.end(), [](const model::CustomRule& c) {
+    return c.severity != "ignore" && std::any_of(c.constraints.begin(), c.constraints.end(), [](const model::Constraint& k) {
+             return k.type == "diff_pair_gap" && (k.min || k.max);
+           });
+  });
+  if (!any) return;
+  const int nl = b_.copper_count();
+  gap_bounds_.assign(b_.nets.size() * static_cast<std::size_t>(nl), {});
+  for (const auto& n : b_.nets) {
+    if (n.id == 0 || re_->dp_partner(n.id) == 0) continue;
+    for (int l = 0; l < nl; ++l) {
+      drc::CopperItem probe;
+      probe.kind = drc::ItemKind::Track;
+      probe.net = n.id;
+      probe.layers = model::layer_bit(l);
+      const int ri = re_->last_rule_with(probe, l, "diff_pair_gap");
+      if (ri < 0 || re_->rule(ri).severity == "ignore") continue;
+      const model::Constraint* k = nullptr;
+      for (const auto& x : re_->rule(ri).constraints)
+        if (x.type == "diff_pair_gap") k = &x;
+      if (!k->min && !k->max) continue;
+      gap_bounds_[static_cast<std::size_t>(n.id) * static_cast<std::size_t>(nl) + static_cast<std::size_t>(l)] = GapBounds{k->min, k->max, true};
+      coupling_on_ = true;
+    }
+  }
+  if (!coupling_on_) return;
+  net_tracks_.assign(b_.nets.size(), {});
+  for (std::size_t i = 0; i < cm_.items.size(); ++i)
+    if (cm_.items[i].kind == drc::ItemKind::Track && static_cast<std::size_t>(cm_.items[i].net) < net_tracks_.size())
+      net_tracks_[static_cast<std::size_t>(cm_.items[i].net)].push_back(static_cast<int>(i));
+}
+
+// KiCad's diff-pair coupling (drc/coupling.hpp, doc 05 §59) for a new track of `net`: against each track of the partner on the layer
+// that it would couple with (parallel, overlapping, nothing between them) at a gap outside the rule's, by more than the DRC epsilon.
+// A routed partner track is rippable (1, owner appended) when `ignore_routed`; otherwise, and for fixed copper, the track is blocked.
+int Obstacles::coupling_state(Point a, Point b, int layer, Coord width, model::NetId net, bool ignore_routed, std::vector<int>* owners) const {
+  if (!coupling_on_ || net <= 0 || static_cast<std::size_t>(net) >= net_tracks_.size() || a == b) return 0;
+  const int nl = b_.copper_count();
+  const GapBounds& gb = gap_bounds_[static_cast<std::size_t>(net) * static_cast<std::size_t>(nl) + static_cast<std::size_t>(layer)];
+  if (!gb.set) return 0;
+  const model::NetId q = re_->dp_partner(net);
+  if (q <= 0 || static_cast<std::size_t>(q) >= net_tracks_.size()) return 0;
+  constexpr Coord kEpsilon = 500;  // KiCad's DRC epsilon
+  const std::string& name = b_.nets[static_cast<std::size_t>(net)].name;
+  const bool positive = name.back() == 'P' || name.back() == '+';
+  int state = 0;
+  for (const int id : net_tracks_[static_cast<std::size_t>(q)]) {
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || !(it.layers & model::layer_bit(layer))) continue;
+    const auto& t = b_.tracks[static_cast<std::size_t>(it.index)];
+    const auto c = positive ? drc::couple(a, b, width, t.a, t.b, t.width) : drc::couple(t.a, t.b, t.width, a, b, width);
+    if (!c || !((gb.min && c->gap < *gb.min - kEpsilon) || (gb.max && c->gap > *gb.max + kEpsilon))) continue;
+    // Coupled only if nothing else on the layer lies between the nearest points (KiCad's exclusions: the two tracks, items touching
+    // the coupled ends, pads that either track leaves). Pad holes on layers without the pad's copper are not looked at: stricter.
+    const Shape line = Shape::segment(c->near_n, c->near_p, 0);
+    const Point ends[4] = {c->na, c->nb, c->pa, c->pb};
+    bool hidden = false;
+    grid_->query(line.box, [&](int j) {
+      if (hidden || j == id) return;
+      const auto& o = cm_.items[static_cast<std::size_t>(j)];
+      if (o.removed || o.kind == drc::ItemKind::Zone || !(o.layers & model::layer_bit(layer))) return;
+      auto touches = [&](Point pt) {
+        return std::any_of(o.shapes.begin(), o.shapes.end(), [&](const Shape& sh) { return geom::closer_than_disk(sh, pt, 0, 1); });
+      };
+      if (o.kind == drc::ItemKind::Track || o.kind == drc::ItemKind::Arc || o.kind == drc::ItemKind::Via) {
+        if (std::any_of(std::begin(ends), std::end(ends), touches)) return;
+      } else if (o.kind == drc::ItemKind::Pad) {
+        if (touches(a) != touches(b) || touches(t.a) != touches(t.b)) return;
+      }
+      hidden = std::any_of(o.shapes.begin(), o.shapes.end(), [&](const Shape& sh) { return geom::closer_than(line, sh, 1); });
+    });
+    if (hidden) continue;
+    if (ignore_routed && it.owner >= 0) {
+      state = 1;
+      if (owners) owners->push_back(it.owner);
+    } else {
+      return 2;
+    }
+  }
+  return state;
 }
 
 bool Obstacles::via_keeps_off(const drc::CopperItem& it) const {
@@ -579,7 +668,8 @@ int Obstacles::segment_state(Point a, Point b, int layer, Coord width, model::Ne
   const int st = copper_state(s, probe, layer, ignore_routed, owners);
   if (st == 2) return 2;
   const int st2 = worst(st, holes_edges_state(s, net, layer, false, 0, ignore_routed, owners));
-  return st2 != 2 && track_disallowed(s, layer, width, net) ? 2 : st2;
+  if (st2 == 2 || track_disallowed(s, layer, width, net)) return 2;
+  return coupling_on_ ? worst(st2, coupling_state(a, b, layer, width, net, ignore_routed, owners)) : st2;
 }
 
 int Obstacles::via_state_span(Point p, Coord d, Coord drill, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners, int l0,
@@ -624,6 +714,7 @@ int Obstacles::add_track(int index, int owner) {
   const int id = static_cast<int>(cm_.items.size());
   grid_->insert(id, it.box);
   rgrid_->insert(id, it.box);
+  if (coupling_on_ && static_cast<std::size_t>(t.net) < net_tracks_.size()) net_tracks_[static_cast<std::size_t>(t.net)].push_back(id);
   cm_.items.push_back(std::move(it));
   return id;
 }

@@ -1623,6 +1623,7 @@ struct Router::Impl {
     }
     long expanded = 0;
     const long exp_cap = expansion_cap > 0 ? expansion_cap : opt.max_expansions;
+    const bool coupled_net = obs->coupling_net(net);  // KiCad's pair-gap coupling is checked on every step (doc 05 §59)
     std::size_t goal = SIZE_MAX;
     while (!open.empty()) {
       const auto [f, s] = open.top();
@@ -1667,6 +1668,7 @@ struct Router::Impl {
         } else {
           extra = textra(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(nci));
         }
+        if (coupled_net && obs->coupling_state(at(w.x0 + cx, w.y0 + cy), at(w.x0 + ncx, w.y0 + ncy), l, 2 * hw, net, soft, nullptr) == 2) continue;
         std::int64_t cost = on_layer((d & 1) ? diag : step, l) + extra;
         if (dir_pen > 0 && !(d & 1) && ((d == 0 || d == 4) != ((l % 2 == 0) != opt.layer_dir_swap))) cost += dir_pen;  // against the layer's preferred direction (doc 16)
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);

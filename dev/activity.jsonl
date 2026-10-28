@@ -193,3 +193,4 @@
 {"ts": "2026-10-28T00:46:10+00:00", "kind": "milestone", "text": "M21 A5: five seeds; --si-rules keeps critical-first (D146)"}
 {"ts": "2026-10-28T00:46:10+00:00", "kind": "note", "text": "C5 follow-up: --txn on top 1,220 -> 1,198 open but loses the one clean board; plane_smd test widened to four variants (A84)"}
 {"ts": "2026-10-28T02:10:06+00:00", "kind": "milestone", "text": "M21 B2 built: time-domain matching as KiCad 10.0.6 measures it (D147); ddr8, interf_u, RoyalBlue KiCad-clean in delay; B1 rejudged at schema 5"}
+{"ts": "2026-10-28T02:36:46+00:00", "kind": "decision", "text": "D148: the router avoids KiCad's diff-pair coupling-gap errors; RoyalBlue profiles 104/147 with 0 gap errors (was 5), other B1/B2 fixtures identical; ctest 416/416"}

@@ -288,12 +288,13 @@ the defaults on five seeds): met.
 
 The engine measures a net's length and delay as KiCad 10.0.6 does, quirks included, and checks `length` and `skew` rules in ps against
 the delay. The router tunes nets into ps windows and skew groups, weighting meanders by each layer's delay per mm. The DRC now also has
-KiCad's diff-pair coupling test (doc 05 §59, decision [D147](decisions/D147.md), records in `bench/records/m21-b2`).
+KiCad's diff-pair coupling test, and the router avoids coupling-gap errors (doc 05 §59, decisions [D147](decisions/D147.md) and
+[D148](decisions/D148.md), records in `bench/records/m21-b2`).
 
 Checking B2 against KiCad showed that B1's fixtures were judged by a KiCad that read no profile, because their net settings were at
 schema 4. Rejudged (doc 05 §58), B1 needed profile inheritance from Default, the pair width from a single-ended profile, and no
-neck-down on profiled nets. A single-ended profile on Default costs RoyalBlue 23 of 147 connections, and the pair profile leaves 5
-coupling-gap errors at its USB-C connector, which the router does not yet avoid.
+neck-down on profiled nets. A single-ended profile on Default costs RoyalBlue 23 of 147 connections. The pair profile left 5
+coupling-gap errors at its USB-C connector. The router now avoids them (D148) and still routes 104 of 147 connections.
 
 Gate (doc 18 §4 B2):
 
