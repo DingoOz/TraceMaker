@@ -57,6 +57,8 @@ def summarize(report: dict, meta: dict, kicad: bool = False) -> collections.Coun
                 if not isinstance(description, str) or not isinstance(position, dict):
                     raise ValueError(f"{violation_type}: malformed item {item!r}")
                 kind = description.split(maxsplit=1)[0] if description else ""
+                if description.startswith("NPTH pad"):
+                    kind = "Pad"
                 layer = re.search(r"\bon ([\w.]+)", description)
                 candidates = []
                 for candidate, spec in meta["items"].items():

@@ -102,6 +102,26 @@ class despite a conflicting project class. Assertions use violation types and ac
 copper widths, not rendered diagnostics or echoed options. Unit tests cover default boundaries,
 cross-property legacy suppression, nontriggering local fields and independent class migration.
 
+### 3.2 The order a clearance is resolved in (D151)
+
+The engine resolves a copper clearance in the order of KiCad 10.0.6's `DRC_ENGINE::EvalRules` (`drc/rule_engine.cpp`,
+`RuleEngine::clearance`):
+
+1. **Net tie**: 0.
+2. **Local override** of either item (a pad's clearance, else its footprint's; the larger of the two items'): wins over everything
+   but the board minimum, which floors it.
+3. **Custom rule** (the last matching `.kicad_dru` rule with a `clearance` minimum): final, *even below the board minimum*. vme-wren
+   allows 0.1 mm under its FPGA and DDR with a 0.125 mm board minimum.
+4. **Net class**: the larger of the two items' classes, with the coupled-pair relaxation and a zone's own clearance; floored at the
+   board minimum.
+
+`hole_clearance` and `hole_to_hole` work alike: a matching custom rule replaces the board's value instead of being raised to it.
+Rule parity checks each step against KiCad: `clearance_custom_below_minimum`, `clearance_local_over_custom`,
+`hole_rules_custom_below_minimum` and `hole_rules_minimum`.
+
+The router's exact check, which decides what is committed, uses the same function. Its class-level shortcuts (grid costs, escape
+planning, the ramp) still take the class clearance floored at the board minimum; they only steer the search.
+
 ## 4. Rule coverage policy
 
 - Every rule TraceMaker cannot interpret is reported as a warning with its location, and the router uses

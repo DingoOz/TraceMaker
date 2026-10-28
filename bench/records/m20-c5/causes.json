@@ -1,0 +1,823 @@
+[
+ {
+  "board": "96boards-robomezzi_96boards-robomezzi",
+  "layers": 4,
+  "open_run": 2,
+  "baseline": {
+   "connections": 2,
+   "open": 2,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 2
+  },
+  "by_cause_dense": {
+   "package_fanout": 2
+  },
+  "dense_packages": 8,
+  "more_layers": {
+   "layers": 6,
+   "open": 2
+  }
+ },
+ {
+  "board": "Aleste-520EX_aleste",
+  "layers": 2,
+  "open_run": 363,
+  "baseline": {
+   "connections": 363,
+   "open": 355,
+   "routed": 8,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 139,
+   "near_and_far": 11,
+   "no_path_bare": 24,
+   "package_fanout": 36,
+   "through_traffic": 145
+  },
+  "by_cause_dense": {},
+  "dense_packages": 0,
+  "more_layers": {
+   "layers": 4,
+   "open": 287
+  }
+ },
+ {
+  "board": "CoreOne-xCORE200-Original_CoreOne",
+  "layers": 4,
+  "open_run": 60,
+  "baseline": {
+   "connections": 60,
+   "open": 58,
+   "routed": 2,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 1,
+   "near_and_far": 2,
+   "package_fanout": 24,
+   "through_traffic": 31
+  },
+  "by_cause_dense": {
+   "channel": 1,
+   "near_and_far": 2,
+   "package_fanout": 23,
+   "through_traffic": 17
+  },
+  "dense_packages": 8,
+  "more_layers": {
+   "layers": 6,
+   "open": 58
+  }
+ },
+ {
+  "board": "DronPi_dronPi",
+  "layers": 2,
+  "open_run": 11,
+  "baseline": {
+   "connections": 11,
+   "open": 11,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 11
+  },
+  "by_cause_dense": {
+   "no_path_bare": 11
+  },
+  "dense_packages": 10,
+  "more_layers": {
+   "layers": 4,
+   "open": 11
+  }
+ },
+ {
+  "board": "ErgodoneWithHole_ErgoDone",
+  "layers": 2,
+  "open_run": 2,
+  "baseline": {
+   "connections": 2,
+   "open": 2,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 2
+  },
+  "by_cause_dense": {},
+  "dense_packages": 0,
+  "more_layers": {
+   "layers": 4,
+   "open": 0
+  }
+ },
+ {
+  "board": "EtherCAT_shield_v1_EtherCAT_shield_v1",
+  "layers": 2,
+  "open_run": 34,
+  "baseline": {
+   "connections": 33,
+   "open": 30,
+   "routed": 3,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 26,
+   "through_traffic": 4
+  },
+  "by_cause_dense": {
+   "package_fanout": 26,
+   "through_traffic": 4
+  },
+  "dense_packages": 1,
+  "more_layers": {
+   "layers": 4,
+   "open": 30
+  }
+ },
+ {
+  "board": "Hardware_Playground_E3_Pcb_rev0.3",
+  "layers": 2,
+  "open_run": 26,
+  "baseline": {
+   "connections": 26,
+   "open": 26,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 15,
+   "package_fanout": 8,
+   "through_traffic": 3
+  },
+  "by_cause_dense": {
+   "package_fanout": 8,
+   "through_traffic": 3
+  },
+  "dense_packages": 9,
+  "more_layers": {
+   "layers": 4,
+   "open": 14
+  }
+ },
+ {
+  "board": "Hardware_Playground_multisensor_cr2032",
+  "layers": 2,
+  "open_run": 1,
+  "baseline": {
+   "connections": 1,
+   "open": 1,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 1
+  },
+  "by_cause_dense": {
+   "channel": 1
+  },
+  "dense_packages": 4,
+  "more_layers": {
+   "layers": 4,
+   "open": 0
+  }
+ },
+ {
+  "board": "Hardware_Playground_sd_wav_pcm5100",
+  "layers": 2,
+  "open_run": 3,
+  "baseline": {
+   "connections": 3,
+   "open": 3,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 3
+  },
+  "by_cause_dense": {
+   "package_fanout": 3
+  },
+  "dense_packages": 4,
+  "more_layers": {
+   "layers": 4,
+   "open": 3
+  }
+ },
+ {
+  "board": "Hardware_Playground_serial_gw_ATMEGA328P",
+  "layers": 2,
+  "open_run": 1,
+  "baseline": {
+   "connections": 1,
+   "open": 1,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 1
+  },
+  "by_cause_dense": {
+   "package_fanout": 1
+  },
+  "dense_packages": 3,
+  "more_layers": {
+   "layers": 4,
+   "open": 1
+  }
+ },
+ {
+  "board": "KiCad-Library_Teensy_test_layout",
+  "layers": 2,
+  "open_run": 30,
+  "baseline": {
+   "connections": 30,
+   "open": 24,
+   "routed": 6,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 7,
+   "near_and_far": 5,
+   "no_path_bare": 2,
+   "package_fanout": 8,
+   "through_traffic": 2
+  },
+  "by_cause_dense": {
+   "channel": 4,
+   "near_and_far": 3,
+   "no_path_bare": 1,
+   "package_fanout": 8,
+   "through_traffic": 2
+  },
+  "dense_packages": 24,
+  "more_layers": {
+   "layers": 4,
+   "open": 21
+  }
+ },
+ {
+  "board": "LeeChee_1800",
+  "layers": 2,
+  "open_run": 46,
+  "baseline": {
+   "connections": 46,
+   "open": 45,
+   "routed": 1,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 18,
+   "near_and_far": 7,
+   "no_path_bare": 8,
+   "package_fanout": 11,
+   "through_traffic": 1
+  },
+  "by_cause_dense": {
+   "channel": 4,
+   "near_and_far": 7,
+   "no_path_bare": 5,
+   "package_fanout": 11,
+   "through_traffic": 1
+  },
+  "dense_packages": 9,
+  "more_layers": {
+   "layers": 4,
+   "open": 46
+  }
+ },
+ {
+  "board": "MicroMaple_MicroMaple",
+  "layers": 2,
+  "open_run": 11,
+  "baseline": {
+   "connections": 11,
+   "open": 10,
+   "routed": 1,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 9,
+   "through_traffic": 1
+  },
+  "by_cause_dense": {
+   "package_fanout": 9
+  },
+  "dense_packages": 2,
+  "more_layers": {
+   "layers": 4,
+   "open": 7
+  }
+ },
+ {
+  "board": "MonApollo_analog-board",
+  "layers": 2,
+  "open_run": 96,
+  "baseline": {
+   "connections": 96,
+   "open": 94,
+   "routed": 2,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 20,
+   "near_and_far": 7,
+   "package_fanout": 41,
+   "through_traffic": 26
+  },
+  "by_cause_dense": {
+   "channel": 14,
+   "near_and_far": 7,
+   "package_fanout": 39,
+   "through_traffic": 21
+  },
+  "dense_packages": 38,
+  "more_layers": {
+   "layers": 4,
+   "open": 91
+  }
+ },
+ {
+  "board": "P8000_WDC_Emulator_P8000_WDC_Emulator",
+  "layers": 2,
+  "open_run": 37,
+  "baseline": {
+   "connections": 37,
+   "open": 35,
+   "routed": 2,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 15,
+   "near_and_far": 3,
+   "no_path_bare": 10,
+   "package_fanout": 4,
+   "through_traffic": 3
+  },
+  "by_cause_dense": {},
+  "dense_packages": 0,
+  "more_layers": {
+   "layers": 4,
+   "open": 24
+  }
+ },
+ {
+  "board": "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0",
+  "layers": 2,
+  "open_run": 35,
+  "baseline": {
+   "connections": 35,
+   "open": 35,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 5,
+   "pin_cannot_escape": 30
+  },
+  "by_cause_dense": {
+   "package_fanout": 5,
+   "pin_cannot_escape": 30
+  },
+  "dense_packages": 3,
+  "more_layers": {
+   "layers": 4,
+   "open": 35
+  }
+ },
+ {
+  "board": "TCKB_Kicad_TCKB",
+  "layers": 2,
+  "open_run": 43,
+  "baseline": {
+   "connections": 43,
+   "open": 38,
+   "routed": 5,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 1,
+   "near_and_far": 1,
+   "no_path_bare": 28,
+   "package_fanout": 5,
+   "through_traffic": 3
+  },
+  "by_cause_dense": {
+   "channel": 1,
+   "near_and_far": 1,
+   "no_path_bare": 28,
+   "package_fanout": 5,
+   "through_traffic": 2
+  },
+  "dense_packages": 3,
+  "more_layers": {
+   "layers": 4,
+   "open": 38
+  }
+ },
+ {
+  "board": "dorkyboard_keyboard",
+  "layers": 2,
+  "open_run": 20,
+  "baseline": {
+   "connections": 20,
+   "open": 16,
+   "routed": 4,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 2,
+   "near_and_far": 6,
+   "package_fanout": 8
+  },
+  "by_cause_dense": {
+   "channel": 2,
+   "near_and_far": 6,
+   "package_fanout": 8
+  },
+  "dense_packages": 2,
+  "more_layers": {
+   "layers": 4,
+   "open": 15
+  }
+ },
+ {
+  "board": "fifogfx_c64cart",
+  "layers": 2,
+  "open_run": 42,
+  "baseline": {
+   "connections": 42,
+   "open": 42,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 40,
+   "package_fanout": 1,
+   "through_traffic": 1
+  },
+  "by_cause_dense": {},
+  "dense_packages": 1,
+  "more_layers": {
+   "layers": 4,
+   "open": 40
+  }
+ },
+ {
+  "board": "front-end-modules_LimeSDR_Sony",
+  "layers": 6,
+  "open_run": 8,
+  "baseline": {
+   "connections": 8,
+   "open": 5,
+   "routed": 3,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 4,
+   "through_traffic": 1
+  },
+  "by_cause_dense": {
+   "package_fanout": 4,
+   "through_traffic": 1
+  },
+  "dense_packages": 15,
+  "more_layers": {
+   "layers": 8,
+   "open": 6
+  }
+ },
+ {
+  "board": "kitspace_OtterPill",
+  "layers": 2,
+  "open_run": 15,
+  "baseline": {
+   "connections": 15,
+   "open": 14,
+   "routed": 1,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 1,
+   "package_fanout": 12,
+   "through_traffic": 1
+  },
+  "by_cause_dense": {
+   "no_path_bare": 1,
+   "package_fanout": 12
+  },
+  "dense_packages": 3,
+  "more_layers": {
+   "layers": 4,
+   "open": 12
+  }
+ },
+ {
+  "board": "kitspace_ardfpga",
+  "layers": 2,
+  "open_run": 15,
+  "baseline": {
+   "connections": 15,
+   "open": 15,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 9,
+   "through_traffic": 6
+  },
+  "by_cause_dense": {
+   "package_fanout": 9,
+   "through_traffic": 3
+  },
+  "dense_packages": 14,
+  "more_layers": {
+   "layers": 4,
+   "open": 15
+  }
+ },
+ {
+  "board": "kitspace_d20_tri_r0.3",
+  "layers": 4,
+  "open_run": 150,
+  "baseline": {
+   "connections": 150,
+   "open": 147,
+   "routed": 3,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 38,
+   "through_traffic": 109
+  },
+  "by_cause_dense": {
+   "package_fanout": 16,
+   "through_traffic": 56
+  },
+  "dense_packages": 7,
+  "more_layers": {
+   "layers": 6,
+   "open": 148
+  }
+ },
+ {
+  "board": "kitspace_teensy-fx",
+  "layers": 4,
+  "open_run": 22,
+  "baseline": {
+   "connections": 22,
+   "open": 22,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "package_fanout": 10,
+   "through_traffic": 12
+  },
+  "by_cause_dense": {
+   "package_fanout": 10,
+   "through_traffic": 12
+  },
+  "dense_packages": 4,
+  "more_layers": {
+   "layers": 6,
+   "open": 22
+  }
+ },
+ {
+  "board": "kitspace_test-jig",
+  "layers": 2,
+  "open_run": 32,
+  "baseline": {
+   "connections": 32,
+   "open": 32,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 32
+  },
+  "by_cause_dense": {
+   "no_path_bare": 9
+  },
+  "dense_packages": 6,
+  "more_layers": {
+   "layers": 4,
+   "open": 32
+  }
+ },
+ {
+  "board": "mechkeys_58r-mxalps",
+  "layers": 2,
+  "open_run": 12,
+  "baseline": {
+   "connections": 12,
+   "open": 12,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 10,
+   "near_and_far": 2
+  },
+  "by_cause_dense": {
+   "channel": 5,
+   "near_and_far": 1
+  },
+  "dense_packages": 2,
+  "more_layers": {
+   "layers": 4,
+   "open": 5
+  }
+ },
+ {
+  "board": "mechkeys_LFK78",
+  "layers": 2,
+  "open_run": 45,
+  "baseline": {
+   "connections": 45,
+   "open": 39,
+   "routed": 6,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 12,
+   "near_and_far": 3,
+   "package_fanout": 9,
+   "through_traffic": 15
+  },
+  "by_cause_dense": {
+   "channel": 12,
+   "near_and_far": 3,
+   "package_fanout": 9,
+   "through_traffic": 15
+  },
+  "dense_packages": 4,
+  "more_layers": {
+   "layers": 4,
+   "open": 28
+  }
+ },
+ {
+  "board": "memsarray_mems_modules",
+  "layers": 2,
+  "open_run": 1,
+  "baseline": {
+   "connections": 1,
+   "open": 1,
+   "routed": 0,
+   "work": 10000000
+  },
+  "by_cause": {
+   "pin_cannot_escape": 1
+  },
+  "by_cause_dense": {
+   "pin_cannot_escape": 1
+  },
+  "dense_packages": 1,
+  "more_layers": {
+   "layers": 4,
+   "open": 1
+  }
+ },
+ {
+  "board": "mini_mass_prog_bench_prog_rig",
+  "layers": 4,
+  "open_run": 26,
+  "baseline": {
+   "connections": 26,
+   "open": 25,
+   "routed": 1,
+   "work": 10000000
+  },
+  "by_cause": {
+   "near_and_far": 3,
+   "no_path_bare": 1,
+   "package_fanout": 11,
+   "through_traffic": 10
+  },
+  "by_cause_dense": {
+   "near_and_far": 3,
+   "no_path_bare": 1,
+   "package_fanout": 11,
+   "through_traffic": 10
+  },
+  "dense_packages": 23,
+  "more_layers": {
+   "layers": 6,
+   "open": 25
+  }
+ },
+ {
+  "board": "motor-high-current-sensors_CurrentSensorPCB_line",
+  "layers": 2,
+  "open_run": 17,
+  "baseline": {
+   "connections": 16,
+   "open": 11,
+   "routed": 5,
+   "work": 10000000
+  },
+  "by_cause": {
+   "no_path_bare": 8,
+   "pin_cannot_escape": 2,
+   "through_traffic": 1
+  },
+  "by_cause_dense": {
+   "no_path_bare": 8,
+   "pin_cannot_escape": 2,
+   "through_traffic": 1
+  },
+  "dense_packages": 13,
+  "more_layers": {
+   "layers": 4,
+   "open": 11
+  }
+ },
+ {
+  "board": "poncho_fpga_fpga-dongle",
+  "layers": 2,
+  "open_run": 80,
+  "baseline": {
+   "connections": 80,
+   "open": 78,
+   "routed": 2,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 7,
+   "package_fanout": 26,
+   "through_traffic": 45
+  },
+  "by_cause_dense": {
+   "channel": 4,
+   "package_fanout": 22,
+   "through_traffic": 37
+  },
+  "dense_packages": 5,
+  "more_layers": {
+   "layers": 4,
+   "open": 80
+  }
+ },
+ {
+  "board": "rvi_v2x_hardware_V2X",
+  "layers": 2,
+  "open_run": 28,
+  "baseline": {
+   "connections": 28,
+   "open": 27,
+   "routed": 1,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 6,
+   "package_fanout": 11,
+   "through_traffic": 10
+  },
+  "by_cause_dense": {
+   "channel": 6,
+   "package_fanout": 11,
+   "through_traffic": 6
+  },
+  "dense_packages": 12,
+  "more_layers": {
+   "layers": 4,
+   "open": 27
+  }
+ },
+ {
+  "board": "zx-sizif-512-ext_sizif512ext",
+  "layers": 2,
+  "open_run": 69,
+  "baseline": {
+   "connections": 69,
+   "open": 64,
+   "routed": 5,
+   "work": 10000000
+  },
+  "by_cause": {
+   "channel": 20,
+   "near_and_far": 1,
+   "package_fanout": 13,
+   "pin_cannot_escape": 16,
+   "through_traffic": 14
+  },
+  "by_cause_dense": {
+   "channel": 15,
+   "near_and_far": 1,
+   "package_fanout": 12,
+   "pin_cannot_escape": 16,
+   "through_traffic": 13
+  },
+  "dense_packages": 3,
+  "more_layers": {
+   "layers": 4,
+   "open": 61
+  }
+ }
+]

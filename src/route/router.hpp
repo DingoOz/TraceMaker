@@ -65,6 +65,11 @@ struct RouterOptions {
   double layer_dir_pen = -1;    // negative = automatic (-1: 0.3; otherwise the strength is the absolute value) on breakout boards only, else 0; extra cost (pitches per orthogonal step) against a layer's preferred direction: even layers horizontal, odd vertical (doc 16)
   bool layer_dir_swap = false;  // preferred directions the other way round: even layers vertical, odd horizontal
   double package_pen = -1;      // -1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
+  // Strict searches from the crowded end (doc 05 §55, M20 C5): a strict search starts from the end with more routed copper of other nets
+  // and more pads of other nets of its own part near it. A boxed-in source is proved in a few expansions; a boxed-in target only after the
+  // search has flooded its window, which on the failing tier B-D boards spent most of the budget of the first pass.
+  bool crowded_source = false;
+  bool crowded_portfolio = true;  // crowded_source in four of the portfolio's designed eight variants (1, 5, 6, 7; D143)
   bool layer_assign_angle = false;  // layer preference by chord direction instead of by crossings (uses layer_assign_pen)
   bool layer_assign = false;    // doc 16 F2: prefer, per connection, the layer that leaves the fewest crossings (two-layer boards)
   double layer_assign_pen = 0.4;  // pitches per lattice step on the other layer

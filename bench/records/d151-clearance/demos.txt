@@ -1,0 +1,21 @@
+MATCH  CM5_MINIMA_3.kicad_pcb                           
+MATCH  complex_hierarchy.kicad_pcb                      
+MATCH  ecc83-pp.kicad_pcb                               
+MATCH  ecc83-pp_v2.kicad_pcb                            
+MATCH  interf_u.kicad_pcb                               
+MATCH  kit-dev-coldfire-xilinx_5213.kicad_pcb           
+DIFF   microwave.kicad_pcb                              clearance=2/0 shorting_items=6/8
+MATCH  multichannel_mixer-unrouted.kicad_pcb            
+MATCH  multichannel_mixer.kicad_pcb                     
+DIFF   One-Air-Max.kicad_pcb                            clearance=14/12
+MATCH  pic_programmer.kicad_pcb                         
+DIFF   RoyalBlue54L-Feather.kicad_pcb                   annular_width=2/0 holes_co_located=1/0
+MATCH  StickHub.kicad_pcb                               
+MATCH  tinytapeout-demo.kicad_pcb                       
+MATCH  video.kicad_pcb                                  
+
+12/15 boards match exactly on 15 routing-relevant types (kicad/ours shown on diffs)
+  clearance                differs on 2 boards
+  shorting_items           differs on 1 boards
+  annular_width            differs on 1 boards
+  holes_co_located         differs on 1 boards

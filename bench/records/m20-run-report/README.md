@@ -19,19 +19,17 @@ summary, the report in both forms and the route log. The routed boards are not k
 | multichannel_mixer | 173/173 | 3 | no | 0 -> 0 | 0 | 0 | - | 0 |
 | pic_programmer | 82/86 | 7 | no | 0 -> 0 | 0 | 0 | boxed_in 4 | 0 |
 | plane_smd | 48/49 | 1 | no | 0 -> 0 | 0 | 0 | boxed_in 1 | 2 |
-| RoyalBlue54L-Feather | 37/147 | 119 | (not recorded) | 38 -> 38 | 0 | 0 | not_attempted 107, boxed_in 3 | 6 |
+| interf_u | 140/164 | 26 | no | 0 -> 0 | 0 | 0 | not_attempted 22, boxed_in 2 | 2 |
+| RoyalBlue54L-Feather | 102/147 | 61 | no | 38 -> 38 | 0 | 0 | not_attempted 37, boxed_in 8 | 6 |
 | sonde_xilinx | 48/48 | 0 | no | 0 -> 0 | 0 | 0 | - | 0 |
 | StickHub | 121/128 | 10 | no | 0 -> 0 | 0 | 0 | ripped_not_rerouted 6, boxed_in 1 | 18 |
 
 Caveats, honestly:
 
-- **RoyalBlue54L-Feather** is from an earlier run of the same command **without `--time 3600`** (the default 120 s limit), made before the
-  `time_limited` field existed; the `--time 3600` run was stopped before it finished, so its log is not kept. With 107 connections never
-  attempted, the 120 s limit ended that run: an earlier run under a different load routed 102. The report cannot say so, because its summary
-  predates the field. Not re-run (owner's call, 2026-10-24).
-- **interf_u has no report.** After its eight variants finish, the run stays on one core for more than 20 minutes before it writes the board,
-  with `main`'s binary as well as this branch's (same options, no `--report`), so it is not caused by this change. Earlier records route the
-  same board with the same options in 27 s (`i24b-planes-soft-si`, commit `97a3948`, GPU available). Not investigated further; open.
+- **interf_u and RoyalBlue54L-Feather** were re-run on 2026-10-27 with the binary of `main` `ec7cc9b` (after D137's GPU back-off; same
+  command). interf_u finished in 128 s: the 20-minute single-core stall of 2026-10-24 was the GPU fallback cliff that D137 fixed.
+  RoyalBlue finished in 72 s under `--time 3600`, so `time_limited` is false and its 37 never-attempted connections are left by the
+  work budget, not the clock. Its 38 DRC errors (10 `clearance`, 28 `copper_edge_clearance`) are in the input board; the route adds none.
 - The unconnected count after the refill equals the report's own DRC count of unconnected items on every board: two independent paths
   (the router's refill count and `tracemaker drc` on the written board) agree.
 - An earlier run of these boards with the default 120 s limit routed differently (multichannel_mixer 8 unconnected after refill instead of

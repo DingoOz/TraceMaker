@@ -1130,22 +1130,24 @@ TEST_CASE("A courtyard that cannot be read is warned about when a rule asks for 
 }
 
 TEST_CASE("Rules with a KiCad function TraceMaker does not evaluate are kept, unknown symbols drop the rule", "[rules][drc]") {
-  // KiCad 10.0.6: kicad_function_*. KiCad applies these rules, so dropping them would hide what the rest of the
+  // KiCad 10.0.6: kicad_function_*. hasNetclass() was one of them until D147 and the cases keep it (no class 'x'). KiCad applies these rules, so dropping them would hide what the rest of the
   // condition selects (before D80 they were evaluated the same way, without a warning).
   CHECK(parity_hits("A.NetName == 'SIG' || A.hasNetclass('x')") == 2);
   CHECK(parity_hits("A.NetName == 'SIG' || A.fromTo('a', 'b')") == 2);
-  CHECK(parity_hits("A.hasNetclass('x')") == 0);
+  CHECK(parity_hits("A.hasNetclass('x')") == 0);  // evaluated since D147: no class of that name
+  CHECK(parity_hits("A.NetName == 'SIG' && A.hasNetclass('Default')") == 2);
+  CHECK(parity_hits("A.NetName == 'SIG' && A.hasNetclass('default')") == 0);
   CHECK(parity_hits("A.NetName == 'SIG' && !A.isMicroVia()") == 0);  // a disallow never fires through the unknown call
   CHECK(parity_hits("A.NetName == 'SIG' || A.isThroughVia()") == 0);  // not a KiCad function: rule dropped
   {
-    const Files f("kicad_function", board_text(kParityCopper), parity_rule("A.NetName == 'SIG' || A.hasNetclass('x')"));
+    const Files f("kicad_function", board_text(kParityCopper), parity_rule("A.NetName == 'SIG' || A.fromTo('a', 'b')"));
     const auto lb = io::read_board_file(f.pcb.string());
     const auto rules = io::read_design_rules(f.pcb.string());
     const drc::RuleEngine engine(lb.board, rules);
     CHECK_FALSE(engine.track_allowed(1, 0));  // the router honours the branch that can be evaluated
     CHECK(engine.track_allowed(2, 0));
     CHECK(std::any_of(engine.warnings().begin(), engine.warnings().end(), [](const auto& w) {
-      return w.find("rule 'parity'") != std::string::npos && w.find("hasNetclass()") != std::string::npos &&
+      return w.find("rule 'parity'") != std::string::npos && w.find("fromTo()") != std::string::npos &&
              w.find("taken as false") != std::string::npos;
     }));
   }

@@ -1,0 +1,54 @@
+critical nets: 0
+  routed first: no; via cost x3; over a plane void: free
+portfolio: 8 variants on 4 threads
+searches: 59 ok (292045 expansions), 35 failed (203459 expansions); fields 14 GPU + 0 CPU (0.62 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 47 connections improved
+restarts 0; legality checks 584377; rips 1, passes 2, boxed-in 15, nogood skips 0, history cells 14, transactions 0 kept of 0
+reachability checks: 10, 3 proved unreachable, 145938 cells visited
+failed-search expansions: strict confined 0, strict wide 166903, negotiated confined 0, negotiated wide 0
+searches: 62 ok (309930 expansions), 5 failed (143360 expansions); fields 14 GPU + 0 CPU (2.41 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 52 connections improved
+restarts 0; legality checks 493808; rips 0, passes 1, boxed-in 1, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 143360, negotiated confined 0, negotiated wide 0
+searches: 68 ok (361901 expansions), 7 failed (251530 expansions); fields 17 GPU + 0 CPU (2.46 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 48 connections improved
+restarts 0; legality checks 663452; rips 0, passes 1, boxed-in 2, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 251530, negotiated confined 0, negotiated wide 0
+searches: 62 ok (309930 expansions), 5 failed (143360 expansions); fields 14 GPU + 0 CPU (0.95 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 52 connections improved
+restarts 0; legality checks 493808; rips 0, passes 1, boxed-in 1, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 143360, negotiated confined 0, negotiated wide 0
+searches: 64 ok (3754307 expansions), 3 failed (53844 expansions); fields 15 GPU + 0 CPU (0.87 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 49 connections improved
+restarts 0; legality checks 564893; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 53844, negotiated confined 0, negotiated wide 0
+searches: 51 ok (2299515 expansions), 4 failed (1006220 expansions); fields 15 GPU + 0 CPU (1.04 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 49 connections improved
+restarts 0; legality checks 605825; rips 2, passes 2, boxed-in 0, nogood skips 1, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 1 proved unreachable, 145084 cells visited
+failed-search expansions: strict confined 0, strict wide 861136, negotiated confined 0, negotiated wide 0
+searches: 58 ok (308349 expansions), 5 failed (142265 expansions); fields 14 GPU + 0 CPU (3.45 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 51 connections improved
+restarts 0; legality checks 488970; rips 0, passes 1, boxed-in 1, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 142265, negotiated confined 0, negotiated wide 0
+searches: 75 ok (2061629 expansions), 4 failed (35088 expansions); fields 58 GPU + 0 CPU (17.35 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 54 connections improved
+restarts 0; legality checks 2192927; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 35088, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 48 in 8.5 s
+  variant 1 fast bends, shortest first, crowded source routed 48 in 4.5 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 48 in 2.3 s
+  variant 3 fast bends, jittered order, escape plan routed 48 in 4.8 s
+  variant 4 exact bends, jittered order    routed 48 in 9.2 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 48 in 25.8 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 48 in 2.8 s
+  variant 7 fast bends, dear vias, crowded source routed 48 in 4.9 s  <- best
+soft zones: after refilling 1 zones, 1 items unconnected
+searches: 1 ok (10538 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 1878; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+refill repair: routed 1/1 connections, 2 tracks, 0 vias, 10538 expansions
+refill repair: 0 items unconnected after refilling again
+routed 48/48 connections, 121 tracks, 2 vias, pitch 0.100 mm, 450614 expansions, 35.22 s (best variant 4.86 s)
+work (all variants): 11495092 expansions, 291022 flood cells, 6087717 cell checks, 4014573 fixed-copper checks, 28279770 field cells in 161 fields, 499 commits, 3 rips

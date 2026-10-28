@@ -1,0 +1,278 @@
+{
+ "baseline": {
+  "connections": 11,
+  "open": 11,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/DronPi_dronPi.kicad_pcb",
+ "by_cause": {
+  "no_path_bare": 11
+ },
+ "by_cause_at_dense_packages": {
+  "no_path_bare": 11
+ },
+ "by_dense_package": {
+  "IC2": {
+   "no_path_bare": 14
+  },
+  "IC3": {
+   "no_path_bare": 2
+  },
+  "IC8": {
+   "no_path_bare": 2
+  }
+ },
+ "connections": [
+  {
+   "a": "IC2.20",
+   "at_dense_package": true,
+   "b": "IC2.18",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.20",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "IC2.18",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "GND",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "IC3.8",
+   "at_dense_package": true,
+   "b": "IC2.23",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC3.8",
+     "part_pads": 8,
+     "pitch_mm": 1.24968
+    },
+    {
+     "dense": true,
+     "pad": "IC2.23",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "SPI_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC2.8",
+   "at_dense_package": true,
+   "b": "IC2.13",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.8",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "IC2.13",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3v3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC2.10",
+   "at_dense_package": true,
+   "b": "C13.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.10",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "C13.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(C13-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC2.20",
+   "at_dense_package": true,
+   "b": "C14.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.20",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "C14.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "GND",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC2.1",
+   "at_dense_package": true,
+   "b": "IC2.8",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.1",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "IC2.8",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3v3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "C11.2",
+   "at_dense_package": true,
+   "b": "IC2.20",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "C11.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "IC2.20",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "GND",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC3.6",
+   "at_dense_package": true,
+   "b": "IC2.9",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC3.6",
+     "part_pads": 8,
+     "pitch_mm": 1.24968
+    },
+    {
+     "dense": true,
+     "pad": "IC2.9",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "SPI_MISO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC2.9",
+   "at_dense_package": true,
+   "b": "IC8.15",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.9",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "IC8.15",
+     "part_pads": 18,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "SPI_MISO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "IC2.23",
+   "at_dense_package": true,
+   "b": "IC8.13",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "IC2.23",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "IC8.13",
+     "part_pads": 18,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "SPI_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "J1.26",
+   "at_dense_package": true,
+   "b": "IC2.22",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "J1.26",
+     "part_pads": 44
+    },
+    {
+     "dense": true,
+     "pad": "IC2.22",
+     "part_pads": 28,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "SPI_CS_MPU",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 2,
+ "dense_packages": 10,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

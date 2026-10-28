@@ -238,7 +238,7 @@ CourtyardRegion prepare_courtyard(const model::Board& board, const model::Footpr
 }  // namespace
 
 bool area_matches(const CopperItem& item, const model::Zone& area, bool enclosure) {
-  if (!(item.layers & area.copper) || item.shapes.empty() || area.outline.empty()) return false;
+  if (!((item.span ? item.span : item.layers) & area.copper) || item.shapes.empty() || area.outline.empty()) return false;
   for (const auto& ring : area.outline) if (ring.size() < 3) return false;
   if (enclosure) {
     for (const auto& shape : item.shapes) if (!enclosed(shape, area.outline)) return false;

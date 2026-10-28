@@ -1,0 +1,574 @@
+{
+ "board": "vme-wren (KiCad demos)",
+ "judge": "kicad-cli 10.0.6",
+ "kicad_counts": {
+  "connection_width": 193,
+  "courtyards_overlap": 22,
+  "diff_pair_gap_out_of_range": 28,
+  "diff_pair_uncoupled_length_too_long": 6,
+  "length_out_of_range": 34,
+  "nonmirrored_text_on_back_layer": 10,
+  "padstack": 7,
+  "silk_overlap": 199,
+  "solder_mask_bridge": 6,
+  "track_dangling": 1,
+  "via_dangling": 92,
+  "zones_intersect": 12
+ },
+ "engine_counts": {
+  "clearance": 425,
+  "diff_pair_gap_out_of_range": 28,
+  "diff_pair_uncoupled_length_too_long": 6,
+  "shorting_items": 20,
+  "track_dangling": 1,
+  "via_dangling": 92
+ },
+ "kicad_pairs": [
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on L5, length 0.3300 mm",
+    "Track [/DDR4-PS.DQS_N0] on L5, length 0.2820 mm"
+   ],
+   "value": "zdiff_100R_inner maximum gap 1.0000 mm; actual 1.8573 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on L5, length 0.3300 mm",
+    "Track [/DDR4-PS.DQS_N0] on L5, length 0.2820 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.8573 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on L5, length 3.1664 mm",
+    "Track [/DDR4-PS.DQS_N0] on L5, length 0.3125 mm"
+   ],
+   "value": "zdiff_100R_inner maximum gap 1.0000 mm; actual 1.5173 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on L5, length 3.1664 mm",
+    "Track [/DDR4-PS.DQS_N0] on L5, length 0.3125 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.5173 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_BUNCHCLK1_P] on Top Layer, length 1.1625 mm",
+    "Track [/vme_interface/LVDS_BUNCHCLK1_N] on Top Layer, length 1.1625 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_BUNCHCLK2_P] on Top Layer, length 1.1625 mm",
+    "Track [/vme_interface/LVDS_BUNCHCLK2_N] on Top Layer, length 1.1625 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_TURNCLK1_P] on Top Layer, length 1.1625 mm",
+    "Track [/vme_interface/LVDS_TURNCLK1_N] on Top Layer, length 1.1625 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_TURNCLK2_P] on Top Layer, length 1.1625 mm",
+    "Track [/vme_interface/LVDS_TURNCLK2_N] on Top Layer, length 1.1625 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.6700 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7100 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.6700 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7100 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.7500 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7500 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.7500 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7500 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.7500 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7500 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.7500 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7500 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.7875 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7875 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.7875 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.7875 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 1.0600 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 1.0300 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 1.0600 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 1.0300 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.6700 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.7100 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.6700 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.7100 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.7500 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.7500 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.7500 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.7500 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.7875 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.7875 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.7875 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.7875 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.8627 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.4031 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.5821 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 0.8627 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.4031 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.5821 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 1.0600 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 1.0300 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 1.0600 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 1.0300 mm"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on L5, length 0.3800 mm",
+    "Track [/DDR4-PS.DQS_N0] on L5, length 0.3800 mm"
+   ],
+   "value": "zdiff_100R_inner maximum uncoupled length 5.0000 mm; actual 6.6880 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/WR_CLK.HELPER_P] on L3, length 4.2000 mm",
+    "Track [/WR_CLK.HELPER_N] on L3, length 0.7071 mm"
+   ],
+   "value": "zdiff_100R_inner maximum uncoupled length 5.0000 mm; actual 5.2856 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/fpga/fpga-mgts/BCLK_B1_DBG_P] on Top Layer, length 0.3429 mm",
+    "Track [/fpga/fpga-mgts/BCLK_B1_DBG_N] on Top Layer, length 0.3747 mm"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 5.1512 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/fpga/fpga-mgts/BCLK_B2_DBG_P] on Top Layer, length 0.8202 mm",
+    "Track [/fpga/fpga-mgts/BCLK_B2_DBG_N] on Top Layer, length 0.8202 mm"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 5.1574 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on Top Layer, length 0.3182 mm",
+    "Track [/vme_interface/RS485_DATA0_N] on Top Layer, length 0.8627 mm"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 9.6508 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on Top Layer, length 1.7125 mm",
+    "Track [/vme_interface/RS485_DATA1_N] on Top Layer, length 0.3182 mm"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 8.7304 mm"
+  }
+ ],
+ "engine_pairs": [
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on In4.Cu",
+    "Track [/DDR4-PS.DQS_N0] on In4.Cu"
+   ],
+   "value": "zdiff_100R_inner maximum gap 1.0000 mm; actual 1.5173 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on In4.Cu",
+    "Track [/DDR4-PS.DQS_N0] on In4.Cu"
+   ],
+   "value": "zdiff_100R_inner maximum gap 1.0000 mm; actual 1.8573 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on In4.Cu",
+    "Track [/DDR4-PS.DQS_N0] on In4.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.5173 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on In4.Cu",
+    "Track [/DDR4-PS.DQS_N0] on In4.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.8573 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_BUNCHCLK1_P] on F.Cu",
+    "Track [/vme_interface/LVDS_BUNCHCLK1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_BUNCHCLK2_P] on F.Cu",
+    "Track [/vme_interface/LVDS_BUNCHCLK2_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_TURNCLK1_P] on F.Cu",
+    "Track [/vme_interface/LVDS_TURNCLK1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/LVDS_TURNCLK2_P] on F.Cu",
+    "Track [/vme_interface/LVDS_TURNCLK2_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.1550 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.4850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.5821 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.5821 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_gap_out_of_range",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum gap 1.0000 mm; actual 1.7850 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/DDR4-PS.DQS_P0] on In4.Cu",
+    "Track [/DDR4-PS.DQS_N0] on In4.Cu"
+   ],
+   "value": "zdiff_100R_inner maximum uncoupled length 5.0000 mm; actual 6.6880 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/WR_CLK.HELPER_P] on In2.Cu",
+    "Track [/WR_CLK.HELPER_N] on In2.Cu"
+   ],
+   "value": "zdiff_100R_inner maximum uncoupled length 5.0000 mm; actual 5.2856 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/fpga/fpga-mgts/BCLK_B1_DBG_P] on F.Cu",
+    "Track [/fpga/fpga-mgts/BCLK_B1_DBG_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 5.1512 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/fpga/fpga-mgts/BCLK_B2_DBG_P] on F.Cu",
+    "Track [/fpga/fpga-mgts/BCLK_B2_DBG_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 5.1574 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/vme_interface/RS485_DATA0_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA0_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 9.6508 mm"
+  },
+  {
+   "type": "diff_pair_uncoupled_length_too_long",
+   "items": [
+    "Track [/vme_interface/RS485_DATA1_P] on F.Cu",
+    "Track [/vme_interface/RS485_DATA1_N] on F.Cu"
+   ],
+   "value": "zdiff_100R_outer maximum uncoupled length 5.0000 mm; actual 8.7304 mm"
+  }
+ ]
+}

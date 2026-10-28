@@ -199,52 +199,11 @@ std::optional<Coord> bus_rule_skew(const drc::RuleEngine& re, const BusGroup& g)
   std::optional<Coord> out;
   for (NetId n : g.members) {
     const auto k = re.net_constraint(n, "skew");
-    if (!k || !k->max || std::find(k->items.begin(), k->items.end(), "within_diff_pairs") != k->items.end()) return std::nullopt;
+    // A skew in picoseconds is a delay, which the bus router does not tune (doc 05 §59).
+    if (!k || !k->max || k->time || std::find(k->items.begin(), k->items.end(), "within_diff_pairs") != k->items.end()) return std::nullopt;
     out = out ? std::min(*out, *k->max) : *k->max;
   }
   return out;
-}
-
-Coord ViaHeights::between(int a, int b) const {
-  if (a > b) std::swap(a, b);
-  if (a < 0 || a == b || static_cast<std::size_t>(b) >= to.size()) return 0;
-  return to[static_cast<std::size_t>(b)] - from[static_cast<std::size_t>(a)];
-}
-
-ViaHeights via_heights(const model::Board& b, const model::DesignRules& rules) {
-  ViaHeights vh;
-  const int n = b.copper_count();
-  if (!rules.use_height_for_length || n < 2) return vh;
-  vh.from.assign(static_cast<std::size_t>(n), 0);
-  vh.to.assign(static_cast<std::size_t>(n), 0);
-  Coord z = 0;
-  // An inner layer counts by half (KiCad halves in integer nanometres), an outer one in full.
-  auto copper = [&](int ci, Coord th) {
-    const bool outer = ci == 0 || ci == n - 1;
-    vh.from[static_cast<std::size_t>(ci)] = outer ? z : z + th - th / 2;
-    vh.to[static_cast<std::size_t>(ci)] = outer ? z + th : z + th / 2;
-    z += th;
-  };
-  bool listed = b.stackup.present;
-  for (int ci = 0; ci < n && listed; ++ci) listed = b.stackup.position_of_copper(ci) >= 0;
-  if (listed) {
-    for (const auto& l : b.stackup.layers) {
-      if (l.is_copper() && l.copper_index >= 0 && l.copper_index < n) copper(l.copper_index, l.thickness);
-      else if (l.name.rfind("dielectric", 0) == 0) z += l.thickness;  // mask, silk and paste are not between copper
-    }
-    return vh;
-  }
-  // KiCad's default stackup (BOARD_STACKUP::BuildDefaultStackupList).
-  const Coord cu = 35'000, mask = 10'000;
-  Coord masks = 0;
-  for (const auto& l : b.layers)
-    if (l.name == "F.Mask" || l.name == "B.Mask") masks += mask;
-  const Coord diel = (b.thickness - cu * n - masks) / (n - 1);
-  for (int ci = 0; ci < n; ++ci) {
-    copper(ci, cu);
-    z += diel;
-  }
-  return vh;
 }
 
 double net_via_length(const model::Board& b, const ViaHeights& vh, NetId net, const std::vector<model::Track>& tracks,

@@ -8,6 +8,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "drc/copper.hpp"
@@ -18,6 +19,15 @@
 namespace tmk::drc {
 
 class Condition;  // compiled custom-rule condition
+
+// A differential-pair net name as KiCad 10.0.6 reads it (DRC_ENGINE::MatchDpSuffix): from the end, digits and underscores are
+// skipped, then P or + makes the positive half and N or - the negative one. `complement` is the other half's name and `base` the name
+// before the polarity character, so D_P1 pairs with D_N1 on base "D_". Polarity 0: not a pair name.
+struct DpSuffix {
+  int polarity = 0;
+  std::string complement, base;
+};
+DpSuffix match_dp_suffix(std::string_view name);
 
 class RuleEngine {
  public:
@@ -32,6 +42,9 @@ class RuleEngine {
   Coord edge_clearance(const CopperItem& a, int layer) const;
   // Minimum and maximum track width (max = 0: none).
   std::pair<Coord, Coord> track_width(const CopperItem& t, int layer) const;
+  // The severity of the last rule with a track_width constraint that matches the track ("" when none matches or it sets none): in KiCad
+  // that rule decides the track's width check, so an ignored rule hides the board minimum too (tuning profiles, doc 05 §58).
+  std::string track_width_severity(const CopperItem& t, int layer) const;
   Coord via_diameter_min(const CopperItem& v) const;
   Coord annular_width_min(const CopperItem& v) const;
   Coord hole_size_min(const CopperItem* owner) const;
@@ -51,6 +64,21 @@ class RuleEngine {
   std::optional<Coord> skew_constraint(model::NetId net) const;
   // Last custom constraint of `type` (e.g. diff_pair_gap, diff_pair_uncoupled) whose rule matches a track of `net`.
   std::optional<model::Constraint> net_constraint(model::NetId net, const std::string& type) const;
+  // KiCad's matched-length check groups items by the rule that gives them a constraint (DRC_ENGINE::EvalRules'
+  // parent rule; doc 05 §59): the position in rule order of the last rule with a `type` constraint matching `it` on
+  // `layer`, or -1. rule(i) is that rule.
+  int last_rule_with(const CopperItem& it, int layer, const std::string& type) const;
+  const model::CustomRule& rule(int i) const { return *rules_[static_cast<std::size_t>(i)].rule; }
+  // The same for a net as a whole (a track of `net` on any layer), as length_constraint and net_constraint see it.
+  int net_rule_with(model::NetId net, const std::string& type) const;
+  // The other half of `net`'s differential pair (KiCad's DpCoupledNet), or 0.
+  model::NetId dp_partner(model::NetId net) const {
+    return static_cast<std::size_t>(net) < dp_partner_.size() ? dp_partner_[static_cast<std::size_t>(net)] : 0;
+  }
+  // True when `net` is the positive half of a pair (P or +, match_dp_suffix); only meaningful when dp_partner(net) is set.
+  bool dp_positive(model::NetId net) const {
+    return static_cast<std::size_t>(net) < dp_positive_.size() && dp_positive_[static_cast<std::size_t>(net)];
+  }
 
   // Name of the last rule disallowing `it` on `layer`, if any (KiCad: items_not_allowed).
   std::optional<std::string> disallowed(const CopperItem& it, int layer) const;
@@ -108,6 +136,9 @@ class RuleEngine {
   Coord max_clearance_ = 0;
   std::vector<const model::NetClass*> net_class_;  // by net id (nets created later fall back to a lookup)
   std::vector<model::NetId> dp_partner_;          // by net id: the other half of a P/N pair, or 0
+  std::vector<char> dp_positive_;                 // by net id: the positive half of a pair
+  std::vector<std::string> dp_base_;              // by net id: the pair's base name (inDiffPair), for pair nets
+  std::vector<std::vector<std::string>> net_classes_;  // by net id: DesignRules::classes_of
   // Area and courtyard functions of a zone fill, by (condition node, zone, fill): a fill has tens of thousands
   // of points and is asked again for every pair it is in (vme-wren: 80 s of a DRC).
   mutable std::map<std::tuple<const void*, int, int>, bool> area_cache_;

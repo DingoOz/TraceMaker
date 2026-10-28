@@ -34,10 +34,10 @@ def generate(root: Path) -> dict:
                 (aa*(cx-bx)+bb*(ax-cx)+cc*(bx-ax))/denominator]
         ITEMS[label] = {'kind':'Arc','pos':center}
         return capture(f'(arc (start {start[0]} {start[1]}) (mid {mid[0]} {mid[1]}) (end {end[0]} {end[1]}) (width {width}) (layer "{layer}") (net 1) (uuid "{uid(label)}"))', [label])
-    def via(label, x, y, kind='', layers=('F.Cu','B.Cu'), net=1):
+    def via(label, x, y, kind='', layers=('F.Cu','B.Cu'), net=1, extra=''):
         ITEMS[label] = {'kind':'Via','pos':[x,y]}
-        return capture(f'(via {kind} (at {x} {y}) (size 0.8) (drill 0.4) (layers "{layers[0]}" "{layers[1]}") (net {net}) (uuid "{uid(label)}"))', [label])
-    def footprint(ref,x,y,padtype='smd',size=(1,1),back=False,courtyard=False,angle=0,pad_at=(0,0),graphics=''):
+        return capture(f'(via {kind} (at {x} {y}) (size 0.8) (drill 0.4) (layers "{layers[0]}" "{layers[1]}") {extra} (net {net}) (uuid "{uid(label)}"))', [label])
+    def footprint(ref,x,y,padtype='smd',size=(1,1),back=False,courtyard=False,angle=0,pad_at=(0,0),graphics='',pad_extra=''):
         layer = 'B.Cu' if back else 'F.Cu'
         radians = math.radians(angle)
         px = x + pad_at[0]*math.cos(radians) + pad_at[1]*math.sin(radians)
@@ -49,9 +49,9 @@ def generate(root: Path) -> dict:
             for side,coords in [('F',( -2,-2,2,2)),('B',(3,-2,7,2))]:
                 a,b,c,d=coords
                 graphics += f'(fp_rect (start {a} {b}) (end {c} {d}) (stroke (width 0.05) (type solid)) (fill none) (layer "{side}.CrtYd") (uuid "{uid(ref+side+'court')}"))'
-        return capture(f'(footprint "Test:R" (layer "{layer}") (at {x} {y} {angle}) (uuid "{uid(ref)}") (property "Reference" "{ref}" (at 0 -3) (layer "F.SilkS")) {graphics} (pad "1" {padtype} rect (at {pad_at[0]} {pad_at[1]}) (size {size[0]} {size[1]}) {drill} (layers {layers}) (net 1 "X") (uuid "{uid(ref+":pad1")}")))', [ref+':pad1'])
+        return capture(f'(footprint "Test:R" (layer "{layer}") (at {x} {y} {angle}) (uuid "{uid(ref)}") (property "Reference" "{ref}" (at 0 -3) (layer "F.SilkS")) {graphics} (pad "1" {padtype} rect (at {pad_at[0]} {pad_at[1]}) (size {size[0]} {size[1]}) {drill} (layers {layers}) {pad_extra} (net 1 "X") (uuid "{uid(ref+":pad1")}")))', [ref+':pad1'])
     def board(items):
-        return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
+        return '(kicad_pcb (version 20240108) (generator "pcbnew") (general (thickness 1.6)) (paper "A4") (layers (0 "F.Cu" signal) (1 "In1.Cu" signal) (2 "In2.Cu" signal) (31 "B.Cu" signal) (36 "B.SilkS" user "b.silkscreen") (37 "F.SilkS" user "f.silkscreen") (44 "Edge.Cuts" user) (46 "B.CrtYd" user "b.courtyard") (47 "F.CrtYd" user "f.courtyard")) (setup (pad_to_mask_clearance 0)) (net 0 "") (net 1 "X") (net 2 "Y") (net 3 "D_P") (net 4 "D_N") (net 5 "L_P1") (net 6 "L_N1") (gr_rect (start 0 0) (end 50 40) (stroke (width 0.05) (type solid)) (fill none) (layer "Edge.Cuts") (uuid "'+uid('edge')+'"))\n'+'\n'.join(items)+'\n)\n'
     def rule(condition='',word='track',layer='',severity='',constraint=None,name='C'):
         return f'(rule "{name}" '+ (f'(condition {json.dumps(condition)}) ' if condition else '') + (f'(layer {layer}) ' if layer else '') + (f'(severity {severity}) ' if severity else '') + (constraint or f'(constraint disallow {word})') + ')\n'
     def case(name,items,rules,note='',project=None,types=None):
@@ -73,6 +73,127 @@ def generate(root: Path) -> dict:
     project={'meta':{'filename':'b.kicad_pro','version':1},'net_settings':{'classes':[{'name':'Default','clearance':0.2,'track_width':0.25,'via_diameter':0.8,'via_drill':0.4},{'name':'Special','clearance':0.2,'track_width':0.25,'via_diameter':0.8,'via_drill':0.4}], 'netclass_assignments':{'X':'Special'}, 'netclass_patterns':[{'netclass':'Special','pattern':'X'}]},'board':{'design_settings':{'rules':{'allow_blind_buried_vias':True,'allow_microvias':True}}}}
     case('static_class_track',static,rule("A.NetClass == 'Special'"),project=project)
     case('static_class_via',static,rule("A.NetClass == 'Special'",'via'),project=project)
+    # hasExactNetclass (evaluated since D145) and KiCad 10's tuning profiles, which compile into exact-width rules with it (doc 05 §58).
+    case('static_exact_class_track',static,rule("A.hasExactNetclass('Special')"),project=project)
+    case('static_exact_class_case',static,rule("A.hasExactNetclass('special')"),project=project,
+         note='Exact: a different case selects nothing.')
+    # hasNetclass (evaluated since D147): the item's effective class contains the name, exactly (doc 05 §59).
+    case('static_has_class_track',static,rule("A.hasNetclass('Special')"),project=project)
+    case('static_has_class_case',static,rule("A.hasNetclass('special')"),project=project,
+         note='Exact: a different case selects nothing.')
+    case('static_has_class_default',static,rule("A.hasNetclass('Default')"),project=project,
+         note='Special leaves microvia, pair and schematic sizes unset: KiCad 10.0.6 fills them from Default, which then counts as one of its classes, so X is selected too.')
+    full=json.loads(json.dumps(project))
+    for c in full['net_settings']['classes']:
+        c.update({'microvia_diameter':0.3,'microvia_drill':0.1,'diff_pair_width':0.2,'diff_pair_gap':0.25,'wire_width':6,'bus_width':12})
+    case('static_has_class_default_full',static,rule("A.hasNetclass('Default')"),project=full,
+         note='Special sets every size: its nets are not in Default.')
+    def tuned(severity):
+        q=json.loads(json.dumps(project))
+        q['net_settings']['classes'][1]['tuning_profile']='MS'
+        q['board']['design_settings']['rule_severities']={'tuning_profile_track_geometries':severity}
+        entry=lambda layer,w: {'signal_layer':layer,'top_reference_layer':'UNDEFINED','bottom_reference_layer':'UNDEFINED','width':w,'diff_pair_gap':0,'delay':0}
+        q['tuning_profiles']={'meta':{'version':0},'tuning_profiles_impedance_geometric':[{'profile_name':'MS','type':0,'target_impedance':50.0,
+            'enable_time_domain_tuning':False,'via_prop_delay':0,'via_overrides':[],
+            'layer_entries':[entry('F.Cu',150000),entry('In1.Cu',100000),entry('In2.Cu',100000),entry('B.Cu',150000)]}]}
+        return q
+    profiled=[track('tp-front-wide',5,25,8,25),track('tp-front-ok',5,29,8,29,width=0.15),track('tp-inner-wide',12,25,15,25,width=0.15,layer='In1.Cu'),
+              track('tp-inner-ok',12,29,15,29,width=0.1,layer='In1.Cu'),track('tp-other-net',20,25,23,25,net=2),track('tp-back-narrow',20,29,23,29,width=0.1,layer='B.Cu')]
+    case('tuning_profile_width',profiled,'',project=tuned('error'),types=['track_width'],
+         note='Profile MS (0.15 mm outside, 0.1 mm inside) on class Special: its tracks of another width on a layer are track_width errors.')
+    case('tuning_profile_ignored',profiled,'',project=tuned('ignore'),types=['track_width'],
+         note="With tuning_profile_track_geometries at KiCad's default (ignore) there is no such rule.")
+    inherited=tuned('error')
+    inherited['net_settings']['classes'][0]['tuning_profile'],inherited['net_settings']['classes'][1]['tuning_profile']='MS',''
+    case('tuning_profile_inherited',profiled,'',project=inherited,types=['track_width'],
+         note="Profile MS on Default only: Special, which names none, takes Default's (D147), so both nets' tracks are held to it.")
+    old_settings=tuned('error')
+    old_settings['net_settings']['meta']={'version':4}
+    case('tuning_profile_schema4',profiled,'',project=old_settings,types=['track_width'],
+         note='Net settings of schema 4: KiCad migrates them and every class loses its tuning profile (D147).')
+    # Diff-pair coupling (D147): P and N tracks on parallel lines whose projections overlap are coupled, unless other copper lies
+    # between them; each coupling's gap must be within the rule (doc 05 §59). 0.2 mm tracks, so the gaps are 0.4, 0.2, 0.1 and 0.8 mm.
+    dp=[track('dp-wide-P',5,30,15,30,width=0.2,net=3),track('dp-wide-N',7,30.6,17,30.6,width=0.2,net=4),
+        track('dp-ok-P',20,30,30,30,width=0.2,net=3),track('dp-ok-N',20,30.4,30,30.4,width=0.2,net=4),
+        track('dp-close-P',5,35,15,35,width=0.2,net=3),track('dp-close-N',5,35.3,15,35.3,width=0.2,net=4),
+        track('dp-shield-P',20,34,30,34,width=0.2,net=3),track('dp-shield-N',20,35,30,35,width=0.2,net=4),track('dp-shield-Y',20,34.5,30,34.5,width=0.2,net=2),
+        track('dp-apart-P',35,30,40,30,width=0.2,net=3),track('dp-apart-N',41,30.6,46,30.6,width=0.2,net=4),
+        track('dp-bend-P',35,35,40,35,width=0.2,net=3),track('dp-bend-N',35,35.6,40,37,width=0.2,net=4)]
+    gap_rule=rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (min 0.15mm) (max 0.25mm))',name='dp_gap')
+    case('diff_pair_gap',dp,gap_rule,types=['diff_pair_gap_out_of_range'],
+         note='0.4 mm too wide, 0.1 mm too narrow; 0.2 mm fine; a Y track between two halves hides them; no overlap, or not parallel: no coupling.')
+    case('diff_pair_gap_ignored',dp,rule("A.inDiffPair('*')",severity='ignore',constraint='(constraint diff_pair_gap (min 0.15mm) (max 0.25mm))'),
+         types=['diff_pair_gap_out_of_range'],note='A rule at severity ignore checks nothing.')
+    case('diff_pair_uncoupled',dp,gap_rule+rule("A.inDiffPair('*')",constraint='(constraint diff_pair_uncoupled (max 5mm))',name='dp_unc'),
+         types=['diff_pair_gap_out_of_range','diff_pair_uncoupled_length_too_long'],
+         note='With a maximum uncoupled length too: KiCad keys the items twice, so the gap errors stay, and the 10 mm coupled at 0.2 mm leave most of the length uncoupled.')
+    # Pair names as MatchDpSuffix reads them: digits and underscores after the P or N are skipped, so L_P1 pairs with L_N1 on base
+    # "L_", and inDiffPair('L') matches a base ending in an underscore without it. Both pairs are 0.4 mm apart.
+    suffixed=[track('dps-L-P',5,10,15,10,width=0.2,net=5),track('dps-L-N',5,10.6,15,10.6,width=0.2,net=6),
+              track('dps-D-P',20,10,30,10,width=0.2,net=3),track('dps-D-N',20,10.6,30,10.6,width=0.2,net=4)]
+    case('diff_pair_suffix',suffixed,rule("A.inDiffPair('L')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
+         types=['diff_pair_gap_out_of_range'],note='L_P1/L_N1 are a pair whose base L_ matches L; D_P/D_N (base D_) does not.')
+    case('diff_pair_suffix_base',suffixed,rule("A.inDiffPair('D_')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
+         types=['diff_pair_gap_out_of_range'],note="The base itself matches: D_ for D_P/D_N; L_ is not D_.")
+    # Tracks of a tuning pattern (a generator group) are left out of the coupling test and of the uncoupled lengths (KiCad's
+    # isInTuningPattern). Both pairs are 0.4 mm apart; the L pair's tracks are members of a tuning pattern.
+    tuned=[track('dpt-D-P',5,10,15,10,width=0.2,net=3),track('dpt-D-N',5,10.6,15,10.6,width=0.2,net=4),
+           track('dpt-L-P',20,10,30,10,width=0.2,net=5),track('dpt-L-N',20,10.6,30,10.6,width=0.2,net=6),
+           f'(generated (uuid "{uid("tuning")}") (type tuning_pattern) (name "Tuning Pattern") (layer "F.Cu") (members "{uid("dpt-L-P")}" "{uid("dpt-L-N")}"))']
+    case('diff_pair_tuning_pattern',tuned,rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap')+
+         rule("A.inDiffPair('*')",constraint='(constraint diff_pair_uncoupled (max 5mm))',name='dp_unc'),
+         types=['diff_pair_gap_out_of_range','diff_pair_uncoupled_length_too_long'],note='Only the D pair, whose tracks are not in the tuning pattern, is judged.')
+    # Nearly parallel tracks are coupled when their lines cross beyond 32-bit coordinates (SEG::Intersect returns nothing there):
+    # 0.4 mm apart, N 10 nm off parallel over 10 mm (crossing about 400 m away), and N 0.1 mm off (crossing within the board).
+    skewed=[track('dpn-D-P',5,10,15,10,width=0.2,net=3),track('dpn-D-N',5,10.6,15,10.60001,width=0.2,net=4),
+            track('dpn-L-P',20,10,30,10,width=0.2,net=5),track('dpn-L-N',20,10.6,30,10.7,width=0.2,net=6)]
+    case('diff_pair_near_parallel',skewed,rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
+         types=['diff_pair_gap_out_of_range'],note='Only the D pair, 10 nm off parallel, is coupled.')
+    # The order KiCad resolves a clearance in (DRC_ENGINE::EvalRules): a pad's local clearance first, floored at the board minimum;
+    # then the custom rules, whose value is final even below the board minimum; only then the net class, floored. Holes alike: a
+    # custom hole_clearance or hole_to_hole replaces the board's.
+    def minimums(**rules):
+        p = json.loads(json.dumps(project))
+        p['board']['design_settings']['rules'].update(rules)
+        return p
+    clr_box='(zone (net 0) (net_name "") (layer "F.Cu") (uuid "'+uid('clr-box')+'") (name "box") (hatch edge 0.5) (connect_pads (clearance 0)) (min_thickness 0.25) (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints allowed)) (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 10 5) (xy 20 5) (xy 20 15) (xy 10 15))))'
+    below=[clr_box,track('cb-in-X',12,7,18,7,width=0.2,net=1),track('cb-in-Y',12,7.3,18,7.3,width=0.2,net=2),
+           track('cb-out-X',25,7,30,7,width=0.2,net=1),track('cb-out-Y',25,7.3,30,7.3,width=0.2,net=2)]
+    case('clearance_custom_below_minimum',below,rule("A.intersectsArea('box')",constraint='(constraint clearance (min 0.1mm))',name='clr'),
+         project=minimums(min_clearance=0.125),types=['clearance'],note='0.1 mm gaps under a 0.125 mm board minimum: the rule in the box allows them.')
+    local=[footprint('LC',10,20,pad_extra='(clearance 0.3)'),track('lc-Y',8,20.8,12,20.8,width=0.2,net=2)]
+    case('clearance_local_over_custom',local,rule(constraint='(constraint clearance (min 0.1mm))',name='clr'),
+         project=project,types=['clearance'],note="A 0.2 mm gap to a pad with a 0.3 mm local clearance; the custom 0.1 mm rule does not override the pad's.")
+    holes=[footprint('H1',10,25,padtype='np_thru_hole',size=(0.4,0.4)),track('h1-Y',8,25.45,12,25.45,width=0.2,net=2),
+           footprint('H2',20,25,padtype='np_thru_hole',size=(0.4,0.4)),footprint('H3',20.7,25,padtype='np_thru_hole',size=(0.4,0.4))]
+    case('hole_rules_custom_below_minimum',holes,rule(constraint='(constraint hole_clearance (min 0.1mm)) (constraint hole_to_hole (min 0.2mm))',name='holes'),
+         project=minimums(min_hole_clearance=0.3,min_hole_to_hole=0.5),types=['hole_clearance','hole_to_hole'],
+         note='A track 0.15 mm from a hole, and holes 0.3 mm apart, under 0.3/0.5 mm board minimums and 0.1/0.2 mm rules.')
+    case('hole_rules_minimum',holes,'',project=minimums(min_hole_clearance=0.3,min_hole_to_hole=0.5),types=['hole_clearance','hole_to_hole'],
+         note='The same without the rule: the board minimums apply.')
+    # Copper graphics: two touching shapes of one footprint are never tested (KiCad treats them as one compound shape); two touching
+    # net-less board graphics are.
+    fp_copper=''.join(f'(fp_line (start {a} {b}) (end {c} {d}) (stroke (width 0.1) (type solid)) (layer "F.Cu") (uuid "{uid("gfp"+str(k))}"))'
+                      for k,(a,b,c,d) in enumerate([(-2,-2,2,-2),(2,-2,2,2)]))
+    def gr_line(label,x1,y1,x2,y2):
+        ITEMS[label]={'kind':'Copper','pos':[x1,y1]}
+        return capture(f'(gr_line (start {x1} {y1}) (end {x2} {y2}) (stroke (width 0.1) (type solid)) (layer "F.Cu") (uuid "{uid(label)}"))',[label])
+    fp_copper2=f'(fp_line (start -2 -2) (end -2 2) (stroke (width 0.1) (type solid)) (layer "F.Cu") (uuid "{uid("gfp2")}"))'
+    graphics=[footprint('G1',10,30,graphics=fp_copper),footprint('G2',14,30,graphics=fp_copper2),
+              gr_line('gr-a',30,30,34,30),gr_line('gr-b',34,30,34,34)]
+    case('copper_graphics_compound',graphics,'',types=['shorting_items','clearance'],
+         note="G1's two copper lines meet at a corner, and G2's line lies on G1's right-hand one; two net-less board lines meet.")
+    # Vias that remove unconnected copper (D150): a Y track 0.7 mm from an X via's centre is inside the ring's clearance but clear of
+    # the hole. KiCad keeps the ring on F.Cu (keep_end_layers), on In1.Cu where an X track reaches the hole, and on In2.Cu where the
+    # file says a zone joins it; elsewhere only the hole is there. keep_end_layers no removes the end layers too.
+    keep='(remove_unused_layers yes) (keep_end_layers yes)'
+    unused=[via('vu-a',10,30,extra=keep),track('vu-a-inner',8,30.7,12,30.7,layer='In1.Cu',net=2),track('vu-a-front',8,29.3,12,29.3,net=2),
+            via('vu-b',20,30,extra=keep),track('vu-b-feed',20,30,23,30,layer='In1.Cu'),track('vu-b-inner',18,30.7,22,30.7,layer='In1.Cu',net=2),
+            via('vu-c',30,30,extra=keep+' (zone_layer_connections "In2.Cu")'),track('vu-c-inner',28,30.7,32,30.7,layer='In2.Cu',net=2),
+            track('vu-c-other',28,29.3,32,29.3,layer='In1.Cu',net=2),
+            via('vu-d',40,30,extra='(remove_unused_layers yes) (keep_end_layers no)'),track('vu-d-front',38,30.7,42,30.7,net=2)]
+    case('via_unused_layers',unused,'',types=['clearance','shorting_items','hole_clearance'],
+         note='Only vu-a-front, vu-b-inner and vu-c-inner are near copper: the other tracks pass rings KiCad removed.')
     case('static_layer_track',static,rule(layer='"F.Cu"'))
     case('static_inner_track',static,rule(layer='inner'))
     case('static_inner_via',static,rule(word='via',layer='inner'))

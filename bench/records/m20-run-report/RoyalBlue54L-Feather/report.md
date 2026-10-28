@@ -1,10 +1,10 @@
 # Run report: unrouted.kicad\_pcb[^1]
 
-TraceMaker 0.10.0[^2], 2026-10-24T01:41:45Z[^3]. Input build/demos/RoyalBlue54L-Feather//unrouted.kicad\_pcb[^4], output bench/results/run-report/RoyalBlue54L-Feather/routed.kicad\_pcb[^5].
+TraceMaker 0.11.0[^2], 2026-10-27T22:56:45Z[^3]. Input build/demos/RoyalBlue54L-Feather/unrouted.kicad\_pcb[^4], output build/scratch/d3/RoyalBlue54L-Feather/routed.kicad\_pcb[^5].
 
-> **110[^6] of 147[^7] connections are open; 25.17[^8] % are routed.**
+> **45[^6] of 147[^7] connections are open; 69.39[^8] % are routed.**
 
-> **After the zones are refilled for the new copper, 119[^9] items are unconnected: the board is not finished. See What is open and why.**
+> **After the zones are refilled for the new copper, 61[^9] items are unconnected: the board is not finished. See What is open and why.**
 
 The route added 0[^10] DRC errors of types routing can cause.
 
@@ -13,16 +13,16 @@ The route added 0[^10] DRC errors of types routing can cause.
 |  | Value | JSON |
 | --- | --- | --- |
 | Connections | 147 | `/connections` |
-| Routed | 37 | `/routed` |
-| Open | 110 | `/open` |
-| Routed, % | 25.17 | `/completion_pct` |
-| Unconnected after zone refill | 119 | `/unconnected_after_refill` |
-| Tracks added | 199 | `/tracks` |
-| Vias added | 23 | `/vias` |
+| Routed | 102 | `/routed` |
+| Open | 45 | `/open` |
+| Routed, % | 69.39 | `/completion_pct` |
+| Unconnected after zone refill | 61 | `/unconnected_after_refill` |
+| Tracks added | 331 | `/tracks` |
+| Vias added | 57 | `/vias` |
 | Winning variant | fast bends, dear vias | `/variant_name` |
 | Lattice pitch, mm | 0.05 | `/pitch_mm` |
-| Search expansions, all variants | 29049979 | `/work_all_variants/total/expansions` |
-| Wall time, s | 169.103 | `/seconds` |
+| Search expansions, all variants | 25017730 | `/work_all_variants/total/expansions` |
+| Wall time, s | 71.651 | `/seconds` |
 
 ## What is open and why
 
@@ -30,8 +30,8 @@ Open connections by cause:
 
 | Cause | Connections | What it means |
 | --- | --- | --- |
-| not\_attempted | 107 | The run ended (work or time) before the router tried it again. |
-| boxed\_in | 3 | Fixed copper (pads, locked tracks, keep-outs) encloses a pad, so no track can leave it on the layers it can use. |
+| not\_attempted | 37 | The run ended (work or time) before the router tried it again. |
+| boxed\_in | 8 | Fixed copper (pads, locked tracks, keep-outs) encloses a pad, so no track can leave it on the layers it can use. |
 
 Rows: `/stuck/unrouted_by_reason/<row>`
 
@@ -47,22 +47,22 @@ Parts with the most open connection ends:
 
 | Part | Open ends |
 | --- | --- |
-| U1 | 29 |
-| U5 | 24 |
-| U2 | 20 |
+| U1 | 25 |
+| U5 | 11 |
 | U6 | 11 |
-| J1 | 8 |
-| U4 | 8 |
-| J3 | 6 |
-| J2 | 5 |
-| SW1 | 4 |
-| D3 | 3 |
-| J5 | 3 |
-| J8 | 3 |
-| L1 | 3 |
-| R2 | 3 |
-| R3 | 3 |
-| SW2 | 3 |
+| J1 | 10 |
+| U2 | 8 |
+| J2 | 7 |
+| R8 | 3 |
+| J3 | 2 |
+| J8 | 2 |
+| C13 | 1 |
+| C14 | 1 |
+| C22 | 1 |
+| C5 | 1 |
+| D3 | 1 |
+| R2 | 1 |
+| R3 | 1 |
 
 Rows: `/stuck/unrouted_by_part/<row>`
 
@@ -70,9 +70,32 @@ Each open connection, with the router's last explanation and the nets whose copp
 
 | Net | From | To | Length, mm | Cause | Why | In the way |
 | --- | --- | --- | --- | --- | --- | --- |
+| Net-(U5-DEC4) | C22 pad 1 | U5 pad 26 | 1.95 | boxed\_in | boxed in (target); escapes/neck-down: boxed in (target) |  |
+| Net-(D3-GK) | D3 pad 3 | U2 pad 26 | 2.852 | boxed\_in | boxed in (target); escapes/neck-down: boxed in (target) |  |
+| Net-(U5-DEC4) | U5 pad 26 | U5 pad 38 | 4.102 | boxed\_in | boxed in; escapes/neck-down: boxed in |  |
+| Net-(J8-~{RESET}) | U5 pad 16 | TP10 pad 1 | 5.713 | boxed\_in | boxed in; escapes/neck-down: boxed in |  |
 | Net-(J8-SWDIO) | U5 pad 19 | J8 pad 2 | 6.259 | boxed\_in | boxed in; escapes/neck-down: boxed in |  |
 | /Debugger/TRG\_~{RESET}\_NRF52 | R8 pad 2 | U5 pad 34 | 7.286 | boxed\_in | boxed in (target); escapes/neck-down: boxed in (target) |  |
-| /Debugger/UART\_RX\_NRF52 | U6 pad 3 | U5 pad 36 | 17.534 | boxed\_in | boxed in (target); escapes/neck-down: out of budget |  |
+| Net-(J8-~{RESET}) | U5 pad 16 | J8 pad 3 | 8.735 | boxed\_in | boxed in; escapes/neck-down: boxed in |  |
+| /Debugger/SWD\_TRG.SWDIO | U1 pad J3 | U6 pad 11 | 10.42 | boxed\_in | boxed in (target); escapes/neck-down: out of budget |  |
+| /Debugger/SWD\_TRG.SWDCLK | U1 pad K3 | U6 pad 10 | 10.521 | not\_attempted |  |  |
+| /Debugger/TRG\_~{RESET}\_NRF52 | R8 pad 2 | U6 pad 5 | 10.685 | not\_attempted |  |  |
+| /Connectors/UART.RX | U1 pad A3 | U6 pad 14 | 10.631 | not\_attempted |  |  |
+| /Debugger/nRF52\_VDD | U6 pad 2 | R8 pad 1 | 10.823 | not\_attempted |  |  |
+| /Connectors/DIG.D11 | U1 pad J4 | SW2 pad 1 | 11.334 | not\_attempted |  |  |
+| /Connectors/UART.TX | U1 pad B2 | U6 pad 13 | 11.385 | not\_attempted |  |  |
+| /Connectors/ENABLE | U2 pad 8 | J2 pad 2 | 12.603 | not\_attempted |  |  |
+| /Connectors/I2C.SCL | U1 pad G8 | J2 pad 11 | 12.985 | not\_attempted |  |  |
+| /Connectors/UART.TX | U1 pad B2 | J1 pad 15 | 13.324 | not\_attempted |  |  |
+| /Connectors/ANALOG.A3 | U1 pad G9 | J1 pad 8 | 13.799 | not\_attempted |  |  |
+| /Connectors/UART.RX | U6 pad 14 | J1 pad 14 | 14.25 | not\_attempted |  |  |
+| /Connectors/DIG.D6 | U1 pad K4 | J2 pad 9 | 14.459 | not\_attempted |  |  |
+| /Connectors/DIG.D9 | U1 pad K5 | J2 pad 8 | 14.849 | not\_attempted |  |  |
+| /Connectors/DIG.D10 | U1 pad K6 | J2 pad 7 | 15.405 | not\_attempted |  |  |
+| /Connectors/ANALOG.A2 | U1 pad F9 | J1 pad 7 | 16.355 | not\_attempted |  |  |
+| /Connectors/ANALOG.A5 | U1 pad B5 | J1 pad 10 | 16.289 | not\_attempted |  |  |
+| /Connectors/DIG.D12 | U1 pad J5 | J2 pad 5 | 17.874 | not\_attempted |  |  |
+| /Debugger/UART\_RX\_NRF52 | U6 pad 3 | U5 pad 36 | 17.534 | not\_attempted |  |  |
 | /Debugger/UART\_TX\_NRF52 | U6 pad 4 | U5 pad 35 | 17.734 | not\_attempted |  |  |
 | /Connectors/ANALOG.A4 | U1 pad B4 | J1 pad 9 | 18.487 | not\_attempted |  |  |
 | /Debugger/USB.VBUS | C5 pad 1 | U3 pad 5 | 18.348 | not\_attempted |  |  |
@@ -92,220 +115,74 @@ Each open connection, with the router's last explanation and the nets whose copp
 | Net-(J6-Pin\_4) | U1 pad E8 | C13 pad 1 | 35.083 | not\_attempted |  |  |
 | /Connectors/I2C.SCL | U1 pad G8 | R2 pad 2 | 36.019 | not\_attempted |  |  |
 | /Connectors/I2C.SDA | U1 pad B3 | R3 pad 2 | 39.105 | not\_attempted |  |  |
-| VDD | R5 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | U1 pad B8 | zone fill | 0 | not\_attempted |  |  |
-| VDD | U1 pad C8 | zone fill | 0 | not\_attempted |  |  |
-| VDD | R7 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | U2 pad 12 | zone fill | 0 | not\_attempted |  |  |
-| VDD | R2 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | C24 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | C1 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | U4 pad 8 | zone fill | 0 | not\_attempted |  |  |
-| VDD | C9 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | U6 pad 15 | zone fill | 0 | not\_attempted |  |  |
-| VDD | R3 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | J5 pad 2 | zone fill | 0 | not\_attempted |  |  |
-| VDD | C12 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VDD | JP1 pad 2 | zone fill | 0 | not\_attempted |  |  |
-| +BATT | J4 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| +BATT | U2 pad 19 | zone fill | 0 | not\_attempted |  |  |
-| +BATT | C11 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VSYS | U2 pad 4 | zone fill | 0 | not\_attempted |  |  |
-| VSYS | U2 pad 20 | zone fill | 0 | not\_attempted |  |  |
-| VSYS | C4 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VSYS | C2 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| VBUS | U5 pad 10 | U5 pad 9 | 0.4 | not\_attempted |  |  |
-| VSYS | C3 pad 1 | zone fill | 0 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U5 pad 40 | C15 pad 1 | 1.126 | not\_attempted |  |  |
-| VBUS | C7 pad 1 | U5 pad 10 | 1.126 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | C10 pad 1 | U5 pad 8 | 1.132 | not\_attempted |  |  |
-| Net-(U5-DEC1) | C19 pad 1 | U5 pad 1 | 1.129 | not\_attempted |  |  |
-| Net-(U5-DECUSB) | C23 pad 1 | U5 pad 11 | 1.148 | not\_attempted |  |  |
-| Net-(U2-VSET2) | U2 pad 16 | R4 pad 1 | 1.173 | not\_attempted |  |  |
-| Net-(JP1-A) | L1 pad 1 | C8 pad 1 | 1.51 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U5 pad 18 | C17 pad 1 | 1.293 | not\_attempted |  |  |
-| Net-(D1-K) | R6 pad 1 | D1 pad 1 | 1.303 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U6 pad 8 | R1 pad 1 | 1.34 | not\_attempted |  |  |
-| /Connectors/I2C.SDA | R3 pad 2 | J5 pad 3 | 1.79 | not\_attempted |  |  |
-| /Connectors/I2C.SCL | R2 pad 2 | J5 pad 4 | 1.809 | not\_attempted |  |  |
-| Net-(J6-Pin\_2) | C14 pad 1 | J6 pad 2 | 1.425 | not\_attempted |  |  |
-| Net-(J6-Pin\_4) | C13 pad 1 | J6 pad 4 | 1.425 | not\_attempted |  |  |
-| VSYS | U2 pad 1 | C3 pad 1 | 1.927 | not\_attempted |  |  |
-| Net-(U5-DEC3) | C21 pad 1 | U5 pad 27 | 1.935 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | C16 pad 1 | U5 pad 30 | 1.78 | not\_attempted |  |  |
-| /nRF54L15/D3\_FLASH | U1 pad H9 | U4 pad 7 | 1.903 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | C25 pad 1 | U6 pad 2 | 1.868 | not\_attempted |  |  |
-| /Debugger/USB.VBUS | U2 pad 21 | C5 pad 1 | 2.436 | not\_attempted |  |  |
-| /Debugger/USB.VBUS | J3 pad A4 | TP5 pad 1 | 3.311 | not\_attempted |  |  |
-| /Connectors/SPI.SCK | U1 pad J9 | U4 pad 6 | 2.267 | not\_attempted |  |  |
-| Net-(D1-A) | U1 pad K7 | D1 pad 2 | 2.676 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | R8 pad 1 | C10 pad 1 | 2.684 | not\_attempted |  |  |
-| Net-(D3-RK) | D3 pad 2 | U2 pad 25 | 2.63 | not\_attempted |  |  |
-| /Debugger/USB.CC2 | J3 pad B5 | TP6 pad 1 | 3.614 | not\_attempted |  |  |
-| VBUS | U2 pad 22 | C6 pad 1 | 3.104 | not\_attempted |  |  |
-| Net-(J8-SWDIO) | U5 pad 19 | TP12 pad 1 | 3.53 | not\_attempted |  |  |
-| /Debugger/SWD\_TRG.SWDCLK | U1 pad K3 | TP3 pad 1 | 3.592 | not\_attempted |  |  |
-| Net-(U2-SW2) | U2 pad 5 | L1 pad 2 | 3.393 | not\_attempted |  |  |
-| Net-(D3-BK) | D3 pad 4 | U2 pad 27 | 3.132 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U6 pad 2 | U6 pad 8 | 3.457 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U5 pad 8 | U5 pad 40 | 3.496 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U5 pad 8 | U5 pad 18 | 3.726 | not\_attempted |  |  |
-| /Debugger/SWD\_TRG.~{RESET} | SW1 pad 2 | SW1 pad 2 | 4.125 | not\_attempted |  |  |
-| /Connectors/DIG.D11 | SW2 pad 1 | SW2 pad 1 | 4.15 | not\_attempted |  |  |
-| /Debugger/USB.VBUS | U3 pad 5 | J3 pad A4 | 4.373 | not\_attempted |  |  |
-| VSYS | C4 pad 1 | J2 pad 3 | 4.783 | not\_attempted |  |  |
-| /Debugger/SWD\_TRG.~{RESET} | U1 pad G2 | TP2 pad 1 | 4.68 | not\_attempted |  |  |
-| /nPM1300/NPM1300.SDA | U1 pad H2 | R7 pad 2 | 4.072 | not\_attempted |  |  |
-| VSYS | D3 pad 1 | U2 pad 1 | 4.081 | not\_attempted |  |  |
-| /nPM1300/NPM1300.SCL | R5 pad 2 | U1 pad J2 | 4.11 | not\_attempted |  |  |
-| /Connectors/SPI.MISO | U1 pad K9 | U4 pad 2 | 4.302 | not\_attempted |  |  |
-| /Connectors/SPI.MOSI | U1 pad J8 | U4 pad 5 | 3.914 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | C15 pad 1 | C16 pad 1 | 4.15 | not\_attempted |  |  |
-| /Debugger/SWD\_TRG.~{RESET} | U6 pad 12 | SW1 pad 2 | 4.367 | not\_attempted |  |  |
-| /Debugger/USB.VBUS | U3 pad 5 | J3 pad A9 | 4.909 | not\_attempted |  |  |
-| /nRF54L15/~{CS}\_FLASH | U1 pad K8 | U4 pad 1 | 4.606 | not\_attempted |  |  |
-| Net-(J8-SWCLK) | U5 pad 20 | TP11 pad 1 | 5.209 | not\_attempted |  |  |
-| Net-(JP1-A) | C8 pad 1 | JP1 pad 1 | 5.341 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | C17 pad 1 | TP9 pad 1 | 5.474 | not\_attempted |  |  |
-| /Connectors/DIG.D11 | SW2 pad 1 | J2 pad 6 | 5.996 | not\_attempted |  |  |
-| /nRF54L15/D2\_FLASH | U1 pad J7 | U4 pad 3 | 5.266 | not\_attempted |  |  |
-| /Debugger/SWD\_TRG.SWDIO | U1 pad J3 | TP1 pad 1 | 6.513 | not\_attempted |  |  |
-| /Connectors/SPI.MISO | U1 pad K9 | J1 pad 13 | 6.378 | not\_attempted |  |  |
-| Net-(J8-SWCLK) | U5 pad 20 | J8 pad 4 | 5.879 | not\_attempted |  |  |
-| Net-(JP1-A) | U2 pad 32 | L1 pad 1 | 6.652 | not\_attempted |  |  |
-| /Connectors/SPI.SCK | U4 pad 6 | J1 pad 11 | 7.223 | not\_attempted |  |  |
-| /Connectors/SPI.MOSI | U1 pad J8 | J1 pad 12 | 7.193 | not\_attempted |  |  |
-| /Connectors/DIG.D5 | U1 pad B6 | J2 pad 10 | 7.206 | not\_attempted |  |  |
-| /Debugger/nRF52\_VDD | U5 pad 30 | J8 pad 1 | 7.445 | not\_attempted |  |  |
-| /Connectors/I2C.SDA | U1 pad B3 | J2 pad 12 | 8.096 | not\_attempted |  |  |
-| VBUS | U2 pad 22 | C7 pad 1 | 7.764 | not\_attempted |  |  |
-| /Debugger/SWD\_TRG.~{RESET} | TP2 pad 1 | U6 pad 12 | 8.787 | not\_attempted |  |  |
 
 Rows: `/stuck/unrouted/<row>`
 
-Unconnected on the board as written, by the DRC after the route (119[^11] items). With copper zones this is the number that counts: the zones are refilled for the new copper first, and a fill the new tracks cut off no longer joins the pads the router counted as joined through it.
+Unconnected on the board as written, by the DRC after the route (61[^11] items). With copper zones this is the number that counts: the zones are refilled for the new copper first, and a fill the new tracks cut off no longer joins the pads the router counted as joined through it.
 
 | Missing connection | From | To | X, mm | Y, mm |
 | --- | --- | --- | --- | --- |
 | Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of C25 \[/Debugger/nRF52\_VDD\] | Pad 1 of C10 \[/Debugger/nRF52\_VDD\] | 153.23 | 101.81 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of C10 \[/Debugger/nRF52\_VDD\] | Pad 1 of C16 \[/Debugger/nRF52\_VDD\] | 140.44 | 107.28 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of C16 \[/Debugger/nRF52\_VDD\] | Pad 1 of R8 \[/Debugger/nRF52\_VDD\] | 134.44 | 111.71 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of R8 \[/Debugger/nRF52\_VDD\] | Pad 8 of U6 \[/Debugger/nRF52\_VDD\] | 143.11 | 107.01 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 8 of U6 \[/Debugger/nRF52\_VDD\] | Pad 1 of C15 \[/Debugger/nRF52\_VDD\] | 154.45 | 106.965 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of C15 \[/Debugger/nRF52\_VDD\] | Pad 1 of R1 \[/Debugger/nRF52\_VDD\] | 138.59 | 111.69 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of R1 \[/Debugger/nRF52\_VDD\] | Pad 1 of C17 \[/Debugger/nRF52\_VDD\] | 155.25 | 108.04 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of C17 \[/Debugger/nRF52\_VDD\] | Pad 8 of U5 \[/Debugger/nRF52\_VDD\] | 135.87 | 104.4 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 8 of U5 \[/Debugger/nRF52\_VDD\] | Pad 18 of U5 \[/Debugger/nRF52\_VDD\] | 139.318 | 107.13 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 18 of U5 \[/Debugger/nRF52\_VDD\] | Pad 30 of U5 \[/Debugger/nRF52\_VDD\] | 135.88 | 105.693 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 30 of U5 \[/Debugger/nRF52\_VDD\] | Pad 40 of U5 \[/Debugger/nRF52\_VDD\] | 134.443 | 109.93 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 40 of U5 \[/Debugger/nRF52\_VDD\] | Pad 1 of TP9 \[/Debugger/nRF52\_VDD\] | 138.68 | 110.568 |
-| Missing connection in net /Debugger/nRF52\_VDD | Pad 1 of TP9 \[/Debugger/nRF52\_VDD\] | Pad 1 of J8 \[/Debugger/nRF52\_VDD\] | 139.1 | 99.98 |
-| Missing connection in net GND | Pad 2 of C25 \[GND\] | Pad H8 of U1 \[GND\] | 154.19 | 101.81 |
-| Missing connection in net GND | Pad H8 of U1 \[GND\] | Pad 2 of U2 \[GND\] | 162.62 | 107.23 |
+| Missing connection in net GND | Pad 2 of C25 \[GND\] | Pad 2 of J4 \[GND\] | 154.19 | 101.81 |
+| Missing connection in net GND | Pad 2 of J4 \[GND\] | Pad A1 of U1 \[GND\] | 135.88 | 101.308 |
+| Missing connection in net GND | Pad A1 of U1 \[GND\] | Pad A9 of U1 \[GND\] | 168.92 | 100.93 |
+| Missing connection in net GND | Pad A9 of U1 \[GND\] | Pad 2 of C10 \[GND\] | 161.72 | 100.93 |
+| Missing connection in net GND | Pad 2 of C10 \[GND\] | Pad 2 of U2 \[GND\] | 140.44 | 108.24 |
 | Missing connection in net GND | Pad 2 of U2 \[GND\] | Pad 6 of U2 \[GND\] | 146.33 | 106.91 |
-| Missing connection in net GND | Pad 6 of U2 \[GND\] | Pad 28 of U2 \[GND\] | 148.33 | 106.91 |
-| Missing connection in net GND | Pad 28 of U2 \[GND\] | Pad 2 of C1 \[GND\] | 145.13 | 104.21 |
-| Missing connection in net GND | Pad 2 of C1 \[GND\] | Pad 4 of U4 \[GND\] | 151.14 | 106.17 |
-| Missing connection in net GND | Pad 4 of U4 \[GND\] | Pad 4 of Y2 \[GND\] | 158.71 | 105.105 |
-| Missing connection in net GND | Pad 4 of Y2 \[GND\] | Pad 2 of C11 \[GND\] | 132.24 | 109.5 |
-| Missing connection in net GND | Pad 2 of C11 \[GND\] | Pad 3 of U3 \[GND\] | 151.595 | 100.59 |
-| Missing connection in net GND | Pad 3 of U3 \[GND\] | Pad 2 of C17 \[GND\] | 127.898 | 105.473 |
-| Missing connection in net VDD | Pad 1 of R5 \[VDD\] | Pad B8 of U1 \[VDD\] | 170.21 | 112.07 |
-| Missing connection in net VDD | Pad B8 of U1 \[VDD\] | Pad C8 of U1 \[VDD\] | 162.62 | 101.83 |
-| Missing connection in net VDD | Pad C8 of U1 \[VDD\] | Pad 1 of R7 \[VDD\] | 162.62 | 102.73 |
-| Missing connection in net VDD | Pad 1 of R7 \[VDD\] | Pad 12 of U2 \[VDD\] | 170.21 | 111.13 |
-| Missing connection in net VDD | Pad 12 of U2 \[VDD\] | Pad 1 of R2 \[VDD\] | 150.03 | 104.71 |
-| Missing connection in net VDD | Pad 1 of R2 \[VDD\] | Pad 1 of C24 \[VDD\] | 127.103 | 101.355 |
-| Missing connection in net VDD | Pad 1 of C24 \[VDD\] | Pad 1 of C1 \[VDD\] | 158.06 | 103.42 |
-| Missing connection in net VDD | Pad 1 of C1 \[VDD\] | Pad 8 of U4 \[VDD\] | 151.14 | 105.21 |
-| Missing connection in net VDD | Pad 8 of U4 \[VDD\] | Pad 1 of C9 \[VDD\] | 160.21 | 107.955 |
-| Missing connection in net VDD | Pad 1 of C9 \[VDD\] | Pad 15 of U6 \[VDD\] | 160.26 | 100.87 |
-| Missing connection in net VDD | Pad 15 of U6 \[VDD\] | Pad 1 of R3 \[VDD\] | 156.995 | 103.67 |
-| Missing connection in net VDD | Pad 1 of R3 \[VDD\] | Pad 2 of J5 \[VDD\] | 128.043 | 101.355 |
-| Missing connection in net VDD | Pad 2 of J5 \[VDD\] | Pad 1 of C12 \[VDD\] | 128.49 | 98.633 |
-| Missing connection in net VDD | Pad 1 of C12 \[VDD\] | Pad 2 of JP1 \[VDD\] | 160.21 | 109.14 |
-| Missing connection in net VDD | Pad 2 of JP1 \[VDD\] | Pad 2 of J1 \[VDD\] | 152.86 | 105.68 |
-| Missing connection in net /nPM1300/NPM1300.SCL | Pad 2 of R5 \[/nPM1300/NPM1300.SCL\] | Pad J2 of U1 \[/nPM1300/NPM1300.SCL\] | 169.19 | 112.07 |
-| Missing connection in net /nPM1300/NPM1300.SCL | Pad J2 of U1 \[/nPM1300/NPM1300.SCL\] | Pad 14 of U2 \[/nPM1300/NPM1300.SCL\] | 168.02 | 108.13 |
-| Missing connection in net +BATT | Pad 1 of J4 \[+BATT\] | Pad 19 of U2 \[+BATT\] | 137.88 | 101.308 |
-| Missing connection in net +BATT | Pad 19 of U2 \[+BATT\] | Pad 1 of C11 \[+BATT\] | 148.33 | 102.01 |
-| Missing connection in net +BATT | Pad 1 of C11 \[+BATT\] | Pad 1 of J2 \[+BATT\] | 150.045 | 100.59 |
-| Missing connection in net /Connectors/I2C.SDA | Pad B3 of U1 \[/Connectors/I2C.SDA\] | Pad 12 of J2 \[/Connectors/I2C.SDA\] | 167.12 | 101.83 |
-| Missing connection in net /Connectors/I2C.SDA | Pad 12 of J2 \[/Connectors/I2C.SDA\] | Pad 2 of R3 \[/Connectors/I2C.SDA\] | 171.17 | 94.82 |
-| Missing connection in net /Connectors/I2C.SDA | Pad 2 of R3 \[/Connectors/I2C.SDA\] | Pad 3 of J5 \[/Connectors/I2C.SDA\] | 128.043 | 100.335 |
+| Missing connection in net GND | Pad 6 of U2 \[GND\] | Pad 18 of U2 \[GND\] | 148.33 | 106.91 |
+| Missing connection in net GND | Pad 18 of U2 \[GND\] | Pad 28 of U2 \[GND\] | 148.83 | 102.01 |
+| Missing connection in net GND | Pad 28 of U2 \[GND\] | Pad 2 of C19 \[GND\] | 145.13 | 104.21 |
+| Missing connection in net GND | Pad 2 of C19 \[GND\] | Pad A1 of J3 \[GND\] | 140.44 | 111.01 |
+| Missing connection in net GND | Pad A1 of J3 \[GND\] | Pad 4 of Y2 \[GND\] | 125.405 | 101.73 |
+| Missing connection in net GND | Pad 4 of Y2 \[GND\] | Pad 2 of C8 \[GND\] | 132.24 | 109.5 |
+| Missing connection in net GND | Pad 2 of C8 \[GND\] | Pad 2 of C15 \[GND\] | 150.37 | 110.155 |
+| Missing connection in net GND | Pad 2 of C15 \[GND\] | Pad 3 of U3 \[GND\] | 139.55 | 111.69 |
+| Missing connection in net GND | Pad 3 of U3 \[GND\] | Pad 2 of C7 \[GND\] | 127.898 | 105.473 |
+| Missing connection in net GND | Pad 2 of C7 \[GND\] | Pad 2 of C17 \[GND\] | 140.44 | 105.46 |
+| Missing connection in net GND | Pad 2 of C17 \[GND\] | Pad 2 of C12 \[GND\] | 134.91 | 104.4 |
+| Missing connection in net /nPM1300/NPM1300.SCL | Pad 2 of R5 \[/nPM1300/NPM1300.SCL\] | Pad 14 of U2 \[/nPM1300/NPM1300.SCL\] | 169.19 | 112.07 |
+| Missing connection in net /Connectors/UART.RX | Pad A3 of U1 \[/Connectors/UART.RX\] | Pad 14 of U6 \[/Connectors/UART.RX\] | 167.12 | 100.93 |
+| Missing connection in net /Connectors/UART.RX | Pad 14 of U6 \[/Connectors/UART.RX\] | Pad 14 of J1 \[/Connectors/UART.RX\] | 156.995 | 104.17 |
+| Missing connection in net /Connectors/UART.TX | Pad B2 of U1 \[/Connectors/UART.TX\] | Pad 13 of U6 \[/Connectors/UART.TX\] | 168.02 | 101.83 |
+| Missing connection in net /Connectors/UART.TX | Pad 13 of U6 \[/Connectors/UART.TX\] | Pad 15 of J1 \[/Connectors/UART.TX\] | 156.995 | 104.67 |
+| Missing connection in net /Connectors/I2C.SDA | Pad B3 of U1 \[/Connectors/I2C.SDA\] | Pad 2 of R3 \[/Connectors/I2C.SDA\] | 167.12 | 101.83 |
 | Missing connection in net /Connectors/ANALOG.A4 | Pad B4 of U1 \[/Connectors/ANALOG.A4\] | Pad 9 of J1 \[/Connectors/ANALOG.A4\] | 166.22 | 101.83 |
-| Missing connection in net /Connectors/DIG.D5 | Pad B6 of U1 \[/Connectors/DIG.D5\] | Pad 10 of J2 \[/Connectors/DIG.D5\] | 164.42 | 101.83 |
+| Missing connection in net /Connectors/ANALOG.A5 | Pad B5 of U1 \[/Connectors/ANALOG.A5\] | Pad 10 of J1 \[/Connectors/ANALOG.A5\] | 165.32 | 101.83 |
 | Missing connection in net Net-(J6-Pin\_2) | Pad D9 of U1 \[Net-(J6-Pin\_2)\] | Pad 2 of J6 \[Net-(J6-Pin\_2)\] | 161.72 | 103.63 |
-| Missing connection in net Net-(J6-Pin\_2) | Pad 2 of J6 \[Net-(J6-Pin\_2)\] | Pad 1 of C14 \[Net-(J6-Pin\_2)\] | 127.31 | 113.28 |
 | Missing connection in net Net-(J6-Pin\_4) | Pad E8 of U1 \[Net-(J6-Pin\_4)\] | Pad 1 of C13 \[Net-(J6-Pin\_4)\] | 162.62 | 104.53 |
-| Missing connection in net Net-(J6-Pin\_4) | Pad 1 of C13 \[Net-(J6-Pin\_4)\] | Pad 4 of J6 \[Net-(J6-Pin\_4)\] | 128.31 | 111.855 |
 | Missing connection in net /Connectors/ANALOG.A0 | Pad E9 of U1 \[/Connectors/ANALOG.A0\] | Pad 5 of J1 \[/Connectors/ANALOG.A0\] | 161.72 | 104.53 |
 | Missing connection in net /Connectors/ANALOG.A1 | Pad F8 of U1 \[/Connectors/ANALOG.A1\] | Pad 6 of J1 \[/Connectors/ANALOG.A1\] | 162.62 | 105.43 |
-| Missing connection in net /Debugger/SWD\_TRG.~{RESET} | Pad G2 of U1 \[/Debugger/SWD\_TRG.~{RESET}\] | Pad 2 of SW1 \[/Debugger/SWD\_TRG.~{RESET}\] | 168.02 | 106.33 |
-| Missing connection in net /Debugger/SWD\_TRG.~{RESET} | Pad 2 of SW1 \[/Debugger/SWD\_TRG.~{RESET}\] | Pad 2 of SW1 \[/Debugger/SWD\_TRG.~{RESET}\] | 157.835 | 109.455 |
-| Missing connection in net /Debugger/SWD\_TRG.~{RESET} | Pad 2 of SW1 \[/Debugger/SWD\_TRG.~{RESET}\] | Pad 12 of U6 \[/Debugger/SWD\_TRG.~{RESET}\] | 153.71 | 109.455 |
-| Missing connection in net /Debugger/SWD\_TRG.~{RESET} | Pad 12 of U6 \[/Debugger/SWD\_TRG.~{RESET}\] | Pad 1 of J1 \[/Debugger/SWD\_TRG.~{RESET}\] | 156.995 | 105.17 |
-| Missing connection in net /Debugger/SWD\_TRG.~{RESET} | Pad 1 of J1 \[/Debugger/SWD\_TRG.~{RESET}\] | Pad 1 of TP2 \[/Debugger/SWD\_TRG.~{RESET}\] | 133.07 | 115.14 |
+| Missing connection in net /Connectors/ANALOG.A2 | Pad F9 of U1 \[/Connectors/ANALOG.A2\] | Pad 7 of J1 \[/Connectors/ANALOG.A2\] | 161.72 | 105.43 |
+| Missing connection in net /Debugger/SWD\_TRG.~{RESET} | Pad G2 of U1 \[/Debugger/SWD\_TRG.~{RESET}\] | Pad 1 of J1 \[/Debugger/SWD\_TRG.~{RESET}\] | 168.02 | 106.33 |
 | Missing connection in net /Connectors/I2C.SCL | Pad G8 of U1 \[/Connectors/I2C.SCL\] | Pad 2 of R2 \[/Connectors/I2C.SCL\] | 162.62 | 106.33 |
-| Missing connection in net /Connectors/I2C.SCL | Pad 2 of R2 \[/Connectors/I2C.SCL\] | Pad 4 of J5 \[/Connectors/I2C.SCL\] | 127.103 | 100.335 |
-| Missing connection in net /nPM1300/NPM1300.SDA | Pad H2 of U1 \[/nPM1300/NPM1300.SDA\] | Pad 2 of R7 \[/nPM1300/NPM1300.SDA\] | 168.02 | 107.23 |
-| Missing connection in net /nPM1300/NPM1300.SDA | Pad 2 of R7 \[/nPM1300/NPM1300.SDA\] | Pad 13 of U2 \[/nPM1300/NPM1300.SDA\] | 169.19 | 111.13 |
-| Missing connection in net /nRF54L15/D3\_FLASH | Pad H9 of U1 \[/nRF54L15/D3\_FLASH\] | Pad 7 of U4 \[/nRF54L15/D3\_FLASH\] | 161.72 | 107.23 |
-| Missing connection in net /Debugger/SWD\_TRG.SWDIO | Pad J3 of U1 \[/Debugger/SWD\_TRG.SWDIO\] | Pad 1 of TP1 \[/Debugger/SWD\_TRG.SWDIO\] | 167.12 | 108.13 |
+| Missing connection in net /Connectors/I2C.SCL | Pad 2 of R2 \[/Connectors/I2C.SCL\] | Pad 11 of J2 \[/Connectors/I2C.SCL\] | 127.103 | 100.335 |
+| Missing connection in net /Connectors/ANALOG.A3 | Pad G9 of U1 \[/Connectors/ANALOG.A3\] | Pad 8 of J1 \[/Connectors/ANALOG.A3\] | 161.72 | 106.33 |
+| Missing connection in net /nPM1300/NPM1300.SDA | Pad H2 of U1 \[/nPM1300/NPM1300.SDA\] | Pad 13 of U2 \[/nPM1300/NPM1300.SDA\] | 168.02 | 107.23 |
+| Missing connection in net /Debugger/SWD\_TRG.SWDIO | Pad J3 of U1 \[/Debugger/SWD\_TRG.SWDIO\] | Pad 11 of U6 \[/Debugger/SWD\_TRG.SWDIO\] | 167.12 | 108.13 |
 | Missing connection in net /Connectors/DIG.D11 | Pad J4 of U1 \[/Connectors/DIG.D11\] | Pad 1 of SW2 \[/Connectors/DIG.D11\] | 166.22 | 108.13 |
-| Missing connection in net /Connectors/DIG.D11 | Pad 1 of SW2 \[/Connectors/DIG.D11\] | Pad 6 of J2 \[/Connectors/DIG.D11\] | 153.685 | 100.505 |
+| Missing connection in net /Connectors/DIG.D12 | Pad J5 of U1 \[/Connectors/DIG.D12\] | Pad 5 of J2 \[/Connectors/DIG.D12\] | 165.32 | 108.13 |
 | Missing connection in net /Connectors/DIG.D13 | Pad J6 of U1 \[/Connectors/DIG.D13\] | Pad 4 of J2 \[/Connectors/DIG.D13\] | 164.42 | 108.13 |
-| Missing connection in net /nRF54L15/D2\_FLASH | Pad J7 of U1 \[/nRF54L15/D2\_FLASH\] | Pad 3 of U4 \[/nRF54L15/D2\_FLASH\] | 163.52 | 108.13 |
-| Missing connection in net /Connectors/SPI.MOSI | Pad J8 of U1 \[/Connectors/SPI.MOSI\] | Pad 5 of U4 \[/Connectors/SPI.MOSI\] | 162.62 | 108.13 |
-| Missing connection in net /Connectors/SPI.MOSI | Pad 5 of U4 \[/Connectors/SPI.MOSI\] | Pad 12 of J1 \[/Connectors/SPI.MOSI\] | 158.71 | 107.955 |
-| Missing connection in net /Connectors/SPI.SCK | Pad J9 of U1 \[/Connectors/SPI.SCK\] | Pad 6 of U4 \[/Connectors/SPI.SCK\] | 161.72 | 108.13 |
-| Missing connection in net /Connectors/SPI.SCK | Pad 6 of U4 \[/Connectors/SPI.SCK\] | Pad 11 of J1 \[/Connectors/SPI.SCK\] | 159.21 | 107.955 |
 | Missing connection in net /nPM1300/NPM1300.INT | Pad K2 of U1 \[/nPM1300/NPM1300.INT\] | Pad 7 of U2 \[/nPM1300/NPM1300.INT\] | 168.02 | 109.03 |
-| Missing connection in net /Debugger/SWD\_TRG.SWDCLK | Pad K3 of U1 \[/Debugger/SWD\_TRG.SWDCLK\] | Pad 1 of TP3 \[/Debugger/SWD\_TRG.SWDCLK\] | 167.12 | 109.03 |
-| Missing connection in net Net-(D1-A) | Pad K7 of U1 \[Net-(D1-A)\] | Pad 2 of D1 \[Net-(D1-A)\] | 163.52 | 109.03 |
-| Missing connection in net /nRF54L15/~{CS}\_FLASH | Pad K8 of U1 \[/nRF54L15/~{CS}\_FLASH\] | Pad 1 of U4 \[/nRF54L15/~{CS}\_FLASH\] | 162.62 | 109.03 |
-| Missing connection in net /Connectors/SPI.MISO | Pad K9 of U1 \[/Connectors/SPI.MISO\] | Pad 2 of U4 \[/Connectors/SPI.MISO\] | 161.72 | 109.03 |
-| Missing connection in net /Connectors/SPI.MISO | Pad 2 of U4 \[/Connectors/SPI.MISO\] | Pad 13 of J1 \[/Connectors/SPI.MISO\] | 159.71 | 105.105 |
-| Missing connection in net Net-(D1-K) | Pad 1 of R6 \[Net-(D1-K)\] | Pad 1 of D1 \[Net-(D1-K)\] | 166.94 | 111.65 |
-| Missing connection in net VSYS | Pad 1 of D3 \[VSYS\] | Pad 1 of U2 \[VSYS\] | 142.48 | 104.58 |
-| Missing connection in net VSYS | Pad 1 of U2 \[VSYS\] | Pad 4 of U2 \[VSYS\] | 145.83 | 106.91 |
-| Missing connection in net VSYS | Pad 4 of U2 \[VSYS\] | Pad 20 of U2 \[VSYS\] | 147.33 | 106.91 |
-| Missing connection in net VSYS | Pad 20 of U2 \[VSYS\] | Pad 1 of C4 \[VSYS\] | 147.83 | 102.01 |
-| Missing connection in net VSYS | Pad 1 of C4 \[VSYS\] | Pad 3 of J2 \[VSYS\] | 148.58 | 99.595 |
-| Missing connection in net VSYS | Pad 3 of J2 \[VSYS\] | Pad 1 of C2 \[VSYS\] | 148.31 | 94.82 |
-| Missing connection in net VSYS | Pad 1 of C2 \[VSYS\] | Pad 1 of C3 \[VSYS\] | 148.085 | 108.67 |
-| Missing connection in net Net-(D3-RK) | Pad 2 of D3 \[Net-(D3-RK)\] | Pad 25 of U2 \[Net-(D3-RK)\] | 143.28 | 104.58 |
-| Missing connection in net Net-(D3-BK) | Pad 4 of D3 \[Net-(D3-BK)\] | Pad 27 of U2 \[Net-(D3-BK)\] | 142.48 | 105.38 |
-| Missing connection in net Net-(U2-SW2) | Pad 5 of U2 \[Net-(U2-SW2)\] | Pad 2 of L1 \[Net-(U2-SW2)\] | 147.83 | 106.91 |
+| Missing connection in net /Debugger/SWD\_TRG.SWDCLK | Pad K3 of U1 \[/Debugger/SWD\_TRG.SWDCLK\] | Pad 10 of U6 \[/Debugger/SWD\_TRG.SWDCLK\] | 167.12 | 109.03 |
+| Missing connection in net /Connectors/DIG.D6 | Pad K4 of U1 \[/Connectors/DIG.D6\] | Pad 9 of J2 \[/Connectors/DIG.D6\] | 166.22 | 109.03 |
+| Missing connection in net /Connectors/DIG.D9 | Pad K5 of U1 \[/Connectors/DIG.D9\] | Pad 8 of J2 \[/Connectors/DIG.D9\] | 165.32 | 109.03 |
+| Missing connection in net /Connectors/DIG.D10 | Pad K6 of U1 \[/Connectors/DIG.D10\] | Pad 7 of J2 \[/Connectors/DIG.D10\] | 164.42 | 109.03 |
+| Missing connection in net /Connectors/ENABLE | Pad 8 of U2 \[/Connectors/ENABLE\] | Pad 2 of J2 \[/Connectors/ENABLE\] | 149.33 | 106.91 |
 | Missing connection in net /Connectors/SHPHLD | Pad 15 of U2 \[/Connectors/SHPHLD\] | Pad 16 of J1 \[/Connectors/SHPHLD\] | 150.03 | 103.21 |
-| Missing connection in net Net-(U2-VSET2) | Pad 16 of U2 \[Net-(U2-VSET2)\] | Pad 1 of R4 \[Net-(U2-VSET2)\] | 150.03 | 102.71 |
 | Missing connection in net /Debugger/USB.VBUS | Pad 21 of U2 \[/Debugger/USB.VBUS\] | Pad A4 of J3 \[/Debugger/USB.VBUS\] | 147.33 | 102.01 |
-| Missing connection in net /Debugger/USB.VBUS | Pad A4 of J3 \[/Debugger/USB.VBUS\] | Pad A9 of J3 \[/Debugger/USB.VBUS\] | 125.405 | 102.53 |
-| Missing connection in net /Debugger/USB.VBUS | Pad A9 of J3 \[/Debugger/USB.VBUS\] | Pad 5 of U3 \[/Debugger/USB.VBUS\] | 125.405 | 107.43 |
-| Missing connection in net /Debugger/USB.VBUS | Pad 5 of U3 \[/Debugger/USB.VBUS\] | Pad 1 of C5 \[/Debugger/USB.VBUS\] | 129.322 | 104.473 |
-| Missing connection in net /Debugger/USB.VBUS | Pad 1 of C5 \[/Debugger/USB.VBUS\] | Pad 1 of TP5 \[/Debugger/USB.VBUS\] | 147.01 | 99.595 |
-| Missing connection in net VBUS | Pad 22 of U2 \[VBUS\] | Pad 1 of C6 \[VBUS\] | 146.83 | 102.01 |
-| Missing connection in net VBUS | Pad 1 of C6 \[VBUS\] | Pad 1 of C7 \[VBUS\] | 144.88 | 99.595 |
-| Missing connection in net VBUS | Pad 1 of C7 \[VBUS\] | Pad 9 of U5 \[VBUS\] | 140.44 | 106.42 |
-| Missing connection in net VBUS | Pad 9 of U5 \[VBUS\] | Pad 10 of U5 \[VBUS\] | 139.318 | 106.73 |
 | Missing connection in net /Debugger/USB.CC1 | Pad 23 of U2 \[/Debugger/USB.CC1\] | Pad A5 of J3 \[/Debugger/USB.CC1\] | 146.33 | 102.01 |
 | Missing connection in net /Debugger/USB.CC2 | Pad 24 of U2 \[/Debugger/USB.CC2\] | Pad B5 of J3 \[/Debugger/USB.CC2\] | 145.83 | 102.01 |
-| Missing connection in net /Debugger/USB.CC2 | Pad B5 of J3 \[/Debugger/USB.CC2\] | Pad 1 of TP6 \[/Debugger/USB.CC2\] | 125.405 | 106.73 |
-| Missing connection in net Net-(JP1-A) | Pad 32 of U2 \[Net-(JP1-A)\] | Pad 1 of C8 \[Net-(JP1-A)\] | 145.13 | 106.21 |
-| Missing connection in net Net-(JP1-A) | Pad 1 of C8 \[Net-(JP1-A)\] | Pad 1 of L1 \[Net-(JP1-A)\] | 150.37 | 111.705 |
-| Missing connection in net Net-(JP1-A) | Pad 1 of L1 \[Net-(JP1-A)\] | Pad 2 of JP1 \[VDD\] | 148.86 | 111.718 |
-| Missing connection in net Net-(U5-DECUSB) | Pad 1 of C23 \[Net-(U5-DECUSB)\] | Pad 11 of U5 \[Net-(U5-DECUSB)\] | 138.92 | 104.57 |
-| Missing connection in net Net-(U5-DEC1) | Pad 1 of C19 \[Net-(U5-DEC1)\] | Pad 1 of U5 \[Net-(U5-DEC1)\] | 140.44 | 110.05 |
-| Missing connection in net /Debugger/TRG\_~{RESET}\_NRF52 | Pad 2 of R8 \[/Debugger/TRG\_~{RESET}\_NRF52\] | Pad 34 of U5 \[/Debugger/TRG\_~{RESET}\_NRF52\] | 143.11 | 108.03 |
+| Missing connection in net Net-(U5-DEC4) | Pad 1 of C22 \[Net-(U5-DEC4)\] | Pad 26 of U5 \[Net-(U5-DEC4)\] | 133.26 | 106.78 |
+| Missing connection in net Net-(U5-DEC4) | Pad 26 of U5 \[Net-(U5-DEC4)\] | Pad 38 of U5 \[Net-(U5-DEC4)\] | 134.443 | 108.33 |
+| Missing connection in net /Debugger/TRG\_~{RESET}\_NRF52 | Pad 2 of R8 \[/Debugger/TRG\_~{RESET}\_NRF52\] | Pad 5 of U6 \[/Debugger/TRG\_~{RESET}\_NRF52\] | 143.11 | 108.03 |
+| Missing connection in net /Debugger/TRG\_~{RESET}\_NRF52 | Pad 5 of U6 \[/Debugger/TRG\_~{RESET}\_NRF52\] | Pad 34 of U5 \[/Debugger/TRG\_~{RESET}\_NRF52\] | 153.405 | 105.17 |
 | Missing connection in net /Debugger/UART\_RX\_NRF52 | Pad 3 of U6 \[/Debugger/UART\_RX\_NRF52\] | Pad 36 of U5 \[/Debugger/UART\_RX\_NRF52\] | 153.405 | 104.17 |
 | Missing connection in net /Debugger/UART\_TX\_NRF52 | Pad 4 of U6 \[/Debugger/UART\_TX\_NRF52\] | Pad 35 of U5 \[/Debugger/UART\_TX\_NRF52\] | 153.405 | 104.67 |
 | Missing connection in net /Debugger/TRG\_SWDIO\_NRF52 | Pad 6 of U6 \[/Debugger/TRG\_SWDIO\_NRF52\] | Pad 33 of U5 \[/Debugger/TRG\_SWDIO\_NRF52\] | 153.405 | 105.67 |
 | Missing connection in net /Debugger/TRG\_SWDCLK\_NRF52 | Pad 7 of U6 \[/Debugger/TRG\_SWDCLK\_NRF52\] | Pad 32 of U5 \[/Debugger/TRG\_SWDCLK\_NRF52\] | 153.405 | 106.17 |
-| Missing connection in net Net-(U5-DEC3) | Pad 1 of C21 \[Net-(U5-DEC3)\] | Pad 27 of U5 \[Net-(U5-DEC3)\] | 132.78 | 107.74 |
-| Missing connection in net Net-(J8-SWDIO) | Pad 19 of U5 \[Net-(J8-SWDIO)\] | Pad 1 of TP12 \[Net-(J8-SWDIO)\] | 135.48 | 105.693 |
-| Missing connection in net Net-(J8-SWDIO) | Pad 1 of TP12 \[Net-(J8-SWDIO)\] | Pad 2 of J8 \[Net-(J8-SWDIO)\] | 136.7 | 102.38 |
-| Missing connection in net Net-(J8-SWCLK) | Pad 20 of U5 \[Net-(J8-SWCLK)\] | Pad 1 of TP11 \[Net-(J8-SWCLK)\] | 135.08 | 105.693 |
-| Missing connection in net Net-(J8-SWCLK) | Pad 1 of TP11 \[Net-(J8-SWCLK)\] | Pad 4 of J8 \[Net-(J8-SWCLK)\] | 139.1 | 102.38 |
+| Missing connection in net Net-(J8-~{RESET}) | Pad 16 of U5 \[Net-(J8-~{RESET})\] | Pad 1 of TP10 \[Net-(J8-~{RESET})\] | 136.68 | 105.693 |
+| Missing connection in net Net-(J8-~{RESET}) | Pad 1 of TP10 \[Net-(J8-~{RESET})\] | Pad 3 of J8 \[Net-(J8-~{RESET})\] | 136.7 | 99.98 |
+| Missing connection in net Net-(J8-SWDIO) | Pad 19 of U5 \[Net-(J8-SWDIO)\] | Pad 2 of J8 \[Net-(J8-SWDIO)\] | 135.48 | 105.693 |
 
 Rows: `/drc/after/unconnected_items/<row>`
 
@@ -348,16 +225,16 @@ No custom rules.
 
 ## Signal-integrity audit
 
-Critical nets: 6[^12] nets, 2[^13] vias, 7[^14] crossings of a reference-plane void.
+Critical nets: 6[^12] nets, 2[^13] vias, 9[^14] crossings of a reference-plane void.
 
 | Net | Tier | Why critical | Vias | Length, mm | Unrouted | Void crossings | Warnings |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Net-(U1-P1.01{slash}XL2) | 1 | Quartz crystal with load capacitors (crystal xin) | 0 | 5.175 | 0 | 0 |  |
-| Net-(U1-P1.00{slash}XL1) | 1 | Quartz crystal with load capacitors (crystal xin) | 0 | 16.968 | 0 | 1 | runs over 1 void of its reference plane (detour 5.84 mm) |
-| Net-(U5-XC1) | 1 | Quartz crystal with load capacitors (crystal xin) | 0 | 5.147 | 0 | 1 | runs over 1 void of its reference plane (detour 4.47 mm) |
-| Net-(U5-XC2) | 1 | Quartz crystal with load capacitors (crystal xout) | 0 | 3.959 | 0 | 1 | runs over 1 void of its reference plane (detour 6.62 mm) |
-| /Debugger/D+ | 2 | USB 2.0 (Full/High Speed) port (usb2 dp) | 1 | 20.534 | 0 | 2 | runs over 2 voids of its reference plane (detour 0.82 mm) |
-| /Debugger/D- | 2 | USB 2.0 (Full/High Speed) port (usb2 dm) | 1 | 24.043 | 0 | 2 | runs over 2 voids of its reference plane (detour 1.02 mm) |
+| Net-(U1-P1.00{slash}XL1) | 1 | Quartz crystal with load capacitors (crystal xin) | 0 | 16.951 | 0 | 1 | runs over 1 void of its reference plane (detour 3.20 mm) |
+| Net-(U5-XC1) | 1 | Quartz crystal with load capacitors (crystal xin) | 0 | 5.147 | 0 | 0 |  |
+| Net-(U5-XC2) | 1 | Quartz crystal with load capacitors (crystal xout) | 0 | 3.959 | 0 | 0 |  |
+| /Debugger/D+ | 2 | USB 2.0 (Full/High Speed) port (usb2 dp) | 1 | 20.534 | 0 | 4 | runs over 4 voids of its reference plane (detour 8.49 mm) |
+| /Debugger/D- | 2 | USB 2.0 (Full/High Speed) port (usb2 dm) | 1 | 24.043 | 0 | 4 | runs over 4 voids of its reference plane (detour 8.59 mm) |
 
 Rows: `/critical_nets/nets/<row>`
 
@@ -369,7 +246,7 @@ Checked with tracemaker drc[^15] (KiCad's violation names); zones refilled first
 | --- | --- | --- |
 | Errors | 38 | 38 |
 | Warnings | 0 | 0 |
-| Unconnected items | 146 | 119 |
+| Unconnected items | 146 | 61 |
 
 Rows: `/drc/before, /drc/after`
 
@@ -388,7 +265,8 @@ Rows: `/drc/types/<row>`
 | --- | --- | --- |
 | Seed | 1 | `/run/seed` |
 | Work budget per variant, expansions | 3000000 | `/run/work_budget` |
-| Time limit, s | 120 | `/run/time_limit_s` |
+| Time limit, s | 3600 | `/run/time_limit_s` |
+| Stopped by the time limit | no | `/time_limited` |
 | Variants | 8 | `/run/variants` |
 | Threads | 4 | `/run/threads` |
 
@@ -396,15 +274,16 @@ Options given (command line and --config):
 
 | Option | Value |
 | --- | --- |
-| --output | bench/results/run-report/RoyalBlue54L-Feather/routed.kicad\_pcb |
+| --output | build/scratch/d3/RoyalBlue54L-Feather/routed.kicad\_pcb |
+| --time | 3600 |
 | --work | 3000000 |
 | --soft-zones | true |
 | --threads | 4 |
 | --view | true |
 | --si-rules | true |
-| --view-port | 8804 |
-| --json | bench/results/run-report/RoyalBlue54L-Feather/summary.json |
-| --report | bench/results/run-report/RoyalBlue54L-Feather/report.html |
+| --view-port | 8841 |
+| --json | build/scratch/d3/RoyalBlue54L-Feather/summary.json |
+| --report | build/scratch/d3/RoyalBlue54L-Feather/report.html |
 
 Rows: `/run/options/<row>`
 
@@ -412,14 +291,14 @@ Portfolio variants:
 
 | Variant | Name | Routed | Seconds |
 | --- | --- | --- | --- |
-| 0 | exact bends, shortest first | 18 | 43.138 |
-| 1 | fast bends, shortest first | 26 | 23.435 |
-| 2 | fast bends, longest first (2x pitch on large boards) | 25 | 99.472 |
-| 3 | fast bends, jittered order, escape plan | 29 | 31.673 |
-| 4 | exact bends, jittered order | 17 | 30.753 |
-| 5 | fast bends, cheap vias (2x pitch on large boards, half pitch on small ones) | 17 | 15.204 |
-| 6 | fast bends, cheap crossings, escape plan | 26 | 121.898 |
-| 7 | fast bends, dear vias | 37 | 20.994 |
+| 0 | exact bends, shortest first | 53 | 7.165 |
+| 1 | fast bends, shortest first | 102 | 15.668 |
+| 2 | fast bends, longest first (2x pitch on large boards) | 25 | 14.131 |
+| 3 | fast bends, jittered order, escape plan | 98 | 19.475 |
+| 4 | exact bends, jittered order | 58 | 8.914 |
+| 5 | fast bends, cheap vias (2x pitch on large boards, half pitch on small ones) | 53 | 11.811 |
+| 6 | fast bends, cheap crossings, escape plan | 101 | 16.027 |
+| 7 | fast bends, dear vias | 102 | 15.915 |
 
 Rows: `/variants/<row>`
 

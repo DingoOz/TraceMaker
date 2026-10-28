@@ -1,0 +1,116 @@
+# KiCad version drift (M19, doc 18 A4, D142): every week, the newest KiCad image on Docker Hub (a release, or a release candidate when one
+# is newer: the road to KiCad 11) upgrades a few boards to its own file format; this build must read and re-write them byte for byte, count the same DRC violations
+# as kicad-cli, and write a routed board that kicad-cli opens with no new error type. A failure is a warning of drift, not of a broken
+# build: it does not gate pull requests.
+name: KiCad drift
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "KiCad images to check, as a JSON list (empty: the newest release and release candidate on Docker Hub)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  resolve:
+    name: Newest KiCad images
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.pick.outputs.images }}
+    steps:
+      # kicad/kicad:nightly is not kept current (it was a 10.0 release candidate in October 2026), so the version tags are read instead.
+      - id: pick
+        env:
+          GIVEN: ${{ github.event.inputs.images }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, re, urllib.request
+          given = os.environ.get("GIVEN", "").strip()
+          if given:
+              print("images=" + json.dumps(json.loads(given)))
+              raise SystemExit
+          url, tags = "https://hub.docker.com/v2/repositories/kicad/kicad/tags?page_size=100&ordering=last_updated", []
+          for _ in range(5):
+              d = json.load(urllib.request.urlopen(url, timeout=60))
+              tags += [t["name"] for t in d["results"]]
+              url = d.get("next")
+              if not url:
+                  break
+          def key(t):
+              m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:-rc(\d+))?", t)
+              return None if not m else (int(m[1]), int(m[2]), int(m[3]), int(m[4]) if m[4] else 1 << 30)
+          vers = sorted((key(t), t) for t in tags if key(t))
+          stable = [t for k, t in vers if k[3] == 1 << 30]
+          pick = [stable[-1]] + ([vers[-1][1]] if vers[-1][1] != stable[-1] else [])
+          print("images=" + json.dumps(["kicad/kicad:" + t for t in pick]))
+          PY
+
+  build:
+    name: Build (CPU only)
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 45
+    steps:
+      - name: Install build dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            g++-15 cmake ninja-build git ca-certificates python3 python3-yaml python3-dev \
+            libboost-dev libboost-system-dev libeigen3-dev nlohmann-json3-dev libcli11-dev \
+            libsqlite3-dev libzstd-dev catch2 pybind11-dev
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          cmake --preset dist
+          cmake --build --preset dist --target tracemaker
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tracemaker
+          path: build/dist/src/app/tracemaker
+
+  drift:
+    name: Drift against ${{ matrix.image }}
+    needs: [resolve, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.resolve.outputs.images) }}
+    container:
+      image: ${{ matrix.image }}
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: tracemaker
+          path: bin
+      - name: KiCad demo boards (pinned, as scripts/fetch_fixtures.sh kicad-demos)
+        run: |
+          chmod +x bin/tracemaker
+          git config --global --add safe.directory '*'
+          git clone --quiet --depth 1 --filter=blob:none --sparse --branch 10.0 https://gitlab.com/kicad/code/kicad.git kicad-src
+          git -C kicad-src sparse-checkout set demos/ecc83 demos/pic_programmer demos/complex_hierarchy
+      - name: Drift check
+        env:
+          HOME: /tmp
+        run: |
+          python3 scripts/kicad_drift.py --kicad-cli kicad-cli --tracemaker bin/tracemaker --out drift \
+            tests/boards/plane_smd/plane_smd.kicad_pcb kicad-src/demos/ecc83/ecc83-pp.kicad_pcb \
+            kicad-src/demos/pic_programmer/pic_programmer.kicad_pcb kicad-src/demos/complex_hierarchy/complex_hierarchy.kicad_pcb
+      - name: Summary
+        if: always()
+        run: cat drift/drift.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: drift-${{ strategy.job-index }}
+          path: drift/

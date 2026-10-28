@@ -1,0 +1,1674 @@
+{
+ "baseline": {
+  "connections": 80,
+  "open": 78,
+  "routed": 2,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/poncho_fpga_fpga-dongle.kicad_pcb",
+ "by_cause": {
+  "channel": 7,
+  "package_fanout": 26,
+  "through_traffic": 45
+ },
+ "by_cause_at_dense_packages": {
+  "channel": 4,
+  "package_fanout": 22,
+  "through_traffic": 37
+ },
+ "by_dense_package": {
+  "U1": {
+   "package_fanout": 2
+  },
+  "U4": {
+   "channel": 4,
+   "package_fanout": 18,
+   "through_traffic": 37
+  },
+  "U5": {
+   "package_fanout": 3,
+   "through_traffic": 3
+  },
+  "U6": {
+   "package_fanout": 4
+  }
+ },
+ "connections": [
+  {
+   "a": "U6.7",
+   "at_dense_package": true,
+   "b": "X1.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U6.7",
+     "part_pads": 48,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "X1.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "Net-(C39-Pad1)",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "R37.1",
+   "at_dense_package": true,
+   "b": "U6.47",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R37.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U6.47",
+     "part_pads": 48,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/P_TxD",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U4.71",
+   "at_dense_package": true,
+   "b": "U1.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.71",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "dense": true,
+     "pad": "U1.1",
+     "part_pads": 8,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/iCE40-SS_B",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U4.68",
+   "at_dense_package": true,
+   "b": "U1.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.68",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "dense": true,
+     "pad": "U1.2",
+     "part_pads": 8,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/iCE40-SDI",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U6.4",
+   "at_dense_package": true,
+   "b": "P7.5",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U6.4",
+     "part_pads": 48,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "P7.5",
+     "part_pads": 6
+    }
+   ],
+   "net": "/DBG_~ISP~",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U5.35",
+   "at_dense_package": true,
+   "b": "U4.55",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.35",
+     "part_pads": 54,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U4.55",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/RAM_A12",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "P2.1",
+   "at_dense_package": true,
+   "b": "U6.40",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "P2.1",
+     "part_pads": 8
+    },
+    {
+     "dense": true,
+     "pad": "U6.40",
+     "part_pads": 48,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/iCE40-CDONE",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U5.44",
+   "at_dense_package": true,
+   "b": "U4.44",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.44",
+     "part_pads": 54,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U4.44",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/RAM_D9",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: out of budget"
+  },
+  {
+   "a": "U4.125",
+   "at_dense_package": true,
+   "b": "P5.22",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.125",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.22",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.122",
+   "at_dense_package": true,
+   "b": "P5.20",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.122",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.20",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.45",
+   "at_dense_package": true,
+   "b": "U4.43",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.45",
+     "part_pads": 54,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U4.43",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/RAM_D10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.120",
+   "at_dense_package": true,
+   "b": "P5.18",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.120",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.18",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.106",
+   "at_dense_package": true,
+   "b": "P4.21",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.106",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P4.21",
+     "part_pads": 40
+    }
+   ],
+   "net": "/I2C_SCL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.138",
+   "at_dense_package": true,
+   "b": "P5.30",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.138",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.30",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_19",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.136",
+   "at_dense_package": true,
+   "b": "P5.28",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.136",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.28",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_17",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.118",
+   "at_dense_package": true,
+   "b": "P5.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.118",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.16",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.134",
+   "at_dense_package": true,
+   "b": "P5.26",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.134",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.26",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.141",
+   "at_dense_package": true,
+   "b": "P5.32",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.141",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.32",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_21",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.143",
+   "at_dense_package": true,
+   "b": "P5.34",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.143",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.34",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_23",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.116",
+   "at_dense_package": true,
+   "b": "P5.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.116",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.14",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P4.19",
+   "at_dense_package": true,
+   "b": "U4.107",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "P4.19",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U4.107",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/I2C_SDA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.117",
+   "at_dense_package": true,
+   "b": "P5.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.117",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.15",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.114",
+   "at_dense_package": true,
+   "b": "P5.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.114",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.12",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.135",
+   "at_dense_package": true,
+   "b": "P5.27",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.135",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.27",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_16",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.139",
+   "at_dense_package": true,
+   "b": "P5.31",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.139",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.31",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_20",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.115",
+   "at_dense_package": true,
+   "b": "P5.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.115",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.13",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.142",
+   "at_dense_package": true,
+   "b": "P5.33",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.142",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.33",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_22",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.112",
+   "at_dense_package": true,
+   "b": "P5.10",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.112",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.10",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.113",
+   "at_dense_package": true,
+   "b": "P5.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.113",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P5.11",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK1_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.2",
+   "at_dense_package": true,
+   "b": "U4.96",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.2",
+     "part_pads": 54,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U4.96",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/RAM_D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.16",
+   "at_dense_package": true,
+   "b": "P6.18",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.16",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.18",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.18",
+   "at_dense_package": true,
+   "b": "P6.20",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.18",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.20",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.20",
+   "at_dense_package": true,
+   "b": "P6.22",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.20",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.22",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.10",
+   "at_dense_package": true,
+   "b": "P6.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.10",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.14",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.12",
+   "at_dense_package": true,
+   "b": "P6.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.12",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.16",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R3.1",
+   "at_dense_package": false,
+   "b": "R40.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R3.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "R40.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/iCE40-CDONE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.22",
+   "at_dense_package": true,
+   "b": "P6.24",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.22",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.24",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_17",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.24",
+   "at_dense_package": true,
+   "b": "P6.26",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.24",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.26",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_19",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.4",
+   "at_dense_package": true,
+   "b": "P6.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.4",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.10",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.51",
+   "at_dense_package": true,
+   "b": "U4.38",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.51",
+     "part_pads": 54,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U4.38",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/RAM_D14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.2",
+   "at_dense_package": true,
+   "b": "P6.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.2",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.8",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.29",
+   "at_dense_package": true,
+   "b": "P6.30",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.29",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.30",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_23",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.17",
+   "at_dense_package": true,
+   "b": "P6.19",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.17",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.19",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.32",
+   "at_dense_package": true,
+   "b": "P6.32",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.32",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.32",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_25",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.11",
+   "at_dense_package": true,
+   "b": "P6.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.11",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.15",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.7",
+   "at_dense_package": true,
+   "b": "P6.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.7",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.11",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.21",
+   "at_dense_package": true,
+   "b": "P6.23",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.21",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.23",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_16",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.34",
+   "at_dense_package": true,
+   "b": "P6.34",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.34",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.34",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_27",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.53",
+   "at_dense_package": true,
+   "b": "U4.37",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.53",
+     "part_pads": 54,
+     "pitch_mm": 0.8
+    },
+    {
+     "dense": true,
+     "pad": "U4.37",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/RAM_D15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R7.2",
+   "at_dense_package": false,
+   "b": "P2.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R7.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P2.4",
+     "part_pads": 8
+    }
+   ],
+   "net": "/iCE40-SDO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.3",
+   "at_dense_package": true,
+   "b": "P6.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.3",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.9",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.25",
+   "at_dense_package": true,
+   "b": "P6.27",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.25",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.27",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_20",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.1",
+   "at_dense_package": true,
+   "b": "P6.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.1",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.7",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.28",
+   "at_dense_package": true,
+   "b": "P6.29",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.28",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.29",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_22",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.31",
+   "at_dense_package": true,
+   "b": "P6.31",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.31",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "P6.31",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FPGA_IO_BANK2_24",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.66",
+   "at_dense_package": true,
+   "b": "R41.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.66",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "R41.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/iCE40-CRESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.20",
+   "at_dense_package": true,
+   "b": "U4.98",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "P3.20",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U4.98",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/SPI_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R40.2",
+   "at_dense_package": false,
+   "b": "P2.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R40.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P2.1",
+     "part_pads": 8
+    }
+   ],
+   "net": "/iCE40-CDONE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.18",
+   "at_dense_package": true,
+   "b": "U4.97",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "P3.18",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U4.97",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/SPI_MISO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R29.2",
+   "at_dense_package": false,
+   "b": "R16.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R29.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R16.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/iCE40-SCK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.29",
+   "at_dense_package": true,
+   "b": "U4.102",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "P3.29",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U4.102",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/GPIO0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P6.3",
+   "at_dense_package": false,
+   "b": "P6.38",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "P6.3",
+     "part_pads": 40
+    },
+    {
+     "pad": "P6.38",
+     "part_pads": 40
+    }
+   ],
+   "net": "+5V",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P5.38",
+   "at_dense_package": false,
+   "b": "P5.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "P5.38",
+     "part_pads": 40
+    },
+    {
+     "pad": "P5.3",
+     "part_pads": 40
+    }
+   ],
+   "net": "+5V",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.21",
+   "at_dense_package": true,
+   "b": "U4.99",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "P3.21",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U4.99",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/SPI_MOSI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.23",
+   "at_dense_package": true,
+   "b": "U4.101",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "P3.23",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U4.101",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "/SPI_CS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.40",
+   "at_dense_package": true,
+   "b": "U3.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.40",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "U3.4",
+     "part_pads": 5
+    }
+   ],
+   "net": "+1V2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.144",
+   "at_dense_package": true,
+   "b": "LED1.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.144",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "LED1.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/LED1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R28.2",
+   "at_dense_package": false,
+   "b": "P2.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R28.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P2.6",
+     "part_pads": 8
+    }
+   ],
+   "net": "/iCE40-SS_B",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.20",
+   "at_dense_package": false,
+   "b": "R36.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "P3.20",
+     "part_pads": 40
+    },
+    {
+     "pad": "R36.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/SPI_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.23",
+   "at_dense_package": false,
+   "b": "R33.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "P3.23",
+     "part_pads": 40
+    },
+    {
+     "pad": "R33.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/SPI_CS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.18",
+   "at_dense_package": false,
+   "b": "R35.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "P3.18",
+     "part_pads": 40
+    },
+    {
+     "pad": "R35.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/SPI_MISO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R34.2",
+   "at_dense_package": false,
+   "b": "P3.21",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R34.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P3.21",
+     "part_pads": 40
+    }
+   ],
+   "net": "/SPI_MOSI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.104",
+   "at_dense_package": true,
+   "b": "R37.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.104",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "R37.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/TxD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D7.1",
+   "at_dense_package": false,
+   "b": "P5.38",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D7.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "P5.38",
+     "part_pads": 40
+    }
+   ],
+   "net": "+5V",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.105",
+   "at_dense_package": true,
+   "b": "R38.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.105",
+     "part_pads": 144,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "R38.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/RxD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P3.29",
+   "at_dense_package": false,
+   "b": "R39.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "P3.29",
+     "part_pads": 40
+    },
+    {
+     "pad": "R39.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/GPIO0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R31.2",
+   "at_dense_package": false,
+   "b": "P4.19",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R31.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P4.19",
+     "part_pads": 40
+    }
+   ],
+   "net": "/I2C_SDA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P4.21",
+   "at_dense_package": false,
+   "b": "R32.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "P4.21",
+     "part_pads": 40
+    },
+    {
+     "pad": "R32.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2C_SCL",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 2,
+ "dense_packages": 5,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

@@ -1,0 +1,2692 @@
+{
+ "c5-base": {
+  "96boards-robomezzi_96boards-robomezzi": {
+   "connections": 282,
+   "routed_by_variant": [
+    274,
+    280,
+    279,
+    280,
+    269,
+    280,
+    280,
+    279
+   ]
+  },
+  "Aleste-520EX_aleste": {
+   "connections": 1616,
+   "routed_by_variant": [
+    887,
+    1176,
+    27,
+    1166,
+    850,
+    1253,
+    1176,
+    1170
+   ]
+  },
+  "CoreOne-xCORE200-Original_CoreOne": {
+   "connections": 807,
+   "routed_by_variant": [
+    580,
+    691,
+    52,
+    713,
+    577,
+    743,
+    747,
+    689
+   ]
+  },
+  "DronPi_dronPi": {
+   "connections": 352,
+   "routed_by_variant": [
+    320,
+    334,
+    320,
+    341,
+    312,
+    334,
+    337,
+    339
+   ]
+  },
+  "ErgodoneWithHole_ErgoDone": {
+   "connections": 356,
+   "routed_by_variant": [
+    332,
+    339,
+    346,
+    344,
+    333,
+    354,
+    339,
+    339
+   ]
+  },
+  "EtherCAT_shield_v1_EtherCAT_shield_v1": {
+   "connections": 272,
+   "routed_by_variant": [
+    220,
+    234,
+    19,
+    232,
+    211,
+    235,
+    238,
+    234
+   ]
+  },
+  "Hardware_Playground_E3_Pcb_rev0.3": {
+   "connections": 341,
+   "routed_by_variant": [
+    285,
+    302,
+    254,
+    306,
+    286,
+    303,
+    315,
+    303
+   ]
+  },
+  "Hardware_Playground_multisensor_cr2032": {
+   "connections": 205,
+   "routed_by_variant": [
+    201,
+    204,
+    204,
+    203,
+    200,
+    203,
+    203,
+    203
+   ]
+  },
+  "Hardware_Playground_sd_wav_pcm5100": {
+   "connections": 396,
+   "routed_by_variant": [
+    386,
+    389,
+    393,
+    390,
+    385,
+    386,
+    392,
+    392
+   ]
+  },
+  "Hardware_Playground_serial_gw_ATMEGA328P": {
+   "connections": 172,
+   "routed_by_variant": [
+    166,
+    170,
+    170,
+    170,
+    163,
+    171,
+    169,
+    170
+   ]
+  },
+  "KiCad-Library_Teensy_test_layout": {
+   "connections": 1268,
+   "routed_by_variant": [
+    999,
+    1195,
+    145,
+    1189,
+    1006,
+    1238,
+    1202,
+    1193
+   ]
+  },
+  "LeeChee_1800": {
+   "connections": 1160,
+   "routed_by_variant": [
+    813,
+    1087,
+    45,
+    1108,
+    765,
+    1114,
+    1091,
+    1076
+   ]
+  },
+  "MicroMaple_MicroMaple": {
+   "connections": 111,
+   "routed_by_variant": [
+    92,
+    92,
+    86,
+    97,
+    90,
+    100,
+    94,
+    98
+   ]
+  },
+  "MonApollo_analog-board": {
+   "connections": 1190,
+   "routed_by_variant": [
+    855,
+    1056,
+    120,
+    1068,
+    851,
+    1094,
+    1070,
+    1052
+   ]
+  },
+  "P8000_WDC_Emulator_P8000_WDC_Emulator": {
+   "connections": 361,
+   "routed_by_variant": [
+    288,
+    315,
+    22,
+    312,
+    288,
+    324,
+    315,
+    315
+   ]
+  },
+  "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0": {
+   "connections": 188,
+   "routed_by_variant": [
+    149,
+    150,
+    143,
+    151,
+    145,
+    150,
+    153,
+    150
+   ]
+  },
+  "TCKB_Kicad_TCKB": {
+   "connections": 597,
+   "routed_by_variant": [
+    451,
+    546,
+    7,
+    551,
+    418,
+    554,
+    549,
+    545
+   ]
+  },
+  "dorkyboard_keyboard": {
+   "connections": 830,
+   "routed_by_variant": [
+    745,
+    806,
+    77,
+    809,
+    717,
+    810,
+    809,
+    805
+   ]
+  },
+  "fifogfx_c64cart": {
+   "connections": 104,
+   "routed_by_variant": [
+    41,
+    59,
+    62,
+    60,
+    45,
+    46,
+    59,
+    58
+   ]
+  },
+  "front-end-modules_LimeSDR_Sony": {
+   "connections": 814,
+   "routed_by_variant": [
+    759,
+    781,
+    806,
+    805,
+    753,
+    798,
+    803,
+    781
+   ]
+  },
+  "kitspace_OtterPill": {
+   "connections": 137,
+   "routed_by_variant": [
+    120,
+    120,
+    117,
+    119,
+    119,
+    122,
+    120,
+    120
+   ]
+  },
+  "kitspace_ardfpga": {
+   "connections": 214,
+   "routed_by_variant": [
+    138,
+    177,
+    35,
+    199,
+    133,
+    175,
+    193,
+    176
+   ]
+  },
+  "kitspace_d20_tri_r0.3": {
+   "connections": 553,
+   "routed_by_variant": [
+    193,
+    357,
+    134,
+    403,
+    234,
+    369,
+    344,
+    370
+   ]
+  },
+  "kitspace_teensy-fx": {
+   "connections": 196,
+   "routed_by_variant": [
+    147,
+    171,
+    16,
+    174,
+    125,
+    172,
+    173,
+    171
+   ]
+  },
+  "kitspace_test-jig": {
+   "connections": 292,
+   "routed_by_variant": [
+    198,
+    258,
+    255,
+    260,
+    209,
+    257,
+    260,
+    255
+   ]
+  },
+  "mechkeys_58r-mxalps": {
+   "connections": 361,
+   "routed_by_variant": [
+    318,
+    347,
+    309,
+    345,
+    296,
+    346,
+    349,
+    345
+   ]
+  },
+  "mechkeys_LFK78": {
+   "connections": 893,
+   "routed_by_variant": [
+    637,
+    810,
+    295,
+    816,
+    599,
+    848,
+    815,
+    806
+   ]
+  },
+  "memsarray_mems_modules": {
+   "connections": 10,
+   "routed_by_variant": [
+    7,
+    7,
+    7,
+    7,
+    7,
+    9,
+    7,
+    7
+   ]
+  },
+  "mini_mass_prog_bench_prog_rig": {
+   "connections": 995,
+   "routed_by_variant": [
+    565,
+    888,
+    6,
+    923,
+    617,
+    969,
+    922,
+    862
+   ]
+  },
+  "motor-high-current-sensors_CurrentSensorPCB_line": {
+   "connections": 472,
+   "routed_by_variant": [
+    427,
+    452,
+    421,
+    452,
+    437,
+    455,
+    452,
+    453
+   ]
+  },
+  "poncho_fpga_fpga-dongle": {
+   "connections": 413,
+   "routed_by_variant": [
+    278,
+    318,
+    23,
+    333,
+    279,
+    321,
+    320,
+    320
+   ]
+  },
+  "rvi_v2x_hardware_V2X": {
+   "connections": 479,
+   "routed_by_variant": [
+    397,
+    451,
+    377,
+    447,
+    397,
+    448,
+    448,
+    448
+   ]
+  },
+  "zx-sizif-512-ext_sizif512ext": {
+   "connections": 498,
+   "routed_by_variant": [
+    273,
+    398,
+    108,
+    393,
+    272,
+    429,
+    396,
+    389
+   ]
+  }
+ },
+ "c5-crowdpads": {
+  "96boards-robomezzi_96boards-robomezzi": {
+   "connections": 282,
+   "routed_by_variant": [
+    274,
+    280,
+    280,
+    280,
+    272,
+    280,
+    280,
+    280
+   ]
+  },
+  "Aleste-520EX_aleste": {
+   "connections": 1616,
+   "routed_by_variant": [
+    893,
+    1191,
+    27,
+    1192,
+    856,
+    1264,
+    1191,
+    1189
+   ]
+  },
+  "CoreOne-xCORE200-Original_CoreOne": {
+   "connections": 807,
+   "routed_by_variant": [
+    723,
+    778,
+    734,
+    790,
+    720,
+    779,
+    787,
+    770
+   ]
+  },
+  "DronPi_dronPi": {
+   "connections": 352,
+   "routed_by_variant": [
+    325,
+    341,
+    338,
+    341,
+    330,
+    335,
+    341,
+    335
+   ]
+  },
+  "ErgodoneWithHole_ErgoDone": {
+   "connections": 356,
+   "routed_by_variant": [
+    333,
+    352,
+    335,
+    353,
+    336,
+    353,
+    352,
+    353
+   ]
+  },
+  "EtherCAT_shield_v1_EtherCAT_shield_v1": {
+   "connections": 272,
+   "routed_by_variant": [
+    238,
+    239,
+    228,
+    246,
+    238,
+    239,
+    245,
+    239
+   ]
+  },
+  "Hardware_Playground_E3_Pcb_rev0.3": {
+   "connections": 341,
+   "routed_by_variant": [
+    280,
+    302,
+    257,
+    309,
+    284,
+    302,
+    309,
+    303
+   ]
+  },
+  "Hardware_Playground_multisensor_cr2032": {
+   "connections": 205,
+   "routed_by_variant": [
+    200,
+    205,
+    204,
+    203,
+    200,
+    204,
+    203,
+    205
+   ]
+  },
+  "Hardware_Playground_sd_wav_pcm5100": {
+   "connections": 396,
+   "routed_by_variant": [
+    388,
+    388,
+    393,
+    394,
+    385,
+    389,
+    388,
+    392
+   ]
+  },
+  "Hardware_Playground_serial_gw_ATMEGA328P": {
+   "connections": 172,
+   "routed_by_variant": [
+    164,
+    169,
+    167,
+    170,
+    164,
+    168,
+    171,
+    170
+   ]
+  },
+  "KiCad-Library_Teensy_test_layout": {
+   "connections": 1268,
+   "routed_by_variant": [
+    1026,
+    1196,
+    1108,
+    1175,
+    1014,
+    1236,
+    1214,
+    1191
+   ]
+  },
+  "LeeChee_1800": {
+   "connections": 1160,
+   "routed_by_variant": [
+    891,
+    1079,
+    95,
+    1126,
+    842,
+    1117,
+    1101,
+    1086
+   ]
+  },
+  "MicroMaple_MicroMaple": {
+   "connections": 111,
+   "routed_by_variant": [
+    87,
+    96,
+    88,
+    95,
+    90,
+    101,
+    94,
+    94
+   ]
+  },
+  "MonApollo_analog-board": {
+   "connections": 1190,
+   "routed_by_variant": [
+    886,
+    1092,
+    315,
+    1087,
+    909,
+    1108,
+    1091,
+    1083
+   ]
+  },
+  "P8000_WDC_Emulator_P8000_WDC_Emulator": {
+   "connections": 361,
+   "routed_by_variant": [
+    291,
+    321,
+    23,
+    311,
+    290,
+    321,
+    321,
+    323
+   ]
+  },
+  "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0": {
+   "connections": 188,
+   "routed_by_variant": [
+    136,
+    150,
+    144,
+    141,
+    138,
+    150,
+    150,
+    153
+   ]
+  },
+  "TCKB_Kicad_TCKB": {
+   "connections": 597,
+   "routed_by_variant": [
+    528,
+    566,
+    528,
+    580,
+    522,
+    561,
+    575,
+    571
+   ]
+  },
+  "dorkyboard_keyboard": {
+   "connections": 830,
+   "routed_by_variant": [
+    748,
+    809,
+    456,
+    812,
+    731,
+    815,
+    812,
+    807
+   ]
+  },
+  "fifogfx_c64cart": {
+   "connections": 104,
+   "routed_by_variant": [
+    57,
+    59,
+    64,
+    61,
+    52,
+    63,
+    59,
+    60
+   ]
+  },
+  "front-end-modules_LimeSDR_Sony": {
+   "connections": 814,
+   "routed_by_variant": [
+    758,
+    797,
+    784,
+    802,
+    769,
+    801,
+    803,
+    797
+   ]
+  },
+  "kitspace_OtterPill": {
+   "connections": 137,
+   "routed_by_variant": [
+    121,
+    122,
+    118,
+    120,
+    119,
+    122,
+    120,
+    123
+   ]
+  },
+  "kitspace_ardfpga": {
+   "connections": 214,
+   "routed_by_variant": [
+    172,
+    193,
+    168,
+    203,
+    160,
+    192,
+    203,
+    196
+   ]
+  },
+  "kitspace_d20_tri_r0.3": {
+   "connections": 553,
+   "routed_by_variant": [
+    294,
+    396,
+    173,
+    400,
+    265,
+    402,
+    385,
+    388
+   ]
+  },
+  "kitspace_teensy-fx": {
+   "connections": 196,
+   "routed_by_variant": [
+    173,
+    183,
+    178,
+    185,
+    172,
+    183,
+    185,
+    182
+   ]
+  },
+  "kitspace_test-jig": {
+   "connections": 292,
+   "routed_by_variant": [
+    245,
+    260,
+    260,
+    260,
+    244,
+    259,
+    260,
+    260
+   ]
+  },
+  "mechkeys_58r-mxalps": {
+   "connections": 361,
+   "routed_by_variant": [
+    334,
+    345,
+    305,
+    346,
+    331,
+    350,
+    347,
+    345
+   ]
+  },
+  "mechkeys_LFK78": {
+   "connections": 893,
+   "routed_by_variant": [
+    649,
+    811,
+    433,
+    824,
+    635,
+    845,
+    821,
+    812
+   ]
+  },
+  "memsarray_mems_modules": {
+   "connections": 10,
+   "routed_by_variant": [
+    7,
+    7,
+    7,
+    7,
+    7,
+    9,
+    7,
+    7
+   ]
+  },
+  "mini_mass_prog_bench_prog_rig": {
+   "connections": 995,
+   "routed_by_variant": [
+    704,
+    973,
+    6,
+    976,
+    720,
+    974,
+    981,
+    970
+   ]
+  },
+  "motor-high-current-sensors_CurrentSensorPCB_line": {
+   "connections": 472,
+   "routed_by_variant": [
+    431,
+    454,
+    424,
+    457,
+    444,
+    461,
+    461,
+    454
+   ]
+  },
+  "poncho_fpga_fpga-dongle": {
+   "connections": 413,
+   "routed_by_variant": [
+    312,
+    372,
+    44,
+    356,
+    305,
+    363,
+    370,
+    367
+   ]
+  },
+  "rvi_v2x_hardware_V2X": {
+   "connections": 479,
+   "routed_by_variant": [
+    413,
+    451,
+    381,
+    448,
+    413,
+    453,
+    452,
+    450
+   ]
+  },
+  "zx-sizif-512-ext_sizif512ext": {
+   "connections": 498,
+   "routed_by_variant": [
+    309,
+    416,
+    159,
+    404,
+    314,
+    425,
+    414,
+    421
+   ]
+  }
+ },
+ "c5c-base": {
+  "APM-RPi-Shield_APM-RPi-Shield": {
+   "connections": 125,
+   "routed_by_variant": [
+    120,
+    125,
+    115,
+    125,
+    120,
+    123,
+    125,
+    125
+   ]
+  },
+  "AmpOne_dev-AmpOne": {
+   "connections": 321,
+   "routed_by_variant": [
+    257,
+    315,
+    297,
+    321,
+    272,
+    315,
+    319,
+    317
+   ]
+  },
+  "Apple-M0110-BT_Apple M0110": {
+   "connections": 224,
+   "routed_by_variant": [
+    213,
+    224,
+    215,
+    224,
+    214,
+    224,
+    224,
+    224
+   ]
+  },
+  "BUF-DiffToSE-ADAU1966_BUF-DiffToSE-ADAU1966": {
+   "connections": 307,
+   "routed_by_variant": [
+    307,
+    307,
+    307,
+    307,
+    307,
+    307,
+    307,
+    307
+   ]
+  },
+  "Biscay_Blueeye_sipm": {
+   "connections": 306,
+   "routed_by_variant": [
+    305,
+    306,
+    301,
+    306,
+    306,
+    306,
+    306,
+    306
+   ]
+  },
+  "DSP-ADAU1452_DSP-ADAU1452": {
+   "connections": 742,
+   "routed_by_variant": [
+    739,
+    742,
+    738,
+    742,
+    733,
+    742,
+    742,
+    742
+   ]
+  },
+  "EUC-VESC_electronics_sept": {
+   "connections": 760,
+   "routed_by_variant": [
+    716,
+    753,
+    4,
+    749,
+    695,
+    753,
+    753,
+    753
+   ]
+  },
+  "Hardware_Playground_heater_actuator_node": {
+   "connections": 1039,
+   "routed_by_variant": [
+    1036,
+    1039,
+    1038,
+    1039,
+    1037,
+    1039,
+    1039,
+    1039
+   ]
+  },
+  "Hardware_Playground_usb_shield": {
+   "connections": 211,
+   "routed_by_variant": [
+    211,
+    211,
+    211,
+    211,
+    211,
+    211,
+    211,
+    211
+   ]
+  },
+  "Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4": {
+   "connections": 368,
+   "routed_by_variant": [
+    368,
+    368,
+    368,
+    368,
+    368,
+    368,
+    368,
+    368
+   ]
+  },
+  "Horticulture_Light_EQ_3-Band_light": {
+   "connections": 422,
+   "routed_by_variant": [
+    396,
+    407,
+    422,
+    414,
+    395,
+    422,
+    407,
+    399
+   ]
+  },
+  "Hypfer-RGB-W-LED-Controller_led_strip_controller": {
+   "connections": 74,
+   "routed_by_variant": [
+    74,
+    74,
+    74,
+    74,
+    69,
+    74,
+    74,
+    74
+   ]
+  },
+  "Keyboard_PCB_Keyboard": {
+   "connections": 534,
+   "routed_by_variant": [
+    446,
+    504,
+    45,
+    505,
+    446,
+    523,
+    503,
+    503
+   ]
+  },
+  "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1": {
+   "connections": 10,
+   "routed_by_variant": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ]
+  },
+  "Microdox-PCB_Microdox": {
+   "connections": 223,
+   "routed_by_variant": [
+    215,
+    223,
+    214,
+    223,
+    215,
+    223,
+    223,
+    223
+   ]
+  },
+  "Microdox-PCB_Microdox-topMCU": {
+   "connections": 216,
+   "routed_by_variant": [
+    209,
+    216,
+    210,
+    216,
+    209,
+    216,
+    216,
+    216
+   ]
+  },
+  "NavigationThing_NavigationThing": {
+   "connections": 90,
+   "routed_by_variant": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ]
+  },
+  "PCB_small_halogen_replacement": {
+   "connections": 52,
+   "routed_by_variant": [
+    52,
+    52,
+    52,
+    52,
+    52,
+    52,
+    52,
+    52
+   ]
+  },
+  "Paperino_HW_paperino_breakout": {
+   "connections": 11,
+   "routed_by_variant": [
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11
+   ]
+  },
+  "ProtoHead_v4_Protohead_v4_FAB_rc1": {
+   "connections": 34,
+   "routed_by_variant": [
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34
+   ]
+  },
+  "Prototyping_Workshop_Prototyping_PCB": {
+   "connections": 80,
+   "routed_by_variant": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ]
+  },
+  "Radio-FM-TEA5767_radio tea5767": {
+   "connections": 83,
+   "routed_by_variant": [
+    83,
+    83,
+    83,
+    83,
+    83,
+    83,
+    83,
+    83
+   ]
+  },
+  "TOBS_HybridChargeController": {
+   "connections": 210,
+   "routed_by_variant": [
+    178,
+    210,
+    210,
+    210,
+    185,
+    210,
+    210,
+    210
+   ]
+  },
+  "TPS63001-Breakout_TPS63001 Breakout 25x25": {
+   "connections": 26,
+   "routed_by_variant": [
+    26,
+    26,
+    26,
+    26,
+    26,
+    26,
+    26,
+    26
+   ]
+  },
+  "TripleDelay2399_TripleDelay2399": {
+   "connections": 256,
+   "routed_by_variant": [
+    256,
+    256,
+    256,
+    256,
+    256,
+    256,
+    256,
+    256
+   ]
+  },
+  "WemosLoraTracker_wemosGPSrfm": {
+   "connections": 53,
+   "routed_by_variant": [
+    53,
+    53,
+    53,
+    53,
+    53,
+    53,
+    53,
+    53
+   ]
+  },
+  "avr_ledprojector_avr_ledprojection-0402": {
+   "connections": 176,
+   "routed_by_variant": [
+    171,
+    175,
+    175,
+    175,
+    172,
+    173,
+    175,
+    174
+   ]
+  },
+  "badge2016_Badge_init": {
+   "connections": 76,
+   "routed_by_variant": [
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76
+   ]
+  },
+  "bumps_bumps": {
+   "connections": 330,
+   "routed_by_variant": [
+    321,
+    328,
+    320,
+    330,
+    321,
+    327,
+    328,
+    328
+   ]
+  },
+  "cat-trainer_teensy_base_pcb": {
+   "connections": 67,
+   "routed_by_variant": [
+    66,
+    67,
+    67,
+    67,
+    66,
+    67,
+    67,
+    67
+   ]
+  },
+  "digital_clock_led_clock_3_and_4_digit": {
+   "connections": 253,
+   "routed_by_variant": [
+    246,
+    253,
+    223,
+    253,
+    244,
+    253,
+    253,
+    253
+   ]
+  },
+  "draco_draco": {
+   "connections": 418,
+   "routed_by_variant": [
+    349,
+    404,
+    388,
+    418,
+    362,
+    403,
+    407,
+    403
+   ]
+  },
+  "espeverywhere_espeverywhere": {
+   "connections": 84,
+   "routed_by_variant": [
+    84,
+    84,
+    84,
+    84,
+    82,
+    84,
+    84,
+    84
+   ]
+  },
+  "gamelights_leds": {
+   "connections": 30,
+   "routed_by_variant": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30
+   ]
+  },
+  "jadonk_PocketBone": {
+   "connections": 202,
+   "routed_by_variant": [
+    190,
+    202,
+    189,
+    202,
+    190,
+    202,
+    202,
+    202
+   ]
+  },
+  "kitspace_40-channel-hv-switching-board": {
+   "connections": 604,
+   "routed_by_variant": [
+    502,
+    576,
+    98,
+    589,
+    511,
+    581,
+    598,
+    581
+   ]
+  },
+  "kitspace_BalthazarPSU3": {
+   "connections": 204,
+   "routed_by_variant": [
+    204,
+    204,
+    204,
+    204,
+    204,
+    204,
+    204,
+    204
+   ]
+  },
+  "kitspace_PSLab": {
+   "connections": 339,
+   "routed_by_variant": [
+    329,
+    339,
+    330,
+    339,
+    325,
+    332,
+    339,
+    339
+   ]
+  },
+  "kitspace_USBI2C01": {
+   "connections": 73,
+   "routed_by_variant": [
+    67,
+    72,
+    72,
+    72,
+    68,
+    68,
+    72,
+    73
+   ]
+  },
+  "kitspace_dropbot_control_board": {
+   "connections": 307,
+   "routed_by_variant": [
+    270,
+    293,
+    300,
+    299,
+    279,
+    305,
+    306,
+    293
+   ]
+  },
+  "kitspace_sympetrum-v2%20FF1.1": {
+   "connections": 146,
+   "routed_by_variant": [
+    118,
+    141,
+    146,
+    138,
+    118,
+    140,
+    138,
+    141
+   ]
+  },
+  "kitspace_sympetrum-v2%20NFF1.1": {
+   "connections": 115,
+   "routed_by_variant": [
+    113,
+    115,
+    115,
+    115,
+    115,
+    115,
+    115,
+    115
+   ]
+  },
+  "m2-electronics_m2fc": {
+   "connections": 724,
+   "routed_by_variant": [
+    603,
+    702,
+    688,
+    715,
+    569,
+    703,
+    712,
+    708
+   ]
+  },
+  "mechkeys_MF68+10": {
+   "connections": 415,
+   "routed_by_variant": [
+    297,
+    357,
+    281,
+    354,
+    269,
+    405,
+    358,
+    349
+   ]
+  },
+  "memsarray_mems_array": {
+   "connections": 245,
+   "routed_by_variant": [
+    156,
+    226,
+    235,
+    224,
+    158,
+    231,
+    226,
+    221
+   ]
+  },
+  "motor-3xdrv8833-hw_ver1": {
+   "connections": 195,
+   "routed_by_variant": [
+    166,
+    180,
+    174,
+    179,
+    168,
+    179,
+    181,
+    180
+   ]
+  },
+  "newer-motor-controllers_busparts": {
+   "connections": 316,
+   "routed_by_variant": [
+    309,
+    316,
+    316,
+    316,
+    308,
+    316,
+    316,
+    316
+   ]
+  },
+  "newer-motor-controllers_si31-3": {
+   "connections": 316,
+   "routed_by_variant": [
+    310,
+    316,
+    316,
+    316,
+    309,
+    316,
+    316,
+    316
+   ]
+  },
+  "opendous_Upconverter": {
+   "connections": 813,
+   "routed_by_variant": [
+    813,
+    813,
+    813,
+    813,
+    813,
+    813,
+    813,
+    813
+   ]
+  },
+  "ourglass__autosave-watch-v4": {
+   "connections": 134,
+   "routed_by_variant": [
+    133,
+    134,
+    134,
+    134,
+    127,
+    134,
+    134,
+    131
+   ]
+  },
+  "perfplusplus_Ard-perf++": {
+   "connections": 886,
+   "routed_by_variant": [
+    886,
+    886,
+    886,
+    886,
+    886,
+    886,
+    886,
+    886
+   ]
+  },
+  "retroreflectors_SALSAFLOCK": {
+   "connections": 40,
+   "routed_by_variant": [
+    36,
+    38,
+    36,
+    38,
+    38,
+    40,
+    38,
+    36
+   ]
+  },
+  "royer_royer": {
+   "connections": 46,
+   "routed_by_variant": [
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46
+   ]
+  },
+  "rxadc_14_rxadc_14": {
+   "connections": 124,
+   "routed_by_variant": [
+    115,
+    124,
+    120,
+    124,
+    118,
+    122,
+    124,
+    124
+   ]
+  },
+  "scimpy_amp": {
+   "connections": 90,
+   "routed_by_variant": [
+    90,
+    90,
+    88,
+    90,
+    90,
+    90,
+    90,
+    90
+   ]
+  },
+  "tiny-8088_Computer": {
+   "connections": 284,
+   "routed_by_variant": [
+    220,
+    261,
+    241,
+    265,
+    212,
+    284,
+    261,
+    257
+   ]
+  },
+  "wavegen_wavegen": {
+   "connections": 140,
+   "routed_by_variant": [
+    114,
+    131,
+    129,
+    140,
+    121,
+    131,
+    132,
+    129
+   ]
+  },
+  "wordclock_ledboard2": {
+   "connections": 310,
+   "routed_by_variant": [
+    310,
+    310,
+    310,
+    310,
+    310,
+    310,
+    310,
+    310
+   ]
+  },
+  "yamsek.kicad_i2c_bridge_primary": {
+   "connections": 34,
+   "routed_by_variant": [
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34
+   ]
+  }
+ },
+ "c5c-crowded": {
+  "APM-RPi-Shield_APM-RPi-Shield": {
+   "connections": 125,
+   "routed_by_variant": [
+    123,
+    125,
+    115,
+    125,
+    120,
+    123,
+    125,
+    125
+   ]
+  },
+  "AmpOne_dev-AmpOne": {
+   "connections": 321,
+   "routed_by_variant": [
+    312,
+    320,
+    297,
+    320,
+    313,
+    320,
+    319,
+    318
+   ]
+  },
+  "Apple-M0110-BT_Apple M0110": {
+   "connections": 224,
+   "routed_by_variant": [
+    214,
+    224,
+    215,
+    224,
+    214,
+    224,
+    224,
+    224
+   ]
+  },
+  "BUF-DiffToSE-ADAU1966_BUF-DiffToSE-ADAU1966": {
+   "connections": 307,
+   "routed_by_variant": [
+    307,
+    307,
+    307,
+    307,
+    307,
+    307,
+    307,
+    307
+   ]
+  },
+  "Biscay_Blueeye_sipm": {
+   "connections": 306,
+   "routed_by_variant": [
+    306,
+    306,
+    305,
+    306,
+    306,
+    306,
+    306,
+    306
+   ]
+  },
+  "DSP-ADAU1452_DSP-ADAU1452": {
+   "connections": 742,
+   "routed_by_variant": [
+    742,
+    742,
+    742,
+    742,
+    742,
+    742,
+    742,
+    742
+   ]
+  },
+  "EUC-VESC_electronics_sept": {
+   "connections": 760,
+   "routed_by_variant": [
+    743,
+    760,
+    7,
+    759,
+    739,
+    755,
+    759,
+    760
+   ]
+  },
+  "Hardware_Playground_heater_actuator_node": {
+   "connections": 1039,
+   "routed_by_variant": [
+    1039,
+    1039,
+    1039,
+    1039,
+    1038,
+    1038,
+    1039,
+    1039
+   ]
+  },
+  "Hardware_Playground_usb_shield": {
+   "connections": 211,
+   "routed_by_variant": [
+    211,
+    211,
+    211,
+    211,
+    211,
+    211,
+    211,
+    211
+   ]
+  },
+  "Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4": {
+   "connections": 368,
+   "routed_by_variant": [
+    368,
+    368,
+    368,
+    368,
+    368,
+    368,
+    368,
+    368
+   ]
+  },
+  "Horticulture_Light_EQ_3-Band_light": {
+   "connections": 422,
+   "routed_by_variant": [
+    394,
+    411,
+    422,
+    416,
+    400,
+    422,
+    411,
+    407
+   ]
+  },
+  "Hypfer-RGB-W-LED-Controller_led_strip_controller": {
+   "connections": 74,
+   "routed_by_variant": [
+    74,
+    74,
+    74,
+    74,
+    71,
+    74,
+    74,
+    74
+   ]
+  },
+  "Keyboard_PCB_Keyboard": {
+   "connections": 534,
+   "routed_by_variant": [
+    456,
+    506,
+    47,
+    506,
+    449,
+    523,
+    506,
+    504
+   ]
+  },
+  "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1": {
+   "connections": 10,
+   "routed_by_variant": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ]
+  },
+  "Microdox-PCB_Microdox": {
+   "connections": 223,
+   "routed_by_variant": [
+    215,
+    223,
+    214,
+    223,
+    215,
+    223,
+    223,
+    223
+   ]
+  },
+  "Microdox-PCB_Microdox-topMCU": {
+   "connections": 216,
+   "routed_by_variant": [
+    211,
+    216,
+    213,
+    216,
+    208,
+    216,
+    216,
+    216
+   ]
+  },
+  "NavigationThing_NavigationThing": {
+   "connections": 90,
+   "routed_by_variant": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ]
+  },
+  "PCB_small_halogen_replacement": {
+   "connections": 52,
+   "routed_by_variant": [
+    52,
+    52,
+    52,
+    52,
+    52,
+    52,
+    52,
+    52
+   ]
+  },
+  "Paperino_HW_paperino_breakout": {
+   "connections": 11,
+   "routed_by_variant": [
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11
+   ]
+  },
+  "ProtoHead_v4_Protohead_v4_FAB_rc1": {
+   "connections": 34,
+   "routed_by_variant": [
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34
+   ]
+  },
+  "Prototyping_Workshop_Prototyping_PCB": {
+   "connections": 80,
+   "routed_by_variant": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ]
+  },
+  "Radio-FM-TEA5767_radio tea5767": {
+   "connections": 83,
+   "routed_by_variant": [
+    83,
+    83,
+    83,
+    83,
+    83,
+    83,
+    83,
+    83
+   ]
+  },
+  "TOBS_HybridChargeController": {
+   "connections": 210,
+   "routed_by_variant": [
+    204,
+    210,
+    210,
+    210,
+    206,
+    210,
+    210,
+    210
+   ]
+  },
+  "TPS63001-Breakout_TPS63001 Breakout 25x25": {
+   "connections": 26,
+   "routed_by_variant": [
+    26,
+    26,
+    26,
+    26,
+    26,
+    26,
+    26,
+    26
+   ]
+  },
+  "TripleDelay2399_TripleDelay2399": {
+   "connections": 256,
+   "routed_by_variant": [
+    256,
+    256,
+    256,
+    256,
+    256,
+    256,
+    256,
+    256
+   ]
+  },
+  "WemosLoraTracker_wemosGPSrfm": {
+   "connections": 53,
+   "routed_by_variant": [
+    53,
+    53,
+    53,
+    53,
+    53,
+    53,
+    53,
+    53
+   ]
+  },
+  "avr_ledprojector_avr_ledprojection-0402": {
+   "connections": 176,
+   "routed_by_variant": [
+    171,
+    173,
+    175,
+    173,
+    173,
+    173,
+    175,
+    173
+   ]
+  },
+  "badge2016_Badge_init": {
+   "connections": 76,
+   "routed_by_variant": [
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76
+   ]
+  },
+  "bumps_bumps": {
+   "connections": 330,
+   "routed_by_variant": [
+    321,
+    329,
+    320,
+    328,
+    322,
+    325,
+    329,
+    329
+   ]
+  },
+  "cat-trainer_teensy_base_pcb": {
+   "connections": 67,
+   "routed_by_variant": [
+    66,
+    67,
+    67,
+    67,
+    66,
+    67,
+    67,
+    67
+   ]
+  },
+  "digital_clock_led_clock_3_and_4_digit": {
+   "connections": 253,
+   "routed_by_variant": [
+    247,
+    253,
+    214,
+    253,
+    245,
+    253,
+    253,
+    253
+   ]
+  },
+  "draco_draco": {
+   "connections": 418,
+   "routed_by_variant": [
+    395,
+    403,
+    386,
+    418,
+    399,
+    412,
+    416,
+    402
+   ]
+  },
+  "espeverywhere_espeverywhere": {
+   "connections": 84,
+   "routed_by_variant": [
+    83,
+    84,
+    84,
+    84,
+    82,
+    84,
+    84,
+    84
+   ]
+  },
+  "gamelights_leds": {
+   "connections": 30,
+   "routed_by_variant": [
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30,
+    30
+   ]
+  },
+  "jadonk_PocketBone": {
+   "connections": 202,
+   "routed_by_variant": [
+    195,
+    202,
+    188,
+    202,
+    202,
+    200,
+    202,
+    202
+   ]
+  },
+  "kitspace_40-channel-hv-switching-board": {
+   "connections": 604,
+   "routed_by_variant": [
+    533,
+    597,
+    265,
+    594,
+    531,
+    597,
+    592,
+    594
+   ]
+  },
+  "kitspace_BalthazarPSU3": {
+   "connections": 204,
+   "routed_by_variant": [
+    203,
+    204,
+    204,
+    204,
+    203,
+    204,
+    204,
+    204
+   ]
+  },
+  "kitspace_PSLab": {
+   "connections": 339,
+   "routed_by_variant": [
+    329,
+    339,
+    338,
+    339,
+    338,
+    332,
+    339,
+    339
+   ]
+  },
+  "kitspace_USBI2C01": {
+   "connections": 73,
+   "routed_by_variant": [
+    70,
+    73,
+    71,
+    73,
+    73,
+    72,
+    73,
+    73
+   ]
+  },
+  "kitspace_dropbot_control_board": {
+   "connections": 307,
+   "routed_by_variant": [
+    293,
+    307,
+    298,
+    307,
+    294,
+    307,
+    307,
+    307
+   ]
+  },
+  "kitspace_sympetrum-v2%20FF1.1": {
+   "connections": 146,
+   "routed_by_variant": [
+    118,
+    141,
+    146,
+    134,
+    118,
+    141,
+    138,
+    140
+   ]
+  },
+  "kitspace_sympetrum-v2%20NFF1.1": {
+   "connections": 115,
+   "routed_by_variant": [
+    115,
+    115,
+    115,
+    115,
+    115,
+    115,
+    115,
+    115
+   ]
+  },
+  "m2-electronics_m2fc": {
+   "connections": 724,
+   "routed_by_variant": [
+    636,
+    701,
+    687,
+    714,
+    685,
+    699,
+    708,
+    702
+   ]
+  },
+  "mechkeys_MF68+10": {
+   "connections": 415,
+   "routed_by_variant": [
+    321,
+    382,
+    348,
+    384,
+    325,
+    412,
+    383,
+    380
+   ]
+  },
+  "memsarray_mems_array": {
+   "connections": 245,
+   "routed_by_variant": [
+    159,
+    227,
+    241,
+    229,
+    165,
+    241,
+    227,
+    227
+   ]
+  },
+  "motor-3xdrv8833-hw_ver1": {
+   "connections": 195,
+   "routed_by_variant": [
+    156,
+    180,
+    180,
+    182,
+    179,
+    178,
+    184,
+    180
+   ]
+  },
+  "newer-motor-controllers_busparts": {
+   "connections": 316,
+   "routed_by_variant": [
+    314,
+    316,
+    316,
+    316,
+    315,
+    316,
+    316,
+    316
+   ]
+  },
+  "newer-motor-controllers_si31-3": {
+   "connections": 316,
+   "routed_by_variant": [
+    315,
+    316,
+    316,
+    316,
+    315,
+    316,
+    316,
+    316
+   ]
+  },
+  "opendous_Upconverter": {
+   "connections": 813,
+   "routed_by_variant": [
+    813,
+    813,
+    813,
+    813,
+    813,
+    813,
+    813,
+    813
+   ]
+  },
+  "ourglass__autosave-watch-v4": {
+   "connections": 134,
+   "routed_by_variant": [
+    126,
+    134,
+    134,
+    134,
+    126,
+    129,
+    133,
+    131
+   ]
+  },
+  "perfplusplus_Ard-perf++": {
+   "connections": 886,
+   "routed_by_variant": [
+    886,
+    886,
+    886,
+    886,
+    886,
+    886,
+    886,
+    886
+   ]
+  },
+  "retroreflectors_SALSAFLOCK": {
+   "connections": 40,
+   "routed_by_variant": [
+    38,
+    38,
+    38,
+    38,
+    35,
+    40,
+    38,
+    37
+   ]
+  },
+  "royer_royer": {
+   "connections": 46,
+   "routed_by_variant": [
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46,
+    46
+   ]
+  },
+  "rxadc_14_rxadc_14": {
+   "connections": 124,
+   "routed_by_variant": [
+    121,
+    123,
+    122,
+    124,
+    121,
+    123,
+    124,
+    124
+   ]
+  },
+  "scimpy_amp": {
+   "connections": 90,
+   "routed_by_variant": [
+    88,
+    90,
+    89,
+    90,
+    89,
+    90,
+    90,
+    90
+   ]
+  },
+  "tiny-8088_Computer": {
+   "connections": 284,
+   "routed_by_variant": [
+    227,
+    267,
+    229,
+    267,
+    218,
+    284,
+    267,
+    263
+   ]
+  },
+  "wavegen_wavegen": {
+   "connections": 140,
+   "routed_by_variant": [
+    130,
+    137,
+    136,
+    140,
+    130,
+    137,
+    140,
+    132
+   ]
+  },
+  "wordclock_ledboard2": {
+   "connections": 310,
+   "routed_by_variant": [
+    310,
+    310,
+    310,
+    310,
+    310,
+    310,
+    310,
+    310
+   ]
+  },
+  "yamsek.kicad_i2c_bridge_primary": {
+   "connections": 34,
+   "routed_by_variant": [
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34
+   ]
+  }
+ },
+ "c5m-base": {
+  "Aleste-520EX_aleste": {
+   "connections": 1616,
+   "routed_by_variant": [
+    1001,
+    1253,
+    35,
+    1271,
+    982,
+    1334,
+    1253,
+    1236
+   ]
+  },
+  "CoreOne-xCORE200-Original_CoreOne": {
+   "connections": 807,
+   "routed_by_variant": [
+    637,
+    743,
+    727,
+    744,
+    639,
+    750,
+    750,
+    741
+   ]
+  },
+  "KiCad-Library_Teensy_test_layout": {
+   "connections": 1268,
+   "routed_by_variant": [
+    1090,
+    1232,
+    1111,
+    1236,
+    1091,
+    1243,
+    1233,
+    1229
+   ]
+  },
+  "LeeChee_1800": {
+   "connections": 1160,
+   "routed_by_variant": [
+    1010,
+    1110,
+    1067,
+    1131,
+    932,
+    1121,
+    1113,
+    1108
+   ]
+  },
+  "MonApollo_analog-board": {
+   "connections": 1190,
+   "routed_by_variant": [
+    936,
+    1079,
+    917,
+    1087,
+    985,
+    1108,
+    1097,
+    1073
+   ]
+  },
+  "decelerator4030_decelerator4030": {
+   "connections": 1009,
+   "routed_by_variant": [
+    301,
+    516,
+    16,
+    516,
+    300,
+    611,
+    542,
+    493
+   ]
+  },
+  "front-end-modules_LimeSDR_Sony": {
+   "connections": 814,
+   "routed_by_variant": [
+    777,
+    794,
+    810,
+    806,
+    776,
+    801,
+    804,
+    795
+   ]
+  },
+  "kitspace_EEZ%20DIB%20MCU%20r1B2": {
+   "connections": 634,
+   "routed_by_variant": [
+    470,
+    505,
+    18,
+    512,
+    466,
+    506,
+    519,
+    502
+   ]
+  },
+  "kitspace_d20_r0.1": {
+   "connections": 282,
+   "routed_by_variant": [
+    228,
+    268,
+    228,
+    263,
+    218,
+    264,
+    276,
+    274
+   ]
+  },
+  "oskirby_logicbone": {
+   "connections": 1188,
+   "routed_by_variant": [
+    804,
+    910,
+    43,
+    906,
+    830,
+    936,
+    918,
+    908
+   ]
+  },
+  "sbc_sbc": {
+   "connections": 410,
+   "routed_by_variant": [
+    310,
+    348,
+    23,
+    353,
+    310,
+    350,
+    354,
+    346
+   ]
+  }
+ },
+ "c5m-crowded": {
+  "Aleste-520EX_aleste": {
+   "connections": 1616,
+   "routed_by_variant": [
+    1048,
+    1258,
+    44,
+    1286,
+    1005,
+    1352,
+    1258,
+    1252
+   ]
+  },
+  "CoreOne-xCORE200-Original_CoreOne": {
+   "connections": 807,
+   "routed_by_variant": [
+    753,
+    777,
+    754,
+    790,
+    753,
+    778,
+    786,
+    775
+   ]
+  },
+  "KiCad-Library_Teensy_test_layout": {
+   "connections": 1268,
+   "routed_by_variant": [
+    1091,
+    1238,
+    1111,
+    1236,
+    1089,
+    1235,
+    1242,
+    1230
+   ]
+  },
+  "LeeChee_1800": {
+   "connections": 1160,
+   "routed_by_variant": [
+    1014,
+    1124,
+    1085,
+    1145,
+    1002,
+    1119,
+    1137,
+    1124
+   ]
+  },
+  "MonApollo_analog-board": {
+   "connections": 1190,
+   "routed_by_variant": [
+    971,
+    1113,
+    922,
+    1120,
+    994,
+    1120,
+    1117,
+    1111
+   ]
+  },
+  "decelerator4030_decelerator4030": {
+   "connections": 1009,
+   "routed_by_variant": [
+    296,
+    504,
+    52,
+    567,
+    292,
+    639,
+    511,
+    507
+   ]
+  },
+  "front-end-modules_LimeSDR_Sony": {
+   "connections": 814,
+   "routed_by_variant": [
+    758,
+    796,
+    793,
+    812,
+    775,
+    811,
+    807,
+    796
+   ]
+  },
+  "kitspace_EEZ%20DIB%20MCU%20r1B2": {
+   "connections": 634,
+   "routed_by_variant": [
+    482,
+    530,
+    79,
+    543,
+    491,
+    532,
+    562,
+    523
+   ]
+  },
+  "kitspace_d20_r0.1": {
+   "connections": 282,
+   "routed_by_variant": [
+    248,
+    260,
+    245,
+    257,
+    253,
+    265,
+    268,
+    268
+   ]
+  },
+  "oskirby_logicbone": {
+   "connections": 1188,
+   "routed_by_variant": [
+    874,
+    963,
+    72,
+    987,
+    839,
+    1015,
+    1003,
+    957
+   ]
+  },
+  "sbc_sbc": {
+   "connections": 410,
+   "routed_by_variant": [
+    330,
+    350,
+    40,
+    358,
+    330,
+    352,
+    359,
+    351
+   ]
+  }
+ }
+}

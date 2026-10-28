@@ -1,0 +1,14 @@
+{
+  "board": {"design_settings": {"rules": {"min_track_width": 0.1, "min_clearance": 0.15},
+                                "rule_severities": {"tuning_profile_track_geometries": "error"}}},
+  "net_settings": {"classes": [{"name": "Default", "track_width": 0.25, "clearance": 0.2, "via_diameter": 0.6, "via_drill": 0.3, "tuning_profile": ""},
+                               {"name": "FAST", "priority": 0, "tuning_profile": "MS"}],
+                   "netclass_patterns": [{"pattern": "CLK", "netclass": "FAST"}]},
+  "tuning_profiles": {"meta": {"version": 0}, "tuning_profiles_impedance_geometric": [
+    {"profile_name": "MS", "type": 0, "target_impedance": 50.0, "enable_time_domain_tuning": false, "via_prop_delay": 0, "via_overrides": [],
+     "layer_entries": [
+       {"signal_layer": "F.Cu", "top_reference_layer": "UNDEFINED", "bottom_reference_layer": "In1.Cu", "width": 150000, "diff_pair_gap": 0, "delay": 0},
+       {"signal_layer": "In1.Cu", "top_reference_layer": "F.Cu", "bottom_reference_layer": "In2.Cu", "width": 100000, "diff_pair_gap": 0, "delay": 0},
+       {"signal_layer": "In2.Cu", "top_reference_layer": "In1.Cu", "bottom_reference_layer": "B.Cu", "width": 100000, "diff_pair_gap": 0, "delay": 0},
+       {"signal_layer": "B.Cu", "top_reference_layer": "In2.Cu", "bottom_reference_layer": "UNDEFINED", "width": 150000, "diff_pair_gap": 0, "delay": 0}]}]}
+}

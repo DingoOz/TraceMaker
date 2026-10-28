@@ -46,6 +46,9 @@ SUBCOMMANDS:
                               (doc 19)
   style                       Style metric of a routed board: bends, acute angles, stair-steps,
                               detours (doc 05 §39)
+  causes                      Why connections stay open on a routed board: each open connection
+                              is routed again with other nets' copper removed near its ends,
+                              away from them or everywhere (doc 05 §55)
   layers                      Write a copy of a board with another copper layer count (inner
                               layers added, or empty ones removed; doc 05 §53)
   srj-import                  Convert a Simple Route JSON problem (tscircuit) to a KiCad board
@@ -175,6 +178,10 @@ OPTIONS:
           --seed UINT
           --layer-assign      Prefer per connection the layer with the fewest crossings
                               (two-layer boards; doc 16 F2)
+          --crowded-source    Every strict search starts from the end with more copper and pads
+                              of other nets near it, a boxed-in pin is proved at once (doc 05
+                              §55; the portfolio does so in four of its eight variants by
+                              default)
           --relax             Portfolio: route under 60 % and 80 % of the clearance first,
                               legalise (move vertices off the lattice) up to the real rules,
                               repeat on stalls; until complete, in rounds of --round-work (20 M
@@ -323,7 +330,13 @@ OPTIONS:
                               (from the component rules' roles and differential pairs) routed
                               first, dearer vias for them (x3), and a cost for their tracks
                               over a void of the adjacent reference plane (+4 pitches per
-                              lattice step); each can be set with the options below instead
+                              lattice step); each can be set with the options below instead.
+                              After routing, layer changes of critical nets without a return
+                              via get one (doc 05 §57; --no-si-stitch)
+          --no-si-stitch{false}
+                              With --si-rules: no return-path stitching vias for the critical
+                              nets' layer changes that the reference-return audit finds without
+                              one (doc 05 §57)
           --critical-nets TEXT ...
                               Nets that are critical whatever their role, KiCad wildcards comma
                               separated (e.g. 'CLK*,USB_D*'); they are tier 1, like clocks, and
@@ -696,6 +709,36 @@ OPTIONS:
   -h,     --help              Print this help message and exit
           --json TEXT         Write the metric as JSON
           --connections       With --json: also one row per connection
+```
+
+### `tracemaker causes`
+
+```text
+Why connections stay open on a routed board: each open connection is routed
+again with other nets' copper removed near its ends, away from them or
+everywhere (doc 05 §55)
+
+
+tracemaker causes [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    A routed board
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the classification as JSON
+          --rules-from TEXT:FILE
+                              Read the design rules beside this board instead
+          --baseline-work INT Work of the run on the board as it is (default 10 M)
+          --work INT          Work of each run on a changed copy, per net (default 2 M)
+          --radius FLOAT:FLOAT in [0.1 - 20]
+                              Near an end: within this distance (mm) of an end pad (default 2)
+          --threads INT:INT in [1 - 256]
+                              Nets classified at once (the result does not depend on it;
+                              default 8)
+          --seed UINT         Router seed (default 1)
+          --baseline-only     Only the run on the board as it is (for a copy with more layers)
 ```
 
 ### `tracemaker layers`

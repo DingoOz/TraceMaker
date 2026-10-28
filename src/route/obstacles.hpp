@@ -4,6 +4,7 @@
 // use the DRC's rule engine, so the router and the DRC can never disagree about what is legal.
 #include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "drc/connectivity.hpp"
@@ -68,6 +69,12 @@ class Obstacles {
                    bool via_hole = false, Coord hole_r = 0) const;
   // Maximum routed_state over `layers` for a via and its hole; layer-independent hole checks run once.
   int routed_via_state(const geom::Shape& s, model::LayerMask layers, model::NetId net, bool soft, Coord hole_r) const;
+  // KiCad's diff-pair coupling for a new track of a pair net with a bounded gap (doc 05 §59): 0, 1 (a routed partner track; owners
+  // appended) or 2. Part of segment_state; the search also asks it for each step of a net that coupling_net() names.
+  int coupling_state(geom::Point a, geom::Point b, int layer, Coord width, model::NetId net, bool ignore_routed, std::vector<int>* owners) const;
+  bool coupling_net(model::NetId net) const {
+    return coupling_on_ && net > 0 && static_cast<std::size_t>(net) < net_tracks_.size() && re_->dp_partner(net) > 0;
+  }
   // Rules outside the per-class cache require exact per-point checks.
   bool needs_exact_routing() const { return re_->needs_exact_routing(); }
   // Ids of live routed items whose box meets `box`.
@@ -123,6 +130,14 @@ class Obstacles {
   int routed_hole_copper_part(const geom::Shape& h, int layer, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;
   int routed_hole_to_hole_part(const geom::Shape& hole, bool soft, std::vector<int>* owners) const;
   std::int32_t via_hole_code(geom::Point p, Coord drill, Coord margin, model::NetId probe_net, std::int32_t code) const;
+  void setup_coupling();
+  struct GapBounds {
+    std::optional<Coord> min, max;
+    bool set = false;
+  };
+  bool coupling_on_ = false;               // some pair net has a diff_pair_gap rule with a minimum or maximum
+  std::vector<GapBounds> gap_bounds_;      // by net * copper count + layer
+  std::vector<std::vector<int>> net_tracks_;  // copper item ids of each net's tracks (fixed and routed; removed ones are skipped)
 
   model::Board& b_;
   const model::DesignRules& r_;

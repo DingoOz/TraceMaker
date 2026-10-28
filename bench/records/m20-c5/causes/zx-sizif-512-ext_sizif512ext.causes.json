@@ -1,0 +1,1419 @@
+{
+ "baseline": {
+  "connections": 69,
+  "open": 64,
+  "routed": 5,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/zx-sizif-512-ext_sizif512ext.kicad_pcb",
+ "by_cause": {
+  "channel": 20,
+  "near_and_far": 1,
+  "package_fanout": 13,
+  "pin_cannot_escape": 16,
+  "through_traffic": 14
+ },
+ "by_cause_at_dense_packages": {
+  "channel": 15,
+  "near_and_far": 1,
+  "package_fanout": 12,
+  "pin_cannot_escape": 16,
+  "through_traffic": 13
+ },
+ "by_dense_package": {
+  "J1": {
+   "channel": 1,
+   "package_fanout": 4,
+   "pin_cannot_escape": 1,
+   "through_traffic": 1
+  },
+  "U11": {
+   "pin_cannot_escape": 20
+  },
+  "U7": {
+   "channel": 14,
+   "near_and_far": 1,
+   "package_fanout": 11,
+   "pin_cannot_escape": 1,
+   "through_traffic": 13
+  }
+ },
+ "connections": [
+  {
+   "a": "U11.20",
+   "at_dense_package": true,
+   "b": "C68.1",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.20",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "C68.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U11.11",
+   "at_dense_package": true,
+   "b": "U11.8",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U11.11",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.8",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "C70.1",
+   "at_dense_package": true,
+   "b": "U11.41",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "pad": "C70.1",
+     "part_pads": 2
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.41",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "C26.1",
+   "at_dense_package": true,
+   "b": "U11.5",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "pad": "C26.1",
+     "part_pads": 2
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.5",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(C26-Pad1)",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "C43.1",
+   "at_dense_package": true,
+   "b": "U11.6",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "pad": "C43.1",
+     "part_pads": 2
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.6",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3.3VA",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U11.35",
+   "at_dense_package": true,
+   "b": "U11.31",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.35",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.31",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U11.34",
+   "at_dense_package": true,
+   "b": "C32.1",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.34",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "C32.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(C32-Pad1)",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U11.41",
+   "at_dense_package": true,
+   "b": "U11.35",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.41",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.35",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U11.35",
+   "at_dense_package": true,
+   "b": "C69.1",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.35",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "C69.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "C71.1",
+   "at_dense_package": true,
+   "b": "U11.20",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "pad": "C71.1",
+     "part_pads": 2
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.20",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U11.8",
+   "at_dense_package": true,
+   "b": "U11.47",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.8",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "U11.47",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "+3V3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "C22.1",
+   "at_dense_package": true,
+   "b": "U11.2",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "pad": "C22.1",
+     "part_pads": 2
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.2",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/MIDI_R",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "J1.24",
+   "at_dense_package": true,
+   "b": "U7.119",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.24",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    },
+    {
+     "dense": true,
+     "pad": "U7.119",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/A14",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "J1.34",
+   "at_dense_package": true,
+   "b": "U7.125",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.34",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    },
+    {
+     "dense": true,
+     "pad": "U7.125",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/CLKCPU",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "J1.6",
+   "at_dense_package": true,
+   "b": "U7.97",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.6",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    },
+    {
+     "dense": true,
+     "pad": "U7.97",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/A8",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "J1.3",
+   "at_dense_package": true,
+   "b": "U7.96",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.3",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    },
+    {
+     "dense": true,
+     "pad": "U7.96",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~BUSACK",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "U3.30",
+   "at_dense_package": false,
+   "b": "U12.12",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.30",
+     "part_pads": 40
+    },
+    {
+     "pad": "U12.12",
+     "part_pads": 32
+    }
+   ],
+   "net": "/GA0",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U3.31",
+   "at_dense_package": true,
+   "b": "U7.67",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U3.31",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.67",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GA1",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U3.30",
+   "at_dense_package": true,
+   "b": "U7.68",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.30",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.68",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GA0",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "R20.1",
+   "at_dense_package": true,
+   "b": "J1.42",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R20.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "J1.42",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/MIX_R",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U3.2",
+   "at_dense_package": false,
+   "b": "U12.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.2",
+     "part_pads": 40
+    },
+    {
+     "pad": "U12.4",
+     "part_pads": 32
+    }
+   ],
+   "net": "/GA12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.7",
+   "at_dense_package": true,
+   "b": "U7.81",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.7",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.81",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GD4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.5",
+   "at_dense_package": true,
+   "b": "U7.45",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.5",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.45",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GA15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.10",
+   "at_dense_package": true,
+   "b": "U7.74",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.10",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.74",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GD6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.8",
+   "at_dense_package": true,
+   "b": "U7.80",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.8",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.80",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GD3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.9",
+   "at_dense_package": true,
+   "b": "U7.78",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.9",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.78",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GD5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.27",
+   "at_dense_package": true,
+   "b": "U7.63",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.27",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.63",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~GM1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.12",
+   "at_dense_package": true,
+   "b": "U7.79",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.12",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.79",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GD2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U11.39",
+   "at_dense_package": true,
+   "b": "U7.35",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.39",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "U7.35",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/MIDI_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.14",
+   "at_dense_package": true,
+   "b": "U7.71",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.14",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.71",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/GD0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.26",
+   "at_dense_package": true,
+   "b": "U7.61",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.26",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.61",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~GRESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.3",
+   "at_dense_package": false,
+   "b": "U12.28",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.3",
+     "part_pads": 40
+    },
+    {
+     "pad": "U12.28",
+     "part_pads": 32
+    }
+   ],
+   "net": "/GA13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "J1.2",
+   "at_dense_package": true,
+   "b": "X1.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.2",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    },
+    {
+     "pad": "X1.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "+5V",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.40",
+   "at_dense_package": false,
+   "b": "U12.23",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.40",
+     "part_pads": 40
+    },
+    {
+     "pad": "U12.23",
+     "part_pads": 32
+    }
+   ],
+   "net": "/GA10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R51.2",
+   "at_dense_package": true,
+   "b": "U7.90",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R51.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U7.90",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/CFG2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U7.104",
+   "at_dense_package": true,
+   "b": "J2.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U7.104",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "J2.3",
+     "part_pads": 10
+    }
+   ],
+   "net": "/TDO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.1",
+   "at_dense_package": false,
+   "b": "U12.25",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U3.1",
+     "part_pads": 40
+    },
+    {
+     "pad": "U12.25",
+     "part_pads": 32
+    }
+   ],
+   "net": "/GA11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U7.81",
+   "at_dense_package": true,
+   "b": "U12.18",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U7.81",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "U12.18",
+     "part_pads": 32
+    }
+   ],
+   "net": "/GD4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R50.2",
+   "at_dense_package": true,
+   "b": "U7.91",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R50.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U7.91",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/CFG1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.16",
+   "at_dense_package": true,
+   "b": "U7.49",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U3.16",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.49",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~GINT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U11.38",
+   "at_dense_package": true,
+   "b": "J1.44",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.38",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "dense": true,
+     "pad": "J1.44",
+     "part_pads": 50,
+     "pitch_mm": 1.27
+    }
+   ],
+   "net": "/~RST",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.19",
+   "at_dense_package": true,
+   "b": "U7.54",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U3.19",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.54",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~GMREQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.20",
+   "at_dense_package": true,
+   "b": "U7.56",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U3.20",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.56",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~GIORQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.19",
+   "at_dense_package": false,
+   "b": "C9.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U9.19",
+     "part_pads": 40
+    },
+    {
+     "pad": "C9.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/AY_B2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.20",
+   "at_dense_package": false,
+   "b": "C7.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U9.20",
+     "part_pads": 40
+    },
+    {
+     "pad": "C7.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/AY_A2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R40.2",
+   "at_dense_package": true,
+   "b": "U7.28",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "R40.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U7.28",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/FM_ENA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.40",
+   "at_dense_package": true,
+   "b": "U7.27",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U4.40",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.27",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U11.16",
+   "at_dense_package": true,
+   "b": "U4.13",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.16",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "U4.13",
+     "part_pads": 40
+    }
+   ],
+   "net": "/MIDI_IN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.2",
+   "at_dense_package": true,
+   "b": "U7.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U4.2",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.7",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.3",
+   "at_dense_package": true,
+   "b": "U7.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U4.3",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.8",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.38",
+   "at_dense_package": true,
+   "b": "U7.25",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U9.38",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.25",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/YM_M",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.24",
+   "at_dense_package": true,
+   "b": "U11.38",
+   "cause": "pin_cannot_escape",
+   "ends": [
+    {
+     "pad": "U4.24",
+     "part_pads": 40
+    },
+    {
+     "cannot_escape": "no channel at 0.200 mm and no via site within reach",
+     "dense": true,
+     "pad": "U11.38",
+     "part_pads": 58,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/~RST",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.4",
+   "at_dense_package": true,
+   "b": "U7.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U4.4",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.9",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.37",
+   "at_dense_package": true,
+   "b": "U7.23",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U9.37",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.23",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AA0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.5",
+   "at_dense_package": true,
+   "b": "U7.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U4.5",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.10",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.36",
+   "at_dense_package": true,
+   "b": "U7.22",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U9.36",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.22",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~ARD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.6",
+   "at_dense_package": true,
+   "b": "U7.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U4.6",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.11",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.35",
+   "at_dense_package": true,
+   "b": "U7.21",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U9.35",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.21",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~AWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.7",
+   "at_dense_package": true,
+   "b": "U7.12",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U4.7",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.12",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U9.34",
+   "at_dense_package": true,
+   "b": "U7.19",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U9.34",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.19",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~YM2_CS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U7.18",
+   "at_dense_package": true,
+   "b": "U4.34",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U7.18",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "U4.34",
+     "part_pads": 40
+    }
+   ],
+   "net": "/~YM1_CS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.8",
+   "at_dense_package": true,
+   "b": "U7.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "U4.8",
+     "part_pads": 40
+    },
+    {
+     "dense": true,
+     "pad": "U7.14",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/AD7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U14.8",
+   "at_dense_package": true,
+   "b": "U7.16",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U14.8",
+     "part_pads": 18
+    },
+    {
+     "dense": true,
+     "pad": "U7.16",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/SAA_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U14.2",
+   "at_dense_package": true,
+   "b": "U7.15",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "U14.2",
+     "part_pads": 18
+    },
+    {
+     "dense": true,
+     "pad": "U7.15",
+     "part_pads": 144,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/~SAA_CS",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 2,
+ "dense_packages": 3,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

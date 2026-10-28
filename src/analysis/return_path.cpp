@@ -452,7 +452,15 @@ ReturnPathReport analyse_return_paths(const model::Board& in, const model::Desig
       ch.at = v.pos;
       ch.from_layer = *on.begin();
       ch.to_layer = *on.rbegin();
-      const int ra = ref_of.count(ch.from_layer) ? ref_of[ch.from_layer] : -1, rb = ref_of.count(ch.to_layer) ? ref_of[ch.to_layer] : -1;
+      // A layer whose trace is only a stub from a pad to the via may lie wholly over the via's own antipad and so have no reference by
+      // coverage; at the via, the reference of such a layer is the adjacent layer (N+1, then N-1) with copper near the via.
+      auto ref_at_via = [&](int layer) {
+        if (const auto it = ref_of.find(layer); it != ref_of.end() && it->second >= 0) return it->second;
+        for (const int cand : {layer + 1, layer - 1})
+          if (cand >= 0 && cand < nl && lc[static_cast<std::size_t>(cand)].has && lc[static_cast<std::size_t>(cand)].net_near(to_pt(v.pos), 2e6) > 0) return cand;
+        return -1;
+      };
+      const int ra = ref_at_via(ch.from_layer), rb = ref_at_via(ch.to_layer);
       const NetId na = ra >= 0 ? lc[static_cast<std::size_t>(ra)].net_near(to_pt(v.pos), 2e6) : 0, nb = rb >= 0 ? lc[static_cast<std::size_t>(rb)].net_near(to_pt(v.pos), 2e6) : 0;
       ch.ref_from = na > 0 ? b.nets[static_cast<std::size_t>(na)].name : "";
       ch.ref_to = nb > 0 ? b.nets[static_cast<std::size_t>(nb)].name : "";

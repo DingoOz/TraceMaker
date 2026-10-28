@@ -1,0 +1,64 @@
+# The 59 PCBench boards of tiers B-D (40 + 30 + 22 boards of the 0.9.0 run, bench/results/rel090-tier{B,C,D}) that were clean:
+# the complement of pcbench-bd-fail, to check that a change to the router's defaults loses no clean board (doc 05 section 55).
+# tier B
+APM-RPi-Shield_APM-RPi-Shield
+Hypfer-RGB-W-LED-Controller_led_strip_controller
+KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1
+NavigationThing_NavigationThing
+PCB_small_halogen_replacement
+ProtoHead_v4_Protohead_v4_FAB_rc1
+Prototyping_Workshop_Prototyping_PCB
+Radio-FM-TEA5767_radio tea5767
+TOBS_HybridChargeController
+TPS63001-Breakout_TPS63001 Breakout 25x25
+WemosLoraTracker_wemosGPSrfm
+avr_ledprojector_avr_ledprojection-0402
+bumps_bumps
+cat-trainer_teensy_base_pcb
+digital_clock_led_clock_3_and_4_digit
+espeverywhere_espeverywhere
+gamelights_leds
+kitspace_BalthazarPSU3
+kitspace_USBI2C01
+kitspace_sympetrum-v2%20FF1.1
+kitspace_sympetrum-v2%20NFF1.1
+motor-3xdrv8833-hw_ver1
+ourglass__autosave-watch-v4
+retroreflectors_SALSAFLOCK
+royer_royer
+rxadc_14_rxadc_14
+scimpy_amp
+wavegen_wavegen
+yamsek.kicad_i2c_bridge_primary
+# tier C
+AmpOne_dev-AmpOne
+Apple-M0110-BT_Apple M0110
+BUF-DiffToSE-ADAU1966_BUF-DiffToSE-ADAU1966
+Biscay_Blueeye_sipm
+Hardware_Playground_usb_shield
+Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4
+Microdox-PCB_Microdox
+Microdox-PCB_Microdox-topMCU
+Paperino_HW_paperino_breakout
+TripleDelay2399_TripleDelay2399
+draco_draco
+jadonk_PocketBone
+kitspace_40-channel-hv-switching-board
+kitspace_PSLab
+kitspace_dropbot_control_board
+mechkeys_MF68+10
+tiny-8088_Computer
+wordclock_ledboard2
+# tier D
+DSP-ADAU1452_DSP-ADAU1452
+EUC-VESC_electronics_sept
+Hardware_Playground_heater_actuator_node
+Horticulture_Light_EQ_3-Band_light
+Keyboard_PCB_Keyboard
+badge2016_Badge_init
+m2-electronics_m2fc
+memsarray_mems_array
+newer-motor-controllers_busparts
+newer-motor-controllers_si31-3
+opendous_Upconverter
+perfplusplus_Ard-perf++

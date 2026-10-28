@@ -12,6 +12,9 @@
 
 namespace tmk::drc {
 
+// hasExactNetclass() in a rule KiCad compiles itself (model::CustomRule::implicit); no condition text can spell this name.
+constexpr std::string_view kImplicitExactNetclass = "hasExactNetclass#implicit";
+
 // ---------------------------------------------------------------------------------------------------------
 // Condition expressions: a small recursive-descent parser for the subset of KiCad's rule language used in
 // practice: A./B. properties, string/number literals, comparisons, && || ! and a few functions.
@@ -71,6 +74,8 @@ class Condition {
   std::string unsupported() const { return unsupported(*root_); }
   // First function that KiCad knows and call() below does not evaluate ("" if none).
   std::string unevaluated() const { return unevaluated(*root_); }
+  // KiCad's own rules (model::CustomRule::implicit): their hasExactNetclass() is evaluated (see call()).
+  void mark_implicit() { mark_implicit(*root_); }
   // Resolves the name patterns of area and courtyard functions against the board.
   void bind(const model::Board& b, const CourtyardCache& courtyards) { bind(*root_, b, courtyards); }
 
@@ -237,7 +242,7 @@ class Condition {
     static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
                                                  "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
-                                                 "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
+                                                 kImplicitExactNetclass, "hasNetclass", "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
     if (n.op == Node::Op::Call && std::find(std::begin(calls), std::end(calls), n.name) == std::end(calls) && !kicad_only(n.name))
       return n.name + "()";
@@ -252,7 +257,7 @@ class Condition {
   // (false) here, as before D80, and a disallow whose evaluation reached it does not fire (disallow_hit).
   static bool kicad_only(std::string_view name) {
     static constexpr std::string_view names[] = {
-        "hasNetclass", "hasExactNetclass", "hasComponentClass", "fromTo", "isMicroVia", "isBlindBuriedVia", "isBlindVia",
+        "hasExactNetclass", "hasComponentClass", "fromTo", "isMicroVia", "isBlindBuriedVia", "isBlindVia",
         "isBuriedVia", "isCoupledDiffPair", "getField", "memberOf", "memberOfGroup", "memberOfSheet",
         "memberOfSheetOrChildren", "insideCourtyard", "insideFrontCourtyard", "insideBackCourtyard"};
     return std::find(std::begin(names), std::end(names), name) != std::end(names);
@@ -262,6 +267,11 @@ class Condition {
     for (const auto& k : n.kids)
       if (auto u = unevaluated(*k); !u.empty()) return u;
     return {};
+  }
+
+  static void mark_implicit(Node& n) {
+    if (n.op == Node::Op::Call && n.name == "hasExactNetclass") n.name = kImplicitExactNetclass;
+    for (auto& k : n.kids) mark_implicit(*k);
   }
 
   static bool area_call(const Node& n) {
@@ -380,7 +390,7 @@ class Condition {
       v.b = it->kind == ItemKind::Via || (it->kind == ItemKind::Pad && b.pads[static_cast<std::size_t>(it->index)].type == model::PadType::ThruHole);
     } else if (n.name == "existsOnLayer" && !n.args.empty()) {
       const int l = b.copper_index(n.args[0]);
-      v.b = l >= 0 && (it->layers & model::layer_bit(l));
+      v.b = l >= 0 && ((it->span ? it->span : it->layers) & model::layer_bit(l));  // IsOnLayer: the padstack's layers, with copper or not
     } else if (area_call(n)) {
       const bool enclosure = n.name == "enclosedByArea";
       v.b = cached_for_fill(n, *it, ctx, [&] {
@@ -398,11 +408,26 @@ class Condition {
     } else if (n.name == "inDiffPair" && !n.args.empty()) {
       // KiCad: true when the item's net is one half of a differential pair whose base name (without the final
       // P/N or +/-) matches the pattern.
+      // KiCad matches the base name, or with a trailing underscore the base without it (pcbexpr_functions.cpp, inDiffPairFunc).
       const auto net = static_cast<std::size_t>(it->net);
       if (it->net != 0 && net < ctx.eng->dp_partner_.size() && ctx.eng->dp_partner_[net] != 0) {
-        const std::string& name = b.nets[net].name;
-        v.b = model::wildcard_match(n.args[0], name.substr(0, name.size() - 1)) || model::wildcard_match(n.args[0], name);
+        const std::string& base = ctx.eng->dp_base_[net];
+        v.b = model::wildcard_match(n.args[0], base) ||
+              (!base.empty() && base.back() == '_' && model::wildcard_match(n.args[0], std::string_view(base).substr(0, base.rfind('_'))));
       }
+    } else if (n.name == "hasNetclass" && !n.args.empty()) {
+      // KiCad: the item's effective net class contains a class of that name (NETCLASS::ContainsNetclassWithName),
+      // compared exactly. QA board time_calculations (doc 05 §59) and rule_parity has_netclass_* check it.
+      const auto net = static_cast<std::size_t>(it->net);
+      if (net < ctx.eng->net_classes_.size()) {
+        const auto& cs = ctx.eng->net_classes_[net];
+        v.b = std::find(cs.begin(), cs.end(), n.args[0]) != cs.end();
+      }
+    } else if (n.name == kImplicitExactNetclass && !n.args.empty()) {
+      // hasExactNetclass() in the rules KiCad compiles itself (tuning profiles, doc 05 §58): the name of the item's effective net class,
+      // compared exactly (pcbexpr_functions.cpp). In a user's rule KiCad 10.0.6 never matches it (rule_parity static_exact_class_*), so
+      // there it stays one of the unevaluated functions.
+      v.b = !n.args[0].empty() && ctx.eng->netclass(*it).name == n.args[0];
     } else if (n.name == "memberOfFootprint" && !n.args.empty()) {
       if (it->footprint >= 0) {
         const auto& fp = b.footprints[static_cast<std::size_t>(it->footprint)];
@@ -457,12 +482,34 @@ class Condition {
 
 // ---------------------------------------------------------------------------------------------------------
 
+DpSuffix match_dp_suffix(std::string_view name) {
+  // KiCad's loop also counts the polarity character, so `count` is the length of the suffix from it to the end.
+  DpSuffix r;
+  std::size_t count = 0;
+  char other = 0;
+  for (auto it = name.rbegin(); it != name.rend(); ++it) {
+    const char ch = *it;
+    ++count;
+    if ((ch >= '0' && ch <= '9') || ch == '_') continue;
+    if (ch == '+' || ch == 'P') r.polarity = 1;
+    else if (ch == '-' || ch == 'N') r.polarity = -1;
+    else return {};
+    other = ch == '+' ? '-' : ch == '-' ? '+' : ch == 'P' ? 'N' : 'P';
+    break;
+  }
+  if (r.polarity == 0) return {};
+  r.base = std::string(name.substr(0, name.size() - count));
+  r.complement = r.base + other + std::string(name.substr(name.size() - count + 1));
+  return r;
+}
+
 RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r), router_hole_(std::max<Coord>(r.minimums.hole_clearance, 0)) {
   for (const auto& rule : r_.custom) {
     Compiled c{&rule, nullptr, true};
     if (!rule.condition.empty()) {
       std::string err;
       c.cond = Condition::parse(rule.condition, err);
+      if (c.cond && rule.implicit) c.cond->mark_implicit();
       if (!c.cond) {
         c.valid = false;
         warnings_.push_back("rule '" + rule.name + "': cannot parse condition (" + err + "); rule ignored");
@@ -482,7 +529,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
                                                "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
                                                "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
-    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair"});
+    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", "hasNetclass", kImplicitExactNetclass});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
@@ -496,7 +543,9 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
         }
       }
       // Rules outside the per-class cache need exact checks, including unreadable conditions.
-      if (!c.valid || (k.type != "disallow" && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
+      // KiCad's own tuning-profile rules set widths and pair gaps, never a clearance: the cache stays (doc 05 §58).
+      const bool width_only = rule.implicit && (k.type == "track_width" || k.type == "diff_pair_gap");
+      if (!c.valid || (k.type != "disallow" && !width_only && !(k.type == "physical_hole_clearance" && !nets_seen))) needs_exact_ = true;
       if (k.type != "disallow" || !c.valid) continue;
       for (const auto& w : k.items) {
         const std::uint16_t bit = w == "track" ? kTrack : w == "via" ? kVia : w == "through_via" ? kThroughVia : w == "micro_via" ? kMicroVia
@@ -540,20 +589,23 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
   net_class_.resize(b_.nets.size());
+  net_classes_.resize(b_.nets.size());
   dp_partner_.assign(b_.nets.size(), 0);
+  dp_positive_.assign(b_.nets.size(), 0);
+  dp_base_.assign(b_.nets.size(), {});
   std::map<std::string, model::NetId> by_name;
   for (const auto& n : b_.nets) by_name[n.name] = n.id;
   for (const auto& n : b_.nets) {
     net_class_[static_cast<std::size_t>(n.id)] = &r_.class_for(n.name);
-    if (n.name.size() < 2) continue;
-    std::string other = n.name;
-    char& last = other.back();
-    if (last == 'P') last = 'N';
-    else if (last == 'N') last = 'P';
-    else if (last == '+') last = '-';
-    else if (last == '-') last = '+';
-    else continue;
-    if (auto it = by_name.find(other); it != by_name.end()) dp_partner_[static_cast<std::size_t>(n.id)] = it->second;
+    net_classes_[static_cast<std::size_t>(n.id)] = r_.classes_of(n.name);
+    if (n.id == 0) continue;
+    auto dp = match_dp_suffix(n.name);
+    if (dp.polarity == 0) continue;
+    if (auto it = by_name.find(dp.complement); it != by_name.end() && it->second != 0) {
+      dp_partner_[static_cast<std::size_t>(n.id)] = it->second;
+      dp_positive_[static_cast<std::size_t>(n.id)] = dp.polarity > 0;
+      dp_base_[static_cast<std::size_t>(n.id)] = std::move(dp.base);
+    }
   }
   for (const auto& rule : r_.custom)
     for (const auto& k : rule.constraints)
@@ -623,7 +675,8 @@ std::pair<std::optional<Coord>, std::optional<Coord>> RuleEngine::length_constra
       EvalCtx ctx{this, &probe, nullptr, -1};
       if (!c.cond->eval(ctx)) continue;
     }
-    out = {k->min, k->max};  // later rules take precedence
+    // Later rules take precedence. A delay (ps) is not a length, and the router does not tune delays (doc 05 §59).
+    out = k->time ? std::pair<std::optional<Coord>, std::optional<Coord>>{} : std::pair{k->min, k->max};
   }
   return out;
 }
@@ -644,7 +697,7 @@ std::optional<Coord> RuleEngine::skew_constraint(model::NetId net) const {
       EvalCtx ctx{this, &probe, nullptr, -1};
       if (!c.cond->eval(ctx)) continue;
     }
-    out = k->max;
+    out = k->time ? std::nullopt : k->max;  // a skew in ps is a delay (see length_constraint)
   }
   return out;
 }
@@ -668,6 +721,29 @@ std::optional<model::Constraint> RuleEngine::net_constraint(model::NetId net, co
     out = *k;  // later rules take precedence
   }
   return out;
+}
+
+int RuleEngine::last_rule_with(const CopperItem& it, int layer, const std::string& type) const {
+  int out = -1;
+  for (std::size_t i = 0; i < rules_.size(); ++i) {
+    const auto& c = rules_[i];
+    if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
+    if (std::none_of(c.rule->constraints.begin(), c.rule->constraints.end(), [&](const model::Constraint& x) { return x.type == type; })) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &it, nullptr, layer};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = static_cast<int>(i);
+  }
+  return out;
+}
+
+int RuleEngine::net_rule_with(model::NetId net, const std::string& type) const {
+  CopperItem probe;
+  probe.kind = ItemKind::Track;
+  probe.net = net;
+  probe.layers = ~model::LayerMask{0};
+  return last_rule_with(probe, -1, type);
 }
 
 // KiCad's disallow item keywords (DRC_RULES_PARSER): "via" covers every via type. `words` holds the rule's
@@ -780,17 +856,14 @@ bool RuleEngine::via_hole_rule_hits_own_tracks(model::NetId net) const {
 bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   if (a == 0 || b == 0 || a == b) return false;
   if (static_cast<std::size_t>(a) < dp_partner_.size()) return dp_partner_[static_cast<std::size_t>(a)] == b;
-  const std::string& x = b_.nets[static_cast<std::size_t>(a)].name;
-  const std::string& y = b_.nets[static_cast<std::size_t>(b)].name;
-  if (x.size() != y.size() || x.empty()) return false;
-  const char cx = x.back(), cy = y.back();
-  const bool pair = (cx == 'P' && cy == 'N') || (cx == 'N' && cy == 'P') || (cx == '+' && cy == '-') || (cx == '-' && cy == '+');
-  return pair && x.compare(0, x.size() - 1, y, 0, y.size() - 1) == 0;
+  return match_dp_suffix(b_.nets[static_cast<std::size_t>(a)].name).complement == b_.nets[static_cast<std::size_t>(b)].name;
 }
 
 Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer) const {
-  // Local overrides (pad, then footprint) win over net classes: KiCad uses the larger of the two items'
-  // overrides when either has one (verified on tinytapeout-demo: U6 footprint 0.18 mm vs GND class 0.23 mm).
+  // KiCad 10.0.6's order (DRC_ENGINE::EvalRules): a local override (pad, then footprint; the larger of the two items') wins over
+  // everything but the board minimum (verified on tinytapeout-demo: U6 footprint 0.18 mm vs GND class 0.23 mm). Then the custom
+  // rules: the one that applies is final, below the board minimum too (vme-wren: 0.1 mm under the FPGA, 0.125 mm minimum). Only
+  // the net-class value is raised by a zone's own clearance and floored at the board minimum.
   auto local = [&](const CopperItem& it) -> Coord {
     if (it.kind != ItemKind::Pad) return -1;
     const auto& pad = b_.pads[static_cast<std::size_t>(it.index)];
@@ -798,34 +871,37 @@ Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer)
     return b_.footprints[static_cast<std::size_t>(pad.footprint)].clearance;
   };
   const Coord la = local(a), lb = local(b);
-  Coord req = (la >= 0 || lb >= 0) ? std::max(la, lb) : std::max(netclass(a).clearance, netclass(b).clearance);
+  if (la >= 0 || lb >= 0) return std::max(std::max(la, lb), r_.minimums.clearance);
+  if (any_custom_clearance_)
+    if (auto c = custom_min("clearance", &a, &b, layer)) return *c;
+  Coord req = std::max(netclass(a).clearance, netclass(b).clearance);
   // KiCad's implicit diff-pair rule: between the two halves of a coupled pair, the class's diff-pair gap
   // replaces the clearance (verified on CM5_MINIMA_3: PCIe P/N at 0.177 mm under a 0.2 mm class clearance).
   // Observed: the smaller of clearance and diff-pair gap applies (0.154 gap passes under a 0.2 class; 0.2 mm
   // pads pass under a 0.25 gap).
-  if (la < 0 && lb < 0 && coupled_diff_pair(a.net, b.net)) req = std::min(req, netclass(a).diff_pair_gap);
-  bool custom = false;
-  if (any_custom_clearance_)
-    if (auto c = custom_min("clearance", &a, &b, layer)) req = *c, custom = true;
-  // A copper zone's own clearance is a local clearance: without a pad override or a custom rule, the larger of
-  // it and the net-class value applies (DRC_ENGINE::EvalRules; KiCad names it "zone clearance").
-  if (zone_overrides_ && la < 0 && lb < 0 && !custom)
+  if (coupled_diff_pair(a.net, b.net)) {
+    req = std::min(req, netclass(a).diff_pair_gap);
+    auto track = [](const CopperItem& it) { return it.kind == ItemKind::Track || it.kind == ItemKind::Arc; };
+    if (const Coord g = netclass(a).tuning_pair_gap; g > 0 && track(a) && track(b)) req = std::min(req, g);
+  }
+  // A copper zone's own clearance is a local clearance: the larger of it and the net-class value applies (KiCad names it
+  // "zone clearance").
+  if (zone_overrides_)
     for (const CopperItem* z : {&a, &b})
       if (z->kind == ItemKind::Zone) req = std::max(req, b_.zones[static_cast<std::size_t>(z->index)].clearance);
-  // The board minimum is always a floor (multichannel_mixer: 0.3 mm minimum over a 0.2 mm class).
+  // The board minimum is a floor here (multichannel_mixer: 0.3 mm minimum over a 0.2 mm class).
   return std::max(req, r_.minimums.clearance);
 }
 
+// A custom rule replaces the board minimum here as well: it is the board setup's implicit rule, which any custom rule overrides.
 Coord RuleEngine::hole_clearance(const CopperItem* owner, const CopperItem& other, int layer) const {
-  Coord req = r_.minimums.hole_clearance;
-  if (auto c = custom_min("hole_clearance", owner, &other, layer)) req = std::max(req, *c);
-  return req;
+  if (auto c = custom_min("hole_clearance", owner, &other, layer)) return *c;
+  return r_.minimums.hole_clearance;
 }
 
 Coord RuleEngine::hole_to_hole(const CopperItem* a, const CopperItem* b) const {
-  Coord req = r_.minimums.hole_to_hole;
-  if (auto c = custom_min("hole_to_hole", a, b, -1)) req = std::max(req, *c);
-  return req;
+  if (auto c = custom_min("hole_to_hole", a, b, -1)) return *c;
+  return r_.minimums.hole_to_hole;
 }
 
 Coord RuleEngine::edge_clearance(const CopperItem& a, int layer) const {
@@ -852,6 +928,20 @@ std::pair<Coord, Coord> RuleEngine::track_width(const CopperItem& t, int layer) 
     mx = k->max ? *k->max : 0;
   }
   return {mn, mx};
+}
+
+std::string RuleEngine::track_width_severity(const CopperItem& t, int layer) const {
+  std::string out;
+  for (const auto& c : rules_) {
+    if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
+    if (std::none_of(c.rule->constraints.begin(), c.rule->constraints.end(), [](const auto& x) { return x.type == "track_width"; })) continue;
+    if (c.cond) {
+      EvalCtx ctx{this, &t, nullptr, layer};
+      if (!c.cond->eval(ctx)) continue;
+    }
+    out = c.rule->severity;
+  }
+  return out;
 }
 
 Coord RuleEngine::via_diameter_min(const CopperItem& v) const {

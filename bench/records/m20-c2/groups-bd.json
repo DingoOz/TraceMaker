@@ -1,0 +1,3107 @@
+{
+ "EtherCAT_shield_v1_EtherCAT_shield_v1": [
+  {
+   "ref": "J3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "PB6",
+    "~SCS",
+    "PB11"
+   ],
+   "assign": {
+    "1": "~SCS",
+    "2": "PB6",
+    "3": "PB11"
+   },
+   "before_mm": 41.187,
+   "after_mm": 40.131,
+   "moved": 2
+  },
+  {
+   "ref": "J4",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "PB2",
+    "SCK",
+    "PB10"
+   ],
+   "assign": {
+    "1": "SCK",
+    "2": "PB2",
+    "3": "PB10"
+   },
+   "before_mm": 44.88,
+   "after_mm": 44.515,
+   "moved": 2
+  },
+  {
+   "ref": "J6",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "PC9",
+    "SIO0",
+    "PB1"
+   ],
+   "assign": {
+    "1": "PB1",
+    "2": "PC9",
+    "3": "SIO0"
+   },
+   "before_mm": 59.889,
+   "after_mm": 57.717,
+   "moved": 3
+  },
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "21",
+    "23",
+    "25",
+    "27",
+    "34"
+   ],
+   "nets": [
+    "PC10",
+    "LAN9252_IRQ",
+    "LAN9252_RST",
+    "SYNC0",
+    "SYNC1",
+    "PB0"
+   ],
+   "assign": {
+    "1": "PC10",
+    "21": "PB0",
+    "23": "LAN9252_RST",
+    "25": "SYNC1",
+    "27": "LAN9252_IRQ",
+    "34": "SYNC0"
+   },
+   "before_mm": 202.506,
+   "after_mm": 195.738,
+   "moved": 4
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "13",
+    "15",
+    "17",
+    "18",
+    "22",
+    "24",
+    "25"
+   ],
+   "nets": [
+    "PC9",
+    "PA6",
+    "PA7",
+    "PB6",
+    "PB11",
+    "PB2",
+    "PB1",
+    "PB10"
+   ],
+   "assign": {
+    "1": "PA7",
+    "13": "PC9",
+    "15": "PB1",
+    "17": "PB6",
+    "18": "PA6",
+    "22": "PB11",
+    "24": "PB2",
+    "25": "PB10"
+   },
+   "before_mm": 86.52,
+   "after_mm": 80.234,
+   "moved": 6
+  }
+ ],
+ "Hardware_Playground_serial_gw_ATMEGA328P": [
+  {
+   "ref": "CON1",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "5",
+    "4"
+   ],
+   "nets": [
+    "/MISO",
+    "/SCK",
+    "/RST",
+    "/MOSI"
+   ],
+   "assign": {
+    "1": "/RST",
+    "3": "/MISO",
+    "5": "/SCK",
+    "4": "/MOSI"
+   },
+   "before_mm": 45.889,
+   "after_mm": 39.944,
+   "moved": 3
+  }
+ ],
+ "MicroMaple_MicroMaple": [
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "13",
+    "14",
+    "7",
+    "8",
+    "9",
+    "12",
+    "11",
+    "10",
+    "4",
+    "5",
+    "6",
+    "3",
+    "2",
+    "1"
+   ],
+   "nets": [
+    "/PA12",
+    "/PA13",
+    "/PA6",
+    "/PA7",
+    "/PA8",
+    "/PA11",
+    "/PA10",
+    "/PA9",
+    "/PA3",
+    "/PA4",
+    "/PA5",
+    "/PA2",
+    "/PA1",
+    "/PA0"
+   ],
+   "assign": {
+    "13": "/PA13",
+    "14": "/PA0",
+    "7": "/PA6",
+    "8": "/PA5",
+    "9": "/PA4",
+    "12": "/PA1",
+    "11": "/PA2",
+    "10": "/PA3",
+    "4": "/PA9",
+    "5": "/PA8",
+    "6": "/PA7",
+    "3": "/PA10",
+    "2": "/PA11",
+    "1": "/PA12"
+   },
+   "before_mm": 257.25,
+   "after_mm": 204.431,
+   "moved": 13
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "13",
+    "14",
+    "7",
+    "8",
+    "9",
+    "12",
+    "11",
+    "10",
+    "4",
+    "5",
+    "6",
+    "3",
+    "2",
+    "1"
+   ],
+   "nets": [
+    "/PB12",
+    "/PB13",
+    "/PB6",
+    "/PB7",
+    "/PB8",
+    "/PB11",
+    "/PB10",
+    "/PB9",
+    "/PB3",
+    "/PB4",
+    "/PB5",
+    "/PB2",
+    "/PB1",
+    "/PB0"
+   ],
+   "assign": {
+    "13": "/PB2",
+    "14": "/PB1",
+    "7": "/PB4",
+    "8": "/PB5",
+    "9": "/PB6",
+    "12": "/PB9",
+    "11": "/PB8",
+    "10": "/PB7",
+    "4": "/PB11",
+    "5": "/PB10",
+    "6": "/PB3",
+    "3": "/PB13",
+    "2": "/PB12",
+    "1": "/PB0"
+   },
+   "before_mm": 242.935,
+   "after_mm": 230.627,
+   "moved": 13
+  },
+  {
+   "ref": "P4",
+   "kind": "connector",
+   "pads": [
+    "12",
+    "11",
+    "4",
+    "5",
+    "3",
+    "2",
+    "1"
+   ],
+   "nets": [
+    "/PB14",
+    "/PB15",
+    "/PC14",
+    "/PC15",
+    "/PC13",
+    "/PA15",
+    "/PA14"
+   ],
+   "assign": {
+    "12": "/PA15",
+    "11": "/PC13",
+    "4": "/PC15",
+    "5": "/PC14",
+    "3": "/PB15",
+    "2": "/PB14",
+    "1": "/PA14"
+   },
+   "before_mm": 110.9,
+   "after_mm": 99.782,
+   "moved": 6
+  }
+ ],
+ "fifogfx_c64cart": [
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43"
+   ],
+   "nets": [
+    "/~IRQ",
+    "/R/~W",
+    "/DOTCLK",
+    "/~I/O1",
+    "/~GAME",
+    "/~EXROM",
+    "/~I/O2",
+    "/~ROML",
+    "/BA",
+    "/~DMA",
+    "/D7",
+    "/D6",
+    "/D5",
+    "/D4",
+    "/D3",
+    "/D2",
+    "/D1",
+    "/D0",
+    "/~ROMH",
+    "/~RESET",
+    "/~NMI",
+    "/PHI2",
+    "/A15",
+    "/A14",
+    "/A13",
+    "/A12",
+    "/A11",
+    "/A10",
+    "/A9",
+    "/A8",
+    "/A7",
+    "/A6",
+    "/A5",
+    "/A4",
+    "/A3",
+    "/A2",
+    "/A1",
+    "/A0"
+   ],
+   "assign": {
+    "4": "/~ROMH",
+    "5": "/~NMI",
+    "6": "/~IRQ",
+    "7": "/DOTCLK",
+    "8": "/~I/O1",
+    "9": "/~GAME",
+    "10": "/~EXROM",
+    "11": "/~I/O2",
+    "12": "/~ROML",
+    "13": "/BA",
+    "14": "/~DMA",
+    "15": "/A7",
+    "16": "/A6",
+    "17": "/A5",
+    "18": "/A4",
+    "19": "/A3",
+    "20": "/A2",
+    "21": "/A1",
+    "24": "/A15",
+    "25": "/~RESET",
+    "26": "/A14",
+    "27": "/A13",
+    "28": "/A12",
+    "29": "/A11",
+    "30": "/A10",
+    "31": "/PHI2",
+    "32": "/A9",
+    "33": "/R/~W",
+    "34": "/A8",
+    "35": "/D7",
+    "36": "/D6",
+    "37": "/D5",
+    "38": "/D4",
+    "39": "/D3",
+    "40": "/D2",
+    "41": "/D1",
+    "42": "/D0",
+    "43": "/A0"
+   },
+   "before_mm": 1205.993,
+   "after_mm": 1182.567,
+   "moved": 36
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "5",
+    "10",
+    "12",
+    "14",
+    "16",
+    "18",
+    "20",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "40"
+   ],
+   "nets": [
+    "/~RESET",
+    "Net-(P3-Pad5)",
+    "/A15",
+    "/A14",
+    "/A13",
+    "/A12",
+    "/A11",
+    "/A10",
+    "/A9",
+    "/D7",
+    "/A8",
+    "/D6",
+    "/A7",
+    "/D5",
+    "/A6",
+    "/D4",
+    "/A5",
+    "/D3",
+    "/A4",
+    "/D2",
+    "/A3",
+    "/D1",
+    "/A2",
+    "/D0",
+    "/A1",
+    "/A0"
+   ],
+   "assign": {
+    "3": "/A15",
+    "5": "/~RESET",
+    "10": "/A14",
+    "12": "/A13",
+    "14": "/A12",
+    "16": "/A11",
+    "18": "/A10",
+    "20": "/A9",
+    "22": "Net-(P3-Pad5)",
+    "23": "/A8",
+    "24": "/D7",
+    "25": "/A7",
+    "26": "/D6",
+    "27": "/A6",
+    "28": "/D5",
+    "29": "/A5",
+    "30": "/D4",
+    "31": "/A4",
+    "32": "/D3",
+    "33": "/A3",
+    "34": "/D2",
+    "35": "/A2",
+    "36": "/D1",
+    "37": "/A1",
+    "38": "/D0",
+    "40": "/A0"
+   },
+   "before_mm": 752.421,
+   "after_mm": 741.197,
+   "moved": 25
+  }
+ ],
+ "kitspace_OtterPill": [
+  {
+   "ref": "J3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "13",
+    "14",
+    "15"
+   ],
+   "nets": [
+    "PB14",
+    "PB15",
+    "PB0",
+    "PA7",
+    "PA6",
+    "PA5",
+    "PA4",
+    "PA3",
+    "PA2",
+    "PA1",
+    "PB9",
+    "PA10",
+    "PA9"
+   ],
+   "assign": {
+    "1": "PA9",
+    "2": "PB15",
+    "3": "PB14",
+    "5": "PB0",
+    "6": "PA7",
+    "7": "PA6",
+    "8": "PA5",
+    "9": "PA3",
+    "10": "PA4",
+    "11": "PA2",
+    "13": "PA1",
+    "14": "PA10",
+    "15": "PB9"
+   },
+   "before_mm": 132.284,
+   "after_mm": 129.891,
+   "moved": 10
+  },
+  {
+   "ref": "J4",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "13"
+   ],
+   "nets": [
+    "PB13",
+    "PA8",
+    "PB1",
+    "PB8",
+    "PA15",
+    "PB2",
+    "PB7",
+    "PB6",
+    "PB3",
+    "PB4",
+    "PB5"
+   ],
+   "assign": {
+    "1": "PB13",
+    "3": "PB2",
+    "4": "PB1",
+    "5": "PA8",
+    "6": "PB4",
+    "7": "PB3",
+    "8": "PA15",
+    "9": "PB5",
+    "10": "PB6",
+    "11": "PB7",
+    "13": "PB8"
+   },
+   "before_mm": 92.098,
+   "after_mm": 83.058,
+   "moved": 9
+  }
+ ],
+ "kitspace_ardfpga": [
+  {
+   "ref": "J3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "MSDI",
+    "MSCK",
+    "MSDO",
+    "MRST"
+   ],
+   "assign": {
+    "1": "MRST",
+    "3": "MSDO",
+    "4": "MSDI",
+    "5": "MSCK"
+   },
+   "before_mm": 56.582,
+   "after_mm": 53.859,
+   "moved": 4
+  },
+  {
+   "ref": "RN1",
+   "kind": "resistor_array",
+   "pads": [
+    "2",
+    "3",
+    "1",
+    "4",
+    "8",
+    "7",
+    "6",
+    "5"
+   ],
+   "nets": [
+    "IO7",
+    "IO8",
+    "IO6",
+    "IO9",
+    "Net-(RN1-Pad8)",
+    "Net-(RN1-Pad7)",
+    "Net-(RN1-Pad6)",
+    "Net-(RN1-Pad5)"
+   ],
+   "assign": {
+    "1": "Net-(RN1-Pad5)",
+    "8": "IO9",
+    "2": "Net-(RN1-Pad6)",
+    "7": "IO8",
+    "3": "IO6",
+    "6": "Net-(RN1-Pad8)",
+    "4": "IO7",
+    "5": "Net-(RN1-Pad7)"
+   },
+   "before_mm": 97.676,
+   "after_mm": 96.591,
+   "moved": 8
+  },
+  {
+   "ref": "RN3",
+   "kind": "resistor_array",
+   "pads": [
+    "5",
+    "6",
+    "7",
+    "8",
+    "4",
+    "1",
+    "3",
+    "2"
+   ],
+   "nets": [
+    "IO2",
+    "IO3",
+    "IO4",
+    "IO5",
+    "Net-(RN3-Pad4)",
+    "Net-(RN3-Pad1)",
+    "Net-(RN3-Pad3)",
+    "Net-(RN3-Pad2)"
+   ],
+   "assign": {
+    "1": "Net-(RN3-Pad2)",
+    "8": "IO4",
+    "2": "Net-(RN3-Pad3)",
+    "7": "IO3",
+    "3": "Net-(RN3-Pad4)",
+    "6": "IO2",
+    "4": "Net-(RN3-Pad1)",
+    "5": "IO5"
+   },
+   "before_mm": 121.866,
+   "after_mm": 119.727,
+   "moved": 8
+  }
+ ],
+ "kitspace_test-jig": [
+  {
+   "ref": "J3",
+   "kind": "connector",
+   "pads": [
+    "6",
+    "5",
+    "4"
+   ],
+   "nets": [
+    "/LED_FAIL",
+    "/LED_PASS",
+    "/LED_RUN"
+   ],
+   "assign": {
+    "6": "/LED_RUN",
+    "5": "/LED_FAIL",
+    "4": "/LED_PASS"
+   },
+   "before_mm": 46.609,
+   "after_mm": 45.723,
+   "moved": 3
+  }
+ ],
+ "poncho_fpga_fpga-dongle": [
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+   ],
+   "nets": [
+    "/iCE40-CDONE",
+    "/iCE40-CRESET",
+    "/iCE40-SDI",
+    "/iCE40-SDO",
+    "/iCE40-SCK",
+    "/iCE40-SS_B"
+   ],
+   "assign": {
+    "1": "/iCE40-SCK",
+    "2": "/iCE40-SDI",
+    "3": "/iCE40-CRESET",
+    "4": "/iCE40-SDO",
+    "5": "/iCE40-SS_B",
+    "6": "/iCE40-CDONE"
+   },
+   "before_mm": 87.973,
+   "after_mm": 79.849,
+   "moved": 5
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "4",
+    "6",
+    "12",
+    "14",
+    "15",
+    "16",
+    "18",
+    "20",
+    "21",
+    "23",
+    "29"
+   ],
+   "nets": [
+    "/AUX_SPI_MISO",
+    "/AUX_SPI_MOSI",
+    "/AUX_CRESET",
+    "/AUX_CDONE",
+    "/AUX_SPI_SCK",
+    "/AUX_SPI_SSEL",
+    "/SPI_MISO",
+    "/SPI_CLK",
+    "/SPI_MOSI",
+    "/SPI_CS",
+    "/GPIO0"
+   ],
+   "assign": {
+    "4": "/SPI_CLK",
+    "6": "/SPI_CS",
+    "12": "/AUX_SPI_MOSI",
+    "14": "/AUX_CRESET",
+    "15": "/AUX_CDONE",
+    "16": "/AUX_SPI_MISO",
+    "18": "/AUX_SPI_SCK",
+    "20": "/SPI_MISO",
+    "21": "/AUX_SPI_SSEL",
+    "23": "/SPI_MOSI",
+    "29": "/GPIO0"
+   },
+   "before_mm": 255.51,
+   "after_mm": 232.662,
+   "moved": 10
+  },
+  {
+   "ref": "P4",
+   "kind": "connector",
+   "pads": [
+    "19",
+    "21",
+    "23",
+    "25"
+   ],
+   "nets": [
+    "/I2C_SDA",
+    "/I2C_SCL",
+    "/RxD",
+    "/TxD"
+   ],
+   "assign": {
+    "19": "/TxD",
+    "21": "/RxD",
+    "23": "/I2C_SCL",
+    "25": "/I2C_SDA"
+   },
+   "before_mm": 119.113,
+   "after_mm": 118.75,
+   "moved": 4
+  },
+  {
+   "ref": "P5",
+   "kind": "connector",
+   "pads": [
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34"
+   ],
+   "nets": [
+    "/FPGA_IO_BANK1_0",
+    "/FPGA_IO_BANK1_1",
+    "/FPGA_IO_BANK1_2",
+    "/FPGA_IO_BANK1_3",
+    "/FPGA_IO_BANK1_4",
+    "/FPGA_IO_BANK1_5",
+    "/FPGA_IO_BANK1_6",
+    "/FPGA_IO_BANK1_7",
+    "/FPGA_IO_BANK1_8",
+    "/FPGA_IO_BANK1_9",
+    "/FPGA_IO_BANK1_10",
+    "/FPGA_IO_BANK1_11",
+    "/FPGA_IO_BANK1_12",
+    "/FPGA_IO_BANK1_13",
+    "/BUT1",
+    "/EXTCLK",
+    "/FPGA_IO_BANK1_14",
+    "/FPGA_IO_BANK1_15",
+    "/FPGA_IO_BANK1_16",
+    "/FPGA_IO_BANK1_17",
+    "/FPGA_IO_BANK1_18",
+    "/FPGA_IO_BANK1_19",
+    "/FPGA_IO_BANK1_20",
+    "/FPGA_IO_BANK1_21",
+    "/FPGA_IO_BANK1_22",
+    "/FPGA_IO_BANK1_23"
+   ],
+   "assign": {
+    "9": "/FPGA_IO_BANK1_6",
+    "10": "/FPGA_IO_BANK1_10",
+    "11": "/FPGA_IO_BANK1_2",
+    "12": "/FPGA_IO_BANK1_7",
+    "13": "/FPGA_IO_BANK1_0",
+    "14": "/FPGA_IO_BANK1_4",
+    "15": "/FPGA_IO_BANK1_3",
+    "16": "/FPGA_IO_BANK1_1",
+    "17": "/FPGA_IO_BANK1_8",
+    "18": "/FPGA_IO_BANK1_5",
+    "19": "/FPGA_IO_BANK1_11",
+    "20": "/FPGA_IO_BANK1_9",
+    "21": "/FPGA_IO_BANK1_13",
+    "22": "/FPGA_IO_BANK1_12",
+    "23": "/FPGA_IO_BANK1_15",
+    "24": "/FPGA_IO_BANK1_14",
+    "25": "/FPGA_IO_BANK1_17",
+    "26": "/FPGA_IO_BANK1_16",
+    "27": "/FPGA_IO_BANK1_19",
+    "28": "/FPGA_IO_BANK1_18",
+    "29": "/FPGA_IO_BANK1_21",
+    "30": "/FPGA_IO_BANK1_20",
+    "31": "/BUT1",
+    "32": "/FPGA_IO_BANK1_22",
+    "33": "/EXTCLK",
+    "34": "/FPGA_IO_BANK1_23"
+   },
+   "before_mm": 776.298,
+   "after_mm": 770.389,
+   "moved": 23
+  },
+  {
+   "ref": "P6",
+   "kind": "connector",
+   "pads": [
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34"
+   ],
+   "nets": [
+    "/FPGA_IO_BANK2_0",
+    "/FPGA_IO_BANK2_1",
+    "/FPGA_IO_BANK2_2",
+    "/FPGA_IO_BANK2_3",
+    "/FPGA_IO_BANK2_4",
+    "/FPGA_IO_BANK2_5",
+    "/FPGA_IO_BANK2_6",
+    "/FPGA_IO_BANK2_7",
+    "/FPGA_IO_BANK2_8",
+    "/FPGA_IO_BANK2_9",
+    "/FPGA_IO_BANK2_10",
+    "/FPGA_IO_BANK2_11",
+    "/FPGA_IO_BANK2_12",
+    "/FPGA_IO_BANK2_13",
+    "/FPGA_IO_BANK2_14",
+    "/FPGA_IO_BANK2_15",
+    "/FPGA_IO_BANK2_16",
+    "/FPGA_IO_BANK2_17",
+    "/FPGA_IO_BANK2_18",
+    "/FPGA_IO_BANK2_19",
+    "/FPGA_IO_BANK2_20",
+    "/FPGA_IO_BANK2_21",
+    "/FPGA_IO_BANK2_22",
+    "/FPGA_IO_BANK2_23",
+    "/FPGA_IO_BANK2_24",
+    "/FPGA_IO_BANK2_25",
+    "/FPGA_IO_BANK2_26",
+    "/FPGA_IO_BANK2_27"
+   ],
+   "assign": {
+    "7": "/FPGA_IO_BANK2_0",
+    "8": "/FPGA_IO_BANK2_1",
+    "9": "/FPGA_IO_BANK2_2",
+    "10": "/FPGA_IO_BANK2_3",
+    "11": "/FPGA_IO_BANK2_4",
+    "12": "/FPGA_IO_BANK2_5",
+    "13": "/FPGA_IO_BANK2_6",
+    "14": "/FPGA_IO_BANK2_7",
+    "15": "/FPGA_IO_BANK2_8",
+    "16": "/FPGA_IO_BANK2_9",
+    "17": "/FPGA_IO_BANK2_10",
+    "18": "/FPGA_IO_BANK2_11",
+    "19": "/FPGA_IO_BANK2_12",
+    "20": "/FPGA_IO_BANK2_13",
+    "21": "/FPGA_IO_BANK2_14",
+    "22": "/FPGA_IO_BANK2_15",
+    "23": "/FPGA_IO_BANK2_16",
+    "24": "/FPGA_IO_BANK2_17",
+    "25": "/FPGA_IO_BANK2_18",
+    "26": "/FPGA_IO_BANK2_19",
+    "27": "/FPGA_IO_BANK2_20",
+    "28": "/FPGA_IO_BANK2_22",
+    "29": "/FPGA_IO_BANK2_23",
+    "30": "/FPGA_IO_BANK2_26",
+    "31": "/FPGA_IO_BANK2_27",
+    "32": "/FPGA_IO_BANK2_24",
+    "33": "/FPGA_IO_BANK2_25",
+    "34": "/FPGA_IO_BANK2_21"
+   },
+   "before_mm": 1024.952,
+   "after_mm": 1024.939,
+   "moved": 7
+  },
+  {
+   "ref": "P7",
+   "kind": "connector",
+   "pads": [
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/DBG_SWDIO",
+    "/DBG_SWCLK",
+    "/DBG_~RST~",
+    "/DBG_~ISP~"
+   ],
+   "assign": {
+    "2": "/DBG_SWCLK",
+    "3": "/DBG_SWDIO",
+    "4": "/DBG_~ISP~",
+    "5": "/DBG_~RST~"
+   },
+   "before_mm": 82.559,
+   "after_mm": 82.276,
+   "moved": 4
+  }
+ ],
+ "Hardware_Playground_multisensor_cr2032": [
+  {
+   "ref": "CON1",
+   "kind": "connector",
+   "pads": [
+    "4",
+    "5",
+    "3",
+    "1"
+   ],
+   "nets": [
+    "/MOSI",
+    "/RST",
+    "/SCK",
+    "/MISO"
+   ],
+   "assign": {
+    "4": "/MOSI",
+    "5": "/MISO",
+    "3": "/SCK",
+    "1": "/RST"
+   },
+   "before_mm": 69.495,
+   "after_mm": 65.23,
+   "moved": 2
+  }
+ ],
+ "Hardware_Playground_sd_wav_pcm5100": [
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "nets": [
+    "/nRST",
+    "/SWDIO",
+    "/SWCLK",
+    "/SWO"
+   ],
+   "assign": {
+    "1": "/nRST",
+    "2": "/SWO",
+    "3": "/SWCLK",
+    "4": "/SWDIO"
+   },
+   "before_mm": 34.226,
+   "after_mm": 32.049,
+   "moved": 2
+  }
+ ],
+ "P8000_WDC_Emulator_P8000_WDC_Emulator": [
+  {
+   "ref": "X2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "16",
+    "17",
+    "18",
+    "19",
+    "22",
+    "24"
+   ],
+   "nets": [
+    "//RDY",
+    "/D0",
+    "/D1",
+    "/D7",
+    "/D6",
+    "/D5",
+    "/D4",
+    "/D3",
+    "/D2",
+    "//ASTB",
+    "/STATUS0",
+    "//TR",
+    "/STATUS2",
+    "/STATUS1",
+    "//RST2",
+    "//TE"
+   ],
+   "assign": {
+    "1": "//ASTB",
+    "2": "//RDY",
+    "3": "/STATUS1",
+    "4": "/D4",
+    "5": "/D5",
+    "6": "/D2",
+    "7": "//TE",
+    "8": "/D3",
+    "9": "/D6",
+    "10": "/STATUS2",
+    "16": "/D0",
+    "17": "/D7",
+    "18": "/STATUS0",
+    "19": "/D1",
+    "22": "//TR",
+    "24": "//RST2"
+   },
+   "before_mm": 229.656,
+   "after_mm": 167.81,
+   "moved": 15
+  },
+  {
+   "ref": "X4",
+   "kind": "connector",
+   "pads": [
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "23",
+    "25",
+    "33",
+    "35",
+    "36",
+    "37",
+    "38"
+   ],
+   "nets": [
+    "/PA7",
+    "/PC0",
+    "/PA6",
+    "/PC1",
+    "/PA5",
+    "/PC2",
+    "/PA4",
+    "/PC3",
+    "/PA3",
+    "/PC4",
+    "/PA2",
+    "/PC5",
+    "/PA1",
+    "/PC6",
+    "/PA0",
+    "/PC7",
+    "//WR",
+    "//RD",
+    "/DA1",
+    "/DA0",
+    "/DA2",
+    "//CS0",
+    "Net-(D4-Pad8)"
+   ],
+   "assign": {
+    "3": "/PA7",
+    "4": "/PC4",
+    "5": "/PA6",
+    "6": "/PC3",
+    "7": "/PA5",
+    "8": "/PC2",
+    "9": "/PA4",
+    "10": "/PC1",
+    "11": "/PA3",
+    "12": "/PC0",
+    "13": "/PA2",
+    "14": "/PA1",
+    "15": "//RD",
+    "16": "/PA0",
+    "17": "//WR",
+    "18": "/DA2",
+    "23": "/DA1",
+    "25": "/DA0",
+    "33": "Net-(D4-Pad8)",
+    "35": "//CS0",
+    "36": "/PC6",
+    "37": "/PC7",
+    "38": "/PC5"
+   },
+   "before_mm": 1155.133,
+   "after_mm": 1107.582,
+   "moved": 16
+  },
+  {
+   "ref": "X6",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "16",
+    "17",
+    "18",
+    "21"
+   ],
+   "nets": [
+    "//RDY",
+    "/D4",
+    "//ASTB",
+    "/D2",
+    "/STATUS1",
+    "/D5",
+    "/D3",
+    "/RST1",
+    "/STATUS2",
+    "//TE",
+    "/D0",
+    "/D6",
+    "/D7",
+    "/STATUS0",
+    "/D1",
+    "//TR"
+   ],
+   "assign": {
+    "1": "/D0",
+    "3": "/D7",
+    "4": "//RDY",
+    "5": "/D5",
+    "6": "/D1",
+    "8": "/D6",
+    "9": "/D4",
+    "10": "/D3",
+    "11": "/D2",
+    "12": "//ASTB",
+    "13": "/STATUS0",
+    "14": "//TR",
+    "16": "/STATUS2",
+    "17": "/STATUS1",
+    "18": "//TE",
+    "21": "/RST1"
+   },
+   "before_mm": 211.713,
+   "after_mm": 140.627,
+   "moved": 16
+  },
+  {
+   "ref": "X7",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "Net-(D1-Pad7)",
+    "Net-(D1-Pad8)",
+    "Net-(D1-Pad6)",
+    "Net-(1C1-Pad1)"
+   ],
+   "assign": {
+    "1": "Net-(1C1-Pad1)",
+    "3": "Net-(D1-Pad7)",
+    "4": "Net-(D1-Pad6)",
+    "5": "Net-(D1-Pad8)"
+   },
+   "before_mm": 403.649,
+   "after_mm": 399.178,
+   "moved": 3
+  }
+ ],
+ "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0": [
+  {
+   "ref": "J3",
+   "kind": "connector",
+   "pads": [
+    "13",
+    "15",
+    "16",
+    "19"
+   ],
+   "nets": [
+    "CEC",
+    "/TMDS_SCL",
+    "/TMDS_SDA",
+    "/TMDS_HPD"
+   ],
+   "assign": {
+    "13": "CEC",
+    "15": "/TMDS_SDA",
+    "16": "/TMDS_HPD",
+    "19": "/TMDS_SCL"
+   },
+   "before_mm": 105.836,
+   "after_mm": 105.777,
+   "moved": 3
+  }
+ ],
+ "mechkeys_58r-mxalps": [
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15"
+   ],
+   "nets": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "C14",
+    "C15"
+   ],
+   "assign": {
+    "1": "C3",
+    "2": "C2",
+    "3": "C4",
+    "4": "C11",
+    "5": "C12",
+    "6": "C13",
+    "7": "C1",
+    "8": "C14",
+    "9": "C15",
+    "10": "C5",
+    "11": "C6",
+    "12": "C7",
+    "13": "C8",
+    "14": "C9",
+    "15": "C10"
+   },
+   "before_mm": 921.849,
+   "after_mm": 808.773,
+   "moved": 14
+  },
+  {
+   "ref": "P4",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "nets": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "assign": {
+    "1": "R1",
+    "2": "R3",
+    "3": "R4",
+    "4": "R2"
+   },
+   "before_mm": 121.355,
+   "after_mm": 119.769,
+   "moved": 3
+  }
+ ],
+ "zx-sizif-512-ext_sizif512ext": [
+  {
+   "ref": "J1",
+   "kind": "connector",
+   "pads": [
+    "50",
+    "44",
+    "42",
+    "40",
+    "38",
+    "36",
+    "34",
+    "32",
+    "30",
+    "28",
+    "26",
+    "24",
+    "22",
+    "20",
+    "18",
+    "16",
+    "14",
+    "12",
+    "10",
+    "8",
+    "6",
+    "4"
+   ],
+   "nets": [
+    "/BUS1",
+    "/~RST",
+    "/MIX_R",
+    "/~INT",
+    "/D1",
+    "/A5",
+    "/CLKCPU",
+    "/A2",
+    "/A4",
+    "/A7",
+    "/~RFSH",
+    "/A14",
+    "/D3",
+    "/A13",
+    "/D5",
+    "/D6",
+    "/D7",
+    "/~ROMCSB",
+    "/A11",
+    "/A12",
+    "/A8",
+    "/~HALT"
+   ],
+   "assign": {
+    "50": "/MIX_R",
+    "44": "/BUS1",
+    "42": "/~INT",
+    "40": "/D1",
+    "38": "/A5",
+    "36": "/A2",
+    "34": "/A4",
+    "32": "/A7",
+    "30": "/~RST",
+    "28": "/CLKCPU",
+    "26": "/~RFSH",
+    "24": "/A14",
+    "22": "/D3",
+    "20": "/A13",
+    "18": "/D5",
+    "16": "/D6",
+    "14": "/A8",
+    "12": "/A11",
+    "10": "/D7",
+    "8": "/~ROMCSB",
+    "6": "/A12",
+    "4": "/~HALT"
+   },
+   "before_mm": 299.54,
+   "after_mm": 290.314,
+   "moved": 15
+  },
+  {
+   "ref": "J1",
+   "kind": "connector",
+   "pads": [
+    "49",
+    "43",
+    "41",
+    "39",
+    "37",
+    "35",
+    "33",
+    "31",
+    "29",
+    "27",
+    "25",
+    "23",
+    "21",
+    "19",
+    "17",
+    "15",
+    "13",
+    "11",
+    "9",
+    "7",
+    "5",
+    "3"
+   ],
+   "nets": [
+    "/BUS0",
+    "/MIX_L",
+    "/~NMI",
+    "/D2",
+    "/D0",
+    "/A0",
+    "/A1",
+    "/A3",
+    "/A6",
+    "/~MREQ",
+    "/~M1",
+    "/A15",
+    "/D4",
+    "/~IORQGE",
+    "/~RD",
+    "/~WR",
+    "/~IORQ",
+    "/A10",
+    "/A9",
+    "/~WAIT",
+    "/~BUSRQ",
+    "/~BUSACK"
+   ],
+   "assign": {
+    "49": "/MIX_L",
+    "43": "/BUS0",
+    "41": "/~NMI",
+    "39": "/D2",
+    "37": "/D0",
+    "35": "/A0",
+    "33": "/A1",
+    "31": "/A3",
+    "29": "/A6",
+    "27": "/~MREQ",
+    "25": "/~M1",
+    "23": "/A15",
+    "21": "/D4",
+    "19": "/~IORQGE",
+    "17": "/~RD",
+    "15": "/~WR",
+    "13": "/~BUSRQ",
+    "11": "/A9",
+    "9": "/~IORQ",
+    "7": "/A10",
+    "5": "/~WAIT",
+    "3": "/~BUSACK"
+   },
+   "before_mm": 283.356,
+   "after_mm": 280.235,
+   "moved": 7
+  },
+  {
+   "ref": "J2",
+   "kind": "connector",
+   "pads": [
+    "9",
+    "5",
+    "3",
+    "1"
+   ],
+   "nets": [
+    "/TDI",
+    "/TMS",
+    "/TDO",
+    "/TCK"
+   ],
+   "assign": {
+    "9": "/TDO",
+    "5": "/TCK",
+    "3": "/TMS",
+    "1": "/TDI"
+   },
+   "before_mm": 90.856,
+   "after_mm": 84.818,
+   "moved": 4
+  }
+ ],
+ "Aleste-520EX_aleste": [
+  {
+   "ref": "X1",
+   "kind": "connector",
+   "pads": [
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6",
+    "B7",
+    "B8",
+    "B9",
+    "B10",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15",
+    "B16",
+    "B17",
+    "B18",
+    "B19",
+    "B21",
+    "B22",
+    "B23",
+    "B25",
+    "B26",
+    "B27",
+    "B28",
+    "B29",
+    "B30",
+    "B31"
+   ],
+   "nets": [
+    "/CPU/A14",
+    "/CPU/A12",
+    "/CPU/A10",
+    "/CPU/A8",
+    "/CPU/A6",
+    "/CPU/A4",
+    "/CPU/A2",
+    "/CPU/A0",
+    "/CPU/D6",
+    "/CPU/D4",
+    "/CPU/D2",
+    "/CPU/D0",
+    "/CPU/~MREQ",
+    "/CPU/~RFSH",
+    "/CPU/~RD",
+    "/CPU/~HALT",
+    "/CPU/~NMI",
+    "/CPU/~BUSAK",
+    "/CPU/~ROMEN",
+    "/CPU/~RAMEN",
+    "/Clocks & CRTC/CURSOR",
+    "/CPU/CLK",
+    "/Gate Array/MAP15",
+    "/Gate Array/MAP17",
+    "/Gate Array/MAPBLK",
+    "/RAM/~DIS",
+    "/RAM/DIS",
+    "/Gate Array/HIGHTZ"
+   ],
+   "assign": {
+    "B2": "/Clocks & CRTC/CURSOR",
+    "B3": "/CPU/A10",
+    "B4": "/CPU/A12",
+    "B5": "/CPU/A8",
+    "B6": "/CPU/A14",
+    "B7": "/CPU/A6",
+    "B8": "/CPU/D4",
+    "B9": "/CPU/A4",
+    "B10": "/CPU/~ROMEN",
+    "B11": "/CPU/A2",
+    "B12": "/CPU/D6",
+    "B13": "/CPU/A0",
+    "B14": "/CPU/D2",
+    "B15": "/CPU/~RFSH",
+    "B16": "/CPU/D0",
+    "B17": "/CPU/~RAMEN",
+    "B18": "/CPU/~HALT",
+    "B19": "/CPU/~BUSAK",
+    "B21": "/CPU/~MREQ",
+    "B22": "/CPU/~RD",
+    "B23": "/CPU/~NMI",
+    "B25": "/CPU/CLK",
+    "B26": "/RAM/DIS",
+    "B27": "/Gate Array/HIGHTZ",
+    "B28": "/Gate Array/MAPBLK",
+    "B29": "/Gate Array/MAP15",
+    "B30": "/Gate Array/MAP17",
+    "B31": "/RAM/~DIS"
+   },
+   "before_mm": 1369.558,
+   "after_mm": 1304.396,
+   "moved": 23
+  },
+  {
+   "ref": "X1",
+   "kind": "connector",
+   "pads": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "A8",
+    "A9",
+    "A10",
+    "A11",
+    "A12",
+    "A13",
+    "A15",
+    "A16",
+    "A17",
+    "A18",
+    "A19",
+    "A21",
+    "A22",
+    "A23",
+    "A24",
+    "A26",
+    "A27",
+    "A28",
+    "A29"
+   ],
+   "nets": [
+    "/Gate Array/SOUND",
+    "/CPU/A15",
+    "/CPU/A13",
+    "/CPU/A11",
+    "/CPU/A9",
+    "/CPU/A7",
+    "/CPU/A5",
+    "/CPU/A3",
+    "/CPU/A1",
+    "/CPU/D7",
+    "/CPU/D5",
+    "/CPU/D3",
+    "/CPU/D1",
+    "/CPU/~M1",
+    "/CPU/~IORQ",
+    "/CPU/~WR",
+    "/CPU/~INT",
+    "/CPU/~BUSRQ",
+    "/CPU/~RESET",
+    "/CPU/ROMDIS",
+    "/CPU/RAMDIS",
+    "/Clocks & CRTC/L.PEN",
+    "/Gate Array/MAP14",
+    "/Gate Array/MAP16",
+    "/Gate Array/M4",
+    "/CPU/~INTA"
+   ],
+   "assign": {
+    "A1": "/CPU/~RESET",
+    "A2": "/Gate Array/SOUND",
+    "A3": "/Gate Array/M4",
+    "A4": "/CPU/A11",
+    "A5": "/CPU/A9",
+    "A6": "/CPU/A13",
+    "A7": "/CPU/A7",
+    "A8": "/CPU/A15",
+    "A9": "/CPU/A5",
+    "A10": "/CPU/A3",
+    "A11": "/CPU/D3",
+    "A12": "/CPU/D5",
+    "A13": "/CPU/A1",
+    "A15": "/CPU/D7",
+    "A16": "/CPU/~M1",
+    "A17": "/CPU/D1",
+    "A18": "/CPU/~BUSRQ",
+    "A19": "/CPU/~INT",
+    "A21": "/CPU/~INTA",
+    "A22": "/CPU/~WR",
+    "A23": "/Gate Array/MAP14",
+    "A24": "/CPU/ROMDIS",
+    "A26": "/CPU/~IORQ",
+    "A27": "/CPU/RAMDIS",
+    "A28": "/Clocks & CRTC/L.PEN",
+    "A29": "/Gate Array/MAP16"
+   },
+   "before_mm": 1269.329,
+   "after_mm": 1225.352,
+   "moved": 24
+  },
+  {
+   "ref": "X4",
+   "kind": "connector",
+   "pads": [
+    "A16",
+    "A15",
+    "A14",
+    "A13",
+    "A4",
+    "A5",
+    "A6",
+    "A8",
+    "A9",
+    "A10",
+    "A11",
+    "A12"
+   ],
+   "nets": [
+    "/FDC/~SIDE",
+    "/FDC/~RDATA",
+    "/FDC/~WRTPRT",
+    "/FDC/~TRAC0",
+    "/FDC/~INDEX",
+    "/FDC/~DRIVE0",
+    "/FDC/~DRIVE1",
+    "/FDC/~MOTOR",
+    "/FDC/~DIR",
+    "/FDC/~STEP",
+    "/FDC/~WRDAT",
+    "/FDC/~GATE"
+   ],
+   "assign": {
+    "A16": "/FDC/~GATE",
+    "A15": "/FDC/~TRAC0",
+    "A14": "/FDC/~SIDE",
+    "A13": "/FDC/~MOTOR",
+    "A4": "/FDC/~STEP",
+    "A5": "/FDC/~DRIVE1",
+    "A6": "/FDC/~DIR",
+    "A8": "/FDC/~WRTPRT",
+    "A9": "/FDC/~WRDAT",
+    "A10": "/FDC/~DRIVE0",
+    "A11": "/FDC/~INDEX",
+    "A12": "/FDC/~RDATA"
+   },
+   "before_mm": 374.559,
+   "after_mm": 356.77,
+   "moved": 12
+  },
+  {
+   "ref": "X8",
+   "kind": "connector",
+   "pads": [
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12"
+   ],
+   "nets": [
+    "/Periphery/KM10",
+    "/Periphery/KM9",
+    "/Periphery/KM8",
+    "/Periphery/KM7",
+    "/Periphery/KM6",
+    "/Periphery/KM5",
+    "/Periphery/KM4",
+    "/Periphery/KM3",
+    "/Periphery/KM2",
+    "/Periphery/KM1",
+    "/Periphery/KM0"
+   ],
+   "assign": {
+    "2": "/Periphery/KM10",
+    "3": "/Periphery/KM7",
+    "4": "/Periphery/KM8",
+    "5": "/Periphery/KM6",
+    "6": "/Periphery/KM9",
+    "7": "/Periphery/KM5",
+    "8": "/Periphery/KM4",
+    "9": "/Periphery/KM3",
+    "10": "/Periphery/KM2",
+    "11": "/Periphery/KM1",
+    "12": "/Periphery/KM0"
+   },
+   "before_mm": 81.042,
+   "after_mm": 79.308,
+   "moved": 3
+  },
+  {
+   "ref": "X9",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+   ],
+   "nets": [
+    "/Periphery/KM11",
+    "/Periphery/KM12",
+    "/Periphery/KM13",
+    "/Periphery/KM14",
+    "/Periphery/KM15",
+    "/Periphery/KM16",
+    "/Periphery/KM17",
+    "/Periphery/KM18",
+    "/Periphery/SBRES"
+   ],
+   "assign": {
+    "1": "/Periphery/SBRES",
+    "2": "/Periphery/KM11",
+    "3": "/Periphery/KM12",
+    "4": "/Periphery/KM13",
+    "5": "/Periphery/KM14",
+    "6": "/Periphery/KM15",
+    "7": "/Periphery/KM16",
+    "8": "/Periphery/KM17",
+    "9": "/Periphery/KM18"
+   },
+   "before_mm": 121.346,
+   "after_mm": 111.798,
+   "moved": 9
+  }
+ ],
+ "CoreOne-xCORE200-Original_CoreOne": [
+  {
+   "ref": "P403",
+   "kind": "connector",
+   "pads": [
+    "5",
+    "6",
+    "7",
+    "9",
+    "10",
+    "13",
+    "14",
+    "15",
+    "18"
+   ],
+   "nets": [
+    "/TDI",
+    "/XL_UP1",
+    "/TMS",
+    "/TCK",
+    "/XL_UP0",
+    "/TDO",
+    "Net-(P403-Pad14)",
+    "/XSYS_RST",
+    "Net-(P403-Pad18)"
+   ],
+   "assign": {
+    "5": "/TDI",
+    "6": "/XL_UP1",
+    "7": "/TMS",
+    "9": "/TCK",
+    "10": "/XL_UP0",
+    "13": "/TDO",
+    "14": "Net-(P403-Pad14)",
+    "15": "Net-(P403-Pad18)",
+    "18": "/XSYS_RST"
+   },
+   "before_mm": 59.551,
+   "after_mm": 58.961,
+   "moved": 2
+  },
+  {
+   "ref": "P404",
+   "kind": "connector",
+   "pads": [
+    "2",
+    "4",
+    "6",
+    "8"
+   ],
+   "nets": [
+    "/I2C2_SDA",
+    "/I2C2_SCL",
+    "/I2C_RST",
+    "/I2C_MUTE"
+   ],
+   "assign": {
+    "2": "/I2C_MUTE",
+    "4": "/I2C2_SDA",
+    "6": "/I2C_RST",
+    "8": "/I2C2_SCL"
+   },
+   "before_mm": 113.374,
+   "after_mm": 111.822,
+   "moved": 3
+  }
+ ],
+ "KiCad-Library_Teensy_test_layout": [
+  {
+   "ref": "P113",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "Net-(P113-Pad1)",
+    "LED_OE",
+    "!LED_RST",
+    "SPI_SCK",
+    "LED_LATCH"
+   ],
+   "assign": {
+    "1": "Net-(P113-Pad1)",
+    "2": "!LED_RST",
+    "3": "SPI_SCK",
+    "4": "LED_LATCH",
+    "5": "LED_OE"
+   },
+   "before_mm": 52.098,
+   "after_mm": 51.334,
+   "moved": 4
+  },
+  {
+   "ref": "P13",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K1",
+    "K2",
+    "K3",
+    "K4",
+    "K5",
+    "K6",
+    "K7",
+    "K8"
+   ],
+   "assign": {
+    "1": "K4",
+    "2": "K1",
+    "3": "K2",
+    "4": "K3",
+    "5": "K6",
+    "6": "K8",
+    "7": "K7",
+    "8": "K5"
+   },
+   "before_mm": 117.535,
+   "after_mm": 115.353,
+   "moved": 7
+  },
+  {
+   "ref": "P14",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K9",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "assign": {
+    "1": "K12",
+    "2": "K9",
+    "3": "K10",
+    "4": "K11",
+    "5": "K14",
+    "6": "K16",
+    "7": "K15",
+    "8": "K13"
+   },
+   "before_mm": 119.343,
+   "after_mm": 117.133,
+   "moved": 7
+  },
+  {
+   "ref": "P15",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K17",
+    "K18",
+    "K19",
+    "K20",
+    "K21",
+    "K22",
+    "K23",
+    "K24"
+   ],
+   "assign": {
+    "1": "K19",
+    "2": "K18",
+    "3": "K17",
+    "4": "K21",
+    "5": "K23",
+    "6": "K24",
+    "7": "K22",
+    "8": "K20"
+   },
+   "before_mm": 102.543,
+   "after_mm": 99.04,
+   "moved": 7
+  },
+  {
+   "ref": "P16",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K25",
+    "K26",
+    "K27",
+    "K28",
+    "K29",
+    "K30",
+    "K31",
+    "K32"
+   ],
+   "assign": {
+    "1": "K27",
+    "2": "K26",
+    "3": "K25",
+    "4": "K29",
+    "5": "K31",
+    "6": "K32",
+    "7": "K30",
+    "8": "K28"
+   },
+   "before_mm": 102.543,
+   "after_mm": 99.04,
+   "moved": 7
+  },
+  {
+   "ref": "P17",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K33",
+    "K34",
+    "K35",
+    "K36",
+    "K37",
+    "K38",
+    "K39",
+    "K40"
+   ],
+   "assign": {
+    "1": "K36",
+    "2": "K33",
+    "3": "K34",
+    "4": "K35",
+    "5": "K38",
+    "6": "K40",
+    "7": "K39",
+    "8": "K37"
+   },
+   "before_mm": 117.535,
+   "after_mm": 115.353,
+   "moved": 7
+  },
+  {
+   "ref": "P18",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K41",
+    "K42",
+    "K43",
+    "K44",
+    "K45",
+    "K46",
+    "K47",
+    "K48"
+   ],
+   "assign": {
+    "1": "K44",
+    "2": "K41",
+    "3": "K42",
+    "4": "K43",
+    "5": "K46",
+    "6": "K48",
+    "7": "K47",
+    "8": "K45"
+   },
+   "before_mm": 117.535,
+   "after_mm": 115.353,
+   "moved": 7
+  },
+  {
+   "ref": "P19",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K49",
+    "K50",
+    "K51",
+    "K52",
+    "K53",
+    "K54",
+    "K55",
+    "K56"
+   ],
+   "assign": {
+    "1": "K51",
+    "2": "K50",
+    "3": "K49",
+    "4": "K53",
+    "5": "K55",
+    "6": "K56",
+    "7": "K54",
+    "8": "K52"
+   },
+   "before_mm": 102.543,
+   "after_mm": 99.04,
+   "moved": 7
+  },
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P2-Pad1)",
+    "Net-(P2-Pad2)",
+    "Net-(P2-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P2-Pad1)",
+    "2": "Net-(P2-Pad3)",
+    "3": "Net-(P2-Pad2)"
+   },
+   "before_mm": 19.852,
+   "after_mm": 19.646,
+   "moved": 2
+  },
+  {
+   "ref": "P20",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "K57",
+    "K58",
+    "K59",
+    "K60",
+    "K61",
+    "K62",
+    "K63",
+    "K64"
+   ],
+   "assign": {
+    "1": "K59",
+    "2": "K58",
+    "3": "K57",
+    "4": "K61",
+    "5": "K63",
+    "6": "K64",
+    "7": "K62",
+    "8": "K60"
+   },
+   "before_mm": 102.543,
+   "after_mm": 99.04,
+   "moved": 7
+  },
+  {
+   "ref": "P21",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "KA0",
+    "KA1",
+    "KA2",
+    "KA3",
+    "EN"
+   ],
+   "assign": {
+    "1": "EN",
+    "2": "KA1",
+    "3": "KA0",
+    "4": "KA3",
+    "5": "KA2"
+   },
+   "before_mm": 217.37,
+   "after_mm": 217.137,
+   "moved": 3
+  },
+  {
+   "ref": "P30",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P30-Pad1)",
+    "Net-(P30-Pad2)",
+    "Net-(P30-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P30-Pad1)",
+    "2": "Net-(P30-Pad3)",
+    "3": "Net-(P30-Pad2)"
+   },
+   "before_mm": 19.852,
+   "after_mm": 19.646,
+   "moved": 2
+  },
+  {
+   "ref": "P4",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "nets": [
+    "Net-(P4-Pad1)",
+    "Net-(P4-Pad2)",
+    "Net-(P4-Pad3)",
+    "Net-(P4-Pad4)",
+    "Net-(P4-Pad5)",
+    "Net-(P4-Pad6)",
+    "Net-(P4-Pad7)",
+    "Net-(P4-Pad8)"
+   ],
+   "assign": {
+    "1": "Net-(P4-Pad2)",
+    "2": "Net-(P4-Pad3)",
+    "3": "Net-(P4-Pad4)",
+    "4": "Net-(P4-Pad5)",
+    "5": "Net-(P4-Pad6)",
+    "6": "Net-(P4-Pad7)",
+    "7": "Net-(P4-Pad8)",
+    "8": "Net-(P4-Pad1)"
+   },
+   "before_mm": 65.175,
+   "after_mm": 64.353,
+   "moved": 8
+  },
+  {
+   "ref": "P89",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "nets": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "assign": {
+    "1": "B",
+    "2": "A",
+    "3": "C",
+    "4": "D"
+   },
+   "before_mm": 170.558,
+   "after_mm": 170.521,
+   "moved": 2
+  }
+ ],
+ "MonApollo_analog-board": [
+  {
+   "ref": "J3",
+   "kind": "connector",
+   "pads": [
+    "11",
+    "4",
+    "13",
+    "6",
+    "15",
+    "8",
+    "17",
+    "10",
+    "19",
+    "12",
+    "21",
+    "14",
+    "23",
+    "16",
+    "25",
+    "18",
+    "27",
+    "20",
+    "29",
+    "22",
+    "31",
+    "24",
+    "26",
+    "33",
+    "28",
+    "32",
+    "34",
+    "36",
+    "38",
+    "35",
+    "37",
+    "3",
+    "5",
+    "7",
+    "9",
+    "30"
+   ],
+   "nets": [
+    "DB3",
+    "TUNE",
+    "DB5",
+    "LFO TUNE",
+    "DB7",
+    "DB0",
+    "DAC MUX EN2",
+    "DB2",
+    "DAC MUX EN0",
+    "DB4",
+    "/DAC12",
+    "DB6",
+    "/DAC10",
+    "DAC MUX EN3",
+    "/DAC8",
+    "DAC MUX EN1",
+    "~DAC WR",
+    "/DAC13",
+    "/DAC6",
+    "/DAC11",
+    "/DAC4",
+    "/DAC9",
+    "~DAC RS",
+    "/DAC2",
+    "/DAC7",
+    "/DAC3",
+    "/DAC1",
+    "ANALOG SW LATCH",
+    "EG2 POL",
+    "/DAC0",
+    "LFO DMUX EN",
+    "GATE",
+    "LFO",
+    "LFO RESET",
+    "DB1",
+    "/DAC5"
+   ],
+   "assign": {
+    "11": "TUNE",
+    "4": "EG2 POL",
+    "13": "DAC MUX EN2",
+    "6": "DB2",
+    "15": "DAC MUX EN1",
+    "8": "DAC MUX EN3",
+    "17": "DAC MUX EN0",
+    "10": "LFO TUNE",
+    "19": "~DAC WR",
+    "12": "/DAC13",
+    "21": "~DAC RS",
+    "14": "/DAC9",
+    "23": "LFO RESET",
+    "16": "/DAC7",
+    "25": "/DAC12",
+    "18": "/DAC3",
+    "27": "/DAC11",
+    "20": "/DAC6",
+    "29": "/DAC10",
+    "22": "/DAC4",
+    "31": "/DAC0",
+    "24": "ANALOG SW LATCH",
+    "26": "/DAC5",
+    "33": "/DAC1",
+    "28": "DB7",
+    "32": "DB5",
+    "34": "DB4",
+    "36": "DB3",
+    "38": "LFO DMUX EN",
+    "35": "/DAC8",
+    "37": "/DAC2",
+    "3": "GATE",
+    "5": "LFO",
+    "7": "DB1",
+    "9": "DB0",
+    "30": "DB6"
+   },
+   "before_mm": 2305.246,
+   "after_mm": 2248.33,
+   "moved": 34
+  }
+ ],
+ "dorkyboard_keyboard": [
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/microcontroller/MISO",
+    "/matrix/LED1",
+    "/matrix/LED2",
+    "/microcontroller/RESET"
+   ],
+   "assign": {
+    "1": "/microcontroller/MISO",
+    "3": "/microcontroller/RESET",
+    "4": "/matrix/LED2",
+    "5": "/matrix/LED1"
+   },
+   "before_mm": 46.196,
+   "after_mm": 45.346,
+   "moved": 2
+  }
+ ],
+ "mini_mass_prog_bench_prog_rig": [
+  {
+   "ref": "CON1",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/MISO",
+    "/SCK",
+    "/MOSI",
+    "/RESET"
+   ],
+   "assign": {
+    "1": "/RESET",
+    "3": "/MISO",
+    "4": "/MOSI",
+    "5": "/SCK"
+   },
+   "before_mm": 67.186,
+   "after_mm": 66.42,
+   "moved": 3
+  },
+  {
+   "ref": "CON10",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #8/PROG_MISO",
+    "/Programming Socket #8/PROG_SCK",
+    "/Programming Socket #8/PROG_MOSI",
+    "/Programming Socket #8/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #8/PROG_SCK",
+    "3": "/Programming Socket #8/PROG_MOSI",
+    "4": "/Programming Socket #8/PROG_MISO",
+    "5": "/Programming Socket #8/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #0/PROG_MISO",
+    "/Programming Socket #0/PROG_SCK",
+    "/Programming Socket #0/PROG_MOSI",
+    "/Programming Socket #0/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #0/PROG_SCK",
+    "3": "/Programming Socket #0/PROG_MOSI",
+    "4": "/Programming Socket #0/PROG_MISO",
+    "5": "/Programming Socket #0/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #1/PROG_MISO",
+    "/Programming Socket #1/PROG_SCK",
+    "/Programming Socket #1/PROG_MOSI",
+    "/Programming Socket #1/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #1/PROG_SCK",
+    "3": "/Programming Socket #1/PROG_MOSI",
+    "4": "/Programming Socket #1/PROG_MISO",
+    "5": "/Programming Socket #1/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON4",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #2/PROG_MISO",
+    "/Programming Socket #2/PROG_SCK",
+    "/Programming Socket #2/PROG_MOSI",
+    "/Programming Socket #2/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #2/PROG_SCK",
+    "3": "/Programming Socket #2/PROG_MOSI",
+    "4": "/Programming Socket #2/PROG_MISO",
+    "5": "/Programming Socket #2/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON5",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #3/PROG_MISO",
+    "/Programming Socket #3/PROG_SCK",
+    "/Programming Socket #3/PROG_MOSI",
+    "/Programming Socket #3/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #3/PROG_SCK",
+    "3": "/Programming Socket #3/PROG_MOSI",
+    "4": "/Programming Socket #3/PROG_MISO",
+    "5": "/Programming Socket #3/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON6",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #4/PROG_MISO",
+    "/Programming Socket #4/PROG_SCK",
+    "/Programming Socket #4/PROG_MOSI",
+    "/Programming Socket #4/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #4/PROG_SCK",
+    "3": "/Programming Socket #4/PROG_MOSI",
+    "4": "/Programming Socket #4/PROG_MISO",
+    "5": "/Programming Socket #4/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON7",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #5/PROG_MISO",
+    "/Programming Socket #5/PROG_SCK",
+    "/Programming Socket #5/PROG_MOSI",
+    "/Programming Socket #5/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #5/PROG_SCK",
+    "3": "/Programming Socket #5/PROG_MOSI",
+    "4": "/Programming Socket #5/PROG_MISO",
+    "5": "/Programming Socket #5/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON8",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #6/PROG_MISO",
+    "/Programming Socket #6/PROG_SCK",
+    "/Programming Socket #6/PROG_MOSI",
+    "/Programming Socket #6/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #6/PROG_SCK",
+    "3": "/Programming Socket #6/PROG_MOSI",
+    "4": "/Programming Socket #6/PROG_MISO",
+    "5": "/Programming Socket #6/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "CON9",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "3",
+    "4",
+    "5"
+   ],
+   "nets": [
+    "/Programming Socket #7/PROG_MISO",
+    "/Programming Socket #7/PROG_SCK",
+    "/Programming Socket #7/PROG_MOSI",
+    "/Programming Socket #7/PROG_RESET"
+   ],
+   "assign": {
+    "1": "/Programming Socket #7/PROG_SCK",
+    "3": "/Programming Socket #7/PROG_MOSI",
+    "4": "/Programming Socket #7/PROG_MISO",
+    "5": "/Programming Socket #7/PROG_RESET"
+   },
+   "before_mm": 129.146,
+   "after_mm": 129.117,
+   "moved": 3
+  },
+  {
+   "ref": "P1",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P1-Pad1)",
+    "Net-(P1-Pad2)",
+    "Net-(P1-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P1-Pad2)",
+    "2": "Net-(P1-Pad3)",
+    "3": "Net-(P1-Pad1)"
+   },
+   "before_mm": 41.6,
+   "after_mm": 40.953,
+   "moved": 3
+  },
+  {
+   "ref": "P2",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P2-Pad1)",
+    "Net-(P2-Pad2)",
+    "Net-(P2-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P2-Pad2)",
+    "2": "Net-(P2-Pad3)",
+    "3": "Net-(P2-Pad1)"
+   },
+   "before_mm": 41.74,
+   "after_mm": 39.972,
+   "moved": 3
+  },
+  {
+   "ref": "P3",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P3-Pad1)",
+    "Net-(P3-Pad2)",
+    "Net-(P3-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P3-Pad2)",
+    "2": "Net-(P3-Pad3)",
+    "3": "Net-(P3-Pad1)"
+   },
+   "before_mm": 41.74,
+   "after_mm": 39.972,
+   "moved": 3
+  },
+  {
+   "ref": "P4",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P4-Pad1)",
+    "Net-(P4-Pad2)",
+    "Net-(P4-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P4-Pad2)",
+    "2": "Net-(P4-Pad3)",
+    "3": "Net-(P4-Pad1)"
+   },
+   "before_mm": 40.625,
+   "after_mm": 39.159,
+   "moved": 3
+  },
+  {
+   "ref": "P5",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P5-Pad1)",
+    "Net-(P5-Pad2)",
+    "Net-(P5-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P5-Pad2)",
+    "2": "Net-(P5-Pad3)",
+    "3": "Net-(P5-Pad1)"
+   },
+   "before_mm": 42.144,
+   "after_mm": 39.806,
+   "moved": 3
+  },
+  {
+   "ref": "P6",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P6-Pad1)",
+    "Net-(P6-Pad2)",
+    "Net-(P6-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P6-Pad2)",
+    "2": "Net-(P6-Pad3)",
+    "3": "Net-(P6-Pad1)"
+   },
+   "before_mm": 41.74,
+   "after_mm": 39.972,
+   "moved": 3
+  },
+  {
+   "ref": "P7",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P7-Pad1)",
+    "Net-(P7-Pad2)",
+    "Net-(P7-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P7-Pad2)",
+    "2": "Net-(P7-Pad3)",
+    "3": "Net-(P7-Pad1)"
+   },
+   "before_mm": 41.74,
+   "after_mm": 39.972,
+   "moved": 3
+  },
+  {
+   "ref": "P8",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P8-Pad1)",
+    "Net-(P8-Pad2)",
+    "Net-(P8-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P8-Pad2)",
+    "2": "Net-(P8-Pad3)",
+    "3": "Net-(P8-Pad1)"
+   },
+   "before_mm": 41.74,
+   "after_mm": 39.972,
+   "moved": 3
+  },
+  {
+   "ref": "P9",
+   "kind": "connector",
+   "pads": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nets": [
+    "Net-(P9-Pad1)",
+    "Net-(P9-Pad2)",
+    "Net-(P9-Pad3)"
+   ],
+   "assign": {
+    "1": "Net-(P9-Pad2)",
+    "2": "Net-(P9-Pad3)",
+    "3": "Net-(P9-Pad1)"
+   },
+   "before_mm": 41.74,
+   "after_mm": 39.972,
+   "moved": 3
+  }
+ ]
+}

@@ -25,6 +25,14 @@ struct CopperItem {
   int owner = -1;                 // router connection that created this item (-1 = fixed copper)
   bool removed = false;           // ripped up (router working model only)
   bool free_via = false;          // via marked (free yes): its net is fixed for KiCad's net propagation
+  // Vias and pads whose copper KiCad removes on layers nothing connects to (model::UnconnectedLayers, doc 05 §60). On those
+  // layers only the hole is left, and KiCad's clearance test takes the hole for the item's copper there. Such an item is split:
+  // the item with the copper (`layers` without the bare layers) and a second item of the same kind and index whose layers are
+  // the bare ones and whose shape is the hole. `bare_part` on the first points to the second, `bare_of` on the second to the
+  // first. The second is no node of the connectivity graph and is not reported on its own. `span` is the padstack's whole layer
+  // set (KiCad's GetLayerSet), which rule conditions see; 0 for items that are not split.
+  model::LayerMask span = 0;
+  int bare_part = -1, bare_of = -1;
 };
 
 struct Hole {
@@ -51,6 +59,20 @@ struct CopperModel {
 std::vector<geom::Shape> pad_shapes(const model::Pad& pad);
 
 CopperModel build_copper(const model::Board& b);
+
+// KiCad's ConditionallyFlashed: the layers of a via, or of a plated through-hole pad on a board of `copper_count` layers, whose
+// copper depends on what connects there.
+model::LayerMask conditional_layers(const model::Via& v);
+model::LayerMask conditional_layers(const model::Pad& p, int copper_count);
+
+// The copper layers of each via (`vias`) and pad (`pads`) as KiCad 10.0.6 flashes them (PCB_VIA::FlashLayer, PAD::FlashLayer): a
+// layer keeps its copper unless the padstack removes unconnected copper there and neither a zone connection (zone_layers) nor a
+// track, arc, via or pad of the net (not of the pad's own footprint) touches it. Touching is CN_VISITOR's test: on such a layer an
+// item is only its hole. Items that remove nothing keep their whole span.
+struct Flashing {
+  std::vector<model::LayerMask> vias, pads;
+};
+Flashing flash_layers(const model::Board& b);
 
 // Closed loops chained from Edge.Cuts pieces whose ends meet within `tol`; pieces that close no loop are dropped
 // (`all_closed`, if given, tells whether any was).

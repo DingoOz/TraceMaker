@@ -82,6 +82,23 @@
       ]
     },
     "bare_layer_front": {},
+    "clearance_custom_below_minimum": {
+      "clearance": [
+        [
+          "cb-out-X",
+          "cb-out-Y"
+        ]
+      ]
+    },
+    "clearance_local_over_custom": {
+      "clearance": [
+        [
+          "LC:pad1",
+          "lc-Y"
+        ]
+      ]
+    },
+    "copper_graphics_compound": {},
     "court_arc_intersectsCourtyard": {
       "items_not_allowed": [
         [
@@ -299,6 +316,111 @@
         ]
       ]
     },
+    "diff_pair_gap": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dp-close-N",
+          "dp-close-P"
+        ],
+        [
+          "dp-close-P",
+          "dp-wide-N"
+        ],
+        [
+          "dp-ok-N",
+          "dp-shield-P"
+        ],
+        [
+          "dp-wide-N",
+          "dp-wide-P"
+        ]
+      ]
+    },
+    "diff_pair_gap_ignored": {},
+    "diff_pair_near_parallel": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dpn-D-N",
+          "dpn-D-P"
+        ]
+      ]
+    },
+    "diff_pair_suffix": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dps-L-N",
+          "dps-L-P"
+        ]
+      ]
+    },
+    "diff_pair_suffix_base": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dps-D-N",
+          "dps-D-P"
+        ]
+      ]
+    },
+    "diff_pair_tuning_pattern": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dpt-D-N",
+          "dpt-D-P"
+        ],
+        [
+          "dpt-D-N",
+          "dpt-D-P"
+        ]
+      ],
+      "diff_pair_uncoupled_length_too_long": [
+        [
+          "dpt-D-N",
+          "dpt-D-P"
+        ]
+      ]
+    },
+    "diff_pair_uncoupled": {
+      "diff_pair_gap_out_of_range": [
+        [
+          "dp-close-N",
+          "dp-close-P"
+        ],
+        [
+          "dp-close-N",
+          "dp-close-P"
+        ],
+        [
+          "dp-close-P",
+          "dp-wide-N"
+        ],
+        [
+          "dp-close-P",
+          "dp-wide-N"
+        ],
+        [
+          "dp-ok-N",
+          "dp-shield-P"
+        ],
+        [
+          "dp-ok-N",
+          "dp-shield-P"
+        ],
+        [
+          "dp-wide-N",
+          "dp-wide-P"
+        ],
+        [
+          "dp-wide-N",
+          "dp-wide-P"
+        ]
+      ],
+      "diff_pair_uncoupled_length_too_long": [
+        [
+          "dp-wide-N",
+          "dp-wide-P"
+        ]
+      ]
+    },
     "earlier_ignore": {
       "items_not_allowed": [
         [
@@ -374,6 +496,21 @@
         ],
         [
           "wide"
+        ]
+      ]
+    },
+    "hole_rules_custom_below_minimum": {},
+    "hole_rules_minimum": {
+      "hole_clearance": [
+        [
+          "H1:pad1",
+          "h1-Y"
+        ]
+      ],
+      "hole_to_hole": [
+        [
+          "H2:pad1",
+          "H3:pad1"
         ]
       ]
     },
@@ -1197,6 +1334,45 @@
         ]
       ]
     },
+    "static_exact_class_case": {},
+    "static_exact_class_track": {},
+    "static_has_class_case": {},
+    "static_has_class_default": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ],
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "static_has_class_default_full": {
+      "items_not_allowed": [
+        [
+          "Y-front"
+        ]
+      ]
+    },
+    "static_has_class_track": {
+      "items_not_allowed": [
+        [
+          "X-back"
+        ],
+        [
+          "X-front"
+        ],
+        [
+          "X-inner"
+        ]
+      ]
+    },
     "static_inner_track": {
       "items_not_allowed": [
         [
@@ -1328,9 +1504,83 @@
         ]
       ]
     },
+    "tuning_profile_ignored": {},
+    "tuning_profile_inherited": {
+      "track_width": [
+        [
+          "tp-back-narrow"
+        ],
+        [
+          "tp-front-ok"
+        ],
+        [
+          "tp-front-wide"
+        ],
+        [
+          "tp-inner-ok"
+        ],
+        [
+          "tp-inner-wide"
+        ],
+        [
+          "tp-other-net"
+        ]
+      ]
+    },
+    "tuning_profile_schema4": {
+      "track_width": [
+        [
+          "tp-back-narrow"
+        ],
+        [
+          "tp-front-ok"
+        ],
+        [
+          "tp-inner-ok"
+        ],
+        [
+          "tp-inner-wide"
+        ]
+      ]
+    },
+    "tuning_profile_width": {
+      "track_width": [
+        [
+          "tp-back-narrow"
+        ],
+        [
+          "tp-front-ok"
+        ],
+        [
+          "tp-front-wide"
+        ],
+        [
+          "tp-inner-ok"
+        ],
+        [
+          "tp-inner-wide"
+        ]
+      ]
+    },
     "unknown_function": {},
     "unknown_property": {},
     "unknown_short_circuit": {},
+    "via_unused_layers": {
+      "clearance": [
+        [
+          "vu-a",
+          "vu-a-front"
+        ],
+        [
+          "vu-b",
+          "vu-b-inner"
+        ],
+        [
+          "vu-c",
+          "vu-c-inner"
+        ]
+      ]
+    },
     "width_eq_250fs": {
       "items_not_allowed": [
         [

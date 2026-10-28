@@ -1,0 +1,3072 @@
+{
+ "baseline": {
+  "connections": 150,
+  "open": 147,
+  "routed": 3,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/kitspace_d20_tri_r0.3.kicad_pcb",
+ "by_cause": {
+  "package_fanout": 38,
+  "through_traffic": 109
+ },
+ "by_cause_at_dense_packages": {
+  "package_fanout": 16,
+  "through_traffic": 56
+ },
+ "by_dense_package": {
+  "J1": {
+   "package_fanout": 1,
+   "through_traffic": 2
+  },
+  "J2": {
+   "package_fanout": 2,
+   "through_traffic": 3
+  },
+  "U1": {
+   "package_fanout": 2,
+   "through_traffic": 15
+  },
+  "U2": {
+   "package_fanout": 2,
+   "through_traffic": 20
+  },
+  "U3": {
+   "package_fanout": 5,
+   "through_traffic": 13
+  },
+  "U4": {
+   "package_fanout": 9,
+   "through_traffic": 7
+  },
+  "U5": {
+   "package_fanout": 4,
+   "through_traffic": 6
+  }
+ },
+ "connections": [
+  {
+   "a": "D38.1",
+   "at_dense_package": false,
+   "b": "D39.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D38.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D39.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_2",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D42.1",
+   "at_dense_package": false,
+   "b": "D43.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D42.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D43.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_2",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D98.1",
+   "at_dense_package": false,
+   "b": "D97.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D98.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D97.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_6",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D23.1",
+   "at_dense_package": false,
+   "b": "D22.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D23.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D22.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_1",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D22.1",
+   "at_dense_package": false,
+   "b": "D21.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D22.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D21.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_1",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D34.1",
+   "at_dense_package": false,
+   "b": "D35.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D34.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D35.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_2",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D69.1",
+   "at_dense_package": false,
+   "b": "D68.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D69.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D68.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_4",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D100.1",
+   "at_dense_package": false,
+   "b": "D99.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D100.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D99.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_6",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D113.1",
+   "at_dense_package": false,
+   "b": "D114.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D113.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D114.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_7",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D65.4",
+   "at_dense_package": false,
+   "b": "D81.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D65.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D81.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_0",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D34.2",
+   "at_dense_package": false,
+   "b": "D50.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D34.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D50.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_1",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D98.2",
+   "at_dense_package": false,
+   "b": "D114.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D98.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D114.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_1",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D98.4",
+   "at_dense_package": false,
+   "b": "D114.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D98.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D114.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_1",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D52.2",
+   "at_dense_package": false,
+   "b": "D68.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D52.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D68.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_3",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D100.2",
+   "at_dense_package": false,
+   "b": "D116.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D100.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D116.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_3",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D132.2",
+   "at_dense_package": false,
+   "b": "D148.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D132.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D148.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D52.4",
+   "at_dense_package": false,
+   "b": "D68.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D52.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D68.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D164.4",
+   "at_dense_package": false,
+   "b": "D180.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D164.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D180.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_3",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D37.4",
+   "at_dense_package": false,
+   "b": "D53.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D37.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D53.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_4",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D117.4",
+   "at_dense_package": false,
+   "b": "D133.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D117.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D133.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_4",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D117.3",
+   "at_dense_package": false,
+   "b": "D133.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D117.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D133.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_4",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D23.4",
+   "at_dense_package": false,
+   "b": "D39.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D23.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D39.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_6",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D7.2",
+   "at_dense_package": false,
+   "b": "D23.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D7.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D23.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_6",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D8.3",
+   "at_dense_package": false,
+   "b": "D24.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D8.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D24.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_7",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D40.3",
+   "at_dense_package": false,
+   "b": "D56.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D40.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D56.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_7",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D72.3",
+   "at_dense_package": false,
+   "b": "D88.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D72.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D88.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_7",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D72.2",
+   "at_dense_package": false,
+   "b": "D88.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D72.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D88.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_7",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D104.2",
+   "at_dense_package": false,
+   "b": "D120.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D104.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D120.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_7",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D25.2",
+   "at_dense_package": false,
+   "b": "D41.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D25.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D41.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_8",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D57.3",
+   "at_dense_package": false,
+   "b": "D73.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D57.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D73.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_8",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D90.3",
+   "at_dense_package": false,
+   "b": "D74.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D90.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D74.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_9",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D59.2",
+   "at_dense_package": false,
+   "b": "D75.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D59.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D75.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_10",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D133.1",
+   "at_dense_package": false,
+   "b": "D134.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D133.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D134.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_8",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D193.1",
+   "at_dense_package": false,
+   "b": "D194.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D193.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D194.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_12",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D41.1",
+   "at_dense_package": false,
+   "b": "D42.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D41.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D42.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_2",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D43.1",
+   "at_dense_package": false,
+   "b": "D44.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D43.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D44.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_2",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D56.1",
+   "at_dense_package": false,
+   "b": "D57.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D56.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D57.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_3",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D70.1",
+   "at_dense_package": false,
+   "b": "D69.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D69.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_4",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D89.1",
+   "at_dense_package": false,
+   "b": "D88.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D89.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D88.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_5",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D103.1",
+   "at_dense_package": false,
+   "b": "D104.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D103.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "D104.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "row_6",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D49.2",
+   "at_dense_package": false,
+   "b": "D65.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D49.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D65.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_0",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D193.3",
+   "at_dense_package": false,
+   "b": "D209.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D193.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D209.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_0",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D66.3",
+   "at_dense_package": false,
+   "b": "D82.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D66.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D82.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_1",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D18.2",
+   "at_dense_package": false,
+   "b": "D34.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D18.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D34.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_1",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+  },
+  {
+   "a": "D2.4",
+   "at_dense_package": false,
+   "b": "D18.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D2.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D18.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D51.2",
+   "at_dense_package": false,
+   "b": "D67.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D51.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D67.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D116.2",
+   "at_dense_package": false,
+   "b": "D132.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D116.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D132.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D148.2",
+   "at_dense_package": false,
+   "b": "D164.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D148.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D164.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D84.4",
+   "at_dense_package": false,
+   "b": "D100.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D84.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D100.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D116.4",
+   "at_dense_package": false,
+   "b": "D132.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D116.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D132.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D69.4",
+   "at_dense_package": false,
+   "b": "D85.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D69.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D85.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D101.4",
+   "at_dense_package": false,
+   "b": "D117.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D101.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D117.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D133.2",
+   "at_dense_package": false,
+   "b": "D149.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D133.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D149.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D21.3",
+   "at_dense_package": false,
+   "b": "D37.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D21.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D37.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D101.3",
+   "at_dense_package": false,
+   "b": "D117.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D101.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D117.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D133.3",
+   "at_dense_package": false,
+   "b": "D149.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D133.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D149.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D118.4",
+   "at_dense_package": false,
+   "b": "D134.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D118.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D134.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D39.2",
+   "at_dense_package": false,
+   "b": "D55.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D39.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D55.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.3",
+   "at_dense_package": false,
+   "b": "D103.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D87.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D103.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D103.3",
+   "at_dense_package": false,
+   "b": "D119.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D103.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D119.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D56.2",
+   "at_dense_package": false,
+   "b": "D72.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D56.2",
+     "part_pads": 4
+    },
+    {
+     "pad": "D72.2",
+     "part_pads": 4
+    }
+   ],
+   "net": "colb_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D88.4",
+   "at_dense_package": false,
+   "b": "D104.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D88.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D104.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D41.4",
+   "at_dense_package": false,
+   "b": "D57.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D41.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D57.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D73.4",
+   "at_dense_package": false,
+   "b": "D89.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D73.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D89.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D73.3",
+   "at_dense_package": false,
+   "b": "D89.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D73.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D89.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D74.3",
+   "at_dense_package": false,
+   "b": "D58.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D74.3",
+     "part_pads": 4
+    },
+    {
+     "pad": "D58.3",
+     "part_pads": 4
+    }
+   ],
+   "net": "colg_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D43.4",
+   "at_dense_package": false,
+   "b": "D59.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D43.4",
+     "part_pads": 4
+    },
+    {
+     "pad": "D59.4",
+     "part_pads": 4
+    }
+   ],
+   "net": "colr_10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.14",
+   "at_dense_package": true,
+   "b": "U4.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.14",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U4.9",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    }
+   ],
+   "net": "sdo_U4>sdi_U5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D163.2",
+   "at_dense_package": true,
+   "b": "U3.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D163.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.7",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "J1.SH",
+   "at_dense_package": true,
+   "b": "U7.5",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.SH",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "U7.5",
+     "part_pads": 6
+    }
+   ],
+   "net": "vcc",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "J1.3",
+   "at_dense_package": true,
+   "b": "U6.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.3",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "U6.3",
+     "part_pads": 6
+    }
+   ],
+   "net": "blank_i",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "J1.2",
+   "at_dense_package": true,
+   "b": "U6.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J1.2",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "U6.1",
+     "part_pads": 6
+    }
+   ],
+   "net": "dat_i",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.2",
+   "at_dense_package": true,
+   "b": "Q3.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.2",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q3.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D35.4",
+   "at_dense_package": true,
+   "b": "U1.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D35.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.7",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.16",
+   "at_dense_package": true,
+   "b": "U4.10",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.16",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U4.10",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    }
+   ],
+   "net": "vcc",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D99.3",
+   "at_dense_package": true,
+   "b": "U2.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D99.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.7",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.3",
+   "at_dense_package": true,
+   "b": "Q4.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.3",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q4.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D148.2",
+   "at_dense_package": true,
+   "b": "U3.8",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D148.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.8",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.5",
+   "at_dense_package": true,
+   "b": "Q6.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.5",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q6.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D20.4",
+   "at_dense_package": true,
+   "b": "U1.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D20.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.8",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.12",
+   "at_dense_package": true,
+   "b": "U4.12",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.12",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U4.12",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    }
+   ],
+   "net": "latch",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.11",
+   "at_dense_package": true,
+   "b": "U4.11",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.11",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U4.11",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    }
+   ],
+   "net": "sclk",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.4",
+   "at_dense_package": true,
+   "b": "Q13.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.4",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q13.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.15",
+   "at_dense_package": true,
+   "b": "Q1.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.15",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q1.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D84.3",
+   "at_dense_package": true,
+   "b": "U2.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D84.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.8",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D180.1",
+   "at_dense_package": false,
+   "b": "Q12.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D180.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q12.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D85.1",
+   "at_dense_package": false,
+   "b": "Q6.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D85.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q6.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D149.2",
+   "at_dense_package": true,
+   "b": "U3.9",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D149.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.9",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D195.1",
+   "at_dense_package": false,
+   "b": "Q13.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D195.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q13.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.15",
+   "at_dense_package": true,
+   "b": "Q9.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.15",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q9.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.11",
+   "at_dense_package": true,
+   "b": "U2.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.11",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U2.3",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "sclk",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.12",
+   "at_dense_package": true,
+   "b": "U2.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.12",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U2.4",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "latch",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.7",
+   "at_dense_package": true,
+   "b": "Q8.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.7",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q8.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "J2.3",
+   "at_dense_package": true,
+   "b": "U6.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "J2.3",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    },
+    {
+     "pad": "U6.4",
+     "part_pads": 6
+    }
+   ],
+   "net": "blank",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.6",
+   "at_dense_package": true,
+   "b": "Q7.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.6",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q7.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D135.1",
+   "at_dense_package": false,
+   "b": "Q9.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D135.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q9.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D69.3",
+   "at_dense_package": true,
+   "b": "U2.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D69.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.9",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D134.2",
+   "at_dense_package": true,
+   "b": "U3.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D134.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.10",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.11",
+   "at_dense_package": true,
+   "b": "U3.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.11",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U3.3",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "sclk",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.12",
+   "at_dense_package": true,
+   "b": "U3.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.12",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "U3.4",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "latch",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D105.2",
+   "at_dense_package": true,
+   "b": "U3.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D105.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.13",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.21",
+   "at_dense_package": true,
+   "b": "U3.21",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.21",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U3.21",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "blank",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U1.21",
+   "at_dense_package": true,
+   "b": "U2.21",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.21",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U2.21",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "blank",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.4",
+   "at_dense_package": true,
+   "b": "U1.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.4",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U1.4",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "latch",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.3",
+   "at_dense_package": true,
+   "b": "U1.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.3",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U1.3",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "sclk",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D6.4",
+   "at_dense_package": true,
+   "b": "U1.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D6.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.10",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D100.1",
+   "at_dense_package": false,
+   "b": "Q7.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D100.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q7.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.3",
+   "at_dense_package": true,
+   "b": "U2.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.10",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D41.3",
+   "at_dense_package": true,
+   "b": "U2.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D41.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.13",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D115.1",
+   "at_dense_package": false,
+   "b": "Q8.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D115.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q8.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D119.2",
+   "at_dense_package": true,
+   "b": "U3.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D119.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.11",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D90.2",
+   "at_dense_package": true,
+   "b": "U3.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D90.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.14",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.12",
+   "at_dense_package": true,
+   "b": "J2.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.12",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "J2.4",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "latch",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D9.4",
+   "at_dense_package": true,
+   "b": "U1.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D9.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.13",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D150.1",
+   "at_dense_package": false,
+   "b": "Q10.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D150.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q10.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U1.22",
+   "at_dense_package": true,
+   "b": "U2.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.22",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U2.2",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "sdo_U1>sdi_U2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.22",
+   "at_dense_package": true,
+   "b": "U3.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.22",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U3.2",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "sdo_U2>sdi_U3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U4.11",
+   "at_dense_package": true,
+   "b": "J2.5",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U4.11",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "J2.5",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "sclk",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D165.1",
+   "at_dense_package": false,
+   "b": "Q11.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D165.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "Q11.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "row_10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D7.4",
+   "at_dense_package": true,
+   "b": "U1.11",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D7.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.11",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D55.3",
+   "at_dense_package": true,
+   "b": "U2.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D55.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.11",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D26.3",
+   "at_dense_package": true,
+   "b": "U2.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D26.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.14",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D104.2",
+   "at_dense_package": true,
+   "b": "U3.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D104.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.12",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U3.22",
+   "at_dense_package": true,
+   "b": "U4.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U3.22",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "U4.14",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    }
+   ],
+   "net": "sdo_U3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D75.2",
+   "at_dense_package": true,
+   "b": "U3.15",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D75.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.15",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D10.4",
+   "at_dense_package": true,
+   "b": "U1.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D10.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.14",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U2.21",
+   "at_dense_package": true,
+   "b": "J2.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U2.21",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "dense": true,
+     "pad": "J2.3",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "blank",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D40.3",
+   "at_dense_package": true,
+   "b": "U2.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D40.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.12",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.9",
+   "at_dense_package": true,
+   "b": "J2.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.9",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "dense": true,
+     "pad": "J2.2",
+     "part_pads": 8,
+     "pitch_mm": 0.499999
+    }
+   ],
+   "net": "dat_out",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D27.3",
+   "at_dense_package": true,
+   "b": "U2.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D27.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.15",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D8.4",
+   "at_dense_package": true,
+   "b": "U1.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D8.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.12",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.5",
+   "at_dense_package": true,
+   "b": "Q14.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.5",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q14.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D11.4",
+   "at_dense_package": true,
+   "b": "U1.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D11.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.15",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U5.6",
+   "at_dense_package": true,
+   "b": "Q15.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U5.6",
+     "part_pads": 16,
+     "pitch_mm": 0.65
+    },
+    {
+     "pad": "Q15.1",
+     "part_pads": 3
+    }
+   ],
+   "net": "srow_14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D60.2",
+   "at_dense_package": true,
+   "b": "U3.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D60.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.16",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D28.3",
+   "at_dense_package": true,
+   "b": "U2.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D28.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.16",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D12.4",
+   "at_dense_package": true,
+   "b": "U1.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D12.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.16",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D45.2",
+   "at_dense_package": true,
+   "b": "U3.17",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D45.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.17",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.3",
+   "at_dense_package": true,
+   "b": "U2.17",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D29.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.17",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D13.4",
+   "at_dense_package": true,
+   "b": "U1.17",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D13.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.17",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D14.3",
+   "at_dense_package": true,
+   "b": "U2.18",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D14.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.18",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.2",
+   "at_dense_package": true,
+   "b": "U3.18",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D30.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.18",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D14.4",
+   "at_dense_package": true,
+   "b": "U1.18",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D14.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.18",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D15.3",
+   "at_dense_package": true,
+   "b": "U2.19",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D15.3",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U2.19",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colg_14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D15.2",
+   "at_dense_package": true,
+   "b": "U3.19",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D15.2",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U3.19",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colb_14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D15.4",
+   "at_dense_package": true,
+   "b": "U1.19",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D15.4",
+     "part_pads": 4
+    },
+    {
+     "dense": true,
+     "pad": "U1.19",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    }
+   ],
+   "net": "colr_14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U1.2",
+   "at_dense_package": true,
+   "b": "U6.6",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.2",
+     "part_pads": 24,
+     "pitch_mm": 0.635
+    },
+    {
+     "pad": "U6.6",
+     "part_pads": 6
+    }
+   ],
+   "net": "dat",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 4,
+ "dense_packages": 7,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

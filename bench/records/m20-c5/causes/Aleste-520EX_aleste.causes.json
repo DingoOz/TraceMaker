@@ -1,0 +1,6799 @@
+{
+ "baseline": {
+  "connections": 363,
+  "open": 355,
+  "routed": 8,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/Aleste-520EX_aleste.kicad_pcb",
+ "by_cause": {
+  "channel": 139,
+  "near_and_far": 11,
+  "no_path_bare": 24,
+  "package_fanout": 36,
+  "through_traffic": 145
+ },
+ "by_cause_at_dense_packages": {},
+ "by_dense_package": {},
+ "connections": [
+  {
+   "a": "D8.4",
+   "at_dense_package": false,
+   "b": "D7.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D8.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D7.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS0",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D7.4",
+   "at_dense_package": false,
+   "b": "D6.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D7.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D6.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS0",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D4.4",
+   "at_dense_package": false,
+   "b": "D3.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D4.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D3.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS0",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "D3.4",
+   "at_dense_package": false,
+   "b": "D2.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D3.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D2.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS0",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "D16.4",
+   "at_dense_package": false,
+   "b": "D15.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D16.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D15.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS1",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D15.4",
+   "at_dense_package": false,
+   "b": "D14.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D15.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D14.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS1",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D12.4",
+   "at_dense_package": false,
+   "b": "D11.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D12.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D11.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS1",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "D11.4",
+   "at_dense_package": false,
+   "b": "D10.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D11.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D10.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/RAS1",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "D55.12",
+   "at_dense_package": false,
+   "b": "R16.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D55.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "R16.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/LED0",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D48.15",
+   "at_dense_package": false,
+   "b": "D14.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D48.15",
+     "part_pads": 20
+    },
+    {
+     "pad": "D14.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D48.12",
+   "at_dense_package": false,
+   "b": "D13.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D48.12",
+     "part_pads": 20
+    },
+    {
+     "pad": "D13.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D15.2",
+   "at_dense_package": false,
+   "b": "D48.16",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D15.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D48.16",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "CB1_13.2",
+   "at_dense_package": false,
+   "b": "D5.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "CB1_13.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "D5.8",
+     "part_pads": 16
+    }
+   ],
+   "net": "VCC",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D16.2",
+   "at_dense_package": false,
+   "b": "D48.19",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D16.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D48.19",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D7",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D13.14",
+   "at_dense_package": false,
+   "b": "D48.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D13.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D48.13",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R12",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D14.14",
+   "at_dense_package": false,
+   "b": "D48.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D14.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D48.14",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R13",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D15.14",
+   "at_dense_package": false,
+   "b": "D48.17",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D15.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D48.17",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R14",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D16.6",
+   "at_dense_package": false,
+   "b": "D8.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D16.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D8.6",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/MA2",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D16.7",
+   "at_dense_package": false,
+   "b": "D8.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D16.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "D8.7",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/MA1",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D11.2",
+   "at_dense_package": false,
+   "b": "D3.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D11.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D3.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D12.2",
+   "at_dense_package": false,
+   "b": "D4.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D12.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D4.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D13.2",
+   "at_dense_package": false,
+   "b": "D5.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D13.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D5.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D14.2",
+   "at_dense_package": false,
+   "b": "D6.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D14.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D6.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D7.2",
+   "at_dense_package": false,
+   "b": "D15.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D7.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D15.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D16.2",
+   "at_dense_package": false,
+   "b": "D8.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D16.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D8.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D7",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D61.7",
+   "at_dense_package": false,
+   "b": "D58.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D61.7",
+     "part_pads": 24
+    },
+    {
+     "pad": "D58.14",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/XD5",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D61.6",
+   "at_dense_package": false,
+   "b": "D58.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D61.6",
+     "part_pads": 24
+    },
+    {
+     "pad": "D58.13",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/XD4",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D10.14",
+   "at_dense_package": false,
+   "b": "D46.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D10.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D46.4",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R9",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: no path in window"
+  },
+  {
+   "a": "D48.9",
+   "at_dense_package": false,
+   "b": "D12.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D48.9",
+     "part_pads": 20
+    },
+    {
+     "pad": "D12.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "no_legal_path",
+   "why": "no path in window"
+  },
+  {
+   "a": "D56.6",
+   "at_dense_package": false,
+   "b": "D58.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D56.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D58.7",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/XD2",
+   "reason": "out_of_budget",
+   "why": "out of budget"
+  },
+  {
+   "a": "D11.14",
+   "at_dense_package": false,
+   "b": "D46.7",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D11.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D46.7",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D12.14",
+   "at_dense_package": false,
+   "b": "D48.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D12.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D48.8",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D45.7",
+   "at_dense_package": false,
+   "b": "D47.7",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D45.7",
+     "part_pads": 20
+    },
+    {
+     "pad": "D47.7",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D47.8",
+   "at_dense_package": false,
+   "b": "D45.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D47.8",
+     "part_pads": 20
+    },
+    {
+     "pad": "D45.8",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D47.14",
+   "at_dense_package": false,
+   "b": "D45.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D47.14",
+     "part_pads": 20
+    },
+    {
+     "pad": "D45.14",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D47.17",
+   "at_dense_package": false,
+   "b": "D45.17",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D47.17",
+     "part_pads": 20
+    },
+    {
+     "pad": "D45.17",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D47.18",
+   "at_dense_package": false,
+   "b": "D45.18",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D47.18",
+     "part_pads": 20
+    },
+    {
+     "pad": "D45.18",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D48.8",
+   "at_dense_package": false,
+   "b": "D46.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D48.8",
+     "part_pads": 20
+    },
+    {
+     "pad": "D46.8",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D61.15",
+   "at_dense_package": false,
+   "b": "D60.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D61.15",
+     "part_pads": 24
+    },
+    {
+     "pad": "D60.15",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/PX2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D61.4",
+   "at_dense_package": false,
+   "b": "D60.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D61.4",
+     "part_pads": 24
+    },
+    {
+     "pad": "D60.4",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/NCOLOR3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D37.2",
+   "at_dense_package": false,
+   "b": "D38.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D37.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D38.12",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/XTAL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D59.14",
+   "at_dense_package": false,
+   "b": "D58.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D59.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D58.15",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/C5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B3",
+   "at_dense_package": false,
+   "b": "D30.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.B3",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.2",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A3",
+   "at_dense_package": false,
+   "b": "D30.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "X1.A3",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.3",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.5",
+   "at_dense_package": false,
+   "b": "D19.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D33.5",
+     "part_pads": 24
+    },
+    {
+     "pad": "D19.7",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/AY3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.6",
+   "at_dense_package": false,
+   "b": "D19.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D33.6",
+     "part_pads": 24
+    },
+    {
+     "pad": "D19.6",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/AY2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.8",
+   "at_dense_package": false,
+   "b": "D19.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D33.8",
+     "part_pads": 24
+    },
+    {
+     "pad": "D19.4",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/AY0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.3",
+   "at_dense_package": false,
+   "b": "D19.9",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D33.3",
+     "part_pads": 24
+    },
+    {
+     "pad": "D19.9",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/AY5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.4",
+   "at_dense_package": false,
+   "b": "D19.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D33.4",
+     "part_pads": 24
+    },
+    {
+     "pad": "D19.8",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/AY4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.15",
+   "at_dense_package": false,
+   "b": "D57.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D87.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D57.2",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/XD0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B13",
+   "at_dense_package": false,
+   "b": "D30.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B13",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.14",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D59.13",
+   "at_dense_package": false,
+   "b": "D58.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D59.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D58.12",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/C4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.2",
+   "at_dense_package": false,
+   "b": "D32.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D87.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D32.6",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/XD2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A13",
+   "at_dense_package": false,
+   "b": "D30.15",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.A13",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.15",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B2",
+   "at_dense_package": false,
+   "b": "D30.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B2",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.4",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D28.4",
+   "at_dense_package": false,
+   "b": "D87.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D28.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D87.9",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/M1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D56.13",
+   "at_dense_package": false,
+   "b": "D62.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D56.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D62.14",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/XD4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D9.15",
+   "at_dense_package": false,
+   "b": "R80.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D9.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "R80.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/RAM/CAS1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A10",
+   "at_dense_package": false,
+   "b": "D30.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.A10",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.13",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.9",
+   "at_dense_package": false,
+   "b": "D30.31",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.9",
+     "part_pads": 28
+    },
+    {
+     "pad": "D30.31",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.32",
+   "at_dense_package": false,
+   "b": "D31.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.32",
+     "part_pads": 40
+    },
+    {
+     "pad": "D31.8",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.33",
+   "at_dense_package": false,
+   "b": "D31.7",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.33",
+     "part_pads": 40
+    },
+    {
+     "pad": "D31.7",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.34",
+   "at_dense_package": false,
+   "b": "D31.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.34",
+     "part_pads": 40
+    },
+    {
+     "pad": "D31.6",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.37",
+   "at_dense_package": false,
+   "b": "D31.3",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.37",
+     "part_pads": 40
+    },
+    {
+     "pad": "D31.3",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.35",
+   "at_dense_package": false,
+   "b": "D31.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.35",
+     "part_pads": 40
+    },
+    {
+     "pad": "D31.5",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.36",
+   "at_dense_package": false,
+   "b": "D31.4",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D30.36",
+     "part_pads": 40
+    },
+    {
+     "pad": "D31.4",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.10",
+   "at_dense_package": false,
+   "b": "D30.30",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.10",
+     "part_pads": 28
+    },
+    {
+     "pad": "D30.30",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D61.7",
+   "at_dense_package": false,
+   "b": "D62.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D61.7",
+     "part_pads": 24
+    },
+    {
+     "pad": "D62.15",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/XD5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D54.6",
+   "at_dense_package": false,
+   "b": "D58.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D54.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D58.11",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/CBORDER",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D39.5",
+   "at_dense_package": false,
+   "b": "D38.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D39.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "D38.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "Net-(D38-Pad4)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B14",
+   "at_dense_package": false,
+   "b": "D30.19",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B14",
+     "part_pads": 62
+    },
+    {
+     "pad": "D30.19",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/~MREQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.1",
+   "at_dense_package": false,
+   "b": "D57.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D87.1",
+     "part_pads": 16
+    },
+    {
+     "pad": "D57.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/XD1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D43.6",
+   "at_dense_package": false,
+   "b": "D46.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D43.6",
+     "part_pads": 14
+    },
+    {
+     "pad": "D46.1",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/~VCLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D64.15",
+   "at_dense_package": false,
+   "b": "D77.5",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D64.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D77.5",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D64-Pad15)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D18.21",
+   "at_dense_package": false,
+   "b": "R87.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D18.21",
+     "part_pads": 40
+    },
+    {
+     "pad": "R87.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Periphery/X1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D74.15",
+   "at_dense_package": false,
+   "b": "D70.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D74.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D70.3",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.6",
+   "at_dense_package": false,
+   "b": "D48.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D70.6",
+     "part_pads": 40
+    },
+    {
+     "pad": "D48.2",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D59.11",
+   "at_dense_package": false,
+   "b": "D58.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D59.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D58.9",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/C3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D71.9",
+   "at_dense_package": false,
+   "b": "D76.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D71.9",
+     "part_pads": 14
+    },
+    {
+     "pad": "D76.3",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/DSKRDY",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D39.12",
+   "at_dense_package": false,
+   "b": "R79.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D39.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "R79.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Clocks & CRTC/CAS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D20.4",
+   "at_dense_package": false,
+   "b": "D25.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D20.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D25.4",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/V1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R20.1",
+   "at_dense_package": false,
+   "b": "D30.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R20.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D30.6",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.13",
+   "at_dense_package": false,
+   "b": "D22.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D29.13",
+     "part_pads": 14
+    },
+    {
+     "pad": "D22.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A1",
+   "at_dense_package": false,
+   "b": "R100.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.A1",
+     "part_pads": 62
+    },
+    {
+     "pad": "R100.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/SOUND",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D88.3",
+   "at_dense_package": false,
+   "b": "D62.17",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D88.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D62.17",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/VRAMACC",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.30",
+   "at_dense_package": false,
+   "b": "D76.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.30",
+     "part_pads": 40
+    },
+    {
+     "pad": "D76.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D70-Pad30)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.10",
+   "at_dense_package": false,
+   "b": "D34.5",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.10",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.5",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.11",
+   "at_dense_package": false,
+   "b": "D34.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.11",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.6",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.12",
+   "at_dense_package": false,
+   "b": "D34.7",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D70.12",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.7",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D48.6",
+   "at_dense_package": false,
+   "b": "D11.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D48.6",
+     "part_pads": 20
+    },
+    {
+     "pad": "D11.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D34.7",
+   "at_dense_package": false,
+   "b": "D7.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D34.7",
+     "part_pads": 28
+    },
+    {
+     "pad": "D7.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D20.12",
+   "at_dense_package": false,
+   "b": "D25.5",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D20.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "D25.5",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/V2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D40.3",
+   "at_dense_package": false,
+   "b": "D39.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D40.3",
+     "part_pads": 14
+    },
+    {
+     "pad": "D39.14",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R25.1",
+   "at_dense_package": false,
+   "b": "D31.22",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R25.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D31.22",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/ROMDIS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.7",
+   "at_dense_package": false,
+   "b": "D34.28",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.7",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.28",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.27",
+   "at_dense_package": false,
+   "b": "D76.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.27",
+     "part_pads": 40
+    },
+    {
+     "pad": "D76.13",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D70-Pad27)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D18.29",
+   "at_dense_package": false,
+   "b": "D17.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D18.29",
+     "part_pads": 40
+    },
+    {
+     "pad": "D17.11",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Periphery/BC1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.39",
+   "at_dense_package": false,
+   "b": "D79.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.39",
+     "part_pads": 40
+    },
+    {
+     "pad": "D79.9",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/HX",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X4.A10",
+   "at_dense_package": false,
+   "b": "D75.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X4.A10",
+     "part_pads": 34
+    },
+    {
+     "pad": "D75.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/~STEP",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B30",
+   "at_dense_package": false,
+   "b": "D24.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.B30",
+     "part_pads": 62
+    },
+    {
+     "pad": "D24.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/DIS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B31",
+   "at_dense_package": false,
+   "b": "D24.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.B31",
+     "part_pads": 62
+    },
+    {
+     "pad": "D24.9",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/HIGHTZ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X5.B1.2",
+   "at_dense_package": false,
+   "b": "X6.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X5.B1.2",
+     "part_pads": 11
+    },
+    {
+     "pad": "X6.1",
+     "part_pads": 11
+    }
+   ],
+   "net": "/Periphery/COMMON",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A26",
+   "at_dense_package": false,
+   "b": "D24.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.A26",
+     "part_pads": 62
+    },
+    {
+     "pad": "D24.15",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D19.8",
+   "at_dense_package": false,
+   "b": "D17.40",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D19.8",
+     "part_pads": 24
+    },
+    {
+     "pad": "D17.40",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Periphery/AY4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D88.15",
+   "at_dense_package": false,
+   "b": "D32.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D88.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D32.13",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/XD4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B21",
+   "at_dense_package": false,
+   "b": "D31.20",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B21",
+     "part_pads": 62
+    },
+    {
+     "pad": "D31.20",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/~ROMEN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D74.13",
+   "at_dense_package": false,
+   "b": "D21.11",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D74.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D21.11",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "C13.2",
+   "at_dense_package": false,
+   "b": "D17.35",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "C13.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "D17.35",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FDC/RESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D19.9",
+   "at_dense_package": false,
+   "b": "D17.39",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D19.9",
+     "part_pads": 24
+    },
+    {
+     "pad": "D17.39",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Periphery/AY5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D43.5",
+   "at_dense_package": false,
+   "b": "D36.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D43.5",
+     "part_pads": 14
+    },
+    {
+     "pad": "D36.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D36-Pad6)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.17",
+   "at_dense_package": false,
+   "b": "D73.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.17",
+     "part_pads": 40
+    },
+    {
+     "pad": "D73.10",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D70-Pad17)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.15",
+   "at_dense_package": false,
+   "b": "D62.9",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D87.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D62.9",
+     "part_pads": 24
+    }
+   ],
+   "net": "/FDC/XD0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D56.6",
+   "at_dense_package": false,
+   "b": "D62.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D56.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D62.11",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/XD2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.6",
+   "at_dense_package": false,
+   "b": "D34.27",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.6",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.27",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.11",
+   "at_dense_package": false,
+   "b": "D85.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D23.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D85.8",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/MAP18",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D1.3",
+   "at_dense_package": false,
+   "b": "R9.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D1.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "R9.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/RAM/WE0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.7",
+   "at_dense_package": false,
+   "b": "D48.5",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.7",
+     "part_pads": 40
+    },
+    {
+     "pad": "D48.5",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D22.3",
+   "at_dense_package": false,
+   "b": "D25.17",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D22.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D25.17",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/V14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D19.10",
+   "at_dense_package": false,
+   "b": "D17.38",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D19.10",
+     "part_pads": 24
+    },
+    {
+     "pad": "D17.38",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Periphery/AY6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D18.27",
+   "at_dense_package": false,
+   "b": "D17.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D18.27",
+     "part_pads": 40
+    },
+    {
+     "pad": "D17.10",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Periphery/BDIR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D51.10",
+   "at_dense_package": false,
+   "b": "D35.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D51.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D35.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/MVI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D34.20",
+   "at_dense_package": false,
+   "b": "D72.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D34.20",
+     "part_pads": 28
+    },
+    {
+     "pad": "D72.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/RSCLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.22",
+   "at_dense_package": false,
+   "b": "D20.11",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D25.22",
+     "part_pads": 40
+    },
+    {
+     "pad": "D20.11",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D78.9",
+   "at_dense_package": false,
+   "b": "D82.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D78.9",
+     "part_pads": 14
+    },
+    {
+     "pad": "D82.16",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/Y3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D22.14",
+   "at_dense_package": false,
+   "b": "D36.5",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D22.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D36.5",
+     "part_pads": 14
+    }
+   ],
+   "net": "/RAM/S0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R135.1",
+   "at_dense_package": false,
+   "b": "D19.18",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R135.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D19.18",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/~RESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.14",
+   "at_dense_package": false,
+   "b": "D24.11",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D23.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D24.11",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/S0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D19.11",
+   "at_dense_package": false,
+   "b": "D17.37",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D19.11",
+     "part_pads": 24
+    },
+    {
+     "pad": "D17.37",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Periphery/AY7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D43.6",
+   "at_dense_package": false,
+   "b": "D36.12",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D43.6",
+     "part_pads": 14
+    },
+    {
+     "pad": "D36.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/RAM/~VCLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.1",
+   "at_dense_package": false,
+   "b": "D62.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D87.1",
+     "part_pads": 16
+    },
+    {
+     "pad": "D62.10",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/XD1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D1.4",
+   "at_dense_package": false,
+   "b": "R77.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D1.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "R77.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/RAM/RAS0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.8",
+   "at_dense_package": false,
+   "b": "D48.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D70.8",
+     "part_pads": 40
+    },
+    {
+     "pad": "D48.6",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.11",
+   "at_dense_package": false,
+   "b": "D48.15",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D70.11",
+     "part_pads": 40
+    },
+    {
+     "pad": "D48.15",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.25",
+   "at_dense_package": false,
+   "b": "D76.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.25",
+     "part_pads": 40
+    },
+    {
+     "pad": "D76.1",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D70-Pad25)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.33",
+   "at_dense_package": false,
+   "b": "D70.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.33",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.6",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.32",
+   "at_dense_package": false,
+   "b": "D70.7",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.32",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.7",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.31",
+   "at_dense_package": false,
+   "b": "D70.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.31",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.8",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.30",
+   "at_dense_package": false,
+   "b": "D70.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.30",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.9",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.29",
+   "at_dense_package": false,
+   "b": "D70.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.29",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.10",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.28",
+   "at_dense_package": false,
+   "b": "D70.11",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.28",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.11",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.27",
+   "at_dense_package": false,
+   "b": "D70.12",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.27",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.12",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.26",
+   "at_dense_package": false,
+   "b": "D70.13",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D25.26",
+     "part_pads": 40
+    },
+    {
+     "pad": "D70.13",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.27",
+   "at_dense_package": false,
+   "b": "D62.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D17.27",
+     "part_pads": 40
+    },
+    {
+     "pad": "D62.1",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R51.2",
+   "at_dense_package": false,
+   "b": "D28.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R51.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "D28.13",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAPBLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D48.5",
+   "at_dense_package": false,
+   "b": "D10.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D48.5",
+     "part_pads": 20
+    },
+    {
+     "pad": "D10.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D38.10",
+   "at_dense_package": false,
+   "b": "D25.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D38.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D25.14",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/V11",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D67.2",
+   "at_dense_package": false,
+   "b": "D44.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D67.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D44.1",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~MREQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D42.8",
+   "at_dense_package": false,
+   "b": "D41.5",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D42.8",
+     "part_pads": 14
+    },
+    {
+     "pad": "D41.5",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D41-Pad5)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D34.22",
+   "at_dense_package": false,
+   "b": "R132.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D34.22",
+     "part_pads": 28
+    },
+    {
+     "pad": "R132.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Periphery/DSR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.20",
+   "at_dense_package": false,
+   "b": "D29.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D30.20",
+     "part_pads": 40
+    },
+    {
+     "pad": "D29.2",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~IORQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.12",
+   "at_dense_package": false,
+   "b": "D41.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D29.12",
+     "part_pads": 14
+    },
+    {
+     "pad": "D41.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D24.10",
+   "at_dense_package": false,
+   "b": "D23.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D24.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D23.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/RAM/DIS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D41.1",
+   "at_dense_package": false,
+   "b": "D40.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D41.1",
+     "part_pads": 14
+    },
+    {
+     "pad": "D40.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D40-Pad6)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.24",
+   "at_dense_package": false,
+   "b": "R118.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D17.24",
+     "part_pads": 40
+    },
+    {
+     "pad": "R118.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Periphery/BUSY",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D38.11",
+   "at_dense_package": false,
+   "b": "D25.16",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D38.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D25.16",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/V13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.6",
+   "at_dense_package": false,
+   "b": "D44.4",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D23.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D44.4",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/A6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.28",
+   "at_dense_package": false,
+   "b": "D62.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.28",
+     "part_pads": 40
+    },
+    {
+     "pad": "D62.2",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.23",
+   "at_dense_package": false,
+   "b": "D17.36",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D33.23",
+     "part_pads": 24
+    },
+    {
+     "pad": "D17.36",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.11",
+   "at_dense_package": false,
+   "b": "D89.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.11",
+     "part_pads": 28
+    },
+    {
+     "pad": "D89.6",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.12",
+   "at_dense_package": false,
+   "b": "D89.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.12",
+     "part_pads": 28
+    },
+    {
+     "pad": "D89.5",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.13",
+   "at_dense_package": false,
+   "b": "D89.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.13",
+     "part_pads": 28
+    },
+    {
+     "pad": "D89.4",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D35.6",
+   "at_dense_package": false,
+   "b": "D49.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D35.6",
+     "part_pads": 14
+    },
+    {
+     "pad": "D49.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MVI",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.9",
+   "at_dense_package": false,
+   "b": "D48.9",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D70.9",
+     "part_pads": 40
+    },
+    {
+     "pad": "D48.9",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.10",
+   "at_dense_package": false,
+   "b": "D48.12",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D70.10",
+     "part_pads": 40
+    },
+    {
+     "pad": "D48.12",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D42.11",
+   "at_dense_package": false,
+   "b": "D77.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D42.11",
+     "part_pads": 14
+    },
+    {
+     "pad": "D77.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Clocks & CRTC/RAS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.29",
+   "at_dense_package": false,
+   "b": "D62.3",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.29",
+     "part_pads": 40
+    },
+    {
+     "pad": "D62.3",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.39",
+   "at_dense_package": false,
+   "b": "D85.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.39",
+     "part_pads": 40
+    },
+    {
+     "pad": "D85.2",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/RW/S",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D1.15",
+   "at_dense_package": false,
+   "b": "R79.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D1.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "R79.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/RAM/CAS0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D55.2",
+   "at_dense_package": false,
+   "b": "D53.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D55.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "D53.14",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MODE0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D53.11",
+   "at_dense_package": false,
+   "b": "D44.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D53.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D44.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/8ST",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.13",
+   "at_dense_package": false,
+   "b": "D42.13",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D17.13",
+     "part_pads": 40
+    },
+    {
+     "pad": "D42.13",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Periphery/STROBE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B29",
+   "at_dense_package": false,
+   "b": "D75.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B29",
+     "part_pads": 62
+    },
+    {
+     "pad": "D75.1",
+     "part_pads": 14
+    }
+   ],
+   "net": "/RAM/~DIS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D89.6",
+   "at_dense_package": false,
+   "b": "D62.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D89.6",
+     "part_pads": 20
+    },
+    {
+     "pad": "D62.8",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D89.5",
+   "at_dense_package": false,
+   "b": "D62.7",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D89.5",
+     "part_pads": 20
+    },
+    {
+     "pad": "D62.7",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D89.4",
+   "at_dense_package": false,
+   "b": "D62.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D89.4",
+     "part_pads": 20
+    },
+    {
+     "pad": "D62.6",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D62.5",
+   "at_dense_package": false,
+   "b": "D89.3",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D62.5",
+     "part_pads": 24
+    },
+    {
+     "pad": "D89.3",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D62.4",
+   "at_dense_package": false,
+   "b": "D89.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D62.4",
+     "part_pads": 24
+    },
+    {
+     "pad": "D89.2",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.14",
+   "at_dense_package": false,
+   "b": "D42.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D23.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D42.10",
+     "part_pads": 14
+    }
+   ],
+   "net": "/RAM/S0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.30",
+   "at_dense_package": false,
+   "b": "D62.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.30",
+     "part_pads": 40
+    },
+    {
+     "pad": "D62.4",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D67.5",
+   "at_dense_package": false,
+   "b": "D55.7",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D67.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "D55.7",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/PROM0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "C24.1",
+   "at_dense_package": false,
+   "b": "D30.26",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "C24.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D30.26",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/~RESET*",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D5.14",
+   "at_dense_package": false,
+   "b": "D47.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D5.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D47.13",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D55.5",
+   "at_dense_package": false,
+   "b": "D53.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D55.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "D53.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MODE1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.10",
+   "at_dense_package": false,
+   "b": "D26.14",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D29.10",
+     "part_pads": 14
+    },
+    {
+     "pad": "D26.14",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~IORQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D6.14",
+   "at_dense_package": false,
+   "b": "D47.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D6.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D47.14",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D7.14",
+   "at_dense_package": false,
+   "b": "D47.17",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D7.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D47.17",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.33",
+   "at_dense_package": false,
+   "b": "D85.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D70.33",
+     "part_pads": 40
+    },
+    {
+     "pad": "D85.3",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D70-Pad33)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D8.14",
+   "at_dense_package": false,
+   "b": "D47.18",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D8.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D47.18",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.11",
+   "at_dense_package": false,
+   "b": "D37.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D49.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D37.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/XTAL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.31",
+   "at_dense_package": false,
+   "b": "D62.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.31",
+     "part_pads": 40
+    },
+    {
+     "pad": "D62.5",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.13",
+   "at_dense_package": false,
+   "b": "D38.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D49.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D38.1",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/HIGHT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.19",
+   "at_dense_package": false,
+   "b": "D42.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D33.19",
+     "part_pads": 24
+    },
+    {
+     "pad": "D42.9",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/A0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.14",
+   "at_dense_package": false,
+   "b": "D25.33",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.14",
+     "part_pads": 40
+    },
+    {
+     "pad": "D25.33",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.15",
+   "at_dense_package": false,
+   "b": "D25.32",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.15",
+     "part_pads": 40
+    },
+    {
+     "pad": "D25.32",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.21",
+   "at_dense_package": false,
+   "b": "D75.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.21",
+     "part_pads": 40
+    },
+    {
+     "pad": "D75.2",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~RD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D18.15",
+   "at_dense_package": false,
+   "b": "D82.19",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D18.15",
+     "part_pads": 40
+    },
+    {
+     "pad": "D82.19",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/X7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D41.12",
+   "at_dense_package": false,
+   "b": "D54.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D41.12",
+     "part_pads": 14
+    },
+    {
+     "pad": "D54.15",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D67.6",
+   "at_dense_package": false,
+   "b": "D55.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D67.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D55.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/PROM1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D48.2",
+   "at_dense_package": false,
+   "b": "D9.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D48.2",
+     "part_pads": 20
+    },
+    {
+     "pad": "D9.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/D0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R100.2",
+   "at_dense_package": false,
+   "b": "X2.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R100.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "X2.6",
+     "part_pads": 11
+    }
+   ],
+   "net": "/Gate Array/SOUND",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D59.1",
+   "at_dense_package": false,
+   "b": "R6.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D59.1",
+     "part_pads": 16
+    },
+    {
+     "pad": "R6.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/BLANK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.21",
+   "at_dense_package": false,
+   "b": "D42.6",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D33.21",
+     "part_pads": 24
+    },
+    {
+     "pad": "D42.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Periphery/~CS53",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.20",
+   "at_dense_package": false,
+   "b": "D31.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D33.20",
+     "part_pads": 24
+    },
+    {
+     "pad": "D31.9",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.21",
+   "at_dense_package": false,
+   "b": "D29.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.21",
+     "part_pads": 40
+    },
+    {
+     "pad": "D29.5",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~RD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.13",
+   "at_dense_package": false,
+   "b": "D25.31",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.13",
+     "part_pads": 28
+    },
+    {
+     "pad": "D25.31",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.22",
+   "at_dense_package": false,
+   "b": "D29.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D30.22",
+     "part_pads": 40
+    },
+    {
+     "pad": "D29.1",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~WR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D57.5",
+   "at_dense_package": false,
+   "b": "D35.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D57.5",
+     "part_pads": 14
+    },
+    {
+     "pad": "D35.10",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/ROM0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D82.17",
+   "at_dense_package": false,
+   "b": "R83.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D82.17",
+     "part_pads": 24
+    },
+    {
+     "pad": "R83.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D82-Pad17)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D2.14",
+   "at_dense_package": false,
+   "b": "D45.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D2.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D45.4",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D18.14",
+   "at_dense_package": false,
+   "b": "D82.20",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D18.14",
+     "part_pads": 40
+    },
+    {
+     "pad": "D82.20",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/X8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D3.14",
+   "at_dense_package": false,
+   "b": "D45.7",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D3.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D45.7",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D4.14",
+   "at_dense_package": false,
+   "b": "D47.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D4.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D47.8",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D57.9",
+   "at_dense_package": false,
+   "b": "D35.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D57.9",
+     "part_pads": 14
+    },
+    {
+     "pad": "D35.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/ROM1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.26",
+   "at_dense_package": false,
+   "b": "D29.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.26",
+     "part_pads": 28
+    },
+    {
+     "pad": "D29.13",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/A13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D82.18",
+   "at_dense_package": false,
+   "b": "R82.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D82.18",
+     "part_pads": 24
+    },
+    {
+     "pad": "R82.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D82-Pad18)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.21",
+   "at_dense_package": false,
+   "b": "D43.4",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D25.21",
+     "part_pads": 40
+    },
+    {
+     "pad": "D43.4",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Clocks & CRTC/CBUF",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D52.3",
+   "at_dense_package": false,
+   "b": "D50.12",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D52.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D50.12",
+     "part_pads": 16
+    }
+   ],
+   "net": "Net-(D50-Pad12)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.15",
+   "at_dense_package": false,
+   "b": "D25.30",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.15",
+     "part_pads": 28
+    },
+    {
+     "pad": "D25.30",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.3",
+   "at_dense_package": false,
+   "b": "D74.15",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D29.3",
+     "part_pads": 14
+    },
+    {
+     "pad": "D74.15",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.3",
+   "at_dense_package": false,
+   "b": "D34.10",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D70.3",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.10",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D75.1",
+   "at_dense_package": false,
+   "b": "D40.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D75.1",
+     "part_pads": 14
+    },
+    {
+     "pad": "D40.8",
+     "part_pads": 14
+    }
+   ],
+   "net": "/RAM/~DIS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D34.3",
+   "at_dense_package": false,
+   "b": "R126.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D34.3",
+     "part_pads": 28
+    },
+    {
+     "pad": "R126.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Periphery/RXD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D1.14",
+   "at_dense_package": false,
+   "b": "D45.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D1.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D45.3",
+     "part_pads": 20
+    }
+   ],
+   "net": "/RAM/R0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D22.5",
+   "at_dense_package": false,
+   "b": "D28.11",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D22.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "D28.11",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R61.2",
+   "at_dense_package": false,
+   "b": "R57.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R61.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R57.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(R56-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.36",
+   "at_dense_package": false,
+   "b": "D29.3",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.36",
+     "part_pads": 40
+    },
+    {
+     "pad": "D29.3",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~IOWR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D42.1",
+   "at_dense_package": false,
+   "b": "X9.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D42.1",
+     "part_pads": 14
+    },
+    {
+     "pad": "X9.9",
+     "part_pads": 12
+    }
+   ],
+   "net": "/Periphery/SBRES",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D83.18",
+   "at_dense_package": false,
+   "b": "R86.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D83.18",
+     "part_pads": 24
+    },
+    {
+     "pad": "R86.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D83-Pad18)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D64.10",
+   "at_dense_package": false,
+   "b": "D18.22",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D64.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D18.22",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/1M",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D53.9",
+   "at_dense_package": false,
+   "b": "D51.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D53.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "D51.9",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/RRC",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.27",
+   "at_dense_package": false,
+   "b": "D29.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D30.27",
+     "part_pads": 40
+    },
+    {
+     "pad": "D29.9",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~M1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.16",
+   "at_dense_package": false,
+   "b": "D25.29",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.16",
+     "part_pads": 28
+    },
+    {
+     "pad": "D25.29",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D57.3",
+   "at_dense_package": false,
+   "b": "D29.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D57.3",
+     "part_pads": 14
+    },
+    {
+     "pad": "D29.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D29-Pad11)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D32.15",
+   "at_dense_package": false,
+   "b": "R36.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D32.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "R36.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/~CSAY",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R135.1",
+   "at_dense_package": false,
+   "b": "D32.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R135.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D32.1",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~RESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R60.2",
+   "at_dense_package": false,
+   "b": "R55.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R60.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R55.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(R54-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D32.12",
+   "at_dense_package": false,
+   "b": "D42.5",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D32.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "D42.5",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/CS53",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D85.1",
+   "at_dense_package": false,
+   "b": "D73.12",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D85.1",
+     "part_pads": 14
+    },
+    {
+     "pad": "D73.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D73-Pad12)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D21.9",
+   "at_dense_package": false,
+   "b": "R42.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D21.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "R42.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D21-Pad9)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.14",
+   "at_dense_package": false,
+   "b": "D61.21",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D49.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D61.21",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/~PAGE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D35.9",
+   "at_dense_package": false,
+   "b": "D25.25",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D35.9",
+     "part_pads": 14
+    },
+    {
+     "pad": "D25.25",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.6",
+   "at_dense_package": false,
+   "b": "D17.5",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D29.6",
+     "part_pads": 14
+    },
+    {
+     "pad": "D17.5",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/~IORD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.13",
+   "at_dense_package": false,
+   "b": "D62.23",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D29.13",
+     "part_pads": 14
+    },
+    {
+     "pad": "D62.23",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/A13",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D53.3",
+   "at_dense_package": false,
+   "b": "D50.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D53.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D50.14",
+     "part_pads": 16
+    }
+   ],
+   "net": "Net-(D50-Pad14)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D83.17",
+   "at_dense_package": false,
+   "b": "R87.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D83.17",
+     "part_pads": 24
+    },
+    {
+     "pad": "R87.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D83-Pad17)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D52.13",
+   "at_dense_package": false,
+   "b": "D51.14",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D52.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D51.14",
+     "part_pads": 16
+    }
+   ],
+   "net": "Net-(D51-Pad14)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.40",
+   "at_dense_package": false,
+   "b": "D85.12",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D25.40",
+     "part_pads": 40
+    },
+    {
+     "pad": "D85.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/HY",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D83.19",
+   "at_dense_package": false,
+   "b": "R85.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D83.19",
+     "part_pads": 24
+    },
+    {
+     "pad": "R85.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D83-Pad19)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D22.11",
+   "at_dense_package": false,
+   "b": "D28.10",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D22.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D28.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP16",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A24",
+   "at_dense_package": false,
+   "b": "D25.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.A24",
+     "part_pads": 62
+    },
+    {
+     "pad": "D25.3",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/L.PEN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.17",
+   "at_dense_package": false,
+   "b": "D25.28",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.17",
+     "part_pads": 28
+    },
+    {
+     "pad": "D25.28",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.5",
+   "at_dense_package": false,
+   "b": "D89.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.5",
+     "part_pads": 40
+    },
+    {
+     "pad": "D89.1",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/A15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D34.13",
+   "at_dense_package": false,
+   "b": "D70.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D34.13",
+     "part_pads": 28
+    },
+    {
+     "pad": "D70.2",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/~IORD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D28.1",
+   "at_dense_package": false,
+   "b": "D85.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D28.1",
+     "part_pads": 16
+    },
+    {
+     "pad": "D85.9",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/MAPMOD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.3",
+   "at_dense_package": false,
+   "b": "D77.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D49.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D77.9",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D49-Pad3)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R59.2",
+   "at_dense_package": false,
+   "b": "R53.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R59.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R53.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(R52-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D75.3",
+   "at_dense_package": false,
+   "b": "D40.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D75.3",
+     "part_pads": 14
+    },
+    {
+     "pad": "D40.2",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D40-Pad2)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.5",
+   "at_dense_package": false,
+   "b": "D28.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D23.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "D28.9",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP17",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.18",
+   "at_dense_package": false,
+   "b": "D65.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D17.18",
+     "part_pads": 40
+    },
+    {
+     "pad": "D65.10",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/HY*",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.4",
+   "at_dense_package": false,
+   "b": "D77.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D49.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D77.8",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D49-Pad4)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R10.1",
+   "at_dense_package": false,
+   "b": "D47.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R10.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D47.1",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/BUFFER0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.15",
+   "at_dense_package": false,
+   "b": "D58.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D49.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D58.1",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/PAGE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D83.20",
+   "at_dense_package": false,
+   "b": "R84.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D83.20",
+     "part_pads": 24
+    },
+    {
+     "pad": "R84.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D83-Pad20)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.5",
+   "at_dense_package": false,
+   "b": "D82.21",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.5",
+     "part_pads": 40
+    },
+    {
+     "pad": "D82.21",
+     "part_pads": 24
+    }
+   ],
+   "net": "/CPU/~IORD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R32.1",
+   "at_dense_package": false,
+   "b": "D85.10",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R32.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D85.10",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Gate Array/M4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.13",
+   "at_dense_package": false,
+   "b": "D25.26",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.13",
+     "part_pads": 40
+    },
+    {
+     "pad": "D25.26",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.19",
+   "at_dense_package": false,
+   "b": "D67.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.19",
+     "part_pads": 40
+    },
+    {
+     "pad": "D67.2",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~MREQ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.18",
+   "at_dense_package": false,
+   "b": "D25.27",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.18",
+     "part_pads": 28
+    },
+    {
+     "pad": "D25.27",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/D6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D78.8",
+   "at_dense_package": false,
+   "b": "X5.B1.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D78.8",
+     "part_pads": 14
+    },
+    {
+     "pad": "X5.B1.2",
+     "part_pads": 11
+    }
+   ],
+   "net": "/Periphery/COMMON",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.39",
+   "at_dense_package": false,
+   "b": "D43.11",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.39",
+     "part_pads": 40
+    },
+    {
+     "pad": "D43.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Clocks & CRTC/HX",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.9",
+   "at_dense_package": false,
+   "b": "D26.4",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D17.9",
+     "part_pads": 40
+    },
+    {
+     "pad": "D26.4",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D53.7",
+   "at_dense_package": false,
+   "b": "D61.16",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D53.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "D61.16",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/PX3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D52.9",
+   "at_dense_package": false,
+   "b": "D61.15",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D52.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "D61.15",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/PX2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "C4.2",
+   "at_dense_package": false,
+   "b": "D65.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "C4.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "D65.9",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/SYNC*",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.4",
+   "at_dense_package": false,
+   "b": "D23.6",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D31.4",
+     "part_pads": 28
+    },
+    {
+     "pad": "D23.6",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A6",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D24.3",
+   "at_dense_package": false,
+   "b": "D28.12",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D24.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D28.12",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A21",
+   "at_dense_package": false,
+   "b": "D42.4",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.A21",
+     "part_pads": 62
+    },
+    {
+     "pad": "D42.4",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~RESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D52.7",
+   "at_dense_package": false,
+   "b": "D61.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D52.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "D61.14",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/PX1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D88.6",
+   "at_dense_package": false,
+   "b": "VD12.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D88.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "VD12.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D88-Pad6)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.2",
+   "at_dense_package": false,
+   "b": "D23.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.2",
+     "part_pads": 28
+    },
+    {
+     "pad": "D23.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.21",
+   "at_dense_package": false,
+   "b": "D74.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D31.21",
+     "part_pads": 28
+    },
+    {
+     "pad": "D74.3",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A10",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.7",
+   "at_dense_package": false,
+   "b": "R45.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D23.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "R45.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D23-Pad7)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.2",
+   "at_dense_package": false,
+   "b": "D29.6",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D70.2",
+     "part_pads": 40
+    },
+    {
+     "pad": "D29.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~IORD",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.5",
+   "at_dense_package": false,
+   "b": "D22.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.5",
+     "part_pads": 28
+    },
+    {
+     "pad": "D22.6",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D38.14",
+   "at_dense_package": false,
+   "b": "D72.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D38.14",
+     "part_pads": 16
+    },
+    {
+     "pad": "D72.1",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Clocks & CRTC/16MHZ",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.4",
+   "at_dense_package": false,
+   "b": "D28.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D30.4",
+     "part_pads": 40
+    },
+    {
+     "pad": "D28.5",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A14",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D20.7",
+   "at_dense_package": false,
+   "b": "R39.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D20.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "R39.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D20-Pad7)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B27",
+   "at_dense_package": false,
+   "b": "D23.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B27",
+     "part_pads": 62
+    },
+    {
+     "pad": "D23.5",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP17",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.20",
+   "at_dense_package": false,
+   "b": "D67.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.20",
+     "part_pads": 28
+    },
+    {
+     "pad": "D67.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~ROMEN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D29.8",
+   "at_dense_package": false,
+   "b": "D66.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D29.8",
+     "part_pads": 14
+    },
+    {
+     "pad": "D66.10",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~INTA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D21.7",
+   "at_dense_package": false,
+   "b": "R41.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D21.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "R41.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D21-Pad7)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A29",
+   "at_dense_package": false,
+   "b": "D29.8",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.A29",
+     "part_pads": 62
+    },
+    {
+     "pad": "D29.8",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~INTA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D22.9",
+   "at_dense_package": false,
+   "b": "R44.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D22.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "R44.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D22-Pad9)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D17.8",
+   "at_dense_package": false,
+   "b": "D26.12",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D17.8",
+     "part_pads": 40
+    },
+    {
+     "pad": "D26.12",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D38.9",
+   "at_dense_package": false,
+   "b": "D24.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D38.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "D24.1",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/V1113",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.25",
+   "at_dense_package": false,
+   "b": "D74.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D31.25",
+     "part_pads": 28
+    },
+    {
+     "pad": "D74.1",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.24",
+   "at_dense_package": false,
+   "b": "D34.12",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D25.24",
+     "part_pads": 40
+    },
+    {
+     "pad": "D34.12",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A8",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D22.7",
+   "at_dense_package": false,
+   "b": "R43.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D22.7",
+     "part_pads": 16
+    },
+    {
+     "pad": "R43.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D22-Pad7)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.1",
+   "at_dense_package": false,
+   "b": "D35.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D31.1",
+     "part_pads": 28
+    },
+    {
+     "pad": "D35.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D31-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R11.1",
+   "at_dense_package": false,
+   "b": "D48.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R11.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D48.1",
+     "part_pads": 20
+    }
+   ],
+   "net": "/CPU/BUFFER1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.9",
+   "at_dense_package": false,
+   "b": "R46.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D23.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "R46.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D23-Pad9)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D39.13",
+   "at_dense_package": false,
+   "b": "D42.11",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D39.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D42.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Clocks & CRTC/RAS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.9",
+   "at_dense_package": false,
+   "b": "D20.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.9",
+     "part_pads": 28
+    },
+    {
+     "pad": "D20.6",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.7",
+   "at_dense_package": false,
+   "b": "D21.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.7",
+     "part_pads": 28
+    },
+    {
+     "pad": "D21.6",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D85.6",
+   "at_dense_package": false,
+   "b": "R7.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D85.6",
+     "part_pads": 14
+    },
+    {
+     "pad": "R7.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D85-Pad6)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R20.1",
+   "at_dense_package": false,
+   "b": "D40.3",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "R20.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "D40.3",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D74.10",
+   "at_dense_package": false,
+   "b": "D44.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D74.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D44.5",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/EXRG",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B23",
+   "at_dense_package": false,
+   "b": "D25.19",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B23",
+     "part_pads": 62
+    },
+    {
+     "pad": "D25.19",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/CURSOR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.6",
+   "at_dense_package": false,
+   "b": "D21.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.6",
+     "part_pads": 28
+    },
+    {
+     "pad": "D21.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A27",
+   "at_dense_package": false,
+   "b": "D22.11",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "X1.A27",
+     "part_pads": 62
+    },
+    {
+     "pad": "D22.11",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP16",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.1",
+   "at_dense_package": false,
+   "b": "D42.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D70.1",
+     "part_pads": 40
+    },
+    {
+     "pad": "D42.2",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/RESET",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.8",
+   "at_dense_package": false,
+   "b": "D20.10",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.8",
+     "part_pads": 28
+    },
+    {
+     "pad": "D20.10",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.3",
+   "at_dense_package": false,
+   "b": "D74.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D31.3",
+     "part_pads": 28
+    },
+    {
+     "pad": "D74.13",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/A7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B28",
+   "at_dense_package": false,
+   "b": "R51.2",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.B28",
+     "part_pads": 62
+    },
+    {
+     "pad": "R51.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/MAPBLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.16",
+   "at_dense_package": false,
+   "b": "X1.B23",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D33.16",
+     "part_pads": 24
+    },
+    {
+     "pad": "X1.B23",
+     "part_pads": 62
+    }
+   ],
+   "net": "/Clocks & CRTC/CURSOR",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D67.3",
+   "at_dense_package": false,
+   "b": "D70.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D67.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D70.5",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D41.3",
+   "at_dense_package": false,
+   "b": "R8.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D41.3",
+     "part_pads": 14
+    },
+    {
+     "pad": "R8.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D41-Pad3)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D32.9",
+   "at_dense_package": false,
+   "b": "D44.6",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D32.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "D44.6",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D32-Pad9)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D42.12",
+   "at_dense_package": false,
+   "b": "X5.A1.6",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D42.12",
+     "part_pads": 14
+    },
+    {
+     "pad": "X5.A1.6",
+     "part_pads": 11
+    }
+   ],
+   "net": "/Periphery/~STROBE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.17",
+   "at_dense_package": false,
+   "b": "D41.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D33.17",
+     "part_pads": 24
+    },
+    {
+     "pad": "D41.9",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Periphery/FUTURE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B26",
+   "at_dense_package": false,
+   "b": "D22.5",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "X1.B26",
+     "part_pads": 62
+    },
+    {
+     "pad": "D22.5",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Gate Array/MAP15",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D20.9",
+   "at_dense_package": false,
+   "b": "R40.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D20.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "R40.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D20-Pad9)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A23",
+   "at_dense_package": false,
+   "b": "R14.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.A23",
+     "part_pads": 62
+    },
+    {
+     "pad": "R14.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/CPU/RAMDIS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.24",
+   "at_dense_package": false,
+   "b": "D25.22",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D31.24",
+     "part_pads": 28
+    },
+    {
+     "pad": "D25.22",
+     "part_pads": 40
+    }
+   ],
+   "net": "/CPU/A9",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.12",
+   "at_dense_package": false,
+   "b": "D85.13",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D79.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "D85.13",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/SINT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D31.27",
+   "at_dense_package": false,
+   "b": "D35.8",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D31.27",
+     "part_pads": 28
+    },
+    {
+     "pad": "D35.8",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D31-Pad27)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.23",
+   "at_dense_package": false,
+   "b": "D41.11",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.23",
+     "part_pads": 40
+    },
+    {
+     "pad": "D41.11",
+     "part_pads": 14
+    }
+   ],
+   "net": "Net-(D25-Pad23)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D41.6",
+   "at_dense_package": false,
+   "b": "R9.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D41.6",
+     "part_pads": 14
+    },
+    {
+     "pad": "R9.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D41-Pad6)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.28",
+   "at_dense_package": false,
+   "b": "D40.10",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D30.28",
+     "part_pads": 40
+    },
+    {
+     "pad": "D40.10",
+     "part_pads": 14
+    }
+   ],
+   "net": "/CPU/~RFSH",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.18",
+   "at_dense_package": false,
+   "b": "D25.39",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D33.18",
+     "part_pads": 24
+    },
+    {
+     "pad": "D25.39",
+     "part_pads": 40
+    }
+   ],
+   "net": "/Clocks & CRTC/HX",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D23.10",
+   "at_dense_package": false,
+   "b": "D34.11",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D23.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D34.11",
+     "part_pads": 28
+    }
+   ],
+   "net": "/CPU/A12",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A28",
+   "at_dense_package": false,
+   "b": "D89.18",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "X1.A28",
+     "part_pads": 62
+    },
+    {
+     "pad": "D89.18",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Gate Array/M4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D59.9",
+   "at_dense_package": false,
+   "b": "D49.11",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D59.9",
+     "part_pads": 16
+    },
+    {
+     "pad": "D49.11",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/XTAL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D32.2",
+   "at_dense_package": false,
+   "b": "R136.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D32.2",
+     "part_pads": 16
+    },
+    {
+     "pad": "R136.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/HIGHTY",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D24.5",
+   "at_dense_package": false,
+   "b": "R24.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D24.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "R24.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D24-Pad5)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.B22",
+   "at_dense_package": false,
+   "b": "D67.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "X1.B22",
+     "part_pads": 62
+    },
+    {
+     "pad": "D67.9",
+     "part_pads": 16
+    }
+   ],
+   "net": "/CPU/~RAMEN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D43.13",
+   "at_dense_package": false,
+   "b": "VD2.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D43.13",
+     "part_pads": 14
+    },
+    {
+     "pad": "VD2.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(D43-Pad13)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D81.5",
+   "at_dense_package": false,
+   "b": "D84.3",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D81.5",
+     "part_pads": 16
+    },
+    {
+     "pad": "D84.3",
+     "part_pads": 20
+    }
+   ],
+   "net": "/Periphery/KRS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D30.16",
+   "at_dense_package": false,
+   "b": "R15.2",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D30.16",
+     "part_pads": 40
+    },
+    {
+     "pad": "R15.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/CPU/~INT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.40",
+   "at_dense_package": false,
+   "b": "C3.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D25.40",
+     "part_pads": 40
+    },
+    {
+     "pad": "C3.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/CPU/HY",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D64.10",
+   "at_dense_package": false,
+   "b": "D38.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D64.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D38.5",
+     "part_pads": 16
+    }
+   ],
+   "net": "/Clocks & CRTC/1M",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D87.15",
+   "at_dense_package": false,
+   "b": "D71.12",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D87.15",
+     "part_pads": 16
+    },
+    {
+     "pad": "D71.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/FDC/XD0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D25.18",
+   "at_dense_package": false,
+   "b": "D77.12",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D25.18",
+     "part_pads": 40
+    },
+    {
+     "pad": "D77.12",
+     "part_pads": 14
+    }
+   ],
+   "net": "/Clocks & CRTC/DEN",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D49.12",
+   "at_dense_package": false,
+   "b": "VD8.1",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D49.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "VD8.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/Gate Array/SYNC",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.10",
+   "at_dense_package": false,
+   "b": "D82.10",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D79.10",
+     "part_pads": 16
+    },
+    {
+     "pad": "D82.10",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Periphery/KW3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D51.12",
+   "at_dense_package": false,
+   "b": "D61.13",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D51.12",
+     "part_pads": 16
+    },
+    {
+     "pad": "D61.13",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Gate Array/PX0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "X1.A1",
+   "at_dense_package": false,
+   "b": "X3.5",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "X1.A1",
+     "part_pads": 62
+    },
+    {
+     "pad": "X3.5",
+     "part_pads": 9
+    }
+   ],
+   "net": "/Gate Array/SOUND",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D70.18",
+   "at_dense_package": false,
+   "b": "D17.19",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D70.18",
+     "part_pads": 40
+    },
+    {
+     "pad": "D17.19",
+     "part_pads": 40
+    }
+   ],
+   "net": "/FDC/DISCINT",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.13",
+   "at_dense_package": false,
+   "b": "D65.11",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D79.13",
+     "part_pads": 16
+    },
+    {
+     "pad": "D65.11",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/SINT*",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.3",
+   "at_dense_package": false,
+   "b": "D65.14",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D79.3",
+     "part_pads": 16
+    },
+    {
+     "pad": "D65.14",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/KK0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.4",
+   "at_dense_package": false,
+   "b": "D65.15",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D79.4",
+     "part_pads": 16
+    },
+    {
+     "pad": "D65.15",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/KK1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.6",
+   "at_dense_package": false,
+   "b": "D65.16",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D79.6",
+     "part_pads": 16
+    },
+    {
+     "pad": "D65.16",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/KK2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D79.11",
+   "at_dense_package": false,
+   "b": "D65.17",
+   "cause": "no_path_bare",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D79.11",
+     "part_pads": 16
+    },
+    {
+     "pad": "D65.17",
+     "part_pads": 24
+    }
+   ],
+   "net": "/Clocks & CRTC/KK3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.10",
+   "at_dense_package": false,
+   "b": "D34.25",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D33.10",
+     "part_pads": 24
+    },
+    {
+     "pad": "D34.25",
+     "part_pads": 28
+    }
+   ],
+   "net": "/Periphery/RXC",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D33.13",
+   "at_dense_package": false,
+   "b": "D34.9",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "D33.13",
+     "part_pads": 24
+    },
+    {
+     "pad": "D34.9",
+     "part_pads": 28
+    }
+   ],
+   "net": "/Periphery/TXC",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 2,
+ "dense_packages": 0,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

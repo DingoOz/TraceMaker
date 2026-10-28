@@ -739,7 +739,7 @@ pad's own layer.
 | `disallow via`, `through_via`, `micro_via`, `buried_via` or `blind_via` with those conditions | `via_allowed(net, type)` is a per-net switch for each via type. `via` or `through_via` matching a through via on any layer leaves the net without vias of any type (blind, buried and micro vias are only tried where a through via is blocked). Blind/buried router probes have no span yet, so either keyword conservatively stops both; `micro_via` alone stops micro vias. | `items_not_allowed`; `blind_via` has exactly one outer span endpoint, `buried_via` none, micro remains separate (D80). |
 | Positional, footprint or pad-dependent `disallow` (`insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y`) | Applied to every new track and via with its actual shape, width, position and span, in the exact checks before commit, escapes, pair legs and clean-up, and in the search's lattice tests (§34, D82). Not warned. | Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80). |
 | Rules whose condition does not parse, uses an unknown property/function anywhere, or contains a single numeric literal without units | Not applied; warned by name. | Not reported, including an unknown symbol in a short-circuited branch. `Parent.Reference` is not an alias (D80). |
-| Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasExactNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
+| Rules that use a KiCad function TraceMaker does not evaluate (`hasNetclass`, `hasComponentClass`, `fromTo`, `isMicroVia`, `isBlindBuriedVia`, `isBlindVia`, `isBuriedVia`, `isCoupledDiffPair`, `getField`, `memberOf`, `memberOfGroup`, `memberOfSheet`, `memberOfSheetOrChildren`, `insideCourtyard`, `insideFrontCourtyard`, `insideBackCourtyard`) | Kept, because KiCad applies them; warned by name. The call is taken as false, so the rule holds where the rest of its condition decides: `A.NetName == 'X' \|\| A.hasNetclass('Y')` still applies to X. | The same; a `disallow` whose evaluation reached the call is not reported (D80). |
 | Matching `disallow` with `(severity ignore)` | Later matching rules for the same item type win, including ignore exceptions. | Ignore clears that item type's selected violation; different disallow types accumulate (D80). |
 | Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have no layer property. A zone uses its source layer, not a fill projection; a multilayer zone has an unset layer ID (`==` false, `!=` true). Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
@@ -2059,6 +2059,19 @@ connections, and the clean-pass count (2 of 8) did not move at all. Without `--s
 under the net including via antipads. A first version that searched a 20 mm window from the start made `--si-rules` route 3 of 147 on RoyalBlue (failing critical connections spent the work budget); the wider window is now searched
 only after a critical net's first path crossed a void or hopped layers. With all options off the quick, mid, planes and planes `--soft-zones` tiers are byte-identical to `main`.
 
+**Five seeds (doc 18 A5, 2026-10-28, D146; `bench/records/m21-a5`).** The same comparison was repeated over seeds 1-5 on a later
+binary (C5's crowded-source portfolio). No critical-net measure varies with the seed: the differences between the options are
+systematic. On the nets both runs route:
+
+- `--critical-via-cost 3` cuts their vias by 4 and crossings by 3.
+- `--split-cost 4` cuts crossings by 6 and adds 2 vias.
+- Both together cut vias by 2 and crossings by 4.
+
+The one-seed table's 20 -> 11 splits did not recur. `--critical-first` routes 27 of the 28 critical nets against 23 to 25 without it
+(RoyalBlue's crystal net and debugger USB pair are routed only with it). It costs 6 connections of the other nets in every seed, and
+with it the cost terms change nothing on the common nets. `--si-rules` keeps all three: its purpose is the critical nets, and the
+costs alone are still available.
+
 **Limits.** The tweet the issue quotes gives no numbers, and none were copied: 3 for the via multiplier and 4 pitches per step for the split cost are the values of `--si-rules`, chosen on the
 benchmark runs recorded, not derived. The cost map knows the zone fills of the file, not the antipads of vias the route adds (the audit after the route does, on a refilled board). Only the
 smoothing pass is made split-aware; the other post-passes (length tuning, pair coupling) are not. A rule's own `plane_net` parameter (doc 15 USB2-09, ETH-13) is not read: the reference of a layer
@@ -2271,3 +2284,402 @@ DRC still checks it as written. Test `[rules]` ("custom hole_clearance rules").
 
 Not done: rules whose condition uses `A.Net` (JLCPCB's "Hole to hole" between different nets, 0.5 mm) are still not
 applied by the router or the DRC (the engine does not evaluate `Net`); KiCad found no such error on that board.
+
+## 55. Why connections stay open, and strict searches from the crowded end (M20 C5, 2026-10-27, D143)
+
+**The question** (doc 18 C5): of the connections the failing tier B-D boards leave open, which fail at a dense package, and why?
+The 33 boards are `bench/sets/pcbench-bd-fail.txt`; the run is 10 M work per board, eight variants, KiCad judging (`c5-base`, 1,383
+open, 1,368 unconnected items after KiCad's refill).
+
+**Classification** (`tracemaker causes BOARD [--json FILE]`, `src/app/causes.{hpp,cpp}`; `bench/failure_causes.py` runs it over a
+benchmark run). Every open connection of a routed board is routed again alone (one router, 2 M work) on copies of the board whose
+routed copper is locked, each copy with other nets' copper removed in one region; its cause is the first copy on which it routes:
+
+| Cause | The copy on which it routes | Meaning |
+|---|---|---|
+| `pin_cannot_escape` | none: the escape analysis (§35) on the bare board says the pin cannot leave its package | the footprint and the rules, not the routing |
+| `through_traffic` | copper within 2 mm of an end removed, of nets with no pad on that end's part | other nets' tracks passing through the pin's fan-out region |
+| `package_fanout` | all copper within 2 mm of an end removed (the part's own nets too) | the package's own fan-out |
+| `channel` | the copper farther than 2 mm from both ends removed | a routing channel away from the pins |
+| `near_and_far` | all other copper removed | both |
+| `no_path_bare` | none at this work | the rules, keep-outs or the work budget |
+
+A connection that routes alone on the board as it is ("routes as is", 63 of 1,383) was left by the order or the budget, not by
+copper. "At a dense package" means an end on a package the escape analysis calls dense. Radius 2 mm: the scale of a package's
+fan-out (EtherCAT at 1 mm moved 4 of 30 connections from `package_fanout` to `channel`). Records: `bench/records/m20-c5/causes.md`.
+
+| Cause | Open | At a dense package |
+|---|--:|--:|
+| `through_traffic` | 444 | 204 |
+| `package_fanout` | 335 | 264 |
+| `channel` | 259 | 69 |
+| `no_path_bare` | 182 | 64 |
+| `near_and_far` | 51 | 34 |
+| `pin_cannot_escape` | 49 | 49 |
+
+Two more inner layers (`tracemaker layers`, routed at 10 M): 1,320 → 1,196 open, two boards complete. The largest class is copper
+near the pins, the pins' own fan-out and other nets passing through it (779 of 1,320), and more than half of it is at dense packages.
+
+**Where the work went** (`work-profile.md`, from each board's `route.json`): 17 of the 33 boards spend the whole budget in the strict
+first pass and never negotiate; they hold 1,156 of the 1,383 open connections, and only 79 open connections in all were tried in
+negotiation. Failed strict searches take 70 to 90 % of those budgets. A strict search whose *source* is boxed in is proved so in a
+few expansions (the enclosure proof, `enclosed`); one whose *target* is boxed in floods its window first, then the reverse probe
+(capped at 60,000 expansions) finds the target enclosed. The cheap proof depends on which end the search starts from.
+
+**The fix: start from the crowded end** (`RouterOptions::crowded_source`, `route --crowded-source`). In the strict pass a connection's
+search starts from the end with the higher crowding: the copper of other nets routed in this run, plus the pads of other nets of the
+end's own part, within 1 mm of the pad's box (copper already on the input board is not counted: the routed-item index holds only this
+run's). A boxed-in pin is then proved at once, and a pin that can be left by one narrow way is left that way instead of being
+reached by a flood from the open end (test `[causes][route]`: 2,126 expansions against 395,412 on a pin in a 3 × 3 grid of its
+part's pads).
+
+| 33 failing boards, 10 M work | Open | KiCad unconnected | Better / worse boards | Clean |
+|---|--:|--:|---|--:|
+| base (`c5-base`) | 1,383 | 1,368 | | 0 |
+| pin halo: 2 pitches per step within 0.3 mm of another part's pad, for nets without a pad on it | 1,394 | 1,378 | 6 / 9 | 0 |
+| strict searches capped at 100,000 expansions | 1,422 | 1,407 | 6 / 15 | 0 |
+| strict pass stops at 70 % of the budget, negotiation gets the rest | 1,536 | 1,521 | 1 / 16 | 0 |
+| crowded source, routed copper only, all variants | 1,217 | 1,203 | 18 / 9 | 1 |
+| crowded source, routed copper and own pads, all variants | 1,204 | 1,188 | 19 / 8 | 1 |
+| **crowded source in variants 1, 5, 6, 7 (the default)** (`c5x-fail`) | **1,220** | **1,204** | 18 / 6 | 1 |
+
+The halo, the cap and the share move work around without proving anything sooner, and lose. The polish pass (`--polish`) was worse on
+three boards of the first few tried and was not run on all.
+
+**Why half the portfolio.** In all eight variants the crowded source lost two boards of the 59 tier B-D boards that the 0.9.0 run
+finished clean (`pcbench-bd-clean`, at 10 M work 44 of them are clean in KiCad's judgement): AmpOne and bumps, one connection each.
+Each portfolio variant runs with the whole budget and keeps its own result, and `route.json` records every variant's routed count,
+so every subset of the eight could be scored from the two runs without routing again. On the 71 boards first finished (33 + 38),
+the four variants 1 ("fast bends, shortest first"), 5 ("cheap vias"), 6 ("cheap crossings, escape plan") and 7 ("dear vias") keep
+nearly all of the gain and lose no board. Variants 0, 2, 3 and 4 search from the first end as before; `--crowded-source` turns it on in
+all of them, and the hidden `--no-crowded-portfolio` restores the old portfolio. Checked with the real binary afterwards:
+
+| Set | Base | Default (variants 1, 5, 6, 7) | Better / worse boards | Clean |
+|---|--:|--:|---|---|
+| 33 failing boards, 10 M (`c5x-fail`) | 1,383 open | 1,220 | 18 / 6 | 0 → 1 |
+| 59 boards clean in the 0.9.0 run, 10 M (`c5x-clean`; 21 of them were not used to choose) | 69 open | 46 | 5 / 1 | 44 → 46 |
+| mid tier, 11 boards, 20 M (`c5x-mid`; not used to choose) | 1,306 open | 1,093 | 7 / 2 | 0 → 0 |
+| quick tier, 30 boards, 1 M (`c5x-quick`; not used to choose) | 32 open | 24 | 4 / 0 | 25 → 26 |
+
+No board in any set gained a KiCad error. The worse boards lose one to four connections (E3 Pcb six); the two mid-tier boards one
+each. The subset is the smallest of the ties with the fewest open connections and no complete board lost (`portfolio_subsets.py`,
+`portfolio-subsets.md`); on the mid tier alone a different subset scores a little better, so it is not a precise optimum.
+
+Records: `bench/records/m20-c5/` (README, causes, runs).
+
+## 56. Pin swap: what the freedom would be worth (M20 C2, 2026-10-27, D141)
+
+`bench/pin_swap.py` measures an upper bound before any pass is built. Groups of pins are taken as swappable by construction
+(assumption A73), not from the design: a connector's signal pins (reference J, P, CN, CON or X; one pad type and size; not a supply,
+ground or differential-pair net; the net's only pad on the connector), standing for a connector wired to interchangeable GPIO, and
+the resistors of a resistor array (RN/RP, 4, 8 or 16 pads; a resistor moves as a unit, either way round). An oracle assigns the
+group's nets to its pads by a minimum-cost assignment of the distance from each pad to the nearest pad of its net elsewhere
+(Kuhn 1955, the Hungarian method). A minimum Euclidean bipartite matching has no crossing pairs, so the group's own ratsnest
+untangles. The swapped board permutes the pads' own `(net ...)` nodes; everything else is byte-identical.
+
+| Set | Boards | Ratsnest of the groups | Open connections | Vias | Length | Clean (KiCad) |
+|---|--:|---|---|---|---|---|
+| Failing tier B-D boards with a group, 10 M work | 20 | 0 to −12 % | 982 → 978 (5 better, 5 worse) | 3,548 → 3,434 | 102.2 → 101.3 m | 0 → 0 |
+| Quick boards with a group, 1 M work | 10 | 0 to −19 % | 27 → 26 (2 better, 1 worse) | 228 → 224 | 8.56 → 8.51 m | 7 → 6 |
+
+The median change in open connections is 0 on both sets; doc 18's condition for building the pass ("only if a median gain is
+clear") is not met, and the proposal-only pin-swap pass is not built. The order of connector pins is not what leaves connections open
+on these boards (§55 says what does); free assignment buys about 3 % of vias. Records: `bench/records/m20-c2/`.
+
+## 57. `--si-rules` closes the audit loop: return stitching of critical nets (doc 18 B3, 2026-10-27, D144)
+
+The reference-return audit (§42) and the return-path stitching pass (§39.3) were two commands; `--si-rules` routed the critical nets
+with their three rules (§44) and reported void crossings without places. Now, with `--si-rules`:
+
+1. After routing, the audit runs on the critical nets. Each layer change it finds with no closure and the same reference net on both
+   sides makes that net a return-path stitching target of that reference net at 5 mm, the audit's own radius (the catalogue's 5.08 mm
+   would leave a stitch the audit does not count).
+2. The stitching pass runs with those targets added to any from `--stitch-vias return` and the component rules, as a transaction: its
+   vias are kept only if no net has more unconnected items with them after a refill.
+3. The audit runs again. The critical-net report (log, `--json` `critical_nets`, the run report) carries `missing_stitches` per net and
+   in the totals, `missing_stitches_before_stitching`, and a warning per place: each unstitched layer change with its layers, its
+   position in millimetres and why (no via of the plane net within 5 mm; two different reference nets and no capacitor between them;
+   no reference copper on one side), and each void whose return detour is over 2 mm, with its layer and position. At most eight places
+   per net are listed, then a count.
+
+`--no-si-stitch` turns step 2 off. A change between two different reference nets needs a capacitor between them, which is a placement
+decision: it stays a warning. A layer with no plane copper near the via cannot be fixed with a via either.
+
+The audit at a layer change also changed: a signal layer whose trace is only a stub from a pad to its via can lie wholly over the
+via's own antipad, which left that layer with no reference by coverage and reported "no reference copper on one side" between two
+solid planes. At the via, such a layer now takes the adjacent layer (N+1, then N-1) that has copper within 2 mm of it.
+
+Test `[pour][route][critical]` ("route --si-rules stitches the critical nets' layer changes the audit finds without a return via"): a
+four-layer board, CLK from an F.Cu pad to a B.Cu pad between GND planes on In1.Cu and In2.Cu, the nearest GND pin 10 mm away: one
+unstitched change before the pass, a GND via beside it after, none in the audit; with `--no-si-stitch` the warning names the place.
+
+On the plane tier (`bench/records/m21-b3`) the critical nets' layer changes are nearly all closed already by the GND pads and stitching
+the boards carry: one change on StickHub stays open, and it has no plane copper on one side. The pass matters on boards whose critical
+nets change layers far from any plane via.
+
+## 58. KiCad 10 tuning profiles: per-layer width (doc 18 B1, 2026-10-28, D145)
+
+KiCad 10 lets a project define tuning profiles (Board Setup → Tuning Profiles), stored in the `.kicad_pro` as
+`tuning_profiles.tuning_profiles_impedance_geometric`. Each profile has a name, a type (single-ended or differential) and, for each signal
+layer, a track width and pair gap in nanometres, its reference layers and a propagation delay, plus via delays. A net class names its
+profile in its `tuning_profile` field. The engine read none of it.
+
+**Reading.** `read_design_rules` reads the profiles (`model::TuningProfile`) and each class's `tuning_profile`, Default's included.
+
+**KiCad's rule.** KiCad's DRC engine (`pcbnew/drc/drc_engine.cpp`) compiles each class's profile into implicit rules. They come before
+the custom rules, so a `.kicad_dru` rule overrides them. On each layer with a width, the class's tracks have exactly that width:
+`track_width` with min = the larger of the width and the board minimum, and opt = max = the width, under the condition
+`A.hasExactNetclass('C') && A.Layer == 'L'`. A differential profile constrains only the pair nets (`&& A.inDiffPair('*')`) and fixes their
+gap the same way. When that gap is below the class clearance, it adds a clearance at the gap for `AB.isCoupledDiffPair()`. The rules
+carry the severity of `tuning_profile_track_geometries`, which is `ignore` unless the project sets it. `read_design_rules` adds the width
+and gap rules in the same place (`CustomRule::implicit`) with that severity, so the engine's DRC judges a board as KiCad does.
+
+What KiCad 10.0.6 does, measured with `kicad-cli` (rule_parity cases `tuning_profile_*` and `static_exact_class_*`, and the boards in
+`bench/records/m21-b1`), differs from the source in three places, and the engine follows the measurement:
+
+- **An ignored rule still decides.** At `ignore`, a profiled track below the board minimum is not reported either: the profile's rule
+  is the one that decides the track's width check, and it is ignored. The DRC now takes `track_width`'s severity from the last matching
+  rule (`RuleEngine::track_width_severity`).
+- **`hasExactNetclass` matches only in KiCad's own rules.** In a user's rule it never matched, whether alone, under `&&` or in a
+  `track_width` rule, while the profile's rules with the same text did. The engine evaluates it only in implicit rules (renamed
+  internally when compiled). In a user's rule it stays one of the functions taken as false (the table in §27).
+- **The coupled clearance covers tracks only.** On RoyalBlue with a 0.15 mm profile gap under a 0.2032 mm class clearance, KiCad
+  passed the coupled tracks at 0.15 mm but reported a half's track 0.19 mm from the other half's connector pad. With the same gap set
+  on the net class instead, the pad passes. The engine's reader does not add the coupled rule (it does not evaluate
+  `isCoupledDiffPair`). The route job sets `NetClass::tuning_pair_gap`, which relaxes only the halves' tracks against each other
+  (`RuleEngine::clearance`, `route::pair_rule`). Pads and the pair's vias keep the class clearance, or the class's own pair gap.
+
+**Routing.** The router has one width per net (doc 15 §15). A profiled class is routed as follows:
+
+- *Single-ended.* At the widest width the profile gives on the board's layers, so every clearance holds at any of the widths. After
+  routing, each track of the class's nets is narrowed to the profile's width on its layer, in `run_route_job`. Narrower copper cannot
+  break a clearance, and a track keeps its ends. The step is judged like the other after-route passes: it is dropped if a net has more
+  unconnected items with it.
+- *Differential.* A pair's gap changes with its width when the centrelines stay put, so narrowing would leave the inner layers at the
+  wrong gap. The pairs are routed at one layer's width and gap: a layer the class's SMD pads are on (a pair kept off its pads' layer
+  could not leave them), then the geometry most of the profile's layers share, then the first. A `disallow track` rule for the class's
+  pair nets keeps them off every layer with another width or gap. Their uncoupled pieces take the same width, and the tracks of the
+  two halves may sit at the profile's gap (above).
+
+The profile is applied whatever the severity of KiCad's check: it states the impedance the designer wants, and the check is only
+whether KiCad reports a miss.
+
+The log names each profile and its route width. `--json` has `tuning_profiles`: the class, the profile, the route width and its layer,
+each layer's width and gap, the layers kept clear, and the tracks narrowed. A class naming a profile the project does not define is
+warned about (KiCad's `missing_tuning_profile`) and routed with its class width.
+
+**Not used yet.** The delays (per layer and per via) and time-domain tuning: they belong to B2's length and skew matching. The profile's
+reference layers are not used: the audit (§42) finds the reference copper itself.
+
+Tests `[tuning]`:
+
+- "tuning profiles: read from the project and compiled into KiCad's width rules, with its severity": a four-layer project with profile
+  MS (0.15 mm on the outer layers, 0.1 mm inside) for class FAST. The profile is read and four implicit rules are compiled. At
+  `error`, a 0.25 mm CLK track on F.Cu is one `track_width` error and a 0.15 mm one is none. At `ignore`, neither is reported, nor is a
+  track below the board minimum. A user's rule with `hasExactNetclass('FAST')` selects nothing, and the same rule with
+  `A.NetClass == 'FAST'` selects the track.
+- "route: a profiled net has its profile's width on each layer": CLK from an F.Cu pad to a B.Cu pad, with a track keepout across the
+  outer layers so that it crosses inside. Every track is 0.15 mm outside and 0.1 mm inside, and the written board has no
+  `track_width` error by the project's own rules.
+- rule_parity (`tests/integration/rule_parity`, frozen KiCad 10.0.6 verdicts): `static_exact_class_track` and
+  `static_exact_class_case` (a user's `hasExactNetclass` selects nothing), and `tuning_profile_width` and `tuning_profile_ignored` (six
+  tracks of a profiled and an unprofiled net: five `track_width` errors at `error`, none at `ignore`). All 220 cases match.
+
+On two plane-tier boards given profiles (`bench/records/m21-b1`; KiCad 10.0.6 with the check at `error`, 3 M work, soft zones), KiCad
+adds no error. On RoyalBlue (8 layers), 68 inner tracks are narrowed to 0.2 mm, and with only the single-ended profile the routing is
+the same as without profiles: 125/147, with the same count in every variant. The USB pair profile (0.15/0.15 mm outside, 0.1/0.2 mm
+inside) keeps the pairs on the outer layers and costs five connections (120/147). plane_smd: 48/49 either way, with no inner signal
+tracks to narrow.
+
+The profile rules set widths and pair gaps, never a clearance, so they do not switch the router to exact checks
+(`RuleEngine::needs_exact_routing`). Before that was fixed, a profiled board routed without its distance fields.
+
+**Rejudged (B2, same night).** The B1 fixtures above wrote their net settings at schema 4. KiCad migrates such settings and gives
+every class an empty tuning profile (`migrateSchema4to5`), so KiCad checked no profile at all and "adds no error" was vacuous. With the
+fixtures at schema 5 (`bench/records/m21-b1/runs/b1-v5`), the first build had 20 `track_width` errors on plane_smd (0.15 mm neck-downs),
+97 on RoyalBlue with both profiles and 175 with the single-ended one. Three fixes followed (§59):
+
+- A class that names no profile takes Default's, as KiCad does (`addMissingDefaults`), so RoyalBlue's USB pairs fall under SE50.
+- A single-ended profile also sets the class's pair width.
+- Profiled nets get no neck-down, because the profile's width is also KiCad's minimum.
+
+The reader now also drops the profiles of schema-4 settings, with a warning, as KiCad does. After the fixes, plane_smd routes 48/49
+with no added error. RoyalBlue drops from 125/147 to 102/147 with the single-ended profile (every Default net now keeps 0.25 mm on the
+outer layers and 0.2 mm inside, with no neck-down at fine-pitch pads) and to 104/147 with both profiles. Neither has a `track_width`
+error. The pair profile leaves 5 `diff_pair_gap_out_of_range` errors, which §59 explains. "Narrowing is free" no longer holds: the
+earlier 125 came from the judge that read no profile.
+
+## 59. Time-domain matching: delays as KiCad 10.0.6 measures them (doc 18 B2, 2026-10-28, D147)
+
+KiCad 10 measures a net's length and propagation delay in `LENGTH_DELAY_CALCULATION` (`pcbnew/length_delay_calculation`). A
+`length` or `skew` constraint given in ps or fs is compared with the delay. The engine read the units but measured lengths its own
+way, ignored time rules, and had no tuner aiming at a delay.
+
+**Measurement** (`drc/length.hpp`, `drc::net_length`). This is a port of 10.0.6's calculation, with its quirks:
+
+- *Pieces.* A net's tracks and arcs, in file order, are chained where ends meet. In 10.0.6 a chain grows at an end only where exactly
+  one other line end remains, on the same layer, and the first line of each chain is taken out of the search first. On a branched net
+  the result therefore depends on the order KiCad visits the lines, which is the order of their addresses (a `std::set` of pointers).
+  KiCad master merges only at simple two-end joints.
+- *Vias.* A via counts when its span is used: a line ends at its centre or strictly inside its disc, or a pad it touches is on the net
+  (an SMD pad on its copper layer, a through-hole pad on its footprint's side). Its height is the stackup distance between the outermost
+  layers used (doc 05 §38's `via_heights`, moved to `drc`). A via joining one layer only is a stub: counted, with no height. Without
+  "use height for length calculations", vias count for nothing.
+- *Clipping.* A chain end inside a via's disc is replaced by a straight line from the via's centre to where the chain crosses the
+  disc's edge. A chain end exactly on a pad's position is clipped at the pad's outline.
+- *Rounding.* Segment lengths are rounded to the nanometre and arc lengths are truncated. A layer's delay is its delay per mm times the
+  length in mm, truncated to the attosecond. A via's delay is the profile's override for its signal and via layers (upper layer first),
+  else its delay per mm times its height, and only with time-domain tuning on. A pad's die delay counts only when the net has a profile.
+
+**Check** (`drc.cpp`, `check_lengths`). This is KiCad's matched-length test:
+
+- Every pad, track, arc and via is grouped by the last rule giving it a `length` or `skew` constraint at its layer, then by net. Each
+  group is sorted by net name.
+- A length outside the window is reported on its minimum first. A rule in ps compares the delay.
+- Skew is measured against the net with the most length or delay. In 10.0.6 that net is measured against itself too, so a minimum skew
+  always fails on it (KiCad's QA board shows exactly that one violation). `within_diff_pairs` pairs each net with its partner.
+- A rule at severity `ignore` is skipped.
+
+**Net classes, as 10.0.6 resolves them** (`DesignRules::classes_of`). A net's effective class is built from every class that matches
+it. Default joins when the matched classes leave any of ten fields unset (clearance, track width, via and microvia sizes, pair width
+and gap, wire and bus width), or when none of them has a tuning profile and Default has one. Such a composite is named "A,Default", so
+`hasExactNetclass('A')` misses it. `hasNetclass('A')` is true when any constituent is named exactly A; it is now evaluated, and was
+taken as false before. A class with an empty profile takes Default's. Net settings older than schema 5 lose every profile when KiCad
+migrates them, and the reader does the same and warns. A missing schema version means no migration.
+
+**Coupling check** (`drc/coupling.hpp`, `check_diff_pairs`). This is a port of KiCad's diff-pair coupling test, which the engine did
+not have, so `diff_pair_gap` rules were not checked at all:
+
+- A P track and an N track on one layer are coupled where their lines are exactly parallel (a zero integer cross product) and not
+  collinear, and their projections overlap. The pair is skipped when anything else on the layer crosses the line between their nearest
+  points, apart from tracks and vias touching the coupled ends and pads that either track leaves.
+- The gap is the centreline distance minus the half widths, with KiCad's rounding. It must lie within the rule, with the DRC epsilon.
+- Items are grouped by pair and rule names under KiCad's key comparator. Its quirk keys an item twice when both a gap and an uncoupled
+  rule apply, so the gap errors are reported even then. `diff_pair_uncoupled` compares the longer half's track length minus the
+  coupled length.
+- Arc pairs are not coupled (the router writes no arcs).
+
+A tuning profile's pair gap is a rule with min = max = gap and no uncoupled limit. Every parallel stretch of the two halves that can
+see the other must therefore be at exactly the gap, which includes stretches far apart with nothing between them.
+
+**Routing** (`Router::tune_delays`, after `tune_lengths` and `tune_skew`). Each net with a `length` rule in ps is tuned into its window.
+A meander raises the delay by the delay per mm of the layer it is on, so only tracks on layers with a delay are candidates. The tuner
+measures with the same calculation as the check, and its last meander is cut to fit. Then each `skew` rule in ps: the nets it groups,
+or each pair with `within_diff_pairs`, are brought to within a quarter of the limit below the net with the most delay. Nets of a profiled
+class are not necked down (§58).
+
+**Pair names** (`drc::match_dp_suffix`, D149). Nets are paired as KiCad 10.0.6's `MatchDpSuffix` pairs them:
+- From the end of the name, digits and underscores are skipped. The next character must be P or + (positive) or N or − (negative).
+- The partner's name swaps that character, so `LVDS_N0_1` pairs with `LVDS_P0_1`.
+- `inDiffPair('x')` matches the base, which is the name before that character. If the base ends in an underscore, it also matches the
+  base without it. So `D_P1` is in `inDiffPair('D')` and in `inDiffPair('D_')`.
+
+Before, the engine looked only at the last character and matched the whole name minus that character, or the whole name. Among the
+4,143 fixture boards, only vme-wren (its DDR4 `DQS_P0..3`/`DQS_N0..3`) and one freerouting fixture pair differently. Pair routing,
+the relaxed gap between pair halves and the DRC's pair polarity all use the same pairing.
+
+**Routing around coupling errors** (`Obstacles::coupling_state`, D148). This applies when a pair net has a `diff_pair_gap` rule, not
+ignored, with a minimum or a maximum on a layer. A new track of that net is then tested against each track of its partner on that
+layer with the same coupling test as the check, the same epsilon included. A coupling out of range blocks the track if the partner
+track is fixed copper. If the partner track was routed, it can be ripped up. The test is part of `segment_state`, so the exact check
+at commit applies it to merged segments. The search also applies it to each lattice step of such a net, because otherwise a path
+that the exact check rejects at the end is found again and again. When looking for something between the two tracks, the router does
+not consider pad holes on layers that have none of the pad's copper. It is therefore stricter than KiCad there, never looser. Boards
+without such a rule do not run the test.
+
+**Results** (`bench/records/m21-b2`, KiCad 10.0.6 as the judge):
+
+- *KiCad's QA board* `time_calculations` (copied into `tests/boards`): the six classes' delays match KiCad's to 0.01 ps, and the DRC
+  reports the same single CLASS7 skew violation.
+- *Length parity* on four demo boards (StickHub, RoyalBlue, interf_u, CM5_MINIMA_3), with a rule no net can meet so that both DRCs
+  print every length: 329 nets were measured by both. 313 agree to 0.0001 mm and 12 more to under 1 µm. Four power or mesh nets differ
+  by 0.04 to 1.58 mm (StickHub GND and +5V, RoyalBlue GND and /Debugger/D-), all branched inside vias, where 10.0.6's result depends on
+  pointer order. A simulation of the merge in file order gave the engine's value on /Debugger/D-.
+- *ddr8* (`bench/make_delay_boards.py`): a byte lane from a front controller to a back memory, with a 205–215 ps window, at most 3 ps
+  of skew and 0.5 ps within the strobe pair. Before: 11 window and 9 skew errors. After: 17/17 routed and KiCad finds none.
+- *interf_u* (four memory-data lanes, 2 layers, a 245–260 ps window and 3 ps skew) and *RoyalBlue* (the debugger USB pair, 0.5 ps
+  within the pair), both 3 M work. The build before B2 left 4 window and 3 skew errors on interf_u and 1 pair-skew error on RoyalBlue.
+  B2 leaves none, at the same routed counts (145/164 and 119/147). The engine's DRC gives the same verdicts as KiCad on all four
+  boards (`timing-verdicts.json`). RoyalBlue's 119, against 125 without the rule file, is the exact-check mode that any custom rule
+  other than a disallow turns on in this branch. D139, on its own branch, fixes that.
+- *B1 rejudged* (§58): the five `diff_pair_gap_out_of_range` errors on RoyalBlue with the USB pair profile are found by the engine's
+  DRC as well, at the same places with the same gaps. They are where the USB-C connector's interleaved D+/D− pads, 0.5 mm apart, are
+  joined pad to pad and leave in parallel before the pair forms.
+- *Routing around coupling errors* (`runs/couple-b1`, `runs/couple-b2`, same settings): RoyalBlue with the pair profile still routes
+  104/147, with 353 tracks against 349. KiCad's five gap errors are gone. The other four B1 boards and the three B2 boards are
+  identical to the runs before the change (routed counts, tracks, vias, added errors).
+
+**Not done.**
+
+- `fromTo()` is not evaluated, so length rules written with it (vme-wren) are unchecked.
+- The bus tuner (§38) ignores ps skew rules.
+- A net in two classes takes its parameters from the first.
+
+Tests:
+
+- `[length]`, four cases: the QA board's delays and its one skew violation; clipping, via span, a stub, and height off; layer, via and
+  override delays with time-domain tuning on and off; ps parsing.
+- `[coupling]`, four cases: pair names as `MatchDpSuffix` reads them; coupled stretch and gap, direction, diagonals; lines that meet,
+  collinear, end to end, about 1 nm; and a routed pair whose pads are 2 mm apart under a 0.15–0.25 mm gap rule. With the rule
+  ignored, the straight tracks break the rule; with the rule in force, the routed pair has no gap errors.
+- rule_parity: `static_has_class_*` (four), `tuning_profile_inherited`, `tuning_profile_schema4`, and `diff_pair_gap`,
+  `diff_pair_gap_ignored` and `diff_pair_uncoupled` (cross-stretch couplings, a shielded pair, and the doubled key). Two more with
+  D149: `diff_pair_suffix` and `diff_pair_suffix_base`. All 231 cases match; the build before D149 fails `diff_pair_suffix`.
+- `delay_tuning` (integration): ddr8 routed with the rules is clean by the engine's DRC and by KiCad; routed without them, it misses.
+
+## 60. Vias and pads that remove unconnected copper (2026-10-28, D150)
+
+KiCad lets a via or a through-hole pad drop its copper on the layers where nothing connects to it (the padstack's "remove unconnected
+layers"). The engine read such a via as copper on every layer of its span. On boards that use the option it reported clearance and
+shorting errors against copper KiCad does not have, filled zones around rings that are not there, and on vme-wren judged diff pairs
+as hidden from each other by rings KiCad had removed.
+
+**Reading** (`io/kicad/board_reader.cpp`). The mode is set token by token in file order, as KiCad's parser sets it: a via's
+`(remove_unused_layers)` switches removal on, its `(keep_end_layers)` keeps the outer layers, its `(start_end_only)` keeps only them;
+a pad's `(remove_unused_layers)` and `(keep_end_layers)` set the mode either way. `(zone_layer_connections ...)` lists the layers a
+zone joins it on.
+
+**Flashing** (`drc/copper.cpp`, `drc::flash_layers`). A layer of a via or pad that may lose its copper keeps it when the file says a
+zone joins it there, or when a same-net track, arc, via or pad reaches it on that layer. As in KiCad's connectivity (`CN_VISITOR`),
+the item is looked at as its hole on such layers: a track that touches the ring but not the hole does not keep the ring. A pad
+reaches F.Cu to B.Cu if it is plated through and only its first layer otherwise; the items of the pad's own footprint, and two pads
+whose layers are both conditional, do not count.
+
+**Copper model.** A via or pad with bare layers is two items: its copper on the flashed layers, and a hole-shaped *bare part* on the
+others, which KiCad's clearance test checks at copper clearance. The bare part has no connectivity of its own (its root and net are
+the main item's) and is left out of the checks that look at copper (rings, widths, edges, keepouts, lengths, pairs, dangling); a
+rule's `existsOnLayer` and area tests use the whole span.
+
+**Zones** (`drc/refill.cpp`). Before filling, KiCad's filler works out again which layers a zone joins each via and pad on (the
+highest-priority zone of the net that contains the hole there, with its accuracy and keepout quirks); the refill does the same on a
+copy of the board. A same-net via that no zone joins on a layer is knocked out of the fill there like another net's.
+
+**Router** (`route/obstacles.cpp`). A new track or via of the net does not flash a bare layer it did not plan to reach, so the router
+keeps its own net clear of bare parts (and new vias clear of same-net rings that may be removed). This is stricter than KiCad, which
+would flash the layer and connect them.
+
+**Nearly parallel pairs.** KiCad couples two tracks whose lines do not meet (`!SEG::Intersect(..., lines)`). In line mode SEG
+reports no crossing when the crossing point does not fit in 32 bits, so tracks a few nanometres off parallel are coupled (vme-wren's
+DQS0 has two 45° stubs 10 nm off). `drc::couple` computes the crossing as SEG does and couples them too; the router uses the same
+function.
+
+**Tuning patterns.** KiCad's diff-pair coupling test (`isInTuningPattern`) leaves out tracks and arcs that are members of a tuning
+pattern (a `(generated (type tuning_pattern) (members ...))` group): they are neither coupled nor counted in the uncoupled length. The
+reader marks them, and the DRC and the router's coupling test skip them. vme-wren's DDR4 pairs have 89 tuning patterns.
+
+**Results.** Four fixture boards use the option: vme-wren and jetson (KiCad demos) and two srj24 samples. None is in a bench tier.
+
+On vme-wren (`bench/records/d150-padstacks`) the engine's DRC went from 22,362 clearance and 21 shorting reports, where KiCad
+reports none, to 425 and 20. Those left have other causes: pad-to-track pairs judged at 0.125 mm where KiCad resolves 0.1 mm, and
+shorts against copper graphics. With flashing, tuning patterns and nearly parallel pairs, its 28 coupling-gap errors and 6
+uncoupled-length errors are KiCad's, values included. jetson still matches KiCad on the routing-relevant types. The eight B1/B2
+boards with pair rules route byte for byte as before.
+
+Tests:
+
+- `[flash]`, two cases: modes read in file order and the layers flashed for a via with an inner track, a zone connection, no end
+  layers, start-end only and none; the refill joining a GND via to its plane and filling up to a bare S hole, with no DRC errors.
+- `[coupling]`, two cases: tracks in a tuning pattern are not coupled, members of a plain group are; DQS0's stubs 10 nm off
+  parallel are coupled at KiCad's 1.8573 mm.
+- rule_parity: `via_unused_layers` (four vias, each passed by tracks inside the ring's clearance and outside the hole's) and
+  `diff_pair_tuning_pattern` and `diff_pair_near_parallel`. All 234 cases match; the build before D150 fails these three.

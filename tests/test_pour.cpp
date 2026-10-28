@@ -312,3 +312,73 @@ TEST_CASE("Layer advisor: counts the board cannot take are skipped, the fewest t
   CHECK(r4.summary["layers"]["tried"][0]["tried"] == false);  // the zone on In1.Cu
   CHECK(r4.summary["layers"]["chosen"] == 4);
 }
+
+// `route -o OUT`: KiCad reads the rules from the project files beside OUT, so the input's are copied there, never over existing ones.
+TEST_CASE("route -o copies the project files beside the output when it has none", "[pour][route]") {
+  Dir d("project");
+  const fs::path in = d.dir / "b.kicad_pcb", out = d.dir / "out.kicad_pcb", out2 = d.dir / "out2.kicad_pcb";
+  std::ofstream(in) << kTwoLayer;
+  std::ofstream(d.dir / "b.kicad_pro") << "{\"board\": {}}\n";
+  std::ofstream(d.dir / "b.kicad_dru") << "(version 1)\n";
+  std::ofstream(d.dir / "out2.kicad_pro") << "{\"mine\": true}\n";
+  app::RouteJob job;
+  job.in = in.string();
+  job.opt.work_budget = 300'000;
+  job.variants = 1;
+  job.threads = 1;
+  for (const auto& o : {out, out2}) {
+    job.out = o.string();
+    app::run_route_job(job);
+  }
+  auto text = [](const fs::path& p) {
+    std::ifstream f(p);
+    return std::string(std::istreambuf_iterator<char>(f), {});
+  };
+  CHECK(text(d.dir / "out.kicad_pro") == "{\"board\": {}}\n");
+  CHECK(text(d.dir / "out.kicad_dru") == "(version 1)\n");
+  CHECK(text(d.dir / "out2.kicad_pro") == "{\"mine\": true}\n");  // kept
+  CHECK(text(d.dir / "out2.kicad_dru") == "(version 1)\n");
+}
+
+// --si-rules closes the audit loop (doc 05 §57): CLK runs from an F.Cu pad to a B.Cu pad, so it changes layers between two GND planes
+// (In1.Cu and In2.Cu) and the only GND copper through them is a pin 10 mm away. The audit finds the change unstitched; the stitching
+// pass puts a GND via beside it, and the audit after it finds none.
+TEST_CASE("route --si-rules stitches the critical nets' layer changes the audit finds without a return via", "[pour][route][critical]") {
+  Dir d("si_stitch");
+  const fs::path in = d.dir / "b.kicad_pcb";
+  auto zone = [](const char* layer) {
+    return std::string("\t(zone (net 1) (net_name \"GND\") (layer \"") + layer +
+           "\") (hatch edge 0.5) (connect_pads (clearance 0.2)) (min_thickness 0.25)\n"
+           "\t\t(fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 1 1) (xy 29 1) (xy 29 19) (xy 1 19))))\n";
+  };
+  std::string text = kFourLayer;
+  text.replace(text.find("\t(net 1 \"GND\")\n"), 15, "\t(net 1 \"GND\")\n\t(net 2 \"CLK\")\n");
+  text.replace(text.find("(at 4 4)"), 8, "(at 3 18)");
+  text.erase(text.find("\t(zone"), text.find("\t(gr_rect") - text.find("\t(zone"));
+  text.erase(text.find("\t\t(stackup"), text.find("\t\t(pad_to_mask") - text.find("\t\t(stackup"));  // four copper layers, no stackup
+  text.insert(text.find("\t(gr_rect"), zone("In1.Cu") + zone("In2.Cu") +
+                                          "\t(footprint \"T:P\" (layer \"F.Cu\") (at 12 6)\n"
+                                          "\t\t(pad \"1\" smd rect (at 0 0) (size 1 1) (layers \"F.Cu\") (net 2 \"CLK\")))\n"
+                                          "\t(footprint \"T:P\" (layer \"B.Cu\") (at 22 6)\n"
+                                          "\t\t(pad \"1\" smd rect (at 0 0) (size 1 1) (layers \"B.Cu\") (net 2 \"CLK\")))\n");
+  std::ofstream(in) << text;
+  app::RouteJob job;
+  job.in = in.string();
+  job.opt.work_budget = 2'000'000;
+  job.variants = 1;
+  job.threads = 1;
+  job.si_rules = true;
+  job.critical_nets = {"CLK"};
+  const auto with = app::run_route_job(job);
+  INFO(with.summary.dump(1));
+  REQUIRE(with.result.routed == with.result.connections);
+  const auto& t = with.summary["critical_nets"]["totals"];
+  CHECK(t["missing_stitches_before_stitching"] == 1);
+  CHECK(t["missing_stitches"] == 0);
+  REQUIRE(with.summary.contains("stitch"));
+  CHECK(with.summary["stitch"]["return_path_vias"] == 1);
+  job.si_stitch = false;
+  const auto without = app::run_route_job(job);
+  CHECK(without.summary["critical_nets"]["totals"]["missing_stitches"] == 1);
+  CHECK(without.summary["critical_nets"]["nets"][0]["warnings"].dump().find("no via of GND within 5.0 mm") != std::string::npos);
+}

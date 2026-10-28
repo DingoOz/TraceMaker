@@ -1,0 +1,46 @@
+critical nets: 0
+  routed first: no; via cost x3; over a plane void: free
+portfolio: 8 variants on 4 threads
+searches: 87 ok (195652 expansions), 0 failed (0 expansions); fields 14 GPU + 0 CPU (0.60 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 98 connections improved
+restarts 0; legality checks 238211; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 90 ok (397056 expansions), 0 failed (0 expansions); fields 17 GPU + 0 CPU (4.15 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 451748; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 93 ok (502380 expansions), 0 failed (0 expansions); fields 19 GPU + 0 CPU (4.43 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 98 connections improved
+restarts 0; legality checks 564033; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 91 ok (2450310 expansions), 0 failed (0 expansions); fields 17 GPU + 0 CPU (1.30 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 482421; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 92 ok (3004406 expansions), 0 failed (0 expansions); fields 19 GPU + 0 CPU (1.59 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 561240; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 90 ok (397056 expansions), 0 failed (0 expansions); fields 17 GPU + 0 CPU (2.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 451748; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 90 ok (411346 expansions), 0 failed (0 expansions); fields 17 GPU + 0 CPU (5.09 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 99 connections improved
+restarts 0; legality checks 466880; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 92 ok (2307720 expansions), 0 failed (0 expansions); fields 73 GPU + 0 CPU (19.45 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 101 connections improved
+restarts 0; legality checks 2439508; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 87 in 8.9 s
+  variant 1 fast bends, shortest first, crowded source routed 87 in 6.5 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 87 in 1.8 s  <- best
+  variant 3 fast bends, jittered order, escape plan routed 87 in 6.9 s
+  variant 4 exact bends, jittered order    routed 87 in 9.2 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 87 in 30.2 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 87 in 4.2 s
+  variant 7 fast bends, dear vias, crowded source routed 87 in 7.4 s
+soft zones: after refilling 1 zones, 0 items unconnected
+routed 87/87 connections, 188 tracks, 0 vias, pitch 0.100 mm, 195652 expansions, 37.78 s (best variant 1.75 s)
+work (all variants): 9665926 expansions, 0 flood cells, 5655789 cell checks, 5185246 fixed-copper checks, 67948238 field cells in 193 fields, 725 commits, 0 rips

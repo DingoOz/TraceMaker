@@ -8,6 +8,15 @@ of boards with every connection made and no error added in KiCad's DRC (the judg
 README says what the runs were for and how to read them; numbers from different records are not always
 comparable (judge version, time limit, machine load).
 
+## d150-padstacks
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d150-padstacks)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [flash-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d150-padstacks/runs/flash-b1/summary.json) | b1-profiles | 5 | c6d0f4b | 0.0% | 77.0% |  | 207 | `--soft-zones` |
+| [flash-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d150-padstacks/runs/flash-b2/summary.json) | b2-delay | 3 | c6d0f4b | 0.0% | 79.6% |  | 162 | `--soft-zones` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)
@@ -25,6 +34,17 @@ comparable (judge version, time limit, machine load).
 | [m17-pcbworld-fr21](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-fr21/summary.json) | pcbworld-d3-test | 119 |  | 61.6% | 96.1% |  | 10694 |  |
 | [m17-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-quick-new/summary.json) | quick | 30 | 6cb3d65 | 83.3% | 99.0% | 100.0% | 124 | `--no-gpu` |
 
+## m20-c2
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m20-c2)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [c2-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2-base/summary.json) | pcbench-bd-swap | 20 | ec7cc9b | 0.0% | 86.1% | 15.0% | 1308 | `--no-gpu` |
+| [c2-swap](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2-swap/summary.json) | pcbench-bd-swap | 20 | ec7cc9b | 0.0% | 86.3% | 15.0% | 1305 | `--no-gpu` |
+| [c2q-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2q-base/summary.json) | quick-swap | 10 | ec7cc9b | 70.0% | 97.7% | 100.0% | 74 | `--no-gpu` |
+| [c2q-swap](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c2/runs/c2q-swap/summary.json) | quick-swap | 10 | ec7cc9b | 60.0% | 97.7% | 100.0% | 72 | `--no-gpu` |
+
 ## m20-c3
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m20-c3)
@@ -41,6 +61,102 @@ comparable (judge version, time limit, machine load).
 | [c3-layers-pour-L4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-pour-L4/summary.json) | PCBench tier A | 14 | 2adbac9 | 7.1% | 90.4% | 14.3% | 492 | `--no-gpu --pour auto` |
 | [c3-layers-pour-L6](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-layers-pour-L6/summary.json) | PCBench tier A | 14 | 2adbac9 | 14.3% | 89.3% | 14.3% | 614 | `--no-gpu --pour auto` |
 | [c3-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c3/runs/c3-quick/summary.json) | quick | 30 | 2adbac9 | 83.3% | 99.0% | 100.0% | 138 |  |
+
+## m20-c5
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m20-c5)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [a5x-nocrowd-base-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/a5x-nocrowd-base-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 91.2% |  | 501 | `--soft-zones --seed 1 --critical-auto --no-crowded-portfolio` |
+| [c5-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5-base/summary.json) | pcbench-bd-fail | 33 | ec7cc9b | 0.0% | 88.6% | 12.1% | 1552 | `--no-gpu` |
+| [c5-cap100k](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5-cap100k/summary.json) | pcbench-bd-fail | 33 | ec7cc9b | 0.0% | 88.3% | 12.1% | 2363 | `--no-gpu --strict-cap 100000` |
+| [c5-crowded](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5-crowded/summary.json) | pcbench-bd-fail | 33 | ec7cc9b | 3.0% | 89.8% | 12.1% | 1891 | `--no-gpu --crowded-source` |
+| [c5-crowdpads](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5-crowdpads/summary.json) | pcbench-bd-fail | 33 | bbac639 | 3.0% | 90.0% | 12.1% | 1859 | `--no-gpu --crowded-source` |
+| [c5-halo03](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5-halo03/summary.json) | pcbench-bd-fail | 33 | ec7cc9b | 0.0% | 88.5% | 12.1% | 1510 | `--no-gpu --pin-halo 0.3` |
+| [c5-share07](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5-share07/summary.json) | pcbench-bd-fail | 33 | ec7cc9b | 0.0% | 87.6% | 12.1% | 1699 | `--no-gpu --first-pass-share 0.7` |
+| [c5c-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5c-base/summary.json) | pcbench-bd-clean | 59 | 012486d | 74.6% | 99.6% | 64.4% | 2851 | `--no-gpu` |
+| [c5c-crowded](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5c-crowded/summary.json) | pcbench-bd-clean | 59 | 012486d | 74.6% | 99.8% | 64.4% | 2917 | `--no-gpu --crowded-source` |
+| [c5m-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5m-base/summary.json) | mid | 11 | bbac639 | 0.0% | 75.9% | 9.1% | 1370 | `--no-gpu` |
+| [c5m-crowded](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5m-crowded/summary.json) | mid | 11 | 012486d | 0.0% | 80.0% | 9.1% | 2447 | `--no-gpu --crowded-source` |
+| [c5q-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5q-base/summary.json) | quick | 30 | bbac639 | 83.3% | 99.0% | 100.0% | 154 |  |
+| [c5q-crowded](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5q-crowded/summary.json) | quick | 30 | bbac639 | 90.0% | 99.4% | 100.0% | 198 | `--crowded-source` |
+| [c5x-clean](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-clean/summary.json) | pcbench-bd-clean | 59 | 6899b8d | 78.0% | 99.8% | 64.4% | 2084 | `--no-gpu` |
+| [c5x-fail](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-fail/summary.json) | pcbench-bd-fail | 33 | 6899b8d | 3.0% | 89.9% | 12.1% | 2519 | `--no-gpu` |
+| [c5x-fail-txn](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-fail-txn/summary.json) | pcbench-bd-fail | 33 | 6899b8d | 0.0% | 90.1% | 12.1% | 1669 | `--no-gpu --txn 1` |
+| [c5x-mid](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-mid/summary.json) | mid | 11 | 6899b8d | 0.0% | 79.8% | 9.1% | 2381 | `--no-gpu` |
+| [c5x-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-quick/summary.json) | quick | 30 | 6899b8d | 86.7% | 99.3% | 100.0% | 214 |  |
+
+## m21-a5
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m21-a5)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [a5-base-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-base-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.2% |  | 546 | `--soft-zones --seed 1 --critical-auto` |
+| [a5-base-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-base-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.2% |  | 578 | `--soft-zones --seed 2 --critical-auto` |
+| [a5-base-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-base-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.3% |  | 594 | `--soft-zones --seed 3 --critical-auto` |
+| [a5-base-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-base-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.8% |  | 285 | `--soft-zones --seed 4 --critical-auto` |
+| [a5-base-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-base-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.6% |  | 479 | `--soft-zones --seed 5 --critical-auto` |
+| [a5-first-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-first-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.7% |  | 529 | `--soft-zones --seed 1 --critical-auto --critical-first` |
+| [a5-first-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-first-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.7% |  | 495 | `--soft-zones --seed 2 --critical-auto --critical-first` |
+| [a5-first-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-first-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.8% |  | 563 | `--soft-zones --seed 3 --critical-auto --critical-first` |
+| [a5-first-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-first-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.3% |  | 438 | `--soft-zones --seed 4 --critical-auto --critical-first` |
+| [a5-first-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-first-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.2% |  | 408 | `--soft-zones --seed 5 --critical-auto --critical-first` |
+| [a5-firstsplit-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-firstsplit-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.9% |  | 511 | `--soft-zones --seed 1 --critical-auto --critical-first --split-cost 4` |
+| [a5-firstsplit-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-firstsplit-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.9% |  | 482 | `--soft-zones --seed 2 --critical-auto --critical-first --split-cost 4` |
+| [a5-firstsplit-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-firstsplit-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.0% |  | 381 | `--soft-zones --seed 3 --critical-auto --critical-first --split-cost 4` |
+| [a5-firstsplit-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-firstsplit-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.5% |  | 471 | `--soft-zones --seed 4 --critical-auto --critical-first --split-cost 4` |
+| [a5-firstsplit-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-firstsplit-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.3% |  | 406 | `--soft-zones --seed 5 --critical-auto --critical-first --split-cost 4` |
+| [a5-si-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-si-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.5% |  | 642 | `--soft-zones --seed 1 --si-rules --no-si-stitch` |
+| [a5-si-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-si-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.5% |  | 467 | `--soft-zones --seed 2 --si-rules --no-si-stitch` |
+| [a5-si-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-si-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.6% |  | 481 | `--soft-zones --seed 3 --si-rules --no-si-stitch` |
+| [a5-si-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-si-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.1% |  | 447 | `--soft-zones --seed 4 --si-rules --no-si-stitch` |
+| [a5-si-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-si-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 91.9% |  | 464 | `--soft-zones --seed 5 --si-rules --no-si-stitch` |
+| [a5-sistitch-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-sistitch-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.5% |  | 652 | `--soft-zones --seed 1 --si-rules` |
+| [a5-sistitch-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-sistitch-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.5% |  | 607 | `--soft-zones --seed 2 --si-rules` |
+| [a5-sistitch-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-sistitch-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.6% |  | 473 | `--soft-zones --seed 3 --si-rules` |
+| [a5-sistitch-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-sistitch-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.1% |  | 532 | `--soft-zones --seed 4 --si-rules` |
+| [a5-sistitch-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-sistitch-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 91.9% |  | 478 | `--soft-zones --seed 5 --si-rules` |
+| [a5-split-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-split-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.2% |  | 537 | `--soft-zones --seed 1 --critical-auto --split-cost 4` |
+| [a5-split-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-split-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.2% |  | 512 | `--soft-zones --seed 2 --critical-auto --split-cost 4` |
+| [a5-split-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-split-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.3% |  | 482 | `--soft-zones --seed 3 --critical-auto --split-cost 4` |
+| [a5-split-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-split-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.8% |  | 449 | `--soft-zones --seed 4 --critical-auto --split-cost 4` |
+| [a5-split-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-split-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.6% |  | 467 | `--soft-zones --seed 5 --critical-auto --split-cost 4` |
+| [a5-splitvia-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-splitvia-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.2% |  | 572 | `--soft-zones --seed 1 --critical-auto --split-cost 4 --critical-via-cost 3` |
+| [a5-splitvia-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-splitvia-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.2% |  | 504 | `--soft-zones --seed 2 --critical-auto --split-cost 4 --critical-via-cost 3` |
+| [a5-splitvia-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-splitvia-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.4% |  | 479 | `--soft-zones --seed 3 --critical-auto --split-cost 4 --critical-via-cost 3` |
+| [a5-splitvia-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-splitvia-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.8% |  | 499 | `--soft-zones --seed 4 --critical-auto --split-cost 4 --critical-via-cost 3` |
+| [a5-splitvia-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-splitvia-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.7% |  | 521 | `--soft-zones --seed 5 --critical-auto --split-cost 4 --critical-via-cost 3` |
+| [a5-via-s1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-via-s1/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.4% |  | 610 | `--soft-zones --seed 1 --critical-auto --critical-via-cost 3` |
+| [a5-via-s2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-via-s2/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.4% |  | 566 | `--soft-zones --seed 2 --critical-auto --critical-via-cost 3` |
+| [a5-via-s3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-via-s3/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.6% |  | 558 | `--soft-zones --seed 3 --critical-auto --critical-via-cost 3` |
+| [a5-via-s4](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-via-s4/summary.json) | planes | 8 | d849fd3 | 25.0% | 93.0% |  | 446 | `--soft-zones --seed 4 --critical-auto --critical-via-cost 3` |
+| [a5-via-s5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a5/runs/a5-via-s5/summary.json) | planes | 8 | d849fd3 | 25.0% | 92.9% |  | 564 | `--soft-zones --seed 5 --critical-auto --critical-via-cost 3` |
+
+## m21-b1
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m21-b1)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [b1-profiles2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-profiles2/summary.json) | b1-profiles | 4 | d849fd3 | 0.0% | 84.2% |  | 289 | `--soft-zones` |
+| [b1-profiles3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-profiles3/summary.json) | b1-profiles | 2 | d849fd3 | 0.0% | 83.2% |  | 110 | `--soft-zones` |
+| [b1-se](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-se/summary.json) | b1-profiles | 1 | d849fd3 | 0.0% | 71.9% |  | 62 | `--soft-zones` |
+| [b1-v5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b1/runs/b1-v5/summary.json) | b1-profiles | 5 | 17b2178 | 0.0% | 77.0% |  | 183 | `--soft-zones` |
+
+## m21-b2
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m21-b2)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [b2-delay-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-delay-new/summary.json) | b2-delay | 3 | 17b2178 | 0.0% | 79.6% |  | 165 | `--soft-zones` |
+| [b2-delay-old](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-delay-old/summary.json) | b2-delay | 2 | 17b2178 | 0.0% | 77.3% |  | 88 | `--soft-zones` |
+| [b2-profile](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-profile/summary.json) | b2-delay | 2 | 17b2178 | 0.0% | 78.0% |  | 121 | `--soft-zones` |
+| [b2-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/b2-quick/summary.json) | quick | 30 | 6e9b774 | 86.7% | 99.3% | 100.0% | 381 |  |
+| [couple-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b1/summary.json) | b1-profiles | 5 | b0e6dc7 | 0.0% | 77.0% |  | 205 | `--soft-zones` |
+| [couple-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b2/summary.json) | b2-delay | 3 | b0e6dc7 | 0.0% | 79.6% |  | 165 | `--soft-zones` |
 
 ## macos15
 

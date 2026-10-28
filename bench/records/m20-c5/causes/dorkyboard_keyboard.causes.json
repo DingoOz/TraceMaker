@@ -1,0 +1,388 @@
+{
+ "baseline": {
+  "connections": 20,
+  "open": 16,
+  "routed": 4,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/dorkyboard_keyboard.kicad_pcb",
+ "by_cause": {
+  "channel": 2,
+  "near_and_far": 6,
+  "package_fanout": 8
+ },
+ "by_cause_at_dense_packages": {
+  "channel": 2,
+  "near_and_far": 6,
+  "package_fanout": 8
+ },
+ "by_dense_package": {
+  "U1": {
+   "channel": 2,
+   "near_and_far": 6,
+   "package_fanout": 11
+  }
+ },
+ "connections": [
+  {
+   "a": "U1.3",
+   "at_dense_package": true,
+   "b": "U1.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.3",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U1.3",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "Net-(R4-Pad2)",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U1.13",
+   "at_dense_package": true,
+   "b": "U1.13",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.13",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U1.13",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/microcontroller/RESET",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.1",
+   "at_dense_package": true,
+   "b": "U1.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.1",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "dense": true,
+     "pad": "U1.1",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/matrix/Col0",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "U1.27",
+   "at_dense_package": true,
+   "b": "D37.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.27",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D37.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col7",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.26",
+   "at_dense_package": true,
+   "b": "D38.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.26",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D38.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col8",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.25",
+   "at_dense_package": true,
+   "b": "D39.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.25",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D39.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col9",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.29",
+   "at_dense_package": true,
+   "b": "D35.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.29",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D35.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col5",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.40",
+   "at_dense_package": true,
+   "b": "D12.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.40",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D12.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col2",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.41",
+   "at_dense_package": true,
+   "b": "D11.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.41",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D11.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col1",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.25",
+   "at_dense_package": true,
+   "b": "D9.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.25",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D9.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col9",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.32",
+   "at_dense_package": true,
+   "b": "SW69.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.32",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "SW69.1",
+     "part_pads": 5
+    }
+   ],
+   "net": "/matrix/Row4",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.30",
+   "at_dense_package": true,
+   "b": "SW109.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.30",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "SW109.1",
+     "part_pads": 5
+    }
+   ],
+   "net": "/matrix/Row0",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.26",
+   "at_dense_package": true,
+   "b": "D8.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.26",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D8.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col8",
+   "reason": "boxed_in",
+   "why": "boxed in; escapes/neck-down: boxed in"
+  },
+  {
+   "a": "U1.36",
+   "at_dense_package": true,
+   "b": "SW29.1",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.36",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "SW29.1",
+     "part_pads": 5
+    }
+   ],
+   "net": "/matrix/Row8",
+   "reason": "out_of_budget",
+   "why": "search budget"
+  },
+  {
+   "a": "U1.31",
+   "at_dense_package": true,
+   "b": "SW89.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.31",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "SW89.1",
+     "part_pads": 5
+    }
+   ],
+   "net": "/matrix/Row2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U1.27",
+   "at_dense_package": true,
+   "b": "D7.1",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U1.27",
+     "part_pads": 89,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "D7.1",
+     "part_pads": 4
+    }
+   ],
+   "net": "/matrix/Col7",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 2,
+ "dense_packages": 2,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

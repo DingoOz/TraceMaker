@@ -1,0 +1,188 @@
+{
+ "profile, severity error": [
+  {
+   "type": "track_width",
+   "severity": "error",
+   "description": "Track width (tuning profile 'MS' max width 0.1500 mm; actual 0.2500 mm)",
+   "items": [
+    "Track [CLK] on F.Cu, length 5.0000 mm"
+   ]
+  }
+ ],
+ "profile, severity ignore": [],
+ "RoyalBlue routed with an earlier build (pads relaxed to the profile gap)": [
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1937 mm)",
+   "items": [
+    "Pad A7 [/Debugger/D-] of J3 on F.Cu",
+    "Track [/Debugger/D+] on F.Cu, length 0.3394 mm"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1950 mm)",
+   "items": [
+    "Track [/Debugger/D+] on F.Cu, length 0.5500 mm",
+    "Pad A7 [/Debugger/D-] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1902 mm)",
+   "items": [
+    "Pad A6 [/Debugger/D+] of J3 on F.Cu",
+    "Track [/Debugger/D-] on F.Cu, length 0.4101 mm"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 2 [/Debugger/D-] of U3 on F.Cu",
+    "Pad 3 [GND] of U3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 2 [/Debugger/D-] of U3 on F.Cu",
+    "Pad 1 [unconnected-(U3-IO1-Pad1)] of U3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad A6 [/Debugger/D+] of J3 on F.Cu",
+    "Pad A7 [/Debugger/D-] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad B6 [/Debugger/D+] of J3 on F.Cu",
+    "Pad A7 [/Debugger/D-] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad B6 [/Debugger/D+] of J3 on F.Cu",
+    "Pad A8 [unconnected-(J3-SBU1-PadA8)] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad B7 [/Debugger/D-] of J3 on F.Cu",
+    "Pad A6 [/Debugger/D+] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad B7 [/Debugger/D-] of J3 on F.Cu",
+    "Pad A5 [/Debugger/USB.CC1] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 11 [Net-(U5-DECUSB)] of U5 on F.Cu",
+    "Pad 12 [/Debugger/D-] of U5 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 12 [/Debugger/D-] of U5 on F.Cu",
+    "Pad 13 [/Debugger/D+] of U5 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation ( clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 13 [/Debugger/D+] of U5 on F.Cu",
+    "Pad 14 [unconnected-(U5-P0.15-Pad14)] of U5 on F.Cu"
+   ]
+  }
+ ],
+ "the same copper, gap on the net class instead of a profile": [
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation (netclass 'USB_DIFF' clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 2 [/Debugger/D-] of U3 on F.Cu",
+    "Pad 3 [GND] of U3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation (netclass 'USB_DIFF' clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 2 [/Debugger/D-] of U3 on F.Cu",
+    "Pad 1 [unconnected-(U3-IO1-Pad1)] of U3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation (netclass 'USB_DIFF' clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad B6 [/Debugger/D+] of J3 on F.Cu",
+    "Pad A8 [unconnected-(J3-SBU1-PadA8)] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation (netclass 'USB_DIFF' clearance 0.2032 mm; actual 0.2000 mm)",
+   "items": [
+    "Pad B7 [/Debugger/D-] of J3 on F.Cu",
+    "Pad A5 [/Debugger/USB.CC1] of J3 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation (netclass 'USB_DIFF' clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 11 [Net-(U5-DECUSB)] of U5 on F.Cu",
+    "Pad 12 [/Debugger/D-] of U5 on F.Cu"
+   ]
+  },
+  {
+   "type": "clearance",
+   "severity": "error",
+   "description": "Clearance violation (netclass 'USB_DIFF' clearance 0.2032 mm; actual 0.1500 mm)",
+   "items": [
+    "Pad 13 [/Debugger/D+] of U5 on F.Cu",
+    "Pad 14 [unconnected-(U5-P0.15-Pad14)] of U5 on F.Cu"
+   ]
+  }
+ ]
+}

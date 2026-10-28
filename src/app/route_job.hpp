@@ -46,6 +46,9 @@ struct RouteJob {
   bool split_cost_given = false;           // as critical_via_given (else +4 with si_rules)
   bool split_hard = false;                 // such cells are closed to critical nets
   bool si_rules = false;
+  // With si_rules: layer changes of critical nets that the reference-return audit finds without a stitch get return-path stitching vias
+  // of their plane net (doc 05 §57); --no-si-stitch turns it off.
+  bool si_stitch = true;
   // --footprint-refs (issue #5, doc 05 §43): every footprint is checked against the datasheet land patterns of a reference library before the first track is
   // routed; a discrepancy is an error and stops the job unless footprint_warn_only.
   std::string footprint_refs;     // the library: a directory or a JSON file; empty = no check

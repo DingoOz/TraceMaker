@@ -1,0 +1,1233 @@
+{
+ "baseline": {
+  "connections": 60,
+  "open": 58,
+  "routed": 2,
+  "work": 10000000
+ },
+ "board": "c3-bd-base/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb",
+ "by_cause": {
+  "channel": 1,
+  "near_and_far": 2,
+  "package_fanout": 24,
+  "through_traffic": 31
+ },
+ "by_cause_at_dense_packages": {
+  "channel": 1,
+  "near_and_far": 2,
+  "package_fanout": 23,
+  "through_traffic": 17
+ },
+ "by_dense_package": {
+  "U502": {
+   "through_traffic": 2
+  },
+  "U601": {
+   "package_fanout": 1,
+   "through_traffic": 1
+  },
+  "U801": {
+   "channel": 1,
+   "near_and_far": 2,
+   "package_fanout": 22,
+   "through_traffic": 14
+  }
+ },
+ "connections": [
+  {
+   "a": "R821.2",
+   "at_dense_package": true,
+   "b": "U801.30",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R821.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.30",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R821-Pad2)",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "R831.2",
+   "at_dense_package": true,
+   "b": "U801.28",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R831.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.28",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R831-Pad2)",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "R829.2",
+   "at_dense_package": true,
+   "b": "U801.39",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R829.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.39",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R829-Pad2)",
+   "reason": "boxed_in",
+   "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+  },
+  {
+   "a": "R827.2",
+   "at_dense_package": true,
+   "b": "U801.34",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R827.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.34",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R827-Pad2)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R884.1",
+   "at_dense_package": true,
+   "b": "U801.107",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R884.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.107",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R884-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U801.117",
+   "at_dense_package": true,
+   "b": "R607.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U801.117",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "R607.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/ETH_RX1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R427.2",
+   "at_dense_package": true,
+   "b": "U801.20",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R427.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.20",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/SPI_MISO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R414.2",
+   "at_dense_package": true,
+   "b": "U801.9",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R414.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.9",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/XL_DN1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U801.68",
+   "at_dense_package": true,
+   "b": "R114.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U801.68",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "R114.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/AUD_MUTE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R417.2",
+   "at_dense_package": true,
+   "b": "U801.90",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R417.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.90",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_BCLK2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R879.1",
+   "at_dense_package": true,
+   "b": "U801.13",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R879.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.13",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R879-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R422.2",
+   "at_dense_package": true,
+   "b": "U801.88",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R422.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.88",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_SDATA1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R420.2",
+   "at_dense_package": true,
+   "b": "U801.66",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R420.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.66",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_LRCLK1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R421.2",
+   "at_dense_package": true,
+   "b": "U801.64",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R421.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.64",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_BCLK1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R413.2",
+   "at_dense_package": true,
+   "b": "U801.8",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R413.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.8",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/XL_DN0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R880.1",
+   "at_dense_package": true,
+   "b": "U801.15",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R880.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.15",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R880-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D405.3",
+   "at_dense_package": true,
+   "b": "U801.23",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "D405.3",
+     "part_pads": 3
+    },
+    {
+     "dense": true,
+     "pad": "U801.23",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/AUX_DIGI5",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R432.1",
+   "at_dense_package": true,
+   "b": "U801.63",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R432.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.63",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_SDATA0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R804.2",
+   "at_dense_package": false,
+   "b": "P404.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R804.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "P404.2",
+     "part_pads": 8
+    }
+   ],
+   "net": "/I2C2_SDA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U801.26",
+   "at_dense_package": true,
+   "b": "D401.3",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U801.26",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "D401.3",
+     "part_pads": 3
+    }
+   ],
+   "net": "/AUX_DIGI7",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R602.2",
+   "at_dense_package": true,
+   "b": "U601.29",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R602.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U601.29",
+     "part_pads": 48,
+     "pitch_mm": 0.5
+    }
+   ],
+   "net": "/Eth-KSZ8081/ISO",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R889.1",
+   "at_dense_package": true,
+   "b": "U801.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R889.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.1",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R889-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R804.2",
+   "at_dense_package": false,
+   "b": "R829.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R804.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R829.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2C2_SDA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R864.2",
+   "at_dense_package": true,
+   "b": "U801.12",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R864.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.12",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R864-Pad2)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D601.2",
+   "at_dense_package": false,
+   "b": "R869.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D601.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R869.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/ETH_RST",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R887.1",
+   "at_dense_package": true,
+   "b": "U801.128",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R887.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.128",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R887-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "SW701.1",
+   "at_dense_package": false,
+   "b": "R713.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "SW701.1",
+     "part_pads": 4
+    },
+    {
+     "pad": "R713.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(P701-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "L801.1",
+   "at_dense_package": false,
+   "b": "L802.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "L801.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "L802.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "+1V0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R890.1",
+   "at_dense_package": true,
+   "b": "U801.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R890.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.2",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R890-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R888.1",
+   "at_dense_package": true,
+   "b": "U801.127",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R888.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.127",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "Net-(R888-Pad1)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U601.32",
+   "at_dense_package": true,
+   "b": "R621.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U601.32",
+     "part_pads": 48,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R621.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "Net-(R621-Pad2)",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D402.3",
+   "at_dense_package": true,
+   "b": "U801.57",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D402.3",
+     "part_pads": 3
+    },
+    {
+     "dense": true,
+     "pad": "U801.57",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/AUX_DIGI0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R431.1",
+   "at_dense_package": true,
+   "b": "U801.32",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R431.1",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.32",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_BCLK0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R509.1",
+   "at_dense_package": false,
+   "b": "R893.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R509.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "R893.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/SYS_CLK",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D406.3",
+   "at_dense_package": true,
+   "b": "U801.59",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D406.3",
+     "part_pads": 3
+    },
+    {
+     "dense": true,
+     "pad": "U801.59",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/AUX_DIGI2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D404.3",
+   "at_dense_package": true,
+   "b": "U801.58",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "D404.3",
+     "part_pads": 3
+    },
+    {
+     "dense": true,
+     "pad": "U801.58",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/AUX_DIGI1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R418.2",
+   "at_dense_package": true,
+   "b": "U801.3",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R418.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.3",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/I2S_SDATA2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R892.2",
+   "at_dense_package": false,
+   "b": "R710.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R892.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R710.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/XMOS_RST",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U301.3",
+   "at_dense_package": false,
+   "b": "R862.1",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "U301.3",
+     "part_pads": 6
+    },
+    {
+     "pad": "R862.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/SPDIF_TX",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U801.68",
+   "at_dense_package": true,
+   "b": "R115.2",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U801.68",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "R115.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/AUD_MUTE",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R820.2",
+   "at_dense_package": true,
+   "b": "U801.93",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R820.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.93",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/XMOS200/MODE1",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "JP301.2",
+   "at_dense_package": true,
+   "b": "U801.85",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "JP301.2",
+     "part_pads": 3
+    },
+    {
+     "dense": true,
+     "pad": "U801.85",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/SPDIF_RX",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "D408.3",
+   "at_dense_package": true,
+   "b": "U801.61",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "D408.3",
+     "part_pads": 3
+    },
+    {
+     "dense": true,
+     "pad": "U801.61",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/AUX_DIGI3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "L202.2",
+   "at_dense_package": false,
+   "b": "L803.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "L202.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "L803.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "+1V0",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R107.1",
+   "at_dense_package": false,
+   "b": "R112.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R107.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "R112.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/AUD_MCLK2A",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U502.9",
+   "at_dense_package": true,
+   "b": "R823.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U502.9",
+     "part_pads": 10,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R823.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2C1_SCL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U502.10",
+   "at_dense_package": true,
+   "b": "R824.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U502.10",
+     "part_pads": 10,
+     "pitch_mm": 0.5
+    },
+    {
+     "pad": "R824.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2C1_SDA",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R843.2",
+   "at_dense_package": true,
+   "b": "U801.94",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "R843.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.94",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/XMOS200/MODE2",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R102.1",
+   "at_dense_package": false,
+   "b": "R106.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R102.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "R106.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2S_D3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R510.1",
+   "at_dense_package": false,
+   "b": "R821.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R510.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "R821.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/AUD_PLLSYNC",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U801.95",
+   "at_dense_package": true,
+   "b": "R805.2",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U801.95",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "R805.2",
+     "part_pads": 2
+    }
+   ],
+   "net": "/XMOS200/MODE3",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "U801.97",
+   "at_dense_package": true,
+   "b": "JP804.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "dense": true,
+     "pad": "U801.97",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    },
+    {
+     "pad": "JP804.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/XMOS200/MODE4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "C404.2",
+   "at_dense_package": true,
+   "b": "U801.45",
+   "cause": "package_fanout",
+   "copies": "through_traffic,package_fanout",
+   "ends": [
+    {
+     "pad": "C404.2",
+     "part_pads": 2
+    },
+    {
+     "dense": true,
+     "pad": "U801.45",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/USB_VBUS",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R803.2",
+   "at_dense_package": false,
+   "b": "R830.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R803.2",
+     "part_pads": 2
+    },
+    {
+     "pad": "R830.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2C2_SCL",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "P404.6",
+   "at_dense_package": false,
+   "b": "R117.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "P404.6",
+     "part_pads": 8
+    },
+    {
+     "pad": "R117.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2C_RST",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "R104.1",
+   "at_dense_package": false,
+   "b": "R108.1",
+   "cause": "through_traffic",
+   "copies": "through_traffic",
+   "ends": [
+    {
+     "pad": "R104.1",
+     "part_pads": 2
+    },
+    {
+     "pad": "R108.1",
+     "part_pads": 2
+    }
+   ],
+   "net": "/I2S_D4",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "CN401.3",
+   "at_dense_package": true,
+   "b": "U801.46",
+   "cause": "channel",
+   "copies": "through_traffic,package_fanout,channel",
+   "ends": [
+    {
+     "pad": "CN401.3",
+     "part_pads": 6
+    },
+    {
+     "dense": true,
+     "pad": "U801.46",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/USBD_P",
+   "reason": "not_attempted"
+  },
+  {
+   "a": "CN401.2",
+   "at_dense_package": true,
+   "b": "U801.47",
+   "cause": "near_and_far",
+   "copies": "through_traffic,package_fanout,channel,near_and_far",
+   "ends": [
+    {
+     "pad": "CN401.2",
+     "part_pads": 6
+    },
+    {
+     "dense": true,
+     "pad": "U801.47",
+     "part_pads": 138,
+     "pitch_mm": 0.4
+    }
+   ],
+   "net": "/USBD_N",
+   "reason": "not_attempted"
+  }
+ ],
+ "copper_layers": 4,
+ "dense_packages": 8,
+ "radius_mm": 2.0,
+ "work": 2000000
+}

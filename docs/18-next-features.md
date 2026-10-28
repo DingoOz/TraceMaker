@@ -178,14 +178,15 @@ and the items the refilled board leaves unconnected); the rules read and not rea
 the DRC of the board before and after (TraceMaker's DRC, zones refilled); the options as given and the seed. `tracemaker report` renders it
 again from a saved summary.
 
-Gate, as far as it goes (`bench/records/m20-run-report`): reports for seven of the eight plane-tier boards, `--soft-zones --si-rules`, 3 M
+Gate, as far as it goes (`bench/records/m20-run-report`): reports for all eight plane-tier boards, `--soft-zones --si-rules`, 3 M
 work. No routing error added on any board; the unconnected count after the refill equals the report's own DRC count on every board. A unit
 test checks every value of the HTML against its JSON pointer and that the renderer's own words hold no number. The extra work after the
 route took 0.1 to 2.1 s per board. Options off, the quick tier is byte-identical to `main` (30/30).
 
-Not met yet: the review by someone who did not write it, and interf_u, which spends more than 20 minutes on one core after its portfolio
-with `main`'s binary as well (27 s in the 14 October records; open). Found on the way: under load the default 120 s time limit, not the
-work budget, ended some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
+Not met yet: the review by someone who did not write it. interf_u, which on 2026-10-24 spent more than 20 minutes on one core after its
+portfolio, finished in 128 s on 2026-10-27 after D137's GPU back-off (the stall was the GPU fallback cliff), and RoyalBlue54L-Feather was
+re-run under `--time 3600` (72 s, not time-limited). Found on the way: under load the default 120 s time limit, not the work budget, ended
+some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
 
 ## 10. C3 built: generated pours and the layer-count advisor (2026-10-27)
 
@@ -201,3 +202,106 @@ the refill 1,368 → 1,290), and 1 against 1 at 4 layers, 2 against 1 at 6 on th
 pour closes few boards. On two layers the plane is cut up by the tracks that share its layer; the pour's thermal spokes,
 KiCad's default, were starved on 22 boards, so the pour connects pads solid.
 
+
+## 11. C2 measured: pin swap is not worth a pass (2026-10-27)
+
+`bench/pin_swap.py` gave each board an oracle's freedom: connector signal pins and resistor-array resistors taken as swappable by
+construction, the nets assigned to them by a minimum-cost assignment of pad-to-net distance, the board routed as designed and as
+swapped at the same work and judged by KiCad (doc 05 §56, decision [D141](decisions/D141.md), records in `bench/records/m20-c2`).
+
+Gate (a table on at least ten boards): 30 boards. On the 20 failing tier B-D boards with a group, open connections 982 → 978 (five
+boards better, five worse), vias −3 %, length −1 %, none clean either way; on the 10 quick boards with one, 27 → 26 open and 7 → 6
+clean. The median gain is zero, so the proposal-only pass is not built and C2 is closed. The oracle is an upper bound: a real design
+can swap fewer pins.
+
+## 12. M19 started: the KiCad drift job (2026-10-27)
+
+`scripts/kicad_drift.py` and the weekly workflow `kicad-drift.yml` (decision [D142](decisions/D142.md), records in
+`bench/records/m19-drift`): the newest `kicad/kicad` release, and the newest release candidate when it is newer, upgrades four boards
+to its own format; this build must re-write them byte for byte, match kicad-cli's DRC counts on the routing-relevant types, and write
+a routed copy kicad-cli finds no new error type in. 4 of 4 pass on KiCad 10.0.6, 10.0.7 (released 2026-10-18) and the image tagged
+`nightly`, which turned out to be a 10.0 release candidate from February, so the job reads the version tags instead of trusting that
+tag. No KiCad 11 release candidate exists yet; the format, DRC and plugin work of M19 waits for one, and the job will check it the
+week it appears.
+
+## 13. C5 classified and fixed: strict searches from the crowded end (2026-10-27)
+
+`tracemaker causes` routes each open connection of a routed board again alone, with other nets' copper removed near its ends, away
+from them or everywhere, and names the first change that lets it route (doc 05 §55, decision [D143](decisions/D143.md), records in
+`bench/records/m20-c5`). On the 33 failing tier B-D boards (1,320 open on the board as it is): other nets' copper passing through a
+pin's fan-out region 444, the package's own fan-out 335, a channel away from the pins 259, no path even alone 182, both 51, pins that
+cannot leave their package 49; 684 of them at dense packages. Two more layers close 124.
+
+The largest class is near the pins, and the work profile says why it is not repaired: 17 boards spend their whole budget in failed
+strict searches that flood their window before finding the *target* boxed in, and never negotiate. Starting each strict search from the
+more crowded end proves a boxed-in pin at once. In four of the portfolio's eight variants (all eight lost two clean boards), by
+default: open connections on the 33 boards 1,383 → 1,220 (KiCad 1,368 → 1,204; 18 boards better, 6 worse; one completes); the other
+sets in the table of doc 05 §55. Gate (a table of failures by cause; the fix chosen from it): met.
+
+## 14. B3 built: `--si-rules` closes the audit loop (2026-10-27)
+
+With `--si-rules`, the reference-return audit runs on the critical nets after routing; every layer change it finds with the same plane
+net on both sides and no via of it within 5 mm gets a return-path stitching via (the stitching pass of doc 05 §39.3, as a
+transaction), the audit runs again, and the report names each unstitched change and each detour over 2 mm with its place
+(`--no-si-stitch` turns the stitching off; doc 05 §57, decision [D144](decisions/D144.md), records in `bench/records/m21-b3`).
+
+Gate (doc 18 §4 B3): on the plane boards unstitched layer changes of critical nets fall, 0 added DRC errors, quick/mid/planes unchanged
+with the options off. Not met on the plane tier, because there is nothing to fix there. Under `--si-rules` routing, one change stays without a return via in
+every seed (StickHub, with no plane copper on one side, which a via cannot fix). The other option sets leave 2 to 7, so the
+`--si-rules` routing already avoids them (`bench/records/m21-a5`). The pass is shown working on a constructed board (doc 05 §57),
+and no KiCad error was added in any run. A3's modern-boards set does not exist yet (the Kookabus files are still missing).
+
+## 15. B1 built: KiCad 10 tuning profiles (2026-10-28)
+
+The project reader reads KiCad 10's tuning profiles and compiles KiCad's implicit width and pair-gap rules, so the engine's DRC
+judges profiled tracks as KiCad does. Single-ended profiles are routed at their widest width and narrowed afterwards to each layer's
+width. Differential profiles keep their pairs on the layers that share one width and gap (doc 05 §58, decision
+[D145](decisions/D145.md), records in `bench/records/m21-b1`).
+
+KiCad 10.0.6 was measured where its behaviour and its source disagree, and the engine follows the behaviour:
+
+- an ignored profile rule still decides the width check;
+- `hasExactNetclass` never matches in a user's rule;
+- the coupled clearance at the profile's gap covers tracks, not pads.
+
+The DRC parity corpus has four new cases, and all 220 match KiCad.
+
+Gate (doc 18 §4 B1):
+
+- Boards with profiles route with each layer's profile width: met for single-ended profiles, and for pairs on the layers they keep.
+- `kicad-cli` with `tuning_profile_track_geometries` enabled adds 0 errors: met on the two boards given profiles. On RoyalBlue,
+  routing with the single-ended profile alone is the same as without one. The pair profile costs 5 of 147 connections.
+- Parity corpus extended: met.
+- Options off byte-identical: the quick tier at the end of the night (morning report).
+
+No real board with profiles exists in the fixtures; the delays are left to B2.
+
+## 16. A5 settled: `--si-rules` keeps critical-first (2026-10-28)
+
+Five seeds of #24's options on the plane tier (decision [D146](decisions/D146.md), records in `bench/records/m21-a5`). No
+critical-net measure moves with the seed. `--critical-first` routes 27 of 28 critical nets against 23 to 25 without it, including
+RoyalBlue's crystal net and debugger USB pair, at 6 connections of the other nets. The via and split costs alone save a few vias and
+crossings on common nets, and nothing once critical-first is on. `--si-rules` keeps all three, and defaults stay off. Gate (settle
+the defaults on five seeds): met.
+
+## 17. B2 built: time-domain matching (2026-10-28)
+
+The engine measures a net's length and delay as KiCad 10.0.6 does, quirks included, and checks `length` and `skew` rules in ps against
+the delay. The router tunes nets into ps windows and skew groups, weighting meanders by each layer's delay per mm. The DRC now also has
+KiCad's diff-pair coupling test, and the router avoids coupling-gap errors (doc 05 §59, decisions [D147](decisions/D147.md) and
+[D148](decisions/D148.md), records in `bench/records/m21-b2`).
+
+Checking B2 against KiCad showed that B1's fixtures were judged by a KiCad that read no profile, because their net settings were at
+schema 4. Rejudged (doc 05 §58), B1 needed profile inheritance from Default, the pair width from a single-ended profile, and no
+neck-down on profiled nets. A single-ended profile on Default costs RoyalBlue 23 of 147 connections. The pair profile left 5
+coupling-gap errors at its USB-C connector. The router now avoids them (D148) and still routes 104 of 147 connections.
+
+Gate (doc 18 §4 B2):
+
+- A DDR-style generated fixture within tolerance by KiCad's DRC, in delay: met. ddr8's 20 window and skew errors are now 0, and the
+  `delay_tuning` test checks this.
+- Two real boards within tolerance in delay: met on interf_u (four memory-data lanes: 7 errors before, 0 after) and RoyalBlue (the
+  debugger USB pair: 1 before, 0 after), both given profiles and rules by `make_fixtures.py`, at the same routed counts. No fixture
+  board has delay rules of its own.
+- The measurement itself: KiCad's QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm. Four branched power nets
+  differ, where 10.0.6 depends on pointer order.

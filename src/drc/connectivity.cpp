@@ -47,12 +47,12 @@ Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, 
     std::vector<model::Point> anc;
     for (std::size_t i = 0; i < n; ++i) {
       const CopperItem& a = cm.items[i];
-      if (a.net == 0) continue;
+      if (a.net == 0 || a.bare_of >= 0) continue;
       grid.query(a.box, [&](int jj) {
         const auto j = static_cast<std::size_t>(jj);
         if (j <= i) return;
         const CopperItem& c = cm.items[j];
-        if (c.net != a.net || !(a.layers & c.layers)) return;
+        if (c.net != a.net || !(a.layers & c.layers) || c.bare_of >= 0) return;
         bool linked = false;
         if (a.kind == ItemKind::Zone || c.kind == ItemKind::Zone) {
           const std::size_t zi = a.kind == ItemKind::Zone ? i : j;
@@ -125,7 +125,7 @@ Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, 
     {
       std::map<std::pair<int, std::string>, int> pad_item;
       for (std::size_t i = 0; i < n; ++i)
-        if (cm.items[i].kind == ItemKind::Pad) {
+        if (cm.items[i].kind == ItemKind::Pad && cm.items[i].bare_of < 0) {
           const auto& p = b.pads[static_cast<std::size_t>(cm.items[i].index)];
           pad_item[{p.footprint, p.number}] = static_cast<int>(i);
         }
@@ -138,11 +138,15 @@ Connectivity compute_connectivity(const model::Board& b, const CopperModel& cm, 
     }
     out.root.resize(n);
     for (std::size_t i = 0; i < n; ++i) out.root[i] = uf.find(static_cast<int>(i));
+    // A via's or pad's bare layers (CopperItem::bare_of) belong to its cluster.
+    for (std::size_t i = 0; i < n; ++i)
+      if (cm.items[i].bare_of >= 0) out.root[i] = out.root[static_cast<std::size_t>(cm.items[i].bare_of)];
     return out;
 }
 
 bool in_item_graph(const CopperItem& it) {
-  return it.kind != ItemKind::Graphic || it.footprint < 0;  // footprint graphics are not connectivity items
+  // Footprint graphics are not connectivity items; the bare layers of a via or pad are part of the via's or pad's item.
+  return (it.kind != ItemKind::Graphic || it.footprint < 0) && it.bare_of < 0;
 }
 
 bool can_change_net(const CopperItem& it) {
@@ -226,7 +230,7 @@ std::vector<model::NetId> propagate_nets(const CopperModel& cm, const ItemGraph&
   // Vias that touch only zone fills take a zone's net (CN_CONNECTIVITY_ALGO::searchConnections, deferred net codes).
   for (std::size_t i = 0; i < n; ++i) {
     const CopperItem& v = cm.items[i];
-    if (v.kind != ItemKind::Via || v.free_via || !g.adj[i].empty()) continue;  // linked to a track or pad: clusters decide
+    if (v.kind != ItemKind::Via || v.free_via || v.bare_of >= 0 || !g.adj[i].empty()) continue;  // linked to a track or pad: clusters decide
     std::set<model::NetId> zone_nets;
     for (const auto& s : v.shapes)
       for (const int j : zones_touching(cm, zf, grid, s, v.layers)) zone_nets.insert(cm.items[static_cast<std::size_t>(j)].net);
@@ -275,6 +279,8 @@ std::vector<model::NetId> propagate_nets(const CopperModel& cm, const ItemGraph&
     for (const int m : members)
       if (can_change_net(cm.items[static_cast<std::size_t>(m)])) net[static_cast<std::size_t>(m)] = origin;
   }
+  for (std::size_t i = 0; i < n; ++i)
+    if (cm.items[i].bare_of >= 0) net[i] = net[static_cast<std::size_t>(cm.items[i].bare_of)];
   return net;
 }
 

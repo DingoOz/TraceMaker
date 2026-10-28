@@ -822,24 +822,37 @@
   {
    "id": "M19",
    "title": "KiCad 11 readiness",
-   "status": "planned",
+   "status": "in_progress",
    "gate": "Round trip, DRC parity and plugin on KiCad 11 once a release candidate exists (docs/18 section 5)",
    "deliverables": "Version-drift watch job; file format, DRC parity and plugin for KiCad 11",
-   "tasks": []
+   "tasks": [
+    {
+     "text": "Version-drift watch: scripts/kicad_drift.py and the weekly kicad-drift workflow (newest kicad/kicad release and newer release candidate); 4/4 boards pass on 10.0.6, 10.0.7 and nightly (D142)",
+     "done": true
+    },
+    {
+     "text": "route -o copies the input's .kicad_pro and .kicad_dru beside the output (found by the drift job)",
+     "done": true
+    },
+    {
+     "text": "KiCad 11 file format, DRC parity and plugin, once a KiCad 11 release candidate exists",
+     "done": false
+    }
+   ]
   },
   {
    "id": "M20",
    "title": "Hobbyist wins",
    "status": "in_progress",
    "gate": "Pours and a layer-count advisor, a run report, a proposal-only pin swap experiment (docs/18 section 5)",
-   "deliverables": "C3, D3, C2 experiment",
+   "deliverables": "C3, D3, C2 experiment, C5 classification",
    "tasks": [
     {
      "text": "D3 run report: route --report FILE (HTML or Markdown) and tracemaker report SUMMARY.json, rendered from the summary alone; rules read and not read, stuck report, DRC before and after, SI audit, options and seed (D136)",
      "done": true
     },
     {
-     "text": "D3 gate: reports for the plane boards, every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
+     "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
      "done": false
     },
     {
@@ -847,22 +860,47 @@
      "done": true
     },
     {
-     "text": "C2 pin-swap feasibility experiment, then a proposal-only pass if the gain is clear",
-     "done": false
+     "text": "C2 pin-swap feasibility experiment: oracle on 30 boards, open 982 -> 978 and 27 -> 26, median gain zero; pass not built (D141)",
+     "done": true
     },
     {
-     "text": "C5 classification of dense-package failures by cause",
-     "done": false
+     "text": "C5 open connections by cause (tracemaker causes; near the pins 779 of 1,320) and the fix: half the portfolio searches from the crowded end (D143); 33 failing boards 1,383 -> 1,220 open, clean set 69 -> 46, mid 1,306 -> 1,093, quick 32 -> 24, no board gains an error",
+     "done": true
     }
    ]
   },
   {
    "id": "M21",
    "title": "High speed for the Kookabus boards",
-   "status": "planned",
+   "status": "in_progress",
    "gate": "Only as far as the Kookabus boards need it; the board files are not on this machine yet (docs/18 section 7)",
    "deliverables": "B1 tuning profiles, B2 time-domain matching, B3 audit loop, A5",
-   "tasks": []
+   "tasks": [
+    {
+     "text": "B3 audit loop: --si-rules stitches the critical nets' unstitched layer changes and places the rest in the report (D144); plane tier: one change left (StickHub, no plane copper), nothing to stitch",
+     "done": true
+    },
+    {
+     "text": "B1 KiCad 10 tuning profiles: read, KiCad's implicit width/gap rules as KiCad 10.0.6 applies them, per-layer widths by narrowing, pairs on one geometry (D145); rejudged at schema 5 with B2 (D147): 0 width errors, RoyalBlue's 5 USB-C coupling-gap errors avoided by the router since D148",
+     "done": true
+    },
+    {
+     "text": "A5 five seeds of #24's options on the plane tier: no critical-net measure moves with the seed; --si-rules keeps critical-first (D146)",
+     "done": true
+    },
+    {
+     "text": "B2 time-domain matching: delays measured as KiCad 10.0.6 does, ps windows and skew tuned, KiCad's coupling check in the DRC (D147) and in the router (D148); ddr8, interf_u and RoyalBlue KiCad-clean in delay; 229 parity cases",
+     "done": true
+    },
+    {
+     "text": "KiCad parity on pair boards: pair names as MatchDpSuffix (D149); vias/pads that remove unconnected copper flashed and refilled as KiCad does, tuning patterns and nearly parallel tracks in the coupling test (D150); vme-wren pair verdicts identical to KiCad's, 234 parity cases; clearances in KiCad's order and same-footprint graphics (D151): vme-wren matches KiCad on all routing-relevant types, 239 parity cases",
+     "done": true
+    },
+    {
+     "text": "A3 Kookabus boards as a fixture set (files still missing)",
+     "done": false
+    }
+   ]
   }
  ]
 }

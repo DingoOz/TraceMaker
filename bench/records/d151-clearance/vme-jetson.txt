@@ -1,0 +1,4 @@
+MATCH  vme-wren.kicad_pcb                               
+MATCH  jetson-agx-thor-baseboard.kicad_pcb              
+
+2/2 boards match exactly on 15 routing-relevant types (kicad/ours shown on diffs)

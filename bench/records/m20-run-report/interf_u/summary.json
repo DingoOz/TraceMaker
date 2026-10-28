@@ -1,0 +1,2384 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 85.37,
+ "connections": 164,
+ "copper_layers": 2,
+ "critical_nets": {
+  "nets": [
+   {
+    "detour_mm": 3.287,
+    "length_mm": 30.305,
+    "name": "Net-(U9-P{slash}A3)",
+    "splits": 1,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 4,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 2.222,
+    "length_mm": 15.766,
+    "name": "/8MH-OUT",
+    "splits": 1,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 2,
+    "warnings": [
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   }
+  ],
+  "options": {
+   "first": true,
+   "split_cost": 4.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 3.0
+  },
+  "totals": {
+   "nets": 2,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 6
+  }
+ },
+ "drc": {
+  "added_routing_errors": 0,
+  "after": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 26,
+   "unconnected_items": [
+    {
+     "from": "Pad 1 of C6 [VCC]",
+     "to": "Pad 3 of BUS1 [VCC]",
+     "what": "Missing connection in net VCC",
+     "x_mm": 159.385,
+     "y_mm": 111.76
+    },
+    {
+     "from": "Pad 2 of C6 [GND]",
+     "to": "Pad 12 of U8 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 174.385,
+     "y_mm": 111.76
+    },
+    {
+     "from": "Pad 1 of U2 [/PC-AEN]",
+     "to": "Pad N10 of U9 [/PC-AEN]",
+     "what": "Missing connection in net /PC-AEN",
+     "x_mm": 95.885,
+     "y_mm": 124.46
+    },
+    {
+     "from": "Pad 2 of U2 [/PC-A5]",
+     "to": "Pad J2 of U9 [/PC-A5]",
+     "what": "Missing connection in net /PC-A5",
+     "x_mm": 98.425,
+     "y_mm": 124.46
+    },
+    {
+     "from": "Pad 4 of U2 [/PC-A8]",
+     "to": "Pad H1 of U9 [/PC-A8]",
+     "what": "Missing connection in net /PC-A8",
+     "x_mm": 103.505,
+     "y_mm": 124.46
+    },
+    {
+     "from": "Pad 6 of U2 [/PC-A9]",
+     "to": "Pad N7 of U9 [/PC-A9]",
+     "what": "Missing connection in net /PC-A9",
+     "x_mm": 108.585,
+     "y_mm": 124.46
+    },
+    {
+     "from": "Pad 11 of U2 [/PC-A10]",
+     "to": "Pad L8 of U9 [/PC-A10]",
+     "what": "Missing connection in net /PC-A10",
+     "x_mm": 118.745,
+     "y_mm": 116.84
+    },
+    {
+     "from": "Pad 17 of U2 [/PC-A4]",
+     "to": "Pad H3 of U9 [/PC-A4]",
+     "what": "Missing connection in net /PC-A4",
+     "x_mm": 103.505,
+     "y_mm": 116.84
+    },
+    {
+     "from": "Pad 3 of U3 [/PC-A0]",
+     "to": "Pad M6 of U9 [/PC-A0]",
+     "what": "Missing connection in net /PC-A0",
+     "x_mm": 128.905,
+     "y_mm": 124.46
+    },
+    {
+     "from": "Pad M6 of U9 [/PC-A0]",
+     "to": "Pad 62 of BUS1 [/PC-A0]",
+     "what": "Missing connection in net /PC-A0",
+     "x_mm": 155.575,
+     "y_mm": 95.25
+    },
+    {
+     "from": "Pad 5 of U3 [/PC-A3]",
+     "to": "Pad 59 of BUS1 [/PC-A3]",
+     "what": "Missing connection in net /PC-A3",
+     "x_mm": 133.985,
+     "y_mm": 124.46
+    },
+    {
+     "from": "Pad 2 of U5 [/MA16]",
+     "to": "Pad C8 of U9 [/MA16]",
+     "what": "Missing connection in net /MA16",
+     "x_mm": 89.535,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 3 of U5 [/MA14]",
+     "to": "Pad D1 of U9 [/MA14]",
+     "what": "Missing connection in net /MA14",
+     "x_mm": 92.075,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 4 of U5 [/MA12]",
+     "to": "Pad F3 of U9 [/MA12]",
+     "what": "Missing connection in net /MA12",
+     "x_mm": 94.615,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 5 of U5 [/MA7]",
+     "to": "Pad B3 of U9 [/MA7]",
+     "what": "Missing connection in net /MA7",
+     "x_mm": 97.155,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 6 of U5 [/MA6]",
+     "to": "Pad F2 of U9 [/MA6]",
+     "what": "Missing connection in net /MA6",
+     "x_mm": 99.695,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 7 of U5 [/MA5]",
+     "to": "Pad C13 of U9 [/MA5]",
+     "what": "Missing connection in net /MA5",
+     "x_mm": 102.235,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 12 of U5 [/MA0]",
+     "to": "Pad A11 of U9 [/MA0]",
+     "what": "Missing connection in net /MA0",
+     "x_mm": 114.935,
+     "y_mm": 76.2
+    },
+    {
+     "from": "Pad 19 of U5 [/MD5]",
+     "to": "Pad A8 of U9 [/MD5]",
+     "what": "Missing connection in net /MD5",
+     "x_mm": 120.015,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 20 of U5 [/MD6]",
+     "to": "Pad A9 of U9 [/MD6]",
+     "what": "Missing connection in net /MD6",
+     "x_mm": 117.475,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 24 of U5 [/OE-]",
+     "to": "Pad B9 of U9 [/OE-]",
+     "what": "Missing connection in net /OE-",
+     "x_mm": 107.315,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 25 of U5 [/MA11]",
+     "to": "Pad D2 of U9 [/MA11]",
+     "what": "Missing connection in net /MA11",
+     "x_mm": 104.775,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 27 of U5 [/MA8]",
+     "to": "Pad G1 of U9 [/MA8]",
+     "what": "Missing connection in net /MA8",
+     "x_mm": 99.695,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 28 of U5 [/MA13]",
+     "to": "Pad C1 of U9 [/MA13]",
+     "what": "Missing connection in net /MA13",
+     "x_mm": 97.155,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 29 of U5 [/WR-]",
+     "to": "Pad A13 of U9 [/WR-]",
+     "what": "Missing connection in net /WR-",
+     "x_mm": 94.615,
+     "y_mm": 60.96
+    },
+    {
+     "from": "Pad 2 of R4 [/LED1]",
+     "to": "Pad M3 of U9 [/LED1]",
+     "what": "Missing connection in net /LED1",
+     "x_mm": 144.145,
+     "y_mm": 41.91
+    }
+   ],
+   "warnings": 0
+  },
+  "before": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 164,
+   "warnings": 0
+  },
+  "checker": "tracemaker drc",
+  "removed": 0,
+  "types": [],
+  "unconnected_change": -138,
+  "zones_refilled": true
+ },
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3024100,
+ "failures": [
+  "VCC: U1.20 -> BUS1.3  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/PC-A3: U3.5 -> BUS1.59  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/PC-A4: U2.17 -> U9.H3  ()",
+  "/MD5: U5.19 -> U9.A8  ()",
+  "/PC-A10: U2.11 -> U9.L8  ()",
+  "/PC-A0: U3.3 -> BUS1.62  ()",
+  "/PC-A0: U3.3 -> U9.M6  ()",
+  "/OE-: U5.24 -> U9.B9  ()",
+  "/MA0: U5.12 -> U9.A11  ()",
+  "/PC-AEN: U2.1 -> BUS1.42  ()",
+  "/MA8: U5.27 -> U9.G1  ()",
+  "/MA14: U5.3 -> U9.D1  ()",
+  "/MA6: U5.6 -> U9.F2  ()",
+  "/MD6: U5.20 -> U9.A9  ()",
+  "/MA12: U5.4 -> U9.F3  ()",
+  "/PC-A8: U2.4 -> U9.H1  ()",
+  "/MA13: U5.28 -> U9.C1  ()",
+  "/MA7: U5.5 -> U9.B3  ()",
+  "/MA16: U5.2 -> U9.C8  ()",
+  "/LED1: R4.2 -> U9.M3  ()",
+  "/PC-A9: BUS1.53 -> U9.N7  ()",
+  "/WR-: U5.29 -> U9.A13  ()",
+  "/PC-A5: U2.2 -> U9.J2  ()",
+  "/MA5: U5.7 -> U9.C13  ()"
+ ],
+ "open": 24,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.1,
+ "refill": {
+  "repair": {
+   "connections": 33,
+   "expansions": 3298813,
+   "kept": true,
+   "routed": 7,
+   "tracks": 24,
+   "unconnected": 26,
+   "vias": 5
+  },
+  "starved_thermals": 4,
+  "thermal_repair": {
+   "nets_rerouted": 3,
+   "pads_repaired": 2,
+   "pads_tried": 6,
+   "starved": 7,
+   "starved_after": 4,
+   "unconnected": 26
+  },
+  "unconnected": 33,
+  "warnings": [],
+  "zones": 1
+ },
+ "routed": 140,
+ "rules": {
+  "custom_rule_count": 0,
+  "custom_rules": [],
+  "files": {
+   "custom_rules": "unrouted.kicad_dru",
+   "custom_rules_found": false,
+   "project": "unrouted.kicad_pro",
+   "project_found": true
+  },
+  "minimums": {
+   "blind_buried_vias": false,
+   "clearance_mm": 0.0,
+   "copper_edge_clearance_mm": 0.0,
+   "drill_mm": 0.5,
+   "hole_clearance_mm": 0.0,
+   "hole_to_hole_mm": 0.25,
+   "microvias": false,
+   "track_width_mm": 0.2,
+   "via_annular_width_mm": 0.05,
+   "via_diameter_mm": 0.9
+  },
+  "net_classes": [
+   {
+    "clearance_mm": 0.254,
+    "diff_pair_gap_mm": 0.25,
+    "diff_pair_width_mm": 0.2,
+    "name": "Default",
+    "nets": 171,
+    "track_width_mm": 0.4,
+    "via_diameter_mm": 1.4,
+    "via_drill_mm": 0.6
+   },
+   {
+    "clearance_mm": 0.254,
+    "diff_pair_gap_mm": 0.25,
+    "diff_pair_width_mm": 0.2,
+    "name": "Power",
+    "nets": 2,
+    "track_width_mm": 0.5,
+    "via_diameter_mm": 1.6,
+    "via_drill_mm": 0.6
+   }
+  ],
+  "not_read": [],
+  "not_read_count": 0
+ },
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-27T22:57:42Z",
+  "input": "build/demos/interf_u/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "build/scratch/d3/interf_u/routed.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--si-rules",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "8840"
+   },
+   {
+    "name": "--json",
+    "value": "build/scratch/d3/interf_u/summary.json"
+   },
+   {
+    "name": "--report",
+    "value": "build/scratch/d3/interf_u/report.html"
+   }
+  ],
+  "output": "build/scratch/d3/interf_u/routed.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 3000000
+ },
+ "seconds": 128.027811185,
+ "stuck": {
+  "board": {
+   "copper_layers": [
+    "F.Cu",
+    "B.Cu"
+   ],
+   "name": "unrouted.kicad_pcb",
+   "nets": 173,
+   "outline_mm": [
+    79.375,
+    34.29,
+    194.945,
+    142.494
+   ],
+   "pads": 379,
+   "parts": 25
+  },
+  "escape_analysis": [],
+  "parts": [
+   {
+    "kind": "multi_pin",
+    "library_id": "interf_u:DIP-20_W7.62mm",
+    "pads": 20,
+    "part": "U1",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "74LS245",
+    "x_mm": 151.765,
+    "y_mm": 124.46
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "interf_u:DIP-20_W7.62mm",
+    "pads": 20,
+    "part": "U2",
+    "side": "front",
+    "unrouted_ends": 5,
+    "value": "74LS688",
+    "x_mm": 95.885,
+    "y_mm": 124.46
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "interf_u:DIP-20_W7.62mm",
+    "pads": 20,
+    "part": "U3",
+    "side": "front",
+    "unrouted_ends": 3,
+    "value": "74LS541",
+    "x_mm": 123.825,
+    "y_mm": 124.46
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "interf_u:DIP-32_W15.24mm",
+    "pads": 32,
+    "part": "U5",
+    "side": "front",
+    "unrouted_ends": 13,
+    "value": "628128",
+    "x_mm": 86.995,
+    "y_mm": 76.2
+   },
+   {
+    "kind": "passive",
+    "library_id": "interf_u:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
+    "pads": 2,
+    "part": "R4",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "330",
+    "x_mm": 151.765,
+    "y_mm": 41.91
+   },
+   {
+    "kind": "grid_array",
+    "library_id": "interf_u:PGA120",
+    "pads": 120,
+    "part": "U9",
+    "side": "front",
+    "unrouted_ends": 20,
+    "value": "4003APG120",
+    "x_mm": 158.115,
+    "y_mm": 82.55
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "interf_u:BUS_PC",
+    "pads": 62,
+    "part": "BUS1",
+    "side": "front",
+    "unrouted_ends": 5,
+    "value": "BUSPC",
+    "x_mm": 131.445,
+    "y_mm": 138.43
+   }
+  ],
+  "result": {
+   "connections": 164,
+   "routed": 140,
+   "seconds": 15.33,
+   "tracks": 529,
+   "unrouted": 24,
+   "vias": 41
+  },
+  "rules": {
+   "clearance_mm": 0.254,
+   "copper_edge_clearance_mm": 0.0,
+   "min_track_width_mm": 0.2,
+   "track_width_mm": 0.4,
+   "via_diameter_mm": 1.4,
+   "via_drill_mm": 0.6
+  },
+  "unrouted": [
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 22,
+     "other_vias": 2,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-RST",
+       "track_mm": 17.309
+      },
+      {
+       "net": "/PC-DB1",
+       "track_mm": 16.074
+      },
+      {
+       "net": "/PC-DB2",
+       "track_mm": 16.074
+      },
+      {
+       "net": "/PC-DB3",
+       "track_mm": 16.074
+      },
+      {
+       "net": "/PC-DB4",
+       "track_mm": 16.074
+      },
+      {
+       "net": "/PC-DB5",
+       "track_mm": 14.603
+      }
+     ]
+    },
+    "fails": 1,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "20",
+     "part": "U1",
+     "x_mm": 151.765,
+     "y_mm": 116.84
+    },
+    "length_mm": 25.048,
+    "net": "VCC",
+    "reason": "boxed_in",
+    "region_mm": [
+     150.265,
+     115.34,
+     165.965,
+     139.93
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "3",
+     "part": "BUS1",
+     "x_mm": 164.465,
+     "y_mm": 138.43
+    },
+    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 39,
+     "other_vias": 10,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A2",
+       "track_mm": 55.607
+      },
+      {
+       "net": "/PC-A1",
+       "track_mm": 33.48
+      },
+      {
+       "net": "/PC-A6",
+       "track_mm": 29.106
+      },
+      {
+       "net": "/PC-A8",
+       "track_mm": 18.178
+      },
+      {
+       "net": "/PC-A4",
+       "track_mm": 17.046
+      },
+      {
+       "net": "/PC-A10",
+       "track_mm": 16.98
+      }
+     ]
+    },
+    "fails": 1,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "5",
+     "part": "U3",
+     "x_mm": 133.985,
+     "y_mm": 124.46
+    },
+    "length_mm": 35.854,
+    "net": "/PC-A3",
+    "reason": "boxed_in",
+    "region_mm": [
+     99.465,
+     122.96,
+     135.485,
+     139.93
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "59",
+     "part": "BUS1",
+     "x_mm": 100.965,
+     "y_mm": 138.43
+    },
+    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 84,
+     "other_vias": 12,
+     "routed_copper_by_net": [
+      {
+       "net": "VCC",
+       "track_mm": 78.761
+      },
+      {
+       "net": "/PC-A7",
+       "track_mm": 57.539
+      },
+      {
+       "net": "/PC-A6",
+       "track_mm": 48.909
+      },
+      {
+       "net": "/PC-A2",
+       "track_mm": 35.471
+      },
+      {
+       "net": "/PC-A3",
+       "track_mm": 31.969
+      },
+      {
+       "net": "GND",
+       "track_mm": 30.658
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "17",
+     "part": "U2",
+     "x_mm": 103.505,
+     "y_mm": 116.84
+    },
+    "length_mm": 54.625,
+    "net": "/PC-A4",
+    "reason": "not_attempted",
+    "region_mm": [
+     102.005,
+     83.59,
+     149.455,
+     118.34
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "H3",
+     "part": "U9",
+     "x_mm": 147.955,
+     "y_mm": 85.09
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 9,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "/MD7",
+       "track_mm": 48.462
+      },
+      {
+       "net": "/CS1-",
+       "track_mm": 45.351
+      },
+      {
+       "net": "/MA10",
+       "track_mm": 42.435
+      },
+      {
+       "net": "/MD4",
+       "track_mm": 38.19
+      },
+      {
+       "net": "/MD3",
+       "track_mm": 33.11
+      },
+      {
+       "net": "/MA9",
+       "track_mm": 32.523
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "19",
+     "part": "U5",
+     "x_mm": 120.015,
+     "y_mm": 60.96
+    },
+    "length_mm": 41.133,
+    "net": "/MD5",
+    "reason": "not_attempted",
+    "region_mm": [
+     118.515,
+     59.46,
+     162.155,
+     68.81
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "A8",
+     "part": "U9",
+     "x_mm": 160.655,
+     "y_mm": 67.31
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 72,
+     "other_vias": 17,
+     "routed_copper_by_net": [
+      {
+       "net": "VCC",
+       "track_mm": 98.177
+      },
+      {
+       "net": "/D0",
+       "track_mm": 46.271
+      },
+      {
+       "net": "/PC-A2",
+       "track_mm": 39.569
+      },
+      {
+       "net": "/PROG-",
+       "track_mm": 39.268
+      },
+      {
+       "net": "/PC-A7",
+       "track_mm": 36.73
+      },
+      {
+       "net": "/ENBBUF",
+       "track_mm": 32.837
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "11",
+     "part": "U2",
+     "x_mm": 118.745,
+     "y_mm": 116.84
+    },
+    "length_mm": 48.36,
+    "net": "/PC-A10",
+    "reason": "not_attempted",
+    "region_mm": [
+     117.245,
+     91.21,
+     162.155,
+     118.34
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "L8",
+     "part": "U9",
+     "x_mm": 160.655,
+     "y_mm": 92.71
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 41,
+     "other_vias": 11,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A2",
+       "track_mm": 56.181
+      },
+      {
+       "net": "/PC-A1",
+       "track_mm": 40.933
+      },
+      {
+       "net": "/PC-A6",
+       "track_mm": 29.82
+      },
+      {
+       "net": "/PC-A8",
+       "track_mm": 18.178
+      },
+      {
+       "net": "/PC-A4",
+       "track_mm": 17.046
+      },
+      {
+       "net": "/PC-A10",
+       "track_mm": 16.98
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "3",
+     "part": "U3",
+     "x_mm": 128.905,
+     "y_mm": 124.46
+    },
+    "length_mm": 38.206,
+    "net": "/PC-A0",
+    "reason": "not_attempted",
+    "region_mm": [
+     91.845,
+     122.96,
+     130.405,
+     139.93
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "62",
+     "part": "BUS1",
+     "x_mm": 93.345,
+     "y_mm": 138.43
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 53,
+     "other_vias": 16,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A1",
+       "track_mm": 51.896
+      },
+      {
+       "net": "/PC-A2",
+       "track_mm": 50.771
+      },
+      {
+       "net": "/D0",
+       "track_mm": 46.271
+      },
+      {
+       "net": "/PC-A3",
+       "track_mm": 35.358
+      },
+      {
+       "net": "VCC",
+       "track_mm": 33.308
+      },
+      {
+       "net": "/ENBBUF",
+       "track_mm": 32.837
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "3",
+     "part": "U3",
+     "x_mm": 128.905,
+     "y_mm": 124.46
+    },
+    "length_mm": 39.554,
+    "net": "/PC-A0",
+    "reason": "not_attempted",
+    "region_mm": [
+     127.405,
+     93.75,
+     157.075,
+     125.96
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "M6",
+     "part": "U9",
+     "x_mm": 155.575,
+     "y_mm": 95.25
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 24,
+     "other_vias": 1,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA10",
+       "track_mm": 57.834
+      },
+      {
+       "net": "/CS1-",
+       "track_mm": 55.626
+      },
+      {
+       "net": "/MD7",
+       "track_mm": 54.076
+      },
+      {
+       "net": "/MA9",
+       "track_mm": 45.827
+      },
+      {
+       "net": "/MD4",
+       "track_mm": 38.19
+      },
+      {
+       "net": "/MD3",
+       "track_mm": 33.11
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "24",
+     "part": "U5",
+     "x_mm": 107.315,
+     "y_mm": 60.96
+    },
+    "length_mm": 56.583,
+    "net": "/OE-",
+    "reason": "not_attempted",
+    "region_mm": [
+     105.815,
+     59.46,
+     164.695,
+     71.35
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "B9",
+     "part": "U9",
+     "x_mm": 163.195,
+     "y_mm": 69.85
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 43,
+     "other_vias": 4,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA9",
+       "track_mm": 37.603
+      },
+      {
+       "net": "/MD1",
+       "track_mm": 36.641
+      },
+      {
+       "net": "/MD2",
+       "track_mm": 35.65
+      },
+      {
+       "net": "/MA1",
+       "track_mm": 35.215
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 35.029
+      },
+      {
+       "net": "/MA3",
+       "track_mm": 32.514
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "12",
+     "part": "U5",
+     "x_mm": 114.935,
+     "y_mm": 76.2
+    },
+    "length_mm": 54.076,
+    "net": "/MA0",
+    "reason": "not_attempted",
+    "region_mm": [
+     113.435,
+     65.81,
+     169.775,
+     77.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "A11",
+     "part": "U9",
+     "x_mm": 168.275,
+     "y_mm": 67.31
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 57,
+     "other_vias": 12,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A2",
+       "track_mm": 59.671
+      },
+      {
+       "net": "/PC-A1",
+       "track_mm": 40.933
+      },
+      {
+       "net": "/PC-A6",
+       "track_mm": 29.82
+      },
+      {
+       "net": "/PC-A8",
+       "track_mm": 18.178
+      },
+      {
+       "net": "/PC-A4",
+       "track_mm": 17.046
+      },
+      {
+       "net": "/PC-A10",
+       "track_mm": 16.98
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "U2",
+     "x_mm": 95.885,
+     "y_mm": 124.46
+    },
+    "length_mm": 50.241,
+    "net": "/PC-AEN",
+    "reason": "not_attempted",
+    "region_mm": [
+     94.385,
+     122.96,
+     145.645,
+     139.93
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "42",
+     "part": "BUS1",
+     "x_mm": 144.145,
+     "y_mm": 138.43
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 27,
+     "other_vias": 4,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA15",
+       "track_mm": 50.082
+      },
+      {
+       "net": "/MA9",
+       "track_mm": 44.228
+      },
+      {
+       "net": "/MA3",
+       "track_mm": 39.276
+      },
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "/MA10",
+       "track_mm": 36.276
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 35.556
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "27",
+     "part": "U5",
+     "x_mm": 99.695,
+     "y_mm": 60.96
+    },
+    "length_mm": 48.277,
+    "net": "/MA8",
+    "reason": "not_attempted",
+    "region_mm": [
+     98.195,
+     59.46,
+     144.375,
+     84.05
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "G1",
+     "part": "U9",
+     "x_mm": 142.875,
+     "y_mm": 82.55
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 14,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 35.556
+      },
+      {
+       "net": "/MA15",
+       "track_mm": 5.262
+      },
+      {
+       "net": "/MD1",
+       "track_mm": 4.241
+      },
+      {
+       "net": "/MA1",
+       "track_mm": 3.917
+      },
+      {
+       "net": "/MA3",
+       "track_mm": 3.917
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "3",
+     "part": "U5",
+     "x_mm": 92.075,
+     "y_mm": 76.2
+    },
+    "length_mm": 50.816,
+    "net": "/MA14",
+    "reason": "not_attempted",
+    "region_mm": [
+     90.575,
+     73.43,
+     144.375,
+     77.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "D1",
+     "part": "U9",
+     "x_mm": 142.875,
+     "y_mm": 74.93
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 15,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA15",
+       "track_mm": 42.898
+      },
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "GND",
+       "track_mm": 3.109
+      },
+      {
+       "net": "/MD1",
+       "track_mm": 2.445
+      },
+      {
+       "net": "/MA3",
+       "track_mm": 2.121
+      },
+      {
+       "net": "/MD2",
+       "track_mm": 2.121
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "6",
+     "part": "U5",
+     "x_mm": 99.695,
+     "y_mm": 76.2
+    },
+    "length_mm": 45.878,
+    "net": "/MA6",
+    "reason": "not_attempted",
+    "region_mm": [
+     98.195,
+     74.7,
+     146.915,
+     81.51
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "F2",
+     "part": "U9",
+     "x_mm": 145.415,
+     "y_mm": 80.01
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 11,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "/CS1-",
+       "track_mm": 51.483
+      },
+      {
+       "net": "/MD7",
+       "track_mm": 51.135
+      },
+      {
+       "net": "/MA10",
+       "track_mm": 44.975
+      },
+      {
+       "net": "/MD4",
+       "track_mm": 38.19
+      },
+      {
+       "net": "/MA9",
+       "track_mm": 35.063
+      },
+      {
+       "net": "/MD3",
+       "track_mm": 33.11
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "20",
+     "part": "U5",
+     "x_mm": 117.475,
+     "y_mm": 60.96
+    },
+    "length_mm": 46.159,
+    "net": "/MD6",
+    "reason": "not_attempted",
+    "region_mm": [
+     115.975,
+     59.46,
+     164.695,
+     68.81
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "A9",
+     "part": "U9",
+     "x_mm": 163.195,
+     "y_mm": 67.31
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 20,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA15",
+       "track_mm": 42.898
+      },
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "VCC",
+       "track_mm": 6.81
+      },
+      {
+       "net": "GND",
+       "track_mm": 5.094
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 2.447
+      },
+      {
+       "net": "/MD1",
+       "track_mm": 2.445
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "4",
+     "part": "U5",
+     "x_mm": 94.615,
+     "y_mm": 76.2
+    },
+    "length_mm": 53.476,
+    "net": "/MA12",
+    "reason": "not_attempted",
+    "region_mm": [
+     93.115,
+     74.7,
+     149.455,
+     81.51
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "F3",
+     "part": "U9",
+     "x_mm": 147.955,
+     "y_mm": 80.01
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 83,
+     "other_vias": 12,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A2",
+       "track_mm": 73.426
+      },
+      {
+       "net": "/PC-A6",
+       "track_mm": 65.57
+      },
+      {
+       "net": "/PC-A7",
+       "track_mm": 63.688
+      },
+      {
+       "net": "VCC",
+       "track_mm": 62.927
+      },
+      {
+       "net": "/PC-A3",
+       "track_mm": 38.198
+      },
+      {
+       "net": "Net-(U9-P{slash}A3)",
+       "track_mm": 30.305
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "4",
+     "part": "U2",
+     "x_mm": 103.505,
+     "y_mm": 124.46
+    },
+    "length_mm": 55.678,
+    "net": "/PC-A8",
+    "reason": "not_attempted",
+    "region_mm": [
+     102.005,
+     83.59,
+     144.375,
+     125.96
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "H1",
+     "part": "U9",
+     "x_mm": 142.875,
+     "y_mm": 85.09
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 13,
+     "other_vias": 3,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA9",
+       "track_mm": 44.228
+      },
+      {
+       "net": "/MA10",
+       "track_mm": 36.276
+      },
+      {
+       "net": "/MA3",
+       "track_mm": 36.009
+      },
+      {
+       "net": "/CS1-",
+       "track_mm": 32.543
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 32.289
+      },
+      {
+       "net": "/MA1",
+       "track_mm": 31.948
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "28",
+     "part": "U5",
+     "x_mm": 97.155,
+     "y_mm": 60.96
+    },
+    "length_mm": 47.127,
+    "net": "/MA13",
+    "reason": "not_attempted",
+    "region_mm": [
+     95.655,
+     59.46,
+     144.375,
+     73.89
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "C1",
+     "part": "U9",
+     "x_mm": 142.875,
+     "y_mm": 72.39
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 22,
+     "other_vias": 3,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA3",
+       "track_mm": 40.747
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 39.645
+      },
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "/MA1",
+       "track_mm": 36.686
+      },
+      {
+       "net": "/MD1",
+       "track_mm": 32.527
+      },
+      {
+       "net": "/MD2",
+       "track_mm": 29.012
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "5",
+     "part": "U5",
+     "x_mm": 97.155,
+     "y_mm": 76.2
+    },
+    "length_mm": 51.195,
+    "net": "/MA7",
+    "reason": "not_attempted",
+    "region_mm": [
+     95.655,
+     68.35,
+     149.455,
+     77.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "B3",
+     "part": "U9",
+     "x_mm": 147.955,
+     "y_mm": 69.85
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 26,
+     "other_vias": 3,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA3",
+       "track_mm": 40.747
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 39.645
+      },
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "/MD2",
+       "track_mm": 34.179
+      },
+      {
+       "net": "/MD0",
+       "track_mm": 24.455
+      },
+      {
+       "net": "/MA15",
+       "track_mm": 8.854
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "U5",
+     "x_mm": 89.535,
+     "y_mm": 76.2
+    },
+    "length_mm": 71.222,
+    "net": "/MA16",
+    "reason": "not_attempted",
+    "region_mm": [
+     88.035,
+     70.89,
+     162.155,
+     77.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "C8",
+     "part": "U9",
+     "x_mm": 160.655,
+     "y_mm": 72.39
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 34,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "VCC",
+       "track_mm": 29.321
+      },
+      {
+       "net": "GND",
+       "track_mm": 21.12
+      },
+      {
+       "net": "/PC-A2",
+       "track_mm": 8.431
+      },
+      {
+       "net": "/MA9",
+       "track_mm": 6.922
+      },
+      {
+       "net": "/MD3",
+       "track_mm": 6.905
+      },
+      {
+       "net": "/MD7",
+       "track_mm": 6.81
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "R4",
+     "x_mm": 144.145,
+     "y_mm": 41.91
+    },
+    "length_mm": 53.476,
+    "net": "/LED1",
+    "reason": "not_attempted",
+    "region_mm": [
+     142.645,
+     40.41,
+     149.455,
+     96.75
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "M3",
+     "part": "U9",
+     "x_mm": 147.955,
+     "y_mm": 95.25
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 106,
+     "other_vias": 23,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A1",
+       "track_mm": 66.781
+      },
+      {
+       "net": "VCC",
+       "track_mm": 66.003
+      },
+      {
+       "net": "/PC-A2",
+       "track_mm": 56.942
+      },
+      {
+       "net": "/D0",
+       "track_mm": 46.271
+      },
+      {
+       "net": "/ENBBUF",
+       "track_mm": 32.837
+      },
+      {
+       "net": "/PC-A7",
+       "track_mm": 32.5
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "53",
+     "part": "BUS1",
+     "x_mm": 116.205,
+     "y_mm": 138.43
+    },
+    "length_mm": 58.379,
+    "net": "/PC-A9",
+    "reason": "not_attempted",
+    "region_mm": [
+     114.705,
+     96.29,
+     159.615,
+     139.93
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "N7",
+     "part": "U9",
+     "x_mm": 158.115,
+     "y_mm": 97.79
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 24,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "/CS1-",
+       "track_mm": 57.097
+      },
+      {
+       "net": "/MA10",
+       "track_mm": 52.851
+      },
+      {
+       "net": "/MD7",
+       "track_mm": 52.606
+      },
+      {
+       "net": "/MA9",
+       "track_mm": 50.89
+      },
+      {
+       "net": "/MD4",
+       "track_mm": 38.19
+      },
+      {
+       "net": "/MD3",
+       "track_mm": 33.11
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "29",
+     "part": "U5",
+     "x_mm": 94.615,
+     "y_mm": 60.96
+    },
+    "length_mm": 78.996,
+    "net": "/WR-",
+    "reason": "not_attempted",
+    "region_mm": [
+     93.115,
+     59.46,
+     174.855,
+     68.81
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "A13",
+     "part": "U9",
+     "x_mm": 173.355,
+     "y_mm": 67.31
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 101,
+     "other_vias": 11,
+     "routed_copper_by_net": [
+      {
+       "net": "/PC-A6",
+       "track_mm": 79.336
+      },
+      {
+       "net": "/PC-A2",
+       "track_mm": 77.387
+      },
+      {
+       "net": "VCC",
+       "track_mm": 71.951
+      },
+      {
+       "net": "/PC-A7",
+       "track_mm": 63.688
+      },
+      {
+       "net": "/PC-A3",
+       "track_mm": 39.669
+      },
+      {
+       "net": "/MATCHL",
+       "track_mm": 32.587
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "U2",
+     "x_mm": 98.425,
+     "y_mm": 124.46
+    },
+    "length_mm": 59.704,
+    "net": "/PC-A5",
+    "reason": "not_attempted",
+    "region_mm": [
+     96.925,
+     86.13,
+     146.915,
+     125.96
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "J2",
+     "part": "U9",
+     "x_mm": 145.415,
+     "y_mm": 87.63
+    },
+    "why": ""
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 32,
+     "other_vias": 3,
+     "routed_copper_by_net": [
+      {
+       "net": "/MA3",
+       "track_mm": 40.747
+      },
+      {
+       "net": "/MA2",
+       "track_mm": 39.645
+      },
+      {
+       "net": "/MA4",
+       "track_mm": 38.626
+      },
+      {
+       "net": "/MD2",
+       "track_mm": 34.179
+      },
+      {
+       "net": "/MD0",
+       "track_mm": 29.142
+      },
+      {
+       "net": "VCC",
+       "track_mm": 13.211
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "7",
+     "part": "U5",
+     "x_mm": 102.235,
+     "y_mm": 76.2
+    },
+    "length_mm": 71.222,
+    "net": "/MA5",
+    "reason": "not_attempted",
+    "region_mm": [
+     100.735,
+     70.89,
+     174.855,
+     77.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "C13",
+     "part": "U9",
+     "x_mm": 173.355,
+     "y_mm": 72.39
+    },
+    "why": ""
+   }
+  ],
+  "unrouted_by_net": [
+   {
+    "count": 2,
+    "name": "/PC-A0"
+   },
+   {
+    "count": 1,
+    "name": "/LED1"
+   },
+   {
+    "count": 1,
+    "name": "/MA0"
+   },
+   {
+    "count": 1,
+    "name": "/MA12"
+   },
+   {
+    "count": 1,
+    "name": "/MA13"
+   },
+   {
+    "count": 1,
+    "name": "/MA14"
+   },
+   {
+    "count": 1,
+    "name": "/MA16"
+   },
+   {
+    "count": 1,
+    "name": "/MA5"
+   },
+   {
+    "count": 1,
+    "name": "/MA6"
+   },
+   {
+    "count": 1,
+    "name": "/MA7"
+   },
+   {
+    "count": 1,
+    "name": "/MA8"
+   },
+   {
+    "count": 1,
+    "name": "/MD5"
+   },
+   {
+    "count": 1,
+    "name": "/MD6"
+   },
+   {
+    "count": 1,
+    "name": "/OE-"
+   },
+   {
+    "count": 1,
+    "name": "/PC-A10"
+   },
+   {
+    "count": 1,
+    "name": "/PC-A3"
+   }
+  ],
+  "unrouted_by_part": [
+   {
+    "count": 20,
+    "name": "U9"
+   },
+   {
+    "count": 13,
+    "name": "U5"
+   },
+   {
+    "count": 5,
+    "name": "BUS1"
+   },
+   {
+    "count": 5,
+    "name": "U2"
+   },
+   {
+    "count": 3,
+    "name": "U3"
+   },
+   {
+    "count": 1,
+    "name": "R4"
+   },
+   {
+    "count": 1,
+    "name": "U1"
+   }
+  ],
+  "unrouted_by_reason": [
+   {
+    "count": 22,
+    "name": "not_attempted"
+   },
+   {
+    "count": 2,
+    "name": "boxed_in"
+   }
+  ]
+ },
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 296,
+  "bends_per_connection": 1.5102,
+  "connections": 196,
+  "detour_length_mm": 2822.32991,
+  "detour_octile_mm": 2559.166748,
+  "detour_ratio": 1.1028,
+  "length_mm": 2822.32991,
+  "long_detours": 4,
+  "off_angle_segments": 34,
+  "segments": 529,
+  "short_segments": 6,
+  "stair_steps": 10,
+  "vias": 41
+ },
+ "time_limited": false,
+ "tracks": 529,
+ "tunnels": 0,
+ "unconnected_after_refill": 26,
+ "variant": 3,
+ "variant_name": "fast bends, jittered order, escape plan",
+ "variant_seconds": 15.326395221,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 117,
+   "seconds": 10.412121646,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first",
+   "routed": 137,
+   "seconds": 14.488868075,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 23,
+   "seconds": 7.733440754,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 140,
+   "seconds": 15.326395221,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 109,
+   "seconds": 9.415149193,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "routed": 137,
+   "seconds": 13.396234295,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan",
+   "routed": 137,
+   "seconds": 12.07352854,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias",
+   "routed": 136,
+   "seconds": 13.305756255,
+   "variant": 7
+  }
+ ],
+ "vias": 41,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 3089867,
+   "commits": 140,
+   "expansions": 2682845,
+   "field_cells": 22935020,
+   "fields": 95,
+   "fixed_checks": 2255914,
+   "flood_cells": 341255,
+   "rips": 0,
+   "searches": 164
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3089867,
+   "commits": 140,
+   "expansions": 2682845,
+   "field_cells": 22935020,
+   "fields": 95,
+   "fixed_checks": 2255914,
+   "flood_cells": 341255,
+   "rips": 0,
+   "searches": 164
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 19904947,
+   "commits": 936,
+   "expansions": 22274548,
+   "field_cells": 131474842,
+   "fields": 583,
+   "fixed_checks": 12321040,
+   "flood_cells": 2614218,
+   "rips": 0,
+   "searches": 1076
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 19904947,
+   "commits": 936,
+   "expansions": 22274548,
+   "field_cells": 131474842,
+   "fields": 583,
+   "fixed_checks": 12321040,
+   "flood_cells": 2614218,
+   "rips": 0,
+   "searches": 1076
+  }
+ }
+}

@@ -1,0 +1,295 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 97.96,
+ "connections": 49,
+ "copper_layers": 4,
+ "escape_corridor_mm": 58.478553,
+ "escape_corridors": 26,
+ "escape_reclaimed": 0,
+ "expansions": 3006598,
+ "failures": [
+  "INT: U1.21 -> U2.B2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))"
+ ],
+ "open": 1,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.03,
+ "refill": {
+  "repair": {
+   "connections": 1,
+   "expansions": 1158092,
+   "kept": false,
+   "routed": 0,
+   "tracks": 0,
+   "unconnected": 1,
+   "vias": 0
+  },
+  "starved_thermals": 0,
+  "unconnected": 1,
+  "warnings": [],
+  "zones": 2
+ },
+ "routed": 48,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-28T02:33:30Z",
+  "input": "build/scratch/b2/b1fx/plane_smd-base/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "bench/results/couple-b1/boards/plane_smd-base.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600.0"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "",
+    "value": "bench/results/couple-b1/boards/plane_smd-base.kicad_pcb.state"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-token",
+    "value": "(not recorded)"
+   },
+   {
+    "name": "--view-port",
+    "value": "8800"
+   },
+   {
+    "name": "--view-embed",
+    "value": "(not recorded)"
+   },
+   {
+    "name": "--json",
+    "value": "bench/results/couple-b1/boards/plane_smd-base.kicad_pcb.route.json"
+   }
+  ],
+  "output": "bench/results/couple-b1/boards/plane_smd-base.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.11.0",
+  "work_budget": 3000000
+ },
+ "seconds": 10.693862771,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 44,
+  "bends_per_connection": 0.5867,
+  "connections": 75,
+  "detour_length_mm": 71.530404,
+  "detour_octile_mm": 65.916127,
+  "detour_ratio": 1.0852,
+  "length_mm": 71.530404,
+  "long_detours": 0,
+  "off_angle_segments": 38,
+  "segments": 121,
+  "short_segments": 33,
+  "stair_steps": 1,
+  "vias": 38
+ },
+ "time_limited": false,
+ "tracks": 121,
+ "tunnels": 0,
+ "unconnected_after_refill": 1,
+ "variant": 6,
+ "variant_name": "fast bends, cheap crossings, escape plan, crowded source",
+ "variant_seconds": 4.838562737,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 29,
+   "seconds": 2.224828036,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 48,
+   "seconds": 5.320507821,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 44,
+   "seconds": 3.418721347,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 48,
+   "seconds": 5.885798018,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 29,
+   "seconds": 1.990826946,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 48,
+   "seconds": 9.578859914,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 48,
+   "seconds": 4.838562737,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 48,
+   "seconds": 5.342928737,
+   "variant": 7
+  }
+ ],
+ "vias": 38,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 2279637,
+   "commits": 214,
+   "expansions": 2176636,
+   "field_cells": 17095320,
+   "fields": 50,
+   "fixed_checks": 480117,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 216
+  },
+  "negotiation": {
+   "cell_checks": 692645,
+   "commits": 0,
+   "expansions": 482842,
+   "field_cells": 2169336,
+   "fields": 6,
+   "fixed_checks": 740810,
+   "flood_cells": 347120,
+   "rips": 0,
+   "searches": 8
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 25,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2972282,
+   "commits": 214,
+   "expansions": 2659478,
+   "field_cells": 19264656,
+   "fields": 56,
+   "fixed_checks": 1220952,
+   "flood_cells": 347120,
+   "rips": 0,
+   "searches": 224
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 14900503,
+   "commits": 1155,
+   "expansions": 19624861,
+   "field_cells": 103329904,
+   "fields": 265,
+   "fixed_checks": 4423160,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 1185
+  },
+  "negotiation": {
+   "cell_checks": 3932966,
+   "commits": 0,
+   "expansions": 2626841,
+   "field_cells": 12332528,
+   "fields": 31,
+   "fixed_checks": 3804577,
+   "flood_cells": 2229972,
+   "rips": 0,
+   "searches": 42
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 45,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 18833469,
+   "commits": 1155,
+   "expansions": 22251702,
+   "field_cells": 115662432,
+   "fields": 296,
+   "fixed_checks": 8227782,
+   "flood_cells": 2229972,
+   "rips": 0,
+   "searches": 1227
+  }
+ }
+}

@@ -156,6 +156,17 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D137](decisions/D137.md) | Starved thermal reliefs and GPU back-off from the October test campaign | accepted |
 | [D138](decisions/D138.md) | Generated pours and the layer-count advisor | accepted |
 | [D140](decisions/D140.md) | Unfilled zones are filled for routing; the router keeps custom hole clearance | accepted |
+| [D141](decisions/D141.md) | Pin swap: the free-assignment oracle gains too little to build the pass | accepted |
+| [D142](decisions/D142.md) | KiCad drift job: the newest KiCad image upgrades, re-reads, judges and routes four boards weekly | accepted |
+| [D143](decisions/D143.md) | Open connections by cause; half the portfolio searches from the crowded end | accepted |
+| [D144](decisions/D144.md) | --si-rules stitches the critical nets' unstitched layer changes and says where the rest are | accepted |
+| [D145](decisions/D145.md) | KiCad 10 tuning profiles: KiCad's width rules, and per-layer widths by narrowing | accepted |
+| [D146](decisions/D146.md) | --si-rules keeps critical-first: five seeds settle #24's options | accepted |
+| [D147](decisions/D147.md) | Time-domain matching measured as KiCad 10.0.6 measures it, and KiCad's net-class and pair-coupling semantics | accepted |
+| [D148](decisions/D148.md) | The router avoids KiCad's diff-pair coupling-gap errors | accepted |
+| [D149](decisions/D149.md) | Differential pairs named as KiCad's MatchDpSuffix names them | accepted |
+| [D150](decisions/D150.md) | Vias and pads that remove unconnected copper, and tuning patterns left out of pair coupling | accepted |
+| [D151](decisions/D151.md) | Clearances resolved in KiCad's order; copper graphics compared as KiCad compares their nets | accepted |
 <!-- END decision index -->
 
 ## Risks
