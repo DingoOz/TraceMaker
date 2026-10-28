@@ -5,9 +5,12 @@
 #include <cstdlib>
 
 #include <algorithm>
+#include <bit>
 #include <cmath>
 #include <cstdlib>
 #include <numbers>
+
+#include "index/uniform_grid.hpp"
 
 namespace tmk::drc {
 
@@ -103,6 +106,7 @@ std::vector<Shape> pad_shapes(const model::Pad& p) {
 }
 
 namespace {
+void split_bare_layers(const model::Board& b, CopperModel& m);
 void finish(CopperItem& it) {
   it.box = geom::Box{};
   for (const auto& s : it.shapes) it.box.add(s.box);
@@ -322,8 +326,191 @@ CopperModel build_copper(const model::Board& b) {
       if (std::getenv("TM_DEBUG_GFX")) std::fprintf(stderr, "board copper graphic %d: net %d%s\n", g.index, static_cast<int>(g.net), many ? " (several nets: net-less)" : "");
     }
   }
+  split_bare_layers(b, m);
   return m;
 }
+
+namespace {
+
+// The conditional layers of a padstack spanning `top`..`bottom`.
+model::LayerMask conditional_layers(model::UnconnectedLayers mode, model::LayerMask span, int top, int bottom) {
+  switch (mode) {
+    case model::UnconnectedLayers::KeepAll: return 0;
+    case model::UnconnectedLayers::RemoveAll: return span;
+    default: return span & ~(model::layer_bit(top) | model::layer_bit(bottom));
+  }
+}
+
+bool removes_layers(model::UnconnectedLayers mode) {
+  return mode == model::UnconnectedLayers::RemoveAll || mode == model::UnconnectedLayers::RemoveExceptStartEnd;
+}
+
+}  // namespace
+
+model::LayerMask conditional_layers(const model::Via& v) {
+  model::LayerMask span = 0;
+  for (int l = v.layer_top; l <= v.layer_bottom; ++l) span |= model::layer_bit(l);
+  return conditional_layers(v.unconnected, span, v.layer_top, v.layer_bottom);
+}
+
+model::LayerMask conditional_layers(const model::Pad& p, int copper_count) {
+  return p.type == model::PadType::ThruHole ? conditional_layers(p.unconnected, p.copper, 0, copper_count - 1) : 0;
+}
+
+Flashing flash_layers(const model::Board& b) {
+  const int nl = b.copper_count();
+  const model::LayerMask all = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
+  Flashing f;
+  f.vias.resize(b.vias.size());
+  f.pads.resize(b.pads.size());
+  // Every connectable item (CN_ITEM): its layer set for the touching test, the layers it spans for IsConnectedOnLayer, the
+  // layers where it is only its hole, and its shapes.
+  struct Node {
+    int via = -1, pad = -1;
+    model::NetId net = 0;
+    model::LayerMask set = 0, cn = 0, cond = 0;
+    std::vector<Shape> full;
+    Shape hole;
+    geom::Box box;
+    int footprint = -1;
+    model::UnconnectedLayers mode = model::UnconnectedLayers::KeepAll;
+  };
+  std::vector<Node> nodes;
+  bool any = false;
+  for (std::size_t i = 0; i < b.vias.size(); ++i) {
+    const auto& v = b.vias[i];
+    Node n;
+    n.via = static_cast<int>(i);
+    n.net = v.net;
+    for (int l = v.layer_top; l <= v.layer_bottom; ++l) n.set |= model::layer_bit(l);
+    n.cn = n.set;
+    n.cond = conditional_layers(v.unconnected, n.set, v.layer_top, v.layer_bottom);
+    n.mode = v.unconnected;
+    n.full = {Shape::point(v.pos, v.size / 2)};
+    n.hole = Shape::point(v.pos, v.drill / 2);
+    f.vias[i] = n.set;
+    any |= n.cond != 0;
+    nodes.push_back(std::move(n));
+  }
+  for (std::size_t i = 0; i < b.pads.size(); ++i) {
+    const auto& p = b.pads[i];
+    f.pads[i] = p.copper;
+    if (!p.copper) continue;
+    Node n;
+    n.pad = static_cast<int>(i);
+    n.net = p.net;
+    n.set = p.copper;
+    // CN_LIST::Add(PAD*): a plated through-hole pad spans F.Cu..B.Cu, any other pad its first copper layer.
+    n.cn = p.type == model::PadType::ThruHole ? all : model::layer_bit(std::countr_zero(p.copper));
+    n.footprint = p.footprint;
+    if (p.type == model::PadType::ThruHole) {
+      n.cond = conditional_layers(p.unconnected, p.copper, 0, nl - 1);
+      n.mode = p.unconnected;
+      if (p.drill_oval && p.drill_x != p.drill_y) {
+        const Point half = p.drill_x > p.drill_y ? Point{(p.drill_x - p.drill_y) / 2, 0} : Point{0, (p.drill_y - p.drill_x) / 2};
+        n.hole = Shape::segment(p.pos - geom::rotate(half, p.angle), p.pos + geom::rotate(half, p.angle), std::min(p.drill_x, p.drill_y) / 2);
+      } else {
+        n.hole = Shape::point(p.pos, p.drill_x / 2);
+      }
+    }
+    n.full = pad_shapes(p);
+    any |= n.cond != 0;
+    nodes.push_back(std::move(n));
+  }
+  if (!any) return f;
+  for (const auto& t : b.tracks) {
+    if (t.layer < 0) continue;
+    Node n;
+    n.net = t.net;
+    n.set = n.cn = model::layer_bit(t.layer);
+    n.full = {Shape::segment(t.a, t.b, t.width / 2)};
+    nodes.push_back(std::move(n));
+  }
+  for (const auto& t : b.arcs) {
+    if (t.layer < 0) continue;
+    Node n;
+    n.net = t.net;
+    n.set = n.cn = model::layer_bit(t.layer);
+    n.full = {Shape::polyline(geom::arc_points(t.a, t.mid, t.b, 100), t.width / 2)};
+    nodes.push_back(std::move(n));
+  }
+  geom::Box bounds;
+  for (auto& n : nodes) {
+    for (const auto& s : n.full) n.box.add(s.box);
+    if (n.cond) n.box.add(n.hole.box);
+    bounds.add(n.box);
+  }
+  index::UniformGrid grid(bounds, 1'000'000, nodes.size());
+  for (std::size_t i = 0; i < nodes.size(); ++i) grid.insert(static_cast<int>(i), nodes[i].box);
+  // The shapes of a node on a layer of its set, as CN_VISITOR collides them.
+  auto collide = [&](const Node& x, const Node& y, int l) {
+    const model::LayerMask bit = model::layer_bit(l);
+    const std::vector<Shape> xh{x.hole}, yh{y.hole};
+    const auto& xs = (x.cond & bit) ? xh : x.full;
+    const auto& ys = (y.cond & bit) ? yh : y.full;
+    for (const auto& s : xs)
+      for (const auto& u : ys)
+        if (geom::closer_than(s, u, 0)) return true;
+    return false;
+  };
+  for (auto& x : nodes) {
+    if (!x.cond) continue;
+    model::LayerMask flashed = x.set & ~x.cond;
+    if (x.mode != model::UnconnectedLayers::StartEndOnly) {
+      flashed |= (x.via >= 0 ? b.vias[static_cast<std::size_t>(x.via)].zone_layers : b.pads[static_cast<std::size_t>(x.pad)].zone_layers) & x.cond;
+      // IsConnectedOnLayer: a layer keeps its copper when an item touching this one, of its net, spans the layer.
+      grid.query(x.box, [&](int j) {
+        const Node& y = nodes[static_cast<std::size_t>(j)];
+        if (&y == &x || y.net != x.net || !(y.cn & x.cond & ~flashed)) return;
+        if (x.pad >= 0 && y.pad >= 0 && (y.footprint == x.footprint || (removes_layers(x.mode) && removes_layers(y.mode)))) return;
+        const model::LayerMask common = x.set & y.set;
+        for (int l = 0; l < nl; ++l)
+          if ((common & model::layer_bit(l)) && collide(x, y, l)) {
+            flashed |= y.cn & x.cond;
+            return;
+          }
+      });
+    }
+    (x.via >= 0 ? f.vias[static_cast<std::size_t>(x.via)] : f.pads[static_cast<std::size_t>(x.pad)]) = flashed;
+  }
+  return f;
+}
+
+namespace {
+
+void split_bare_layers(const model::Board& b, CopperModel& m) {
+  const bool any = std::any_of(b.vias.begin(), b.vias.end(), [](const model::Via& v) { return v.unconnected != model::UnconnectedLayers::KeepAll; }) ||
+                   std::any_of(b.pads.begin(), b.pads.end(), [](const model::Pad& p) {
+                     return p.type == model::PadType::ThruHole && p.unconnected != model::UnconnectedLayers::KeepAll;
+                   });
+  if (!any) return;
+  const Flashing f = flash_layers(b);
+  std::vector<int> hole_of(m.items.size(), -1);
+  for (std::size_t h = 0; h < m.holes.size(); ++h)
+    if (m.holes[h].item >= 0) hole_of[static_cast<std::size_t>(m.holes[h].item)] = static_cast<int>(h);
+  const std::size_t n = m.items.size();
+  for (std::size_t i = 0; i < n; ++i) {
+    auto& it = m.items[i];
+    model::LayerMask flashed = it.layers;
+    if (it.kind == ItemKind::Via) flashed = f.vias[static_cast<std::size_t>(it.index)];
+    else if (it.kind == ItemKind::Pad) flashed = f.pads[static_cast<std::size_t>(it.index)];
+    else continue;
+    const model::LayerMask bare = it.layers & ~flashed;
+    if (!bare || hole_of[i] < 0) continue;
+    CopperItem h = it;
+    h.layers = bare;
+    h.shapes = {m.holes[static_cast<std::size_t>(hole_of[i])].shape};
+    h.span = it.layers;
+    h.bare_of = static_cast<int>(i);
+    finish(h);
+    it.span = it.layers;
+    it.layers = flashed;
+    it.bare_part = static_cast<int>(m.items.size());
+    m.items.push_back(std::move(h));
+  }
+}
+
+}  // namespace
 
 std::vector<std::vector<model::Point>> edge_loops(const std::vector<geom::Shape>& edges, Coord tol, bool* all_closed) {
   auto near = [tol](Point a, Point c) { return std::llabs(a.x - c.x) < tol && std::llabs(a.y - c.y) < tol; };

@@ -195,3 +195,4 @@
 {"ts": "2026-10-28T02:10:06+00:00", "kind": "milestone", "text": "M21 B2 built: time-domain matching as KiCad 10.0.6 measures it (D147); ddr8, interf_u, RoyalBlue KiCad-clean in delay; B1 rejudged at schema 5"}
 {"ts": "2026-10-28T02:36:46+00:00", "kind": "decision", "text": "D148: the router avoids KiCad's diff-pair coupling-gap errors; RoyalBlue profiles 104/147 with 0 gap errors (was 5), other B1/B2 fixtures identical; ctest 416/416"}
 {"ts": "2026-10-28T03:25:41+00:00", "kind": "decision", "text": "D149: pairs recognised as KiCad's MatchDpSuffix does (DQS_P0/DQS_N0, inDiffPair base); rule parity 231/231; ctest 417/417"}
+{"ts": "2026-10-28T04:39:30+00:00", "kind": "decision", "text": "D150: vias/pads that remove unconnected copper flashed and refilled as KiCad 10.0.6 does; tuning patterns and nearly parallel tracks in the pair coupling test; vme-wren pair verdicts identical to KiCad's (28 gap, 6 uncoupled), clearance 22,362 -> 425; rule parity 234/234"}

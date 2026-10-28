@@ -893,6 +893,10 @@
      "done": true
     },
     {
+     "text": "KiCad parity on pair boards: pair names as MatchDpSuffix (D149); vias/pads that remove unconnected copper flashed and refilled as KiCad does, tuning patterns and nearly parallel tracks in the coupling test (D150); vme-wren pair verdicts identical to KiCad's, 234 parity cases",
+     "done": true
+    },
+    {
      "text": "A3 Kookabus boards as a fixture set (files still missing)",
      "done": false
     }

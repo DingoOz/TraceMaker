@@ -43,6 +43,10 @@ enum class PadShape : std::uint8_t { Circle, Rect, Oval, Trapezoid, RoundRect, C
 
 // How a pad joins a zone of its net (KiCad's ZONE_CONNECTION; the file stores these numbers).
 enum class ZoneConnect : std::int8_t { Inherited = -1, None = 0, Thermal = 1, Full = 2, ThtThermal = 3 };
+// A padstack's copper on layers nothing connects to (KiCad's UNCONNECTED_LAYER_MODE; doc 05 §60): kept on every layer, removed
+// from every layer, removed except on the drill's start and end layers, or only on the start and end layers. Vias and plated
+// through-hole pads; read from (remove_unused_layers), (keep_end_layers) and (start_end_only) in file order, as KiCad reads them.
+enum class UnconnectedLayers : std::uint8_t { KeepAll, RemoveAll, RemoveExceptStartEnd, StartEndOnly };
 
 struct Pad {
   int footprint = -1;
@@ -82,6 +86,8 @@ struct Pad {
   // recognise component roles (doc 15 §3.1).
   std::string pinfunction, pintype;
   NetId net = 0;
+  UnconnectedLayers unconnected = UnconnectedLayers::KeepAll;  // plated through-hole pads only
+  LayerMask zone_layers = 0;  // (zone_layer_connections): layers where a zone fill joins the pad, so it keeps its copper
   sexpr::NodeId node = sexpr::kNoNode;
 };
 
@@ -138,6 +144,7 @@ struct Track {
   NetId net = 0;
   bool locked = false;
   sexpr::NodeId node = sexpr::kNoNode;
+  bool tuning_pattern = false;  // a member of a (generated (type tuning_pattern)) group: KiCad's pair coupling leaves it out
 };
 
 struct ArcTrack {
@@ -147,6 +154,7 @@ struct ArcTrack {
   NetId net = 0;
   bool locked = false;
   sexpr::NodeId node = sexpr::kNoNode;
+  bool tuning_pattern = false;  // a member of a (generated (type tuning_pattern)) group: KiCad's pair coupling leaves it out
 };
 
 enum class ViaType : std::uint8_t { Through, Blind, Micro };
@@ -160,6 +168,8 @@ struct Via {
   bool locked = false;
   sexpr::NodeId node = sexpr::kNoNode;
   bool free = false;         // (free yes): a stitching via whose net KiCad's connectivity never changes
+  UnconnectedLayers unconnected = UnconnectedLayers::KeepAll;
+  LayerMask zone_layers = 0;  // (zone_layer_connections): layers where a zone fill joins the via, so it keeps its copper
 };
 
 struct Zone {

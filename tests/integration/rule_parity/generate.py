@@ -34,9 +34,9 @@ def generate(root: Path) -> dict:
                 (aa*(cx-bx)+bb*(ax-cx)+cc*(bx-ax))/denominator]
         ITEMS[label] = {'kind':'Arc','pos':center}
         return capture(f'(arc (start {start[0]} {start[1]}) (mid {mid[0]} {mid[1]}) (end {end[0]} {end[1]}) (width {width}) (layer "{layer}") (net 1) (uuid "{uid(label)}"))', [label])
-    def via(label, x, y, kind='', layers=('F.Cu','B.Cu'), net=1):
+    def via(label, x, y, kind='', layers=('F.Cu','B.Cu'), net=1, extra=''):
         ITEMS[label] = {'kind':'Via','pos':[x,y]}
-        return capture(f'(via {kind} (at {x} {y}) (size 0.8) (drill 0.4) (layers "{layers[0]}" "{layers[1]}") (net {net}) (uuid "{uid(label)}"))', [label])
+        return capture(f'(via {kind} (at {x} {y}) (size 0.8) (drill 0.4) (layers "{layers[0]}" "{layers[1]}") {extra} (net {net}) (uuid "{uid(label)}"))', [label])
     def footprint(ref,x,y,padtype='smd',size=(1,1),back=False,courtyard=False,angle=0,pad_at=(0,0),graphics=''):
         layer = 'B.Cu' if back else 'F.Cu'
         radians = math.radians(angle)
@@ -135,6 +135,31 @@ def generate(root: Path) -> dict:
          types=['diff_pair_gap_out_of_range'],note='L_P1/L_N1 are a pair whose base L_ matches L; D_P/D_N (base D_) does not.')
     case('diff_pair_suffix_base',suffixed,rule("A.inDiffPair('D_')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
          types=['diff_pair_gap_out_of_range'],note="The base itself matches: D_ for D_P/D_N; L_ is not D_.")
+    # Tracks of a tuning pattern (a generator group) are left out of the coupling test and of the uncoupled lengths (KiCad's
+    # isInTuningPattern). Both pairs are 0.4 mm apart; the L pair's tracks are members of a tuning pattern.
+    tuned=[track('dpt-D-P',5,10,15,10,width=0.2,net=3),track('dpt-D-N',5,10.6,15,10.6,width=0.2,net=4),
+           track('dpt-L-P',20,10,30,10,width=0.2,net=5),track('dpt-L-N',20,10.6,30,10.6,width=0.2,net=6),
+           f'(generated (uuid "{uid("tuning")}") (type tuning_pattern) (name "Tuning Pattern") (layer "F.Cu") (members "{uid("dpt-L-P")}" "{uid("dpt-L-N")}"))']
+    case('diff_pair_tuning_pattern',tuned,rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap')+
+         rule("A.inDiffPair('*')",constraint='(constraint diff_pair_uncoupled (max 5mm))',name='dp_unc'),
+         types=['diff_pair_gap_out_of_range','diff_pair_uncoupled_length_too_long'],note='Only the D pair, whose tracks are not in the tuning pattern, is judged.')
+    # Nearly parallel tracks are coupled when their lines cross beyond 32-bit coordinates (SEG::Intersect returns nothing there):
+    # 0.4 mm apart, N 10 nm off parallel over 10 mm (crossing about 400 m away), and N 0.1 mm off (crossing within the board).
+    skewed=[track('dpn-D-P',5,10,15,10,width=0.2,net=3),track('dpn-D-N',5,10.6,15,10.60001,width=0.2,net=4),
+            track('dpn-L-P',20,10,30,10,width=0.2,net=5),track('dpn-L-N',20,10.6,30,10.7,width=0.2,net=6)]
+    case('diff_pair_near_parallel',skewed,rule("A.inDiffPair('*')",constraint='(constraint diff_pair_gap (max 0.25mm))',name='dp_gap'),
+         types=['diff_pair_gap_out_of_range'],note='Only the D pair, 10 nm off parallel, is coupled.')
+    # Vias that remove unconnected copper (D150): a Y track 0.7 mm from an X via's centre is inside the ring's clearance but clear of
+    # the hole. KiCad keeps the ring on F.Cu (keep_end_layers), on In1.Cu where an X track reaches the hole, and on In2.Cu where the
+    # file says a zone joins it; elsewhere only the hole is there. keep_end_layers no removes the end layers too.
+    keep='(remove_unused_layers yes) (keep_end_layers yes)'
+    unused=[via('vu-a',10,30,extra=keep),track('vu-a-inner',8,30.7,12,30.7,layer='In1.Cu',net=2),track('vu-a-front',8,29.3,12,29.3,net=2),
+            via('vu-b',20,30,extra=keep),track('vu-b-feed',20,30,23,30,layer='In1.Cu'),track('vu-b-inner',18,30.7,22,30.7,layer='In1.Cu',net=2),
+            via('vu-c',30,30,extra=keep+' (zone_layer_connections "In2.Cu")'),track('vu-c-inner',28,30.7,32,30.7,layer='In2.Cu',net=2),
+            track('vu-c-other',28,29.3,32,29.3,layer='In1.Cu',net=2),
+            via('vu-d',40,30,extra='(remove_unused_layers yes) (keep_end_layers no)'),track('vu-d-front',38,30.7,42,30.7,net=2)]
+    case('via_unused_layers',unused,'',types=['clearance','shorting_items','hole_clearance'],
+         note='Only vu-a-front, vu-b-inner and vu-c-inner are near copper: the other tracks pass rings KiCad removed.')
     case('static_layer_track',static,rule(layer='"F.Cu"'))
     case('static_inner_track',static,rule(layer='inner'))
     case('static_inner_via',static,rule(word='via',layer='inner'))

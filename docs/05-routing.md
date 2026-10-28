@@ -2626,3 +2626,60 @@ Tests:
   `diff_pair_gap_ignored` and `diff_pair_uncoupled` (cross-stretch couplings, a shielded pair, and the doubled key). Two more with
   D149: `diff_pair_suffix` and `diff_pair_suffix_base`. All 231 cases match; the build before D149 fails `diff_pair_suffix`.
 - `delay_tuning` (integration): ddr8 routed with the rules is clean by the engine's DRC and by KiCad; routed without them, it misses.
+
+## 60. Vias and pads that remove unconnected copper (2026-10-28, D150)
+
+KiCad lets a via or a through-hole pad drop its copper on the layers where nothing connects to it (the padstack's "remove unconnected
+layers"). The engine read such a via as copper on every layer of its span. On boards that use the option it reported clearance and
+shorting errors against copper KiCad does not have, filled zones around rings that are not there, and on vme-wren judged diff pairs
+as hidden from each other by rings KiCad had removed.
+
+**Reading** (`io/kicad/board_reader.cpp`). The mode is set token by token in file order, as KiCad's parser sets it: a via's
+`(remove_unused_layers)` switches removal on, its `(keep_end_layers)` keeps the outer layers, its `(start_end_only)` keeps only them;
+a pad's `(remove_unused_layers)` and `(keep_end_layers)` set the mode either way. `(zone_layer_connections ...)` lists the layers a
+zone joins it on.
+
+**Flashing** (`drc/copper.cpp`, `drc::flash_layers`). A layer of a via or pad that may lose its copper keeps it when the file says a
+zone joins it there, or when a same-net track, arc, via or pad reaches it on that layer. As in KiCad's connectivity (`CN_VISITOR`),
+the item is looked at as its hole on such layers: a track that touches the ring but not the hole does not keep the ring. A pad
+reaches F.Cu to B.Cu if it is plated through and only its first layer otherwise; the items of the pad's own footprint, and two pads
+whose layers are both conditional, do not count.
+
+**Copper model.** A via or pad with bare layers is two items: its copper on the flashed layers, and a hole-shaped *bare part* on the
+others, which KiCad's clearance test checks at copper clearance. The bare part has no connectivity of its own (its root and net are
+the main item's) and is left out of the checks that look at copper (rings, widths, edges, keepouts, lengths, pairs, dangling); a
+rule's `existsOnLayer` and area tests use the whole span.
+
+**Zones** (`drc/refill.cpp`). Before filling, KiCad's filler works out again which layers a zone joins each via and pad on (the
+highest-priority zone of the net that contains the hole there, with its accuracy and keepout quirks); the refill does the same on a
+copy of the board. A same-net via that no zone joins on a layer is knocked out of the fill there like another net's.
+
+**Router** (`route/obstacles.cpp`). A new track or via of the net does not flash a bare layer it did not plan to reach, so the router
+keeps its own net clear of bare parts (and new vias clear of same-net rings that may be removed). This is stricter than KiCad, which
+would flash the layer and connect them.
+
+**Nearly parallel pairs.** KiCad couples two tracks whose lines do not meet (`!SEG::Intersect(..., lines)`). In line mode SEG
+reports no crossing when the crossing point does not fit in 32 bits, so tracks a few nanometres off parallel are coupled (vme-wren's
+DQS0 has two 45° stubs 10 nm off). `drc::couple` computes the crossing as SEG does and couples them too; the router uses the same
+function.
+
+**Tuning patterns.** KiCad's diff-pair coupling test (`isInTuningPattern`) leaves out tracks and arcs that are members of a tuning
+pattern (a `(generated (type tuning_pattern) (members ...))` group): they are neither coupled nor counted in the uncoupled length. The
+reader marks them, and the DRC and the router's coupling test skip them. vme-wren's DDR4 pairs have 89 tuning patterns.
+
+**Results.** Four fixture boards use the option: vme-wren and jetson (KiCad demos) and two srj24 samples. None is in a bench tier.
+
+On vme-wren (`bench/records/d150-padstacks`) the engine's DRC went from 22,362 clearance and 21 shorting reports, where KiCad
+reports none, to 425 and 20. Those left have other causes: pad-to-track pairs judged at 0.125 mm where KiCad resolves 0.1 mm, and
+shorts against copper graphics. With flashing, tuning patterns and nearly parallel pairs, its 28 coupling-gap errors and 6
+uncoupled-length errors are KiCad's, values included. jetson still matches KiCad on the routing-relevant types. The eight B1/B2
+boards with pair rules route byte for byte as before.
+
+Tests:
+
+- `[flash]`, two cases: modes read in file order and the layers flashed for a via with an inner track, a zone connection, no end
+  layers, start-end only and none; the refill joining a GND via to its plane and filling up to a bare S hole, with no DRC errors.
+- `[coupling]`, two cases: tracks in a tuning pattern are not coupled, members of a plain group are; DQS0's stubs 10 nm off
+  parallel are coupled at KiCad's 1.8573 mm.
+- rule_parity: `via_unused_layers` (four vias, each passed by tracks inside the ring's clearance and outside the hole's) and
+  `diff_pair_tuning_pattern` and `diff_pair_near_parallel`. All 234 cases match; the build before D150 fails these three.

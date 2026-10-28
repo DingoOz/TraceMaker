@@ -8,6 +8,7 @@
 #include <charconv>
 #include <cmath>
 #include <numbers>
+#include <set>
 #include <stdexcept>
 
 namespace tmk::io {
@@ -63,6 +64,7 @@ class Reader {
       else if (h.starts_with("gr_") && h != "gr_text" && h != "gr_text_box") read_graphic(c, -1, Point{}, 0, false);
       else if (h == "gr_text") read_text(c, -1, Point{}, 0);
     }
+    mark_tuning_patterns(root);
     return std::move(b_);
   }
 
@@ -389,6 +391,7 @@ class Reader {
     // (die_delay) is in picoseconds, as a board unit before format 20250926 and as a time after: either way x 1e6 to attoseconds.
     if (NodeId c = d_.find(p, "die_delay"); c != kNoNode) pad.die_delay = d_.nm_at(c, 1).value_or(0);
     if (NodeId zc = d_.find(p, "zone_connect"); zc != kNoNode) pad.zone_connect = zone_connect(zc);
+    if (pad.type == model::PadType::ThruHole) read_unconnected(p, true, pad.unconnected, pad.zone_layers);
     if (NodeId g = d_.find(p, "thermal_gap"); g != kNoNode) pad.thermal_gap = d_.nm_at(g, 1).value_or(-1);
     for (const char* key : {"thermal_bridge_width", "thermal_width"})  // KiCad 7+, KiCad 6
       if (NodeId w = d_.find(p, key); w != kNoNode) pad.thermal_bridge_width = d_.nm_at(w, 1).value_or(-1);
@@ -599,6 +602,54 @@ class Reader {
     b_.arcs.push_back(t);
   }
 
+  // Tracks and arcs that are members of a tuning pattern, which the diff-pair coupling test leaves out (KiCad 10.0.6
+  // drc_test_provider_diff_pair_coupling.cpp, isInTuningPattern: the item's parent group is a tuning_pattern generator).
+  void mark_tuning_patterns(NodeId root) {
+    std::set<std::string> members;
+    for (NodeId c : d_.children(root)) {
+      if (!d_.is_list(c) || d_.head(c) != "generated") continue;
+      const NodeId type = d_.find(c, "type");
+      if (type == kNoNode || d_.str_at(type, 1) != "tuning_pattern") continue;
+      if (const NodeId m = d_.find(c, "members"); m != kNoNode)
+        for (std::size_t i = 1; i < d_.children(m).size(); ++i) members.insert(d_.str_at(m, i));
+    }
+    if (members.empty()) return;
+    auto in = [&](NodeId n) {
+      const NodeId u = d_.find(n, "uuid");
+      return u != kNoNode && members.contains(d_.str_at(u, 1));
+    };
+    for (auto& t : b_.tracks) t.tuning_pattern = in(t.node);
+    for (auto& t : b_.arcs) t.tuning_pattern = in(t.node);
+  }
+
+  // The unconnected-layer mode of a via or pad, token by token in file order as PCB_IO_KICAD_SEXPR_PARSER sets it: a via's
+  // (remove_unused_layers) and (keep_end_layers) only switch removal on, a pad's set it either way; (start_end_only) is a via's.
+  void read_unconnected(NodeId n, bool pad, model::UnconnectedLayers& mode, model::LayerMask& zone_layers) const {
+    using U = model::UnconnectedLayers;
+    auto value = [&](NodeId c) {
+      const std::string v = d_.str_at(c, 1);
+      return v.empty() || v == "yes" || v == "true";
+    };
+    for (NodeId c : d_.children(n)) {
+      const bool list = d_.is_list(c);
+      const std::string_view h = list ? d_.head(c) : d_.raw(c);
+      const bool on = !list || value(c);
+      if (h == "remove_unused_layers") {
+        if (pad) mode = on ? U::RemoveAll : U::KeepAll;
+        else if (on) mode = U::RemoveAll;
+      } else if (h == "keep_end_layers") {
+        if (pad) mode = on ? U::RemoveExceptStartEnd : U::RemoveAll;
+        else if (on) mode = U::RemoveExceptStartEnd;
+      } else if (h == "start_end_only" && !pad) {
+        if (on) mode = U::StartEndOnly;
+      } else if (h == "zone_layer_connections" && list) {
+        zone_layers = 0;
+        for (std::size_t i = 1; i < d_.children(c).size(); ++i)
+          if (const int l = b_.copper_index(d_.str_at(c, i)); l >= 0) zone_layers |= model::layer_bit(l);
+      }
+    }
+  }
+
   void read_via(NodeId v) {
     model::Via via;
     via.node = v;
@@ -624,6 +675,7 @@ class Reader {
     via.net = read_net(v);
     via.locked = yes(v, "locked");
     via.free = yes(v, "free");
+    read_unconnected(v, false, via.unconnected, via.zone_layers);
     b_.vias.push_back(via);
   }
 

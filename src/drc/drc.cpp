@@ -335,6 +335,7 @@ class Checker {
 
   void check_items() {
     for (const auto& it : cm_.items) {
+      if (it.bare_of >= 0) continue;  // a via's bare layers: the via is checked once
       if (it.kind == ItemKind::Track || it.kind == ItemKind::Arc) {
         const int layer = std::countr_zero(it.layers);
         const auto [mn, mx] = re_.track_width(it, layer);
@@ -353,7 +354,7 @@ class Checker {
 
   void check_pad_rings() {
     for (const auto& it : cm_.items) {
-      if (it.kind != ItemKind::Pad) continue;
+      if (it.kind != ItemKind::Pad || it.bare_of >= 0) continue;
       const auto& p = b_.pads[static_cast<std::size_t>(it.index)];
       if (p.type != model::PadType::ThruHole || p.drill_x <= 0) continue;
       const Coord ring = std::min((p.size_x - p.drill_x) / 2, (p.size_y - (p.drill_oval ? p.drill_y : p.drill_x)) / 2);
@@ -424,12 +425,12 @@ class Checker {
       // Hole to copper of other nets.
       grid_->query(a.shape.box.inflated(reach_), [&](int j) {
         const CopperItem& c = cm_.items[static_cast<std::size_t>(j)];
-        if (j == a.item) return;
+        if (j == a.item || (a.item >= 0 && c.bare_of == a.item)) return;
         if (c.net == a.net && a.net != 0) return;
         if (c.kind == ItemKind::Zone) {
           // testItemAgainstZone: the hole of a via or pad against another net's fill on each of the owner's
           // layers, only with a positive hole clearance (a fill poured before a via was added can cover it).
-          if (!ao || !(ao->layers & c.layers) || (c.net != 0 && c.net == a.net)) return;
+          if (!ao || !((ao->span ? ao->span : ao->layers) & c.layers) || (c.net != 0 && c.net == a.net)) return;  // every layer of the padstack
           const int zl = std::countr_zero(c.layers);
           const Coord zreq = re_.hole_clearance(ao, c, zl);
           const geom::PolygonIndex* zi = fill_index(c);
@@ -474,6 +475,8 @@ class Checker {
     std::vector<int> hole_of(cm_.items.size(), -1);
     for (std::size_t h = 0; h < cm_.holes.size(); ++h)
       if (cm_.holes[h].item >= 0) hole_of[static_cast<std::size_t>(cm_.holes[h].item)] = static_cast<int>(h);
+    for (std::size_t i = 0; i < cm_.items.size(); ++i)  // a via's or pad's bare layers have its hole too
+      if (cm_.items[i].bare_of >= 0) hole_of[i] = hole_of[static_cast<std::size_t>(cm_.items[i].bare_of)];
     auto hits = [&](const Hole& h, const CopperItem& c, Coord req) {
       for (const auto& s : c.shapes)
         if (geom::closer_than(cshape(h), s, req > 0 ? req - o_.epsilon : 0)) return true;
@@ -519,6 +522,7 @@ class Checker {
     for (const auto& e : cm_.edges) edges.push_back(&e);
     for (const auto& e : cm_.margins) edges.push_back(&e);
     for (const auto& it : cm_.items) {
+      if (it.bare_of >= 0) continue;  // the via's or pad's copper item covers it
       const int layer = std::countr_zero(it.layers);
       const Coord req = re_.edge_clearance(it, layer);
       if (req < 0) continue;  // KiCad tests at zero clearance too: copper may not cross the edge
@@ -543,14 +547,14 @@ class Checker {
       if (!z.rule_area || z.outline.empty() || z.outline.front().size() < 3) continue;
       const geom::Shape area = geom::Shape::polygon(z.outline.front(), 0);
       for (const auto& it : cm_.items) {
-        if (!(it.layers & z.copper)) continue;
+        if (it.bare_of >= 0 || !((it.span ? it.span : it.layers) & z.copper)) continue;
         const bool forbidden = ((it.kind == ItemKind::Track || it.kind == ItemKind::Arc) && z.keepout_tracks) ||
                                (it.kind == ItemKind::Via && z.keepout_vias) || (it.kind == ItemKind::Pad && z.keepout_pads);
         if (!forbidden || !area.box.intersects(it.box)) continue;
         bool hit = false;
         for (const auto& s : it.shapes)
           if (geom::closer_than(s, area, 1)) { hit = true; break; }
-        if (hit) add("items_not_allowed", &it, nullptr, -1, -1, std::countr_zero(it.layers & z.copper));
+        if (hit) add("items_not_allowed", &it, nullptr, -1, -1, std::countr_zero((it.span ? it.span : it.layers) & z.copper));
       }
     }
   }
@@ -563,8 +567,8 @@ class Checker {
       return;
     std::set<int> zones_done;
     for (const auto& it : cm_.items) {
-      if (it.kind == ItemKind::Zone && zones_done.count(it.index)) continue;
-      for (model::LayerMask m = it.layers; m; m &= m - 1) {
+      if ((it.kind == ItemKind::Zone && zones_done.count(it.index)) || it.bare_of >= 0) continue;
+      for (model::LayerMask m = it.span ? it.span : it.layers; m; m &= m - 1) {
         const int l = std::countr_zero(m);
         if (!re_.disallowed(it, l)) continue;
         add("items_not_allowed", &it, nullptr, -1, -1, l);
@@ -591,8 +595,8 @@ class Checker {
     };
     std::map<int, std::map<model::NetId, Entry>> groups;  // rule position → net → items
     for (const auto& it : cm_.items) {
-      if (it.kind == ItemKind::Zone || it.kind == ItemKind::Graphic || it.layers == 0) continue;
-      const int layer = std::countr_zero(it.layers);
+      if (it.kind == ItemKind::Zone || it.kind == ItemKind::Graphic || it.layers == 0 || it.bare_of >= 0) continue;
+      const int layer = std::countr_zero(it.span ? it.span : it.layers);
       const int rl = re_.last_rule_with(it, layer, "length"), rs = re_.last_rule_with(it, layer, "skew");
       // A rule with both constraints takes the item once (KiCad keeps a set of items per rule).
       for (const int ri : {rl, rs == rl ? -1 : rs}) {
@@ -682,12 +686,19 @@ class Checker {
     }
   }
 
+  bool in_tuning_pattern(const CopperItem& it) const {
+    const auto i = static_cast<std::size_t>(it.index);
+    if (it.kind == ItemKind::Track) return b_.tracks[i].tuning_pattern;
+    return it.kind == ItemKind::Arc && b_.arcs[i].tuning_pattern;
+  }
+
   // KiCad 10.0.6's diff-pair coupling test (drc_test_provider_diff_pair_coupling.cpp; doc 05 §59). Each track, arc and via of
   // a pair net joins a group per constraint it gets (diff_pair_gap, then diff_pair_uncoupled, from the last matching rule at its
   // layer), keyed by the pair and the rule names with KiCad's comparator, whose quirks decide which items share a group. In a
   // group every P track is tried against every N track (drc/coupling.hpp); a coupling counts when nothing on the layer crosses the
   // line between the nearest points, apart from the two tracks, items touching the coupled ends, and pads either track leaves.
-  // Arc pairs are not coupled here (the router writes no arcs).
+  // Arc pairs are not coupled here (the router writes no arcs). Tracks and arcs of a tuning pattern are left out of the couplings
+  // and the lengths.
   void check_diff_pairs() {
     const bool any = std::any_of(r_.custom.begin(), r_.custom.end(), [](const model::CustomRule& c) {
       return std::any_of(c.constraints.begin(), c.constraints.end(),
@@ -721,13 +732,13 @@ class Checker {
     std::map<Key, Group> groups;
     for (std::size_t i = 0; i < cm_.items.size(); ++i) {
       const CopperItem& it = cm_.items[i];
-      if ((it.kind != ItemKind::Track && it.kind != ItemKind::Arc && it.kind != ItemKind::Via) || it.layers == 0) continue;
+      if ((it.kind != ItemKind::Track && it.kind != ItemKind::Arc && it.kind != ItemKind::Via) || it.layers == 0 || it.bare_of >= 0) continue;
       const model::NetId q = re_.dp_partner(it.net);
       if (q == 0) continue;
       Key key;
       key.p = positive(it.net) ? it.net : q;
       key.n = key.p == it.net ? q : it.net;
-      const int layer = std::countr_zero(it.layers);
+      const int layer = std::countr_zero(it.span ? it.span : it.layers);
       Group cur;  // the key as KiCad fills it in, constraint by constraint
       for (const char* type : {"diff_pair_gap", "diff_pair_uncoupled"}) {
         const int ri = re_.last_rule_with(it, layer, type);
@@ -764,11 +775,11 @@ class Checker {
       std::vector<Coupled> coupled;
       for (const int pi : g.p_items) {
         const CopperItem& ip = cm_.items[static_cast<std::size_t>(pi)];
-        if (ip.kind != ItemKind::Track) continue;
+        if (ip.kind != ItemKind::Track || in_tuning_pattern(ip)) continue;
         const model::Track& sp = b_.tracks[static_cast<std::size_t>(ip.index)];
         for (const int ni : g.n_items) {
           const CopperItem& in = cm_.items[static_cast<std::size_t>(ni)];
-          if (in.kind != ItemKind::Track || !(in.layers & ip.layers)) continue;
+          if (in.kind != ItemKind::Track || !(in.layers & ip.layers) || in_tuning_pattern(in)) continue;
           const model::Track& sn = b_.tracks[static_cast<std::size_t>(in.index)];
           const auto c = couple(sp.a, sp.b, sp.width, sn.a, sn.b, sn.width);
           if (!c) continue;
@@ -801,9 +812,9 @@ class Checker {
       std::vector<int> seen;
       auto add_len = [&](const std::vector<int>& items, Coord& total) {
         for (const int j : items) {
-          if (std::find(seen.begin(), seen.end(), j) != seen.end()) continue;
-          seen.push_back(j);
           const CopperItem& o = cm_.items[static_cast<std::size_t>(j)];
+          if (in_tuning_pattern(o) || std::find(seen.begin(), seen.end(), j) != seen.end()) continue;
+          seen.push_back(j);
           double l = 0;
           if (o.kind == ItemKind::Track) {
             const auto& t = b_.tracks[static_cast<std::size_t>(o.index)];
@@ -869,6 +880,7 @@ class Checker {
       grid_->query(hole.box.inflated(re_.max_physical_hole_clearance() + 1), [&](int jj) {
         if (jj == h.item) return;
         const CopperItem& c = cm_.items[static_cast<std::size_t>(jj)];
+        if (c.bare_of == h.item) return;  // the owner's own bare layers
         Coord req = -1;
         int at = -1;
         for (model::LayerMask m = c.layers; m; m &= m - 1)
@@ -919,7 +931,7 @@ class Checker {
       const CopperItem& it = cm_.items[i];
       if ((it.kind == ItemKind::Track || it.kind == ItemKind::Arc) && track_dangling(i))
         add("track_dangling", &it, nullptr, -1, -1, std::countr_zero(it.layers), "warning");
-      else if (it.kind == ItemKind::Via && via_dangling(i))
+      else if (it.kind == ItemKind::Via && it.bare_of < 0 && via_dangling(i))
         add("via_dangling", &it, nullptr, -1, -1, -1, "warning");
     }
   }
@@ -989,7 +1001,8 @@ class Checker {
     const CopperItem& v = cm_.items[i];
     int first = -1;
     auto other_layer = [&](int j) {
-      const int l = std::countr_zero(cm_.items[static_cast<std::size_t>(j)].layers);
+      const CopperItem& c = cm_.items[static_cast<std::size_t>(j)];
+      const int l = std::countr_zero(c.span ? c.span : c.layers);
       if (first < 0) first = l;
       return l != first;
     };

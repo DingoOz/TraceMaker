@@ -165,6 +165,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D147](decisions/D147.md) | Time-domain matching measured as KiCad 10.0.6 measures it, and KiCad's net-class and pair-coupling semantics | accepted |
 | [D148](decisions/D148.md) | The router avoids KiCad's diff-pair coupling-gap errors | accepted |
 | [D149](decisions/D149.md) | Differential pairs named as KiCad's MatchDpSuffix names them | accepted |
+| [D150](decisions/D150.md) | Vias and pads that remove unconnected copper, and tuning patterns left out of pair coupling | accepted |
 <!-- END decision index -->
 
 ## Risks

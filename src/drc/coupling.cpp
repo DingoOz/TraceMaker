@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <limits>
 
 namespace tmk::drc {
 
@@ -48,8 +50,20 @@ std::optional<Coupling> couple(Point p0, Point p1, Coord wp, Point n0, Point n1,
   const Point dp = p1 - p0, dn = n1 - n0;
   // Segments of about 1 nm are parallel to everything; KiCad skips them.
   if (sq(dp) <= 2 || sq(dn) <= 2) return std::nullopt;
-  // `!ssp.Intersect(ssn, false, true)`: as lines, they must not meet, so they are parallel and not collinear.
-  if (cross(dn, dp) != 0 || cross(dp, n0 - p0) == 0) return std::nullopt;
+  // `!ssp.Intersect(ssn, false, true)`: as lines, they must not meet. Parallel lines meet only if collinear. Other lines meet unless
+  // the crossing point, as SEG::intersects computes it, does not fit in 32 bits: nearly parallel tracks (vme-wren's DQS0, 10 nm off
+  // over 0.2 mm) are coupled.
+  const std::int64_t det = cross(dn, dp), q = cross(dp, n0 - p0);
+  if (det == 0) {
+    if (q == 0) return std::nullopt;
+  } else {
+    auto at = [&](std::int64_t o, std::int64_t d) {  // VECTOR2L addition, wrapping as the hardware does
+      return static_cast<std::int64_t>(static_cast<std::uint64_t>(o) + static_cast<std::uint64_t>(rescale(q, d, det)));
+    };
+    const std::int64_t x = at(n0.x, dn.x), y = at(n0.y, dn.y);
+    constexpr std::int64_t lo = std::numeric_limits<std::int32_t>::min(), hi = std::numeric_limits<std::int32_t>::max();
+    if (x >= lo && x <= hi && y >= lo && y <= hi) return std::nullopt;
+  }
   // commonParallelProjection: the overlap of the two along P's direction, in TCoef units (|dp|² per segment length).
   const Point proj_a = line_project(p0, p1, n0), proj_b = line_project(p0, p1, n1);
   std::int64_t ta = 0, tb = dot(dp, dp), qa = dot(dp, proj_a - p0), qb = dot(dp, proj_b - p0);

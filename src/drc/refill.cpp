@@ -130,7 +130,7 @@ class Filler {
     re_.use_zone_clearance_overrides();
     for (std::size_t i = 0; i < cm_.items.size(); ++i) {
       const auto& it = cm_.items[i];
-      if (it.kind == ItemKind::Pad) pad_item_.emplace(it.index, static_cast<int>(i));
+      if (it.kind == ItemKind::Pad && it.bare_of < 0) pad_item_.emplace(it.index, static_cast<int>(i));
     }
     for (std::size_t i = 0; i < cm_.holes.size(); ++i)
       if (cm_.holes[i].pad >= 0) pad_hole_.emplace(cm_.holes[i].pad, static_cast<int>(i));
@@ -274,7 +274,8 @@ class Filler {
         append(relief, shapes_rings(shapes, thermal_gap(pad, zone)));
       } else if (c == ZoneConnect::None) {
         const Coord gap = std::max<Coord>(zone.clearance, 0);
-        if ((pad.copper & lb) && pi != pad_item_.end()) append(relief, shapes_rings(cm_.items[static_cast<std::size_t>(pi->second)].shapes, gap));
+        if (pi != pad_item_.end() && (cm_.items[static_cast<std::size_t>(pi->second)].layers & lb))  // FlashLayer
+          append(relief, shapes_rings(cm_.items[static_cast<std::size_t>(pi->second)].shapes, gap));
         else if (hi != pad_hole_.end()) append(relief, geom::shape_rings(cm_.holes[static_cast<std::size_t>(hi->second)].shape, gap, kMaxError));
       }
     }
@@ -287,7 +288,7 @@ class Filler {
       const auto pi = pad_item_.find(i);
       const auto hi = pad_hole_.find(i);
       const CopperItem* item = pi != pad_item_.end() ? &cm_.items[static_cast<std::size_t>(pi->second)] : nullptr;
-      const bool flash = (pad.copper & lb) && item;
+      const bool flash = item && (item->layers & lb);  // PAD::FlashLayer: copper on the layer (CopperItem::bare_part)
       const bool has_hole = hi != pad_hole_.end();
       Coord gap = -1;
       if (item && (flash || (has_hole && pad.type == model::PadType::ThruHole))) gap = re_.clearance(zit, *item, layer);
@@ -310,7 +311,13 @@ class Filler {
       const auto& it = cm_.items[i];
       if (it.kind != ItemKind::Track && it.kind != ItemKind::Arc && it.kind != ItemKind::Via && it.kind != ItemKind::Graphic) continue;
       if (!(it.layers & lb) || !it.box.intersects(zbox)) continue;
-      const bool same_net = zone_net && it.net == zone.net;
+      // A via that removes unconnected copper is joined to the zone only where the filler flashed it (zone_layer_overrides):
+      // elsewhere it is knocked out like another net's, as its hole (the bare part's shape) where it has no copper.
+      bool same_net = zone_net && it.net == zone.net;
+      if (same_net && it.kind == ItemKind::Via) {
+        const auto& via = b_.vias[static_cast<std::size_t>(it.index)];
+        if ((conditional_layers(via) & lb) && !(via.zone_layers & lb)) same_net = false;
+      }
       Coord gap = same_net ? -1 : re_.clearance(zit, it, layer);
       if (it.kind != ItemKind::Via) {
         if (gap >= 0) append(holes, shapes_rings(it.shapes, gap + kExtraMargin));
@@ -476,7 +483,95 @@ class Filler {
 
 }  // namespace
 
-RefillResult refill_zones(const model::Board& b, const model::DesignRules& r) { return Filler(b, r).run(); }
+namespace {
+
+// SHAPE_POLY_SET::Contains for a zone outline (outline plus holes): inside the outline, or within `accuracy` of its edge when
+// accuracy > 1, and not inside a hole.
+bool outline_contains(const model::Zone& z, Point p, Coord accuracy) {
+  const auto& outer = z.outline.front();
+  bool in = geom::point_in_polygon(p, outer);
+  if (!in && accuracy > 1)
+    for (std::size_t i = 0; i < outer.size() && !in; ++i) in = geom::point_seg_closer(p, outer[i], outer[(i + 1) % outer.size()], accuracy + 1);
+  if (!in) return false;
+  for (std::size_t h = 1; h < z.outline.size(); ++h)
+    if (z.outline[h].size() >= 3 && geom::point_in_polygon(p, z.outline[h])) return false;
+  return true;
+}
+
+geom::Box outline_box(const model::Zone& z) {
+  geom::Box bx;
+  for (const auto& ring : z.outline)
+    for (const auto& q : ring) bx.add(q);
+  return bx;
+}
+
+// ZONE_FILLER::Fill decides, before filling, on which of their conditional layers vias and pads that remove unconnected copper
+// join a zone (their zone layer overrides): where the highest-priority zone at the via's hole or the pad's centre has their net,
+// and no pour keepout covers them. The board's (zone_layer_connections) are replaced by the result.
+void zone_layer_overrides(model::Board& b) {
+  const int nl = b.copper_count();
+  auto board_zone = [](const model::Zone& z) { return z.footprint < 0 && !z.outline.empty() && z.outline.front().size() > 2; };
+  auto in_keepout = [&](const geom::Box& bx, int l, Point p) {
+    for (const auto& z : b.zones)
+      if (z.rule_area && z.keepout_pour && board_zone(z) && (z.copper & model::layer_bit(l)) && outline_box(z).intersects(bx) &&
+          outline_contains(z, p, 0))
+        return true;
+    return false;
+  };
+  // findHighestPriorityZone, with its tie rule: a zone replaces the one found when its priority is higher or it has the net.
+  auto highest = [&](const geom::Box& bx, int l, model::NetId net, Point p, Coord accuracy) -> const model::Zone* {
+    int best_priority = 0;
+    const model::Zone* best = nullptr;
+    for (const auto& z : b.zones) {
+      if (z.rule_area || !board_zone(z) || z.priority < best_priority || !(z.copper & model::layer_bit(l))) continue;
+      if (!outline_box(z).intersects(bx) || !outline_contains(z, p, accuracy)) continue;
+      if (z.priority > best_priority || z.net == net) {
+        best_priority = z.priority;
+        best = &z;
+      }
+    }
+    return best;
+  };
+  for (auto& v : b.vias) {
+    if (v.unconnected == model::UnconnectedLayers::KeepAll) continue;
+    v.zone_layers = 0;
+    const model::LayerMask cond = conditional_layers(v);
+    geom::Box bx;
+    bx.add(v.pos - Point{v.size / 2, v.size / 2});
+    bx.add(v.pos + Point{v.size / 2, v.size / 2});
+    for (int l = 0; l < nl; ++l) {
+      if (!(cond & model::layer_bit(l)) || in_keepout(bx, l, v.pos)) continue;
+      const model::Zone* z = highest(bx, l, v.net, v.pos, v.drill / 2 + 1);
+      if (z && z->net == v.net && (v.unconnected != model::UnconnectedLayers::StartEndOnly || l == v.layer_top || l == v.layer_bottom))
+        v.zone_layers |= model::layer_bit(l);
+    }
+  }
+  for (auto& p : b.pads) {
+    if (p.type != model::PadType::ThruHole || p.unconnected == model::UnconnectedLayers::KeepAll) continue;
+    p.zone_layers = 0;
+    const model::LayerMask cond = conditional_layers(p, nl);
+    geom::Box bx;
+    for (const auto& sh : pad_shapes(p)) bx.add(sh.box);
+    for (int l = 0; l < nl; ++l) {
+      if (!(cond & model::layer_bit(l)) || in_keepout(bx, l, p.pos)) continue;
+      const model::Zone* z = highest(bx, l, p.net, p.pos, 0);
+      if (z && z->net == p.net) p.zone_layers |= model::layer_bit(l);
+    }
+  }
+}
+
+}  // namespace
+
+RefillResult refill_zones(const model::Board& b, const model::DesignRules& r) {
+  const bool conditional = std::any_of(b.vias.begin(), b.vias.end(), [](const model::Via& v) { return v.unconnected != model::UnconnectedLayers::KeepAll; }) ||
+                           std::any_of(b.pads.begin(), b.pads.end(), [](const model::Pad& p) {
+                             return p.type == model::PadType::ThruHole && p.unconnected != model::UnconnectedLayers::KeepAll;
+                           });
+  if (!conditional) return Filler(b, r).run();
+  model::Board c = b;
+  zone_layer_overrides(c);
+  return Filler(c, r).run();
+}
 
 std::vector<geom::Ring> thermal_spokes(const model::Pad& pad, const model::Zone& zone) {
   std::vector<Spoke> sp;

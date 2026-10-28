@@ -390,7 +390,7 @@ class Condition {
       v.b = it->kind == ItemKind::Via || (it->kind == ItemKind::Pad && b.pads[static_cast<std::size_t>(it->index)].type == model::PadType::ThruHole);
     } else if (n.name == "existsOnLayer" && !n.args.empty()) {
       const int l = b.copper_index(n.args[0]);
-      v.b = l >= 0 && (it->layers & model::layer_bit(l));
+      v.b = l >= 0 && ((it->span ? it->span : it->layers) & model::layer_bit(l));  // IsOnLayer: the padstack's layers, with copper or not
     } else if (area_call(n)) {
       const bool enclosure = n.name == "enclosedByArea";
       v.b = cached_for_fill(n, *it, ctx, [&] {

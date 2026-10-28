@@ -5,6 +5,7 @@
 
 #include <unistd.h>
 
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -43,6 +44,15 @@ TEST_CASE("coupling: tracks that meet as lines, lie on one line or do not overla
   CHECK_FALSE(drc::couple({0, 0}, {10'000'000, 0}, 200'000, {12'000'000, 0}, {20'000'000, 0}, 200'000));     // collinear
   CHECK_FALSE(drc::couple({0, 0}, {10'000'000, 0}, 200'000, {10'000'000, 500'000}, {20'000'000, 500'000}, 200'000));  // end to end
   CHECK_FALSE(drc::couple({0, 0}, {1, 1}, 200'000, {0, 500'000}, {10'000'000, 500'000}, 200'000));          // about 1 nm long
+}
+
+TEST_CASE("coupling: nearly parallel tracks whose lines meet beyond 32 bits are coupled, as KiCad's SEG::Intersect has it",
+          "[drc][coupling]") {
+  // vme-wren's DQS_P0 and DQS_N0 on In4.Cu: 45 degree stubs 10 nm off parallel. KiCad 10.0.6 reports their gap as 1.8573 mm.
+  const auto c = drc::couple({167'098'800, 199'267'035}, {167'332'130, 199'033'705}, 100'000, {168'516'630, 200'617'185},
+                             {168'716'060, 200'417'765}, 100'000);
+  REQUIRE(c);
+  CHECK(std::abs(c->gap - 1'857'300) < 50);
 }
 
 TEST_CASE("pair names: KiCad's MatchDpSuffix", "[drc][coupling]") {
@@ -125,5 +135,28 @@ TEST_CASE("route: a pair under a gap rule is not left coupled out of range", "[c
   const auto rules = io::read_design_rules(pcb.string());
   CHECK(gap_errors(route("ignore"), rules) > 0);
   CHECK(gap_errors(route("error"), rules) == 0);
+  fs::remove_all(dir);
+}
+
+TEST_CASE("coupling: tracks of a tuning pattern are not coupled", "[drc][coupling]") {
+  // D_P and D_N run parallel 1.75 mm apart, out of a 0.15-0.25 mm gap rule. Made members of a tuning pattern, KiCad leaves the tracks
+  // out of the coupling test (isInTuningPattern); members of a plain group are still tested.
+  const fs::path dir = fs::temp_directory_path() / ("tmk_tuning_" + std::to_string(::getpid()));
+  fs::remove_all(dir);
+  fs::create_directories(dir);
+  const fs::path pcb = dir / "b.kicad_pcb";
+  std::ofstream(dir / "b.kicad_dru") << gap_rule("error");
+  const auto judge = [&](const std::string& group) {
+    std::string text = kPairBoard.substr(0, kPairBoard.rfind(')'));
+    text += "\t(segment (start 5 9) (end 25 9) (width 0.25) (layer \"F.Cu\") (net 1) (uuid \"p\"))\n"
+            "\t(segment (start 5 11) (end 25 11) (width 0.25) (layer \"F.Cu\") (net 2) (uuid \"n\"))\n" +
+            group + ")\n";
+    std::ofstream(pcb) << text;
+    const auto board = io::read_board_file(pcb.string()).board;
+    return gap_errors(board, io::read_design_rules(pcb.string()));
+  };
+  CHECK(judge("") == 1);
+  CHECK(judge("\t(group \"\" (uuid \"g\") (members \"p\" \"n\"))\n") == 1);
+  CHECK(judge("\t(generated (uuid \"g\") (type tuning_pattern) (name \"Tuning Pattern\") (layer \"F.Cu\") (members \"n\"))\n") == 0);
   fs::remove_all(dir);
 }

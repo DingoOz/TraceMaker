@@ -315,7 +315,8 @@ void Obstacles::setup_coupling() {
   if (!coupling_on_) return;
   net_tracks_.assign(b_.nets.size(), {});
   for (std::size_t i = 0; i < cm_.items.size(); ++i)
-    if (cm_.items[i].kind == drc::ItemKind::Track && static_cast<std::size_t>(cm_.items[i].net) < net_tracks_.size())
+    if (cm_.items[i].kind == drc::ItemKind::Track && static_cast<std::size_t>(cm_.items[i].net) < net_tracks_.size() &&
+        !b_.tracks[static_cast<std::size_t>(cm_.items[i].index)].tuning_pattern)  // KiCad does not couple a tuning pattern's tracks
       net_tracks_[static_cast<std::size_t>(cm_.items[i].net)].push_back(static_cast<int>(i));
 }
 
@@ -408,6 +409,13 @@ int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int la
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.removed || !(it.layers & model::layer_bit(layer))) return;
     if (soft_item(it)) return;
+    // A via or pad that removes unconnected copper (doc 05 §60) gets a ring back where copper of its net touches it: on a layer
+    // where it has none, touching its hole; anywhere, for a new via, which spans every layer. No one checked that ring, so
+    // the net's own copper keeps off.
+    if (it.net == probe.net && probe.net != 0 && (it.bare_of >= 0 || (it.bare_part >= 0 && probe.kind == drc::ItemKind::Via))) {
+      if (item_closer(s, it, 0)) state = 2;
+      return;
+    }
     if (it.net == probe.net && probe.net != 0 && !(probe.kind == drc::ItemKind::Via && via_keeps_off(it))) return;
     Coord req = re_->clearance(probe, it, layer);
     // Untented vias open the mask around themselves: other nets' copper must stay outside that opening.

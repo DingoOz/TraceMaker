@@ -2,7 +2,7 @@
 
 Asked on 2026-10-27 at about 22:10 UTC: "work on the roadmap features without stopping until I tell you". Everything is on the local
 branch `m20-c5-fanout` in the worktree `/home/dingo/Programming/TraceMaker-roadmap`, from `origin/main` `ec7cc9b` (PR #51). Nothing is
-pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A91).
+pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A92).
 
 ## What was done
 
@@ -37,6 +37,13 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
 - **Pair names as KiCad reads them** (D149). `DQS_P0`/`DQS_N0` are now a pair, as `MatchDpSuffix` makes them, and `inDiffPair('D')`
   matches `D_P`. The rule-parity corpus has 231 cases, all matching KiCad. Of 4,143 fixture boards only vme-wren and one freerouting
   fixture pair differently.
+- **Vias that remove unconnected copper** (D150). KiCad drops a via's or pad's ring on layers nothing connects to
+  (`remove_unused_layers`); the engine judged and filled around those rings. It now flashes them as KiCad does, splits the item
+  into its copper and a bare hole, and refills as KiCad's filler does. On vme-wren the engine's DRC went from 22,362 clearance and
+  21 shorting reports (KiCad: none) to 425 and 20, which have other causes. Two more KiCad coupling rules came out of the same
+  comparison: tracks of a tuning pattern are left out, and tracks a few nanometres off parallel are coupled (SEG::Intersect gives up
+  beyond 32 bits). vme-wren's 28 gap and 6 uncoupled-length errors are now KiCad's exactly. Only four fixture boards use the option,
+  none in a bench tier; the router treats it more strictly than KiCad (A92). Records in `bench/records/d150-padstacks`.
 - **D139 is not on this branch.** On `m20-c5-fanout`, any custom rule other than a disallow (a skew rule, say) switches the router to
   exact checks and turns the distance fields off: RoyalBlue routes 119 with B2's rule file and 125 without it. D139
   (`cache-safe-custom-rules`) fixes that, and merging the two is yours.
@@ -49,7 +56,6 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
   - `fromTo()` in rules (vme-wren's length rules are unchecked);
   - ps skew in the bus tuner;
   - a net in two classes takes its parameters from the first;
-  - pair names with trailing digits;
   - A3 (the Kookabus files are still missing).
 - From earlier in the night:
   - multichannel_mixer gains one `starved_thermal` with the crowded variants under `--soft-zones` (D143, "found afterwards");
@@ -67,9 +73,16 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A9
 - After D148 (coupling-gap avoidance): full `ctest` 416 of 416 passed (1 skipped), with the new `[coupling][route]` case. The eight
   B1/B2 fixture boards were rerun (`m21-b2/runs/couple-b1`, `couple-b2`). The quick tier was not rerun: none of its 30 boards has a
   `diff_pair_gap` rule or a tuning profile, so the new check never runs on them.
+- After D150: rule parity 234/234 (three new cases, which the D149 build fails); vme-wren pair verdicts identical to KiCad's; jetson
+  still matches; the eight B1/B2 pair-rule boards route byte for byte as with D148 (`d150-padstacks/runs`). The quick tier was not
+  rerun: none of its boards has a pair rule, a tuning pattern or a via that removes copper (checked). Full `ctest`: 420 of 420 passed (1 skipped).
 
 ## Commits (local, branch `m20-c5-fanout`, nothing pushed)
 
 - `64704bf`: C5 follow-ups (D143, A84)
 - `69bb1af`: B3, B1 and A5 (D144-D146; amended to scrub the LAN addresses, previously 17b2178)
 - `6e9b774`: B2 (D147)
+- `b0e6dc7`: B2 quick-tier record and this report
+- `82f81cf`: coupling-gap avoidance in the router (D148, A90)
+- `c6d0f4b`: pair names as `MatchDpSuffix` reads them (D149, A91)
+- vias and pads that remove unconnected copper, tuning patterns, nearly parallel pairs (D150, A92)

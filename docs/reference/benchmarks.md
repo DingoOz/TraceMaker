@@ -8,6 +8,15 @@ of boards with every connection made and no error added in KiCad's DRC (the judg
 README says what the runs were for and how to read them; numbers from different records are not always
 comparable (judge version, time limit, machine load).
 
+## d150-padstacks
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d150-padstacks)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [flash-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d150-padstacks/runs/flash-b1/summary.json) | b1-profiles | 5 | c6d0f4b | 0.0% | 77.0% |  | 207 | `--soft-zones` |
+| [flash-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d150-padstacks/runs/flash-b2/summary.json) | b2-delay | 3 | c6d0f4b | 0.0% | 79.6% |  | 162 | `--soft-zones` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)
