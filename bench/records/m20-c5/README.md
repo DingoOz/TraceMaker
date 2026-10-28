@@ -30,6 +30,8 @@ the final build of this branch).
 | `c5m-base`, `c5m-crowded` | `mid` (11) | 20 M | `--threads 4 --no-gpu`; crowded = routed copper only | |
 | `c5q-base`, `c5q-crowded` | `quick` (30) | 1 M | `--jobs 4 --threads 4`; crowded = routed copper only | |
 | `c5x-fail`, `c5x-clean`, `c5x-mid`, `c5x-quick` | the four sets | as above | none: the default portfolio, crowded source in variants 1, 5, 6, 7 | the change as merged |
+| `c5x-fail-txn` | `pcbench-bd-fail` (33) | 10 M | `--no-gpu --txn 1` | the default with M17's transactions on top |
+| `a5x-nocrowd-base-s1` | `planes` (8) | 3 M | `--soft-zones --seed 1 --critical-auto --no-crowded-portfolio`, `--jobs 4 --threads 2` | the control for `a5-base-s1` in `bench/records/m21-a5` |
 
 ## Results
 
@@ -42,6 +44,7 @@ the final build of this branch).
 | `c5-crowded` (all variants) | 1,217 | 1,203 | 18 / 9 | 1 |
 | `c5-crowdpads` (all variants) | 1,204 | 1,188 | 19 / 8 | 1 |
 | **`c5x-fail` (default: variants 1, 5, 6, 7)** | **1,220** | **1,204** | 18 / 6 | 1 |
+| `c5x-fail-txn` (default and `--txn 1`) | 1,198 | 1,183 | 12 / 3 against `c5x-fail` | 0 (multisensor_cr2032 loses its last connection) |
 
 | Set | Base | Crowded source in every variant | Default (variants 1, 5, 6, 7) |
 |---|---|---|---|
@@ -55,3 +58,11 @@ used, and the `c5x-*` runs check the real binary rather than the simulation (the
 run).
 
 `--polish` was tried on a few boards early and was worse on three; it was not run on all. Classification and runs are one seed.
+
+`--txn 1` on top of the default closes 22 more connections on the 33 boards, in 1,672 s against 2,522 s of wall time, but the one
+board the default completes loses a connection with it. It stays an option (M17).
+
+On the plane tier with `--soft-zones` (`a5x-nocrowd-base-s1` against `a5-base-s1`, seed 1), the crowded variants route RoyalBlue 125
+against 103 and StickHub 127 against 126, and add one KiCad `starved_thermal` on multichannel_mixer, which the route reports and its
+thermal repair does not fix (D143, consequences). The integration test `plane_smd` (two variants) lost a connection with variant 1's
+crowded search and now uses four (assumption A84).
