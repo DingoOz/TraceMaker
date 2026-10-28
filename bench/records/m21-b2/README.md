@@ -70,3 +70,9 @@ D139, on branch `cache-safe-custom-rules`, keeps the fields for rules like these
 The ported coupling check reports the same five `diff_pair_gap_out_of_range` errors on B1's RoyalBlue-profiles as KiCad, with the same
 gaps (0.35, 0.35, 0.355, 0.8625 and 1.995 mm against a 0.15 mm maximum) and positions. The rule parity corpus has three new cases:
 `diff_pair_gap`, `diff_pair_gap_ignored` and `diff_pair_uncoupled`. All 229 cases match KiCad 10.0.6.
+
+## No regression
+
+The quick tier (`runs/b2-quick`, 1 M work, 4 threads, the committed B2 binary) is identical to the run before B2 (`m21-quick`, commit
+17b2178) on all 30 boards: routed counts, tracks, vias and added errors. Full `ctest` on the B2 build: 415 of 415 passed (1 skipped,
+`fixture_preparation_native`).

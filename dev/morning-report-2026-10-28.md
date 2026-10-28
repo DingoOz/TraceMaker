@@ -53,3 +53,16 @@ pushed. The choices I made without asking are in `dev/assumptions.md` (A71 to A8
   - the D3 run report still needs a review by someone who did not write it;
   - the progress website serves the main checkout, not this worktree;
   - direct `route` runs without `--no-kb` read the knowledge base, so two runs can differ.
+
+## Tests
+
+- Full `ctest` on the B2 build (6e9b774): 415 of 415 passed (1 skipped, `fixture_preparation_native`).
+- Quick tier, run once at the end (`b2-quick`): identical to `m21-quick` (17b2178) on all 30 boards in routed counts, tracks, vias and
+  added errors; clean 0.8667, completion 0.9931.
+- Rule parity corpus: 229/229 against KiCad 10.0.6.
+
+## Commits (local, branch `m20-c5-fanout`, nothing pushed)
+
+- `64704bf`: C5 follow-ups (D143, A84)
+- `69bb1af`: B3, B1 and A5 (D144-D146; amended to scrub the LAN addresses, previously 17b2178)
+- `6e9b774`: B2 (D147)
