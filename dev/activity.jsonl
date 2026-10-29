@@ -200,3 +200,4 @@
 {"ts": "2026-10-28T06:59:30+00:00", "kind": "decision", "text": "D152: delay tuner rips the connections a meander needs and routes them again; RoyalBlue54L-Feather-delay 125/147 with no added KiCad errors (PR #58)"}
 {"ts": "2026-10-29T04:41:09+00:00", "kind": "decision", "text": "D154 speed-ups: late reachability proof (default), vectorised CPU field, banded inside-board test, chunked class caches; quick 30/30 identical -22% CPU, mid 20M -29% CPU with 4 boards better"}
 {"ts": "2026-10-29T10:39:21+00:00", "kind": "milestone", "text": "Release 0.12.0: tiers A-D 100/72.5/50.0/40.9% clean on an idle machine, no added errors; ctest 428/428; delay_room known failure (#60)"}
+{"ts": "2026-10-29T11:58:37+00:00", "kind": "decision", "text": "M22 planned (D155): finish the last connections; research in bench/records/m22-research"}

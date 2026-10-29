@@ -901,6 +901,51 @@
      "done": false
     }
    ]
+  },
+  {
+   "id": "M22",
+   "title": "Finish the last connections",
+   "status": "in_progress",
+   "gate": "At least 15 % fewer open connections on pcbench-bd-fail at 10 M work (KiCad judge), no clean board lost, quick and mid byte-identical with the options off",
+   "deliverables": "Pin rescue, end-game retry, whole-board window attempt, pad-to-plane searches, gated via retry, via cost near dense pins, tight/off-lattice vias (doc 18 section 18, D155)",
+   "tasks": [
+    {
+     "text": "Research: literature, Freerouting/tscircuit/KiCad source, 349 open connections on 7 boards measured (bench/records/m22-research, D155)",
+     "done": true
+    },
+    {
+     "text": "1 Proof-triggered pin rescue",
+     "done": false
+    },
+    {
+     "text": "2 Retry every unattempted or ripped connection at the end",
+     "done": false
+    },
+    {
+     "text": "3 Whole-board attempt for window misses",
+     "done": false
+    },
+    {
+     "text": "4 Informed pad-to-plane searches; causes fills zones",
+     "done": false
+    },
+    {
+     "text": "5 D153 via retry gated on budget misses",
+     "done": false
+    },
+    {
+     "text": "6 Escape plan in more variants, via cost near dense pins",
+     "done": false
+    },
+    {
+     "text": "7 Tight and off-lattice vias",
+     "done": false
+    },
+    {
+     "text": "8 Via-site and layer planner (research, only if fan-out stays the largest class)",
+     "done": false
+    }
+   ]
   }
  ]
 }

@@ -1,0 +1,10661 @@
+{
+ "board": "bench/results/rel0120-tierD/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb",
+ "connections": [
+  {
+   "a": "R892.1",
+   "b": "U801.124",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R892.1",
+     "part_pads": 2,
+     "pos": [
+      158.846,
+      76.98
+     ],
+     "smd": true,
+     "tracks_within": [
+      3,
+      7,
+      9,
+      26
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.7083844098506619,
+     "via_gap_nearest_ownpart_mm": 1.33,
+     "via_gap_nearest_through_mm": 0.7083844098506619,
+     "via_nearest_net": "/SPDIF_TX",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      4
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      5
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.124",
+     "part_pads": 138,
+     "pos": [
+      152.282,
+      80.7121
+     ],
+     "smd": true,
+     "tracks_within": [
+      8,
+      12,
+      25,
+      47
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2584408933230074,
+     "via_gap_nearest_ownpart_mm": 0.2584408933230074,
+     "via_gap_nearest_through_mm": 2.293010287763491,
+     "via_nearest_net": "Net-(R891-Pad1)",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      4,
+      9
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R892-Pad1)"
+  },
+  {
+   "a": "R822.2",
+   "b": "U801.27",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R822.2",
+     "part_pads": 2,
+     "pos": [
+      141.75,
+      69.6
+     ],
+     "smd": true,
+     "tracks_within": [
+      4,
+      8,
+      13,
+      32
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.4387670143089025,
+     "via_gap_nearest_ownpart_mm": 1.76,
+     "via_gap_nearest_through_mm": 0.4387670143089025,
+     "via_nearest_net": "/XMOS200/MODE4",
+     "vias_through_within": [
+      0,
+      1,
+      3,
+      4
+     ],
+     "vias_within": [
+      0,
+      1,
+      3,
+      5
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.27",
+     "part_pads": 138,
+     "pos": [
+      140.332,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      8,
+      9,
+      30,
+      49
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6505890776131265,
+     "via_gap_nearest_ownpart_mm": 0.6505890776131265,
+     "via_gap_nearest_through_mm": 3.089723973325111,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      2,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R822-Pad2)"
+  },
+  {
+   "a": "R827.2",
+   "b": "U801.34",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R827.2",
+     "part_pads": 2,
+     "pos": [
+      133.25,
+      68.85
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      3,
+      5
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.35,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 0.35,
+     "via_nearest_net": "/AUX_DIGI0",
+     "vias_through_within": [
+      0,
+      1,
+      1,
+      2
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.34",
+     "part_pads": 138,
+     "pos": [
+      136.782,
+      79.5121
+     ],
+     "smd": true,
+     "tracks_within": [
+      7,
+      12,
+      23,
+      44
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2371,
+     "via_gap_nearest_ownpart_mm": 0.2371,
+     "via_gap_nearest_through_mm": 1.8812839389256215,
+     "via_nearest_net": "Net-(R826-Pad2)",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      1,
+      1,
+      1,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R827-Pad2)"
+  },
+  {
+   "a": "X601.2",
+   "b": "U601.15",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "X601.2",
+     "part_pads": 2,
+     "pos": [
+      181.06,
+      64.5
+     ],
+     "smd": false,
+     "tracks_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": -1.0,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U601.15",
+     "part_pads": 48,
+     "pos": [
+      184.25,
+      76.15
+     ],
+     "smd": true,
+     "tracks_within": [
+      7,
+      8,
+      22,
+      36
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.3117583859709698,
+     "via_gap_nearest_ownpart_mm": 0.3117583859709698,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "Net-(R615-Pad1)",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(C602-Pad1)"
+  },
+  {
+   "a": "R824.2",
+   "b": "U801.38",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R824.2",
+     "part_pads": 2,
+     "pos": [
+      124.702,
+      82.41
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      1,
+      3
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.55,
+     "via_gap_nearest_ownpart_mm": 1.55,
+     "via_gap_nearest_through_mm": 2.62038474370402,
+     "via_nearest_net": "/I2C1_SDA",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.38",
+     "part_pads": 138,
+     "pos": [
+      136.782,
+      81.1121
+     ],
+     "smd": true,
+     "tracks_within": [
+      8,
+      10,
+      29,
+      57
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.9187025479614422,
+     "via_gap_nearest_ownpart_mm": 1.1163431043137961,
+     "via_gap_nearest_through_mm": 0.9187025479614422,
+     "via_nearest_net": "/I2C2_SCL",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R824-Pad2)"
+  },
+  {
+   "a": "U502.9",
+   "b": "U503.9",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U502.9",
+     "part_pads": 10,
+     "pos": [
+      163.962,
+      111.116
+     ],
+     "smd": true,
+     "tracks_within": [
+      2,
+      12,
+      18,
+      23
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.236,
+     "via_gap_nearest_ownpart_mm": 0.236,
+     "via_gap_nearest_through_mm": 1.9105367341810433,
+     "via_nearest_net": "/I2C1_SDA",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      1,
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U503.9",
+     "part_pads": 10,
+     "pos": [
+      175.396,
+      114.272
+     ],
+     "smd": true,
+     "tracks_within": [
+      4,
+      9,
+      15,
+      18
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.276,
+     "via_gap_nearest_ownpart_mm": 0.276,
+     "via_gap_nearest_through_mm": 4.784,
+     "via_nearest_net": "/I2C1_SDA",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      1
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "len_by_layer": {
+      "0": 9.367136936313067,
+      "3": 15.186198410471444
+     },
+     "min_via_mm": 0.8,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 2
+    },
+    "FB": {
+     "len_by_layer": {
+      "0": 9.367136936313067,
+      "3": 15.186198410471444
+     },
+     "min_via_mm": 0.8,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 2
+    },
+    "W": {
+     "len_by_layer": {
+      "0": 9.797700428174107,
+      "3": 15.351198410471445
+     },
+     "min_via_mm": 0.8,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.11,
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/I2C1_SCL"
+  },
+  {
+   "a": "R874.1",
+   "b": "U801.121",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R874.1",
+     "part_pads": 2,
+     "pos": [
+      165.096,
+      78.98
+     ],
+     "smd": true,
+     "tracks_within": [
+      5,
+      5,
+      12,
+      17
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6826178209749157,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 0.6826178209749157,
+     "via_nearest_net": "/ETH_RX1",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      1
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.121",
+     "part_pads": 138,
+     "pos": [
+      152.282,
+      81.9121
+     ],
+     "smd": true,
+     "tracks_within": [
+      9,
+      11,
+      22,
+      54
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.252,
+     "via_gap_nearest_ownpart_mm": 0.252,
+     "via_gap_nearest_through_mm": 1.8295462341023567,
+     "via_nearest_net": "Net-(R875-Pad1)",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      0,
+      1,
+      5,
+      10
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R874-Pad1)"
+  },
+  {
+   "a": "R110.1",
+   "b": "U801.89",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R110.1",
+     "part_pads": 2,
+     "pos": [
+      145.75,
+      109.39
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      2,
+      5
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 2.7430240215435835,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 2.7430240215435835,
+     "via_nearest_net": "/I2S_D3",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.89",
+     "part_pads": 138,
+     "pos": [
+      147.932,
+      93.0621
+     ],
+     "smd": true,
+     "tracks_within": [
+      2,
+      4,
+      20,
+      43
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.30594433916563135,
+     "via_gap_nearest_ownpart_mm": 0.30594433916563135,
+     "via_gap_nearest_through_mm": 2.4678147447141696,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "len_by_layer": {
+      "0": 5.151240456327895,
+      "1": 12.375670631985086
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 2
+    },
+    "FB": {
+     "len_by_layer": {
+      "0": 5.403458710397374,
+      "1": 12.123452377915605
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 2
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/AUD_MCLK1A"
+  },
+  {
+   "a": "U801.25",
+   "b": "D403.3",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.25",
+     "part_pads": 138,
+     "pos": [
+      141.132,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      11,
+      12,
+      19,
+      43
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6731343858063631,
+     "via_gap_nearest_ownpart_mm": 0.6731343858063631,
+     "via_gap_nearest_through_mm": 3.479867705218826,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "pad": "D403.3",
+     "part_pads": 3,
+     "pos": [
+      134.958,
+      51.63
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      2,
+      7,
+      19
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6835907899202539,
+     "via_gap_nearest_ownpart_mm": 1.9561003798650005,
+     "via_gap_nearest_through_mm": 0.6835907899202539,
+     "via_nearest_net": "+1V0",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    }
+   },
+   "net": "/AUX_DIGI6"
+  },
+  {
+   "a": "R881.1",
+   "b": "U801.18",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R881.1",
+     "part_pads": 2,
+     "pos": [
+      120.546,
+      91.042
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      0,
+      2
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 2.5431207926281245,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 2.5431207926281245,
+     "via_nearest_net": "+1V0",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.18",
+     "part_pads": 138,
+     "pos": [
+      143.932,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      5,
+      11,
+      26,
+      47
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2660806332569653,
+     "via_gap_nearest_ownpart_mm": 0.2660806332569653,
+     "via_gap_nearest_through_mm": 5.532670006835034,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      6
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: out of budget"
+    },
+    "FB": {
+     "len_by_layer": {
+      "0": 22.813408714347258,
+      "2": 6.945634918610404,
+      "3": 3.63
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 3
+    },
+    "W": {
+     "len_by_layer": {
+      "0": 7.3879957748263445,
+      "1": 23.37874600704694,
+      "2": 4.321269837220809
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.11,
+     "routed": true,
+     "vias": 4
+    }
+   },
+   "net": "Net-(R881-Pad1)"
+  },
+  {
+   "a": "U801.119",
+   "b": "R609.2",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.119",
+     "part_pads": 138,
+     "pos": [
+      152.282,
+      82.7121
+     ],
+     "smd": true,
+     "tracks_within": [
+      8,
+      12,
+      24,
+      44
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.32200582407623274,
+     "via_gap_nearest_ownpart_mm": 0.32200582407623274,
+     "via_gap_nearest_through_mm": 1.752,
+     "via_nearest_net": "/ETH_RX2",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      2
+     ],
+     "vias_within": [
+      0,
+      2,
+      4,
+      10
+     ]
+    },
+    {
+     "pad": "R609.2",
+     "part_pads": 2,
+     "pos": [
+      176.4,
+      70.0
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      2,
+      3,
+      8
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 3.946872438892128,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 3.946872438892128,
+     "via_nearest_net": "/Eth-KSZ8081/A3V3",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    }
+   },
+   "net": "/ETH_RX3"
+  },
+  {
+   "a": "R417.2",
+   "b": "U801.90",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R417.2",
+     "part_pads": 2,
+     "pos": [
+      155.006,
+      119.914
+     ],
+     "smd": true,
+     "tracks_within": [
+      5,
+      6,
+      10,
+      19
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 2.438152920474864,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 2.438152920474864,
+     "via_nearest_net": "/AUD_PLLSYNC",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.90",
+     "part_pads": 138,
+     "pos": [
+      148.332,
+      93.0621
+     ],
+     "smd": true,
+     "tracks_within": [
+      5,
+      6,
+      29,
+      44
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.5033036089820521,
+     "via_gap_nearest_ownpart_mm": 0.5033036089820521,
+     "via_gap_nearest_through_mm": 2.6407172525573634,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      3
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "len_by_layer": {
+      "0": 4.0196781418412435,
+      "1": 3.41,
+      "3": 22.52828173317607
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 3
+    },
+    "FB": {
+     "len_by_layer": {
+      "0": 4.239678141841244,
+      "1": 3.19,
+      "3": 22.52828173317607
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 3
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    }
+   },
+   "net": "/I2S_BCLK2"
+  },
+  {
+   "a": "R879.1",
+   "b": "U801.13",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R879.1",
+     "part_pads": 2,
+     "pos": [
+      120.546,
+      88.502
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      0,
+      2
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 2.464,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 2.464,
+     "via_nearest_net": "/I2C1_SCL",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.13",
+     "part_pads": 138,
+     "pos": [
+      145.932,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      7,
+      11,
+      28,
+      53
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2921,
+     "via_gap_nearest_ownpart_mm": 0.2921,
+     "via_gap_nearest_through_mm": 5.038826473606232,
+     "via_nearest_net": "/XMOS200/IOVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R879-Pad1)"
+  },
+  {
+   "a": "R422.2",
+   "b": "U801.88",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R422.2",
+     "part_pads": 2,
+     "pos": [
+      139.512,
+      119.914
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      4,
+      7,
+      17
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 3.317388400496924,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 3.317388400496924,
+     "via_nearest_net": "/I2S_BCLK1",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.88",
+     "part_pads": 138,
+     "pos": [
+      147.532,
+      93.0621
+     ],
+     "smd": true,
+     "tracks_within": [
+      10,
+      11,
+      17,
+      48
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2779,
+     "via_gap_nearest_ownpart_mm": 0.2779,
+     "via_gap_nearest_through_mm": 2.3427652852550107,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/I2S_SDATA1"
+  },
+  {
+   "a": "R880.1",
+   "b": "U801.15",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R880.1",
+     "part_pads": 2,
+     "pos": [
+      120.546,
+      93.582
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      4,
+      17
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 2.041524114154927,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 2.041524114154927,
+     "via_nearest_net": "/GEN_RST",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.15",
+     "part_pads": 138,
+     "pos": [
+      145.132,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      12,
+      22,
+      24,
+      57
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2543266844627383,
+     "via_gap_nearest_ownpart_mm": 0.2543266844627383,
+     "via_gap_nearest_through_mm": 5.562686761016379,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R880-Pad1)"
+  },
+  {
+   "a": "D405.3",
+   "b": "U801.23",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "D405.3",
+     "part_pads": 3,
+     "pos": [
+      137.752,
+      48.074
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      4,
+      10,
+      23
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2570882741306529,
+     "via_gap_nearest_ownpart_mm": 0.2570882741306529,
+     "via_gap_nearest_through_mm": 0.599,
+     "via_nearest_net": "+3V3",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.23",
+     "part_pads": 138,
+     "pos": [
+      141.932,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      11,
+      13,
+      17,
+      35
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6632673276274409,
+     "via_gap_nearest_ownpart_mm": 0.6632673276274409,
+     "via_gap_nearest_through_mm": 3.982758652949076,
+     "via_nearest_net": "/AUX_DIGI4",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/AUX_DIGI5"
+  },
+  {
+   "a": "R432.1",
+   "b": "U801.63",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R432.1",
+     "part_pads": 2,
+     "pos": [
+      123.594,
+      117.966
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      3,
+      6,
+      17
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 2.5681024241087096,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 2.5681024241087096,
+     "via_nearest_net": "/AUD_MCLK2B",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.63",
+     "part_pads": 138,
+     "pos": [
+      136.782,
+      91.1121
+     ],
+     "smd": true,
+     "tracks_within": [
+      8,
+      11,
+      25,
+      47
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.3729,
+     "via_gap_nearest_ownpart_mm": 0.3729,
+     "via_gap_nearest_through_mm": 5.1880787762879645,
+     "via_nearest_net": "/I2S_BCLK1",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      6
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/I2S_SDATA0"
+  },
+  {
+   "a": "U801.26",
+   "b": "D401.3",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.26",
+     "part_pads": 138,
+     "pos": [
+      140.732,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      5,
+      5,
+      26,
+      44
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6221,
+     "via_gap_nearest_ownpart_mm": 0.6221,
+     "via_gap_nearest_through_mm": 3.2682112002991324,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "pad": "D401.3",
+     "part_pads": 3,
+     "pos": [
+      132.926,
+      48.074
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      5,
+      23
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.699,
+     "via_gap_nearest_ownpart_mm": 1.7749521833824302,
+     "via_gap_nearest_through_mm": 1.699,
+     "via_nearest_net": "/AUX_DIGI6",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    }
+   },
+   "net": "/AUX_DIGI7"
+  },
+  {
+   "a": "R602.2",
+   "b": "U601.29",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R602.2",
+     "part_pads": 2,
+     "pos": [
+      156.73,
+      101.75
+     ],
+     "smd": true,
+     "tracks_within": [
+      2,
+      3,
+      6,
+      12
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.25,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 0.25,
+     "via_nearest_net": "/I2S_D4",
+     "vias_through_within": [
+      0,
+      1,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      1
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U601.29",
+     "part_pads": 48,
+     "pos": [
+      178.15,
+      79.75
+     ],
+     "smd": true,
+     "tracks_within": [
+      5,
+      11,
+      21,
+      30
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.8330855606972292,
+     "via_gap_nearest_ownpart_mm": 0.8330855606972292,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Eth-KSZ8081/D1V2",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "len_by_layer": {
+      "0": 6.215706345359769,
+      "3": 32.50913885416844
+     },
+     "min_via_mm": 0.8,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 2
+    },
+    "FB": {
+     "len_by_layer": {
+      "0": 6.545706345359768,
+      "3": 32.179138854168436
+     },
+     "min_via_mm": 0.8,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 2
+    },
+    "W": {
+     "len_by_layer": {
+      "0": 6.701269837220809,
+      "3": 32.055793616376874
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.11,
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/Eth-KSZ8081/ISO"
+  },
+  {
+   "a": "R864.2",
+   "b": "U801.12",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R864.2",
+     "part_pads": 2,
+     "pos": [
+      121.308,
+      54.72
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      2,
+      11
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.32,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 0.32,
+     "via_nearest_net": "+3V3",
+     "vias_through_within": [
+      0,
+      1,
+      1,
+      2
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.12",
+     "part_pads": 138,
+     "pos": [
+      146.332,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      6,
+      10,
+      27,
+      58
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.3348546863156008,
+     "via_gap_nearest_ownpart_mm": 0.3348546863156008,
+     "via_gap_nearest_through_mm": 4.803309851431107,
+     "via_nearest_net": "/XMOS200/IOVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R864-Pad2)"
+  },
+  {
+   "a": "R888.1",
+   "b": "U801.127",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R888.1",
+     "part_pads": 2,
+     "pos": [
+      121.308,
+      59.546
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      2,
+      8
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.966,
+     "via_gap_nearest_ownpart_mm": 1.768,
+     "via_gap_nearest_through_mm": 0.966,
+     "via_nearest_net": "Net-(R890-Pad1)",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.127",
+     "part_pads": 138,
+     "pos": [
+      152.282,
+      79.5121
+     ],
+     "smd": true,
+     "tracks_within": [
+      12,
+      15,
+      22,
+      44
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.238,
+     "via_gap_nearest_ownpart_mm": 0.238,
+     "via_gap_nearest_through_mm": 1.5378504612069528,
+     "via_nearest_net": "/XMOS200/DVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      1,
+      2,
+      3,
+      6
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "Net-(R888-Pad1)"
+  },
+  {
+   "a": "U601.32",
+   "b": "R621.2",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U601.32",
+     "part_pads": 48,
+     "pos": [
+      178.15,
+      81.25
+     ],
+     "smd": true,
+     "tracks_within": [
+      4,
+      11,
+      24,
+      42
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.24536811201050213,
+     "via_gap_nearest_ownpart_mm": 0.24536811201050213,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Eth-KSZ8081/D1V2",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      1,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "pad": "R621.2",
+     "part_pads": 2,
+     "pos": [
+      146.1,
+      100.25
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      2,
+      12
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.3008062419270823,
+     "via_gap_nearest_ownpart_mm": 1.3008062419270823,
+     "via_gap_nearest_through_mm": 2.7357614705203583,
+     "via_nearest_net": "/ETH_INT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      1
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    }
+   },
+   "net": "Net-(R621-Pad2)"
+  },
+  {
+   "a": "D406.3",
+   "b": "U801.59",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "D406.3",
+     "part_pads": 3,
+     "pos": [
+      124.036,
+      51.63
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      2,
+      4,
+      22
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.3608353131397608,
+     "via_gap_nearest_ownpart_mm": 1.3608353131397608,
+     "via_gap_nearest_through_mm": 3.106888589155142,
+     "via_nearest_net": "GNDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.59",
+     "part_pads": 138,
+     "pos": [
+      136.782,
+      89.5121
+     ],
+     "smd": true,
+     "tracks_within": [
+      12,
+      16,
+      33,
+      50
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.3471535899582284,
+     "via_gap_nearest_ownpart_mm": 0.3471535899582284,
+     "via_gap_nearest_through_mm": 3.9085849660880547,
+     "via_nearest_net": "/AUX_DIGI0",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/AUX_DIGI2"
+  },
+  {
+   "a": "D404.3",
+   "b": "U801.58",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "D404.3",
+     "part_pads": 3,
+     "pos": [
+      127.084,
+      48.074
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      2,
+      15
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.9653413492603232,
+     "via_gap_nearest_ownpart_mm": 2.3526054929829665,
+     "via_gap_nearest_through_mm": 0.9653413492603232,
+     "via_nearest_net": "/AUX_DIGI0",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      1
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.58",
+     "part_pads": 138,
+     "pos": [
+      136.782,
+      89.1121
+     ],
+     "smd": true,
+     "tracks_within": [
+      6,
+      8,
+      29,
+      49
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.268,
+     "via_gap_nearest_ownpart_mm": 0.268,
+     "via_gap_nearest_through_mm": 3.6247017790141918,
+     "via_nearest_net": "/AUX_DIGI0",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      3
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/AUX_DIGI1"
+  },
+  {
+   "a": "R418.2",
+   "b": "U801.3",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R418.2",
+     "part_pads": 2,
+     "pos": [
+      159.578,
+      119.914
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      3,
+      17
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.402,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 1.402,
+     "via_nearest_net": "GNDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.3",
+     "part_pads": 138,
+     "pos": [
+      149.932,
+      77.5621
+     ],
+     "smd": true,
+     "tracks_within": [
+      8,
+      10,
+      28,
+      50
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6148120072210419,
+     "via_gap_nearest_ownpart_mm": 0.6148120072210419,
+     "via_gap_nearest_through_mm": 3.884152589486047,
+     "via_nearest_net": "Net-(R889-Pad1)",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      2,
+      6
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: out of budget"
+    },
+    "FB": {
+     "len_by_layer": {
+      "0": 3.2159279672363628,
+      "1": 17.51384522503711,
+      "2": 9.92183332908185,
+      "3": 20.42197618258058
+     },
+     "min_via_mm": 0.5,
+     "min_width_mm": 0.15,
+     "necked": true,
+     "pitch": 0.055,
+     "routed": true,
+     "vias": 5
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/I2S_SDATA2"
+  },
+  {
+   "a": "R843.2",
+   "b": "U801.94",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R843.2",
+     "part_pads": 2,
+     "pos": [
+      139.746,
+      46.15
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      2,
+      4,
+      20
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.0935514721629114,
+     "via_gap_nearest_ownpart_mm": 1.9814902897135653,
+     "via_gap_nearest_through_mm": 1.0935514721629114,
+     "via_nearest_net": "/AUX_DIGI4",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.94",
+     "part_pads": 138,
+     "pos": [
+      149.932,
+      93.0621
+     ],
+     "smd": true,
+     "tracks_within": [
+      4,
+      9,
+      25,
+      44
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.35471147467095,
+     "via_gap_nearest_ownpart_mm": 0.35471147467095,
+     "via_gap_nearest_through_mm": 3.6660006652729415,
+     "via_nearest_net": "/XMOS200/IOVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/XMOS200/MODE2"
+  },
+  {
+   "a": "U801.95",
+   "b": "R805.2",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.95",
+     "part_pads": 138,
+     "pos": [
+      150.332,
+      93.0621
+     ],
+     "smd": true,
+     "tracks_within": [
+      2,
+      4,
+      25,
+      46
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2821,
+     "via_gap_nearest_ownpart_mm": 0.2821,
+     "via_gap_nearest_through_mm": 3.446784554663804,
+     "via_nearest_net": "/XMOS200/IOVDD",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      2,
+      2,
+      4
+     ]
+    },
+    {
+     "pad": "R805.2",
+     "part_pads": 2,
+     "pos": [
+      139.746,
+      41.9
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      3,
+      5,
+      10
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 4.244157189415535,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 4.244157189415535,
+     "via_nearest_net": "/AUX_DIGI4",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: boxed in"
+    }
+   },
+   "net": "/XMOS200/MODE3"
+  },
+  {
+   "a": "CN401.3",
+   "b": "U801.46",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "CN401.3",
+     "part_pads": 6,
+     "pos": [
+      199.75,
+      58.75
+     ],
+     "smd": false,
+     "tracks_within": [
+      0,
+      4,
+      4,
+      8
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": -1.0,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.4,
+     "pad": "U801.46",
+     "part_pads": 138,
+     "pos": [
+      136.782,
+      84.3121
+     ],
+     "smd": true,
+     "tracks_within": [
+      7,
+      11,
+      33,
+      57
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.268,
+     "via_gap_nearest_ownpart_mm": 0.268,
+     "via_gap_nearest_through_mm": 2.3165464122668697,
+     "via_nearest_net": "/I2S_BCLK0",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      2,
+      3,
+      5
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "FB": {
+     "pitch": 0.055,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    },
+    "W": {
+     "pitch": 0.11,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: boxed in (target)"
+    }
+   },
+   "net": "/USBD_P"
+  }
+ ],
+ "control": [
+  {
+   "open": true,
+   "pad": "R110.1",
+   "part_pads": 2,
+   "pos": [
+    145.75,
+    109.39
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.7430240215435835,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.7430240215435835,
+   "via_nearest_net": "/I2S_D3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R110.2",
+   "part_pads": 2,
+   "pos": [
+    145.75,
+    111.59
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    1,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.7746953809671826,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.7746953809671826,
+   "via_nearest_net": "/AUD_MCLK1B",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "X601.1",
+   "part_pads": 2,
+   "pos": [
+    185.94,
+    64.5
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.9640365032021516,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.9640365032021516,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "X601.2",
+   "part_pads": 2,
+   "pos": [
+    181.06,
+    64.5
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R418.1",
+   "part_pads": 2,
+   "pos": [
+    159.578,
+    122.114
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    2,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.0460008176613513,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.0460008176613513,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R418.2",
+   "part_pads": 2,
+   "pos": [
+    159.578,
+    119.914
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.402,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.402,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R417.1",
+   "part_pads": 2,
+   "pos": [
+    155.006,
+    122.114
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    10
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.29843293024387,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 4.29843293024387,
+   "via_nearest_net": "/I2S_LRCLK2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R417.2",
+   "part_pads": 2,
+   "pos": [
+    155.006,
+    119.914
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    6,
+    10,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.438152920474864,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.438152920474864,
+   "via_nearest_net": "/AUD_PLLSYNC",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "CN401.5",
+   "part_pads": 6,
+   "pos": [
+    197.04,
+    53.98
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2608656386730927,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.2608656386730927,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "CN401.5",
+   "part_pads": 6,
+   "pos": [
+    197.04,
+    66.02
+   ],
+   "smd": false,
+   "tracks_within": [
+    1,
+    2,
+    5,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2516950275829332,
+   "via_gap_nearest_ownpart_mm": 0.2516950275829332,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(CN401-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "CN401.1",
+   "part_pads": 6,
+   "pos": [
+    201.75,
+    61.25
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "CN401.4",
+   "part_pads": 6,
+   "pos": [
+    199.75,
+    61.25
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    4,
+    5,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 5.284103638900291,
+   "via_gap_nearest_ownpart_mm": 5.284103638900291,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(CN401-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "CN401.3",
+   "part_pads": 6,
+   "pos": [
+    199.75,
+    58.75
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    4,
+    4,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "CN401.2",
+   "part_pads": 6,
+   "pos": [
+    201.75,
+    58.75
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R422.1",
+   "part_pads": 2,
+   "pos": [
+    139.512,
+    122.114
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    3,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.479163445063785,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 3.479163445063785,
+   "via_nearest_net": "/I2S_BCLK1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R422.2",
+   "part_pads": 2,
+   "pos": [
+    139.512,
+    119.914
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    7,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.317388400496924,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 3.317388400496924,
+   "via_nearest_net": "/I2S_BCLK1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R432.1",
+   "part_pads": 2,
+   "pos": [
+    123.594,
+    117.966
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    6,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.5681024241087096,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.5681024241087096,
+   "via_nearest_net": "/AUD_MCLK2B",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R432.2",
+   "part_pads": 2,
+   "pos": [
+    121.394,
+    117.966
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.6422249057335785,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 4.6422249057335785,
+   "via_nearest_net": "/AUD_MCLK2B",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R822.1",
+   "part_pads": 2,
+   "pos": [
+    141.75,
+    67.4
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    7,
+    11,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.49323616704248185,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.49323616704248185,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R822.2",
+   "part_pads": 2,
+   "pos": [
+    141.75,
+    69.6
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    8,
+    13,
+    32
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4387670143089025,
+   "via_gap_nearest_ownpart_mm": 1.76,
+   "via_gap_nearest_through_mm": 0.4387670143089025,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R824.1",
+   "part_pads": 2,
+   "pos": [
+    124.702,
+    84.61
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.0,
+   "via_nearest_net": "Net-(R823-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R824.2",
+   "part_pads": 2,
+   "pos": [
+    124.702,
+    82.41
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    1,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.55,
+   "via_gap_nearest_ownpart_mm": 1.55,
+   "via_gap_nearest_through_mm": 2.62038474370402,
+   "via_nearest_net": "/I2C1_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R827.1",
+   "part_pads": 2,
+   "pos": [
+    133.25,
+    66.65
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    3,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6094622878671134,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.6094622878671134,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R827.2",
+   "part_pads": 2,
+   "pos": [
+    133.25,
+    68.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    3,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.35,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.35,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R843.1",
+   "part_pads": 2,
+   "pos": [
+    139.746,
+    48.35
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    2,
+    2,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.4790146353873883,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.4790146353873883,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R843.2",
+   "part_pads": 2,
+   "pos": [
+    139.746,
+    46.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0935514721629114,
+   "via_gap_nearest_ownpart_mm": 1.9814902897135653,
+   "via_gap_nearest_through_mm": 1.0935514721629114,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R864.1",
+   "part_pads": 2,
+   "pos": [
+    119.108,
+    54.72
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    2,
+    2,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.1,
+   "via_nearest_net": "/TDI",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R864.2",
+   "part_pads": 2,
+   "pos": [
+    121.308,
+    54.72
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.32,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.32,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R874.1",
+   "part_pads": 2,
+   "pos": [
+    165.096,
+    78.98
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    5,
+    12,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6826178209749157,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.6826178209749157,
+   "via_nearest_net": "/ETH_RX1",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R874.2",
+   "part_pads": 2,
+   "pos": [
+    165.096,
+    76.78
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    6,
+    8,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0644489339643437,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.0644489339643437,
+   "via_nearest_net": "/ETH_RX1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R879.1",
+   "part_pads": 2,
+   "pos": [
+    120.546,
+    88.502
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.464,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.464,
+   "via_nearest_net": "/I2C1_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R879.2",
+   "part_pads": 2,
+   "pos": [
+    118.346,
+    88.502
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    1,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.664,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 4.664,
+   "via_nearest_net": "/I2C1_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R880.1",
+   "part_pads": 2,
+   "pos": [
+    120.546,
+    93.582
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.041524114154927,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.041524114154927,
+   "via_nearest_net": "/GEN_RST",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R880.2",
+   "part_pads": 2,
+   "pos": [
+    118.346,
+    93.582
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    5,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.9480034071525536,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.9480034071525536,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R881.1",
+   "part_pads": 2,
+   "pos": [
+    120.546,
+    91.042
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.5431207926281245,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.5431207926281245,
+   "via_nearest_net": "+1V0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R881.2",
+   "part_pads": 2,
+   "pos": [
+    118.346,
+    91.042
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    1,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.488001636660937,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 4.488001636660937,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R888.1",
+   "part_pads": 2,
+   "pos": [
+    121.308,
+    59.546
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.966,
+   "via_gap_nearest_ownpart_mm": 1.768,
+   "via_gap_nearest_through_mm": 0.966,
+   "via_nearest_net": "Net-(R890-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R888.2",
+   "part_pads": 2,
+   "pos": [
+    119.108,
+    59.546
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    2,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.444,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.444,
+   "via_nearest_net": "/TCK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    3
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R892.1",
+   "part_pads": 2,
+   "pos": [
+    158.846,
+    76.98
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    9,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7083844098506619,
+   "via_gap_nearest_ownpart_mm": 1.33,
+   "via_gap_nearest_through_mm": 0.7083844098506619,
+   "via_nearest_net": "/SPDIF_TX",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    4
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R892.2",
+   "part_pads": 2,
+   "pos": [
+    158.846,
+    74.78
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    7,
+    9,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2500123075757874,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.2500123075757874,
+   "via_nearest_net": "/SPDIF_TX",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    4
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.10",
+   "part_pads": 10,
+   "pos": [
+    174.896,
+    114.272
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    5,
+    13
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.6895857327480006,
+   "via_gap_nearest_ownpart_mm": 2.6895857327480006,
+   "via_gap_nearest_through_mm": 5.284,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.1",
+   "part_pads": 10,
+   "pos": [
+    174.896,
+    119.172
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    11,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.864,
+   "via_gap_nearest_ownpart_mm": 4.0654697401281314,
+   "via_gap_nearest_through_mm": 2.864,
+   "via_nearest_net": "/AUD_PLLSYNC",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U503.9",
+   "part_pads": 10,
+   "pos": [
+    175.396,
+    114.272
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    9,
+    15,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.276,
+   "via_gap_nearest_ownpart_mm": 0.276,
+   "via_gap_nearest_through_mm": 4.784,
+   "via_nearest_net": "/I2C1_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.2",
+   "part_pads": 10,
+   "pos": [
+    175.396,
+    119.172
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    9,
+    13,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.276,
+   "via_gap_nearest_ownpart_mm": 0.276,
+   "via_gap_nearest_through_mm": 2.364,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.8",
+   "part_pads": 10,
+   "pos": [
+    175.896,
+    114.272
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    9,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.776,
+   "via_gap_nearest_ownpart_mm": 0.776,
+   "via_gap_nearest_through_mm": 4.284,
+   "via_nearest_net": "/I2C1_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.3",
+   "part_pads": 10,
+   "pos": [
+    175.896,
+    119.172
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    10,
+    17,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.776,
+   "via_gap_nearest_ownpart_mm": 0.776,
+   "via_gap_nearest_through_mm": 1.864,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.7",
+   "part_pads": 10,
+   "pos": [
+    176.396,
+    114.272
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    4,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.276,
+   "via_gap_nearest_ownpart_mm": 1.276,
+   "via_gap_nearest_through_mm": 3.784,
+   "via_nearest_net": "/I2C1_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.4",
+   "part_pads": 10,
+   "pos": [
+    176.396,
+    119.172
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    8,
+    14,
+    24
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.276,
+   "via_gap_nearest_ownpart_mm": 1.276,
+   "via_gap_nearest_through_mm": 1.364,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U503.5",
+   "part_pads": 10,
+   "pos": [
+    176.896,
+    119.172
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    5,
+    9,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.864,
+   "via_gap_nearest_ownpart_mm": 1.744,
+   "via_gap_nearest_through_mm": 0.864,
+   "via_nearest_net": "/AUD_PLLSYNC",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.10",
+   "part_pads": 10,
+   "pos": [
+    163.962,
+    110.616
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    7,
+    16,
+    28
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9435475428878577,
+   "via_gap_nearest_ownpart_mm": 0.9435475428878577,
+   "via_gap_nearest_through_mm": 2.4004606763887972,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.1",
+   "part_pads": 10,
+   "pos": [
+    159.062,
+    110.616
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    6,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1933988828915376,
+   "via_gap_nearest_ownpart_mm": 1.1933988828915376,
+   "via_gap_nearest_through_mm": 3.5091533610233303,
+   "via_nearest_net": "/I2C1_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U502.9",
+   "part_pads": 10,
+   "pos": [
+    163.962,
+    111.116
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    12,
+    18,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.236,
+   "via_gap_nearest_ownpart_mm": 0.236,
+   "via_gap_nearest_through_mm": 1.9105367341810433,
+   "via_nearest_net": "/I2C1_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    1,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.2",
+   "part_pads": 10,
+   "pos": [
+    159.062,
+    111.116
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    7,
+    12,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.236,
+   "via_gap_nearest_ownpart_mm": 0.236,
+   "via_gap_nearest_through_mm": 3.3252489849673137,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    1,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.8",
+   "part_pads": 10,
+   "pos": [
+    163.962,
+    111.616
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    14,
+    19,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.736,
+   "via_gap_nearest_ownpart_mm": 0.736,
+   "via_gap_nearest_through_mm": 1.42608324016185,
+   "via_nearest_net": "/I2C1_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.3",
+   "part_pads": 10,
+   "pos": [
+    159.062,
+    111.616
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    14,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.39483331585936937,
+   "via_gap_nearest_ownpart_mm": 0.39483331585936937,
+   "via_gap_nearest_through_mm": 3.2018717356396795,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.7",
+   "part_pads": 10,
+   "pos": [
+    163.962,
+    112.116
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    9,
+    16,
+    29
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.885114780865896,
+   "via_gap_nearest_ownpart_mm": 0.885114780865896,
+   "via_gap_nearest_through_mm": 0.952989283032205,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.4",
+   "part_pads": 10,
+   "pos": [
+    159.062,
+    112.116
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    9,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.39382617744692694,
+   "via_gap_nearest_ownpart_mm": 0.39382617744692694,
+   "via_gap_nearest_through_mm": 3.145346245432172,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U502.5",
+   "part_pads": 10,
+   "pos": [
+    159.062,
+    112.616
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    7,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.588008097132812,
+   "via_gap_nearest_ownpart_mm": 0.588008097132812,
+   "via_gap_nearest_through_mm": 3.1422986887048356,
+   "via_nearest_net": "/Clock-CS2200/CS_3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R602.1",
+   "part_pads": 2,
+   "pos": [
+    156.73,
+    99.55
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    3,
+    6,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2489992295835181,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.2489992295835181,
+   "via_nearest_net": "/I2S_D3",
+   "vias_through_within": [
+    1,
+    2,
+    2,
+    2
+   ],
+   "vias_within": [
+    1,
+    2,
+    2,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R602.2",
+   "part_pads": 2,
+   "pos": [
+    156.73,
+    101.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    6,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.25,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.25,
+   "via_nearest_net": "/I2S_D4",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.1",
+   "part_pads": 138,
+   "pos": [
+    150.732,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    9,
+    16,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9267499425287344,
+   "via_gap_nearest_ownpart_mm": 0.9267499425287344,
+   "via_gap_nearest_through_mm": 3.256933607546082,
+   "via_nearest_net": "Net-(R887-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.2",
+   "part_pads": 138,
+   "pos": [
+    150.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    10,
+    18,
+    43
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.23517195309616754,
+   "via_gap_nearest_ownpart_mm": 0.23517195309616754,
+   "via_gap_nearest_through_mm": 3.5627721874970306,
+   "via_nearest_net": "Net-(R889-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    1,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.3",
+   "part_pads": 138,
+   "pos": [
+    149.932,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    10,
+    28,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6148120072210419,
+   "via_gap_nearest_ownpart_mm": 0.6148120072210419,
+   "via_gap_nearest_through_mm": 3.884152589486047,
+   "via_nearest_net": "Net-(R889-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.4",
+   "part_pads": 138,
+   "pos": [
+    149.532,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    24,
+    45
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.38338458626654126,
+   "via_gap_nearest_ownpart_mm": 0.38338458626654126,
+   "via_gap_nearest_through_mm": 3.898059260875774,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.5",
+   "part_pads": 138,
+   "pos": [
+    149.132,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    12,
+    26,
+    53
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2921,
+   "via_gap_nearest_ownpart_mm": 0.2921,
+   "via_gap_nearest_through_mm": 3.8999573730445283,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.6",
+   "part_pads": 138,
+   "pos": [
+    148.732,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    8,
+    23,
+    53
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0904534242974517,
+   "via_gap_nearest_ownpart_mm": 1.0904534242974517,
+   "via_gap_nearest_through_mm": 3.9308236410641335,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.7",
+   "part_pads": 138,
+   "pos": [
+    148.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    10,
+    14,
+    29,
+    55
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5179386744222078,
+   "via_gap_nearest_ownpart_mm": 0.5179386744222078,
+   "via_gap_nearest_through_mm": 3.998003343563986,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.8",
+   "part_pads": 138,
+   "pos": [
+    147.932,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    11,
+    31,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.725278370004507,
+   "via_gap_nearest_ownpart_mm": 0.725278370004507,
+   "via_gap_nearest_through_mm": 4.099870377021987,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.9",
+   "part_pads": 138,
+   "pos": [
+    147.532,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    8,
+    29,
+    53
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7079,
+   "via_gap_nearest_ownpart_mm": 0.7079,
+   "via_gap_nearest_through_mm": 4.234137828118624,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.10",
+   "part_pads": 138,
+   "pos": [
+    147.132,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    13,
+    24,
+    54
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7690044525150449,
+   "via_gap_nearest_ownpart_mm": 0.7690044525150449,
+   "via_gap_nearest_through_mm": 4.398086432110202,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.11",
+   "part_pads": 138,
+   "pos": [
+    146.732,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    6,
+    20,
+    48
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5474235641992445,
+   "via_gap_nearest_ownpart_mm": 0.5474235641992445,
+   "via_gap_nearest_through_mm": 4.588790776330473,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.12",
+   "part_pads": 138,
+   "pos": [
+    146.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    10,
+    27,
+    58
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3348546863156008,
+   "via_gap_nearest_ownpart_mm": 0.3348546863156008,
+   "via_gap_nearest_through_mm": 4.803309851431107,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.13",
+   "part_pads": 138,
+   "pos": [
+    145.932,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    11,
+    28,
+    53
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2921,
+   "via_gap_nearest_ownpart_mm": 0.2921,
+   "via_gap_nearest_through_mm": 5.038826473606232,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.14",
+   "part_pads": 138,
+   "pos": [
+    145.532,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    5,
+    21,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5847555077276796,
+   "via_gap_nearest_ownpart_mm": 0.5847555077276796,
+   "via_gap_nearest_through_mm": 5.292735143145165,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.15",
+   "part_pads": 138,
+   "pos": [
+    145.132,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    12,
+    22,
+    24,
+    57
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2543266844627383,
+   "via_gap_nearest_ownpart_mm": 0.2543266844627383,
+   "via_gap_nearest_through_mm": 5.562686761016379,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.16",
+   "part_pads": 138,
+   "pos": [
+    144.732,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    18,
+    36
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9191404057188151,
+   "via_gap_nearest_ownpart_mm": 0.9191404057188151,
+   "via_gap_nearest_through_mm": 5.846601748951184,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.17",
+   "part_pads": 138,
+   "pos": [
+    144.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    17,
+    35
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9730911877948966,
+   "via_gap_nearest_ownpart_mm": 0.9730911877948966,
+   "via_gap_nearest_through_mm": 5.873290477094138,
+   "via_nearest_net": "/SPI_MISO",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.18",
+   "part_pads": 138,
+   "pos": [
+    143.932,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    11,
+    26,
+    47
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2660806332569653,
+   "via_gap_nearest_ownpart_mm": 0.2660806332569653,
+   "via_gap_nearest_through_mm": 5.532670006835034,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.19",
+   "part_pads": 138,
+   "pos": [
+    143.532,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    2,
+    19,
+    39
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.599031235747912,
+   "via_gap_nearest_ownpart_mm": 0.599031235747912,
+   "via_gap_nearest_through_mm": 5.199908339428423,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.20",
+   "part_pads": 138,
+   "pos": [
+    143.132,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    9,
+    12,
+    40
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.825976104987369,
+   "via_gap_nearest_ownpart_mm": 0.825976104987369,
+   "via_gap_nearest_through_mm": 4.876492529133345,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.22",
+   "part_pads": 138,
+   "pos": [
+    142.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    3,
+    19,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1058882461856192,
+   "via_gap_nearest_ownpart_mm": 1.1058882461856192,
+   "via_gap_nearest_through_mm": 4.265423175875903,
+   "via_nearest_net": "/SPI_MISO",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.23",
+   "part_pads": 138,
+   "pos": [
+    141.932,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    11,
+    13,
+    17,
+    35
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6632673276274409,
+   "via_gap_nearest_ownpart_mm": 0.6632673276274409,
+   "via_gap_nearest_through_mm": 3.982758652949076,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.24",
+   "part_pads": 138,
+   "pos": [
+    141.532,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    6,
+    8,
+    37
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8348835613125635,
+   "via_gap_nearest_ownpart_mm": 0.8348835613125635,
+   "via_gap_nearest_through_mm": 3.7195841307102833,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.25",
+   "part_pads": 138,
+   "pos": [
+    141.132,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    11,
+    12,
+    19,
+    43
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6731343858063631,
+   "via_gap_nearest_ownpart_mm": 0.6731343858063631,
+   "via_gap_nearest_through_mm": 3.479867705218826,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.26",
+   "part_pads": 138,
+   "pos": [
+    140.732,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    5,
+    26,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6221,
+   "via_gap_nearest_ownpart_mm": 0.6221,
+   "via_gap_nearest_through_mm": 3.2682112002991324,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.27",
+   "part_pads": 138,
+   "pos": [
+    140.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    9,
+    30,
+    49
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6505890776131265,
+   "via_gap_nearest_ownpart_mm": 0.6505890776131265,
+   "via_gap_nearest_through_mm": 3.089723973325111,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.28",
+   "part_pads": 138,
+   "pos": [
+    139.932,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    10,
+    14,
+    20,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6246069539096443,
+   "via_gap_nearest_ownpart_mm": 0.6246069539096443,
+   "via_gap_nearest_through_mm": 2.949712436911563,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.29",
+   "part_pads": 138,
+   "pos": [
+    139.532,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    9,
+    18,
+    43
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.060320995534886,
+   "via_gap_nearest_ownpart_mm": 1.060320995534886,
+   "via_gap_nearest_through_mm": 2.8531482305606675,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.30",
+   "part_pads": 138,
+   "pos": [
+    139.132,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    14,
+    17,
+    33,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2679,
+   "via_gap_nearest_ownpart_mm": 0.2679,
+   "via_gap_nearest_through_mm": 2.80396214241055,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.31",
+   "part_pads": 138,
+   "pos": [
+    138.732,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    8,
+    28,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.29522615744806385,
+   "via_gap_nearest_ownpart_mm": 0.29522615744806385,
+   "via_gap_nearest_through_mm": 2.7979,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.32",
+   "part_pads": 138,
+   "pos": [
+    138.332,
+    77.5621
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    11,
+    32,
+    56
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3734111083386308,
+   "via_gap_nearest_ownpart_mm": 0.3734111083386308,
+   "via_gap_nearest_through_mm": 2.819579694618538,
+   "via_nearest_net": "Net-(R825-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    4,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.33",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    79.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    6,
+    19,
+    38
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8271,
+   "via_gap_nearest_ownpart_mm": 0.8271,
+   "via_gap_nearest_through_mm": 2.2211784391757843,
+   "via_nearest_net": "Net-(R828-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.34",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    79.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    12,
+    23,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2371,
+   "via_gap_nearest_ownpart_mm": 0.2371,
+   "via_gap_nearest_through_mm": 1.8812839389256215,
+   "via_nearest_net": "Net-(R826-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    1,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.35",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    79.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    11,
+    18,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6371,
+   "via_gap_nearest_ownpart_mm": 0.6371,
+   "via_gap_nearest_through_mm": 1.5641630304025171,
+   "via_nearest_net": "Net-(R826-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.36",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    80.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    8,
+    17,
+    33
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0371,
+   "via_gap_nearest_ownpart_mm": 1.0371,
+   "via_gap_nearest_through_mm": 1.282740743549047,
+   "via_nearest_net": "Net-(R826-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.37",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    80.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    9,
+    27,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0578396379574813,
+   "via_gap_nearest_ownpart_mm": 1.4371,
+   "via_gap_nearest_through_mm": 1.0578396379574813,
+   "via_nearest_net": "/I2C2_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.38",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    81.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    10,
+    29,
+    57
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9187025479614422,
+   "via_gap_nearest_ownpart_mm": 1.1163431043137961,
+   "via_gap_nearest_through_mm": 0.9187025479614422,
+   "via_nearest_net": "/I2C2_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.39",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    81.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    10,
+    28,
+    59
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7631751415844478,
+   "via_gap_nearest_ownpart_mm": 0.7631751415844478,
+   "via_gap_nearest_through_mm": 0.888,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.40",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    81.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    10,
+    13,
+    26,
+    62
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.45244144080400034,
+   "via_gap_nearest_ownpart_mm": 0.45244144080400034,
+   "via_gap_nearest_through_mm": 0.9196099461583335,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.41",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    82.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    11,
+    15,
+    31,
+    54
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.24833356383886224,
+   "via_gap_nearest_ownpart_mm": 0.24833356383886224,
+   "via_gap_nearest_through_mm": 1.0598117721131037,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    1,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.42",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    82.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    9,
+    26,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2736556074126464,
+   "via_gap_nearest_ownpart_mm": 1.2736556074126464,
+   "via_gap_nearest_through_mm": 1.2854466500011206,
+   "via_nearest_net": "/I2S_BCLK0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.43",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    83.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    13,
+    20,
+    36,
+    60
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.33261887090082526,
+   "via_gap_nearest_ownpart_mm": 0.33261887090082526,
+   "via_gap_nearest_through_mm": 1.5673358660889603,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.44",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    83.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    10,
+    17,
+    47
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5678547609447535,
+   "via_gap_nearest_ownpart_mm": 0.5678547609447535,
+   "via_gap_nearest_through_mm": 1.8847517173644928,
+   "via_nearest_net": "/I2S_BCLK0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.45",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    83.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    10,
+    29,
+    58
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.31794930231491614,
+   "via_gap_nearest_ownpart_mm": 0.31794930231491614,
+   "via_gap_nearest_through_mm": 2.224837215905017,
+   "via_nearest_net": "/I2S_BCLK0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    4,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.46",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    84.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    11,
+    33,
+    57
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.268,
+   "via_gap_nearest_ownpart_mm": 0.268,
+   "via_gap_nearest_through_mm": 2.3165464122668697,
+   "via_nearest_net": "/I2S_BCLK0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.47",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    84.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    6,
+    21,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3016340997984633,
+   "via_gap_nearest_ownpart_mm": 0.3016340997984633,
+   "via_gap_nearest_through_mm": 2.368628615397883,
+   "via_nearest_net": "Net-(R876-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    3,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.48",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    85.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    11,
+    19,
+    47
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.650910877945205,
+   "via_gap_nearest_ownpart_mm": 0.650910877945205,
+   "via_gap_nearest_through_mm": 2.4759319202651513,
+   "via_nearest_net": "/I2S_BCLK0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.49",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    85.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    7,
+    18,
+    43
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2785900161364003,
+   "via_gap_nearest_ownpart_mm": 0.2785900161364003,
+   "via_gap_nearest_through_mm": 2.5953748363101403,
+   "via_nearest_net": "Net-(R876-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.52",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    86.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    9,
+    38
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1866708574874627,
+   "via_gap_nearest_ownpart_mm": 1.1866708574874627,
+   "via_gap_nearest_through_mm": 2.5536662658465663,
+   "via_nearest_net": "Net-(R876-Pad2)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.56",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    88.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    8,
+    29
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5991869111096804,
+   "via_gap_nearest_ownpart_mm": 0.5991869111096804,
+   "via_gap_nearest_through_mm": 3.125175798453178,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.57",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    88.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    10,
+    21,
+    48
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0990658457853009,
+   "via_gap_nearest_ownpart_mm": 1.0990658457853009,
+   "via_gap_nearest_through_mm": 3.3619867636662413,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.58",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    89.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    8,
+    29,
+    49
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.268,
+   "via_gap_nearest_ownpart_mm": 0.268,
+   "via_gap_nearest_through_mm": 3.6247017790141918,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.59",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    89.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    12,
+    16,
+    33,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3471535899582284,
+   "via_gap_nearest_ownpart_mm": 0.3471535899582284,
+   "via_gap_nearest_through_mm": 3.9085849660880547,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.60",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    89.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    6,
+    15,
+    25
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6184885779329513,
+   "via_gap_nearest_ownpart_mm": 0.6184885779329513,
+   "via_gap_nearest_through_mm": 4.209727151361564,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.61",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    90.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    15,
+    23,
+    24,
+    45
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9632404584417715,
+   "via_gap_nearest_ownpart_mm": 0.9632404584417715,
+   "via_gap_nearest_through_mm": 4.524963391742115,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.62",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    90.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    6,
+    24,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7729,
+   "via_gap_nearest_ownpart_mm": 0.7729,
+   "via_gap_nearest_through_mm": 4.851756316700157,
+   "via_nearest_net": "/I2S_BCLK1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.63",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    91.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    11,
+    25,
+    47
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3729,
+   "via_gap_nearest_ownpart_mm": 0.3729,
+   "via_gap_nearest_through_mm": 5.1880787762879645,
+   "via_nearest_net": "/I2S_BCLK1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.64",
+   "part_pads": 138,
+   "pos": [
+    136.782,
+    91.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    12,
+    45
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7780035696040992,
+   "via_gap_nearest_ownpart_mm": 0.7780035696040992,
+   "via_gap_nearest_through_mm": 5.532310208510677,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.66",
+   "part_pads": 138,
+   "pos": [
+    138.732,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    11,
+    24,
+    40
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2821,
+   "via_gap_nearest_ownpart_mm": 0.2821,
+   "via_gap_nearest_through_mm": 4.448212805766677,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.67",
+   "part_pads": 138,
+   "pos": [
+    139.132,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    11,
+    13,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4797310531969981,
+   "via_gap_nearest_ownpart_mm": 0.4797310531969981,
+   "via_gap_nearest_through_mm": 4.320038920390381,
+   "via_nearest_net": "/AUD_MUTE",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.68",
+   "part_pads": 138,
+   "pos": [
+    139.532,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    9,
+    16,
+    39
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2779,
+   "via_gap_nearest_ownpart_mm": 0.2779,
+   "via_gap_nearest_through_mm": 4.223025785132503,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.72",
+   "part_pads": 138,
+   "pos": [
+    141.132,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    11,
+    18,
+    39
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6206455849118243,
+   "via_gap_nearest_ownpart_mm": 0.6206455849118243,
+   "via_gap_nearest_through_mm": 4.148939152154049,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    3,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.73",
+   "part_pads": 138,
+   "pos": [
+    141.532,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    8,
+    13,
+    34
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6486364170230361,
+   "via_gap_nearest_ownpart_mm": 0.6486364170230361,
+   "via_gap_nearest_through_mm": 4.204611537361214,
+   "via_nearest_net": "/ETH_INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.74",
+   "part_pads": 138,
+   "pos": [
+    141.932,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    10,
+    10,
+    15,
+    31
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2779,
+   "via_gap_nearest_ownpart_mm": 0.2779,
+   "via_gap_nearest_through_mm": 4.293830781994596,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.78",
+   "part_pads": 138,
+   "pos": [
+    143.532,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    10,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6521,
+   "via_gap_nearest_ownpart_mm": 0.6521,
+   "via_gap_nearest_through_mm": 3.6781222897309,
+   "via_nearest_net": "/USBD_N",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.80",
+   "part_pads": 138,
+   "pos": [
+    144.332,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    14,
+    31
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9405937216363943,
+   "via_gap_nearest_ownpart_mm": 0.9405937216363943,
+   "via_gap_nearest_through_mm": 3.110310728411375,
+   "via_nearest_net": "/USBD_N",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.81",
+   "part_pads": 138,
+   "pos": [
+    144.732,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    17,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6432628671624424,
+   "via_gap_nearest_ownpart_mm": 0.6432628671624424,
+   "via_gap_nearest_through_mm": 2.863109163052931,
+   "via_nearest_net": "/SPDIF_RX",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.83",
+   "part_pads": 138,
+   "pos": [
+    145.532,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    13,
+    28
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2779,
+   "via_gap_nearest_ownpart_mm": 0.2779,
+   "via_gap_nearest_through_mm": 2.4738617590273893,
+   "via_nearest_net": "/SPDIF_RX",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.85",
+   "part_pads": 138,
+   "pos": [
+    146.332,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    19,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.954797922200946,
+   "via_gap_nearest_ownpart_mm": 0.954797922200946,
+   "via_gap_nearest_through_mm": 2.2740010115929272,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.87",
+   "part_pads": 138,
+   "pos": [
+    147.132,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    9,
+    34
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1348216215573717,
+   "via_gap_nearest_ownpart_mm": 1.1348216215573717,
+   "via_gap_nearest_through_mm": 2.2722951577249093,
+   "via_nearest_net": "/SPDIF_RX",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.88",
+   "part_pads": 138,
+   "pos": [
+    147.532,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    10,
+    11,
+    17,
+    48
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2779,
+   "via_gap_nearest_ownpart_mm": 0.2779,
+   "via_gap_nearest_through_mm": 2.3427652852550107,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.89",
+   "part_pads": 138,
+   "pos": [
+    147.932,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    20,
+    43
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.30594433916563135,
+   "via_gap_nearest_ownpart_mm": 0.30594433916563135,
+   "via_gap_nearest_through_mm": 2.4678147447141696,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.90",
+   "part_pads": 138,
+   "pos": [
+    148.332,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    6,
+    29,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5033036089820521,
+   "via_gap_nearest_ownpart_mm": 0.5033036089820521,
+   "via_gap_nearest_through_mm": 2.6407172525573634,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.91",
+   "part_pads": 138,
+   "pos": [
+    148.732,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    14,
+    21,
+    40
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8056356870962307,
+   "via_gap_nearest_ownpart_mm": 0.8056356870962307,
+   "via_gap_nearest_through_mm": 2.8538533172225202,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.92",
+   "part_pads": 138,
+   "pos": [
+    149.132,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    7,
+    14,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1527902015404399,
+   "via_gap_nearest_ownpart_mm": 1.1527902015404399,
+   "via_gap_nearest_through_mm": 3.0998801993782585,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.93",
+   "part_pads": 138,
+   "pos": [
+    149.532,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    13,
+    21,
+    31
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5939765641100397,
+   "via_gap_nearest_ownpart_mm": 0.5939765641100397,
+   "via_gap_nearest_through_mm": 3.372368143487589,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.94",
+   "part_pads": 138,
+   "pos": [
+    149.932,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    9,
+    25,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.35471147467095,
+   "via_gap_nearest_ownpart_mm": 0.35471147467095,
+   "via_gap_nearest_through_mm": 3.6660006652729415,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.95",
+   "part_pads": 138,
+   "pos": [
+    150.332,
+    93.0621
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    25,
+    46
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2821,
+   "via_gap_nearest_ownpart_mm": 0.2821,
+   "via_gap_nearest_through_mm": 3.446784554663804,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.97",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    91.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    5,
+    6,
+    32
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7620036187551225,
+   "via_gap_nearest_ownpart_mm": 0.7620036187551225,
+   "via_gap_nearest_through_mm": 2.9356592167066466,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.101",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    89.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    15,
+    39
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4860750029718439,
+   "via_gap_nearest_ownpart_mm": 0.4860750029718439,
+   "via_gap_nearest_through_mm": 1.739135902648544,
+   "via_nearest_net": "/XMOS200/PLL_VDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.102",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    89.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    6,
+    24,
+    42
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.388,
+   "via_gap_nearest_ownpart_mm": 0.388,
+   "via_gap_nearest_through_mm": 1.5334483210057621,
+   "via_nearest_net": "/XMOS200/PLL_VDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.103",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    89.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    14,
+    26,
+    42
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.523074433618438,
+   "via_gap_nearest_ownpart_mm": 0.523074433618438,
+   "via_gap_nearest_through_mm": 1.3945869747660602,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    4,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.104",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    88.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    11,
+    13,
+    31,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.29165483443694656,
+   "via_gap_nearest_ownpart_mm": 0.29165483443694656,
+   "via_gap_nearest_through_mm": 1.3386380905754942,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    4,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.105",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    88.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    13,
+    14,
+    27,
+    48
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.28472944291888014,
+   "via_gap_nearest_ownpart_mm": 0.28472944291888014,
+   "via_gap_nearest_through_mm": 1.342339923780661,
+   "via_nearest_net": "Net-(R883-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.106",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    87.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    11,
+    27,
+    50
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3062523699075282,
+   "via_gap_nearest_ownpart_mm": 0.3062523699075282,
+   "via_gap_nearest_through_mm": 1.414956861746306,
+   "via_nearest_net": "/XMOS200/IOVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.107",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    87.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    8,
+    27,
+    48
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.26607838127355554,
+   "via_gap_nearest_ownpart_mm": 0.26607838127355554,
+   "via_gap_nearest_through_mm": 1.5678385121752243,
+   "via_nearest_net": "Net-(R883-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.108",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    87.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    8,
+    19,
+    46
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.28927237722108085,
+   "via_gap_nearest_ownpart_mm": 0.28927237722108085,
+   "via_gap_nearest_through_mm": 1.7841951400916538,
+   "via_nearest_net": "Net-(R886-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.109",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    86.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    7,
+    18,
+    45
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8264992498978546,
+   "via_gap_nearest_ownpart_mm": 0.8264992498978546,
+   "via_gap_nearest_through_mm": 1.9471072429695242,
+   "via_nearest_net": "Net-(R883-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.110",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    86.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    3,
+    14,
+    35
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.26219514495350993,
+   "via_gap_nearest_ownpart_mm": 0.26219514495350993,
+   "via_gap_nearest_through_mm": 1.6374573394306935,
+   "via_nearest_net": "Net-(R886-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.111",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    85.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    4,
+    14,
+    33
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2939296866397921,
+   "via_gap_nearest_ownpart_mm": 0.2939296866397921,
+   "via_gap_nearest_through_mm": 1.3645261148535037,
+   "via_nearest_net": "Net-(R877-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.112",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    85.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    6,
+    16,
+    34
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.817843343784413,
+   "via_gap_nearest_ownpart_mm": 0.817843343784413,
+   "via_gap_nearest_through_mm": 1.1478605912678312,
+   "via_nearest_net": "Net-(R886-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.113",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    85.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    10,
+    21,
+    35
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2584408933230074,
+   "via_gap_nearest_ownpart_mm": 0.2584408933230074,
+   "via_gap_nearest_through_mm": 1.0135743383352713,
+   "via_nearest_net": "Net-(R877-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.114",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    84.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    10,
+    18,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.48761726549228407,
+   "via_gap_nearest_ownpart_mm": 0.48761726549228407,
+   "via_gap_nearest_through_mm": 0.982,
+   "via_nearest_net": "Net-(R877-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.115",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    84.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    8,
+    23,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.26774726506366164,
+   "via_gap_nearest_ownpart_mm": 0.26774726506366164,
+   "via_gap_nearest_through_mm": 1.0086867678799287,
+   "via_nearest_net": "/ETH_RX0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.116",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    83.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    9,
+    20,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8068829313566415,
+   "via_gap_nearest_ownpart_mm": 0.8068829313566415,
+   "via_gap_nearest_through_mm": 1.1371136620302351,
+   "via_nearest_net": "/ETH_RX2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    7
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.117",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    83.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    10,
+    12,
+    21,
+    39
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2828560682896506,
+   "via_gap_nearest_ownpart_mm": 0.2828560682896506,
+   "via_gap_nearest_through_mm": 1.3495823530202857,
+   "via_nearest_net": "/ETH_RX0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.118",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    83.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    7,
+    22,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5164374795115385,
+   "via_gap_nearest_ownpart_mm": 0.5164374795115385,
+   "via_gap_nearest_through_mm": 1.6197421642378018,
+   "via_nearest_net": "/ETH_RX1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    3,
+    10
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.119",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    82.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    12,
+    24,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.32200582407623274,
+   "via_gap_nearest_ownpart_mm": 0.32200582407623274,
+   "via_gap_nearest_through_mm": 1.752,
+   "via_nearest_net": "/ETH_RX2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    2,
+    4,
+    10
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.120",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    82.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    7,
+    23,
+    41
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3095198030454329,
+   "via_gap_nearest_ownpart_mm": 0.3095198030454329,
+   "via_gap_nearest_through_mm": 1.7597584147306848,
+   "via_nearest_net": "Net-(R875-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    2,
+    5,
+    10
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.121",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    81.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    9,
+    11,
+    22,
+    54
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.252,
+   "via_gap_nearest_ownpart_mm": 0.252,
+   "via_gap_nearest_through_mm": 1.8295462341023567,
+   "via_nearest_net": "Net-(R875-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    5,
+    10
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.122",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    81.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    8,
+    14,
+    47
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2939296866397921,
+   "via_gap_nearest_ownpart_mm": 0.2939296866397921,
+   "via_gap_nearest_through_mm": 1.9658394725762778,
+   "via_nearest_net": "Net-(R891-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    9
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.123",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    81.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    7,
+    19,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6301070446258228,
+   "via_gap_nearest_ownpart_mm": 0.6301070446258228,
+   "via_gap_nearest_through_mm": 2.1580297906787558,
+   "via_nearest_net": "Net-(R875-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.124",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    80.7121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    12,
+    25,
+    47
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2584408933230074,
+   "via_gap_nearest_ownpart_mm": 0.2584408933230074,
+   "via_gap_nearest_through_mm": 2.293010287763491,
+   "via_nearest_net": "Net-(R891-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    4,
+    9
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.125",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    80.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    11,
+    20,
+    37
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.48761726549228407,
+   "via_gap_nearest_ownpart_mm": 0.48761726549228407,
+   "via_gap_nearest_through_mm": 2.0013796888455606,
+   "via_nearest_net": "Net-(R891-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.126",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    79.9121
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    14,
+    29
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7471,
+   "via_gap_nearest_ownpart_mm": 0.7471,
+   "via_gap_nearest_through_mm": 1.7449812143699537,
+   "via_nearest_net": "Net-(R887-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    3,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": true,
+   "pad": "U801.127",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    79.5121
+   ],
+   "smd": true,
+   "tracks_within": [
+    12,
+    15,
+    22,
+    44
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.238,
+   "via_gap_nearest_ownpart_mm": 0.238,
+   "via_gap_nearest_through_mm": 1.5378504612069528,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    1,
+    2,
+    3,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.128",
+   "part_pads": 138,
+   "pos": [
+    152.282,
+    79.1121
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    5,
+    19,
+    38
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.26652412559486544,
+   "via_gap_nearest_ownpart_mm": 0.26652412559486544,
+   "via_gap_nearest_through_mm": 1.3971044516109796,
+   "via_nearest_net": "/XMOS200/DVDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    144.532,
+    85.3121
+   ],
+   "smd": true,
+   "tracks_within": [
+    8,
+    10,
+    13,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.338,
+   "via_gap_nearest_ownpart_mm": 0.338,
+   "via_gap_nearest_through_mm": 1.956681652239012,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    144.532,
+    85.3121
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.5995990724608238,
+   "via_gap_nearest_ownpart_mm": 1.5995990724608238,
+   "via_gap_nearest_through_mm": 3.900175529656697,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    146.282,
+    83.5621
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.671190700874262,
+   "via_gap_nearest_ownpart_mm": 1.671190700874262,
+   "via_gap_nearest_through_mm": 2.341002685898301,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    144.532,
+    83.5621
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.759664248261034,
+   "via_gap_nearest_ownpart_mm": 2.759664248261034,
+   "via_gap_nearest_through_mm": 4.040607089214847,
+   "via_nearest_net": "/XL_DN1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    142.782,
+    83.5621
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    3,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.488014523286463,
+   "via_gap_nearest_ownpart_mm": 2.488014523286463,
+   "via_gap_nearest_through_mm": 3.5619007620071517,
+   "via_nearest_net": "/XL_DN1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    142.782,
+    85.3121
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    1,
+    4,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.5846615918909546,
+   "via_gap_nearest_ownpart_mm": 2.5846615918909546,
+   "via_gap_nearest_through_mm": 4.591211925431398,
+   "via_nearest_net": "/USB_VBUS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    142.782,
+    87.0621
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    3,
+    3,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2593421243517664,
+   "via_gap_nearest_ownpart_mm": 1.2593421243517664,
+   "via_gap_nearest_through_mm": 5.9207960246587055,
+   "via_nearest_net": "/USB_VBUS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    144.532,
+    87.0621
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    2,
+    2,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.0158632358188546,
+   "via_gap_nearest_ownpart_mm": 2.0158632358188546,
+   "via_gap_nearest_through_mm": 5.194377770535725,
+   "via_nearest_net": "/USB_VBUS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    146.282,
+    87.0621
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    2,
+    2,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2467134020685093,
+   "via_gap_nearest_ownpart_mm": 1.2467134020685093,
+   "via_gap_nearest_through_mm": 3.6322114260038667,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.4,
+   "open": false,
+   "pad": "U801.EP",
+   "part_pads": 138,
+   "pos": [
+    146.282,
+    85.3121
+   ],
+   "smd": false,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6145564883873442,
+   "via_gap_nearest_ownpart_mm": 0.6145564883873442,
+   "via_gap_nearest_through_mm": 3.016132072594079,
+   "via_nearest_net": "/XMOS200/MODE4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R609.1",
+   "part_pads": 2,
+   "pos": [
+    178.6,
+    70.0
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    6,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.768413683133346,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 4.768413683133346,
+   "via_nearest_net": "VDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R609.2",
+   "part_pads": 2,
+   "pos": [
+    176.4,
+    70.0
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    3,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.946872438892128,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 3.946872438892128,
+   "via_nearest_net": "/Eth-KSZ8081/A3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.1",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    83.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    3,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.1728000310945275,
+   "via_gap_nearest_ownpart_mm": 2.1728000310945275,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/A3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.2",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    82.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    9,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6974508337503411,
+   "via_gap_nearest_ownpart_mm": 1.6974508337503411,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/A3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.3",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    82.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    8,
+    8,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2368567438844489,
+   "via_gap_nearest_ownpart_mm": 1.2368567438844489,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/A3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.4",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    81.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    5,
+    13,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.31,
+   "via_gap_nearest_ownpart_mm": 0.31,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.7",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    80.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    5,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8376186811776881,
+   "via_gap_nearest_ownpart_mm": 0.8376186811776881,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.9",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    79.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    5,
+    16,
+    27
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0252368224263644,
+   "via_gap_nearest_ownpart_mm": 1.0252368224263644,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/A3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.10",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    78.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    7,
+    10,
+    25
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.76,
+   "via_gap_nearest_ownpart_mm": 0.76,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/TX_P",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.11",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    78.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    8,
+    17,
+    28
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.26,
+   "via_gap_nearest_ownpart_mm": 0.26,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/TX_P",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.12",
+   "part_pads": 48,
+   "pos": [
+    186.85,
+    77.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    7,
+    13,
+    24
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2792447448959696,
+   "via_gap_nearest_ownpart_mm": 0.2792447448959696,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/RX_P",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.13",
+   "part_pads": 48,
+   "pos": [
+    185.25,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    7,
+    9,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.29230987451825,
+   "via_gap_nearest_ownpart_mm": 0.29230987451825,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/RX_P",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.14",
+   "part_pads": 48,
+   "pos": [
+    184.75,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    10,
+    16,
+    32
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6230347012687302,
+   "via_gap_nearest_ownpart_mm": 0.6230347012687302,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U601.15",
+   "part_pads": 48,
+   "pos": [
+    184.25,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    7,
+    8,
+    22,
+    36
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3117583859709698,
+   "via_gap_nearest_ownpart_mm": 0.3117583859709698,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.16",
+   "part_pads": 48,
+   "pos": [
+    183.75,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    6,
+    9,
+    14,
+    31
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2327277789025335,
+   "via_gap_nearest_ownpart_mm": 1.2327277789025335,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(C601-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.17",
+   "part_pads": 48,
+   "pos": [
+    183.25,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    7,
+    9,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.368505042273634,
+   "via_gap_nearest_ownpart_mm": 0.368505042273634,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.18",
+   "part_pads": 48,
+   "pos": [
+    182.75,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    11,
+    17,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7183022847155414,
+   "via_gap_nearest_ownpart_mm": 0.7183022847155414,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.19",
+   "part_pads": 48,
+   "pos": [
+    182.25,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    15,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1526107045875988,
+   "via_gap_nearest_ownpart_mm": 1.1526107045875988,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.20",
+   "part_pads": 48,
+   "pos": [
+    181.75,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    6,
+    12,
+    33
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6175727991822253,
+   "via_gap_nearest_ownpart_mm": 1.6175727991822253,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.21",
+   "part_pads": 48,
+   "pos": [
+    181.25,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    6,
+    12,
+    28
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.096116984438029,
+   "via_gap_nearest_ownpart_mm": 2.096116984438029,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.22",
+   "part_pads": 48,
+   "pos": [
+    180.75,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    6,
+    16,
+    25
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.5817109182481124,
+   "via_gap_nearest_ownpart_mm": 2.5817109182481124,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.23",
+   "part_pads": 48,
+   "pos": [
+    180.25,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    11,
+    13,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.071397413146469,
+   "via_gap_nearest_ownpart_mm": 3.071397413146469,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "Net-(R615-Pad1)",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.24",
+   "part_pads": 48,
+   "pos": [
+    179.75,
+    76.15
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    3,
+    6,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.200347205478938,
+   "via_gap_nearest_ownpart_mm": 3.200347205478938,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "VDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.25",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    77.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    8,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.724179892387761,
+   "via_gap_nearest_ownpart_mm": 2.724179892387761,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.27",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    78.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    2,
+    7,
+    29
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.7541819793137257,
+   "via_gap_nearest_ownpart_mm": 1.7541819793137257,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.28",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    79.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    2,
+    12,
+    28
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2824089871371942,
+   "via_gap_nearest_ownpart_mm": 1.2824089871371942,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U601.29",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    79.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    11,
+    21,
+    30
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8330855606972292,
+   "via_gap_nearest_ownpart_mm": 0.8330855606972292,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.30",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    80.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    7,
+    11,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.44291162051546074,
+   "via_gap_nearest_ownpart_mm": 0.44291162051546074,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.31",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    80.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    9,
+    13,
+    29
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1961516218705541,
+   "via_gap_nearest_ownpart_mm": 1.1961516218705541,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/ETH_TX_CLK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U601.32",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    81.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    11,
+    24,
+    42
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.24536811201050213,
+   "via_gap_nearest_ownpart_mm": 0.24536811201050213,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    1,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.33",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    81.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    5,
+    19,
+    34
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4980534505250787,
+   "via_gap_nearest_ownpart_mm": 0.4980534505250787,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.34",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    82.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    6,
+    11,
+    36
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9024976007655446,
+   "via_gap_nearest_ownpart_mm": 0.9024976007655446,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/D1V2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.35",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    82.75
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    12,
+    31
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.74,
+   "via_gap_nearest_ownpart_mm": 0.74,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/ETH_TX_CTL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.36",
+   "part_pads": 48,
+   "pos": [
+    178.15,
+    83.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    5,
+    13,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.24,
+   "via_gap_nearest_ownpart_mm": 0.24,
+   "via_gap_nearest_through_mm": 6.065052203965564,
+   "via_nearest_net": "/ETH_TX_CTL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    1,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.37",
+   "part_pads": 48,
+   "pos": [
+    179.75,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    5,
+    5,
+    12,
+    25
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4521150157109074,
+   "via_gap_nearest_ownpart_mm": 0.4521150157109074,
+   "via_gap_nearest_through_mm": 6.209757938079124,
+   "via_nearest_net": "/ETH_TX_CTL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.38",
+   "part_pads": 48,
+   "pos": [
+    180.25,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    7,
+    12,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3528612089887485,
+   "via_gap_nearest_ownpart_mm": 0.3528612089887485,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/CONFIG0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.39",
+   "part_pads": 48,
+   "pos": [
+    180.75,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    8,
+    12,
+    27
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.32,
+   "via_gap_nearest_ownpart_mm": 0.32,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/CONFIG0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.40",
+   "part_pads": 48,
+   "pos": [
+    181.25,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    6,
+    14,
+    24
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.288839603971781,
+   "via_gap_nearest_ownpart_mm": 0.288839603971781,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/CONFIG1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.41",
+   "part_pads": 48,
+   "pos": [
+    181.75,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    8,
+    15,
+    22
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4363013810822029,
+   "via_gap_nearest_ownpart_mm": 0.4363013810822029,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/NWAYEN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.42",
+   "part_pads": 48,
+   "pos": [
+    182.25,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    5,
+    9,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.318679344353238,
+   "via_gap_nearest_ownpart_mm": 0.318679344353238,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/CONFIG1",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.43",
+   "part_pads": 48,
+   "pos": [
+    182.75,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    4,
+    5,
+    9,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4193900170248598,
+   "via_gap_nearest_ownpart_mm": 0.4193900170248598,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/NWAYEN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U601.47",
+   "part_pads": 48,
+   "pos": [
+    184.75,
+    84.85
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0283556979968258,
+   "via_gap_nearest_ownpart_mm": 1.0283556979968258,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Eth-KSZ8081/SPEED",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R621.1",
+   "part_pads": 2,
+   "pos": [
+    143.9,
+    100.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.3569729777420743,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.3569729777420743,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R621.2",
+   "part_pads": 2,
+   "pos": [
+    146.1,
+    100.25
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.3008062419270823,
+   "via_gap_nearest_ownpart_mm": 1.3008062419270823,
+   "via_gap_nearest_through_mm": 2.7357614705203583,
+   "via_nearest_net": "/ETH_INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "D401.3",
+   "part_pads": 3,
+   "pos": [
+    132.926,
+    48.074
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    5,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.699,
+   "via_gap_nearest_ownpart_mm": 1.7749521833824302,
+   "via_gap_nearest_through_mm": 1.699,
+   "via_nearest_net": "/AUX_DIGI6",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D401.1",
+   "part_pads": 3,
+   "pos": [
+    130.526,
+    47.124
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    4,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.49880865594407797,
+   "via_gap_nearest_ownpart_mm": 4.347527461742586,
+   "via_gap_nearest_through_mm": 0.49880865594407797,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D401.2",
+   "part_pads": 3,
+   "pos": [
+    130.526,
+    49.024
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    4,
+    13
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0808298349236485,
+   "via_gap_nearest_ownpart_mm": 3.568236006086331,
+   "via_gap_nearest_through_mm": 1.0808298349236485,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "D403.3",
+   "part_pads": 3,
+   "pos": [
+    134.958,
+    51.63
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    7,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6835907899202539,
+   "via_gap_nearest_ownpart_mm": 1.9561003798650005,
+   "via_gap_nearest_through_mm": 0.6835907899202539,
+   "via_nearest_net": "+1V0",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D403.1",
+   "part_pads": 3,
+   "pos": [
+    132.558,
+    50.68
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9724463559644143,
+   "via_gap_nearest_ownpart_mm": 0.9724463559644143,
+   "via_gap_nearest_through_mm": 2.5506624679891803,
+   "via_nearest_net": "/AUX_DIGI6",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D403.2",
+   "part_pads": 3,
+   "pos": [
+    132.558,
+    52.58
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.432650812348059,
+   "via_gap_nearest_ownpart_mm": 1.432650812348059,
+   "via_gap_nearest_through_mm": 2.512004292579254,
+   "via_nearest_net": "/AUX_DIGI6",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "D404.3",
+   "part_pads": 3,
+   "pos": [
+    127.084,
+    48.074
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9653413492603232,
+   "via_gap_nearest_ownpart_mm": 2.3526054929829665,
+   "via_gap_nearest_through_mm": 0.9653413492603232,
+   "via_nearest_net": "/AUX_DIGI0",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D404.1",
+   "part_pads": 3,
+   "pos": [
+    124.684,
+    47.124
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    4,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.761526037614229,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.761526037614229,
+   "via_nearest_net": "/AUX_DIGI3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D404.2",
+   "part_pads": 3,
+   "pos": [
+    124.684,
+    49.024
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    6,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1851047284012497,
+   "via_gap_nearest_ownpart_mm": 1.7134892949811695,
+   "via_gap_nearest_through_mm": 1.1851047284012497,
+   "via_nearest_net": "/AUX_DIGI2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "open": true,
+   "pad": "D405.3",
+   "part_pads": 3,
+   "pos": [
+    137.752,
+    48.074
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    10,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2570882741306529,
+   "via_gap_nearest_ownpart_mm": 0.2570882741306529,
+   "via_gap_nearest_through_mm": 0.599,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D405.1",
+   "part_pads": 3,
+   "pos": [
+    135.352,
+    47.124
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    4,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.101,
+   "via_gap_nearest_ownpart_mm": 1.101,
+   "via_gap_nearest_through_mm": 1.2587239071044944,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D405.2",
+   "part_pads": 3,
+   "pos": [
+    135.352,
+    49.024
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    4,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.3055101875978343,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.3055101875978343,
+   "via_nearest_net": "/AUX_DIGI6",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "D406.3",
+   "part_pads": 3,
+   "pos": [
+    124.036,
+    51.63
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    22
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.3608353131397608,
+   "via_gap_nearest_ownpart_mm": 1.3608353131397608,
+   "via_gap_nearest_through_mm": 3.106888589155142,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D406.1",
+   "part_pads": 3,
+   "pos": [
+    121.636,
+    50.68
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.334,
+   "via_gap_nearest_ownpart_mm": 1.334,
+   "via_gap_nearest_through_mm": 1.925,
+   "via_nearest_net": "/AUX_DIGI2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D406.2",
+   "part_pads": 3,
+   "pos": [
+    121.636,
+    52.58
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.925,
+   "via_gap_nearest_ownpart_mm": 0.925,
+   "via_gap_nearest_through_mm": 3.825,
+   "via_nearest_net": "GNDD",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R805.1",
+   "part_pads": 2,
+   "pos": [
+    139.746,
+    44.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    1,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.2548438748822877,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 2.2548438748822877,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R805.2",
+   "part_pads": 2,
+   "pos": [
+    139.746,
+    41.9
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    5,
+    10
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.244157189415535,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 4.244157189415535,
+   "via_nearest_net": "/AUX_DIGI4",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ ],
+ "copper_layers": 4,
+ "input_vias": 0,
+ "nets_open": 28,
+ "nets_sampled": 28,
+ "open": 28,
+ "pitch_mm": 0.055,
+ "vias_on_board": 352
+}

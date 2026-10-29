@@ -305,3 +305,45 @@ Gate (doc 18 §4 B2):
   board has delay rules of its own.
 - The measurement itself: KiCad's QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm. Four branched power nets
   differ, where 10.0.6 depends on pointer order.
+
+## 18. Finishing the last connections: research and plan (2026-10-29, M22)
+
+The user asked what would take hard boards to 100 % routed. They had seen vias placed too close to footprint pins, connections that would
+route with two vias and a run on another layer, and paths that must first go the other way. A research round read the literature (escape
+routing, pin access, multi-layer search, negotiation), the source of Freerouting, tscircuit's capacity autorouter and KiCad's PNS router.
+It also measured 349 open connections on seven failing boards of the 0.12.1 release run, each routed alone on a copy of its final board
+(decision [D155](decisions/D155.md); report, notes and the `viastudy` harness in `bench/records/m22-research`).
+
+What the boards say:
+
+| What the open connection needed to route alone | Connections (of 349) |
+|---|--:|
+| Nothing: it routes on the final board, most with 0-2 vias (never attempted, ripped and not re-routed, or tried only while boxed in) | 139 |
+| More search: the whole-board window or more work (long detours, median 4-12 vias) | about 15 more |
+| Other nets' copper within 2 mm of its pins removed (mostly tracks; vias alone rescue 46 of 288) | 144 more |
+| Enclosed even with the whole board, any number of vias and every option | about 52 |
+
+The search is not blind to layers: a via is possible at every lattice point and the cost-to-go field prices vias on every layer. What it
+lacks is a reflex. When it proves a pin boxed in, it moves on instead of clearing the space around the pin, and four of the seven boards
+never reached negotiation. Freerouting's recent gains come from the same place (`LastMileBlockerRipup`, `RetryNeighbourhood`: foreign copper
+ripped around open pins in a radius growing from 1.5 to 12 mm). None of the open routers prices other nets' vias in a footprint's escape
+region during the main route; on these boards that would help CoreOne and kitspace_d20 only.
+
+Plan (M22), in order. Each change sits behind an option, off until measured:
+
+| # | Change | Evidence | Effort |
+|--:|---|---|:--:|
+| 1 | **Proof-triggered pin rescue**: a pin proved boxed in by routed copper gets its neighbours within ~2 mm ripped, is routed first, and the victims are re-routed, as a transaction; on failure a seeded victim order and a radius growing toward ~12 mm | copper near pins rescues 155 of 288; 229 of 526 open boxed in with no negotiation; `--lns-open` never got budget | M |
+| 2 | **Leave nothing unattempted**: when the main loop ends, retry every ripped-not-re-routed and never-attempted connection on the current copper | 139 of 349 route alone on the final board | S |
+| 3 | **Whole-board attempt for window misses** (never for proved enclosures) | whole-board window rescues 78; "no path in window" 133 of 526 | S |
+| 4 | **Informed pad-to-plane searches**: a lower bound to the net's fill, the late proof, planning to nearby same-net copper; `causes` fills zones as `route` does | pad-to-plane search floods to its 3 M cap (PoE switch C115.2, C123.2: 1.2 mm stubs) | S-M |
+| 5 | **D153 via retry only after budget misses**, against an equal-budget control | enclosure proofs do not depend on prices | S |
+| 6 | **Escape plan in more variants, then a via-only cost in dense pins' outward cones** | CoreOne vias 0.31 mm from open pins against 0.65 mm from routed ones | S, then M |
+| 7 | **A tight via state and off-lattice via sites** | the via margin has no tight fallback; neck-down vias carried 5 of CoreOne's 10 via rescues | M |
+| 8 | **Research: a via-site and layer planner** for dense packages and buses (pin access points, via exclusion, crossing and layer planning) | PAO, Bayless 2016, Haas 2026; start only if package fan-out is still the largest class | L |
+
+The user's "widen and randomise the last traces" is item 1's escalation: what widens is the radius and the order of what is ripped around
+one proved-stuck pin, seeded, not the search's cost weights (those were measured and lost, doc 16 §11).
+
+Gate: at least 15 % fewer open connections on `pcbench-bd-fail` at 10 M work, judged by KiCad; no clean board lost; `quick` and `mid`
+byte-identical with the options off.

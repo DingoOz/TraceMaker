@@ -1,0 +1,42 @@
+| board | L | pitch | open | sampled | A | Afail | dead_end | V05 | V1 | V2 | T2 | VT2 | anyV | Vonly | Tonly | BIG | CHEAP | FINE | search | none | swap_tried | swap_ok |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| TCKB_Kicad_TCKB | 2 | 0.1 | 18 | 18 | 1 | 17 | 0 | 0 | 0 | 0 | 3 | 4 | 0 | 0 | 3 | 4 | 3 | 2 | 5 | 8 | 0 | 0 |
+| mini_mass_prog_bench_prog_rig | 4 | 0.065 | 11 | 11 | 1 | 10 | 0 | 2 | 2 | 2 | 6 | 6 | 2 | 0 | 4 | 1 | 0 | 0 | 1 | 3 | 1 | 0 |
+| CoreOne-xCORE200-Original_CoreOne | 4 | 0.055 | 28 | 28 | 4 | 24 | 0 | 5 | 9 | 10 | 15 | 15 | 10 | 0 | 5 | 2 | 2 | 0 | 2 | 8 | 8 | 1 |
+| LeeChee_1800 | 2 | 0.075 | 29 | 29 | 13 | 16 | 0 | 0 | 2 | 4 | 4 | 4 | 4 | 0 | 0 | 8 | 2 | 0 | 8 | 4 | 0 | 0 |
+| MonApollo_analog-board | 2 | 0.075 | 73 | 73 | 12 | 61 | 0 | 3 | 3 | 7 | 33 | 33 | 7 | 0 | 26 | 10 | 8 | 1 | 11 | 20 | 2 | 1 |
+| Aleste-520EX_aleste | 2 | 0.1 | 228 | 95 | 18 | 77 | 0 | 0 | 1 | 1 | 10 | 10 | 1 | 0 | 9 | 53 | 25 | 0 | 53 | 21 | 1 | 1 |
+| kitspace_d20_tri_r0.3 | 4 | 0.035 | 139 | 95 | 12 | 83 | 0 | 6 | 12 | 22 | 83 | 83 | 22 | 0 | 61 | 0 | 0 | 0 | 0 | 0 | 5 | 2 |
+| total | | | 526 | 349 | 61 | 288 | 0 | 16 | 29 | 46 | 154 | 155 | 46 | 0 | 108 | 78 | 40 | 3 | 80 | 64 | 17 | 5 |
+
+original run failure reasons: {'boxed in (target)': 57, 'boxed in': 172, ')': 152, 'search budget': 1, 'out of budget': 2, 'ripped up by': 9, 'no path in window': 133}
+  TCKB_Kicad_TCKB fast bends, jittered order, escape plan 0.1 {'boxed in (target)': 12, 'boxed in': 3, ')': 3}
+  mini_mass_prog_bench_prog_rig fast bends, cheap crossings, escape plan, crowded source 0.065 {'boxed in': 6, 'boxed in (target)': 1, 'search budget': 1, 'out of budget': 1, ')': 2}
+  CoreOne-xCORE200-Original_CoreOne fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source 0.11 {'boxed in': 28}
+  LeeChee_1800 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source 0.15 {'ripped up by': 8, 'out of budget': 1, 'boxed in': 20}
+  MonApollo_analog-board fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source 0.15 {'ripped up by': 1, 'no path in window': 19, 'boxed in': 44, 'boxed in (target)': 9}
+  Aleste-520EX_aleste fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source 0.2 {'no path in window': 105, 'boxed in': 26, 'boxed in (target)': 2, ')': 95}
+  kitspace_d20_tri_r0.3 exact bends, jittered order 0.035 {'boxed in (target)': 33, 'boxed in': 45, 'no path in window': 9, ')': 52}
+BIG why for A-fails: {'boxed in (target)': 72, '?': 78, 'boxed in (source)': 56, 'out of budget': 9, 'boxed_in': 10, 'no path in window': 14, 'not_attempted': 45, 'search budget': 2, 'ripped_not_rerouted': 2}
+vias in A routes: [(0, 4), (1, 11), (2, 22), (3, 5), (4, 8), (5, 4), (6, 7)]
+vias in rescue routes: [(('BIG', 2), 6), (('BIG', 3), 3), (('BIG', 4), 7), (('BIG', 5), 13), (('BIG', 6), 49), (('CHEAP', 2), 1), (('CHEAP', 3), 1), (('CHEAP', 4), 3), (('CHEAP', 5), 4), (('CHEAP', 6), 31), (('FINE', 4), 1), (('FINE', 6), 2), (('V05', 0), 1), (('V05', 1), 3), (('V05', 2), 9), (('V05', 3), 2), (('V05', 4), 1), (('V1', 0), 4), (('V1', 1), 4), (('V1', 2), 17), (('V1', 3), 2), (('V1', 4), 2), (('V2', 0), 10), (('V2', 1), 4), (('V2', 2), 25), (('V2', 3), 2), (('V2', 4), 3), (('V2', 6), 2)]
+nearest foreign via gap (mm), pads of dense parts holding an open end: open pads n=252 p25=0.30 med=0.54 <0.25:15% <0.5:45% <1:77%
+                                                                   connected pads n=735 p25=0.46 med=0.82 <0.25:3% <0.5:30% <1:59%
+
+| board | open ends at dense parts | nearest foreign via gap median (mm) | nearest is own-part net | connected pads of same parts: median gap |
+|---|--:|--:|--:|--:|
+| TCKB_Kicad_TCKB | 21 | 0.48 | 21/21 | 0.66 (n=58) |
+| mini_mass_prog_bench_prog_rig | 18 | 0.56 | 18/18 | 1.00 (n=126) |
+| CoreOne-xCORE200-Original_CoreOne | 29 | 0.31 | 28/29 | 0.65 (n=146) |
+| LeeChee_1800 | 30 | 0.66 | 30/30 | 1.13 (n=78) |
+| MonApollo_analog-board | 79 | 1.08 | 73/79 | 0.89 (n=295) |
+| kitspace_d20_tri_r0.3 | 75 | 0.26 | 21/75 | 0.24 (n=32) |
+
+V05 rescued routes by via count: [(0, 1), (1, 3), (2, 9), (3, 2), (4, 1)]
+V1 rescued routes by via count: [(0, 4), (1, 4), (2, 17), (3, 2), (4, 2)]
+V2 rescued routes by via count: [(0, 10), (1, 4), (2, 25), (3, 2), (4, 3), (6, 1), (8, 1)]
+T2 rescued routes by via count: [(0, 69), (1, 21), (10, 1), (2, 50), (3, 4), (4, 7), (6, 2)]
+VT2 rescued routes by via count: [(0, 71), (1, 22), (10, 1), (2, 48), (3, 5), (4, 6), (6, 2)]
+BIG rescued routes by via count: [(10, 4), (11, 3), (12, 3), (13, 2), (14, 1), (15, 2), (2, 6), (3, 3), (4, 7), (5, 13), (6, 12), (7, 5), (8, 10), (9, 7)]
+CHEAP rescued routes by via count: [(10, 4), (11, 3), (12, 5), (13, 2), (14, 3), (15, 1), (16, 1), (17, 1), (2, 1), (3, 1), (4, 3), (5, 4), (6, 5), (7, 3), (8, 1), (9, 2)]
+FINE rescued routes by via count: [(10, 1), (12, 1), (4, 1)]

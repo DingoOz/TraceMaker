@@ -1,0 +1,36 @@
+| board | exp | rescued | median vias | median detour (route / straight) | A why of those (first clause) |
+|---|---|--:|--:|--:|---|
+| TCKB_Kicad_TCKB | T2 | 3 | 4 | 1.27 | {'boxed_in: boxed in (target)': 3} |
+| TCKB_Kicad_TCKB | BIG | 4 | 12.0 | 1.31 | {'boxed_in: boxed in (target)': 3, 'out_of_budget: out of budget': 1} |
+| TCKB_Kicad_TCKB | CHEAP | 3 | 14 | 1.38 | {'boxed_in: boxed in (target)': 2, 'out_of_budget: out of budget': 1} |
+| mini_mass_prog_bench_prog_rig | V2 | 2 | 2.0 | 1.06 | {'boxed_in: boxed in (target)': 1, 'boxed_in: boxed in': 1} |
+| mini_mass_prog_bench_prog_rig | T2 | 6 | 2.0 | 1.09 | {'boxed_in: boxed in (target)': 5, 'boxed_in: boxed in': 1} |
+| mini_mass_prog_bench_prog_rig | BIG | 1 | 2 | 1.01 | {'out_of_budget: out of budget': 1} |
+| CoreOne-xCORE200-Original_CoreOne | V2 | 10 | 2.0 | 1.17 | {'boxed_in: boxed in (target)': 5, 'boxed_in: boxed in': 5} |
+| CoreOne-xCORE200-Original_CoreOne | T2 | 15 | 2 | 1.11 | {'boxed_in: boxed in (target)': 10, 'boxed_in: boxed in': 5} |
+| CoreOne-xCORE200-Original_CoreOne | BIG | 2 | 4.0 | 1.21 | {'boxed_in: boxed in (target)': 2} |
+| CoreOne-xCORE200-Original_CoreOne | CHEAP | 2 | 5.0 | 1.14 | {'boxed_in: boxed in (target)': 2} |
+| LeeChee_1800 | V2 | 4 | 2.0 | 1.12 | {'boxed_in: boxed in': 2, 'boxed_in: skipped: identical earlier att': 2} |
+| LeeChee_1800 | T2 | 4 | 2.0 | 1.09 | {'boxed_in: boxed in': 2, 'boxed_in: skipped: identical earlier att': 2} |
+| LeeChee_1800 | BIG | 8 | 6.0 | 1.13 | {'out_of_budget: out of budget': 8} |
+| LeeChee_1800 | CHEAP | 2 | 7.5 | 1.09 | {'out_of_budget: out of budget': 2} |
+| MonApollo_analog-board | V2 | 7 | 2 | 1.51 | {'boxed_in: boxed in (target)': 4, 'no_legal_path: no path in window': 2, 'boxed_in: boxed in': 1} |
+| MonApollo_analog-board | T2 | 33 | 1 | 1.14 | {'boxed_in: boxed in (target)': 17, 'boxed_in: boxed in': 5, 'not_attempted: ': 5} |
+| MonApollo_analog-board | BIG | 10 | 6.5 | 1.59 | {'boxed_in: boxed in (target)': 5, 'out_of_budget: out of budget': 3, 'no_legal_path: no path in window': 2} |
+| MonApollo_analog-board | CHEAP | 8 | 8.5 | 1.39 | {'boxed_in: boxed in (target)': 4, 'out_of_budget: out of budget': 3, 'no_legal_path: no path in window': 1} |
+| Aleste-520EX_aleste | V2 | 1 | 4 | 1.48 | {'no_legal_path: skipped: identical earlie': 1} |
+| Aleste-520EX_aleste | T2 | 10 | 2.0 | 1.35 | {'boxed_in: boxed in (target)': 3, 'no_legal_path: skipped: identical earlie': 2, 'not_attempted: ': 2} |
+| Aleste-520EX_aleste | BIG | 53 | 7 | 1.67 | {'out_of_budget: out of budget': 24, 'not_attempted: ': 15, 'no_legal_path: no path in window': 12} |
+| Aleste-520EX_aleste | CHEAP | 25 | 10 | 1.45 | {'out_of_budget: out of budget': 14, 'not_attempted: ': 6, 'no_legal_path: no path in window': 4} |
+| kitspace_d20_tri_r0.3 | V2 | 22 | 1.0 | 1.61 | {'boxed_in: boxed in': 8, 'not_attempted: ': 7, 'boxed_in: boxed in (target)': 6} |
+| kitspace_d20_tri_r0.3 | T2 | 83 | 0 | 1.12 | {'not_attempted: ': 36, 'boxed_in: boxed in': 23, 'boxed_in: boxed in (target)': 21} |
+
+| board | sampled | A exact bends | FB fast bends | W winning variant | A only | FB only | W only |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| TCKB_Kicad_TCKB | 18 | 1 | 5 | 0 | 0 | 4 | 0 |
+| mini_mass_prog_bench_prog_rig | 11 | 1 | 2 | 3 | 0 | 0 | 1 |
+| CoreOne-xCORE200-Original_CoreOne | 28 | 4 | 6 | 3 | 0 | 1 | 0 |
+| LeeChee_1800 | 29 | 13 | 21 | 20 | 0 | 1 | 0 |
+| MonApollo_analog-board | 73 | 12 | 22 | 18 | 0 | 4 | 4 |
+| Aleste-520EX_aleste | 95 | 18 | 53 | 41 | 0 | 15 | 13 |
+| kitspace_d20_tri_r0.3 | 95 | 12 | 12 | 12 | 0 | 0 | 0 |
