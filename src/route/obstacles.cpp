@@ -156,6 +156,30 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
     };
     mark_loop(outline_);
     for (const auto& c : cutouts_) mark_loop(c);
+    // Edge index by raster row (rows are ir_cell_ tall from bounds_.y0, as in inside_exact): an edge is listed in every
+    // row its closed y-range meets.
+    auto band_loop = [&](const std::vector<Point>& loop) {
+      LoopBands lb;
+      std::vector<std::vector<std::uint32_t>> rows(static_cast<std::size_t>(ir_h_));
+      auto row_of = [&](Coord y) {  // floor division: y may lie below bounds_.y0
+        const Coord off = y - bounds_.y0;
+        return off >= 0 ? off / ir_cell_ : -((-off + ir_cell_ - 1) / ir_cell_);
+      };
+      for (std::size_t i = 0; i < loop.size(); ++i) {
+        const Point a = loop[i == 0 ? loop.size() - 1 : i - 1], c = loop[i];
+        const Coord r0 = std::max<Coord>(0, row_of(std::min(a.y, c.y))), r1 = std::min<Coord>(ir_h_ - 1, row_of(std::max(a.y, c.y)));
+        for (Coord r = r0; r <= r1; ++r) rows[static_cast<std::size_t>(r)].push_back(static_cast<std::uint32_t>(i));
+      }
+      lb.start.reserve(rows.size() + 1);
+      lb.start.push_back(0);
+      for (const auto& r : rows) {
+        lb.edges.insert(lb.edges.end(), r.begin(), r.end());
+        lb.start.push_back(static_cast<std::uint32_t>(lb.edges.size()));
+      }
+      loop_bands_.push_back(std::move(lb));
+    };
+    band_loop(outline_);
+    for (const auto& c : cutouts_) band_loop(c);
     // Interior cells by scanline parity (an exact point-in-polygon per cell was O(cells x vertices): minutes on
     // PCBench LeeChee_1800, 378 x 157 mm with a 572-line outline). Cells near an edge are marked 2 above and
     // tested exactly per query, so the parity here only has to be right at cell centres far from edges.
@@ -375,10 +399,22 @@ bool Obstacles::via_keeps_off(const drc::CopperItem& it) const {
   return std::min(p.size_x, p.size_y) < vias_off_pads_max_;
 }
 
-bool Obstacles::inside_exact(Point p) const {
+bool Obstacles::inside_exact_linear(Point p) const {
   if (!geom::point_in_polygon(p, outline_)) return false;
   for (const auto& c : cutouts_)
     if (geom::point_in_polygon(p, c)) return false;
+  return true;
+}
+
+bool Obstacles::inside_exact(Point p) const {
+  const Coord off = p.y - bounds_.y0;
+  if (loop_bands_.empty() || off < 0 || off / ir_cell_ >= ir_h_) return inside_exact_linear(p);
+  const std::size_t row = static_cast<std::size_t>(off / ir_cell_);
+  for (std::size_t li = 0; li < loop_bands_.size(); ++li) {
+    const auto& lb = loop_bands_[li];
+    const bool in = geom::point_in_polygon_edges(p, li == 0 ? outline_ : cutouts_[li - 1], lb.edges.data() + lb.start[row], lb.start[row + 1] - lb.start[row]);
+    if (li == 0 ? !in : in) return false;
+  }
   return true;
 }
 

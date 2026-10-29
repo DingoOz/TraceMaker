@@ -50,6 +50,10 @@ long double seg_seg_dist(Point a, Point b, Point c, Point d);
 
 // Point in closed polygon (boundary counts as inside).
 bool point_in_polygon(Point p, const std::vector<Point>& poly);
+// The same test over a subset of the polygon's edges, given by the index i of each edge (poly[i - 1], poly[i]), with edge 0
+// closing the loop from the last point. Exact when the subset holds every edge whose y-range contains p.y: only those
+// can cross p's ray or carry p (an index of edges by horizontal band, Obstacles::inside_exact).
+bool point_in_polygon_edges(Point p, const std::vector<Point>& poly, const std::uint32_t* edges, std::size_t count);
 
 // True if the gap between the two shapes (distance between their surfaces, negative when they overlap) is
 // strictly less than `clearance`. clearance may be 0 (then: do they overlap or touch? no — strictly overlap).

@@ -649,6 +649,32 @@ TEST_CASE("disallow blind_via or buried_via or micro_via alone stops the router 
   }
 }
 
+TEST_CASE("inside board: the exact test by raster-row edges equals the every-edge reference", "[geom][route]") {
+  // A toothed outline (many edges, some horizontal and some on raster-row boundaries) round the board, the board's own
+  // rectangle and a round hole as cut-outs.
+  std::string poly = "  (gr_poly (pts";
+  for (int k = 0; k <= 24; ++k) poly += " (xy " + std::to_string(-3 + k) + (k % 2 ? " -3.25" : " -4") + ")";
+  poly += " (xy 21 6.5)";
+  for (int k = 24; k >= 0; k -= 3) poly += " (xy " + std::to_string(-3 + k) + (k % 2 ? " 13.5" : " 14.125") + ")";
+  poly += " (xy -3.6 5.05)) (stroke (width 0.1) (type solid)) (fill none) (layer \"Edge.Cuts\"))\n";
+  poly += "  (gr_circle (center 10 -1.5) (end 11.2 -1.5) (stroke (width 0.1) (type solid)) (fill none) (layer \"Edge.Cuts\"))\n";
+  const Files f("inside_bands", board_text(poly), "");
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  route::Obstacles obs(lb.board, rules);
+  REQUIRE(!obs.outline().empty());
+  int inside = 0, outside = 0;
+  for (Coord y = -6'000'000; y <= 16'000'000; y += 61'000)
+    for (Coord x = -6'000'000; x <= 24'000'000; x += 77'000)
+      for (const geom::Point p : {geom::Point{x, y}, geom::Point{x - x % 250'000, y - y % 250'000}, geom::Point{x, y - y % 125'000}}) {
+        const bool fast = obs.inside_exact(p);
+        REQUIRE(fast == obs.inside_exact_linear(p));
+        (fast ? inside : outside) += 1;
+      }
+  CHECK(inside > 1000);
+  CHECK(outside > 1000);
+}
+
 TEST_CASE("fixed via codes: the one-pass check equals the per-layer reference", "[rules][route]") {
   // Keepouts (outer wall, via-only), fixed tracks of both nets on several layers, and a physical hole rule.
   const std::string extra = std::string(kOuterWall) +
