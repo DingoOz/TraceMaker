@@ -116,13 +116,13 @@ mkdir -p out
 cp $EX/plane_smd.kicad_pro out/routed.kicad_pro      # the design rules travel with the board
 tracemaker route $EX/plane_smd.kicad_pcb -o out/routed.kicad_pcb \
     --soft-zones --via-in-pad --keep-vias-off-pads --first-nets XIN,XOUT \
-    --work 3000000 --variants 2 --no-gpu
+    --work 3000000 --variants 4 --no-gpu
 ```
 
 It takes a few seconds and ends with:
 
 ```
-routed 49/49 connections, 104 tracks, 46 vias, ...
+routed 49/49 connections, 108 tracks, 42 vias, ...
 ```
 
 The options suit this dense board; a plain `tracemaker route board.kicad_pcb -o out.kicad_pcb` is where to start on
@@ -151,7 +151,7 @@ No KiCad? [Run kicad-cli from Docker](how-to/kicad-cli-docker.md).
 ```bash
 tracemaker route $EX/plane_smd.kicad_pcb -o out/routed.kicad_pcb --view --hold \
     --soft-zones --via-in-pad --keep-vias-off-pads --first-nets XIN,XOUT \
-    --work 3000000 --variants 2 --no-gpu
+    --work 3000000 --variants 4 --no-gpu
 ```
 
 Open the address it prints (`http://127.0.0.1:8766/`) in a browser. `--hold` keeps the viewer open after routing

@@ -50,7 +50,7 @@ kill $vpid 2>/dev/null
 DESC="the viewer serves index.html from ../share/tracemaker/viewer"; check bash -c "head -1 /work/page.txt | grep -q ' 200 ' && grep -qi '<html' /work/page.txt"
 cp share/tracemaker/examples/plane_smd/plane_smd.kicad_pro /work/routed.kicad_pro
 tracemaker route share/tracemaker/examples/plane_smd/plane_smd.kicad_pcb -o /work/routed.kicad_pcb --soft-zones --via-in-pad --keep-vias-off-pads \
-  --first-nets XIN,XOUT --work 3000000 --variants 2 --threads 2 --no-kb --no-gpu --json /work/route.json >/work/route.log 2>&1
+  --first-nets XIN,XOUT --work 3000000 --variants 4 --threads 2 --no-kb --no-gpu --json /work/route.json >/work/route.log 2>&1
 echo "route exit code: $?"
 tracemaker drc /work/routed.kicad_pcb --refill-zones --json /work/drc.json >/work/drc.log 2>&1
 echo "drc exit code: $?"

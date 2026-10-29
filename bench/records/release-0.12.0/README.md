@@ -47,3 +47,10 @@ python3 bench/run.py --tier A --limit 40 --time 120 --threads 8 --name rel0120-t
 python3 bench/compare_runs.py rel0110-tierA rel0120-tierA
 ctest --preset release -R '^delay_room$' --output-on-failure                           # needs bench/prepare_demos.py -> build/demos
 ```
+
+## 4. Release files gate
+
+The first `v0.12.0` tag failed the install test (`scripts/test_release_install.py`): the example board, `plane_smd`, routed 48/49 with
+`--variants 2`. That dates from D143 (#57), not this release: 455e315 also routes 48/49. A84 had moved the ctest for that board to four
+variants, but the tag-only install test and the tutorials still used two. All of them now use `--variants 4` (49/49; the tutorials'
+sample output is from that run), and the tag was moved to the fixed commit before any release was published.

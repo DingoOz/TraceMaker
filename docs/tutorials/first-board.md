@@ -69,7 +69,7 @@ mkdir -p build/tutorial
 cp tests/boards/plane_smd/plane_smd.kicad_pro build/tutorial/routed.kicad_pro
 $TM route tests/boards/plane_smd/plane_smd.kicad_pcb -o build/tutorial/routed.kicad_pcb \
     --soft-zones --via-in-pad --keep-vias-off-pads --first-nets XIN,XOUT \
-    --work 3000000 --variants 2 --no-gpu
+    --work 3000000 --variants 4 --no-gpu
 ```
 
 What the options are for, on this board:
@@ -81,16 +81,16 @@ What the options are for, on this board:
 | `--keep-vias-off-pads` | No plane vias in the small 0402 and QFN pads. |
 | `--first-nets XIN,XOUT` | The crystal lines go first, so they stay short. |
 | `--work 3000000` | A budget in search steps instead of seconds, so you get the same result every time, at any thread count. |
-| `--variants 2` | Run two of the eight differently configured routers and keep the better result. |
+| `--variants 4` | Run four of the eight differently configured routers and keep the best result. |
 | `--no-gpu` | Compute on the CPU only. The results are the same either way. |
 
 After about five seconds the last lines read:
 
 ```text
-  variant 6 fast bends, cheap crossings, escape plan routed 49 in 4.7 s  <- best
-  variant 2 fast bends, longest first (2x pitch on large boards) routed 44 in 5.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 44 in 4.7 s
+  variant 1 fast bends, shortest first, crowded source routed 47 in 3.3 s
 soft zones: after refilling 2 zones, 0 items unconnected
-routed 49/49 connections, 124 tracks, 44 vias, pitch 0.030 mm, ...
+routed 49/49 connections, 108 tracks, 42 vias, pitch 0.025 mm, ...
 ```
 
 Every connection is routed. The exit code is 0 when nothing is left open.

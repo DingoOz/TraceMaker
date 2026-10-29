@@ -73,7 +73,7 @@ Try it:
   export PATH="$PWD/bin:$PATH"
   tracemaker version
   tracemaker route share/tracemaker/examples/plane_smd/plane_smd.kicad_pcb -o /tmp/routed.kicad_pcb \\
-      --soft-zones --via-in-pad --keep-vias-off-pads --first-nets XIN,XOUT --work 3000000 --variants 2 --no-gpu
+      --soft-zones --via-in-pad --keep-vias-off-pads --first-nets XIN,XOUT --work 3000000 --variants 4 --no-gpu
   tracemaker drc /tmp/routed.kicad_pcb
 
 (A board's .kicad_pro, next to the .kicad_pcb, gives the design rules: copy it beside the output.)
