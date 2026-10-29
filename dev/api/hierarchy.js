@@ -114,6 +114,7 @@ var hierarchy =
     [ "tmk::crules::LayerDelay", "structtmk_1_1crules_1_1LayerDelay.html", null ],
     [ "tmk::crules::LayerGeometry", "structtmk_1_1crules_1_1LayerGeometry.html", null ],
     [ "tmk::route::LayerLimits", "structtmk_1_1route_1_1LayerLimits.html", null ],
+    [ "tmk::route::LazyCodes", "classtmk_1_1route_1_1LazyCodes.html", null ],
     [ "tmk::place::LegaliseStats", "structtmk_1_1place_1_1LegaliseStats.html", null ],
     [ "tmk::place::Legality", "classtmk_1_1place_1_1Legality.html", null ],
     [ "tmk::route::LegalizeOptions", "structtmk_1_1route_1_1LegalizeOptions.html", null ],

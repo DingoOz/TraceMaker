@@ -17,6 +17,7 @@ var namespacetmk_1_1gpu =
     ] ],
     [ "compiled_backend", "namespacetmk_1_1gpu.html#a904403259d81e2274227b0a596c59a5e", null ],
     [ "field_cpu", "namespacetmk_1_1gpu.html#aa3bac7e3113dc638bb2cf01a32a538fd", null ],
+    [ "field_cpu_reference", "namespacetmk_1_1gpu.html#aa820a2c1ad24cbbe1335a07fbe7c72b5", null ],
     [ "field_gpu", "namespacetmk_1_1gpu.html#ac8b7070628adb71b6c96684ebe4a127d", null ],
     [ "find_device", "namespacetmk_1_1gpu.html#a39d30fb39fd98f2c3856f77687777e24", null ],
     [ "has_free_memory", "namespacetmk_1_1gpu.html#aa2d5ddd96bfe1c12b81ea9d8895a5372", null ],

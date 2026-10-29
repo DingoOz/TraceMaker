@@ -30,6 +30,7 @@ var namespacetmk_1_1geom =
     [ "offset", "namespacetmk_1_1geom.html#a903460cc1a23bedf39b6eca9d329ed40", null ],
     [ "orient", "namespacetmk_1_1geom.html#a835a08772a6df161ce20600ea6f6d534", null ],
     [ "point_in_polygon", "namespacetmk_1_1geom.html#ad63b136b7dfafb273fc103241a99e84a", null ],
+    [ "point_in_polygon_edges", "namespacetmk_1_1geom.html#a5717515dc23d157a6d83159d5f466124", null ],
     [ "point_seg_closer", "namespacetmk_1_1geom.html#aa8149207aa7fa0e8a5cd6a6ce3a73260", null ],
     [ "point_seg_dist", "namespacetmk_1_1geom.html#a5991c94d23b0db5e64f29ba165ce9fa2", null ],
     [ "polygons", "namespacetmk_1_1geom.html#a06c5d5a998405da41d4b10504f91727a", null ],

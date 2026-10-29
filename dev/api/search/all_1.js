@@ -93,6 +93,6 @@ var searchData=
   ['busgroup_90',['BusGroup',['../structtmk_1_1route_1_1BusGroup.html',1,'tmk::route']]],
   ['busmember_91',['BusMember',['../structtmk_1_1route_1_1BusMember.html',1,'tmk::route']]],
   ['busstats_92',['BusStats',['../structtmk_1_1route_1_1BusStats.html',1,'tmk::route']]],
-  ['bytes_93',['bytes',['../classtmk_1_1route_1_1HeatGrid.html#a4fdceb5ff4348fa682ebebe232f1164d',1,'tmk::route::HeatGrid']]],
+  ['bytes_93',['bytes',['../classtmk_1_1route_1_1HeatGrid.html#a4fdceb5ff4348fa682ebebe232f1164d',1,'tmk::route::HeatGrid::bytes()'],['../classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720',1,'tmk::route::LazyCodes::bytes()']]],
   ['bytes_5fin_94',['bytes_in',['../classtmk_1_1server_1_1ReplayWriter.html#a636a43c89fb2fb87e396ae7b8829dc01',1,'tmk::server::ReplayWriter']]]
 ];

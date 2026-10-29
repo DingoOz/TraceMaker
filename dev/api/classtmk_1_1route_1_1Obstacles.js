@@ -15,6 +15,8 @@ var classtmk_1_1route_1_1Obstacles =
     [ "fixed_via_code_reference", "classtmk_1_1route_1_1Obstacles.html#a50b587f0303216eb4fc3deaf4083b44d", null ],
     [ "grid", "classtmk_1_1route_1_1Obstacles.html#ac042e49f24afcf2818b906289fb4c00b", null ],
     [ "inside_board", "classtmk_1_1route_1_1Obstacles.html#ade017b0f4bc2654e5579bfbf6ea23eba", null ],
+    [ "inside_exact", "classtmk_1_1route_1_1Obstacles.html#afb60a95109fa82be82aa5a9ac6e31b0a", null ],
+    [ "inside_exact_linear", "classtmk_1_1route_1_1Obstacles.html#ae479348c02fb1a806ff16df6c078cece", null ],
     [ "needs_exact_routing", "classtmk_1_1route_1_1Obstacles.html#a191fcf6f442bcb9e763e76df54a5bd12", null ],
     [ "outline", "classtmk_1_1route_1_1Obstacles.html#a641a115b09690d40683a167e277f160d", null ],
     [ "positional_rules", "classtmk_1_1route_1_1Obstacles.html#a13742ca84a07a01d4c4c7b37fb00ac16", null ],

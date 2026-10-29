@@ -87,7 +87,7 @@ var searchData=
   ['site_5fblocked_84',['site_blocked',['../structtmk_1_1passes_1_1StitchResult.html#a47f44ae1a856c537aabf0c36770973b9',1,'tmk::passes::StitchResult']]],
   ['site_5fserved_85',['site_served',['../structtmk_1_1passes_1_1StitchResult.html#a2ec697be17e9bc561d5c9729eedff803',1,'tmk::passes::StitchResult']]],
   ['sites_86',['sites',['../structtmk_1_1passes_1_1StitchResult.html#a0159c463ac30983bf5f468a059c79d85',1,'tmk::passes::StitchResult']]],
-  ['size_87',['size',['../structtmk_1_1model_1_1Via.html#a684a306f535d3216c1681140aa5b435c',1,'tmk::model::Via::size'],['../structtmk_1_1place_1_1CongestionMap.html#a6c2465679e21cc75f04d4ec2cabc800b',1,'tmk::place::CongestionMap::size()']]],
+  ['size_87',['size',['../structtmk_1_1model_1_1Via.html#a684a306f535d3216c1681140aa5b435c',1,'tmk::model::Via::size'],['../structtmk_1_1place_1_1CongestionMap.html#a6c2465679e21cc75f04d4ec2cabc800b',1,'tmk::place::CongestionMap::size()'],['../classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542',1,'tmk::route::LazyCodes::size()']]],
   ['size_5ftol_5fmm_88',['size_tol_mm',['../structtmk_1_1analysis_1_1FootprintCheckOptions.html#a6af6f575a292bef81f87746c712edbfe',1,'tmk::analysis::FootprintCheckOptions']]],
   ['size_5ftol_5fnm_89',['size_tol_nm',['../structtmk_1_1analysis_1_1FootprintRef.html#a1f5fa025fb0fc60ee2fc232d1000d681',1,'tmk::analysis::FootprintRef']]],
   ['size_5fx_90',['size_x',['../structtmk_1_1model_1_1Pad.html#a0fdf08da07a5416ef83a2984a08652d8',1,'tmk::model::Pad']]],

@@ -37,7 +37,7 @@ var searchData=
   ['side_5fvias_34',['side_vias',['../namespacetmk_1_1place.html#ab0da0352d080360025fb226b732ebbf0',1,'tmk::place']]],
   ['signal_35',['signal',['../classtmk_1_1crules_1_1BoardIndex.html#a29f6f028f0fac47154d1659e85b2d76f',1,'tmk::crules::BoardIndex']]],
   ['signal_5fname_36',['signal_name',['../namespacetmk_1_1crules.html#ad10de8f2280c161ebbb98f4f64cef363',1,'tmk::crules']]],
-  ['size_37',['size',['../structtmk_1_1place_1_1CongestionMap.html#a6c2465679e21cc75f04d4ec2cabc800b',1,'tmk::place::CongestionMap']]],
+  ['size_37',['size',['../structtmk_1_1place_1_1CongestionMap.html#a6c2465679e21cc75f04d4ec2cabc800b',1,'tmk::place::CongestionMap::size()'],['../classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542',1,'tmk::route::LazyCodes::size()']]],
   ['skew_38',['skew',['../structtmk_1_1route_1_1BusStats.html#ae1f238fbd2adf2efb09b3b804d9b35e0',1,'tmk::route::BusStats::skew()'],['../structtmk_1_1route_1_1PairStats.html#a41754a2bd132ea2c4422d795fc4c185b',1,'tmk::route::PairStats::skew()']]],
   ['skew_5fconstraint_39',['skew_constraint',['../classtmk_1_1drc_1_1RuleEngine.html#a6348e87032430f61e28f5841e1dca7b2',1,'tmk::drc::RuleEngine']]],
   ['snap_40',['snap',['../namespacetmk_1_1place_1_1detail.html#a29b362db495963dd08f7b5fa3b0cbd39',1,'tmk::place::detail::snap(Coord v)'],['../namespacetmk_1_1place_1_1detail.html#a1a7dc9a3715a6855776b41acd4941ecb',1,'tmk::place::detail::snap(Point q)']]],

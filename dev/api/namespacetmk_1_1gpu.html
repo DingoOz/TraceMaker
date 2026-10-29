@@ -122,7 +122,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aa2d5ddd96bfe1c12b81ea9d8895a5372" id="r_aa2d5ddd96bfe1c12b81ea9d8895a5372"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2d5ddd96bfe1c12b81ea9d8895a5372">has_free_memory</a> (int device_index, std::size_t bytes)</td></tr>
 <tr class="memdesc:aa2d5ddd96bfe1c12b81ea9d8895a5372"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when <span class="tt">bytes</span> plus a safety margin fit in the device's free memory right now.  <br /></td></tr>
 <tr class="memitem:aa3bac7e3113dc638bb2cf01a32a538fd" id="r_aa3bac7e3113dc638bb2cf01a32a538fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3bac7e3113dc638bb2cf01a32a538fd">field_cpu</a> (const <a class="el" href="structtmk_1_1gpu_1_1FieldProblem.html">FieldProblem</a> &amp;p, std::vector&lt; std::int32_t &gt; &amp;out)</td></tr>
-<tr class="memdesc:aa3bac7e3113dc638bb2cf01a32a538fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">CPU reference. <span class="tt">out</span> is resized to layers*h*w. Returns the number of sweep rounds.  <br /></td></tr>
+<tr class="memdesc:aa3bac7e3113dc638bb2cf01a32a538fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">CPU reference.  <br /></td></tr>
+<tr class="memitem:aa820a2c1ad24cbbe1335a07fbe7c72b5" id="r_aa820a2c1ad24cbbe1335a07fbe7c72b5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa820a2c1ad24cbbe1335a07fbe7c72b5">field_cpu_reference</a> (const <a class="el" href="structtmk_1_1gpu_1_1FieldProblem.html">FieldProblem</a> &amp;p, std::vector&lt; std::int32_t &gt; &amp;out)</td></tr>
+<tr class="memdesc:aa820a2c1ad24cbbe1335a07fbe7c72b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The line-by-line sweeps field_cpu replaced (reference for its test): identical output and round count.  <br /></td></tr>
 <tr class="memitem:ac8b7070628adb71b6c96684ebe4a127d" id="r_ac8b7070628adb71b6c96684ebe4a127d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1gpu_1_1GpuStatus.html">GpuStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac8b7070628adb71b6c96684ebe4a127d">field_gpu</a> (int device_index, const <a class="el" href="structtmk_1_1gpu_1_1FieldProblem.html">FieldProblem</a> &amp;p, std::vector&lt; std::int32_t &gt; &amp;out)</td></tr>
 <tr class="memdesc:ac8b7070628adb71b6c96684ebe4a127d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compiled GPU backend; on failure (no device, no memory) returns !ok and leaves <span class="tt">out</span> empty.  <br /></td></tr>
 <tr class="memitem:ae5c7b4e0aed90b403a1d6a6c7e99296d" id="r_ae5c7b4e0aed90b403a1d6a6c7e99296d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5c7b4e0aed90b403a1d6a6c7e99296d">philox_fill_cpu</a> (std::uint64_t seed, std::uint32_t stage, std::uint64_t item, std::size_t n)</td></tr>
@@ -204,7 +206,31 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>CPU reference. <span class="tt">out</span> is resized to layers*h*w. Returns the number of sweep rounds. </p>
+<p>CPU reference. </p>
+<p><span class="tt">out</span> is resized to layers*h*w. Returns the number of sweep rounds. The sweeps that change row run a row at a time (vectorised); every sweep leaves exactly what the line-by-line sweep leaves, so the rounds are the same too. </p>
+
+</div>
+</div>
+<a id="aa820a2c1ad24cbbe1335a07fbe7c72b5" name="aa820a2c1ad24cbbe1335a07fbe7c72b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa820a2c1ad24cbbe1335a07fbe7c72b5">&#9670;&#160;</a></span>field_cpu_reference()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::gpu::field_cpu_reference </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1gpu_1_1FieldProblem.html">FieldProblem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::int32_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The line-by-line sweeps field_cpu replaced (reference for its test): identical output and round count. </p>
 
 </div>
 </div>

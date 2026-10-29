@@ -258,6 +258,7 @@ var annotated_dup =
         [ "GlobalResult", "structtmk_1_1route_1_1GlobalResult.html", "structtmk_1_1route_1_1GlobalResult" ],
         [ "HeatGrid", "classtmk_1_1route_1_1HeatGrid.html", "classtmk_1_1route_1_1HeatGrid" ],
         [ "LayerLimits", "structtmk_1_1route_1_1LayerLimits.html", "structtmk_1_1route_1_1LayerLimits" ],
+        [ "LazyCodes", "classtmk_1_1route_1_1LazyCodes.html", "classtmk_1_1route_1_1LazyCodes" ],
         [ "LegalizeOptions", "structtmk_1_1route_1_1LegalizeOptions.html", "structtmk_1_1route_1_1LegalizeOptions" ],
         [ "LegalizeResult", "structtmk_1_1route_1_1LegalizeResult.html", "structtmk_1_1route_1_1LegalizeResult" ],
         [ "Obstacles", "classtmk_1_1route_1_1Obstacles.html", "classtmk_1_1route_1_1Obstacles" ],

@@ -141,6 +141,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a641a115b09690d40683a167e277f160d" id="r_a641a115b09690d40683a167e277f160d"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a641a115b09690d40683a167e277f160d">outline</a> () const</td></tr>
 <tr class="memdesc:a641a115b09690d40683a167e277f160d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise.  <br /></td></tr>
 <tr class="memitem:ade017b0f4bc2654e5579bfbf6ea23eba" id="r_ade017b0f4bc2654e5579bfbf6ea23eba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade017b0f4bc2654e5579bfbf6ea23eba">inside_board</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> p, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> margin) const</td></tr>
+<tr class="memitem:afb60a95109fa82be82aa5a9ac6e31b0a" id="r_afb60a95109fa82be82aa5a9ac6e31b0a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb60a95109fa82be82aa5a9ac6e31b0a">inside_exact</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> p) const</td></tr>
+<tr class="memdesc:afb60a95109fa82be82aa5a9ac6e31b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exact inside test against the outline and cut-outs: by the edges of the point's raster row, and the reference that tests every edge (the two must agree; test "[geom][route]" inside board).  <br /></td></tr>
+<tr class="memitem:ae479348c02fb1a806ff16df6c078cece" id="r_ae479348c02fb1a806ff16df6c078cece"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae479348c02fb1a806ff16df6c078cece">inside_exact_linear</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> p) const</td></tr>
 <tr class="memitem:abbc4f460a26b46e9735d15bd2c81adbd" id="r_abbc4f460a26b46e9735d15bd2c81adbd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbc4f460a26b46e9735d15bd2c81adbd">via_mask</a> () const</td></tr>
 <tr class="memdesc:abbc4f460a26b46e9735d15bd2c81adbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solder-mask expansion the checks give untented vias (0 when the board tents them).  <br /></td></tr>
 <tr class="memitem:ac0c6c1c3cecaf5888b95b33601dc3549" id="r_ac0c6c1c3cecaf5888b95b33601dc3549"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0c6c1c3cecaf5888b95b33601dc3549">set_via_mask</a> (<a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> m)</td></tr>
@@ -661,6 +664,42 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="afb60a95109fa82be82aa5a9ac6e31b0a" name="afb60a95109fa82be82aa5a9ac6e31b0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb60a95109fa82be82aa5a9ac6e31b0a">&#9670;&#160;</a></span>inside_exact()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::route::Obstacles::inside_exact </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a></td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exact inside test against the outline and cut-outs: by the edges of the point's raster row, and the reference that tests every edge (the two must agree; test "[geom][route]" inside board). </p>
+
+</div>
+</div>
+<a id="ae479348c02fb1a806ff16df6c078cece" name="ae479348c02fb1a806ff16df6c078cece"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae479348c02fb1a806ff16df6c078cece">&#9670;&#160;</a></span>inside_exact_linear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::route::Obstacles::inside_exact_linear </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a></td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a191fcf6f442bcb9e763e76df54a5bd12" name="a191fcf6f442bcb9e763e76df54a5bd12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a191fcf6f442bcb9e763e76df54a5bd12">&#9670;&#160;</a></span>needs_exact_routing()</h2>
 
@@ -1026,7 +1065,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Reference path: test probes against every edge of a zone fill instead of the fill's edge index (the answers are the same; tests/test_design_rules.cpp). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00112">112</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00116">116</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1053,7 +1092,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00109">109</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00113">113</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1083,7 +1122,7 @@ Static Public Attributes</h2></td></tr>
 <p>Net-less copper drawn as BOARD graphics (an EasyEDA import's pours as polygons on a copper layer) is fixed copper that no track may touch, and pins inside it are enclosed; soft, it is ignored like a zone fill (KiCad then flags what touches it). </p>
 <p>Off by default. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00103">103</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00107">107</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1113,7 +1152,7 @@ Static Public Attributes</h2></td></tr>
 <p>Net-less solder-mask openings drawn as footprint graphics (a solder-jumper's bridge, a MEMS microphone's pad group) no longer keep copper out; KiCad's mask checks flag what then lies in them (judgement, not a short). </p>
 <p>Off by default. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00100">100</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00104">104</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1142,7 +1181,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Zone fills are ignored as obstacles (they are refilled after routing); they remain connection targets. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00097">97</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00101">101</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1169,7 +1208,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00095">95</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00099">99</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1203,7 +1242,7 @@ Static Public Attributes</h2></td></tr>
 <p>Vias keep clear of SMD pads narrower than <span class="tt">max_pad</span> (any net, net-class clearance), as if they were another net's copper; larger pads (exposed thermal pads) still take vias. </p>
 <p>set_pad_via_exempt(true) lifts this around the checks of one deliberate via in pad (the router's &ndash;via-in-pad). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00108">108</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00112">112</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1230,7 +1269,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00104">104</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00108">108</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1332,7 +1371,7 @@ Static Public Attributes</h2></td></tr>
 <p>Solder-mask expansion the checks give untented vias (0 when the board tents them). </p>
 <p>Escape analysis sets it to 0 to ask "would a via fit here if vias were tented?"; routing never changes it. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00094">94</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00098">98</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1504,7 +1543,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00118">118</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1571,7 +1610,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00118">118</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1587,7 +1626,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00118">118</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1613,7 +1652,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Rejection counters (diagnostics): outside board, copper, holes/edges/keepouts. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00118">118</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>

@@ -27,6 +27,6 @@ var searchData=
   ['bus_5fpattern_5fmatch_24',['bus_pattern_match',['../namespacetmk_1_1route.html#aacad7a10234c31a06b0c23e408f77f87',1,'tmk::route']]],
   ['bus_5freport_25',['bus_report',['../namespacetmk_1_1app.html#ae70362c5f3d6fb89606b961add6816d8',1,'tmk::app']]],
   ['bus_5frule_5fskew_26',['bus_rule_skew',['../namespacetmk_1_1route.html#a3106ae39207d435759bc5cbaa5632597',1,'tmk::route']]],
-  ['bytes_27',['bytes',['../classtmk_1_1route_1_1HeatGrid.html#a4fdceb5ff4348fa682ebebe232f1164d',1,'tmk::route::HeatGrid']]],
+  ['bytes_27',['bytes',['../classtmk_1_1route_1_1HeatGrid.html#a4fdceb5ff4348fa682ebebe232f1164d',1,'tmk::route::HeatGrid::bytes()'],['../classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720',1,'tmk::route::LazyCodes::bytes()']]],
   ['bytes_5fin_28',['bytes_in',['../classtmk_1_1server_1_1ReplayWriter.html#a636a43c89fb2fb87e396ae7b8829dc01',1,'tmk::server::ReplayWriter']]]
 ];

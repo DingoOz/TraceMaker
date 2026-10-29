@@ -56,5 +56,6 @@ var searchData=
   ['kstates_53',['kStates',['../namespacetmk_1_1place.html#a4af5547c1db8aa75fc14f163dab8c402',1,'tmk::place']]],
   ['kthroughmargin_54',['kThroughMargin',['../namespacetmk_1_1place.html#ac16bc7eeaec13ab5baab03b20e9d1086',1,'tmk::place']]],
   ['kthroughthrough_55',['kThroughThrough',['../namespacetmk_1_1place.html#ae57dfaec4cfbc6ecc7cb779a96da521e',1,'tmk::place']]],
-  ['kworkphases_56',['kWorkPhases',['../namespacetmk_1_1route.html#a0262564b42cf349fadd53f9e50425b26',1,'tmk::route']]]
+  ['kunknown_56',['kUnknown',['../classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c',1,'tmk::route::LazyCodes']]],
+  ['kworkphases_57',['kWorkPhases',['../namespacetmk_1_1route.html#a0262564b42cf349fadd53f9e50425b26',1,'tmk::route']]]
 ];
