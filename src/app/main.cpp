@@ -1019,6 +1019,10 @@ int main(int argc, char** argv) {
   route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of the GPU (same results)");
   route->add_flag("--reach-verify", ropt.reach_verify, "Test: check every unreachable verdict with the full A*")->group("");
   route->add_option("--reach-check", ropt.reach_check, "Reachability check before strict searches: 0 off, 1 likely failures, 2 all")->group("");
+  route->add_option("--reach-after", ropt.reach_after, "Late reachability proof: a strict search open after this many expansions floods from both ends (0 off; default 100000)")->group("");
+  route->add_option("--reach-after-cap", ropt.reach_after_cap, "Flood cells a late reachability proof may visit before the search goes on (0 no cap; default 10000)")->group("");
+  route->add_option("--field-after", ropt.field_after, "Build the cost-to-go field only once a search has expanded this many states (0: before it starts)")->group("");
+  route->add_flag("--tie-deep,!--no-tie-deep", ropt.tie_deep, "A* ties on cost go to the deeper state")->group("");
   route->add_flag("--soft-zones", ropt.soft_zones, "Zone fills do not block other nets (refill the zones afterwards); unused fills become plane targets");
   bool r_no_repair = false;
   route->add_flag("--no-refill-repair", r_no_repair, "With --soft-zones: only count what the zone refill leaves unconnected, do not route it");
