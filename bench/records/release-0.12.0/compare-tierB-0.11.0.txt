@@ -1,0 +1,82 @@
+# rel0110-tierB → rel0120-tierB
+
+40 boards; routed boards byte-identical: 8/40.
+Clean pass 28 → 29; mean completion 97.1% → 97.4%; router seconds 3320.9 → 3122.8.
+Route CPU time 12,409 → 14,459 s (+16.5%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| APM-RPi-Shield_APM-RPi-Shield | 125 → 125 / 125 | 100.0% → 100.0% | yes → yes | – | 120.1 → 120.2 | 352.4 → 409.4 | differs |
+| EtherCAT_shield_v1_EtherCAT_shield_v1 | 244 → 245 / 272 | 90.1% → 90.4% | no → no | – | 121.8 → 121.4 | 603.0 → 799.5 | differs |
+| Hardware_Playground_E3_Pcb_rev0.3 | 323 → 323 / 341 | 98.5% → 98.5% | no → no | – | 122.6 → 121.0 | 594.5 → 721.9 | differs |
+| Hardware_Playground_serial_gw_ATMEGA328P | 171 → 171 / 172 | 99.4% → 99.4% | no → no | – | 121.5 → 120.2 | 598.5 → 767.3 | differs |
+| Hypfer-RGB-W-LED-Controller_led_strip_controller | 74 → 74 / 74 | 100.0% → 100.0% | yes → yes | – | 121.1 → 121.3 | 207.6 → 220.5 | differs |
+| MicroMaple_MicroMaple | 102 → 102 / 111 | 91.9% → 91.9% | no → no | – | 120.6 → 120.4 | 607.5 → 714.1 | differs |
+| NavigationThing_NavigationThing | 90 → 90 / 90 | 100.0% → 100.0% | yes → yes | – | 19.4 → 21.6 | 66.1 → 76.6 | differs |
+| PCB_small_halogen_replacement | 52 → 52 / 52 | 100.0% → 100.0% | yes → yes | – | 10.6 → 10.8 | 21.2 → 19.5 | differs |
+| Prototyping_Workshop_Prototyping_PCB | 80 → 80 / 80 | 100.0% → 100.0% | yes → yes | – | 36.2 → 46.2 | 112.2 → 107.6 | differs |
+| Radio-FM-TEA5767_radio tea5767 | 83 → 83 / 83 | 100.0% → 100.0% | yes → yes | – | 10.5 → 14.0 | 40.6 → 41.0 | differs |
+| TOBS_HybridChargeController | 210 → 210 / 210 | 100.0% → 100.0% | yes → yes | – | 122.0 → 121.5 | 481.2 → 603.6 | differs |
+| TPS63001-Breakout_TPS63001 Breakout 25x25 | 26 → 26 / 26 | 100.0% → 100.0% | yes → yes | – | 6.3 → 9.7 | 20.4 → 22.0 | differs |
+| avr_ledprojector_avr_ledprojection-0402 | 175 → 176 / 176 | 99.4% → 100.0% | no → yes | – | 124.4 → 81.9 | 554.6 → 444.1 | differs |
+| bumps_bumps | 330 → 330 / 330 | 100.0% → 100.0% | yes → yes | – | 121.3 → 120.6 | 472.2 → 587.1 | differs |
+| cat-trainer_teensy_base_pcb | 67 → 67 / 67 | 100.0% → 100.0% | yes → yes | – | 45.3 → 56.5 | 184.3 → 208.1 | differs |
+| digital_clock_led_clock_3_and_4_digit | 253 → 253 / 253 | 100.0% → 100.0% | yes → yes | – | 121.8 → 121.7 | 418.6 → 534.3 | differs |
+| espeverywhere_espeverywhere | 84 → 84 / 84 | 100.0% → 100.0% | yes → yes | – | 81.0 → 74.7 | 149.1 → 229.9 | differs |
+| fifogfx_c64cart | 64 → 64 / 104 | 61.5% → 61.5% | no → no | – | 125.0 → 123.0 | 577.4 → 769.8 | differs |
+| kitspace_BalthazarPSU3 | 204 → 204 / 204 | 100.0% → 100.0% | yes → yes | – | 63.0 → 22.3 | 145.3 → 82.9 | differs |
+| kitspace_OtterPill | 123 → 126 / 137 | 89.8% → 92.0% | no → no | – | 120.4 → 120.3 | 512.8 → 721.2 | differs |
+| kitspace_USBI2C01 | 73 → 73 / 73 | 100.0% → 100.0% | yes → yes | – | 43.7 → 24.9 | 181.8 → 119.1 | differs |
+| kitspace_ardfpga | 202 → 206 / 214 | 94.4% → 96.3% | no → no | – | 123.2 → 125.1 | 506.9 → 713.8 | differs |
+| kitspace_sympetrum-v2%20NFF1.1 | 115 → 115 / 115 | 100.0% → 100.0% | yes → yes | – | 120.5 → 120.9 | 275.0 → 389.9 | differs |
+| kitspace_teensy-fx | 180 → 186 / 196 | 91.8% → 94.9% | no → no | – | 125.1 → 124.3 | 578.3 → 736.6 | differs |
+| kitspace_test-jig | 260 → 260 / 292 | 89.0% → 89.0% | no → no | – | 121.1 → 120.8 | 506.2 → 753.9 | differs |
+| memsarray_mems_modules | 9 → 9 / 10 | 90.0% → 90.0% | no → no | – | 19.1 → 13.7 | 16.0 → 12.6 | differs |
+| motor-3xdrv8833-hw_ver1 | 195 → 195 / 195 | 100.0% → 100.0% | yes → yes | – | 120.7 → 121.9 | 631.5 → 770.3 | differs |
+| ourglass__autosave-watch-v4 | 134 → 134 / 134 | 100.0% → 100.0% | yes → yes | – | 120.6 → 112.0 | 357.0 → 343.5 | differs |
+| poncho_fpga_fpga-dongle | 367 → 383 / 413 | 88.9% → 92.7% | no → no | – | 121.5 → 123.3 | 640.0 → 750.0 | differs |
+| retroreflectors_SALSAFLOCK | 40 → 40 / 40 | 100.0% → 100.0% | yes → yes | – | 107.7 → 96.1 | 243.0 → 294.9 | differs |
+| rxadc_14_rxadc_14 | 124 → 124 / 124 | 100.0% → 100.0% | yes → yes | – | 73.9 → 57.2 | 259.7 → 224.2 | differs |
+| scimpy_amp | 90 → 90 / 90 | 100.0% → 100.0% | yes → yes | – | 120.3 → 92.9 | 349.5 → 259.9 | differs |
+
+Style (informational): bends per connection 0.7418 → 0.7754; acute angles 5 → 4; stair steps 196 → 128; short segments 2101 → 1855; off angle segments 4978 → 4293; detour ratio 1.127 → 1.1259; long detours 239 → 238.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| APM-RPi-Shield_APM-RPi-Shield | 1.467 → 1.3011 | 0 → 0 | 3 → 3 | 20 → 23 | 36 → 39 | 1.2586 → 1.2728 | 12 → 11 |
+| EtherCAT_shield_v1_EtherCAT_shield_v1 | 0.4829 → 0.4785 | 3 → 3 | 13 → 12 | 134 → 141 | 414 → 413 | 1.063 → 1.0572 | 10 → 11 |
+| Hardware_Playground_E3_Pcb_rev0.3 | 0.7497 → 0.642 | 0 → 0 | 31 → 27 | 187 → 172 | 636 → 636 | 1.277 → 1.1538 | 25 → 17 |
+| Hardware_Playground_serial_gw_ATMEGA328P | 0.6133 → 0.4612 | 0 → 0 | 26 → 15 | 270 → 231 | 340 → 340 | 1.3418 → 1.1902 | 16 → 12 |
+| Hypfer-RGB-W-LED-Controller_led_strip_controller | 0.8646 → 0.875 | 0 → 0 | 0 → 0 | 8 → 9 | 5 → 5 | 1.0512 → 1.0487 | 0 → 0 |
+| MicroMaple_MicroMaple | 0.7966 → 0.7415 | 0 → 0 | 13 → 7 | 99 → 89 | 186 → 188 | 1.2077 → 1.2085 | 11 → 8 |
+| NavigationThing_NavigationThing | 1.0084 → 1.0256 | 0 → 0 | 1 → 1 | 6 → 7 | 16 → 15 | 1.0779 → 1.0865 | 2 → 3 |
+| PCB_small_halogen_replacement | 0.3222 → 0.3523 | 0 → 0 | 0 → 1 | 22 → 21 | 19 → 16 | 1.0306 → 1.0317 | 0 → 0 |
+| Prototyping_Workshop_Prototyping_PCB | 0.5492 → 0.479 | 0 → 0 | 0 → 0 | 33 → 34 | 7 → 4 | 1.0654 → 1.0587 | 1 → 0 |
+| Radio-FM-TEA5767_radio tea5767 | 0.625 → 0.625 | 0 → 0 | 0 → 0 | 6 → 6 | 20 → 20 | 1.0429 → 1.0425 | 3 → 3 |
+| TOBS_HybridChargeController | 0.7688 → 0.8485 | 0 → 0 | 0 → 0 | 36 → 39 | 72 → 72 | 1.0515 → 1.0718 | 1 → 3 |
+| TPS63001-Breakout_TPS63001 Breakout 25x25 | 0.4737 → 0.4211 | 0 → 0 | 0 → 0 | 9 → 9 | 6 → 6 | 1.0124 → 1.0153 | 0 → 0 |
+| avr_ledprojector_avr_ledprojection-0402 | 0.5259 → 0.64 | 0 → 0 | 26 → 3 | 264 → 56 | 344 → 104 | 1.0958 → 1.1044 | 9 → 10 |
+| bumps_bumps | 1.0364 → 1.0941 | 0 → 0 | 7 → 5 | 152 → 139 | 81 → 80 | 1.163 → 1.2227 | 16 → 18 |
+| cat-trainer_teensy_base_pcb | 1.1176 → 1.1765 | 0 → 0 | 0 → 0 | 6 → 6 | 8 → 9 | 1.1095 → 1.1036 | 2 → 1 |
+| digital_clock_led_clock_3_and_4_digit | 0.5348 → 0.5263 | 0 → 0 | 0 → 0 | 28 → 28 | 63 → 65 | 1.0471 → 1.0393 | 0 → 0 |
+| espeverywhere_espeverywhere | 0.6561 → 0.7548 | 0 → 0 | 0 → 0 | 5 → 10 | 51 → 49 | 1.062 → 1.0824 | 4 → 4 |
+| fifogfx_c64cart | 1.5765 → 0.7337 | 0 → 0 | 2 → 2 | 15 → 79 | 22 → 122 | 1.2317 → 1.2064 | 6 → 5 |
+| kitspace_BalthazarPSU3 | 0.457 → 0.4849 | 0 → 1 | 1 → 0 | 47 → 46 | 84 → 78 | 1.0478 → 1.0714 | 6 → 9 |
+| kitspace_OtterPill | 0.8516 → 0.6725 | 0 → 0 | 27 → 21 | 145 → 131 | 241 → 247 | 1.2909 → 1.1909 | 17 → 12 |
+| kitspace_USBI2C01 | 0.9732 → 0.9375 | 0 → 0 | 0 → 0 | 11 → 9 | 21 → 20 | 1.1567 → 1.1558 | 6 → 5 |
+| kitspace_ardfpga | 0.7274 → 0.8644 | 0 → 0 | 5 → 6 | 45 → 72 | 399 → 404 | 1.1986 → 1.1938 | 13 → 16 |
+| kitspace_sympetrum-v2%20NFF1.1 | 0.7583 → 0.7371 | 0 → 0 | 0 → 0 | 9 → 10 | 66 → 70 | 1.0653 → 1.0625 | 2 → 2 |
+| kitspace_teensy-fx | 0.8956 → 1.066 | 0 → 0 | 0 → 0 | 40 → 45 | 98 → 98 | 1.0492 → 1.0428 | 1 → 1 |
+| kitspace_test-jig | 0.5097 → 0.4826 | 0 → 0 | 7 → 7 | 104 → 112 | 499 → 498 | 1.0977 → 1.0726 | 8 → 3 |
+| motor-3xdrv8833-hw_ver1 | 1.2229 → 1.234 | 0 → 0 | 0 → 2 | 44 → 42 | 76 → 78 | 1.3119 → 1.1694 | 19 → 15 |
+| ourglass__autosave-watch-v4 | 0.5212 → 0.549 | 0 → 0 | 1 → 1 | 40 → 39 | 102 → 100 | 1.0535 → 1.0648 | 1 → 5 |
+| poncho_fpga_fpga-dongle | 0.7411 → 1.4168 | 2 → 0 | 20 → 2 | 140 → 82 | 708 → 166 | 1.0888 → 1.2109 | 10 → 28 |
+| retroreflectors_SALSAFLOCK | 1.2542 → 1.2931 | 0 → 0 | 0 → 0 | 9 → 6 | 11 → 11 | 1.1326 → 1.1201 | 0 → 0 |
+| rxadc_14_rxadc_14 | 0.7594 → 0.8132 | 0 → 0 | 1 → 3 | 35 → 33 | 31 → 28 | 1.0512 → 1.0614 | 4 → 3 |
+| scimpy_amp | 1.3333 → 1.3282 | 0 → 0 | 6 → 4 | 26 → 23 | 19 → 15 | 1.0943 → 1.0938 | 3 → 2 |
+
+Gates: FAIL
+- kitspace_test-jig: before evaluated DRC errors are capped or unavailable; gate unknown
+- kitspace_test-jig: after evaluated DRC errors are capped or unavailable; gate unknown
+- poncho_fpga_fpga-dongle: before evaluated DRC errors are capped or unavailable; gate unknown
+- poncho_fpga_fpga-dongle: after evaluated DRC errors are capped or unavailable; gate unknown

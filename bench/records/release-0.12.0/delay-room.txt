@@ -1,0 +1,22 @@
+Test project /home/dingo/Programming/TraceMaker-speed/build/release
+    Start 415: delay_room
+1/1 Test #415: delay_room .......................***Failed   48.95 sec
+routed 129/147, 1 skew violation(s); room for /Debugger/D+: retune yes, now 78441.586 ps; room for /Debugger/D+: 1 ripped, kept
+FAIL: skew: ['(usb_pair_skew max skew 0.50 ps; actual -8.69 ps; target net length 79.25 ps (from /Debugger/D-); actual 70.56 ps) [/Debugger/D+]']
+1 failure(s)
+
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+integration    = 391.57 sec*proc (1 test)
+route          = 391.57 sec*proc (1 test)
+
+Total Test time (real) =  48.96 sec
+
+The following tests FAILED:
+	415 - delay_room (Failed)                               integration route
+Errors while running CTest
+--- 455e315 (build/sbase/tracemaker, 0.11.0+main before D154):
+routed 125/147, 0 skew violation(s); room for /Debugger/D+: retune yes, now 79427.287 ps; room for /Debugger/D+: 1 ripped, kept
+PASS

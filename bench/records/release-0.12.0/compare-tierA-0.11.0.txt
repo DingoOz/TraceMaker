@@ -1,0 +1,67 @@
+# rel0110-tierA → rel0120-tierA
+
+40 boards; routed boards byte-identical: 12/40.
+Clean pass 40 → 40; mean completion 100.0% → 100.0%; router seconds 1702.9 → 1165.6.
+Route CPU time 4,500 → 4,817 s (+7.0%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| 655_testboard | 57 → 57 / 57 | 100.0% → 100.0% | yes → yes | – | 58.9 → 30.7 | 94.7 → 118.3 | differs |
+| C-BISCUIT_buck-reg-5v | 55 → 55 / 55 | 100.0% → 100.0% | yes → yes | – | 45.5 → 8.9 | 21.8 → 40.4 | differs |
+| CubeSAT-Reaction-Wheel_Edison_Motor_Servo | 8 → 8 / 8 | 100.0% → 100.0% | yes → yes | – | 46.0 → 2.2 | 12.6 → 4.5 | differs |
+| Dekada_dekada_TopoR_curves | 117 → 117 / 117 | 100.0% → 100.0% | yes → yes | – | 46.4 → 1.7 | 14.3 → 4.8 | differs |
+| ESP8266-MQTT-battery-monitor-hw_battery-monitor | 95 → 95 / 95 | 100.0% → 100.0% | yes → yes | – | 47.0 → 49.4 | 42.6 → 191.8 | differs |
+| ESP_WiFiSwitch_WifiSwitch | 22 → 22 / 22 | 100.0% → 100.0% | yes → yes | – | 52.6 → 29.3 | 45.2 → 74.9 | differs |
+| HES-V2__autosave-hes | 36 → 36 / 36 | 100.0% → 100.0% | yes → yes | – | 47.5 → 4.9 | 14.7 → 11.5 | differs |
+| Hangul-Clock_Hangul | 209 → 209 / 209 | 100.0% → 100.0% | yes → yes | – | 126.3 → 112.1 | 418.6 → 555.4 | differs |
+| Hardware_Playground_rpi_zero_ws2812 | 46 → 46 / 46 | 100.0% → 100.0% | yes → yes | – | 46.4 → 6.5 | 17.7 → 15.6 | differs |
+| Inkjet__autosave-InkjetDriver | 65 → 65 / 65 | 100.0% → 100.0% | yes → yes | – | 129.4 → 55.9 | 302.2 → 251.4 | differs |
+| LogicBoxen_LogicBoxen | 116 → 116 / 116 | 100.0% → 100.0% | yes → yes | – | 126.1 → 115.1 | 197.4 → 493.6 | differs |
+| Photodiode_dethead | 40 → 40 / 40 | 100.0% → 100.0% | yes → yes | – | 47.6 → 10.4 | 18.5 → 17.3 | differs |
+| SmartLaserCO2-PCB__autosave-SmartLaserShield | 107 → 107 / 107 | 100.0% → 100.0% | yes → yes | – | 59.9 → 64.8 | 321.9 → 363.7 | differs |
+| TTNEnschedeMote_ArduinoNanoRN2483 | 52 → 52 / 52 | 100.0% → 100.0% | yes → yes | – | 23.8 → 7.9 | 44.8 → 27.6 | differs |
+| custom_cpu--ALU_custom_cpu--ALU | 83 → 83 / 83 | 100.0% → 100.0% | yes → yes | – | 123.8 → 79.0 | 593.0 → 420.2 | differs |
+| devttys0_IRis | 52 → 52 / 52 | 100.0% → 100.0% | yes → yes | – | 11.1 → 10.9 | 30.9 → 25.4 | differs |
+| fan_controller_fan_controller | 115 → 115 / 115 | 100.0% → 100.0% | yes → yes | – | 29.9 → 41.1 | 134.2 → 183.9 | differs |
+| kika-in-space_DS8500 | 44 → 44 / 44 | 100.0% → 100.0% | yes → yes | – | 6.0 → 7.3 | 15.7 → 19.3 | differs |
+| kitspace_4_switch_array | 24 → 24 / 24 | 100.0% → 100.0% | yes → yes | – | 2.0 → 1.6 | 6.7 → 6.3 | differs |
+| kitspace_aquarius | 171 → 171 / 171 | 100.0% → 100.0% | yes → yes | – | 121.6 → 78.5 | 418.0 → 302.7 | differs |
+| kitspace_pmt_combiner | 35 → 35 / 35 | 100.0% → 100.0% | yes → yes | – | 9.3 → 8.0 | 29.1 → 25.9 | differs |
+| kitspace_threeboard | 119 → 119 / 119 | 100.0% → 100.0% | yes → yes | – | 52.6 → 51.9 | 232.6 → 239.0 | differs |
+| komputer-klavier_KomputerKlavier | 87 → 87 / 87 | 100.0% → 100.0% | yes → yes | – | 14.0 → 14.5 | 46.9 → 52.6 | differs |
+| mearm-base-pcb_ServoPCB | 14 → 14 / 14 | 100.0% → 100.0% | yes → yes | – | 5.4 → 9.1 | 24.4 → 36.2 | differs |
+| mosavr_pcie1x_backplane | 110 → 110 / 110 | 100.0% → 100.0% | yes → yes | – | 45.1 → 44.2 | 210.2 → 185.9 | differs |
+| opentilt_opentilt1 | 24 → 24 / 24 | 100.0% → 100.0% | yes → yes | – | 16.5 → 11.5 | 54.5 → 50.3 | differs |
+| phone_rtty_interface_phone_rtty_rev_a | 61 → 61 / 61 | 100.0% → 100.0% | yes → yes | – | 4.4 → 4.4 | 11.8 → 12.2 | differs |
+| scimpy_volumebuffer | 67 → 67 / 67 | 100.0% → 100.0% | yes → yes | – | 15.9 → 18.6 | 68.2 → 78.0 | differs |
+
+Style (informational): bends per connection 0.8198 → 0.8429; acute angles 0 → 0; stair steps 30 → 35; short segments 450 → 451; off angle segments 734 → 721; detour ratio 1.0591 → 1.0603; long detours 66 → 58.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| 655_testboard | 1.4412 → 1.4545 | 0 → 0 | 1 → 2 | 24 → 19 | 23 → 27 | 1.1326 → 1.2197 | 5 → 9 |
+| C-BISCUIT_buck-reg-5v | 0.5244 → 0.5432 | 0 → 0 | 0 → 0 | 10 → 10 | 11 → 12 | 1.0342 → 1.0341 | 0 → 0 |
+| Dekada_dekada_TopoR_curves | 0.227 → 0.227 | 0 → 0 | 0 → 0 | 45 → 45 | 0 → 0 | 1.0154 → 1.015 | 0 → 0 |
+| ESP8266-MQTT-battery-monitor-hw_battery-monitor | 0.3372 → 0.3787 | 0 → 0 | 1 → 1 | 24 → 24 | 48 → 46 | 1.0329 → 1.0333 | 2 → 2 |
+| ESP_WiFiSwitch_WifiSwitch | 0.7813 → 1.0 | 0 → 0 | 0 → 0 | 1 → 1 | 8 → 6 | 1.0081 → 1.0319 | 0 → 0 |
+| HES-V2__autosave-hes | 0.5128 → 0.5128 | 0 → 0 | 0 → 0 | 1 → 1 | 0 → 0 | 1.0016 → 1.0018 | 0 → 0 |
+| Hangul-Clock_Hangul | 1.0789 → 1.0551 | 0 → 0 | 0 → 0 | 4 → 6 | 65 → 59 | 1.0425 → 1.0203 | 7 → 0 |
+| Hardware_Playground_rpi_zero_ws2812 | 0.6667 → 0.6935 | 0 → 0 | 0 → 0 | 9 → 9 | 3 → 2 | 1.0142 → 1.014 | 0 → 0 |
+| Inkjet__autosave-InkjetDriver | 0.916 → 1.1707 | 0 → 0 | 0 → 0 | 9 → 10 | 50 → 47 | 1.0927 → 1.1029 | 1 → 2 |
+| LogicBoxen_LogicBoxen | 0.8148 → 0.8995 | 0 → 0 | 0 → 0 | 43 → 43 | 41 → 42 | 1.1213 → 1.1572 | 4 → 5 |
+| Photodiode_dethead | 0.6875 → 0.64 | 0 → 0 | 0 → 0 | 3 → 3 | 6 → 7 | 1.0064 → 1.0036 | 0 → 0 |
+| SmartLaserCO2-PCB__autosave-SmartLaserShield | 1.0062 → 0.9563 | 0 → 0 | 0 → 0 | 28 → 27 | 34 → 35 | 1.075 → 1.0894 | 1 → 1 |
+| custom_cpu--ALU_custom_cpu--ALU | 1.61 → 1.6042 | 0 → 0 | 0 → 0 | 4 → 5 | 17 → 9 | 1.0481 → 1.0514 | 2 → 0 |
+| devttys0_IRis | 0.4944 → 0.5114 | 0 → 0 | 0 → 0 | 19 → 19 | 9 → 8 | 1.0779 → 1.0779 | 1 → 1 |
+| fan_controller_fan_controller | 0.988 → 0.9632 | 0 → 0 | 0 → 2 | 18 → 20 | 27 → 32 | 1.1138 → 1.0864 | 7 → 4 |
+| kika-in-space_DS8500 | 0.4203 → 0.3913 | 0 → 0 | 0 → 0 | 6 → 6 | 9 → 9 | 1.0966 → 1.0966 | 2 → 2 |
+| kitspace_aquarius | 0.7324 → 0.797 | 0 → 0 | 0 → 1 | 32 → 29 | 74 → 69 | 1.0537 → 1.0519 | 8 → 12 |
+| kitspace_threeboard | 0.884 → 0.9441 | 0 → 0 | 0 → 0 | 8 → 10 | 36 → 40 | 1.1184 → 1.0869 | 5 → 2 |
+| komputer-klavier_KomputerKlavier | 0.7589 → 0.8108 | 0 → 0 | 0 → 0 | 3 → 4 | 2 → 2 | 1.0279 → 1.0257 | 0 → 0 |
+| mearm-base-pcb_ServoPCB | 2.5556 → 2.3158 | 0 → 0 | 0 → 0 | 3 → 5 | 3 → 4 | 1.0891 → 1.1023 | 0 → 0 |
+| mosavr_pcie1x_backplane | 1.3701 → 1.5355 | 0 → 0 | 26 → 27 | 43 → 43 | 22 → 19 | 1.1069 → 1.1183 | 5 → 3 |
+| opentilt_opentilt1 | 1.2692 → 1.0741 | 0 → 0 | 0 → 0 | 0 → 0 | 2 → 3 | 1.0457 → 1.0471 | 0 → 0 |
+| phone_rtty_interface_phone_rtty_rev_a | 0.6575 → 0.6575 | 0 → 0 | 0 → 0 | 4 → 4 | 2 → 0 | 1.0085 → 1.0084 | 0 → 0 |
+| scimpy_volumebuffer | 1.1628 → 1.125 | 0 → 0 | 0 → 0 | 7 → 6 | 5 → 6 | 1.0904 → 1.0807 | 1 → 0 |
+
+Gates: pass
