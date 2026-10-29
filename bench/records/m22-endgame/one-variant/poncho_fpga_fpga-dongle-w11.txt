@@ -1,0 +1,1 @@
+routed 282/413 connections, 853 tracks, 81 vias, pitch 0.070 mm, 11023489 expansions, 8.29 s (best variant 8.25 s)

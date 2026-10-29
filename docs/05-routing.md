@@ -2796,3 +2796,47 @@ comparison prints `Gates: FAIL` for both runs alike: KiCad's DRC list is capped 
   (output identical).
 - *Open list as a vector with a heap of structs* (needed to re-key it): 4–8 % slower on sbc and logicbone than
   `std::priority_queue` of pairs; the open list stays a `priority_queue` whose container is reached for the re-key.
+
+## 63. Finishing the last connections: end-game retry, pin rescue, plane fallback (2026-10-29, D155)
+
+Items 1, 2 and part of 4 of the M22 plan (doc 18 §18). All of it is off by default, and with it off the output is byte-identical to
+0.12.1 (the 30 `quick` boards at 1 M work, every routed `.kicad_pcb` compared). Records in `bench/records/m22-endgame`.
+
+**What was built.**
+
+- *End-game retry* (`--endgame F`, `--endgame-cap N`): when the main loop ends with connections open, the board is put back to its
+  best state (only the connections whose copper differs are lifted) and the router gets F of the budget more. Each open connection
+  that is not proved dead goes once more, shortest first, as a plain search capped at N expansions, then a pin rescue if it is boxed
+  in, then the plane fallback. The result is kept only from the best state, so the clean-up stages still run.
+- *Pin rescue* (`--rescue 2,4,8`, `--rescue-orders`, `--rescue-victims`, `--rescue-cap`, `--rescue-per-conn`, `--rescue-in-loop`):
+  for a connection proved boxed in, the routed connections with copper within r of either end are lifted (none that are coupled,
+  bus lanes, bundle lanes, first nets or bus nets for a plain net; a radius that would lift more than `--rescue-victims` ends it).
+  The boxed connection is routed first. Each lifted connection whose old copper still passes the exact check gets it back unchanged;
+  the others are routed again in seeded orders. It is kept only when all of them route; else everything is put back exactly. On failure
+  the radius widens: this is the user's "widen and randomise the last traces", applied to what is ripped, not to the search's costs.
+  By default it runs only inside the end-game; `--rescue-in-loop` also runs it in the main loop.
+- *Informed pad-to-plane searches* (`--plane-informed`, `--plane-fallback-mm`): the A* to a zone uses the octile distance to the
+  zone's box as its bound and may run the late reachability proof (§62) forward to the zone. When the search fails, the connection
+  is planned from a nearby pad already joined to the plane, from another pad of the same group, or to another fill of the net.
+
+**Measured.** The ten failing boards of the M22 study, 8 variants, 20 M work, routed connections (total of the ten):
+
+| Arm | Routed | Against the base |
+|---|--:|--:|
+| base, 20 M | 7,175 | |
+| pin rescue in the main loop (`--rescue 2,4,8 --rescue-in-loop`, first version: all victims re-routed) | 7,049 | −126 (Aleste −81, poncho −32) |
+| end-game 0.1 (first version: ran only when the loop ended in its best state) | 7,178 | +3 |
+| end-game 0.1 with rescue (same) | 7,180 | +5 |
+| end-game 0.1, from the best state | 7,179 | +4 |
+| end-game 0.1 with rescue, from the best state, old copper kept where it fits | 7,185 | +10 (poncho +4, MonApollo +4) |
+| **base, 22 M: the same budget as the end-game arms** | **7,193** | **+18** (Aleste +11, LeeChee +4, MonApollo +3) |
+
+One variant, 10 M work: teensy-fx 167 (base), 167 (end-game), 167 (with rescue), 170 (11 M); poncho 281, 285, 284, 282. The end-game
+tries few connections (2 to 11 per run), and most fail. The ones left open at 20 M work are not the ones that "route alone on the final
+board" in the study. Those came from 120 s runs that ran out of time before the first pass was over; at a fixed work budget the main
+loop already routes them. In the main loop the rescue lost because its work came from routing. In the end-game it routes something (poncho:
+2 of 5), but less than the same work spent on routing.
+
+**Status.** Kept as options, off. At the same budget, more plain routing beats every arm here, which agrees with the study's warning that
+moving budget to repair had lost before (doc 16 §11, `--polish`). The plane fallback rescued one of the PoE switch's five open plane
+connections (C123.2 through C118.2's pad); it has not been measured on PCBench.

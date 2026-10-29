@@ -1,0 +1,2 @@
+end-game retry: 11 tried, 4 routed
+routed 285/413 connections, 866 tracks, 82 vias, pitch 0.070 mm, 11711322 expansions, 9.30 s (best variant 9.24 s)

@@ -925,6 +925,16 @@ int main(int argc, char** argv) {
   route->add_option("--polish-trials", ropt.polish_trials, "Polish: seeded orders tried per open connection")->group("");
   route->add_option("--lns-open", ropt.lns_open_trials, "Regional rebuild of open connections: orders tried per open connection (0 = off)")->group("");
   route->add_option("--lns-open-radius-mm", ropt.lns_open_radius_mm, "Regional rebuild: radius around the open pin")->group("");
+  route->add_option("--rescue", ropt.rescue_radii_mm, "Pin rescue: comma-separated radii in mm around a pin proved boxed in (empty = off)")->delimiter(',')->group("");
+  route->add_option("--rescue-orders", ropt.rescue_orders, "Pin rescue: orders tried per radius")->group("");
+  route->add_option("--rescue-victims", ropt.rescue_victims, "Pin rescue: most connections lifted at one radius")->group("");
+  route->add_option("--rescue-cap", ropt.rescue_cap, "Pin rescue: expansion cap per search")->group("");
+  route->add_option("--rescue-per-conn", ropt.rescue_per_conn, "Pin rescue: rescues per connection per run")->group("");
+  route->add_flag("--rescue-in-loop", ropt.rescue_in_loop, "Pin rescue also in the main loop, not only in the end-game retry")->group("");
+  route->add_option("--endgame", ropt.endgame_frac, "End-game retry of the open connections, with this share of the budget as its own allowance (0 = off)")->group("");
+  route->add_option("--endgame-cap", ropt.endgame_cap, "End-game retry: expansion cap per search")->group("");
+  route->add_option("--plane-fallback-mm", ropt.plane_fallback_mm, "With --plane-informed: radius of the nearby-pad fallback for pads that cannot reach their plane")->group("");
+  route->add_flag("--plane-informed,!--no-plane-informed", ropt.plane_informed, "Pad-to-plane searches: a distance lower bound and the late reachability proof")->group("");
   route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
   route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");

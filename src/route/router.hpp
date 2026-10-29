@@ -68,6 +68,22 @@ struct RouterOptions {
   int polish_trials = 20;       // seeded orders tried per open connection in the polish
   int lns_open_trials = 0;      // regional rebuild of open connections: seeded orders tried per open connection (0 = off, doc 16 F4)
   double lns_open_radius_mm = 2.5;  // copper within this distance of the open connection's first pad is lifted
+  // Proof-triggered pin rescue (D155, doc 05 §63): when a strict search proves a pin boxed in, the routed connections with copper
+  // within each radius in turn are lifted and the boxed connection routed first; lifted copper that still passes the exact check
+  // goes back unchanged, the rest is routed again in seeded orders. Runs in the end-game retry (and the main loop with rescue_in_loop).
+  std::vector<double> rescue_radii_mm;  // empty = off
+  int rescue_orders = 2;         // orders tried per radius (the first keeps the connection order)
+  int rescue_victims = 16;       // a radius that would lift more connections ends the rescue
+  long rescue_cap = 200'000;     // expansion cap of each search in a rescue
+  int rescue_per_conn = 1;       // rescues per connection per run
+  bool rescue_in_loop = false;   // also rescue in the main loop (lost on the failing set: work taken from routing, m22 records)
+  // End-game retry (D155): when the main loop ends, the open connections are tried again on the final board, with this share of the
+  // budget as an allowance of their own (work units with --work, else of the time limit).
+  double endgame_frac = 0;       // 0 = off
+  int plane_fallback_sources = 8;  // --plane-informed: other pads of the same fixed-copper group tried as the source of its plane join
+  double plane_fallback_mm = 10;  // --plane-informed: a pad that cannot reach its plane joins a pad of its net this near that is on the plane
+  bool plane_informed = false;   // pad-to-plane searches get a lower bound (distance to the plane's box) and the late reachability proof (D155)
+  long endgame_cap = 400'000;    // expansion cap of each end-game search
   double layer_dir_pen = -1;    // negative = automatic (-1: 0.3; otherwise the strength is the absolute value) on breakout boards only, else 0; extra cost (pitches per orthogonal step) against a layer's preferred direction: even layers horizontal, odd vertical (doc 16)
   bool layer_dir_swap = false;  // preferred directions the other way round: even layers vertical, odd horizontal
   double package_pen = -1;      // -1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
@@ -312,6 +328,9 @@ struct RouteResult {
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
   int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
+  int rescue_tried = 0, rescued = 0;  // pin rescues (D155): radii tried, and connections routed by one
+  int plane_fallbacks = 0;      // pad-to-plane connections re-planned to a nearby pad already on the plane (D155)
+  int endgame_tried = 0, endgame_fixed = 0;  // end-game retry (D155): connections tried, and routed
   int tidied = 0;               // connections shortened by tidy sweeps
   int txn_tried = 0, txn_kept = 0;  // transactional negotiation: routes with victims tried, and kept
   int optimized = 0;

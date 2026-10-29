@@ -186,6 +186,20 @@ comparable (judge version, time limit, machine load).
 | [couple-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b1/summary.json) | b1-profiles | 5 | b0e6dc7 | 0.0% | 77.0% |  | 205 | `--soft-zones` |
 | [couple-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b2/summary.json) | b2-delay | 3 | b0e6dc7 | 0.0% | 79.6% |  | 165 | `--soft-zones` |
 
+## m22-endgame
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m22-endgame)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [lm-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-base/summary.json) | lm10 | 10 | db5950f | 0.0% | 86.6% | 0.0% | 3175 |  |
+| [lm-base22](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-base22/summary.json) | lm10 | 10 | df366f7 | 0.0% | 87.0% | 0.0% | 9579 |  |
+| [lm-eg10](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.7% | 0.0% | 9516 | `--endgame 0.1` |
+| [lm-eg10b](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10b/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.7% | 0.0% | 6393 | `--endgame 0.1` |
+| [lm-eg10r](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10r/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.7% | 0.0% | 9569 | `--endgame 0.1 --rescue 2,4,8` |
+| [lm-eg10rb](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10rb/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.9% | 0.0% | 6382 | `--endgame 0.1 --rescue 2,4,8` |
+| [lm-rescue](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-rescue/summary.json) | lm10 | 10 | df366f7 | 0.0% | 84.0% | 0.0% | 3058 | `--rescue 2,4,8` |
+
 ## macos15
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/macos15)

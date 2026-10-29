@@ -347,3 +347,6 @@ one proved-stuck pin, seeded, not the search's cost weights (those were measured
 
 Gate: at least 15 % fewer open connections on `pcbench-bd-fail` at 10 M work, judged by KiCad; no clean board lost; `quick` and `mid`
 byte-identical with the options off.
+
+Items 1 and 2 (and part of 4) were built and measured on 2026-10-29: at the same budget, plain routing beat them (7,193 against
+7,185 routed on ten failing boards; doc 05 §63). They stay as options, off.

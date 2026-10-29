@@ -914,12 +914,12 @@
      "done": true
     },
     {
-     "text": "1 Proof-triggered pin rescue",
-     "done": false
+     "text": "1 Proof-triggered pin rescue (built, off: lost to an equal budget, doc 05 section 63)",
+     "done": true
     },
     {
-     "text": "2 Retry every unattempted or ripped connection at the end",
-     "done": false
+     "text": "2 Retry every unattempted or ripped connection at the end (built, off: lost to an equal budget, doc 05 section 63)",
+     "done": true
     },
     {
      "text": "3 Whole-board attempt for window misses",
