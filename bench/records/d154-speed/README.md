@@ -57,3 +57,7 @@ Tiers, base → new:
 
 `mid` prints `Gates: FAIL` for both runs alike: KiCad's DRC list is capped on LeeChee, LimeSDR and logicbone (see
 `bench/records/m16/README.md`).
+
+Tests: `cpu-only` ctest 427/427 and the GPU field tests in `release` pass. Under the `asan` preset, the `[field]`, `[route]`, `[geom]`,
+`[rules]`, `[txn]`, `[stall]` and `[causes]` unit tests (135 cases, 988,239 assertions) and the `reach_verify`, `late_reach_verify` and
+`thread_determinism` integration tests pass with no sanitizer reports.
