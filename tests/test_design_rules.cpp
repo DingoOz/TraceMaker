@@ -18,6 +18,7 @@
 #include "drc/rule_engine.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "route/lazy_codes.hpp"
 #include "route/obstacles.hpp"
 #include "route/router.hpp"
 
@@ -647,6 +648,23 @@ TEST_CASE("disallow blind_via or buried_via or micro_via alone stops the router 
     CHECK(sig_vias(q, model::ViaType::Blind) == 0);
     CHECK(sig_vias(q, model::ViaType::Micro) > 0);
   }
+}
+
+TEST_CASE("lazy codes: unknown until written, allocated by chunk", "[route]") {
+  route::LazyCodes c;
+  CHECK(c.empty());
+  c.init(10'000);
+  CHECK(c.bytes() == 0);
+  CHECK(c.get(9'999) == route::LazyCodes::kUnknown);
+  CHECK(c[5] == route::LazyCodes::kUnknown);  // reading through [] allocates the chunk, all unknown
+  c[5] = 7;
+  c[9'999] = -3;
+  CHECK(c.get(5) == 7);
+  CHECK(c.get(6) == route::LazyCodes::kUnknown);
+  CHECK(c.get(9'999) == -3);
+  CHECK(c.bytes() == 2 * 4096 * sizeof(std::int32_t));
+  c.init(10);
+  CHECK(c.get(5) == route::LazyCodes::kUnknown);
 }
 
 TEST_CASE("inside board: the exact test by raster-row edges equals the every-edge reference", "[geom][route]") {

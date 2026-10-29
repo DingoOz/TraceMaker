@@ -31,6 +31,7 @@
 #include "drc/connectivity.hpp"
 #include "gpu/device.hpp"
 #include "gpu/field.hpp"
+#include "route/lazy_codes.hpp"
 #include "route/legalize.hpp"
 #include "route/ref_map.hpp"
 #include "route/obstacles.hpp"
@@ -158,7 +159,7 @@ struct Router::Impl {
   bool soft = false;                 // current search may cross routed copper
   // Persistent fixed-obstacle caches per net class (codes from Obstacles::fixed_code), lattice-indexed.
   struct ClassCache {
-    std::vector<std::int32_t> margin, tight, via;  // INT32_MIN = not computed yet
+    LazyCodes margin, tight, via;  // INT32_MIN = not computed yet (allocated in chunks as cells are reached)
     model::NetId rep = 0;
     bool prefilled = false;
   };
@@ -814,9 +815,9 @@ struct Router::Impl {
     auto& cc = caches[{&netclass(net), key}];
     if (cc.margin.empty()) {
       const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
-      cc.margin.assign(n, INT32_MIN);
-      cc.tight.assign(n, INT32_MIN);
-      cc.via.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), INT32_MIN);
+      cc.margin.init(n);
+      cc.tight.init(n);
+      cc.via.init(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny));
       cc.rep = net;
     }
     cc_net = net;
@@ -1286,7 +1287,7 @@ struct Router::Impl {
                                   static_cast<std::size_t>(w.x0);
         std::uint8_t* row = &f_pass[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w)];
         for (int cx = 0; cx < w.w; ++cx) {
-          const std::int32_t t = cc.tight[gbase + static_cast<std::size_t>(cx)];
+          const std::int32_t t = cc.tight.get(gbase + static_cast<std::size_t>(cx));
           if (t != INT32_MIN && !code_ok(t, net)) row[cx] = 0;  // known blocked by fixed copper even without margin
         }
       }
@@ -1294,7 +1295,7 @@ struct Router::Impl {
     if (!vias_ok(net)) std::fill(f_via.begin(), f_via.end(), std::uint8_t{0});
     for (int cy = 0; cy < w.h; ++cy)
       for (int cx = 0; cx < w.w; ++cx) {
-        const std::int32_t v = cc.via[static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx)];
+        const std::int32_t v = cc.via.get(static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx));
         if (v != INT32_MIN && !code_ok(v, net)) f_via[static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx)] = 0;
       }
     for (const auto& [l, ci] : dst.cells) {
