@@ -1,0 +1,2938 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An autorouter and component placer for KiCad">
+      
+      
+      
+        <link rel="canonical" href="https://dingooz.github.io/TraceMaker/0.12/19-agent-interface/">
+      
+      
+        <link rel="prev" href="../17-llm-advisor/">
+      
+      
+        <link rel="next" href="../project/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Agent interface - TraceMaker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#19-a-board-session-and-an-agent-interface-m18" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TraceMaker" class="md-header__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TraceMaker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agent interface
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../quick-start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quick start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../how-to/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  How-to guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../explanation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../project/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TraceMaker" class="md-nav__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    TraceMaker
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/first-board/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route your first board
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/kicad-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route from inside KiCad
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/build-and-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build and test
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/kicad-cli-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run kicad-cli from Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/run-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fetch boards and run benchmarks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Make a release
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write and publish the docs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-viewer-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer protocol
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../explanation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data structures and DRC
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-placement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-failure-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Failure memory
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU acceleration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-kicad-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KiCad integration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live viewer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-placement-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement test plan
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-component-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component-aware rules
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-bga-breakout-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGA breakout
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-llm-advisor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-it-is-and-how-it-differs-from-the-advisor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. What it is, and how it differs from the advisor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-rules-applied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The rules, applied
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-safety-the-agent-is-not-trusted-and-neither-is-the-board" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Safety (the agent is not trusted, and neither is the board)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-session-state-and-the-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Session state and the log
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-transports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Transports
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-the-evaluation-and-its-stop-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. The evaluation and its stop rule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-what-is-deliberately-not-here" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. What is deliberately not here
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-built-and-measured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Built and measured
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Built and measured">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-the-first-call-is-the-command-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 The first call is the command line's
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-the-stop-rule-test-with-a-scripted-agent-not-met" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 The stop-rule test with a scripted agent: not met
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.3 The stop-rule test with a scripted agent: not met">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#931-a-model-driven-arm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.1 A model-driven arm
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-what-a-session-showed-that-the-measurement-did-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 What a session showed that the measurement did not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#95-not-built-and-what-follows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.5 Not built, and what follows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../project/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-next-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions and risks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-what-it-is-and-how-it-differs-from-the-advisor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. What it is, and how it differs from the advisor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-rules-applied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The rules, applied
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-safety-the-agent-is-not-trusted-and-neither-is-the-board" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Safety (the agent is not trusted, and neither is the board)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-session-state-and-the-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Session state and the log
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-transports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Transports
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-the-evaluation-and-its-stop-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. The evaluation and its stop rule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-what-is-deliberately-not-here" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. What is deliberately not here
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-built-and-measured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Built and measured
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Built and measured">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-the-first-call-is-the-command-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 The first call is the command line's
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-the-stop-rule-test-with-a-scripted-agent-not-met" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 The stop-rule test with a scripted agent: not met
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.3 The stop-rule test with a scripted agent: not met">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#931-a-model-driven-arm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3.1 A model-driven arm
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-what-a-session-showed-that-the-measurement-did-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 What a session showed that the measurement did not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#95-not-built-and-what-follows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.5 Not built, and what follows
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/DingoOz/TraceMaker/edit/main/docs/19-agent-interface.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="19-a-board-session-and-an-agent-interface-m18">19 — A board session and an agent interface (M18)<a class="headerlink" href="#19-a-board-session-and-an-agent-interface-m18" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Status: Partly built</p>
+<p>Part of this page describes code that exists; the rest is a plan. The page says which is which.</p>
+</div>
+<blockquote>
+<p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/PLAN.md"><code>../PLAN.md</code></a>. Written 2026-10-15. Milestone <strong>M18</strong> (<a href="../11-roadmap/">11-roadmap.md</a>), candidate D2 of
+<a href="../18-next-features/">18-next-features.md</a>. Decision D119.
+Status: stage A (session, tools, two transports) and stage B (evaluation harness, scripted baseline agent) are what this note specifies; §9 says
+what is built and what was measured.</p>
+</blockquote>
+<h2 id="1-what-it-is-and-how-it-differs-from-the-advisor">1. What it is, and how it differs from the advisor<a class="headerlink" href="#1-what-it-is-and-how-it-differs-from-the-advisor" title="Permanent link">&para;</a></h2>
+<p><a href="../17-llm-advisor/">Doc 17</a> lets the <strong>engine consult</strong> an advisor: the plain route runs, a stuck report goes out, an advice file comes back, the route
+runs again. The agent never sees a board, only a report, and it acts once. Its measured result is that hints derived by a rule gain nothing over the same
+compute without hints (doc 17 §8.1), and a model's hints have not been measured.</p>
+<p>This document is the other direction: a <strong>session</strong> in which an agent drives the engine. The agent lists the open connections, asks the engine to route some
+nets with some hints, looks at what happened, rips a net, goes back to an earlier state, tries something else, and saves. The engine stays what it is: every
+copper item passes the exact check, nothing the agent says contains copper or changes a rule, every call is a transaction that is kept or not, and the
+whole session replays to the same bytes. PCBWorld (July 2026) reports that agents with engine feedback beat open-loop and grid-action baselines [W, abstract];
+whether one can beat TraceMaker's own portfolio at equal compute is the question this milestone answers, with the <strong>stop rule</strong> of §7.</p>
+<p>The same session process is the core of the KiCad assistant (M18's second half, candidate D1): a plugin that routes the selected nets without starting the
+engine afresh. Only the first half is specified here.</p>
+<h2 id="2-the-rules-applied">2. The rules, applied<a class="headerlink" href="#2-the-rules-applied" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>How the session keeps it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Correctness</td>
+<td>Copper enters the session only from the router, which checks every segment and via exactly before it commits. <code>check</code> runs the DRC on the session's board; <code>save</code> reports the errors it added</td>
+</tr>
+<tr>
+<td>2 Determinism</td>
+<td>A call's result depends on the board, the session's state, the call's arguments and the seed only. Router work is a count (<code>work</code>), never a wall time. The log of calls replays to the same board bytes (tested)</td>
+</tr>
+<tr>
+<td>3 Reference path</td>
+<td><code>route</code> over all nets with the defaults equals <code>route --variants V</code> of the command line on the same board and options (tested): the session is a second front door to the same code</td>
+</tr>
+<tr>
+<td>4 Transactions</td>
+<td>A <code>route</code> is kept only if it routes something and, with <code>verify: "refuse"</code> (the default), adds no DRC error relative to the state it starts from; otherwise the state is unchanged and the result says why. <code>report</code> keeps it and names the added errors, <code>off</code> skips the check. <code>undo</code>, <code>restore</code> and <code>history</code> go back to any state</td>
+</tr>
+<tr>
+<td>5 Budgets</td>
+<td>Every <code>route</code> takes a <code>work</code> budget in search steps (expansions plus flood cells). The router's budget stops new searches from starting; the search in progress and the clean-up after the last one finish, so a call can pass it. The session counts what was really spent (<code>work_used</code>) and refuses the next call when <code>--work-limit</code> is spent. The limit is soft, and a call runs with the <code>work</code> it asks for (so a first call is the command line's): an agent that must stay under the limit sizes <code>work</code> from <code>board_info</code>'s <code>work_left</code></td>
+</tr>
+<tr>
+<td>6 Locked and unreadable</td>
+<td>Session copper is locked inside the session: later calls cannot rip it except through <code>rip_net</code>, and <code>rip_net</code> removes session copper only. The board's own tracks and vias are never removed. Rules that could not be read keep the warnings the engine gives</td>
+</tr>
+<tr>
+<td>7 Events</td>
+<td><code>--view</code> streams the router's events to the viewer, so a person can watch the agent work</td>
+</tr>
+<tr>
+<td>8 KiCad files</td>
+<td><code>save</code> re-reads the input file and adds the session's copper through the same editor <code>route</code> uses; everything else is byte for byte</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-safety-the-agent-is-not-trusted-and-neither-is-the-board">3. Safety (the agent is not trusted, and neither is the board)<a class="headerlink" href="#3-safety-the-agent-is-not-trusted-and-neither-is-the-board" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Typed arguments.</strong> Every tool has a schema; an unknown key, a wrong type or a value out of range is an error naming the tool and the key, as for advice files
+  (doc 17 §4). <code>hints</code> are an advice file, parsed and checked by the same code.</li>
+<li><strong>No paths from the agent, no commands.</strong> <code>save</code> writes to the file named when the session was started (<code>--out</code>) and nowhere else. There is no tool that runs
+  a program or reads a file.</li>
+<li><strong>Names are data.</strong> Net names, references and layer names come from the board and may say anything. They appear only as JSON string values, never in the tool
+  descriptions or in error templates, and the server's <code>instructions</code> tell the agent so (doc 17 §6 wording).</li>
+<li><strong>Caps.</strong> At most 512 open connections listed per call, 64 nets per <code>route</code>, <code>work</code> at most 50 M per call (times up to 8 variants), 256 states kept, a request line of at most 1 MB. Start an unattended agent with <code>--work-limit</code>: without it nothing but the per-call caps bounds what an agent can spend.</li>
+<li><strong>No redaction in the session.</strong> An agent that drives it sees the board's names. Where names must not leave the machine, the advisor protocol's <code>--advisor-redact</code>
+  (doc 17 §3) is the tool; a redacted session would need aliases in every result and is not built.</li>
+<li><strong>No network.</strong> The server speaks over standard input and output only. A model, a key or a network stays in the agent's own process.</li>
+</ul>
+<h2 id="4-the-tools">4. The tools<a class="headerlink" href="#4-the-tools" title="Permanent link">&para;</a></h2>
+<p>Millimetres and the board file's axes; connections are named <code>REF.PIN</code>, as in doc 17 (<code>priority</code>). Every result is a JSON object; an error is
+<code>{"error": {"code", "message"}}</code> with the code one of <code>bad_argument</code>, <code>unknown_name</code>, <code>limit</code>, <code>not_allowed</code>, <code>failed</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Arguments</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>board_info</code></td>
+<td>none</td>
+<td>board name, copper layers, counts (parts, pads, nets, tracks and vias of the board and of the session), open connections, state id, work used and left, rules summary (clearance, track width, via) and the warnings from reading the rules</td>
+</tr>
+<tr>
+<td><code>open_connections</code></td>
+<td><code>net</code> (name, optional), <code>limit</code>, <code>soft_zones</code></td>
+<td>the connections still open in the current state: <code>net</code>, <code>a</code>, <code>b</code> (<code>REF.PIN</code>, or <code>zone</code> for a plane), <code>length_mm</code> (not for a plane), and, if a route has tried them, <code>reason</code>, <code>why</code>, <code>rips</code>, <code>fails</code>, <code>blockers</code>. <code>soft_zones</code> plans the plane connections too (default: on once a route with soft zones was kept)</td>
+</tr>
+<tr>
+<td><code>route</code></td>
+<td><code>nets</code> (names; default: every net with an open connection), <code>work</code> (default 2 M, at most 50 M), <code>variants</code> (1 to 8, default 1), <code>seed</code>, <code>hints</code> (an advice object: <code>first_nets</code>, <code>priority</code>, <code>layers</code>, <code>regions</code>), <code>options</code> (a whitelist of booleans: <code>soft_zones</code>, <code>via_in_pad</code>, <code>diff_pairs</code>, <code>vias_off_pads</code>, <code>escape_plan</code>), <code>verify</code> (<code>refuse</code> by default, <code>report</code>, <code>off</code>), <code>commit</code> (default true)</td>
+<td><code>committed</code>, <code>reason</code> (when not), <code>state</code>, <code>connections</code> and <code>routed</code> and <code>open_after</code> (for the nets this call named), <code>open_total</code> (the board's), the new copper per net (tracks, vias, length), <code>added_errors</code> (DRC types, relative to the state the call started from), the connections still open with <code>reason</code>, <code>why</code>, <code>tried</code> (a search ran or the pin was ruled out; false: never attempted), <code>rips</code>, <code>fails</code>, <code>blockers</code>, and <code>work</code> (<code>used</code>, <code>total_used</code>, <code>left</code>). A call can spend more than <code>work</code> (proofs of boxed-in pins and the clean-up count on top; observed up to 1.6 times with one router)</td>
+</tr>
+<tr>
+<td><code>rip_net</code></td>
+<td><code>net</code></td>
+<td>the session copper of that net removed (a new state); how many tracks and vias; refuses a net with none</td>
+</tr>
+<tr>
+<td><code>check</code></td>
+<td><code>full</code> (default true), <code>refill</code></td>
+<td>unconnected items and DRC errors by type, the types and counts the session added relative to the input board, and for those up to five <code>examples</code> each (items with positions: which net, where) that the input board does not have. <code>refill</code> judges with the zones refilled, as <code>kicad-cli --refill-zones</code> does (default: on once a route with soft zones was kept; a route with soft zones is verified refilled, because the router counts on the refill)</td>
+</tr>
+<tr>
+<td><code>stuck_report</code></td>
+<td><code>redact</code></td>
+<td>doc 17's report for the last <code>route</code> (reasons, crowding, parts at the open ends, <code>advice_schema</code>)</td>
+</tr>
+<tr>
+<td><code>inspect_pad</code></td>
+<td><code>pad</code> (<code>REF.PIN</code>), <code>radius_mm</code> (0.1 to 10, default 1.5)</td>
+<td>read-only: the pad (net, position, layers, size, distance to the box of the outline), the open connections that end on it with the last route's reason and blockers, the other pads within the radius (at most 40, nearest first), and the copper within it (the board's and the session's, per net and layer, nearest first, at most 30 rows; <code>within_pad_area</code> marks another net's copper that lies in the pad's own area)</td>
+</tr>
+<tr>
+<td><code>inspect_net</code></td>
+<td><code>net</code></td>
+<td>read-only: its pads (at most 60), the board's and the session's tracks and vias on it, the session's length per layer, the open connections, the box it spans, and its class width and clearance</td>
+</tr>
+<tr>
+<td><code>history</code></td>
+<td>none</td>
+<td>the states: id, the call that made it, routed connections, vias, copper length</td>
+</tr>
+<tr>
+<td><code>undo</code> / <code>restore</code></td>
+<td>none / <code>state</code></td>
+<td>the session goes back one state / to that state (states stay; a new change after a restore starts a new branch)</td>
+</tr>
+<tr>
+<td><code>save</code></td>
+<td><code>refill</code></td>
+<td>writes the board to <code>--out</code> (the result does not name the path: a replay may write elsewhere); returns counts and the DRC types added</td>
+</tr>
+</tbody>
+</table>
+<p>A <code>route</code> with <code>commit: false</code> is a dry run: the result is reported and the state is unchanged.</p>
+<p><code>hints</code> apply to this call's run itself, not to extra portfolio variants: in a session the agent decides, sees the result and can undo, so the "advised copies
+cannot be worse" guard of doc 17 §4 is not needed; the transaction rule above takes its place.</p>
+<h2 id="5-session-state-and-the-log">5. Session state and the log<a class="headerlink" href="#5-session-state-and-the-log" title="Permanent link">&para;</a></h2>
+<p>State = the input board, plus a list of session copper (tracks and vias, in commit order), plus the open-connection reasons of the last route. A state is
+immutable; each change makes a new one. A router run gets the board with the session copper added and marked locked. The first listing of the open
+connections of a state costs one router set-up (the planner needs the obstacle model); it is cached per state. A long-running daemon that keeps the set-up
+between calls is the other half of M18 and is not built.</p>
+<p>The log is a JSON-lines file (<code>--log FILE</code>): per call, the tool, the arguments, a digest of the result and the state's digest (FNV-1a 64 of the session copper
+in canonical order: a digest to compare a session with its replay, not a cryptographic hash). <code>tracemaker session --replay LOG BOARD --out FILE</code> runs the calls again and stops at the first digest that differs. Replay is the
+determinism test, and it is how a session that went well is reproduced without an agent.</p>
+<h2 id="6-transports">6. Transports<a class="headerlink" href="#6-transports" title="Permanent link">&para;</a></h2>
+<p>One <code>Session::call(tool, args)</code> serves both, so they cannot differ.</p>
+<ul>
+<li><strong>MCP over standard input and output</strong> (<code>tracemaker session BOARD --out FILE</code>): JSON-RPC 2.0 with <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code> and the
+  <code>notifications/initialized</code> notification, protocol revision 2024-11-05 or the client's, <code>instructions</code> as in §3. Any MCP client can be the agent (a coding
+  agent, an application).
+  To attach it to Claude Code, for example: <code>claude mcp add tracemaker -- /path/to/tracemaker session /path/to/board.kicad_pcb --out /path/to/routed.kicad_pcb</code>
+  (other clients take the same command and arguments in their MCP server configuration). <code>--log FILE</code> records the session for <code>--replay</code>, and <code>--view</code> lets a
+  person watch the agent route in the browser viewer. The server speaks on standard input and output only; the router's own text goes to standard error.
+  An agent that has a shell tool but no MCP client can drive a session with <code>agents/relay.py</code>: <code>start NAME BOARD OUT</code> holds a session under a small daemon,
+  <code>call NAME TOOL '{...}'</code> sends one tool call and prints the answer (<code>result NAME</code> fetches an answer that took longer than <code>--wait</code>), <code>stop NAME</code> ends it. Every
+  request and answer is also appended to the session folder's <code>transcript.jsonl</code>, which <code>bench/agent_score.py</code> reads to score the board the agent saved.</li>
+<li><strong>JSON lines</strong> (<code>--jsonl</code>): one request <code>{"tool", "args"}</code> per line, one response per line. For scripts, tests and the evaluation harness.</li>
+</ul>
+<h2 id="7-the-evaluation-and-its-stop-rule">7. The evaluation and its stop rule<a class="headerlink" href="#7-the-evaluation-and-its-stop-rule" title="Permanent link">&para;</a></h2>
+<p><strong>Question.</strong> Does an agent that drives the session route more connections than the same compute spent without an agent?</p>
+<p><strong>Compute.</strong> Search expansions plus flood cells over all routers of all calls: the summary's <code>work_all_variants.total</code> for a <code>route</code> run, <code>work_used</code> for a
+session. The agent's own thinking is not routing work and is not counted, as the advisor's wall time is not (doc 17 §4).</p>
+<p><strong>Arms</strong> (<code>bench/agent_eval.py</code>), each scored the same way: connections routed = unconnected items of the input board minus those of the written board, judged
+by <code>tracemaker drc</code> beside the input's project files; an arm that adds a DRC error is invalid for that board.</p>
+<ol>
+<li><strong>plain</strong>: <code>route --work W --variants V</code> (W = 20 M, V = 8: doc 17 §8.1's plain arm).</li>
+<li><strong>control</strong>: <code>route --work W --variants V+4</code>. More compute with no agent, and <strong>the equal-compute reference</strong>: its measured work is the agent's <code>--work-limit</code>.</li>
+<li><strong>agent</strong>: a program that drives <code>tracemaker session</code> with that limit. Its first call is the plain arm (so it cannot do worse than arm 1 by construction); the
+   rest of the compute is the agent's to spend.</li>
+</ol>
+<p><strong>Boards.</strong> <code>bench/sets/srj20-m15fail4.txt</code> (16 <code>srj20</code> boards still open after the 70 M run of M15, doc 17 §8.1): an even half to tune an agent on and an odd
+half held out, looked at once when the agent is final. The same boards and arms as doc 17 §8.1, so the plain and control columns must reproduce its totals
+(430 and 431 on the even half, 439 and 450 on the odd half); if they do not, the arms were not run the same way and nothing else is read.</p>
+<p><strong>Stop rule (decided in advance, D118/D119).</strong> The interface is worth building on for agents only if an agent arm routes <strong>more connections than the control
+(arm 2) on the held-out half</strong>, summed over the half and not worse on most boards. If neither the scripted agent of stage B nor a model-driven one does,
+the session stays a library (it is still the core of the KiCad assistant) and nothing more is built for agents. The scripted agent is a baseline, not the
+test of a model: a negative result for it says that these rules do not beat seeds, not that a model cannot.</p>
+<h2 id="8-what-is-deliberately-not-here">8. What is deliberately not here<a class="headerlink" href="#8-what-is-deliberately-not-here" title="Permanent link">&para;</a></h2>
+<ul>
+<li>No tool that places copper by coordinates. An agent that wants a route in a place says it through <code>hints</code> (a region, a layer cost, an order), and the
+  engine finds the copper. A <code>propose_path</code> tool (a polyline the router takes as a guide, <code>RouterOptions::guides</code>, doc 16 F1) is the next step if §7's result
+  is good, and is not built before.</li>
+<li>No placement moves (doc 17 §9, stage 4).</li>
+<li>No <code>critical_first</code>, <code>relax</code> or other portfolio options among the route <code>options</code>: the whitelist is small on purpose, and grows when an agent needs one.</li>
+<li>No model, key or network in the engine (D109).</li>
+<li>No multi-board or multi-user server. One session is one board, one agent.</li>
+</ul>
+<h2 id="9-built-and-measured">9. Built and measured<a class="headerlink" href="#9-built-and-measured" title="Permanent link">&para;</a></h2>
+<p>Records: <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/bench/records/m18/README.md"><code>bench/records/m18/</code></a>.</p>
+<h3 id="91-built">9.1 Built<a class="headerlink" href="#91-built" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>src/session/</code> (<code>session.{hpp,cpp}</code>, <code>transport.{hpp,cpp}</code>): the ten tools of §4, the states, the log and its replay, MCP and JSON-lines transports;
+  <code>tracemaker session</code>. One engine change: <code>RouterOptions::plan_only</code> (plan the connections and stop), used to list a state's open connections; off by default.</li>
+<li><code>agents/session_client.py</code> (a Python client), <code>agents/repair_agent.py</code> (the scripted baseline, two policies), <code>bench/agent_eval.py</code> (the three arms),
+  <code>bench/sets/srj20-agent-heldout.txt</code>.</li>
+<li>Tests: <code>tests/test_session.cpp</code> (12 cases, 176 assertions: listing and routing, equality with the plain router, rip/undo/restore, dry runs and refusals, hints,
+  the work limit, <code>save</code> only to <code>--out</code>, replay and a changed log, thread-count independence, every listed tool dispatchable, both transports on bad
+  requests), <code>tests/integration/session_cli.py</code> (the real binary over both transports, a net name that carries an instruction, replay to the same bytes, equality
+  with <code>route --variants 1</code>). ASan + UBSan and TSan clean on the session tests; the CLI test also under ASan + UBSan.</li>
+</ul>
+<h3 id="92-the-first-call-is-the-command-lines">9.2 The first call is the command line's<a class="headerlink" href="#92-the-first-call-is-the-command-lines" title="Permanent link">&para;</a></h3>
+<p><code>route --work 20000000 --variants 8 --threads 8</code> and the session's first <code>route</code> with the same arguments on <code>srj20</code> sample054 give 56 routed, 596 tracks, 154 vias
+and 69,573,838 work, both. The plain and control columns of the evaluation reproduce doc 17 §8.1's totals exactly (430 / 431 and 439 / 450).</p>
+<h3 id="93-the-stop-rule-test-with-a-scripted-agent-not-met">9.3 The stop-rule test with a scripted agent: not met<a class="headerlink" href="#93-the-stop-rule-test-with-a-scripted-agent-not-met" title="Permanent link">&para;</a></h3>
+<p>Sixteen boards (the even and odd halves of <code>srj20-m15fail4</code>), connections routed, summed:</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th style="text-align: right;">Even half (489 open)</th>
+<th style="text-align: right;">Odd half (492 open, held out)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plain, 8 variants</td>
+<td style="text-align: right;">430</td>
+<td style="text-align: right;">439</td>
+</tr>
+<tr>
+<td>control, 12 variants (the agent's compute)</td>
+<td style="text-align: right;">431</td>
+<td style="text-align: right;"><strong>450</strong></td>
+</tr>
+<tr>
+<td>agent, policy <code>tabu</code> (each stuck connection once)</td>
+<td style="text-align: right;">430</td>
+<td style="text-align: right;">439</td>
+</tr>
+<tr>
+<td>agent, policy <code>persist</code> (retries with other blockers and seeds, plateau moves kept)</td>
+<td style="text-align: right;">430</td>
+<td style="text-align: right;">not run (confirmed on a fresh set, below)</td>
+</tr>
+</tbody>
+</table>
+<p>Policy <code>tabu</code> used 77 % of the control's work; none of its 43 repair rounds was kept. Policy <code>persist</code> used 95 % and kept 150 plateau rounds that never
+reduced the open connections. Neither routed one connection more than the plain run on any of these 16 boards. The control's gain on the odd half (+11)
+comes from the four extra seeds, which a repair of three stuck connections does not reproduce. Every unrouted connection on these boards is <code>boxed_in</code> (a ball
+fenced by its neighbours' copper), and the proof of it is the expensive part of a repair call (8.6 M flood cells against 0.85 M expansions in one case).</p>
+<p>Because <code>persist</code> was designed after the <code>tabu</code> result on both halves, it was confirmed on 16 boards no agent was developed on (<code>srj20-agent-heldout</code>), run once:</p>
+<table>
+<thead>
+<tr>
+<th>Arm (16 held-out boards, 1,162 open at the start)</th>
+<th style="text-align: right;">Routed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plain, 8 variants</td>
+<td style="text-align: right;">960</td>
+</tr>
+<tr>
+<td>control, 12 variants (the agent's compute)</td>
+<td style="text-align: right;"><strong>968</strong></td>
+</tr>
+<tr>
+<td>agent, policy <code>persist</code> (95 % of the control's work)</td>
+<td style="text-align: right;">967</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Stop rule: not met, by one connection.</strong> A model-driven arm (§9.3.1) then tied the control. Exploratory reading by group: on the 8 boards where the plain run leaves only 3 to 6 connections open the agent gains
+nothing (429, plain 429, control 433); on the 8 where it leaves 22 on average it routes 538 against the control's 535 and the plain run's 531. Eight boards, one
+run: a lead, not a result. A repair loop earns something where there is something to repair, and the extra seeds of the control earn their gain where little is
+left. Whether a model does better than this loop is untested.</p>
+<h4 id="931-a-model-driven-arm">9.3.1 A model-driven arm<a class="headerlink" href="#931-a-model-driven-arm" title="Permanent link">&para;</a></h4>
+<p>Four model agents (subagents, one brief, four boards each; the first call mandated to be the plain route; scored from the boards they saved, never from their own
+reports; two sessions replayed from their logs byte for byte) drove the same 16 boards through the tools of §4, <code>inspect_pad</code> and <code>inspect_net</code> included:</p>
+<table>
+<thead>
+<tr>
+<th>Arm (16 held-out boards, 1,162 open at the start)</th>
+<th style="text-align: right;">Routed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plain, 8 variants</td>
+<td style="text-align: right;">960</td>
+</tr>
+<tr>
+<td>control, 12 variants (the agents' compute)</td>
+<td style="text-align: right;">968</td>
+</tr>
+<tr>
+<td>scripted agent, policy <code>persist</code></td>
+<td style="text-align: right;">967</td>
+</tr>
+<tr>
+<td><strong>model-driven agents</strong> (94 % of the control's work)</td>
+<td style="text-align: right;"><strong>968</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Stop rule: not met, by a tie</strong> (968 against 968). The model never routed less than the plain run, gained +8 over it, used 94 % of the allowance, was better than the
+control on 5 boards and worse on 6. It gained on boards where the scripted loop did not, and the loop gained where the model did not; one run each. The technique that
+worked was single-net: look at the stuck ball and its target pad with <code>inspect_pad</code>, remove the nets beside it, route the stuck net alone. The removed nets then
+mostly failed to return, so a cycle gained 0 or 1 and every board reached a plateau. It cost 615 k tokens for +8 connections; four more seeds give +8 for compute alone.
+So: with this router and these boards, an agent matches what extra seeds give and does not exceed it, and by D118 nothing more is built for agents until the router can
+tell an agent more than it does now (below). What the agents asked of the tools, and what was done, is in <code>bench/records/m18/README.md</code>.</p>
+<h3 id="94-what-a-session-showed-that-the-measurement-did-not">9.4 What a session showed that the measurement did not<a class="headerlink" href="#94-what-a-session-showed-that-the-measurement-did-not" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>The engine's DRC and KiCad disagreed on two boards of this set</strong> (<code>sample031</code>, <code>sample191</code>): the engine counted 3 added <code>copper_edge_clearance</code> errors where
+  <code>kicad-cli</code> counted none. The router puts a track with its edge exactly on the centre line of an outline whose stroke is 0.05 mm and whose clearance rule is 0;
+  <code>check_edges</code> (<code>src/drc/drc.cpp</code>) counted touching as a violation at zero clearance, KiCad does not for a straight track. <strong>Fixed afterwards</strong> (issue #42, D120: the edge
+  threshold depends on the shape, frozen against KiCad in <code>tests/integration/edge_touch</code>); the numbers of this section were measured before the fix. It is why <code>verify</code>
+  has the modes of §4 and why the agent's first call uses <code>report</code>; after it the engine and KiCad agree on <code>copper_edge_clearance</code> for the plain route of <code>sample031</code>, <code>sample007</code>, <code>sample191</code> and <code>sample039</code> (65, 72, 69 and 78; <code>bench/records/issue42</code>). The session's <code>refuse</code> mode was not re-run.</li>
+<li><strong>A model cannot choose blockers blind</strong> (this is why <code>inspect_pad</code> and <code>inspect_net</code> exist, §4). A session driven by hand on <code>sample119</code> (<code>bench/records/m18/README.md</code>) swapped one stuck connection for another and
+  never reduced the open count: the tools name nets and pads, and say nothing of what lies around a pad. And <code>stuck_report</code> after a route restricted to a few
+  nets has no crowding (the other nets are locked copper, not routed copper of that run).</li>
+<li><strong>Listing the open connections costs a router set-up</strong> per state. Fine on these boards; on a large board it is the reason for the daemon.</li>
+</ul>
+<h3 id="95-not-built-and-what-follows">9.5 Not built, and what follows<a class="headerlink" href="#95-not-built-and-what-follows" title="Permanent link">&para;</a></h3>
+<ul>
+<li>What the agents asked for and the router cannot yet say: which end of a boxed-in connection is fenced and which lanes and via sites are free; a dry run that names the
+  minimal set of nets to remove to free a pin; "stopped at net X" and a reason with blockers for every open connection of a multi-net call. These are router
+  questions (escape analysis per pad, doc 05 §14), not session ones; they are the thing to build if agents are worth another try.</li>
+<li>The daemon (<code>tracemakerd</code>) and the KiCad assistant that uses it (the other half of M18).</li>
+<li>Redaction in the session, <code>propose_path</code>, placement moves (§8).</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../17-llm-advisor/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Advice files and advisors">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Advice files and advisors
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../project/" class="md-footer__link md-footer__link--next" aria-label="Next: Project">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Project
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      GPL-3.0-or-later
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../assets/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['ic_5fpad_0',['ic_pad',['../structtmk_1_1crules_1_1DecapTie.html#a49c3fb6ab9c4f0b6f49b6feae303a0b7',1,'tmk::crules::DecapTie']]],
+  ['id_1',['id',['../structtmk_1_1analysis_1_1FootprintRef.html#a01c0d80ad910b6af1109c35eaa04efbd',1,'tmk::analysis::FootprintRef::id'],['../structtmk_1_1crules_1_1RuleSpec.html#a90d8600193d6168b8800929014c2534c',1,'tmk::crules::RuleSpec::id'],['../structtmk_1_1crules_1_1Category.html#ab6f0b842174ef2e28fdd60fa94d556e7',1,'tmk::crules::Category::id'],['../structtmk_1_1io_1_1SrjObstacle.html#a7e471f61dc698a7ae68815033765a92c',1,'tmk::io::SrjObstacle::id'],['../structtmk_1_1model_1_1Net.html#ab9fc50673616ad72a473175479fafcf0',1,'tmk::model::Net::id']]],
+  ['illegal_2',['illegal',['../structtmk_1_1place_1_1AnnealResult.html#a304dbb797b11050ac89f3c1526922b77',1,'tmk::place::AnnealResult']]],
+  ['impedance_3',['impedance',['../structtmk_1_1crules_1_1EffectiveRule.html#a1c00f47f8c866cc641387bcc6507e87f',1,'tmk::crules::EffectiveRule']]],
+  ['implicit_4',['implicit',['../structtmk_1_1model_1_1CustomRule.html#a6102712ba01db411be554ef5d8e40496',1,'tmk::model::CustomRule']]],
+  ['improved_5',['improved',['../structtmk_1_1place_1_1LnsResult.html#af0ecda094c8764ae59fd552b13d48294',1,'tmk::place::LnsResult::improved'],['../structtmk_1_1place_1_1WindowResult.html#afcdf654988f8d97f3c9c9d32365fc44a',1,'tmk::place::WindowResult::improved'],['../structtmk_1_1place_1_1detail_1_1WindowStats.html#aa3776bfacdeed6e425319f2bb0668ae7',1,'tmk::place::detail::WindowStats::improved']]],
+  ['in_6',['in',['../structtmk_1_1app_1_1RouteJob.html#adf45fd34e917803ace934d720b094e7b',1,'tmk::app::RouteJob::in'],['../structtmk_1_1session_1_1SessionOptions.html#a7c7baa3f86ddac47f40ea04905d1d18d',1,'tmk::session::SessionOptions::in']]],
+  ['index_7',['index',['../structtmk_1_1drc_1_1ZoneFills.html#afed8ce1f78706d99064b4789c354ecae',1,'tmk::drc::ZoneFills::index'],['../structtmk_1_1drc_1_1CopperItem.html#a8208bd8df95d1863093a6f7cc7be10e1',1,'tmk::drc::CopperItem::index'],['../structtmk_1_1gpu_1_1DeviceInfo.html#ab066ad2998012f0feb6ef5a1e3017f4f',1,'tmk::gpu::DeviceInfo::index']]],
+  ['indices_8',['indices',['../structtmk_1_1route_1_1PortfolioResult.html#a040e118c1ab9e7afc86ccf7e9a469f46',1,'tmk::route::PortfolioResult']]],
+  ['infer_5fgraphic_5fnets_9',['infer_graphic_nets',['../structtmk_1_1model_1_1Board.html#a11711ee115b002cba9d5053e33dc33e7',1,'tmk::model::Board']]],
+  ['inner_5fcopper_10',['inner_copper',['../structtmk_1_1crules_1_1CurrentPlan.html#aecc339cc39a2020cd28114cb2c31e93b',1,'tmk::crules::CurrentPlan']]],
+  ['inner_5fwidth_11',['inner_width',['../structtmk_1_1crules_1_1CurrentPlan.html#ae72f188ad06b5f5676b6bc5c06a5f93b',1,'tmk::crules::CurrentPlan']]],
+  ['instance_12',['instance',['../structtmk_1_1crules_1_1EffectiveRule.html#ae2a52330c1cbde86541dbb240bd30318',1,'tmk::crules::EffectiveRule::instance'],['../structtmk_1_1crules_1_1ProximityPairs.html#af5c5b3421d485930f89a318b38b5981c',1,'tmk::crules::ProximityPairs::instance'],['../structtmk_1_1crules_1_1GeneratedKeepout.html#a9c0943c18afd33dc6489711b144dd238',1,'tmk::crules::GeneratedKeepout::instance']]],
+  ['instances_13',['instances',['../structtmk_1_1crules_1_1Detection.html#ae8b9bcd69cb61a4fcc65b4608d3ddf04',1,'tmk::crules::Detection']]],
+  ['island_5farea_5fmin_14',['island_area_min',['../structtmk_1_1model_1_1Zone.html#a9bcae8d041b0ca32c9b34aa55a2b1ec2',1,'tmk::model::Zone']]],
+  ['island_5fremoval_15',['island_removal',['../structtmk_1_1model_1_1Zone.html#adee0b97488a2c181a42b6bacd4d6218d',1,'tmk::model::Zone']]],
+  ['island_5fslack_16',['island_slack',['../structtmk_1_1route_1_1RouterOptions.html#ae28ec66b165b9b2a54abfdedc118108f',1,'tmk::route::RouterOptions']]],
+  ['island_5fspokes_17',['island_spokes',['../structtmk_1_1drc_1_1StarvedThermal.html#a3ebfe01716e64b80f08ae704bf312921',1,'tmk::drc::StarvedThermal']]],
+  ['islands_5fremoved_18',['islands_removed',['../structtmk_1_1drc_1_1RefillResult.html#a35ca1075f6e8d3ab25eb32014d81e2f4',1,'tmk::drc::RefillResult']]],
+  ['issues_19',['issues',['../structtmk_1_1analysis_1_1FootprintResult.html#a44943a5a6ed49913d91b85a81fa18fda',1,'tmk::analysis::FootprintResult']]],
+  ['item_20',['item',['../structtmk_1_1drc_1_1Hole.html#a273e47b227cb9a5272814d2357ec16d6',1,'tmk::drc::Hole']]],
+  ['items_21',['items',['../structtmk_1_1app_1_1RouteJobResult.html#af0c4f8dc2efddaf1a796d5cdc527ae17',1,'tmk::app::RouteJobResult::items'],['../structtmk_1_1drc_1_1CopperModel.html#a2eec8b6014b1ec4c4cf64beeed98b519',1,'tmk::drc::CopperModel::items'],['../structtmk_1_1drc_1_1Violation.html#a1c5efc675d1c1a09b8a0739f0c007a8f',1,'tmk::drc::Violation::items'],['../structtmk_1_1model_1_1Constraint.html#a645713487fbb055f2e7421552a4e071d',1,'tmk::model::Constraint::items']]],
+  ['items_5fout_22',['items_out',['../structtmk_1_1app_1_1RouteJob.html#a8c724944e321799ca1cd9cd1dccbcbea',1,'tmk::app::RouteJob']]],
+  ['iteration_23',['iteration',['../structtmk_1_1server_1_1Stats.html#af3a8e663a509b39cf4dfa58cb4a2b17f',1,'tmk::server::Stats']]],
+  ['iterations_24',['iterations',['../structtmk_1_1place_1_1SpreadStats.html#a7674b9aa1a294252ed44529d0135de31',1,'tmk::place::SpreadStats::iterations'],['../structtmk_1_1route_1_1GlobalOptions.html#aa5b73f4c6ad52b7a744beef3b809ae17',1,'tmk::route::GlobalOptions::iterations']]]
+];

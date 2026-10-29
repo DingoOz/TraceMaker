@@ -1,0 +1,2958 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An autorouter and component placer for KiCad">
+      
+      
+      
+        <link rel="canonical" href="https://dingooz.github.io/TraceMaker/0.12/17-llm-advisor/">
+      
+      
+        <link rel="prev" href="../16-bga-breakout-plan/">
+      
+      
+        <link rel="next" href="../19-agent-interface/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Advice files and advisors - TraceMaker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#17-advice-files-and-a-pluggable-advisor-called-only-when-the-router-is-stuck" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TraceMaker" class="md-header__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TraceMaker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Advice files and advisors
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../quick-start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quick start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../how-to/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  How-to guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../explanation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../project/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TraceMaker" class="md-nav__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    TraceMaker
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/first-board/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route your first board
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/kicad-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route from inside KiCad
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/build-and-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build and test
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/kicad-cli-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run kicad-cli from Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/run-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fetch boards and run benchmarks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Make a release
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write and publish the docs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-viewer-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer protocol
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../explanation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data structures and DRC
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-placement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-failure-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Failure memory
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU acceleration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-kicad-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KiCad integration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live viewer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-placement-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement test plan
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-component-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component-aware rules
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-bga-breakout-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGA breakout
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-where-a-language-model-belongs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Where a language model belongs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-what-it-may-and-may-not-do-the-projects-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. What it may and may not do (the project's rules)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-stuck-report-stage-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The stuck report (stage 0)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-advice-file-stage-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The advice file (stage 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-advisor-protocol-stage-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The advisor protocol (stage 3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reference-advisors-advisors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Reference advisors (advisors/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-what-was-measured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. What was measured
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. What was measured">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-does-a-hint-channel-help-issue-26-stage-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Does a hint channel help? (issue #26 stage 2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-not-built-and-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Not built, and limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-agent-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../project/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-next-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions and risks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-where-a-language-model-belongs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Where a language model belongs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-what-it-may-and-may-not-do-the-projects-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. What it may and may not do (the project's rules)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-stuck-report-stage-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The stuck report (stage 0)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-advice-file-stage-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The advice file (stage 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-advisor-protocol-stage-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The advisor protocol (stage 3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reference-advisors-advisors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Reference advisors (advisors/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-what-was-measured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. What was measured
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. What was measured">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-does-a-hint-channel-help-issue-26-stage-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Does a hint channel help? (issue #26 stage 2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-not-built-and-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Not built, and limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/DingoOz/TraceMaker/edit/main/docs/17-llm-advisor.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="17-advice-files-and-a-pluggable-advisor-called-only-when-the-router-is-stuck">17 — Advice files and a pluggable advisor, called only when the router is stuck<a class="headerlink" href="#17-advice-files-and-a-pluggable-advisor-called-only-when-the-router-is-stuck" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Status: Partly built</p>
+<p>Part of this page describes code that exists; the rest is a plan. The page says which is which.</p>
+</div>
+<blockquote>
+<p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/PLAN.md"><code>../PLAN.md</code></a>. Written 2026-10-14 for issue #26. <strong>Milestone M16.</strong>
+Status: stages 0–3 built; stage 4 (placement) is not. §8 holds what was measured, including what did not work.</p>
+</blockquote>
+<h2 id="1-where-a-language-model-belongs">1. Where a language model belongs<a class="headerlink" href="#1-where-a-language-model-belongs" title="Permanent link">&para;</a></h2>
+<p>TraceMaker is the deterministic counterweight to an LLM's probabilistic approach (requirement N3, rule 2). A model still has a
+place: the <em>judgement calls</em> a lattice search cannot make — which part to move when <code>--cut-report</code> proves the placement cannot
+route, which nets matter, which layer a group should prefer. This document puts it there and nowhere else:</p>
+<ul>
+<li><strong>Not inside the engine.</strong> The tree has no HTTP client, no TLS, no credentials; a non-repeatable call inside a run that must be
+  byte-identical would break N3.</li>
+<li><strong>Not a separate orchestrator.</strong> Users would learn two tools, and the engine would still need the report and hint interfaces,
+  which are the real work.</li>
+<li><strong>A replaceable advisor, called only when the deterministic route is stuck, talking to the engine through a file.</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code> route board.kicad_pcb -o out.kicad_pcb --advisor "python3 advisors/tracemaker_advisor.py ..."
+
+   plain portfolio ──► all routed? ── yes ──► done (the advisor is never started)
+         │ no
+         ▼
+   stuck report (JSON) ──► advisor process (stdin → stdout, time-limited) ──► advice (JSON)
+                                                                                 │ strict parse + check against the board
+                                                                                 ▼
+   portfolio again: the unadvised variants + `variants` more, carrying the advice
+                                                                                 │ the better result of the two runs is written,
+                                                                                 ▼ the advice is saved beside it (out.advice.json)
+</code></pre></div>
+<p>Three parts, each with one job:</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Job</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Engine</td>
+<td>Deterministic and offline. Writes a <strong>stuck report</strong>; reads an <strong>advice file</strong> (<code>--advice FILE</code>), typed and strictly checked, that can only change order, cost, and which attempts are made</td>
+<td><code>src/advice/</code>, <code>src/route/router.cpp</code>, <code>src/app/route_job.cpp</code></td>
+</tr>
+<tr>
+<td>Advisor</td>
+<td>Any executable: stuck report on stdin, advice on stdout. A person, a script, a local or cloud model</td>
+<td><code>advisors/</code> (reference ones, standard library only)</td>
+</tr>
+<tr>
+<td>The switch</td>
+<td><code>--advisor CMD</code>: plain route first; only if connections are left, consult, then route again with the advice. Without the flag nothing changes, byte for byte</td>
+<td><code>run_route_job</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-what-it-may-and-may-not-do-the-projects-rules">2. What it may and may not do (the project's rules)<a class="headerlink" href="#2-what-it-may-and-may-not-do-the-projects-rules" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>How it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Correctness</td>
+<td>Advice never contains copper and never changes a rule's value. Every route still passes the exact check; regions are enforced by it (§4)</td>
+</tr>
+<tr>
+<td>2 Determinism</td>
+<td>The model's answer is frozen in a file. <code>board + options + seed + advice file</code> gives byte-identical output at any thread count (tested). A live run is repeated by <code>--advice out.advice.json</code></td>
+</tr>
+<tr>
+<td>4 Transactions / never worse</td>
+<td>Advised attempts are <em>extra</em> portfolio variants after the unadvised ones (the next entries of the list, indices from 1000). The winner is the minimum of the portfolio's total order, a tie goes to the unadvised variant, and in <code>--advisor</code> mode the plain result stays unless the advised run's is better</td>
+</tr>
+<tr>
+<td>5 Budgets</td>
+<td>Advice changes no budget. The advisor's wall time is not routing work (<code>--advisor-timeout</code>); each routing run gets the same <code>--work</code>/<code>--time</code></td>
+</tr>
+<tr>
+<td>6 Rules</td>
+<td>A missing, slow, failing or nonsensical advisor is a warning; the run goes on unadvised, exit code unchanged</td>
+</tr>
+<tr>
+<td>Untrusted both ways</td>
+<td>The report quotes net and part names from the board (a prompt-injection surface). Advice is typed data: no commands, no paths, unknown keys are errors. Sending a board to a cloud model is opt-in, the report says what it contains, and <code>--advisor-redact</code> sends aliases</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-the-stuck-report-stage-0">3. The stuck report (stage 0)<a class="headerlink" href="#3-the-stuck-report-stage-0" title="Permanent link">&para;</a></h2>
+<p><code>route --stuck-report FILE</code> writes it for the run the advisor sees (or the final run, with no advisor); <code>--advisor</code> sends the same
+JSON on stdin. It is built from the finished route by <code>advice::build_stuck_report</code> (<code>src/advice/stuck_report.cpp</code>). Fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tracemaker_stuck_report</code></td>
+<td>1 (the format version)</td>
+</tr>
+<tr>
+<td><code>task</code></td>
+<td>one paragraph telling an advisor what is asked and that names are data</td>
+</tr>
+<tr>
+<td><code>disclosure</code></td>
+<td><code>redacted</code>, <code>contains</code> (kinds of data sent), <code>does_not_contain</code> (the board file, copper geometry beyond these lists, paths, keys, the advisor command)</td>
+</tr>
+<tr>
+<td><code>board</code></td>
+<td>name, outline box (mm), copper layers, counts of parts, pads, nets</td>
+</tr>
+<tr>
+<td><code>rules</code></td>
+<td>clearance, track width and minimum, via size and drill, copper-to-edge clearance</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>routed / connections, tracks, vias, seconds, the portfolio's variants and their counts, <code>escape_rings</code> (with <code>--escape-report</code>), <code>cuts</code> (with <code>--cut-report</code>)</td>
+</tr>
+<tr>
+<td><code>unrouted[]</code></td>
+<td>per open connection (up to <code>max_unrouted</code>, 40; <code>unrouted_not_shown</code> counts the rest): <code>net</code>; <code>from</code> / <code>to</code> (<code>part</code>, <code>pad</code>, <code>x_mm</code>, <code>y_mm</code>, <code>layers</code>; <code>to</code> is <code>{"zone": true}</code> for a plane); <code>length_mm</code>; <code>reason</code>; <code>why</code> (the router's own words; omitted when redacted); <code>rips</code>, <code>fails</code>; <code>blockers</code> (nets whose routed copper the last rejected route would have had to rip); <code>region_mm</code> (the two pads ±1.5 mm); <code>crowding</code> (routed copper by net in the region, vias and foreign pads in it)</td>
+</tr>
+<tr>
+<td><code>unrouted_by_reason</code>, <code>_by_net</code>, <code>_by_part</code></td>
+<td>counts, the largest 16</td>
+</tr>
+<tr>
+<td><code>parts[]</code></td>
+<td>the parts at the open ends: kind (<code>grid_array</code>, <code>multi_pin</code>, <code>small_ic</code>, <code>passive</code>), side, pad count, position, number of open ends; <code>library_id</code> and <code>value</code> unless redacted</td>
+</tr>
+<tr>
+<td><code>previous_advice</code></td>
+<td>the advice already tried and what it gave (later rounds)</td>
+</tr>
+<tr>
+<td><code>advice_schema</code></td>
+<td>the hint types this engine reads, so an advisor adapts to the engine it talks to</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reason codes</strong> (<code>failure_reason_code</code>, <code>router.cpp</code>): <code>boxed_in</code> (fixed copper encloses a pin), <code>exact_check</code> (the lattice path was
+rejected by the exact check), <code>rip_limit</code> (the only route would rip a protected net, too many connections, or one already ripped too
+often), <code>ripped_not_rerouted</code>, <code>layer_limit</code>, <code>out_of_budget</code>, <code>rolled_back</code> (a transaction was undone), <code>not_attempted</code> (the budget
+ended first), <code>no_legal_path</code>. They are the class of the cause, matched from the router's sentences, and they nest: a boxed-in pin is
+<code>boxed_in</code> whatever later attempts said.</p>
+<p><strong>The <code>failure</code> event</strong> (doc 13) now has <code>region</code> (the two pads ±1.5 mm, nm; it was <code>[0,0,0,0]</code>) and a new <code>blocker_nets</code> (net ids of
+the connections the rejected route would have ripped). <code>blockers</code> (object ids) stays empty: doc 06's closed-set boundary analysis is
+not built, and the victims are the cheap, true part of it.</p>
+<p><strong>Redaction.</strong> With <code>--advisor-redact</code> every net becomes <code>N1…</code>, every part <code>P1…</code> (in order of first use), <code>value</code> / <code>library_id</code> /
+<code>why</code> are dropped, and the board name is <code>board</code>. The advice that comes back is mapped to the real names (<code>advice::unalias</code>) before it
+is checked, and the saved file has the real names, so <code>--advice</code> repeats the run.</p>
+<h2 id="4-the-advice-file-stage-1">4. The advice file (stage 1)<a class="headerlink" href="#4-the-advice-file-stage-1" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"note"</span><span class="p">:</span><span class="w"> </span><span class="s2">"free text, logged, never acted on"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"variants"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"first_nets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"USB_DP"</span><span class="p">,</span><span class="w"> </span><span class="s2">"USB_DM"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"priority"</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">"U1.A1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"J2.3"</span><span class="p">]],</span>
+<span class="w">  </span><span class="nt">"layers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"no_tracks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"In2.Cu"</span><span class="p">],</span><span class="w"> </span><span class="nt">"cost"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"F.Cu"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">}},</span>
+<span class="w">  </span><span class="nt">"regions"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"north channel"</span><span class="p">,</span><span class="w"> </span><span class="nt">"rect"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">14</span><span class="p">],</span><span class="w"> </span><span class="nt">"layers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"F.Cu"</span><span class="p">],</span><span class="w"> </span><span class="nt">"reserve_for"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"NET1"</span><span class="p">],</span><span class="w"> </span><span class="nt">"vias"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}]</span>
+<span class="p">}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Hint</th>
+<th>Meaning</th>
+<th>Existing mechanism it reuses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>first_nets</code></td>
+<td>these nets are routed first, also after restarts, and other nets do not rip them</td>
+<td><code>RouterOptions::first_nets</code> (<code>--first-nets</code>)</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td>these connections (pad to pad, either order; both pads on one net) are routed before the rest</td>
+<td><code>RouterOptions::priority</code>, which the knowledge base feeds and the command line does not</td>
+</tr>
+<tr>
+<td><code>layers.no_tracks</code></td>
+<td>no new tracks there; vias still pass</td>
+<td><code>no_track_layers</code> (<code>--no-tracks-on</code>)</td>
+</tr>
+<tr>
+<td><code>layers.cost</code></td>
+<td>a track on that layer costs this factor more (1 to 1000)</td>
+<td><code>layer_cost_pm</code> (<code>--layer-cost</code>)</td>
+</tr>
+<tr>
+<td><code>regions</code></td>
+<td>a rectangle or polygon (mm, the board file's axes) in which only <code>reserve_for</code> nets may put tracks and vias, or <code>avoid_nets</code> may not; per layer, tracks and/or vias</td>
+<td>a <strong>rule area plus <code>disallow</code> rules</strong> (doc 05 §34)</td>
+</tr>
+<tr>
+<td><code>variants</code></td>
+<td>advised variants to add (1 to 8; <code>--advice-variants</code> overrides)</td>
+<td><code>route_portfolio</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regions are rules, not a new obstacle type.</strong> A region becomes an in-memory rule area (<code>tmk:advice:N</code>, no keep-out flags: it only
+names a place) and <code>disallow track via</code> rules whose condition is <code>A.intersectsArea('tmk:advice:N') &amp;&amp; A.NetName != 'NET1' &amp;&amp; …</code>
+("every net but these") or <code>… &amp;&amp; A.NetName == 'NET3'</code> (one rule per avoided net), one rule per layer when layers are named. §34's
+machinery then does what it does for a user's <code>.kicad_dru</code>: the lattice search treats the rule like fixed copper, and the exact check
+before every commit, escapes, pair legs and clean-up enforces it. Two details matter. KiCad reads <code>a &amp;&amp; b || c</code> as <code>a &amp;&amp; (b || c)</code>, so
+<strong>no <code>||</code> is ever generated</strong>. And the rules and the area live only in the router's working copy (<code>RouterOptions::extra_zones</code> /
+<code>extra_rules</code>, added in <code>Router::Impl</code> and <code>Router::run</code>): the caller's rules are not touched and the output board never contains them.
+(The positional rules are judged outside the per-class obstacle caches, so net-scoped regions do not need the caches keyed by net.)</p>
+<p><strong>Strict reading</strong> (<code>parse_advice</code>, modelled on the rule overrides, doc 15 §6.3): an unknown key, a wrong type, a value out of range
+(coordinates within ±10 m, cost 1–1000, <code>variants</code> 1–8), a duplicate, a region with no area or with both or neither of
+<code>reserve_for</code> / <code>avoid_nets</code>, or more than 64 <code>first_nets</code>, 512 <code>priority</code>, 24 <code>regions</code>, a 64-point polygon is an error that names the
+file and the entry (<code>regions[2].rect: has no area</code>); a syntax error gives line and column. <code>check_advice_refs</code> then checks names against
+the board: unknown nets, layers and pads are errors with a "did you mean", priority pads must lie on one net, <code>no_tracks</code> may not cover
+every copper layer, net names with a quote or backslash cannot be used in a region. Entries without effect (a region outside the outline,
+a <code>first_nets</code> net with fewer than two pads) are warnings. <code>tracemaker advice-check BOARD ADVICE</code> runs both checks without routing.
+(Errors name the file and the JSON path of the entry; the line is given for syntax errors only.)</p>
+<p><strong>Advised variants</strong> (<code>route_portfolio</code>). With advice, the portfolio is the variants that would run anyway, then <code>variants</code> more: the
+next entries of the portfolio's list, the very variants a plain run with that many more would have added (same configurations, same
+seeds), each carrying the hints. They are named <code>&lt;variant&gt; + advice</code> and have indices <code>1000 + k</code> (<code>route::kAdvisedIndex</code>). So a plain run
+with <code>V + 4</code> variants is the exact control for an advised run with <code>V</code>: the only difference is the hints. (A first version advised
+<em>copies</em> of variants 0, 2, 4, 6. A hint that does nothing then repeats work already done, while the control's extra variants bring new
+seeds; on the held-out half the control beat it by 11 connections, §8.) Variant results do not depend on each other except through
+portfolio rounds, so adding variants at the end leaves the unadvised ones as they were (tested), and the total order puts a tie on the
+unadvised side. The knowledge base is never told about advised variants. <code>route_result_better</code> is the same order for comparing two
+whole runs.</p>
+<h2 id="5-the-advisor-protocol-stage-3">5. The advisor protocol (stage 3)<a class="headerlink" href="#5-the-advisor-protocol-stage-3" title="Permanent link">&para;</a></h2>
+<p><code>--advisor CMD</code>: <code>CMD</code> is run with <code>/bin/sh -c</code>, in its own process group, with the stuck report on stdin; stdout must be exactly one
+advice file (at most 1 MB), stderr is logged (first 2,000 characters). After <code>--advisor-timeout</code> (120 s) the group is killed. Only the
+program name is logged and put in the summary (a command line may carry a token). The answer goes through <code>parse_advice</code>, <code>unalias</code> and
+<code>check_advice_refs</code>; if anything fails the run says why (<code>warning: the advisor's advice was refused: …</code>) and goes on without advice.
+The accepted advice is saved as <code>&lt;out&gt;.advice.json</code> (<code>--advice-out</code> changes it; with <code>--advisor-rounds N &gt; 1</code> also
+<code>&lt;out&gt;.advice.K.json</code>), always with the real names.</p>
+<p><code>--advisor-rounds N</code> repeats the loop while connections are open, each time with the best result so far and <code>previous_advice</code> in the
+report; every round routes from scratch with that round's advice alone, so the saved file of the last round repeats it.</p>
+<p>Each routing run gets the full <code>--work</code> and <code>--time</code>. The advised run contains the unadvised variants again, so an <code>--advisor</code> run costs
+about twice a plain one; <code>--advice FILE</code> alone costs one run with the extra variants.</p>
+<h2 id="6-reference-advisors-advisors">6. Reference advisors (<code>advisors/</code>)<a class="headerlink" href="#6-reference-advisors-advisors" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>heuristic_advisor.py</code> — no model. Strategies <code>stuck-first</code> (nets of the open connections go first), <code>corridor</code> (a strip along the
+  straight line of each open connection is reserved for its net, on the layer its start pad is on), <code>mixed</code>. It proves the hint channel
+  (§8) and is the smallest example of the protocol.</li>
+<li><code>tracemaker_advisor.py</code> — a language model through an OpenAI-compatible endpoint (llama-server, Ollama, vLLM, clouds) or the
+  Anthropic Messages API. Standard library only. The key comes from the environment (<code>TRACEMAKER_ADVISOR_API_KEY</code>, else
+  <code>OPENAI_API_KEY</code> / <code>ANTHROPIC_API_KEY</code>), never from the command line. An endpoint that is not on this machine or its network is
+  refused unless <code>--allow-remote</code> is given; what is sent is printed to stderr first. The reply is parsed leniently (a code fence is
+  tolerated), checked against the advice format, and sent back to the model once with the problems if it fails.</li>
+<li><code>test_advisors.py</code> — both, against fake servers (no network, no model).</li>
+<li><strong>A coding agent needs no advisor process.</strong> The <code>tracemaker-route</code> skill (<code>skills/</code>, D84) has the agent read <code>--stuck-report</code>, write the
+  advice file itself, check it with <code>tracemaker advice-check</code> and route again with <code>--advice</code>; it puts that after more search (§8.1: the
+  control wins) and says that the hint channel's measured gain is none. Whether a model's own hints do better is the open question of §8.1,
+  not something the skill claims.</li>
+</ul>
+<p>Benchmarks always run from <strong>recorded advice files</strong> (<code>bench/advice_eval.py</code> stores them), so results stay reproducible.</p>
+<h2 id="7-options">7. Options<a class="headerlink" href="#7-options" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--advice FILE</code></td>
+<td>use this advice (advised variants run next to the unadvised ones)</td>
+</tr>
+<tr>
+<td><code>--advice-variants N</code></td>
+<td>advised variants to add (1–8; default the file's, else 4)</td>
+</tr>
+<tr>
+<td><code>--advisor CMD</code></td>
+<td>consult CMD only if connections are left; route again with its advice</td>
+</tr>
+<tr>
+<td><code>--advisor-timeout S</code></td>
+<td>its time limit (default 120 s)</td>
+</tr>
+<tr>
+<td><code>--advisor-rounds N</code></td>
+<td>consult again with the advised result while connections are open (default 1)</td>
+</tr>
+<tr>
+<td><code>--advisor-redact</code></td>
+<td>aliases for nets and parts in the report</td>
+</tr>
+<tr>
+<td><code>--advice-out FILE</code></td>
+<td>where the advice that was used is saved (default <code>&lt;out&gt;.advice.json</code>)</td>
+</tr>
+<tr>
+<td><code>--stuck-report FILE</code></td>
+<td>write the stuck report</td>
+</tr>
+<tr>
+<td><code>tracemaker advice-check BOARD ADVICE [--json F]</code></td>
+<td>check an advice file against a board</td>
+</tr>
+</tbody>
+</table>
+<p>The summary (<code>--json</code>) gets an <code>advice</code> block: the file's hints and warnings, <code>unadvised_best_routed</code> / <code>advised_best_routed</code> /
+<code>winner_advised</code> of the first run, and per advisor round the program, seconds, outcome or error, routed before and after, and whether the
+advised result was kept. Viewer events: <code>advice.hint</code> for each hint, and <code>stage</code> events <code>advisor</code> begin/end.</p>
+<h2 id="8-what-was-measured">8. What was measured<a class="headerlink" href="#8-what-was-measured" title="Permanent link">&para;</a></h2>
+<p>Raw data, the advice files used and the test outputs are in <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/bench/records/m16/README.md"><code>bench/records/m16/</code></a>; the story of the
+runs is in <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/dev/m16-notes.md"><code>dev/m16-notes.md</code></a>.</p>
+<h3 id="81-does-a-hint-channel-help-issue-26-stage-2">8.1 Does a hint channel help? (issue #26 stage 2)<a class="headerlink" href="#81-does-a-hint-channel-help-issue-26-stage-2" title="Permanent link">&para;</a></h3>
+<p>The question is whether advice makes this router route more, before any model is connected. Board set: the 16 <code>srj20</code> boards of fewer
+than 70 connections that were still open after the 70 M portfolio run of M15 (<code>bench/sets/srj20-m15fail4.txt</code>: 8 + 8, even and odd index
+as the tuning half and the held-out half). Configuration: <code>--work 20000000 --variants 8 --threads 8 --no-kb --time 3600</code> (the breakout
+portfolio, 4 rounds), <code>bench/advice_eval.py</code>, a rule-based advisor (<code>advisors/heuristic_advisor.py</code>). Counts are connections routed, summed
+over the half (489 and 492 connections; no board completes in any arm).</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th style="text-align: right;">Even half (tuning)</th>
+<th style="text-align: right;">Odd half (held out)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Plain, 8 variants (what advice must beat)</td>
+<td style="text-align: right;">430</td>
+<td style="text-align: right;">439</td>
+</tr>
+<tr>
+<td><strong>Control: plain, 12 variants</strong> (the advised run's compute without advice)</td>
+<td style="text-align: right;">431</td>
+<td style="text-align: right;"><strong>450</strong></td>
+</tr>
+<tr>
+<td>Advice <code>mixed</code> (stuck nets first + a reserved strip along each open connection), first design (advised copies of variants 0, 2, 4, 6)</td>
+<td style="text-align: right;">431</td>
+<td style="text-align: right;">439</td>
+</tr>
+<tr>
+<td>Advice <code>mixed</code>, final design (advised variants are the next four of the list, the control's own)</td>
+<td style="text-align: right;">431</td>
+<td style="text-align: right;">439</td>
+</tr>
+<tr>
+<td>Advice <code>stuck-first</code> only (first design)</td>
+<td style="text-align: right;">430</td>
+<td style="text-align: right;">not run</td>
+</tr>
+<tr>
+<td>Advice <code>corridor</code> only (0.35 mm half width, vias allowed through; first design)</td>
+<td style="text-align: right;">431</td>
+<td style="text-align: right;">not run</td>
+</tr>
+<tr>
+<td>Advice <code>corridor</code>, 0.5 mm, other nets' vias allowed (first design)</td>
+<td style="text-align: right;">431</td>
+<td style="text-align: right;">not run</td>
+</tr>
+<tr>
+<td>Advice <code>stuck-first</code> + layer cost F.Cu x1.4 + 12 priority pairs (first design)</td>
+<td style="text-align: right;">430</td>
+<td style="text-align: right;">not run</td>
+</tr>
+</tbody>
+</table>
+<p>What this says:</p>
+<ul>
+<li><strong>The gate is not met.</strong> The gate was "advised runs route more on a held-out half, and never fewer anywhere". "Never fewer" holds by
+  construction (no board did worse in any arm). "More" does not: on the held-out half advice routes exactly what the plain run does (439
+  and 439), on the tuning half it gains one connection on one board (<code>sample094</code>, 54 to 55), the same total as the control, which gets it on
+  other boards. No strategy tried on the tuning half beat the control.</li>
+<li><strong>Seeds beat these hints.</strong> The control, the same four extra variants without hints, gains 11 connections on the held-out half
+  (<code>sample173</code> 49 to 53, <code>sample136</code> 58 to 61). The same variants with the hints gain nothing: on the held-out half no advised variant routed more than the best unadvised
+  variant of its own run, and on five of the eight boards they routed fewer. The first design hid this, because its
+  advised copies repeated work that was already done and so could not tell "the hints do nothing" from "the hints hurt".</li>
+<li><strong>Consistent with the repository's earlier evidence.</strong> M14 experiment E1 (doc 16): tscircuit's own finished routes as guides did not
+  help either; the literature note puts language-model routing agents far below classical routers.</li>
+<li>These are the hints a rule can derive from the report (who is open, where, how crowded). A model might write better ones: judgement about
+  which part to move or which nets matter is what the issue expects it to add, and the placement seams (stage 4) are where that would show.
+  This measurement does not say it cannot; it says the channel gives no free gain, and that <strong>the stage 3 gate of the issue (proving the
+  channel without a model first) is not met</strong>. Stage 3 is built because it was asked for, it is opt-in, and it cannot make a result worse.</li>
+</ul>
+<p>An invalid first batch is worth recording because it nearly produced a false result: the driver did not pass <code>--time</code>, the default 120 s
+wall limit cut variants short on a loaded machine, and the same command gave different plain counts in three experiments (one board: 54,
+50, 54). Advice looked like +3 to +11 connections there. <code>advice_eval.py</code> now passes <code>--time 3600</code>, and every table above comes from runs
+whose plain column agrees across experiments. (Lesson for any work-budget experiment: check that the arms' shared columns match.)</p>
+<h3 id="82-checks">8.2 Checks<a class="headerlink" href="#82-checks" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Options off: <code>quick</code> / <code>planes</code> (plain and <code>--soft-zones</code>) / <code>mid</code> against <code>origin/main</code> (<code>49fbd3c</code>), CPU-only builds, <code>bench/compare_runs.py --expect-identical</code></td>
+<td><strong>byte-identical</strong>: quick 30/30, planes 8/8 and 8/8, mid 11/11 (<code>mid</code> prints <code>Gates: FAIL</code> only because PR #28's judge calls three capped KiCad reports "unknown"; the baseline against itself prints the same)</td>
+</tr>
+<tr>
+<td>Full test suite</td>
+<td>291 of 291 pass, release and CPU-only; the new tests and 11 router-heavy existing ones also pass under ASan + UBSan</td>
+</tr>
+<tr>
+<td>Same advice file at 1, 2 and 4 threads, and twice: identical bytes</td>
+<td>generated board (CLI test <code>advice_cli</code>, every run); a real <code>srj20</code> board (<code>sample100</code>, 1, 2, 4 and 4 threads): one sha256</td>
+</tr>
+<tr>
+<td>Bad advice (unknown key, name, layer, syntax error, every layer without tracks): refused naming the file</td>
+<td>unit tests and <code>advice_cli</code></td>
+</tr>
+<tr>
+<td>Advisor absent, failing, slow, rubbish, unknown key, unknown net: output board and exit code as without it, the reason in the summary</td>
+<td><code>advice_cli</code> (5 failure kinds and a timeout)</td>
+</tr>
+<tr>
+<td>Advised result never fewer than unadvised</td>
+<td>by construction; no board worse in the 8 advised experiments (64 board runs)</td>
+</tr>
+<tr>
+<td>KiCad DRC adds no error on advised boards</td>
+<td>0 router-introduced errors on 10 advised boards checked (5 of each design; <code>drc-advised.txt</code> has the final design's)</td>
+</tr>
+<tr>
+<td>A real model</td>
+<td><strong>not verified.</strong> The reference advisor was tested against fake OpenAI-compatible and Anthropic servers only. One live request to the shared <code>llama-server</code> on this machine ended in HTTP 503 (its engine stopped, exit -6), a second timed out at 150 s; no further attempts were made on a shared service</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-not-built-and-limits">9. Not built, and limits<a class="headerlink" href="#9-not-built-and-limits" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Stage 4 (placement).</strong> Advisor-proposed placements as <code>seeds</code> of <code>routability_loop</code> and proposed moves as ECO candidates
+  (<code>src/place/routable.hpp</code>) are not built: they would be kept only if they route more, through seams that exist, and wait for §8's
+  evidence that hints help at all.</li>
+<li><strong>Per-net layer preference and per-net guide corridors</strong> are new router features the issue asked to add only if the simple hints
+  matter; §8.1 says they do not, so they were not added.</li>
+<li><strong>A hint that picks an attempt</strong> ("run the relax-route-legalise profile", doc 05 §41.3) is the hint type the evidence of this repository
+  favours: boards that no ordering or reservation helped (<code>srj20</code> 039, 048, 071, 103) completed with <code>--relax</code>. It is not built: relax
+  drives the whole portfolio (stages, rounds, legalisation) and is not a per-variant tweak, so it needs its own design.</li>
+<li>A model that answers with many small, plausible hints costs only the advised variants' time; a model that answers with a region
+  that fences a net out of its own pads can make an advised variant route less, which is why advised variants never replace
+  unadvised ones.</li>
+<li>The report quotes at most 40 open connections; very large boards need <code>--advisor-rounds</code> or a better summariser.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../16-bga-breakout-plan/" class="md-footer__link md-footer__link--prev" aria-label="Previous: BGA breakout">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                BGA breakout
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../19-agent-interface/" class="md-footer__link md-footer__link--next" aria-label="Next: Agent interface">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Agent interface
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      GPL-3.0-or-later
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../assets/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
