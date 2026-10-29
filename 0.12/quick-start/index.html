@@ -2279,9 +2279,9 @@ and gives the same results (<a href="../how-to/gpu/">Use the GPUs</a>).</p>
 <div class="tabbed-block">
 <p>Check your C library first: <code>ldd --version</code> must say 2.38 or newer (Debian 12 and Ubuntu 22.04 are too old;
 build from source there).</p>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/DingoOz/TraceMaker/releases/download/v0.12.0/tracemaker-0.12.0-linux-x86_64.tar.gz
-tar<span class="w"> </span>xzf<span class="w"> </span>tracemaker-0.12.0-linux-x86_64.tar.gz
-<span class="nb">cd</span><span class="w"> </span>tracemaker-0.12.0-linux-x86_64
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/DingoOz/TraceMaker/releases/download/v0.12.1/tracemaker-0.12.1-linux-x86_64.tar.gz
+tar<span class="w"> </span>xzf<span class="w"> </span>tracemaker-0.12.1-linux-x86_64.tar.gz
+<span class="nb">cd</span><span class="w"> </span>tracemaker-0.12.1-linux-x86_64
 <span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
 <span class="nv">EX</span><span class="o">=</span>share/tracemaker/examples/plane_smd
 tracemaker<span class="w"> </span>version
@@ -2351,10 +2351,10 @@ planes. <code>EX</code> was set in step 1.</p>
 cp<span class="w"> </span><span class="nv">$EX</span>/plane_smd.kicad_pro<span class="w"> </span>out/routed.kicad_pro<span class="w">      </span><span class="c1"># the design rules travel with the board</span>
 tracemaker<span class="w"> </span>route<span class="w"> </span><span class="nv">$EX</span>/plane_smd.kicad_pcb<span class="w"> </span>-o<span class="w"> </span>out/routed.kicad_pcb<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--soft-zones<span class="w"> </span>--via-in-pad<span class="w"> </span>--keep-vias-off-pads<span class="w"> </span>--first-nets<span class="w"> </span>XIN,XOUT<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--variants<span class="w"> </span><span class="m">2</span><span class="w"> </span>--no-gpu
+<span class="w">    </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--variants<span class="w"> </span><span class="m">4</span><span class="w"> </span>--no-gpu
 </code></pre></div>
 <p>It takes a few seconds and ends with:</p>
-<div class="highlight"><pre><span></span><code>routed 49/49 connections, 104 tracks, 46 vias, ...
+<div class="highlight"><pre><span></span><code>routed 49/49 connections, 108 tracks, 42 vias, ...
 </code></pre></div>
 <p>The options suit this dense board; a plain <code>tracemaker route board.kicad_pcb -o out.kicad_pcb</code> is where to start on
 your own boards. <a href="../tutorials/first-board/">Route your first board</a> explains each one.</p>
@@ -2371,7 +2371,7 @@ editor, or run:</p>
 <h2 id="4-watch-it-route-optional">4. Watch it route (optional)<a class="headerlink" href="#4-watch-it-route-optional" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>tracemaker<span class="w"> </span>route<span class="w"> </span><span class="nv">$EX</span>/plane_smd.kicad_pcb<span class="w"> </span>-o<span class="w"> </span>out/routed.kicad_pcb<span class="w"> </span>--view<span class="w"> </span>--hold<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--soft-zones<span class="w"> </span>--via-in-pad<span class="w"> </span>--keep-vias-off-pads<span class="w"> </span>--first-nets<span class="w"> </span>XIN,XOUT<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--variants<span class="w"> </span><span class="m">2</span><span class="w"> </span>--no-gpu
+<span class="w">    </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--variants<span class="w"> </span><span class="m">4</span><span class="w"> </span>--no-gpu
 </code></pre></div>
 <p>Open the address it prints (<code>http://127.0.0.1:8766/</code>) in a browser. <code>--hold</code> keeps the viewer open after routing
 ends; stop it with Ctrl+C.</p>

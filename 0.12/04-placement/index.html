@@ -2786,7 +2786,7 @@
 
 <h1 id="04-component-placement">04 — Component placement<a class="headerlink" href="#04-component-placement" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/PLAN.md"><code>../PLAN.md</code></a>.</p>
+<p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.1/PLAN.md"><code>../PLAN.md</code></a>.</p>
 </blockquote>
 <h2 id="1-what-mathematically-optimal-can-honestly-mean">1. What "mathematically optimal" can honestly mean<a class="headerlink" href="#1-what-mathematically-optimal-can-honestly-mean" title="Permanent link">&para;</a></h2>
 <p>Placement of rectangles to minimise wirelength without overlap is NP-hard (it contains bin packing and
@@ -2907,7 +2907,7 @@ beyond what was proved. (The L4 bound is weak on dense boards; it is still a tru
 </ol>
 <h3 id="e-detailed-placement-simulated-annealing-and-large-neighbourhood-search">(E) Detailed placement — simulated annealing and large-neighbourhood search<a class="headerlink" href="#e-detailed-placement-simulated-annealing-and-large-neighbourhood-search" title="Permanent link">&para;</a></h3>
 <p>SA is the proven workhorse for PCB placement (TimberWolf, OpenROAD SA-PCB; see
-<a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.0/pcb-routing-optimization.md"><code>../pcb-routing-optimization.md</code></a>). TraceMaker runs it <em>after</em> the analytic
+<a href="https://github.com/DingoOz/TraceMaker/blob/v0.12.1/pcb-routing-optimization.md"><code>../pcb-routing-optimization.md</code></a>). TraceMaker runs it <em>after</em> the analytic
 stages, so it refines rather than searches blindly.</p>
 <ul>
 <li><strong>Moves</strong>: shift (Gaussian, radius shrinks with temperature), swap two same-footprint parts, rotate,

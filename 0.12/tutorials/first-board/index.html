@@ -2308,7 +2308,7 @@ the board, as they do in KiCad.</p>
 cp<span class="w"> </span>tests/boards/plane_smd/plane_smd.kicad_pro<span class="w"> </span>build/tutorial/routed.kicad_pro
 <span class="nv">$TM</span><span class="w"> </span>route<span class="w"> </span>tests/boards/plane_smd/plane_smd.kicad_pcb<span class="w"> </span>-o<span class="w"> </span>build/tutorial/routed.kicad_pcb<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--soft-zones<span class="w"> </span>--via-in-pad<span class="w"> </span>--keep-vias-off-pads<span class="w"> </span>--first-nets<span class="w"> </span>XIN,XOUT<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--variants<span class="w"> </span><span class="m">2</span><span class="w"> </span>--no-gpu
+<span class="w">    </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--variants<span class="w"> </span><span class="m">4</span><span class="w"> </span>--no-gpu
 </code></pre></div>
 <p>What the options are for, on this board:</p>
 <table>
@@ -2340,8 +2340,8 @@ cp<span class="w"> </span>tests/boards/plane_smd/plane_smd.kicad_pro<span class=
 <td>A budget in search steps instead of seconds, so you get the same result every time, at any thread count.</td>
 </tr>
 <tr>
-<td><code>--variants 2</code></td>
-<td>Run two of the eight differently configured routers and keep the better result.</td>
+<td><code>--variants 4</code></td>
+<td>Run four of the eight differently configured routers and keep the best result.</td>
 </tr>
 <tr>
 <td><code>--no-gpu</code></td>
@@ -2350,10 +2350,10 @@ cp<span class="w"> </span>tests/boards/plane_smd/plane_smd.kicad_pro<span class=
 </tbody>
 </table>
 <p>After about five seconds the last lines read:</p>
-<div class="highlight"><pre><span></span><code>  variant 6 fast bends, cheap crossings, escape plan routed 49 in 4.7 s  &lt;- best
-  variant 2 fast bends, longest first (2x pitch on large boards) routed 44 in 5.1 s
+<div class="highlight"><pre><span></span><code>  variant 2 fast bends, longest first (2x pitch on large boards) routed 44 in 4.7 s
+  variant 1 fast bends, shortest first, crowded source routed 47 in 3.3 s
 soft zones: after refilling 2 zones, 0 items unconnected
-routed 49/49 connections, 124 tracks, 44 vias, pitch 0.030 mm, ...
+routed 49/49 connections, 108 tracks, 42 vias, pitch 0.025 mm, ...
 </code></pre></div>
 <p>Every connection is routed. The exit code is 0 when nothing is left open.</p>
 <h2 id="4-check-the-result">4. Check the result<a class="headerlink" href="#4-check-the-result" title="Permanent link">&para;</a></h2>
