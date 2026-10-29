@@ -2242,6 +2242,37 @@ struct Router::Impl {
     return false;
   }
 
+  // Via retry (D153): a connection whose search found no path is searched again at once, strictly, with a via at a
+  // quarter of its price and the layer that holds the most routed track at twice the cost per mm, so the route leaves
+  // the crowded layer through a via instead of looking for a way along it. The search is A* over the same lattice; the
+  // changed prices change which cells it expands before its caps, and the copper it adds goes where there is room.
+  // Layer costs only go up, so the octile and field heuristics stay lower bounds.
+  bool via_retry(int ci) {
+    const auto& st = cs[static_cast<std::size_t>(ci)];
+    if (nl < 2 || !opt.allow_vias || !vias_ok(st.c.net)) return false;
+    std::vector<double> len(static_cast<std::size_t>(nl), 0.0);
+    for (const auto& it : obs->copper().items) {
+      if (it.owner < 0 || it.removed || it.kind != drc::ItemKind::Track) continue;
+      const auto& t = b.tracks[static_cast<std::size_t>(it.index)];
+      len[static_cast<std::size_t>(t.layer)] += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+    }
+    const int busy = static_cast<int>(std::max_element(len.begin(), len.end()) - len.begin());
+    const auto saved_pm = layer_pm;
+    const double saved_mult = via_cost_mult;
+    layer_pm.resize(static_cast<std::size_t>(nl), 1000);
+    if (len[static_cast<std::size_t>(busy)] > 0) layer_pm[static_cast<std::size_t>(busy)] = std::max<std::int64_t>(layer_pm[static_cast<std::size_t>(busy)], 2000);
+    via_cost_mult = saved_mult / 4;
+    via_retry_on = true;
+    const bool ok = search_and_commit(st.c, false);
+    via_retry_on = false;
+    via_cost_mult = saved_mult;
+    layer_pm = saved_pm;
+    if (ok) ++res.via_retried;
+    if (std::getenv("TM_DEBUG_VIA_RETRY"))
+      std::fprintf(stderr, "via retry conn %d (%s), busy layer %d: %s\n", ci, b.nets[static_cast<std::size_t>(st.c.net)].name.c_str(), busy, ok ? "routed" : why.c_str());
+    return ok;
+  }
+
   // Removes a connection's copper and marks it (and connections of its net satisfied implicitly) unrouted.
   void rip(int v) {
     auto& st = cs[static_cast<std::size_t>(v)];
@@ -2297,6 +2328,7 @@ struct Router::Impl {
   bool blind_ok = false;    // blind/buried vias allowed (board setting, more than two layers)
   bool fields_off = false;
   double via_cost_mult = 1.0;   // raised by the clean-up pass
+  bool via_retry_on = false;    // the search under way is a via retry (its own nogoods)
   bool bypass_nogoods = false;  // clean-up re-routes are judged on their own  // set when GPU fields cost too much wall-clock time (see search)
   int rip_cap = 0;  // per-connection rip limit (opt.max_rips_per_connection, raised by diversified restarts)
   long nogood_skips = 0;
@@ -2320,7 +2352,7 @@ struct Router::Impl {
     wb.add(pb0);
     wb = wb.inflated(6'000'000 + c.length / 4);
     const std::uint64_t ng = splitmix64(window_signature(wb) ^ (static_cast<std::uint64_t>(current) << 3) ^ (soft_mode ? 1u : 0u) ^
-                                        (force_escapes ? 2u : 0u) ^ (static_cast<std::uint64_t>(width_override) << 20) ^ (!conn_guide.empty() && current >= 0 && conn_guide[static_cast<std::size_t>(current)] >= 0 ? 4u : 0u));
+                                        (force_escapes ? 2u : 0u) ^ (via_retry_on ? 8u : 0u) ^ (static_cast<std::uint64_t>(width_override) << 20) ^ (!conn_guide.empty() && current >= 0 && conn_guide[static_cast<std::size_t>(current)] >= 0 ? 4u : 0u));
     if (!bypass_nogoods && nogoods.count(ng)) {
       ++nogood_skips;
       why = "skipped: identical earlier attempt failed (nogood)";
@@ -5770,6 +5802,10 @@ struct Router::Impl {
           }
           force_escapes = false;
           if (!ok) reason += "; escapes/neck-down: " + why;
+        }
+        if (!ok && opt.via_retry) {
+          ok = via_retry(ci);
+          if (!ok) reason += "; via retry: " + why;
         }
         if (!ok && opt.rip_up && (pass > 0 || !opt.strict_first || opt.warm)) {
           const bool use_txn = opt.txn > 0 && pair_partner.empty() && conn_bundle.empty();

@@ -58,6 +58,7 @@ struct RouterOptions {
   int soft_attempts = 3;        // window sizes tried by negotiated searches
   double via_cost_mm = 3.0;     // equivalent track length of one via
   bool allow_vias = true;
+  bool via_retry = true;        // a connection that finds no path is searched again at once with cheap vias (D153)
   double polish_fraction = 0;   // share of the budget reserved for rebuilding the open connections of the best state (doc 16)
   int polish_trials = 20;       // seeded orders tried per open connection in the polish
   int lns_open_trials = 0;      // regional rebuild of open connections: seeded orders tried per open connection (0 = off, doc 16 F4)
@@ -304,6 +305,7 @@ struct RouteResult {
   int enclosed = 0;             // searches that proved the source boxed in (no larger window tried)
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
   int necked = 0;               // connections routed at the neck-down width
+  int via_retried = 0;          // connections routed by the via retry (D153)
   int restarts = 0;
   int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
   int tidied = 0;               // connections shortened by tidy sweeps
