@@ -1,9 +1,11 @@
-TraceMaker 0.12.0 is faster. It also checks differential pairs and delay tuning the way KiCad 10 does, and it can add a ground pour or change the layer count for you. At the same work budget it uses 20–30 % less CPU, and on hard boards the old router needs 1.4–2.6× the time to reach the same result.
+TraceMaker 0.12.1 is faster. It also checks differential pairs and delay tuning the way KiCad 10 does, and it can add a ground pour or change the layer count for you. At the same work budget it uses 20–30 % less CPU, and on hard boards the old router needs 1.4–2.6× the time to reach the same result.
+
+This is the first published 0.12 release. The `v0.12.0` tag failed its install check (the example board needed four router variants, not two, since D143) and was not released. The results below were measured on the 0.12.0 build, which differs from 0.12.1 only in the version string, the install check and the documentation.
 
 ## Install without building (Linux x86_64)
 
-- `tracemaker-0.12.0-linux-x86_64.tar.gz`: the router, the placer, the live viewer, an example board and the agent skills. Start with its `INSTALL.txt`.
-- `tracemaker-0.12.0-pcm-linux-x86_64.zip`: the KiCad 10 plugin with the router inside. KiCad > Plugin and Content Manager > Install from File...
+- `tracemaker-0.12.1-linux-x86_64.tar.gz`: the router, the placer, the live viewer, an example board and the agent skills. Start with its `INSTALL.txt`.
+- `tracemaker-0.12.1-pcm-linux-x86_64.zip`: the KiCad 10 plugin with the router inside. KiCad > Plugin and Content Manager > Install from File...
 
 They need glibc 2.38 or newer (Ubuntu 24.04, Debian 13, current Fedora). They need no CUDA and no other library. CI installs them in a clean container with no compiler and routes the example board (D121).
 
@@ -40,14 +42,14 @@ They need glibc 2.38 or newer (Ubuntu 24.04, Debian 13, current Fedora). They ne
 
 PCBench, 8 router variants, 120 s per board, judged by KiCad's own DRC (`kicad-cli pcb drc`, the D106 judge, the same as 0.10.0 and 0.11.0). Measured on an idle machine.
 
-| Tier | Boards | 0.12.0 clean | 0.11.0 clean | Freerouting 2.5.0-RC12 (published) | 0.12.0 completion |
+| Tier | Boards | 0.12.1 clean | 0.11.0 clean | Freerouting 2.5.0-RC12 (published) | 0.12.1 completion |
 |---|--:|--:|--:|--:|--:|
 | A | 40 | **100%** | 100% | 100% | 100% |
 | B | 40 | **72.5%** | 70.0% | 50.0% | 97.4% |
 | C | 30 | **50.0%** | 46.7% | 46.7% | 97.5% |
 | D | 22 | **40.9%** | 36.4% | 36.4% | 95.9% |
 
-One more board is clean in each of tiers B, C and D: avr_ledprojector, kitspace_40-channel-hv-switching-board and Keyboard_PCB_Keyboard (534 of 534). On most boards that stay open there are fewer open connections, for example CoreOne 56 → 28, LeeChee 46 → 29 and TCKB 31 → 18. No board has an error added by routing. 0.11.0 was measured on a shared machine and the limit is wall-clock time. For a like-for-like check, 0.11.0 on an idle machine scored 8 tier D boards (2026-10-26); 0.12.0 scores 9.
+One more board is clean in each of tiers B, C and D: avr_ledprojector, kitspace_40-channel-hv-switching-board and Keyboard_PCB_Keyboard (534 of 534). On most boards that stay open there are fewer open connections, for example CoreOne 56 → 28, LeeChee 46 → 29 and TCKB 31 → 18. No board has an error added by routing. 0.11.0 was measured on a shared machine and the limit is wall-clock time. For a like-for-like check, 0.11.0 on an idle machine scored 8 tier D boards (2026-10-26); 0.12.1 scores 9.
 
 Records: `bench/records/release-0.12.0/` (every run's summary and per-board results, the comparisons, the test log).
 

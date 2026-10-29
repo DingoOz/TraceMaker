@@ -22,13 +22,13 @@ reference (command line, C++ API) and the design documents.
 - **What it never does:** touch anything it did not create. The rest of your file round-trips byte for byte.
 - **What it runs on:** Linux, C++20. A CUDA 12.x GPU speeds it up; it works without one. A macOS build with a
   Metal backend (macOS 15 and 26, Apple silicon) is contributed; it is tested on contributors' Macs, not in CI.
-- **Status:** release 0.12.0. Licence GPL-3.0-or-later.
+- **Status:** release 0.12.1. Licence GPL-3.0-or-later.
 
 ## How good is it?
 
 Share of boards routed with **every connection made and no KiCad error added** (PCBench, 120 s per board):
 
-| Tier | Boards | TraceMaker 0.12.0 | Freerouting 2.5 |
+| Tier | Boards | TraceMaker 0.12.1 | Freerouting 2.5 |
 |---|--:|--:|--:|
 | A (routine) | 40 | **100%** | 100% |
 | B | 40 | **72.5%** | 50.0% |
@@ -61,7 +61,7 @@ D154, which routes more within the 120 s. These runs were on an idle machine and
   writes every compromise down and checks it with a circuit simulation; power nets keep the board's rules.
 
 Full detail: [design and results report](report/report.pdf) ·
-[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.12.0 has 428 tests).
+[roadmap and test report](report/roadmap_testing.pdf) (the 132 tests and every benchmark run of release 0.8.0; 0.12.1 has 428 tests).
 
 ## Quick start
 

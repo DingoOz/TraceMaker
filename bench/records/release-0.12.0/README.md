@@ -1,4 +1,4 @@
-# Release 0.12.0 records: the test suite and PCBench tiers A-D
+# Release 0.12.0 / 0.12.1 records: the test suite and PCBench tiers A-D
 
 2026-10-29, branch `release-0.12.0` on main `4e69750` (pull request #59 merged) with the version bump. Since 0.11.0: test campaign
 fixes and generated pours (#50, D137, D138), unfilled zones and hole clearance (#51, D140), the roadmap night (#57, D141-D151), the
@@ -53,4 +53,4 @@ ctest --preset release -R '^delay_room$' --output-on-failure                    
 The first `v0.12.0` tag failed the install test (`scripts/test_release_install.py`): the example board, `plane_smd`, routed 48/49 with
 `--variants 2`. That dates from D143 (#57), not this release: 455e315 also routes 48/49. A84 had moved the ctest for that board to four
 variants, but the tag-only install test and the tutorials still used two. All of them now use `--variants 4` (49/49; the tutorials'
-sample output is from that run), and the tag was moved to the fixed commit before any release was published.
+sample output is from that run), and the release was made as **0.12.1** from the fixed commit (the `v0.12.0` tag stays, unreleased). 0.12.1 differs from the measured 0.12.0 build only in the version string, this install test, `INSTALL.txt` and the tutorials, so the tables above stand for it.
