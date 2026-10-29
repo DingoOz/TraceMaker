@@ -1,0 +1,10 @@
+# sp-quick-base → sp-quick-new
+
+30 boards; routed boards byte-identical: 30/30.
+Clean pass 26 → 26; mean completion 99.3% → 99.3%; router seconds 86.9 → 61.3.
+Route CPU time 385 → 299 s (-22.4%) at the same work.
+Byte-identical boards moved -28% to -9% in CPU time (the same work: noise, or speed).
+
+Style (informational): bends per connection 0.7494 → 0.7494; acute angles 0 → 0; stair steps 34 → 34; short segments 358 → 358; off angle segments 744 → 744; detour ratio 1.0581 → 1.0581; long detours 42 → 42.
+
+Gates: pass

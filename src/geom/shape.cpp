@@ -109,18 +109,39 @@ long double seg_seg_dist(Point a, Point b, Point c, Point d) {
   return std::min({point_seg_dist(a, c, d), point_seg_dist(b, c, d), point_seg_dist(c, a, b), point_seg_dist(d, a, b)});
 }
 
+namespace {
+// One edge of the crossing-number test: -1 when p lies on the edge, 1 when the edge crosses p's ray to the left, else 0.
+int pip_edge(Point p, Point a, Point b) {
+  if (orient(a, b, p) == 0 && on_segment(a, b, p)) return -1;  // on the boundary
+  if ((a.y > p.y) != (b.y > p.y)) {
+    // x-coordinate of the edge at p.y, compared exactly: p.x < a.x + (p.y-a.y)(b.x-a.x)/(b.y-a.y)
+    const i128 lhs = static_cast<i128>(p.x - a.x) * (b.y - a.y);
+    const i128 rhs = static_cast<i128>(p.y - a.y) * (b.x - a.x);
+    if ((b.y > a.y) ? lhs < rhs : lhs > rhs) return 1;
+  }
+  return 0;
+}
+}  // namespace
+
 bool point_in_polygon(Point p, const std::vector<Point>& poly) {
   bool inside = false;
   const std::size_t n = poly.size();
   for (std::size_t i = 0, j = n - 1; i < n; j = i++) {
-    const Point a = poly[j], b = poly[i];
-    if (orient(a, b, p) == 0 && on_segment(a, b, p)) return true;  // on the boundary
-    if ((a.y > p.y) != (b.y > p.y)) {
-      // x-coordinate of the edge at p.y, compared exactly: p.x < a.x + (p.y-a.y)(b.x-a.x)/(b.y-a.y)
-      const i128 lhs = static_cast<i128>(p.x - a.x) * (b.y - a.y);
-      const i128 rhs = static_cast<i128>(p.y - a.y) * (b.x - a.x);
-      if ((b.y > a.y) ? lhs < rhs : lhs > rhs) inside = !inside;
-    }
+    const int e = pip_edge(p, poly[j], poly[i]);
+    if (e < 0) return true;
+    if (e > 0) inside = !inside;
+  }
+  return inside;
+}
+
+bool point_in_polygon_edges(Point p, const std::vector<Point>& poly, const std::uint32_t* edges, std::size_t count) {
+  bool inside = false;
+  const std::size_t n = poly.size();
+  for (std::size_t k = 0; k < count; ++k) {
+    const std::size_t i = edges[k];
+    const int e = pip_edge(p, poly[i == 0 ? n - 1 : i - 1], poly[i]);
+    if (e < 0) return true;
+    if (e > 0) inside = !inside;
   }
   return inside;
 }

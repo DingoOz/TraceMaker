@@ -44,6 +44,12 @@ struct RouterOptions {
   long max_expansions = 3'000'000;
   bool reach_verify = false;        // test only: run the A* even where the pre-check proved no path, count mismatches
   int reach_check = 1;              // flood-fill reachability check before strict searches (exact): 0 off, 1 likely failures, 2 all
+  // Late reachability proof (doc 05 §62, D154): a strict search still open after this many expansions floods from both ends; when one
+  // end's region runs out first there is no path (exact) and the search stops. 0 = off. Up to reach_after_cap flood cells (0 = no cap).
+  long reach_after = 100'000;
+  long reach_after_cap = 10'000;
+  long field_after = 0;             // > 0: the cost-to-go field is built only when a search has expanded this many states (doc 05 §62)
+  bool tie_deep = false;            // A* ties on f go to the state with the larger g (the deeper one) instead of the lower state index
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   double heuristic_weight = 1.0;
   // Plane-aware routing of all-SMD boards (doc 05 §26), all opt-in:

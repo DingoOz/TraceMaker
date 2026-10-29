@@ -1,0 +1,40 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 37.20      7.09     7.09     1167     0.01     0.02  tmk::route::Router::Impl::search(tmk::route::Connection const&, tmk::route::Router::Impl::Window const&, std::vector<tmk::route::Router::Impl::PathNode, std::allocator<tmk::route::Router::Impl::PathNode> >&)
+ 23.50     11.57     4.48      367     0.01     0.01  tmk::gpu::field_cpu(tmk::gpu::FieldProblem const&, std::vector<int, std::allocator<int> >&)
+  5.04     12.53     0.96       21     0.05     0.05  std::vector<int, std::allocator<int> >::_M_fill_assign(unsigned long, int const&)
+  4.93     13.47     0.94 99885394     0.00     0.00  tmk::route::Router::Impl::add_long_stub(tmk::route::Router::Impl::Window const&, int, tmk::route::Router::Impl::Endpoint&)
+  3.99     14.23     0.76  3355545     0.00     0.00  tmk::route::Obstacles::fixed_code(tmk::geom::Point, int, long, long, int, bool) const
+  3.93     14.98     0.75  2101044     0.00     0.00  tmk::route::Obstacles::fixed_via_code(tmk::geom::Point, long, long, long, int) const
+  2.62     15.48     0.50  7172850     0.00     0.00  tmk::route::Obstacles::aperture_codes(tmk::geom::Shape const&, int, bool, std::function<void (int)> const&) const
+  2.52     15.96     0.48 59459581     0.00     0.00  tmk::route::Router::Impl::search(tmk::route::Connection const&, tmk::route::Router::Impl::Window const&, std::vector<tmk::route::Router::Impl::PathNode, std::allocator<tmk::route::Router::Impl::PathNode> >&)::{lambda(int, int, int)#5}::operator()(int, int, int) const
+  1.57     16.26     0.30  1875854     0.00     0.00  tmk::route::Obstacles::via_hole_code(tmk::geom::Point, long, long, int, int) const
+  1.31     16.51     0.25  2113891     0.00     0.00  tmk::route::Obstacles::routed_copper_part(tmk::geom::Shape const&, int, int, tmk::drc::ItemKind, bool, std::vector<int, std::allocator<int> >*) const
+  1.21     16.74     0.23 33231737     0.00     0.00  void std::priority_queue<std::pair<long, unsigned long>, std::vector<std::pair<long, unsigned long>, std::allocator<std::pair<long, unsigned long> > >, std::greater<void> >::emplace<long, unsigned long const&>(long&&, unsigned long const&)
+  1.21     16.97     0.23  8923929     0.00     0.00  tmk::route::Router::Impl::via_cost_at(tmk::route::Router::Impl::Window const&, int, int, int, long, long)
+  1.00     17.16     0.19  1685270     0.00     0.00  tmk::route::Obstacles::routed_via_holes_part(tmk::geom::Shape const&, int, long, bool, std::vector<int, std::allocator<int> >*) const
+  0.84     17.32     0.16 21500247     0.00     0.00  tmk::geom::closer_than(tmk::geom::Shape const&, tmk::geom::Shape const&, long)
+  0.79     17.47     0.15  9691844     0.00     0.00  tmk::route::(anonymous namespace)::Probe::Probe(tmk::drc::ItemKind, tmk::geom::Shape const&, int, int, long, tmk::geom::Point)
+  0.73     17.61     0.14  3870355     0.00     0.00  tmk::route::Router::Impl::point_state(int, int, int, int, long)
+  0.63     17.73     0.12 10829241     0.00     0.00  tmk::drc::RuleEngine::clearance(tmk::drc::CopperItem const&, tmk::drc::CopperItem const&, int) const
+  0.52     17.83     0.10 19550372     0.00     0.00  tmk::route::Router::Impl::search(tmk::route::Connection const&, tmk::route::Router::Impl::Window const&, std::vector<tmk::route::Router::Impl::PathNode, std::allocator<tmk::route::Router::Impl::PathNode> >&)::{lambda(int, long)#1}::operator()(int, long) const
+  0.52     17.93     0.10                             _init
+  0.42     18.01     0.08 20008921     0.00     0.00  tmk::route::Router::Impl::layer_ok(int, int) const
+  0.42     18.09     0.08 10534527     0.00     0.00  std::_Function_handler<void (int), tmk::route::Obstacles::fixed_via_code(tmk::geom::Point, long, long, long, int) const::{lambda(int)#1}>::_M_invoke(std::_Any_data const&, int&&)
+  0.42     18.17     0.08     1091     0.00     0.00  tmk::route::Router::Impl::run()::{lambda()#1}::operator()() const
+  0.37     18.24     0.07  5456859     0.00     0.00  tmk::route::Obstacles::inside_board(tmk::geom::Point, long) const
+  0.37     18.31     0.07   715368     0.00     0.00  void tmk::index::UniformGrid::query<tmk::route::Obstacles::routed_hole_copper_part(tmk::geom::Shape const&, int, int, long, bool, std::vector<int, std::allocator<int> >*) const::{lambda(int)#1}>(tmk::geom::Box const&, tmk::route::Obstacles::routed_hole_copper_part(tmk::geom::Shape const&, int, int, long, bool, std::vector<int, std::allocator<int> >*) const::{lambda(int)#1}&&)
+  0.31     18.37     0.06 11170799     0.00     0.00  tmk::geom::Shape::set_point(tmk::geom::Point, long)
+  0.31     18.43     0.06  4426754     0.00     0.00  tmk::route::Obstacles::physical_hole_state(tmk::geom::Shape const&, int, int, bool, bool, bool, std::vector<int, std::allocator<int> >*) const
+  0.26     18.48     0.05  2591175     0.00     0.00  tmk::geom::point_in_polygon(tmk::geom::Point, std::vector<tmk::geom::Point, std::allocator<tmk::geom::Point> > const&)
+  0.26     18.53     0.05    10318     0.00     0.00  tmk::route::Router::Impl::near_mark(int, int)
+  0.21     18.57     0.04  9912732     0.00     0.00  tmk::geom::seg_seg_closer(tmk::geom::Point, tmk::geom::Point, tmk::geom::Point, tmk::geom::Point, long)
+  0.21     18.61     0.04   607651     0.00     0.00  tmk::route::Obstacles::routed_hole_to_hole_part(tmk::geom::Shape const&, bool, std::vector<int, std::allocator<int> >*) const
+  0.16     18.64     0.03  7801782     0.00     0.00  bool tmk::geom::(anonymous namespace)::any_edge<tmk::geom::closer_than(tmk::geom::Shape const&, tmk::geom::Shape const&, long)::{lambda(tmk::geom::Point, tmk::geom::Point)#1}::operator()(tmk::geom::Point, tmk::geom::Point) const::{lambda(tmk::geom::Point, tmk::geom::Point)#1}>(tmk::geom::Shape const&, tmk::geom::closer_than(tmk::geom::Shape const&, tmk::geom::Shape const&, long)::{lambda(tmk::geom::Point, tmk::geom::Point)#1}::operator()(tmk::geom::Point, tmk::geom::Point) const::{lambda(tmk::geom::Point, tmk::geom::Point)#1}&&)
+  0.16     18.67     0.03  3860235     0.00     0.00  std::_Rb_tree<std::pair<long, long>, std::pair<long, long>, std::_Identity<std::pair<long, long> >, std::less<std::pair<long, long> >, std::allocator<std::pair<long, long> > >::find(std::pair<long, long> const&) const
+  0.16     18.70     0.03  2078691     0.00     0.00  std::_Hashtable<long, std::pair<long const, tmk::geom::Point>, std::allocator<std::pair<long const, tmk::geom::Point> >, std::__detail::_Select1st, std::equal_to<long>, std::hash<long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_insert_unique_node(unsigned long, unsigned long, std::__detail::_Hash_node<std::pair<long const, tmk::geom::Point>, false>*, unsigned long)
+  0.16     18.73     0.03  1832075     0.00     0.00  tmk::route::Obstacles::routed_via_state(tmk::geom::Shape const&, unsigned long, int, bool, long) const
+  0.16     18.76     0.03     1094     0.00     0.00  tmk::route::Router::Impl::joined(int)

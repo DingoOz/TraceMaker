@@ -31,6 +31,7 @@
 #include "drc/connectivity.hpp"
 #include "gpu/device.hpp"
 #include "gpu/field.hpp"
+#include "route/lazy_codes.hpp"
 #include "route/legalize.hpp"
 #include "route/ref_map.hpp"
 #include "route/obstacles.hpp"
@@ -158,7 +159,7 @@ struct Router::Impl {
   bool soft = false;                 // current search may cross routed copper
   // Persistent fixed-obstacle caches per net class (codes from Obstacles::fixed_code), lattice-indexed.
   struct ClassCache {
-    std::vector<std::int32_t> margin, tight, via;  // INT32_MIN = not computed yet
+    LazyCodes margin, tight, via;  // INT32_MIN = not computed yet (allocated in chunks as cells are reached)
     model::NetId rep = 0;
     bool prefilled = false;
   };
@@ -814,9 +815,9 @@ struct Router::Impl {
     auto& cc = caches[{&netclass(net), key}];
     if (cc.margin.empty()) {
       const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
-      cc.margin.assign(n, INT32_MIN);
-      cc.tight.assign(n, INT32_MIN);
-      cc.via.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), INT32_MIN);
+      cc.margin.init(n);
+      cc.tight.init(n);
+      cc.via.init(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny));
       cc.rep = net;
     }
     cc_net = net;
@@ -1286,7 +1287,7 @@ struct Router::Impl {
                                   static_cast<std::size_t>(w.x0);
         std::uint8_t* row = &f_pass[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w)];
         for (int cx = 0; cx < w.w; ++cx) {
-          const std::int32_t t = cc.tight[gbase + static_cast<std::size_t>(cx)];
+          const std::int32_t t = cc.tight.get(gbase + static_cast<std::size_t>(cx));
           if (t != INT32_MIN && !code_ok(t, net)) row[cx] = 0;  // known blocked by fixed copper even without margin
         }
       }
@@ -1294,7 +1295,7 @@ struct Router::Impl {
     if (!vias_ok(net)) std::fill(f_via.begin(), f_via.end(), std::uint8_t{0});
     for (int cy = 0; cy < w.h; ++cy)
       for (int cx = 0; cx < w.w; ++cx) {
-        const std::int32_t v = cc.via[static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx)];
+        const std::int32_t v = cc.via.get(static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx));
         if (v != INT32_MIN && !code_ok(v, net)) f_via[static_cast<std::size_t>(cy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(cx)] = 0;
       }
     for (const auto& [l, ci] : dst.cells) {
@@ -1374,6 +1375,14 @@ struct Router::Impl {
   bool reach_check_now = false;  // run the reachability pre-check before the next search
   std::vector<std::uint32_t> rstamp;  // flood-fill visited marks (generation stamps)
   std::vector<std::size_t> reach_q;
+  // Late reachability proof (RouterOptions::reach_after): marks and queue of the flood from the targets; and the target marks
+  // of a search, in a buffer reused between searches.
+  std::vector<std::uint32_t> bstamp;
+  std::vector<std::uint8_t> is_target;  // per lattice cell of the search window: 1 target, 2 not (zone checks are lazy), 0 otherwise
+  std::vector<std::size_t> reach_bq;
+  long late_checks = 0, late_proved = 0, late_cells = 0;
+  bool miss_target = false;  // the last search's miss was proved at its target end (the target is boxed in)
+  long field_late = 0;       // fields built during a search (RouterOptions::field_after)
   long reach_checks = 0, reach_pruned = 0, reach_visits = 0, reach_mismatch = 0;
   bool reach_said_no = false;  // this search's pre-check found no path
   long expansion_cap = 0;  // > 0: per-search expansion limit overriding opt.max_expansions (reverse probes)
@@ -1392,6 +1401,113 @@ struct Router::Impl {
     Point closest{};                  // the expanded lattice point nearest the target
     std::vector<std::array<std::int64_t, 3>> path;  // x, y, layer from the source to `closest`, corners only
   } stall_probe;
+
+  // Late reachability proof (see search, RouterOptions::reach_after): 1 when the sources' region runs out before the floods
+  // meet, 2 when the targets' does, 0 when they meet or the cap is reached; `proved_edge` says whether that region touched the
+  // window edge. Uses the search's generation, target marks and legality caches.
+  int late_reach_proof(const Connection& c, const Window& w, const Endpoint& src, const Endpoint& dst, Coord hw, Coord vd, Coord vdrill, bool& proved_edge) {
+    const NetId net = c.net;
+    const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
+    auto tgt_of = [&](std::size_t i) -> std::uint8_t { return is_target[i]; };
+    int proved = 0;
+    proved_edge = false;
+    const std::size_t lcells = cells * static_cast<std::size_t>(nl);
+    if (rstamp.size() < lcells) rstamp.assign(lcells, 0);
+    if (bstamp.size() < lcells) bstamp.assign(lcells, 0);
+    ++late_checks;
+    reach_q.clear();
+    reach_bq.clear();
+    for (const auto& [l, ci] : src.cells) {
+      const std::size_t i = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
+      if (rstamp[i] != gen) rstamp[i] = gen, reach_q.push_back(i);
+    }
+    for (const auto& [l, ci] : dst.cells) {
+      const std::size_t i = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
+      if (bstamp[i] != gen) bstamp[i] = gen, reach_bq.push_back(i);
+    }
+    const bool blind_micro = blind_for(net) || micro_for(net);
+    auto via_ok = [&](int cx, int cy) { return blind_micro || (opt.allow_vias && via_cost_at(w, cx, cy, net, vd, vdrill) >= 0); };
+    const std::size_t cap = opt.reach_after_cap > 0 ? static_cast<std::size_t>(opt.reach_after_cap) : SIZE_MAX;
+    std::size_t fh = 0, bh = 0;
+    bool fedge = false, bedge = false, met = false;
+    auto on_edge = [&](int cx, int cy) { return cx == 0 || cy == 0 || cx == w.w - 1 || cy == w.h - 1; };
+    while (!met && reach_q.size() + reach_bq.size() <= cap) {
+      if (fh == reach_q.size()) {
+        proved = 1;
+        proved_edge = fedge;
+        break;
+      }
+      if (bh == reach_bq.size()) {
+        proved = 2;
+        proved_edge = bedge;
+        break;
+      }
+      {  // forward: the moves of the pre-check, plus via landings on target cells of layers without tracks (the A* allows them)
+        const std::size_t i = reach_q[fh++];
+        const int l = static_cast<int>(i / cells);
+        const std::size_t ci = i % cells;
+        const int cx = static_cast<int>(ci % static_cast<std::size_t>(w.w)), cy = static_cast<int>(ci / static_cast<std::size_t>(w.w));
+        fedge = fedge || on_edge(cx, cy);
+        auto reach = [&](std::size_t ni) {
+          if (rstamp[ni] == gen) return;
+          if (bstamp[ni] == gen) met = true;
+          rstamp[ni] = gen;
+          reach_q.push_back(ni);
+        };
+        for (int d = 0; d < 8 && !met; ++d) {
+          const int ncx = cx + kDx[d], ncy = cy + kDy[d];
+          if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
+          const std::size_t ni = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ncy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(ncx);
+          if (rstamp[ni] == gen) continue;
+          if (tgt_of(ni) != 1 && cell_cost(w, l, ncx, ncy, net, hw) < 0) continue;
+          reach(ni);
+        }
+        if (!met && nl > 1) {
+          bool useful = false;
+          for (int l2 = 0; l2 < nl && !useful; ++l2) useful = l2 != l && rstamp[static_cast<std::size_t>(l2) * cells + ci] != gen;
+          if (useful && via_ok(cx, cy))
+            for (int l2 = 0; l2 < nl && !met; ++l2) {
+              const std::size_t ni = static_cast<std::size_t>(l2) * cells + ci;
+              if (l2 != l && (layer_ok(net, l2) || tgt_of(ni) == 1)) reach(ni);
+            }
+        }
+      }
+      if (met) break;
+      {  // backward: every cell with a forward move into this one
+        const std::size_t i = reach_bq[bh++];
+        const int l = static_cast<int>(i / cells);
+        const std::size_t ci = i % cells;
+        const int cx = static_cast<int>(ci % static_cast<std::size_t>(w.w)), cy = static_cast<int>(ci / static_cast<std::size_t>(w.w));
+        bedge = bedge || on_edge(cx, cy);
+        const bool is_tgt = tgt_of(i) == 1;
+        auto reach = [&](std::size_t ni) {
+          if (bstamp[ni] == gen) return;
+          if (rstamp[ni] == gen) met = true;
+          bstamp[ni] = gen;
+          reach_bq.push_back(ni);
+        };
+        if (is_tgt || cell_cost(w, l, cx, cy, net, hw) >= 0)  // a planar move may enter it: from any neighbour
+          for (int d = 0; d < 8 && !met; ++d) {
+            const int ncx = cx + kDx[d], ncy = cy + kDy[d];
+            if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
+            reach(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ncy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(ncx));
+          }
+        if (!met && nl > 1 && (layer_ok(net, l) || is_tgt)) {  // a via may land on it: from the other layers of the cell
+          bool useful = false;
+          for (int l2 = 0; l2 < nl && !useful; ++l2) useful = l2 != l && bstamp[static_cast<std::size_t>(l2) * cells + ci] != gen;
+          if (useful && via_ok(cx, cy))
+            for (int l2 = 0; l2 < nl && !met; ++l2)
+              if (l2 != l) reach(static_cast<std::size_t>(l2) * cells + ci);
+        }
+      }
+    }
+    const long visited = static_cast<long>(reach_q.size() + reach_bq.size());
+    res.expansions += visited * opt.flood_work_pct / 100;
+    wc().flood_cells += visited;
+    late_cells += visited;
+    if (proved) ++late_proved;
+    return proved;
+  }
 
   bool search(const Connection& c, const Window& w, std::vector<PathNode>& path) {
     last_miss = Miss::None;
@@ -1420,13 +1536,20 @@ struct Router::Impl {
       std::fill(cstamp.begin(), cstamp.end(), 0u);
       std::fill(vstamp.begin(), vstamp.end(), 0u);
       std::fill(rstamp.begin(), rstamp.end(), 0u);
+      std::fill(bstamp.begin(), bstamp.end(), 0u);
       gen = 1;
     }
     const Endpoint src = pad_cells(w, c.pad_a);
     const Endpoint dst = c.pad_b >= 0 ? pad_cells(w, c.pad_b) : Endpoint{};
     if (src.cells.empty() || (c.pad_b >= 0 && dst.cells.empty())) return false;
-    std::vector<std::uint8_t> is_target(cells * static_cast<std::size_t>(nl), 0);  // 1 target, 2 not (zone checks are lazy)
-    for (auto [l, ci] : dst.cells) is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)] = 1;
+    // Target marks per lattice cell of the window: 1 target, 2 not (zone checks are lazy), 0 otherwise. The buffer is reused
+    // between searches and cleared for this window: one byte per cell, read on every move.
+    if (is_target.size() < cells * static_cast<std::size_t>(nl)) is_target.resize(cells * static_cast<std::size_t>(nl));
+    std::fill_n(is_target.begin(), static_cast<std::ptrdiff_t>(cells * static_cast<std::size_t>(nl)), std::uint8_t{0});
+    auto tgt_of = [&](std::size_t i) -> std::uint8_t { return is_target[i]; };
+    auto tgt_set = [&](std::size_t i, std::uint8_t v) { is_target[i] = v; };
+    for (auto [l, ci] : dst.cells) tgt_set(static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci), 1);
+    miss_target = false;
     // Via-in-pad target cells carry their penalty (the source side pays it through src.cost): charged on entry.
     std::unordered_map<std::size_t, std::int64_t> target_extra;
     for (std::size_t k = dst.in_pad_from; k < dst.cells.size(); ++k)
@@ -1445,7 +1568,8 @@ struct Router::Impl {
       zone_poly = &z.shapes.front().pts;
     }
     auto target = [&](int l, std::int64_t ci) -> bool {
-      auto& t = is_target[static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)];
+      const std::size_t ti = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
+      const std::uint8_t t = tgt_of(ti);
       if (t == 1) return true;
       if (t == 2 || l != zone_layer) return false;
       const int cx = static_cast<int>(ci % w.w), cy = static_cast<int>(ci / w.w);
@@ -1457,7 +1581,7 @@ struct Router::Impl {
         for (std::size_t i = 0, j = poly.size() - 1; i < poly.size() && inside; j = i++)
           if (geom::point_seg_closer(pt.pts[0], poly[j], poly[i], hw + pitch)) inside = false;
       }
-      t = inside ? 1 : 2;
+      tgt_set(ti, inside ? 1 : 2);
       return inside;
     };
     const Point tp = c.pad_b >= 0 ? b.pads[static_cast<std::size_t>(c.pad_b)].pos : b.pads[static_cast<std::size_t>(c.pad_a)].pos;
@@ -1483,7 +1607,9 @@ struct Router::Impl {
     // bend states, turn limits or costs, so it admits every path the A* could find. "Unreachable" is therefore
     // exact, found with one visit per lattice point instead of up to nine heap-ordered expansions, and the cell
     // cache it fills is reused by the A* when a path exists. Run only where a failure is likely (reach_check_now).
+    bool prechecked = false;  // the pre-check ran (and, since the search goes on, found the target)
     if (reach_check_now && !soft && !zone_target && c.pad_b >= 0) {
+      prechecked = true;
       const std::size_t lcells = cells * static_cast<std::size_t>(nl);
       if (rstamp.size() < lcells) rstamp.assign(lcells, 0);
       const std::size_t cap = static_cast<std::size_t>(expansion_cap > 0 ? expansion_cap : opt.max_expansions);
@@ -1497,7 +1623,7 @@ struct Router::Impl {
       bool found = false, edge = false;
       for (std::size_t head = 0; head < reach_q.size() && reach_q.size() <= cap; ++head) {
         const std::size_t i = reach_q[head];
-        if (is_target[i] == 1) {
+        if (tgt_of(i) == 1) {
           found = true;
           break;
         }
@@ -1510,7 +1636,7 @@ struct Router::Impl {
           if (ncx < 0 || ncy < 0 || ncx >= w.w || ncy >= w.h) continue;
           const std::size_t ni = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ncy) * static_cast<std::size_t>(w.w) + static_cast<std::size_t>(ncx);
           if (rstamp[ni] == gen) continue;
-          if (is_target[ni] != 1 && cell_cost(w, l, ncx, ncy, net, hw) < 0) continue;
+          if (tgt_of(ni) != 1 && cell_cost(w, l, ncx, ncy, net, hw) < 0) continue;
           rstamp[ni] = gen;
           reach_q.push_back(ni);
         }
@@ -1567,14 +1693,17 @@ struct Router::Impl {
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
     const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
                            cells * static_cast<std::size_t>(nl) >= static_cast<std::size_t>(opt.field_min_cells);
-    if (use_field) {
+    bool have_field = false;
+    auto make_field = [&] {
       build_field(w, net, hw, dst, step, diag, via_cost);
       // Wall-clock mode only (keeps --work runs deterministic): when shared GPUs make fields cost more than
       // 30% of the run, this variant continues with the octile heuristic.
       const double el = elapsed();
       if (opt.work_budget == 0 && el > 10.0 && field_seconds > 0.3 * el) fields_off = true;
-    }
-    const bool have_field = use_field && field_ok;
+      have_field = field_ok;
+    };
+    // With field_after > 0 the field is built only once the search has expanded that many states (below).
+    if (use_field && opt.field_after <= 0) make_field();
     auto h = [&](int fl, int gx, int gy) -> std::int64_t {
       if (have_field) {
         const std::int32_t v = field[static_cast<std::size_t>(fl) * cells + static_cast<std::size_t>(gy - w.y0) * static_cast<std::size_t>(w.w) +
@@ -1592,8 +1721,23 @@ struct Router::Impl {
     auto sidx = [&](int l, std::int64_t ci, int dir) {
       return ((static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)) * D) + (D == 9 ? static_cast<std::size_t>(dir) : 0);
     };
-    using QE = std::pair<std::int64_t, std::size_t>;  // (f, state)
-    std::priority_queue<QE, std::vector<QE>, std::greater<>> open;
+    // Open list: a min-heap of (f, key). The key is the state index; with tie_deep, ties on f go first to the larger g, in
+    // units of 256 (saturating at 2^32), then to the lower state index (states < 2^31: parents are int32). Its container is
+    // reachable so a field built during the search can re-key it (a priority_queue of pairs is faster here than a vector
+    // with a heap of structs: 4-8 % of the run on sbc and logicbone).
+    using QE = std::pair<std::int64_t, std::uint64_t>;
+    struct OpenList : std::priority_queue<QE, std::vector<QE>, std::greater<>> {
+      using std::priority_queue<QE, std::vector<QE>, std::greater<>>::c;
+    } open;
+    const bool tie_deep = opt.tie_deep;
+    auto qkey = [&](std::int64_t g, std::size_t st) -> std::uint64_t {
+      if (!tie_deep) return st;
+      constexpr std::uint64_t kMax = (std::uint64_t{1} << 32) - 1;
+      const std::uint64_t gq = std::min<std::uint64_t>(static_cast<std::uint64_t>(std::max<std::int64_t>(g, 0)) >> 8, kMax);
+      return ((kMax - gq) << 31) | st;
+    };
+    auto qstate = [&](const QE& e) -> std::size_t { return tie_deep ? static_cast<std::size_t>(e.second & ((std::uint64_t{1} << 31) - 1)) : static_cast<std::size_t>(e.second); };
+    auto push = [&](std::int64_t g, std::int64_t f, std::size_t st) { open.emplace(f, qkey(g, st)); };
     const Point sp = b.pads[static_cast<std::size_t>(c.pad_a)].pos;
     start_stub.clear();
     target_stub.clear();
@@ -1619,14 +1763,31 @@ struct Router::Impl {
       else start_drop.erase(cell_key(l, w.x0 + cx, w.y0 + cy));
       sn[s] = SNode{g0, gen | (static_cast<std::uint32_t>(kNoDir) << 28), -1};
       if (h(l, w.x0 + cx, w.y0 + cy) >= kUnreachable) continue;
-      open.emplace(g0 + h(l, w.x0 + cx, w.y0 + cy), s);
+      push(g0, g0 + h(l, w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
     const long exp_cap = expansion_cap > 0 ? expansion_cap : opt.max_expansions;
     const bool coupled_net = obs->coupling_net(net);  // KiCad's pair-gap coupling is checked on every step (doc 05 §59)
     std::size_t goal = SIZE_MAX;
+    // Late reachability proof (RouterOptions::reach_after, doc 05 §62). A strict search that has expanded reach_after states is
+    // most likely one that cannot reach its target: on the hard PCBench boards successful searches expand a median of 30-230
+    // states, while failed ones flood their window with up to nine states per lattice point and took 77-91 % of the first
+    // pass. Two floods over the moves the pre-check above uses (no bends, turn limits or costs: a superset of the A*'s moves),
+    // one forward from the sources and one backward from the targets, take a cell in turn. When either runs out before they
+    // meet, no path exists, which is exact; the end that ran out says whether the source or the target is boxed in, and
+    // whether its region touched the window edge (a larger window might help). When they meet, or reach_after_cap cells are
+    // visited, the A* goes on unchanged: the floods only filled the legality caches it reads. Flood cells count against the
+    // budget like the pre-check's.
+    const bool late_proof = opt.reach_after > 0 && !soft && !zone_target && c.pad_b >= 0 && !prechecked;
+    bool late_done = false, field_tried = false, late_verify = false;
+    int proved = 0;           // 1: the source's region ran out, 2: the target's
+    bool proved_edge = false;  // that region touched the window edge
+    auto run_late_proof = [&] {
+      proved = late_reach_proof(c, w, src, dst, hw, vd, vdrill, proved_edge);
+    };
     while (!open.empty()) {
-      const auto [f, s] = open.top();
+      const std::int64_t f = open.top().first;
+      const std::size_t s = qstate(open.top());
       open.pop();
       const int dir = D == 9 ? static_cast<int>(s % 9) : static_cast<int>(sn[s].tag >> 28);
       const std::size_t lc = s / D;
@@ -1640,6 +1801,40 @@ struct Router::Impl {
         break;
       }
       if (++expanded > exp_cap) break;
+      if (late_proof && !late_done && expanded >= opt.reach_after) {
+        late_done = true;
+        run_late_proof();
+        if (proved && opt.reach_verify) {  // reference check: search on; a path found is a mismatch
+          late_verify = true;
+          proved = 0;
+        }
+        if (proved) break;
+      }
+      if (use_field && !field_tried && opt.field_after > 0 && expanded >= opt.field_after) {
+        field_tried = true;
+        // The field is built now and the open list re-keyed with it: each state's live entry (the one whose f matches its
+        // g under the old heuristic) gets g + the new h; the others were stale anyway.
+        std::vector<QE> kept;
+        kept.reserve(open.size() + 1);
+        auto keep = [&](const QE& e) {
+          const std::size_t es = qstate(e), elc = es / D;
+          const std::int64_t ci2 = static_cast<std::int64_t>(elc % cells);
+          if (e.first - h(static_cast<int>(elc / cells), w.x0 + static_cast<int>(ci2 % w.w), w.y0 + static_cast<int>(ci2 / w.w)) <= sn[es].g) kept.push_back(e);
+        };
+        keep(QE{f, qkey(sn[s].g, s)});  // the state being expanded goes back too: the new key may put another state first
+        for (const auto& e : open.c) keep(e);
+        make_field();
+        ++field_late;
+        for (auto& e : kept) {
+          const std::size_t es = qstate(e), elc = es / D;
+          const std::int64_t ci2 = static_cast<std::int64_t>(elc % cells);
+          e.first = sn[es].g + h(static_cast<int>(elc / cells), w.x0 + static_cast<int>(ci2 % w.w), w.y0 + static_cast<int>(ci2 / w.w));
+        }
+        open.c = std::move(kept);
+        std::make_heap(open.c.begin(), open.c.end(), std::greater<>{});
+        --expanded;  // the state was not expanded
+        continue;
+      }
       if (probe_wanted) {  // the expanded state nearest the target (ties: the first)
         const Point pp = at(w.x0 + cx, w.y0 + cy);
         const std::int64_t dx = pp.x - tp.x, dy = pp.y - tp.y, d2 = dx * dx + dy * dy;
@@ -1677,7 +1872,7 @@ struct Router::Impl {
         const std::int64_t hn = h(l, w.x0 + ncx, w.y0 + ncy);
         if (hn >= kUnreachable) continue;  // cannot reach a target from there
         sn[ns] = SNode{gs + cost, gen | (static_cast<std::uint32_t>(d) << 28), static_cast<std::int32_t>(s)};
-        open.emplace(gs + cost + hn, ns);
+        push(gs + cost, gs + cost + hn, ns);
       }
       // Through via: skip legality checks if the bare via cost cannot improve another layer.
       // Extra via costs are nonnegative. With blind or micro vias the check always runs: they are tried only
@@ -1711,7 +1906,7 @@ struct Router::Impl {
           const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
           if (hn >= kUnreachable) continue;
           sn[ns] = SNode{ng, gen | (static_cast<std::uint32_t>(kNoDir) << 28), static_cast<std::int32_t>(s)};
-          open.emplace(ng + hn, ns);
+          push(ng, ng + hn, ns);
         }
       }
       if (vextra >= 0) {
@@ -1724,11 +1919,11 @@ struct Router::Impl {
           const std::int64_t hn = h(l2, w.x0 + cx, w.y0 + cy);
           if (hn >= kUnreachable) continue;
           sn[ns] = SNode{ng, gen | (static_cast<std::uint32_t>(kNoDir) << 28), static_cast<std::int32_t>(s)};
-          open.emplace(ng + hn, ns);
+          push(ng, ng + hn, ns);
         }
       }
     }
-    if (reach_said_no && goal != SIZE_MAX) ++reach_mismatch;
+    if ((reach_said_no || late_verify) && goal != SIZE_MAX) ++reach_mismatch;
     res.expansions += expanded;
     wc().expansions += expanded;
     ++wc().searches;
@@ -1739,6 +1934,11 @@ struct Router::Impl {
       // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
       // cannot help (Contour's boxed-in terminal test).
       last_miss = expanded > exp_cap ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
+      if (proved) {
+        last_miss = proved_edge ? Miss::Window : Miss::Enclosed;
+        miss_target = proved == 2 && !proved_edge;
+        touched_edge = proved_edge;
+      }
       if (probe_wanted && probe_s != SIZE_MAX && last_miss != Miss::Budget) {
         // The way to the closest approach, corners only: back along the parents, then the collinear points dropped.
         std::vector<std::array<std::int64_t, 3>> raw;
@@ -2458,7 +2658,7 @@ struct Router::Impl {
       const bool found_path = search(c, w, path);
       reach_check_now = false;
       if (!found_path) {
-        why = last_miss == Miss::Enclosed ? "boxed in" : last_miss == Miss::Budget ? "search budget" : "no path in window";
+        why = last_miss == Miss::Enclosed ? (miss_target ? "boxed in (target)" : "boxed in") : last_miss == Miss::Budget ? "search budget" : "no path in window";
         if (last_miss == Miss::Enclosed) {
           ++res.enclosed;
           return false;  // boxed in: go straight to negotiation (or give up in strict mode)
@@ -5996,6 +6196,8 @@ struct Router::Impl {
     if (reach_checks) std::fprintf(stderr, "reachability checks: %ld, %ld proved unreachable, %ld cells visited%s\n", reach_checks, reach_pruned, reach_visits,
                                   opt.reach_verify ? (reach_mismatch ? ", MISMATCHES" : ", verified (0 mismatches)") : "");
     if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
+    if (late_checks) std::fprintf(stderr, "late reachability proofs: %ld, %ld proved no path, %ld cells visited\n", late_checks, late_proved, late_cells);
+    if (field_late) std::fprintf(stderr, "fields built during a search: %ld\n", field_late);
     std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
                  xf_strict_wide, xf_soft_conf, xf_soft_wide);
     if (opt.escape_report) {  // pins of deep arrays per ring: to route, and with every connection routed

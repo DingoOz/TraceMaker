@@ -1,0 +1,77 @@
+# sp-tierC-base → sp-tierC-new
+
+30 boards; routed boards byte-identical: 7/30.
+Clean pass 16 → 17; mean completion 97.6% → 97.6%; router seconds 2925.9 → 2830.4.
+Route CPU time 19,254 → 18,476 s (-4.0%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| 96boards-robomezzi_96boards-robomezzi | 280 → 280 / 282 | 99.3% → 99.3% | no → no | – | 122.6 → 124.6 | 965.1 → 967.3 | differs |
+| AmpOne_dev-AmpOne | 321 → 321 / 321 | 100.0% → 100.0% | yes → yes | – | 118.0 → 96.1 | 644.5 → 601.4 | differs |
+| Apple-M0110-BT_Apple M0110 | 224 → 224 / 224 | 100.0% → 100.0% | yes → yes | – | 121.5 → 42.8 | 529.1 → 195.9 | differs |
+| Biscay_Blueeye_sipm | 306 → 306 / 306 | 100.0% → 100.0% | yes → yes | – | 121.5 → 120.4 | 650.6 → 636.6 | differs |
+| DronPi_dronPi | 341 → 341 / 352 | 96.9% → 96.9% | no → no | – | 122.1 → 121.0 | 965.9 → 962.9 | differs |
+| ErgodoneWithHole_ErgoDone | 354 → 354 / 356 | 99.4% → 99.4% | no → no | – | 123.2 → 125.8 | 967.1 → 967.4 | differs |
+| Hardware_Playground_sd_wav_pcm5100 | 394 → 394 / 396 | 99.5% → 99.5% | no → no | – | 120.5 → 120.2 | 960.4 → 960.3 | differs |
+| Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4 | 368 → 368 / 368 | 100.0% → 100.0% | yes → yes | – | 75.8 → 114.1 | 363.2 → 444.2 | differs |
+| Microdox-PCB_Microdox | 223 → 223 / 223 | 100.0% → 100.0% | no → no | – | 78.0 → 74.2 | 423.8 → 380.2 | differs |
+| P8000_WDC_Emulator_P8000_WDC_Emulator | 331 → 329 / 361 | 91.7% → 91.1% | no → no | – | 125.5 → 128.0 | 977.5 → 980.9 | differs |
+| PCIE-to-MXM-Adapter_PCIEx1toMXM3.0 | 158 → 158 / 188 | 84.0% → 84.0% | no → no | – | 121.8 → 122.5 | 966.5 → 965.7 | differs |
+| draco_draco | 418 → 418 / 418 | 100.0% → 100.0% | yes → yes | – | 120.6 → 120.4 | 805.6 → 726.8 | differs |
+| jadonk_PocketBone | 202 → 202 / 202 | 100.0% → 100.0% | yes → yes | – | 120.6 → 120.3 | 794.0 → 572.1 | differs |
+| kitspace_40-channel-hv-switching-board | 604 → 604 / 604 | 100.0% → 100.0% | yes → yes | – | 124.4 → 120.4 | 876.9 → 755.0 | differs |
+| kitspace_PSLab | 339 → 339 / 339 | 100.0% → 100.0% | yes → yes | – | 120.6 → 120.8 | 575.3 → 668.2 | differs |
+| kitspace_d20_tri_r0.3 | 415 → 418 / 553 | 72.3% → 73.0% | no → no | – | 123.2 → 120.6 | 967.0 → 962.3 | differs |
+| kitspace_dropbot_control_board | 307 → 307 / 307 | 100.0% → 100.0% | yes → yes | – | 122.7 → 122.2 | 636.5 → 681.8 | differs |
+| mechkeys_58r-mxalps | 358 → 361 / 361 | 99.2% → 100.0% | no → yes | – | 123.7 → 125.3 | 971.3 → 976.6 | differs |
+| mechkeys_MF68+10 | 415 → 415 / 415 | 100.0% → 100.0% | yes → yes | – | 124.5 → 127.6 | 972.0 → 950.6 | differs |
+| motor-high-current-sensors_CurrentSensorPCB_line | 461 → 461 / 472 | 97.9% → 97.9% | no → no | – | 124.1 → 121.5 | 967.2 → 962.8 | differs |
+| rvi_v2x_hardware_V2X | 458 → 461 / 479 | 95.6% → 96.2% | no → no | – | 121.2 → 123.3 | 962.3 → 965.4 | differs |
+| tiny-8088_Computer | 284 → 284 / 284 | 100.0% → 100.0% | yes → yes | – | 120.2 → 120.1 | 447.7 → 450.9 | differs |
+| zx-sizif-512-ext_sizif512ext | 452 → 453 / 498 | 90.8% → 91.0% | no → no | – | 123.6 → 123.0 | 969.8 → 968.1 | differs |
+
+Style (informational): bends per connection 0.6844 → 0.7055; acute angles 6 → 11; stair steps 240 → 231; short segments 3622 → 3546; off angle segments 8980 → 8655; detour ratio 1.0968 → 1.0958; long detours 306 → 310.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| 96boards-robomezzi_96boards-robomezzi | 0.3615 → 0.3514 | 0 → 1 | 12 → 9 | 133 → 121 | 533 → 536 | 1.0257 → 1.0136 | 3 → 2 |
+| AmpOne_dev-AmpOne | 0.8033 → 0.7925 | 0 → 0 | 1 → 1 | 30 → 28 | 53 → 55 | 1.0891 → 1.0878 | 24 → 24 |
+| Apple-M0110-BT_Apple M0110 | 0.6531 → 0.5895 | 0 → 0 | 0 → 0 | 6 → 6 | 31 → 33 | 1.0164 → 1.0095 | 0 → 0 |
+| Biscay_Blueeye_sipm | 0.6903 → 0.6707 | 0 → 0 | 3 → 3 | 56 → 51 | 129 → 127 | 1.0523 → 1.0484 | 12 → 11 |
+| DronPi_dronPi | 0.5643 → 0.5651 | 1 → 1 | 14 → 15 | 221 → 225 | 655 → 657 | 1.2202 → 1.2156 | 12 → 12 |
+| Hardware_Playground_sd_wav_pcm5100 | 0.2792 → 0.3391 | 1 → 0 | 32 → 40 | 683 → 699 | 773 → 769 | 1.1444 → 1.1479 | 12 → 13 |
+| Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4 | 0.3453 → 0.3814 | 0 → 0 | 2 → 4 | 64 → 67 | 62 → 65 | 1.1062 → 1.1114 | 6 → 5 |
+| Microdox-PCB_Microdox | 0.7911 → 0.7911 | 0 → 0 | 0 → 0 | 5 → 5 | 154 → 154 | 1.0513 → 1.0511 | 0 → 0 |
+| P8000_WDC_Emulator_P8000_WDC_Emulator | 1.3258 → 1.2481 | 0 → 0 | 2 → 2 | 35 → 35 | 28 → 27 | 1.1888 → 1.1518 | 11 → 7 |
+| PCIE-to-MXM-Adapter_PCIEx1toMXM3.0 | 0.8727 → 0.9136 | 1 → 6 | 29 → 35 | 320 → 344 | 315 → 315 | 1.0578 → 1.0441 | 7 → 2 |
+| draco_draco | 0.6578 → 0.6587 | 0 → 0 | 3 → 2 | 110 → 119 | 271 → 271 | 1.0819 → 1.081 | 18 → 16 |
+| jadonk_PocketBone | 0.9437 → 0.8952 | 0 → 0 | 0 → 0 | 33 → 33 | 118 → 117 | 1.0428 → 1.0364 | 3 → 3 |
+| kitspace_40-channel-hv-switching-board | 0.604 → 0.615 | 0 → 0 | 0 → 1 | 117 → 107 | 440 → 433 | 1.0569 → 1.0523 | 5 → 5 |
+| kitspace_PSLab | 0.6726 → 0.6711 | 0 → 0 | 3 → 3 | 93 → 93 | 281 → 282 | 1.0591 → 1.0626 | 8 → 9 |
+| kitspace_d20_tri_r0.3 | 0.5451 → 0.6273 | 0 → 0 | 8 → 14 | 110 → 213 | 617 → 832 | 1.2615 → 1.2507 | 78 → 75 |
+| kitspace_dropbot_control_board | 0.5009 → 0.5089 | 0 → 0 | 0 → 0 | 86 → 86 | 159 → 158 | 1.0555 → 1.0549 | 4 → 4 |
+| mechkeys_58r-mxalps | 0.7744 → 1.3052 | 0 → 0 | 28 → 4 | 263 → 97 | 675 → 119 | 1.1246 → 1.1968 | 15 → 30 |
+| mechkeys_MF68+10 | 1.5719 → 1.5867 | 0 → 0 | 1 → 3 | 89 → 87 | 159 → 146 | 1.0973 → 1.0713 | 10 → 5 |
+| motor-high-current-sensors_CurrentSensorPCB_line | 0.5364 → 0.5431 | 3 → 3 | 39 → 43 | 522 → 507 | 865 → 865 | 1.2233 → 1.1638 | 22 → 21 |
+| rvi_v2x_hardware_V2X | 0.7657 → 0.77 | 0 → 0 | 45 → 36 | 343 → 323 | 801 → 817 | 1.2681 → 1.2885 | 27 → 35 |
+| tiny-8088_Computer | 2.1325 → 2.0398 | 0 → 0 | 0 → 0 | 9 → 6 | 78 → 91 | 1.1111 → 1.1403 | 3 → 5 |
+| zx-sizif-512-ext_sizif512ext | 0.9313 → 0.9386 | 0 → 0 | 17 → 15 | 140 → 140 | 872 → 875 | 1.1265 → 1.1247 | 13 → 13 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- kitspace_40-channel-hv-switching-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- kitspace_d20_tri_r0.3: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- ErgodoneWithHole_ErgoDone: before evaluated DRC errors are capped or unavailable; gate unknown
+- ErgodoneWithHole_ErgoDone: after evaluated DRC errors are capped or unavailable; gate unknown
+- Hardware_Playground_sd_wav_pcm5100: before evaluated DRC errors are capped or unavailable; gate unknown
+- Hardware_Playground_sd_wav_pcm5100: after evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox: before evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox: after evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox-topMCU: before evaluated DRC errors are capped or unavailable; gate unknown
+- Microdox-PCB_Microdox-topMCU: after evaluated DRC errors are capped or unavailable; gate unknown
+- P8000_WDC_Emulator_P8000_WDC_Emulator: worse (clean False -> False, completion 91.7% -> 91.1%)
+- PCIE-to-MXM-Adapter_PCIEx1toMXM3.0: before evaluated DRC errors are capped or unavailable; gate unknown
+- PCIE-to-MXM-Adapter_PCIEx1toMXM3.0: after evaluated DRC errors are capped or unavailable; gate unknown
+- wordclock_ledboard2: before evaluated DRC errors are capped or unavailable; gate unknown
+- wordclock_ledboard2: after evaluated DRC errors are capped or unavailable; gate unknown

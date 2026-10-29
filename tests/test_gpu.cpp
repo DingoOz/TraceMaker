@@ -54,6 +54,26 @@ TEST_CASE("cost-to-go field: CPU reference is the exact shortest-path distance o
   CHECK(d[3] == 230);                   // back up through a via at x = 3
 }
 
+TEST_CASE("cost-to-go field: row-at-a-time sweeps equal the line-by-line reference", "[gpu][field][cpu-reference]") {
+  const tmk::RngStream rng(23, 4, 0);
+  std::uint64_t k = 0;
+  const int dims[][3] = {{1, 1, 1}, {1, 9, 2}, {9, 1, 2}, {2, 2, 1}, {37, 29, 1}, {90, 70, 2}, {143, 111, 4}, {64, 200, 3}};
+  for (const auto& dm : dims)
+    for (const int open_pct : {55, 78, 97}) {
+      const int w = dm[0], h = dm[1], L = dm[2];
+      const std::size_t n = static_cast<std::size_t>(w) * static_cast<std::size_t>(h);
+      std::vector<std::uint8_t> pass(n * static_cast<std::size_t>(L)), via(n), tgt(n * static_cast<std::size_t>(L), 0);
+      for (auto& x : pass) x = rng.u64(k++) % 100 < static_cast<std::uint64_t>(open_pct) ? 1 : 0;
+      for (auto& x : via) x = rng.u64(k++) % 100 < 30 ? 1 : 0;
+      for (int q = 0; q < 3; ++q) tgt[rng.u64(k++) % tgt.size()] = 1;  // targets may sit on cells that cannot be entered
+      const tmk::gpu::FieldProblem p{w, h, L, 1000, 1414, 9000, pass.data(), via.data(), tgt.data()};
+      std::vector<std::int32_t> fast, ref;
+      INFO(w << "x" << h << "x" << L << " open " << open_pct);
+      CHECK(tmk::gpu::field_cpu(p, fast) == tmk::gpu::field_cpu_reference(p, ref));
+      REQUIRE(fast == ref);
+    }
+}
+
 TEST_CASE("cost-to-go field: GPU equals CPU on random grids", "[gpu][field]") {
   if (tmk::gpu::compiled_backend() == tmk::gpu::Backend::Cpu) SKIP("built without GPU support");
   const auto devices = tmk::gpu::list_devices();

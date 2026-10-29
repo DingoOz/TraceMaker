@@ -1,5 +1,8 @@
 # tm_gpu: CPU references are always compiled; at most one GPU backend is selected.
 add_library(tm_gpu STATIC philox_fill_cpu.cpp field_cpu.cpp)
+# The CPU field's sweeps are written to vectorise; GCC does so at -O2 only with the dynamic cost model (clang does by default).
+# Integer arithmetic only, so the field is the same with or without vectors.
+set_source_files_properties(field_cpu.cpp PROPERTIES COMPILE_OPTIONS "$<$<CXX_COMPILER_ID:GNU>:-ftree-vectorize;-fvect-cost-model=dynamic>")
 add_library(tm::gpu ALIAS tm_gpu)
 target_link_libraries(tm_gpu PUBLIC tm::core)
 tm_set_warnings(tm_gpu)

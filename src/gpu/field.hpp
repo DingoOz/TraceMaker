@@ -24,8 +24,12 @@ struct FieldProblem {
   const std::uint8_t* target = nullptr;        // [layers][h][w]: 1 = distance 0
 };
 
-// CPU reference. `out` is resized to layers*h*w. Returns the number of sweep rounds.
+// CPU reference. `out` is resized to layers*h*w. Returns the number of sweep rounds. The sweeps that change row run a row
+// at a time (vectorised); every sweep leaves exactly what the line-by-line sweep leaves, so the rounds are the same too.
 int field_cpu(const FieldProblem& p, std::vector<std::int32_t>& out);
+
+// The line-by-line sweeps field_cpu replaced (reference for its test): identical output and round count.
+int field_cpu_reference(const FieldProblem& p, std::vector<std::int32_t>& out);
 
 // Compiled GPU backend; on failure (no device, no memory) returns !ok and leaves `out` empty.
 GpuStatus field_gpu(int device_index, const FieldProblem& p, std::vector<std::int32_t>& out);

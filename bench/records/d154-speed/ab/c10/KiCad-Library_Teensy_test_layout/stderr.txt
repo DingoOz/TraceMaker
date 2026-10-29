@@ -1,0 +1,8 @@
+searches: 1101 ok (16523068 expansions), 49 failed (2852367 expansions); fields 0 GPU + 366 CPU (2.13 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1059 connections improved
+restarts 0; legality checks 4074583; rips 0, passes 1, boxed-in 41, nogood skips 1, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 0 proved unreachable, 564818 cells visited
+late reachability proofs: 60, 16 proved no path, 459150 cells visited
+failed-search expansions: strict confined 0, strict wide 2852367, negotiated confined 0, negotiated wide 0
+Command exited with non-zero status 3
+18.62 581396

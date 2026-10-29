@@ -89,6 +89,10 @@ class Obstacles {
   // Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise.
   const std::vector<geom::Point>& outline() const { return outline_; }
   bool inside_board(geom::Point p, Coord margin) const;
+  // Exact inside test against the outline and cut-outs: by the edges of the point's raster row, and the reference that
+  // tests every edge (the two must agree; test "[geom][route]" inside board).
+  bool inside_exact(geom::Point p) const;
+  bool inside_exact_linear(geom::Point p) const;
   // Solder-mask expansion the checks give untented vias (0 when the board tents them). Escape analysis sets it
   // to 0 to ask "would a via fit here if vias were tented?"; routing never changes it.
   Coord via_mask() const { return via_mask_; }
@@ -158,7 +162,14 @@ class Obstacles {
   std::vector<std::uint8_t> inside_raster_;
   int ir_w_ = 0, ir_h_ = 0;
   Coord ir_cell_ = 250'000;
-  bool inside_exact(geom::Point p) const;
+  // Edges of each loop (outline first, then the cut-outs) by raster row: the exact test of a point in a boundary cell
+  // needs only the edges whose y-range meets the point's row (LeeChee_1800: 572 outline edges, 28% of the run before).
+  struct LoopBands {
+    std::vector<std::uint32_t> start;  // ir_h_ + 1 offsets into edges
+    std::vector<std::uint32_t> edges;  // edge indices, ascending within a row
+  };
+  std::vector<LoopBands> loop_bands_;
+
   bool soft_zones_ = false;
   bool soft_mask_graphics_ = false;
   bool soft_copper_graphics_ = false;
