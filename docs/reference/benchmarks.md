@@ -28,6 +28,23 @@ comparable (judge version, time limit, machine load).
 | [d152-room](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d152-room/runs/d152-room/summary.json) | b2-delay | 1 | ca40050 | 0.0% | 71.9% |  | 41 | `--soft-zones` |
 | [main-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d152-room/runs/main-b2/summary.json) | b2-delay | 3 | ca40050 | 0.0% | 80.5% |  | 188 | `--soft-zones` |
 
+## d154-speed
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d154-speed)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [sp-mid-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-mid-base/summary.json) | mid | 11 | f2a7238 | 0.0% | 79.8% | 9.1% | 1279 |  |
+| [sp-mid-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-mid-new/summary.json) | mid | 11 | f2a7238 | 0.0% | 80.4% | 9.1% | 784 |  |
+| [sp-mid60-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-mid60-base/summary.json) | mid | 11 | f2a7238 | 0.0% | 80.9% | 9.1% | 689 |  |
+| [sp-mid60-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-mid60-new/summary.json) | mid | 11 | f2a7238 | 0.0% | 82.0% | 9.1% | 683 |  |
+| [sp-quick-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-quick-base/summary.json) | quick | 30 | f2a7238 | 86.7% | 99.3% | 100.0% | 87 |  |
+| [sp-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-quick-new/summary.json) | quick | 30 | f2a7238 | 86.7% | 99.3% | 100.0% | 61 |  |
+| [sp-tierB-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-tierB-base/summary.json) | PCBench tier B | 40 | f2a7238 | 72.5% | 97.5% | 50.0% | 2740 |  |
+| [sp-tierB-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-tierB-new/summary.json) | PCBench tier B | 40 | f2a7238 | 72.5% | 97.5% | 50.0% | 2534 |  |
+| [sp-tierC-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-tierC-base/summary.json) | PCBench tier C | 30 | f2a7238 | 53.3% | 97.5% | 46.7% | 2926 |  |
+| [sp-tierC-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-tierC-new/summary.json) | PCBench tier C | 30 | f2a7238 | 56.7% | 97.6% | 46.7% | 2830 |  |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)

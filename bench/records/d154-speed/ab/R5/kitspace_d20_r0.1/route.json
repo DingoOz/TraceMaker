@@ -1,0 +1,276 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 78.72,
+ "connections": 282,
+ "copper_layers": 4,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 5073381,
+ "failures": [
+  "4v5: J5.1 -> U15.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: J3.1 -> U11.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: J2.1 -> U9.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U15.5 -> U16.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U11.5 -> U12.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U9.5 -> U10.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "gnd: U1.4 -> R2.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: J4.1 -> U13.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led2_sclk: U8.12 -> U14.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led2_blank: U8.10 -> U13.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U16.5 -> C31.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U12.5 -> C25.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "ice_config_ss: U7.11 -> U8.16  (no path in window)",
+  "pp_batt_prot: R8.2 -> U4.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led3_blank: U8.46 -> U15.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "5v0_usb: J7.A4 -> J7.B4  ()",
+  "3v3: U8.33 -> U8.22  ()",
+  "1v2: C23.1 -> C7.1  ()",
+  "5v0_usb: J7.B4 -> C35.1  ()",
+  "led_g: D1.3 -> R12.2  ()",
+  "3v3: C33.1 -> U18.8  ()",
+  "swdclk: J6.4 -> U7.45  ()",
+  "imu_int1: U7.29 -> U17.4  ()",
+  "imu_cs: U7.27 -> U17.12  ()",
+  "imu_sck: U7.26 -> U17.13  ()",
+  "imu_mosi: U7.25 -> U17.14  ()",
+  "_led3_data: U8.45 -> U15.3  ()",
+  "imu_int2: U7.30 -> U17.9  ()",
+  "ice_config_reset: R17.1 -> U8.8  ()",
+  "led_b: D1.4 -> R13.2  ()",
+  "1v2: U8.30 -> U8.5  ()",
+  "3v3: U8.1 -> U8.33  ()",
+  "_led1_data: U11.3 -> U8.6  ()",
+  "led_r: D1.2 -> R11.2  ()",
+  "ice_config_done: U7.7 -> U8.7  ()",
+  "_led1_blank: U11.1 -> U8.4  ()",
+  "qspi_bus_io0: U7.13 -> U18.5  ()",
+  "3v3: C18.1 -> D2.1  ()",
+  "samd_rst: J6.10 -> U7.40  ()",
+  "samd_usb_p: J7.A6 -> U7.34  ()",
+  "samd_usb_n: J7.B7 -> U7.33  ()",
+  "_led1_latch: U12.3 -> U8.3  ()",
+  "2v5: C6.1 -> U8.24  ()",
+  "qspi_bus_io3: U7.16 -> U18.7  ()",
+  "_led1_sclk: U12.1 -> U8.2  ()",
+  "qspi_bus_sck: U7.19 -> U18.6  ()",
+  "_led0_data: U9.3 -> U8.21  ()",
+  "N$46: SW1.1 -> U7.37  ()",
+  "4v5_in: L1.2 -> U19.5  ()",
+  "_led0_blank: U9.1 -> U8.20  ()",
+  "qspi_bus_io2: U7.15 -> U18.3  ()",
+  "_led0_latch: U10.3 -> U8.19  ()",
+  "qspi_bus_io1: U7.14 -> U18.2  ()",
+  "_led0_sclk: U10.1 -> U8.18  ()",
+  "qspi_bus_cs: U7.20 -> U18.1  ()",
+  "N$31: U7.38 -> U8.35  ()",
+  "4v5: U13.5 -> C9.1  ()",
+  "ice_led_g: R15.2 -> D2.3  ()",
+  "ice_led_b: D2.4 -> R16.2  ()",
+  "ice_led_r: R14.2 -> D2.2  ()"
+ ],
+ "open": 60,
+ "package_pin_edges": 31,
+ "pitch_mm": 0.035,
+ "routed": 222,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-29T03:49:19Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_d20_r0.1/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "5000000"
+   },
+   {
+    "name": "--seed",
+    "value": "7"
+   },
+   {
+    "name": "--no-gpu",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "100000"
+   },
+   {
+    "name": "",
+    "value": "10000"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "1"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--json",
+    "value": "route.json"
+   }
+  ],
+  "output": "out.kicad_pcb",
+  "seed": 7,
+  "threads": 1,
+  "time_limit_s": 3600.0,
+  "variants": 1,
+  "version": "0.11.0",
+  "work_budget": 5000000
+ },
+ "seconds": 4.921571733,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 195,
+  "bends_per_connection": 0.5159,
+  "connections": 378,
+  "detour_length_mm": 510.206552,
+  "detour_octile_mm": 480.451427,
+  "detour_ratio": 1.0619,
+  "length_mm": 510.206552,
+  "long_detours": 8,
+  "off_angle_segments": 86,
+  "segments": 603,
+  "short_segments": 55,
+  "stair_steps": 0,
+  "vias": 49
+ },
+ "time_limited": false,
+ "tracks": 603,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 4.902550748,
+ "vias": 49,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1363100,
+   "commits": 222,
+   "expansions": 4297481,
+   "field_cells": 28963112,
+   "fields": 251,
+   "fixed_checks": 1438621,
+   "flood_cells": 775900,
+   "rips": 0,
+   "searches": 252
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 1363100,
+   "commits": 222,
+   "expansions": 4297481,
+   "field_cells": 28963112,
+   "fields": 251,
+   "fixed_checks": 1438621,
+   "flood_cells": 775900,
+   "rips": 0,
+   "searches": 252
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1363100,
+   "commits": 222,
+   "expansions": 4297481,
+   "field_cells": 28963112,
+   "fields": 251,
+   "fixed_checks": 1438621,
+   "flood_cells": 775900,
+   "rips": 0,
+   "searches": 252
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 1363100,
+   "commits": 222,
+   "expansions": 4297481,
+   "field_cells": 28963112,
+   "fields": 251,
+   "fixed_checks": 1438621,
+   "flood_cells": 775900,
+   "rips": 0,
+   "searches": 252
+  }
+ }
+}

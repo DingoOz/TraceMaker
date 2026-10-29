@@ -169,6 +169,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D150](decisions/D150.md) | Vias and pads that remove unconnected copper, and tuning patterns left out of pair coupling | accepted |
 | [D151](decisions/D151.md) | Clearances resolved in KiCad's order; copper graphics compared as KiCad compares their nets | accepted |
 | [D152](decisions/D152.md) | Delay tuning rips the routed connections a meander needs and routes them again | accepted |
+| [D154](decisions/D154.md) | Late reachability proof on long strict searches, and speed-ups that keep the output | accepted |
 <!-- END decision index -->
 
 ## Risks

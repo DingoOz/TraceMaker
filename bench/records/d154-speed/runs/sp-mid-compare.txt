@@ -1,0 +1,41 @@
+# sp-mid-base → sp-mid-new
+
+11 boards; routed boards byte-identical: 7/11.
+Clean pass 0 → 0; mean completion 79.8% → 80.4%; router seconds 1278.6 → 783.8.
+Route CPU time 6,157 → 4,357 s (-29.2%) at the same work.
+Byte-identical boards moved -55% to +20% in CPU time (the same work: noise, or speed).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| decelerator4030_decelerator4030 | 620 → 630 / 1009 | 22.0% → 24.1% | no → no | – | 113.0 → 65.4 | 448.8 → 364.7 | differs |
+| front-end-modules_LimeSDR_Sony | 810 → 813 / 814 | 99.2% → 99.8% | no → no | – | 149.6 → 75.9 | 746.0 → 402.1 | differs |
+| kitspace_EEZ%20DIB%20MCU%20r1B2 | 549 → 570 / 634 | 83.0% → 87.2% | no → no | – | 111.6 → 92.6 | 573.9 → 476.4 | differs |
+| oskirby_logicbone | 1036 → 1036 / 1188 | 69.5% → 69.5% | no → no | – | 192.8 → 123.9 | 797.0 → 655.1 | differs |
+
+Style (informational): bends per connection 0.7194 → 0.7524; acute angles 1 → 3; stair steps 134 → 120; short segments 2366 → 2380; off angle segments 8104 → 6948; detour ratio 1.0968 → 1.0974; long detours 343 → 315.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| decelerator4030_decelerator4030 | 1.0269 → 1.0396 | 0 → 0 | 4 → 4 | 160 → 161 | 305 → 314 | 1.1321 → 1.1391 | 38 → 41 |
+| front-end-modules_LimeSDR_Sony | 0.3371 → 0.387 | 0 → 2 | 15 → 1 | 171 → 198 | 1456 → 290 | 1.0895 → 1.0442 | 44 → 9 |
+| kitspace_EEZ%20DIB%20MCU%20r1B2 | 0.7929 → 0.9382 | 0 → 0 | 2 → 1 | 146 → 136 | 241 → 241 | 1.0528 → 1.0747 | 12 → 16 |
+| oskirby_logicbone | 0.5186 → 0.5191 | 0 → 0 | 61 → 62 | 651 → 647 | 1980 → 1981 | 1.0601 → 1.0599 | 53 → 53 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- Aleste-520EX_aleste: completion uses KiCad's capped unconnected list, not exact connectivity
+- CoreOne-xCORE200-Original_CoreOne: completion uses KiCad's capped unconnected list, not exact connectivity
+- KiCad-Library_Teensy_test_layout: completion uses KiCad's capped unconnected list, not exact connectivity
+- LeeChee_1800: completion uses KiCad's capped unconnected list, not exact connectivity
+- MonApollo_analog-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- decelerator4030_decelerator4030: completion uses KiCad's capped unconnected list, not exact connectivity
+- front-end-modules_LimeSDR_Sony: completion uses KiCad's capped unconnected list, not exact connectivity
+- kitspace_EEZ%20DIB%20MCU%20r1B2: completion uses KiCad's capped unconnected list, not exact connectivity
+- oskirby_logicbone: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- LeeChee_1800: before evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: after evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: before evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: after evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: before evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: after evaluated DRC errors are capped or unavailable; gate unknown

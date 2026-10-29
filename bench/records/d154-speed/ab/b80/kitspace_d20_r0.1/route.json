@@ -1,0 +1,231 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 91.84,
+ "connections": 282,
+ "copper_layers": 4,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 80843345,
+ "failures": [
+  "4v5: J5.1 -> U15.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: J3.1 -> U11.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: J2.1 -> U9.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U15.5 -> U16.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U11.5 -> U12.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U9.5 -> U10.5  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "gnd: U1.4 -> R2.2  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: J4.1 -> U13.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led2_sclk: U8.12 -> U14.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led2_blank: U8.10 -> U13.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U16.5 -> C31.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "4v5: U12.5 -> C25.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "ice_config_ss: U7.11 -> U8.16  (no path in window)",
+  "pp_batt_prot: R8.2 -> U4.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led3_blank: U8.46 -> U15.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "swdclk: J6.4 -> U7.45  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "ice_config_done: U7.7 -> U8.7  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led1_latch: U12.3 -> U8.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led1_sclk: U12.1 -> U8.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led0_latch: U10.3 -> U8.19  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "_led0_sclk: U10.1 -> U8.18  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "N$31: U7.38 -> U8.35  (search budget)",
+  "4v5: U13.5 -> C9.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))"
+ ],
+ "open": 23,
+ "package_pin_edges": 31,
+ "pitch_mm": 0.035,
+ "routed": 259,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-29T03:50:14Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_d20_r0.1/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "80000000"
+   },
+   {
+    "name": "--seed",
+    "value": "7"
+   },
+   {
+    "name": "--no-gpu",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "1"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--json",
+    "value": "route.json"
+   }
+  ],
+  "output": "out.kicad_pcb",
+  "seed": 7,
+  "threads": 1,
+  "time_limit_s": 3600.0,
+  "variants": 1,
+  "version": "0.11.0",
+  "work_budget": 80000000
+ },
+ "seconds": 59.056056849,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 279,
+  "bends_per_connection": 0.3609,
+  "connections": 773,
+  "detour_length_mm": 909.318141,
+  "detour_octile_mm": 872.521442,
+  "detour_ratio": 1.0422,
+  "length_mm": 909.318141,
+  "long_detours": 9,
+  "off_angle_segments": 501,
+  "segments": 1125,
+  "short_segments": 105,
+  "stair_steps": 2,
+  "vias": 111
+ },
+ "time_limited": false,
+ "tracks": 1125,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 58.946367462,
+ "vias": 111,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 7334852,
+   "commits": 259,
+   "expansions": 41598306,
+   "field_cells": 78238012,
+   "fields": 326,
+   "fixed_checks": 2811463,
+   "flood_cells": 1952039,
+   "rips": 0,
+   "searches": 328
+  },
+  "negotiation": {
+   "cell_checks": 10658635,
+   "commits": 49,
+   "expansions": 27715926,
+   "field_cells": 38457704,
+   "fields": 104,
+   "fixed_checks": 673853,
+   "flood_cells": 9577074,
+   "rips": 57,
+   "searches": 153
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 17993487,
+   "commits": 308,
+   "expansions": 69314232,
+   "field_cells": 116695716,
+   "fields": 430,
+   "fixed_checks": 3485316,
+   "flood_cells": 11529113,
+   "rips": 57,
+   "searches": 481
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 7334852,
+   "commits": 259,
+   "expansions": 41598306,
+   "field_cells": 78238012,
+   "fields": 326,
+   "fixed_checks": 2811463,
+   "flood_cells": 1952039,
+   "rips": 0,
+   "searches": 328
+  },
+  "negotiation": {
+   "cell_checks": 10658635,
+   "commits": 49,
+   "expansions": 27715926,
+   "field_cells": 38457704,
+   "fields": 104,
+   "fixed_checks": 673853,
+   "flood_cells": 9577074,
+   "rips": 57,
+   "searches": 153
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 17993487,
+   "commits": 308,
+   "expansions": 69314232,
+   "field_cells": 116695716,
+   "fields": 430,
+   "fixed_checks": 3485316,
+   "flood_cells": 11529113,
+   "rips": 57,
+   "searches": 481
+  }
+ }
+}

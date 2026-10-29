@@ -529,8 +529,8 @@ congestion map is within noise (decelerator +15, P8000 +5, the rest equal). All 
 **Why there is no GPU global router.** Routing and negotiating the tile graph takes 0.02–0.5 s per board (Aleste
 0.06 s, logicbone 0.52 s, sbc 0.13 s); set-up, which samples the CPU obstacle model, takes 0.4–1.3 s. Against a
 120 s routing budget there is at most half a second for a GPU port of the pattern and maze stages (GAMER, GGR) to
-save, on a plan that does not help. Not built. Known wart: set-up takes 135 s on LeeChee, where obstacle queries are
-about 50 times slower than elsewhere (cause not found; only the opt-in global options pay it).
+save, on a plan that does not help. Not built. The set-up took 135 s on LeeChee, where obstacle queries were
+about 50 times slower than elsewhere: the exact inside-board test of its 572-edge outline. Fixed in §62: a `--global` run at 200 k work, one variant, took 158 s before and 7.5 s after.
 
 **GPU DRC broad-phase: not built, the DRC fixed on the CPU instead** (D55). Profiling vme-wren (38,062 copper
 items, 128 zones): the uniform grid builds in 14 ms and yields 327 k candidate pairs; of the DRC's 730 s, 395 s
@@ -2719,3 +2719,80 @@ the step. Test: `delay_room` (it skips without `build/demos`).
 
 **Open.** mm length windows, mm pair skew and the bus tuner do not make room yet.
 
+
+## 62. Search speed: late reachability proofs and output-preserving speed-ups (2026-10-29, D154)
+
+**Where the time went.** gprof on five hard PCBench boards (logicbone, sbc, Teensy_test_layout, LeeChee, kitspace_d20), one
+variant, 20 M work, CPU fields: the A* loop 27–57 % of CPU, cost-to-go fields on the CPU 14–33 %, legality checks most of the rest.
+Every board spent the whole budget in the strict first pass. A few failed searches took most of it: 15 failures 77 % of logicbone's
+budget, 108 failures 84 % of sbc's, 60 failures 91 % of kitspace_d20's. Successful searches expanded a median of 30–230 states. A
+per-search log showed that most failures exhaust their region (no path exists) rather than hit the 3 M cap. On LeeChee 28 % of the
+run was `point_in_polygon` on its 572-edge outline, called by the inside-board test in boundary cells. Records in
+`bench/records/d154-speed`.
+
+**What changed.**
+
+| Change | Output | Effect |
+|---|---|---|
+| Late reachability proof (`--reach-after 100000`, `--reach-after-cap 10000`) | changes (exact; more budget left for the rest) | see below |
+| CPU field: the six sweeps that change row, and the via step, run a row at a time without branches and vectorise (`field_cpu.cpp` gets `-ftree-vectorize -fvect-cost-model=dynamic` under GCC); the line-by-line version is `field_cpu_reference` | identical (fields and round counts; test) | field time about halved (logicbone 9.5 → 5.3 s at 20 M) |
+| Inside-board test: the outline's and cut-outs' edges indexed by raster row; a point in a boundary cell is tested against its row's edges only (`Obstacles::inside_exact`, reference `inside_exact_linear`) | identical (test on a toothed outline with a round cut-out, points on edges and row boundaries) | LeeChee 27.6 → 18.2 s CPU; a `--global` run there 158 → 7.5 s (§19) |
+| Per-class obstacle caches (`LazyCodes`) allocated in chunks of 4,096 codes on first write; unwritten chunks read as not computed | identical | memory per router 1.6 GB → 0.56 GB (Teensy), 1.65 GB → 0.44 GB (logicbone) |
+| Target marks of a search in a reused buffer instead of a fresh array per search | identical | small |
+
+**Late reachability proof.** The pre-check of §13 floods before a strict search; run on every search (`--reach-check 2`) it pays a
+flood on searches that would have succeeded at once. The late proof instead runs only inside a strict search that has expanded
+`reach_after` states without reaching its target. Two floods, forward from the sources and backward from the targets, take a cell in
+turn, over the pre-check's moves (no bends, turn limits or costs; any via landing the A* allows, including on target cells of layers
+without tracks). The backward flood enters a cell's neighbours when a planar move may enter the cell (it is a target or legal), and the
+cell's other layers when a via may land on it. Both admit every path the A*
+can find, so when one runs out before they meet there is no path. The search stops as an enclosure (the region did not touch the
+window edge; when it is the target's, "boxed in (target)", which spares the reverse probe) or a window miss. When they meet, or
+`reach_after_cap` cells are visited, the A* goes on as before: the floods only filled the legality caches it reads. Flood cells count
+against `--work` at `--flood-work-pct`, as the pre-check's do. `--reach-verify` runs the A* on after every proof and counts paths it
+finds: 0 on the five boards (the proof at 20,000 expansions, no cap: 389 proofs, 64 of them "no path"). Breakout boards keep the pre-check on
+every strict search (D98), so the late proof does not run there.
+
+One variant, 20 M work, routed connections:
+
+| Board | before | trigger 100 k, no cap | 30 k, no cap | 100 k, cap 10 k (default) | 50 k, cap 10 k |
+|---|--:|--:|--:|--:|--:|
+| kitspace_d20_r0.1 | 228 | 256 | 256 | 259 | 259 |
+| oskirby_logicbone | 804 | 873 | 858 | 883 | 883 |
+| sbc_sbc | 310 | 334 | 334 | 341 | 345 |
+| KiCad-Library_Teensy_test_layout | 1,090 | 1,080 | 1,056 | 1,093 | 1,093 |
+| LeeChee_1800 | 1,010 | 991 | 895 | 1,010 | 1,010 |
+
+Without a cap, floods on long searches that do succeed (they meet late) cost more than the proofs save on Teensy and LeeChee. With
+the cap no board loses. The same result in less time: the old router needs 40 M work on logicbone (41.8 s CPU) for the 883 the new one
+routes at 20 M (30.0 s); on kitspace_d20 80 M (56.9 s) for 259 (22.1 s); on sbc 40 M gives 329 (29.1 s) against 341 at 20 M (20.8 s).
+At 10 M the new router routes more than the old one at 20 M on all three (250, 858, 327 against 228, 804, 310).
+
+**Tiers** (KiCad 10.0.6 judge):
+
+| Set | Budget | Before → after | Output | Route CPU |
+|---|---|---|---|---|
+| quick (30) | 1 M work, 8 variants | 26 → 26 clean, 99.3 % → 99.3 % | 30/30 byte-identical | 385 → 299 s (−22 %) |
+| mid (11) | 20 M work, 8 variants | 7 identical; decelerator 620 → 630, LimeSDR 810 → 813, EEZ 549 → 570, logicbone 1,036 → 1,036 | 7/11 identical | 6,157 → 4,357 s (−29 %) |
+| mid (11) | 60 s, 8 variants | 9,349 → 9,401 routed (6 boards up, 4 down, 1 equal) | – | – |
+| B (40) | 120 s, 8 variants | 29 → 29 clean, 5,197 → 5,198 routed | 12/40 identical | 16,935 → 16,036 s (−5 %) |
+| C (30) | 120 s, 8 variants | 16 → 17 clean, 9,529 → 9,537 routed | 7/30 identical | 19,254 → 18,476 s (−4 %) |
+
+At 120 s, the boards that finish early mostly finish sooner (tier B APM-RPi-Shield 370 → 147 CPU s, avr_ledprojector 862 → 464; tier C
+Apple-M0110 529 → 196, PocketBone 794 → 572), some later (Horticulture 363 → 444, PSLab 575 → 668): the portfolio stops when one
+variant completes, and which one does first changes. Boards that use the whole 120 s route as many or more within noise. The `mid`
+comparison prints `Gates: FAIL` for both runs alike: KiCad's DRC list is capped on LeeChee, LimeSDR and logicbone
+(`bench/records/m16/README.md`).
+
+**Tried and left off.**
+
+- *Field only for long searches* (`--field-after N`): the A* starts with the octile bound and builds the field after N expansions,
+  re-keying its open list. On logicbone 78 % of field work went to searches that ended in under 2,000 expansions, and at N = 2,000
+  field time fell (logicbone 5.0 → 3.6 s), but total CPU rose (LeeChee 18.3 → 25.6 s, logicbone 21.3 → 25.8 s): without the field the
+  A* spreads over more cells, and first visits to cells (legality checks) cost more than the field saved. Routed counts were equal.
+- *Ties to the deeper state* (`--tie-deep`): on equal f, the larger g first. With the late proof, 20 M work: Teensy 1,093 → 1,095,
+  sbc 341 → 333, others ±1. Not kept.
+- *Compiler flags*: `-O3` with link-time optimisation instead of `-O2` (RelWithDebInfo) changed CPU time by about 1 % on four boards
+  (output identical).
+- *Open list as a vector with a heap of structs* (needed to re-key it): 4–8 % slower on sbc and logicbone than
+  `std::priority_queue` of pairs; the open list stays a `priority_queue` whose container is reached for the re-key.

@@ -1,0 +1,285 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 83.17,
+ "connections": 410,
+ "copper_layers": 4,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 20020909,
+ "failures": [
+  "GND: DRAM1.J8 -> DRAM1.G8  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.N1 -> DRAM1.R1  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.K2 -> DRAM1.H2  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.N9 -> DRAM1.R9  (boxed in; escapes/neck-down: boxed in)",
+  "GND: DRAM1.J2 -> DRAM1.G1  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.H2 -> DRAM1.F1  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.F1 -> DRAM1.D2  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.H9 -> DRAM1.K8  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+1.5V: DRAM1.C9 -> DRAM1.A8  (boxed in; escapes/neck-down: boxed in)",
+  "1.8V: IC1.H15 -> IC1.K13  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+1.5V: DRAM1.G7 -> DRAM1.E9  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GND: DRAM1.M1 -> DRAM1.J2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GND: DRAM1.M9 -> DRAM1.J8  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "+1.5V: DRAM1.N1 -> DRAM1.K2  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.K8 -> DRAM1.N9  (boxed in; escapes/neck-down: boxed in)",
+  "1.1V: IC1.N13 -> R9.1  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(C49-Pad1): IC1.D9 -> C49.1  (boxed in; escapes/neck-down: boxed in)",
+  "1.8V: IC1.K13 -> IC1.P14  (boxed in; escapes/neck-down: boxed in)",
+  "+5V: IC1.P15 -> TPS4.4  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.H2 -> DRAM1.G7  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: DRAM1.R9 -> C42.1  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_ZQ: DRAM1.L8 -> R15.2  (boxed in; escapes/neck-down: boxed in)",
+  "+1.5V: R25.1 -> DRAM1.N1  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/1.1FB: R9.2 -> R10.1  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R4-Pad2): R4.2 -> TPS4.2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "Net-(C48-Pad1): IC1.D11 -> C48.1  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_VREF: DRAM1.H1 -> DRAM1.M8  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/1.1FB: R9.2 -> TPS1.7  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_D2: IC1.N1 -> DRAM1.F2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/DDR_A5: IC1.B1 -> DRAM1.P2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/DDR_CSn0: IC1.H2 -> DRAM1.L2  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_A7: IC1.E2 -> DRAM1.R2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/DDR_D15: IC1.M1 -> DRAM1.A3  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/DDR_A3: IC1.C3 -> DRAM1.N2  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_D6: IC1.P3 -> DRAM1.G2  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_WEn: IC1.B2 -> DRAM1.L3  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_D11: IC1.K3 -> DRAM1.C2  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_D13: IC1.L3 -> DRAM1.A2  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_D0: IC1.M3 -> DRAM1.E3  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_BA0: IC1.C4 -> DRAM1.M2  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/DDR_D4: IC1.N3 -> DRAM1.H3  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_BA2: IC1.B3 -> DRAM1.M3  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_A13: IC1.H3 -> DRAM1.T3  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_RASn: IC1.G4 -> DRAM1.J3  (boxed in; escapes/neck-down: boxed in)",
+  "/DDR_DQS1: IC1.L1 -> DRAM1.C7  ()",
+  "/MMC0_DAT2: IC1.F18 -> CON1.1  ()",
+  "/DDR_A1: IC1.H1 -> DRAM1.P7  ()",
+  "/DDR_D8: IC1.J1 -> DRAM1.D7  ()",
+  "/MMC0_DAT3: IC1.F17 -> CON1.2  ()",
+  "/DDR_BA1: IC1.E1 -> DRAM1.N8  ()",
+  "/DDR_DQM0: IC1.M2 -> DRAM1.E7  ()",
+  "/MMC0_DAT0: IC1.G16 -> CON1.7  ()",
+  "/DDR_A11: IC1.F2 -> DRAM1.R7  ()",
+  "/DDR_CK: IC1.D2 -> DRAM1.J7  ()",
+  "/DDR_DQSn1: IC1.L2 -> DRAM1.B7  ()",
+  "/DDR_A12: IC1.E3 -> DRAM1.N7  ()",
+  "/DDR_A4: IC1.C2 -> DRAM1.P8  ()",
+  "/DDR_D3: IC1.N2 -> DRAM1.F8  ()",
+  "/MMC0_DAT1: IC1.G15 -> CON1.8  ()",
+  "/DDR_D10: IC1.K2 -> DRAM1.C8  ()",
+  "/DDR_D1: IC1.M4 -> DRAM1.F7  ()",
+  "/DDR_A10: IC1.F4 -> DRAM1.L7  ()",
+  "/DDR_D7: IC1.P4 -> DRAM1.H7  ()",
+  "/DDR_D12: IC1.K4 -> DRAM1.A7  ()",
+  "/DDR_CKE: IC1.G3 -> DRAM1.K9  ()",
+  "/DDR_A8: IC1.D4 -> DRAM1.T8  ()",
+  "/DDR_D5: IC1.N4 -> DRAM1.H8  ()",
+  "/DDR_D14: IC1.L4 -> DRAM1.B8  ()",
+  "/DDR_A6: IC1.D5 -> DRAM1.R8  ()"
+ ],
+ "open": 69,
+ "package_pin_edges": 159,
+ "pitch_mm": 0.04,
+ "routed": 341,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-29T03:48:44Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/sbc_sbc/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "--seed",
+    "value": "7"
+   },
+   {
+    "name": "--no-gpu",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "100000"
+   },
+   {
+    "name": "",
+    "value": "10000"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "1"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--json",
+    "value": "route.json"
+   }
+  ],
+  "output": "out.kicad_pcb",
+  "seed": 7,
+  "threads": 1,
+  "time_limit_s": 3600.0,
+  "variants": 1,
+  "version": "0.11.0",
+  "work_budget": 20000000
+ },
+ "seconds": 21.59493654,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 299,
+  "bends_per_connection": 0.5456,
+  "connections": 548,
+  "detour_length_mm": 1234.658671,
+  "detour_octile_mm": 1079.830153,
+  "detour_ratio": 1.1434,
+  "length_mm": 1234.818671,
+  "long_detours": 23,
+  "off_angle_segments": 153,
+  "segments": 910,
+  "short_segments": 81,
+  "stair_steps": 2,
+  "vias": 119
+ },
+ "time_limited": false,
+ "tracks": 910,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 21.554847712,
+ "vias": 119,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 4215347,
+   "commits": 341,
+   "expansions": 18597191,
+   "field_cells": 87509524,
+   "fields": 330,
+   "fixed_checks": 2809700,
+   "flood_cells": 1423718,
+   "rips": 0,
+   "searches": 453
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 4215347,
+   "commits": 341,
+   "expansions": 18597191,
+   "field_cells": 87509524,
+   "fields": 330,
+   "fixed_checks": 2809700,
+   "flood_cells": 1423718,
+   "rips": 0,
+   "searches": 453
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 4215347,
+   "commits": 341,
+   "expansions": 18597191,
+   "field_cells": 87509524,
+   "fields": 330,
+   "fixed_checks": 2809700,
+   "flood_cells": 1423718,
+   "rips": 0,
+   "searches": 453
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 4215347,
+   "commits": 341,
+   "expansions": 18597191,
+   "field_cells": 87509524,
+   "fields": 330,
+   "fixed_checks": 2809700,
+   "flood_cells": 1423718,
+   "rips": 0,
+   "searches": 453
+  }
+ }
+}

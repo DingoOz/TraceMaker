@@ -1,0 +1,58 @@
+# sp-mid60-base → sp-mid60-new
+
+11 boards; routed boards byte-identical: 0/11.
+Clean pass 0 → 0; mean completion 80.9% → 82.0%; router seconds 689.0 → 683.2.
+Route CPU time 5,355 → 5,347 s (-0.1%).
+
+| Board | Routed | Completion | Clean | Added errors (after) | Router s | CPU s | Output |
+|---|---|---|---|---|---|---|---|
+| Aleste-520EX_aleste | 1390 → 1382 / 1616 | 54.7% → 53.1% | no → no | – | 61.0 → 61.2 | 484.0 → 484.3 | differs |
+| CoreOne-xCORE200-Original_CoreOne | 779 → 779 / 807 | 94.4% → 94.4% | no → no | – | 64.9 → 63.0 | 490.4 → 488.8 | differs |
+| KiCad-Library_Teensy_test_layout | 1251 → 1241 / 1268 | 96.6% → 94.8% | no → no | – | 61.7 → 62.5 | 485.7 → 486.2 | differs |
+| LeeChee_1800 | 1117 → 1139 / 1160 | 91.4% → 95.8% | no → no | – | 62.8 → 62.0 | 489.4 → 485.6 | differs |
+| MonApollo_analog-board | 1117 → 1128 / 1190 | 85.4% → 87.6% | no → no | – | 61.6 → 61.8 | 486.2 → 486.8 | differs |
+| decelerator4030_decelerator4030 | 690 → 680 / 1009 | 36.1% → 34.1% | no → no | – | 63.8 → 62.8 | 486.9 → 486.3 | differs |
+| front-end-modules_LimeSDR_Sony | 807 → 810 / 814 | 98.6% → 99.2% | no → no | – | 62.6 → 63.0 | 485.6 → 486.9 | differs |
+| kitspace_EEZ%20DIB%20MCU%20r1B2 | 536 → 569 / 634 | 80.4% → 87.0% | no → no | – | 62.6 → 62.4 | 487.6 → 489.2 | differs |
+| kitspace_d20_r0.1 | 273 → 280 / 282 | 96.8% → 99.3% | no → no | – | 64.2 → 60.6 | 487.3 → 482.3 | differs |
+| oskirby_logicbone | 1030 → 1035 / 1188 | 68.3% → 69.3% | no → no | – | 62.2 → 61.2 | 486.2 → 484.2 | differs |
+| sbc_sbc | 359 → 358 / 410 | 87.6% → 87.3% | no → no | – | 61.6 → 62.7 | 485.9 → 486.8 | differs |
+
+Style (informational): bends per connection 0.6253 → 0.6941; acute angles 3 → 5; stair steps 156 → 185; short segments 2822 → 3212; off angle segments 12427 → 10241; detour ratio 1.1023 → 1.1118; long detours 347 → 333.
+
+| Board | Bends per connection | Acute angles | Stair steps | Short segments | Off angle segments | Detour ratio | Long detours |
+|---|---|---|---|---|---|---|---|
+| Aleste-520EX_aleste | 1.78 → 1.7362 | 0 → 0 | 5 → 5 | 55 → 51 | 327 → 310 | 1.1705 → 1.1641 | 77 → 71 |
+| CoreOne-xCORE200-Original_CoreOne | 0.4398 → 0.4347 | 2 → 2 | 20 → 19 | 183 → 181 | 1512 → 1512 | 1.029 → 1.0285 | 6 → 6 |
+| KiCad-Library_Teensy_test_layout | 0.445 → 0.5045 | 0 → 2 | 24 → 38 | 808 → 998 | 2435 → 2424 | 1.0627 → 1.1261 | 9 → 22 |
+| LeeChee_1800 | 0.4817 → 0.8147 | 1 → 0 | 17 → 0 | 184 → 267 | 2025 → 327 | 1.029 → 1.0485 | 6 → 19 |
+| MonApollo_analog-board | 0.5024 → 0.8723 | 0 → 1 | 18 → 2 | 420 → 247 | 2005 → 453 | 1.1275 → 1.1479 | 51 → 55 |
+| decelerator4030_decelerator4030 | 1.1423 → 1.1145 | 0 → 0 | 10 → 10 | 182 → 178 | 371 → 355 | 1.1245 → 1.1302 | 41 → 43 |
+| front-end-modules_LimeSDR_Sony | 0.3205 → 0.2589 | 0 → 0 | 14 → 8 | 166 → 163 | 1446 → 1441 | 1.0874 → 1.0387 | 46 → 11 |
+| kitspace_EEZ%20DIB%20MCU%20r1B2 | 0.7828 → 0.8743 | 0 → 0 | 0 → 3 | 150 → 164 | 235 → 273 | 1.0607 → 1.0722 | 18 → 12 |
+| kitspace_d20_r0.1 | 0.572 → 0.6176 | 0 → 0 | 23 → 24 | 185 → 201 | 527 → 541 | 1.0778 → 1.0824 | 17 → 20 |
+| oskirby_logicbone | 0.6043 → 0.5114 | 0 → 0 | 21 → 70 | 374 → 653 | 912 → 1973 | 1.0742 → 1.0629 | 55 → 53 |
+| sbc_sbc | 0.435 → 0.4387 | 0 → 0 | 4 → 6 | 115 → 109 | 632 → 632 | 1.1154 → 1.117 | 21 → 21 |
+
+Comparison notes (not a gate; CPU speed needs equal wall time, doc 10 §5):
+- Aleste-520EX_aleste: completion uses KiCad's capped unconnected list, not exact connectivity
+- CoreOne-xCORE200-Original_CoreOne: completion uses KiCad's capped unconnected list, not exact connectivity
+- KiCad-Library_Teensy_test_layout: completion uses KiCad's capped unconnected list, not exact connectivity
+- LeeChee_1800: completion uses KiCad's capped unconnected list, not exact connectivity
+- MonApollo_analog-board: completion uses KiCad's capped unconnected list, not exact connectivity
+- decelerator4030_decelerator4030: completion uses KiCad's capped unconnected list, not exact connectivity
+- front-end-modules_LimeSDR_Sony: completion uses KiCad's capped unconnected list, not exact connectivity
+- kitspace_EEZ%20DIB%20MCU%20r1B2: completion uses KiCad's capped unconnected list, not exact connectivity
+- oskirby_logicbone: completion uses KiCad's capped unconnected list, not exact connectivity
+
+Gates: FAIL
+- Aleste-520EX_aleste: worse (clean False -> False, completion 54.7% -> 53.1%)
+- KiCad-Library_Teensy_test_layout: worse (clean False -> False, completion 96.6% -> 94.8%)
+- LeeChee_1800: before evaluated DRC errors are capped or unavailable; gate unknown
+- LeeChee_1800: after evaluated DRC errors are capped or unavailable; gate unknown
+- decelerator4030_decelerator4030: worse (clean False -> False, completion 36.1% -> 34.1%)
+- front-end-modules_LimeSDR_Sony: before evaluated DRC errors are capped or unavailable; gate unknown
+- front-end-modules_LimeSDR_Sony: after evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: before evaluated DRC errors are capped or unavailable; gate unknown
+- oskirby_logicbone: after evaluated DRC errors are capped or unavailable; gate unknown
+- sbc_sbc: worse (clean False -> False, completion 87.6% -> 87.3%)
