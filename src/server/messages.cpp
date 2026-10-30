@@ -403,6 +403,46 @@ std::string stats(const Stats& s) {
   return dump(j);
 }
 
+void BurnHistory::stats(std::string_view json) {
+  const auto j = nlohmann::json::parse(json, nullptr, false);
+  if (!j.is_object()) return;
+  const Point p{j.value("elapsed_s", 0.0), j.value("routed", std::int64_t{0}), j.value("total", std::int64_t{0}), j.value("unrouted", std::int64_t{0})};
+  if (!pts_.empty() && (p.t < pts_.back().t || p.total != pts_.back().total)) {
+    pts_.clear();
+    marks_.clear();
+  }
+  if (!pts_.empty() && pts_.back().t == p.t) pts_.back() = p;
+  else pts_.push_back(p);
+  if (pts_.size() > kMax) {
+    std::vector<Point> kept;
+    kept.reserve(pts_.size() / 2 + 1);
+    for (std::size_t i = 0; i < pts_.size(); ++i)
+      if (i % 2 == 0 || i + 1 == pts_.size()) kept.push_back(pts_[i]);
+    pts_ = std::move(kept);
+  }
+}
+
+void BurnHistory::stage(std::string_view json) {
+  const auto j = nlohmann::json::parse(json, nullptr, false);
+  if (!j.is_object() || j.value("state", std::string()) != "begin") return;
+  const std::string name = j.value("name", std::string());
+  if (!marks_.empty() && marks_.back().second == name) return;
+  marks_.emplace_back(pts_.empty() ? 0.0 : pts_.back().t, name);  // before any stats: the start of the run
+}
+
+std::string BurnHistory::message() const {
+  if (pts_.empty()) return {};
+  J j;
+  j["type"] = "stats_history";
+  J a = J::array();
+  for (const auto& p : pts_) a.push_back(J::array({p.t, p.routed, p.total, p.open}));
+  j["points"] = std::move(a);
+  J m = J::array();
+  for (const auto& [t, name] : marks_) m.push_back(J::array({t, name}));
+  j["marks"] = std::move(m);
+  return dump(j);
+}
+
 std::string stage(std::string_view name, std::string_view state, std::string_view detail) {
   J j;
   j["type"] = "stage";

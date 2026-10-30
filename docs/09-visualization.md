@@ -178,7 +178,8 @@ Server behaviour:
   fading dots (0.6 s), `path_try` is a fading polyline, failures are pulsing red rings at both ends plus a moving
   red dashed line (4.5 s). Effects are suppressed while catching up after a snapshot or a stall.
 - HUD: stage, iteration, routed/total with progress bar, unrouted, rip-ups, failures, elapsed, messages/s, FPS,
-  `stats.extra`; layer list (click = active, eye = visibility, keys 1–9); toggles for active-on-top (H), zones (Z),
+  a burndown of the open connections against elapsed time with each stage's start as a dashed line (the server keeps the
+  history, so a viewer opened during a run draws it from the start: `stats_history`, doc 13), `stats.extra`; layer list (click = active, eye = visibility, keys 1–9); toggles for active-on-top (H), zones (Z),
   ratsnest (R), footprints, effects (E), follow activity (L); event log of `log`/`stage`/`failure`; cursor
   position in board millimetres; footprint reference labels; hover tooltip (net, layer, width/size, pad ref)
   from a CPU uniform-grid picker, with the hovered net highlighted.

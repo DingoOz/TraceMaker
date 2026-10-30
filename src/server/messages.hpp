@@ -91,6 +91,27 @@ std::string log(std::string_view level, std::string_view text);
 std::string heatmap(std::string_view name, model::Point origin, Coord cell, int w, int h, int layer, double max,
                     std::span<const std::uint8_t> data);
 
+// The burndown of the open connections, kept for viewers that connect during a run (`stats_history`, doc 13): one point per
+// `stats` message and the time each stage began. A stats message whose time goes backwards, or whose total changes, starts a new
+// run. Long runs keep at most kMax points by dropping every other one, so the history stays a few tens of kilobytes.
+class BurnHistory {
+ public:
+  static constexpr std::size_t kMax = 1200;
+  void stats(std::string_view json);  // a `stats` message
+  void stage(std::string_view json);  // a `stage` message: a "begin" is marked at the latest stats time (0 before any)
+  // The `stats_history` message, or an empty string before the first stats message.
+  std::string message() const;
+  std::size_t size() const { return pts_.size(); }
+
+ private:
+  struct Point {
+    double t;
+    std::int64_t routed, total, open;
+  };
+  std::vector<Point> pts_;
+  std::vector<std::pair<double, std::string>> marks_;
+};
+
 // Returns the value of the top-level "type" key of a message, or an empty string. Fast path for messages built
 // here ("type" first); falls back to a full parse otherwise.
 std::string message_type(std::string_view json);
