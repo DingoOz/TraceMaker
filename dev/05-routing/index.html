@@ -2394,6 +2394,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#67-thin-tracks-real-vias-the-cut-test-of-a-routed-topology-and-pads-as-they-are-2026-10-30-d159" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        67. Thin tracks, real vias: the cut test of a routed topology, and pads as they are (2026-10-30, D159)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3843,6 +3854,17 @@
     <span class="md-ellipsis">
       
         66. Throughput after M22: where the work goes, and small fields on the CPU (2026-10-30, D158)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#67-thin-tracks-real-vias-the-cut-test-of-a-routed-topology-and-pads-as-they-are-2026-10-30-d159" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        67. Thin tracks, real vias: the cut test of a routed topology, and pads as they are (2026-10-30, D159)
       
     </span>
   </a>
@@ -7138,6 +7160,7 @@ least 70 % of the connections with an end on a ball-grid-like package) and off e
 <ul>
 <li><code>--warm-pcb FILE</code> starts from the tracks and vias of a routed board (nets with one connection take all of theirs); <code>--legalize</code> legalises every warm start (also <code>--state-in</code> and the ramp's stage hand-over); <code>--relax</code> = <code>--ramp-from 0.6 c --ramp-step 0.2 c --ramp-rounds 3 --ramp-cycle 2 --ramp-stall 2 --legalize</code> with <code>--round-work 20000000 --rounds 200</code> unless given: stage 1 routes under 60 % of the clearance, the solution is legalised to 80 %, routed again for what is missing, legalised to 100 %, and when the real rules stall for two rounds the run goes back two stages and climbs again, returning the best result under the real rules.</li>
 <li>Vertices end off the lattice and off 45° multiples; track lengths grow by the small moves (at most 0.3 mm). Zones, keep-outs, mounting holes and custom <code>.kicad_dru</code> clearances are not constraints of the legaliser; they are caught by the exact check that follows, which drops the routes involved. A projection step is a heuristic: it can leave pairs too close (3-9 on the hard boards), never an illegal result.</li>
+<li>Pads are what they are (D159, §67): a pad at an angle that is not a multiple of 90° is a rotated rectangle, an oval or a rounded rectangle is a rectangle grown by its corner radius. Until D159 they were the bounding boxes of sharp rectangles, which made up most of the "pairs too close" on boards with such pads and cost a third of the relaxed routes at each hand-over.</li>
 <li>Prototype with a linear-programming step (sequential LP with a trust region, HiGHS, minimum total movement, scratchpad only) on the six stuck boards: 071, 039, 104 legal in one or two iterations, 103/048/072 with 3/6/11 pairs left; projection: 071, 104 legal, 039/103/048/072 with 2/5/4/9 left. Both turn a 0.06 mm solution (about 800-1000 pairs too close at 0.10 mm) into one with a handful left.</li>
 </ul>
 <h2 id="42-reference-return-audit-of-high-speed-nets-issue-7-2026-10-14-d114">42. Reference-return audit of high-speed nets (issue #7, 2026-10-14, D114)<a class="headerlink" href="#42-reference-return-audit-of-high-speed-nets-issue-7-2026-10-14-d114" title="Permanent link">&para;</a></h2>
@@ -8761,6 +8784,198 @@ where a run's work and time go, on one board of each kind. Records: <code>bench/
   before any requeue. It was removed.
 - <strong>The 988</strong> fails on other U2 pins than the base. The room around the package decides, as the fan-out heads showed (§65), not
   the order of negotiation.</p>
+<h2 id="67-thin-tracks-real-vias-the-cut-test-of-a-routed-topology-and-pads-as-they-are-2026-10-30-d159">67. Thin tracks, real vias: the cut test of a routed topology, and pads as they are (2026-10-30, D159)<a class="headerlink" href="#67-thin-tracks-real-vias-the-cut-test-of-a-routed-topology-and-pads-as-they-are-2026-10-30-d159" title="Permanent link">&para;</a></h2>
+<p><strong>The question.</strong> If a board is routed with impossibly thin tracks and the tracks are thickened afterwards, when does the thickening work?
+Relax, route, legalise (§41.3) is this idea at 60 % of the clearance. It completed srj20 boards that hours of search had not, and it lost
+509 connections on the failing PCBench boards (doc 10 §11.3). Its legaliser could not tell a topology that cannot fit from a push that got
+stuck. Records: <code>bench/records/d159-thin-cut</code>.</p>
+<p><strong>The cut test</strong> (<code>tracemaker cuts BOARD [--json F] [--clearance MM] [--max-gap MM]</code>, <code>route/cut_test.{hpp,cpp}</code>).
+- <strong>The theorem.</strong> Cole and Siegel, and Leiserson and Maley (STOC 1985), show that a one-layer routing can be moved to meet the rules,
+  keeping its topology, exactly when every cut has room. Gao, Jerrum, Kaufmann, Mehlhorn and Rülling (1988) give it for continuous geometry.
+- <strong>The cuts.</strong> For every two features (pads, vias) in sight of each other on a copper layer, up to 2 mm apart, the cut is the shortest
+  segment between their copper (between two facing edges, the middle of their overlap).
+- <strong>Its wires</strong> are the crossings of the routed centrelines, less pairs of crossings of one wire whose loop with the cut encloses no feature
+  (the wire can be pulled out).
+- <strong>Its need</strong> is the sum of the widths and of the rule clearances between neighbours (the rule engine's, so classes and custom rules
+  count). Copper of one net may overlap.
+- <strong>s*</strong> is the smallest (gap − widths) / clearances over cuts with a wire or a via: the factor the clearance could be scaled by.
+- <strong>Via room.</strong> Vias are features of the topology. The via room test lets a via that fails a cut move anywhere in its cell (it may not cross
+  a cut between two pads). If no position keeps it clear of the pads with the wires the topology puts between them, no geometry with this
+  topology meets the rules: a proof.
+- <strong>Limits.</strong> Both are necessary conditions only: wire-to-wire spacing away from features, zones and the edge are not cuts.
+- <strong>No false alarms.</strong> On 405 boards that KiCad judged clean (the full tier A-D runs and the srj19/srj20 record runs), there is no
+  over-full cut with a wire in it and no via without room (423,870 cuts). Over-full cuts between two pads with no wire are the board's own
+  spacing (9 boards); s* leaves them out.</p>
+<p><strong>What thickening needs on srj20.</strong> The six boards complete at 0.06 mm (<code>bench/results/diag-c006</code>), judged at 0.10 mm:</p>
+<table>
+<thead>
+<tr>
+<th>Board</th>
+<th>Wires between pads</th>
+<th style="text-align: right;">Vias without room</th>
+<th>Legaliser (D104)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>071</td>
+<td>all fit</td>
+<td style="text-align: right;">0</td>
+<td>legal</td>
+</tr>
+<tr>
+<td>104</td>
+<td>all fit</td>
+<td style="text-align: right;">0</td>
+<td>legal</td>
+</tr>
+<tr>
+<td>039</td>
+<td>all fit</td>
+<td style="text-align: right;">0</td>
+<td>projection 2 pairs left, LP legal</td>
+</tr>
+<tr>
+<td>103</td>
+<td>all fit</td>
+<td style="text-align: right;">0</td>
+<td>3-5 pairs left</td>
+</tr>
+<tr>
+<td>048</td>
+<td>all fit</td>
+<td style="text-align: right;">2</td>
+<td>4-6 pairs left</td>
+</tr>
+<tr>
+<td>072</td>
+<td>all fit</td>
+<td style="text-align: right;">2</td>
+<td>9-11 pairs left</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The thin tracks never took a gap between two pads that cannot hold them.</li>
+<li>The four vias without room each sit in a ball-grid cell with a track between the via and a pad. The cell's diagonal is 0.622 mm; a via and
+  a track need 0.3 + 0.12 + 3 × 0.1 = 0.72 mm.</li>
+<li>Both legalisers (projection and the LP prototype) left their violations exactly at those four vias. On 103 and 039 nothing is proved:
+  what is left there is the legaliser's.</li>
+</ul>
+<p><strong>Two options built on it</strong> (both off by default):
+- <code>--ramp-vias-real</code>: the relaxed stages of a ramp lower the clearance of tracks only. Anything against a via keeps the board's clearance
+  (<code>DesignRules::via_clearance_extra</code>, added by the rule engine to every clearance that involves a via, and by the legaliser).
+- <code>--ramp-cut-prune</code>: before a warm start is legalised, the cut test's proofs drop routes, which are then routed again, so the legaliser does
+  not push their neighbours about. It drops the routes whose vias have no room. For each cut between two pads that cannot hold its wires
+  (pads do not move), it also drops enough of the routes through the cut. The choice is greedy: the route that crosses most of the cuts still
+  over-full goes first, and each wire freed gives back its width and a clearance.</p>
+<p><strong>On srj20 neither option helps</strong> (048 and 072, <code>--relax --variants 16</code>, one hour each):</p>
+<table>
+<thead>
+<tr>
+<th>Board</th>
+<th style="text-align: right;">base</th>
+<th style="text-align: right;"><code>--ramp-vias-real</code></th>
+<th style="text-align: right;"><code>--ramp-cut-prune</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>048 (74)</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">72</td>
+</tr>
+<tr>
+<td>072 (81)</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">75</td>
+</tr>
+</tbody>
+</table>
+<p>The prune was identical to the base round by round: no hand-over of those runs had a via without room. On PCBench, with pads as they are (below), the pad-cut prune fires at the final hand-over. ardfpga dropped 2 routes and still completed
+(214/214). d20_tri dropped 40 routes (43 over-full pad cuts, s* 0.717) and finished at 360 against 375 without it: routing them again cost
+more than letting the legaliser try. It stays off. Real vias make stage 1 route fewer
+connections (048: at most 72 instead of 74), so the thin sketch loses what made it useful. On these ball-grid boards the binding limit of
+thin-then-thicken is via room per cell, and these two blunt options do not get around it.</p>
+<p><strong>Where relax lost on PCBench: the legaliser's pads.</strong>
+- <strong>The topology fitted.</strong> The cut test on relaxed (stage 1) solutions of four failing PCBench boards, judged at the next stage's rules,
+  found nothing over-full (s* 1.17-1.76). The legaliser still left 136-354 pairs too close and dropped a third of the routes at each
+  hand-over.
+- <strong>The cause.</strong> The legaliser modelled every pad as an axis-aligned sharp rectangle, a rotated pad as the bounding box of its rotated
+  rectangle. d20_tri has 526 of 669 pads at non-right angles and 657 rounded rectangles. poncho has 182 rotated pads and 170 ovals. The
+  boxes overlapped legal tracks, the legaliser pushed them, and the pushes made real violations.
+- <strong>The fix</strong> (<code>route/legalize.cpp</code>, on by default, <code>TM_LEGALIZE_BBOX_PADS=1</code> for the old model). A pad is a rectangle in its own frame,
+  turned by its angle and grown by its corner radius (a rounded rectangle's, or half an oval's width). An offset pad's copper is centred
+  on its copper. Chamfered, trapezoid and custom pads stay rectangles. A vertex inside its own pad that the sweeps moved so far that its
+  track's end no longer touches the pad's copper goes back, so the track stays connected. A first version reset every vertex that
+  left the copper, even by less than the track's half width, and lost 24 connections on 21 boards (d20 375 -&gt; 356) without a
+  disconnection to prevent. Test: <code>tests/test_txn.cpp</code>, "a rotated pad is a rotated rectangle and an oval an oval".
+- <strong>The first hand-over.</strong> d20 went from 1452 pairs too close before and 274 of 427 routes kept to 0 pairs and 427 of 427. poncho went
+  from 834 pairs and 245 of 373 to 42 -&gt; 0 and 379 of 379.</p>
+<p><strong>The 33 failing PCBench tier B-D boards</strong> (doc 10 §11.3's set; 100 M work, eight variants, relax as 5 rounds of 20 M; KiCad-judged;
+<code>bench/records/d159-thin-cut</code> section 6):</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th style="text-align: right;">Routed (of 16,935)</th>
+<th style="text-align: right;">vs base</th>
+<th style="text-align: right;">Better / worse</th>
+<th style="text-align: right;">KiCad-clean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base (main, no relax)</td>
+<td style="text-align: right;">16,166</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td><code>--relax</code>, bounding-box pads (main)</td>
+<td style="text-align: right;">15,683</td>
+<td style="text-align: right;">−483</td>
+<td style="text-align: right;">8 / 16</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td><code>--relax</code>, exact pads (this change)</td>
+<td style="text-align: right;">15,925</td>
+<td style="text-align: right;">−241</td>
+<td style="text-align: right;">8 / 15</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td><code>--relax --legalize-subdivide 0.1</code>, exact pads</td>
+<td style="text-align: right;">15,955</td>
+<td style="text-align: right;">−211</td>
+<td style="text-align: right;">10 / 13</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Exact pads halve what relax loses against the current base: −241 instead of −483 connections.</li>
+<li><code>--legalize-subdivide 0.1</code> (§46) adds 30 (12 boards better, 1 worse) for about 10 % more CPU. On srj20's six stuck boards at the same
+  budget it is neutral (404 and 404 of 453, 2 better and 2 worse), so <code>--relax</code> does not turn it on by itself. Add it by hand on boards
+  with many rotated or rounded pads.</li>
+<li>Relax with exact pads completes five boards (serial_gw, teensy-fx, multisensor, ardfpga, mxalps). The base completes two of those.</li>
+<li>Taking the better of base and relax per board gives 16,208 routed (+42) and five clean boards.</li>
+<li>Relax still loses on most large boards. Its five rounds are mostly spent at relaxed rules, and the final hand-over to the board's rules
+  is where the legaliser now stalls. On poncho the cut test finds no over-full cut there (s* 1.167). The legaliser leaves 71 track-to-track
+  and pad-corner pairs short by 0.02-0.04 mm in one dense area, and 14 routes go.</li>
+<li>No arm added a DRC error. Quick tier: 30 of 30 routed boards byte-identical to main (the legaliser runs only with <code>--relax</code> and
+  <code>--legalize</code>). With srj20's axis-aligned rectangular pads, relax output is byte-identical to before (sample039).</li>
+</ul>
+<p><strong>What this says about "always 100 %".</strong> The cut condition is a cheap, exact-enough certificate (no false alarm on 405 boards). Used as a
+diagnosis, it turned "relax loses on real boards" into a modelling bug and showed that on ball grids the thin sketch fails only at vias.
+The next steps it suggests:
+- room-aware thin routing, where each cell's via room is counted while routing ("thin geometry, thick accounting"), not blanket real-clearance vias;
+- a realizer for the final hand-over that does better than projection where the cuts say there is room;
+- relax as a rescue after a plain run on the boards it completes.</p>
 
 
 

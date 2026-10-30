@@ -25,5 +25,8 @@ var searchData=
   ['currentplan_22',['CurrentPlan',['../structtmk_1_1crules_1_1CurrentPlan.html',1,'tmk::crules']]],
   ['customprim_23',['CustomPrim',['../structtmk_1_1model_1_1Pad_1_1CustomPrim.html',1,'tmk::model::Pad']]],
   ['customrule_24',['CustomRule',['../structtmk_1_1model_1_1CustomRule.html',1,'tmk::model']]],
-  ['cutline_25',['CutLine',['../structtmk_1_1route_1_1CutLine.html',1,'tmk::route']]]
+  ['cutfeature_25',['CutFeature',['../structtmk_1_1route_1_1CutFeature.html',1,'tmk::route']]],
+  ['cutline_26',['CutLine',['../structtmk_1_1route_1_1CutLine.html',1,'tmk::route']]],
+  ['cutreport_27',['CutReport',['../structtmk_1_1route_1_1CutReport.html',1,'tmk::route']]],
+  ['cuttestoptions_28',['CutTestOptions',['../structtmk_1_1route_1_1CutTestOptions.html',1,'tmk::route']]]
 ];

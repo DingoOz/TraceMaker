@@ -100,7 +100,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af8263289ab08f200ed3cb41516c029c0" id="r_af8263289ab08f200ed3cb41516c029c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8263289ab08f200ed3cb41516c029c0">RuleEngine</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
 <tr class="memitem:a89a3b3a3c85164812179bc2e04388419" id="r_a89a3b3a3c85164812179bc2e04388419"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89a3b3a3c85164812179bc2e04388419">~RuleEngine</a> ()</td></tr>
 <tr class="memitem:a92e14349228a7c249b1b27b3f68b887d" id="r_a92e14349228a7c249b1b27b3f68b887d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92e14349228a7c249b1b27b3f68b887d">clearance</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;a, const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;b, int layer) const</td></tr>
-<tr class="memdesc:a92e14349228a7c249b1b27b3f68b887d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Required copper-to-copper clearance between two items on a copper layer.  <br /></td></tr>
+<tr class="memdesc:a92e14349228a7c249b1b27b3f68b887d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Required copper-to-copper clearance between two items on a copper layer (with the router's via_clearance_extra when either item is a via).  <br /></td></tr>
+<tr class="memitem:a7bd845136653703c75471b5c8d2eb092" id="r_a7bd845136653703c75471b5c8d2eb092"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bd845136653703c75471b5c8d2eb092">clearance_rules</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;a, const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;b, int layer) const</td></tr>
+<tr class="memdesc:a7bd845136653703c75471b5c8d2eb092"><td class="mdescLeft">&#160;</td><td class="mdescRight">The clearance the board's rules give, as KiCad's DRC evaluates them.  <br /></td></tr>
 <tr class="memitem:a42812baeb6b1ba96c899346e3f5cb2da" id="r_a42812baeb6b1ba96c899346e3f5cb2da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42812baeb6b1ba96c899346e3f5cb2da">hole_clearance</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> *hole_owner, const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;other, int layer) const</td></tr>
 <tr class="memdesc:a42812baeb6b1ba96c899346e3f5cb2da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Required clearance between a hole and a copper item.  <br /></td></tr>
 <tr class="memitem:ace11a8db8f7c8840805d036764d3e824" id="r_ace11a8db8f7c8840805d036764d3e824"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace11a8db8f7c8840805d036764d3e824">hole_to_hole</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> *a, const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> *b) const</td></tr>
@@ -243,7 +245,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00098">98</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00104">104</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -252,6 +254,9 @@ Friends</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::drc::RuleEngine::clearance </td>
@@ -269,9 +274,44 @@ Friends</h2></td></tr>
           <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>&#160;) const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Required copper-to-copper clearance between two items on a copper layer. </p>
+<p>Required copper-to-copper clearance between two items on a copper layer (with the router's via_clearance_extra when either item is a via). </p>
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00039">39</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7bd845136653703c75471b5c8d2eb092" name="a7bd845136653703c75471b5c8d2eb092"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bd845136653703c75471b5c8d2eb092">&#9670;&#160;</a></span>clearance_rules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::drc::RuleEngine::clearance_rules </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The clearance the board's rules give, as KiCad's DRC evaluates them. </p>
 
 </div>
 </div>
@@ -346,7 +386,7 @@ Friends</h2></td></tr>
 
 <p>The other half of <span class="tt">net</span>'s differential pair (KiCad's DpCoupledNet), or 0. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00075">75</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00081">81</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -375,7 +415,7 @@ Friends</h2></td></tr>
 
 <p>True when <span class="tt">net</span> is the positive half of a pair (P or +, match_dp_suffix); only meaningful when dp_partner(net) is set. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00079">79</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00085">85</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -539,7 +579,7 @@ Friends</h2></td></tr>
 
 <p>Largest clearance any pair could need (for spatial-index inflation). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00052">52</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00058">58</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -566,7 +606,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00102">102</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00108">108</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -595,7 +635,7 @@ Friends</h2></td></tr>
 
 <p>Custom rules that the per-class obstacle cache cannot represent require exact per-point checks. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00109">109</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00115">115</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -715,7 +755,7 @@ Friends</h2></td></tr>
 
 <p>A disallow rule on tracks or vias depends on position, size or footprint: the router asks probe_disallowed. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00092">92</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00098">98</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -768,7 +808,7 @@ Friends</h2></td></tr>
 <p>Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule. </p>
 <p>The router's checks and caches have no per-pair hole rule, so a rule with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact (hole_clearance above). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00107">107</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00113">113</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -795,7 +835,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00071">71</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00077">77</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -990,7 +1030,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00110">110</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00116">116</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1055,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00154">154</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00160">160</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>

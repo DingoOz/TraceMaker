@@ -1,5 +1,10 @@
 var NAVTREEINDEX11 =
 {
+"structtmk_1_1drc_1_1CopperItem.html#a7fa8727f5f68a24e385169fd0443f2de":[0,0,0,6,4,15],
+"structtmk_1_1drc_1_1CopperItem.html#a7fa8727f5f68a24e385169fd0443f2de":[1,0,0,5,4,15],
+"structtmk_1_1drc_1_1CopperItem.html#a8208bd8df95d1863093a6f7cc7be10e1":[0,0,0,6,4,5],
+"structtmk_1_1drc_1_1CopperItem.html#a8208bd8df95d1863093a6f7cc7be10e1":[1,0,0,5,4,5],
+"structtmk_1_1drc_1_1CopperItem.html#a848dfeb72dd9cd6c811ab1bf81e7b751":[0,0,0,6,4,12],
 "structtmk_1_1drc_1_1CopperItem.html#a848dfeb72dd9cd6c811ab1bf81e7b751":[1,0,0,5,4,12],
 "structtmk_1_1drc_1_1CopperItem.html#ab7c5f7f033f9fead296dedc5dc33f64c":[0,0,0,6,4,6],
 "structtmk_1_1drc_1_1CopperItem.html#ab7c5f7f033f9fead296dedc5dc33f64c":[1,0,0,5,4,6],
@@ -244,10 +249,5 @@ var NAVTREEINDEX11 =
 "structtmk_1_1geom_1_1Box.html#ae72de6ea64b1f8bfbe685109e6c878a3":[0,0,0,7,2,1],
 "structtmk_1_1geom_1_1Box.html#ae72de6ea64b1f8bfbe685109e6c878a3":[1,0,0,6,2,1],
 "structtmk_1_1geom_1_1Box.html#aee5b10f573943aa9a15f2345d1996710":[0,0,0,7,2,4],
-"structtmk_1_1geom_1_1Box.html#aee5b10f573943aa9a15f2345d1996710":[1,0,0,6,2,4],
-"structtmk_1_1geom_1_1Box.html#af566dff3348a98b3ee75a465e25e1e1e":[0,0,0,7,2,7],
-"structtmk_1_1geom_1_1Box.html#af566dff3348a98b3ee75a465e25e1e1e":[1,0,0,6,2,7],
-"structtmk_1_1geom_1_1Point.html":[0,0,0,7,1],
-"structtmk_1_1geom_1_1Point.html":[1,0,0,6,1],
-"structtmk_1_1geom_1_1Point.html#a0cfcc9e41c26a37f93e04470cbf8c290":[0,0,0,7,1,3]
+"structtmk_1_1geom_1_1Box.html#aee5b10f573943aa9a15f2345d1996710":[1,0,0,6,2,4]
 };

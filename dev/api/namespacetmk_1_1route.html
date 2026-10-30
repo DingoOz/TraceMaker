@@ -105,6 +105,10 @@ Classes</h2></td></tr>
 <tr class="memitem:BusMember" id="r_BusMember"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1BusMember.html">BusMember</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A group as routed, measured on copper.  <a href="structtmk_1_1route_1_1BusMember.html#details">More...</a><br /></td></tr>
 <tr class="memitem:BusStats" id="r_BusStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1BusStats.html">BusStats</a></td></tr>
+<tr class="memitem:CutTestOptions" id="r_CutTestOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1CutTestOptions.html">CutTestOptions</a></td></tr>
+<tr class="memitem:CutFeature" id="r_CutFeature"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1CutFeature.html">CutFeature</a></td></tr>
+<tr class="memitem:OverfullCut" id="r_OverfullCut"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1OverfullCut.html">OverfullCut</a></td></tr>
+<tr class="memitem:CutReport" id="r_CutReport"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1CutReport.html">CutReport</a></td></tr>
 <tr class="memitem:PairRule" id="r_PairRule"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1PairRule.html">PairRule</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a pair is routed at.  <a href="structtmk_1_1route_1_1PairRule.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Dir2" id="r_Dir2"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1Dir2.html">Dir2</a></td></tr>
@@ -183,6 +187,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a478cde627ebb7e97b682422ea50048f1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">net_routed[net]</span>: <a class="el" href="#aae11d853bcf1effbdbdd0e421a0b6a72" title="Per net: 1 when all its pads are joined by copper (the router&#39;s own connectivity; nets without pads c...">nets_joined()</a> of the board the copper belongs to; <span class="tt">b</span> gives the pads, <span class="tt">vh</span> its via heights.  <br /></td></tr>
 <tr class="memitem:aae11d853bcf1effbdbdd0e421a0b6a72" id="r_aae11d853bcf1effbdbdd0e421a0b6a72"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae11d853bcf1effbdbdd0e421a0b6a72">nets_joined</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
 <tr class="memdesc:aae11d853bcf1effbdbdd0e421a0b6a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per net: 1 when all its pads are joined by copper (the router's own connectivity; nets without pads count as joined).  <br /></td></tr>
+<tr class="memitem:a6738f735ef8f0fe72a5242f79c9a42c0" id="r_a6738f735ef8f0fe72a5242f79c9a42c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1CutReport.html">CutReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6738f735ef8f0fe72a5242f79c9a42c0">cut_test</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1route_1_1CutTestOptions.html">CutTestOptions</a> &amp;opt={})</td></tr>
 <tr class="memitem:a1713d7202f73ee0f2d2d867e88e3d430" id="r_a1713d7202f73ee0f2d2d867e88e3d430"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1PairRule.html">PairRule</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1713d7202f73ee0f2d2d867e88e3d430">pair_rule</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="classtmk_1_1drc_1_1RuleEngine.html">drc::RuleEngine</a> &amp;re, <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> a, <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> c, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> via_mask=0)</td></tr>
 <tr class="memdesc:a1713d7202f73ee0f2d2d867e88e3d430"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">via_mask</span>: solder-mask expansion of untented vias (<a class="el" href="classtmk_1_1route_1_1Obstacles.html#abbc4f460a26b46e9735d15bd2c81adbd" title="Solder-mask expansion the checks give untented vias (0 when the board tents them).">route::Obstacles::via_mask()</a>); two vias then need their mask openings apart as well.  <br /></td></tr>
 <tr class="memitem:aa20166ccffb1fdaef2ab21ade09a634b" id="r_aa20166ccffb1fdaef2ab21ade09a634b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1Dir2.html">Dir2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa20166ccffb1fdaef2ab21ade09a634b">unit_dir</a> (int d)</td></tr>
@@ -264,7 +269,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970" name="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970"></a>Cleanup&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00331">331</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00333">333</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -477,6 +482,32 @@ Variables</h2></td></tr>
 <p>Edge gap up to which a sample counts as coupled: the pair's gap plus a quarter of it (at least 50 um), so lattice rounding and the miter at bends do not count as uncoupled while a single track wandering off does. </p>
 
 <p class="definition">Definition at line <a class="el" href="diff__pair_8hpp_source.html#l00061">61</a> of file <a class="el" href="diff__pair_8hpp_source.html">diff_pair.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6738f735ef8f0fe72a5242f79c9a42c0" name="a6738f735ef8f0fe72a5242f79c9a42c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6738f735ef8f0fe72a5242f79c9a42c0">&#9670;&#160;</a></span>cut_test()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1route_1_1CutReport.html">CutReport</a> tmk::route::cut_test </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>board</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rules</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1route_1_1CutTestOptions.html">CutTestOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1383,7 +1414,7 @@ Variables</h2></td></tr>
 
 <p>Variant indices from here up are the advised copies the portfolio adds when <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a71e9bf1534dd6edf71aa3fc97724afd3">RouterOptions::advice</a> is active (position k of the advice's variants has index kAdvisedIndex + k). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00434">434</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00436">436</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1458,7 +1489,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00332">332</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00334">334</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

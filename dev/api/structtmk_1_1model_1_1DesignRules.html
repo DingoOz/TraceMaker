@@ -122,6 +122,8 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a6dbe699f3c8581f108e4aae5d6cdeef2"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad 10 tuning profiles, as the project lists them.  <br /></td></tr>
 <tr class="memitem:a030271b817f79539d0cafa3f913416a5" id="r_a030271b817f79539d0cafa3f913416a5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a030271b817f79539d0cafa3f913416a5">use_height_for_length</a> = true</td></tr>
 <tr class="memdesc:a030271b817f79539d0cafa3f913416a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add the stackup height between the layers they join to a net's length (<a class="el" href="length_8hpp.html" title="Net length and propagation delay as KiCad 10.0.6 measures them for its length and skew checks (design...">drc/length.hpp</a>, via_heights).  <br /></td></tr>
+<tr class="memitem:a8e280811052450b91d4cc6beb34d4017" id="r_a8e280811052450b91d4cc6beb34d4017"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e280811052450b91d4cc6beb34d4017">via_clearance_extra</a> = 0</td></tr>
+<tr class="memdesc:a8e280811052450b91d4cc6beb34d4017"><td class="mdescLeft">&#160;</td><td class="mdescRight">Router only, never read from a file: added to every clearance between a via and other copper.  <br /></td></tr>
 <tr class="memitem:a59f26a9a4b67bda8b40e03c0698bfb22" id="r_a59f26a9a4b67bda8b40e03c0698bfb22"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59f26a9a4b67bda8b40e03c0698bfb22">warnings</a></td></tr>
 <tr class="memdesc:a59f26a9a4b67bda8b40e03c0698bfb22"><td class="mdescLeft">&#160;</td><td class="mdescRight">anything that could not be interpreted  <br /></td></tr>
 </table>
@@ -190,7 +192,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00123">123</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00127">127</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -236,7 +238,7 @@ Public Attributes</h2></td></tr>
 
 <p>The tuning profile a class names, if the project has one of that name. </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00131">131</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00135">135</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
@@ -381,6 +383,25 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a8e280811052450b91d4cc6beb34d4017" name="a8e280811052450b91d4cc6beb34d4017"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e280811052450b91d4cc6beb34d4017">&#9670;&#160;</a></span>via_clearance_extra</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::model::DesignRules::via_clearance_extra = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Router only, never read from a file: added to every clearance between a via and other copper. </p>
+<p>The relaxed stages of a clearance ramp lower all clearances; with this set back to the difference, vias keep the board's own clearance while tracks route thin (doc 05 §67: a thin sketch's tracks thicken, its vias parked in cells too small for them do not). </p>
+
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00124">124</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a59f26a9a4b67bda8b40e03c0698bfb22" name="a59f26a9a4b67bda8b40e03c0698bfb22"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a59f26a9a4b67bda8b40e03c0698bfb22">&#9670;&#160;</a></span>warnings</h2>
 
@@ -395,7 +416,7 @@ Public Attributes</h2></td></tr>
 
 <p>anything that could not be interpreted </p>
 
-<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00121">121</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rules_8hpp_source.html#l00125">125</a> of file <a class="el" href="rules_8hpp_source.html">rules.hpp</a>.</p>
 
 </div>
 </div>
