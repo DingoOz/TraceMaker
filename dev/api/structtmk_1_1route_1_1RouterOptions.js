@@ -54,6 +54,7 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "global_route", "structtmk_1_1route_1_1RouterOptions.html#a37f23ab334bae24dc96983b66761657e", null ],
     [ "global_strict_corridor_only", "structtmk_1_1route_1_1RouterOptions.html#a4eb7d5680287b9ce61c7e2d603e6504e", null ],
     [ "gpu_device", "structtmk_1_1route_1_1RouterOptions.html#afa739fc8cd583a83e43d638ca0bec0a2", null ],
+    [ "gpu_field_min_cells", "structtmk_1_1route_1_1RouterOptions.html#aafc93765154426454888e280bc9d7c21", null ],
     [ "guide_pen", "structtmk_1_1route_1_1RouterOptions.html#a67a1b9c200ea1418fbd987713e2198ae", null ],
     [ "guide_radius", "structtmk_1_1route_1_1RouterOptions.html#a4b28be1435d16b27db72c3bd4ce5ac90", null ],
     [ "guides", "structtmk_1_1route_1_1RouterOptions.html#a78e981e8b162ca8e599a300f4c1ff397", null ],

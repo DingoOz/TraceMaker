@@ -2383,6 +2383,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#66-throughput-after-m22-where-the-work-goes-and-small-fields-on-the-cpu-2026-10-30-d158" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        66. Throughput after M22: where the work goes, and small fields on the CPU (2026-10-30, D158)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3821,6 +3832,17 @@
     <span class="md-ellipsis">
       
         65. Fan-out heads: the designer's escapes laid before routing (2026-10-30, D157)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-throughput-after-m22-where-the-work-goes-and-small-fields-on-the-cpu-2026-10-30-d158" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        66. Throughput after M22: where the work goes, and small fields on the CPU (2026-10-30, D158)
       
     </span>
   </a>
@@ -8674,6 +8696,71 @@ against 787 of 807 for the base; our heads on U801 alone route 786. There, 51 of
 so the escapes are fan-out vias rather than F.Cu runs, and even they do not help. No better rule for the heads could win on that
 board, so the work stopped. A single variant moves by up to 10 connections between arms with the same best-of result, so the -1 to
 -3 per board above is within that spread (records: <code>bench/records/m22-oneboard/heads/coreone</code>).</p>
+<h2 id="66-throughput-after-m22-where-the-work-goes-and-small-fields-on-the-cpu-2026-10-30-d158">66. Throughput after M22: where the work goes, and small fields on the CPU (2026-10-30, D158)<a class="headerlink" href="#66-throughput-after-m22-where-the-work-goes-and-small-fields-on-the-cpu-2026-10-30-d158" title="Permanent link">&para;</a></h2>
+<p>M22 ended with every repair landing within a few connections of the base given about 10 % more work (§63–§65). This section measures
+where a run's work and time go, on one board of each kind. Records: <code>bench/records/m23-throughput</code>.</p>
+<p><strong>Where the work goes</strong> (one variant, 20 M work, every search logged with <code>TM_DEBUG_CONN</code> set empty; <code>searches/</code>).</p>
+<ul>
+<li><strong>mini_mass is not held back by work.</strong></li>
+<li>The first pass ends at 15.8 M.</li>
+<li>In pass 2 the six boxed-in U2 connections get negotiated paths cheaply.</li>
+<li>One strict search for LED1 then spends 6 M at the per-search cap.</li>
+<li>40 M and 60 M work route the same 986 (§64).</li>
+<li>With strict searches in negotiation capped (<code>--neg-strict-cap 200000</code>, 40 M), the three INT nets' negotiated searches spend
+    27 M at the 3 M cap. The next pass never starts.</li>
+<li><strong>Aleste is held back by work, and spends it usefully.</strong></li>
+<li>It never leaves the first pass.</li>
+<li>Routed searches take 57 % of the work and searches that reach the window's edge 26 %.</li>
+<li>The larger-window retry after such a miss routes 40 of 131 connections, at about 64 k expansions each. The run's rate at its end
+    is about 4.5 connections per million, so the retry pays for itself.</li>
+<li>Predicting every failure exactly would be worth about what 2 M more work gives (+11).</li>
+</ul>
+<p><strong>Where the time goes</strong> (gprof, Aleste, one variant, one thread, CPU fields; <code>profile/</code>). The shares are approximate:</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th style="text-align: right;">Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fields</td>
+<td style="text-align: right;">17 %</td>
+</tr>
+<tr>
+<td>legality against routed copper</td>
+<td style="text-align: right;">25 %</td>
+</tr>
+<tr>
+<td>the A* loop</td>
+<td style="text-align: right;">15 %</td>
+</tr>
+<tr>
+<td>fixed-copper codes</td>
+<td style="text-align: right;">8 %</td>
+</tr>
+</tbody>
+</table>
+<p>gprof charges the samples of clones such as <code>cell_cost [clone .isra.0]</code> to the symbol before them. In the flat profile
+<code>add_long_stub</code> stands for <code>cell_cost</code>.</p>
+<p><strong>Small fields on the CPU</strong> (D158).
+- <strong>The costs.</strong> Since D154 the CPU field costs about 72 ns per cell. The GPU costs about 26 ns per cell plus about 8.5 ms per
+  field.
+- <strong>The rule.</strong> A field with fewer than <code>gpu_field_min_cells</code> cells (500,000) is computed on the CPU. The two give identical fields,
+  so the routes are the same.
+- <strong>The gain.</strong> At 20 M work with eight variants:
+  - Aleste goes from 33.45 s to 29.55 s;
+  - mini_mass goes from 85.89 s to 78.51 s.</p>
+<p>Both outputs are byte-identical, and so are all 30 quick-tier boards.</p>
+<p><strong>Negotiation on mini_mass</strong> (<code>negotiation/</code>).
+- <strong>At 20 M</strong> negotiation gets only 4.3 M.
+- <strong>With more work.</strong> Capping its strict searches and trying one window size (<code>--neg-strict-cap 200000 --soft-attempts 1</code>) routes
+  986 at 40 M and 988 at 80 M.
+- <strong>Putting the cap-limited connections last in later passes</strong> changed nothing, since the three INT nets spend their work in pass 2,
+  before any requeue. It was removed.
+- <strong>The 988</strong> fails on other U2 pins than the base. The room around the package decides, as the fan-out heads showed (§65), not
+  the order of negotiation.</p>
 
 
 

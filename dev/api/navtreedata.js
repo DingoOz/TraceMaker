@@ -83,8 +83,8 @@ var NAVTREEINDEX =
 "structtmk_1_1route_1_1BusStats.html#a3bc4281aa691a03bf43d527c21f8b67e",
 "structtmk_1_1route_1_1LegalizeOptions.html#a5809199b307042387b4f360ec51a497d",
 "structtmk_1_1route_1_1RouteResult.html#afe80c8d02364f18a5906bd26dc0a655e",
-"structtmk_1_1route_1_1RouterOptions.html#abf9a0b1a0604f56dadfd87bc3c341a1d",
-"structtmk_1_1server_1_1Failure.html#acb8ac16cb6741993968672902757e7e1"
+"structtmk_1_1route_1_1RouterOptions.html#abde9b436a997b2d8c699fb761fbd40d2",
+"structtmk_1_1server_1_1Failure.html#ac8fb19c533051ef1cb3185071a3e83e0"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

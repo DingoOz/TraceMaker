@@ -1,5 +1,7 @@
 var NAVTREEINDEX24 =
 {
+"structtmk_1_1server_1_1Failure.html#ac8fb19c533051ef1cb3185071a3e83e0":[1,0,0,15,2,0],
+"structtmk_1_1server_1_1Failure.html#acb8ac16cb6741993968672902757e7e1":[0,0,0,17,2,12],
 "structtmk_1_1server_1_1Failure.html#acb8ac16cb6741993968672902757e7e1":[1,0,0,15,2,12],
 "structtmk_1_1server_1_1Failure.html#ae967393ee21795da5aab0621ecb445a4":[0,0,0,17,2,11],
 "structtmk_1_1server_1_1Failure.html#ae967393ee21795da5aab0621ecb445a4":[1,0,0,15,2,11],
