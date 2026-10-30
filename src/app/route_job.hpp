@@ -94,6 +94,9 @@ struct RouteJob {
   std::string stuck_report_out;   // --stuck-report FILE: write the stuck report (of the run the advisor saw, else the final one)
   // With soft zones: refill the zones after routing and route what the refill left unconnected (doc 05 §36).
   bool refill_repair = true;
+  // The relax rescue (doc 05 §68, D160): connections left open by the plain run are tried again with --relax on a budget of its own
+  // (--time again, and --work again with a work budget); the better result is kept. --no-rescue turns it off.
+  bool rescue = true;
   // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;

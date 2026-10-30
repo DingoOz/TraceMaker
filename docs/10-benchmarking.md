@@ -484,3 +484,7 @@ Quick tier with the release binary: 30 of 30 routed boards byte-identical to mai
 boxes of sharp rectangles. Same set, same settings, against the base of that day (16,166 routed, 2 clean): relax with the old pads
 15,683 (−483, 3 clean); with the pads as they are 15,925 (−241, **5 clean**). The better of base and relax per board gives 16,208 and five
 clean boards (`bench/records/d159-thin-cut`).
+
+**With the relax rescue by default (D160, doc 05 §68).** The same set routed with the default options, so a board left open is
+routed again with relax and the better result kept: 16,208 routed (+42 against the plain run), 8 boards better and none worse, five
+clean, no DRC error added, 73 % more CPU (`bench/records/d160-rescue`).

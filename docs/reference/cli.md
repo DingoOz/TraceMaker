@@ -242,6 +242,10 @@ OPTIONS:
           --vias-off-pads-below FLOAT
                               Pad width (mm) below which --keep-vias-off-pads applies (default
                               2)
+          --no-rescue{false}  Do not route again with --relax when connections are left open
+                              (by default the rescue runs on a budget of its own, --time and
+                              --work again, and its result is kept only if it is better; doc 05
+                              §68)
           --no-neck-nets TEXT ...
                               Comma-separated nets that are never narrowed below their class
                               width nor given the small neck-down via (power nets of a

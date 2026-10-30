@@ -3126,4 +3126,44 @@ diagnosis, it turned "relax loses on real boards" into a modelling bug and showe
 The next steps it suggests:
 - room-aware thin routing, where each cell's via room is counted while routing ("thin geometry, thick accounting"), not blanket real-clearance vias;
 - a realizer for the final hand-over that does better than projection where the cuts say there is room;
-- relax as a rescue after a plain run on the boards it completes.
+- relax as a rescue after a plain run on the boards it completes (built, and on by default: §68).
+
+## 68. The relax rescue: escalation by default (2026-10-30, D160)
+
+**Why.** A plain `tracemaker route` runs the portfolio and stops. Relax (§41.3, with the pads of §67) completes boards the plain run does
+not, but loses on most others, so it is no default on its own. The better of the two per board is: +42 connections and five clean
+boards against two on the 33 failing PCBench tier B-D boards (§67).
+
+**What it does** (`app/route_job.cpp`). When the plain run leaves connections open and `--relax` was not given, the board is routed again
+from nothing with `--relax`. The result that `route_result_better` prefers stands (more routed, then fewer vias, then shorter copper). A
+tie keeps the plain result. Then the advisor (doc 17), the refill repair (§36) and the passes run on what stands, as before.
+- **Budget.** The rescue gets `--time` again (as the advisor's re-run does) and, with `--work`, rounds of at most 20 M work that add
+  up to `--work`. A board left open can take up to twice the time. A complete board never gets a rescue.
+- **Why its own time.** Without `--work`, the plain portfolio uses all of its 120 s on hard boards: on ardfpga, teensy-fx, poncho and
+  serial_gw it was still working when the limit came (two passes on poncho). Splitting the time would give the plain run less on exactly
+  those boards.
+- **Off** with `--no-rescue`. Only `tracemaker route` has it; placement's routing and `tracemaker session` do not.
+- **Reported.** The run summary has `rescue` (`routed_before`, `routed_after`, `adopted`, `seconds`, `rounds`, `round_work`), the
+  log says what happened, the viewer gets `rescue` stage events, and `bench/run.py` keeps the summary per board. A rescue's variants
+  are in `variants` with `"stage": "rescue"`.
+
+**Measured** (`bench/records/d160-rescue`):
+
+The 33 failing PCBench tier B-D boards (100 M work, eight variants, KiCad-judged):
+
+| Arm | Routed (of 16,935) | vs plain | Better / worse | KiCad-clean | CPU s |
+|---|--:|--:|--:|--:|--:|
+| plain (main) | 16,166 | | | 2 | 64,062 |
+| `--relax` alone (D159) | 15,925 | −241 | 8 / 15 | 5 | 60,232 |
+| default with the rescue | 16,208 | +42 | 8 / 0 | 5 | 110,958 |
+
+- Every board is the better of the plain run and relax: the counts equal the maximum of the two arms on all 33, and the plain part
+  is byte for byte the plain arm's.
+- The rescue ran on the 30 boards left open and was kept on 12: eight routed more (serial_gw, ardfpga and teensy-fx complete clean;
+  CoreOne +17, V2X +6, MonApollo +5), four as many with fewer vias or shorter copper.
+- No board added a DRC error. CPU is up 73 % on this set, where every board is left open; a board that completes pays nothing.
+
+- Quick tier (`--work 1000000 --variants 1`): the rescue ran on the 19 boards left open and was kept on 8: +11 connections, 12
+  clean boards against 11 (C-BISCUIT completes), 22 of 30 boards byte-identical, gates pass. Each rescue took 1-3 s.
+- Test: `tests/integration/round_options.py` (the rescue runs when a board is left open, `--no-rescue` turns it off, a rescue that
+  does not win leaves the output byte-identical to the plain run's, and the result is never below the plain run).
