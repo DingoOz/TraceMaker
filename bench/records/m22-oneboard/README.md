@@ -136,3 +136,20 @@ number of pins given a head.
   That sums to nothing.
 
 **Quick tier, options off** (`quick-heads-off/`): every one of the 30 output boards is byte-identical to `lm-quick-off`.
+
+**CoreOne follow-up** (`heads/coreone/`, `run3.sh`, 8 variants, 20 M work, 8 threads). CoreOne lost the most with the heads, so the
+oracle was repeated on its U801 (a 0.4 mm QFP-128): the designer's copper within 5 mm of the package, only the clusters that touch
+one pad (326 segment and via lines), put in as fixed copper.
+
+| Arm | Routed | Best variant | Variants 0-7 |
+|---|--:|--:|---|
+| `base` | 787/807 | 6 | 693 778 727 766 695 779 787 776 |
+| `oh5`, the designer's heads (oracle) | 785/806 | 7 | 694 784 725 744 695 772 771 785 |
+| `fh5u`, `--fanout-heads 5 --fanout-heads-min-pins 100` (U801 only, 66 heads) | 786/807 | 7 | 691 782 734 761 698 775 779 786 |
+
+- The base reproduces the ten-board run exactly.
+- Even the designer's own escapes do not help CoreOne, so no better choice of head shape can. The rule work stopped here.
+- The designer's escapes on U801 differ from mini_mass's U2. Of 70 pins with a head, 51 end at a via within 3 mm: 23 under the body
+  and 28 just outside. Only 19 are F.Cu-only (`designer-u801.png`, `heads-u801.png`, `base-u801.png`).
+- A single variant moves by up to 10 connections between arms with the same best-of result, so the -1 to -3 per board in the
+  ten-board table is within that spread.

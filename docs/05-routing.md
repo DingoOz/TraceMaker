@@ -2958,5 +2958,10 @@ head. They are not routed copper, so they are not written out. Each route runs p
 Adding `--via-shove --escape-all` gives 7,190.
 
 **Status.** Off by default; with it off the output is byte-identical. What a side of a package should do is decided here from free
-head length alone. That fits U2 on mini_mass and not the packages of CoreOne, EtherCAT and poncho. A better choice needs a measure
-of where each head's route goes next.
+head length alone. That fits U2 on mini_mass and not the packages of CoreOne, EtherCAT and poncho.
+
+**CoreOne oracle.** The same oracle on CoreOne's U801 (a 0.4 mm QFP-128) routes 785 of 806 with the designer's single-pad copper,
+against 787 of 807 for the base; our heads on U801 alone route 786. There, 51 of the designer's 70 heads end at a via within 3 mm,
+so the escapes are fan-out vias rather than F.Cu runs, and even they do not help. No better rule for the heads could win on that
+board, so the work stopped. A single variant moves by up to 10 connections between arms with the same best-of result, so the -1 to
+-3 per board above is within that spread (records: `bench/records/m22-oneboard/heads/coreone`).

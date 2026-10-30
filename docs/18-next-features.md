@@ -363,4 +363,9 @@ Item 8 remains: on mini_mass the open pins are boxed in by their neighbours' tra
 
 Item 8 was then built as fan-out heads (D157, doc 05 §65): before routing, the pins of a dense four-sided package get the first
 millimetres of their routes as the designer lays them, straight or in staggered 45-degree bundles. mini_mass goes from 986 to 989
-(the designer's own heads give 990). On the ten boards it nets zero (7,175, as the base) and stays off.
+(the designer's own heads give 990). On the ten boards it nets zero (7,175, as the base) and stays off. On CoreOne even the designer's own heads do not help (785
+against 787), so a better rule for the heads was not pursued.
+
+State of M22: items 1-3 and 5-8 are built and off by default, and item 4 is partly built (`--plane-informed`). The best arm,
+`--via-shove --escape-all`, cuts open connections by 3.5 % against the 15 % gate. Every repair so far lands within a few connections
+of the base given about 10 % more work, so more search per second is the stronger lever.
