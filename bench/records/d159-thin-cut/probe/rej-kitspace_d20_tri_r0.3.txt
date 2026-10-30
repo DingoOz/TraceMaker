@@ -1,0 +1,28 @@
+ramp stage 1/2 (clearance -0.0406 mm): 427 of 553 routed
+legalize: 15331 vertices, 129 moved (at most 0.004 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+legalize: 15331 vertices, 129 moved (at most 0.004 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+legalize: 15331 vertices, 129 moved (at most 0.004 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+legalize: 15331 vertices, 129 moved (at most 0.004 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 427 of 553 routed
+legalize: 15330 vertices, 57 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+legalize: 15330 vertices, 60 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 15330 vertices, 60 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+warm start: 427 saved routes taken over, 0 not legal under these rules
+legalize: 15330 vertices, 60 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 427 saved routes taken over, 0 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 427 of 553 routed
+legalize: 15325 vertices, 2160 moved (at most 0.302 mm), 8568 pairs too close before, 220 after, 300 sweeps
+warm start: 381 saved routes taken over, 46 not legal under these rules
+legalize: 15325 vertices, 2112 moved (at most 0.279 mm), 8568 pairs too close before, 563 after, 300 sweeps
+warm start: 381 saved routes taken over, 46 not legal under these rules
+legalize: 15325 vertices, 2112 moved (at most 0.279 mm), 8568 pairs too close before, 563 after, 300 sweeps
+warm start: 381 saved routes taken over, 46 not legal under these rules
+legalize: 15325 vertices, 2112 moved (at most 0.279 mm), 8568 pairs too close before, 563 after, 300 sweeps
+warm start: 381 saved routes taken over, 46 not legal under these rules
+routed 381/553 connections, 1750 tracks, 258 vias, pitch 0.035 mm, 0 expansions, 491.96 s (best variant 46.62 s)

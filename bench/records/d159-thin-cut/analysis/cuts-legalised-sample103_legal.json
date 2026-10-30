@@ -1,0 +1,49 @@
+{
+ "board": "/home/dingo/Programming/TraceMaker/bench/results/legal/sample103_legal.kicad_pcb",
+ "crossings_cancelled": 180,
+ "cuts": 3638,
+ "overfull": [
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.65",
+    "x_mm": 0.4,
+    "y_mm": 0.4
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_053",
+    "x_mm": -0.1439,
+    "y_mm": 0.8213
+   },
+   "gap_mm": 0.286634,
+   "layer": "B.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_018"
+   ]
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_048",
+    "pad": "bga_component.87",
+    "x_mm": -1.2,
+    "y_mm": 2.0
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_040",
+    "x_mm": -0.803,
+    "y_mm": 1.7005
+   },
+   "gap_mm": 0.097728,
+   "layer": "B.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  }
+ ],
+ "s_star": 0.83317,
+ "vias_without_room": []
+}

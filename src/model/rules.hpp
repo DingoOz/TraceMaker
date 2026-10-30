@@ -118,6 +118,10 @@ struct DesignRules {
   // KiCad's "Include stackup height in track length calculations" (on unless the project turns it off): vias add
   // the stackup height between the layers they join to a net's length (drc/length.hpp, via_heights).
   bool use_height_for_length = true;
+  // Router only, never read from a file: added to every clearance between a via and other copper. The relaxed stages of a
+  // clearance ramp lower all clearances; with this set back to the difference, vias keep the board's own clearance while
+  // tracks route thin (doc 05 §67: a thin sketch's tracks thicken, its vias parked in cells too small for them do not).
+  Coord via_clearance_extra = 0;
   std::vector<std::string> warnings;        // anything that could not be interpreted
 
   const NetClass& default_class() const { return classes.front(); }

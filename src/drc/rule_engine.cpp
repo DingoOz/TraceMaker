@@ -617,6 +617,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   for (const auto& p : b_.pads) max_clearance_ = std::max(max_clearance_, p.clearance);
   max_clearance_ = std::max({max_clearance_, r_.minimums.clearance, r_.minimums.copper_edge_clearance, r_.minimums.hole_clearance,
                              r_.minimums.hole_to_hole});
+  max_clearance_ += std::max<Coord>(r_.via_clearance_extra, 0);
 }
 
 RuleEngine::~RuleEngine() = default;
@@ -863,7 +864,7 @@ bool RuleEngine::coupled_diff_pair(model::NetId a, model::NetId b) const {
   return match_dp_suffix(b_.nets[static_cast<std::size_t>(a)].name).complement == b_.nets[static_cast<std::size_t>(b)].name;
 }
 
-Coord RuleEngine::clearance(const CopperItem& a, const CopperItem& b, int layer) const {
+Coord RuleEngine::clearance_rules(const CopperItem& a, const CopperItem& b, int layer) const {
   // KiCad 10.0.6's order (DRC_ENGINE::EvalRules): a local override (pad, then footprint; the larger of the two items') wins over
   // everything but the board minimum (verified on tinytapeout-demo: U6 footprint 0.18 mm vs GND class 0.23 mm). Then the custom
   // rules: the one that applies is final, below the board minimum too (vme-wren: 0.1 mm under the FPGA, 0.125 mm minimum). Only

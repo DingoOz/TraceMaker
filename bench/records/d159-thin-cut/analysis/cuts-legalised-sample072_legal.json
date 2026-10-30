@@ -1,0 +1,180 @@
+{
+ "board": "/home/dingo/Programming/TraceMaker/bench/results/legal/sample072_legal.kicad_pcb",
+ "crossings_cancelled": 204,
+ "cuts": 4717,
+ "overfull": [
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.86",
+    "x_mm": 0.8,
+    "y_mm": 0.0
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.2006,
+    "y_mm": 0.584
+   },
+   "gap_mm": 0.310305,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_038"
+   ]
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_046",
+    "pad": "bga_component.87",
+    "x_mm": 1.6,
+    "y_mm": 0.0
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.2006,
+    "y_mm": 0.584
+   },
+   "gap_mm": 0.309731,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_038"
+   ]
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "bga_component.99",
+    "x_mm": 0.8,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0171,
+    "y_mm": 1.2025
+   },
+   "gap_mm": 0.075572,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "bga_component.99",
+    "x_mm": 0.8,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.2006,
+    "y_mm": 0.584
+   },
+   "gap_mm": 0.073518,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.100",
+    "x_mm": 1.6,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0171,
+    "y_mm": 1.2025
+   },
+   "gap_mm": 0.310255,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_043"
+   ]
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.100",
+    "x_mm": 1.6,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.2006,
+    "y_mm": 0.584
+   },
+   "gap_mm": 0.072334,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_031",
+    "pad": "bga_component.112",
+    "x_mm": 0.8,
+    "y_mm": 1.6
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0171,
+    "y_mm": 1.2025
+   },
+   "gap_mm": 0.070641,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.113",
+    "x_mm": 1.6,
+    "y_mm": 1.6
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0171,
+    "y_mm": 1.2025
+   },
+   "gap_mm": 0.307859,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_043"
+   ]
+  }
+ ],
+ "s_star": 0.70641,
+ "vias_without_room": [
+  {
+   "net": "bga_conn_063",
+   "x_mm": 1.0171,
+   "y_mm": 1.2025
+  },
+  {
+   "net": "bga_conn_043",
+   "x_mm": 1.2006,
+   "y_mm": 0.584
+  }
+ ]
+}

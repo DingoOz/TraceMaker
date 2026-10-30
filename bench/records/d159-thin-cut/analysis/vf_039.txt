@@ -1,0 +1,1 @@
+diag-c006/boards/sample039.kicad_pcb: vias 280, no room even against pads alone: 0, after placing all vias: 2 without room (sweeps 60, moves 83)

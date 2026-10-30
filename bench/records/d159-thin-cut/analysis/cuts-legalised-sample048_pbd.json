@@ -1,0 +1,1479 @@
+{
+ "board": "/home/dingo/Programming/TraceMaker/bench/results/legal/sample048_pbd.kicad_pcb",
+ "crossings_cancelled": 214,
+ "cuts": 5072,
+ "overfull": [
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "bga_component.106",
+    "x_mm": 0.8,
+    "y_mm": 1.6
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_018",
+    "x_mm": 1.1695,
+    "y_mm": 1.7865
+   },
+   "gap_mm": 0.039611,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.140",
+    "x_mm": -3.2,
+    "y_mm": 4.0
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_055",
+    "x_mm": -3.0084,
+    "y_mm": 4.3673
+   },
+   "gap_mm": 0.037659,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_057",
+    "pad": "bga_component.141",
+    "x_mm": -2.4,
+    "y_mm": 4.0
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_055",
+    "x_mm": -3.0084,
+    "y_mm": 4.3673
+   },
+   "gap_mm": 0.317555,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_040"
+   ]
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_001",
+    "pad": "TP001.1",
+    "x_mm": -8.168,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_005",
+    "pad": "TP005.1",
+    "x_mm": -7.261,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_002",
+    "pad": "TP002.1",
+    "x_mm": 10.29,
+    "y_mm": 8.168
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_006",
+    "pad": "TP006.1",
+    "x_mm": 10.29,
+    "y_mm": 7.261
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_003",
+    "pad": "TP003.1",
+    "x_mm": -8.168,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_007",
+    "pad": "TP007.1",
+    "x_mm": -7.261,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_004",
+    "pad": "TP004.1",
+    "x_mm": -10.29,
+    "y_mm": 8.168
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_008",
+    "pad": "TP008.1",
+    "x_mm": -10.29,
+    "y_mm": 7.261
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_005",
+    "pad": "TP005.1",
+    "x_mm": -7.261,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_009",
+    "pad": "TP009.1",
+    "x_mm": -6.353,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_006",
+    "pad": "TP006.1",
+    "x_mm": 10.29,
+    "y_mm": 7.261
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_010",
+    "pad": "TP010.1",
+    "x_mm": 10.29,
+    "y_mm": 6.353
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_007",
+    "pad": "TP007.1",
+    "x_mm": -7.261,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_011",
+    "pad": "TP011.1",
+    "x_mm": -6.353,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_008",
+    "pad": "TP008.1",
+    "x_mm": -10.29,
+    "y_mm": 7.261
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_012",
+    "pad": "TP012.1",
+    "x_mm": -10.29,
+    "y_mm": 6.353
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_009",
+    "pad": "TP009.1",
+    "x_mm": -6.353,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_013",
+    "pad": "TP013.1",
+    "x_mm": -5.446,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_010",
+    "pad": "TP010.1",
+    "x_mm": 10.29,
+    "y_mm": 6.353
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_014",
+    "pad": "TP014.1",
+    "x_mm": 10.29,
+    "y_mm": 5.446
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_011",
+    "pad": "TP011.1",
+    "x_mm": -6.353,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_015",
+    "pad": "TP015.1",
+    "x_mm": -5.446,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_012",
+    "pad": "TP012.1",
+    "x_mm": -10.29,
+    "y_mm": 6.353
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_016",
+    "pad": "TP016.1",
+    "x_mm": -10.29,
+    "y_mm": 5.446
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_013",
+    "pad": "TP013.1",
+    "x_mm": -5.446,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_017",
+    "pad": "TP017.1",
+    "x_mm": -4.538,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_014",
+    "pad": "TP014.1",
+    "x_mm": 10.29,
+    "y_mm": 5.446
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_018",
+    "pad": "TP018.1",
+    "x_mm": 10.29,
+    "y_mm": 4.538
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_015",
+    "pad": "TP015.1",
+    "x_mm": -5.446,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_019",
+    "pad": "TP019.1",
+    "x_mm": -4.538,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_016",
+    "pad": "TP016.1",
+    "x_mm": -10.29,
+    "y_mm": 5.446
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_020",
+    "pad": "TP020.1",
+    "x_mm": -10.29,
+    "y_mm": 4.538
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_017",
+    "pad": "TP017.1",
+    "x_mm": -4.538,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_021",
+    "pad": "TP021.1",
+    "x_mm": -3.63,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_018",
+    "pad": "TP018.1",
+    "x_mm": 10.29,
+    "y_mm": 4.538
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_022",
+    "pad": "TP022.1",
+    "x_mm": 10.29,
+    "y_mm": 3.63
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_019",
+    "pad": "TP019.1",
+    "x_mm": -4.538,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_023",
+    "pad": "TP023.1",
+    "x_mm": -3.63,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_020",
+    "pad": "TP020.1",
+    "x_mm": -10.29,
+    "y_mm": 4.538
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_024",
+    "pad": "TP024.1",
+    "x_mm": -10.29,
+    "y_mm": 3.63
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_021",
+    "pad": "TP021.1",
+    "x_mm": -3.63,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_025",
+    "pad": "TP025.1",
+    "x_mm": -2.723,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_022",
+    "pad": "TP022.1",
+    "x_mm": 10.29,
+    "y_mm": 3.63
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_026",
+    "pad": "TP026.1",
+    "x_mm": 10.29,
+    "y_mm": 2.723
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_023",
+    "pad": "TP023.1",
+    "x_mm": -3.63,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_027",
+    "pad": "TP027.1",
+    "x_mm": -2.723,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_024",
+    "pad": "TP024.1",
+    "x_mm": -10.29,
+    "y_mm": 3.63
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_028",
+    "pad": "TP028.1",
+    "x_mm": -10.29,
+    "y_mm": 2.723
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_025",
+    "pad": "TP025.1",
+    "x_mm": -2.723,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_029",
+    "pad": "TP029.1",
+    "x_mm": -1.815,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_026",
+    "pad": "TP026.1",
+    "x_mm": 10.29,
+    "y_mm": 2.723
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_030",
+    "pad": "TP030.1",
+    "x_mm": 10.29,
+    "y_mm": 1.815
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_027",
+    "pad": "TP027.1",
+    "x_mm": -2.723,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_031",
+    "pad": "TP031.1",
+    "x_mm": -1.815,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_028",
+    "pad": "TP028.1",
+    "x_mm": -10.29,
+    "y_mm": 2.723
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_032",
+    "pad": "TP032.1",
+    "x_mm": -10.29,
+    "y_mm": 1.815
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_029",
+    "pad": "TP029.1",
+    "x_mm": -1.815,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_033",
+    "pad": "TP033.1",
+    "x_mm": -0.908,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_030",
+    "pad": "TP030.1",
+    "x_mm": 10.29,
+    "y_mm": 1.815
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_034",
+    "pad": "TP034.1",
+    "x_mm": 10.29,
+    "y_mm": 0.908
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_031",
+    "pad": "TP031.1",
+    "x_mm": -1.815,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_035",
+    "pad": "TP035.1",
+    "x_mm": -0.908,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_032",
+    "pad": "TP032.1",
+    "x_mm": -10.29,
+    "y_mm": 1.815
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_036",
+    "pad": "TP036.1",
+    "x_mm": -10.29,
+    "y_mm": 0.908
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_033",
+    "pad": "TP033.1",
+    "x_mm": -0.908,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "TP037.1",
+    "x_mm": 0.0,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_034",
+    "pad": "TP034.1",
+    "x_mm": 10.29,
+    "y_mm": 0.908
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_038",
+    "pad": "TP038.1",
+    "x_mm": 10.29,
+    "y_mm": 0.0
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_035",
+    "pad": "TP035.1",
+    "x_mm": -0.908,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_039",
+    "pad": "TP039.1",
+    "x_mm": 0.0,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_036",
+    "pad": "TP036.1",
+    "x_mm": -10.29,
+    "y_mm": 0.908
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_040",
+    "pad": "TP040.1",
+    "x_mm": -10.29,
+    "y_mm": 0.0
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "TP037.1",
+    "x_mm": 0.0,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_041",
+    "pad": "TP041.1",
+    "x_mm": 0.908,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_038",
+    "pad": "TP038.1",
+    "x_mm": 10.29,
+    "y_mm": 0.0
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_042",
+    "pad": "TP042.1",
+    "x_mm": 10.29,
+    "y_mm": -0.908
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_039",
+    "pad": "TP039.1",
+    "x_mm": 0.0,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_043",
+    "pad": "TP043.1",
+    "x_mm": 0.908,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_040",
+    "pad": "TP040.1",
+    "x_mm": -10.29,
+    "y_mm": 0.0
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_044",
+    "pad": "TP044.1",
+    "x_mm": -10.29,
+    "y_mm": -0.908
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_041",
+    "pad": "TP041.1",
+    "x_mm": 0.908,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_045",
+    "pad": "TP045.1",
+    "x_mm": 1.815,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_042",
+    "pad": "TP042.1",
+    "x_mm": 10.29,
+    "y_mm": -0.908
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_046",
+    "pad": "TP046.1",
+    "x_mm": 10.29,
+    "y_mm": -1.815
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_043",
+    "pad": "TP043.1",
+    "x_mm": 0.908,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_047",
+    "pad": "TP047.1",
+    "x_mm": 1.815,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_044",
+    "pad": "TP044.1",
+    "x_mm": -10.29,
+    "y_mm": -0.908
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_048",
+    "pad": "TP048.1",
+    "x_mm": -10.29,
+    "y_mm": -1.815
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_045",
+    "pad": "TP045.1",
+    "x_mm": 1.815,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_049",
+    "pad": "TP049.1",
+    "x_mm": 2.723,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_046",
+    "pad": "TP046.1",
+    "x_mm": 10.29,
+    "y_mm": -1.815
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_050",
+    "pad": "TP050.1",
+    "x_mm": 10.29,
+    "y_mm": -2.723
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_047",
+    "pad": "TP047.1",
+    "x_mm": 1.815,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_051",
+    "pad": "TP051.1",
+    "x_mm": 2.723,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_048",
+    "pad": "TP048.1",
+    "x_mm": -10.29,
+    "y_mm": -1.815
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_052",
+    "pad": "TP052.1",
+    "x_mm": -10.29,
+    "y_mm": -2.723
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_049",
+    "pad": "TP049.1",
+    "x_mm": 2.723,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_053",
+    "pad": "TP053.1",
+    "x_mm": 3.63,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_050",
+    "pad": "TP050.1",
+    "x_mm": 10.29,
+    "y_mm": -2.723
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_054",
+    "pad": "TP054.1",
+    "x_mm": 10.29,
+    "y_mm": -3.63
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_051",
+    "pad": "TP051.1",
+    "x_mm": 2.723,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_055",
+    "pad": "TP055.1",
+    "x_mm": 3.63,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_052",
+    "pad": "TP052.1",
+    "x_mm": -10.29,
+    "y_mm": -2.723
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_056",
+    "pad": "TP056.1",
+    "x_mm": -10.29,
+    "y_mm": -3.63
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_053",
+    "pad": "TP053.1",
+    "x_mm": 3.63,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_057",
+    "pad": "TP057.1",
+    "x_mm": 4.538,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_054",
+    "pad": "TP054.1",
+    "x_mm": 10.29,
+    "y_mm": -3.63
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_058",
+    "pad": "TP058.1",
+    "x_mm": 10.29,
+    "y_mm": -4.538
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_055",
+    "pad": "TP055.1",
+    "x_mm": 3.63,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_059",
+    "pad": "TP059.1",
+    "x_mm": 4.538,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_056",
+    "pad": "TP056.1",
+    "x_mm": -10.29,
+    "y_mm": -3.63
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_060",
+    "pad": "TP060.1",
+    "x_mm": -10.29,
+    "y_mm": -4.538
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_057",
+    "pad": "TP057.1",
+    "x_mm": 4.538,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_061",
+    "pad": "TP061.1",
+    "x_mm": 5.446,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_058",
+    "pad": "TP058.1",
+    "x_mm": 10.29,
+    "y_mm": -4.538
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_062",
+    "pad": "TP062.1",
+    "x_mm": 10.29,
+    "y_mm": -5.446
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_059",
+    "pad": "TP059.1",
+    "x_mm": 4.538,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_063",
+    "pad": "TP063.1",
+    "x_mm": 5.446,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_060",
+    "pad": "TP060.1",
+    "x_mm": -10.29,
+    "y_mm": -4.538
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_064",
+    "pad": "TP064.1",
+    "x_mm": -10.29,
+    "y_mm": -5.446
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_061",
+    "pad": "TP061.1",
+    "x_mm": 5.446,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_065",
+    "pad": "TP065.1",
+    "x_mm": 6.353,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_062",
+    "pad": "TP062.1",
+    "x_mm": 10.29,
+    "y_mm": -5.446
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_066",
+    "pad": "TP066.1",
+    "x_mm": 10.29,
+    "y_mm": -6.353
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_063",
+    "pad": "TP063.1",
+    "x_mm": 5.446,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_067",
+    "pad": "TP067.1",
+    "x_mm": 6.353,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_064",
+    "pad": "TP064.1",
+    "x_mm": -10.29,
+    "y_mm": -5.446
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_068",
+    "pad": "TP068.1",
+    "x_mm": -10.29,
+    "y_mm": -6.353
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_065",
+    "pad": "TP065.1",
+    "x_mm": 6.353,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_069",
+    "pad": "TP069.1",
+    "x_mm": 7.261,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_066",
+    "pad": "TP066.1",
+    "x_mm": 10.29,
+    "y_mm": -6.353
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_070",
+    "pad": "TP070.1",
+    "x_mm": 10.29,
+    "y_mm": -7.261
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_067",
+    "pad": "TP067.1",
+    "x_mm": 6.353,
+    "y_mm": 10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_071",
+    "pad": "TP071.1",
+    "x_mm": 7.261,
+    "y_mm": 10.29
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_068",
+    "pad": "TP068.1",
+    "x_mm": -10.29,
+    "y_mm": -6.353
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_072",
+    "pad": "TP072.1",
+    "x_mm": -10.29,
+    "y_mm": -7.261
+   },
+   "gap_mm": 0.058,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_069",
+    "pad": "TP069.1",
+    "x_mm": 7.261,
+    "y_mm": -10.29
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_073",
+    "pad": "TP073.1",
+    "x_mm": 8.168,
+    "y_mm": -10.29
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_070",
+    "pad": "TP070.1",
+    "x_mm": 10.29,
+    "y_mm": -7.261
+   },
+   "b": {
+    "kind": "pad",
+    "net": "bga_conn_074",
+    "pad": "TP074.1",
+    "x_mm": 10.29,
+    "y_mm": -8.168
+   },
+   "gap_mm": 0.057,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  }
+ ],
+ "s_star": 0.37659,
+ "vias_without_room": [
+  {
+   "net": "bga_conn_018",
+   "x_mm": 1.1695,
+   "y_mm": 1.7865
+  },
+  {
+   "net": "bga_conn_055",
+   "x_mm": -3.0084,
+   "y_mm": 4.3673
+  }
+ ]
+}

@@ -34,6 +34,7 @@
 #include "gpu/device.hpp"
 #include "gpu/field.hpp"
 #include "route/lazy_codes.hpp"
+#include "route/cut_test.hpp"
 #include "route/legalize.hpp"
 #include "route/ref_map.hpp"
 #include "route/obstacles.hpp"
@@ -6402,6 +6403,68 @@ struct Router::Impl {
         for (const auto& cr : from_board)
           if (!cr.tracks.empty()) by_pads[{cr.pad_a, cr.pad_b}] = &cr;
       }
+      // The cut test's proofs (doc 05 §67), used before the legaliser pushes neighbours about: a route whose via has no room in its cell under
+      // these rules (a track squeezed between the via and a pad), and enough of the routes through a cut between two pads that cannot hold
+      // its wires (pads do not move), cannot be legalised by moving vertices. They are dropped and routed again.
+      if (opt.cut_prune && opt.legalize && !by_pads.empty()) {
+        model::Board tb = b;
+        std::vector<std::pair<int, int>> via_key, track_key;
+        for (const auto& [key, cr] : by_pads) {
+          for (const auto& t : cr->tracks) {
+            tb.tracks.push_back(t);
+            track_key.push_back(key);
+          }
+          for (const auto& v : cr->vias) {
+            tb.vias.push_back(v);
+            via_key.push_back(key);
+          }
+        }
+        const std::size_t first_via = b.vias.size(), first_track = b.tracks.size();
+        const CutReport cr = cut_test(tb, rules);
+        int pruned_vias = 0, pruned_cuts = 0;
+        for (const int vi : cr.vias_without_room)
+          if (static_cast<std::size_t>(vi) >= first_via) pruned_vias += static_cast<int>(by_pads.erase(via_key[static_cast<std::size_t>(vi) - first_via]));
+        // Greedy cover: drop the route that crosses most of the pad-to-pad cuts still over-full; each wire it takes out frees its width and a
+        // clearance. Routes in a std::map: the first of equals goes (deterministic).
+        std::vector<Coord> excess;
+        std::vector<std::map<std::pair<int, int>, Coord>> frees;  // per cut: what dropping a route frees in it
+        for (const auto& o : cr.overfull) {
+          if (o.a.via || o.b.via || o.wires.empty()) continue;
+          std::map<std::pair<int, int>, Coord> f;
+          for (std::size_t w = 0; w < o.wires.size(); ++w) {
+            const int ti = o.wire_tracks[w];
+            if (ti < 0 || static_cast<std::size_t>(ti) < first_track) continue;  // an arc, or copper of the board
+            const auto& t = tb.tracks[static_cast<std::size_t>(ti)];
+            const auto& nc = rules.class_for(t.net >= 0 && static_cast<std::size_t>(t.net) < b.nets.size() ? b.nets[static_cast<std::size_t>(t.net)].name : std::string());
+            f[track_key[static_cast<std::size_t>(ti) - first_track]] += t.width + std::max(nc.clearance, rules.minimums.clearance);
+          }
+          if (f.empty()) continue;
+          excess.push_back(o.need - o.gap);
+          frees.push_back(std::move(f));
+        }
+        for (;;) {
+          std::map<std::pair<int, int>, int> crossing;
+          for (std::size_t c = 0; c < excess.size(); ++c)
+            if (excess[c] > 0)
+              for (const auto& [key, fr] : frees[c])
+                if (by_pads.count(key)) ++crossing[key];
+          if (crossing.empty()) break;
+          auto worst = crossing.begin();
+          for (auto it = crossing.begin(); it != crossing.end(); ++it)
+            if (it->second > worst->second) worst = it;
+          const auto key = worst->first;
+          for (std::size_t c = 0; c < excess.size(); ++c)
+            if (const auto it = frees[c].find(key); it != frees[c].end()) excess[c] -= it->second;
+          pruned_cuts += static_cast<int>(by_pads.erase(key));
+        }
+        if (std::getenv("TM_DEBUG_LEGALIZE")) {
+          int pad_wire = 0, via_wire = 0;
+          for (const auto& o : cr.overfull)
+            if (!o.wires.empty()) ++(o.a.via || o.b.via ? via_wire : pad_wire);
+          std::fprintf(stderr, "cut prune: %d cuts, over-full with wires: %d between pads, %d at vias; s* %.3f; %zu vias without room; routes dropped: %d for vias, %d for pad cuts\n",
+                       cr.cuts, pad_wire, via_wire, cr.s_star, cr.vias_without_room.size(), pruned_vias, pruned_cuts);
+        }
+      }
       std::vector<ConnRoute> legalized;  // routes saved under looser rules, moved until the clearances of these rules hold
       if (opt.legalize && !by_pads.empty()) {
         legalized.reserve(by_pads.size());
@@ -6429,10 +6492,20 @@ struct Router::Impl {
           const auto it = cs[ci].routed ? by_pads.end() : by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b});
           if (it == by_pads.end()) continue;
           bool legal = true;
+          const char* dbg = std::getenv("TM_DEBUG_LEGALIZE");
           for (const auto& t : it->second->tracks)
-            if (!(t.a == t.b) && obs->segment_state(t.a, t.b, t.layer, t.width, t.net, false, nullptr) == 2) legal = false;
+            if (!(t.a == t.b) && obs->segment_state(t.a, t.b, t.layer, t.width, t.net, false, nullptr) == 2) {
+              if (legal && dbg && dbg[0] == '3')
+                std::fprintf(stderr, "  not legal (fixed copper): track (%.3f, %.3f)-(%.3f, %.3f) layer %d net %d\n", nm_to_mm(t.a.x), nm_to_mm(t.a.y),
+                             nm_to_mm(t.b.x), nm_to_mm(t.b.y), t.layer, t.net);
+              legal = false;
+            }
           for (const auto& v : it->second->vias)
-            if (obs->via_state(v.pos, v.size, v.drill, v.net, 0, false, nullptr) == 2) legal = false;
+            if (obs->via_state(v.pos, v.size, v.drill, v.net, 0, false, nullptr) == 2) {
+              if (legal && dbg && dbg[0] == '3')
+                std::fprintf(stderr, "  not legal (fixed copper): via (%.3f, %.3f) net %d\n", nm_to_mm(v.pos.x), nm_to_mm(v.pos.y), v.net);
+              legal = false;
+            }
           if (legal) cand[ci] = 1;
           else drop[ci] = 1;
         }
@@ -7399,6 +7472,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       const Coord delta = c_board - c;
       for (auto& cl : rr.classes) cl.clearance = std::max<Coord>(cl.clearance - delta, 0);
       rr.minimums.clearance = std::max<Coord>(rr.minimums.clearance - delta, 0);
+      if (base.ramp_via_real) rr.via_clearance_extra = delta;
       ramp_rules.push_back(std::move(rr));
     }
     for (auto& v : vs) v.o.state_recheck = true;

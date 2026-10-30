@@ -140,6 +140,7 @@ struct RouterOptions {
   int ramp_rounds = 2;          // a ramp stage ends after this many rounds in a row without gain over the best round of the stage (or when complete)
   int ramp_cycle = 0;           // > 0: when the final stage (the board's rules) has not improved for ramp_stall rounds, go back this many stages and climb again ("breathing"); the best result under the board's rules is returned
   bool ramp_late = false;       // start at the board's rules and use the ramp (with ramp_cycle) only once those stall
+  bool ramp_via_real = false;   // relaxed stages lower the clearance of tracks only: anything against a via keeps the board's clearance (doc 05 §67)
   int ramp_fresh = 0;           // > 0: every n-th breathing cycle starts from nothing instead of the best state (a new topology; the best result under the board's rules is kept)
   int ramp_stall = 3;           // rounds without improvement at the final stage before breathing
   int island_slack = -1;        // portfolio rounds: >= 0 lets every variant continue the next round from its own final state when that routes at least (best - island_slack) connections, instead of all from the best (islands; the best state ever seen is returned)
@@ -147,6 +148,7 @@ struct RouterOptions {
   std::vector<model::Track> warm_tracks;  // copper of a routed board (--warm-pcb) to start from: a net with one connection takes all of its tracks and vias; only what is legal under this board's rules is kept
   std::vector<model::Via> warm_vias;
   double legalize_subdivide_mm = 0;  // > 0 with legalize: route tracks are cut into pieces of at most this length so they can bend (route/legalize.hpp)
+  bool cut_prune = false;       // with legalize: first drop the routes the cut test proves cannot be legalised under these rules: vias with no room, enough wires through over-full pad-to-pad cuts (doc 05 §67)
   bool legalize = false;        // warm start: first move the vertices of the taken-over routes until the board's clearances hold (route/legalize.hpp), then keep what is legal
   bool state_recheck = false;   // warm start: take over only the routes that are legal under this board's rules (continuation from looser rules)
   int breakout_portfolio = 1;   // 1: with more than one variant, a board that looks like a ball-grid breakout gets the breakout portfolio (D101) instead of the designed eight

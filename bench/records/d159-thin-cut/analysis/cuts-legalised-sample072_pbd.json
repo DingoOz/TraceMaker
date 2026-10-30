@@ -1,0 +1,140 @@
+{
+ "board": "/home/dingo/Programming/TraceMaker/bench/results/legal/sample072_pbd.kicad_pcb",
+ "crossings_cancelled": 190,
+ "cuts": 4728,
+ "overfull": [
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.86",
+    "x_mm": 0.8,
+    "y_mm": 0.0
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.1698,
+    "y_mm": 0.5823
+   },
+   "gap_mm": 0.294825,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_038"
+   ]
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "bga_component.99",
+    "x_mm": 0.8,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0042,
+    "y_mm": 1.1682
+   },
+   "gap_mm": 0.03975,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "bga_conn_037",
+    "pad": "bga_component.99",
+    "x_mm": 0.8,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.1698,
+    "y_mm": 0.5823
+   },
+   "gap_mm": 0.043508,
+   "layer": "F.Cu",
+   "need_mm": 0.1,
+   "wires": []
+  },
+  {
+   "a": {
+    "kind": "pad",
+    "net": "",
+    "pad": "bga_component.100",
+    "x_mm": 1.6,
+    "y_mm": 0.8
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0042,
+    "y_mm": 1.1682
+   },
+   "gap_mm": 0.306409,
+   "layer": "F.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_043"
+   ]
+  },
+  {
+   "a": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0042,
+    "y_mm": 1.1682
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_037",
+    "x_mm": 0.6226,
+    "y_mm": 0.6844
+   },
+   "gap_mm": 0.316183,
+   "layer": "B.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_013"
+   ]
+  },
+  {
+   "a": {
+    "kind": "via",
+    "net": "bga_conn_063",
+    "x_mm": 1.0042,
+    "y_mm": 1.1682
+   },
+   "b": {
+    "kind": "via",
+    "net": "bga_conn_043",
+    "x_mm": 1.1698,
+    "y_mm": 0.5823
+   },
+   "gap_mm": 0.308853,
+   "layer": "B.Cu",
+   "need_mm": 0.32,
+   "wires": [
+    "bga_conn_013"
+   ]
+  }
+ ],
+ "s_star": 0.3975,
+ "vias_without_room": [
+  {
+   "net": "bga_conn_063",
+   "x_mm": 1.0042,
+   "y_mm": 1.1682
+  },
+  {
+   "net": "bga_conn_043",
+   "x_mm": 1.1698,
+   "y_mm": 0.5823
+  }
+ ]
+}

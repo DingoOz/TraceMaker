@@ -1,0 +1,8 @@
+{
+ "board": "/home/dingo/Programming/TraceMaker/bench/results/legal/sample039_legal.kicad_pcb",
+ "crossings_cancelled": 156,
+ "cuts": 4238,
+ "overfull": [],
+ "s_star": 1.02951,
+ "vias_without_room": []
+}
