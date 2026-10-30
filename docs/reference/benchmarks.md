@@ -8,6 +8,20 @@ of boards with every connection made and no error added in KiCad's DRC (the judg
 README says what the runs were for and how to read them; numbers from different records are not always
 comparable (judge version, time limit, machine load).
 
+## complete-routing
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/complete-routing)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [cr-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/quick/cr-quick/summary.json) | quick | 30 | d927bfc | 53.3% | 93.9% | 100.0% | 66 | `--variants 1` |
+| [cr-quick2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/quick/cr-quick2/summary.json) | quick | 30 | d927bfc | 53.3% | 93.9% | 100.0% | 67 | `--variants 1` |
+| [late-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/late-bd/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 9.1% | 92.5% | 12.1% | 11104 | `--no-gpu --relax --relax-late --round-work 20000000 --rounds 5` |
+| [real-bd-relax](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/real-bd-relax/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 15.2% | 91.7% | 12.1% | 11572 | `--no-gpu --relax --round-work 20000000 --rounds 5 --no-rescue` |
+| [real-srj6-relax](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/real-srj6-relax/summary.json) | srj20-stuck6 | 6 | d927bfc | 0.0% | 90.8% |  | 1689 | `--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --no-rescue` |
+| [real2-srj6-relax](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/real2-srj6-relax/summary.json) | srj20-stuck6 | 6 | d927bfc | 0.0% | 90.8% |  | 1482 | `--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --no-rescue` |
+| [rescue-warm-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/rescue-warm-bd/summary.json) | pcbench-bd-fail | 33 | ad17f21 | 12.1% | 93.9% | 12.1% | 14227 | `--no-gpu --rescue-warm` |
+
 ## d150-padstacks
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d150-padstacks)

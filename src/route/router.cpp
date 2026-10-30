@@ -393,6 +393,7 @@ struct Router::Impl {
       const double pts = static_cast<double>(bb0.x1 - bb0.x0) / static_cast<double>(pitch) * static_cast<double>(bb0.y1 - bb0.y0) / static_cast<double>(pitch);
       if (opt.pitch_scale != 1.0 && pts >= 3e6) pitch = std::clamp<Coord>(static_cast<Coord>(static_cast<double>(pitch) * opt.pitch_scale) / 5'000 * 5'000, 25'000, 200'000);
       if (opt.pitch_scale_small != 1.0 && pts < 1e6) pitch = std::clamp<Coord>(static_cast<Coord>(static_cast<double>(pitch) * opt.pitch_scale_small) / 5'000 * 5'000, 25'000, 200'000);
+      if (opt.pitch_scale_all != 1.0) pitch = std::clamp<Coord>(static_cast<Coord>(static_cast<double>(pitch) * opt.pitch_scale_all) / 5'000 * 5'000, 10'000, 400'000);
     }
     res.pitch = pitch;
     const auto bb = obs->bounds();
@@ -6466,31 +6467,48 @@ struct Router::Impl {
         }
       }
       std::vector<ConnRoute> legalized;  // routes saved under looser rules, moved until the clearances of these rules hold
+      std::vector<ConnRoute> legalized_proj;  // the same by the projection alone, when the realizer ran (D162)
+      std::map<std::pair<int, int>, const ConnRoute*> by_pads_proj;
       if (opt.legalize && !by_pads.empty()) {
         legalized.reserve(by_pads.size());
         for (const auto& [key, cr] : by_pads) legalized.push_back(*cr);
+        std::vector<ConnRoute> saved = legalized;
         LegalizeOptions lo;
         lo.outline = obs->outline();
         lo.seed = opt.seed;
         lo.subdivide_mm = opt.legalize_subdivide_mm;
         const LegalizeResult lr = legalize_routes(b, rules, legalized, lo);
         if (std::getenv("TM_DEBUG_LEGALIZE"))
-          std::fprintf(stderr, "legalize: %d vertices, %d moved (at most %.3f mm), %d pairs too close before, %d after, %d sweeps\n", lr.nodes, lr.moved,
-                       lr.max_move_mm, lr.pairs_before, lr.pairs_after, lr.sweeps_used);
+          std::fprintf(stderr, "legalize: %d vertices, %d moved (at most %.3f mm), %d pairs too close before, %d after, %d sweeps%s\n", lr.nodes, lr.moved,
+                       lr.max_move_mm, lr.pairs_before, lr.pairs_after, lr.sweeps_used,
+                       lr.pairs_projected >= 0 ? (" (realizer: " + std::to_string(lr.pairs_projected) + " left by the sweeps, " +
+                                                  std::to_string(lr.realize_iters_used) + " rounds)").c_str() : "");
         std::size_t k = 0;
         for (auto& [key, cr] : by_pads) cr = &legalized[k++];
+        // The realizer judges itself by the pairs it models; zones, keep-outs and custom rules are left to the exact check below, and its
+        // larger moves can cost routes there (uC3Moy: 9 -> 5 pairs, one route fewer kept). So the projection's own result is kept too,
+        // and the subset below takes whichever keeps more routes (D162).
+        if (lr.pairs_projected > 0 && opt.state_recheck) {
+          legalized_proj = std::move(saved);
+          LegalizeOptions lp = lo;
+          lp.realize_iters = 0;
+          legalize_routes(b, rules, legalized_proj, lp);
+          by_pads_proj = by_pads;
+          std::size_t j = 0;
+          for (auto& [key, cr] : by_pads_proj) cr = &legalized_proj[j++];
+        }
       }
       int taken = 0, dropped = 0;
       // Saved under other (looser) rules: the routes that stay are a largest conflict-free subset of those legal against the fixed
       // copper (greedy vertex cover of the conflict graph: drop the route with most conflicts until none is left), so a tighter rule
       // costs as few routes as possible; each one still passes the strict exact check when it is put in below.
-      std::vector<std::uint8_t> drop(cs.size(), 0);
-      if (opt.state_recheck) {
+      auto choose = [&](const std::map<std::pair<int, int>, const ConnRoute*>& bp) {
+        std::vector<std::uint8_t> drop(cs.size(), 0);
         std::vector<std::vector<int>> items_of(cs.size());
         std::vector<std::uint8_t> cand(cs.size(), 0);
         for (std::size_t ci = 0; ci < cs.size(); ++ci) {
-          const auto it = cs[ci].routed ? by_pads.end() : by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b});
-          if (it == by_pads.end()) continue;
+          const auto it = cs[ci].routed ? bp.end() : bp.find({cs[ci].c.pad_a, cs[ci].c.pad_b});
+          if (it == bp.end()) continue;
           bool legal = true;
           const char* dbg = std::getenv("TM_DEBUG_LEGALIZE");
           for (const auto& t : it->second->tracks)
@@ -6511,7 +6529,7 @@ struct Router::Impl {
         }
         for (std::size_t ci = 0; ci < cs.size(); ++ci) {  // all candidates in at once, to see who conflicts with whom
           if (!cand[ci]) continue;
-          const auto& wr = *by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b})->second;
+          const auto& wr = *bp.find({cs[ci].c.pad_a, cs[ci].c.pad_b})->second;
           for (const auto& t : wr.tracks) {
             b.tracks.push_back(t);
             items_of[ci].push_back(obs->add_track(static_cast<int>(b.tracks.size() - 1), static_cast<int>(ci)));
@@ -6524,7 +6542,7 @@ struct Router::Impl {
         std::vector<std::set<int>> adj(cs.size());
         for (std::size_t ci = 0; ci < cs.size(); ++ci) {
           if (!cand[ci]) continue;
-          const auto& wr = *by_pads.find({cs[ci].c.pad_a, cs[ci].c.pad_b})->second;
+          const auto& wr = *bp.find({cs[ci].c.pad_a, cs[ci].c.pad_b})->second;
           std::vector<int> owners;
           for (const auto& t : wr.tracks)
             if (!(t.a == t.b)) obs->segment_state(t.a, t.b, t.layer, t.width, t.net, true, &owners);
@@ -6555,6 +6573,25 @@ struct Router::Impl {
         }
         for (std::size_t ci = 0; ci < cs.size(); ++ci)
           for (int item : items_of[ci]) obs->remove_item(item);
+        return drop;
+      };
+      std::vector<std::uint8_t> drop(cs.size(), 0);
+      if (opt.state_recheck) {
+        drop = choose(by_pads);
+        if (!by_pads_proj.empty()) {  // the realizer ran: keep its result only if the subset keeps more of its routes (D162)
+          auto kept = [&](const std::vector<std::uint8_t>& d, const std::map<std::pair<int, int>, const ConnRoute*>& bp) {
+            int n = 0;
+            for (std::size_t ci = 0; ci < cs.size(); ++ci) n += !cs[ci].routed && !d[ci] && bp.count({cs[ci].c.pad_a, cs[ci].c.pad_b});
+            return n;
+          };
+          std::vector<std::uint8_t> drop_p = choose(by_pads_proj);
+          const int kr = kept(drop, by_pads), kp = kept(drop_p, by_pads_proj);
+          if (std::getenv("TM_DEBUG_LEGALIZE")) std::fprintf(stderr, "legalize: the subset keeps %d routes after the realizer, %d after the projection alone\n", kr, kp);
+          if (kp >= kr) {  // a tie keeps the projection's (the result without the realizer)
+            by_pads = by_pads_proj;
+            drop = std::move(drop_p);
+          }
+        }
       }
       for (std::size_t ci = 0; ci < cs.size(); ++ci) {
         if (cs[ci].routed) continue;
@@ -7448,6 +7485,10 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   int resumed_rounds = 0, saved_routed = -1;
   bool resumed = false;
   if (!base.state_in.empty() && load_state(base.state_in, warm_routes, resumed_rounds, saved_routed)) resumed = true;
+  if (!resumed && base.start_routes && !base.start_routes->empty()) {
+    warm_routes = *base.start_routes;
+    resumed = true;
+  }
   if (base.round_work > 0)
     for (auto& v : vs) v.o.work_budget = base.round_work;
   else if (rounds > 1)

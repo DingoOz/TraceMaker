@@ -17,6 +17,7 @@
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "advice/advice.hpp"
+#include "analysis/escape_proof.hpp"
 #include "analysis/return_path.hpp"
 #include "app/route_job.hpp"
 #include "app/tui.hpp"
@@ -234,6 +235,44 @@ int cmd_layers(const std::string& in, int count, const std::string& out) {
     if (const fs::path src = fs::path(in).replace_extension(ext); fs::exists(src)) fs::copy_file(src, fs::path(out).replace_extension(ext), fs::copy_options::overwrite_existing);
   std::printf("%s: %d -> %d copper layers, written to %s\n", in.c_str(), had, count, out.c_str());
   for (const auto& n : notes) std::printf("  %s\n", n.c_str());
+  return 0;
+}
+
+// Pins that cannot get out past the board's fixed copper (doc 20 §2.4): every pad of a net with more than one pad, or the named
+// ones, flood-filled for a way out for a track of its net class.
+int cmd_walled(const std::string& path, const std::vector<std::string>& pins, bool soft_zones, bool via_in_pad, const std::string& json_out) {
+  const auto lb = tmk::io::read_board_file(path);
+  const auto rules = tmk::io::read_design_rules(path);
+  const auto& b = lb.board;
+  tmk::analysis::EscapeOptions eo;
+  eo.soft = soft_zones;
+  eo.via_in_pad = via_in_pad;
+  const tmk::analysis::EscapeAnalyser ea(b, rules, eo);
+  std::vector<int> net_pads(b.nets.size(), 0);
+  for (const auto& p : b.pads)
+    if (p.net > 0 && static_cast<std::size_t>(p.net) < net_pads.size()) ++net_pads[static_cast<std::size_t>(p.net)];
+  nlohmann::json out{{"board", path}, {"walled_in", nlohmann::json::array()}, {"soft_only", nlohmann::json::array()}, {"class_only", nlohmann::json::array()}};
+  int analysed = 0;
+  for (std::size_t i = 0; i < b.pads.size(); ++i) {
+    const auto& p = b.pads[i];
+    const std::string label = tmk::analysis::pad_label(b, static_cast<int>(i));
+    if (!pins.empty() ? std::find(pins.begin(), pins.end(), label) == pins.end() : (p.net <= 0 || net_pads[static_cast<std::size_t>(p.net)] < 2)) continue;
+    const auto e = ea.run(static_cast<int>(i));
+    if (!e.analysed) continue;
+    ++analysed;
+    const bool class_only = !e.enclosed && (e.neck_width > 0 || e.small_via_fits);
+    if (!e.enclosed && !e.soft_only && !class_only) {
+      if (!pins.empty()) std::printf("  %s\n", e.text.c_str());
+      continue;
+    }
+    std::printf("  %s\n", e.text.c_str());
+    out[e.enclosed ? "walled_in" : e.soft_only ? "soft_only" : "class_only"].push_back(
+        {{"pin", label}, {"walls", e.walls}, {"neck_mm", tmk::nm_to_mm(e.neck_width)}, {"via_in_pad_fits", e.via_in_pad_fits}, {"text", e.text}});
+  }
+  out["pins"] = analysed;
+  std::printf("%s: %d pins, %zu walled in by fixed copper, %zu only for their class's track or via, %zu only by zone fills or copper graphics\n", path.c_str(), analysed,
+              out["walled_in"].size(), out["class_only"].size(), out["soft_only"].size());
+  if (!json_out.empty()) std::ofstream(json_out) << out.dump(1) << "\n";
   return 0;
 }
 
@@ -956,6 +995,9 @@ int main(int argc, char** argv) {
                     "Deterministic work budget in search expansions per router (e.g. 50000000); with the default portfolio every "
                     "variant gets the whole budget, so a run does up to --variants times this work");
   route->add_option("--pitch-um", r_pitch_um, "Lattice pitch in micrometres (default: automatic)");
+  route->add_option("--pitch-scale", ropt.pitch_scale_all, "Experiment: multiply the automatic lattice pitch by this on every board and variant")
+      ->check(CLI::Range(0.1, 4.0))
+      ->group("");
   std::string r_guide;
   route->add_option("--guide", r_guide, "Preferred paths per connection (JSON, Simple Route JSON coordinates in mm; doc 16 F1)")->group("");
   route->add_option("--guide-pen", ropt.guide_pen, "Guide: pitches per lattice step off the guide")->group("");
@@ -1071,7 +1113,7 @@ int main(int argc, char** argv) {
   route->add_flag("--fanout-hold", ropt.fanout_hold, "Escape plan: through the strict first pass, each open pin's straight corridor is held by a placeholder track of its net, so other nets route round it; released once the pin is routed and before negotiation")->group("");
   route->add_flag("--escape-stubs", ropt.escape_stubs, "Escape plan: a pin offers the end of its straight corridor (see --escape-length) as a start point, one exact off-lattice segment at a discount: parallel escapes at the pad pitch")->group("");
   route->add_flag("--soft-mask-graphics", ropt.soft_mask_graphics, "Solder-mask openings drawn as footprint graphics (solder jumpers, a MEMS microphone's pad group) do not keep tracks and vias out; KiCad flags what then lies in them (judgement)")->group("");
-  route->add_flag("--soft-copper-graphics", ropt.soft_copper_graphics, "Board copper graphics (polygons on a copper layer, e.g. an EasyEDA import's pours) take the net of the one net whose pads, tracks or vias they touch: that net may touch them, no other (default: net-less copper nothing may touch)")->group("");
+  route->add_flag("--soft-copper-graphics", ropt.soft_copper_graphics, "Board copper graphics (polygons on a copper layer, e.g. an EasyEDA import's pours) take the net of the one net whose pads, tracks or vias they touch: that net may touch them, no other (default: net-less copper nothing may touch)");
   route->add_flag("--via-drops", ropt.via_drops, "Pins of dense packages may drop to a via a little way out, off the lattice, then go on on the other layer (short pin-to-via drops)")->group("");
   route->add_flag("--bundle-escape", ropt.bundle_escape, "Bundle (river) escapes: the connections that leave one side of a dense package for one side of another part are placed first as a block of parallel straight lanes in pin order, peeling off at their pads; the router may not rip the lanes (doc 05 section 50)")->group("");
   route->add_flag("--package-tunnels", ropt.package_tunnels, "A connection between two perimeter pins of one dense package on one net gets a stub and a via at each pin and its run on the other layer between them (the core rail's tunnel under the package), placed before the search (doc 05 section 52)")->group("");
@@ -1108,8 +1150,15 @@ int main(int argc, char** argv) {
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
   tmk::app::RouteJob r_job;
   route->add_flag("!--no-rescue", r_job.rescue,
-                  "Do not route again with --relax when connections are left open (by default the rescue runs on a budget of its own, --time "
-                  "and --work again, and its result is kept only if it is better; doc 05 §68)");
+                  "Do not route again with --relax when connections are left open (by default the rescue runs, each pass on a budget of its own, "
+                  "--time and --work again, and a result is kept only if it is better; doc 05 §68, §71)");
+  route->add_flag("!--no-why-open", r_job.why_open,
+                  "Do not check the pins of open connections for a way out (by default each is flood-filled against the board's fixed copper, and "
+                  "a pin walled in on every layer with no room for a via is reported as unconnectable as placed; doc 20 §2.4)");
+  route->add_option("--rescue-mode", r_job.rescue_mode,
+                    "How the rescue routes again with relax: warm (from the plain run's routes), fresh (from nothing) or both (warm, then fresh "
+                    "while connections are open; each pass on its own budget, kept only if better; default both; doc 05 §71)")
+      ->check(CLI::IsMember({"warm", "fresh", "both"}));
   route->add_option("--no-neck-nets", ropt.no_neck_nets, "Comma-separated nets that are never narrowed below their class width nor given the small neck-down via (power nets of a rule-relaxed routing)")->delimiter(',');
   route->add_flag("--first-nets-ordered", ropt.first_nets_ordered, "Route the --first-nets in the order of the list (e.g. the pins of a package round its perimeter), not in the router's own order");
   route->add_option("--first-nets", ropt.first_nets, "Comma-separated nets routed first, also after restarts; other nets do not rip them (e.g. crystal lines)")->delimiter(',');
@@ -1366,6 +1415,15 @@ int main(int argc, char** argv) {
   cuts_cmd->add_option("--rules-from", cu_rules, "Read the design rules beside this board instead")->check(CLI::ExistingFile);
   cuts_cmd->add_option("--clearance", cu_clearance, "Judge against this clearance (mm) instead of the board's")->check(CLI::NonNegativeNumber);
   cuts_cmd->add_option("--max-gap", cu_max_gap, "Check cuts up to this gap (mm, default 2)")->check(CLI::PositiveNumber);
+  auto* walled_cmd = app.add_subcommand("walled", "Pins no track can leave past the board's fixed copper on any layer, with no room for a via (doc 20 §2.4)");
+  std::string wa_board, wa_json;
+  std::vector<std::string> wa_pins;
+  bool wa_soft = false, wa_vip = false;
+  walled_cmd->add_option("board", wa_board, "A board")->required()->check(CLI::ExistingFile);
+  walled_cmd->add_option("--pin", wa_pins, "Only these pins (REF.NUM; repeatable); by default every pad of a net with more than one pad");
+  walled_cmd->add_option("--json", wa_json, "Write the walled-in pins as JSON");
+  walled_cmd->add_flag("--soft-zones", wa_soft, "Zone fills of other nets, and net-less copper graphics on the pin, are no walls (route --soft-zones, --soft-copper-graphics)");
+  walled_cmd->add_flag("--via-in-pad", wa_vip, "A via may sit in the pin's own pad (route --via-in-pad)");
   auto* layers_cmd = app.add_subcommand("layers", "Write a copy of a board with another copper layer count (inner layers added, or empty ones removed; doc 05 §53)");
   std::string ly_in, ly_out;
   int ly_count = 0;
@@ -1502,6 +1560,7 @@ int main(int argc, char** argv) {
     if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host, fc_token, fc_insecure);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*layers_cmd) return cmd_layers(ly_in, ly_count, ly_out);
+    if (*walled_cmd) return cmd_walled(wa_board, wa_pins, wa_soft, wa_vip, wa_json);
     if (*cuts_cmd) return cmd_cuts(cu_board, cu_rules, cu_clearance, cu_max_gap, cu_json);
     if (*causes_cmd) {
       const auto j = tmk::app::classify_open_connections(ca_board, ca_opt, true);
