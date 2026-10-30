@@ -2905,3 +2905,58 @@ What is left on mini_mass is fan-out:
 
 Both point at item 8, planning a package's escapes and via sites together, rather than more local repair. Moving tracks would need
 the search to accept points as endpoints, and pin rescue (§63) showed that the re-routed neighbour is then the one boxed in.
+
+## 65. Fan-out heads: the designer's escapes laid before routing (2026-10-30, D157)
+
+M22 item 8, developed on `mini_mass_prog_bench_prog_rig` like §64. Its open pins are on U2, a 0.5 mm QFN-44. Their neighbours'
+escapes and a ring of vias 1-2 mm out box them in.
+
+**The oracle.** The designer's copper near U2 was put into the unrouted board as fixed copper (variant 6, 20 M work):
+
+| Copper put in | Routed |
+|---|--:|
+| none (base) | 986 / 995 |
+| all within 5 mm | 969 / 973 (it completes 22 local connections itself) |
+| only the parts touching one pad (escape heads) | **990 / 995** |
+| only the parts joining two or more pads | 967 / 973 |
+| straight 5 mm stubs from every pin | 978 / 989 |
+| the same, no GND/+5V pins | 983 / 993 |
+
+The escape heads alone are worth four connections, and straight stubs do worse than nothing. The designer keeps each side straight,
+or bends its pins in staggered 45-degree bundles toward their destinations. A side stays straight where its bundles would run into
+the parts beside the package: on U2 the top pins' destinations are more sideways than the left pins', yet the top runs straight.
+Angle rules alone failed: always bending gave 983-984, bending past 60 degrees 986-987.
+
+**The heads** (`--fanout-heads MM`, route/fanout_heads.hpp). Before the obstacles are built, each perimeter pin of a package with
+pins on all four sides (24 or more) gets a head on its pad's layer, MM past the package.
+
+- Along a side the pins split into a block that turns toward the low end, a straight block and a block that turns toward the high
+  end. This is ordered escape with one bend (Kong, Yan and Wong, ASP-DAC 2010). A pin turns when its destination is more than 30
+  degrees off the side's normal.
+- Turning pins bend from 0.3 mm past the pad, each 0.1 mm further out than its neighbour toward the corner, so parallel diagonals
+  keep track plus clearance apart.
+- Each side is laid both ways and keeps the way with more head length.
+- Each leg stops where the exact check refuses it, and a cut head ends 0.5 mm short of the obstacle.
+- No head for:
+  - nets with a zone;
+  - pins whose nearest off-package pad of the net is within MM (local connections);
+  - copper that would come near other copper of the net (so a head joins nothing).
+
+The heads are fixed copper of their net while the board is routed: other nets go round them, and the pin's own route runs over its
+head. They are not routed copper, so they are not written out. Each route runs pad to pad, so leaving them out disconnects nothing.
+
+**Results on mini_mass.** `--fanout-heads 5` routes 989 of 995 and `--fanout-heads 3` 988; the base routes 986. Adding
+`--via-shove` keeps 989. The KiCad DRC of the output adds nothing. Still open:
+
+- RESET (U2.13);
+- USB_D- (U2.3);
+- +5V C1-R6;
+- the three INT nets (about 450 mm), which fail on the search budget, not on escape.
+
+**On the ten failing boards** (8 variants, 20 M work) `--fanout-heads 5` routes 7,175, the same as the base. The base at 22 M routes
+7,193 and `--via-shove --escape-all` 7,197. Of the six boards that get heads, two gain 3, one is unchanged, and three lose 1-3.
+Adding `--via-shove --escape-all` gives 7,190.
+
+**Status.** Off by default; with it off the output is byte-identical. What a side of a package should do is decided here from free
+head length alone. That fits U2 on mini_mass and not the packages of CoreOne, EtherCAT and poncho. A better choice needs a measure
+of where each head's route goes next.

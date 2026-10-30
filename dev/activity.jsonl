@@ -203,3 +203,5 @@
 {"ts": "2026-10-29T11:58:37+00:00", "kind": "decision", "text": "M22 planned (D155): finish the last connections; research in bench/records/m22-research"}
 {"ts": "2026-10-29T13:14:30+00:00", "kind": "test", "text": "M22 end-game retry and pin rescue measured on 10 failing boards at 20 M: +10 routed, against +18 for the same budget of plain routing; options stay off (doc 05 section 63)"}
 {"ts": "2026-10-30T01:50:44+00:00", "kind": "note", "text": "M22 on one board (D156): via shove routes mini_mass 987 (was 986 in every arm); ten failing boards 7,197 with --via-shove --escape-all against 7,175 base and 7,193 at 22 M; window escalation and the pin via penalty lost; all off by default, quick tier byte-identical"}
+{"ts": "2026-10-30T02:35:18+00:00", "kind": "note", "text": "M22 item 8: fan-out heads (--fanout-heads, D157) route mini_mass 989/995 (base 986, designer heads 990); ten-board run started"}
+{"ts": "2026-10-30T02:50:17+00:00", "kind": "test", "text": "M22 fan-out heads on ten failing boards: 7,175 (base 7,175, base 22 M 7,193, shove+escape-all 7,197); quick tier off byte-identical"}

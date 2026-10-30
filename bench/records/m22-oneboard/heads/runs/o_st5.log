@@ -1,0 +1,21 @@
+portfolio: 8 variants on 1 thread
+searches: 978 ok (15572235 expansions), 39 failed (6435009 expansions); fields 699 GPU + 0 CPU (48.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1086 connections improved
+restarts 0; legality checks 25637667; rips 0, passes 1, boxed-in 20, nogood skips 10, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 6 proved unreachable, 3402820 cells visited
+late reachability proofs: 19, 0 proved no path, 190032 cells visited
+failed-search expansions: strict confined 0, strict wide 6433145, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 978 in 92.8 s  <- best
+routed 978/989 connections, 2858 tracks, 258 vias, pitch 0.065 mm, 25598232 expansions, 93.14 s (best variant 92.80 s)
+  unrouted: +5V: U2.44 -> U2.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.2 -> C3.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.24 -> U2.34  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_VBUS: U4.5 -> U2.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /SCK: CON1.3 -> U2.9  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  (search budget)
+work (all variants): 22005380 expansions, 3592852 flood cells, 25631781 cell checks, 19515679 fixed-copper checks, 1008551928 field cells in 699 fields, 978 commits, 0 rips

@@ -942,8 +942,8 @@
           "done": true
         },
         {
-          "text": "8 Via-site and layer planner (research, only if fan-out stays the largest class)",
-          "done": false
+          "text": "8 Via-site and layer planner: fan-out heads (built, off: --fanout-heads 5, mini_mass 986 -> 989, designer's heads 990; ten boards 7,175 = base; D157)",
+          "done": true
         }
       ]
     }

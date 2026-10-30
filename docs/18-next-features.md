@@ -360,3 +360,7 @@ doc 05 §64):
 With `--via-shove --escape-all` the ten boards route 7,197, against 7,175 for the base and 7,193 for the base at 22 M. Open
 connections fall 3.5 %, short of the 15 % gate. The whole-board window (item 3) and the via penalty (item 6) lost, and stay off.
 Item 8 remains: on mini_mass the open pins are boxed in by their neighbours' tracks.
+
+Item 8 was then built as fan-out heads (D157, doc 05 §65): before routing, the pins of a dense four-sided package get the first
+millimetres of their routes as the designer lays them, straight or in staggered 45-degree bundles. mini_mass goes from 986 to 989
+(the designer's own heads give 990). On the ten boards it nets zero (7,175, as the base) and stays off.

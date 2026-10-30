@@ -191,6 +191,8 @@ struct RouterOptions {
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   // Corridors of the review of the EtherCAT shield (reports/realworld/ethercat_qfn_analysis.md, doc 05 §47). All off by default: no change without them.
   double escape_length_mm = 0;  // > 0: perimeter corridors run this far past the package edge (2 mm by default), as far as no fixed copper is in the way (bundles of parallel straight escapes)
+  double fanout_heads_mm = 0;   // D157 (M22 item 8): > 0: before routing, each perimeter pin of a dense four-sided package gets the first part of its route as the designer lays it (straight, or in staggered 45-degree bundles toward its destination, side by side), this far past the package (route/fanout_heads.hpp). They are fixed copper of the pin's net while the board is routed and are not written out
+  int fanout_heads_min_pins = 24;  // perimeter pins a package needs for heads
   bool fanout_hold = false;     // D156: with the escape plan, each open pin's straight corridor (as --escape-stubs offers it) is held by a placeholder track of its net through the strict first pass, so no other net's track or via takes it before the pin is routed; dropped when the pin is routed and before negotiation
   bool escape_stubs = false;    // with the escape plan: a pin offers the end of its (long, straight) corridor as a start point, reached by one exact off-lattice segment at a discount: parallel escapes at the pad pitch, which the lattice cannot draw
   bool soft_mask_graphics = false;  // net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them
@@ -371,6 +373,7 @@ struct RouteResult {
   int via_shoves = 0;              // --via-shove: stuck connections routed after moving another net's via
   int via_shove_trials = 0;        // routing attempts after a via move
   int escape_reclaimed = 0;        // --escape-persist: corridors given back to the pins of a ripped-up connection
+  int fanout_heads = 0;            // --fanout-heads: pins given a head before routing
   int fanout_holds = 0;            // --fanout-hold: placeholder tracks laid along open pins' corridors before the strict pass (all strict passes)
   int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   // With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route, pins with every

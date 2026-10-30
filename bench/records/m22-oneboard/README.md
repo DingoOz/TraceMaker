@@ -76,3 +76,63 @@ Attribution (`attribution/`, one option at a time, 20 M work, 8 variants):
 ## Quick tier with the options off
 
 `quick-off/`: 30 boards, 1 M work, every output board byte-identical to `lm-quick-off` (the D155 run, itself identical to main `db5950f`).
+
+## Item 8: fan-out heads (D157, doc 05 §65)
+
+`heads/`: the scripts (`scripts/`), each run's log and `route.json` (`runs/`), and plots of U2. All on mini_mass, variant 6, 20 M work.
+
+**Oracles** (copper put into `unrouted.kicad_pcb` as fixed copper):
+
+- `inject_fanout.py` copies the designer's copper (`processed.kicad_pcb`) within a box, cut at its edge.
+- `split_oracle.py` splits it into the clusters that touch one pad (heads) and those that join pads (local connections).
+- `synth_stubs.py` lays straight stubs.
+- `gen_heads.py` is the Python prototype of the planner.
+
+| Run | Copper put in | Routed |
+|---|---|--:|
+| `out2` / `out3` / `out5` | designer's, within 2 / 3 / 5 mm of U2's pads | 973/981, 976/981, 969/973 |
+| `o_h5` | designer's heads only (clusters touching one pad), 5 mm | **990/995** |
+| `o_l5` | designer's local connections only, 5 mm | 967/973 |
+| `o_st3` / `o_st5` / `o_st5g` | straight stubs from every pin, 3 / 5 mm / 5 mm without GND and +5V | 981/991, 978/989, 983/993 |
+| `o_g3` / `o_g5` | prototype, always bend toward the destination (past 30 degrees), 3 / 5 mm | 984/995, 983/994 |
+| `o_gs5` | prototype, all straight, 5 mm | 986/994 |
+| `o_gt5` / `o_gt3` | prototype, bend past 60 degrees, 5 / 3 mm | 987/994, 986/995 |
+| `o_gp3` / `o_gp5` | prototype, per side the longer of bent and straight, 3 / 5 mm | 988/995, 988/994 |
+
+A count below 995 means the copper put in already completes some connections. With the prototype's heads removed from `o_gp5`'s
+output, KiCad DRC counts 7 unconnected, its 6 open plus the one a head completed. The router's version keeps heads away from other
+copper of their net, so they complete nothing.
+
+**The router's planner** (`--fanout-heads`):
+
+| Run | Options | Routed | KiCad DRC added |
+|---|---|--:|---|
+| `fh3` | `--fanout-heads 3` | 988/995 | none |
+| `fh5` | `--fanout-heads 5` | **989/995** | none |
+| `fh5s` | `--fanout-heads 5 --via-shove` | 989/995 | none (23 shove trials, no move) |
+
+The base (`v6base`) routes 986.
+
+**Ten failing boards** (`m22-heads.sh`, 8 variants, 20 M work; `tenboard/m22heads`, `tenboard/m22headsse`). The heads column is the
+number of pins given a head.
+
+| Board | heads | base | base 22 M | shove + escape-all | `--fanout-heads 5` | heads + shove + escape-all |
+|---|--:|--:|--:|--:|--:|--:|
+| Aleste-520EX_aleste | 0 | 1351 | 1362 | 1351 | 1351 | 1351 |
+| CoreOne-xCORE200-Original | 85 | 787 | 787 | 788 | 784 | 780 |
+| EtherCAT_shield_v1 | 35 | 245 | 245 | 248 | 244 | 244 |
+| LeeChee_1800 | 54 | 1131 | 1135 | 1131 | 1134 | 1135 |
+| MonApollo_analog-board | 0 | 1126 | 1129 | 1134 | 1126 | 1134 |
+| TCKB_Kicad_TCKB | 0 | 575 | 575 | 582 | 575 | 582 |
+| kitspace_d20_tri_r0.3 | 0 | 410 | 410 | 410 | 410 | 410 |
+| kitspace_teensy-fx | 15 | 185 | 185 | 188 | 185 | 187 |
+| mini_mass_prog_bench_prog_rig | 30 | 986 | 986 | 987 | 989 | 989 |
+| poncho_fpga_fpga-dongle | 8 | 379 | 379 | 378 | 377 | 378 |
+| **total** | | **7175** | **7193** | **7197** | **7175** | **7190** |
+
+- No board gained KiCad DRC errors.
+- Boards with no qualifying package route exactly as the base.
+- On the six boards that get heads, the result is +3 (mini_mass, LeeChee), 0 (teensy) and -1 to -3 (EtherCAT, poncho, CoreOne).
+  That sums to nothing.
+
+**Quick tier, options off** (`quick-heads-off/`): every one of the 30 output boards is byte-identical to `lm-quick-off`.

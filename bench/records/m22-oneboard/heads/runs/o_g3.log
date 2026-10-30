@@ -1,0 +1,21 @@
+portfolio: 8 variants on 1 thread
+searches: 984 ok (16104835 expansions), 25 failed (6244238 expansions); fields 697 GPU + 0 CPU (30.57 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1094 connections improved
+restarts 0; legality checks 25637710; rips 0, passes 1, boxed-in 16, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 4, 2 proved unreachable, 3176873 cells visited
+late reachability proofs: 22, 0 proved no path, 220042 cells visited
+failed-search expansions: strict confined 0, strict wide 6243568, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 984 in 75.2 s  <- best
+routed 984/995 connections, 2885 tracks, 266 vias, pitch 0.065 mm, 25745318 expansions, 75.51 s (best variant 75.24 s)
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.24 -> U2.34  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_D+: R5.2 -> U2.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/PSU_FAULT: U2.37 -> U30.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/PSU_EN: U2.38 -> U30.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED2: D79.1 -> U2.40  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (search budget)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 22348403 expansions, 3396915 flood cells, 25634958 cell checks, 19534927 fixed-copper checks, 735014276 field cells in 697 fields, 984 commits, 0 rips

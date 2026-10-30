@@ -3,6 +3,7 @@
 
 #include "drc/refill.hpp"
 #include "route/bundle.hpp"
+#include "route/fanout_heads.hpp"
 #include "route/bus.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
@@ -305,6 +306,7 @@ struct Router::Impl {
 
   void setup() {
     b.infer_graphic_nets = opt.soft_copper_graphics;
+    if (opt.fanout_heads_mm > 0) place_fanout_heads();
     obs = std::make_unique<Obstacles>(b, rules);
     obs->set_soft_zones(opt.soft_zones);
     obs->set_soft_mask_graphics(opt.soft_mask_graphics);
@@ -6110,6 +6112,37 @@ struct Router::Impl {
         if (q >= 0 && b.pads[static_cast<std::size_t>(q)].footprint == fp) return true;
     }
     return false;
+  }
+  // --fanout-heads (D157): the heads go into the router's copy of the board before its obstacles are built, so they are fixed copper
+  // of their net for the whole run: other nets route round them, the pin's own route runs over them. They are not routed copper, so
+  // they are in no result and are not written; each route runs pad to pad and a head touches nothing but its own pad, so leaving
+  // them out disconnects nothing. Planned against a copy of the obstacles at hard zones (the conservative fill).
+  void place_fanout_heads() {
+    Obstacles probe(b, rules);
+    FanoutHeadHooks h;
+    h.width = [&](NetId n) { return class_width(n); };
+    h.clearance = [&](NetId n) { return std::max(netclass(n).clearance, rules.minimums.clearance); };
+    h.free = [&](Point a, Point c, int l, Coord w, NetId n) { return layer_ok(n, l) && probe.segment_state(a, c, l, w, n, false, nullptr) == 0; };
+    h.add = [&](Point a, Point c, int l, Coord w, NetId n) {
+      b.tracks.push_back(model::Track{a, c, w, l, n, false, sexpr::kNoNode});
+      return probe.add_track(static_cast<int>(b.tracks.size() - 1), 0);
+    };
+    h.remove = [&](int item) {
+      probe.remove_item(item);
+      b.tracks.pop_back();
+    };
+    FanoutHeadOptions fo;
+    fo.reach = mm_to_nm(opt.fanout_heads_mm);
+    fo.min_pins = opt.fanout_heads_min_pins;
+    const auto heads = plan_fanout_heads(b, h, fo);
+    res.fanout_heads = static_cast<int>(heads.size());
+    if (std::getenv("TM_DEBUG_HEADS"))
+      for (const auto& fh : heads) {
+        const auto& p = b.pads[static_cast<std::size_t>(fh.pad)];
+        std::fprintf(stderr, "head %s.%s %s:", b.footprints[static_cast<std::size_t>(p.footprint)].reference.c_str(), p.number.c_str(), b.nets[static_cast<std::size_t>(fh.net)].name.c_str());
+        for (const Point q : fh.pts) std::fprintf(stderr, " (%.3f,%.3f)", nm_to_mm(q.x), nm_to_mm(q.y));
+        std::fprintf(stderr, "\n");
+      }
   }
   // --fanout-hold (D156): before the strict pass, a placeholder track of the pin's net along each open pin's straight corridor, checked
   // exactly against all copper. It belongs to no connection (it is never in a result or a snapshot) and goes when the pin is routed or

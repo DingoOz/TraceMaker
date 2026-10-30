@@ -1477,7 +1477,7 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
   // M22 repair steps (D156), only when they ran: a run without them writes the summary it always did.
   for (const auto& [k, v] : {std::pair<const char*, long>{"via_shoves", res.via_shoves}, {"via_shove_trials", res.via_shove_trials}, {"window_escalations", res.window_escalations},
-                             {"via_retried", res.via_retried}, {"fanout_holds", res.fanout_holds}})
+                             {"via_retried", res.via_retried}, {"fanout_holds", res.fanout_holds}, {"fanout_heads", res.fanout_heads}})
     if (v > 0) out.summary[k] = v;
   if (!refill_summary.is_null()) {
     out.summary["refill"] = refill_summary;
