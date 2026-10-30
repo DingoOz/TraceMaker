@@ -207,3 +207,5 @@
 {"ts": "2026-10-30T02:50:17+00:00", "kind": "test", "text": "M22 fan-out heads on ten failing boards: 7,175 (base 7,175, base 22 M 7,193, shove+escape-all 7,197); quick tier off byte-identical"}
 {"ts": "2026-10-30T05:22:38+00:00", "kind": "test", "text": "M22 item 8 on CoreOne: designer's heads oracle 785/806 vs base 787/807, our U801 heads 786; heads rule work stopped"}
 {"ts": "2026-10-30T05:59:56+00:00", "kind": "build", "text": "Viewer: burndown chart of open connections, server keeps the history for late viewers (stats_history)"}
+{"ts": "2026-10-30T06:39:34+00:00", "kind": "decision", "text": "D158: fields under 500k cells on the CPU; 8 variants Aleste -11.7%, mini_mass -8.6%, output byte-identical (quick tier 30/30)"}
+{"ts": "2026-10-30T06:53:23+00:00", "kind": "test", "text": "mini_mass negotiation: --neg-strict-cap 200000 --soft-attempts 1 routes 988 at 80 M (986 at 20/40 M); parking capped connections last changed nothing, removed"}

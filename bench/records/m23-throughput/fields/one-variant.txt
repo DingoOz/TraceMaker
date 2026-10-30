@@ -1,0 +1,11 @@
+Aleste-520EX_aleste 0 fields 482 GPU + 0 CPU (5.83 s | 27.35 s (best variant | 32499b34
+Aleste-520EX_aleste 100000 fields 247 GPU + 235 CPU (4.98 s | 26.45 s (best variant | 32499b34
+Aleste-520EX_aleste 250000 fields 34 GPU + 448 CPU (4.41 s | 25.51 s (best variant | 32499b34
+Aleste-520EX_aleste 500000 fields 0 GPU + 482 CPU (4.38 s | 25.51 s (best variant | 32499b34
+Aleste-520EX_aleste 1000000 fields 0 GPU + 482 CPU (4.42 s | 25.77 s (best variant | 32499b34
+mini_mass_prog_bench_prog_rig 0 fields 709 GPU + 0 CPU (25.01 s | 65.61 s (best variant | 9d300132
+mini_mass_prog_bench_prog_rig 100000 fields 523 GPU + 186 CPU (24.43 s | 65.00 s (best variant | 9d300132
+mini_mass_prog_bench_prog_rig 250000 fields 324 GPU + 385 CPU (23.57 s | 64.40 s (best variant | 9d300132
+mini_mass_prog_bench_prog_rig 500000 fields 166 GPU + 543 CPU (22.97 s | 63.68 s (best variant | 9d300132
+mini_mass_prog_bench_prog_rig 1000000 fields 98 GPU + 611 CPU (23.02 s | 62.17 s (best variant | 9d300132
+all-done

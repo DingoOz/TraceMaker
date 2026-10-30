@@ -215,6 +215,14 @@ comparable (judge version, time limit, machine load).
 | [lm-m22shove](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shove/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 86.8% | 0.0% | 7139 | `--via-shove` |
 | [lm-m22shovee](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shovee/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 87.2% | 0.0% | 6918 | `--via-shove --escape-all` |
 
+## m23-throughput
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m23-throughput)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [m23-quick-split](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-throughput/quick-split/summary.json) | quick | 30 | 34c30cb | 86.7% | 99.3% | 100.0% | 114 |  |
+
 ## macos15
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/macos15)

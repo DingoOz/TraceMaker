@@ -3,12 +3,16 @@
 // A device without enough free memory is skipped, not failed: the GPUs are shared with other jobs.
 #include <catch2/catch_test_macros.hpp>
 #include <algorithm>
+#include <filesystem>
 #include <future>
 #include <utility>
 
 #include "gpu/backoff.hpp"
 #include "gpu/device.hpp"
 #include "gpu/philox_fill.hpp"
+#include "io/kicad/board_reader.hpp"
+#include "io/kicad/project_reader.hpp"
+#include "route/router.hpp"
 
 TEST_CASE("CPU reference fill is deterministic", "[gpu][cpu-reference]") {
   CHECK(tmk::gpu::philox_fill_cpu(1, 2, 3, 1000) == tmk::gpu::philox_fill_cpu(1, 2, 3, 1000));
@@ -217,4 +221,34 @@ TEST_CASE("cost-to-go field: concurrent callers have independent state", "[gpu][
   if (!a.first || !b.first) SKIP("the device could not execute a field (shared GPU)");
   CHECK(a.second);
   CHECK(b.second);
+}
+
+TEST_CASE("fields split between the CPU and the GPU by size route exactly as all on one of them", "[gpu][field][route]") {
+  const auto pcb = std::filesystem::path(TM_SOURCE_DIR) / "bench/data/kicad/demos/pic_programmer/pic_programmer.kicad_pcb";
+  if (!std::filesystem::exists(pcb)) SKIP("the demo board is not here");
+  auto b = tmk::io::read_board_file(pcb.string()).board;
+  b.tracks.clear();
+  b.vias.clear();
+  const auto rules = tmk::io::read_design_rules(pcb.string());
+  auto run = [&](int device, long min_cells) {
+    tmk::route::RouterOptions o;
+    o.work_budget = 500'000;
+    o.time_limit_s = 600;
+    o.gpu_device = device;
+    o.gpu_field_min_cells = min_cells;
+    return tmk::route::Router(b, rules, o).run();
+  };
+  const auto same = [](const tmk::route::RouteResult& x, const tmk::route::RouteResult& y) {
+    if (x.routed != y.routed || x.tracks.size() != y.tracks.size() || x.vias.size() != y.vias.size()) return false;
+    for (std::size_t i = 0; i < x.tracks.size(); ++i)
+      if (!(x.tracks[i].a == y.tracks[i].a) || !(x.tracks[i].b == y.tracks[i].b) || x.tracks[i].layer != y.tracks[i].layer) return false;
+    for (std::size_t i = 0; i < x.vias.size(); ++i)
+      if (!(x.vias[i].pos == y.vias[i].pos)) return false;
+    return true;
+  };
+  const auto cpu = run(-1, 0);
+  REQUIRE(cpu.routed > 0);
+  CHECK(same(run(0, 0), cpu));        // every field on the GPU when one is free
+  CHECK(same(run(0, 200'000), cpu));  // the small ones on the CPU
+  CHECK(same(run(0, 1L << 40), cpu));  // all of them on the CPU
 }

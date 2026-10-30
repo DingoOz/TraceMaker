@@ -1046,6 +1046,7 @@ int main(int argc, char** argv) {
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
   bool r_nogpu = false;
   route->add_flag("--no-gpu", r_nogpu, "Compute cost-to-go fields on the CPU instead of the GPU (same results)");
+  route->add_option("--gpu-field-min-cells", ropt.gpu_field_min_cells, "Fields with fewer lattice cells than this are computed on the CPU (same results)")->group("");
   route->add_flag("--reach-verify", ropt.reach_verify, "Test: check every unreachable verdict with the full A*")->group("");
   route->add_option("--reach-check", ropt.reach_check, "Reachability check before strict searches: 0 off, 1 likely failures, 2 all")->group("");
   route->add_option("--reach-after", ropt.reach_after, "Late reachability proof: a strict search open after this many expansions floods from both ends (0 off; default 100000)")->group("");
