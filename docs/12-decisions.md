@@ -173,6 +173,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D155](decisions/D155.md) | Completing hard boards: proof-triggered pin rescue first | accepted |
 | [D156](decisions/D156.md) | Last-mile repairs developed on one board: via shove, fan-out hold, negotiation bounds | accepted |
 | [D157](decisions/D157.md) | Fan-out heads: the designer's escapes laid before routing | accepted |
+| [D158](decisions/D158.md) | Small cost-to-go fields on the CPU | accepted |
 <!-- END decision index -->
 
 ## Risks

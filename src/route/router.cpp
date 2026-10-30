@@ -911,7 +911,7 @@ struct Router::Impl {
       const std::int64_t key = cell_key(layer, gx, gy);
       ++obs->checks;
       ++wc().cell_checks;
-      cell_state[idx] = static_cast<std::uint8_t>(learned_block.count({block_owner(net), key}) ? 2 : point_state(layer, gx, gy, net, hw));
+      cell_state[idx] = static_cast<std::uint8_t>(!learned_block.empty() && learned_block.count({block_owner(net), key}) ? 2 : point_state(layer, gx, gy, net, hw));
       cell_hist[idx] = cell_state[idx] == 2 ? 0 : hist_cost(layer, gx, gy);  // history only changes between searches
     }
     const int st = cell_state[idx];
@@ -1374,12 +1374,15 @@ struct Router::Impl {
       }
     }
     // Same field on the GPU or the CPU (identical by construction), so results do not depend on GPU availability.
-    const auto st = opt.gpu_device >= 0 ? gpu::field_gpu(opt.gpu_device, fp, field) : gpu::GpuStatus{false, "no GPU"};
+    // A small field is computed on the CPU: the GPU's fixed cost per field (allocation, copies, a sync per round) is more than
+    // the CPU needs for it.
+    const bool small = static_cast<long>(w.w) * w.h * nl < opt.gpu_field_min_cells;
+    const auto st = opt.gpu_device >= 0 && !small ? gpu::field_gpu(opt.gpu_device, fp, field) : gpu::GpuStatus{false, "no GPU"};
     if (st.ok) {
       ++field_runs;
     } else {
       gpu::field_cpu(fp, field);
-      if (opt.gpu_device >= 0) ++field_gpu_fail;
+      if (opt.gpu_device >= 0 && !small) ++field_gpu_fail;
       ++field_cpu_runs;
     }
     field_ok = true;
