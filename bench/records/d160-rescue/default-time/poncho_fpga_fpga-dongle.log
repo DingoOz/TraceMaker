@@ -1,0 +1,90 @@
+live view: http://192.168.1.83:8812/?token=b10b6f9d565b2b0dd8315b2ef765ad9e
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 8 threads
+searches: 613 ok (34204411 expansions), 746 failed (39669289 expansions); fields 18 GPU + 125 CPU (4.40 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 90027846; rips 227, passes 2, boxed-in 401, nogood skips 0, history cells 845, transactions 0 kept of 0
+reachability checks: 409, 317 proved unreachable, 57504435 cells visited
+late reachability proofs: 67, 42 proved no path, 316973 cells visited
+failed-search expansions: strict confined 0, strict wide 23768045, negotiated confined 0, negotiated wide 0
+searches: 605 ok (29282691 expansions), 614 failed (23990346 expansions); fields 30 GPU + 131 CPU (5.79 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 72027024; rips 225, passes 2, boxed-in 388, nogood skips 0, history cells 672, transactions 0 kept of 0
+reachability checks: 319, 226 proved unreachable, 56115182 cells visited
+late reachability proofs: 32, 7 proved no path, 256550 cells visited
+failed-search expansions: strict confined 0, strict wide 10886812, negotiated confined 0, negotiated wide 0
+searches: 582 ok (33635415 expansions), 506 failed (34911741 expansions); fields 24 GPU + 119 CPU (4.67 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 77795485; rips 191, passes 2, boxed-in 334, nogood skips 0, history cells 1073, transactions 0 kept of 0
+reachability checks: 253, 173 proved unreachable, 54865129 cells visited
+late reachability proofs: 50, 11 proved no path, 407364 cells visited
+failed-search expansions: strict confined 0, strict wide 17375478, negotiated confined 0, negotiated wide 0
+searches: 424 ok (70150041 expansions), 285 failed (66938700 expansions); fields 195 GPU + 182 CPU (14.73 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 36363744; rips 57, passes 2, boxed-in 132, nogood skips 0, history cells 148, transactions 0 kept of 0
+reachability checks: 150, 96 proved unreachable, 29834924 cells visited
+late reachability proofs: 124, 26 proved no path, 1007456 cells visited
+failed-search expansions: strict confined 0, strict wide 60170302, negotiated confined 0, negotiated wide 0
+searches: 710 ok (41947931 expansions), 789 failed (23425876 expansions); fields 59 GPU + 124 CPU (4.59 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 87423149; rips 299, passes 2, boxed-in 488, nogood skips 0, history cells 1310, transactions 0 kept of 0
+reachability checks: 426, 296 proved unreachable, 63749021 cells visited
+late reachability proofs: 33, 5 proved no path, 302314 cells visited
+failed-search expansions: strict confined 0, strict wide 12783812, negotiated confined 0, negotiated wide 0
+searches: 430 ok (21092517 expansions), 764 failed (42362945 expansions); fields 181 GPU + 321 CPU (15.47 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 310 connections improved
+restarts 0; legality checks 71112464; rips 91, passes 2, boxed-in 392, nogood skips 0, history cells 429, transactions 0 kept of 0
+reachability checks: 328, 216 proved unreachable, 43607428 cells visited
+late reachability proofs: 103, 57 proved no path, 557228 cells visited
+failed-search expansions: strict confined 0, strict wide 27187649, negotiated confined 0, negotiated wide 0
+searches: 416 ok (68681256 expansions), 297 failed (59458113 expansions); fields 205 GPU + 166 CPU (14.54 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 36484540; rips 44, passes 2, boxed-in 147, nogood skips 0, history cells 138, transactions 0 kept of 0
+reachability checks: 152, 108 proved unreachable, 28909997 cells visited
+late reachability proofs: 133, 51 proved no path, 882358 cells visited
+failed-search expansions: strict confined 0, strict wide 52376986, negotiated confined 0, negotiated wide 0
+searches: 549 ok (24622025 expansions), 500 failed (22663621 expansions); fields 9 GPU + 120 CPU (3.09 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 57447495; rips 163, passes 2, boxed-in 332, nogood skips 0, history cells 509, transactions 0 kept of 0
+reachability checks: 253, 180 proved unreachable, 39225483 cells visited
+late reachability proofs: 45, 17 proved no path, 295323 cells visited
+failed-search expansions: strict confined 0, strict wide 8579832, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 359 in 120.9 s
+  variant 1 fast bends, shortest first, crowded source routed 382 in 123.4 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 321 in 120.6 s
+  variant 3 fast bends, jittered order, escape plan routed 367 in 120.0 s
+  variant 4 exact bends, jittered order    routed 358 in 120.2 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 368 in 120.0 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 387 in 120.4 s  <- best
+  variant 7 fast bends, dear vias, crowded source routed 379 in 120.1 s
+routed 387/413 connections, 2723 tracks, 305 vias, pitch 0.070 mm, 118783078 expansions, 123.49 s (best variant 120.38 s)
+  unrouted: /VCCPLL: U4.126 -> R12.2  (ripped up by /BUT1 and not routed again)
+  unrouted: +1V2: C13.1 -> U4.111  (ripped up by GND and not routed again)
+  unrouted: Net-(CR1-Pad3): R10.2 -> CR1.3  (ripped up by /BUT1 and not routed again)
+  unrouted: +3V3: C21.1 -> U4.30  (ripped up by /FPGA_IO_BANK2_23 and not routed again)
+  unrouted: Net-(R42-Pad1): U6.45 -> R43.1  (ripped up by /P_RxD and not routed again)
+  unrouted: /FPGM_MOSI: R30.1 -> U6.38  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: exact check rejected the lattice path)
+  unrouted: +1V2: R12.1 -> C13.1  (ripped up by /FPGA_IO_BANK2_25 and not routed again)
+  unrouted: /BUT1: R6.1 -> SW1.2  (ripped up by /BUT1 and not routed again)
+  unrouted: +3V3: U4.30 -> P6.4  (ripped up by /FPGA_IO_BANK2_25 and not routed again)
+  unrouted: /FPGA_IO_BANK1_17: U4.136 -> P5.28  (ripped up by /BUT1 and not routed again)
+  unrouted: /FPGA_IO_BANK1_10: U4.121 -> P5.19  (ripped up by GND and not routed again)
+  unrouted: /FPGA_IO_BANK1_12: U4.124 -> P5.21  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /FPGA_IO_BANK1_5: U4.116 -> P5.14  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /I2C_SDA: P4.19 -> U4.107  (ripped up by GND and not routed again)
+  unrouted: /FPGA_IO_BANK1_6: U4.117 -> P5.15  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /FPGA_IO_BANK1_3: U4.114 -> P5.12  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /FPGA_IO_BANK1_16: U4.135 -> P5.27  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /FPGA_IO_BANK1_1: U4.112 -> P5.10  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /FPGA_IO_BANK1_2: U4.113 -> P5.11  (ripped up by /FPGA_IO_BANK1_7 and not routed again)
+  unrouted: /FPGA_IO_BANK2_7: U4.10 -> P6.14  (ripped up by /FPGA_IO_BANK2_9 and not routed again)
+  unrouted: /FPGA_IO_BANK2_9: U4.12 -> P6.16  (ripped up by /FPGA_IO_BANK2_8 and not routed again)
+  unrouted: /FPGA_IO_BANK2_19: U4.24 -> P6.26  (ripped up by /FPGA_IO_BANK2_23 and not routed again)
+  unrouted: /FPGA_IO_BANK2_21: U4.26 -> P6.28  (ripped up by /FPGA_IO_BANK2_19 and not routed again)
+  unrouted: /FPGA_IO_BANK2_16: U4.21 -> P6.23  (ripped up by /FPGA_IO_BANK2_19 and not routed again)
+  unrouted: /FPGA_IO_BANK2_26: U4.33 -> P6.33  (ripped up by /FPGA_IO_BANK2_23 and not routed again)
+  unrouted: /GPIO0: P3.29 -> U4.102  (ripped up by GND and not routed again)
+work (all variants): 536745203 expansions, 377837165 flood cells, 528356097 cell checks, 87331163 fixed-copper checks, 922573180 field cells in 2009 fields, 4329 commits, 1297 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed
+Command exited with non-zero status 3
+poncho_fpga_fpga-dongle wall 125.30 s

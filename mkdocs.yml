@@ -133,4 +133,5 @@ nav:
       - project/index.md
       - Roadmap: 11-roadmap.md
       - Candidate features: 18-next-features.md
+      - Towards 100 % routed boards: 20-complete-routing.md
       - Decisions and risks: 12-decisions.md

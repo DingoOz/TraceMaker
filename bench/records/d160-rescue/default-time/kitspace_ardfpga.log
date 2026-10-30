@@ -1,0 +1,72 @@
+live view: http://192.168.1.83:8810/?token=464d263f7a8fdddacf5a2e570c6b0303
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 8 threads
+searches: 433 ok (34816738 expansions), 458 failed (45473077 expansions); fields 199 GPU + 410 CPU (16.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 86594376; rips 246, passes 2, boxed-in 193, nogood skips 97, history cells 475, transactions 0 kept of 0
+reachability checks: 264, 149 proved unreachable, 50126570 cells visited
+late reachability proofs: 98, 46 proved no path, 567467 cells visited
+failed-search expansions: strict confined 0, strict wide 15529106, negotiated confined 0, negotiated wide 0
+searches: 446 ok (45655360 expansions), 422 failed (41385976 expansions); fields 25 GPU + 117 CPU (6.30 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 96200137; rips 254, passes 2, boxed-in 196, nogood skips 98, history cells 574, transactions 0 kept of 0
+reachability checks: 270, 171 proved unreachable, 70409817 cells visited
+late reachability proofs: 50, 11 proved no path, 418244 cells visited
+failed-search expansions: strict confined 0, strict wide 4938341, negotiated confined 0, negotiated wide 0
+searches: 445 ok (32927405 expansions), 393 failed (42655550 expansions); fields 33 GPU + 111 CPU (4.08 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 80856079; rips 247, passes 2, boxed-in 198, nogood skips 99, history cells 1147, transactions 0 kept of 0
+reachability checks: 197, 132 proved unreachable, 52373143 cells visited
+late reachability proofs: 79, 36 proved no path, 462078 cells visited
+failed-search expansions: strict confined 0, strict wide 10189421, negotiated confined 0, negotiated wide 0
+searches: 420 ok (42542753 expansions), 357 failed (35183544 expansions); fields 24 GPU + 117 CPU (6.34 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 80664993; rips 218, passes 2, boxed-in 184, nogood skips 92, history cells 911, transactions 0 kept of 0
+reachability checks: 226, 148 proved unreachable, 50553621 cells visited
+late reachability proofs: 63, 8 proved no path, 561506 cells visited
+failed-search expansions: strict confined 0, strict wide 3520729, negotiated confined 0, negotiated wide 0
+searches: 398 ok (44439364 expansions), 367 failed (32972418 expansions); fields 15 GPU + 108 CPU (3.86 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 88097438; rips 195, passes 2, boxed-in 148, nogood skips 74, history cells 507, transactions 0 kept of 0
+reachability checks: 176, 109 proved unreachable, 53152082 cells visited
+late reachability proofs: 91, 36 proved no path, 608158 cells visited
+failed-search expansions: strict confined 0, strict wide 11729908, negotiated confined 0, negotiated wide 0
+searches: 426 ok (37922494 expansions), 369 failed (39116532 expansions); fields 29 GPU + 117 CPU (6.67 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 79823074; rips 241, passes 2, boxed-in 206, nogood skips 103, history cells 630, transactions 0 kept of 0
+reachability checks: 221, 150 proved unreachable, 52750320 cells visited
+late reachability proofs: 65, 18 proved no path, 484736 cells visited
+failed-search expansions: strict confined 0, strict wide 5197757, negotiated confined 0, negotiated wide 0
+searches: 260 ok (85811752 expansions), 183 failed (59355392 expansions); fields 94 GPU + 193 CPU (8.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 39920736; rips 63, passes 2, boxed-in 102, nogood skips 51, history cells 181, transactions 0 kept of 0
+reachability checks: 95, 62 proved unreachable, 31996513 cells visited
+late reachability proofs: 89, 40 proved no path, 531959 cells visited
+failed-search expansions: strict confined 0, strict wide 17384307, negotiated confined 0, negotiated wide 18120008
+searches: 211 ok (44393557 expansions), 126 failed (61178668 expansions); fields 80 GPU + 147 CPU (8.44 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 25813218; rips 24, passes 2, boxed-in 76, nogood skips 38, history cells 59, transactions 0 kept of 0
+reachability checks: 52, 26 proved unreachable, 19096197 cells visited
+late reachability proofs: 67, 32 proved no path, 379398 cells visited
+failed-search expansions: strict confined 0, strict wide 36163822, negotiated confined 0, negotiated wide 21180010
+  variant 0 exact bends, shortest first    routed 199 in 120.3 s
+  variant 1 fast bends, shortest first, crowded source routed 197 in 120.3 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 197 in 120.0 s
+  variant 3 fast bends, jittered order, escape plan routed 205 in 120.2 s
+  variant 4 exact bends, jittered order    routed 191 in 122.0 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 200 in 120.1 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 204 in 120.1 s
+  variant 7 fast bends, dear vias, crowded source routed 206 in 120.1 s  <- best
+routed 206/214 connections, 1325 tracks, 152 vias, pitch 0.050 mm, 97178609 expansions, 122.10 s (best variant 120.11 s)
+  unrouted: +3.3V: U1.9 -> CD2.1  (ripped up by Net-(RN1-Pad5) and not routed again)
+  unrouted: +3.3V: U1.9 -> U1.16  (ripped up by Net-(RN1-Pad5) and not routed again)
+  unrouted: FRST: Q1.D -> U1.10  (ripped up by Net-(RN1-Pad5) and not routed again)
+  unrouted: Net-(RN1-Pad7): RN1.7 -> U1.6  (ripped up by Net-(RN1-Pad6) and not routed again)
+  unrouted: Net-(RN1-Pad6): RN1.6 -> U1.7  (ripped up by Net-(RN1-Pad5) and not routed again)
+  unrouted: CLK16: U1.18 -> X1.3  (ripped up by Net-(RN1-Pad5) and not routed again)
+  unrouted: Net-(RN3-Pad4): RN3.4 -> U1.19  (ripped up by Net-(RN1-Pad6) and not routed again)
+  unrouted: Net-(RN3-Pad3): RN3.3 -> U1.20  (ripped up by Net-(RN3-Pad4) and not routed again)
+work (all variants): 512462832 expansions, 384471809 flood cells, 577736485 cell checks, 31058320 fixed-copper checks, 696899866 field cells in 1819 fields, 3039 commits, 1488 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed
+Command exited with non-zero status 3
+kitspace_ardfpga wall 123.81 s
