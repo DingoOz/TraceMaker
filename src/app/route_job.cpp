@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "app/route_job.hpp"
 
+#include <cstdlib>
 #include <algorithm>
 #include <bit>
 #include <chrono>
@@ -755,6 +756,14 @@ RouteJobResult run_route_job(RouteJob job) {
         log("relax: rounds of 20 M work until the board is complete; --work does not limit them (bound with --round-work, --rounds or --time)");
       std::vector<int> pick;
       if (use_kb && kb && variants < route::portfolio_size()) pick = kb->choose_variants(feat, route::portfolio_size(), variants, o.seed);
+      if (const char* e = std::getenv("TM_PICK_VARIANTS")) {  // debugging: run these variant indices of the list only (comma separated)
+        pick.clear();
+        for (const char* q = e; *q;) {
+          char* end = nullptr;
+          pick.push_back(static_cast<int>(std::strtol(q, &end, 10)));
+          q = *end ? end + 1 : end;
+        }
+      }
       log(fmt("portfolio: %d variants%s on %d thread%s", variants, o.advice.active() ? fmt(" + %d advised", std::min(o.advice.variants, variants)).c_str() : "",
               std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
       auto pr = route::route_portfolio(*route_board, rules, o, variants, pick, threads);
@@ -1466,6 +1475,10 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"escape_reclaimed", res.escape_reclaimed},
                  {"bundle_groups", res.bundle_groups}, {"bundle_spines", res.bundle_spines}, {"bundle_conns", res.bundle_conns}, {"bundle_lanes", res.bundle_lanes}, {"tunnels", res.tunnels}};
   if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
+  // M22 repair steps (D156), only when they ran: a run without them writes the summary it always did.
+  for (const auto& [k, v] : {std::pair<const char*, long>{"via_shoves", res.via_shoves}, {"via_shove_trials", res.via_shove_trials}, {"window_escalations", res.window_escalations},
+                             {"via_retried", res.via_retried}, {"fanout_holds", res.fanout_holds}})
+    if (v > 0) out.summary[k] = v;
   if (!refill_summary.is_null()) {
     out.summary["refill"] = refill_summary;
     out.summary["unconnected_after_refill"] = unconnected_after_refill;

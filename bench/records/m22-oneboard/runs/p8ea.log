@@ -1,0 +1,68 @@
+live view: http://192.168.1.83:8844/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 4 threads
+searches: 756 ok (15973141 expansions), 35 failed (3500000 expansions); fields 482 GPU + 0 CPU (18.72 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 794 connections improved
+restarts 0; legality checks 3826455; rips 0, passes 1, boxed-in 35, nogood skips 5, history cells 0, transactions 0 kept of 0
+late reachability proofs: 88, 35 proved no path, 630834 cells visited
+failed-search expansions: strict confined 0, strict wide 3500000, negotiated confined 0, negotiated wide 0
+searches: 987 ok (12943235 expansions), 204 failed (3705899 expansions); fields 350 GPU + 0 CPU (37.37 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 19066615; rips 2, passes 2, boxed-in 115, nogood skips 20, history cells 0, transactions 0 kept of 0
+reachability checks: 26, 20 proved unreachable, 6229202 cells visited
+late reachability proofs: 10, 0 proved no path, 100035 cells visited
+failed-search expansions: strict confined 0, strict wide 914439, negotiated confined 0, negotiated wide 0
+searches: 800 ok (16421384 expansions), 28 failed (2800000 expansions); fields 515 GPU + 0 CPU (20.46 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 822 connections improved
+restarts 0; legality checks 4086609; rips 0, passes 1, boxed-in 28, nogood skips 5, history cells 0, transactions 0 kept of 0
+reachability checks: 5, 0 proved unreachable, 137262 cells visited
+late reachability proofs: 85, 28 proved no path, 649994 cells visited
+failed-search expansions: strict confined 0, strict wide 2800000, negotiated confined 0, negotiated wide 0
+searches: 969 ok (13429761 expansions), 36 failed (3225385 expansions); fields 695 GPU + 0 CPU (48.59 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1031 connections improved
+restarts 0; legality checks 19517808; rips 0, passes 1, boxed-in 28, nogood skips 6, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 1 proved unreachable, 3446340 cells visited
+late reachability proofs: 54, 21 proved no path, 346584 cells visited
+failed-search expansions: strict confined 0, strict wide 2779046, negotiated confined 0, negotiated wide 0
+searches: 989 ok (15681737 expansions), 69 failed (3367556 expansions); fields 749 GPU + 0 CPU (117.44 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1087 connections improved
+restarts 0; legality checks 22101661; rips 0, passes 1, boxed-in 66, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000001 cells visited
+late reachability proofs: 22, 0 proved no path, 220036 cells visited
+failed-search expansions: strict confined 0, strict wide 3367556, negotiated confined 0, negotiated wide 0
+searches: 999 ok (8169484 expansions), 137 failed (11635273 expansions); fields 385 GPU + 0 CPU (80.83 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 20492066; rips 16, passes 2, boxed-in 110, nogood skips 20, history cells 17, transactions 0 kept of 0
+reachability checks: 50, 44 proved unreachable, 8340178 cells visited
+late reachability proofs: 9, 0 proved no path, 90024 cells visited
+failed-search expansions: strict confined 0, strict wide 303523, negotiated confined 0, negotiated wide 6060003
+searches: 986 ok (13636242 expansions), 55 failed (725199 expansions); fields 732 GPU + 0 CPU (80.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1086 connections improved
+restarts 0; legality checks 19433551; rips 0, passes 1, boxed-in 51, nogood skips 6, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 6000004 cells visited
+late reachability proofs: 22, 0 proved no path, 220042 cells visited
+failed-search expansions: strict confined 0, strict wide 725199, negotiated confined 0, negotiated wide 0
+searches: 989 ok (15681737 expansions), 69 failed (3367556 expansions); fields 749 GPU + 0 CPU (83.78 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1087 connections improved
+restarts 0; legality checks 22101661; rips 0, passes 1, boxed-in 66, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000001 cells visited
+late reachability proofs: 22, 0 proved no path, 220036 cells visited
+failed-search expansions: strict confined 0, strict wide 3367556, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 754 in 33.9 s
+  variant 1 fast bends, shortest first, crowded source routed 987 in 158.0 s  <- best
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 974 in 59.2 s
+  variant 3 fast bends, jittered order, escape plan routed 966 in 74.9 s
+  variant 4 exact bends, jittered order    routed 788 in 35.3 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 984 in 109.1 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 987 in 124.7 s
+  variant 7 fast bends, dear vias, crowded source routed 984 in 111.8 s
+routed 987/995 connections, 2925 tracks, 276 vias, pitch 0.065 mm, 22269330 expansions, 194.31 s (best variant 158.04 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 135754043 expansions, 32630573 flood cells, 130618431 cell checks, 96880568 fixed-copper checks, 6070880220 field cells in 4657 fields, 7475 commits, 18 rips

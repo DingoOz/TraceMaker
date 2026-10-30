@@ -1,951 +1,951 @@
 {
- "project": "TraceMaker",
- "current_milestone": "M17",
- "milestones": [
-  {
-   "id": "M0",
-   "title": "Toolchain and skeleton",
-   "status": "done",
-   "gate": "`ctest` runs a CPU and a CUDA hello-kernel test on both GPUs; `kicad-cli version` works from the harness",
-   "deliverables": "CMake presets (`debug`, `release`, `asan`, `cpu-only`), CUDA build with a GCC host compiler that `nvcc 12.4` accepts, Catch2, clang-format/clang-tidy config (or GCC equivalents), `scripts/bootstrap.sh`, `kicad-cli` available (Docker image or native), fixture download script",
-   "tasks": [
+  "project": "TraceMaker",
+  "current_milestone": "M17",
+  "milestones": [
     {
-     "text": "Ubuntu setup script (packages, Docker, KiCad 10 kicad-cli wrapper)",
-     "done": true
+      "id": "M0",
+      "title": "Toolchain and skeleton",
+      "status": "done",
+      "gate": "`ctest` runs a CPU and a CUDA hello-kernel test on both GPUs; `kicad-cli version` works from the harness",
+      "deliverables": "CMake presets (`debug`, `release`, `asan`, `cpu-only`), CUDA build with a GCC host compiler that `nvcc 12.4` accepts, Catch2, clang-format/clang-tidy config (or GCC equivalents), `scripts/bootstrap.sh`, `kicad-cli` available (Docker image or native), fixture download script",
+      "tasks": [
+        {
+          "text": "Ubuntu setup script (packages, Docker, KiCad 10 kicad-cli wrapper)",
+          "done": true
+        },
+        {
+          "text": "Git repository, .gitignore",
+          "done": true
+        },
+        {
+          "text": "CMake project + presets (debug, release, cpu-only, asan, tsan)",
+          "done": true
+        },
+        {
+          "text": "CUDA build: nvcc 12.4 with g++-13 host, sm_60 + sm_70; system GCC 15 for C++",
+          "done": true
+        },
+        {
+          "text": "Core library: units, deterministic Philox/SplitMix RNG",
+          "done": true
+        },
+        {
+          "text": "GPU service: device discovery by UUID, free-memory admission control",
+          "done": true
+        },
+        {
+          "text": "First kernel with CPU reference; bit-identical on V100 and P100",
+          "done": true
+        },
+        {
+          "text": "Catch2 tests wired into ctest with JUnit results",
+          "done": true
+        },
+        {
+          "text": "tracemaker CLI: version, gpu-info",
+          "done": true
+        },
+        {
+          "text": "Development progress website (0.0.0.0)",
+          "done": true
+        },
+        {
+          "text": "scripts/bootstrap.sh: configure, build and test all presets",
+          "done": true
+        },
+        {
+          "text": "Benchmark environment check (kicad-cli from the harness)",
+          "done": true
+        },
+        {
+          "text": "Fixture download script (Freerouting, DAC2020, KiCad demos, PCBench)",
+          "done": true
+        },
+        {
+          "text": "Gate: CPU + CUDA tests pass on both GPUs; kicad-cli works from harness",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Git repository, .gitignore",
-     "done": true
+      "id": "M1",
+      "title": "KiCad I/O and board model",
+      "status": "done",
+      "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
+      "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
+      "tasks": [
+        {
+          "text": "Lossless s-expression parser/writer with span edits",
+          "done": true
+        },
+        {
+          "text": "Board reader: layers, nets (KiCad 9 and 10 syntax), footprints, pads, tracks, arcs, vias, zones, graphics",
+          "done": true
+        },
+        {
+          "text": "Reader verified against pcbnew ground truth on demo boards",
+          "done": true
+        },
+        {
+          "text": "Byte-identical round trip of fixture boards",
+          "done": true
+        },
+        {
+          "text": "Design rules: .kicad_pro net classes, patterns, assignments, board minimums",
+          "done": true
+        },
+        {
+          "text": "Custom rules: .kicad_dru parsed into rules and constraints",
+          "done": true
+        },
+        {
+          "text": "Board editor: add/remove tracks and vias, move/rotate footprints",
+          "done": true
+        },
+        {
+          "text": "Edited boards load in pcbnew with the expected geometry",
+          "done": true
+        },
+        {
+          "text": "Netlist import via kicad-cli (kicadsexpr) and cross-check against board pad nets",
+          "done": true
+        },
+        {
+          "text": "tracemaker inspect: board summary and JSON dump",
+          "done": true
+        },
+        {
+          "text": "Gate: round trip on all fixtures; reader matches KiCad",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "CMake project + presets (debug, release, cpu-only, asan, tsan)",
-     "done": true
+      "id": "M2",
+      "title": "Rules and DRC parity",
+      "status": "done",
+      "gate": "Same violation multiset as `kicad-cli pcb drc` on all unrouted and routed fixture boards (documented, tested exceptions only) | Result: 14 of 17 KiCad demo boards exact and 264 of 264 injected-defect variants (regression tests); three demo boards differ in documented ways. Since 2026-10-06 Margin-layer edges and one-sided SMD pads match KiCad too.",
+      "deliverables": "Rule compiler (net classes, board constraints, custom rules subset), spatial indices, own DRC with KiCad violation names",
+      "tasks": [
+        {
+          "text": "Exact integer geometry kernel (rounded-core shapes, int128 predicates, fine arc flattening)",
+          "done": true
+        },
+        {
+          "text": "Copper item model: pads (all shapes, drill offsets), tracks, arcs, vias, zone fills, copper graphics with nets",
+          "done": true
+        },
+        {
+          "text": "Rule engine: net classes, local overrides, diff pairs, board minimums, legacy rules, custom-rule conditions",
+          "done": true
+        },
+        {
+          "text": "Checks: clearance, shorts, crossings, widths, vias, annular, holes, edge, keepouts",
+          "done": true
+        },
+        {
+          "text": "Anchor/overlap connectivity, unconnected items, dangling tracks/vias",
+          "done": true
+        },
+        {
+          "text": "DRC parity harness vs kicad-cli + fuzzer",
+          "done": true
+        },
+        {
+          "text": "Parity: 11/16 demo boards exact (regression test)",
+          "done": true
+        },
+        {
+          "text": "Parity on broken-board classification (shorts/dangling): 264/264 injected-defect variants match kicad-cli violation by violation (was 41/264; regression test); demo boards 14/17 exact",
+          "done": true
+        },
+        {
+          "text": "Performance on very large boards: vme-wren 730 s -> 7 s, jetson 250 s -> 4 s (zone-fill edge index, area-rule cache; identical reports)",
+          "done": true
+        },
+        {
+          "text": "Copper text obstacle margin (estimated glyph boxes)",
+          "done": true
+        },
+        {
+          "text": "DRC parity 12 of 17 KiCad demo boards (jetson now exact; RoyalBlue54L down to a malformed duplicate pad)",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "CUDA build: nvcc 12.4 with g++-13 host, sm_60 + sm_70; system GCC 15 for C++",
-     "done": true
+      "id": "M3",
+      "title": "Event bus, server, viewer v1",
+      "status": "done",
+      "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board | Result: replay reproduces the routed board (test record_replay). The 60 fps figure was not measured: there is no GPU-backed browser on this machine.",
+      "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
+      "tasks": [
+        {
+          "text": "Event types and Sink interface",
+          "done": true
+        },
+        {
+          "text": "WebSocket server (Boost.Beast), static files, snapshot + deltas, back-pressure",
+          "done": true
+        },
+        {
+          "text": "Viewer: WebGL2 instanced tracks/pads/vias/zones, layers, pan/zoom",
+          "done": true
+        },
+        {
+          "text": "Live effects: glow, frontiers, failures, HUD, log, tooltips",
+          "done": true
+        },
+        {
+          "text": "tracemaker-view with --demo",
+          "done": true
+        },
+        {
+          "text": "Router live streaming (route --view)",
+          "done": true
+        },
+        {
+          "text": "Replay log (zstd frames, --record FILE.zst) and heatmaps (expansions, history) live and in replay; test: recording/viewing leave the routed board byte-identical",
+          "done": true
+        },
+        {
+          "text": "Event recording (route --record) and replay (tracemaker-view --replay); test: replay reproduces the routed board exactly",
+          "done": true
+        },
+        {
+          "text": "FlatBuffers schema: closed, not built (protocol and replay log stay JSON, zstd-compressed logs 12-13x smaller; D45, D61)",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Core library: units, deterministic Philox/SplitMix RNG",
-     "done": true
+      "id": "M4",
+      "title": "First router (lattice A*)",
+      "status": "done",
+      "gate": "Routes the simple fixture set with 0 added KiCad DRC errors; harness produces the comparison table",
+      "deliverables": "Rerun debug logging of searches (optional), transactions, scoring, union-find, bit-planes, A* + radix heap, insertion with exact validation, basic pull-tight; sequential routing in net order; `tracemaker route` CLI; bench harness v1 with KiCad-DRC judge and Freerouting runner",
+      "tasks": [
+        {
+          "text": "Router obstacle model with exact KiCad-rule legality",
+          "done": true
+        },
+        {
+          "text": "Octilinear lattice A* with vias, bends, admissible heuristic",
+          "done": true
+        },
+        {
+          "text": "Path simplification, exact verification, commit through the board editor",
+          "done": true
+        },
+        {
+          "text": "tracemaker route CLI",
+          "done": true
+        },
+        {
+          "text": "Benchmark harness judged by kicad-cli with Freerouting baselines",
+          "done": true
+        },
+        {
+          "text": "Gate: zero added KiCad DRC errors on the benchmark",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "GPU service: device discovery by UUID, free-memory admission control",
-     "done": true
+      "id": "M5",
+      "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
+      "status": "done",
+      "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
+      "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
+      "tasks": [
+        {
+          "text": "Negotiated rip-up and reroute (soft crossing of routed copper, victims requeued)",
+          "done": true
+        },
+        {
+          "text": "PathFinder history on contested cells",
+          "done": true
+        },
+        {
+          "text": "Learned blocked cells after exact-check failures",
+          "done": true
+        },
+        {
+          "text": "Best-state keeping",
+          "done": true
+        },
+        {
+          "text": "Failure records, nogoods, conflict graph, bandit (T0-T2 complete)",
+          "done": true
+        },
+        {
+          "text": "Gate: completion >= Freerouting on tier A (100% clean, equal to Freerouting RC12, in every run since 2026-10-03)",
+          "done": true
+        },
+        {
+          "text": "Reverse probe for boxed-in targets; pad legs dropped when the lattice end is on the pad; learned blocks beside fine-pitch pads",
+          "done": true
+        },
+        {
+          "text": "Diversified extra restarts while budget remains",
+          "done": true
+        },
+        {
+          "text": "Post-routing clean-up: via-saving re-routes and path smoothing (bends -40%, vias -25-33%)",
+          "done": true
+        },
+        {
+          "text": "Connection planning by pad copper distance (--plan-gap, on, D54): 24 boards at a fixed budget 11,905 -> 11,986 routed; tiers A-D neutral; failure reasons now reported as at the best state",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "First kernel with CPU reference; bit-identical on V100 and P100",
-     "done": true
+      "id": "M6",
+      "title": "Global routing + GPU",
+      "status": "done",
+      "gate": "CPU and GPU results identical on every fixture; time-to-route reduced on dense boards with no quality loss",
+      "deliverables": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3); tile graph, Steiner decomposition, CPU NCR, corridors; GPU pattern routing, GPU sweep maze routing, GPU cost-to-go fields, GPU DRC broad-phase",
+      "tasks": [
+        {
+          "text": "GPU cost-to-go fields (CUDA sweeps) with identical CPU reference",
+          "done": true
+        },
+        {
+          "text": "Fields used as the router's A* heuristic; deterministic with/without GPU",
+          "done": true
+        },
+        {
+          "text": "Coarse global routing + corridors (CPU, negotiated congestion): built, off by default (corridors cost completion in three measurements)",
+          "done": true
+        },
+        {
+          "text": "GPU pattern/maze global routing (GAMER/GGR port): closed, not built. The CPU global router routes the tile graph in 0.02-0.5 s per board and its plan does not help (D56)",
+          "done": true
+        },
+        {
+          "text": "GPU DRC broad-phase: closed, not built. Broad-phase is 14 ms; the DRC was fixed on the CPU with a zone-fill edge index: vme-wren 730 s -> 7 s, jetson 250 s -> 4 s, reports byte-identical (D55)",
+          "done": true
+        },
+        {
+          "text": "Adaptive GPU-field cut-off under GPU contention (wall-clock mode)",
+          "done": true
+        },
+        {
+          "text": "CPU global router v1 (tile graph, capacities, negotiated congestion, soft corridors): experimental, no gain yet",
+          "done": true
+        },
+        {
+          "text": "Global router v2: net-shared edges (Steiner demand), via capacity, layer-true corridors, integer costs, corridor-restricted windows: built; 18 hard boards 13,305 without, 12,967 corridors, 13,324 congestion map; off (D56)",
+          "done": true
+        },
+        {
+          "text": "Exact flood-fill reachability pre-check before likely-failing searches (10 hard boards +47 routed at fixed budget; tiers neutral)",
+          "done": true
+        },
+        {
+          "text": "Global congestion map + cut-based tile capacities (opt-in --global-congestion): 18 hard boards 13,285 -> 13,294 routed, within noise; kept off (D53). Boards are not congested at tile scale; v2 remainder deferred",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Catch2 tests wired into ctest with JUnit results",
-     "done": true
+      "id": "M7",
+      "title": "Placement A\u2013D",
+      "status": "done",
+      "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL \u2264 SA-PCB baseline on the placement set | Result: legality met (held-out set, doc 04 \u00a710). The HPWL comparison with SA-PCB was NOT measured: the baseline does not build here (it needs SWIG, which is not installed, and its Makefile is stale; build/tools/sa-pcb).",
+      "deliverables": "Constraint extraction, decoupling detection, quadratic B2B (PCG), electrostatic global placement (CPU then GPU batched), rotation/side assignment, LP legalisation; placement report with optimality levels and lower bound",
+      "tasks": [
+        {
+          "text": "Constraint extraction (fixed parts, outline, keepouts, courtyards, copper legality)",
+          "done": true
+        },
+        {
+          "text": "Decoupling capacitors tied to their IC supply pin (D25)",
+          "done": true
+        },
+        {
+          "text": "Other proximity groups: crystals, load caps, ESD near connectors, regulator caps (M13, --component-rules soft)",
+          "done": true
+        },
+        {
+          "text": "quadratic B2B (Eigen CG)",
+          "done": true
+        },
+        {
+          "text": "global spreading (SimPL instead of electrostatic; CPU)",
+          "done": true
+        },
+        {
+          "text": "Rotation assignment (coordinate descent)",
+          "done": true
+        },
+        {
+          "text": "Side assignment (flip to the back): opt-in --flip, annealer flip move + via estimate, KiCad-exact mirror (2,529 footprints = pcbnew); 23 boards HPWL -8%, crossings -31%, 0 new DRC (D48)",
+          "done": true
+        },
+        {
+          "text": "legalisation (greedy minimum displacement; LP not done)",
+          "done": true
+        },
+        {
+          "text": "parallel simulated annealing, deterministic across thread counts",
+          "done": true
+        },
+        {
+          "text": "placement report with optimality levels and LP lower bound (min-cost flow)",
+          "done": true
+        },
+        {
+          "text": "evaluation on 23 PCBench boards: HPWL -17..-26% median, zero new DRC errors; routability not yet improved",
+          "done": true
+        },
+        {
+          "text": "--mode auto with route checks: 23 boards, HPWL -24.5% total, never more unrouted (61 -> 59)",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "tracemaker CLI: version, gpu-info",
-     "done": true
+      "id": "M8",
+      "title": "Placement E\u2013G + ECO",
+      "status": "done",
+      "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot | Result 2026-10-06: NOT met. From-scratch clean pass 85 % (34/40) on set S; 4 of the 6 failing boards cannot be clean in any placement. eco closed 0 of the 1 held-out board the human placement leaves unrouted (3 of 7 on the development set).",
+      "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
+      "tasks": [
+        {
+          "text": "Parallel tempering (annealed replica exchange, CPU; deterministic for 1/3/16 threads): refine cost -4% on 23 boards, full neutral",
+          "done": true
+        },
+        {
+          "text": "GPU parallel-tempering SA: closed, not built (annealing 1.9 s median, 56 s max on the held-out boards; CPU tempering neutral on routability; D57)",
+          "done": true
+        },
+        {
+          "text": "LNS (window rip-up, exact <=4 parts, greedy otherwise; never worsens)",
+          "done": true
+        },
+        {
+          "text": "Exact windows by branch and bound (CP-SAT not available; B&B equals full enumeration)",
+          "done": true
+        },
+        {
+          "text": "CP-SAT windows: closed, not built (no OR-tools C++ library; exact windows by branch and bound equal full enumeration; D57)",
+          "done": true
+        },
+        {
+          "text": "RUDY routability term in the annealer (incremental, exact vs reference)",
+          "done": true
+        },
+        {
+          "text": "Routability loop (--mode routable): 23 boards unrouted 64 -> 35 (auto 60), 0 new DRC errors",
+          "done": true
+        },
+        {
+          "text": "ECO placement moves (--mode eco): closes 3 of 7 incomplete boards, unrouted 64 -> 48",
+          "done": true
+        },
+        {
+          "text": "Schematic-to-board set S (40 held-out boards, parts piled) built and the gate measured: 85 % clean (34/40) with routable --scratch, human placement 95 %; gate of 90 % NOT met (doc 04 \u00a710)",
+          "done": true
+        },
+        {
+          "text": "R4 exact window solve: closed, not built as an exact model (no CP-SAT); the group re-route stand-in changed no board and was removed (doc 05 \u00a717, \u00a720)",
+          "done": true
+        },
+        {
+          "text": "R5 trial ordering: closed, not built (every order of small conflict groups was tried and changed no board, doc 05 \u00a717, \u00a720)",
+          "done": true
+        },
+        {
+          "text": "R6 cut proofs: built (route --cut-report); no over-full line on 92 tier B-D boards, tightest line 40 % used",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Development progress website (0.0.0.0)",
-     "done": true
+      "id": "M9",
+      "title": "Escape planning",
+      "status": "done",
+      "gate": "BGA boards in the academic set complete | Result: NOT met. 17 dense-package boards: 41 % clean, 47 % of the 15 feasible ones (Freerouting 2.5: 24 %).",
+      "deliverables": "Min-cost-flow escape, layer assignment, NC fallback, escape templates",
+      "tasks": [
+        {
+          "text": "Escape corridors for dense-package pins (perimeter + dog-bone), opt-in --escape-plan",
+          "done": true
+        },
+        {
+          "text": "Escape feasibility analysis: tracemaker escape, dead pins with reasons and hints; benchmark dead_pins / clean_pass_feasible",
+          "done": true
+        },
+        {
+          "text": "Via neck-down rung (smallest via the board minimums allow)",
+          "done": true
+        },
+        {
+          "text": "Dead pins: not retried after a negotiated neck-down check",
+          "done": true
+        },
+        {
+          "text": "Second-ring channel corridors (built, off: measured mixed)",
+          "done": true
+        },
+        {
+          "text": "Min-cost-flow channel assignment for deep arrays (built, opt-in --escape-flow: measured below the v1 corridors, D49)",
+          "done": true
+        },
+        {
+          "text": "Per-ring layer assignment (per pin, layer by layer, inside --escape-flow; same evidence, D49)",
+          "done": true
+        },
+        {
+          "text": "NC fallback for escapes: closed, not built (the flow planner it belongs to measured below the corridors and is off; ordinary negotiation already overrides corridors; D62)",
+          "done": true
+        },
+        {
+          "text": "Escape templates in the knowledge base: closed, not built (planning takes 0.1-2 s per board; a cache saves nothing; D62)",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "scripts/bootstrap.sh: configure, build and test all presets",
-     "done": true
+      "id": "M10",
+      "title": "Portfolio, determinism, knowledge base",
+      "status": "done",
+      "gate": "Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget",
+      "deliverables": "Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts",
+      "tasks": [
+        {
+          "text": "Parallel portfolio of 8 router variants, best kept",
+          "done": true
+        },
+        {
+          "text": "Deterministic work budget (byte-identical repeat runs)",
+          "done": true
+        },
+        {
+          "text": "Persistent knowledge base with variant bandit",
+          "done": true
+        },
+        {
+          "text": "Restarts that keep history",
+          "done": true
+        },
+        {
+          "text": "Successive-halving budget allocation (--halving, restart-based): 24 boards at 2 / 4 threads 12,385 / 12,451 routed against 12,402 / 12,508 for the first variants; kept off (D59)",
+          "done": true
+        },
+        {
+          "text": "Bit-identical across thread counts (portfolio selection; --variants, all 8 with --work, D47)",
+          "done": true
+        },
+        {
+          "text": "Portfolio early stop once a variant routes everything (wall-clock mode)",
+          "done": true
+        },
+        {
+          "text": "2x lattice pitch for two variants on large boards",
+          "done": true
+        },
+        {
+          "text": "Quality benchmark vs Freerouting 2.5.0-RC12 and 1.9.0 on 60 held-out boards (bench/quality_bench.py)",
+          "done": true
+        },
+        {
+          "text": "Held-out quality benchmark on tier C-like boards (heldC-1) and DAC2020",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Benchmark environment check (kicad-cli from the harness)",
-     "done": true
+      "id": "M11",
+      "title": "KiCad integration",
+      "status": "done",
+      "gate": "Round-trip in KiCad on the demo boards",
+      "deliverables": "IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package",
+      "tasks": [
+        {
+          "text": "IPC action plugin: save copy with project, route, add tracks/vias in one commit",
+          "done": true
+        },
+        {
+          "text": "Offline test against kicad-python 0.8",
+          "done": true
+        },
+        {
+          "text": "Round trip in a running KiCad GUI (headless: pcbnew in Docker under Xvfb, scripts/kicad_gui_roundtrip.py): tracks 140 -> 316 in the open board, one undo removes them, DRC of the saved board clean of new errors",
+          "done": true
+        },
+        {
+          "text": "Python bindings (pybind11): read_board, route, emit_items, drc; GIL released; CLI parity test",
+          "done": true
+        },
+        {
+          "text": "PCM package (scripts/make_pcm_package.py, validate_pcm.py; passes kicad-python 0.8 validator)",
+          "done": true
+        },
+        {
+          "text": "Plugin uses the Python module when importable, binary otherwise",
+          "done": true
+        },
+        {
+          "text": "Install the PCM archive in a running KiCad GUI (Plugin and Content Manager, Install from File: listed as installed and compatible; venv creation and toolbar button not checked, no network in the container)",
+          "done": true
+        },
+        {
+          "text": "Plugin: footprint moves (TRACEMAKER_PLACE), re-routing of existing unlocked copper (TRACEMAKER_REROUTE, route --reroute), zone refill (TRACEMAKER_REFILL); checked in the running GUI",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Fixture download script (Freerouting, DAC2020, KiCad demos, PCBench)",
-     "done": true
+      "id": "M12",
+      "title": "Advanced rules and arms",
+      "status": "done",
+      "gate": "Each feature gated by its own benchmark subset; no regressions",
+      "deliverables": "Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models",
+      "tasks": [
+        {
+          "text": "Differential pairs: experimental --diff-pairs (rarely couples)",
+          "done": true
+        },
+        {
+          "text": "Differential pairs: proper coupled routing (v2, opt-in --diff-pairs, D50): coupled pair search with coupled vias, breakout legs, re-coupling, enclosed-pin check, --pair-skew-mm; 18 PCBench boards: 35 of 59 pairs >= 50 % coupled at the rule gap, completion 2,201 -> 2,210; KiCad: no new error kinds (one more Margin-layer edge clearance on a board that has 27 with pairs off) (doc 05 \u00a715)",
+          "done": true
+        },
+        {
+          "text": "Differential pairs: twists (layer change with the sides swapped, on with pair routing: one of 59 pairs gains coupling, median share 57 -> 63 %), per-pair skew limits from component rules; pairs ending on routed copper measured to matter little (13 of 21 such attempts couple) and not built (D64)",
+          "done": true
+        },
+        {
+          "text": "Length and skew tuning (KiCad length constraints)",
+          "done": true
+        },
+        {
+          "text": "Blind/buried vias: experimental --blind-vias",
+          "done": true
+        },
+        {
+          "text": "Micro vias (--micro-vias, off): outer layer to the next at the class's microvia size where a through via is blocked; no fixture allows them on more than two layers; KiCad-clean on two boards with the setting forced on",
+          "done": true
+        },
+        {
+          "text": "Gridless tile-plane arm: closed, not built; a half-pitch portfolio variant for small boards takes its place (12 boards 4,140 -> 4,153 routed at half pitch; tier B 27 -> 28 clean; D63)",
+          "done": true
+        },
+        {
+          "text": "Learned ordering/congestion models: closed, not built (ordering changes measured no effect, tile congestion absent, variant bandit already in the knowledge base; D64)",
+          "done": true
+        },
+        {
+          "text": "Length tuning: custom length rules read; trombone meanders until in range; KiCad-judged test",
+          "done": true
+        },
+        {
+          "text": "Differential pairs: coupled pair routing v1 (experimental, --diff-pairs; rarely succeeds without coupled escapes)",
+          "done": true
+        },
+        {
+          "text": "Skew tuning for differential pairs (custom skew rules, inDiffPair condition)",
+          "done": true
+        },
+        {
+          "text": "Blind/buried vias where through vias are blocked (--blind-vias; correct on the 3 boards that allow them, no measurable gain)",
+          "done": true
+        }
+      ]
     },
     {
-     "text": "Gate: CPU + CUDA tests pass on both GPUs; kicad-cli works from harness",
-     "done": true
+      "id": "M13",
+      "title": "Component-aware layout rules",
+      "status": "done",
+      "gate": "Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier",
+      "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
+      "tasks": [
+        {
+          "text": "Verify the 41 unchecked catalogue numbers against their sources (2026-10-05: 9 confirmed, 9 corrected, 11 TraceMaker defaults now D, 12 unverifiable stay R; doc 15 \u00a78.10, D46)",
+          "done": true
+        },
+        {
+          "text": "Category detection + role binding with confidence",
+          "done": true
+        },
+        {
+          "text": "Rule compiler: sidecar .kicad_dru, keep-out areas, placer pseudo-nets",
+          "done": true
+        },
+        {
+          "text": "Rule compiler: net classes from rules, used by the router with --component-rules on (tmk_<RULE>_<ref>, Default-class nets only, D58; doc 15 \u00a715)",
+          "done": true
+        },
+        {
+          "text": "Stackup parsing + impedance (IPC-2141A / Wadell) - widths/gaps reported per layer (P4, report only)",
+          "done": true
+        },
+        {
+          "text": "Detection and rule report",
+          "done": true
+        },
+        {
+          "text": "Labelled PCBench subset and benchmark",
+          "done": true
+        },
+        {
+          "text": "Placer pseudo-nets for proximity rules (crystal, ESD, regulator caps, generalised decoupling): --component-rules",
+          "done": true
+        },
+        {
+          "text": "Generated keep-outs (crystal, inductor) for router/DRC + sidecar .kicad_dru",
+          "done": true
+        },
+        {
+          "text": "Per-net coupled routing for USB 2.0 pairs (RouterOptions::pair_nets)",
+          "done": true
+        },
+        {
+          "text": "Net classes from rules: impedance width/gap from the stackup, IPC-2221 width for current, minimum widths (one width per net: front-layer solution; per-layer widths not built)",
+          "done": true
+        },
+        {
+          "text": "IPC-2221 width for current reported for rules with a current (USBC-09)",
+          "done": true
+        },
+        {
+          "text": "User override file (--rules-override, JSON): disable / assert / deny / set, validated, reported (doc 15 \u00a76.3)",
+          "done": true
+        },
+        {
+          "text": "Ethernet magnetics void (ETH-05) as a generated keep-out (--component-rules on)",
+          "done": true
+        },
+        {
+          "text": "Connector edge attraction in the placer (opt-in --edge-attraction, objective only)",
+          "done": true
+        },
+        {
+          "text": "Two-stage soft placement (decaps and their ICs locked first, D43)",
+          "done": true
+        },
+        {
+          "text": "Turn component rules on by default for placement (soft; placed tiers B+C off vs soft: clean pass unchanged, crystals closer, decaps equal; D52). Routing stays off",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "M16",
+      "title": "Advice files and a pluggable advisor",
+      "status": "done",
+      "gate": "Options off: quick/mid/planes byte-identical; same advice at 1/2/4 threads identical; bad advice refused; advisor failure leaves the run unadvised; advised never fewer than unadvised; the hint channel proven without a model first (doc 17 section 8) | Result 2026-10-14: stages 0, 1 and 3 built; stage 4 (placement) not built. The stage 2 gate is NOT met: rule-based advice routes no more than the plain run on the held-out half (439 vs 439; the equal-compute control with 4 more variants routes 450) and ties the control on the tuning half (431 vs 431) (doc 17 section 8.1). Options off: quick/planes/mid byte-identical to main; 291/291 tests; no real model verified (bench/records/m16/).",
+      "deliverables": "Stuck report, advice file, advised portfolio variants, --advisor protocol, reference advisors (doc 17, issue #26)",
+      "tasks": [
+        {
+          "text": "Stage 0: structured unrouted list (reason, rips, blockers, positions), failure event region and blocker nets, stuck report with disclosure and redaction",
+          "done": true
+        },
+        {
+          "text": "Stage 1: src/advice (strict parser, board check, rule-area regions), --advice, advised portfolio variants, advice-check",
+          "done": true
+        },
+        {
+          "text": "Stage 2: prove the channel without a model (bench/advice_eval.py, heuristic advisor, equal-compute control): gate measured on a held-out half and NOT met (doc 17 section 8.1)",
+          "done": true
+        },
+        {
+          "text": "Stage 3: --advisor/--advisor-timeout/--advisor-rounds/--advisor-redact, advisor process runner, reference advisors, fake-server tests",
+          "done": true
+        },
+        {
+          "text": "Stage 4: placement seams (routability_loop seeds, ECO candidates) - not built",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M17",
+      "title": "Installable and measured",
+      "status": "in_progress",
+      "gate": "A machine without a compiler installs the plugin and routes plane_smd in under five minutes (CI does the same in a clean container); the PCBWorld report states boards lost to each baseline; --relax gains and losses counted at equal work, KiCad-judged (docs/18 section 5, D121, D122) | Result 2026-10-16: release files built and installed in clean Ubuntu 24.04 / Debian 13 / Fedora containers in 5 s, the unpacked plugin ran in a live KiCad 10.0.6; the release workflow's package and install jobs passed on GitHub in PR #44 (the tag publish step has not run) and macOS is not built; PCBWorld's D3 is a PCBench subset (119 test boards run: 97/99, 10/10, 9/10 clean; Freerouting 2.1.0 under this judge 73.7 / 50 / 30 %; no comparison with the paper's own rows, other judge); --txn 1 +118 and --relax -509 connections on the 33 failing tier B-D boards at eight variants (bench/records/m17).",
+      "deliverables": "Release files (tarball, KiCad plugin package) built and tested by CI on a tag; PCBWorld-Bench D3 test boards run beside Freerouting 2.1.0 with the paper's settings; --txn and --relax on the 33 failing tier B-D boards",
+      "tasks": [
+        {
+          "text": "Release files: dist preset (static libstdc++/SQLite/zstd), install rules, viewer lookup beside the binary, scripts/make_release.py",
+          "done": true
+        },
+        {
+          "text": "Install gate: scripts/test_release_install.py in clean Ubuntu 24.04 / Debian 13 / Fedora containers (5 s from unpacking to a routed, DRC-clean example); packaged plugin run in a live KiCad 10.0.6 GUI",
+          "done": true
+        },
+        {
+          "text": "Release files workflow (.github/workflows/release.yml): package and install jobs green on GitHub in PR #44 (4 min 26 s, 17 s); the tag-triggered publish to a draft release has not run",
+          "done": true
+        },
+        {
+          "text": "macOS arm64 release files - not built",
+          "done": false
+        },
+        {
+          "text": "PCBWorld-Bench: D3 is a PCBench subset; 119 test boards run, Freerouting 2.1.0 re-run with the paper's settings under this judge, boards lost listed (doc 10 section 11)",
+          "done": true
+        },
+        {
+          "text": "C1: --txn and --relax on the 33 failing tier B-D boards at equal work, one and eight variants (bench/records/m17); --relax ignored with --variants 1 fixed",
+          "done": true
+        },
+        {
+          "text": "Open: --txn 1 as a portfolio variant needs tiers A-D at equal wall time before it can be a default",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M18",
+      "title": "Session server and agent interface",
+      "status": "done",
+      "gate": "The agent must route more than the plain run at the same compute on a held-out half, otherwise the interface stays a library (D118). Result 2026-10-15: NOT met (model-driven agents 968 against the equal-compute control's 968); `tracemaker session` stays a library; nothing more built for agents until the router can say which end of a boxed-in pin is fenced (doc 19, D119). The long-running daemon for the KiCad plugin is not built.",
+      "deliverables": "tracemaker session over MCP and JSON lines, scripted and model-driven evaluation, doc 19",
+      "tasks": [
+        {
+          "text": "tracemaker session (MCP stdio and JSON lines), transactions, replayable log, inspect tools",
+          "done": true
+        },
+        {
+          "text": "Stop-rule test: scripted agent (tabu, persist) and a model-driven arm of four agents on 16 held-out boards",
+          "done": true
+        },
+        {
+          "text": "Long-running daemon shared with the KiCad plugin - not built",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M19",
+      "title": "KiCad 11 readiness",
+      "status": "in_progress",
+      "gate": "Round trip, DRC parity and plugin on KiCad 11 once a release candidate exists (docs/18 section 5)",
+      "deliverables": "Version-drift watch job; file format, DRC parity and plugin for KiCad 11",
+      "tasks": [
+        {
+          "text": "Version-drift watch: scripts/kicad_drift.py and the weekly kicad-drift workflow (newest kicad/kicad release and newer release candidate); 4/4 boards pass on 10.0.6, 10.0.7 and nightly (D142)",
+          "done": true
+        },
+        {
+          "text": "route -o copies the input's .kicad_pro and .kicad_dru beside the output (found by the drift job)",
+          "done": true
+        },
+        {
+          "text": "KiCad 11 file format, DRC parity and plugin, once a KiCad 11 release candidate exists",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M20",
+      "title": "Hobbyist wins",
+      "status": "in_progress",
+      "gate": "Pours and a layer-count advisor, a run report, a proposal-only pin swap experiment (docs/18 section 5)",
+      "deliverables": "C3, D3, C2 experiment, C5 classification",
+      "tasks": [
+        {
+          "text": "D3 run report: route --report FILE (HTML or Markdown) and tracemaker report SUMMARY.json, rendered from the summary alone; rules read and not read, stuck report, DRC before and after, SI audit, options and seed (D136)",
+          "done": true
+        },
+        {
+          "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
+          "done": false
+        },
+        {
+          "text": "C3 pour generation and a layer-count advisor: route --pour, --copper-layers, --try-layers, tracemaker layers (D138); advisor equals brute force 28/28; pours close 0 of 33 non-clean boards (open 1,368 -> 1,290)",
+          "done": true
+        },
+        {
+          "text": "C2 pin-swap feasibility experiment: oracle on 30 boards, open 982 -> 978 and 27 -> 26, median gain zero; pass not built (D141)",
+          "done": true
+        },
+        {
+          "text": "C5 open connections by cause (tracemaker causes; near the pins 779 of 1,320) and the fix: half the portfolio searches from the crowded end (D143); 33 failing boards 1,383 -> 1,220 open, clean set 69 -> 46, mid 1,306 -> 1,093, quick 32 -> 24, no board gains an error",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "M21",
+      "title": "High speed for the Kookabus boards",
+      "status": "in_progress",
+      "gate": "Only as far as the Kookabus boards need it; the board files are not on this machine yet (docs/18 section 7)",
+      "deliverables": "B1 tuning profiles, B2 time-domain matching, B3 audit loop, A5",
+      "tasks": [
+        {
+          "text": "B3 audit loop: --si-rules stitches the critical nets' unstitched layer changes and places the rest in the report (D144); plane tier: one change left (StickHub, no plane copper), nothing to stitch",
+          "done": true
+        },
+        {
+          "text": "B1 KiCad 10 tuning profiles: read, KiCad's implicit width/gap rules as KiCad 10.0.6 applies them, per-layer widths by narrowing, pairs on one geometry (D145); rejudged at schema 5 with B2 (D147): 0 width errors, RoyalBlue's 5 USB-C coupling-gap errors avoided by the router since D148",
+          "done": true
+        },
+        {
+          "text": "A5 five seeds of #24's options on the plane tier: no critical-net measure moves with the seed; --si-rules keeps critical-first (D146)",
+          "done": true
+        },
+        {
+          "text": "B2 time-domain matching: delays measured as KiCad 10.0.6 does, ps windows and skew tuned, KiCad's coupling check in the DRC (D147) and in the router (D148); ddr8, interf_u and RoyalBlue KiCad-clean in delay; 229 parity cases",
+          "done": true
+        },
+        {
+          "text": "KiCad parity on pair boards: pair names as MatchDpSuffix (D149); vias/pads that remove unconnected copper flashed and refilled as KiCad does, tuning patterns and nearly parallel tracks in the coupling test (D150); vme-wren pair verdicts identical to KiCad's, 234 parity cases; clearances in KiCad's order and same-footprint graphics (D151): vme-wren matches KiCad on all routing-relevant types, 239 parity cases",
+          "done": true
+        },
+        {
+          "text": "A3 Kookabus boards as a fixture set (files still missing)",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M22",
+      "title": "Finish the last connections",
+      "status": "in_progress",
+      "gate": "At least 15 % fewer open connections on pcbench-bd-fail at 10 M work (KiCad judge), no clean board lost, quick and mid byte-identical with the options off",
+      "deliverables": "Pin rescue, end-game retry, whole-board window attempt, pad-to-plane searches, gated via retry, via cost near dense pins, tight/off-lattice vias (doc 18 section 18, D155)",
+      "tasks": [
+        {
+          "text": "Research: literature, Freerouting/tscircuit/KiCad source, 349 open connections on 7 boards measured (bench/records/m22-research, D155)",
+          "done": true
+        },
+        {
+          "text": "1 Proof-triggered pin rescue (built, off: lost to an equal budget, doc 05 section 63)",
+          "done": true
+        },
+        {
+          "text": "2 Retry every unattempted or ripped connection at the end (built, off: lost to an equal budget, doc 05 section 63)",
+          "done": true
+        },
+        {
+          "text": "3 Whole-board attempt for window misses (built, off: Aleste -254, doc 05 section 64)",
+          "done": true
+        },
+        {
+          "text": "4 Informed pad-to-plane searches; causes fills zones",
+          "done": false
+        },
+        {
+          "text": "5 D153 via retry gated on budget misses (built, off: no effect on the boards measured)",
+          "done": true
+        },
+        {
+          "text": "6 Escape plan in more variants, via cost near dense pins (built, off: --escape-all with the via shove +22 on ten boards; the via cost lost)",
+          "done": true
+        },
+        {
+          "text": "7 Tight and off-lattice vias: via shove (built, off: mini_mass 987; ten boards 7,197 with --escape-all against 7,193 at equal budget, D156)",
+          "done": true
+        },
+        {
+          "text": "8 Via-site and layer planner (research, only if fan-out stays the largest class)",
+          "done": false
+        }
+      ]
     }
-   ]
-  },
-  {
-   "id": "M1",
-   "title": "KiCad I/O and board model",
-   "status": "done",
-   "gate": "Byte-identical round-trip of every fixture board (parse \u2192 write); netlist equals `kicad-cli sch export netlist` on all fixture projects",
-   "deliverables": "s-expression lexer/parser/writer; `.kicad_pcb`, `.kicad_pro`, `.kicad_dru`, `.kicad_sch` (netlist), `.kicad_mod`; board model with layers, stackup, footprints, pads, tracks, vias, zones, nets, net classes; DSN reader",
-   "tasks": [
-    {
-     "text": "Lossless s-expression parser/writer with span edits",
-     "done": true
-    },
-    {
-     "text": "Board reader: layers, nets (KiCad 9 and 10 syntax), footprints, pads, tracks, arcs, vias, zones, graphics",
-     "done": true
-    },
-    {
-     "text": "Reader verified against pcbnew ground truth on demo boards",
-     "done": true
-    },
-    {
-     "text": "Byte-identical round trip of fixture boards",
-     "done": true
-    },
-    {
-     "text": "Design rules: .kicad_pro net classes, patterns, assignments, board minimums",
-     "done": true
-    },
-    {
-     "text": "Custom rules: .kicad_dru parsed into rules and constraints",
-     "done": true
-    },
-    {
-     "text": "Board editor: add/remove tracks and vias, move/rotate footprints",
-     "done": true
-    },
-    {
-     "text": "Edited boards load in pcbnew with the expected geometry",
-     "done": true
-    },
-    {
-     "text": "Netlist import via kicad-cli (kicadsexpr) and cross-check against board pad nets",
-     "done": true
-    },
-    {
-     "text": "tracemaker inspect: board summary and JSON dump",
-     "done": true
-    },
-    {
-     "text": "Gate: round trip on all fixtures; reader matches KiCad",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M2",
-   "title": "Rules and DRC parity",
-   "status": "done",
-   "gate": "Same violation multiset as `kicad-cli pcb drc` on all unrouted and routed fixture boards (documented, tested exceptions only) | Result: 14 of 17 KiCad demo boards exact and 264 of 264 injected-defect variants (regression tests); three demo boards differ in documented ways. Since 2026-10-06 Margin-layer edges and one-sided SMD pads match KiCad too.",
-   "deliverables": "Rule compiler (net classes, board constraints, custom rules subset), spatial indices, own DRC with KiCad violation names",
-   "tasks": [
-    {
-     "text": "Exact integer geometry kernel (rounded-core shapes, int128 predicates, fine arc flattening)",
-     "done": true
-    },
-    {
-     "text": "Copper item model: pads (all shapes, drill offsets), tracks, arcs, vias, zone fills, copper graphics with nets",
-     "done": true
-    },
-    {
-     "text": "Rule engine: net classes, local overrides, diff pairs, board minimums, legacy rules, custom-rule conditions",
-     "done": true
-    },
-    {
-     "text": "Checks: clearance, shorts, crossings, widths, vias, annular, holes, edge, keepouts",
-     "done": true
-    },
-    {
-     "text": "Anchor/overlap connectivity, unconnected items, dangling tracks/vias",
-     "done": true
-    },
-    {
-     "text": "DRC parity harness vs kicad-cli + fuzzer",
-     "done": true
-    },
-    {
-     "text": "Parity: 11/16 demo boards exact (regression test)",
-     "done": true
-    },
-    {
-     "text": "Parity on broken-board classification (shorts/dangling): 264/264 injected-defect variants match kicad-cli violation by violation (was 41/264; regression test); demo boards 14/17 exact",
-     "done": true
-    },
-    {
-     "text": "Performance on very large boards: vme-wren 730 s -> 7 s, jetson 250 s -> 4 s (zone-fill edge index, area-rule cache; identical reports)",
-     "done": true
-    },
-    {
-     "text": "Copper text obstacle margin (estimated glyph boxes)",
-     "done": true
-    },
-    {
-     "text": "DRC parity 12 of 17 KiCad demo boards (jetson now exact; RoyalBlue54L down to a malformed duplicate pad)",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M3",
-   "title": "Event bus, server, viewer v1",
-   "status": "done",
-   "gate": "Viewer renders the largest fixture board at \u2265 60 fps; replay of a recorded log reproduces the final board | Result: replay reproduces the routed board (test record_replay). The 60 fps figure was not measured: there is no GPU-backed browser on this machine.",
-   "deliverables": "Event types, ring buffers, WebSocket server, FlatBuffers schema, replay log; WebGL2 viewer (WebGPU backend optional): layers, pan/zoom, pads/tracks/vias/zones, ratsnest, dark theme",
-   "tasks": [
-    {
-     "text": "Event types and Sink interface",
-     "done": true
-    },
-    {
-     "text": "WebSocket server (Boost.Beast), static files, snapshot + deltas, back-pressure",
-     "done": true
-    },
-    {
-     "text": "Viewer: WebGL2 instanced tracks/pads/vias/zones, layers, pan/zoom",
-     "done": true
-    },
-    {
-     "text": "Live effects: glow, frontiers, failures, HUD, log, tooltips",
-     "done": true
-    },
-    {
-     "text": "tracemaker-view with --demo",
-     "done": true
-    },
-    {
-     "text": "Router live streaming (route --view)",
-     "done": true
-    },
-    {
-     "text": "Replay log (zstd frames, --record FILE.zst) and heatmaps (expansions, history) live and in replay; test: recording/viewing leave the routed board byte-identical",
-     "done": true
-    },
-    {
-     "text": "Event recording (route --record) and replay (tracemaker-view --replay); test: replay reproduces the routed board exactly",
-     "done": true
-    },
-    {
-     "text": "FlatBuffers schema: closed, not built (protocol and replay log stay JSON, zstd-compressed logs 12-13x smaller; D45, D61)",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M4",
-   "title": "First router (lattice A*)",
-   "status": "done",
-   "gate": "Routes the simple fixture set with 0 added KiCad DRC errors; harness produces the comparison table",
-   "deliverables": "Rerun debug logging of searches (optional), transactions, scoring, union-find, bit-planes, A* + radix heap, insertion with exact validation, basic pull-tight; sequential routing in net order; `tracemaker route` CLI; bench harness v1 with KiCad-DRC judge and Freerouting runner",
-   "tasks": [
-    {
-     "text": "Router obstacle model with exact KiCad-rule legality",
-     "done": true
-    },
-    {
-     "text": "Octilinear lattice A* with vias, bends, admissible heuristic",
-     "done": true
-    },
-    {
-     "text": "Path simplification, exact verification, commit through the board editor",
-     "done": true
-    },
-    {
-     "text": "tracemaker route CLI",
-     "done": true
-    },
-    {
-     "text": "Benchmark harness judged by kicad-cli with Freerouting baselines",
-     "done": true
-    },
-    {
-     "text": "Gate: zero added KiCad DRC errors on the benchmark",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M5",
-   "title": "Failure memory T0\u2013T2 + escalation R0\u2013R3 + repair",
-   "status": "done",
-   "gate": "Completion \u2265 Freerouting on the Freerouting test set; ablation shows each learning mechanism helps or is removed",
-   "deliverables": "Failure records, Zobrist signatures, nogood store, history + targeted penalties, conflict graph, activity ordering, bandit; negotiated rip-up; repair windows; aggressor/victim repair",
-   "tasks": [
-    {
-     "text": "Negotiated rip-up and reroute (soft crossing of routed copper, victims requeued)",
-     "done": true
-    },
-    {
-     "text": "PathFinder history on contested cells",
-     "done": true
-    },
-    {
-     "text": "Learned blocked cells after exact-check failures",
-     "done": true
-    },
-    {
-     "text": "Best-state keeping",
-     "done": true
-    },
-    {
-     "text": "Failure records, nogoods, conflict graph, bandit (T0-T2 complete)",
-     "done": true
-    },
-    {
-     "text": "Gate: completion >= Freerouting on tier A (100% clean, equal to Freerouting RC12, in every run since 2026-10-03)",
-     "done": true
-    },
-    {
-     "text": "Reverse probe for boxed-in targets; pad legs dropped when the lattice end is on the pad; learned blocks beside fine-pitch pads",
-     "done": true
-    },
-    {
-     "text": "Diversified extra restarts while budget remains",
-     "done": true
-    },
-    {
-     "text": "Post-routing clean-up: via-saving re-routes and path smoothing (bends -40%, vias -25-33%)",
-     "done": true
-    },
-    {
-     "text": "Connection planning by pad copper distance (--plan-gap, on, D54): 24 boards at a fixed budget 11,905 -> 11,986 routed; tiers A-D neutral; failure reasons now reported as at the best state",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M6",
-   "title": "Global routing + GPU",
-   "status": "done",
-   "gate": "CPU and GPU results identical on every fixture; time-to-route reduced on dense boards with no quality loss",
-   "deliverables": "Port/adapt GAMER sweep and GGR pattern kernels from Xplace `gpugr` (BSD-3); tile graph, Steiner decomposition, CPU NCR, corridors; GPU pattern routing, GPU sweep maze routing, GPU cost-to-go fields, GPU DRC broad-phase",
-   "tasks": [
-    {
-     "text": "GPU cost-to-go fields (CUDA sweeps) with identical CPU reference",
-     "done": true
-    },
-    {
-     "text": "Fields used as the router's A* heuristic; deterministic with/without GPU",
-     "done": true
-    },
-    {
-     "text": "Coarse global routing + corridors (CPU, negotiated congestion): built, off by default (corridors cost completion in three measurements)",
-     "done": true
-    },
-    {
-     "text": "GPU pattern/maze global routing (GAMER/GGR port): closed, not built. The CPU global router routes the tile graph in 0.02-0.5 s per board and its plan does not help (D56)",
-     "done": true
-    },
-    {
-     "text": "GPU DRC broad-phase: closed, not built. Broad-phase is 14 ms; the DRC was fixed on the CPU with a zone-fill edge index: vme-wren 730 s -> 7 s, jetson 250 s -> 4 s, reports byte-identical (D55)",
-     "done": true
-    },
-    {
-     "text": "Adaptive GPU-field cut-off under GPU contention (wall-clock mode)",
-     "done": true
-    },
-    {
-     "text": "CPU global router v1 (tile graph, capacities, negotiated congestion, soft corridors): experimental, no gain yet",
-     "done": true
-    },
-    {
-     "text": "Global router v2: net-shared edges (Steiner demand), via capacity, layer-true corridors, integer costs, corridor-restricted windows: built; 18 hard boards 13,305 without, 12,967 corridors, 13,324 congestion map; off (D56)",
-     "done": true
-    },
-    {
-     "text": "Exact flood-fill reachability pre-check before likely-failing searches (10 hard boards +47 routed at fixed budget; tiers neutral)",
-     "done": true
-    },
-    {
-     "text": "Global congestion map + cut-based tile capacities (opt-in --global-congestion): 18 hard boards 13,285 -> 13,294 routed, within noise; kept off (D53). Boards are not congested at tile scale; v2 remainder deferred",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M7",
-   "title": "Placement A\u2013D",
-   "status": "done",
-   "gate": "Placements are legal (zero courtyard overlaps, inside outline); HPWL \u2264 SA-PCB baseline on the placement set | Result: legality met (held-out set, doc 04 \u00a710). The HPWL comparison with SA-PCB was NOT measured: the baseline does not build here (it needs SWIG, which is not installed, and its Makefile is stale; build/tools/sa-pcb).",
-   "deliverables": "Constraint extraction, decoupling detection, quadratic B2B (PCG), electrostatic global placement (CPU then GPU batched), rotation/side assignment, LP legalisation; placement report with optimality levels and lower bound",
-   "tasks": [
-    {
-     "text": "Constraint extraction (fixed parts, outline, keepouts, courtyards, copper legality)",
-     "done": true
-    },
-    {
-     "text": "Decoupling capacitors tied to their IC supply pin (D25)",
-     "done": true
-    },
-    {
-     "text": "Other proximity groups: crystals, load caps, ESD near connectors, regulator caps (M13, --component-rules soft)",
-     "done": true
-    },
-    {
-     "text": "quadratic B2B (Eigen CG)",
-     "done": true
-    },
-    {
-     "text": "global spreading (SimPL instead of electrostatic; CPU)",
-     "done": true
-    },
-    {
-     "text": "Rotation assignment (coordinate descent)",
-     "done": true
-    },
-    {
-     "text": "Side assignment (flip to the back): opt-in --flip, annealer flip move + via estimate, KiCad-exact mirror (2,529 footprints = pcbnew); 23 boards HPWL -8%, crossings -31%, 0 new DRC (D48)",
-     "done": true
-    },
-    {
-     "text": "legalisation (greedy minimum displacement; LP not done)",
-     "done": true
-    },
-    {
-     "text": "parallel simulated annealing, deterministic across thread counts",
-     "done": true
-    },
-    {
-     "text": "placement report with optimality levels and LP lower bound (min-cost flow)",
-     "done": true
-    },
-    {
-     "text": "evaluation on 23 PCBench boards: HPWL -17..-26% median, zero new DRC errors; routability not yet improved",
-     "done": true
-    },
-    {
-     "text": "--mode auto with route checks: 23 boards, HPWL -24.5% total, never more unrouted (61 -> 59)",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M8",
-   "title": "Placement E\u2013G + ECO",
-   "status": "done",
-   "gate": "Schematic-to-board set: clean pass \u2265 90%; `eco` mode closes boards that `none` mode cannot | Result 2026-10-06: NOT met. From-scratch clean pass 85 % (34/40) on set S; 4 of the 6 failing boards cannot be clean in any placement. eco closed 0 of the 1 held-out board the human placement leaves unrouted (3 of 7 on the development set).",
-   "deliverables": "GPU parallel-tempering SA, LNS, CP-SAT windows, routability loop; R4 exact window solve, R5 trial ordering, R6 cut proofs, ECO placement moves",
-   "tasks": [
-    {
-     "text": "Parallel tempering (annealed replica exchange, CPU; deterministic for 1/3/16 threads): refine cost -4% on 23 boards, full neutral",
-     "done": true
-    },
-    {
-     "text": "GPU parallel-tempering SA: closed, not built (annealing 1.9 s median, 56 s max on the held-out boards; CPU tempering neutral on routability; D57)",
-     "done": true
-    },
-    {
-     "text": "LNS (window rip-up, exact <=4 parts, greedy otherwise; never worsens)",
-     "done": true
-    },
-    {
-     "text": "Exact windows by branch and bound (CP-SAT not available; B&B equals full enumeration)",
-     "done": true
-    },
-    {
-     "text": "CP-SAT windows: closed, not built (no OR-tools C++ library; exact windows by branch and bound equal full enumeration; D57)",
-     "done": true
-    },
-    {
-     "text": "RUDY routability term in the annealer (incremental, exact vs reference)",
-     "done": true
-    },
-    {
-     "text": "Routability loop (--mode routable): 23 boards unrouted 64 -> 35 (auto 60), 0 new DRC errors",
-     "done": true
-    },
-    {
-     "text": "ECO placement moves (--mode eco): closes 3 of 7 incomplete boards, unrouted 64 -> 48",
-     "done": true
-    },
-    {
-     "text": "Schematic-to-board set S (40 held-out boards, parts piled) built and the gate measured: 85 % clean (34/40) with routable --scratch, human placement 95 %; gate of 90 % NOT met (doc 04 \u00a710)",
-     "done": true
-    },
-    {
-     "text": "R4 exact window solve: closed, not built as an exact model (no CP-SAT); the group re-route stand-in changed no board and was removed (doc 05 \u00a717, \u00a720)",
-     "done": true
-    },
-    {
-     "text": "R5 trial ordering: closed, not built (every order of small conflict groups was tried and changed no board, doc 05 \u00a717, \u00a720)",
-     "done": true
-    },
-    {
-     "text": "R6 cut proofs: built (route --cut-report); no over-full line on 92 tier B-D boards, tightest line 40 % used",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M9",
-   "title": "Escape planning",
-   "status": "done",
-   "gate": "BGA boards in the academic set complete | Result: NOT met. 17 dense-package boards: 41 % clean, 47 % of the 15 feasible ones (Freerouting 2.5: 24 %).",
-   "deliverables": "Min-cost-flow escape, layer assignment, NC fallback, escape templates",
-   "tasks": [
-    {
-     "text": "Escape corridors for dense-package pins (perimeter + dog-bone), opt-in --escape-plan",
-     "done": true
-    },
-    {
-     "text": "Escape feasibility analysis: tracemaker escape, dead pins with reasons and hints; benchmark dead_pins / clean_pass_feasible",
-     "done": true
-    },
-    {
-     "text": "Via neck-down rung (smallest via the board minimums allow)",
-     "done": true
-    },
-    {
-     "text": "Dead pins: not retried after a negotiated neck-down check",
-     "done": true
-    },
-    {
-     "text": "Second-ring channel corridors (built, off: measured mixed)",
-     "done": true
-    },
-    {
-     "text": "Min-cost-flow channel assignment for deep arrays (built, opt-in --escape-flow: measured below the v1 corridors, D49)",
-     "done": true
-    },
-    {
-     "text": "Per-ring layer assignment (per pin, layer by layer, inside --escape-flow; same evidence, D49)",
-     "done": true
-    },
-    {
-     "text": "NC fallback for escapes: closed, not built (the flow planner it belongs to measured below the corridors and is off; ordinary negotiation already overrides corridors; D62)",
-     "done": true
-    },
-    {
-     "text": "Escape templates in the knowledge base: closed, not built (planning takes 0.1-2 s per board; a cache saves nothing; D62)",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M10",
-   "title": "Portfolio, determinism, knowledge base",
-   "status": "done",
-   "gate": "Bit-identical output across thread counts and GPU on/off; clean pass up at fixed time budget",
-   "deliverables": "Successive-halving portfolio, deterministic sync points, persistent KB (T3), warm starts",
-   "tasks": [
-    {
-     "text": "Parallel portfolio of 8 router variants, best kept",
-     "done": true
-    },
-    {
-     "text": "Deterministic work budget (byte-identical repeat runs)",
-     "done": true
-    },
-    {
-     "text": "Persistent knowledge base with variant bandit",
-     "done": true
-    },
-    {
-     "text": "Restarts that keep history",
-     "done": true
-    },
-    {
-     "text": "Successive-halving budget allocation (--halving, restart-based): 24 boards at 2 / 4 threads 12,385 / 12,451 routed against 12,402 / 12,508 for the first variants; kept off (D59)",
-     "done": true
-    },
-    {
-     "text": "Bit-identical across thread counts (portfolio selection; --variants, all 8 with --work, D47)",
-     "done": true
-    },
-    {
-     "text": "Portfolio early stop once a variant routes everything (wall-clock mode)",
-     "done": true
-    },
-    {
-     "text": "2x lattice pitch for two variants on large boards",
-     "done": true
-    },
-    {
-     "text": "Quality benchmark vs Freerouting 2.5.0-RC12 and 1.9.0 on 60 held-out boards (bench/quality_bench.py)",
-     "done": true
-    },
-    {
-     "text": "Held-out quality benchmark on tier C-like boards (heldC-1) and DAC2020",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M11",
-   "title": "KiCad integration",
-   "status": "done",
-   "gate": "Round-trip in KiCad on the demo boards",
-   "deliverables": "IPC plugin (live board in pcbnew, one undoable commit), Python bindings, PCM package",
-   "tasks": [
-    {
-     "text": "IPC action plugin: save copy with project, route, add tracks/vias in one commit",
-     "done": true
-    },
-    {
-     "text": "Offline test against kicad-python 0.8",
-     "done": true
-    },
-    {
-     "text": "Round trip in a running KiCad GUI (headless: pcbnew in Docker under Xvfb, scripts/kicad_gui_roundtrip.py): tracks 140 -> 316 in the open board, one undo removes them, DRC of the saved board clean of new errors",
-     "done": true
-    },
-    {
-     "text": "Python bindings (pybind11): read_board, route, emit_items, drc; GIL released; CLI parity test",
-     "done": true
-    },
-    {
-     "text": "PCM package (scripts/make_pcm_package.py, validate_pcm.py; passes kicad-python 0.8 validator)",
-     "done": true
-    },
-    {
-     "text": "Plugin uses the Python module when importable, binary otherwise",
-     "done": true
-    },
-    {
-     "text": "Install the PCM archive in a running KiCad GUI (Plugin and Content Manager, Install from File: listed as installed and compatible; venv creation and toolbar button not checked, no network in the container)",
-     "done": true
-    },
-    {
-     "text": "Plugin: footprint moves (TRACEMAKER_PLACE), re-routing of existing unlocked copper (TRACEMAKER_REROUTE, route --reroute), zone refill (TRACEMAKER_REFILL); checked in the running GUI",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M12",
-   "title": "Advanced rules and arms",
-   "status": "done",
-   "gate": "Each feature gated by its own benchmark subset; no regressions",
-   "deliverables": "Differential pairs, length/skew tuning, blind/micro vias, gridless tile-plane arm, learned ordering/congestion models",
-   "tasks": [
-    {
-     "text": "Differential pairs: experimental --diff-pairs (rarely couples)",
-     "done": true
-    },
-    {
-     "text": "Differential pairs: proper coupled routing (v2, opt-in --diff-pairs, D50): coupled pair search with coupled vias, breakout legs, re-coupling, enclosed-pin check, --pair-skew-mm; 18 PCBench boards: 35 of 59 pairs >= 50 % coupled at the rule gap, completion 2,201 -> 2,210; KiCad: no new error kinds (one more Margin-layer edge clearance on a board that has 27 with pairs off) (doc 05 \u00a715)",
-     "done": true
-    },
-    {
-     "text": "Differential pairs: twists (layer change with the sides swapped, on with pair routing: one of 59 pairs gains coupling, median share 57 -> 63 %), per-pair skew limits from component rules; pairs ending on routed copper measured to matter little (13 of 21 such attempts couple) and not built (D64)",
-     "done": true
-    },
-    {
-     "text": "Length and skew tuning (KiCad length constraints)",
-     "done": true
-    },
-    {
-     "text": "Blind/buried vias: experimental --blind-vias",
-     "done": true
-    },
-    {
-     "text": "Micro vias (--micro-vias, off): outer layer to the next at the class's microvia size where a through via is blocked; no fixture allows them on more than two layers; KiCad-clean on two boards with the setting forced on",
-     "done": true
-    },
-    {
-     "text": "Gridless tile-plane arm: closed, not built; a half-pitch portfolio variant for small boards takes its place (12 boards 4,140 -> 4,153 routed at half pitch; tier B 27 -> 28 clean; D63)",
-     "done": true
-    },
-    {
-     "text": "Learned ordering/congestion models: closed, not built (ordering changes measured no effect, tile congestion absent, variant bandit already in the knowledge base; D64)",
-     "done": true
-    },
-    {
-     "text": "Length tuning: custom length rules read; trombone meanders until in range; KiCad-judged test",
-     "done": true
-    },
-    {
-     "text": "Differential pairs: coupled pair routing v1 (experimental, --diff-pairs; rarely succeeds without coupled escapes)",
-     "done": true
-    },
-    {
-     "text": "Skew tuning for differential pairs (custom skew rules, inDiffPair condition)",
-     "done": true
-    },
-    {
-     "text": "Blind/buried vias where through vias are blocked (--blind-vias; correct on the 3 boards that allow them, no measurable gain)",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M13",
-   "title": "Component-aware layout rules",
-   "status": "done",
-   "gate": "Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier",
-   "deliverables": "Category detection (USB, Ethernet, crystals, regulators, RF, ...), role binding, rule catalogue compiled into net classes, a sidecar .kicad_dru, keep-outs and placer pseudo-nets; stackup impedance; report (doc 15)",
-   "tasks": [
-    {
-     "text": "Verify the 41 unchecked catalogue numbers against their sources (2026-10-05: 9 confirmed, 9 corrected, 11 TraceMaker defaults now D, 12 unverifiable stay R; doc 15 \u00a78.10, D46)",
-     "done": true
-    },
-    {
-     "text": "Category detection + role binding with confidence",
-     "done": true
-    },
-    {
-     "text": "Rule compiler: sidecar .kicad_dru, keep-out areas, placer pseudo-nets",
-     "done": true
-    },
-    {
-     "text": "Rule compiler: net classes from rules, used by the router with --component-rules on (tmk_<RULE>_<ref>, Default-class nets only, D58; doc 15 \u00a715)",
-     "done": true
-    },
-    {
-     "text": "Stackup parsing + impedance (IPC-2141A / Wadell) - widths/gaps reported per layer (P4, report only)",
-     "done": true
-    },
-    {
-     "text": "Detection and rule report",
-     "done": true
-    },
-    {
-     "text": "Labelled PCBench subset and benchmark",
-     "done": true
-    },
-    {
-     "text": "Placer pseudo-nets for proximity rules (crystal, ESD, regulator caps, generalised decoupling): --component-rules",
-     "done": true
-    },
-    {
-     "text": "Generated keep-outs (crystal, inductor) for router/DRC + sidecar .kicad_dru",
-     "done": true
-    },
-    {
-     "text": "Per-net coupled routing for USB 2.0 pairs (RouterOptions::pair_nets)",
-     "done": true
-    },
-    {
-     "text": "Net classes from rules: impedance width/gap from the stackup, IPC-2221 width for current, minimum widths (one width per net: front-layer solution; per-layer widths not built)",
-     "done": true
-    },
-    {
-     "text": "IPC-2221 width for current reported for rules with a current (USBC-09)",
-     "done": true
-    },
-    {
-     "text": "User override file (--rules-override, JSON): disable / assert / deny / set, validated, reported (doc 15 \u00a76.3)",
-     "done": true
-    },
-    {
-     "text": "Ethernet magnetics void (ETH-05) as a generated keep-out (--component-rules on)",
-     "done": true
-    },
-    {
-     "text": "Connector edge attraction in the placer (opt-in --edge-attraction, objective only)",
-     "done": true
-    },
-    {
-     "text": "Two-stage soft placement (decaps and their ICs locked first, D43)",
-     "done": true
-    },
-    {
-     "text": "Turn component rules on by default for placement (soft; placed tiers B+C off vs soft: clean pass unchanged, crystals closer, decaps equal; D52). Routing stays off",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M16",
-   "title": "Advice files and a pluggable advisor",
-   "status": "done",
-   "gate": "Options off: quick/mid/planes byte-identical; same advice at 1/2/4 threads identical; bad advice refused; advisor failure leaves the run unadvised; advised never fewer than unadvised; the hint channel proven without a model first (doc 17 section 8) | Result 2026-10-14: stages 0, 1 and 3 built; stage 4 (placement) not built. The stage 2 gate is NOT met: rule-based advice routes no more than the plain run on the held-out half (439 vs 439; the equal-compute control with 4 more variants routes 450) and ties the control on the tuning half (431 vs 431) (doc 17 section 8.1). Options off: quick/planes/mid byte-identical to main; 291/291 tests; no real model verified (bench/records/m16/).",
-   "deliverables": "Stuck report, advice file, advised portfolio variants, --advisor protocol, reference advisors (doc 17, issue #26)",
-   "tasks": [
-    {
-     "text": "Stage 0: structured unrouted list (reason, rips, blockers, positions), failure event region and blocker nets, stuck report with disclosure and redaction",
-     "done": true
-    },
-    {
-     "text": "Stage 1: src/advice (strict parser, board check, rule-area regions), --advice, advised portfolio variants, advice-check",
-     "done": true
-    },
-    {
-     "text": "Stage 2: prove the channel without a model (bench/advice_eval.py, heuristic advisor, equal-compute control): gate measured on a held-out half and NOT met (doc 17 section 8.1)",
-     "done": true
-    },
-    {
-     "text": "Stage 3: --advisor/--advisor-timeout/--advisor-rounds/--advisor-redact, advisor process runner, reference advisors, fake-server tests",
-     "done": true
-    },
-    {
-     "text": "Stage 4: placement seams (routability_loop seeds, ECO candidates) - not built",
-     "done": false
-    }
-   ]
-  },
-  {
-   "id": "M17",
-   "title": "Installable and measured",
-   "status": "in_progress",
-   "gate": "A machine without a compiler installs the plugin and routes plane_smd in under five minutes (CI does the same in a clean container); the PCBWorld report states boards lost to each baseline; --relax gains and losses counted at equal work, KiCad-judged (docs/18 section 5, D121, D122) | Result 2026-10-16: release files built and installed in clean Ubuntu 24.04 / Debian 13 / Fedora containers in 5 s, the unpacked plugin ran in a live KiCad 10.0.6; the release workflow's package and install jobs passed on GitHub in PR #44 (the tag publish step has not run) and macOS is not built; PCBWorld's D3 is a PCBench subset (119 test boards run: 97/99, 10/10, 9/10 clean; Freerouting 2.1.0 under this judge 73.7 / 50 / 30 %; no comparison with the paper's own rows, other judge); --txn 1 +118 and --relax -509 connections on the 33 failing tier B-D boards at eight variants (bench/records/m17).",
-   "deliverables": "Release files (tarball, KiCad plugin package) built and tested by CI on a tag; PCBWorld-Bench D3 test boards run beside Freerouting 2.1.0 with the paper's settings; --txn and --relax on the 33 failing tier B-D boards",
-   "tasks": [
-    {
-     "text": "Release files: dist preset (static libstdc++/SQLite/zstd), install rules, viewer lookup beside the binary, scripts/make_release.py",
-     "done": true
-    },
-    {
-     "text": "Install gate: scripts/test_release_install.py in clean Ubuntu 24.04 / Debian 13 / Fedora containers (5 s from unpacking to a routed, DRC-clean example); packaged plugin run in a live KiCad 10.0.6 GUI",
-     "done": true
-    },
-    {
-     "text": "Release files workflow (.github/workflows/release.yml): package and install jobs green on GitHub in PR #44 (4 min 26 s, 17 s); the tag-triggered publish to a draft release has not run",
-     "done": true
-    },
-    {
-     "text": "macOS arm64 release files - not built",
-     "done": false
-    },
-    {
-     "text": "PCBWorld-Bench: D3 is a PCBench subset; 119 test boards run, Freerouting 2.1.0 re-run with the paper's settings under this judge, boards lost listed (doc 10 section 11)",
-     "done": true
-    },
-    {
-     "text": "C1: --txn and --relax on the 33 failing tier B-D boards at equal work, one and eight variants (bench/records/m17); --relax ignored with --variants 1 fixed",
-     "done": true
-    },
-    {
-     "text": "Open: --txn 1 as a portfolio variant needs tiers A-D at equal wall time before it can be a default",
-     "done": false
-    }
-   ]
-  },
-  {
-   "id": "M18",
-   "title": "Session server and agent interface",
-   "status": "done",
-   "gate": "The agent must route more than the plain run at the same compute on a held-out half, otherwise the interface stays a library (D118). Result 2026-10-15: NOT met (model-driven agents 968 against the equal-compute control's 968); `tracemaker session` stays a library; nothing more built for agents until the router can say which end of a boxed-in pin is fenced (doc 19, D119). The long-running daemon for the KiCad plugin is not built.",
-   "deliverables": "tracemaker session over MCP and JSON lines, scripted and model-driven evaluation, doc 19",
-   "tasks": [
-    {
-     "text": "tracemaker session (MCP stdio and JSON lines), transactions, replayable log, inspect tools",
-     "done": true
-    },
-    {
-     "text": "Stop-rule test: scripted agent (tabu, persist) and a model-driven arm of four agents on 16 held-out boards",
-     "done": true
-    },
-    {
-     "text": "Long-running daemon shared with the KiCad plugin - not built",
-     "done": false
-    }
-   ]
-  },
-  {
-   "id": "M19",
-   "title": "KiCad 11 readiness",
-   "status": "in_progress",
-   "gate": "Round trip, DRC parity and plugin on KiCad 11 once a release candidate exists (docs/18 section 5)",
-   "deliverables": "Version-drift watch job; file format, DRC parity and plugin for KiCad 11",
-   "tasks": [
-    {
-     "text": "Version-drift watch: scripts/kicad_drift.py and the weekly kicad-drift workflow (newest kicad/kicad release and newer release candidate); 4/4 boards pass on 10.0.6, 10.0.7 and nightly (D142)",
-     "done": true
-    },
-    {
-     "text": "route -o copies the input's .kicad_pro and .kicad_dru beside the output (found by the drift job)",
-     "done": true
-    },
-    {
-     "text": "KiCad 11 file format, DRC parity and plugin, once a KiCad 11 release candidate exists",
-     "done": false
-    }
-   ]
-  },
-  {
-   "id": "M20",
-   "title": "Hobbyist wins",
-   "status": "in_progress",
-   "gate": "Pours and a layer-count advisor, a run report, a proposal-only pin swap experiment (docs/18 section 5)",
-   "deliverables": "C3, D3, C2 experiment, C5 classification",
-   "tasks": [
-    {
-     "text": "D3 run report: route --report FILE (HTML or Markdown) and tracemaker report SUMMARY.json, rendered from the summary alone; rules read and not read, stuck report, DRC before and after, SI audit, options and seed (D136)",
-     "done": true
-    },
-    {
-     "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
-     "done": false
-    },
-    {
-     "text": "C3 pour generation and a layer-count advisor: route --pour, --copper-layers, --try-layers, tracemaker layers (D138); advisor equals brute force 28/28; pours close 0 of 33 non-clean boards (open 1,368 -> 1,290)",
-     "done": true
-    },
-    {
-     "text": "C2 pin-swap feasibility experiment: oracle on 30 boards, open 982 -> 978 and 27 -> 26, median gain zero; pass not built (D141)",
-     "done": true
-    },
-    {
-     "text": "C5 open connections by cause (tracemaker causes; near the pins 779 of 1,320) and the fix: half the portfolio searches from the crowded end (D143); 33 failing boards 1,383 -> 1,220 open, clean set 69 -> 46, mid 1,306 -> 1,093, quick 32 -> 24, no board gains an error",
-     "done": true
-    }
-   ]
-  },
-  {
-   "id": "M21",
-   "title": "High speed for the Kookabus boards",
-   "status": "in_progress",
-   "gate": "Only as far as the Kookabus boards need it; the board files are not on this machine yet (docs/18 section 7)",
-   "deliverables": "B1 tuning profiles, B2 time-domain matching, B3 audit loop, A5",
-   "tasks": [
-    {
-     "text": "B3 audit loop: --si-rules stitches the critical nets' unstitched layer changes and places the rest in the report (D144); plane tier: one change left (StickHub, no plane copper), nothing to stitch",
-     "done": true
-    },
-    {
-     "text": "B1 KiCad 10 tuning profiles: read, KiCad's implicit width/gap rules as KiCad 10.0.6 applies them, per-layer widths by narrowing, pairs on one geometry (D145); rejudged at schema 5 with B2 (D147): 0 width errors, RoyalBlue's 5 USB-C coupling-gap errors avoided by the router since D148",
-     "done": true
-    },
-    {
-     "text": "A5 five seeds of #24's options on the plane tier: no critical-net measure moves with the seed; --si-rules keeps critical-first (D146)",
-     "done": true
-    },
-    {
-     "text": "B2 time-domain matching: delays measured as KiCad 10.0.6 does, ps windows and skew tuned, KiCad's coupling check in the DRC (D147) and in the router (D148); ddr8, interf_u and RoyalBlue KiCad-clean in delay; 229 parity cases",
-     "done": true
-    },
-    {
-     "text": "KiCad parity on pair boards: pair names as MatchDpSuffix (D149); vias/pads that remove unconnected copper flashed and refilled as KiCad does, tuning patterns and nearly parallel tracks in the coupling test (D150); vme-wren pair verdicts identical to KiCad's, 234 parity cases; clearances in KiCad's order and same-footprint graphics (D151): vme-wren matches KiCad on all routing-relevant types, 239 parity cases",
-     "done": true
-    },
-    {
-     "text": "A3 Kookabus boards as a fixture set (files still missing)",
-     "done": false
-    }
-   ]
-  },
-  {
-   "id": "M22",
-   "title": "Finish the last connections",
-   "status": "in_progress",
-   "gate": "At least 15 % fewer open connections on pcbench-bd-fail at 10 M work (KiCad judge), no clean board lost, quick and mid byte-identical with the options off",
-   "deliverables": "Pin rescue, end-game retry, whole-board window attempt, pad-to-plane searches, gated via retry, via cost near dense pins, tight/off-lattice vias (doc 18 section 18, D155)",
-   "tasks": [
-    {
-     "text": "Research: literature, Freerouting/tscircuit/KiCad source, 349 open connections on 7 boards measured (bench/records/m22-research, D155)",
-     "done": true
-    },
-    {
-     "text": "1 Proof-triggered pin rescue (built, off: lost to an equal budget, doc 05 section 63)",
-     "done": true
-    },
-    {
-     "text": "2 Retry every unattempted or ripped connection at the end (built, off: lost to an equal budget, doc 05 section 63)",
-     "done": true
-    },
-    {
-     "text": "3 Whole-board attempt for window misses",
-     "done": false
-    },
-    {
-     "text": "4 Informed pad-to-plane searches; causes fills zones",
-     "done": false
-    },
-    {
-     "text": "5 D153 via retry gated on budget misses",
-     "done": false
-    },
-    {
-     "text": "6 Escape plan in more variants, via cost near dense pins",
-     "done": false
-    },
-    {
-     "text": "7 Tight and off-lattice vias",
-     "done": false
-    },
-    {
-     "text": "8 Via-site and layer planner (research, only if fan-out stays the largest class)",
-     "done": false
-    }
-   ]
-  }
- ]
+  ]
 }

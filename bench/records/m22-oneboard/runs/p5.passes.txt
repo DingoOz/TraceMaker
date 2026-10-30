@@ -1,0 +1,8 @@
+end of pass 0: routed 986 of 995, budget 1
+end of pass 1: routed 970 of 995, budget 1
+end of pass 2: routed 966 of 995, budget 1
+end of pass 3: routed 961 of 995, budget 1
+end of pass 4: routed 958 of 995, budget 1
+end of pass 5: routed 971 of 995, budget 1
+end of pass 6: routed 969 of 995, budget 1
+end of pass 7: routed 974 of 995, budget 0

@@ -1,0 +1,248 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 97.99,
+ "connections": 995,
+ "copper_layers": 4,
+ "escape_corridor_mm": 622.4537129999989,
+ "escape_corridors": 222,
+ "escape_reclaimed": 0,
+ "expansions": 40807089,
+ "failures": [
+  "/USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/BL_POWER: Q1.1 -> R6.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/Programming Socket #0/I2C_SCL: U24.14 -> U21.14  (search budget)",
+  "/Programming Socket #0/I2C_SCL: U15.14 -> U12.14  (out of budget)",
+  "/Programming Socket #0/I2C_SDA: U15.15 -> U12.15  ()",
+  "/Programming Socket #8/SWITCH: SW9.1 -> U2.1  ()",
+  "/Programming Socket #7/INT: U2.29 -> U27.13  ()",
+  "/Programming Socket #0/I2C_SDA: U2.19 -> U27.15  ()",
+  "/Programming Socket #0/I2C_SCL: U2.18 -> U27.14  ()",
+  "/Programming Socket #6/INT: U2.30 -> U24.13  ()",
+  "/Programming Socket #5/INT: U2.12 -> U21.13  ()",
+  "/Programming Socket #4/INT: U18.13 -> R127.2  ()",
+  "/Programming Socket #3/INT: U15.13 -> R3.2  ()",
+  "/Programming Socket #2/INT: U2.31 -> U12.13  ()",
+  "/Programming Socket #1/INT: U2.32 -> U9.13  ()",
+  "/Programming Socket #0/INT: U2.36 -> U6.13  ()"
+ ],
+ "open": 20,
+ "package_pin_edges": 123,
+ "pitch_mm": 0.065,
+ "routed": 975,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-29T23:41:22Z",
+  "input": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mini_mass_prog_bench_prog_rig/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/2f575f17-e79e-4dda-b3a4-e97cc1143a8b/scratchpad/mm/g.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "40000000"
+   },
+   {
+    "name": "--global",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-token",
+    "value": "(not recorded)"
+   },
+   {
+    "name": "--view-port",
+    "value": "8841"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/2f575f17-e79e-4dda-b3a4-e97cc1143a8b/scratchpad/mm/g.route.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/2f575f17-e79e-4dda-b3a4-e97cc1143a8b/scratchpad/mm/g.kicad_pcb",
+  "seed": 1,
+  "threads": 1,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 40000000
+ },
+ "seconds": 83.939999021,
+ "style": {
+  "acute_angles": 2,
+  "arcs": 0,
+  "bends": 1452,
+  "bends_per_connection": 1.0069,
+  "connections": 1442,
+  "detour_length_mm": 11302.197118,
+  "detour_octile_mm": 10663.187702,
+  "detour_ratio": 1.0599,
+  "length_mm": 11302.197118,
+  "long_detours": 19,
+  "off_angle_segments": 246,
+  "segments": 3272,
+  "short_segments": 84,
+  "stair_steps": 2,
+  "vias": 415
+ },
+ "time_limited": false,
+ "tracks": 3272,
+ "tunnels": 0,
+ "variant": 6,
+ "variant_name": "fast bends, cheap crossings, escape plan, crowded source",
+ "variant_seconds": 83.78712115,
+ "variants": [
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 975,
+   "seconds": 83.78712115,
+   "variant": 6
+  }
+ ],
+ "vias": 415,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 39675510,
+   "commits": 975,
+   "expansions": 37216967,
+   "field_cells": 371647752,
+   "fields": 683,
+   "fixed_checks": 26824819,
+   "flood_cells": 3590122,
+   "rips": 0,
+   "searches": 993
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 1,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 39675510,
+   "commits": 975,
+   "expansions": 37216967,
+   "field_cells": 371647752,
+   "fields": 683,
+   "fixed_checks": 26824820,
+   "flood_cells": 3590122,
+   "rips": 0,
+   "searches": 993
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 39675510,
+   "commits": 975,
+   "expansions": 37216967,
+   "field_cells": 371647752,
+   "fields": 683,
+   "fixed_checks": 26824819,
+   "flood_cells": 3590122,
+   "rips": 0,
+   "searches": 993
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 1,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 39675510,
+   "commits": 975,
+   "expansions": 37216967,
+   "field_cells": 371647752,
+   "fields": 683,
+   "fixed_checks": 26824820,
+   "flood_cells": 3590122,
+   "rips": 0,
+   "searches": 993
+  }
+ }
+}

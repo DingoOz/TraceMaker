@@ -64,3 +64,39 @@ TEST_CASE("last mile: end-game retry and rescue are deterministic and only add c
   CHECK(e.routed >= plain.routed);
   if (plain.routed < plain.connections) CHECK(e.endgame_tried > 0);
 }
+
+TEST_CASE("last mile: via shove, fan-out hold and the negotiation bounds are deterministic and change nothing when off", "[route][last-mile]") {
+  if (!std::filesystem::exists(kBoard)) SKIP("board missing: " + kBoard);
+  const model::Board b = io::read_board_file(kBoard).board;
+  const auto rules = io::read_design_rules(kBoard);
+  route::RouterOptions base;
+  base.work_budget = 3'000'000;
+  base.time_limit_s = 3600;
+  base.gpu_device = -1;
+  base.soft_zones = base.via_in_pad = base.vias_off_pads = true;
+  base.escape_plan = true;
+  const auto plain = route::Router(b, rules, base).run();
+
+  // Off: the values that mean "off" give the default run (D156).
+  auto off = base;
+  off.via_shove = off.fanout_hold = off.pass_bound = off.window_escalate = off.via_retry = off.escape_all = false;
+  off.neg_strict_cap = 0;
+  off.long_weight = 0;
+  off.pin_via_pen_mm = 0;
+  CHECK(same_copper(route::Router(b, rules, off).run(), plain));
+
+  auto on = base;
+  on.via_shove = on.fanout_hold = on.pass_bound = on.window_escalate = on.via_retry = true;
+  on.neg_strict_cap = 200'000;
+  on.long_weight = 2;
+  on.long_weight_mm = 5;
+  on.pin_via_pen_mm = 3;
+  const auto r1 = route::Router(b, rules, on).run();
+  const auto r2 = route::Router(b, rules, on).run();
+  CHECK(same_copper(r1, r2));
+  CHECK(r1.via_shoves == r2.via_shoves);
+  CHECK(r1.via_shove_trials == r2.via_shove_trials);
+  CHECK(r1.window_escalations == r2.window_escalations);
+  CHECK(r1.via_retried == r2.via_retried);
+  CHECK(r1.fanout_holds == r2.fanout_holds);
+}

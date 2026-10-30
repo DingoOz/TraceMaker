@@ -1,0 +1,293 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 91.53,
+ "connections": 413,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 20058798,
+ "failures": [
+  "/FPGM_MOSI: R30.1 -> U6.38  (boxed in; escapes/neck-down: boxed in)",
+  "/iCE40-SS_B: U4.71 -> U1.1  (boxed in; escapes/neck-down: boxed in)",
+  "GND: U6.41 -> R14.2  (boxed in; escapes/neck-down: boxed in)",
+  "/P_SPI_SS: R33.1 -> U6.10  (boxed in; escapes/neck-down: boxed in)",
+  "/iCE40-CDONE: P2.1 -> U6.40  (boxed in; escapes/neck-down: boxed in)",
+  "/iCE40-CRESET: P2.2 -> U6.42  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_8: U4.119 -> P5.17  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_5: U4.116 -> P5.14  (boxed in; escapes/neck-down: boxed in)",
+  "/I2C_SDA: P4.19 -> U4.107  (boxed in; escapes/neck-down: boxed in)",
+  "/RAM_D11: U5.47 -> U4.42  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/FPGA_IO_BANK1_6: U4.117 -> P5.15  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_3: U4.114 -> P5.12  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_18: U4.137 -> P5.29  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_16: U4.135 -> P5.27  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_4: U4.115 -> P5.13  (boxed in; escapes/neck-down: boxed in)",
+  "/RAM_D12: U5.48 -> U4.41  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/FPGA_IO_BANK1_1: U4.112 -> P5.10  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_2: U4.113 -> P5.11  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK1_0: U4.110 -> P5.9  (boxed in; escapes/neck-down: boxed in)",
+  "/iCE40-CDONE: R3.1 -> R40.2  (no path in window)",
+  "/FPGA_IO_BANK2_14: U4.19 -> P6.21  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_16: U4.21 -> P6.23  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_27: U4.34 -> P6.34  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_18: U4.23 -> P6.25  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_20: U4.25 -> P6.27  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_0: U4.1 -> P6.7  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_22: U4.28 -> P6.29  (boxed in; escapes/neck-down: boxed in)",
+  "/FPGA_IO_BANK2_26: U4.33 -> P6.33  (boxed in; escapes/neck-down: boxed in)",
+  "/iCE40-CRESET: U4.66 -> R41.2  (no path in window)",
+  "/SPI_CLK: P3.20 -> U4.98  (boxed in; escapes/neck-down: no path in window)",
+  "/SPI_MISO: P3.18 -> U4.97  (no path in window)",
+  "/GPIO0: P3.29 -> U4.102  (boxed in; escapes/neck-down: boxed in)",
+  "/SPI_MOSI: P3.21 -> U4.99  (boxed in; escapes/neck-down: boxed in)",
+  "/SPI_CS: P3.23 -> U4.101  (boxed in; escapes/neck-down: boxed in)",
+  "/RxD: U4.105 -> R38.2  (boxed in; escapes/neck-down: boxed in)"
+ ],
+ "open": 35,
+ "package_pin_edges": 7,
+ "pitch_mm": 0.07,
+ "routed": 378,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T01:23:04Z",
+  "input": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/poncho_fpga_fpga-dongle/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "build/m22-attr/poncho_fpga_fpga-dongle.pvp.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "3"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "8854"
+   },
+   {
+    "name": "--json",
+    "value": "build/m22-attr/poncho_fpga_fpga-dongle.pvp.route.json"
+   }
+  ],
+  "output": "build/m22-attr/poncho_fpga_fpga-dongle.pvp.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 304.648979036,
+ "style": {
+  "acute_angles": 4,
+  "arcs": 0,
+  "bends": 906,
+  "bends_per_connection": 0.8039,
+  "connections": 1127,
+  "detour_length_mm": 5886.96515,
+  "detour_octile_mm": 5233.215569,
+  "detour_ratio": 1.1249,
+  "length_mm": 5886.96515,
+  "long_detours": 25,
+  "off_angle_segments": 732,
+  "segments": 2268,
+  "short_segments": 158,
+  "stair_steps": 10,
+  "vias": 270
+ },
+ "time_limited": false,
+ "tracks": 2268,
+ "tunnels": 0,
+ "variant": 5,
+ "variant_name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+ "variant_seconds": 201.645620723,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 318,
+   "seconds": 33.764032805,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 375,
+   "seconds": 209.218493515,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 55,
+   "seconds": 64.388751452,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 365,
+   "seconds": 193.173137388,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 310,
+   "seconds": 32.86800866,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 378,
+   "seconds": 201.645620723,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 376,
+   "seconds": 85.348706291,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 369,
+   "seconds": 152.529629237,
+   "variant": 7
+  }
+ ],
+ "vias": 270,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 14048195,
+   "commits": 389,
+   "expansions": 10248114,
+   "field_cells": 186550124,
+   "fields": 311,
+   "fixed_checks": 6485312,
+   "flood_cells": 5171579,
+   "rips": 0,
+   "searches": 574
+  },
+  "negotiation": {
+   "cell_checks": 3906892,
+   "commits": 21,
+   "expansions": 2006297,
+   "field_cells": 15726892,
+   "fields": 30,
+   "fixed_checks": 479582,
+   "flood_cells": 2632808,
+   "rips": 33,
+   "searches": 81
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 17955087,
+   "commits": 410,
+   "expansions": 12254411,
+   "field_cells": 202277016,
+   "fields": 341,
+   "fixed_checks": 6964894,
+   "flood_cells": 7804387,
+   "rips": 33,
+   "searches": 655
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 98184754,
+   "commits": 2639,
+   "expansions": 104520800,
+   "field_cells": 1038975600,
+   "fields": 1907,
+   "fixed_checks": 39849267,
+   "flood_cells": 32578215,
+   "rips": 0,
+   "searches": 3706
+  },
+  "negotiation": {
+   "cell_checks": 20024075,
+   "commits": 103,
+   "expansions": 10849064,
+   "field_cells": 69084222,
+   "fields": 161,
+   "fixed_checks": 3065424,
+   "flood_cells": 12799425,
+   "rips": 135,
+   "searches": 433
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 246,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 118208829,
+   "commits": 2742,
+   "expansions": 115369864,
+   "field_cells": 1108059822,
+   "fields": 2068,
+   "fixed_checks": 42914937,
+   "flood_cells": 45377640,
+   "rips": 135,
+   "searches": 4139
+  }
+ }
+}

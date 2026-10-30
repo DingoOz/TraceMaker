@@ -1,0 +1,24 @@
+live view: http://192.168.1.83:8843/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 1 thread
+searches: 983 ok (14213789 expansions), 29 failed (6392018 expansions); fields 693 GPU + 0 CPU (86.76 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1102 connections improved
+restarts 0; legality checks 23774248; rips 0, passes 1, boxed-in 18, nogood skips 9, history cells 0, transactions 0 kept of 0
+reachability checks: 5, 4 proved unreachable, 3000929 cells visited
+late reachability proofs: 20, 2 proved no path, 182194 cells visited
+failed-search expansions: strict confined 0, strict wide 6391090, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 983 in 128.4 s  <- best
+routed 983/995 connections, 2869 tracks, 263 vias, pitch 0.065 mm, 23788002 expansions, 128.75 s (best variant 128.44 s)
+  unrouted: +5V: U2.44 -> U2.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.2 -> C3.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_VBUS: U4.5 -> U2.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /BL_POWER: Q1.1 -> R6.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #6/INT: U2.30 -> U24.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (search budget)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 20604879 expansions, 3183123 flood cells, 23770762 cell checks, 18934613 fixed-copper checks, 750006640 field cells in 693 fields, 983 commits, 0 rips

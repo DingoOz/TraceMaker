@@ -200,6 +200,18 @@ comparable (judge version, time limit, machine load).
 | [lm-eg10rb](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10rb/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.9% | 0.0% | 6382 | `--endgame 0.1 --rescue 2,4,8` |
 | [lm-rescue](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-rescue/summary.json) | lm10 | 10 | df366f7 | 0.0% | 84.0% | 0.0% | 3058 | `--rescue 2,4,8` |
 
+## m22-oneboard
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m22-oneboard)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [lm-quick-off2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/quick-off/summary.json) | quick | 30 | 08a82ff | 86.7% | 99.3% | 100.0% | 212 |  |
+| [lm-m22all](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22all/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 79.3% | 0.0% | 6540 | `--via-shove --pin-via-pen 3 --escape-all --window-escalate --via-retry --pass-bound --neg-strict-cap 200000 --long-weight 2 --plane-informed` |
+| [lm-m22core](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22core/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 85.4% | 0.0% | 7105 | `--via-shove --pin-via-pen 3 --escape-all` |
+| [lm-m22shove](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shove/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 86.8% | 0.0% | 7139 | `--via-shove` |
+| [lm-m22shovee](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shovee/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 87.2% | 0.0% | 6918 | `--via-shove --escape-all` |
+
 ## macos15
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/macos15)

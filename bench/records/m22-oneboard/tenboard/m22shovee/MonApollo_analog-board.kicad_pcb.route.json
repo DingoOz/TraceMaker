@@ -1,0 +1,316 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 95.29,
+ "connections": 1190,
+ "copper_layers": 2,
+ "escape_corridor_mm": 1444.085749999999,
+ "escape_corridors": 506,
+ "escape_reclaimed": 0,
+ "expansions": 20770489,
+ "failures": [
+  "Net-(Q6-Pad1): Q6.1 -> Q6.4  (ripped up by Net-(Q6-Pad3) and not routed again)",
+  "Net-(D3-Pad2): D3.2 -> U39.10  (ripped up by Net-(D4-Pad2) and not routed again)",
+  "Net-(C14-Pad1): U7.2 -> C14.1  (ripped up by Net-(C14-Pad1) and not routed again)",
+  "+12V: R184.1 -> U39.4  (ripped up by Net-(D4-Pad2) and not routed again)",
+  "SH12: C63.1 -> U14.12  (no path in window)",
+  "SH20: C72.1 -> U16.12  (no path in window)",
+  "SH16: C65.1 -> U16.4  (no path in window)",
+  "-12V: C37.1 -> U28.11  (no path in window)",
+  "+12V: U15.8 -> R96.2  (boxed in; escapes/neck-down: boxed in (target); via shove failed)",
+  "+12V: R96.2 -> U12.13  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "DB0: U20.2 -> U36.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+12V: U28.4 -> U34.4  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "-12V: C44.2 -> C133.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(C16-Pad2): U8.8 -> VCO2.10  (no path in window)",
+  "Net-(C110-Pad2): U39.7 -> U45.12  (no path in window)",
+  "+12V: U34.4 -> C132.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+5V: U36.20 -> U20.5  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U12.3 -> VCO2.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(C102-Pad1): C102.1 -> R210.2  (no path in window)",
+  "+5V: U4.12 -> U11.12  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC LFO MOD: U5.8 -> R65.1  (no path in window)",
+  "OSC LFO MOD: R65.1 -> U4.14  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "PWM A EG2 AMT CV: R22.1 -> U22.1  (boxed in; escapes/neck-down: no path in window; via shove failed)",
+  "DB1: U14.16 -> U36.3  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC7: J3.28 -> U6.26  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U11.6 -> U12.3  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB0: U14.1 -> U13.1  (no path in window)",
+  "VDAC: U16.8 -> U17.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB0: J3.8 -> U17.1  (no path in window)",
+  "PWM A LFO AMT CV: R23.1 -> U23.9  (no path in window)",
+  "/DAC9: J3.24 -> U6.24  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U12.3 -> R113.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC13: J3.20 -> U6.20  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "ANALOG SW LATCH: J3.36 -> U36.11  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC LFO AMT CV: R18.1 -> U22.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCA INIT CV: R51.2 -> U23.1  (no path in window)",
+  "NOISE MIX CV: R103.1 -> U23.6  (no path in window)",
+  "FIL OSCB  AMT CV: R129.1 -> U27.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC PWM EG2 MOD: U4.11 -> U3.12  (no path in window)",
+  "OSCB INIT CV: R49.2 -> U25.9  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG1 ATT CV: EG1.10 -> U33.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG2 REL CV: EG2.8 -> U34.13  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG1 REL CV: EG1.8 -> U33.13  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "LFO: R1.1 -> U45.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+5V: U46.3 -> U12.12  (no path in window)",
+  "LFO: R112.1 -> R1.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCA PITCH CV: R82.1 -> U24.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB TRI: U12.16 -> U36.12  (no path in window)",
+  "DB6: J3.14 -> U36.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB PULSE: U12.8 -> U36.14  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "DB4: J3.12 -> U36.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC SYNC: U11.8 -> U36.16  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "FIL EG2 AMT CV: R127.1 -> U27.14  (no path in window)",
+  "GLIDE AMT CV: R68.2 -> U24.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB MOD: U4.16 -> U36.15  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DAC MUX EN1: J3.18 -> U14.2  (boxed in; escapes/neck-down: boxed in; via shove failed)"
+ ],
+ "open": 56,
+ "package_pin_edges": 17,
+ "pitch_mm": 0.15,
+ "routed": 1134,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T01:41:19Z",
+  "input": "/home/dingo/Programming/TraceMaker-speed/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/MonApollo_analog-board/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22shovee/boards/MonApollo_analog-board.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "7200.0"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22shovee/boards/MonApollo_analog-board.kicad_pcb.state"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22shovee/boards/MonApollo_analog-board.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22shovee/boards/MonApollo_analog-board.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 7200.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 592.517403865,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 1869,
+  "bends_per_connection": 0.5559,
+  "connections": 3362,
+  "detour_length_mm": 13644.959866,
+  "detour_octile_mm": 11795.200836,
+  "detour_ratio": 1.1568,
+  "length_mm": 13644.959866,
+  "long_detours": 69,
+  "off_angle_segments": 2033,
+  "segments": 5824,
+  "short_segments": 428,
+  "stair_steps": 31,
+  "vias": 787
+ },
+ "time_limited": false,
+ "tracks": 5824,
+ "tunnels": 0,
+ "variant": 5,
+ "variant_name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+ "variant_seconds": 338.984469158,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 937,
+   "seconds": 55.042314199,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 1119,
+   "seconds": 338.828636964,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 936,
+   "seconds": 154.239551057,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 1100,
+   "seconds": 273.05757364,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 974,
+   "seconds": 70.243258305,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 1134,
+   "seconds": 338.984469158,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 1119,
+   "seconds": 176.481497098,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 1124,
+   "seconds": 319.17350198,
+   "variant": 7
+  }
+ ],
+ "via_shove_trials": 214,
+ "via_shoves": 1,
+ "vias": 787,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 12084253,
+   "commits": 1145,
+   "expansions": 9260046,
+   "field_cells": 125145856,
+   "fields": 366,
+   "fixed_checks": 5795555,
+   "flood_cells": 2812663,
+   "rips": 0,
+   "searches": 1684
+  },
+  "negotiation": {
+   "cell_checks": 7108426,
+   "commits": 7,
+   "expansions": 162257,
+   "field_cells": 2987600,
+   "fields": 1,
+   "fixed_checks": 788773,
+   "flood_cells": 8535523,
+   "rips": 9,
+   "searches": 90
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 19192679,
+   "commits": 1152,
+   "expansions": 9422303,
+   "field_cells": 128133456,
+   "fields": 367,
+   "fixed_checks": 6584328,
+   "flood_cells": 11348186,
+   "rips": 9,
+   "searches": 1774
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 110153216,
+   "commits": 8476,
+   "expansions": 124762902,
+   "field_cells": 733810114,
+   "fields": 2446,
+   "fixed_checks": 75814305,
+   "flood_cells": 23788244,
+   "rips": 0,
+   "searches": 11114
+  },
+  "negotiation": {
+   "cell_checks": 12337015,
+   "commits": 20,
+   "expansions": 2851227,
+   "field_cells": 15247886,
+   "fields": 23,
+   "fixed_checks": 1606321,
+   "flood_cells": 12507702,
+   "rips": 24,
+   "searches": 138
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 122490231,
+   "commits": 8496,
+   "expansions": 127614129,
+   "field_cells": 749058000,
+   "fields": 2469,
+   "fixed_checks": 77420626,
+   "flood_cells": 36295946,
+   "rips": 24,
+   "searches": 11252
+  }
+ }
+}

@@ -350,3 +350,13 @@ byte-identical with the options off.
 
 Items 1 and 2 (and part of 4) were built and measured on 2026-10-29: at the same budget, plain routing beat them (7,193 against
 7,185 routed on ten failing boards; doc 05 §63). They stay as options, off.
+
+The rest of the plan was developed on one board, `mini_mass_prog_bench_prog_rig`, and then measured on the ten (2026-10-30, D156,
+doc 05 §64):
+
+- Item 7, as a via shove that moves other nets' vias near a boxed-in pin: mini_mass 986 → 987.
+- Items 3, 5 and 6 were also built.
+
+With `--via-shove --escape-all` the ten boards route 7,197, against 7,175 for the base and 7,193 for the base at 22 M. Open
+connections fall 3.5 %, short of the 15 % gate. The whole-board window (item 3) and the via penalty (item 6) lost, and stay off.
+Item 8 remains: on mini_mass the open pins are boxed in by their neighbours' tracks.

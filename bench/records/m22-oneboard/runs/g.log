@@ -1,0 +1,32 @@
+live view: http://192.168.1.83:8841/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 1 thread
+searches: 975 ok (28094879 expansions), 17 failed (9122088 expansions); fields 683 GPU + 0 CPU (19.64 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1108 connections improved
+restarts 0; legality checks 39675510; rips 0, passes 1, boxed-in 12, nogood skips 6, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000001 cells visited
+late reachability proofs: 59, 0 proved no path, 590121 cells visited
+failed-search expansions: strict confined 0, strict wide 9122088, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 975 in 83.8 s  <- best
+routed 975/995 connections, 3272 tracks, 415 vias, pitch 0.065 mm, 40807089 expansions, 83.94 s (best variant 83.79 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /BL_POWER: Q1.1 -> R6.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U24.14 -> U21.14  (search budget)
+  unrouted: /Programming Socket #0/I2C_SCL: U15.14 -> U12.14  (out of budget)
+  unrouted: /Programming Socket #0/I2C_SDA: U15.15 -> U12.15  ()
+  unrouted: /Programming Socket #8/SWITCH: SW9.1 -> U2.1  ()
+  unrouted: /Programming Socket #7/INT: U2.29 -> U27.13  ()
+  unrouted: /Programming Socket #0/I2C_SDA: U2.19 -> U27.15  ()
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  ()
+  unrouted: /Programming Socket #6/INT: U2.30 -> U24.13  ()
+  unrouted: /Programming Socket #5/INT: U2.12 -> U21.13  ()
+  unrouted: /Programming Socket #4/INT: U18.13 -> R127.2  ()
+  unrouted: /Programming Socket #3/INT: U15.13 -> R3.2  ()
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  ()
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 37216967 expansions, 3590122 flood cells, 39675510 cell checks, 26824820 fixed-copper checks, 371647752 field cells in 683 fields, 975 commits, 0 rips

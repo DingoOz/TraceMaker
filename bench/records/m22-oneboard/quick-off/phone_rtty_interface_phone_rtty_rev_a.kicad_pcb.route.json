@@ -1,0 +1,249 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 100.0,
+ "connections": 61,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 357953,
+ "failures": [],
+ "open": 0,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.035,
+ "routed": 61,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T01:48:51Z",
+  "input": "/home/dingo/Programming/TraceMaker-speed/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/phone_rtty_interface_phone_rtty_rev_a/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-quick-off2/boards/phone_rtty_interface_phone_rtty_rev_a.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600.0"
+   },
+   {
+    "name": "--work",
+    "value": "1000000"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-quick-off2/boards/phone_rtty_interface_phone_rtty_rev_a.kicad_pcb.state"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "7"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-quick-off2/boards/phone_rtty_interface_phone_rtty_rev_a.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-quick-off2/boards/phone_rtty_interface_phone_rtty_rev_a.kicad_pcb",
+  "seed": 1,
+  "threads": 7,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 1000000
+ },
+ "seconds": 4.91683232,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 48,
+  "bends_per_connection": 0.6575,
+  "connections": 73,
+  "detour_length_mm": 433.936132,
+  "detour_octile_mm": 430.313338,
+  "detour_ratio": 1.0084,
+  "length_mm": 433.936132,
+  "long_detours": 0,
+  "off_angle_segments": 0,
+  "segments": 121,
+  "short_segments": 4,
+  "stair_steps": 0,
+  "vias": 0
+ },
+ "time_limited": false,
+ "tracks": 121,
+ "tunnels": 0,
+ "variant": 5,
+ "variant_name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+ "variant_seconds": 4.903553638,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 61,
+   "seconds": 1.813677413,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 61,
+   "seconds": 1.89045053,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 61,
+   "seconds": 0.623799668,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 61,
+   "seconds": 2.15580794,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 61,
+   "seconds": 1.538155619,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 61,
+   "seconds": 4.903553638,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 61,
+   "seconds": 0.945766632,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 61,
+   "seconds": 1.322473578,
+   "variant": 7
+  }
+ ],
+ "vias": 0,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 404958,
+   "commits": 61,
+   "expansions": 357953,
+   "field_cells": 12414416,
+   "fields": 51,
+   "fixed_checks": 534459,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 61
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 404958,
+   "commits": 61,
+   "expansions": 357953,
+   "field_cells": 12414416,
+   "fields": 51,
+   "fixed_checks": 534459,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 61
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 644351,
+   "commits": 29,
+   "expansions": 1342284,
+   "field_cells": 3404214,
+   "fields": 25,
+   "fixed_checks": 134183,
+   "flood_cells": 30006,
+   "rips": 0,
+   "searches": 29
+  },
+  "first_pass": {
+   "cell_checks": 1485020,
+   "commits": 488,
+   "expansions": 2134529,
+   "field_cells": 24043908,
+   "fields": 149,
+   "fixed_checks": 1906672,
+   "flood_cells": 40008,
+   "rips": 0,
+   "searches": 488
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2129371,
+   "commits": 517,
+   "expansions": 3476813,
+   "field_cells": 27448122,
+   "fields": 174,
+   "fixed_checks": 2040855,
+   "flood_cells": 70014,
+   "rips": 0,
+   "searches": 517
+  }
+ }
+}

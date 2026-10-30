@@ -1,0 +1,25 @@
+live view: http://192.168.1.83:8841/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 1 thread
+searches: 983 ok (14581937 expansions), 33 failed (6064034 expansions); fields 707 GPU + 0 CPU (63.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1090 connections improved
+restarts 0; legality checks 23293408; rips 0, passes 1, boxed-in 30, nogood skips 5, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000001 cells visited
+late reachability proofs: 19, 0 proved no path, 190030 cells visited
+failed-search expansions: strict confined 0, strict wide 6064034, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 982 in 104.0 s  <- best
+routed 982/995 connections, 2911 tracks, 266 vias, pitch 0.065 mm, 23836002 expansions, 104.16 s (best variant 103.96 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #8/PSU_FAULT: U2.37 -> U30.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (search budget)
+  unrouted: /Programming Socket #6/INT: U2.30 -> U24.13  ()
+  unrouted: /Programming Socket #5/INT: U2.12 -> U21.13  ()
+  unrouted: /Programming Socket #4/INT: U18.13 -> R127.2  ()
+  unrouted: /Programming Socket #3/INT: U15.13 -> R3.2  ()
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  ()
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 20645971 expansions, 3190031 flood cells, 23290896 cell checks, 17202597 fixed-copper checks, 437941768 field cells in 707 fields, 983 commits, 0 rips

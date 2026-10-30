@@ -42,6 +42,21 @@ struct RouterOptions {
   // 8,285 / 8,309 / 8,381 / 8,371 / 8,363), but the 8-variant 120 s tiers did not confirm it (tier B 5,167 -> 5,161,
   // tier C 9,523 -> 9,512 and 63.3 % -> 60.0 % clean), so it stays 3M (doc 05 §13; --max-expansions to experiment).
   long max_expansions = 3'000'000;
+  // Via shove (D156, doc 05 §64): a boxed-in connection moves the nearest vias of other nets (and only the tracks ending at them) a little.
+  bool via_shove = false;
+  double via_shove_mm = 1.5;      // vias within this distance of the stuck connection's pads
+  int via_shove_vias = 6;         // at most this many vias, nearest first
+  double via_shove_step_mm = 0.15;  // ring spacing of the positions tried
+  int via_shove_rings = 6;        // rings of 16 positions
+  int via_shove_trials = 16;      // searches per stuck connection (one per via or pair lifted)
+  long via_shove_cap = 300'000;   // expansion limit of each attempt
+  double via_shove_share = 0.05;  // the shove stops once it has spent this share of the work budget
+  bool window_escalate = false;  // D156 (M22 item 3): a search whose last window's edge stopped it gets one whole-board window
+  bool escape_all = false;       // D156 (M22 item 6): the escape plan in every portfolio variant
+  double pin_via_pen_mm = 0;     // D156 (M22 item 6): > 0: a via in another net's dense-package pin fan-out region costs this much more (mm of track)
+  double pin_via_mm = 1.0;       // the fan-out region: this far past the pin's copper
+  bool pass_bound = false;       // D156: a negotiation pass routes only the connections queued at its start; what it rips waits for the next pass
+  long neg_strict_cap = 0;      // D156: > 0: expansion limit of the strict searches in negotiation passes (they retry first-pass failures before the negotiated search); 0 = max_expansions
   bool reach_verify = false;        // test only: run the A* even where the pre-check proved no path, count mismatches
   int reach_check = 1;              // flood-fill reachability check before strict searches (exact): 0 off, 1 likely failures, 2 all
   // Late reachability proof (doc 05 §62, D154): a strict search still open after this many expansions floods from both ends; when one
@@ -52,6 +67,8 @@ struct RouterOptions {
   bool tie_deep = false;            // A* ties on f go to the state with the larger g (the deeper one) instead of the lower state index
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   double heuristic_weight = 1.0;
+  double long_weight = 0;        // D156: > 1: negotiated searches of connections at least long_weight_mm long use this heuristic weight (weighted A*); 0 = off
+  double long_weight_mm = 100;
   // Plane-aware routing of all-SMD boards (doc 05 §26), all opt-in:
   bool soft_zones = false;          // zone fills do not block other nets (refilled afterwards); unused fills become plane targets
   bool via_in_pad = false;          // inner balls / enclosed SMD pads may take a minimum-size via in the pad
@@ -64,6 +81,7 @@ struct RouterOptions {
   int soft_attempts = 3;        // window sizes tried by negotiated searches
   double via_cost_mm = 3.0;     // equivalent track length of one via
   bool allow_vias = true;
+  bool via_retry = false;       // D153 (M22 item 5): a search that stopped at its expansion cap is searched again at once with cheap vias and its busiest layer dearer
   double polish_fraction = 0;   // share of the budget reserved for rebuilding the open connections of the best state (doc 16)
   int polish_trials = 20;       // seeded orders tried per open connection in the polish
   int lns_open_trials = 0;      // regional rebuild of open connections: seeded orders tried per open connection (0 = off, doc 16 F4)
@@ -173,6 +191,7 @@ struct RouterOptions {
   bool escape_plan = false;     // reserve escape corridors for the pins of dense packages (route/escape.hpp, M9)
   // Corridors of the review of the EtherCAT shield (reports/realworld/ethercat_qfn_analysis.md, doc 05 §47). All off by default: no change without them.
   double escape_length_mm = 0;  // > 0: perimeter corridors run this far past the package edge (2 mm by default), as far as no fixed copper is in the way (bundles of parallel straight escapes)
+  bool fanout_hold = false;     // D156: with the escape plan, each open pin's straight corridor (as --escape-stubs offers it) is held by a placeholder track of its net through the strict first pass, so no other net's track or via takes it before the pin is routed; dropped when the pin is routed and before negotiation
   bool escape_stubs = false;    // with the escape plan: a pin offers the end of its (long, straight) corridor as a start point, reached by one exact off-lattice segment at a discount: parallel escapes at the pad pitch, which the lattice cannot draw
   bool soft_mask_graphics = false;  // net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them
   bool soft_copper_graphics = false;  // board copper graphics (polygons on a copper layer) take the net of the pads, tracks and vias of the one net they touch (a manual pour), so that net's pins inside are not enclosed and no other net may touch them
@@ -181,6 +200,7 @@ struct RouterOptions {
   int bundle_min_lanes = 3;     // fewer connections than this in a group are left to the ordinary router
   bool package_tunnels = false; // doc 05 §52: a connection between two perimeter pins of one dense package on one net gets a stub and a via at each pin and its run between them on the other layer (the core rail's tunnel under the package), placed before the search
   bool supply_first = false;    // doc 05 §51: nets with 2+ perimeter pins on one dense package (supply and core nets: +3V3, a core rail) and no pour are routed before everything else and may not be ripped (as --first-nets); the bundles of --bundle-escape are still placed first (placing them after the supply nets was worse: 20 against 13 unrouted on the EtherCAT shield)
+  double escape_via_keep_mm = 0;  // D156: with the escape plan, no other net's via where its copper would cover an open pin's corridor, this far past the pad edge (0 = off)
   bool escape_persist = false;  // a ripped-up connection gets its pins' corridors back; a corridor is kept while the net has other open connections at that package
   bool radial_supply = false;   // spanning tree: no edge between two pins of one dense package for a net with 3+ pins there (each pin goes to a capacitor or via; the trunk forms outside the escape band)
   double radial_penalty_mm = 10;  // what such an edge costs in the spanning tree
@@ -325,6 +345,7 @@ struct RouteResult {
   int rips = 0, passes = 0;
   int enclosed = 0;             // searches that proved the source boxed in (no larger window tried)
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
+  int via_retried = 0;          // connections routed by the via retry (D153)
   int necked = 0;               // connections routed at the neck-down width
   int restarts = 0;
   int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
@@ -346,7 +367,11 @@ struct RouteResult {
   int blind_vias = 0;           // blind/buried vias placed
   double escape_corridor_mm = 0;   // total length of the corridors reserved (centrelines, version 1)
   int package_pin_edges = 0;       // spanning-tree edges between two pins of one dense package, for nets with 3+ pins there (--radial-supply makes them rarer)
+  int window_escalations = 0;      // --window-escalate: whole-board windows given to searches that hit their window's edge
+  int via_shoves = 0;              // --via-shove: stuck connections routed after moving another net's via
+  int via_shove_trials = 0;        // routing attempts after a via move
   int escape_reclaimed = 0;        // --escape-persist: corridors given back to the pins of a ripped-up connection
+  int fanout_holds = 0;            // --fanout-hold: placeholder tracks laid along open pins' corridors before the strict pass (all strict passes)
   int escape_corridors = 0;     // escape corridors reserved (M9)          // nets brought into their custom length range by meanders                // differential pairs routed coupled            // connections improved by the clean-up pass
   // With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route, pins with every
   // connection routed}.

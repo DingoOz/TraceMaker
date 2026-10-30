@@ -2840,3 +2840,68 @@ loop already routes them. In the main loop the rescue lost because its work came
 **Status.** Kept as options, off. At the same budget, more plain routing beats every arm here, which agrees with the study's warning that
 moving budget to repair had lost before (doc 16 §11, `--polish`). The plane fallback rescued one of the PoE switch's five open plane
 connections (C123.2 through C118.2's pad); it has not been measured on PCBench.
+
+## 64. The last connections, developed on one board: via shove, fan-out hold, negotiation bounds (2026-10-30, D156)
+
+M22 developed on one board, as the user asked: `mini_mass_prog_bench_prog_rig` (995 connections, 986 routed in every earlier arm).
+Each change was tried there alone, and the other failing boards were run only at the end. Everything is off by default, and with it
+off the output is byte-identical (the 30 `quick` boards). Records in `bench/records/m22-oneboard`.
+
+**What the board showed.**
+
+- The nine open connections are all on U2, a 0.5 mm QFN-44. Six are pins boxed in by their neighbours' fan-out within 0.25-1.25 mm.
+  Three are INT nets about 450 mm long, boxed in at U2 in the first pass.
+- More budget does not move it: 40 M and 60 M route 986. The first pass is the same at every budget. In negotiation, each open
+  connection first retries strictly, which fails (25 M of 30 M at 40 M work). Its negotiated search then finds a path in 18 k-1.4 M
+  expansions.
+- Every negotiated success rips other long nets, which go back into the same pass, so the pass never ends. Bounded, the passes route
+  986, 970, 966, 961, 958, 971, 969, 974: negotiation on this board loses.
+
+**What was built.**
+
+- *Via shove* (`--via-shove`, `--via-shove-mm`, `--via-shove-step`, `--via-shove-rings`, `--via-shove-trials`, `--via-shove-share`).
+  KiCad's push-and-shove via move, as a repair step of the batch router: a boxed-in connection moves other nets' vias nearby, and only
+  the tracks ending at them.
+  - The nearest vias are lifted one at a time, then in pairs, and the connection is searched once without them (strict, capped).
+  - If it routes, each via goes down at the nearest position on 6 rings of 16 where it and its re-drawn legs pass the exact check.
+  - If no position fits beside the new route, the via is put at each position in turn and the connection searched round it.
+  - Otherwise everything is put back.
+  - It spends at most 5 % of the run's work budget. Unbounded, it routed 10 connections on kitspace_d20 and lost 41 through the
+    budget it took from the main loop.
+- *Fan-out hold* (`--fanout-hold`): each open pin's straight escape corridor is held by a placeholder track of its net through the
+  strict pass. It is dropped when the pin is routed or the pass ends.
+- *Negotiation bounds* (`--neg-strict-cap`, `--long-weight`, `--long-weight-mm`, `--pass-bound`): a cap on negotiation's strict
+  searches, weighted A* (Pohl 1970) for long negotiated searches, and passes limited to what was queued at their start (PathFinder's
+  iterations).
+- *Items 3, 5 and 6 of the plan*: `--window-escalate` (one whole-board window after an edge miss), `--via-retry` (D153, after a cap
+  miss only), `--escape-all` (the escape plan in every variant) and `--pin-via-pen` (a via in another net's dense-pin fan-out region
+  costs more).
+
+**Results.** On mini_mass the via shove routes 987: I2C_SCL, open in every earlier run, after an I2C_SDA via moves 0.45 mm. The fan-out
+hold moves the failures between U2 pins (979-987). The negotiation bounds and items 3 and 5 leave it at 986.
+
+On the ten failing boards (20 M work, 8 variants):
+
+| Arm | Routed | Open |
+|---|--:|--:|
+| base | 7,175 | 624 |
+| base at 22 M | 7,193 | 606 |
+| `--via-shove` | 7,176 | 623 |
+| `--via-shove --escape-all` | 7,197 | 602 |
+
+No board gained DRC errors. One option at a time:
+
+- `--window-escalate` cost Aleste 254 connections (15 whole-board windows take the budget).
+- `--pin-via-pen 3` cost kitspace_d20 9 and poncho 1.
+- `--escape-all` cost poncho 5, but lifts four of mini_mass's variants by 7-11.
+
+**Status.** Kept as options, off. `--via-shove --escape-all` is the first M22 arm to beat the equal-budget control, by 4 connections,
+which is within per-board noise. The gate (15 % fewer open connections) is not met.
+
+What is left on mini_mass is fan-out:
+
+- Five U2 pins are boxed in by their neighbours' tracks, not vias. Lifting the vias alone or in pairs does not free them.
+- The three INT nets route only in a negotiation that loses more than it gains.
+
+Both point at item 8, planning a package's escapes and via sites together, rather than more local repair. Moving tracks would need
+the search to accept points as endpoints, and pin rescue (§63) showed that the re-routed neighbour is then the one boxed in.

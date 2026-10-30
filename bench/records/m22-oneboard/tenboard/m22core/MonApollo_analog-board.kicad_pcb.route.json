@@ -1,0 +1,320 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 95.13,
+ "connections": 1190,
+ "copper_layers": 2,
+ "escape_corridor_mm": 1444.085749999999,
+ "escape_corridors": 506,
+ "escape_reclaimed": 0,
+ "expansions": 20212489,
+ "failures": [
+  "Net-(C16-Pad2): C16.2 -> U8.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(Q6-Pad3): Q6.3 -> R84.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(D4-Pad2): TP25.1 -> U39.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(Q6-Pad3): Q6.3 -> R81.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(D4-Pad2): U39.8 -> D4.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "SH30: C74.1 -> U17.10  (no path in window)",
+  "GND: C30.1 -> C118.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "SH12: C63.1 -> U14.12  (no path in window)",
+  "SH20: C72.1 -> U16.12  (no path in window)",
+  "SH16: C65.1 -> U16.4  (no path in window)",
+  "-12V: U34.11 -> U17.3  (no path in window)",
+  "-12V: C37.1 -> U28.11  (no path in window)",
+  "+12V: U15.8 -> R96.2  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "+12V: R96.2 -> U12.13  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "DB0: U20.2 -> U36.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(C16-Pad2): U8.8 -> VCO2.10  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "-12V: U12.4 -> U15.4  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(C12-Pad2): U8.1 -> R57.2  (boxed in; escapes/neck-down: no path in window; via shove failed)",
+  "-12V: C117.2 -> U45.3  (no path in window)",
+  "+5V: U36.20 -> U20.5  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "LFO: R1.1 -> R4.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U12.3 -> VCO2.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(R58-Pad2): U4.2 -> R58.2  (no path in window)",
+  "+5V: U4.12 -> U11.12  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "RES CV: U28.6 -> TR17.2  (no path in window)",
+  "CUTOFF CV: R158.2 -> U28.1  (no path in window)",
+  "OSC LFO MOD: R65.1 -> U4.14  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB1: U14.16 -> U36.3  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U11.6 -> U12.3  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB1: U14.16 -> U13.16  (no path in window)",
+  "VDAC: U14.8 -> U13.8  (no path in window)",
+  "~DAC RS: J3.26 -> U6.18  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "PWM A LFO AMT CV: R23.1 -> U23.9  (no path in window)",
+  "/DAC10: J3.23 -> U6.23  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC9: J3.24 -> U6.24  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U12.3 -> R113.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC13: J3.20 -> U6.20  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB1: U16.16 -> U14.16  (no path in window)",
+  "ANALOG SW LATCH: J3.36 -> U36.11  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "AMP LFO AMT CV: R146.1 -> U28.9  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC LFO AMT CV: R18.1 -> U22.6  (boxed in; escapes/neck-down: no path in window; via shove failed)",
+  "FIL OSCB  AMT CV: R129.1 -> U27.1  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "OSCB INIT CV: R49.2 -> U25.9  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG2 ATT CV: EG2.10 -> U34.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG1 DEC CV: EG1.9 -> U33.7  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+5V: U12.12 -> U40.5  (no path in window)",
+  "EG2 REL CV: EG2.8 -> U34.13  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "LFO: R1.1 -> U45.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "LFO: R112.1 -> R1.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCA FM AMT CV: R14.1 -> U22.14  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCA PULSE: U11.1 -> U36.18  (boxed in; escapes/neck-down: no path in window; via shove failed)",
+  "OSCB PITCH CV: R85.1 -> U24.9  (no path in window)",
+  "DB3: J3.11 -> U36.5  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB4: J3.12 -> U36.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCA TRI: U11.9 -> U36.17  (no path in window)",
+  "OSC SYNC: U11.8 -> U36.16  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "GLIDE AMT CV: R68.2 -> U24.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "LFO RESET: J3.7 -> LFO1.11  ()"
+ ],
+ "open": 58,
+ "package_pin_edges": 17,
+ "pitch_mm": 0.15,
+ "routed": 1132,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T01:09:35Z",
+  "input": "/home/dingo/Programming/TraceMaker-speed/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/MonApollo_analog-board/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22core/boards/MonApollo_analog-board.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "7200.0"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22core/boards/MonApollo_analog-board.kicad_pcb.state"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "3"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22core/boards/MonApollo_analog-board.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22core/boards/MonApollo_analog-board.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 7200.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 627.120168725,
+ "style": {
+  "acute_angles": 1,
+  "arcs": 0,
+  "bends": 2001,
+  "bends_per_connection": 0.5971,
+  "connections": 3351,
+  "detour_length_mm": 13774.263249,
+  "detour_octile_mm": 11911.599246,
+  "detour_ratio": 1.1564,
+  "length_mm": 13774.263249,
+  "long_detours": 70,
+  "off_angle_segments": 2033,
+  "segments": 5941,
+  "short_segments": 449,
+  "stair_steps": 41,
+  "vias": 768
+ },
+ "time_limited": false,
+ "tracks": 5941,
+ "tunnels": 0,
+ "variant": 5,
+ "variant_name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+ "variant_seconds": 325.269655355,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 888,
+   "seconds": 55.393509753,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 1113,
+   "seconds": 450.964680948,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 947,
+   "seconds": 172.453783683,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 1077,
+   "seconds": 290.827802261,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 925,
+   "seconds": 63.263597328,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 1132,
+   "seconds": 325.269655355,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 1113,
+   "seconds": 199.689286209,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 1115,
+   "seconds": 335.944948267,
+   "variant": 7
+  }
+ ],
+ "vias": 768,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 14508337,
+   "commits": 1139,
+   "expansions": 11385008,
+   "field_cells": 117122070,
+   "fields": 326,
+   "fixed_checks": 6438569,
+   "flood_cells": 3861944,
+   "rips": 0,
+   "searches": 1620
+  },
+  "negotiation": {
+   "cell_checks": 4296483,
+   "commits": 10,
+   "expansions": 84202,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 348651,
+   "flood_cells": 4881335,
+   "rips": 10,
+   "searches": 191
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 18804820,
+   "commits": 1149,
+   "expansions": 11469210,
+   "field_cells": 117122070,
+   "fields": 326,
+   "fixed_checks": 6787220,
+   "flood_cells": 8743279,
+   "rips": 10,
+   "searches": 1811
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 117640413,
+   "commits": 8412,
+   "expansions": 132336625,
+   "field_cells": 900077078,
+   "fields": 2630,
+   "fixed_checks": 74383124,
+   "flood_cells": 20490502,
+   "rips": 0,
+   "searches": 12663
+  },
+  "negotiation": {
+   "cell_checks": 7263539,
+   "commits": 11,
+   "expansions": 195171,
+   "field_cells": 8747452,
+   "fields": 14,
+   "fixed_checks": 521398,
+   "flood_cells": 8314491,
+   "rips": 10,
+   "searches": 219
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 124903952,
+   "commits": 8423,
+   "expansions": 132531796,
+   "field_cells": 908824530,
+   "fields": 2644,
+   "fixed_checks": 74904522,
+   "flood_cells": 28804993,
+   "rips": 10,
+   "searches": 12882
+  }
+ }
+}
