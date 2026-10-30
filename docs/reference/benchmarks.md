@@ -45,6 +45,24 @@ comparable (judge version, time limit, machine load).
 | [sp-tierC-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-tierC-base/summary.json) | PCBench tier C | 30 | f2a7238 | 53.3% | 97.5% | 46.7% | 2926 |  |
 | [sp-tierC-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d154-speed/runs/sp-tierC-new/summary.json) | PCBench tier C | 30 | f2a7238 | 56.7% | 97.6% | 46.7% | 2830 |  |
 
+## d159-thin-cut
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d159-thin-cut)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [thin-bd-replay9](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/replay9/summary.json) | pcbench-bd-fail | 2 | 33643ee | 0.0% | 78.1% | 0.0% | 344 | `--no-gpu --relax --round-work 20000000 --rounds 5` |
+| [thin-bd-base8](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-bd-base8/summary.json) | pcbench-bd-fail | 33 | 33643ee | 6.1% | 93.1% | 12.1% | 14203 | `--no-gpu` |
+| [thin-bd-relax-bbox](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-bd-relax-bbox/summary.json) | pcbench-bd-fail | 33 | 33643ee | 9.1% | 89.5% | 12.1% | 20958 | `--no-gpu --relax --round-work 20000000 --rounds 5` |
+| [thin-bd-relax-exact](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-bd-relax-exact/summary.json) | pcbench-bd-fail | 33 | 33643ee | 15.2% | 91.5% | 12.1% | 20678 | `--no-gpu --relax --round-work 20000000 --rounds 5` |
+| [thin-bd-relax-exsub](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-bd-relax-exsub/summary.json) | pcbench-bd-fail | 33 | 33643ee | 15.2% | 91.8% | 12.1% | 20864 | `--no-gpu --relax --round-work 20000000 --rounds 5 --legalize-subdivide 0.1` |
+| [thin-bd-relax-final9](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-bd-relax-final9/summary.json) | pcbench-bd-fail | 33 | 33643ee | 15.2% | 91.5% | 12.1% | 10182 | `--no-gpu --relax --round-work 20000000 --rounds 5` |
+| [thin-bd-relax-final9-sub](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-bd-relax-final9-sub/summary.json) | pcbench-bd-fail | 33 | 33643ee | 15.2% | 91.8% | 12.1% | 11011 | `--no-gpu --relax --round-work 20000000 --rounds 5 --legalize-subdivide 0.1` |
+| [thin-quick-main](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-quick-main/summary.json) | quick | 30 | 33643ee | 36.7% | 89.8% | 100.0% | 62 | `--variants 1` |
+| [thin-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-quick-new/summary.json) | quick | 30 | 33643ee | 36.7% | 89.8% | 100.0% | 52 | `--variants 1` |
+| [thin-srj6-relax](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-srj6-relax/summary.json) | srj20-stuck6 | 6 | 33643ee | 0.0% | 89.3% |  | 1907 | `--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5` |
+| [thin-srj6-relax-sub](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-srj6-relax-sub/summary.json) | srj20-stuck6 | 6 | 33643ee | 0.0% | 89.2% |  | 2049 | `--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --legalize-subdivide 0.1` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)

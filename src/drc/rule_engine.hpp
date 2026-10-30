@@ -34,8 +34,14 @@ class RuleEngine {
   RuleEngine(const model::Board& b, const model::DesignRules& r);
   ~RuleEngine();
 
-  // Required copper-to-copper clearance between two items on a copper layer.
-  Coord clearance(const CopperItem& a, const CopperItem& b, int layer) const;
+  // Required copper-to-copper clearance between two items on a copper layer (with the router's via_clearance_extra when
+  // either item is a via).
+  Coord clearance(const CopperItem& a, const CopperItem& b, int layer) const {
+    const Coord c = clearance_rules(a, b, layer);
+    return r_.via_clearance_extra > 0 && (a.kind == ItemKind::Via || b.kind == ItemKind::Via) ? c + r_.via_clearance_extra : c;
+  }
+  // The clearance the board's rules give, as KiCad's DRC evaluates them.
+  Coord clearance_rules(const CopperItem& a, const CopperItem& b, int layer) const;
   // Required clearance between a hole and a copper item.
   Coord hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
   Coord hole_to_hole(const CopperItem* a, const CopperItem* b) const;

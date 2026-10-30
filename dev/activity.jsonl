@@ -209,3 +209,5 @@
 {"ts": "2026-10-30T05:59:56+00:00", "kind": "build", "text": "Viewer: burndown chart of open connections, server keeps the history for late viewers (stats_history)"}
 {"ts": "2026-10-30T06:39:34+00:00", "kind": "decision", "text": "D158: fields under 500k cells on the CPU; 8 variants Aleste -11.7%, mini_mass -8.6%, output byte-identical (quick tier 30/30)"}
 {"ts": "2026-10-30T06:53:23+00:00", "kind": "test", "text": "mini_mass negotiation: --neg-strict-cap 200000 --soft-attempts 1 routes 988 at 80 M (986 at 20/40 M); parking capped connections last changed nothing, removed"}
+{"ts": "2026-10-30T10:13:37+00:00", "kind": "note", "text": "D159 started (branch thin-vias): cut test of routed topologies (tracemaker cuts); 0 false positives on 405 KiCad-clean boards; proves 4 vias without room on srj20 048/072 0.06 mm solutions; testing --ramp-vias-real and --ramp-cut-prune on the six stuck srj20 boards"}
+{"ts": "2026-10-30T15:29:16+00:00", "kind": "test", "text": "D159 final: 33 PCBench B-D boards, relax with exact pads 15,925 (-241 vs base 16,166; bbox pads -483), 5 clean vs 2; subdivide 0.1 +30 but neutral on srj20 stuck six, stays off; full ctest green"}

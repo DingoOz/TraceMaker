@@ -1,0 +1,79 @@
+ramp stage 1/2 (clearance -0.0406 mm): 427 of 553 routed
+cut prune: 8190 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.195; 0 vias without room, 0 routes dropped
+cut prune: 8190 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.195; 0 vias without room, 0 routes dropped
+cut prune: 8190 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.195; 0 vias without room, 0 routes dropped
+legalize: 2227 vertices, 989 moved (at most 0.707 mm), 1452 pairs too close before, 164 after, 300 sweeps
+warm start: 274 saved routes taken over, 153 not legal under these rules
+legalize: 2227 vertices, 996 moved (at most 0.707 mm), 1452 pairs too close before, 181 after, 300 sweeps
+warm start: 273 saved routes taken over, 154 not legal under these rules
+legalize: 2227 vertices, 996 moved (at most 0.707 mm), 1452 pairs too close before, 181 after, 300 sweeps
+warm start: 273 saved routes taken over, 154 not legal under these rules
+cut prune: 8190 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.195; 0 vias without room, 0 routes dropped
+legalize: 2227 vertices, 996 moved (at most 0.707 mm), 1452 pairs too close before, 181 after, 300 sweeps
+warm start: 273 saved routes taken over, 154 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 406 of 553 routed
+cut prune: 8499 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 8499 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 8499 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 1941 vertices, 487 moved (at most 0.490 mm), 743 pairs too close before, 67 after, 300 sweeps
+legalize: 1941 vertices, 477 moved (at most 0.559 mm), 743 pairs too close before, 57 after, 300 sweeps
+warm start: 315 saved routes taken over, 91 not legal under these rules
+warm start: 315 saved routes taken over, 91 not legal under these rules
+legalize: 1941 vertices, 477 moved (at most 0.559 mm), 743 pairs too close before, 57 after, 300 sweeps
+warm start: 315 saved routes taken over, 91 not legal under these rules
+cut prune: 8499 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 1941 vertices, 477 moved (at most 0.559 mm), 743 pairs too close before, 57 after, 300 sweeps
+warm start: 315 saved routes taken over, 91 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 409 of 553 routed
+cut prune: 8628 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 8628 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 8628 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 1912 vertices, 384 moved (at most 0.610 mm), 578 pairs too close before, 41 after, 300 sweeps
+legalize: 1912 vertices, 377 moved (at most 0.610 mm), 578 pairs too close before, 35 after, 300 sweeps
+warm start: 340 saved routes taken over, 69 not legal under these rules
+warm start: 340 saved routes taken over, 69 not legal under these rules
+legalize: 1912 vertices, 384 moved (at most 0.610 mm), 578 pairs too close before, 41 after, 300 sweeps
+warm start: 340 saved routes taken over, 69 not legal under these rules
+cut prune: 8628 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 1912 vertices, 384 moved (at most 0.610 mm), 578 pairs too close before, 41 after, 300 sweeps
+warm start: 340 saved routes taken over, 69 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 433 of 553 routed
+cut prune: 9385 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 9385 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 9385 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 2301 vertices, 444 moved (at most 0.395 mm), 750 pairs too close before, 61 after, 300 sweeps
+warm start: 365 saved routes taken over, 68 not legal under these rules
+legalize: 2301 vertices, 440 moved (at most 0.392 mm), 750 pairs too close before, 45 after, 300 sweeps
+warm start: 364 saved routes taken over, 69 not legal under these rules
+legalize: 2301 vertices, 440 moved (at most 0.392 mm), 750 pairs too close before, 45 after, 300 sweeps
+warm start: 364 saved routes taken over, 69 not legal under these rules
+cut prune: 9385 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 2301 vertices, 440 moved (at most 0.392 mm), 750 pairs too close before, 45 after, 300 sweeps
+warm start: 364 saved routes taken over, 69 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 417 of 553 routed
+cut prune: 9112 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 9112 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+cut prune: 9112 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 2268 vertices, 384 moved (at most 0.389 mm), 756 pairs too close before, 49 after, 300 sweeps
+warm start: 358 saved routes taken over, 59 not legal under these rules
+legalize: 2268 vertices, 384 moved (at most 0.410 mm), 756 pairs too close before, 50 after, 300 sweeps
+warm start: 359 saved routes taken over, 58 not legal under these rules
+legalize: 2268 vertices, 384 moved (at most 0.410 mm), 756 pairs too close before, 50 after, 300 sweeps
+warm start: 359 saved routes taken over, 58 not legal under these rules
+cut prune: 9112 cuts, over-full with wires: 0 between pads, 0 at vias; s* 1.453; 0 vias without room, 0 routes dropped
+legalize: 2268 vertices, 384 moved (at most 0.410 mm), 756 pairs too close before, 50 after, 300 sweeps
+warm start: 359 saved routes taken over, 58 not legal under these rules
+ramp stage 1/2 (clearance -0.0406 mm): 421 of 553 routed
+cut prune: 9501 cuts, over-full with wires: 16 between pads, 0 at vias; s* 0.872; 0 vias without room, 0 routes dropped
+cut prune: 9501 cuts, over-full with wires: 16 between pads, 0 at vias; s* 0.872; 0 vias without room, 0 routes dropped
+cut prune: 9501 cuts, over-full with wires: 16 between pads, 0 at vias; s* 0.872; 0 vias without room, 0 routes dropped
+legalize: 2300 vertices, 1035 moved (at most 0.707 mm), 2337 pairs too close before, 164 after, 300 sweeps
+warm start: 320 saved routes taken over, 101 not legal under these rules
+legalize: 2300 vertices, 1045 moved (at most 0.707 mm), 2337 pairs too close before, 224 after, 300 sweeps
+cut prune: 9501 cuts, over-full with wires: 16 between pads, 0 at vias; s* 0.872; 0 vias without room, 0 routes dropped
+warm start: 331 saved routes taken over, 90 not legal under these rules
+legalize: 2300 vertices, 1045 moved (at most 0.707 mm), 2337 pairs too close before, 224 after, 300 sweeps
+warm start: 331 saved routes taken over, 90 not legal under these rules
+legalize: 2300 vertices, 1045 moved (at most 0.707 mm), 2337 pairs too close before, 224 after, 300 sweeps
+warm start: 331 saved routes taken over, 90 not legal under these rules
+routed 331/553 connections, 1304 tracks, 242 vias, pitch 0.035 mm, 0 expansions, 772.83 s (best variant 8.42 s)

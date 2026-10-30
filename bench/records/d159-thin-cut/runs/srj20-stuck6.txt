@@ -1,0 +1,7 @@
+#fixtures: bench/data/tscircuit/boards/srj20
+sample039
+sample048
+sample071
+sample072
+sample103
+sample104

@@ -33,6 +33,7 @@
 #include "server/viewer_server.hpp"
 #include "learn/knowledge_base.hpp"
 #include "passes/style.hpp"
+#include "route/cut_test.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
 #include "route/escape_flow.hpp"
@@ -233,6 +234,50 @@ int cmd_layers(const std::string& in, int count, const std::string& out) {
     if (const fs::path src = fs::path(in).replace_extension(ext); fs::exists(src)) fs::copy_file(src, fs::path(out).replace_extension(ext), fs::copy_options::overwrite_existing);
   std::printf("%s: %d -> %d copper layers, written to %s\n", in.c_str(), had, count, out.c_str());
   for (const auto& n : notes) std::printf("  %s\n", n.c_str());
+  return 0;
+}
+
+// Cut test of a routed board (doc 05 §67): over-full cuts prove that this topology cannot meet the rules, a via without room that
+// it cannot be fixed by moving the via inside its cell.
+int cmd_cuts(const std::string& path, const std::string& rules_from, double clearance_mm, double max_gap_mm, const std::string& json_out) {
+  const auto lb = tmk::io::read_board_file(path);
+  auto rules = tmk::io::read_design_rules(rules_from.empty() ? path : rules_from);
+  if (clearance_mm >= 0) {  // judge against another clearance (every class and the board minimum)
+    for (auto& c : rules.classes) c.clearance = tmk::mm_to_nm(clearance_mm);
+    rules.minimums.clearance = tmk::mm_to_nm(clearance_mm);
+  }
+  tmk::route::CutTestOptions opt;
+  opt.max_gap = tmk::mm_to_nm(max_gap_mm);
+  const auto r = tmk::route::cut_test(lb.board, rules, opt);
+  const auto& b = lb.board;
+  auto net = [&](tmk::model::NetId n) { return n > 0 && static_cast<std::size_t>(n) < b.nets.size() ? b.nets[static_cast<std::size_t>(n)].name : std::string(); };
+  auto feat = [&](const tmk::route::CutFeature& f) {
+    nlohmann::json j{{"kind", f.via ? "via" : "pad"}, {"x_mm", tmk::nm_to_mm(f.pos.x)}, {"y_mm", tmk::nm_to_mm(f.pos.y)}, {"net", net(f.net)}};
+    if (!f.via) {
+      const auto& p = b.pads[static_cast<std::size_t>(f.index)];
+      if (p.footprint >= 0) j["pad"] = b.footprints[static_cast<std::size_t>(p.footprint)].reference + "." + p.number;
+    }
+    return j;
+  };
+  nlohmann::json out{{"board", path}, {"cuts", r.cuts}, {"crossings_cancelled", r.crossings_cancelled}, {"s_star", r.s_star}};
+  out["overfull"] = nlohmann::json::array();
+  for (const auto& c : r.overfull) {
+    nlohmann::json w = nlohmann::json::array();
+    for (auto n : c.wires) w.push_back(net(n));
+    out["overfull"].push_back({{"layer", b.copper_name(c.layer)}, {"a", feat(c.a)}, {"b", feat(c.b)}, {"gap_mm", tmk::nm_to_mm(c.gap)},
+                               {"need_mm", tmk::nm_to_mm(c.need)}, {"wires", w}});
+  }
+  out["vias_without_room"] = nlohmann::json::array();
+  for (int vi : r.vias_without_room) {
+    const auto& v = b.vias[static_cast<std::size_t>(vi)];
+    out["vias_without_room"].push_back({{"x_mm", tmk::nm_to_mm(v.pos.x)}, {"y_mm", tmk::nm_to_mm(v.pos.y)}, {"net", net(v.net)}});
+  }
+  int pad_pad_empty = 0;
+  for (const auto& c : r.overfull) pad_pad_empty += !c.a.via && !c.b.via && c.wires.empty();
+  std::printf("%s: %d cuts, %zu over-full (%d between two pads with no wire: the board's own), %zu vias without room, s* %.3f\n", path.c_str(), r.cuts,
+              r.overfull.size(), pad_pad_empty, r.vias_without_room.size(), r.s_star);
+  for (const auto& v : out["vias_without_room"]) std::printf("  via without room: %s at (%.3f, %.3f)\n", v["net"].get<std::string>().c_str(), v["x_mm"].get<double>(), v["y_mm"].get<double>());
+  if (!json_out.empty()) std::ofstream(json_out) << out.dump(1) << "\n";
   return 0;
 }
 
@@ -962,6 +1007,7 @@ int main(int argc, char** argv) {
   route->add_option("--breakout-portfolio", ropt.breakout_portfolio, "1 (default): a ball-grid breakout board gets the breakout portfolio with --variants > 1; 0: the designed variants")->group("");
   std::string r_warm_pcb;
   route->add_option("--legalize-subdivide", ropt.legalize_subdivide_mm, "With --legalize or --relax: cut route tracks into pieces of at most this length (mm) so a long track can bend where its neighbours are too close, not only move as a whole; straight pieces are merged again (default 0 = off)")->group("");
+  route->add_flag("--ramp-cut-prune", ropt.cut_prune, "Legalisation: first drop the saved routes the cut test proves cannot be legalised: vias with no room, enough wires through over-full cuts between pads (doc 05 §67)")->group("");
   route->add_flag("--legalize", ropt.legalize, "Warm start: move the vertices of the saved routes until the clearances hold (gridless compaction), then keep what is legal")->group("");
   route->add_option("--warm-pcb", r_warm_pcb, "Start from the tracks and vias of this routed board (e.g. a relaxed-clearance solution after legalisation); what is not legal under the input's rules is dropped and routed again")->group("");
   route->add_option("--state-out", ropt.state_out, "Portfolio: write the best routes after every round to this file so the run can be resumed")->group("");
@@ -972,6 +1018,7 @@ int main(int argc, char** argv) {
   route->add_option("--ramp-from", ropt.ramp_from_mm, "Portfolio: clearance continuation, start at this clearance (mm) and raise it stage by stage to the board's, warm-starting each stage")->group("");
   route->add_option("--ramp-step", ropt.ramp_step_mm, "Clearance added per ramp stage (mm)")->group("");
   route->add_option("--ramp-cycle", ropt.ramp_cycle, "Ramp: after --ramp-stall rounds without gain under the board's rules, go back this many stages and climb again")->group("");
+  route->add_flag("--ramp-vias-real", ropt.ramp_via_real, "Ramp/relax: lowered clearances apply to tracks only; vias keep the board's clearance to everything")->group("");
   route->add_flag("--ramp-late", ropt.ramp_late, "Ramp: begin under the board's rules and climb from the ramp only after --ramp-stall rounds without gain (with --ramp-cycle)")->group("");
   route->add_option("--ramp-fresh", ropt.ramp_fresh, "Ramp: every n-th breathing cycle starts afresh from the loosest stage instead of from the best state")->group("");
   route->add_option("--ramp-stall", ropt.ramp_stall, "Ramp: rounds without gain at the final stage before going back")->group("");
@@ -1308,6 +1355,14 @@ int main(int argc, char** argv) {
   causes_cmd->add_option("--threads", ca_opt.threads, "Nets classified at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
   causes_cmd->add_option("--seed", ca_opt.seed, "Router seed (default 1)");
   causes_cmd->add_flag("--baseline-only", ca_opt.baseline_only, "Only the run on the board as it is (for a copy with more layers)");
+  auto* cuts_cmd = app.add_subcommand("cuts", "Cut test of a routed board's topology: cuts between pads and vias that cannot hold their wires, vias with no room in their cell (doc 05 §67)");
+  std::string cu_board, cu_rules, cu_json;
+  double cu_clearance = -1, cu_max_gap = 2.0;
+  cuts_cmd->add_option("board", cu_board, "A routed board")->required()->check(CLI::ExistingFile);
+  cuts_cmd->add_option("--json", cu_json, "Write the over-full cuts and the vias without room as JSON");
+  cuts_cmd->add_option("--rules-from", cu_rules, "Read the design rules beside this board instead")->check(CLI::ExistingFile);
+  cuts_cmd->add_option("--clearance", cu_clearance, "Judge against this clearance (mm) instead of the board's")->check(CLI::NonNegativeNumber);
+  cuts_cmd->add_option("--max-gap", cu_max_gap, "Check cuts up to this gap (mm, default 2)")->check(CLI::PositiveNumber);
   auto* layers_cmd = app.add_subcommand("layers", "Write a copy of a board with another copper layer count (inner layers added, or empty ones removed; doc 05 §53)");
   std::string ly_in, ly_out;
   int ly_count = 0;
@@ -1444,6 +1499,7 @@ int main(int argc, char** argv) {
     if (*fc_cmd) return cmd_footprint_check(fc_board, fc_refs, fc_trusted, fc_trust_all, fc_opt, fc_all, fc_strict, fc_json, fc_view, fc_port, fc_host, fc_token, fc_insecure);
     if (*style_cmd) return cmd_style(sty_board, sty_json, sty_conn);
     if (*layers_cmd) return cmd_layers(ly_in, ly_count, ly_out);
+    if (*cuts_cmd) return cmd_cuts(cu_board, cu_rules, cu_clearance, cu_max_gap, cu_json);
     if (*causes_cmd) {
       const auto j = tmk::app::classify_open_connections(ca_board, ca_opt, true);
       if (!ca_json.empty()) std::ofstream(ca_json) << j.dump(1) << "\n";

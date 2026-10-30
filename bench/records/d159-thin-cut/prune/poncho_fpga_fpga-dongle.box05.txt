@@ -1,0 +1,81 @@
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+warm start: 370 saved routes taken over, 0 not legal under these rules
+legalize: 1667 vertices, 12 moved (at most 0.027 mm), 11 pairs too close before, 0 after, 2 sweeps
+warm start: 370 saved routes taken over, 0 not legal under these rules
+warm start: 370 saved routes taken over, 0 not legal under these rules
+legalize: 1667 vertices, 13 moved (at most 0.030 mm), 11 pairs too close before, 0 after, 2 sweeps
+warm start: 370 saved routes taken over, 0 not legal under these rules
+warm start: 370 saved routes taken over, 0 not legal under these rules
+warm start: 370 saved routes taken over, 0 not legal under these rules
+warm start: 370 saved routes taken over, 0 not legal under these rules
+warm start: 370 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+legalize: 1718 vertices, 0 moved (at most 0.000 mm), 0 pairs too close before, 0 after, 1 sweeps
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+warm start: 374 saved routes taken over, 0 not legal under these rules
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+warm start: 362 saved routes taken over, 12 not legal under these rules
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+warm start: 362 saved routes taken over, 12 not legal under these rules
+warm start: 362 saved routes taken over, 12 not legal under these rules
+warm start: 362 saved routes taken over, 12 not legal under these rules
+legalize: 1718 vertices, 245 moved (at most 0.501 mm), 406 pairs too close before, 11 after, 300 sweeps
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+legalize: 1718 vertices, 246 moved (at most 0.507 mm), 406 pairs too close before, 15 after, 300 sweeps
+warm start: 362 saved routes taken over, 12 not legal under these rules
+warm start: 363 saved routes taken over, 11 not legal under these rules
+warm start: 362 saved routes taken over, 12 not legal under these rules
+warm start: 362 saved routes taken over, 12 not legal under these rules
+routed 363/413 connections, 1525 tracks, 190 vias, pitch 0.070 mm, 0 expansions, 314.89 s (best variant 1.54 s)

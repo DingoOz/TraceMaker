@@ -49,6 +49,9 @@ SUBCOMMANDS:
   causes                      Why connections stay open on a routed board: each open connection
                               is routed again with other nets' copper removed near its ends,
                               away from them or everywhere (doc 05 §55)
+  cuts                        Cut test of a routed board's topology: cuts between pads and vias
+                              that cannot hold their wires, vias with no room in their cell
+                              (doc 05 §67)
   layers                      Write a copy of a board with another copper layer count (inner
                               layers added, or empty ones removed; doc 05 §53)
   srj-import                  Convert a Simple Route JSON problem (tscircuit) to a KiCad board
@@ -739,6 +742,30 @@ OPTIONS:
                               default 8)
           --seed UINT         Router seed (default 1)
           --baseline-only     Only the run on the board as it is (for a copy with more layers)
+```
+
+### `tracemaker cuts`
+
+```text
+Cut test of a routed board's topology: cuts between pads and vias that cannot
+hold their wires, vias with no room in their cell (doc 05 §67)
+
+
+tracemaker cuts [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    A routed board
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the over-full cuts and the vias without room as JSON
+          --rules-from TEXT:FILE
+                              Read the design rules beside this board instead
+          --clearance FLOAT:NONNEGATIVE
+                              Judge against this clearance (mm) instead of the board's
+          --max-gap FLOAT:POSITIVE
+                              Check cuts up to this gap (mm, default 2)
 ```
 
 ### `tracemaker layers`

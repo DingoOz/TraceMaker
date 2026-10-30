@@ -1,0 +1,19 @@
+sample039_pbd.kicad_pcb: 4242 cuts, 0 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 1.029
+sample103_pbd.kicad_pcb: 3639 cuts, 1 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 0.979
+sample103_legal.kicad_pcb: 3638 cuts, 2 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 0.833
+sample072_pbd.kicad_pcb: 4728 cuts, 6 over-full (0 between two pads with no wire: the board's own), 2 vias without room, s* 0.398
+  via without room: bga_conn_063 at (1.004, 1.168)
+  via without room: bga_conn_043 at (1.170, 0.582)
+sample072_legal.kicad_pcb: 4717 cuts, 8 over-full (0 between two pads with no wire: the board's own), 2 vias without room, s* 0.706
+  via without room: bga_conn_063 at (1.017, 1.202)
+  via without room: bga_conn_043 at (1.201, 0.584)
+sample048_pbd.kicad_pcb: 5072 cuts, 73 over-full (70 between two pads with no wire: the board's own), 2 vias without room, s* 0.377
+  via without room: bga_conn_018 at (1.169, 1.786)
+  via without room: bga_conn_055 at (-3.008, 4.367)
+sample048_legal.kicad_pcb: 5075 cuts, 74 over-full (70 between two pads with no wire: the board's own), 2 vias without room, s* 0.486
+  via without room: bga_conn_018 at (1.228, 1.831)
+  via without room: bga_conn_055 at (-2.969, 4.428)
+sample039_legal.kicad_pcb: 4238 cuts, 0 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 1.030
+sample104_pbd.kicad_pcb: 4695 cuts, 0 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 1.026
+sample072_R3x.kicad_pcb: 4559 cuts, 0 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 1.019
+sample103_R1x.kicad_pcb: 3777 cuts, 0 over-full (0 between two pads with no wire: the board's own), 0 vias without room, s* 1.024
