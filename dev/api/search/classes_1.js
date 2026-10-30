@@ -10,8 +10,9 @@ var searchData=
   ['bundlehooks_7',['BundleHooks',['../structtmk_1_1route_1_1BundleHooks.html',1,'tmk::route']]],
   ['bundleoptions_8',['BundleOptions',['../structtmk_1_1route_1_1BundleOptions.html',1,'tmk::route']]],
   ['bundlestats_9',['BundleStats',['../structtmk_1_1route_1_1BundleStats.html',1,'tmk::route']]],
-  ['bus_10',['Bus',['../structtmk_1_1route_1_1RouterOptions_1_1Bus.html',1,'tmk::route::RouterOptions']]],
-  ['busgroup_11',['BusGroup',['../structtmk_1_1route_1_1BusGroup.html',1,'tmk::route']]],
-  ['busmember_12',['BusMember',['../structtmk_1_1route_1_1BusMember.html',1,'tmk::route']]],
-  ['busstats_13',['BusStats',['../structtmk_1_1route_1_1BusStats.html',1,'tmk::route']]]
+  ['burnhistory_10',['BurnHistory',['../classtmk_1_1server_1_1BurnHistory.html',1,'tmk::server']]],
+  ['bus_11',['Bus',['../structtmk_1_1route_1_1RouterOptions_1_1Bus.html',1,'tmk::route::RouterOptions']]],
+  ['busgroup_12',['BusGroup',['../structtmk_1_1route_1_1BusGroup.html',1,'tmk::route']]],
+  ['busmember_13',['BusMember',['../structtmk_1_1route_1_1BusMember.html',1,'tmk::route']]],
+  ['busstats_14',['BusStats',['../structtmk_1_1route_1_1BusStats.html',1,'tmk::route']]]
 ];

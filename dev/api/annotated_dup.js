@@ -282,6 +282,7 @@ var annotated_dup =
         [ "PathPoint", "structtmk_1_1server_1_1PathPoint.html", "structtmk_1_1server_1_1PathPoint" ],
         [ "Failure", "structtmk_1_1server_1_1Failure.html", "structtmk_1_1server_1_1Failure" ],
         [ "Stats", "structtmk_1_1server_1_1Stats.html", "structtmk_1_1server_1_1Stats" ],
+        [ "BurnHistory", "classtmk_1_1server_1_1BurnHistory.html", "classtmk_1_1server_1_1BurnHistory" ],
         [ "ReplayWriter", "classtmk_1_1server_1_1ReplayWriter.html", "classtmk_1_1server_1_1ReplayWriter" ],
         [ "ReplayReader", "classtmk_1_1server_1_1ReplayReader.html", "classtmk_1_1server_1_1ReplayReader" ],
         [ "ServerOptions", "structtmk_1_1server_1_1ServerOptions.html", "structtmk_1_1server_1_1ServerOptions" ],

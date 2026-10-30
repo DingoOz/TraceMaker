@@ -12,7 +12,7 @@ var searchData=
   ['measure_5fbus_9',['measure_bus',['../namespacetmk_1_1route.html#a478cde627ebb7e97b682422ea50048f1',1,'tmk::route']]],
   ['measure_5fpair_10',['measure_pair',['../namespacetmk_1_1route.html#a059c41cb55028cf75fb3847e5b609993',1,'tmk::route']]],
   ['measure_5fstyle_11',['measure_style',['../namespacetmk_1_1passes.html#ad9c8875a09d7cf6713ded3307309d89d',1,'tmk::passes']]],
-  ['message_12',['message',['../classtmk_1_1route_1_1HeatGrid.html#a36378f447f9c435d8b0581f54e0e9637',1,'tmk::route::HeatGrid']]],
+  ['message_12',['message',['../classtmk_1_1route_1_1HeatGrid.html#a36378f447f9c435d8b0581f54e0e9637',1,'tmk::route::HeatGrid::message()'],['../classtmk_1_1server_1_1BurnHistory.html#aa87ac9ae178b0534fffa2b9094dce527',1,'tmk::server::BurnHistory::message()']]],
   ['message_5ftype_13',['message_type',['../namespacetmk_1_1server.html#a2c8226178e9005700c7e117329764f35',1,'tmk::server']]],
   ['microstrip_14',['microstrip',['../namespacetmk_1_1crules_1_1imp.html#ab365e2ff97fe57bd6c3853d2d30cd03f',1,'tmk::crules::imp']]],
   ['mincostflow_15',['MinCostFlow',['../classtmk_1_1place_1_1MinCostFlow.html#a7fe803efca411f9697d6af57404c4046',1,'tmk::place::MinCostFlow']]],

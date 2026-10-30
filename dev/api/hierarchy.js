@@ -21,6 +21,7 @@ var hierarchy =
     [ "tmk::route::BundleHooks", "structtmk_1_1route_1_1BundleHooks.html", null ],
     [ "tmk::route::BundleOptions", "structtmk_1_1route_1_1BundleOptions.html", null ],
     [ "tmk::route::BundleStats", "structtmk_1_1route_1_1BundleStats.html", null ],
+    [ "tmk::server::BurnHistory", "classtmk_1_1server_1_1BurnHistory.html", null ],
     [ "tmk::route::RouterOptions::Bus", "structtmk_1_1route_1_1RouterOptions_1_1Bus.html", null ],
     [ "tmk::route::BusGroup", "structtmk_1_1route_1_1BusGroup.html", null ],
     [ "tmk::route::BusMember", "structtmk_1_1route_1_1BusMember.html", null ],

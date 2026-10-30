@@ -4,6 +4,7 @@ var messages_8hpp =
     [ "tmk::server::PathPoint", "structtmk_1_1server_1_1PathPoint.html", "structtmk_1_1server_1_1PathPoint" ],
     [ "tmk::server::Failure", "structtmk_1_1server_1_1Failure.html", "structtmk_1_1server_1_1Failure" ],
     [ "tmk::server::Stats", "structtmk_1_1server_1_1Stats.html", "structtmk_1_1server_1_1Stats" ],
+    [ "tmk::server::BurnHistory", "classtmk_1_1server_1_1BurnHistory.html", "classtmk_1_1server_1_1BurnHistory" ],
     [ "tmk::server::ObjectId", "namespacetmk_1_1server.html#a1fa07d8342209791a578f046f0ba556b", null ],
     [ "tmk::server::board_snapshot_json", "namespacetmk_1_1server.html#adc1e2b89a685a247670330579f581cd4", null ],
     [ "tmk::server::failure", "namespacetmk_1_1server.html#ae885f345e2d6218ce6989780419ada51", null ],

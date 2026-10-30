@@ -2305,6 +2305,11 @@ On connect the server sends the latest <code>board</code> snapshot, then every l
 <td>Progress counters (≤ 10 Hz)</td>
 </tr>
 <tr>
+<td><code>stats_history</code></td>
+<td><code>points:[[elapsed_s, routed, total, unrouted],…]</code>, <code>marks:[[elapsed_s, stage],…]</code></td>
+<td>The burndown so far, sent by the server (not the engine) to a client that connects during a run, before the latest <code>stats</code>: one point per <code>stats</code> message (at most 1,200; a long run keeps every other one), and the time each <code>stage</code> began (0 before the first <code>stats</code>). A <code>stats</code> whose time goes backwards or whose total changes starts a new run</td>
+</tr>
+<tr>
 <td><code>stage</code></td>
 <td><code>name</code>, <code>state:"begin"|"end"</code>, <code>detail</code></td>
 <td>Pipeline stage changes</td>
