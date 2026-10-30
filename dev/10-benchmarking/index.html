@@ -2085,6 +2085,8 @@
       
         
       
+        
+      
     
     
     
@@ -2196,6 +2198,41 @@
     
   
     Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-complete-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Towards 100 % routed boards
   
 
     
@@ -3428,6 +3465,9 @@ repository is the harder test, and doc 18 §8's expectation that A1 "could look 
 boxes of sharp rectangles. Same set, same settings, against the base of that day (16,166 routed, 2 clean): relax with the old pads
 15,683 (−483, 3 clean); with the pads as they are 15,925 (−241, <strong>5 clean</strong>). The better of base and relax per board gives 16,208 and five
 clean boards (<code>bench/records/d159-thin-cut</code>).</p>
+<p><strong>With the relax rescue by default (D160, doc 05 §68).</strong> The same set routed with the default options, so a board left open is
+routed again with relax and the better result kept: 16,208 routed (+42 against the plain run), 8 boards better and none worse, five
+clean, no DRC error added, 73 % more CPU (<code>bench/records/d160-rescue</code>).</p>
 
 
 

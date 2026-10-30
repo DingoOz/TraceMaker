@@ -1,5 +1,7 @@
 var NAVTREEINDEX11 =
 {
+"structtmk_1_1drc_1_1CopperItem.html#a7b5aa0b61185d3b49da302883f31398f":[0,0,0,6,4,13],
+"structtmk_1_1drc_1_1CopperItem.html#a7b5aa0b61185d3b49da302883f31398f":[1,0,0,5,4,13],
 "structtmk_1_1drc_1_1CopperItem.html#a7fa8727f5f68a24e385169fd0443f2de":[0,0,0,6,4,15],
 "structtmk_1_1drc_1_1CopperItem.html#a7fa8727f5f68a24e385169fd0443f2de":[1,0,0,5,4,15],
 "structtmk_1_1drc_1_1CopperItem.html#a8208bd8df95d1863093a6f7cc7be10e1":[0,0,0,6,4,5],
@@ -247,7 +249,5 @@ var NAVTREEINDEX11 =
 "structtmk_1_1geom_1_1Box.html#ae32f4017ce745dfd7eb5cab644794cdd":[0,0,0,7,2,2],
 "structtmk_1_1geom_1_1Box.html#ae32f4017ce745dfd7eb5cab644794cdd":[1,0,0,6,2,2],
 "structtmk_1_1geom_1_1Box.html#ae72de6ea64b1f8bfbe685109e6c878a3":[0,0,0,7,2,1],
-"structtmk_1_1geom_1_1Box.html#ae72de6ea64b1f8bfbe685109e6c878a3":[1,0,0,6,2,1],
-"structtmk_1_1geom_1_1Box.html#aee5b10f573943aa9a15f2345d1996710":[0,0,0,7,2,4],
-"structtmk_1_1geom_1_1Box.html#aee5b10f573943aa9a15f2345d1996710":[1,0,0,6,2,4]
+"structtmk_1_1geom_1_1Box.html#ae72de6ea64b1f8bfbe685109e6c878a3":[1,0,0,6,2,1]
 };

@@ -41,6 +41,7 @@ var structtmk_1_1app_1_1RouteJob =
     [ "refill_repair", "structtmk_1_1app_1_1RouteJob.html#ad13427674b259858abbddefa70dfecd1", null ],
     [ "report_out", "structtmk_1_1app_1_1RouteJob.html#a302e60e0793e3fc00a8cfe97e292e574", null ],
     [ "reroute", "structtmk_1_1app_1_1RouteJob.html#a3efd7aec4cad4c4c2d5d464d0c581288", null ],
+    [ "rescue", "structtmk_1_1app_1_1RouteJob.html#a0fa678c96210cbd89a03e4358e5c0274", null ],
     [ "return_paths", "structtmk_1_1app_1_1RouteJob.html#a9a88a27b86997dac6476e1249d7e4cb7", null ],
     [ "rules_override", "structtmk_1_1app_1_1RouteJob.html#a0638d1a7c6ff8284a9af0177de373f7d", null ],
     [ "si_rules", "structtmk_1_1app_1_1RouteJob.html#ae31339bcb8fa1593e1bae86662425e3f", null ],

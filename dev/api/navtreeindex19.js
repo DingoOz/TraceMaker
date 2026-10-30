@@ -1,5 +1,7 @@
 var NAVTREEINDEX19 =
 {
+"structtmk_1_1place_1_1Problem.html#a2e1dc4e0f9944018303f456541764dce":[0,0,0,14,23,10],
+"structtmk_1_1place_1_1Problem.html#a2e1dc4e0f9944018303f456541764dce":[1,0,0,13,23,10],
 "structtmk_1_1place_1_1Problem.html#a2ea88f32f924ce9c40d870abe74820fe":[0,0,0,14,23,5],
 "structtmk_1_1place_1_1Problem.html#a2ea88f32f924ce9c40d870abe74820fe":[1,0,0,13,23,5],
 "structtmk_1_1place_1_1Problem.html#a32dd9bca95677b0413a9188e8f76b3e1":[0,0,0,14,23,14],
@@ -247,7 +249,5 @@ var NAVTREEINDEX19 =
 "structtmk_1_1route_1_1BusStats.html#a12a7cb771adb73879abd7d4300ee270c":[0,0,0,16,7,7],
 "structtmk_1_1route_1_1BusStats.html#a12a7cb771adb73879abd7d4300ee270c":[1,0,0,14,7,7],
 "structtmk_1_1route_1_1BusStats.html#a192a6e7d7d71c38c10fde1e30998dd36":[0,0,0,16,7,1],
-"structtmk_1_1route_1_1BusStats.html#a192a6e7d7d71c38c10fde1e30998dd36":[1,0,0,14,7,1],
-"structtmk_1_1route_1_1BusStats.html#a1b7bb305b0ac21789173f611f121a6e7":[0,0,0,16,7,8],
-"structtmk_1_1route_1_1BusStats.html#a1b7bb305b0ac21789173f611f121a6e7":[1,0,0,14,7,8]
+"structtmk_1_1route_1_1BusStats.html#a192a6e7d7d71c38c10fde1e30998dd36":[1,0,0,14,7,1]
 };

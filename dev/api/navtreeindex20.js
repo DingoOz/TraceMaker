@@ -1,5 +1,7 @@
 var NAVTREEINDEX20 =
 {
+"structtmk_1_1route_1_1BusStats.html#a1b7bb305b0ac21789173f611f121a6e7":[0,0,0,16,7,8],
+"structtmk_1_1route_1_1BusStats.html#a1b7bb305b0ac21789173f611f121a6e7":[1,0,0,14,7,8],
 "structtmk_1_1route_1_1BusStats.html#a1de900753ccc56bda6ca37050f7f4dd2":[0,0,0,16,7,4],
 "structtmk_1_1route_1_1BusStats.html#a1de900753ccc56bda6ca37050f7f4dd2":[1,0,0,14,7,4],
 "structtmk_1_1route_1_1BusStats.html#a22f81cec2b260aef3240cc67553dc8cd":[0,0,0,16,7,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX20 =
 "structtmk_1_1route_1_1GlobalResult.html#a046d86c1e7da34b391b8e9e49b0d5a27":[0,0,0,16,30,17],
 "structtmk_1_1route_1_1GlobalResult.html#a046d86c1e7da34b391b8e9e49b0d5a27":[1,0,0,14,30,17],
 "structtmk_1_1route_1_1GlobalResult.html#a2e43444486a33236bab94e1ca6f9f98a":[0,0,0,16,30,14],
-"structtmk_1_1route_1_1GlobalResult.html#a2e43444486a33236bab94e1ca6f9f98a":[1,0,0,14,30,14],
-"structtmk_1_1route_1_1GlobalResult.html#a336f39667d81d0697972733fcd0f938d":[0,0,0,16,30,10],
-"structtmk_1_1route_1_1GlobalResult.html#a336f39667d81d0697972733fcd0f938d":[1,0,0,14,30,10]
+"structtmk_1_1route_1_1GlobalResult.html#a2e43444486a33236bab94e1ca6f9f98a":[1,0,0,14,30,14]
 };
