@@ -1,0 +1,19 @@
+portfolio: 8 variants on 1 thread
+searches: 986 ok (15790857 expansions), 17 failed (6123515 expansions); fields 693 GPU + 0 CPU (46.46 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1094 connections improved
+restarts 0; legality checks 24997654; rips 0, passes 1, boxed-in 12, nogood skips 6, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 3162518 cells visited
+late reachability proofs: 23, 0 proved no path, 230046 cells visited
+failed-search expansions: strict confined 0, strict wide 6123515, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 986 in 90.6 s  <- best
+routed 986/995 connections, 2898 tracks, 271 vias, pitch 0.065 mm, 25306936 expansions, 90.95 s (best variant 90.64 s)
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_D+: R5.2 -> U2.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /SCK: CON1.3 -> U2.9  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED2: D79.1 -> U2.40  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (search budget)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 21914372 expansions, 3392564 flood cells, 24997474 cell checks, 19045084 fixed-copper checks, 727156856 field cells in 693 fields, 986 commits, 0 rips

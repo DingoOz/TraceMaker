@@ -1,0 +1,20 @@
+portfolio: 8 variants on 1 thread
+searches: 981 ok (16311845 expansions), 24 failed (3270293 expansions); fields 696 GPU + 0 CPU (41.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1089 connections improved
+restarts 0; legality checks 21168948; rips 0, passes 1, boxed-in 14, nogood skips 7, history cells 0, transactions 0 kept of 0
+reachability checks: 4, 2 proved unreachable, 244008 cells visited
+late reachability proofs: 21, 0 proved no path, 210037 cells visited
+failed-search expansions: strict confined 0, strict wide 3269625, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 981 in 78.1 s  <- best
+routed 981/991 connections, 2876 tracks, 266 vias, pitch 0.065 mm, 20035515 expansions, 78.38 s (best variant 78.09 s)
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: GND: U2.5 -> C3.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.24 -> U2.34  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /SCK: CON1.3 -> U2.9  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (out of budget)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 19581470 expansions, 454045 flood cells, 21168478 cell checks, 17712108 fixed-copper checks, 673176076 field cells in 696 fields, 981 commits, 0 rips

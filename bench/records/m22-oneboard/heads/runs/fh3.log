@@ -1,0 +1,17 @@
+portfolio: 8 variants on 1 thread
+searches: 988 ok (16096860 expansions), 13 failed (6122561 expansions); fields 691 GPU + 0 CPU (29.54 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1097 connections improved
+restarts 0; legality checks 25392678; rips 0, passes 1, boxed-in 8, nogood skips 4, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 3161810 cells visited
+late reachability proofs: 22, 0 proved no path, 220039 cells visited
+failed-search expansions: strict confined 0, strict wide 6122561, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 988 in 73.4 s  <- best
+routed 988/995 connections, 2902 tracks, 272 vias, pitch 0.065 mm, 25601270 expansions, 73.72 s (best variant 73.40 s)
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_D+: R5.2 -> U2.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (search budget)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 22219421 expansions, 3381849 flood cells, 25392498 cell checks, 19165714 fixed-copper checks, 717145736 field cells in 691 fields, 988 commits, 0 rips

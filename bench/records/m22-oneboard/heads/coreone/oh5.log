@@ -1,0 +1,81 @@
+live view: http://127.0.0.1:8862/
+portfolio: 8 variants on 8 threads
+searches: 700 ok (14402067 expansions), 42 failed (4756789 expansions); fields 427 GPU + 0 CPU (12.79 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 669 connections improved
+restarts 0; legality checks 5204687; rips 0, passes 1, boxed-in 29, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 7 proved unreachable, 2574814 cells visited
+late reachability proofs: 65, 26 proved no path, 440639 cells visited
+failed-search expansions: strict confined 0, strict wide 2802751, negotiated confined 0, negotiated wide 0
+searches: 699 ok (14342721 expansions), 43 failed (4936121 expansions); fields 433 GPU + 0 CPU (13.42 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 669 connections improved
+restarts 0; legality checks 4962461; rips 0, passes 1, boxed-in 30, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 5 proved unreachable, 2236567 cells visited
+late reachability proofs: 69, 31 proved no path, 445851 cells visited
+failed-search expansions: strict confined 0, strict wide 3299773, negotiated confined 0, negotiated wide 0
+searches: 788 ok (8351247 expansions), 589 failed (11660793 expansions); fields 231 GPU + 0 CPU (22.84 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 22324115; rips 58, passes 2, boxed-in 322, nogood skips 0, history cells 108, transactions 0 kept of 0
+reachability checks: 176, 125 proved unreachable, 10172608 cells visited
+late reachability proofs: 35, 17 proved no path, 203791 cells visited
+failed-search expansions: strict confined 0, strict wide 3514352, negotiated confined 0, negotiated wide 141
+searches: 776 ok (10420354 expansions), 162 failed (6069684 expansions); fields 618 GPU + 0 CPU (52.49 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 18424262; rips 7, passes 2, boxed-in 139, nogood skips 0, history cells 22, transactions 0 kept of 0
+reachability checks: 21, 16 proved unreachable, 6739277 cells visited
+late reachability proofs: 25, 1 proved no path, 245288 cells visited
+failed-search expansions: strict confined 0, strict wide 3330725, negotiated confined 0, negotiated wide 0
+searches: 804 ok (4356692 expansions), 289 failed (14458988 expansions); fields 296 GPU + 0 CPU (64.53 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 20319835; rips 48, passes 2, boxed-in 205, nogood skips 0, history cells 114, transactions 0 kept of 0
+reachability checks: 92, 80 proved unreachable, 15703618 cells visited
+late reachability proofs: 2, 0 proved no path, 20002 cells visited
+failed-search expansions: strict confined 0, strict wide 211895, negotiated confined 0, negotiated wide 141
+searches: 748 ok (6123603 expansions), 146 failed (13571259 expansions); fields 574 GPU + 0 CPU (92.64 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 722 connections improved
+restarts 0; legality checks 20504171; rips 0, passes 1, boxed-in 114, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 11 proved unreachable, 5068546 cells visited
+late reachability proofs: 92, 73 proved no path, 320005 cells visited
+failed-search expansions: strict confined 0, strict wide 8502713, negotiated confined 0, negotiated wide 0
+searches: 786 ok (10233343 expansions), 135 failed (5585719 expansions); fields 611 GPU + 0 CPU (136.65 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 760 connections improved
+restarts 0; legality checks 17948252; rips 0, passes 2, boxed-in 119, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 6 proved unreachable, 6248807 cells visited
+late reachability proofs: 26, 1 proved no path, 255475 cells visited
+failed-search expansions: strict confined 0, strict wide 3355358, negotiated confined 0, negotiated wide 0
+searches: 787 ok (13447616 expansions), 136 failed (5681192 expansions); fields 613 GPU + 0 CPU (143.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 769 connections improved
+restarts 0; legality checks 21152949; rips 0, passes 2, boxed-in 120, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 6 proved unreachable, 6341636 cells visited
+late reachability proofs: 33, 1 proved no path, 325441 cells visited
+failed-search expansions: strict confined 0, strict wide 3355447, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 694 in 30.9 s
+  variant 1 fast bends, shortest first, crowded source routed 784 in 173.5 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 725 in 55.8 s
+  variant 3 fast bends, jittered order, escape plan routed 744 in 123.9 s
+  variant 4 exact bends, jittered order    routed 695 in 29.6 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 772 in 93.3 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 771 in 90.0 s
+  variant 7 fast bends, dear vias, crowded source routed 785 in 187.4 s  <- best
+routed 785/806 connections, 2586 tracks, 284 vias, pitch 0.055 mm, 23470140 expansions, 187.52 s (best variant 187.38 s)
+  unrouted: /XMOS200/IOVDD: U801.42 -> U801.29  (search budget; negotiated: out of budget)
+  unrouted: Net-(R831-Pad2): R831.2 -> U801.28  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(R822-Pad2): R822.2 -> U801.27  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(C602-Pad1): X601.2 -> U601.15  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /I2C1_SCL: U502.9 -> U503.9  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(R823-Pad2): R823.2 -> U801.37  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /ETH_RX1: U801.117 -> R607.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /ETH_RX3: U801.119 -> R609.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /I2S_BCLK2: R417.2 -> U801.90  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /I2S_SDATA1: R422.2 -> U801.88  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /XL_DN0: R413.2 -> U801.8  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(R880-Pad1): R880.1 -> U801.15  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /AUX_DIGI5: D405.3 -> U801.23  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /AUX_DIGI7: U801.26 -> D401.3  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(R864-Pad2): R864.2 -> U801.12  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(R890-Pad1): R890.1 -> U801.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /I2S_BCLK0: R431.1 -> U801.32  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /AUX_DIGI1: D404.3 -> U801.58  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /AUD_MUTE: U801.68 -> R115.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /AUX_DIGI3: D408.3 -> U801.61  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /XMOS200/MODE4: U801.97 -> JP804.1  (boxed in; escapes/neck-down: boxed in)
+work (all variants): 110050939 expansions, 57342365 flood cells, 130828246 cell checks, 59939687 fixed-copper checks, 1849049964 field cells in 3803 fields, 6088 commits, 113 rips

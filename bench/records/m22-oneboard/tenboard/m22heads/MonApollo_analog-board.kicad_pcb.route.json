@@ -1,0 +1,318 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 94.62,
+ "connections": 1190,
+ "copper_layers": 2,
+ "escape_corridor_mm": 1444.085749999999,
+ "escape_corridors": 506,
+ "escape_reclaimed": 0,
+ "expansions": 20580063,
+ "failures": [
+  "Net-(Q6-Pad3): Q6.3 -> R84.2  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(Q6-Pad3): Q6.3 -> R81.2  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R92-Pad1): R92.1 -> TR9.2  (boxed in; escapes/neck-down: boxed in)",
+  "GND: C30.1 -> C118.2  (boxed in; escapes/neck-down: boxed in)",
+  "SH12: C63.1 -> U14.12  (no path in window)",
+  "-12V: C37.1 -> U28.11  (no path in window)",
+  "DB0: U20.2 -> U36.2  (boxed in; escapes/neck-down: boxed in)",
+  "OSCB SAW WAVE: U12.3 -> VCO2.8  (boxed in; escapes/neck-down: boxed in)",
+  "+5V: U4.12 -> U11.12  (no path in window)",
+  "OSC LFO MOD: U5.8 -> R65.1  (no path in window)",
+  "OSC EG2 MOD: R66.1 -> U4.3  (boxed in; escapes/neck-down: boxed in)",
+  "CUTOFF CV: R158.2 -> U28.1  (boxed in; escapes/neck-down: boxed in)",
+  "OSC LFO MOD: R65.1 -> U4.14  (boxed in; escapes/neck-down: boxed in)",
+  "PWM A EG2 AMT CV: R22.1 -> U22.1  (boxed in; escapes/neck-down: boxed in)",
+  "DB1: U14.16 -> U36.3  (boxed in; escapes/neck-down: boxed in)",
+  "OSCB SAW WAVE: U11.6 -> U12.3  (boxed in; escapes/neck-down: boxed in)",
+  "PWM A LFO AMT CV: R23.1 -> U23.9  (boxed in; escapes/neck-down: boxed in)",
+  "/DAC10: J3.23 -> U6.23  (boxed in; escapes/neck-down: boxed in)",
+  "/DAC9: J3.24 -> U6.24  (boxed in; escapes/neck-down: boxed in)",
+  "OSCB SAW WAVE: U12.3 -> R113.1  (boxed in; escapes/neck-down: boxed in)",
+  "/DAC11: J3.22 -> U6.22  (boxed in; escapes/neck-down: boxed in)",
+  "/DAC13: J3.20 -> U6.20  (boxed in; escapes/neck-down: boxed in)",
+  "AMP LFO AMT CV: R146.1 -> U28.9  (boxed in; escapes/neck-down: boxed in)",
+  "FIL LFO AMT CV: R128.1 -> U27.6  (boxed in; escapes/neck-down: boxed in)",
+  "OSCA INIT CV: R51.2 -> U23.1  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "NOISE MIX CV: R103.1 -> U23.6  (boxed in; escapes/neck-down: boxed in)",
+  "FIL OSCB  AMT CV: R129.1 -> U27.1  (boxed in; escapes/neck-down: boxed in)",
+  "OSCB INIT CV: R49.2 -> U25.9  (boxed in; escapes/neck-down: boxed in)",
+  "EG2 SUS CV: EG2.7 -> U34.8  (boxed in; escapes/neck-down: boxed in)",
+  "EG2 REL CV: EG2.8 -> U34.13  (boxed in; escapes/neck-down: boxed in)",
+  "EG1 REL CV: EG1.8 -> U33.13  (boxed in; escapes/neck-down: boxed in)",
+  "LFO DMUX EN: J3.37 -> U20.4  ()",
+  "+5V: U46.3 -> U12.12  ()",
+  "NOISE: U39.14 -> R97.1  ()",
+  "LFO: R112.1 -> R1.1  ()",
+  "OSCA PITCH CV: R82.1 -> U24.1  ()",
+  "OSCB SAW: U12.1 -> U36.13  ()",
+  "OSCB TRI: U12.16 -> U36.12  ()",
+  "DB7: J3.15 -> U36.9  ()",
+  "OSCA FM AMT CV: R14.1 -> U22.14  ()",
+  "OSCA SAW: U11.16 -> U36.19  ()",
+  "DB5: J3.13 -> U36.7  ()",
+  "OSCA PULSE: U11.1 -> U36.18  ()",
+  "DB6: J3.14 -> U36.8  ()",
+  "LFO: J3.5 -> R132.1  ()",
+  "OSCB PULSE: U12.8 -> U36.14  ()",
+  "OSC EG2 AMT CV: R15.1 -> U24.14  ()",
+  "OSCB PITCH CV: R85.1 -> U24.9  ()",
+  "KEYTRACK AMT CV: R126.1 -> U27.9  ()",
+  "DB3: J3.11 -> U36.5  ()",
+  "DB4: J3.12 -> U36.6  ()",
+  "OSCA TRI: U11.9 -> U36.17  ()",
+  "OSC SYNC: U11.8 -> U36.16  ()",
+  "FIL EG2 AMT CV: R127.1 -> U27.14  ()",
+  "GLIDE AMT CV: R68.2 -> U24.6  ()",
+  "EG2: R111.1 -> R3.1  ()",
+  "OSCB MOD: U4.16 -> U36.15  ()",
+  "DAC MUX EN1: J3.18 -> U14.2  ()",
+  "TUNE: J3.4 -> D13.2  ()",
+  "GATE: J3.3 -> EG1.2  ()",
+  "DAC MUX EN0: J3.19 -> U13.2  ()",
+  "EG2 POL: J3.38 -> U40.6  ()",
+  "LFO TUNE: J3.6 -> R215.1  ()",
+  "LFO RESET: J3.7 -> LFO1.11  ()"
+ ],
+ "open": 64,
+ "package_pin_edges": 17,
+ "pitch_mm": 0.075,
+ "routed": 1126,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T02:43:08Z",
+  "input": "/home/dingo/Programming/TraceMaker-speed/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/MonApollo_analog-board/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/MonApollo_analog-board.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "7200.0"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/MonApollo_analog-board.kicad_pcb.state"
+   },
+   {
+    "name": "",
+    "value": "5"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/MonApollo_analog-board.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/MonApollo_analog-board.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 7200.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 567.94397604,
+ "style": {
+  "acute_angles": 1,
+  "arcs": 0,
+  "bends": 1583,
+  "bends_per_connection": 0.8641,
+  "connections": 1832,
+  "detour_length_mm": 11164.954481,
+  "detour_octile_mm": 9741.235953,
+  "detour_ratio": 1.1462,
+  "length_mm": 11164.954481,
+  "long_detours": 55,
+  "off_angle_segments": 448,
+  "segments": 3829,
+  "short_segments": 246,
+  "stair_steps": 2,
+  "vias": 588
+ },
+ "time_limited": false,
+ "tracks": 3829,
+ "tunnels": 0,
+ "variant": 6,
+ "variant_name": "fast bends, cheap crossings, escape plan, crowded source",
+ "variant_seconds": 192.953839278,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 942,
+   "seconds": 64.239121244,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 1115,
+   "seconds": 357.931066661,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 919,
+   "seconds": 149.656496557,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 1101,
+   "seconds": 275.981094093,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 987,
+   "seconds": 74.478023176,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 1117,
+   "seconds": 266.468590875,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 1126,
+   "seconds": 192.953839278,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 1113,
+   "seconds": 291.6719928,
+   "variant": 7
+  }
+ ],
+ "vias": 588,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 19754300,
+   "commits": 1126,
+   "expansions": 17119473,
+   "field_cells": 162489686,
+   "fields": 404,
+   "fixed_checks": 14921218,
+   "flood_cells": 3460590,
+   "rips": 0,
+   "searches": 1281
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 19754300,
+   "commits": 1126,
+   "expansions": 17119473,
+   "field_cells": 162489686,
+   "fields": 404,
+   "fixed_checks": 14921218,
+   "flood_cells": 3460590,
+   "rips": 0,
+   "searches": 1281
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 111936493,
+   "commits": 8420,
+   "expansions": 127304757,
+   "field_cells": 734591546,
+   "fields": 2279,
+   "fixed_checks": 79109972,
+   "flood_cells": 22568368,
+   "rips": 0,
+   "searches": 10902
+  },
+  "negotiation": {
+   "cell_checks": 12138213,
+   "commits": 28,
+   "expansions": 2681563,
+   "field_cells": 19128068,
+   "fields": 45,
+   "fixed_checks": 5498780,
+   "flood_cells": 12908308,
+   "rips": 31,
+   "searches": 156
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 124074706,
+   "commits": 8448,
+   "expansions": 129986320,
+   "field_cells": 753719614,
+   "fields": 2324,
+   "fixed_checks": 84608752,
+   "flood_cells": 35476676,
+   "rips": 31,
+   "searches": 11058
+  }
+ }
+}

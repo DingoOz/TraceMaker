@@ -1,0 +1,3 @@
+pin rescues: 2 tried, 0 connections routed
+end-game retry: 2 tried, 0 routed
+routed 167/196 connections, 542 tracks, 79 vias, pitch 0.075 mm, 11351063 expansions, 11.61 s (best variant 11.56 s)

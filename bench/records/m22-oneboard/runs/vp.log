@@ -1,0 +1,20 @@
+live view: http://192.168.1.83:8840/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 1 thread
+searches: 990 ok (15691132 expansions), 92 failed (3370328 expansions); fields 773 GPU + 0 CPU (40.04 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1087 connections improved
+restarts 0; legality checks 22122309; rips 0, passes 1, boxed-in 89, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000001 cells visited
+late reachability proofs: 22, 0 proved no path, 220036 cells visited
+failed-search expansions: strict confined 0, strict wide 3370328, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 987 in 81.3 s  <- best
+routed 987/995 connections, 2925 tracks, 276 vias, pitch 0.065 mm, 22281497 expansions, 81.57 s (best variant 81.27 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 19061460 expansions, 3220037 flood cells, 22116878 cell checks, 19170536 fixed-copper checks, 1919676140 field cells in 773 fields, 990 commits, 0 rips

@@ -1,0 +1,17 @@
+shove for conn 408 (/USB_D-): lift /USB_D+@(78.325, 123.565): boxed in
+shove for conn 408 (/USB_D-): lift +5V@(82.940, 121.355): boxed in
+shove for conn 408 (/USB_D-): lift /USB_D+@(80.275, 123.565): boxed in
+shove for conn 628 (Net-(C16-Pad1)): lift /RESET@(83.850, 129.935): boxed in
+shove for conn 665 (/FLASH_HV_nS): lift /LCD_HV_SS@(91.195, 125.060): blocker, but no position for it lets the connection through
+shove for conn 665 (/FLASH_HV_nS): lift /LCD_HV_nRES@(91.845, 125.775): boxed in
+shove for conn 665 (/FLASH_HV_nS): lift Net-(R6-Pad10)@(91.845, 122.525): boxed in
+shove for conn 977 (/Programming Socket #8/LED1): lift /Programming Socket #8/PSU_FAULT@(87.165, 120.185): boxed in
+shove for conn 977 (/Programming Socket #8/LED1): lift /Programming Socket #8/PSU_EN@(86.970, 119.210): boxed in
+shove for conn 977 (/Programming Socket #8/LED1): lift GND@(87.880, 119.535): boxed in
+shove for conn 987 (/Programming Socket #0/I2C_SCL): lift /Programming Socket #0/I2C_SDA@(86.970, 129.480): routed round the moved via
+shove for conn 992 (/Programming Socket #2/INT): lift /Programming Socket #2/PSU_FAULT@(472.940, 70.720): boxed in
+shove for conn 992 (/Programming Socket #2/INT): lift /Programming Socket #6/INT@(91.195, 123.565): boxed in
+shove for conn 992 (/Programming Socket #2/INT): lift Net-(R6-Pad10)@(91.845, 122.525): boxed in
+shove for conn 992 (/Programming Socket #2/INT): lift /LCD_HV_SS@(91.195, 125.060): boxed in
+shove for conn 992 (/Programming Socket #2/INT): lift /Programming Socket #7/INT@(91.845, 124.280): boxed in
+shove for conn 993 (/Programming Socket #1/INT): lift /Programming Socket #6/INT@(91.195, 123.565): search budget

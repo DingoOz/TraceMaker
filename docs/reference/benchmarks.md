@@ -186,6 +186,35 @@ comparable (judge version, time limit, machine load).
 | [couple-b1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b1/summary.json) | b1-profiles | 5 | b0e6dc7 | 0.0% | 77.0% |  | 205 | `--soft-zones` |
 | [couple-b2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-b2/runs/couple-b2/summary.json) | b2-delay | 3 | b0e6dc7 | 0.0% | 79.6% |  | 165 | `--soft-zones` |
 
+## m22-endgame
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m22-endgame)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [lm-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-base/summary.json) | lm10 | 10 | db5950f | 0.0% | 86.6% | 0.0% | 3175 |  |
+| [lm-base22](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-base22/summary.json) | lm10 | 10 | df366f7 | 0.0% | 87.0% | 0.0% | 9579 |  |
+| [lm-eg10](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.7% | 0.0% | 9516 | `--endgame 0.1` |
+| [lm-eg10b](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10b/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.7% | 0.0% | 6393 | `--endgame 0.1` |
+| [lm-eg10r](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10r/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.7% | 0.0% | 9569 | `--endgame 0.1 --rescue 2,4,8` |
+| [lm-eg10rb](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-eg10rb/summary.json) | lm10 | 10 | df366f7 | 0.0% | 86.9% | 0.0% | 6382 | `--endgame 0.1 --rescue 2,4,8` |
+| [lm-rescue](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-endgame/runs/lm-rescue/summary.json) | lm10 | 10 | df366f7 | 0.0% | 84.0% | 0.0% | 3058 | `--rescue 2,4,8` |
+
+## m22-oneboard
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m22-oneboard)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [lm-quick-heads-off](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/quick-heads-off/summary.json) | quick | 30 | 05a5e77 | 86.7% | 99.3% | 100.0% | 211 |  |
+| [lm-quick-off2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/quick-off/summary.json) | quick | 30 | 08a82ff | 86.7% | 99.3% | 100.0% | 212 |  |
+| [lm-m22all](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22all/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 79.3% | 0.0% | 6540 | `--via-shove --pin-via-pen 3 --escape-all --window-escalate --via-retry --pass-bound --neg-strict-cap 200000 --long-weight 2 --plane-informed` |
+| [lm-m22core](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22core/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 85.4% | 0.0% | 7105 | `--via-shove --pin-via-pen 3 --escape-all` |
+| [lm-m22heads](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22heads/summary.json) | lm10 | 10 | 05a5e77 | 0.0% | 86.5% | 0.0% | 6354 | `--fanout-heads 5` |
+| [lm-m22headsse](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22headsse/summary.json) | lm10 | 10 | 05a5e77 | 0.0% | 86.9% | 0.0% | 6679 | `--fanout-heads 5 --via-shove --escape-all` |
+| [lm-m22shove](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shove/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 86.8% | 0.0% | 7139 | `--via-shove` |
+| [lm-m22shovee](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shovee/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 87.2% | 0.0% | 6918 | `--via-shove --escape-all` |
+
 ## macos15
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/macos15)

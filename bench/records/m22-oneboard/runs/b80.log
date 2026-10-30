@@ -1,0 +1,21 @@
+live view: http://192.168.1.83:8842/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 1 thread
+searches: 1035 ok (23291119 expansions), 109 failed (41627348 expansions); fields 804 GPU + 0 CPU (100.95 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 72781635; rips 50, passes 2, boxed-in 72, nogood skips 36, history cells 160, transactions 0 kept of 0
+reachability checks: 32, 24 proved unreachable, 18948334 cells visited
+late reachability proofs: 33, 10 proved no path, 244963 cells visited
+failed-search expansions: strict confined 0, strict wide 10660420, negotiated confined 0, negotiated wide 27180012
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 986 in 211.9 s  <- best
+routed 986/995 connections, 4649 tracks, 274 vias, pitch 0.065 mm, 80324848 expansions, 212.18 s (best variant 211.89 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  ()
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 61131551 expansions, 19193297 flood cells, 72733481 cell checks, 22496287 fixed-copper checks, 2077393800 field cells in 804 fields, 1035 commits, 50 rips

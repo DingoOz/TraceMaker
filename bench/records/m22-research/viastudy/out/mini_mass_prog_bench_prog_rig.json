@@ -1,0 +1,6756 @@
+{
+ "board": "bench/results/rel0120-tierD/boards/mini_mass_prog_bench_prog_rig.kicad_pcb",
+ "connections": [
+  {
+   "a": "R4.2",
+   "b": "U2.3",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "R4.2",
+     "part_pads": 2,
+     "pos": [
+      76.95,
+      122.7
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      3,
+      6,
+      16
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.8491038320345741,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 0.8491038320345741,
+     "via_nearest_net": "/USB_D+",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      1
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      1
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.3",
+     "part_pads": 45,
+     "pos": [
+      82.6,
+      123.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      4,
+      11,
+      22
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.2831506879266595,
+     "via_gap_nearest_ownpart_mm": 0.2831506879266595,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "+5V",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      3
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "SWAP1": {
+     "foreign_pads": 165,
+     "skipped": "foreign nets too large"
+    },
+    "T2": {
+     "len_by_layer": {
+      "0": 6.091894722929888
+     },
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": true,
+     "vias": 0
+    },
+    "V05": {
+     "len_by_layer": {
+      "0": 3.5402433948338654,
+      "1": 2.34
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V"
+     ],
+     "routed": true,
+     "vias": 2
+    },
+    "V1": {
+     "len_by_layer": {
+      "0": 3.5402433948338654,
+      "1": 2.34
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/USB_D+"
+     ],
+     "routed": true,
+     "vias": 2
+    },
+    "V2": {
+     "len_by_layer": {
+      "0": 2.6302433948338653,
+      "1": 3.25
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/USB_D+"
+     ],
+     "routed": true,
+     "vias": 2
+    },
+    "VT2": {
+     "len_by_layer": {
+      "0": 5.898528137423857
+     },
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/USB_D+"
+     ],
+     "routed": true,
+     "vias": 0
+    }
+   },
+   "net": "/USB_D-"
+  },
+  {
+   "a": "Y1.1",
+   "b": "U2.16",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "Y1.1",
+     "part_pads": 2,
+     "pos": [
+      80.75114,
+      138.1
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      2,
+      3,
+      3
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 3.2317711831159737,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 3.2317711831159737,
+     "via_nearest_net": "/Programming Socket #4/INT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.16",
+     "part_pads": 45,
+     "pos": [
+      85.6,
+      128.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      4,
+      7,
+      21
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.0294770348063418,
+     "via_gap_nearest_ownpart_mm": 1.0294770348063418,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "T2": {
+     "len_by_layer": {
+      "0": 11.974148998997643
+     },
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": true,
+     "vias": 0
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/RESET",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #5/INT"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "VT2": {
+     "len_by_layer": {
+      "0": 11.974148998997643
+     },
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/RESET",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #5/INT"
+     ],
+     "routed": true,
+     "vias": 0
+    }
+   },
+   "net": "Net-(C16-Pad1)"
+  },
+  {
+   "a": "R6.14",
+   "b": "U2.25",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.8,
+     "pad": "R6.14",
+     "part_pads": 16,
+     "pos": [
+      100.25,
+      126.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      4,
+      6,
+      26
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.251664358259653,
+     "via_gap_nearest_ownpart_mm": 0.251664358259653,
+     "via_gap_nearest_through_mm": 2.0170287281737833,
+     "via_nearest_net": "/LCD_HV_nRES",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      4
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.25",
+     "part_pads": 45,
+     "pos": [
+      89.6,
+      126.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      7,
+      13,
+      29
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.30327454833325823,
+     "via_gap_nearest_ownpart_mm": 0.30327454833325823,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "+5V",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "T2": {
+     "len_by_layer": {
+      "0": 8.392242570216085,
+      "1": 6.270422433049806
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": true,
+     "vias": 2
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/LCD_HV_nRES"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/LCD_HV_nRES"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/LCD_nRES",
+      "/LCD_HV_SS",
+      "/LCD_HV_nRES",
+      "/SPI2_HV_SCK",
+      "/SPI2_HV_MOSI"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "VT2": {
+     "len_by_layer": {
+      "0": 5.905050647633947,
+      "1": 4.745
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "/LCD_nRES",
+      "/LCD_HV_SS",
+      "/LCD_HV_nRES",
+      "/SPI2_HV_SCK",
+      "/SPI2_HV_MOSI"
+     ],
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/LCD_HV_DnC"
+  },
+  {
+   "a": "R6.11",
+   "b": "U2.28",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.8,
+     "pad": "R6.11",
+     "part_pads": 16,
+     "pos": [
+      100.25,
+      123.9
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      7,
+      10,
+      28
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6600123761617973,
+     "via_gap_nearest_ownpart_mm": 0.6600123761617973,
+     "via_gap_nearest_through_mm": 4.352640215878735,
+     "via_nearest_net": "/LCD_HV_SS",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      2,
+      4
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.28",
+     "part_pads": 45,
+     "pos": [
+      89.6,
+      124.8
+     ],
+     "smd": true,
+     "tracks_within": [
+      2,
+      4,
+      9,
+      22
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6254443566876151,
+     "via_gap_nearest_ownpart_mm": 0.6254443566876151,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/LCD_HV_SS",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      2,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "T2": {
+     "len_by_layer": {
+      "0": 6.215987509825721,
+      "1": 6.043086578651014
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": true,
+     "vias": 2
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "Net-(R6-Pad10)",
+      "/LCD_HV_SS",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "Net-(R6-Pad10)",
+      "/LCD_HV_SS",
+      "/LCD_HV_nRES",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "VT2": {
+     "len_by_layer": {
+      "0": 3.8536830360427263,
+      "1": 7.15
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "+5V",
+      "Net-(R6-Pad10)",
+      "/LCD_HV_SS",
+      "/LCD_HV_nRES",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/FLASH_HV_nS"
+  },
+  {
+   "a": "D76.1",
+   "b": "U2.39",
+   "dead_end": false,
+   "ends": [
+    {
+     "pad": "D76.1",
+     "part_pads": 2,
+     "pos": [
+      146.55,
+      75.0
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 3.68700693583749,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 3.68700693583749,
+     "via_nearest_net": "/Programming Socket #8/LED2",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.39",
+     "part_pads": 45,
+     "pos": [
+      86.1,
+      121.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      3,
+      5,
+      11,
+      23
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.7298170595661779,
+     "via_gap_nearest_ownpart_mm": 0.7298170595661779,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      2,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "T2": {
+     "len_by_layer": {
+      "0": 19.523657835243853,
+      "1": 62.78783794425153
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": true,
+     "vias": 2
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #8/LED2",
+      "/Programming Socket #8/PSU_FAULT"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "GND",
+      "/Programming Socket #8/LED2",
+      "/Programming Socket #8/PSU_FAULT",
+      "/Programming Socket #8/PSU_EN"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "VT2": {
+     "len_by_layer": {
+      "0": 18.683277243015105,
+      "1": 61.49707675979404
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "GND",
+      "/Programming Socket #8/LED2",
+      "/Programming Socket #8/PSU_FAULT",
+      "/Programming Socket #8/PSU_EN"
+     ],
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/Programming Socket #8/LED1"
+  },
+  {
+   "a": "U2.18",
+   "b": "U27.14",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.18",
+     "part_pads": 45,
+     "pos": [
+      86.6,
+      128.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      4,
+      7,
+      23
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.27414468931847613,
+     "via_gap_nearest_ownpart_mm": 0.27414468931847613,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 1.27,
+     "pad": "U27.14",
+     "part_pads": 16,
+     "pos": [
+      173.92,
+      72.905
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      7,
+      9
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.5425,
+     "via_gap_nearest_ownpart_mm": 0.5425,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #7/INT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      3,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "SWAP1": {
+     "all_ok": false,
+     "foreign_nets": 2,
+     "foreign_open_after": 4,
+     "foreign_open_before": 0,
+     "foreign_pads": 12,
+     "routed": true
+    },
+    "T2": {
+     "len_by_layer": {
+      "0": 5.7812283070818395,
+      "2": 107.3322441230783
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": true,
+     "vias": 2
+    },
+    "V05": {
+     "len_by_layer": {
+      "0": 3.5383218030860424,
+      "2": 109.08724412307829
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #0/I2C_SDA"
+     ],
+     "routed": true,
+     "vias": 2
+    },
+    "V1": {
+     "len_by_layer": {
+      "0": 3.5383218030860424,
+      "2": 109.08724412307829
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": true,
+     "vias": 2
+    },
+    "V2": {
+     "len_by_layer": {
+      "0": 3.5383218030860424,
+      "2": 109.08724412307829
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/SPI2_HV_SCK",
+      "/Programming Socket #7/PSU_FAULT",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": true,
+     "vias": 2
+    },
+    "VT2": {
+     "len_by_layer": {
+      "0": 8.805853729169227,
+      "3": 103.0729948473305
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/SPI2_HV_SCK",
+      "/Programming Socket #7/PSU_FAULT",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/Programming Socket #0/I2C_SCL"
+  },
+  {
+   "a": "U2.30",
+   "b": "U24.13",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.30",
+     "part_pads": 45,
+     "pos": [
+      89.6,
+      123.8
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      5,
+      16
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.6944978024257726,
+     "via_gap_nearest_ownpart_mm": 0.6944978024257726,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #7/INT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "dense_pitch": 1.27,
+     "pad": "U24.13",
+     "part_pads": 16,
+     "pos": [
+      230.92,
+      71.635
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      6,
+      7
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.5725,
+     "via_gap_nearest_ownpart_mm": 0.5725,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #6/PSU_FAULT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "len_by_layer": {
+      "0": 4.137511963260586,
+      "2": 158.7179425463042
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "routed": true,
+     "vias": 2
+    }
+   },
+   "net": "/Programming Socket #6/INT"
+  },
+  {
+   "a": "U15.13",
+   "b": "R3.2",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 1.27,
+     "pad": "U15.13",
+     "part_pads": 16,
+     "pos": [
+      405.92,
+      129.635
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      5,
+      10
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.3475,
+     "via_gap_nearest_ownpart_mm": 0.3475,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      1,
+      4
+     ]
+    },
+    {
+     "pad": "R3.2",
+     "part_pads": 2,
+     "pos": [
+      73.6,
+      134.95
+     ],
+     "smd": true,
+     "tracks_within": [
+      2,
+      3,
+      7,
+      12
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.61,
+     "via_gap_nearest_ownpart_mm": -1.0,
+     "via_gap_nearest_through_mm": 0.61,
+     "via_nearest_net": "/Programming Socket #4/INT",
+     "vias_through_within": [
+      0,
+      0,
+      1,
+      2
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "BIG": {
+     "len_by_layer": {
+      "0": 1.754982494623524,
+      "2": 335.1624404564514
+     },
+     "min_via_mm": 0.7,
+     "min_width_mm": 0.2,
+     "necked": false,
+     "pitch": 0.065,
+     "routed": true,
+     "vias": 2
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: search budget"
+    },
+    "T2": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #0/I2C_SCL"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #0/I2C_SCL",
+      "/Programming Socket #4/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/SCK",
+      "/Programming Socket #0/I2C_SCL",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #4/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "VT2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/SCK",
+      "/Programming Socket #0/I2C_SCL",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #4/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    }
+   },
+   "net": "/Programming Socket #3/INT"
+  },
+  {
+   "a": "U2.31",
+   "b": "U12.13",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.31",
+     "part_pads": 45,
+     "pos": [
+      89.6,
+      123.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      0,
+      4,
+      17
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.9006516340618034,
+     "via_gap_nearest_ownpart_mm": 0.9006516340618034,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #7/INT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      3
+     ]
+    },
+    {
+     "dense_pitch": 1.27,
+     "pad": "U12.13",
+     "part_pads": 16,
+     "pos": [
+      472.02,
+      71.635
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      6,
+      9
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.5725,
+     "via_gap_nearest_ownpart_mm": 0.5725,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #2/PSU_FAULT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      4
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: search budget"
+    },
+    "T2": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #2/PSU_FAULT",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "Net-(R6-Pad10)",
+      "/LCD_HV_SS",
+      "/Programming Socket #2/PSU_EN",
+      "/Programming Socket #2/PSU_FAULT",
+      "/Programming Socket #0/I2C_SCL",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "VT2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "Net-(R6-Pad10)",
+      "/LCD_HV_SS",
+      "/Programming Socket #2/PSU_EN",
+      "/Programming Socket #2/PSU_FAULT",
+      "/Programming Socket #0/I2C_SCL",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    }
+   },
+   "net": "/Programming Socket #2/INT"
+  },
+  {
+   "a": "U2.32",
+   "b": "U9.13",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.32",
+     "part_pads": 45,
+     "pos": [
+      89.6,
+      122.8
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      1,
+      3,
+      14
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 1.2311340213859814,
+     "via_gap_nearest_ownpart_mm": 1.2311340213859814,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #7/INT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      0,
+      2
+     ]
+    },
+    {
+     "dense_pitch": 1.27,
+     "pad": "U9.13",
+     "part_pads": 16,
+     "pos": [
+      528.02,
+      71.635
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      5,
+      9
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.5075,
+     "via_gap_nearest_ownpart_mm": 0.5075,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #1/PSU_FAULT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      3
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "out_of_budget: search budget"
+    },
+    "T2": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #1/PSU_FAULT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "Net-(R6-Pad10)",
+      "/Programming Socket #1/PSU_EN",
+      "/Programming Socket #1/PSU_FAULT",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "VT2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "Net-(R6-Pad10)",
+      "/Programming Socket #1/PSU_EN",
+      "/Programming Socket #1/PSU_FAULT",
+      "/Programming Socket #0/I2C_SDA",
+      "/Programming Socket #7/INT"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    }
+   },
+   "net": "/Programming Socket #1/INT"
+  },
+  {
+   "a": "U2.36",
+   "b": "U6.13",
+   "dead_end": false,
+   "ends": [
+    {
+     "dense_pitch": 0.5,
+     "pad": "U2.36",
+     "part_pads": 45,
+     "pos": [
+      87.6,
+      121.3
+     ],
+     "smd": true,
+     "tracks_within": [
+      0,
+      5,
+      12,
+      18
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.25329277176938325,
+     "via_gap_nearest_ownpart_mm": 0.25329277176938325,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      1,
+      2,
+      4
+     ]
+    },
+    {
+     "dense_pitch": 1.27,
+     "pad": "U6.13",
+     "part_pads": 16,
+     "pos": [
+      585.02,
+      71.635
+     ],
+     "smd": true,
+     "tracks_within": [
+      1,
+      1,
+      5,
+      5
+     ],
+     "via_gap_nearest_input_mm": -1.0,
+     "via_gap_nearest_mm": 0.5075,
+     "via_gap_nearest_ownpart_mm": 0.5075,
+     "via_gap_nearest_through_mm": -1.0,
+     "via_nearest_net": "/Programming Socket #0/PSU_FAULT",
+     "vias_through_within": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "vias_within": [
+      0,
+      0,
+      1,
+      2
+     ]
+    }
+   ],
+   "exp": {
+    "A": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "BIG": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "CHEAP": {
+     "pitch": 0.065,
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "T2": {
+     "pitch": 0.065,
+     "removed_via_nets": [],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    },
+    "V05": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "/Programming Socket #8/PSU_FAULT"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V1": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "GND",
+      "/Programming Socket #0/PSU_FAULT",
+      "/Programming Socket #8/PSU_FAULT"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "V2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "GND",
+      "/Programming Socket #0/PSU_EN",
+      "/Programming Socket #0/PSU_FAULT",
+      "/Programming Socket #8/LED2",
+      "/Programming Socket #8/PSU_FAULT",
+      "/Programming Socket #8/PSU_EN"
+     ],
+     "routed": false,
+     "why": "boxed_in: boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood)"
+    },
+    "VT2": {
+     "pitch": 0.065,
+     "removed_via_nets": [
+      "GND",
+      "/Programming Socket #0/PSU_EN",
+      "/Programming Socket #0/PSU_FAULT",
+      "/Programming Socket #8/LED2",
+      "/Programming Socket #8/PSU_FAULT",
+      "/Programming Socket #8/PSU_EN"
+     ],
+     "routed": false,
+     "why": "out_of_budget: out of budget"
+    }
+   },
+   "net": "/Programming Socket #0/INT"
+  }
+ ],
+ "control": [
+  {
+   "open": true,
+   "pad": "D76.1",
+   "part_pads": 2,
+   "pos": [
+    146.55,
+    75.0
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.68700693583749,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 3.68700693583749,
+   "via_nearest_net": "/Programming Socket #8/LED2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "D76.2",
+   "part_pads": 2,
+   "pos": [
+    149.45,
+    75.0
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    1,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 5.948525621127534,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 5.948525621127534,
+   "via_nearest_net": "/Programming Socket #8/LED2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R4.1",
+   "part_pads": 2,
+   "pos": [
+    75.45,
+    122.7
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    3,
+    4,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.299098238432144,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 1.299098238432144,
+   "via_nearest_net": "/USB_VBUS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R4.2",
+   "part_pads": 2,
+   "pos": [
+    76.95,
+    122.7
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    6,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8491038320345741,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.8491038320345741,
+   "via_nearest_net": "/USB_D+",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.1",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    127.9
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.29095631676425504,
+   "via_gap_nearest_ownpart_mm": 1.2230305146436289,
+   "via_gap_nearest_through_mm": 0.29095631676425504,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    1,
+    1,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.2",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    127.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    6,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6020635482991669,
+   "via_gap_nearest_ownpart_mm": 0.6020635482991669,
+   "via_gap_nearest_through_mm": 1.0904252844212365,
+   "via_nearest_net": "/LCD_DnC",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.3",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    126.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    5,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.34327123119310243,
+   "via_gap_nearest_ownpart_mm": 0.34327123119310243,
+   "via_gap_nearest_through_mm": 1.8902734208127363,
+   "via_nearest_net": "/LCD_nRES",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.4",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    125.5
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    5,
+    8,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5960047568590762,
+   "via_gap_nearest_ownpart_mm": 0.5960047568590762,
+   "via_gap_nearest_through_mm": 2.6902014735869066,
+   "via_nearest_net": "/LCD_DnC",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.5",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    124.7
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    5,
+    5,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.25466933112239126,
+   "via_gap_nearest_ownpart_mm": 0.25466933112239126,
+   "via_gap_nearest_through_mm": 3.490159501895722,
+   "via_nearest_net": "/LCD_nRES",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.6",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    123.9
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    6,
+    10,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0085378169193524,
+   "via_gap_nearest_ownpart_mm": 1.0085378169193524,
+   "via_gap_nearest_through_mm": 4.290132002432689,
+   "via_nearest_net": "/LCD_nRES",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    6
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.7",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    123.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    7,
+    11,
+    22
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.26,
+   "via_gap_nearest_ownpart_mm": 0.26,
+   "via_gap_nearest_through_mm": 5.0121497554618895,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.8",
+   "part_pads": 16,
+   "pos": [
+    101.95,
+    122.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    6,
+    6,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9405909499140307,
+   "via_gap_nearest_ownpart_mm": 0.9405909499140307,
+   "via_gap_nearest_through_mm": 4.2361367184156205,
+   "via_nearest_net": "/LCD_nRES",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.9",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    122.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    6,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.805,
+   "via_gap_nearest_ownpart_mm": 0.805,
+   "via_gap_nearest_through_mm": 4.075,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.10",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    123.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    4,
+    7,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9561871994473075,
+   "via_gap_nearest_ownpart_mm": 0.9561871994473075,
+   "via_gap_nearest_through_mm": 4.875,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": true,
+   "pad": "R6.11",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    123.9
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    7,
+    10,
+    28
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6600123761617973,
+   "via_gap_nearest_ownpart_mm": 0.6600123761617973,
+   "via_gap_nearest_through_mm": 4.352640215878735,
+   "via_nearest_net": "/LCD_HV_SS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.12",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    124.7
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    5,
+    7,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2796824596572466,
+   "via_gap_nearest_ownpart_mm": 0.2796824596572466,
+   "via_gap_nearest_through_mm": 3.565459743120851,
+   "via_nearest_net": "/LCD_HV_nRES",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.13",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    125.5
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    3,
+    7,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6193425607080295,
+   "via_gap_nearest_ownpart_mm": 0.6193425607080295,
+   "via_gap_nearest_through_mm": 2.7847767065614097,
+   "via_nearest_net": "/LCD_HV_SS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": true,
+   "pad": "R6.14",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    126.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    6,
+    26
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.251664358259653,
+   "via_gap_nearest_ownpart_mm": 0.251664358259653,
+   "via_gap_nearest_through_mm": 2.0170287281737833,
+   "via_nearest_net": "/LCD_HV_nRES",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.15",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    127.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    5,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2517682278086805,
+   "via_gap_nearest_ownpart_mm": 0.2517682278086805,
+   "via_gap_nearest_through_mm": 1.2805903838794095,
+   "via_nearest_net": "/SPI2_HV_MOSI",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    1
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.8,
+   "open": false,
+   "pad": "R6.16",
+   "part_pads": 16,
+   "pos": [
+    100.25,
+    127.9
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    4,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.647409143731899,
+   "via_gap_nearest_ownpart_mm": 1.8211747972008148,
+   "via_gap_nearest_through_mm": 0.647409143731899,
+   "via_nearest_net": "+3V3",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.1",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    122.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    10,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2637571603592335,
+   "via_gap_nearest_ownpart_mm": 0.2637571603592335,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.2",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    122.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    5,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.4788506765291816,
+   "via_gap_nearest_ownpart_mm": 1.4788506765291816,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/USB_D+",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.3",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    123.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    11,
+    22
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2831506879266595,
+   "via_gap_nearest_ownpart_mm": 0.2831506879266595,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.4",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    123.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    10,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6740208686390545,
+   "via_gap_nearest_ownpart_mm": 0.6740208686390545,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.5",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    124.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    5,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1258305569769562,
+   "via_gap_nearest_ownpart_mm": 1.1258305569769562,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.6",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    124.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    5,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.599601152600179,
+   "via_gap_nearest_ownpart_mm": 1.599601152600179,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.7",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    125.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    7,
+    13
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.0181044458083943,
+   "via_gap_nearest_ownpart_mm": 2.0181044458083943,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/USB_D+",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.8",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    125.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    6,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.0852514384484926,
+   "via_gap_nearest_ownpart_mm": 2.0852514384484926,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #5/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.9",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    126.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.5877080734623794,
+   "via_gap_nearest_ownpart_mm": 1.5877080734623794,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #5/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.10",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    126.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0917050606189578,
+   "via_gap_nearest_ownpart_mm": 1.0917050606189578,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #5/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.11",
+   "part_pads": 45,
+   "pos": [
+    82.6,
+    127.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    5,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5993293410075071,
+   "via_gap_nearest_ownpart_mm": 0.5993293410075071,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #5/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.12",
+   "part_pads": 45,
+   "pos": [
+    83.6,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    7,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.66220695231099,
+   "via_gap_nearest_ownpart_mm": 0.66220695231099,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/RESET",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.13",
+   "part_pads": 45,
+   "pos": [
+    84.1,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    6,
+    8,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.27,
+   "via_gap_nearest_ownpart_mm": 0.27,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #5/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.14",
+   "part_pads": 45,
+   "pos": [
+    84.6,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    7,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.77,
+   "via_gap_nearest_ownpart_mm": 0.77,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #5/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.15",
+   "part_pads": 45,
+   "pos": [
+    85.1,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    7,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1884090144274875,
+   "via_gap_nearest_ownpart_mm": 1.1884090144274875,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/RESET",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.16",
+   "part_pads": 45,
+   "pos": [
+    85.6,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    7,
+    21
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0294770348063418,
+   "via_gap_nearest_ownpart_mm": 1.0294770348063418,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.17",
+   "part_pads": 45,
+   "pos": [
+    86.1,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    6,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6042191811411355,
+   "via_gap_nearest_ownpart_mm": 0.6042191811411355,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.18",
+   "part_pads": 45,
+   "pos": [
+    86.6,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    4,
+    7,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.27414468931847613,
+   "via_gap_nearest_ownpart_mm": 0.27414468931847613,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.19",
+   "part_pads": 45,
+   "pos": [
+    87.1,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    3,
+    6,
+    15
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.32,
+   "via_gap_nearest_ownpart_mm": 1.32,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/SPI2_HV_SCK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.20",
+   "part_pads": 45,
+   "pos": [
+    87.6,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    6,
+    11,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.42698435801258267,
+   "via_gap_nearest_ownpart_mm": 0.42698435801258267,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.21",
+   "part_pads": 45,
+   "pos": [
+    88.1,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    8,
+    12,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.32,
+   "via_gap_nearest_ownpart_mm": 0.32,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/SPI2_HV_SCK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.22",
+   "part_pads": 45,
+   "pos": [
+    88.6,
+    128.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    6,
+    11,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2661540136692495,
+   "via_gap_nearest_ownpart_mm": 1.2661540136692495,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.23",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    127.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    4,
+    9,
+    24
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.27129760793094654,
+   "via_gap_nearest_ownpart_mm": 0.27129760793094654,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/SPI2_HV_SCK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.24",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    126.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    6,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7628935030318272,
+   "via_gap_nearest_ownpart_mm": 0.7628935030318272,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/SPI2_HV_SCK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.25",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    126.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    7,
+    13,
+    29
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.30327454833325823,
+   "via_gap_nearest_ownpart_mm": 0.30327454833325823,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.26",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    125.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    10,
+    20
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6314813299387666,
+   "via_gap_nearest_ownpart_mm": 0.6314813299387666,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.27",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    125.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    4,
+    5,
+    19
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0541074608919423,
+   "via_gap_nearest_ownpart_mm": 1.0541074608919423,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.28",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    124.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    9,
+    22
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6254443566876151,
+   "via_gap_nearest_ownpart_mm": 0.6254443566876151,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/LCD_HV_SS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.29",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    124.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    2,
+    3,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8329009715654047,
+   "via_gap_nearest_ownpart_mm": 0.8329009715654047,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/LCD_HV_SS",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.30",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    123.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    5,
+    16
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6944978024257726,
+   "via_gap_nearest_ownpart_mm": 0.6944978024257726,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.31",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    123.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9006516340618034,
+   "via_gap_nearest_ownpart_mm": 0.9006516340618034,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.32",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    122.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.2311340213859814,
+   "via_gap_nearest_ownpart_mm": 1.2311340213859814,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.33",
+   "part_pads": 45,
+   "pos": [
+    89.6,
+    122.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6288083521068777,
+   "via_gap_nearest_ownpart_mm": 1.6288083521068777,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.34",
+   "part_pads": 45,
+   "pos": [
+    88.6,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    6,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9555497243309828,
+   "via_gap_nearest_ownpart_mm": 0.9555497243309828,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.35",
+   "part_pads": 45,
+   "pos": [
+    88.1,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    5,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.619129125704447,
+   "via_gap_nearest_ownpart_mm": 0.619129125704447,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.36",
+   "part_pads": 45,
+   "pos": [
+    87.6,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    5,
+    12,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.25329277176938325,
+   "via_gap_nearest_ownpart_mm": 0.25329277176938325,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.37",
+   "part_pads": 45,
+   "pos": [
+    87.1,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    5,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9861443402307867,
+   "via_gap_nearest_ownpart_mm": 0.9861443402307867,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.38",
+   "part_pads": 45,
+   "pos": [
+    86.6,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    5,
+    17
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.33513471967102415,
+   "via_gap_nearest_ownpart_mm": 0.33513471967102415,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": true,
+   "pad": "U2.39",
+   "part_pads": 45,
+   "pos": [
+    86.1,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    5,
+    11,
+    23
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7298170595661779,
+   "via_gap_nearest_ownpart_mm": 0.7298170595661779,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.40",
+   "part_pads": 45,
+   "pos": [
+    85.6,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    6,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.1815023044884596,
+   "via_gap_nearest_ownpart_mm": 1.1815023044884596,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.41",
+   "part_pads": 45,
+   "pos": [
+    85.1,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    4,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8019312577859093,
+   "via_gap_nearest_ownpart_mm": 0.8019312577859093,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/LED2",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.43",
+   "part_pads": 45,
+   "pos": [
+    84.1,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    3,
+    7,
+    18
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.66,
+   "via_gap_nearest_ownpart_mm": 0.66,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.44",
+   "part_pads": 45,
+   "pos": [
+    83.6,
+    121.3
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    6,
+    14
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4525885785584457,
+   "via_gap_nearest_ownpart_mm": 0.4525885785584457,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #8/SWITCH",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 0.5,
+   "open": false,
+   "pad": "U2.45",
+   "part_pads": 45,
+   "pos": [
+    86.1,
+    124.8
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    3,
+    45,
+    64
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2736184731067546,
+   "via_gap_nearest_ownpart_mm": 0.2736184731067546,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/SPI2_HV_SCK",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    3,
+    8
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.1",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.593274337400328,
+   "via_gap_nearest_ownpart_mm": 3.593274337400328,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.2",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.235789190531985,
+   "via_gap_nearest_ownpart_mm": 4.235789190531985,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.3",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    1,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 5.103009490180629,
+   "via_gap_nearest_ownpart_mm": 5.103009490180629,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.4",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    6,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 6.104995158789819,
+   "via_gap_nearest_ownpart_mm": 6.104995158789819,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.5",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.6",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.7",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    67.825
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    5,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.8",
+   "part_pads": 16,
+   "pos": [
+    595.18,
+    66.555
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    1,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.11",
+   "part_pads": 16,
+   "pos": [
+    585.02,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6975,
+   "via_gap_nearest_ownpart_mm": 0.6975,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.12",
+   "part_pads": 16,
+   "pos": [
+    585.02,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5375,
+   "via_gap_nearest_ownpart_mm": 0.5375,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": true,
+   "pad": "U6.13",
+   "part_pads": 16,
+   "pos": [
+    585.02,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    5,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5075,
+   "via_gap_nearest_ownpart_mm": 0.5075,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.14",
+   "part_pads": 16,
+   "pos": [
+    585.02,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    3,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.7775,
+   "via_gap_nearest_ownpart_mm": 1.7775,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.15",
+   "part_pads": 16,
+   "pos": [
+    585.02,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.423727185575395,
+   "via_gap_nearest_ownpart_mm": 2.423727185575395,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U6.16",
+   "part_pads": 16,
+   "pos": [
+    585.02,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.1257852289728203,
+   "via_gap_nearest_ownpart_mm": 2.1257852289728203,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.1",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6944222900369679,
+   "via_gap_nearest_ownpart_mm": 1.6944222900369679,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.2",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    8,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5834412140033244,
+   "via_gap_nearest_ownpart_mm": 0.5834412140033244,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.3",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    5,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3025,
+   "via_gap_nearest_ownpart_mm": 0.3025,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.4",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    4,
+    6,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.0489862401038832,
+   "via_gap_nearest_ownpart_mm": 1.0489862401038832,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.5",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.2410060787269486,
+   "via_gap_nearest_ownpart_mm": 2.2410060787269486,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.6",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    4,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.483440034746859,
+   "via_gap_nearest_ownpart_mm": 3.483440034746859,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.7",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    67.825
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    5,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.739500221043319,
+   "via_gap_nearest_ownpart_mm": 4.739500221043319,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.8",
+   "part_pads": 16,
+   "pos": [
+    538.18,
+    66.555
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.11",
+   "part_pads": 16,
+   "pos": [
+    528.02,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6975,
+   "via_gap_nearest_ownpart_mm": 0.6975,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #1/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.12",
+   "part_pads": 16,
+   "pos": [
+    528.02,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5375,
+   "via_gap_nearest_ownpart_mm": 0.5375,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #1/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": true,
+   "pad": "U9.13",
+   "part_pads": 16,
+   "pos": [
+    528.02,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    5,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5075,
+   "via_gap_nearest_ownpart_mm": 0.5075,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #1/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.14",
+   "part_pads": 16,
+   "pos": [
+    528.02,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    5,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6575,
+   "via_gap_nearest_ownpart_mm": 0.6575,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.15",
+   "part_pads": 16,
+   "pos": [
+    528.02,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    6,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.0475,
+   "via_gap_nearest_ownpart_mm": 3.0475,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #1/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U9.16",
+   "part_pads": 16,
+   "pos": [
+    528.02,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    4,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5475,
+   "via_gap_nearest_ownpart_mm": 0.5475,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.1",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    4,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.4175,
+   "via_gap_nearest_ownpart_mm": 0.4175,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.2",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    5,
+    9,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.5714572562336078,
+   "via_gap_nearest_ownpart_mm": 2.5714572562336078,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #2/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.3",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    4,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.7875,
+   "via_gap_nearest_ownpart_mm": 0.7875,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.4",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    4,
+    6,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.0575,
+   "via_gap_nearest_ownpart_mm": 2.0575,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.5",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.3275,
+   "via_gap_nearest_ownpart_mm": 3.3275,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.6",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    3,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.5975,
+   "via_gap_nearest_ownpart_mm": 4.5975,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.7",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    67.825
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    5,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.8",
+   "part_pads": 16,
+   "pos": [
+    482.18,
+    66.555
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    1,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.11",
+   "part_pads": 16,
+   "pos": [
+    472.02,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6325,
+   "via_gap_nearest_ownpart_mm": 0.6325,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #2/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.12",
+   "part_pads": 16,
+   "pos": [
+    472.02,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5375,
+   "via_gap_nearest_ownpart_mm": 0.5375,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #2/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": true,
+   "pad": "U12.13",
+   "part_pads": 16,
+   "pos": [
+    472.02,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    6,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5725,
+   "via_gap_nearest_ownpart_mm": 0.5725,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #2/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.14",
+   "part_pads": 16,
+   "pos": [
+    472.02,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    4,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9175,
+   "via_gap_nearest_ownpart_mm": 0.9175,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.15",
+   "part_pads": 16,
+   "pos": [
+    472.02,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    3,
+    11,
+    13
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2675,
+   "via_gap_nearest_ownpart_mm": 0.2675,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    3
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U12.16",
+   "part_pads": 16,
+   "pos": [
+    472.02,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    4,
+    6,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2875,
+   "via_gap_nearest_ownpart_mm": 0.2875,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.1",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    133.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    0,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.9847510573934857,
+   "via_gap_nearest_ownpart_mm": 1.9847510573934857,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.2",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    132.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    5,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.096344530186359,
+   "via_gap_nearest_ownpart_mm": 1.096344530186359,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.3",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    130.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    5,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.4",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    129.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    5,
+    11
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.4111253504506713,
+   "via_gap_nearest_ownpart_mm": 1.4111253504506713,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.5",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    128.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    5,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.444085270710255,
+   "via_gap_nearest_ownpart_mm": 2.444085270710255,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.6",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    127.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    4,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.6171226978756277,
+   "via_gap_nearest_ownpart_mm": 3.6171226978756277,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.7",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    125.825
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    2,
+    5,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 4.836040156034274,
+   "via_gap_nearest_ownpart_mm": 4.836040156034274,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "GND",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.8",
+   "part_pads": 16,
+   "pos": [
+    416.08,
+    124.555
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    1,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.11",
+   "part_pads": 16,
+   "pos": [
+    405.92,
+    127.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.8875,
+   "via_gap_nearest_ownpart_mm": 2.8875,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.12",
+   "part_pads": 16,
+   "pos": [
+    405.92,
+    128.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6175,
+   "via_gap_nearest_ownpart_mm": 1.6175,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": true,
+   "pad": "U15.13",
+   "part_pads": 16,
+   "pos": [
+    405.92,
+    129.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    5,
+    10
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3475,
+   "via_gap_nearest_ownpart_mm": 0.3475,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.14",
+   "part_pads": 16,
+   "pos": [
+    405.92,
+    130.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3125,
+   "via_gap_nearest_ownpart_mm": 0.3125,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    2,
+    2,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.15",
+   "part_pads": 16,
+   "pos": [
+    405.92,
+    132.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8575,
+   "via_gap_nearest_ownpart_mm": 0.8575,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U15.16",
+   "part_pads": 16,
+   "pos": [
+    405.92,
+    133.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.8275,
+   "via_gap_nearest_ownpart_mm": 0.8275,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.1",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3525,
+   "via_gap_nearest_ownpart_mm": 0.3525,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.2",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    6,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.6049840152799204,
+   "via_gap_nearest_ownpart_mm": 1.6049840152799204,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.3",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    4,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.4875,
+   "via_gap_nearest_ownpart_mm": 1.4875,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.4",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    3,
+    3,
+    4,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 1.8653583231612896,
+   "via_gap_nearest_ownpart_mm": 1.8653583231612896,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.5",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    3,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 2.7586914449652284,
+   "via_gap_nearest_ownpart_mm": 2.7586914449652284,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.6",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    3,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.8507038100775444,
+   "via_gap_nearest_ownpart_mm": 3.8507038100775444,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.7",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    67.825
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    4,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 5.021560527444516,
+   "via_gap_nearest_ownpart_mm": 5.021560527444516,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.8",
+   "part_pads": 16,
+   "pos": [
+    241.08,
+    66.555
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.11",
+   "part_pads": 16,
+   "pos": [
+    230.92,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6325,
+   "via_gap_nearest_ownpart_mm": 0.6325,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #6/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.12",
+   "part_pads": 16,
+   "pos": [
+    230.92,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    2,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5375,
+   "via_gap_nearest_ownpart_mm": 0.5375,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #6/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": true,
+   "pad": "U24.13",
+   "part_pads": 16,
+   "pos": [
+    230.92,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    6,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5725,
+   "via_gap_nearest_ownpart_mm": 0.5725,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #6/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.14",
+   "part_pads": 16,
+   "pos": [
+    230.92,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5925,
+   "via_gap_nearest_ownpart_mm": 0.5925,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.15",
+   "part_pads": 16,
+   "pos": [
+    230.92,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    8,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2825,
+   "via_gap_nearest_ownpart_mm": 0.2825,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "+5V",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U24.16",
+   "part_pads": 16,
+   "pos": [
+    230.92,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    4,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.2875,
+   "via_gap_nearest_ownpart_mm": 0.2875,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.1",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    1,
+    1
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.2",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    1,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.3",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    3,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.4",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    5,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.5",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.6",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    4
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.7",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    67.825
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.8",
+   "part_pads": 16,
+   "pos": [
+    184.08,
+    66.555
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.11",
+   "part_pads": 16,
+   "pos": [
+    173.92,
+    69.095
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    2,
+    2
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.6325,
+   "via_gap_nearest_ownpart_mm": 0.6325,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/PSU_FAULT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.12",
+   "part_pads": 16,
+   "pos": [
+    173.92,
+    70.365
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    4,
+    7
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5375,
+   "via_gap_nearest_ownpart_mm": 0.5375,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/PSU_EN",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.13",
+   "part_pads": 16,
+   "pos": [
+    173.92,
+    71.635
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    3,
+    6,
+    6
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.3025,
+   "via_gap_nearest_ownpart_mm": 0.3025,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": true,
+   "pad": "U27.14",
+   "part_pads": 16,
+   "pos": [
+    173.92,
+    72.905
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    7,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5425,
+   "via_gap_nearest_ownpart_mm": 0.5425,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #7/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    3,
+    4
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.15",
+   "part_pads": 16,
+   "pos": [
+    173.92,
+    74.175
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    3,
+    9
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.9025,
+   "via_gap_nearest_ownpart_mm": 0.9025,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SCL",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "dense_pitch": 1.27,
+   "open": false,
+   "pad": "U27.16",
+   "part_pads": 16,
+   "pos": [
+    173.92,
+    75.445
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    0,
+    4,
+    5
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5475,
+   "via_gap_nearest_ownpart_mm": 0.5475,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "/Programming Socket #0/I2C_SDA",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    2,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "Y1.1",
+   "part_pads": 2,
+   "pos": [
+    80.75114,
+    138.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    2,
+    3,
+    3
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 3.2317711831159737,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 3.2317711831159737,
+   "via_nearest_net": "/Programming Socket #4/INT",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "Y1.2",
+   "part_pads": 2,
+   "pos": [
+    90.44886,
+    138.1
+   ],
+   "smd": true,
+   "tracks_within": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": -1.0,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": -1.0,
+   "via_nearest_net": "",
+   "vias_through_within": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "vias_within": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "open": false,
+   "pad": "R3.1",
+   "part_pads": 2,
+   "pos": [
+    73.6,
+    133.45
+   ],
+   "smd": true,
+   "tracks_within": [
+    0,
+    1,
+    6,
+    8
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.5624280793574911,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.5624280793574911,
+   "via_nearest_net": "/SCK",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "open": true,
+   "pad": "R3.2",
+   "part_pads": 2,
+   "pos": [
+    73.6,
+    134.95
+   ],
+   "smd": true,
+   "tracks_within": [
+    2,
+    3,
+    7,
+    12
+   ],
+   "via_gap_nearest_input_mm": -1.0,
+   "via_gap_nearest_mm": 0.61,
+   "via_gap_nearest_ownpart_mm": -1.0,
+   "via_gap_nearest_through_mm": 0.61,
+   "via_nearest_net": "/Programming Socket #4/INT",
+   "vias_through_within": [
+    0,
+    0,
+    1,
+    2
+   ],
+   "vias_within": [
+    0,
+    0,
+    1,
+    2
+   ]
+  }
+ ],
+ "copper_layers": 4,
+ "input_vias": 0,
+ "nets_open": 11,
+ "nets_sampled": 11,
+ "open": 11,
+ "pitch_mm": 0.065,
+ "vias_on_board": 268
+}

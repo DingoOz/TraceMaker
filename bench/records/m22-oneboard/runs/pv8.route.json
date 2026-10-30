@@ -1,0 +1,245 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 98.69,
+ "connections": 995,
+ "copper_layers": 4,
+ "escape_corridor_mm": 622.4537129999989,
+ "escape_corridors": 222,
+ "escape_reclaimed": 0,
+ "expansions": 23836002,
+ "failures": [
+  "/USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)",
+  "Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)",
+  "/LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)",
+  "/FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)",
+  "/Programming Socket #8/PSU_FAULT: U2.37 -> U30.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); via shove failed)",
+  "/Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (search budget)",
+  "/Programming Socket #6/INT: U2.30 -> U24.13  ()",
+  "/Programming Socket #5/INT: U2.12 -> U21.13  ()",
+  "/Programming Socket #4/INT: U18.13 -> R127.2  ()",
+  "/Programming Socket #3/INT: U15.13 -> R3.2  ()",
+  "/Programming Socket #2/INT: U2.31 -> U12.13  ()",
+  "/Programming Socket #1/INT: U2.32 -> U9.13  ()",
+  "/Programming Socket #0/INT: U2.36 -> U6.13  ()"
+ ],
+ "open": 13,
+ "package_pin_edges": 123,
+ "pitch_mm": 0.065,
+ "routed": 982,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T00:57:00Z",
+  "input": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mini_mass_prog_bench_prog_rig/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/2f575f17-e79e-4dda-b3a4-e97cc1143a8b/scratchpad/mm/pv8.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "8"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--no-freeze",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-token",
+    "value": "(not recorded)"
+   },
+   {
+    "name": "--view-port",
+    "value": "8841"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/2f575f17-e79e-4dda-b3a4-e97cc1143a8b/scratchpad/mm/pv8.route.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/2f575f17-e79e-4dda-b3a4-e97cc1143a8b/scratchpad/mm/pv8.kicad_pcb",
+  "seed": 1,
+  "threads": 1,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 104.15564218,
+ "style": {
+  "acute_angles": 2,
+  "arcs": 0,
+  "bends": 1227,
+  "bends_per_connection": 0.8421,
+  "connections": 1457,
+  "detour_length_mm": 11651.565593,
+  "detour_octile_mm": 11298.353695,
+  "detour_ratio": 1.0313,
+  "length_mm": 11651.565593,
+  "long_detours": 10,
+  "off_angle_segments": 279,
+  "segments": 2911,
+  "short_segments": 90,
+  "stair_steps": 0,
+  "vias": 266
+ },
+ "time_limited": false,
+ "tracks": 2911,
+ "tunnels": 0,
+ "variant": 6,
+ "variant_name": "fast bends, cheap crossings, escape plan, crowded source",
+ "variant_seconds": 103.964200731,
+ "variants": [
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 982,
+   "seconds": 103.964200731,
+   "variant": 6
+  }
+ ],
+ "vias": 266,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 23290896,
+   "commits": 983,
+   "expansions": 20645971,
+   "field_cells": 437941768,
+   "fields": 707,
+   "fixed_checks": 17202596,
+   "flood_cells": 3190031,
+   "rips": 0,
+   "searches": 1017
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 1,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 23290896,
+   "commits": 983,
+   "expansions": 20645971,
+   "field_cells": 437941768,
+   "fields": 707,
+   "fixed_checks": 17202597,
+   "flood_cells": 3190031,
+   "rips": 0,
+   "searches": 1017
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 23290896,
+   "commits": 983,
+   "expansions": 20645971,
+   "field_cells": 437941768,
+   "fields": 707,
+   "fixed_checks": 17202596,
+   "flood_cells": 3190031,
+   "rips": 0,
+   "searches": 1017
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 1,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 23290896,
+   "commits": 983,
+   "expansions": 20645971,
+   "field_cells": 437941768,
+   "fields": 707,
+   "fixed_checks": 17202597,
+   "flood_cells": 3190031,
+   "rips": 0,
+   "searches": 1017
+  }
+ }
+}

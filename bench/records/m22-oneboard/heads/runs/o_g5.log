@@ -1,0 +1,21 @@
+portfolio: 8 variants on 1 thread
+searches: 986 ok (15801805 expansions), 52 failed (4096444 expansions); fields 715 GPU + 0 CPU (34.85 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 22407251; rips 6, passes 2, boxed-in 39, nogood skips 17, history cells 11, transactions 0 kept of 0
+reachability checks: 14, 10 proved unreachable, 3958984 cells visited
+late reachability proofs: 21, 0 proved no path, 210042 cells visited
+failed-search expansions: strict confined 0, strict wide 3126815, negotiated confined 0, negotiated wide 429081
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 983 in 75.9 s  <- best
+routed 983/994 connections, 4627 tracks, 264 vias, pitch 0.065 mm, 23526727 expansions, 76.25 s (best variant 75.93 s)
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_VBUS: U4.5 -> U2.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/PSU_FAULT: U2.37 -> U30.4  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/PSU_EN: U2.38 -> U30.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED2: D79.1 -> U2.40  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  ()
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 19357701 expansions, 4169026 flood cells, 22396621 cell checks, 19124243 fixed-copper checks, 985231952 field cells in 715 fields, 986 commits, 6 rips

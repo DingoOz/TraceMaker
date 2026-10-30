@@ -1,0 +1,363 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 93.53,
+ "connections": 1190,
+ "copper_layers": 2,
+ "escape_corridor_mm": 1444.085749999999,
+ "escape_corridors": 506,
+ "escape_reclaimed": 0,
+ "expansions": 21335702,
+ "failures": [
+  "Net-(C16-Pad2): C16.2 -> U8.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(Q6-Pad3): Q6.3 -> R84.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(D4-Pad2): TP25.1 -> U39.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(Q6-Pad3): Q6.3 -> R81.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(D4-Pad2): U39.8 -> D4.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "GND: C30.1 -> C118.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+12V: C41.1 -> U27.4  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "SH24: U34.5 -> U17.4  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+12V: U15.8 -> R96.2  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "+12V: R96.2 -> U12.13  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "DB0: U20.2 -> U36.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "Net-(C16-Pad2): U8.8 -> VCO2.10  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "-12V: U12.4 -> U15.4  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+5V: U36.20 -> U20.5  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+5V: U12.12 -> U4.12  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "LFO: R1.1 -> R4.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U12.3 -> VCO2.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "+5V: U4.12 -> U11.12  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "CUTOFF CV: R158.2 -> U28.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC LFO MOD: R65.1 -> U4.14  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DB1: U14.16 -> U36.3  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U11.6 -> U12.3  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "VDAC: U16.8 -> U17.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "VDAC: U14.8 -> U13.8  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB MIX CV: R94.1 -> U25.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "~DAC RS: J3.26 -> U6.18  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC10: J3.23 -> U6.23  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC9: J3.24 -> U6.24  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCA MIX CV: R93.1 -> U25.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSCB SAW WAVE: U12.3 -> R113.1  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "/DAC13: J3.20 -> U6.20  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "DAC MUX EN2: J3.17 -> U16.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "ANALOG SW LATCH: J3.36 -> U36.11  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "FIL LFO AMT CV: R128.1 -> U27.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "OSC LFO AMT CV: R18.1 -> U22.6  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "FIL OSCB  AMT CV: R129.1 -> U27.1  (boxed in (target); escapes/neck-down: boxed in (target); via shove failed)",
+  "OSCB INIT CV: R49.2 -> U25.9  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG2 DEC CV: EG2.9 -> U34.7  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG2 ATT CV: EG2.10 -> U34.2  (boxed in; escapes/neck-down: boxed in; via shove failed)",
+  "EG2 SUS CV: EG2.7 -> U34.8  ()",
+  "EG1 SUS CV: EG1.7 -> U33.8  ()",
+  "EG2 REL CV: EG2.8 -> U34.13  ()",
+  "EG1 REL CV: EG1.8 -> U33.13  ()",
+  "LFO: R1.1 -> U45.8  ()",
+  "LFO DMUX EN: J3.37 -> U20.4  ()",
+  "+5V: U46.3 -> U12.12  ()",
+  "NOISE: U39.14 -> R97.1  ()",
+  "LFO: R112.1 -> R1.1  ()",
+  "OSCA PITCH CV: R82.1 -> U24.1  ()",
+  "OSCB SAW: U12.1 -> U36.13  ()",
+  "OSCB TRI: U12.16 -> U36.12  ()",
+  "DB7: J3.15 -> U36.9  ()",
+  "OSCA FM AMT CV: R14.1 -> U22.14  ()",
+  "OSCA SAW: U11.16 -> U36.19  ()",
+  "DB5: J3.13 -> U36.7  ()",
+  "OSCA PULSE: U11.1 -> U36.18  ()",
+  "DB6: J3.14 -> U36.8  ()",
+  "LFO: J3.5 -> R132.1  ()",
+  "OSCB PULSE: U12.8 -> U36.14  ()",
+  "OSC EG2 AMT CV: R15.1 -> U24.14  ()",
+  "OSCB PITCH CV: R85.1 -> U24.9  ()",
+  "KEYTRACK AMT CV: R126.1 -> U27.9  ()",
+  "DB3: J3.11 -> U36.5  ()",
+  "DB4: J3.12 -> U36.6  ()",
+  "OSCA TRI: U11.9 -> U36.17  ()",
+  "OSC SYNC: U11.8 -> U36.16  ()",
+  "FIL EG2 AMT CV: R127.1 -> U27.14  ()",
+  "GLIDE AMT CV: R68.2 -> U24.6  ()",
+  "EG2: R111.1 -> R3.1  ()",
+  "OSCB MOD: U4.16 -> U36.15  ()",
+  "DAC MUX EN1: J3.18 -> U14.2  ()",
+  "TUNE: J3.4 -> D13.2  ()",
+  "GATE: J3.3 -> EG1.2  ()",
+  "DAC MUX EN0: J3.19 -> U13.2  ()",
+  "EG2 POL: J3.38 -> U40.6  ()",
+  "LFO TUNE: J3.6 -> R215.1  ()",
+  "LFO RESET: J3.7 -> LFO1.11  ()"
+ ],
+ "open": 77,
+ "package_pin_edges": 17,
+ "pitch_mm": 0.15,
+ "routed": 1113,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T01:08:27Z",
+  "input": "/home/dingo/Programming/TraceMaker-speed/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/MonApollo_analog-board/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22all/boards/MonApollo_analog-board.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "7200.0"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22all/boards/MonApollo_analog-board.kicad_pcb.state"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "3"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "200000"
+   },
+   {
+    "name": "",
+    "value": "2"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22all/boards/MonApollo_analog-board.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22all/boards/MonApollo_analog-board.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 7200.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 559.442454036,
+ "style": {
+  "acute_angles": 2,
+  "arcs": 0,
+  "bends": 1577,
+  "bends_per_connection": 0.8469,
+  "connections": 1862,
+  "detour_length_mm": 11178.6522,
+  "detour_octile_mm": 9424.934093,
+  "detour_ratio": 1.1861,
+  "length_mm": 11178.6522,
+  "long_detours": 80,
+  "off_angle_segments": 465,
+  "segments": 3930,
+  "short_segments": 214,
+  "stair_steps": 0,
+  "vias": 664
+ },
+ "time_limited": false,
+ "tracks": 3932,
+ "tunnels": 0,
+ "variant": 5,
+ "variant_name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+ "variant_seconds": 245.533412352,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 888,
+   "seconds": 43.984864427,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 1085,
+   "seconds": 283.328395864,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 144,
+   "seconds": 166.972119402,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 1051,
+   "seconds": 218.119079996,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 925,
+   "seconds": 49.042210957,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 1113,
+   "seconds": 245.533412352,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 1085,
+   "seconds": 153.753085689,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 1102,
+   "seconds": 341.010400713,
+   "variant": 7
+  }
+ ],
+ "vias": 664,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 17479099,
+   "commits": 1120,
+   "expansions": 6109195,
+   "field_cells": 90779770,
+   "fields": 269,
+   "fixed_checks": 9479188,
+   "flood_cells": 15226507,
+   "rips": 0,
+   "searches": 1598
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 17479099,
+   "commits": 1120,
+   "expansions": 6109195,
+   "field_cells": 90779770,
+   "fields": 269,
+   "fixed_checks": 9479188,
+   "flood_cells": 15226507,
+   "rips": 0,
+   "searches": 1598
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 109613209,
+   "commits": 7425,
+   "expansions": 108556016,
+   "field_cells": 851664748,
+   "fields": 2320,
+   "fixed_checks": 85200834,
+   "flood_cells": 54789344,
+   "rips": 0,
+   "searches": 9299
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 109613209,
+   "commits": 7425,
+   "expansions": 108556016,
+   "field_cells": 851664748,
+   "fields": 2320,
+   "fixed_checks": 85200834,
+   "flood_cells": 54789344,
+   "rips": 0,
+   "searches": 9299
+  }
+ }
+}

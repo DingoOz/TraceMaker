@@ -1,0 +1,278 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 97.15,
+ "connections": 807,
+ "copper_layers": 4,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 20226803,
+ "failures": [
+  "Net-(R821-Pad2): R821.2 -> U801.30  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R831-Pad2): R831.2 -> U801.28  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R825-Pad2): R825.2 -> U801.31  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R827-Pad2): R827.2 -> U801.34  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(C602-Pad1): X601.2 -> U601.15  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R824-Pad2): R824.2 -> U801.38  (boxed in; escapes/neck-down: boxed in)",
+  "/I2C1_SCL: U502.9 -> U503.9  (boxed in; escapes/neck-down: boxed in)",
+  "/AUD_MCLK1A: R110.1 -> U801.89  (boxed in; escapes/neck-down: boxed in)",
+  "/ETH_TX_CTL: R878.2 -> U601.34  (boxed in; escapes/neck-down: boxed in)",
+  "/ETH_RX_CTL: U801.115 -> R605.2  (boxed in; escapes/neck-down: boxed in)",
+  "/I2S_LRCLK0: R430.1 -> U801.62  (boxed in; escapes/neck-down: boxed in)",
+  "/ETH_RX2: U801.118 -> R608.2  (boxed in; escapes/neck-down: boxed in)",
+  "/ETH_RX1: U801.117 -> R607.2  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R881-Pad1): R881.1 -> U801.18  (boxed in; escapes/neck-down: boxed in)",
+  "/XL_DN1: R414.2 -> U801.9  (boxed in; escapes/neck-down: boxed in)",
+  "/I2S_BCLK2: R417.2 -> U801.90  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R880-Pad1): R880.1 -> U801.15  (boxed in; escapes/neck-down: boxed in)",
+  "/AUX_DIGI5: D405.3 -> U801.23  (boxed in; escapes/neck-down: boxed in)",
+  "/I2S_SDATA0: R432.1 -> U801.63  (boxed in; escapes/neck-down: boxed in)",
+  "/AUX_DIGI7: U801.26 -> D401.3  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(R621-Pad2): U601.32 -> R621.2  (boxed in; escapes/neck-down: boxed in)",
+  "/USBD_P: CN401.3 -> U801.46  ()",
+  "/USBD_N: CN401.2 -> U801.47  ()"
+ ],
+ "fanout_heads": 85,
+ "open": 23,
+ "package_pin_edges": 37,
+ "pitch_mm": 0.055,
+ "routed": 784,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-10-30T02:47:43Z",
+  "input": "/home/dingo/Programming/TraceMaker-speed/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/CoreOne-xCORE200-Original_CoreOne/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "7200.0"
+   },
+   {
+    "name": "--work",
+    "value": "20000000"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb.state"
+   },
+   {
+    "name": "",
+    "value": "5"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-speed/bench/results/lm-m22heads/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb",
+  "seed": 1,
+  "threads": 4,
+  "time_limit_s": 7200.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 20000000
+ },
+ "seconds": 843.702779744,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 1276,
+  "bends_per_connection": 0.5368,
+  "connections": 2377,
+  "detour_length_mm": 6331.407685,
+  "detour_octile_mm": 5987.004634,
+  "detour_ratio": 1.0575,
+  "length_mm": 6331.407685,
+  "long_detours": 26,
+  "off_angle_segments": 1537,
+  "segments": 3915,
+  "short_segments": 232,
+  "stair_steps": 16,
+  "vias": 290
+ },
+ "time_limited": false,
+ "tracks": 3915,
+ "tunnels": 0,
+ "variant": 7,
+ "variant_name": "fast bends, dear vias, crowded source",
+ "variant_seconds": 398.754755885,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 692,
+   "seconds": 104.57844154,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 780,
+   "seconds": 723.23568126,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 737,
+   "seconds": 186.717580576,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 756,
+   "seconds": 618.142022576,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 695,
+   "seconds": 100.226310918,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 773,
+   "seconds": 394.09814565,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 777,
+   "seconds": 239.891369922,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 784,
+   "seconds": 398.754755885,
+   "variant": 7
+  }
+ ],
+ "vias": 290,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 15670677,
+   "commits": 785,
+   "expansions": 14074309,
+   "field_cells": 413713388,
+   "fields": 605,
+   "fixed_checks": 9232643,
+   "flood_cells": 843595,
+   "rips": 0,
+   "searches": 918
+  },
+  "negotiation": {
+   "cell_checks": 5138674,
+   "commits": 8,
+   "expansions": 1302481,
+   "field_cells": 8765196,
+   "fields": 28,
+   "fixed_checks": 1202135,
+   "flood_cells": 4006418,
+   "rips": 11,
+   "searches": 49
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 20809351,
+   "commits": 793,
+   "expansions": 15376790,
+   "field_cells": 422478584,
+   "fields": 633,
+   "fixed_checks": 10434778,
+   "flood_cells": 4850013,
+   "rips": 11,
+   "searches": 967
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 85067393,
+   "commits": 6011,
+   "expansions": 103496642,
+   "field_cells": 1803691536,
+   "fields": 3653,
+   "fixed_checks": 50199359,
+   "flood_cells": 10282074,
+   "rips": 0,
+   "searches": 7209
+  },
+  "negotiation": {
+   "cell_checks": 47303096,
+   "commits": 86,
+   "expansions": 10151457,
+   "field_cells": 78273796,
+   "fields": 197,
+   "fixed_checks": 10822780,
+   "flood_cells": 38806199,
+   "rips": 145,
+   "searches": 456
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 2,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 132370489,
+   "commits": 6097,
+   "expansions": 113648099,
+   "field_cells": 1881965332,
+   "fields": 3850,
+   "fixed_checks": 61022141,
+   "flood_cells": 49088273,
+   "rips": 145,
+   "searches": 7665
+  }
+ }
+}

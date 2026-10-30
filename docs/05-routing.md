@@ -2796,3 +2796,172 @@ comparison prints `Gates: FAIL` for both runs alike: KiCad's DRC list is capped 
   (output identical).
 - *Open list as a vector with a heap of structs* (needed to re-key it): 4–8 % slower on sbc and logicbone than
   `std::priority_queue` of pairs; the open list stays a `priority_queue` whose container is reached for the re-key.
+
+## 63. Finishing the last connections: end-game retry, pin rescue, plane fallback (2026-10-29, D155)
+
+Items 1, 2 and part of 4 of the M22 plan (doc 18 §18). All of it is off by default, and with it off the output is byte-identical to
+0.12.1 (the 30 `quick` boards at 1 M work, every routed `.kicad_pcb` compared). Records in `bench/records/m22-endgame`.
+
+**What was built.**
+
+- *End-game retry* (`--endgame F`, `--endgame-cap N`): when the main loop ends with connections open, the board is put back to its
+  best state (only the connections whose copper differs are lifted) and the router gets F of the budget more. Each open connection
+  that is not proved dead goes once more, shortest first, as a plain search capped at N expansions, then a pin rescue if it is boxed
+  in, then the plane fallback. The result is kept only from the best state, so the clean-up stages still run.
+- *Pin rescue* (`--rescue 2,4,8`, `--rescue-orders`, `--rescue-victims`, `--rescue-cap`, `--rescue-per-conn`, `--rescue-in-loop`):
+  for a connection proved boxed in, the routed connections with copper within r of either end are lifted (none that are coupled,
+  bus lanes, bundle lanes, first nets or bus nets for a plain net; a radius that would lift more than `--rescue-victims` ends it).
+  The boxed connection is routed first. Each lifted connection whose old copper still passes the exact check gets it back unchanged;
+  the others are routed again in seeded orders. It is kept only when all of them route; else everything is put back exactly. On failure
+  the radius widens: this is the user's "widen and randomise the last traces", applied to what is ripped, not to the search's costs.
+  By default it runs only inside the end-game; `--rescue-in-loop` also runs it in the main loop.
+- *Informed pad-to-plane searches* (`--plane-informed`, `--plane-fallback-mm`): the A* to a zone uses the octile distance to the
+  zone's box as its bound and may run the late reachability proof (§62) forward to the zone. When the search fails, the connection
+  is planned from a nearby pad already joined to the plane, from another pad of the same group, or to another fill of the net.
+
+**Measured.** The ten failing boards of the M22 study, 8 variants, 20 M work, routed connections (total of the ten):
+
+| Arm | Routed | Against the base |
+|---|--:|--:|
+| base, 20 M | 7,175 | |
+| pin rescue in the main loop (`--rescue 2,4,8 --rescue-in-loop`, first version: all victims re-routed) | 7,049 | −126 (Aleste −81, poncho −32) |
+| end-game 0.1 (first version: ran only when the loop ended in its best state) | 7,178 | +3 |
+| end-game 0.1 with rescue (same) | 7,180 | +5 |
+| end-game 0.1, from the best state | 7,179 | +4 |
+| end-game 0.1 with rescue, from the best state, old copper kept where it fits | 7,185 | +10 (poncho +4, MonApollo +4) |
+| **base, 22 M: the same budget as the end-game arms** | **7,193** | **+18** (Aleste +11, LeeChee +4, MonApollo +3) |
+
+One variant, 10 M work: teensy-fx 167 (base), 167 (end-game), 167 (with rescue), 170 (11 M); poncho 281, 285, 284, 282. The end-game
+tries few connections (2 to 11 per run), and most fail. The ones left open at 20 M work are not the ones that "route alone on the final
+board" in the study. Those came from 120 s runs that ran out of time before the first pass was over; at a fixed work budget the main
+loop already routes them. In the main loop the rescue lost because its work came from routing. In the end-game it routes something (poncho:
+2 of 5), but less than the same work spent on routing.
+
+**Status.** Kept as options, off. At the same budget, more plain routing beats every arm here, which agrees with the study's warning that
+moving budget to repair had lost before (doc 16 §11, `--polish`). The plane fallback rescued one of the PoE switch's five open plane
+connections (C123.2 through C118.2's pad); it has not been measured on PCBench.
+
+## 64. The last connections, developed on one board: via shove, fan-out hold, negotiation bounds (2026-10-30, D156)
+
+M22 developed on one board, as the user asked: `mini_mass_prog_bench_prog_rig` (995 connections, 986 routed in every earlier arm).
+Each change was tried there alone, and the other failing boards were run only at the end. Everything is off by default, and with it
+off the output is byte-identical (the 30 `quick` boards). Records in `bench/records/m22-oneboard`.
+
+**What the board showed.**
+
+- The nine open connections are all on U2, a 0.5 mm QFN-44. Six are pins boxed in by their neighbours' fan-out within 0.25-1.25 mm.
+  Three are INT nets about 450 mm long, boxed in at U2 in the first pass.
+- More budget does not move it: 40 M and 60 M route 986. The first pass is the same at every budget. In negotiation, each open
+  connection first retries strictly, which fails (25 M of 30 M at 40 M work). Its negotiated search then finds a path in 18 k-1.4 M
+  expansions.
+- Every negotiated success rips other long nets, which go back into the same pass, so the pass never ends. Bounded, the passes route
+  986, 970, 966, 961, 958, 971, 969, 974: negotiation on this board loses.
+
+**What was built.**
+
+- *Via shove* (`--via-shove`, `--via-shove-mm`, `--via-shove-step`, `--via-shove-rings`, `--via-shove-trials`, `--via-shove-share`).
+  KiCad's push-and-shove via move, as a repair step of the batch router: a boxed-in connection moves other nets' vias nearby, and only
+  the tracks ending at them.
+  - The nearest vias are lifted one at a time, then in pairs, and the connection is searched once without them (strict, capped).
+  - If it routes, each via goes down at the nearest position on 6 rings of 16 where it and its re-drawn legs pass the exact check.
+  - If no position fits beside the new route, the via is put at each position in turn and the connection searched round it.
+  - Otherwise everything is put back.
+  - It spends at most 5 % of the run's work budget. Unbounded, it routed 10 connections on kitspace_d20 and lost 41 through the
+    budget it took from the main loop.
+- *Fan-out hold* (`--fanout-hold`): each open pin's straight escape corridor is held by a placeholder track of its net through the
+  strict pass. It is dropped when the pin is routed or the pass ends.
+- *Negotiation bounds* (`--neg-strict-cap`, `--long-weight`, `--long-weight-mm`, `--pass-bound`): a cap on negotiation's strict
+  searches, weighted A* (Pohl 1970) for long negotiated searches, and passes limited to what was queued at their start (PathFinder's
+  iterations).
+- *Items 3, 5 and 6 of the plan*: `--window-escalate` (one whole-board window after an edge miss), `--via-retry` (D153, after a cap
+  miss only), `--escape-all` (the escape plan in every variant) and `--pin-via-pen` (a via in another net's dense-pin fan-out region
+  costs more).
+
+**Results.** On mini_mass the via shove routes 987: I2C_SCL, open in every earlier run, after an I2C_SDA via moves 0.45 mm. The fan-out
+hold moves the failures between U2 pins (979-987). The negotiation bounds and items 3 and 5 leave it at 986.
+
+On the ten failing boards (20 M work, 8 variants):
+
+| Arm | Routed | Open |
+|---|--:|--:|
+| base | 7,175 | 624 |
+| base at 22 M | 7,193 | 606 |
+| `--via-shove` | 7,176 | 623 |
+| `--via-shove --escape-all` | 7,197 | 602 |
+
+No board gained DRC errors. One option at a time:
+
+- `--window-escalate` cost Aleste 254 connections (15 whole-board windows take the budget).
+- `--pin-via-pen 3` cost kitspace_d20 9 and poncho 1.
+- `--escape-all` cost poncho 5, but lifts four of mini_mass's variants by 7-11.
+
+**Status.** Kept as options, off. `--via-shove --escape-all` is the first M22 arm to beat the equal-budget control, by 4 connections,
+which is within per-board noise. The gate (15 % fewer open connections) is not met.
+
+What is left on mini_mass is fan-out:
+
+- Five U2 pins are boxed in by their neighbours' tracks, not vias. Lifting the vias alone or in pairs does not free them.
+- The three INT nets route only in a negotiation that loses more than it gains.
+
+Both point at item 8, planning a package's escapes and via sites together, rather than more local repair. Moving tracks would need
+the search to accept points as endpoints, and pin rescue (§63) showed that the re-routed neighbour is then the one boxed in.
+
+## 65. Fan-out heads: the designer's escapes laid before routing (2026-10-30, D157)
+
+M22 item 8, developed on `mini_mass_prog_bench_prog_rig` like §64. Its open pins are on U2, a 0.5 mm QFN-44. Their neighbours'
+escapes and a ring of vias 1-2 mm out box them in.
+
+**The oracle.** The designer's copper near U2 was put into the unrouted board as fixed copper (variant 6, 20 M work):
+
+| Copper put in | Routed |
+|---|--:|
+| none (base) | 986 / 995 |
+| all within 5 mm | 969 / 973 (it completes 22 local connections itself) |
+| only the parts touching one pad (escape heads) | **990 / 995** |
+| only the parts joining two or more pads | 967 / 973 |
+| straight 5 mm stubs from every pin | 978 / 989 |
+| the same, no GND/+5V pins | 983 / 993 |
+
+The escape heads alone are worth four connections, and straight stubs do worse than nothing. The designer keeps each side straight,
+or bends its pins in staggered 45-degree bundles toward their destinations. A side stays straight where its bundles would run into
+the parts beside the package: on U2 the top pins' destinations are more sideways than the left pins', yet the top runs straight.
+Angle rules alone failed: always bending gave 983-984, bending past 60 degrees 986-987.
+
+**The heads** (`--fanout-heads MM`, route/fanout_heads.hpp). Before the obstacles are built, each perimeter pin of a package with
+pins on all four sides (24 or more) gets a head on its pad's layer, MM past the package.
+
+- Along a side the pins split into a block that turns toward the low end, a straight block and a block that turns toward the high
+  end. This is ordered escape with one bend (Kong, Yan and Wong, ASP-DAC 2010). A pin turns when its destination is more than 30
+  degrees off the side's normal.
+- Turning pins bend from 0.3 mm past the pad, each 0.1 mm further out than its neighbour toward the corner, so parallel diagonals
+  keep track plus clearance apart.
+- Each side is laid both ways and keeps the way with more head length.
+- Each leg stops where the exact check refuses it, and a cut head ends 0.5 mm short of the obstacle.
+- No head for:
+  - nets with a zone;
+  - pins whose nearest off-package pad of the net is within MM (local connections);
+  - copper that would come near other copper of the net (so a head joins nothing).
+
+The heads are fixed copper of their net while the board is routed: other nets go round them, and the pin's own route runs over its
+head. They are not routed copper, so they are not written out. Each route runs pad to pad, so leaving them out disconnects nothing.
+
+**Results on mini_mass.** `--fanout-heads 5` routes 989 of 995 and `--fanout-heads 3` 988; the base routes 986. Adding
+`--via-shove` keeps 989. The KiCad DRC of the output adds nothing. Still open:
+
+- RESET (U2.13);
+- USB_D- (U2.3);
+- +5V C1-R6;
+- the three INT nets (about 450 mm), which fail on the search budget, not on escape.
+
+**On the ten failing boards** (8 variants, 20 M work) `--fanout-heads 5` routes 7,175, the same as the base. The base at 22 M routes
+7,193 and `--via-shove --escape-all` 7,197. Of the six boards that get heads, two gain 3, one is unchanged, and three lose 1-3.
+Adding `--via-shove --escape-all` gives 7,190.
+
+**Status.** Off by default; with it off the output is byte-identical. What a side of a package should do is decided here from free
+head length alone. That fits U2 on mini_mass and not the packages of CoreOne, EtherCAT and poncho.
+
+**CoreOne oracle.** The same oracle on CoreOne's U801 (a 0.4 mm QFP-128) routes 785 of 806 with the designer's single-pad copper,
+against 787 of 807 for the base; our heads on U801 alone route 786. There, 51 of the designer's 70 heads end at a via within 3 mm,
+so the escapes are fan-out vias rather than F.Cu runs, and even they do not help. No better rule for the heads could win on that
+board, so the work stopped. A single variant moves by up to 10 connections between arms with the same best-of result, so the -1 to
+-3 per board above is within that spread (records: `bench/records/m22-oneboard/heads/coreone`).

@@ -1,0 +1,20 @@
+portfolio: 8 variants on 1 thread
+searches: 983 ok (15532076 expansions), 33 failed (6314654 expansions); fields 696 GPU + 0 CPU (45.01 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1091 connections improved
+restarts 0; legality checks 25413525; rips 0, passes 1, boxed-in 18, nogood skips 9, history cells 0, transactions 0 kept of 0
+reachability checks: 7, 4 proved unreachable, 3386040 cells visited
+late reachability proofs: 19, 0 proved no path, 190029 cells visited
+failed-search expansions: strict confined 0, strict wide 6313458, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 983 in 90.2 s  <- best
+routed 983/993 connections, 2868 tracks, 260 vias, pitch 0.065 mm, 25421603 expansions, 90.47 s (best variant 90.18 s)
+  unrouted: +5V: U2.44 -> U2.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /RESET: R2.2 -> U2.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.2 -> C3.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: C1.1 -> R6.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_VBUS: U4.5 -> U2.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /SCK: CON1.3 -> U2.9  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  (search budget)
+work (all variants): 21845534 expansions, 3576069 flood cells, 25407847 cell checks, 19522521 fixed-copper checks, 1008300216 field cells in 696 fields, 983 commits, 0 rips

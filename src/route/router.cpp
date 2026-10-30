@@ -3,6 +3,7 @@
 
 #include "drc/refill.hpp"
 #include "route/bundle.hpp"
+#include "route/fanout_heads.hpp"
 #include "route/bus.hpp"
 #include "route/diff_pair.hpp"
 #include "route/escape.hpp"
@@ -10,6 +11,7 @@
 #include "route/heat_grid.hpp"
 #include "route/global_router.hpp"
 
+#include <functional>
 #include <algorithm>
 #include <bit>
 #include <numbers>
@@ -116,6 +118,7 @@ struct Router::Impl {
     bool implicit = false;           // satisfied through other routes of the same net (no own copper)
     std::vector<int> items;          // copper item indices owned by this connection
     int rips = 0, fails = 0;
+    int rescues = 0;                 // pin rescues tried for this connection (D155)
     std::string why;                 // last failure explanation
     std::vector<NetId> blockers;     // nets of the connections the last rejected route would have had to rip (stuck report, doc 17)
     bool coupled = false;            // routed as half of a differential pair: clean-up leaves it alone
@@ -175,7 +178,12 @@ struct Router::Impl {
   std::vector<std::vector<std::size_t>> pad_reserved;  // board pad -> cells it reserved
   std::vector<int> pad_open;                           // board pad -> its connections not yet routed
   std::vector<std::vector<std::size_t>> pad_plan;      // board pad -> cells its corridor reserved at planning (kept after a release, for escape_persist)
+  // --escape-via-keep (D156): lattice point (x, y) -> net whose corridor a via centred there would cover (0 none, -1 two
+  // corridors: no net's via). The corridor's own band is a track's keep distance; a via needs its radius more.
+  std::vector<std::int32_t> vreserve;
+  std::vector<std::vector<std::size_t>> pad_vreserved;  // board pad -> via-keep points it holds
   std::unordered_map<int, std::pair<Point, int>> pad_stub;  // board pad -> (end of its straight corridor, layer): --escape-stubs
+  std::vector<int> hold_item;  // board pad -> copper item of its --fanout-hold placeholder (-1 none)
   std::vector<char> esc_released;                      // connection -> its pins' corridor counts were decremented (release_escapes) and not yet restored
   std::int64_t reserve_pen = 0;
   std::size_t lat_index(int layer, int gx, int gy) const {
@@ -298,6 +306,7 @@ struct Router::Impl {
 
   void setup() {
     b.infer_graphic_nets = opt.soft_copper_graphics;
+    if (opt.fanout_heads_mm > 0) place_fanout_heads();
     obs = std::make_unique<Obstacles>(b, rules);
     obs->set_soft_zones(opt.soft_zones);
     obs->set_soft_mask_graphics(opt.soft_mask_graphics);
@@ -988,7 +997,39 @@ struct Router::Impl {
       if (rc < 0) return -1;
       extra = std::max(extra, rc);
     }
+    if (!vreserve.empty()) {
+      const std::int32_t r = vreserve[static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx)];
+      if (r != 0 && r != static_cast<std::int32_t>(net)) {
+        if (!soft) return -1;
+        extra = std::max(extra, reserve_pen);
+      }
+    }
+    if (!pinvia.empty()) {  // --pin-via-pen: a via in another net's pin fan-out region costs more
+      const std::int32_t r = pinvia[static_cast<std::size_t>(w.y0 + cy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(w.x0 + cx)];
+      if (r != 0 && r != static_cast<std::int32_t>(net)) extra += pin_via_cost;
+    }
     return extra + (via_state[idx] == 1 ? soft_unit : 0);
+  }
+  // --pin-via-pen (D156, M22 item 6): lattice point -> net of the dense-package pin whose fan-out region (pin_via_mm past its copper plus a
+  // via's radius and clearance) holds it, -1 for two nets' regions, 0 none. Vias of other nets there pay pin_via_cost: on the failing boards
+  // other nets' copper within 2 mm of a pin is the main blocker (m22-research), and a via there blocks every layer.
+  std::vector<std::int32_t> pinvia;
+  std::int64_t pin_via_cost = 0;
+  void build_pin_via() {
+    pinvia.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
+    pin_via_cost = static_cast<std::int64_t>(opt.pin_via_pen_mm * 1e6);
+    for (std::size_t pad = 0; pad < b.pads.size(); ++pad) {
+      const auto& p = b.pads[pad];
+      if (p.net <= 0 || p.footprint < 0 || p.type != model::PadType::Smd || !dense_footprint(p.footprint) || pad_item[pad] < 0) continue;
+      const Coord r = mm_to_nm(opt.pin_via_mm) + class_via_diameter(p.net) / 2 + std::max(netclass(p.net).clearance, rules.minimums.clearance);
+      const auto bx = obs->copper().items[static_cast<std::size_t>(pad_item[pad])].box.inflated(r);
+      for (int gy = std::max(0, to_iy(bx.y0)); gy <= std::min(ny - 1, to_iy(bx.y1)); ++gy)
+        for (int gx = std::max(0, to_ix(bx.x0)); gx <= std::min(nx - 1, to_ix(bx.x1)); ++gx) {
+          auto& v = pinvia[static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx)];
+          if (v == 0) v = static_cast<std::int32_t>(p.net);
+          else if (v != static_cast<std::int32_t>(p.net)) v = -1;
+        }
+    }
   }
 
   // Lattice cells of the window inside a pad's copper on each of its layers (falls back to cells next to the
@@ -1038,7 +1079,7 @@ struct Router::Impl {
     }
     const std::size_t n_own = e.cells.size();
     if (!any_free || force_escapes) add_escapes(w, pad, e);
-    if (opt.escape_stubs) add_long_stub(w, pad, e);
+    if (opt.escape_stubs || opt.fanout_hold) add_long_stub(w, pad, e);
     if (opt.via_drops && nl > 1 && p.footprint >= 0 && dense_footprint(p.footprint) && p.type == model::PadType::Smd) add_via_drops(w, pad, e);
     // Round pads (BGA/WLP balls) are offered a via in pad at a high cost: an inner ball can look free locally (a
     // diagonal gap) yet have no way out of the array.
@@ -1386,6 +1427,13 @@ struct Router::Impl {
   long reach_checks = 0, reach_pruned = 0, reach_visits = 0, reach_mismatch = 0;
   bool reach_said_no = false;  // this search's pre-check found no path
   long expansion_cap = 0;  // > 0: per-search expansion limit overriding opt.max_expansions (reverse probes)
+  // Per-search expansion limit: expansion_cap, else opt.max_expansions; --neg-strict-cap (D156) bounds the strict searches of the negotiation
+  // passes, which retry what failed strictly in the first pass before the negotiated search that can cross copper.
+  long search_cap() const {
+    if (expansion_cap > 0) return expansion_cap;
+    if (opt.neg_strict_cap > 0 && !soft && !strict_pass && phase == WorkPhase::Negotiation) return std::min(opt.neg_strict_cap, opt.max_expansions);
+    return opt.max_expansions;
+  }
   Miss last_miss = Miss::None;
 
   // ---- stall diagnostics (issue #8, doc 09 section 8) ----
@@ -1405,7 +1453,11 @@ struct Router::Impl {
   // Late reachability proof (see search, RouterOptions::reach_after): 1 when the sources' region runs out before the floods
   // meet, 2 when the targets' does, 0 when they meet or the cap is reached; `proved_edge` says whether that region touched the
   // window edge. Uses the search's generation, target marks and legality caches.
-  int late_reach_proof(const Connection& c, const Window& w, const Endpoint& src, const Endpoint& dst, Coord hw, Coord vd, Coord vdrill, bool& proved_edge) {
+  // A pad-to-plane search (zone_tgt set, --plane-informed) has no target cells to flood back from: only the forward flood runs, and it
+  // meets the target when it enters a cell the search would accept as the plane (the same lazy test). Its running out is the proof.
+  int late_reach_proof(const Connection& c, const Window& w, const Endpoint& src, const Endpoint& dst, Coord hw, Coord vd, Coord vdrill, bool& proved_edge,
+                       const std::function<bool(int, std::int64_t)>& zone_tgt = {}) {
+    const bool zmode = static_cast<bool>(zone_tgt);
     const NetId net = c.net;
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
     auto tgt_of = [&](std::size_t i) -> std::uint8_t { return is_target[i]; };
@@ -1437,7 +1489,7 @@ struct Router::Impl {
         proved_edge = fedge;
         break;
       }
-      if (bh == reach_bq.size()) {
+      if (!zmode && bh == reach_bq.size()) {
         proved = 2;
         proved_edge = bedge;
         break;
@@ -1453,6 +1505,7 @@ struct Router::Impl {
           if (bstamp[ni] == gen) met = true;
           rstamp[ni] = gen;
           reach_q.push_back(ni);
+          if (zmode && zone_tgt(static_cast<int>(ni / cells), static_cast<std::int64_t>(ni % cells))) met = true;
         };
         for (int d = 0; d < 8 && !met; ++d) {
           const int ncx = cx + kDx[d], ncy = cy + kDy[d];
@@ -1468,11 +1521,11 @@ struct Router::Impl {
           if (useful && via_ok(cx, cy))
             for (int l2 = 0; l2 < nl && !met; ++l2) {
               const std::size_t ni = static_cast<std::size_t>(l2) * cells + ci;
-              if (l2 != l && (layer_ok(net, l2) || tgt_of(ni) == 1)) reach(ni);
+              if (l2 != l && (layer_ok(net, l2) || tgt_of(ni) == 1 || (zmode && zone_tgt(l2, static_cast<std::int64_t>(ci))))) reach(ni);
             }
         }
       }
-      if (met) break;
+      if (met || zmode) continue;
       {  // backward: every cell with a forward move into this one
         const std::size_t i = reach_bq[bh++];
         const int l = static_cast<int>(i / cells);
@@ -1562,10 +1615,12 @@ struct Router::Impl {
     // Zone target: any cell inside the fill on its layer, with room for the track (tested lazily when reached).
     int zone_layer = -1;
     const std::vector<Point>* zone_poly = nullptr;
+    geom::Box zone_box;
     if (c.zone_b >= 0) {
       const auto& z = obs->copper().items[static_cast<std::size_t>(c.zone_b)];
       zone_layer = std::countr_zero(z.layers);
       zone_poly = &z.shapes.front().pts;
+      zone_box = z.shapes.front().box;
     }
     auto target = [&](int l, std::int64_t ci) -> bool {
       const std::size_t ti = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
@@ -1612,7 +1667,7 @@ struct Router::Impl {
       prechecked = true;
       const std::size_t lcells = cells * static_cast<std::size_t>(nl);
       if (rstamp.size() < lcells) rstamp.assign(lcells, 0);
-      const std::size_t cap = static_cast<std::size_t>(expansion_cap > 0 ? expansion_cap : opt.max_expansions);
+      const std::size_t cap = static_cast<std::size_t>(search_cap());
       reach_q.clear();
       for (const auto& [l, ci] : src.cells) {
         const std::size_t i = static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci);
@@ -1704,19 +1759,29 @@ struct Router::Impl {
     };
     // With field_after > 0 the field is built only once the search has expanded that many states (below).
     if (use_field && opt.field_after <= 0) make_field();
+    // --long-weight (D156): a negotiated search of a long connection is weighted A* (Pohl 1970), at most that factor above the cheapest path: on a
+    // congested board the optimal search floods the window round every crossing before it reaches a target hundreds of mm away.
+    const double hweight = soft && opt.long_weight > 1.0 && c.length >= mm_to_nm(opt.long_weight_mm) ? std::max(opt.heuristic_weight, opt.long_weight) : opt.heuristic_weight;
     auto h = [&](int fl, int gx, int gy) -> std::int64_t {
       if (have_field) {
         const std::int32_t v = field[static_cast<std::size_t>(fl) * cells + static_cast<std::size_t>(gy - w.y0) * static_cast<std::size_t>(w.w) +
                                      static_cast<std::size_t>(gx - w.x0)];
         // Never prune on the field: where it claims "unreachable" fall back to the octile bound, so the search
         // stays complete even if the field's view of blocked cells is stale or wrong.
-        if (v < gpu::kFieldInf) return static_cast<std::int64_t>(static_cast<double>(v) * opt.heuristic_weight);
+        if (v < gpu::kFieldInf) return static_cast<std::int64_t>(static_cast<double>(v) * hweight);
       }
       const Point p = at(gx, gy);
-      if (zone_target) return std::int64_t{0};  // plane anywhere nearby: no useful lower bound
+      if (zone_target) {
+        if (!opt.plane_informed || zone_box.empty()) return std::int64_t{0};  // plane anywhere nearby: no useful lower bound
+        // --plane-informed: octile distance to the plane's bounding box, a lower bound on the steps to any cell inside it.
+        const std::int64_t bx = std::max<std::int64_t>({0, zone_box.x0 - p.x, p.x - zone_box.x1});
+        const std::int64_t by = std::max<std::int64_t>({0, zone_box.y0 - p.y, p.y - zone_box.y1});
+        const std::int64_t zmn = std::min(bx, by), zmx = std::max(bx, by);
+        return static_cast<std::int64_t>(static_cast<double>((zmx - zmn) + zmn * diag / step) * hweight);
+      }
       const std::int64_t dx = std::llabs(p.x - tp.x), dy = std::llabs(p.y - tp.y);
       const std::int64_t mn = std::min(dx, dy), mx = std::max(dx, dy);
-      return static_cast<std::int64_t>(static_cast<double>((mx - mn) + mn * diag / step) * opt.heuristic_weight);  // octile distance
+      return static_cast<std::int64_t>(static_cast<double>((mx - mn) + mn * diag / step) * hweight);  // octile distance
     };
     auto sidx = [&](int l, std::int64_t ci, int dir) {
       return ((static_cast<std::size_t>(l) * cells + static_cast<std::size_t>(ci)) * D) + (D == 9 ? static_cast<std::size_t>(dir) : 0);
@@ -1766,7 +1831,7 @@ struct Router::Impl {
       push(g0, g0 + h(l, w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
-    const long exp_cap = expansion_cap > 0 ? expansion_cap : opt.max_expansions;
+    const long exp_cap = search_cap();
     const bool coupled_net = obs->coupling_net(net);  // KiCad's pair-gap coupling is checked on every step (doc 05 §59)
     std::size_t goal = SIZE_MAX;
     // Late reachability proof (RouterOptions::reach_after, doc 05 §62). A strict search that has expanded reach_after states is
@@ -1778,12 +1843,16 @@ struct Router::Impl {
     // whether its region touched the window edge (a larger window might help). When they meet, or reach_after_cap cells are
     // visited, the A* goes on unchanged: the floods only filled the legality caches it reads. Flood cells count against the
     // budget like the pre-check's.
-    const bool late_proof = opt.reach_after > 0 && !soft && !zone_target && c.pad_b >= 0 && !prechecked;
+    const bool zone_proof = zone_target && opt.plane_informed;  // --plane-informed: forward-only proof for pad-to-plane searches
+    const bool late_proof = opt.reach_after > 0 && !soft && ((!zone_target && c.pad_b >= 0) || zone_proof) && !prechecked;
     bool late_done = false, field_tried = false, late_verify = false;
     int proved = 0;           // 1: the source's region ran out, 2: the target's
     bool proved_edge = false;  // that region touched the window edge
     auto run_late_proof = [&] {
-      proved = late_reach_proof(c, w, src, dst, hw, vd, vdrill, proved_edge);
+      if (zone_proof)
+        proved = late_reach_proof(c, w, src, dst, hw, vd, vdrill, proved_edge, [&](int l, std::int64_t ci) { return target(l, ci); });
+      else
+        proved = late_reach_proof(c, w, src, dst, hw, vd, vdrill, proved_edge);
     };
     while (!open.empty()) {
       const std::int64_t f = open.top().first;
@@ -2442,6 +2511,36 @@ struct Router::Impl {
     return false;
   }
 
+  // Via retry (D153, M22 item 5): a connection whose search stopped at its expansion cap is searched again at once, strictly, with a via at a
+  // quarter of its price and the layer that holds the most routed track at twice the cost per mm, so the route leaves the crowded layer
+  // through a via instead of looking for a way along it. Only cap misses: a proved enclosure or a miss at the window's edge does not
+  // depend on prices (m22-research). Layer costs only go up, so the octile and field heuristics stay lower bounds.
+  bool via_retry(int ci) {
+    const auto& st = cs[static_cast<std::size_t>(ci)];
+    if (nl < 2 || !opt.allow_vias || !vias_ok(st.c.net)) return false;
+    std::vector<double> len(static_cast<std::size_t>(nl), 0.0);
+    for (const auto& it : obs->copper().items) {
+      if (it.owner < 0 || it.removed || it.kind != drc::ItemKind::Track) continue;
+      const auto& t = b.tracks[static_cast<std::size_t>(it.index)];
+      len[static_cast<std::size_t>(t.layer)] += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+    }
+    const int busy = static_cast<int>(std::max_element(len.begin(), len.end()) - len.begin());
+    const auto saved_pm = layer_pm;
+    const double saved_mult = via_cost_mult;
+    layer_pm.resize(static_cast<std::size_t>(nl), 1000);
+    if (len[static_cast<std::size_t>(busy)] > 0) layer_pm[static_cast<std::size_t>(busy)] = std::max<std::int64_t>(layer_pm[static_cast<std::size_t>(busy)], 2000);
+    via_cost_mult = saved_mult / 4;
+    via_retry_on = true;
+    const bool ok = search_and_commit(st.c, false);
+    via_retry_on = false;
+    via_cost_mult = saved_mult;
+    layer_pm = saved_pm;
+    if (ok) ++res.via_retried;
+    if (std::getenv("TM_DEBUG_VIA_RETRY"))
+      std::fprintf(stderr, "via retry conn %d (%s), busy layer %d: %s\n", ci, b.nets[static_cast<std::size_t>(st.c.net)].name.c_str(), busy, ok ? "routed" : why.c_str());
+    return ok;
+  }
+
   // Removes a connection's copper and marks it (and connections of its net satisfied implicitly) unrouted.
   void rip(int v) {
     auto& st = cs[static_cast<std::size_t>(v)];
@@ -2497,6 +2596,7 @@ struct Router::Impl {
   bool blind_ok = false;    // blind/buried vias allowed (board setting, more than two layers)
   bool fields_off = false;
   double via_cost_mult = 1.0;   // raised by the clean-up pass
+  bool via_retry_on = false;    // the search under way is a via retry (its own nogoods)
   bool bypass_nogoods = false;  // clean-up re-routes are judged on their own  // set when GPU fields cost too much wall-clock time (see search)
   int rip_cap = 0;  // per-connection rip limit (opt.max_rips_per_connection, raised by diversified restarts)
   long nogood_skips = 0;
@@ -2520,7 +2620,7 @@ struct Router::Impl {
     wb.add(pb0);
     wb = wb.inflated(6'000'000 + c.length / 4);
     const std::uint64_t ng = splitmix64(window_signature(wb) ^ (static_cast<std::uint64_t>(current) << 3) ^ (soft_mode ? 1u : 0u) ^
-                                        (force_escapes ? 2u : 0u) ^ (static_cast<std::uint64_t>(width_override) << 20) ^ (!conn_guide.empty() && current >= 0 && conn_guide[static_cast<std::size_t>(current)] >= 0 ? 4u : 0u));
+                                        (force_escapes ? 2u : 0u) ^ (via_retry_on ? 8u : 0u) ^ (static_cast<std::uint64_t>(width_override) << 20) ^ (!conn_guide.empty() && current >= 0 && conn_guide[static_cast<std::size_t>(current)] >= 0 ? 4u : 0u));
     if (!bypass_nogoods && nogoods.count(ng)) {
       ++nogood_skips;
       why = "skipped: identical earlier attempt failed (nogood)";
@@ -2639,7 +2739,7 @@ struct Router::Impl {
     // The strict first pass tries two window sizes only; anything harder is left to negotiation.
     // Negotiated searches stop before the whole-board window (they can cross copper, so a reachable target is
     // normally found within 20 mm of the bounding box); strict passes try two sizes.
-    const int attempts = strict_pass ? std::min(2, opt.max_attempts) : soft ? std::min(opt.soft_attempts, opt.max_attempts) : opt.max_attempts;
+    int attempts = strict_pass ? std::min(2, opt.max_attempts) : soft ? std::min(opt.soft_attempts, opt.max_attempts) : opt.max_attempts;
     for (int attempt = 0; attempt < attempts; ++attempt) {
       if (out_of_budget()) {
         why = "out of budget";
@@ -2655,8 +2755,13 @@ struct Router::Impl {
       // The cheap reachability check first: on every strict search (mode 2) or only on likely failures (mode 1:
       // a retry with a larger window, or a connection that has failed before).
       reach_check_now = opt.reach_check == 2 || (opt.reach_check == 1 && (attempt > 0 || cs[static_cast<std::size_t>(current)].fails > 0));
+      const long dbg_e0 = res.expansions;
       const bool found_path = search(c, w, path);
       reach_check_now = false;
+      if (const char* dn = std::getenv("TM_DEBUG_CONN"); dn && b.nets[static_cast<std::size_t>(c.net)].name.find(dn) != std::string::npos)
+        std::fprintf(stderr, "[conn %d %s] pass %d soft %d attempt %d window %.0fx%.0f mm: found %d miss %d, %ld expansions (total %ld)\n", current,
+                     b.nets[static_cast<std::size_t>(c.net)].name.c_str(), res.passes, soft ? 1 : 0, attempt, nm_to_mm(static_cast<Coord>(w.w) * pitch),
+                     nm_to_mm(static_cast<Coord>(w.h) * pitch), found_path ? 1 : 0, static_cast<int>(last_miss), res.expansions - dbg_e0, res.expansions);
       if (!found_path) {
         why = last_miss == Miss::Enclosed ? (miss_target ? "boxed in (target)" : "boxed in") : last_miss == Miss::Budget ? "search budget" : "no path in window";
         if (last_miss == Miss::Enclosed) {
@@ -2680,6 +2785,13 @@ struct Router::Impl {
           }
           if (found && commit(r, rp)) return true;
           last_miss = Miss::Window;
+        }
+        // --window-escalate (D156, M22 item 3): a search that ran into its window's edge on its last window gets one whole-board window.
+        // The long detours that head away first (Aleste's /RAM/MA1, 25.4 mm apart, routed in 217.5 mm with 4 vias) fit no smaller one.
+        if (opt.window_escalate && attempt == attempts - 1 && attempts < 4 && last_miss == Miss::Window) {
+          attempts = 4;
+          attempt = 2;
+          ++res.window_escalations;
         }
         continue;
       }
@@ -2942,7 +3054,12 @@ struct Router::Impl {
     const auto& c = cs[static_cast<std::size_t>(ci)].c;
     const int ra = init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])];
     const int rb = c.pad_b >= 0 ? init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])] : init_root[static_cast<std::size_t>(c.zone_b)];
+    return joined_roots(c.net, ra, rb);
+  }
+  // Are two fixed-copper groups (init_root values) of `net` joined through fixed copper and routed connections of the net?
+  bool joined_roots(NetId net, int ra, int rb) {
     if (ra == rb) return true;
+    const Connection c{net, -1, -1, -1, 0};
     std::map<int, int> up;
     auto find = [&](int x) {
       while (up.count(x) && up[x] != x) x = up[x];
@@ -2961,6 +3078,98 @@ struct Router::Impl {
           }
     }
     return find(ra) == find(rb);
+  }
+
+  // Pad-to-plane fallback (D155, --plane-informed): a pad that cannot reach its plane joins the nearest pad of its net within
+  // plane_fallback_mm on the plane's side of the net's plan, and the connection becomes that pad-to-pad connection. On the PoE switch
+  // copy two GND pads failed into the plane (the fill does not reach them; the search used its whole cap) while each routes to a
+  // GND pad 1.17 mm away (bench/records/m22-research). Strict searches, nearest first, at most three candidates.
+  bool plane_fallback(int ci) {
+    auto& st = cs[static_cast<std::size_t>(ci)];
+    if (st.c.zone_b < 0 || st.c.pad_a < 0 || opt.plane_fallback_mm <= 0) return false;
+    const NetId net = st.c.net;
+    const Point a = b.pads[static_cast<std::size_t>(st.c.pad_a)].pos;
+    const int rz = init_root[static_cast<std::size_t>(st.c.zone_b)];
+    const double lim = opt.plane_fallback_mm * 1e6;
+    // The net's plan is a tree over its fixed-copper groups. Without this connection it falls into the pad's side and the plane's
+    // side; a pad on the plane's side keeps the tree spanning when it replaces the plane as this connection's target.
+    auto root_of = [&](const Connection& c, bool second) {
+      if (!second) return init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_a)])];
+      return c.pad_b >= 0 ? init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(c.pad_b)])] : init_root[static_cast<std::size_t>(c.zone_b)];
+    };
+    std::set<int> plane_side{rz};
+    for (bool grew = true; grew;) {
+      grew = false;
+      for (std::size_t k = 0; k < cs.size(); ++k) {
+        if (static_cast<int>(k) == ci || cs[k].c.net != net || cs[k].c.pad_a < 0) continue;
+        const int x = root_of(cs[k].c, false), y = root_of(cs[k].c, true);
+        if (plane_side.count(x) != plane_side.count(y)) {
+          plane_side.insert(x);
+          plane_side.insert(y);
+          grew = true;
+        }
+      }
+    }
+    std::vector<std::pair<double, int>> cand;
+    for (std::size_t p = 0; p < b.pads.size(); ++p) {
+      const int it = pad_item[p];
+      if (static_cast<int>(p) == st.c.pad_a || it < 0 || obs->copper().items[static_cast<std::size_t>(it)].net != net) continue;
+      const Point q = b.pads[p].pos;
+      const double d = std::hypot(static_cast<double>(q.x - a.x), static_cast<double>(q.y - a.y));
+      if (d > lim) continue;
+      if (init_root[static_cast<std::size_t>(it)] == init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(st.c.pad_a)])]) continue;
+      if (!plane_side.count(init_root[static_cast<std::size_t>(it)])) continue;
+      cand.emplace_back(d, static_cast<int>(p));
+    }
+    std::sort(cand.begin(), cand.end());
+    const long keep_cap = expansion_cap;
+    const bool keep_bypass = bypass_nogoods;
+    auto attempt = [&](const Connection& alt) {
+      expansion_cap = opt.rescue_cap;
+      bypass_nogoods = true;  // a nogood of the plane search is no verdict on another target or source
+      const bool ok = search_and_commit(alt, false);
+      bypass_nogoods = keep_bypass;
+      expansion_cap = keep_cap;
+      if (std::getenv("TM_DEBUG_PLANE"))
+        std::fprintf(stderr, "plane fallback %s -> %s: %s (%s)\n", pad_label(alt.pad_a).c_str(), alt.pad_b >= 0 ? pad_label(alt.pad_b).c_str() : "plane", ok ? "routed" : "failed", why.c_str());
+      if (ok) {
+        st.c = alt;
+        ++res.plane_fallbacks;
+      }
+      return ok;
+    };
+    for (std::size_t k = 0; k < cand.size() && k < 3 && !out_of_budget(); ++k)
+      if (attempt(Connection{net, st.c.pad_a, cand[k].second, -1, static_cast<Coord>(cand[k].first)})) return true;
+    // The connection joins the pad's whole fixed-copper group to the plane: any other pad of the group may make that join.
+    // On the PoE switch copy C115.2 shares a group with 20 GND pads tied by locked copper, and the plan chose it to drop into the plane.
+    const int ra = init_root[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(st.c.pad_a)])];
+    std::vector<std::pair<double, int>> mates;
+    for (std::size_t p = 0; p < b.pads.size(); ++p) {
+      const int it = pad_item[p];
+      if (static_cast<int>(p) == st.c.pad_a || it < 0 || init_root[static_cast<std::size_t>(it)] != ra) continue;
+      const Point q = b.pads[p].pos;
+      mates.emplace_back(std::hypot(static_cast<double>(q.x - a.x), static_cast<double>(q.y - a.y)), static_cast<int>(p));
+    }
+    std::sort(mates.begin(), mates.end());
+    for (std::size_t k = 0; k < mates.size() && k < static_cast<std::size_t>(opt.plane_fallback_sources) && !out_of_budget(); ++k)
+      if (attempt(Connection{net, mates[k].second, -1, st.c.zone_b, 0})) return true;
+    // Another fill of the net on the plane's side: the plan picks the nearest piece of the plane, which may be a sliver with no
+    // room for a via (on the PoE copy C115.2 was planned into a 2.9 x 2.5 mm island beside the 19,000 mm^2 GND plane).
+    std::vector<std::pair<double, int>> fills;
+    const auto& cm = obs->copper();
+    for (std::size_t i = 0; i < cm.items.size(); ++i) {
+      const auto& it = cm.items[i];
+      if (static_cast<int>(i) == st.c.zone_b || it.kind != drc::ItemKind::Zone || it.net != net || it.footprint >= 0) continue;
+      if (!plane_side.count(init_root[i]) || zone_fill_area(cm, {static_cast<int>(i)}) < kPlaneTargetArea || !reaches(st.c.pad_a, static_cast<int>(i))) continue;
+      fills.emplace_back(zone_dist(a, static_cast<int>(i)), static_cast<int>(i));
+    }
+    std::sort(fills.begin(), fills.end());
+    for (std::size_t k = 0; k < fills.size() && k < 2 && !out_of_budget(); ++k) {
+      if (attempt(Connection{net, st.c.pad_a, -1, fills[k].second, 0})) return true;
+      for (std::size_t m = 0; m < mates.size() && m < static_cast<std::size_t>(opt.plane_fallback_sources) && !out_of_budget(); ++m)
+        if (attempt(Connection{net, mates[m].second, -1, fills[k].second, 0})) return true;
+    }
+    return false;
   }
 
   std::deque<int> pending;
@@ -3777,6 +3986,254 @@ struct Router::Impl {
       else emit_track_add(o.index);
       st.items.push_back(id);
     }
+  }
+  // True when lifted copper would pass the commit's exact check (rule 1) on the board as it now stands. A via that
+  // fails as a plain via is reported as not fitting, also when it was a via in pad (conservative: it is routed again).
+  bool saved_fits(const std::vector<OldItem>& saved) const {
+    for (const auto& o : saved) {
+      if (o.kind == drc::ItemKind::Via) {
+        const auto& v = b.vias[static_cast<std::size_t>(o.index)];
+        const int s = v.type == model::ViaType::Through ? obs->via_state(v.pos, v.size, v.drill, v.net, 0, false)
+                                                        : obs->via_state_span(v.pos, v.size, v.drill, v.net, 0, false, nullptr, v.layer_top, v.layer_bottom, v.type);
+        if (s == 2) return false;
+      } else {
+        const auto& t = b.tracks[static_cast<std::size_t>(o.index)];
+        if (obs->segment_state(t.a, t.b, t.layer, t.width, t.net, false, nullptr) == 2) return false;
+      }
+    }
+    return true;
+  }
+  struct LiftedVia {
+    int owner = -1;
+    model::Via via;
+    std::vector<OldItem> saved;  // the via, then its legs
+    std::vector<bool> leg_at_a;  // leg i's end `a` is at the via
+  };
+  // Lifts a routed via of connection `owner` with the tracks of that connection that end at it; nothing when other copper ends there
+  // too or the via stands in a pad of its connection (it is tied in place).
+  std::optional<LiftedVia> lift_via(int item) {
+    const auto& vit = obs->copper().items[static_cast<std::size_t>(item)];
+    LiftedVia L;
+    L.owner = vit.owner;
+    L.via = b.vias[static_cast<std::size_t>(vit.index)];
+    auto& oc = cs[static_cast<std::size_t>(L.owner)];
+    const Point P = L.via.pos;
+    std::vector<int> drop{item};
+    L.saved.push_back({drc::ItemKind::Via, vit.index});
+    for (const int it_id : oc.items) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(it_id)];
+      if (it.removed || it.kind != drc::ItemKind::Track) continue;
+      const auto& t = b.tracks[static_cast<std::size_t>(it.index)];
+      if (t.a == P || t.b == P) {
+        drop.push_back(it_id);
+        L.saved.push_back({drc::ItemKind::Track, it.index});
+        L.leg_at_a.push_back(t.a == P);
+      }
+    }
+    if (drop.size() < 2) return std::nullopt;
+    for (const int pad : {oc.c.pad_a, oc.c.pad_b})
+      for (int l = 0; l < nl && pad >= 0; ++l)
+        if (on_pad_copper(P, pad, l)) return std::nullopt;
+    std::vector<int> ids;
+    obs->routed_items_in(geom::Shape::point(P, 0).box.inflated(1), ids);
+    for (const int id : ids) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(id)];
+      if (!it.removed && it.net == L.via.net && it.owner != L.owner) return std::nullopt;
+    }
+    unlink_items(L.owner, drop);
+    return L;
+  }
+  void unlink_items(int owner, const std::vector<int>& items) {
+    auto& oc = cs[static_cast<std::size_t>(owner)];
+    for (const int item : items) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+      if (opt.sink) emit(std::string("{\"type\":\"") + (it.kind == drc::ItemKind::Via ? "via_remove" : "track_remove") + "\",\"id\":" + std::to_string(it.index) + "}");
+      remove_routed(item);
+      oc.items.erase(std::find(oc.items.begin(), oc.items.end(), item));
+    }
+  }
+  // Positions for a lifted via, nearest first (rings of 16 round where it was), where it and its re-drawn legs pass the exact check
+  // against everything now on the board.
+  std::vector<Point> via_positions(const LiftedVia& L) {
+    std::vector<Point> out;
+    const Point P = L.via.pos;
+    for (int ring = 1; ring <= opt.via_shove_rings; ++ring) {
+      const double r = static_cast<double>(mm_to_nm(opt.via_shove_step_mm)) * ring;
+      for (int k = 0; k < 16; ++k) {
+        const double ang = k * std::numbers::pi / 8;
+        const Point Q{P.x + static_cast<Coord>(std::llround(r * std::cos(ang))), P.y + static_cast<Coord>(std::llround(r * std::sin(ang)))};
+        if (obs->via_state(Q, L.via.size, L.via.drill, L.via.net, 0, false) != 0 || obs->via_disallowed(Q, L.via.size, L.via.net, 0, nl - 1, model::ViaType::Through)) continue;
+        bool legal = true;
+        for (std::size_t i = 0; i + 1 < L.saved.size() && legal; ++i) {
+          const auto& t = b.tracks[static_cast<std::size_t>(L.saved[i + 1].index)];
+          const Point far = L.leg_at_a[i] ? t.b : t.a;
+          if (far == Q || !layer_ok(t.net, t.layer) || obs->segment_state(far, Q, t.layer, t.width, t.net, false) != 0) legal = false;
+        }
+        if (legal) out.push_back(Q);
+      }
+    }
+    return out;
+  }
+  // Puts a lifted via down at Q (checked by via_positions) with its legs re-drawn to it; returns the new items.
+  std::vector<int> place_at(const LiftedVia& L, Point Q) {
+    std::vector<int> placed;
+    model::Via nv = L.via;
+    nv.pos = Q;
+    b.vias.push_back(nv);
+    placed.push_back(obs->add_via(static_cast<int>(b.vias.size() - 1), L.owner));
+    emit_via_add(static_cast<int>(b.vias.size() - 1));
+    for (std::size_t i = 0; i + 1 < L.saved.size(); ++i) {
+      model::Track t = b.tracks[static_cast<std::size_t>(L.saved[i + 1].index)];
+      (L.leg_at_a[i] ? t.a : t.b) = Q;
+      b.tracks.push_back(t);
+      placed.push_back(obs->add_track(static_cast<int>(b.tracks.size() - 1), L.owner));
+      emit_track_add(static_cast<int>(b.tracks.size() - 1));
+    }
+    for (const int id : placed) {
+      near_mark(id, +1);
+      cs[static_cast<std::size_t>(L.owner)].items.push_back(id);
+    }
+    return placed;
+  }
+  // Via shove (D156, doc 05 §64): a pin boxed in by other nets' vias is often freed by moving one or two of them a few tenths of a mm, which
+  // the rip-up cannot do: it routes the other connection again from scratch, and on a full board that one then fails instead (the pin
+  // rescue's measured failure, doc 05 §63). Here only a via and the tracks ending at it move; the rest of its connection stays. The vias
+  // of other nets within via_shove_mm of the stuck connection's pads, nearest first, are lifted one at a time, then in pairs, and the stuck
+  // connection is searched without them (strictly, capped). When it routes, each lifted via goes down at the nearest position where it
+  // and its re-drawn legs pass the exact check beside the new route; when one finds none, the new route is lifted and everything is put
+  // back as it was. A push-and-shove router's via move (KiCad's PNS), as a repair step of the batch router.
+  long shove_work = 0, shove_start = 0;  // expansions the via shove has spent in this run; res.expansions when the current shove began
+  bool shove_spent() const {
+    return opt.work_budget > 0 && static_cast<double>(shove_work + res.expansions - shove_start) >= opt.via_shove_share * static_cast<double>(opt.work_budget);
+  }
+  bool via_shove(int ci) {
+    const auto& st = cs[static_cast<std::size_t>(ci)];
+    if (st.c.pad_a < 0) return false;
+    // Its searches come out of the run's budget: past via_shove_share of it the shove stops (on kitspace_d20 an unbounded shove routed 10
+    // connections and lost 41 to the budget it took from the main loop).
+    shove_start = res.expansions;
+    if (shove_spent()) return false;
+    const bool done = via_shove_try(ci);
+    shove_work += res.expansions - shove_start;
+    return done;
+  }
+  bool via_shove_try(int ci) {
+    const auto& st = cs[static_cast<std::size_t>(ci)];
+    const bool dbg = std::getenv("TM_DEBUG_SHOVE") != nullptr;
+    struct Cand { std::int64_t d2; int item; };
+    std::vector<Cand> cands;
+    std::vector<int> ids;
+    const Coord reach = mm_to_nm(opt.via_shove_mm);
+    for (const int pad : {st.c.pad_a, st.c.pad_b}) {
+      if (pad < 0) continue;
+      const Point pp = b.pads[static_cast<std::size_t>(pad)].pos;
+      ids.clear();
+      obs->routed_items_in(obs->copper().items[static_cast<std::size_t>(pad_item[static_cast<std::size_t>(pad)])].box.inflated(reach), ids);
+      for (const int id : ids) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(id)];
+        if (it.removed || it.kind != drc::ItemKind::Via || it.net == st.c.net || it.owner < 0 || it.bare_of >= 0) continue;
+        const auto& oc = cs[static_cast<std::size_t>(it.owner)];
+        if (!oc.routed || oc.bundle_lane || oc.c.zone_b >= 0 || b.vias[static_cast<std::size_t>(it.index)].type != model::ViaType::Through) continue;
+        const Point vp = b.vias[static_cast<std::size_t>(it.index)].pos;
+        const std::int64_t dx = vp.x - pp.x, dy = vp.y - pp.y;
+        cands.push_back({dx * dx + dy * dy, id});
+      }
+    }
+    std::sort(cands.begin(), cands.end(), [](const Cand& x, const Cand& y) { return x.d2 != y.d2 ? x.d2 < y.d2 : x.item < y.item; });
+    // Vias by (owner, position): a via that is lifted and put back is a new copper item.
+    std::vector<std::pair<int, Point>> vias;
+    for (const auto& cd : cands) {
+      const auto& it = obs->copper().items[static_cast<std::size_t>(cd.item)];
+      const std::pair<int, Point> key{it.owner, b.vias[static_cast<std::size_t>(it.index)].pos};
+      if (std::find(vias.begin(), vias.end(), key) == vias.end()) vias.push_back(key);
+    }
+    if (static_cast<int>(vias.size()) > opt.via_shove_vias) vias.resize(static_cast<std::size_t>(opt.via_shove_vias));
+    auto via_item = [&](const std::pair<int, Point>& key) {
+      for (const int item : cs[static_cast<std::size_t>(key.first)].items) {
+        const auto& it = obs->copper().items[static_cast<std::size_t>(item)];
+        if (!it.removed && it.kind == drc::ItemKind::Via && b.vias[static_cast<std::size_t>(it.index)].pos == key.second) return item;
+      }
+      return -1;
+    };
+    std::vector<std::vector<std::pair<int, Point>>> groups;
+    for (const auto& v : vias) groups.push_back({v});
+    for (std::size_t i = 0; i < vias.size() && i < 4; ++i)
+      for (std::size_t j = i + 1; j < vias.size() && j < 4; ++j) groups.push_back({vias[i], vias[j]});
+    int trials = 0;
+    const bool saved_force = force_escapes;
+    for (const auto& g : groups) {
+      if (trials >= opt.via_shove_trials || out_of_budget() || shove_spent()) break;
+      std::vector<LiftedVia> lifted;
+      bool ok_lift = true;
+      for (const auto& key : g) {
+        const int item = via_item(key);
+        if (item < 0) { ok_lift = false; break; }
+        auto L = lift_via(item);
+        if (!L) { ok_lift = false; break; }
+        lifted.push_back(std::move(*L));
+      }
+      auto put_back = [&] {
+        for (auto it = lifted.rbegin(); it != lifted.rend(); ++it) restore_items(it->owner, it->saved);
+      };
+      if (!ok_lift) {
+        put_back();
+        continue;
+      }
+      auto attempt = [&] {
+        ++trials;
+        ++res.via_shove_trials;
+        force_escapes = true;
+        expansion_cap = opt.via_shove_cap;
+        const bool ok = search_and_commit(st.c, false);
+        expansion_cap = 0;
+        force_escapes = saved_force;
+        return ok;
+      };
+      auto note = [&](const char* what) {
+        if (!dbg) return;
+        std::fprintf(stderr, "shove for conn %d (%s): lift", ci, b.nets[static_cast<std::size_t>(st.c.net)].name.c_str());
+        for (const auto& L : lifted) std::fprintf(stderr, " %s@(%.3f, %.3f)", b.nets[static_cast<std::size_t>(L.via.net)].name.c_str(), nm_to_mm(L.via.pos.x), nm_to_mm(L.via.pos.y));
+        std::fprintf(stderr, ": %s\n", what);
+      };
+      // Without the lifted vias, does the connection route at all? If not, they are not what blocks it.
+      if (!attempt()) {
+        note(why.c_str());
+        put_back();
+        continue;
+      }
+      // It does. First the vias go down beside the new route, if there is room.
+      std::vector<std::pair<int, std::vector<int>>> placed;
+      bool placed_all = true;
+      for (std::size_t i = 0; i < lifted.size() && placed_all; ++i) {
+        const auto pos = via_positions(lifted[i]);
+        if (pos.empty()) placed_all = false;
+        else placed.emplace_back(lifted[i].owner, place_at(lifted[i], pos.front()));
+      }
+      if (placed_all) {
+        note("routed, vias moved beside it");
+        ++res.via_shoves;
+        return true;
+      }
+      for (auto it = placed.rbegin(); it != placed.rend(); ++it) unlink_items(it->first, it->second);
+      lift_items(ci);
+      // No room beside that route: a single via goes down at each of its positions in turn and the connection is searched round it.
+      if (lifted.size() == 1) {
+        const auto pos = via_positions(lifted[0]);
+        for (const Point Q : pos) {
+          if (trials >= opt.via_shove_trials || out_of_budget() || shove_spent()) break;
+          auto p = place_at(lifted[0], Q);
+          if (attempt()) {
+            note("routed round the moved via");
+            ++res.via_shoves;
+            return true;
+          }
+          unlink_items(lifted[0].owner, p);
+        }
+      }
+      note("blocker, but no position for it lets the connection through");
+      put_back();
+    }
+    return false;
   }
   std::vector<OldItem> lift_items(int ci) {
     auto& st = cs[static_cast<std::size_t>(ci)];
@@ -4742,6 +5199,103 @@ struct Router::Impl {
     return fixed;
   }
 
+  // Proof-triggered pin rescue (D155, doc 05 §63). Called when a strict search has just proved an end of connection x
+  // boxed in: if this run's routed copper is part of the wall, the routed connections with copper within r of either
+  // end are lifted, x is routed first and the lifted ones after it, in seeded orders. Kept only if all of them route
+  // again (the routed count rises by one); otherwise every lifted connection is restored exactly (rule 4). On failure
+  // the radius widens (opt.rescue_radii_mm), which is the "widen the last traces" of the M22 research: on the failing
+  // PCBench boards, other nets' copper within 2 mm of an open pin was what blocked 155 of 288 that a whole-board
+  // search with every option could not route (bench/records/m22-research). Freerouting's RetryNeighbourhood grows its
+  // rip radius the same way (1.5 to 12 mm). Each search here is capped at rescue_cap expansions; it counts as work.
+  bool pin_rescue(int x) {
+    auto& sx = cs[static_cast<std::size_t>(x)];
+    if (sx.routed || sx.c.pad_a < 0 || sx.rescues >= opt.rescue_per_conn) return false;
+    ++sx.rescues;
+    const bool keep_strict = strict_pass, keep_soft = soft, keep_bypass = bypass_nogoods;
+    const long keep_cap = expansion_cap;
+    const int keep_current = current;
+    strict_pass = false;  // the usual window ladder: the rescue is the expensive step already
+    soft = false;
+    bypass_nogoods = true;
+    std::vector<Point> ends{b.pads[static_cast<std::size_t>(sx.c.pad_a)].pos};
+    if (sx.c.pad_b >= 0) ends.push_back(b.pads[static_cast<std::size_t>(sx.c.pad_b)].pos);
+    bool done = false;
+    for (std::size_t ri = 0; ri < opt.rescue_radii_mm.size() && !done && !out_of_budget(); ++ri) {
+      const Coord r = static_cast<Coord>(opt.rescue_radii_mm[ri] * 1e6);
+      std::vector<int> group;
+      for (const Point& p : ends) {
+        std::vector<int> ids;
+        obs->routed_items_in(geom::Shape::point(p, r).box, ids);
+        for (int id : ids) {
+          const int o = obs->copper().items[static_cast<std::size_t>(id)].owner;
+          if (o < 0 || o == x || std::find(group.begin(), group.end(), o) != group.end()) continue;
+          const auto& st = cs[static_cast<std::size_t>(o)];
+          if (!st.routed || st.implicit || st.coupled || st.bus_lane || st.bundle_lane) continue;
+          if (first_net_ids.count(st.c.net) && !first_net_ids.count(sx.c.net)) continue;
+          if (bus_net(st.c.net) && !bus_net(sx.c.net)) continue;
+          group.push_back(o);
+        }
+      }
+      if (group.empty()) continue;  // the wall is fixed copper this close: a wider radius may still hold routed copper
+      if (static_cast<int>(group.size()) > opt.rescue_victims) break;  // wider only lifts more
+      std::sort(group.begin(), group.end());
+      ++res.rescue_tried;
+      std::vector<std::vector<OldItem>> saved;
+      for (int g : group) saved.push_back(lift_items(g));
+      auto route = [&](int ci) {
+        current = ci;
+        expansion_cap = opt.rescue_cap;
+        const bool ok = search_and_commit(cs[static_cast<std::size_t>(ci)].c, false);
+        expansion_cap = keep_cap;
+        return ok;
+      };
+      const bool rdbg = std::getenv("TM_DEBUG_RESCUE") != nullptr;
+      if (rdbg) std::fprintf(stderr, "rescue %s r=%.1f mm: %zu lifted\n", pad_label(sx.c.pad_a).c_str(), opt.rescue_radii_mm[ri], group.size());
+      if (!route(x)) {  // the pin does not route even with its neighbours gone: a wider radius may lift what blocks it
+        if (rdbg) std::fprintf(stderr, "  pin still fails: %s\n", why.c_str());
+        for (std::size_t k = 0; k < group.size(); ++k) restore_items(group[k], saved[k]);
+        continue;
+      }
+      // Every victim whose old copper still passes the exact check gets it back unchanged; only those the new path
+      // crosses are routed again, in seeded orders.
+      std::vector<char> back(group.size(), 0);
+      for (std::size_t k = 0; k < group.size(); ++k)
+        if (saved_fits(saved[k])) {
+          restore_items(group[k], saved[k]);
+          back[k] = 1;
+        }
+      if (rdbg) std::fprintf(stderr, "  pin routed; %d of %zu lifted fit again unchanged\n", static_cast<int>(std::count(back.begin(), back.end(), 1)), group.size());
+      for (int trial = 0; trial < opt.rescue_orders && !done && !out_of_budget(); ++trial) {
+        const RngStream rr(opt.seed, 0x5E5Cu, (static_cast<std::uint64_t>(x) * 64 + ri) * 64 + static_cast<std::uint64_t>(trial));
+        std::vector<std::pair<double, std::size_t>> key;
+        for (std::size_t k = 0; k < group.size(); ++k)
+          if (!back[k]) key.emplace_back(trial == 0 ? static_cast<double>(k) : rr.uniform(k), k);
+        std::sort(key.begin(), key.end());
+        std::vector<int> placed;
+        bool ok = true;
+        for (const auto& kv : key) {
+          if (!(ok = route(group[kv.second]))) break;
+          placed.push_back(group[kv.second]);
+        }
+        if (rdbg) std::fprintf(stderr, "  order %d: %zu of %zu re-routed%s\n", trial, placed.size(), key.size(), ok ? "" : (", failed: " + why).c_str());
+        if (ok) done = true;
+        else
+          for (int ci : placed) lift_items(ci);  // undo this order
+      }
+      if (!done) {
+        lift_items(x);
+        for (std::size_t k = 0; k < group.size(); ++k)
+          if (!back[k]) restore_items(group[k], saved[k]);
+      }
+    }
+    strict_pass = keep_strict;
+    soft = keep_soft;
+    bypass_nogoods = keep_bypass;
+    current = keep_current;
+    if (done) ++res.rescued;
+    return done;
+  }
+
   // Length tuning (design doc 05 §9 phase 3): nets with a custom `length` constraint that are routed too short get
   // trombone meanders on their longest straight segments. Each candidate meander is checked exactly; the net never
   // exceeds its maximum. Returns the number of nets brought into range.
@@ -5366,13 +5920,16 @@ struct Router::Impl {
       if (opt.escape_length_mm > nm_to_mm(EscapeOptions{}.length)) extend_corridors(plan);
     }
     pad_stub.clear();
-    if (opt.escape_stubs)
+    if (opt.escape_stubs || opt.fanout_hold)
       for (const auto& c : plan)
         if (!c.via && !c.has_mid && c.tail.empty() && std::hypot(static_cast<double>(c.b.x - c.a.x), static_cast<double>(c.b.y - c.a.y)) > 4.0 * static_cast<double>(pitch))
           pad_stub[c.pad] = {c.b, c.layer};
     reserve.assign(static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
     pad_reserved.assign(b.pads.size(), {});
     pad_plan.assign(b.pads.size(), {});
+    vreserve.clear();
+    pad_vreserved.assign(b.pads.size(), {});
+    if (opt.escape_via_keep_mm > 0) vreserve.assign(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), 0);
     reserve_pen = static_cast<std::int64_t>(2 * opt.soft_cost_mm * 1e6);
     res.escape_corridors = 0;
     res.escape_corridor_mm = 0;
@@ -5429,6 +5986,52 @@ struct Router::Impl {
       for (const Point& q : c.tail) {  // version 2: the planned channels, on the escape's layer
         strip(prev, q, false, c.tail_layer);
         prev = q;
+      }
+      if (!vreserve.empty()) {  // the points where another net's via would cover the corridor's track
+        const Coord rv = via_diameter(c.net) / 2 + std::max(netclass(c.net).clearance, rules.minimums.clearance) + class_width(c.net) / 2;
+        const long double rv2 = static_cast<long double>(rv) * static_cast<long double>(rv);
+        auto vstrip = [&](Point sa, Point sb) {
+          const int ix0 = std::max(0, to_ix(std::min(sa.x, sb.x) - rv)), ix1 = std::min(nx - 1, to_ix(std::max(sa.x, sb.x) + rv));
+          const int iy0 = std::max(0, to_iy(std::min(sa.y, sb.y) - rv)), iy1 = std::min(ny - 1, to_iy(std::max(sa.y, sb.y) + rv));
+          const long double ux = static_cast<long double>(sb.x - sa.x), uy = static_cast<long double>(sb.y - sa.y);
+          const long double len2 = ux * ux + uy * uy;
+          for (int gy = iy0; gy <= iy1; ++gy)
+            for (int gx = ix0; gx <= ix1; ++gx) {
+              const Point p = at(gx, gy);
+              const long double px = static_cast<long double>(p.x - sa.x), py = static_cast<long double>(p.y - sa.y);
+              const long double t = len2 > 0 ? std::clamp((px * ux + py * uy) / len2, 0.0L, 1.0L) : 0.0L;
+              const long double dx = px - t * ux, dy = py - t * uy;
+              if (dx * dx + dy * dy > rv2) continue;
+              const std::size_t gi = static_cast<std::size_t>(gy) * static_cast<std::size_t>(nx) + static_cast<std::size_t>(gx);
+              if (vreserve[gi] == 0) {
+                vreserve[gi] = static_cast<std::int32_t>(c.net);
+                pad_vreserved[static_cast<std::size_t>(c.pad)].push_back(gi);
+              } else if (vreserve[gi] != static_cast<std::int32_t>(c.net)) {
+                vreserve[gi] = -1;
+              }
+            }
+        };
+        Point from = c.a;
+        if (c.has_mid) {
+          vstrip(c.a, c.mid);
+          from = c.mid;
+        }
+        // The keep runs escape_via_keep_mm past the pad's edge (never past the corridor's end); between there and the
+        // corridor's end, where other nets' tracks may not come, the pin's fan-out via has room to stand.
+        Point end = c.b;
+        if (c.tail.empty()) {
+          const double ux = static_cast<double>(c.b.x - from.x), uy = static_cast<double>(c.b.y - from.y), len = std::hypot(ux, uy);
+          const auto [hx, hy] = pad_half_extents(b.pads[static_cast<std::size_t>(c.pad)]);
+          const double edge = len > 0 ? std::abs(ux / len) * static_cast<double>(hx) + std::abs(uy / len) * static_cast<double>(hy) : 0;
+          const double keep_len = std::min(len, (c.has_mid ? 0 : edge) + opt.escape_via_keep_mm * 1e6);
+          end = len > 0 ? Point{from.x + static_cast<Coord>(std::llround(ux / len * keep_len)), from.y + static_cast<Coord>(std::llround(uy / len * keep_len))} : from;
+        }
+        vstrip(from, end);
+        from = c.b;
+        for (const Point& q : c.tail) {
+          vstrip(from, q);
+          from = q;
+        }
       }
       if (opt.sink) {  // viewer: one corridor per pin (doc 09; CLAUDE.md rule 7)
         std::string pts = "[" + jnum(c.a.x) + "," + jnum(c.a.y) + "]";
@@ -5510,12 +6113,83 @@ struct Router::Impl {
     }
     return false;
   }
+  // --fanout-heads (D157): the heads go into the router's copy of the board before its obstacles are built, so they are fixed copper
+  // of their net for the whole run: other nets route round them, the pin's own route runs over them. They are not routed copper, so
+  // they are in no result and are not written; each route runs pad to pad and a head touches nothing but its own pad, so leaving
+  // them out disconnects nothing. Planned against a copy of the obstacles at hard zones (the conservative fill).
+  void place_fanout_heads() {
+    Obstacles probe(b, rules);
+    FanoutHeadHooks h;
+    h.width = [&](NetId n) { return class_width(n); };
+    h.clearance = [&](NetId n) { return std::max(netclass(n).clearance, rules.minimums.clearance); };
+    h.free = [&](Point a, Point c, int l, Coord w, NetId n) { return layer_ok(n, l) && probe.segment_state(a, c, l, w, n, false, nullptr) == 0; };
+    h.add = [&](Point a, Point c, int l, Coord w, NetId n) {
+      b.tracks.push_back(model::Track{a, c, w, l, n, false, sexpr::kNoNode});
+      return probe.add_track(static_cast<int>(b.tracks.size() - 1), 0);
+    };
+    h.remove = [&](int item) {
+      probe.remove_item(item);
+      b.tracks.pop_back();
+    };
+    FanoutHeadOptions fo;
+    fo.reach = mm_to_nm(opt.fanout_heads_mm);
+    fo.min_pins = opt.fanout_heads_min_pins;
+    const auto heads = plan_fanout_heads(b, h, fo);
+    res.fanout_heads = static_cast<int>(heads.size());
+    if (std::getenv("TM_DEBUG_HEADS"))
+      for (const auto& fh : heads) {
+        const auto& p = b.pads[static_cast<std::size_t>(fh.pad)];
+        std::fprintf(stderr, "head %s.%s %s:", b.footprints[static_cast<std::size_t>(p.footprint)].reference.c_str(), p.number.c_str(), b.nets[static_cast<std::size_t>(fh.net)].name.c_str());
+        for (const Point q : fh.pts) std::fprintf(stderr, " (%.3f,%.3f)", nm_to_mm(q.x), nm_to_mm(q.y));
+        std::fprintf(stderr, "\n");
+      }
+  }
+  // --fanout-hold (D156): before the strict pass, a placeholder track of the pin's net along each open pin's straight corridor, checked
+  // exactly against all copper. It belongs to no connection (it is never in a result or a snapshot) and goes when the pin is routed or
+  // the strict pass ends; until then the other nets' tracks and vias route round it, as round a designer's fan-out.
+  void place_holds() {
+    hold_item.assign(b.pads.size(), -1);
+    for (std::size_t pad = 0; pad < b.pads.size(); ++pad) {
+      const auto it = pad_stub.find(static_cast<int>(pad));
+      if (it == pad_stub.end() || pad_open[pad] == 0) continue;
+      const auto& p = b.pads[pad];
+      const Point V = it->second.first;
+      const int l = it->second.second;
+      const Coord width = class_width(p.net);
+      if (!layer_ok(p.net, l) || obs->segment_state(p.pos, V, l, width, p.net, false, nullptr) != 0) continue;
+      int owner = -1;
+      for (std::size_t ci = 0; ci < cs.size() && owner < 0; ++ci)
+        if (cs[ci].c.pad_a == static_cast<int>(pad) || cs[ci].c.pad_b == static_cast<int>(pad)) owner = static_cast<int>(ci);
+      b.tracks.push_back(model::Track{p.pos, V, width, l, p.net, false, sexpr::kNoNode});
+      const int id = static_cast<int>(b.tracks.size() - 1);
+      hold_item[pad] = obs->add_track(id, owner);
+      near_mark(hold_item[pad], +1);
+      emit_track_add(id);
+      ++res.fanout_holds;
+    }
+  }
+  void drop_hold(int pad) {
+    if (pad < 0 || static_cast<std::size_t>(pad) >= hold_item.size() || hold_item[static_cast<std::size_t>(pad)] < 0) return;
+    const int item = hold_item[static_cast<std::size_t>(pad)];
+    if (opt.sink) emit("{\"type\":\"track_remove\",\"id\":" + std::to_string(obs->copper().items[static_cast<std::size_t>(item)].index) + "}");
+    remove_routed(item);
+    hold_item[static_cast<std::size_t>(pad)] = -1;
+  }
+  void drop_holds() {
+    for (std::size_t pad = 0; pad < hold_item.size(); ++pad) drop_hold(static_cast<int>(pad));
+  }
   void release_pad(int pad, NetId net) {
+    drop_hold(pad);
     if (reserve.empty() || pad < 0) return;
     if (opt.sink && !pad_reserved[static_cast<std::size_t>(pad)].empty()) emit("{\"type\":\"escape_release\",\"id\":" + std::to_string(pad) + "}");
     for (std::size_t gi : pad_reserved[static_cast<std::size_t>(pad)])
       if (reserve[gi] == static_cast<std::int32_t>(net)) reserve[gi] = 0;
     pad_reserved[static_cast<std::size_t>(pad)].clear();
+    if (!vreserve.empty()) {
+      for (std::size_t gi : pad_vreserved[static_cast<std::size_t>(pad)])
+        if (vreserve[gi] == static_cast<std::int32_t>(net)) vreserve[gi] = 0;
+      pad_vreserved[static_cast<std::size_t>(pad)].clear();
+    }
   }
   // A pin whose connections are all routed no longer needs its corridor.
   void release_escapes(int ci) {
@@ -5628,6 +6302,7 @@ struct Router::Impl {
     guide_match();
     layer_assign();
     package_boxes();
+    if (opt.pin_via_pen_mm > 0) build_pin_via();
     if (opt.escape_plan || opt.escape_flow) {
       plan_escape_reservations();
       if (tdbg) std::fprintf(stderr, "[%.2f s] escape plan: %d corridors\n", elapsed(), res.escape_corridors);
@@ -5915,12 +6590,22 @@ struct Router::Impl {
     for (int pass = 0; pass < opt.max_passes && !pending.empty() && !out_of_budget(); ++pass) {
       res.passes = pass + 1;
       strict_pass = pass == 0 && opt.strict_first && !opt.warm;
+      if (opt.fanout_hold && !pad_stub.empty()) {
+        if (strict_pass) place_holds();
+        else drop_holds();
+      }
       soft_unit = static_cast<std::int64_t>(opt.soft_cost_mm * 1e6 * (1.0 + opt.soft_growth * std::min(pass, 20)));
       phase = strict_pass ? WorkPhase::FirstPass : WorkPhase::Negotiation;
       std::vector<int> failed;
       const int routed_before = res.routed;
       txn_attempts_pass = 0;
-      while (!pending.empty() && !out_of_budget()) {
+      // --pass-bound (D156): a negotiation pass routes the connections queued when it began; those it rips wait for the next pass, at the
+      // next pass's crossing cost. Unbounded, a pass whose successes rip long nets that rip others in turn never ends, so the cost that
+      // makes negotiation converge (PathFinder, McMurchie and Ebeling 1995) never rises.
+      const std::size_t pass_quota = opt.pass_bound && !strict_pass ? pending.size() : SIZE_MAX;
+      std::size_t pass_taken = 0;
+      while (!pending.empty() && !out_of_budget() && pass_taken < pass_quota) {
+        ++pass_taken;
         const int ci = pending.front();
         pending.pop_front();
         auto& st = cs[static_cast<std::size_t>(ci)];
@@ -5970,6 +6655,18 @@ struct Router::Impl {
           }
           force_escapes = false;
           if (!ok) reason += "; escapes/neck-down: " + why;
+          if (!ok && opt.via_shove) {
+            ok = via_shove(ci);
+            if (!ok) reason += "; via shove failed";
+          }
+          if (!ok && opt.rescue_in_loop && !opt.rescue_radii_mm.empty()) {
+            ok = pin_rescue(ci);
+            if (!ok) reason += "; pin rescue failed";
+          }
+        }
+        if (!ok && opt.via_retry && last_miss == Miss::Budget) {
+          ok = via_retry(ci);
+          if (!ok) reason += "; via retry: " + why;
         }
         if (!ok && opt.rip_up && (pass > 0 || !opt.strict_first || opt.warm)) {
           const bool use_txn = opt.txn > 0 && pair_partner.empty() && conn_bundle.empty();
@@ -6006,6 +6703,10 @@ struct Router::Impl {
               reason += "; negotiated escapes/neck-down: " + why;
             }
           }
+        }
+        if (!ok && opt.plane_informed && st.c.zone_b >= 0 && !out_of_budget()) {
+          ok = plane_fallback(ci);
+          if (!ok) reason += "; no nearby pad joined to the plane";
         }
         cs[static_cast<std::size_t>(ci)].why = reason;
         if (lane) bus_note(ci, ok);
@@ -6065,6 +6766,7 @@ struct Router::Impl {
         if (pass - run_best_pass >= opt.stall_passes) break;
       }
     }
+    drop_holds();
     if (res.routed > best_routed) {
       snapshot();
       snapshot_unrouted();
@@ -6094,6 +6796,88 @@ struct Router::Impl {
           snapshot_unrouted();
         }
         if (f == 0) break;
+      }
+    }
+    // End-game retry (D155, doc 05 §63): when the main loop is over, every connection still open that is not proved dead is
+    // tried once more, strictly, on the board as it now stands, and then (with --rescue) rescued. On the failing PCBench
+    // boards 139 of 349 open connections route alone on the final board: never attempted before the budget ran out, ripped
+    // and not routed again, or tried only while their pin was boxed in (bench/records/m22-research). The retry gets an
+    // allowance of its own (endgame_frac of the budget, in work units with --work), triggered by the end of the loop and
+    // not taken from it, which is what lost for --polish. It starts from the best state, so the clean-up below still runs.
+    if (opt.endgame_frac > 0 && best_routed >= 0 && best_routed < res.connections && !best_items.empty() && res.routed != best_routed) {
+      // Negotiation usually ends away from its best state: put the board back to it first, as polish does, but lift only the
+      // connections whose copper differs (the others keep their pair, bus and bundle flags).
+      std::vector<char> differs(cs.size(), 0);
+      for (std::size_t ci = 0; ci < cs.size(); ++ci) {
+        const auto& st = cs[ci];
+        const bool best_ok = best_unrouted.empty() || !best_unrouted[ci];
+        bool d = st.routed != best_ok || st.items.size() != best_items[ci].size();
+        for (std::size_t k = 0; !d && k < st.items.size(); ++k) {
+          const auto& it = obs->copper().items[static_cast<std::size_t>(st.items[k])];
+          d = it.kind != best_items[ci][k].kind || it.index != best_items[ci][k].index;
+        }
+        differs[ci] = d;
+      }
+      for (std::size_t ci = 0; ci < cs.size(); ++ci)
+        if (differs[ci]) {
+          lift_items(static_cast<int>(ci));
+          cs[ci].routed = cs[ci].implicit = cs[ci].coupled = cs[ci].bus_lane = cs[ci].bundle_lane = false;
+        }
+      for (std::size_t ci = 0; ci < cs.size(); ++ci)
+        if (differs[ci] && (!best_items[ci].empty() || (!best_unrouted.empty() && !best_unrouted[ci]))) {
+          restore_items(static_cast<int>(ci), best_items[ci]);
+          cs[ci].routed = best_unrouted.empty() || !best_unrouted[ci];
+          cs[ci].implicit = cs[ci].routed && best_items[ci].empty();
+        }
+      res.routed = 0;
+      for (const auto& st : cs) res.routed += st.routed ? 1 : 0;
+    }
+    if (opt.endgame_frac > 0 && best_routed >= 0 && res.routed == best_routed && res.routed < res.connections) {
+      const double keep_scale = budget_scale;
+      if (opt.work_budget > 0)
+        budget_scale = std::max(budget_scale, (static_cast<double>(res.expansions) + opt.endgame_frac * static_cast<double>(opt.work_budget)) / static_cast<double>(opt.work_budget));
+      else
+        budget_scale = std::max(budget_scale, elapsed() / opt.time_limit_s + opt.endgame_frac);
+      phase = WorkPhase::Negotiation;
+      const bool keep_strict = strict_pass;
+      strict_pass = false;
+      soft = false;
+      std::vector<int> open;
+      for (std::size_t ci = 0; ci < cs.size(); ++ci)
+        if (!cs[ci].routed && !cs[ci].implicit && !cs[ci].dead && !cs[ci].coupled && !cs[ci].bus_lane && cs[ci].c.pad_a >= 0) open.push_back(static_cast<int>(ci));
+      std::stable_sort(open.begin(), open.end(), [&](int x, int y) { return cs[static_cast<std::size_t>(x)].c.length < cs[static_cast<std::size_t>(y)].c.length; });
+      for (int ci : open) {
+        if (out_of_budget()) break;
+        auto& st = cs[static_cast<std::size_t>(ci)];
+        if (st.routed) continue;
+        current = ci;
+        if (joined(ci)) {
+          st.routed = st.implicit = true;
+          ++res.routed;
+          release_escapes(ci);
+          continue;
+        }
+        ++res.endgame_tried;
+        expansion_cap = opt.endgame_cap;
+        bool ok = search_and_commit(st.c, false);
+        expansion_cap = 0;
+        if (!ok && !opt.rescue_radii_mm.empty() && (last_miss == Miss::Enclosed || why.starts_with("boxed in"))) {
+          st.rescues = std::min(st.rescues, opt.rescue_per_conn - 1);  // the board around it has changed since its last rescue
+          ok = pin_rescue(ci);
+        }
+        if (!ok && opt.plane_informed && st.c.zone_b >= 0) ok = plane_fallback(ci);
+        if (!ok) continue;
+        st.routed = true;
+        st.why.clear();
+        ++res.routed;
+        ++res.endgame_fixed;
+        release_escapes(ci);
+      }
+      strict_pass = keep_strict;
+      budget_scale = keep_scale;
+      if (res.routed > best_routed) {
+        snapshot();
+        snapshot_unrouted();
       }
     }
     if (opt.deadline && best_routed == res.connections && res.connections > 0) {  // first complete variant sets the deadline
@@ -6198,6 +6982,9 @@ struct Router::Impl {
     if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
     if (late_checks) std::fprintf(stderr, "late reachability proofs: %ld, %ld proved no path, %ld cells visited\n", late_checks, late_proved, late_cells);
     if (field_late) std::fprintf(stderr, "fields built during a search: %ld\n", field_late);
+    if (res.rescue_tried) std::fprintf(stderr, "pin rescues: %d tried, %d connections routed\n", res.rescue_tried, res.rescued);
+    if (res.plane_fallbacks) std::fprintf(stderr, "plane fallbacks: %d pads joined to a nearby pad on the plane\n", res.plane_fallbacks);
+    if (res.endgame_tried) std::fprintf(stderr, "end-game retry: %d tried, %d routed\n", res.endgame_tried, res.endgame_fixed);
     std::fprintf(stderr, "failed-search expansions: strict confined %ld, strict wide %ld, negotiated confined %ld, negotiated wide %ld\n", xf_strict_conf,
                  xf_strict_wide, xf_soft_conf, xf_soft_wide);
     if (opt.escape_report) {  // pins of deep arrays per ring: to route, and with every connection routed
@@ -6402,6 +7189,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       o.layer_dir_swap = k % 5 == 4;
     });
   }
+    if (base.escape_all)  // --escape-all (D156, M22 item 6): the escape plan in every variant, not only in two of the designed eight
+      for (auto& v : vs) v.o.escape_plan = true;
     // Strict searches from the crowded end (doc 05 §55, D143) in half the designed eight: on in every variant it routed 1,383 -> 1,204
     // of the 33 failing tier B-D boards but lost two of the clean ones; in these four (chosen on those 71 boards) it loses none.
     if (base.crowded_portfolio)

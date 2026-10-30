@@ -1,0 +1,22 @@
+live view: http://192.168.1.83:8842/?token=PQZderiZ6w4SozSr
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 8 variants on 1 thread
+searches: 985 ok (16358459 expansions), 27 failed (6250103 expansions); fields 693 GPU + 0 CPU (86.46 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1098 connections improved
+restarts 0; legality checks 26039804; rips 0, passes 1, boxed-in 14, nogood skips 7, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 4 proved unreachable, 3141074 cells visited
+late reachability proofs: 21, 0 proved no path, 210034 cells visited
+failed-search expansions: strict confined 0, strict wide 6249175, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 985 in 132.3 s  <- best
+routed 985/995 connections, 2886 tracks, 281 vias, pitch 0.065 mm, 25958742 expansions, 132.59 s (best variant 132.29 s)
+  unrouted: +5V: U2.44 -> U2.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.2 -> C3.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: GND: C1.2 -> C14.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /USB_VBUS: U4.5 -> U2.7  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: Net-(D1-Pad2): D1.2 -> U2.8  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #6/INT: U2.30 -> U24.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  (search budget)
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+work (all variants): 22607634 expansions, 3351108 flood cells, 26024241 cell checks, 20085764 fixed-copper checks, 734079148 field cells in 693 fields, 985 commits, 0 rips
