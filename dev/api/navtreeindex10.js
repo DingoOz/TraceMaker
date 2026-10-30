@@ -1,5 +1,8 @@
 var NAVTREEINDEX10 =
 {
+"structtmk_1_1crules_1_1LayerGeometry.html#ad68456c51bce35b65fb854357458dcc8":[1,0,0,4,19,2],
+"structtmk_1_1crules_1_1LayerGeometry.html#ae535f8340c665324d0146c60d8ba8e6c":[0,0,0,5,19,4],
+"structtmk_1_1crules_1_1LayerGeometry.html#ae535f8340c665324d0146c60d8ba8e6c":[1,0,0,4,19,4],
 "structtmk_1_1crules_1_1LayerGeometry.html#ae717a2c8097fbea8ff37bc844f94a2e0":[0,0,0,5,19,6],
 "structtmk_1_1crules_1_1LayerGeometry.html#ae717a2c8097fbea8ff37bc844f94a2e0":[1,0,0,4,19,6],
 "structtmk_1_1crules_1_1LayerGeometry.html#af6bea3e63a7fe8ef844e73e94897329f":[0,0,0,5,19,7],
@@ -246,8 +249,5 @@ var NAVTREEINDEX10 =
 "structtmk_1_1drc_1_1CopperItem.html#ade89a7eb90875cacdef28470b5af0f8d":[1,0,0,5,4,3],
 "structtmk_1_1drc_1_1CopperItem.html#ae4709af147fb4d140438661d59c7fb28":[0,0,0,6,4,0],
 "structtmk_1_1drc_1_1CopperItem.html#ae4709af147fb4d140438661d59c7fb28":[1,0,0,5,4,0],
-"structtmk_1_1drc_1_1CopperItem.html#af1649890a9bfc0c8f64cc55dd53ca6a8":[0,0,0,6,4,1],
-"structtmk_1_1drc_1_1CopperItem.html#af1649890a9bfc0c8f64cc55dd53ca6a8":[1,0,0,5,4,1],
-"structtmk_1_1drc_1_1CopperItem.html#af929071a0da240b2a258a79bd1d5a6fd":[0,0,0,6,4,14],
-"structtmk_1_1drc_1_1CopperItem.html#af929071a0da240b2a258a79bd1d5a6fd":[1,0,0,5,4,14]
+"structtmk_1_1drc_1_1CopperItem.html#af1649890a9bfc0c8f64cc55dd53ca6a8":[0,0,0,6,4,1]
 };

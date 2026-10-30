@@ -122,6 +122,9 @@ Classes</h2></td></tr>
 <tr class="memitem:RingPlan" id="r_RingPlan"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1RingPlan.html">RingPlan</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per ring (1 = perimeter) of the planned arrays: how the pins that need routing were assigned.  <a href="structtmk_1_1route_1_1RingPlan.html#details">More...</a><br /></td></tr>
 <tr class="memitem:FlowEscapeStats" id="r_FlowEscapeStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1FlowEscapeStats.html">FlowEscapeStats</a></td></tr>
+<tr class="memitem:FanoutHeadOptions" id="r_FanoutHeadOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1FanoutHeadOptions.html">FanoutHeadOptions</a></td></tr>
+<tr class="memitem:FanoutHead" id="r_FanoutHead"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1FanoutHead.html">FanoutHead</a></td></tr>
+<tr class="memitem:FanoutHeadHooks" id="r_FanoutHeadHooks"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1FanoutHeadHooks.html">FanoutHeadHooks</a></td></tr>
 <tr class="memitem:GlobalNet" id="r_GlobalNet"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1GlobalNet.html">GlobalNet</a></td></tr>
 <tr class="memitem:GlobalOptions" id="r_GlobalOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1GlobalOptions.html">GlobalOptions</a></td></tr>
 <tr class="memitem:CutLine" id="r_CutLine"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1CutLine.html">CutLine</a></td></tr>
@@ -202,6 +205,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:aa0381eb1b0f11577e1483980c401cb64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deep arrays: SMD pads of one footprint on a regular square grid (every pad within pitch / 8 of a grid point, at most one pad per point, at least 30 % of the points populated, at least 5 x 5) with at least one pin that needs routing in the third ring or deeper.  <br /></td></tr>
 <tr class="memitem:a0dbdb301de53bd1362fa4298b039a769" id="r_a0dbdb301de53bd1362fa4298b039a769"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1EscapeCorridor.html">EscapeCorridor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0dbdb301de53bd1362fa4298b039a769">plan_escapes_flow</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; char &gt; &amp;needs, const <a class="el" href="structtmk_1_1route_1_1FlowEscapeInput.html">FlowEscapeInput</a> &amp;in, const <a class="el" href="structtmk_1_1route_1_1EscapeOptions.html">EscapeOptions</a> &amp;o={}, <a class="el" href="structtmk_1_1route_1_1FlowEscapeStats.html">FlowEscapeStats</a> *stats=nullptr)</td></tr>
 <tr class="memdesc:a0dbdb301de53bd1362fa4298b039a769"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plans the deep arrays by min-cost flow and every other dense package as version 1 does (plan_escapes).  <br /></td></tr>
+<tr class="memitem:a027dd56cca7741fe5bb576aa1ae71788" id="r_a027dd56cca7741fe5bb576aa1ae71788"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1FanoutHead.html">FanoutHead</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a027dd56cca7741fe5bb576aa1ae71788">plan_fanout_heads</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1route_1_1FanoutHeadHooks.html">FanoutHeadHooks</a> &amp;h, const <a class="el" href="structtmk_1_1route_1_1FanoutHeadOptions.html">FanoutHeadOptions</a> &amp;o={})</td></tr>
+<tr class="memdesc:a027dd56cca7741fe5bb576aa1ae71788"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plans and adds (through hooks.add) the heads of every qualifying package.  <br /></td></tr>
 <tr class="memitem:aafa940c00e9d22feda5b349df9d8971a" id="r_aafa940c00e9d22feda5b349df9d8971a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1GlobalResult.html">GlobalResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aafa940c00e9d22feda5b349df9d8971a">global_route</a> (const <a class="el" href="classtmk_1_1route_1_1Obstacles.html">Obstacles</a> &amp;obs, const <a class="el" href="structtmk_1_1geom_1_1Box.html">geom::Box</a> &amp;bounds, int layers, const std::vector&lt; <a class="el" href="structtmk_1_1route_1_1GlobalNet.html">GlobalNet</a> &gt; &amp;nets, const <a class="el" href="structtmk_1_1route_1_1GlobalOptions.html">GlobalOptions</a> &amp;opt)</td></tr>
 <tr class="memitem:a7c41fbc5c168cb14dd7ea7701b770ea3" id="r_a7c41fbc5c168cb14dd7ea7701b770ea3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1LayerLimits.html">LayerLimits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c41fbc5c168cb14dd7ea7701b770ea3">layer_limits</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; std::string &gt; &amp;no_tracks_on, const std::vector&lt; std::string &gt; &amp;layer_costs)</td></tr>
 <tr class="memdesc:a7c41fbc5c168cb14dd7ea7701b770ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">no_tracks_on</span>: copper layer names.  <br /></td></tr>
@@ -259,7 +264,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970" name="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970"></a>Cleanup&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00292">292</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00330">330</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1060,6 +1065,35 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a027dd56cca7741fe5bb576aa1ae71788" name="a027dd56cca7741fe5bb576aa1ae71788"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a027dd56cca7741fe5bb576aa1ae71788">&#9670;&#160;</a></span>plan_fanout_heads()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1FanoutHead.html">FanoutHead</a> &gt; tmk::route::plan_fanout_heads </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1route_1_1FanoutHeadHooks.html">FanoutHeadHooks</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1route_1_1FanoutHeadOptions.html">FanoutHeadOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Plans and adds (through hooks.add) the heads of every qualifying package. </p>
+<p>Pins that get no head: nets with a zone, pins whose net has no pad off the package, and pins whose nearest such pad lies within <span class="tt">reach</span> of the package (local connections are the router's). A head never comes within clearance of another pad or other copper of its own net, so it joins nothing: the connection plan is unchanged, and removing the heads after routing cannot disconnect a route (each runs pad to pad). Deterministic: footprints in board order, sides in a fixed order, pins by position. </p>
+
+</div>
+</div>
 <a id="aab2e31777f6ffab8d925f74d779830cf" name="aab2e31777f6ffab8d925f74d779830cf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aab2e31777f6ffab8d925f74d779830cf">&#9670;&#160;</a></span>portfolio_size()</h2>
 
@@ -1349,7 +1383,7 @@ Variables</h2></td></tr>
 
 <p>Variant indices from here up are the advised copies the portfolio adds when <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a71e9bf1534dd6edf71aa3fc97724afd3">RouterOptions::advice</a> is active (position k of the advice's variants has index kAdvisedIndex + k). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00386">386</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00433">433</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1424,7 +1458,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00293">293</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00331">331</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

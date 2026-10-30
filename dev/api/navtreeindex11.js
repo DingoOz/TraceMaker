@@ -1,5 +1,8 @@
 var NAVTREEINDEX11 =
 {
+"structtmk_1_1drc_1_1CopperItem.html#af1649890a9bfc0c8f64cc55dd53ca6a8":[1,0,0,5,4,1],
+"structtmk_1_1drc_1_1CopperItem.html#af929071a0da240b2a258a79bd1d5a6fd":[0,0,0,6,4,14],
+"structtmk_1_1drc_1_1CopperItem.html#af929071a0da240b2a258a79bd1d5a6fd":[1,0,0,5,4,14],
 "structtmk_1_1drc_1_1CopperModel.html":[0,0,0,6,6],
 "structtmk_1_1drc_1_1CopperModel.html":[1,0,0,5,6],
 "structtmk_1_1drc_1_1CopperModel.html#a197b73169dd8781efabf9f4af8f4285b":[0,0,0,6,6,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX11 =
 "structtmk_1_1geom_1_1Point.html#ab4025185b7b281ac9511ac49e363e0d9":[1,0,0,6,1,2],
 "structtmk_1_1geom_1_1Polygon.html":[0,0,0,7,0],
 "structtmk_1_1geom_1_1Polygon.html":[1,0,0,6,0],
-"structtmk_1_1geom_1_1Polygon.html#a45ab8a9d1c286a056a3132102546bbdf":[0,0,0,7,0,0],
-"structtmk_1_1geom_1_1Polygon.html#a45ab8a9d1c286a056a3132102546bbdf":[1,0,0,6,0,0],
-"structtmk_1_1geom_1_1Polygon.html#ade2bcd7098b282d2e5581ffa4b62b060":[0,0,0,7,0,1],
-"structtmk_1_1geom_1_1Polygon.html#ade2bcd7098b282d2e5581ffa4b62b060":[1,0,0,6,0,1]
+"structtmk_1_1geom_1_1Polygon.html#a45ab8a9d1c286a056a3132102546bbdf":[0,0,0,7,0,0]
 };

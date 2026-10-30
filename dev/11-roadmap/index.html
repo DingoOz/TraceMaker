@@ -2291,6 +2291,12 @@ every later milestone can be watched while it is built.</p>
 <td>The Kookabus boards as a fixture set; KiCad 10 tuning profiles (per-layer width and gap, via and per-layer delay); time-domain length and skew matching; the return-path stitch pass inside <code>--si-rules</code>; five-seed settlement of #24's defaults</td>
 <td>Kookabus boards route with each layer's profile width, 0 errors added with <code>tuning_profile_track_geometries</code> enabled, groups within tolerance in delay by KiCad's DRC; options off byte-identical on the quick, mid and planes tiers</td>
 </tr>
+<tr>
+<td>M22</td>
+<td><strong>Finish the last connections</strong> (planned 2026-10-29, doc 18 §18, D155)</td>
+<td>Proof-triggered pin rescue (rip the copper around a pin proved boxed in, route it first, re-route the victims; seeded, widening radius); retry of every unattempted or ripped connection at the end; a whole-board attempt for window misses; informed pad-to-plane searches; the D153 via retry gated on budget misses; escape plan and a via cost near dense pins; tight and off-lattice vias; a via-site planner only if fan-out remains the largest class</td>
+<td>At least 15 % fewer open connections on <code>pcbench-bd-fail</code> at 10 M work (KiCad judge), no clean board lost, <code>quick</code> and <code>mid</code> byte-identical with the options off</td>
+</tr>
 </tbody>
 </table>
 <h2 id="working-rules-for-implementation-sessions">Working rules for implementation sessions<a class="headerlink" href="#working-rules-for-implementation-sessions" title="Permanent link">&para;</a></h2>

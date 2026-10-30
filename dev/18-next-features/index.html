@@ -2267,6 +2267,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#18-finishing-the-last-connections-research-and-plan-2026-10-29-m22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Finishing the last connections: research and plan (2026-10-29, M22)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2575,6 +2586,17 @@
     <span class="md-ellipsis">
       
         17. B2 built: time-domain matching (2026-10-28)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-finishing-the-last-connections-research-and-plan-2026-10-29-m22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Finishing the last connections: research and plan (2026-10-29, M22)
       
     </span>
   </a>
@@ -3145,6 +3167,127 @@ coupling-gap errors at its USB-C connector. The router now avoids them (D148) an
 <li>The measurement itself: KiCad's QA board to 0.01 ps; 325 of 329 nets on four demo boards to under 1 µm. Four branched power nets
   differ, where 10.0.6 depends on pointer order.</li>
 </ul>
+<h2 id="18-finishing-the-last-connections-research-and-plan-2026-10-29-m22">18. Finishing the last connections: research and plan (2026-10-29, M22)<a class="headerlink" href="#18-finishing-the-last-connections-research-and-plan-2026-10-29-m22" title="Permanent link">&para;</a></h2>
+<p>The user asked what would take hard boards to 100 % routed. They had seen vias placed too close to footprint pins, connections that would
+route with two vias and a run on another layer, and paths that must first go the other way. A research round read the literature (escape
+routing, pin access, multi-layer search, negotiation), the source of Freerouting, tscircuit's capacity autorouter and KiCad's PNS router.
+It also measured 349 open connections on seven failing boards of the 0.12.1 release run, each routed alone on a copy of its final board
+(decision <a href="../decisions/D155/">D155</a>; report, notes and the <code>viastudy</code> harness in <code>bench/records/m22-research</code>).</p>
+<p>What the boards say:</p>
+<table>
+<thead>
+<tr>
+<th>What the open connection needed to route alone</th>
+<th style="text-align: right;">Connections (of 349)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nothing: it routes on the final board, most with 0-2 vias (never attempted, ripped and not re-routed, or tried only while boxed in)</td>
+<td style="text-align: right;">139</td>
+</tr>
+<tr>
+<td>More search: the whole-board window or more work (long detours, median 4-12 vias)</td>
+<td style="text-align: right;">about 15 more</td>
+</tr>
+<tr>
+<td>Other nets' copper within 2 mm of its pins removed (mostly tracks; vias alone rescue 46 of 288)</td>
+<td style="text-align: right;">144 more</td>
+</tr>
+<tr>
+<td>Enclosed even with the whole board, any number of vias and every option</td>
+<td style="text-align: right;">about 52</td>
+</tr>
+</tbody>
+</table>
+<p>The search is not blind to layers: a via is possible at every lattice point and the cost-to-go field prices vias on every layer. What it
+lacks is a reflex. When it proves a pin boxed in, it moves on instead of clearing the space around the pin, and four of the seven boards
+never reached negotiation. Freerouting's recent gains come from the same place (<code>LastMileBlockerRipup</code>, <code>RetryNeighbourhood</code>: foreign copper
+ripped around open pins in a radius growing from 1.5 to 12 mm). None of the open routers prices other nets' vias in a footprint's escape
+region during the main route; on these boards that would help CoreOne and kitspace_d20 only.</p>
+<p>Plan (M22), in order. Each change sits behind an option, off until measured:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">#</th>
+<th>Change</th>
+<th>Evidence</th>
+<th style="text-align: center;">Effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><strong>Proof-triggered pin rescue</strong>: a pin proved boxed in by routed copper gets its neighbours within ~2 mm ripped, is routed first, and the victims are re-routed, as a transaction; on failure a seeded victim order and a radius growing toward ~12 mm</td>
+<td>copper near pins rescues 155 of 288; 229 of 526 open boxed in with no negotiation; <code>--lns-open</code> never got budget</td>
+<td style="text-align: center;">M</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><strong>Leave nothing unattempted</strong>: when the main loop ends, retry every ripped-not-re-routed and never-attempted connection on the current copper</td>
+<td>139 of 349 route alone on the final board</td>
+<td style="text-align: center;">S</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><strong>Whole-board attempt for window misses</strong> (never for proved enclosures)</td>
+<td>whole-board window rescues 78; "no path in window" 133 of 526</td>
+<td style="text-align: center;">S</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td><strong>Informed pad-to-plane searches</strong>: a lower bound to the net's fill, the late proof, planning to nearby same-net copper; <code>causes</code> fills zones as <code>route</code> does</td>
+<td>pad-to-plane search floods to its 3 M cap (PoE switch C115.2, C123.2: 1.2 mm stubs)</td>
+<td style="text-align: center;">S-M</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td><strong>D153 via retry only after budget misses</strong>, against an equal-budget control</td>
+<td>enclosure proofs do not depend on prices</td>
+<td style="text-align: center;">S</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td><strong>Escape plan in more variants, then a via-only cost in dense pins' outward cones</strong></td>
+<td>CoreOne vias 0.31 mm from open pins against 0.65 mm from routed ones</td>
+<td style="text-align: center;">S, then M</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td><strong>A tight via state and off-lattice via sites</strong></td>
+<td>the via margin has no tight fallback; neck-down vias carried 5 of CoreOne's 10 via rescues</td>
+<td style="text-align: center;">M</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td><strong>Research: a via-site and layer planner</strong> for dense packages and buses (pin access points, via exclusion, crossing and layer planning)</td>
+<td>PAO, Bayless 2016, Haas 2026; start only if package fan-out is still the largest class</td>
+<td style="text-align: center;">L</td>
+</tr>
+</tbody>
+</table>
+<p>The user's "widen and randomise the last traces" is item 1's escalation: what widens is the radius and the order of what is ripped around
+one proved-stuck pin, seeded, not the search's cost weights (those were measured and lost, doc 16 §11).</p>
+<p>Gate: at least 15 % fewer open connections on <code>pcbench-bd-fail</code> at 10 M work, judged by KiCad; no clean board lost; <code>quick</code> and <code>mid</code>
+byte-identical with the options off.</p>
+<p>Items 1 and 2 (and part of 4) were built and measured on 2026-10-29: at the same budget, plain routing beat them (7,193 against
+7,185 routed on ten failing boards; doc 05 §63). They stay as options, off.</p>
+<p>The rest of the plan was developed on one board, <code>mini_mass_prog_bench_prog_rig</code>, and then measured on the ten (2026-10-30, D156,
+doc 05 §64):</p>
+<ul>
+<li>Item 7, as a via shove that moves other nets' vias near a boxed-in pin: mini_mass 986 → 987.</li>
+<li>Items 3, 5 and 6 were also built.</li>
+</ul>
+<p>With <code>--via-shove --escape-all</code> the ten boards route 7,197, against 7,175 for the base and 7,193 for the base at 22 M. Open
+connections fall 3.5 %, short of the 15 % gate. The whole-board window (item 3) and the via penalty (item 6) lost, and stay off.
+Item 8 remains: on mini_mass the open pins are boxed in by their neighbours' tracks.</p>
+<p>Item 8 was then built as fan-out heads (D157, doc 05 §65): before routing, the pins of a dense four-sided package get the first
+millimetres of their routes as the designer lays them, straight or in staggered 45-degree bundles. mini_mass goes from 986 to 989
+(the designer's own heads give 990). On the ten boards it nets zero (7,175, as the base) and stays off. On CoreOne even the designer's own heads do not help (785
+against 787), so a better rule for the heads was not pursued.</p>
+<p>State of M22: items 1-3 and 5-8 are built and off by default, and item 4 is partly built (<code>--plane-informed</code>). The best arm,
+<code>--via-shove --escape-all</code>, cuts open connections by 3.5 % against the 15 % gate. Every repair so far lands within a few connections
+of the base given about 10 % more work, so more search per second is the stronger lever.</p>
 
 
 

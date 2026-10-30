@@ -5,6 +5,7 @@ var dir_4005b166026311c360bb4fe9f8933493 =
     [ "diff_pair.hpp", "diff__pair_8hpp.html", "diff__pair_8hpp" ],
     [ "escape.hpp", "escape_8hpp.html", "escape_8hpp" ],
     [ "escape_flow.hpp", "escape__flow_8hpp.html", "escape__flow_8hpp" ],
+    [ "fanout_heads.hpp", "fanout__heads_8hpp.html", "fanout__heads_8hpp" ],
     [ "global_router.hpp", "global__router_8hpp.html", "global__router_8hpp" ],
     [ "heat_grid.hpp", "heat__grid_8hpp.html", "heat__grid_8hpp" ],
     [ "layer_limits.hpp", "layer__limits_8hpp.html", "layer__limits_8hpp" ],
