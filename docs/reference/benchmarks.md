@@ -63,6 +63,15 @@ comparable (judge version, time limit, machine load).
 | [thin-srj6-relax](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-srj6-relax/summary.json) | srj20-stuck6 | 6 | 33643ee | 0.0% | 89.3% |  | 1907 | `--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5` |
 | [thin-srj6-relax-sub](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d159-thin-cut/runs/thin-srj6-relax-sub/summary.json) | srj20-stuck6 | 6 | 33643ee | 0.0% | 89.2% |  | 2049 | `--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --legalize-subdivide 0.1` |
 
+## d160-rescue
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d160-rescue)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [rescue-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-bd/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 15.2% | 93.4% | 12.1% | 18675 | `--no-gpu` |
+| [rescue-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-quick/summary.json) | quick | 30 | 736eac2 | 40.0% | 90.1% | 100.0% | 71 | `--variants 1` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)

@@ -255,7 +255,7 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
         r = json.loads(rj.read_text())
         res.update({k: r[k] for k in ("routed", "connections", "tracks", "vias", "seconds")})
         # Style metric of the new copper (doc 05 §39; informational) and what the after-route passes did.
-        res.update({k: r[k] for k in ("style", "widen", "stitch") if k in r})
+        res.update({k: r[k] for k in ("style", "widen", "stitch", "rescue") if k in r})
     # The fixture's own routing, where it has one (PCBench: processed.kicad_pcb), measured the same way.
     ref = SRC_FIX / name / "processed.kicad_pcb"
     if ref.exists() and "style" in res:

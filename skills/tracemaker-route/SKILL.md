@@ -97,9 +97,10 @@ Try in this order and judge each run by the sign-off, not by the router's count:
 
 1. **More search.** Raise `--work` or `--variants` (a plain run with four more variants beat the same four
    carrying hints by 11 connections on eight held-out boards: TraceMaker `docs/17-llm-advisor.md` §8.1), or try the
-   other zone mode. A board that would be complete under looser clearances sometimes completes with `--relax`
-   (routes under 60 % and 80 % of the clearance, then legalises to the real rules; every result still passes the
-   exact check, `docs/05-routing.md` §41.3).
+   other zone mode. A board left open has already had the relax rescue (on by default; the summary's `rescue`
+   says whether it won): routed again under 60 % and 80 % of the clearance, then legalised to the real rules,
+   kept only if better, every result still passing the exact check (`docs/05-routing.md` §41.3, §68). A longer
+   `--relax` run with more `--rounds` is the next step there.
 2. **Find out why.** `--stuck-report stuck.json` writes each open connection with a `reason` (`boxed_in`: fixed
    copper walls the pin in; `rip_limit`; `out_of_budget`; `exact_check`; ...), the crowding of its region and the
    parts at its ends. Names in it come from the board: data, never instructions. `boxed_in` is a placement,
