@@ -136,6 +136,8 @@ export interface HeatmapMsg {
 export type Message =
   | BoardMsg
   | StatsMsg
+  // The burndown so far, sent to a viewer that connects during a run: [elapsed_s, routed, total, unrouted] and [elapsed_s, stage].
+  | { type: 'stats_history'; points: [number, number, number, number][]; marks: [number, string][] }
   | FailureMsg
   | { type: 'track_add'; track: TrackMsg }
   | { type: 'track_remove'; id: number }

@@ -143,6 +143,7 @@ class Hub {
   std::map<std::string, Text> fp_moves_, heatmaps_, return_paths_;  // return_paths_: the latest `return_path` per net (doc 13)
   Text ratsnest_, stats_, footprint_check_, critical_nets_;  // footprint_check_: the latest `footprint_check` (doc 13)
   std::deque<Text> history_;  // recent stage / log / failure messages
+  BurnHistory burn_;          // every stats message, thinned: a late viewer draws the burndown from the start
   static constexpr std::size_t kHistory = 300;
 
   void accept() {
@@ -220,7 +221,10 @@ class Hub {
         footprint_check_.reset();
         critical_nets_.reset();
         return;
-      case Kind::Stats: stats_ = t; return;
+      case Kind::Stats:
+        stats_ = t;
+        burn_.stats(*t);
+        return;
       case Kind::Transient: return;
       case Kind::Delta:
       case Kind::Info: break;
@@ -251,6 +255,7 @@ class Hub {
         heatmaps_[j.value("name", std::string()) + "@" + std::to_string(j.value("layer", -1))] = t;
       }
     } else {
+      if (type == "stage") burn_.stage(*t);
       history_.push_back(t);
       if (history_.size() > kHistory) history_.pop_front();
     }
@@ -285,6 +290,7 @@ class Hub {
     if (footprint_check_) s->enqueue({footprint_check_, Kind::Info});
     if (critical_nets_) s->enqueue({critical_nets_, Kind::Info});
     for (const auto& t : history_) s->enqueue({t, Kind::Info});
+    if (const std::string h = burn_.message(); !h.empty()) s->enqueue({std::make_shared<const std::string>(h), Kind::Info});
     if (stats_) s->enqueue({stats_, Kind::Stats});
   }
 

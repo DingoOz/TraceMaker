@@ -240,6 +240,7 @@ function applyMessages(msgs: import('./protocol').Message[], now: number) {
         break;
       }
       case 'stats': hud.setStats(m); break;
+      case 'stats_history': hud.loadBurn(m.points, m.marks); break;
       case 'stage':
         hud.setStage(m.name, m.state, m.detail ?? '');
         hud.addLog('info', `${m.name} ${m.state}${m.detail ? ` — ${m.detail}` : ''}`, 'stage');

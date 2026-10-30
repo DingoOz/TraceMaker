@@ -120,7 +120,7 @@ add_test(NAME advisor_scripts COMMAND python3 ${PROJECT_SOURCE_DIR}/advisors/tes
 set_tests_properties(advisor_scripts PROPERTIES LABELS "python;integration" TIMEOUT 120)
 
 # The viewer's stall latch and its drawing (issue #8), under Node without a browser; skipped where node is missing or too old to strip types (22.6+).
-add_test(NAME viewer_stall COMMAND sh -c "node --experimental-strip-types -e 0 >/dev/null 2>&1 || exit 77; cd '${PROJECT_SOURCE_DIR}/viewer' && node --experimental-strip-types --no-warnings --test src/stall.test.ts src/stall_draw.test.ts src/returnpath_draw.test.ts src/footprintcheck_draw.test.ts")
+add_test(NAME viewer_stall COMMAND sh -c "node --experimental-strip-types -e 0 >/dev/null 2>&1 || exit 77; cd '${PROJECT_SOURCE_DIR}/viewer' && node --experimental-strip-types --no-warnings --test src/stall.test.ts src/stall_draw.test.ts src/returnpath_draw.test.ts src/footprintcheck_draw.test.ts src/burndown.test.ts")
 set_tests_properties(viewer_stall PROPERTIES SKIP_RETURN_CODE 77 LABELS "viewer;integration" TIMEOUT 120)
 
 # The reference-return audit (issue #7) through the command line; the board part needs the KiCad demo fixtures and skips without them.

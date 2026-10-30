@@ -617,3 +617,55 @@ TEST_CASE("viewer server: --view-embed lets the named dashboard frame the viewer
   o.embed = "http://x; script-src *";  // a header cannot be built from this
   CHECK_THROWS(server::ViewerServer(o));
 }
+
+TEST_CASE("burndown history: kept for late clients, thinned, reset by a new run", "[server]") {
+  auto st = [](double t, std::int64_t routed, std::int64_t total) {
+    server::Stats s;
+    s.stage = "route";
+    s.elapsed_s = t;
+    s.routed = routed;
+    s.total = total;
+    s.unrouted = total - routed;
+    return server::stats(s);
+  };
+  server::BurnHistory h;
+  CHECK(h.message().empty());
+  h.stage(server::stage("route", "begin"));  // no stats yet: marked at the start
+  h.stats(st(0.5, 0, 10));
+  h.stage(server::stage("route", "begin"));  // the same stage again: one mark
+  h.stats(st(1.0, 4, 10));
+  h.stats(st(1.0, 5, 10));  // same time: replaces
+  h.stage(server::stage("route", "end"));
+  h.stats(st(2.0, 9, 10));
+  auto j = json::parse(h.message());
+  CHECK(j["type"] == "stats_history");
+  CHECK(j["points"] == json::parse("[[0.5,0,10,10],[1.0,5,10,5],[2.0,9,10,1]]"));
+  CHECK(j["marks"] == json::parse(R"([[0.0,"route"]])"));
+  h.stats(st(0.1, 0, 10));  // time went back: a new run
+  CHECK(h.size() == 1);
+  CHECK(json::parse(h.message())["marks"].empty());
+  for (int i = 0; i < 5000; ++i) h.stats(st(1.0 + i, i % 10, 10));
+  CHECK(h.size() <= server::BurnHistory::kMax);
+  CHECK(json::parse(h.message())["points"].back()[0] == 5000.0);
+
+  server::ServerOptions o;
+  o.host = "127.0.0.1";
+  o.port = 0;
+  server::ViewerServer srv(o);
+  model::Board b;
+  srv.publish(server::board_snapshot_json(b, "empty"));
+  srv.publish(st(0.5, 0, 10));
+  srv.publish(server::stage("route", "begin"));
+  srv.publish(st(1.5, 6, 10));
+  for (int i = 0; i < 100 && srv.counters().published < 4; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  WsClient c(srv.port());
+  CHECK(c.read()["type"] == "board");
+  CHECK(c.read()["type"] == "stage");
+  auto hm = c.read();
+  CHECK(hm["type"] == "stats_history");
+  CHECK(hm["points"].size() == 2);
+  CHECK(hm["marks"] == json::parse(R"([[0.5,"route"]])"));
+  auto sm = c.read();
+  CHECK(sm["type"] == "stats");
+  CHECK(sm["routed"] == 6);
+}

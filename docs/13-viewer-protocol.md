@@ -37,6 +37,7 @@ On connect the server sends the latest `board` snapshot, then every later messag
 | `bus_skew` | `bus`, `skew`, `limit` | Length matching of a group is done: longest minus shortest member and the limit, nm |
 | `heatmap` | `name`, `x0`, `y0`, `cell`, `w`, `h`, `layer`, `max`, `data:[…]` (row-major, 0–255), optional `scale` (`"sqrt"`: byte = round(255·√(v/max)), non-zero cells ≥ 1; absent: linear) | Overlays, latest per name replaces the previous one. The router sends `expansions` (A* expansions per cell, cumulative) and `history` (largest PathFinder history cost per cell), layer -1 |
 | `stats` | `stage`, `iteration`, `routed`, `total`, `unrouted`, `rips`, `failures`, `elapsed_s`, `extra:{}` | Progress counters (≤ 10 Hz) |
+| `stats_history` | `points:[[elapsed_s, routed, total, unrouted],…]`, `marks:[[elapsed_s, stage],…]` | The burndown so far, sent by the server (not the engine) to a client that connects during a run, before the latest `stats`: one point per `stats` message (at most 1,200; a long run keeps every other one), and the time each `stage` began (0 before the first `stats`). A `stats` whose time goes backwards or whose total changes starts a new run |
 | `stage` | `name`, `state:"begin"|"end"`, `detail` | Pipeline stage changes |
 | `log` | `level`, `text` | Human-readable log line |
 

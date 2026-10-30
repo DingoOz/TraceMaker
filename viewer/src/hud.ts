@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // HTML overlay: brand bar, progress, layer controls, log, status bar and hover tooltip.
+import { Burndown, burndownSvg } from './burndown';
 import { css, infernoGradient, layerColor } from './colors';
 import type { ConnState } from './connection';
 import type { StatsMsg } from './protocol';
@@ -58,6 +59,8 @@ export class Hud {
   private bar = h('div', 'bar-fill');
   private cells = new Map<string, HTMLElement>();
   private extra = h('div', 'extra');
+  private burn = new Burndown();
+  private burnChart = h('div', 'burn-chart');
   private layerList = h('div', 'layer-list');
   private chips = h('div', 'chips');
   private heat = h('div', 'heat');
@@ -121,7 +124,10 @@ export class Hud {
       this.cells.set(key, v);
       grid.appendChild(cell);
     }
-    prog.append(head, progRow, bar, grid, this.extra);
+    const burnHead = h('div', 'section-head burn-head');
+    burnHead.append(h('div', 'label', 'Burndown'), h('div', 'hint', 'open connections over time'));
+    this.renderBurn();
+    prog.append(head, progRow, bar, grid, burnHead, this.burnChart, this.extra);
 
     const layers = h('section', 'section');
     const lh = h('div', 'section-head');
@@ -276,6 +282,11 @@ export class Hud {
   private haveStats = false;
 
   setBoard(name: string, layers: string[], visible: boolean[], active: number) {
+    // A reconnect resends the same board: its burndown carries on. Another board starts a new one.
+    if (name !== this.boardName.textContent) {
+      this.burn.reset();
+      this.renderBurn();
+    }
     this.boardName.textContent = name;
     if (!this.haveStats) {
       this.stageName.textContent = 'Board loaded';
@@ -363,6 +374,8 @@ export class Hud {
     this.cells.get('rips')!.textContent = num(s.rips);
     this.cells.get('failures')!.textContent = num(s.failures);
     this.cells.get('elapsed')!.textContent = duration(s.elapsed_s);
+    this.burn.add(s.elapsed_s, s.routed, s.total, s.unrouted);
+    this.renderBurn();
     const ex = s.extra ? Object.entries(s.extra) : [];
     this.extra.textContent = '';
     for (const [k, v] of ex) {
@@ -373,8 +386,22 @@ export class Hud {
   }
 
   setStage(name: string, state: string, detail: string) {
-    if (state === 'begin') this.stageName.textContent = name;
+    if (state === 'begin') {
+      this.stageName.textContent = name;
+      this.burn.mark(name);
+      this.renderBurn();
+    }
     this.stageDetail.textContent = detail;
+  }
+
+  /** The server's history of the run (a viewer that connected late): replaces what this page had collected. */
+  loadBurn(points: [number, number, number, number][], marks: [number, string][]) {
+    this.burn.load(points, marks);
+    this.renderBurn();
+  }
+
+  private renderBurn() {
+    this.burnChart.innerHTML = burndownSvg(this.burn, 284, 92);
   }
 
   setRate(msgs: number, fps: number) {

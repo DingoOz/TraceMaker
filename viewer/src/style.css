@@ -81,6 +81,17 @@ button { font: inherit; color: inherit; }
 .cell .value { font-size: 15px; margin-top: 2px; white-space: nowrap; }
 .cell .value.bad { color: #ff8a95; }
 .extra { margin-top: 8px; }
+.burn-head { margin: 14px 0 6px; }
+.burn-chart { height: 92px; }
+.burn-svg { display: block; overflow: visible; }
+.burn-axis { stroke: var(--line-strong); stroke-width: 1; }
+.burn-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+.burn-mark { stroke: var(--faint); stroke-width: 1; stroke-dasharray: 3 3; }
+.burn-mark:hover { stroke: var(--muted); }
+.burn-area { fill: rgba(91, 156, 245, 0.16); }
+.burn-line { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; }
+.burn-dot { fill: var(--accent); }
+.burn-tick { fill: var(--faint); font: 10px var(--mono); }
 .kv { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; line-height: 1.7; }
 
 /* Layers */
