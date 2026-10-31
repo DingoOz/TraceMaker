@@ -7514,6 +7514,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       for (auto& cl : rr.classes) cl.clearance = std::max<Coord>(cl.clearance - delta, 0);
       rr.minimums.clearance = std::max<Coord>(rr.minimums.clearance - delta, 0);
       if (base.ramp_via_real) rr.via_clearance_extra = delta;
+      if (base.ramp_via_fixed) rr.via_fixed_clearance_extra = delta;
       ramp_rules.push_back(std::move(rr));
     }
     for (auto& v : vs) v.o.state_recheck = true;

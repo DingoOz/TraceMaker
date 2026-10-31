@@ -50,3 +50,12 @@ at 34 % and 117 % more CPU. Not adopted (doc 20 §2.7).
 ## The defaults together: quick tier (`quick/`)
 
 See `quick/README.md`.
+
+## Step 6 (first form): vias keep the board's clearance to fixed copper in relaxed stages (`runs/vfix-*`)
+
+- `runs/vfix-srj6-relax`, `runs/vfix-srj6.md`: srj20's six stuck boards, `--relax --variants 8 --round-work 20000000 --rounds 5
+  --ramp-vias-fixed` against `runs/real2-srj6-relax`: 425 against 411 (5 better, 0 worse).
+- `runs/base-bd-relax2`, `runs/vfix-bd-relax2`, `runs/vfix-bd.md`: the 33 failing PCBench boards, `--no-gpu --relax --round-work
+  20000000 --rounds 5 --no-rescue`, without and with `--ramp-vias-fixed`: 15,940 against 15,937 (1 better, 10 worse), 5 clean against 3.
+  Not adopted (doc 20 §2.6).
+

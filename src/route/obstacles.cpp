@@ -440,7 +440,8 @@ bool Obstacles::inside_board(Point p, Coord margin) const {
 
 int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int layer, bool ignore_routed, std::vector<int>* owners) const {
   int state = 0;
-  grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
+  const Coord vfx = probe.kind == drc::ItemKind::Via ? std::max<Coord>(r_.via_fixed_clearance_extra, 0) : 0;  // fixed copper only (doc 20 §2.6)
+  grid_->query(s.box.inflated(re_->max_clearance() + vfx + 1), [&](int id) {
     if (state == 2) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.removed || !(it.layers & model::layer_bit(layer))) return;
@@ -453,7 +454,7 @@ int Obstacles::copper_state(const Shape& s, const drc::CopperItem& probe, int la
       return;
     }
     if (it.net == probe.net && probe.net != 0 && !(probe.kind == drc::ItemKind::Via && via_keeps_off(it))) return;
-    Coord req = re_->clearance(probe, it, layer);
+    Coord req = re_->clearance(probe, it, layer) + (it.owner < 0 ? vfx : 0);
     // Untented vias open the mask around themselves: other nets' copper must stay outside that opening.
     if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1)) {
       if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (probe.kind == drc::ItemKind::Via ? via_mask_ : 0) + 1'000);
@@ -831,20 +832,21 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
     else if (code == kFree) code = n;
     else if (code != n) code = kBlocked;
   };
-  grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
+  const Coord vfx = via_probe ? std::max<Coord>(r_.via_fixed_clearance_extra, 0) : 0;  // fixed copper only (doc 20 §2.6)
+  grid_->query(s.box.inflated(re_->max_clearance() + vfx + 1), [&](int id) {
     if (code == kBlocked) return;
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer))) return;
     if (soft_item(it)) return;
     if (via_probe && via_keeps_off(it)) {
-      const Coord rq = re_->clearance(probe, it, layer);
+      const Coord rq = re_->clearance(probe, it, layer) + vfx;
       if (item_closer(s, it, rq)) {
         code = kBlocked;
         return;
       }
     }
     if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
-    Coord req = re_->clearance(probe, it, layer);
+    Coord req = re_->clearance(probe, it, layer) + vfx;
     if (via_mask_ > 0 && (layer == 0 || layer == b_.copper_count() - 1) && it.kind != drc::ItemKind::Zone && it.kind != drc::ItemKind::Pad) {
       if (it.kind == drc::ItemKind::Via) req = std::max(req, via_mask_ + (via_probe ? via_mask_ : 0) + 1'000);
       else if (via_probe) req = std::max(req, via_mask_ + 1'000);
@@ -899,7 +901,8 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
     std::array<std::optional<Probe>, 64> probes;  // one per layer; reverse destruction preserves the pool stack
     for (int l = 0; l < nl; ++l) probes[static_cast<std::size_t>(l)].emplace(drc::ItemKind::Via, s, probe_net, l, 2 * hw, p);
     const model::LayerMask all = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
-    grid_->query(s.box.inflated(re_->max_clearance() + 1), [&](int id) {
+    const Coord vfx = std::max<Coord>(r_.via_fixed_clearance_extra, 0);  // a via against fixed copper (doc 20 §2.6)
+    grid_->query(s.box.inflated(re_->max_clearance() + vfx + 1), [&](int id) {
       if (code == kBlocked) return;
       const auto& it = cm_.items[static_cast<std::size_t>(id)];
       if (it.owner >= 0 || it.removed || !(it.layers & all)) return;
@@ -909,7 +912,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
       if (via_keeps_off(it)) {
         for (int l = 0; l < nl; ++l) {
           if (!(it.layers & model::layer_bit(l))) continue;
-          const Coord rq = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l);
+          const Coord rq = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l) + vfx;
           if (item_closer(s, it, rq)) {
             code = kBlocked;
             return;
@@ -919,7 +922,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
       if (it.net != 0 && code == it.net) return;  // already known: only legal for this net
       for (int l = 0; l < nl; ++l) {
         if (!(it.layers & model::layer_bit(l))) continue;
-        Coord req = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l);
+        Coord req = re_->clearance(**probes[static_cast<std::size_t>(l)], it, l) + vfx;
         if (via_mask_ > 0 && (l == 0 || l == nl - 1) && it.kind != drc::ItemKind::Zone && it.kind != drc::ItemKind::Pad)
           req = std::max(req, it.kind == drc::ItemKind::Via ? 2 * via_mask_ + 1'000 : via_mask_ + 1'000);
         if (item_closer(s, it, req)) {
