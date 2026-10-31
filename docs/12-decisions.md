@@ -179,6 +179,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D161](decisions/D161.md) | Why a connection is open: an escape proof for the pins of open connections | accepted |
 | [D162](decisions/D162.md) | The realizer on by default: the legaliser's last hand-over solved as a QP | accepted |
 | [D163](decisions/D163.md) | Two rescue passes by default: relax from the plain routes, then from nothing | accepted |
+| [D165](decisions/D165.md) | Live page of every process and bench run | accepted |
 <!-- END decision index -->
 
 ## Risks

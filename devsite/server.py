@@ -4,7 +4,7 @@
 
 Read-only dashboard over the repository: roadmap progress (dev/progress.json), activity log
 (dev/activity.jsonl), test results (build/*/test-results/*.xml), code size, git history, GPU memory and
-benchmark summaries. Standard library only.
+benchmark summaries, and a live page (/live) of every tracemaker process and bench run on the machine. Standard library only.
 
 Usage: devsite/server.py [--host 0.0.0.0] [--port 8765]
 """
@@ -19,6 +19,9 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs
+
+import livefeed
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 STATIC = pathlib.Path(__file__).resolve().parent / "static"
@@ -331,9 +334,19 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:  # noqa: N802
-        path = self.path.split("?", 1)[0]
+        path, _, query = self.path.partition("?")
         if path == "/api/status":
             self._send(200, json.dumps(status()).encode(), "application/json")
+        elif path == "/api/live":  # every tracemaker process and bench run on the machine (devsite/livefeed.py)
+            try:
+                keep = float(parse_qs(query).get("keep", ["1800"])[0])
+            except ValueError:
+                keep = 1800.0
+            snap = livefeed.snapshot(keep)
+            snap["gpus"] = CACHE.get("gpus", 5, gpus)
+            self._send(200, json.dumps(snap).encode(), "application/json")
+        elif path in ("/live", "/live.html"):
+            self._send(200, (STATIC / "live.html").read_bytes(), "text/html; charset=utf-8")
         elif path in ("/", "/index.html"):
             self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
         elif path.startswith("/media/"):

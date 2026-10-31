@@ -212,3 +212,4 @@
 {"ts": "2026-10-30T10:13:37+00:00", "kind": "note", "text": "D159 started (branch thin-vias): cut test of routed topologies (tracemaker cuts); 0 false positives on 405 KiCad-clean boards; proves 4 vias without room on srj20 048/072 0.06 mm solutions; testing --ramp-vias-real and --ramp-cut-prune on the six stuck srj20 boards"}
 {"ts": "2026-10-30T15:29:16+00:00", "kind": "test", "text": "D159 final: 33 PCBench B-D boards, relax with exact pads 15,925 (-241 vs base 16,166; bbox pads -483), 5 clean vs 2; subdivide 0.1 +30 but neutral on srj20 stuck six, stays off; full ctest green"}
 {"ts": "2026-10-30T21:30:54+00:00", "kind": "test", "text": "D160 relax rescue by default: 33 PCBench B-D boards 16,208 routed (+42 vs plain, 8 better 0 worse), 5 clean vs 2, CPU +73%; quick tier gates pass (+11, 12 clean vs 11)"}
+{"ts": "2026-10-31T03:16:56+00:00", "kind": "note", "text": "Live page /live (D165): every tracemaker process and bench run, once a second, on by default"}

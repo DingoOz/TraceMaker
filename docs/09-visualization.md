@@ -1,6 +1,6 @@
 ---
 status: current
-code: [src/server, viewer]
+code: [src/server, viewer, src/core/live.hpp, devsite/livefeed.py]
 ---
 
 # 09 — Real-time visualisation
@@ -239,3 +239,24 @@ cd viewer && npm run dev                              # hot-reload development, 
 Verified in headless Chromium (SwiftShader WebGL2) on the `video` (7,932 tracks, 4 layers) and
 `RoyalBlue54L-Feather` (8 layers, zone fills) demos. Firefox has not been tested on this machine; the renderer
 uses only core WebGL2 (instancing, MSAA renderbuffers, `blitFramebuffer`, stencil).
+
+## 9. The live page (D165)
+
+The viewer shows one run in depth. The live page on the progress site, `http://<host>:8765/live`, shows every run on the machine
+at once, from any checkout or worktree. It is always on and needs no `--view`.
+
+- Every `tracemaker` process writes its state to `~/.cache/tracemaker/live/<pid>.json` once a second (`src/core/live.hpp`;
+  `$TM_LIVE_DIR` or `$XDG_CACHE_HOME` move it, and `TM_LIVE=0` turns it off). The state is:
+  - the command, board, budget and stage;
+  - the round of a relax or rounds run;
+  - every portfolio variant's routed count, phase and work against its budget;
+  - a history of the best variant's routed count;
+  - the last 200 log lines;
+  - the exit code.
+- `bench/run.py` writes `run-<pid>.json` for each run: its boards, each running board's step (placing, routing or judging)
+  and each finished board's result. The page puts each board's router under its run.
+- `/api/live` (`devsite/livefeed.py`) adds CPU use, memory and threads from `/proc`. It marks a process that died without
+  writing its last state as killed. The page polls it once a second.
+
+The routers update their rows with relaxed atomic stores, and nothing in the engine reads them, so results do not change.
+How to use it: [Watch runs live](how-to/live-page.md).
