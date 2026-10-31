@@ -1196,6 +1196,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#complete-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        complete-routing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#d150-padstacks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2278,7 +2289,7 @@
     
   
   
-    <span class="md-status md-status--plan"></span>
+    <span class="md-status md-status--partly-built"></span>
   
 
   
@@ -2356,6 +2367,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#complete-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        complete-routing
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#d150-padstacks" class="md-nav__link">
@@ -2610,6 +2632,135 @@ of boards with every connection made and no error added in KiCad's DRC (the judg
 2026-10-14, D106); <em>FR 2.5</em> is Freerouting 2.5.0-RC12's published result on the same boards. Each record's
 README says what the runs were for and how to read them; numbers from different records are not always
 comparable (judge version, time limit, machine load).</p>
+<h2 id="complete-routing">complete-routing<a class="headerlink" href="#complete-routing" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/DingoOz/TraceMaker/tree/main/bench/records/complete-routing">Record and README</a></p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>Set</th>
+<th style="text-align: right;">Boards</th>
+<th>Commit</th>
+<th style="text-align: right;">Clean</th>
+<th style="text-align: right;">Completion</th>
+<th style="text-align: right;">FR 2.5</th>
+<th style="text-align: right;">Seconds</th>
+<th>Route options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/pitch/pitch-b-0.5/summary.json">pitch-b-0.5</a></td>
+<td>pcbench-b-fail</td>
+<td style="text-align: right;">11</td>
+<td>40f2939</td>
+<td style="text-align: right;">0.0%</td>
+<td style="text-align: right;">89.5%</td>
+<td style="text-align: right;">9.1%</td>
+<td style="text-align: right;">753</td>
+<td><code>--no-gpu --no-rescue --pitch-scale 0.5</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/pitch/pitch-b-0.67/summary.json">pitch-b-0.67</a></td>
+<td>pcbench-b-fail</td>
+<td style="text-align: right;">11</td>
+<td>40f2939</td>
+<td style="text-align: right;">0.0%</td>
+<td style="text-align: right;">88.6%</td>
+<td style="text-align: right;">9.1%</td>
+<td style="text-align: right;">468</td>
+<td><code>--no-gpu --no-rescue --pitch-scale 0.67</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/pitch/pitch-b-1.0/summary.json">pitch-b-1.0</a></td>
+<td>pcbench-b-fail</td>
+<td style="text-align: right;">11</td>
+<td>d927bfc</td>
+<td style="text-align: right;">0.0%</td>
+<td style="text-align: right;">89.8%</td>
+<td style="text-align: right;">9.1%</td>
+<td style="text-align: right;">313</td>
+<td><code>--no-gpu --no-rescue --pitch-scale 1.0</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/quick/cr-quick/summary.json">cr-quick</a></td>
+<td>quick</td>
+<td style="text-align: right;">30</td>
+<td>d927bfc</td>
+<td style="text-align: right;">53.3%</td>
+<td style="text-align: right;">93.9%</td>
+<td style="text-align: right;">100.0%</td>
+<td style="text-align: right;">66</td>
+<td><code>--variants 1</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/quick/cr-quick2/summary.json">cr-quick2</a></td>
+<td>quick</td>
+<td style="text-align: right;">30</td>
+<td>d927bfc</td>
+<td style="text-align: right;">53.3%</td>
+<td style="text-align: right;">93.9%</td>
+<td style="text-align: right;">100.0%</td>
+<td style="text-align: right;">67</td>
+<td><code>--variants 1</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/late-bd/summary.json">late-bd</a></td>
+<td>pcbench-bd-fail</td>
+<td style="text-align: right;">33</td>
+<td>736eac2</td>
+<td style="text-align: right;">9.1%</td>
+<td style="text-align: right;">92.5%</td>
+<td style="text-align: right;">12.1%</td>
+<td style="text-align: right;">11104</td>
+<td><code>--no-gpu --relax --relax-late --round-work 20000000 --rounds 5</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/real-bd-relax/summary.json">real-bd-relax</a></td>
+<td>pcbench-bd-fail</td>
+<td style="text-align: right;">33</td>
+<td>736eac2</td>
+<td style="text-align: right;">15.2%</td>
+<td style="text-align: right;">91.7%</td>
+<td style="text-align: right;">12.1%</td>
+<td style="text-align: right;">11572</td>
+<td><code>--no-gpu --relax --round-work 20000000 --rounds 5 --no-rescue</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/real-srj6-relax/summary.json">real-srj6-relax</a></td>
+<td>srj20-stuck6</td>
+<td style="text-align: right;">6</td>
+<td>d927bfc</td>
+<td style="text-align: right;">0.0%</td>
+<td style="text-align: right;">90.8%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">1689</td>
+<td><code>--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --no-rescue</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/real2-srj6-relax/summary.json">real2-srj6-relax</a></td>
+<td>srj20-stuck6</td>
+<td style="text-align: right;">6</td>
+<td>d927bfc</td>
+<td style="text-align: right;">0.0%</td>
+<td style="text-align: right;">90.8%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">1482</td>
+<td><code>--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --no-rescue</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/rescue-warm-bd/summary.json">rescue-warm-bd</a></td>
+<td>pcbench-bd-fail</td>
+<td style="text-align: right;">33</td>
+<td>ad17f21</td>
+<td style="text-align: right;">12.1%</td>
+<td style="text-align: right;">93.9%</td>
+<td style="text-align: right;">12.1%</td>
+<td style="text-align: right;">14227</td>
+<td><code>--no-gpu --rescue-warm</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="d150-padstacks">d150-padstacks<a class="headerlink" href="#d150-padstacks" title="Permanent link">&para;</a></h2>
 <p><a href="https://github.com/DingoOz/TraceMaker/tree/main/bench/records/d150-padstacks">Record and README</a></p>
 <table>

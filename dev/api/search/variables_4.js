@@ -9,7 +9,7 @@ var searchData=
   ['effort_6',['effort',['../structtmk_1_1place_1_1AnnealOptions.html#a708b9e04cc35c4d3f428067195a9653f',1,'tmk::place::AnnealOptions::effort'],['../structtmk_1_1place_1_1PlaceOptions.html#a849c232a6e6536202bc5be40fc23f295',1,'tmk::place::PlaceOptions::effort']]],
   ['elapsed_5fs_7',['elapsed_s',['../structtmk_1_1server_1_1Stats.html#adf4c68c1480f572785758a3ff15620c4',1,'tmk::server::Stats']]],
   ['embed_8',['embed',['../structtmk_1_1server_1_1ServerOptions.html#ad97b0298d301e021fb2a4828d3610aac',1,'tmk::server::ServerOptions']]],
-  ['enclosed_9',['enclosed',['../structtmk_1_1route_1_1RouteResult.html#ac66a1f23000fb46e616c02ac64ed1f1b',1,'tmk::route::RouteResult']]],
+  ['enclosed_9',['enclosed',['../structtmk_1_1analysis_1_1PinEscape.html#aba5eeaf779091076c057392918e9f3e4',1,'tmk::analysis::PinEscape::enclosed'],['../structtmk_1_1route_1_1RouteResult.html#ac66a1f23000fb46e616c02ac64ed1f1b',1,'tmk::route::RouteResult::enclosed']]],
   ['end_10',['end',['../structtmk_1_1sexpr_1_1Node.html#a817e9f5b7d00a065ad415192fa388dce',1,'tmk::sexpr::Node::end'],['../namespacetmk_1_1app_1_1tui_1_1key.html#a68f846e41a880f856c3a098952b1acc8',1,'tmk::app::tui::key::end']]],
   ['end_5fhit_11',['end_hit',['../structtmk_1_1drc_1_1Connectivity.html#a33645e8e163ce9acb8533a7b7d833dfc',1,'tmk::drc::Connectivity']]],
   ['endgame_5fcap_12',['endgame_cap',['../structtmk_1_1route_1_1RouterOptions.html#aee7edfe98c9a88908d12b609b8be20e6',1,'tmk::route::RouterOptions']]],

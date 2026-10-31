@@ -42,6 +42,7 @@ var structtmk_1_1app_1_1RouteJob =
     [ "report_out", "structtmk_1_1app_1_1RouteJob.html#a302e60e0793e3fc00a8cfe97e292e574", null ],
     [ "reroute", "structtmk_1_1app_1_1RouteJob.html#a3efd7aec4cad4c4c2d5d464d0c581288", null ],
     [ "rescue", "structtmk_1_1app_1_1RouteJob.html#a0fa678c96210cbd89a03e4358e5c0274", null ],
+    [ "rescue_mode", "structtmk_1_1app_1_1RouteJob.html#aba75b81856dcd175e7f05e4544dcbad4", null ],
     [ "return_paths", "structtmk_1_1app_1_1RouteJob.html#a9a88a27b86997dac6476e1249d7e4cb7", null ],
     [ "rules_override", "structtmk_1_1app_1_1RouteJob.html#a0638d1a7c6ff8284a9af0177de373f7d", null ],
     [ "si_rules", "structtmk_1_1app_1_1RouteJob.html#ae31339bcb8fa1593e1bae86662425e3f", null ],
@@ -64,6 +65,7 @@ var structtmk_1_1app_1_1RouteJob =
     [ "view_port", "structtmk_1_1app_1_1RouteJob.html#a8dce115ff2402be0f0a41ffbabcb8967", null ],
     [ "view_token", "structtmk_1_1app_1_1RouteJob.html#a962359ae87fddab3cadcf6f6d2e11a0f", null ],
     [ "warm_pcb", "structtmk_1_1app_1_1RouteJob.html#a0661085d614e67ca60c1522ceeab64d0", null ],
+    [ "why_open", "structtmk_1_1app_1_1RouteJob.html#a1d30914b1b2024095f91a849154939b8", null ],
     [ "widen_nets", "structtmk_1_1app_1_1RouteJob.html#a079af804d12f97a9693cff43ee37ec72", null ],
     [ "widen_power", "structtmk_1_1app_1_1RouteJob.html#a9d35bba2c5a0802a404b040864697b51", null ]
 ];

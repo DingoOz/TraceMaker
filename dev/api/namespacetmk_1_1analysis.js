@@ -1,6 +1,9 @@
 var namespacetmk_1_1analysis =
 [
     [ "detail", "namespacetmk_1_1analysis_1_1detail.html", "namespacetmk_1_1analysis_1_1detail" ],
+    [ "EscapeOptions", "structtmk_1_1analysis_1_1EscapeOptions.html", "structtmk_1_1analysis_1_1EscapeOptions" ],
+    [ "PinEscape", "structtmk_1_1analysis_1_1PinEscape.html", "structtmk_1_1analysis_1_1PinEscape" ],
+    [ "EscapeAnalyser", "classtmk_1_1analysis_1_1EscapeAnalyser.html", "classtmk_1_1analysis_1_1EscapeAnalyser" ],
     [ "FootprintIssue", "structtmk_1_1analysis_1_1FootprintIssue.html", "structtmk_1_1analysis_1_1FootprintIssue" ],
     [ "FootprintResult", "structtmk_1_1analysis_1_1FootprintResult.html", "structtmk_1_1analysis_1_1FootprintResult" ],
     [ "FootprintCheckOptions", "structtmk_1_1analysis_1_1FootprintCheckOptions.html", "structtmk_1_1analysis_1_1FootprintCheckOptions" ],
@@ -35,6 +38,7 @@ var namespacetmk_1_1analysis =
     [ "load_references", "namespacetmk_1_1analysis.html#a07e52ee730d661c170fd5753d8be4037", null ],
     [ "load_trusted_brands", "namespacetmk_1_1analysis.html#a91d9a1f2ee84fb3b9553d2de3c48823c", null ],
     [ "normalise_brand", "namespacetmk_1_1analysis.html#aa41f6ec1037cea4326cc7283f115589c", null ],
+    [ "pad_label", "namespacetmk_1_1analysis.html#a27eebeddd803ae653ae529f09ba66d86", null ],
     [ "pads_from_kicad_mod", "namespacetmk_1_1analysis.html#abf8076956efa7cc03b092208ebb50d6f", null ],
     [ "parse_trusted_brands", "namespacetmk_1_1analysis.html#a92e140db9034003810eeb8b3ef611093", null ],
     [ "return_path_json", "namespacetmk_1_1analysis.html#a157100a0591e69455987ae08b340ad9f", null ],

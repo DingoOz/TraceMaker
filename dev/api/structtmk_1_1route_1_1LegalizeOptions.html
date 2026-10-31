@@ -111,6 +111,8 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a7a97f7e8c93b54d5aae31ff19fefff88"><td class="mdescLeft">&#160;</td><td class="mdescRight">!= 0: the pairs are visited in another (seeded) order, which leaves other pinches unresolved: portfolio variants differ  <br /></td></tr>
 <tr class="memitem:ad366bbd9cee2707fcf854a1e1ee93996" id="r_ad366bbd9cee2707fcf854a1e1ee93996"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">geom::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad366bbd9cee2707fcf854a1e1ee93996">outline</a></td></tr>
 <tr class="memdesc:ad366bbd9cee2707fcf854a1e1ee93996"><td class="mdescLeft">&#160;</td><td class="mdescRight">board outline polygon (<a class="el" href="classtmk_1_1route_1_1Obstacles.html#a641a115b09690d40683a167e277f160d" title="Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise.">Obstacles::outline()</a>); empty = unbounded  <br /></td></tr>
+<tr class="memitem:a112348ff3986d88d06548438b6566e33" id="r_a112348ff3986d88d06548438b6566e33"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a112348ff3986d88d06548438b6566e33">realize_iters</a> = 20</td></tr>
+<tr class="memdesc:a112348ff3986d88d06548438b6566e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">&gt; 0: when the sweeps leave pairs too close, up to this many rounds of the realizer (doc 20 §2.3): the constraints near their limit are linearised and the smallest move that meets them all is solved for at once, within a trust region.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -185,6 +187,25 @@ Public Attributes</h2></td></tr>
 <p>board outline polygon (<a class="el" href="classtmk_1_1route_1_1Obstacles.html#a641a115b09690d40683a167e277f160d" title="Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise.">Obstacles::outline()</a>); empty = unbounded </p>
 
 <p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00035">35</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a112348ff3986d88d06548438b6566e33" name="a112348ff3986d88d06548438b6566e33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a112348ff3986d88d06548438b6566e33">&#9670;&#160;</a></span>realize_iters</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::route::LegalizeOptions::realize_iters = 20</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&gt; 0: when the sweeps leave pairs too close, up to this many rounds of the realizer (doc 20 §2.3): the constraints near their limit are linearised and the smallest move that meets them all is solved for at once, within a trust region. </p>
+<p>0 = projection only. 20 by default (D162); the experiment switch TM_LEGALIZE_REALIZE=N overrides it. </p>
+
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00039">39</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
 
 </div>
 </div>

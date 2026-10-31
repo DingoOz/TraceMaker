@@ -18,6 +18,9 @@ var annotated_dup =
           [ "Region", "classtmk_1_1analysis_1_1detail_1_1Region.html", "classtmk_1_1analysis_1_1detail_1_1Region" ],
           [ "Point", "structtmk_1_1analysis_1_1detail_1_1Point.html", "structtmk_1_1analysis_1_1detail_1_1Point" ]
         ] ],
+        [ "EscapeOptions", "structtmk_1_1analysis_1_1EscapeOptions.html", "structtmk_1_1analysis_1_1EscapeOptions" ],
+        [ "PinEscape", "structtmk_1_1analysis_1_1PinEscape.html", "structtmk_1_1analysis_1_1PinEscape" ],
+        [ "EscapeAnalyser", "classtmk_1_1analysis_1_1EscapeAnalyser.html", "classtmk_1_1analysis_1_1EscapeAnalyser" ],
         [ "FootprintIssue", "structtmk_1_1analysis_1_1FootprintIssue.html", "structtmk_1_1analysis_1_1FootprintIssue" ],
         [ "FootprintResult", "structtmk_1_1analysis_1_1FootprintResult.html", "structtmk_1_1analysis_1_1FootprintResult" ],
         [ "FootprintCheckOptions", "structtmk_1_1analysis_1_1FootprintCheckOptions.html", "structtmk_1_1analysis_1_1FootprintCheckOptions" ],

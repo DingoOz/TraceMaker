@@ -1332,6 +1332,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tracemaker-walled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker walled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tracemaker-layers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2328,7 +2339,7 @@
     
   
   
-    <span class="md-status md-status--plan"></span>
+    <span class="md-status md-status--partly-built"></span>
   
 
   
@@ -2607,6 +2618,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tracemaker-walled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracemaker walled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tracemaker-layers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2752,6 +2774,8 @@ SUBCOMMANDS:
   cuts                        Cut test of a routed board's topology: cuts between pads and vias
                               that cannot hold their wires, vias with no room in their cell
                               (doc 05 §67)
+  walled                      Pins no track can leave past the board's fixed copper on any
+                              layer, with no room for a via (doc 20 §2.4)
   layers                      Write a copy of a board with another copper layer count (inner
                               layers added, or empty ones removed; doc 05 §53)
   srj-import                  Convert a Simple Route JSON problem (tscircuit) to a KiCad board
@@ -2899,6 +2923,11 @@ OPTIONS:
           --escape-plan, --no-escape-plan{false}
                               Reserve escape corridors for the pins of dense packages (QFP,
                               BGA) before routing
+          --soft-copper-graphics
+                              Board copper graphics (polygons on a copper layer, e.g. an
+                              EasyEDA import's pours) take the net of the one net whose pads,
+                              tracks or vias they touch: that net may touch them, no other
+                              (default: net-less copper nothing may touch)
           --escape-flow       Escape plan v2: min-cost-flow channel and layer assignment for
                               deep BGA arrays (implies --escape-plan; experimental)
           --reroute           Remove every unlocked track and via first and route the whole
@@ -2925,9 +2954,19 @@ OPTIONS:
                               Pad width (mm) below which --keep-vias-off-pads applies (default
                               2)
           --no-rescue{false}  Do not route again with --relax when connections are left open
-                              (by default the rescue runs on a budget of its own, --time and
-                              --work again, and its result is kept only if it is better; doc 05
-                              §68)
+                              (by default the rescue runs, each pass on a budget of its own,
+                              --time and --work again, and a result is kept only if it is
+                              better; doc 05 §68, §71)
+          --no-why-open{false}
+                              Do not check the pins of open connections for a way out (by
+                              default each is flood-filled against the board's fixed copper,
+                              and a pin walled in on every layer with no room for a via is
+                              reported as unconnectable as placed; doc 20 §2.4)
+          --rescue-mode TEXT:{warm,fresh,both}
+                              How the rescue routes again with relax: warm (from the plain
+                              run's routes), fresh (from nothing) or both (warm, then fresh
+                              while connections are open; each pass on its own budget, kept
+                              only if better; default both; doc 05 §71)
           --no-neck-nets TEXT ...
                               Comma-separated nets that are never narrowed below their class
                               width nor given the small neck-down via (power nets of a
@@ -3419,6 +3458,26 @@ OPTIONS:
                               Judge against this clearance (mm) instead of the board's
           --max-gap FLOAT:POSITIVE
                               Check cuts up to this gap (mm, default 2)
+</code></pre></div>
+<h3 id="tracemaker-walled"><code>tracemaker walled</code><a class="headerlink" href="#tracemaker-walled" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Pins no track can leave past the board's fixed copper on any layer, with no room
+for a via (doc 20 §2.4)
+
+
+tracemaker walled [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    A board
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --pin TEXT ...      Only these pins (REF.NUM; repeatable); by default every pad of a
+                              net with more than one pad
+          --json TEXT         Write the walled-in pins as JSON
+          --soft-zones        Zone fills of other nets, and net-less copper graphics on the
+                              pin, are no walls (route --soft-zones, --soft-copper-graphics)
+          --via-in-pad        A via may sit in the pin's own pad (route --via-in-pad)
 </code></pre></div>
 <h3 id="tracemaker-layers"><code>tracemaker layers</code><a class="headerlink" href="#tracemaker-layers" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>Write a copy of a board with another copper layer count (inner layers added, or
