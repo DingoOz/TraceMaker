@@ -1130,7 +1130,7 @@ static int run_main(int argc, char** argv) {
   bool r_reroute = false;
   route->add_flag("--reroute", r_reroute, "Remove every unlocked track and via first and route the whole board again");
   route->add_flag("--fine-variant,!--no-fine-variant", ropt.fine_variant, "Portfolio: one variant routes small boards at half the lattice pitch (default on)")->group("");
-  route->add_flag("--halving", ropt.halving, "With more --variants than --threads: successive halving over all the variants instead of running only the first ones");
+  route->add_flag("--halving", ropt.halving, "With more --variants than --threads: successive halving over all the variants instead of running only the first ones; not with --relax, rounds or a warm start (including the relax rescue), which then run all the variants");
   route->add_flag("--cut-report", ropt.cut_report, "Report straight lines across the board that more nets must cross than tracks fit (proof that the placement cannot be routed)");
   route->add_flag("--escape-report", ropt.escape_report, "Report the pins of deep BGA arrays per ring and how many were connected");
   route->add_flag("!--fast-bends", ropt.bend_states, "Approximate bend costs (1 state per lattice point instead of 9)");
