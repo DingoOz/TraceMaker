@@ -150,6 +150,16 @@ On srj20 the thin sketch fails only where a cell has no room for its via. While 
 
 - **Cost:** research. Measure on srj20's six stuck boards first.
 
+**First measurement (2026-10-31).** The simplest form of thin geometry, thick accounting: in the relaxed stages a new via keeps the
+board's clearance to fixed copper (pads, the board's own copper), and the lowered one to routed tracks, which legalising can still
+move (`--ramp-vias-fixed`, `RuleEngine` untouched: `route/obstacles.cpp` adds `DesignRules::via_fixed_clearance_extra` to via
+checks against items with no owner). srj20's six stuck boards under `--relax` (realizer on): 425 against 411 routed (+14, 5 better,
+0 worse), same CPU; sample104 63 → 70, sample072 70 → 74. `--ramp-vias-real` (vias real to everything) had cost the thin stage too
+much (D159). On the 33 failing PCBench boards under `--relax` (100 M work in rounds of 20 M, no rescue) it loses: 15,937 against
+15,940 routed (1 better, 10 worse), 3 clean against 5 (serial_gw, ardfpga and 58r-mxalps lose their last connections; Teensy_test_layout
+becomes clean), CPU +2 % (`bench/records/complete-routing/runs/vfix-bd.md`). Why has not been measured; a guess is that
+where pads are not what limits a via, full clearance to them only takes room the relaxed stage needs. `--ramp-vias-fixed` stays a
+hidden option for ball grids and is not a default; a per-cell via-room cost (the idea above) is still open.
 
 ### 2.7 A finer lattice (asked 2026-10-30)
 
@@ -185,4 +195,5 @@ Each step:
 | §2.3 realizer (SQP after the sweeps), on by default | 2026-10-30 | poncho 71 → 7 pairs; `--relax` on the 33 boards +15 (5 better, 0 worse), srj20 six +7 (4 / 0) | D162 |
 | §2.4 why open: escape proof | 2026-10-30 | 0 false alarms on 41,810 pins of 405 clean boards; on the 33 boards 0 of 1,341 open pins walled in by the placement, 14 by E3's pours (fix named), 8 by class width | D161 |
 | §2.5 more rungs | 2026-10-30 | not run by default: swaps and placement gave nothing on these boards; the run's "next:" lines offer them by cause | D161 |
+| §2.6 vias keep fixed clearance in relaxed stages | 2026-10-31 | srj20 six +14 (5 better, 0 worse); 33 boards −3 (1 better, 10 worse), 3 clean against 5. Not adopted; hidden `--ramp-vias-fixed` | |
 | §2.7 finer lattice | 2026-10-30 | 0.67 and 0.5 of the automatic pitch: −11 and −10 of 2,262 on 11 tier B boards, CPU +34 % and +117 %. Not adopted | |

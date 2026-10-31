@@ -122,6 +122,9 @@ struct DesignRules {
   // clearance ramp lower all clearances; with this set back to the difference, vias keep the board's own clearance while
   // tracks route thin (doc 05 §67: a thin sketch's tracks thicken, its vias parked in cells too small for them do not).
   Coord via_clearance_extra = 0;
+  // Router only: added to the clearance between a new via and fixed copper (the board's pads, holes' copper, tracks, vias, zones), not
+  // routed copper. A relaxed stage's vias then keep the board's clearance to what legalising cannot move (doc 20 §2.6).
+  Coord via_fixed_clearance_extra = 0;
   std::vector<std::string> warnings;        // anything that could not be interpreted
 
   const NetClass& default_class() const { return classes.front(); }

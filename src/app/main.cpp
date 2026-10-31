@@ -1061,6 +1061,7 @@ static int run_main(int argc, char** argv) {
   route->add_option("--ramp-from", ropt.ramp_from_mm, "Portfolio: clearance continuation, start at this clearance (mm) and raise it stage by stage to the board's, warm-starting each stage")->group("");
   route->add_option("--ramp-step", ropt.ramp_step_mm, "Clearance added per ramp stage (mm)")->group("");
   route->add_option("--ramp-cycle", ropt.ramp_cycle, "Ramp: after --ramp-stall rounds without gain under the board's rules, go back this many stages and climb again")->group("");
+  route->add_flag("--ramp-vias-fixed", ropt.ramp_via_fixed, "Ramp/relax: a new via keeps the board's clearance to fixed copper (pads, the board's own copper); to routed tracks the lowered one (doc 20 §2.6)")->group("");
   route->add_flag("--ramp-vias-real", ropt.ramp_via_real, "Ramp/relax: lowered clearances apply to tracks only; vias keep the board's clearance to everything")->group("");
   route->add_flag("--ramp-late", ropt.ramp_late, "Ramp: begin under the board's rules and climb from the ramp only after --ramp-stall rounds without gain (with --ramp-cycle)")->group("");
   route->add_option("--ramp-fresh", ropt.ramp_fresh, "Ramp: every n-th breathing cycle starts afresh from the loosest stage instead of from the best state")->group("");

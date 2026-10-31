@@ -142,6 +142,7 @@ struct RouterOptions {
   int ramp_rounds = 2;          // a ramp stage ends after this many rounds in a row without gain over the best round of the stage (or when complete)
   int ramp_cycle = 0;           // > 0: when the final stage (the board's rules) has not improved for ramp_stall rounds, go back this many stages and climb again ("breathing"); the best result under the board's rules is returned
   bool ramp_late = false;       // start at the board's rules and use the ramp (with ramp_cycle) only once those stall
+  bool ramp_via_fixed = false;  // relaxed stages: a new via keeps the board's clearance to fixed copper only (doc 20 §2.6)
   bool ramp_via_real = false;   // relaxed stages lower the clearance of tracks only: anything against a via keeps the board's clearance (doc 05 §67)
   int ramp_fresh = 0;           // > 0: every n-th breathing cycle starts from nothing instead of the best state (a new topology; the best result under the board's rules is kept)
   int ramp_stall = 3;           // rounds without improvement at the final stage before breathing
