@@ -14,5 +14,6 @@ var structtmk_1_1model_1_1DesignRules =
     [ "tuning_profiles", "structtmk_1_1model_1_1DesignRules.html#a6dbe699f3c8581f108e4aae5d6cdeef2", null ],
     [ "use_height_for_length", "structtmk_1_1model_1_1DesignRules.html#a030271b817f79539d0cafa3f913416a5", null ],
     [ "via_clearance_extra", "structtmk_1_1model_1_1DesignRules.html#a8e280811052450b91d4cc6beb34d4017", null ],
+    [ "via_fixed_clearance_extra", "structtmk_1_1model_1_1DesignRules.html#ae0cec77e1e480fbcb9b6319a4e1156e1", null ],
     [ "warnings", "structtmk_1_1model_1_1DesignRules.html#a59f26a9a4b67bda8b40e03c0698bfb22", null ]
 ];

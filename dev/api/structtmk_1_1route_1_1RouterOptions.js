@@ -120,6 +120,7 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "ramp_rounds", "structtmk_1_1route_1_1RouterOptions.html#ad26d0750c1ddd275a53b1ca22b49d257", null ],
     [ "ramp_stall", "structtmk_1_1route_1_1RouterOptions.html#aba7691ce7910a6fe44be2ad0f12816de", null ],
     [ "ramp_step_mm", "structtmk_1_1route_1_1RouterOptions.html#a386d80d84a1515299dee8953195a97f9", null ],
+    [ "ramp_via_fixed", "structtmk_1_1route_1_1RouterOptions.html#a30ffc613fb792cf3bcdf4dda87ebd9c1", null ],
     [ "ramp_via_real", "structtmk_1_1route_1_1RouterOptions.html#a2ceb1ea7234a655233e76537fae34a26", null ],
     [ "reach_after", "structtmk_1_1route_1_1RouterOptions.html#ac98f56d047cd1bd6d635f7d4936593df", null ],
     [ "reach_after_cap", "structtmk_1_1route_1_1RouterOptions.html#a75abacbd57bf0b2d1991c42f76bccbe7", null ],

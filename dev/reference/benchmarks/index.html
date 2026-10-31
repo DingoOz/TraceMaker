@@ -2742,6 +2742,17 @@ comparable (judge version, time limit, machine load).</p>
 <td><code>--variants 1</code></td>
 </tr>
 <tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/base-bd-relax2/summary.json">base-bd-relax2</a></td>
+<td>pcbench-bd-fail</td>
+<td style="text-align: right;">33</td>
+<td>40f2939</td>
+<td style="text-align: right;">15.2%</td>
+<td style="text-align: right;">91.7%</td>
+<td style="text-align: right;">12.1%</td>
+<td style="text-align: right;">10037</td>
+<td><code>--no-gpu --relax --round-work 20000000 --rounds 5 --no-rescue</code></td>
+</tr>
+<tr>
 <td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/late-bd/summary.json">late-bd</a></td>
 <td>pcbench-bd-fail</td>
 <td style="text-align: right;">33</td>
@@ -2795,6 +2806,28 @@ comparable (judge version, time limit, machine load).</p>
 <td style="text-align: right;">12.1%</td>
 <td style="text-align: right;">14227</td>
 <td><code>--no-gpu --rescue-warm</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/vfix-bd-relax2/summary.json">vfix-bd-relax2</a></td>
+<td>pcbench-bd-fail</td>
+<td style="text-align: right;">33</td>
+<td>40f2939</td>
+<td style="text-align: right;">9.1%</td>
+<td style="text-align: right;">91.6%</td>
+<td style="text-align: right;">12.1%</td>
+<td style="text-align: right;">10302</td>
+<td><code>--no-gpu --relax --round-work 20000000 --rounds 5 --no-rescue --ramp-vias-fixed</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/vfix-srj6-relax/summary.json">vfix-srj6-relax</a></td>
+<td>srj20-stuck6</td>
+<td style="text-align: right;">6</td>
+<td>40f2939</td>
+<td style="text-align: right;">0.0%</td>
+<td style="text-align: right;">93.9%</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">1517</td>
+<td><code>--no-gpu --relax --variants 8 --round-work 20000000 --rounds 5 --no-rescue --ramp-vias-fixed</code></td>
 </tr>
 </tbody>
 </table>

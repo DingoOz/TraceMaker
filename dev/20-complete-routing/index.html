@@ -2628,6 +2628,16 @@ congestion.</p>
 <ul>
 <li><strong>Cost:</strong> research. Measure on srj20's six stuck boards first.</li>
 </ul>
+<p><strong>First measurement (2026-10-31).</strong> The simplest form of thin geometry, thick accounting: in the relaxed stages a new via keeps the
+board's clearance to fixed copper (pads, the board's own copper), and the lowered one to routed tracks, which legalising can still
+move (<code>--ramp-vias-fixed</code>, <code>RuleEngine</code> untouched: <code>route/obstacles.cpp</code> adds <code>DesignRules::via_fixed_clearance_extra</code> to via
+checks against items with no owner). srj20's six stuck boards under <code>--relax</code> (realizer on): 425 against 411 routed (+14, 5 better,
+0 worse), same CPU; sample104 63 → 70, sample072 70 → 74. <code>--ramp-vias-real</code> (vias real to everything) had cost the thin stage too
+much (D159). On the 33 failing PCBench boards under <code>--relax</code> (100 M work in rounds of 20 M, no rescue) it loses: 15,937 against
+15,940 routed (1 better, 10 worse), 3 clean against 5 (serial_gw, ardfpga and 58r-mxalps lose their last connections; Teensy_test_layout
+becomes clean), CPU +2 % (<code>bench/records/complete-routing/runs/vfix-bd.md</code>). Why has not been measured; a guess is that
+where pads are not what limits a via, full clearance to them only takes room the relaxed stage needs. <code>--ramp-vias-fixed</code> stays a
+hidden option for ball grids and is not a default; a per-cell via-room cost (the idea above) is still open.</p>
 <h3 id="27-a-finer-lattice-asked-2026-10-30">2.7 A finer lattice (asked 2026-10-30)<a class="headerlink" href="#27-a-finer-lattice-asked-2026-10-30" title="Permanent link">&para;</a></h3>
 <p>Is the lattice's granularity hurting completion? Coordinates are int64 nanometres, so the number type is no limit. The search lattice
 is: (width + clearance) / 6, 25-100 µm (doc 05 §25). <code>route --pitch-scale X</code> (hidden) scales it on every board and variant. On the
@@ -2700,6 +2710,12 @@ automatic pitch stays; the room it wastes is recovered off-lattice (relax and th
 <td>2026-10-30</td>
 <td>not run by default: swaps and placement gave nothing on these boards; the run's "next:" lines offer them by cause</td>
 <td>D161</td>
+</tr>
+<tr>
+<td>§2.6 vias keep fixed clearance in relaxed stages</td>
+<td>2026-10-31</td>
+<td>srj20 six +14 (5 better, 0 worse); 33 boards −3 (1 better, 10 worse), 3 clean against 5. Not adopted; hidden <code>--ramp-vias-fixed</code></td>
+<td></td>
 </tr>
 <tr>
 <td>§2.7 finer lattice</td>
