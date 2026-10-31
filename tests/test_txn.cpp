@@ -470,3 +470,26 @@ TEST_CASE("relax late: plain rounds first, stages afresh when they stall; legal 
   CHECK(one.best.routed > 0);
   CHECK(errors(l.board, l.rules, one.best) == 0);
 }
+
+// Issue #63: halving restarts every rung from nothing, so with rounds it used to return before them and drop --relax without a word.
+// Rounds now win: halving plus relax is relax over all the variants.
+TEST_CASE("halving gives way to relax: the same copper as relax alone", "[route][txn]") {
+  const auto l = load_problem();
+  route::RouterOptions o = options();
+  o.relax = true;
+  o.round_work = 60000;
+  o.rounds = 4;
+  o.ramp_rounds = 1;
+  const auto relax = route::route_portfolio(l.board, l.rules, o, 4, {}, 2);
+  o.halving = true;
+  const auto both = route::route_portfolio(l.board, l.rules, o, 4, {}, 2);
+  CHECK(both.indices == relax.indices);
+  CHECK(both.routed == relax.routed);
+  REQUIRE(both.best.tracks.size() == relax.best.tracks.size());
+  for (std::size_t i = 0; i < both.best.tracks.size(); ++i) {
+    CHECK(both.best.tracks[i].a == relax.best.tracks[i].a);
+    CHECK(both.best.tracks[i].b == relax.best.tracks[i].b);
+  }
+  CHECK(both.best.vias.size() == relax.best.vias.size());
+  CHECK(errors(l.board, l.rules, both.best) == 0);
+}

@@ -7397,7 +7397,18 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     for (const auto& t : r.tracks) l += std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
     return l;
   };
-  if (base.halving && threads >= 1 && static_cast<int>(vs.size()) > threads) {
+  // Halving restarts its variants from nothing at every rung (doc 05 §22), so it cannot run the options that continue from earlier
+  // routes: rounds asked for (--relax, --rounds, --round-work, the ramp, islands) and a warm start (--state-in, the relax rescue's plain
+  // routes). It returned before they were set up and dropped them without a word (issue #63); with any of them the rounds run over all
+  // the variants instead, and halving is off.
+  const bool rounds_asked = base.rounds > 1 || base.round_work > 0 || base.ramp_from_mm > 0 || base.island_slack >= 0 ||
+                            !base.state_in.empty() || (base.start_routes && !base.start_routes->empty());
+  const bool halve = base.halving && threads >= 1 && static_cast<int>(vs.size()) > threads;
+  if (halve && rounds_asked)
+    live::eprintf("--halving does not apply with %s: all %zu variants run on %d thread%s\n",
+                  base.relax ? "relax" : !base.state_in.empty() || base.start_routes ? "a warm start" : "rounds", vs.size(), threads,
+                  threads == 1 ? "" : "s");
+  if (halve && !rounds_asked) {
     // Rung sizes n, n/2, ... down to `threads`.
     std::vector<std::size_t> sizes{vs.size()};
     while (sizes.back() > static_cast<std::size_t>(threads)) sizes.push_back(std::max(static_cast<std::size_t>(threads), sizes.back() / 2));

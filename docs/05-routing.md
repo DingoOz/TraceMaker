@@ -602,6 +602,13 @@ eight variants does not make up for that. With eight or more threads there is no
 resumable runs to pay; kept off (D59). The knowledge base's variant choice (doc 06 T3) remains the way fewer
 threads pick their variants.
 
+Halving does not combine with the options that continue from earlier routes, since every rung starts from nothing: rounds
+(`--relax`, `--rounds`, `--round-work`, `--ramp-from`, `--island-slack`) and a warm start (`--state-in`, the relax rescue's
+warm pass, §71). With any of them all the variants run the rounds and halving is off, and stderr says so (D166). Before,
+halving returned before the rounds were set up, so `--relax` was ignored without a word (issue #63). So was the rescue, which ran
+as a second plain halving run. The portfolio's own four rounds on breakout boards are a default, not an option asked for, and
+halving still replaces them.
+
 ## 23. Escape planning: what is left of M9 (2026-10-06)
 
 Two items of §12 and §14 stay unbuilt, and M9's gate is not met.
