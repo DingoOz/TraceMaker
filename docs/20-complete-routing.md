@@ -150,6 +150,15 @@ On srj20 the thin sketch fails only where a cell has no room for its via. While 
 
 - **Cost:** research. Measure on srj20's six stuck boards first.
 
+
+### 2.7 A finer lattice (asked 2026-10-30)
+
+Is the lattice's granularity hurting completion? Coordinates are int64 nanometres, so the number type is no limit. The search lattice
+is: (width + clearance) / 6, 25-100 µm (doc 05 §25). `route --pitch-scale X` (hidden) scales it on every board and variant. On the
+11 failing tier B boards at 20 M work: 2,051 routed at the automatic pitch, 2,040 at 0.67 and 2,041 at 0.5 (2 better, 5 worse each),
+at 34 % and 117 % more CPU (`bench/records/complete-routing/pitch`). A finer lattice spends the budget on more steps per path. The
+automatic pitch stays; the room it wastes is recovered off-lattice (relax and the legaliser).
+
 ## 3. Order
 
 1. **§2.1 relax-late:** cheap, and it answers a question left open.
@@ -176,3 +185,4 @@ Each step:
 | §2.3 realizer (SQP after the sweeps), on by default | 2026-10-30 | poncho 71 → 7 pairs; `--relax` on the 33 boards +15 (5 better, 0 worse), srj20 six +7 (4 / 0) | D162 |
 | §2.4 why open: escape proof | 2026-10-30 | 0 false alarms on 41,810 pins of 405 clean boards; on the 33 boards 0 of 1,341 open pins walled in by the placement, 14 by E3's pours (fix named), 8 by class width | D161 |
 | §2.5 more rungs | 2026-10-30 | not run by default: swaps and placement gave nothing on these boards; the run's "next:" lines offer them by cause | D161 |
+| §2.7 finer lattice | 2026-10-30 | 0.67 and 0.5 of the automatic pitch: −11 and −10 of 2,262 on 11 tier B boards, CPU +34 % and +117 %. Not adopted | |

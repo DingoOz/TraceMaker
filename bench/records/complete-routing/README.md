@@ -42,6 +42,11 @@ On by default now (D162).
 See `escape/README.md`: no false alarm on 41,810 pins of 405 clean boards. On the 33 boards none of the 1,341 open pins is walled
 in by the placement (D161).
 
+## A finer lattice (`pitch/`)
+
+See `pitch/README.md`: 0.67 and 0.5 of the automatic pitch route 11 and 10 fewer of 2,262 connections on the 11 failing tier B boards,
+at 34 % and 117 % more CPU. Not adopted (doc 20 §2.7).
+
 ## The defaults together: quick tier (`quick/`)
 
 See `quick/README.md`.

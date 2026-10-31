@@ -14,6 +14,9 @@ comparable (judge version, time limit, machine load).
 
 | Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
 |---|---|--:|---|--:|--:|--:|--:|---|
+| [pitch-b-0.5](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/pitch/pitch-b-0.5/summary.json) | pcbench-b-fail | 11 | 40f2939 | 0.0% | 89.5% | 9.1% | 753 | `--no-gpu --no-rescue --pitch-scale 0.5` |
+| [pitch-b-0.67](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/pitch/pitch-b-0.67/summary.json) | pcbench-b-fail | 11 | 40f2939 | 0.0% | 88.6% | 9.1% | 468 | `--no-gpu --no-rescue --pitch-scale 0.67` |
+| [pitch-b-1.0](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/pitch/pitch-b-1.0/summary.json) | pcbench-b-fail | 11 | d927bfc | 0.0% | 89.8% | 9.1% | 313 | `--no-gpu --no-rescue --pitch-scale 1.0` |
 | [cr-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/quick/cr-quick/summary.json) | quick | 30 | d927bfc | 53.3% | 93.9% | 100.0% | 66 | `--variants 1` |
 | [cr-quick2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/quick/cr-quick2/summary.json) | quick | 30 | d927bfc | 53.3% | 93.9% | 100.0% | 67 | `--variants 1` |
 | [late-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/complete-routing/runs/late-bd/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 9.1% | 92.5% | 12.1% | 11104 | `--no-gpu --relax --relax-late --round-work 20000000 --rounds 5` |
