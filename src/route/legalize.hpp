@@ -33,6 +33,10 @@ struct LegalizeOptions {
   double subdivide_mm = 0;
   std::uint64_t seed = 0;    // != 0: the pairs are visited in another (seeded) order, which leaves other pinches unresolved: portfolio variants differ
   std::vector<geom::Point> outline;  // board outline polygon (Obstacles::outline()); empty = unbounded
+  // > 0: when the sweeps leave pairs too close, up to this many rounds of the realizer (doc 20 §2.3): the constraints near their limit are
+  // linearised and the smallest move that meets them all is solved for at once, within a trust region. 0 = projection only. 20 by
+  // default (D162); the experiment switch TM_LEGALIZE_REALIZE=N overrides it.
+  int realize_iters = 20;
 };
 
 struct LegalizeResult {
@@ -42,6 +46,8 @@ struct LegalizeResult {
   int pairs_after = 0;
   double max_move_mm = 0;
   int sweeps_used = 0;
+  int pairs_projected = -1;    // with the realizer: the pairs the sweeps left (pairs_after is after the realizer); -1 = it did not run
+  int realize_iters_used = 0;
 };
 
 // Moves the vertices of `routes` (tracks and vias of the connections) so that the clearances of `rules` hold between nets, to

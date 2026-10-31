@@ -1,0 +1,34 @@
+board	open_connections	pins	walled_in	class_only	soft_only	congested	walled_and_soft_texts
+Hardware_Playground_serial_gw_ATMEGA328P	0	0	0	0	0	0	
+EtherCAT_shield_v1_EtherCAT_shield_v1	25	46	0	0	0	46	
+fifogfx_c64cart	40	79	0	0	0	79	
+Hardware_Playground_E3_Pcb_rev0.3	16	21	0	0	14	7	Q2.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; Q1.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; U6.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; U6.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; U7.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; U7.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; F1.1 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; F1.1 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; F1.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; F1.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; P2.1 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; P4.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; P1.1 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.; D3.2 is walled in only by net-less copper graphics that cover the pin (a designer's pour): --soft-copper-graphics gives such graphics the net of the pads they touch.
+MicroMaple_MicroMaple	8	15	0	0	0	15	
+memsarray_mems_modules	1	2	0	0	0	2	
+kitspace_OtterPill	9	18	0	1	0	17	
+kitspace_ardfpga	0	0	0	0	0	0	
+kitspace_teensy-fx	0	0	0	0	0	0	
+kitspace_test-jig	32	91	0	0	0	91	
+Hardware_Playground_multisensor_cr2032	0	0	0	0	0	0	
+poncho_fpga_fpga-dongle	28	54	0	0	0	54	
+DronPi_dronPi	11	17	0	1	0	16	
+ErgodoneWithHole_ErgoDone	2	4	0	0	0	4	
+Hardware_Playground_sd_wav_pcm5100	2	4	0	0	0	4	
+96boards-robomezzi_96boards-robomezzi	2	4	0	0	0	4	
+mechkeys_58r-mxalps	0	0	0	0	0	0	
+PCIE-to-MXM-Adapter_PCIEx1toMXM3.0	30	44	0	0	0	44	
+kitspace_d20_tri_r0.3	135	229	0	0	0	229	
+motor-high-current-sensors_CurrentSensorPCB_line	11	18	0	0	0	18	
+zx-sizif-512-ext_sizif512ext	45	82	0	5	0	77	
+rvi_v2x_hardware_V2X	12	23	0	0	0	23	
+P8000_WDC_Emulator_P8000_WDC_Emulator	22	40	0	0	0	40	
+Aleste-520EX_aleste	179	325	0	0	0	325	
+LeeChee_1800	0	0	0	0	0	0	
+KiCad-Library_Teensy_test_layout	11	21	0	1	0	20	
+MonApollo_analog-board	37	69	0	0	0	69	
+CoreOne-xCORE200-Original_CoreOne	3	6	0	0	0	6	
+TCKB_Kicad_TCKB	22	43	0	0	0	43	
+dorkyboard_keyboard	3	11	0	0	0	11	
+mechkeys_LFK78	33	60	0	0	0	60	
+front-end-modules_LimeSDR_Sony	1	2	0	0	0	2	
+mini_mass_prog_bench_prog_rig	7	13	0	0	0	13	

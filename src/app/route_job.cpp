@@ -21,6 +21,7 @@
 #include <thread>
 
 #include "advice/advice.hpp"
+#include "analysis/escape_proof.hpp"
 #include "analysis/return_path.hpp"
 #include "advice/advisor.hpp"
 #include "advice/stuck_report.hpp"
@@ -817,48 +818,70 @@ RouteJobResult run_route_job(RouteJob job) {
               best_index >= route::kAdvisedIndex ? " (an advised variant won)" : ""));
     }
   }
-  // The relax rescue (doc 05 §68, D160): a board the plain run leaves with open connections is routed again from nothing with relax,
-  // route, legalise (§41.3) on a budget of its own: --time again and, with --work, rounds of at most 20 M work that add up to --work.
-  // Its result is kept only if it is better, so no board ends worse than the plain run; a complete board never gets here.
+  // The relax rescue (doc 05 §68, D160; §71, D163): a board the plain run leaves with open connections is routed again with relax,
+  // route, legalise (§41.3) on a budget of its own per pass: --time again and, with --work, rounds of at most 20 M work that add up to
+  // --work. By default two passes: relax started from the plain run's routes (warm), then, if connections are still open, from
+  // nothing (fresh). A pass's result is kept only if it is better than the best so far, so no board ends worse than the plain run; a
+  // complete board never gets here.
   const std::vector<int> plain_ran = ran;  // the knowledge base learns which plain variants win, not the rescue's
   bool best_from_rescue = false;
   nlohmann::json rescue_summary;
   if (job.rescue && !opt.relax && res.routed < res.connections) {
-    route::RouterOptions o2 = opt;
-    o2.relax = true;
-    o2.relax_late = false;
-    o2.sink = nullptr;
-    o2.rounds = 0, o2.round_work = 0;  // relax's own: rounds of 20 M until complete or --time
-    if (opt.work_budget > 0) {
-      constexpr long kRescueRound = 20'000'000;
-      const long rounds = std::max(1L, (opt.work_budget + kRescueRound - 1) / kRescueRound);
-      o2.rounds = static_cast<int>(rounds);
-      o2.round_work = std::max(1L, opt.work_budget / rounds);
+    const int routed_before = res.routed;
+    const std::vector<route::ConnRoute> plain_routes = res.conn_routes;
+    std::vector<bool> passes;  // true: warm
+    if (job.rescue_mode != "fresh") passes.push_back(true);
+    if (job.rescue_mode != "warm") passes.push_back(false);
+    nlohmann::json pass_rows = nlohmann::json::array();
+    double rescue_s = 0;
+    int last_routed = res.routed;
+    for (const bool warm : passes) {
+      if (res.routed >= res.connections) break;
+      route::RouterOptions o2 = opt;
+      o2.relax = true;
+      o2.relax_late = false;
+      o2.sink = nullptr;
+      o2.rounds = 0, o2.round_work = 0;  // relax's own: rounds of 20 M until complete or --time
+      if (warm) o2.start_routes = &plain_routes;
+      if (opt.work_budget > 0) {
+        constexpr long kRescueRound = 20'000'000;
+        const long rounds = std::max(1L, (opt.work_budget + kRescueRound - 1) / kRescueRound);
+        o2.rounds = static_cast<int>(rounds);
+        o2.round_work = std::max(1L, opt.work_budget / rounds);
+      }
+      const char* mode = warm ? "warm" : "fresh";
+      if (opt.sink) opt.sink->publish(server::stage("rescue", "begin", fmt("%s: %d connections open", mode, res.connections - res.routed)));
+      log(fmt("rescue (%s): %d of %d connections are open; routing again with relax (%s%s)", mode, res.connections - res.routed, res.connections,
+              warm ? "from the plain routes, " : "from nothing, ",
+              opt.work_budget > 0 ? fmt("%d round%s of %ld work", o2.rounds, o2.rounds == 1 ? "" : "s", o2.round_work).c_str() : fmt("up to %.0f s", opt.time_limit_s).c_str()));
+      route_t0 = std::chrono::steady_clock::now();
+      if (warm || passes.size() == 1) live::field("first pass", fmt("%d of %d routed", routed_before, res.connections));
+      live_stage = fmt("rescue (%s): ", mode);
+      Run next = run_once(o2, 0, false);
+      const double pass_s = std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();  // a relax result's own clock is its last round's
+      rescue_s += pass_s;
+      for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += next.work.phase[static_cast<std::size_t>(p)];
+      const bool better = route::route_result_better(next.res, res);
+      log(fmt("rescue (%s): %d -> %d routed%s", mode, res.routed, next.res.routed, better ? " (the relax result is kept)" : " (no gain: the result before stands)"));
+      pass_rows.push_back({{"mode", mode}, {"routed", next.res.routed}, {"adopted", better}, {"seconds", pass_s}});
+      last_routed = next.res.routed;
+      for (auto& row : next.rows) {
+        row["stage"] = "rescue";
+        row["rescue_mode"] = mode;
+        variant_rows.push_back(std::move(row));
+      }
+      if (better) {
+        best_from_rescue = true;
+        res = std::move(next.res);
+        ran = std::move(next.ran);
+        best_index = next.best_index;
+        best_name = std::string("rescue (") + mode + "): " + next.best_name;
+      }
+      if (opt.sink) opt.sink->publish(server::stage("rescue", "end", fmt("%s: %d routed%s", mode, res.routed, better ? ", kept" : ", not kept")));
     }
-    if (opt.sink) opt.sink->publish(server::stage("rescue", "begin", fmt("%d connections open", res.connections - res.routed)));
-    log(fmt("rescue: %d of %d connections are open; routing again with relax (%s)", res.connections - res.routed, res.connections,
-            opt.work_budget > 0 ? fmt("%d round%s of %ld work", o2.rounds, o2.rounds == 1 ? "" : "s", o2.round_work).c_str() : fmt("up to %.0f s", opt.time_limit_s).c_str()));
-    route_t0 = std::chrono::steady_clock::now();
-    live::field("first pass", fmt("%d of %d routed", res.routed, res.connections));
-    live_stage = "rescue: ";
-    Run next = run_once(o2, 0, false);
-    const double rescue_s = std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();  // a relax result's own clock is its last round's
-    for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += next.work.phase[static_cast<std::size_t>(p)];
-    best_from_rescue = route::route_result_better(next.res, res);
-    rescue_summary = {{"routed_before", res.routed}, {"routed_after", next.res.routed}, {"connections", res.connections}, {"adopted", best_from_rescue},
-                      {"seconds", rescue_s}, {"rounds", o2.rounds}, {"round_work", o2.round_work}};
-    log(fmt("rescue: %d -> %d routed%s", res.routed, next.res.routed, best_from_rescue ? " (the relax result is kept)" : " (no gain: the plain result stands)"));
-    for (auto& row : next.rows) {
-      row["stage"] = "rescue";
-      variant_rows.push_back(std::move(row));
-    }
-    if (best_from_rescue) {
-      res = std::move(next.res);
-      ran = std::move(next.ran);
-      best_index = next.best_index;
-      best_name = "rescue: " + next.best_name;
-    }
-    if (opt.sink) opt.sink->publish(server::stage("rescue", "end", fmt("%d routed%s", res.routed, best_from_rescue ? ", kept" : ", not kept")));
+    // routed_after: the last pass's own count (kept or not), as D160 reported it; `routed` of the summary is what stands.
+    rescue_summary = {{"routed_before", routed_before}, {"routed_after", last_routed}, {"connections", res.connections}, {"adopted", best_from_rescue},
+                      {"seconds", rescue_s}, {"mode", job.rescue_mode}, {"passes", pass_rows}};
   }
   // The advisor (doc 17 §5): consulted only when connections are left. It gets the stuck report, answers with an advice file,
   // and the board is routed again with it; the better result of the two stands. A missing, slow or nonsensical advisor is a
@@ -1514,8 +1537,79 @@ RouteJobResult run_route_job(RouteJob job) {
   log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s (best variant %.2f s)", res.routed,
           res.connections, res.tracks.size(), res.vias.size(), nm_to_mm(res.pitch), res.expansions, job_seconds, res.seconds));
   for (const auto& f : res.failures) log("  unrouted: " + f);
-  live::field("stage", "summary and reports");
   live::field("result", fmt("%d of %d routed, %zu tracks, %zu vias", res.routed, res.connections, res.tracks.size(), res.vias.size()));
+  // Why each open connection is open (doc 20 §2.4): a pin that the board's fixed copper walls in, on every layer and with no via
+  // beside it, cannot be connected by any router as placed. The proof is a flood fill of the space a track of the net's width
+  // has (route/../analysis/escape_proof.hpp); a pin that is not walled in is open through congestion.
+  nlohmann::json why_open;
+  if (job.why_open && res.routed < res.connections) {
+    live::field("stage", "why open: proving the open pins");
+    const auto t_why = std::chrono::steady_clock::now();
+    analysis::EscapeOptions eo;
+    eo.soft = opt.soft_zones;
+    eo.via_in_pad = opt.via_in_pad;
+    const analysis::EscapeAnalyser ea(lb.board, rules, eo);
+    std::vector<int> pads;
+    for (const auto& u : res.unrouted)
+      for (const int p : {u.pad_a, u.pad_b})
+        if (p >= 0) pads.push_back(p);
+    std::sort(pads.begin(), pads.end());
+    pads.erase(std::unique(pads.begin(), pads.end()), pads.end());
+    if (pads.size() > 400) pads.resize(400);
+    nlohmann::json proved = nlohmann::json::array();
+    int congested = 0, neck = 0, vip = 0, soft_only = 0;
+    bool want_soft_zones = false, want_soft_graphics = false;
+    for (const int p : pads) {
+      const auto e = ea.run(p);
+      if (!e.analysed) continue;
+      if (e.soft_only) {
+        ++soft_only;
+        want_soft_zones |= e.text.find("--soft-zones") != std::string::npos;
+        want_soft_graphics |= e.text.find("--soft-copper-graphics") != std::string::npos;
+        log("  open by the router's settings: " + e.text);
+        continue;
+      }
+      if (!e.enclosed && (e.neck_width > 0 || e.small_via_fits)) {
+        ++neck;
+        log("  needs a narrower track or via: " + e.text);
+        continue;
+      }
+      if (!e.enclosed) {
+        ++congested;
+        continue;
+      }
+      vip += e.via_in_pad_fits;
+      log("  cannot connect: " + e.text);
+      nlohmann::json walls = nlohmann::json::array();
+      for (const auto& w : e.walls) walls.push_back(w);
+      proved.push_back({{"pin", analysis::pad_label(lb.board, p)}, {"net", lb.board.nets[static_cast<std::size_t>(lb.board.pads[static_cast<std::size_t>(p)].net)].name},
+                        {"width_mm", nm_to_mm(e.width)}, {"via_in_pad_fits", e.via_in_pad_fits}, {"walls", walls},
+                        {"text", e.text}});
+    }
+    const double why_s = std::chrono::duration<double>(std::chrono::steady_clock::now() - t_why).count();
+    log(fmt("why open: %zu pins of open connections; %zu walled in by fixed copper (%d of them with a via in the pad), %d only for the class's track or via, %d only by "
+            "zone fills or copper graphics, %d open through congestion (%.2f s)",
+            pads.size(), proved.size(), vip, neck, soft_only, congested, why_s));
+    // What to try next, by why the pins are open (doc 20 §2.5): the design changes (a part moved, a rule, more layers) are offered,
+    // never made silently.
+    nlohmann::json next = nlohmann::json::array();
+    if (!proved.empty())
+      next.push_back(fmt("move a part or change the rules around the %zu pin%s walled in above: no router can connect them as placed", proved.size(),
+                         proved.size() == 1 ? "" : "s"));
+    if (want_soft_zones || want_soft_graphics)
+      next.push_back(fmt("route again with%s%s: %d pin%s walled in only by %s", want_soft_zones ? " --soft-zones" : "", want_soft_graphics ? " --soft-copper-graphics" : "",
+                         soft_only, soft_only == 1 ? " is" : "s are", want_soft_zones && want_soft_graphics ? "zone fills and copper graphics" : want_soft_zones ? "zone fills" : "copper graphics"));
+    if (neck > 0)
+      next.push_back(fmt("%d pin%s get out only with a track narrower than the net class's: check that the net is not in --no-neck-nets, or lower the "
+                         "class's track width", neck, neck == 1 ? "" : "s"));
+    if (congested > 0)
+      next.push_back(fmt("%d pin%s open through congestion: more search (%s--work, --variants) or more copper layers (--try-layers 2,4 routes each count "
+                         "and compares them)", congested, congested == 1 ? " is" : "s are", job.rescue || opt.relax ? "" : "the relax rescue without --no-rescue, "));
+    for (const auto& n : next) log("  next: " + n.get<std::string>());
+    why_open = {{"pins", pads.size()}, {"walled_in", proved.size()}, {"soft_only", soft_only}, {"congested", congested}, {"neck_down", neck},
+                {"via_in_pad", vip}, {"proved", proved}, {"next", next}, {"seconds", why_s}};
+  }
+  live::field("stage", "summary and reports");
   {
     const auto t = all_work.total();
     log(fmt("work (all variants): %ld expansions, %ld flood cells, %ld cell checks, %ld fixed-copper checks, %ld field cells in %ld fields, "
@@ -1554,6 +1648,7 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!footprint_summary.is_null()) out.summary["footprint_check"] = footprint_summary;
   if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!rescue_summary.is_null()) out.summary["rescue"] = rescue_summary;
+  if (!why_open.is_null()) out.summary["why_open"] = why_open;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
   if (!stitch_summary.is_null()) out.summary["stitch"] = stitch_summary;

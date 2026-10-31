@@ -2,12 +2,14 @@
 #include "route/legalize.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <map>
 #include <set>
+#include <string>
 #include <tuple>
 
 namespace tmk::route {
@@ -62,6 +64,7 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
   LegalizeOptions opt = opt_in;
   if (const char* e = std::getenv("TM_LEGALIZE_SWEEPS")) opt.sweeps = std::atoi(e);  // experiments
   if (const char* e = std::getenv("TM_LEGALIZE_BOX")) opt.box_mm = std::atof(e);
+  if (const char* e = std::getenv("TM_LEGALIZE_REALIZE"); e && opt.realize_iters > 0) opt.realize_iters = std::atoi(e);  // a caller's 0 stays 0
   // --- clearance of a pair of nets ------------------------------------------------------------------------------------
   std::vector<double> net_clr(board.nets.size(), 0);
   for (std::size_t n = 0; n < board.nets.size(); ++n)
@@ -483,6 +486,135 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
     res.sweeps_used = sweep + 1;
     if (worst <= margin) break;  // everything within the margin of its target: the next sweeps would only chase it
   }
+  // --- realizer (doc 20 §2.3) ------------------------------------------------------------------------------------------
+  // The sweeps chase one pair at a time. Where a bundle of tracks has to shift together they stall (poncho's last hand-over: 71 pairs,
+  // the same after 3000 sweeps). The realizer moves everything at once: sequential quadratic programming. Each round linearises the
+  // constraints within kNear of their target and solves the elastic QP  min 1/2 |d|^2 + kM sum s  s.t.  g_i + a_i.d + s_i >= 0, s >= 0,
+  // d within the node's box and the trust region rho, by dual coordinate ascent (Hildreth 1957: one multiplier per row in [0, kM], the
+  // box kept by clipping). A round is kept if it leaves fewer pairs, or as many less deep; otherwise rho halves. Rows in a fixed order:
+  // deterministic.
+  if (opt.realize_iters > 0) {
+    auto tally = [&] {
+      std::pair<int, double> t{0, 0.0};
+      for (const auto& c : cons) {
+        Geo g{};
+        if (eval(c, g) && g.d < c.req - margin - 1e-9) {
+          ++t.first;
+          t.second = std::max(t.second, c.req - margin - g.d);
+        }
+      }
+      return t;
+    };
+    auto cur = tally();
+    if (cur.first > 0) {
+      res.pairs_projected = cur.first;
+      constexpr double kNear = 0.05, kM = 1.0, kRhoMin = 1e-4;
+      constexpr int kPasses = 200;
+      struct Term {
+        int node;
+        double gx, gy;
+      };
+      struct Row {
+        double g;
+        int first, count;
+      };
+      std::vector<Row> rows;
+      std::vector<Term> terms;
+      std::vector<double> dx(n, 0), dy(n, 0), dlo_x(n), dhi_x(n), dlo_y(n), dhi_y(n), lam;
+      std::vector<std::uint8_t> touched(n, 0);
+      std::vector<int> nodes_in;
+      double rho = 0.05;
+      for (int it = 0; it < opt.realize_iters && cur.first > 0; ++it) {
+        rows.clear();
+        terms.clear();
+        for (const auto& c : cons) {
+          Geo g{};
+          if (!eval(c, g) || g.d - c.req >= kNear) continue;
+          const int first = static_cast<int>(terms.size());
+          auto add = [&](int i, double gx, double gy) {
+            if (i >= 0 && !fixed[static_cast<std::size_t>(i)] && (gx != 0 || gy != 0)) terms.push_back({i, gx, gy});
+          };
+          switch (c.kind) {  // gradients of the distance (the segment parameter t held: the envelope theorem)
+            case Kind::PointSeg:
+              add(c.a, g.nx, g.ny);
+              add(c.b, -(1 - g.t) * g.nx, -(1 - g.t) * g.ny);
+              add(c.c, -g.t * g.nx, -g.t * g.ny);
+              break;
+            case Kind::PointPoint:
+              add(c.a, g.nx, g.ny);
+              add(c.b, -g.nx, -g.ny);
+              break;
+            case Kind::PointPad:
+              add(c.a, g.nx, g.ny);
+              break;
+            case Kind::CornerSeg:
+              add(c.b, (1 - g.t) * g.nx, (1 - g.t) * g.ny);
+              add(c.c, g.t * g.nx, g.t * g.ny);
+              break;
+          }
+          const int count = static_cast<int>(terms.size()) - first;
+          if (count > 0) rows.push_back({g.d - c.req, first, count});
+        }
+        if (rows.empty()) break;
+        nodes_in.clear();
+        for (const auto& t : terms) {
+          const auto k = static_cast<std::size_t>(t.node);
+          if (touched[k]) continue;
+          touched[k] = 1;
+          nodes_in.push_back(t.node);
+          dx[k] = dy[k] = 0;
+          dlo_x[k] = std::max(-rho, lox[k] - px[k]);
+          dhi_x[k] = std::min(rho, hix[k] - px[k]);
+          dlo_y[k] = std::max(-rho, loy[k] - py[k]);
+          dhi_y[k] = std::min(rho, hiy[k] - py[k]);
+        }
+        lam.assign(rows.size(), 0.0);
+        for (int pass = 0; pass < kPasses; ++pass) {
+          double change = 0;
+          for (std::size_t r = 0; r < rows.size(); ++r) {
+            double ad = 0, aa = 0;
+            for (int j = rows[r].first; j < rows[r].first + rows[r].count; ++j) {
+              const auto& t = terms[static_cast<std::size_t>(j)];
+              const auto k = static_cast<std::size_t>(t.node);
+              ad += t.gx * dx[k] + t.gy * dy[k];
+              aa += t.gx * t.gx + t.gy * t.gy;
+            }
+            if (aa == 0) continue;
+            const double nl = std::clamp(lam[r] + (-rows[r].g - ad) / aa, 0.0, kM), dl = nl - lam[r];
+            if (dl == 0) continue;
+            lam[r] = nl;
+            change = std::max(change, std::fabs(dl));
+            for (int j = rows[r].first; j < rows[r].first + rows[r].count; ++j) {
+              const auto& t = terms[static_cast<std::size_t>(j)];
+              const auto k = static_cast<std::size_t>(t.node);
+              dx[k] = std::clamp(dx[k] + dl * t.gx, dlo_x[k], dhi_x[k]);
+              dy[k] = std::clamp(dy[k] + dl * t.gy, dlo_y[k], dhi_y[k]);
+            }
+          }
+          if (change < 1e-9) break;
+        }
+        const std::vector<double> ox = px, oy = py;
+        for (int i : nodes_in) {
+          const auto k = static_cast<std::size_t>(i);
+          touched[k] = 0;
+          const double nx = px[k] + dx[k], ny = py[k] + dy[k];
+          if (!outline.empty() && !inside_outline(nx, ny, half[k] + edge)) continue;  // a move off the board is not taken
+          px[k] = nx;
+          py[k] = ny;
+        }
+        res.realize_iters_used = it + 1;
+        const auto next = tally();
+        if (next.first < cur.first || (next.first == cur.first && next.second < cur.second)) {
+          cur = next;
+        } else {
+          px = ox;
+          py = oy;
+          rho *= 0.5;
+          if (rho < kRhoMin) break;
+        }
+      }
+    }
+  }
   // A vertex in its own pad moved within the pad's bounding box. If its track's end no longer touches the copper of a rotated, oval or
   // rounded pad (the box's corners are not copper), the track would be unconnected, so the vertex goes back to where it was. A vertex
   // that left the copper by less than its half width still connects; resetting those cost routes (D159).
@@ -499,6 +631,28 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
     if (in_pad(pd, x0[i], y0[i], 0) && !in_pad(pd, px[i], py[i], touch)) px[i] = x0[i], py[i] = y0[i];
   }
   for (const auto& c : cons) res.pairs_after += violated(c) ? 1 : 0;
+  // Experiments (doc 20 §2.3): the problem as the projection leaves it, for a realizer prototype. TM_LEGALIZE_DUMP=DIR writes
+  // DIR/legalize-<n>.json for every call that leaves pairs too close: nodes (start, now, bounds, fixed), pads and constraints.
+  if (const char* dir = std::getenv("TM_LEGALIZE_DUMP"); dir && res.pairs_after > 0) {
+    static std::atomic<int> dumps{0};
+    const std::string path = std::string(dir) + "/legalize-" + std::to_string(dumps++) + ".json";
+    if (std::FILE* f = std::fopen(path.c_str(), "w")) {
+      std::fprintf(f, "{\"margin\": %.9g, \"box\": %.9g, \"nodes\": [", margin, opt.box_mm);
+      for (std::size_t i = 0; i < n; ++i)
+        std::fprintf(f, "%s[%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%.9g]", i ? "," : "", x0[i], y0[i], px[i], py[i], lox[i], hix[i], loy[i], hiy[i],
+                     fixed[i] ? 1 : 0, own_pad[i], half[i]);
+      std::fprintf(f, "], \"pads\": [");
+      for (std::size_t i = 0; i < pads.size(); ++i)
+        std::fprintf(f, "%s[%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d]", i ? "," : "", pads[i].cx, pads[i].cy, pads[i].hx, pads[i].hy, pads[i].rr, pads[i].ca,
+                     pads[i].sa, pads[i].circle ? 1 : 0);
+      std::fprintf(f, "], \"cons\": [");
+      for (std::size_t i = 0; i < cons.size(); ++i)
+        std::fprintf(f, "%s[%d,%d,%d,%d,%.9g,%.9g,%.9g]", i ? "," : "", static_cast<int>(cons[i].kind), cons[i].a, cons[i].b, cons[i].c, cons[i].qx, cons[i].qy,
+                     cons[i].req);
+      std::fprintf(f, "]}\n");
+      std::fclose(f);
+    }
+  }
   if (const char* e = std::getenv("TM_DEBUG_LEGALIZE"); e && e[0] == '2')  // list what is left
     for (const auto& c : cons) {
       Geo g{};

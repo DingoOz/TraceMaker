@@ -6,7 +6,7 @@
 
 Checked: every line the server writes to standard output is one JSON message (the router's own text goes to standard error); a board whose net name holds
 line breaks, a fenced block and an instruction reaches the agent only inside JSON strings; the MCP handshake and tool calls work; a route through the session
-gives the numbers of `route --variants 1`; `save` writes the session's copper to the --out file and nowhere else, and the saved board reads back; the log
+gives the numbers of `route --variants 1 --no-rescue` (the session has no rescue); `save` writes the session's copper to the --out file and nowhere else, and the saved board reads back; the log
 replays (exit 0) and a changed log does not (exit 1); a request the server cannot take is answered and the server goes on.
 """
 import json
@@ -85,7 +85,7 @@ def main():
     route_json = work / "route.json"
     cli_out = work / "cli.kicad_pcb"
     p = subprocess.run([str(tm), "route", str(board), "-o", str(cli_out), "--json", str(route_json), "--variants", "1", "--work", "1000000", "--no-kb", "--no-gpu",
-                        "--soft-zones", "--keep-vias-off-pads", "--time", "3600"], capture_output=True, text=True, timeout=600)
+                        "--no-rescue", "--soft-zones", "--keep-vias-off-pads", "--time", "3600"], capture_output=True, text=True, timeout=600)
     check(p.returncode in (0, 3), f"route exit {p.returncode}: {p.stderr[-300:]}")
     summary = json.loads(route_json.read_text())
     check(summary["routed"] == routed["routed"] and summary["tracks"] == routed["new_tracks"] and summary["vias"] == routed["new_vias"],

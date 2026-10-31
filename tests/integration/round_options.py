@@ -9,7 +9,8 @@ Routes tests/boards/plane_smd with a small budget:
 - `--variants 1 --relax --rounds 1` must print the clearance stages of the relax portfolio ("ramp stage"), and `--variants 1 --no-rescue`
   must not (the plain single router, unchanged);
 - `--variants 1` (the rescue on, as by default) leaves the board no worse than `--no-rescue`: with connections open the rescue runs and
-  says so in the summary; when it does not win, the output is byte for byte the plain run's.
+  says so in the summary; when it does not win, the output is byte for byte the plain run's. Its passes are warm, then fresh while
+  connections are open (D163).
 """
 import json
 import pathlib
@@ -50,6 +51,13 @@ def main() -> int:
             bad.append(f"the rescue started from {rs['routed_before']} routed, the plain run routed {plain_js['routed']}")
         elif not rs["adopted"] and (work / "rescued.kicad_pcb").read_bytes() != (work / "plain.kicad_pcb").read_bytes():
             bad.append("the rescue did not win, yet the output differs from the plain run's")
+        else:
+            modes = [p["mode"] for p in rs.get("passes", [])]
+            # Default --rescue-mode both (D163): warm first, then fresh only while connections are open.
+            if not modes or modes[0] != "warm" or modes not in (["warm"], ["warm", "fresh"]):
+                bad.append(f"rescue passes {modes}: expected warm, then fresh while connections are open")
+            elif modes == ["warm"] and rescued_js["routed"] < rescued_js["connections"]:
+                bad.append("connections were open after the warm pass and no fresh pass ran")
     elif "rescue" in rescued_js:
         bad.append("a complete board got a rescue")
     if rescued_js["routed"] < plain_js["routed"]:
@@ -59,7 +67,7 @@ def main() -> int:
     if not bad:
         rs = rescued_js.get("rescue")
         print("PASS: --relax runs its stages with one variant; the plain run is unchanged; rescue",
-              f"{rs['routed_before']} -> {rs['routed_after']} (kept: {rs['adopted']})" if rs else "not needed")
+              f"{rs['routed_before']} -> {rescued_js['routed']} (kept: {rs['adopted']}; passes {[(p['mode'], p['routed']) for p in rs['passes']]})" if rs else "not needed")
     return 1 if bad else 0
 
 
