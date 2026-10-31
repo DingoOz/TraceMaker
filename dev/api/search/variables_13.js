@@ -38,7 +38,7 @@ var searchData=
   ['token_35',['token',['../structtmk_1_1server_1_1ServerOptions.html#aac81f9ae825c58e3fc77c8e07bbc501f',1,'tmk::server::ServerOptions']]],
   ['tol_5fpct_36',['tol_pct',['../structtmk_1_1crules_1_1ImpedancePlan.html#ab66886b99831754644d075ef91ccd591',1,'tmk::crules::ImpedancePlan']]],
   ['tolerance_37',['tolerance',['../structtmk_1_1route_1_1CutTestOptions.html#ab4ec9e380630f2acb04853b2e2fbe353',1,'tmk::route::CutTestOptions']]],
-  ['total_38',['total',['../structtmk_1_1server_1_1Stats.html#a8630660fb218de36cd575b432aa57ef9',1,'tmk::server::Stats']]],
+  ['total_38',['total',['../structtmk_1_1live_1_1Slot.html#a4e1bdef13a39315a11dbfb39d3c74c2c',1,'tmk::live::Slot::total'],['../structtmk_1_1server_1_1Stats.html#a8630660fb218de36cd575b432aa57ef9',1,'tmk::server::Stats::total']]],
   ['total_5fbytes_39',['total_bytes',['../structtmk_1_1gpu_1_1DeviceInfo.html#a38ccbfd6ef0096413d847e5c93e0674c',1,'tmk::gpu::DeviceInfo']]],
   ['total_5foverflow_40',['total_overflow',['../structtmk_1_1route_1_1GlobalResult.html#ace1f0ec646572a32eff94519bce28824',1,'tmk::route::GlobalResult']]],
   ['trace_41',['trace',['../structtmk_1_1place_1_1AnnealResult.html#ae4fddcf5b8bcc7f3a393612107420668',1,'tmk::place::AnnealResult::trace'],['../structtmk_1_1place_1_1PlaceOptions.html#aa9963d45e2dfd0ba376270ea3dc18635',1,'tmk::place::PlaceOptions::trace']]],

@@ -72,6 +72,7 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "layer_dir_swap", "structtmk_1_1route_1_1RouterOptions.html#a052a9f780fcf6155625ac420e135c60a", null ],
     [ "legalize", "structtmk_1_1route_1_1RouterOptions.html#ac2827a4bc26ed3a1f7510bfcaf0345af", null ],
     [ "legalize_subdivide_mm", "structtmk_1_1route_1_1RouterOptions.html#aaaf47eed2a78235d3dd2767990032c5b", null ],
+    [ "live_name", "structtmk_1_1route_1_1RouterOptions.html#a80ebe0940d4346fe8708fbfc24e72c3e", null ],
     [ "lns_open_radius_mm", "structtmk_1_1route_1_1RouterOptions.html#a54baf9bd268324e6f4169d3f42b0941b", null ],
     [ "lns_open_trials", "structtmk_1_1route_1_1RouterOptions.html#aba63160c743c5342b95b199a57c2a59d", null ],
     [ "long_weight", "structtmk_1_1route_1_1RouterOptions.html#a54454ff91353c0b64e6369373ce89ed6", null ],

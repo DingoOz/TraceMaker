@@ -6,7 +6,7 @@ var searchData=
   ['sessionoptions_3',['SessionOptions',['../structtmk_1_1session_1_1SessionOptions.html',1,'tmk::session']]],
   ['shape_4',['Shape',['../structtmk_1_1geom_1_1Shape.html',1,'tmk::geom::Shape'],['../structtmk_1_1place_1_1Shape.html',1,'tmk::place::Shape']]],
   ['sink_5',['Sink',['../classtmk_1_1events_1_1Sink.html',1,'tmk::events']]],
-  ['slot_6',['Slot',['../structtmk_1_1place_1_1detail_1_1Slot.html',1,'tmk::place::detail']]],
+  ['slot_6',['Slot',['../structtmk_1_1live_1_1Slot.html',1,'tmk::live::Slot'],['../structtmk_1_1place_1_1detail_1_1Slot.html',1,'tmk::place::detail::Slot']]],
   ['solved_7',['Solved',['../structtmk_1_1crules_1_1imp_1_1Solved.html',1,'tmk::crules::imp']]],
   ['span_8',['Span',['../structtmk_1_1app_1_1tui_1_1Span.html',1,'tmk::app::tui']]],
   ['spreadstats_9',['SpreadStats',['../structtmk_1_1place_1_1SpreadStats.html',1,'tmk::place']]],

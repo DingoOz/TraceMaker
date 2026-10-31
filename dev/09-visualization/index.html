@@ -666,6 +666,8 @@
       
         
       
+        
+      
     
     
     
@@ -847,6 +849,41 @@
     
   
     Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/live-page/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Watch runs live
   
 
     
@@ -1823,6 +1860,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#9-the-live-page-d165" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. The live page (D165)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2464,6 +2512,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#9-the-live-page-d165" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. The live page (D165)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2795,6 +2854,25 @@ cd viewer &amp;&amp; npm run dev                              # hot-reload devel
 <p>Verified in headless Chromium (SwiftShader WebGL2) on the <code>video</code> (7,932 tracks, 4 layers) and
 <code>RoyalBlue54L-Feather</code> (8 layers, zone fills) demos. Firefox has not been tested on this machine; the renderer
 uses only core WebGL2 (instancing, MSAA renderbuffers, <code>blitFramebuffer</code>, stencil).</p>
+<h2 id="9-the-live-page-d165">9. The live page (D165)<a class="headerlink" href="#9-the-live-page-d165" title="Permanent link">&para;</a></h2>
+<p>The viewer shows one run in depth. The live page on the progress site, <code>http://&lt;host&gt;:8765/live</code>, shows every run on the machine
+at once, from any checkout or worktree. It is always on and needs no <code>--view</code>.</p>
+<ul>
+<li>Every <code>tracemaker</code> process writes its state to <code>~/.cache/tracemaker/live/&lt;pid&gt;.json</code> once a second (<code>src/core/live.hpp</code>;
+  <code>$TM_LIVE_DIR</code> or <code>$XDG_CACHE_HOME</code> move it, and <code>TM_LIVE=0</code> turns it off). The state is:</li>
+<li>the command, board, budget and stage;</li>
+<li>the round of a relax or rounds run;</li>
+<li>every portfolio variant's routed count, phase and work against its budget;</li>
+<li>a history of the best variant's routed count;</li>
+<li>the last 200 log lines;</li>
+<li>the exit code.</li>
+<li><code>bench/run.py</code> writes <code>run-&lt;pid&gt;.json</code> for each run: its boards, each running board's step (placing, routing or judging)
+  and each finished board's result. The page puts each board's router under its run.</li>
+<li><code>/api/live</code> (<code>devsite/livefeed.py</code>) adds CPU use, memory and threads from <code>/proc</code>. It marks a process that died without
+  writing its last state as killed. The page polls it once a second.</li>
+</ul>
+<p>The routers update their rows with relaxed atomic stores, and nothing in the engine reads them, so results do not change.
+How to use it: <a href="../how-to/live-page/">Watch runs live</a>.</p>
 
 
 

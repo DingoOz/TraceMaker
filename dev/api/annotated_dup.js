@@ -52,6 +52,9 @@ var annotated_dup =
         [ "Sink", "classtmk_1_1events_1_1Sink.html", "classtmk_1_1events_1_1Sink" ],
         [ "NullSink", "classtmk_1_1events_1_1NullSink.html", "classtmk_1_1events_1_1NullSink" ]
       ] ],
+      [ "live", "namespacetmk_1_1live.html", [
+        [ "Slot", "structtmk_1_1live_1_1Slot.html", "structtmk_1_1live_1_1Slot" ]
+      ] ],
       [ "crules", "namespacetmk_1_1crules.html", [
         [ "imp", "namespacetmk_1_1crules_1_1imp.html", [
           [ "Line", "structtmk_1_1crules_1_1imp_1_1Line.html", "structtmk_1_1crules_1_1imp_1_1Line" ],

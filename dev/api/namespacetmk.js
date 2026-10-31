@@ -4,6 +4,7 @@ var namespacetmk =
     [ "analysis", "namespacetmk_1_1analysis.html", "namespacetmk_1_1analysis" ],
     [ "app", "namespacetmk_1_1app.html", "namespacetmk_1_1app" ],
     [ "events", "namespacetmk_1_1events.html", "namespacetmk_1_1events" ],
+    [ "live", "namespacetmk_1_1live.html", "namespacetmk_1_1live" ],
     [ "detail", "namespacetmk_1_1detail.html", [
       [ "mul_hi_lo", "namespacetmk_1_1detail.html#aea790e64a28869ed69714dd72a1f052a", null ],
       [ "parse_double_from_chars", "namespacetmk_1_1detail.html#a95d05a79e6b2588bcc2f935dc6e1c546", null ],

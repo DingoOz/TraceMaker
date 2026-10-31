@@ -445,6 +445,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a92c3a1d94239f0edb2ec6eb010ff78fd" id="r_a92c3a1d94239f0edb2ec6eb010ff78fd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1CustomRule.html">model::CustomRule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92c3a1d94239f0edb2ec6eb010ff78fd">extra_rules</a></td></tr>
 <tr class="memitem:a71e9bf1534dd6edf71aa3fc97724afd3" id="r_a71e9bf1534dd6edf71aa3fc97724afd3"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html">tmk::route::RouterOptions::AdviceSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71e9bf1534dd6edf71aa3fc97724afd3">advice</a></td></tr>
 <tr class="memitem:adb09d94af3f7e9ed37c05e777abd3b91" id="r_adb09d94af3f7e9ed37c05e777abd3b91"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtmk_1_1events_1_1Sink.html">events::Sink</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb09d94af3f7e9ed37c05e777abd3b91">sink</a> = nullptr</td></tr>
+<tr class="memitem:a80ebe0940d4346fe8708fbfc24e72c3e" id="r_a80ebe0940d4346fe8708fbfc24e72c3e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80ebe0940d4346fe8708fbfc24e72c3e">live_name</a></td></tr>
+<tr class="memdesc:a80ebe0940d4346fe8708fbfc24e72c3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">this router's row on the live page (<a class="el" href="live_8hpp.html" title="Live status of this process for the progress site&#39;s live page (devsite /live, D165): what the process...">core/live.hpp</a>); empty: "router"  <br /></td></tr>
 <tr class="memitem:afd71cc2ca001afee18b90f5156d5a79d" id="r_afd71cc2ca001afee18b90f5156d5a79d"><td class="memItemLeft" align="right" valign="top">std::atomic&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd71cc2ca001afee18b90f5156d5a79d">deadline</a> = nullptr</td></tr>
 <tr class="memdesc:afd71cc2ca001afee18b90f5156d5a79d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.  <br /></td></tr>
 <tr class="memitem:a359d92119a32043eb86d422cbdf5f72a" id="r_a359d92119a32043eb86d422cbdf5f72a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a359d92119a32043eb86d422cbdf5f72a">buffer_events</a> = false</td></tr>
@@ -570,7 +572,7 @@ Public Attributes</h2></td></tr>
 
 <p>Recording: every variant buffers its events and only the winning variant's are forwarded to <span class="tt"><a class="el" href="#adb09d94af3f7e9ed37c05e777abd3b91">sink</a></span> (each message gains a leading "t" field, seconds since that variant started). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00310">310</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00311">311</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -783,7 +785,7 @@ Public Attributes</h2></td></tr>
 
 <p>Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00307">307</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00308">308</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1679,6 +1681,24 @@ Public Attributes</h2></td></tr>
 <p>&gt; 0 with legalize: route tracks are cut into pieces of at most this length so they can bend (<a class="el" href="route_2legalize_8hpp.html" title="Gridless legalisation of routed copper (doc 05 §41.3, D104).">route/legalize.hpp</a>) </p>
 
 <p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00152">152</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a80ebe0940d4346fe8708fbfc24e72c3e" name="a80ebe0940d4346fe8708fbfc24e72c3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80ebe0940d4346fe8708fbfc24e72c3e">&#9670;&#160;</a></span>live_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::route::RouterOptions::live_name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>this router's row on the live page (<a class="el" href="live_8hpp.html" title="Live status of this process for the progress site&#39;s live page (devsite /live, D165): what the process...">core/live.hpp</a>); empty: "router" </p>
+
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00305">305</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

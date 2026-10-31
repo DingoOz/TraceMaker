@@ -223,6 +223,7 @@ var hierarchy =
       [ "tmk::events::NullSink", "classtmk_1_1events_1_1NullSink.html", null ],
       [ "tmk::server::ViewerServer", "classtmk_1_1server_1_1ViewerServer.html", null ]
     ] ],
+    [ "tmk::live::Slot", "structtmk_1_1live_1_1Slot.html", null ],
     [ "tmk::place::detail::Slot", "structtmk_1_1place_1_1detail_1_1Slot.html", null ],
     [ "tmk::crules::imp::Solved", "structtmk_1_1crules_1_1imp_1_1Solved.html", null ],
     [ "tmk::app::tui::Span", "structtmk_1_1app_1_1tui_1_1Span.html", null ],

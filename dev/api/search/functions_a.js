@@ -24,6 +24,6 @@ var searchData=
   ['load_5foverrides_5ffile_21',['load_overrides_file',['../namespacetmk_1_1crules.html#a3ddddbd510131b893679a8cdb1d9af2a',1,'tmk::crules']]],
   ['load_5freferences_22',['load_references',['../namespacetmk_1_1analysis.html#a07e52ee730d661c170fd5753d8be4037',1,'tmk::analysis']]],
   ['load_5ftrusted_5fbrands_23',['load_trusted_brands',['../namespacetmk_1_1analysis.html#a91d9a1f2ee84fb3b9553d2de3c48823c',1,'tmk::analysis']]],
-  ['log_24',['log',['../namespacetmk_1_1server.html#ac5e374734b71a447e7f518cb650471e9',1,'tmk::server']]],
+  ['log_24',['log',['../namespacetmk_1_1live.html#a9111764fa21cc857ba212aaf3df9b720',1,'tmk::live::log()'],['../namespacetmk_1_1server.html#ac5e374734b71a447e7f518cb650471e9',1,'tmk::server::log()']]],
   ['lower_25',['lower',['../namespacetmk_1_1crules.html#a3d4c56bb6864847ae51c8b6b279d5c26',1,'tmk::crules']]]
 ];
