@@ -24,6 +24,7 @@
 #include "analysis/return_path.hpp"
 #include "advice/advisor.hpp"
 #include "advice/stuck_report.hpp"
+#include "core/live.hpp"
 #include "core/version.hpp"
 #include "crules/critical.hpp"
 #include "crules/engine.hpp"
@@ -218,9 +219,17 @@ int default_gpu_device(bool use_gpu) {
 RouteJobResult run_route_job(RouteJob job) {
   const auto t_job = std::chrono::steady_clock::now();
   auto log = [&](const std::string& line) {
+    live::log(line);
     if (job.log) job.log(line);
   };
   auto& opt = job.opt;
+  // The live page (core/live.hpp): what this job is and where it is.
+  live::field("board", job.in);
+  if (!job.out.empty()) live::field("output", job.out);
+  live::field("budget", (opt.work_budget > 0 ? fmt("%ld work, ", opt.work_budget) : std::string()) + fmt("--time %.0f s, %d thread%s", opt.time_limit_s,
+                        job.threads, job.threads == 1 ? "" : "s") + (opt.relax ? ", relax" : ""));
+  if (job.view) live::field("viewer port", std::to_string(job.view_port));
+  live::field("stage", "reading the board");
   auto lb = io::read_board_file(job.in);
   if (job.reroute) {
     // Strip the unlocked tracks and vias from the document and read it again (the editor changes the document,
@@ -745,6 +754,7 @@ RouteJobResult run_route_job(RouteJob job) {
     route::WorkProfile work;
     int unadvised_best = -1, advised_best = -1;  // routed counts of the best variant of each kind (-1: none ran)
   };
+  std::string live_stage;  // what the live page's stage line says a routing run is part of ("rescue: ")
   auto run_once = [&](const route::RouterOptions& o, int round, bool use_kb) {
     Run r;
     // The round-based options (--relax, --rounds, --round-work, --ramp-from) are implemented in the portfolio; given with one
@@ -764,6 +774,7 @@ RouteJobResult run_route_job(RouteJob job) {
           q = *end ? end + 1 : end;
         }
       }
+      live::field("stage", live_stage + fmt("%s: %d variants", o.relax ? "relax, route, legalise" : "routing", variants));
       log(fmt("portfolio: %d variants%s on %d thread%s", variants, o.advice.active() ? fmt(" + %d advised", std::min(o.advice.variants, variants)).c_str() : "",
               std::min(threads, variants), std::min(threads, variants) == 1 ? "" : "s"));
       auto pr = route::route_portfolio(*route_board, rules, o, variants, pick, threads);
@@ -783,6 +794,7 @@ RouteJobResult run_route_job(RouteJob job) {
       for (const auto& w : pr.work)
         for (int p = 0; p < route::kWorkPhases; ++p) r.work.phase[static_cast<std::size_t>(p)] += w.phase[static_cast<std::size_t>(p)];
     } else {
+      live::field("stage", live_stage + "routing: one router");
       r.res = route::Router(*route_board, rules, o).run();
       r.ran = {0};
       r.work = r.res.work;
@@ -827,6 +839,8 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("rescue: %d of %d connections are open; routing again with relax (%s)", res.connections - res.routed, res.connections,
             opt.work_budget > 0 ? fmt("%d round%s of %ld work", o2.rounds, o2.rounds == 1 ? "" : "s", o2.round_work).c_str() : fmt("up to %.0f s", opt.time_limit_s).c_str()));
     route_t0 = std::chrono::steady_clock::now();
+    live::field("first pass", fmt("%d of %d routed", res.routed, res.connections));
+    live_stage = "rescue: ";
     Run next = run_once(o2, 0, false);
     const double rescue_s = std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();  // a relax result's own clock is its last round's
     for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += next.work.phase[static_cast<std::size_t>(p)];
@@ -852,6 +866,7 @@ RouteJobResult run_route_job(RouteJob job) {
   nlohmann::json advisor_rounds = nlohmann::json::array();
   if (!job.advisor.empty() || !job.stuck_report_out.empty()) {
     const int total_rounds = job.advisor.empty() ? 1 : std::max(job.advisor_rounds, 1);
+    live::field("stage", "advisor");
     std::string advice_base = job.advice_out;
     if (advice_base.empty() && !job.out.empty()) {
       advice_base = job.out;
@@ -927,6 +942,7 @@ RouteJobResult run_route_job(RouteJob job) {
       o2.advice = ap.set;
       o2.sink = nullptr;
       route_t0 = std::chrono::steady_clock::now();
+      live_stage = fmt("advisor round %d: ", round);
       Run next = run_once(o2, round, false);
       for (int p = 0; p < route::kWorkPhases; ++p) all_work.phase[static_cast<std::size_t>(p)] += next.work.phase[static_cast<std::size_t>(p)];
       const bool adopt = route::route_result_better(next.res, res);
@@ -969,6 +985,7 @@ RouteJobResult run_route_job(RouteJob job) {
   nlohmann::json refill_summary;
   int unconnected_after_refill = -1;
   if (opt.soft_zones) {
+    live::field("stage", "soft zones: refill and pass 2");
     model::Board routed = *route_board;
     auto add_copper = [](model::Board& b, const route::RouteResult& r) {
       b.tracks.insert(b.tracks.end(), r.tracks.begin(), r.tracks.end());
@@ -1161,6 +1178,7 @@ RouteJobResult run_route_job(RouteJob job) {
   for (const auto& z : route_board->zones) plane_zones = plane_zones || (!z.rule_area && z.net > 0);
   const bool si_stitch = job.si_rules && job.si_stitch && !critical.empty() && plane_zones && route_board->copper_count() > 1;
   int si_missing_before = 0;
+  live::field("stage", fmt("after-route passes (%d of %d routed)", res.routed, res.connections));
   {
     // Unconnected items per net (keyed by the report's text, which names the net), and all of them under "".
     using Unconnected = std::map<std::string, int>;
@@ -1373,6 +1391,7 @@ RouteJobResult run_route_job(RouteJob job) {
     }
   }
   if (!job.out.empty()) {
+    live::field("stage", "writing the board");
     io::BoardEditor ed(lb, opt.seed);
     for (const auto& t : res.tracks) ed.add_track(t);
     for (const auto& v : res.vias) ed.add_via(v);
@@ -1495,6 +1514,8 @@ RouteJobResult run_route_job(RouteJob job) {
   log(fmt("routed %d/%d connections, %zu tracks, %zu vias, pitch %.3f mm, %ld expansions, %.2f s (best variant %.2f s)", res.routed,
           res.connections, res.tracks.size(), res.vias.size(), nm_to_mm(res.pitch), res.expansions, job_seconds, res.seconds));
   for (const auto& f : res.failures) log("  unrouted: " + f);
+  live::field("stage", "summary and reports");
+  live::field("result", fmt("%d of %d routed, %zu tracks, %zu vias", res.routed, res.connections, res.tracks.size(), res.vias.size()));
   {
     const auto t = all_work.total();
     log(fmt("work (all variants): %ld expansions, %ld flood cells, %ld cell checks, %ld fixed-copper checks, %ld field cells in %ld fields, "

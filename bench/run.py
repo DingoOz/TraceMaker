@@ -36,6 +36,7 @@ import time
 from collections import Counter
 import drc_judge
 import viewport
+from live_run import LiveRun
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FIX = ROOT / "bench/data/freerouting/scripts/benchmark/fixtures/PCBench"
@@ -104,11 +105,14 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
     placed = outdir / "boards" / f"{name}.placed.kicad_pcb"
     js = outdir / "boards" / f"{name}.placed.json"
     t0 = time.time()
+    if LIVE:
+        LIVE.step(name, "placing")
     try:
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
                             "--threads", str(PLACE_THREADS), "--json", str(js)]
                            + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else []) + PLACE_ARGS
-                           + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT)
+                           + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT,
+                           env=LIVE.env(name) if LIVE else None)
         res["place_exit"] = p.returncode
     except subprocess.TimeoutExpired:
         res["place_exit"] = -1
@@ -180,11 +184,11 @@ def pct(x: float | None) -> str:
     return "–" if x is None else f"{x:.1%}"
 
 
-def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
+def run_measured(cmd: list[str], timeout: float, env: dict | None = None) -> tuple[int, str, str, float]:
     """Runs cmd and returns (exit code, stdout, stderr, CPU seconds). CPU time is the child's own user + system time
     from os.wait4, so other boards routing at the same time do not count. Raises subprocess.TimeoutExpired."""
     with tempfile.TemporaryFile("w+") as fo, tempfile.TemporaryFile("w+") as fe:
-        p = subprocess.Popen(cmd, stdout=fo, stderr=fe, text=True)
+        p = subprocess.Popen(cmd, stdout=fo, stderr=fe, text=True, env=env)
         killed = threading.Event()
 
         def kill() -> None:
@@ -207,6 +211,7 @@ def run_measured(cmd: list[str], timeout: float) -> tuple[int, str, str, float]:
 
 VIEW = False  # --view: every board streams to its own live viewer (bench/viewport.py)
 VIEW_EMBED = True  # the binary takes --view-embed (0.11.0 on); older ones exit with a usage error when given it
+LIVE: LiveRun | None = None  # the run's state for the progress site's live page (bench/live_run.py)
 RESUME_RUN = ""  # --resume-run: earlier run whose saved search state (<board>.kicad_pcb.state) each board starts from
 
 
@@ -233,12 +238,14 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     res["dead_pins"] = dead_pins(src, outdir / "boards" / f"{name}.escape.json")
     t0 = time.time()
     view = viewport.route_args(VIEW_EMBED) if VIEW else []
+    if LIVE:
+        LIVE.step(name, "routing")
     try:
         # --work: deterministic (no knowledge base, which learns across boards of a run); --time stays a safety stop.
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
         code, stdout, stderr, cpu = run_measured(
             [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + view + EXTRA,
-            time_limit * 3 + 60)
+            time_limit * 3 + 60, LIVE.env(name) if LIVE else None)
         res["exit"] = code
         res["cpu_s"] = round(cpu, 2)
         if code not in (0, 3):
@@ -260,6 +267,8 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
     ref = SRC_FIX / name / "processed.kicad_pcb"
     if ref.exists() and "style" in res:
         res["style_ref"] = style_of(ref, outdir / "boards" / f"{name}.style_ref.json")
+    if LIVE:
+        LIVE.step(name, "judging (KiCad DRC)")
     before = drc(src)
     after = drc(out) if out.exists() else None
     if before is None or after is None:
@@ -339,7 +348,7 @@ def main() -> int:
     outdir = ROOT / "bench/results" / run_id
     outdir.mkdir(parents=True, exist_ok=True)
     # Snapshot the engine binary so rebuilding during a run cannot mix versions.
-    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES, VIEW_EMBED
+    global TM, PLACE, PLACE_MODE, PLACE_TIMEOUT, PLACE_WORK, PLACE_CRULES, VIEW_EMBED, LIVE
     snap = outdir / "tracemaker"
     shutil.copy2(TM, snap)
     TM = snap
@@ -353,6 +362,8 @@ def main() -> int:
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     budget = f"{a.work:,} work units" if a.work else f"{a.time:.0f} s"
     print(f"run {run_id}: {len(names)} boards, {a.set_name or 'tier ' + a.tier}, {budget} per board, {a.jobs} jobs", flush=True)
+    LIVE = LiveRun(run_id, {"set": a.set_name or (f"{len(names)} boards given" if a.boards else f"tier {a.tier}"), "outdir": str(outdir), "root": str(ROOT), "commit": commit, "jobs": a.jobs,
+                            "budget": budget, "threads": THREADS, "route_args": " ".join(EXTRA)}, names)
     rows = []
     with cf.ThreadPoolExecutor(a.jobs) as ex, (outdir / "boards.jsonl").open("w") as f:
         # Rows are written as boards finish (not in board order), so a long board does not hide the ones that finished before it.
@@ -363,6 +374,7 @@ def main() -> int:
             r["fr_241"] = fr.get("2.4.1")
             r["tier"] = fr.get("tier")
             rows.append(r)
+            LIVE.finished(r)
             f.write(json.dumps(r) + "\n")
             f.flush()
             tag = "CLEAN" if r.get("clean") else ("ERR  " if r.get("error") or r.get("judge") else "     ")
@@ -409,6 +421,7 @@ def main() -> int:
     summary["style_ref"] = style_total([r["style_ref"] for r in with_ref])
     summary["style_same_boards"] = style_total([r["style"] for r in with_ref])  # TraceMaker on the boards that have a reference
     (outdir / "summary.json").write_text(json.dumps(summary, indent=1))
+    LIVE.end(summary)
     notes = [f"{budget} per board"] + (["zones refilled before judging"] if a.refill else []) + ([f"route options `{' '.join(EXTRA)}`"] if EXTRA else [])
     lines = [f"# Benchmark {run_id}", "", f"{a.set_name or 'PCBench tier ' + a.tier}, {n} boards, {', '.join(notes)}.", "",
              "| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |", "|---|--:|--:|--:|",

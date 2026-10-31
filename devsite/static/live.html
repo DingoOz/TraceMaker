@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23101a2e'/%3E%3Cg%20fill='none'%20stroke-linejoin='round'%3E%3Cpolyline%20points='15,42%2017,42%2027,32%2028.2,32'%20stroke='%23ef5b5b'%20stroke-width='5'/%3E%3Cpolyline%20points='35.8,32%2037,32%2047,42%2049,42'%20stroke='%235b9cf5'%20stroke-width='5'/%3E%3Ccircle%20cx='11'%20cy='42'%20r='4.5'%20stroke='%23ef5b5b'%20stroke-width='3.2'/%3E%3Ccircle%20cx='53'%20cy='42'%20r='4.5'%20stroke='%235b9cf5'%20stroke-width='3.2'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='3.8'%20stroke='%23e8ecf2'%20stroke-width='3.4'/%3E%3C/g%3E%3C/svg%3E" />
+<title>TraceMaker Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* The live page (D165): every tracemaker process and bench run on the machine, polled from /api/live once a second. */
+:root {
+  color-scheme: light;
+  --page: #f4f4f1; --surface: #fcfcfb; --surface-2: #f0efec; --border: #e2e1dc;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #7a7974;
+  --accent: #2a78d6; --accent-soft: #cde2fb; --track: #e8e7e3;
+  --good: #0ca30c; --good-text: #006300; --warn: #fab219; --warn-text: #8a5a00; --critical: #d03b3b;
+  --code-bg: #f6f8fa;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0f1012; --surface: #1a1a19; --surface-2: #232321; --border: #2e2e2b;
+    --text: #ffffff; --text-2: #c3c2b7; --muted: #8d8c84;
+    --accent: #3987e5; --accent-soft: #184f95; --track: #2c2c29;
+    --good: #0ca30c; --good-text: #4cc94c; --warn: #fab219; --warn-text: #fab219; --critical: #e66767;
+    --code-bg: #0d1117;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0f1012; --surface: #1a1a19; --surface-2: #232321; --border: #2e2e2b;
+  --text: #ffffff; --text-2: #c3c2b7; --muted: #8d8c84;
+  --accent: #3987e5; --accent-soft: #184f95; --track: #2c2c29;
+  --good: #0ca30c; --good-text: #4cc94c; --warn: #fab219; --warn-text: #fab219; --critical: #e66767;
+  --code-bg: #0d1117;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.45 Inter, system-ui, sans-serif; }
+.mono, .num { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1500px; margin: 0 auto; padding: 20px 16px 48px; }
+header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+.logo { width: 34px; height: 34px; flex: none; }
+h1 { font-size: 20px; margin: 0; font-weight: 700; letter-spacing: -.01em; }
+.sub { color: var(--text-2); font-size: 13px; }
+.spacer { flex: 1; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button.toggle, select { background: var(--surface); color: var(--text-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+button.toggle:hover { color: var(--text); }
+button.toggle[aria-pressed="true"] { background: var(--accent-soft); color: var(--text); }
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 12px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); animation: pulse 2s infinite; }
+.dot.stale { background: var(--critical); animation: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(12,163,12,.5);} 70% { box-shadow: 0 0 0 7px rgba(12,163,12,0);} 100% { box-shadow: 0 0 0 0 rgba(12,163,12,0);} }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } .fill { transition: none !important; } }
+
+.machine { display: flex; flex-wrap: wrap; gap: 8px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: var(--text-2); }
+.machine b { color: var(--text); font-weight: 600; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-2); margin: 22px 0 10px; font-weight: 600; }
+.empty { color: var(--muted); font-size: 13px; padding: 4px 0; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; min-width: 0; }
+.card.ended { opacity: .72; }
+.card .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.card .title { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.meta { color: var(--text-2); font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
+.badge { font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border); text-transform: uppercase; letter-spacing: .04em; }
+.b-running { color: var(--accent); border-color: var(--accent); }
+.b-done { color: var(--good-text); border-color: var(--good); }
+.b-killed, .b-ended, .b-failed { color: var(--critical); border-color: var(--critical); }
+.stage { margin-top: 8px; font-weight: 500; }
+.stage .k { color: var(--muted); font-weight: 400; }
+
+.bar { position: relative; height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
+.fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 4px; transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.fill.good { background: var(--good); }
+.fill.part { position: absolute; background: var(--accent); opacity: .45; }
+.prog { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; margin-top: 10px; }
+.prog .num { font-size: 13px; }
+
+.body { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; margin-top: 12px; }
+@media (max-width: 1000px) { .body { grid-template-columns: 1fr; } }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; font-size: 12px; }
+.kv .k { color: var(--muted); }
+.kv .v { overflow-wrap: anywhere; }
+.spark { width: 100%; height: 70px; display: block; margin-top: 8px; }
+.spark .total { stroke: var(--muted); stroke-dasharray: 4 3; stroke-width: 1; fill: none; }
+.spark .line { stroke: var(--accent); stroke-width: 1.8; fill: none; vector-effect: non-scaling-stroke; }
+.spark .area { fill: var(--accent); opacity: .12; }
+.cap { color: var(--muted); font-size: 11px; }
+
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+th { text-align: left; color: var(--muted); font-weight: 500; padding: 3px 8px 3px 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 3px 8px 3px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+td.r, th.r { text-align: right; }
+td .bar { height: 6px; min-width: 60px; }
+.ph-2 { color: var(--accent); } .ph-3 { color: var(--warn-text); } .ph-4 { color: var(--good-text); } .ph-5, .ph-0 { color: var(--muted); }
+.tablewrap { overflow-x: auto; }
+
+details { margin-top: 10px; }
+summary { cursor: pointer; color: var(--text-2); font-size: 12px; font-weight: 500; }
+pre.log { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin: 6px 0 0;
+  font: 11.5px/1.45 "JetBrains Mono", ui-monospace, monospace; max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.runboards { margin-top: 12px; padding-left: 12px; border-left: 2px solid var(--border); }
+.runboards .card { background: var(--surface-2); }
+.ok { color: var(--good-text); } .bad { color: var(--critical); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#101a2e"/><g fill="none" stroke-linejoin="round"><polyline points="15,42 17,42 27,32 28.2,32" stroke="#ef5b5b" stroke-width="5"/><polyline points="35.8,32 37,32 47,42 49,42" stroke="#5b9cf5" stroke-width="5"/><circle cx="11" cy="42" r="4.5" stroke="#ef5b5b" stroke-width="3.2"/><circle cx="53" cy="42" r="4.5" stroke="#5b9cf5" stroke-width="3.2"/><circle cx="32" cy="32" r="3.8" stroke="#e8ecf2" stroke-width="3.4"/></g></svg>
+    <div>
+      <h1>TraceMaker live</h1>
+      <div class="sub">Every tracemaker process and bench run on this machine, from any checkout · <a href="/">progress dashboard</a></div>
+    </div>
+    <div class="spacer"></div>
+    <label class="sub">Ended in the last
+      <select id="keep"><option value="600">10 min</option><option value="1800" selected>30 min</option><option value="21600">6 h</option><option value="86400">24 h</option></select>
+    </label>
+    <button class="toggle" id="pause" type="button" aria-pressed="false">Pause</button>
+    <span class="live"><span class="dot" id="livedot"></span><span id="updated">connecting…</span></span>
+    <button class="toggle" id="theme" type="button">Theme</button>
+  </header>
+
+  <div class="machine" id="machine"></div>
+  <div id="runs"></div>
+  <div id="procs"></div>
+</div>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const root = document.documentElement;
+try { const t = localStorage.getItem("tm-theme"); if (t) root.dataset.theme = t; } catch (_) {}
+$("theme").addEventListener("click", () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("tm-theme", root.dataset.theme); } catch (_) {}
+});
+try { const k = localStorage.getItem("tm-live-keep"); if (k) $("keep").value = k; } catch (_) {}
+$("keep").addEventListener("change", () => { try { localStorage.setItem("tm-live-keep", $("keep").value); } catch (_) {} poll(); });
+let paused = false;
+$("pause").addEventListener("click", () => { paused = !paused; $("pause").setAttribute("aria-pressed", paused); $("pause").textContent = paused ? "Resume" : "Pause"; });
+
+// <details> keep their open/closed state across the once-a-second redraw.
+const openState = new Map();
+document.addEventListener("toggle", e => { if (e.target.dataset && e.target.dataset.key) openState.set(e.target.dataset.key, e.target.open); }, true);
+const isOpen = (key, dflt) => openState.has(key) ? openState.get(key) : dflt;
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const base = p => String(p || "").split("/").pop();
+// A board's name: its file, or folder/file when the file name says nothing (every PCBench board is unrouted.kicad_pcb).
+const boardName = p => { const a = String(p || "").split("/"), f = a.pop(); return /^(unrouted|routed|input|board)\.kicad_pcb$/.test(f) && a.length ? a.pop() + "/" + f : f; };
+const dur = s => { s = Math.max(0, Math.round(s || 0)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60;
+  return h ? `${h} h ${String(m).padStart(2, "0")} min` : m ? `${m} min ${String(x).padStart(2, "0")} s` : `${x} s`; };
+const big = n => n >= 1e9 ? (n / 1e9).toFixed(2) + " G" : n >= 1e6 ? (n / 1e6).toFixed(1) + " M" : n >= 1e3 ? (n / 1e3).toFixed(1) + " k" : String(n ?? 0);
+const pct = (a, b) => b > 0 ? Math.min(100, 100 * a / b) : 0;
+const PHASE = ["waiting", "setup", "first pass", "negotiation", "clean-up", "done"];
+const badge = st => `<span class="badge b-${esc(st)}">${esc(st)}</span>`;
+
+function spark(h) {
+  const r = h && h.routed || [], t = h && h.total || [];
+  if (r.length < 2) return "";
+  const W = 300, H = 60, top = Math.max(...t, ...r, 1), lo = Math.max(0, Math.min(...r) - 0.05 * top);
+  const x = i => (i / (r.length - 1)) * W, y = v => H - 2 - (H - 4) * (v - lo) / Math.max(top - lo, 1);
+  const pts = r.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="routed connections over time">
+    <polygon class="area" points="0,${H} ${pts} ${W},${H}"/><line class="total" x1="0" x2="${W}" y1="${y(top)}" y2="${y(top)}"/>
+    <polyline class="line" points="${pts}"/></svg>
+    <div class="cap">Best variant's routed connections over the last ${dur((r.length - 1) * (h.step_s || 1))} (dashed: all connections${lo > 0 ? `; axis from ${Math.round(lo)}` : ""})</div>`;
+}
+
+function procCard(p, inRun) {
+  const f = Object.fromEntries(p.fields || []);
+  const slots = p.slots || [];
+  const best = slots.reduce((m, s) => Math.max(m, s.routed), 0), total = slots.reduce((m, s) => Math.max(m, s.total), 0);
+  const cmd = (p.argv || [])[1] || "";
+  const title = p.board || boardName(f.board) || boardName((p.argv || []).find(a => a.endsWith(".kicad_pcb"))) || cmd;
+  const pr = p.proc || {};
+  const meta = [`pid ${p.pid}`, `<span class="mono">${esc(cmd)}</span>`, p.branch ? `branch <b>${esc(p.branch)}</b>` : "",
+    p.worktree ? esc(base(p.worktree)) : "", `v${esc(p.version)}`, `running ${dur(p.elapsed_s)}`,
+    pr.cpu_pct != null ? `CPU ${pr.cpu_pct} %` : "", `CPU time ${dur(p.cpu_s)}`, pr.rss_mb != null ? `${Math.round(pr.rss_mb)} MB` : "",
+    pr.threads ? `${pr.threads} threads` : "", p.state !== "running" ? `updated ${dur(p.age_s)} ago` : "",
+    p.exit != null ? `exit ${p.exit}` : ""].filter(Boolean);
+  const view = f["viewer port"] ? `<a href="${location.protocol}//${location.hostname}:${encodeURIComponent(f["viewer port"])}/" target="_blank" rel="noopener">viewer :${esc(f["viewer port"])}</a>` : "";
+  const skip = new Set(["stage"]);
+  const kv = (p.fields || []).filter(([k]) => !skip.has(k)).map(([k, v]) => `<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join("");
+  const rows = slots.map(s => `<tr><td>${esc(s.name)}</td><td class="ph-${s.phase}">${PHASE[s.phase] || s.phase}</td>
+      <td class="r num">${s.routed}/${s.total}</td><td><div class="bar"><div class="fill ${s.total && s.routed === s.total ? "good" : ""}" style="width:${pct(s.routed, s.total)}%"></div></div></td>
+      <td class="r num">${s.budget ? Math.round(pct(s.work, s.budget)) + " %" : big(s.work)}</td><td class="r num">${big(s.work_all)}</td><td class="r num">${s.runs}</td></tr>`).join("");
+  const key = `p${p.pid}-${p.proc_start}`;
+  const log = (p.log || []).slice(-60).map(esc).join("\n");
+  return `<div class="card ${p.state === "running" ? "" : "ended"}">
+    <div class="head"><span class="title">${esc(title)}</span>${badge(p.state)}${view}</div>
+    <div class="meta">${meta.join("<span>·</span>")}</div>
+    ${f.stage ? `<div class="stage"><span class="k">stage</span> ${esc(f.stage)}</div>` : ""}
+    ${total ? `<div class="prog"><div class="bar"><div class="fill ${best === total ? "good" : ""}" style="width:${pct(best, total)}%"></div></div>
+      <div class="num">${best} / ${total} routed (best variant)${best < total ? ` · ${total - best} open` : ""}</div></div>` : ""}
+    <div class="body">
+      <div><div class="kv">${kv}</div>${spark(p.history)}</div>
+      <div>${rows ? `<div class="tablewrap"><table><thead><tr><th>variant</th><th>phase</th><th class="r">routed</th><th></th><th class="r" title="work of the run in progress, of its budget">round work</th><th class="r" title="search expansions over all its runs">all work</th><th class="r" title="router runs (one per round)">runs</th></tr></thead><tbody>${rows}</tbody></table></div>` : `<div class="empty">No router running yet.</div>`}</div>
+    </div>
+    <details data-key="${key}-log" ${isOpen(key + "-log", !inRun) ? "open" : ""}><summary>Log (last ${Math.min(60, (p.log || []).length)} of ${(p.log || []).length} lines)</summary><pre class="log">${log || "(nothing logged yet)"}</pre></details>
+    <details data-key="${key}-cmd" ${isOpen(key + "-cmd", false) ? "open" : ""}><summary>Command line</summary><pre class="log">${esc((p.argv || []).join(" "))}\n\ncwd ${esc(p.cwd)}\nexe ${esc(p.exe)}</pre></details>
+  </div>`;
+}
+
+function runCard(r) {
+  const fin = r.finished || [], all = (r.boards || []).length, running = Object.entries(r.running || {});
+  const clean = fin.filter(b => b.clean).length, judged = fin.filter(b => "clean" in b).length;
+  const routed = fin.reduce((a, b) => a + (b.routed || 0), 0), conns = fin.reduce((a, b) => a + (b.connections || 0), 0);
+  const elapsed = (r.state === "running" ? Date.now() / 1000 : r.updated) - r.started;
+  const meta = [r.set, r.branch ? `branch <b>${esc(r.branch)}</b>` : "", r.worktree ? esc(base(r.worktree)) : "", r.commit, r.budget,
+    `${r.jobs} jobs × ${r.threads} threads`, r.route_args ? `<span class="mono">${esc(r.route_args)}</span>` : "", `running ${dur(elapsed)}`, `pid ${r.pid}`]
+    .filter(Boolean).map(x => typeof x === "string" && !x.startsWith("<") && !x.includes("<b>") ? esc(x) : x);
+  const procs = r.procs || [];
+  const byBoard = new Map(procs.map(p => [p.board, p]));
+  const steps = running.map(([b, s]) => { const p = byBoard.get(b);
+    return p && s.step === "routing" ? procCard(p, true)
+      : `<div class="card"><div class="head"><span class="title">${esc(b)}</span>${badge("running")}</div><div class="stage"><span class="k">step</span> ${esc(s.step)} for ${dur(Date.now() / 1000 - s.step_since)}</div></div>`; }).join("");
+  const rows = fin.slice().reverse().map(b => `<tr><td>${esc(b.board)}</td><td class="r num">${b.routed ?? "?"}/${b.connections ?? "?"}</td>
+      <td>${"clean" in b ? (b.clean ? '<span class="ok">clean</span>' : `<span class="bad">${b.unconnected_after ?? ""} unconnected${b.added_errors && Object.keys(b.added_errors).length ? ", added " + esc(Object.keys(b.added_errors).join(", ")) : ""}</span>`) : esc(b.error || "not judged")}</td>
+      <td class="r num">${dur(b.seconds)}</td><td class="r num">${dur(b.cpu_s)}</td></tr>`).join("");
+  const key = `r${r.pid}-${r.proc_start}`;
+  return `<div class="card ${r.state === "running" ? "" : "ended"}">
+    <div class="head"><span class="title">bench run ${esc(r.run)}</span>${badge(r.state)}</div>
+    <div class="meta">${meta.join("<span>·</span>")}</div>
+    <div class="prog"><div class="bar"><div class="fill good" style="width:${pct(fin.length, all)}%"></div></div>
+      <div class="num">${fin.length} / ${all} boards finished · ${running.length} running · ${all - fin.length - running.length} queued</div></div>
+    <div class="meta" style="margin-top:6px">${judged ? `<span><b>${clean}</b> of ${judged} judged clean</span>` : ""}${conns ? `<span>finished boards: <b>${routed}</b> of ${conns} connections routed</span>` : ""}
+      ${r.summary ? `<span>clean pass ${(100 * (r.summary.clean_pass || 0)).toFixed(1)} %, completion ${(100 * (r.summary.completion || 0)).toFixed(1)} %</span>` : ""}</div>
+    ${steps ? `<div class="runboards">${steps}</div>` : ""}
+    ${rows ? `<details data-key="${key}-fin" ${isOpen(key + "-fin", false) ? "open" : ""}><summary>Finished boards (${fin.length}), latest first</summary><div class="tablewrap"><table><thead><tr><th>board</th><th class="r">routed</th><th>KiCad DRC</th><th class="r">route time</th><th class="r">CPU</th></tr></thead><tbody>${rows}</tbody></table></div></details>` : ""}
+  </div>`;
+}
+
+function render(d) {
+  const g = (d.gpus || []).map(x => `<span>${esc(x.name)} <b>${(x.used_mib / 1024).toFixed(1)}/${(x.total_mib / 1024).toFixed(0)} GB</b> ${x.util} %</span>`).join("");
+  const m = d.mem_mb || {};
+  const runningProcs = d.procs.filter(p => p.state === "running").length + d.runs.reduce((a, r) => a + (r.procs || []).filter(p => p.state === "running").length, 0);
+  $("machine").innerHTML = `<span><b>${runningProcs}</b> tracemaker processes running</span><span><b>${d.runs.filter(r => r.state === "running").length}</b> bench runs</span>
+    <span>load <b>${d.load.join(" ")}</b> on ${d.cpus} cores</span>${m.MemTotal ? `<span>memory <b>${((m.MemTotal - m.MemAvailable) / 1024).toFixed(0)}/${(m.MemTotal / 1024).toFixed(0)} GB</b></span>` : ""}${g}`;
+  $("runs").innerHTML = d.runs.length ? `<h2>Bench runs</h2>${d.runs.map(runCard).join("")}` : "";
+  $("procs").innerHTML = `<h2>${d.runs.length ? "Other processes" : "Processes"}</h2>` +
+    (d.procs.length ? d.procs.map(p => procCard(p, false)).join("") : `<div class="empty">No tracemaker process is running${d.runs.length ? " outside the bench runs" : ""}. Status files are read from <span class="mono">${esc(d.dir)}</span>.</div>`);
+}
+
+let last = 0;
+async function poll() {
+  if (paused) return;
+  try {
+    const r = await fetch(`/api/live?keep=${encodeURIComponent($("keep").value)}`, {cache: "no-store"});
+    if (!r.ok) throw new Error(r.status);
+    render(await r.json());
+    last = Date.now();
+  } catch (e) { /* the dot turns red below */ }
+}
+setInterval(() => {
+  const age = (Date.now() - last) / 1000;
+  $("livedot").classList.toggle("stale", !last || age > 5);
+  $("updated").textContent = paused ? "paused" : !last ? "connecting…" : age > 5 ? `no answer for ${Math.round(age)} s` : `live · ${new Date(last).toLocaleTimeString()}`;
+}, 500);
+setInterval(poll, 1000);
+poll();
+</script>
+</body>
+</html>

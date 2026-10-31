@@ -56,6 +56,8 @@ scripts/fetch_fixtures.sh [set ...]  # freerouting dac2020 kicad-demos derived (
   `bench/results/*/summary.json`.
 - Keep it truthful: tick tasks and set milestone status in `dev/progress.json` as work lands, and log notable
   events with `scripts/devlog.py --kind build|test|note|decision|milestone "text"`.
+- `/live` on the same site shows every tracemaker process and bench run on the machine, from any worktree, once a second (D165):
+  processes write `~/.cache/tracemaker/live/<pid>.json` by default (`TM_LIVE=0` off). Point the user there for run status.
 - Benchmark runs should write `bench/results/<run-id>/summary.json` with `set`, `boards`, `clean_pass`,
   `completion` and `seconds` so they appear on the site.
 

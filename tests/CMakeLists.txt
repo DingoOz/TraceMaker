@@ -134,3 +134,5 @@ set_tests_properties(critical_nets_cli PROPERTIES LABELS "route;integration" TIM
 # The board session an agent drives (doc 19, M18): both transports through the real binary, a hostile net name, replay, and equality with `route --variants 1`.
 add_test(NAME session_cli COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/session_cli.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/session_cli)
 set_tests_properties(session_cli PROPERTIES SKIP_RETURN_CODE 77 LABELS "integration;session" TIMEOUT 600)
+add_test(NAME live_status COMMAND python3 ${PROJECT_SOURCE_DIR}/tests/integration/live_status.py $<TARGET_FILE:tracemaker> ${CMAKE_BINARY_DIR}/integration/live_status)
+set_tests_properties(live_status PROPERTIES LABELS "integration" TIMEOUT 120)

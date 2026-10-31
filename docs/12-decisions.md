@@ -176,6 +176,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D158](decisions/D158.md) | Small cost-to-go fields on the CPU | accepted |
 | [D159](decisions/D159.md) | Thin tracks, real vias: the cut test of a routed topology | accepted |
 | [D160](decisions/D160.md) | Relax rescue by default: a plain run that leaves connections open is routed again with relax | accepted |
+| [D165](decisions/D165.md) | Live page of every process and bench run | accepted |
 <!-- END decision index -->
 
 ## Risks

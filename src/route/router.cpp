@@ -29,6 +29,7 @@
 #include <thread>
 #include <unordered_map>
 
+#include "core/live.hpp"
 #include "core/rng.hpp"
 #include "drc/connectivity.hpp"
 #include "gpu/device.hpp"
@@ -199,7 +200,9 @@ struct Router::Impl {
     return soft ? reserve_pen : -1;
   }
 
+  live::Slot* lslot = nullptr;  // this router's row on the live page (nullptr: not shown)
   Impl(const model::Board& in, const model::DesignRules& r, const RouterOptions& o) : rules(r), opt(o), b(in) {
+    lslot = live::slot(opt.live_name.empty() ? "router" : opt.live_name);
     // Advice regions and other in-memory rule areas: part of the working copy only, so every obstacle test sees them.
     b.zones.insert(b.zones.end(), opt.extra_zones.begin(), opt.extra_zones.end());
     // Name-pattern matching is too costly for per-cell lookups.
@@ -225,6 +228,12 @@ struct Router::Impl {
     if (opt.sink) opt.sink->publish(s);
   }
   void emit_stats(const char* stage) {
+    if (lslot) {  // the live page (core/live.hpp): write-only, read by nothing in the engine
+      lslot->routed.store(res.routed, std::memory_order_relaxed);
+      lslot->total.store(res.connections, std::memory_order_relaxed);
+      lslot->work.store(static_cast<long>(res.expansions), std::memory_order_relaxed);
+      lslot->phase.store(static_cast<int>(phase) + 1, std::memory_order_relaxed);
+    }
     if (!opt.sink) return;
     char buf[256];
     std::snprintf(buf, sizeof buf,
@@ -6209,6 +6218,22 @@ struct Router::Impl {
 
   RouteResult run() {
     t0 = std::chrono::steady_clock::now();
+    if (lslot) {
+      lslot->runs.fetch_add(1, std::memory_order_relaxed);
+      lslot->routed.store(0, std::memory_order_relaxed);
+      lslot->work.store(0, std::memory_order_relaxed);
+      lslot->budget.store(opt.work_budget, std::memory_order_relaxed);
+      lslot->phase.store(1, std::memory_order_relaxed);
+    }
+    struct LiveEnd {  // on every way out: the run's work is done, the slot waits for the next run
+      Impl& r;
+      ~LiveEnd() {
+        if (!r.lslot) return;
+        r.lslot->work_done.fetch_add(static_cast<long>(r.res.expansions), std::memory_order_relaxed);
+        r.lslot->work.store(0, std::memory_order_relaxed);
+        r.lslot->phase.store(5, std::memory_order_relaxed);
+      }
+    } live_end{*this};
     rip_cap = opt.max_rips_per_connection;
     budget_scale = (opt.polish_fraction > 0 && opt.polish_fraction < 1) ? 1.0 - opt.polish_fraction : 1.0;
     soft_unit = static_cast<std::int64_t>(opt.soft_cost_mm * 1e6);
@@ -7323,6 +7348,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       chosen.push_back(kAdvisedIndex + static_cast<int>(j));
     }
   }
+  for (auto& v : vs) v.o.live_name = v.name;  // the live page's row of each variant
   // Spread variants over the visible GPUs (cost-to-go fields); CPU-only when none.
   if (base.gpu_device >= 0) {
     const auto devs = gpu::list_devices();
@@ -7505,6 +7531,16 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       }
     const model::DesignRules& round_rules = stage < ramp_rules.size() ? ramp_rules[stage] : rules;
     last_relaxed = stage < ramp_rules.size();
+    if (live::enabled()) {
+      char buf[160];
+      if (last_relaxed)
+        std::snprintf(buf, sizeof buf, "%d of %d, relaxed stage %zu/%zu (clearance -%.4f mm)", round + 1, rounds, stage + 1, ramp_rules.size(),
+                      nm_to_mm(std::max(rules.classes.empty() ? Coord{0} : rules.classes.front().clearance, rules.minimums.clearance) -
+                               std::max(round_rules.classes.empty() ? Coord{0} : round_rules.classes.front().clearance, round_rules.minimums.clearance)));
+      else
+        std::snprintf(buf, sizeof buf, "%d of %d, board rules", round + 1, rounds);
+      live::field("round", buf);
+    }
     std::atomic<std::size_t> next{0};
     pool.clear();
     for (std::size_t w = 0; w < workers; ++w)
@@ -7524,8 +7560,9 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
         if (save_state(base.state_out, rs[bi].conn_routes, resumed_rounds + round + 1, rs[bi].routed)) saved_routed = relaxed ? -1 : rs[bi].routed;
       }
       const bool complete = rs[bi].connections > 0 && rs[bi].routed == rs[bi].connections;
+      if (live::enabled()) live::field("last round", std::to_string(rs[bi].routed) + " of " + std::to_string(rs[bi].connections) + " routed (best variant)");
       if (stage < ramp_rules.size()) {  // relaxed stage: done when complete or after ramp_rounds rounds, then the next one
-        std::fprintf(stderr, "ramp stage %zu/%zu (clearance -%.4f mm): %d of %d routed%s\n", stage + 1, ramp_rules.size(),
+        live::eprintf("ramp stage %zu/%zu (clearance -%.4f mm): %d of %d routed%s\n", stage + 1, ramp_rules.size(),
                      nm_to_mm(std::max(rules.classes.front().clearance, rules.minimums.clearance) -
                               std::max(ramp_rules[stage].classes.front().clearance, ramp_rules[stage].minimums.clearance)),
                      rs[bi].routed, rs[bi].connections, complete ? " (complete)" : "");
@@ -7547,7 +7584,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
       if (islands) {  // each variant keeps its own state if it is close enough to the best, else it starts from the best again
         std::string fin;
         for (std::size_t vi = 0; vi < vs.size(); ++vi) fin += " " + std::to_string(ramp_rules.empty() ? rs[vi].final_routed : rs[vi].routed);
-        std::fprintf(stderr, "island round %d: best %d of %d, %s states:%s\n", round + 1, rs[bi].routed, rs[bi].connections,
+        live::eprintf("island round %d: best %d of %d, %s states:%s\n", round + 1, rs[bi].routed, rs[bi].connections,
                      ramp_rules.empty() ? "final" : "best", fin.c_str());
         // With a ramp every variant's best state of the stage is its own (16 different solutions of the stage, a beam); without one the
         // state the search ended in, which wanders across the plateau.
@@ -7582,7 +7619,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
             warm_routes = best_final.conn_routes;
           }
           ramp_started = true;
-          std::fprintf(stderr, "ramp: %d of %d routed under the board's rules, back to stage %zu/%zu\n", best_final_routed, rs[bi].connections, stage + 1,
+          live::eprintf("ramp: %d of %d routed under the board's rules, back to stage %zu/%zu\n", best_final_routed, rs[bi].connections, stage + 1,
                        ramp_rules.size());
           continue;
         }
