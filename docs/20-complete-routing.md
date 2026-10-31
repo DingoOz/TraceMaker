@@ -1,6 +1,6 @@
 ---
-status: plan
-code: [src/route/legalize.cpp, src/route/cut_test.cpp, src/app/route_job.cpp]
+status: partly-built
+code: [src/route/legalize.cpp, src/route/cut_test.cpp, src/app/route_job.cpp, src/analysis/escape_proof.cpp]
 ---
 
 # 20 — Towards 100 % routed boards (plan)
@@ -61,6 +61,11 @@ That should be faster, and should keep what the plain run got right on boards wh
 - **Measure:** a third arm on the 33 boards, warm start against fresh start, both kept only if better than the plain run.
 - **Stop rule:** keep the warm start only if it wins on the sum and on clean boards, or matches them in less time.
 
+**Outcome (2026-10-30, D163, doc 05 §71).** The warm rescue routed 16,259 against the fresh rescue's 16,208 (+51, 14 better and 5
+worse) at 22 % less CPU, but left 4 boards clean against 5. It failed the stop rule by one clean board. The two are better on different
+boards: the best of both per board is 16,280 (+72) with 6 clean. The default is now both: warm first, then fresh while connections are
+open, at about 20 % more CPU on boards left open.
+
 ### 2.3 A realizer for the final hand-over (largest expected gain)
 
 Where the cut test says a topology fits and projection stalls, solve for all the vertex positions together. Two methods:
@@ -70,6 +75,24 @@ Where the cut test says a topology fits and projection stalls, solve for all the
   homotopy class with spacing, then place vias in the room the cut test found.
 
 - **Cost:** days. Start with the LP: it slots in after the projection, only when pairs are left.
+**Prototype (2026-10-30).** `TM_LEGALIZE_DUMP=DIR` writes the legaliser's problem as the sweeps leave it. The Python prototypes are
+in `bench/records/complete-routing/realizer/`. On poncho's final hand-over (1,718 vertices, 50,362 constraints, 71 pairs left by the
+sweeps):
+
+| Method | Pairs left (box 0.25 mm) | Pairs left (box 0.6 mm) |
+|---|--:|--:|
+| projection sweeps (today) | 71 | |
+| SLP: linear programs with a trust region (scipy HiGHS) | 7 | 2 |
+| penalty, L-BFGS-B | 92 | 12 |
+| augmented Lagrangian, 6 rounds | 92 | 12 |
+| SQP, QP by dual coordinate ascent (no LP solver) | 7 | 2 |
+
+- The 71 pairs were two clusters. A ladder of about 20 parallel tracks, each a few µm short, needs to shift together, which the
+  sweeps cannot do; the SLP and SQP solve it. A track in a 1.4 mm channel between two pad columns needs a bend that a straight segment
+  cannot make within the box.
+- Smooth penalties settle into a compromise in the squeezed ladder. Hard linearised constraints are what make the difference.
+- The SQP needs no library, so it is the one ported to C++ (`route/legalize.cpp`, `LegalizeOptions::realize_iters`; experiment switch
+  `TM_LEGALIZE_REALIZE=N`).
 
 - **Measure:** poncho's 71 pairs; then the 33 boards under `--relax`; then the rescue.
 - **Stop rule:** it must keep every result exact-checked and deterministic (fixed iteration counts, stable ordering).
@@ -85,6 +108,17 @@ Move U3 by 0.1 mm or narrow the track to 0.10 mm."
 - **Cost:** a day for the report and its viewer events; longer for suggested moves that are checked.
 - **Measure:** on the 33 boards, which open connections get a proof, and whether the suggested change makes them routable.
 
+**Built (2026-10-30, D161, doc 05 §69).** The board-scale cut lines of `--cut-report` find nothing on tiers B-D, so the proof is per
+pin. The board's fixed copper, grown by the clearances, is flood-filled from the pin on every layer, with via sites checked, at the
+board's minimum track and via. A pin walled in there cannot be connected as placed. `tracemaker route` checks the pins of its open
+connections (summary `why_open`), and `tracemaker walled` checks a board before routing.
+- No false alarm on the 405 KiCad-clean benchmark boards (41,810 pins).
+- On the 33 boards, none of the 1,341 pins of the 727 open connections is walled in by the placement. 8 are walled in only for their
+  class's width (a neck-down gets out), 14 only by E3's net-less copper pours (`--soft-copper-graphics` frees them), and the rest are
+  congestion. These boards have their designers' routings, so a proof could not fire on them; what the check gives here is the E3
+  fix and the knowledge that the rest is a search problem.
+- Suggested moves (which part, how far) are not built.
+
 ### 2.5 More rungs on the default ladder
 
 Run each rung only while connections are open, and keep a result only if it is better:
@@ -98,6 +132,16 @@ approves, not a silent default.
 - **Cost:** a rung each. Swaps and nudges change the design, so they are offered as a result to accept, like the layer advisor.
 - **Measure:** completion and clean boards on the 33, and what each rung changed.
 
+**Outcome (2026-10-30): offered, not run.** What each rung is worth on these boards was already measured:
+- Pin swaps (doc 05 §56): 982 → 978 open on 20 failing boards, 5 better and 5 worse, no clean board gained.
+- Different placements (the placement closure experiment, 2026-10-16) made none of 8 failing boards clean, where more budget did better.
+- More layers (D138): the advisor picked the right count on 28 of 28 boards. It is a stackup change the user pays for.
+
+The escape proof (§2.4) agrees: no open pin on the 33 boards is walled in by the placement, so swaps and nudges have nothing to unblock.
+Instead the run ends with "next:" lines by cause (doc 05 §69): a part to move for proved pins, `--soft-zones` or
+`--soft-copper-graphics` where those free a pin, the neck-down settings for class-only pins, and more search or `--try-layers` for
+congestion.
+
 ### 2.6 Via room as a cost on ball grids (research)
 
 On srj20 the thin sketch fails only where a cell has no room for its via. While routing at thin clearance, count each cell's via room
@@ -105,6 +149,15 @@ On srj20 the thin sketch fails only where a cell has no room for its via. While 
 (`--ramp-vias-real`) cost stage 1 too much and gained nothing (D159).
 
 - **Cost:** research. Measure on srj20's six stuck boards first.
+
+
+### 2.7 A finer lattice (asked 2026-10-30)
+
+Is the lattice's granularity hurting completion? Coordinates are int64 nanometres, so the number type is no limit. The search lattice
+is: (width + clearance) / 6, 25-100 µm (doc 05 §25). `route --pitch-scale X` (hidden) scales it on every board and variant. On the
+11 failing tier B boards at 20 M work: 2,051 routed at the automatic pitch, 2,040 at 0.67 and 2,041 at 0.5 (2 better, 5 worse each),
+at 34 % and 117 % more CPU (`bench/records/complete-routing/pitch`). A finer lattice spends the budget on more steps per path. The
+automatic pitch stays; the room it wastes is recovered off-lattice (relax and the legaliser).
 
 ## 3. Order
 
@@ -127,3 +180,9 @@ Each step:
 |---|---|---|---|
 | Cut test, exact pads | 2026-10-30 | relax −483 → −241 against plain; 5 clean against 2 | D159 |
 | Relax rescue by default | 2026-10-30 | 16,208 routed (+42 against plain), 8 better and 0 worse, 5 clean against 2; CPU +73 % | D160 |
+| §2.1 relax-late, full run | 2026-10-30 | 16,079 routed (−129 against the rescue), 4 better and 15 worse, 3 clean against 5. Dropped (stop rule) | |
+| §2.2 warm rescue | 2026-10-30 | warm 16,259 (+51 against fresh, 14 better, 5 worse) but 4 clean against 5; best of both 16,280 (+72), 6 clean: both passes by default, CPU +20 % on boards left open | D163 |
+| §2.3 realizer (SQP after the sweeps), on by default | 2026-10-30 | poncho 71 → 7 pairs; `--relax` on the 33 boards +15 (5 better, 0 worse), srj20 six +7 (4 / 0) | D162 |
+| §2.4 why open: escape proof | 2026-10-30 | 0 false alarms on 41,810 pins of 405 clean boards; on the 33 boards 0 of 1,341 open pins walled in by the placement, 14 by E3's pours (fix named), 8 by class width | D161 |
+| §2.5 more rungs | 2026-10-30 | not run by default: swaps and placement gave nothing on these boards; the run's "next:" lines offer them by cause | D161 |
+| §2.7 finer lattice | 2026-10-30 | 0.67 and 0.5 of the automatic pitch: −11 and −10 of 2,262 on 11 tier B boards, CPU +34 % and +117 %. Not adopted | |

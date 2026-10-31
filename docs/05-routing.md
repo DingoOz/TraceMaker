@@ -3130,6 +3130,8 @@ The next steps it suggests:
 
 ## 68. The relax rescue: escalation by default (2026-10-30, D160)
 
+> Since §71 (D163) the rescue has two passes: relax from the plain run's routes, then from nothing.
+
 **Why.** A plain `tracemaker route` runs the portfolio and stops. Relax (§41.3, with the pads of §67) completes boards the plain run does
 not, but loses on most others, so it is no default on its own. The better of the two per board is: +42 connections and five clean
 boards against two on the 33 failing PCBench tier B-D boards (§67).
@@ -3167,3 +3169,125 @@ The 33 failing PCBench tier B-D boards (100 M work, eight variants, KiCad-judged
   clean boards against 11 (C-BISCUIT completes), 22 of 30 boards byte-identical, gates pass. Each rescue took 1-3 s.
 - Test: `tests/integration/round_options.py` (the rescue runs when a board is left open, `--no-rescue` turns it off, a rescue that
   does not win leaves the output byte-identical to the plain run's, and the result is never below the plain run).
+
+## 69. Why a connection is open: pins the fixed copper walls in (2026-10-30, D161)
+
+**Why.** A run that leaves connections open says so, but not whether any router could have done better. The router's own `boxed_in`
+reason means its last searches found no way out, which includes the routed copper of other nets. A user needs to know which open pins
+cannot be connected as the parts are placed (move a part or change a rule) and which are open through congestion (more search, or the
+relax rescue of §68). Doc 20 §2.4.
+
+**The proof** (`analysis/escape_proof.{hpp,cpp}`). A track of width w whose centre keeps w/2 + c from every item of another net lives in
+the free space of the plane less those items, each grown by its own w/2 + c (the configuration space of a disc; Lozano-Pérez 1983).
+Around the pin (1.5 mm beyond its copper), on each of its copper layers:
+- **Walls.** The board's fixed copper of other nets is marked on a 10 µm grid: pads, existing tracks and vias, zone fills, copper
+  graphics, holes (with the hole clearance), the board edge. Each wall carries the clearance the rule engine gives for that pair.
+  Copper that overlaps the pin itself is no wall: it is the pin's own pour, or a short already there.
+- **Flood fill.** The flood starts from the cells a track touching the pin could start from (within w/2 of its copper) and is
+  8-connected. It gets out when it leaves the window or touches other copper of the net.
+- **Vias.** A via is checked on every copper layer, including hole-to-hole spacing. It counts if it fits in the space the track
+  reaches, and in the pin's own pad only with `--via-in-pad`.
+- **Soundness.** A cell counts as free when its centre is within half a cell diagonal of being free, so the sampled free space is a
+  superset of the true one. "Walled in" is therefore a proof; "gets out" is no promise.
+
+**The three answers.** A pin walled in for its class's track and via is checked again with the board's minimum track width and via
+(KiCad's DRC checks those; a class's sizes are defaults, not limits):
+- **Proved** (`enclosed`): walled in on every layer even for the minimum track, and no minimum via fits. Nothing but a change to the
+  placement or the rules connects it. The message names the walls, nearest first, and says whether a via in the pad would fit.
+- **Class only:** a narrower track gets out (the message gives the widest one, a neck-down), or a smaller via fits.
+- **Router's settings only:** walled in only by zone fills (`--soft-zones` routes through them and refills afterwards) or by net-less
+  copper graphics on the pin, a designer's pour (`--soft-copper-graphics` gives them the net of the pads they touch).
+- Anything else is open through congestion.
+
+**Where.** `tracemaker route` checks the end pins of every connection it leaves open (at most 400 pins) after the run. The log has
+"why open" lines and the summary has `why_open` (`pins`, `walled_in`, `neck_down`, `soft_only`, `congested`, `via_in_pad`, and `proved`
+with each pin's walls and message). `--no-why-open` turns it off. The log ends with "next:" lines (the summary's `why_open.next`): what to try, by why
+the pins are open. Move a part or change a rule for proved pins. Name `--soft-zones` or `--soft-copper-graphics` for pins those free.
+Check the neck-down settings for class-only pins. Suggest more search or more copper layers (`--try-layers`) for congestion. Design
+changes are offered, never made (doc 20 §2.5). `tracemaker walled BOARD [--pin REF.NUM]` checks a board before
+routing: every pad of a net with more than one pad, or the pins named. It is read-only and does not change the routing.
+
+**Measured** (`bench/records/complete-routing/escape`):
+- **No false alarms.** On the inputs of the 405 boards that benchmark runs left KiCad-clean (tiers A-D, srj19, srj20), every pin was
+  connected under the rules. Of their 41,810 pins none is proved walled in (`legal-sweep.tsv`). The first version judged a pin at its
+  class's track width and raised six alarms on wavegen: the +3V3 pins are walled in for 1.02 mm but a 0.85 mm track gets out, and the
+  router had necked them down. Hence the minimums.
+- **The 33 failing PCBench tier B-D boards** (the rescue run's open connections, D160): 727 open connections with 1,341 end pins.
+  - 0 are walled in by the placement.
+  - 8 are walled in only for their class's track (OtterPill, DronPi, sizif ×5, Teensy).
+  - 14 are walled in only by the router's settings, all on E3: the board's net-less copper polygons (an EasyEDA import's pours) cover
+    the pins. A run of E3 with `--soft-copper-graphics` leaves none of them open (`e3-soft.log`).
+  - 1,319 are open through congestion. These boards come with their designers' routings, so all are routable as placed; the router's
+    `boxed_in` on them is congestion.
+- **Cost:** about 19 ms per pin (one thread). 579 pins of poncho take 13 s; the 65 open pins of a short E3 run took 1.8 s.
+- Test: `tests/test_escape_proof.cpp` (`[escape_proof]`): a pin in a ring of eight pads. A tight ring is a proof, with a via fitting only
+  in the pad. A ring with 0.3 mm gaps is walled in for 0.12 mm tracks but freed by a 0.1 mm neck-down, and is a proof when the
+  minimum is 0.12 mm. A ring with 0.4 mm gaps does not wall the pin in.
+
+## 70. The realizer: the legaliser's last hand-over solved at once (2026-10-30, D162)
+
+**Why.** Relax hands its routes over to the real rules through the projection legaliser (§41.3, §67), which moves one pair at a time. On
+poncho's last hand-over it leaves 71 pairs short by 0.02-0.04 mm, the same after 3000 sweeps, although the cut test finds room
+(s\* 1.167). Two clusters: a ladder of about 20 parallel tracks, each a few µm short, that has to shift together, and a track in a
+1.4 mm channel that needs a bend. Doc 20 §2.3.
+
+**What it does** (`route/legalize.cpp`, after the sweeps, only when pairs are left). Sequential quadratic programming:
+- Each round linearises the constraints within 0.05 of their target at the current positions (gradients by the envelope theorem). It
+  solves the elastic QP min ½|d|² + M Σ s subject to g + a·d + s ≥ 0 and s ≥ 0, with every move d inside its node's box and a trust
+  region ρ.
+- The QP is solved by dual coordinate ascent (Hildreth 1957): one multiplier per row in [0, M], the box kept by clipping, 200 passes,
+  rows in a fixed order. It needs no LP solver and is deterministic.
+- A round is kept if the exact recheck finds fewer pairs, or as many but less deep, and the outline still holds. Otherwise ρ halves.
+- Up to 20 rounds (`LegalizeOptions::realize_iters`, 20 by default; `TM_LEGALIZE_REALIZE=N` for experiments, 0 = projection only).
+  Every result still goes through the router's exact check before it is committed.
+- **Judged by what the router keeps** (`route/router.cpp`). The realizer counts only the pairs it models. Zones, keep-outs and custom
+  rules are left to the exact check, and its larger moves can cost routes there: on uC3Moy it took 9 pairs to 5, but the subset of
+  routes the exact check keeps went from 40 to 39, and the quick tier's gate failed. So when the realizer ran, the router also
+  legalises by projection alone and computes the conflict-free subset of both results. It keeps the realizer's only if that keeps
+  more routes; a tie keeps the projection's. The second legalisation runs only when the sweeps leave pairs.
+
+**Prototypes** (`bench/records/complete-routing/realizer/`, doc 20 §2.3). On poncho's dumped problem, linear programs (HiGHS) and this
+QP both leave 7 pairs (2 with a larger move box); a penalty method and an augmented Lagrangian leave 92. Hard linearised constraints are
+what make the difference.
+
+**Measured** (`bench/records/complete-routing/runs`):
+
+| Set | Without | With the realizer | Better / worse | Clean | CPU s |
+|---|--:|--:|--:|--:|--:|
+| poncho, last hand-over (pairs left) | 71 | 7 | | | |
+| 33 failing PCBench B-D, `--relax` (routed of 16,935) | 15,925 | 15,940 (+15) | 5 / 0 | 5 / 5 | 60,232 / 67,272 |
+| srj20's six stuck boards, `--relax` (of 453) | 404 | 411 (+7) | 4 / 0 | 0 / 0 | 13,533 / 11,741 |
+
+- The two `--relax` rows were measured before the realizer was judged by the routes kept (below). srj20's six, run again with it:
+  411, board for board the same. Quick tier with it: gates pass, 0 boards worse (§71, `bench/records/complete-routing/quick`).
+- The CPU difference goes both ways (shared machine). The realizer runs only when the sweeps leave pairs.
+- In the default run it acts through the relax rescue (§68). Per board, the better of the plain run and the realizer's relax run is
+  16,210 on the 33 boards, against 16,208.
+
+## 71. Two rescue passes: warm, then fresh (2026-10-30, D163)
+
+**Why.** The rescue of §68 routes the board again from nothing. Starting relax from the plain run's routes instead (warm; they are legal
+under the real rules, so under relaxed ones too) keeps what the plain run got right and spends the budget on what is open. Doc 20 §2.2.
+
+**Measured** on the 33 failing PCBench tier B-D boards (100 M work, eight variants, KiCad-judged; `bench/records/complete-routing/runs`):
+
+| Rescue | Routed (of 16,935) | vs fresh | Better / worse | KiCad-clean | CPU s |
+|---|--:|--:|--:|--:|--:|
+| none (plain) | 16,166 | | | 2 | 64,062 |
+| fresh (D160) | 16,208 | | | 5 | 110,958 |
+| warm | 16,259 | +51 | 14 / 5 | 4 | 86,304 |
+| best of the two per board | 16,280 | +72 | | 6 | about 133,000 |
+
+- Warm wins more often (kept on 22 boards against 12) and costs less, but it loses serial_gw and teensy-fx by one connection each,
+  where fresh completes them clean. It completes Teensy_test_layout, which fresh does not.
+- Neither is better on every board, so both run.
+
+**What it does** (`app/route_job.cpp`). `--rescue-mode both` (the default) runs the warm pass first. If connections are still open, the
+fresh pass follows. Each pass has its own budget (§68) and is kept only if `route_result_better` prefers it to the best so far.
+`--rescue-mode warm` or `fresh` runs one pass. The summary's `rescue` has `passes` (mode, routed, adopted, seconds), and variant rows
+carry `rescue_mode`.
+
+- Cost: a board left open after the warm pass is routed three times. Without `--work`, a default run can take three times `--time`. A
+  complete board pays nothing.
+- The realizer (§70) was not on in these runs. With it, both arms gain a little (§70).
+- Test: `tests/integration/round_options.py` checks the order of the passes (on its board: warm 26, fresh 27, kept).

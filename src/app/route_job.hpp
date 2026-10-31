@@ -97,6 +97,8 @@ struct RouteJob {
   // The relax rescue (doc 05 §68, D160): connections left open by the plain run are tried again with --relax on a budget of its own
   // (--time again, and --work again with a work budget); the better result is kept. --no-rescue turns it off.
   bool rescue = true;
+  bool why_open = true;  // explain open connections: pins the fixed copper walls in (doc 20 §2.4); --no-why-open
+  std::string rescue_mode = "both";  // --rescue-mode: warm (relax from the plain run's routes), fresh (from nothing), both (warm, then fresh; D163)
   // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;

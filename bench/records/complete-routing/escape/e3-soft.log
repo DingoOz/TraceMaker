@@ -1,0 +1,32 @@
+searches: 325 ok (17611052 expansions), 109 failed (1375358 expansions); fields 0 GPU + 136 CPU (3.98 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 3740501; rips 18, passes 2, boxed-in 104, nogood skips 0, history cells 81, transactions 0 kept of 0
+reachability checks: 36, 30 proved unreachable, 909013 cells visited
+late reachability proofs: 46, 12 proved no path, 343997 cells visited
+failed-search expansions: strict confined 0, strict wide 1338960, negotiated confined 0, negotiated wide 0
+routed 305/328 connections, 1324 tracks, 129 vias, pitch 0.075 mm, 20203022 expansions, 18.80 s (best variant 18.76 s)
+  unrouted: C22_1: U5.6 -> C22.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U4_5: U4.5 -> C14.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: C11_2: U3.5 -> C11.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U1_5: C2.2 -> U1.5  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: Z_STP: U2.26 -> U4.16  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Z_DIR: U2.25 -> U4.19  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Z_EN: U2.27 -> U4.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: FAN_PWM: U2.41 -> R43.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: X_STOP: U2.8 -> R31.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: THB: U2.11 -> R35.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SD_DET: U2.24 -> R27.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SD_MISO: U2.22 -> R26.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SD_SCK: U2.21 -> R25.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Y_STP: U3.16 -> U2.29  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: Y_DIR: U3.19 -> U2.28  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SD_MOSI: U2.23 -> R24.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SD_CS: U2.20 -> R23.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Y_EN: U3.2 -> U2.30  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: USB_D-: U2.44 -> R39.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: LCD_MOSI: U2.59 -> H2.3  (boxed in; escapes/neck-down: boxed in)
+  unrouted: LCD_ENC_A: U2.43 -> H2.6  (boxed in; escapes/neck-down: boxed in)
+  unrouted: X_DIR: U2.33 -> U1.19  ()
+  unrouted: X_EN: U1.2 -> U2.35  ()
+why open: 46 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 46 open through congestion (0.74 s)
+work (all variants): 18950012 expansions, 1253010 flood cells, 3738615 cell checks, 2425709 fixed-copper checks, 57168502 field cells in 136 fields, 325 commits, 18 rips

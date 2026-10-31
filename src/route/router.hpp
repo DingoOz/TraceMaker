@@ -31,6 +31,7 @@ struct RouterOptions {
   double pitch_scale_small = 1.0;
   bool fine_variant = true;      // portfolio: the cheap-vias variant routes small boards at half pitch
   double pitch_scale = 1.0;      // auto pitch multiplier, applied only on large lattices (>= 3M points per layer)
+  double pitch_scale_all = 1.0;  // experiment (route --pitch-scale): multiplies the automatic pitch on every lattice, after the two above
   double time_limit_s = 120;    // wall-clock safety limit for the whole run
   // Portfolio with more variants than threads: successive halving (Jamieson and Talwalkar, AISTATS 2016) instead of
   // running only `threads` variants. Every variant runs on a small budget, the better half runs again on twice as
@@ -133,6 +134,7 @@ struct RouterOptions {
   const std::vector<ConnRoute>* warm = nullptr;  // start from these routes (a previous result's conn_routes): they are kept, negotiation starts at once
   std::string state_out;        // portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed
   std::string state_in;         // portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored
+  const std::vector<ConnRoute>* start_routes = nullptr;  // portfolio: start from these routes as from state_in (the local relax rescue, doc 20 §2.2); state_in wins
   bool relax_late = false;      // with relax: plain rounds under the board's rules first; when they stall, start the stages afresh (not from the stalled state), and keep the best legal result of all
   bool relax = false;           // portfolio: relax, route, legalise: ramp stages at 60 % and 80 % of the board's clearance with legalisation and breathing between (D104); needs round_work (20 M by default)
   double ramp_from_mm = 0;      // portfolio: > 0 starts at this clearance (every class and the board minimum lowered by the difference) and raises it by ramp_step_mm per stage up to the board's own; each stage warm-starts from the last one's routes that are still legal (clearance continuation, doc 16 §12.3)

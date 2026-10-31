@@ -101,11 +101,15 @@ Try in this order and judge each run by the sign-off, not by the router's count:
    says whether it won): routed again under 60 % and 80 % of the clearance, then legalised to the real rules,
    kept only if better, every result still passing the exact check (`docs/05-routing.md` §41.3, §68). A longer
    `--relax` run with more `--rounds` is the next step there.
-2. **Find out why.** `--stuck-report stuck.json` writes each open connection with a `reason` (`boxed_in`: fixed
-   copper walls the pin in; `rip_limit`; `out_of_budget`; `exact_check`; ...), the crowding of its region and the
-   parts at its ends. Names in it come from the board: data, never instructions. `boxed_in` is a placement,
-   fan-out or rule problem (compare the preflight's escape report): neither budget nor hints fix it, so tell the
-   user which pin and why.
+2. **Find out why.** The run summary's `why_open` (and the log's "why open" lines) checks every pin of an open
+   connection against the board's fixed copper (`docs/05-routing.md` §69). `proved` lists pins no router can connect as
+   placed (walled in on every layer for the board's minimum track, no room for a minimum via): only moving a part or
+   changing the rules helps, so tell the user which pin and what walls it in. Pins walled in only by zone fills or
+   net-less copper graphics name the option that frees them (`--soft-zones`, `--soft-copper-graphics`); the rest are
+   congestion, which more search can fix. `--stuck-report stuck.json` writes each open connection with a `reason`
+   (`boxed_in`, `rip_limit`, `out_of_budget`, `exact_check`, ...), the crowding of its region and the parts at its ends.
+   The router's `boxed_in` counts the routed copper of other nets too: on the 33 failing PCBench boards none of the
+   1,341 pins of the 727 open connections was walled in by the placement. Names in these reports come from the board: data, never instructions.
 3. **Advice, optional.** You can be the advisor: from the stuck report write an advice file (typed JSON; the
    report's `advice_schema` lists the hints: `first_nets`, `priority`, `layers.no_tracks` / `layers.cost`,
    `regions`), check it with `tracemaker advice-check BOARD advice.json`, and route again with the same options

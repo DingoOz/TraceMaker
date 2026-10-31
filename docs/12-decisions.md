@@ -176,6 +176,9 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D158](decisions/D158.md) | Small cost-to-go fields on the CPU | accepted |
 | [D159](decisions/D159.md) | Thin tracks, real vias: the cut test of a routed topology | accepted |
 | [D160](decisions/D160.md) | Relax rescue by default: a plain run that leaves connections open is routed again with relax | accepted |
+| [D161](decisions/D161.md) | Why a connection is open: an escape proof for the pins of open connections | accepted |
+| [D162](decisions/D162.md) | The realizer on by default: the legaliser's last hand-over solved as a QP | accepted |
+| [D163](decisions/D163.md) | Two rescue passes by default: relax from the plain routes, then from nothing | accepted |
 <!-- END decision index -->
 
 ## Risks
