@@ -103,6 +103,7 @@ nav:
       - Run kicad-cli from Docker: how-to/kicad-cli-docker.md
       - Use the GPUs: how-to/gpu.md
       - Read a run report: how-to/run-report.md
+      - Watch runs live: how-to/live-page.md
       - Fetch boards and run benchmarks: how-to/benchmarks.md
       - Make a release: how-to/release.md
       - Write and publish the docs: how-to/docs.md

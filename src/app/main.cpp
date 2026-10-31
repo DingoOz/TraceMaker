@@ -21,6 +21,7 @@
 #include "analysis/return_path.hpp"
 #include "app/route_job.hpp"
 #include "app/tui.hpp"
+#include "core/live.hpp"
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
 #include "drc/drc.hpp"
@@ -911,7 +912,7 @@ int cmd_srj_export(const std::string& board, const std::string& problem, const s
 
 }  // namespace
 
-int main(int argc, char** argv) {
+static int run_main(int argc, char** argv) {
   CLI::App app{"TraceMaker: placement-aware PCB autorouter for KiCad"};
   app.require_subcommand(1);
   auto* version = app.add_subcommand("version", "Print the version");
@@ -1654,4 +1655,11 @@ int main(int argc, char** argv) {
     return 1;
   }
   return 1;
+}
+
+int main(int argc, char** argv) {
+  tmk::live::start(argc, argv);  // the live page (core/live.hpp); TM_LIVE=0 turns it off
+  const int code = run_main(argc, argv);
+  tmk::live::finish(code);
+  return code;
 }

@@ -11,6 +11,7 @@ Recipes for one job each, for people who already know what they want to do.
 - [Run kicad-cli from Docker](kicad-cli-docker.md): KiCad's DRC without installing KiCad.
 - [Use the GPUs](gpu.md): check, choose and share devices; build for CUDA 12.
 - [Read a run report](run-report.md): what a route did, what is open and why, and where each number comes from.
+- [Watch runs live](live-page.md): every tracemaker process and bench run on the machine, updated once a second.
 - [Fetch boards and run benchmarks](benchmarks.md): fixture sets, the quick tier, tiers A–D, keeping records.
 - [Make a release](release.md): measure, bump, tag, publish.
 - [Write and publish the docs](docs.md): this site, decision records, generated pages, the C++ API.

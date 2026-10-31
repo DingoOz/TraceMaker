@@ -303,6 +303,7 @@ struct RouterOptions {
     }
   } advice;
   events::Sink* sink = nullptr;
+  std::string live_name;  // this router's row on the live page (core/live.hpp); empty: "router"
   // Shared by portfolio variants (wall-clock mode only): when one variant has routed everything at time T, the
   // others may continue until 2T + 5 s; a variant that is complete always finishes its clean-up.
   std::atomic<double>* deadline = nullptr;
