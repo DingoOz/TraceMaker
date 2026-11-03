@@ -4238,7 +4238,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 <tbody>
 <tr>
 <td>1</td>
-<td>Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, <code>.kicad_dru</code> clearance/width conditions on net class, layer and area; <code>disallow</code> and <code>physical_hole_clearance</code> (§27)</td>
+<td>Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, <code>.kicad_dru</code> clearance/width conditions on net class, layer and area; <code>disallow</code>, <code>physical_hole_clearance</code> and <code>physical_clearance</code> (§27)</td>
 </tr>
 <tr>
 <td>2</td>
@@ -5369,13 +5369,18 @@ pad's own layer.</p>
 <td><code>hole_clearance</code>, once per hole and item, any net</td>
 </tr>
 <tr>
+<td><code>physical_clearance</code> (D167, issue #64)</td>
+<td>Between any two copper items, whatever the nets: KiCad's provider has no net test, so a via in a pad of its own net breaks <code>A.Type == 'Via' &amp;&amp; B.Type == 'Pad'</code>. <code>Obstacles::physical_state</code> tests new tracks and vias against fixed and routed copper in the exact check before commit and the routed checks; <code>physical_codes</code> gives the per-class caches a pad's net (a track of that net may touch it) or a block. A pair with a track of one net is left out, because a track meets its net's copper wherever it connects; a rule that matches such a pair is named in a warning, and KiCad reports each contact. A net whose vias the rule sets against its own tracks gets no vias, as above. Zone fills do not keep it (the refill warns).</td>
+<td><code>clearance</code> with the rule's name, once per pair (an item against a zone fill once per zone and layer), any net, severity from the rule; a later matching rule with <code>(severity ignore)</code> turns it off</td>
+</tr>
+<tr>
 <td>Keepout rule areas</td>
 <td>Tracks and vias use their respective keepout flags (§26, D65).</td>
 <td>Unchanged</td>
 </tr>
 </tbody>
 </table>
-<p>Disallow masks retain the per-class cache. Physical-hole rules do too when independent of <code>NetName</code>, <code>NetClass</code>
+<p>Disallow masks retain the per-class cache. Physical-hole and physical clearance rules do too when independent of <code>NetName</code>, <code>NetClass</code>
 and <code>inDiffPair</code>, and clearance rules when independent of <code>NetName</code> and <code>inDiffPair</code> (cached via codes probe a via, so
 <code>Type</code>, <code>Width</code> and position conditions agree with the exact check). Other constraints are not read per point, and
 rules that cannot be read are not applied, so neither needs exact checks (D139).</p>

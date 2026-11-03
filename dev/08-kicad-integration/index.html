@@ -2681,8 +2681,8 @@ planning, the ramp) still take the class clearance floored at the board minimum;
   the most conservative interpretation (for example, the largest clearance that could apply).</li>
 <li>Phase 1 custom-rule conditions: <code>A.NetClass</code>, <code>A.NetName</code>, <code>A.Type</code>, <code>A.Layer</code>, <code>A.insideArea(...)</code>,
   <code>A.intersectsArea(...)</code>, <code>A.isPlated()</code>, <code>A.Pad_Type</code>, <code>A.Reference</code>, boolean <code>&amp;&amp; || !</code>. Others later.</li>
-<li>The router also enforces <code>disallow track/via</code> by net and layer, and <code>physical_hole_clearance</code> between holes
-  and copper of any net (doc 05 §27). Positional <code>disallow</code> rules are warned and left to the DRC.</li>
+<li>The router also enforces <code>disallow track/via</code> by net and layer, <code>physical_hole_clearance</code> between holes
+  and copper of any net, and <code>physical_clearance</code> between copper of any net (doc 05 §27). Positional <code>disallow</code> rules are warned and left to the DRC.</li>
 </ul>
 <h2 id="5-ipc-plugin-kicad_plugin">5. IPC plugin (<code>kicad_plugin/</code>)<a class="headerlink" href="#5-ipc-plugin-kicad_plugin" title="Permanent link">&para;</a></h2>
 <p>Facts that shape it:

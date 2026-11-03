@@ -149,8 +149,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa1b97b421ea68072387f731f00a6df92" id="r_aa1b97b421ea68072387f731f00a6df92"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1b97b421ea68072387f731f00a6df92">physical_hole_clearance</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> *hole_owner, const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;other, int layer) const</td></tr>
 <tr class="memdesc:aa1b97b421ea68072387f731f00a6df92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hole-to-copper clearance on <span class="tt">layer</span>, any net; -1 when no rule matches (KiCad: hole_clearance).  <br /></td></tr>
 <tr class="memitem:a9acc61cbf757a4270df4f18b1d25fc2d" id="r_a9acc61cbf757a4270df4f18b1d25fc2d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9acc61cbf757a4270df4f18b1d25fc2d">any_physical_hole_clearance</a> () const</td></tr>
-<tr class="memitem:a291d2c26905f5de190695bd23a3b2b50" id="r_a291d2c26905f5de190695bd23a3b2b50"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a291d2c26905f5de190695bd23a3b2b50">via_hole_rule_hits_own_tracks</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net) const</td></tr>
-<tr class="memdesc:a291d2c26905f5de190695bd23a3b2b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when a physical_hole_clearance rule holds between a via of <span class="tt">net</span> and a track of the same net: the tracks that end in a via touch its hole, so every via of that net would break the rule.  <br /></td></tr>
+<tr class="memitem:a5c347624c16f59e0075345d2693e4e16" id="r_a5c347624c16f59e0075345d2693e4e16"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c347624c16f59e0075345d2693e4e16">physical_clearance</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;a, const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;b, int layer, const <a class="el" href="structtmk_1_1model_1_1CustomRule.html">model::CustomRule</a> **<a class="el" href="#a764ea418b12bc15ad4b35ddcbd76f006">rule</a>=nullptr) const</td></tr>
+<tr class="memdesc:a5c347624c16f59e0075345d2693e4e16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copper-to-copper clearance on <span class="tt">layer</span> whatever the nets, same net included; -1 when no rule matches or the last one that does has severity ignore (KiCad: physical_clearance, reported as clearance).  <br /></td></tr>
+<tr class="memitem:a26441a3ca18e472ef496761c85f64f8d" id="r_a26441a3ca18e472ef496761c85f64f8d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26441a3ca18e472ef496761c85f64f8d">any_physical_clearance</a> () const</td></tr>
+<tr class="memitem:a1fccd321bd7b34dc5a7f09c715007082" id="r_a1fccd321bd7b34dc5a7f09c715007082"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1fccd321bd7b34dc5a7f09c715007082">max_physical_clearance</a> () const</td></tr>
+<tr class="memitem:af24f2eb2d94b6b23c4e7bcd27ffeee1e" id="r_af24f2eb2d94b6b23c4e7bcd27ffeee1e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af24f2eb2d94b6b23c4e7bcd27ffeee1e">via_rule_hits_own_tracks</a> (<a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> net) const</td></tr>
+<tr class="memdesc:af24f2eb2d94b6b23c4e7bcd27ffeee1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when a physical_hole_clearance or physical_clearance rule holds between a via of <span class="tt">net</span> and a track of the same net: the tracks that end in a via touch it and its hole, so every via of that net would break the rule.  <br /></td></tr>
 <tr class="memitem:a55109b35a2259ab30cf0ff6600d086f6" id="r_a55109b35a2259ab30cf0ff6600d086f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55109b35a2259ab30cf0ff6600d086f6">max_physical_hole_clearance</a> () const</td></tr>
 <tr class="memitem:a9de5903f24f907a91d1dfba2b558a897" id="r_a9de5903f24f907a91d1dfba2b558a897"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9de5903f24f907a91d1dfba2b558a897">router_hole_clearance</a> () const</td></tr>
 <tr class="memdesc:a9de5903f24f907a91d1dfba2b558a897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule.  <br /></td></tr>
@@ -219,6 +223,33 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a26441a3ca18e472ef496761c85f64f8d" name="a26441a3ca18e472ef496761c85f64f8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26441a3ca18e472ef496761c85f64f8d">&#9670;&#160;</a></span>any_physical_clearance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::drc::RuleEngine::any_physical_clearance </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00108">108</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -583,6 +614,33 @@ Friends</h2></td></tr>
 
 </div>
 </div>
+<a id="a1fccd321bd7b34dc5a7f09c715007082" name="a1fccd321bd7b34dc5a7f09c715007082"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fccd321bd7b34dc5a7f09c715007082">&#9670;&#160;</a></span>max_physical_clearance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::drc::RuleEngine::max_physical_clearance </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00109">109</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a55109b35a2259ab30cf0ff6600d086f6" name="a55109b35a2259ab30cf0ff6600d086f6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a55109b35a2259ab30cf0ff6600d086f6">&#9670;&#160;</a></span>max_physical_hole_clearance()</h2>
 
@@ -606,7 +664,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00108">108</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00113">113</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -635,7 +693,7 @@ Friends</h2></td></tr>
 
 <p>Custom rules that the per-class obstacle cache cannot represent require exact per-point checks. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00115">115</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00120">120</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -699,6 +757,40 @@ Friends</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5c347624c16f59e0075345d2693e4e16" name="a5c347624c16f59e0075345d2693e4e16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c347624c16f59e0075345d2693e4e16">&#9670;&#160;</a></span>physical_clearance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::drc::RuleEngine::physical_clearance </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1CustomRule.html">model::CustomRule</a> **</td>          <td class="paramname"><span class="paramname"><em>rule</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copper-to-copper clearance on <span class="tt">layer</span> whatever the nets, same net included; -1 when no rule matches or the last one that does has severity ignore (KiCad: physical_clearance, reported as clearance). </p>
+<p><span class="tt"><a class="el" href="#a764ea418b12bc15ad4b35ddcbd76f006">rule</a></span> receives the rule that applies. </p>
 
 </div>
 </div>
@@ -808,7 +900,7 @@ Friends</h2></td></tr>
 <p>Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule. </p>
 <p>The router's checks and caches have no per-pair hole rule, so a rule with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact (hole_clearance above). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00113">113</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00118">118</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -988,14 +1080,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a291d2c26905f5de190695bd23a3b2b50" name="a291d2c26905f5de190695bd23a3b2b50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a291d2c26905f5de190695bd23a3b2b50">&#9670;&#160;</a></span>via_hole_rule_hits_own_tracks()</h2>
+<a id="af24f2eb2d94b6b23c4e7bcd27ffeee1e" name="af24f2eb2d94b6b23c4e7bcd27ffeee1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af24f2eb2d94b6b23c4e7bcd27ffeee1e">&#9670;&#160;</a></span>via_rule_hits_own_tracks()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool tmk::drc::RuleEngine::via_hole_rule_hits_own_tracks </td>
+          <td class="memname">bool tmk::drc::RuleEngine::via_rule_hits_own_tracks </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a></td>          <td class="paramname"><span class="paramname"><em>net</em></span></td><td>)</td>
           <td> const</td>
@@ -1003,7 +1095,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>True when a physical_hole_clearance rule holds between a via of <span class="tt">net</span> and a track of the same net: the tracks that end in a via touch its hole, so every via of that net would break the rule. </p>
+<p>True when a physical_hole_clearance or physical_clearance rule holds between a via of <span class="tt">net</span> and a track of the same net: the tracks that end in a via touch it and its hole, so every via of that net would break the rule. </p>
 
 </div>
 </div>
@@ -1030,7 +1122,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00116">116</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00121">121</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1055,7 +1147,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00160">160</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00167">167</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
