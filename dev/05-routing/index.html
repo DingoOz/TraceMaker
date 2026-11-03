@@ -5334,7 +5334,7 @@ pad's own layer.</p>
 <td><code>items_not_allowed</code>; <code>blind_via</code> has exactly one outer span endpoint, <code>buried_via</code> none, micro remains separate (D80).</td>
 </tr>
 <tr>
-<td>Positional, footprint or pad-dependent <code>disallow</code> (<code>insideArea</code>, <code>intersectsArea</code>, <code>enclosedByArea</code>, courtyard functions, <code>memberOfFootprint</code>, <code>Reference</code>, <code>Pad_Type</code>, <code>Width</code>, <code>Size_X/Y</code>, <code>Position_X/Y</code>)</td>
+<td>Positional, footprint or pad-dependent <code>disallow</code> (<code>insideArea</code>, <code>intersectsArea</code>, <code>enclosedByArea</code>, courtyard functions, <code>memberOfFootprint</code>, <code>Reference</code>, <code>Pad_Type</code>, <code>Pad_Number</code>, <code>Pin_Name</code>, <code>Width</code>, <code>Size_X/Y</code>, <code>Position_X/Y</code>)</td>
 <td>Applied to every new track and via with its actual shape, width, position and span, in the exact checks before commit, escapes, pair legs and clean-up, and in the search's lattice tests (§34, D82). Not warned.</td>
 <td>Nanometre-valued properties and comparisons; intersection/enclosure of copper, common area layers and physical front/back courtyard polygons (§33, D80).</td>
 </tr>
@@ -5876,6 +5876,10 @@ were not distinguished.</p>
 <tr>
 <td>Absolute transformed pad/via anchors; tracks/arcs have undefined positions (<code>==</code>/<code>!=</code> both false, relational zero-coercion)</td>
 <td><code>position_x</code>, <code>position_anchor_shifted_pad</code>, <code>position_anchor_rotated_pad</code>, <code>position_anchor_x_ne_zero</code>, <code>position_anchor_x_lt_one</code></td>
+</tr>
+<tr>
+<td><code>Pad_Number</code> and <code>Pin_Name</code> are pad strings (case-insensitive, wildcards), undefined on other items; NPTH pads have an empty number, so <code>!= '2'</code> selects them and <code>== '1'</code> does not (issue #65, KiCad 10.0.6)</td>
+<td><code>pad_number</code>, <code>pad_number_other</code>, <code>pad_number_ne</code>, <code>pin_name</code>, <code>pin_name_wildcard</code>, <code>pin_name_ne</code></td>
 </tr>
 <tr>
 <td>Blind via spans touch exactly one outer layer; buried spans none; micro vias remain separate</td>
