@@ -1,0 +1,5 @@
+(version 1)
+(rule "pad1_keepaway"
+  (constraint clearance (min 0.5mm))
+  (condition "B.Type == 'Pad' && B.Pad_Number == '1'"))
+
