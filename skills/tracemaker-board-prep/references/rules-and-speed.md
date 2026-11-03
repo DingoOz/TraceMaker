@@ -26,6 +26,13 @@ What to do:
 - Board minimums should be the fab's limits, not tighter "just in case": they also floor every class.
 - `--pitch-um` overrides the automatic pitch; a coarser pitch is faster but can miss tight gaps.
 
+## Many net classes
+
+The router keeps an obstacle cache per set of class values (clearance, pair gaps, track width, via size), not per class name:
+fifty classes with the same values cost what one does. A custom rule whose condition names classes (`NetClass`,
+`hasNetclass`) keeps them apart again, one cache each. `--class-cache-mb` (default 2048 per variant) bounds the caches;
+past it the oldest are freed and computed again, which costs time and can change the result (a `note:` line says so).
+
 ## Custom rules: what keeps the caches
 
 TraceMaker reads the board's `.kicad_dru`. Whether a rule is cheap depends on its constraint and condition:

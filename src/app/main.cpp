@@ -1176,6 +1176,10 @@ static int run_main(int argc, char** argv) {
   bool r_nokb = false;
   route->add_option("--kb", r_kb, "Knowledge base file (failure memory across runs)");
   route->add_flag("--no-kb", r_nokb, "Do not read or update the knowledge base");
+  route->add_option("--class-cache-mb", ropt.class_cache_mb,
+                    "Memory bound of each router's fixed-obstacle caches, in MB (0 = none; default 2048). Past it the oldest are freed and "
+                    "computed again: more time, and the result may differ from an unbounded run (still deterministic)")
+      ->check(CLI::NonNegativeNumber);
   route->add_option("--threads", r_threads,
                     "Threads for the portfolio (differently configured routers, best kept). Without --variants it is also the portfolio "
                     "size, except with --work, where all variants run and the output is identical for any thread count");

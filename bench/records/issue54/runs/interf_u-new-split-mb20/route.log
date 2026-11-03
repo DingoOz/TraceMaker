@@ -1,0 +1,63 @@
+live view: http://127.0.0.1:8855/
+portfolio: 2 variants on 2 threads
+  variant 0 exact bends, shortest first    routed 98 in 6.3 s
+  variant 1 fast bends, shortest first, crowded source routed 120 in 12.8 s  <- best
+rescue (warm): 44 of 164 connections are open; routing again with relax (from the plain routes, 1 round of 3000000 work)
+portfolio: 2 variants on 2 threads
+  variant 0 exact bends, shortest first    routed 120 in 1.5 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 120 in 1.4 s
+rescue (warm): 120 -> 120 routed (no gain: the result before stands)
+rescue (fresh): 44 of 164 connections are open; routing again with relax (from nothing, 1 round of 3000000 work)
+portfolio: 2 variants on 2 threads
+  variant 0 exact bends, shortest first    routed 114 in 1.6 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 114 in 1.6 s
+rescue (fresh): 120 -> 114 routed (no gain: the result before stands)
+routed 120/164 connections, 442 tracks, 6 vias, pitch 0.100 mm, 3033691 expansions, 38.72 s (best variant 12.75 s)
+  unrouted: /PC-IOW: U3.6 -> BUS1.13  (no path in window)
+  unrouted: /PC-IOR: U3.7 -> BUS1.14  (no path in window)
+  unrouted: /PC-A4: U2.17 -> BUS1.58  (boxed in (target); escapes/neck-down: no path in window)
+  unrouted: VCC: U2.20 -> BUS1.29  (no path in window)
+  unrouted: /PC-A7: U2.13 -> BUS1.55  (boxed in; escapes/neck-down: boxed in)
+  unrouted: VCC: U1.20 -> BUS1.3  (no path in window)
+  unrouted: /D0: U1.18 -> U9.N2  (no path in window)
+  unrouted: /PC-RST: U3.9 -> BUS1.2  (no path in window)
+  unrouted: VCC: U9.L3 -> U8.23  (no path in window)
+  unrouted: /ENBBUF: U1.19 -> U8.22  (no path in window)
+  unrouted: VCC: U3.20 -> U2.20  (no path in window)
+  unrouted: /MATCHL: U2.19 -> U8.2  (no path in window)
+  unrouted: /PC-A1: U3.2 -> BUS1.61  (no path in window)
+  unrouted: /PC-A2: U3.4 -> BUS1.60  (no path in window)
+  unrouted: /PC-A3: U3.5 -> BUS1.59  (no path in window)
+  unrouted: /PROG-: U8.19 -> U9.M12  (no path in window)
+  unrouted: /PC-A3: U3.5 -> U9.K2  (no path in window)
+  unrouted: /PC-A2: U3.4 -> U9.M5  (no path in window)
+  unrouted: /PC-A0: U3.3 -> BUS1.62  (no path in window)
+  unrouted: /MA3: U5.9 -> U9.C2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /PC-A0: U3.3 -> U9.M6  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /MA11: U5.25 -> U9.D2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /PC-AEN: BUS1.42 -> U9.N10  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /MD7: U5.21 -> U9.B8  (no path in window)
+  unrouted: /MA13: U5.28 -> U9.C1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /PC-A10: U2.11 -> U9.L8  (out of budget)
+  unrouted: /MA9: U5.26 -> U9.A4  ()
+  unrouted: /PC-AEN: U2.1 -> BUS1.42  ()
+  unrouted: /MA14: U5.3 -> U9.D1  ()
+  unrouted: /MA7: U5.5 -> U9.B3  ()
+  unrouted: /MA12: U5.4 -> U9.F3  ()
+  unrouted: /LED1: R4.2 -> U9.M3  ()
+  unrouted: /CS1-: U5.22 -> U9.A10  ()
+  unrouted: /MA0: U5.12 -> U9.A11  ()
+  unrouted: /MA10: U5.23 -> U9.C9  ()
+  unrouted: /PC-A4: U2.17 -> U9.H3  ()
+  unrouted: /PC-A8: U2.4 -> U9.H1  ()
+  unrouted: /PC-A9: BUS1.53 -> U9.N7  ()
+  unrouted: /OE-: U5.24 -> U9.B9  ()
+  unrouted: /MA15: U5.31 -> U9.F1  ()
+  unrouted: /PC-A5: U2.2 -> U9.J2  ()
+  unrouted: /MA16: U5.2 -> U9.C8  ()
+  unrouted: /MA5: U5.7 -> U9.C13  ()
+  unrouted: /WR-: U5.29 -> U9.A13  ()
+why open: 82 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 82 open through congestion (1.63 s)
+  next: 82 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 5014672 expansions, 1062147 flood cells, 3855532 cell checks, 3569848 fixed-copper checks, 46845498 field cells in 207 fields, 218 commits, 0 rips
+note: the obstacle caches reached --class-cache-mb (20 MB) and were freed 17 times; a larger bound saves time, the result is the same

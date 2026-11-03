@@ -587,6 +587,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     }
     // Position, size and footprint conditions are evaluated on each new track and via (probe_disallowed).
     if (c.positional && (c.words & kRouted)) positional_disallow_ = true;
+    if (c.valid && c.cond && c.cond->references({"NetClass", "hasNetclass", "hasExactNetclass", kImplicitExactNetclass})) class_names_seen_ = true;
     rules_.push_back(std::move(c));
   }
   if (std::any_of(rules_.begin(), rules_.end(), [](const Compiled& c) {

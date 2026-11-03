@@ -16,11 +16,22 @@ class LazyCodes {
  public:
   static constexpr std::int32_t kUnknown = INT32_MIN;
 
-  // n entries, all unknown; drops any earlier contents.
-  void init(std::size_t n) {
+  // n entries, all unknown; drops any earlier contents. `counter`, if given, is kept equal to the bytes held, summed
+  // with any other LazyCodes sharing it (the router bounds its caches' total, issue #54).
+  void init(std::size_t n, std::size_t* counter = nullptr) {
+    release();
     n_ = n;
+    counter_ = counter;
     chunks_.clear();
     chunks_.resize((n + kChunk - 1) / kChunk);
+  }
+  // Every entry back to unknown, freeing the chunks.
+  void release() {
+    for (auto& c : chunks_)
+      if (c) {
+        c.reset();
+        if (counter_) *counter_ -= kChunk * sizeof(std::int32_t);
+      }
   }
   bool empty() const { return n_ == 0; }
   std::size_t size() const { return n_; }
@@ -31,6 +42,7 @@ class LazyCodes {
     if (!c) {
       c = std::make_unique<std::int32_t[]>(kChunk);
       for (std::size_t k = 0; k < kChunk; ++k) c[k] = kUnknown;
+      if (counter_) *counter_ += kChunk * sizeof(std::int32_t);
     }
     return c[i & (kChunk - 1)];
   }
@@ -50,6 +62,7 @@ class LazyCodes {
   static constexpr std::size_t kShift = 12;  // 4,096 entries (16 KB): a few lattice rows of a window
   static constexpr std::size_t kChunk = std::size_t{1} << kShift;
   std::size_t n_ = 0;
+  std::size_t* counter_ = nullptr;
   std::vector<std::unique_ptr<std::int32_t[]>> chunks_;
 };
 

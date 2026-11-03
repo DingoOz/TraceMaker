@@ -1714,6 +1714,9 @@ RouteJobResult run_route_job(RouteJob job) {
   }
   out.summary["time_limited"] = res.time_limited;
   if (res.time_limited) log(fmt("warning: the time limit (%.0f s) ended the search before the work budget did: the result depends on machine speed", opt.time_limit_s));
+  if (res.cache_evictions > 0)
+    log(fmt("note: the obstacle caches reached --class-cache-mb (%.0f MB) and were freed %ld times; a larger bound saves time (and may change the result)",
+            opt.class_cache_mb, res.cache_evictions));
   out.summary["open"] = res.connections - res.routed;
   out.summary["completion_pct"] = res.connections > 0 ? std::round(10000.0 * res.routed / res.connections) / 100.0 : 100.0;
   {
