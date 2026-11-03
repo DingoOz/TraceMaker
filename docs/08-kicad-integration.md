@@ -126,10 +126,10 @@ planning, the ramp) still take the class clearance floored at the board minimum;
 
 - Every rule TraceMaker cannot interpret is reported as a warning with its location, and the router uses
   the most conservative interpretation (for example, the largest clearance that could apply).
-- Phase 1 custom-rule conditions: `A.NetClass`, `A.NetName`, `A.Type`, `A.Layer`, `A.insideArea(...)`,
+- Phase 1 custom-rule conditions: `A.NetClass`, `A.NetName`, `A.Net`, `A.Type`, `A.Layer`, `A.insideArea(...)`,
   `A.intersectsArea(...)`, `A.isPlated()`, `A.Pad_Type`, `A.Pad_Number`, `A.Pin_Name`, `A.Reference`, boolean `&& || !`. Others later.
 - The router also enforces `disallow track/via` by net and layer, `physical_hole_clearance` between holes
-  and copper of any net, and `physical_clearance` between copper of any net (doc 05 §27). Positional `disallow` rules are warned and left to the DRC.
+  and copper of any net, and `physical_clearance` between copper of any net, and custom `hole_to_hole` and `edge_clearance` rules (doc 05 §27). Positional `disallow` rules are warned and left to the DRC.
 
 ## 5. IPC plugin (`kicad_plugin/`)
 

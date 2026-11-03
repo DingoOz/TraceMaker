@@ -116,6 +116,11 @@ class RuleEngine {
   // with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact
   // (hole_clearance above).
   Coord router_hole_clearance() const { return router_hole_; }
+  // Hole-to-hole distance the router keeps round a new via's hole, and the copper-to-edge clearance of new tracks and vias: the board
+  // minimums raised to every applied custom hole_to_hole rule, and to every edge_clearance rule that can hold for a track or via (issue
+  // #52). As with hole clearance, a rule with a condition or a layer is kept everywhere, with a warning; the DRC stays exact.
+  Coord router_hole_to_hole() const { return router_h2h_; }
+  Coord router_edge_clearance() const { return router_edge_; }
   // Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.
   bool needs_exact_routing() const { return needs_exact_; }
   const std::vector<std::string>& warnings() const { return warnings_; }
@@ -164,6 +169,8 @@ class RuleEngine {
   Coord max_physical_hole_ = 0;
   Coord max_physical_ = 0;
   Coord router_hole_ = 0;
+  Coord router_h2h_ = 0;
+  Coord router_edge_ = 0;
   friend class Condition;
 };
 

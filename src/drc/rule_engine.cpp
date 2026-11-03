@@ -239,7 +239,7 @@ class Condition {
   }
 
   static std::string unsupported(const Node& n) {
-    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Pad_Number",
+    static constexpr std::string_view props[] = {"NetClass", "NetName", "Net", "Type", "Layer", "L", "Reference", "Pad_Type", "Pad_Number",
                                                  "Pin_Name", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
                                                  kImplicitExactNetclass, "hasNetclass", "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
@@ -316,6 +316,12 @@ class Condition {
     v.k = Value::K::Str;
     if (n.name == "NetClass") v.s = ctx.eng->netclass(*it).name;
     else if (n.name == "NetName") v.s = b.nets[static_cast<std::size_t>(it->net)].name;
+    else if (n.name == "Net") {
+      // KiCad's Net is the net code, a number (PROPERTY_ENUM<BOARD_CONNECTED_ITEM, int>): `A.Net != B.Net` compares the nets of the two
+      // items, 0 being no net (issue #52). A literal code depends on the numbering of the file being read.
+      v.k = Value::K::Num;
+      v.n = static_cast<double>(it->net);
+    }
     else if (n.name == "Type") v.s = it->kind == ItemKind::Arc ? "Track" : kind_name(it->kind);
     else if (n.name == "L") return {};
     else if (n.name == "Layer") {
@@ -510,7 +516,8 @@ DpSuffix match_dp_suffix(std::string_view name) {
   return r;
 }
 
-RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r), router_hole_(std::max<Coord>(r.minimums.hole_clearance, 0)) {
+RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(b), r_(r), router_hole_(std::max<Coord>(r.minimums.hole_clearance, 0)),
+      router_h2h_(std::max<Coord>(r.minimums.hole_to_hole, 0)), router_edge_(std::max<Coord>(r.minimums.copper_edge_clearance, 0)) {
   for (const auto& rule : r_.custom) {
     Compiled c{&rule, nullptr, true};
     if (!rule.condition.empty()) {
@@ -537,11 +544,11 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
                                                "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
                                                "Reference", "Pad_Type", "Pad_Number", "Pin_Name", "Width", "Size_X", "Size_Y", "Position_X",
                                                "Position_Y"});
-    const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", "hasNetclass", kImplicitExactNetclass});
+    const bool nets_seen = c.cond && c.cond->references({"NetName", "Net", "NetClass", "inDiffPair", "hasNetclass", kImplicitExactNetclass});
     // The per-class cache judges a lattice point with one net of the class standing in for all of them (as a
     // track, or as a via for via codes), so a clearance rule is cached unless its condition tells nets of one
     // class apart.
-    const bool net_seen = c.cond && c.cond->references({"NetName", "inDiffPair"});
+    const bool net_seen = c.cond && c.cond->references({"NetName", "Net", "inDiffPair"});
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
@@ -553,6 +560,15 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
           std::snprintf(mm, sizeof mm, "%.3f", static_cast<double>(*k.min) / 1e6);
           warnings_.push_back("rule '" + rule.name + "': the router keeps its hole clearance (" + mm +
                               " mm) round every hole, not only where the rule applies (the DRC checks it as written)");
+        }
+      }
+      if (k.type == "hole_to_hole" && k.min && c.valid && rule.severity != "ignore" && *k.min > router_h2h_) {
+        router_h2h_ = *k.min;
+        if (c.cond || !rule.layer.empty()) {
+          char mm[32];
+          std::snprintf(mm, sizeof mm, "%.3f", static_cast<double>(*k.min) / 1e6);
+          warnings_.push_back("rule '" + rule.name + "': the router keeps its hole to hole distance (" + mm +
+                              " mm) round every new via's hole, not only where the rule applies (the DRC checks it as written)");
         }
       }
       // Exact checks only where the cache could judge differently. Rules that are not applied (unreadable
@@ -627,6 +643,42 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   for (const auto& p : b_.pads) max_clearance_ = std::max(max_clearance_, p.clearance);
   max_clearance_ = std::max({max_clearance_, r_.minimums.clearance, r_.minimums.copper_edge_clearance, r_.minimums.hole_clearance,
                              r_.minimums.hole_to_hole});
+  // edge_clearance rules that can hold for a new track or via raise the router's edge clearance; one that only selects zones, pads or
+  // graphics leaves it alone. A track or via of each net is asked on each layer; a positional condition is assumed to hold.
+  for (const auto& c : rules_) {
+    if (!c.valid || c.rule->severity == "ignore") continue;
+    Coord ec = -1;
+    for (const auto& k : c.rule->constraints)
+      if (k.type == "edge_clearance" && k.min) ec = *k.min;
+    if (ec <= router_edge_) continue;
+    bool hits = !c.cond || c.positional, all = !c.cond;  // `all`: it holds for every track and via of every net, on every layer
+    const int nl = b_.copper_count();
+    const model::LayerMask span = nl >= 64 ? ~model::LayerMask{0} : (model::LayerMask{1} << nl) - 1;
+    CopperItem probe;
+    if (c.cond && !c.positional) {
+      all = true;
+      for (const ItemKind kind : {ItemKind::Track, ItemKind::Via})
+        for (std::size_t n = 0; n < b_.nets.size(); ++n)
+          for (int l = 0; l < nl; ++l) {
+            probe.kind = kind;
+            probe.net = static_cast<model::NetId>(n);
+            probe.layers = kind == ItemKind::Via ? span : model::layer_bit(l);
+            EvalCtx ctx{this, &probe, nullptr, l};
+            const bool h = layer_matches(c.rule->layer, l) && c.cond->eval(ctx);
+            hits = hits || h;
+            all = all && h;
+          }
+    }
+    if (!hits) continue;
+    router_edge_ = ec;
+    if (!all || !c.rule->layer.empty()) {
+      char mm[32];
+      std::snprintf(mm, sizeof mm, "%.3f", static_cast<double>(ec) / 1e6);
+      warnings_.push_back("rule '" + c.rule->name + "': the router keeps its edge clearance (" + mm +
+                          " mm) for every new track and via, not only where the rule applies (the DRC checks it as written)");
+    }
+  }
+  max_clearance_ = std::max({max_clearance_, router_h2h_, router_edge_});
   max_clearance_ += std::max<Coord>(r_.via_clearance_extra, 0);
   // physical_clearance holds whatever the nets, so a rule that matches a track and a pad, or two tracks, of one net is broken by
   // every connection (KiCad's DRC reports each). The router cannot keep it there and keeps it everywhere else; say so.

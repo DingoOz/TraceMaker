@@ -228,6 +228,14 @@ def generate(root: Path) -> dict:
     for prop in ['A.Reference','A.Parent.Reference','Parent.Reference','B.Reference']:
         case('reference_'+prop.replace('.','_'),pads,rule(f"{prop} == 'R1'",'pad track'))
     case('pad_type',pads,rule("A.Pad_Type == 'SMD'",'pad'))
+    # Net is the net code, a number (issue #52): a literal code, and two items' nets compared.
+    # One unitless literal drops the condition (see width_*_double); with two, the codes are compared.
+    case('net_code_lone',static,rule("A.Net == 2",'track via'))
+    case('net_code',static,rule("A.Net == 2 || A.Net == 99",'track via'))
+    case('net_code_zero',static+[track('free-net0',30,5,33,5,net=0)],rule("A.Net == 0 || A.Net == 99",'track via'))
+    h2h=[via('hh-X1',30,5),via('hh-X2',30,6.2),via('hh-Y',31.2,5,net=2)]
+    for name,condition in [('net_ne_hole_to_hole',"A.Net != B.Net"),('net_eq_hole_to_hole',"A.Net == B.Net")]:
+        case(name,h2h,rule(condition,constraint='(constraint hole_to_hole (min 1.5mm))'),types=['hole_to_hole'])
     # Pad_Number exists on copper pads only (KiCad's isCopperPad), Pin_Name on every pad; both are strings (issue #65).
     pin_pads=pads+[footprint('U1',30,5,pad_extra='(pinfunction "VCC")')]
     for name,condition,words in [('pad_number',"A.Pad_Number == '1'",'pad'),('pad_number_other',"A.Pad_Number == '2'",'pad'),

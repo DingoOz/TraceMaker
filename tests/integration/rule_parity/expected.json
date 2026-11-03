@@ -917,6 +917,44 @@
         ]
       ]
     },
+    "net_code": {
+      "items_not_allowed": [
+        [
+          "Y-front"
+        ],
+        [
+          "Y-through"
+        ]
+      ]
+    },
+    "net_code_lone": {},
+    "net_code_zero": {
+      "items_not_allowed": [
+        [
+          "free-net0"
+        ]
+      ]
+    },
+    "net_eq_hole_to_hole": {
+      "hole_to_hole": [
+        [
+          "hh-X1",
+          "hh-X2"
+        ]
+      ]
+    },
+    "net_ne_hole_to_hole": {
+      "hole_to_hole": [
+        [
+          "hh-X1",
+          "hh-Y"
+        ],
+        [
+          "hh-X2",
+          "hh-Y"
+        ]
+      ]
+    },
     "number_exponent": {},
     "number_inexact_eq_mil": {},
     "number_inexact_eq_mm": {},

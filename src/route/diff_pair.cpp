@@ -73,7 +73,7 @@ PairRule pair_rule(const model::Board& b, const model::DesignRules& rules, const
   if (na.has_diff_pair_gap) vgap = std::max(vgap, na.diff_pair_via_gap);
   if (nc.has_diff_pair_gap) vgap = std::max(vgap, nc.diff_pair_via_gap);
   if (via_mask > 0) vgap = std::max(vgap, 2 * via_mask + 1'000);  // as route::Obstacles checks untented vias
-  r.via_offset = std::max({r.offset, ceil_half(r.via_diameter + vgap), ceil_half(r.via_drill + m.hole_to_hole),
+  r.via_offset = std::max({r.offset, ceil_half(r.via_diameter + vgap), ceil_half(r.via_drill + re.router_hole_to_hole()),
                            ceil_half(r.via_drill / 2 + r.via_diameter / 2 + re.router_hole_clearance())}) +
                  kRoundMargin;
   if (const auto k = re.net_constraint(a, "diff_pair_uncoupled"); k && k->max) r.max_uncoupled = *k->max;
