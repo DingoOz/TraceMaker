@@ -182,6 +182,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D165](decisions/D165.md) | Live page of every process and bench run | accepted |
 | [D166](decisions/D166.md) | Halving gives way to rounds and warm starts | accepted |
 | [D167](decisions/D167.md) | physical_clearance between copper of any net in the router and the DRC | accepted |
+| [D168](decisions/D168.md) | The router keeps custom hole_to_hole and edge_clearance rules at one board-wide value | accepted |
 <!-- END decision index -->
 
 ## Risks

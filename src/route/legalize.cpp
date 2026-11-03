@@ -77,7 +77,7 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
   };
   const double margin = opt.margin_mm;
   const double via_extra = nm_to_mm(std::max<Coord>(rules.via_clearance_extra, 0));  // a ramp stage that keeps vias at the board's clearance
-  const double hole_gap = nm_to_mm(rules.minimums.hole_to_hole);
+  const double hole_gap = nm_to_mm(opt.hole_to_hole >= 0 ? opt.hole_to_hole : rules.minimums.hole_to_hole);
 
   // --- items ---------------------------------------------------------------------------------------------------------
   const bool bbox_pads = [] {
@@ -229,7 +229,7 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
   // Board outline.
   std::vector<std::pair<double, double>> outline;
   for (const auto& p : opt.outline) outline.emplace_back(nm_to_mm(p.x), nm_to_mm(p.y));
-  const double edge = opt.edge_mm + nm_to_mm(rules.minimums.copper_edge_clearance);
+  const double edge = opt.edge_mm + nm_to_mm(opt.edge_clearance >= 0 ? opt.edge_clearance : rules.minimums.copper_edge_clearance);
   auto inside_outline = [&](double x, double y, double m) {
     if (outline.size() < 3) return true;
     bool in = false;

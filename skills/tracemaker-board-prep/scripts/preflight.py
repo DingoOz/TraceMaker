@@ -525,7 +525,7 @@ def main():
         allowed = {'track', 'via', 'through_via', 'micro_via', 'buried_via', 'blind_via', 'pad', 'zone', 'graphic'}
         # The engine's vocabulary. Any other name (e.g. Parent.Reference, memberOfGroup, insideCourtyard) drops the
         # whole rule in the router and in `tracemaker drc`; KiCad still applies it.
-        evaluated = {'NetClass', 'NetName', 'Type', 'Layer', 'L', 'Reference', 'Pad_Type', 'Pad_Number', 'Pin_Name', 'Width', 'Size_X', 'Size_Y',
+        evaluated = {'NetClass', 'NetName', 'Net', 'Type', 'Layer', 'L', 'Reference', 'Pad_Type', 'Pad_Number', 'Pin_Name', 'Width', 'Size_X', 'Size_Y',
                      'Position_X', 'Position_Y', 'isPlated', 'existsOnLayer', 'insideArea', 'intersectsArea',
                      'enclosedByArea', 'inDiffPair', 'memberOfFootprint', 'intersectsCourtyard',
                      'intersectsFrontCourtyard', 'intersectsBackCourtyard'}
@@ -561,9 +561,10 @@ def main():
             if dropped:
                 reasons.append('rule not applied')
             for kind in kinds:
-                if kind not in ('disallow', 'physical_hole_clearance', 'physical_clearance'):
+                # The router keeps hole_to_hole and edge_clearance rules at one board-wide value (doc 05 §27, D168): caches kept.
+                if kind not in ('disallow', 'physical_hole_clearance', 'physical_clearance', 'hole_to_hole', 'edge_clearance'):
                     reasons.append('constraint ' + kind)
-                elif kind != 'disallow' and refs & {'NetName', 'NetClass', 'inDiffPair'}:
+                elif kind.startswith('physical') and refs & {'NetName', 'Net', 'NetClass', 'inDiffPair'}:
                     reasons.append('net-dependent ' + kind)
             caches_disabled |= bool(reasons)
             finding('Custom rules', 'slow' if reasons else 'info',

@@ -34,7 +34,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
   rgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, 1024);
   // Non-plated holes are board edges for KiCad's copper_edge_clearance (verified on PCBench ErgoDone).
   for (auto& h : cm_.holes)
-    if (!h.plated) h.clearance = std::max(h.clearance, r_.minimums.copper_edge_clearance);
+    if (!h.plated) h.clearance = std::max(h.clearance, re_->router_edge_clearance());
   for (const auto& h : cm_.holes) max_hole_local_ = std::max(max_hole_local_, h.clearance);
   hgrid_ = std::make_unique<index::UniformGrid>(bounds_, cell, cm_.holes.size() + 1024);
   for (std::size_t i = 0; i < cm_.holes.size(); ++i) hgrid_->insert(static_cast<int>(i), cm_.holes[i].shape.box);
@@ -487,7 +487,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   // Copper (or a new via's hole) against other items' holes.
   int state = 0;
   const Coord hc = re_->router_hole_clearance();
-  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
+  const Coord h2h = re_->router_hole_to_hole();
   hgrid_->query(s.box.inflated(std::max({hc, h2h, max_hole_local_}) + 1), [&](int id) {
     if (state == 2) return;
     const auto& h = cm_.holes[static_cast<std::size_t>(id)];
@@ -539,7 +539,7 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
     if (state == 2) return 2;
   }
   // Board edge.
-  const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
+  const Coord ec = re_->router_edge_clearance();
   bool edge_ok = true;
   egrid_->query(s.box.inflated(ec + 1), [&](int id) {
     if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
@@ -918,7 +918,7 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   if (physical_copper_state(s, via_probe ? drc::ItemKind::Via : drc::ItemKind::Track, probe_net, layer, true, false, false, nullptr) != 0) return kBlocked;
   physical_codes(s, via_probe ? drc::ItemKind::Via : drc::ItemKind::Track, probe_net, layer, add_net);
   if (code == kBlocked) return code;
-  const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
+  const Coord ec = re_->router_edge_clearance();
   bool edge_ok = true;
   egrid_->query(s.box.inflated(ec + 1), [&](int id) {
     if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
@@ -1000,7 +1000,7 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
     if (physical_copper_state(s, drc::ItemKind::Via, probe_net, l, true, false, false, nullptr) != 0) return kBlocked;
   for (int l = 0; l < nl && code != kBlocked; ++l) physical_codes(s, drc::ItemKind::Via, probe_net, l, add_net);
   if (code == kBlocked) return code;
-  const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
+  const Coord ec = re_->router_edge_clearance();
   bool edge_ok = true;
   egrid_->query(s.box.inflated(ec + 1), [&](int id) {
     if (edge_ok && geom::closer_than(s, edge_segs_[static_cast<std::size_t>(id)], ec)) edge_ok = false;
@@ -1031,7 +1031,7 @@ std::int32_t Obstacles::fixed_via_code_reference(Point p, Coord d, Coord drill, 
 // Check the via hole against fixed holes and copper, continuing from the pad's code.
 std::int32_t Obstacles::via_hole_code(Point p, Coord drill, Coord margin, model::NetId probe_net, std::int32_t code) const {
   // Hole to hole against fixed holes (any net).
-  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
+  const Coord h2h = re_->router_hole_to_hole();
   static thread_local Shape hole;  // scratch disk: the via's hole
   hole.set_point(p, drill / 2 + margin);
   bool ok = true;
@@ -1135,7 +1135,7 @@ int Obstacles::routed_hole_copper_part(const Shape& h, int layer, model::NetId n
 
 // A new via hole against routed vias' holes (hole to hole, any net).
 int Obstacles::routed_hole_to_hole_part(const Shape& hole, bool soft, std::vector<int>* owners) const {
-  const Coord h2h = std::max<Coord>(r_.minimums.hole_to_hole, 0);
+  const Coord h2h = re_->router_hole_to_hole();
   int state = 0;
   rgrid_->query(hole.box.inflated(h2h + 1), [&](int id) {
     if (state == 2) return;

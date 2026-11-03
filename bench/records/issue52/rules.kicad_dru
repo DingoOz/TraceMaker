@@ -1,0 +1,7 @@
+(version 1)
+(rule "Hole to hole"
+  (constraint hole_to_hole (min 1mm))
+  (condition "A.Net != B.Net"))
+(rule "Tracks and vias to edge"
+  (constraint edge_clearance (min 0.8mm))
+  (condition "A.Type == 'Track' || A.Type == 'Via'"))

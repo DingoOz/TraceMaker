@@ -1393,3 +1393,61 @@ TEST_CASE("Pad_Number and Pin_Name conditions are evaluated: a clearance rule fo
   CHECK(obs.fixed_code({4'000'000, 4'100'000}, 0, 125'000, 0, 2) == route::Obstacles::kFree);
   CHECK_FALSE(obs.needs_exact_routing());  // a pad's own property: the per-class cache stays valid
 }
+
+TEST_CASE("custom hole_to_hole and edge_clearance rules: the router keeps them, Net is the net code", "[rules][route]") {
+  // A via (0.6 mm, drill 0.3) at (10, 4.5): its hole is 0.95 mm from the 0.8 mm hole at (10, 3), more than the 0.25 mm board minimum.
+  const geom::Point p{10'000'000, 4'500'000};
+  const Coord d = 600'000, drill = 300'000;
+  auto obstacles_with = [&](const char* name, const std::string& dru, auto&& check) {
+    const Files f(name, board_text(kHoleInTheWay), dru);
+    auto lb = io::read_board_file(f.pcb.string());
+    const auto rules = io::read_design_rules(f.pcb.string());
+    route::Obstacles obs(lb.board, rules);
+    check(obs);
+  };
+  auto warned = [](const route::Obstacles& obs, const std::string& text) {
+    const auto& w = obs.rules().warnings();
+    return std::any_of(w.begin(), w.end(), [&](const std::string& s) { return s.find(text) != std::string::npos; });
+  };
+  obstacles_with("h2h_none", "", [&](const route::Obstacles& obs) {
+    CHECK(obs.via_state(p, d, drill, 1, 0, false) == 0);
+    CHECK(obs.fixed_via_code(p, d, drill, 0, 1) != route::Obstacles::kBlocked);
+  });
+  obstacles_with("h2h_net", "(version 1)\n(rule \"h2h\" (constraint hole_to_hole (min 1mm)) (condition \"A.Net != B.Net\"))\n",
+                 [&](const route::Obstacles& obs) {
+                   CHECK(obs.rules().router_hole_to_hole() == 1'000'000);
+                   CHECK(warned(obs, "rule 'h2h': the router keeps its hole to hole distance (1.000 mm)"));
+                   CHECK_FALSE(warned(obs, "does not evaluate"));
+                   CHECK(obs.via_state(p, d, drill, 1, 0, false) == 2);
+                   CHECK(obs.fixed_via_code(p, d, drill, 0, 1) == route::Obstacles::kBlocked);  // cached path agrees
+                   CHECK(obs.via_state({10'000'000, 4'600'000}, d, drill, 1, 0, false) == 0);   // 1.05 mm
+                   CHECK_FALSE(obs.needs_exact_routing());
+                 });
+  // A 0.25 mm track 0.675 mm from the outline: legal at the board's 0.5 mm, not under a 1 mm rule for tracks.
+  const geom::Point a{2'000'000, 800'000}, b{6'000'000, 800'000};
+  obstacles_with("edge_zone", "(version 1)\n(rule \"zones\" (constraint edge_clearance (min 1mm)) (condition \"A.Type == 'Zone'\"))\n",
+                 [&](const route::Obstacles& obs) {
+                   CHECK(obs.rules().router_edge_clearance() == 500'000);  // the rule cannot hold for a track or via
+                   CHECK(obs.segment_state(a, b, 0, 250'000, 1, false) == 0);
+                 });
+  obstacles_with("edge_track", "(version 1)\n(rule \"tracks\" (constraint edge_clearance (min 1mm)) (condition \"A.Net == 1 || A.Net == 99\"))\n",
+                 [&](const route::Obstacles& obs) {
+                   CHECK(obs.rules().router_edge_clearance() == 1'000'000);
+                   CHECK(warned(obs, "rule 'tracks': the router keeps its edge clearance (1.000 mm)"));
+                   CHECK(obs.segment_state(a, b, 0, 250'000, 1, false) == 2);
+                   CHECK(obs.fixed_code({4'000'000, 800'000}, 0, 125'000, 0, 1) == route::Obstacles::kBlocked);
+                 });
+  // The DRC applies the hole_to_hole rule as written: between holes of different nets only.
+  const std::string net_rule = "(version 1)\n(rule \"h2h\" (constraint hole_to_hole (min 1mm)) (condition \"A.Net != B.Net\"))\n";
+  const Files f("h2h_drc", board_text(""), net_rule);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  const drc::RuleEngine re(lb.board, rules);
+  drc::CopperItem v1, v2;
+  v1.kind = v2.kind = drc::ItemKind::Via;
+  v1.net = 1;
+  v2.net = 1;
+  CHECK(re.hole_to_hole(&v1, &v2) == 250'000);
+  v2.net = 2;
+  CHECK(re.hole_to_hole(&v1, &v2) == 1'000'000);
+}

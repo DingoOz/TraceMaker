@@ -6502,6 +6502,8 @@ struct Router::Impl {
         lo.outline = obs->outline();
         lo.seed = opt.seed;
         lo.subdivide_mm = opt.legalize_subdivide_mm;
+        lo.hole_to_hole = obs->rules().router_hole_to_hole();
+        lo.edge_clearance = obs->rules().router_edge_clearance();
         const LegalizeResult lr = legalize_routes(b, rules, legalized, lo);
         if (std::getenv("TM_DEBUG_LEGALIZE"))
           std::fprintf(stderr, "legalize: %d vertices, %d moved (at most %.3f mm), %d pairs too close before, %d after, %d sweeps%s\n", lr.nodes, lr.moved,
