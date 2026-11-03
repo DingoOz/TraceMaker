@@ -1373,3 +1373,23 @@ TEST_CASE("A clearance rule for vias: cached via codes probe a via, as via_state
   CHECK(obs.disk_state(p, 0, 125'000, 1, 0, false) == 0);  // tracks keep the class clearance
   CHECK(obs.fixed_code(p, 0, 125'000, 0, 1) == route::Obstacles::kFree);
 }
+
+TEST_CASE("Pad_Number and Pin_Name conditions are evaluated: a clearance rule for pad 2 only", "[rules][route]") {
+  // R1's pad 1 is SIG at (4, 3), its pad 2 GND at (4, 7); both 1 mm square.
+  const std::string rule =
+      "(version 1)\n(rule \"pad2_keepaway\" (constraint clearance (min 1mm))\n"
+      "  (condition \"B.Type == 'Pad' && B.Pad_Number == '2'\"))\n"
+      "(rule \"by pin name\" (constraint clearance (min 0.3mm)) (condition \"B.Pin_Name == 'VCC'\"))\n";
+  const Files f("pad_number", board_text(""), rule);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  route::Obstacles obs(lb.board, rules);
+  for (const auto& w : obs.rules().warnings()) CHECK(w.find("does not evaluate") == std::string::npos);
+  // A 0.25 mm SIG track 0.475 mm from GND's pad 2: legal by the net classes, closer than the rule.
+  CHECK(obs.segment_state({2'000'000, 5'900'000}, {6'000'000, 5'900'000}, 0, 250'000, 1, false) == 2);
+  CHECK(obs.fixed_code({4'000'000, 5'900'000}, 0, 125'000, 0, 1) == 2);  // cached path agrees: legal for GND only
+  // A GND track 0.475 mm from SIG's pad 1: the rule does not apply.
+  CHECK(obs.segment_state({2'000'000, 4'100'000}, {6'000'000, 4'100'000}, 0, 250'000, 2, false) == 0);
+  CHECK(obs.fixed_code({4'000'000, 4'100'000}, 0, 125'000, 0, 2) == route::Obstacles::kFree);
+  CHECK_FALSE(obs.needs_exact_routing());  // a pad's own property: the per-class cache stays valid
+}

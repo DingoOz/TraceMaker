@@ -525,12 +525,12 @@ def main():
         allowed = {'track', 'via', 'through_via', 'micro_via', 'buried_via', 'blind_via', 'pad', 'zone', 'graphic'}
         # The engine's vocabulary. Any other name (e.g. Parent.Reference, memberOfGroup, insideCourtyard) drops the
         # whole rule in the router and in `tracemaker drc`; KiCad still applies it.
-        evaluated = {'NetClass', 'NetName', 'Type', 'Layer', 'L', 'Reference', 'Pad_Type', 'Width', 'Size_X', 'Size_Y',
+        evaluated = {'NetClass', 'NetName', 'Type', 'Layer', 'L', 'Reference', 'Pad_Type', 'Pad_Number', 'Pin_Name', 'Width', 'Size_X', 'Size_Y',
                      'Position_X', 'Position_Y', 'isPlated', 'existsOnLayer', 'insideArea', 'intersectsArea',
                      'enclosedByArea', 'inDiffPair', 'memberOfFootprint', 'intersectsCourtyard',
                      'intersectsFrontCourtyard', 'intersectsBackCourtyard'}
         positional = {'insideArea', 'intersectsArea', 'enclosedByArea', 'memberOfFootprint', 'intersectsCourtyard',
-                      'intersectsFrontCourtyard', 'intersectsBackCourtyard', 'Reference', 'Pad_Type', 'Width',
+                      'intersectsFrontCourtyard', 'intersectsBackCourtyard', 'Reference', 'Pad_Type', 'Pad_Number', 'Pin_Name', 'Width',
                       'Size_X', 'Size_Y', 'Position_X', 'Position_Y'}
         caches_disabled = False
         for rule in rules:

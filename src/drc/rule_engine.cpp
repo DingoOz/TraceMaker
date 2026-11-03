@@ -239,8 +239,8 @@ class Condition {
   }
 
   static std::string unsupported(const Node& n) {
-    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Width",
-                                                 "Size_X", "Size_Y", "Position_X", "Position_Y"};
+    static constexpr std::string_view props[] = {"NetClass", "NetName", "Type", "Layer", "L", "Reference", "Pad_Type", "Pad_Number",
+                                                 "Pin_Name", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"};
     static constexpr std::string_view calls[] = {"isPlated", "existsOnLayer", "insideArea", "intersectsArea", "enclosedByArea", "inDiffPair",
                                                  kImplicitExactNetclass, "hasNetclass", "memberOfFootprint", "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard"};
     if (n.op == Node::Op::Prop && std::find(std::begin(props), std::end(props), n.name) == std::end(props)) return n.name;
@@ -341,6 +341,13 @@ class Condition {
     else if (n.name == "Pad_Type" && it->kind == ItemKind::Pad) {
       static const char* names[] = {"SMD", "Through-hole", "NPTH, mechanical", "Edge connector"};
       v.s = names[static_cast<int>(b.pads[static_cast<std::size_t>(it->index)].type)];
+    } else if (n.name == "Pad_Number" || n.name == "Pin_Name") {
+      // Pad properties: undefined on other items. Both compare as strings, case-insensitive with wildcards, like NetName. KiCad
+      // gives NPTH and aperture pads no number (PAD::CanHaveNumber), so theirs is empty (rule_parity pad_number_ne, issue #65).
+      if (it->kind != ItemKind::Pad || it->index < 0) return {};
+      const auto& pad = b.pads[static_cast<std::size_t>(it->index)];
+      if (n.name == "Pin_Name") v.s = pad.pinfunction;
+      else if (pad.type != model::PadType::NpThruHole && pad.copper) v.s = pad.number;
     } else if (n.name == "Width") {
       // Only tracks and arcs have a Width in KiCad. A via's diameter (CopperItem::width) is not one: for pads and
       // vias the property is undefined (== and != false, relational comparisons see 0).
@@ -528,7 +535,8 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     }
     c.positional = c.cond && c.cond->references({"insideArea", "intersectsArea", "enclosedByArea", "memberOfFootprint",
                                                "intersectsCourtyard", "intersectsFrontCourtyard", "intersectsBackCourtyard",
-                                               "Reference", "Pad_Type", "Width", "Size_X", "Size_Y", "Position_X", "Position_Y"});
+                                               "Reference", "Pad_Type", "Pad_Number", "Pin_Name", "Width", "Size_X", "Size_Y", "Position_X",
+                                               "Position_Y"});
     const bool nets_seen = c.cond && c.cond->references({"NetName", "NetClass", "inDiffPair", "hasNetclass", kImplicitExactNetclass});
     // The per-class cache judges a lattice point with one net of the class standing in for all of them (as a
     // track, or as a via for via codes), so a clearance rule is cached unless its condition tells nets of one
