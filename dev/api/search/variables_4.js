@@ -2,7 +2,7 @@ var searchData=
 [
   ['eco_5fcandidates_0',['eco_candidates',['../structtmk_1_1place_1_1LoopOptions.html#a2a39b4e843ef9da3b5e40e3252754f75',1,'tmk::place::LoopOptions']]],
   ['edge_5fbox_1',['edge_box',['../structtmk_1_1place_1_1PartGeom.html#a64f865a5de5325bbb37d8471e44a4837',1,'tmk::place::PartGeom']]],
-  ['edge_5fclearance_2',['edge_clearance',['../structtmk_1_1place_1_1Problem.html#ac0561684339f28509aa58783a5697a63',1,'tmk::place::Problem']]],
+  ['edge_5fclearance_2',['edge_clearance',['../structtmk_1_1place_1_1Problem.html#ac0561684339f28509aa58783a5697a63',1,'tmk::place::Problem::edge_clearance'],['../structtmk_1_1route_1_1LegalizeOptions.html#a810e48aacf7676111be3bfafb4bc7d8a',1,'tmk::route::LegalizeOptions::edge_clearance']]],
   ['edge_5fmm_3',['edge_mm',['../structtmk_1_1route_1_1LegalizeOptions.html#ab5aad2d6c2cd636912d1f3da746b9dea',1,'tmk::route::LegalizeOptions']]],
   ['edge_5fpulls_4',['edge_pulls',['../structtmk_1_1place_1_1ExtractOptions.html#aa6c1e0e8ab6cc51e826b81ebe330f161',1,'tmk::place::ExtractOptions']]],
   ['edges_5',['edges',['../structtmk_1_1drc_1_1CopperModel.html#aae210e8f57a18b44ec98cc6793725c8d',1,'tmk::drc::CopperModel::edges'],['../structtmk_1_1place_1_1Problem.html#ab4949a5244b134eef91b202d295ce37a',1,'tmk::place::Problem::edges']]],

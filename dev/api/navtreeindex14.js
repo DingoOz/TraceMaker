@@ -1,5 +1,9 @@
 var NAVTREEINDEX14 =
 {
+"structtmk_1_1model_1_1BoardMinimums.html#af40b6243d304d99269958e7d67901f52":[1,0,0,12,19,6],
+"structtmk_1_1model_1_1BoardMinimums.html#af96062a05c48c5e3cdc6664f77c45cd6":[0,0,0,13,19,16],
+"structtmk_1_1model_1_1BoardMinimums.html#af96062a05c48c5e3cdc6664f77c45cd6":[1,0,0,12,19,16],
+"structtmk_1_1model_1_1Box.html":[0,0,0,13,26],
 "structtmk_1_1model_1_1Box.html":[1,0,0,12,26],
 "structtmk_1_1model_1_1Box.html#a3cdd3d6da316d572e269290ae03a09c3":[0,0,0,13,26,3],
 "structtmk_1_1model_1_1Box.html#a3cdd3d6da316d572e269290ae03a09c3":[1,0,0,12,26,3],
@@ -245,9 +249,5 @@ var NAVTREEINDEX14 =
 "structtmk_1_1model_1_1Netlist.html":[1,0,0,12,14],
 "structtmk_1_1model_1_1Netlist.html#a265bfdd6fb1174d4c08b2cb14ee02266":[0,0,0,13,14,0],
 "structtmk_1_1model_1_1Netlist.html#a265bfdd6fb1174d4c08b2cb14ee02266":[1,0,0,12,14,0],
-"structtmk_1_1model_1_1Netlist.html#a3a711aa42afa7d05c57af0d7e9263a73":[0,0,0,13,14,1],
-"structtmk_1_1model_1_1Netlist.html#a3a711aa42afa7d05c57af0d7e9263a73":[1,0,0,12,14,1],
-"structtmk_1_1model_1_1NetlistComponent.html":[0,0,0,13,11],
-"structtmk_1_1model_1_1NetlistComponent.html":[1,0,0,12,11],
-"structtmk_1_1model_1_1NetlistComponent.html#a20e5b6e0ade9996afaa7f3816dd71043":[0,0,0,13,11,0]
+"structtmk_1_1model_1_1Netlist.html#a3a711aa42afa7d05c57af0d7e9263a73":[0,0,0,13,14,1]
 };

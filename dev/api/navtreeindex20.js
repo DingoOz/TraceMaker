@@ -1,5 +1,9 @@
 var NAVTREEINDEX20 =
 {
+"structtmk_1_1place_1_1detail_1_1WindowStats.html#a6aa5f2bcca35bcbe95686a00aeaebe1a":[1,0,0,14,0,2,2],
+"structtmk_1_1place_1_1detail_1_1WindowStats.html#a71e99b053cdfbf6c57d2fa4d37db8d6b":[0,0,0,15,0,2,0],
+"structtmk_1_1place_1_1detail_1_1WindowStats.html#a71e99b053cdfbf6c57d2fa4d37db8d6b":[1,0,0,14,0,2,0],
+"structtmk_1_1place_1_1detail_1_1WindowStats.html#aa3776bfacdeed6e425319f2bb0668ae7":[0,0,0,15,0,2,1],
 "structtmk_1_1place_1_1detail_1_1WindowStats.html#aa3776bfacdeed6e425319f2bb0668ae7":[1,0,0,14,0,2,1],
 "structtmk_1_1place_1_1detail_1_1WindowStats.html#aaf0090f346c2a95fe03a593301e13b3b":[0,0,0,15,0,2,4],
 "structtmk_1_1place_1_1detail_1_1WindowStats.html#aaf0090f346c2a95fe03a593301e13b3b":[1,0,0,14,0,2,4],
@@ -245,9 +249,5 @@ var NAVTREEINDEX20 =
 "structtmk_1_1route_1_1FanoutHead.html#aa0f16627a4f5902cf6d91b9f0a93663f":[1,0,0,15,25,1],
 "structtmk_1_1route_1_1FanoutHead.html#af804559e3d18041c15a21597bb904afb":[0,0,0,17,25,2],
 "structtmk_1_1route_1_1FanoutHead.html#af804559e3d18041c15a21597bb904afb":[1,0,0,15,25,2],
-"structtmk_1_1route_1_1FanoutHead.html#afe4800550d1628c3c10b2d4dd624adfd":[0,0,0,17,25,0],
-"structtmk_1_1route_1_1FanoutHead.html#afe4800550d1628c3c10b2d4dd624adfd":[1,0,0,15,25,0],
-"structtmk_1_1route_1_1FanoutHeadHooks.html":[0,0,0,17,26],
-"structtmk_1_1route_1_1FanoutHeadHooks.html":[1,0,0,15,26],
-"structtmk_1_1route_1_1FanoutHeadHooks.html#a12da3f8139870a96dfb10d1e7bfabfab":[0,0,0,17,26,3]
+"structtmk_1_1route_1_1FanoutHead.html#afe4800550d1628c3c10b2d4dd624adfd":[0,0,0,17,25,0]
 };

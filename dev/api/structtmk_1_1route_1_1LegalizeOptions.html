@@ -105,6 +105,9 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:ae0816097c0999f542f27a562b7d4094c"><td class="mdescLeft">&#160;</td><td class="mdescRight">projection sweeps at most  <br /></td></tr>
 <tr class="memitem:ab5aad2d6c2cd636912d1f3da746b9dea" id="r_ab5aad2d6c2cd636912d1f3da746b9dea"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5aad2d6c2cd636912d1f3da746b9dea">edge_mm</a> = 0.035</td></tr>
 <tr class="memdesc:ab5aad2d6c2cd636912d1f3da746b9dea"><td class="mdescLeft">&#160;</td><td class="mdescRight">copper stays this far inside the board outline (plus the rule's edge clearance)  <br /></td></tr>
+<tr class="memitem:a6ca3688fa72e93eaee7548b04e3538fd" id="r_a6ca3688fa72e93eaee7548b04e3538fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ca3688fa72e93eaee7548b04e3538fd">hole_to_hole</a> = -1</td></tr>
+<tr class="memdesc:a6ca3688fa72e93eaee7548b04e3538fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The router's hole to hole and edge clearance (<a class="el" href="classtmk_1_1drc_1_1RuleEngine.html#a1a4563cdd24ae989c7d135fafb773424" title="Hole-to-hole distance the router keeps round a new via&#39;s hole, and the copper-to-edge clearance of ne...">drc::RuleEngine::router_hole_to_hole</a>, router_edge_clearance: custom rules included); -1 takes the board minimums.  <br /></td></tr>
+<tr class="memitem:a810e48aacf7676111be3bfafb4bc7d8a" id="r_a810e48aacf7676111be3bfafb4bc7d8a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a810e48aacf7676111be3bfafb4bc7d8a">edge_clearance</a> = -1</td></tr>
 <tr class="memitem:a5809199b307042387b4f360ec51a497d" id="r_a5809199b307042387b4f360ec51a497d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5809199b307042387b4f360ec51a497d">subdivide_mm</a> = 0</td></tr>
 <tr class="memdesc:a5809199b307042387b4f360ec51a497d"><td class="mdescLeft">&#160;</td><td class="mdescRight">&gt; 0: every unlocked route track is cut into pieces of at most this length (at the vertices of same-net copper that lie on it, and evenly in between), so that a long straight track can bend where its neighbours are too close, instead of only moving as a whole; after the sweeps the vertices that stayed on a straight line are merged again.  <br /></td></tr>
 <tr class="memitem:a7a97f7e8c93b54d5aae31ff19fefff88" id="r_a7a97f7e8c93b54d5aae31ff19fefff88"><td class="memItemLeft" align="right" valign="top">std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a97f7e8c93b54d5aae31ff19fefff88">seed</a> = 0</td></tr>
@@ -136,6 +139,22 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a810e48aacf7676111be3bfafb4bc7d8a" name="a810e48aacf7676111be3bfafb4bc7d8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a810e48aacf7676111be3bfafb4bc7d8a">&#9670;&#160;</a></span>edge_clearance</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::route::LegalizeOptions::edge_clearance = -1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00032">32</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ab5aad2d6c2cd636912d1f3da746b9dea" name="ab5aad2d6c2cd636912d1f3da746b9dea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab5aad2d6c2cd636912d1f3da746b9dea">&#9670;&#160;</a></span>edge_mm</h2>
 
@@ -151,6 +170,24 @@ Public Attributes</h2></td></tr>
 <p>copper stays this far inside the board outline (plus the rule's edge clearance) </p>
 
 <p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00029">29</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6ca3688fa72e93eaee7548b04e3538fd" name="a6ca3688fa72e93eaee7548b04e3538fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ca3688fa72e93eaee7548b04e3538fd">&#9670;&#160;</a></span>hole_to_hole</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::route::LegalizeOptions::hole_to_hole = -1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The router's hole to hole and edge clearance (<a class="el" href="classtmk_1_1drc_1_1RuleEngine.html#a1a4563cdd24ae989c7d135fafb773424" title="Hole-to-hole distance the router keeps round a new via&#39;s hole, and the copper-to-edge clearance of ne...">drc::RuleEngine::router_hole_to_hole</a>, router_edge_clearance: custom rules included); -1 takes the board minimums. </p>
+
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00032">32</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
 
 </div>
 </div>
@@ -186,7 +223,7 @@ Public Attributes</h2></td></tr>
 
 <p>board outline polygon (<a class="el" href="classtmk_1_1route_1_1Obstacles.html#a641a115b09690d40683a167e277f160d" title="Board outline polygon (largest Edge.Cuts loop) when it could be assembled; empty otherwise.">Obstacles::outline()</a>); empty = unbounded </p>
 
-<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00035">35</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00038">38</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
 
 </div>
 </div>
@@ -205,7 +242,7 @@ Public Attributes</h2></td></tr>
 <p>&gt; 0: when the sweeps leave pairs too close, up to this many rounds of the realizer (doc 20 §2.3): the constraints near their limit are linearised and the smallest move that meets them all is solved for at once, within a trust region. </p>
 <p>0 = projection only. 20 by default (D162); the experiment switch TM_LEGALIZE_REALIZE=N overrides it. </p>
 
-<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00039">39</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00042">42</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
 
 </div>
 </div>
@@ -223,7 +260,7 @@ Public Attributes</h2></td></tr>
 
 <p>!= 0: the pairs are visited in another (seeded) order, which leaves other pinches unresolved: portfolio variants differ </p>
 
-<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00034">34</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00037">37</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
 
 </div>
 </div>
@@ -242,7 +279,7 @@ Public Attributes</h2></td></tr>
 <p>&gt; 0: every unlocked route track is cut into pieces of at most this length (at the vertices of same-net copper that lie on it, and evenly in between), so that a long straight track can bend where its neighbours are too close, instead of only moving as a whole; after the sweeps the vertices that stayed on a straight line are merged again. </p>
 <p>0 = the vertices the routes have (unchanged behaviour). </p>
 
-<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00033">33</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route_2legalize_8hpp_source.html#l00036">36</a> of file <a class="el" href="route_2legalize_8hpp_source.html">legalize.hpp</a>.</p>
 
 </div>
 </div>

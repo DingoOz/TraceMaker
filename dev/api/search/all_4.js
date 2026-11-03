@@ -8,7 +8,7 @@ var searchData=
   ['edge_5fattractions_5',['edge_attractions',['../namespacetmk_1_1crules.html#a2b1f1c6de29f93f4377f5b570a5ea99e',1,'tmk::crules']]],
   ['edge_5fbbox_6',['edge_bbox',['../structtmk_1_1model_1_1Board.html#a8c1f92c47e5312370121fa3809f07ca0',1,'tmk::model::Board']]],
   ['edge_5fbox_7',['edge_box',['../structtmk_1_1place_1_1PartGeom.html#a64f865a5de5325bbb37d8471e44a4837',1,'tmk::place::PartGeom']]],
-  ['edge_5fclearance_8',['edge_clearance',['../structtmk_1_1place_1_1Problem.html#ac0561684339f28509aa58783a5697a63',1,'tmk::place::Problem::edge_clearance'],['../classtmk_1_1drc_1_1RuleEngine.html#ae005c4b31e3856f0b58a6bcaf9491a01',1,'tmk::drc::RuleEngine::edge_clearance()']]],
+  ['edge_5fclearance_8',['edge_clearance',['../structtmk_1_1place_1_1Problem.html#ac0561684339f28509aa58783a5697a63',1,'tmk::place::Problem::edge_clearance'],['../structtmk_1_1route_1_1LegalizeOptions.html#a810e48aacf7676111be3bfafb4bc7d8a',1,'tmk::route::LegalizeOptions::edge_clearance'],['../classtmk_1_1drc_1_1RuleEngine.html#ae005c4b31e3856f0b58a6bcaf9491a01',1,'tmk::drc::RuleEngine::edge_clearance()']]],
   ['edge_5floops_9',['edge_loops',['../namespacetmk_1_1drc.html#abea99f9c9bb7ea30e7d51aa9648afd85',1,'tmk::drc']]],
   ['edge_5fmm_10',['edge_mm',['../structtmk_1_1route_1_1LegalizeOptions.html#ab5aad2d6c2cd636912d1f3da746b9dea',1,'tmk::route::LegalizeOptions']]],
   ['edge_5fpulls_11',['edge_pulls',['../structtmk_1_1place_1_1ExtractOptions.html#aa6c1e0e8ab6cc51e826b81ebe330f161',1,'tmk::place::ExtractOptions']]],

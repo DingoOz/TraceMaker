@@ -5374,14 +5374,24 @@ pad's own layer.</p>
 <td><code>clearance</code> with the rule's name, once per pair (an item against a zone fill once per zone and layer), any net, severity from the rule; a later matching rule with <code>(severity ignore)</code> turns it off</td>
 </tr>
 <tr>
+<td>Custom <code>hole_to_hole</code> (D168, issue #52)</td>
+<td><code>RuleEngine::router_hole_to_hole</code>: the board minimum raised to every applied rule's minimum, kept between a new via's hole and every other hole (exact check, cached via codes, routed vias, pair via offsets, legaliser). A rule with a condition or a layer is kept everywhere, as D140 keeps <code>hole_clearance</code>, and warned by name: <code>A.Net != B.Net</code> at 0.5 mm also spaces a net's own vias 0.5 mm apart.</td>
+<td>Exact, per pair of holes, with <code>Net</code> evaluated</td>
+</tr>
+<tr>
+<td>Custom <code>edge_clearance</code> (D168, issue #52)</td>
+<td><code>RuleEngine::router_edge_clearance</code>: the board minimum raised to every applied rule that can hold for a new track or via (each net's track and via asked on each layer; a positional condition is assumed to hold), kept for all new copper and against non-plated holes. A rule for zones or pads only leaves it alone; one that misses some tracks or vias, or has a layer, is warned by name.</td>
+<td>Exact, per item</td>
+</tr>
+<tr>
 <td>Keepout rule areas</td>
 <td>Tracks and vias use their respective keepout flags (§26, D65).</td>
 <td>Unchanged</td>
 </tr>
 </tbody>
 </table>
-<p>Disallow masks retain the per-class cache. Physical-hole and physical clearance rules do too when independent of <code>NetName</code>, <code>NetClass</code>
-and <code>inDiffPair</code>, and clearance rules when independent of <code>NetName</code> and <code>inDiffPair</code> (cached via codes probe a via, so
+<p>Disallow masks retain the per-class cache. Physical-hole and physical clearance rules do too when independent of <code>NetName</code>, <code>Net</code>, <code>NetClass</code>
+and <code>inDiffPair</code>, and clearance rules when independent of <code>NetName</code>, <code>Net</code> and <code>inDiffPair</code> (cached via codes probe a via, so
 <code>Type</code>, <code>Width</code> and position conditions agree with the exact check). Other constraints are not read per point, and
 rules that cannot be read are not applied, so neither needs exact checks (D139).</p>
 <p>KiCad's violation names and counts were checked with kicad-cli 10.0.3. Example: inner layers for GND only;
@@ -5876,6 +5886,10 @@ were not distinguished.</p>
 <tr>
 <td>Absolute transformed pad/via anchors; tracks/arcs have undefined positions (<code>==</code>/<code>!=</code> both false, relational zero-coercion)</td>
 <td><code>position_x</code>, <code>position_anchor_shifted_pad</code>, <code>position_anchor_rotated_pad</code>, <code>position_anchor_x_ne_zero</code>, <code>position_anchor_x_lt_one</code></td>
+</tr>
+<tr>
+<td><code>Net</code> is the net code, a number: <code>A.Net != B.Net</code> compares two items' nets; <code>A.Net == 2</code> alone is one unitless literal and drops the condition, <code>A.Net == 2 \|\| A.Net == 99</code> compares codes (issue #52, KiCad 10.0.6). TraceMaker numbers nets in file order; KiCad 10 files name nets without codes, so a literal code may select another net than in KiCad</td>
+<td><code>net_code</code>, <code>net_code_lone</code>, <code>net_code_zero</code>, <code>net_ne_hole_to_hole</code>, <code>net_eq_hole_to_hole</code></td>
 </tr>
 <tr>
 <td><code>Pad_Number</code> and <code>Pin_Name</code> are pad strings (case-insensitive, wildcards), undefined on other items; NPTH pads have an empty number, so <code>!= '2'</code> selects them and <code>== '1'</code> does not (issue #65, KiCad 10.0.6)</td>
