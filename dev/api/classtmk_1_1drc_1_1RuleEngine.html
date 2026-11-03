@@ -163,6 +163,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a49dda6c66fd32146b7f74e4547725516" id="r_a49dda6c66fd32146b7f74e4547725516"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49dda6c66fd32146b7f74e4547725516">router_edge_clearance</a> () const</td></tr>
 <tr class="memitem:a22092f2f48bd1167966005c66b94ad39" id="r_a22092f2f48bd1167966005c66b94ad39"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22092f2f48bd1167966005c66b94ad39">needs_exact_routing</a> () const</td></tr>
 <tr class="memdesc:a22092f2f48bd1167966005c66b94ad39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.  <br /></td></tr>
+<tr class="memitem:a712aaa60409f97b9365b6668c000dc6d" id="r_a712aaa60409f97b9365b6668c000dc6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a712aaa60409f97b9365b6668c000dc6d">class_names_seen</a> () const</td></tr>
+<tr class="memdesc:a712aaa60409f97b9365b6668c000dc6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Some applied rule's condition reads a net class by name (NetClass, hasNetclass, hasExactNetclass): two classes with the same values may then be judged differently, so the router's obstacle caches stay per class (issue #54).  <br /></td></tr>
 <tr class="memitem:a3ba01a7c7f578bd8d2ddd22fa5444d6f" id="r_a3ba01a7c7f578bd8d2ddd22fa5444d6f"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ba01a7c7f578bd8d2ddd22fa5444d6f">warnings</a> () const</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
@@ -280,6 +282,35 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00104">104</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a712aaa60409f97b9365b6668c000dc6d" name="a712aaa60409f97b9365b6668c000dc6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a712aaa60409f97b9365b6668c000dc6d">&#9670;&#160;</a></span>class_names_seen()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::drc::RuleEngine::class_names_seen </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Some applied rule's condition reads a net class by name (NetClass, hasNetclass, hasExactNetclass): two classes with the same values may then be judged differently, so the router's obstacle caches stay per class (issue #54). </p>
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00128">128</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1182,7 +1213,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00126">126</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00129">129</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1207,7 +1238,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00174">174</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00178">178</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>

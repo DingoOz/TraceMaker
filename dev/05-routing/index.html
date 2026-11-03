@@ -2486,6 +2486,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#72-obstacle-caches-one-per-set-of-class-values-bounded-in-memory-2026-11-03-d169" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        72. Obstacle caches: one per set of class values, bounded in memory (2026-11-03, D169)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4027,6 +4038,17 @@
     <span class="md-ellipsis">
       
         71. Two rescue passes: warm, then fresh (2026-10-30, D163)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#72-obstacle-caches-one-per-set-of-class-values-bounded-in-memory-2026-11-03-d169" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        72. Obstacle caches: one per set of class values, bounded in memory (2026-11-03, D169)
       
     </span>
   </a>
@@ -9422,6 +9444,93 @@ carry <code>rescue_mode</code>.</p>
 <li>The realizer (§70) was not on in these runs. With it, both arms gain a little (§70).</li>
 <li>Test: <code>tests/integration/round_options.py</code> checks the order of the passes (on its board: warm 26, fresh 27, kept).</li>
 </ul>
+<h2 id="72-obstacle-caches-one-per-set-of-class-values-bounded-in-memory-2026-11-03-d169">72. Obstacle caches: one per set of class values, bounded in memory (2026-11-03, D169)<a class="headerlink" href="#72-obstacle-caches-one-per-set-of-class-values-bounded-in-memory-2026-11-03-d169" title="Permanent link">&para;</a></h2>
+<p><strong>Why.</strong> Issue #54: a board with 83 net classes (one per impedance pair) took 181 GB with 8 variants, since each class (and track width)
+had its own fixed-obstacle cache per router, and nothing bounded their total. D154 made the caches grow only where searches go, but
+classes with equal values still each computed the same codes.</p>
+<p><strong>What it does</strong> (<code>route/router.cpp</code>, <code>cache_for</code>).</p>
+<ul>
+<li>A cache is keyed by what its codes depend on: the class's clearance, diff-pair gap and tuning-pair gap, the track width, and the via
+  diameter and drill. Classes with equal values share one, as the nets of one class do. A custom rule whose condition reads class names
+  (<code>NetClass</code>, <code>hasNetclass</code>, <code>hasExactNetclass</code>) keeps them per class (<code>RuleEngine::class_names_seen</code>).</li>
+<li><code>--class-cache-mb</code> (default 2048 MB per router, 0 = none) bounds them. Past it, the caches used longest ago are freed. A freed cache
+  keeps its probe net, so its codes come back the same, but the cost-to-go fields only use codes already known, so a run that reaches
+  the bound may route differently; it stays deterministic. A <code>note:</code> line in the route log gives the number of evictions.</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/issue54/</code>; 3 M work, two variants, two threads, CPU fields). Each board was routed with its own classes
+and with every net in a class of its own with the same values, as WholeBoard wrote them:</p>
+<table>
+<thead>
+<tr>
+<th>Board, classes</th>
+<th>Engine</th>
+<th style="text-align: right;">Peak memory</th>
+<th style="text-align: right;">Wall time</th>
+<th style="text-align: right;">Fixed-copper checks</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>interf_u, 2</td>
+<td>main</td>
+<td style="text-align: right;">886 MB</td>
+<td style="text-align: right;">37.8 s</td>
+<td style="text-align: right;">3,140,539</td>
+<td>A</td>
+</tr>
+<tr>
+<td>interf_u, 175 (one per net)</td>
+<td>main</td>
+<td style="text-align: right;">1,185 MB</td>
+<td style="text-align: right;">48.8 s</td>
+<td style="text-align: right;">5,284,040</td>
+<td>A</td>
+</tr>
+<tr>
+<td>interf_u, 2</td>
+<td>D169</td>
+<td style="text-align: right;">892 MB</td>
+<td style="text-align: right;">37.1 s</td>
+<td style="text-align: right;">3,140,539</td>
+<td>A</td>
+</tr>
+<tr>
+<td>interf_u, 175</td>
+<td>D169</td>
+<td style="text-align: right;">885 MB</td>
+<td style="text-align: right;">37.0 s</td>
+<td style="text-align: right;">3,140,539</td>
+<td>A</td>
+</tr>
+<tr>
+<td>interf_u, 175, <code>--class-cache-mb 20</code></td>
+<td>D169</td>
+<td style="text-align: right;">841 MB</td>
+<td style="text-align: right;">40.4 s</td>
+<td style="text-align: right;">3,569,848 (17 evictions)</td>
+<td>A</td>
+</tr>
+<tr>
+<td>StickHub, 1</td>
+<td>main / D169</td>
+<td style="text-align: right;">296 / 297 MB</td>
+<td style="text-align: right;">29.6 / 30.0 s</td>
+<td style="text-align: right;">681,412</td>
+<td>B</td>
+</tr>
+<tr>
+<td>StickHub, 48 (one per net)</td>
+<td>main / D169</td>
+<td style="text-align: right;">305 / 297 MB</td>
+<td style="text-align: right;">28.8 / 29.3 s</td>
+<td style="text-align: right;">869,604 / 681,412</td>
+<td>B</td>
+</tr>
+</tbody>
+</table>
+<p>The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
+run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.</p>
 
 
 

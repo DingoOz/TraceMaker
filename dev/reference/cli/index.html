@@ -3032,6 +3032,11 @@ OPTIONS:
           --no-field{false}   Use the octile heuristic only (no cost-to-go fields)
           --kb TEXT           Knowledge base file (failure memory across runs)
           --no-kb             Do not read or update the knowledge base
+          --class-cache-mb FLOAT:NONNEGATIVE
+                              Memory bound of each router's fixed-obstacle caches, in MB (0 =
+                              none; default 2048). Past it the oldest are freed and computed
+                              again: more time, and the result may differ from an unbounded run
+                              (still deterministic)
           --threads INT       Threads for the portfolio (differently configured routers, best
                               kept). Without --variants it is also the portfolio size, except
                               with --work, where all variants run and the output is identical

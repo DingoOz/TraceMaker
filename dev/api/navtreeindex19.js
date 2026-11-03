@@ -1,5 +1,9 @@
 var NAVTREEINDEX19 =
 {
+"structtmk_1_1place_1_1PlaceOptions.html#a9d0573dc87f753ba7ba764c34270d4d9":[1,0,0,14,14,9],
+"structtmk_1_1place_1_1PlaceOptions.html#aa9963d45e2dfd0ba376270ea3dc18635":[0,0,0,15,14,16],
+"structtmk_1_1place_1_1PlaceOptions.html#aa9963d45e2dfd0ba376270ea3dc18635":[1,0,0,14,14,16],
+"structtmk_1_1place_1_1PlaceOptions.html#ad39d952c66d35deacc2a7dba97acb70c":[0,0,0,15,14,8],
 "structtmk_1_1place_1_1PlaceOptions.html#ad39d952c66d35deacc2a7dba97acb70c":[1,0,0,14,14,8],
 "structtmk_1_1place_1_1PlaceOptions.html#ae03ebad4f072472bdd140acb623a77db":[0,0,0,15,14,11],
 "structtmk_1_1place_1_1PlaceOptions.html#ae03ebad4f072472bdd140acb623a77db":[1,0,0,14,14,11],
@@ -245,9 +249,5 @@ var NAVTREEINDEX19 =
 "structtmk_1_1place_1_1detail_1_1Slot.html#a7b0338768ff34958a1b9de745fb4bc96":[1,0,0,14,0,1,0],
 "structtmk_1_1place_1_1detail_1_1Slot.html#ab19f0b0b41f0146df4934dbd11243a40":[0,0,0,15,0,1,2],
 "structtmk_1_1place_1_1detail_1_1Slot.html#ab19f0b0b41f0146df4934dbd11243a40":[1,0,0,14,0,1,2],
-"structtmk_1_1place_1_1detail_1_1Slot.html#aeeb1a152ac2a96163ae0f4b9c48a0c00":[0,0,0,15,0,1,3],
-"structtmk_1_1place_1_1detail_1_1Slot.html#aeeb1a152ac2a96163ae0f4b9c48a0c00":[1,0,0,14,0,1,3],
-"structtmk_1_1place_1_1detail_1_1WindowStats.html":[0,0,0,15,0,2],
-"structtmk_1_1place_1_1detail_1_1WindowStats.html":[1,0,0,14,0,2],
-"structtmk_1_1place_1_1detail_1_1WindowStats.html#a6aa5f2bcca35bcbe95686a00aeaebe1a":[0,0,0,15,0,2,2]
+"structtmk_1_1place_1_1detail_1_1Slot.html#aeeb1a152ac2a96163ae0f4b9c48a0c00":[0,0,0,15,0,1,3]
 };

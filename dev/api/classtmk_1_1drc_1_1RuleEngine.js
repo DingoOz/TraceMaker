@@ -5,6 +5,7 @@ var classtmk_1_1drc_1_1RuleEngine =
     [ "annular_width_min", "classtmk_1_1drc_1_1RuleEngine.html#a6cb9ad3bf59ed38ff3978ab690358b1d", null ],
     [ "any_physical_clearance", "classtmk_1_1drc_1_1RuleEngine.html#a26441a3ca18e472ef496761c85f64f8d", null ],
     [ "any_physical_hole_clearance", "classtmk_1_1drc_1_1RuleEngine.html#a9acc61cbf757a4270df4f18b1d25fc2d", null ],
+    [ "class_names_seen", "classtmk_1_1drc_1_1RuleEngine.html#a712aaa60409f97b9365b6668c000dc6d", null ],
     [ "clearance", "classtmk_1_1drc_1_1RuleEngine.html#a92e14349228a7c249b1b27b3f68b887d", null ],
     [ "clearance_rules", "classtmk_1_1drc_1_1RuleEngine.html#a7bd845136653703c75471b5c8d2eb092", null ],
     [ "coupled_diff_pair", "classtmk_1_1drc_1_1RuleEngine.html#a6d17e0dd0962d6666e3408984d389eeb", null ],

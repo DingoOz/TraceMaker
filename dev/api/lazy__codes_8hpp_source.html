@@ -111,61 +111,77 @@ $(function(){initNavTree('lazy__codes_8hpp_source.html','',''); });
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> <span class="keyword">public</span>:</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">   17</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> std::int32_t <a class="code hl_variable" href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">kUnknown</a> = INT32_MIN;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="comment">// n entries, all unknown; drops any earlier contents.</span></div>
-<div class="foldopen" id="foldopen00020" data-start="{" data-end="}">
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#ab4a2d45af39763221ff558ba8352ad90">   20</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#ab4a2d45af39763221ff558ba8352ad90">init</a>(std::size_t n) {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    n_ = n;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    chunks_.clear();</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    chunks_.resize((n + kChunk - 1) / kChunk);</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  }</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="comment">// n entries, all unknown; drops any earlier contents. `counter`, if given, is kept equal to the bytes held, summed</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="comment">// with any other LazyCodes sharing it (the router bounds its caches&#39; total, issue #54).</span></div>
+<div class="foldopen" id="foldopen00021" data-start="{" data-end="}">
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#ab4bff73ab31a2b1e609905f2322bee67">   21</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#ab4bff73ab31a2b1e609905f2322bee67">init</a>(std::size_t n, std::size_t* counter = <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a3ae5fa904f9337151319e23d71669b7c">release</a>();</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    n_ = n;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    counter_ = counter;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    chunks_.clear();</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    chunks_.resize((n + kChunk - 1) / kChunk);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  }</div>
 </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#adf1aca13a598c1779459780cc45fa5a7">   25</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#adf1aca13a598c1779459780cc45fa5a7">empty</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_ == 0; }</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542">   26</a></span>  std::size_t <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542">size</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_; }</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="comment">// The entry, allocating its chunk (all unknown) if needed.</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="comment">// Every entry back to unknown, freeing the chunks.</span></div>
 <div class="foldopen" id="foldopen00029" data-start="{" data-end="}">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a9c2d5c0c974e92b8d8f5483cc5897e5f">   29</a></span>  std::int32_t&amp; <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a9c2d5c0c974e92b8d8f5483cc5897e5f">operator[]</a>(std::size_t i) {</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keyword">auto</span>&amp; c = chunks_[i &gt;&gt; kShift];</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span> (!c) {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>      c = std::make_unique&lt;std::int32_t[]&gt;(kChunk);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>      <span class="keywordflow">for</span> (std::size_t k = 0; k &lt; kChunk; ++k) c[k] = <a class="code hl_variable" href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">kUnknown</a>;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordflow">return</span> c[i &amp; (kChunk - 1)];</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  }</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a3ae5fa904f9337151319e23d71669b7c">   29</a></span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a3ae5fa904f9337151319e23d71669b7c">release</a>() {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; c : chunks_)</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>      <span class="keywordflow">if</span> (c) {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        c.reset();</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="keywordflow">if</span> (counter_) *counter_ -= kChunk * <span class="keyword">sizeof</span>(std::int32_t);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>      }</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  }</div>
 </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="comment">// The entry without allocating: unknown where nothing was written.</span></div>
-<div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a1f9b329164ec928e52b7d71177c18011">   38</a></span>  std::int32_t <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a1f9b329164ec928e52b7d71177c18011">get</a>(std::size_t i)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; c = chunks_[i &gt;&gt; kShift];</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">return</span> c ? c[i &amp; (kChunk - 1)] : <a class="code hl_variable" href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">kUnknown</a>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#adf1aca13a598c1779459780cc45fa5a7">   36</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#adf1aca13a598c1779459780cc45fa5a7">empty</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_ == 0; }</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542">   37</a></span>  std::size_t <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542">size</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_; }</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="comment">// The entry, allocating its chunk (all unknown) if needed.</span></div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a9c2d5c0c974e92b8d8f5483cc5897e5f">   40</a></span>  std::int32_t&amp; <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a9c2d5c0c974e92b8d8f5483cc5897e5f">operator[]</a>(std::size_t i) {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">auto</span>&amp; c = chunks_[i &gt;&gt; kShift];</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">if</span> (!c) {</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      c = std::make_unique&lt;std::int32_t[]&gt;(kChunk);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      <span class="keywordflow">for</span> (std::size_t k = 0; k &lt; kChunk; ++k) c[k] = <a class="code hl_variable" href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">kUnknown</a>;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      <span class="keywordflow">if</span> (counter_) *counter_ += kChunk * <span class="keyword">sizeof</span>(std::int32_t);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">return</span> c[i &amp; (kChunk - 1)];</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  }</div>
 </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="comment">// Bytes held by allocated chunks (diagnostics, test).</span></div>
-<div class="foldopen" id="foldopen00043" data-start="{" data-end="}">
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720">   43</a></span>  std::size_t <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720">bytes</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    std::size_t b = 0;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : chunks_) b += c ? kChunk * <span class="keyword">sizeof</span>(std::int32_t) : 0;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordflow">return</span> b;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="comment">// The entry without allocating: unknown where nothing was written.</span></div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="}">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#a1f9b329164ec928e52b7d71177c18011">   50</a></span>  std::int32_t <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#a1f9b329164ec928e52b7d71177c18011">get</a>(std::size_t i)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; c = chunks_[i &gt;&gt; kShift];</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">return</span> c ? c[i &amp; (kChunk - 1)] : <a class="code hl_variable" href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">kUnknown</a>;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  }</div>
 </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t kShift = 12;  <span class="comment">// 4,096 entries (16 KB): a few lattice rows of a window</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t kChunk = std::size_t{1} &lt;&lt; kShift;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  std::size_t n_ = 0;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  std::vector&lt;std::unique_ptr&lt;std::int32_t[]&gt;&gt; chunks_;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>};</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="comment">// Bytes held by allocated chunks (diagnostics, test).</span></div>
+<div class="foldopen" id="foldopen00055" data-start="{" data-end="}">
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720">   55</a></span>  std::size_t <a class="code hl_function" href="classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720">bytes</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    std::size_t b = 0;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : chunks_) b += c ? kChunk * <span class="keyword">sizeof</span>(std::int32_t) : 0;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">return</span> b;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  }</div>
 </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}  <span class="comment">// namespace tmk::route</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t kShift = 12;  <span class="comment">// 4,096 entries (16 KB): a few lattice rows of a window</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> std::size_t kChunk = std::size_t{1} &lt;&lt; kShift;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  std::size_t n_ = 0;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  std::size_t* counter_ = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  std::vector&lt;std::unique_ptr&lt;std::int32_t[]&gt;&gt; chunks_;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>};</div>
+</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>}  <span class="comment">// namespace tmk::route</span></div>
 <div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html">tmk::route::LazyCodes</a></div><div class="ttdef"><b>Definition</b> <a href="#l00015">lazy_codes.hpp:15</a></div></div>
-<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a1f9b329164ec928e52b7d71177c18011"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a1f9b329164ec928e52b7d71177c18011">tmk::route::LazyCodes::get</a></div><div class="ttdeci">std::int32_t get(std::size_t i) const</div><div class="ttdoc">The entry without allocating: unknown where nothing was written.</div><div class="ttdef"><b>Definition</b> <a href="#l00038">lazy_codes.hpp:38</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a1f9b329164ec928e52b7d71177c18011"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a1f9b329164ec928e52b7d71177c18011">tmk::route::LazyCodes::get</a></div><div class="ttdeci">std::int32_t get(std::size_t i) const</div><div class="ttdoc">The entry without allocating: unknown where nothing was written.</div><div class="ttdef"><b>Definition</b> <a href="#l00050">lazy_codes.hpp:50</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a3ae5fa904f9337151319e23d71669b7c"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a3ae5fa904f9337151319e23d71669b7c">tmk::route::LazyCodes::release</a></div><div class="ttdeci">void release()</div><div class="ttdoc">Every entry back to unknown, freeing the chunks.</div><div class="ttdef"><b>Definition</b> <a href="#l00029">lazy_codes.hpp:29</a></div></div>
 <div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a7f6a740a653fd875606bc7bd2a23fc8c"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a7f6a740a653fd875606bc7bd2a23fc8c">tmk::route::LazyCodes::kUnknown</a></div><div class="ttdeci">static constexpr std::int32_t kUnknown</div><div class="ttdef"><b>Definition</b> <a href="#l00017">lazy_codes.hpp:17</a></div></div>
-<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a9c2d5c0c974e92b8d8f5483cc5897e5f"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a9c2d5c0c974e92b8d8f5483cc5897e5f">tmk::route::LazyCodes::operator[]</a></div><div class="ttdeci">std::int32_t &amp; operator[](std::size_t i)</div><div class="ttdoc">The entry, allocating its chunk (all unknown) if needed.</div><div class="ttdef"><b>Definition</b> <a href="#l00029">lazy_codes.hpp:29</a></div></div>
-<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a9dba03a962eeb34f288037a0ca01b542"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542">tmk::route::LazyCodes::size</a></div><div class="ttdeci">std::size_t size() const</div><div class="ttdef"><b>Definition</b> <a href="#l00026">lazy_codes.hpp:26</a></div></div>
-<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_ab4a2d45af39763221ff558ba8352ad90"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#ab4a2d45af39763221ff558ba8352ad90">tmk::route::LazyCodes::init</a></div><div class="ttdeci">void init(std::size_t n)</div><div class="ttdoc">n entries, all unknown; drops any earlier contents.</div><div class="ttdef"><b>Definition</b> <a href="#l00020">lazy_codes.hpp:20</a></div></div>
-<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_adf1aca13a598c1779459780cc45fa5a7"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#adf1aca13a598c1779459780cc45fa5a7">tmk::route::LazyCodes::empty</a></div><div class="ttdeci">bool empty() const</div><div class="ttdef"><b>Definition</b> <a href="#l00025">lazy_codes.hpp:25</a></div></div>
-<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_af9f9f67f9be5ff42cc3c1566c580b720"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720">tmk::route::LazyCodes::bytes</a></div><div class="ttdeci">std::size_t bytes() const</div><div class="ttdoc">Bytes held by allocated chunks (diagnostics, test).</div><div class="ttdef"><b>Definition</b> <a href="#l00043">lazy_codes.hpp:43</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a9c2d5c0c974e92b8d8f5483cc5897e5f"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a9c2d5c0c974e92b8d8f5483cc5897e5f">tmk::route::LazyCodes::operator[]</a></div><div class="ttdeci">std::int32_t &amp; operator[](std::size_t i)</div><div class="ttdoc">The entry, allocating its chunk (all unknown) if needed.</div><div class="ttdef"><b>Definition</b> <a href="#l00040">lazy_codes.hpp:40</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_a9dba03a962eeb34f288037a0ca01b542"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#a9dba03a962eeb34f288037a0ca01b542">tmk::route::LazyCodes::size</a></div><div class="ttdeci">std::size_t size() const</div><div class="ttdef"><b>Definition</b> <a href="#l00037">lazy_codes.hpp:37</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_ab4bff73ab31a2b1e609905f2322bee67"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#ab4bff73ab31a2b1e609905f2322bee67">tmk::route::LazyCodes::init</a></div><div class="ttdeci">void init(std::size_t n, std::size_t *counter=nullptr)</div><div class="ttdoc">n entries, all unknown; drops any earlier contents.</div><div class="ttdef"><b>Definition</b> <a href="#l00021">lazy_codes.hpp:21</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_adf1aca13a598c1779459780cc45fa5a7"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#adf1aca13a598c1779459780cc45fa5a7">tmk::route::LazyCodes::empty</a></div><div class="ttdeci">bool empty() const</div><div class="ttdef"><b>Definition</b> <a href="#l00036">lazy_codes.hpp:36</a></div></div>
+<div class="ttc" id="aclasstmk_1_1route_1_1LazyCodes_html_af9f9f67f9be5ff42cc3c1566c580b720"><div class="ttname"><a href="classtmk_1_1route_1_1LazyCodes.html#af9f9f67f9be5ff42cc3c1566c580b720">tmk::route::LazyCodes::bytes</a></div><div class="ttdeci">std::size_t bytes() const</div><div class="ttdoc">Bytes held by allocated chunks (diagnostics, test).</div><div class="ttdef"><b>Definition</b> <a href="#l00055">lazy_codes.hpp:55</a></div></div>
 <div class="ttc" id="anamespacetmk_1_1route_html"><div class="ttname"><a href="namespacetmk_1_1route.html">tmk::route</a></div><div class="ttdef"><b>Definition</b> <a href="bundle_8hpp_source.html#l00017">bundle.hpp:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

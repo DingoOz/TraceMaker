@@ -14,6 +14,7 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "bundle_min_lanes", "structtmk_1_1route_1_1RouterOptions.html#af6a7d07d572374cf13bec51b5c9d9a2a", null ],
     [ "bus_first", "structtmk_1_1route_1_1RouterOptions.html#afbf36f1f4fd2c4b8c559627594258974", null ],
     [ "buses", "structtmk_1_1route_1_1RouterOptions.html#a50999082ae6b8bcc78d1a460011a797c", null ],
+    [ "class_cache_mb", "structtmk_1_1route_1_1RouterOptions.html#a0bb87e12be543d6555a7c7be04710be6", null ],
     [ "critical", "structtmk_1_1route_1_1RouterOptions.html#ad0e008baee0fdfab6749ea4417690cab", null ],
     [ "critical_first", "structtmk_1_1route_1_1RouterOptions.html#af3c4f95225511bd9139f44a27ad2d28a", null ],
     [ "critical_via_mult", "structtmk_1_1route_1_1RouterOptions.html#af590e3093f1573e1f16b8cb98670ed3d", null ],
