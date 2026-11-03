@@ -123,6 +123,9 @@ class RuleEngine {
   Coord router_edge_clearance() const { return router_edge_; }
   // Custom rules that the per-class obstacle cache cannot represent require exact per-point checks.
   bool needs_exact_routing() const { return needs_exact_; }
+  // Some applied rule's condition reads a net class by name (NetClass, hasNetclass, hasExactNetclass): two classes with the same
+  // values may then be judged differently, so the router's obstacle caches stay per class (issue #54).
+  bool class_names_seen() const { return class_names_seen_; }
   const std::vector<std::string>& warnings() const { return warnings_; }
 
  private:
@@ -166,6 +169,7 @@ class RuleEngine {
   bool any_custom_clearance_ = false;
   bool zone_overrides_ = false;
   bool needs_exact_ = false;
+  bool class_names_seen_ = false;
   Coord max_physical_hole_ = 0;
   Coord max_physical_ = 0;
   Coord router_hole_ = 0;

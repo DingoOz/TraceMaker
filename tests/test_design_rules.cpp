@@ -754,6 +754,80 @@ TEST_CASE("lazy codes: unknown until written, allocated by chunk", "[route]") {
   CHECK(c.bytes() == 2 * 4096 * sizeof(std::int32_t));
   c.init(10);
   CHECK(c.get(5) == route::LazyCodes::kUnknown);
+  std::size_t held = 0;  // a counter shared by several, kept equal to the bytes they hold
+  route::LazyCodes d, e;
+  d.init(10'000, &held);
+  e.init(10'000, &held);
+  d[1] = 1;
+  d[9'000] = 2;
+  e[3] = 3;
+  CHECK(held == 3 * 4096 * sizeof(std::int32_t));
+  d.release();
+  CHECK(held == 4096 * sizeof(std::int32_t));
+  CHECK(d.get(1) == route::LazyCodes::kUnknown);
+  CHECK(e.get(3) == 3);
+}
+
+bool same_copper(const route::RouteResult& x, const route::RouteResult& y) {
+  if (x.routed != y.routed || x.tracks.size() != y.tracks.size() || x.vias.size() != y.vias.size()) return false;
+  for (std::size_t i = 0; i < x.tracks.size(); ++i) {
+    const auto &s = x.tracks[i], &t = y.tracks[i];
+    if (!(s.a == t.a && s.b == t.b && s.width == t.width && s.layer == t.layer && s.net == t.net)) return false;
+  }
+  for (std::size_t i = 0; i < x.vias.size(); ++i) {
+    const auto &u = x.vias[i], &v = y.vias[i];
+    if (!(u.pos == v.pos && u.size == v.size && u.drill == v.drill && u.net == v.net)) return false;
+  }
+  return true;
+}
+
+TEST_CASE("obstacle caches: classes with the same values share one, and the memory bound is deterministic", "[route]") {
+  // Issue #54: one cache per class (and track width) per router, so a board with a class per impedance pair ran out of memory.
+  auto run = [](const Files& f, bool split, Coord other_clearance, double mb) {
+    const auto lb = io::read_board_file(f.pcb.string());
+    auto rules = io::read_design_rules(f.pcb.string());
+    if (split) {  // SIG in a class of its own
+      model::NetClass other = rules.default_class();
+      other.name = "Other";
+      if (other_clearance > 0) other.clearance = other_clearance;
+      rules.classes.push_back(other);
+      rules.assignments["SIG"] = {"Other"};
+    }
+    route::RouterOptions o;
+    o.work_budget = 2'000'000;
+    o.gpu_device = -1;
+    o.time_limit_s = 600;
+    o.class_cache_mb = mb;
+    return route::Router(lb.board, rules, o).run();
+  };
+  const std::string board = board_text(
+      "  (footprint \"R\" (layer \"F.Cu\") (at 10 5)\n    (property \"Reference\" \"R3\" (at 0 0) (layer \"F.SilkS\"))\n"
+      "    (pad \"1\" smd rect (at 0 -2) (size 1 1) (layers \"F.Cu\") (net 1 \"SIG\"))\n"
+      "    (pad \"2\" smd rect (at 0 2) (size 1 1) (layers \"F.Cu\") (net 2 \"GND\"))\n  )\n");
+  const Files f("class_cache", board, "");
+  const auto one = run(f, false, 0, 2048);
+  REQUIRE(one.routed == 4);
+  CHECK(one.obstacle_caches == 1);
+  // Same values: one cache, as if the nets were in one class.
+  const auto two = run(f, true, 0, 2048);
+  CHECK(two.obstacle_caches == 1);
+  CHECK(same_copper(one, two));
+  CHECK(two.work.total().fixed_checks == one.work.total().fixed_checks);
+  // A rule that reads class names (it never matches, so the copper is the same) keeps them apart.
+  const Files g("class_cache_named", board,
+                "(version 1)\n(rule \"x\" (condition \"A.NetClass == 'Nope'\") (constraint clearance (min 5mm)))\n");
+  const auto named_one = run(g, false, 0, 2048), named_two = run(g, true, 0, 2048);
+  CHECK(named_one.obstacle_caches == 1);
+  CHECK(named_two.obstacle_caches == 2);
+  CHECK(same_copper(named_one, named_two));
+  // Different values: two caches. A bound below one chunk frees the other cache on each switch; the run stays deterministic.
+  const auto roomy = run(f, true, 250'000, 2048), tight = run(f, true, 250'000, 1e-6), again = run(f, true, 250'000, 1e-6);
+  CHECK(roomy.obstacle_caches == 2);
+  CHECK(roomy.cache_evictions == 0);
+  CHECK(tight.cache_evictions > 0);
+  CHECK(tight.routed == 4);
+  CHECK(same_copper(tight, again));
+  CHECK(tight.cache_evictions == again.cache_evictions);
 }
 
 TEST_CASE("inside board: the exact test by raster-row edges equals the every-edge reference", "[geom][route]") {

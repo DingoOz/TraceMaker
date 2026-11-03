@@ -1,0 +1,244 @@
+live view: http://127.0.0.1:8841/
+portfolio: 2 variants on 2 threads
+  variant 0 exact bends, shortest first    routed 24 in 2.9 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 24 in 1.9 s
+rescue (warm): 104 of 128 connections are open; routing again with relax (from the plain routes, 1 round of 3000000 work)
+portfolio: 2 variants on 2 threads
+  variant 0 exact bends, shortest first    routed 19 in 0.0 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 19 in 0.0 s
+rescue (warm): 24 -> 19 routed (no gain: the result before stands)
+rescue (fresh): 104 of 128 connections are open; routing again with relax (from nothing, 1 round of 3000000 work)
+portfolio: 2 variants on 2 threads
+  variant 0 exact bends, shortest first    routed 19 in 0.0 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 19 in 0.0 s
+rescue (fresh): 24 -> 19 routed (no gain: the result before stands)
+routed 24/128 connections, 67 tracks, 2 vias, pitch 0.050 mm, 3011602 expansions, 9.80 s (best variant 2.90 s)
+  unrouted: +5V: D25.2 -> C19.1  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: +5V: J4.1 -> C27.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: C18.1 -> J4.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: C19.1 -> J8.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: C20.1 -> J5.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: J3.1 -> C16.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: C15.1 -> J6.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: J2.1 -> C14.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /U4D+: D8.2 -> J5.3  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /U4D-: J5.2 -> D7.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: VIN: U2.3 -> JP1.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +5V: J7.1 -> C17.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: VIN: C21.1 -> D24.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +3.3V: U1.36 -> C7.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +3.3V: U1.20 -> C10.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(U1-REXT): R6.1 -> U1.27  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V8: C13.1 -> U1.28  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +3.3V: U1.26 -> C5.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +3.3V: C6.1 -> U1.31  (boxed in; escapes/neck-down: boxed in)
+  unrouted: /LC: D21.RA -> D18.GK  ()
+  unrouted: +1V8: U1.25 -> C4.1  ()
+  unrouted: VIN: JP1.2 -> C21.1  ()
+  unrouted: +1V8: U1.21 -> C12.1  ()
+  unrouted: +3.3V: C8.1 -> U1.15  ()
+  unrouted: +3.3V: R5.1 -> C9.1  ()
+  unrouted: +5V: C20.1 -> zone  ()
+  unrouted: Net-(U1-VBUS_SENSE): R1.2 -> U1.41  ()
+  unrouted: +3.3V: C9.1 -> U1.42  ()
+  unrouted: Net-(U1-TEST3#): R4.2 -> U1.45  ()
+  unrouted: Net-(U1-EXT_RST#): U1.40 -> R3.2  ()
+  unrouted: /LED7: R13.2 -> U1.46  ()
+  unrouted: Net-(U1-TEST1#): U1.43 -> R5.2  ()
+  unrouted: /LED6: R12.2 -> U1.47  ()
+  unrouted: Net-(D15-1): D15.GA -> D15.RK  ()
+  unrouted: /LC: D15.GK -> D15.RA  ()
+  unrouted: /LC: D16.GK -> D16.RA  ()
+  unrouted: /LC: D19.RA -> D19.GK  ()
+  unrouted: /LC: D19.RA -> D20.GK  ()
+  unrouted: /LC: D20.RA -> D21.GK  ()
+  unrouted: /LC: D17.GK -> D17.RA  ()
+  unrouted: /LC: D18.GK -> D18.RA  ()
+  unrouted: Net-(D16-1): D16.GA -> D16.RK  ()
+  unrouted: Net-(D19-1): D19.GA -> D19.RK  ()
+  unrouted: Net-(D20-1): D20.GA -> D20.RK  ()
+  unrouted: Net-(D21-1): D21.GA -> D21.RK  ()
+  unrouted: Net-(D17-1): D17.GA -> D17.RK  ()
+  unrouted: Net-(D18-1): D18.GA -> D18.RK  ()
+  unrouted: +1V8: C11.1 -> U1.6  ()
+  unrouted: /LED4: R10.2 -> U1.7  ()
+  unrouted: +5V: U1.8 -> C1.1  ()
+  unrouted: /LED5: R11.2 -> U1.48  ()
+  unrouted: /LED3: U1.5 -> R9.2  ()
+  unrouted: +3.3V: U1.9 -> C3.1  ()
+  unrouted: /LED2: R8.2 -> U1.4  ()
+  unrouted: Net-(U1-VBUS_SENSE): R2.1 -> R1.2  ()
+  unrouted: /LED1: R7.2 -> U1.3  ()
+  unrouted: +5V: J5.1 -> C38.1  ()
+  unrouted: +5V: C17.1 -> C18.1  ()
+  unrouted: +5V: C16.1 -> C15.1  ()
+  unrouted: +3.3V: C10.1 -> C8.1  ()
+  unrouted: +3.3V: C9.1 -> R3.1  ()
+  unrouted: /U6D+: J7.3 -> U1.35  ()
+  unrouted: Net-(U2-CAP): U2.7 -> C28.1  ()
+  unrouted: +5V: J2.1 -> C22.1  ()
+  unrouted: +3.3V: C7.1 -> C6.1  ()
+  unrouted: /XI: Y1.1 -> U1.22  ()
+  unrouted: /U1D+: J2.3 -> U1.19  ()
+  unrouted: +1V8: U1.21 -> U1.25  ()
+  unrouted: +5V: J7.1 -> R1.1  ()
+  unrouted: +3.3V: U1.31 -> U1.26  ()
+  unrouted: /U5D-: J6.2 -> U1.32  ()
+  unrouted: /U2D-: J3.2 -> U1.16  ()
+  unrouted: /U6D-: J7.2 -> U1.34  ()
+  unrouted: +5V: J3.1 -> U1.8  ()
+  unrouted: +3.3V: U1.15 -> U1.9  ()
+  unrouted: /XO: Y1.3 -> U1.23  ()
+  unrouted: +3.3V: U1.26 -> U1.20  ()
+  unrouted: +5V: J6.1 -> C30.1  ()
+  unrouted: +3.3V: U1.42 -> U1.36  ()
+  unrouted: /U2D+: J3.3 -> U1.17  ()
+  unrouted: /U1D-: J2.2 -> U1.18  ()
+  unrouted: +5V: J7.1 -> J3.1  ()
+  unrouted: +5V: J6.1 -> J2.1  ()
+  unrouted: /D+: J1.3 -> D23.2  ()
+  unrouted: /U5D+: J6.3 -> U1.33  ()
+  unrouted: Net-(J1-Pin_1): J1.1 -> JP1.1  ()
+  unrouted: /D-: J1.2 -> D22.2  ()
+  unrouted: /D-: D22.2 -> U1.29  ()
+  unrouted: /D+: D23.2 -> U1.30  ()
+  unrouted: Net-(D19-1): D19.GA -> R11.1  ()
+  unrouted: /U7D+: J8.3 -> U1.38  ()
+  unrouted: +1V8: U1.6 -> U1.21  ()
+  unrouted: Net-(D20-1): D20.GA -> R12.1  ()
+  unrouted: /U7D-: J8.2 -> U1.37  ()
+  unrouted: Net-(D15-1): D15.GA -> R7.1  ()
+  unrouted: /U3D-: J4.2 -> U1.13  ()
+  unrouted: /LC: D15.RA -> U1.1  ()
+  unrouted: Net-(D21-1): D21.GA -> R13.1  ()
+  unrouted: /U3D+: J4.3 -> U1.14  ()
+  unrouted: Net-(D16-1): D16.GA -> R8.1  ()
+  unrouted: Net-(D17-1): D17.GA -> R9.1  ()
+  unrouted: /U4D-: J5.2 -> U1.11  ()
+  unrouted: Net-(D18-1): D18.GA -> R10.1  ()
+  unrouted: /U4D+: J5.3 -> U1.12  ()
+  open by the router's settings: J7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C18.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C16.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D15.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D15.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D15.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C14.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D16.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D16.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D16.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C15.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J2.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D19.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D19.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D19.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J5.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C20.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D20.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D20.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D20.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C17.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D21.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D21.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D21.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J4.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C19.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D17.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D17.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D17.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R7.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D23.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C11.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R13.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R13.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R4.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R11.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R11.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D24.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R10.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R10.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R8.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C28.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C5.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: Y1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: Y1.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R12.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R12.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D22.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.11 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.12 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.13 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.14 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.15 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.16 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.17 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.18 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.19 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.20 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.21 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.22 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.23 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.25 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.26 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.27 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.28 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.29 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.30 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.31 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.32 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.33 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.34 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.35 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.36 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.37 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.38 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.40 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.41 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.42 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.43 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.45 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.46 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.47 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.48 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: JP1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: JP1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R9.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R9.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C38.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C9.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C10.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C12.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R5.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R3.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C21.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+why open: 155 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 121 only by zone fills or copper graphics, 34 open through congestion (19.64 s)
+  next: route again with --soft-zones: 121 pins are walled in only by zone fills
+  next: 34 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 3820260 expansions, 45032 flood cells, 1429620 cell checks, 681412 fixed-copper checks, 28556524 field cells in 208 fields, 1281 commits, 0 rips

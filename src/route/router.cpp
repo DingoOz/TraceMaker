@@ -167,9 +167,23 @@ struct Router::Impl {
     LazyCodes margin, tight, via;  // INT32_MIN = not computed yet (allocated in chunks as cells are reached)
     model::NetId rep = 0;
     bool prefilled = false;
+    std::uint64_t used = 0;  // when it was last switched to (cache_tick), for eviction
   };
-  std::map<std::pair<const model::NetClass*, Coord>, ClassCache> caches;  // per (net class, track width)
+  // What a cache's codes depend on: the class values the rule engine reads for the probe net (clearance, and the pair gaps
+  // between the halves of a coupled pair), the track width and the via size. Classes with the same values share a cache, as
+  // nets of one class do, unless a custom rule reads class names; then `cls` keeps them apart (issue #54: a board with 83
+  // classes, one per impedance pair, had 83 caches per variant).
+  struct CacheKey {
+    const model::NetClass* cls = nullptr;
+    Coord clearance = 0, pair_gap = 0, tuning_gap = 0, width = 0, via_d = 0, via_drill = 0;
+    auto operator<=>(const CacheKey&) const = default;
+  };
+  std::map<CacheKey, ClassCache> caches;
+  std::size_t cache_bytes = 0;  // chunks held by all caches (LazyCodes keeps it)
+  std::uint64_t cache_tick = 0;
   bool use_cache = true;
+  bool class_names_seen = false;  // keep caches per class (CacheKey)
+  long cache_evictions = 0;
   int current = -1;                  // connection being routed
   std::vector<std::int64_t> soft_cells;  // cells of the last soft path that crossed routed copper
 
@@ -367,6 +381,7 @@ struct Router::Impl {
     obs->set_vias_off_pads(opt.vias_off_pads, static_cast<Coord>(opt.vias_off_pads_below_mm * 1e6));
     if (opt.via_in_pad) find_inner_balls();
     use_cache = !obs->needs_exact_routing();
+    class_names_seen = obs->rules().class_names_seen();
     nl = b.copper_count();
     blind_ok = opt.blind_vias && rules.minimums.allow_blind_buried_vias && nl > 2;
     micro_ok = opt.micro_vias && rules.minimums.allow_microvias && nl > 2;
@@ -830,15 +845,33 @@ struct Router::Impl {
   Coord cc_key = -1;
   ClassCache* cc_last = nullptr;
   ClassCache& cache_for(NetId net) {
-    const Coord key = track_width(net) * 2 + (via_override ? 1 : 0);  // via codes depend on the via size
+    const Coord key = track_width(net) * 2 + (via_override ? 1 : 0);  // all that changes the cache of one net
     if (net == cc_net && key == cc_key) return *cc_last;
-    auto& cc = caches[{&netclass(net), key}];
+    const auto& nc = netclass(net);
+    auto& cc = caches[{class_names_seen ? &nc : nullptr, nc.clearance, nc.diff_pair_gap, nc.tuning_pair_gap, track_width(net), via_diameter(net), via_drill(net)}];
     if (cc.margin.empty()) {
       const std::size_t n = static_cast<std::size_t>(nl) * static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny);
-      cc.margin.init(n);
-      cc.tight.init(n);
-      cc.via.init(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny));
+      cc.margin.init(n, &cache_bytes);
+      cc.tight.init(n, &cache_bytes);
+      cc.via.init(static_cast<std::size_t>(nx) * static_cast<std::size_t>(ny), &cache_bytes);
       cc.rep = net;
+    }
+    cc.used = ++cache_tick;
+    // Over the bound: free the codes of the caches used longest ago (not this one). The cache keeps its net, so a code asked again
+    // comes back the same, but the cost-to-go fields use only the codes known so far (build_field), so a run that reaches the bound
+    // may route differently from one that does not; the order of switches, and so the result, stays deterministic. Each cache holds
+    // at most a whole lattice, so the total stays below the bound plus one cache.
+    const double cap = opt.class_cache_mb * 1e6;
+    while (opt.class_cache_mb > 0 && static_cast<double>(cache_bytes) > cap) {
+      ClassCache* oldest = nullptr;
+      for (auto& [k, c] : caches)
+        if (&c != &cc && (c.margin.bytes() + c.tight.bytes() + c.via.bytes()) > 0 && (!oldest || c.used < oldest->used)) oldest = &c;
+      if (!oldest) break;
+      oldest->margin.release();
+      oldest->tight.release();
+      oldest->via.release();
+      oldest->prefilled = false;
+      ++cache_evictions;
     }
     cc_net = net;
     cc_key = key;
@@ -6327,6 +6360,8 @@ struct Router::Impl {
       }
       res.seconds = elapsed();
       res.time_limited = time_stopped;
+      res.cache_evictions = cache_evictions;
+      res.obstacle_caches = static_cast<int>(caches.size());
       return res;
     }
     guide_match();
@@ -7149,6 +7184,8 @@ struct Router::Impl {
     emit_stats("done");
     emit("{\"type\":\"stage\",\"name\":\"route\",\"state\":\"end\",\"detail\":\"\"}");
     res.time_limited = time_stopped;
+    res.cache_evictions = cache_evictions;
+    res.obstacle_caches = static_cast<int>(caches.size());
     return std::move(res);
   }
 };

@@ -1,0 +1,79 @@
+searches: 1136 ok (490674 expansions), 496 failed (363016 expansions); fields 0 GPU + 106 CPU (0.59 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 46; legality checks 963153; rips 0, passes 1, boxed-in 436, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 20 proved unreachable, 10370 cells visited
+failed-search expansions: strict confined 0, strict wide 169800, negotiated confined 0, negotiated wide 182846
+searches: 145 ok (487400 expansions), 504 failed (2499910 expansions); fields 0 GPU + 102 CPU (0.64 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 6; legality checks 492016; rips 0, passes 1, boxed-in 436, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 20 proved unreachable, 10370 cells visited
+late reachability proofs: 6, 6 proved no path, 24292 cells visited
+failed-search expansions: strict confined 0, strict wide 1108804, negotiated confined 0, negotiated wide 1380736
+warm start: 24 saved routes taken over, 0 not legal under these rules
+warm start: 24 saved routes taken over, 0 not legal under these rules
+searches: 2 ok (20 expansions), 400 failed (2979634 expansions); fields 0 GPU + 112 CPU (0.33 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 24 connections improved
+restarts 0; legality checks 435848; rips 0, passes 1, boxed-in 336, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 4 proved no path, 27610 cells visited
+failed-search expansions: strict confined 0, strict wide 1257902, negotiated confined 0, negotiated wide 1721732
+searches: 1206 ok (719510 expansions), 492 failed (622846 expansions); fields 0 GPU + 204 CPU (1.26 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 21 connections improved
+restarts 46; legality checks 1468452; rips 0, passes 1, boxed-in 408, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 310494, negotiated confined 0, negotiated wide 312352
+ramp stage 1/2 (clearance -0.0600 mm): 26 of 128 routed
+warm start: 19 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 19 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 26 ok (119693 expansions), 452 failed (2938778 expansions); fields 0 GPU + 146 CPU (0.90 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 21 connections improved
+restarts 0; legality checks 460075; rips 0, passes 2, boxed-in 384, nogood skips 148, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 16 proved unreachable, 14618 cells visited
+late reachability proofs: 6, 6 proved no path, 38016 cells visited
+failed-search expansions: strict confined 0, strict wide 1654160, negotiated confined 0, negotiated wide 1270000
+searches: 1230 ok (734600 expansions), 492 failed (618472 expansions); fields 0 GPU + 186 CPU (1.31 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 23 connections improved
+restarts 46; legality checks 1472445; rips 0, passes 1, boxed-in 424, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 16 proved unreachable, 14618 cells visited
+failed-search expansions: strict confined 0, strict wide 291502, negotiated confined 0, negotiated wide 312352
+ramp stage 1/2 (clearance -0.0600 mm): 26 of 128 routed
+warm start: 19 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 19 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+Command exited with non-zero status 3
+	Command being timed: "/home/dingo/Programming/TraceMaker-rules/build/release/src/app/tracemaker route split/unrouted.kicad_pcb -o new-split/out.kicad_pcb --work 3000000 --variants 2 --threads 2 --no-gpu --no-kb --time 3600 --view --view-port 8844"
+	User time (seconds): 36.43
+	System time (seconds): 0.58
+	Percent of CPU this job got: 126%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:29.33
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 297480
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 291630
+	Voluntary context switches: 931
+	Involuntary context switches: 65
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 2608
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 3

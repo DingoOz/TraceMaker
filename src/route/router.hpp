@@ -125,6 +125,10 @@ struct RouterOptions {
   long txn_cap = 0;             // transactional negotiation: expansion cap of each victim's re-route search (0 = none)
   int txn_depth = 0;            // transactional negotiation: victims that cannot be re-routed strictly get a nested transaction of their own, this deep
   int txn_nested = 4;           // nested transactions allowed per top-level transaction
+  // Bound on the memory of the per-class fixed-obstacle caches (MB per router; 0 = none). Past it, the caches used longest
+  // ago are freed and computed again when needed (issue #54): slower, and the fields then know fewer codes, so the result may
+  // differ from an unbounded run; it is still deterministic.
+  double class_cache_mb = 2048;
   int field_cache_mb = 0;       // > 0: cost-to-go fields are kept (this many MB per router) and reused when every input is identical; results are unchanged
   int flood_work_pct = 100;     // reachability-flood cells count this percent of an expansion against the work budget (a flood cell costs far less time)
   int field_prefill = 0;        // 1: fill a class's fixed-copper cache for the whole board before its first field, so fields depend on nothing learned later (and can be cached)
@@ -406,6 +410,8 @@ struct RouteResult {
   };
   std::vector<Unrouted> unrouted;
   bool time_limited = false;  // the wall-clock limit (--time), not the work budget, ended a search: the result depends on machine speed
+  long cache_evictions = 0;   // obstacle caches freed to stay under RouterOptions::class_cache_mb
+  int obstacle_caches = 0;    // fixed-obstacle caches the router made (one per set of class values, track width and via size)
 };
 
 // The reason code of a failure explanation (RouteResult::Unrouted::reason). The text is matched, not parsed: the
