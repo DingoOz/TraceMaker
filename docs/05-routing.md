@@ -134,7 +134,7 @@ them (KiCad 8+ generates teardrops itself; TraceMaker leaves them to KiCad by de
 
 | Phase | Rules |
 |---|---|
-| 1 | Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, `.kicad_dru` clearance/width conditions on net class, layer and area; `disallow` and `physical_hole_clearance` (§27) |
+| 1 | Clearance (all object pairs incl. copper text/graphics), track width, via size/drill/annular ring, hole-to-hole, hole clearance, edge clearance, keepouts and rule areas, net-class rules, `.kicad_dru` clearance/width conditions on net class, layer and area; `disallow`, `physical_hole_clearance` and `physical_clearance` (§27) |
 | 2 | Zone connections (thermal reliefs to planes), solder-mask bridge awareness, blind/buried/micro vias |
 | 3 | Differential pairs (coupled routing as a single "pair" object in search: §15), length and skew targets (meander tuning in cleanup), max uncoupled length (`diff_pair_uncoupled`) |
 
@@ -751,9 +751,10 @@ pad's own layer.
 | Item `A.Layer` versus `(layer ...)` / `existsOnLayer` | Static track/via gates retain the same distinction. | Own track layer; pads use footprint side, including PTH; vias have no layer property. A zone uses its source layer, not a fill projection; a multilayer zone has an unset layer ID (`==` false, `!=` true). Layer selectors and membership still examine occupied copper layers (D80). |
 | `disallow hole / footprint / text` | Not applied; warned by name. | Left to KiCad |
 | `physical_hole_clearance` | Between a hole and any other item's copper, whatever the nets, as KiCad reports it. `Obstacles::physical_copper_state` tests new tracks and via pads against the holes of pads and vias; `physical_hole_state` tests a new via's hole against copper; both against fixed and routed items, in the exact check before commit and in the search's cached and routed checks. A net whose vias the rule sets against its own tracks (an unconditional rule does) gets no vias: the tracks that end in a via touch its hole. For the same reason a track cannot end on a plated pad of its own net under such a rule. | `hole_clearance`, once per hole and item, any net |
+| `physical_clearance` (D167, issue #64) | Between any two copper items, whatever the nets: KiCad's provider has no net test, so a via in a pad of its own net breaks `A.Type == 'Via' && B.Type == 'Pad'`. `Obstacles::physical_state` tests new tracks and vias against fixed and routed copper in the exact check before commit and the routed checks; `physical_codes` gives the per-class caches a pad's net (a track of that net may touch it) or a block. A pair with a track of one net is left out, because a track meets its net's copper wherever it connects; a rule that matches such a pair is named in a warning, and KiCad reports each contact. A net whose vias the rule sets against its own tracks gets no vias, as above. Zone fills do not keep it (the refill warns). | `clearance` with the rule's name, once per pair (an item against a zone fill once per zone and layer), any net, severity from the rule; a later matching rule with `(severity ignore)` turns it off |
 | Keepout rule areas | Tracks and vias use their respective keepout flags (§26, D65). | Unchanged |
 
-Disallow masks retain the per-class cache. Physical-hole rules do too when independent of `NetName`, `NetClass`
+Disallow masks retain the per-class cache. Physical-hole and physical clearance rules do too when independent of `NetName`, `NetClass`
 and `inDiffPair`, and clearance rules when independent of `NetName` and `inDiffPair` (cached via codes probe a via, so
 `Type`, `Width` and position conditions agree with the exact check). Other constraints are not read per point, and
 rules that cannot be read are not applied, so neither needs exact checks (D139).

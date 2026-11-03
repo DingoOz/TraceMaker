@@ -532,6 +532,8 @@ int Obstacles::holes_edges_state(const Shape& s, model::NetId net, int layer, bo
   // every item's copper, fixed and routed, any net.
   state = std::max(state, physical_copper_state(s, is_via_hole ? drc::ItemKind::Via : drc::ItemKind::Track, net, layer, true, true, ignore_routed, owners));
   if (state == 2) return 2;
+  state = std::max(state, physical_state(s, is_via_hole ? drc::ItemKind::Via : drc::ItemKind::Track, net, layer, true, true, ignore_routed, owners));
+  if (state == 2) return 2;
   if (is_via_hole) {
     state = std::max(state, physical_hole_state(Shape::point(s.pts[0], hole_r), net, layer, true, true, ignore_routed, owners));
     if (state == 2) return 2;
@@ -683,6 +685,52 @@ int Obstacles::physical_hole_state(const Shape& hole, model::NetId net, int laye
     }
   });
   return state;
+}
+
+// Custom physical_clearance rules hold between any two items whatever their nets (KiCad reports them as clearance). A track meets the
+// copper of its own net wherever it connects, so a pair with a track of one net is left out (the rule engine warns when a rule
+// matches one); a via against a pad or via of its own net is not (no via in a pad, issue #64).
+namespace {
+bool own_net_contact(drc::ItemKind kind, const drc::CopperItem& it, model::NetId net) {
+  return net != 0 && it.net == net && (kind == drc::ItemKind::Track || it.kind == drc::ItemKind::Track || it.kind == drc::ItemKind::Arc);
+}
+}  // namespace
+
+int Obstacles::physical_state(const Shape& s, drc::ItemKind kind, model::NetId net, int layer, bool fixed, bool routed, bool soft,
+                              std::vector<int>* owners) const {
+  if (!re_->any_physical_clearance()) return 0;
+  const Probe pp(kind, s, net, layer, 2 * s.r, s.pts[0]);
+  const drc::CopperItem& probe = *pp;
+  int state = 0;
+  (fixed ? grid_ : rgrid_)->query(s.box.inflated(re_->max_physical_clearance() + 1), [&](int id) {
+    if (state == 2) return;
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    const bool is_routed = it.owner >= 0;
+    if (it.removed || (is_routed ? !routed : !fixed) || !(it.layers & model::layer_bit(layer))) return;
+    if (soft_item(it) || own_net_contact(kind, it, net)) return;  // soft fills are refilled after routing
+    const Coord req = re_->physical_clearance(probe, it, layer);
+    if (req <= 0 || !item_closer(s, it, req)) return;
+    if (is_routed && soft) {
+      state = 1;
+      if (owners) owners->push_back(it.owner);
+    } else {
+      state = 2;
+    }
+  });
+  return state;
+}
+
+void Obstacles::physical_codes(const Shape& s, drc::ItemKind kind, model::NetId net, int layer, const std::function<void(model::NetId)>& hit) const {
+  if (!re_->any_physical_clearance()) return;
+  const Probe pp(kind, s, net, layer, 2 * s.r, s.pts[0]);
+  const drc::CopperItem& probe = *pp;
+  grid_->query(s.box.inflated(re_->max_physical_clearance() + 1), [&](int id) {
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.owner >= 0 || it.removed || !(it.layers & model::layer_bit(layer)) || soft_item(it)) return;
+    const Coord req = re_->physical_clearance(probe, it, layer);
+    if (req <= 0 || !item_closer(s, it, req)) return;
+    hit(own_net_contact(kind, it, it.net) ? it.net : 0);
+  });
 }
 
 int Obstacles::disk_state(Point p, int layer, Coord hw, model::NetId net, Coord margin, bool ignore_routed, std::vector<int>* owners) const {
@@ -868,6 +916,8 @@ std::int32_t Obstacles::fixed_code(Point p, int layer, Coord hw, Coord margin, m
   });
   if (code == kBlocked) return code;
   if (physical_copper_state(s, via_probe ? drc::ItemKind::Via : drc::ItemKind::Track, probe_net, layer, true, false, false, nullptr) != 0) return kBlocked;
+  physical_codes(s, via_probe ? drc::ItemKind::Via : drc::ItemKind::Track, probe_net, layer, add_net);
+  if (code == kBlocked) return code;
   const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
   bool edge_ok = true;
   egrid_->query(s.box.inflated(ec + 1), [&](int id) {
@@ -948,6 +998,8 @@ std::int32_t Obstacles::fixed_via_code(Point p, Coord d, Coord drill, Coord marg
   if (code == kBlocked) return code;
   for (int l = 0; l < nl; ++l)
     if (physical_copper_state(s, drc::ItemKind::Via, probe_net, l, true, false, false, nullptr) != 0) return kBlocked;
+  for (int l = 0; l < nl && code != kBlocked; ++l) physical_codes(s, drc::ItemKind::Via, probe_net, l, add_net);
+  if (code == kBlocked) return code;
   const Coord ec = std::max<Coord>(r_.minimums.copper_edge_clearance, 0);
   bool edge_ok = true;
   egrid_->query(s.box.inflated(ec + 1), [&](int id) {
@@ -1111,6 +1163,7 @@ int Obstacles::routed_state(const Shape& s, int layer, model::NetId net, drc::It
     if (via_hole && state != 2) state = std::max(state, routed_hole_copper_part(scratch_hole(s.pts[0], hole_r), layer, net, hc, soft, owners));
   }
   if (state != 2) state = std::max(state, physical_copper_state(s, kind, net, layer, false, true, soft, owners));
+  if (state != 2) state = std::max(state, physical_state(s, kind, net, layer, false, true, soft, owners));
   if (state == 2 || !via_hole) return state;
   state = std::max(state, physical_hole_state(scratch_hole(s.pts[0], hole_r), net, layer, false, true, soft, owners));
   if (state == 2) return state;
@@ -1129,6 +1182,7 @@ int Obstacles::routed_via_state(const Shape& s, model::LayerMask layers, model::
     if (hc > 0) state = std::max(state, routed_hole_copper_part(hole, l, net, hc, soft, nullptr));
     if (state == 2) return state;
     state = std::max(state, physical_copper_state(s, drc::ItemKind::Via, net, l, false, true, soft, nullptr));
+    if (state != 2) state = std::max(state, physical_state(s, drc::ItemKind::Via, net, l, false, true, soft, nullptr));
     if (state != 2) state = std::max(state, physical_hole_state(hole, net, l, false, true, soft, nullptr));
     if (state == 2) return state;
   }

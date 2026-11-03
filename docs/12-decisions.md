@@ -181,6 +181,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D163](decisions/D163.md) | Two rescue passes by default: relax from the plain routes, then from nothing | accepted |
 | [D165](decisions/D165.md) | Live page of every process and bench run | accepted |
 | [D166](decisions/D166.md) | Halving gives way to rounds and warm starts | accepted |
+| [D167](decisions/D167.md) | physical_clearance between copper of any net in the router and the DRC | accepted |
 <!-- END decision index -->
 
 ## Risks

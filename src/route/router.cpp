@@ -379,7 +379,7 @@ struct Router::Impl {
       if (i >= net_layers.size()) continue;
       for (int l = 0; l < nl; ++l)
         if (tracks_ok(l) && obs->rules().track_allowed(n.id, l)) net_layers[i] |= model::layer_bit(l);
-      net_vias[i] = obs->rules().via_allowed(n.id) && !obs->rules().via_hole_rule_hits_own_tracks(n.id) ? 1 : 0;
+      net_vias[i] = obs->rules().via_allowed(n.id) && !obs->rules().via_rule_hits_own_tracks(n.id) ? 1 : 0;
       net_blind[i] = net_vias[i] && obs->rules().via_allowed(n.id, model::ViaType::Blind) ? 1 : 0;
       net_micro[i] = net_vias[i] && obs->rules().via_allowed(n.id, model::ViaType::Micro) ? 1 : 0;
     }

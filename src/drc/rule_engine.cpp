@@ -537,6 +537,7 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
     for (const auto& k : rule.constraints) {
       if (k.type == "clearance" && k.min) max_clearance_ = std::max(max_clearance_, *k.min);
       if (k.type == "physical_hole_clearance" && k.min && c.valid) max_physical_hole_ = std::max(max_physical_hole_, *k.min);
+      if (k.type == "physical_clearance" && k.min && c.valid && rule.severity != "ignore") max_physical_ = std::max(max_physical_, *k.min);
       if (k.type == "hole_clearance" && k.min && c.valid && *k.min > r_.minimums.hole_clearance) {
         router_hole_ = std::max(router_hole_, *k.min);
         if (c.cond || !rule.layer.empty()) {
@@ -549,7 +550,8 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
       // Exact checks only where the cache could judge differently. Rules that are not applied (unreadable
       // conditions) and constraints the router does not read per point (sizes, hole and edge minimums, silk,
       // text, length, and KiCad's own tuning-profile width and gap rules, doc 05 §58) are the same either way (D139).
-      if (c.valid && ((k.type == "clearance" && net_seen) || (k.type == "physical_hole_clearance" && nets_seen))) needs_exact_ = true;
+      if (c.valid && ((k.type == "clearance" && net_seen) || ((k.type == "physical_hole_clearance" || k.type == "physical_clearance") && nets_seen)))
+        needs_exact_ = true;
       if (k.type != "disallow" || !c.valid) continue;
       for (const auto& w : k.items) {
         const std::uint16_t bit = w == "track" ? kTrack : w == "via" ? kVia : w == "through_via" ? kThroughVia : w == "micro_via" ? kMicroVia
@@ -618,6 +620,29 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   max_clearance_ = std::max({max_clearance_, r_.minimums.clearance, r_.minimums.copper_edge_clearance, r_.minimums.hole_clearance,
                              r_.minimums.hole_to_hole});
   max_clearance_ += std::max<Coord>(r_.via_clearance_extra, 0);
+  // physical_clearance holds whatever the nets, so a rule that matches a track and a pad, or two tracks, of one net is broken by
+  // every connection (KiCad's DRC reports each). The router cannot keep it there and keeps it everywhere else; say so.
+  for (const auto& c : rules_) {
+    if (!c.valid || c.rule->severity == "ignore" ||
+        std::none_of(c.rule->constraints.begin(), c.rule->constraints.end(), [](const auto& k) { return k.type == "physical_clearance" && k.min; }))
+      continue;
+    bool hits = c.positional;  // position, size or footprint: not decidable without the items, so assume it can
+    CopperItem track, other;
+    track.kind = ItemKind::Track;
+    for (std::size_t n = 1; n < b_.nets.size() && !hits; ++n)
+      for (const ItemKind k : {ItemKind::Pad, ItemKind::Track})
+        for (int l = 0; l < b_.copper_count() && !hits; ++l) {
+          if (!layer_matches(c.rule->layer, l)) continue;
+          track.net = other.net = static_cast<model::NetId>(n);
+          track.layers = other.layers = model::layer_bit(l);
+          other.kind = k;
+          EvalCtx ab{this, &track, &other, l}, ba{this, &other, &track, l};
+          hits = !c.cond || c.cond->eval(ab) || c.cond->eval(ba);
+        }
+    if (hits)
+      warnings_.push_back("rule '" + c.rule->name + "': physical_clearance between a track and a pad or track of its own net is broken by "
+                          "every connection; the router keeps it everywhere else (KiCad's DRC reports each contact)");
+  }
 }
 
 RuleEngine::~RuleEngine() = default;
@@ -642,7 +667,8 @@ bool RuleEngine::layer_matches(const std::string& sel, int layer) const {
   return b_.copper_index(sel) == layer;
 }
 
-std::optional<Coord> RuleEngine::custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer) const {
+std::optional<Coord> RuleEngine::custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer,
+                                            const model::CustomRule** rule) const {
   std::optional<Coord> out;
   for (const auto& c : rules_) {
     if (!c.valid || !layer_matches(c.rule->layer, layer)) continue;
@@ -659,7 +685,10 @@ std::optional<Coord> RuleEngine::custom_min(const char* type, const CopperItem* 
         match = c.cond->eval(ctx2);
       }
     }
-    if (match) out = *k->min;  // later rules take precedence
+    if (match) {  // later rules take precedence
+      out = *k->min;
+      if (rule) *rule = c.rule;
+    }
   }
   return out;
 }
@@ -844,8 +873,17 @@ Coord RuleEngine::physical_hole_clearance(const CopperItem* hole_owner, const Co
   return custom_min("physical_hole_clearance", hole_owner, &other, layer).value_or(-1);
 }
 
-bool RuleEngine::via_hole_rule_hits_own_tracks(model::NetId net) const {
-  if (max_physical_hole_ <= 0) return false;
+Coord RuleEngine::physical_clearance(const CopperItem& a, const CopperItem& b, int layer, const model::CustomRule** rule) const {
+  if (max_physical_ <= 0) return -1;
+  const model::CustomRule* r = nullptr;
+  const auto v = custom_min("physical_clearance", &a, &b, layer, &r);
+  if (!v || r->severity == "ignore") return -1;  // KiCad: the last matching rule decides, and an ignored one tests nothing
+  if (rule) *rule = r;
+  return *v;
+}
+
+bool RuleEngine::via_rule_hits_own_tracks(model::NetId net) const {
+  if (max_physical_hole_ <= 0 && max_physical_ <= 0) return false;
   CopperItem via, track;
   via.kind = ItemKind::Via;
   track.kind = ItemKind::Track;
@@ -853,7 +891,7 @@ bool RuleEngine::via_hole_rule_hits_own_tracks(model::NetId net) const {
   for (int l = 0; l < b_.copper_count(); ++l) via.layers |= model::layer_bit(l);
   for (int l = 0; l < b_.copper_count(); ++l) {
     track.layers = model::layer_bit(l);
-    if (physical_hole_clearance(&via, track, l) > 0) return true;
+    if (physical_hole_clearance(&via, track, l) > 0 || physical_clearance(via, track, l) > 0) return true;
   }
   return false;
 }

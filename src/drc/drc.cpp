@@ -96,6 +96,8 @@ class Checker {
       tick("check_keepouts");
       check_disallow();
       tick("check_disallow");
+      check_physical_clearance();
+      tick("check_physical_clearance");
       check_physical_holes();
       tick("check_physical_holes");
       check_lengths();
@@ -885,6 +887,43 @@ class Checker {
   }
 
   const std::string& net_name(model::NetId n) const { return b_.nets[static_cast<std::size_t>(n)].name; }
+
+  // Custom physical_clearance rules (KiCad: drc_test_provider_physical_clearance.cpp, reported as clearance): between any two
+  // copper items on a common layer whatever their nets, the same net and touching copper included, so a track that meets its own pad
+  // breaks a rule that matches the two. One report per pair; an item against a zone fill once per zone and layer, as KiCad does.
+  void check_physical_clearance() {
+    if (!re_.any_physical_clearance()) return;
+    auto mm = [](double v) {
+      char buf[40];
+      std::snprintf(buf, sizeof buf, "%.4f mm", v / 1e6);
+      return std::string(buf);
+    };
+    const auto n = cm_.items.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const CopperItem& a = cm_.items[i];
+      grid_->query(a.box.inflated(re_.max_physical_clearance() + 1), [&](int j) {
+        if (static_cast<std::size_t>(j) <= i) return;
+        const CopperItem& c = cm_.items[static_cast<std::size_t>(j)];
+        if (a.kind == ItemKind::Zone && c.kind == ItemKind::Zone) return;  // KiCad tests items against fills, not fills against fills
+        if (c.bare_of == static_cast<int>(i) || a.bare_of == j) return;   // one pad's own bare layers
+        Coord req = -1;
+        int at = -1;
+        const model::CustomRule* rule = nullptr;
+        for (model::LayerMask m = a.layers & c.layers; m; m &= m - 1) {
+          const model::CustomRule* r = nullptr;
+          if (const Coord v = re_.physical_clearance(a, c, std::countr_zero(m), &r); v > req) req = v, at = std::countr_zero(m), rule = r;
+        }
+        if (req <= 0 || !pair_closer(a, c, req - o_.epsilon)) return;
+        if (a.kind == ItemKind::Zone || c.kind == ItemKind::Zone) {
+          const CopperItem& z = a.kind == ItemKind::Zone ? a : c;
+          if (!zone_reported_.insert({"physical", a.kind == ItemKind::Zone ? static_cast<std::size_t>(j) : i, z.index, at}).second) return;
+        }
+        const double g = pair_gap(a, c, req - o_.epsilon);
+        add("clearance", &a, &c, static_cast<Coord>(std::max(0.0, g)), req, at, rule->severity == "warning" ? "warning" : "error");
+        rep_.violations.back().description = "(" + rule->name + " clearance " + mm(static_cast<double>(req)) + "; actual " + mm(std::max(0.0, g)) + ")";
+      });
+    }
+  }
 
   void check_physical_holes() {
     if (!re_.any_physical_hole_clearance()) return;

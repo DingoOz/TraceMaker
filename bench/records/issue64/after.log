@@ -1,0 +1,107 @@
+warning: zone refill: rule 'via_not_in_pad': physical_clearance is not applied
+planes: zone (unnamed) (GND on B.Cu) has no fill: filled in memory for routing, 843 mm2
+planes: zone fills are soft for this run (--soft-zones): plane nets drop vias into their planes, other nets route through
+live view: http://127.0.0.1:8792/
+portfolio: 2 variants on 2 threads
+searches: 55 ok (1805071 expansions), 29 failed (1422539 expansions); fields 0 GPU + 33 CPU (0.38 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 38 connections improved
+restarts 0; legality checks 595081; rips 0, passes 1, boxed-in 26, nogood skips 13, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 1 proved unreachable, 92445 cells visited
+late reachability proofs: 17, 10 proved no path, 82321 cells visited
+failed-search expansions: strict confined 0, strict wide 1351387, negotiated confined 0, negotiated wide 0
+searches: 64 ok (580888 expansions), 77 failed (2200418 expansions); fields 0 GPU + 54 CPU (0.86 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 3054424; rips 6, passes 2, boxed-in 52, nogood skips 22, history cells 8, transactions 0 kept of 0
+reachability checks: 24, 21 proved unreachable, 2280858 cells visited
+failed-search expansions: strict confined 0, strict wide 351203, negotiated confined 0, negotiated wide 84076
+  variant 0 exact bends, shortest first    routed 54 in 4.5 s
+  variant 1 fast bends, shortest first, crowded source routed 57 in 5.7 s  <- best
+rescue (warm): 15 of 72 connections are open; routing again with relax (from the plain routes, 1 round of 3000000 work)
+portfolio: 2 variants on 2 threads
+warm start: 57 saved routes taken over, 0 not legal under these rules
+warm start: 57 saved routes taken over, 0 not legal under these rules
+searches: 4 ok (63837 expansions), 38 failed (2961398 expansions); fields 0 GPU + 16 CPU (0.13 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 2947342; rips 4, passes 1, boxed-in 26, nogood skips 8, history cells 7, transactions 0 kept of 0
+reachability checks: 6, 6 proved unreachable, 2493716 cells visited
+failed-search expansions: strict confined 0, strict wide 320152, negotiated confined 0, negotiated wide 147530
+searches: 4 ok (484699 expansions), 28 failed (2606108 expansions); fields 0 GPU + 12 CPU (0.08 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 917197; rips 5, passes 1, boxed-in 22, nogood skips 7, history cells 14, transactions 0 kept of 0
+reachability checks: 2, 2 proved unreachable, 593888 cells visited
+late reachability proofs: 4, 2 proved no path, 25839 cells visited
+failed-search expansions: strict confined 0, strict wide 770962, negotiated confined 0, negotiated wide 1241258
+ramp stage 1/2 (clearance -0.0800 mm): 57 of 72 routed
+warm start: 57 saved routes taken over, 0 not legal under these rules
+warm start: 57 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 41 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 41 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 57 in 0.0 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 57 in 0.0 s
+rescue (warm): 57 -> 57 routed (no gain: the result before stands)
+rescue (fresh): 15 of 72 connections are open; routing again with relax (from nothing, 1 round of 3000000 work)
+portfolio: 2 variants on 2 threads
+searches: 54 ok (2163552 expansions), 13 failed (1077155 expansions); fields 0 GPU + 25 CPU (0.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 38 connections improved
+restarts 0; legality checks 586105; rips 0, passes 1, boxed-in 10, nogood skips 5, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 1 proved unreachable, 122933 cells visited
+late reachability proofs: 10, 4 proved no path, 65788 cells visited
+failed-search expansions: strict confined 0, strict wide 954222, negotiated confined 0, negotiated wide 0
+searches: 64 ok (785196 expansions), 60 failed (2317709 expansions); fields 0 GPU + 54 CPU (1.11 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 47 connections improved
+restarts 0; legality checks 3010238; rips 1, passes 2, boxed-in 41, nogood skips 16, history cells 0, transactions 0 kept of 0
+reachability checks: 15, 15 proved unreachable, 1651951 cells visited
+late reachability proofs: 1, 0 proved no path, 10001 cells visited
+failed-search expansions: strict confined 0, strict wide 518228, negotiated confined 0, negotiated wide 147530
+ramp stage 1/2 (clearance -0.0800 mm): 62 of 72 routed
+warm start: 56 saved routes taken over, 6 not legal under these rules
+warm start: 56 saved routes taken over, 6 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 56 in 0.2 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 56 in 0.2 s
+rescue (fresh): 57 -> 56 routed (no gain: the result before stands)
+warning: zone refill: rule 'via_not_in_pad': physical_clearance is not applied
+soft zones: after refilling 1 zones, 16 items unconnected
+searches: 0 ok (0 expansions), 65 failed (3278383 expansions); fields 0 GPU + 31 CPU (0.27 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 1166015; rips 0, passes 2, boxed-in 47, nogood skips 41, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 6 proved unreachable, 852158 cells visited
+late reachability proofs: 8, 6 proved no path, 27458 cells visited
+failed-search expansions: strict confined 0, strict wide 1505048, negotiated confined 0, negotiated wide 921177
+refill repair: routed 0/16 connections, 0 tracks, 0 vias, 3305841 expansions
+refill repair: 16 items unconnected after refilling again (no better: repair discarded)
+routed 57/72 connections, 250 tracks, 32 vias, pitch 0.065 mm, 3297025 expansions, 23.68 s (best variant 5.71 s)
+  unrouted: MTR_TX: R14.1 -> U6.4  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: U2.1 -> U2.3  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: GND: Q1.2 -> zone  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: AC_L_F: U3.2 -> R4.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: AC_L_F: U3.2 -> R3.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +3V3: R7.1 -> R13.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: MTR_TX_AC: U3.10 -> R12.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +3V3: J3.1 -> R7.1  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: AC_N: J2.2 -> J1.2  (no path in window)
+  unrouted: AC_L_F: U3.2 -> RV1.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: MTR_RX: U6.3 -> R13.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: BTN: U6.8 -> R8.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: AC_L_F: R4.1 -> U1.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +5V: K1.3 -> U2.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RELAY: U6.5 -> R1.1  (exact check rejected the lattice path; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  cannot connect: R14.1 (MTR_TX) cannot be connected as placed: on F.Cu the fixed copper leaves no way out even for a track of the board's minimum width (0.2 mm) with its clearances, and no via fits beside it. Moving a part or changing the rules is needed.
+  cannot connect: U2.1 (+5V) cannot be connected as placed: on F.Cu the fixed copper leaves no way out even for a track of the board's minimum width (0.2 mm) with its clearances, and no via fits beside it. Moving a part or changing the rules is needed.
+why open: 24 pins of open connections; 2 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 22 open through congestion (0.89 s)
+  next: move a part or change the rules around the 2 pins walled in above: no router can connect them as placed
+  next: 22 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 4172625 expansions, 2455624 flood cells, 3630332 cell checks, 1545842 fixed-copper checks, 13146964 field cells in 87 fields, 119 commits, 6 rips

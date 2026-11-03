@@ -629,7 +629,7 @@ int cmd_escape(const std::string& path, const std::string& json_path, bool flow,
              !obs.track_disallowed(tmk::geom::Shape::point(p, width(n) / 2), l, width(n), n);
     };
     in.via_free = [&](tmk::geom::Point p, tmk::model::NetId n) {
-      return re.via_allowed(n) && !re.via_hole_rule_hits_own_tracks(n) && ok(obs.fixed_via_code(p, via_d(n), via_drill(n), 0, n), n) &&
+      return re.via_allowed(n) && !re.via_rule_hits_own_tracks(n) && ok(obs.fixed_via_code(p, via_d(n), via_drill(n), 0, n), n) &&
              !obs.via_disallowed(p, via_d(n), n, 0, b.copper_count() - 1, tmk::model::ViaType::Through);
     };
     in.layers = b.copper_count();

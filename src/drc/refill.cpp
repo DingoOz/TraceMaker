@@ -144,7 +144,8 @@ class Filler {
       for (const auto& k : c.constraints)
         if (k.type == "zone_connection" || k.type == "thermal_relief_gap" || k.type == "thermal_spoke_width" ||
             k.type == "physical_clearance")
-          warnings_.push_back("zone refill: rule '" + c.name + "': " + k.type + " is not applied");
+          warnings_.push_back("zone refill: rule '" + c.name + "': " + k.type + " is not applied" +
+                              (k.type == "physical_clearance" ? " to zone fills (the router and the DRC keep it)" : ""));
     worst_ = re_.max_clearance() + kExtraMargin;
     // KiCad breaks priority ties by zone id; files from KiCad 5 and older give every zone the same one, and KiCad's
     // own refill of such boards then disagrees with this one (two PCBench boards, doc 05 §36).
