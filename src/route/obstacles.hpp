@@ -129,6 +129,13 @@ class Obstacles {
   int physical_copper_state(const geom::Shape& s, drc::ItemKind kind, model::NetId net, int layer, bool fixed, bool routed, bool soft,
                             std::vector<int>* owners) const;
   int physical_hole_state(const geom::Shape& hole, model::NetId net, int layer, bool fixed, bool routed, bool soft, std::vector<int>* owners) const;
+  // Custom physical_clearance rules, any net: new copper `s` of `kind` against existing copper on `layer`, the same states. A pair
+  // with a track of the probe's own net is not tested (a track touches its net's copper wherever it connects; D167).
+  int physical_state(const geom::Shape& s, drc::ItemKind kind, model::NetId net, int layer, bool fixed, bool routed, bool soft,
+                     std::vector<int>* owners) const;
+  // The same against fixed copper for the per-class caches: `hit(net)` for copper only that net's track pairs may touch, hit(0) for
+  // copper no new item may come near. `net` stands in for the class in the rules' conditions.
+  void physical_codes(const geom::Shape& s, drc::ItemKind kind, model::NetId net, int layer, const std::function<void(model::NetId)>& hit) const;
   int routed_copper_part(const geom::Shape& s, int layer, model::NetId net, drc::ItemKind kind, bool soft, std::vector<int>* owners) const;
   int routed_via_holes_part(const geom::Shape& s, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;
   int routed_hole_copper_part(const geom::Shape& h, int layer, model::NetId net, Coord hc, bool soft, std::vector<int>* owners) const;

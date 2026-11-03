@@ -77,7 +77,7 @@ Details and measurements: [references/rules-and-speed.md](references/rules-and-s
 - **Finest net class sets the grid for the whole board.** The routing pitch is (track + clearance) / 6
   of the finest class, between 25 and 100 µm. Delete unused classes; keep fine classes only for the
   nets that need them, assigned by pattern.
-- **Custom rules other than `disallow` and net-independent `physical_hole_clearance`, and rules TraceMaker
+- **Custom rules other than `disallow` and net-independent `physical_hole_clearance` and `physical_clearance`, and rules TraceMaker
   does not apply, turn off the per-class caches for every net.** One custom `clearance` rule made a demo
   board route 2.15× slower. Express clearances as net-class clearances where possible.
 - **Net-class name patterns are fine.** They are resolved once per net (this was the large speed-up on

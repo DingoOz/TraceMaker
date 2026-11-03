@@ -102,9 +102,14 @@ class RuleEngine {
   // Hole-to-copper clearance on `layer`, any net; -1 when no rule matches (KiCad: hole_clearance).
   Coord physical_hole_clearance(const CopperItem* hole_owner, const CopperItem& other, int layer) const;
   bool any_physical_hole_clearance() const { return max_physical_hole_ > 0; }
-  // True when a physical_hole_clearance rule holds between a via of `net` and a track of the same net: the
-  // tracks that end in a via touch its hole, so every via of that net would break the rule.
-  bool via_hole_rule_hits_own_tracks(model::NetId net) const;
+  // Copper-to-copper clearance on `layer` whatever the nets, same net included; -1 when no rule matches or the last one that
+  // does has severity ignore (KiCad: physical_clearance, reported as clearance). `rule` receives the rule that applies.
+  Coord physical_clearance(const CopperItem& a, const CopperItem& b, int layer, const model::CustomRule** rule = nullptr) const;
+  bool any_physical_clearance() const { return max_physical_ > 0; }
+  Coord max_physical_clearance() const { return max_physical_; }
+  // True when a physical_hole_clearance or physical_clearance rule holds between a via of `net` and a track of the same net:
+  // the tracks that end in a via touch it and its hole, so every via of that net would break the rule.
+  bool via_rule_hits_own_tracks(model::NetId net) const;
   Coord max_physical_hole_clearance() const { return max_physical_hole_; }
   // Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to
   // every applied custom hole_clearance rule. The router's checks and caches have no per-pair hole rule, so a rule
@@ -132,7 +137,8 @@ class RuleEngine {
   // Item type, layer and condition all match a disallow constraint.
   bool disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type = nullptr, bool span = false) const;
   // Value of the last matching custom constraint of `type` (min field), trying (a,b) and (b,a).
-  std::optional<Coord> custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer) const;
+  std::optional<Coord> custom_min(const char* type, const CopperItem* a, const CopperItem* b, int layer,
+                                  const model::CustomRule** rule = nullptr) const;
   bool layer_matches(const std::string& sel, int layer) const;
 
   const model::Board& b_;
@@ -156,6 +162,7 @@ class RuleEngine {
   bool zone_overrides_ = false;
   bool needs_exact_ = false;
   Coord max_physical_hole_ = 0;
+  Coord max_physical_ = 0;
   Coord router_hole_ = 0;
   friend class Condition;
 };

@@ -35,7 +35,8 @@ TraceMaker reads the board's `.kicad_dru`. Whether a rule is cheap depends on it
 | `disallow track/via` with conditions on `NetName`, `NetClass`, `Type`, `Layer` | Enforced as per-net layer masks / via switches | Cached |
 | `disallow track/via` with `insideArea`, `intersectsArea`, `enclosedByArea`, courtyard functions, `memberOfFootprint`, `Reference`, `Pad_Type`, `Width`, `Size_X/Y`, `Position_X/Y` | Enforced on every new track and via with its real shape, width, position and via span | Cached; one rule check per lattice point the search visits |
 | `physical_hole_clearance` whose condition does not mention `NetName`, `NetClass` or `inDiffPair` | Enforced for every new via | Cached |
-| `physical_hole_clearance` that mentions a net or net class | Enforced | **Disables caches board-wide** |
+| `physical_clearance` whose condition does not mention `NetName`, `NetClass` or `inDiffPair` | Enforced for every new track and via against any item, same net included; left out only where a track meets copper of its own net (every connection does; a `warning:` line says so when a rule matches such a pair). A rule between a net's vias and its own tracks leaves that net without vias | Cached |
+| `physical_hole_clearance` or `physical_clearance` that mentions a net or net class | Enforced | **Disables caches board-wide** |
 | `clearance` (any condition), and any other constraint type | Enforced exactly | **Disables caches board-wide** |
 | `disallow hole/footprint/text` | Not checked by TraceMaker; KiCad DRC reports it | — |
 | Condition that does not parse, uses a property TraceMaker does not evaluate (`Parent.Reference`, ...) or has a single number without units | **Not applied by the router or `tracemaker drc`** (KiCad still applies it); named in a `warning:` line. Preflight grades it `block` | **Disables caches board-wide** |

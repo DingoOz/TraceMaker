@@ -561,10 +561,10 @@ def main():
             if dropped:
                 reasons.append('rule not applied')
             for kind in kinds:
-                if kind not in ('disallow', 'physical_hole_clearance'):
+                if kind not in ('disallow', 'physical_hole_clearance', 'physical_clearance'):
                     reasons.append('constraint ' + kind)
-                elif kind == 'physical_hole_clearance' and refs & {'NetName', 'NetClass', 'inDiffPair'}:
-                    reasons.append('net-dependent physical_hole_clearance')
+                elif kind != 'disallow' and refs & {'NetName', 'NetClass', 'inDiffPair'}:
+                    reasons.append('net-dependent ' + kind)
             caches_disabled |= bool(reasons)
             finding('Custom rules', 'slow' if reasons else 'info',
                     f"Rule '{name}': {', '.join(kinds) or 'no constraints'}; condition `{condition or 'true'}`; "

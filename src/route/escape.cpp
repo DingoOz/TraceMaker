@@ -255,7 +255,7 @@ std::vector<PartEscape> analyse_escapes(const model::Board& b, const model::Desi
       model::LayerMask layers = 0;
       for (int l = 0; l < nl; ++l)
         if (rules.track_allowed(p.net, l)) layers |= model::layer_bit(l);
-      const bool vias_allowed = rules.via_allowed(p.net) && !rules.via_hole_rule_hits_own_tracks(p.net);
+      const bool vias_allowed = rules.via_allowed(p.net) && !rules.via_rule_hits_own_tracks(p.net);
       const bool ruled = layers != all_layers || !vias_allowed || obs.positional_rules();
       std::vector<std::int8_t> track_rule(obs.positional_rules() ? static_cast<std::size_t>(nl) * cells : 0, -1), via_rule(obs.positional_rules() ? cells : 0, -1);
       geom::Shape disk;

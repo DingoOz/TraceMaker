@@ -446,6 +446,95 @@ TEST_CASE("physical_hole_clearance between a net's vias and its own tracks leave
   CHECK(route_board(pads_only).routed == 2);
 }
 
+// Issue #64: physical_clearance holds whatever the nets, so "A.Type == 'Via' && B.Type == 'Pad'" keeps vias out of and away from
+// the pads of their own net, which the net-class clearance does not.
+const char* kViaNotInPad =
+    "(version 1)\n(rule \"via_not_in_pad\" (constraint physical_clearance (min 0.1mm)) (condition \"A.Type == 'Via' && B.Type == 'Pad'\"))\n";
+
+TEST_CASE("physical_clearance keeps vias out of and away from pads of their own net", "[rules][route]") {
+  const Files f("pc_vip", board_text(""), kViaNotInPad);
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto with_rule = io::read_design_rules(f.pcb.string());
+  const model::DesignRules no_rule = [&] {
+    auto r = with_rule;
+    r.custom.clear();
+    return r;
+  }();
+  // R1's SIG pad spans (3.5..4.5, 2.5..3.5) mm. A 0.6 mm via at its centre, 0.05 mm below it, and 0.2 mm below it.
+  const geom::Point in_pad{4'000'000, 3'000'000}, near{4'000'000, 3'850'000}, clear{4'000'000, 4'000'000};
+  const Coord d = 600'000, drill = 300'000;
+  {
+    route::Obstacles obs(lb.board, no_rule);
+    CHECK(obs.via_state(in_pad, d, drill, 1, 0, false) == 0);  // the net-class clearance does not hold within a net
+    CHECK(obs.via_state(near, d, drill, 1, 0, false) == 0);
+  }
+  route::Obstacles obs(lb.board, with_rule);
+  CHECK(obs.via_state(in_pad, d, drill, 1, 0, false) == 2);
+  CHECK(obs.via_state(near, d, drill, 1, 0, false) == 2);
+  CHECK(obs.via_state(clear, d, drill, 1, 0, false) == 0);
+  CHECK(obs.fixed_via_code(in_pad, d, drill, 0, 1) == route::Obstacles::kBlocked);  // the cached paths agree
+  CHECK(obs.fixed_via_code(near, d, drill, 0, 1) == route::Obstacles::kBlocked);
+  CHECK(obs.fixed_via_code_reference(near, d, drill, 0, 1) == route::Obstacles::kBlocked);
+  CHECK(obs.fixed_via_code(clear, d, drill, 0, 1) != route::Obstacles::kBlocked);
+  CHECK(obs.segment_state(in_pad, {8'000'000, 3'000'000}, 0, 250'000, 1, false) == 0);  // tracks: the rule is about vias
+  CHECK_FALSE(obs.needs_exact_routing());  // the condition does not tell nets apart: the cache stays
+  CHECK(obs.rules().warnings().empty());
+  CHECK_FALSE(obs.rules().via_rule_hits_own_tracks(1));
+  // The DRC reports a via in its own pad as KiCad does: a clearance violation named after the rule.
+  auto lv = io::read_board_file(f.pcb.string());
+  lv.board.vias.push_back({});
+  auto& v = lv.board.vias.back();
+  v.pos = in_pad, v.size = d, v.drill = drill, v.layer_top = 0, v.layer_bottom = 3, v.net = 1;
+  const auto rep = drc::run_drc(lv.board, with_rule);
+  int named = 0;
+  for (const auto& x : rep.violations) named += x.type == "clearance" && x.description.find("via_not_in_pad") != std::string::npos;
+  CHECK(named == 1);
+  CHECK_FALSE(drc::run_drc(lv.board, no_rule).counts().contains("clearance"));
+  // A later rule with severity ignore turns it off, as in KiCad.
+  auto ignored = with_rule;
+  ignored.custom.push_back(ignored.custom.front());
+  ignored.custom.back().name = "allowed";
+  ignored.custom.back().severity = "ignore";
+  CHECK_FALSE(drc::run_drc(lv.board, ignored).counts().contains("clearance"));
+  CHECK(route::Obstacles(lb.board, ignored).via_state(in_pad, d, drill, 1, 0, false) == 0);
+  // Routed under the rule, with the wall forcing vias: both nets connect, and the DRC finds no via near a pad.
+  const Files walled("pc_vip_wall", board_text(kOuterWall), kViaNotInPad);
+  const auto r = route_board(walled);
+  CHECK(r.routed == 2);
+  CHECK_FALSE(r.vias.empty());
+  auto lw = io::read_board_file(walled.pcb.string());
+  const auto rw = io::read_design_rules(walled.pcb.string());
+  lw.board.tracks.insert(lw.board.tracks.end(), r.tracks.begin(), r.tracks.end());
+  lw.board.vias.insert(lw.board.vias.end(), r.vias.begin(), r.vias.end());
+  CHECK_FALSE(drc::run_drc(lw.board, rw).counts().contains("clearance"));
+}
+
+TEST_CASE("physical_clearance between tracks and pads: kept against other nets, left out where a track meets its own pad",
+          "[rules][route]") {
+  const Files f("pc_track", board_text(""),
+                "(version 1)\n(rule \"pad keepaway\" (constraint physical_clearance (min 1mm)) (condition \"A.Type == 'Track' && B.Type == 'Pad'\"))\n");
+  auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  route::Obstacles obs(lb.board, rules);
+  // Every connection touches its pads, so the rule cannot hold there: the router leaves those pairs out and says so.
+  REQUIRE(obs.rules().warnings().size() == 1);
+  CHECK(obs.rules().warnings().front().find("rule 'pad keepaway'") != std::string::npos);
+  CHECK(obs.segment_state({4'000'000, 3'000'000}, {8'000'000, 3'000'000}, 0, 250'000, 1, false) == 0);  // SIG leaves its own pad
+  // A GND track 0.5 mm above R1's SIG pad: legal by clearance, inside the rule's 1 mm.
+  const geom::Point a{2'000'000, 1'875'000}, b{6'000'000, 1'875'000};
+  CHECK(obs.segment_state(a, b, 0, 250'000, 2, false) == 2);
+  CHECK(obs.segment_state(a, b, 1, 250'000, 2, false) == 0);  // the pad is on F.Cu only
+  // The cache: legal there only for SIG, whose tracks may touch the pad.
+  CHECK(obs.fixed_code({4'000'000, 1'875'000}, 0, 125'000, 0, 2) == 1);
+  // A rule between a net's vias and its own tracks leaves the net without vias, as physical_hole_clearance does.
+  const Files g("pc_via_track", board_text(""),
+                "(version 1)\n(rule \"via keepaway\" (constraint physical_clearance (min 0.1mm)) (condition \"A.Type == 'Via' && B.Type == 'Track'\"))\n");
+  auto lg = io::read_board_file(g.pcb.string());
+  const auto rg = io::read_design_rules(g.pcb.string());  // the engine keeps a reference
+  const drc::RuleEngine re(lg.board, rg);
+  CHECK(re.via_rule_hits_own_tracks(1));
+}
+
 TEST_CASE("a keepout that forbids only vias blocks vias and lets tracks through", "[rules][route]") {
   const std::string ko =
       "  (zone (net 0) (net_name \"\") (layers \"B.Cu\") (name \"tc\") (hatch edge 0.5) (connect_pads (clearance 0))\n"
