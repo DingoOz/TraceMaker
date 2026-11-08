@@ -1499,7 +1499,8 @@ obstacle model (`route::Obstacles`, the check the router commits with), touch on
 transactions (rule 4): the job counts unconnected items per net with and without the pass's result (after an
 in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
 (per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
-board is byte-identical to before.
+board is byte-identical to before. On a board with `length` or `skew` rules, these passes and the soft-zone repairs are
+also dropped when a net ends further outside such a rule than without them (§73, D173).
 
 ### 39.1 Power track widening (`--widen-power`)
 
@@ -2732,6 +2733,8 @@ the step. Test: `delay_room` (it skips without `build/demos`).
 
 **Open.** mm length windows, mm pair skew and the bus tuner do not make room yet.
 
+The tuned copper is now also what the run writes (§73, D173, issue #60).
+
 
 ## 62. Search speed: late reachability proofs and output-preserving speed-ups (2026-10-29, D154)
 
@@ -3334,3 +3337,60 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 
 The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.
+
+## 73. Tuned nets stay tuned (2026-11-08, D173)
+
+**Why.** Issue #60: `delay_room` (§61) failed on main after D154. The router's tuning log said D+ was tuned to 78.44 ps against D-'s
+78.50 ps, but the DRC of the written board measured D+ at 70.56 ps, 8.69 ps short of D- against a 0.5 ps rule. The soft-zone refill
+repair and the clean-up were the suspects. Neither was the cause: with debug output after each stage of `app/route_job.cpp`, the
+copper of D+ and D- came out of the router already untuned, and no later stage changed it.
+
+**Cause.** The clean-up (§9: diff-pair recoupling, via optimisation, smoothing and then the tuners) runs only when the search ends in
+its best state. When it ends away from it, the router returns the best state as it was snapshotted during the search: routed, but never
+tuned. The tuning lines in the log came from other variants of the portfolio that did end in their best state. The winning variant (fast
+bends, shortest first, crowded source) ended with 128 routed against a best of 129. Before D154 it ended in its best state on this
+board. The late reachability proofs change which connections are searched, so it no longer does.
+
+**Fix** (`route/router.cpp`, `wants_tuning`, `restore_best`). A board where the clean-up has tuning to do gets its best state back
+before the clean-up when the search ended away from it. The router puts it back the way the end-game retry does (§63): only the
+connections whose copper differs are lifted and restored. The clean-up and the tuners then run on the state the router returns.
+"Tuning to do" means any of these:
+
+- a net with a `length` rule (mm or time);
+- a net with a `skew` rule, or a diff pair's skew constraint;
+- `--pair-skew-mm`, or a component-rule pair skew above 0;
+- buses (`--bus`, `--buses`).
+
+Other boards keep the old behaviour, byte for byte. Running the clean-up on the best state of every board would change results
+everywhere and needs measuring of its own (not done here).
+
+**Guard on the stages after routing** (`app/route_job.cpp`, `drc::length_faults`). On a board with `length` or `skew` rules, these
+stages are kept only if no net is further outside such a rule with their copper than without it:
+
+- the soft-zone refill repair (§36);
+- the thermal relief repair (§36.1), for each pad;
+- the stitching vias (§39.3).
+
+The distance outside a rule is measured as the DRC measures it on the written board (KiCad's length calculation, §59;
+`DrcOptions::lengths_only` runs only those checks). A net that is in range counts as 0. These stages route or rip connections again,
+or add vias, so they can lengthen or shorten a tuned net. A sub-router does not tune a skew group whose other members it did not route.
+Widening and the tuning-profile narrowing change only widths, which KiCad's length calculation ignores, so they need no guard. On this
+board no stage touched the pair: the guard did not reject anything.
+
+**Result** (`bench/records/issue60/`, the B2 fixtures, 3 M work, `--refill --soft-zones`, 8 threads, judged by KiCad 10.0.6):
+
+| Board | main | D173 |
+|---|---|---|
+| RoyalBlue54L-Feather-delay | 129/147, 37 unconnected, `skew_out_of_range` 1 | 129/147, 39 unconnected, none added |
+| RoyalBlue54L-Feather-profile, interf_u-delay, interf_u-profile | as on main | byte-identical output |
+
+On RoyalBlue54L-Feather-delay the best state is now cleaned up and tuned: D+ ends at 79.43 ps against D-'s 79.49 ps. The meanders cut
+the soft fills once more, so the refill repair closes one connection to a zone instead of two. KiCad counts two more unconnected
+items, with the same routed count; that is what meeting the rule costs on this board. Boards without length or skew rules are
+unchanged by construction. Two quick-tier boards were checked byte-identical, and none of the 30 has a `.kicad_dru`.
+
+**Tests.** `delay_room` passes again. Unit test `length faults: a stage that shortens a tuned net is worse` (`tests/test_length.cpp`,
+runs in CI without `build/demos`): on KiCad's `time_calculations` board it halves a track of a net tuned into its 29.83-29.85 ps
+window. It checks that the lengths-only DRC reports the full DRC's length and skew violations, that the cut makes the net a fault and
+that `length_faults_no_worse` rejects it. The router fix itself has no CI test: a small board that makes the search end away from its
+best state with a tuned net was not found. `delay_room` covers it where the demos are prepared.

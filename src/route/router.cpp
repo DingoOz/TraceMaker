@@ -5601,6 +5601,19 @@ struct Router::Impl {
     return out;
   }
 
+  // Does the clean-up have tuning to do on this board: a net with a length, delay or skew rule, a pair skew asked for on the
+  // command line, or buses (whose skew tune_bus_skew matches)?
+  bool wants_tuning() const {
+    if (!opt.buses.empty() || opt.pair_skew > 0) return true;
+    if (std::any_of(opt.pair_net_skew.begin(), opt.pair_net_skew.end(), [](Coord k) { return k > 0; })) return true;
+    const auto& rr = obs->rules();
+    for (const auto& st : cs) {
+      const NetId n = st.c.net;
+      if (rr.length_constraint(n).first || rr.net_constraint(n, "length") || rr.net_rule_with(n, "skew") >= 0 || rr.skew_constraint(n)) return true;
+    }
+    return false;
+  }
+
   // Length tuning (design doc 05 §9 phase 3): nets with a custom `length` constraint that are routed too short get
   // trombone meanders on their longest straight segments; each candidate is checked exactly and the net never
   // exceeds its maximum. Returns the number of constrained nets brought into range.
@@ -6973,15 +6986,9 @@ struct Router::Impl {
         if (f == 0) break;
       }
     }
-    // End-game retry (D155, doc 05 §63): when the main loop is over, every connection still open that is not proved dead is
-    // tried once more, strictly, on the board as it now stands, and then (with --rescue) rescued. On the failing PCBench
-    // boards 139 of 349 open connections route alone on the final board: never attempted before the budget ran out, ripped
-    // and not routed again, or tried only while their pin was boxed in (bench/records/m22-research). The retry gets an
-    // allowance of its own (endgame_frac of the budget, in work units with --work), triggered by the end of the loop and
-    // not taken from it, which is what lost for --polish. It starts from the best state, so the clean-up below still runs.
-    if (opt.endgame_frac > 0 && best_routed >= 0 && best_routed < res.connections && !best_items.empty() && res.routed != best_routed) {
-      // Negotiation usually ends away from its best state: put the board back to it first, as polish does, but lift only the
-      // connections whose copper differs (the others keep their pair, bus and bundle flags).
+    // Puts the live board back to the best state seen, as polish does, but lifts only the connections whose copper differs (the
+    // others keep their pair, bus and bundle flags).
+    auto restore_best = [&]() {
       std::vector<char> differs(cs.size(), 0);
       for (std::size_t ci = 0; ci < cs.size(); ++ci) {
         const auto& st = cs[ci];
@@ -7006,6 +7013,16 @@ struct Router::Impl {
         }
       res.routed = 0;
       for (const auto& st : cs) res.routed += st.routed ? 1 : 0;
+    };
+    // End-game retry (D155, doc 05 §63): when the main loop is over, every connection still open that is not proved dead is
+    // tried once more, strictly, on the board as it now stands, and then (with --rescue) rescued. On the failing PCBench
+    // boards 139 of 349 open connections route alone on the final board: never attempted before the budget ran out, ripped
+    // and not routed again, or tried only while their pin was boxed in (bench/records/m22-research). The retry gets an
+    // allowance of its own (endgame_frac of the budget, in work units with --work), triggered by the end of the loop and
+    // not taken from it, which is what lost for --polish. It starts from the best state, so the clean-up below still runs.
+    if (opt.endgame_frac > 0 && best_routed >= 0 && best_routed < res.connections && !best_items.empty() && res.routed != best_routed) {
+      // Negotiation usually ends away from its best state: put the board back to it first.
+      restore_best();
     }
     if (opt.endgame_frac > 0 && best_routed >= 0 && res.routed == best_routed && res.routed < res.connections) {
       const double keep_scale = budget_scale;
@@ -7080,6 +7097,11 @@ struct Router::Impl {
     // Via-saving re-routes need search budget; smoothing is cheap geometry and always runs (it uses no budget and
     // no randomness, so --work runs stay deterministic).
     phase = WorkPhase::Cleanup;
+    // A board with length, delay or skew rules is tuned on the state it returns (D173, issue #60): when the search ended away from its
+    // best state, that state goes back on the board first, so the clean-up and the tuning run on it. Skipping them returned the best
+    // state untuned; the late reachability proofs (D154) made the search end away from it on RoyalBlue54L-Feather-delay. Boards
+    // without such rules keep the old behaviour (the best state as it was snapshotted).
+    if (opt.optimize && best_routed > 0 && res.routed != best_routed && !best_items.empty() && wants_tuning()) restore_best();
     if (opt.optimize && best_routed > 0 && res.routed == best_routed) {
       // Pairs split by negotiation: coupled again where they fit now (each attempt restores the old copper on failure).
       if ((opt.diff_pairs || !opt.pair_nets.empty()) && !out_of_budget()) res.pairs += route_diff_pairs(true);

@@ -707,6 +707,21 @@ RouteJobResult run_route_job(RouteJob job) {
     log(fmt("warm start from %s: %zu tracks, %zu vias", job.warm_pcb.c_str(), opt.warm_tracks.size(), opt.warm_vias.size()));
   }
   auto& res = out.result;
+  // The after-route stages below may not undo the router's tuning (D173, issue #60): a stage's copper is kept only if no net is
+  // further outside a `length` or `skew` rule with it than without it, measured as the DRC measures the written board.
+  const bool length_rules = std::any_of(rules.custom.begin(), rules.custom.end(), [](const model::CustomRule& c) {
+    return std::any_of(c.constraints.begin(), c.constraints.end(), [](const model::Constraint& k) { return k.type == "length" || k.type == "skew"; });
+  });
+  auto length_faults_of = [&](const std::vector<model::Track>& tracks, const std::vector<model::Via>& vias) {
+    model::Board bd = *route_board;
+    bd.tracks.insert(bd.tracks.end(), tracks.begin(), tracks.end());
+    bd.vias.insert(bd.vias.end(), vias.begin(), vias.end());
+    return drc::length_faults(bd, rules);
+  };
+  auto lengths_no_worse = [&](const std::vector<model::Track>& t0, const std::vector<model::Via>& v0, const std::vector<model::Track>& t1,
+                              const std::vector<model::Via>& v1) {
+    return !length_rules || drc::length_faults_no_worse(length_faults_of(t0, v0), length_faults_of(t1, v1));
+  };
   auto route_t0 = std::chrono::steady_clock::now();  // --time covers one routing run, the refill repair after it included
   std::vector<int> ran;
   int best_index = 0;
@@ -1044,8 +1059,17 @@ RouteJobResult run_route_job(RouteJob job) {
       add_copper(routed, r2);
       model::Board refilled_again = drc::refill_zones(routed, rules).board;
       const int after = unconnected(refilled_again);
-      const bool kept = after < before;
-      log(fmt("refill repair: %d items unconnected after refilling again%s", after, kept ? "" : " (no better: repair discarded)"));
+      bool kept = after < before;
+      bool lengths_kept = true;
+      if (kept) {
+        auto t1 = res.tracks;
+        auto v1 = res.vias;
+        t1.insert(t1.end(), r2.tracks.begin(), r2.tracks.end());
+        v1.insert(v1.end(), r2.vias.begin(), r2.vias.end());
+        kept = lengths_kept = lengths_no_worse(res.tracks, res.vias, t1, v1);
+      }
+      log(fmt("refill repair: %d items unconnected after refilling again%s", after,
+              kept ? "" : lengths_kept ? " (no better: repair discarded)" : " (a net is further outside its length or skew rule: repair discarded)"));
       if (kept) {
         res.tracks.insert(res.tracks.end(), r2.tracks.begin(), r2.tracks.end());
         res.vias.insert(res.vias.end(), r2.vias.begin(), r2.vias.end());
@@ -1171,9 +1195,9 @@ RouteJobResult run_route_job(RouteJob job) {
           add_copper(b3, r3);
           const model::Board judged = drc::refill_zones(b3, rules).board;
           const int u3 = unconnected(judged), s3 = static_cast<int>(starved_new(judged).size());
-          if (s3 < s_cur && u3 <= u_cur) {
-            kept.tracks.insert(kept.tracks.end(), r3.tracks.begin(), r3.tracks.end());
-            kept.vias.insert(kept.vias.end(), r3.vias.begin(), r3.vias.end());
+          kept.tracks.insert(kept.tracks.end(), r3.tracks.begin(), r3.tracks.end());
+          kept.vias.insert(kept.vias.end(), r3.vias.begin(), r3.vias.end());
+          if (s3 < s_cur && u3 <= u_cur && lengths_no_worse(res.tracks, res.vias, kept.tracks, kept.vias)) {
             res.tracks = std::move(kept.tracks);
             res.vias = std::move(kept.vias);
             u_cur = u3;
@@ -1350,7 +1374,7 @@ RouteJobResult run_route_job(RouteJob job) {
         const auto without = judge(res.tracks, res.vias, true), with_vias = judge(res.tracks, with, true);
         before = without.at("");
         after = with_vias.at("");
-        kept = no_worse(without, with_vias);
+        kept = no_worse(without, with_vias) && lengths_no_worse(res.tracks, res.vias, res.tracks, with);
       }
       std::map<model::NetId, std::pair<int, int>> per_net;  // net -> (grid vias, return-path vias)
       for (std::size_t i = 0; i < sr.vias.size() && kept; ++i) ++(sr.return_path[i] ? per_net[sr.vias[i].net].second : per_net[sr.vias[i].net].first);

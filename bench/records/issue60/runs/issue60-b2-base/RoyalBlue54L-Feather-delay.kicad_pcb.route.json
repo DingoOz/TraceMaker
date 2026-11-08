@@ -1,0 +1,451 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 87.76,
+ "connections": 147,
+ "copper_layers": 8,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3226646,
+ "failures": [
+  "Net-(U5-XC1): Y2.1 -> U5.28  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/D+: U3.4 -> U5.13  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/D-: U3.2 -> U5.12  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))",
+  "/Connectors/UART.TX: U1.B2 -> U6.13  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D12: U1.J5 -> J2.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/UART_RX_NRF52: U6.3 -> U5.36  (boxed in; escapes/neck-down: boxed in (target))",
+  "/Debugger/UART_TX_NRF52: U6.4 -> U5.35  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D13: U1.J6 -> J2.4  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/ANALOG.A1: U1.F8 -> J1.6  (boxed in; escapes/neck-down: boxed in)",
+  "/nPM1300/NPM1300.INT: U1.K2 -> U2.7  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/Connectors/ANALOG.A0: U1.E9 -> J1.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/USB.CC1: U2.23 -> J3.A5  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/Connectors/SHPHLD: U2.15 -> J1.16  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(J6-Pin_2): U1.D9 -> C14.1  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/I2C.SCL: U1.G8 -> R2.2  (boxed in; escapes/neck-down: boxed in)"
+ ],
+ "open": 18,
+ "package_pin_edges": 2,
+ "pitch_mm": 0.05,
+ "refill": {
+  "repair": {
+   "connections": 40,
+   "expansions": 3145705,
+   "kept": true,
+   "routed": 2,
+   "tracks": 9,
+   "unconnected": 38,
+   "vias": 1
+  },
+  "starved_thermals": 0,
+  "unconnected": 40,
+  "warnings": [],
+  "zones": 4
+ },
+ "rescue": {
+  "adopted": false,
+  "connections": 147,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": false,
+    "mode": "warm",
+    "routed": 125,
+    "seconds": 24.633134107
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "routed": 107,
+    "seconds": 41.766369983
+   }
+  ],
+  "routed_after": 107,
+  "routed_before": 129,
+  "seconds": 66.39950409
+ },
+ "routed": 129,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-11-08T22:36:35Z",
+  "input": "/home/dingo/Programming/TraceMaker-i60/build/i60fix/RoyalBlue54L-Feather-delay/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-i60/bench/results/issue60-b2-base/boards/RoyalBlue54L-Feather-delay.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600.0"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "",
+    "value": "/home/dingo/Programming/TraceMaker-i60/bench/results/issue60-b2-base/boards/RoyalBlue54L-Feather-delay.kicad_pcb.state"
+   },
+   {
+    "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-i60/bench/results/issue60-b2-base/boards/RoyalBlue54L-Feather-delay.kicad_pcb.route.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-i60/bench/results/issue60-b2-base/boards/RoyalBlue54L-Feather-delay.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 3000000
+ },
+ "seconds": 125.189788701,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 301,
+  "bends_per_connection": 0.8113,
+  "connections": 371,
+  "detour_length_mm": 857.010632,
+  "detour_octile_mm": 795.119832,
+  "detour_ratio": 1.0778,
+  "length_mm": 857.010632,
+  "long_detours": 5,
+  "off_angle_segments": 225,
+  "segments": 730,
+  "short_segments": 132,
+  "stair_steps": 12,
+  "vias": 94
+ },
+ "time_limited": false,
+ "tracks": 730,
+ "tunnels": 0,
+ "unconnected_after_refill": 38,
+ "variant": 1,
+ "variant_name": "fast bends, shortest first, crowded source",
+ "variant_seconds": 34.871423775,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "routed": 91,
+   "seconds": 7.345606065,
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 129,
+   "seconds": 34.871423775,
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 14,
+   "seconds": 15.958740712,
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 102,
+   "seconds": 11.456897511,
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "routed": 85,
+   "seconds": 7.227292829,
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 120,
+   "seconds": 34.103304947,
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 123,
+   "seconds": 30.026439783,
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 128,
+   "seconds": 30.418011244,
+   "variant": 7
+  },
+  {
+   "name": "exact bends, shortest first",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.818883984,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.140519335,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.812317863,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.596401767,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 1.912691925,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.683494186,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.30744021,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_mode": "warm",
+   "routed": 125,
+   "seconds": 2.208376381,
+   "stage": "rescue",
+   "variant": 7
+  },
+  {
+   "name": "exact bends, shortest first",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 3.484150735,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 4.794360443,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 4.985045124,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_mode": "fresh",
+   "routed": 106,
+   "seconds": 4.865422668,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "name": "exact bends, jittered order",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 5.148106461,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 4.307019307,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 4.776602234,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_mode": "fresh",
+   "routed": 107,
+   "seconds": 5.208324831,
+   "stage": "rescue",
+   "variant": 7
+  }
+ ],
+ "vias": 94,
+ "why_open": {
+  "congested": 36,
+  "neck_down": 0,
+  "next": [
+   "36 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 36,
+  "proved": [],
+  "seconds": 0.489504719,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 2789595,
+   "commits": 130,
+   "expansions": 2326956,
+   "field_cells": 200979528,
+   "fields": 206,
+   "fixed_checks": 2242767,
+   "flood_cells": 251770,
+   "rips": 0,
+   "searches": 231
+  },
+  "negotiation": {
+   "cell_checks": 588993,
+   "commits": 1,
+   "expansions": 28918,
+   "field_cells": 1075672,
+   "fields": 5,
+   "fixed_checks": 289569,
+   "flood_cells": 619002,
+   "rips": 2,
+   "searches": 9
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3378588,
+   "commits": 131,
+   "expansions": 2355874,
+   "field_cells": 202055200,
+   "fields": 211,
+   "fixed_checks": 2532336,
+   "flood_cells": 870772,
+   "rips": 2,
+   "searches": 240
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 1985,
+   "commits": 2,
+   "expansions": 1428,
+   "field_cells": 1101288,
+   "fields": 3,
+   "fixed_checks": 770,
+   "flood_cells": 0,
+   "rips": 19,
+   "searches": 3
+  },
+  "first_pass": {
+   "cell_checks": 19139239,
+   "commits": 795,
+   "expansions": 21405846,
+   "field_cells": 954378472,
+   "fields": 1064,
+   "fixed_checks": 15348906,
+   "flood_cells": 1867317,
+   "rips": 0,
+   "searches": 1235
+  },
+  "negotiation": {
+   "cell_checks": 1553798,
+   "commits": 4,
+   "expansions": 34059,
+   "field_cells": 3106792,
+   "fields": 17,
+   "fixed_checks": 762478,
+   "flood_cells": 1603261,
+   "rips": 8,
+   "searches": 33
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 120,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 20695022,
+   "commits": 801,
+   "expansions": 21441333,
+   "field_cells": 958586552,
+   "fields": 1084,
+   "fixed_checks": 16112274,
+   "flood_cells": 3470578,
+   "rips": 27,
+   "searches": 1271
+  }
+ }
+}
