@@ -26,8 +26,14 @@ const std::vector<CriticalRole>& critical_roles() {
 std::vector<CriticalNet> critical_nets(const model::Board& b, const Catalogue& cat, const Detection& det,
                                        const std::vector<std::pair<model::NetId, model::NetId>>& diff_pairs) {
   std::map<model::NetId, CriticalNet> found;  // ordered by net id
+  // A net with fewer than two pads has nothing to route: an unused connector pin (KiCad names it "unconnected-(J1-D+-PadA6)", as on a
+  // charge-only USB-C socket) must not be audited as a critical signal (M21 A3, Kookabus-04H).
+  std::vector<int> pads_of(b.nets.size(), 0);
+  for (const auto& p : b.pads)
+    if (p.net > 0 && static_cast<std::size_t>(p.net) < pads_of.size()) ++pads_of[static_cast<std::size_t>(p.net)];
   auto add = [&](model::NetId n, int tier, const std::string& why) {
     if (n <= 0 || static_cast<std::size_t>(n) >= b.nets.size()) return;
+    if (pads_of[static_cast<std::size_t>(n)] < 2) return;
     auto it = found.find(n);
     if (it == found.end()) found.emplace(n, CriticalNet{n, tier, why});
     else if (tier < it->second.tier) it->second = CriticalNet{n, tier, why};
