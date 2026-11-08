@@ -65,6 +65,32 @@ def build_items(board, items: dict) -> list:
     return out
 
 
+def removed_items(board, items: dict) -> tuple[list, int]:
+    """The open board's tracks and vias that the engine's repair (route --repair, doc 05 §73) lifted, matched by geometry, layer and net;
+    and how many of the lifted items were not found (then nothing is changed)."""
+    gone = items.get("removed") or {}
+    want_t = {(tuple(t["start"]), tuple(t["end"]), board.get_layer_by_name(t["layer"]), t["net"]) for t in gone.get("tracks", [])}
+    want_v = {(tuple(v["position"]), v["net"]) for v in gone.get("vias", [])}
+    if not want_t and not want_v:
+        return [], 0
+    found, seen_t, seen_v = [], set(), set()
+    for t in board.get_tracks():
+        if type(t).__name__ != "Track" or t.locked:
+            continue
+        key = ((t.start.x, t.start.y), (t.end.x, t.end.y), t.layer, t.net.name)
+        rkey = (key[1], key[0], key[2], key[3])
+        k = key if key in want_t else rkey if rkey in want_t else None
+        if k is not None and k not in seen_t:
+            seen_t.add(k)
+            found.append(t)
+    for v in board.get_vias():
+        key = ((v.position.x, v.position.y), v.net.name)
+        if not v.locked and key in want_v and key not in seen_v:
+            seen_v.add(key)
+            found.append(v)
+    return found, len(want_t) + len(want_v) - len(seen_t) - len(seen_v)
+
+
 def find_bindings():
     """The `tracemaker` Python module, or None (then the binary is used)."""
     if os.environ.get("TRACEMAKER_NO_BINDINGS"):
@@ -214,6 +240,11 @@ def main() -> int:
         with open(items_path) as f:
             items = json.load(f)
     new = build_items(board, items)
+    lifted, missing = removed_items(board, items)
+    if missing:
+        print(f"TraceMaker: the repair lifted {missing} tracks or vias that are not on the open board; nothing was changed "
+              "(run again with TRACEMAKER_ARGS=\"--repair off\")", file=sys.stderr)
+        return 1
     if not new and not moves:
         print("TraceMaker: nothing to add")
         return 0
@@ -225,6 +256,9 @@ def main() -> int:
         if old:
             board.remove_items(old)
         removed = len(old)
+    elif lifted:
+        board.remove_items(lifted)  # the repair's lifted copper (doc 05 §73)
+        removed = len(lifted)
     changed = []
     if moves:
         for fp in board.get_footprints():
@@ -242,7 +276,7 @@ def main() -> int:
     if new:
         board.create_items(new)
     board.push_commit(commit, "TraceMaker autoroute")
-    print(f"TraceMaker: added {len(items['tracks'])} tracks and {len(items['vias'])} vias" + (f", removed {removed} old ones" if reroute else "") +
+    print(f"TraceMaker: added {len(items['tracks'])} tracks and {len(items['vias'])} vias" + (f", removed {removed} old ones" if removed else "") +
           (f", moved {len(changed)} footprints" if moves else ""))
     # Moved footprints leave the fills stale (KiCad's DRC then reports clearance errors against them), so they are
     # refilled unless switched off; otherwise only on request.

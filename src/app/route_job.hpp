@@ -9,6 +9,7 @@
 
 #include "analysis/footprint_check.hpp"
 #include "analysis/return_path.hpp"
+#include "passes/repair.hpp"
 #include "route/bus.hpp"
 #include "route/router.hpp"
 
@@ -71,6 +72,15 @@ struct RouteJob {
   // --reroute: remove every unlocked track and via first and route the whole board again (locked copper, arcs and
   // zones stay; rule 6).
   bool reroute = false;
+  // --repair (issue #56, doc 05 §73, D172): connections still open at the end are tried again with the unlocked copper near them
+  // lifted (a window that grows on each failure) and routed again; an attempt is kept only if nothing that was joined comes apart
+  // and fewer connections are open. "auto" (default): only on a board that came with unlocked tracks or vias (a partly routed
+  // board, whose copper the plain run cannot move); "on": also on a board routed from nothing here; "off".
+  std::string repair = "auto";
+  passes::RepairOptions repair_opt;
+  // --only-net / --skip-net patterns (KiCad wildcards or regular expressions, as net-class patterns): only_nets keeps the nets that
+  // match any pattern, skip_nets leaves those that match unrouted. Resolved against the board into RouterOptions::skip_nets.
+  std::vector<std::string> only_nets, skip_nets;
   // --copper-layers N (doc 05 §53): route the board with N copper layers, inner layers added (or empty ones removed) in memory and in the
   // output; 0 = as the file has them. `route --try-layers` sets it for each count it tries.
   int copper_layers = 0;

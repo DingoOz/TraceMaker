@@ -1,0 +1,44 @@
+live view: http://192.168.1.79:8783/?token=29188e893b4a16137aefb85779a85d97
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 160 ok (5179082 expansions), 0 failed (0 expansions); fields 0 GPU + 71 CPU (0.40 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 158 connections improved
+restarts 0; legality checks 883185; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 7, 0 proved no path, 70015 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: 9 of 169 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 4 ok (3181986 expansions), 0 failed (0 expansions); fields 0 GPU + 4 CPU (0.26 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 476225; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 3, 0 proved no path, 30004 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: RST P3.5-P1.14: 2 mm window, 2 branches lifted (8 tracks, 1 vias); open 9 -> 7 (kept)
+searches: 6 ok (1895031 expansions), 2 failed (3060002 expansions); fields 0 GPU + 8 CPU (0.93 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 8 connections improved
+restarts 0; legality checks 991801; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 6, 0 proved no path, 60014 cells visited
+failed-search expansions: strict confined 0, strict wide 3060002, negotiated confined 0, negotiated wide 0
+repair: Net-(P1-Pad9) SW1.2-P1.9: 1 mm window, 1 branches lifted (3 tracks, 0 vias); open 7 -> 2 (kept)
+searches: 0 ok (0 expansions), 2 failed (3060002 expansions); fields 0 GPU + 2 CPU (0.31 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 406742; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 1, 0 proved no path, 10004 cells visited
+failed-search expansions: strict confined 0, strict wide 3060002, negotiated confined 0, negotiated wide 0
+repair: Net-(U35-Pad2) U5.4-U35.2: 1 mm window, 1 branches lifted (2 tracks, 0 vias); open 2 -> 3, joined pads came apart (not kept)
+searches: 0 ok (0 expansions), 2 failed (3060002 expansions); fields 0 GPU + 2 CPU (0.36 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 406652; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 1, 0 proved no path, 10004 cells visited
+failed-search expansions: strict confined 0, strict wide 3060002, negotiated confined 0, negotiated wide 0
+repair: Net-(U35-Pad2) U5.4-U35.2: 4 mm window, 5 branches lifted (10 tracks, 0 vias); open 2 -> 7, joined pads came apart (not kept)
+searches: 2 ok (689351 expansions), 2 failed (3060002 expansions); fields 0 GPU + 3 CPU (0.68 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1 connections improved
+restarts 0; legality checks 535437; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 2, 0 proved no path, 20007 cells visited
+failed-search expansions: strict confined 0, strict wide 3060002, negotiated confined 0, negotiated wide 0
+repair: Net-(U36-Pad2) U6.4-U36.2: 1 mm window, 1 branches lifted (2 tracks, 0 vias); open 2 -> 1 (kept)
+repair: 5 attempts, 3 kept: open 9 -> 1; 3 tracks and 0 vias of the input lifted (22.4 s)
+routed 168/169 connections, 525 tracks, 76 vias, pitch 0.075 mm, 5249097 expansions, 27.25 s (best variant 4.81 s)
+  unrouted: Net-(U35-Pad2): U5.4 -> U35.2  (out of budget)
+why open: 2 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 2 open through congestion (0.11 s)
+  next: 2 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 23315491 expansions, 70015 flood cells, 883185 cell checks, 1360987 fixed-copper checks, 8225890 field cells in 71 fields, 160 commits, 0 rips

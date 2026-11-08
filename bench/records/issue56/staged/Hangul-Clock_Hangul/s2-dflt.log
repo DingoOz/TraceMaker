@@ -1,0 +1,61 @@
+live view: http://192.168.1.79:8783/?token=9148fd0add1582bedad21873e45d3be1
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 160 ok (5179082 expansions), 0 failed (0 expansions); fields 0 GPU + 71 CPU (0.41 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 158 connections improved
+restarts 0; legality checks 883185; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 7, 0 proved no path, 70015 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+rescue (warm): 9 of 169 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 160 saved routes taken over, 0 not legal under these rules
+searches: 2 ok (5553468 expansions), 0 failed (0 expansions); fields 0 GPU + 2 CPU (0.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 2 connections improved
+restarts 0; legality checks 774436; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 2, 0 proved no path, 20004 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0800 mm): 162 of 169 routed
+warm start: 162 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 162 in 0.1 s  <- best
+rescue (warm): 160 -> 162 routed (the relax result is kept)
+rescue (fresh): 7 of 169 connections are open; routing again with relax (from nothing, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+searches: 157 ok (5070740 expansions), 0 failed (0 expansions); fields 0 GPU + 115 CPU (0.42 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 158 connections improved
+restarts 0; legality checks 932790; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 13, 0 proved no path, 130024 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0800 mm): 157 of 169 routed
+warm start: 157 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 157 in 0.1 s  <- best
+rescue (fresh): 162 -> 157 routed (no gain: the result before stands)
+repair: 7 of 169 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 6 ok (1894996 expansions), 2 failed (3060002 expansions); fields 0 GPU + 8 CPU (0.72 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 8 connections improved
+restarts 0; legality checks 998638; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 6, 0 proved no path, 60014 cells visited
+failed-search expansions: strict confined 0, strict wide 3060002, negotiated confined 0, negotiated wide 0
+repair: Net-(P1-Pad9) SW1.2-P1.9: 1 mm window, 1 branches lifted (3 tracks, 0 vias); open 7 -> 2 (kept)
+searches: 3 ok (3631607 expansions), 0 failed (0 expansions); fields 0 GPU + 2 CPU (0.14 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 482207; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 2, 0 proved no path, 20005 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: Net-(U35-Pad2) U5.4-U35.2: 1 mm window, 2 branches lifted (6 tracks, 0 vias); open 2 -> 1 (kept)
+searches: 5 ok (2865947 expansions), 0 failed (0 expansions); fields 0 GPU + 4 CPU (0.48 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 2 connections improved
+restarts 0; legality checks 601814; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 0 proved no path, 40010 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: Net-(U36-Pad2) U6.4-U36.2: 1 mm window, 1 branches lifted (2 tracks, 0 vias); open 1 -> 0 (kept)
+repair: 3 attempts, 3 kept: open 7 -> 0; 3 tracks and 0 vias of the input lifted (10.7 s)
+routed 169/169 connections, 523 tracks, 77 vias, pitch 0.075 mm, 0 expansions, 24.66 s (best variant 0.06 s)
+work (all variants): 16751663 expansions, 70015 flood cells, 883185 cell checks, 1360987 fixed-copper checks, 8225890 field cells in 71 fields, 160 commits, 0 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed

@@ -1,0 +1,18 @@
+live view: http://192.168.1.79:8783/?token=ed2f97cca55424f95b5a4b46b1dc9095
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+warning: net pattern 'VCC*' matches no net of the board
+warning: net pattern 'VDD*' matches no net of the board
+warning: net pattern '*3V3*' matches no net of the board
+warning: net pattern '*VBUS*' matches no net of the board
+warning: net pattern '*VIN*' matches no net of the board
+nets: 3 of 43 left unrouted by --only-net / --skip-net
+searches: 46 ok (1161055 expansions), 2 failed (200000 expansions); fields 0 GPU + 15 CPU (0.15 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 50 connections improved
+restarts 0; legality checks 257830; rips 0, passes 1, boxed-in 2, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 5, 2 proved no path, 32763 cells visited
+failed-search expansions: strict confined 0, strict wide 200000, negotiated confined 0, negotiated wide 0
+routed 46/47 connections, 132 tracks, 10 vias, pitch 0.075 mm, 1393818 expansions, 1.54 s (best variant 1.53 s)
+  unrouted: /ENC_B(CN6): SW1.3 -> U1.6  ()
+why open: 2 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 2 open through congestion (0.04 s)
+  next: 2 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 1361055 expansions, 32763 flood cells, 257830 cell checks, 368783 fixed-copper checks, 3147300 field cells in 15 fields, 46 commits, 0 rips

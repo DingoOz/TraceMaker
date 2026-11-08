@@ -1,0 +1,16 @@
+live view: http://192.168.1.79:8783/?token=5011b0764cb19fb24b0ea0d38f1d8a21
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+warning: net pattern 'VCC*' matches no net of the board
+warning: net pattern 'VDD*' matches no net of the board
+warning: net pattern '*3V3*' matches no net of the board
+warning: net pattern '*5V*' matches no net of the board
+warning: net pattern '*VBUS*' matches no net of the board
+warning: net pattern '*VIN*' matches no net of the board
+nets: 2 of 14 left unrouted by --only-net / --skip-net
+searches: 24 ok (325243 expansions), 0 failed (0 expansions); fields 0 GPU + 5 CPU (0.05 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 25 connections improved
+restarts 0; legality checks 70529; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 1, 0 proved no path, 10001 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+routed 24/24 connections, 57 tracks, 0 vias, pitch 0.080 mm, 335244 expansions, 0.46 s (best variant 0.45 s)
+work (all variants): 325243 expansions, 10001 flood cells, 70529 cell checks, 88189 fixed-copper checks, 1077976 field cells in 5 fields, 24 commits, 0 rips

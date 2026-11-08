@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:42",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-offeq.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C34",
+                    "pos": {
+                        "x": 197.75,
+                        "y": 75.75
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005901620b"
+                },
+                {
+                    "description": "Footprint P5",
+                    "pos": {
+                        "x": 196.89,
+                        "y": 89.06
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000590fdd29"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C35",
+                    "pos": {
+                        "x": 197.75,
+                        "y": 92.25
+                    },
+                    "uuid": "00000000-0000-0000-0000-000059016211"
+                },
+                {
+                    "description": "Footprint P5",
+                    "pos": {
+                        "x": 196.89,
+                        "y": 89.06
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000590fdd29"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 153.25,
+                        "y": 150.0
+                    },
+                    "uuid": "daf1ba1e-4255-4759-bd9d-f07eb9770e0a"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 153.25,
+                        "y": 150.0
+                    },
+                    "uuid": "daf1ba1e-4255-4759-bd9d-f07eb9770e0a"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        }
+    ]
+}

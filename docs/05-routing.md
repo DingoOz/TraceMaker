@@ -3334,3 +3334,74 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 
 The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.
+
+## 73. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
+
+**Why.** Without `--reroute`, every track and via of the input is fixed copper. On a WholeBoard PoE switch routed 1186/1189 the last
+pins stayed open ("fixed copper encloses the pin"): the neighbours' fan-outs wall them in and the router may not rip them. The only other
+choice was `--reroute`, a fresh two-hour run. Staged flows hit the same wall: route some nets first (`--only-net`), then the rest with
+that copper fixed.
+
+**What it does** (`passes/repair.{hpp,cpp}`, called from `app/route_job.cpp` after the rescue and the advisor).
+
+- For each connection still open, in the router's order, the *branches* of other nets with copper within r of either end pad (measured
+  from the pad's edge) are lifted. A branch is the chain of tracks and vias of one net between two stops: a pad, a zone fill, an arc or
+  copper graphic, or a junction where three or more tracks and vias meet. Track ends touch when an end point or the centreline lies
+  within 1 µm, or the end lies in a via. Whatever the lift leaves dead goes too: a track with an end that touched copper and now touches
+  nothing, or a via left with one contact. So no cut stub stays in the way (the user's manual cut at 2.5 mm left 11 open instead of 3), and
+  a big net keeps the branches outside the window.
+- The board is routed again by one router (the run's options, the open connection first), everything else fixed, on `--repair-work`
+  (3 M) work. The attempt is a transaction (rule 4): it is kept only if no two pads that were joined come apart and fewer connections are
+  open, counted per net on the router's connectivity. Otherwise the window grows (`--repair-window-mm`, default 1, 2, 4). A window that
+  would lift more than `--repair-branches` (64) branches ends the growth; at most `--repair-conns` (64) connections are tried, and
+  `--time` bounds the repair as a safety only. A kept attempt's own open list is the next one.
+- Never lifted: locked tracks and vias (rule 6), tuning patterns, free vias, branches touching arcs or copper graphics, the open
+  connection's own net, nets this run does not route, coupled pairs (`--diff-pairs`, component-rule pairs) and bus members.
+- **`--repair auto`** (default) runs only on a board that came with unlocked tracks or vias, and only when connections are left open. A
+  board routed from nothing here is unchanged: the router's negotiation could already rip that copper, and D155's pin rescue, which lifts
+  routed copper in the same way, lost against the same work spent on routing (§63). `--repair on` runs it on any board, `off` never.
+- The lifted input copper leaves the written board. `--emit-items` lists it under `removed`, and the KiCad plugin removes it from the open
+  board in the same commit (nothing is changed if an item is not found). The summary has `repair` (attempts with radius, branches,
+  tracks and vias lifted, open before and after, kept), and the viewer gets `repair` stage events.
+- **Staged routing.** `--only-net` and `--skip-net` take patterns (KiCad wildcards or regular expressions, as net-class patterns;
+  repeatable or comma separated), e.g. `route board.kicad_pcb --only-net '/USB_D*,/ETH_*' -o pass1.kicad_pcb`, then
+  `route pass1.kicad_pcb -o pass2.kicad_pcb`: the second pass routes the rest, and its repair may lift pass-one copper near a pin that
+  copper encloses. A net named exactly matches itself even when its name reads as a regular expression (`Net-(U1-Pad3)`).
+
+**Measured** (`bench/records/issue56/`). Staged flow on the nine PCBench quick-tier boards where it leaves connections open: stage 1 routes
+everything but the power nets (`--skip-net 'GND*,*GND,VCC*,VDD*,+*,*3V3*,*5V*,*VBUS*,*VIN*'`, 1 M work), stage 2 routes the board with that
+copper fixed (one variant, `--no-rescue`, 5 M work). "Plain, same work" gives the plain stage 2 the repair's work on top of its own.
+
+| Board (stage 2 connections) | Plain | Repair | Plain, same work | Attempts (kept) | Input tracks / vias lifted |
+|---|--:|--:|--:|--:|--:|
+| 655_testboard (32) | 25 | 32 | 27 | 5 (1) | 55 / 8 |
+| breakout-boards_swd-and-uart (4) | 3 | 4 | 3 | 2 (1) | 13 / 0 |
+| custom_cpu--ALU_custom_cpu--ALU (39) | 30 | 39 | 39 | 4 (4) | 21 / 1 |
+| fan_controller_fan_controller (69) | 66 | 69 | 66 | 1 (1) | 12 / 1 |
+| Hangul-Clock_Hangul (169) | 160 | 168 | 169 | 5 (3) | 3 / 0 |
+| Inkjet__autosave-InkjetDriver (39) | 38 | 39 | 39 | 1 (1) | 4 / 0 |
+| LogicBoxen_LogicBoxen (64) | 60 | 64 | 62 | 1 (1) | 21 / 1 |
+| mosavr_pcie1x_backplane (54) | 48 | 53 | 54 | 10 (4) | 10 / 0 |
+| uC3Moy_uC3Moy (17) | 16 | 16 | 17 | 3 (0) | 0 / 0 |
+| **total (487)** | **446** | **484** | **476** | | |
+
+KiCad 10.0.6's DRC (zones refilled) gives the same errors for all three arms of each board (the boards' own: outline, courtyards,
+mask bridges, annular width), so the repair adds none; its unconnected counts equal the open connections above.
+
+- Against the plain stage 2 the repair closes 38 of 41 open connections and never loses (it is a transaction). Against the same work
+  spent on the plain run it is +8: better where pins are walled in (655_testboard, LogicBoxen, breakout, fan_controller), worse where the
+  open connections only wanted more search (Hangul, mosavr, uC3Moy, one each).
+- **Default flow** (the relax rescue on, as a plain `tracemaker route` runs; repair after it): 467 of 487 with `--repair off`, 486 with
+  the default `auto`. The repair ran on the five boards the rescue left open and completed four (655_testboard, Hangul, custom_cpu,
+  fan_controller); uC3Moy stays at 16/17. The rescue alone completes LogicBoxen, breakout and mosavr; on fixed copper it cannot lift.
+- **The PoE switch** (rev6, 1186/1189, private; 2 M work for the plain run): **not finished.** The plain
+  run plans 6 connections (soft zones) and routes 2; four stay open, all at the KSZ9897 QFNs (U10, U11). Around those pins a 1 mm window
+  holds 26-40 branches of the neighbours' fan-outs (99-117 tracks), a 2 mm one more than 64; with windows of 0.2, 0.4 and 0.7 mm still
+  9-22 branches. In every attempt (3 M and 10 M work) the router could not route all the lifted branches again, so none was kept
+  (`poe6-*.log`). Dense fine-pitch fan-outs need more than a window and one router run: what each lifted connection needs is the
+  room the others used, which is the whole negotiation the two-hour run did. The repair leaves such a board as it was.
+- Cost: an attempt is one router run on the whole board: 1-6 s on the quick-tier boards, about 20-40 s on the PoE switch. Complete
+  boards and boards routed from nothing pay nothing.
+- Test: `tests/test_repair.cpp` (`[repair]`): a pin in a ring of another net's track is opened (the whole branch lifted, both nets
+  joined, no DRC error, the 2 mm window the first that lifts anything, deterministic); the same ring locked is never lifted; a branch
+  limit of 0 tries nothing. `kicad_plugin/test_offline.py` checks that the lifted copper is found on the open board.

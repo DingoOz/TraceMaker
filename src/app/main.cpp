@@ -1006,8 +1006,6 @@ static int run_main(int argc, char** argv) {
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
   route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first")->group("");
   route->add_option("--seed", ropt.seed);
-  route->add_option("--only-net", ropt.only_net, "Debugging: route only this net")->group("");
-  route->add_option("--skip-net", ropt.skip_nets, "Experiments: leave this net unrouted (repeatable)")->group("");
   route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
   route->add_option("--polish", ropt.polish_fraction, "Reserve this share of the budget (0-0.9) to rebuild the open connections of the best state")->group("");
   route->add_option("--polish-trials", ropt.polish_trials, "Polish: seeded orders tried per open connection")->group("");
@@ -1157,6 +1155,23 @@ static int run_main(int argc, char** argv) {
   route->add_flag("!--no-why-open", r_job.why_open,
                   "Do not check the pins of open connections for a way out (by default each is flood-filled against the board's fixed copper, and "
                   "a pin walled in on every layer with no room for a via is reported as unconnectable as placed; doc 20 §2.4)");
+  route->add_option("--only-net", r_job.only_nets,
+                    "Route only the nets that match one of these patterns (KiCad wildcards such as '/I2S_*', or regular expressions; repeatable or "
+                    "comma separated); the other nets are left unrouted and their copper stays (staged routing)")
+      ->delimiter(',')->allow_extra_args(false);
+  route->add_option("--skip-net", r_job.skip_nets,
+                    "Leave the nets that match these patterns unrouted (KiCad wildcards or regular expressions; repeatable or comma separated)")
+      ->delimiter(',')->allow_extra_args(false);
+  route->add_option("--repair", r_job.repair,
+                    "Repair windows for connections still open at the end: the unlocked copper near each is lifted (a window that grows on each "
+                    "failure) and routed again; an attempt is kept only if no joined pads come apart and fewer connections are open. auto (default): "
+                    "only on a board that came with unlocked tracks or vias; on: also on a board routed from nothing; off (doc 05 §73)")
+      ->check(CLI::IsMember({"auto", "on", "off"}));
+  route->add_option("--repair-window-mm", r_job.repair_opt.radii_mm, "Repair: window radii round each end of an open connection, tried in turn (default 1,2,4)")
+      ->delimiter(',')->allow_extra_args(false);
+  route->add_option("--repair-work", r_job.repair_opt.step_work, "Repair: work budget of each attempt in search expansions (default 3000000)");
+  route->add_option("--repair-branches", r_job.repair_opt.max_branches, "Repair: a window that would lift more branches (the tracks and vias of one net between two pads or junctions) stops growing (default 64)");
+  route->add_option("--repair-conns", r_job.repair_opt.max_conns, "Repair: open connections tried at most (default 64)");
   route->add_option("--rescue-mode", r_job.rescue_mode,
                     "How the rescue routes again with relax: warm (from the plain run's routes), fresh (from nothing) or both (warm, then fresh "
                     "while connections are open; each pass on its own budget, kept only if better; default both; doc 05 §71)")

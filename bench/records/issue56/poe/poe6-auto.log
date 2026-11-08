@@ -1,0 +1,71 @@
+planes: zone GND_In1_Cu (GND on In1.Cu) has no fill: filled in memory for routing, 30125 mm2
+planes: zone +54V_In2_Cu (+54V on In2.Cu) has no fill: filled in memory for routing, 29811 mm2
+planes: zone fills are soft for this run (--soft-zones): plane nets drop vias into their planes, other nets route through
+live view: http://192.168.1.79:8783/?token=7f3f4efdd512e9845db055f465322be2
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+warning: rule 'JLCPCB: Hole to hole': the router keeps its hole to hole distance (0.500 mm) round every new via's hole, not only where the rule applies (the DRC checks it as written)
+searches: 2 ok (682287 expansions), 20 failed (3738855 expansions); fields 0 GPU + 12 CPU (1.84 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1 connections improved
+restarts 0; legality checks 662588; rips 0, passes 2, boxed-in 18, nogood skips 10, history cells 0, transactions 0 kept of 0
+late reachability proofs: 6, 6 proved no path, 8715 cells visited
+failed-search expansions: strict confined 0, strict wide 731279, negotiated confined 0, negotiated wide 3007576
+repair: 4 of 6 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 10 ok (758444 expansions), 44 failed (3794867 expansions); fields 0 GPU + 39 CPU (3.05 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 2 connections improved
+restarts 0; legality checks 1089858; rips 1, passes 2, boxed-in 42, nogood skips 5, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 5 proved unreachable, 277057 cells visited
+late reachability proofs: 17, 15 proved no path, 48742 cells visited
+failed-search expansions: strict confined 0, strict wide 1524647, negotiated confined 0, negotiated wide 2024593
+repair: GND U10.123-zone: 1 mm window, 26 branches lifted (99 tracks, 7 vias); open 4 -> 8, joined pads came apart (not kept)
+searches: 11 ok (1257561 expansions), 35 failed (4215720 expansions); fields 0 GPU + 36 CPU (6.33 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1 connections improved
+restarts 0; legality checks 3345215; rips 0, passes 1, boxed-in 34, nogood skips 4, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000004 cells visited
+late reachability proofs: 14, 12 proved no path, 44199 cells visited
+failed-search expansions: strict confined 0, strict wide 4215720, negotiated confined 0, negotiated wide 0
+repair: GND U10.123-zone: 2 mm window, 37 branches lifted (161 tracks, 15 vias); open 4 -> 12, joined pads came apart (not kept)
+repair: GND U10.123-zone: a 4 mm window would lift 66 branches (limit 64); the window stops growing
+searches: 7 ok (265754 expansions), 28 failed (3853035 expansions); fields 0 GPU + 24 CPU (10.19 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 677035; rips 2, passes 2, boxed-in 27, nogood skips 9, history cells 12, transactions 0 kept of 0
+reachability checks: 2, 2 proved unreachable, 482 cells visited
+late reachability proofs: 8, 8 proved no path, 9663 cells visited
+failed-search expansions: strict confined 0, strict wide 849515, negotiated confined 0, negotiated wide 3003038
+repair: RG_B2A_TXD1 U10.54-R83.2: 1 mm window, 31 branches lifted (117 tracks, 21 vias); open 4 -> 8, joined pads came apart (not kept)
+repair: RG_B2A_TXD1 U10.54-R83.2: a 2 mm window would lift 66 branches (limit 64); the window stops growing
+searches: 0 ok (0 expansions), 2 failed (3060002 expansions); fields 0 GPU + 2 CPU (1.22 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 418357; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 1, 0 proved no path, 10001 cells visited
+failed-search expansions: strict confined 0, strict wide 3060002, negotiated confined 0, negotiated wide 0
+repair: P10_C_P T10.6-U11.39: 1 mm window, 31 branches lifted (94 tracks, 10 vias); open 4 -> 16, joined pads came apart (not kept)
+repair: P10_C_P T10.6-U11.39: a 2 mm window would lift 79 branches (limit 64); the window stops growing
+searches: 12 ok (1777116 expansions), 17 failed (3426113 expansions); fields 0 GPU + 8 CPU (0.52 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 745800; rips 0, passes 1, boxed-in 13, nogood skips 1, history cells 0, transactions 0 kept of 0
+late reachability proofs: 5, 2 proved no path, 30923 cells visited
+failed-search expansions: strict confined 0, strict wide 3426113, negotiated confined 0, negotiated wide 0
+repair: P5_C_N T5.5-U10.40: 1 mm window, 40 branches lifted (99 tracks, 12 vias); open 4 -> 10, joined pads came apart (not kept)
+repair: P5_C_N T5.5-U10.40: a 2 mm window would lift 90 branches (limit 64); the window stops growing
+repair: 5 attempts, 0 kept: open 4 -> 4; 0 tracks and 0 vias of the input lifted (107.4 s)
+soft zones: after refilling 2 zones, 4 items unconnected
+searches: 0 ok (0 expansions), 17 failed (3614539 expansions); fields 0 GPU + 12 CPU (1.79 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 477058; rips 0, passes 2, boxed-in 16, nogood skips 10, history cells 0, transactions 0 kept of 0
+late reachability proofs: 6, 6 proved no path, 5568 cells visited
+failed-search expansions: strict confined 0, strict wide 606963, negotiated confined 0, negotiated wide 3007576
+refill repair: routed 0/4 connections, 0 tracks, 0 vias, 3620107 expansions
+refill repair: 4 items unconnected after refilling again (no better: repair discarded)
+routed 2/6 connections, 9 tracks, 2 vias, pitch 0.050 mm, 4429857 expansions, 148.85 s (best variant 11.06 s)
+  unrouted: GND: U10.123 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)
+  unrouted: RG_B2A_TXD1: U10.54 -> R83.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; fixed copper encloses the pin)
+  unrouted: P10_C_P: T10.6 -> U11.39  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); negotiated escapes/neck-down: out of budget)
+  unrouted: P5_C_N: T5.5 -> U10.40  (boxed in (target); escapes/neck-down: boxed in (target))
+  cannot connect: U10.40 (P5_C_N) cannot be connected as placed: on F.Cu the fixed copper (U10.39, U10.41, a P5_C_P track, a +1V2A_AN via, a hole) leaves no way out even for a track of the board's minimum width (0.127 mm) with its clearances, and no via fits beside it. Moving a part or changing the rules is needed.
+  needs a narrower track or via: U10.123 (GND) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  cannot connect: U11.39 (P10_C_P) cannot be connected as placed: on F.Cu the fixed copper (U11.38, U11.40, U11.37, a P10_C_N via, a P10_B_N via, a +1V2B_AN track) leaves no way out even for a track of the board's minimum width (0.127 mm) with its clearances, and no via fits beside it. Moving a part or changing the rules is needed.
+why open: 7 pins of open connections; 2 walled in by fixed copper (0 of them with a via in the pad), 1 only for the class's track or via, 0 only by zone fills or copper graphics, 4 open through congestion (1.38 s)
+  next: move a part or change the rules around the 2 pins walled in above: no router can connect them as placed
+  next: 1 pin get out only with a track narrower than the net class's: check that the net is not in --no-neck-nets, or lower the class's track width
+  next: 4 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 30004716 expansions, 8715 flood cells, 654282 cell checks, 847375 fixed-copper checks, 55650148 field cells in 12 fields, 2 commits, 0 rips

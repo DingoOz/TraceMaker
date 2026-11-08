@@ -1,0 +1,241 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 96.88,
+ "connections": 64,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 8030236,
+ "failures": [
+  "VCC: U2.1 -> C5.1  (boxed in; escapes/neck-down: boxed in)",
+  "VCC: U3.16 -> U2.1  (boxed in (target); escapes/neck-down: boxed in (target))"
+ ],
+ "open": 2,
+ "package_pin_edges": 7,
+ "pitch_mm": 0.075,
+ "routed": 62,
+ "run": {
+  "board": "stage1.kicad_pcb",
+  "date": "2026-11-08T22:26:57Z",
+  "input": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/LogicBoxen_LogicBoxen/stage1.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/LogicBoxen_LogicBoxen/s2-offeq.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "8001525"
+   },
+   {
+    "name": "--no-rescue",
+    "value": "false"
+   },
+   {
+    "name": "--repair",
+    "value": "off"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-port",
+    "value": "8783"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/LogicBoxen_LogicBoxen/s2-offeq.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/LogicBoxen_LogicBoxen/s2-offeq.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "variants": 1,
+  "version": "0.12.1",
+  "work_budget": 8001525
+ },
+ "seconds": 5.671917835,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 103,
+  "bends_per_connection": 0.6319,
+  "connections": 163,
+  "detour_length_mm": 642.890788,
+  "detour_octile_mm": 552.733764,
+  "detour_ratio": 1.1631,
+  "length_mm": 642.890788,
+  "long_detours": 5,
+  "off_angle_segments": 99,
+  "segments": 308,
+  "short_segments": 42,
+  "stair_steps": 1,
+  "vias": 52
+ },
+ "time_limited": false,
+ "tracks": 308,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 5.656243612,
+ "vias": 52,
+ "why_open": {
+  "congested": 2,
+  "neck_down": 0,
+  "next": [
+   "move a part or change the rules around the 1 pin walled in above: no router can connect them as placed",
+   "2 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 3,
+  "proved": [
+   {
+    "net": "VCC",
+    "pin": "U2.1",
+    "text": "U2.1 (VCC) cannot be connected as placed: on F.Cu the fixed copper (U2.2, a Net-(U2-Pad5) track, a Net-(R7-Pad1) via) leaves no way out even for a track of the board's minimum width (0.2 mm) with its clearances, and no via fits beside it. A via in the pad would fit (--via-in-pad).",
+    "via_in_pad_fits": true,
+    "walls": [
+     "U2.2",
+     "a Net-(U2-Pad5) track",
+     "a Net-(R7-Pad1) via"
+    ],
+    "width_mm": 0.25
+   }
+  ],
+  "seconds": 0.193668313,
+  "soft_only": 0,
+  "via_in_pad": 1,
+  "walled_in": 1
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1111091,
+   "commits": 117,
+   "expansions": 7083729,
+   "field_cells": 5770090,
+   "fields": 39,
+   "fixed_checks": 538542,
+   "flood_cells": 191389,
+   "rips": 0,
+   "searches": 123
+  },
+  "negotiation": {
+   "cell_checks": 114031,
+   "commits": 0,
+   "expansions": 730522,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 49134,
+   "flood_cells": 24596,
+   "rips": 0,
+   "searches": 15
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 1225122,
+   "commits": 117,
+   "expansions": 7814251,
+   "field_cells": 5770090,
+   "fields": 39,
+   "fixed_checks": 587676,
+   "flood_cells": 215985,
+   "rips": 0,
+   "searches": 138
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1111091,
+   "commits": 117,
+   "expansions": 7083729,
+   "field_cells": 5770090,
+   "fields": 39,
+   "fixed_checks": 538542,
+   "flood_cells": 191389,
+   "rips": 0,
+   "searches": 123
+  },
+  "negotiation": {
+   "cell_checks": 114031,
+   "commits": 0,
+   "expansions": 730522,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 49134,
+   "flood_cells": 24596,
+   "rips": 0,
+   "searches": 15
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 1225122,
+   "commits": 117,
+   "expansions": 7814251,
+   "field_cells": 5770090,
+   "fields": 39,
+   "fixed_checks": 587676,
+   "flood_cells": 215985,
+   "rips": 0,
+   "searches": 138
+  }
+ }
+}
