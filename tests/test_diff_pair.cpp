@@ -172,9 +172,10 @@ model::Board fenced_pair() {
   return io::read_board(sexpr::Document::parse(s));
 }
 
-route::RouteResult route_fenced(const model::Board& b, long work) {
+route::RouteResult route_fenced(const model::Board& b, long work, double pair_share = 0) {
   route::RouterOptions o;
   o.work_budget = work;
+  o.pair_share = pair_share;
   o.time_limit_s = 600;
   o.gpu_device = -1;
   o.pair_nets = {{b.net_by_name("D_P"), b.net_by_name("D_N")}};
@@ -200,4 +201,22 @@ TEST_CASE("pair search: rejected candidates are work, and the work budget stops 
   const auto again = route_fenced(b, budget);
   CHECK(again.expansions == cut.expansions);
   CHECK(again.pair_work == cut.pair_work);
+}
+
+TEST_CASE("pair share: the coupled searches stop at their share of the work budget", "[diffpair][route]") {
+  // Issue #53: the pair phase may not spend more than pair_share of the budget; past it the pairs are left to single routing.
+  const auto b = fenced_pair();
+  const long budget = 200'000;
+  const auto free_run = route_fenced(b, budget);
+  REQUIRE(free_run.pair_work > 2'000);
+  const auto shared = route_fenced(b, budget, 0.01);  // 2,000 work units
+  CHECK(shared.pair_work < free_run.pair_work);
+  CHECK(shared.pair_work <= 2'000 + 64 * 72);  // checked every 64 candidates, as the work budget
+  const auto again = route_fenced(b, budget, 0.01);
+  CHECK(again.pair_work == shared.pair_work);
+  CHECK(again.expansions == shared.expansions);
+  // Share 0 is no limit: the same run as without the option.
+  const auto zero = route_fenced(b, budget, 0);
+  CHECK(zero.pair_work == free_run.pair_work);
+  CHECK(zero.expansions == free_run.expansions);
 }

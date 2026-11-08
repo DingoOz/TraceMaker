@@ -1525,3 +1525,52 @@ TEST_CASE("custom hole_to_hole and edge_clearance rules: the router keeps them, 
   v2.net = 2;
   CHECK(re.hole_to_hole(&v1, &v2) == 1'000'000);
 }
+
+TEST_CASE("kind tables: conditions on item types alone give the same clearances as evaluating them", "[rules][drc]") {
+  // Issue #53: a condition that reads only A.Type and B.Type is evaluated once per pair of kinds. Every pair of items on the parity board
+  // (pads, tracks, vias, a zone) and probes of every kind must get the same clearance, hole clearance and edge clearance either way.
+  const std::string zone =
+      "  (zone (net 2) (net_name \"GND\") (layer \"B.Cu\") (name \"gnd\") (hatch edge 0.5) (connect_pads (clearance 0.3))\n"
+      "    (min_thickness 0.25) (fill yes (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 1 1) (xy 19 1) (xy 19 9) (xy 1 9)))\n"
+      "    (filled_polygon (layer \"B.Cu\") (pts (xy 1 8) (xy 19 8) (xy 19 9) (xy 1 9))))\n";
+  const std::string dru =
+      "(version 1)\n"
+      "(rule \"non-zone\" (condition \"A.Type != 'Zone' && B.Type != 'Zone'\") (constraint clearance (min 0.09mm)))\n"
+      "(rule \"via-pad\" (condition \"A.Type == 'Via' && B.Type == 'Pad'\") (constraint clearance (min 0.3mm)))\n"
+      "(rule \"track\" (layer outer) (condition \"A.Type == 'track' || B.Type == 'Arc'\") (constraint clearance (min 0.11mm)))\n"
+      "(rule \"vias\" (condition \"A.Type == 'Via'\") (constraint hole_clearance (min 0.27mm)) (constraint edge_clearance (min 0.4mm)))\n"
+      "(rule \"by net\" (condition \"A.NetName == 'GND' && B.Type == 'Pad'\") (constraint clearance (min 0.2mm)))\n"
+      "(rule \"always\" (condition \"true\") (constraint hole_clearance (min 0.26mm)))\n";
+  const Files f("kind_tables", board_text(std::string(kParityCopper) + zone), dru);
+  const auto lb = io::read_board_file(f.pcb.string());
+  const auto rules = io::read_design_rules(f.pcb.string());
+  drc::RuleEngine table(lb.board, rules), direct(lb.board, rules);
+  direct.use_kind_tables(false);
+  auto items = drc::build_copper(lb.board).items;
+  for (const auto kind : {drc::ItemKind::Track, drc::ItemKind::Via, drc::ItemKind::Arc, drc::ItemKind::Graphic})
+    for (const model::NetId net : {0, 1, 2}) {
+      drc::CopperItem probe;
+      probe.kind = kind;
+      probe.net = net;
+      probe.index = -1;
+      probe.layers = ~model::LayerMask{0};
+      items.push_back(probe);
+    }
+  REQUIRE(std::any_of(items.begin(), items.end(), [](const drc::CopperItem& it) { return it.kind == drc::ItemKind::Zone; }));
+  int differ = 0, rule_values = 0;
+  for (const auto& a : items) {
+    for (int layer = -1; layer < lb.board.copper_count(); ++layer) {
+      differ += table.edge_clearance(a, layer) != direct.edge_clearance(a, layer);
+      differ += table.hole_clearance(&a, a, layer) != direct.hole_clearance(&a, a, layer);
+    }
+    for (const auto& b : items)
+      for (int layer = 0; layer < lb.board.copper_count(); ++layer) {
+        const Coord c = table.clearance(a, b, layer);
+        differ += c != direct.clearance(a, b, layer);
+        differ += table.hole_clearance(&a, b, layer) != direct.hole_clearance(&a, b, layer);
+        rule_values += c == 90'000 || c == 110'000 || c == 300'000;
+      }
+  }
+  CHECK(differ == 0);
+  CHECK(rule_values > 0);  // the type rules did apply somewhere
+}

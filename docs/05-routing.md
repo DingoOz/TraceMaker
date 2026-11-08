@@ -3334,3 +3334,47 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 
 The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.
+
+## 73. Rules below the class: the pair phase and the price of a condition (2026-11-08, D170)
+
+**Why.** Issue #53: with WholeBoard's JLCPCB rule `(condition "A.Type != 'Zone' && B.Type != 'Zone'") (constraint clearance (min
+0.09mm))` under 0.15 mm classes, six of eight `--diff-pairs` variants on the 10-port PoE switch stopped at about 116 connections in
+300 s (`bench/records/d139/`). Nothing sized from the class disagrees with the rule engine. The stalled variants were all still in the
+coupled pair phase (§15) when the time ran out: about 116 is the pairs' own connections. The pair search checks every move exactly, and
+the exact checks ask the clearance of every nearby item; evaluating the rule's condition each time (strings built, lower-cased and
+wildcard-matched for both types, both orders) made the same work 55 % slower than an unconditional 0.09 mm rule. Without the rule the
+phase only just fits in 300 s; on a loaded machine it does not fit either.
+
+**What was built** (D170).
+
+- Kind tables (`drc::RuleEngine`): a condition that reads only `A.Type` and `B.Type` is evaluated once per pair of kinds when the engine
+  is built; `custom_min` (clearance, hole clearance, hole to hole, edge clearance, track width) reads the table. Same answers by
+  construction; `use_kind_tables(false)` is the reference, compared over every item pair in the test "kind tables". On by default.
+- `--pair-share X` (default 0, no limit): the coupled pair searches stop after X of the work budget (of `--time` without one), counted
+  over every pair phase of the run; the pairs left are routed as single connections. Each pair attempt was already capped (§15); this
+  caps the phase. Off by default (below).
+
+**Measured** (`bench/records/issue53/`, `--diff-pairs --no-kb --no-rescue`; the PoE switch is WholeBoard's, not committed).
+
+| Board, rule | Run | Before (main) | D170 | Output |
+|---|---|---|---|---|
+| PoE switch, non-zone 0.09 mm | 1 variant, 2 M work | 189 s | 86 s | same file |
+| PoE switch, unconditional 0.09 mm | 1 variant, 2 M work | 122 s | 84 s | same file |
+| StickHub (8 USB pairs, 0.15 mm class), non-zone 0.09 mm | 1 variant, 5 M work, `--soft-zones` | 31.8 s CPU | 21.0 s CPU | same file, 128/128 |
+| StickHub, no rule | 1 variant, 5 M work, `--soft-zones` | 31.0 s CPU | 30.9 s CPU | same file |
+
+Eight variants, 300 s, the PoE switch with the rule, the four runs at the same time on the shared machine:
+
+| Engine | Connections per variant (0..7) | Best | Coupled pairs (best) | Work done |
+|---|---|---|---|---|
+| main | 96 96 160 96 96 1097 96 54 | 1,097 | 75 | 44.7 M |
+| D170 | 126 140 660 140 140 1105 126 106 | 1,105 | 75 | 89.7 M |
+| D170, `--pair-share 0.25` | 1027 1104 1029 1073 1034 1105 1111 1088 | 1,111 | 19 | 404.6 M |
+| D170, no rule | 106 106 148 106 106 1090 106 86 | 1,090 | 70 | 80.8 M |
+
+With the tables the rule costs nothing over no rule. `--pair-share 0.25` lifts every variant past 1,000, but the portfolio keeps only the
+best, which then couples 19 pairs instead of 75: completion +6, coupling −56. Coupling is what `--diff-pairs` asks for, so the share
+stays off. One variant at 5 M work: 88 → 126 connections with the share, 44 → 8 coupled pairs.
+
+**Open.** The pair phase is slow per unit of work (every turn and via move is an exact check; only straight steps are memoised), so at
+short time limits it still takes most of the run. Conditions that read nets or classes are still evaluated per call.

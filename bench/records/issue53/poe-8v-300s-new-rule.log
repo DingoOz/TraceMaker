@@ -1,0 +1,221 @@
+planes: zone GND_In1_Cu (GND on In1.Cu) has no fill: filled in memory for routing, 32598 mm2
+planes: zone +54V_In2_Cu (+54V on In2.Cu) has no fill: filled in memory for routing, 32591 mm2
+planes: zone fills are soft for this run (--soft-zones): plane nets drop vias into their planes, other nets route through
+portfolio: 8 variants on 8 threads
+searches: 40 ok (207397 expansions), 0 failed (0 expansions); fields 0 GPU + 40 CPU (1.09 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 250993; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 589 ok (15843819 expansions), 358 failed (9134568 expansions); fields 0 GPU + 410 CPU (30.23 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 344 connections improved
+restarts 0; legality checks 32774261; rips 0, passes 1, boxed-in 192, nogood skips 31, history cells 0, transactions 0 kept of 0
+reachability checks: 60, 37 proved unreachable, 13223197 cells visited
+late reachability proofs: 90, 49 proved no path, 488468 cells visited
+failed-search expansions: strict confined 0, strict wide 6723123, negotiated confined 0, negotiated wide 0
+searches: 40 ok (371769 expansions), 0 failed (0 expansions); fields 0 GPU + 40 CPU (1.18 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 169641; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 40 ok (126580 expansions), 0 failed (0 expansions); fields 0 GPU + 40 CPU (1.24 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 171242; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 36 ok (187348 expansions), 0 failed (0 expansions); fields 0 GPU + 36 CPU (1.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 226597; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 1177 ok (10177679 expansions), 596 failed (18182403 expansions); fields 0 GPU + 516 CPU (56.83 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 45536296; rips 86, passes 2, boxed-in 508, nogood skips 54, history cells 110, transactions 0 kept of 0
+reachability checks: 186, 97 proved unreachable, 42254797 cells visited
+late reachability proofs: 19, 2 proved no path, 170604 cells visited
+failed-search expansions: strict confined 0, strict wide 6524495, negotiated confined 0, negotiated wide 49294
+searches: 36 ok (348220 expansions), 0 failed (0 expansions); fields 0 GPU + 36 CPU (1.17 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 158480; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 32 ok (103276 expansions), 0 failed (0 expansions); fields 0 GPU + 32 CPU (0.90 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 128732; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 126 in 300.2 s
+  variant 1 fast bends, shortest first, crowded source routed 140 in 300.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 660 in 300.1 s
+  variant 3 fast bends, jittered order, escape plan routed 140 in 300.1 s
+  variant 4 exact bends, jittered order    routed 140 in 300.1 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 1105 in 300.2 s  <- best
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 126 in 300.2 s
+  variant 7 fast bends, dear vias, crowded source routed 106 in 300.4 s
+soft zones: after refilling 2 zones, 84 items unconnected
+refill repair: skipped, the time limit is used up
+routed 1105/1189 connections, 5195 tracks, 804 vias, pitch 0.100 mm, 62662069 expansions, 303.48 s (best variant 300.20 s)
+  unrouted: +1V2A: U10.23 -> C102.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2B: U11.11 -> C134.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2B: U11.23 -> C135.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2A_AN: U10.114 -> C115.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2A_AN: C112.1 -> U10.30  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2A_AN: C116.1 -> U10.114  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +2V5B_AN: C157.1 -> U11.122  (boxed in; escapes/neck-down: boxed in (target))
+  unrouted: +1V2A_AN: C117.1 -> U10.119  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2A_AN: U10.119 -> C116.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +2V5B_AN: U11.122 -> C156.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +2V5B_AN: C157.1 -> U11.128  (boxed in; escapes/neck-down: boxed in (target))
+  unrouted: +1V2A_AN: U10.41 -> U10.36  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U10_XO: U10.125 -> C132.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +2V5A_AN: C120.1 -> U10.33  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +2V5B_AN: C156.1 -> U11.111  (boxed in; escapes/neck-down: boxed in (target))
+  unrouted: +1V2B_AN: C145.1 -> C146.1  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: +1V2B: U11.11 -> FB3.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U10_ISET: U10.127 -> R70.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U10_XI: U10.126 -> Y1.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +1V2B_AN: U11.41 -> C162.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2A: C101.1 -> U10.23  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2B: C134.1 -> U11.23  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +2V5B_AN: C151.1 -> C157.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +2V5B_AN: U11.10 -> U11.22  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P6A_NEG: U21.10 -> Q11.5  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U11_XO: U11.125 -> Y2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P4A_NEG: C175.2 -> D32.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +1V2A: C102.1 -> C103.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +1V2B: C135.1 -> C136.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P6A_NEG: U21.10 -> C181.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U11_LED1_1: R50.2 -> U11.106  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +1V2A_AN: U10.114 -> FB1.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: RG_B_RX_CTL: U11.76 -> R86.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U10_LED2_1: R26.2 -> U10.92  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B_RX_CLK: U11.75 -> R87.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B2A_TXD0: U10.55 -> R82.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P3_B_N: T3.8 -> U10.16  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P8_B_N: T8.8 -> U11.16  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P3_B_P: T3.9 -> U10.15  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P8_B_P: T8.9 -> U11.15  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P9_A_P: T9.12 -> U11.24  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P9_A_N: T9.11 -> U11.25  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P9_B_P: T9.9 -> U11.26  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P9_B_N: T9.8 -> U11.27  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P2_C_N: T2.5 -> U10.7  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P7_C_N: T7.5 -> U11.7  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P2_C_P: T2.6 -> U10.6  (boxed in; escapes/neck-down: boxed in)
+  unrouted: P7_C_P: T7.6 -> U11.6  (boxed in; escapes/neck-down: boxed in)
+  unrouted: RG_A_RXD3: U10.62 -> R79.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P6A_NEG: T6.15 -> U21.10  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U11_LED3_0: R61.2 -> U11.88  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_A2B_TXD0: U11.73 -> R76.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U11_LED4_0: R67.2 -> U11.85  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U10_LED3_0: R31.2 -> U10.88  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: U11_LED5_0: R43.2 -> U11.102  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: SPI_MISO: U11.97 -> U6.21  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P1_C_N: T1.5 -> U10.118  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U10_LED3_1: R32.2 -> U10.89  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P1_C_P: T1.6 -> U10.117  (boxed in; escapes/neck-down: boxed in)
+  unrouted: PSE_OSS: R110.1 -> U21.56  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P1_B_N: T1.8 -> U10.116  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U11_LED4_1: R68.2 -> U11.86  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P1_B_P: T1.9 -> U10.115  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U10_LED4_1: R38.2 -> U10.86  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: P4A_NEG: T4.15 -> C175.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_A2B_TXD3: U11.70 -> R79.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B_RXD2: U11.81 -> R84.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B_RXD0: U11.83 -> R82.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_A2B_TXD2: U11.71 -> R78.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: PSE_RST_N: R109.1 -> U21.44  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: I2C_SCL: U20.53 -> R106.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B2A_TX_CLK: U10.48 -> R87.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_A_RX_CTL: U10.58 -> R80.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B2A_TX_CTL: U10.49 -> R86.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: PSE_RST_N: U21.44 -> U6.10  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_B_RXD1: U11.82 -> R83.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_A_RX_CLK: U10.57 -> R81.1  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: I2C_SDA: U21.54 -> U6.12  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: RG_A2B_TXD1: U11.72 -> R77.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: PSE_OSS: U21.56 -> U6.23  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: +2V5B_AN: U11.111 -> FB4.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: U11_RST_N: U11.96 -> D25.2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: SPI_MISO: U10.97 -> U11.97  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: SPI_SCK: U10.101 -> U11.101  (boxed in (target); escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+work (all variants): 89670824 expansions, 56137066 flood cells, 79407580 cell checks, 44701270 fixed-copper checks, 1078957824 field cells in 1150 fields, 1670 commits, 86 rips
+differential pairs: 81 wanted, 75 coupled pair routes (re-coupling included), 3485200 work units
+  P1_A_LP / P1_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P1_B_LP / P1_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P1_C_LP / P1_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P1_D_LP / P1_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P1_D_P / P1_D_N: 53.8 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 1.074 mm, vias 0/0
+  P1_C_P / P1_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P1_B_P / P1_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P1_A_P / P1_A_N: 58.5 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 1.131 mm, vias 0/0
+  P2_A_LP / P2_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P2_B_LP / P2_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P2_C_LP / P2_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P2_D_LP / P2_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P2_D_P / P2_D_N: 36.9 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.393 mm, vias 0/0
+  P2_C_P / P2_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P2_B_P / P2_B_N: 38.8 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.427 mm, vias 0/0
+  P2_A_P / P2_A_N: 42.3 mm, coupled 90 %, gap 0.170 mm (target 0.168, net class), skew 1.237 mm, vias 2/2
+  P3_A_LP / P3_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P3_B_LP / P3_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P3_C_LP / P3_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P3_D_LP / P3_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P3_D_P / P3_D_N: 32.4 mm, coupled 98 %, gap 0.170 mm (target 0.168, net class), skew 0.328 mm, vias 0/0
+  P3_C_P / P3_C_N: 31.2 mm, coupled 98 %, gap 0.170 mm (target 0.168, net class), skew 0.116 mm, vias 0/0
+  P3_B_P / P3_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P3_A_P / P3_A_N: 35.3 mm, coupled 95 %, gap 0.170 mm (target 0.168, net class), skew 0.271 mm, vias 2/2
+  P4_A_LP / P4_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P4_B_LP / P4_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P4_C_LP / P4_C_LN: 17.4 mm, coupled 87 %, gap 0.170 mm (target 0.168, net class), skew 1.342 mm, vias 1/1
+  P4_D_LP / P4_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P4_D_P / P4_D_N: 39.1 mm, coupled 97 %, gap 0.170 mm (target 0.168, net class), skew 0.286 mm, vias 0/0
+  P4_C_P / P4_C_N: 38.4 mm, coupled 95 %, gap 0.170 mm (target 0.168, net class), skew 0.307 mm, vias 2/2
+  P4_B_P / P4_B_N: 42.2 mm, coupled 88 %, gap 0.170 mm (target 0.168, net class), skew 2.256 mm, vias 2/2
+  P4_A_P / P4_A_N: 38.2 mm, coupled 92 %, gap 0.170 mm (target 0.168, net class), skew 0.444 mm, vias 4/4
+  P5_A_LP / P5_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P5_B_LP / P5_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P5_C_LP / P5_C_LN: 17.4 mm, coupled 87 %, gap 0.170 mm (target 0.168, net class), skew 1.342 mm, vias 1/1
+  P5_D_LP / P5_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P5_D_P / P5_D_N: 61.4 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.998 mm, vias 0/0
+  P5_C_P / P5_C_N: 53.4 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.978 mm, vias 0/0
+  P5_B_P / P5_B_N: 52.1 mm, coupled 94 %, gap 0.170 mm (target 0.168, net class), skew 2.251 mm, vias 2/2
+  P5_A_P / P5_A_N: 47.0 mm, coupled 95 %, gap 0.170 mm (target 0.168, net class), skew 1.145 mm, vias 2/2
+  P6_A_LP / P6_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P6_B_LP / P6_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P6_C_LP / P6_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P6_D_LP / P6_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P6_D_P / P6_D_N: 51.3 mm, coupled 94 %, gap 0.170 mm (target 0.168, net class), skew 1.164 mm, vias 0/0
+  P6_C_P / P6_C_N: 54.3 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 1.097 mm, vias 0/0
+  P6_B_P / P6_B_N: 59.8 mm, coupled 95 %, gap 0.170 mm (target 0.168, net class), skew 1.022 mm, vias 0/0
+  P6_A_P / P6_A_N: 64.8 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 1.127 mm, vias 0/0
+  P7_A_LP / P7_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P7_B_LP / P7_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P7_C_LP / P7_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P7_D_LP / P7_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P7_D_P / P7_D_N: 39.0 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.389 mm, vias 0/0
+  P7_C_P / P7_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P7_B_P / P7_B_N: 38.2 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.427 mm, vias 0/0
+  P7_A_P / P7_A_N: 40.9 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.483 mm, vias 0/0
+  P8_A_LP / P8_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P8_B_LP / P8_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P8_C_LP / P8_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P8_D_LP / P8_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P8_D_P / P8_D_N: 31.7 mm, coupled 98 %, gap 0.170 mm (target 0.168, net class), skew 0.324 mm, vias 0/0
+  P8_C_P / P8_C_N: 31.0 mm, coupled 98 %, gap 0.170 mm (target 0.168, net class), skew 0.116 mm, vias 0/0
+  P8_B_P / P8_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P8_A_P / P8_A_N: 36.7 mm, coupled 95 %, gap 0.170 mm (target 0.168, net class), skew 0.271 mm, vias 2/2
+  P9_A_LP / P9_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P9_B_LP / P9_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P9_C_LP / P9_C_LN: 17.4 mm, coupled 87 %, gap 0.170 mm (target 0.168, net class), skew 1.342 mm, vias 1/1
+  P9_D_LP / P9_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P9_D_P / P9_D_N: 40.0 mm, coupled 97 %, gap 0.170 mm (target 0.168, net class), skew 0.306 mm, vias 0/0
+  P9_C_P / P9_C_N: 40.3 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.307 mm, vias 0/0
+  P9_B_P / P9_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P9_A_P / P9_A_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P10_A_LP / P10_A_LN: 18.3 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 1.493 mm, vias 0/0
+  P10_B_LP / P10_B_LN: 17.9 mm, coupled 79 %, gap 0.170 mm (target 0.168, net class), skew 2.733 mm, vias 0/0
+  P10_C_LP / P10_C_LN: 17.4 mm, coupled 86 %, gap 0.170 mm (target 0.168, net class), skew 1.416 mm, vias 1/1
+  P10_D_LP / P10_D_LN: 19.5 mm, coupled 83 %, gap 0.170 mm (target 0.168, net class), skew 0.739 mm, vias 0/0
+  P10_D_P / P10_D_N: 58.5 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.998 mm, vias 0/0
+  P10_C_P / P10_C_N: 54.5 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.982 mm, vias 0/0
+  P10_B_P / P10_B_N: 52.2 mm, coupled 90 %, gap 0.170 mm (target 0.168, net class), skew 2.834 mm, vias 2/2
+  P10_A_P / P10_A_N: 45.2 mm, coupled 96 %, gap 0.170 mm (target 0.168, net class), skew 1.131 mm, vias 2/2
+  USB_DP / USB_DN: 76.0 mm, coupled 80 %, gap 0.170 mm (target 0.168, net class), skew 2.398 mm, vias 4/4
+warning: the time limit (300 s) ended the search before the work budget did: the result depends on machine speed
+Command exited with non-zero status 3
+wall 303.75 s, cpu 2233.82 s

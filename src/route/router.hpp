@@ -170,6 +170,10 @@ struct RouterOptions {
   bool micro_vias = false;
   bool blind_vias = false;      // use blind/buried vias where a through via is blocked, if the board allows them
   bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
+  // Coupled pair searches stop once they have spent this share of the budget (the work budget, else the time limit; 0 = no limit):
+  // the pairs left over are routed as single connections (issue #53: the pair phase took a whole 300 s run and the board's other
+  // 1,000 connections were never tried).
+  double pair_share = 0;
   // Component rules (doc 15 P3): these net pairs only are routed coupled first when diff_pairs is off (e.g. USB 2.0
   // D+/D- bound by tm::crules, whose names need not end in P/N or +/-). Empty = none.
   std::vector<std::pair<model::NetId, model::NetId>> pair_nets;
@@ -369,6 +373,7 @@ struct RouteResult {
   int txn_tried = 0, txn_kept = 0;  // transactional negotiation: routes with victims tried, and kept
   int optimized = 0;
   int pairs = 0;
+  int pairs_over_share = 0;     // pair attempts skipped because the pair searches had spent RouterOptions::pair_share of the budget
   int length_tuned = 0;
   // Buses: connections routed as a lane of their group (leaders and the members that followed one), and connections
   // of a group routed otherwise ("left the bus"), in the state returned.

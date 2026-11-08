@@ -203,6 +203,10 @@ OPTIONS:
                               boards that allow them)
           --diff-pairs        Route differential pairs (KiCad P/N or +/- names) as coupled
                               pairs first (doc 05 §15)
+          --pair-share FLOAT:FLOAT in [0 - 1]
+                              Coupled pair searches stop after this share of the work budget
+                              (else of --time); the pairs left are routed as single connections
+                              (0 = no limit)
           --pair-twists, --no-pair-twists{false}
                               Coupled pairs may swap sides at a layer change, for pairs whose
                               pin order is mirrored between the ends (default on; only with
