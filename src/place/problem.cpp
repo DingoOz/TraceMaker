@@ -655,7 +655,9 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // supply pad to the nearest pad of an IC (U*, IC*) on the same supply in the input placement, at signal weight.
   // A two-pin pseudo-net between two pads: objective only (never reported as wirelength, never routed, never
   // counted for crossings or congestion), so the reported HPWL is unchanged.
-  auto add_affinity = [&](int pad_a, int pad_b, int weight, std::string name) {
+  // `standoff_b` > 0: the second pin is not pad_b itself but the point that far outside its part's body, straight
+  // out from pad_b across the nearer body side (D171: a decoupling cap held clear of a large IC's escape band).
+  auto add_affinity = [&](int pad_a, int pad_b, int weight, std::string name, Coord standoff_b = 0) {
     PNet net;
     net.name = std::move(name);
     net.weight = weight;
@@ -667,7 +669,15 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       Pin pin;
       pin.part = part_of_fp[z(q.footprint)];
       pin.net = ni;
-      const Point off = q.pos - p.parts[z(pin.part)].pos0;
+      Point off = q.pos - p.parts[z(pin.part)].pos0;
+      if (pi == pad_b && standoff_b > 0) {
+        const Box& body = p.parts[z(pin.part)].geom[0].body;
+        const Coord cx = (body.x0 + body.x1) / 2, cy = (body.y0 + body.y1) / 2;
+        const Coord hw = std::max<Coord>(1, (body.x1 - body.x0) / 2), hh = std::max<Coord>(1, (body.y1 - body.y0) / 2);
+        const geom::i128 ux = static_cast<geom::i128>(off.x - cx) * hh, uy = static_cast<geom::i128>(off.y - cy) * hw;
+        if ((ux < 0 ? -ux : ux) >= (uy < 0 ? -uy : uy)) off.x = off.x >= cx ? body.x1 + standoff_b : body.x0 - standoff_b;
+        else off.y = off.y >= cy ? body.y1 + standoff_b : body.y0 - standoff_b;
+      }
       for (int rr = 0; rr < 4; ++rr) pin.off[z(rr)] = rot90(off, rr);
       net.pins.push_back(static_cast<int>(p.pins.size()));
       p.parts[z(pin.part)].pins.push_back(static_cast<int>(p.pins.size()));
@@ -678,9 +688,31 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   std::vector<std::uint8_t> tied_fp(b.footprints.size(), 0);
   if (opt.decap_affinity) {
     int tied = 0;
-    for (const auto& t : crules::decap_ties(b, [&](int fi) { return part_of_fp[z(fi)] >= 0; }, false)) {
+    const auto usable = [&](int fi) { return part_of_fp[z(fi)] >= 0; };
+    auto ties = crules::decap_ties(b, usable, false);
+    // D171 (issue #55; with decap_spread, off by default): a capacitor whose input position carries no intent (from
+    // scratch, or dropped beside the board as KiCad does with new parts) is spread over its IC supply pads instead of
+    // tied to the pad nearest the pile. A capacitor on the board in a real placement keeps its nearest pad (the
+    // designer's choice).
+    const auto unplaced = [&](int fi) {
+      const Part& pt = p.parts[z(part_of_fp[z(fi)])];
+      if (!pt.movable) return false;
+      if (opt.scratch) return true;
+      const Box& body = pt.geom[0].body;
+      return !Box{pt.pos0.x + body.x0, pt.pos0.y + body.y0, pt.pos0.x + body.x1, pt.pos0.y + body.y1}.intersects(p.region);
+    };
+    if (opt.decap_spread)
+      if (const int moved = crules::spread_unplaced_decaps(b, ties, usable, unplaced); moved > 0)
+        p.notes.push_back(std::to_string(moved) + " decoupling tie(s) of unplaced capacitors spread over their IC's supply pins (D171)");
+    for (const auto& t : ties) {
+      const int ic_fp = b.pads[z(t.ic_pad)].footprint;
+      // A large IC (many pins round its body): an unplaced cap is pulled to a point clear of its pin rows.
+      const Coord standoff = opt.decap_spread && opt.decap_standoff > 0 && unplaced(t.cap_fp) &&
+                                     static_cast<int>(b.footprints[z(ic_fp)].pads.size()) >= kDecapStandoffPins
+                                 ? opt.decap_standoff
+                                 : 0;
       add_affinity(t.cap_pad, t.ic_pad, opt.decap_weight,
-                   "~decap " + b.footprints[z(t.cap_fp)].reference + "-" + b.footprints[z(b.pads[z(t.ic_pad)].footprint)].reference);
+                   "~decap " + b.footprints[z(t.cap_fp)].reference + "-" + b.footprints[z(ic_fp)].reference, standoff);
       tied_fp[z(t.cap_fp)] = 1;
       ++tied;
     }

@@ -92,7 +92,7 @@ def drc(path: pathlib.Path, timeout: int = 600) -> dict | None:
         return None
 
 
-PLACE = ROOT / "build/release/src/place/tracemaker-place"
+PLACE = pathlib.Path(os.environ.get("TM_PLACE_BINARY", ROOT / "build/release/src/place/tracemaker-place"))  # as bench/place_m8.py
 PLACE_MODE = None        # --place MODE: TraceMaker may move components before routing
 PLACE_TIMEOUT = 900      # seconds; on timeout the human placement is routed (recorded)
 PLACE_WORK = 3_000_000   # router budget per placement evaluation (deterministic)

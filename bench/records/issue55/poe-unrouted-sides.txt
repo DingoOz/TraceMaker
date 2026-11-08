@@ -1,0 +1,12 @@
+== before
+unrouted connections: 229
+U10: pin ends of unrouted connections L 14 R 23 T 5 B 15 (total 57)
+U11: pin ends of unrouted connections L 21 R 8 T 19 B 11 (total 59)
+== after
+unrouted connections: 320
+U10: pin ends of unrouted connections L 21 R 16 T 10 B 18 (total 65)
+U11: pin ends of unrouted connections L 17 R 7 T 21 B 22 (total 67)
+== so2
+unrouted connections: 196
+U10: pin ends of unrouted connections L 15 R 16 T 3 B 17 (total 51)
+U11: pin ends of unrouted connections L 19 R 10 T 18 B 21 (total 68)

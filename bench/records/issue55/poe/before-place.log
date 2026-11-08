@@ -1,0 +1,37 @@
+  component rules (soft): buck=5 connector_general=13 crystal=2 esd_tvs=18 ethernet=12 fuse=17 ic_decoupling=99 led=21 mounting_hole=6 power_path=1 rf_line=16 rf_module=1 test_point=8 usb2=1 usb3_typec=1; 115 proximity pseudo-net(s)
+poe_gbe_switch_10p-1-generated.kicad_pcb: 484 parts (314 movable), 563 nets, 1888 pins, mode refine
+  note: two-stage component rules: 107 decoupling capacitor(s) and IC(s) locked after stage 1, then refined
+  note: courtyard clearance 0.250000 mm (default 0.250000 mm)
+  note: 99 decoupling capacitor(s) tied to the nearest supply pin of their IC
+  note: component rules: 16 proximity pseudo-net(s), 99 skipped (part already tied as a decoupling capacitor)
+  HPWL            before    17242.9 mm   after    17145.3 mm
+  weighted HPWL   before    15957.0      after    15852.3   (signal x1, power x0.1)
+  lower bound L4     13425.3 (any rotation)     13651.6 (input rotations)  gap after/LB 1.181
+  crossings       before       1137      after       1061
+  conflicts       before          0      after          0   new 0 (outside board: 0 -> 0, new 0; fixed-only pairs 9)
+  legalisation: 0 placed, 0 failed, mean displacement 0.00 mm, max 0.00 mm
+  annealing: best run 3, 40192000 moves, 6749613 accepted
+  421 footprints moved, 85.1 s, legal -> before-full.kicad_pcb
+	Command being timed: "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i55/base/tracemaker-place poe_gbe_switch_10p-1-generated.kicad_pcb -o before-full.kicad_pcb --mode full --scratch --seed 1 --threads 8 --json before-full.json"
+	User time (seconds): 1628.78
+	System time (seconds): 0.70
+	Percent of CPU this job got: 679%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:59.77
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 199552
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 126983
+	Voluntary context switches: 92
+	Involuntary context switches: 67125
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

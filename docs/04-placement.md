@@ -42,9 +42,39 @@ Extracted from the KiCad project (doc 08):
     *built (2026-10-03, D25)*: each such capacitor is tied to the nearest IC pad on its supply in the input
     placement by a two-pin pseudo-net at signal weight (objective only, not reported as wirelength); the
     Hungarian assignment is not built;
+    *built (2026-11-08, D171, issue #55; off by default, `--decap-spread`)*: a capacitor whose input position
+    carries no intent (`--scratch`, or lying wholly outside the board outline's box, as KiCad drops new parts) is
+    not tied to the pin nearest the pile, which sends every capacitor of a big chip to the pins facing the pile. It
+    goes to the IC supply pad of its net with the fewest capacitors so far (the designer's capacitors counted
+    first), equally loaded pads taken in bit-reversed order of the pad list, so the capacitors land evenly round
+    the package and across the ICs on that net (`crules::spread_unplaced_decaps`). On an IC with 48 or more pads
+    the tie ends `--decap-standoff-mm` (default 2) outside the IC's body, straight out from the pin, so the band
+    next to the pin rows stays free for escapes. Capacitors placed on the board keep their nearest pin. Off by default:
+    not a clear routing win (§2.1);
   - **crystal/oscillator** near its MCU pins; **termination resistors** near the driver or receiver
     (by net topology); **ESD/TVS** near the connector pin.
   - schematic **hierarchical sheets** and KiCad **groups/rooms** as cluster hints.
+
+### 2.1 Decoupling caps from a pile (D171, issue #55; 2026-11-08)
+
+Nearest-pin ties (D25) are right for a human placement. From scratch they are wrong: WholeBoard's PoE switch put
+22-25 of each KSZ9897's 29 caps on the chip side facing the pile. That side is also where port 5's MDI pairs and the
+RGMII bus leave. With `--decap-spread` (off by default) the caps of a pile are spread over the supply pads of their
+net. On an IC with 48 or more pads the tie ends 2 mm outside the body (`--decap-standoff-mm`). Records:
+`bench/records/issue55/`.
+
+| Board, budget | Placement | Caps at the chip, by side | Routed |
+|---|---|---|--:|
+| PoE switch (1,189 connections), `--work 10M` | nearest pin (default) | U10 1/25/1/2, U11 4/22/1/2 (supply pins 9/7/3/8) | 960 |
+| | spread onto the pins (standoff 0) | U10 12/7/5/9 | 869 |
+| | `--decap-spread` (standoff 2 mm) | U10 9/9/4/11, U11 9/8/5/11, max 4.9 mm from the pin | 993 |
+| 8 PCBench piles, 64-154-pin ICs (2,146), `--work 1M`, seeds 1 / 2 | nearest pin (default) | busiest side 0.59 / 0.71 of the caps | 1581 / 1578 |
+| | spread onto the pins | 0.51 / 0.50 | 1540 / 1518 |
+| | `--decap-spread` | 0.50 / 0.47 | 1549 / 1582 |
+
+Caps against the pin rows cost routing. Caps 2 mm out route as well as the default on the public piles (single boards
+swing by up to ±48) and better on the PoE board. That is not a clear win, so the option stays off; output with it off is
+byte-identical to before.
 
 ## 3. Pipeline
 

@@ -23,6 +23,7 @@ inline std::size_t z(int i) { return static_cast<std::size_t>(i); }
 // Net weights are small integers so every cost is an exact integer (CLAUDE.md rule 2).
 inline constexpr int kSignalWeight = 10;
 inline constexpr int kPowerWeight = 1;
+inline constexpr int kDecapStandoffPins = 48;  // D171: "large IC" for ExtractOptions::decap_standoff
 inline constexpr Coord kEdgeTolerance = 250'000;  // courtyard may extend this far past the board edge
 
 // A piece of copper with what KiCad's clearance check needs: layers, net and the clearance it asks for
@@ -155,6 +156,14 @@ struct ExtractOptions {
   Coord default_clearance = 250'000;  // used when the board has no courtyard rule (KiCad's own default is 0)
   bool decap_affinity = true;       // tie each decoupling capacitor to the nearest supply pin of its IC
   int decap_weight = kSignalWeight; // weight of those ties (D25: signal weight)
+  // D171 (off by default: not a clear routing win): capacitors without a real input position (scratch, or beside
+  // the board) are spread over their IC's supply pins (crules::spread_unplaced_decaps) instead of tied to the pin
+  // nearest the pile.
+  bool decap_spread = false;
+  // D171: with decap_spread, an unplaced cap tied to an IC of kDecapStandoffPins pads or more is pulled to a point
+  // this far outside the IC's body (straight out from its pin) instead of onto the pin: the band next to the
+  // pin rows stays free for the escapes and fan-out vias (0 = onto the pin).
+  Coord decap_standoff = 2'000'000;
   int crules_weight_pct = 100;      // scale of the component-rule proximity weights (100 = as the rules say)
   // Full mode with component rules: place with the decoupling ties only, then lock the tied capacitors and refine
   // with the component-rule pulls (they compete for the space next to the IC otherwise; doc 15 §14.3).

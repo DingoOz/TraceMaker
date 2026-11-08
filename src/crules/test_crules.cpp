@@ -279,6 +279,55 @@ TEST_CASE("D25 ties are reproduced and the generalised decoupling is a superset"
   CHECK_FALSE(vref_plain);
 }
 
+TEST_CASE("D171: unplaced decoupling caps spread over the IC's supply pins, placed caps keep theirs", "[crules]") {
+  Builder B;
+  // An IC with eight +1V2 pins 1 mm apart (pads 0..7 of U1) and a ground pin; eight caps in a pile to the right.
+  std::vector<std::tuple<std::string, std::string, std::string>> pins;
+  for (int i = 0; i < 8; ++i) pins.emplace_back(std::to_string(i + 1), "+1V2", "VDD");
+  pins.emplace_back("9", "GND", "GND");
+  const int u1 = B.add("U1", "Package_QFP:TQFP-128", "KSZ9897", {20 * MM, 40 * MM}, pins);
+  std::vector<int> caps;
+  for (int i = 0; i < 8; ++i)
+    caps.push_back(B.add("C" + std::to_string(101 + i), "Capacitor_SMD:C_0402_1005Metric", "100nF", {200 * MM + i * 2 * MM, 40 * MM},
+                         {{"1", "+1V2", ""}, {"2", "GND", ""}}));
+  const auto all = [](int) { return true; };
+  const auto none = [](int) { return false; };
+  const auto pin_of = [&](const DecapTie& t) { return t.ic_pad - B.b.footprints[static_cast<std::size_t>(u1)].pads.front(); };
+  const auto ties = decap_ties(B.b, all, false);
+  REQUIRE(ties.size() == 8);
+  for (const auto& t : ties) CHECK(pin_of(t) == 7);  // nearest to the pile: every cap on the last pin
+  // All unplaced: one cap per pin.
+  auto spread = ties;
+  CHECK(spread_unplaced_decaps(B.b, spread, all, all) == 7);
+  std::set<int> used;
+  for (const auto& t : spread) used.insert(pin_of(t));
+  CHECK(used.size() == 8);
+  // Four unplaced caps out of eight pins land on every other pin, not on the first four.
+  auto half = ties;
+  const auto first4 = [&](int f) { return f == caps[0] || f == caps[1] || f == caps[2] || f == caps[3]; };
+  std::erase_if(half, [&](const DecapTie& t) { return !first4(t.cap_fp); });
+  spread_unplaced_decaps(B.b, half, all, first4);
+  std::set<int> h;
+  for (const auto& t : half) h.insert(pin_of(t));
+  CHECK(h == std::set<int>{0, 2, 4, 6});
+  // A placed cap keeps its pin and counts as its load.
+  auto mixed = ties;
+  const auto not_first = [&](int f) { return f != caps[0]; };
+  spread_unplaced_decaps(B.b, mixed, all, not_first);
+  CHECK(pin_of(mixed[0]) == 7);
+  std::set<int> m;
+  for (const auto& t : mixed) m.insert(pin_of(t));
+  CHECK(m.size() == 8);
+  // Nothing unplaced: nothing changes.
+  auto same = ties;
+  CHECK(spread_unplaced_decaps(B.b, same, all, none) == 0);
+  for (std::size_t i = 0; i < ties.size(); ++i) CHECK(same[i].ic_pad == ties[i].ic_pad);
+  // Deterministic.
+  auto again = ties;
+  spread_unplaced_decaps(B.b, again, all, all);
+  for (std::size_t i = 0; i < ties.size(); ++i) CHECK(again[i].ic_pad == spread[i].ic_pad);
+}
+
 TEST_CASE("evaluation: proximity measured, statuses follow the mode", "[crules]") {
   Builder B = demo_board();
   const auto& b = B.b;

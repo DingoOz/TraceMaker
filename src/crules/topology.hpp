@@ -63,4 +63,15 @@ struct DecapTie {
 };
 std::vector<DecapTie> decap_ties(const model::Board& b, const std::function<bool(int)>& usable, bool generalised);
 
+// Decision D171 (issue #55, doc 04 §2): re-tie the capacitors whose input position carries no intent
+// (`unplaced(cap_fp)`: a pile from a schematic import, or parts dropped beside the board) to the IC (U*, IC*)
+// supply pads of their net, spread instead of nearest. Nearest-in-the-input sends a whole pile to the pins that
+// face it: all the caps of a 128-pin chip on one side, over that side's escapes. Each unplaced cap goes to the pad
+// of its supply net with the fewest caps tied to it so far, the caps the designer placed counted first; among
+// equally loaded pads the order is the bit-reversed index of the pad list (van der Corput), so any number of caps
+// lands evenly round the package and across the ICs on that net rather than on its first pins. Ties of placed
+// caps are kept. Returns the number of ties changed.
+int spread_unplaced_decaps(const model::Board& b, std::vector<DecapTie>& ties, const std::function<bool(int)>& usable,
+                           const std::function<bool(int)>& unplaced);
+
 }  // namespace tmk::crules
