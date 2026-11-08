@@ -23,6 +23,7 @@ struct Violation {
   std::vector<ViolationItem> items;
   Coord actual = -1, required = -1;
   int layer = -1;
+  model::NetId net = -1;  // unconnected_items: the net that is missing the connection (-1 for other types)
 };
 
 struct DrcOptions {

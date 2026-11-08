@@ -295,7 +295,8 @@ Bound bind_crystal(const Ctx& c, int anchor) {
   Role xin = make_role("xin"), xout = make_role("xout"), icr = make_role("ic"), caps = make_role("load_caps"), ser = make_role("series_r");
   if (ic >= 0) {
     static const std::regex osc = icase(R"(osc|xtal|xt|^x(in|out|i|o|1|2)$|^xc(in|out)|^xi$|^xo$|clk_?in|tosc|xin|xout)");
-    static const std::regex out_re = icase(R"(out|xo$|x2|xtal2|_n$|^xo|xc2)");
+    // The output pin by its name: XL2 (Nordic), OSC2 / CLKO (Microchip) besides the usual ones.
+    static const std::regex out_re = icase(R"(out|xo$|x2|xtal2|_n$|^xo|xc2|xl2|osc2|clko)");
     icr.parts.push_back(ic);
     std::vector<int> pins;
     for (NetId n : sig) {
@@ -314,8 +315,12 @@ Bound bind_crystal(const Ctx& c, int anchor) {
     // the crystal category has no pin_name detector; see dev/assumptions-m13.md).
     if (named || !c.ix.has_pin_names()) r.topology.push_back("two_terminal_between_osc_pins");
     r.topology_weak = !named;
+    // Pins named, but neither name says which is the output (GPIO-style names): as for unnamed pins, the last one is xout,
+    // rather than calling both xin.
+    bool any_out = false;
+    for (int p : pins) any_out = any_out || search(c.b.pads[static_cast<std::size_t>(p)].pinfunction, out_re);
     for (int p : pins) {
-      const bool is_out = c.ix.has_pin_names() ? search(c.b.pads[static_cast<std::size_t>(p)].pinfunction, out_re) : (p == pins.back() && pins.size() > 1);
+      const bool is_out = c.ix.has_pin_names() && any_out ? search(c.b.pads[static_cast<std::size_t>(p)].pinfunction, out_re) : (p == pins.back() && pins.size() > 1);
       (is_out ? xout : xin).pads.push_back(p);
       add_unique_net(is_out ? xout.nets : xin.nets, c.b.pads[static_cast<std::size_t>(p)].net);
     }

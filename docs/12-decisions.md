@@ -184,6 +184,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D167](decisions/D167.md) | physical_clearance between copper of any net in the router and the DRC | accepted |
 | [D168](decisions/D168.md) | The router keeps custom hole_to_hole and edge_clearance rules at one board-wide value | accepted |
 | [D169](decisions/D169.md) | Obstacle caches are keyed by class values and bounded in memory | accepted |
+| [D177](decisions/D177.md) | Run report: what the outside review of D3 found, fixed | accepted |
 <!-- END decision index -->
 
 ## Risks

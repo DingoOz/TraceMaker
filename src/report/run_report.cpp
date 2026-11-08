@@ -87,14 +87,17 @@ nlohmann::json rules_json(const std::string& board_path, const model::Board& boa
   return j;
 }
 
-nlohmann::json drc_json(const model::Board& before, const model::Board& after, const model::DesignRules& rules, bool refill) {
+nlohmann::json drc_json(const model::Board& before, const model::Board& after, const model::DesignRules& rules, bool refill,
+                        const std::set<std::string>* router_open) {
   struct Side {
     std::map<std::string, std::pair<int, std::string>> by_type;  // type -> (count, severity of the first)
     int errors = 0, warnings = 0, unconnected = 0;
     std::vector<std::string> notes;
     nlohmann::json missing = nlohmann::json::array();  // the unconnected items: what is still to be joined, and where
+    nlohmann::json error_items = nlohmann::json::array();  // the errors, each with its first item and place
+    int open_by_router = 0, cut_by_refill = 0;
   };
-  auto check = [&](const model::Board& b) {
+  auto check = [&](const model::Board& b, bool mark) {
     Side s;
     drc::DrcReport rep;
     if (refill) {
@@ -108,19 +111,27 @@ nlohmann::json drc_json(const model::Board& before, const model::Board& after, c
       auto& e = s.by_type[v.type];
       if (e.first++ == 0) e.second = v.severity;
       (v.severity == "error" ? s.errors : s.warnings) += 1;
+      if (v.severity == "error" && s.error_items.size() < kMaxMissing) {
+        nlohmann::json ei{{"type", v.type}, {"what", v.description}};
+        if (!v.items.empty()) ei.update({{"item", v.items[0].description}, {"x_mm", mm3(v.items[0].pos.x)}, {"y_mm", mm3(v.items[0].pos.y)}});
+        s.error_items.push_back(std::move(ei));
+      }
     }
     s.unconnected = static_cast<int>(rep.unconnected.size());
     for (const auto& u : rep.unconnected) {
-      if (s.missing.size() >= kMaxMissing) break;
+      const bool by_router = mark && router_open && u.net > 0 && static_cast<std::size_t>(u.net) < b.nets.size() && router_open->count(b.nets[static_cast<std::size_t>(u.net)].name);
+      (by_router ? s.open_by_router : s.cut_by_refill) += 1;
+      if (s.missing.size() >= kMaxMissing) continue;
       nlohmann::json e{{"what", u.description}};
       if (u.items.size() >= 2)
         e.update({{"from", u.items[0].description}, {"to", u.items[1].description}, {"x_mm", mm3(u.items[0].pos.x)}, {"y_mm", mm3(u.items[0].pos.y)}});
+      if (mark && router_open) e["open_by_router"] = by_router;
       s.missing.push_back(std::move(e));
     }
     s.notes.insert(s.notes.end(), rep.warnings.begin(), rep.warnings.end());
     return s;
   };
-  const Side b = check(before), a = check(after);
+  const Side b = check(before, false), a = check(after, true);
   std::set<std::string> types;
   for (const auto& [t, _] : b.by_type) types.insert(t);
   for (const auto& [t, _] : a.by_type) types.insert(t);
@@ -139,13 +150,19 @@ nlohmann::json drc_json(const model::Board& before, const model::Board& after, c
   auto side = [](const Side& s) {
     return nlohmann::json{{"errors", s.errors}, {"warnings", s.warnings}, {"unconnected", s.unconnected}, {"notes", s.notes}};
   };
+  auto before_side = side(b);
+  before_side["error_items"] = b.error_items;
   auto after_side = side(a);
+  if (router_open) {
+    after_side["unconnected_open_by_router"] = a.open_by_router;
+    after_side["unconnected_cut_by_refill"] = a.cut_by_refill;
+  }
   // Only after the route: before it, every connection is unconnected and the list says nothing.
   after_side["unconnected_items"] = a.missing;
   if (a.unconnected > static_cast<int>(a.missing.size())) after_side["unconnected_items_not_shown"] = a.unconnected - static_cast<int>(a.missing.size());
   return {{"checker", "tracemaker drc"},
           {"zones_refilled", refill},
-          {"before", side(b)},
+          {"before", before_side},
           {"after", after_side},
           {"types", rows},
           {"added_routing_errors", added_routing},
