@@ -1,0 +1,213 @@
+{
+ "work": 30000000,
+ "on_args": "--diff-pairs",
+ "modes": [
+  [
+   "base",
+   "--diff-pairs --soft-zones"
+  ]
+ ],
+ "rows": [
+  {
+   "board": "StickHub",
+   "mode": "base",
+   "routed": 128,
+   "connections": 128,
+   "unconnected": 0,
+   "added_errors": {
+    "clearance": 427
+   },
+   "added_any": {
+    "clearance": 427
+   },
+   "capped": {
+    "before": {},
+    "after": {}
+   },
+   "capped_evaluated_types": [],
+   "capped_not_evaluated_types": [],
+   "error_gate": "fail",
+   "clean": false,
+   "pairs": [
+    {
+     "coupled_a_mm": 0.6597534805382169,
+     "coupled_b_mm": 0.31979824488104985,
+     "coupled_share": 0.07044014213045682,
+     "gap_median_mm": 0.15315302477366646,
+     "gap_min_mm": 0.15309354358102056,
+     "gap_source": "net class",
+     "length_a_mm": 7.453154577237605,
+     "length_b_mm": 6.453003130467096,
+     "net_a": "/U2D+",
+     "net_b": "/U2D-",
+     "skew_mm": 1.0001514467705097,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 0.0,
+     "coupled_b_mm": 0.0,
+     "coupled_share": 0.0,
+     "gap_median_mm": 0.0,
+     "gap_min_mm": 0.0,
+     "gap_source": "net class",
+     "length_a_mm": 4.173978408055192,
+     "length_b_mm": 5.337593910206947,
+     "net_a": "/U6D+",
+     "net_b": "/U6D-",
+     "skew_mm": 1.1636155021517556,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 2.690048995322964,
+     "coupled_b_mm": 3.490148022664081,
+     "coupled_share": 0.23580092602900432,
+     "gap_median_mm": 0.153963,
+     "gap_min_mm": 0.150238775018932,
+     "gap_source": "net class",
+     "length_a_mm": 12.645717102574363,
+     "length_b_mm": 13.563666898007805,
+     "net_a": "/U7D+",
+     "net_b": "/U7D-",
+     "skew_mm": 0.9179497954334411,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 2.8738889131925753,
+     "coupled_b_mm": 2.383461048514621,
+     "coupled_share": 0.3129495623554254,
+     "gap_median_mm": 0.15443778996133387,
+     "gap_min_mm": 0.15239366518662392,
+     "gap_source": "net class",
+     "length_a_mm": 8.914815628219175,
+     "length_b_mm": 7.884536708743928,
+     "net_a": "/U5D+",
+     "net_b": "/U5D-",
+     "skew_mm": 1.0302789194752482,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 7.176777520489659,
+     "coupled_b_mm": 6.5966894735724555,
+     "coupled_share": 0.36602402368378795,
+     "gap_median_mm": 0.153148,
+     "gap_min_mm": 0.15276078129440743,
+     "gap_source": "net class",
+     "length_a_mm": 19.515815262354884,
+     "length_b_mm": 18.114138245727304,
+     "net_a": "/U4D+",
+     "net_b": "/U4D-",
+     "skew_mm": 1.4016770166275798,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 0.0,
+     "coupled_b_mm": 0.0,
+     "coupled_share": 0.0,
+     "gap_median_mm": 0.0,
+     "gap_min_mm": 0.0,
+     "gap_source": "net class",
+     "length_a_mm": 5.910128587598685,
+     "length_b_mm": 7.973191099927187,
+     "net_a": "/U1D+",
+     "net_b": "/U1D-",
+     "skew_mm": 2.0630625123285027,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 7.692988128426006,
+     "coupled_b_mm": 7.769002852399054,
+     "coupled_share": 0.5494422194620534,
+     "gap_median_mm": 0.15683178344596033,
+     "gap_min_mm": 0.15419097330542206,
+     "gap_source": "net class",
+     "length_a_mm": 15.201390346614168,
+     "length_b_mm": 12.93985987613637,
+     "net_a": "/U3D+",
+     "net_b": "/U3D-",
+     "skew_mm": 2.261530470477799,
+     "target_gap_mm": 0.15,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.15
+    },
+    {
+     "coupled_a_mm": 8.012732816047844,
+     "coupled_b_mm": 8.51936639938717,
+     "coupled_share": 0.3510738733940462,
+     "gap_median_mm": 0.1535240933291135,
+     "gap_min_mm": 0.15298831852911465,
+     "gap_source": "net class",
+     "length_a_mm": 21.01703646777062,
+     "length_b_mm": 26.073050457835897,
+     "net_a": "/D+",
+     "net_b": "/D-",
+     "skew_mm": 5.056013990065277,
+     "target_gap_mm": 0.15,
+     "vias_a": 3,
+     "vias_b": 3,
+     "width_mm": 0.15
+    }
+   ]
+  },
+  {
+   "board": "RoyalBlue54L-Feather",
+   "mode": "base",
+   "routed": 125,
+   "connections": 147,
+   "unconnected": 22,
+   "added_errors": {},
+   "added_any": {},
+   "capped": {
+    "before": {},
+    "after": {
+     "clearance": 499,
+     "hole_clearance": 199
+    }
+   },
+   "capped_evaluated_types": [
+    "clearance",
+    "hole_clearance"
+   ],
+   "capped_not_evaluated_types": [],
+   "error_gate": "unknown",
+   "clean": false,
+   "pairs": [
+    {
+     "coupled_a_mm": 14.08096228575539,
+     "coupled_b_mm": 14.463487370981817,
+     "coupled_share": 0.6146967720821817,
+     "gap_median_mm": 0.2052,
+     "gap_min_mm": 0.20519907403827226,
+     "gap_source": "net class",
+     "length_a_mm": 22.122084108046327,
+     "length_b_mm": 24.314550917785514,
+     "net_a": "/Debugger/D+",
+     "net_b": "/Debugger/D-",
+     "skew_mm": 2.1924668097391873,
+     "target_gap_mm": 0.2032,
+     "vias_a": 1,
+     "vias_b": 1,
+     "width_mm": 0.125
+    }
+   ]
+  }
+ ]
+}

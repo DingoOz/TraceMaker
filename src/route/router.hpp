@@ -179,6 +179,22 @@ struct RouterOptions {
   // pin order is mirrored between its ends can still be routed coupled (doc 05 §24).
   bool pair_twists = true;
   Coord pair_skew = 0;
+  // Coupled pairs (issue #67, D175; design by quanln). Longest reach of a pair's uncoupled legs: the coupled section
+  // starts and ends within this distance of the pad midpoints (the old fixed 2.5 mm by default).
+  Coord pair_leg_max = 2'500'000;
+  // Negotiation never rips a half of a coupled pair (a ripped half takes its partner with it, and the pair is often
+  // not coupled again): the route that would rip it fails instead, as one that would rip a bus does.
+  bool protect_coupled = false;
+  // Work units the clean-up re-coupling of split pairs may spend past the search budget (0 = none: it runs only on
+  // budget left over, as before D175). Under a time limit the allowance is converted to time at the run's own work
+  // rate. Used only when pairs are routed; on the 20 pair boards of doc 05 §73 it coupled two more pairs and changed
+  // nothing else.
+  long recouple_work = 2'000'000;
+  // Pair legs may also leave a pad straight out along one of 8 directions before turning towards the coupled
+  // section, for end pads whose neighbours block every direct leg (issue #67 cause 3).
+  bool pair_pad_exits = false;
+  // A pair that finds no coupled path is tried once more with legs of up to this reach and pad exits (0 = no retry).
+  Coord pair_retry_leg = 0;
   // Per-pair limits for RouterOptions::pair_nets (same index; 0 or missing = pair_skew): component rules give each
   // interface its own limit (USB 2.0 1.27 mm, doc 15 USB2-02).
   std::vector<Coord> pair_net_skew;
@@ -369,6 +385,7 @@ struct RouteResult {
   int txn_tried = 0, txn_kept = 0;  // transactional negotiation: routes with victims tried, and kept
   int optimized = 0;
   int pairs = 0;
+  int pair_retried = 0;  // pairs coupled by the wider retry (RouterOptions::pair_retry_leg)
   int length_tuned = 0;
   // Buses: connections routed as a lane of their group (leaders and the members that followed one), and connections
   // of a group routed otherwise ("left the bus"), in the state returned.

@@ -1667,6 +1667,7 @@ RouteJobResult run_route_job(RouteJob job) {
         want.push_back(p);
     nlohmann::json pj = nlohmann::json::array();
     log(fmt("differential pairs: %zu wanted, %d coupled pair routes (re-coupling included), %ld work units", want.size(), res.pairs, res.pair_work));
+    if (res.pair_retried > 0) log(fmt("  %d of them coupled by the wider retry (--pair-retry-leg-mm)", res.pair_retried));
     out.summary["pair_work"] = res.pair_work;
     for (const auto& [na, nb] : want) {
       const auto pr = route::pair_rule(lb.board, rules, re, na, nb);

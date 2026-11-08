@@ -201,3 +201,150 @@ TEST_CASE("pair search: rejected candidates are work, and the work budget stops 
   CHECK(again.expansions == cut.expansions);
   CHECK(again.pair_work == cut.pair_work);
 }
+
+namespace {
+
+// Issue #67 (D175): 40 x 20 mm, one copper layer. Pair D_P/D_N runs from (5, 10) to (35, 10); at each end a locked
+// box of net W opens only towards the other end, and a field of small W pads in the box's mouth lets single tracks
+// through (one between each two posts) but not the coupled pair. The coupled section can start only beyond the
+// field, about 4.4 mm from the pads: farther than the default leg reach of 2.5 mm. The posts have no net.
+model::Board post_field_pair() {
+  std::string s = R"((kicad_pcb (version 20240108) (generator "pcbnew")
+  (general (thickness 1.6))
+  (layers (0 "F.Cu" signal) (44 "Edge.Cuts" user))
+  (setup (pad_to_mask_clearance 0))
+  (net 0 "") (net 1 "D_P") (net 2 "D_N") (net 3 "W")
+)";
+  auto num = [](double v) { return std::to_string(v); };
+  auto wall = [&](double x0, double y0, double x1, double y1) {
+    s += "  (segment (start " + num(x0) + " " + num(y0) + ") (end " + num(x1) + " " + num(y1) +
+         ") (width 0.1) (locked yes) (layer \"F.Cu\") (net 3))\n";
+  };
+  for (const int end : {0, 1}) {
+    const double x = end == 0 ? 5 : 35, sg = end == 0 ? 1 : -1;  // sg: towards the other end
+    const std::string ref = end == 0 ? "U1" : "U2";
+    s += "  (footprint \"T:P\" (layer \"F.Cu\") (at " + num(x) + " 10) (property \"Reference\" \"" + ref + "\")\n"
+         "    (pad \"1\" smd rect (at 0 -0.3) (size 0.2 0.2) (layers \"F.Cu\") (net 1 \"D_P\"))\n"
+         "    (pad \"2\" smd rect (at 0 0.3) (size 0.2 0.2) (layers \"F.Cu\") (net 2 \"D_N\")))\n";
+    const double back = x - sg * 0.6, mouth = x + sg * 4.2;
+    wall(back, 9.0, back, 11.0);
+    wall(back, 9.0, mouth, 9.0);
+    wall(back, 11.0, mouth, 11.0);
+    s += "  (footprint \"T:F\" (layer \"F.Cu\") (at " + num(x) + " 10) (property \"Reference\" \"" + (end == 0 ? "F1" : "F2") + "\")\n";
+    int k = 0;
+    for (int col = 0; col < 8; ++col)
+      for (const double y : {-0.6, 0.0, 0.6})
+        s += "    (pad \"" + std::to_string(++k) + "\" smd circle (at " + num(sg * (0.6 + 0.5 * col)) + " " + num(y) +
+             ") (size 0.1 0.1) (layers \"F.Cu\"))\n";
+    s += "  )\n";
+  }
+  s += "  (gr_rect (start 0 0) (end 40 20) (stroke (width 0.1) (type default)) (fill none) (layer \"Edge.Cuts\"))\n)\n";
+  return io::read_board(sexpr::Document::parse(s));
+}
+
+route::RouteResult route_post_field(const model::Board& b, Coord leg_max, Coord retry = 0) {
+  model::DesignRules r;
+  model::NetClass k;
+  k.name = "Default";
+  k.clearance = 100'000;
+  k.track_width = 150'000;
+  r.classes.push_back(k);
+  route::RouterOptions o;
+  o.work_budget = 3'000'000;
+  o.time_limit_s = 600;
+  o.gpu_device = -1;
+  o.pair_leg_max = leg_max;
+  o.pair_retry_leg = retry;
+  o.pair_nets = {{b.net_by_name("D_P"), b.net_by_name("D_N")}};
+  return route::Router(b, r, o).run();
+}
+
+}  // namespace
+
+TEST_CASE("pair legs: --pair-leg-mm reaches past obstacles beside the pads (issue #67)", "[diffpair][route]") {
+  const auto b = post_field_pair();
+  const auto near = route_post_field(b, 2'500'000);
+  CHECK(near.routed == near.connections);  // routed singly between the posts
+  CHECK(near.pairs == 0);
+  const auto far = route_post_field(b, 6'000'000);
+  CHECK(far.routed == far.connections);
+  CHECK(far.pairs == 1);
+  // The default and an explicit 2.5 mm are the same run.
+  const auto t1 = near.tracks, t2 = route_post_field(b, route::RouterOptions{}.pair_leg_max).tracks;
+  REQUIRE(t1.size() == t2.size());
+  for (std::size_t i = 0; i < t1.size(); ++i) CHECK((t1[i].a == t2[i].a && t1[i].b == t2[i].b && t1[i].layer == t2[i].layer));
+}
+
+TEST_CASE("pair protection: a refused rip of a coupled half is a rip limit", "[diffpair]") {
+  CHECK(route::failure_reason_code("exact check rejected the lattice path; negotiated: would rip a coupled pair half") == "rip_limit");
+}
+
+namespace {
+
+// Issue #67 cause 3 (D175): each end pad of pair D_P/D_N (0.5 mm squares 2 mm apart) is walled in by five unnetted pads
+// and free only on its outer side (D_P above, D_N below), so every direct leg from the pad centre towards the pair runs
+// into a neighbour. A leg that leaves the pad through its free side first and then turns can reach the pair.
+model::Board flanked_pair() {
+  std::string s = R"((kicad_pcb (version 20240108) (generator "pcbnew")
+  (general (thickness 1.6))
+  (layers (0 "F.Cu" signal) (44 "Edge.Cuts" user))
+  (setup (pad_to_mask_clearance 0))
+  (net 0 "") (net 1 "D_P") (net 2 "D_N")
+)";
+  auto num = [](double v) { return std::to_string(v); };
+  for (const int end : {0, 1}) {
+    const double x = end == 0 ? 5 : 35, sg = end == 0 ? 1 : -1;  // sg: towards the other end
+    s += "  (footprint \"T:P\" (layer \"F.Cu\") (at " + num(x) + " 10) (property \"Reference\" \"" + (end == 0 ? "U1" : "U2") + "\")\n";
+    int k = 0;
+    for (const double side : {-1.0, 1.0}) {  // D_P at y = 9, D_N at y = 11
+      const double y = side;
+      s += "    (pad \"" + std::to_string(++k) + "\" smd rect (at 0 " + num(y) + ") (size 0.5 0.5) (layers \"F.Cu\") (net " +
+           (side < 0 ? "1 \"D_P\"" : "2 \"D_N\"") + "))\n";
+      for (const auto& [dx, dy] : {std::pair{0.6, 0.0}, std::pair{0.6, 0.6}, std::pair{0.0, 0.6}, std::pair{-0.6, 0.6}, std::pair{-0.6, 0.0}})
+        s += "    (pad \"" + std::to_string(++k) + "\" smd rect (at " + num(sg * dx) + " " + num(y - side * dy) + ") (size 0.5 0.5) (layers \"F.Cu\"))\n";
+    }
+    s += "  )\n";
+  }
+  s += "  (gr_rect (start 0 0) (end 40 20) (stroke (width 0.1) (type default)) (fill none) (layer \"Edge.Cuts\"))\n)\n";
+  return io::read_board(sexpr::Document::parse(s));
+}
+
+route::RouteResult route_flanked(const model::Board& b, bool exits, Coord retry = 0) {
+  model::DesignRules r;
+  model::NetClass k;
+  k.name = "Default";
+  k.clearance = 100'000;
+  k.track_width = 150'000;
+  r.classes.push_back(k);
+  route::RouterOptions o;
+  o.work_budget = 3'000'000;
+  o.time_limit_s = 600;
+  o.gpu_device = -1;
+  o.pair_pad_exits = exits;
+  o.pair_retry_leg = retry;
+  o.pair_nets = {{b.net_by_name("D_P"), b.net_by_name("D_N")}};
+  return route::Router(b, r, o).run();
+}
+
+}  // namespace
+
+TEST_CASE("pair legs: --pair-pad-exits enters pads flanked by other pads from their free side (issue #67)", "[diffpair][route]") {
+  const auto b = flanked_pair();
+  const auto direct = route_flanked(b, false);
+  CHECK(direct.routed == direct.connections);
+  CHECK(direct.pairs == 0);
+  const auto exits = route_flanked(b, true);
+  CHECK(exits.routed == exits.connections);
+  CHECK(exits.pairs == 1);
+}
+
+TEST_CASE("pair legs: --pair-retry-leg-mm retries a failed pair with long legs and pad exits (issue #67)", "[diffpair][route]") {
+  const auto field = route_post_field(post_field_pair(), 2'500'000, 6'000'000);
+  CHECK(field.pairs == 1);
+  CHECK(field.pair_retried == 1);
+  CHECK(field.routed == field.connections);
+  const auto flanked = route_flanked(flanked_pair(), false, 6'000'000);
+  CHECK(flanked.pairs == 1);
+  CHECK(flanked.pair_retried == 1);
+  CHECK(flanked.routed == flanked.connections);
+}
