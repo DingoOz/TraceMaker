@@ -216,3 +216,4 @@
 {"ts": "2026-10-31T01:25:59+00:00", "kind": "note", "text": "Step 6 --ramp-vias-fixed: srj20 six +14, 33 boards -3 and 3 clean vs 5; not adopted, hidden option"}
 {"ts": "2026-10-31T03:16:56+00:00", "kind": "note", "text": "Live page /live (D165): every tracemaker process and bench run, once a second, on by default"}
 {"ts": "2026-11-03T09:31:09+00:00", "kind": "note", "text": "Issue #54 (D169): obstacle caches keyed by class values, --class-cache-mb bound; quick tier 30/30 byte-identical"}
+{"ts": "2026-11-08T22:48:07+00:00", "kind": "decision", "text": "D172 repair windows (issue #56): branch issue56-repair-window; staged flow on 9 quick-tier boards 446 -> 484 of 487 (default flow 467 -> 486); PoE switch not finished"}
