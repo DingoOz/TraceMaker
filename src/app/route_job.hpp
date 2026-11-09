@@ -103,6 +103,10 @@ struct RouteJob {
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;
   std::vector<std::string> layer_costs;
+  // --layer-dir / --layer-diag-pen (doc 05 §29, issue #66, D174): "LAYER=h|v|none" entries, and "LAYER=PITCHES" entries or
+  // one bare value. Resolved against the board into opt.layer_dir / opt.layer_diag_pen; unknown layers are warnings.
+  std::vector<std::string> layer_dir;
+  std::vector<std::string> layer_diag_pen;
   // Buses (doc 05 §38): "NAME=PATTERN" groups (--bus), automatic detection (--buses) and the skew limit of the
   // command-line groups in mm (--bus-skew-mm; 0 = none). A custom skew rule of the board wins over the option.
   std::vector<std::string> buses;

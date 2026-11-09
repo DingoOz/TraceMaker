@@ -1,0 +1,29 @@
+live view: http://192.168.1.79:8785/?token=(removed)
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+portfolio: 4 variants on 2 threads
+searches: 21 ok (304893 expansions), 0 failed (0 expansions); fields 0 GPU + 21 CPU (0.58 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 18 connections improved
+restarts 0; legality checks 1533722; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 21, 0 proved unreachable, 1877202 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 20 ok (354846 expansions), 0 failed (0 expansions); fields 0 GPU + 20 CPU (0.66 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 18 connections improved
+restarts 0; legality checks 1563118; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 0 proved unreachable, 1894425 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 22 ok (294828 expansions), 4 failed (712 expansions); fields 0 GPU + 20 CPU (0.70 s, 0 GPU fallbacks, 2 cache hits)
+clean-up: 21 connections improved
+restarts 0; legality checks 1576467; rips 3, passes 2, boxed-in 4, nogood skips 0, history cells 1, transactions 1 kept of 1
+reachability checks: 25, 4 proved unreachable, 1873024 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 20 ok (403289 expansions), 0 failed (0 expansions); fields 0 GPU + 20 CPU (0.74 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 12 connections improved
+restarts 0; legality checks 1581860; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 0 proved unreachable, 1892663 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 breakout profile               routed 20 in 2.0 s  <- best
+  variant 1 breakout seeded 1              routed 20 in 1.9 s
+  variant 2 breakout seeded 2              routed 19 in 2.1 s
+  variant 3 breakout seeded 3              routed 20 in 2.4 s
+routed 20/20 connections, 103 tracks, 28 vias, pitch 0.035 mm, 828446 expansions, 4.43 s (best variant 2.05 s)
+work (all variants): 1357856 expansions, 7537314 flood cells, 6254799 cell checks, 5455237 fixed-copper checks, 17001618 field cells in 81 fields, 83 commits, 3 rips

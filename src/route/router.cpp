@@ -34,6 +34,7 @@
 #include "drc/connectivity.hpp"
 #include "gpu/device.hpp"
 #include "gpu/field.hpp"
+#include "route/layer_limits.hpp"
 #include "route/lazy_codes.hpp"
 #include "route/cut_test.hpp"
 #include "route/legalize.hpp"
@@ -1791,6 +1792,13 @@ struct Router::Impl {
     const double via_price = opt.via_cost_mm * via_cost_mult * via_mult_of(net);  // critical nets pay more for a via (issue #24)
     const std::int64_t via_cost = static_cast<std::int64_t>(via_price * 1e6);
     const std::int64_t dir_pen = static_cast<std::int64_t>(auto_dir_pen * static_cast<double>(pitch));
+    // Diagonal penalty per layer (D174), in the search's integer units; all zero without --layer-diag-pen.
+    std::array<std::int64_t, 64> diag_pen{};
+    bool diag_pen_on = false;
+    for (std::size_t l = 0; l < opt.layer_diag_pen.size() && l < diag_pen.size() && static_cast<int>(l) < nl; ++l) {
+      diag_pen[l] = static_cast<std::int64_t>(std::max(0.0, opt.layer_diag_pen[l]) * static_cast<double>(pitch));
+      diag_pen_on = diag_pen_on || diag_pen[l] > 0;
+    }
     // Cost-to-go field (GPU) for large windows: exact distances to the targets through cells not known to be
     // blocked by fixed copper; a lower bound on the true cost, so A* stays optimal while expanding far less.
     const bool use_field = !zone_target && opt.field_heuristic && use_cache && !fields_off &&
@@ -1981,7 +1989,11 @@ struct Router::Impl {
         }
         if (coupled_net && obs->coupling_state(at(w.x0 + cx, w.y0 + cy), at(w.x0 + ncx, w.y0 + ncy), l, 2 * hw, net, soft, nullptr) == 2) continue;
         std::int64_t cost = on_layer((d & 1) ? diag : step, l) + extra;
-        if (dir_pen > 0 && !(d & 1) && ((d == 0 || d == 4) != ((l % 2 == 0) != opt.layer_dir_swap))) cost += dir_pen;  // against the layer's preferred direction (doc 16)
+        if (dir_pen > 0 && !(d & 1)) {  // against the layer's preferred direction (doc 16; per layer by name: D174)
+          const int pref = layer_pref(l);
+          if (pref != route::kLayerDirNone && (d == 0 || d == 4) != (pref == route::kLayerDirHorizontal)) cost += dir_pen;
+        }
+        if (diag_pen_on && (d & 1)) cost += diag_pen[static_cast<std::size_t>(l)];  // a 45-degree step (D174)
         if (dir != kNoDir && d != dir) cost += ((std::min((d - dir + 8) % 8, (dir - d + 8) % 8) == 1) ? step / 2 : 2 * step);
         const std::size_t ns = sidx(l, nci, d);
         if ((sn[ns].tag & kGenMask) == gen && sn[ns].g <= gs + cost) continue;
@@ -4380,6 +4392,15 @@ struct Router::Impl {
   struct PkgBox { geom::Box box; int layer; int footprint; };
   std::vector<PkgBox> pkg_boxes;
   double auto_dir_pen = 0;  // opt.layer_dir_pen resolved for this board
+  // Smoothing keeps the direction costs (D174) when the user asked for directions: --layer-dir, or a positive --layer-dir-pen.
+  // The automatic strengths of D98 (negative values: breakout boards and the seeded portfolio variants) keep the plain pull-tight
+  // smoothing, so default runs are unchanged.
+  bool smooth_dir_aware() const { return auto_dir_pen > 0 && (!opt.layer_dir.empty() || opt.layer_dir_pen > 0); }
+  // Preferred direction of copper layer l: opt.layer_dir by name when given (D174), else the parity of D98.
+  int layer_pref(int l) const {
+    if (!opt.layer_dir.empty()) return static_cast<std::size_t>(l) < opt.layer_dir.size() ? static_cast<int>(opt.layer_dir[static_cast<std::size_t>(l)]) : static_cast<int>(route::kLayerDirNone);
+    return (l % 2 == 0) != opt.layer_dir_swap ? route::kLayerDirHorizontal : route::kLayerDirVertical;
+  }
   bool pkg_on = false;
   std::int64_t pkg_pen = 0;
   // Footprints with at least 30 SMD pads on one layer: the box of their pads, a pad pitch wider on every side.
@@ -4387,6 +4408,8 @@ struct Router::Impl {
     pkg_boxes.clear();
     pkg_on = false;
     auto_dir_pen = std::max(0.0, opt.layer_dir_pen);
+    // Directions named by layer (D174) are the user's convention: a negative (automatic) strength applies on any board.
+    if (!opt.layer_dir.empty() && opt.layer_dir_pen < 0) auto_dir_pen = opt.layer_dir_pen == -1.0 ? 0.3 : -opt.layer_dir_pen;
     double pen = std::max(0.0, opt.package_pen);
     std::map<int, std::vector<int>> by;
     for (std::size_t i = 0; i < b.pads.size(); ++i)
@@ -5738,6 +5761,57 @@ struct Router::Impl {
       if (legal(a, straight) && legal(straight, c) && !over({a, straight, c})) return {a, straight, c};
       return {};
     };
+    // With the user's direction costs (D174) a shortcut must not cost more under them than the run it replaces: pulled tight
+    // without them, a run becomes a 45-degree segment and a straight one again whatever the layer prefers (tests/test_layer_dir.cpp:
+    // the L-shaped track the diagonal penalty asks for went back to diagonal-first). The candidates are the two octilinear
+    // corners above and the two orthogonal ones, cheapest first (ties: that order).
+    const std::int64_t s_dir_pen = smooth_dir_aware() ? static_cast<std::int64_t>(auto_dir_pen * static_cast<double>(pitch)) : 0;
+    std::array<std::int64_t, 64> s_diag_pen{};
+    for (std::size_t l = 0; l < opt.layer_diag_pen.size() && l < s_diag_pen.size() && static_cast<int>(l) < nl; ++l)
+      s_diag_pen[l] = static_cast<std::int64_t>(std::max(0.0, opt.layer_diag_pen[l]) * static_cast<double>(pitch));
+    const std::int64_t s_diag = static_cast<std::int64_t>(std::llround(static_cast<double>(pitch) * std::numbers::sqrt2));
+    // The search's cost of a polyline on `layer` without obstacles and bends, in lattice-step units scaled to nm: a segment is
+    // min(|dx|, |dy|) of 45-degree run and the rest straight along its longer axis.
+    auto dir_cost = [&](const std::vector<Point>& v, int layer) {
+      const int pref = layer_pref(layer);
+      std::int64_t c = 0;
+      for (std::size_t q = 0; q + 1 < v.size(); ++q) {
+        const Coord ax = std::llabs(v[q + 1].x - v[q].x), ay = std::llabs(v[q + 1].y - v[q].y), dm = std::min(ax, ay), r = std::max(ax, ay) - dm;
+        c += dm * (s_diag + s_diag_pen[static_cast<std::size_t>(layer)]) / pitch + r;
+        const bool horiz = ax > ay;
+        if (r > 0 && s_dir_pen > 0 && pref != route::kLayerDirNone && horiz != (pref == route::kLayerDirHorizontal)) c += r * s_dir_pen / pitch;
+      }
+      return c;
+    };
+    auto shortcut_dir = [&](Point a, Point c, int layer, Coord width, NetId net, std::size_t max_void, std::int64_t limit) -> std::vector<Point> {
+      auto legal = [&](Point u, Point v) { return u == v || obs->segment_state(u, v, layer, width, net, false, nullptr) == 0; };
+      auto over = [&](const std::vector<Point>& v) {
+        if (!split_on || !crit_split[static_cast<std::size_t>(net)]) return false;
+        std::size_t n = 0;
+        for (std::size_t i = 0; i + 1 < v.size(); ++i) n += void_samples(layer, v[i], v[i + 1]);
+        return n > max_void;
+      };
+      std::vector<std::vector<Point>> cand;
+      if (octi(a, c)) cand.push_back({a, c});
+      else {
+        const Coord dx = c.x - a.x, dy = c.y - a.y, m = std::min(std::llabs(dx), std::llabs(dy));
+        cand.push_back({a, Point{a.x + (dx > 0 ? m : -m), a.y + (dy > 0 ? m : -m)}, c});
+        cand.push_back({a, Point{c.x - (dx > 0 ? m : -m), c.y - (dy > 0 ? m : -m)}, c});
+        cand.push_back({a, Point{c.x, a.y}, c});
+        cand.push_back({a, Point{a.x, c.y}, c});
+      }
+      std::vector<std::pair<std::int64_t, std::size_t>> order;
+      for (std::size_t q = 0; q < cand.size(); ++q) order.emplace_back(dir_cost(cand[q], layer), q);
+      std::stable_sort(order.begin(), order.end(), [](const auto& x, const auto& y) { return x.first < y.first; });
+      for (const auto& [cost, q] : order) {
+        if (cost > limit) break;
+        const auto& v = cand[q];
+        bool ok = !over(v);
+        for (std::size_t i = 0; ok && i + 1 < v.size(); ++i) ok = legal(v[i], v[i + 1]);
+        if (ok) return v;
+      }
+      return {};
+    };
     for (std::size_t ci = 0; ci < cs.size(); ++ci) {
       auto& st = cs[ci];
       if (!st.routed || st.implicit || st.coupled || st.items.empty()) continue;
@@ -5768,7 +5842,10 @@ struct Router::Impl {
           std::size_t best = i + 1;
           std::vector<Point> via_pts;
           for (std::size_t j = pts.size() - 1; j >= i + 2; --j) {
-            auto sc = shortcut(pts[i], pts[j], tr[k].layer, tr[k].width, tr[k].net, void_to[j] - void_to[i]);
+            auto sc = !smooth_dir_aware() && s_diag_pen[static_cast<std::size_t>(tr[k].layer)] == 0
+                          ? shortcut(pts[i], pts[j], tr[k].layer, tr[k].width, tr[k].net, void_to[j] - void_to[i])
+                          : shortcut_dir(pts[i], pts[j], tr[k].layer, tr[k].width, tr[k].net, void_to[j] - void_to[i],
+                                         dir_cost(std::vector<Point>(pts.begin() + static_cast<std::ptrdiff_t>(i), pts.begin() + static_cast<std::ptrdiff_t>(j) + 1), tr[k].layer));
             if (!sc.empty() && sc.size() - 1 < j - i) {
               best = j;
               via_pts.assign(sc.begin() + 1, sc.end());
