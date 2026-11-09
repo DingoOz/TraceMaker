@@ -2,6 +2,7 @@
 // Net length and delay as KiCad 10.0.6 measures them, and its `length` and `skew` checks (doc 05 §59).
 #include <catch2/catch_test_macros.hpp>
 
+#include <cmath>
 #include <cstdlib>
 #include <map>
 #include <string>
@@ -168,4 +169,43 @@ TEST_CASE("length and skew rules in ps are delays, and the router does not read 
         CHECK(k.max == 29'850'000);
       }
   CHECK(found);
+}
+
+TEST_CASE("length faults: a stage that shortens a tuned net is worse, one that leaves it is not (D173)", "[length][drc]") {
+  const auto lb = io::read_board_file(kQa);
+  const auto r = io::read_design_rules(kQa);
+  const auto& b = lb.board;
+  // The board as KiCad's QA has it: only CLASS7's minimum skew is out of range.
+  const auto base = drc::length_faults(b, r);
+  REQUIRE(base.size() == 1);
+  CHECK(base.begin()->first.starts_with("skew_out_of_range "));
+  CHECK(drc::length_faults_no_worse(base, base));
+  // The lengths-only DRC reports exactly the full DRC's length and skew violations.
+  drc::DrcOptions lo;
+  lo.lengths_only = true;
+  const auto only = drc::run_drc(b, r, lo).violations;
+  std::vector<std::string> full;
+  for (const auto& v : drc::run_drc(b, r).violations)
+    if (v.type == "skew_out_of_range" || v.type == "length_out_of_range") full.push_back(v.description);
+  REQUIRE(only.size() == full.size());
+  for (std::size_t i = 0; i < only.size(); ++i) CHECK(only[i].description == full[i]);
+  // A later stage that takes copper off a net tuned into its window (CLASS1: 29.83-29.85 ps) puts the net below its minimum.
+  model::Board shorter = b;
+  model::NetId net = 0;
+  for (const auto& n : b.nets)
+    if (n.id > 0 && r.class_for(n.name).name == "CLASS1") net = n.id;
+  REQUIRE(net > 0);
+  std::size_t longest = b.tracks.size();
+  for (std::size_t i = 0; i < b.tracks.size(); ++i) {
+    const auto len = [&](std::size_t k) { return std::hypot(static_cast<double>(b.tracks[k].b.x - b.tracks[k].a.x), static_cast<double>(b.tracks[k].b.y - b.tracks[k].a.y)); };
+    if (b.tracks[i].net == net && (longest == b.tracks.size() || len(i) > len(longest))) longest = i;
+  }
+  REQUIRE(longest < b.tracks.size());
+  auto& t = shorter.tracks[longest];
+  t.b = {t.a.x + (t.b.x - t.a.x) / 2, t.a.y + (t.b.y - t.a.y) / 2};  // half as long
+  const auto cut = drc::length_faults(shorter, r);
+  CHECK(cut.size() == 2);
+  CHECK(cut.count("length_out_of_range " + b.nets[static_cast<std::size_t>(net)].name) == 1);
+  CHECK_FALSE(drc::length_faults_no_worse(base, cut));  // the stage is rejected
+  CHECK(drc::length_faults_no_worse(cut, base));        // undoing it is not worse
 }

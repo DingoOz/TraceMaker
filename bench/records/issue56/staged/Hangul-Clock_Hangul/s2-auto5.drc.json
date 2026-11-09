@@ -1,0 +1,129 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:38",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-auto5.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(U35-Pad2)] of U5 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 122.75
+                    },
+                    "uuid": "ecc6cd39-79d5-4b20-b0be-9689ab9349c5"
+                },
+                {
+                    "description": "Pad 2 [Net-(U35-Pad2)] of U35 on F.Cu",
+                    "pos": {
+                        "x": 204.35,
+                        "y": 111.25
+                    },
+                    "uuid": "d4806c27-5736-410f-8e03-99613cbc9cba"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C34",
+                    "pos": {
+                        "x": 197.75,
+                        "y": 75.75
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005901620b"
+                },
+                {
+                    "description": "Footprint P5",
+                    "pos": {
+                        "x": 196.89,
+                        "y": 89.06
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000590fdd29"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C35",
+                    "pos": {
+                        "x": 197.75,
+                        "y": 92.25
+                    },
+                    "uuid": "00000000-0000-0000-0000-000059016211"
+                },
+                {
+                    "description": "Footprint P5",
+                    "pos": {
+                        "x": 196.89,
+                        "y": 89.06
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000590fdd29"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 153.25,
+                        "y": 150.0
+                    },
+                    "uuid": "d6cb9d30-ebbe-4edf-8722-64850ce5e466"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 153.25,
+                        "y": 150.0
+                    },
+                    "uuid": "d6cb9d30-ebbe-4edf-8722-64850ce5e466"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        }
+    ]
+}

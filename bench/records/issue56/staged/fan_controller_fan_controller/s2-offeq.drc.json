@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:36",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-offeq.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on B.Cu, length 2.1213 mm",
+                    "pos": {
+                        "x": 140.325,
+                        "y": 71.475
+                    },
+                    "uuid": "6bb0d28f-f740-4286-bee8-d6ae86b9bddf"
+                },
+                {
+                    "description": "Pad 27 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 142.541,
+                        "y": 77.332
+                    },
+                    "uuid": "ab2d1ab9-f3b1-408f-931a-97540975df00"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 27 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 142.541,
+                        "y": 77.332
+                    },
+                    "uuid": "ab2d1ab9-f3b1-408f-931a-97540975df00"
+                },
+                {
+                    "description": "Pad 2 [GND] of C9 on B.Cu",
+                    "pos": {
+                        "x": 145.204,
+                        "y": 79.432
+                    },
+                    "uuid": "a8a68a79-6b72-4993-84f8-2a3f32a91e96"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 27 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 142.541,
+                        "y": 77.332
+                    },
+                    "uuid": "ab2d1ab9-f3b1-408f-931a-97540975df00"
+                },
+                {
+                    "description": "Pad 8 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 138.641,
+                        "y": 84.532
+                    },
+                    "uuid": "28527ccb-b65f-469c-9bc2-b037ef82d0ab"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": []
+}

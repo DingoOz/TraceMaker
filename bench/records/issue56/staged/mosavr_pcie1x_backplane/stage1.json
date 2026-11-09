@@ -1,0 +1,229 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 93.33,
+ "connections": 60,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 1072419,
+ "failures": [
+  "/SDA: M0.A7 -> M1.A7  ()",
+  "/SDA: M2.A7 -> M3.A7  ()",
+  "/SCL: M0.B7 -> M1.B7  ()",
+  "/SCL: M2.B7 -> M3.B7  ()"
+ ],
+ "open": 4,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.075,
+ "routed": 56,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-11-08T22:09:53Z",
+  "input": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/stage1.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "1000000"
+   },
+   {
+    "name": "--no-rescue",
+    "value": "false"
+   },
+   {
+    "name": "--skip-net",
+    "value": "GND*,*GND,VCC*,VDD*,+*,*3V3*,*5V*,*VBUS*,*VIN*"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-port",
+    "value": "8783"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/stage1.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/stage1.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "variants": 1,
+  "version": "0.12.1",
+  "work_budget": 1000000
+ },
+ "seconds": 1.270043508,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 29,
+  "bends_per_connection": 0.4833,
+  "connections": 60,
+  "detour_length_mm": 759.426826,
+  "detour_octile_mm": 753.817576,
+  "detour_ratio": 1.0074,
+  "length_mm": 759.426826,
+  "long_detours": 0,
+  "off_angle_segments": 1,
+  "segments": 89,
+  "short_segments": 0,
+  "stair_steps": 0,
+  "vias": 0
+ },
+ "time_limited": false,
+ "tracks": 89,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 1.262975915,
+ "vias": 0,
+ "why_open": {
+  "congested": 8,
+  "neck_down": 0,
+  "next": [
+   "8 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 8,
+  "proved": [],
+  "seconds": 0.071291026,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 242439,
+   "commits": 56,
+   "expansions": 1062416,
+   "field_cells": 5048246,
+   "fields": 48,
+   "fixed_checks": 349214,
+   "flood_cells": 10003,
+   "rips": 0,
+   "searches": 56
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 242439,
+   "commits": 56,
+   "expansions": 1062416,
+   "field_cells": 5048246,
+   "fields": 48,
+   "fixed_checks": 349214,
+   "flood_cells": 10003,
+   "rips": 0,
+   "searches": 56
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 242439,
+   "commits": 56,
+   "expansions": 1062416,
+   "field_cells": 5048246,
+   "fields": 48,
+   "fixed_checks": 349214,
+   "flood_cells": 10003,
+   "rips": 0,
+   "searches": 56
+  },
+  "negotiation": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 242439,
+   "commits": 56,
+   "expansions": 1062416,
+   "field_cells": 5048246,
+   "fields": 48,
+   "fixed_checks": 349214,
+   "flood_cells": 10003,
+   "rips": 0,
+   "searches": 56
+  }
+ }
+}

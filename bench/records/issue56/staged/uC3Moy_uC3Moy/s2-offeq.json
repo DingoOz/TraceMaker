@@ -1,0 +1,211 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 100.0,
+ "connections": 17,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 7321779,
+ "failures": [],
+ "open": 0,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.08,
+ "routed": 17,
+ "run": {
+  "board": "stage1.kicad_pcb",
+  "date": "2026-11-08T22:28:02Z",
+  "input": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/stage1.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/s2-offeq.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "14135645"
+   },
+   {
+    "name": "--no-rescue",
+    "value": "false"
+   },
+   {
+    "name": "--repair",
+    "value": "off"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-port",
+    "value": "8783"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/s2-offeq.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/s2-offeq.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "variants": 1,
+  "version": "0.12.1",
+  "work_budget": 14135645
+ },
+ "seconds": 5.26852816,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 44,
+  "bends_per_connection": 1.2571,
+  "connections": 35,
+  "detour_length_mm": 238.412744,
+  "detour_octile_mm": 150.264642,
+  "detour_ratio": 1.5866,
+  "length_mm": 238.412744,
+  "long_detours": 2,
+  "off_angle_segments": 2,
+  "segments": 83,
+  "short_segments": 1,
+  "stair_steps": 0,
+  "vias": 4
+ },
+ "time_limited": false,
+ "tracks": 83,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 5.245199793,
+ "vias": 4,
+ "work": {
+  "cleanup": {
+   "cell_checks": 721732,
+   "commits": 10,
+   "expansions": 1090251,
+   "field_cells": 5253020,
+   "fields": 14,
+   "fixed_checks": 3044,
+   "flood_cells": 663044,
+   "rips": 0,
+   "searches": 36
+  },
+  "first_pass": {
+   "cell_checks": 113006,
+   "commits": 15,
+   "expansions": 266447,
+   "field_cells": 785400,
+   "fields": 5,
+   "fixed_checks": 139906,
+   "flood_cells": 76321,
+   "rips": 0,
+   "searches": 21
+  },
+  "negotiation": {
+   "cell_checks": 2122962,
+   "commits": 8,
+   "expansions": 3496455,
+   "field_cells": 6463008,
+   "fields": 28,
+   "fixed_checks": 81196,
+   "flood_cells": 1729261,
+   "rips": 6,
+   "searches": 66
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2957700,
+   "commits": 33,
+   "expansions": 4853153,
+   "field_cells": 12501428,
+   "fields": 47,
+   "fixed_checks": 224146,
+   "flood_cells": 2468626,
+   "rips": 6,
+   "searches": 123
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 721732,
+   "commits": 10,
+   "expansions": 1090251,
+   "field_cells": 5253020,
+   "fields": 14,
+   "fixed_checks": 3044,
+   "flood_cells": 663044,
+   "rips": 0,
+   "searches": 36
+  },
+  "first_pass": {
+   "cell_checks": 113006,
+   "commits": 15,
+   "expansions": 266447,
+   "field_cells": 785400,
+   "fields": 5,
+   "fixed_checks": 139906,
+   "flood_cells": 76321,
+   "rips": 0,
+   "searches": 21
+  },
+  "negotiation": {
+   "cell_checks": 2122962,
+   "commits": 8,
+   "expansions": 3496455,
+   "field_cells": 6463008,
+   "fields": 28,
+   "fixed_checks": 81196,
+   "flood_cells": 1729261,
+   "rips": 6,
+   "searches": 66
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2957700,
+   "commits": 33,
+   "expansions": 4853153,
+   "field_cells": 12501428,
+   "fields": 47,
+   "fixed_checks": 224146,
+   "flood_cells": 2468626,
+   "rips": 6,
+   "searches": 123
+  }
+ }
+}
