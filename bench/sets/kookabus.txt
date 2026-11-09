@@ -1,0 +1,9 @@
+# Kookabus tier (doc 18 A3, M21): the Kookabus boards, KiCad 10 projects with custom rules (.kicad_dru), routing stripped.
+# Private repository: scripts/fetch_fixtures.sh kookabus needs read access; the boards are never committed here.
+# bench/prepare_demos.py --out build/kookabus --set kookabus && bench/run.py --fixtures build/kookabus --set kookabus --work 3000000 --refill
+i2c-battery-board
+kookabus-02
+kookabus-03
+kookabus-04
+kookabus-04h
+kookabus-06
