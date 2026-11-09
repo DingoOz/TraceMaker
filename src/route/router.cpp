@@ -69,7 +69,7 @@ std::string failure_reason_code(const std::string& why) {
   // a boxed-in pin is boxed in whatever the later attempts said, and a rip limit says more than the exact check before it.
   const auto has = [&](const char* needle) { return why.find(needle) != std::string::npos; };
   if (why.empty()) return "not_attempted";  // the budget ended before the connection was tried again
-  if (has("fixed copper encloses") || has("boxed in")) return "boxed_in";
+  if (has("fixed copper encloses") || has("boxed in")) return "boxed_in";  // the first: summaries of older versions
   if (has("track on a layer that takes no tracks")) return "layer_limit";
   if (has("would rip a --first-nets") || has("would rip a bus") || has("would rip a coupled pair") || has("would rip too many") || has("already ripped too often") ||
       has("would rip a connection of the running"))
@@ -7065,11 +7065,11 @@ struct Router::Impl {
                 const int dp = why.find("target") != std::string::npos && st.c.pad_b >= 0 ? st.c.pad_b : st.c.pad_a;
                 const Point q = b.pads[static_cast<std::size_t>(dp)].pos;
                 emit("{\"type\":\"escape_dead\",\"id\":" + std::to_string(dp) + ",\"net\":" + std::to_string(st.c.net) + ",\"pad\":\"" + pad_label(dp) +
-                     "\",\"p\":[" + jnum(q.x) + "," + jnum(q.y) + "],\"why\":\"fixed copper encloses the pin\"}");
+                     "\",\"p\":[" + jnum(q.x) + "," + jnum(q.y) + "],\"why\":\"boxed in on the routing lattice, even with routed copper negotiable\"}");
               }
               release_pad(st.c.pad_a, st.c.net);  // a sealed pin's corridor only blocks others
               release_pad(st.c.pad_b, st.c.net);
-              reason += "; fixed copper encloses the pin";
+              reason += "; given up: boxed in on the routing lattice, even with routed copper negotiable";  // not a proof: why_open has the exact one
             } else if (!ok) {
               reason += "; negotiated escapes/neck-down: " + why;
             }
@@ -7726,6 +7726,16 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     return pr;
   }
   std::vector<RouteResult> rs(vs.size());
+  // Work per variant over every round (the run report's /work and /expansions): each round's results replace the last's, so
+  // without this a run of rounds reported only its last round, and a relaxed run only its legalising round, which does no work.
+  std::vector<WorkProfile> work_sum(vs.size());
+  std::vector<long> expansions_sum(vs.size(), 0);
+  auto add_work = [&] {
+    for (std::size_t i = 0; i < rs.size(); ++i) {
+      for (int p = 0; p < kWorkPhases; ++p) work_sum[i].phase[static_cast<std::size_t>(p)] += rs[i].work.phase[static_cast<std::size_t>(p)];
+      expansions_sum[i] += rs[i].expansions;
+    }
+  };
   std::vector<std::thread> pool;
   // Once a variant is complete the others get a short grace period, so the best-quality complete result can be
   // chosen. With a work budget the run must stay deterministic, so this is only used under wall-clock limits.
@@ -7807,6 +7817,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     }
     for (auto& v : vs) v.o.state_recheck = true;
   }
+  std::vector<int> stage_routed(ramp_rules.size(), -1);  // the best count of each relaxed stage (PortfolioResult::ramp_stages)
   std::size_t stage = base.ramp_late ? ramp_rules.size() : 0;  // late: the board's own rules first
   int rounds_at_stage = 0, stage_best = -1;
   int cycles = 0;                        // breathing cycles started
@@ -7852,6 +7863,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
         for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, round_rules, vs[i].o).run();
       });
     for (auto& t : pool) t.join();
+    add_work();
     fresh_start = false;
     {
       std::size_t bi = 0;
@@ -7870,6 +7882,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
                      nm_to_mm(std::max(rules.classes.front().clearance, rules.minimums.clearance) -
                               std::max(ramp_rules[stage].classes.front().clearance, ramp_rules[stage].minimums.clearance)),
                      rs[bi].routed, rs[bi].connections, complete ? " (complete)" : "");
+        stage_routed[stage] = std::max(stage_routed[stage], rs[bi].routed);
         // A stage ends when complete, or after ramp_rounds rounds in a row that did not route more than the best round of the stage.
         if (rs[bi].routed > stage_best) {
           stage_best = rs[bi].routed;
@@ -7934,6 +7947,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   }
   if (!ramp_rules.empty() && last_relaxed) {
     // Out of time or rounds while relaxed: one round with next to no budget under the board's rules keeps what is legal.
+    // Its zero time limit stops it at once by design, so only the rounds before it can say the clock ended the search.
+    for (const auto& r : rs) rounds_timed_out = rounds_timed_out || r.time_limited;
     for (auto& v : vs) {
       v.o.warm = &warm_routes;
       v.o.sink = nullptr;
@@ -7948,6 +7963,20 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
         for (std::size_t i; (i = next.fetch_add(1)) < vs.size();) rs[i] = Router(board, rules, vs[i].o).run();
       });
     for (auto& t : pool) t.join();
+    add_work();
+    // The legalising round does not search, so what it leaves open has no explanation of its own: say which of the two it is.
+    std::set<std::pair<int, int>> relaxed_routed;
+    for (const auto& c : warm_routes) relaxed_routed.insert({c.pad_a, c.pad_b});
+    for (auto& r : rs) {
+      r.time_limited = false;
+      for (std::size_t k = 0; k < r.unrouted.size(); ++k) {
+        auto& u = r.unrouted[k];
+        if (!u.why.empty()) continue;
+        u.why = relaxed_routed.count({u.pad_a, u.pad_b}) ? "its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search"
+                                                          : "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search";
+        if (k < r.failures.size() && r.failures[k].ends_with("  ()")) r.failures[k].replace(r.failures[k].size() - 2, 1, "(" + u.why);
+      }
+    }
   }
   PortfolioResult pr;
   std::size_t best = 0;
@@ -7956,10 +7985,17 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
     pr.variants.push_back(vs[i].name);
     pr.routed.push_back(rs[i].routed);
     pr.seconds.push_back(rs[i].seconds);
-    pr.work.push_back(rs[i].work);
+    pr.work.push_back(work_sum[i]);
     if (i > 0 && better(i, best)) best = i;
   }
   pr.best_variant = static_cast<int>(best);
+  {
+    const Coord c_board = std::max(rules.classes.empty() ? Coord{0} : rules.classes.front().clearance, rules.minimums.clearance);
+    for (std::size_t k = 0; k < ramp_rules.size(); ++k)
+      if (stage_routed[k] >= 0)
+        pr.ramp_stages.push_back({c_board - std::max(ramp_rules[k].classes.empty() ? Coord{0} : ramp_rules[k].classes.front().clearance, ramp_rules[k].minimums.clearance),
+                                  stage_routed[k]});
+  }
   if (!bufs.empty())
     for (auto& m : bufs[best]->msgs) base.sink->publish(std::move(m));
   // Any variant stopped by time, not work, could have beaten the winner on a faster machine: the result depends on machine speed.
@@ -7968,6 +8004,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   pr.best = std::move(rs[best]);
   if (best_final_routed > pr.best.routed) pr.best = std::move(best_final);  // breathing ended relaxed or worse: the best legal one
   pr.best.time_limited = timed;
+  pr.best.work = work_sum[best];  // the kept result's variant over every round (one round: its own work, as before)
+  pr.best.expansions = expansions_sum[best];
   return pr;
 }
 

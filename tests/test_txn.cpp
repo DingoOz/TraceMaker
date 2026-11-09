@@ -178,6 +178,24 @@ TEST_CASE("clearance ramp: loose stages first, the result is legal under the boa
   CHECK(errors(l.board, l.rules, one.best) == 0);
 }
 
+// The round that keeps what is legal after a relaxed last round has a zero time limit by design; that must not mark a
+// work-budgeted run as stopped by the clock (the run report and summary would say the result depends on machine speed).
+TEST_CASE("clearance ramp ending relaxed: the legalising round does not mark the run time-limited", "[route][txn]") {
+  const auto l = load_problem();
+  const double board_mm = nm_to_mm(std::max(l.rules.classes.front().clearance, l.rules.minimums.clearance));
+  route::RouterOptions o = options();
+  o.round_work = 300000;
+  o.rounds = 1;  // the only round is relaxed, so the legalising round runs
+  o.ramp_from_mm = board_mm - 0.04;
+  o.ramp_step_mm = 0.02;
+  o.ramp_rounds = 1;
+  o.time_limit_s = 3600;
+  const auto r = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  CHECK(r.best.routed > 0);
+  CHECK_FALSE(r.best.time_limited);
+  CHECK(errors(l.board, l.rules, r.best) == 0);
+}
+
 TEST_CASE("clearance ramp with breathing: still legal under the board's rules and the same at any thread count", "[route][txn]") {
   const auto l = load_problem();
   const double board_mm = nm_to_mm(std::max(l.rules.classes.front().clearance, l.rules.minimums.clearance));

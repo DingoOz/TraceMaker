@@ -221,4 +221,5 @@
 {"ts": "2026-11-08T22:46:12+00:00", "kind": "milestone", "text": "M21 A3: Kookabus boards as a private fixture set (D176); no tuning profiles on any board; 1/6 clean at 3 M work; unused USB-C pins no longer critical nets"}
 {"ts": "2026-11-08T22:48:07+00:00", "kind": "decision", "text": "D172 repair windows (issue #56): branch issue56-repair-window; staged flow on 9 quick-tier boards 446 -> 484 of 487 (default flow 467 -> 486); PoE switch not finished"}
 {"ts": "2026-11-08T22:55:05+00:00", "kind": "decision", "text": "D170 (issue #53): Type-only rule conditions tabled by kind pair (PoE switch with JLCPCB rule: 2x work per 300 s, identical output); --pair-share option, off by default (coupling 75 -> 19 pairs)"}
+{"ts": "2026-11-08T22:57:58+00:00", "kind": "test", "text": "D177 run report review fixes: 8 plane reports regenerated; copper byte-identical to main on 5 plane boards and quick 30/30"}
 {"ts": "2026-11-08T23:04:30+00:00", "kind": "decision", "text": "D175 (issue #67): --pair-leg-mm, --protect-coupled, --pair-pad-exits, --pair-retry-leg-mm opt-in; --recouple-work 2M default (2 more pairs coupled on 20 pair boards, nothing else changed)"}

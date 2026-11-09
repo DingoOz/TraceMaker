@@ -3,28 +3,17 @@
  "bundle_groups": 0,
  "bundle_lanes": 0,
  "bundle_spines": 0,
- "completion_pct": 69.39,
+ "completion_pct": 87.07,
  "connections": 147,
  "copper_layers": 8,
  "critical_nets": {
+  "detour_listed_over_mm": 2.0,
   "nets": [
    {
-    "detour_mm": 0.0,
+    "detour_mm": 11.361,
     "length_mm": 5.175,
+    "missing_stitches": 0,
     "name": "Net-(U1-P1.01{slash}XL2)",
-    "splits": 0,
-    "tier": 1,
-    "uncovered_mm": 0.0,
-    "unrouted": 0,
-    "vias": 0,
-    "void_crossings": 0,
-    "warnings": [],
-    "why": "Quartz crystal with load capacitors (crystal xin)"
-   },
-   {
-    "detour_mm": 3.203,
-    "length_mm": 16.951,
-    "name": "Net-(U1-P1.00{slash}XL1)",
     "splits": 0,
     "tier": 1,
     "uncovered_mm": 0.0,
@@ -32,63 +21,98 @@
     "vias": 0,
     "void_crossings": 1,
     "warnings": [
-     "runs over 1 void of its reference plane (detour 3.20 mm)"
+     "runs over 1 void of its reference plane (detour 11.36 mm)",
+     "detour of 11.36 mm round a void on F.Cu at (160.900, 101.970) mm"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 10.744,
+    "length_mm": 16.951,
+    "missing_stitches": 0,
+    "name": "Net-(U1-P1.00{slash}XL1)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 3,
+    "warnings": [
+     "runs over 3 voids of its reference plane (detour 10.74 mm)",
+     "detour of 3.20 mm round a void on F.Cu at (168.996, 100.246) mm",
+     "detour of 5.72 mm round a void on F.Cu at (166.366, 98.230) mm"
     ],
     "why": "Quartz crystal with load capacitors (crystal xin)"
    },
    {
-    "detour_mm": 0.0,
+    "detour_mm": 3.476,
     "length_mm": 5.147,
+    "missing_stitches": 0,
     "name": "Net-(U5-XC1)",
     "splits": 0,
     "tier": 1,
     "uncovered_mm": 0.0,
     "unrouted": 0,
     "vias": 0,
-    "void_crossings": 0,
-    "warnings": [],
+    "void_crossings": 1,
+    "warnings": [
+     "runs over 1 void of its reference plane (detour 3.48 mm)",
+     "detour of 3.48 mm round a void on F.Cu at (133.710, 109.130) mm"
+    ],
     "why": "Quartz crystal with load capacitors (crystal xin)"
    },
    {
-    "detour_mm": 0.0,
+    "detour_mm": 4.537,
     "length_mm": 3.959,
+    "missing_stitches": 0,
     "name": "Net-(U5-XC2)",
     "splits": 0,
     "tier": 1,
     "uncovered_mm": 0.0,
     "unrouted": 0,
     "vias": 0,
-    "void_crossings": 0,
-    "warnings": [],
+    "void_crossings": 1,
+    "warnings": [
+     "runs over 1 void of its reference plane (detour 4.54 mm)",
+     "detour of 4.54 mm round a void on F.Cu at (134.110, 109.530) mm"
+    ],
     "why": "Quartz crystal with load capacitors (crystal xout)"
    },
    {
-    "detour_mm": 8.491,
-    "length_mm": 20.534,
+    "detour_mm": 17.75,
+    "length_mm": 20.563,
+    "missing_stitches": 0,
     "name": "/Debugger/D+",
     "splits": 0,
     "tier": 2,
     "uncovered_mm": 0.0,
     "unrouted": 0,
     "vias": 1,
-    "void_crossings": 4,
+    "void_crossings": 5,
     "warnings": [
-     "runs over 4 voids of its reference plane (detour 8.49 mm)"
+     "runs over 5 voids of its reference plane (detour 17.75 mm)",
+     "detour of 3.90 mm round a void on F.Cu at (127.680, 105.950) mm",
+     "detour of 9.40 mm round a void on F.Cu at (133.759, 103.750) mm",
+     "detour of 3.63 mm round a void on F.Cu at (137.174, 104.424) mm"
     ],
     "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
    },
    {
-    "detour_mm": 8.591,
-    "length_mm": 24.043,
+    "detour_mm": 25.447,
+    "length_mm": 24.277,
+    "missing_stitches": 0,
     "name": "/Debugger/D-",
     "splits": 0,
     "tier": 2,
     "uncovered_mm": 0.0,
     "unrouted": 0,
     "vias": 1,
-    "void_crossings": 4,
+    "void_crossings": 5,
     "warnings": [
-     "runs over 4 voids of its reference plane (detour 8.59 mm)"
+     "runs over 5 voids of its reference plane (detour 25.45 mm)",
+     "detour of 9.65 mm round a void on F.Cu at (128.550, 104.526) mm",
+     "detour of 10.53 mm round a void on F.Cu at (134.159, 103.350) mm",
+     "detour of 4.25 mm round a void on F.Cu at (137.726, 104.426) mm"
     ],
     "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
    }
@@ -101,10 +125,12 @@
    "via_mult": 3.0
   },
   "totals": {
+   "missing_stitches": 0,
+   "missing_stitches_before_stitching": 0,
    "nets": 6,
    "over_via_limit": 0,
    "vias": 2,
-   "void_crossings": 9
+   "void_crossings": 16
   }
  },
  "drc": {
@@ -112,17 +138,12 @@
   "after": {
    "errors": 38,
    "notes": [],
-   "unconnected": 61,
+   "unconnected": 38,
+   "unconnected_cut_by_refill": 19,
    "unconnected_items": [
     {
-     "from": "Pad 1 of C25 [/Debugger/nRF52_VDD]",
-     "to": "Pad 1 of C10 [/Debugger/nRF52_VDD]",
-     "what": "Missing connection in net /Debugger/nRF52_VDD",
-     "x_mm": 153.23,
-     "y_mm": 101.81
-    },
-    {
      "from": "Pad 2 of C25 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of J4 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 154.19,
@@ -130,6 +151,7 @@
     },
     {
      "from": "Pad 2 of J4 [GND]",
+     "open_by_router": false,
      "to": "Pad A1 of U1 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 135.88,
@@ -137,6 +159,7 @@
     },
     {
      "from": "Pad A1 of U1 [GND]",
+     "open_by_router": false,
      "to": "Pad A9 of U1 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 168.92,
@@ -144,13 +167,23 @@
     },
     {
      "from": "Pad A9 of U1 [GND]",
-     "to": "Pad 2 of C10 [GND]",
+     "open_by_router": false,
+     "to": "Pad H8 of U1 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 161.72,
      "y_mm": 100.93
     },
     {
+     "from": "Pad H8 of U1 [GND]",
+     "open_by_router": false,
+     "to": "Pad 2 of C10 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 162.62,
+     "y_mm": 107.23
+    },
+    {
      "from": "Pad 2 of C10 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of U2 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 140.44,
@@ -158,6 +191,7 @@
     },
     {
      "from": "Pad 2 of U2 [GND]",
+     "open_by_router": false,
      "to": "Pad 6 of U2 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 146.33,
@@ -165,6 +199,7 @@
     },
     {
      "from": "Pad 6 of U2 [GND]",
+     "open_by_router": false,
      "to": "Pad 18 of U2 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 148.33,
@@ -172,6 +207,7 @@
     },
     {
      "from": "Pad 18 of U2 [GND]",
+     "open_by_router": false,
      "to": "Pad 28 of U2 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 148.83,
@@ -179,6 +215,7 @@
     },
     {
      "from": "Pad 28 of U2 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of C19 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 145.13,
@@ -186,6 +223,7 @@
     },
     {
      "from": "Pad 2 of C19 [GND]",
+     "open_by_router": false,
      "to": "Pad A1 of J3 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 140.44,
@@ -193,6 +231,7 @@
     },
     {
      "from": "Pad A1 of J3 [GND]",
+     "open_by_router": false,
      "to": "Pad 4 of Y2 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 125.405,
@@ -200,20 +239,31 @@
     },
     {
      "from": "Pad 4 of Y2 [GND]",
-     "to": "Pad 2 of C8 [GND]",
+     "open_by_router": false,
+     "to": "Pad 2 of C22 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 132.24,
      "y_mm": 109.5
     },
     {
-     "from": "Pad 2 of C8 [GND]",
+     "from": "Pad 2 of C22 [GND]",
+     "open_by_router": false,
+     "to": "Pad 1 of SW1 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 132.3,
+     "y_mm": 106.78
+    },
+    {
+     "from": "Pad 1 of SW1 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of C15 [GND]",
      "what": "Missing connection in net GND",
-     "x_mm": 150.37,
-     "y_mm": 110.155
+     "x_mm": 157.835,
+     "y_mm": 111.605
     },
     {
      "from": "Pad 2 of C15 [GND]",
+     "open_by_router": false,
      "to": "Pad 3 of U3 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 139.55,
@@ -221,6 +271,7 @@
     },
     {
      "from": "Pad 3 of U3 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of C7 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 127.898,
@@ -228,6 +279,7 @@
     },
     {
      "from": "Pad 2 of C7 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of C17 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 140.44,
@@ -235,62 +287,31 @@
     },
     {
      "from": "Pad 2 of C17 [GND]",
+     "open_by_router": false,
      "to": "Pad 2 of C12 [GND]",
      "what": "Missing connection in net GND",
      "x_mm": 134.91,
      "y_mm": 104.4
     },
     {
-     "from": "Pad 2 of R5 [/nPM1300/NPM1300.SCL]",
-     "to": "Pad 14 of U2 [/nPM1300/NPM1300.SCL]",
-     "what": "Missing connection in net /nPM1300/NPM1300.SCL",
-     "x_mm": 169.19,
-     "y_mm": 112.07
-    },
-    {
-     "from": "Pad A3 of U1 [/Connectors/UART.RX]",
-     "to": "Pad 14 of U6 [/Connectors/UART.RX]",
-     "what": "Missing connection in net /Connectors/UART.RX",
-     "x_mm": 167.12,
-     "y_mm": 100.93
-    },
-    {
-     "from": "Pad 14 of U6 [/Connectors/UART.RX]",
-     "to": "Pad 14 of J1 [/Connectors/UART.RX]",
-     "what": "Missing connection in net /Connectors/UART.RX",
-     "x_mm": 156.995,
-     "y_mm": 104.17
-    },
-    {
      "from": "Pad B2 of U1 [/Connectors/UART.TX]",
+     "open_by_router": true,
      "to": "Pad 13 of U6 [/Connectors/UART.TX]",
      "what": "Missing connection in net /Connectors/UART.TX",
      "x_mm": 168.02,
      "y_mm": 101.83
     },
     {
-     "from": "Pad 13 of U6 [/Connectors/UART.TX]",
-     "to": "Pad 15 of J1 [/Connectors/UART.TX]",
-     "what": "Missing connection in net /Connectors/UART.TX",
-     "x_mm": 156.995,
-     "y_mm": 104.67
-    },
-    {
      "from": "Pad B3 of U1 [/Connectors/I2C.SDA]",
+     "open_by_router": true,
      "to": "Pad 2 of R3 [/Connectors/I2C.SDA]",
      "what": "Missing connection in net /Connectors/I2C.SDA",
      "x_mm": 167.12,
      "y_mm": 101.83
     },
     {
-     "from": "Pad B4 of U1 [/Connectors/ANALOG.A4]",
-     "to": "Pad 9 of J1 [/Connectors/ANALOG.A4]",
-     "what": "Missing connection in net /Connectors/ANALOG.A4",
-     "x_mm": 166.22,
-     "y_mm": 101.83
-    },
-    {
      "from": "Pad B5 of U1 [/Connectors/ANALOG.A5]",
+     "open_by_router": true,
      "to": "Pad 10 of J1 [/Connectors/ANALOG.A5]",
      "what": "Missing connection in net /Connectors/ANALOG.A5",
      "x_mm": 165.32,
@@ -298,90 +319,39 @@
     },
     {
      "from": "Pad D9 of U1 [Net-(J6-Pin_2)]",
+     "open_by_router": true,
      "to": "Pad 2 of J6 [Net-(J6-Pin_2)]",
      "what": "Missing connection in net Net-(J6-Pin_2)",
      "x_mm": 161.72,
      "y_mm": 103.63
     },
     {
-     "from": "Pad E8 of U1 [Net-(J6-Pin_4)]",
-     "to": "Pad 1 of C13 [Net-(J6-Pin_4)]",
-     "what": "Missing connection in net Net-(J6-Pin_4)",
-     "x_mm": 162.62,
-     "y_mm": 104.53
-    },
-    {
      "from": "Pad E9 of U1 [/Connectors/ANALOG.A0]",
+     "open_by_router": true,
      "to": "Pad 5 of J1 [/Connectors/ANALOG.A0]",
      "what": "Missing connection in net /Connectors/ANALOG.A0",
      "x_mm": 161.72,
      "y_mm": 104.53
     },
     {
-     "from": "Pad F8 of U1 [/Connectors/ANALOG.A1]",
-     "to": "Pad 6 of J1 [/Connectors/ANALOG.A1]",
-     "what": "Missing connection in net /Connectors/ANALOG.A1",
-     "x_mm": 162.62,
-     "y_mm": 105.43
-    },
-    {
-     "from": "Pad F9 of U1 [/Connectors/ANALOG.A2]",
-     "to": "Pad 7 of J1 [/Connectors/ANALOG.A2]",
-     "what": "Missing connection in net /Connectors/ANALOG.A2",
-     "x_mm": 161.72,
-     "y_mm": 105.43
-    },
-    {
-     "from": "Pad G2 of U1 [/Debugger/SWD_TRG.~{RESET}]",
-     "to": "Pad 1 of J1 [/Debugger/SWD_TRG.~{RESET}]",
-     "what": "Missing connection in net /Debugger/SWD_TRG.~{RESET}",
-     "x_mm": 168.02,
-     "y_mm": 106.33
-    },
-    {
      "from": "Pad G8 of U1 [/Connectors/I2C.SCL]",
+     "open_by_router": true,
      "to": "Pad 2 of R2 [/Connectors/I2C.SCL]",
      "what": "Missing connection in net /Connectors/I2C.SCL",
      "x_mm": 162.62,
      "y_mm": 106.33
     },
     {
-     "from": "Pad 2 of R2 [/Connectors/I2C.SCL]",
-     "to": "Pad 11 of J2 [/Connectors/I2C.SCL]",
-     "what": "Missing connection in net /Connectors/I2C.SCL",
-     "x_mm": 127.103,
-     "y_mm": 100.335
-    },
-    {
-     "from": "Pad G9 of U1 [/Connectors/ANALOG.A3]",
-     "to": "Pad 8 of J1 [/Connectors/ANALOG.A3]",
-     "what": "Missing connection in net /Connectors/ANALOG.A3",
-     "x_mm": 161.72,
-     "y_mm": 106.33
-    },
-    {
-     "from": "Pad H2 of U1 [/nPM1300/NPM1300.SDA]",
-     "to": "Pad 13 of U2 [/nPM1300/NPM1300.SDA]",
-     "what": "Missing connection in net /nPM1300/NPM1300.SDA",
-     "x_mm": 168.02,
-     "y_mm": 107.23
-    },
-    {
      "from": "Pad J3 of U1 [/Debugger/SWD_TRG.SWDIO]",
+     "open_by_router": true,
      "to": "Pad 11 of U6 [/Debugger/SWD_TRG.SWDIO]",
      "what": "Missing connection in net /Debugger/SWD_TRG.SWDIO",
      "x_mm": 167.12,
      "y_mm": 108.13
     },
     {
-     "from": "Pad J4 of U1 [/Connectors/DIG.D11]",
-     "to": "Pad 1 of SW2 [/Connectors/DIG.D11]",
-     "what": "Missing connection in net /Connectors/DIG.D11",
-     "x_mm": 166.22,
-     "y_mm": 108.13
-    },
-    {
      "from": "Pad J5 of U1 [/Connectors/DIG.D12]",
+     "open_by_router": true,
      "to": "Pad 5 of J2 [/Connectors/DIG.D12]",
      "what": "Missing connection in net /Connectors/DIG.D12",
      "x_mm": 165.32,
@@ -389,6 +359,7 @@
     },
     {
      "from": "Pad J6 of U1 [/Connectors/DIG.D13]",
+     "open_by_router": true,
      "to": "Pad 4 of J2 [/Connectors/DIG.D13]",
      "what": "Missing connection in net /Connectors/DIG.D13",
      "x_mm": 164.42,
@@ -396,48 +367,15 @@
     },
     {
      "from": "Pad K2 of U1 [/nPM1300/NPM1300.INT]",
+     "open_by_router": true,
      "to": "Pad 7 of U2 [/nPM1300/NPM1300.INT]",
      "what": "Missing connection in net /nPM1300/NPM1300.INT",
      "x_mm": 168.02,
      "y_mm": 109.03
     },
     {
-     "from": "Pad K3 of U1 [/Debugger/SWD_TRG.SWDCLK]",
-     "to": "Pad 10 of U6 [/Debugger/SWD_TRG.SWDCLK]",
-     "what": "Missing connection in net /Debugger/SWD_TRG.SWDCLK",
-     "x_mm": 167.12,
-     "y_mm": 109.03
-    },
-    {
-     "from": "Pad K4 of U1 [/Connectors/DIG.D6]",
-     "to": "Pad 9 of J2 [/Connectors/DIG.D6]",
-     "what": "Missing connection in net /Connectors/DIG.D6",
-     "x_mm": 166.22,
-     "y_mm": 109.03
-    },
-    {
-     "from": "Pad K5 of U1 [/Connectors/DIG.D9]",
-     "to": "Pad 8 of J2 [/Connectors/DIG.D9]",
-     "what": "Missing connection in net /Connectors/DIG.D9",
-     "x_mm": 165.32,
-     "y_mm": 109.03
-    },
-    {
-     "from": "Pad K6 of U1 [/Connectors/DIG.D10]",
-     "to": "Pad 7 of J2 [/Connectors/DIG.D10]",
-     "what": "Missing connection in net /Connectors/DIG.D10",
-     "x_mm": 164.42,
-     "y_mm": 109.03
-    },
-    {
-     "from": "Pad 8 of U2 [/Connectors/ENABLE]",
-     "to": "Pad 2 of J2 [/Connectors/ENABLE]",
-     "what": "Missing connection in net /Connectors/ENABLE",
-     "x_mm": 149.33,
-     "y_mm": 106.91
-    },
-    {
      "from": "Pad 15 of U2 [/Connectors/SHPHLD]",
+     "open_by_router": true,
      "to": "Pad 16 of J1 [/Connectors/SHPHLD]",
      "what": "Missing connection in net /Connectors/SHPHLD",
      "x_mm": 150.03,
@@ -445,6 +383,7 @@
     },
     {
      "from": "Pad 21 of U2 [/Debugger/USB.VBUS]",
+     "open_by_router": true,
      "to": "Pad A4 of J3 [/Debugger/USB.VBUS]",
      "what": "Missing connection in net /Debugger/USB.VBUS",
      "x_mm": 147.33,
@@ -452,48 +391,23 @@
     },
     {
      "from": "Pad 23 of U2 [/Debugger/USB.CC1]",
+     "open_by_router": true,
      "to": "Pad A5 of J3 [/Debugger/USB.CC1]",
      "what": "Missing connection in net /Debugger/USB.CC1",
      "x_mm": 146.33,
      "y_mm": 102.01
     },
     {
-     "from": "Pad 24 of U2 [/Debugger/USB.CC2]",
-     "to": "Pad B5 of J3 [/Debugger/USB.CC2]",
-     "what": "Missing connection in net /Debugger/USB.CC2",
-     "x_mm": 145.83,
-     "y_mm": 102.01
-    },
-    {
-     "from": "Pad 1 of C22 [Net-(U5-DEC4)]",
-     "to": "Pad 26 of U5 [Net-(U5-DEC4)]",
-     "what": "Missing connection in net Net-(U5-DEC4)",
-     "x_mm": 133.26,
-     "y_mm": 106.78
-    },
-    {
-     "from": "Pad 26 of U5 [Net-(U5-DEC4)]",
-     "to": "Pad 38 of U5 [Net-(U5-DEC4)]",
-     "what": "Missing connection in net Net-(U5-DEC4)",
-     "x_mm": 134.443,
-     "y_mm": 108.33
-    },
-    {
      "from": "Pad 2 of R8 [/Debugger/TRG_~{RESET}_NRF52]",
-     "to": "Pad 5 of U6 [/Debugger/TRG_~{RESET}_NRF52]",
+     "open_by_router": true,
+     "to": "Pad 34 of U5 [/Debugger/TRG_~{RESET}_NRF52]",
      "what": "Missing connection in net /Debugger/TRG_~{RESET}_NRF52",
      "x_mm": 143.11,
      "y_mm": 108.03
     },
     {
-     "from": "Pad 5 of U6 [/Debugger/TRG_~{RESET}_NRF52]",
-     "to": "Pad 34 of U5 [/Debugger/TRG_~{RESET}_NRF52]",
-     "what": "Missing connection in net /Debugger/TRG_~{RESET}_NRF52",
-     "x_mm": 153.405,
-     "y_mm": 105.17
-    },
-    {
      "from": "Pad 3 of U6 [/Debugger/UART_RX_NRF52]",
+     "open_by_router": true,
      "to": "Pad 36 of U5 [/Debugger/UART_RX_NRF52]",
      "what": "Missing connection in net /Debugger/UART_RX_NRF52",
      "x_mm": 153.405,
@@ -501,6 +415,7 @@
     },
     {
      "from": "Pad 4 of U6 [/Debugger/UART_TX_NRF52]",
+     "open_by_router": true,
      "to": "Pad 35 of U5 [/Debugger/UART_TX_NRF52]",
      "what": "Missing connection in net /Debugger/UART_TX_NRF52",
      "x_mm": 153.405,
@@ -508,20 +423,15 @@
     },
     {
      "from": "Pad 6 of U6 [/Debugger/TRG_SWDIO_NRF52]",
+     "open_by_router": true,
      "to": "Pad 33 of U5 [/Debugger/TRG_SWDIO_NRF52]",
      "what": "Missing connection in net /Debugger/TRG_SWDIO_NRF52",
      "x_mm": 153.405,
      "y_mm": 105.67
     },
     {
-     "from": "Pad 7 of U6 [/Debugger/TRG_SWDCLK_NRF52]",
-     "to": "Pad 32 of U5 [/Debugger/TRG_SWDCLK_NRF52]",
-     "what": "Missing connection in net /Debugger/TRG_SWDCLK_NRF52",
-     "x_mm": 153.405,
-     "y_mm": 106.17
-    },
-    {
      "from": "Pad 16 of U5 [Net-(J8-~{RESET})]",
+     "open_by_router": true,
      "to": "Pad 1 of TP10 [Net-(J8-~{RESET})]",
      "what": "Missing connection in net Net-(J8-~{RESET})",
      "x_mm": 136.68,
@@ -529,22 +439,285 @@
     },
     {
      "from": "Pad 1 of TP10 [Net-(J8-~{RESET})]",
+     "open_by_router": true,
      "to": "Pad 3 of J8 [Net-(J8-~{RESET})]",
      "what": "Missing connection in net Net-(J8-~{RESET})",
      "x_mm": 136.7,
      "y_mm": 99.98
-    },
-    {
-     "from": "Pad 19 of U5 [Net-(J8-SWDIO)]",
-     "to": "Pad 2 of J8 [Net-(J8-SWDIO)]",
-     "what": "Missing connection in net Net-(J8-SWDIO)",
-     "x_mm": 135.48,
-     "y_mm": 105.693
     }
    ],
+   "unconnected_open_by_router": 19,
    "warnings": 0
   },
   "before": {
+   "error_items": [
+    {
+     "item": "Pad A5 of J3 [/Debugger/USB.CC1]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 125.405,
+     "y_mm": 103.73
+    },
+    {
+     "item": "Pad A6 of J3 [/Debugger/D+]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 125.405,
+     "y_mm": 104.73
+    },
+    {
+     "item": "Pad A6 of J3 [/Debugger/D+]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 125.405,
+     "y_mm": 104.73
+    },
+    {
+     "item": "Pad A7 of J3 [/Debugger/D-]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 125.405,
+     "y_mm": 105.23
+    },
+    {
+     "item": "Pad A8 of J3 [unconnected-(J3-SBU1-PadA8)]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 125.405,
+     "y_mm": 106.23
+    },
+    {
+     "item": "Pad 1 of U3 [unconnected-(U3-IO1-Pad1)]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 127.898,
+     "y_mm": 104.473
+    },
+    {
+     "item": "Pad 2 of U3 [/Debugger/D-]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 127.898,
+     "y_mm": 104.973
+    },
+    {
+     "item": "Pad 11 of U5 [Net-(U5-DECUSB)]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 138.68,
+     "y_mm": 105.693
+    },
+    {
+     "item": "Pad 12 of U5 [/Debugger/D-]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 138.28,
+     "y_mm": 105.693
+    },
+    {
+     "item": "Pad 13 of U5 [/Debugger/D+]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 137.88,
+     "y_mm": 105.693
+    },
+    {
+     "item": "Pad 1 of J2 [+BATT]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 143.23,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 2 of J2 [/Connectors/ENABLE]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 145.77,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 3 of J2 [VSYS]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 148.31,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 4 of J2 [/Connectors/DIG.D13]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 150.85,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 5 of J2 [/Connectors/DIG.D12]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 153.39,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 6 of J2 [/Connectors/DIG.D11]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 155.93,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 7 of J2 [/Connectors/DIG.D10]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 158.47,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 8 of J2 [/Connectors/DIG.D9]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 161.01,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 9 of J2 [/Connectors/DIG.D6]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 163.55,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 10 of J2 [/Connectors/DIG.D5]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 166.09,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 11 of J2 [/Connectors/I2C.SCL]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 168.63,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 12 of J2 [/Connectors/I2C.SDA]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 171.17,
+     "y_mm": 93.55
+    },
+    {
+     "item": "Pad 1 of J1 [/Debugger/SWD_TRG.~{RESET}]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 133.07,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 2 of J1 [VDD]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 135.61,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 3 of J1 [unconnected-(J1-Pin_3-Pad3)]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 138.15,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 4 of J1 [GND]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 140.69,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 5 of J1 [/Connectors/ANALOG.A0]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 143.23,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 6 of J1 [/Connectors/ANALOG.A1]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 145.77,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 7 of J1 [/Connectors/ANALOG.A2]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 148.31,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 8 of J1 [/Connectors/ANALOG.A3]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 150.85,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 9 of J1 [/Connectors/ANALOG.A4]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 153.39,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 10 of J1 [/Connectors/ANALOG.A5]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 155.93,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 11 of J1 [/Connectors/SPI.SCK]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 158.47,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 12 of J1 [/Connectors/SPI.MOSI]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 161.01,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 13 of J1 [/Connectors/SPI.MISO]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 163.55,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 14 of J1 [/Connectors/UART.RX]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 166.09,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 15 of J1 [/Connectors/UART.TX]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 168.63,
+     "y_mm": 116.41
+    },
+    {
+     "item": "Pad 16 of J1 [/Connectors/SHPHLD]",
+     "type": "copper_edge_clearance",
+     "what": "",
+     "x_mm": 171.17,
+     "y_mm": 116.41
+    }
+   ],
    "errors": 38,
    "notes": [],
    "unconnected": 146,
@@ -570,79 +743,88 @@
     "type": "copper_edge_clearance"
    }
   ],
-  "unconnected_change": -85,
+  "unconnected_change": -108,
   "zones_refilled": true
  },
  "escape_corridor_mm": 0.0,
  "escape_corridors": 0,
  "escape_reclaimed": 0,
- "expansions": 3042182,
+ "expansions": 3063153,
  "failures": [
-  "Net-(U5-DEC4): C22.1 -> U5.26  (boxed in (target); escapes/neck-down: boxed in (target))",
-  "Net-(D3-GK): D3.3 -> U2.26  (boxed in (target); escapes/neck-down: boxed in (target))",
-  "Net-(U5-DEC4): U5.26 -> U5.38  (boxed in; escapes/neck-down: boxed in)",
   "Net-(J8-~{RESET}): U5.16 -> TP10.1  (boxed in; escapes/neck-down: boxed in)",
-  "Net-(J8-SWDIO): U5.19 -> J8.2  (boxed in; escapes/neck-down: boxed in)",
-  "/Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (boxed in; escapes/neck-down: boxed in)",
   "Net-(J8-~{RESET}): U5.16 -> J8.3  (boxed in; escapes/neck-down: boxed in)",
-  "/Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (boxed in (target); escapes/neck-down: out of budget)",
-  "/Debugger/SWD_TRG.SWDCLK: U1.K3 -> U6.10  ()",
-  "/Debugger/TRG_~{RESET}_NRF52: R8.2 -> U6.5  ()",
-  "/Connectors/UART.RX: U1.A3 -> U6.14  ()",
-  "/Debugger/nRF52_VDD: U6.2 -> R8.1  ()",
-  "/Connectors/DIG.D11: U1.J4 -> SW2.1  ()",
-  "/Connectors/UART.TX: U1.B2 -> U6.13  ()",
-  "/Connectors/ENABLE: U2.8 -> J2.2  ()",
-  "/Connectors/I2C.SCL: U1.G8 -> J2.11  ()",
-  "/Connectors/UART.TX: U1.B2 -> J1.15  ()",
-  "/Connectors/ANALOG.A3: U1.G9 -> J1.8  ()",
-  "/Connectors/UART.RX: U6.14 -> J1.14  ()",
-  "/Connectors/DIG.D6: U1.K4 -> J2.9  ()",
-  "/Connectors/DIG.D9: U1.K5 -> J2.8  ()",
-  "/Connectors/DIG.D10: U1.K6 -> J2.7  ()",
-  "/Connectors/ANALOG.A2: U1.F9 -> J1.7  ()",
-  "/Connectors/ANALOG.A5: U1.B5 -> J1.10  ()",
-  "/Connectors/DIG.D12: U1.J5 -> J2.5  ()",
-  "/Debugger/UART_RX_NRF52: U6.3 -> U5.36  ()",
-  "/Debugger/UART_TX_NRF52: U6.4 -> U5.35  ()",
-  "/Connectors/ANALOG.A4: U1.B4 -> J1.9  ()",
-  "/Debugger/USB.VBUS: C5.1 -> U3.5  ()",
-  "/Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  ()",
-  "/nPM1300/NPM1300.SDA: U1.H2 -> U2.13  ()",
-  "/Debugger/TRG_SWDCLK_NRF52: U6.7 -> U5.32  ()",
-  "/nPM1300/NPM1300.SCL: U1.J2 -> U2.14  ()",
-  "/Connectors/DIG.D13: U1.J6 -> J2.4  ()",
-  "/Connectors/ANALOG.A1: U1.F8 -> J1.6  ()",
-  "/nPM1300/NPM1300.INT: U1.K2 -> U2.7  ()",
-  "/Connectors/ANALOG.A0: U1.E9 -> J1.5  ()",
-  "/Debugger/SWD_TRG.~{RESET}: SW1.2 -> J1.1  ()",
-  "/Debugger/USB.CC2: U2.24 -> J3.B5  ()",
-  "/Debugger/USB.CC1: U2.23 -> J3.A5  ()",
-  "/Connectors/SHPHLD: U2.15 -> J1.16  ()",
-  "Net-(J6-Pin_2): U1.D9 -> C14.1  ()",
-  "Net-(J6-Pin_4): U1.E8 -> C13.1  ()",
+  "/Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/UART.TX: U1.B2 -> U6.13  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/ANALOG.A5: U1.B5 -> J1.10  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D12: U1.J5 -> J2.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/UART_RX_NRF52: U6.3 -> U5.36  (boxed in; escapes/neck-down: boxed in (target))",
+  "/Debugger/UART_TX_NRF52: U6.4 -> U5.35  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/USB.VBUS: C5.1 -> U3.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  (boxed in; escapes/neck-down: boxed in)",
+  "/Connectors/DIG.D13: U1.J6 -> J2.4  (boxed in; escapes/neck-down: boxed in)",
+  "/nPM1300/NPM1300.INT: U1.K2 -> U2.7  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/Connectors/ANALOG.A0: U1.E9 -> J1.5  (boxed in; escapes/neck-down: boxed in)",
+  "/Debugger/USB.CC1: U2.23 -> J3.A5  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "/Connectors/SHPHLD: U2.15 -> J1.16  (boxed in; escapes/neck-down: boxed in)",
+  "Net-(J6-Pin_2): U1.D9 -> C14.1  (boxed in; escapes/neck-down: boxed in)",
   "/Connectors/I2C.SCL: U1.G8 -> R2.2  ()",
   "/Connectors/I2C.SDA: U1.B3 -> R3.2  ()"
  ],
- "open": 45,
+ "open": 19,
  "package_pin_edges": 2,
  "pitch_mm": 0.05,
  "refill": {
   "repair": {
-   "connections": 62,
-   "expansions": 3145397,
-   "kept": true,
-   "routed": 1,
-   "tracks": 4,
-   "unconnected": 61,
+   "connections": 38,
+   "expansions": 3244436,
+   "kept": false,
+   "routed": 0,
+   "tracks": 0,
+   "unconnected": 38,
    "vias": 0
   },
+  "starved_thermal_pads": [],
   "starved_thermals": 0,
-  "unconnected": 62,
+  "unconnected": 38,
   "warnings": [],
   "zones": 4
  },
- "routed": 102,
+ "rescue": {
+  "adopted": false,
+  "connections": 147,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": false,
+    "mode": "warm",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.06,
+      "routed": 130
+     }
+    ],
+    "routed": 128,
+    "seconds": 43.813087189
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.06,
+      "routed": 126
+     }
+    ],
+    "routed": 105,
+    "seconds": 50.946156782
+   }
+  ],
+  "routed_after": 105,
+  "routed_before": 128,
+  "seconds": 94.759243971
+ },
+ "routed": 128,
  "rules": {
   "custom_rule_count": 0,
   "custom_rules": [],
@@ -691,12 +873,12 @@
  },
  "run": {
   "board": "unrouted.kicad_pcb",
-  "date": "2026-10-27T22:56:45Z",
-  "input": "build/demos/RoyalBlue54L-Feather/unrouted.kicad_pcb",
+  "date": "2026-11-08T22:48:19Z",
+  "input": "build/demos/RoyalBlue54L-Feather//unrouted.kicad_pcb",
   "options": [
    {
     "name": "--output",
-    "value": "build/scratch/d3/RoyalBlue54L-Feather/routed.kicad_pcb"
+    "value": "bench/results/run-report/RoyalBlue54L-Feather/routed.kicad_pcb"
    },
    {
     "name": "--time",
@@ -708,6 +890,10 @@
    },
    {
     "name": "--soft-zones",
+    "value": "true"
+   },
+   {
+    "name": "--no-kb",
     "value": "true"
    },
    {
@@ -723,27 +909,31 @@
     "value": "true"
    },
    {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
     "name": "--view-port",
-    "value": "8841"
+    "value": "8815"
    },
    {
     "name": "--json",
-    "value": "build/scratch/d3/RoyalBlue54L-Feather/summary.json"
+    "value": "bench/results/run-report/RoyalBlue54L-Feather/summary.json"
    },
    {
     "name": "--report",
-    "value": "build/scratch/d3/RoyalBlue54L-Feather/report.html"
+    "value": "bench/results/run-report/RoyalBlue54L-Feather/report.html"
    }
   ],
-  "output": "build/scratch/d3/RoyalBlue54L-Feather/routed.kicad_pcb",
+  "output": "bench/results/run-report/RoyalBlue54L-Feather/routed.kicad_pcb",
   "seed": 1,
   "threads": 4,
   "time_limit_s": 3600.0,
   "variants": 8,
-  "version": "0.11.0",
+  "version": "0.12.1",
   "work_budget": 3000000
  },
- "seconds": 71.651461238,
+ "seconds": 204.194944788,
  "stuck": {
   "board": {
    "copper_layers": [
@@ -773,6 +963,7 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 44,
+    "not_proved": [],
     "part": "U1",
     "pins": 44,
     "pitch_mm": 0.25
@@ -782,6 +973,7 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 20,
+    "not_proved": [],
     "part": "U2",
     "pins": 20,
     "pitch_mm": 0.5
@@ -791,6 +983,7 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 10,
+    "not_proved": [],
     "part": "J3",
     "pins": 10,
     "pitch_mm": 0.5
@@ -800,6 +993,7 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 7,
+    "not_proved": [],
     "part": "U4",
     "pins": 7,
     "pitch_mm": 0.5
@@ -809,6 +1003,7 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 13,
+    "not_proved": [],
     "part": "U6",
     "pins": 13,
     "pitch_mm": 0.5
@@ -818,24 +1013,20 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 25,
+    "not_proved": [],
     "part": "J2",
     "pins": 25,
     "pitch_mm": 1.27
    },
    {
     "already_connected": 20,
-    "cannot_escape": 2,
-    "dead": [
-     {
-      "cause": "no channel at 0.125 mm and no via site within reach",
-      "count": 2,
-      "pads": [
-       "12",
-       "13"
-      ]
-     }
-    ],
+    "cannot_escape": 0,
+    "dead": [],
     "escapable": 21,
+    "not_proved": [
+     "12",
+     "13"
+    ],
     "part": "U5",
     "pins": 23,
     "pitch_mm": 0.4
@@ -845,6 +1036,7 @@
     "cannot_escape": 0,
     "dead": [],
     "escapable": 28,
+    "not_proved": [],
     "part": "J1",
     "pins": 28,
     "pitch_mm": 1.27
@@ -857,20 +1049,9 @@
     "pads": 55,
     "part": "U1",
     "side": "front",
-    "unrouted_ends": 25,
+    "unrouted_ends": 10,
     "value": "BM15x",
     "x_mm": 169.12,
-    "y_mm": 104.98
-   },
-   {
-    "kind": "small_ic",
-    "library_id": "LED_SMD:LED_Wurth_150044M155260",
-    "pads": 4,
-    "part": "D3",
-    "side": "front",
-    "unrouted_ends": 1,
-    "value": "LED_ARGB",
-    "x_mm": 142.88,
     "y_mm": 104.98
    },
    {
@@ -879,7 +1060,7 @@
     "pads": 59,
     "part": "U2",
     "side": "front",
-    "unrouted_ends": 8,
+    "unrouted_ends": 3,
     "value": "nPM1300-QEXX",
     "x_mm": 147.58,
     "y_mm": 104.46
@@ -901,21 +1082,10 @@
     "pads": 22,
     "part": "J3",
     "side": "front",
-    "unrouted_ends": 2,
+    "unrouted_ends": 1,
     "value": "USB_C_Receptacle_USB2.0_16P",
     "x_mm": 121.36,
     "y_mm": 104.98
-   },
-   {
-    "kind": "passive",
-    "library_id": "Capacitor_SMD:C_0402_1005Metric",
-    "pads": 2,
-    "part": "C22",
-    "side": "front",
-    "unrouted_ends": 1,
-    "value": "1uF",
-    "x_mm": 132.78,
-    "y_mm": 106.78
    },
    {
     "kind": "passive",
@@ -923,32 +1093,10 @@
     "pads": 2,
     "part": "R8",
     "side": "front",
-    "unrouted_ends": 3,
+    "unrouted_ends": 1,
     "value": "100kR",
     "x_mm": 143.11,
     "y_mm": 107.52
-   },
-   {
-    "kind": "passive",
-    "library_id": "Capacitor_SMD:C_0402_1005Metric",
-    "pads": 2,
-    "part": "C13",
-    "side": "front",
-    "unrouted_ends": 1,
-    "value": "300pF",
-    "x_mm": 128.79,
-    "y_mm": 111.855
-   },
-   {
-    "kind": "small_ic",
-    "library_id": "Button_Switch_SMD:SW_Push_1P1T_NO_Vertical_Wuerth_434133025816",
-    "pads": 4,
-    "part": "SW1",
-    "side": "front",
-    "unrouted_ends": 1,
-    "value": "SW_Push",
-    "x_mm": 155.76,
-    "y_mm": 110.53
    },
    {
     "kind": "multi_pin",
@@ -956,21 +1104,10 @@
     "pads": 21,
     "part": "U6",
     "side": "front",
-    "unrouted_ends": 11,
+    "unrouted_ends": 5,
     "value": "TXB0106RGY",
     "x_mm": 155.2,
     "y_mm": 104.92
-   },
-   {
-    "kind": "small_ic",
-    "library_id": "Button_Switch_SMD:SW_Push_1P1T_NO_Vertical_Wuerth_434133025816",
-    "pads": 4,
-    "part": "SW2",
-    "side": "front",
-    "unrouted_ends": 1,
-    "value": "SW_Push",
-    "x_mm": 155.76,
-    "y_mm": 99.43
    },
    {
     "kind": "multi_pin",
@@ -978,7 +1115,7 @@
     "pads": 25,
     "part": "J2",
     "side": "front",
-    "unrouted_ends": 7,
+    "unrouted_ends": 2,
     "value": "Conn_01x12_Pin",
     "x_mm": 143.23,
     "y_mm": 94.82
@@ -1033,7 +1170,7 @@
     "pads": 67,
     "part": "U5",
     "side": "front",
-    "unrouted_ends": 11,
+    "unrouted_ends": 6,
     "value": "nRF52833-QDXX",
     "x_mm": 136.88,
     "y_mm": 108.13
@@ -1044,7 +1181,7 @@
     "pads": 32,
     "part": "J1",
     "side": "back",
-    "unrouted_ends": 10,
+    "unrouted_ends": 3,
     "value": "Conn_01x16_Pin",
     "x_mm": 133.07,
     "y_mm": 115.14
@@ -1066,7 +1203,7 @@
     "pads": 9,
     "part": "J8",
     "side": "back",
-    "unrouted_ends": 2,
+    "unrouted_ends": 1,
     "value": "Conn_ARM_SWD_TagConnect_TC2030-NL",
     "x_mm": 128.61,
     "y_mm": 104.973
@@ -1074,11 +1211,11 @@
   ],
   "result": {
    "connections": 147,
-   "routed": 102,
-   "seconds": 15.91,
-   "tracks": 331,
-   "unrouted": 45,
-   "vias": 57
+   "routed": 128,
+   "seconds": 47.34,
+   "tracks": 526,
+   "unrouted": 19,
+   "vias": 94
   },
   "rules": {
    "clearance_mm": 0.15,
@@ -1092,193 +1229,20 @@
    {
     "blockers": [],
     "crowding": {
-     "other_pads": 19,
-     "other_vias": 1,
-     "routed_copper_by_net": [
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 6.65
-      },
-      {
-       "net": "Net-(U5-XC1)",
-       "track_mm": 2.84
-      },
-      {
-       "net": "Net-(U5-DEC3)",
-       "track_mm": 2.073
-      },
-      {
-       "net": "/Debugger/D+",
-       "track_mm": 1.339
-      },
-      {
-       "net": "Net-(U5-XC2)",
-       "track_mm": 1.257
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 0.825
-      }
-     ]
-    },
-    "fails": 1,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "1",
-     "part": "C22",
-     "x_mm": 133.26,
-     "y_mm": 106.78
-    },
-    "length_mm": 1.95,
-    "net": "Net-(U5-DEC4)",
-    "reason": "boxed_in",
-    "region_mm": [
-     131.76,
-     105.28,
-     135.943,
-     109.83
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "26",
-     "part": "U5",
-     "x_mm": 134.443,
-     "y_mm": 108.33
-    },
-    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 15,
-     "other_vias": 1,
-     "routed_copper_by_net": [
-      {
-       "net": "VSYS",
-       "track_mm": 4.679
-      },
-      {
-       "net": "Net-(D3-BK)",
-       "track_mm": 4.388
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 4.045
-      },
-      {
-       "net": "Net-(D3-RK)",
-       "track_mm": 2.894
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 1.959
-      }
-     ]
-    },
-    "fails": 1,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "3",
-     "part": "D3",
-     "x_mm": 143.28,
-     "y_mm": 105.38
-    },
-    "length_mm": 2.852,
-    "net": "Net-(D3-GK)",
-    "reason": "boxed_in",
-    "region_mm": [
-     141.78,
-     101.71,
-     146.63,
-     106.88
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "26",
-     "part": "U2",
-     "x_mm": 145.13,
-     "y_mm": 103.21
-    },
-    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 41,
-     "other_vias": 1,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 10.548
-      },
-      {
-       "net": "Net-(U5-DEC3)",
-       "track_mm": 1.91
-      },
-      {
-       "net": "Net-(U5-XC2)",
-       "track_mm": 1.776
-      },
-      {
-       "net": "Net-(U5-XC1)",
-       "track_mm": 1.657
-      },
-      {
-       "net": "Net-(U5-DEC1)",
-       "track_mm": 0.063
-      }
-     ]
-    },
-    "fails": 1,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "26",
-     "part": "U5",
-     "x_mm": 134.443,
-     "y_mm": 108.33
-    },
-    "length_mm": 4.102,
-    "net": "Net-(U5-DEC4)",
-    "reason": "boxed_in",
-    "region_mm": [
-     132.943,
-     106.83,
-     139.38,
-     112.068
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "38",
-     "part": "U5",
-     "x_mm": 137.88,
-     "y_mm": 110.568
-    },
-    "why": "boxed in; escapes/neck-down: boxed in"
-   },
-   {
-    "blockers": [],
-    "crowding": {
      "other_pads": 13,
      "other_vias": 3,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
        "track_mm": 8.192
+      },
+      {
+       "net": "Net-(J8-SWDIO)",
+       "track_mm": 4.367
+      },
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 3.848
       },
       {
        "net": "/Debugger/D+",
@@ -1291,14 +1255,6 @@
       {
        "net": "/Debugger/D-",
        "track_mm": 3.662
-      },
-      {
-       "net": "Net-(J8-SWDIO)",
-       "track_mm": 3.48
-      },
-      {
-       "net": "+BATT",
-       "track_mm": 0.022
       }
      ]
     },
@@ -1336,75 +1292,20 @@
    {
     "blockers": [],
     "crowding": {
-     "other_pads": 26,
-     "other_vias": 5,
-     "routed_copper_by_net": [
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 10.796
-      },
-      {
-       "net": "/Debugger/D+",
-       "track_mm": 7.165
-      },
-      {
-       "net": "/Debugger/D-",
-       "track_mm": 6.186
-      },
-      {
-       "net": "/Debugger/USB.VBUS",
-       "track_mm": 4.617
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 3.939
-      },
-      {
-       "net": "Net-(U5-DEC3)",
-       "track_mm": 0.214
-      }
-     ]
-    },
-    "fails": 1,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "19",
-     "part": "U5",
-     "x_mm": 135.48,
-     "y_mm": 105.693
-    },
-    "length_mm": 6.259,
-    "net": "Net-(J8-SWDIO)",
-    "reason": "boxed_in",
-    "region_mm": [
-     127.745,
-     104.193,
-     136.98,
-     107.743
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "B.Cu"
-     ],
-     "pad": "2",
-     "part": "J8",
-     "x_mm": 129.245,
-     "y_mm": 106.243
-    },
-    "why": "boxed in; escapes/neck-down: boxed in"
-   },
-   {
-    "blockers": [],
-    "crowding": {
      "other_pads": 43,
-     "other_vias": 1,
+     "other_vias": 4,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
-       "track_mm": 19.263
+       "track_mm": 20.296
+      },
+      {
+       "net": "/Debugger/TRG_SWDCLK_NRF52",
+       "track_mm": 10.29
+      },
+      {
+       "net": "Net-(U5-DEC4)",
+       "track_mm": 4.321
       },
       {
        "net": "Net-(U5-DEC1)",
@@ -1417,10 +1318,6 @@
       {
        "net": "VBUS",
        "track_mm": 0.2
-      },
-      {
-       "net": "VSYS",
-       "track_mm": 0.184
       }
      ]
     },
@@ -1453,37 +1350,37 @@
      "x_mm": 136.28,
      "y_mm": 110.568
     },
-    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 27,
-     "other_vias": 7,
+     "other_vias": 10,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/D+",
-       "track_mm": 13.513
+       "track_mm": 13.542
       },
       {
        "net": "Net-(J8-SWCLK)",
-       "track_mm": 12.493
-      },
-      {
-       "net": "/Debugger/D-",
-       "track_mm": 10.764
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 8.233
-      },
-      {
-       "net": "/Debugger/USB.VBUS",
-       "track_mm": 6.537
+       "track_mm": 12.179
       },
       {
        "net": "Net-(J8-SWDIO)",
-       "track_mm": 3.727
+       "track_mm": 11.207
+      },
+      {
+       "net": "/Debugger/USB.CC2",
+       "track_mm": 9.302
+      },
+      {
+       "net": "/Debugger/USB.VBUS",
+       "track_mm": 9.008
+      },
+      {
+       "net": "/Debugger/nRF52_VDD",
+       "track_mm": 7.097
       }
      ]
     },
@@ -1522,31 +1419,31 @@
     "blockers": [],
     "crowding": {
      "other_pads": 49,
-     "other_vias": 14,
+     "other_vias": 23,
      "routed_copper_by_net": [
       {
+       "net": "/nPM1300/NPM1300.SDA",
+       "track_mm": 16.335
+      },
+      {
        "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 17.306
+       "track_mm": 15.816
+      },
+      {
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 11.428
+      },
+      {
+       "net": "/Debugger/SWD_TRG.SWDCLK",
+       "track_mm": 11.209
+      },
+      {
+       "net": "/Connectors/ANALOG.A1",
+       "track_mm": 10.375
       },
       {
        "net": "/Connectors/SPI.MOSI",
-       "track_mm": 9.711
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 7.698
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 6.524
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 6.436
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.921
+       "track_mm": 9.659
       }
      ]
     },
@@ -1579,356 +1476,41 @@
      "x_mm": 156.995,
      "y_mm": 105.67
     },
-    "why": "boxed in (target); escapes/neck-down: out of budget"
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 46,
-     "other_vias": 13,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 15.892
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 10.984
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 7.463
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 7.336
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 5.23
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.921
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "K3",
-     "part": "U1",
-     "x_mm": 167.12,
-     "y_mm": 109.03
-    },
-    "length_mm": 10.521,
-    "net": "/Debugger/SWD_TRG.SWDCLK",
-    "reason": "not_attempted",
-    "region_mm": [
-     155.495,
-     104.67,
-     168.62,
-     110.53
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "10",
-     "part": "U6",
-     "x_mm": 156.995,
-     "y_mm": 106.17
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 48,
-     "other_vias": 9,
-     "routed_copper_by_net": [
-      {
-       "net": "VSYS",
-       "track_mm": 9.128
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 8.373
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 5.951
-      },
-      {
-       "net": "Net-(D3-BK)",
-       "track_mm": 4.388
-      },
-      {
-       "net": "Net-(U2-SW2)",
-       "track_mm": 3.047
-      },
-      {
-       "net": "Net-(D3-GK)",
-       "track_mm": 2.104
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "2",
-     "part": "R8",
-     "x_mm": 143.11,
-     "y_mm": 108.03
-    },
-    "length_mm": 10.685,
-    "net": "/Debugger/TRG_~{RESET}_NRF52",
-    "reason": "not_attempted",
-    "region_mm": [
-     141.61,
-     103.67,
-     154.905,
-     109.53
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "5",
-     "part": "U6",
-     "x_mm": 153.405,
-     "y_mm": 105.17
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 38,
-     "other_vias": 10,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 14.531
-      },
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 7.136
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 6.127
-      },
-      {
-       "net": "/Connectors/DIG.D11",
-       "track_mm": 3.86
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 3.734
-      },
-      {
-       "net": "Net-(U1-P1.01{slash}XL2)",
-       "track_mm": 3.536
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "A3",
-     "part": "U1",
-     "x_mm": 167.12,
-     "y_mm": 100.93
-    },
-    "length_mm": 10.631,
-    "net": "/Connectors/UART.RX",
-    "reason": "not_attempted",
-    "region_mm": [
-     155.495,
-     99.43,
-     168.62,
-     105.67
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "14",
-     "part": "U6",
-     "x_mm": 156.995,
-     "y_mm": 104.17
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 51,
-     "other_vias": 5,
-     "routed_copper_by_net": [
-      {
-       "net": "VSYS",
-       "track_mm": 8.391
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 5.857
-      },
-      {
-       "net": "Net-(D3-BK)",
-       "track_mm": 4.388
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 3.635
-      },
-      {
-       "net": "Net-(D3-GK)",
-       "track_mm": 3.194
-      },
-      {
-       "net": "Net-(D3-RK)",
-       "track_mm": 2.894
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "2",
-     "part": "U6",
-     "x_mm": 153.405,
-     "y_mm": 103.67
-    },
-    "length_mm": 10.823,
-    "net": "/Debugger/nRF52_VDD",
-    "reason": "not_attempted",
-    "region_mm": [
-     141.61,
-     102.17,
-     154.905,
-     108.51
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "1",
-     "part": "R8",
-     "x_mm": 143.11,
-     "y_mm": 107.01
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 67,
-     "other_vias": 22,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 20.198
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 9.711
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 7.698
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 6.436
-      },
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 5.614
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "J4",
-     "part": "U1",
-     "x_mm": 166.22,
-     "y_mm": 108.13
-    },
-    "length_mm": 11.334,
-    "net": "/Connectors/DIG.D11",
-    "reason": "not_attempted",
-    "region_mm": [
-     156.335,
-     99.005,
-     167.72,
-     109.63
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "1",
-     "part": "SW2",
-     "x_mm": 157.835,
-     "y_mm": 100.505
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 43,
-     "other_vias": 11,
+     "other_vias": 21,
      "routed_copper_by_net": [
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 16.771
+      },
       {
        "net": "/Debugger/SWD_TRG.~{RESET}",
        "track_mm": 15.731
       },
       {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 9.342
+       "net": "/Connectors/UART.RX",
+       "track_mm": 15.206
       },
       {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 6.834
+       "net": "/nPM1300/NPM1300.SDA",
+       "track_mm": 11.954
       },
       {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 3.693
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 11.466
       },
       {
-       "net": "/Debugger/SWD_TRG.SWDIO",
-       "track_mm": 2.885
-      },
-      {
-       "net": "Net-(U1-P1.01{slash}XL2)",
-       "track_mm": 2.636
+       "net": "/Connectors/DIG.D11",
+       "track_mm": 11.419
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -1940,7 +1522,7 @@
     },
     "length_mm": 11.385,
     "net": "/Connectors/UART.TX",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      155.495,
      100.33,
@@ -1957,671 +1539,41 @@
      "x_mm": 156.995,
      "y_mm": 104.67
     },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 51,
-     "other_vias": 6,
-     "routed_copper_by_net": [
-      {
-       "net": "VSYS",
-       "track_mm": 11.713
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 6.601
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 4.032
-      },
-      {
-       "net": "/Debugger/USB.VBUS",
-       "track_mm": 2.686
-      },
-      {
-       "net": "Net-(D3-BK)",
-       "track_mm": 2.084
-      },
-      {
-       "net": "Net-(U2-SW2)",
-       "track_mm": 1.927
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "8",
-     "part": "U2",
-     "x_mm": 149.33,
-     "y_mm": 106.91
-    },
-    "length_mm": 12.603,
-    "net": "/Connectors/ENABLE",
-    "reason": "not_attempted",
-    "region_mm": [
-     144.27,
-     93.32,
-     150.83,
-     108.41
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "2",
-     "part": "J2",
-     "x_mm": 145.77,
-     "y_mm": 94.82
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 43,
-     "other_vias": 7,
-     "routed_copper_by_net": [
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 16.951
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 11.614
-      },
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 10.117
-      },
-      {
-       "net": "/Debugger/SWD_TRG.SWDIO",
-       "track_mm": 5.524
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 5.14
-      },
-      {
-       "net": "/Connectors/I2C.SDA",
-       "track_mm": 4.341
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "G8",
-     "part": "U1",
-     "x_mm": 162.62,
-     "y_mm": 106.33
-    },
-    "length_mm": 12.985,
-    "net": "/Connectors/I2C.SCL",
-    "reason": "not_attempted",
-    "region_mm": [
-     161.12,
-     93.32,
-     170.13,
-     107.83
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "11",
-     "part": "J2",
-     "x_mm": 168.63,
-     "y_mm": 94.82
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 17,
-     "other_vias": 3,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.SWDIO",
-       "track_mm": 5.841
-      },
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 4.928
-      },
-      {
-       "net": "/nPM1300/NPM1300.SCL",
-       "track_mm": 4.425
-      },
-      {
-       "net": "/nPM1300/NPM1300.SDA",
-       "track_mm": 4.385
-      },
-      {
-       "net": "/Debugger/SWD_TRG.SWDCLK",
-       "track_mm": 3.645
-      },
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 2.215
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "B2",
-     "part": "U1",
-     "x_mm": 168.02,
-     "y_mm": 101.83
-    },
-    "length_mm": 13.324,
-    "net": "/Connectors/UART.TX",
-    "reason": "not_attempted",
-    "region_mm": [
-     166.52,
-     100.33,
-     170.13,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "15",
-     "part": "J1",
-     "x_mm": 168.63,
-     "y_mm": 115.14
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 57,
-     "other_vias": 13,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 15.108
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 12.496
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 11.624
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 6.724
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.921
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "G9",
-     "part": "U1",
-     "x_mm": 161.47,
-     "y_mm": 106.33
-    },
-    "length_mm": 13.799,
-    "net": "/Connectors/ANALOG.A3",
-    "reason": "not_attempted",
-    "region_mm": [
-     149.35,
-     104.83,
-     162.97,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "8",
-     "part": "J1",
-     "x_mm": 150.85,
-     "y_mm": 115.14
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 68,
-     "other_vias": 20,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 20.379
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 16.012
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.966
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.921
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "14",
-     "part": "U6",
-     "x_mm": 156.995,
-     "y_mm": 104.17
-    },
-    "length_mm": 14.25,
-    "net": "/Connectors/UART.RX",
-    "reason": "not_attempted",
-    "region_mm": [
-     155.495,
-     102.67,
-     167.59,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "14",
-     "part": "J1",
-     "x_mm": 166.09,
-     "y_mm": 115.14
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 29,
-     "other_vias": 9,
-     "routed_copper_by_net": [
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 11.301
-      },
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 8.668
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 8.15
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 6.727
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 4.399
-      },
-      {
-       "net": "/Debugger/SWD_TRG.SWDIO",
-       "track_mm": 2.432
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "K4",
-     "part": "U1",
-     "x_mm": 166.22,
-     "y_mm": 109.03
-    },
-    "length_mm": 14.459,
-    "net": "/Connectors/DIG.D6",
-    "reason": "not_attempted",
-    "region_mm": [
-     162.05,
-     93.32,
-     167.72,
-     110.53
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "9",
-     "part": "J2",
-     "x_mm": 163.55,
-     "y_mm": 94.82
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 56,
-     "other_vias": 15,
-     "routed_copper_by_net": [
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 11.614
-      },
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 9.936
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 9.309
-      },
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 9.194
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 8.598
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 7.539
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "K5",
-     "part": "U1",
-     "x_mm": 165.32,
-     "y_mm": 109.03
-    },
-    "length_mm": 14.849,
-    "net": "/Connectors/DIG.D9",
-    "reason": "not_attempted",
-    "region_mm": [
-     159.51,
-     93.32,
-     166.82,
-     110.53
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "8",
-     "part": "J2",
-     "x_mm": 161.01,
-     "y_mm": 94.82
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 69,
-     "other_vias": 20,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 17.018
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 11.374
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 10.984
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 8.598
-      },
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 7.394
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "K6",
-     "part": "U1",
-     "x_mm": 164.42,
-     "y_mm": 109.03
-    },
-    "length_mm": 15.405,
-    "net": "/Connectors/DIG.D10",
-    "reason": "not_attempted",
-    "region_mm": [
-     156.97,
-     93.32,
-     165.92,
-     110.53
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "7",
-     "part": "J2",
-     "x_mm": 158.47,
-     "y_mm": 94.82
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 83,
-     "other_vias": 18,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 15.108
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.146
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 12.496
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 10.2
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.921
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "F9",
-     "part": "U1",
-     "x_mm": 161.47,
-     "y_mm": 105.43
-    },
-    "length_mm": 16.355,
-    "net": "/Connectors/ANALOG.A2",
-    "reason": "not_attempted",
-    "region_mm": [
-     146.81,
-     103.93,
-     162.97,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "7",
-     "part": "J1",
-     "x_mm": 148.31,
-     "y_mm": 115.14
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 82,
-     "other_vias": 20,
+     "other_vias": 36,
      "routed_copper_by_net": [
+      {
+       "net": "/Connectors/UART.RX",
+       "track_mm": 27.087
+      },
       {
        "net": "/Debugger/SWD_TRG.~{RESET}",
        "track_mm": 20.831
       },
       {
+       "net": "/Connectors/ANALOG.A4",
+       "track_mm": 20.143
+      },
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 17.836
+      },
+      {
        "net": "/Connectors/SPI.MOSI",
-       "track_mm": 16.012
+       "track_mm": 15.961
       },
       {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.966
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.921
+       "net": "/Connectors/DIG.D11",
+       "track_mm": 15.22
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -2633,7 +1585,7 @@
     },
     "length_mm": 16.289,
     "net": "/Connectors/ANALOG.A5",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      154.43,
      100.33,
@@ -2657,41 +1609,41 @@
      "x_mm": 155.93,
      "y_mm": 115.14
     },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 97,
-     "other_vias": 24,
+     "other_vias": 42,
      "routed_copper_by_net": [
       {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 21.551
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 11.614
-      },
-      {
        "net": "/Connectors/DIG.D11",
-       "track_mm": 10.624
+       "track_mm": 22.191
       },
       {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 9.711
+       "net": "/Debugger/SWD_TRG.~{RESET}",
+       "track_mm": 21.737
       },
       {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
+       "net": "/Connectors/UART.RX",
+       "track_mm": 20.773
       },
       {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 9.194
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 20.376
+      },
+      {
+       "net": "/Connectors/DIG.D10",
+       "track_mm": 17.742
+      },
+      {
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 17.283
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -2703,7 +1655,7 @@
     },
     "length_mm": 17.874,
     "net": "/Connectors/DIG.D12",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      151.89,
      93.32,
@@ -2727,41 +1679,41 @@
      "x_mm": 153.39,
      "y_mm": 94.82
     },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 113,
-     "other_vias": 14,
+     "other_vias": 22,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
-       "track_mm": 33.521
+       "track_mm": 45.854
+      },
+      {
+       "net": "/Debugger/TRG_SWDCLK_NRF52",
+       "track_mm": 19.875
       },
       {
        "net": "Net-(JP1-A)",
-       "track_mm": 15.858
+       "track_mm": 15.903
+      },
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 13.629
+      },
+      {
+       "net": "/Debugger/TRG_~{RESET}_NRF52",
+       "track_mm": 12.514
       },
       {
        "net": "VSYS",
        "track_mm": 9.128
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 6.652
-      },
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 4.986
-      },
-      {
-       "net": "Net-(D3-BK)",
-       "track_mm": 4.388
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -2773,7 +1725,7 @@
     },
     "length_mm": 17.534,
     "net": "/Debugger/UART_RX_NRF52",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      135.58,
      102.67,
@@ -2790,21 +1742,29 @@
      "x_mm": 137.08,
      "y_mm": 110.568
     },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in (target)"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 115,
-     "other_vias": 14,
+     "other_vias": 23,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
-       "track_mm": 32.714
+       "track_mm": 45.047
+      },
+      {
+       "net": "/Debugger/TRG_SWDCLK_NRF52",
+       "track_mm": 20.754
       },
       {
        "net": "Net-(JP1-A)",
-       "track_mm": 15.858
+       "track_mm": 15.903
+      },
+      {
+       "net": "/Debugger/TRG_~{RESET}_NRF52",
+       "track_mm": 12.514
       },
       {
        "net": "VSYS",
@@ -2813,18 +1773,10 @@
       {
        "net": "VBUS",
        "track_mm": 5.945
-      },
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 4.857
-      },
-      {
-       "net": "/Debugger/D-",
-       "track_mm": 4.488
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -2836,7 +1788,7 @@
     },
     "length_mm": 17.734,
     "net": "/Debugger/UART_TX_NRF52",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      135.18,
      103.17,
@@ -2853,111 +1805,41 @@
      "x_mm": 136.68,
      "y_mm": 110.568
     },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 102,
-     "other_vias": 26,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 22.823
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 16.012
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.966
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 7.583
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "B4",
-     "part": "U1",
-     "x_mm": 166.22,
-     "y_mm": 101.83
-    },
-    "length_mm": 18.487,
-    "net": "/Connectors/ANALOG.A4",
-    "reason": "not_attempted",
-    "region_mm": [
-     151.89,
-     100.33,
-     167.72,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "9",
-     "part": "J1",
-     "x_mm": 153.39,
-     "y_mm": 115.14
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 58,
-     "other_vias": 10,
+     "other_vias": 13,
      "routed_copper_by_net": [
       {
-       "net": "/Debugger/D-",
-       "track_mm": 12.517
-      },
-      {
-       "net": "/Debugger/D+",
-       "track_mm": 12.074
+       "net": "/Debugger/USB.CC2",
+       "track_mm": 15.549
       },
       {
        "net": "Net-(J8-SWCLK)",
-       "track_mm": 11.953
+       "track_mm": 14.2
+      },
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 13.932
+      },
+      {
+       "net": "/Debugger/D-",
+       "track_mm": 12.752
+      },
+      {
+       "net": "/Debugger/D+",
+       "track_mm": 12.103
       },
       {
        "net": "VBUS",
        "track_mm": 11.895
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 11.577
-      },
-      {
-       "net": "Net-(J8-SWDIO)",
-       "track_mm": 5.001
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -2969,7 +1851,7 @@
     },
     "length_mm": 18.348,
     "net": "/Debugger/USB.VBUS",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      127.823,
      98.095,
@@ -2986,21 +1868,29 @@
      "x_mm": 129.322,
      "y_mm": 104.473
     },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 121,
-     "other_vias": 14,
+     "other_vias": 21,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
-       "track_mm": 32.375
+       "track_mm": 41.215
+      },
+      {
+       "net": "/Debugger/TRG_SWDCLK_NRF52",
+       "track_mm": 20.754
       },
       {
        "net": "Net-(JP1-A)",
-       "track_mm": 15.858
+       "track_mm": 15.903
+      },
+      {
+       "net": "/Debugger/TRG_~{RESET}_NRF52",
+       "track_mm": 10.783
       },
       {
        "net": "VSYS",
@@ -3008,19 +1898,11 @@
       },
       {
        "net": "Net-(J8-SWCLK)",
-       "track_mm": 5.681
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 4.531
-      },
-      {
-       "net": "Net-(U2-SW2)",
-       "track_mm": 3.659
+       "track_mm": 5.691
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3032,7 +1914,7 @@
     },
     "length_mm": 18.196,
     "net": "/Debugger/TRG_SWDIO_NRF52",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      134.38,
      104.17,
@@ -3049,230 +1931,41 @@
      "x_mm": 135.88,
      "y_mm": 110.568
     },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 79,
-     "other_vias": 19,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 17.888
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 8.438
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 6.61
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 6.609
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 5.296
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "H2",
-     "part": "U1",
-     "x_mm": 168.02,
-     "y_mm": 107.23
-    },
-    "length_mm": 18.242,
-    "net": "/nPM1300/NPM1300.SDA",
-    "reason": "not_attempted",
-    "region_mm": [
-     148.53,
-     102.71,
-     169.52,
-     108.73
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "13",
-     "part": "U2",
-     "x_mm": 150.03,
-     "y_mm": 104.21
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 107,
-     "other_vias": 14,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 31.505
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 15.858
-      },
-      {
-       "net": "VSYS",
-       "track_mm": 9.0
-      },
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 6.174
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 3.823
-      },
-      {
-       "net": "Net-(U2-SW2)",
-       "track_mm": 3.659
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "7",
-     "part": "U6",
-     "x_mm": 153.405,
-     "y_mm": 106.17
-    },
-    "length_mm": 18.457,
-    "net": "/Debugger/TRG_SWDCLK_NRF52",
-    "reason": "not_attempted",
-    "region_mm": [
-     133.98,
-     104.67,
-     154.905,
-     112.068
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "32",
-     "part": "U5",
-     "x_mm": 135.48,
-     "y_mm": 110.568
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 93,
-     "other_vias": 26,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 23.342
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 9.711
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 7.698
-      },
-      {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 7.242
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 7.11
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "J2",
-     "part": "U1",
-     "x_mm": 168.02,
-     "y_mm": 108.13
-    },
-    "length_mm": 18.525,
-    "net": "/nPM1300/NPM1300.SCL",
-    "reason": "not_attempted",
-    "region_mm": [
-     148.53,
-     102.21,
-     169.52,
-     109.63
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "14",
-     "part": "U2",
-     "x_mm": 150.03,
-     "y_mm": 103.71
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 109,
-     "other_vias": 27,
+     "other_vias": 44,
      "routed_copper_by_net": [
       {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 20.278
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 11.374
-      },
-      {
        "net": "/Connectors/DIG.D11",
-       "track_mm": 10.624
+       "track_mm": 21.718
       },
       {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 9.711
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 21.249
       },
       {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
+       "net": "/Debugger/SWD_TRG.~{RESET}",
+       "track_mm": 20.464
       },
       {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 7.698
+       "net": "/Connectors/UART.RX",
+       "track_mm": 19.873
+      },
+      {
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 18.16
+      },
+      {
+       "net": "/nPM1300/NPM1300.SDA",
+       "track_mm": 17.766
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3284,7 +1977,7 @@
     },
     "length_mm": 19.008,
     "net": "/Connectors/DIG.D13",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      149.35,
      93.32,
@@ -3308,111 +2001,41 @@
      "x_mm": 150.85,
      "y_mm": 94.82
     },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 102,
-     "other_vias": 23,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 16.437
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 16.012
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 15.858
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.966
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
-      },
-      {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 6.418
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "F8",
-     "part": "U1",
-     "x_mm": 162.62,
-     "y_mm": 105.43
-    },
-    "length_mm": 19.448,
-    "net": "/Connectors/ANALOG.A1",
-    "reason": "not_attempted",
-    "region_mm": [
-     144.27,
-     103.93,
-     164.12,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "6",
-     "part": "J1",
-     "x_mm": 145.77,
-     "y_mm": 115.14
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 62,
-     "other_vias": 18,
+     "other_vias": 27,
      "routed_copper_by_net": [
       {
+       "net": "/Debugger/SWD_TRG.SWDCLK",
+       "track_mm": 14.739
+      },
+      {
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 11.671
+      },
+      {
+       "net": "/Connectors/ANALOG.A1",
+       "track_mm": 11.419
+      },
+      {
+       "net": "/nPM1300/NPM1300.SDA",
+       "track_mm": 10.971
+      },
+      {
        "net": "/Connectors/SPI.MOSI",
-       "track_mm": 10.984
+       "track_mm": 10.932
       },
       {
        "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 9.438
-      },
-      {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 7.336
-      },
-      {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 5.98
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 4.808
-      },
-      {
-       "net": "/nRF54L15/~{CS}_FLASH",
-       "track_mm": 4.616
+       "track_mm": 10.856
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3424,7 +2047,7 @@
     },
     "length_mm": 19.307,
     "net": "/nPM1300/NPM1300.INT",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      147.33,
      105.41,
@@ -3441,41 +2064,41 @@
      "x_mm": 148.83,
      "y_mm": 106.91
     },
-    "why": ""
+    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 117,
-     "other_vias": 24,
+     "other_vias": 37,
      "routed_copper_by_net": [
       {
-       "net": "Net-(JP1-A)",
-       "track_mm": 15.858
-      },
-      {
        "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 15.108
+       "track_mm": 29.65
       },
       {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.146
+       "net": "/Connectors/ANALOG.A1",
+       "track_mm": 23.967
       },
       {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 12.496
+       "net": "/Debugger/nRF52_VDD",
+       "track_mm": 19.988
       },
       {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
+       "net": "/Connectors/ANALOG.A2",
+       "track_mm": 18.188
       },
       {
-       "net": "VSYS",
-       "track_mm": 9.128
+       "net": "/Connectors/ANALOG.A3",
+       "track_mm": 16.372
+      },
+      {
+       "net": "Net-(JP1-A)",
+       "track_mm": 15.903
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3487,7 +2110,7 @@
     },
     "length_mm": 21.101,
     "net": "/Connectors/ANALOG.A0",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      141.73,
      103.03,
@@ -3511,174 +2134,41 @@
      "x_mm": 143.23,
      "y_mm": 115.14
     },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 66,
-     "other_vias": 5,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 17.762
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 11.341
-      },
-      {
-       "net": "Net-(U5-XC2)",
-       "track_mm": 3.959
-      },
-      {
-       "net": "Net-(U5-XC1)",
-       "track_mm": 3.104
-      },
-      {
-       "net": "Net-(U2-SW2)",
-       "track_mm": 2.314
-      },
-      {
-       "net": "Net-(U5-DEC3)",
-       "track_mm": 1.559
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "2",
-     "part": "SW1",
-     "x_mm": 153.71,
-     "y_mm": 109.455
-    },
-    "length_mm": 21.409,
-    "net": "/Debugger/SWD_TRG.~{RESET}",
-    "reason": "not_attempted",
-    "region_mm": [
-     131.57,
-     107.955,
-     155.21,
-     116.64
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "In3.Cu",
-      "In4.Cu",
-      "In5.Cu",
-      "In6.Cu",
-      "B.Cu"
-     ],
-     "pad": "1",
-     "part": "J1",
-     "x_mm": 133.07,
-     "y_mm": 115.14
-    },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 98,
-     "other_vias": 12,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 23.876
-      },
-      {
-       "net": "/Debugger/D-",
-       "track_mm": 22.419
-      },
-      {
-       "net": "/Debugger/D+",
-       "track_mm": 18.91
-      },
-      {
-       "net": "/Debugger/USB.VBUS",
-       "track_mm": 14.898
-      },
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 14.514
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 12.85
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "24",
-     "part": "U2",
-     "x_mm": 145.83,
-     "y_mm": 102.01
-    },
-    "length_mm": 20.963,
-    "net": "/Debugger/USB.CC2",
-    "reason": "not_attempted",
-    "region_mm": [
-     123.905,
-     100.51,
-     147.33,
-     108.23
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "B5",
-     "part": "J3",
-     "x_mm": 125.405,
-     "y_mm": 106.73
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 44,
-     "other_vias": 8,
+     "other_vias": 12,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/D-",
-       "track_mm": 21.957
+       "track_mm": 22.191
+      },
+      {
+       "net": "/Debugger/USB.CC2",
+       "track_mm": 14.499
+      },
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 11.92
       },
       {
        "net": "/Debugger/USB.VBUS",
-       "track_mm": 10.322
+       "track_mm": 11.567
+      },
+      {
+       "net": "/Debugger/D+",
+       "track_mm": 11.016
       },
       {
        "net": "VBUS",
        "track_mm": 9.818
-      },
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 9.072
-      },
-      {
-       "net": "/Debugger/D+",
-       "track_mm": 7.461
-      },
-      {
-       "net": "Net-(J8-SWDIO)",
-       "track_mm": 4.539
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3690,7 +2180,7 @@
     },
     "length_mm": 20.996,
     "net": "/Debugger/USB.CC1",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      123.905,
      100.51,
@@ -3707,41 +2197,41 @@
      "x_mm": 125.405,
      "y_mm": 103.73
     },
-    "why": ""
+    "why": "boxed in (target); escapes/neck-down: boxed in (target)"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 142,
-     "other_vias": 29,
+     "other_vias": 51,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 23.342
+       "track_mm": 30.466
       },
       {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 16.012
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 29.854
       },
       {
-       "net": "/Connectors/SPI.MISO",
-       "track_mm": 13.966
+       "net": "/nPM1300/NPM1300.SDA",
+       "track_mm": 25.755
       },
       {
-       "net": "/Connectors/SPI.SCK",
-       "track_mm": 12.253
+       "net": "/Connectors/ANALOG.A1",
+       "track_mm": 21.994
       },
       {
-       "net": "/nRF54L15/D2_FLASH",
-       "track_mm": 9.507
+       "net": "/Connectors/ANALOG.A4",
+       "track_mm": 21.444
       },
       {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 7.808
+       "net": "/Connectors/UART.RX",
+       "track_mm": 20.813
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3753,7 +2243,7 @@
     },
     "length_mm": 24.274,
     "net": "/Connectors/SHPHLD",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      148.53,
      101.71,
@@ -3777,41 +2267,41 @@
      "x_mm": 171.17,
      "y_mm": 115.14
     },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 216,
-     "other_vias": 34,
+     "other_vias": 56,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
-       "track_mm": 51.425
+       "track_mm": 61.674
       },
       {
-       "net": "/Debugger/D+",
-       "track_mm": 16.194
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 15.858
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 29.129
       },
       {
        "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 15.108
+       "track_mm": 21.138
       },
       {
-       "net": "/Debugger/D-",
-       "track_mm": 14.829
+       "net": "/Debugger/TRG_SWDCLK_NRF52",
+       "track_mm": 20.754
       },
       {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 14.514
+       "net": "/Connectors/ANALOG.A1",
+       "track_mm": 19.353
+      },
+      {
+       "net": "/Debugger/D+",
+       "track_mm": 16.223
       }
      ]
     },
-    "fails": 0,
+    "fails": 1,
     "from": {
      "layers": [
       "F.Cu"
@@ -3823,7 +2313,7 @@
     },
     "length_mm": 35.136,
     "net": "Net-(J6-Pin_2)",
-    "reason": "not_attempted",
+    "reason": "boxed_in",
     "region_mm": [
      125.81,
      102.13,
@@ -3840,100 +2330,37 @@
      "x_mm": 127.31,
      "y_mm": 111.855
     },
-    "why": ""
-   },
-   {
-    "blockers": [],
-    "crowding": {
-     "other_pads": 208,
-     "other_vias": 36,
-     "routed_copper_by_net": [
-      {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 48.07
-      },
-      {
-       "net": "/Debugger/SWD_TRG.~{RESET}",
-       "track_mm": 16.734
-      },
-      {
-       "net": "Net-(JP1-A)",
-       "track_mm": 15.858
-      },
-      {
-       "net": "/Connectors/SPI.MOSI",
-       "track_mm": 14.227
-      },
-      {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 13.864
-      },
-      {
-       "net": "/Debugger/D-",
-       "track_mm": 13.804
-      }
-     ]
-    },
-    "fails": 0,
-    "from": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "E8",
-     "part": "U1",
-     "x_mm": 162.62,
-     "y_mm": 104.53
-    },
-    "length_mm": 35.083,
-    "net": "Net-(J6-Pin_4)",
-    "reason": "not_attempted",
-    "region_mm": [
-     126.81,
-     103.03,
-     164.12,
-     113.355
-    ],
-    "rips": 0,
-    "to": {
-     "layers": [
-      "F.Cu"
-     ],
-     "pad": "1",
-     "part": "C13",
-     "x_mm": 128.31,
-     "y_mm": 111.855
-    },
-    "why": ""
+    "why": "boxed in; escapes/neck-down: boxed in"
    },
    {
     "blockers": [],
     "crowding": {
      "other_pads": 169,
-     "other_vias": 34,
+     "other_vias": 55,
      "routed_copper_by_net": [
       {
        "net": "/Debugger/nRF52_VDD",
-       "track_mm": 30.763
+       "track_mm": 41.653
+      },
+      {
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 36.218
+      },
+      {
+       "net": "/Debugger/USB.CC2",
+       "track_mm": 22.186
       },
       {
        "net": "/Debugger/D+",
-       "track_mm": 16.814
+       "track_mm": 16.843
       },
       {
-       "net": "/Debugger/D-",
-       "track_mm": 15.036
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 15.614
       },
       {
-       "net": "Net-(J8-SWCLK)",
-       "track_mm": 14.514
-      },
-      {
-       "net": "VBUS",
-       "track_mm": 14.087
-      },
-      {
-       "net": "/Debugger/USB.VBUS",
-       "track_mm": 13.934
+       "net": "/Connectors/UART.RX",
+       "track_mm": 15.54
       }
      ]
     },
@@ -3972,31 +2399,31 @@
     "blockers": [],
     "crowding": {
      "other_pads": 52,
-     "other_vias": 10,
+     "other_vias": 18,
      "routed_copper_by_net": [
       {
-       "net": "VBUS",
-       "track_mm": 8.369
+       "net": "Net-(J6-Pin_4)",
+       "track_mm": 28.896
       },
       {
-       "net": "Net-(U1-P1.00{slash}XL1)",
-       "track_mm": 7.47
+       "net": "/Debugger/USB.CC2",
+       "track_mm": 11.812
+      },
+      {
+       "net": "/nPM1300/NPM1300.SCL",
+       "track_mm": 11.339
       },
       {
        "net": "/Connectors/DIG.D11",
-       "track_mm": 6.512
+       "track_mm": 11.327
       },
       {
-       "net": "/Debugger/nRF52_VDD",
-       "track_mm": 5.721
+       "net": "/Connectors/UART.RX",
+       "track_mm": 8.879
       },
       {
-       "net": "/Debugger/USB.VBUS",
-       "track_mm": 4.441
-      },
-      {
-       "net": "/Connectors/DIG.D5",
-       "track_mm": 4.404
+       "net": "VBUS",
+       "track_mm": 8.369
       }
      ]
     },
@@ -4035,27 +2462,7 @@
   "unrouted_by_net": [
    {
     "count": 2,
-    "name": "/Connectors/I2C.SCL"
-   },
-   {
-    "count": 2,
-    "name": "/Connectors/UART.RX"
-   },
-   {
-    "count": 2,
-    "name": "/Connectors/UART.TX"
-   },
-   {
-    "count": 2,
-    "name": "/Debugger/TRG_~{RESET}_NRF52"
-   },
-   {
-    "count": 2,
     "name": "Net-(J8-~{RESET})"
-   },
-   {
-    "count": 2,
-    "name": "Net-(U5-DEC4)"
    },
    {
     "count": 1,
@@ -4063,31 +2470,7 @@
    },
    {
     "count": 1,
-    "name": "/Connectors/ANALOG.A1"
-   },
-   {
-    "count": 1,
-    "name": "/Connectors/ANALOG.A2"
-   },
-   {
-    "count": 1,
-    "name": "/Connectors/ANALOG.A3"
-   },
-   {
-    "count": 1,
-    "name": "/Connectors/ANALOG.A4"
-   },
-   {
-    "count": 1,
     "name": "/Connectors/ANALOG.A5"
-   },
-   {
-    "count": 1,
-    "name": "/Connectors/DIG.D10"
-   },
-   {
-    "count": 1,
-    "name": "/Connectors/DIG.D11"
    },
    {
     "count": 1,
@@ -4096,48 +2479,76 @@
    {
     "count": 1,
     "name": "/Connectors/DIG.D13"
+   },
+   {
+    "count": 1,
+    "name": "/Connectors/I2C.SCL"
+   },
+   {
+    "count": 1,
+    "name": "/Connectors/I2C.SDA"
+   },
+   {
+    "count": 1,
+    "name": "/Connectors/SHPHLD"
+   },
+   {
+    "count": 1,
+    "name": "/Connectors/UART.TX"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/SWD_TRG.SWDIO"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/TRG_SWDIO_NRF52"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/TRG_~{RESET}_NRF52"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/UART_RX_NRF52"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/UART_TX_NRF52"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/USB.CC1"
+   },
+   {
+    "count": 1,
+    "name": "/Debugger/USB.VBUS"
    }
   ],
   "unrouted_by_part": [
    {
-    "count": 25,
+    "count": 10,
     "name": "U1"
    },
    {
-    "count": 11,
+    "count": 6,
     "name": "U5"
    },
    {
-    "count": 11,
+    "count": 5,
     "name": "U6"
    },
    {
-    "count": 10,
+    "count": 3,
     "name": "J1"
    },
    {
-    "count": 8,
+    "count": 3,
     "name": "U2"
    },
    {
-    "count": 7,
+    "count": 2,
     "name": "J2"
-   },
-   {
-    "count": 3,
-    "name": "R8"
-   },
-   {
-    "count": 2,
-    "name": "J3"
-   },
-   {
-    "count": 2,
-    "name": "J8"
-   },
-   {
-    "count": 1,
-    "name": "C13"
    },
    {
     "count": 1,
@@ -4145,15 +2556,15 @@
    },
    {
     "count": 1,
-    "name": "C22"
-   },
-   {
-    "count": 1,
     "name": "C5"
    },
    {
     "count": 1,
-    "name": "D3"
+    "name": "J3"
+   },
+   {
+    "count": 1,
+    "name": "J8"
    },
    {
     "count": 1,
@@ -4162,94 +2573,288 @@
    {
     "count": 1,
     "name": "R3"
+   },
+   {
+    "count": 1,
+    "name": "R8"
+   },
+   {
+    "count": 1,
+    "name": "TP10"
+   },
+   {
+    "count": 1,
+    "name": "U3"
    }
   ],
   "unrouted_by_reason": [
    {
-    "count": 37,
-    "name": "not_attempted"
+    "count": 17,
+    "name": "boxed_in"
    },
    {
-    "count": 8,
-    "name": "boxed_in"
+    "count": 2,
+    "name": "not_attempted"
    }
   ]
  },
  "style": {
   "acute_angles": 0,
   "arcs": 0,
-  "bends": 127,
-  "bends_per_connection": 0.7175,
-  "connections": 177,
-  "detour_length_mm": 384.385483,
-  "detour_octile_mm": 334.716624,
-  "detour_ratio": 1.1484,
-  "length_mm": 384.385483,
+  "bends": 229,
+  "bends_per_connection": 0.9662,
+  "connections": 237,
+  "detour_length_mm": 808.677303,
+  "detour_octile_mm": 729.006747,
+  "detour_ratio": 1.1093,
+  "length_mm": 808.677303,
   "long_detours": 5,
-  "off_angle_segments": 54,
-  "segments": 331,
-  "short_segments": 53,
-  "stair_steps": 0,
-  "vias": 57
+  "off_angle_segments": 79,
+  "segments": 526,
+  "short_segments": 70,
+  "stair_steps": 2,
+  "vias": 94
  },
  "time_limited": false,
- "tracks": 331,
+ "tracks": 526,
  "tunnels": 0,
- "unconnected_after_refill": 61,
- "variant": 7,
- "variant_name": "fast bends, dear vias",
- "variant_seconds": 15.914836799,
+ "unconnected_after_refill": 38,
+ "variant": 1,
+ "variant_name": "fast bends, shortest first, crowded source",
+ "variant_seconds": 47.337593196,
  "variants": [
   {
+   "best": false,
    "name": "exact bends, shortest first",
-   "routed": 53,
-   "seconds": 7.165164534,
+   "routed": 81,
+   "seconds": 10.464022236,
    "variant": 0
   },
   {
-   "name": "fast bends, shortest first",
-   "routed": 102,
-   "seconds": 15.667915406,
+   "best": true,
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 128,
+   "seconds": 47.337593196,
    "variant": 1
   },
   {
+   "best": false,
    "name": "fast bends, longest first (2x pitch on large boards)",
-   "routed": 25,
-   "seconds": 14.130523264,
+   "routed": 26,
+   "seconds": 21.08900897,
    "variant": 2
   },
   {
+   "best": false,
    "name": "fast bends, jittered order, escape plan",
-   "routed": 98,
-   "seconds": 19.474761275,
+   "routed": 104,
+   "seconds": 22.509529378,
    "variant": 3
   },
   {
+   "best": false,
    "name": "exact bends, jittered order",
-   "routed": 58,
-   "seconds": 8.91371513,
+   "routed": 81,
+   "seconds": 11.180394292,
    "variant": 4
   },
   {
-   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
-   "routed": 53,
-   "seconds": 11.811286366,
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 110,
+   "seconds": 33.18038938,
    "variant": 5
   },
   {
-   "name": "fast bends, cheap crossings, escape plan",
-   "routed": 101,
-   "seconds": 16.027450713,
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 125,
+   "seconds": 45.565102438,
    "variant": 6
   },
   {
-   "name": "fast bends, dear vias",
-   "routed": 102,
-   "seconds": 15.914836799,
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 126,
+   "seconds": 42.996428576,
+   "variant": 7
+  },
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 2.199038202,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 2.14595322,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 1.894768586,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": true,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 128,
+   "seconds": 2.152728307,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 1.597627621,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 2.16451321,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 1.831405054,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 127,
+   "seconds": 2.147368427,
+   "stage": "rescue",
+   "variant": 7
+  },
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.60447043,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.625436501,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": true,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.605810589,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 104,
+   "seconds": 3.634968583,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.621803669,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.443871142,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.722212419,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 105,
+   "seconds": 3.69736937,
+   "stage": "rescue",
    "variant": 7
   }
  ],
- "vias": 57,
+ "vias": 94,
+ "why_open": {
+  "congested": 37,
+  "neck_down": 0,
+  "neck_pins": [],
+  "next": [
+   "37 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 37,
+  "proved": [],
+  "seconds": 0.491884531,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
  "work": {
   "cleanup": {
    "cell_checks": 0,
@@ -4263,15 +2868,15 @@
    "searches": 0
   },
   "first_pass": {
-   "cell_checks": 3191434,
-   "commits": 102,
-   "expansions": 3042182,
-   "field_cells": 43187752,
-   "fields": 137,
-   "fixed_checks": 2105906,
-   "flood_cells": 0,
+   "cell_checks": 3315555,
+   "commits": 129,
+   "expansions": 2810593,
+   "field_cells": 196068760,
+   "fields": 217,
+   "fixed_checks": 2485399,
+   "flood_cells": 252560,
    "rips": 0,
-   "searches": 161
+   "searches": 242
   },
   "negotiation": {
    "cell_checks": 0,
@@ -4296,15 +2901,15 @@
    "searches": 0
   },
   "total": {
-   "cell_checks": 3191434,
-   "commits": 102,
-   "expansions": 3042182,
-   "field_cells": 43187752,
-   "fields": 137,
-   "fixed_checks": 2105906,
-   "flood_cells": 0,
+   "cell_checks": 3315555,
+   "commits": 129,
+   "expansions": 2810593,
+   "field_cells": 196068760,
+   "fields": 217,
+   "fixed_checks": 2485399,
+   "flood_cells": 252560,
    "rips": 0,
-   "searches": 161
+   "searches": 242
   }
  },
  "work_all_variants": {
@@ -4320,26 +2925,26 @@
    "searches": 0
   },
   "first_pass": {
-   "cell_checks": 21791303,
-   "commits": 593,
-   "expansions": 25017730,
-   "field_cells": 372241008,
-   "fields": 704,
-   "fixed_checks": 15278357,
-   "flood_cells": 2278005,
+   "cell_checks": 40213127,
+   "commits": 1548,
+   "expansions": 42218529,
+   "field_cells": 1679042792,
+   "fields": 2034,
+   "fixed_checks": 32722917,
+   "flood_cells": 6953059,
    "rips": 0,
-   "searches": 872
+   "searches": 2386
   },
   "negotiation": {
-   "cell_checks": 0,
-   "commits": 0,
-   "expansions": 0,
-   "field_cells": 0,
-   "fields": 0,
-   "fixed_checks": 0,
-   "flood_cells": 0,
-   "rips": 0,
-   "searches": 0
+   "cell_checks": 22172040,
+   "commits": 76,
+   "expansions": 26261343,
+   "field_cells": 485787728,
+   "fields": 222,
+   "fixed_checks": 19313270,
+   "flood_cells": 733901,
+   "rips": 112,
+   "searches": 223
   },
   "setup": {
    "cell_checks": 0,
@@ -4347,21 +2952,21 @@
    "expansions": 0,
    "field_cells": 0,
    "fields": 0,
-   "fixed_checks": 40,
+   "fixed_checks": 200,
    "flood_cells": 0,
    "rips": 0,
    "searches": 0
   },
   "total": {
-   "cell_checks": 21791303,
-   "commits": 593,
-   "expansions": 25017730,
-   "field_cells": 372241008,
-   "fields": 704,
-   "fixed_checks": 15278397,
-   "flood_cells": 2278005,
-   "rips": 0,
-   "searches": 872
+   "cell_checks": 62385167,
+   "commits": 1624,
+   "expansions": 68479872,
+   "field_cells": 2164830520,
+   "fields": 2256,
+   "fixed_checks": 52036387,
+   "flood_cells": 7686960,
+   "rips": 112,
+   "searches": 2609
   }
  }
 }

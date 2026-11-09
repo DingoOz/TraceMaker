@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <regex>
+#include <set>
 #include <string>
 
 #include <nlohmann/json.hpp>
@@ -28,13 +29,25 @@ json full_summary() {
     "variant": 3, "variant_name": "hard-first", "time_limited": true, "pitch_mm": 0.127, "unconnected_after_refill": 2,
     "work_all_variants": {"total": {"expansions": 987654}},
     "failures": ["SDA: U1.4 -> R7.1 (no legal path)"],
-    "variants": [{"variant": 0, "name": "base", "routed": 40, "seconds": 5.25}, {"variant": 3, "name": "hard-first", "routed": 41, "seconds": 6.5}],
+    "variants": [{"variant": 0, "name": "base", "routed": 40, "seconds": 5.25, "best": false}, {"variant": 3, "name": "hard-first", "routed": 41, "seconds": 6.5, "best": true},
+                 {"variant": 3, "name": "hard-first", "routed": 39, "seconds": 7.5, "best": true, "stage": "rescue", "rescue_mode": "warm", "rescue_kept": false}],
+    "copper_layers": 4, "expansions": 123456,
+    "why_open": {"pins": 6, "walled_in": 1, "soft_only": 0, "congested": 4, "neck_down": 1, "via_in_pad": 0,
+                 "proved": [{"pin": "U9.B2", "net": "/io{slash}SDA", "width_mm": 0.2, "via_in_pad_fits": false, "walls": ["U9.B1"], "text": "walled in by U9.B1"}],
+                 "neck_pins": [{"pin": "U2.B2", "net": "INT", "width_mm": 0.1, "small_via_fits": true, "text": "a via of 0.25 mm fits beside it"}],
+                 "next": ["4 pins are open through congestion: more search"], "seconds": 0.5},
+    "rescue": {"routed_before": 40, "routed_after": 39, "connections": 44, "adopted": false, "seconds": 7.5, "mode": "warm",
+               "passes": [{"mode": "warm", "routed": 39, "adopted": false, "seconds": 7.5, "relaxed_stages": [{"clearance_lowered_mm": 0.06, "routed": 43}]}]},
+    "refill": {"zones": 2, "unconnected": 5, "warnings": [], "starved_thermals": 1,
+               "repair": {"connections": 5, "routed": 3, "tracks": 8, "vias": 2, "expansions": 4567, "unconnected": 2, "kept": true},
+               "thermal_repair": {"starved": 2, "pads_tried": 2, "pads_repaired": 1, "nets_rerouted": 1, "starved_after": 1, "unconnected": 2},
+               "starved_thermal_pads": [{"pad": "U3.19", "net": "GND", "layer": "B.Cu", "x_mm": 12.5, "y_mm": 7.75}]},
     "run": {"version": "0.10.0", "board": "demo-2.kicad_pcb", "input": "in/demo-2.kicad_pcb", "output": "out/demo-2.kicad_pcb", "date": "2026-10-24T01:02:03Z",
             "seed": 7, "work_budget": 3000000, "time_limit_s": 120, "variants": 8, "threads": 4,
             "options": [{"name": "--work", "value": "3000000"}, {"name": "--soft-zones", "value": "on"}]},
     "rules": {"files": {"project": "demo-2.kicad_pro", "project_found": true, "custom_rules": "demo-2.kicad_dru", "custom_rules_found": false},
               "minimums": {"clearance_mm": 0.15, "track_width_mm": 0.2, "via_diameter_mm": 0.45, "via_annular_width_mm": 0.1, "drill_mm": 0.3,
-                           "hole_clearance_mm": 0.25, "hole_to_hole_mm": 0.5, "copper_edge_clearance_mm": 0.4, "blind_buried_vias": false, "microvias": false},
+                           "hole_clearance_mm": 0.25, "hole_to_hole_mm": 0, "copper_edge_clearance_mm": 0.4, "blind_buried_vias": false, "microvias": false},
               "net_classes": [{"name": "Default", "nets": 30, "clearance_mm": 0.2, "track_width_mm": 0.25, "via_diameter_mm": 0.6, "via_drill_mm": 0.3,
                                "diff_pair_width_mm": 0.2, "diff_pair_gap_mm": 0.25}],
               "custom_rules": [{"name": "rule 9", "layer": "", "condition": "A.NetClass == 'HV'", "constraints": ["clearance"]}], "custom_rule_count": 1,
@@ -42,20 +55,24 @@ json full_summary() {
     "stuck": {"result": {"cuts": {"unroutable": [{"axis": "x", "at_mm": 21.5, "demand": 9, "capacity": 6}]}},
               "unrouted": [{"net": "SDA", "from": {"part": "U1", "pad": "4"}, "to": {"part": "R7", "pad": "1"}, "length_mm": 13.2, "reason": "no_legal_path",
                             "why": "no path within 0.15 mm clearance", "blockers": ["SCL", "+3V3"]},
-                           {"net": "GND", "from": {"part": "C5", "pad": "2"}, "to": {"zone": true}, "length_mm": 0, "reason": "boxed_in", "why": "boxed in", "blockers": []}],
+                           {"net": "GND", "from": {"part": "C5", "pad": "2"}, "to": {"zone": true}, "length_mm": 0, "reason": "boxed_in", "why": "boxed in", "blockers": [],
+                            "crowding": {"routed_copper_by_net": [{"net": "Net-(J8-~{RESET})", "track_mm": 3.5}], "other_vias": 2, "other_pads": 5}}],
               "unrouted_not_shown": 1,
               "unrouted_by_reason": [{"name": "no_legal_path", "count": 2}, {"name": "boxed_in", "count": 1}],
               "unrouted_by_part": [{"name": "U1", "count": 2}],
               "escape_analysis": [{"part": "U9", "pitch_mm": 0.4, "pins": 64, "escapable": 61, "cannot_escape": 3, "hint": "use 0.1 mm tracks",
-                                   "dead": [{"pads": ["B2", "C3", "D4"], "count": 3, "cause": "trapped on every layer it can reach"}]},
-                                  {"part": "U2", "pitch_mm": 0.5, "pins": 17, "escapable": 17, "cannot_escape": 0, "dead": []}]},
-    "critical_nets": {"totals": {"nets": 2, "vias": 5, "void_crossings": 1, "missing_stitches": 1, "missing_stitches_before_stitching": 3},
-                      "nets": [{"name": "CLK", "tier": 1, "why": "clock", "vias": 3, "length_mm": 22.75, "unrouted": 0, "void_crossings": 1, "missing_stitches": 1,
+                                   "dead": [{"pads": ["B2", "C3", "D4"], "count": 3, "cause": "trapped on every layer it can reach"}], "not_proved": []},
+                                  {"part": "U2", "pitch_mm": 0.5, "pins": 17, "escapable": 17, "cannot_escape": 0, "dead": [], "not_proved": ["12", "13"]}]},
+    "critical_nets": {"detour_listed_over_mm": 2.5, "totals": {"nets": 2, "vias": 5, "void_crossings": 1, "missing_stitches": 1, "missing_stitches_before_stitching": 3},
+                      "nets": [{"name": "CLK", "tier": 1, "why": "clock", "vias": 3, "length_mm": 22.75, "unrouted": 0, "void_crossings": 1, "splits": 0, "detour_mm": 4.125, "missing_stitches": 1,
                                 "warnings": ["runs over 1 void", "layer change F.Cu to B.Cu at (12.480, 5.980) mm: no via of GND within 5.0 mm"]}]},
     "pairs": [{"net_a": "USB_P", "net_b": "USB_N", "length_mm": 18.5, "coupled_share": 0.86, "gap_mm": 0.2, "target_gap_mm": 0.18, "skew_mm": 0.031}],
     "drc": {"checker": "tracemaker drc", "zones_refilled": true,
-            "before": {"errors": 4, "warnings": 6, "unconnected": 44, "notes": []}, "after": {"errors": 5, "warnings": 8, "unconnected": 2, "notes": ["zone 3 has no outline"],
-                      "unconnected_items": [{"what": "Missing connection in net GND", "from": "Pad 2 [GND] of C5", "to": "Zone [GND] on B.Cu", "x_mm": 10.5, "y_mm": 20.25}],
+            "before": {"errors": 4, "warnings": 6, "unconnected": 44, "notes": [],
+                       "error_items": [{"type": "clearance", "what": "Clearance violation (0.1 mm < 0.15 mm)", "item": "Pad 1 of R9", "x_mm": 3.25, "y_mm": 4.5}]},
+            "after": {"errors": 5, "warnings": 8, "unconnected": 2, "notes": ["zone 3 has no outline"], "unconnected_open_by_router": 1, "unconnected_cut_by_refill": 1,
+                      "unconnected_items": [{"what": "Missing connection in net GND", "from": "Pad 2 [GND] of C5", "to": "Zone [GND] on B.Cu", "x_mm": 10.5, "y_mm": 20.25,
+                                             "open_by_router": true}],
                       "unconnected_items_not_shown": 1},
             "types": [{"type": "clearance", "severity": "error", "routing": true, "before": 4, "after": 5, "added": 1}],
             "added_routing_errors": 1, "removed": 0, "unconnected_change": -42}
@@ -109,10 +126,42 @@ TEST_CASE("report: every value in the HTML is the field its pointer names, and n
   CHECK(html.find("Cut proof") != std::string::npos);
   CHECK(html.find("cannot leave their package") != std::string::npos);
   CHECK(html.find("data-src=\"/stuck/escape_analysis/0/dead/0/pads/2\"") != std::string::npos);  // the trapped pins are named
-  CHECK(html.find("data-src=\"/stuck/escape_analysis/1/part\"") == std::string::npos);           // a package whose pins all escape is not
+  CHECK(html.find("data-src=\"/stuck/escape_analysis/1/pitch_mm\"") == std::string::npos);       // a package whose pins all escape is not
   CHECK(html.find("could not be read") != std::string::npos);
   CHECK(html.find("not the work budget, ended the search") != std::string::npos);
   CHECK(html.find("data-src=\"/drc/after/unconnected_items/0/to\"") != std::string::npos);
+  // The sections and statements the outside review of D3 asked for.
+  for (const char* id : {"id=\"rescue\"", "id=\"zones\""}) CHECK(html.find(id) != std::string::npos);
+  CHECK(html.find("Diagnosis of the open pins") != std::string::npos);
+  CHECK(html.find("data-src=\"/why_open/next/0\"") != std::string::npos);               // the next step, in the header
+  CHECK(html.find("data-src=\"/why_open/neck_pins/0/text\"") != std::string::npos);     // what would help, pin by pin
+  CHECK(html.find("Fixed copper (pads, locked tracks") == std::string::npos);             // boxed in is not called fixed copper
+  CHECK(html.find("data-src=\"/stuck/escape_analysis/1/not_proved/1\"") != std::string::npos);
+  CHECK(html.find("thermal reliefs are starved") == std::string::npos);
+  CHECK(html.find("thermal relief is starved") != std::string::npos);
+  CHECK(html.find("data-src=\"/refill/starved_thermal_pads/0/pad\"") != std::string::npos);
+  CHECK(html.find("data-src=\"/refill/repair/kept\"") != std::string::npos);
+  CHECK(html.find("data-src=\"/rescue/passes/0/relaxed_stages/0/clearance_lowered_mm\"") != std::string::npos);
+  CHECK(html.find("data-src=\"/variants/2/rescue_mode\"") != std::string::npos);
+  CHECK(html.find("data-src=\"/stuck/unrouted/1/crowding/routed_copper_by_net/0/net\"") != std::string::npos);  // in the way, from the crowding
+  CHECK(html.find("already has") != std::string::npos);                                   // errors in the input board
+  CHECK(html.find("data-src=\"/drc/before/error_items/0/x_mm\"") != std::string::npos);
+  CHECK(html.find("data-src=\"/drc/after/unconnected_cut_by_refill\"") != std::string::npos);
+  CHECK(html.find("(not set)") != std::string::npos);
+  CHECK(html.find("<a href=\"#open\">What is open and why</a>") != std::string::npos);
+  CHECK(html.find("data-src=\"/copper_layers\"") != std::string::npos);
+  CHECK(html.find("Not checked, because not asked for") != std::string::npos);              // only --soft-zones and --work given
+  // KiCad's escapes are shown as KiCad shows them.
+  CHECK(html.find("/io/SDA") != std::string::npos);
+  CHECK(html.find("{slash}") == std::string::npos);
+  CHECK(html.find("~{RESET}") == std::string::npos);
+}
+
+TEST_CASE("report: KiCad names are unescaped", "[report]") {
+  CHECK(report::kicad_unescape("Net-(U1-P1.01{slash}XL2)") == "Net-(U1-P1.01/XL2)");
+  CHECK(report::kicad_unescape("~{RESET}") == "R\xCC\x85" "E\xCC\x85" "S\xCC\x85" "E\xCC\x85" "T\xCC\x85");
+  CHECK(report::kicad_unescape("A{colon}B{unknown}~{") == "A:B{unknown}~{");
+  CHECK(report::value_text(json("/TRG_~{RST}")) == "/TRG_R\xCC\x85S\xCC\x85T\xCC\x85");
 }
 
 TEST_CASE("report: the Markdown names the JSON pointer of each value in its text", "[report]") {
@@ -124,6 +173,7 @@ TEST_CASE("report: the Markdown names the JSON pointer of each value in its text
   CHECK(notes > 10);
   CHECK(md.find("| Connections | 44 | `/connections` |") != std::string::npos);
   CHECK(md.find("Rows: `/stuck/unrouted/<row>`") != std::string::npos);
+  CHECK(md.find("[What is open and why](#what-is-open-and-why)") != std::string::npos);
 }
 
 TEST_CASE("report: a plain summary renders, and says what it lacks", "[report]") {
@@ -145,7 +195,14 @@ TEST_CASE("report: a plain summary renders, and says what it lacks", "[report]")
   const json asked = json::parse(R"({"routed": 5, "connections": 5, "run": {"options": [{"name": "--si-rules", "value": "true"}]}})");
   const std::string h2 = report::render(asked, report::Format::Html, "s.json");
   CHECK(h2.find("No audit was asked for") == std::string::npos);
-  CHECK(h2.find("the board has nothing for them") != std::string::npos);
+  CHECK(h2.find("Critical nets were looked for") != std::string::npos);
+  CHECK(h2.find("differential pairs") != std::string::npos);  // named as not checked, not as found absent
+  CHECK(h2.find("Differential pairs were asked for") == std::string::npos);
+  // A summary of an older version (no why_open, no rescue or refill sections) still renders, with the router's lattice caveat.
+  const json old_s = json::parse(R"({"routed": 4, "connections": 5, "open": 1, "stuck": {"unrouted_by_reason": [{"name": "boxed_in", "count": 1}]}})");
+  const std::string h4 = report::render(old_s, report::Format::Html, "s.json");
+  CHECK(h4.find("not a proof that fixed copper walls the pin in") != std::string::npos);
+  CHECK(h4.find("No rescue pass ran") != std::string::npos);
 }
 
 TEST_CASE("report: the rules section lists the project's classes and what was not read", "[report]") {
@@ -176,6 +233,17 @@ TEST_CASE("report: DRC before and after counts what the new copper adds", "[repo
   CHECK(same["added_routing_errors"] == 0);
   CHECK(same["removed"] == 0);
   CHECK(same["unconnected_change"] == 0);
+  CHECK_FALSE(same["after"].contains("unconnected_open_by_router"));
+  // With the router's open nets: every unconnected item says whether its net is one, and the two counts add up.
+  const std::string first_net = lb.board.nets[static_cast<std::size_t>(lb.board.pads.front().net)].name;
+  const std::set<std::string> open_nets{first_net};
+  const auto marked = report::drc_json(lb.board, lb.board, rules, false, &open_nets);
+  CHECK(marked["after"]["unconnected_open_by_router"].get<int>() + marked["after"]["unconnected_cut_by_refill"].get<int>() == marked["after"]["unconnected"].get<int>());
+  CHECK(marked["after"]["unconnected_items"][0].contains("open_by_router"));
+  int on_first = 0;
+  for (const auto& u : marked["after"]["unconnected_items"]) on_first += u["open_by_router"].get<bool>();
+  CHECK(on_first > 0);
+  CHECK(marked["before"]["error_items"].size() == static_cast<std::size_t>(std::min(marked["before"]["errors"].get<int>(), 300)));
   // A track of one net laid over a pad of another is a routing error the comparison must count.
   model::Board bad = lb.board;
   const model::Pad* a = nullptr;

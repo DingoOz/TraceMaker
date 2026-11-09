@@ -1004,6 +1004,7 @@ class Checker {
         Violation v;
         v.type = "unconnected_items";
         v.description = "Missing connection in net " + b_.nets[static_cast<std::size_t>(net)].name;
+        v.net = net;
         v.items.push_back({describe(cm_.items[static_cast<std::size_t>(root_item[rs[k - 1]])]), cm_.items[static_cast<std::size_t>(root_item[rs[k - 1]])].pos});
         v.items.push_back({describe(cm_.items[static_cast<std::size_t>(root_item[rs[k]])]), cm_.items[static_cast<std::size_t>(root_item[rs[k]])].pos});
         rep_.unconnected.push_back(std::move(v));

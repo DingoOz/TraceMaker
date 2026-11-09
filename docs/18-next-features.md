@@ -189,6 +189,17 @@ portfolio, finished in 128 s on 2026-10-27 after D137's GPU back-off (the stall 
 re-run under `--time 3600` (72 s, not time-limited). Found on the way: under load the default 120 s time limit, not the work budget, ended
 some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
 
+Outside review (2026-11-08, [D177](decisions/D177.md)). A separate AI agent, with no part in writing the code, read the eight boards'
+reports, summaries and logs and the how-to (`bench/records/m20-run-report/outside-review.md`); it is not a human review. Every number
+matched its JSON field and the log. It found seven wrong statements: congestion described as "fixed copper encloses a pad" while the
+run's exact proof (`why_open`) said no pin was walled in, and that proof left out; two USB pins of RoyalBlue called unescapable although
+routed (the package analysis's 40 µm lattice; now confirmed pin by pin with the exact proof); starved thermal reliefs missing; the relax
+rescue's legalising round explained as "the run ended"; a rescued run's work reported as 0 (the work of a run of rounds is now summed over
+its rounds); the narrower-via hint left in the log; an SI sentence claiming checks that did not run. All seven are fixed, and most of the
+misleading and unclear points (README §4 lists each finding and what was done). The routed copper is unchanged (byte-identical to `main`
+057ee82 on the boards compared). The task stays open for a human designer's read of the fixed reports: the AI review checked the reports
+against their data, which a person reading them to decide what to do next may still find wanting.
+
 ## 10. C3 built: generated pours and the layer-count advisor (2026-10-27)
 
 `route --pour auto|NET@LAYER` adds a ground (or named) pour to a board without zones and routes with soft zones;

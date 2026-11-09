@@ -459,7 +459,10 @@ struct PortfolioResult {
   std::vector<std::string> variants;   // description per variant
   std::vector<int> routed;             // routed count per variant
   std::vector<double> seconds;         // wall time per variant (its own clock)
-  std::vector<WorkProfile> work;       // work profile per variant
+  std::vector<WorkProfile> work;       // work profile per variant, over every round
+  // Clearance ramp (relax): per relaxed stage that ran, how much the clearance was lowered and the most connections a round of it
+  // routed (under the lowered clearance, so not legal yet).
+  std::vector<std::pair<Coord, int>> ramp_stages;
 };
 // `variants`: how many variants to run (the first `variants` of the portfolio); `pick`: which variant indices to
 // run instead (non-empty: overrides `variants`). `threads`: concurrency only (0 = one thread per variant).

@@ -230,7 +230,16 @@ StuckReport build_stuck_report(const StuckInput& in) {
       for (const auto& pe : route::analyse_escapes(scratch, rules, obs)) {
         if (pk.size() >= 8) break;
         std::map<std::string, std::vector<std::string>> by_cause;
-        for (const auto& d : pe.dead) by_cause[d.reason].push_back(scratch.pads[static_cast<std::size_t>(d.pad)].number);
+        ordered_json not_proved = ordered_json::array();
+        std::size_t dead_n = 0;
+        for (const auto& d : pe.dead) {
+          if (in.confirm_dead && !in.confirm_dead(d.pad)) {
+            not_proved.push_back(scratch.pads[static_cast<std::size_t>(d.pad)].number);
+            continue;
+          }
+          ++dead_n;
+          by_cause[d.reason].push_back(scratch.pads[static_cast<std::size_t>(d.pad)].number);
+        }
         ordered_json dead = ordered_json::array();
         for (const auto& [why, pads] : by_cause) {
           ordered_json pj = ordered_json::array();
@@ -238,7 +247,8 @@ StuckReport build_stuck_report(const StuckInput& in) {
           dead.push_back({{"pads", pj}, {"count", pads.size()}, {"cause", in.redact ? std::string("see the hint") : why}});
         }
         ordered_json e{{"part", nm.part(pe.ref)}, {"pitch_mm", mm3(pe.pitch)}, {"pins", pe.pins}, {"escapable", pe.escapable}, {"already_connected", pe.satisfied},
-                       {"cannot_escape", pe.dead.size()}, {"dead", dead}};
+                       {"cannot_escape", dead_n}, {"dead", dead}};
+        if (in.confirm_dead) e["not_proved"] = not_proved;
         if (!pe.hint.empty() && !in.redact) e["hint"] = pe.hint;
         pk.push_back(std::move(e));
       }

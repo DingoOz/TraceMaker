@@ -852,7 +852,7 @@
           "done": true
         },
         {
-          "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
+          "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it. 2026-11-08: reviewed by an AI agent with no part in the code (not a human), 7 errors and 10 misleading points; the errors and most of the rest fixed (D177, bench/records/m20-run-report README section 4). Left open for a human designer's read of the fixed reports",
           "done": false
         },
         {

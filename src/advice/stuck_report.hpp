@@ -7,6 +7,7 @@
 // The report quotes names from the board (nets, parts), which makes it a prompt-injection surface and, sent to a cloud
 // model, a disclosure. So it says exactly what it contains (`disclosure`), is limited in size, and can be redacted: with
 // `redact` every net and part gets an alias (N1, P3) and the advice that comes back uses the aliases (advice::unalias).
+#include <functional>
 #include <string>
 
 #include <nlohmann/json.hpp>
@@ -32,6 +33,10 @@ struct StuckInput {
   // Escape analysis of the dense packages (route/escape.hpp, the `escape` command): which pins cannot leave their package at all under
   // the board's rules, and the analysis's own hint. Cheap (0.2 s on a 163-ball array). Run with the same obstacle options as the route.
   bool escape_analysis = true;
+  // When set, a pin the lattice analysis finds dead is listed as dead only if this exact check (analysis::EscapeAnalyser: walled in
+  // on every layer, no via site) agrees; the others go to the package's `not_proved` (the lattice is coarse, and the router may have
+  // routed them). Unset: every lattice-dead pin is listed, as before.
+  std::function<bool(int pad)> confirm_dead;
   bool soft_zones = false;
   double vias_off_pads_below_mm = 0;
 };
