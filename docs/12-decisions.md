@@ -188,6 +188,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D172](decisions/D172.md) | Repair windows lift the unlocked copper near open connections | accepted |
 | [D173](decisions/D173.md) | Tuned nets stay tuned: the clean-up tunes the best state, after-route stages keep length and skew | accepted |
 | [D174](decisions/D174.md) | Per-layer preferred directions by name and a 45-degree penalty | accepted |
+| [D175](decisions/D175.md) | Coupled pairs: leg reach, protected halves, a re-coupling allowance and pad exits | accepted |
 | [D176](decisions/D176.md) | Kookabus boards as a private fixture set; unused pins are not critical nets | accepted |
 <!-- END decision index -->
 

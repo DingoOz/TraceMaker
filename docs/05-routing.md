@@ -346,10 +346,10 @@ named otherwise, e.g. USB DP/DM from `--component-rules soft`; D50).
 |---|---|
 | Pair rule (`route/diff_pair.cpp`, `pair_rule`) | Width and gap, highest source first: a custom rule's `diff_pair_gap` (opt, else min); the net class's diff-pair width, gap and via gap when the project sets them; else the class width and the clearance KiCad requires between the halves (relaxed to the class diff-pair gap only for pairs KiCad recognises by name, as its DRC does). Never below the board minimums. `diff_pair_uncoupled` (max) limits the legs. Offsets carry a 1 µm rounding margin per side, so the gap comes out 2 µm wide of the rule. Coupled vias sit side by side at the via gap (and the mask web of untented vias) |
 | Coupled search (`route_pair`) | A* over (layer, lattice point, direction, which half is on the left). Moves: one straight lattice step; a 45° turn followed by K straight steps, K·pitch ≥ 2·offset·tan 22.5° + width so the inner track's miter never folds back; a coupled via pair (both halves jog out at 45° to the via spacing, change layer side by side, jog back; MV steps). Each move is checked exactly (`segment_state`, `via_state` against fixed and routed copper) on both offset tracks, so the coupled section keeps its gap by construction. Cost: length + K·pitch per turn + two vias; heuristic 2 × straight-line distance to the end pads plus a via pair while off the end pads' layers (weighted: legal, not optimal). Budget 600 states per lattice step of the pair's length (40 k–250 k). Work is the states closed plus every exact leg check of a start or goal candidate, legal or not, charged to the router's total every 64 steps, when the work budget and the time limit are also checked, so an attempt whose candidates all fail ends on either (§30, D77) |
-| Breakout and fan-in | Start candidates: every lattice point within R of the start pads' midpoint (0.3 × the pair's length, at least 1.5 × the pads' distance, 0.6–2.5 mm), 8 directions, sides by the shorter legs. Legs: straight, the two octilinear dog-legs, or the same to a point behind the end of the coupled section followed by a straight entry; at the pair width, then the neck-down width; checked exactly, against each other and against the other half's first straight run, when the A* pops the candidate. The pads must lie behind the start (ahead of the end), so legs never double back along the pair. Legs cost twice the coupled length, so coupling starts as close to the pads as the board allows. Goal candidates near the end pads wait in their own queue and are checked at least every 16 expansions; the first legal one is taken |
+| Breakout and fan-in | Start candidates: every lattice point within R of the start pads' midpoint (0.3 × the pair's length, at least 1.5 × the pads' distance, 0.6–2.5 mm; `--pair-leg-mm`, `--pair-retry-leg-mm` and `--pair-pad-exits`, §77), 8 directions, sides by the shorter legs. Legs: straight, the two octilinear dog-legs, or the same to a point behind the end of the coupled section followed by a straight entry; at the pair width, then the neck-down width; checked exactly, against each other and against the other half's first straight run, when the A* pops the candidate. The pads must lie behind the start (ahead of the end), so legs never double back along the pair. Legs cost twice the coupled length, so coupling starts as close to the pads as the board allows. Goal candidates near the end pads wait in their own queue and are checked at least every 16 expansions; the first legal one is taken |
 | Commit | Both halves are built from corners only (a node's own offset point would fold an inner miter back), collinear runs merged, checked against each other geometrically, then exactly: each half against the board, the first committed, the second checked against it too, otherwise the first is taken back. Up to four finished candidates per search |
 | Enclosed pins | A pin of another net between the two pins of an end (the ground pin between P and N on HDMI parts) is tested with a short strict search before and after the pair; a pair that boxes in a pin that could escape before is taken back |
-| Negotiation and clean-up | A coupled half ripped by negotiation takes its partner with it, and the pair is tried coupled again (twice at most) before single routing. In the clean-up, pairs that ended up routed singly are lifted and routed coupled; on failure their old copper is restored exactly, so completion is unchanged. Via optimisation, smoothing and LNS leave coupled connections alone |
+| Negotiation and clean-up | A coupled half ripped by negotiation takes its partner with it, and the pair is tried coupled again (twice at most) before single routing. In the clean-up, pairs that ended up routed singly are lifted and routed coupled; on failure their old copper is restored exactly, so completion is unchanged. Via optimisation, smoothing and LNS leave coupled connections alone (`--protect-coupled` keeps negotiation off coupled halves; the re-coupling has an allowance past the budget, `--recouple-work`, §77) |
 | Skew | `--pair-skew-mm X` (or a KiCad custom `skew` rule) meanders the shorter half in the clean-up with the length-tuning code until the halves differ by at most X/2 (meanders go to the free side) |
 | Measurement | `tracemaker pairs <board> [--pair A,B] [--json]`: per pair the track length, the coupled share (20 µm samples beside a parallel track of the other half on the same layer within gap + max(gap/4, 50 µm)), the gap kept (median, minimum), skew and vias. `tracemaker route` prints the same for the pairs it routed; `bench/pair_eval.py` routes boards off/on at a fixed budget and judges both with KiCad |
 
@@ -3552,3 +3552,54 @@ stays off. One variant at 5 M work: 88 → 126 connections with the share, 44 �
 
 **Open.** The pair phase is slow per unit of work (every turn and via move is an exact check; only straight steps are memoised), so at
 short time limits it still takes most of the run. Conditions that read nets or classes are still evaluated per call.
+
+## 77. Coupled pairs: leg reach, protected halves, re-coupling past the budget, pad exits (issue #67, 2026-11-08, D175)
+
+**Why.** Issue #67 (quanln, who also found the causes and designed the first two options in their fork): on a small 2-layer board
+routed with `--diff-pairs`, the two long pairs ended 0-3 % coupled where the hand-routed board is 88-100 %. (1) The coupled section
+must start within 2.5 mm of an end's pad midpoint (§15), and pads of other nets beside the pads left no legal start that near.
+(2) Negotiation ripped one coupled half, the partner went with it (D50), and the clean-up re-coupling ran only on budget left over,
+which a run that spends its budget never has. (3) End legs into 0402 pads flanked by GND pads: 82,450 goal candidates, none legal.
+
+**What it does** (`route/router.cpp`: `route_pair`, `pair_leg`, `pad_exits`, `commit`, the clean-up).
+
+| Option | Default | What |
+|---|---|---|
+| `--pair-leg-mm X` | 2.5 | The longest reach of the legs (the old clamp of §15). The pair search's window grows with it |
+| `--protect-coupled` | off | A negotiated route that would rip a half of a coupled pair fails ("would rip a coupled pair half", reason `rip_limit`) |
+| `--recouple-work N` | 2,000,000 | The clean-up re-coupling of split pairs may spend N work units past the search budget; under a time limit alone, the time that much work takes at the run's average rate. `0` = the old behaviour |
+| `--pair-pad-exits` | off | Where no direct leg (straight, dog-leg, entry from behind) of a candidate is legal, the same shapes after a straight exit from the pad centre along one of 8 directions, to r + w, 2r + w or 4r + w (r half the pad's larger side). Legal exits are found once per pad and attempt; each check is work |
+| `--pair-retry-leg-mm X` | 0 | A pair attempt that finds no coupled path is tried again with legs of up to X, then with pad exits; pairs the first attempt couples route as without it |
+
+With `--recouple-work 0` and the other options at their defaults the output is byte-identical to the router before (20 boards).
+
+**Measured** (`bench/records/issue67/`: 18 PCBench pair boards of §15 and two KiCad demos, 69 pairs, `--work 30000000`, one variant,
+KiCad 10 DRC). On the 18 PCBench boards:
+
+| Options | Pairs ≥ 80 % / ≥ 50 % / > 0 % of 60 | Median share | Routed of 2,403 | KiCad errors added |
+|---|---|--:|--:|--:|
+| before | 19 / 33 / 47 | 60 % | 2,248 | 0 |
+| `--pair-leg-mm 4` | 15 / 29 / 45 | 47 % | 2,248 | 0 |
+| `--pair-leg-mm 6` | 11 / 33 / 46 | 58 % | 2,248 | 0 |
+| `--protect-coupled` | 16 / 30 / 44 | 51 % | 2,245 | 0 |
+| `--recouple-work 2000000` (default now) | 20 / 34 / 48 | 65 % | 2,248 | 0 |
+| `--pair-pad-exits` | 15 / 30 / 46 | 50 % | 2,249 | 0 |
+| `--pair-retry-leg-mm 6` | 19 / 35 / 47 | 60 % | 2,250 | 0 |
+
+- A longer fixed reach loses coupling on these boards: the search takes the first legal goal candidate, and a far one comes up
+  first (hub 92 → 74 %, USB-C-Screen-Adapter 87 → 0 % at 4 mm). It is what quanln's board needs (CHG_D 0 → 90.4 % at 6 mm, by their
+  measurement), so it is an option, and `--pair-retry-leg-mm` is the form that leaves coupled pairs alone. That retry coupled no
+  public pair by itself; its failed attempts only shift the rest of the run's budget.
+- Protecting coupled halves cost 3 connections and 2 clean boards and lowered coupling on balance (quanln: 3 more open connections).
+- The re-coupling allowance changed 2 of 20 boards, both for the better (PmodHDMIIn's third pair 4 → 29 %, USB-C-Screen-Adapter's L2
+  0 → 89 %), with equal completion and DRC. It replaces the reserved tenth that §15 dropped: it comes after the budget, so routing gives
+  up nothing for it.
+- Pad exits are mixed (PmodHDMIIn 112 → 116 routed, RaspberryPi-PoE's second pair 24 → 73 %; USB-C-Screen-Adapter loses coupling on
+  four pairs and two connections).
+
+**Cause 3.** Pad exits are the simple model of a pad's legal entry directions: a straight run out of the free side, then the usual
+leg. The unit test (a pair whose pads are walled in on three sides) couples only with them. Whether they couple USB_D_MCU on
+quanln's board is not known; its closest goal candidate missed by 0.027 mm, which suggests the legs fail on the last few µm into the
+pad rather than on the direction, and the neck-down width is the other lever there. Not built: pad entry from the pad's edge rather than
+its centre, legs of more than one bend after an exit, and a pair whose end leg starts uncoupled at the pad and couples after the
+obstacle (the long-leg retry is the nearest form).

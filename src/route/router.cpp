@@ -71,7 +71,7 @@ std::string failure_reason_code(const std::string& why) {
   if (why.empty()) return "not_attempted";  // the budget ended before the connection was tried again
   if (has("fixed copper encloses") || has("boxed in")) return "boxed_in";
   if (has("track on a layer that takes no tracks")) return "layer_limit";
-  if (has("would rip a --first-nets") || has("would rip a bus") || has("would rip too many") || has("already ripped too often") ||
+  if (has("would rip a --first-nets") || has("would rip a bus") || has("would rip a coupled pair") || has("would rip too many") || has("already ripped too often") ||
       has("would rip a connection of the running"))
     return "rip_limit";
   if (has("exact check")) return "exact_check";
@@ -235,6 +235,14 @@ struct Router::Impl {
     if (opt.work_budget > 0 && static_cast<double>(res.expansions) >= static_cast<double>(opt.work_budget) * budget_scale) return true;
     if (elapsed() > opt.time_limit_s * budget_scale) return time_stopped = true;
     return false;
+  }
+  // The budget scale that leaves `work` more work units from now: on the work budget, or under a time limit alone the
+  // time that much work takes at this run's average rate so far (wall time only stops the job, rule 5).
+  double allowance_scale(long work) const {
+    if (opt.work_budget > 0) return (static_cast<double>(res.expansions) + static_cast<double>(work)) / static_cast<double>(opt.work_budget);
+    const double t = elapsed();
+    const double rate = res.expansions > 0 && t > 0 ? static_cast<double>(res.expansions) / t : 0;
+    return rate > 0 ? (t + static_cast<double>(work) / rate) / opt.time_limit_s : t / opt.time_limit_s;
   }
   // Work profile (D88): the phase now running and its counters.
   WorkPhase phase = WorkPhase::Setup;
@@ -2281,6 +2289,12 @@ struct Router::Impl {
           commit_why = "would rip a bus connection";
           return false;
         }
+    if (opt.protect_coupled)  // a ripped half takes its partner with it, and the pair is seldom coupled again (issue #67, D175)
+      for (int v : victims)
+        if (cs[static_cast<std::size_t>(v)].coupled) {
+          commit_why = "would rip a coupled pair half";
+          return false;
+        }
     if (opt.bundle_escape || opt.package_tunnels)  // the lanes of a bundle escape and the tunnels are what the rest of the board is routed around
       for (int v : victims)
         if (cs[static_cast<std::size_t>(v)].bundle_lane) {
@@ -3367,10 +3381,16 @@ struct Router::Impl {
   // doubling back over the pair): straight, the two octilinear dog-legs, or the same to a point behind X followed by
   // a straight entry. Shortest legal candidate first, at the pair width, then at the neck-down width. `checks` counts
   // the exact segment checks made, legal or not: they are the pair search's work units for candidates (rule 5).
-  std::optional<PairLeg> pair_leg(Point p, Point X, Dir2 a, Dir2 n, int layer, NetId net, Coord w, long& checks) {
+  // With pad exits on (--pair-pad-exits or the retry) and `pad_r` > 0 (half the pad's larger side), when no direct
+  // leg is legal, the same shapes after a straight exit from the pad centre along any of 8 directions, out to
+  // pad_r + width, 2 pad_r + width or 4 pad_r + width: an end pad flanked by pads of other nets is entered only from
+  // its free side (issue #67, D175).
+  std::optional<PairLeg> pair_leg(Point p, Point X, Dir2 a, Dir2 n, int layer, NetId net, Coord w, long& checks, Coord pad_r = 0) {
     std::vector<std::vector<Point>> cand;
+    std::optional<Point> head;  // a pad exit before the leg proper
     auto with_dogs = [&](Point f, Point t, std::optional<Point> tail) {
       auto push = [&](std::vector<Point> v) {
+        if (head) v.insert(v.begin(), *head);
         if (tail) v.push_back(*tail);
         std::vector<Point> u;
         for (const Point q : v)
@@ -3384,38 +3404,69 @@ struct Router::Impl {
         push({f, Point{t.x - (dx > 0 ? m : -m), t.y - (dy > 0 ? m : -m)}, t});
       }
     };
-    with_dogs(p, X, std::nullopt);
-    const double side_off = std::fabs(static_cast<double>(X.x - p.x) * n.x + static_cast<double>(X.y - p.y) * n.y);
-    with_dogs(p, offset_point(X, a, -std::max(side_off, static_cast<double>(w))), X);
     auto length = [](const std::vector<Point>& v) {
       double l = 0;
       for (std::size_t i = 0; i + 1 < v.size(); ++i) l += std::hypot(static_cast<double>(v[i + 1].x - v[i].x), static_cast<double>(v[i + 1].y - v[i].y));
       return l;
     };
-    std::vector<std::pair<double, std::size_t>> order;
-    for (std::size_t i = 0; i < cand.size(); ++i) {
-      const auto& v = cand[i];
-      if (v.size() >= 2) {  // the last segment must not run against the pair's direction
-        const Point q = v[v.size() - 2], e = v.back();
-        if (static_cast<double>(e.x - q.x) * a.x + static_cast<double>(e.y - q.y) * a.y < 0) continue;
-      }
-      order.emplace_back(length(v), i);
-    }
-    std::stable_sort(order.begin(), order.end(), [](const auto& x, const auto& y) { return x.first < y.first; });
     const Coord neck = neck_width(net);
-    for (const Coord ww : {w, neck > 0 && neck < w ? neck : Coord{0}}) {
-      if (ww <= 0) continue;
-      for (const auto& [len, i] : order) {
+    // The shortest legal candidate of `cand`, at the pair width, then the neck-down width. `from`: segments before it
+    // are known to be legal at the pair width (a pad exit), so also at the narrower one.
+    auto first_legal = [&](std::size_t from) -> std::optional<PairLeg> {
+      std::vector<std::pair<double, std::size_t>> order;
+      for (std::size_t i = 0; i < cand.size(); ++i) {
         const auto& v = cand[i];
-        bool good = true;
-        for (std::size_t k = 0; k + 1 < v.size() && good; ++k) {
-          ++checks;
-          good = obs->segment_state(v[k], v[k + 1], layer, ww, net, false, nullptr) == 0;
+        if (v.size() >= 2) {  // the last segment must not run against the pair's direction
+          const Point q = v[v.size() - 2], e = v.back();
+          if (static_cast<double>(e.x - q.x) * a.x + static_cast<double>(e.y - q.y) * a.y < 0) continue;
         }
-        if (good) return PairLeg{v, ww, len};
+        order.emplace_back(length(v), i);
       }
+      std::stable_sort(order.begin(), order.end(), [](const auto& x, const auto& y) { return x.first < y.first; });
+      for (const Coord ww : {w, neck > 0 && neck < w ? neck : Coord{0}}) {
+        if (ww <= 0) continue;
+        for (const auto& [len, i] : order) {
+          const auto& v = cand[i];
+          bool good = true;
+          for (std::size_t k = from; k + 1 < v.size() && good; ++k) {
+            ++checks;
+            good = obs->segment_state(v[k], v[k + 1], layer, ww, net, false, nullptr) == 0;
+          }
+          if (good) return PairLeg{v, ww, len};
+        }
+      }
+      return std::nullopt;
+    };
+    with_dogs(p, X, std::nullopt);
+    const double side_off = std::fabs(static_cast<double>(X.x - p.x) * n.x + static_cast<double>(X.y - p.y) * n.y);
+    with_dogs(p, offset_point(X, a, -std::max(side_off, static_cast<double>(w))), X);
+    if (auto leg = first_legal(0)) return leg;
+    if (!pad_exits_now || pad_r <= 0) return std::nullopt;
+    // Only when no direct leg is legal: the same shapes after a straight exit from the pad.
+    cand.clear();
+    head = p;
+    for (const Point q : pad_exits(p, layer, net, w, pad_r, checks)) {
+      with_dogs(q, X, std::nullopt);
+      const double so = std::fabs(static_cast<double>(X.x - q.x) * n.x + static_cast<double>(X.y - q.y) * n.y);
+      with_dogs(q, offset_point(X, a, -std::max(so, static_cast<double>(w))), X);
     }
-    return std::nullopt;
+    head.reset();
+    return first_legal(1);
+  }
+
+  // Legal straight exits from a pad centre (see pair_leg), cached for one pair attempt: the board does not change
+  // during an attempt, and every goal candidate of an end asks for the same pads.
+  std::map<std::tuple<Coord, Coord, int, NetId, Coord>, std::vector<Point>> exit_cache;
+  const std::vector<Point>& pad_exits(Point p, int layer, NetId net, Coord w, Coord pad_r, long& checks) {
+    auto [it, fresh] = exit_cache.try_emplace({p.x, p.y, layer, net, w});
+    if (!fresh) return it->second;
+    for (int dd = 0; dd < 8; ++dd)
+      for (const int k : {1, 2, 4}) {
+        const Point q = offset_point(p, unit_dir(dd), static_cast<double>(k * pad_r + w));
+        ++checks;
+        if (obs->segment_state(p, q, layer, w, net, false, nullptr) == 0) it->second.push_back(q);
+      }
+    return it->second;
   }
 
   // Do two legs of different halves keep the gap the rules require between the halves?
@@ -3481,7 +3532,33 @@ struct Router::Impl {
     return true;
   }
 
+  // Leg reach and pad exits of the pair attempt now running (route_pair sets them; issue #67, D175).
+  Coord leg_max_now = 2'500'000;
+  bool pad_exits_now = false;
+  // A pair attempt at the configured leg reach (--pair-leg-mm) and pad exits (--pair-pad-exits). With
+  // --pair-retry-leg-mm, one that finds no coupled path is tried again with legs of up to that reach, then with pad
+  // exits at the configured reach. Pairs the first attempt couples are routed exactly as without the retry.
   bool route_pair(int ia, int ib) {
+    leg_max_now = opt.pair_leg_max;
+    pad_exits_now = opt.pair_pad_exits;
+    if (route_pair_at(ia, ib)) return true;
+    bool ok = false;
+    if (opt.pair_retry_leg > 0) {  // longer legs first, then pad exits at the configured reach
+      for (const auto& [reach, exits] : {std::pair{std::max(opt.pair_leg_max, opt.pair_retry_leg), opt.pair_pad_exits}, std::pair{opt.pair_leg_max, true}}) {
+        if (ok || pair_why != "no coupled path" || out_of_budget()) break;
+        if (reach == opt.pair_leg_max && exits == opt.pair_pad_exits) continue;  // the first attempt again
+        leg_max_now = reach;
+        pad_exits_now = exits;
+        ok = route_pair_at(ia, ib);
+      }
+      if (ok) ++res.pair_retried;
+    }
+    leg_max_now = opt.pair_leg_max;
+    pad_exits_now = opt.pair_pad_exits;
+    return ok;
+  }
+  bool route_pair_at(int ia, int ib) {
+    exit_cache.clear();
     const Connection& A = cs[static_cast<std::size_t>(ia)].c;
     Connection B = cs[static_cast<std::size_t>(ib)].c;
     auto d = [](Point u, Point v) { return std::hypot(static_cast<double>(u.x - v.x), static_cast<double>(u.y - v.y)); };
@@ -3544,9 +3621,11 @@ struct Router::Impl {
     const double se = d(S, E);
     if (se < 1'500'000) { pair_why = "too short to couple"; return false; }
     // Where the coupled section may start and end: within Rs / Re of the pad midpoints (legs are uncoupled length),
-    // farther where the two pads lie far apart (pins with another pin between them).
+    // farther where the two pads lie far apart (pins with another pin between them). At most opt.pair_leg_max (2.5 mm
+    // unless --pair-leg-mm says otherwise: pads of other nets beside a pair's pads can need longer legs, issue #67).
+    const double leg_max = std::max(600'000.0, static_cast<double>(leg_max_now));
     auto reach = [&](Point p1, Point p2) {
-      double r = std::clamp(std::max(0.3 * se, 1.5 * d(p1, p2)), 600'000.0, 2'500'000.0);
+      double r = std::clamp(std::max(0.3 * se, 1.5 * d(p1, p2)), 600'000.0, leg_max);
       if (pr.max_uncoupled) r = std::min(r, std::max(static_cast<double>(*pr.max_uncoupled) / 2, 2.0 * static_cast<double>(pitch)));
       return r;
     };
@@ -3569,7 +3648,8 @@ struct Router::Impl {
     geom::Box box;
     box.add(S);
     box.add(E);
-    box = box.inflated(3'000'000 + static_cast<Coord>(se / 4));
+    // The window holds every start and goal candidate (3 mm covers the default reach of 2.5 mm).
+    box = box.inflated(std::max<Coord>(3'000'000, static_cast<Coord>(std::max(Rs, Re)) + 500'000) + static_cast<Coord>(se / 4));
     const int wx0 = std::max(0, to_ix(box.x0)), wy0 = std::max(0, to_iy(box.y0));
     const int wx1 = std::min(nx - 1, to_ix(box.x1)), wy1 = std::min(ny - 1, to_iy(box.y1));
     auto in_win = [&](int gx, int gy) { return gx >= wx0 && gy >= wy0 && gx <= wx1 && gy <= wy1; };
@@ -3680,8 +3760,10 @@ struct Router::Impl {
         const double ahead = static_cast<double>(pad_pt.x - X.x) * u.x + static_cast<double>(pad_pt.y - X.y) * u.y;
         if ((at_start ? -ahead : ahead) < -static_cast<double>(w) / 2) return false;
       }
-      const auto la = pair_leg((at_start ? pa1 : pa2).pos, XA, a, n, cd.l, A.net, w, leg_checks);
-      const auto lb = la ? pair_leg((at_start ? pb1 : pb2).pos, XB, a, n, cd.l, B.net, w, leg_checks) : std::nullopt;
+      const model::Pad& qa = at_start ? pa1 : pa2;
+      const model::Pad& qb = at_start ? pb1 : pb2;
+      const auto la = pair_leg(qa.pos, XA, a, n, cd.l, A.net, w, leg_checks, std::max(qa.size_x, qa.size_y) / 2);
+      const auto lb = la ? pair_leg(qb.pos, XB, a, n, cd.l, B.net, w, leg_checks, std::max(qb.size_x, qb.size_y) / 2) : std::nullopt;
       if (dbg_legs > 0 && !at_start && (!la || !lb || !legs_clear(*la, *lb, pr.required_gap))) {
         --dbg_legs;
         const Point pA = (at_start ? pa1 : pa2).pos, pB = (at_start ? pb1 : pb2).pos;
@@ -7205,7 +7287,14 @@ struct Router::Impl {
     if (opt.optimize && best_routed > 0 && res.routed != best_routed && !best_items.empty() && wants_tuning()) restore_best();
     if (opt.optimize && best_routed > 0 && res.routed == best_routed) {
       // Pairs split by negotiation: coupled again where they fit now (each attempt restores the old copper on failure).
-      if ((opt.diff_pairs || !opt.pair_nets.empty()) && !out_of_budget()) res.pairs += route_diff_pairs(true);
+      if (opt.diff_pairs || !opt.pair_nets.empty()) {
+        // An allowance of its own past the search budget (--recouple-work, D175): otherwise a run that spends its
+        // whole budget, as every --time run does, never couples a split pair again.
+        const double keep_scale = budget_scale;
+        if (opt.recouple_work > 0) budget_scale = std::max(budget_scale, allowance_scale(opt.recouple_work));
+        if (!out_of_budget()) res.pairs += route_diff_pairs(true);
+        budget_scale = keep_scale;
+      }
       for (int round = 0; round < 4 && !out_of_budget(); ++round) {  // repeat while connections still improve
         const int before = res.optimized;
         optimize_vias();

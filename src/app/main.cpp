@@ -1100,6 +1100,17 @@ static int run_main(int argc, char** argv) {
   double r_pair_skew_mm = 0;
   route->add_flag("--pair-twists,!--no-pair-twists", ropt.pair_twists, "Coupled pairs may swap sides at a layer change, for pairs whose pin order is mirrored between the ends (default on; only with pair routing)");
   route->add_option("--pair-skew-mm", r_pair_skew_mm, "Intra-pair skew limit for coupled pairs: meanders on the shorter half (0 = custom skew rules only)");
+  double r_pair_leg_mm = 2.5;
+  route->add_option("--pair-leg-mm", r_pair_leg_mm, "Coupled pairs: longest reach of the uncoupled legs from the pads to the coupled section (default 2.5)")
+      ->check(CLI::Range(0.6, 50.0));
+  route->add_flag("--protect-coupled", ropt.protect_coupled, "Coupled pairs: negotiation never rips a half of a coupled pair (the route that would fails instead)");
+  route->add_option("--recouple-work", ropt.recouple_work, "Coupled pairs: work units the clean-up re-coupling of split pairs may spend past the budget (default 2000000, 0 = none)")
+      ->check(CLI::NonNegativeNumber);
+  double r_pair_retry_leg_mm = 0;
+  route->add_option("--pair-retry-leg-mm", r_pair_retry_leg_mm,
+                    "Coupled pairs: a pair that finds no coupled path is tried again with legs of up to this reach and pad exits (0 = no retry)")
+      ->check(CLI::Range(0.0, 50.0));
+  route->add_flag("--pair-pad-exits", ropt.pair_pad_exits, "Coupled pairs: legs may leave an end pad straight out in any of 8 directions before turning to the pair");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
   route->add_flag("--global-confine", ropt.global_confine, "With --global: confine each connection's first search to its corridor (experimental)")->group("");
   route->add_flag("--global-corridor-only", ropt.global_strict_corridor_only, "With --global-confine: a corridor failure goes straight to negotiation (experimental)")->group("");
@@ -1623,6 +1634,8 @@ static int run_main(int argc, char** argv) {
         }
       }
       ropt.pair_skew = static_cast<tmk::Coord>(r_pair_skew_mm * 1e6);
+      ropt.pair_leg_max = static_cast<tmk::Coord>(std::llround(r_pair_leg_mm * 1e6));
+      ropt.pair_retry_leg = static_cast<tmk::Coord>(std::llround(r_pair_retry_leg_mm * 1e6));
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
       auto job = std::move(r_job);
       job.in = r_in;
