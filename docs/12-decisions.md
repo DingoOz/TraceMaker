@@ -184,6 +184,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D167](decisions/D167.md) | physical_clearance between copper of any net in the router and the DRC | accepted |
 | [D168](decisions/D168.md) | The router keeps custom hole_to_hole and edge_clearance rules at one board-wide value | accepted |
 | [D169](decisions/D169.md) | Obstacle caches are keyed by class values and bounded in memory | accepted |
+| [D172](decisions/D172.md) | Repair windows lift the unlocked copper near open connections | accepted |
 | [D173](decisions/D173.md) | Tuned nets stay tuned: the clean-up tunes the best state, after-route stages keep length and skew | accepted |
 | [D174](decisions/D174.md) | Per-layer preferred directions by name and a 45-degree penalty | accepted |
 | [D176](decisions/D176.md) | Kookabus boards as a private fixture set; unused pins are not critical nets | accepted |

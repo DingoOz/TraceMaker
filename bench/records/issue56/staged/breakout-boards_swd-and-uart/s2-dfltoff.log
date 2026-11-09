@@ -1,0 +1,28 @@
+live view: http://192.168.1.79:8783/?token=2a5cdf4a6351408a090b55035890a1f4
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 7 ok (299285 expansions), 42 failed (4623134 expansions); fields 0 GPU + 30 CPU (0.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 1506812; rips 4, passes 2, boxed-in 10, nogood skips 1, history cells 0, transactions 0 kept of 0
+reachability checks: 18, 17 proved unreachable, 1077115 cells visited
+late reachability proofs: 8, 0 proved no path, 80010 cells visited
+failed-search expansions: strict confined 0, strict wide 2134106, negotiated confined 0, negotiated wide 1447188
+rescue (warm): 1 of 4 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 3 saved routes taken over, 0 not legal under these rules
+searches: 7 ok (587036 expansions), 14 failed (3699173 expansions); fields 0 GPU + 21 CPU (0.29 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 1067641; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 7, 0 proved unreachable, 659258 cells visited
+late reachability proofs: 7, 0 proved no path, 70014 cells visited
+failed-search expansions: strict confined 0, strict wide 3699173, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0610 mm): 4 of 4 routed (complete)
+warm start: 4 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 4 in 0.0 s  <- best
+rescue (warm): 3 -> 4 routed (the relax result is kept)
+routed 4/4 connections, 16 tracks, 2 vias, pitch 0.065 mm, 0 expansions, 6.44 s (best variant 0.00 s)
+work (all variants): 3880579 expansions, 1157125 flood cells, 1504978 cell checks, 306491 fixed-copper checks, 3393144 field cells in 30 fields, 7 commits, 4 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed

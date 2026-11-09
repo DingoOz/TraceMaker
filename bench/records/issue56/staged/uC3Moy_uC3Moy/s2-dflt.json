@@ -1,0 +1,310 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 94.12,
+ "connections": 17,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 5469168,
+ "failures": [
+  "GND: R1.1 -> R4.1  (ripped up by +6V and not routed again)"
+ ],
+ "open": 1,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.08,
+ "repair": {
+  "attempts": 3,
+  "kept": 0,
+  "lifted_tracks": 0,
+  "lifted_vias": 0,
+  "open_after": 1,
+  "open_before": 1,
+  "seconds": 8.129487619,
+  "steps": [
+   {
+    "branches": 6,
+    "connection": "GND R1.1-R4.1",
+    "kept": false,
+    "open_after": 1,
+    "open_before": 1,
+    "radius_mm": 1.0,
+    "split": false,
+    "tracks": 33,
+    "vias": 1,
+    "work": 3066352
+   },
+   {
+    "branches": 8,
+    "connection": "GND R1.1-R4.1",
+    "kept": false,
+    "open_after": 1,
+    "open_before": 1,
+    "radius_mm": 2.0,
+    "split": false,
+    "tracks": 35,
+    "vias": 1,
+    "work": 3068217
+   },
+   {
+    "branches": 19,
+    "connection": "GND R1.1-R4.1",
+    "kept": false,
+    "open_after": 1,
+    "open_before": 1,
+    "radius_mm": 4.0,
+    "split": true,
+    "tracks": 54,
+    "vias": 1,
+    "work": 3001076
+   }
+  ],
+  "work": 9135645
+ },
+ "rescue": {
+  "adopted": false,
+  "connections": 17,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": false,
+    "mode": "warm",
+    "routed": 14,
+    "seconds": 3.441765743
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "routed": 15,
+    "seconds": 3.373393839
+   }
+  ],
+  "routed_after": 15,
+  "routed_before": 16,
+  "seconds": 6.815159582
+ },
+ "routed": 16,
+ "run": {
+  "board": "stage1.kicad_pcb",
+  "date": "2026-11-08T22:41:36Z",
+  "input": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/stage1.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/s2-dflt.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "5000000"
+   },
+   {
+    "name": "--repair",
+    "value": "auto"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-port",
+    "value": "8783"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/s2-dflt.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/uC3Moy_uC3Moy/s2-dflt.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "variants": 1,
+  "version": "0.12.1",
+  "work_budget": 5000000
+ },
+ "seconds": 18.39405319,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 37,
+  "bends_per_connection": 1.7619,
+  "connections": 21,
+  "detour_length_mm": 207.631643,
+  "detour_octile_mm": 113.357811,
+  "detour_ratio": 1.8316,
+  "length_mm": 207.631643,
+  "long_detours": 3,
+  "off_angle_segments": 2,
+  "segments": 60,
+  "short_segments": 0,
+  "stair_steps": 0,
+  "vias": 2
+ },
+ "time_limited": false,
+ "tracks": 60,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 3.427690607,
+ "variants": [
+  {
+   "name": "exact bends, shortest first",
+   "rescue_mode": "warm",
+   "routed": 14,
+   "seconds": 0.300830803,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "name": "exact bends, shortest first",
+   "rescue_mode": "fresh",
+   "routed": 15,
+   "seconds": 0.182917412,
+   "stage": "rescue",
+   "variant": 0
+  }
+ ],
+ "vias": 2,
+ "why_open": {
+  "congested": 2,
+  "neck_down": 0,
+  "next": [
+   "2 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 2,
+  "proved": [],
+  "seconds": 0.027410529,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 113006,
+   "commits": 15,
+   "expansions": 266447,
+   "field_cells": 785400,
+   "fields": 5,
+   "fixed_checks": 139906,
+   "flood_cells": 76321,
+   "rips": 0,
+   "searches": 21
+  },
+  "negotiation": {
+   "cell_checks": 2106183,
+   "commits": 7,
+   "expansions": 3397139,
+   "field_cells": 6350060,
+   "fields": 27,
+   "fixed_checks": 81190,
+   "flood_cells": 1729261,
+   "rips": 6,
+   "searches": 65
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2219189,
+   "commits": 22,
+   "expansions": 3663586,
+   "field_cells": 7135460,
+   "fields": 32,
+   "fixed_checks": 221096,
+   "flood_cells": 1805582,
+   "rips": 6,
+   "searches": 86
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 9135645,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 113006,
+   "commits": 15,
+   "expansions": 266447,
+   "field_cells": 785400,
+   "fields": 5,
+   "fixed_checks": 139906,
+   "flood_cells": 76321,
+   "rips": 0,
+   "searches": 21
+  },
+  "negotiation": {
+   "cell_checks": 2106183,
+   "commits": 7,
+   "expansions": 3397139,
+   "field_cells": 6350060,
+   "fields": 27,
+   "fixed_checks": 81190,
+   "flood_cells": 1729261,
+   "rips": 6,
+   "searches": 65
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2219189,
+   "commits": 22,
+   "expansions": 12799231,
+   "field_cells": 7135460,
+   "fields": 32,
+   "fixed_checks": 221096,
+   "flood_cells": 1805582,
+   "rips": 6,
+   "searches": 86
+  }
+ }
+}

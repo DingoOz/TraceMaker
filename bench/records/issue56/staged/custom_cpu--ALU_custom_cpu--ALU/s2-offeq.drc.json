@@ -1,0 +1,128 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:30",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-offeq.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "0a905caa-7286-43df-b7e4-66206ee5020c"
+                },
+                {
+                    "description": "Pad 1 [VCC] of J9 on B.Cu",
+                    "pos": {
+                        "x": 146.365,
+                        "y": 55.245
+                    },
+                    "uuid": "8690c4ca-a4a9-43ef-8325-66eed408f30a"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "0a905caa-7286-43df-b7e4-66206ee5020c"
+                },
+                {
+                    "description": "Pad 1 [VCC] of J10 on F.Cu",
+                    "pos": {
+                        "x": 146.365,
+                        "y": 55.245
+                    },
+                    "uuid": "8d77f4c5-d6b7-4549-82b0-011372cd9ce8"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "0a905caa-7286-43df-b7e4-66206ee5020c"
+                },
+                {
+                    "description": "Pad 1 [GND] of J11 on F.Cu",
+                    "pos": {
+                        "x": 53.655,
+                        "y": 55.245
+                    },
+                    "uuid": "c21eff27-50ba-4fd2-9db5-8f93e4e0167c"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "0a905caa-7286-43df-b7e4-66206ee5020c"
+                },
+                {
+                    "description": "Pad 1 [GND] of J12 on B.Cu",
+                    "pos": {
+                        "x": 53.655,
+                        "y": 55.245
+                    },
+                    "uuid": "1540884f-adc1-401f-b4f0-6d984ecfc140"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        }
+    ]
+}

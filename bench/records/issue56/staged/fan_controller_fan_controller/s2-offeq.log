@@ -1,0 +1,17 @@
+live view: http://192.168.1.79:8783/?token=933fce146da0f1d88823d585e691657b
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 318 ok (7060593 expansions), 29 failed (795590 expansions); fields 0 GPU + 33 CPU (0.36 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 4; legality checks 1364988; rips 0, passes 1, boxed-in 24, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 9 proved unreachable, 71247 cells visited
+late reachability proofs: 24, 3 proved no path, 211487 cells visited
+failed-search expansions: strict confined 0, strict wide 307650, negotiated confined 0, negotiated wide 416693
+routed 66/69 connections, 299 tracks, 30 vias, pitch 0.075 mm, 8067670 expansions, 5.33 s (best variant 5.32 s)
+  unrouted: GND: U1.27 -> C9.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: GND: C12.2 -> U1.27  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: GND: U1.27 -> U1.8  (boxed in; escapes/neck-down: boxed in)
+  cannot connect: U1.27 (GND) cannot be connected as placed: on B.Cu the fixed copper (U1.26, U1.28, a Net-(R14-Pad1) track, a /sense0(CN13) track) leaves no way out even for a track of the board's minimum width (0.2 mm) with its clearances, and no via fits beside it. A via in the pad would fit (--via-in-pad).
+why open: 4 pins of open connections; 1 walled in by fixed copper (1 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 3 open through congestion (0.30 s)
+  next: move a part or change the rules around the 1 pin walled in above: no router can connect them as placed
+  next: 3 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 7784936 expansions, 282734 flood cells, 1364592 cell checks, 398517 fixed-copper checks, 5186662 field cells in 33 fields, 318 commits, 0 rips

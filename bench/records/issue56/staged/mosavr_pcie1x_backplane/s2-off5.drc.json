@@ -1,0 +1,911 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:59",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-off5.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad A16 [GND] of M1",
+                    "pos": {
+                        "x": 139.57,
+                        "y": 110.35
+                    },
+                    "uuid": "2cb3a00d-d54d-4a57-80ff-ffe0448d9fe9"
+                },
+                {
+                    "description": "Track [GND] on B.Cu, length 0.6055 mm",
+                    "pos": {
+                        "x": 139.57,
+                        "y": 96.35
+                    },
+                    "uuid": "2205885c-64c6-4dd0-adc5-d578f3225dd3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on B.Cu, length 3.5000 mm",
+                    "pos": {
+                        "x": 156.39,
+                        "y": 96.35
+                    },
+                    "uuid": "49829059-8e8f-43ce-ace1-755d7d3390ae"
+                },
+                {
+                    "description": "Track [GND] on F.Cu, length 6.2500 mm",
+                    "pos": {
+                        "x": 159.89,
+                        "y": 110.35
+                    },
+                    "uuid": "32a346ff-f1f8-4996-9fcf-4bd68c376868"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [+3V3] on F.Cu, length 2.5000 mm",
+                    "pos": {
+                        "x": 117.25,
+                        "y": 97.35
+                    },
+                    "uuid": "ff94e36f-4ba8-4ac9-a417-7992cd30b8ec"
+                },
+                {
+                    "description": "Track [+3V3] on F.Cu, length 2.2500 mm",
+                    "pos": {
+                        "x": 117.25,
+                        "y": 111.35
+                    },
+                    "uuid": "17a82322-00cf-44f8-9002-169690e5c30c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [+3V3] on B.Cu, length 2.5000 mm",
+                    "pos": {
+                        "x": 135.07,
+                        "y": 97.35
+                    },
+                    "uuid": "e0e790c1-5d52-4be3-ac67-4471fe4f928e"
+                },
+                {
+                    "description": "PTH pad A17 [+3V3] of M1",
+                    "pos": {
+                        "x": 137.57,
+                        "y": 111.35
+                    },
+                    "uuid": "548b3162-0676-4e79-900d-8abec70c24e1"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad A17 [+3V3] of M2",
+                    "pos": {
+                        "x": 157.89,
+                        "y": 111.35
+                    },
+                    "uuid": "b7351df5-044d-417a-b7a5-2e81a582673b"
+                },
+                {
+                    "description": "Track [+3V3] on B.Cu, length 2.5000 mm",
+                    "pos": {
+                        "x": 155.39,
+                        "y": 97.35
+                    },
+                    "uuid": "ba0a219b-a107-4485-a2d2-618dd4a03da0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [+3V3] on F.Cu, length 2.5000 mm",
+                    "pos": {
+                        "x": 175.71,
+                        "y": 97.35
+                    },
+                    "uuid": "29d020b1-0143-4d3c-ad30-a36d421260bf"
+                },
+                {
+                    "description": "Track [+3V3] on B.Cu, length 3.0900 mm",
+                    "pos": {
+                        "x": 178.21,
+                        "y": 111.35
+                    },
+                    "uuid": "bfec40fe-237f-4c5d-b21e-db5859171b1e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M0-PadA11)] of M0",
+                    "pos": {
+                        "x": 117.25,
+                        "y": 103.35
+                    },
+                    "uuid": "431879e3-3a37-489a-ad9f-b40988a87b9e"
+                },
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M0-PadA11)] of M0",
+                    "pos": {
+                        "x": 117.25,
+                        "y": 103.35
+                    },
+                    "uuid": "431879e3-3a37-489a-ad9f-b40988a87b9e"
+                },
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadB11)] of M0",
+                    "pos": {
+                        "x": 114.75,
+                        "y": 103.35
+                    },
+                    "uuid": "6e29aced-7c7a-41e5-b067-d7e886a08618"
+                },
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadB11)] of M0",
+                    "pos": {
+                        "x": 114.75,
+                        "y": 103.35
+                    },
+                    "uuid": "6e29aced-7c7a-41e5-b067-d7e886a08618"
+                },
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M2-PadA11)] of M2",
+                    "pos": {
+                        "x": 157.89,
+                        "y": 103.35
+                    },
+                    "uuid": "ffcf6979-071e-4b67-a68b-e47f70d09fef"
+                },
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M2-PadA11)] of M2",
+                    "pos": {
+                        "x": 157.89,
+                        "y": 103.35
+                    },
+                    "uuid": "ffcf6979-071e-4b67-a68b-e47f70d09fef"
+                },
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M1-PadA11)] of M2",
+                    "pos": {
+                        "x": 155.39,
+                        "y": 103.35
+                    },
+                    "uuid": "52ab3d14-d8eb-4c6d-88e0-5dbcfbb490de"
+                },
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M1-PadA11)] of M2",
+                    "pos": {
+                        "x": 155.39,
+                        "y": 103.35
+                    },
+                    "uuid": "52ab3d14-d8eb-4c6d-88e0-5dbcfbb490de"
+                },
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M3-PadA11)] of M3",
+                    "pos": {
+                        "x": 178.21,
+                        "y": 103.35
+                    },
+                    "uuid": "37849bd7-214e-4bac-b8b9-eb74f1c1e21d"
+                },
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M1-PadA11)] of M1",
+                    "pos": {
+                        "x": 137.57,
+                        "y": 103.35
+                    },
+                    "uuid": "86f245de-7502-43a3-a49b-9b18590008d3"
+                },
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M3-PadA11)] of M3",
+                    "pos": {
+                        "x": 178.21,
+                        "y": 103.35
+                    },
+                    "uuid": "37849bd7-214e-4bac-b8b9-eb74f1c1e21d"
+                },
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad A11 [Net-(M1-PadA11)] of M1",
+                    "pos": {
+                        "x": 137.57,
+                        "y": 103.35
+                    },
+                    "uuid": "86f245de-7502-43a3-a49b-9b18590008d3"
+                },
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M2-PadA11)] of M3",
+                    "pos": {
+                        "x": 175.71,
+                        "y": 103.35
+                    },
+                    "uuid": "a4a64206-5a6c-41e7-89e7-de430ffb7c79"
+                },
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadA11)] of M1",
+                    "pos": {
+                        "x": 135.07,
+                        "y": 103.35
+                    },
+                    "uuid": "57bb7a1a-94ff-45d0-9896-d8f206e6377b"
+                },
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M2-PadA11)] of M3",
+                    "pos": {
+                        "x": 175.71,
+                        "y": 103.35
+                    },
+                    "uuid": "a4a64206-5a6c-41e7-89e7-de430ffb7c79"
+                },
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadA11)] of M1",
+                    "pos": {
+                        "x": 135.07,
+                        "y": 103.35
+                    },
+                    "uuid": "57bb7a1a-94ff-45d0-9896-d8f206e6377b"
+                },
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadA11)] of M1",
+                    "pos": {
+                        "x": 135.07,
+                        "y": 103.35
+                    },
+                    "uuid": "57bb7a1a-94ff-45d0-9896-d8f206e6377b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M1-PadA11)] of M1",
+                    "pos": {
+                        "x": 137.57,
+                        "y": 103.35
+                    },
+                    "uuid": "86f245de-7502-43a3-a49b-9b18590008d3"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadB11)] of M0",
+                    "pos": {
+                        "x": 114.75,
+                        "y": 103.35
+                    },
+                    "uuid": "6e29aced-7c7a-41e5-b067-d7e886a08618"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M0-PadA11)] of M0",
+                    "pos": {
+                        "x": 117.25,
+                        "y": 103.35
+                    },
+                    "uuid": "431879e3-3a37-489a-ad9f-b40988a87b9e"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadA11)] of M1",
+                    "pos": {
+                        "x": 135.07,
+                        "y": 103.35
+                    },
+                    "uuid": "57bb7a1a-94ff-45d0-9896-d8f206e6377b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M0-PadB11)] of M0",
+                    "pos": {
+                        "x": 114.75,
+                        "y": 103.35
+                    },
+                    "uuid": "6e29aced-7c7a-41e5-b067-d7e886a08618"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M1",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 105.0
+                    },
+                    "uuid": "7543b60e-bd81-4ce3-9385-718b3a9a9239"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M1-PadA11)] of M1",
+                    "pos": {
+                        "x": 137.57,
+                        "y": 103.35
+                    },
+                    "uuid": "86f245de-7502-43a3-a49b-9b18590008d3"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M0",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 105.0
+                    },
+                    "uuid": "bacdc28e-9d16-4726-9467-97f769fd2a74"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M0-PadA11)] of M0",
+                    "pos": {
+                        "x": 117.25,
+                        "y": 103.35
+                    },
+                    "uuid": "431879e3-3a37-489a-ad9f-b40988a87b9e"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M2-PadA11)] of M3",
+                    "pos": {
+                        "x": 175.71,
+                        "y": 103.35
+                    },
+                    "uuid": "a4a64206-5a6c-41e7-89e7-de430ffb7c79"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M3-PadA11)] of M3",
+                    "pos": {
+                        "x": 178.21,
+                        "y": 103.35
+                    },
+                    "uuid": "37849bd7-214e-4bac-b8b9-eb74f1c1e21d"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M2-PadA11)] of M3",
+                    "pos": {
+                        "x": 175.71,
+                        "y": 103.35
+                    },
+                    "uuid": "a4a64206-5a6c-41e7-89e7-de430ffb7c79"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M3",
+                    "pos": {
+                        "x": 176.96,
+                        "y": 105.0
+                    },
+                    "uuid": "f1b2a849-f60e-472e-8d0f-6eaaeebd9703"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M3-PadA11)] of M3",
+                    "pos": {
+                        "x": 178.21,
+                        "y": 103.35
+                    },
+                    "uuid": "37849bd7-214e-4bac-b8b9-eb74f1c1e21d"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M1-PadA11)] of M2",
+                    "pos": {
+                        "x": 155.39,
+                        "y": 103.35
+                    },
+                    "uuid": "52ab3d14-d8eb-4c6d-88e0-5dbcfbb490de"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M2-PadA11)] of M2",
+                    "pos": {
+                        "x": 157.89,
+                        "y": 103.35
+                    },
+                    "uuid": "ffcf6979-071e-4b67-a68b-e47f70d09fef"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                },
+                {
+                    "description": "PTH pad B11 [Net-(M1-PadA11)] of M2",
+                    "pos": {
+                        "x": 155.39,
+                        "y": 103.35
+                    },
+                    "uuid": "52ab3d14-d8eb-4c6d-88e0-5dbcfbb490de"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of M2",
+                    "pos": {
+                        "x": 156.64,
+                        "y": 105.0
+                    },
+                    "uuid": "205c5b99-efdb-4719-8715-5483da056992"
+                },
+                {
+                    "description": "PTH pad A11 [Net-(M2-PadA11)] of M2",
+                    "pos": {
+                        "x": 157.89,
+                        "y": 103.35
+                    },
+                    "uuid": "ffcf6979-071e-4b67-a68b-e47f70d09fef"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        }
+    ]
+}

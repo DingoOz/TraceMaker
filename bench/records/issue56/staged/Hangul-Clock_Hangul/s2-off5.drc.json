@@ -1,0 +1,313 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:40",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-off5.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [DIN] of U1 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 56.75
+                    },
+                    "uuid": "3c5ee0e1-6d60-41b8-91f8-4c4f31881aed"
+                },
+                {
+                    "description": "PTH pad 2 [DIN] of P4",
+                    "pos": {
+                        "x": 129.0,
+                        "y": 119.0
+                    },
+                    "uuid": "7d812c93-8766-4058-90c0-4551bf652672"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 2 [DIN] of P4",
+                    "pos": {
+                        "x": 129.0,
+                        "y": 119.0
+                    },
+                    "uuid": "7d812c93-8766-4058-90c0-4551bf652672"
+                },
+                {
+                    "description": "PTH pad 8 [DIN] of P1",
+                    "pos": {
+                        "x": 188.2,
+                        "y": 101.165
+                    },
+                    "uuid": "3ca0a878-0037-4924-9189-16377e0245f9"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [+5VA] on F.Cu, length 2.1213 mm",
+                    "pos": {
+                        "x": 135.15,
+                        "y": 111.25
+                    },
+                    "uuid": "b9114cf9-e6a2-4d16-baae-dec226afa251"
+                },
+                {
+                    "description": "PTH pad 9 [Net-(P1-Pad9)] of P1",
+                    "pos": {
+                        "x": 190.74,
+                        "y": 101.165
+                    },
+                    "uuid": "55fe4401-96e3-4947-b83e-60547a6afbbe"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(U2-Pad4)] of U2 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 73.25
+                    },
+                    "uuid": "72d1eb80-ee22-4336-ab57-6217ff48a5aa"
+                },
+                {
+                    "description": "Pad 2 [Net-(U2-Pad4)] of U32 on F.Cu",
+                    "pos": {
+                        "x": 204.35,
+                        "y": 61.75
+                    },
+                    "uuid": "fe15c475-c065-46f6-8530-2328484848b5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(U3-Pad4)] of U3 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 89.75
+                    },
+                    "uuid": "b0a0f68d-f353-4fa5-9bf6-e515a6678fd3"
+                },
+                {
+                    "description": "Pad 2 [Net-(U3-Pad4)] of U33 on F.Cu",
+                    "pos": {
+                        "x": 204.35,
+                        "y": 78.25
+                    },
+                    "uuid": "d1d414ca-57ac-46de-b476-383f3219043c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(U34-Pad2)] of U4 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 106.25
+                    },
+                    "uuid": "3c31377f-319b-475d-93a3-a1d4e7a03343"
+                },
+                {
+                    "description": "Pad 2 [Net-(U34-Pad2)] of U34 on F.Cu",
+                    "pos": {
+                        "x": 204.35,
+                        "y": 94.75
+                    },
+                    "uuid": "1d5c28e2-4537-4710-b133-57ad4952ef69"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(U35-Pad2)] of U5 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 122.75
+                    },
+                    "uuid": "70520ebe-dedc-415e-b4b9-d11765e1f290"
+                },
+                {
+                    "description": "Pad 2 [Net-(U35-Pad2)] of U35 on F.Cu",
+                    "pos": {
+                        "x": 204.35,
+                        "y": 111.25
+                    },
+                    "uuid": "ffc4c649-2736-4f3c-951b-0a3f74e83409"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(U36-Pad2)] of U6 on F.Cu",
+                    "pos": {
+                        "x": 118.65,
+                        "y": 139.25
+                    },
+                    "uuid": "a77b6863-22a1-40b7-9fe2-d3a92949aed4"
+                },
+                {
+                    "description": "Pad 2 [Net-(U36-Pad2)] of U36 on F.Cu",
+                    "pos": {
+                        "x": 204.35,
+                        "y": 127.75
+                    },
+                    "uuid": "e7a5e7fd-9f65-47b2-b06e-e56c8eb1389d"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 5 [RST] of P3",
+                    "pos": {
+                        "x": 160.26,
+                        "y": 138.63
+                    },
+                    "uuid": "8da67045-53a5-4aa3-9182-56a2c45365a8"
+                },
+                {
+                    "description": "PTH pad 14 [RST] of P1",
+                    "pos": {
+                        "x": 203.44,
+                        "y": 101.165
+                    },
+                    "uuid": "ab25aeb9-f751-4eb7-992e-ab0df0d83970"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C34",
+                    "pos": {
+                        "x": 197.75,
+                        "y": 75.75
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005901620b"
+                },
+                {
+                    "description": "Footprint P5",
+                    "pos": {
+                        "x": 196.89,
+                        "y": 89.06
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000590fdd29"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C35",
+                    "pos": {
+                        "x": 197.75,
+                        "y": 92.25
+                    },
+                    "uuid": "00000000-0000-0000-0000-000059016211"
+                },
+                {
+                    "description": "Footprint P5",
+                    "pos": {
+                        "x": 196.89,
+                        "y": 89.06
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000590fdd29"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 153.25,
+                        "y": 150.0
+                    },
+                    "uuid": "fb9d6070-14d8-46d5-9fde-df095b223aae"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 153.25,
+                        "y": 150.0
+                    },
+                    "uuid": "fb9d6070-14d8-46d5-9fde-df095b223aae"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        }
+    ]
+}
