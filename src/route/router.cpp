@@ -3818,7 +3818,7 @@ struct Router::Impl {
       // deterministic under a work budget, and the time limit stops a long attempt instead of waiting for it.
       if ((++iterations & 63) == 0) {
         charge();
-        if (out_of_budget()) {
+        if (out_of_budget() || pair_share_over()) {
           stopped = true;
           break;
         }
@@ -4306,7 +4306,27 @@ struct Router::Impl {
     st.items.clear();
     return saved;
   }
+  // Work and wall time the coupled pair searches have spent in this run, over every call of route_diff_pairs (opt.pair_share).
+  long pair_spent_work = 0;
+  double pair_spent_s = 0;
+  long pair_start_work = 0;
+  double pair_start_s = 0;
+  bool pair_share_over() const {
+    if (opt.pair_share <= 0) return false;
+    if (opt.work_budget > 0)
+      return static_cast<double>(pair_spent_work + res.expansions - pair_start_work) >= opt.pair_share * static_cast<double>(opt.work_budget);
+    return pair_spent_s + elapsed() - pair_start_s >= opt.pair_share * opt.time_limit_s;
+  }
   int route_diff_pairs(bool recouple = false) {
+    pair_start_work = res.expansions;
+    pair_start_s = elapsed();
+    struct Spent {
+      Impl& r;
+      ~Spent() {
+        r.pair_spent_work += r.res.expansions - r.pair_start_work;
+        r.pair_spent_s += r.elapsed() - r.pair_start_s;
+      }
+    } spent{*this};
     if (!recouple) pair_partner.assign(cs.size(), -1);
     if (pair_retries.size() != cs.size()) pair_retries.assign(cs.size(), 0);
     std::map<NetId, std::vector<int>> by_net;
@@ -4337,6 +4357,10 @@ struct Router::Impl {
             if (dd < bd) { bd = dd; best = static_cast<int>(k); }
           }
           if (best < 0 || out_of_budget()) continue;
+          if (pair_share_over()) {
+            ++res.pairs_over_share;
+            continue;
+          }
           const int cb = lb[static_cast<std::size_t>(best)];
           std::vector<OldItem> old_a, old_b;
           if (recouple) {
