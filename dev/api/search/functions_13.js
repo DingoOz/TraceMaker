@@ -12,6 +12,7 @@ var searchData=
   ['upper_9',['upper',['../namespacetmk_1_1crules.html#a66e60c21cdfa96adff5dc5895ca55b24',1,'tmk::crules']]],
   ['url_10',['url',['../classtmk_1_1server_1_1ViewerServer.html#a9de2f57fb7ed1f2b03db737d4d32750f',1,'tmk::server::ViewerServer']]],
   ['usb_5fpairs_11',['usb_pairs',['../namespacetmk_1_1crules.html#a535b94b11147dfb8d4bfa0ae0bac4e22',1,'tmk::crules']]],
-  ['use_5fzone_5fclearance_5foverrides_12',['use_zone_clearance_overrides',['../classtmk_1_1drc_1_1RuleEngine.html#a3473da7b23b1069db07c8db9e9082257',1,'tmk::drc::RuleEngine']]],
-  ['utilisation_13',['utilisation',['../namespacetmk_1_1place.html#a634264f154cf45669b6227063290e372',1,'tmk::place']]]
+  ['use_5fkind_5ftables_12',['use_kind_tables',['../classtmk_1_1drc_1_1RuleEngine.html#a44392ca7a8aeb894f2d730c36d74a0de',1,'tmk::drc::RuleEngine']]],
+  ['use_5fzone_5fclearance_5foverrides_13',['use_zone_clearance_overrides',['../classtmk_1_1drc_1_1RuleEngine.html#a3473da7b23b1069db07c8db9e9082257',1,'tmk::drc::RuleEngine']]],
+  ['utilisation_14',['utilisation',['../namespacetmk_1_1place.html#a634264f154cf45669b6227063290e372',1,'tmk::place']]]
 ];

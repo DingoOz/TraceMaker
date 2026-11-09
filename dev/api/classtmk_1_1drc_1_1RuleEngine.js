@@ -37,6 +37,7 @@ var classtmk_1_1drc_1_1RuleEngine =
     [ "track_allowed", "classtmk_1_1drc_1_1RuleEngine.html#a011cff6f61b68847287d4b2d6b56576d", null ],
     [ "track_width", "classtmk_1_1drc_1_1RuleEngine.html#a5dcee5588df0b98c97f0594d82f8c5d4", null ],
     [ "track_width_severity", "classtmk_1_1drc_1_1RuleEngine.html#ad675992ff2629e8b3810cbc8eabeacfc", null ],
+    [ "use_kind_tables", "classtmk_1_1drc_1_1RuleEngine.html#a44392ca7a8aeb894f2d730c36d74a0de", null ],
     [ "use_zone_clearance_overrides", "classtmk_1_1drc_1_1RuleEngine.html#a3473da7b23b1069db07c8db9e9082257", null ],
     [ "via_allowed", "classtmk_1_1drc_1_1RuleEngine.html#a27b7322859acf2769001f6925185828c", null ],
     [ "via_diameter_min", "classtmk_1_1drc_1_1RuleEngine.html#afc502e7f91470b77fc0424c08478caa1", null ],

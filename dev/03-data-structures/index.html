@@ -2507,7 +2507,8 @@ transaction applies its delta; rolling back drops the overlay.</p>
 <ol>
 <li><strong>Broad phase</strong>: candidate pairs from the uniform spatial hash (CPU) or LBVH (GPU), restricted to dirty
    regions during routing, full board at sign-off.</li>
-<li><strong>Rule resolution</strong>: per pair, compiled constraint table + matching custom rules → required clearance.</li>
+<li><strong>Rule resolution</strong>: per pair, compiled constraint table + matching custom rules → required clearance. A custom
+   rule whose condition reads only <code>A.Type</code> and <code>B.Type</code> is tabled by pair of kinds when the engine is built (D170).</li>
 <li><strong>Narrow phase</strong>: exact integer distance between primitives.</li>
 <li><strong>Checks</strong> (KiCad names): <code>clearance</code>, <code>track_width</code>, <code>via_diameter</code>, <code>annular_width</code>, <code>hole_clearance</code>,
    <code>hole_to_hole</code>, <code>copper_edge_clearance</code>, <code>shorting_items</code>, <code>unconnected_items</code>, <code>solder_mask_bridge</code>,

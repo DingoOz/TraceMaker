@@ -166,6 +166,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a712aaa60409f97b9365b6668c000dc6d" id="r_a712aaa60409f97b9365b6668c000dc6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a712aaa60409f97b9365b6668c000dc6d">class_names_seen</a> () const</td></tr>
 <tr class="memdesc:a712aaa60409f97b9365b6668c000dc6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Some applied rule's condition reads a net class by name (NetClass, hasNetclass, hasExactNetclass): two classes with the same values may then be judged differently, so the router's obstacle caches stay per class (issue #54).  <br /></td></tr>
 <tr class="memitem:a3ba01a7c7f578bd8d2ddd22fa5444d6f" id="r_a3ba01a7c7f578bd8d2ddd22fa5444d6f"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ba01a7c7f578bd8d2ddd22fa5444d6f">warnings</a> () const</td></tr>
+<tr class="memitem:a44392ca7a8aeb894f2d730c36d74a0de" id="r_a44392ca7a8aeb894f2d730c36d74a0de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44392ca7a8aeb894f2d730c36d74a0de">use_kind_tables</a> (bool on)</td></tr>
+<tr class="memdesc:a44392ca7a8aeb894f2d730c36d74a0de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference path for the per-kind tables of conditions that read only the items' types (issue #53): off, every custom_min evaluates the condition itself.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -173,7 +175,7 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00032">32</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00033">33</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af8263289ab08f200ed3cb41516c029c0" name="af8263289ab08f200ed3cb41516c029c0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af8263289ab08f200ed3cb41516c029c0">&#9670;&#160;</a></span>RuleEngine()</h2>
@@ -254,7 +256,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00108">108</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00109">109</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -281,7 +283,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00104">104</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00105">105</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -310,7 +312,7 @@ Friends</h2></td></tr>
 
 <p>Some applied rule's condition reads a net class by name (NetClass, hasNetclass, hasExactNetclass): two classes with the same values may then be judged differently, so the router's obstacle caches stay per class (issue #54). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00128">128</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00129">129</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -348,7 +350,7 @@ Friends</h2></td></tr>
 
 <p>Required copper-to-copper clearance between two items on a copper layer (with the router's via_clearance_extra when either item is a via). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00039">39</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00040">40</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -451,7 +453,7 @@ Friends</h2></td></tr>
 
 <p>The other half of <span class="tt">net</span>'s differential pair (KiCad's DpCoupledNet), or 0. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00081">81</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00082">82</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -480,7 +482,7 @@ Friends</h2></td></tr>
 
 <p>True when <span class="tt">net</span> is the positive half of a pair (P or +, match_dp_suffix); only meaningful when dp_partner(net) is set. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00085">85</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00086">86</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -644,7 +646,7 @@ Friends</h2></td></tr>
 
 <p>Largest clearance any pair could need (for spatial-index inflation). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00058">58</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00059">59</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -671,7 +673,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00109">109</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00110">110</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -698,7 +700,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00113">113</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00114">114</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -727,7 +729,7 @@ Friends</h2></td></tr>
 
 <p>Custom rules that the per-class obstacle cache cannot represent require exact per-point checks. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00125">125</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00126">126</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -881,7 +883,7 @@ Friends</h2></td></tr>
 
 <p>A disallow rule on tracks or vias depends on position, size or footprint: the router asks probe_disallowed. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00098">98</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00099">99</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -931,7 +933,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00123">123</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00124">124</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -961,7 +963,7 @@ Friends</h2></td></tr>
 <p>Hole-to-copper clearance the router keeps between a hole and other nets' copper: the board minimum raised to every applied custom hole_clearance rule. </p>
 <p>The router's checks and caches have no per-pair hole rule, so a rule with a condition or a layer is kept everywhere (conservative, rule 6; a warning says so). The DRC stays exact (hole_clearance above). </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00118">118</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00119">119</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -991,7 +993,7 @@ Friends</h2></td></tr>
 <p>Hole-to-hole distance the router keeps round a new via's hole, and the copper-to-edge clearance of new tracks and vias: the board minimums raised to every applied custom hole_to_hole rule, and to every edge_clearance rule that can hold for a track or via (issue #52). </p>
 <p>As with hole clearance, a rule with a condition or a layer is kept everywhere, with a warning; the DRC stays exact. </p>
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00122">122</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00123">123</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1018,7 +1020,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00077">77</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00078">78</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1107,6 +1109,36 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The severity of the last rule with a track_width constraint that matches the track ("" when none matches or it sets none): in KiCad that rule decides the track's width check, so an ignored rule hides the board minimum too (tuning profiles, doc 05 §58). </p>
+
+</div>
+</div>
+<a id="a44392ca7a8aeb894f2d730c36d74a0de" name="a44392ca7a8aeb894f2d730c36d74a0de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44392ca7a8aeb894f2d730c36d74a0de">&#9670;&#160;</a></span>use_kind_tables()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::drc::RuleEngine::use_kind_tables </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>on</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reference path for the per-kind tables of conditions that read only the items' types (issue #53): off, every custom_min evaluates the condition itself. </p>
+<p>The answers are the same (test "[drc][rules]" kind tables). </p>
+
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00133">133</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1213,7 +1245,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00129">129</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00130">130</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>
@@ -1238,7 +1270,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00178">178</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rule__engine_8hpp_source.html#l00191">191</a> of file <a class="el" href="rule__engine_8hpp_source.html">rule_engine.hpp</a>.</p>
 
 </div>
 </div>

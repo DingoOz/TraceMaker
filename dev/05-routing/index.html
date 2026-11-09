@@ -2530,6 +2530,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#76-rules-below-the-class-the-pair-phase-and-the-price-of-a-condition-2026-11-08-d170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        76. Rules below the class: the pair phase and the price of a condition (2026-11-08, D170)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4115,6 +4126,17 @@
     <span class="md-ellipsis">
       
         75. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#76-rules-below-the-class-the-pair-phase-and-the-price-of-a-condition-2026-11-08-d170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        76. Rules below the class: the pair phase and the price of a condition (2026-11-08, D170)
       
     </span>
   </a>
@@ -9890,6 +9912,112 @@ mask bridges, annular width), so the repair adds none; its unconnected counts eq
   joined, no DRC error, the 2 mm window the first that lifts anything, deterministic); the same ring locked is never lifted; a branch
   limit of 0 tries nothing. <code>kicad_plugin/test_offline.py</code> checks that the lifted copper is found on the open board.</li>
 </ul>
+<h2 id="76-rules-below-the-class-the-pair-phase-and-the-price-of-a-condition-2026-11-08-d170">76. Rules below the class: the pair phase and the price of a condition (2026-11-08, D170)<a class="headerlink" href="#76-rules-below-the-class-the-pair-phase-and-the-price-of-a-condition-2026-11-08-d170" title="Permanent link">&para;</a></h2>
+<p><strong>Why.</strong> Issue #53: with WholeBoard's JLCPCB rule <code>(condition "A.Type != 'Zone' &amp;&amp; B.Type != 'Zone'") (constraint clearance (min
+0.09mm))</code> under 0.15 mm classes, six of eight <code>--diff-pairs</code> variants on the 10-port PoE switch stopped at about 116 connections in
+300 s (<code>bench/records/d139/</code>). Nothing sized from the class disagrees with the rule engine. The stalled variants were all still in the
+coupled pair phase (§15) when the time ran out: about 116 is the pairs' own connections. The pair search checks every move exactly, and
+the exact checks ask the clearance of every nearby item; evaluating the rule's condition each time (strings built, lower-cased and
+wildcard-matched for both types, both orders) made the same work 55 % slower than an unconditional 0.09 mm rule. Without the rule the
+phase only just fits in 300 s; on a loaded machine it does not fit either.</p>
+<p><strong>What was built</strong> (D170).</p>
+<ul>
+<li>Kind tables (<code>drc::RuleEngine</code>): a condition that reads only <code>A.Type</code> and <code>B.Type</code> is evaluated once per pair of kinds when the engine
+  is built; <code>custom_min</code> (clearance, hole clearance, hole to hole, edge clearance, track width) reads the table. Same answers by
+  construction; <code>use_kind_tables(false)</code> is the reference, compared over every item pair in the test "kind tables". On by default.</li>
+<li><code>--pair-share X</code> (default 0, no limit): the coupled pair searches stop after X of the work budget (of <code>--time</code> without one), counted
+  over every pair phase of the run; the pairs left are routed as single connections. Each pair attempt was already capped (§15); this
+  caps the phase. Off by default (below).</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/issue53/</code>, <code>--diff-pairs --no-kb --no-rescue</code>; the PoE switch is WholeBoard's, not committed).</p>
+<table>
+<thead>
+<tr>
+<th>Board, rule</th>
+<th>Run</th>
+<th>Before (main)</th>
+<th>D170</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PoE switch, non-zone 0.09 mm</td>
+<td>1 variant, 2 M work</td>
+<td>189 s</td>
+<td>86 s</td>
+<td>same file</td>
+</tr>
+<tr>
+<td>PoE switch, unconditional 0.09 mm</td>
+<td>1 variant, 2 M work</td>
+<td>122 s</td>
+<td>84 s</td>
+<td>same file</td>
+</tr>
+<tr>
+<td>StickHub (8 USB pairs, 0.15 mm class), non-zone 0.09 mm</td>
+<td>1 variant, 5 M work, <code>--soft-zones</code></td>
+<td>31.8 s CPU</td>
+<td>21.0 s CPU</td>
+<td>same file, 128/128</td>
+</tr>
+<tr>
+<td>StickHub, no rule</td>
+<td>1 variant, 5 M work, <code>--soft-zones</code></td>
+<td>31.0 s CPU</td>
+<td>30.9 s CPU</td>
+<td>same file</td>
+</tr>
+</tbody>
+</table>
+<p>Eight variants, 300 s, the PoE switch with the rule, the four runs at the same time on the shared machine:</p>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>Connections per variant (0..7)</th>
+<th>Best</th>
+<th>Coupled pairs (best)</th>
+<th>Work done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>main</td>
+<td>96 96 160 96 96 1097 96 54</td>
+<td>1,097</td>
+<td>75</td>
+<td>44.7 M</td>
+</tr>
+<tr>
+<td>D170</td>
+<td>126 140 660 140 140 1105 126 106</td>
+<td>1,105</td>
+<td>75</td>
+<td>89.7 M</td>
+</tr>
+<tr>
+<td>D170, <code>--pair-share 0.25</code></td>
+<td>1027 1104 1029 1073 1034 1105 1111 1088</td>
+<td>1,111</td>
+<td>19</td>
+<td>404.6 M</td>
+</tr>
+<tr>
+<td>D170, no rule</td>
+<td>106 106 148 106 106 1090 106 86</td>
+<td>1,090</td>
+<td>70</td>
+<td>80.8 M</td>
+</tr>
+</tbody>
+</table>
+<p>With the tables the rule costs nothing over no rule. <code>--pair-share 0.25</code> lifts every variant past 1,000, but the portfolio keeps only the
+best, which then couples 19 pairs instead of 75: completion +6, coupling −56. Coupling is what <code>--diff-pairs</code> asks for, so the share
+stays off. One variant at 5 M work: 88 → 126 connections with the share, 44 → 8 coupled pairs.</p>
+<p><strong>Open.</strong> The pair phase is slow per unit of work (every turn and via move is an exact check; only straight steps are memoised), so at
+short time limits it still takes most of the run. Conditions that read nets or classes are still evaluated per call.</p>
 
 
 

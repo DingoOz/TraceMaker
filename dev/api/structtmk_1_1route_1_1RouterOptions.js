@@ -97,6 +97,7 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "package_tunnels", "structtmk_1_1route_1_1RouterOptions.html#aa77901d0b320de4d28095f82a9983afa", null ],
     [ "pair_net_skew", "structtmk_1_1route_1_1RouterOptions.html#a3e8ee34952538185618023d5b6b48cc4", null ],
     [ "pair_nets", "structtmk_1_1route_1_1RouterOptions.html#a135c0f809eaec98644adc86dfad400cd", null ],
+    [ "pair_share", "structtmk_1_1route_1_1RouterOptions.html#a04a897ff8923caa623fcb7e9fbfa9700", null ],
     [ "pair_skew", "structtmk_1_1route_1_1RouterOptions.html#a56d34e3625140554f5bd7df4c38d9aa9", null ],
     [ "pair_twists", "structtmk_1_1route_1_1RouterOptions.html#a51d11e1b1908f23a1b7eaad5336a51cf", null ],
     [ "pass_bound", "structtmk_1_1route_1_1RouterOptions.html#a557b2c0b1c3e8489a6bc4dead00aeeaa", null ],
