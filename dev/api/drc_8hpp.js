@@ -4,6 +4,9 @@ var drc_8hpp =
     [ "tmk::drc::Violation", "structtmk_1_1drc_1_1Violation.html", "structtmk_1_1drc_1_1Violation" ],
     [ "tmk::drc::DrcOptions", "structtmk_1_1drc_1_1DrcOptions.html", "structtmk_1_1drc_1_1DrcOptions" ],
     [ "tmk::drc::DrcReport", "structtmk_1_1drc_1_1DrcReport.html", "structtmk_1_1drc_1_1DrcReport" ],
+    [ "tmk::drc::LengthFaults", "namespacetmk_1_1drc.html#af8c1b767bc17952534c1545cc347d37a", null ],
+    [ "tmk::drc::length_faults", "namespacetmk_1_1drc.html#adfd6a1dc1e68c2bea3737214cc053c11", null ],
+    [ "tmk::drc::length_faults_no_worse", "namespacetmk_1_1drc.html#a1cd164d038f156e7590c2dce56bf3d35", null ],
     [ "tmk::drc::run_drc", "namespacetmk_1_1drc.html#a65dbead7747b642204eae3d310ad85d8", null ],
     [ "tmk::drc::write_drc_json", "namespacetmk_1_1drc.html#a4550789200edec8ef61885cb80b481f5", null ]
 ];

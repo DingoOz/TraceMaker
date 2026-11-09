@@ -2508,6 +2508,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#74-tuned-nets-stay-tuned-2026-11-08-d173" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        74. Tuned nets stay tuned (2026-11-08, D173)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#75-repair-windows-finishing-a-partly-routed-board-issue-56-2026-11-08-d172" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        75. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4071,6 +4093,28 @@
     <span class="md-ellipsis">
       
         73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#74-tuned-nets-stay-tuned-2026-11-08-d173" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        74. Tuned nets stay tuned (2026-11-08, D173)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#75-repair-windows-finishing-a-partly-routed-board-issue-56-2026-11-08-d172" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        75. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
       
     </span>
   </a>
@@ -6750,7 +6794,8 @@ obstacle model (<code>route::Obstacles</code>, the check the router commits with
 transactions (rule 4): the job counts unconnected items per net with and without the pass's result (after an
 in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
 (per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
-board is byte-identical to before.</p>
+board is byte-identical to before. On a board with <code>length</code> or <code>skew</code> rules, these passes and the soft-zone repairs are
+also dropped when a net ends further outside such a rule than without them (§74, D173).</p>
 <h3 id="391-power-track-widening-widen-power">39.1 Power track widening (<code>--widen-power</code>)<a class="headerlink" href="#391-power-track-widening-widen-power" title="Permanent link">&para;</a></h3>
 <p><strong>Which tracks, and how wide.</strong> Nothing is invented: a track is widened only towards a width something stated.</p>
 <table>
@@ -8537,6 +8582,7 @@ stayed 2.7 ps short of D- against a 0.5 ps rule, and KiCad reported <code>skew_o
 KiCad errors. One connection is ripped and routed again, and D+ ends at 79.43 ps against D-'s 79.49 ps. The other B2 boards never reach
 the step. Test: <code>delay_room</code> (it skips without <code>build/demos</code>).</p>
 <p><strong>Open.</strong> mm length windows, mm pair skew and the bus tuner do not make room yet.</p>
+<p>The tuned copper is now also what the run writes (§74, D173, issue #60).</p>
 <h2 id="62-search-speed-late-reachability-proofs-and-output-preserving-speed-ups-2026-10-29-d154">62. Search speed: late reachability proofs and output-preserving speed-ups (2026-10-29, D154)<a class="headerlink" href="#62-search-speed-late-reachability-proofs-and-output-preserving-speed-ups-2026-10-29-d154" title="Permanent link">&para;</a></h2>
 <p><strong>Where the time went.</strong> gprof on five hard PCBench boards (logicbone, sbc, Teensy_test_layout, LeeChee, kitspace_d20), one
 variant, 20 M work, CPU fields: the A* loop 27–57 % of CPU, cost-to-go fields on the CPU 14–33 %, legality checks most of the rest.
@@ -9630,6 +9676,220 @@ diagonal zigzags: on relaymini the 45-degree share grew from 31 to 37 % on F.Cu 
 cost the quick tier 89.2 → 86.8 %), so both stay off by default. The coupled-pair search (§24) and the advice file (doc 17) do not use
 them: advice runs as extra variants next to the plain ones, and a layer convention is meant for every variant. Track length grows (up
 to 25 % at strength 1.0 on relaymini).</p>
+<h2 id="74-tuned-nets-stay-tuned-2026-11-08-d173">74. Tuned nets stay tuned (2026-11-08, D173)<a class="headerlink" href="#74-tuned-nets-stay-tuned-2026-11-08-d173" title="Permanent link">&para;</a></h2>
+<p><strong>Why.</strong> Issue #60: <code>delay_room</code> (§61) failed on main after D154. The router's tuning log said D+ was tuned to 78.44 ps against D-'s
+78.50 ps, but the DRC of the written board measured D+ at 70.56 ps, 8.69 ps short of D- against a 0.5 ps rule. The soft-zone refill
+repair and the clean-up were the suspects. Neither was the cause: with debug output after each stage of <code>app/route_job.cpp</code>, the
+copper of D+ and D- came out of the router already untuned, and no later stage changed it.</p>
+<p><strong>Cause.</strong> The clean-up (§9: diff-pair recoupling, via optimisation, smoothing and then the tuners) runs only when the search ends in
+its best state. When it ends away from it, the router returns the best state as it was snapshotted during the search: routed, but never
+tuned. The tuning lines in the log came from other variants of the portfolio that did end in their best state. The winning variant (fast
+bends, shortest first, crowded source) ended with 128 routed against a best of 129. Before D154 it ended in its best state on this
+board. The late reachability proofs change which connections are searched, so it no longer does.</p>
+<p><strong>Fix</strong> (<code>route/router.cpp</code>, <code>wants_tuning</code>, <code>restore_best</code>). A board where the clean-up has tuning to do gets its best state back
+before the clean-up when the search ended away from it. The router puts it back the way the end-game retry does (§63): only the
+connections whose copper differs are lifted and restored. The clean-up and the tuners then run on the state the router returns.
+"Tuning to do" means any of these:</p>
+<ul>
+<li>a net with a <code>length</code> rule (mm or time);</li>
+<li>a net with a <code>skew</code> rule, or a diff pair's skew constraint;</li>
+<li><code>--pair-skew-mm</code>, or a component-rule pair skew above 0;</li>
+<li>buses (<code>--bus</code>, <code>--buses</code>).</li>
+</ul>
+<p>Other boards keep the old behaviour, byte for byte. Running the clean-up on the best state of every board would change results
+everywhere and needs measuring of its own (not done here).</p>
+<p><strong>Guard on the stages after routing</strong> (<code>app/route_job.cpp</code>, <code>drc::length_faults</code>). On a board with <code>length</code> or <code>skew</code> rules, these
+stages are kept only if no net is further outside such a rule with their copper than without it:</p>
+<ul>
+<li>the soft-zone refill repair (§36);</li>
+<li>the thermal relief repair (§36.1), for each pad;</li>
+<li>the stitching vias (§39.3).</li>
+</ul>
+<p>The distance outside a rule is measured as the DRC measures it on the written board (KiCad's length calculation, §59;
+<code>DrcOptions::lengths_only</code> runs only those checks). A net that is in range counts as 0. These stages route or rip connections again,
+or add vias, so they can lengthen or shorten a tuned net. A sub-router does not tune a skew group whose other members it did not route.
+Widening and the tuning-profile narrowing change only widths, which KiCad's length calculation ignores, so they need no guard. On this
+board no stage touched the pair: the guard did not reject anything.</p>
+<p><strong>Result</strong> (<code>bench/records/issue60/</code>, the B2 fixtures, 3 M work, <code>--refill --soft-zones</code>, 8 threads, judged by KiCad 10.0.6):</p>
+<table>
+<thead>
+<tr>
+<th>Board</th>
+<th>main</th>
+<th>D173</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RoyalBlue54L-Feather-delay</td>
+<td>129/147, 37 unconnected, <code>skew_out_of_range</code> 1</td>
+<td>129/147, 39 unconnected, none added</td>
+</tr>
+<tr>
+<td>RoyalBlue54L-Feather-profile, interf_u-delay, interf_u-profile</td>
+<td>as on main</td>
+<td>byte-identical output</td>
+</tr>
+</tbody>
+</table>
+<p>On RoyalBlue54L-Feather-delay the best state is now cleaned up and tuned: D+ ends at 79.43 ps against D-'s 79.49 ps. The meanders cut
+the soft fills once more, so the refill repair closes one connection to a zone instead of two. KiCad counts two more unconnected
+items, with the same routed count; that is what meeting the rule costs on this board. Boards without length or skew rules are
+unchanged by construction. Two quick-tier boards were checked byte-identical, and none of the 30 has a <code>.kicad_dru</code>.</p>
+<p><strong>Tests.</strong> <code>delay_room</code> passes again. Unit test <code>length faults: a stage that shortens a tuned net is worse</code> (<code>tests/test_length.cpp</code>,
+runs in CI without <code>build/demos</code>): on KiCad's <code>time_calculations</code> board it halves a track of a net tuned into its 29.83-29.85 ps
+window. It checks that the lengths-only DRC reports the full DRC's length and skew violations, that the cut makes the net a fault and
+that <code>length_faults_no_worse</code> rejects it. The router fix itself has no CI test: a small board that makes the search end away from its
+best state with a tuned net was not found. <code>delay_room</code> covers it where the demos are prepared.</p>
+<h2 id="75-repair-windows-finishing-a-partly-routed-board-issue-56-2026-11-08-d172">75. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)<a class="headerlink" href="#75-repair-windows-finishing-a-partly-routed-board-issue-56-2026-11-08-d172" title="Permanent link">&para;</a></h2>
+<p><strong>Why.</strong> Without <code>--reroute</code>, every track and via of the input is fixed copper. On a WholeBoard PoE switch routed 1186/1189 the last
+pins stayed open ("fixed copper encloses the pin"): the neighbours' fan-outs wall them in and the router may not rip them. The only other
+choice was <code>--reroute</code>, a fresh two-hour run. Staged flows hit the same wall: route some nets first (<code>--only-net</code>), then the rest with
+that copper fixed.</p>
+<p><strong>What it does</strong> (<code>passes/repair.{hpp,cpp}</code>, called from <code>app/route_job.cpp</code> after the rescue and the advisor).</p>
+<ul>
+<li>For each connection still open, in the router's order, the <em>branches</em> of other nets with copper within r of either end pad (measured
+  from the pad's edge) are lifted. A branch is the chain of tracks and vias of one net between two stops: a pad, a zone fill, an arc or
+  copper graphic, or a junction where three or more tracks and vias meet. Track ends touch when an end point or the centreline lies
+  within 1 µm, or the end lies in a via. Whatever the lift leaves dead goes too: a track with an end that touched copper and now touches
+  nothing, or a via left with one contact. So no cut stub stays in the way (the user's manual cut at 2.5 mm left 11 open instead of 3), and
+  a big net keeps the branches outside the window.</li>
+<li>The board is routed again by one router (the run's options, the open connection first), everything else fixed, on <code>--repair-work</code>
+  (3 M) work. The attempt is a transaction (rule 4): it is kept only if no two pads that were joined come apart and fewer connections are
+  open, counted per net on the router's connectivity. Otherwise the window grows (<code>--repair-window-mm</code>, default 1, 2, 4). A window that
+  would lift more than <code>--repair-branches</code> (64) branches ends the growth; at most <code>--repair-conns</code> (64) connections are tried, and
+  <code>--time</code> bounds the repair as a safety only. A kept attempt's own open list is the next one.</li>
+<li>Never lifted: locked tracks and vias (rule 6), tuning patterns, free vias, branches touching arcs or copper graphics, the open
+  connection's own net, nets this run does not route, coupled pairs (<code>--diff-pairs</code>, component-rule pairs) and bus members.</li>
+<li><strong><code>--repair auto</code></strong> (default) runs only on a board that came with unlocked tracks or vias, and only when connections are left open. A
+  board routed from nothing here is unchanged: the router's negotiation could already rip that copper, and D155's pin rescue, which lifts
+  routed copper in the same way, lost against the same work spent on routing (§63). <code>--repair on</code> runs it on any board, <code>off</code> never.</li>
+<li>The lifted input copper leaves the written board. <code>--emit-items</code> lists it under <code>removed</code>, and the KiCad plugin removes it from the open
+  board in the same commit (nothing is changed if an item is not found). The summary has <code>repair</code> (attempts with radius, branches,
+  tracks and vias lifted, open before and after, kept), and the viewer gets <code>repair</code> stage events.</li>
+<li><strong>Staged routing.</strong> <code>--only-net</code> and <code>--skip-net</code> take patterns (KiCad wildcards or regular expressions, as net-class patterns;
+  repeatable or comma separated), e.g. <code>route board.kicad_pcb --only-net '/USB_D*,/ETH_*' -o pass1.kicad_pcb</code>, then
+  <code>route pass1.kicad_pcb -o pass2.kicad_pcb</code>: the second pass routes the rest, and its repair may lift pass-one copper near a pin that
+  copper encloses. A net named exactly matches itself even when its name reads as a regular expression (<code>Net-(U1-Pad3)</code>).</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/issue56/</code>). Staged flow on the nine PCBench quick-tier boards where it leaves connections open: stage 1 routes
+everything but the power nets (<code>--skip-net 'GND*,*GND,VCC*,VDD*,+*,*3V3*,*5V*,*VBUS*,*VIN*'</code>, 1 M work), stage 2 routes the board with that
+copper fixed (one variant, <code>--no-rescue</code>, 5 M work). "Plain, same work" gives the plain stage 2 the repair's work on top of its own.</p>
+<table>
+<thead>
+<tr>
+<th>Board (stage 2 connections)</th>
+<th style="text-align: right;">Plain</th>
+<th style="text-align: right;">Repair</th>
+<th style="text-align: right;">Plain, same work</th>
+<th style="text-align: right;">Attempts (kept)</th>
+<th style="text-align: right;">Input tracks / vias lifted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>655_testboard (32)</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">5 (1)</td>
+<td style="text-align: right;">55 / 8</td>
+</tr>
+<tr>
+<td>breakout-boards_swd-and-uart (4)</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2 (1)</td>
+<td style="text-align: right;">13 / 0</td>
+</tr>
+<tr>
+<td>custom_cpu--ALU_custom_cpu--ALU (39)</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">4 (4)</td>
+<td style="text-align: right;">21 / 1</td>
+</tr>
+<tr>
+<td>fan_controller_fan_controller (69)</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">1 (1)</td>
+<td style="text-align: right;">12 / 1</td>
+</tr>
+<tr>
+<td>Hangul-Clock_Hangul (169)</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">169</td>
+<td style="text-align: right;">5 (3)</td>
+<td style="text-align: right;">3 / 0</td>
+</tr>
+<tr>
+<td>Inkjet__autosave-InkjetDriver (39)</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">1 (1)</td>
+<td style="text-align: right;">4 / 0</td>
+</tr>
+<tr>
+<td>LogicBoxen_LogicBoxen (64)</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">1 (1)</td>
+<td style="text-align: right;">21 / 1</td>
+</tr>
+<tr>
+<td>mosavr_pcie1x_backplane (54)</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">10 (4)</td>
+<td style="text-align: right;">10 / 0</td>
+</tr>
+<tr>
+<td>uC3Moy_uC3Moy (17)</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">3 (0)</td>
+<td style="text-align: right;">0 / 0</td>
+</tr>
+<tr>
+<td><strong>total (487)</strong></td>
+<td style="text-align: right;"><strong>446</strong></td>
+<td style="text-align: right;"><strong>484</strong></td>
+<td style="text-align: right;"><strong>476</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+<p>KiCad 10.0.6's DRC (zones refilled) gives the same errors for all three arms of each board (the boards' own: outline, courtyards,
+mask bridges, annular width), so the repair adds none; its unconnected counts equal the open connections above.</p>
+<ul>
+<li>Against the plain stage 2 the repair closes 38 of 41 open connections and never loses (it is a transaction). Against the same work
+  spent on the plain run it is +8: better where pins are walled in (655_testboard, LogicBoxen, breakout, fan_controller), worse where the
+  open connections only wanted more search (Hangul, mosavr, uC3Moy, one each).</li>
+<li><strong>Default flow</strong> (the relax rescue on, as a plain <code>tracemaker route</code> runs; repair after it): 467 of 487 with <code>--repair off</code>, 486 with
+  the default <code>auto</code>. The repair ran on the five boards the rescue left open and completed four (655_testboard, Hangul, custom_cpu,
+  fan_controller); uC3Moy stays at 16/17. The rescue alone completes LogicBoxen, breakout and mosavr; on fixed copper it cannot lift.</li>
+<li><strong>The PoE switch</strong> (rev6, 1186/1189, private; 2 M work for the plain run): <strong>not finished.</strong> The plain
+  run plans 6 connections (soft zones) and routes 2; four stay open, all at the KSZ9897 QFNs (U10, U11). Around those pins a 1 mm window
+  holds 26-40 branches of the neighbours' fan-outs (99-117 tracks), a 2 mm one more than 64; with windows of 0.2, 0.4 and 0.7 mm still
+  9-22 branches. In every attempt (3 M and 10 M work) the router could not route all the lifted branches again, so none was kept
+  (<code>poe6-*.log</code>). Dense fine-pitch fan-outs need more than a window and one router run: what each lifted connection needs is the
+  room the others used, which is the whole negotiation the two-hour run did. The repair leaves such a board as it was.</li>
+<li>Cost: an attempt is one router run on the whole board: 1-6 s on the quick-tier boards, about 20-40 s on the PoE switch. Complete
+  boards and boards routed from nothing pay nothing.</li>
+<li>Test: <code>tests/test_repair.cpp</code> (<code>[repair]</code>): a pin in a ring of another net's track is opened (the whole branch lifted, both nets
+  joined, no DRC error, the 2 mm window the first that lifts anything, deterministic); the same ring locked is never lifted; a branch
+  limit of 0 tries nothing. <code>kicad_plugin/test_offline.py</code> checks that the lifted copper is found on the open board.</li>
+</ul>
 
 
 

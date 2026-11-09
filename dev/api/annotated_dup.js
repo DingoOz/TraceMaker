@@ -182,6 +182,9 @@ var annotated_dup =
       ] ],
       [ "passes", "namespacetmk_1_1passes.html", [
         [ "PourPlan", "structtmk_1_1passes_1_1PourPlan.html", "structtmk_1_1passes_1_1PourPlan" ],
+        [ "RepairOptions", "structtmk_1_1passes_1_1RepairOptions.html", "structtmk_1_1passes_1_1RepairOptions" ],
+        [ "RepairStep", "structtmk_1_1passes_1_1RepairStep.html", "structtmk_1_1passes_1_1RepairStep" ],
+        [ "RepairResult", "structtmk_1_1passes_1_1RepairResult.html", "structtmk_1_1passes_1_1RepairResult" ],
         [ "StitchOptions", "structtmk_1_1passes_1_1StitchOptions.html", "structtmk_1_1passes_1_1StitchOptions" ],
         [ "StitchReturn", "structtmk_1_1passes_1_1StitchReturn.html", "structtmk_1_1passes_1_1StitchReturn" ],
         [ "StitchResult", "structtmk_1_1passes_1_1StitchResult.html", "structtmk_1_1passes_1_1StitchResult" ],

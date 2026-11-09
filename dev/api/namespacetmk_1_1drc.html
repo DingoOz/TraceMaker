@@ -127,6 +127,11 @@ Classes</h2></td></tr>
 <tr class="memitem:CourtyardEntry" id="r_CourtyardEntry"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CourtyardEntry.html">CourtyardEntry</a></td></tr>
 <tr class="memitem:CourtyardCache" id="r_CourtyardCache"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1CourtyardCache.html">CourtyardCache</a></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:af8c1b767bc17952534c1545cc347d37a" id="r_af8c1b767bc17952534c1545cc347d37a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a> = std::map&lt;std::string, double&gt;</td></tr>
+<tr class="memdesc:af8c1b767bc17952534c1545cc347d37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far each net is outside its <span class="tt">length</span> and <span class="tt">skew</span> rules, as the DRC measures them (doc 05 §59): keyed by the violation type and the net's name ("skew_out_of_range /D+"), the amount outside the window in nm or attoseconds.  <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a6fc83dc7c644ce6ebc9afc6b6dc67038" id="r_a6fc83dc7c644ce6ebc9afc6b6dc67038"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fc83dc7c644ce6ebc9afc6b6dc67038">ItemKind</a> : std::uint8_t { <br />
@@ -164,6 +169,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6f7a87f85ac92d11c2e2177bcfd7b761" id="r_a6f7a87f85ac92d11c2e2177bcfd7b761"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structtmk_1_1drc_1_1Coupling.html">Coupling</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f7a87f85ac92d11c2e2177bcfd7b761">couple</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> p0, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> p1, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> wp, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> n0, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> n1, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> wn)</td></tr>
 <tr class="memdesc:a6f7a87f85ac92d11c2e2177bcfd7b761"><td class="mdescLeft">&#160;</td><td class="mdescRight">The two centrelines (a P track from p0 to p1 of width wp, an N track likewise) coupled as KiCad couples them, or nothing: both longer than about 1 nm, exactly parallel (a zero cross product) and not collinear, with overlapping projections.  <br /></td></tr>
 <tr class="memitem:a65dbead7747b642204eae3d310ad85d8" id="r_a65dbead7747b642204eae3d310ad85d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a65dbead7747b642204eae3d310ad85d8">run_drc</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r, const <a class="el" href="structtmk_1_1drc_1_1DrcOptions.html">DrcOptions</a> &amp;opt={})</td></tr>
+<tr class="memitem:adfd6a1dc1e68c2bea3737214cc053c11" id="r_adfd6a1dc1e68c2bea3737214cc053c11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfd6a1dc1e68c2bea3737214cc053c11">length_faults</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;r)</td></tr>
+<tr class="memitem:a1cd164d038f156e7590c2dce56bf3d35" id="r_a1cd164d038f156e7590c2dce56bf3d35"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1cd164d038f156e7590c2dce56bf3d35">length_faults_no_worse</a> (const <a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a> &amp;without, const <a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a> &amp;with)</td></tr>
+<tr class="memdesc:a1cd164d038f156e7590c2dce56bf3d35"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when no net is further outside its length or skew window in <span class="tt">with</span> than in <span class="tt">without</span> (a net not in a map is in range).  <br /></td></tr>
 <tr class="memitem:a4550789200edec8ef61885cb80b481f5" id="r_a4550789200edec8ef61885cb80b481f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4550789200edec8ef61885cb80b481f5">write_drc_json</a> (const <a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a> &amp;rep, const std::string &amp;path)</td></tr>
 <tr class="memdesc:a4550789200edec8ef61885cb80b481f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the report in kicad-cli's JSON layout (violations, unconnected_items; positions in mm).  <br /></td></tr>
 <tr class="memitem:a1a7db7bba9f75137230a69fa3a34307f" id="r_a1a7db7bba9f75137230a69fa3a34307f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a7db7bba9f75137230a69fa3a34307f">via_heights</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
@@ -188,6 +196,26 @@ Functions</h2></td></tr>
 <tr class="memdesc:a60377b2005627866d13ed90450d82019"><td class="mdescLeft">&#160;</td><td class="mdescRight">The entries a footprint selector picks, in entry order, and the same test against them.  <br /></td></tr>
 <tr class="memitem:aa5a26fdb99fe982916b0a976d07148c5" id="r_aa5a26fdb99fe982916b0a976d07148c5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5a26fdb99fe982916b0a976d07148c5">courtyard_matches</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperItem.html">CopperItem</a> &amp;item, const <a class="el" href="structtmk_1_1drc_1_1CourtyardCache.html">CourtyardCache</a> &amp;courtyards, const std::vector&lt; int &gt; &amp;entries, const std::string &amp;function)</td></tr>
 </table>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="af8c1b767bc17952534c1545cc347d37a" name="af8c1b767bc17952534c1545cc347d37a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8c1b767bc17952534c1545cc347d37a">&#9670;&#160;</a></span>LengthFaults</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#af8c1b767bc17952534c1545cc347d37a">tmk::drc::LengthFaults</a> = std::map&lt;std::string, double&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How far each net is outside its <span class="tt">length</span> and <span class="tt">skew</span> rules, as the DRC measures them (doc 05 §59): keyed by the violation type and the net's name ("skew_out_of_range /D+"), the amount outside the window in nm or attoseconds. </p>
+<p>Empty when every net is in range or the board has no such rule. </p>
+
+<p class="definition">Definition at line <a class="el" href="drc_8hpp_source.html#l00049">49</a> of file <a class="el" href="drc_8hpp_source.html">drc.hpp</a>.</p>
+
+</div>
+</div>
 <a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
 <a id="a6fc83dc7c644ce6ebc9afc6b6dc67038" name="a6fc83dc7c644ce6ebc9afc6b6dc67038"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6fc83dc7c644ce6ebc9afc6b6dc67038">&#9670;&#160;</a></span>ItemKind</h2>
@@ -645,6 +673,51 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>KiCad expression type names: Pad, Track, Arc, Via, Zone, Graphic. </p>
+
+</div>
+</div>
+<a id="adfd6a1dc1e68c2bea3737214cc053c11" name="adfd6a1dc1e68c2bea3737214cc053c11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfd6a1dc1e68c2bea3737214cc053c11">&#9670;&#160;</a></span>length_faults()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a> tmk::drc::length_faults </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>r</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1cd164d038f156e7590c2dce56bf3d35" name="a1cd164d038f156e7590c2dce56bf3d35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cd164d038f156e7590c2dce56bf3d35">&#9670;&#160;</a></span>length_faults_no_worse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::drc::length_faults_no_worse </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>without</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#af8c1b767bc17952534c1545cc347d37a">LengthFaults</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>with</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>True when no net is further outside its length or skew window in <span class="tt">with</span> than in <span class="tt">without</span> (a net not in a map is in range). </p>
+<p>The after-route stages are judged by it (D173): a stage may not undo the router's tuning. </p>
 
 </div>
 </div>

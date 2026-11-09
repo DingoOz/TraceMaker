@@ -73,8 +73,9 @@ var searchData=
   ['structure_5fname_70',['structure_name',['../namespacetmk_1_1crules_1_1imp.html#a55da86a12b427e21acc1ed877364aa36',1,'tmk::crules::imp']]],
   ['style_5fjson_71',['style_json',['../namespacetmk_1_1passes.html#a9023db0c98a5a505ecc443e634b4ee38',1,'tmk::passes']]],
   ['subtract_72',['subtract',['../namespacetmk_1_1geom.html#aba7a462e238b1700e7e1a14df9a1ad2a',1,'tmk::geom']]],
-  ['supply_73',['supply',['../classtmk_1_1crules_1_1BoardIndex.html#a7f8f10711554598c8003ff5cbca7be9d',1,'tmk::crules::BoardIndex']]],
-  ['swap_5fstate_74',['swap_state',['../namespacetmk_1_1place.html#ac96899d73ae2bafa1f13e7e8332ec6e8',1,'tmk::place']]],
-  ['sweep_75',['sweep',['../classtmk_1_1place_1_1detail_1_1Annealer.html#a64f2d9ef0cb2aa12c102fb9b98606bff',1,'tmk::place::detail::Annealer']]],
-  ['synthetic_5fnet_5fclasses_76',['synthetic_net_classes',['../namespacetmk_1_1crules.html#a1b1cf5bf8ea3c4f8ff16a6213561433e',1,'tmk::crules']]]
+  ['summary_73',['summary',['../structtmk_1_1passes_1_1RepairResult.html#a769f98ee7a7fbb25e0c7d66d9a44bd10',1,'tmk::passes::RepairResult']]],
+  ['supply_74',['supply',['../classtmk_1_1crules_1_1BoardIndex.html#a7f8f10711554598c8003ff5cbca7be9d',1,'tmk::crules::BoardIndex']]],
+  ['swap_5fstate_75',['swap_state',['../namespacetmk_1_1place.html#ac96899d73ae2bafa1f13e7e8332ec6e8',1,'tmk::place']]],
+  ['sweep_76',['sweep',['../classtmk_1_1place_1_1detail_1_1Annealer.html#a64f2d9ef0cb2aa12c102fb9b98606bff',1,'tmk::place::detail::Annealer']]],
+  ['synthetic_5fnet_5fclasses_77',['synthetic_net_classes',['../namespacetmk_1_1crules.html#a1b1cf5bf8ea3c4f8ff16a6213561433e',1,'tmk::crules']]]
 ];

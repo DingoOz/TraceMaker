@@ -23,6 +23,7 @@ var namespacetmk_1_1drc =
     [ "CourtyardRegion", "structtmk_1_1drc_1_1CourtyardRegion.html", "structtmk_1_1drc_1_1CourtyardRegion" ],
     [ "CourtyardEntry", "structtmk_1_1drc_1_1CourtyardEntry.html", "structtmk_1_1drc_1_1CourtyardEntry" ],
     [ "CourtyardCache", "structtmk_1_1drc_1_1CourtyardCache.html", "structtmk_1_1drc_1_1CourtyardCache" ],
+    [ "LengthFaults", "namespacetmk_1_1drc.html#af8c1b767bc17952534c1545cc347d37a", null ],
     [ "ItemKind", "namespacetmk_1_1drc.html#a6fc83dc7c644ce6ebc9afc6b6dc67038", [
       [ "Pad", "namespacetmk_1_1drc.html#a6fc83dc7c644ce6ebc9afc6b6dc67038ade43468adaf6acb2c38ebc0c1176f82f", null ],
       [ "Track", "namespacetmk_1_1drc.html#a6fc83dc7c644ce6ebc9afc6b6dc67038a92ea731d3af6677905303c88689f5d55", null ],
@@ -48,6 +49,8 @@ var namespacetmk_1_1drc =
     [ "in_item_graph", "namespacetmk_1_1drc.html#a8375e84e2246503b95fe9939e94e4541", null ],
     [ "item_graph", "namespacetmk_1_1drc.html#a6904c5ab7d24b8b55c4127a423e6bd81", null ],
     [ "kind_name", "namespacetmk_1_1drc.html#ac213504480f42a0bd88a184b315ececd", null ],
+    [ "length_faults", "namespacetmk_1_1drc.html#adfd6a1dc1e68c2bea3737214cc053c11", null ],
+    [ "length_faults_no_worse", "namespacetmk_1_1drc.html#a1cd164d038f156e7590c2dce56bf3d35", null ],
     [ "match_dp_suffix", "namespacetmk_1_1drc.html#a9f113c61c2a085da3d9e6d2dd3fe0c6f", null ],
     [ "net_length", "namespacetmk_1_1drc.html#a03ff68f31a7926da698be24e9d122e05", null ],
     [ "pad_shapes", "namespacetmk_1_1drc.html#a9a0aa8aa1e4621d4382f818c9074702b", null ],

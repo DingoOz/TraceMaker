@@ -107,6 +107,8 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:aa1482ac3c020413e7d9add664caa239f"><td class="mdescLeft">&#160;</td><td class="mdescRight">reference path: test items against every edge of a zone fill (no edge index)  <br /></td></tr>
 <tr class="memitem:ab1c9d05c8c36a8e55d09398169250f4a" id="r_ab1c9d05c8c36a8e55d09398169250f4a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1c9d05c8c36a8e55d09398169250f4a">connectivity_only</a> = false</td></tr>
 <tr class="memdesc:ab1c9d05c8c36a8e55d09398169250f4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">only unconnected items (and dangling ends if <span class="tt"><a class="el" href="#a2f6f1158c73b28aaf886ea43b3b7ae36" title="report dangling tracks and vias (warnings)">dangling</a></span>): no clearance or rule checks  <br /></td></tr>
+<tr class="memitem:af166655cb33036f6ef2105777c066064" id="r_af166655cb33036f6ef2105777c066064"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af166655cb33036f6ef2105777c066064">lengths_only</a> = false</td></tr>
+<tr class="memdesc:af166655cb33036f6ef2105777c066064"><td class="mdescLeft">&#160;</td><td class="mdescRight">only the <span class="tt">length</span> and <span class="tt">skew</span> rules (no clearance, rule or connectivity checks)  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -163,6 +165,24 @@ Public Attributes</h2></td></tr>
 <p>KiCad's DRC epsilon (0.0005 mm): gaps below required - epsilon are violations. </p>
 
 <p class="definition">Definition at line <a class="el" href="drc_8hpp_source.html#l00029">29</a> of file <a class="el" href="drc_8hpp_source.html">drc.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af166655cb33036f6ef2105777c066064" name="af166655cb33036f6ef2105777c066064"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af166655cb33036f6ef2105777c066064">&#9670;&#160;</a></span>lengths_only</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::drc::DrcOptions::lengths_only = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>only the <span class="tt">length</span> and <span class="tt">skew</span> rules (no clearance, rule or connectivity checks) </p>
+
+<p class="definition">Definition at line <a class="el" href="drc_8hpp_source.html#l00034">34</a> of file <a class="el" href="drc_8hpp_source.html">drc.hpp</a>.</p>
 
 </div>
 </div>

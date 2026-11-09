@@ -8,7 +8,7 @@ var searchData=
   ['failure_5',['Failure',['../structtmk_1_1place_1_1RouteEval_1_1Failure.html',1,'tmk::place::RouteEval::Failure'],['../structtmk_1_1server_1_1Failure.html',1,'tmk::server::Failure']]],
   ['failure_6',['failure',['../namespacetmk_1_1server.html#ae885f345e2d6218ce6989780419ada51',1,'tmk::server']]],
   ['failure_5freason_5fcode_7',['failure_reason_code',['../namespacetmk_1_1route.html#a94906d09c53b6b81d65dc40faa3b0d12',1,'tmk::route']]],
-  ['failures_8',['failures',['../structtmk_1_1place_1_1LegaliseStats.html#a38ba6f52688acd2dfb9fa909fdaa15aa',1,'tmk::place::LegaliseStats::failures'],['../structtmk_1_1route_1_1RouteResult.html#a4a8c7a1ae8db2d25e361d2597a124619',1,'tmk::route::RouteResult::failures'],['../structtmk_1_1server_1_1Stats.html#a09f767242e717be966ac2ef32ac97579',1,'tmk::server::Stats::failures']]],
+  ['failures_8',['failures',['../structtmk_1_1passes_1_1RepairResult.html#a02d8c61aacf838c1fa5dcfbb7e9ed994',1,'tmk::passes::RepairResult::failures'],['../structtmk_1_1place_1_1LegaliseStats.html#a38ba6f52688acd2dfb9fa909fdaa15aa',1,'tmk::place::LegaliseStats::failures'],['../structtmk_1_1route_1_1RouteResult.html#a4a8c7a1ae8db2d25e361d2597a124619',1,'tmk::route::RouteResult::failures'],['../structtmk_1_1server_1_1Stats.html#a09f767242e717be966ac2ef32ac97579',1,'tmk::server::Stats::failures']]],
   ['fanout_5fheads_9',['fanout_heads',['../structtmk_1_1route_1_1RouteResult.html#ac747240e3a500be2574760e3da94ea4e',1,'tmk::route::RouteResult']]],
   ['fanout_5fheads_2ehpp_10',['fanout_heads.hpp',['../fanout__heads_8hpp.html',1,'']]],
   ['fanout_5fheads_5fmin_5fpins_11',['fanout_heads_min_pins',['../structtmk_1_1route_1_1RouterOptions.html#a045ffa49bb3e9433980c29a9e0608666',1,'tmk::route::RouterOptions']]],
