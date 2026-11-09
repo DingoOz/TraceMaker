@@ -1,6 +1,6 @@
 # Issue #60: tuned nets stay tuned (D173)
 
-Doc 05 §73, decision D173. `delay_room` failed on main after D154: the router's log said `/Debugger/D+` was tuned to 78.44 ps, but
+Doc 05 §74, decision D173. `delay_room` failed on main after D154: the router's log said `/Debugger/D+` was tuned to 78.44 ps, but
 the written board measured 70.56 ps against D-'s 79.25 ps (0.5 ps skew rule).
 
 ## Diagnosis

@@ -1500,7 +1500,7 @@ transactions (rule 4): the job counts unconnected items per net with and without
 in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
 (per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
 board is byte-identical to before. On a board with `length` or `skew` rules, these passes and the soft-zone repairs are
-also dropped when a net ends further outside such a rule than without them (§73, D173).
+also dropped when a net ends further outside such a rule than without them (§74, D173).
 
 ### 39.1 Power track widening (`--widen-power`)
 
@@ -1816,6 +1816,7 @@ hidden options are.
   vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with `--package-pen 3`) on a breakout board: two copper layers and at least 70 %
   of the connections with an end on a ball-grid-like package (at least 30 same-layer SMD pads on at least 5 × 5 distinct positions, 40 % of the grid filled). Negative values mean "automatic at that strength" (the seeded
   portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.
+  Directions by layer name and a penalty for 45-degree steps: `--layer-dir`, `--layer-diag-pen` (§73, D174).
 - **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
 - **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
   `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.
@@ -2733,7 +2734,7 @@ the step. Test: `delay_room` (it skips without `build/demos`).
 
 **Open.** mm length windows, mm pair skew and the bus tuner do not make room yet.
 
-The tuned copper is now also what the run writes (§73, D173, issue #60).
+The tuned copper is now also what the run writes (§74, D173, issue #60).
 
 
 ## 62. Search speed: late reachability proofs and output-preserving speed-ups (2026-10-29, D154)
@@ -3338,7 +3339,49 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.
 
-## 73. Tuned nets stay tuned (2026-11-08, D173)
+## 73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)
+
+**Why.** `--layer-dir-pen` / `--layer-dir-swap` (§40, D98) give even layers one direction and odd layers the other, so a two-layer board
+has two choices. Hand-routed boards use other conventions (quanln's study in the issue: of 13 boards, F.Cu mostly horizontal on 6,
+vertical on 1, mixed on 7). And a 45-degree step costs nothing against either direction, so the penalty turns orthogonal runs into
+diagonal zigzags: on relaymini the 45-degree share grew from 31 to 37 % on F.Cu and from 42 to 50 % on B.Cu. Design from quanln
+(GitHub @quanln), who proposed both options.
+
+**What it does** (`route/layer_limits.cpp`, `layer_pref` and the planar moves in `route/router.cpp`).
+
+- `--layer-dir F.Cu=v,B.Cu=h` (`h`, `v` or `none` per layer; names as for `--layer-cost`, §29) replaces the parity: named layers get
+  that direction, layers not named get none, `--layer-dir-swap` has no effect (a warning says so). Its strength is `--layer-dir-pen`;
+  if that is not given, 0.3 pitches per step on any board, not only on breakout boards.
+- `--layer-diag-pen P` or `--layer-diag-pen F.Cu=P,...` (0 to 100; a bare value is every layer's, named layers override it): every
+  45-degree lattice step on that layer costs P pitches more. Independent of the directions.
+- Both are integer costs added in the search's planar move, like the parity penalty (rule 2). The cost-to-go fields (CPU and GPU)
+  do not include them, so they stay lower bounds and nothing on the GPU path changes; no new GPU code.
+- **Smoothing keeps them.** Path smoothing (pull tight, in the clean-up after the search) replaced runs by a 45-degree segment and a straight one whatever
+  they cost, which undid the diagonal penalty on the test board. With `--layer-dir`, an explicit positive `--layer-dir-pen` or a
+  diagonal penalty on the layer, a shortcut is taken only if its direction cost is not above the run's, and the two orthogonal corners
+  are candidates too, cheapest first. The automatic strengths (D98's breakout boards, the seeded portfolio variants: negative values)
+  keep the plain smoothing, so default runs do not change.
+- An unknown layer name is a warning and its entry is ignored (a convention may name inner layers a two-layer board does not have);
+  a malformed entry, a bad value or a layer given twice stops the run before the board is read.
+
+**Measured** on relaymini (`bench/records/issue66/`, 3 M work, two variants; F.Cu asked vertical, B.Cu horizontal, strength 1.0):
+
+| Run | F.Cu 45° | B.Cu 45° | F.Cu against its direction | B.Cu against | Routed |
+|---|--:|--:|--:|--:|--:|
+| Default | 31.4 % | 42.2 % | – | – | 60/72 |
+| `--layer-dir F.Cu=v,B.Cu=h --layer-dir-pen 1.0` | 36.8 % | 49.6 % | 0.6 % | 1.4 % | 61/72 |
+| ... `--layer-diag-pen 0.6` | 27.4 % | 35.2 % | 8.6 % | 9.9 % | 63/72 |
+| ... `--layer-diag-pen 1.0` | 25.5 % | 22.9 % | 8.1 % | 10.3 % | 62/72 |
+
+With both options unset the output is byte-identical to main (relaymini, and srj20 sample001 where D98's automatic directions are on).
+`--layer-dir` naming the parity's directions gives the parity's output exactly.
+
+**Limits.** One public board measured: whether a convention costs completion on other boards is not known (doc 16: the parity penalty
+cost the quick tier 89.2 → 86.8 %), so both stay off by default. The coupled-pair search (§24) and the advice file (doc 17) do not use
+them: advice runs as extra variants next to the plain ones, and a layer convention is meant for every variant. Track length grows (up
+to 25 % at strength 1.0 on relaymini).
+
+## 74. Tuned nets stay tuned (2026-11-08, D173)
 
 **Why.** Issue #60: `delay_room` (§61) failed on main after D154. The router's tuning log said D+ was tuned to 78.44 ps against D-'s
 78.50 ps, but the DRC of the written board measured D+ at 70.56 ps, 8.69 ps short of D- against a 0.5 ps rule. The soft-zone refill

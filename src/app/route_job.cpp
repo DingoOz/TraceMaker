@@ -281,6 +281,26 @@ RouteJobResult run_route_job(RouteJob job) {
         log(fmt("track cost on %s: x%.3g", bd.copper_name(l).c_str(), lim.layer_cost_pm[static_cast<std::size_t>(l)] / 1000.0));
     if (stranded) log(fmt("warning: %d pads lie only on layers that take no tracks; their connections stay unrouted", stranded));
   }
+  if (!job.layer_dir.empty() || !job.layer_diag_pen.empty()) {
+    const auto& bd = lb.board;
+    const auto ld = route::layer_directions(bd, job.layer_dir, job.layer_diag_pen);
+    for (const auto& w : ld.warnings) log("warning: " + w);
+    opt.layer_dir = ld.dir;
+    opt.layer_diag_pen = ld.diag_pen;
+    if (!ld.dir.empty()) {
+      std::string t;
+      for (int l = 0; l < bd.copper_count(); ++l) {
+        const auto d = ld.dir[static_cast<std::size_t>(l)];
+        t += fmt("%s%s %s", t.empty() ? "" : ", ", bd.copper_name(l).c_str(), d == route::kLayerDirHorizontal ? "horizontal" : d == route::kLayerDirVertical ? "vertical" : "none");
+      }
+      const double pen = opt.layer_dir_pen == -1.0 ? 0.3 : std::abs(opt.layer_dir_pen);
+      log(fmt("preferred directions: %s (%.3g pitches per step against them)", t.c_str(), pen));
+      if (opt.layer_dir_pen == 0) log("warning: --layer-dir has no effect with --layer-dir-pen 0");
+      if (opt.layer_dir_swap) log("warning: --layer-dir-swap has no effect with --layer-dir (the directions are named per layer)");
+    }
+    for (int l = 0; l < bd.copper_count() && !ld.diag_pen.empty(); ++l)
+      if (ld.diag_pen[static_cast<std::size_t>(l)] > 0) log(fmt("45-degree steps on %s: +%.3g pitches each", bd.copper_name(l).c_str(), ld.diag_pen[static_cast<std::size_t>(l)]));
+  }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
   // Zones without a fill (a generated board, or one saved before filling; doc 05 §54): left unfilled, the router does not see the planes,
   // so a plane net's pads are joined by tracks round the board (1,773 mm of GND and +54V track, some on the other net's plane layer, on

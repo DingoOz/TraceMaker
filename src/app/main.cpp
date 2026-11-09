@@ -28,6 +28,7 @@
 #include "drc/refill.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "io/srj/srj.hpp"
+#include "route/layer_limits.hpp"
 #include "route/router.hpp"
 #include "session/session.hpp"
 #include "session/transport.hpp"
@@ -1024,7 +1025,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--plane-fallback-mm", ropt.plane_fallback_mm, "With --plane-informed: radius of the nearby-pad fallback for pads that cannot reach their plane")->group("");
   route->add_flag("--plane-informed,!--no-plane-informed", ropt.plane_informed, "Pad-to-plane searches: a distance lower bound and the late reachability proof")->group("");
   route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
-  route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
+  route->add_option("--layer-dir-pen", ropt.layer_dir_pen,
+                    "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (by default even layers horizontal, odd vertical; automatic 0.3 on breakout boards and with --layer-dir)");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
   route->add_flag("--crowded-source", ropt.crowded_source,
@@ -1190,6 +1192,10 @@ static int run_main(int argc, char** argv) {
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
+  route->add_option("--layer-dir", r_job.layer_dir, "Preferred direction per copper layer as LAYER=h|v|none, e.g. F.Cu=v,B.Cu=h (replaces the even/odd rule; strength --layer-dir-pen, 0.3 if not given)")
+      ->delimiter(',');
+  route->add_option("--layer-diag-pen", r_job.layer_diag_pen, "Extra cost (pitches per step) of 45-degree steps, as LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3")
+      ->delimiter(',');
   bool r_no_fill_planes = false;
   route->add_flag("--no-fill-planes", r_no_fill_planes,
                   "Leave zones that have no fill unfilled while routing (default: fill them in memory and route with --soft-zones, so plane "
@@ -1582,6 +1588,7 @@ static int run_main(int argc, char** argv) {
       return 0;
     }
     if (*route) {
+      tmk::route::check_layer_dir_specs(r_job.layer_dir, r_job.layer_diag_pen);  // a typo stops the run before the board is read
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
       if (!r_guide.empty()) {
         // [{"a":[x,y],"b":[x,y],"segs":[[x1,y1,x2,y2,layer],...],"vias":[[x,y],...]}]: Simple Route JSON millimetres, y up.
