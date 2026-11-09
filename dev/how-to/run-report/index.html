@@ -942,6 +942,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#open-cut-off-starved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open, cut off, starved
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#trace-a-number" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2248,6 +2259,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#open-cut-off-starved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open, cut off, starved
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#trace-a-number" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2309,8 +2331,8 @@ seed that repeat the run (doc 18 D3, decision <a href="../../decisions/D136/">D1
 <li><code>tracemaker report SUMMARY.json -o FILE</code> renders the report again from a saved summary. A summary written without
   <code>--report</code> has no rules, stuck report or DRC sections, and the report says so.</li>
 <li><code>--report</code> adds work after the route: a DRC of the board before and after (zones refilled when the board has
-  copper zones) and, when connections are open, the escape analysis of the stuck report. On the plane-tier boards this
-  took 0.1 to 2.1 s (doc 18 §9).</li>
+  copper zones) and, when connections are open, the escape analysis of the stuck report, checked pin by pin with the exact
+  proof. On the plane-tier boards this took 0.1 to 2.8 s (doc 18 §9).</li>
 </ul>
 <h2 id="what-each-section-says">What each section says<a class="headerlink" href="#what-each-section-says" title="Permanent link">&para;</a></h2>
 <table>
@@ -2324,41 +2346,65 @@ seed that repeat the run (doc 18 D3, decision <a href="../../decisions/D136/">D1
 <tbody>
 <tr>
 <td>Top</td>
-<td>Routed of all connections, items left unconnected after the zones are refilled (with <code>--soft-zones</code>), routing DRC errors added, whether the time limit rather than the work budget ended the search (the result then depends on machine speed), rules that could not be read</td>
-<td><code>/routed</code>, <code>/connections</code>, <code>/open</code>, <code>/completion_pct</code>, <code>/unconnected_after_refill</code>, <code>/drc/added_routing_errors</code>, <code>/time_limited</code>, <code>/rules/not_read_count</code></td>
+<td>Routed of all connections; items left unconnected after the zones are refilled (with <code>--soft-zones</code>); thermal reliefs the new copper starved (KiCad's <code>starved_thermal</code>, which this report's DRC does not check); routing DRC errors added; DRC errors already in the input board; whether the time limit rather than the work budget ended the search (the result then depends on machine speed); rules that could not be read; the next step, from the diagnosis of the open pins</td>
+<td><code>/routed</code>, <code>/connections</code>, <code>/open</code>, <code>/completion_pct</code>, <code>/unconnected_after_refill</code>, <code>/refill/starved_thermals</code>, <code>/drc/added_routing_errors</code>, <code>/drc/before/errors</code>, <code>/time_limited</code>, <code>/rules/not_read_count</code>, <code>/why_open/next</code></td>
 </tr>
 <tr>
 <td>Result</td>
-<td>Tracks and vias added, the winning variant, the lattice pitch, the work done, the wall time</td>
+<td>Tracks and vias added, copper layers, the kept result (a portfolio variant, or a rescue pass's), the lattice pitch, the work of the kept result and of the whole run, the wall time</td>
 <td>top-level fields of the summary</td>
 </tr>
 <tr>
 <td>What is open and why</td>
-<td>Open connections by cause, with what each cause means; cut proofs (lines more nets must cross than tracks fit through); pins that cannot leave their package; the parts with most open ends; each open connection with the router's last explanation and the nets in the way; what the board as written leaves unconnected once the zones are refilled</td>
-<td><code>/stuck</code>: the stuck report of doc 17 §3 for the final result, without its advisor parts; <code>/drc/after/unconnected_items</code></td>
+<td>First the diagnosis: an exact proof, past the board's fixed copper only, of whether each open pin can get out at all (walled in, out only with a smaller track or via, walled in only by fills, or open through congestion), with what would help per pin. Then the router's own causes (what failed when it last tried), cut proofs, pins that cannot leave their package (only those the exact proof confirms), the parts with most open ends, each open connection with its last explanation and the nets in the way, and what the board as written leaves unconnected once the zones are refilled, split into nets the router left open and nets the refill cut off</td>
+<td><code>/why_open</code>; <code>/stuck</code>: the stuck report of doc 17 §3 for the final result, without its advisor parts; <code>/drc/after/unconnected_items</code></td>
+</tr>
+<tr>
+<td>Relax rescue</td>
+<td>When the first pass left connections open: each rescue pass (warm from the first pass's routes, fresh from nothing), how many it routed under the board's rules, whether it was kept, and its relaxed stages (how far the clearance was lowered, and how many routed there before legalising)</td>
+<td><code>/rescue</code></td>
+</tr>
+<tr>
+<td>Zone refill</td>
+<td>With <code>--soft-zones</code>: the refill after the route, the refill repair (connections the refill cut off, routed again; kept only if better), the thermal repair, and the starved thermal reliefs by pad</td>
+<td><code>/refill</code></td>
 </tr>
 <tr>
 <td>Rules</td>
-<td>Whether the project and custom-rule files were found, what could not be read (the route may break those, rule 6), board minimums, net classes with their net counts, custom rules, net classes from the component rules</td>
+<td>Whether the project and custom-rule files were found, what could not be read (the route may break those, rule 6), board minimums ("not set" when 0) and which governs, net classes with their net counts, custom rules, net classes from the component rules</td>
 <td><code>/rules</code>, <code>/component_rule_net_classes</code></td>
 </tr>
 <tr>
 <td>Signal-integrity audit</td>
-<td>Critical nets, differential pairs, buses and return paths, when the options that turn them on were given</td>
+<td>Critical nets, differential pairs, buses and return paths, when the options that turn them on were given; it names the parts that were not asked for as not checked</td>
 <td><code>/critical_nets</code>, <code>/pairs</code>, <code>/buses</code>, <code>/return_paths</code></td>
 </tr>
 <tr>
 <td>DRC before and after</td>
-<td>Errors, warnings and unconnected items of the board the router started from and of the board it wrote; per violation type, how many the route added</td>
+<td>Errors, warnings and unconnected items of the board the router started from and of the board it wrote; per violation type, how many the route added; the input board's own errors with where they are</td>
 <td><code>/drc</code></td>
 </tr>
 <tr>
 <td>Options and seed</td>
-<td>Seed, work budget, time limit, variants, threads; every option as given on the command line or in <code>--config</code>; the portfolio's variants; advisor rounds</td>
+<td>Seed, work budget (of each variant in each pass, not of the run), time limit, variants, threads; every option as given on the command line or in <code>--config</code>; the portfolio's variants, pass by pass, with the best of each pass and whether the pass was kept; advisor rounds</td>
 <td><code>/run</code>, <code>/variants</code>, <code>/advice</code></td>
 </tr>
 </tbody>
 </table>
+<p>Names are shown as KiCad shows them: <code>{slash}</code> as <code>/</code>, and <code>~{RESET}</code> as RESET with an overbar. The JSON keeps KiCad's own spelling.</p>
+<h2 id="open-cut-off-starved">Open, cut off, starved<a class="headerlink" href="#open-cut-off-starved" title="Permanent link">&para;</a></h2>
+<p>A board with copper zones has three different kinds of "not finished":</p>
+<ul>
+<li><strong>Open</strong>: a connection the router planned and did not route (<code>/open</code>, the stuck table). With <code>--soft-zones</code> the router counts a pad
+  joined once its track reaches the old fill.</li>
+<li><strong>Unconnected after the refill</strong>: KiCad refills the zones for the new copper, and a fill the new tracks cut off no longer joins
+  what it joined before. The DRC counts these as KiCad does, one per missing link, with its own two ends (so not the router's pads);
+  each says whether its net is one the router left open. The refill repair routes the cut-off ones again before the board is written.</li>
+<li><strong>Starved thermal relief</strong>: the pad is still joined, but the new copper cut its spokes off the pour. KiCad's DRC reports
+  <code>starved_thermal</code>; TraceMaker's DRC in this report does not, so the report names them from the router's own check.</li>
+</ul>
+<p>The DRC's count of unconnected items before the route need not equal the router's connections: the router plans its own (with
+<code>--soft-zones</code> it does not count the old fills as joining pads).</p>
 <h2 id="trace-a-number">Trace a number<a class="headerlink" href="#trace-a-number" title="Permanent link">&para;</a></h2>
 <p>In the HTML, every value is underlined with dots: hover over it to see its JSON pointer, or tick <strong>Show the JSON field
 of every value</strong> to show all of them, and the source of each table's rows below it. In the Markdown, each value in the
@@ -2368,10 +2414,11 @@ their rows come from (<code>Rows: /stuck/unrouted/&lt;row&gt;</code>).</p>
 <h2 id="what-the-report-does-not-claim">What the report does not claim<a class="headerlink" href="#what-the-report-does-not-claim" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The DRC is TraceMaker's own (KiCad's violation names and, for routing rules, KiCad's results, doc 03 §6). It counts
-  violations by type, so a type whose count did not grow may still hold a new violation that replaced an old one. Sign
-  off with <code>kicad-cli pcb drc</code> (<a href="../kicad-cli-docker/">Run kicad-cli from Docker</a>).</li>
-<li>"No legal path" means the search found none, not that none exists. Only a cut proof or a pin that cannot escape its
-  package is a proof.</li>
+  violations by type, so a type whose count did not grow may still hold a new violation that replaced an old one, and it does not
+  check thermal reliefs. Sign off with <code>kicad-cli pcb drc</code> (<a href="../kicad-cli-docker/">Run kicad-cli from Docker</a>).</li>
+<li>Proofs are: a cut proof, a pin the diagnosis proves walled in by fixed copper, and a pin that cannot leave its package (confirmed by
+  the same exact proof). "No legal path" and "boxed in" are what the router's search on its lattice found at the time it tried, with
+  the copper routed by then; they are not proofs.</li>
 <li>The explanations are the router's own words, written while it worked; they name the last thing that failed, not
   every thing.</li>
 </ul>

@@ -116,12 +116,14 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:ab2221ff33bdd8d3de6e52b26c4549520"><td class="mdescLeft">&#160;</td><td class="mdescRight">around the two pads of a connection: the region whose crowding is described  <br /></td></tr>
 <tr class="memitem:a3cff62537fd231df903ced1d5766aa06" id="r_a3cff62537fd231df903ced1d5766aa06"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3cff62537fd231df903ced1d5766aa06">escape_analysis</a> = true</td></tr>
 <tr class="memdesc:a3cff62537fd231df903ced1d5766aa06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Escape analysis of the dense packages (<a class="el" href="escape_8hpp.html" title="Escape (fanout) planning, version 1 (roadmap M9; design doc 05 §3).">route/escape.hpp</a>, the <span class="tt">escape</span> command): which pins cannot leave their package at all under the board's rules, and the analysis's own hint.  <br /></td></tr>
+<tr class="memitem:af352fc3128c2902226c6875109083152" id="r_af352fc3128c2902226c6875109083152"><td class="memItemLeft" align="right" valign="top">std::function&lt; bool(int pad)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af352fc3128c2902226c6875109083152">confirm_dead</a></td></tr>
+<tr class="memdesc:af352fc3128c2902226c6875109083152"><td class="mdescLeft">&#160;</td><td class="mdescRight">When set, a pin the lattice analysis finds dead is listed as dead only if this exact check (<a class="el" href="classtmk_1_1analysis_1_1EscapeAnalyser.html" title="Builds the board&#39;s copper and rules once; run analyses one pin of a connection that stayed open.">analysis::EscapeAnalyser</a>: walled in on every layer, no via site) agrees; the others go to the package's <span class="tt">not_proved</span> (the lattice is coarse, and the router may have routed them).  <br /></td></tr>
 <tr class="memitem:aab799f457a02df18746229b0d3563768" id="r_aab799f457a02df18746229b0d3563768"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab799f457a02df18746229b0d3563768">soft_zones</a> = false</td></tr>
 <tr class="memitem:a8778bffb05b0fbcb486556338b8d8ef6" id="r_a8778bffb05b0fbcb486556338b8d8ef6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8778bffb05b0fbcb486556338b8d8ef6">vias_off_pads_below_mm</a> = 0</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00021">21</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00022">22</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="a627ca61b058f91b68fffd085447cacfe" name="a627ca61b058f91b68fffd085447cacfe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a627ca61b058f91b68fffd085447cacfe">&#9670;&#160;</a></span>board</h2>
@@ -135,7 +137,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00022">22</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00023">23</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -153,7 +155,26 @@ Public Attributes</h2></td></tr>
 
 <p>the file name, no path </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00025">25</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00026">26</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af352fc3128c2902226c6875109083152" name="af352fc3128c2902226c6875109083152"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af352fc3128c2902226c6875109083152">&#9670;&#160;</a></span>confirm_dead</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::function&lt;bool(int pad)&gt; tmk::advice::StuckInput::confirm_dead</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>When set, a pin the lattice analysis finds dead is listed as dead only if this exact check (<a class="el" href="classtmk_1_1analysis_1_1EscapeAnalyser.html" title="Builds the board&#39;s copper and rules once; run analyses one pin of a connection that stayed open.">analysis::EscapeAnalyser</a>: walled in on every layer, no via site) agrees; the others go to the package's <span class="tt">not_proved</span> (the lattice is coarse, and the router may have routed them). </p>
+<p>Unset: every lattice-dead pin is listed, as before. </p>
+
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00039">39</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -172,7 +193,7 @@ Public Attributes</h2></td></tr>
 <p>Escape analysis of the dense packages (<a class="el" href="escape_8hpp.html" title="Escape (fanout) planning, version 1 (roadmap M9; design doc 05 §3).">route/escape.hpp</a>, the <span class="tt">escape</span> command): which pins cannot leave their package at all under the board's rules, and the analysis's own hint. </p>
 <p>Cheap (0.2 s on a 163-ball array). Run with the same obstacle options as the route. </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00034">34</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00035">35</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -190,7 +211,7 @@ Public Attributes</h2></td></tr>
 
 <p>the longest unrouted list sent (the rest are counted) </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00030">30</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00031">31</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -208,7 +229,7 @@ Public Attributes</h2></td></tr>
 
 <p>the report of advice already tried (<a class="el" href="structtmk_1_1advice_1_1Applied.html#ab1720736d7e54fcb82fef962b2b9396d" title="{&quot;source&quot;, &quot;note&quot;, &quot;hints&quot;: [{&quot;kind&quot;, &quot;text&quot;, &quot;applied&quot;}], &quot;variants&quot;}">Applied::report</a>) with its outcome; null = none </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00028">28</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00029">29</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -226,7 +247,7 @@ Public Attributes</h2></td></tr>
 
 <p>aliases for net and part names; no part values or library ids </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00029">29</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00030">30</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -244,7 +265,7 @@ Public Attributes</h2></td></tr>
 
 <p>around the two pads of a connection: the region whose crowding is described </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00031">31</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00032">32</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -260,7 +281,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00024">24</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00025">25</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -276,7 +297,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00023">23</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00024">24</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -294,7 +315,7 @@ Public Attributes</h2></td></tr>
 
 <p>wall time of the run that produced the result </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00026">26</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00027">27</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -310,7 +331,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00035">35</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00040">40</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -328,7 +349,7 @@ Public Attributes</h2></td></tr>
 
 <p>rows {"variant", "name", "routed", "seconds"} of that run; null = none </p>
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00027">27</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00028">28</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>
@@ -344,7 +365,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00036">36</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="stuck__report_8hpp_source.html#l00041">41</a> of file <a class="el" href="stuck__report_8hpp_source.html">stuck_report.hpp</a>.</p>
 
 </div>
 </div>

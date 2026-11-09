@@ -104,13 +104,15 @@ Functions</h2></td></tr>
 <tr class="memitem:aedac65fb82e30fe94289c8946d1c1112" id="r_aedac65fb82e30fe94289c8946d1c1112"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ab6bbea67ab7024c5a1cc39c5b071713d">Format</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedac65fb82e30fe94289c8946d1c1112">format_for_path</a> (const std::string &amp;path)</td></tr>
 <tr class="memdesc:aedac65fb82e30fe94289c8946d1c1112"><td class="mdescLeft">&#160;</td><td class="mdescRight">Markdown for a path ending in .md or .markdown, else HTML.  <br /></td></tr>
 <tr class="memitem:a9cb5be9d99e9a41116a80fbc17ccb521" id="r_a9cb5be9d99e9a41116a80fbc17ccb521"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9cb5be9d99e9a41116a80fbc17ccb521">value_text</a> (const nlohmann::json &amp;v)</td></tr>
-<tr class="memdesc:a9cb5be9d99e9a41116a80fbc17ccb521"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JSON value as the report prints it: integers as they are, other numbers to three decimals without trailing zeros, true/false as yes/no, null as n/a, strings as they are.  <br /></td></tr>
+<tr class="memdesc:a9cb5be9d99e9a41116a80fbc17ccb521"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JSON value as the report prints it: integers as they are, other numbers to three decimals without trailing zeros, true/false as yes/no, null as n/a, strings with KiCad's escapes undone (kicad_unescape).  <br /></td></tr>
+<tr class="memitem:a66919c39dcd741904d7b8ee7f07f0f04" id="r_a66919c39dcd741904d7b8ee7f07f0f04"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66919c39dcd741904d7b8ee7f07f0f04">kicad_unescape</a> (const std::string &amp;s)</td></tr>
+<tr class="memdesc:a66919c39dcd741904d7b8ee7f07f0f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">A KiCad name as KiCad shows it: {slash} as /, the other escape tokens ({colon}, {lt}, {space} ...) as their characters, and the overbar markup ~{RESET} as RESET with a combining overline on each character.  <br /></td></tr>
 <tr class="memitem:ae8dc00e39ed14b5b2ac72a3e069a011d" id="r_ae8dc00e39ed14b5b2ac72a3e069a011d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8dc00e39ed14b5b2ac72a3e069a011d">render</a> (const nlohmann::json &amp;summary, <a class="el" href="#ab6bbea67ab7024c5a1cc39c5b071713d">Format</a> format, const std::string &amp;json_name)</td></tr>
 <tr class="memdesc:ae8dc00e39ed14b5b2ac72a3e069a011d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The report of <span class="tt">summary</span>. <span class="tt">json_name</span> is the summary file the report points at for its sources (shown as written).  <br /></td></tr>
 <tr class="memitem:accaf6b49d0165b024cb8def4ae54f1eb" id="r_accaf6b49d0165b024cb8def4ae54f1eb"><td class="memItemLeft" align="right" valign="top">nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#accaf6b49d0165b024cb8def4ae54f1eb">rules_json</a> (const std::string &amp;board_path, const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const std::vector&lt; std::string &gt; &amp;engine_warnings)</td></tr>
 <tr class="memdesc:accaf6b49d0165b024cb8def4ae54f1eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the router took from the board's project (<span class="tt">board_path</span> names the .kicad_pcb; the .kicad_pro and .kicad_dru are looked for beside it as <a class="el" href="namespacetmk_1_1io.html#ad581f447aaaea9cc490ec4030f14d1be" title="board_path is the .kicad_pcb; the project and rule files are looked up next to it with the same stem.">io::read_design_rules</a> does): board minimums, net classes with their net counts, custom rules, and everything that could not be read (<span class="tt">rules.warnings</span>, the rule engine's <span class="tt">engine_warnings</span> and the board reader's <span class="tt">board.warnings</span>).  <br /></td></tr>
-<tr class="memitem:a75e9b1d24abbb8201cc8cb5694f37f33" id="r_a75e9b1d24abbb8201cc8cb5694f37f33"><td class="memItemLeft" align="right" valign="top">nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75e9b1d24abbb8201cc8cb5694f37f33">drc_json</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;before, const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;after, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, bool refill)</td></tr>
-<tr class="memdesc:a75e9b1d24abbb8201cc8cb5694f37f33"><td class="mdescLeft">&#160;</td><td class="mdescRight">TraceMaker's DRC (KiCad's violation names, doc 03 §6) of the board the router started from and of the board it wrote, by violation type, with what the route added.  <br /></td></tr>
+<tr class="memitem:a9da1d13d6b76c587b8b6e5fe596e335d" id="r_a9da1d13d6b76c587b8b6e5fe596e335d"><td class="memItemLeft" align="right" valign="top">nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9da1d13d6b76c587b8b6e5fe596e335d">drc_json</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;before, const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;after, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, bool refill, const std::set&lt; std::string &gt; *router_open=nullptr)</td></tr>
+<tr class="memdesc:a9da1d13d6b76c587b8b6e5fe596e335d"><td class="mdescLeft">&#160;</td><td class="mdescRight">TraceMaker's DRC (KiCad's violation names, doc 03 §6) of the board the router started from and of the board it wrote, by violation type, with what the route added.  <br /></td></tr>
 <tr class="memitem:a323d41c12d0f7c3c711d8e24707be04e" id="r_a323d41c12d0f7c3c711d8e24707be04e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a323d41c12d0f7c3c711d8e24707be04e">routing_violation</a> (const std::string &amp;type)</td></tr>
 <tr class="memdesc:a323d41c12d0f7c3c711d8e24707be04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">True for violation types that routing can cause (bench/drc_judge.py NOT_ROUTING lists the others; unconnected items are counted on their own).  <br /></td></tr>
 </table>
@@ -144,8 +146,8 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a75e9b1d24abbb8201cc8cb5694f37f33" name="a75e9b1d24abbb8201cc8cb5694f37f33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75e9b1d24abbb8201cc8cb5694f37f33">&#9670;&#160;</a></span>drc_json()</h2>
+<a id="a9da1d13d6b76c587b8b6e5fe596e335d" name="a9da1d13d6b76c587b8b6e5fe596e335d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9da1d13d6b76c587b8b6e5fe596e335d">&#9670;&#160;</a></span>drc_json()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,13 +170,18 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>refill</em></span>&#160;)</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>refill</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::set&lt; std::string &gt; *</td>          <td class="paramname"><span class="paramname"><em>router_open</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>TraceMaker's DRC (KiCad's violation names, doc 03 §6) of the board the router started from and of the board it wrote, by violation type, with what the route added. </p>
-<p>With <span class="tt">refill</span> the copper zones of both are refilled first, as <span class="tt">kicad-cli pcb <a class="el" href="namespacetmk_1_1drc.html">drc</a> --refill-zones</span> does (the plane tier is judged that way, doc 10 §4). Counts per type, not the instance matching of bench/drc_judge.py: a type whose count did not grow may still hold a new violation that replaced an old one. </p>
+<p>With <span class="tt">refill</span> the copper zones of both are refilled first, as <span class="tt">kicad-cli pcb <a class="el" href="namespacetmk_1_1drc.html">drc</a> --refill-zones</span> does (the plane tier is judged that way, doc 10 §4). Counts per type, not the instance matching of bench/drc_judge.py: a type whose count did not grow may still hold a new violation that replaced an old one. The errors of the board before the route are listed with where they are (<span class="tt">before/error_items</span>, the first of each), so a designer can tell the input's own errors from the route's. With <span class="tt">router_open</span> (names of the nets the router left a connection of open), each unconnected item after the route says whether its net is one of them (<span class="tt">open_by_router</span>) or was completed by the router and cut off by the zone refill, and <span class="tt">after</span> counts both. </p>
 
 </div>
 </div>
@@ -194,6 +201,25 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Markdown for a path ending in .md or .markdown, else HTML. </p>
+
+</div>
+</div>
+<a id="a66919c39dcd741904d7b8ee7f07f0f04" name="a66919c39dcd741904d7b8ee7f07f0f04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66919c39dcd741904d7b8ee7f07f0f04">&#9670;&#160;</a></span>kicad_unescape()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::report::kicad_unescape </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A KiCad name as KiCad shows it: {slash} as /, the other escape tokens ({colon}, {lt}, {space} ...) as their characters, and the overbar markup ~{RESET} as RESET with a combining overline on each character. </p>
 
 </div>
 </div>
@@ -293,7 +319,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>A JSON value as the report prints it: integers as they are, other numbers to three decimals without trailing zeros, true/false as yes/no, null as n/a, strings as they are. </p>
+<p>A JSON value as the report prints it: integers as they are, other numbers to three decimals without trailing zeros, true/false as yes/no, null as n/a, strings with KiCad's escapes undone (kicad_unescape). </p>
 
 </div>
 </div>

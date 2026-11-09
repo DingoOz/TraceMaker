@@ -2,6 +2,7 @@ var structtmk_1_1advice_1_1StuckInput =
 [
     [ "board", "structtmk_1_1advice_1_1StuckInput.html#a627ca61b058f91b68fffd085447cacfe", null ],
     [ "board_name", "structtmk_1_1advice_1_1StuckInput.html#ac90038a5ab63e28dafa6bd53eeace46c", null ],
+    [ "confirm_dead", "structtmk_1_1advice_1_1StuckInput.html#af352fc3128c2902226c6875109083152", null ],
     [ "escape_analysis", "structtmk_1_1advice_1_1StuckInput.html#a3cff62537fd231df903ced1d5766aa06", null ],
     [ "max_unrouted", "structtmk_1_1advice_1_1StuckInput.html#a74ad736143df4ba35d19004f0bd7bd78", null ],
     [ "previous_advice", "structtmk_1_1advice_1_1StuckInput.html#a330db205a9a6f71a10f450b95b671218", null ],

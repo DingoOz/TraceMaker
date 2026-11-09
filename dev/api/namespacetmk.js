@@ -25,8 +25,9 @@ var namespacetmk =
         [ "Html", "namespacetmk_1_1report.html#ab6bbea67ab7024c5a1cc39c5b071713da3135f4019bee015e2d1ae7f77f9f3f64", null ],
         [ "Markdown", "namespacetmk_1_1report.html#ab6bbea67ab7024c5a1cc39c5b071713da2182a74bab7188d959e795d9301e87ff", null ]
       ] ],
-      [ "drc_json", "namespacetmk_1_1report.html#a75e9b1d24abbb8201cc8cb5694f37f33", null ],
+      [ "drc_json", "namespacetmk_1_1report.html#a9da1d13d6b76c587b8b6e5fe596e335d", null ],
       [ "format_for_path", "namespacetmk_1_1report.html#aedac65fb82e30fe94289c8946d1c1112", null ],
+      [ "kicad_unescape", "namespacetmk_1_1report.html#a66919c39dcd741904d7b8ee7f07f0f04", null ],
       [ "render", "namespacetmk_1_1report.html#ae8dc00e39ed14b5b2ac72a3e069a011d", null ],
       [ "routing_violation", "namespacetmk_1_1report.html#a323d41c12d0f7c3c711d8e24707be04e", null ],
       [ "rules_json", "namespacetmk_1_1report.html#accaf6b49d0165b024cb8def4ae54f1eb", null ],

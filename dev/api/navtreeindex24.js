@@ -1,5 +1,12 @@
 var NAVTREEINDEX24 =
 {
+"structtmk_1_1route_1_1RouterOptions.html#a909922d074c818b7bd301eb7ba30d8d3":[1,0,0,15,40,183],
+"structtmk_1_1route_1_1RouterOptions.html#a92c3a1d94239f0edb2ec6eb010ff78fd":[0,0,0,17,40,35],
+"structtmk_1_1route_1_1RouterOptions.html#a92c3a1d94239f0edb2ec6eb010ff78fd":[1,0,0,15,40,35],
+"structtmk_1_1route_1_1RouterOptions.html#a935d3b9fdbbf2c7cf23f1ee69577dca0":[0,0,0,17,40,161],
+"structtmk_1_1route_1_1RouterOptions.html#a935d3b9fdbbf2c7cf23f1ee69577dca0":[1,0,0,15,40,161],
+"structtmk_1_1route_1_1RouterOptions.html#a9689cce368539bb6ef690aa79a511f1b":[0,0,0,17,40,92],
+"structtmk_1_1route_1_1RouterOptions.html#a9689cce368539bb6ef690aa79a511f1b":[1,0,0,15,40,92],
 "structtmk_1_1route_1_1RouterOptions.html#a96f6258f24bd2a4bc1dd5c7e870ba0b8":[0,0,0,17,40,85],
 "structtmk_1_1route_1_1RouterOptions.html#a96f6258f24bd2a4bc1dd5c7e870ba0b8":[1,0,0,15,40,85],
 "structtmk_1_1route_1_1RouterOptions.html#a9782b2d1b30126310c4ec764e41f99e2":[0,0,0,17,40,108],
@@ -242,12 +249,5 @@ var NAVTREEINDEX24 =
 "structtmk_1_1route_1_1TunnelStats.html#a0bace43978658c8edb7fdd7d2d9663d8":[1,0,0,15,4,0],
 "structtmk_1_1route_1_1TunnelStats.html#a4166929066185545429119351275e5e5":[0,0,0,17,4,1],
 "structtmk_1_1route_1_1TunnelStats.html#a4166929066185545429119351275e5e5":[1,0,0,15,4,1],
-"structtmk_1_1route_1_1ViaHeights.html":[0,0,0,17,47],
-"structtmk_1_1route_1_1ViaHeights.html":[1,0,0,15,47],
-"structtmk_1_1route_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747":[0,0,0,17,47,1],
-"structtmk_1_1route_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747":[1,0,0,15,47,1],
-"structtmk_1_1route_1_1ViaHeights.html#ab384d7ecbdeb2f19f2dc2d9f99b40f2f":[0,0,0,17,47,2],
-"structtmk_1_1route_1_1ViaHeights.html#ab384d7ecbdeb2f19f2dc2d9f99b40f2f":[1,0,0,15,47,2],
-"structtmk_1_1route_1_1ViaHeights.html#abc2f60e301b496aa9ce4c3464e35a195":[0,0,0,17,47,0],
-"structtmk_1_1route_1_1ViaHeights.html#abc2f60e301b496aa9ce4c3464e35a195":[1,0,0,15,47,0]
+"structtmk_1_1route_1_1ViaHeights.html":[0,0,0,17,47]
 };

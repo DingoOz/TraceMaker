@@ -112,7 +112,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aedbcd628a000de590ea2471be8b92084" id="r_aedbcd628a000de590ea2471be8b92084"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedbcd628a000de590ea2471be8b92084">seconds</a></td></tr>
 <tr class="memdesc:aedbcd628a000de590ea2471be8b92084"><td class="mdescLeft">&#160;</td><td class="mdescRight">wall time per variant (its own clock)  <br /></td></tr>
 <tr class="memitem:ad190a000f6cd49ca38dd37a0b0dd26e9" id="r_ad190a000f6cd49ca38dd37a0b0dd26e9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1WorkProfile.html">WorkProfile</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad190a000f6cd49ca38dd37a0b0dd26e9">work</a></td></tr>
-<tr class="memdesc:ad190a000f6cd49ca38dd37a0b0dd26e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">work profile per variant  <br /></td></tr>
+<tr class="memdesc:ad190a000f6cd49ca38dd37a0b0dd26e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">work profile per variant, over every round  <br /></td></tr>
+<tr class="memitem:ac324f44484a6717b72ebaea7ad03005a" id="r_ac324f44484a6717b72ebaea7ad03005a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac324f44484a6717b72ebaea7ad03005a">ramp_stages</a></td></tr>
+<tr class="memdesc:ac324f44484a6717b72ebaea7ad03005a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clearance ramp (relax): per relaxed stage that ran, how much the clearance was lowered and the most connections a round of it routed (under the lowered clearance, so not legal yet).  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Runs several differently configured routers (portfolio variants) and keeps the best result. </p>
@@ -169,6 +171,24 @@ Public Attributes</h2></td></tr>
 <p>portfolio variant index per position </p>
 
 <p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00458">458</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac324f44484a6717b72ebaea7ad03005a" name="ac324f44484a6717b72ebaea7ad03005a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac324f44484a6717b72ebaea7ad03005a">&#9670;&#160;</a></span>ramp_stages</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::pair&lt;<a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>, int&gt; &gt; tmk::route::PortfolioResult::ramp_stages</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clearance ramp (relax): per relaxed stage that ran, how much the clearance was lowered and the most connections a round of it routed (under the lowered clearance, so not legal yet). </p>
+
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00465">465</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -238,7 +258,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>work profile per variant </p>
+<p>work profile per variant, over every round </p>
 
 <p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00462">462</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
