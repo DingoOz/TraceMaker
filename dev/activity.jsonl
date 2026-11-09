@@ -216,3 +216,4 @@
 {"ts": "2026-10-31T01:25:59+00:00", "kind": "note", "text": "Step 6 --ramp-vias-fixed: srj20 six +14, 33 boards -3 and 3 clean vs 5; not adopted, hidden option"}
 {"ts": "2026-10-31T03:16:56+00:00", "kind": "note", "text": "Live page /live (D165): every tracemaker process and bench run, once a second, on by default"}
 {"ts": "2026-11-03T09:31:09+00:00", "kind": "note", "text": "Issue #54 (D169): obstacle caches keyed by class values, --class-cache-mb bound; quick tier 30/30 byte-identical"}
+{"ts": "2026-11-08T22:57:58+00:00", "kind": "test", "text": "D177 run report review fixes: 8 plane reports regenerated; copper byte-identical to main on 5 plane boards and quick 30/30"}
