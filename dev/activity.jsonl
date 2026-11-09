@@ -223,3 +223,4 @@
 {"ts": "2026-11-08T22:55:05+00:00", "kind": "decision", "text": "D170 (issue #53): Type-only rule conditions tabled by kind pair (PoE switch with JLCPCB rule: 2x work per 300 s, identical output); --pair-share option, off by default (coupling 75 -> 19 pairs)"}
 {"ts": "2026-11-08T22:57:58+00:00", "kind": "test", "text": "D177 run report review fixes: 8 plane reports regenerated; copper byte-identical to main on 5 plane boards and quick 30/30"}
 {"ts": "2026-11-08T23:04:30+00:00", "kind": "decision", "text": "D175 (issue #67): --pair-leg-mm, --protect-coupled, --pair-pad-exits, --pair-retry-leg-mm opt-in; --recouple-work 2M default (2 more pairs coupled on 20 pair boards, nothing else changed)"}
+{"ts": "2026-11-08T23:33:14+00:00", "kind": "decision", "text": "D171 (issue #55): tracemaker-place --decap-spread spreads piled decoupling caps over their IC's supply pins, 2 mm standoff on 48+ pin ICs; off by default (PoE 960->993 routed, public piles -32/+4)"}

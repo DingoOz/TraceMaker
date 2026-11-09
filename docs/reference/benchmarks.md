@@ -92,6 +92,20 @@ comparable (judge version, time limit, machine load).
 | [rescue-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-bd/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 15.2% | 93.4% | 12.1% | 18675 | `--no-gpu` |
 | [rescue-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-quick/summary.json) | quick | 30 | 736eac2 | 40.0% | 90.1% | 100.0% | 71 | `--variants 1` |
 
+## issue55
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/issue55)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [i55-pub-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-base/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 74.9% | 12.5% | 170 |  |
+| [i55-pub-base-seed2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-base-seed2/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 74.4% | 12.5% | 187 |  |
+| [i55-pub-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-new/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 73.1% | 12.5% | 158 |  |
+| [i55-pub-new-seed2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-new-seed2/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 71.7% | 12.5% | 172 |  |
+| [i55-pub-so1](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-so1/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 70.4% | 12.5% | 177 |  |
+| [i55-pub-so2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-so2/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 72.7% | 12.5% | 202 |  |
+| [i55-pub-so2-seed2](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue55/runs/i55-pub-so2-seed2/summary.json) | issue55-S + placement (full) | 8 | 057ee82 | 0.0% | 74.9% | 12.5% | 177 |  |
+
 ## issue60
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/issue60)

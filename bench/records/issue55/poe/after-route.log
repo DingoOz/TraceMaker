@@ -1,0 +1,656 @@
+planes: zone GND_In1_Cu (GND on In1.Cu) has no fill: filled in memory for routing, 32581 mm2
+planes: zone +54V_In2_Cu (+54V on In2.Cu) has no fill: filled in memory for routing, 32574 mm2
+planes: zone fills are soft for this run (--soft-zones): plane nets drop vias into their planes, other nets route through
+warning: rule 'JLCPCB: Hole to hole': the router keeps its hole to hole distance (0.500 mm) round every new via's hole, not only where the rule applies (the DRC checks it as written)
+portfolio: 8 variants on 8 threads
+searches: 880 ok (721703 expansions), 283 failed (988571 expansions); fields 0 GPU + 63 CPU (0.38 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 376 connections improved
+restarts 0; legality checks 2022841; rips 0, passes 1, boxed-in 251, nogood skips 4, history cells 0, transactions 0 kept of 0
+reachability checks: 33, 10 proved unreachable, 792771 cells visited
+failed-search expansions: strict confined 0, strict wide 411743, negotiated confined 0, negotiated wide 0
+searches: 59 ok (1484149 expansions), 0 failed (0 expansions); fields 0 GPU + 51 CPU (3.57 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 3834575; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 3000001 cells visited
+late reachability proofs: 5, 0 proved no path, 50011 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 16 ok (27984 expansions), 16 failed (960016 expansions); fields 0 GPU + 32 CPU (0.90 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 181656; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 960016, negotiated confined 0, negotiated wide 0
+searches: 16 ok (27984 expansions), 16 failed (960016 expansions); fields 0 GPU + 32 CPU (0.93 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 181656; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 960016, negotiated confined 0, negotiated wide 0
+searches: 32 ok (292544 expansions), 0 failed (0 expansions); fields 0 GPU + 32 CPU (1.11 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 342488; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 32 ok (498800 expansions), 0 failed (0 expansions); fields 0 GPU + 32 CPU (1.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 566568; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 32 ok (428336 expansions), 0 failed (0 expansions); fields 0 GPU + 32 CPU (1.30 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 496952; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 32 ok (498800 expansions), 0 failed (0 expansions); fields 0 GPU + 32 CPU (1.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 566568; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 74 in 286.5 s
+  variant 1 fast bends, shortest first, crowded source routed 78 in 320.0 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 119 in 279.3 s
+  variant 3 fast bends, jittered order, escape plan routed 78 in 322.3 s
+  variant 4 exact bends, jittered order    routed 74 in 288.1 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 832 in 208.0 s  <- best
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 78 in 319.0 s
+  variant 7 fast bends, dear vias, crowded source routed 74 in 301.6 s
+rescue (warm): 357 of 1189 connections are open; routing again with relax (from the plain routes, 1 round of 10000000 work)
+portfolio: 8 variants on 8 threads
+warm start: 690 saved routes taken over, 36 not legal under these rules
+searches: 195 ok (166532 expansions), 23 failed (4297206 expansions); fields 0 GPU + 66 CPU (12.20 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 20 connections improved
+restarts 0; legality checks 4656755; rips 3, passes 1, boxed-in 16, nogood skips 0, history cells 3, transactions 0 kept of 0
+reachability checks: 27, 2 proved unreachable, 4399874 cells visited
+failed-search expansions: strict confined 0, strict wide 3047183, negotiated confined 0, negotiated wide 72
+warm start: 751 saved routes taken over, 15 not legal under these rules
+searches: 28 ok (78386 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.72 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 75 connections improved
+restarts 0; legality checks 106026; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 747 saved routes taken over, 15 not legal under these rules
+searches: 28 ok (215984 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.72 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 69 connections improved
+restarts 0; legality checks 254002; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 747 saved routes taken over, 15 not legal under these rules
+searches: 28 ok (263877 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 71 connections improved
+restarts 0; legality checks 116254; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 747 saved routes taken over, 15 not legal under these rules
+searches: 28 ok (263877 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 69 connections improved
+restarts 0; legality checks 116254; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 747 saved routes taken over, 15 not legal under these rules
+searches: 28 ok (215984 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 68 connections improved
+restarts 0; legality checks 254002; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 747 saved routes taken over, 15 not legal under these rules
+searches: 28 ok (79704 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.78 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 69 connections improved
+restarts 0; legality checks 118967; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 692 saved routes taken over, 34 not legal under these rules
+searches: 52 ok (1407896 expansions), 2 failed (112 expansions); fields 0 GPU + 46 CPU (2.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 15 connections improved
+restarts 0; legality checks 1533048; rips 0, passes 1, boxed-in 2, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 0 proved no path, 40006 cells visited
+failed-search expansions: strict confined 0, strict wide 112, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0600 mm): 832 of 1189 routed
+warm start: 825 saved routes taken over, 7 not legal under these rules
+warm start: 825 saved routes taken over, 7 not legal under these rules
+warm start: 825 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 153 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 165 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 825 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 153 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 156 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 825 saved routes taken over, 7 not legal under these rules
+warm start: 826 saved routes taken over, 6 not legal under these rules
+warm start: 825 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 153 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 825 saved routes taken over, 7 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 155 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 153 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 153 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 825 in 3.7 s
+  variant 1 fast bends, shortest first, crowded source routed 825 in 4.0 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 825 in 3.6 s
+  variant 3 fast bends, jittered order, escape plan routed 826 in 3.9 s  <- best
+  variant 4 exact bends, jittered order    routed 825 in 3.7 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 825 in 3.6 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 825 in 3.8 s
+  variant 7 fast bends, dear vias, crowded source routed 825 in 3.9 s
+rescue (warm): 832 -> 826 routed (no gain: the result before stands)
+rescue (fresh): 357 of 1189 connections are open; routing again with relax (from nothing, 1 round of 10000000 work)
+portfolio: 8 variants on 8 threads
+searches: 963 ok (787641 expansions), 268 failed (254832 expansions); fields 0 GPU + 181 CPU (1.02 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 468 connections improved
+restarts 0; legality checks 1978119; rips 0, passes 1, boxed-in 263, nogood skips 7, history cells 0, transactions 0 kept of 0
+reachability checks: 29, 1 proved unreachable, 1035957 cells visited
+failed-search expansions: strict confined 0, strict wide 254228, negotiated confined 0, negotiated wide 0
+searches: 28 ok (78386 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 106026; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 28 ok (215984 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.69 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 254002; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 28 ok (263877 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 116254; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 28 ok (215984 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 254002; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 28 ok (263877 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.72 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 116254; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 28 ok (79704 expansions), 0 failed (0 expansions); fields 0 GPU + 28 CPU (0.76 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 118967; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 55 ok (1114032 expansions), 0 failed (0 expansions); fields 0 GPU + 47 CPU (3.77 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 1248416; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 0 proved no path, 40008 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0600 mm): 881 of 1189 routed
+warm start: 869 saved routes taken over, 12 not legal under these rules
+warm start: 869 saved routes taken over, 12 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 154 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 869 saved routes taken over, 12 not legal under these rules
+warm start: 869 saved routes taken over, 12 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 153 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 154 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 154 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 869 saved routes taken over, 12 not legal under these rules
+warm start: 869 saved routes taken over, 12 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 154 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 869 saved routes taken over, 12 not legal under these rules
+warm start: 869 saved routes taken over, 12 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 170 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 154 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 158 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 869 in 4.6 s
+  variant 1 fast bends, shortest first, crowded source routed 869 in 4.3 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 869 in 4.5 s  <- best
+  variant 3 fast bends, jittered order, escape plan routed 869 in 4.6 s
+  variant 4 exact bends, jittered order    routed 869 in 4.3 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 869 in 4.2 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 869 in 4.4 s
+  variant 7 fast bends, dear vias, crowded source routed 869 in 4.3 s
+rescue (fresh): 832 -> 869 routed (the relax result is kept)
+stuck report written to after-stuck.json
+soft zones: after refilling 2 zones, 320 items unconnected
+searches: 16 ok (521455 expansions), 87 failed (2931744 expansions); fields 0 GPU + 89 CPU (0.87 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 0; legality checks 823823; rips 0, passes 1, boxed-in 57, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 6 proved unreachable, 307113 cells visited
+late reachability proofs: 6, 2 proved no path, 46020 cells visited
+failed-search expansions: strict confined 0, strict wide 2809711, negotiated confined 0, negotiated wide 0
+refill repair: routed 18/320 connections, 111 tracks, 0 vias, 10347724 expansions
+refill repair: 302 items unconnected after refilling again
+routed 869/1189 connections, 2279 tracks, 434 vias, pitch 0.100 mm, 0 expansions, 1165.68 s (best variant 4.47 s)
+  unrouted: SPI_CS_A: R72.1 -> U6.18  ()
+  unrouted: FAN_TACH: R114.2 -> U6.5  ()
+  unrouted: +2V5B_AN: C156.1 -> FB4.2  ()
+  unrouted: FAN_PWM: R111.1 -> U6.4  ()
+  unrouted: SW_INT_N: U10.94 -> U11.94  ()
+  unrouted: SPI_MISO: U10.97 -> U11.97  ()
+  unrouted: SPI_MOSI: U10.98 -> U11.98  ()
+  unrouted: SPI_SCK: U10.101 -> U11.101  ()
+  unrouted: SW_RST: D25.1 -> U6.22  ()
+  unrouted: +1V2B: FB3.1 -> L5.2  ()
+  unrouted: RG_A2B_TX_CTL: U11.67 -> R80.2  ()
+  unrouted: RG_A2B_TXD0: U11.73 -> R76.2  ()
+  unrouted: RG_B_RXD0: U11.83 -> R82.1  ()
+  unrouted: RG_B_RX_CLK: U11.75 -> R87.1  ()
+  unrouted: +1V2B: R124.1 -> TP6.1  ()
+  unrouted: VIN_SENSE: R1.2 -> C9.1  ()
+  unrouted: P4B_POS: T4.21 -> R29.1  ()
+  unrouted: PSE_OSS: U21.56 -> U6.23  ()
+  unrouted: RG_B_RX_CTL: U11.76 -> R86.1  ()
+  unrouted: RG_B_RXD1: U11.82 -> R83.1  ()
+  unrouted: RG_A_RXD3: U10.62 -> R79.1  ()
+  unrouted: P1A_NEG: R9.1 -> Q1.5  ()
+  unrouted: RG_A_RXD2: U10.63 -> R78.1  ()
+  unrouted: P3B_POS: T3.21 -> D31.1  ()
+  unrouted: P5B_NEG: T5.24 -> D35.2  ()
+  unrouted: P5B_POS: T5.21 -> D35.1  ()
+  unrouted: P3A_NEG: T3.15 -> Q5.5  ()
+  unrouted: P3A_POS: T3.18 -> R22.1  ()
+  unrouted: RG_A2B_TX_CLK: U11.66 -> R81.2  ()
+  unrouted: U11_RST_N: U11.96 -> R74.1  ()
+  unrouted: RG_A_RXD1: U10.64 -> R77.1  ()
+  unrouted: P3B_NEG: T3.24 -> U20.33  ()
+  unrouted: P4A_POS: T4.18 -> F8.2  ()
+  unrouted: P10_LED_SP: D21.1 -> R68.1  ()
+  unrouted: P10_LED_LA: D20.1 -> R67.1  ()
+  unrouted: I2C_SDA: U21.54 -> U6.12  ()
+  unrouted: RG_B_RXD2: U11.81 -> R84.1  ()
+  unrouted: P1_LED_LA: D2.1 -> R13.1  ()
+  unrouted: I2C_SCL: U21.53 -> U6.11  ()
+  unrouted: P5A_NEG: T5.15 -> C179.2  ()
+  unrouted: P4B_NEG: T4.24 -> U20.40  ()
+  unrouted: P5A_POS: T5.18 -> C179.1  ()
+  unrouted: P1_LED_SP: D3.1 -> R14.1  ()
+  unrouted: RG_B_RXD3: U11.80 -> R85.1  ()
+  unrouted: P1B_NEG: R12.1 -> Q2.5  ()
+  unrouted: P2_LED_LA: D4.1 -> R19.1  ()
+  unrouted: P1_A_P: T1.12 -> U10.112  ()
+  unrouted: P6_A_P: T6.12 -> U11.112  ()
+  unrouted: P1_A_N: T1.11 -> U10.113  ()
+  unrouted: P6_A_N: T6.11 -> U11.113  ()
+  unrouted: PSE_INT_N: U21.45 -> U6.9  ()
+  unrouted: PSE_RST_N: U21.44 -> U6.10  ()
+  unrouted: P5_D_N: T5.2 -> U10.43  ()
+  unrouted: P10_D_N: T10.2 -> U11.43  ()
+  unrouted: +3V3: D9.2 -> C159.1  ()
+  unrouted: P1_B_P: T1.9 -> U10.115  ()
+  unrouted: P6_B_P: T6.9 -> U11.115  ()
+  unrouted: P5_D_P: T5.3 -> U10.42  ()
+  unrouted: P10_D_P: T10.3 -> U11.42  ()
+  unrouted: P1_B_N: T1.8 -> U10.116  ()
+  unrouted: P6_B_N: T6.8 -> U11.116  ()
+  unrouted: P6_LED_LA: D12.1 -> R43.1  ()
+  unrouted: P5_C_N: T5.5 -> U10.40  ()
+  unrouted: P10_C_N: T10.5 -> U11.40  ()
+  unrouted: CHASSIS: C89.2 -> C80.2  ()
+  unrouted: P4A_NEG: T4.15 -> Q7.5  ()
+  unrouted: P5_C_P: T5.6 -> U10.39  ()
+  unrouted: P10_C_P: T10.6 -> U11.39  ()
+  unrouted: +1V2A: FB1.1 -> TP5.1  ()
+  unrouted: U11_LED3_1: R62.2 -> U11.89  ()
+  unrouted: P5_B_N: T5.8 -> U10.38  ()
+  unrouted: P10_B_N: T10.8 -> U11.38  ()
+  unrouted: U11_LED4_1: R68.2 -> U11.86  ()
+  unrouted: U10_LED3_1: R32.2 -> U10.89  ()
+  unrouted: P5_B_P: T5.9 -> U10.37  ()
+  unrouted: P10_B_P: T10.9 -> U11.37  ()
+  unrouted: SPI_MISO: U11.97 -> U6.21  ()
+  unrouted: PSE_OSS: R110.1 -> U21.56  ()
+  unrouted: SPI_SCK: U11.101 -> U6.20  ()
+  unrouted: P2A_NEG: T2.15 -> R15.1  ()
+  unrouted: P8_LED_LA: D16.1 -> R55.1  ()
+  unrouted: RG_A_RX_CLK: U10.57 -> R81.1  ()
+  unrouted: U11_LED3_0: R61.2 -> U11.88  ()
+  unrouted: P6_LED_SP: D13.1 -> R44.1  ()
+  unrouted: SPI_MOSI: U11.98 -> U6.19  ()
+  unrouted: CHASSIS: C94.2 -> C89.2  ()
+  unrouted: I2C_SDA: R107.1 -> U21.55  ()
+  unrouted: RG_B2A_TXD3: U10.52 -> R85.2  ()
+  unrouted: P2_LED_SP: D5.1 -> R20.1  ()
+  unrouted: U11_LED5_0: R43.2 -> U11.102  ()
+  unrouted: U10_LED4_1: R38.2 -> U10.86  ()
+  unrouted: RG_A2B_TXD1: U11.72 -> R77.2  ()
+  unrouted: P7_LED_LA: D14.1 -> R49.1  ()
+  unrouted: P5_LED_SP: D11.1 -> R38.1  ()
+  unrouted: RG_B2A_TXD2: U10.53 -> R84.2  ()
+  unrouted: +3V3: R74.2 -> U21.43  ()
+  unrouted: I2C_SCL: R106.1 -> U21.53  ()
+  unrouted: PSE_INT_N: R108.1 -> U21.45  ()
+  unrouted: P5_LED_LA: D10.1 -> R37.1  ()
+  unrouted: SW_INT_N: U11.94 -> U6.8  ()
+  unrouted: SW_RST: D23.1 -> D25.1  ()
+  unrouted: PSE_RST_N: R109.1 -> U21.44  ()
+  unrouted: P3_LED_LA: D6.1 -> R25.1  ()
+  unrouted: P2A_NEG: D28.2 -> Q3.5  ()
+  unrouted: P8A_NEG: T8.15 -> R51.1  ()
+  unrouted: P2B_NEG: R18.1 -> Q4.5  ()
+  unrouted: P2A_POS: T2.18 -> R16.1  ()
+  unrouted: U10_LED5_0: R13.2 -> U10.102  ()
+  unrouted: CHASSIS: J19.SH -> C94.2  ()
+  unrouted: RG_A2B_TXD2: U11.71 -> R78.2  ()
+  unrouted: P2_A_N: T2.11 -> U10.2  ()
+  unrouted: P9_D_N: T9.2 -> U11.32  ()
+  unrouted: P3_LED_SP: D7.1 -> R26.1  ()
+  unrouted: SPI_CS_B: R75.1 -> U6.17  ()
+  unrouted: P2_B_P: T2.9 -> U10.4  ()
+  unrouted: P7_B_P: T7.9 -> U11.4  ()
+  unrouted: P8B_NEG: D41.2 -> R54.1  ()
+  unrouted: P2_B_N: T2.8 -> U10.5  ()
+  unrouted: P7_B_N: T7.8 -> U11.5  ()
+  unrouted: P9_C_N: T9.5 -> U11.29  ()
+  unrouted: P3B_NEG: U20.33 -> D31.2  ()
+  unrouted: CHASSIS: C62.2 -> C53.2  ()
+  unrouted: P8A_POS: T8.18 -> R52.1  ()
+  unrouted: P9_C_P: T9.6 -> U11.28  ()
+  unrouted: P7_C_P: T7.6 -> U11.6  ()
+  unrouted: U11_LED4_0: R67.2 -> U11.85  ()
+  unrouted: RG_A2B_TXD3: U11.70 -> R79.2  ()
+  unrouted: P2_C_N: T2.5 -> U10.7  ()
+  unrouted: P7_C_N: T7.5 -> U11.7  ()
+  unrouted: P4_B_N: T4.8 -> U10.27  ()
+  unrouted: P9_B_N: T9.8 -> U11.27  ()
+  unrouted: P8_LED_SP: D17.1 -> R56.1  ()
+  unrouted: U10_LED3_0: R31.2 -> U10.88  ()
+  unrouted: U10_LED4_0: R37.2 -> U10.85  ()
+  unrouted: P4_B_P: T4.9 -> U10.26  ()
+  unrouted: P8B_NEG: R54.1 -> Q16.5  ()
+  unrouted: P6A_NEG: D36.2 -> C181.2  ()
+  unrouted: P2_D_P: T2.3 -> U10.8  ()
+  unrouted: P7_D_P: T7.3 -> U11.8  ()
+  unrouted: P2_D_N: T2.2 -> U10.9  ()
+  unrouted: P7_D_N: T7.2 -> U11.9  ()
+  unrouted: P7B_NEG: R48.1 -> Q14.5  ()
+  unrouted: P4_A_N: T4.11 -> U10.25  ()
+  unrouted: P4_LED_LA: D8.1 -> R31.1  ()
+  unrouted: P4_A_P: T4.12 -> U10.24  ()
+  unrouted: +2V5: TP4.1 -> C199.1  ()
+  unrouted: U11_LED2_1: R56.2 -> U11.92  ()
+  unrouted: P7A_NEG: R45.1 -> Q13.5  ()
+  unrouted: P7_LED_SP: D15.1 -> R50.1  ()
+  unrouted: FAN_PWM_OUT: J2.4 -> Q17.3  ()
+  unrouted: +2V5A_AN: C119.1 -> FB2.2  ()
+  unrouted: P3_A_P: T3.12 -> U10.12  ()
+  unrouted: P8_A_P: T8.12 -> U11.12  ()
+  unrouted: P3_A_N: T3.11 -> U10.13  ()
+  unrouted: P8_A_N: T8.11 -> U11.13  ()
+  unrouted: P3_D_N: T3.2 -> U10.21  ()
+  unrouted: P8_D_N: T8.2 -> U11.21  ()
+  unrouted: U10_RST_N: U10.96 -> D22.2  ()
+  unrouted: P3_D_P: T3.3 -> U10.20  ()
+  unrouted: P8_D_P: T8.3 -> U11.20  ()
+  unrouted: P3_B_P: T3.9 -> U10.15  ()
+  unrouted: P8_B_P: T8.9 -> U11.15  ()
+  unrouted: P3_B_N: T3.8 -> U10.16  ()
+  unrouted: P8_B_N: T8.8 -> U11.16  ()
+  unrouted: P8_C_N: T8.5 -> U11.18  ()
+  unrouted: P8_C_P: T8.6 -> U11.17  ()
+  unrouted: RG_B2A_TX_CTL: U10.49 -> R86.2  ()
+  unrouted: MCU_EN: U6.3 -> SW1.1  ()
+  unrouted: U10_LED2_1: R26.2 -> U10.92  ()
+  unrouted: +3V3: R88.2 -> R71.2  ()
+  unrouted: U11_LED1_1: R50.2 -> U11.106  ()
+  unrouted: RG_B2A_TXD1: U10.54 -> R83.2  ()
+  unrouted: P8A_POS: R52.1 -> C185.1  ()
+  unrouted: P3A_NEG: U20.31 -> D30.2  ()
+  unrouted: P6B_NEG: T6.24 -> D37.2  ()
+  unrouted: P6B_NEG: D37.2 -> C182.2  ()
+  unrouted: P9_LED_SP: D19.1 -> R62.1  ()
+  unrouted: P1B_POS: T1.21 -> D27.1  ()
+  unrouted: P1B_NEG: T1.24 -> D27.2  ()
+  unrouted: FAN_TACH_RAW: R113.1 -> R114.1  ()
+  unrouted: +3V3: R71.2 -> TP3.1  ()
+  unrouted: U10_LED2_0: R25.2 -> U10.91  ()
+  unrouted: U11_LED1_0: R49.2 -> U11.105  ()
+  unrouted: CHASSIS: C44.2 -> C35.2  ()
+  unrouted: +1V2A: TP5.1 -> R121.1  ()
+  unrouted: P4_LED_SP: D9.1 -> R32.1  ()
+  unrouted: +2V5: C199.1 -> R118.1  ()
+  unrouted: U11_LED5_1: R44.2 -> U11.103  ()
+  unrouted: P6A_POS: T6.18 -> D36.1  ()
+  unrouted: CHASSIS: C35.2 -> C26.2  ()
+  unrouted: P8B_NEG: T8.24 -> C186.2  ()
+  unrouted: SW_INT_N: U10.94 -> R89.1  ()
+  unrouted: +3V3: R127.1 -> C126.1  ()
+  unrouted: P8A_NEG: R51.1 -> C185.2  ()
+  unrouted: +2V5: FB2.1 -> TP4.1  ()
+  unrouted: CHASSIS: C71.2 -> C62.2  ()
+  unrouted: CHASSIS: C80.2 -> C71.2  ()
+  unrouted: CHASSIS: C26.2 -> C100.1  ()
+  unrouted: P5A_NEG: R33.1 -> Q9.5  ()
+  unrouted: P8_BS: C82.2 -> C89.1  ()
+  unrouted: P6B_POS: D37.1 -> C182.1  ()
+  unrouted: +3V3: U20.43 -> C125.1  ()
+  unrouted: P9_LED_LA: D18.1 -> R61.1  ()
+  unrouted: P7A_POS: T7.18 -> D38.1  ()
+  unrouted: RG_B2A_TX_CLK: U10.48 -> R87.2  ()
+  unrouted: P1A_NEG: T1.15 -> D26.2  ()
+  unrouted: U10_LED5_1: R14.2 -> U10.103  ()
+  unrouted: P1B_NEG: C170.2 -> R12.1  ()
+  unrouted: P7B_NEG: T7.24 -> C184.2  ()
+  unrouted: U11_LED2_0: R55.2 -> U11.91  ()
+  unrouted: P6B_POS: T6.21 -> F13.2  ()
+  unrouted: P6A_NEG: T6.15 -> D36.2  ()
+  unrouted: +12V: C188.1 -> C194.1  ()
+  unrouted: U11_XO: U11.125 -> C165.1  ()
+  unrouted: U11_XI: U11.126 -> Y2.1  ()
+  unrouted: PSE_RST_N: U20.44 -> R109.1  ()
+  unrouted: SPI_CS_A: U10.100 -> R72.1  ()
+  unrouted: P8B_POS: T8.21 -> F17.2  ()
+  unrouted: +3V3: R89.2 -> L2.2  ()
+  unrouted: P7B_POS: T7.21 -> C184.1  ()
+  unrouted: PSE_INT_N: U20.45 -> R108.1  ()
+  unrouted: I2C_SCL: U20.53 -> R106.1  ()
+  unrouted: P1A_NEG: C169.2 -> R9.1  ()
+  unrouted: CHASSIS: C53.2 -> C44.2  ()
+  unrouted: I2C_SDA: U20.54 -> R107.1  ()
+  unrouted: CHASSIS: C94.2 -> C99.2  ()
+  unrouted: P4B_NEG: Q8.5 -> R30.1  ()
+  unrouted: P2B_POS: T2.21 -> D29.1  ()
+  unrouted: PSE_OSS: U20.56 -> R110.1  ()
+  unrouted: P2B_NEG: T2.24 -> D29.2  ()
+  unrouted: U10_LED1_0: R19.2 -> U10.105  ()
+  unrouted: P7A_NEG: T7.15 -> D38.2  ()
+  unrouted: +3V3: C192.1 -> R127.1  ()
+  unrouted: P2B_NEG: C172.2 -> R18.1  ()
+  unrouted: P9_D_CT: T9.24 -> R60.1  ()
+  unrouted: SPI_CS_B: U11.100 -> R75.1  ()
+  unrouted: P1A_POS: T1.18 -> D26.1  ()
+  unrouted: +3V3: R127.1 -> R75.2  ()
+  unrouted: P10_D_CT: T10.24 -> R66.1  ()
+  unrouted: +3V3: D2.2 -> D3.2  ()
+  unrouted: +3V3: D4.2 -> D5.2  ()
+  unrouted: +3V3: D6.2 -> D7.2  ()
+  unrouted: +3V3: D8.2 -> D9.2  ()
+  unrouted: +3V3: D10.2 -> D11.2  ()
+  unrouted: +3V3: D12.2 -> D13.2  ()
+  unrouted: +3V3: D14.2 -> D15.2  ()
+  unrouted: +3V3: D16.2 -> D17.2  ()
+  unrouted: +3V3: D18.2 -> D19.2  ()
+  unrouted: +3V3: D20.2 -> D21.2  ()
+  unrouted: P10_A_CT: T10.15 -> R63.1  ()
+  unrouted: P1A_POS: D26.1 -> F2.2  ()
+  unrouted: P9_C_CT: T9.21 -> R59.1  ()
+  unrouted: P9_A_CT: T9.15 -> R57.1  ()
+  unrouted: P10_C_CT: T10.21 -> R65.1  ()
+  unrouted: P9_B_CT: T9.18 -> R58.1  ()
+  unrouted: P10_B_CT: T10.18 -> R64.1  ()
+  unrouted: P8A_NEG: D40.2 -> Q15.5  ()
+  unrouted: P4A_NEG: U20.38 -> D32.2  ()
+  unrouted: P3_TCT4: T3.10 -> C36.1  ()
+  unrouted: P9_TCT3: T9.7 -> C91.1  ()
+  unrouted: P10_TCT2: T10.4 -> C97.1  ()
+  unrouted: P10_TCT3: T10.7 -> C96.1  ()
+  unrouted: P5_TCT4: T5.10 -> C54.1  ()
+  unrouted: P9_TCT2: T9.4 -> C92.1  ()
+  unrouted: P7B_NEG: D39.2 -> R48.1  ()
+  unrouted: STATUS_LED: U6.7 -> R130.1  ()
+  unrouted: CHASSIS: J11.SH -> J11.SH  ()
+  unrouted: CHASSIS: J12.SH -> J12.SH  ()
+  unrouted: CHASSIS: J13.SH -> J13.SH  ()
+  unrouted: CHASSIS: J14.SH -> J14.SH  ()
+  unrouted: CHASSIS: J15.SH -> J15.SH  ()
+  unrouted: CHASSIS: J16.SH -> J16.SH  ()
+  unrouted: CHASSIS: J17.SH -> J17.SH  ()
+  unrouted: CHASSIS: J18.SH -> J18.SH  ()
+  unrouted: CHASSIS: J19.SH -> J19.SH  ()
+  unrouted: CHASSIS: J20.SH -> J20.SH  ()
+  unrouted: +3V3: R75.2 -> C213.1  ()
+  unrouted: U10_LED1_1: R20.2 -> U10.106  ()
+  unrouted: P6A_POS: D36.1 -> F12.2  ()
+  unrouted: SPI_MOSI: U10.98 -> R88.1  ()
+  unrouted: P1A_NEG: D26.2 -> C169.2  ()
+  unrouted: U10_RST_N: U10.96 -> D23.2  ()
+  unrouted: P2B_NEG: D29.2 -> C172.2  ()
+  unrouted: +3V3: C160.1 -> R88.2  ()
+  unrouted: +12V: L1.2 -> R120.1  ()
+  unrouted: P6A_NEG: C181.2 -> R39.1  ()
+  unrouted: +3V3: C212.1 -> U6.2  ()
+  unrouted: P6A_POS: F12.2 -> C181.1  ()
+  unrouted: P5B_NEG: R36.1 -> Q10.5  ()
+  unrouted: U10_RST_N: D22.2 -> R71.1  ()
+  unrouted: P3A_NEG: D30.2 -> C173.2  ()
+  unrouted: +1V2A: R121.1 -> L4.2  ()
+  unrouted: +12V: C200.1 -> C196.1  ()
+  unrouted: +3V3: R71.2 -> D22.1  ()
+  unrouted: +12V: C207.1 -> J2.2  ()
+  unrouted: +12V: R123.1 -> TP2.1  ()
+  unrouted: +3V3: U20.43 -> D24.1  ()
+  unrouted: +3V3: L2.2 -> R115.1  ()
+  unrouted: +3V3: C159.1 -> U20.43  ()
+  unrouted: P4A_SEN: U20.37 -> Q7.3  ()
+  unrouted: P5B_GATE: U21.7 -> Q10.4  ()
+  unrouted: +1V2A: U10.23 -> U10.45  ()
+  unrouted: P2A_NEG: Q3.5 -> U20.10  ()
+  unrouted: U10_XO: U10.125 -> Y1.3  ()
+  unrouted: P4A_GATE: U20.36 -> Q7.4  ()
+  unrouted: P8A_GATE: U21.36 -> Q15.4  ()
+  unrouted: +2V5B_AN: U11.22 -> U11.33  ()
+  unrouted: +2V5B_AN: U11.10 -> U11.22  ()
+  unrouted: +2V5A_AN: U10.122 -> U10.111  ()
+  unrouted: P3B_SEN: U20.34 -> Q6.3  ()
+  unrouted: U10_XI: U10.126 -> C131.1  ()
+  unrouted: +1V2A_AN: U10.3 -> U10.124  ()
+  unrouted: +1V2A: C108.1 -> C205.1  ()
+  unrouted: +2V5B_AN: U11.22 -> C155.1  ()
+  unrouted: +2V5A_AN: U10.122 -> C123.1  ()
+  unrouted: +2V5A_AN: U10.128 -> U10.122  ()
+  unrouted: +1V2B_AN: C142.1 -> C162.1  ()
+  unrouted: GND: C108.2 -> zone  ()
+  unrouted: GND: J3.A1 -> zone  ()
+  unrouted: GND: J3.A12 -> zone  ()
+  needs a narrower track or via: U10.3 (+1V2A_AN) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U10.23 (+1V2A) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U10.45 (+1V2A) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U10.111 (+2V5A_AN) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U10.122 (+2V5A_AN) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U10.124 (+1V2A_AN) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U11.10 (+2V5B_AN) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+  needs a narrower track or via: U11.22 (+2V5B_AN) is walled in on F.Cu for its class's 0.8 mm track and 0.6 mm via, but a track of 0.524 mm gets out (a neck-down).
+why open: 400 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 8 only for the class's track or via, 0 only by zone fills or copper graphics, 392 open through congestion (12.24 s)
+  next: 8 pins get out only with a track narrower than the net class's: check that the net is not in --no-neck-nets, or lower the class's track width
+  next: 392 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 78989208 expansions, 3842783 flood cells, 8192700 cell checks, 7972744 fixed-copper checks, 184175924 field cells in 306 fields, 844 commits, 0 rips
+differential pairs: 81 wanted, 0 coupled pair routes (re-coupling included), 0 work units
+  P1_A_LP / P1_A_LN: 18.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.997 mm, vias 0/0
+  P1_B_LP / P1_B_LN: 17.2 mm, coupled 6 %, gap 0.170 mm (target 0.168, net class), skew 2.902 mm, vias 0/0
+  P1_C_LP / P1_C_LN: 16.5 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.655 mm, vias 1/1
+  P1_D_LP / P1_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P1_D_P / P1_D_N: 51.6 mm, coupled 61 %, gap 0.181 mm (target 0.168, net class), skew 1.081 mm, vias 2/2
+  P1_C_P / P1_C_N: 53.9 mm, coupled 96 %, gap 0.156 mm (target 0.168, net class), skew 1.249 mm, vias 0/0
+  P1_B_P / P1_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P1_A_P / P1_A_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P2_A_LP / P2_A_LN: 17.9 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.989 mm, vias 0/0
+  P2_B_LP / P2_B_LN: 17.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 2.521 mm, vias 0/0
+  P2_C_LP / P2_C_LN: 16.5 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.672 mm, vias 1/1
+  P2_D_LP / P2_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P2_D_P / P2_D_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P2_C_P / P2_C_N: 18.5 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 36.977 mm, vias 0/0
+  P2_B_P / P2_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P2_A_P / P2_A_N: 19.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 39.586 mm, vias 0/0
+  P3_A_LP / P3_A_LN: 17.9 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.990 mm, vias 0/0
+  P3_B_LP / P3_B_LN: 17.4 mm, coupled 66 %, gap 0.155 mm (target 0.168, net class), skew 2.490 mm, vias 0/0
+  P3_C_LP / P3_C_LN: 16.7 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.519 mm, vias 1/1
+  P3_D_LP / P3_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P3_D_P / P3_D_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P3_C_P / P3_C_N: 31.1 mm, coupled 98 %, gap 0.163 mm (target 0.168, net class), skew 0.024 mm, vias 0/0
+  P3_B_P / P3_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P3_A_P / P3_A_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P4_A_LP / P4_A_LN: 18.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 2.395 mm, vias 0/0
+  P4_B_LP / P4_B_LN: 17.2 mm, coupled 7 %, gap 0.152 mm (target 0.168, net class), skew 2.883 mm, vias 0/0
+  P4_C_LP / P4_C_LN: 16.7 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.519 mm, vias 1/1
+  P4_D_LP / P4_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P4_D_P / P4_D_N: 38.8 mm, coupled 88 %, gap 0.153 mm (target 0.168, net class), skew 0.245 mm, vias 0/0
+  P4_C_P / P4_C_N: 38.2 mm, coupled 72 %, gap 0.161 mm (target 0.168, net class), skew 0.800 mm, vias 0/0
+  P4_B_P / P4_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P4_A_P / P4_A_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P5_A_LP / P5_A_LN: 18.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.997 mm, vias 0/0
+  P5_B_LP / P5_B_LN: 17.2 mm, coupled 6 %, gap 0.170 mm (target 0.168, net class), skew 2.902 mm, vias 0/0
+  P5_C_LP / P5_C_LN: 16.5 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.655 mm, vias 1/1
+  P5_D_LP / P5_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P5_D_P / P5_D_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P5_C_P / P5_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P5_B_P / P5_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P5_A_P / P5_A_N: 46.3 mm, coupled 7 %, gap 0.187 mm (target 0.168, net class), skew 2.497 mm, vias 2/2
+  P6_A_LP / P6_A_LN: 17.9 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.989 mm, vias 0/0
+  P6_B_LP / P6_B_LN: 17.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 2.521 mm, vias 0/0
+  P6_C_LP / P6_C_LN: 16.5 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.672 mm, vias 1/1
+  P6_D_LP / P6_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P6_D_P / P6_D_N: 52.8 mm, coupled 92 %, gap 0.159 mm (target 0.168, net class), skew 1.030 mm, vias 0/0
+  P6_C_P / P6_C_N: 53.2 mm, coupled 92 %, gap 0.160 mm (target 0.168, net class), skew 0.944 mm, vias 0/0
+  P6_B_P / P6_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P6_A_P / P6_A_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P7_A_LP / P7_A_LN: 17.9 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.990 mm, vias 0/0
+  P7_B_LP / P7_B_LN: 17.2 mm, coupled 7 %, gap 0.152 mm (target 0.168, net class), skew 2.870 mm, vias 0/0
+  P7_C_LP / P7_C_LN: 16.7 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.519 mm, vias 1/1
+  P7_D_LP / P7_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P7_D_P / P7_D_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P7_C_P / P7_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P7_B_P / P7_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P7_A_P / P7_A_N: 39.3 mm, coupled 64 %, gap 0.166 mm (target 0.168, net class), skew 0.570 mm, vias 2/2
+  P8_A_LP / P8_A_LN: 18.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 2.395 mm, vias 0/0
+  P8_B_LP / P8_B_LN: 17.2 mm, coupled 7 %, gap 0.152 mm (target 0.168, net class), skew 2.883 mm, vias 0/0
+  P8_C_LP / P8_C_LN: 16.7 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.519 mm, vias 1/1
+  P8_D_LP / P8_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P8_D_P / P8_D_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P8_C_P / P8_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P8_B_P / P8_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P8_A_P / P8_A_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P9_A_LP / P9_A_LN: 18.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.997 mm, vias 0/0
+  P9_B_LP / P9_B_LN: 17.4 mm, coupled 11 %, gap 0.170 mm (target 0.168, net class), skew 3.301 mm, vias 0/0
+  P9_C_LP / P9_C_LN: 16.5 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.655 mm, vias 1/1
+  P9_D_LP / P9_D_LN: 16.8 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.884 mm, vias 0/0
+  P9_D_P / P9_D_N: 19.2 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 38.351 mm, vias 0/0
+  P9_C_P / P9_C_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P9_B_P / P9_B_N: 18.1 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 36.121 mm, vias 0/0
+  P9_A_P / P9_A_N: 43.3 mm, coupled 68 %, gap 0.157 mm (target 0.168, net class), skew 0.176 mm, vias 2/2
+  P10_A_LP / P10_A_LN: 17.9 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.989 mm, vias 0/0
+  P10_B_LP / P10_B_LN: 17.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 2.521 mm, vias 0/0
+  P10_C_LP / P10_C_LN: 16.7 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 2.011 mm, vias 1/1
+  P10_D_LP / P10_D_LN: 17.3 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 1.239 mm, vias 0/0
+  P10_D_P / P10_D_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P10_C_P / P10_C_N: 53.5 mm, coupled 99 %, gap 0.170 mm (target 0.168, net class), skew 0.968 mm, vias 0/0
+  P10_B_P / P10_B_N: 0.0 mm, coupled 0 %, gap 0.000 mm (target 0.168, net class), skew 0.000 mm, vias 0/0
+  P10_A_P / P10_A_N: 47.9 mm, coupled 9 %, gap 0.167 mm (target 0.168, net class), skew 2.244 mm, vias 2/2
+  USB_DP / USB_DN: 62.5 mm, coupled 0 %, gap 0.216 mm (target 0.168, net class), skew 8.066 mm, vias 4/4
+warning: the time limit (20000 s) ended the search before the work budget did: the result depends on machine speed
+Command exited with non-zero status 3
+1178.14 s 4994244 KB

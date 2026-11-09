@@ -146,4 +146,57 @@ std::vector<DecapTie> decap_ties(const model::Board& b, const std::function<bool
   return out;
 }
 
+namespace {
+
+// Position of i in the bit-reversal permutation (van der Corput order): every prefix of the order is spread evenly
+// over the range, so k picks out of m land about m/k apart.
+std::uint32_t bit_reversed(std::uint32_t i, int bits) {
+  std::uint32_t r = 0;
+  for (int k = 0; k < bits; ++k) r |= ((i >> k) & 1U) << (bits - 1 - k);
+  return r;
+}
+
+}  // namespace
+
+int spread_unplaced_decaps(const model::Board& b, std::vector<DecapTie>& ties, const std::function<bool(int)>& usable,
+                           const std::function<bool(int)>& unplaced) {
+  const BoardIndex ix(b);
+  auto net_of = [&](const DecapTie& t) { return b.pads[static_cast<std::size_t>(t.cap_pad)].net; };
+  // Supply nets that carry an unplaced cap, ascending (deterministic, no hash order).
+  std::vector<model::NetId> nets;
+  for (const auto& t : ties)
+    if (unplaced(t.cap_fp)) nets.push_back(net_of(t));
+  std::sort(nets.begin(), nets.end());
+  nets.erase(std::unique(nets.begin(), nets.end()), nets.end());
+  int changed = 0;
+  for (const model::NetId n : nets) {
+    // Candidate pads: IC pads on the net, ascending pad index (footprint by footprint, round each package).
+    std::vector<int> cand;
+    for (int k : ix.net_pads(n)) {
+      const int f = b.pads[static_cast<std::size_t>(k)].footprint;
+      if (f >= 0 && usable(f) && ix.is_ic(f)) cand.push_back(k);
+    }
+    if (cand.empty()) continue;
+    int bits = 0;
+    while ((std::size_t{1} << bits) < cand.size()) ++bits;
+    std::vector<int> load(cand.size(), 0);  // caps tied to each candidate pad so far
+    std::vector<std::uint32_t> rank(cand.size());
+    for (std::size_t i = 0; i < cand.size(); ++i) rank[i] = bit_reversed(static_cast<std::uint32_t>(i), bits);
+    for (const auto& t : ties)  // the designer's caps hold their pads first
+      if (!unplaced(t.cap_fp) && net_of(t) == n)
+        if (const auto it = std::lower_bound(cand.begin(), cand.end(), t.ic_pad); it != cand.end() && *it == t.ic_pad)
+          ++load[static_cast<std::size_t>(it - cand.begin())];
+    for (auto& t : ties) {  // ascending capacitor footprint index (decap_ties' order)
+      if (!unplaced(t.cap_fp) || net_of(t) != n) continue;
+      std::size_t best = 0;
+      for (std::size_t i = 1; i < cand.size(); ++i)
+        if (load[i] < load[best] || (load[i] == load[best] && rank[i] < rank[best])) best = i;
+      ++load[best];
+      if (t.ic_pad != cand[best]) ++changed;
+      t.ic_pad = cand[best];
+    }
+  }
+  return changed;
+}
+
 }  // namespace tmk::crules

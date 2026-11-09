@@ -416,6 +416,63 @@ TEST_CASE("decoupling capacitors are tied to an IC supply pin, objective only", 
   CHECK(count_crossings(on, a) == count_crossings(off, b));
 }
 
+TEST_CASE("D171: decoupling ties spread only for unplaced caps; the standoff target is outside the IC", "[place][fixture]") {
+  const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/ice40_stm32_fsmc_test_pcb_fsmc_ice40/unrouted.kicad_pcb";
+  if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);
+  const auto lb = io::read_board_file(path);
+  const auto rules = io::read_design_rules(path);
+  // (cap part, IC part, IC-side offset) of every decoupling tie.
+  auto ties = [](const Problem& p) {
+    std::vector<std::tuple<int, int, Point>> v;
+    for (const auto& n : p.nets)
+      if (n.affinity && n.name.starts_with("~decap ")) {
+        const Pin& a = p.pins[z(n.pins[0])];
+        const Pin& c = p.pins[z(n.pins[1])];
+        v.emplace_back(a.part, c.part, c.off[0]);
+      }
+    return v;
+  };
+  ExtractOptions on, off;
+  CHECK_FALSE(off.decap_spread);  // off by default
+  on.decap_spread = true;
+  on.decap_standoff = 0;
+  // A real placement: the caps are on the board, so nothing changes.
+  CHECK(ties(extract(lb.board, rules, path, on)) == ties(extract(lb.board, rules, path, off)));
+  // From scratch: the ties are spread, over more distinct IC pins than nearest-pin gives.
+  on.scratch = off.scratch = true;
+  const Problem ps = extract(lb.board, rules, path, on), pn = extract(lb.board, rules, path, off);
+  const auto ts = ties(ps), tn = ties(pn);
+  REQUIRE(ts.size() == tn.size());
+  REQUIRE(!ts.empty());
+  auto distinct = [](const std::vector<std::tuple<int, int, Point>>& v) {
+    std::set<std::pair<int, std::pair<Coord, Coord>>> s;
+    for (const auto& [c, ic, o] : v) s.insert({ic, {o.x, o.y}});
+    return s.size();
+  };
+  CHECK(distinct(ts) >= distinct(tn));
+  // With a standoff, a tie to an IC of 48+ pads ends that far outside the IC's body on one axis, inside its span on the other.
+  ExtractOptions so = on;
+  so.decap_standoff = 2 * MM;
+  // Off (the default) is the old behaviour whatever the standoff.
+  ExtractOptions off_so = off;
+  off_so.decap_standoff = 2 * MM;
+  CHECK(ties(extract(lb.board, rules, path, off_so)) == tn);
+  const Problem pso = extract(lb.board, rules, path, so);
+  int big = 0;
+  for (const auto& [c, ic, o] : ties(pso)) {
+    const Part& pt = pso.parts[z(ic)];
+    if (static_cast<int>(lb.board.footprints[z(pt.fp)].pads.size()) < kDecapStandoffPins) continue;
+    ++big;
+    const Box& bx = pt.geom[0].body;
+    const bool on_x = o.x == bx.x1 + 2 * MM || o.x == bx.x0 - 2 * MM;
+    const bool on_y = o.y == bx.y1 + 2 * MM || o.y == bx.y0 - 2 * MM;
+    CHECK(on_x != on_y);
+    if (on_x) CHECK((o.y >= bx.y0 && o.y <= bx.y1));
+    if (on_y) CHECK((o.x >= bx.x0 && o.x <= bx.x1));
+  }
+  CHECK(big > 0);
+}
+
 TEST_CASE("component-rule proximity pseudo-nets are objective only and skip D25-tied parts", "[place][fixture][crules]") {
   const std::string path = std::string(TM_SOURCE_DIR) + "/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/1Bitsy_1bitsy/unrouted.kicad_pcb";
   if (!std::filesystem::exists(path)) SKIP("fixture missing: " + path);

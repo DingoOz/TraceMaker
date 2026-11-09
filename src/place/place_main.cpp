@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker-place: component placement for a .kicad_pcb (design doc 04).
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
@@ -305,12 +306,13 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
 struct LoopCli {
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false, no_fallback = false, no_decap_affinity = false, scratch = false;
+  bool move_connectors = false, no_fallback = false, no_decap_affinity = false, decap_spread = false, scratch = false;
   bool repair_input = false;            // --repair-input (D75): compare against the input's minimal repair
   std::string component_rules = "soft";  // --component-rules (doc 15; soft by default, D52)
   std::string rules_override;           // --rules-override (doc 15 §6.3)
   bool edge_attraction = false;         // --edge-attraction (doc 15 CONN-01)
   int decap_weight = place::kSignalWeight;
+  double decap_standoff_mm = 2.0;
   int crules_weight_pct = 100;
   bool crules_two_stage = true;
   double clearance_mm = -1;
@@ -369,6 +371,8 @@ int run_loop_mode(const LoopCli& c) {
   eo.fix_edge_connectors = !c.move_connectors;
   eo.scratch = c.scratch;
   eo.decap_affinity = !c.no_decap_affinity;
+  eo.decap_spread = c.decap_spread;
+  eo.decap_standoff = static_cast<Coord>(std::llround(c.decap_standoff_mm * 1e6));
   eo.decap_weight = c.decap_weight;
   eo.crules_weight_pct = c.crules_weight_pct;
   eo.crules_two_stage = c.crules_two_stage;
@@ -619,10 +623,11 @@ int main(int argc, char** argv) {
   CLI::App app{"TraceMaker placer: quadratic + SimPL global placement, legalisation and annealing"};
   std::string in, out, json_path;
   place::PlaceOptions o;
-  bool move_connectors = false, no_decap_affinity = false, scratch = false, repair_input = false;
+  bool move_connectors = false, no_decap_affinity = false, decap_spread = false, scratch = false, repair_input = false;
   std::string component_rules = "soft", rules_override;  // D52
   bool edge_attraction = false;
   int decap_weight = place::kSignalWeight;
+  double decap_standoff_mm = 2.0;
   int crules_weight_pct = 100;
   bool crules_two_stage = true;
   double clearance_mm = -1;
@@ -644,6 +649,13 @@ int main(int argc, char** argv) {
                                                "replaced, as the baseline and fallback, by its minimal repair (only the conflicting parts moved "
                                                "to the nearest legal spot). Off by default: the placement model is stricter than KiCad's DRC");
   app.add_flag("--no-decap-affinity", no_decap_affinity, "Do not tie decoupling capacitors to their IC's supply pins");
+  app.add_flag("--decap-spread", decap_spread,
+               "Decoupling capacitors whose input position is a pile (--scratch, or beside the board) are spread over their IC's "
+               "supply pins instead of tied to the pin nearest the pile (D171; off by default)");
+  app.add_option("--decap-standoff-mm", decap_standoff_mm,
+                 "With --decap-spread: a capacitor tied to an IC with 48 or more pads is pulled to a point this far outside the IC's "
+                 "body, straight out from its pin, keeping the band next to the pin rows for escapes (0 = onto the pin; default 2)")
+      ->check(CLI::Range(0.0, 20.0));
   app.add_option("--component-rules", component_rules,
                  "Component-aware layout rules (doc 15): off, report (detect and list only), soft (proximity pseudo-nets: crystal, ESD, regulator caps, generalised decoupling); default soft (D52)")
       ->check(CLI::IsMember({"off", "report", "soft", "on"}));
@@ -735,6 +747,8 @@ int main(int argc, char** argv) {
     lc.scratch = scratch;
     lc.repair_input = repair_input;
     lc.no_decap_affinity = no_decap_affinity;
+    lc.decap_spread = decap_spread;
+    lc.decap_standoff_mm = decap_standoff_mm;
     lc.component_rules = component_rules;
     lc.rules_override = rules_override;
     lc.edge_attraction = edge_attraction;
@@ -769,7 +783,7 @@ int main(int argc, char** argv) {
                         " --threads " + std::to_string(o.threads) + " --effort " + std::to_string(o.effort) + " --route-check " +
                         std::to_string(route_check) + " --route-threads " + std::to_string(route_threads) + " --json '" + c.json + "'" +
                         (move_connectors ? " --move-connectors" : "") + (scratch ? " --scratch" : "") +
-                        (no_decap_affinity ? " --no-decap-affinity" : "") + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
+                        (no_decap_affinity ? " --no-decap-affinity" : "") + (decap_spread ? " --decap-spread" : "") + " --decap-standoff-mm " + std::to_string(decap_standoff_mm) + " --component-rules " + component_rules + " --decap-weight " + std::to_string(decap_weight) +
                         " --crules-weight " + std::to_string(crules_weight_pct) + (crules_two_stage ? "" : " --no-crules-two-stage") + (rules_override.empty() ? "" : " --rules-override '" + rules_override + "'") + (edge_attraction ? " --edge-attraction" : "") +
                         (o.flip ? " --flip --flip-via-mm " + std::to_string(o.via_mm) + " --flip-rate " + std::to_string(o.flip_rate) + (keep_side.empty() ? "" : " --keep-side '" + keep_side + "'") : "") +
                         " > /dev/null 2>&1";
@@ -815,6 +829,8 @@ int main(int argc, char** argv) {
     eo.fix_edge_connectors = !move_connectors;
     eo.scratch = scratch;
     eo.decap_affinity = !no_decap_affinity;
+    eo.decap_spread = decap_spread;
+    eo.decap_standoff = static_cast<Coord>(std::llround(decap_standoff_mm * 1e6));
     eo.decap_weight = decap_weight;
     eo.crules_weight_pct = crules_weight_pct;
     eo.crules_two_stage = crules_two_stage;

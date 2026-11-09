@@ -1,0 +1,38 @@
+  component rules (soft): buck=5 connector_general=13 crystal=2 esd_tvs=18 ethernet=12 fuse=17 ic_decoupling=99 led=21 mounting_hole=6 power_path=1 rf_line=16 rf_module=1 test_point=8 usb2=1 usb3_typec=1; 115 proximity pseudo-net(s)
+poe_gbe_switch_10p-1-generated.kicad_pcb: 484 parts (314 movable), 563 nets, 1888 pins, mode refine
+  note: two-stage component rules: 107 decoupling capacitor(s) and IC(s) locked after stage 1, then refined
+  note: courtyard clearance 0.250000 mm (default 0.250000 mm)
+  note: 80 decoupling tie(s) of unplaced capacitors spread over their IC's supply pins (D171)
+  note: 99 decoupling capacitor(s) tied to the nearest supply pin of their IC
+  note: component rules: 16 proximity pseudo-net(s), 99 skipped (part already tied as a decoupling capacitor)
+  HPWL            before    16949.2 mm   after    16761.2 mm
+  weighted HPWL   before    15557.2      after    15374.7   (signal x1, power x0.1)
+  lower bound L4     13048.8 (any rotation)     13262.0 (input rotations)  gap after/LB 1.178
+  crossings       before        946      after        938
+  conflicts       before          0      after          0   new 0 (outside board: 0 -> 0, new 0; fixed-only pairs 9)
+  legalisation: 0 placed, 0 failed, mean displacement 0.00 mm, max 0.00 mm
+  annealing: best run 5, 40192000 moves, 6956060 accepted
+  421 footprints moved, 92.0 s, legal -> after-full.kicad_pcb
+	Command being timed: "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i55/new/tracemaker-place poe_gbe_switch_10p-1-generated.kicad_pcb -o after-full.kicad_pcb --mode full --scratch --seed 1 --threads 8 --json after-full.json"
+	User time (seconds): 1443.25
+	System time (seconds): 0.65
+	Percent of CPU this job got: 695%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:27.65
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 199460
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 124271
+	Voluntary context switches: 40
+	Involuntary context switches: 37583
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,15 @@
+== poe_gbe_switch_10p-1-generated
+U10: 29 caps  L 0  R 29  T 0  B 0  (supply pins L 9 R 7 T 3 B 8)  top-side 29 bottom-side 0  median 248.25 mm  max 416.41 mm
+U11: 29 caps  L 0  R 29  T 0  B 0  (supply pins L 9 R 7 T 3 B 8)  top-side 29 bottom-side 0  median 245.13 mm  max 306.31 mm
+== before-full
+U10: 29 caps  L 1  R 25  T 1  B 2  (supply pins L 9 R 7 T 3 B 8)  top-side 29 bottom-side 0  median 2.99 mm  max 6.41 mm
+U11: 29 caps  L 4  R 22  T 1  B 2  (supply pins L 9 R 7 T 3 B 8)  top-side 29 bottom-side 0  median 2.87 mm  max 5.68 mm
+== after-full
+U10: 33 caps  L 12  R 7  T 5  B 9  (supply pins L 9 R 7 T 3 B 8)  top-side 33 bottom-side 0  median 1.7 mm  max 11.51 mm
+U11: 33 caps  L 9  R 9  T 5  B 10  (supply pins L 9 R 7 T 3 B 8)  top-side 33 bottom-side 0  median 1.7 mm  max 4.51 mm
+== so2-full
+U10: 33 caps  L 9  R 9  T 4  B 11  (supply pins L 9 R 7 T 3 B 8)  top-side 33 bottom-side 0  median 2.99 mm  max 4.88 mm
+U11: 33 caps  L 9  R 8  T 5  B 11  (supply pins L 9 R 7 T 3 B 8)  top-side 33 bottom-side 0  median 2.99 mm  max 4.92 mm
+== poe_gbe_switch_10p-2-placed
+U10: 29 caps  L 2  R 23  T 2  B 2  (supply pins L 9 R 7 T 3 B 8)  top-side 29 bottom-side 0  median 3.3 mm  max 6.47 mm
+U11: 29 caps  L 3  R 24  T 1  B 1  (supply pins L 9 R 7 T 3 B 8)  top-side 29 bottom-side 0  median 3.1 mm  max 6.67 mm
