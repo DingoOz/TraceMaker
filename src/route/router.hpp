@@ -106,6 +106,12 @@ struct RouterOptions {
   long endgame_cap = 400'000;    // expansion cap of each end-game search
   double layer_dir_pen = -1;    // negative = automatic (-1: 0.3; otherwise the strength is the absolute value) on breakout boards only, else 0; extra cost (pitches per orthogonal step) against a layer's preferred direction: even layers horizontal, odd vertical (doc 16)
   bool layer_dir_swap = false;  // preferred directions the other way round: even layers vertical, odd horizontal
+  // Per-layer preferred directions by name (--layer-dir, issue #66, D174): route::LayerDir per copper index. Empty = the layer
+  // parity above; given, it replaces the parity (and layer_dir_swap), layers it leaves at none have no preferred direction, and a
+  // negative layer_dir_pen means that strength on any board (-1: 0.3), not only on breakout boards.
+  std::vector<std::int8_t> layer_dir;
+  // Pitches per 45-degree lattice step, per copper index (--layer-diag-pen, D174); empty or 0 = no penalty. Independent of layer_dir.
+  std::vector<double> layer_diag_pen;
   double package_pen = -1;      // -1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
   // Strict searches from the crowded end (doc 05 §55, M20 C5): a strict search starts from the end with more routed copper of other nets
   // and more pads of other nets of its own part near it. A boxed-in source is proved in a few expansions; a boxed-in target only after the

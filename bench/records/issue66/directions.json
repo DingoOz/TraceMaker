@@ -1,0 +1,162 @@
+{
+ "main_default.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 152.374,
+   "horizontal": 25.0,
+   "vertical": 26.4,
+   "diag45": 42.2,
+   "other": 6.3
+  },
+  "F.Cu": {
+   "length_mm": 283.489,
+   "horizontal": 22.0,
+   "vertical": 30.1,
+   "diag45": 31.4,
+   "other": 16.5
+  }
+ },
+ "default.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 152.374,
+   "horizontal": 25.0,
+   "vertical": 26.4,
+   "diag45": 42.2,
+   "other": 6.3
+  },
+  "F.Cu": {
+   "length_mm": 283.489,
+   "horizontal": 22.0,
+   "vertical": 30.1,
+   "diag45": 31.4,
+   "other": 16.5
+  }
+ },
+ "main_swap.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 206.564,
+   "horizontal": 41.4,
+   "vertical": 4.4,
+   "diag45": 45.7,
+   "other": 8.5
+  },
+  "F.Cu": {
+   "length_mm": 333.759,
+   "horizontal": 4.3,
+   "vertical": 42.5,
+   "diag45": 33.0,
+   "other": 20.2
+  }
+ },
+ "swap.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 209.368,
+   "horizontal": 40.9,
+   "vertical": 1.4,
+   "diag45": 49.6,
+   "other": 8.1
+  },
+  "F.Cu": {
+   "length_mm": 338.348,
+   "horizontal": 0.6,
+   "vertical": 42.0,
+   "diag45": 36.8,
+   "other": 20.6
+  }
+ },
+ "dir.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 209.368,
+   "horizontal": 40.9,
+   "vertical": 1.4,
+   "diag45": 49.6,
+   "other": 8.1
+  },
+  "F.Cu": {
+   "length_mm": 338.348,
+   "horizontal": 0.6,
+   "vertical": 42.0,
+   "diag45": 36.8,
+   "other": 20.6
+  }
+ },
+ "dirdiag03.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 199.99,
+   "horizontal": 48.1,
+   "vertical": 1.0,
+   "diag45": 43.9,
+   "other": 7.0
+  },
+  "F.Cu": {
+   "length_mm": 320.999,
+   "horizontal": 0.6,
+   "vertical": 38.4,
+   "diag45": 38.3,
+   "other": 22.7
+  }
+ },
+ "dirdiag06.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 228.04,
+   "horizontal": 52.1,
+   "vertical": 9.9,
+   "diag45": 35.2,
+   "other": 2.7
+  },
+  "F.Cu": {
+   "length_mm": 303.562,
+   "horizontal": 8.6,
+   "vertical": 57.1,
+   "diag45": 27.4,
+   "other": 7.0
+  }
+ },
+ "dirdiag10.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 218.724,
+   "horizontal": 64.8,
+   "vertical": 10.3,
+   "diag45": 22.9,
+   "other": 2.0
+  },
+  "F.Cu": {
+   "length_mm": 322.585,
+   "horizontal": 8.1,
+   "vertical": 59.1,
+   "diag45": 25.5,
+   "other": 7.2
+  }
+ },
+ "dir03.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 235.212,
+   "horizontal": 31.2,
+   "vertical": 28.7,
+   "diag45": 38.1,
+   "other": 2.0
+  },
+  "F.Cu": {
+   "length_mm": 283.0,
+   "horizontal": 18.0,
+   "vertical": 35.9,
+   "diag45": 35.6,
+   "other": 10.6
+  }
+ },
+ "dir03diag03.kicad_pcb": {
+  "B.Cu": {
+   "length_mm": 199.385,
+   "horizontal": 36.1,
+   "vertical": 19.8,
+   "diag45": 42.0,
+   "other": 2.1
+  },
+  "F.Cu": {
+   "length_mm": 302.369,
+   "horizontal": 15.3,
+   "vertical": 38.8,
+   "diag45": 35.3,
+   "other": 10.6
+  }
+ }
+}

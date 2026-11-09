@@ -216,3 +216,4 @@
 {"ts": "2026-10-31T01:25:59+00:00", "kind": "note", "text": "Step 6 --ramp-vias-fixed: srj20 six +14, 33 boards -3 and 3 clean vs 5; not adopted, hidden option"}
 {"ts": "2026-10-31T03:16:56+00:00", "kind": "note", "text": "Live page /live (D165): every tracemaker process and bench run, once a second, on by default"}
 {"ts": "2026-11-03T09:31:09+00:00", "kind": "note", "text": "Issue #54 (D169): obstacle caches keyed by class values, --class-cache-mb bound; quick tier 30/30 byte-identical"}
+{"ts": "2026-11-08T22:17:29+00:00", "kind": "decision", "text": "D174 (issue #66): --layer-dir by layer name and --layer-diag-pen; default off, byte-identical; relaymini 45-degree share 37/50 % -> 26/23 % with diag pen 1.0"}
