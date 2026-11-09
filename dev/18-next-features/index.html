@@ -2317,6 +2317,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#19-a3-done-the-kookabus-boards-2026-11-08-m21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19. A3 done: the Kookabus boards (2026-11-08, M21)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2677,6 +2688,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#19-a3-done-the-kookabus-boards-2026-11-08-m21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19. A3 done: the Kookabus boards (2026-11-08, M21)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2713,6 +2735,7 @@
 not an independent second corpus; and the paper was read in full (§1). The rest of this note is as written on 2026-10-14.</strong>
 <strong>Update (2026-10-24): D3, the run report, was built (§9, D136).</strong>
 <strong>Update (2026-10-27): C3, pours and the layer-count advisor, was built (§10, D138).</strong>
+<strong>Update (2026-11-08): A3, the Kookabus boards, is a private fixture set (§19, D176); §7's open question is answered.</strong>
 <strong>Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.</strong> The
 candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: <strong>[R]</strong> checked in this repository (file or doc named), <strong>[W]</strong> from a web source (vendor
 claims are marked as self-reported), <strong>[A]</strong> my estimate or assumption.</p>
@@ -3362,6 +3385,18 @@ against 787), so a better rule for the heads was not pursued.</p>
 <p>State of M22: items 1-3 and 5-8 are built and off by default, and item 4 is partly built (<code>--plane-informed</code>). The best arm,
 <code>--via-shove --escape-all</code>, cuts open connections by 3.5 % against the 15 % gate. Every repair so far lands within a few connections
 of the base given about 10 % more work, so more search per second is the stronger lever.</p>
+<h2 id="19-a3-done-the-kookabus-boards-2026-11-08-m21">19. A3 done: the Kookabus boards (2026-11-08, M21)<a class="headerlink" href="#19-a3-done-the-kookabus-boards-2026-11-08-m21" title="Permanent link">&para;</a></h2>
+<p>The Kookabus files are in the private repository <code>DingoOz/kookabus</code> (no licence), so §7's "may they go in the repository" is answered with
+a fetch script, not a copy: <code>scripts/fetch_fixtures.sh kookabus</code> clones it at a pinned commit into <code>bench/data/kookabus</code> and
+<code>bench/sets/kookabus.txt</code> names the six boards with a layout (decision <a href="../decisions/D176/">D176</a>, records <code>bench/records/m21-a3</code>). They are
+2-layer boards (one 4-layer: the motor driver Kookabus-06) for I2C, power, motor and LoRa, with custom clearance rules and <strong>no tuning
+profile, length, skew, delay or impedance rule</strong>, as §8 feared: B1 and B2 have nothing to act on here, and M21's gate is met only
+vacuously. The SI audit finds Kelvin current-sense pairs and one crystal; it also marked a charge-only USB-C socket's unused D+/D- pins
+(single-pad nets) as critical, which D176 fixes (a critical net needs two pads).</p>
+<p>At 3 M work with <code>--refill</code>, 1 of 6 boards is clean (Kookabus-03) and completion is 85-100 %, with no routing error added, against six
+DRC-clean designer layouts; <code>--si-rules</code> changes almost nothing and <code>--diff-pairs</code> costs completion on three boards (Kookabus-06's sense
+pairs coupled 95.9 %, the designer's 42.6 %). What these boards need is completion (M22), not high speed. The one real high-speed Kookabus
+design, the CSI-2 vision board Kookabus-05, has no layout yet; it is the board to revisit B1/B2 on.</p>
 
 
 

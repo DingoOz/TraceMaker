@@ -2846,6 +2846,12 @@ gates of §5.</p>
 <td><code>bench/prepare_demos.py --set planes</code>, then <code>--fixtures build/demos --set planes --work 3000000 --refill</code>, once plain and once with <code>--route-args=--soft-zones</code></td>
 <td>changes to zones, planes and plane targets</td>
 </tr>
+<tr>
+<td><code>kookabus</code></td>
+<td>the 6 Kookabus boards with layouts (KiCad 10, custom clearance rules), routing stripped; <strong>private repository</strong>, never committed (D176)</td>
+<td><code>scripts/fetch_fixtures.sh kookabus</code> (needs read access to <code>DingoOz/kookabus</code>), <code>bench/prepare_demos.py --out build/kookabus --set kookabus</code>, then <code>--fixtures build/kookabus --set kookabus --work 3000000 --refill --route-args=--soft-zones</code></td>
+<td>changes for the Kookabus boards, <code>--si-rules</code>, custom rules; not runnable in CI</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Comparing.</strong> <code>bench/compare_runs.py BEFORE AFTER [--expect-identical]</code> lists every board whose routed output
