@@ -2497,6 +2497,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#73-preferred-directions-per-layer-by-name-and-a-45-degree-penalty-issue-66-2026-11-08-d174" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4049,6 +4060,17 @@
     <span class="md-ellipsis">
       
         72. Obstacle caches: one per set of class values, bounded in memory (2026-11-03, D169)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#73-preferred-directions-per-layer-by-name-and-a-45-degree-penalty-issue-66-2026-11-08-d174" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)
       
     </span>
   </a>
@@ -7338,7 +7360,8 @@ hidden options are.</p>
 <li><strong><code>--layer-dir-pen P</code>, <code>--layer-dir-swap</code></strong> (D98). Orthogonal steps against the layer's preferred direction (even layers horizontal, odd
   vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with <code>--package-pen 3</code>) on a breakout board: two copper layers and at least 70 %
   of the connections with an end on a ball-grid-like package (at least 30 same-layer SMD pads on at least 5 × 5 distinct positions, 40 % of the grid filled). Negative values mean "automatic at that strength" (the seeded
-  portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.</li>
+  portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.
+  Directions by layer name and a penalty for 45-degree steps: <code>--layer-dir</code>, <code>--layer-diag-pen</code> (§73, D174).</li>
 <li><strong>Portfolio extras</strong> (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.</li>
 <li><strong>More hidden options, measured and not useful:</strong> <code>--polish F</code> (reserve a budget share for rebuilding the open connections of the best state),
   <code>--layer-assign-angle</code>, <code>--heuristic-weight</code> above 1 (weighted A*: 4 % clean at 1.5), <code>--lns-open</code>.</li>
@@ -9531,6 +9554,82 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 </table>
 <p>The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.</p>
+<h2 id="73-preferred-directions-per-layer-by-name-and-a-45-degree-penalty-issue-66-2026-11-08-d174">73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)<a class="headerlink" href="#73-preferred-directions-per-layer-by-name-and-a-45-degree-penalty-issue-66-2026-11-08-d174" title="Permanent link">&para;</a></h2>
+<p><strong>Why.</strong> <code>--layer-dir-pen</code> / <code>--layer-dir-swap</code> (§40, D98) give even layers one direction and odd layers the other, so a two-layer board
+has two choices. Hand-routed boards use other conventions (quanln's study in the issue: of 13 boards, F.Cu mostly horizontal on 6,
+vertical on 1, mixed on 7). And a 45-degree step costs nothing against either direction, so the penalty turns orthogonal runs into
+diagonal zigzags: on relaymini the 45-degree share grew from 31 to 37 % on F.Cu and from 42 to 50 % on B.Cu. Design from quanln
+(GitHub @quanln), who proposed both options.</p>
+<p><strong>What it does</strong> (<code>route/layer_limits.cpp</code>, <code>layer_pref</code> and the planar moves in <code>route/router.cpp</code>).</p>
+<ul>
+<li><code>--layer-dir F.Cu=v,B.Cu=h</code> (<code>h</code>, <code>v</code> or <code>none</code> per layer; names as for <code>--layer-cost</code>, §29) replaces the parity: named layers get
+  that direction, layers not named get none, <code>--layer-dir-swap</code> has no effect (a warning says so). Its strength is <code>--layer-dir-pen</code>;
+  if that is not given, 0.3 pitches per step on any board, not only on breakout boards.</li>
+<li><code>--layer-diag-pen P</code> or <code>--layer-diag-pen F.Cu=P,...</code> (0 to 100; a bare value is every layer's, named layers override it): every
+  45-degree lattice step on that layer costs P pitches more. Independent of the directions.</li>
+<li>Both are integer costs added in the search's planar move, like the parity penalty (rule 2). The cost-to-go fields (CPU and GPU)
+  do not include them, so they stay lower bounds and nothing on the GPU path changes; no new GPU code.</li>
+<li><strong>Smoothing keeps them.</strong> Path smoothing (pull tight, in the clean-up after the search) replaced runs by a 45-degree segment and a straight one whatever
+  they cost, which undid the diagonal penalty on the test board. With <code>--layer-dir</code>, an explicit positive <code>--layer-dir-pen</code> or a
+  diagonal penalty on the layer, a shortcut is taken only if its direction cost is not above the run's, and the two orthogonal corners
+  are candidates too, cheapest first. The automatic strengths (D98's breakout boards, the seeded portfolio variants: negative values)
+  keep the plain smoothing, so default runs do not change.</li>
+<li>An unknown layer name is a warning and its entry is ignored (a convention may name inner layers a two-layer board does not have);
+  a malformed entry, a bad value or a layer given twice stops the run before the board is read.</li>
+</ul>
+<p><strong>Measured</strong> on relaymini (<code>bench/records/issue66/</code>, 3 M work, two variants; F.Cu asked vertical, B.Cu horizontal, strength 1.0):</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th style="text-align: right;">F.Cu 45°</th>
+<th style="text-align: right;">B.Cu 45°</th>
+<th style="text-align: right;">F.Cu against its direction</th>
+<th style="text-align: right;">B.Cu against</th>
+<th style="text-align: right;">Routed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Default</td>
+<td style="text-align: right;">31.4 %</td>
+<td style="text-align: right;">42.2 %</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">60/72</td>
+</tr>
+<tr>
+<td><code>--layer-dir F.Cu=v,B.Cu=h --layer-dir-pen 1.0</code></td>
+<td style="text-align: right;">36.8 %</td>
+<td style="text-align: right;">49.6 %</td>
+<td style="text-align: right;">0.6 %</td>
+<td style="text-align: right;">1.4 %</td>
+<td style="text-align: right;">61/72</td>
+</tr>
+<tr>
+<td>... <code>--layer-diag-pen 0.6</code></td>
+<td style="text-align: right;">27.4 %</td>
+<td style="text-align: right;">35.2 %</td>
+<td style="text-align: right;">8.6 %</td>
+<td style="text-align: right;">9.9 %</td>
+<td style="text-align: right;">63/72</td>
+</tr>
+<tr>
+<td>... <code>--layer-diag-pen 1.0</code></td>
+<td style="text-align: right;">25.5 %</td>
+<td style="text-align: right;">22.9 %</td>
+<td style="text-align: right;">8.1 %</td>
+<td style="text-align: right;">10.3 %</td>
+<td style="text-align: right;">62/72</td>
+</tr>
+</tbody>
+</table>
+<p>With both options unset the output is byte-identical to main (relaymini, and srj20 sample001 where D98's automatic directions are on).
+<code>--layer-dir</code> naming the parity's directions gives the parity's output exactly.</p>
+<p><strong>Limits.</strong> One public board measured: whether a convention costs completion on other boards is not known (doc 16: the parity penalty
+cost the quick tier 89.2 → 86.8 %), so both stay off by default. The coupled-pair search (§24) and the advice file (doc 17) do not use
+them: advice runs as extra variants next to the plain ones, and a layer convention is meant for every variant. Track length grows (up
+to 25 % at strength 1.0 on relaymini).</p>
 
 
 

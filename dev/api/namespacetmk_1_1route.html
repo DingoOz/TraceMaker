@@ -136,6 +136,8 @@ Classes</h2></td></tr>
 <tr class="memitem:GlobalResult" id="r_GlobalResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1GlobalResult.html">GlobalResult</a></td></tr>
 <tr class="memitem:HeatGrid" id="r_HeatGrid"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1route_1_1HeatGrid.html">HeatGrid</a></td></tr>
 <tr class="memitem:LayerLimits" id="r_LayerLimits"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1LayerLimits.html">LayerLimits</a></td></tr>
+<tr class="memitem:LayerDirections" id="r_LayerDirections"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1LayerDirections.html">LayerDirections</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-layer directions and diagonal penalties (<span class="tt">--layer-dir</span>, <span class="tt">--layer-diag-pen</span>; doc 05 §29, D174) resolved against a board.  <a href="structtmk_1_1route_1_1LayerDirections.html#details">More...</a><br /></td></tr>
 <tr class="memitem:LazyCodes" id="r_LazyCodes"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1route_1_1LazyCodes.html">LazyCodes</a></td></tr>
 <tr class="memitem:LegalizeOptions" id="r_LegalizeOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1LegalizeOptions.html">LegalizeOptions</a></td></tr>
 <tr class="memitem:LegalizeResult" id="r_LegalizeResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1LegalizeResult.html">LegalizeResult</a></td></tr>
@@ -158,6 +160,11 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:a1aaa3cf550fd338a3c366e62a15e1c2f" id="r_a1aaa3cf550fd338a3c366e62a15e1c2f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1aaa3cf550fd338a3c366e62a15e1c2f">LayerDir</a> : std::int8_t { <a class="el" href="#a1aaa3cf550fd338a3c366e62a15e1c2fa8bea32109ab8b2d594807cc94c939e31">kLayerDirNone</a> = 0
+, <a class="el" href="#a1aaa3cf550fd338a3c366e62a15e1c2faf4bfd3d0d3cb6ef083453a1d94eda6ac">kLayerDirHorizontal</a> = 1
+, <a class="el" href="#a1aaa3cf550fd338a3c366e62a15e1c2fa52c633e64b1ed3a54e5b7626ccf2d8d2">kLayerDirVertical</a> = 2
+ }</td></tr>
+<tr class="memdesc:a1aaa3cf550fd338a3c366e62a15e1c2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preferred track direction of a copper layer (issue #66, D174): orthogonal steps across it cost &ndash;layer-dir-pen.  <a href="#a1aaa3cf550fd338a3c366e62a15e1c2f">More...</a><br /></td></tr>
 <tr class="memitem:aa07b2911aa3920d0a70125836a15e71c" id="r_aa07b2911aa3920d0a70125836a15e71c"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa07b2911aa3920d0a70125836a15e71c">WorkPhase</a> { <a class="el" href="#aa07b2911aa3920d0a70125836a15e71caad2376beebecdcf7846ba973fa1a005b">Setup</a>
 , <a class="el" href="#aa07b2911aa3920d0a70125836a15e71ca95a9ac37d75aaac65eea1b5818262908">FirstPass</a>
 , <a class="el" href="#aa07b2911aa3920d0a70125836a15e71ca016e5686a3e19a16d84129542aa14646">Negotiation</a>
@@ -215,6 +222,10 @@ Functions</h2></td></tr>
 <tr class="memitem:aafa940c00e9d22feda5b349df9d8971a" id="r_aafa940c00e9d22feda5b349df9d8971a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1GlobalResult.html">GlobalResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aafa940c00e9d22feda5b349df9d8971a">global_route</a> (const <a class="el" href="classtmk_1_1route_1_1Obstacles.html">Obstacles</a> &amp;obs, const <a class="el" href="structtmk_1_1geom_1_1Box.html">geom::Box</a> &amp;bounds, int layers, const std::vector&lt; <a class="el" href="structtmk_1_1route_1_1GlobalNet.html">GlobalNet</a> &gt; &amp;nets, const <a class="el" href="structtmk_1_1route_1_1GlobalOptions.html">GlobalOptions</a> &amp;opt)</td></tr>
 <tr class="memitem:a7c41fbc5c168cb14dd7ea7701b770ea3" id="r_a7c41fbc5c168cb14dd7ea7701b770ea3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1LayerLimits.html">LayerLimits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c41fbc5c168cb14dd7ea7701b770ea3">layer_limits</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; std::string &gt; &amp;no_tracks_on, const std::vector&lt; std::string &gt; &amp;layer_costs)</td></tr>
 <tr class="memdesc:a7c41fbc5c168cb14dd7ea7701b770ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">no_tracks_on</span>: copper layer names.  <br /></td></tr>
+<tr class="memitem:a18dc7ce4a7e30269cb141e28e25739a0" id="r_a18dc7ce4a7e30269cb141e28e25739a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18dc7ce4a7e30269cb141e28e25739a0">check_layer_dir_specs</a> (const std::vector&lt; std::string &gt; &amp;dir_specs, const std::vector&lt; std::string &gt; &amp;diag_specs)</td></tr>
+<tr class="memdesc:a18dc7ce4a7e30269cb141e28e25739a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Syntax check without a board, for the command line: <span class="tt">dir_specs</span> are "LAYER=h|v|none" entries, <span class="tt">diag_specs</span> are "LAYER=P" entries or one bare "P" for every copper layer (0 &lt;= P &lt;= kMaxDiagPen).  <br /></td></tr>
+<tr class="memitem:a194c96da380bdc7400b2df1cbe63a63d" id="r_a194c96da380bdc7400b2df1cbe63a63d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1LayerDirections.html">LayerDirections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a194c96da380bdc7400b2df1cbe63a63d">layer_directions</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; std::string &gt; &amp;dir_specs, const std::vector&lt; std::string &gt; &amp;diag_specs)</td></tr>
+<tr class="memdesc:a194c96da380bdc7400b2df1cbe63a63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The entries resolved against <span class="tt">b</span> (names as for layer_limits).  <br /></td></tr>
 <tr class="memitem:a20ec5a7f9b10e3cf8edf34ac9888ca49" id="r_a20ec5a7f9b10e3cf8edf34ac9888ca49"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1LegalizeResult.html">LegalizeResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20ec5a7f9b10e3cf8edf34ac9888ca49">legalize_routes</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, std::vector&lt; <a class="el" href="structtmk_1_1route_1_1ConnRoute.html">ConnRoute</a> &gt; &amp;routes, const <a class="el" href="structtmk_1_1route_1_1LegalizeOptions.html">LegalizeOptions</a> &amp;opt={})</td></tr>
 <tr class="memdesc:a20ec5a7f9b10e3cf8edf34ac9888ca49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the vertices of <span class="tt">routes</span> (tracks and vias of the connections) so that the clearances of <span class="tt">rules</span> hold between nets, to the pads of <span class="tt">board</span> and to its fixed tracks and vias.  <br /></td></tr>
 <tr class="memitem:a70cc99cb4e45c31015a4b330a96a0291" id="r_a70cc99cb4e45c31015a4b330a96a0291"><td class="memItemLeft" align="right" valign="top">long double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70cc99cb4e45c31015a4b330a96a0291">zone_fill_area</a> (const <a class="el" href="structtmk_1_1drc_1_1CopperModel.html">drc::CopperModel</a> &amp;cm, const std::vector&lt; int &gt; &amp;items)</td></tr>
@@ -236,6 +247,7 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a981581e9878cf3b706ea17cd9a7d3570" id="r_a981581e9878cf3b706ea17cd9a7d3570"><td class="memItemLeft" align="right" valign="top">constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a981581e9878cf3b706ea17cd9a7d3570">kMaxLayerCost</a> = 1000.0</td></tr>
+<tr class="memitem:a2e4e32029829581fd1e3828ade01fd0d" id="r_a2e4e32029829581fd1e3828ade01fd0d"><td class="memItemLeft" align="right" valign="top">constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e4e32029829581fd1e3828ade01fd0d">kMaxDiagPen</a> = 100.0</td></tr>
 <tr class="memitem:a4ef84370bddd64650bc98ccf90e0d843" id="r_a4ef84370bddd64650bc98ccf90e0d843"><td class="memItemLeft" align="right" valign="top">constexpr long double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ef84370bddd64650bc98ccf90e0d843">kPlaneTargetArea</a> = 1e12L</td></tr>
 <tr class="memdesc:a4ef84370bddd64650bc98ccf90e0d843"><td class="mdescLeft">&#160;</td><td class="mdescRight">With soft zones a fill of at least this area that no pad touches is its net's plane: a connection target of its own (doc 05 §26).  <br /></td></tr>
 <tr class="memitem:a0262564b42cf349fadd53f9e50425b26" id="r_a0262564b42cf349fadd53f9e50425b26"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0262564b42cf349fadd53f9e50425b26">kWorkPhases</a> = 4</td></tr>
@@ -243,6 +255,29 @@ Variables</h2></td></tr>
 <tr class="memdesc:a53a2a27c1ef0a039ceceb3911393471a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variant indices from here up are the advised copies the portfolio adds when <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a71e9bf1534dd6edf71aa3fc97724afd3">RouterOptions::advice</a> is active (position k of the advice's variants has index kAdvisedIndex + k).  <br /></td></tr>
 </table>
 <a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
+<a id="a1aaa3cf550fd338a3c366e62a15e1c2f" name="a1aaa3cf550fd338a3c366e62a15e1c2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1aaa3cf550fd338a3c366e62a15e1c2f">&#9670;&#160;</a></span>LayerDir</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a1aaa3cf550fd338a3c366e62a15e1c2f">tmk::route::LayerDir</a> : std::int8_t</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Preferred track direction of a copper layer (issue #66, D174): orthogonal steps across it cost &ndash;layer-dir-pen. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1aaa3cf550fd338a3c366e62a15e1c2fa8bea32109ab8b2d594807cc94c939e31" name="a1aaa3cf550fd338a3c366e62a15e1c2fa8bea32109ab8b2d594807cc94c939e31"></a>kLayerDirNone&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1aaa3cf550fd338a3c366e62a15e1c2faf4bfd3d0d3cb6ef083453a1d94eda6ac" name="a1aaa3cf550fd338a3c366e62a15e1c2faf4bfd3d0d3cb6ef083453a1d94eda6ac"></a>kLayerDirHorizontal&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1aaa3cf550fd338a3c366e62a15e1c2fa52c633e64b1ed3a54e5b7626ccf2d8d2" name="a1aaa3cf550fd338a3c366e62a15e1c2fa52c633e64b1ed3a54e5b7626ccf2d8d2"></a>kLayerDirVertical&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="layer__limits_8hpp_source.html#l00027">27</a> of file <a class="el" href="layer__limits_8hpp_source.html">layer_limits.hpp</a>.</p>
+
+</div>
+</div>
 <a id="aa07b2911aa3920d0a70125836a15e71c" name="aa07b2911aa3920d0a70125836a15e71c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa07b2911aa3920d0a70125836a15e71c">&#9670;&#160;</a></span>WorkPhase</h2>
 
@@ -269,7 +304,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970" name="aa07b2911aa3920d0a70125836a15e71ca8c6384dda98d8864d00e29dc96179970"></a>Cleanup&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00341">341</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00347">347</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,6 +491,30 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a18dc7ce4a7e30269cb141e28e25739a0" name="a18dc7ce4a7e30269cb141e28e25739a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18dc7ce4a7e30269cb141e28e25739a0">&#9670;&#160;</a></span>check_layer_dir_specs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::route::check_layer_dir_specs </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dir_specs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>diag_specs</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Syntax check without a board, for the command line: <span class="tt">dir_specs</span> are "LAYER=h|v|none" entries, <span class="tt">diag_specs</span> are "LAYER=P" entries or one bare "P" for every copper layer (0 &lt;= P &lt;= kMaxDiagPen). </p>
+<p>Throws std::invalid_argument on a malformed entry, a bad value or a layer given twice. </p>
+
+</div>
+</div>
 <a id="ae7af9fde486e92b6511f0d66f761bcb4" name="ae7af9fde486e92b6511f0d66f761bcb4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae7af9fde486e92b6511f0d66f761bcb4">&#9670;&#160;</a></span>coupled_threshold()</h2>
 
@@ -588,6 +647,35 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a194c96da380bdc7400b2df1cbe63a63d" name="a194c96da380bdc7400b2df1cbe63a63d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a194c96da380bdc7400b2df1cbe63a63d">&#9670;&#160;</a></span>layer_directions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1route_1_1LayerDirections.html">LayerDirections</a> tmk::route::layer_directions </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dir_specs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>diag_specs</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The entries resolved against <span class="tt">b</span> (names as for layer_limits). </p>
+<p>A layer name the board does not have is a warning and the entry is ignored (a board-independent option file may name inner layers); everything check_layer_dir_specs refuses still throws. With dir_specs given, layers not named have no preferred direction; with diag_specs given, layers not named (and no bare value) have no diagonal penalty. </p>
 
 </div>
 </div>
@@ -1414,7 +1502,31 @@ Variables</h2></td></tr>
 
 <p>Variant indices from here up are the advised copies the portfolio adds when <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a71e9bf1534dd6edf71aa3fc97724afd3">RouterOptions::advice</a> is active (position k of the advice's variants has index kAdvisedIndex + k). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00446">446</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00452">452</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2e4e32029829581fd1e3828ade01fd0d" name="a2e4e32029829581fd1e3828ade01fd0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e4e32029829581fd1e3828ade01fd0d">&#9670;&#160;</a></span>kMaxDiagPen</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tmk::route::kMaxDiagPen = 100.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="layer__limits_8hpp_source.html#l00036">36</a> of file <a class="el" href="layer__limits_8hpp_source.html">layer_limits.hpp</a>.</p>
 
 </div>
 </div>
@@ -1489,7 +1601,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00342">342</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00348">348</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

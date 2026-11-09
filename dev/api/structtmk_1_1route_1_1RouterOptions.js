@@ -69,6 +69,8 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "layer_assign_angle", "structtmk_1_1route_1_1RouterOptions.html#ab4abc357e4365c79471c20989e9efaff", null ],
     [ "layer_assign_pen", "structtmk_1_1route_1_1RouterOptions.html#a89fbb3705025b92da2a8e81436c76508", null ],
     [ "layer_cost_pm", "structtmk_1_1route_1_1RouterOptions.html#a0133c40bb000d31ab9b47d7c25f5a4a4", null ],
+    [ "layer_diag_pen", "structtmk_1_1route_1_1RouterOptions.html#a81989ac9f21e4077dd0c76ea08019e60", null ],
+    [ "layer_dir", "structtmk_1_1route_1_1RouterOptions.html#a9880bbe734c3a211de794fd4c40d26a5", null ],
     [ "layer_dir_pen", "structtmk_1_1route_1_1RouterOptions.html#a730030f727d01d014c76845057811e0e", null ],
     [ "layer_dir_swap", "structtmk_1_1route_1_1RouterOptions.html#a052a9f780fcf6155625ac420e135c60a", null ],
     [ "legalize", "structtmk_1_1route_1_1RouterOptions.html#ac2827a4bc26ed3a1f7510bfcaf0345af", null ],

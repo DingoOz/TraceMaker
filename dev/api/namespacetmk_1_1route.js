@@ -33,6 +33,7 @@ var namespacetmk_1_1route =
     [ "GlobalResult", "structtmk_1_1route_1_1GlobalResult.html", "structtmk_1_1route_1_1GlobalResult" ],
     [ "HeatGrid", "classtmk_1_1route_1_1HeatGrid.html", "classtmk_1_1route_1_1HeatGrid" ],
     [ "LayerLimits", "structtmk_1_1route_1_1LayerLimits.html", "structtmk_1_1route_1_1LayerLimits" ],
+    [ "LayerDirections", "structtmk_1_1route_1_1LayerDirections.html", "structtmk_1_1route_1_1LayerDirections" ],
     [ "LazyCodes", "classtmk_1_1route_1_1LazyCodes.html", "classtmk_1_1route_1_1LazyCodes" ],
     [ "LegalizeOptions", "structtmk_1_1route_1_1LegalizeOptions.html", "structtmk_1_1route_1_1LegalizeOptions" ],
     [ "LegalizeResult", "structtmk_1_1route_1_1LegalizeResult.html", "structtmk_1_1route_1_1LegalizeResult" ],
@@ -48,6 +49,11 @@ var namespacetmk_1_1route =
     [ "Router", "classtmk_1_1route_1_1Router.html", "classtmk_1_1route_1_1Router" ],
     [ "ViaHeights", "structtmk_1_1route_1_1ViaHeights.html", "structtmk_1_1route_1_1ViaHeights" ],
     [ "Point", "structtmk_1_1route_1_1Point.html", "structtmk_1_1route_1_1Point" ],
+    [ "LayerDir", "namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2f", [
+      [ "kLayerDirNone", "namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2fa8bea32109ab8b2d594807cc94c939e31", null ],
+      [ "kLayerDirHorizontal", "namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2faf4bfd3d0d3cb6ef083453a1d94eda6ac", null ],
+      [ "kLayerDirVertical", "namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2fa52c633e64b1ed3a54e5b7626ccf2d8d2", null ]
+    ] ],
     [ "WorkPhase", "namespacetmk_1_1route.html#aa07b2911aa3920d0a70125836a15e71c", [
       [ "Setup", "namespacetmk_1_1route.html#aa07b2911aa3920d0a70125836a15e71caad2376beebecdcf7846ba973fa1a005b", null ],
       [ "FirstPass", "namespacetmk_1_1route.html#aa07b2911aa3920d0a70125836a15e71ca95a9ac37d75aaac65eea1b5818262908", null ],
@@ -60,11 +66,13 @@ var namespacetmk_1_1route =
     [ "bus_from_option", "namespacetmk_1_1route.html#a6ed60ea89c6cf282fb8da39f3f0309ab", null ],
     [ "bus_pattern_match", "namespacetmk_1_1route.html#aacad7a10234c31a06b0c23e408f77f87", null ],
     [ "bus_rule_skew", "namespacetmk_1_1route.html#a3106ae39207d435759bc5cbaa5632597", null ],
+    [ "check_layer_dir_specs", "namespacetmk_1_1route.html#a18dc7ce4a7e30269cb141e28e25739a0", null ],
     [ "coupled_threshold", "namespacetmk_1_1route.html#ae7af9fde486e92b6511f0d66f761bcb4", null ],
     [ "cut_test", "namespacetmk_1_1route.html#a6738f735ef8f0fe72a5242f79c9a42c0", null ],
     [ "detect_buses", "namespacetmk_1_1route.html#a9cf3699f5f5243e2b66d3780e1e181da", null ],
     [ "failure_reason_code", "namespacetmk_1_1route.html#a94906d09c53b6b81d65dc40faa3b0d12", null ],
     [ "global_route", "namespacetmk_1_1route.html#aafa940c00e9d22feda5b349df9d8971a", null ],
+    [ "layer_directions", "namespacetmk_1_1route.html#a194c96da380bdc7400b2df1cbe63a63d", null ],
     [ "layer_limits", "namespacetmk_1_1route.html#a7c41fbc5c168cb14dd7ea7701b770ea3", null ],
     [ "left_normal", "namespacetmk_1_1route.html#af0d7ace1c1610cc889fe68aa988463af", null ],
     [ "legalize_routes", "namespacetmk_1_1route.html#a20ec5a7f9b10e3cf8edf34ac9888ca49", null ],
@@ -93,6 +101,7 @@ var namespacetmk_1_1route =
     [ "work_phase_name", "namespacetmk_1_1route.html#ac3d5afa2f8f115e7943d7ccdee6254d9", null ],
     [ "zone_fill_area", "namespacetmk_1_1route.html#a70cc99cb4e45c31015a4b330a96a0291", null ],
     [ "kAdvisedIndex", "namespacetmk_1_1route.html#a53a2a27c1ef0a039ceceb3911393471a", null ],
+    [ "kMaxDiagPen", "namespacetmk_1_1route.html#a2e4e32029829581fd1e3828ade01fd0d", null ],
     [ "kMaxLayerCost", "namespacetmk_1_1route.html#a981581e9878cf3b706ea17cd9a7d3570", null ],
     [ "kPlaneTargetArea", "namespacetmk_1_1route.html#a4ef84370bddd64650bc98ccf90e0d843", null ],
     [ "kWorkPhases", "namespacetmk_1_1route.html#a0262564b42cf349fadd53f9e50425b26", null ]

@@ -2924,6 +2924,10 @@ OPTIONS:
           --seed UINT
           --layer-assign      Prefer per connection the layer with the fewest crossings
                               (two-layer boards; doc 16 F2)
+          --layer-dir-pen FLOAT
+                              Cost (pitches per step) of orthogonal steps against the layer's
+                              preferred direction (by default even layers horizontal, odd
+                              vertical; automatic 0.3 on breakout boards and with --layer-dir)
           --crowded-source    Every strict search starts from the end with more copper and pads
                               of other nets near it, a boxed-in pin is proved at once (doc 05
                               §55; the portfolio does so in four of its eight variants by
@@ -3050,6 +3054,13 @@ OPTIONS:
           --layer-cost TEXT ...
                               Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 =
                               normal, at most 1000)
+          --layer-dir TEXT ...
+                              Preferred direction per copper layer as LAYER=h|v|none, e.g.
+                              F.Cu=v,B.Cu=h (replaces the even/odd rule; strength
+                              --layer-dir-pen, 0.3 if not given)
+          --layer-diag-pen TEXT ...
+                              Extra cost (pitches per step) of 45-degree steps, as
+                              LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3
           --no-fill-planes    Leave zones that have no fill unfilled while routing (default:
                               fill them in memory and route with --soft-zones, so plane nets
                               drop vias into their planes)

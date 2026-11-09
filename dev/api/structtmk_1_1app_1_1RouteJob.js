@@ -30,6 +30,8 @@ var structtmk_1_1app_1_1RouteJob =
     [ "json_out", "structtmk_1_1app_1_1RouteJob.html#a70f1fdfd6051d3c62cb4ef579f8999c6", null ],
     [ "kb_path", "structtmk_1_1app_1_1RouteJob.html#a7278534473e1b7c27164bc563471bf74", null ],
     [ "layer_costs", "structtmk_1_1app_1_1RouteJob.html#a50bc561d84cb48e8e697034dfeb293dc", null ],
+    [ "layer_diag_pen", "structtmk_1_1app_1_1RouteJob.html#a079c0d61b35fb1f6c073387d1eb8fced", null ],
+    [ "layer_dir", "structtmk_1_1app_1_1RouteJob.html#a00b2545315c95a36c1df57da989ddd23", null ],
     [ "log", "structtmk_1_1app_1_1RouteJob.html#a4f1f7623752261e17d2c60f039cdbf34", null ],
     [ "no_tracks_on", "structtmk_1_1app_1_1RouteJob.html#aace167e293cc0cc7f1ac1401788449fa", null ],
     [ "opt", "structtmk_1_1app_1_1RouteJob.html#a97fbd8e1285ef6cebb96f97a6c948ef9", null ],

@@ -121,6 +121,7 @@ var hierarchy =
     [ "tmk::learn::KnowledgeBase", "classtmk_1_1learn_1_1KnowledgeBase.html", null ],
     [ "tmk::model::LayerDef", "structtmk_1_1model_1_1LayerDef.html", null ],
     [ "tmk::crules::LayerDelay", "structtmk_1_1crules_1_1LayerDelay.html", null ],
+    [ "tmk::route::LayerDirections", "structtmk_1_1route_1_1LayerDirections.html", null ],
     [ "tmk::crules::LayerGeometry", "structtmk_1_1crules_1_1LayerGeometry.html", null ],
     [ "tmk::route::LayerLimits", "structtmk_1_1route_1_1LayerLimits.html", null ],
     [ "tmk::route::LazyCodes", "classtmk_1_1route_1_1LazyCodes.html", null ],

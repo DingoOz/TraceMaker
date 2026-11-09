@@ -1,5 +1,17 @@
 var NAVTREEINDEX16 =
 {
+"structtmk_1_1model_1_1TuningProfile.html#a75a9d8eb5acfb65d63548a4046819674":[1,0,0,12,18,5],
+"structtmk_1_1model_1_1TuningProfile.html#a7a146e676887f58deeed71588c5138ea":[0,0,0,13,18,0],
+"structtmk_1_1model_1_1TuningProfile.html#a7a146e676887f58deeed71588c5138ea":[1,0,0,12,18,0],
+"structtmk_1_1model_1_1TuningProfile.html#aac95317c692064c386b6bb25b232b1c3":[0,0,0,13,18,4],
+"structtmk_1_1model_1_1TuningProfile.html#aac95317c692064c386b6bb25b232b1c3":[1,0,0,12,18,4],
+"structtmk_1_1model_1_1TuningProfile.html#ab4242f827addcc1a7a2a95bac41f390e":[0,0,0,13,18,6],
+"structtmk_1_1model_1_1TuningProfile.html#ab4242f827addcc1a7a2a95bac41f390e":[1,0,0,12,18,6],
+"structtmk_1_1model_1_1TuningProfile.html#af1decc7afe9ff3635d7981d9e244c381":[0,0,0,13,18,3],
+"structtmk_1_1model_1_1TuningProfile.html#af1decc7afe9ff3635d7981d9e244c381":[1,0,0,12,18,3],
+"structtmk_1_1model_1_1TuningViaOverride.html":[0,0,0,13,17],
+"structtmk_1_1model_1_1TuningViaOverride.html":[1,0,0,12,17],
+"structtmk_1_1model_1_1TuningViaOverride.html#a50a6f0e59cb1a12801f8c97f7fd2b5e0":[0,0,0,13,17,1],
 "structtmk_1_1model_1_1TuningViaOverride.html#a50a6f0e59cb1a12801f8c97f7fd2b5e0":[1,0,0,12,17,1],
 "structtmk_1_1model_1_1TuningViaOverride.html#a6ede652e095e81e85ebcecde66350ffd":[0,0,0,13,17,0],
 "structtmk_1_1model_1_1TuningViaOverride.html#a6ede652e095e81e85ebcecde66350ffd":[1,0,0,12,17,0],
@@ -237,17 +249,5 @@ var NAVTREEINDEX16 =
 "structtmk_1_1passes_1_1WidenNet.html#a368c2e569ef18118858e8e8f25d67f12":[1,0,0,13,8,6],
 "structtmk_1_1passes_1_1WidenNet.html#a6d9e043b47d1dca418300cce7ba02e01":[0,0,0,14,8,3],
 "structtmk_1_1passes_1_1WidenNet.html#a6d9e043b47d1dca418300cce7ba02e01":[1,0,0,13,8,3],
-"structtmk_1_1passes_1_1WidenNet.html#a6f2658c961a251c22ad4659cdb236547":[0,0,0,14,8,2],
-"structtmk_1_1passes_1_1WidenNet.html#a6f2658c961a251c22ad4659cdb236547":[1,0,0,13,8,2],
-"structtmk_1_1passes_1_1WidenNet.html#a88e3264b3d5b8f7a52dde29a07843b8c":[0,0,0,14,8,7],
-"structtmk_1_1passes_1_1WidenNet.html#a88e3264b3d5b8f7a52dde29a07843b8c":[1,0,0,13,8,7],
-"structtmk_1_1passes_1_1WidenNet.html#a91c8613c972e15415d746a516f73a38a":[0,0,0,14,8,8],
-"structtmk_1_1passes_1_1WidenNet.html#a91c8613c972e15415d746a516f73a38a":[1,0,0,13,8,8],
-"structtmk_1_1passes_1_1WidenNet.html#ae12bbb9f8766f4d395fe33731235f089":[0,0,0,14,8,1],
-"structtmk_1_1passes_1_1WidenNet.html#ae12bbb9f8766f4d395fe33731235f089":[1,0,0,13,8,1],
-"structtmk_1_1passes_1_1WidenOptions.html":[0,0,0,14,7],
-"structtmk_1_1passes_1_1WidenOptions.html":[1,0,0,13,7],
-"structtmk_1_1passes_1_1WidenOptions.html#a76df557ea7a5b2d770e4794351dfb353":[0,0,0,14,7,4],
-"structtmk_1_1passes_1_1WidenOptions.html#a76df557ea7a5b2d770e4794351dfb353":[1,0,0,13,7,4],
-"structtmk_1_1passes_1_1WidenOptions.html#a8f5339e5e64e01a9c5d3ca16b081b95f":[0,0,0,14,7,2]
+"structtmk_1_1passes_1_1WidenNet.html#a6f2658c961a251c22ad4659cdb236547":[0,0,0,14,8,2]
 };

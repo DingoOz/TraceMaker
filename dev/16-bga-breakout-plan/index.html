@@ -3371,7 +3371,7 @@ top-centre 50 open of 316 (tscircuit solves none of the AM3352 cases). The full 
 </tr>
 <tr>
 <td><code>--layer-dir-pen P</code> (orthogonal steps against the layer's preferred direction cost P pitches; even layers horizontal, odd vertical)</td>
-<td>srj20 gap: 28 % → 30 / 40 / 35 / 30 % clean at P = 0.15 / 0.3 / 0.5 / 1.0, routed 87.7 % → 89.0 / 89.8 / 90.7 / 91.0 %. srj19 gap: 46 % → 50 % at 0.3. Swapping the directions (<code>--layer-dir-swap</code>): 37 %, no difference. The first structural gain on srj20</td>
+<td>srj20 gap: 28 % → 30 / 40 / 35 / 30 % clean at P = 0.15 / 0.3 / 0.5 / 1.0, routed 87.7 % → 89.0 / 89.8 / 90.7 / 91.0 %. srj19 gap: 46 % → 50 % at 0.3. Swapping the directions (<code>--layer-dir-swap</code>): 37 %, no difference. The first structural gain on srj20. Per-layer directions by name and a 45-degree penalty came later (<code>--layer-dir</code>, <code>--layer-diag-pen</code>; doc 05 §73, D174)</td>
 </tr>
 <tr>
 <td>Automatic settings (D98): direction penalty 0.3 and package penalty 3 on a <em>breakout board</em> (two layers, at least 70 % of the connections have an end on a package of at least 30 same-layer SMD pads)</td>

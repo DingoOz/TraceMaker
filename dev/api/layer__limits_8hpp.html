@@ -105,20 +105,35 @@ $(function(){initNavTree('layer__limits_8hpp.html','',''); });
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:tmk_3A_3Aroute_3A_3ALayerLimits" id="r_tmk_3A_3Aroute_3A_3ALayerLimits"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1LayerLimits.html">tmk::route::LayerLimits</a></td></tr>
+<tr class="memitem:tmk_3A_3Aroute_3A_3ALayerDirections" id="r_tmk_3A_3Aroute_3A_3ALayerDirections"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1route_1_1LayerDirections.html">tmk::route::LayerDirections</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-layer directions and diagonal penalties (<span class="tt">--layer-dir</span>, <span class="tt">--layer-diag-pen</span>; doc 05 §29, D174) resolved against a board.  <a href="structtmk_1_1route_1_1LayerDirections.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:tmk" id="r_tmk"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk.html">tmk</a></td></tr>
 <tr class="memitem:tmk_3A_3Aroute" id="r_tmk_3A_3Aroute"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html">tmk::route</a></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a1aaa3cf550fd338a3c366e62a15e1c2f" id="r_a1aaa3cf550fd338a3c366e62a15e1c2f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2f">tmk::route::LayerDir</a> : std::int8_t { <a class="el" href="namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2fa8bea32109ab8b2d594807cc94c939e31">tmk::route::kLayerDirNone</a> = 0
+, <a class="el" href="namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2faf4bfd3d0d3cb6ef083453a1d94eda6ac">tmk::route::kLayerDirHorizontal</a> = 1
+, <a class="el" href="namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2fa52c633e64b1ed3a54e5b7626ccf2d8d2">tmk::route::kLayerDirVertical</a> = 2
+ }</td></tr>
+<tr class="memdesc:a1aaa3cf550fd338a3c366e62a15e1c2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preferred track direction of a copper layer (issue #66, D174): orthogonal steps across it cost &ndash;layer-dir-pen.  <a href="namespacetmk_1_1route.html#a1aaa3cf550fd338a3c366e62a15e1c2f">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a7c41fbc5c168cb14dd7ea7701b770ea3" id="r_a7c41fbc5c168cb14dd7ea7701b770ea3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1LayerLimits.html">LayerLimits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html#a7c41fbc5c168cb14dd7ea7701b770ea3">tmk::route::layer_limits</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; std::string &gt; &amp;no_tracks_on, const std::vector&lt; std::string &gt; &amp;layer_costs)</td></tr>
 <tr class="memdesc:a7c41fbc5c168cb14dd7ea7701b770ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">no_tracks_on</span>: copper layer names.  <br /></td></tr>
+<tr class="memitem:a18dc7ce4a7e30269cb141e28e25739a0" id="r_a18dc7ce4a7e30269cb141e28e25739a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html#a18dc7ce4a7e30269cb141e28e25739a0">tmk::route::check_layer_dir_specs</a> (const std::vector&lt; std::string &gt; &amp;dir_specs, const std::vector&lt; std::string &gt; &amp;diag_specs)</td></tr>
+<tr class="memdesc:a18dc7ce4a7e30269cb141e28e25739a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Syntax check without a board, for the command line: <span class="tt">dir_specs</span> are "LAYER=h|v|none" entries, <span class="tt">diag_specs</span> are "LAYER=P" entries or one bare "P" for every copper layer (0 &lt;= P &lt;= kMaxDiagPen).  <br /></td></tr>
+<tr class="memitem:a194c96da380bdc7400b2df1cbe63a63d" id="r_a194c96da380bdc7400b2df1cbe63a63d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1route_1_1LayerDirections.html">LayerDirections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html#a194c96da380bdc7400b2df1cbe63a63d">tmk::route::layer_directions</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; std::string &gt; &amp;dir_specs, const std::vector&lt; std::string &gt; &amp;diag_specs)</td></tr>
+<tr class="memdesc:a194c96da380bdc7400b2df1cbe63a63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The entries resolved against <span class="tt">b</span> (names as for layer_limits).  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a981581e9878cf3b706ea17cd9a7d3570" id="r_a981581e9878cf3b706ea17cd9a7d3570"><td class="memItemLeft" align="right" valign="top">constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html#a981581e9878cf3b706ea17cd9a7d3570">tmk::route::kMaxLayerCost</a> = 1000.0</td></tr>
+<tr class="memitem:a2e4e32029829581fd1e3828ade01fd0d" id="r_a2e4e32029829581fd1e3828ade01fd0d"><td class="memItemLeft" align="right" valign="top">constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetmk_1_1route.html#a2e4e32029829581fd1e3828ade01fd0d">tmk::route::kMaxDiagPen</a> = 100.0</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Which copper layers may carry new tracks, and what a track costs on each (doc 05 §29): the user's <span class="tt">--no-tracks-on</span> and <span class="tt">--layer-cost</span> lists turned into the numbers RouterOptions holds. </p>
