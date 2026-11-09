@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
-// Repair windows (issue #56, doc 05 §73, D172): finish a nearly routed board without routing all of it again.
+// Repair windows (issue #56, doc 05 §75, D172): finish a nearly routed board without routing all of it again.
 //
 // A plain run keeps every track and via of the input as fixed copper, so a pin that the neighbours' fan-outs wall in
 // stays open ("fixed copper encloses the pin"). The repair lifts the unlocked copper near each open connection (whole

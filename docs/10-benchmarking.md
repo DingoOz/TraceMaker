@@ -129,6 +129,7 @@ gates of §5.
 | `quick` | the 30 PCBench tier-A boards of `--limit 30 --seed 1` | `--set quick --work 1000000 --route-args "--variants 1"` (≈ 30 s with `--jobs 4`) | every routing change |
 | `mid` | 11 large, hard PCBench boards | `--set mid --work 20000000` | changes to search, plans or rip-up, which can move results at 20 M while `quick` stays identical |
 | `planes` | 7 KiCad demos with zone fills plus `tests/boards/plane_smd`, routing stripped | `bench/prepare_demos.py --set planes`, then `--fixtures build/demos --set planes --work 3000000 --refill`, once plain and once with `--route-args=--soft-zones` | changes to zones, planes and plane targets |
+| `kookabus` | the 6 Kookabus boards with layouts (KiCad 10, custom clearance rules), routing stripped; **private repository**, never committed (D176) | `scripts/fetch_fixtures.sh kookabus` (needs read access to `DingoOz/kookabus`), `bench/prepare_demos.py --out build/kookabus --set kookabus`, then `--fixtures build/kookabus --set kookabus --work 3000000 --refill --route-args=--soft-zones` | changes for the Kookabus boards, `--si-rules`, custom rules; not runnable in CI |
 
 **Comparing.** `bench/compare_runs.py BEFORE AFTER [--expect-identical]` lists every board whose routed output
 differs or got worse, the clean-pass and completion totals and router seconds, and exits 1 if a gate fails.

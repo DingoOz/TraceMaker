@@ -281,6 +281,26 @@ RouteJobResult run_route_job(RouteJob job) {
         log(fmt("track cost on %s: x%.3g", bd.copper_name(l).c_str(), lim.layer_cost_pm[static_cast<std::size_t>(l)] / 1000.0));
     if (stranded) log(fmt("warning: %d pads lie only on layers that take no tracks; their connections stay unrouted", stranded));
   }
+  if (!job.layer_dir.empty() || !job.layer_diag_pen.empty()) {
+    const auto& bd = lb.board;
+    const auto ld = route::layer_directions(bd, job.layer_dir, job.layer_diag_pen);
+    for (const auto& w : ld.warnings) log("warning: " + w);
+    opt.layer_dir = ld.dir;
+    opt.layer_diag_pen = ld.diag_pen;
+    if (!ld.dir.empty()) {
+      std::string t;
+      for (int l = 0; l < bd.copper_count(); ++l) {
+        const auto d = ld.dir[static_cast<std::size_t>(l)];
+        t += fmt("%s%s %s", t.empty() ? "" : ", ", bd.copper_name(l).c_str(), d == route::kLayerDirHorizontal ? "horizontal" : d == route::kLayerDirVertical ? "vertical" : "none");
+      }
+      const double pen = opt.layer_dir_pen == -1.0 ? 0.3 : std::abs(opt.layer_dir_pen);
+      log(fmt("preferred directions: %s (%.3g pitches per step against them)", t.c_str(), pen));
+      if (opt.layer_dir_pen == 0) log("warning: --layer-dir has no effect with --layer-dir-pen 0");
+      if (opt.layer_dir_swap) log("warning: --layer-dir-swap has no effect with --layer-dir (the directions are named per layer)");
+    }
+    for (int l = 0; l < bd.copper_count() && !ld.diag_pen.empty(); ++l)
+      if (ld.diag_pen[static_cast<std::size_t>(l)] > 0) log(fmt("45-degree steps on %s: +%.3g pitches each", bd.copper_name(l).c_str(), ld.diag_pen[static_cast<std::size_t>(l)]));
+  }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
   // Zones without a fill (a generated board, or one saved before filling; doc 05 §54): left unfilled, the router does not see the planes,
   // so a plane net's pads are joined by tracks round the board (1,773 mm of GND and +54V track, some on the other net's plane layer, on
@@ -727,6 +747,21 @@ RouteJobResult run_route_job(RouteJob job) {
   for (const auto& t : lb.board.tracks) input_copper = input_copper || !t.locked;
   for (const auto& v : lb.board.vias) input_copper = input_copper || !v.locked;
   auto& res = out.result;
+  // The after-route stages below may not undo the router's tuning (D173, issue #60): a stage's copper is kept only if no net is
+  // further outside a `length` or `skew` rule with it than without it, measured as the DRC measures the written board.
+  const bool length_rules = std::any_of(rules.custom.begin(), rules.custom.end(), [](const model::CustomRule& c) {
+    return std::any_of(c.constraints.begin(), c.constraints.end(), [](const model::Constraint& k) { return k.type == "length" || k.type == "skew"; });
+  });
+  auto length_faults_of = [&](const std::vector<model::Track>& tracks, const std::vector<model::Via>& vias) {
+    model::Board bd = *route_board;
+    bd.tracks.insert(bd.tracks.end(), tracks.begin(), tracks.end());
+    bd.vias.insert(bd.vias.end(), vias.begin(), vias.end());
+    return drc::length_faults(bd, rules);
+  };
+  auto lengths_no_worse = [&](const std::vector<model::Track>& t0, const std::vector<model::Via>& v0, const std::vector<model::Track>& t1,
+                              const std::vector<model::Via>& v1) {
+    return !length_rules || drc::length_faults_no_worse(length_faults_of(t0, v0), length_faults_of(t1, v1));
+  };
   auto route_t0 = std::chrono::steady_clock::now();  // --time covers one routing run, the refill repair after it included
   std::vector<int> ran;
   int best_index = 0;
@@ -1022,7 +1057,7 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& u : res.unrouted) failed.push_back({u.net, u.a, u.b, 1});
     kb->record_failures(feat.hash, failed);
   }
-  // Repair windows (issue #56, doc 05 §73, D172): connections still open are tried again with the unlocked copper near them lifted.
+  // Repair windows (issue #56, doc 05 §75, D172): connections still open are tried again with the unlocked copper near them lifted.
   nlohmann::json repair_summary;
   std::optional<model::Board> board_before_repair;  // the input as read, for the report's DRC "before" when the repair lifted some of it
   nlohmann::json removed_items;                      // the input's tracks and vias the repair lifted, in the --emit-items layout
@@ -1119,8 +1154,17 @@ RouteJobResult run_route_job(RouteJob job) {
       add_copper(routed, r2);
       model::Board refilled_again = drc::refill_zones(routed, rules).board;
       const int after = unconnected(refilled_again);
-      const bool kept = after < before;
-      log(fmt("refill repair: %d items unconnected after refilling again%s", after, kept ? "" : " (no better: repair discarded)"));
+      bool kept = after < before;
+      bool lengths_kept = true;
+      if (kept) {
+        auto t1 = res.tracks;
+        auto v1 = res.vias;
+        t1.insert(t1.end(), r2.tracks.begin(), r2.tracks.end());
+        v1.insert(v1.end(), r2.vias.begin(), r2.vias.end());
+        kept = lengths_kept = lengths_no_worse(res.tracks, res.vias, t1, v1);
+      }
+      log(fmt("refill repair: %d items unconnected after refilling again%s", after,
+              kept ? "" : lengths_kept ? " (no better: repair discarded)" : " (a net is further outside its length or skew rule: repair discarded)"));
       if (kept) {
         res.tracks.insert(res.tracks.end(), r2.tracks.begin(), r2.tracks.end());
         res.vias.insert(res.vias.end(), r2.vias.begin(), r2.vias.end());
@@ -1246,9 +1290,9 @@ RouteJobResult run_route_job(RouteJob job) {
           add_copper(b3, r3);
           const model::Board judged = drc::refill_zones(b3, rules).board;
           const int u3 = unconnected(judged), s3 = static_cast<int>(starved_new(judged).size());
-          if (s3 < s_cur && u3 <= u_cur) {
-            kept.tracks.insert(kept.tracks.end(), r3.tracks.begin(), r3.tracks.end());
-            kept.vias.insert(kept.vias.end(), r3.vias.begin(), r3.vias.end());
+          kept.tracks.insert(kept.tracks.end(), r3.tracks.begin(), r3.tracks.end());
+          kept.vias.insert(kept.vias.end(), r3.vias.begin(), r3.vias.end());
+          if (s3 < s_cur && u3 <= u_cur && lengths_no_worse(res.tracks, res.vias, kept.tracks, kept.vias)) {
             res.tracks = std::move(kept.tracks);
             res.vias = std::move(kept.vias);
             u_cur = u3;
@@ -1425,7 +1469,7 @@ RouteJobResult run_route_job(RouteJob job) {
         const auto without = judge(res.tracks, res.vias, true), with_vias = judge(res.tracks, with, true);
         before = without.at("");
         after = with_vias.at("");
-        kept = no_worse(without, with_vias);
+        kept = no_worse(without, with_vias) && lengths_no_worse(res.tracks, res.vias, res.tracks, with);
       }
       std::map<model::NetId, std::pair<int, int>> per_net;  // net -> (grid vias, return-path vias)
       for (std::size_t i = 0; i < sr.vias.size() && kept; ++i) ++(sr.return_path[i] ? per_net[sr.vias[i].net].second : per_net[sr.vias[i].net].first);
@@ -1701,7 +1745,7 @@ RouteJobResult run_route_job(RouteJob job) {
     for (const auto& c : res.over_cuts) log("  cut proof: unroutable across " + line(c));
   }
   out.items = items_json(lb.board, res);
-  if (!removed_items.is_null()) out.items["removed"] = removed_items;  // the input's copper that the repair lifted (doc 05 §73)
+  if (!removed_items.is_null()) out.items["removed"] = removed_items;  // the input's copper that the repair lifted (doc 05 §75)
   if (!job.items_out.empty()) std::ofstream(job.items_out) << out.items.dump();
   out.summary = {{"routed", res.routed},     {"connections", res.connections}, {"tracks", res.tracks.size()},
                  {"vias", res.vias.size()},  {"seconds", job_seconds},         {"variant_seconds", res.seconds},

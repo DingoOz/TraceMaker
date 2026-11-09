@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Repair windows (issue #56, doc 05 §73, D172): a pin walled in by another net's unlocked copper is opened by lifting that copper and
+// Repair windows (issue #56, doc 05 §75, D172): a pin walled in by another net's unlocked copper is opened by lifting that copper and
 // routing both again; locked copper is never lifted; the result is deterministic and has no DRC errors.
 #include <catch2/catch_test_macros.hpp>
 

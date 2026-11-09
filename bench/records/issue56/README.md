@@ -1,6 +1,6 @@
 # Issue #56 records: repair windows (D172)
 
-Doc 05 §73. Engine: branch `issue56-repair-window`, 2026-11-08, shared machine, `--no-kb`, one variant, CPU or GPU fields (same result).
+Doc 05 §75. Engine: branch `issue56-repair-window`, 2026-11-08, shared machine, `--no-kb`, one variant, CPU or GPU fields (same result).
 
 ## Staged flow on PCBench quick-tier boards
 

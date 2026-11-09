@@ -1499,7 +1499,8 @@ obstacle model (`route::Obstacles`, the check the router commits with), touch on
 transactions (rule 4): the job counts unconnected items per net with and without the pass's result (after an
 in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
 (per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
-board is byte-identical to before.
+board is byte-identical to before. On a board with `length` or `skew` rules, these passes and the soft-zone repairs are
+also dropped when a net ends further outside such a rule than without them (§74, D173).
 
 ### 39.1 Power track widening (`--widen-power`)
 
@@ -1815,6 +1816,7 @@ hidden options are.
   vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with `--package-pen 3`) on a breakout board: two copper layers and at least 70 %
   of the connections with an end on a ball-grid-like package (at least 30 same-layer SMD pads on at least 5 × 5 distinct positions, 40 % of the grid filled). Negative values mean "automatic at that strength" (the seeded
   portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.
+  Directions by layer name and a penalty for 45-degree steps: `--layer-dir`, `--layer-diag-pen` (§73, D174).
 - **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
 - **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
   `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.
@@ -2732,6 +2734,8 @@ the step. Test: `delay_room` (it skips without `build/demos`).
 
 **Open.** mm length windows, mm pair skew and the bus tuner do not make room yet.
 
+The tuned copper is now also what the run writes (§74, D173, issue #60).
+
 
 ## 62. Search speed: late reachability proofs and output-preserving speed-ups (2026-10-29, D154)
 
@@ -3335,7 +3339,106 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.
 
-## 73. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
+## 73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)
+
+**Why.** `--layer-dir-pen` / `--layer-dir-swap` (§40, D98) give even layers one direction and odd layers the other, so a two-layer board
+has two choices. Hand-routed boards use other conventions (quanln's study in the issue: of 13 boards, F.Cu mostly horizontal on 6,
+vertical on 1, mixed on 7). And a 45-degree step costs nothing against either direction, so the penalty turns orthogonal runs into
+diagonal zigzags: on relaymini the 45-degree share grew from 31 to 37 % on F.Cu and from 42 to 50 % on B.Cu. Design from quanln
+(GitHub @quanln), who proposed both options.
+
+**What it does** (`route/layer_limits.cpp`, `layer_pref` and the planar moves in `route/router.cpp`).
+
+- `--layer-dir F.Cu=v,B.Cu=h` (`h`, `v` or `none` per layer; names as for `--layer-cost`, §29) replaces the parity: named layers get
+  that direction, layers not named get none, `--layer-dir-swap` has no effect (a warning says so). Its strength is `--layer-dir-pen`;
+  if that is not given, 0.3 pitches per step on any board, not only on breakout boards.
+- `--layer-diag-pen P` or `--layer-diag-pen F.Cu=P,...` (0 to 100; a bare value is every layer's, named layers override it): every
+  45-degree lattice step on that layer costs P pitches more. Independent of the directions.
+- Both are integer costs added in the search's planar move, like the parity penalty (rule 2). The cost-to-go fields (CPU and GPU)
+  do not include them, so they stay lower bounds and nothing on the GPU path changes; no new GPU code.
+- **Smoothing keeps them.** Path smoothing (pull tight, in the clean-up after the search) replaced runs by a 45-degree segment and a straight one whatever
+  they cost, which undid the diagonal penalty on the test board. With `--layer-dir`, an explicit positive `--layer-dir-pen` or a
+  diagonal penalty on the layer, a shortcut is taken only if its direction cost is not above the run's, and the two orthogonal corners
+  are candidates too, cheapest first. The automatic strengths (D98's breakout boards, the seeded portfolio variants: negative values)
+  keep the plain smoothing, so default runs do not change.
+- An unknown layer name is a warning and its entry is ignored (a convention may name inner layers a two-layer board does not have);
+  a malformed entry, a bad value or a layer given twice stops the run before the board is read.
+
+**Measured** on relaymini (`bench/records/issue66/`, 3 M work, two variants; F.Cu asked vertical, B.Cu horizontal, strength 1.0):
+
+| Run | F.Cu 45° | B.Cu 45° | F.Cu against its direction | B.Cu against | Routed |
+|---|--:|--:|--:|--:|--:|
+| Default | 31.4 % | 42.2 % | – | – | 60/72 |
+| `--layer-dir F.Cu=v,B.Cu=h --layer-dir-pen 1.0` | 36.8 % | 49.6 % | 0.6 % | 1.4 % | 61/72 |
+| ... `--layer-diag-pen 0.6` | 27.4 % | 35.2 % | 8.6 % | 9.9 % | 63/72 |
+| ... `--layer-diag-pen 1.0` | 25.5 % | 22.9 % | 8.1 % | 10.3 % | 62/72 |
+
+With both options unset the output is byte-identical to main (relaymini, and srj20 sample001 where D98's automatic directions are on).
+`--layer-dir` naming the parity's directions gives the parity's output exactly.
+
+**Limits.** One public board measured: whether a convention costs completion on other boards is not known (doc 16: the parity penalty
+cost the quick tier 89.2 → 86.8 %), so both stay off by default. The coupled-pair search (§24) and the advice file (doc 17) do not use
+them: advice runs as extra variants next to the plain ones, and a layer convention is meant for every variant. Track length grows (up
+to 25 % at strength 1.0 on relaymini).
+
+## 74. Tuned nets stay tuned (2026-11-08, D173)
+
+**Why.** Issue #60: `delay_room` (§61) failed on main after D154. The router's tuning log said D+ was tuned to 78.44 ps against D-'s
+78.50 ps, but the DRC of the written board measured D+ at 70.56 ps, 8.69 ps short of D- against a 0.5 ps rule. The soft-zone refill
+repair and the clean-up were the suspects. Neither was the cause: with debug output after each stage of `app/route_job.cpp`, the
+copper of D+ and D- came out of the router already untuned, and no later stage changed it.
+
+**Cause.** The clean-up (§9: diff-pair recoupling, via optimisation, smoothing and then the tuners) runs only when the search ends in
+its best state. When it ends away from it, the router returns the best state as it was snapshotted during the search: routed, but never
+tuned. The tuning lines in the log came from other variants of the portfolio that did end in their best state. The winning variant (fast
+bends, shortest first, crowded source) ended with 128 routed against a best of 129. Before D154 it ended in its best state on this
+board. The late reachability proofs change which connections are searched, so it no longer does.
+
+**Fix** (`route/router.cpp`, `wants_tuning`, `restore_best`). A board where the clean-up has tuning to do gets its best state back
+before the clean-up when the search ended away from it. The router puts it back the way the end-game retry does (§63): only the
+connections whose copper differs are lifted and restored. The clean-up and the tuners then run on the state the router returns.
+"Tuning to do" means any of these:
+
+- a net with a `length` rule (mm or time);
+- a net with a `skew` rule, or a diff pair's skew constraint;
+- `--pair-skew-mm`, or a component-rule pair skew above 0;
+- buses (`--bus`, `--buses`).
+
+Other boards keep the old behaviour, byte for byte. Running the clean-up on the best state of every board would change results
+everywhere and needs measuring of its own (not done here).
+
+**Guard on the stages after routing** (`app/route_job.cpp`, `drc::length_faults`). On a board with `length` or `skew` rules, these
+stages are kept only if no net is further outside such a rule with their copper than without it:
+
+- the soft-zone refill repair (§36);
+- the thermal relief repair (§36.1), for each pad;
+- the stitching vias (§39.3).
+
+The distance outside a rule is measured as the DRC measures it on the written board (KiCad's length calculation, §59;
+`DrcOptions::lengths_only` runs only those checks). A net that is in range counts as 0. These stages route or rip connections again,
+or add vias, so they can lengthen or shorten a tuned net. A sub-router does not tune a skew group whose other members it did not route.
+Widening and the tuning-profile narrowing change only widths, which KiCad's length calculation ignores, so they need no guard. On this
+board no stage touched the pair: the guard did not reject anything.
+
+**Result** (`bench/records/issue60/`, the B2 fixtures, 3 M work, `--refill --soft-zones`, 8 threads, judged by KiCad 10.0.6):
+
+| Board | main | D173 |
+|---|---|---|
+| RoyalBlue54L-Feather-delay | 129/147, 37 unconnected, `skew_out_of_range` 1 | 129/147, 39 unconnected, none added |
+| RoyalBlue54L-Feather-profile, interf_u-delay, interf_u-profile | as on main | byte-identical output |
+
+On RoyalBlue54L-Feather-delay the best state is now cleaned up and tuned: D+ ends at 79.43 ps against D-'s 79.49 ps. The meanders cut
+the soft fills once more, so the refill repair closes one connection to a zone instead of two. KiCad counts two more unconnected
+items, with the same routed count; that is what meeting the rule costs on this board. Boards without length or skew rules are
+unchanged by construction. Two quick-tier boards were checked byte-identical, and none of the 30 has a `.kicad_dru`.
+
+**Tests.** `delay_room` passes again. Unit test `length faults: a stage that shortens a tuned net is worse` (`tests/test_length.cpp`,
+runs in CI without `build/demos`): on KiCad's `time_calculations` board it halves a track of a net tuned into its 29.83-29.85 ps
+window. It checks that the lengths-only DRC reports the full DRC's length and skew violations, that the cut makes the net a fault and
+that `length_faults_no_worse` rejects it. The router fix itself has no CI test: a small board that makes the search end away from its
+best state with a tuned net was not found. `delay_room` covers it where the demos are prepared.
+
+## 75. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
 
 **Why.** Without `--reroute`, every track and via of the input is fixed copper. On a WholeBoard PoE switch routed 1186/1189 the last
 pins stayed open ("fixed copper encloses the pin"): the neighbours' fan-outs wall them in and the router may not rip them. The only other
