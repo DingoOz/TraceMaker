@@ -852,7 +852,7 @@
           "done": true
         },
         {
-          "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it",
+          "text": "D3 gate: reports for all eight plane boards (interf_u and RoyalBlue54L-Feather finished 2026-10-27 after D137), every number traceable to a JSON field (unit test enforces it); review by someone who did not write it. 2026-11-08: reviewed by an AI agent with no part in the code (not a human), 7 errors and 10 misleading points; the errors and most of the rest fixed (D177, bench/records/m20-run-report README section 4). Left open for a human designer's read of the fixed reports",
           "done": false
         },
         {
@@ -872,8 +872,8 @@
     {
       "id": "M21",
       "title": "High speed for the Kookabus boards",
-      "status": "in_progress",
-      "gate": "Only as far as the Kookabus boards need it; the board files are not on this machine yet (docs/18 section 7)",
+      "status": "done",
+      "gate": "Only as far as the Kookabus boards need it (docs/18 section 7); A3 found they define no tuning profiles or length/delay rules (docs/18 section 19, D176)",
       "deliverables": "B1 tuning profiles, B2 time-domain matching, B3 audit loop, A5",
       "tasks": [
         {
@@ -897,8 +897,8 @@
           "done": true
         },
         {
-          "text": "A3 Kookabus boards as a fixture set (files still missing)",
-          "done": false
+          "text": "A3 Kookabus boards as a fixture set: private repository, fetch script pinned at 293a922, bench/sets/kookabus.txt (D176); no tuning profiles or length/delay rules on any board; 1/6 clean at 3 M work; unused USB-C pins no longer critical nets",
+          "done": true
         }
       ]
     },

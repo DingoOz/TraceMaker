@@ -1,0 +1,336 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:28",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-off5.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on B.Cu, length 8.6850 mm",
+                    "pos": {
+                        "x": 120.535,
+                        "y": 91.44
+                    },
+                    "uuid": "49829059-8e8f-43ce-ace1-755d7d3390ae"
+                },
+                {
+                    "description": "PTH pad 1 [Net-(D1-Pad2)] of U2",
+                    "pos": {
+                        "x": 88.58,
+                        "y": 91.44
+                    },
+                    "uuid": "dbf758c2-5da1-479e-ac7b-7928fbf48d02"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 8 [Net-(D6-Pad2)] of U5",
+                    "pos": {
+                        "x": 129.22,
+                        "y": 86.36
+                    },
+                    "uuid": "7ae2aec5-a55c-4ed6-ac64-2e40c80f8741"
+                },
+                {
+                    "description": "PTH pad 13 [Net-(D6-Pad2)] of U1",
+                    "pos": {
+                        "x": 96.2,
+                        "y": 58.42
+                    },
+                    "uuid": "71234d07-eb5d-4804-b4ac-b1eb01805e76"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on F.Cu, length 6.0458 mm",
+                    "pos": {
+                        "x": 94.875,
+                        "y": 90.975
+                    },
+                    "uuid": "bdc295ae-e4f4-4424-b271-531414a28330"
+                },
+                {
+                    "description": "PTH pad 10 [Net-(D7-Pad2)] of U1",
+                    "pos": {
+                        "x": 103.82,
+                        "y": 58.42
+                    },
+                    "uuid": "89226cad-93b0-4899-9e5b-9a2d09dcd1be"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 1 [Net-(J1-Pad1)] of J1",
+                    "pos": {
+                        "x": 54.925,
+                        "y": 64.135
+                    },
+                    "uuid": "2b082674-2afd-41ce-af4a-1f064be525c7"
+                },
+                {
+                    "description": "PTH pad 12 [Net-(J1-Pad1)] of U1",
+                    "pos": {
+                        "x": 98.74,
+                        "y": 58.42
+                    },
+                    "uuid": "d18ae4b6-3e7a-4959-a0d8-43609da36f28"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 4 [Net-(J1-Pad4)] of J1",
+                    "pos": {
+                        "x": 54.925,
+                        "y": 71.755
+                    },
+                    "uuid": "4f1aca30-a2a3-49a8-8a72-f0b1e3ed42b1"
+                },
+                {
+                    "description": "PTH pad 5 [Net-(J1-Pad4)] of U1",
+                    "pos": {
+                        "x": 98.74,
+                        "y": 66.04
+                    },
+                    "uuid": "d361686c-e0ee-41e9-a197-d07a9b57f630"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 5 [Net-(J1-Pad5)] of J1",
+                    "pos": {
+                        "x": 54.925,
+                        "y": 74.295
+                    },
+                    "uuid": "ece32fda-d178-48aa-9ec1-bf2526275c1f"
+                },
+                {
+                    "description": "PTH pad 12 [Net-(J1-Pad5)] of U2",
+                    "pos": {
+                        "x": 98.74,
+                        "y": 83.82
+                    },
+                    "uuid": "6b8bc6b6-b381-4189-887f-1ca4b22fa935"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 7 [Net-(J1-Pad7)] of J1",
+                    "pos": {
+                        "x": 54.925,
+                        "y": 79.375
+                    },
+                    "uuid": "31f888ab-39e5-41e6-a241-28ac2f7da63a"
+                },
+                {
+                    "description": "PTH pad 3 [Net-(J1-Pad7)] of U2",
+                    "pos": {
+                        "x": 93.66,
+                        "y": 91.44
+                    },
+                    "uuid": "38d4d758-7003-44be-88c9-310d1341586f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 8 [Net-(J1-Pad8)] of J1",
+                    "pos": {
+                        "x": 54.925,
+                        "y": 81.915
+                    },
+                    "uuid": "87bf34ae-94a5-469f-b483-584626d18284"
+                },
+                {
+                    "description": "PTH pad 5 [Net-(J1-Pad8)] of U2",
+                    "pos": {
+                        "x": 98.74,
+                        "y": 91.44
+                    },
+                    "uuid": "90f58a5f-74b0-494f-9196-5a8da78f2fab"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [VCC] on F.Cu, length 7.6200 mm",
+                    "pos": {
+                        "x": 129.22,
+                        "y": 68.58
+                    },
+                    "uuid": "7daae14d-58fb-4a10-a500-3d4c9f4dca7c"
+                },
+                {
+                    "description": "Track [VCC] on F.Cu, length 17.5250 mm",
+                    "pos": {
+                        "x": 92.325,
+                        "y": 62.55
+                    },
+                    "uuid": "1ceb3f39-3514-4a3a-8725-e95b8220cd2f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "2de53896-be35-43bb-a06f-46dd2c5922f1"
+                },
+                {
+                    "description": "Pad 1 [VCC] of J9 on B.Cu",
+                    "pos": {
+                        "x": 146.365,
+                        "y": 55.245
+                    },
+                    "uuid": "9c5601ef-8f1d-401e-acd7-86e1dc003b6a"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "2de53896-be35-43bb-a06f-46dd2c5922f1"
+                },
+                {
+                    "description": "Pad 1 [VCC] of J10 on F.Cu",
+                    "pos": {
+                        "x": 146.365,
+                        "y": 55.245
+                    },
+                    "uuid": "c7d2df45-7686-4860-841b-66d3e7b7425b"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "2de53896-be35-43bb-a06f-46dd2c5922f1"
+                },
+                {
+                    "description": "Pad 1 [GND] of J11 on F.Cu",
+                    "pos": {
+                        "x": 53.655,
+                        "y": 55.245
+                    },
+                    "uuid": "7b448fd1-fcf0-4ad5-9b7c-551618944a32"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2450 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 50.0
+                    },
+                    "uuid": "2de53896-be35-43bb-a06f-46dd2c5922f1"
+                },
+                {
+                    "description": "Pad 1 [GND] of J12 on B.Cu",
+                    "pos": {
+                        "x": 53.655,
+                        "y": 55.245
+                    },
+                    "uuid": "22d3ffc8-de65-490f-a14d-3732b63e2bf0"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        }
+    ]
+}

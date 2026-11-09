@@ -1,0 +1,54 @@
+live view: http://192.168.1.79:8783/?token=393bab525accb22bcf83604c840b805c
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 35 ok (3919997 expansions), 80 failed (1090497 expansions); fields 0 GPU + 11 CPU (0.32 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 22 connections improved
+restarts 0; legality checks 853964; rips 10, passes 2, boxed-in 61, nogood skips 0, history cells 69, transactions 0 kept of 0
+reachability checks: 32, 28 proved unreachable, 113608 cells visited
+late reachability proofs: 10, 3 proved no path, 71449 cells visited
+failed-search expansions: strict confined 0, strict wide 613675, negotiated confined 0, negotiated wide 405761
+rescue (warm): 7 of 32 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 25 saved routes taken over, 0 not legal under these rules
+searches: 45 ok (3074687 expansions), 69 failed (1777366 expansions); fields 0 GPU + 13 CPU (0.23 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 2; legality checks 800129; rips 2, passes 1, boxed-in 38, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 12, 7 proved unreachable, 110069 cells visited
+late reachability proofs: 8, 3 proved no path, 51971 cells visited
+failed-search expansions: strict confined 0, strict wide 1167381, negotiated confined 0, negotiated wide 604585
+ramp stage 1/2 (clearance -0.0813 mm): 27 of 32 routed
+warm start: 27 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 27 in 0.0 s  <- best
+rescue (warm): 25 -> 27 routed (the relax result is kept)
+rescue (fresh): 5 of 32 connections are open; routing again with relax (from nothing, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+searches: 27 ok (3117568 expansions), 77 failed (1783370 expansions); fields 0 GPU + 12 CPU (0.30 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 23 connections improved
+restarts 0; legality checks 989760; rips 2, passes 2, boxed-in 53, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 26, 24 proved unreachable, 353620 cells visited
+late reachability proofs: 10, 6 proved no path, 43906 cells visited
+failed-search expansions: strict confined 0, strict wide 1064314, negotiated confined 0, negotiated wide 604585
+ramp stage 1/2 (clearance -0.0813 mm): 25 of 32 routed
+warm start: 25 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 25 in 0.0 s  <- best
+rescue (fresh): 27 -> 25 routed (no gain: the result before stands)
+routed 27/32 connections, 128 tracks, 26 vias, pitch 0.100 mm, 0 expansions, 11.38 s (best variant 0.01 s)
+  unrouted: VCC: IC1.7 -> IC1.14  ()
+  unrouted: GND: C2.2 -> IC1.15  ()
+  unrouted: GND: IC1.15 -> IC1.23  ()
+  unrouted: GND: IC1.15 -> IC1.5  ()
+  unrouted: VCC: IC1.14 -> IC1.24  ()
+  cannot connect: IC1.15 (GND) cannot be connected as placed: on F.Cu the fixed copper (IC1.14, IC1.16, a Net-(C1-Pad1) track, a /RES via, a /MISO track) leaves no way out even for a track of the board's minimum width (0.203 mm) with its clearances, and no via fits beside it. Moving a part or changing the rules is needed.
+  cannot connect: IC1.14 (VCC) cannot be connected as placed: on F.Cu the fixed copper (IC1.13, IC1.15, a /RES track, a Net-(C1-Pad1) track, a /RES via, a /MISO track) leaves no way out even for a track of the board's minimum width (0.203 mm) with its clearances, and no via fits beside it. Moving a part or changing the rules is needed.
+why open: 7 pins of open connections; 2 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 5 open through congestion (0.47 s)
+  next: move a part or change the rules around the 2 pins walled in above: no router can connect them as placed
+  next: 5 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 4939433 expansions, 185057 flood cells, 832035 cell checks, 430145 fixed-copper checks, 4228956 field cells in 11 fields, 35 commits, 10 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed

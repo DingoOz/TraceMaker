@@ -1,0 +1,45 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 18.77      4.35     4.35 28306678     0.00     0.00  tmk::route::Obstacles::holes_edges_state(tmk::geom::Shape const&, int, int, bool, long, bool, std::vector<int, std::allocator<int> >*) const
+ 17.99      8.52     4.17 31927824     0.00     0.00  tmk::route::Obstacles::copper_state(tmk::geom::Shape const&, tmk::drc::CopperItem const&, int, bool, std::vector<int, std::allocator<int> >*) cons
+  6.26      9.97     1.45 28249967     0.00     0.00  tmk::drc::RuleEngine::coupled_diff_pair(int, int) const
+  5.91     11.34     1.37 28334935     0.00     0.00  tmk::route::Obstacles::aperture_codes(tmk::geom::Shape const&, int, bool, std::function<void (int)> const&) const
+  5.18     12.54     1.20  2903424     0.00     0.00  tmk::route::Router::Impl::route_pair(int, int)::{lambda(unsigned long, long, unsigned long, int, unsigned char, tmk::geom::Point, int)#1}::operato
+  4.87     13.67     1.13 47509992     0.00     0.00  tmk::drc::Condition::str_eq(tmk::drc::Value const&, tmk::drc::Value const&)
+  3.45     14.47     0.80                             _init
+  3.41     15.26     0.79       11     0.07     1.94  tmk::route::Router::Impl::route_pair(int, int)
+  2.80     15.91     0.65   805855     0.00     0.00  std::priority_queue<tmk::route::Router::Impl::route_pair(int, int)::QE, std::vector<tmk::route::Router::Impl::route_pair(int, int)::QE, std::alloc
+  1.86     16.34     0.43 62205209     0.00     0.00  tmk::geom::point_seg_closer(tmk::geom::Point, tmk::geom::Point, tmk::geom::Point, long)
+  1.77     16.75     0.41 22322279     0.00     0.00  tmk::drc::RuleEngine::custom_min(char const*, tmk::drc::CopperItem const*, tmk::drc::CopperItem const*, int, tmk::model::CustomRule const**) const
+  1.55     17.11     0.36   687512     0.00     0.00  tmk::route::route_portfolio(tmk::model::Board const&, tmk::model::DesignRules const&, tmk::route::RouterOptions const&, int, std::vector<int, std:
+  1.38     17.43     0.32 44574034     0.00     0.00  tmk::geom::Shape::update_box()
+  1.38     17.75     0.32 31973529     0.00     0.00  tmk::route::(anonymous namespace)::Probe::Probe(tmk::drc::ItemKind, tmk::geom::Shape const&, int, int, long, tmk::geom::Point)
+  1.21     18.03     0.28 95091465     0.00     0.00  bool std::operator==<char, std::char_traits<char>, std::allocator<char> >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<
+  1.08     18.28     0.25 15191754     0.00     0.00  tmk::geom::segments_intersect(tmk::geom::Point, tmk::geom::Point, tmk::geom::Point, tmk::geom::Point)
+  1.04     18.52     0.24 50890533     0.00     0.00  tmk::geom::closer_than(tmk::geom::Shape const&, tmk::geom::Shape const&, long)
+  1.04     18.76     0.24 47510090     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned lo
+  0.91     18.97     0.21  2866778     0.00     0.00  tmk::geom::PolygonIndex::inside(tmk::geom::Point) const
+  0.86     19.17     0.20 90705644     0.00     0.00  tmk::model::wildcard_match(std::basic_string_view<char, std::char_traits<char> >, std::basic_string_view<char, std::char_traits<char> >)
+  0.86     19.37     0.20 72767456     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::__cxx11::basic_string<char, std::char_traits<ch
+  0.82     19.56     0.19 52134353     0.00     0.00  tmk::route::offset_point(tmk::geom::Point, tmk::route::Dir2, double)
+  0.82     19.75     0.19 22321602     0.00     0.00  tmk::drc::RuleEngine::clearance_rules(tmk::drc::CopperItem const&, tmk::drc::CopperItem const&, int) const
+  0.82     19.94     0.19        6     0.03     0.05  tmk::route::Router::Impl::search(tmk::route::Connection const&, tmk::route::Router::Impl::Window const&, std::vector<tmk::route::Router::Impl::Pat
+  0.78     20.12     0.18  8399705     0.00     0.00  tmk::route::Obstacles::inside_board(tmk::geom::Point, long) const
+  0.69     20.28     0.16 28313146     0.00     0.00  tmk::route::Obstacles::physical_state(tmk::geom::Shape const&, tmk::drc::ItemKind, int, int, bool, bool, bool, std::vector<int, std::allocator<int
+  0.65     20.43     0.15 18293401     0.00     0.00  tmk::route::Obstacles::segment_state(tmk::geom::Point, tmk::geom::Point, int, long, int, bool, std::vector<int, std::allocator<int> >*) const
+  0.65     20.58     0.15   109399     0.00     0.00  Clipper2Lib::ClipperBase::InsertLeftEdge(Clipper2Lib::Active&)
+  0.65     20.73     0.15    26717     0.00     0.00  std::thread::_State_impl<std::thread::_Invoker<std::tuple<tmk::route::route_portfolio(tmk::model::Board const&, tmk::model::DesignRules const&, tm
+  0.60     20.87     0.14 28341783     0.00     0.00  tmk::route::Obstacles::physical_copper_state(tmk::geom::Shape const&, tmk::drc::ItemKind, int, int, bool, bool, bool, std::vector<int, std::alloca
+  0.56     21.00     0.13 47510076     0.00     0.00  tmk::drc::kind_name(tmk::drc::ItemKind)
+  0.52     21.12     0.12 47580623     0.00     0.00  void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<true>(char const*, unsigned long)
+  0.52     21.24     0.12    99961     0.00     0.00  Clipper2Lib::ClipperBase::BuildIntersectList(long)
+  0.43     21.34     0.10 26255434     0.00     0.00  tmk::geom::Shape::point(tmk::geom::Point, long)
+  0.43     21.44     0.10        6     0.02     0.02  tmk::gpu::field_cpu(tmk::gpu::FieldProblem const&, std::vector<int, std::allocator<int> >&)
+  0.39     21.53     0.09  4943000     0.00     0.00  tmk::route::Obstacles::via_state(tmk::geom::Point, long, long, int, long, bool, std::vector<int, std::allocator<int> >*) const
+  0.39     21.62     0.09  4793236     0.00     0.00  bool tmk::geom::(anonymous namespace)::any_edge<tmk::geom::closer_than(tmk::geom::Shape const&, tmk::geom::Shape const&, long)::{lambda(tmk::geom:
+  0.39     21.71     0.09    98448     0.00     0.00  Clipper2Lib::ClipperBase::PopScanline(long&)
+  0.35     21.79     0.08 31976041     0.00     0.00  std::_Function_handler<void (int), tmk::route::Obstacles::fixed_via_code(tmk::geom::Point, long, long, long, int) const::{lambda(int)#1}>::_M_invo
+  0.35     21.87     0.08 17807115     0.00     0.00  tmk::route::Router::Impl::route_pair(int, int)::{lambda(tmk::geom::Point, tmk::geom::Point, int, int)#14}::operator()(tmk::geom::Point, tmk::geom:

@@ -1,0 +1,462 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:32:06",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-offeq.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J1",
+                    "pos": {
+                        "x": 218.344,
+                        "y": 133.81
+                    },
+                    "uuid": "64971ba9-2423-47a8-b54b-194abefe7a3e"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J1",
+                    "pos": {
+                        "x": 223.344,
+                        "y": 128.81
+                    },
+                    "uuid": "c95e9470-d777-477c-85fd-483f4bf14c4c"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J1",
+                    "pos": {
+                        "x": 213.344,
+                        "y": 129.01
+                    },
+                    "uuid": "0f092349-7833-4b92-9c4a-fefd518188f4"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J1",
+                    "pos": {
+                        "x": 213.344,
+                        "y": 138.81
+                    },
+                    "uuid": "42dc392e-b4e2-48e1-954a-56c05ae6d719"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J1",
+                    "pos": {
+                        "x": 223.344,
+                        "y": 138.81
+                    },
+                    "uuid": "b829d43a-6d15-43f4-b0b4-d0443b2af41e"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J2",
+                    "pos": {
+                        "x": 241.124,
+                        "y": 128.798
+                    },
+                    "uuid": "0be9ad3c-180c-457b-b579-27b0832bbe59"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J2",
+                    "pos": {
+                        "x": 231.124,
+                        "y": 128.798
+                    },
+                    "uuid": "0c14f3d1-12cd-42f3-9057-47311ed40a85"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of J2",
+                    "pos": {
+                        "x": 236.124,
+                        "y": 133.798
+                    },
+                    "uuid": "95685f12-b4c9-4504-b33c-2973a07d60d8"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad [<no net>] of REF**_2",
+                    "pos": {
+                        "x": 226.314,
+                        "y": 140.716
+                    },
+                    "uuid": "f24d9f7b-1e06-40d8-ad21-3cfe24249935"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**_2",
+                    "pos": {
+                        "x": 228.854,
+                        "y": 140.716
+                    },
+                    "uuid": "40b66bbd-b65f-4036-b051-d1bed27e494c"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C5",
+                    "pos": {
+                        "x": 238.506,
+                        "y": 171.958
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000563b6e6c"
+                },
+                {
+                    "description": "Footprint C6",
+                    "pos": {
+                        "x": 242.316,
+                        "y": 168.148
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000563b6e93"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C6",
+                    "pos": {
+                        "x": 242.316,
+                        "y": 168.148
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000563b6e93"
+                },
+                {
+                    "description": "Footprint U2",
+                    "pos": {
+                        "x": 236.982,
+                        "y": 166.878
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000563b8d9d"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4775 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 1 [Net-(R3-Pad2)] of R5",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 141.224
+                    },
+                    "uuid": "c4ec6c7e-6154-45e9-98ba-7e1d4dc8fc55"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4775 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 2 [Net-(R10-Pad2)] of R5",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 143.764
+                    },
+                    "uuid": "01dbd554-5058-4618-bb30-2c58662ad9ab"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4760 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 1 [Net-(J2-Pad4)] of R10",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 138.176
+                    },
+                    "uuid": "f8f2b942-78cf-43aa-9870-19b28ed7ed95"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4775 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 1 [+6V] of C3",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 156.464
+                    },
+                    "uuid": "251ef43a-122c-4970-b240-e20f0ab4e835"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4775 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 2 [GND] of C3",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 158.964
+                    },
+                    "uuid": "245dc612-2f68-4dff-9ba9-3487332d037a"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2580 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 208.5,
+                        "y": 139.25
+                    },
+                    "uuid": "5b9fa1c5-4681-4875-9fc5-5b8f8e3a15e7"
+                },
+                {
+                    "description": "PTH pad 1 [Net-(C2-Pad1)] of C2",
+                    "pos": {
+                        "x": 210.058,
+                        "y": 134.112
+                    },
+                    "uuid": "a505e71a-321c-4eb4-ae53-2a5e9be23086"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2580 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 208.5,
+                        "y": 139.25
+                    },
+                    "uuid": "5b9fa1c5-4681-4875-9fc5-5b8f8e3a15e7"
+                },
+                {
+                    "description": "PTH pad 2 [Net-(C2-Pad2)] of C2",
+                    "pos": {
+                        "x": 210.058,
+                        "y": 129.112
+                    },
+                    "uuid": "16066a39-7930-47bb-8bee-3de01682e4d7"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4760 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 1 [Net-(R10-Pad2)] of U1",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 146.304
+                    },
+                    "uuid": "ffdb60f6-7fd8-4f2c-8d88-18e40dbefb21"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.4760 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 244.0,
+                        "y": 128.5
+                    },
+                    "uuid": "31f62001-92dc-4d4a-8923-61a60e9c7a79"
+                },
+                {
+                    "description": "PTH pad 8 [+6V] of U1",
+                    "pos": {
+                        "x": 242.824,
+                        "y": 153.924
+                    },
+                    "uuid": "39222a89-0ff8-4f0a-853a-e112abe13054"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 234.19,
+                        "y": 194.94
+                    },
+                    "uuid": "0355f8d9-a964-414e-92cd-9e92dd1e426a"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 234.19,
+                        "y": 194.94
+                    },
+                    "uuid": "0355f8d9-a964-414e-92cd-9e92dd1e426a"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        }
+    ]
+}

@@ -32,6 +32,33 @@ std::map<std::string, int> DrcReport::counts() const {
   return c;
 }
 
+LengthFaults length_faults(const model::Board& b, const model::DesignRules& r) {
+  LengthFaults out;
+  const bool any = std::any_of(r.custom.begin(), r.custom.end(), [](const model::CustomRule& c) {
+    return std::any_of(c.constraints.begin(), c.constraints.end(), [](const model::Constraint& k) { return k.type == "length" || k.type == "skew"; });
+  });
+  if (!any) return out;
+  DrcOptions o;
+  o.lengths_only = true;
+  o.dangling = false;
+  for (const auto& v : run_drc(b, r, o).violations) {
+    // The description ends with the net's name in brackets; the amount outside the window is |actual - required| on either side.
+    const auto open = v.description.rfind('[');
+    const std::string net = open == std::string::npos ? v.description : v.description.substr(open + 1, v.description.size() - open - 2);
+    double& f = out[v.type + " " + net];
+    f = std::max(f, std::fabs(static_cast<double>(v.actual - v.required)));
+  }
+  return out;
+}
+
+bool length_faults_no_worse(const LengthFaults& without, const LengthFaults& with) {
+  for (const auto& [key, amount] : with) {
+    const auto it = without.find(key);
+    if (amount > (it == without.end() ? 0.0 : it->second)) return false;
+  }
+  return true;
+}
+
 namespace {
 
 
@@ -79,7 +106,8 @@ class Checker {
         h.shape = geom::Shape::point(h.pos, d / 2);
       }
     tick("net propagation");
-    if (!o_.connectivity_only) {
+    if (o_.lengths_only) check_lengths();
+    if (!o_.connectivity_only && !o_.lengths_only) {
       check_pairs();
       tick("check_pairs");
       check_items();
@@ -105,7 +133,7 @@ class Checker {
       check_diff_pairs();
       tick("check_diff_pairs");
     }
-    check_connectivity();
+    if (!o_.lengths_only) check_connectivity();
     tick("check_connectivity");
     // Project severities: drop ignored types, apply warning/error levels.
     auto sev = [&](const std::string& t) -> const std::string* {
@@ -976,6 +1004,7 @@ class Checker {
         Violation v;
         v.type = "unconnected_items";
         v.description = "Missing connection in net " + b_.nets[static_cast<std::size_t>(net)].name;
+        v.net = net;
         v.items.push_back({describe(cm_.items[static_cast<std::size_t>(root_item[rs[k - 1]])]), cm_.items[static_cast<std::size_t>(root_item[rs[k - 1]])].pos});
         v.items.push_back({describe(cm_.items[static_cast<std::size_t>(root_item[rs[k]])]), cm_.items[static_cast<std::size_t>(root_item[rs[k]])].pos});
         rep_.unconnected.push_back(std::move(v));

@@ -5,10 +5,11 @@ deterministic budget and reports, per pair, the coupled share of its length, the
 (`tracemaker pairs`), and per board the completion and KiCad DRC errors added by routing (kicad-cli, Docker).
 
   bench/pair_eval.py BOARD [BOARD ...] [--work 30000000] [--jobs 4] [--drc-jobs 2] [--out build/pair_eval]
-                     [--on-args "--diff-pairs"] [--json results.json]
+                     [--on-args "--diff-pairs"] [--mode NAME=ARGS ...] [--json results.json]
 
 BOARD is a PCBench fixture name or a .kicad_pcb path. Both runs use --variants 1 --threads 1 --no-kb --no-gpu, so they are
-deterministic and differ only by the pair options.
+deterministic and differ only by the pair options. `--mode NAME=ARGS` (repeatable) replaces the off/on pair with named
+option sets, e.g. `--mode base="--diff-pairs" --mode leg6="--diff-pairs --pair-leg-mm 6"` (issue #67).
 """
 import argparse
 import concurrent.futures as cf
@@ -38,11 +39,14 @@ def board_path(name: str) -> pathlib.Path:
     raise SystemExit(f"no board {name}")
 
 
+TIME_S = 3600  # far above any run here: the work budget, not wall time, must end each run (deterministic)
+
+
 def route(src: pathlib.Path, out: pathlib.Path, work: int, extra: list[str]) -> dict:
     js = out.with_suffix(".json")
     if not out.exists() or not js.exists():
         cmd = [str(TM), "route", str(src), "-o", str(out), "--work", str(work), "--variants", "1", "--threads", "1", "--no-kb", "--no-gpu",
-               "--json", str(js), *extra]
+               "--time", str(TIME_S), "--json", str(js), *extra]
         r = subprocess.run(cmd, capture_output=True, text=True)
         (out.with_suffix(".log")).write_text(r.stderr + r.stdout)
         if not js.exists():  # the router exits non-zero when connections stay unrouted; only a missing summary is an error
@@ -60,6 +64,7 @@ def pairs(board: pathlib.Path, extra_pairs: list[str]) -> list[dict]:
 
 
 def main() -> int:
+    global TM, TIME_S
     ap = argparse.ArgumentParser()
     ap.add_argument("boards", nargs="+")
     ap.add_argument("--work", type=int, default=30_000_000)
@@ -67,21 +72,32 @@ def main() -> int:
     ap.add_argument("--drc-jobs", type=int, default=2, help="kicad-cli containers at once")
     ap.add_argument("--out", default=str(ROOT / "build/pair_eval"))
     ap.add_argument("--on-args", default="--diff-pairs")
+    ap.add_argument("--time", type=int, default=TIME_S, help="wall-time safety limit per run (s)")
+    ap.add_argument("--tm", help="tracemaker binary (default build/release)")
+    ap.add_argument("--mode", action="append", default=[], help="NAME=ARGS: a named option set (repeatable; replaces off/on)")
     ap.add_argument("--pair", action="append", default=[], help="BOARD:NET_A,NET_B pairs not named P/N or +/-")
     ap.add_argument("--json")
     a = ap.parse_args()
+    TIME_S = a.time
+    if a.tm:
+        TM = pathlib.Path(a.tm)
     out = pathlib.Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     extra_pairs: dict[str, list[str]] = {}
     for p in a.pair:
         b, pr = p.split(":", 1)
         extra_pairs.setdefault(b, []).append(pr)
-    on_args = shlex.split(a.on_args)
+    modes = [("off", []), ("on", shlex.split(a.on_args))]
+    if a.mode:
+        modes = [(m.split("=", 1)[0], shlex.split(m.split("=", 1)[1] if "=" in m else "")) for m in a.mode]
     jobs = []
     for name in a.boards:
         src = board_path(name)
-        tag = pathlib.Path(name).stem if name.endswith(".kicad_pcb") else name
-        for mode, extra in (("off", []), ("on", on_args)):
+        tag = name
+        if name.endswith(".kicad_pcb"):  # a fixture's file is often `unrouted.kicad_pcb`: the folder names the board then
+            pp = pathlib.Path(name)
+            tag = pp.parent.name if pp.stem == "unrouted" else pp.stem
+        for mode, extra in modes:
             jobs.append((tag, mode, src, out / f"{tag}.{mode}.kicad_pcb", extra))
     with cf.ThreadPoolExecutor(a.jobs) as ex:
         res = dict(zip([(t, m) for t, m, *_ in jobs], ex.map(lambda j: route(j[2], j[3], a.work, j[4]), jobs)))
@@ -107,7 +123,7 @@ def main() -> int:
         print(f"{r['board'][:34]:34} {r['mode']:4} {r['routed']}/{r['connections']:<4} {r.get('unconnected', '?'):>5} "
               f"{sum(r.get('added_errors', {}).values()) if 'added_errors' in r else '?':>5}  {pr}")
     if a.json:
-        pathlib.Path(a.json).write_text(json.dumps({"work": a.work, "on_args": a.on_args, "rows": rows}, indent=1))
+        pathlib.Path(a.json).write_text(json.dumps({"work": a.work, "on_args": a.on_args, "modes": [[m, " ".join(x)] for m, x in modes], "rows": rows}, indent=1))
     return 0
 
 

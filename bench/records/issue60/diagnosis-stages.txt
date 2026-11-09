@@ -1,0 +1,12 @@
+# Full portfolio run on main (057ee82) with temporary debug output after each stage of app/route_job.cpp:
+# track sums of the pair in the job's result (the router's result and every later stage).
+DBG60 first /Debugger/D+: 17 tracks 10.1015 mm
+DBG60 first /Debugger/D-: 20 tracks 11.5605 mm
+DBG60 before soft zones /Debugger/D+: 17 tracks 10.1015 mm
+DBG60 before soft zones /Debugger/D-: 20 tracks 11.5605 mm
+DBG60 after refill repair /Debugger/D+: 17 tracks 10.1015 mm
+DBG60 after refill repair /Debugger/D-: 20 tracks 11.5605 mm
+DBG60 after thermal /Debugger/D+: 17 tracks 10.1015 mm
+DBG60 after thermal /Debugger/D-: 20 tracks 11.5605 mm
+DBG60 after passes /Debugger/D+: 17 tracks 10.1015 mm
+DBG60 after passes /Debugger/D-: 20 tracks 11.5605 mm

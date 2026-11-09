@@ -5,16 +5,20 @@
  "bundle_spines": 0,
  "completion_pct": 100.0,
  "connections": 87,
+ "copper_layers": 2,
  "drc": {
   "added_routing_errors": 0,
   "after": {
    "errors": 0,
    "notes": [],
    "unconnected": 0,
+   "unconnected_cut_by_refill": 0,
    "unconnected_items": [],
+   "unconnected_open_by_router": 0,
    "warnings": 0
   },
   "before": {
+   "error_items": [],
    "errors": 0,
    "notes": [],
    "unconnected": 87,
@@ -35,6 +39,8 @@
  "package_pin_edges": 0,
  "pitch_mm": 0.1,
  "refill": {
+  "starved_thermal_pads": [],
+  "starved_thermals": 0,
   "unconnected": 0,
   "warnings": [],
   "zones": 1
@@ -88,7 +94,7 @@
  },
  "run": {
   "board": "unrouted.kicad_pcb",
-  "date": "2026-10-24T01:46:11Z",
+  "date": "2026-11-08T22:45:06Z",
   "input": "build/demos/complex_hierarchy//unrouted.kicad_pcb",
   "options": [
    {
@@ -108,6 +114,10 @@
     "value": "true"
    },
    {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
     "name": "--threads",
     "value": "4"
    },
@@ -118,6 +128,10 @@
    {
     "name": "--si-rules",
     "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
    },
    {
     "name": "--view-port",
@@ -137,10 +151,10 @@
   "threads": 4,
   "time_limit_s": 3600.0,
   "variants": 8,
-  "version": "0.10.0",
+  "version": "0.12.1",
   "work_budget": 3000000
  },
- "seconds": 35.040125898,
+ "seconds": 11.914035814,
  "style": {
   "acute_angles": 0,
   "arcs": 0,
@@ -164,54 +178,62 @@
  "unconnected_after_refill": 0,
  "variant": 2,
  "variant_name": "fast bends, longest first (2x pitch on large boards)",
- "variant_seconds": 19.102742683,
+ "variant_seconds": 1.056277313,
  "variants": [
   {
+   "best": false,
    "name": "exact bends, shortest first",
    "routed": 87,
-   "seconds": 31.561977353,
+   "seconds": 4.522735861,
    "variant": 0
   },
   {
-   "name": "fast bends, shortest first",
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
    "routed": 87,
-   "seconds": 4.277235757,
+   "seconds": 1.655446546,
    "variant": 1
   },
   {
+   "best": true,
    "name": "fast bends, longest first (2x pitch on large boards)",
    "routed": 87,
-   "seconds": 19.102742683,
+   "seconds": 1.056277313,
    "variant": 2
   },
   {
+   "best": false,
    "name": "fast bends, jittered order, escape plan",
    "routed": 87,
-   "seconds": 5.299265269,
+   "seconds": 2.02100481,
    "variant": 3
   },
   {
+   "best": false,
    "name": "exact bends, jittered order",
    "routed": 87,
-   "seconds": 28.558905361,
+   "seconds": 4.835541021,
    "variant": 4
   },
   {
-   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones)",
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
    "routed": 87,
-   "seconds": 19.468086956,
+   "seconds": 9.095987228,
    "variant": 5
   },
   {
-   "name": "fast bends, cheap crossings, escape plan",
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
    "routed": 87,
-   "seconds": 12.863902634,
+   "seconds": 1.762395425,
    "variant": 6
   },
   {
-   "name": "fast bends, dear vias",
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
    "routed": 87,
-   "seconds": 5.085050832,
+   "seconds": 1.612968644,
    "variant": 7
   }
  ],
@@ -275,24 +297,24 @@
  },
  "work_all_variants": {
   "cleanup": {
-   "cell_checks": 2616481,
+   "cell_checks": 2650682,
    "commits": 29,
-   "expansions": 4829135,
+   "expansions": 4828088,
    "field_cells": 21327690,
    "fields": 27,
-   "fixed_checks": 714277,
-   "flood_cells": 0,
+   "fixed_checks": 719622,
+   "flood_cells": 90018,
    "rips": 0,
    "searches": 29
   },
   "first_pass": {
-   "cell_checks": 3166426,
+   "cell_checks": 3082589,
    "commits": 696,
-   "expansions": 4958656,
+   "expansions": 4837838,
    "field_cells": 46620548,
    "fields": 166,
-   "fixed_checks": 4527005,
-   "flood_cells": 0,
+   "fixed_checks": 4500380,
+   "flood_cells": 80015,
    "rips": 0,
    "searches": 696
   },
@@ -319,13 +341,13 @@
    "searches": 0
   },
   "total": {
-   "cell_checks": 5782907,
+   "cell_checks": 5733271,
    "commits": 725,
-   "expansions": 9787791,
+   "expansions": 9665926,
    "field_cells": 67948238,
    "fields": 193,
-   "fixed_checks": 5241282,
-   "flood_cells": 0,
+   "fixed_checks": 5220002,
+   "flood_cells": 170033,
    "rips": 0,
    "searches": 725
   }

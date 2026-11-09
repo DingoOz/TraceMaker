@@ -7,7 +7,7 @@ rules, so the router and KiCad's judge read the same net classes and rules.
   bench/prepare_demos.py [--out build/demos] [--set planes | NAME ...]
 
 A name is a board file stem looked up in bench/data/kicad/demos/*/ (scripts/fetch_fixtures.sh kicad-demos) and
-tests/boards/*/. Prints the fixture directory for bench/run.py --fixtures.
+tests/boards/*/ and bench/data/kookabus/*/ (scripts/fetch_fixtures.sh kookabus). Prints the fixture directory for bench/run.py --fixtures.
 """
 import argparse
 import pathlib
@@ -17,7 +17,7 @@ from prepare_dac2020 import strip_routing
 from prepare_inputs import invalidate_fixture, prepare_board
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SEARCH = [ROOT / "bench/data/kicad/demos", ROOT / "tests/boards"]
+SEARCH = [ROOT / "bench/data/kicad/demos", ROOT / "tests/boards", ROOT / "bench/data/kookabus"]
 
 
 def find(name: str) -> pathlib.Path:

@@ -1,0 +1,243 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 95.65,
+ "connections": 69,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 5060652,
+ "failures": [
+  "GND: U1.27 -> C9.2  (boxed in; escapes/neck-down: boxed in)",
+  "GND: C12.2 -> U1.27  (boxed in (target); escapes/neck-down: boxed in (target))",
+  "GND: U1.27 -> U1.8  (boxed in; escapes/neck-down: boxed in)"
+ ],
+ "open": 3,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.075,
+ "routed": 66,
+ "run": {
+  "board": "stage1.kicad_pcb",
+  "date": "2026-11-08T22:21:58Z",
+  "input": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/fan_controller_fan_controller/stage1.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/fan_controller_fan_controller/s2-off5.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "5000000"
+   },
+   {
+    "name": "--no-rescue",
+    "value": "false"
+   },
+   {
+    "name": "--repair",
+    "value": "off"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-port",
+    "value": "8783"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/fan_controller_fan_controller/s2-off5.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/fan_controller_fan_controller/s2-off5.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "variants": 1,
+  "version": "0.12.1",
+  "work_budget": 5000000
+ },
+ "seconds": 3.316200617,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 80,
+  "bends_per_connection": 0.4,
+  "connections": 200,
+  "detour_length_mm": 424.697879,
+  "detour_octile_mm": 385.111171,
+  "detour_ratio": 1.1028,
+  "length_mm": 424.697879,
+  "long_detours": 3,
+  "off_angle_segments": 132,
+  "segments": 299,
+  "short_segments": 24,
+  "stair_steps": 0,
+  "vias": 30
+ },
+ "time_limited": false,
+ "tracks": 299,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 3.302762931,
+ "vias": 30,
+ "why_open": {
+  "congested": 3,
+  "neck_down": 0,
+  "next": [
+   "move a part or change the rules around the 1 pin walled in above: no router can connect them as placed",
+   "3 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 4,
+  "proved": [
+   {
+    "net": "GND",
+    "pin": "U1.27",
+    "text": "U1.27 (GND) cannot be connected as placed: on B.Cu the fixed copper (U1.26, U1.28, a Net-(R14-Pad1) track, a /sense0(CN13) track) leaves no way out even for a track of the board's minimum width (0.2 mm) with its clearances, and no via fits beside it. A via in the pad would fit (--via-in-pad).",
+    "via_in_pad_fits": true,
+    "walls": [
+     "U1.26",
+     "U1.28",
+     "a Net-(R14-Pad1) track",
+     "a /sense0(CN13) track"
+    ],
+    "width_mm": 0.25
+   }
+  ],
+  "seconds": 0.245357933,
+  "soft_only": 0,
+  "via_in_pad": 1,
+  "walled_in": 1
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 737646,
+   "commits": 188,
+   "expansions": 4448685,
+   "field_cells": 2623582,
+   "fields": 17,
+   "fixed_checks": 367688,
+   "flood_cells": 121477,
+   "rips": 0,
+   "searches": 197
+  },
+  "negotiation": {
+   "cell_checks": 118936,
+   "commits": 0,
+   "expansions": 419243,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 30829,
+   "flood_cells": 71247,
+   "rips": 0,
+   "searches": 20
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 856582,
+   "commits": 188,
+   "expansions": 4867928,
+   "field_cells": 2623582,
+   "fields": 17,
+   "fixed_checks": 398517,
+   "flood_cells": 192724,
+   "rips": 0,
+   "searches": 217
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 737646,
+   "commits": 188,
+   "expansions": 4448685,
+   "field_cells": 2623582,
+   "fields": 17,
+   "fixed_checks": 367688,
+   "flood_cells": 121477,
+   "rips": 0,
+   "searches": 197
+  },
+  "negotiation": {
+   "cell_checks": 118936,
+   "commits": 0,
+   "expansions": 419243,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 30829,
+   "flood_cells": 71247,
+   "rips": 0,
+   "searches": 20
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 856582,
+   "commits": 188,
+   "expansions": 4867928,
+   "field_cells": 2623582,
+   "fields": 17,
+   "fixed_checks": 398517,
+   "flood_cells": 192724,
+   "rips": 0,
+   "searches": 217
+  }
+ }
+}

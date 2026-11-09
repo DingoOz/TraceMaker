@@ -10,6 +10,7 @@ code: []
 > not an independent second corpus; and the paper was read in full (§1). The rest of this note is as written on 2026-10-14.**
 > **Update (2026-10-24): D3, the run report, was built (§9, D136).**
 > **Update (2026-10-27): C3, pours and the layer-count advisor, was built (§10, D138).**
+> **Update (2026-11-08): A3, the Kookabus boards, is a private fixture set (§19, D176); §7's open question is answered.**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -187,6 +188,17 @@ Not met yet: the review by someone who did not write it. interf_u, which on 2026
 portfolio, finished in 128 s on 2026-10-27 after D137's GPU back-off (the stall was the GPU fallback cliff), and RoyalBlue54L-Feather was
 re-run under `--time 3600` (72 s, not time-limited). Found on the way: under load the default 120 s time limit, not the work budget, ended
 some runs, and their results moved between runs; the summary now says so (`time_limited`) and the report warns.
+
+Outside review (2026-11-08, [D177](decisions/D177.md)). A separate AI agent, with no part in writing the code, read the eight boards'
+reports, summaries and logs and the how-to (`bench/records/m20-run-report/outside-review.md`); it is not a human review. Every number
+matched its JSON field and the log. It found seven wrong statements: congestion described as "fixed copper encloses a pad" while the
+run's exact proof (`why_open`) said no pin was walled in, and that proof left out; two USB pins of RoyalBlue called unescapable although
+routed (the package analysis's 40 µm lattice; now confirmed pin by pin with the exact proof); starved thermal reliefs missing; the relax
+rescue's legalising round explained as "the run ended"; a rescued run's work reported as 0 (the work of a run of rounds is now summed over
+its rounds); the narrower-via hint left in the log; an SI sentence claiming checks that did not run. All seven are fixed, and most of the
+misleading and unclear points (README §4 lists each finding and what was done). The routed copper is unchanged (byte-identical to `main`
+057ee82 on the boards compared). The task stays open for a human designer's read of the fixed reports: the AI review checked the reports
+against their data, which a person reading them to decide what to do next may still find wanting.
 
 ## 10. C3 built: generated pours and the layer-count advisor (2026-10-27)
 
@@ -369,3 +381,19 @@ against 787), so a better rule for the heads was not pursued.
 State of M22: items 1-3 and 5-8 are built and off by default, and item 4 is partly built (`--plane-informed`). The best arm,
 `--via-shove --escape-all`, cuts open connections by 3.5 % against the 15 % gate. Every repair so far lands within a few connections
 of the base given about 10 % more work, so more search per second is the stronger lever.
+
+## 19. A3 done: the Kookabus boards (2026-11-08, M21)
+
+The Kookabus files are in the private repository `DingoOz/kookabus` (no licence), so §7's "may they go in the repository" is answered with
+a fetch script, not a copy: `scripts/fetch_fixtures.sh kookabus` clones it at a pinned commit into `bench/data/kookabus` and
+`bench/sets/kookabus.txt` names the six boards with a layout (decision [D176](decisions/D176.md), records `bench/records/m21-a3`). They are
+2-layer boards (one 4-layer: the motor driver Kookabus-06) for I2C, power, motor and LoRa, with custom clearance rules and **no tuning
+profile, length, skew, delay or impedance rule**, as §8 feared: B1 and B2 have nothing to act on here, and M21's gate is met only
+vacuously. The SI audit finds Kelvin current-sense pairs and one crystal; it also marked a charge-only USB-C socket's unused D+/D- pins
+(single-pad nets) as critical, which D176 fixes (a critical net needs two pads).
+
+At 3 M work with `--refill`, 1 of 6 boards is clean (Kookabus-03) and completion is 85-100 %, with no routing error added, against six
+DRC-clean designer layouts; `--si-rules` changes almost nothing and `--diff-pairs` costs completion on three boards (Kookabus-06's sense
+pairs coupled 95.9 %, the designer's 42.6 %). What these boards need is completion (M22), not high speed. The one real high-speed Kookabus
+design, the CSI-2 vision board Kookabus-05, has no layout yet; it is the board to revisit B1/B2 on.
+

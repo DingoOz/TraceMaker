@@ -4,6 +4,7 @@
 // plain summary does not carry: which rules were read and which were not, and the DRC of the board before and after the
 // route. The report file itself is rendered from the summary alone (report/render.hpp), so every number in it is a
 // field of the JSON.
+#include <set>
 #include <string>
 #include <vector>
 
@@ -26,7 +27,12 @@ nlohmann::json rules_json(const std::string& board_path, const model::Board& boa
 // `kicad-cli pcb drc --refill-zones` does (the plane tier is judged that way, doc 10 §4). Counts per type, not the
 // instance matching of bench/drc_judge.py: a type whose count did not grow may still hold a new violation that replaced
 // an old one.
-nlohmann::json drc_json(const model::Board& before, const model::Board& after, const model::DesignRules& rules, bool refill);
+// The errors of the board before the route are listed with where they are (`before/error_items`, the first of each), so a
+// designer can tell the input's own errors from the route's. With `router_open` (names of the nets the router left a connection of open),
+// each unconnected item after the route says whether its net is one of them (`open_by_router`) or was completed by the router and
+// cut off by the zone refill, and `after` counts both.
+nlohmann::json drc_json(const model::Board& before, const model::Board& after, const model::DesignRules& rules, bool refill,
+                        const std::set<std::string>* router_open = nullptr);
 
 // True for violation types that routing can cause (bench/drc_judge.py NOT_ROUTING lists the others; unconnected items
 // are counted on their own).

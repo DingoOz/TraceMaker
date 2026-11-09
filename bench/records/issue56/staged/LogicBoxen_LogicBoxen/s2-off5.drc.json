@@ -1,0 +1,174 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:53",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-off5.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [Net-(R9-Pad1)] of R9 on F.Cu",
+                    "pos": {
+                        "x": 26.4,
+                        "y": 58.6
+                    },
+                    "uuid": "aacf9939-57d3-496e-b85f-1f407583cd9c"
+                },
+                {
+                    "description": "Pad 12 [Net-(R9-Pad1)] of U2 on F.Cu",
+                    "pos": {
+                        "x": 58.7,
+                        "y": 54.325
+                    },
+                    "uuid": "71757548-1cf7-4c3c-a1f5-4bd64519b210"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [Net-(R11-Pad1)] of R11 on F.Cu",
+                    "pos": {
+                        "x": 28.9,
+                        "y": 58.55
+                    },
+                    "uuid": "dcec0e4c-57ff-49ea-b4f1-ba3449fcacc8"
+                },
+                {
+                    "description": "Pad 15 [Net-(R11-Pad1)] of U2 on F.Cu",
+                    "pos": {
+                        "x": 58.7,
+                        "y": 52.375
+                    },
+                    "uuid": "5274fe42-8ac3-4a74-a546-1a6f98bb3b33"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [VCC] of C5 on F.Cu",
+                    "pos": {
+                        "x": 50.5,
+                        "y": 51.6
+                    },
+                    "uuid": "28d1a25b-6d44-43ad-b223-dcdb5014435e"
+                },
+                {
+                    "description": "Pad 1 [VCC] of U2 on F.Cu",
+                    "pos": {
+                        "x": 52.8,
+                        "y": 51.725
+                    },
+                    "uuid": "0f44ad44-784a-4e73-8652-b58a3dc5aeeb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [VCC] of C5 on F.Cu",
+                    "pos": {
+                        "x": 50.5,
+                        "y": 51.6
+                    },
+                    "uuid": "28d1a25b-6d44-43ad-b223-dcdb5014435e"
+                },
+                {
+                    "description": "Track [VCC] on F.Cu, length 2.0153 mm",
+                    "pos": {
+                        "x": 50.25,
+                        "y": 43.125
+                    },
+                    "uuid": "bdc295ae-e4f4-4424-b271-531414a28330"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**_3",
+                    "pos": {
+                        "x": 70.2,
+                        "y": 52.7
+                    },
+                    "uuid": "656d63d1-007c-45f8-8fa7-0801c0a6e6b6"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**_2",
+                    "pos": {
+                        "x": 27.6,
+                        "y": 52.7
+                    },
+                    "uuid": "b83d0f8d-da08-4991-bdea-a258d5b99a77"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**",
+                    "pos": {
+                        "x": 27.7,
+                        "y": 32.3
+                    },
+                    "uuid": "6521d17b-ec30-47b4-9b19-596b96f92dc0"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        }
+    ]
+}
