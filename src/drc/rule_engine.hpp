@@ -2,6 +2,7 @@
 #pragma once
 // Resolves KiCad constraints for pairs of copper items (design doc 03 §6): net-class clearances, local pad
 // overrides, board minimums and custom .kicad_dru rules with their conditions.
+#include <array>
 #include <tuple>
 #include <mutex>
 #include <map>
@@ -127,6 +128,9 @@ class RuleEngine {
   // values may then be judged differently, so the router's obstacle caches stay per class (issue #54).
   bool class_names_seen() const { return class_names_seen_; }
   const std::vector<std::string>& warnings() const { return warnings_; }
+  // Reference path for the per-kind tables of conditions that read only the items' types (issue #53): off, every custom_min
+  // evaluates the condition itself. The answers are the same (test "[drc][rules]" kind tables).
+  void use_kind_tables(bool on) { kind_tables_ = on; }
 
  private:
   // Keyword bits of a rule's disallow constraints.
@@ -134,13 +138,21 @@ class RuleEngine {
     kTrack = 1, kVia = 2, kThroughVia = 4, kMicroVia = 8, kBlindVia = 16, kBuriedVia = 32, kPad = 64, kZone = 128, kGraphic = 256,
     kRouted = kTrack | kVia | kThroughVia | kMicroVia | kBlindVia | kBuriedVia,
   };
+  static constexpr int kKinds = 6;  // ItemKind values
+  static_assert(static_cast<int>(ItemKind::Graphic) == kKinds - 1);
   struct Compiled {
     const model::CustomRule* rule;
     std::unique_ptr<Condition> cond;  // null = always
     bool valid = true;
     bool positional = false;  // position, size, footprint or pad condition: evaluated per item, not per net
     std::uint16_t words = 0;  // disallow keywords
+    // The condition reads only A.Type and B.Type: its value by (kind of A, kind of B or absent), index kind_slot(a, b).
+    bool kind_only = false;
+    std::array<std::uint8_t, kKinds * (kKinds + 1)> by_kind{};
   };
+  static std::size_t kind_slot(const CopperItem* a, const CopperItem* b) {
+    return static_cast<std::size_t>(static_cast<int>(a->kind) * (kKinds + 1) + (b ? static_cast<int>(b->kind) : kKinds));
+  }
   bool words_match(std::uint16_t words, const CopperItem& it, const model::ViaType* via_type, bool span) const;
   // Item type, layer and condition all match a disallow constraint.
   bool disallow_hit(const Compiled& c, const CopperItem& it, int layer, const model::ViaType* via_type = nullptr, bool span = false) const;
@@ -170,6 +182,7 @@ class RuleEngine {
   bool zone_overrides_ = false;
   bool needs_exact_ = false;
   bool class_names_seen_ = false;
+  bool kind_tables_ = true;
   Coord max_physical_hole_ = 0;
   Coord max_physical_ = 0;
   Coord router_hole_ = 0;

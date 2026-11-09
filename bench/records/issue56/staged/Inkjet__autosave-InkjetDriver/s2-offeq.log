@@ -1,0 +1,9 @@
+live view: http://192.168.1.79:8783/?token=7b2fecbdfc74c701e8f1cbe7ca17dccf
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 41 ok (8068929 expansions), 0 failed (0 expansions); fields 0 GPU + 22 CPU (0.63 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 30 connections improved
+restarts 0; legality checks 1238456; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 17, 0 proved no path, 170030 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+routed 39/39 connections, 172 tracks, 37 vias, pitch 0.075 mm, 8238959 expansions, 7.61 s (best variant 7.59 s)
+work (all variants): 8068929 expansions, 170030 flood cells, 1238456 cell checks, 1016569 fixed-copper checks, 9909516 field cells in 22 fields, 41 commits, 0 rips

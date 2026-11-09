@@ -28,7 +28,9 @@ Connections routed per variant (0..7):
 | e7 | unconditional clearance 0.09 mm | 52 |
 
 Evaluating a condition costs nothing measurable (e5, e6). Lowering the clearance below the class's 0.15 mm (to the
-0.127 mm board minimum) does, most when zones keep 0.15 mm (e4). Open.
+0.127 mm board minimum) does, most when zones keep 0.15 mm (e4). These runs read the knowledge base, so e4 routed in another order than
+the others. Issue #53 (`../issue53/`, D170) measured it again with `--no-kb`: the variants stall in the coupled pair phase, and the
+non-zone condition made that phase 55 % slower in wall time than an unconditional 0.09 mm rule, at identical results.
 
 ## Quick tier
 

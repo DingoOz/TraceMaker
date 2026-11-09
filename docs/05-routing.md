@@ -346,10 +346,10 @@ named otherwise, e.g. USB DP/DM from `--component-rules soft`; D50).
 |---|---|
 | Pair rule (`route/diff_pair.cpp`, `pair_rule`) | Width and gap, highest source first: a custom rule's `diff_pair_gap` (opt, else min); the net class's diff-pair width, gap and via gap when the project sets them; else the class width and the clearance KiCad requires between the halves (relaxed to the class diff-pair gap only for pairs KiCad recognises by name, as its DRC does). Never below the board minimums. `diff_pair_uncoupled` (max) limits the legs. Offsets carry a 1 µm rounding margin per side, so the gap comes out 2 µm wide of the rule. Coupled vias sit side by side at the via gap (and the mask web of untented vias) |
 | Coupled search (`route_pair`) | A* over (layer, lattice point, direction, which half is on the left). Moves: one straight lattice step; a 45° turn followed by K straight steps, K·pitch ≥ 2·offset·tan 22.5° + width so the inner track's miter never folds back; a coupled via pair (both halves jog out at 45° to the via spacing, change layer side by side, jog back; MV steps). Each move is checked exactly (`segment_state`, `via_state` against fixed and routed copper) on both offset tracks, so the coupled section keeps its gap by construction. Cost: length + K·pitch per turn + two vias; heuristic 2 × straight-line distance to the end pads plus a via pair while off the end pads' layers (weighted: legal, not optimal). Budget 600 states per lattice step of the pair's length (40 k–250 k). Work is the states closed plus every exact leg check of a start or goal candidate, legal or not, charged to the router's total every 64 steps, when the work budget and the time limit are also checked, so an attempt whose candidates all fail ends on either (§30, D77) |
-| Breakout and fan-in | Start candidates: every lattice point within R of the start pads' midpoint (0.3 × the pair's length, at least 1.5 × the pads' distance, 0.6–2.5 mm), 8 directions, sides by the shorter legs. Legs: straight, the two octilinear dog-legs, or the same to a point behind the end of the coupled section followed by a straight entry; at the pair width, then the neck-down width; checked exactly, against each other and against the other half's first straight run, when the A* pops the candidate. The pads must lie behind the start (ahead of the end), so legs never double back along the pair. Legs cost twice the coupled length, so coupling starts as close to the pads as the board allows. Goal candidates near the end pads wait in their own queue and are checked at least every 16 expansions; the first legal one is taken |
+| Breakout and fan-in | Start candidates: every lattice point within R of the start pads' midpoint (0.3 × the pair's length, at least 1.5 × the pads' distance, 0.6–2.5 mm; `--pair-leg-mm`, `--pair-retry-leg-mm` and `--pair-pad-exits`, §77), 8 directions, sides by the shorter legs. Legs: straight, the two octilinear dog-legs, or the same to a point behind the end of the coupled section followed by a straight entry; at the pair width, then the neck-down width; checked exactly, against each other and against the other half's first straight run, when the A* pops the candidate. The pads must lie behind the start (ahead of the end), so legs never double back along the pair. Legs cost twice the coupled length, so coupling starts as close to the pads as the board allows. Goal candidates near the end pads wait in their own queue and are checked at least every 16 expansions; the first legal one is taken |
 | Commit | Both halves are built from corners only (a node's own offset point would fold an inner miter back), collinear runs merged, checked against each other geometrically, then exactly: each half against the board, the first committed, the second checked against it too, otherwise the first is taken back. Up to four finished candidates per search |
 | Enclosed pins | A pin of another net between the two pins of an end (the ground pin between P and N on HDMI parts) is tested with a short strict search before and after the pair; a pair that boxes in a pin that could escape before is taken back |
-| Negotiation and clean-up | A coupled half ripped by negotiation takes its partner with it, and the pair is tried coupled again (twice at most) before single routing. In the clean-up, pairs that ended up routed singly are lifted and routed coupled; on failure their old copper is restored exactly, so completion is unchanged. Via optimisation, smoothing and LNS leave coupled connections alone |
+| Negotiation and clean-up | A coupled half ripped by negotiation takes its partner with it, and the pair is tried coupled again (twice at most) before single routing. In the clean-up, pairs that ended up routed singly are lifted and routed coupled; on failure their old copper is restored exactly, so completion is unchanged. Via optimisation, smoothing and LNS leave coupled connections alone (`--protect-coupled` keeps negotiation off coupled halves; the re-coupling has an allowance past the budget, `--recouple-work`, §77) |
 | Skew | `--pair-skew-mm X` (or a KiCad custom `skew` rule) meanders the shorter half in the clean-up with the length-tuning code until the halves differ by at most X/2 (meanders go to the free side) |
 | Measurement | `tracemaker pairs <board> [--pair A,B] [--json]`: per pair the track length, the coupled share (20 µm samples beside a parallel track of the other half on the same layer within gap + max(gap/4, 50 µm)), the gap kept (median, minimum), skew and vias. `tracemaker route` prints the same for the pairs it routed; `bench/pair_eval.py` routes boards off/on at a fixed budget and judges both with KiCad |
 
@@ -1499,7 +1499,8 @@ obstacle model (`route::Obstacles`, the check the router commits with), touch on
 transactions (rule 4): the job counts unconnected items per net with and without the pass's result (after an
 in-engine refill when fills are soft or vias were added) and drops the result if any net has more than before
 (per net, so that a connection made in one net cannot hide one broken in another). Without the options the routed
-board is byte-identical to before.
+board is byte-identical to before. On a board with `length` or `skew` rules, these passes and the soft-zone repairs are
+also dropped when a net ends further outside such a rule than without them (§74, D173).
 
 ### 39.1 Power track widening (`--widen-power`)
 
@@ -1815,6 +1816,7 @@ hidden options are.
   vertical) cost P pitches; diagonals are free. Automatic (P = 0.3, with `--package-pen 3`) on a breakout board: two copper layers and at least 70 %
   of the connections with an end on a ball-grid-like package (at least 30 same-layer SMD pads on at least 5 × 5 distinct positions, 40 % of the grid filled). Negative values mean "automatic at that strength" (the seeded
   portfolio variants use −0.3, −0.6, −1.01). Elsewhere the penalties cost completion (quick 89.2 → 86.8 %), so they stay off.
+  Directions by layer name and a penalty for 45-degree steps: `--layer-dir`, `--layer-diag-pen` (§73, D174).
 - **Portfolio extras** (variants 9 and up) now vary the direction strength {0.3, 0.6, 1.0} and swap the directions on every fifth.
 - **More hidden options, measured and not useful:** `--polish F` (reserve a budget share for rebuilding the open connections of the best state),
   `--layer-assign-angle`, `--heuristic-weight` above 1 (weighted A*: 4 % clean at 1.5), `--lns-open`.
@@ -2732,6 +2734,8 @@ the step. Test: `delay_room` (it skips without `build/demos`).
 
 **Open.** mm length windows, mm pair skew and the bus tuner do not make room yet.
 
+The tuned copper is now also what the run writes (§74, D173, issue #60).
+
 
 ## 62. Search speed: late reachability proofs and output-preserving speed-ups (2026-10-29, D154)
 
@@ -3334,3 +3338,268 @@ and with every net in a class of its own with the same values, as WholeBoard wro
 
 The split boards route exactly as the originals on both engines; D169 makes the same caches for them as for the originals. The bounded
 run here also gave the same output, but its expansion count differs, as the fields knew fewer codes.
+
+## 73. Preferred directions per layer by name, and a 45-degree penalty (issue #66, 2026-11-08, D174)
+
+**Why.** `--layer-dir-pen` / `--layer-dir-swap` (§40, D98) give even layers one direction and odd layers the other, so a two-layer board
+has two choices. Hand-routed boards use other conventions (quanln's study in the issue: of 13 boards, F.Cu mostly horizontal on 6,
+vertical on 1, mixed on 7). And a 45-degree step costs nothing against either direction, so the penalty turns orthogonal runs into
+diagonal zigzags: on relaymini the 45-degree share grew from 31 to 37 % on F.Cu and from 42 to 50 % on B.Cu. Design from quanln
+(GitHub @quanln), who proposed both options.
+
+**What it does** (`route/layer_limits.cpp`, `layer_pref` and the planar moves in `route/router.cpp`).
+
+- `--layer-dir F.Cu=v,B.Cu=h` (`h`, `v` or `none` per layer; names as for `--layer-cost`, §29) replaces the parity: named layers get
+  that direction, layers not named get none, `--layer-dir-swap` has no effect (a warning says so). Its strength is `--layer-dir-pen`;
+  if that is not given, 0.3 pitches per step on any board, not only on breakout boards.
+- `--layer-diag-pen P` or `--layer-diag-pen F.Cu=P,...` (0 to 100; a bare value is every layer's, named layers override it): every
+  45-degree lattice step on that layer costs P pitches more. Independent of the directions.
+- Both are integer costs added in the search's planar move, like the parity penalty (rule 2). The cost-to-go fields (CPU and GPU)
+  do not include them, so they stay lower bounds and nothing on the GPU path changes; no new GPU code.
+- **Smoothing keeps them.** Path smoothing (pull tight, in the clean-up after the search) replaced runs by a 45-degree segment and a straight one whatever
+  they cost, which undid the diagonal penalty on the test board. With `--layer-dir`, an explicit positive `--layer-dir-pen` or a
+  diagonal penalty on the layer, a shortcut is taken only if its direction cost is not above the run's, and the two orthogonal corners
+  are candidates too, cheapest first. The automatic strengths (D98's breakout boards, the seeded portfolio variants: negative values)
+  keep the plain smoothing, so default runs do not change.
+- An unknown layer name is a warning and its entry is ignored (a convention may name inner layers a two-layer board does not have);
+  a malformed entry, a bad value or a layer given twice stops the run before the board is read.
+
+**Measured** on relaymini (`bench/records/issue66/`, 3 M work, two variants; F.Cu asked vertical, B.Cu horizontal, strength 1.0):
+
+| Run | F.Cu 45° | B.Cu 45° | F.Cu against its direction | B.Cu against | Routed |
+|---|--:|--:|--:|--:|--:|
+| Default | 31.4 % | 42.2 % | – | – | 60/72 |
+| `--layer-dir F.Cu=v,B.Cu=h --layer-dir-pen 1.0` | 36.8 % | 49.6 % | 0.6 % | 1.4 % | 61/72 |
+| ... `--layer-diag-pen 0.6` | 27.4 % | 35.2 % | 8.6 % | 9.9 % | 63/72 |
+| ... `--layer-diag-pen 1.0` | 25.5 % | 22.9 % | 8.1 % | 10.3 % | 62/72 |
+
+With both options unset the output is byte-identical to main (relaymini, and srj20 sample001 where D98's automatic directions are on).
+`--layer-dir` naming the parity's directions gives the parity's output exactly.
+
+**Limits.** One public board measured: whether a convention costs completion on other boards is not known (doc 16: the parity penalty
+cost the quick tier 89.2 → 86.8 %), so both stay off by default. The coupled-pair search (§24) and the advice file (doc 17) do not use
+them: advice runs as extra variants next to the plain ones, and a layer convention is meant for every variant. Track length grows (up
+to 25 % at strength 1.0 on relaymini).
+
+## 74. Tuned nets stay tuned (2026-11-08, D173)
+
+**Why.** Issue #60: `delay_room` (§61) failed on main after D154. The router's tuning log said D+ was tuned to 78.44 ps against D-'s
+78.50 ps, but the DRC of the written board measured D+ at 70.56 ps, 8.69 ps short of D- against a 0.5 ps rule. The soft-zone refill
+repair and the clean-up were the suspects. Neither was the cause: with debug output after each stage of `app/route_job.cpp`, the
+copper of D+ and D- came out of the router already untuned, and no later stage changed it.
+
+**Cause.** The clean-up (§9: diff-pair recoupling, via optimisation, smoothing and then the tuners) runs only when the search ends in
+its best state. When it ends away from it, the router returns the best state as it was snapshotted during the search: routed, but never
+tuned. The tuning lines in the log came from other variants of the portfolio that did end in their best state. The winning variant (fast
+bends, shortest first, crowded source) ended with 128 routed against a best of 129. Before D154 it ended in its best state on this
+board. The late reachability proofs change which connections are searched, so it no longer does.
+
+**Fix** (`route/router.cpp`, `wants_tuning`, `restore_best`). A board where the clean-up has tuning to do gets its best state back
+before the clean-up when the search ended away from it. The router puts it back the way the end-game retry does (§63): only the
+connections whose copper differs are lifted and restored. The clean-up and the tuners then run on the state the router returns.
+"Tuning to do" means any of these:
+
+- a net with a `length` rule (mm or time);
+- a net with a `skew` rule, or a diff pair's skew constraint;
+- `--pair-skew-mm`, or a component-rule pair skew above 0;
+- buses (`--bus`, `--buses`).
+
+Other boards keep the old behaviour, byte for byte. Running the clean-up on the best state of every board would change results
+everywhere and needs measuring of its own (not done here).
+
+**Guard on the stages after routing** (`app/route_job.cpp`, `drc::length_faults`). On a board with `length` or `skew` rules, these
+stages are kept only if no net is further outside such a rule with their copper than without it:
+
+- the soft-zone refill repair (§36);
+- the thermal relief repair (§36.1), for each pad;
+- the stitching vias (§39.3).
+
+The distance outside a rule is measured as the DRC measures it on the written board (KiCad's length calculation, §59;
+`DrcOptions::lengths_only` runs only those checks). A net that is in range counts as 0. These stages route or rip connections again,
+or add vias, so they can lengthen or shorten a tuned net. A sub-router does not tune a skew group whose other members it did not route.
+Widening and the tuning-profile narrowing change only widths, which KiCad's length calculation ignores, so they need no guard. On this
+board no stage touched the pair: the guard did not reject anything.
+
+**Result** (`bench/records/issue60/`, the B2 fixtures, 3 M work, `--refill --soft-zones`, 8 threads, judged by KiCad 10.0.6):
+
+| Board | main | D173 |
+|---|---|---|
+| RoyalBlue54L-Feather-delay | 129/147, 37 unconnected, `skew_out_of_range` 1 | 129/147, 39 unconnected, none added |
+| RoyalBlue54L-Feather-profile, interf_u-delay, interf_u-profile | as on main | byte-identical output |
+
+On RoyalBlue54L-Feather-delay the best state is now cleaned up and tuned: D+ ends at 79.43 ps against D-'s 79.49 ps. The meanders cut
+the soft fills once more, so the refill repair closes one connection to a zone instead of two. KiCad counts two more unconnected
+items, with the same routed count; that is what meeting the rule costs on this board. Boards without length or skew rules are
+unchanged by construction. Two quick-tier boards were checked byte-identical, and none of the 30 has a `.kicad_dru`.
+
+**Tests.** `delay_room` passes again. Unit test `length faults: a stage that shortens a tuned net is worse` (`tests/test_length.cpp`,
+runs in CI without `build/demos`): on KiCad's `time_calculations` board it halves a track of a net tuned into its 29.83-29.85 ps
+window. It checks that the lengths-only DRC reports the full DRC's length and skew violations, that the cut makes the net a fault and
+that `length_faults_no_worse` rejects it. The router fix itself has no CI test: a small board that makes the search end away from its
+best state with a tuned net was not found. `delay_room` covers it where the demos are prepared.
+
+## 75. Repair windows: finishing a partly routed board (issue #56, 2026-11-08, D172)
+
+**Why.** Without `--reroute`, every track and via of the input is fixed copper. On a WholeBoard PoE switch routed 1186/1189 the last
+pins stayed open ("fixed copper encloses the pin"): the neighbours' fan-outs wall them in and the router may not rip them. The only other
+choice was `--reroute`, a fresh two-hour run. Staged flows hit the same wall: route some nets first (`--only-net`), then the rest with
+that copper fixed.
+
+**What it does** (`passes/repair.{hpp,cpp}`, called from `app/route_job.cpp` after the rescue and the advisor).
+
+- For each connection still open, in the router's order, the *branches* of other nets with copper within r of either end pad (measured
+  from the pad's edge) are lifted. A branch is the chain of tracks and vias of one net between two stops: a pad, a zone fill, an arc or
+  copper graphic, or a junction where three or more tracks and vias meet. Track ends touch when an end point or the centreline lies
+  within 1 µm, or the end lies in a via. Whatever the lift leaves dead goes too: a track with an end that touched copper and now touches
+  nothing, or a via left with one contact. So no cut stub stays in the way (the user's manual cut at 2.5 mm left 11 open instead of 3), and
+  a big net keeps the branches outside the window.
+- The board is routed again by one router (the run's options, the open connection first), everything else fixed, on `--repair-work`
+  (3 M) work. The attempt is a transaction (rule 4): it is kept only if no two pads that were joined come apart and fewer connections are
+  open, counted per net on the router's connectivity. Otherwise the window grows (`--repair-window-mm`, default 1, 2, 4). A window that
+  would lift more than `--repair-branches` (64) branches ends the growth; at most `--repair-conns` (64) connections are tried, and
+  `--time` bounds the repair as a safety only. A kept attempt's own open list is the next one.
+- Never lifted: locked tracks and vias (rule 6), tuning patterns, free vias, branches touching arcs or copper graphics, the open
+  connection's own net, nets this run does not route, coupled pairs (`--diff-pairs`, component-rule pairs) and bus members.
+- **`--repair auto`** (default) runs only on a board that came with unlocked tracks or vias, and only when connections are left open. A
+  board routed from nothing here is unchanged: the router's negotiation could already rip that copper, and D155's pin rescue, which lifts
+  routed copper in the same way, lost against the same work spent on routing (§63). `--repair on` runs it on any board, `off` never.
+- The lifted input copper leaves the written board. `--emit-items` lists it under `removed`, and the KiCad plugin removes it from the open
+  board in the same commit (nothing is changed if an item is not found). The summary has `repair` (attempts with radius, branches,
+  tracks and vias lifted, open before and after, kept), and the viewer gets `repair` stage events.
+- **Staged routing.** `--only-net` and `--skip-net` take patterns (KiCad wildcards or regular expressions, as net-class patterns;
+  repeatable or comma separated), e.g. `route board.kicad_pcb --only-net '/USB_D*,/ETH_*' -o pass1.kicad_pcb`, then
+  `route pass1.kicad_pcb -o pass2.kicad_pcb`: the second pass routes the rest, and its repair may lift pass-one copper near a pin that
+  copper encloses. A net named exactly matches itself even when its name reads as a regular expression (`Net-(U1-Pad3)`).
+
+**Measured** (`bench/records/issue56/`). Staged flow on the nine PCBench quick-tier boards where it leaves connections open: stage 1 routes
+everything but the power nets (`--skip-net 'GND*,*GND,VCC*,VDD*,+*,*3V3*,*5V*,*VBUS*,*VIN*'`, 1 M work), stage 2 routes the board with that
+copper fixed (one variant, `--no-rescue`, 5 M work). "Plain, same work" gives the plain stage 2 the repair's work on top of its own.
+
+| Board (stage 2 connections) | Plain | Repair | Plain, same work | Attempts (kept) | Input tracks / vias lifted |
+|---|--:|--:|--:|--:|--:|
+| 655_testboard (32) | 25 | 32 | 27 | 5 (1) | 55 / 8 |
+| breakout-boards_swd-and-uart (4) | 3 | 4 | 3 | 2 (1) | 13 / 0 |
+| custom_cpu--ALU_custom_cpu--ALU (39) | 30 | 39 | 39 | 4 (4) | 21 / 1 |
+| fan_controller_fan_controller (69) | 66 | 69 | 66 | 1 (1) | 12 / 1 |
+| Hangul-Clock_Hangul (169) | 160 | 168 | 169 | 5 (3) | 3 / 0 |
+| Inkjet__autosave-InkjetDriver (39) | 38 | 39 | 39 | 1 (1) | 4 / 0 |
+| LogicBoxen_LogicBoxen (64) | 60 | 64 | 62 | 1 (1) | 21 / 1 |
+| mosavr_pcie1x_backplane (54) | 48 | 53 | 54 | 10 (4) | 10 / 0 |
+| uC3Moy_uC3Moy (17) | 16 | 16 | 17 | 3 (0) | 0 / 0 |
+| **total (487)** | **446** | **484** | **476** | | |
+
+KiCad 10.0.6's DRC (zones refilled) gives the same errors for all three arms of each board (the boards' own: outline, courtyards,
+mask bridges, annular width), so the repair adds none; its unconnected counts equal the open connections above.
+
+- Against the plain stage 2 the repair closes 38 of 41 open connections and never loses (it is a transaction). Against the same work
+  spent on the plain run it is +8: better where pins are walled in (655_testboard, LogicBoxen, breakout, fan_controller), worse where the
+  open connections only wanted more search (Hangul, mosavr, uC3Moy, one each).
+- **Default flow** (the relax rescue on, as a plain `tracemaker route` runs; repair after it): 467 of 487 with `--repair off`, 486 with
+  the default `auto`. The repair ran on the five boards the rescue left open and completed four (655_testboard, Hangul, custom_cpu,
+  fan_controller); uC3Moy stays at 16/17. The rescue alone completes LogicBoxen, breakout and mosavr; on fixed copper it cannot lift.
+- **The PoE switch** (rev6, 1186/1189, private; 2 M work for the plain run): **not finished.** The plain
+  run plans 6 connections (soft zones) and routes 2; four stay open, all at the KSZ9897 QFNs (U10, U11). Around those pins a 1 mm window
+  holds 26-40 branches of the neighbours' fan-outs (99-117 tracks), a 2 mm one more than 64; with windows of 0.2, 0.4 and 0.7 mm still
+  9-22 branches. In every attempt (3 M and 10 M work) the router could not route all the lifted branches again, so none was kept
+  (`poe6-*.log`). Dense fine-pitch fan-outs need more than a window and one router run: what each lifted connection needs is the
+  room the others used, which is the whole negotiation the two-hour run did. The repair leaves such a board as it was.
+- Cost: an attempt is one router run on the whole board: 1-6 s on the quick-tier boards, about 20-40 s on the PoE switch. Complete
+  boards and boards routed from nothing pay nothing.
+- Test: `tests/test_repair.cpp` (`[repair]`): a pin in a ring of another net's track is opened (the whole branch lifted, both nets
+  joined, no DRC error, the 2 mm window the first that lifts anything, deterministic); the same ring locked is never lifted; a branch
+  limit of 0 tries nothing. `kicad_plugin/test_offline.py` checks that the lifted copper is found on the open board.
+
+## 76. Rules below the class: the pair phase and the price of a condition (2026-11-08, D170)
+
+**Why.** Issue #53: with WholeBoard's JLCPCB rule `(condition "A.Type != 'Zone' && B.Type != 'Zone'") (constraint clearance (min
+0.09mm))` under 0.15 mm classes, six of eight `--diff-pairs` variants on the 10-port PoE switch stopped at about 116 connections in
+300 s (`bench/records/d139/`). Nothing sized from the class disagrees with the rule engine. The stalled variants were all still in the
+coupled pair phase (§15) when the time ran out: about 116 is the pairs' own connections. The pair search checks every move exactly, and
+the exact checks ask the clearance of every nearby item; evaluating the rule's condition each time (strings built, lower-cased and
+wildcard-matched for both types, both orders) made the same work 55 % slower than an unconditional 0.09 mm rule. Without the rule the
+phase only just fits in 300 s; on a loaded machine it does not fit either.
+
+**What was built** (D170).
+
+- Kind tables (`drc::RuleEngine`): a condition that reads only `A.Type` and `B.Type` is evaluated once per pair of kinds when the engine
+  is built; `custom_min` (clearance, hole clearance, hole to hole, edge clearance, track width) reads the table. Same answers by
+  construction; `use_kind_tables(false)` is the reference, compared over every item pair in the test "kind tables". On by default.
+- `--pair-share X` (default 0, no limit): the coupled pair searches stop after X of the work budget (of `--time` without one), counted
+  over every pair phase of the run; the pairs left are routed as single connections. Each pair attempt was already capped (§15); this
+  caps the phase. Off by default (below).
+
+**Measured** (`bench/records/issue53/`, `--diff-pairs --no-kb --no-rescue`; the PoE switch is WholeBoard's, not committed).
+
+| Board, rule | Run | Before (main) | D170 | Output |
+|---|---|---|---|---|
+| PoE switch, non-zone 0.09 mm | 1 variant, 2 M work | 189 s | 86 s | same file |
+| PoE switch, unconditional 0.09 mm | 1 variant, 2 M work | 122 s | 84 s | same file |
+| StickHub (8 USB pairs, 0.15 mm class), non-zone 0.09 mm | 1 variant, 5 M work, `--soft-zones` | 31.8 s CPU | 21.0 s CPU | same file, 128/128 |
+| StickHub, no rule | 1 variant, 5 M work, `--soft-zones` | 31.0 s CPU | 30.9 s CPU | same file |
+
+Eight variants, 300 s, the PoE switch with the rule, the four runs at the same time on the shared machine:
+
+| Engine | Connections per variant (0..7) | Best | Coupled pairs (best) | Work done |
+|---|---|---|---|---|
+| main | 96 96 160 96 96 1097 96 54 | 1,097 | 75 | 44.7 M |
+| D170 | 126 140 660 140 140 1105 126 106 | 1,105 | 75 | 89.7 M |
+| D170, `--pair-share 0.25` | 1027 1104 1029 1073 1034 1105 1111 1088 | 1,111 | 19 | 404.6 M |
+| D170, no rule | 106 106 148 106 106 1090 106 86 | 1,090 | 70 | 80.8 M |
+
+With the tables the rule costs nothing over no rule. `--pair-share 0.25` lifts every variant past 1,000, but the portfolio keeps only the
+best, which then couples 19 pairs instead of 75: completion +6, coupling −56. Coupling is what `--diff-pairs` asks for, so the share
+stays off. One variant at 5 M work: 88 → 126 connections with the share, 44 → 8 coupled pairs.
+
+**Open.** The pair phase is slow per unit of work (every turn and via move is an exact check; only straight steps are memoised), so at
+short time limits it still takes most of the run. Conditions that read nets or classes are still evaluated per call.
+
+## 77. Coupled pairs: leg reach, protected halves, re-coupling past the budget, pad exits (issue #67, 2026-11-08, D175)
+
+**Why.** Issue #67 (quanln, who also found the causes and designed the first two options in their fork): on a small 2-layer board
+routed with `--diff-pairs`, the two long pairs ended 0-3 % coupled where the hand-routed board is 88-100 %. (1) The coupled section
+must start within 2.5 mm of an end's pad midpoint (§15), and pads of other nets beside the pads left no legal start that near.
+(2) Negotiation ripped one coupled half, the partner went with it (D50), and the clean-up re-coupling ran only on budget left over,
+which a run that spends its budget never has. (3) End legs into 0402 pads flanked by GND pads: 82,450 goal candidates, none legal.
+
+**What it does** (`route/router.cpp`: `route_pair`, `pair_leg`, `pad_exits`, `commit`, the clean-up).
+
+| Option | Default | What |
+|---|---|---|
+| `--pair-leg-mm X` | 2.5 | The longest reach of the legs (the old clamp of §15). The pair search's window grows with it |
+| `--protect-coupled` | off | A negotiated route that would rip a half of a coupled pair fails ("would rip a coupled pair half", reason `rip_limit`) |
+| `--recouple-work N` | 2,000,000 | The clean-up re-coupling of split pairs may spend N work units past the search budget; under a time limit alone, the time that much work takes at the run's average rate. `0` = the old behaviour |
+| `--pair-pad-exits` | off | Where no direct leg (straight, dog-leg, entry from behind) of a candidate is legal, the same shapes after a straight exit from the pad centre along one of 8 directions, to r + w, 2r + w or 4r + w (r half the pad's larger side). Legal exits are found once per pad and attempt; each check is work |
+| `--pair-retry-leg-mm X` | 0 | A pair attempt that finds no coupled path is tried again with legs of up to X, then with pad exits; pairs the first attempt couples route as without it |
+
+With `--recouple-work 0` and the other options at their defaults the output is byte-identical to the router before (20 boards).
+
+**Measured** (`bench/records/issue67/`: 18 PCBench pair boards of §15 and two KiCad demos, 69 pairs, `--work 30000000`, one variant,
+KiCad 10 DRC). On the 18 PCBench boards:
+
+| Options | Pairs ≥ 80 % / ≥ 50 % / > 0 % of 60 | Median share | Routed of 2,403 | KiCad errors added |
+|---|---|--:|--:|--:|
+| before | 19 / 33 / 47 | 60 % | 2,248 | 0 |
+| `--pair-leg-mm 4` | 15 / 29 / 45 | 47 % | 2,248 | 0 |
+| `--pair-leg-mm 6` | 11 / 33 / 46 | 58 % | 2,248 | 0 |
+| `--protect-coupled` | 16 / 30 / 44 | 51 % | 2,245 | 0 |
+| `--recouple-work 2000000` (default now) | 20 / 34 / 48 | 65 % | 2,248 | 0 |
+| `--pair-pad-exits` | 15 / 30 / 46 | 50 % | 2,249 | 0 |
+| `--pair-retry-leg-mm 6` | 19 / 35 / 47 | 60 % | 2,250 | 0 |
+
+- A longer fixed reach loses coupling on these boards: the search takes the first legal goal candidate, and a far one comes up
+  first (hub 92 → 74 %, USB-C-Screen-Adapter 87 → 0 % at 4 mm). It is what quanln's board needs (CHG_D 0 → 90.4 % at 6 mm, by their
+  measurement), so it is an option, and `--pair-retry-leg-mm` is the form that leaves coupled pairs alone. That retry coupled no
+  public pair by itself; its failed attempts only shift the rest of the run's budget.
+- Protecting coupled halves cost 3 connections and 2 clean boards and lowered coupling on balance (quanln: 3 more open connections).
+- The re-coupling allowance changed 2 of 20 boards, both for the better (PmodHDMIIn's third pair 4 → 29 %, USB-C-Screen-Adapter's L2
+  0 → 89 %), with equal completion and DRC. It replaces the reserved tenth that §15 dropped: it comes after the budget, so routing gives
+  up nothing for it.
+- Pad exits are mixed (PmodHDMIIn 112 → 116 routed, RaspberryPi-PoE's second pair 24 → 73 %; USB-C-Screen-Adapter loses coupling on
+  four pairs and two connections).
+
+**Cause 3.** Pad exits are the simple model of a pad's legal entry directions: a straight run out of the free side, then the usual
+leg. The unit test (a pair whose pads are walled in on three sides) couples only with them. Whether they couple USB_D_MCU on
+quanln's board is not known; its closest goal candidate missed by 0.027 mm, which suggests the legs fail on the last few µm into the
+pad rather than on the direction, and the neck-down width is the other lever there. Not built: pad entry from the pad's edge rather than
+its centre, legs of more than one bend after an exit, and a pair whose end leg starts uncoupled at the pad and couples after the
+obstacle (the long-leg retry is the nearest form).

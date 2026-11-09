@@ -1,0 +1,46 @@
+live view: http://192.168.1.79:8783/?token=7b7cbfc02cfa083873d353a9f1405a7a
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 22 ok (1933174 expansions), 62 failed (3428579 expansions); fields 0 GPU + 32 CPU (0.68 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 22 connections improved
+restarts 0; legality checks 2221767; rips 6, passes 2, boxed-in 10, nogood skips 0, history cells 102, transactions 0 kept of 0
+reachability checks: 37, 35 proved unreachable, 1795579 cells visited
+late reachability proofs: 1, 0 proved no path, 10003 cells visited
+failed-search expansions: strict confined 0, strict wide 1220400, negotiated confined 0, negotiated wide 510012
+rescue (warm): 1 of 17 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 16 saved routes taken over, 0 not legal under these rules
+searches: 9 ok (865049 expansions), 14 failed (1057036 expansions); fields 0 GPU + 17 CPU (0.63 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 9 connections improved
+restarts 0; legality checks 853891; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 2 proved unreachable, 668842 cells visited
+late reachability proofs: 6, 0 proved no path, 60014 cells visited
+failed-search expansions: strict confined 0, strict wide 1036006, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.1016 mm): 17 of 17 routed (complete)
+warm start: 14 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 14 in 0.3 s  <- best
+rescue (warm): 16 -> 14 routed (no gain: the result before stands)
+rescue (fresh): 1 of 17 connections are open; routing again with relax (from nothing, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+searches: 24 ok (1772142 expansions), 36 failed (1817449 expansions); fields 0 GPU + 22 CPU (0.71 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 23 connections improved
+restarts 0; legality checks 1710621; rips 1, passes 2, boxed-in 2, nogood skips 0, history cells 13, transactions 0 kept of 0
+reachability checks: 27, 19 proved unreachable, 1540438 cells visited
+late reachability proofs: 1, 0 proved no path, 10002 cells visited
+failed-search expansions: strict confined 0, strict wide 825829, negotiated confined 0, negotiated wide 249098
+ramp stage 1/2 (clearance -0.1016 mm): 17 of 17 routed (complete)
+warm start: 15 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 15 in 0.2 s  <- best
+rescue (fresh): 16 -> 15 routed (no gain: the result before stands)
+routed 16/17 connections, 60 tracks, 2 vias, pitch 0.080 mm, 5469168 expansions, 10.17 s (best variant 4.41 s)
+  unrouted: GND: R1.1 -> R4.1  (ripped up by +6V and not routed again)
+why open: 2 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 2 open through congestion (0.05 s)
+  next: 2 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 3663586 expansions, 1805582 flood cells, 2219189 cell checks, 221096 fixed-copper checks, 7135460 field cells in 32 fields, 22 commits, 6 rips

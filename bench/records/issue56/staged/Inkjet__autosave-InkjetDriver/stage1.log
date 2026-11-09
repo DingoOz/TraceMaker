@@ -1,0 +1,27 @@
+live view: http://192.168.1.79:8783/?token=3bba1c62116a41d1719c3b01bad0c4aa
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+warning: net pattern 'VCC*' matches no net of the board
+warning: net pattern 'VDD*' matches no net of the board
+warning: net pattern '*3V3*' matches no net of the board
+warning: net pattern '*VBUS*' matches no net of the board
+warning: net pattern '*VIN*' matches no net of the board
+nets: 3 of 80 left unrouted by --only-net / --skip-net
+searches: 26 ok (1461279 expansions), 0 failed (0 expansions); fields 0 GPU + 16 CPU (0.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 23 connections improved
+restarts 0; legality checks 280868; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 3, 0 proved no path, 30010 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+routed 26/36 connections, 88 tracks, 7 vias, pitch 0.075 mm, 1491289 expansions, 2.43 s (best variant 2.41 s)
+  unrouted: Net-(P3-Pad7): U1.15 -> P3.7  ()
+  unrouted: Net-(P3-Pad9): U1.17 -> P3.9  ()
+  unrouted: Net-(P1-Pad32): U1.12 -> P1.32  ()
+  unrouted: Net-(P3-Pad3): U1.5 -> P3.3  ()
+  unrouted: Net-(P3-Pad8): U1.14 -> P3.8  ()
+  unrouted: Net-(P3-Pad10): U1.16 -> P3.10  ()
+  unrouted: Net-(P3-Pad4): U1.4 -> P3.4  ()
+  unrouted: Net-(P3-Pad5): U1.7 -> P3.5  ()
+  unrouted: Net-(P3-Pad6): U1.6 -> P3.6  ()
+  unrouted: 19V: P3.2 -> C4.1  ()
+why open: 20 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 20 open through congestion (0.74 s)
+  next: 20 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 1461279 expansions, 30010 flood cells, 280868 cell checks, 382482 fixed-copper checks, 4046634 field cells in 16 fields, 26 commits, 0 rips

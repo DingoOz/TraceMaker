@@ -1,0 +1,49 @@
+live view: http://192.168.1.79:8783/?token=547d029e3fe55d54bf801b57779867c0
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 188 ok (4143585 expansions), 29 failed (795590 expansions); fields 0 GPU + 17 CPU (0.18 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 2; legality checks 856978; rips 0, passes 1, boxed-in 24, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 9 proved unreachable, 71247 cells visited
+late reachability proofs: 15, 3 proved no path, 121477 cells visited
+failed-search expansions: strict confined 0, strict wide 307650, negotiated confined 0, negotiated wide 416693
+rescue (warm): 3 of 69 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 66 saved routes taken over, 0 not legal under these rules
+searches: 132 ok (3936054 expansions), 17 failed (1003172 expansions); fields 0 GPU + 45 CPU (0.35 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 64 connections improved
+restarts 2; legality checks 807213; rips 0, passes 1, boxed-in 15, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 19, 3 proved no path, 162179 cells visited
+failed-search expansions: strict confined 0, strict wide 310558, negotiated confined 0, negotiated wide 692614
+ramp stage 1/2 (clearance -0.0800 mm): 66 of 69 routed
+warm start: 65 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 65 in 0.2 s  <- best
+rescue (warm): 66 -> 65 routed (no gain: the result before stands)
+rescue (fresh): 3 of 69 connections are open; routing again with relax (from nothing, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+searches: 132 ok (3951701 expansions), 29 failed (1124821 expansions); fields 0 GPU + 45 CPU (0.38 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 64 connections improved
+restarts 1; legality checks 911359; rips 0, passes 1, boxed-in 24, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 9 proved unreachable, 116535 cells visited
+late reachability proofs: 19, 3 proved no path, 162180 cells visited
+failed-search expansions: strict confined 0, strict wide 315672, negotiated confined 0, negotiated wide 692614
+ramp stage 1/2 (clearance -0.0800 mm): 66 of 69 routed
+warm start: 65 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 65 in 0.2 s  <- best
+rescue (fresh): 66 -> 65 routed (no gain: the result before stands)
+routed 66/69 connections, 299 tracks, 30 vias, pitch 0.075 mm, 5060652 expansions, 12.31 s (best variant 3.63 s)
+  unrouted: GND: U1.27 -> C9.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: GND: C12.2 -> U1.27  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: GND: U1.27 -> U1.8  (boxed in; escapes/neck-down: boxed in)
+  cannot connect: U1.27 (GND) cannot be connected as placed: on B.Cu the fixed copper (U1.26, U1.28, a Net-(R14-Pad1) track, a /sense0(CN13) track) leaves no way out even for a track of the board's minimum width (0.2 mm) with its clearances, and no via fits beside it. A via in the pad would fit (--via-in-pad).
+why open: 4 pins of open connections; 1 walled in by fixed copper (1 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 3 open through congestion (0.25 s)
+  next: move a part or change the rules around the 1 pin walled in above: no router can connect them as placed
+  next: 3 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 4867928 expansions, 192724 flood cells, 856582 cell checks, 398517 fixed-copper checks, 2623582 field cells in 17 fields, 188 commits, 0 rips

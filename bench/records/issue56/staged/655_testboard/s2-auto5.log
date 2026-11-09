@@ -1,0 +1,47 @@
+live view: http://192.168.1.79:8783/?token=029406355f84d8c618cf8e5c3414dde1
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 35 ok (3919997 expansions), 80 failed (1090497 expansions); fields 0 GPU + 11 CPU (0.34 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 22 connections improved
+restarts 0; legality checks 853964; rips 10, passes 2, boxed-in 61, nogood skips 0, history cells 69, transactions 0 kept of 0
+reachability checks: 32, 28 proved unreachable, 113608 cells visited
+late reachability proofs: 10, 3 proved no path, 71449 cells visited
+failed-search expansions: strict confined 0, strict wide 613675, negotiated confined 0, negotiated wide 405761
+repair: 7 of 32 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 15 ok (1930608 expansions), 74 failed (1104692 expansions); fields 0 GPU + 12 CPU (0.35 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 523147; rips 7, passes 2, boxed-in 61, nogood skips 0, history cells 26, transactions 0 kept of 0
+reachability checks: 27, 27 proved unreachable, 74404 cells visited
+late reachability proofs: 6, 3 proved no path, 31341 cells visited
+failed-search expansions: strict confined 0, strict wide 597266, negotiated confined 0, negotiated wide 433022
+repair: GND IC1.5-IC1.43: 1 mm window, 10 branches lifted (39 tracks, 6 vias); open 7 -> 7, joined pads came apart (not kept)
+searches: 11 ok (1620032 expansions), 33 failed (1172027 expansions); fields 0 GPU + 14 CPU (0.30 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 13 connections improved
+restarts 0; legality checks 507549; rips 0, passes 2, boxed-in 25, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 5, 3 proved unreachable, 176425 cells visited
+late reachability proofs: 10, 6 proved no path, 42572 cells visited
+failed-search expansions: strict confined 0, strict wide 1046506, negotiated confined 0, negotiated wide 123297
+repair: GND IC1.5-IC1.43: 2 mm window, 15 branches lifted (54 tracks, 10 vias); open 7 -> 7, joined pads came apart (not kept)
+searches: 20 ok (2523649 expansions), 24 failed (415007 expansions); fields 0 GPU + 23 CPU (0.37 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 533174; rips 5, passes 2, boxed-in 20, nogood skips 0, history cells 25, transactions 0 kept of 0
+reachability checks: 11, 9 proved unreachable, 159251 cells visited
+late reachability proofs: 5, 0 proved no path, 50008 cells visited
+failed-search expansions: strict confined 0, strict wide 414091, negotiated confined 0, negotiated wide 0
+repair: GND IC1.5-IC1.43: 4 mm window, 20 branches lifted (65 tracks, 13 vias); open 7 -> 3, joined pads came apart (not kept)
+searches: 11 ok (737313 expansions), 38 failed (2239310 expansions); fields 0 GPU + 11 CPU (0.19 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 12 connections improved
+restarts 0; legality checks 1628203; rips 0, passes 2, boxed-in 12, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 19, 17 proved unreachable, 1617095 cells visited
+late reachability proofs: 5, 4 proved no path, 14037 cells visited
+failed-search expansions: strict confined 0, strict wide 831364, negotiated confined 0, negotiated wide 0
+repair: VCC IC1.7-IC1.14: 1 mm window, 12 branches lifted (37 tracks, 4 vias); open 7 -> 5, joined pads came apart (not kept)
+searches: 35 ok (2390678 expansions), 27 failed (412619 expansions); fields 0 GPU + 32 CPU (0.41 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 24 connections improved
+restarts 0; legality checks 536282; rips 5, passes 2, boxed-in 25, nogood skips 0, history cells 31, transactions 0 kept of 0
+reachability checks: 10, 6 proved unreachable, 125546 cells visited
+late reachability proofs: 11, 4 proved no path, 72394 cells visited
+failed-search expansions: strict confined 0, strict wide 412125, negotiated confined 0, negotiated wide 0
+repair: VCC IC1.7-IC1.14: 2 mm window, 16 branches lifted (61 tracks, 10 vias); open 7 -> 0 (kept)
+repair: 5 attempts, 1 kept: open 7 -> 0; 55 tracks and 8 vias of the input lifted (12.3 s)
+routed 32/32 connections, 231 tracks, 41 vias, pitch 0.100 mm, 5124490 expansions, 16.13 s (best variant 3.83 s)
+work (all variants): 20362457 expansions, 185057 flood cells, 832035 cell checks, 430145 fixed-copper checks, 4228956 field cells in 11 fields, 35 commits, 10 rips

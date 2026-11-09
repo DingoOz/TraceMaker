@@ -28,6 +28,7 @@
 #include "drc/refill.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "io/srj/srj.hpp"
+#include "route/layer_limits.hpp"
 #include "route/router.hpp"
 #include "session/session.hpp"
 #include "session/transport.hpp"
@@ -1006,8 +1007,6 @@ static int run_main(int argc, char** argv) {
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
   route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first")->group("");
   route->add_option("--seed", ropt.seed);
-  route->add_option("--only-net", ropt.only_net, "Debugging: route only this net")->group("");
-  route->add_option("--skip-net", ropt.skip_nets, "Experiments: leave this net unrouted (repeatable)")->group("");
   route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
   route->add_option("--polish", ropt.polish_fraction, "Reserve this share of the budget (0-0.9) to rebuild the open connections of the best state")->group("");
   route->add_option("--polish-trials", ropt.polish_trials, "Polish: seeded orders tried per open connection")->group("");
@@ -1024,7 +1023,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--plane-fallback-mm", ropt.plane_fallback_mm, "With --plane-informed: radius of the nearby-pad fallback for pads that cannot reach their plane")->group("");
   route->add_flag("--plane-informed,!--no-plane-informed", ropt.plane_informed, "Pad-to-plane searches: a distance lower bound and the late reachability proof")->group("");
   route->add_flag("--layer-assign", ropt.layer_assign, "Prefer per connection the layer with the fewest crossings (two-layer boards; doc 16 F2)");
-  route->add_option("--layer-dir-pen", ropt.layer_dir_pen, "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (even layers horizontal, odd vertical)")->group("");
+  route->add_option("--layer-dir-pen", ropt.layer_dir_pen,
+                    "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (by default even layers horizontal, odd vertical; automatic 0.3 on breakout boards and with --layer-dir)");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
   route->add_flag("--crowded-source", ropt.crowded_source,
@@ -1096,9 +1096,21 @@ static int run_main(int argc, char** argv) {
   route->add_flag("--micro-vias", ropt.micro_vias, "Use micro vias (outer layer to the next) where a through via is blocked (only on boards that allow them)");
   route->add_flag("--blind-vias", ropt.blind_vias, "Use blind/buried vias where a through via is blocked (only on boards that allow them)");
   route->add_flag("--diff-pairs", ropt.diff_pairs, "Route differential pairs (KiCad P/N or +/- names) as coupled pairs first (doc 05 §15)");
+  route->add_option("--pair-share", ropt.pair_share, "Coupled pair searches stop after this share of the work budget (else of --time); the pairs left are routed as single connections (0 = no limit)")->check(CLI::Range(0.0, 1.0));
   double r_pair_skew_mm = 0;
   route->add_flag("--pair-twists,!--no-pair-twists", ropt.pair_twists, "Coupled pairs may swap sides at a layer change, for pairs whose pin order is mirrored between the ends (default on; only with pair routing)");
   route->add_option("--pair-skew-mm", r_pair_skew_mm, "Intra-pair skew limit for coupled pairs: meanders on the shorter half (0 = custom skew rules only)");
+  double r_pair_leg_mm = 2.5;
+  route->add_option("--pair-leg-mm", r_pair_leg_mm, "Coupled pairs: longest reach of the uncoupled legs from the pads to the coupled section (default 2.5)")
+      ->check(CLI::Range(0.6, 50.0));
+  route->add_flag("--protect-coupled", ropt.protect_coupled, "Coupled pairs: negotiation never rips a half of a coupled pair (the route that would fails instead)");
+  route->add_option("--recouple-work", ropt.recouple_work, "Coupled pairs: work units the clean-up re-coupling of split pairs may spend past the budget (default 2000000, 0 = none)")
+      ->check(CLI::NonNegativeNumber);
+  double r_pair_retry_leg_mm = 0;
+  route->add_option("--pair-retry-leg-mm", r_pair_retry_leg_mm,
+                    "Coupled pairs: a pair that finds no coupled path is tried again with legs of up to this reach and pad exits (0 = no retry)")
+      ->check(CLI::Range(0.0, 50.0));
+  route->add_flag("--pair-pad-exits", ropt.pair_pad_exits, "Coupled pairs: legs may leave an end pad straight out in any of 8 directions before turning to the pair");
   route->add_flag("--global", ropt.global_route, "Global routing first: detailed search follows coarse corridors");
   route->add_flag("--global-confine", ropt.global_confine, "With --global: confine each connection's first search to its corridor (experimental)")->group("");
   route->add_flag("--global-corridor-only", ropt.global_strict_corridor_only, "With --global-confine: a corridor failure goes straight to negotiation (experimental)")->group("");
@@ -1157,6 +1169,23 @@ static int run_main(int argc, char** argv) {
   route->add_flag("!--no-why-open", r_job.why_open,
                   "Do not check the pins of open connections for a way out (by default each is flood-filled against the board's fixed copper, and "
                   "a pin walled in on every layer with no room for a via is reported as unconnectable as placed; doc 20 §2.4)");
+  route->add_option("--only-net", r_job.only_nets,
+                    "Route only the nets that match one of these patterns (KiCad wildcards such as '/I2S_*', or regular expressions; repeatable or "
+                    "comma separated); the other nets are left unrouted and their copper stays (staged routing)")
+      ->delimiter(',')->allow_extra_args(false);
+  route->add_option("--skip-net", r_job.skip_nets,
+                    "Leave the nets that match these patterns unrouted (KiCad wildcards or regular expressions; repeatable or comma separated)")
+      ->delimiter(',')->allow_extra_args(false);
+  route->add_option("--repair", r_job.repair,
+                    "Repair windows for connections still open at the end: the unlocked copper near each is lifted (a window that grows on each "
+                    "failure) and routed again; an attempt is kept only if no joined pads come apart and fewer connections are open. auto (default): "
+                    "only on a board that came with unlocked tracks or vias; on: also on a board routed from nothing; off (doc 05 §75)")
+      ->check(CLI::IsMember({"auto", "on", "off"}));
+  route->add_option("--repair-window-mm", r_job.repair_opt.radii_mm, "Repair: window radii round each end of an open connection, tried in turn (default 1,2,4)")
+      ->delimiter(',')->allow_extra_args(false);
+  route->add_option("--repair-work", r_job.repair_opt.step_work, "Repair: work budget of each attempt in search expansions (default 3000000)");
+  route->add_option("--repair-branches", r_job.repair_opt.max_branches, "Repair: a window that would lift more branches (the tracks and vias of one net between two pads or junctions) stops growing (default 64)");
+  route->add_option("--repair-conns", r_job.repair_opt.max_conns, "Repair: open connections tried at most (default 64)");
   route->add_option("--rescue-mode", r_job.rescue_mode,
                     "How the rescue routes again with relax: warm (from the plain run's routes), fresh (from nothing) or both (warm, then fresh "
                     "while connections are open; each pass on its own budget, kept only if better; default both; doc 05 §71)")
@@ -1190,6 +1219,10 @@ static int run_main(int argc, char** argv) {
   route->add_option("--no-tracks-on", r_job.no_tracks_on, "Copper layers that get no new tracks, e.g. In1.Cu,In2.Cu (vias still pass through and reach zone fills there)")
       ->delimiter(',');
   route->add_option("--layer-cost", r_job.layer_costs, "Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 = normal, at most 1000)")->delimiter(',');
+  route->add_option("--layer-dir", r_job.layer_dir, "Preferred direction per copper layer as LAYER=h|v|none, e.g. F.Cu=v,B.Cu=h (replaces the even/odd rule; strength --layer-dir-pen, 0.3 if not given)")
+      ->delimiter(',');
+  route->add_option("--layer-diag-pen", r_job.layer_diag_pen, "Extra cost (pitches per step) of 45-degree steps, as LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3")
+      ->delimiter(',');
   bool r_no_fill_planes = false;
   route->add_flag("--no-fill-planes", r_no_fill_planes,
                   "Leave zones that have no fill unfilled while routing (default: fill them in memory and route with --soft-zones, so plane "
@@ -1582,6 +1615,7 @@ static int run_main(int argc, char** argv) {
       return 0;
     }
     if (*route) {
+      tmk::route::check_layer_dir_specs(r_job.layer_dir, r_job.layer_diag_pen);  // a typo stops the run before the board is read
       ropt.pitch = static_cast<tmk::Coord>(r_pitch_um * 1000.0);
       if (!r_guide.empty()) {
         // [{"a":[x,y],"b":[x,y],"segs":[[x1,y1,x2,y2,layer],...],"vias":[[x,y],...]}]: Simple Route JSON millimetres, y up.
@@ -1600,6 +1634,8 @@ static int run_main(int argc, char** argv) {
         }
       }
       ropt.pair_skew = static_cast<tmk::Coord>(r_pair_skew_mm * 1e6);
+      ropt.pair_leg_max = static_cast<tmk::Coord>(std::llround(r_pair_leg_mm * 1e6));
+      ropt.pair_retry_leg = static_cast<tmk::Coord>(std::llround(r_pair_retry_leg_mm * 1e6));
       ropt.gpu_device = tmk::app::default_gpu_device(!r_nogpu);
       auto job = std::move(r_job);
       job.in = r_in;

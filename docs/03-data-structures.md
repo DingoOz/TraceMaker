@@ -67,7 +67,8 @@ The own DRC must match `kicad-cli pcb drc` (verified per KiCad version in CI on 
 
 1. **Broad phase**: candidate pairs from the uniform spatial hash (CPU) or LBVH (GPU), restricted to dirty
    regions during routing, full board at sign-off.
-2. **Rule resolution**: per pair, compiled constraint table + matching custom rules → required clearance.
+2. **Rule resolution**: per pair, compiled constraint table + matching custom rules → required clearance. A custom
+   rule whose condition reads only `A.Type` and `B.Type` is tabled by pair of kinds when the engine is built (D170).
 3. **Narrow phase**: exact integer distance between primitives.
 4. **Checks** (KiCad names): `clearance`, `track_width`, `via_diameter`, `annular_width`, `hole_clearance`,
    `hole_to_hole`, `copper_edge_clearance`, `shorting_items`, `unconnected_items`, `solder_mask_bridge`,

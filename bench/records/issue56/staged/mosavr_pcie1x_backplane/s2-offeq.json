@@ -1,0 +1,211 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 100.0,
+ "connections": 54,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 45167837,
+ "failures": [],
+ "open": 0,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.075,
+ "routed": 54,
+ "run": {
+  "board": "stage1.kicad_pcb",
+  "date": "2026-11-08T22:27:57Z",
+  "input": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/stage1.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/s2-offeq.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "44516148"
+   },
+   {
+    "name": "--no-rescue",
+    "value": "false"
+   },
+   {
+    "name": "--repair",
+    "value": "off"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--variants",
+    "value": "1"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-host",
+    "value": "0.0.0.0"
+   },
+   {
+    "name": "--view-port",
+    "value": "8783"
+   },
+   {
+    "name": "--json",
+    "value": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/s2-offeq.json"
+   }
+  ],
+  "output": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/a81a9786-f3ad-408b-8fd2-28bbc467d0b3/scratchpad/i56/mosavr_pcie1x_backplane/s2-offeq.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "variants": 1,
+  "version": "0.12.1",
+  "work_budget": 44516148
+ },
+ "seconds": 31.766985604,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 123,
+  "bends_per_connection": 0.8978,
+  "connections": 137,
+  "detour_length_mm": 861.387912,
+  "detour_octile_mm": 787.248457,
+  "detour_ratio": 1.0942,
+  "length_mm": 861.387912,
+  "long_detours": 4,
+  "off_angle_segments": 21,
+  "segments": 285,
+  "short_segments": 31,
+  "stair_steps": 8,
+  "vias": 25
+ },
+ "time_limited": false,
+ "tracks": 285,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "",
+ "variant_seconds": 31.730846347,
+ "vias": 25,
+ "work": {
+  "cleanup": {
+   "cell_checks": 11726020,
+   "commits": 33,
+   "expansions": 13879423,
+   "field_cells": 30860668,
+   "fields": 49,
+   "fixed_checks": 10845,
+   "flood_cells": 14581686,
+   "rips": 0,
+   "searches": 116
+  },
+  "first_pass": {
+   "cell_checks": 969530,
+   "commits": 47,
+   "expansions": 3136745,
+   "field_cells": 4108988,
+   "fields": 36,
+   "fixed_checks": 700844,
+   "flood_cells": 671733,
+   "rips": 0,
+   "searches": 71
+  },
+  "negotiation": {
+   "cell_checks": 4185389,
+   "commits": 7,
+   "expansions": 7833917,
+   "field_cells": 10404322,
+   "fields": 14,
+   "fixed_checks": 1013484,
+   "flood_cells": 5064333,
+   "rips": 0,
+   "searches": 38
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 16880939,
+   "commits": 87,
+   "expansions": 24850085,
+   "field_cells": 45373978,
+   "fields": 99,
+   "fixed_checks": 1725173,
+   "flood_cells": 20317752,
+   "rips": 0,
+   "searches": 225
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 11726020,
+   "commits": 33,
+   "expansions": 13879423,
+   "field_cells": 30860668,
+   "fields": 49,
+   "fixed_checks": 10845,
+   "flood_cells": 14581686,
+   "rips": 0,
+   "searches": 116
+  },
+  "first_pass": {
+   "cell_checks": 969530,
+   "commits": 47,
+   "expansions": 3136745,
+   "field_cells": 4108988,
+   "fields": 36,
+   "fixed_checks": 700844,
+   "flood_cells": 671733,
+   "rips": 0,
+   "searches": 71
+  },
+  "negotiation": {
+   "cell_checks": 4185389,
+   "commits": 7,
+   "expansions": 7833917,
+   "field_cells": 10404322,
+   "fields": 14,
+   "fixed_checks": 1013484,
+   "flood_cells": 5064333,
+   "rips": 0,
+   "searches": 38
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 16880939,
+   "commits": 87,
+   "expansions": 24850085,
+   "field_cells": 45373978,
+   "fields": 99,
+   "fixed_checks": 1725173,
+   "flood_cells": 20317752,
+   "rips": 0,
+   "searches": 225
+  }
+ }
+}

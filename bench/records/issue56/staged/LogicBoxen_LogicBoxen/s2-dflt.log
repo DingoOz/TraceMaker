@@ -1,0 +1,26 @@
+live view: http://192.168.1.79:8783/?token=129e865d3ed3a2ad300979c67ae51602
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 60 ok (4624871 expansions), 6 failed (302550 expansions); fields 0 GPU + 21 CPU (0.20 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 42 connections improved
+restarts 0; legality checks 750505; rips 0, passes 1, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 15, 3 proved no path, 121375 cells visited
+failed-search expansions: strict confined 0, strict wide 302550, negotiated confined 0, negotiated wide 0
+rescue (warm): 4 of 64 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 60 saved routes taken over, 0 not legal under these rules
+searches: 17 ok (4675254 expansions), 8 failed (308536 expansions); fields 0 GPU + 17 CPU (0.18 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 20 connections improved
+restarts 0; legality checks 748876; rips 1, passes 1, boxed-in 8, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 15, 3 proved no path, 119416 cells visited
+failed-search expansions: strict confined 0, strict wide 306888, negotiated confined 0, negotiated wide 1648
+ramp stage 1/2 (clearance -0.0800 mm): 64 of 64 routed (complete)
+warm start: 64 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 64 in 0.0 s  <- best
+rescue (warm): 60 -> 64 routed (the relax result is kept)
+routed 64/64 connections, 241 tracks, 56 vias, pitch 0.075 mm, 0 expansions, 8.21 s (best variant 0.02 s)
+work (all variants): 4927421 expansions, 121375 flood cells, 750319 cell checks, 494018 fixed-copper checks, 3103222 field cells in 21 fields, 60 commits, 0 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed

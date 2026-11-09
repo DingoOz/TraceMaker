@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Downloads benchmark fixture sets into bench/data (git-ignored; never redistributed) and builds the sets derived
 # from them.
-# Usage: scripts/fetch_fixtures.sh [all|freerouting|dac2020|kicad-demos|pcbench|pcbworld|derived|tscircuit|tscircuit-checker] ...
+# Usage: scripts/fetch_fixtures.sh [all|freerouting|dac2020|kicad-demos|pcbench|pcbworld|derived|tscircuit|tscircuit-checker|kookabus] ...
 # Default: freerouting dac2020 kicad-demos derived. Sources and licences: docs/10-benchmarking.md.
 #
 # The three default sets are pinned to the commits the published results were measured on (release 0.8.0), so a
@@ -21,6 +21,9 @@ PIN_KICAD=7a7d0267a0bcf7cff2e3d7c6a030b602f4c88a8f         # KiCad branch 10.0
 PIN_SRJ19=c1206f3901d7c2d626733f7937e00b753e15f5ed          # tscircuit/dataset-srj19 main, 2026-06-06 (MIT)
 PIN_SRJ20=9384fb8f45fb479b97178ddfa42fc74c69afbbec          # tscircuit/dataset-srj20 main, 2026-06-07 (no licence file)
 PIN_TSC_AUTOROUTER=5bcf7747433f28d24cad9c9f4aa417838dab88fb # tscircuit/tscircuit-autorouter main, 2026-10-10 (MIT)
+# The Kookabus boards (doc 18 A3, M21): a private repository with no licence, so the boards are never stored here;
+# fetching needs read access to it (gh auth or an SSH key). TM_KOOKABUS_REPO points at another clone or a local path.
+PIN_KOOKABUS=293a922d0edfb34f52af9a2e7352f73878cb352d       # DingoOz/kookabus main, 2026-11-08 (private)
 
 ref_for() {  # NAME pin -> the commit to use, or "latest"
   local var=TM_REF_$1
@@ -109,6 +112,7 @@ fetch() {
       full_clone https://github.com/tscircuit/dataset-srj20.git tscircuit/dataset-srj20 "$(ref_for SRJ20 $PIN_SRJ20)"
       if [[ -x build/release/src/app/tracemaker ]]; then python3 bench/prepare_srj.py; else echo "skipped the srj19/srj20 boards: build first, then run: python3 bench/prepare_srj.py"; fi ;;
     tscircuit-checker) tscircuit_checker ;;
+    kookabus)    full_clone "${TM_KOOKABUS_REPO:-https://github.com/DingoOz/kookabus.git}" kookabus "$(ref_for KOOKABUS $PIN_KOOKABUS)" ;;
     *) echo "unknown set: $1"; exit 2 ;;
   esac
   local at=""

@@ -1,0 +1,42 @@
+# Variant 1 alone (TM_PICK_VARIANTS=1) on main with temporary debug output: the live and best routed counts where the clean-up
+# is decided, the pair at the router's end, and the tuner's lines (the units printed as "ps" are femtoseconds).
+1:DBG60 cleanup? routed 128 best 129 optimize 1
+2:DBG60 router end routed 129 best 129 /Debugger/D+: 17 tracks 10.1015 mm
+3:DBG60 router end routed 129 best 129 /Debugger/D-: 20 tracks 11.5605 mm
+10:DBG60 first /Debugger/D+: 17 tracks 10.1015 mm
+11:DBG60 first /Debugger/D-: 20 tracks 11.5605 mm
+13:DBG60 cleanup? routed 126 best 130 optimize 1
+14:DBG60 router end routed 130 best 130 /Debugger/D+: 17 tracks 10.1015 mm
+15:DBG60 router end routed 130 best 130 /Debugger/D-: 20 tracks 11.5605 mm
+23:DBG60 cleanup? routed 122 best 122 optimize 1
+25:delay skew /Debugger/D+: 70898.106 ps, longest 79489.785 ps, max 500.000 ps
+26:  room for /Debugger/D+: retune yes, now 79427.287 ps
+27:  room for /Debugger/D+: 2 ripped, rolled back
+28:  tuned /Debugger/D+: no, now 76798.153 ps
+29:delay skew /Debugger/D-: 79489.785 ps, longest 79489.785 ps, max 500.000 ps
+30:tuned nets: 1
+31:DBG60 router end routed 122 best 122 /Debugger/D+: 21 tracks 11.1578 mm
+32:DBG60 router end routed 122 best 122 /Debugger/D-: 16 tracks 11.6006 mm
+37:DBG60 cleanup? routed 135 best 135 optimize 1
+39:delay skew /Debugger/D+: 69587.633 ps, longest 69587.633 ps, max 500.000 ps
+40:delay skew /Debugger/D-: 60268.377 ps, longest 69587.633 ps, max 500.000 ps
+41:  tuned /Debugger/D-: no, now 67348.377 ps
+42:tuned nets: 1
+43:DBG60 router end routed 135 best 135 /Debugger/D+: 13 tracks 9.9235 mm
+44:DBG60 router end routed 135 best 135 /Debugger/D-: 16 tracks 9.5439 mm
+52:DBG60 cleanup? routed 107 best 107 optimize 1
+54:delay skew /Debugger/D+: 69833.740 ps, longest 69833.740 ps, max 500.000 ps
+55:delay skew /Debugger/D-: 60631.380 ps, longest 69833.740 ps, max 500.000 ps
+56:  tuned /Debugger/D-: no, now 67711.380 ps
+57:tuned nets: 1
+58:DBG60 router end routed 107 best 107 /Debugger/D+: 13 tracks 9.9683 mm
+59:DBG60 router end routed 107 best 107 /Debugger/D-: 17 tracks 9.6165 mm
+64:DBG60 before soft zones /Debugger/D+: 17 tracks 10.1015 mm
+65:DBG60 before soft zones /Debugger/D-: 20 tracks 11.5605 mm
+66:DBG60 cleanup? routed 2 best 2 optimize 1
+67:tuned nets: 0
+68:DBG60 router end routed 2 best 2 /Debugger/D+: 0 tracks 0.0000 mm
+69:DBG60 router end routed 2 best 2 /Debugger/D-: 0 tracks 0.0000 mm
+74:DBG60 after refill repair /Debugger/D+: 17 tracks 10.1015 mm
+75:DBG60 after refill repair /Debugger/D-: 20 tracks 11.5605 mm
+76:DBG60 after thermal /Debugger/D+: 17 tracks 10.1015 mm

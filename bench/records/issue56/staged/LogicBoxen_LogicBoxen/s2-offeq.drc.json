@@ -1,0 +1,128 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:55",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-offeq.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [VCC] of C5 on F.Cu",
+                    "pos": {
+                        "x": 50.5,
+                        "y": 51.6
+                    },
+                    "uuid": "2719799e-39f2-4bb1-b775-d561b305041c"
+                },
+                {
+                    "description": "Track [VCC] on F.Cu, length 2.0153 mm",
+                    "pos": {
+                        "x": 50.25,
+                        "y": 43.125
+                    },
+                    "uuid": "bcd28885-8714-45da-84f3-60238a9b9e95"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [VCC] of U2 on F.Cu",
+                    "pos": {
+                        "x": 52.8,
+                        "y": 51.725
+                    },
+                    "uuid": "cdd3e14f-64bc-4c43-84ec-996430022ca2"
+                },
+                {
+                    "description": "Pad 1 [VCC] of C5 on F.Cu",
+                    "pos": {
+                        "x": 50.5,
+                        "y": 51.6
+                    },
+                    "uuid": "2719799e-39f2-4bb1-b775-d561b305041c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**_3",
+                    "pos": {
+                        "x": 70.2,
+                        "y": 52.7
+                    },
+                    "uuid": "0db9ce80-8f1f-40c6-9e97-0d358685c2e5"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**_2",
+                    "pos": {
+                        "x": 27.6,
+                        "y": 52.7
+                    },
+                    "uuid": "de208fe7-1af4-475e-b1f5-87785a3f10d9"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        },
+        {
+            "description": "Annular width (board setup constraints min annular width 0.1000 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad 1 [<no net>] of REF**",
+                    "pos": {
+                        "x": 27.7,
+                        "y": 32.3
+                    },
+                    "uuid": "dd419967-8e10-454c-8080-1db1f0901aab"
+                }
+            ],
+            "severity": "error",
+            "type": "annular_width"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+live view: http://192.168.1.79:8783/?token=44358c3809e3007260542464ade7f721
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 60 ok (4624871 expansions), 6 failed (302550 expansions); fields 0 GPU + 21 CPU (0.31 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 42 connections improved
+restarts 0; legality checks 750505; rips 0, passes 1, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 15, 3 proved no path, 121375 cells visited
+failed-search expansions: strict confined 0, strict wide 302550, negotiated confined 0, negotiated wide 0
+repair: 4 of 64 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 19 ok (2595317 expansions), 10 failed (246992 expansions); fields 0 GPU + 13 CPU (0.34 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 18 connections improved
+restarts 0; legality checks 481247; rips 3, passes 2, boxed-in 6, nogood skips 0, history cells 13, transactions 0 kept of 0
+reachability checks: 5, 3 proved unreachable, 74029 cells visited
+late reachability proofs: 10, 0 proved no path, 86708 cells visited
+failed-search expansions: strict confined 0, strict wide 245471, negotiated confined 0, negotiated wide 0
+repair: VCC U2.1-C5.1: 1 mm window, 11 branches lifted (47 tracks, 10 vias); open 4 -> 0 (kept)
+repair: 1 attempts, 1 kept: open 4 -> 0; 21 tracks and 1 vias of the input lifted (3.8 s)
+routed 64/64 connections, 296 tracks, 61 vias, pitch 0.075 mm, 5048796 expansions, 9.63 s (best variant 5.83 s)
+work (all variants): 7928946 expansions, 121375 flood cells, 750319 cell checks, 494018 fixed-copper checks, 3103222 field cells in 21 fields, 60 commits, 0 rips
