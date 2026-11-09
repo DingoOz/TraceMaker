@@ -33,6 +33,7 @@ var structtmk_1_1route_1_1RouteResult =
     [ "optimized", "structtmk_1_1route_1_1RouteResult.html#a5b5bc780f7b956cd4df177b4698dee3f", null ],
     [ "over_cuts", "structtmk_1_1route_1_1RouteResult.html#aa523774f2a9ba6779954cd328a499205", null ],
     [ "package_pin_edges", "structtmk_1_1route_1_1RouteResult.html#a19e898fa6d2c9754cc49557950c29d64", null ],
+    [ "pair_retried", "structtmk_1_1route_1_1RouteResult.html#aaf6564879486a87583c59fda082352b5", null ],
     [ "pair_work", "structtmk_1_1route_1_1RouteResult.html#a31fead0646c02e92522ad43b5a427040", null ],
     [ "pairs", "structtmk_1_1route_1_1RouteResult.html#a89dadc384c53b519af79571585e0c6af", null ],
     [ "pairs_over_share", "structtmk_1_1route_1_1RouteResult.html#ac17d302e279e2a45d4b2b2f40d224077", null ],

@@ -2959,6 +2959,19 @@ OPTIONS:
           --pair-skew-mm FLOAT
                               Intra-pair skew limit for coupled pairs: meanders on the shorter
                               half (0 = custom skew rules only)
+          --pair-leg-mm FLOAT:FLOAT in [0.6 - 50]
+                              Coupled pairs: longest reach of the uncoupled legs from the pads
+                              to the coupled section (default 2.5)
+          --protect-coupled   Coupled pairs: negotiation never rips a half of a coupled pair
+                              (the route that would fails instead)
+          --recouple-work INT:NONNEGATIVE
+                              Coupled pairs: work units the clean-up re-coupling of split pairs
+                              may spend past the budget (default 2000000, 0 = none)
+          --pair-retry-leg-mm FLOAT:FLOAT in [0 - 50]
+                              Coupled pairs: a pair that finds no coupled path is tried again
+                              with legs of up to this reach and pad exits (0 = no retry)
+          --pair-pad-exits    Coupled pairs: legs may leave an end pad straight out in any of 8
+                              directions before turning to the pair
           --global            Global routing first: detailed search follows coarse corridors
           --no-optimize{false}
                               Skip the post-routing clean-up pass (fewer vias, shorter tracks)

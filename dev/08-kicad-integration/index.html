@@ -2741,7 +2741,7 @@ planning, the ramp) still take the class clearance floored at the board minimum;
   again (<code>route --reroute</code>; locked copper, arcs and zones stay); <code>TRACEMAKER_PLACE=&lt;mode&gt;</code> runs <code>tracemaker-place</code>
   first and moves the footprints with <code>update_items</code> (side changes are not applied; when parts move, the old
   copper is routed again and the zones are refilled); <code>TRACEMAKER_REFILL=1</code> refills the zones. Removal, moves and
-  new copper are one commit. Without <code>--reroute</code>, copper that the repair windows lifted (doc 05 §73, D172) comes in the
+  new copper are one commit. Without <code>--reroute</code>, copper that the repair windows lifted (doc 05 §75, D172) comes in the
   items file under <code>removed</code> and is removed in the same commit; if one of those items is not on the open board, nothing is changed. KiCad records a zone refill as a step of its own, so with a refill the result takes
   two undos; that is why refill is off unless footprints moved. Not built: a long-running <code>tracemakerd</code> (each run
   starts the engine afresh). The plugin is tested offline against kicad-python 0.8 (<code>test_offline.py</code>).</li>
