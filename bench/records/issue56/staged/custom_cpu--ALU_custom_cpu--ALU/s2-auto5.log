@@ -1,0 +1,35 @@
+live view: http://192.168.1.79:8783/?token=8f7755ae2d0010ec51db641d4e10f833
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 30 ok (4935429 expansions), 0 failed (0 expansions); fields 0 GPU + 18 CPU (0.74 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 38 connections improved
+restarts 0; legality checks 784229; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 9, 0 proved no path, 90018 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: 9 of 39 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 7 ok (3687639 expansions), 0 failed (0 expansions); fields 0 GPU + 7 CPU (0.43 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 8 connections improved
+restarts 0; legality checks 555819; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 6, 0 proved no path, 60016 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: Net-(D7-Pad2) U5.9-U1.10: 1 mm window, 2 branches lifted (8 tracks, 1 vias); open 9 -> 4 (kept)
+searches: 5 ok (3096776 expansions), 0 failed (0 expansions); fields 0 GPU + 5 CPU (0.32 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 7 connections improved
+restarts 0; legality checks 478852; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 0 proved no path, 40006 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: Net-(J1-Pad1) J1.1-U1.12: 1 mm window, 4 branches lifted (20 tracks, 2 vias); open 4 -> 3 (kept)
+searches: 4 ok (2995421 expansions), 0 failed (0 expansions); fields 0 GPU + 4 CPU (0.20 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 406356; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 3, 0 proved no path, 30008 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: Net-(J1-Pad4) J1.4-U1.5: 1 mm window, 5 branches lifted (13 tracks, 3 vias); open 3 -> 2 (kept)
+searches: 5 ok (3401312 expansions), 0 failed (0 expansions); fields 0 GPU + 5 CPU (0.29 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 474692; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 3, 0 proved no path, 30004 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: Net-(J1-Pad5) J1.5-U2.12: 1 mm window, 4 branches lifted (11 tracks, 1 vias); open 2 -> 0 (kept)
+repair: 4 attempts, 4 kept: open 9 -> 0; 21 tracks and 1 vias of the input lifted (22.4 s)
+routed 39/39 connections, 193 tracks, 37 vias, pitch 0.075 mm, 5025447 expansions, 30.77 s (best variant 8.34 s)
+work (all variants): 18276611 expansions, 90018 flood cells, 784229 cell checks, 970104 fixed-copper checks, 7596280 field cells in 18 fields, 30 commits, 0 rips

@@ -1,0 +1,18 @@
+live view: http://192.168.1.79:8783/?token=45b39754e96ff97e92439cd9debdbacc
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 188 ok (4143585 expansions), 29 failed (795590 expansions); fields 0 GPU + 17 CPU (0.35 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 2; legality checks 856978; rips 0, passes 1, boxed-in 24, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 9 proved unreachable, 71247 cells visited
+late reachability proofs: 15, 3 proved no path, 121477 cells visited
+failed-search expansions: strict confined 0, strict wide 307650, negotiated confined 0, negotiated wide 416693
+repair: 3 of 69 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 24 ok (2864939 expansions), 0 failed (0 expansions); fields 0 GPU + 10 CPU (0.18 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 10 connections improved
+restarts 0; legality checks 462998; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 14, 0 proved no path, 138418 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+repair: GND U1.27-C9.2: 1 mm window, 9 branches lifted (24 tracks, 4 vias); open 3 -> 0 (kept)
+repair: 1 attempts, 1 kept: open 3 -> 0; 12 tracks and 1 vias of the input lifted (3.6 s)
+routed 69/69 connections, 330 tracks, 39 vias, pitch 0.075 mm, 5060652 expansions, 10.12 s (best variant 6.44 s)
+work (all variants): 7871285 expansions, 192724 flood cells, 856582 cell checks, 398517 fixed-copper checks, 2623582 field cells in 17 fields, 188 commits, 0 rips

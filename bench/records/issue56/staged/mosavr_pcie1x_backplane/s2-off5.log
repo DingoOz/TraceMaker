@@ -1,0 +1,18 @@
+live view: http://192.168.1.79:8783/?token=71bca53a28a1016a54b2b6f77ff3b1c6
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 48 ok (2322431 expansions), 26 failed (2401602 expansions); fields 0 GPU + 38 CPU (0.47 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 39 connections improved
+restarts 0; legality checks 1307287; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 9 proved unreachable, 914611 cells visited
+late reachability proofs: 11, 0 proved no path, 110022 cells visited
+failed-search expansions: strict confined 0, strict wide 1844914, negotiated confined 0, negotiated wide 0
+routed 48/54 connections, 162 tracks, 8 vias, pitch 0.075 mm, 5191978 expansions, 3.78 s (best variant 3.77 s)
+  unrouted: GND: M1.A4 -> M1.A16  (no path in window)
+  unrouted: GND: M2.A4 -> M2.A16  (no path in window)
+  unrouted: +3V3: M0.A17 -> M0.A5  (no path in window)
+  unrouted: +3V3: M1.A5 -> M1.A17  (no path in window)
+  unrouted: +3V3: M2.A5 -> M2.A17  (no path in window)
+  unrouted: +3V3: M3.A5 -> M3.A17  (no path in window)
+why open: 12 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 12 open through congestion (0.11 s)
+  next: 12 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 4167345 expansions, 1024633 flood cells, 1307287 cell checks, 963185 fixed-copper checks, 5124124 field cells in 38 fields, 48 commits, 0 rips

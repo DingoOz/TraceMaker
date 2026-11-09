@@ -1,0 +1,46 @@
+[0.02 s] setup done: lattice 531 x 1001 x 2, pitch 0.050 mm
+[0.02 s] connectivity done
+[0.03 s] plan done: 128 connections
+[8.39 s] differential pairs routed coupled: 6
+searches: 138 ok (3509966 expansions), 13 failed (581990 expansions); fields 0 GPU + 25 CPU (0.57 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 77 connections improved
+restarts 0; legality checks 759342; rips 4, passes 2, boxed-in 8, nogood skips 0, history cells 3, transactions 0 kept of 0
+reachability checks: 6, 4 proved unreachable, 163839 cells visited
+late reachability proofs: 10, 4 proved no path, 52692 cells visited
+failed-search expansions: strict confined 0, strict wide 454576, negotiated confined 0, negotiated wide 0
+drc items 813, holes 47
+drc grid                      0.000 s
+drc item graph                0.001 s
+drc zone fills index          0.001 s
+drc net propagation           0.000 s
+drc check_connectivity        0.004 s
+soft zones: after refilling 5 zones, 12 items unconnected
+[0.01 s] setup done: lattice 531 x 1001 x 2, pitch 0.050 mm
+[0.80 s] connectivity done
+[0.82 s] plan done: 12 connections
+[0.82 s] differential pairs routed coupled: 0
+searches: 298 ok (4753940 expansions), 15 failed (259818 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 29; legality checks 713287; rips 0, passes 1, boxed-in 7, nogood skips 2, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 111004, negotiated confined 0, negotiated wide 148814
+refill repair: routed 10/12 connections, 12 tracks, 10 vias, 5013758 expansions
+drc items 835, holes 57
+drc grid                      0.000 s
+drc item graph                0.001 s
+drc zone fills index          0.001 s
+drc net propagation           0.000 s
+drc check_connectivity        0.004 s
+refill repair: 2 items unconnected after refilling again
+routed 128/128 connections, 489 tracks, 56 vias, pitch 0.050 mm, 5041864 expansions, 29.12 s (best variant 19.45 s)
+work (all variants): 4825333 expansions, 216531 flood cells, 759093 cell checks, 362751 fixed-copper checks, 3060330 field cells in 25 fields, 138 commits, 4 rips
+differential pairs: 8 wanted, 7 coupled pair routes (re-coupling included), 860791 work units
+  /U2D+ / /U2D-: 7.1 mm, coupled 49 %, gap 0.152 mm (target 0.150, net class), skew 0.947 mm, vias 1/1
+  /U6D+ / /U6D-: 7.8 mm, coupled 0 %, gap 0.000 mm (target 0.150, net class), skew 3.490 mm, vias 1/1
+  /U7D+ / /U7D-: 13.6 mm, coupled 79 %, gap 0.152 mm (target 0.150, net class), skew 0.991 mm, vias 1/1
+  /U5D+ / /U5D-: 8.7 mm, coupled 68 %, gap 0.152 mm (target 0.150, net class), skew 1.019 mm, vias 1/1
+  /U4D+ / /U4D-: 20.3 mm, coupled 76 %, gap 0.152 mm (target 0.150, net class), skew 1.047 mm, vias 1/1
+  /U1D+ / /U1D-: 7.0 mm, coupled 0 %, gap 0.000 mm (target 0.150, net class), skew 2.220 mm, vias 1/1
+  /U3D+ / /U3D-: 14.8 mm, coupled 67 %, gap 0.152 mm (target 0.150, net class), skew 2.307 mm, vias 1/1
+  /D+ / /D-: 18.4 mm, coupled 57 %, gap 0.152 mm (target 0.150, net class), skew 1.415 mm, vias 3/3
+Command exited with non-zero status 3
+wall 29.22 s, cpu 20.94 s

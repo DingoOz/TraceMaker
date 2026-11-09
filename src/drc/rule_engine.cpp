@@ -2,6 +2,7 @@
 #include "drc/rule_engine.hpp"
 
 #include <algorithm>
+#include <array>
 #include <bit>
 #include <cctype>
 #include <cmath>
@@ -67,6 +68,8 @@ class Condition {
   }
 
   bool eval(EvalCtx& ctx) const { return eval(*root_, ctx).truthy(); }
+  // True when every property and function the condition reads is in `names` (literals only: true).
+  bool references_only(std::initializer_list<std::string_view> names) const { return references_only(*root_, names); }
   // Property or function names used by either item.
   bool references(std::initializer_list<std::string_view> names) const { return references(*root_, names); }
   // First property or function that prop() / call() below do not evaluate and that is not one of KiCad's
@@ -236,6 +239,13 @@ class Condition {
     for (const auto& k : n.kids)
       if (references(*k, names)) return true;
     return false;
+  }
+
+  static bool references_only(const Node& n, std::initializer_list<std::string_view> names) {
+    if ((n.op == Node::Op::Prop || n.op == Node::Op::Call) && std::find(names.begin(), names.end(), n.name) == names.end()) return false;
+    for (const auto& k : n.kids)
+      if (!references_only(*k, names)) return false;
+    return true;
   }
 
   static std::string unsupported(const Node& n) {
@@ -617,6 +627,20 @@ RuleEngine::RuleEngine(const model::Board& b, const model::DesignRules& r) : b_(
   }
   for (auto& c : rules_)
     if (c.valid && c.cond) c.cond->bind(b_, courtyards_);
+  // A condition that reads nothing but the items' types (JLCPCB's "A.Type != 'Zone' && B.Type != 'Zone'") is a function of the two
+  // kinds alone: it is evaluated once per pair of kinds here, and custom_min reads the table. The router asks the clearance of every
+  // item near every probe, and evaluating such a condition each time made the coupled pair searches half as fast again (issue #53).
+  for (auto& c : rules_) {
+    if (!c.valid || !c.cond || !c.cond->references_only({"Type"})) continue;
+    std::array<CopperItem, kKinds> dummy;
+    for (int k = 0; k < kKinds; ++k) dummy[static_cast<std::size_t>(k)].kind = static_cast<ItemKind>(k);
+    for (int ka = 0; ka < kKinds; ++ka)
+      for (int kb = 0; kb <= kKinds; ++kb) {
+        EvalCtx ctx{this, &dummy[static_cast<std::size_t>(ka)], kb < kKinds ? &dummy[static_cast<std::size_t>(kb)] : nullptr, -1};
+        c.by_kind[static_cast<std::size_t>(ka * (kKinds + 1) + kb)] = c.cond->eval(ctx) ? 1 : 0;
+      }
+    c.kind_only = true;
+  }
   for (const auto& c : r_.classes) max_clearance_ = std::max(max_clearance_, c.clearance);
   // Per-net caches: net class and diff-pair partner (string matching is far too slow for inner loops).
   net_class_.resize(b_.nets.size());
@@ -738,7 +762,9 @@ std::optional<Coord> RuleEngine::custom_min(const char* type, const CopperItem* 
       if (x.type == type && x.min) k = &x;
     if (!k) continue;
     bool match = true;
-    if (c.cond) {
+    if (c.cond && c.kind_only && kind_tables_ && a) {
+      match = c.by_kind[kind_slot(a, b)] || (b && c.by_kind[kind_slot(b, a)]);
+    } else if (c.cond) {
       EvalCtx ctx{this, a, b, layer};
       match = c.cond->eval(ctx);
       if (!match && b) {

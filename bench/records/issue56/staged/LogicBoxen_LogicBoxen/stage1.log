@@ -1,0 +1,35 @@
+live view: http://192.168.1.79:8783/?token=c4152c36158353288f8d8a048b684647
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+warning: net pattern 'VDD*' matches no net of the board
+warning: net pattern '+*' matches no net of the board
+warning: net pattern '*3V3*' matches no net of the board
+warning: net pattern '*5V*' matches no net of the board
+warning: net pattern '*VBUS*' matches no net of the board
+warning: net pattern '*VIN*' matches no net of the board
+nets: 2 of 49 left unrouted by --only-net / --skip-net
+searches: 52 ok (961115 expansions), 2 failed (2360 expansions); fields 0 GPU + 10 CPU (0.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 44 connections improved
+restarts 0; legality checks 165552; rips 0, passes 1, boxed-in 2, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 0 proved no path, 40010 cells visited
+failed-search expansions: strict confined 0, strict wide 2360, negotiated confined 0, negotiated wide 0
+routed 52/69 connections, 157 tracks, 16 vias, pitch 0.075 mm, 1003485 expansions, 1.23 s (best variant 1.22 s)
+  unrouted: Net-(R8-Pad1): U2.4 -> R8.1  ()
+  unrouted: Net-(U1-Pad4): U1.4 -> U4.9  ()
+  unrouted: /clock: U3.9 -> P2.1  ()
+  unrouted: /out: U3.7 -> U6.3  ()
+  unrouted: Net-(U2-Pad9): U3.10 -> U2.9  ()
+  unrouted: Net-(R10-Pad1): U2.6 -> R10.1  ()
+  unrouted: /reset: U3.6 -> U1.14  ()
+  unrouted: Net-(P1-Pad1): U1.15 -> P1.1  ()
+  unrouted: Net-(P2-Pad2): P2.2 -> R13.1  ()
+  unrouted: /clock: U3.9 -> U1.9  ()
+  unrouted: Net-(U1-Pad12): U2.14 -> U1.12  ()
+  unrouted: /in_a: U6.11 -> U1.10  ()
+  unrouted: Net-(U1-Pad13): U2.11 -> U1.13  ()
+  unrouted: /in_b: U6.10 -> U1.2  ()
+  unrouted: Net-(Q1-Pad3): Q1.3 -> R5.1  ()
+  unrouted: Net-(R11-Pad1): U2.15 -> R11.1  ()
+  unrouted: Net-(R9-Pad1): U2.12 -> R9.1  ()
+why open: 33 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 33 open through congestion (0.83 s)
+  next: 33 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 963475 expansions, 40010 flood cells, 165552 cell checks, 193159 fixed-copper checks, 817778 field cells in 10 fields, 52 commits, 0 rips

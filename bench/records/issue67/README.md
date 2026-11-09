@@ -1,6 +1,6 @@
 # Issue #67: coupled pairs on boards with pads beside the pair (D175)
 
-Behind [D175](../../../docs/decisions/D175.md) and doc 05 §73. Branch `issue67-coupled-pairs` (on main `057ee82`), 2026-11-08.
+Behind [D175](../../../docs/decisions/D175.md) and doc 05 §77. Branch `issue67-coupled-pairs` (on main `057ee82`), 2026-11-08.
 The issue and its design are by quanln (GitHub @quanln); their board is internal, so these runs use the public boards with
 differential pairs: the 18 PCBench boards of doc 05 §15 and two KiCad demos with USB pairs (StickHub, 8 pairs; RoyalBlue54L-Feather, 1).
 

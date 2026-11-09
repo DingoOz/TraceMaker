@@ -106,6 +106,12 @@ struct RouterOptions {
   long endgame_cap = 400'000;    // expansion cap of each end-game search
   double layer_dir_pen = -1;    // negative = automatic (-1: 0.3; otherwise the strength is the absolute value) on breakout boards only, else 0; extra cost (pitches per orthogonal step) against a layer's preferred direction: even layers horizontal, odd vertical (doc 16)
   bool layer_dir_swap = false;  // preferred directions the other way round: even layers vertical, odd horizontal
+  // Per-layer preferred directions by name (--layer-dir, issue #66, D174): route::LayerDir per copper index. Empty = the layer
+  // parity above; given, it replaces the parity (and layer_dir_swap), layers it leaves at none have no preferred direction, and a
+  // negative layer_dir_pen means that strength on any board (-1: 0.3), not only on breakout boards.
+  std::vector<std::int8_t> layer_dir;
+  // Pitches per 45-degree lattice step, per copper index (--layer-diag-pen, D174); empty or 0 = no penalty. Independent of layer_dir.
+  std::vector<double> layer_diag_pen;
   double package_pen = -1;      // -1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
   // Strict searches from the crowded end (doc 05 §55, M20 C5): a strict search starts from the end with more routed copper of other nets
   // and more pads of other nets of its own part near it. A boxed-in source is proved in a few expansions; a boxed-in target only after the
@@ -170,6 +176,10 @@ struct RouterOptions {
   bool micro_vias = false;
   bool blind_vias = false;      // use blind/buried vias where a through via is blocked, if the board allows them
   bool diff_pairs = false;      // route P/N pairs together as coupled tracks first (falls back to single routing)
+  // Coupled pair searches stop once they have spent this share of the budget (the work budget, else the time limit; 0 = no limit):
+  // the pairs left over are routed as single connections (issue #53: the pair phase took a whole 300 s run and the board's other
+  // 1,000 connections were never tried).
+  double pair_share = 0;
   // Component rules (doc 15 P3): these net pairs only are routed coupled first when diff_pairs is off (e.g. USB 2.0
   // D+/D- bound by tm::crules, whose names need not end in P/N or +/-). Empty = none.
   std::vector<std::pair<model::NetId, model::NetId>> pair_nets;
@@ -187,7 +197,7 @@ struct RouterOptions {
   bool protect_coupled = false;
   // Work units the clean-up re-coupling of split pairs may spend past the search budget (0 = none: it runs only on
   // budget left over, as before D175). Under a time limit the allowance is converted to time at the run's own work
-  // rate. Used only when pairs are routed; on the 20 pair boards of doc 05 §73 it coupled two more pairs and changed
+  // rate. Used only when pairs are routed; on the 20 pair boards of doc 05 §77 it coupled two more pairs and changed
   // nothing else.
   long recouple_work = 2'000'000;
   // Pair legs may also leave a pad straight out along one of 8 directions before turning towards the coupled
@@ -385,6 +395,7 @@ struct RouteResult {
   int txn_tried = 0, txn_kept = 0;  // transactional negotiation: routes with victims tried, and kept
   int optimized = 0;
   int pairs = 0;
+  int pairs_over_share = 0;     // pair attempts skipped because the pair searches had spent RouterOptions::pair_share of the budget
   int pair_retried = 0;  // pairs coupled by the wider retry (RouterOptions::pair_retry_leg)
   int length_tuned = 0;
   // Buses: connections routed as a lane of their group (leaders and the members that followed one), and connections

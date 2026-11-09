@@ -183,6 +183,10 @@ OPTIONS:
           --seed UINT
           --layer-assign      Prefer per connection the layer with the fewest crossings
                               (two-layer boards; doc 16 F2)
+          --layer-dir-pen FLOAT
+                              Cost (pitches per step) of orthogonal steps against the layer's
+                              preferred direction (by default even layers horizontal, odd
+                              vertical; automatic 0.3 on breakout boards and with --layer-dir)
           --crowded-source    Every strict search starts from the end with more copper and pads
                               of other nets near it, a boxed-in pin is proved at once (doc 05
                               §55; the portfolio does so in four of its eight variants by
@@ -203,6 +207,10 @@ OPTIONS:
                               boards that allow them)
           --diff-pairs        Route differential pairs (KiCad P/N or +/- names) as coupled
                               pairs first (doc 05 §15)
+          --pair-share FLOAT:FLOAT in [0 - 1]
+                              Coupled pair searches stop after this share of the work budget
+                              (else of --time); the pairs left are routed as single connections
+                              (0 = no limit)
           --pair-twists, --no-pair-twists{false}
                               Coupled pairs may swap sides at a layer change, for pairs whose
                               pin order is mirrored between the ends (default on; only with
@@ -273,6 +281,29 @@ OPTIONS:
                               default each is flood-filled against the board's fixed copper,
                               and a pin walled in on every layer with no room for a via is
                               reported as unconnectable as placed; doc 20 §2.4)
+          --only-net TEXT ... Route only the nets that match one of these patterns (KiCad
+                              wildcards such as '/I2S_*', or regular expressions; repeatable or
+                              comma separated); the other nets are left unrouted and their
+                              copper stays (staged routing)
+          --skip-net TEXT ... Leave the nets that match these patterns unrouted (KiCad
+                              wildcards or regular expressions; repeatable or comma separated)
+          --repair TEXT:{auto,on,off}
+                              Repair windows for connections still open at the end: the
+                              unlocked copper near each is lifted (a window that grows on each
+                              failure) and routed again; an attempt is kept only if no joined
+                              pads come apart and fewer connections are open. auto (default):
+                              only on a board that came with unlocked tracks or vias; on: also
+                              on a board routed from nothing; off (doc 05 §75)
+          --repair-window-mm FLOAT ...
+                              Repair: window radii round each end of an open connection, tried
+                              in turn (default 1,2,4)
+          --repair-work INT   Repair: work budget of each attempt in search expansions (default
+                              3000000)
+          --repair-branches INT
+                              Repair: a window that would lift more branches (the tracks and
+                              vias of one net between two pads or junctions) stops growing
+                              (default 64)
+          --repair-conns INT  Repair: open connections tried at most (default 64)
           --rescue-mode TEXT:{warm,fresh,both}
                               How the rescue routes again with relax: warm (from the plain
                               run's routes), fresh (from nothing) or both (warm, then fresh
@@ -322,6 +353,13 @@ OPTIONS:
           --layer-cost TEXT ...
                               Track cost per layer as LAYER=FACTOR, e.g. In1.Cu=4,In2.Cu=4 (1 =
                               normal, at most 1000)
+          --layer-dir TEXT ...
+                              Preferred direction per copper layer as LAYER=h|v|none, e.g.
+                              F.Cu=v,B.Cu=h (replaces the even/odd rule; strength
+                              --layer-dir-pen, 0.3 if not given)
+          --layer-diag-pen TEXT ...
+                              Extra cost (pitches per step) of 45-degree steps, as
+                              LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3
           --no-fill-planes    Leave zones that have no fill unfilled while routing (default:
                               fill them in memory and route with --soft-zones, so plane nets
                               drop vias into their planes)

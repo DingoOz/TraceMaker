@@ -1,0 +1,85 @@
+live view: http://192.168.1.79:8783/?token=b0efad7c4a40ff93f79fe9cf295adc81
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 48 ok (2322431 expansions), 26 failed (2401602 expansions); fields 0 GPU + 38 CPU (1.67 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 39 connections improved
+restarts 0; legality checks 1307287; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 9 proved unreachable, 914611 cells visited
+late reachability proofs: 11, 0 proved no path, 110022 cells visited
+failed-search expansions: strict confined 0, strict wide 1844914, negotiated confined 0, negotiated wide 0
+repair: 6 of 54 connections are open; lifting the unlocked copper within 1, 2, 4 mm of each and routing again (3000000 work per attempt)
+searches: 4 ok (1002625 expansions), 22 failed (2035062 expansions); fields 0 GPU + 17 CPU (1.10 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 2 connections improved
+restarts 0; legality checks 1588607; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 10, 9 proved unreachable, 1638532 cells visited
+late reachability proofs: 6, 0 proved no path, 60009 cells visited
+failed-search expansions: strict confined 0, strict wide 1316306, negotiated confined 0, negotiated wide 0
+repair: GND M1.A4-M1.A16: 1 mm window, 3 branches lifted (8 tracks, 1 vias); open 6 -> 5 (kept)
+searches: 3 ok (502132 expansions), 21 failed (2286327 expansions); fields 0 GPU + 17 CPU (0.87 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 954722; rips 0, passes 2, boxed-in 0, nogood skips 1, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 7 proved unreachable, 798644 cells visited
+late reachability proofs: 5, 0 proved no path, 50007 cells visited
+failed-search expansions: strict confined 0, strict wide 1099762, negotiated confined 0, negotiated wide 790033
+repair: GND M2.A4-M2.A16: 1 mm window, 2 branches lifted (3 tracks, 0 vias); open 5 -> 4 (kept)
+searches: 5 ok (996134 expansions), 24 failed (1938464 expansions); fields 0 GPU + 17 CPU (0.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 6 connections improved
+restarts 0; legality checks 1185408; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 12, 10 proved unreachable, 1074005 cells visited
+late reachability proofs: 7, 0 proved no path, 70011 cells visited
+failed-search expansions: strict confined 0, strict wide 1383744, negotiated confined 0, negotiated wide 0
+repair: +3V3 M0.A17-M0.A5: 1 mm window, 6 branches lifted (36 tracks, 3 vias); open 4 -> 4, joined pads came apart (not kept)
+searches: 9 ok (1845250 expansions), 24 failed (1975643 expansions); fields 0 GPU + 21 CPU (0.80 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 8 connections improved
+restarts 0; legality checks 1260290; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 12, 10 proved unreachable, 1079804 cells visited
+late reachability proofs: 7, 0 proved no path, 70012 cells visited
+failed-search expansions: strict confined 0, strict wide 1414087, negotiated confined 0, negotiated wide 0
+repair: +3V3 M0.A17-M0.A5: 2 mm window, 12 branches lifted (44 tracks, 3 vias); open 4 -> 4, joined pads came apart (not kept)
+searches: 23 ok (738378 expansions), 25 failed (2081357 expansions); fields 0 GPU + 36 CPU (0.57 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 19 connections improved
+restarts 0; legality checks 780050; rips 0, passes 2, boxed-in 2, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 6 proved unreachable, 480746 cells visited
+late reachability proofs: 7, 0 proved no path, 70013 cells visited
+failed-search expansions: strict confined 0, strict wide 1783788, negotiated confined 0, negotiated wide 0
+repair: +3V3 M0.A17-M0.A5: 4 mm window, 27 branches lifted (65 tracks, 3 vias); open 4 -> 5, joined pads came apart (not kept)
+searches: 5 ok (782116 expansions), 19 failed (1732221 expansions); fields 0 GPU + 14 CPU (0.89 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 0; legality checks 1383794; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 8 proved unreachable, 1468157 cells visited
+late reachability proofs: 5, 0 proved no path, 50008 cells visited
+failed-search expansions: strict confined 0, strict wide 1082067, negotiated confined 0, negotiated wide 0
+repair: +3V3 M1.A5-M1.A17: 1 mm window, 8 branches lifted (14 tracks, 0 vias); open 4 -> 3, joined pads came apart (not kept)
+searches: 9 ok (1780084 expansions), 19 failed (1737816 expansions); fields 0 GPU + 18 CPU (0.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 7 connections improved
+restarts 0; legality checks 1457480; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 8 proved unreachable, 1487006 cells visited
+late reachability proofs: 5, 0 proved no path, 50011 cells visited
+failed-search expansions: strict confined 0, strict wide 1088330, negotiated confined 0, negotiated wide 0
+repair: +3V3 M1.A5-M1.A17: 2 mm window, 13 branches lifted (22 tracks, 0 vias); open 4 -> 3, joined pads came apart (not kept)
+searches: 21 ok (2019443 expansions), 15 failed (1146030 expansions); fields 0 GPU + 33 CPU (0.50 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 0; legality checks 560566; rips 0, passes 1, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 1 proved unreachable, 144193 cells visited
+late reachability proofs: 10, 2 proved no path, 88549 cells visited
+failed-search expansions: strict confined 0, strict wide 1085614, negotiated confined 0, negotiated wide 0
+repair: +3V3 M1.A5-M1.A17: 4 mm window, 26 branches lifted (48 tracks, 3 vias); open 4 -> 3, joined pads came apart (not kept)
+searches: 4 ok (2881127 expansions), 16 failed (1459475 expansions); fields 0 GPU + 11 CPU (0.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 1336529; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 7 proved unreachable, 1361404 cells visited
+late reachability proofs: 5, 0 proved no path, 50010 cells visited
+failed-search expansions: strict confined 0, strict wide 857684, negotiated confined 0, negotiated wide 0
+repair: +3V3 M2.A5-M2.A17: 1 mm window, 3 branches lifted (7 tracks, 0 vias); open 4 -> 2 (kept)
+searches: 5 ok (2780094 expansions), 15 failed (1761945 expansions); fields 0 GPU + 13 CPU (0.60 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 7 connections improved
+restarts 0; legality checks 1061579; rips 0, passes 2, boxed-in 0, nogood skips 1, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 5 proved unreachable, 655008 cells visited
+late reachability proofs: 4, 0 proved no path, 40007 cells visited
+failed-search expansions: strict confined 0, strict wide 711181, negotiated confined 0, negotiated wide 790033
+repair: +3V3 M3.A5-M3.A17: 1 mm window, 7 branches lifted (25 tracks, 0 vias); open 2 -> 1 (kept)
+repair: 10 attempts, 4 kept: open 6 -> 1; 10 tracks and 0 vias of the input lifted (62.5 s)
+routed 53/54 connections, 280 tracks, 22 vias, pitch 0.075 mm, 5191978 expansions, 74.02 s (best variant 11.45 s)
+  unrouted: +3V3: M1.A5 -> M1.A17  (no path in window)
+why open: 2 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 2 open through congestion (0.02 s)
+  next: 2 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 43683493 expansions, 1024633 flood cells, 1307287 cell checks, 963185 fixed-copper checks, 5124124 field cells in 38 fields, 48 commits, 0 rips

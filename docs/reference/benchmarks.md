@@ -92,6 +92,15 @@ comparable (judge version, time limit, machine load).
 | [rescue-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-bd/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 15.2% | 93.4% | 12.1% | 18675 | `--no-gpu` |
 | [rescue-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-quick/summary.json) | quick | 30 | 736eac2 | 40.0% | 90.1% | 100.0% | 71 | `--variants 1` |
 
+## issue60
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/issue60)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [issue60-b2-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue60/runs/issue60-b2-base/summary.json) | b2-delay | 4 | 057ee82 | 0.0% | 82.2% |  | 442 | `--soft-zones` |
+| [issue60-b2-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue60/runs/issue60-b2-new/summary.json) | b2-delay | 4 | 057ee82 | 0.0% | 81.8% |  | 424 | `--soft-zones` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)
@@ -161,6 +170,18 @@ comparable (judge version, time limit, machine load).
 | [c5x-fail-txn](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-fail-txn/summary.json) | pcbench-bd-fail | 33 | 6899b8d | 0.0% | 90.1% | 12.1% | 1669 | `--no-gpu --txn 1` |
 | [c5x-mid](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-mid/summary.json) | mid | 11 | 6899b8d | 0.0% | 79.8% | 9.1% | 2381 | `--no-gpu` |
 | [c5x-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m20-c5/runs/c5x-quick/summary.json) | quick | 30 | 6899b8d | 86.7% | 99.3% | 100.0% | 214 |  |
+
+## m21-a3
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m21-a3)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [kookabus-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a3/runs/kookabus-base/summary.json) | kookabus | 6 | 057ee82 | 16.7% | 94.2% |  | 579 | `--soft-zones` |
+| [kookabus-pairs](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a3/runs/kookabus-pairs/summary.json) | kookabus | 6 | 057ee82 | 16.7% | 93.2% |  | 588 | `--soft-zones --si-rules --diff-pairs` |
+| [kookabus-pairs-fix](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a3/runs/kookabus-pairs-fix/summary.json) | kookabus | 6 | 057ee82 | 16.7% | 93.2% |  | 411 | `--soft-zones --si-rules --diff-pairs` |
+| [kookabus-si](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a3/runs/kookabus-si/summary.json) | kookabus | 6 | 057ee82 | 16.7% | 94.2% |  | 598 | `--soft-zones --si-rules` |
+| [kookabus-si-fix](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m21-a3/runs/kookabus-si-fix/summary.json) | kookabus | 6 | 057ee82 | 16.7% | 94.2% |  | 429 | `--soft-zones --si-rules` |
 
 ## m21-a5
 

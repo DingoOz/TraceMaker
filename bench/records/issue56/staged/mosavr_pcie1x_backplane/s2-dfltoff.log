@@ -1,0 +1,44 @@
+live view: http://192.168.1.79:8783/?token=b14adedb6ce1c9b61ea67e7878fa6afc
+warning: the viewer listens on 0.0.0.0, so other machines can reach it; the token in the URL is what keeps them out (it travels unencrypted: on an untrusted network use --view-host 127.0.0.1 and an SSH tunnel instead)
+searches: 48 ok (2322431 expansions), 26 failed (2401602 expansions); fields 0 GPU + 38 CPU (0.64 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 39 connections improved
+restarts 0; legality checks 1307287; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 9 proved unreachable, 914611 cells visited
+late reachability proofs: 11, 0 proved no path, 110022 cells visited
+failed-search expansions: strict confined 0, strict wide 1844914, negotiated confined 0, negotiated wide 0
+rescue (warm): 6 of 54 connections are open; routing again with relax (from the plain routes, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+warm start: 48 saved routes taken over, 0 not legal under these rules
+searches: 4 ok (3467761 expansions), 7 failed (781820 expansions); fields 0 GPU + 10 CPU (0.40 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 0; legality checks 888450; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 3, 1 proved unreachable, 829277 cells visited
+late reachability proofs: 5, 0 proved no path, 50006 cells visited
+failed-search expansions: strict confined 0, strict wide 692042, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0800 mm): 52 of 54 routed
+warm start: 51 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 51 in 0.0 s  <- best
+rescue (warm): 48 -> 51 routed (the relax result is kept)
+rescue (fresh): 3 of 54 connections are open; routing again with relax (from nothing, 1 round of 5000000 work)
+portfolio: 1 variants on 1 thread
+searches: 54 ok (4129943 expansions), 4 failed (659375 expansions); fields 0 GPU + 32 CPU (0.53 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 46 connections improved
+restarts 0; legality checks 898723; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 306786 cells visited
+late reachability proofs: 12, 0 proved no path, 120028 cells visited
+failed-search expansions: strict confined 0, strict wide 659375, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.0800 mm): 54 of 54 routed (complete)
+warm start: 54 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 54 in 0.0 s  <- best
+rescue (fresh): 51 -> 54 routed (the relax result is kept)
+routed 54/54 connections, 261 tracks, 17 vias, pitch 0.075 mm, 0 expansions, 15.19 s (best variant 0.02 s)
+work (all variants): 4167345 expansions, 1024633 flood cells, 1307287 cell checks, 963185 fixed-copper checks, 5124124 field cells in 38 fields, 48 commits, 0 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed

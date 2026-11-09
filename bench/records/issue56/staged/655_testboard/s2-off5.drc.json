@@ -1,0 +1,1394 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-08T22:31:16",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "s2-off5.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 23 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 191.7065
+                    },
+                    "uuid": "610700e3-02ee-48e9-83c3-ea44ef09a548"
+                },
+                {
+                    "description": "Pad 15 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 189.992
+                    },
+                    "uuid": "105a2441-29bb-475b-a4db-c46e884c316b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 15 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 189.992
+                    },
+                    "uuid": "105a2441-29bb-475b-a4db-c46e884c316b"
+                },
+                {
+                    "description": "Pad 2 [GND] of C2 on Front",
+                    "pos": {
+                        "x": 218.3384,
+                        "y": 183.9595
+                    },
+                    "uuid": "f1ec0662-9a8d-4d53-aa42-d0665d61f7be"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 15 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 189.992
+                    },
+                    "uuid": "105a2441-29bb-475b-a4db-c46e884c316b"
+                },
+                {
+                    "description": "Pad 5 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 196.5071
+                    },
+                    "uuid": "4221948e-c76a-42a8-8968-340fcc305710"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on Front, length 1.0642 mm",
+                    "pos": {
+                        "x": 224.7138,
+                        "y": 201.422
+                    },
+                    "uuid": "016cd9ad-1b74-4ea7-af11-193518a7f5bf"
+                },
+                {
+                    "description": "Pad 5 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 196.5071
+                    },
+                    "uuid": "4221948e-c76a-42a8-8968-340fcc305710"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on Front, length 0.6286 mm",
+                    "pos": {
+                        "x": 233.9848,
+                        "y": 196.9897
+                    },
+                    "uuid": "0ca522a8-3e62-4606-926b-10a82880eb37"
+                },
+                {
+                    "description": "Pad 5 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 196.5071
+                    },
+                    "uuid": "4221948e-c76a-42a8-8968-340fcc305710"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 14 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 223.9137,
+                        "y": 189.992
+                    },
+                    "uuid": "9dbb4abe-ddaf-492d-9c3e-c8d97ed436cc"
+                },
+                {
+                    "description": "Track [VCC] on Front, length 2.1082 mm",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 192.5066
+                    },
+                    "uuid": "08bbef67-97cd-4741-9b8c-90773af8407b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [VCC] on Front, length 4.6647 mm",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 194.9069
+                    },
+                    "uuid": "9521c111-eac8-4d80-baff-5327a8662ad6"
+                },
+                {
+                    "description": "Pad 14 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 223.9137,
+                        "y": 189.992
+                    },
+                    "uuid": "9dbb4abe-ddaf-492d-9c3e-c8d97ed436cc"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 198.5264
+                    },
+                    "uuid": "b0e9e34d-df24-4fb7-9a87-8411e4e5e364"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 198.5518
+                    },
+                    "uuid": "f72f44a1-0d54-412a-a810-b00fb43b0863"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 198.5264
+                    },
+                    "uuid": "b0e9e34d-df24-4fb7-9a87-8411e4e5e364"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 243.967,
+                        "y": 205.5368
+                    },
+                    "uuid": "77c3e0a7-1217-4466-ae24-fc52e1aa85d7"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 243.9924,
+                        "y": 198.5264
+                    },
+                    "uuid": "e3de6808-5401-43db-a7ec-6f70bc5f7e4d"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 243.9924,
+                        "y": 142.621
+                    },
+                    "uuid": "4da967d7-59b1-4867-a06e-13825aa8c554"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 243.9924,
+                        "y": 198.5264
+                    },
+                    "uuid": "e3de6808-5401-43db-a7ec-6f70bc5f7e4d"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 243.967,
+                        "y": 205.5368
+                    },
+                    "uuid": "77c3e0a7-1217-4466-ae24-fc52e1aa85d7"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 142.6464
+                    },
+                    "uuid": "90c8c2ec-1e0e-4e56-8ca6-a0afbbce2463"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 198.5518
+                    },
+                    "uuid": "f72f44a1-0d54-412a-a810-b00fb43b0863"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        },
+        {
+            "description": "Board has malformed outline (not a closed shape)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 142.621
+                    },
+                    "uuid": "c99df94c-c973-4264-8a3f-2ce450799a01"
+                },
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 204.8256,
+                        "y": 198.5518
+                    },
+                    "uuid": "f72f44a1-0d54-412a-a810-b00fb43b0863"
+                }
+            ],
+            "severity": "error",
+            "type": "invalid_outline"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 6 [Net-(C3-Pad1)] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 195.707
+                    },
+                    "uuid": "e611ee54-a92e-477f-8d24-95f9efaa172c"
+                },
+                {
+                    "description": "Pad 7 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 194.9069
+                    },
+                    "uuid": "b016c4a5-3b1a-4b8b-b576-52888d084829"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 6 [Net-(C3-Pad1)] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 195.707
+                    },
+                    "uuid": "e611ee54-a92e-477f-8d24-95f9efaa172c"
+                },
+                {
+                    "description": "Pad 5 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 196.5071
+                    },
+                    "uuid": "4221948e-c76a-42a8-8968-340fcc305710"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 40 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 222.3135,
+                        "y": 201.422
+                    },
+                    "uuid": "d601be85-b4a6-4320-86ff-4d66957ceeba"
+                },
+                {
+                    "description": "Pad 41 [/COL1] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 201.422
+                    },
+                    "uuid": "6aaa11f3-3bb0-4ab5-8dfc-3fd8c888d590"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 25 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 193.3067
+                    },
+                    "uuid": "54a8821b-79f8-4ad2-b91d-a466fda43af4"
+                },
+                {
+                    "description": "Pad 26 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 194.1068
+                    },
+                    "uuid": "2bfbe596-107d-4650-b513-aad63c678a5b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 39 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 221.5134,
+                        "y": 201.422
+                    },
+                    "uuid": "59de6cd5-3859-46a1-8ede-8a06511307ba"
+                },
+                {
+                    "description": "Pad 40 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 222.3135,
+                        "y": 201.422
+                    },
+                    "uuid": "d601be85-b4a6-4320-86ff-4d66957ceeba"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 36 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 219.1131,
+                        "y": 201.422
+                    },
+                    "uuid": "a106525a-3813-4f24-be03-bd94e5122b6f"
+                },
+                {
+                    "description": "Pad 37 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 219.9132,
+                        "y": 201.422
+                    },
+                    "uuid": "ec3f25e3-ca34-4d30-b6b3-a4aa68dace9b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 1 [VCC] of J1 on Back",
+                    "pos": {
+                        "x": 222.6564,
+                        "y": 149.6339
+                    },
+                    "uuid": "cf84c923-0310-4e8b-98d9-9a685692329e"
+                },
+                {
+                    "description": "Pad 2 [Net-(J1-Pad2)] of J1 on Back",
+                    "pos": {
+                        "x": 223.4565,
+                        "y": 149.6339
+                    },
+                    "uuid": "3eff624a-751f-49d5-a7ab-4efc8fefb627"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 28 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 195.707
+                    },
+                    "uuid": "b4b33177-5317-4074-9d4c-6c6d48f78353"
+                },
+                {
+                    "description": "Pad 29 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 196.5071
+                    },
+                    "uuid": "afcc4039-e587-46f0-b24c-2114dd894c80"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(IC1-Pad4)] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 197.3072
+                    },
+                    "uuid": "1b66426f-1db8-46f6-9b8c-3cfcba4a979c"
+                },
+                {
+                    "description": "Pad 5 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 196.5071
+                    },
+                    "uuid": "4221948e-c76a-42a8-8968-340fcc305710"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 13 [/RES] of IC1 on Front",
+                    "pos": {
+                        "x": 224.7138,
+                        "y": 189.992
+                    },
+                    "uuid": "e1c0722b-e2f5-4a13-99c2-063dde1a5f06"
+                },
+                {
+                    "description": "Pad 14 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 223.9137,
+                        "y": 189.992
+                    },
+                    "uuid": "9dbb4abe-ddaf-492d-9c3e-c8d97ed436cc"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 1 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 199.7075
+                    },
+                    "uuid": "d850d04f-bcbd-4562-a894-ea1f82f484ba"
+                },
+                {
+                    "description": "Pad 2 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 198.9074
+                    },
+                    "uuid": "724b2322-8d5a-4e68-a1ad-fb69a6f86f69"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 25 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 193.3067
+                    },
+                    "uuid": "54a8821b-79f8-4ad2-b91d-a466fda43af4"
+                },
+                {
+                    "description": "Pad 24 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 192.5066
+                    },
+                    "uuid": "51169c8d-847d-4584-8d2b-2b33b6e32c43"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 41 [/COL1] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 201.422
+                    },
+                    "uuid": "6aaa11f3-3bb0-4ab5-8dfc-3fd8c888d590"
+                },
+                {
+                    "description": "Pad 42 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 223.9137,
+                        "y": 201.422
+                    },
+                    "uuid": "95af483a-2f92-4a82-93b7-bcf68695e464"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 39 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 221.5134,
+                        "y": 201.422
+                    },
+                    "uuid": "59de6cd5-3859-46a1-8ede-8a06511307ba"
+                },
+                {
+                    "description": "Pad 38 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 220.7133,
+                        "y": 201.422
+                    },
+                    "uuid": "67e396e4-7b23-46d6-b914-fd4391d4b4fc"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 36 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 219.1131,
+                        "y": 201.422
+                    },
+                    "uuid": "a106525a-3813-4f24-be03-bd94e5122b6f"
+                },
+                {
+                    "description": "Pad 35 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 218.313,
+                        "y": 201.422
+                    },
+                    "uuid": "d1da7b90-c736-433c-81f3-929b7ee2432b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad [<no net>] of J1 on Back",
+                    "pos": {
+                        "x": 229.18166,
+                        "y": 145.38198
+                    },
+                    "uuid": "1ca67f8a-b22e-4320-818d-b807a09510d6"
+                },
+                {
+                    "description": "Pad [<no net>] of J1 on Back",
+                    "pos": {
+                        "x": 229.18166,
+                        "y": 149.63394
+                    },
+                    "uuid": "4e6d1319-c8f4-4f81-ab83-2f13cb8dc144"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 4 [<no net>] of J1 on Back",
+                    "pos": {
+                        "x": 225.0567,
+                        "y": 149.6339
+                    },
+                    "uuid": "c39627a6-5bd0-4a10-ae43-533a61138aba"
+                },
+                {
+                    "description": "Pad 3 [Net-(J1-Pad3)] of J1 on Back",
+                    "pos": {
+                        "x": 224.2566,
+                        "y": 149.6339
+                    },
+                    "uuid": "de6bba0f-bf71-40ab-85d4-b2e5248aeb85"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 35 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 218.313,
+                        "y": 201.422
+                    },
+                    "uuid": "d1da7b90-c736-433c-81f3-929b7ee2432b"
+                },
+                {
+                    "description": "Pad 34 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 217.5129,
+                        "y": 201.422
+                    },
+                    "uuid": "a0a1f385-0de9-4a3c-a971-b920aad57e99"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(IC1-Pad4)] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 197.3072
+                    },
+                    "uuid": "1b66426f-1db8-46f6-9b8c-3cfcba4a979c"
+                },
+                {
+                    "description": "Pad 3 [Net-(IC1-Pad3)] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 198.1073
+                    },
+                    "uuid": "10c5ddad-c98e-4b68-a2ee-c5a5033c7ae7"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 4 [<no net>] of J1 on Back",
+                    "pos": {
+                        "x": 225.0567,
+                        "y": 149.6339
+                    },
+                    "uuid": "c39627a6-5bd0-4a10-ae43-533a61138aba"
+                },
+                {
+                    "description": "Pad 5 [GND] of J1 on Back",
+                    "pos": {
+                        "x": 225.8568,
+                        "y": 149.6339
+                    },
+                    "uuid": "b81f1da8-8e56-4852-9772-3bd7cbf0ffef"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 17 [Net-(C2-Pad1)] of IC1 on Front",
+                    "pos": {
+                        "x": 221.5134,
+                        "y": 189.992
+                    },
+                    "uuid": "f58a3d2d-4c93-4f6b-8394-e755e22d2483"
+                },
+                {
+                    "description": "Pad 18 [/ROW0] of IC1 on Front",
+                    "pos": {
+                        "x": 220.7133,
+                        "y": 189.992
+                    },
+                    "uuid": "05c31ce9-bb64-4ab9-bab9-4a1102c09466"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 13 [/RES] of IC1 on Front",
+                    "pos": {
+                        "x": 224.7138,
+                        "y": 189.992
+                    },
+                    "uuid": "e1c0722b-e2f5-4a13-99c2-063dde1a5f06"
+                },
+                {
+                    "description": "Pad 12 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 225.5139,
+                        "y": 189.992
+                    },
+                    "uuid": "9e5a6034-7012-4f74-a855-0b2b99cd1660"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 24 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 192.5066
+                    },
+                    "uuid": "51169c8d-847d-4584-8d2b-2b33b6e32c43"
+                },
+                {
+                    "description": "Pad 23 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 191.7065
+                    },
+                    "uuid": "610700e3-02ee-48e9-83c3-ea44ef09a548"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 30 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 197.3072
+                    },
+                    "uuid": "5b36c6ee-f88a-4a9f-bc32-3b7932f6aa4d"
+                },
+                {
+                    "description": "Pad 29 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 196.5071
+                    },
+                    "uuid": "afcc4039-e587-46f0-b24c-2114dd894c80"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 17 [Net-(C2-Pad1)] of IC1 on Front",
+                    "pos": {
+                        "x": 221.5134,
+                        "y": 189.992
+                    },
+                    "uuid": "f58a3d2d-4c93-4f6b-8394-e755e22d2483"
+                },
+                {
+                    "description": "Pad 16 [Net-(C1-Pad1)] of IC1 on Front",
+                    "pos": {
+                        "x": 222.3135,
+                        "y": 189.992
+                    },
+                    "uuid": "784a79af-aed6-4c08-a6a8-da7186678d14"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad [<no net>] of J1 on Back",
+                    "pos": {
+                        "x": 219.33154,
+                        "y": 145.38198
+                    },
+                    "uuid": "fc255770-c0df-4051-bbbd-3a1d9ebbaf03"
+                },
+                {
+                    "description": "Pad [<no net>] of J1 on Back",
+                    "pos": {
+                        "x": 219.33154,
+                        "y": 149.63394
+                    },
+                    "uuid": "2e9f122f-d93a-4b11-bff3-6da7ed9f8a07"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 10 [/MOSI] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 192.5066
+                    },
+                    "uuid": "25c9d4ad-ce98-4550-9f94-a282ad2538ec"
+                },
+                {
+                    "description": "Pad 9 [/SCK] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 193.3067
+                    },
+                    "uuid": "1f41641d-8476-4539-9f3a-81ff4317d047"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 28 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 195.707
+                    },
+                    "uuid": "b4b33177-5317-4074-9d4c-6c6d48f78353"
+                },
+                {
+                    "description": "Pad 27 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 194.9069
+                    },
+                    "uuid": "751b6bdd-15ed-4b5f-a117-d174d2feba03"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 30 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 197.3072
+                    },
+                    "uuid": "5b36c6ee-f88a-4a9f-bc32-3b7932f6aa4d"
+                },
+                {
+                    "description": "Pad 31 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 198.1073
+                    },
+                    "uuid": "eb83e6ee-73a2-467b-99d4-68d232b0176d"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 42 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 223.9137,
+                        "y": 201.422
+                    },
+                    "uuid": "95af483a-2f92-4a82-93b7-bcf68695e464"
+                },
+                {
+                    "description": "Pad 43 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 224.7138,
+                        "y": 201.422
+                    },
+                    "uuid": "04b29df7-a881-45cb-b35c-27f9e04c6112"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 16 [Net-(C1-Pad1)] of IC1 on Front",
+                    "pos": {
+                        "x": 222.3135,
+                        "y": 189.992
+                    },
+                    "uuid": "784a79af-aed6-4c08-a6a8-da7186678d14"
+                },
+                {
+                    "description": "Pad 15 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 189.992
+                    },
+                    "uuid": "105a2441-29bb-475b-a4db-c46e884c316b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 10 [/MOSI] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 192.5066
+                    },
+                    "uuid": "25c9d4ad-ce98-4550-9f94-a282ad2538ec"
+                },
+                {
+                    "description": "Pad 11 [/MISO] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 191.7065
+                    },
+                    "uuid": "da29a9a5-60c1-4b34-bd60-28d0029965b9"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 18 [/ROW0] of IC1 on Front",
+                    "pos": {
+                        "x": 220.7133,
+                        "y": 189.992
+                    },
+                    "uuid": "05c31ce9-bb64-4ab9-bab9-4a1102c09466"
+                },
+                {
+                    "description": "Pad 19 [/ROW1] of IC1 on Front",
+                    "pos": {
+                        "x": 219.9132,
+                        "y": 189.992
+                    },
+                    "uuid": "ee1852de-bbfe-450f-84dc-dd8b4bcc98e7"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 7 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 194.9069
+                    },
+                    "uuid": "b016c4a5-3b1a-4b8b-b576-52888d084829"
+                },
+                {
+                    "description": "Pad 8 [/COL0] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 194.1068
+                    },
+                    "uuid": "0ed0063e-359b-4d3f-ba87-b2388c8c68c6"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 43 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 224.7138,
+                        "y": 201.422
+                    },
+                    "uuid": "04b29df7-a881-45cb-b35c-27f9e04c6112"
+                },
+                {
+                    "description": "Pad 44 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 225.5139,
+                        "y": 201.422
+                    },
+                    "uuid": "49418be2-b952-4660-8903-ae570edd8417"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 3 [Net-(J1-Pad3)] of J1 on Back",
+                    "pos": {
+                        "x": 224.2566,
+                        "y": 149.6339
+                    },
+                    "uuid": "de6bba0f-bf71-40ab-85d4-b2e5248aeb85"
+                },
+                {
+                    "description": "Pad 2 [Net-(J1-Pad2)] of J1 on Back",
+                    "pos": {
+                        "x": 223.4565,
+                        "y": 149.6339
+                    },
+                    "uuid": "3eff624a-751f-49d5-a7ab-4efc8fefb627"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 27 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 194.9069
+                    },
+                    "uuid": "751b6bdd-15ed-4b5f-a117-d174d2feba03"
+                },
+                {
+                    "description": "Pad 26 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 194.1068
+                    },
+                    "uuid": "2bfbe596-107d-4650-b513-aad63c678a5b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 38 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 220.7133,
+                        "y": 201.422
+                    },
+                    "uuid": "67e396e4-7b23-46d6-b914-fd4391d4b4fc"
+                },
+                {
+                    "description": "Pad 37 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 219.9132,
+                        "y": 201.422
+                    },
+                    "uuid": "ec3f25e3-ca34-4d30-b6b3-a4aa68dace9b"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 15 [GND] of IC1 on Front",
+                    "pos": {
+                        "x": 223.1136,
+                        "y": 189.992
+                    },
+                    "uuid": "105a2441-29bb-475b-a4db-c46e884c316b"
+                },
+                {
+                    "description": "Pad 14 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 223.9137,
+                        "y": 189.992
+                    },
+                    "uuid": "9dbb4abe-ddaf-492d-9c3e-c8d97ed436cc"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 19 [/ROW1] of IC1 on Front",
+                    "pos": {
+                        "x": 219.9132,
+                        "y": 189.992
+                    },
+                    "uuid": "ee1852de-bbfe-450f-84dc-dd8b4bcc98e7"
+                },
+                {
+                    "description": "Pad 20 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 219.1131,
+                        "y": 189.992
+                    },
+                    "uuid": "a0886236-e105-486e-a17c-00de43b65cb9"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 8 [/COL0] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 194.1068
+                    },
+                    "uuid": "0ed0063e-359b-4d3f-ba87-b2388c8c68c6"
+                },
+                {
+                    "description": "Pad 9 [/SCK] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 193.3067
+                    },
+                    "uuid": "1f41641d-8476-4539-9f3a-81ff4317d047"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 31 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 198.1073
+                    },
+                    "uuid": "eb83e6ee-73a2-467b-99d4-68d232b0176d"
+                },
+                {
+                    "description": "Pad 32 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 198.9074
+                    },
+                    "uuid": "40a195bb-2153-4593-a609-49e3b89f867f"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 20 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 219.1131,
+                        "y": 189.992
+                    },
+                    "uuid": "a0886236-e105-486e-a17c-00de43b65cb9"
+                },
+                {
+                    "description": "Pad 21 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 218.313,
+                        "y": 189.992
+                    },
+                    "uuid": "52b8971d-9c9c-47d1-9120-4ed106eac700"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 21 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 218.313,
+                        "y": 189.992
+                    },
+                    "uuid": "52b8971d-9c9c-47d1-9120-4ed106eac700"
+                },
+                {
+                    "description": "Pad 22 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 217.5129,
+                        "y": 189.992
+                    },
+                    "uuid": "dc4e6c3e-c101-4361-9207-4e32faf65a7d"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 3 [Net-(IC1-Pad3)] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 198.1073
+                    },
+                    "uuid": "10c5ddad-c98e-4b68-a2ee-c5a5033c7ae7"
+                },
+                {
+                    "description": "Pad 2 [VCC] of IC1 on Front",
+                    "pos": {
+                        "x": 227.2284,
+                        "y": 198.9074
+                    },
+                    "uuid": "724b2322-8d5a-4e68-a1ad-fb69a6f86f69"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 32 [<no net>] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 198.9074
+                    },
+                    "uuid": "40a195bb-2153-4593-a609-49e3b89f867f"
+                },
+                {
+                    "description": "Pad 33 [Net-(IC1-Pad33)] of IC1 on Front",
+                    "pos": {
+                        "x": 215.7984,
+                        "y": 199.7075
+                    },
+                    "uuid": "c4efe62f-3d9d-4ec2-8fa3-cb9e9bfeb03c"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        }
+    ]
+}

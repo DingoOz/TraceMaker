@@ -425,6 +425,23 @@ TEST_CASE("critical: roles make nets critical, in tiers, and a differential pair
     const auto with = crules::critical_nets(lb.board, cat, det, {{a, b}});
     CHECK(std::any_of(with.begin(), with.end(), [&](const crules::CriticalNet& c) { return c.net == a && c.tier == 2 && c.why == "differential pair"; }));
   }
+  // A net with fewer than two pads (an unused pin's own net) has nothing to route and is never critical.
+  for (const auto& c : found) {
+    const auto pads = std::count_if(lb.board.pads.begin(), lb.board.pads.end(), [&](const model::Pad& p) { return p.net == c.net; });
+    CHECK(pads >= 2);
+  }
+  {
+    model::Board one = lb.board;
+    const model::NetId lone = found.front().net;
+    bool kept = false;  // leave the net a single pad
+    for (auto& p : one.pads)
+      if (p.net == lone) {
+        if (kept) p.net = 0;
+        kept = true;
+      }
+    const auto without = crules::critical_nets(one, cat, crules::detect(one, cat, nullptr), {});
+    CHECK(std::none_of(without.begin(), without.end(), [&](const crules::CriticalNet& c) { return c.net == lone; }));
+  }
   // The table names only categories and roles the catalogue has.
   for (const auto& cr : crules::critical_roles()) {
     const auto it = std::find_if(cat.categories.begin(), cat.categories.end(), [&](const crules::Category& c) { return c.id == cr.category; });
