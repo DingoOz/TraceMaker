@@ -27,6 +27,7 @@ var problem_8hpp =
     [ "tmk::place::translated", "namespacetmk_1_1place.html#a7be85aea93873575e95551d0c1ef190a", null ],
     [ "tmk::place::with_turn", "namespacetmk_1_1place.html#a8e47928f21415ce79a4b499aae58c9c7", null ],
     [ "tmk::place::z", "namespacetmk_1_1place.html#a33bf7df65fdace2b784d20ad1d3125eb", null ],
+    [ "tmk::place::kDecapStandoffPins", "namespacetmk_1_1place.html#a607808ce9ec2b9506630bb98f2bd96cf", null ],
     [ "tmk::place::kEdgeTolerance", "namespacetmk_1_1place.html#a167213627dcedeb3ff23cde9fc5fb852", null ],
     [ "tmk::place::kFlipBit", "namespacetmk_1_1place.html#a2f755c17febdbf687dab7cb0f0667dd2", null ],
     [ "tmk::place::kPowerWeight", "namespacetmk_1_1place.html#a8b7fa2dcf624aba0b36db673a20c28a6", null ],

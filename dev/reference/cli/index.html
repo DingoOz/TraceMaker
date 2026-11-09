@@ -3695,6 +3695,15 @@ OPTIONS:
                               nearest legal spot). Off by default: the placement model is
                               stricter than KiCad's DRC
           --no-decap-affinity Do not tie decoupling capacitors to their IC's supply pins
+          --decap-spread      Decoupling capacitors whose input position is a pile (--scratch,
+                              or beside the board) are spread over their IC's supply pins
+                              instead of tied to the pin nearest the pile (D171; off by
+                              default)
+          --decap-standoff-mm FLOAT:FLOAT in [0 - 20]
+                              With --decap-spread: a capacitor tied to an IC with 48 or more
+                              pads is pulled to a point this far outside the IC's body,
+                              straight out from its pin, keeping the band next to the pin rows
+                              for escapes (0 = onto the pin; default 2)
           --component-rules TEXT:{off,report,soft,on}
                               Component-aware layout rules (doc 15): off, report (detect and
                               list only), soft (proximity pseudo-nets: crystal, ESD, regulator

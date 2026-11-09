@@ -107,6 +107,10 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a647f7228482285efc0e5a01c7973127e"><td class="mdescLeft">&#160;</td><td class="mdescRight">tie each decoupling capacitor to the nearest supply pin of its IC  <br /></td></tr>
 <tr class="memitem:a246307be50ca75d0e5352e64b557f574" id="r_a246307be50ca75d0e5352e64b557f574"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a246307be50ca75d0e5352e64b557f574">decap_weight</a> = <a class="el" href="namespacetmk_1_1place.html#a1646579961770bd9b7fee841b2d0ef29">kSignalWeight</a></td></tr>
 <tr class="memdesc:a246307be50ca75d0e5352e64b557f574"><td class="mdescLeft">&#160;</td><td class="mdescRight">weight of those ties (D25: signal weight)  <br /></td></tr>
+<tr class="memitem:afa1fe21bdbd4e634af858d674cd21694" id="r_afa1fe21bdbd4e634af858d674cd21694"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa1fe21bdbd4e634af858d674cd21694">decap_spread</a> = false</td></tr>
+<tr class="memdesc:afa1fe21bdbd4e634af858d674cd21694"><td class="mdescLeft">&#160;</td><td class="mdescRight">D171 (off by default: not a clear routing win): capacitors without a real input position (scratch, or beside the board) are spread over their IC's supply pins (<a class="el" href="namespacetmk_1_1crules.html#ae03d3a6ce33a00cd6d6727675ebb2e05" title="Decision D171 (issue #55, doc 04 §2): re-tie the capacitors whose input position carries no intent (u...">crules::spread_unplaced_decaps</a>) instead of tied to the pin nearest the pile.  <br /></td></tr>
+<tr class="memitem:a6a15c63868d424375da2dba2b00959c6" id="r_a6a15c63868d424375da2dba2b00959c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a15c63868d424375da2dba2b00959c6">decap_standoff</a> = 2'000'000</td></tr>
+<tr class="memdesc:a6a15c63868d424375da2dba2b00959c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">D171: with decap_spread, an unplaced cap tied to an IC of kDecapStandoffPins pads or more is pulled to a point this far outside the IC's body (straight out from its pin) instead of onto the pin: the band next to the pin rows stays free for the escapes and fan-out vias (0 = onto the pin).  <br /></td></tr>
 <tr class="memitem:af0eabcd59dc5147d1503eace6fce0f6c" id="r_af0eabcd59dc5147d1503eace6fce0f6c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0eabcd59dc5147d1503eace6fce0f6c">crules_weight_pct</a> = 100</td></tr>
 <tr class="memdesc:af0eabcd59dc5147d1503eace6fce0f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">scale of the component-rule proximity weights (100 = as the rules say)  <br /></td></tr>
 <tr class="memitem:a2591f5af061deb3f4d3548dde9a9f3b7" id="r_a2591f5af061deb3f4d3548dde9a9f3b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2591f5af061deb3f4d3548dde9a9f3b7">crules_two_stage</a> = true</td></tr>
@@ -129,7 +133,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00152">152</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00153">153</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="a973b6941de9519116781534296575c1e" name="a973b6941de9519116781534296575c1e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a973b6941de9519116781534296575c1e">&#9670;&#160;</a></span>affinities</h2>
@@ -146,7 +150,7 @@ Public Attributes</h2></td></tr>
 <p>Extra objective-only pseudo-nets from component rules (<a class="el" href="namespacetmk_1_1crules.html#a040f5da48f821f1ea88ab13a61858d2c">crules::placement_affinities</a>). </p>
 <p>Parts already tied by decap_affinity are skipped. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00164">164</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00173">173</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -165,7 +169,7 @@ Public Attributes</h2></td></tr>
 <p>References tested by copper and holes only: neither their outline nor the other parts' courtyards count against them (copper clearance, hole spacing and the board edge still do). </p>
 <p>The last resort before a part is left off the board: battery holders, modules and headers that the designer placed across other courtyards. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00181">181</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00190">190</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -183,7 +187,7 @@ Public Attributes</h2></td></tr>
 
 <p>override (-1: from the rules, else default_clearance) </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00154">154</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00155">155</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -201,7 +205,7 @@ Public Attributes</h2></td></tr>
 
 <p>Full mode with component rules: place with the decoupling ties only, then lock the tied capacitors and refine with the component-rule pulls (they compete for the space next to the IC otherwise; doc 15 §14.3). </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00161">161</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00170">170</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -219,7 +223,7 @@ Public Attributes</h2></td></tr>
 
 <p>scale of the component-rule proximity weights (100 = as the rules say) </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00158">158</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00167">167</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -237,7 +241,43 @@ Public Attributes</h2></td></tr>
 
 <p>tie each decoupling capacitor to the nearest supply pin of its IC </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00156">156</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00157">157</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afa1fe21bdbd4e634af858d674cd21694" name="afa1fe21bdbd4e634af858d674cd21694"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa1fe21bdbd4e634af858d674cd21694">&#9670;&#160;</a></span>decap_spread</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::place::ExtractOptions::decap_spread = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>D171 (off by default: not a clear routing win): capacitors without a real input position (scratch, or beside the board) are spread over their IC's supply pins (<a class="el" href="namespacetmk_1_1crules.html#ae03d3a6ce33a00cd6d6727675ebb2e05" title="Decision D171 (issue #55, doc 04 §2): re-tie the capacitors whose input position carries no intent (u...">crules::spread_unplaced_decaps</a>) instead of tied to the pin nearest the pile. </p>
+
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00162">162</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6a15c63868d424375da2dba2b00959c6" name="a6a15c63868d424375da2dba2b00959c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a15c63868d424375da2dba2b00959c6">&#9670;&#160;</a></span>decap_standoff</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tmk::place::ExtractOptions::decap_standoff = 2'000'000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>D171: with decap_spread, an unplaced cap tied to an IC of kDecapStandoffPins pads or more is pulled to a point this far outside the IC's body (straight out from its pin) instead of onto the pin: the band next to the pin rows stays free for the escapes and fan-out vias (0 = onto the pin). </p>
+
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00166">166</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -255,7 +295,7 @@ Public Attributes</h2></td></tr>
 
 <p>weight of those ties (D25: signal weight) </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00157">157</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00158">158</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -273,7 +313,7 @@ Public Attributes</h2></td></tr>
 
 <p>used when the board has no courtyard rule (KiCad's own default is 0) </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00155">155</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00156">156</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -291,7 +331,7 @@ Public Attributes</h2></td></tr>
 
 <p>Edge pulls for movable parts (<a class="el" href="namespacetmk_1_1crules.html#a2b1f1c6de29f93f4377f5b570a5ea99e">crules::edge_attractions</a>); fixed parts are skipped. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00166">166</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00175">175</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -309,7 +349,7 @@ Public Attributes</h2></td></tr>
 
 <p>connectors (J*, P*, CN*, USB*) touching the outline stay put </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00153">153</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00154">154</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -328,7 +368,7 @@ Public Attributes</h2></td></tr>
 <p>Side assignment (doc 04 §3 C/E, D48): movable surface-mount parts may move to the other side. </p>
 <p><span class="tt"><a class="el" href="#a39eefef89c937bb769de632418b18cd9">flip_ok</a></span> (one entry per footprint; empty = all) says whether the writer can mirror the footprint, <span class="tt"><a class="el" href="#a775c0a97d1e857c054044cf17ea0d0ef">flip_why</a></span> why not; <span class="tt"><a class="el" href="#a94f2f983d41010057b9272eb0f36b50e">keep_side</a></span> lists references the user pins to their side. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00170">170</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00179">179</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -344,7 +384,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00171">171</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00180">180</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -360,7 +400,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00172">172</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00181">181</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -376,7 +416,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00173">173</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00182">182</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -395,7 +435,7 @@ Public Attributes</h2></td></tr>
 <p>References whose courtyard is ignored: the part is as large as its pads (box + 0.25 mm), like a footprint drawn without a courtyard. </p>
 <p>Full mode's fallback for parts whose courtyard fits nowhere (designers overlap courtyards routinely: 24 of the 40 boards of set H do; doc 04 §9). </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00177">177</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00186">186</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -414,7 +454,7 @@ Public Attributes</h2></td></tr>
 <p>The input positions of movable parts mean nothing (a board straight from the schematic: parts piled or beside the board). </p>
 <p>A part that overhangs the edge where the input has it is then not held there. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00184">184</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00193">193</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>

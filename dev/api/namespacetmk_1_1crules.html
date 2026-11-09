@@ -244,6 +244,8 @@ Functions</h2></td></tr>
 <tr class="memitem:addaf9057ffbe4293a45b936787776234" id="r_addaf9057ffbe4293a45b936787776234"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#addaf9057ffbe4293a45b936787776234">check_override_refs</a> (const <a class="el" href="structtmk_1_1crules_1_1Overrides.html">Overrides</a> &amp;ov, const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b)</td></tr>
 <tr class="memdesc:addaf9057ffbe4293a45b936787776234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every reference must name a footprint of the board (throws otherwise, listing the unknown ones).  <br /></td></tr>
 <tr class="memitem:a3c5ea1b16bd4a85d49cf0d6ce4e1618b" id="r_a3c5ea1b16bd4a85d49cf0d6ce4e1618b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1crules_1_1DecapTie.html">DecapTie</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c5ea1b16bd4a85d49cf0d6ce4e1618b">decap_ties</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::function&lt; bool(int)&gt; &amp;usable, bool generalised)</td></tr>
+<tr class="memitem:ae03d3a6ce33a00cd6d6727675ebb2e05" id="r_ae03d3a6ce33a00cd6d6727675ebb2e05"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae03d3a6ce33a00cd6d6727675ebb2e05">spread_unplaced_decaps</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, std::vector&lt; <a class="el" href="structtmk_1_1crules_1_1DecapTie.html">DecapTie</a> &gt; &amp;ties, const std::function&lt; bool(int)&gt; &amp;usable, const std::function&lt; bool(int)&gt; &amp;unplaced)</td></tr>
+<tr class="memdesc:ae03d3a6ce33a00cd6d6727675ebb2e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decision D171 (issue #55, doc 04 §2): re-tie the capacitors whose input position carries no intent (<span class="tt">unplaced(cap_fp)</span>: a pile from a schematic import, or parts dropped beside the board) to the IC (U*, IC*) supply pads of their net, spread instead of nearest.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -1314,6 +1316,40 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae03d3a6ce33a00cd6d6727675ebb2e05" name="ae03d3a6ce33a00cd6d6727675ebb2e05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae03d3a6ce33a00cd6d6727675ebb2e05">&#9670;&#160;</a></span>spread_unplaced_decaps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::crules::spread_unplaced_decaps </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structtmk_1_1crules_1_1DecapTie.html">DecapTie</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>ties</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; bool(int)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>usable</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; bool(int)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>unplaced</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Decision D171 (issue #55, doc 04 §2): re-tie the capacitors whose input position carries no intent (<span class="tt">unplaced(cap_fp)</span>: a pile from a schematic import, or parts dropped beside the board) to the IC (U*, IC*) supply pads of their net, spread instead of nearest. </p>
+<p>Nearest-in-the-input sends a whole pile to the pins that face it: all the caps of a 128-pin chip on one side, over that side's escapes. Each unplaced cap goes to the pad of its supply net with the fewest caps tied to it so far, the caps the designer placed counted first; among equally loaded pads the order is the bit-reversed index of the pad list (van der Corput), so any number of caps lands evenly round the package and across the ICs on that net rather than on its first pins. Ties of placed caps are kept. Returns the number of ties changed. </p>
 
 </div>
 </div>

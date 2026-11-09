@@ -6,6 +6,8 @@ var structtmk_1_1place_1_1ExtractOptions =
     [ "crules_two_stage", "structtmk_1_1place_1_1ExtractOptions.html#a2591f5af061deb3f4d3548dde9a9f3b7", null ],
     [ "crules_weight_pct", "structtmk_1_1place_1_1ExtractOptions.html#af0eabcd59dc5147d1503eace6fce0f6c", null ],
     [ "decap_affinity", "structtmk_1_1place_1_1ExtractOptions.html#a647f7228482285efc0e5a01c7973127e", null ],
+    [ "decap_spread", "structtmk_1_1place_1_1ExtractOptions.html#afa1fe21bdbd4e634af858d674cd21694", null ],
+    [ "decap_standoff", "structtmk_1_1place_1_1ExtractOptions.html#a6a15c63868d424375da2dba2b00959c6", null ],
     [ "decap_weight", "structtmk_1_1place_1_1ExtractOptions.html#a246307be50ca75d0e5352e64b557f574", null ],
     [ "default_clearance", "structtmk_1_1place_1_1ExtractOptions.html#a897c32fcdd31da50aeb8a4d94e9ade21", null ],
     [ "edge_pulls", "structtmk_1_1place_1_1ExtractOptions.html#aa6c1e0e8ab6cc51e826b81ebe330f161", null ],

@@ -264,6 +264,8 @@ Variables</h2></td></tr>
 <tr class="memitem:a1646579961770bd9b7fee841b2d0ef29" id="r_a1646579961770bd9b7fee841b2d0ef29"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1646579961770bd9b7fee841b2d0ef29">kSignalWeight</a> = 10</td></tr>
 <tr class="memdesc:a1646579961770bd9b7fee841b2d0ef29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Net weights are small integers so every cost is an exact integer (CLAUDE.md rule 2).  <br /></td></tr>
 <tr class="memitem:a8b7fa2dcf624aba0b36db673a20c28a6" id="r_a8b7fa2dcf624aba0b36db673a20c28a6"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b7fa2dcf624aba0b36db673a20c28a6">kPowerWeight</a> = 1</td></tr>
+<tr class="memitem:a607808ce9ec2b9506630bb98f2bd96cf" id="r_a607808ce9ec2b9506630bb98f2bd96cf"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a607808ce9ec2b9506630bb98f2bd96cf">kDecapStandoffPins</a> = 48</td></tr>
+<tr class="memdesc:a607808ce9ec2b9506630bb98f2bd96cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">D171: "large IC" for <a class="el" href="structtmk_1_1place_1_1ExtractOptions.html#a6a15c63868d424375da2dba2b00959c6" title="D171: with decap_spread, an unplaced cap tied to an IC of kDecapStandoffPins pads or more is pulled t...">ExtractOptions::decap_standoff</a>.  <br /></td></tr>
 <tr class="memitem:a167213627dcedeb3ff23cde9fc5fb852" id="r_a167213627dcedeb3ff23cde9fc5fb852"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a167213627dcedeb3ff23cde9fc5fb852">kEdgeTolerance</a> = 250'000</td></tr>
 <tr class="memdesc:a167213627dcedeb3ff23cde9fc5fb852"><td class="mdescLeft">&#160;</td><td class="mdescRight">courtyard may extend this far past the board edge  <br /></td></tr>
 <tr class="memitem:a4af5547c1db8aa75fc14f163dab8c402" id="r_a4af5547c1db8aa75fc14f163dab8c402"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4af5547c1db8aa75fc14f163dab8c402">kStates</a> = 8</td></tr>
@@ -784,7 +786,7 @@ template&lt;class Touch&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00055">55</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00056">56</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -997,7 +999,7 @@ template&lt;class Touch&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00058">58</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00059">59</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -1640,7 +1642,7 @@ template&lt;class Touch&gt; </div>
 <p>Exchanging two interchangeable parts a and b (same footprint and input side; angle0_b − angle0_a = 90° dk): the state that gives a the absolute pose b has in <span class="tt">b_state</span>. </p>
 <p>Flipping negates angle0, so dk changes sign there. (b takes a's pose with swap_state(a_state, −dk).) </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00062">62</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00063">63</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -1811,7 +1813,7 @@ template&lt;class Touch&gt; </div>
 
 <p>State with the same side as <span class="tt">state</span> and <span class="tt">r</span> quarter turns. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00057">57</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00058">58</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -1843,6 +1845,32 @@ template&lt;class Touch&gt; </div>
 </div>
 </div>
 <a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
+<a id="a607808ce9ec2b9506630bb98f2bd96cf" name="a607808ce9ec2b9506630bb98f2bd96cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a607808ce9ec2b9506630bb98f2bd96cf">&#9670;&#160;</a></span>kDecapStandoffPins</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::place::kDecapStandoffPins = 48</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>D171: "large IC" for <a class="el" href="structtmk_1_1place_1_1ExtractOptions.html#a6a15c63868d424375da2dba2b00959c6" title="D171: with decap_spread, an unplaced cap tied to an IC of kDecapStandoffPins pads or more is pulled t...">ExtractOptions::decap_standoff</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00026">26</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a167213627dcedeb3ff23cde9fc5fb852" name="a167213627dcedeb3ff23cde9fc5fb852"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a167213627dcedeb3ff23cde9fc5fb852">&#9670;&#160;</a></span>kEdgeTolerance</h2>
 
@@ -1865,7 +1893,7 @@ template&lt;class Touch&gt; </div>
 
 <p>courtyard may extend this far past the board edge </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00026">26</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00027">27</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -1889,7 +1917,7 @@ template&lt;class Touch&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00054">54</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00055">55</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -1966,7 +1994,7 @@ template&lt;class Touch&gt; </div>
 <p>Orientation state of a part (<a class="el" href="structtmk_1_1place_1_1Placement.html#a3d163ab79ef5c7d8d0296e07b53323f7" title="rotation index per part (angle0 + 90° * rot)">Placement::rot</a>): bits 0–1 = quarter turns r, bit 2 = flipped to the other side. </p>
 <p>State r means angle0 + 90 r on the input side; state 4 + r means the KiCad flip (top/bottom about the origin: offsets mirrored in y, orientation −angle0) followed by r quarter turns, i.e. −angle0 + 90 r on the other side. </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00053">53</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00054">54</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>

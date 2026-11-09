@@ -1,5 +1,11 @@
 var NAVTREEINDEX24 =
 {
+"structtmk_1_1route_1_1RouterOptions.html#a89fbb3705025b92da2a8e81436c76508":[1,0,0,15,40,67],
+"structtmk_1_1route_1_1RouterOptions.html#a8e33968c4d810f571dc1e186dcf8654b":[0,0,0,17,40,119],
+"structtmk_1_1route_1_1RouterOptions.html#a8e33968c4d810f571dc1e186dcf8654b":[1,0,0,15,40,119],
+"structtmk_1_1route_1_1RouterOptions.html#a9049a5c26a473fbefdac488f626065d1":[0,0,0,17,40,171],
+"structtmk_1_1route_1_1RouterOptions.html#a9049a5c26a473fbefdac488f626065d1":[1,0,0,15,40,171],
+"structtmk_1_1route_1_1RouterOptions.html#a909922d074c818b7bd301eb7ba30d8d3":[0,0,0,17,40,183],
 "structtmk_1_1route_1_1RouterOptions.html#a909922d074c818b7bd301eb7ba30d8d3":[1,0,0,15,40,183],
 "structtmk_1_1route_1_1RouterOptions.html#a92c3a1d94239f0edb2ec6eb010ff78fd":[0,0,0,17,40,35],
 "structtmk_1_1route_1_1RouterOptions.html#a92c3a1d94239f0edb2ec6eb010ff78fd":[1,0,0,15,40,35],
@@ -243,11 +249,5 @@ var NAVTREEINDEX24 =
 "structtmk_1_1route_1_1RouterOptions_1_1GuidePath.html#a9561f60021802fcf2933d0abc7b85e45":[1,0,0,15,40,1,2],
 "structtmk_1_1route_1_1RouterOptions_1_1GuidePath.html#abc3b2000dc254c204ab5806897fb59fc":[0,0,0,17,40,1,1],
 "structtmk_1_1route_1_1RouterOptions_1_1GuidePath.html#abc3b2000dc254c204ab5806897fb59fc":[1,0,0,15,40,1,1],
-"structtmk_1_1route_1_1TunnelStats.html":[0,0,0,17,4],
-"structtmk_1_1route_1_1TunnelStats.html":[1,0,0,15,4],
-"structtmk_1_1route_1_1TunnelStats.html#a0bace43978658c8edb7fdd7d2d9663d8":[0,0,0,17,4,0],
-"structtmk_1_1route_1_1TunnelStats.html#a0bace43978658c8edb7fdd7d2d9663d8":[1,0,0,15,4,0],
-"structtmk_1_1route_1_1TunnelStats.html#a4166929066185545429119351275e5e5":[0,0,0,17,4,1],
-"structtmk_1_1route_1_1TunnelStats.html#a4166929066185545429119351275e5e5":[1,0,0,15,4,1],
-"structtmk_1_1route_1_1ViaHeights.html":[0,0,0,17,47]
+"structtmk_1_1route_1_1TunnelStats.html":[0,0,0,17,4]
 };

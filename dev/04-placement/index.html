@@ -1545,6 +1545,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="2. Inputs and constraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-decoupling-caps-from-a-pile-d171-issue-55-2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Decoupling caps from a pile (D171, issue #55; 2026-11-08)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2527,6 +2544,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="2. Inputs and constraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-decoupling-caps-from-a-pile-d171-issue-55-2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Decoupling caps from a pile (D171, issue #55; 2026-11-08)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2917,9 +2951,75 @@ beyond what was proved. (The L4 bound is weak on dense boards; it is still a tru
     <em>built (2026-10-03, D25)</em>: each such capacitor is tied to the nearest IC pad on its supply in the input
     placement by a two-pin pseudo-net at signal weight (objective only, not reported as wirelength); the
     Hungarian assignment is not built;
+    <em>built (2026-11-08, D171, issue #55; off by default, <code>--decap-spread</code>)</em>: a capacitor whose input position
+    carries no intent (<code>--scratch</code>, or lying wholly outside the board outline's box, as KiCad drops new parts) is
+    not tied to the pin nearest the pile, which sends every capacitor of a big chip to the pins facing the pile. It
+    goes to the IC supply pad of its net with the fewest capacitors so far (the designer's capacitors counted
+    first), equally loaded pads taken in bit-reversed order of the pad list, so the capacitors land evenly round
+    the package and across the ICs on that net (<code>crules::spread_unplaced_decaps</code>). On an IC with 48 or more pads
+    the tie ends <code>--decap-standoff-mm</code> (default 2) outside the IC's body, straight out from the pin, so the band
+    next to the pin rows stays free for escapes. Capacitors placed on the board keep their nearest pin. Off by default:
+    not a clear routing win (§2.1);
   - <strong>crystal/oscillator</strong> near its MCU pins; <strong>termination resistors</strong> near the driver or receiver
     (by net topology); <strong>ESD/TVS</strong> near the connector pin.
   - schematic <strong>hierarchical sheets</strong> and KiCad <strong>groups/rooms</strong> as cluster hints.</p>
+<h3 id="21-decoupling-caps-from-a-pile-d171-issue-55-2026-11-08">2.1 Decoupling caps from a pile (D171, issue #55; 2026-11-08)<a class="headerlink" href="#21-decoupling-caps-from-a-pile-d171-issue-55-2026-11-08" title="Permanent link">&para;</a></h3>
+<p>Nearest-pin ties (D25) are right for a human placement. From scratch they are wrong: WholeBoard's PoE switch put
+22-25 of each KSZ9897's 29 caps on the chip side facing the pile. That side is also where port 5's MDI pairs and the
+RGMII bus leave. With <code>--decap-spread</code> (off by default) the caps of a pile are spread over the supply pads of their
+net. On an IC with 48 or more pads the tie ends 2 mm outside the body (<code>--decap-standoff-mm</code>). Records:
+<code>bench/records/issue55/</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Board, budget</th>
+<th>Placement</th>
+<th>Caps at the chip, by side</th>
+<th style="text-align: right;">Routed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PoE switch (1,189 connections), <code>--work 10M</code></td>
+<td>nearest pin (default)</td>
+<td>U10 1/25/1/2, U11 4/22/1/2 (supply pins 9/7/3/8)</td>
+<td style="text-align: right;">960</td>
+</tr>
+<tr>
+<td></td>
+<td>spread onto the pins (standoff 0)</td>
+<td>U10 12/7/5/9</td>
+<td style="text-align: right;">869</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--decap-spread</code> (standoff 2 mm)</td>
+<td>U10 9/9/4/11, U11 9/8/5/11, max 4.9 mm from the pin</td>
+<td style="text-align: right;">993</td>
+</tr>
+<tr>
+<td>8 PCBench piles, 64-154-pin ICs (2,146), <code>--work 1M</code>, seeds 1 / 2</td>
+<td>nearest pin (default)</td>
+<td>busiest side 0.59 / 0.71 of the caps</td>
+<td style="text-align: right;">1581 / 1578</td>
+</tr>
+<tr>
+<td></td>
+<td>spread onto the pins</td>
+<td>0.51 / 0.50</td>
+<td style="text-align: right;">1540 / 1518</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--decap-spread</code></td>
+<td>0.50 / 0.47</td>
+<td style="text-align: right;">1549 / 1582</td>
+</tr>
+</tbody>
+</table>
+<p>Caps against the pin rows cost routing. Caps 2 mm out route as well as the default on the public piles (single boards
+swing by up to ±48) and better on the PoE board. That is not a clear win, so the option stays off; output with it off is
+byte-identical to before.</p>
 <h2 id="3-pipeline">3. Pipeline<a class="headerlink" href="#3-pipeline" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code> constraints ─▶ (A) quadratic init ─▶ (B) electrostatic global ─▶ (C) side + rotation assignment
             ─▶ (D) legalisation (LP) ─▶ (E) detailed: SA / LNS (GPU, parallel tempering)

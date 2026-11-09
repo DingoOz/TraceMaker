@@ -96,6 +96,7 @@ var namespacetmk_1_1crules =
     [ "rule_params", "namespacetmk_1_1crules.html#ae12aa2de1cf44ec76614ef13cdfd750c", null ],
     [ "severity_name", "namespacetmk_1_1crules.html#a03936f63c728620e16d469fcf59a1123", null ],
     [ "signal_name", "namespacetmk_1_1crules.html#ad10de8f2280c161ebbb98f4f64cef363", null ],
+    [ "spread_unplaced_decaps", "namespacetmk_1_1crules.html#ae03d3a6ce33a00cd6d6727675ebb2e05", null ],
     [ "stackup_geometry", "namespacetmk_1_1crules.html#a8792256ac0c1bfc0972813b72b07435a", null ],
     [ "stackup_json", "namespacetmk_1_1crules.html#a803955f551b6d48008375c43f6d84176", null ],
     [ "stackup_summary", "namespacetmk_1_1crules.html#a98fed82df86fb46c71936f17d4f93dc0", null ],

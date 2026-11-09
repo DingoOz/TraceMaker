@@ -1,5 +1,11 @@
 var NAVTREEINDEX21 =
 {
+"structtmk_1_1route_1_1CutFeature.html#a79ba4224aa8420a9d7e72a5daf1e86de":[1,0,0,15,9,0],
+"structtmk_1_1route_1_1CutFeature.html#ad36dc1d305ff9f9095a96a38f1b2850e":[0,0,0,17,9,2],
+"structtmk_1_1route_1_1CutFeature.html#ad36dc1d305ff9f9095a96a38f1b2850e":[1,0,0,15,9,2],
+"structtmk_1_1route_1_1CutFeature.html#af30ce8c4ccefabe79767fd9c44efa32f":[0,0,0,17,9,1],
+"structtmk_1_1route_1_1CutFeature.html#af30ce8c4ccefabe79767fd9c44efa32f":[1,0,0,15,9,1],
+"structtmk_1_1route_1_1CutLine.html":[0,0,0,17,29],
 "structtmk_1_1route_1_1CutLine.html":[1,0,0,15,29],
 "structtmk_1_1route_1_1CutLine.html#a14e5a6ec1a96fd9f7333d3716e8224d3":[0,0,0,17,29,2],
 "structtmk_1_1route_1_1CutLine.html#a14e5a6ec1a96fd9f7333d3716e8224d3":[1,0,0,15,29,2],
@@ -243,11 +249,5 @@ var NAVTREEINDEX21 =
 "structtmk_1_1route_1_1LayerLimits.html":[1,0,0,15,32],
 "structtmk_1_1route_1_1LayerLimits.html#a02e5bbf3f3ddcf1de01f8c738ec90eba":[0,0,0,17,32,0],
 "structtmk_1_1route_1_1LayerLimits.html#a02e5bbf3f3ddcf1de01f8c738ec90eba":[1,0,0,15,32,0],
-"structtmk_1_1route_1_1LayerLimits.html#acd6f3c4c3cd174bec5ecaead506faf3d":[0,0,0,17,32,1],
-"structtmk_1_1route_1_1LayerLimits.html#acd6f3c4c3cd174bec5ecaead506faf3d":[1,0,0,15,32,1],
-"structtmk_1_1route_1_1LegalizeOptions.html":[0,0,0,17,35],
-"structtmk_1_1route_1_1LegalizeOptions.html":[1,0,0,15,35],
-"structtmk_1_1route_1_1LegalizeOptions.html#a112348ff3986d88d06548438b6566e33":[0,0,0,17,35,6],
-"structtmk_1_1route_1_1LegalizeOptions.html#a112348ff3986d88d06548438b6566e33":[1,0,0,15,35,6],
-"structtmk_1_1route_1_1LegalizeOptions.html#a487391a377e19ac051bf772a99c234e8":[0,0,0,17,35,0]
+"structtmk_1_1route_1_1LayerLimits.html#acd6f3c4c3cd174bec5ecaead506faf3d":[0,0,0,17,32,1]
 };
