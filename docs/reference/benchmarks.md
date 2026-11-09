@@ -92,6 +92,15 @@ comparable (judge version, time limit, machine load).
 | [rescue-bd](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-bd/summary.json) | pcbench-bd-fail | 33 | 736eac2 | 15.2% | 93.4% | 12.1% | 18675 | `--no-gpu` |
 | [rescue-quick](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/d160-rescue/runs/rescue-quick/summary.json) | quick | 30 | 736eac2 | 40.0% | 90.1% | 100.0% | 71 | `--variants 1` |
 
+## issue60
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/issue60)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [issue60-b2-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue60/runs/issue60-b2-base/summary.json) | b2-delay | 4 | 057ee82 | 0.0% | 82.2% |  | 442 | `--soft-zones` |
+| [issue60-b2-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/issue60/runs/issue60-b2-new/summary.json) | b2-delay | 4 | 057ee82 | 0.0% | 81.8% |  | 424 | `--soft-zones` |
+
 ## m17
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m17)
