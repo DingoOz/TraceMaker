@@ -1,0 +1,25 @@
+portfolio: 8 variants on 1 thread
+searches: 981 ok (10062908 expansions), 10 failed (1067 expansions); fields 0 GPU + 682 CPU (19.93 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1087 connections improved
+restarts 0; legality checks 11175574; rips 0, passes 1, boxed-in 10, nogood skips 5, history cells 0, transactions 0 kept of 0
+late reachability proofs: 14, 0 proved no path, 140022 cells visited
+failed-search expansions: strict confined 0, strict wide 1067, negotiated confined 0, negotiated wide 0
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 981 in 38.6 s  <- best
+routed 981/995 connections, 2871 tracks, 264 vias, pitch 0.065 mm, 10203997 expansions, 38.69 s (best variant 38.56 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SDA: U2.19 -> U27.15  ()
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  ()
+  unrouted: /Programming Socket #6/INT: U2.30 -> U24.13  ()
+  unrouted: /Programming Socket #5/INT: U2.12 -> U21.13  ()
+  unrouted: /Programming Socket #4/INT: U18.13 -> R127.2  ()
+  unrouted: /Programming Socket #3/INT: U15.13 -> R3.2  ()
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  ()
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+why open: 28 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 28 open through congestion (0.52 s)
+  next: 28 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 10063975 expansions, 140022 flood cells, 11175574 cell checks, 11724986 fixed-copper checks, 373686980 field cells in 682 fields, 981 commits, 0 rips

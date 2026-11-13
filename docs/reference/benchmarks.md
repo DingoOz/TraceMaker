@@ -337,6 +337,21 @@ comparable (judge version, time limit, machine load).
 | [e3-oct05-tierA](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e3/e3-oct05-tierA/summary.json) | PCBench tier A | 40 | 647bccb | 100.0% | 100.0% | 100.0% | 711 | `--octilinear --octilinear-min-leg 0.5` |
 | [e3-oct05-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e3/e3-oct05-tierB/summary.json) | PCBench tier B | 40 | 647bccb | 60.0% | 96.6% | 50.0% | 1784 | `--octilinear --octilinear-min-leg 0.5` |
 
+## m23-e5
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m23-e5)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [e5-work40m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5-work40m/summary.json) | pcbench-bd-fail | 33 | 353449d | 3.0% | 92.0% | 12.1% | 2346 | `--no-rescue` |
+| [e5-work5m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5-work5m/summary.json) | pcbench-bd-fail | 33 | 353449d | 3.0% | 87.8% | 12.1% | 590 | `--no-rescue` |
+| [e5c-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5c-new/summary.json) | pcbench-bd-fail | 33 | 353449d | 3.0% | 92.7% | 12.1% | 3922 | `--time-total 120 --no-gpu` |
+| [e5c-old](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5c-old/summary.json) | pcbench-bd-fail | 33 | 353449d | 3.0% | 92.8% | 12.1% | 3914 | `--time-total 120 --no-gpu` |
+| [e5f-quick-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5f-quick-base/summary.json) | quick | 30 | 353449d | 53.3% | 93.9% | 100.0% | 67 | `--variants 1` |
+| [e5f-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5f-quick-new/summary.json) | quick | 30 | 353449d | 53.3% | 93.9% | 100.0% | 65 | `--variants 1` |
+| [e5t-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5t-new/summary.json) | pcbench-bd-fail | 33 | 353449d | 6.1% | 92.8% | 12.1% | 3871 | `--time-total 120` |
+| [e5t-old](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e5/e5t-old/summary.json) | pcbench-bd-fail | 33 | 353449d | 3.0% | 92.7% | 12.1% | 3927 | `--time-total 120` |
+
 ## m23-e6
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m23-e6)

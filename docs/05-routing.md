@@ -3731,3 +3731,40 @@ At the same wall time, share 0.75 routes 111 more connections than the per-stage
 passes on these boards. **Limit**: the total is a target, not a hard stop. Stages stop at their own check points, and the relax pass's
 legalising stage does not stop on the time limit: 14 of 33 boards took more than 125 s, the most 148 s (P8000_WDC_Emulator, whose 30 s rescue
 took 45 s).
+
+## 83. Throughput: CPU fields skip the rows that cannot change (2026-11-13, D189, M23 E5)
+
+**Is completion limited by search?** On the 33 failing tier B-D boards (`pcbench-bd-fail`, no rescue), 40 M work routes 16,034 of 16,935
+connections against 15,409 at 5 M: open −41 %, better on 26 boards and worse on none. That is about +210 connections per doubling of the work.
+A few boards are not limited by it: DronPi routes 341 of 352 whether its best variant does 6 M or 87 M expansions.
+
+**Where the time goes** (gprof, DronPi, one variant and thread, CPU fields; built with clones off, `-fno-ipa-sra -fno-ipa-cp
+-fno-partial-inlining`, since gprof otherwise charges a clone to the symbol before it). Fields 22 %, the search loop 13 %, the open list's heap 9 %,
+routed-copper checks 7 %, fixed-copper codes 6 %. The heap's share is mostly gprof's per-call cost: a 4-ary heap, which pops in the same
+order, gained 0.5 % of wall time and was not kept.
+
+**The change** (`src/gpu/field_cpu.cpp`, `field_cpu`). The field is a fixpoint of line sweeps in eight directions plus a via step, repeated until
+a round changes nothing (§5.2). After the first rounds the changes are local, near obstacles, yet every round swept every row. Now a row
+is skipped when the step cannot change it:
+
+- along a row, when the row has not changed since the same sweep (layer, direction) last processed it;
+- across rows, when the row it is relaxed from has not changed since then (values only fall, so the row stays within its predecessor's
+  values plus the cost);
+- in the via step, when no layer of the row has changed.
+
+A tick per (layer, row) records the last change, and a tick per (layer, direction, row) the last time it was processed. Every skipped step
+is one that would have changed nothing, so the field, each sweep's change flag and the round count are those of the line-by-line
+reference: `field_cpu_reference`, compared in `tests/test_gpu.cpp`. The GPU kernel is unchanged.
+
+**Measured** (`bench/records/m23-e5`; every output byte-identical, the quick tier's 30 boards too):
+
+| | before | after |
+|---|---|---|
+| CPU field, ns per cell (DronPi / Aleste / mini_mass) | 79 / 63 / 53 | 41 / 39 / 25 |
+| one variant, one thread, `--no-gpu`, 10 M work, wall s (same boards) | 16.20 / 18.71 / 39.39 | 14.81 / 18.11 / 28.64 |
+| eight variants, 8 threads, GPU available, 20 M work, wall s (Aleste / mini_mass) | 36.34 / 61.07 | 33.13 / 58.83 |
+
+Fields under 500 k cells still go to the CPU (D158): with every field on the CPU, mini_mass took 80 s. **At equal wall time**
+(`--time-total 120`, the 33 boards) the difference is not measurable: +13 connections with the GPU, −18 with `--no-gpu`, both within the
+noise of time-limited runs. The work curve above predicts about +15 to +20 for a speed-up of this size. The doc 18 gate is not met; the
+speed-up is kept because it is exact and makes every run faster.

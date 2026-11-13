@@ -971,7 +971,7 @@
           "done": true
         },
         {
-          "text": "E5: throughput on the open boards",
+          "text": "E5: throughput: CPU fields skip rows that cannot change (D189, doc 05 section 83), 3-27 % faster and byte-identical; equal-time gain below noise, gate not met (open)",
           "done": false
         },
         {

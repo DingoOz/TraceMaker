@@ -472,3 +472,9 @@ uses `--time-total 120`. At equal wall time it routed 111 more of 16,935 connect
 run ends near its stated time (median 124 s for 120 s) and no longer at three times it, but the relax pass's legalising stage can still overrun,
 by up to 28 s on these boards (`bench/records/m23-e6`).
 
+**E5, first step (2026-11-13, D189, doc 05 §83).** More search does route more: 8× the work leaves 41 % fewer connections open on the 33
+failing boards. The CPU field now skips rows that cannot change: field cells cost half as much (25-41 ns instead of 53-79), and runs are
+3-27 % faster with byte-identical results. At equal wall time the gain is below the noise (+13 and −18 of 16,935), so the gate is not met.
+What is left: the search loop, the routed-copper checks and the fixed-copper codes, each under a sixth of the time, and none with a single
+large cost.
+

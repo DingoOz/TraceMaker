@@ -203,6 +203,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D186](decisions/D186.md) | One time limit for the whole run (--time-total) | accepted |
 | [D187](decisions/D187.md) | Octilinear doglegs after the route | accepted |
 | [D188](decisions/D188.md) | Return-path audit of critical nets in every run report | accepted |
+| [D189](decisions/D189.md) | CPU fields skip the rows that cannot change | accepted |
 <!-- END decision index -->
 
 ## Risks
